@@ -7,6 +7,7 @@ Implement codecs_strings and codecs_data_structures packages ported from the
 TypeScript `@solana/codecs-strings` and `@solana/codecs-data-structures`.
 
 **codecs_strings** (15 tests):
+
 - UTF-8 codec using dart:convert with null character stripping
 - Base16 (hex) codec with optimized nibble conversion
 - Base58 codec using BigInt arithmetic for Solana address encoding
@@ -16,6 +17,7 @@ TypeScript `@solana/codecs-strings` and `@solana/codecs-data-structures`.
 - BaseX reslice codec for power-of-2 bases using bit accumulator
 
 **codecs_data_structures** (90 tests):
+
 - Unit (void), boolean, and raw bytes codecs
 - Array codec with prefix/fixed/remainder sizing (sealed ArrayLikeCodecSize)
 - Tuple codec for heterogeneous fixed-length lists
