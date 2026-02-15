@@ -104,39 +104,39 @@
 
 ### solana_kit_addresses (~7 source files, ~6 test files)
 
-- [ ] T028 [US1] Port Address extension type, base58 codec, validation from `.repos/kit/packages/addresses/src/` to `packages/solana_kit_addresses/lib/src/`
-- [ ] T029 [US1] Port PDA computation (getProgramDerivedAddress, findProgramDerivedAddress, createAddressWithSeed) in `packages/solana_kit_addresses/lib/src/`
-- [ ] T030 [US1] Port isOnCurve validation in `packages/solana_kit_addresses/lib/src/`
-- [ ] T031 [US1] Update barrel export `packages/solana_kit_addresses/lib/solana_kit_addresses.dart`
-- [ ] T032 [US1] Port all 6 test files from `.repos/kit/packages/addresses/src/__tests__/` to `packages/solana_kit_addresses/test/`
+- [x] T028 [US1] Port Address extension type, base58 codec, validation from `.repos/kit/packages/addresses/src/` to `packages/solana_kit_addresses/lib/src/`
+- [x] T029 [US1] Port PDA computation (getProgramDerivedAddress, findProgramDerivedAddress, createAddressWithSeed) in `packages/solana_kit_addresses/lib/src/`
+- [x] T030 [US1] Port isOnCurve validation in `packages/solana_kit_addresses/lib/src/`
+- [x] T031 [US1] Update barrel export `packages/solana_kit_addresses/lib/solana_kit_addresses.dart`
+- [x] T032 [US1] Port all 6 test files from `.repos/kit/packages/addresses/src/__tests__/` to `packages/solana_kit_addresses/test/`
 
 ### solana_kit_keys (~10 source files, ~10 test files)
 
-- [ ] T033 [US1] Port Ed25519 key generation, signing, verification from `.repos/kit/packages/keys/src/` to `packages/solana_kit_keys/lib/src/` using `cryptography` package
-- [ ] T034 [US1] Port Signature extension type and signature codec in `packages/solana_kit_keys/lib/src/`
-- [ ] T035 [US1] Update barrel export `packages/solana_kit_keys/lib/solana_kit_keys.dart`
-- [ ] T036 [US1] Port all 10 test files from `.repos/kit/packages/keys/src/__tests__/` to `packages/solana_kit_keys/test/`
+- [x] T033 [US1] Port Ed25519 key generation, signing, verification from `.repos/kit/packages/keys/src/` to `packages/solana_kit_keys/lib/src/` using `cryptography` package
+- [x] T034 [US1] Port Signature extension type and signature codec in `packages/solana_kit_keys/lib/src/`
+- [x] T035 [US1] Update barrel export `packages/solana_kit_keys/lib/solana_kit_keys.dart`
+- [x] T036 [US1] Port all 10 test files from `.repos/kit/packages/keys/src/__tests__/` to `packages/solana_kit_keys/test/`
 
 ### solana_kit_instructions (~4 source files, ~2 test files)
 
-- [ ] T037 [P] [US1] Port IInstruction, IAccountMeta, AccountRole from `.repos/kit/packages/instructions/src/` to `packages/solana_kit_instructions/lib/src/`
-- [ ] T038 [US1] Update barrel export `packages/solana_kit_instructions/lib/solana_kit_instructions.dart`
-- [ ] T039 [US1] Port all 2 test files from `.repos/kit/packages/instructions/src/__tests__/` to `packages/solana_kit_instructions/test/`
+- [x] T037 [P] [US1] Port IInstruction, IAccountMeta, AccountRole from `.repos/kit/packages/instructions/src/` to `packages/solana_kit_instructions/lib/src/`
+- [x] T038 [US1] Update barrel export `packages/solana_kit_instructions/lib/solana_kit_instructions.dart`
+- [x] T039 [US1] Port all 2 test files from `.repos/kit/packages/instructions/src/__tests__/` to `packages/solana_kit_instructions/test/`
 
 ### solana_kit_programs (~2 source files, ~2 test files)
 
-- [ ] T040 [P] [US1] Port isProgramError, getProgramErrorMessage from `.repos/kit/packages/programs/src/` to `packages/solana_kit_programs/lib/src/`
-- [ ] T041 [US1] Update barrel export `packages/solana_kit_programs/lib/solana_kit_programs.dart`
-- [ ] T042 [US1] Port all 2 test files from `.repos/kit/packages/programs/src/__tests__/` to `packages/solana_kit_programs/test/`
+- [x] T040 [P] [US1] Port isProgramError, getProgramErrorMessage from `.repos/kit/packages/programs/src/` to `packages/solana_kit_programs/lib/src/`
+- [x] T041 [US1] Update barrel export `packages/solana_kit_programs/lib/solana_kit_programs.dart`
+- [x] T042 [US1] Port all 2 test files from `.repos/kit/packages/programs/src/__tests__/` to `packages/solana_kit_programs/test/`
 
 ### solana_kit_transaction_messages (~38 source files, ~22 test files)
 
-- [ ] T043 [US1] Port TransactionMessage type and creation from `.repos/kit/packages/transaction-messages/src/` to `packages/solana_kit_transaction_messages/lib/src/`
-- [ ] T044 [US1] Port fee payer, blockhash lifetime, durable nonce lifetime setters in `packages/solana_kit_transaction_messages/lib/src/`
-- [ ] T045 [US1] Port instruction append/prepend, address lookup table support in `packages/solana_kit_transaction_messages/lib/src/`
-- [ ] T046 [US1] Port message compilation and decompilation in `packages/solana_kit_transaction_messages/lib/src/`
-- [ ] T047 [US1] Update barrel export `packages/solana_kit_transaction_messages/lib/solana_kit_transaction_messages.dart`
-- [ ] T048 [US1] Port all 22 test files from `.repos/kit/packages/transaction-messages/src/__tests__/` to `packages/solana_kit_transaction_messages/test/`
+- [x] T043 [US1] Port TransactionMessage type and creation from `.repos/kit/packages/transaction-messages/src/` to `packages/solana_kit_transaction_messages/lib/src/`
+- [x] T044 [US1] Port fee payer, blockhash lifetime, durable nonce lifetime setters in `packages/solana_kit_transaction_messages/lib/src/`
+- [x] T045 [US1] Port instruction append/prepend, address lookup table support in `packages/solana_kit_transaction_messages/lib/src/`
+- [x] T046 [US1] Port message compilation and decompilation in `packages/solana_kit_transaction_messages/lib/src/`
+- [x] T047 [US1] Update barrel export `packages/solana_kit_transaction_messages/lib/solana_kit_transaction_messages.dart`
+- [x] T048 [US1] Port all 22 test files from `.repos/kit/packages/transaction-messages/src/__tests__/` to `packages/solana_kit_transaction_messages/test/`
 
 ### solana_kit_transactions (~15 source files, ~17 test files)
 
