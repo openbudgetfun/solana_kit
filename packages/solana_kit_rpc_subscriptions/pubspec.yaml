@@ -1,0 +1,17 @@
+name: solana_kit_rpc_subscriptions
+description: Subscription client for the Solana Kit Dart SDK.
+version: 0.0.1
+
+environment:
+  sdk: ^3.10.1
+
+resolution: workspace
+
+dependencies:
+  solana_kit_errors:
+  solana_kit_rpc_subscriptions_api:
+  solana_kit_rpc_subscriptions_channel_websocket:
+  solana_kit_rpc_types:
+
+dev_dependencies:
+  solana_kit_lints:

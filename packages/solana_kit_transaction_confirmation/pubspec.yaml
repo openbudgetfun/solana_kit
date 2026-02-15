@@ -1,0 +1,15 @@
+name: solana_kit_transaction_confirmation
+description: Confirmation tracking for the Solana Kit Dart SDK.
+version: 0.0.1
+
+environment:
+  sdk: ^3.10.1
+
+resolution: workspace
+
+dependencies:
+  solana_kit_errors:
+  solana_kit_rpc_types:
+
+dev_dependencies:
+  solana_kit_lints:
