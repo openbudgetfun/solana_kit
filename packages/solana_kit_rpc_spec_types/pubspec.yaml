@@ -9,7 +9,7 @@ resolution: workspace
 
 dependencies:
   solana_kit_errors:
-  solana_kit_rpc_types:
 
 dev_dependencies:
   solana_kit_lints:
+  test: ^1.25.0

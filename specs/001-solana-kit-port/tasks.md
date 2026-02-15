@@ -172,9 +172,9 @@
 
 ### solana_kit_rpc_spec_types (~7 source files, ~3 test files)
 
-- [ ] T062 [US2] Port RpcRequest, RpcResponse, RpcPlan types from `.repos/kit/packages/rpc-spec-types/src/` to `packages/solana_kit_rpc_spec_types/lib/src/`
-- [ ] T063 [US2] Update barrel export `packages/solana_kit_rpc_spec_types/lib/solana_kit_rpc_spec_types.dart`
-- [ ] T064 [US2] Port all 3 test files from `.repos/kit/packages/rpc-spec-types/src/__tests__/` to `packages/solana_kit_rpc_spec_types/test/`
+- [x] T062 [US2] Port RpcRequest, RpcResponse, RpcPlan types from `.repos/kit/packages/rpc-spec-types/src/` to `packages/solana_kit_rpc_spec_types/lib/src/`
+- [x] T063 [US2] Update barrel export `packages/solana_kit_rpc_spec_types/lib/solana_kit_rpc_spec_types.dart`
+- [x] T064 [US2] Port all 3 test files from `.repos/kit/packages/rpc-spec-types/src/__tests__/` to `packages/solana_kit_rpc_spec_types/test/`
 
 ### solana_kit_rpc_types (~20 source files, ~11 test files)
 
