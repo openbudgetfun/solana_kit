@@ -115,8 +115,7 @@ Map<String, _AddressMapEntry> _buildAddressMap(
       final accountAddr = account.address.value;
       // Check if this is a lookup table account. AccountLookupMeta extends
       // AccountMeta, so the accounts list can contain both types.
-      final lookupMeta =
-          account is AccountLookupMeta ? account : null;
+      final lookupMeta = account is AccountLookupMeta ? account : null;
 
       _upsert(addressMap, accountAddr, (entry) {
         if (entry != null) {
@@ -127,8 +126,7 @@ Map<String, _AddressMapEntry> _buildAddressMap(
               final nextRole = mergeRoles(entry.role, account.role);
               if (lookupMeta != null) {
                 final shouldReplace =
-                    entry.lookupTableAddress !=
-                        lookupMeta.lookupTableAddress &&
+                    entry.lookupTableAddress != lookupMeta.lookupTableAddress &&
                     (addressComparator ??= getAddressComparator())(
                           lookupMeta.lookupTableAddress,
                           entry.lookupTableAddress!,
@@ -157,8 +155,7 @@ Map<String, _AddressMapEntry> _buildAddressMap(
               if (addressesOfInvokedPrograms.contains(accountAddr)) {
                 if (isWritableRole(account.role)) {
                   throw SolanaError(
-                    SolanaErrorCode
-                        .transactionInvokedProgramsMustNotBeWritable,
+                    SolanaErrorCode.transactionInvokedProgramsMustNotBeWritable,
                     {'programAddress': accountAddr},
                   );
                 }

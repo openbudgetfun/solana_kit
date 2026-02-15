@@ -13,10 +13,7 @@ Instruction _createMockAdvanceNonceAccountInstruction({
   return Instruction(
     programAddress: const Address('11111111111111111111111111111111'),
     accounts: [
-      AccountMeta(
-        address: nonceAccountAddress,
-        role: AccountRole.writable,
-      ),
+      AccountMeta(address: nonceAccountAddress, role: AccountRole.writable),
       const AccountMeta(
         address: Address('SysvarRecentB1ockHashes11111111111111111111'),
         role: AccountRole.readonly,
@@ -60,168 +57,145 @@ void main() {
       );
     });
 
-    test(
-      'throws when supplied a transaction with a nonce lifetime constraint '
-      'but no instructions',
-      () {
-        final tx = durableNonceTx.copyWith(instructions: const []);
-        expect(
-          () => assertIsTransactionMessageWithDurableNonceLifetime(tx),
-          throwsA(
-            isA<SolanaError>().having(
-              (e) => e.code,
-              'code',
-              SolanaErrorCode.transactionExpectedNonceLifetime,
-            ),
+    test('throws when supplied a transaction with a nonce lifetime constraint '
+        'but no instructions', () {
+      final tx = durableNonceTx.copyWith(instructions: const []);
+      expect(
+        () => assertIsTransactionMessageWithDurableNonceLifetime(tx),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionExpectedNonceLifetime,
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
-    test(
-      'throws when supplied a transaction with a nonce lifetime constraint '
-      'but an instruction at index 0 for a program other than the system '
-      'program',
-      () {
-        final tx = TransactionMessage(
-          version: TransactionVersion.v0,
-          instructions: [
-            Instruction(
-              programAddress: const Address(
-                '32JTd9jz5xGuLegzVouXxfzAVTiJYWMLrg6p8RxbV5xc',
-              ),
-              accounts: durableNonceTx.instructions[0].accounts,
-              data: durableNonceTx.instructions[0].data,
+    test('throws when supplied a transaction with a nonce lifetime constraint '
+        'but an instruction at index 0 for a program other than the system '
+        'program', () {
+      final tx = TransactionMessage(
+        version: TransactionVersion.v0,
+        instructions: [
+          Instruction(
+            programAddress: const Address(
+              '32JTd9jz5xGuLegzVouXxfzAVTiJYWMLrg6p8RxbV5xc',
             ),
-          ],
-          lifetimeConstraint: DurableNonceLifetimeConstraint(
-            nonce: nonceConstraintA.nonce,
+            accounts: durableNonceTx.instructions[0].accounts,
+            data: durableNonceTx.instructions[0].data,
           ),
-        );
-        expect(
-          () => assertIsTransactionMessageWithDurableNonceLifetime(tx),
-          throwsA(
-            isA<SolanaError>().having(
-              (e) => e.code,
-              'code',
-              SolanaErrorCode.transactionExpectedNonceLifetime,
-            ),
+        ],
+        lifetimeConstraint: DurableNonceLifetimeConstraint(
+          nonce: nonceConstraintA.nonce,
+        ),
+      );
+      expect(
+        () => assertIsTransactionMessageWithDurableNonceLifetime(tx),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionExpectedNonceLifetime,
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
-    test(
-      'throws when supplied a transaction with a system program instruction '
-      'at index 0 for something other than the AdvanceNonceAccount '
-      'instruction',
-      () {
-        final tx = TransactionMessage(
-          version: TransactionVersion.v0,
-          instructions: [
-            Instruction(
-              programAddress: const Address(
-                '11111111111111111111111111111111',
-              ),
-              accounts: durableNonceTx.instructions[0].accounts,
-              data: Uint8List.fromList([2, 0, 0, 0]),
-            ),
-          ],
-          lifetimeConstraint: DurableNonceLifetimeConstraint(
-            nonce: nonceConstraintA.nonce,
+    test('throws when supplied a transaction with a system program instruction '
+        'at index 0 for something other than the AdvanceNonceAccount '
+        'instruction', () {
+      final tx = TransactionMessage(
+        version: TransactionVersion.v0,
+        instructions: [
+          Instruction(
+            programAddress: const Address('11111111111111111111111111111111'),
+            accounts: durableNonceTx.instructions[0].accounts,
+            data: Uint8List.fromList([2, 0, 0, 0]),
           ),
-        );
-        expect(
-          () => assertIsTransactionMessageWithDurableNonceLifetime(tx),
-          throwsA(
-            isA<SolanaError>().having(
-              (e) => e.code,
-              'code',
-              SolanaErrorCode.transactionExpectedNonceLifetime,
-            ),
+        ],
+        lifetimeConstraint: DurableNonceLifetimeConstraint(
+          nonce: nonceConstraintA.nonce,
+        ),
+      );
+      expect(
+        () => assertIsTransactionMessageWithDurableNonceLifetime(tx),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionExpectedNonceLifetime,
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
-    test(
-      'throws when supplied a transaction with a system program instruction '
-      'at index 0 with malformed accounts',
-      () {
-        final tx = TransactionMessage(
-          version: TransactionVersion.v0,
-          instructions: [
-            Instruction(
-              programAddress: const Address(
-                '11111111111111111111111111111111',
-              ),
-              accounts: const [],
-              data: durableNonceTx.instructions[0].data,
-            ),
-          ],
-          lifetimeConstraint: DurableNonceLifetimeConstraint(
-            nonce: nonceConstraintA.nonce,
+    test('throws when supplied a transaction with a system program instruction '
+        'at index 0 with malformed accounts', () {
+      final tx = TransactionMessage(
+        version: TransactionVersion.v0,
+        instructions: [
+          Instruction(
+            programAddress: const Address('11111111111111111111111111111111'),
+            accounts: const [],
+            data: durableNonceTx.instructions[0].data,
           ),
-        );
-        expect(
-          () => assertIsTransactionMessageWithDurableNonceLifetime(tx),
-          throwsA(
-            isA<SolanaError>().having(
-              (e) => e.code,
-              'code',
-              SolanaErrorCode.transactionExpectedNonceLifetime,
-            ),
+        ],
+        lifetimeConstraint: DurableNonceLifetimeConstraint(
+          nonce: nonceConstraintA.nonce,
+        ),
+      );
+      expect(
+        () => assertIsTransactionMessageWithDurableNonceLifetime(tx),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionExpectedNonceLifetime,
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
-    test(
-      'throws when supplied a transaction with an AdvanceNonceAccount '
-      'instruction at index 0 but no lifetime constraint',
-      () {
-        final tx = durableNonceTx.copyWith(clearLifetimeConstraint: true);
-        expect(
-          () => assertIsTransactionMessageWithDurableNonceLifetime(tx),
-          throwsA(
-            isA<SolanaError>().having(
-              (e) => e.code,
-              'code',
-              SolanaErrorCode.transactionExpectedNonceLifetime,
-            ),
+    test('throws when supplied a transaction with an AdvanceNonceAccount '
+        'instruction at index 0 but no lifetime constraint', () {
+      final tx = durableNonceTx.copyWith(clearLifetimeConstraint: true);
+      expect(
+        () => assertIsTransactionMessageWithDurableNonceLifetime(tx),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionExpectedNonceLifetime,
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
-    test(
-      'throws when supplied a transaction with an AdvanceNonceAccount '
-      'instruction at index 0 but a blockhash lifetime constraint',
-      () {
-        final tx = durableNonceTx.copyWith(
-          lifetimeConstraint: BlockhashLifetimeConstraint(
-            blockhash: '123',
-            lastValidBlockHeight: BigInt.from(123),
+    test('throws when supplied a transaction with an AdvanceNonceAccount '
+        'instruction at index 0 but a blockhash lifetime constraint', () {
+      final tx = durableNonceTx.copyWith(
+        lifetimeConstraint: BlockhashLifetimeConstraint(
+          blockhash: '123',
+          lastValidBlockHeight: BigInt.from(123),
+        ),
+      );
+      expect(
+        () => assertIsTransactionMessageWithDurableNonceLifetime(tx),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionExpectedNonceLifetime,
           ),
-        );
-        expect(
-          () => assertIsTransactionMessageWithDurableNonceLifetime(tx),
-          throwsA(
-            isA<SolanaError>().having(
-              (e) => e.code,
-              'code',
-              SolanaErrorCode.transactionExpectedNonceLifetime,
-            ),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     test('does not throw when supplied a durable nonce transaction', () {
       expect(
-        () => assertIsTransactionMessageWithDurableNonceLifetime(
-          durableNonceTx,
-        ),
+        () =>
+            assertIsTransactionMessageWithDurableNonceLifetime(durableNonceTx),
         returnsNormally,
       );
     });
@@ -270,40 +244,35 @@ void main() {
       );
     });
 
-    test(
-      'sets the lifetime constraint on the transaction to the supplied '
-      'durable nonce constraint',
-      () {
-        final durableNonceTx =
-            setTransactionMessageLifetimeUsingDurableNonce(
-              DurableNonceConfig(
-                nonce: nonceConstraintA.nonce,
-                nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
-                nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
-              ),
-              baseTx,
-            );
-        expect(
-          durableNonceTx.lifetimeConstraint,
-          isA<DurableNonceLifetimeConstraint>().having(
-            (c) => c.nonce,
-            'nonce',
-            nonceConstraintA.nonce,
-          ),
-        );
-      },
-    );
+    test('sets the lifetime constraint on the transaction to the supplied '
+        'durable nonce constraint', () {
+      final durableNonceTx = setTransactionMessageLifetimeUsingDurableNonce(
+        DurableNonceConfig(
+          nonce: nonceConstraintA.nonce,
+          nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
+          nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
+        ),
+        baseTx,
+      );
+      expect(
+        durableNonceTx.lifetimeConstraint,
+        isA<DurableNonceLifetimeConstraint>().having(
+          (c) => c.nonce,
+          'nonce',
+          nonceConstraintA.nonce,
+        ),
+      );
+    });
 
     test('prepends an AdvanceNonceAccount instruction', () {
-      final durableNonceTx =
-          setTransactionMessageLifetimeUsingDurableNonce(
-            DurableNonceConfig(
-              nonce: nonceConstraintA.nonce,
-              nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
-              nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
-            ),
-            baseTx,
-          );
+      final durableNonceTx = setTransactionMessageLifetimeUsingDurableNonce(
+        DurableNonceConfig(
+          nonce: nonceConstraintA.nonce,
+          nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
+          nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
+        ),
+        baseTx,
+      );
       expect(durableNonceTx.instructions.length, 2);
       expect(
         isAdvanceNonceAccountInstruction(durableNonceTx.instructions[0]),
@@ -315,85 +284,70 @@ void main() {
       );
     });
 
-    group(
-      'given a transaction with an advance nonce account instruction but '
-      'no nonce lifetime constraint',
-      () {
-        test(
-          'does not modify an AdvanceNonceAccount instruction if the existing '
-          'one matches the constraint added',
-          () {
-            final instruction = _createMockAdvanceNonceAccountInstruction(
+    group('given a transaction with an advance nonce account instruction but '
+        'no nonce lifetime constraint', () {
+      test('does not modify an AdvanceNonceAccount instruction if the existing '
+          'one matches the constraint added', () {
+        final instruction = _createMockAdvanceNonceAccountInstruction(
+          nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
+          nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
+        );
+        final transaction = TransactionMessage(
+          version: TransactionVersion.v0,
+          instructions: [instruction, baseTx.instructions[0]],
+        );
+        final durableNonceTx = setTransactionMessageLifetimeUsingDurableNonce(
+          DurableNonceConfig(
+            nonce: nonceConstraintA.nonce,
+            nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
+            nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
+          ),
+          transaction,
+        );
+        expect(durableNonceTx.instructions.length, 2);
+        expect(
+          durableNonceTx.instructions[0].accounts![0].address,
+          nonceConstraintA.nonceAccountAddress,
+        );
+        expect(
+          durableNonceTx.instructions[0].accounts![2].address,
+          nonceConstraintA.nonceAuthorityAddress,
+        );
+      });
+
+      group('when the existing AdvanceNonceAccount instruction does not match '
+          'the constraint added', () {
+        test('replaces the existing instruction', () {
+          final transaction = TransactionMessage(
+            version: TransactionVersion.v0,
+            instructions: [
+              _createMockAdvanceNonceAccountInstruction(
+                nonceAccountAddress: nonceConstraintB.nonceAccountAddress,
+                nonceAuthorityAddress: nonceConstraintB.nonceAuthorityAddress,
+              ),
+              baseTx.instructions[0],
+            ],
+          );
+          final durableNonceTx = setTransactionMessageLifetimeUsingDurableNonce(
+            DurableNonceConfig(
+              nonce: nonceConstraintA.nonce,
               nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
               nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
-            );
-            final transaction = TransactionMessage(
-              version: TransactionVersion.v0,
-              instructions: [instruction, baseTx.instructions[0]],
-            );
-            final durableNonceTx =
-                setTransactionMessageLifetimeUsingDurableNonce(
-                  DurableNonceConfig(
-                    nonce: nonceConstraintA.nonce,
-                    nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
-                    nonceAuthorityAddress:
-                        nonceConstraintA.nonceAuthorityAddress,
-                  ),
-                  transaction,
-                );
-            expect(durableNonceTx.instructions.length, 2);
-            expect(
-              durableNonceTx.instructions[0].accounts![0].address,
-              nonceConstraintA.nonceAccountAddress,
-            );
-            expect(
-              durableNonceTx.instructions[0].accounts![2].address,
-              nonceConstraintA.nonceAuthorityAddress,
-            );
-          },
-        );
-
-        group(
-          'when the existing AdvanceNonceAccount instruction does not match '
-          'the constraint added',
-          () {
-            test('replaces the existing instruction', () {
-              final transaction = TransactionMessage(
-                version: TransactionVersion.v0,
-                instructions: [
-                  _createMockAdvanceNonceAccountInstruction(
-                    nonceAccountAddress: nonceConstraintB.nonceAccountAddress,
-                    nonceAuthorityAddress:
-                        nonceConstraintB.nonceAuthorityAddress,
-                  ),
-                  baseTx.instructions[0],
-                ],
-              );
-              final durableNonceTx =
-                  setTransactionMessageLifetimeUsingDurableNonce(
-                    DurableNonceConfig(
-                      nonce: nonceConstraintA.nonce,
-                      nonceAccountAddress:
-                          nonceConstraintA.nonceAccountAddress,
-                      nonceAuthorityAddress:
-                          nonceConstraintA.nonceAuthorityAddress,
-                    ),
-                    transaction,
-                  );
-              expect(durableNonceTx.instructions.length, 2);
-              expect(
-                durableNonceTx.instructions[0].accounts![0].address,
-                nonceConstraintA.nonceAccountAddress,
-              );
-              expect(
-                durableNonceTx.instructions[0].accounts![2].address,
-                nonceConstraintA.nonceAuthorityAddress,
-              );
-            });
-          },
-        );
-      },
-    );
+            ),
+            transaction,
+          );
+          expect(durableNonceTx.instructions.length, 2);
+          expect(
+            durableNonceTx.instructions[0].accounts![0].address,
+            nonceConstraintA.nonceAccountAddress,
+          );
+          expect(
+            durableNonceTx.instructions[0].accounts![2].address,
+            nonceConstraintA.nonceAuthorityAddress,
+          );
+        });
+      });
+    });
 
     group('given a durable nonce transaction', () {
       late TransactionMessage durableNonceTxWithConstraintA;
@@ -418,80 +372,63 @@ void main() {
         );
       });
 
-      test(
-        'sets the new durable nonce constraint on the transaction when '
-        'it differs from the existing one',
-        () {
-          final durableNonceTxB =
-              setTransactionMessageLifetimeUsingDurableNonce(
-                DurableNonceConfig(
-                  nonce: nonceConstraintB.nonce,
-                  nonceAccountAddress: nonceConstraintB.nonceAccountAddress,
-                  nonceAuthorityAddress:
-                      nonceConstraintB.nonceAuthorityAddress,
-                ),
-                durableNonceTxWithConstraintA,
-              );
-          expect(
-            durableNonceTxB.lifetimeConstraint,
-            isA<DurableNonceLifetimeConstraint>().having(
-              (c) => c.nonce,
-              'nonce',
-              nonceConstraintB.nonce,
-            ),
-          );
-        },
-      );
+      test('sets the new durable nonce constraint on the transaction when '
+          'it differs from the existing one', () {
+        final durableNonceTxB = setTransactionMessageLifetimeUsingDurableNonce(
+          DurableNonceConfig(
+            nonce: nonceConstraintB.nonce,
+            nonceAccountAddress: nonceConstraintB.nonceAccountAddress,
+            nonceAuthorityAddress: nonceConstraintB.nonceAuthorityAddress,
+          ),
+          durableNonceTxWithConstraintA,
+        );
+        expect(
+          durableNonceTxB.lifetimeConstraint,
+          isA<DurableNonceLifetimeConstraint>().having(
+            (c) => c.nonce,
+            'nonce',
+            nonceConstraintB.nonce,
+          ),
+        );
+      });
 
-      test(
-        'replaces the advance nonce account instruction when it differs '
-        'from the existing one',
-        () {
-          final durableNonceTxB =
-              setTransactionMessageLifetimeUsingDurableNonce(
-                DurableNonceConfig(
-                  nonce: nonceConstraintB.nonce,
-                  nonceAccountAddress: nonceConstraintB.nonceAccountAddress,
-                  nonceAuthorityAddress:
-                      nonceConstraintB.nonceAuthorityAddress,
-                ),
-                durableNonceTxWithConstraintA,
-              );
-          expect(durableNonceTxB.instructions.length, 2);
-          expect(
-            durableNonceTxB.instructions[0].accounts![0].address,
-            nonceConstraintB.nonceAccountAddress,
-          );
-          expect(
-            durableNonceTxB.instructions[0].accounts![2].address,
-            nonceConstraintB.nonceAuthorityAddress,
-          );
-        },
-      );
+      test('replaces the advance nonce account instruction when it differs '
+          'from the existing one', () {
+        final durableNonceTxB = setTransactionMessageLifetimeUsingDurableNonce(
+          DurableNonceConfig(
+            nonce: nonceConstraintB.nonce,
+            nonceAccountAddress: nonceConstraintB.nonceAccountAddress,
+            nonceAuthorityAddress: nonceConstraintB.nonceAuthorityAddress,
+          ),
+          durableNonceTxWithConstraintA,
+        );
+        expect(durableNonceTxB.instructions.length, 2);
+        expect(
+          durableNonceTxB.instructions[0].accounts![0].address,
+          nonceConstraintB.nonceAccountAddress,
+        );
+        expect(
+          durableNonceTxB.instructions[0].accounts![2].address,
+          nonceConstraintB.nonceAuthorityAddress,
+        );
+      });
 
-      test(
-        'returns the original transaction when trying to set the same '
-        'durable nonce constraint again',
-        () {
-          final txWithSameNonceLifetime =
-              setTransactionMessageLifetimeUsingDurableNonce(
-                DurableNonceConfig(
-                  nonce: nonceConstraintA.nonce,
-                  nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
-                  nonceAuthorityAddress:
-                      nonceConstraintA.nonceAuthorityAddress,
-                ),
-                durableNonceTxWithConstraintA,
-              );
-          expect(
-            identical(
+      test('returns the original transaction when trying to set the same '
+          'durable nonce constraint again', () {
+        final txWithSameNonceLifetime =
+            setTransactionMessageLifetimeUsingDurableNonce(
+              DurableNonceConfig(
+                nonce: nonceConstraintA.nonce,
+                nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
+                nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
+              ),
               durableNonceTxWithConstraintA,
-              txWithSameNonceLifetime,
-            ),
-            isTrue,
-          );
-        },
-      );
+            );
+        expect(
+          identical(durableNonceTxWithConstraintA, txWithSameNonceLifetime),
+          isTrue,
+        );
+      });
     });
   });
 }

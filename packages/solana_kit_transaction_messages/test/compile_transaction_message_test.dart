@@ -7,9 +7,7 @@ import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.
 import 'package:test/test.dart';
 
 void main() {
-  const feePayer = Address(
-    '7EqQdEULxWcraVx3mXKFjc84LhCkMGZCkRuDpvcMwJeK',
-  );
+  const feePayer = Address('7EqQdEULxWcraVx3mXKFjc84LhCkMGZCkRuDpvcMwJeK');
   const programAddress = Address(
     'HZMKVnRrWLyQLwPLTTLKtY7ET4Cf7pQugrTr9eTBrpsf',
   );
@@ -30,8 +28,9 @@ void main() {
     });
 
     test('compiles a simple transaction with no instructions', () {
-      final tx = createTransactionMessage(version: TransactionVersion.v0)
-          .copyWith(feePayer: feePayer);
+      final tx = createTransactionMessage(
+        version: TransactionVersion.v0,
+      ).copyWith(feePayer: feePayer);
       final compiled = compileTransactionMessage(tx);
 
       expect(compiled.version, TransactionVersion.v0);
@@ -76,22 +75,19 @@ void main() {
     });
 
     test('compiles a transaction with an instruction', () {
-      final tx = createTransactionMessage(version: TransactionVersion.v0)
-          .copyWith(feePayer: feePayer);
+      final tx = createTransactionMessage(
+        version: TransactionVersion.v0,
+      ).copyWith(feePayer: feePayer);
       final txWithInstruction = appendTransactionMessageInstruction(
         Instruction(
           programAddress: programAddress,
           accounts: const [
             AccountMeta(
-              address: Address(
-                'H4RdPRWYk3pKw2CkNznxQK6J6herjgQke2pzFJW4GC6x',
-              ),
+              address: Address('H4RdPRWYk3pKw2CkNznxQK6J6herjgQke2pzFJW4GC6x'),
               role: AccountRole.writableSigner,
             ),
             AccountMeta(
-              address: Address(
-                '3LeBzRE9Yna5zi9R8vdT3MiNQYuEp4gJgVyhhwmqfCtd',
-              ),
+              address: Address('3LeBzRE9Yna5zi9R8vdT3MiNQYuEp4gJgVyhhwmqfCtd'),
               role: AccountRole.writable,
             ),
           ],
@@ -120,8 +116,9 @@ void main() {
     });
 
     test('includes addressTableLookups for v0 transactions', () {
-      final tx = createTransactionMessage(version: TransactionVersion.v0)
-          .copyWith(feePayer: feePayer);
+      final tx = createTransactionMessage(
+        version: TransactionVersion.v0,
+      ).copyWith(feePayer: feePayer);
       final compiled = compileTransactionMessage(tx);
 
       expect(compiled.addressTableLookups, isNotNull);

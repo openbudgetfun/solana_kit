@@ -54,14 +54,12 @@ class TransactionMessage {
     bool clearLifetimeConstraint = false,
   }) => TransactionMessage(
     version: version ?? this.version,
-    instructions:
-        instructions != null
-            ? List<Instruction>.unmodifiable(instructions)
-            : this.instructions,
+    instructions: instructions != null
+        ? List<Instruction>.unmodifiable(instructions)
+        : this.instructions,
     feePayer: clearFeePayer ? null : (feePayer ?? this.feePayer),
-    lifetimeConstraint:
-        clearLifetimeConstraint
-            ? null
-            : (lifetimeConstraint ?? this.lifetimeConstraint),
+    lifetimeConstraint: clearLifetimeConstraint
+        ? null
+        : (lifetimeConstraint ?? this.lifetimeConstraint),
   );
 }

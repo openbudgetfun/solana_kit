@@ -20,7 +20,7 @@ import 'package:solana_kit_transaction_messages/src/transaction_message.dart';
 /// a compiled transaction message. The byte array produced by this encoder is
 /// the message part.
 VariableSizeEncoder<CompiledTransactionMessage>
-    getCompiledTransactionMessageEncoder() {
+getCompiledTransactionMessageEncoder() {
   return VariableSizeEncoder<CompiledTransactionMessage>(
     getSizeFromValue: (message) {
       if (message.version == TransactionVersion.legacy) {
@@ -46,7 +46,7 @@ VariableSizeEncoder<CompiledTransactionMessage>
 /// a compiled transaction message. You can use this decoder to decode the
 /// message part.
 VariableSizeDecoder<CompiledTransactionMessage>
-    getCompiledTransactionMessageDecoder() {
+getCompiledTransactionMessageDecoder() {
   return VariableSizeDecoder<CompiledTransactionMessage>(
     read: (bytes, offset) {
       final versionDec = getTransactionVersionDecoder();
@@ -117,7 +117,7 @@ VariableSizeDecoder<CompiledTransactionMessage>
 /// See [getCompiledTransactionMessageDecoder] and
 /// [getCompiledTransactionMessageEncoder].
 Codec<CompiledTransactionMessage, CompiledTransactionMessage>
-    getCompiledTransactionMessageCodec() {
+getCompiledTransactionMessageCodec() {
   return combineCodec(
     getCompiledTransactionMessageEncoder(),
     getCompiledTransactionMessageDecoder(),

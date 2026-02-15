@@ -12,24 +12,18 @@ void main() {
     });
 
     test('creates a v0 transaction', () {
-      final message = createTransactionMessage(
-        version: TransactionVersion.v0,
-      );
+      final message = createTransactionMessage(version: TransactionVersion.v0);
       expect(message.version, TransactionVersion.v0);
       expect(message.instructions, isEmpty);
     });
 
     test('has no fee payer', () {
-      final message = createTransactionMessage(
-        version: TransactionVersion.v0,
-      );
+      final message = createTransactionMessage(version: TransactionVersion.v0);
       expect(message.feePayer, isNull);
     });
 
     test('has no lifetime constraint', () {
-      final message = createTransactionMessage(
-        version: TransactionVersion.v0,
-      );
+      final message = createTransactionMessage(version: TransactionVersion.v0);
       expect(message.lifetimeConstraint, isNull);
     });
   });

@@ -69,9 +69,7 @@ class _LookupAccount extends _DecompiledAccount {
   final int addressIndex;
 }
 
-List<_DecompiledAccount> _getAccountMetas(
-  CompiledTransactionMessage message,
-) {
+List<_DecompiledAccount> _getAccountMetas(CompiledTransactionMessage message) {
   final header = message.header;
   final numWritableSignerAccounts =
       header.numSignerAccounts - header.numReadonlySignerAccounts;
@@ -130,12 +128,12 @@ List<_DecompiledAccount> _getAddressLookupMetas(
   List<AddressTableLookup> compiledAddressTableLookups,
   AddressesByLookupTableAddress addressesByLookupTableAddress,
 ) {
-  final compiledAddresses =
-      compiledAddressTableLookups.map((l) => l.lookupTableAddress).toList();
-  final missing =
-      compiledAddresses
-          .where((a) => !addressesByLookupTableAddress.containsKey(a))
-          .toList();
+  final compiledAddresses = compiledAddressTableLookups
+      .map((l) => l.lookupTableAddress)
+      .toList();
+  final missing = compiledAddresses
+      .where((a) => !addressesByLookupTableAddress.containsKey(a))
+      .toList();
 
   if (missing.isNotEmpty) {
     throw SolanaError(
@@ -212,22 +210,18 @@ Instruction _convertInstruction(
   if (accountIndices != null && accountIndices.isNotEmpty) {
     // Build a list of AccountMeta and AccountLookupMeta objects.
     // AccountLookupMeta extends AccountMeta, so both fit in List<AccountMeta>.
-    final mixed =
-        accountIndices.map((idx) {
-          final meta = transactionMetas[idx];
-          return switch (meta) {
-            _StaticAccount() => AccountMeta(
-              address: meta.address,
-              role: meta.role,
-            ),
-            _LookupAccount() => AccountLookupMeta(
-              address: meta.address,
-              addressIndex: meta.addressIndex,
-              lookupTableAddress: meta.lookupTableAddress,
-              role: meta.role,
-            ),
-          };
-        }).toList();
+    final mixed = accountIndices.map((idx) {
+      final meta = transactionMetas[idx];
+      return switch (meta) {
+        _StaticAccount() => AccountMeta(address: meta.address, role: meta.role),
+        _LookupAccount() => AccountLookupMeta(
+          address: meta.address,
+          addressIndex: meta.addressIndex,
+          lookupTableAddress: meta.lookupTableAddress,
+          role: meta.role,
+        ),
+      };
+    }).toList();
     accounts = List<AccountMeta>.unmodifiable(mixed);
   }
 
@@ -264,41 +258,36 @@ TransactionMessage decompileTransactionMessage(
   final addressTableLookups = compiledTransactionMessage.addressTableLookups;
   final accountLookupMetas =
       (addressTableLookups != null && addressTableLookups.isNotEmpty)
-          ? _getAddressLookupMetas(
-            addressTableLookups,
-            config?.addressesByLookupTableAddress ?? {},
-          )
-          : <_DecompiledAccount>[];
+      ? _getAddressLookupMetas(
+          addressTableLookups,
+          config?.addressesByLookupTableAddress ?? {},
+        )
+      : <_DecompiledAccount>[];
 
   final transactionMetas = [...accountMetas, ...accountLookupMetas];
 
-  final instructions =
-      compiledTransactionMessage.instructions
-          .map(
-            (compiledInstruction) =>
-                _convertInstruction(compiledInstruction, transactionMetas),
-          )
-          .toList();
+  final instructions = compiledTransactionMessage.instructions
+      .map(
+        (compiledInstruction) =>
+            _convertInstruction(compiledInstruction, transactionMetas),
+      )
+      .toList();
 
-  final firstInstruction =
-      instructions.isNotEmpty ? instructions[0] : null;
+  final firstInstruction = instructions.isNotEmpty ? instructions[0] : null;
   final lifetimeToken = compiledTransactionMessage.lifetimeToken;
 
   final version =
       compiledTransactionMessage.version == TransactionVersion.legacy
-          ? TransactionVersion.legacy
-          : TransactionVersion.v0;
+      ? TransactionVersion.legacy
+      : TransactionVersion.v0;
 
   return createTransactionMessage(version: version)
       .pipe((m) => setTransactionMessageFeePayer(feePayer, m))
       .pipe(
         (m) => instructions.fold<TransactionMessage>(
           m,
-          (acc, instruction) =>
-              tx_instructions.appendTransactionMessageInstruction(
-                instruction,
-                acc,
-              ),
+          (acc, instruction) => tx_instructions
+              .appendTransactionMessageInstruction(instruction, acc),
         ),
       )
       .pipe((m) {

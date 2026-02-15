@@ -33,9 +33,7 @@ bool isTransactionMessageWithDurableNonceLifetime(
   final constraint = transactionMessage.lifetimeConstraint;
   if (constraint is! DurableNonceLifetimeConstraint) return false;
   if (transactionMessage.instructions.isEmpty) return false;
-  return isAdvanceNonceAccountInstruction(
-    transactionMessage.instructions[0],
-  );
+  return isAdvanceNonceAccountInstruction(transactionMessage.instructions[0]);
 }
 
 /// Asserts that the transaction message has a durable nonce lifetime
@@ -73,10 +71,9 @@ TransactionMessage setTransactionMessageLifetimeUsingDurableNonce(
 ) {
   List<Instruction> newInstructions;
 
-  final firstInstruction =
-      transactionMessage.instructions.isNotEmpty
-          ? transactionMessage.instructions[0]
-          : null;
+  final firstInstruction = transactionMessage.instructions.isNotEmpty
+      ? transactionMessage.instructions[0]
+      : null;
 
   if (firstInstruction != null &&
       isAdvanceNonceAccountInstruction(firstInstruction)) {

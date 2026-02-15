@@ -33,17 +33,15 @@ CompiledTransactionMessage compileTransactionMessage(
     version: transactionMessage.version,
     header: getCompiledMessageHeader(orderedAccounts),
     staticAccounts: getCompiledStaticAccounts(orderedAccounts),
-    lifetimeToken:
-        lifetimeConstraint != null
-            ? getCompiledLifetimeToken(lifetimeConstraint)
-            : null,
+    lifetimeToken: lifetimeConstraint != null
+        ? getCompiledLifetimeToken(lifetimeConstraint)
+        : null,
     instructions: getCompiledInstructions(
       transactionMessage.instructions,
       orderedAccounts,
     ),
-    addressTableLookups:
-        transactionMessage.version != TransactionVersion.legacy
-            ? getCompiledAddressTableLookups(orderedAccounts)
-            : null,
+    addressTableLookups: transactionMessage.version != TransactionVersion.legacy
+        ? getCompiledAddressTableLookups(orderedAccounts)
+        : null,
   );
 }

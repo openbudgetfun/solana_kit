@@ -21,13 +21,12 @@ void main() {
     });
 
     test('throws for a transaction with a durable nonce constraint', () {
-      final transaction = createTransactionMessage(
-        version: TransactionVersion.v0,
-      ).copyWith(
-        lifetimeConstraint: const DurableNonceLifetimeConstraint(
-          nonce: 'abcd',
-        ),
-      );
+      final transaction =
+          createTransactionMessage(version: TransactionVersion.v0).copyWith(
+            lifetimeConstraint: const DurableNonceLifetimeConstraint(
+              nonce: 'abcd',
+            ),
+          );
       expect(
         () => assertIsTransactionMessageWithBlockhashLifetime(transaction),
         throwsA(
@@ -40,24 +39,20 @@ void main() {
       );
     });
 
-    test(
-      'does not throw for a transaction with a valid blockhash lifetime '
-      'constraint',
-      () {
-        final transaction = createTransactionMessage(
-          version: TransactionVersion.v0,
-        ).copyWith(
-          lifetimeConstraint: BlockhashLifetimeConstraint(
-            blockhash: '11111111111111111111111111111111',
-            lastValidBlockHeight: BigInt.from(1234),
-          ),
-        );
-        expect(
-          () => assertIsTransactionMessageWithBlockhashLifetime(transaction),
-          returnsNormally,
-        );
-      },
-    );
+    test('does not throw for a transaction with a valid blockhash lifetime '
+        'constraint', () {
+      final transaction =
+          createTransactionMessage(version: TransactionVersion.v0).copyWith(
+            lifetimeConstraint: BlockhashLifetimeConstraint(
+              blockhash: '11111111111111111111111111111111',
+              lastValidBlockHeight: BigInt.from(1234),
+            ),
+          );
+      expect(
+        () => assertIsTransactionMessageWithBlockhashLifetime(transaction),
+        returnsNormally,
+      );
+    });
   });
 
   group('setTransactionMessageLifetimeUsingBlockhash', () {
@@ -76,30 +71,27 @@ void main() {
       baseTx = createTransactionMessage(version: TransactionVersion.v0);
     });
 
-    test(
-      'sets the lifetime constraint on the transaction to the supplied '
-      'blockhash lifetime constraint',
-      () {
-        final txWithBlockhash = setTransactionMessageLifetimeUsingBlockhash(
-          blockhashConstraintA,
-          baseTx,
-        );
-        expect(
-          txWithBlockhash.lifetimeConstraint,
-          isA<BlockhashLifetimeConstraint>()
-              .having(
-                (c) => c.blockhash,
-                'blockhash',
-                blockhashConstraintA.blockhash,
-              )
-              .having(
-                (c) => c.lastValidBlockHeight,
-                'lastValidBlockHeight',
-                blockhashConstraintA.lastValidBlockHeight,
-              ),
-        );
-      },
-    );
+    test('sets the lifetime constraint on the transaction to the supplied '
+        'blockhash lifetime constraint', () {
+      final txWithBlockhash = setTransactionMessageLifetimeUsingBlockhash(
+        blockhashConstraintA,
+        baseTx,
+      );
+      expect(
+        txWithBlockhash.lifetimeConstraint,
+        isA<BlockhashLifetimeConstraint>()
+            .having(
+              (c) => c.blockhash,
+              'blockhash',
+              blockhashConstraintA.blockhash,
+            )
+            .having(
+              (c) => c.lastValidBlockHeight,
+              'lastValidBlockHeight',
+              blockhashConstraintA.lastValidBlockHeight,
+            ),
+      );
+    });
 
     group('given a transaction with a blockhash lifetime already set', () {
       late TransactionMessage txWithBlockhashA;
@@ -111,38 +103,30 @@ void main() {
         );
       });
 
-      test(
-        'sets the new blockhash lifetime constraint on the transaction when '
-        'it differs from the existing one',
-        () {
-          final txWithBlockhashB =
-              setTransactionMessageLifetimeUsingBlockhash(
-                blockhashConstraintB,
-                txWithBlockhashA,
-              );
-          expect(
-            txWithBlockhashB.lifetimeConstraint,
-            isA<BlockhashLifetimeConstraint>().having(
-              (c) => c.blockhash,
-              'blockhash',
-              blockhashConstraintB.blockhash,
-            ),
-          );
-        },
-      );
+      test('sets the new blockhash lifetime constraint on the transaction when '
+          'it differs from the existing one', () {
+        final txWithBlockhashB = setTransactionMessageLifetimeUsingBlockhash(
+          blockhashConstraintB,
+          txWithBlockhashA,
+        );
+        expect(
+          txWithBlockhashB.lifetimeConstraint,
+          isA<BlockhashLifetimeConstraint>().having(
+            (c) => c.blockhash,
+            'blockhash',
+            blockhashConstraintB.blockhash,
+          ),
+        );
+      });
 
-      test(
-        'returns the original transaction when trying to set the same '
-        'blockhash lifetime constraint again',
-        () {
-          final txWithSameBlockhash =
-              setTransactionMessageLifetimeUsingBlockhash(
-                blockhashConstraintA,
-                txWithBlockhashA,
-              );
-          expect(identical(txWithBlockhashA, txWithSameBlockhash), isTrue);
-        },
-      );
+      test('returns the original transaction when trying to set the same '
+          'blockhash lifetime constraint again', () {
+        final txWithSameBlockhash = setTransactionMessageLifetimeUsingBlockhash(
+          blockhashConstraintA,
+          txWithBlockhashA,
+        );
+        expect(identical(txWithBlockhashA, txWithSameBlockhash), isTrue);
+      });
     });
   });
 }

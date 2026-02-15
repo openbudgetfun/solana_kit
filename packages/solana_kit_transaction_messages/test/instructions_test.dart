@@ -4,15 +4,9 @@ import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.
 import 'package:test/test.dart';
 
 void main() {
-  const programA = Address(
-    'AALQD2dt1k43Acrkp4SvdhZaN4S115Ff2Bi7rHPti3sL',
-  );
-  const programB = Address(
-    'DNAbkMkoMLRXF7wuLCrTzouMyzi25krr3B94yW87VvxU',
-  );
-  const programC = Address(
-    '6Bkt4j67rxzFF6s9DaMRyfitftRrGxe4oYHPRHuFChzi',
-  );
+  const programA = Address('AALQD2dt1k43Acrkp4SvdhZaN4S115Ff2Bi7rHPti3sL');
+  const programB = Address('DNAbkMkoMLRXF7wuLCrTzouMyzi25krr3B94yW87VvxU');
+  const programC = Address('6Bkt4j67rxzFF6s9DaMRyfitftRrGxe4oYHPRHuFChzi');
 
   group('Transaction instruction helpers', () {
     late TransactionMessage baseTx;
@@ -42,10 +36,10 @@ void main() {
 
     group('appendTransactionMessageInstructions', () {
       test('adds the instructions to the end of the list', () {
-        final txWithAdded = appendTransactionMessageInstructions(
-          [exampleInstruction, secondExampleInstruction],
-          baseTx,
-        );
+        final txWithAdded = appendTransactionMessageInstructions([
+          exampleInstruction,
+          secondExampleInstruction,
+        ], baseTx);
         expect(txWithAdded.instructions.length, 3);
         expect(txWithAdded.instructions[0].programAddress, programA);
         expect(txWithAdded.instructions[1].programAddress, programB);
@@ -67,10 +61,10 @@ void main() {
 
     group('prependTransactionMessageInstructions', () {
       test('adds the instructions to the beginning of the list', () {
-        final txWithAdded = prependTransactionMessageInstructions(
-          [exampleInstruction, secondExampleInstruction],
-          baseTx,
-        );
+        final txWithAdded = prependTransactionMessageInstructions([
+          exampleInstruction,
+          secondExampleInstruction,
+        ], baseTx);
         expect(txWithAdded.instructions.length, 3);
         expect(txWithAdded.instructions[0].programAddress, programB);
         expect(txWithAdded.instructions[1].programAddress, programC);

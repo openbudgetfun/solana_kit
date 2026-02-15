@@ -6,7 +6,9 @@ import 'package:test/test.dart';
 
 void main() {
   // k7FaK87WHGVXzkaoHb7CdVPgkKDQhZ29VLDeBVbDfYn decodes to [11{32}]
-  const lookupTableAddress = Address('k7FaK87WHGVXzkaoHb7CdVPgkKDQhZ29VLDeBVbDfYn');
+  const lookupTableAddress = Address(
+    'k7FaK87WHGVXzkaoHb7CdVPgkKDQhZ29VLDeBVbDfYn',
+  );
 
   group('Address table lookup encoder', () {
     test('serializes an AddressTableLookup according to the spec', () {

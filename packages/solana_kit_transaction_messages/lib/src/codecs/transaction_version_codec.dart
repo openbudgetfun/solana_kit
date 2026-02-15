@@ -20,10 +20,9 @@ VariableSizeEncoder<TransactionVersion> getTransactionVersionEncoder() {
       }
       final version = value.versionNumber!;
       if (version < 0 || version > 127) {
-        throw SolanaError(
-          SolanaErrorCode.transactionVersionNumberOutOfRange,
-          {'actualVersion': version},
-        );
+        throw SolanaError(SolanaErrorCode.transactionVersionNumberOutOfRange, {
+          'actualVersion': version,
+        });
       }
       if (version > maxSupportedTransactionVersion) {
         throw SolanaError(

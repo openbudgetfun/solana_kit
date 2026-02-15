@@ -60,38 +60,31 @@ void main() {
         expect(transaction.version, TransactionVersion.legacy);
       });
 
-      test(
-        'converts a transaction with one instruction with no accounts '
-        'or data',
-        () {
-          const programAddress = Address(
-            'HZMKVnRrWLyQLwPLTTLKtY7ET4Cf7pQugrTr9eTBrpsf',
-          );
+      test('converts a transaction with one instruction with no accounts '
+          'or data', () {
+        const programAddress = Address(
+          'HZMKVnRrWLyQLwPLTTLKtY7ET4Cf7pQugrTr9eTBrpsf',
+        );
 
-          const compiledTransaction = CompiledTransactionMessage(
-            version: TransactionVersion.v0,
-            header: MessageHeader(
-              numSignerAccounts: 1,
-              numReadonlySignerAccounts: 0,
-              numReadonlyNonSignerAccounts: 1,
-            ),
-            staticAccounts: [feePayer, programAddress],
-            lifetimeToken: blockhash,
-            instructions: [
-              CompiledInstruction(programAddressIndex: 1),
-            ],
-          );
+        const compiledTransaction = CompiledTransactionMessage(
+          version: TransactionVersion.v0,
+          header: MessageHeader(
+            numSignerAccounts: 1,
+            numReadonlySignerAccounts: 0,
+            numReadonlyNonSignerAccounts: 1,
+          ),
+          staticAccounts: [feePayer, programAddress],
+          lifetimeToken: blockhash,
+          instructions: [CompiledInstruction(programAddressIndex: 1)],
+        );
 
-          final transaction = decompileTransactionMessage(
-            compiledTransaction,
-          );
+        final transaction = decompileTransactionMessage(compiledTransaction);
 
-          expect(transaction.instructions.length, 1);
-          expect(transaction.instructions[0].programAddress, programAddress);
-          expect(transaction.instructions[0].accounts, isNull);
-          expect(transaction.instructions[0].data, isNull);
-        },
-      );
+        expect(transaction.instructions.length, 1);
+        expect(transaction.instructions[0].programAddress, programAddress);
+        expect(transaction.instructions[0].accounts, isNull);
+        expect(transaction.instructions[0].data, isNull);
+      });
 
       test(
         'converts a transaction with one instruction with accounts and data',
@@ -129,9 +122,7 @@ void main() {
             ],
           );
 
-          final transaction = decompileTransactionMessage(
-            compiledTransaction,
-          );
+          final transaction = decompileTransactionMessage(compiledTransaction);
 
           expect(transaction.instructions.length, 1);
           final ix = transaction.instructions[0];
@@ -241,110 +232,98 @@ void main() {
       const nonceAuthorityAddress = Address(
         '2KntmCrnaf63tpNb8UMFFjFGGnYYAKQdmW9SbuCiRvhM',
       );
-      const systemProgramAddress = Address(
-        '11111111111111111111111111111111',
-      );
+      const systemProgramAddress = Address('11111111111111111111111111111111');
       const recentBlockhashesSysvar = Address(
         'SysvarRecentB1ockHashes11111111111111111111',
       );
 
-      test(
-        'converts a transaction with one instruction which is advance nonce '
-        '(fee payer is nonce authority)',
-        () {
-          final compiledTransaction = CompiledTransactionMessage(
-            version: TransactionVersion.v0,
-            header: const MessageHeader(
-              numSignerAccounts: 1,
-              numReadonlySignerAccounts: 0,
-              numReadonlyNonSignerAccounts: 2,
+      test('converts a transaction with one instruction which is advance nonce '
+          '(fee payer is nonce authority)', () {
+        final compiledTransaction = CompiledTransactionMessage(
+          version: TransactionVersion.v0,
+          header: const MessageHeader(
+            numSignerAccounts: 1,
+            numReadonlySignerAccounts: 0,
+            numReadonlyNonSignerAccounts: 2,
+          ),
+          staticAccounts: const [
+            nonceAuthorityAddress,
+            nonceAccountAddress,
+            systemProgramAddress,
+            recentBlockhashesSysvar,
+          ],
+          lifetimeToken: nonce,
+          instructions: [
+            CompiledInstruction(
+              programAddressIndex: 2,
+              accountIndices: const [1, 3, 0],
+              data: Uint8List.fromList([4, 0, 0, 0]),
             ),
-            staticAccounts: const [
-              nonceAuthorityAddress,
-              nonceAccountAddress,
-              systemProgramAddress,
-              recentBlockhashesSysvar,
-            ],
-            lifetimeToken: nonce,
-            instructions: [
-              CompiledInstruction(
-                programAddressIndex: 2,
-                accountIndices: const [1, 3, 0],
-                data: Uint8List.fromList([4, 0, 0, 0]),
-              ),
-            ],
-          );
+          ],
+        );
 
-          final transaction = decompileTransactionMessage(
-            compiledTransaction,
-          );
+        final transaction = decompileTransactionMessage(compiledTransaction);
 
-          expect(transaction.instructions.length, 1);
-          final ix = transaction.instructions[0];
-          expect(ix.programAddress, systemProgramAddress);
-          expect(ix.accounts!.length, 3);
-          expect(ix.accounts![0].address, nonceAccountAddress);
-          expect(ix.accounts![0].role, AccountRole.writable);
-          expect(ix.accounts![1].address, recentBlockhashesSysvar);
-          expect(ix.accounts![1].role, AccountRole.readonly);
-          expect(ix.accounts![2].address, nonceAuthorityAddress);
-          expect(ix.accounts![2].role, AccountRole.writableSigner);
-          expect(transaction.feePayer, nonceAuthorityAddress);
-          expect(
-            transaction.lifetimeConstraint,
-            isA<DurableNonceLifetimeConstraint>().having(
-              (c) => c.nonce,
-              'nonce',
-              nonce,
+        expect(transaction.instructions.length, 1);
+        final ix = transaction.instructions[0];
+        expect(ix.programAddress, systemProgramAddress);
+        expect(ix.accounts!.length, 3);
+        expect(ix.accounts![0].address, nonceAccountAddress);
+        expect(ix.accounts![0].role, AccountRole.writable);
+        expect(ix.accounts![1].address, recentBlockhashesSysvar);
+        expect(ix.accounts![1].role, AccountRole.readonly);
+        expect(ix.accounts![2].address, nonceAuthorityAddress);
+        expect(ix.accounts![2].role, AccountRole.writableSigner);
+        expect(transaction.feePayer, nonceAuthorityAddress);
+        expect(
+          transaction.lifetimeConstraint,
+          isA<DurableNonceLifetimeConstraint>().having(
+            (c) => c.nonce,
+            'nonce',
+            nonce,
+          ),
+        );
+      });
+
+      test('converts a transaction with one instruction which is advance nonce '
+          '(fee payer is not nonce authority)', () {
+        final compiledTransaction = CompiledTransactionMessage(
+          version: TransactionVersion.v0,
+          header: const MessageHeader(
+            numSignerAccounts: 2,
+            numReadonlySignerAccounts: 1,
+            numReadonlyNonSignerAccounts: 2,
+          ),
+          staticAccounts: const [
+            feePayer,
+            nonceAuthorityAddress,
+            nonceAccountAddress,
+            systemProgramAddress,
+            recentBlockhashesSysvar,
+          ],
+          lifetimeToken: nonce,
+          instructions: [
+            CompiledInstruction(
+              programAddressIndex: 3,
+              accountIndices: const [2, 4, 1],
+              data: Uint8List.fromList([4, 0, 0, 0]),
             ),
-          );
-        },
-      );
+          ],
+        );
 
-      test(
-        'converts a transaction with one instruction which is advance nonce '
-        '(fee payer is not nonce authority)',
-        () {
-          final compiledTransaction = CompiledTransactionMessage(
-            version: TransactionVersion.v0,
-            header: const MessageHeader(
-              numSignerAccounts: 2,
-              numReadonlySignerAccounts: 1,
-              numReadonlyNonSignerAccounts: 2,
-            ),
-            staticAccounts: const [
-              feePayer,
-              nonceAuthorityAddress,
-              nonceAccountAddress,
-              systemProgramAddress,
-              recentBlockhashesSysvar,
-            ],
-            lifetimeToken: nonce,
-            instructions: [
-              CompiledInstruction(
-                programAddressIndex: 3,
-                accountIndices: const [2, 4, 1],
-                data: Uint8List.fromList([4, 0, 0, 0]),
-              ),
-            ],
-          );
+        final transaction = decompileTransactionMessage(compiledTransaction);
 
-          final transaction = decompileTransactionMessage(
-            compiledTransaction,
-          );
-
-          expect(transaction.instructions.length, 1);
-          final ix = transaction.instructions[0];
-          expect(ix.programAddress, systemProgramAddress);
-          expect(ix.accounts!.length, 3);
-          expect(ix.accounts![0].address, nonceAccountAddress);
-          expect(ix.accounts![0].role, AccountRole.writable);
-          expect(ix.accounts![1].address, recentBlockhashesSysvar);
-          expect(ix.accounts![1].role, AccountRole.readonly);
-          expect(ix.accounts![2].address, nonceAuthorityAddress);
-          expect(ix.accounts![2].role, AccountRole.readonlySigner);
-        },
-      );
+        expect(transaction.instructions.length, 1);
+        final ix = transaction.instructions[0];
+        expect(ix.programAddress, systemProgramAddress);
+        expect(ix.accounts!.length, 3);
+        expect(ix.accounts![0].address, nonceAccountAddress);
+        expect(ix.accounts![0].role, AccountRole.writable);
+        expect(ix.accounts![1].address, recentBlockhashesSysvar);
+        expect(ix.accounts![1].role, AccountRole.readonly);
+        expect(ix.accounts![2].address, nonceAuthorityAddress);
+        expect(ix.accounts![2].role, AccountRole.readonlySigner);
+      });
 
       test(
         'converts a durable nonce transaction with multiple instructions',
@@ -380,9 +359,7 @@ void main() {
             ],
           );
 
-          final transaction = decompileTransactionMessage(
-            compiledTransaction,
-          );
+          final transaction = decompileTransactionMessage(compiledTransaction);
 
           expect(transaction.instructions.length, 3);
 
@@ -456,10 +433,7 @@ void main() {
             staticAccounts: [feePayer, programAddress],
             lifetimeToken: blockhash,
             instructions: [
-              CompiledInstruction(
-                programAddressIndex: 1,
-                accountIndices: [2],
-              ),
+              CompiledInstruction(programAddressIndex: 1, accountIndices: [2]),
             ],
             addressTableLookups: [
               AddressTableLookup(
@@ -505,10 +479,7 @@ void main() {
             staticAccounts: [feePayer, programAddress],
             lifetimeToken: blockhash,
             instructions: [
-              CompiledInstruction(
-                programAddressIndex: 1,
-                accountIndices: [2],
-              ),
+              CompiledInstruction(programAddressIndex: 1, accountIndices: [2]),
             ],
             addressTableLookups: [
               AddressTableLookup(
@@ -535,74 +506,67 @@ void main() {
           expect(lookup.role, AccountRole.writable);
         });
 
-        test(
-          'converts an instruction with a combination of static and '
-          'lookup accounts',
-          () {
-            const addressInLookup = Address(
-              'F1Vc6AGoxXLwGB7QV8f4So3C5d8SXEk3KKGHxKGEJ8qn',
-            );
-            const staticAddress = Address(
-              'GbRuWcHyNaVuE9rJE4sKpkHYa9k76VJBCCwGtf87ikH3',
-            );
+        test('converts an instruction with a combination of static and '
+            'lookup accounts', () {
+          const addressInLookup = Address(
+            'F1Vc6AGoxXLwGB7QV8f4So3C5d8SXEk3KKGHxKGEJ8qn',
+          );
+          const staticAddress = Address(
+            'GbRuWcHyNaVuE9rJE4sKpkHYa9k76VJBCCwGtf87ikH3',
+          );
 
-            final lookupTables = <Address, List<Address>>{
-              lookupTableAddress: const [addressInLookup],
-            };
+          final lookupTables = <Address, List<Address>>{
+            lookupTableAddress: const [addressInLookup],
+          };
 
-            const compiledTransaction = CompiledTransactionMessage(
-              version: TransactionVersion.v0,
-              header: MessageHeader(
-                numSignerAccounts: 1,
-                numReadonlySignerAccounts: 0,
-                numReadonlyNonSignerAccounts: 2,
+          const compiledTransaction = CompiledTransactionMessage(
+            version: TransactionVersion.v0,
+            header: MessageHeader(
+              numSignerAccounts: 1,
+              numReadonlySignerAccounts: 0,
+              numReadonlyNonSignerAccounts: 2,
+            ),
+            staticAccounts: [feePayer, staticAddress, programAddress],
+            lifetimeToken: blockhash,
+            instructions: [
+              CompiledInstruction(
+                programAddressIndex: 2,
+                accountIndices: [1, 3],
               ),
-              staticAccounts: [
-                feePayer,
-                staticAddress,
-                programAddress,
-              ],
-              lifetimeToken: blockhash,
-              instructions: [
-                CompiledInstruction(
-                  programAddressIndex: 2,
-                  accountIndices: [1, 3],
-                ),
-              ],
-              addressTableLookups: [
-                AddressTableLookup(
-                  lookupTableAddress: lookupTableAddress,
-                  readonlyIndexes: [0],
-                  writableIndexes: [],
-                ),
-              ],
-            );
-
-            final transaction = decompileTransactionMessage(
-              compiledTransaction,
-              DecompileTransactionMessageConfig(
-                addressesByLookupTableAddress: lookupTables,
+            ],
+            addressTableLookups: [
+              AddressTableLookup(
+                lookupTableAddress: lookupTableAddress,
+                readonlyIndexes: [0],
+                writableIndexes: [],
               ),
-            );
+            ],
+          );
 
-            expect(transaction.instructions.length, 1);
-            final accounts = transaction.instructions[0].accounts!;
-            expect(accounts.length, 2);
+          final transaction = decompileTransactionMessage(
+            compiledTransaction,
+            DecompileTransactionMessageConfig(
+              addressesByLookupTableAddress: lookupTables,
+            ),
+          );
 
-            // First account is a static account.
-            expect(accounts[0], isNot(isA<AccountLookupMeta>()));
-            expect(accounts[0].address, staticAddress);
-            expect(accounts[0].role, AccountRole.readonly);
+          expect(transaction.instructions.length, 1);
+          final accounts = transaction.instructions[0].accounts!;
+          expect(accounts.length, 2);
 
-            // Second account is a lookup.
-            expect(accounts[1], isA<AccountLookupMeta>());
-            final lookup = accounts[1] as AccountLookupMeta;
-            expect(lookup.address, addressInLookup);
-            expect(lookup.addressIndex, 0);
-            expect(lookup.lookupTableAddress, lookupTableAddress);
-            expect(lookup.role, AccountRole.readonly);
-          },
-        );
+          // First account is a static account.
+          expect(accounts[0], isNot(isA<AccountLookupMeta>()));
+          expect(accounts[0].address, staticAddress);
+          expect(accounts[0].role, AccountRole.readonly);
+
+          // Second account is a lookup.
+          expect(accounts[1], isA<AccountLookupMeta>());
+          final lookup = accounts[1] as AccountLookupMeta;
+          expect(lookup.address, addressInLookup);
+          expect(lookup.addressIndex, 0);
+          expect(lookup.lookupTableAddress, lookupTableAddress);
+          expect(lookup.role, AccountRole.readonly);
+        });
 
         test('throws if the lookup table is not passed in', () {
           const compiledTransaction = CompiledTransactionMessage(
@@ -615,10 +579,7 @@ void main() {
             staticAccounts: [feePayer, programAddress],
             lifetimeToken: blockhash,
             instructions: [
-              CompiledInstruction(
-                programAddressIndex: 1,
-                accountIndices: [2],
-              ),
+              CompiledInstruction(programAddressIndex: 1, accountIndices: [2]),
             ],
             addressTableLookups: [
               AddressTableLookup(
@@ -660,10 +621,7 @@ void main() {
             staticAccounts: [feePayer, programAddress],
             lifetimeToken: blockhash,
             instructions: [
-              CompiledInstruction(
-                programAddressIndex: 1,
-                accountIndices: [2],
-              ),
+              CompiledInstruction(programAddressIndex: 1, accountIndices: [2]),
             ],
             addressTableLookups: [
               AddressTableLookup(
@@ -710,10 +668,7 @@ void main() {
             staticAccounts: [feePayer, programAddress],
             lifetimeToken: blockhash,
             instructions: [
-              CompiledInstruction(
-                programAddressIndex: 1,
-                accountIndices: [2],
-              ),
+              CompiledInstruction(programAddressIndex: 1, accountIndices: [2]),
             ],
             addressTableLookups: [
               AddressTableLookup(
@@ -751,71 +706,19 @@ void main() {
           'GS7Rphk6CZLoCGbTcbRaPZzD3k4ZK8XiA5BAj89Fi2Eg',
         );
 
-        test(
-          'converts an instruction with readonly accounts from two lookup '
-          'tables',
-          () {
-            const addressInLookup1 = Address(
-              'F1Vc6AGoxXLwGB7QV8f4So3C5d8SXEk3KKGHxKGEJ8qn',
-            );
-            const addressInLookup2 = Address(
-              'E7p56hzZZEs9vJ1yjxAFjhUP3fN2UJNk2nWvcY7Hz3ee',
-            );
-            final lookupTables = <Address, List<Address>>{
-              lookupTableAddress1: const [addressInLookup1],
-              lookupTableAddress2: const [addressInLookup2],
-            };
+        test('converts an instruction with readonly accounts from two lookup '
+            'tables', () {
+          const addressInLookup1 = Address(
+            'F1Vc6AGoxXLwGB7QV8f4So3C5d8SXEk3KKGHxKGEJ8qn',
+          );
+          const addressInLookup2 = Address(
+            'E7p56hzZZEs9vJ1yjxAFjhUP3fN2UJNk2nWvcY7Hz3ee',
+          );
+          final lookupTables = <Address, List<Address>>{
+            lookupTableAddress1: const [addressInLookup1],
+            lookupTableAddress2: const [addressInLookup2],
+          };
 
-            const compiledTransaction = CompiledTransactionMessage(
-              version: TransactionVersion.v0,
-              header: MessageHeader(
-                numSignerAccounts: 1,
-                numReadonlySignerAccounts: 0,
-                numReadonlyNonSignerAccounts: 1,
-              ),
-              staticAccounts: [feePayer, programAddress],
-              lifetimeToken: blockhash,
-              instructions: [
-                CompiledInstruction(
-                  programAddressIndex: 1,
-                  accountIndices: [2, 3],
-                ),
-              ],
-              addressTableLookups: [
-                AddressTableLookup(
-                  lookupTableAddress: lookupTableAddress1,
-                  readonlyIndexes: [0],
-                  writableIndexes: [],
-                ),
-                AddressTableLookup(
-                  lookupTableAddress: lookupTableAddress2,
-                  readonlyIndexes: [0],
-                  writableIndexes: [],
-                ),
-              ],
-            );
-
-            final transaction = decompileTransactionMessage(
-              compiledTransaction,
-              DecompileTransactionMessageConfig(
-                addressesByLookupTableAddress: lookupTables,
-              ),
-            );
-
-            final accounts = transaction.instructions[0].accounts!;
-            expect(accounts.length, 2);
-
-            final lookup0 = accounts[0] as AccountLookupMeta;
-            expect(lookup0.address, addressInLookup1);
-            expect(lookup0.lookupTableAddress, lookupTableAddress1);
-
-            final lookup1 = accounts[1] as AccountLookupMeta;
-            expect(lookup1.address, addressInLookup2);
-            expect(lookup1.lookupTableAddress, lookupTableAddress2);
-          },
-        );
-
-        test('throws if multiple lookup tables are not passed in', () {
           const compiledTransaction = CompiledTransactionMessage(
             version: TransactionVersion.v0,
             header: MessageHeader(
@@ -828,8 +731,54 @@ void main() {
             instructions: [
               CompiledInstruction(
                 programAddressIndex: 1,
-                accountIndices: [2],
+                accountIndices: [2, 3],
               ),
+            ],
+            addressTableLookups: [
+              AddressTableLookup(
+                lookupTableAddress: lookupTableAddress1,
+                readonlyIndexes: [0],
+                writableIndexes: [],
+              ),
+              AddressTableLookup(
+                lookupTableAddress: lookupTableAddress2,
+                readonlyIndexes: [0],
+                writableIndexes: [],
+              ),
+            ],
+          );
+
+          final transaction = decompileTransactionMessage(
+            compiledTransaction,
+            DecompileTransactionMessageConfig(
+              addressesByLookupTableAddress: lookupTables,
+            ),
+          );
+
+          final accounts = transaction.instructions[0].accounts!;
+          expect(accounts.length, 2);
+
+          final lookup0 = accounts[0] as AccountLookupMeta;
+          expect(lookup0.address, addressInLookup1);
+          expect(lookup0.lookupTableAddress, lookupTableAddress1);
+
+          final lookup1 = accounts[1] as AccountLookupMeta;
+          expect(lookup1.address, addressInLookup2);
+          expect(lookup1.lookupTableAddress, lookupTableAddress2);
+        });
+
+        test('throws if multiple lookup tables are not passed in', () {
+          const compiledTransaction = CompiledTransactionMessage(
+            version: TransactionVersion.v0,
+            header: MessageHeader(
+              numSignerAccounts: 1,
+              numReadonlySignerAccounts: 0,
+              numReadonlyNonSignerAccounts: 1,
+            ),
+            staticAccounts: [feePayer, programAddress],
+            lifetimeToken: blockhash,
+            instructions: [
+              CompiledInstruction(programAddressIndex: 1, accountIndices: [2]),
             ],
             addressTableLookups: [
               AddressTableLookup(

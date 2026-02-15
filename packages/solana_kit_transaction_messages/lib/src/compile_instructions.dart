@@ -23,8 +23,9 @@ List<CompiledInstruction> getCompiledInstructions(
     final data = instruction.data;
     return CompiledInstruction(
       programAddressIndex: accountIndex[instruction.programAddress.value]!,
-      accountIndices:
-          accounts?.map((a) => accountIndex[a.address.value]!).toList(),
+      accountIndices: accounts
+          ?.map((a) => accountIndex[a.address.value]!)
+          .toList(),
       data: data,
     );
   }).toList();

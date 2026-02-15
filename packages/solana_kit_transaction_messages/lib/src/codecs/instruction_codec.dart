@@ -65,8 +65,7 @@ VariableSizeDecoder<CompiledInstruction> getInstructionDecoder() {
       return (
         CompiledInstruction(
           programAddressIndex: programAddressIndex,
-          accountIndices:
-              accountIndices.isNotEmpty ? accountIndices : null,
+          accountIndices: accountIndices.isNotEmpty ? accountIndices : null,
           data: data.isNotEmpty ? data : null,
         ),
         o3,

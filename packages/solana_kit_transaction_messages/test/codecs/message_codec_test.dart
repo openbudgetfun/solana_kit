@@ -52,12 +52,10 @@ void main() {
           Uint8List.fromList([
             // VERSION HEADER
             128, // 0 + version mask
-
             // MESSAGE HEADER
             3, // numSignerAccounts
             2, // numReadonlySignerAccounts
             1, // numReadonlyNonSignerAccounts
-
             // STATIC ADDRESSES
             2, // Number of static accounts
             // k7FaK87WHGVXzkaoHb7CdVPgkKDQhZ29VLDeBVbDfYn
@@ -80,22 +78,18 @@ void main() {
 
             // INSTRUCTIONS
             2, // Number of instructions
-
             // First instruction
             44, // Program address index
             0, // Number of address indices
             0, // Length of instruction data
-
             // Second instruction
             55, // Program address index
             2, // Number of address indices
             77, 66, // Address indices
             3, // Length of instruction data
             7, 8, 9, // Instruction data
-
             // ADDRESS TABLE LOOKUPS
             1, // Number of address table lookups
-
             // First address table lookup
             // 3yS1JFVT284y8z1LC9MRoWxZjzFrdoD5axKsZiyMsfC7
             44, 44, 44, 44, 44, 44, 44, 44,
@@ -134,13 +128,11 @@ void main() {
             Uint8List.fromList([
               // VERSION HEADER
               128, // 0 + version mask
-
               // MESSAGE HEADER
               3, 2, 1,
 
               // STATIC ADDRESSES
               0, // Number of static accounts
-
               // TRANSACTION LIFETIME TOKEN
               11, 11, 11, 11, 11, 11, 11, 11,
               11, 11, 11, 11, 11, 11, 11, 11,
@@ -149,7 +141,6 @@ void main() {
 
               // INSTRUCTIONS
               0, // Number of instructions
-
               // ADDRESS TABLE LOOKUPS (serialized despite not being present)
               0, // Number of address table lookups
             ]),
@@ -245,7 +236,6 @@ void main() {
       final byteArray = Uint8List.fromList([
         // VERSION HEADER
         128, // 0 + version mask
-
         // MESSAGE HEADER
         3, 2, 1,
 
@@ -270,22 +260,18 @@ void main() {
 
         // INSTRUCTIONS
         2, // Number of instructions
-
         // First instruction
         44, // Program address index
         0, // Number of address indices
         0, // Length of instruction data
-
         // Second instruction
         55, // Program address index
         2, // Number of address indices
         77, 66, // Address indices
         3, // Length of instruction data
         7, 8, 9, // Instruction data
-
         // ADDRESS TABLE LOOKUPS
         1, // Number of address table lookups
-
         // First address table lookup
         // 3yS1JFVT284y8z1LC9MRoWxZjzFrdoD5axKsZiyMsfC7
         44, 44, 44, 44, 44, 44, 44, 44,
@@ -347,7 +333,6 @@ void main() {
           Uint8List.fromList([
             // VERSION HEADER
             128, // 0 + version mask
-
             // MESSAGE HEADER
             3, 2, 1,
 
