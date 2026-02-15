@@ -96,3 +96,10 @@ Uses [knope](https://knope.tech/) for changeset-based releases:
 - `knope document-change` - Create a changeset file
 - `knope release` - Prepare and publish releases
 - Changesets stored in `.changeset/`
+
+## Active Technologies
+- Dart 3.10+ (pinned via `.fvmrc`) + `cryptography` (Ed25519), `crypto` (SHA-256), `http` (001-solana-kit-port)
+- N/A (SDK library, no persistent storage) (001-solana-kit-port)
+
+## Recent Changes
+- 001-solana-kit-port: Added Dart 3.10+ (pinned via `.fvmrc`) + `cryptography` (Ed25519), `crypto` (SHA-256), `http`
