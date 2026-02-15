@@ -63,34 +63,34 @@
 
 ### solana_kit_codecs_numbers (~17 source files, ~15 test files)
 
-- [ ] T012 [P] [US3] Port integer codecs (u8, u16, u32, u64, u128, i8–i128) from `.repos/kit/packages/codecs-numbers/src/` to `packages/solana_kit_codecs_numbers/lib/src/`
-- [ ] T013 [P] [US3] Port float codecs (f32, f64) and shortU16 codec in `packages/solana_kit_codecs_numbers/lib/src/`
-- [ ] T014 [US3] Update barrel export `packages/solana_kit_codecs_numbers/lib/solana_kit_codecs_numbers.dart`
-- [ ] T015 [US3] Port all 15 test files from `.repos/kit/packages/codecs-numbers/src/__tests__/` to `packages/solana_kit_codecs_numbers/test/`
+- [x] T012 [P] [US3] Port integer codecs (u8, u16, u32, u64, u128, i8–i128) from `.repos/kit/packages/codecs-numbers/src/` to `packages/solana_kit_codecs_numbers/lib/src/`
+- [x] T013 [P] [US3] Port float codecs (f32, f64) and shortU16 codec in `packages/solana_kit_codecs_numbers/lib/src/`
+- [x] T014 [US3] Update barrel export `packages/solana_kit_codecs_numbers/lib/solana_kit_codecs_numbers.dart`
+- [x] T015 [US3] Port all 15 test files from `.repos/kit/packages/codecs-numbers/src/__tests__/` to `packages/solana_kit_codecs_numbers/test/`
 
 ### solana_kit_codecs_strings (~10 source files, ~8 test files)
 
-- [ ] T016 [P] [US3] Port string codecs (utf8, base58, base64, base16, base10, baseX) from `.repos/kit/packages/codecs-strings/src/` to `packages/solana_kit_codecs_strings/lib/src/`
-- [ ] T017 [US3] Update barrel export `packages/solana_kit_codecs_strings/lib/solana_kit_codecs_strings.dart`
-- [ ] T018 [US3] Port all 8 test files from `.repos/kit/packages/codecs-strings/src/__tests__/` to `packages/solana_kit_codecs_strings/test/`
+- [x] T016 [P] [US3] Port string codecs (utf8, base58, base64, base16, base10, baseX) from `.repos/kit/packages/codecs-strings/src/` to `packages/solana_kit_codecs_strings/lib/src/`
+- [x] T017 [US3] Update barrel export `packages/solana_kit_codecs_strings/lib/solana_kit_codecs_strings.dart`
+- [x] T018 [US3] Port all 8 test files from `.repos/kit/packages/codecs-strings/src/__tests__/` to `packages/solana_kit_codecs_strings/test/`
 
 ### solana_kit_codecs_data_structures (~21 source files, ~38 test files)
 
-- [ ] T019 [US3] Port struct, array, tuple codecs from `.repos/kit/packages/codecs-data-structures/src/` to `packages/solana_kit_codecs_data_structures/lib/src/`
-- [ ] T020 [P] [US3] Port map, set, enum, discriminated union codecs in `packages/solana_kit_codecs_data_structures/lib/src/`
-- [ ] T021 [P] [US3] Port bool, nullable, constant, bitArray, unit, hiddenPrefix, hiddenSuffix codecs in `packages/solana_kit_codecs_data_structures/lib/src/`
-- [ ] T022 [US3] Update barrel export `packages/solana_kit_codecs_data_structures/lib/solana_kit_codecs_data_structures.dart`
-- [ ] T023 [US3] Port all 38 test files from `.repos/kit/packages/codecs-data-structures/src/__tests__/` to `packages/solana_kit_codecs_data_structures/test/`
+- [x] T019 [US3] Port struct, array, tuple codecs from `.repos/kit/packages/codecs-data-structures/src/` to `packages/solana_kit_codecs_data_structures/lib/src/`
+- [x] T020 [P] [US3] Port map, set, enum, discriminated union codecs in `packages/solana_kit_codecs_data_structures/lib/src/`
+- [x] T021 [P] [US3] Port bool, nullable, constant, bitArray, unit, hiddenPrefix, hiddenSuffix codecs in `packages/solana_kit_codecs_data_structures/lib/src/`
+- [x] T022 [US3] Update barrel export `packages/solana_kit_codecs_data_structures/lib/solana_kit_codecs_data_structures.dart`
+- [x] T023 [US3] Port all 38 test files from `.repos/kit/packages/codecs-data-structures/src/__tests__/` to `packages/solana_kit_codecs_data_structures/test/`
 
 ### solana_kit_options (~6 source files, ~5 test files)
 
-- [ ] T024 [P] [US3] Port Option&lt;T&gt; sealed class (Some/None), utilities, and option codec from `.repos/kit/packages/options/src/` to `packages/solana_kit_options/lib/src/`
-- [ ] T025 [US3] Update barrel export `packages/solana_kit_options/lib/solana_kit_options.dart`
-- [ ] T026 [US3] Port all 5 test files from `.repos/kit/packages/options/src/__tests__/` to `packages/solana_kit_options/test/`
+- [x] T024 [P] [US3] Port Option&lt;T&gt; sealed class (Some/None), utilities, and option codec from `.repos/kit/packages/options/src/` to `packages/solana_kit_options/lib/src/`
+- [x] T025 [US3] Update barrel export `packages/solana_kit_options/lib/solana_kit_options.dart`
+- [x] T026 [US3] Port all 5 test files from `.repos/kit/packages/options/src/__tests__/` to `packages/solana_kit_options/test/`
 
 ### solana_kit_codecs (umbrella re-export)
 
-- [ ] T027 [US3] Create umbrella re-export of all codec packages in `packages/solana_kit_codecs/lib/solana_kit_codecs.dart`
+- [x] T027 [US3] Create umbrella re-export of all codec packages in `packages/solana_kit_codecs/lib/solana_kit_codecs.dart`
 
 **Checkpoint**: All codec packages implemented and tested. Developers can encode/decode all Solana data types. `melos test --scope="solana_kit_codecs*"` passes.
 
