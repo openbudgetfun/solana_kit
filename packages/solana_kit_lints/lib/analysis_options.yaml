@@ -1,0 +1,15 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  errors:
+    missing_return: error
+    dead_code: error
+    unused_element: error
+    unused_import: error
+    unused_local_variable: error
+    todo: ignore
+
+linter:
+  rules:
+    public_member_api_docs: false
+    lines_longer_than_80_chars: false
