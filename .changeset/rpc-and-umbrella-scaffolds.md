@@ -24,6 +24,7 @@ pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
 and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
+
 - **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
   rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
   processing), rpc_transport_http (HTTP transport), rpc (primary client)

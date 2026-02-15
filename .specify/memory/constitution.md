@@ -30,6 +30,7 @@ behavior MUST be documented with rationale and tracked as issues. When the
 upstream SDK changes, this project MUST track those changes.
 
 **Reference repos** (cloned via `clone:repos` to `.repos/`):
+
 - `.repos/kit` -- canonical TS source to port
 - `.repos/espresso-cash-public` -- existing Dart Solana reference for idiom guidance
 
@@ -82,20 +83,20 @@ managed by knope with semantic versioning.
 Every commit message and PR title MUST follow the format:
 `EMOJI TYPE(SCOPE): description`
 
-| Emoji | Type | Use |
-|-------|------|-----|
-| ✨ | `feat` | New feature |
-| 🐛 | `fix` | Bug fix |
-| 🔧 | `build` | Build system, dependencies, tooling |
-| 💚 | `ci` | CI/CD changes |
-| 🤖 | `chore` | Maintenance, miscellaneous |
-| 📝 | `docs` | Documentation |
-| ♻️ | `refactor` | Code refactoring |
-| 🧪 | `test` | Tests |
-| ⚡ | `perf` | Performance |
-| 🎨 | `style` | Code style, formatting |
-| 🎉 | `init` | Initial/first-time setup |
-| 🌱 | `seed` | Scaffold/stub packages |
+| Emoji | Type       | Use                                 |
+| ----- | ---------- | ----------------------------------- |
+| ✨    | `feat`     | New feature                         |
+| 🐛    | `fix`      | Bug fix                             |
+| 🔧    | `build`    | Build system, dependencies, tooling |
+| 💚    | `ci`       | CI/CD changes                       |
+| 🤖    | `chore`    | Maintenance, miscellaneous          |
+| 📝    | `docs`     | Documentation                       |
+| ♻️     | `refactor` | Code refactoring                    |
+| 🧪    | `test`     | Tests                               |
+| ⚡    | `perf`     | Performance                         |
+| 🎨    | `style`    | Code style, formatting              |
+| 🎉    | `init`     | Initial/first-time setup            |
+| 🌱    | `seed`     | Scaffold/stub packages              |
 
 The `TYPE(SCOPE)` portion is enforced by the `amannn/action-semantic-pull-request`
 GitHub Action on PR titles. The emoji prefix is a documented convention.
@@ -133,6 +134,7 @@ in exceptional circumstances. One approving review is required; stale reviews
 are dismissed on new pushes.
 
 **Workflow commands** (via devenv scripts):
+
 - `lint:all` -- check formatting + analyze
 - `test:all` -- run all tests
 - `fix:all` -- auto-fix formatting + lint
@@ -143,6 +145,7 @@ This constitution is the authoritative source for project principles and
 development standards. It supersedes any conflicting guidance in other documents.
 
 **Amendment procedure**:
+
 1. Propose changes via a pull request modifying this file.
 2. PR title MUST follow: `📝 docs: amend constitution to vX.Y.Z`
 3. Amendment MUST include a Sync Impact Report (HTML comment at top of file).
@@ -151,6 +154,7 @@ development standards. It supersedes any conflicting guidance in other documents
 5. `claude.md` MUST be kept in sync with any principle changes.
 
 **Versioning policy** (semantic):
+
 - **MAJOR**: Principle removal, redefinition, or backward-incompatible governance change.
 - **MINOR**: New principle or section added, material guidance expansion.
 - **PATCH**: Wording clarifications, typo fixes, non-semantic refinements.

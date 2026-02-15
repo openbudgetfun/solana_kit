@@ -30,17 +30,17 @@ wherever possible, pure Dart (no Flutter SDK dependency at package level)
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-| Principle | Status | Evidence |
-|-----------|--------|----------|
-| I. Faithful Port | PASS | 37 packages mirror upstream 1:1; API contracts in contracts/ |
-| II. Modern Dart, No Codegen | PASS | All types hand-written; Dart 3.10+ features (sealed classes, extension types) |
-| III. Package Independence | PASS | 37 independent packages with own pubspec, analysis, barrel exports |
-| IV. Type Safety | PASS | No `dynamic`; `Object?` where needed; `const` constructors; `very_good_analysis` |
-| V. Test-Driven Quality | PASS | 380+ TS test files serve as baseline; ported per package |
-| VI. Changeset Discipline | PASS | Each implementation PR includes changeset files |
-| VII. Emoji Conventional Commits | PASS | PR titles follow `EMOJI TYPE(SCOPE): description` |
+| Principle                       | Status | Evidence                                                                         |
+| ------------------------------- | ------ | -------------------------------------------------------------------------------- |
+| I. Faithful Port                | PASS   | 37 packages mirror upstream 1:1; API contracts in contracts/                     |
+| II. Modern Dart, No Codegen     | PASS   | All types hand-written; Dart 3.10+ features (sealed classes, extension types)    |
+| III. Package Independence       | PASS   | 37 independent packages with own pubspec, analysis, barrel exports               |
+| IV. Type Safety                 | PASS   | No `dynamic`; `Object?` where needed; `const` constructors; `very_good_analysis` |
+| V. Test-Driven Quality          | PASS   | 380+ TS test files serve as baseline; ported per package                         |
+| VI. Changeset Discipline        | PASS   | Each implementation PR includes changeset files                                  |
+| VII. Emoji Conventional Commits | PASS   | PR titles follow `EMOJI TYPE(SCOPE): description`                                |
 
 No violations. Complexity Tracking section not needed.
 
@@ -226,33 +226,34 @@ The most complex layer by file count. Port order within layer:
 
 ### TS → Dart Language Mapping
 
-| TypeScript Feature | Dart Equivalent |
-|-------------------|-----------------|
-| Branded/nominal types | Extension types |
-| Discriminated unions | Sealed classes |
-| `bigint` | `BigInt` |
-| `Uint8Array` | `Uint8List` |
-| `Promise<T>` | `Future<T>` |
-| Generic type constraints | Generic type constraints (same) |
-| `readonly` arrays | `UnmodifiableListView` or immutable patterns |
-| Template literal types | Not applicable (runtime validation) |
-| Overloaded function signatures | Named constructors or optional parameters |
+| TypeScript Feature             | Dart Equivalent                              |
+| ------------------------------ | -------------------------------------------- |
+| Branded/nominal types          | Extension types                              |
+| Discriminated unions           | Sealed classes                               |
+| `bigint`                       | `BigInt`                                     |
+| `Uint8Array`                   | `Uint8List`                                  |
+| `Promise<T>`                   | `Future<T>`                                  |
+| Generic type constraints       | Generic type constraints (same)              |
+| `readonly` arrays              | `UnmodifiableListView` or immutable patterns |
+| Template literal types         | Not applicable (runtime validation)          |
+| Overloaded function signatures | Named constructors or optional parameters    |
 
 ### Dependency Versions (External)
 
-| Package | Version | Used By |
-|---------|---------|---------|
-| `cryptography` | ^2.9.0 | keys, addresses (Ed25519) |
-| `crypto` | ^3.0.0 | addresses (SHA-256 for PDAs) |
-| `http` | ^1.6.0 | rpc_transport_http |
-| `web_socket_channel` | ^3.0.3 | rpc_subscriptions_channel_websocket |
-| `typed_data` | ^1.4.0 | codecs_core (Uint8Buffer) |
-| `test` | ^1.25.0 | All packages (dev_dependency) |
-| `very_good_analysis` | ^7.0.0 | solana_kit_lints |
+| Package              | Version | Used By                             |
+| -------------------- | ------- | ----------------------------------- |
+| `cryptography`       | ^2.9.0  | keys, addresses (Ed25519)           |
+| `crypto`             | ^3.0.0  | addresses (SHA-256 for PDAs)        |
+| `http`               | ^1.6.0  | rpc_transport_http                  |
+| `web_socket_channel` | ^3.0.3  | rpc_subscriptions_channel_websocket |
+| `typed_data`         | ^1.4.0  | codecs_core (Uint8Buffer)           |
+| `test`               | ^1.25.0 | All packages (dev_dependency)       |
+| `very_good_analysis` | ^7.0.0  | solana_kit_lints                    |
 
 ### Publishing Preparation
 
 Before first publish, each package needs:
+
 1. `readme.md` with usage examples
 2. `changelog.md` (generated by knope on release)
 3. `LICENSE` file (symlink or copy from root)
@@ -267,6 +268,7 @@ graph automatically.
 ## Per-Package PR Strategy
 
 Each package (or small group of related packages) is implemented as a separate PR:
+
 - PR title: `✨ feat(package_name): description`
 - Includes changeset file in `.changeset/`
 - Must pass all 6 CI checks
@@ -274,6 +276,7 @@ Each package (or small group of related packages) is implemented as a separate P
 
 For Layer 2 (codecs), the 6 packages may be split into 2-3 PRs to keep
 review size manageable:
+
 1. codecs_core + codecs_numbers
 2. codecs_strings + codecs_data_structures
 3. options + codecs umbrella
