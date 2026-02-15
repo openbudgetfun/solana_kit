@@ -185,9 +185,9 @@
 
 ### solana_kit_rpc_spec (~4 source files, ~6 test files)
 
-- [ ] T069 [US2] Port createJsonRpcApi, Rpc&lt;T&gt;, RpcTransport from `.repos/kit/packages/rpc-spec/src/` to `packages/solana_kit_rpc_spec/lib/src/`
-- [ ] T070 [US2] Update barrel export `packages/solana_kit_rpc_spec/lib/solana_kit_rpc_spec.dart`
-- [ ] T071 [US2] Port all 6 test files from `.repos/kit/packages/rpc-spec/src/__tests__/` to `packages/solana_kit_rpc_spec/test/`
+- [x] T069 [US2] Port createJsonRpcApi, Rpc&lt;T&gt;, RpcTransport from `.repos/kit/packages/rpc-spec/src/` to `packages/solana_kit_rpc_spec/lib/src/`
+- [x] T070 [US2] Update barrel export `packages/solana_kit_rpc_spec/lib/solana_kit_rpc_spec.dart`
+- [x] T071 [US2] Port all 6 test files from `.repos/kit/packages/rpc-spec/src/__tests__/` to `packages/solana_kit_rpc_spec/test/`
 
 ### solana_kit_rpc_parsed_types (~10 source files, ~8 test files)
 
