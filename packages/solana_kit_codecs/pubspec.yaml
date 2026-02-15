@@ -12,6 +12,7 @@ dependencies:
   solana_kit_codecs_data_structures:
   solana_kit_codecs_numbers:
   solana_kit_codecs_strings:
+  solana_kit_options:
 
 dev_dependencies:
   solana_kit_lints:
