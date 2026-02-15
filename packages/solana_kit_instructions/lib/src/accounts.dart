@@ -21,27 +21,21 @@ class AccountMeta {
 /// index of the desired account address in that table, and metadata about its
 /// mutability. Notably, account addresses obtained via lookups may not act as
 /// signers.
-class AccountLookupMeta {
+///
+/// Extends [AccountMeta] so that it can be used anywhere an [AccountMeta] is
+/// expected (e.g., in an instruction's accounts list).
+class AccountLookupMeta extends AccountMeta {
   /// Creates an [AccountLookupMeta].
   const AccountLookupMeta({
-    required this.address,
+    required super.address,
     required this.addressIndex,
     required this.lookupTableAddress,
-    required this.role,
+    required super.role,
   });
-
-  /// The base58-encoded address of the account.
-  final Address address;
 
   /// The index of the account address within the lookup table.
   final int addressIndex;
 
   /// The base58-encoded address of the lookup table account.
   final Address lookupTableAddress;
-
-  /// The role of the account in the transaction.
-  ///
-  /// Must be either [AccountRole.readonly] or [AccountRole.writable] since
-  /// accounts obtained via lookups may not act as signers.
-  final AccountRole role;
 }
