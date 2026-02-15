@@ -13,3 +13,4 @@ dependencies:
 
 dev_dependencies:
   solana_kit_lints:
+  test: ^1.25.0
