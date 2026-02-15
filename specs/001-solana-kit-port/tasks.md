@@ -140,19 +140,19 @@
 
 ### solana_kit_transactions (~15 source files, ~17 test files)
 
-- [ ] T049 [US1] Port Transaction type, compilation, wire format from `.repos/kit/packages/transactions/src/` to `packages/solana_kit_transactions/lib/src/`
-- [ ] T050 [US1] Port signing, size calculation, base64 wire encoding in `packages/solana_kit_transactions/lib/src/`
-- [ ] T051 [US1] Port signature extraction and full-signature assertion in `packages/solana_kit_transactions/lib/src/`
-- [ ] T052 [US1] Update barrel export `packages/solana_kit_transactions/lib/solana_kit_transactions.dart`
-- [ ] T053 [US1] Port all 17 test files from `.repos/kit/packages/transactions/src/__tests__/` to `packages/solana_kit_transactions/test/`
+- [x] T049 [US1] Port Transaction type, compilation, wire format from `.repos/kit/packages/transactions/src/` to `packages/solana_kit_transactions/lib/src/`
+- [x] T050 [US1] Port signing, size calculation, base64 wire encoding in `packages/solana_kit_transactions/lib/src/`
+- [x] T051 [US1] Port signature extraction and full-signature assertion in `packages/solana_kit_transactions/lib/src/`
+- [x] T052 [US1] Update barrel export `packages/solana_kit_transactions/lib/solana_kit_transactions.dart`
+- [x] T053 [US1] Port all 17 test files from `.repos/kit/packages/transactions/src/__tests__/` to `packages/solana_kit_transactions/test/`
 
 ### solana_kit_signers (~22 source files, ~33 test files)
 
-- [ ] T054 [US1] Port signer interfaces (TransactionSigner, MessageSigner, TransactionPartialSigner, TransactionModifyingSigner, TransactionSendingSigner) from `.repos/kit/packages/signers/src/` to `packages/solana_kit_signers/lib/src/`
-- [ ] T055 [US1] Port KeyPairSigner, NoopSigner implementations in `packages/solana_kit_signers/lib/src/`
-- [ ] T056 [US1] Port signer utilities (createKeyPairSignerFromKeyPair, isTransactionSigner, assertIsTransactionSigner) in `packages/solana_kit_signers/lib/src/`
-- [ ] T057 [US1] Update barrel export `packages/solana_kit_signers/lib/solana_kit_signers.dart`
-- [ ] T058 [US1] Port all 33 test files from `.repos/kit/packages/signers/src/__tests__/` to `packages/solana_kit_signers/test/`
+- [x] T054 [US1] Port signer interfaces (TransactionSigner, MessageSigner, TransactionPartialSigner, TransactionModifyingSigner, TransactionSendingSigner) from `.repos/kit/packages/signers/src/` to `packages/solana_kit_signers/lib/src/`
+- [x] T055 [US1] Port KeyPairSigner, NoopSigner implementations in `packages/solana_kit_signers/lib/src/`
+- [x] T056 [US1] Port signer utilities (createKeyPairSignerFromKeyPair, isTransactionSigner, assertIsTransactionSigner) in `packages/solana_kit_signers/lib/src/`
+- [x] T057 [US1] Update barrel export `packages/solana_kit_signers/lib/solana_kit_signers.dart`
+- [x] T058 [US1] Port all 33 test files from `.repos/kit/packages/signers/src/__tests__/` to `packages/solana_kit_signers/test/`
 
 ### solana_kit_offchain_messages (~26 source files, ~11 test files)
 
