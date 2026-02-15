@@ -8,7 +8,9 @@ environment:
 resolution: workspace
 
 dependencies:
+  solana_kit_addresses:
   solana_kit_errors:
 
 dev_dependencies:
   solana_kit_lints:
+  test: ^1.25.0
