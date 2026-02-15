@@ -14,16 +14,16 @@ Encoder<TNewFrom> transformEncoder<TOldFrom, TNewFrom>(
 ) {
   return switch (encoder) {
     FixedSizeEncoder<TOldFrom>() => FixedSizeEncoder<TNewFrom>(
-        fixedSize: encoder.fixedSize,
-        write: (value, bytes, offset) =>
-            encoder.write(unmap(value), bytes, offset),
-      ),
+      fixedSize: encoder.fixedSize,
+      write: (value, bytes, offset) =>
+          encoder.write(unmap(value), bytes, offset),
+    ),
     VariableSizeEncoder<TOldFrom>() => VariableSizeEncoder<TNewFrom>(
-        getSizeFromValue: (value) => encoder.getSizeFromValue(unmap(value)),
-        write: (value, bytes, offset) =>
-            encoder.write(unmap(value), bytes, offset),
-        maxSize: encoder.maxSize,
-      ),
+      getSizeFromValue: (value) => encoder.getSizeFromValue(unmap(value)),
+      write: (value, bytes, offset) =>
+          encoder.write(unmap(value), bytes, offset),
+      maxSize: encoder.maxSize,
+    ),
   };
 }
 
@@ -38,19 +38,19 @@ Decoder<TNewTo> transformDecoder<TOldTo, TNewTo>(
 ) {
   return switch (decoder) {
     FixedSizeDecoder<TOldTo>() => FixedSizeDecoder<TNewTo>(
-        fixedSize: decoder.fixedSize,
-        read: (bytes, offset) {
-          final (value, newOffset) = decoder.read(bytes, offset);
-          return (map(value, bytes, offset), newOffset);
-        },
-      ),
+      fixedSize: decoder.fixedSize,
+      read: (bytes, offset) {
+        final (value, newOffset) = decoder.read(bytes, offset);
+        return (map(value, bytes, offset), newOffset);
+      },
+    ),
     VariableSizeDecoder<TOldTo>() => VariableSizeDecoder<TNewTo>(
-        read: (bytes, offset) {
-          final (value, newOffset) = decoder.read(bytes, offset);
-          return (map(value, bytes, offset), newOffset);
-        },
-        maxSize: decoder.maxSize,
-      ),
+      read: (bytes, offset) {
+        final (value, newOffset) = decoder.read(bytes, offset);
+        return (map(value, bytes, offset), newOffset);
+      },
+      maxSize: decoder.maxSize,
+    ),
   };
 }
 
@@ -80,18 +80,17 @@ Codec<TNewFrom, TNewTo> transformCodec<TOldFrom, TNewFrom, TOldTo, TNewTo>(
   // When no map function is given, the decode output type stays the same.
   return switch (codec) {
     FixedSizeCodec<TOldFrom, TOldTo>() => FixedSizeCodec<TNewFrom, TNewTo>(
-        fixedSize: codec.fixedSize,
-        write: transformedEncoder.write,
-        read: (bytes, offset) {
-          final (value, newOffset) = codec.read(bytes, offset);
-          return (value as TNewTo, newOffset);
-        },
-      ),
+      fixedSize: codec.fixedSize,
+      write: transformedEncoder.write,
+      read: (bytes, offset) {
+        final (value, newOffset) = codec.read(bytes, offset);
+        return (value as TNewTo, newOffset);
+      },
+    ),
     VariableSizeCodec<TOldFrom, TOldTo>() =>
       VariableSizeCodec<TNewFrom, TNewTo>(
-        getSizeFromValue:
-            (transformedEncoder as VariableSizeEncoder<TNewFrom>)
-                .getSizeFromValue,
+        getSizeFromValue: (transformedEncoder as VariableSizeEncoder<TNewFrom>)
+            .getSizeFromValue,
         write: transformedEncoder.write,
         read: (bytes, offset) {
           final (value, newOffset) = codec.read(bytes, offset);
@@ -108,15 +107,15 @@ Codec<TFrom, TTo> _combineEncoderDecoder<TFrom, TTo>(
 ) {
   return switch (encoder) {
     FixedSizeEncoder<TFrom>() => FixedSizeCodec<TFrom, TTo>(
-        fixedSize: encoder.fixedSize,
-        write: encoder.write,
-        read: decoder.read,
-      ),
+      fixedSize: encoder.fixedSize,
+      write: encoder.write,
+      read: decoder.read,
+    ),
     VariableSizeEncoder<TFrom>() => VariableSizeCodec<TFrom, TTo>(
-        getSizeFromValue: encoder.getSizeFromValue,
-        write: encoder.write,
-        read: decoder.read,
-        maxSize: encoder.maxSize,
-      ),
+      getSizeFromValue: encoder.getSizeFromValue,
+      write: encoder.write,
+      read: decoder.read,
+      maxSize: encoder.maxSize,
+    ),
   };
 }

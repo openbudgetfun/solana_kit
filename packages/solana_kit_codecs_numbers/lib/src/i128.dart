@@ -7,7 +7,9 @@ import 'package:solana_kit_codecs_numbers/src/common.dart';
 import 'package:solana_kit_codecs_numbers/src/utils.dart';
 
 /// The minimum signed 128-bit value: -(2^127).
-final BigInt _i128Min = -BigInt.parse('170141183460469231731687303715884105728');
+final BigInt _i128Min = -BigInt.parse(
+  '170141183460469231731687303715884105728',
+);
 
 /// The maximum signed 128-bit value: 2^127 - 1.
 final BigInt _i128Max = BigInt.parse('170141183460469231731687303715884105727');

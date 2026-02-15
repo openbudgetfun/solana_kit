@@ -20,22 +20,10 @@ void main() {
       expect(s(3).encode('ff9999'), equals(b('9999ff')));
       expect(s(4).encode('999999ff'), equals(b('ff999999')));
       expect(s(4).encode('ff999999'), equals(b('999999ff')));
-      expect(
-        s(8).encode('99999999999999ff'),
-        equals(b('ff99999999999999')),
-      );
-      expect(
-        s(8).encode('ff99999999999999'),
-        equals(b('99999999999999ff')),
-      );
-      expect(
-        s(32).encode('ff${'99' * 31}'),
-        equals(b('${'99' * 31}ff')),
-      );
-      expect(
-        s(32).encode('${'99' * 31}ff'),
-        equals(b('ff${'99' * 31}')),
-      );
+      expect(s(8).encode('99999999999999ff'), equals(b('ff99999999999999')));
+      expect(s(8).encode('ff99999999999999'), equals(b('99999999999999ff')));
+      expect(s(32).encode('ff${'99' * 31}'), equals(b('${'99' * 31}ff')));
+      expect(s(32).encode('${'99' * 31}ff'), equals(b('ff${'99' * 31}')));
 
       // Decode.
       expect(s(2).decode(b('ff99')), equals('99ff'));
@@ -59,10 +47,7 @@ void main() {
         () => reverseEncoder(
           // Force passing a VariableSizeEncoder as FixedSizeEncoder
           // This tests the assertIsFixedSize inside reverseEncoder.
-          FixedSizeEncoder<String>(
-            fixedSize: 0,
-            write: (_, __, ___) => 0,
-          ),
+          FixedSizeEncoder<String>(fixedSize: 0, write: (_, __, ___) => 0),
         ),
         returnsNormally,
       );
@@ -109,10 +94,8 @@ void main() {
     test('can reverse the bytes of a fixed-size decoder', () {
       final decoder = FixedSizeDecoder<String>(
         fixedSize: 2,
-        read: (bytes, offset) => (
-          '${bytes[offset]}-${bytes[offset + 1]}',
-          offset + 2,
-        ),
+        read: (bytes, offset) =>
+            ('${bytes[offset]}-${bytes[offset + 1]}', offset + 2),
       );
 
       final reversedDec = reverseDecoder(decoder);
@@ -126,10 +109,8 @@ void main() {
     test('does not modify the input bytes in-place', () {
       final decoder = FixedSizeDecoder<String>(
         fixedSize: 2,
-        read: (bytes, offset) => (
-          '${bytes[offset]}-${bytes[offset + 1]}',
-          offset + 2,
-        ),
+        read: (bytes, offset) =>
+            ('${bytes[offset]}-${bytes[offset + 1]}', offset + 2),
       );
 
       final reversedDec = reverseDecoder(decoder);

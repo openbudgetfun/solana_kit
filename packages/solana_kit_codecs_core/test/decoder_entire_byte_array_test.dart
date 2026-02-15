@@ -15,169 +15,145 @@ void main() {
   group('createDecoderThatConsumesEntireByteArray', () {
     group('decode function', () {
       group('with no offset', () {
-        test(
-          'returns the same value as the inner decoder when the entire '
-          'byte array is consumed',
-          () {
-            final decoder =
-                createDecoderThatConsumesEntireByteArray(innerDecoder);
-            final bytes = Uint8List(4);
-            final value = decoder.decode(bytes);
-            expect(value, equals(outputNumber));
-          },
-        );
+        test('returns the same value as the inner decoder when the entire '
+            'byte array is consumed', () {
+          final decoder = createDecoderThatConsumesEntireByteArray(
+            innerDecoder,
+          );
+          final bytes = Uint8List(4);
+          final value = decoder.decode(bytes);
+          expect(value, equals(outputNumber));
+        });
 
-        test(
-          'throws when the inner decoder does not consume the entire '
-          'byte array',
-          () {
-            final decoder =
-                createDecoderThatConsumesEntireByteArray(innerDecoder);
-            final bytes = Uint8List(5);
-            expect(
-              () => decoder.decode(bytes),
-              throwsA(
-                isA<SolanaError>().having(
-                  (e) => e.code,
-                  'code',
-                  SolanaErrorCode
-                      .codecsExpectedDecoderToConsumeEntireByteArray,
-                ),
+        test('throws when the inner decoder does not consume the entire '
+            'byte array', () {
+          final decoder = createDecoderThatConsumesEntireByteArray(
+            innerDecoder,
+          );
+          final bytes = Uint8List(5);
+          expect(
+            () => decoder.decode(bytes),
+            throwsA(
+              isA<SolanaError>().having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.codecsExpectedDecoderToConsumeEntireByteArray,
               ),
-            );
-          },
-        );
+            ),
+          );
+        });
       });
 
       group('with an offset', () {
-        test(
-          'returns the same value as the inner decoder when the entire '
-          'byte array is consumed',
-          () {
-            final decoder =
-                createDecoderThatConsumesEntireByteArray(innerDecoder);
-            final bytes = Uint8List(6);
-            final value = decoder.decode(bytes, 2);
-            expect(value, equals(outputNumber));
-          },
-        );
+        test('returns the same value as the inner decoder when the entire '
+            'byte array is consumed', () {
+          final decoder = createDecoderThatConsumesEntireByteArray(
+            innerDecoder,
+          );
+          final bytes = Uint8List(6);
+          final value = decoder.decode(bytes, 2);
+          expect(value, equals(outputNumber));
+        });
 
-        test(
-          'throws when the inner decoder does not consume the entire '
-          'byte array',
-          () {
-            final decoder =
-                createDecoderThatConsumesEntireByteArray(innerDecoder);
-            final bytes = Uint8List(7);
-            expect(
-              () => decoder.decode(bytes, 2),
-              throwsA(
-                isA<SolanaError>().having(
-                  (e) => e.code,
-                  'code',
-                  SolanaErrorCode
-                      .codecsExpectedDecoderToConsumeEntireByteArray,
-                ),
+        test('throws when the inner decoder does not consume the entire '
+            'byte array', () {
+          final decoder = createDecoderThatConsumesEntireByteArray(
+            innerDecoder,
+          );
+          final bytes = Uint8List(7);
+          expect(
+            () => decoder.decode(bytes, 2),
+            throwsA(
+              isA<SolanaError>().having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.codecsExpectedDecoderToConsumeEntireByteArray,
               ),
-            );
-          },
-        );
+            ),
+          );
+        });
       });
     });
 
     group('read function', () {
       group('with no offset', () {
-        test(
-          'returns the same value as the inner decoder when the entire '
-          'byte array is consumed',
-          () {
-            final decoder =
-                createDecoderThatConsumesEntireByteArray(innerDecoder);
-            final bytes = Uint8List(4);
-            final (value, _) = decoder.read(bytes, 0);
-            expect(value, equals(outputNumber));
-          },
-        );
+        test('returns the same value as the inner decoder when the entire '
+            'byte array is consumed', () {
+          final decoder = createDecoderThatConsumesEntireByteArray(
+            innerDecoder,
+          );
+          final bytes = Uint8List(4);
+          final (value, _) = decoder.read(bytes, 0);
+          expect(value, equals(outputNumber));
+        });
 
-        test(
-          'returns the same offset as the inner decoder when the entire '
-          'byte array is consumed',
-          () {
-            final decoder =
-                createDecoderThatConsumesEntireByteArray(innerDecoder);
-            final bytes = Uint8List(4);
-            final (_, offset) = decoder.read(bytes, 0);
-            expect(offset, equals(4));
-          },
-        );
+        test('returns the same offset as the inner decoder when the entire '
+            'byte array is consumed', () {
+          final decoder = createDecoderThatConsumesEntireByteArray(
+            innerDecoder,
+          );
+          final bytes = Uint8List(4);
+          final (_, offset) = decoder.read(bytes, 0);
+          expect(offset, equals(4));
+        });
 
-        test(
-          'throws when the inner decoder does not consume the entire '
-          'byte array',
-          () {
-            final decoder =
-                createDecoderThatConsumesEntireByteArray(innerDecoder);
-            final bytes = Uint8List(5);
-            expect(
-              () => decoder.read(bytes, 0),
-              throwsA(
-                isA<SolanaError>().having(
-                  (e) => e.code,
-                  'code',
-                  SolanaErrorCode
-                      .codecsExpectedDecoderToConsumeEntireByteArray,
-                ),
+        test('throws when the inner decoder does not consume the entire '
+            'byte array', () {
+          final decoder = createDecoderThatConsumesEntireByteArray(
+            innerDecoder,
+          );
+          final bytes = Uint8List(5);
+          expect(
+            () => decoder.read(bytes, 0),
+            throwsA(
+              isA<SolanaError>().having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.codecsExpectedDecoderToConsumeEntireByteArray,
               ),
-            );
-          },
-        );
+            ),
+          );
+        });
       });
 
       group('with an offset', () {
-        test(
-          'returns the same value as the inner decoder when the entire '
-          'byte array is consumed',
-          () {
-            final decoder =
-                createDecoderThatConsumesEntireByteArray(innerDecoder);
-            final bytes = Uint8List(6);
-            final (value, _) = decoder.read(bytes, 2);
-            expect(value, equals(outputNumber));
-          },
-        );
+        test('returns the same value as the inner decoder when the entire '
+            'byte array is consumed', () {
+          final decoder = createDecoderThatConsumesEntireByteArray(
+            innerDecoder,
+          );
+          final bytes = Uint8List(6);
+          final (value, _) = decoder.read(bytes, 2);
+          expect(value, equals(outputNumber));
+        });
 
-        test(
-          'returns the same offset as the inner decoder when the entire '
-          'byte array is consumed',
-          () {
-            final decoder =
-                createDecoderThatConsumesEntireByteArray(innerDecoder);
-            final bytes = Uint8List(6);
-            final (_, offset) = decoder.read(bytes, 2);
-            expect(offset, equals(6));
-          },
-        );
+        test('returns the same offset as the inner decoder when the entire '
+            'byte array is consumed', () {
+          final decoder = createDecoderThatConsumesEntireByteArray(
+            innerDecoder,
+          );
+          final bytes = Uint8List(6);
+          final (_, offset) = decoder.read(bytes, 2);
+          expect(offset, equals(6));
+        });
 
-        test(
-          'throws when the inner decoder does not consume the entire '
-          'byte array',
-          () {
-            final decoder =
-                createDecoderThatConsumesEntireByteArray(innerDecoder);
-            final bytes = Uint8List(7);
-            expect(
-              () => decoder.read(bytes, 2),
-              throwsA(
-                isA<SolanaError>().having(
-                  (e) => e.code,
-                  'code',
-                  SolanaErrorCode
-                      .codecsExpectedDecoderToConsumeEntireByteArray,
-                ),
+        test('throws when the inner decoder does not consume the entire '
+            'byte array', () {
+          final decoder = createDecoderThatConsumesEntireByteArray(
+            innerDecoder,
+          );
+          final bytes = Uint8List(7);
+          expect(
+            () => decoder.read(bytes, 2),
+            throwsA(
+              isA<SolanaError>().having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.codecsExpectedDecoderToConsumeEntireByteArray,
               ),
-            );
-          },
-        );
+            ),
+          );
+        });
       });
     });
 

@@ -11,8 +11,9 @@ final VariableSizeCodec<String, String> base16Codec =
       getSizeFromValue: (value) => (value.length / 2).ceil(),
       write: (value, bytes, offset) {
         final matches = RegExp('.{1,2}').allMatches(value.toLowerCase());
-        final hexBytes =
-            matches.map((m) => int.parse(m.group(0)!, radix: 16)).toList();
+        final hexBytes = matches
+            .map((m) => int.parse(m.group(0)!, radix: 16))
+            .toList();
         bytes.setAll(offset, hexBytes);
         return offset + hexBytes.length;
       },

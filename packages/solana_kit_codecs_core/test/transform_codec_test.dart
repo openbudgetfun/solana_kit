@@ -64,10 +64,10 @@ void main() {
       // From Codec<int, int> to Codec<Map<String, int>, Map<String, int>>.
       final mappedCodec =
           transformCodec<int, Map<String, int>, int, Map<String, int>>(
-        numberCodec,
-        (value) => value['value']!,
-        (value, _, __) => {'value': value},
-      );
+            numberCodec,
+            (value) => value['value']!,
+            (value, _, __) => {'value': value},
+          );
 
       final bytes = mappedCodec.encode({'value': 42});
       expect(mappedCodec.decode(bytes), equals({'value': 42}));
@@ -77,67 +77,69 @@ void main() {
       // Strict codec that requires both 'discriminator' and 'label'.
       final strictCodec =
           FixedSizeCodec<Map<String, Object>, Map<String, Object>>(
-        fixedSize: 2,
-        read: (bytes, offset) => (
-          {'discriminator': bytes[offset], 'label': 'x' * bytes[offset + 1]},
-          offset + 2,
-        ),
-        write: (value, bytes, offset) {
-          bytes[offset] = value['discriminator']! as int;
-          bytes[offset + 1] = (value['label']! as String).length;
-          return offset + 2;
-        },
-      );
+            fixedSize: 2,
+            read: (bytes, offset) => (
+              {
+                'discriminator': bytes[offset],
+                'label': 'x' * bytes[offset + 1],
+              },
+              offset + 2,
+            ),
+            write: (value, bytes, offset) {
+              bytes[offset] = value['discriminator']! as int;
+              bytes[offset + 1] = (value['label']! as String).length;
+              return offset + 2;
+            },
+          );
 
       final bytesA = strictCodec.encode({
         'discriminator': 5,
         'label': 'Hello world',
       });
-      expect(strictCodec.decode(bytesA), equals({
-        'discriminator': 5,
-        'label': 'xxxxxxxxxxx',
-      }));
+      expect(
+        strictCodec.decode(bytesA),
+        equals({'discriminator': 5, 'label': 'xxxxxxxxxxx'}),
+      );
 
       // Loose codec: discriminator is optional with default 42.
-      final looseCodec = transformCodec<
-        Map<String, Object>,
-        Map<String, Object>,
-        Map<String, Object>,
-        Map<String, Object>
-      >(
-        strictCodec,
-        (value) => {
-          'discriminator': 42, // default
-          ...value,
-        },
-      );
+      final looseCodec =
+          transformCodec<
+            Map<String, Object>,
+            Map<String, Object>,
+            Map<String, Object>,
+            Map<String, Object>
+          >(
+            strictCodec,
+            (value) => {
+              'discriminator': 42, // default
+              ...value,
+            },
+          );
 
       // With explicit discriminator.
       final bytesB = looseCodec.encode({
         'discriminator': 5,
         'label': 'Hello world',
       });
-      expect(looseCodec.decode(bytesB), equals({
-        'discriminator': 5,
-        'label': 'xxxxxxxxxxx',
-      }));
+      expect(
+        looseCodec.decode(bytesB),
+        equals({'discriminator': 5, 'label': 'xxxxxxxxxxx'}),
+      );
 
       // With implicit discriminator (uses default 42).
       final bytesC = looseCodec.encode({'label': 'Hello world'});
-      expect(looseCodec.decode(bytesC), equals({
-        'discriminator': 42,
-        'label': 'xxxxxxxxxxx',
-      }));
+      expect(
+        looseCodec.decode(bytesC),
+        equals({'discriminator': 42, 'label': 'xxxxxxxxxxx'}),
+      );
     });
 
     test('can loosen a tuple codec', () {
       // A codec for (int, String) tuples.
       final tupleCodec = FixedSizeCodec<(int, String), (int, String)>(
         fixedSize: 2,
-        read: (bytes, offset) => (
-          (bytes[offset], 'x' * bytes[offset + 1]),
-          offset + 2,
-        ),
+        read: (bytes, offset) =>
+            ((bytes[offset], 'x' * bytes[offset + 1]), offset + 2),
         write: (value, bytes, offset) {
           bytes[offset] = value.$1;
           bytes[offset + 1] = value.$2.length;
@@ -149,15 +151,13 @@ void main() {
       expect(tupleCodec.decode(bytesA), equals((42, 'xxxxxxxxxxx')));
 
       // Map to loosen the tuple: first element can be null.
-      final mappedCodec = transformCodec<
-        (int, String),
-        (int?, String),
-        (int, String),
-        (int, String)
-      >(
-        tupleCodec,
-        (value) => (value.$1 ?? value.$2.length, value.$2),
-      );
+      final mappedCodec =
+          transformCodec<
+            (int, String),
+            (int?, String),
+            (int, String),
+            (int, String)
+          >(tupleCodec, (value) => (value.$1 ?? value.$2.length, value.$2));
 
       final bytesB = mappedCodec.encode((null, 'Hello world'));
       expect(mappedCodec.decode(bytesB), equals((11, 'xxxxxxxxxxx')));

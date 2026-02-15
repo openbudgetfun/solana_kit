@@ -402,50 +402,49 @@ void main() {
         );
       });
 
-      test('throws an error if the pre-offset is above the byte array length',
-          () {
-        final mock = getMockFixedCodec(size: 10, innerSize: 0);
-        final codec = offsetCodec(
-          mock.codec,
-          OffsetConfig(preOffset: (_) => 11),
-        );
-
-        expect(
-          () => codec.encode(42),
-          throwsA(
-            isA<SolanaError>().having(
-              (e) => e.code,
-              'code',
-              SolanaErrorCode.codecsOffsetOutOfRange,
-            ),
-          ),
-        );
-        expect(
-          () => codec.decode(Uint8List(10)),
-          throwsA(
-            isA<SolanaError>().having(
-              (e) => e.code,
-              'code',
-              SolanaErrorCode.codecsOffsetOutOfRange,
-            ),
-          ),
-        );
-      });
-
       test(
-        'does not throw an error if the pre-offset is equal to the '
-        'byte array length',
+        'throws an error if the pre-offset is above the byte array length',
         () {
           final mock = getMockFixedCodec(size: 10, innerSize: 0);
           final codec = offsetCodec(
             mock.codec,
-            OffsetConfig(preOffset: (_) => 10),
+            OffsetConfig(preOffset: (_) => 11),
           );
 
-          expect(() => codec.encode(42), returnsNormally);
-          expect(() => codec.decode(Uint8List(10)), returnsNormally);
+          expect(
+            () => codec.encode(42),
+            throwsA(
+              isA<SolanaError>().having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.codecsOffsetOutOfRange,
+              ),
+            ),
+          );
+          expect(
+            () => codec.decode(Uint8List(10)),
+            throwsA(
+              isA<SolanaError>().having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.codecsOffsetOutOfRange,
+              ),
+            ),
+          );
         },
       );
+
+      test('does not throw an error if the pre-offset is equal to the '
+          'byte array length', () {
+        final mock = getMockFixedCodec(size: 10, innerSize: 0);
+        final codec = offsetCodec(
+          mock.codec,
+          OffsetConfig(preOffset: (_) => 10),
+        );
+
+        expect(() => codec.encode(42), returnsNormally);
+        expect(() => codec.decode(Uint8List(10)), returnsNormally);
+      });
 
       test('throws an error if the post-offset is negative', () {
         final mock = getMockFixedCodec(size: 10, innerSize: 0);
@@ -508,20 +507,17 @@ void main() {
         },
       );
 
-      test(
-        'does not throw an error if the post-offset is equal to the '
-        'byte array length',
-        () {
-          final mock = getMockFixedCodec(size: 10, innerSize: 0);
-          final codec = offsetCodec(
-            mock.codec,
-            OffsetConfig(postOffset: (_) => 10),
-          );
+      test('does not throw an error if the post-offset is equal to the '
+          'byte array length', () {
+        final mock = getMockFixedCodec(size: 10, innerSize: 0);
+        final codec = offsetCodec(
+          mock.codec,
+          OffsetConfig(postOffset: (_) => 10),
+        );
 
-          expect(() => codec.encode(42), returnsNormally);
-          expect(() => codec.decode(Uint8List(10)), returnsNormally);
-        },
-      );
+        expect(() => codec.encode(42), returnsNormally);
+        expect(() => codec.decode(Uint8List(10)), returnsNormally);
+      });
     });
   });
 }

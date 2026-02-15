@@ -45,8 +45,7 @@ Encoder<TFrom> addEncoderSentinel<TFrom>(
 
   final enc = encoder as VariableSizeEncoder<TFrom>;
   return VariableSizeEncoder<TFrom>(
-    getSizeFromValue: (value) =>
-        enc.getSizeFromValue(value) + sentinel.length,
+    getSizeFromValue: (value) => enc.getSizeFromValue(value) + sentinel.length,
     write: writeImpl,
     maxSize: enc.maxSize != null ? enc.maxSize! + sentinel.length : null,
   );
@@ -56,24 +55,19 @@ Encoder<TFrom> addEncoderSentinel<TFrom>(
 /// byte sequence is found.
 ///
 /// Throws a [SolanaError] if the sentinel is not found in the byte array.
-Decoder<TTo> addDecoderSentinel<TTo>(
-  Decoder<TTo> decoder,
-  Uint8List sentinel,
-) {
+Decoder<TTo> addDecoderSentinel<TTo>(Decoder<TTo> decoder, Uint8List sentinel) {
   (TTo, int) readImpl(Uint8List bytes, int currentOffset) {
-    final candidateBytes =
-        currentOffset == 0 ? bytes : bytes.sublist(currentOffset);
+    final candidateBytes = currentOffset == 0
+        ? bytes
+        : bytes.sublist(currentOffset);
     final sentinelIndex = _findSentinelIndex(candidateBytes, sentinel);
     if (sentinelIndex == -1) {
-      throw SolanaError(
-        SolanaErrorCode.codecsSentinelMissingInDecodedBytes,
-        {
-          'decodedBytes': candidateBytes,
-          'hexDecodedBytes': _hexBytes(candidateBytes),
-          'hexSentinel': _hexBytes(sentinel),
-          'sentinel': sentinel,
-        },
-      );
+      throw SolanaError(SolanaErrorCode.codecsSentinelMissingInDecodedBytes, {
+        'decodedBytes': candidateBytes,
+        'hexDecodedBytes': _hexBytes(candidateBytes),
+        'hexSentinel': _hexBytes(sentinel),
+        'sentinel': sentinel,
+      });
     }
     final preSentinelBytes = candidateBytes.sublist(0, sentinelIndex);
     // Use decode() to contain the decoder within its own bounds.
@@ -125,7 +119,5 @@ int _findSentinelIndex(Uint8List bytes, Uint8List sentinel) {
 
 /// Converts [bytes] to a hex string.
 String _hexBytes(Uint8List bytes) {
-  return bytes
-      .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
-      .join();
+  return bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
 }

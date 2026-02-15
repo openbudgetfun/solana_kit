@@ -102,11 +102,7 @@ void main() {
         assertValidBigInt(codec, BigInt.zero, '0000000000000000');
         assertValidBigInt(codec, BigInt.one, '0100000000000000');
         assertValidBigInt(codec, BigInt.from(42), '2a00000000000000');
-        assertValidBigInt(
-          codec,
-          BigInt.from(0xffffffff),
-          'ffffffff00000000',
-        );
+        assertValidBigInt(codec, BigInt.from(0xffffffff), 'ffffffff00000000');
         assertValidBigInt(codec, u64Max, 'ffffffffffffffff');
       });
 
@@ -115,11 +111,7 @@ void main() {
         assertValidBigInt(codec, BigInt.zero, '0000000000000000');
         assertValidBigInt(codec, BigInt.one, '0000000000000001');
         assertValidBigInt(codec, BigInt.from(42), '000000000000002a');
-        assertValidBigInt(
-          codec,
-          BigInt.from(0xffffffff),
-          '00000000ffffffff',
-        );
+        assertValidBigInt(codec, BigInt.from(0xffffffff), '00000000ffffffff');
         assertValidBigInt(codec, u64Max, 'ffffffffffffffff');
       });
 

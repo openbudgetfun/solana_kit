@@ -96,8 +96,7 @@ void main() {
       );
 
       // Decode with padding.
-      final decoded =
-          fixCodecSize(codec, 10).decode(b('08050c0c0f0000000000'));
+      final decoded = fixCodecSize(codec, 10).decode(b('08050c0c0f0000000000'));
       expect(decoded, equals('08050c0c0f0000000000'));
 
       // Read with offset.
@@ -206,18 +205,24 @@ void main() {
       );
 
       // Same size.
-      final decoded10 =
-          fixDecoderSize(decoder, 10).decode(b('08050c0c0f170f120c04'));
+      final decoded10 = fixDecoderSize(
+        decoder,
+        10,
+      ).decode(b('08050c0c0f170f120c04'));
       expect(decoded10, equals('08050c0c0f170f120c04'));
 
       // Truncate: read only 5 bytes.
-      final decoded5 =
-          fixDecoderSize(decoder, 5).decode(b('08050c0c0f170f120c04'));
+      final decoded5 = fixDecoderSize(
+        decoder,
+        5,
+      ).decode(b('08050c0c0f170f120c04'));
       expect(decoded5, equals('08050c0c0f'));
 
       // Pad: read 10 bytes from padded data.
-      final decoded10b =
-          fixDecoderSize(decoder, 10).decode(b('08050c0c0f0000000000'));
+      final decoded10b = fixDecoderSize(
+        decoder,
+        10,
+      ).decode(b('08050c0c0f0000000000'));
       expect(decoded10b, equals('08050c0c0f0000000000'));
 
       // Error when not enough bytes.

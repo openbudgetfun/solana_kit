@@ -8,14 +8,14 @@ import 'package:solana_kit_codecs_core/src/codec.dart';
 Encoder<T> encoderFromCodec<T>(Codec<T, Object?> codec) {
   return switch (codec) {
     FixedSizeCodec<T, Object?>() => FixedSizeEncoder<T>(
-        fixedSize: codec.fixedSize,
-        write: codec.write,
-      ),
+      fixedSize: codec.fixedSize,
+      write: codec.write,
+    ),
     VariableSizeCodec<T, Object?>() => VariableSizeEncoder<T>(
-        getSizeFromValue: codec.getSizeFromValue,
-        write: codec.write,
-        maxSize: codec.maxSize,
-      ),
+      getSizeFromValue: codec.getSizeFromValue,
+      write: codec.write,
+      maxSize: codec.maxSize,
+    ),
   };
 }
 
@@ -25,12 +25,12 @@ Encoder<T> encoderFromCodec<T>(Codec<T, Object?> codec) {
 Decoder<T> decoderFromCodec<T>(Codec<Object?, T> codec) {
   return switch (codec) {
     FixedSizeCodec<Object?, T>() => FixedSizeDecoder<T>(
-        fixedSize: codec.fixedSize,
-        read: codec.read,
-      ),
+      fixedSize: codec.fixedSize,
+      read: codec.read,
+    ),
     VariableSizeCodec<Object?, T>() => VariableSizeDecoder<T>(
-        read: codec.read,
-        maxSize: codec.maxSize,
-      ),
+      read: codec.read,
+      maxSize: codec.maxSize,
+    ),
   };
 }

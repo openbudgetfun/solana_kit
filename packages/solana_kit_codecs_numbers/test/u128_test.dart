@@ -9,8 +9,7 @@ import 'setup.dart';
 void main() {
   group('u128', () {
     const be = NumberCodecConfig(endian: Endian.big);
-    final u128Max =
-        BigInt.parse('340282366920938463463374607431768211455');
+    final u128Max = BigInt.parse('340282366920938463463374607431768211455');
 
     group('encoder', () {
       test('has the correct fixed size', () {
@@ -179,11 +178,7 @@ void main() {
           BigInt.parse('ffffffffffffffff', radix: 16),
           'ffffffffffffffff0000000000000000',
         );
-        assertValidBigInt(
-          codec,
-          u128Max,
-          'ffffffffffffffffffffffffffffffff',
-        );
+        assertValidBigInt(codec, u128Max, 'ffffffffffffffffffffffffffffffff');
       });
 
       test('roundtrips big-endian values correctly', () {
@@ -208,11 +203,7 @@ void main() {
           BigInt.parse('ffffffffffffffff', radix: 16),
           '0000000000000000ffffffffffffffff',
         );
-        assertValidBigInt(
-          codec,
-          u128Max,
-          'ffffffffffffffffffffffffffffffff',
-        );
+        assertValidBigInt(codec, u128Max, 'ffffffffffffffffffffffffffffffff');
       });
 
       test('roundtrips boundary values', () {
@@ -222,11 +213,7 @@ void main() {
           BigInt.zero,
           '00000000000000000000000000000000',
         );
-        assertValidBigInt(
-          codec,
-          u128Max,
-          'ffffffffffffffffffffffffffffffff',
-        );
+        assertValidBigInt(codec, u128Max, 'ffffffffffffffffffffffffffffffff');
         assertValidBigInt(
           codec,
           BigInt.one,

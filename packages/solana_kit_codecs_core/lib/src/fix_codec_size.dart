@@ -75,7 +75,8 @@ FixedSizeCodec<TFrom, TTo> fixCodecSize<TFrom, TTo>(
   int fixedBytes,
 ) {
   return combineCodec(
-    fixEncoderSize(encoderFromCodec(codec), fixedBytes),
-    fixDecoderSize(decoderFromCodec(codec), fixedBytes),
-  ) as FixedSizeCodec<TFrom, TTo>;
+        fixEncoderSize(encoderFromCodec(codec), fixedBytes),
+        fixDecoderSize(decoderFromCodec(codec), fixedBytes),
+      )
+      as FixedSizeCodec<TFrom, TTo>;
 }

@@ -12,15 +12,12 @@ void assertNumberIsBetweenForCodec(
   num value,
 ) {
   if (value < min || value > max) {
-    throw SolanaError(
-      SolanaErrorCode.codecsNumberOutOfRange,
-      {
-        'codecDescription': codecDescription,
-        'min': min,
-        'max': max,
-        'value': value,
-      },
-    );
+    throw SolanaError(SolanaErrorCode.codecsNumberOutOfRange, {
+      'codecDescription': codecDescription,
+      'min': min,
+      'max': max,
+      'value': value,
+    });
   }
 }
 
@@ -36,14 +33,11 @@ void assertBigIntIsBetweenForCodec(
   BigInt value,
 ) {
   if (value < min || value > max) {
-    throw SolanaError(
-      SolanaErrorCode.codecsNumberOutOfRange,
-      {
-        'codecDescription': codecDescription,
-        'min': min,
-        'max': max,
-        'value': value,
-      },
-    );
+    throw SolanaError(SolanaErrorCode.codecsNumberOutOfRange, {
+      'codecDescription': codecDescription,
+      'min': min,
+      'max': max,
+      'value': value,
+    });
   }
 }

@@ -13,10 +13,7 @@ Uint8List mergeBytes(List<Uint8List> byteArrays) {
   }
   final totalLength = nonEmpty.fold<int>(0, (sum, arr) => sum + arr.length);
   final result = Uint8List(totalLength)
-    ..setAll(
-      0,
-      nonEmpty.expand((arr) => arr),
-    );
+    ..setAll(0, nonEmpty.expand((arr) => arr));
   return result;
 }
 
@@ -43,10 +40,9 @@ Uint8List fixBytes(Uint8List bytes, int length) {
 /// Returns `true` if [data] contains [bytes] at the given [offset].
 bool containsBytes(Uint8List data, Uint8List bytes, int offset) {
   if (offset + bytes.length > data.length) return false;
-  final slice =
-      offset == 0 && data.length == bytes.length
-          ? data
-          : data.sublist(offset, offset + bytes.length);
+  final slice = offset == 0 && data.length == bytes.length
+      ? data
+      : data.sublist(offset, offset + bytes.length);
   return bytesEqual(slice, bytes);
 }
 

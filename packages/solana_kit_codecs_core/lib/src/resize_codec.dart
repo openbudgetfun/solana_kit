@@ -9,44 +9,32 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 /// For variable-size encoders, the `getSizeFromValue` is updated.
 ///
 /// Throws a [SolanaError] if the new size is negative.
-Encoder<T> resizeEncoder<T>(
-  Encoder<T> encoder,
-  int Function(int size) resize,
-) {
+Encoder<T> resizeEncoder<T>(Encoder<T> encoder, int Function(int size) resize) {
   return switch (encoder) {
     FixedSizeEncoder<T>() => () {
-        final newFixedSize = resize(encoder.fixedSize);
-        if (newFixedSize < 0) {
-          throw SolanaError(
-            SolanaErrorCode.codecsExpectedPositiveByteLength,
-            {
-              'bytesLength': newFixedSize,
-              'codecDescription': 'resizeEncoder',
-            },
-          );
-        }
-        return FixedSizeEncoder<T>(
-          fixedSize: newFixedSize,
-          write: encoder.write,
-        );
-      }(),
+      final newFixedSize = resize(encoder.fixedSize);
+      if (newFixedSize < 0) {
+        throw SolanaError(SolanaErrorCode.codecsExpectedPositiveByteLength, {
+          'bytesLength': newFixedSize,
+          'codecDescription': 'resizeEncoder',
+        });
+      }
+      return FixedSizeEncoder<T>(fixedSize: newFixedSize, write: encoder.write);
+    }(),
     VariableSizeEncoder<T>() => VariableSizeEncoder<T>(
-        getSizeFromValue: (value) {
-          final newSize = resize(encoder.getSizeFromValue(value));
-          if (newSize < 0) {
-            throw SolanaError(
-              SolanaErrorCode.codecsExpectedPositiveByteLength,
-              {
-                'bytesLength': newSize,
-                'codecDescription': 'resizeEncoder',
-              },
-            );
-          }
-          return newSize;
-        },
-        write: encoder.write,
-        maxSize: encoder.maxSize,
-      ),
+      getSizeFromValue: (value) {
+        final newSize = resize(encoder.getSizeFromValue(value));
+        if (newSize < 0) {
+          throw SolanaError(SolanaErrorCode.codecsExpectedPositiveByteLength, {
+            'bytesLength': newSize,
+            'codecDescription': 'resizeEncoder',
+          });
+        }
+        return newSize;
+      },
+      write: encoder.write,
+      maxSize: encoder.maxSize,
+    ),
   };
 }
 
@@ -57,27 +45,18 @@ Encoder<T> resizeEncoder<T>(
 /// determined dynamically.
 ///
 /// Throws a [SolanaError] if the new size is negative.
-Decoder<T> resizeDecoder<T>(
-  Decoder<T> decoder,
-  int Function(int size) resize,
-) {
+Decoder<T> resizeDecoder<T>(Decoder<T> decoder, int Function(int size) resize) {
   return switch (decoder) {
     FixedSizeDecoder<T>() => () {
-        final newFixedSize = resize(decoder.fixedSize);
-        if (newFixedSize < 0) {
-          throw SolanaError(
-            SolanaErrorCode.codecsExpectedPositiveByteLength,
-            {
-              'bytesLength': newFixedSize,
-              'codecDescription': 'resizeDecoder',
-            },
-          );
-        }
-        return FixedSizeDecoder<T>(
-          fixedSize: newFixedSize,
-          read: decoder.read,
-        );
-      }(),
+      final newFixedSize = resize(decoder.fixedSize);
+      if (newFixedSize < 0) {
+        throw SolanaError(SolanaErrorCode.codecsExpectedPositiveByteLength, {
+          'bytesLength': newFixedSize,
+          'codecDescription': 'resizeDecoder',
+        });
+      }
+      return FixedSizeDecoder<T>(fixedSize: newFixedSize, read: decoder.read);
+    }(),
     VariableSizeDecoder<T>() => decoder,
   };
 }

@@ -69,16 +69,15 @@ Encoder<T> offsetEncoder<T>(Encoder<T> encoder, OffsetConfig config) {
   int writeImpl(T value, Uint8List bytes, int preOffset) {
     int wrapBytesImpl(int offset) => _modulo(offset, bytes.length);
 
-    final newPreOffset =
-        config.preOffset != null
-            ? config.preOffset!(
-              PreOffsetScope(
-                bytes: bytes,
-                preOffset: preOffset,
-                wrapBytes: wrapBytesImpl,
-              ),
-            )
-            : preOffset;
+    final newPreOffset = config.preOffset != null
+        ? config.preOffset!(
+            PreOffsetScope(
+              bytes: bytes,
+              preOffset: preOffset,
+              wrapBytes: wrapBytesImpl,
+            ),
+          )
+        : preOffset;
     assertByteArrayOffsetIsNotOutOfRange(
       'offsetEncoder',
       newPreOffset,
@@ -87,18 +86,17 @@ Encoder<T> offsetEncoder<T>(Encoder<T> encoder, OffsetConfig config) {
 
     final postOffset = encoder.write(value, bytes, newPreOffset);
 
-    final newPostOffset =
-        config.postOffset != null
-            ? config.postOffset!(
-              PostOffsetScope(
-                bytes: bytes,
-                preOffset: preOffset,
-                wrapBytes: wrapBytesImpl,
-                newPreOffset: newPreOffset,
-                postOffset: postOffset,
-              ),
-            )
-            : postOffset;
+    final newPostOffset = config.postOffset != null
+        ? config.postOffset!(
+            PostOffsetScope(
+              bytes: bytes,
+              preOffset: preOffset,
+              wrapBytes: wrapBytesImpl,
+              newPreOffset: newPreOffset,
+              postOffset: postOffset,
+            ),
+          )
+        : postOffset;
     assertByteArrayOffsetIsNotOutOfRange(
       'offsetEncoder',
       newPostOffset,
@@ -110,14 +108,14 @@ Encoder<T> offsetEncoder<T>(Encoder<T> encoder, OffsetConfig config) {
 
   return switch (encoder) {
     FixedSizeEncoder<T>() => FixedSizeEncoder<T>(
-        fixedSize: encoder.fixedSize,
-        write: writeImpl,
-      ),
+      fixedSize: encoder.fixedSize,
+      write: writeImpl,
+    ),
     VariableSizeEncoder<T>() => VariableSizeEncoder<T>(
-        getSizeFromValue: encoder.getSizeFromValue,
-        write: writeImpl,
-        maxSize: encoder.maxSize,
-      ),
+      getSizeFromValue: encoder.getSizeFromValue,
+      write: writeImpl,
+      maxSize: encoder.maxSize,
+    ),
   };
 }
 
@@ -129,16 +127,15 @@ Decoder<T> offsetDecoder<T>(Decoder<T> decoder, OffsetConfig config) {
   (T, int) readImpl(Uint8List bytes, int preOffset) {
     int wrapBytesImpl(int offset) => _modulo(offset, bytes.length);
 
-    final newPreOffset =
-        config.preOffset != null
-            ? config.preOffset!(
-              PreOffsetScope(
-                bytes: bytes,
-                preOffset: preOffset,
-                wrapBytes: wrapBytesImpl,
-              ),
-            )
-            : preOffset;
+    final newPreOffset = config.preOffset != null
+        ? config.preOffset!(
+            PreOffsetScope(
+              bytes: bytes,
+              preOffset: preOffset,
+              wrapBytes: wrapBytesImpl,
+            ),
+          )
+        : preOffset;
     assertByteArrayOffsetIsNotOutOfRange(
       'offsetDecoder',
       newPreOffset,
@@ -147,18 +144,17 @@ Decoder<T> offsetDecoder<T>(Decoder<T> decoder, OffsetConfig config) {
 
     final (value, postOffset) = decoder.read(bytes, newPreOffset);
 
-    final newPostOffset =
-        config.postOffset != null
-            ? config.postOffset!(
-              PostOffsetScope(
-                bytes: bytes,
-                preOffset: preOffset,
-                wrapBytes: wrapBytesImpl,
-                newPreOffset: newPreOffset,
-                postOffset: postOffset,
-              ),
-            )
-            : postOffset;
+    final newPostOffset = config.postOffset != null
+        ? config.postOffset!(
+            PostOffsetScope(
+              bytes: bytes,
+              preOffset: preOffset,
+              wrapBytes: wrapBytesImpl,
+              newPreOffset: newPreOffset,
+              postOffset: postOffset,
+            ),
+          )
+        : postOffset;
     assertByteArrayOffsetIsNotOutOfRange(
       'offsetDecoder',
       newPostOffset,
@@ -170,13 +166,13 @@ Decoder<T> offsetDecoder<T>(Decoder<T> decoder, OffsetConfig config) {
 
   return switch (decoder) {
     FixedSizeDecoder<T>() => FixedSizeDecoder<T>(
-        fixedSize: decoder.fixedSize,
-        read: readImpl,
-      ),
+      fixedSize: decoder.fixedSize,
+      read: readImpl,
+    ),
     VariableSizeDecoder<T>() => VariableSizeDecoder<T>(
-        read: readImpl,
-        maxSize: decoder.maxSize,
-      ),
+      read: readImpl,
+      maxSize: decoder.maxSize,
+    ),
   };
 }
 

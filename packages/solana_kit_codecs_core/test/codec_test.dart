@@ -10,12 +10,11 @@ void main() {
       final myEncoder = FixedSizeEncoder<String>(
         fixedSize: 32,
         write: (value, bytes, offset) {
-          final charCodes =
-              value
-                  .substring(0, value.length > 32 ? 32 : value.length)
-                  .codeUnits
-                  .map((c) => c > 255 ? 255 : c)
-                  .toList();
+          final charCodes = value
+              .substring(0, value.length > 32 ? 32 : value.length)
+              .codeUnits
+              .map((c) => c > 255 ? 255 : c)
+              .toList();
           bytes.setAll(offset, charCodes);
           return offset + 32;
         },
@@ -24,8 +23,7 @@ void main() {
       expect(myEncoder.fixedSize, equals(32));
 
       // Test encode.
-      final expectedBytes = Uint8List(32)
-        ..setAll(0, [104, 101, 108, 108, 111]);
+      final expectedBytes = Uint8List(32)..setAll(0, [104, 101, 108, 108, 111]);
       expect(myEncoder.encode('hello'), equals(expectedBytes));
 
       // Test write.
@@ -38,8 +36,9 @@ void main() {
       final myEncoder = VariableSizeEncoder<String>(
         getSizeFromValue: (value) => value.length,
         write: (value, bytes, offset) {
-          final charCodes =
-              value.codeUnits.map((c) => c > 255 ? 255 : c).toList();
+          final charCodes = value.codeUnits
+              .map((c) => c > 255 ? 255 : c)
+              .toList();
           bytes.setAll(offset, charCodes);
           return offset + charCodes.length;
         },
@@ -93,12 +92,11 @@ void main() {
           return (str, offset + 32);
         },
         write: (value, bytes, offset) {
-          final charCodes =
-              value
-                  .substring(0, value.length > 32 ? 32 : value.length)
-                  .codeUnits
-                  .map((c) => c > 255 ? 255 : c)
-                  .toList();
+          final charCodes = value
+              .substring(0, value.length > 32 ? 32 : value.length)
+              .codeUnits
+              .map((c) => c > 255 ? 255 : c)
+              .toList();
           bytes.setAll(offset, charCodes);
           return offset + 32;
         },
@@ -107,8 +105,7 @@ void main() {
       expect(myCodec.fixedSize, equals(32));
 
       // Test encode.
-      final expectedBytes = Uint8List(32)
-        ..setAll(0, [104, 101, 108, 108, 111]);
+      final expectedBytes = Uint8List(32)..setAll(0, [104, 101, 108, 108, 111]);
       expect(myCodec.encode('hello'), equals(expectedBytes));
 
       // Test write.

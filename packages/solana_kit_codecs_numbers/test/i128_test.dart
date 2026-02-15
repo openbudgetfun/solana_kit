@@ -9,10 +9,8 @@ import 'setup.dart';
 void main() {
   group('i128', () {
     const be = NumberCodecConfig(endian: Endian.big);
-    final i128Min =
-        -BigInt.parse('170141183460469231731687303715884105728');
-    final i128Max =
-        BigInt.parse('170141183460469231731687303715884105727');
+    final i128Min = -BigInt.parse('170141183460469231731687303715884105728');
+    final i128Max = BigInt.parse('170141183460469231731687303715884105727');
 
     group('encoder', () {
       test('has the correct fixed size', () {
@@ -255,16 +253,8 @@ void main() {
 
       test('roundtrips boundary values', () {
         final codec = getI128Codec();
-        assertValidBigInt(
-          codec,
-          i128Min,
-          '00000000000000000000000000000080',
-        );
-        assertValidBigInt(
-          codec,
-          i128Max,
-          'ffffffffffffffffffffffffffffff7f',
-        );
+        assertValidBigInt(codec, i128Min, '00000000000000000000000000000080');
+        assertValidBigInt(codec, i128Max, 'ffffffffffffffffffffffffffffff7f');
         assertValidBigInt(
           codec,
           i128Min + BigInt.one,

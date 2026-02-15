@@ -8,36 +8,36 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 Decoder<T> createDecoderThatConsumesEntireByteArray<T>(Decoder<T> decoder) {
   return switch (decoder) {
     FixedSizeDecoder<T>() => FixedSizeDecoder<T>(
-        fixedSize: decoder.fixedSize,
-        read: (bytes, offset) {
-          final (value, newOffset) = decoder.read(bytes, offset);
-          if (bytes.length > newOffset) {
-            throw SolanaError(
-              SolanaErrorCode.codecsExpectedDecoderToConsumeEntireByteArray,
-              {
-                'expectedLength': newOffset,
-                'numExcessBytes': bytes.length - newOffset,
-              },
-            );
-          }
-          return (value, newOffset);
-        },
-      ),
+      fixedSize: decoder.fixedSize,
+      read: (bytes, offset) {
+        final (value, newOffset) = decoder.read(bytes, offset);
+        if (bytes.length > newOffset) {
+          throw SolanaError(
+            SolanaErrorCode.codecsExpectedDecoderToConsumeEntireByteArray,
+            {
+              'expectedLength': newOffset,
+              'numExcessBytes': bytes.length - newOffset,
+            },
+          );
+        }
+        return (value, newOffset);
+      },
+    ),
     VariableSizeDecoder<T>() => VariableSizeDecoder<T>(
-        read: (bytes, offset) {
-          final (value, newOffset) = decoder.read(bytes, offset);
-          if (bytes.length > newOffset) {
-            throw SolanaError(
-              SolanaErrorCode.codecsExpectedDecoderToConsumeEntireByteArray,
-              {
-                'expectedLength': newOffset,
-                'numExcessBytes': bytes.length - newOffset,
-              },
-            );
-          }
-          return (value, newOffset);
-        },
-        maxSize: decoder.maxSize,
-      ),
+      read: (bytes, offset) {
+        final (value, newOffset) = decoder.read(bytes, offset);
+        if (bytes.length > newOffset) {
+          throw SolanaError(
+            SolanaErrorCode.codecsExpectedDecoderToConsumeEntireByteArray,
+            {
+              'expectedLength': newOffset,
+              'numExcessBytes': bytes.length - newOffset,
+            },
+          );
+        }
+        return (value, newOffset);
+      },
+      maxSize: decoder.maxSize,
+    ),
   };
 }

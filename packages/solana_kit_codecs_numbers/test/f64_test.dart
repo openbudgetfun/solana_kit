@@ -72,8 +72,7 @@ void main() {
 
       test('decodes with offset', () {
         final decoder = getF64Decoder();
-        final (value, offset) =
-            decoder.read(b('ffffff000000000000f03f'), 3);
+        final (value, offset) = decoder.read(b('ffffff000000000000f03f'), 3);
         expect(value, equals(1.0));
         expect(offset, equals(11));
       });

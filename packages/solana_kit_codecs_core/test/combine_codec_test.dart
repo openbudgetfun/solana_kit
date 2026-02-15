@@ -28,30 +28,32 @@ void main() {
       expect(u8Codec.decode(Uint8List.fromList([42])), equals(42));
     });
 
-    test('can join encoders and decoders with different but matching types',
-        () {
-      // Encoder accepts num, decoder returns double (simulating different
-      // types for TFrom and TTo).
-      final numEncoder = FixedSizeEncoder<num>(
-        fixedSize: 1,
-        write: (value, buffer, offset) {
-          buffer[offset] = value.toInt();
-          return offset + 1;
-        },
-      );
+    test(
+      'can join encoders and decoders with different but matching types',
+      () {
+        // Encoder accepts num, decoder returns double (simulating different
+        // types for TFrom and TTo).
+        final numEncoder = FixedSizeEncoder<num>(
+          fixedSize: 1,
+          write: (value, buffer, offset) {
+            buffer[offset] = value.toInt();
+            return offset + 1;
+          },
+        );
 
-      final doubleDecoder = FixedSizeDecoder<double>(
-        fixedSize: 1,
-        read: (bytes, offset) => (bytes[offset].toDouble(), offset + 1),
-      );
+        final doubleDecoder = FixedSizeDecoder<double>(
+          fixedSize: 1,
+          read: (bytes, offset) => (bytes[offset].toDouble(), offset + 1),
+        );
 
-      final codec = combineCodec(numEncoder, doubleDecoder);
+        final codec = combineCodec(numEncoder, doubleDecoder);
 
-      expect(codec, isA<FixedSizeCodec<num, double>>());
-      expect((codec as FixedSizeCodec).fixedSize, equals(1));
-      expect(codec.encode(42), equals(Uint8List.fromList([42])));
-      expect(codec.decode(Uint8List.fromList([42])), equals(42.0));
-    });
+        expect(codec, isA<FixedSizeCodec<num, double>>());
+        expect((codec as FixedSizeCodec).fixedSize, equals(1));
+        expect(codec.encode(42), equals(Uint8List.fromList([42])));
+        expect(codec.decode(Uint8List.fromList([42])), equals(42.0));
+      },
+    );
 
     test('can join variable-size encoders and decoders', () {
       final encoder = VariableSizeEncoder<String>(
@@ -65,8 +67,7 @@ void main() {
 
       final decoder = VariableSizeDecoder<String>(
         read: (bytes, offset) {
-          final str =
-              String.fromCharCodes(bytes.sublist(offset));
+          final str = String.fromCharCodes(bytes.sublist(offset));
           return (str, bytes.length);
         },
         maxSize: 100,

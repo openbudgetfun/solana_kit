@@ -43,8 +43,9 @@ void main() {
         equals(84),
       );
       expect(
-        (resizeCodec(codec, (_) => 0) as VariableSizeCodec)
-            .getSizeFromValue(null),
+        (resizeCodec(codec, (_) => 0) as VariableSizeCodec).getSizeFromValue(
+          null,
+        ),
         equals(0),
       );
     });

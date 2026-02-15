@@ -17,8 +17,7 @@ Encoder<TFrom> addEncoderSizePrefix<TFrom>(
   int writeImpl(TFrom value, Uint8List bytes, int currentOffset) {
     // Use encode() to contain the encoder within its own bounds.
     final encoderBytes = encoder.encode(value);
-    final afterPrefix =
-        prefix.write(encoderBytes.length, bytes, currentOffset);
+    final afterPrefix = prefix.write(encoderBytes.length, bytes, currentOffset);
     bytes.setAll(afterPrefix, encoderBytes);
     return afterPrefix + encoderBytes.length;
   }
@@ -74,11 +73,7 @@ Decoder<TTo> addDecoderSizePrefix<TTo>(
     } else {
       sliced = bytes;
     }
-    assertByteArrayHasEnoughBytesForCodec(
-      'addDecoderSizePrefix',
-      size,
-      sliced,
-    );
+    assertByteArrayHasEnoughBytesForCodec('addDecoderSizePrefix', size, sliced);
     // Use decode() to contain the decoder within its own bounds.
     return (decoder.decode(sliced), contentStart + size);
   }
@@ -105,10 +100,7 @@ Decoder<TTo> addDecoderSizePrefix<TTo>(
     maxSize = null;
   }
 
-  return VariableSizeDecoder<TTo>(
-    read: readImpl,
-    maxSize: maxSize,
-  );
+  return VariableSizeDecoder<TTo>(read: readImpl, maxSize: maxSize);
 }
 
 /// Stores the byte size of [codec] as an encoded number prefix.

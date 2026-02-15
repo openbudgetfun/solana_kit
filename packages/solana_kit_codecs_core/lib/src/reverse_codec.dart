@@ -7,9 +7,7 @@ import 'package:solana_kit_codecs_core/src/combine_codec.dart';
 ///
 /// The returned encoder writes bytes in reverse order within the
 /// fixed-size range.
-FixedSizeEncoder<TFrom> reverseEncoder<TFrom>(
-  FixedSizeEncoder<TFrom> encoder,
-) {
+FixedSizeEncoder<TFrom> reverseEncoder<TFrom>(FixedSizeEncoder<TFrom> encoder) {
   assertIsFixedSize(encoder);
   return FixedSizeEncoder<TFrom>(
     fixedSize: encoder.fixedSize,
@@ -30,9 +28,7 @@ FixedSizeEncoder<TFrom> reverseEncoder<TFrom>(
 ///
 /// The returned decoder reverses bytes within the fixed-size range before
 /// decoding.
-FixedSizeDecoder<TTo> reverseDecoder<TTo>(
-  FixedSizeDecoder<TTo> decoder,
-) {
+FixedSizeDecoder<TTo> reverseDecoder<TTo>(FixedSizeDecoder<TTo> decoder) {
   assertIsFixedSize(decoder);
   return FixedSizeDecoder<TTo>(
     fixedSize: decoder.fixedSize,
@@ -56,16 +52,17 @@ FixedSizeCodec<TFrom, TTo> reverseCodec<TFrom, TTo>(
   FixedSizeCodec<TFrom, TTo> codec,
 ) {
   return combineCodec(
-    reverseEncoder(
-      FixedSizeEncoder<TFrom>(
-        fixedSize: codec.fixedSize,
-        write: codec.write,
-      ),
-    ),
-    reverseDecoder(
-      FixedSizeDecoder<TTo>(fixedSize: codec.fixedSize, read: codec.read),
-    ),
-  ) as FixedSizeCodec<TFrom, TTo>;
+        reverseEncoder(
+          FixedSizeEncoder<TFrom>(
+            fixedSize: codec.fixedSize,
+            write: codec.write,
+          ),
+        ),
+        reverseDecoder(
+          FixedSizeDecoder<TTo>(fixedSize: codec.fixedSize, read: codec.read),
+        ),
+      )
+      as FixedSizeCodec<TFrom, TTo>;
 }
 
 /// Reverses bytes between [sourceStart] (inclusive) and [sourceEnd]

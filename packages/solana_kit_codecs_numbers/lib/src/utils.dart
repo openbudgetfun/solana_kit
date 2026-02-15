@@ -133,12 +133,7 @@ BigInt readBigIntUnsigned(
 /// using [size] bytes in the given [endian] byte order.
 ///
 /// Uses two's complement representation.
-BigInt readBigIntSigned(
-  Uint8List bytes,
-  int offset,
-  int size,
-  Endian endian,
-) {
+BigInt readBigIntSigned(Uint8List bytes, int offset, int size, Endian endian) {
   final unsigned = readBigIntUnsigned(bytes, offset, size, endian);
   final maxPositive = BigInt.one << (size * 8 - 1);
   if (unsigned >= maxPositive) {
@@ -158,7 +153,8 @@ void writeBigIntSigned(
   BigInt value,
   Endian endian,
 ) {
-  final unsigned =
-      value < BigInt.zero ? value + (BigInt.one << (size * 8)) : value;
+  final unsigned = value < BigInt.zero
+      ? value + (BigInt.one << (size * 8))
+      : value;
   writeBigIntUnsigned(bytes, offset, size, unsigned, endian);
 }

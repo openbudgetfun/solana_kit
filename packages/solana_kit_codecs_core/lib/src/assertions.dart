@@ -13,10 +13,9 @@ void assertByteArrayIsNotEmptyForCodec(
   int offset = 0,
 ]) {
   if (bytes.length - offset <= 0) {
-    throw SolanaError(
-      SolanaErrorCode.codecsCannotDecodeEmptyByteArray,
-      {'codecDescription': codecDescription},
-    );
+    throw SolanaError(SolanaErrorCode.codecsCannotDecodeEmptyByteArray, {
+      'codecDescription': codecDescription,
+    });
   }
 }
 
@@ -33,14 +32,11 @@ void assertByteArrayHasEnoughBytesForCodec(
 ]) {
   final bytesLength = bytes.length - offset;
   if (bytesLength < expected) {
-    throw SolanaError(
-      SolanaErrorCode.codecsInvalidByteLength,
-      {
-        'bytesLength': bytesLength,
-        'codecDescription': codecDescription,
-        'expected': expected,
-      },
-    );
+    throw SolanaError(SolanaErrorCode.codecsInvalidByteLength, {
+      'bytesLength': bytesLength,
+      'codecDescription': codecDescription,
+      'expected': expected,
+    });
   }
 }
 
@@ -56,13 +52,10 @@ void assertByteArrayOffsetIsNotOutOfRange(
   int bytesLength,
 ) {
   if (offset < 0 || offset > bytesLength) {
-    throw SolanaError(
-      SolanaErrorCode.codecsOffsetOutOfRange,
-      {
-        'bytesLength': bytesLength,
-        'codecDescription': codecDescription,
-        'offset': offset,
-      },
-    );
+    throw SolanaError(SolanaErrorCode.codecsOffsetOutOfRange, {
+      'bytesLength': bytesLength,
+      'codecDescription': codecDescription,
+      'offset': offset,
+    });
   }
 }

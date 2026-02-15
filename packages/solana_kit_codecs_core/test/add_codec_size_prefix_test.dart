@@ -18,7 +18,8 @@ void main() {
           return offset + 4;
         },
         read: (bytes, offset) {
-          final v = bytes[offset] |
+          final v =
+              bytes[offset] |
               (bytes[offset + 1] << 8) |
               (bytes[offset + 2] << 16) |
               (bytes[offset + 3] << 24);
@@ -44,10 +45,7 @@ void main() {
       // Encoding should place the size (10) as a 4-byte LE prefix.
       final encoded = prefixedCodec.encode('68656c6c6f776f726c64');
       // Size prefix: 10 = 0x0a000000 in LE.
-      expect(
-        encoded,
-        equals(b('0a00000068656c6c6f776f726c64')),
-      );
+      expect(encoded, equals(b('0a00000068656c6c6f776f726c64')));
     });
 
     test('decodes the byte length before reading the content', () {
@@ -62,7 +60,8 @@ void main() {
           return offset + 4;
         },
         read: (bytes, offset) {
-          final v = bytes[offset] |
+          final v =
+              bytes[offset] |
               (bytes[offset + 1] << 8) |
               (bytes[offset + 2] << 16) |
               (bytes[offset + 3] << 24);
@@ -85,9 +84,7 @@ void main() {
       final prefixedCodec = addCodecSizePrefix(contentCodec, numberCodec);
 
       // Bytes: 0a000000 (size = 10) followed by 10 bytes of content.
-      final decoded = prefixedCodec.decode(
-        b('0a00000068656c6c6f776f726c64'),
-      );
+      final decoded = prefixedCodec.decode(b('0a00000068656c6c6f776f726c64'));
       expect(decoded, equals('68656c6c6f776f726c64'));
     });
 
@@ -114,10 +111,7 @@ void main() {
 
       final prefixedCodec = addCodecSizePrefix(contentCodec, numberCodec);
 
-      expect(
-        () => prefixedCodec.encode(''),
-        throwsA(isA<StateError>()),
-      );
+      expect(() => prefixedCodec.encode(''), throwsA(isA<StateError>()));
     });
 
     test('returns the correct fixed size', () {

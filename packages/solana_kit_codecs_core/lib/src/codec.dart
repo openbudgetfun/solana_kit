@@ -56,8 +56,8 @@ final class VariableSizeEncoder<T> extends Encoder<T> {
     required int Function(T value) getSizeFromValue,
     required int Function(T value, Uint8List bytes, int offset) write,
     this.maxSize,
-  })  : _getSizeFromValue = getSizeFromValue,
-        _write = write;
+  }) : _getSizeFromValue = getSizeFromValue,
+       _write = write;
 
   final int Function(T value) _getSizeFromValue;
   final int Function(T value, Uint8List bytes, int offset) _write;
@@ -177,8 +177,8 @@ final class FixedSizeCodec<TFrom, TTo> extends Codec<TFrom, TTo> {
     required this.fixedSize,
     required int Function(TFrom value, Uint8List bytes, int offset) write,
     required (TTo value, int offset) Function(Uint8List bytes, int offset) read,
-  })  : _write = write,
-        _read = read;
+  }) : _write = write,
+       _read = read;
 
   /// The fixed number of bytes used by this codec.
   final int fixedSize;
@@ -213,9 +213,9 @@ final class VariableSizeCodec<TFrom, TTo> extends Codec<TFrom, TTo> {
     required int Function(TFrom value, Uint8List bytes, int offset) write,
     required (TTo value, int offset) Function(Uint8List bytes, int offset) read,
     this.maxSize,
-  })  : _getSizeFromValue = getSizeFromValue,
-        _write = write,
-        _read = read;
+  }) : _getSizeFromValue = getSizeFromValue,
+       _write = write,
+       _read = read;
 
   final int Function(TFrom value) _getSizeFromValue;
   final int Function(TFrom value, Uint8List bytes, int offset) _write;

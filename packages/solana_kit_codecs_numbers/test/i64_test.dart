@@ -25,11 +25,7 @@ void main() {
         assertValidEncodeBigInt(encoder, BigInt.one, '0100000000000000');
         assertValidEncodeBigInt(encoder, BigInt.from(42), '2a00000000000000');
         assertValidEncodeBigInt(encoder, -BigInt.one, 'ffffffffffffffff');
-        assertValidEncodeBigInt(
-          encoder,
-          -BigInt.from(42),
-          'd6ffffffffffffff',
-        );
+        assertValidEncodeBigInt(encoder, -BigInt.from(42), 'd6ffffffffffffff');
         assertValidEncodeBigInt(encoder, i64Min, '0000000000000080');
         assertValidEncodeBigInt(encoder, i64Max, 'ffffffffffffff7f');
       });
@@ -40,11 +36,7 @@ void main() {
         assertValidEncodeBigInt(encoder, BigInt.one, '0000000000000001');
         assertValidEncodeBigInt(encoder, BigInt.from(42), '000000000000002a');
         assertValidEncodeBigInt(encoder, -BigInt.one, 'ffffffffffffffff');
-        assertValidEncodeBigInt(
-          encoder,
-          -BigInt.from(42),
-          'ffffffffffffffd6',
-        );
+        assertValidEncodeBigInt(encoder, -BigInt.from(42), 'ffffffffffffffd6');
         assertValidEncodeBigInt(encoder, i64Min, '8000000000000000');
         assertValidEncodeBigInt(encoder, i64Max, '7fffffffffffffff');
       });
@@ -69,10 +61,7 @@ void main() {
         expect(decoder.decode(b('0100000000000000')), equals(BigInt.one));
         expect(decoder.decode(b('2a00000000000000')), equals(BigInt.from(42)));
         expect(decoder.decode(b('ffffffffffffffff')), equals(-BigInt.one));
-        expect(
-          decoder.decode(b('d6ffffffffffffff')),
-          equals(-BigInt.from(42)),
-        );
+        expect(decoder.decode(b('d6ffffffffffffff')), equals(-BigInt.from(42)));
         expect(decoder.decode(b('0000000000000080')), equals(i64Min));
         expect(decoder.decode(b('ffffffffffffff7f')), equals(i64Max));
       });
@@ -83,18 +72,14 @@ void main() {
         expect(decoder.decode(b('0000000000000001')), equals(BigInt.one));
         expect(decoder.decode(b('000000000000002a')), equals(BigInt.from(42)));
         expect(decoder.decode(b('ffffffffffffffff')), equals(-BigInt.one));
-        expect(
-          decoder.decode(b('ffffffffffffffd6')),
-          equals(-BigInt.from(42)),
-        );
+        expect(decoder.decode(b('ffffffffffffffd6')), equals(-BigInt.from(42)));
         expect(decoder.decode(b('8000000000000000')), equals(i64Min));
         expect(decoder.decode(b('7fffffffffffffff')), equals(i64Max));
       });
 
       test('decodes with offset', () {
         final decoder = getI64Decoder();
-        final (value, offset) =
-            decoder.read(b('ffffffd6ffffffffffffff'), 3);
+        final (value, offset) = decoder.read(b('ffffffd6ffffffffffffff'), 3);
         expect(value, equals(-BigInt.from(42)));
         expect(offset, equals(11));
       });

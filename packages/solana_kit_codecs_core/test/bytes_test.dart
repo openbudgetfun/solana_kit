@@ -141,14 +141,8 @@ void main() {
 
     test('treats empty byte arrays as equal', () {
       expect(bytesEqual(Uint8List(0), Uint8List(0)), isTrue);
-      expect(
-        bytesEqual(Uint8List(0), Uint8List.fromList([0])),
-        isFalse,
-      );
-      expect(
-        bytesEqual(Uint8List.fromList([0]), Uint8List(0)),
-        isFalse,
-      );
+      expect(bytesEqual(Uint8List(0), Uint8List.fromList([0])), isFalse);
+      expect(bytesEqual(Uint8List.fromList([0]), Uint8List(0)), isFalse);
     });
 
     test('returns false when byte arrays are different lengths', () {
