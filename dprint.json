@@ -1,0 +1,45 @@
+{
+  "$schema": "https://dprint.dev/schemas/v0.json",
+  "incremental": true,
+  "exec": {
+    "commands": [
+      {
+        "command": "nixfmt",
+        "exts": ["nix"]
+      },
+      {
+        "command": "shfmt -w",
+        "exts": ["sh", "bash"]
+      },
+      {
+        "command": "dartfmt",
+        "exts": ["dart"]
+      }
+    ]
+  },
+  "json": {
+    "indentWidth": 2,
+    "useTabs": false
+  },
+  "markdown": {},
+  "toml": {},
+  "yaml": {
+    "indentWidth": 2
+  },
+  "excludes": [
+    "**/.dart_tool/**",
+    "**/build/**",
+    "**/.devenv*/**",
+    "**/.direnv/**",
+    "pubspec.lock",
+    "**/pubspec.lock",
+    ".repos/**"
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/json-0.21.1.wasm",
+    "https://plugins.dprint.dev/markdown-0.21.1.wasm",
+    "https://plugins.dprint.dev/toml-0.7.0.wasm",
+    "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.0.wasm",
+    "https://plugins.dprint.dev/exec-0.5.0.json@1b37c24bbe8cc5bca945b1b285b47d9b36a2bbb0c2a507e1c535b25a36aff107"
+  ]
+}
