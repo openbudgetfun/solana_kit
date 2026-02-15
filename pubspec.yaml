@@ -1,0 +1,70 @@
+name: solana_kit_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.10.1
+
+workspace:
+  - packages/solana_kit
+  - packages/solana_kit_accounts
+  - packages/solana_kit_addresses
+  - packages/solana_kit_codecs
+  - packages/solana_kit_codecs_core
+  - packages/solana_kit_codecs_data_structures
+  - packages/solana_kit_codecs_numbers
+  - packages/solana_kit_codecs_strings
+  - packages/solana_kit_errors
+  - packages/solana_kit_fast_stable_stringify
+  - packages/solana_kit_functional
+  - packages/solana_kit_instruction_plans
+  - packages/solana_kit_instructions
+  - packages/solana_kit_keys
+  - packages/solana_kit_lints
+  - packages/solana_kit_offchain_messages
+  - packages/solana_kit_options
+  - packages/solana_kit_program_client_core
+  - packages/solana_kit_programs
+  - packages/solana_kit_rpc
+  - packages/solana_kit_rpc_api
+  - packages/solana_kit_rpc_parsed_types
+  - packages/solana_kit_rpc_spec
+  - packages/solana_kit_rpc_spec_types
+  - packages/solana_kit_rpc_subscriptions
+  - packages/solana_kit_rpc_subscriptions_api
+  - packages/solana_kit_rpc_subscriptions_channel_websocket
+  - packages/solana_kit_rpc_transport_http
+  - packages/solana_kit_rpc_transformers
+  - packages/solana_kit_rpc_types
+  - packages/solana_kit_signers
+  - packages/solana_kit_subscribable
+  - packages/solana_kit_sysvars
+  - packages/solana_kit_test_matchers
+  - packages/solana_kit_transaction_confirmation
+  - packages/solana_kit_transaction_messages
+  - packages/solana_kit_transactions
+
+dev_dependencies:
+  melos: ^7.4.0
+
+melos:
+  name: solana_kit
+  sdkPath: .fvm/flutter_sdk
+
+  scripts:
+    analyze:
+      description: Run dart analyze across all packages.
+      exec: dart analyze --fatal-infos .
+
+    test:
+      description: Run tests in all packages.
+      exec: dart test
+      packageFilters:
+        dirExists: test
+
+    format:
+      description: Format all Dart code.
+      run: dart format .
+
+    upgrade:
+      description: Upgrade dependencies in all packages.
+      exec: dart pub upgrade

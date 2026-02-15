@@ -1,0 +1,517 @@
+[github]
+owner = "openbudgetfun"
+repo = "solana_kit"
+
+###############################################################################
+# Packages
+###############################################################################
+
+[packages.solana_kit]
+versioned_files = ["packages/solana_kit/pubspec.yaml"]
+scopes = ["solana_kit"]
+changelog = "packages/solana_kit/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_accounts]
+versioned_files = ["packages/solana_kit_accounts/pubspec.yaml"]
+scopes = ["solana_kit_accounts"]
+changelog = "packages/solana_kit_accounts/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_addresses]
+versioned_files = ["packages/solana_kit_addresses/pubspec.yaml"]
+scopes = ["solana_kit_addresses"]
+changelog = "packages/solana_kit_addresses/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_codecs]
+versioned_files = ["packages/solana_kit_codecs/pubspec.yaml"]
+scopes = ["solana_kit_codecs"]
+changelog = "packages/solana_kit_codecs/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_codecs_core]
+versioned_files = ["packages/solana_kit_codecs_core/pubspec.yaml"]
+scopes = ["solana_kit_codecs_core"]
+changelog = "packages/solana_kit_codecs_core/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_codecs_data_structures]
+versioned_files = ["packages/solana_kit_codecs_data_structures/pubspec.yaml"]
+scopes = ["solana_kit_codecs_data_structures"]
+changelog = "packages/solana_kit_codecs_data_structures/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_codecs_numbers]
+versioned_files = ["packages/solana_kit_codecs_numbers/pubspec.yaml"]
+scopes = ["solana_kit_codecs_numbers"]
+changelog = "packages/solana_kit_codecs_numbers/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_codecs_strings]
+versioned_files = ["packages/solana_kit_codecs_strings/pubspec.yaml"]
+scopes = ["solana_kit_codecs_strings"]
+changelog = "packages/solana_kit_codecs_strings/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_errors]
+versioned_files = ["packages/solana_kit_errors/pubspec.yaml"]
+scopes = ["solana_kit_errors"]
+changelog = "packages/solana_kit_errors/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_fast_stable_stringify]
+versioned_files = ["packages/solana_kit_fast_stable_stringify/pubspec.yaml"]
+scopes = ["solana_kit_fast_stable_stringify"]
+changelog = "packages/solana_kit_fast_stable_stringify/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_functional]
+versioned_files = ["packages/solana_kit_functional/pubspec.yaml"]
+scopes = ["solana_kit_functional"]
+changelog = "packages/solana_kit_functional/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_instruction_plans]
+versioned_files = ["packages/solana_kit_instruction_plans/pubspec.yaml"]
+scopes = ["solana_kit_instruction_plans"]
+changelog = "packages/solana_kit_instruction_plans/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_instructions]
+versioned_files = ["packages/solana_kit_instructions/pubspec.yaml"]
+scopes = ["solana_kit_instructions"]
+changelog = "packages/solana_kit_instructions/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_keys]
+versioned_files = ["packages/solana_kit_keys/pubspec.yaml"]
+scopes = ["solana_kit_keys"]
+changelog = "packages/solana_kit_keys/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_offchain_messages]
+versioned_files = ["packages/solana_kit_offchain_messages/pubspec.yaml"]
+scopes = ["solana_kit_offchain_messages"]
+changelog = "packages/solana_kit_offchain_messages/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_options]
+versioned_files = ["packages/solana_kit_options/pubspec.yaml"]
+scopes = ["solana_kit_options"]
+changelog = "packages/solana_kit_options/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_program_client_core]
+versioned_files = ["packages/solana_kit_program_client_core/pubspec.yaml"]
+scopes = ["solana_kit_program_client_core"]
+changelog = "packages/solana_kit_program_client_core/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_programs]
+versioned_files = ["packages/solana_kit_programs/pubspec.yaml"]
+scopes = ["solana_kit_programs"]
+changelog = "packages/solana_kit_programs/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_rpc]
+versioned_files = ["packages/solana_kit_rpc/pubspec.yaml"]
+scopes = ["solana_kit_rpc"]
+changelog = "packages/solana_kit_rpc/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_rpc_api]
+versioned_files = ["packages/solana_kit_rpc_api/pubspec.yaml"]
+scopes = ["solana_kit_rpc_api"]
+changelog = "packages/solana_kit_rpc_api/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_rpc_parsed_types]
+versioned_files = ["packages/solana_kit_rpc_parsed_types/pubspec.yaml"]
+scopes = ["solana_kit_rpc_parsed_types"]
+changelog = "packages/solana_kit_rpc_parsed_types/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_rpc_spec]
+versioned_files = ["packages/solana_kit_rpc_spec/pubspec.yaml"]
+scopes = ["solana_kit_rpc_spec"]
+changelog = "packages/solana_kit_rpc_spec/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_rpc_spec_types]
+versioned_files = ["packages/solana_kit_rpc_spec_types/pubspec.yaml"]
+scopes = ["solana_kit_rpc_spec_types"]
+changelog = "packages/solana_kit_rpc_spec_types/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_rpc_subscriptions]
+versioned_files = ["packages/solana_kit_rpc_subscriptions/pubspec.yaml"]
+scopes = ["solana_kit_rpc_subscriptions"]
+changelog = "packages/solana_kit_rpc_subscriptions/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_rpc_subscriptions_api]
+versioned_files = ["packages/solana_kit_rpc_subscriptions_api/pubspec.yaml"]
+scopes = ["solana_kit_rpc_subscriptions_api"]
+changelog = "packages/solana_kit_rpc_subscriptions_api/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_rpc_subscriptions_channel_websocket]
+versioned_files = ["packages/solana_kit_rpc_subscriptions_channel_websocket/pubspec.yaml"]
+scopes = ["solana_kit_rpc_subscriptions_channel_websocket"]
+changelog = "packages/solana_kit_rpc_subscriptions_channel_websocket/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_rpc_transport_http]
+versioned_files = ["packages/solana_kit_rpc_transport_http/pubspec.yaml"]
+scopes = ["solana_kit_rpc_transport_http"]
+changelog = "packages/solana_kit_rpc_transport_http/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_rpc_transformers]
+versioned_files = ["packages/solana_kit_rpc_transformers/pubspec.yaml"]
+scopes = ["solana_kit_rpc_transformers"]
+changelog = "packages/solana_kit_rpc_transformers/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_rpc_types]
+versioned_files = ["packages/solana_kit_rpc_types/pubspec.yaml"]
+scopes = ["solana_kit_rpc_types"]
+changelog = "packages/solana_kit_rpc_types/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_signers]
+versioned_files = ["packages/solana_kit_signers/pubspec.yaml"]
+scopes = ["solana_kit_signers"]
+changelog = "packages/solana_kit_signers/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_subscribable]
+versioned_files = ["packages/solana_kit_subscribable/pubspec.yaml"]
+scopes = ["solana_kit_subscribable"]
+changelog = "packages/solana_kit_subscribable/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_sysvars]
+versioned_files = ["packages/solana_kit_sysvars/pubspec.yaml"]
+scopes = ["solana_kit_sysvars"]
+changelog = "packages/solana_kit_sysvars/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_transaction_confirmation]
+versioned_files = ["packages/solana_kit_transaction_confirmation/pubspec.yaml"]
+scopes = ["solana_kit_transaction_confirmation"]
+changelog = "packages/solana_kit_transaction_confirmation/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_transaction_messages]
+versioned_files = ["packages/solana_kit_transaction_messages/pubspec.yaml"]
+scopes = ["solana_kit_transaction_messages"]
+changelog = "packages/solana_kit_transaction_messages/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+[packages.solana_kit_transactions]
+versioned_files = ["packages/solana_kit_transactions/pubspec.yaml"]
+scopes = ["solana_kit_transactions"]
+changelog = "packages/solana_kit_transactions/changelog.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
+###############################################################################
+# Workflows
+###############################################################################
+
+[[workflows]]
+name = "document-change"
+
+[[workflows.steps]]
+type = "CreateChangeFile"
+
+[[workflows.steps]]
+type = "Command"
+command = "dprint fmt --config dprint.json"
+
+# -----------------------------------------------------------------------------
+
+[[workflows]]
+name = "release"
+
+[[workflows.steps]]
+type = "PrepareRelease"
+ignore_conventional_commits = true
+
+[[workflows.steps]]
+type = "Command"
+command = "dprint fmt --config dprint.json"
+
+[[workflows.steps]]
+type = "Command"
+command = "git add --all"
+
+[[workflows.steps]]
+type = "Command"
+command = "git commit -m 'chore: prepare release'"
+
+[[workflows.steps]]
+type = "Command"
+command = "git push"
+
+[[workflows.steps]]
+type = "Release"
+
+# -----------------------------------------------------------------------------
+
+[[workflows]]
+name = "forced-release"
+
+[[workflows.steps]]
+type = "Release"
+
+# -----------------------------------------------------------------------------
+
+[[workflows]]
+name = "publish"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_accounts && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_addresses && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_codecs && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_codecs_core && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_codecs_data_structures && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_codecs_numbers && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_codecs_strings && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_errors && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_fast_stable_stringify && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_functional && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_instruction_plans && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_instructions && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_keys && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_offchain_messages && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_options && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_program_client_core && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_programs && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_rpc && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_rpc_api && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_rpc_parsed_types && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_rpc_spec && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_rpc_spec_types && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_rpc_subscriptions && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_rpc_subscriptions_api && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_rpc_subscriptions_channel_websocket && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_rpc_transport_http && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_rpc_transformers && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_rpc_types && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_signers && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_subscribable && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_sysvars && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_transaction_confirmation && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_transaction_messages && dart pub publish --force"
+
+[[workflows.steps]]
+type = "Command"
+command = "cd packages/solana_kit_transactions && dart pub publish --force"
