@@ -197,9 +197,9 @@
 
 ### solana_kit_rpc_transformers (~16 source files, ~7 test files)
 
-- [ ] T075 [US2] Port request/response transformers and BigInt upcast/downcast from `.repos/kit/packages/rpc-transformers/src/` to `packages/solana_kit_rpc_transformers/lib/src/`
-- [ ] T076 [US2] Update barrel export `packages/solana_kit_rpc_transformers/lib/solana_kit_rpc_transformers.dart`
-- [ ] T077 [US2] Port all 7 test files from `.repos/kit/packages/rpc-transformers/src/__tests__/` to `packages/solana_kit_rpc_transformers/test/`
+- [x] T075 [US2] Port request/response transformers and BigInt upcast/downcast from `.repos/kit/packages/rpc-transformers/src/` to `packages/solana_kit_rpc_transformers/lib/src/`
+- [x] T076 [US2] Update barrel export `packages/solana_kit_rpc_transformers/lib/solana_kit_rpc_transformers.dart`
+- [x] T077 [US2] Port all 7 test files from `.repos/kit/packages/rpc-transformers/src/__tests__/` to `packages/solana_kit_rpc_transformers/test/`
 
 ### solana_kit_rpc_transport_http (~9 source files, ~10 test files)
 
