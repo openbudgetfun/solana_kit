@@ -156,9 +156,9 @@
 
 ### solana_kit_offchain_messages (~26 source files, ~11 test files)
 
-- [ ] T059 [P] [US1] Port offchain message v0/v1 encoding/decoding from `.repos/kit/packages/offchain-message/src/` to `packages/solana_kit_offchain_messages/lib/src/`
-- [ ] T060 [US1] Update barrel export `packages/solana_kit_offchain_messages/lib/solana_kit_offchain_messages.dart`
-- [ ] T061 [US1] Port all 11 test files from `.repos/kit/packages/offchain-message/src/__tests__/` to `packages/solana_kit_offchain_messages/test/`
+- [x] T059 [P] [US1] Port offchain message v0/v1 encoding/decoding from `.repos/kit/packages/offchain-message/src/` to `packages/solana_kit_offchain_messages/lib/src/`
+- [x] T060 [US1] Update barrel export `packages/solana_kit_offchain_messages/lib/solana_kit_offchain_messages.dart`
+- [x] T061 [US1] Port all 11 test files from `.repos/kit/packages/offchain-message/src/__tests__/` to `packages/solana_kit_offchain_messages/test/`
 
 **Checkpoint**: Full transaction lifecycle implemented. Developers can create keypairs, build transactions, sign them, and compile to wire format. `melos test --scope="solana_kit_addresses" --scope="solana_kit_keys" --scope="solana_kit_instructions" --scope="solana_kit_programs" --scope="solana_kit_transaction_messages" --scope="solana_kit_transactions" --scope="solana_kit_signers"` passes.
 
