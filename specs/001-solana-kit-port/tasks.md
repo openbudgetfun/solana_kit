@@ -55,11 +55,11 @@
 
 ### solana_kit_codecs_core (~17 source files, ~28 test files)
 
-- [ ] T007 [US3] Port Codec/Encoder/Decoder interfaces and core types from `.repos/kit/packages/codecs-core/src/` to `packages/solana_kit_codecs_core/lib/src/`
-- [ ] T008 [US3] Port composition utilities (transformCodec, fixCodecSize, offsetCodec, padCodec, reverseCodec) in `packages/solana_kit_codecs_core/lib/src/`
-- [ ] T009 [US3] Port byte helpers (containsBytes, getEncodedSize) and createCodec/createEncoder/createDecoder in `packages/solana_kit_codecs_core/lib/src/`
-- [ ] T010 [US3] Update barrel export `packages/solana_kit_codecs_core/lib/solana_kit_codecs_core.dart`
-- [ ] T011 [US3] Port all 28 test files from `.repos/kit/packages/codecs-core/src/__tests__/` to `packages/solana_kit_codecs_core/test/`
+- [x] T007 [US3] Port Codec/Encoder/Decoder interfaces and core types from `.repos/kit/packages/codecs-core/src/` to `packages/solana_kit_codecs_core/lib/src/`
+- [x] T008 [US3] Port composition utilities (transformCodec, fixCodecSize, offsetCodec, padCodec, reverseCodec) in `packages/solana_kit_codecs_core/lib/src/`
+- [x] T009 [US3] Port byte helpers (containsBytes, getEncodedSize) and createCodec/createEncoder/createDecoder in `packages/solana_kit_codecs_core/lib/src/`
+- [x] T010 [US3] Update barrel export `packages/solana_kit_codecs_core/lib/solana_kit_codecs_core.dart`
+- [x] T011 [US3] Port all 28 test files from `.repos/kit/packages/codecs-core/src/__tests__/` to `packages/solana_kit_codecs_core/test/`
 
 ### solana_kit_codecs_numbers (~17 source files, ~15 test files)
 
