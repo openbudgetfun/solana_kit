@@ -8,8 +8,17 @@ environment:
 resolution: workspace
 
 dependencies:
+  meta: ^1.16.0
+  solana_kit_addresses:
+  solana_kit_codecs_core:
+  solana_kit_codecs_data_structures:
+  solana_kit_codecs_numbers:
+  solana_kit_codecs_strings:
   solana_kit_errors:
+  solana_kit_instructions:
+  solana_kit_keys:
   solana_kit_transaction_messages:
 
 dev_dependencies:
   solana_kit_lints:
+  test: ^1.25.0
