@@ -178,10 +178,10 @@
 
 ### solana_kit_rpc_types (~20 source files, ~11 test files)
 
-- [ ] T065 [P] [US2] Port Commitment, Lamports, UnixTimestamp, Blockhash, TransactionVersion types from `.repos/kit/packages/rpc-types/src/` to `packages/solana_kit_rpc_types/lib/src/`
-- [ ] T066 [US2] Port TokenAmount, AccountInfoBase, SimulatedTransactionAccountInfo and remaining types in `packages/solana_kit_rpc_types/lib/src/`
-- [ ] T067 [US2] Update barrel export `packages/solana_kit_rpc_types/lib/solana_kit_rpc_types.dart`
-- [ ] T068 [US2] Port all 11 test files from `.repos/kit/packages/rpc-types/src/__tests__/` to `packages/solana_kit_rpc_types/test/`
+- [x] T065 [P] [US2] Port Commitment, Lamports, UnixTimestamp, Blockhash, TransactionVersion types from `.repos/kit/packages/rpc-types/src/` to `packages/solana_kit_rpc_types/lib/src/`
+- [x] T066 [US2] Port TokenAmount, AccountInfoBase, SimulatedTransactionAccountInfo and remaining types in `packages/solana_kit_rpc_types/lib/src/`
+- [x] T067 [US2] Update barrel export `packages/solana_kit_rpc_types/lib/solana_kit_rpc_types.dart`
+- [x] T068 [US2] Port all 11 test files from `.repos/kit/packages/rpc-types/src/__tests__/` to `packages/solana_kit_rpc_types/test/`
 
 ### solana_kit_rpc_spec (~4 source files, ~6 test files)
 
