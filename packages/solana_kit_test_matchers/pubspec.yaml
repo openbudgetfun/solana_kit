@@ -1,0 +1,16 @@
+name: solana_kit_test_matchers
+description: Test assertion helpers for the Solana Kit Dart SDK.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ^3.10.1
+
+resolution: workspace
+
+dependencies:
+  solana_kit_errors:
+  test: ^1.25.0
+
+dev_dependencies:
+  solana_kit_lints:

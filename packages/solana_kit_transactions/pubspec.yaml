@@ -1,0 +1,15 @@
+name: solana_kit_transactions
+description: Transaction compilation and signing for the Solana Kit Dart SDK.
+version: 0.0.1
+
+environment:
+  sdk: ^3.10.1
+
+resolution: workspace
+
+dependencies:
+  solana_kit_errors:
+  solana_kit_transaction_messages:
+
+dev_dependencies:
+  solana_kit_lints:
