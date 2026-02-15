@@ -8,7 +8,11 @@ environment:
 resolution: workspace
 
 dependencies:
+  crypto: ^3.0.6
+  solana_kit_codecs_core:
+  solana_kit_codecs_strings:
   solana_kit_errors:
 
 dev_dependencies:
   solana_kit_lints:
+  test: ^1.25.0

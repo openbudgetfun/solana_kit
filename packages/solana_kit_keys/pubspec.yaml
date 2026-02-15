@@ -8,8 +8,12 @@ environment:
 resolution: workspace
 
 dependencies:
+  ed25519_edwards: ^0.3.1
   solana_kit_addresses:
+  solana_kit_codecs_core:
+  solana_kit_codecs_strings:
   solana_kit_errors:
 
 dev_dependencies:
   solana_kit_lints:
+  test: ^1.25.0
