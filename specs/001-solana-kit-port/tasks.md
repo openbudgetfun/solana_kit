@@ -203,9 +203,9 @@
 
 ### solana_kit_rpc_transport_http (~9 source files, ~10 test files)
 
-- [ ] T078 [P] [US2] Port HTTP transport using `http` package from `.repos/kit/packages/rpc-transport-http/src/` to `packages/solana_kit_rpc_transport_http/lib/src/`
-- [ ] T079 [US2] Update barrel export `packages/solana_kit_rpc_transport_http/lib/solana_kit_rpc_transport_http.dart`
-- [ ] T080 [US2] Port all 10 test files from `.repos/kit/packages/rpc-transport-http/src/__tests__/` to `packages/solana_kit_rpc_transport_http/test/`
+- [x] T078 [P] [US2] Port HTTP transport using `http` package from `.repos/kit/packages/rpc-transport-http/src/` to `packages/solana_kit_rpc_transport_http/lib/src/`
+- [x] T079 [US2] Update barrel export `packages/solana_kit_rpc_transport_http/lib/solana_kit_rpc_transport_http.dart`
+- [x] T080 [US2] Port all 10 test files from `.repos/kit/packages/rpc-transport-http/src/__tests__/` to `packages/solana_kit_rpc_transport_http/test/`
 
 ### solana_kit_rpc_api (~107 source files, ~61 test files)
 
