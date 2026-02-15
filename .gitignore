@@ -1,0 +1,33 @@
+# Devenv
+.devenv*
+devenv.local.nix
+devenv.local.yaml
+
+# direnv
+.direnv
+
+# FVM
+.fvm/
+
+# Dart
+.dart_tool/
+build/
+.packages
+.pub/
+pubspec.lock
+
+# IDE
+*.iml
+.idea/
+*.swp
+*.swo
+.vscode/
+
+# macOS
+.DS_Store
+
+# Reference repos
+.repos/
+
+# eget binaries (installed locally)
+.eget/bin/
