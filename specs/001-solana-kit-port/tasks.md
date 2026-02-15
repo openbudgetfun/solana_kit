@@ -27,8 +27,8 @@
 
 **Purpose**: Verify workspace and reference repos are ready for implementation
 
-- [ ] T001 Verify all 37 scaffolded packages resolve with `dart pub get` in `packages/`
-- [ ] T002 Clone/update reference repos with `clone:repos` and verify `.repos/kit/` and `.repos/espresso-cash-public/` are present
+- [x] T001 Verify all 37 scaffolded packages resolve with `dart pub get` in `packages/`
+- [x] T002 Clone/update reference repos with `clone:repos` and verify `.repos/kit/` and `.repos/espresso-cash-public/` are present
 
 ---
 
@@ -38,10 +38,10 @@
 
 **CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T003 Implement `pipe()` function porting from `.repos/kit/packages/functional/src/` to `packages/solana_kit_functional/lib/src/`
-- [ ] T004 Port tests for solana_kit_functional from `.repos/kit/packages/functional/src/__tests__/` to `packages/solana_kit_functional/test/`
-- [ ] T005 [P] Implement deterministic JSON stringification porting from `.repos/kit/packages/fast-stable-stringify/src/` to `packages/solana_kit_fast_stable_stringify/lib/src/`
-- [ ] T006 [P] Port tests for solana_kit_fast_stable_stringify from `.repos/kit/packages/fast-stable-stringify/src/__tests__/` to `packages/solana_kit_fast_stable_stringify/test/`
+- [x] T003 Implement `pipe()` function porting from `.repos/kit/packages/functional/src/` to `packages/solana_kit_functional/lib/src/`
+- [x] T004 Port tests for solana_kit_functional from `.repos/kit/packages/functional/src/__tests__/` to `packages/solana_kit_functional/test/`
+- [x] T005 [P] Implement deterministic JSON stringification porting from `.repos/kit/packages/fast-stable-stringify/src/` to `packages/solana_kit_fast_stable_stringify/lib/src/`
+- [x] T006 [P] Port tests for solana_kit_fast_stable_stringify from `.repos/kit/packages/fast-stable-stringify/src/__tests__/` to `packages/solana_kit_fast_stable_stringify/test/`
 
 **Checkpoint**: Foundation utilities ready — codec implementation can now begin
 
@@ -421,12 +421,14 @@ Task: "Port signers in packages/solana_kit_signers/" (T054–T058)
 ### Per-Package PR Strategy
 
 Each package or small group of related packages is implemented as a separate PR:
+
 - PR title follows emoji conventional commit format: `EMOJI TYPE(package_name): description`
 - Includes changeset file in `.changeset/`
 - Must pass all 6 CI checks (analyze, test, format, Secrets Detection, PR Title, Changeset Required)
 - Tests ported alongside implementation (not as separate PRs)
 
 Suggested PR groupings:
+
 - PR 1: functional + fast_stable_stringify (Layer 1)
 - PR 2: codecs_core + codecs_numbers (Layer 2a)
 - PR 3: codecs_strings + codecs_data_structures (Layer 2b)

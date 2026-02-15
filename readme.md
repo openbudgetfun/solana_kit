@@ -46,27 +46,27 @@ fix:all
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| `solana_kit` | Umbrella re-exporting all packages |
-| `solana_kit_errors` | Error codes and SolanaError class |
-| `solana_kit_addresses` | Base58 address utilities |
-| `solana_kit_keys` | Key pair and Ed25519 operations |
-| `solana_kit_codecs` | Umbrella for all codec sub-packages |
-| `solana_kit_codecs_core` | Core codec interfaces |
-| `solana_kit_codecs_numbers` | Numeric codecs |
-| `solana_kit_codecs_strings` | String codecs |
-| `solana_kit_codecs_data_structures` | Struct, enum, tuple codecs |
-| `solana_kit_rpc` | Primary RPC client |
-| `solana_kit_rpc_subscriptions` | Subscription client |
-| `solana_kit_transactions` | Transaction compilation and signing |
-| `solana_kit_transaction_messages` | Building transaction messages |
-| `solana_kit_signers` | Signer interfaces |
-| `solana_kit_accounts` | Account fetching and decoding |
-| `solana_kit_programs` | Program utilities |
-| `solana_kit_functional` | Pipe, compose utilities |
-| `solana_kit_options` | Rust-like Option type codec |
-| ...and more | See `packages/` directory |
+| Package                             | Description                         |
+| ----------------------------------- | ----------------------------------- |
+| `solana_kit`                        | Umbrella re-exporting all packages  |
+| `solana_kit_errors`                 | Error codes and SolanaError class   |
+| `solana_kit_addresses`              | Base58 address utilities            |
+| `solana_kit_keys`                   | Key pair and Ed25519 operations     |
+| `solana_kit_codecs`                 | Umbrella for all codec sub-packages |
+| `solana_kit_codecs_core`            | Core codec interfaces               |
+| `solana_kit_codecs_numbers`         | Numeric codecs                      |
+| `solana_kit_codecs_strings`         | String codecs                       |
+| `solana_kit_codecs_data_structures` | Struct, enum, tuple codecs          |
+| `solana_kit_rpc`                    | Primary RPC client                  |
+| `solana_kit_rpc_subscriptions`      | Subscription client                 |
+| `solana_kit_transactions`           | Transaction compilation and signing |
+| `solana_kit_transaction_messages`   | Building transaction messages       |
+| `solana_kit_signers`                | Signer interfaces                   |
+| `solana_kit_accounts`               | Account fetching and decoding       |
+| `solana_kit_programs`               | Program utilities                   |
+| `solana_kit_functional`             | Pipe, compose utilities             |
+| `solana_kit_options`                | Rust-like Option type codec         |
+| ...and more                         | See `packages/` directory           |
 
 ## License
 

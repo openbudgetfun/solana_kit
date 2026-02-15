@@ -25,6 +25,7 @@ workspace dependencies, shared analysis_options.yaml, and an empty barrel export
 file ready for implementation.
 
 Package groups scaffolded:
+
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
 - **Utilities**: functional (pipe/compose), options (Rust-like Option codec),

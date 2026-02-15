@@ -5,7 +5,7 @@
 **Status**: Draft
 **Input**: Port all @solana/kit packages to Dart with full feature parity, tests, and publishing guide
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Build and send a Solana transaction (Priority: P1)
 
@@ -158,7 +158,7 @@ successfully validate all packages with dry-run publish without errors.
   Workspace resolution ensures all packages use compatible versions within the
   monorepo; pub.dev constraints ensure compatibility for external consumers.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -221,7 +221,7 @@ successfully validate all packages with dry-run publish without errors.
 - **Instruction**: A program address, list of account keys with metadata, and
   encoded data bytes.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
