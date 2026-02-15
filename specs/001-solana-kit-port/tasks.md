@@ -191,9 +191,9 @@
 
 ### solana_kit_rpc_parsed_types (~10 source files, ~8 test files)
 
-- [ ] T072 [P] [US2] Port parsed account types (token, stake, vote, etc.) from `.repos/kit/packages/rpc-parsed-types/src/` to `packages/solana_kit_rpc_parsed_types/lib/src/`
-- [ ] T073 [US2] Update barrel export `packages/solana_kit_rpc_parsed_types/lib/solana_kit_rpc_parsed_types.dart`
-- [ ] T074 [US2] Port all 8 test files from `.repos/kit/packages/rpc-parsed-types/src/__tests__/` to `packages/solana_kit_rpc_parsed_types/test/`
+- [x] T072 [P] [US2] Port parsed account types (token, stake, vote, etc.) from `.repos/kit/packages/rpc-parsed-types/src/` to `packages/solana_kit_rpc_parsed_types/lib/src/`
+- [x] T073 [US2] Update barrel export `packages/solana_kit_rpc_parsed_types/lib/solana_kit_rpc_parsed_types.dart`
+- [x] T074 [US2] Port all 8 test files from `.repos/kit/packages/rpc-parsed-types/src/__tests__/` to `packages/solana_kit_rpc_parsed_types/test/`
 
 ### solana_kit_rpc_transformers (~16 source files, ~7 test files)
 
