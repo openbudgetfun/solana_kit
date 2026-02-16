@@ -231,10 +231,10 @@
 
 ### solana_kit_accounts (~10 source files, ~9 test files)
 
-- [ ] T097 [US2] Port fetchEncodedAccount, fetchEncodedAccounts, decodeAccount, parseAccount from `.repos/kit/packages/accounts/src/` to `packages/solana_kit_accounts/lib/src/`
-- [ ] T098 [US2] Port Account&lt;T&gt;, MaybeAccount&lt;T&gt;, EncodedAccount types and assertion utilities in `packages/solana_kit_accounts/lib/src/`
-- [ ] T099 [US2] Update barrel export `packages/solana_kit_accounts/lib/solana_kit_accounts.dart`
-- [ ] T100 [US2] Port all 9 test files from `.repos/kit/packages/accounts/src/__tests__/` to `packages/solana_kit_accounts/test/`
+- [x] T097 [US2] Port fetchEncodedAccount, fetchEncodedAccounts, decodeAccount, parseAccount from `.repos/kit/packages/accounts/src/` to `packages/solana_kit_accounts/lib/src/`
+- [x] T098 [US2] Port Account&lt;T&gt;, MaybeAccount&lt;T&gt;, EncodedAccount types and assertion utilities in `packages/solana_kit_accounts/lib/src/`
+- [x] T099 [US2] Update barrel export `packages/solana_kit_accounts/lib/solana_kit_accounts.dart`
+- [x] T100 [US2] Port all 9 test files from `.repos/kit/packages/accounts/src/__tests__/` to `packages/solana_kit_accounts/test/`
 
 ### solana_kit_sysvars (~13 source files, ~12 test files)
 
