@@ -225,9 +225,9 @@
 
 ### solana_kit_rpc (~8 source files, ~6 test files)
 
-- [ ] T094 [US2] Port createSolanaRpc, createSolanaRpcFromTransport, cluster URLs from `.repos/kit/packages/rpc/src/` to `packages/solana_kit_rpc/lib/src/`
-- [ ] T095 [US2] Update barrel export `packages/solana_kit_rpc/lib/solana_kit_rpc.dart`
-- [ ] T096 [US2] Port all 6 test files from `.repos/kit/packages/rpc/src/__tests__/` to `packages/solana_kit_rpc/test/`
+- [x] T094 [US2] Port createSolanaRpc, createSolanaRpcFromTransport, cluster URLs from `.repos/kit/packages/rpc/src/` to `packages/solana_kit_rpc/lib/src/`
+- [x] T095 [US2] Update barrel export `packages/solana_kit_rpc/lib/solana_kit_rpc.dart`
+- [x] T096 [US2] Port all 6 test files from `.repos/kit/packages/rpc/src/__tests__/` to `packages/solana_kit_rpc/test/`
 
 ### solana_kit_accounts (~10 source files, ~9 test files)
 

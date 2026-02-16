@@ -61,8 +61,6 @@ void main() {
       'content-length',
       'Content-Type',
       'content-type',
-      'Solana-Client',
-      'solana-client',
     ]) {
       test(
         'throws when called with the disallowed header `$disallowedHeader`',

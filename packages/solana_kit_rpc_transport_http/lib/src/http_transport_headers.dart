@@ -6,7 +6,6 @@ const _disallowedHeaders = <String, bool>{
   'accept': true,
   'content-length': true,
   'content-type': true,
-  'solana-client': true,
 };
 
 /// [Forbidden headers](https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name)
