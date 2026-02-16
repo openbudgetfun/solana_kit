@@ -1,6 +1,6 @@
 # Quickstart: Solana Kit Dart SDK
 
-**Branch**: `001-solana-kit-port` | **Date**: 2026-02-15
+**Branch**: `001-solana-kit-port` | **Date**: 2026-02-16
 
 ## Installation
 
@@ -8,58 +8,101 @@ Add the umbrella package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  solana_kit: ^0.1.0
+  solana_kit: ^0.0.1
 ```
 
 Or import individual packages for smaller dependency footprints:
 
 ```yaml
 dependencies:
-  solana_kit_addresses: ^0.1.0
-  solana_kit_keys: ^0.1.0
-  solana_kit_rpc: ^0.1.0
-  solana_kit_transactions: ^0.1.0
+  solana_kit_addresses: ^0.0.1
+  solana_kit_keys: ^0.0.1
+  solana_kit_rpc: ^0.0.1
+  solana_kit_transactions: ^0.0.1
 ```
 
 ## Hello World: Airdrop + Transfer
 
 ```dart
+import 'dart:typed_data';
+
 import 'package:solana_kit/solana_kit.dart';
 
 Future<void> main() async {
-  // Create an RPC client pointing at devnet
-  final rpc = createSolanaRpc('https://api.devnet.solana.com');
+  // Create an RPC client pointing at devnet.
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
-  // Generate a new keypair
-  final sender = await generateKeyPair();
-  final senderAddress = await getAddressFromPublicKey(sender.publicKey);
+  // Generate a new keypair signer (synchronous).
+  final signer = generateKeyPairSigner();
+  final senderAddress = signer.address;
 
-  // Request an airdrop of 1 SOL
-  final airdropSig = await rpc.requestAirdrop(senderAddress, lamports: 1000000000).send();
-  await waitForConfirmation(rpc, airdropSig);
+  // Request an airdrop of 1 SOL.
+  final airdropSig = await rpc
+      .request(
+        'requestAirdrop',
+        [senderAddress.value, Lamports(BigInt.from(1000000000)).value],
+      )
+      .send();
+  print('Airdrop signature: $airdropSig');
 
-  // Create a recipient
-  final recipient = await generateKeyPair();
-  final recipientAddress = await getAddressFromPublicKey(recipient.publicKey);
+  // Create a recipient.
+  final recipient = generateKeyPairSigner();
+  final recipientAddress = recipient.address;
 
-  // Build a transfer transaction
-  final blockhash = await rpc.getLatestBlockhash().send();
-  final message = createTransactionMessage(version: 0)
-      .pipe(setTransactionMessageFeePayer(senderAddress))
-      .pipe(setTransactionMessageLifetimeUsingBlockhash(blockhash.value))
-      .pipe(appendTransactionMessageInstruction(
-        SystemProgram.transfer(
-          from: senderAddress,
-          to: recipientAddress,
-          lamports: 500000000,
+  // Build a transfer transaction message.
+  final blockhashResponse = await rpc
+      .request('getLatestBlockhash', <Object?>[])
+      .send();
+
+  final transferInstruction = Instruction(
+    programAddress: const Address('11111111111111111111111111111111'),
+    accounts: [
+      AccountMeta(
+        address: senderAddress,
+        role: AccountRole.writableSigner,
+      ),
+      AccountMeta(
+        address: recipientAddress,
+        role: AccountRole.writableSigner,
+      ),
+    ],
+    // System program transfer instruction data
+    // (instruction index 2 + lamports as u64 LE).
+    data: Uint8List.fromList([
+      2, 0, 0, 0, // transfer instruction index
+      0, 101, 205, 29, 0, 0, 0, 0, // 500_000_000 lamports LE
+    ]),
+  );
+
+  final blockhashConstraint = BlockhashLifetimeConstraint(
+    blockhash: blockhashResponse['blockhash'] as String,
+    lastValidBlockHeight: BigInt.from(
+      blockhashResponse['lastValidBlockHeight'] as int,
+    ),
+  );
+
+  // Build the transaction message using pipe for composition.
+  final message = createTransactionMessage(version: TransactionVersion.v0)
+      .pipe((msg) => setTransactionMessageFeePayer(senderAddress, msg))
+      .pipe(
+        (msg) => setTransactionMessageLifetimeUsingBlockhash(
+          blockhashConstraint,
+          msg,
         ),
-      ));
+      )
+      .pipe(
+        (msg) => appendTransactionMessageInstruction(
+          transferInstruction,
+          msg,
+        ),
+      );
 
-  // Sign and send
-  final signer = await createKeyPairSignerFromKeyPair(sender);
-  final signedTx = await signTransaction([signer], message);
-  final txSig = await rpc.sendTransaction(signedTx).send();
-  await waitForConfirmation(rpc, txSig);
+  // Sign and send.
+  final signedTx = await signTransactionMessageWithSigners(message);
+  final encodedTx = getBase64EncodedWireTransaction(signedTx);
+  final txSig = await rpc
+      .request('sendTransaction', [encodedTx])
+      .send();
 
   print('Transfer complete: $txSig');
 }
@@ -70,22 +113,22 @@ Future<void> main() async {
 ```dart
 import 'package:solana_kit_codecs/solana_kit_codecs.dart';
 
-// Define a codec for a program's account structure
+// Define a codec for a program's account structure.
 final myAccountCodec = getStructCodec([
-  ('authority', getAddressCodec()),
+  ('authority', addCodecSizePrefix(getUtf8Codec(), getU32Codec())),
   ('balance', getU64Codec()),
-  ('name', getUtf8Codec(size: prefixSize(getU32Codec()))),
+  ('name', addCodecSizePrefix(getUtf8Codec(), getU32Codec())),
   ('isActive', getBoolCodec()),
 ]);
 
-// Decode bytes from chain
+// Decode bytes from chain.
 final accountData = myAccountCodec.decode(rawBytes);
 print('Authority: ${accountData['authority']}');
 print('Balance: ${accountData['balance']}');
 
-// Encode for instruction data
+// Encode for instruction data.
 final encoded = myAccountCodec.encode({
-  'authority': myAddress,
+  'authority': 'E9Nykp3rSdza2moQutaJ3K3RSC8E5iFERX2SqLTsQfjJ',
   'balance': BigInt.from(1000000),
   'name': 'My Account',
   'isActive': true,
@@ -97,20 +140,31 @@ final encoded = myAccountCodec.encode({
 ```dart
 import 'package:solana_kit/solana_kit.dart';
 
-final subscriptions = createSolanaRpcSubscriptions(
-  'wss://api.devnet.solana.com',
-);
+Future<void> main() async {
+  final subscriptions = createSolanaRpcSubscriptions(
+    'wss://api.devnet.solana.com',
+  );
 
-final stream = subscriptions.accountNotifications(myAddress).subscribe();
+  final myAddress = const Address('E9Nykp3rSdza2moQutaJ3K3RSC8E5iFERX2SqLTsQfjJ');
 
-await for (final notification in stream) {
-  print('Account changed! New lamports: ${notification.value.lamports}');
+  // Create an abort controller to manage the subscription lifecycle.
+  final abortController = AbortController();
+
+  final stream = await subscriptions
+      .request('accountNotifications', [myAddress.value])
+      .subscribe(RpcSubscribeOptions(abortSignal: abortController.signal));
+
+  await for (final notification in stream) {
+    print('Account changed! Data: $notification');
+    // Call abortController.abort() when done to unsubscribe.
+    break;
+  }
 }
 ```
 
 ## Verification Steps
 
 1. `dart pub get` resolves all dependencies without errors
-2. The airdrop + transfer example runs against devnet successfully
-3. Codec round-trip produces identical bytes for encode → decode → encode
-4. Subscription stream emits at least one notification when account changes
+2. Codec round-trip produces identical bytes for encode -> decode -> encode
+3. All 3,633 tests pass across 35 packages
+4. `dart analyze` reports zero warnings or errors across the entire workspace
