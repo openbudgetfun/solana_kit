@@ -272,9 +272,9 @@
 
 ### solana_kit_rpc_subscriptions_channel_websocket (~3 source files, ~3 test files)
 
-- [ ] T113 [P] [US4] Port WebSocket channel using `web_socket_channel` from `.repos/kit/packages/rpc-subscriptions-channel-websocket/src/` to `packages/solana_kit_rpc_subscriptions_channel_websocket/lib/src/`
-- [ ] T114 [US4] Update barrel export `packages/solana_kit_rpc_subscriptions_channel_websocket/lib/solana_kit_rpc_subscriptions_channel_websocket.dart`
-- [ ] T115 [US4] Port all 3 test files from `.repos/kit/packages/rpc-subscriptions-channel-websocket/src/__tests__/` to `packages/solana_kit_rpc_subscriptions_channel_websocket/test/`
+- [x] T113 [P] [US4] Port WebSocket channel using `web_socket_channel` from `.repos/kit/packages/rpc-subscriptions-channel-websocket/src/` to `packages/solana_kit_rpc_subscriptions_channel_websocket/lib/src/`
+- [x] T114 [US4] Update barrel export `packages/solana_kit_rpc_subscriptions_channel_websocket/lib/solana_kit_rpc_subscriptions_channel_websocket.dart`
+- [x] T115 [US4] Port all 3 test files from `.repos/kit/packages/rpc-subscriptions-channel-websocket/src/__tests__/` to `packages/solana_kit_rpc_subscriptions_channel_websocket/test/`
 
 ### solana_kit_rpc_subscriptions (~14 source files, ~9 test files)
 
