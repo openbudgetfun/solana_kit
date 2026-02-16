@@ -36,7 +36,7 @@ include: package:solana_kit_lints/analysis_options.yaml
 
 linter:
   rules:
-    avoid_print: false  # Allow print in example/CLI packages
+    avoid_print: false # Allow print in example/CLI packages
 ```
 
 ## Configuration
@@ -66,10 +66,10 @@ The following diagnostics are promoted to errors to catch problems early:
 
 The following rules from `very_good_analysis` are disabled for this project:
 
-| Rule                          | Reason                                                                                             |
-| ----------------------------- | -------------------------------------------------------------------------------------------------- |
-| `public_member_api_docs`      | Disabled to reduce friction during initial development. Public API docs are encouraged but not enforced. |
-| `lines_longer_than_80_chars`  | Disabled because many error messages, type signatures, and constant names in the SDK naturally exceed 80 characters. |
+| Rule                         | Reason                                                                                                               |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `public_member_api_docs`     | Disabled to reduce friction during initial development. Public API docs are encouraged but not enforced.             |
+| `lines_longer_than_80_chars` | Disabled because many error messages, type signatures, and constant names in the SDK naturally exceed 80 characters. |
 
 ### Full configuration
 

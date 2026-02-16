@@ -246,26 +246,26 @@ assertIsTransactionMessageWithDurableNonceLifetime(messageWithNonce);
 
 ### Functions
 
-| Function | Description |
-| --- | --- |
-| `createTransactionMessage` | Creates a new empty transaction message with the given version. |
-| `setTransactionMessageFeePayer` | Returns a new message with the fee payer set. |
-| `setTransactionMessageLifetimeUsingBlockhash` | Returns a new message with a blockhash lifetime constraint. |
-| `setTransactionMessageLifetimeUsingDurableNonce` | Returns a new message with a durable nonce lifetime. |
-| `appendTransactionMessageInstruction` | Returns a new message with an instruction appended. |
-| `appendTransactionMessageInstructions` | Returns a new message with multiple instructions appended. |
-| `prependTransactionMessageInstruction` | Returns a new message with an instruction prepended. |
-| `prependTransactionMessageInstructions` | Returns a new message with multiple instructions prepended. |
-| `compileTransactionMessage` | Compiles a `TransactionMessage` into a `CompiledTransactionMessage`. |
-| `decompileTransactionMessage` | Reconstructs a `TransactionMessage` from a compiled message. |
-| `compressTransactionMessageUsingAddressLookupTables` | Replaces non-signer accounts with lookup table references. |
-| `isTransactionMessageWithBlockhashLifetime` | Returns `true` if the message has a blockhash lifetime. |
-| `assertIsTransactionMessageWithBlockhashLifetime` | Throws if the message does not have a blockhash lifetime. |
-| `isTransactionMessageWithDurableNonceLifetime` | Returns `true` if the message has a durable nonce lifetime. |
-| `assertIsTransactionMessageWithDurableNonceLifetime` | Throws if the message does not have a durable nonce lifetime. |
-| `getCompiledTransactionMessageEncoder` | Returns an encoder for compiled transaction messages. |
-| `getCompiledTransactionMessageDecoder` | Returns a decoder for compiled transaction messages. |
-| `getCompiledTransactionMessageCodec` | Returns a codec for compiled transaction messages. |
+| Function                                             | Description                                                          |
+| ---------------------------------------------------- | -------------------------------------------------------------------- |
+| `createTransactionMessage`                           | Creates a new empty transaction message with the given version.      |
+| `setTransactionMessageFeePayer`                      | Returns a new message with the fee payer set.                        |
+| `setTransactionMessageLifetimeUsingBlockhash`        | Returns a new message with a blockhash lifetime constraint.          |
+| `setTransactionMessageLifetimeUsingDurableNonce`     | Returns a new message with a durable nonce lifetime.                 |
+| `appendTransactionMessageInstruction`                | Returns a new message with an instruction appended.                  |
+| `appendTransactionMessageInstructions`               | Returns a new message with multiple instructions appended.           |
+| `prependTransactionMessageInstruction`               | Returns a new message with an instruction prepended.                 |
+| `prependTransactionMessageInstructions`              | Returns a new message with multiple instructions prepended.          |
+| `compileTransactionMessage`                          | Compiles a `TransactionMessage` into a `CompiledTransactionMessage`. |
+| `decompileTransactionMessage`                        | Reconstructs a `TransactionMessage` from a compiled message.         |
+| `compressTransactionMessageUsingAddressLookupTables` | Replaces non-signer accounts with lookup table references.           |
+| `isTransactionMessageWithBlockhashLifetime`          | Returns `true` if the message has a blockhash lifetime.              |
+| `assertIsTransactionMessageWithBlockhashLifetime`    | Throws if the message does not have a blockhash lifetime.            |
+| `isTransactionMessageWithDurableNonceLifetime`       | Returns `true` if the message has a durable nonce lifetime.          |
+| `assertIsTransactionMessageWithDurableNonceLifetime` | Throws if the message does not have a durable nonce lifetime.        |
+| `getCompiledTransactionMessageEncoder`               | Returns an encoder for compiled transaction messages.                |
+| `getCompiledTransactionMessageDecoder`               | Returns a decoder for compiled transaction messages.                 |
+| `getCompiledTransactionMessageCodec`                 | Returns a codec for compiled transaction messages.                   |
 
 ### Constants
 

@@ -212,30 +212,30 @@ void main() {
 
 ### Interfaces
 
-| Interface | Description |
-|-----------|-------------|
-| `DataPublisher` | Subscribe to named channels via `on(channelName, subscriber)`, which returns an `UnsubscribeFn`. |
-| `WritableDataPublisher` | Extends `DataPublisher` with `publish(channelName, data)` for emitting events. |
+| Interface               | Description                                                                                      |
+| ----------------------- | ------------------------------------------------------------------------------------------------ |
+| `DataPublisher`         | Subscribe to named channels via `on(channelName, subscriber)`, which returns an `UnsubscribeFn`. |
+| `WritableDataPublisher` | Extends `DataPublisher` with `publish(channelName, data)` for emitting events.                   |
 
 ### Factory functions
 
-| Function | Description |
-|----------|-------------|
-| `createDataPublisher()` | Creates a new `WritableDataPublisher` with named channel support. |
-| `createStreamFromDataPublisher<T>(config)` | Creates a broadcast `Stream<T>` from a `DataPublisher`. |
-| `createAsyncIterableFromDataPublisher<T>({...})` | Creates a single-subscription `Stream<T>` with abort signal support. |
+| Function                                                                                | Description                                                                                  |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `createDataPublisher()`                                                                 | Creates a new `WritableDataPublisher` with named channel support.                            |
+| `createStreamFromDataPublisher<T>(config)`                                              | Creates a broadcast `Stream<T>` from a `DataPublisher`.                                      |
+| `createAsyncIterableFromDataPublisher<T>({...})`                                        | Creates a single-subscription `Stream<T>` with abort signal support.                         |
 | `demultiplexDataPublisher<T>({sourcePublisher, sourceChannelName, messageTransformer})` | Splits one channel into many derived channels with lazy subscription and reference counting. |
 
 ### Type aliases
 
-| Type | Description |
-|------|-------------|
-| `UnsubscribeFn` | `void Function()` -- returned by `on()` to unsubscribe a listener. |
-| `Subscriber<T>` | `void Function(T data)` -- a function that receives published data. |
+| Type                    | Description                                                                                                     |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `UnsubscribeFn`         | `void Function()` -- returned by `on()` to unsubscribe a listener.                                              |
+| `Subscriber<T>`         | `void Function(T data)` -- a function that receives published data.                                             |
 | `MessageTransformer<T>` | `(String, Object?)? Function(T)` -- transforms a source message into a channel/message pair, or `null` to drop. |
 
 ### Configuration classes
 
-| Class | Description |
-|-------|-------------|
+| Class                           | Description                                                                                                |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `StreamFromDataPublisherConfig` | Configuration for `createStreamFromDataPublisher`: `dataChannelName`, `dataPublisher`, `errorChannelName`. |

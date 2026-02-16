@@ -172,45 +172,45 @@ void main() {
 
 ### Stable subscription methods
 
-| Notification name | Builder function | Config class |
-|-------------------|-----------------|--------------|
-| `accountNotifications` | `accountNotificationsParams(address, [config])` | `AccountNotificationsConfig` |
-| `logsNotifications` | `logsNotificationsParams(filter, [config])` | `LogsNotificationsConfig` |
-| `programNotifications` | `programNotificationsParams(programId, [config])` | `ProgramNotificationsConfig` |
-| `rootNotifications` | `rootNotificationsParams()` | -- |
+| Notification name        | Builder function                                    | Config class                   |
+| ------------------------ | --------------------------------------------------- | ------------------------------ |
+| `accountNotifications`   | `accountNotificationsParams(address, [config])`     | `AccountNotificationsConfig`   |
+| `logsNotifications`      | `logsNotificationsParams(filter, [config])`         | `LogsNotificationsConfig`      |
+| `programNotifications`   | `programNotificationsParams(programId, [config])`   | `ProgramNotificationsConfig`   |
+| `rootNotifications`      | `rootNotificationsParams()`                         | --                             |
 | `signatureNotifications` | `signatureNotificationsParams(signature, [config])` | `SignatureNotificationsConfig` |
-| `slotNotifications` | `slotNotificationsParams()` | -- |
+| `slotNotifications`      | `slotNotificationsParams()`                         | --                             |
 
 ### Unstable subscription methods
 
-| Notification name | Description |
-|-------------------|-------------|
-| `blockNotifications` | Subscribe to new confirmed blocks. |
+| Notification name           | Description                                                                      |
+| --------------------------- | -------------------------------------------------------------------------------- |
+| `blockNotifications`        | Subscribe to new confirmed blocks.                                               |
 | `slotsUpdatesNotifications` | Subscribe to slot update events (created, dead, optimistically confirmed, etc.). |
-| `voteNotifications` | Subscribe to new vote transactions. |
+| `voteNotifications`         | Subscribe to new vote transactions.                                              |
 
 ### Logs filter classes
 
-| Class | Description |
-|-------|-------------|
-| `LogsFilterAll` | Matches all non-vote transactions. |
-| `LogsFilterAllWithVotes` | Matches all transactions including vote transactions. |
-| `LogsFilterMentions(Address address)` | Matches transactions mentioning a specific address. |
+| Class                                 | Description                                           |
+| ------------------------------------- | ----------------------------------------------------- |
+| `LogsFilterAll`                       | Matches all non-vote transactions.                    |
+| `LogsFilterAllWithVotes`              | Matches all transactions including vote transactions. |
+| `LogsFilterMentions(Address address)` | Matches transactions mentioning a specific address.   |
 
 ### Method name utilities
 
-| Function | Description |
-|----------|-------------|
-| `isSolanaRpcSubscriptionMethodStable(String methodName)` | Returns `true` if the method is stable. |
-| `isSolanaRpcSubscriptionMethod(String methodName)` | Returns `true` if the method is stable or unstable. |
-| `notificationNameToSubscribeMethod(String name)` | Converts e.g. `'accountNotifications'` to `'accountSubscribe'`. |
-| `notificationNameToUnsubscribeMethod(String name)` | Converts e.g. `'accountNotifications'` to `'accountUnsubscribe'`. |
+| Function                                                 | Description                                                       |
+| -------------------------------------------------------- | ----------------------------------------------------------------- |
+| `isSolanaRpcSubscriptionMethodStable(String methodName)` | Returns `true` if the method is stable.                           |
+| `isSolanaRpcSubscriptionMethod(String methodName)`       | Returns `true` if the method is stable or unstable.               |
+| `notificationNameToSubscribeMethod(String name)`         | Converts e.g. `'accountNotifications'` to `'accountSubscribe'`.   |
+| `notificationNameToUnsubscribeMethod(String name)`       | Converts e.g. `'accountNotifications'` to `'accountUnsubscribe'`. |
 
 ### Constants
 
-| Constant | Description |
-|----------|-------------|
-| `solanaRpcSubscriptionsMethodsStable` | List of 6 stable subscription method names. |
-| `solanaRpcSubscriptionsMethodsUnstable` | List of all 9 subscription method names (stable + unstable). |
-| `solanaRpcSubscriptionsNotificationsStable` | List of 6 stable notification names. |
-| `solanaRpcSubscriptionsNotificationsUnstable` | List of all 9 notification names (stable + unstable). |
+| Constant                                      | Description                                                  |
+| --------------------------------------------- | ------------------------------------------------------------ |
+| `solanaRpcSubscriptionsMethodsStable`         | List of 6 stable subscription method names.                  |
+| `solanaRpcSubscriptionsMethodsUnstable`       | List of all 9 subscription method names (stable + unstable). |
+| `solanaRpcSubscriptionsNotificationsStable`   | List of 6 stable notification names.                         |
+| `solanaRpcSubscriptionsNotificationsUnstable` | List of all 9 notification names (stable + unstable).        |

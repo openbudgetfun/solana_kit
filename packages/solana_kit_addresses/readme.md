@@ -203,53 +203,53 @@ Future<void> main() async {
 
 ### Types
 
-| Export | Description |
-|--------|-------------|
-| `Address` | Extension type wrapping `String` -- a validated base58-encoded 32-byte Solana address. Zero runtime overhead. |
-| `ProgramDerivedAddress` | Type alias for `(Address pda, int bump)` -- a derived address paired with its bump seed. |
+| Export                  | Description                                                                                                   |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `Address`               | Extension type wrapping `String` -- a validated base58-encoded 32-byte Solana address. Zero runtime overhead. |
+| `ProgramDerivedAddress` | Type alias for `(Address pda, int bump)` -- a derived address paired with its bump seed.                      |
 
 ### Address creation and validation
 
-| Function | Description |
-|----------|-------------|
-| `address(String)` | Creates a validated `Address` from an untrusted string. Throws on invalid input. |
+| Function                  | Description                                                                              |
+| ------------------------- | ---------------------------------------------------------------------------------------- |
+| `address(String)`         | Creates a validated `Address` from an untrusted string. Throws on invalid input.         |
 | `assertIsAddress(String)` | Asserts that a string is a valid base58 Solana address. Throws `SolanaError` on failure. |
-| `isAddress(String)` | Returns `true` if the string is a valid base58 Solana address. |
+| `isAddress(String)`       | Returns `true` if the string is a valid base58 Solana address.                           |
 
 ### Public key conversion
 
-| Function | Description |
-|----------|-------------|
-| `getAddressFromPublicKey(Uint8List)` | Converts a 32-byte Ed25519 public key to an `Address`. |
-| `getPublicKeyFromAddress(Address)` | Converts an `Address` to its 32-byte Ed25519 public key. |
+| Function                             | Description                                              |
+| ------------------------------------ | -------------------------------------------------------- |
+| `getAddressFromPublicKey(Uint8List)` | Converts a 32-byte Ed25519 public key to an `Address`.   |
+| `getPublicKeyFromAddress(Address)`   | Converts an `Address` to its 32-byte Ed25519 public key. |
 
 ### Codecs
 
-| Function | Description |
-|----------|-------------|
+| Function              | Description                                                                          |
+| --------------------- | ------------------------------------------------------------------------------------ |
 | `getAddressEncoder()` | Returns a `FixedSizeEncoder<Address>` that encodes an address into exactly 32 bytes. |
 | `getAddressDecoder()` | Returns a `FixedSizeDecoder<Address>` that decodes exactly 32 bytes into an address. |
-| `getAddressCodec()` | Returns a `FixedSizeCodec<Address, Address>` combining encoder and decoder. |
+| `getAddressCodec()`   | Returns a `FixedSizeCodec<Address, Address>` combining encoder and decoder.          |
 
 ### Comparator
 
-| Function | Description |
-|----------|-------------|
+| Function                 | Description                                                   |
+| ------------------------ | ------------------------------------------------------------- |
 | `getAddressComparator()` | Returns a `Comparator<Address>` using base58 collation rules. |
 
 ### Curve checks
 
-| Function | Description |
-|----------|-------------|
+| Function                                    | Description                                                             |
+| ------------------------------------------- | ----------------------------------------------------------------------- |
 | `compressedPointBytesAreOnCurve(Uint8List)` | Returns `true` if the 32-byte compressed point is on the Ed25519 curve. |
-| `isOnCurveAddress(Address)` | Returns `true` if the address decodes to a point on the Ed25519 curve. |
-| `isOffCurveAddress(Address)` | Returns `true` if the address is NOT on the Ed25519 curve. |
-| `assertIsOnCurveAddress(Address)` | Asserts the address is on curve. Throws `SolanaError` on failure. |
-| `assertIsOffCurveAddress(Address)` | Asserts the address is off curve. Throws `SolanaError` on failure. |
+| `isOnCurveAddress(Address)`                 | Returns `true` if the address decodes to a point on the Ed25519 curve.  |
+| `isOffCurveAddress(Address)`                | Returns `true` if the address is NOT on the Ed25519 curve.              |
+| `assertIsOnCurveAddress(Address)`           | Asserts the address is on curve. Throws `SolanaError` on failure.       |
+| `assertIsOffCurveAddress(Address)`          | Asserts the address is off curve. Throws `SolanaError` on failure.      |
 
 ### Program-derived addresses
 
-| Function | Description |
-|----------|-------------|
-| `getProgramDerivedAddress({required Address programAddress, required List<Object> seeds})` | Derives a PDA by searching for a valid bump seed (255 down to 0). Returns `Future<ProgramDerivedAddress>`. |
-| `createAddressWithSeed({required Address baseAddress, required Address programAddress, required Object seed})` | Creates a SHA-256-based derived address. Returns `Future<Address>`. |
+| Function                                                                                                       | Description                                                                                                |
+| -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `getProgramDerivedAddress({required Address programAddress, required List<Object> seeds})`                     | Derives a PDA by searching for a valid bump seed (255 down to 0). Returns `Future<ProgramDerivedAddress>`. |
+| `createAddressWithSeed({required Address baseAddress, required Address programAddress, required Object seed})` | Creates a SHA-256-based derived address. Returns `Future<Address>`.                                        |

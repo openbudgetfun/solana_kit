@@ -145,13 +145,13 @@ void main() {
 
 ### Functions
 
-| Function | Description |
-|----------|-------------|
+| Function                                                                                              | Description                                                                                                              |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `isProgramError(Object? error, TransactionMessageInput message, Address programAddress, [int? code])` | Returns `true` if the error is a custom program error from the given program, optionally matching a specific error code. |
 
 ### Classes
 
-| Class | Description |
-|-------|-------------|
+| Class                     | Description                                                                                                                        |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `TransactionMessageInput` | A minimal transaction message representation with a `Map<int, InstructionInput> instructions` map indexed by instruction position. |
-| `InstructionInput` | A minimal instruction representation containing only a `programAddress`. |
+| `InstructionInput`        | A minimal instruction representation containing only a `programAddress`.                                                           |

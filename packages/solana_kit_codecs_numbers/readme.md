@@ -180,39 +180,39 @@ littleEndianU32.encode(42); // Uint8List [0x2a, 0x00, 0x00, 0x00]
 
 ### Unsigned integer codecs
 
-| Function | Size | Dart Type | Range |
-|----------|------|-----------|-------|
-| `getU8Encoder()` / `getU8Decoder()` / `getU8Codec()` | 1 byte | `num` / `int` | 0 to 255 |
-| `getU16Encoder()` / `getU16Decoder()` / `getU16Codec()` | 2 bytes | `num` / `int` | 0 to 65,535 |
-| `getU32Encoder()` / `getU32Decoder()` / `getU32Codec()` | 4 bytes | `num` / `int` | 0 to 4,294,967,295 |
-| `getU64Encoder()` / `getU64Decoder()` / `getU64Codec()` | 8 bytes | `BigInt` | 0 to 2^64-1 |
-| `getU128Encoder()` / `getU128Decoder()` / `getU128Codec()` | 16 bytes | `BigInt` | 0 to 2^128-1 |
+| Function                                                   | Size     | Dart Type     | Range              |
+| ---------------------------------------------------------- | -------- | ------------- | ------------------ |
+| `getU8Encoder()` / `getU8Decoder()` / `getU8Codec()`       | 1 byte   | `num` / `int` | 0 to 255           |
+| `getU16Encoder()` / `getU16Decoder()` / `getU16Codec()`    | 2 bytes  | `num` / `int` | 0 to 65,535        |
+| `getU32Encoder()` / `getU32Decoder()` / `getU32Codec()`    | 4 bytes  | `num` / `int` | 0 to 4,294,967,295 |
+| `getU64Encoder()` / `getU64Decoder()` / `getU64Codec()`    | 8 bytes  | `BigInt`      | 0 to 2^64-1        |
+| `getU128Encoder()` / `getU128Decoder()` / `getU128Codec()` | 16 bytes | `BigInt`      | 0 to 2^128-1       |
 
 ### Signed integer codecs
 
-| Function | Size | Dart Type | Range |
-|----------|------|-----------|-------|
-| `getI8Encoder()` / `getI8Decoder()` / `getI8Codec()` | 1 byte | `num` / `int` | -128 to 127 |
-| `getI16Encoder()` / `getI16Decoder()` / `getI16Codec()` | 2 bytes | `num` / `int` | -32,768 to 32,767 |
-| `getI32Encoder()` / `getI32Decoder()` / `getI32Codec()` | 4 bytes | `num` / `int` | -2^31 to 2^31-1 |
-| `getI64Encoder()` / `getI64Decoder()` / `getI64Codec()` | 8 bytes | `BigInt` | -2^63 to 2^63-1 |
-| `getI128Encoder()` / `getI128Decoder()` / `getI128Codec()` | 16 bytes | `BigInt` | -2^127 to 2^127-1 |
+| Function                                                   | Size     | Dart Type     | Range             |
+| ---------------------------------------------------------- | -------- | ------------- | ----------------- |
+| `getI8Encoder()` / `getI8Decoder()` / `getI8Codec()`       | 1 byte   | `num` / `int` | -128 to 127       |
+| `getI16Encoder()` / `getI16Decoder()` / `getI16Codec()`    | 2 bytes  | `num` / `int` | -32,768 to 32,767 |
+| `getI32Encoder()` / `getI32Decoder()` / `getI32Codec()`    | 4 bytes  | `num` / `int` | -2^31 to 2^31-1   |
+| `getI64Encoder()` / `getI64Decoder()` / `getI64Codec()`    | 8 bytes  | `BigInt`      | -2^63 to 2^63-1   |
+| `getI128Encoder()` / `getI128Decoder()` / `getI128Codec()` | 16 bytes | `BigInt`      | -2^127 to 2^127-1 |
 
 ### Floating-point codecs
 
-| Function | Size | Dart Type |
-|----------|------|-----------|
+| Function                                                | Size    | Dart Type        |
+| ------------------------------------------------------- | ------- | ---------------- |
 | `getF32Encoder()` / `getF32Decoder()` / `getF32Codec()` | 4 bytes | `num` / `double` |
 | `getF64Encoder()` / `getF64Decoder()` / `getF64Codec()` | 8 bytes | `num` / `double` |
 
 ### Special codecs
 
-| Function | Size | Description |
-|----------|------|-------------|
+| Function                                                               | Size      | Description                 |
+| ---------------------------------------------------------------------- | --------- | --------------------------- |
 | `getShortU16Encoder()` / `getShortU16Decoder()` / `getShortU16Codec()` | 1-3 bytes | Solana compact u16 encoding |
 
 ### Configuration
 
-| Type | Description |
-|------|-------------|
+| Type                | Description                                                         |
+| ------------------- | ------------------------------------------------------------------- |
 | `NumberCodecConfig` | Configuration with `endian` parameter (defaults to `Endian.little`) |

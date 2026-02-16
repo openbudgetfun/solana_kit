@@ -146,18 +146,18 @@ print(isInstructionWithData(instruction));     // false
 
 ### Functions
 
-| Function | Description |
-| --- | --- |
-| `isInstructionForProgram` | Returns `true` if the instruction targets the given program address. |
-| `assertIsInstructionForProgram` | Throws `SolanaError` if the instruction does not target the given program. |
-| `isInstructionWithAccounts` | Returns `true` if the instruction has an accounts list. |
-| `assertIsInstructionWithAccounts` | Throws `SolanaError` if the instruction has no accounts. |
-| `isInstructionWithData` | Returns `true` if the instruction has data. |
-| `assertIsInstructionWithData` | Throws `SolanaError` if the instruction has no data. |
-| `isSignerRole` | Returns `true` if the role represents a signer. |
-| `isWritableRole` | Returns `true` if the role represents a writable account. |
-| `upgradeRoleToSigner` | Returns the signer variant of the given role. |
-| `upgradeRoleToWritable` | Returns the writable variant of the given role. |
-| `downgradeRoleToNonSigner` | Returns the non-signer variant of the given role. |
-| `downgradeRoleToReadonly` | Returns the read-only variant of the given role. |
-| `mergeRoles` | Returns the role with the highest privileges of both inputs. |
+| Function                          | Description                                                                |
+| --------------------------------- | -------------------------------------------------------------------------- |
+| `isInstructionForProgram`         | Returns `true` if the instruction targets the given program address.       |
+| `assertIsInstructionForProgram`   | Throws `SolanaError` if the instruction does not target the given program. |
+| `isInstructionWithAccounts`       | Returns `true` if the instruction has an accounts list.                    |
+| `assertIsInstructionWithAccounts` | Throws `SolanaError` if the instruction has no accounts.                   |
+| `isInstructionWithData`           | Returns `true` if the instruction has data.                                |
+| `assertIsInstructionWithData`     | Throws `SolanaError` if the instruction has no data.                       |
+| `isSignerRole`                    | Returns `true` if the role represents a signer.                            |
+| `isWritableRole`                  | Returns `true` if the role represents a writable account.                  |
+| `upgradeRoleToSigner`             | Returns the signer variant of the given role.                              |
+| `upgradeRoleToWritable`           | Returns the writable variant of the given role.                            |
+| `downgradeRoleToNonSigner`        | Returns the non-signer variant of the given role.                          |
+| `downgradeRoleToReadonly`         | Returns the read-only variant of the given role.                           |
+| `mergeRoles`                      | Returns the role with the highest privileges of both inputs.               |

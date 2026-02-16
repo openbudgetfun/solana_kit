@@ -325,102 +325,102 @@ The package defines five abstract signer interfaces. Implementations can mix and
 
 ### Message signers
 
-| Interface | Method | Description |
-|-----------|--------|-------------|
-| `MessagePartialSigner` | `signMessages(List<SignableMessage>)` | Signs messages without modifying content. Parallel-safe. |
+| Interface                | Method                                         | Description                                                                               |
+| ------------------------ | ---------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `MessagePartialSigner`   | `signMessages(List<SignableMessage>)`          | Signs messages without modifying content. Parallel-safe.                                  |
 | `MessageModifyingSigner` | `modifyAndSignMessages(List<SignableMessage>)` | May modify message content before signing. Must run sequentially, before partial signers. |
 
 ### Transaction signers
 
-| Interface | Method | Description |
-|-----------|--------|-------------|
-| `TransactionPartialSigner` | `signTransactions(List<Transaction>)` | Signs transactions without modifying them. Parallel-safe. |
-| `TransactionModifyingSigner` | `modifyAndSignTransactions(List<Transaction>)` | May modify transactions before signing. Must run sequentially, before partial signers. |
-| `TransactionSendingSigner` | `signAndSendTransactions(List<Transaction>)` | Signs and immediately sends transactions. Only one per transaction. Must be the last signer. |
+| Interface                    | Method                                         | Description                                                                                  |
+| ---------------------------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `TransactionPartialSigner`   | `signTransactions(List<Transaction>)`          | Signs transactions without modifying them. Parallel-safe.                                    |
+| `TransactionModifyingSigner` | `modifyAndSignTransactions(List<Transaction>)` | May modify transactions before signing. Must run sequentially, before partial signers.       |
+| `TransactionSendingSigner`   | `signAndSendTransactions(List<Transaction>)`   | Signs and immediately sends transactions. Only one per transaction. Must be the last signer. |
 
 ## API Reference
 
 ### Concrete signers
 
-| Export | Description |
-|--------|-------------|
-| `KeyPairSigner` | Implements `MessagePartialSigner` and `TransactionPartialSigner` using an Ed25519 `KeyPair`. |
-| `NoopSigner` | Implements `MessagePartialSigner` and `TransactionPartialSigner` returning empty signature maps. |
+| Export          | Description                                                                                      |
+| --------------- | ------------------------------------------------------------------------------------------------ |
+| `KeyPairSigner` | Implements `MessagePartialSigner` and `TransactionPartialSigner` using an Ed25519 `KeyPair`.     |
+| `NoopSigner`    | Implements `MessagePartialSigner` and `TransactionPartialSigner` returning empty signature maps. |
 
 ### Signer factories
 
-| Function | Description |
-|----------|-------------|
-| `generateKeyPairSigner()` | Generates a random `KeyPairSigner`. |
-| `createSignerFromKeyPair(KeyPair)` | Creates a `KeyPairSigner` from an existing key pair. |
-| `createKeyPairSignerFromBytes(Uint8List)` | Creates a `KeyPairSigner` from a 64-byte array (32 private + 32 public). |
-| `createKeyPairSignerFromPrivateKeyBytes(Uint8List)` | Creates a `KeyPairSigner` from a 32-byte private key. |
-| `createNoopSigner(Address)` | Creates a `NoopSigner` for the given address. |
+| Function                                            | Description                                                              |
+| --------------------------------------------------- | ------------------------------------------------------------------------ |
+| `generateKeyPairSigner()`                           | Generates a random `KeyPairSigner`.                                      |
+| `createSignerFromKeyPair(KeyPair)`                  | Creates a `KeyPairSigner` from an existing key pair.                     |
+| `createKeyPairSignerFromBytes(Uint8List)`           | Creates a `KeyPairSigner` from a 64-byte array (32 private + 32 public). |
+| `createKeyPairSignerFromPrivateKeyBytes(Uint8List)` | Creates a `KeyPairSigner` from a 32-byte private key.                    |
+| `createNoopSigner(Address)`                         | Creates a `NoopSigner` for the given address.                            |
 
 ### Message utilities
 
-| Export | Description |
-|--------|-------------|
-| `SignableMessage` | Class with `content` (`Uint8List`) and `signatures` (`Map<Address, SignatureBytes>`). |
+| Export                                  | Description                                                                                    |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `SignableMessage`                       | Class with `content` (`Uint8List`) and `signatures` (`Map<Address, SignatureBytes>`).          |
 | `createSignableMessage(Object, [Map?])` | Creates a `SignableMessage` from a `String` or `Uint8List`, with optional existing signatures. |
 
 ### Transaction signing
 
-| Function | Description |
-|----------|-------------|
-| `partiallySignTransactionMessageWithSigners(TransactionMessage)` | Extracts signers from the message and returns a partially signed `Transaction`. |
-| `signTransactionMessageWithSigners(TransactionMessage)` | Same as above but asserts all required signatures are present. |
-| `signAndSendTransactionMessageWithSigners(TransactionMessage)` | Signs and sends via the embedded `TransactionSendingSigner`. Returns `Future<SignatureBytes>`. |
+| Function                                                         | Description                                                                                    |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `partiallySignTransactionMessageWithSigners(TransactionMessage)` | Extracts signers from the message and returns a partially signed `Transaction`.                |
+| `signTransactionMessageWithSigners(TransactionMessage)`          | Same as above but asserts all required signatures are present.                                 |
+| `signAndSendTransactionMessageWithSigners(TransactionMessage)`   | Signs and sends via the embedded `TransactionSendingSigner`. Returns `Future<SignatureBytes>`. |
 
 ### Signer attachment
 
-| Function | Description |
-|----------|-------------|
-| `addSignersToInstruction(List<Object>, Instruction)` | Attaches signers to matching account metas of an instruction. |
+| Function                                                           | Description                                                                      |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| `addSignersToInstruction(List<Object>, Instruction)`               | Attaches signers to matching account metas of an instruction.                    |
 | `addSignersToTransactionMessage(List<Object>, TransactionMessage)` | Attaches signers to all instructions and the fee payer of a transaction message. |
-| `setTransactionMessageFeePayerSigner(Object, TransactionMessage)` | Sets the fee payer of a transaction message to a signer. |
+| `setTransactionMessageFeePayerSigner(Object, TransactionMessage)`  | Sets the fee payer of a transaction message to a signer.                         |
 
 ### Signer deduplication
 
-| Function | Description |
-|----------|-------------|
+| Function                         | Description                                                                            |
+| -------------------------------- | -------------------------------------------------------------------------------------- |
 | `deduplicateSigners<T>(List<T>)` | Removes duplicate signers by address. Throws if two distinct signers share an address. |
 
 ### Type guards and assertions
 
-| Function | Description |
-|----------|-------------|
-| `isKeyPairSigner(Object?)` | Returns `true` if value is a `KeyPairSigner`. |
-| `isMessagePartialSigner(Object?)` | Returns `true` if value implements `MessagePartialSigner`. |
-| `isMessageModifyingSigner(Object?)` | Returns `true` if value implements `MessageModifyingSigner`. |
-| `isMessageSigner(Object?)` | Returns `true` if value is any message signer. |
-| `isTransactionPartialSigner(Object?)` | Returns `true` if value implements `TransactionPartialSigner`. |
-| `isTransactionModifyingSigner(Object?)` | Returns `true` if value implements `TransactionModifyingSigner`. |
-| `isTransactionSendingSigner(Object?)` | Returns `true` if value implements `TransactionSendingSigner`. |
-| `isTransactionSigner(Object?)` | Returns `true` if value is any transaction signer. |
-| `assertIsKeyPairSigner(Object?)` | Asserts value is a `KeyPairSigner`. Throws `SolanaError` on failure. |
-| `assertIsMessagePartialSigner(Object?)` | Asserts value implements `MessagePartialSigner`. |
-| `assertIsMessageModifyingSigner(Object?)` | Asserts value implements `MessageModifyingSigner`. |
-| `assertIsMessageSigner(Object?)` | Asserts value is any message signer. |
-| `assertIsTransactionPartialSigner(Object?)` | Asserts value implements `TransactionPartialSigner`. |
-| `assertIsTransactionModifyingSigner(Object?)` | Asserts value implements `TransactionModifyingSigner`. |
-| `assertIsTransactionSendingSigner(Object?)` | Asserts value implements `TransactionSendingSigner`. |
-| `assertIsTransactionSigner(Object?)` | Asserts value is any transaction signer. |
+| Function                                      | Description                                                          |
+| --------------------------------------------- | -------------------------------------------------------------------- |
+| `isKeyPairSigner(Object?)`                    | Returns `true` if value is a `KeyPairSigner`.                        |
+| `isMessagePartialSigner(Object?)`             | Returns `true` if value implements `MessagePartialSigner`.           |
+| `isMessageModifyingSigner(Object?)`           | Returns `true` if value implements `MessageModifyingSigner`.         |
+| `isMessageSigner(Object?)`                    | Returns `true` if value is any message signer.                       |
+| `isTransactionPartialSigner(Object?)`         | Returns `true` if value implements `TransactionPartialSigner`.       |
+| `isTransactionModifyingSigner(Object?)`       | Returns `true` if value implements `TransactionModifyingSigner`.     |
+| `isTransactionSendingSigner(Object?)`         | Returns `true` if value implements `TransactionSendingSigner`.       |
+| `isTransactionSigner(Object?)`                | Returns `true` if value is any transaction signer.                   |
+| `assertIsKeyPairSigner(Object?)`              | Asserts value is a `KeyPairSigner`. Throws `SolanaError` on failure. |
+| `assertIsMessagePartialSigner(Object?)`       | Asserts value implements `MessagePartialSigner`.                     |
+| `assertIsMessageModifyingSigner(Object?)`     | Asserts value implements `MessageModifyingSigner`.                   |
+| `assertIsMessageSigner(Object?)`              | Asserts value is any message signer.                                 |
+| `assertIsTransactionPartialSigner(Object?)`   | Asserts value implements `TransactionPartialSigner`.                 |
+| `assertIsTransactionModifyingSigner(Object?)` | Asserts value implements `TransactionModifyingSigner`.               |
+| `assertIsTransactionSendingSigner(Object?)`   | Asserts value implements `TransactionSendingSigner`.                 |
+| `assertIsTransactionSigner(Object?)`          | Asserts value is any transaction signer.                             |
 
 ### Configuration
 
-| Export | Description |
-|--------|-------------|
-| `SignerConfig` | Base configuration with an `aborted` flag for cancellation. |
+| Export                    | Description                                                              |
+| ------------------------- | ------------------------------------------------------------------------ |
+| `SignerConfig`            | Base configuration with an `aborted` flag for cancellation.              |
 | `TransactionSignerConfig` | Extends `SignerConfig` with an optional `minContextSlot` for simulation. |
 
 ### Advanced exports
 
-| Export | Description |
-|--------|-------------|
-| `AccountSignerMeta` | Extends `AccountMeta` to hold a signer reference alongside the account metadata. |
-| `TransactionMessageWithFeePayerSigner` | Extends `TransactionMessage` to store a signer as the fee payer. |
-| `getSignersFromInstruction(Instruction)` | Extracts and deduplicates signers from an instruction's account metas. |
-| `getSignersFromTransactionMessage(TransactionMessage)` | Extracts and deduplicates all signers from a transaction message. |
-| `isTransactionMessageWithSingleSendingSigner(TransactionMessage)` | Returns `true` if the message has exactly one `TransactionSendingSigner`. |
-| `assertIsTransactionMessageWithSingleSendingSigner(TransactionMessage)` | Asserts exactly one sending signer exists. |
+| Export                                                                  | Description                                                                      |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `AccountSignerMeta`                                                     | Extends `AccountMeta` to hold a signer reference alongside the account metadata. |
+| `TransactionMessageWithFeePayerSigner`                                  | Extends `TransactionMessage` to store a signer as the fee payer.                 |
+| `getSignersFromInstruction(Instruction)`                                | Extracts and deduplicates signers from an instruction's account metas.           |
+| `getSignersFromTransactionMessage(TransactionMessage)`                  | Extracts and deduplicates all signers from a transaction message.                |
+| `isTransactionMessageWithSingleSendingSigner(TransactionMessage)`       | Returns `true` if the message has exactly one `TransactionSendingSigner`.        |
+| `assertIsTransactionMessageWithSingleSendingSigner(TransactionMessage)` | Asserts exactly one sending signer exists.                                       |

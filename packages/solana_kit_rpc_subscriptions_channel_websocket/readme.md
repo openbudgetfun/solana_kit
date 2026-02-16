@@ -182,21 +182,21 @@ void main() async {
 
 ### Functions
 
-| Function | Description |
-|----------|-------------|
+| Function                                                | Description                                                                 |
+| ------------------------------------------------------- | --------------------------------------------------------------------------- |
 | `createWebSocketChannel(WebSocketChannelConfig config)` | Opens a WebSocket connection and returns `Future<RpcSubscriptionsChannel>`. |
 
 ### Classes
 
-| Class | Description |
-|-------|-------------|
+| Class                     | Description                                                                                                                                      |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `RpcSubscriptionsChannel` | An interface extending `DataPublisher` with a `send(Object)` method for outgoing messages. Supports `on('message', ...)` and `on('error', ...)`. |
-| `WebSocketChannelConfig` | Configuration: `url` (Uri), `sendBufferHighWatermark` (int, default 128KB), `signal` (AbortSignal?). |
-| `AbortController` | Creates and manages an `AbortSignal`. Call `abort([reason])` to fire the signal. |
-| `AbortSignal` | Represents an abort signal. Properties: `isAborted`, `reason`, `future`. |
+| `WebSocketChannelConfig`  | Configuration: `url` (Uri), `sendBufferHighWatermark` (int, default 128KB), `signal` (AbortSignal?).                                             |
+| `AbortController`         | Creates and manages an `AbortSignal`. Call `abort([reason])` to fire the signal.                                                                 |
+| `AbortSignal`             | Represents an abort signal. Properties: `isAborted`, `reason`, `future`.                                                                         |
 
 ### Constants
 
-| Constant | Description |
-|----------|-------------|
+| Constant            | Description                                                              |
+| ------------------- | ------------------------------------------------------------------------ |
 | `normalClosureCode` | `1000` -- the RFC 6455 normal closure code used when aborting a channel. |

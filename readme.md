@@ -68,94 +68,94 @@ The SDK is organized into 37 packages under `packages/`. Most users only need th
 
 ### Umbrella Packages
 
-| Package | Description |
-| --- | --- |
-| [`solana_kit`](#solana_kit) | Single import for the entire SDK. Re-exports all public packages. |
+| Package                                   | Description                                                                   |
+| ----------------------------------------- | ----------------------------------------------------------------------------- |
+| [`solana_kit`](#solana_kit)               | Single import for the entire SDK. Re-exports all public packages.             |
 | [`solana_kit_codecs`](#solana_kit_codecs) | Single import for all codec functionality. Re-exports all codec sub-packages. |
 
 ### Error Handling
 
-| Package | Description |
-| --- | --- |
+| Package                                   | Description                                                                                                               |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | [`solana_kit_errors`](#solana_kit_errors) | Foundation package. Defines `SolanaError`, numeric error codes, and structured error context used by every other package. |
 
 ### Addresses & Keys
 
-| Package | Description |
-| --- | --- |
-| [`solana_kit_addresses`](#solana_kit_addresses) | Base58-encoded Solana addresses, validation, program-derived addresses (PDAs), and address comparison. |
-| [`solana_kit_keys`](#solana_kit_keys) | Ed25519 key pair generation, private/public key types, and signature creation. |
-| [`solana_kit_signers`](#solana_kit_signers) | Signer interfaces: message signers, transaction signers, fee payer signers, modifying signers, and key pair signers. |
+| Package                                         | Description                                                                                                          |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| [`solana_kit_addresses`](#solana_kit_addresses) | Base58-encoded Solana addresses, validation, program-derived addresses (PDAs), and address comparison.               |
+| [`solana_kit_keys`](#solana_kit_keys)           | Ed25519 key pair generation, private/public key types, and signature creation.                                       |
+| [`solana_kit_signers`](#solana_kit_signers)     | Signer interfaces: message signers, transaction signers, fee payer signers, modifying signers, and key pair signers. |
 
 ### Codecs (Binary Serialization)
 
-| Package | Description |
-| --- | --- |
-| [`solana_kit_codecs_core`](#solana_kit_codecs_core) | Core `Codec<T>`, `Encoder<T>`, and `Decoder<T>` interfaces with composition utilities (size prefixing, padding, sentinels, offsets). |
-| [`solana_kit_codecs_numbers`](#solana_kit_codecs_numbers) | Numeric codecs: `u8`–`u128`, `i8`–`i128`, `f32`, `f64`, and `shortU16` in little-endian format. |
-| [`solana_kit_codecs_strings`](#solana_kit_codecs_strings) | String codecs: `base10`, `base16`, `base58`, `base64`, `utf8`, and generic `baseX` encoding. |
-| [`solana_kit_codecs_data_structures`](#solana_kit_codecs_data_structures) | Composite codecs: `struct`, `array`, `tuple`, `union`, `map`, `set`, `boolean`, `nullable`, `bytes`, and `bitArray`. |
-| [`solana_kit_options`](#solana_kit_options) | Rust-style `Option<T>` type with `Some`/`None` variants and a dedicated codec for on-chain optional fields. |
+| Package                                                                   | Description                                                                                                                          |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| [`solana_kit_codecs_core`](#solana_kit_codecs_core)                       | Core `Codec<T>`, `Encoder<T>`, and `Decoder<T>` interfaces with composition utilities (size prefixing, padding, sentinels, offsets). |
+| [`solana_kit_codecs_numbers`](#solana_kit_codecs_numbers)                 | Numeric codecs: `u8`–`u128`, `i8`–`i128`, `f32`, `f64`, and `shortU16` in little-endian format.                                      |
+| [`solana_kit_codecs_strings`](#solana_kit_codecs_strings)                 | String codecs: `base10`, `base16`, `base58`, `base64`, `utf8`, and generic `baseX` encoding.                                         |
+| [`solana_kit_codecs_data_structures`](#solana_kit_codecs_data_structures) | Composite codecs: `struct`, `array`, `tuple`, `union`, `map`, `set`, `boolean`, `nullable`, `bytes`, and `bitArray`.                 |
+| [`solana_kit_options`](#solana_kit_options)                               | Rust-style `Option<T>` type with `Some`/`None` variants and a dedicated codec for on-chain optional fields.                          |
 
 ### Instructions & Transactions
 
-| Package | Description |
-| --- | --- |
-| [`solana_kit_instructions`](#solana_kit_instructions) | Core `Instruction` and `AccountMeta` types with account role definitions (signer, writable, readonly). |
+| Package                                                               | Description                                                                                                                          |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| [`solana_kit_instructions`](#solana_kit_instructions)                 | Core `Instruction` and `AccountMeta` types with account role definitions (signer, writable, readonly).                               |
 | [`solana_kit_transaction_messages`](#solana_kit_transaction_messages) | Build and compile transaction messages with support for v0 messages, address table lookups, blockhash lifetimes, and durable nonces. |
-| [`solana_kit_transactions`](#solana_kit_transactions) | Transaction compilation, signature collection, wire-format encoding, and size calculation. |
-| [`solana_kit_offchain_messages`](#solana_kit_offchain_messages) | Off-chain message signing with envelope formatting, domain specifications, and signatory tracking. |
-| [`solana_kit_instruction_plans`](#solana_kit_instruction_plans) | Plan multi-step operations as sequential or parallel instruction trees, then execute them as batched transactions. |
+| [`solana_kit_transactions`](#solana_kit_transactions)                 | Transaction compilation, signature collection, wire-format encoding, and size calculation.                                           |
+| [`solana_kit_offchain_messages`](#solana_kit_offchain_messages)       | Off-chain message signing with envelope formatting, domain specifications, and signatory tracking.                                   |
+| [`solana_kit_instruction_plans`](#solana_kit_instruction_plans)       | Plan multi-step operations as sequential or parallel instruction trees, then execute them as batched transactions.                   |
 
 ### RPC Client
 
-| Package | Description |
-| --- | --- |
-| [`solana_kit_rpc`](#solana_kit_rpc) | High-level RPC client factory with request coalescing, deduplication, and default configuration. The main entry point for RPC calls. |
-| [`solana_kit_rpc_api`](#solana_kit_rpc_api) | Type-safe definitions for all ~60 Solana JSON-RPC methods (`getAccountInfo`, `getBalance`, `sendTransaction`, etc.). |
-| [`solana_kit_rpc_types`](#solana_kit_rpc_types) | Shared types: `AccountInfo`, `Commitment`, `Lamports`, `TokenAmount`, `ClusterUrl`, `RpcResponse<T>`, and encoding helpers. |
-| [`solana_kit_rpc_spec`](#solana_kit_rpc_spec) | Core JSON-RPC 2.0 protocol: `Rpc`, `RpcApi`, and `RpcTransport` interfaces. |
-| [`solana_kit_rpc_spec_types`](#solana_kit_rpc_spec_types) | Low-level RPC protocol types: `RpcRequest`, `RpcResponse<T>`, `RpcMessage`, and `JsonBigInt`. |
-| [`solana_kit_rpc_parsed_types`](#solana_kit_rpc_parsed_types) | Typed representations of parsed account data for token, stake, vote, config, nonce, and other native program accounts. |
-| [`solana_kit_rpc_transformers`](#solana_kit_rpc_transformers) | Request/response transformation middleware: default commitment injection, BigInt handling, integer overflow detection, and error throwing. |
-| [`solana_kit_rpc_transport_http`](#solana_kit_rpc_transport_http) | HTTP transport implementation for RPC communication using the `http` package. |
+| Package                                                           | Description                                                                                                                                |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`solana_kit_rpc`](#solana_kit_rpc)                               | High-level RPC client factory with request coalescing, deduplication, and default configuration. The main entry point for RPC calls.       |
+| [`solana_kit_rpc_api`](#solana_kit_rpc_api)                       | Type-safe definitions for all ~60 Solana JSON-RPC methods (`getAccountInfo`, `getBalance`, `sendTransaction`, etc.).                       |
+| [`solana_kit_rpc_types`](#solana_kit_rpc_types)                   | Shared types: `AccountInfo`, `Commitment`, `Lamports`, `TokenAmount`, `ClusterUrl`, `RpcResponse<T>`, and encoding helpers.                |
+| [`solana_kit_rpc_spec`](#solana_kit_rpc_spec)                     | Core JSON-RPC 2.0 protocol: `Rpc`, `RpcApi`, and `RpcTransport` interfaces.                                                                |
+| [`solana_kit_rpc_spec_types`](#solana_kit_rpc_spec_types)         | Low-level RPC protocol types: `RpcRequest`, `RpcResponse<T>`, `RpcMessage`, and `JsonBigInt`.                                              |
+| [`solana_kit_rpc_parsed_types`](#solana_kit_rpc_parsed_types)     | Typed representations of parsed account data for token, stake, vote, config, nonce, and other native program accounts.                     |
+| [`solana_kit_rpc_transformers`](#solana_kit_rpc_transformers)     | Request/response transformation middleware: default commitment injection, BigInt handling, integer overflow detection, and error throwing. |
+| [`solana_kit_rpc_transport_http`](#solana_kit_rpc_transport_http) | HTTP transport implementation for RPC communication using the `http` package.                                                              |
 
 ### RPC Subscriptions
 
-| Package | Description |
-| --- | --- |
-| [`solana_kit_rpc_subscriptions`](#solana_kit_rpc_subscriptions) | High-level subscription client factory with connection pooling, auto-ping, and subscription coalescing. |
-| [`solana_kit_rpc_subscriptions_api`](#solana_kit_rpc_subscriptions_api) | Type-safe definitions for all Solana subscription methods (`accountNotifications`, `slotNotifications`, `logsNotifications`, etc.). |
-| [`solana_kit_rpc_subscriptions_channel_websocket`](#solana_kit_rpc_subscriptions_channel_websocket) | WebSocket transport for RPC subscriptions using `web_socket_channel`. |
-| [`solana_kit_subscribable`](#solana_kit_subscribable) | Observable data publisher pattern with conversions to Dart `Stream` and async iterables. |
+| Package                                                                                             | Description                                                                                                                         |
+| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| [`solana_kit_rpc_subscriptions`](#solana_kit_rpc_subscriptions)                                     | High-level subscription client factory with connection pooling, auto-ping, and subscription coalescing.                             |
+| [`solana_kit_rpc_subscriptions_api`](#solana_kit_rpc_subscriptions_api)                             | Type-safe definitions for all Solana subscription methods (`accountNotifications`, `slotNotifications`, `logsNotifications`, etc.). |
+| [`solana_kit_rpc_subscriptions_channel_websocket`](#solana_kit_rpc_subscriptions_channel_websocket) | WebSocket transport for RPC subscriptions using `web_socket_channel`.                                                               |
+| [`solana_kit_subscribable`](#solana_kit_subscribable)                                               | Observable data publisher pattern with conversions to Dart `Stream` and async iterables.                                            |
 
 ### Accounts & Programs
 
-| Package | Description |
-| --- | --- |
-| [`solana_kit_accounts`](#solana_kit_accounts) | Fetch, decode, and parse on-chain account data with typed `Account<T>` and `MaybeAccount<T>` wrappers. |
-| [`solana_kit_programs`](#solana_kit_programs) | Program error handling utilities: `ProgramError` representation and program-specific error detection. |
+| Package                                                             | Description                                                                                                        |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| [`solana_kit_accounts`](#solana_kit_accounts)                       | Fetch, decode, and parse on-chain account data with typed `Account<T>` and `MaybeAccount<T>` wrappers.             |
+| [`solana_kit_programs`](#solana_kit_programs)                       | Program error handling utilities: `ProgramError` representation and program-specific error detection.              |
 | [`solana_kit_program_client_core`](#solana_kit_program_client_core) | Core utilities for building typed program clients: instruction input resolution and self-fetching account helpers. |
-| [`solana_kit_sysvars`](#solana_kit_sysvars) | Type-safe access to Solana sysvars: `Clock`, `Rent`, `EpochSchedule`, `SlotHashes`, `StakeHistory`, and more. |
+| [`solana_kit_sysvars`](#solana_kit_sysvars)                         | Type-safe access to Solana sysvars: `Clock`, `Rent`, `EpochSchedule`, `SlotHashes`, `StakeHistory`, and more.      |
 
 ### Transaction Confirmation
 
-| Package | Description |
-| --- | --- |
+| Package                                                                       | Description                                                                                                                   |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | [`solana_kit_transaction_confirmation`](#solana_kit_transaction_confirmation) | Multiple confirmation strategies: block height polling, nonce invalidation, signature watching, timeout, and strategy racing. |
 
 ### Utilities
 
-| Package | Description |
-| --- | --- |
-| [`solana_kit_functional`](#solana_kit_functional) | Adds a `.pipe()` extension for functional pipeline composition, used throughout the SDK for building transaction messages. |
-| [`solana_kit_fast_stable_stringify`](#solana_kit_fast_stable_stringify) | Deterministic JSON serialization with sorted keys, used for request deduplication and hashing. |
+| Package                                                                 | Description                                                                                                                |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| [`solana_kit_functional`](#solana_kit_functional)                       | Adds a `.pipe()` extension for functional pipeline composition, used throughout the SDK for building transaction messages. |
+| [`solana_kit_fast_stable_stringify`](#solana_kit_fast_stable_stringify) | Deterministic JSON serialization with sorted keys, used for request deduplication and hashing.                             |
 
 ### Internal (Not Published)
 
-| Package | Description |
-| --- | --- |
-| [`solana_kit_lints`](#solana_kit_lints) | Shared lint rules based on `very_good_analysis` used across the monorepo. |
+| Package                                                 | Description                                                                               |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [`solana_kit_lints`](#solana_kit_lints)                 | Shared lint rules based on `very_good_analysis` used across the monorepo.                 |
 | [`solana_kit_test_matchers`](#solana_kit_test_matchers) | Custom test matchers for addresses, byte arrays, error codes, and transaction assertions. |
 
 ## Package Details
@@ -276,6 +276,7 @@ Exists because: Solana programs written in Rust serialize `Option<T>` as a 1-byt
 ### solana_kit_codecs
 
 Umbrella package that re-exports:
+
 - `solana_kit_codecs_core`
 - `solana_kit_codecs_numbers`
 - `solana_kit_codecs_strings`

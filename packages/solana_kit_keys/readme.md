@@ -231,46 +231,46 @@ void main() {
 
 ### Types
 
-| Export | Description |
-|--------|-------------|
-| `KeyPair` | Class holding a 32-byte `privateKey` and a 32-byte `publicKey` (`Uint8List` fields). |
-| `Signature` | Extension type wrapping `String` -- a validated base58-encoded 64-byte Ed25519 signature. Zero runtime overhead. |
+| Export           | Description                                                                                                       |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `KeyPair`        | Class holding a 32-byte `privateKey` and a 32-byte `publicKey` (`Uint8List` fields).                              |
+| `Signature`      | Extension type wrapping `String` -- a validated base58-encoded 64-byte Ed25519 signature. Zero runtime overhead.  |
 | `SignatureBytes` | Extension type wrapping `Uint8List` -- a validated 64-byte Ed25519 signature in raw bytes. Zero runtime overhead. |
 
 ### Key pair generation
 
-| Function | Description |
-|----------|-------------|
-| `generateKeyPair()` | Generates a new random Ed25519 `KeyPair`. |
-| `createKeyPairFromBytes(Uint8List)` | Creates a `KeyPair` from a 64-byte array (32 private + 32 public). Validates the key pair. |
-| `createKeyPairFromPrivateKeyBytes(Uint8List)` | Creates a `KeyPair` from a 32-byte private key, deriving the public key. |
+| Function                                      | Description                                                                                |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `generateKeyPair()`                           | Generates a new random Ed25519 `KeyPair`.                                                  |
+| `createKeyPairFromBytes(Uint8List)`           | Creates a `KeyPair` from a 64-byte array (32 private + 32 public). Validates the key pair. |
+| `createKeyPairFromPrivateKeyBytes(Uint8List)` | Creates a `KeyPair` from a 32-byte private key, deriving the public key.                   |
 
 ### Public key derivation
 
-| Function | Description |
-|----------|-------------|
+| Function                                | Description                                                        |
+| --------------------------------------- | ------------------------------------------------------------------ |
 | `getPublicKeyFromPrivateKey(Uint8List)` | Derives the 32-byte Ed25519 public key from a 32-byte private key. |
 
 ### Signing and verification
 
-| Function | Description |
-|----------|-------------|
-| `signBytes(Uint8List privateKey, Uint8List data)` | Signs data with a 32-byte private key. Returns `SignatureBytes` (64 bytes). |
+| Function                                                                   | Description                                                                 |
+| -------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `signBytes(Uint8List privateKey, Uint8List data)`                          | Signs data with a 32-byte private key. Returns `SignatureBytes` (64 bytes). |
 | `verifySignature(Uint8List publicKey, SignatureBytes sig, Uint8List data)` | Returns `true` if the signature is valid for the given public key and data. |
 
 ### Signature creation and validation
 
-| Function | Description |
-|----------|-------------|
-| `signature(String)` | Creates a validated `Signature` from a base58-encoded string. Throws on invalid input. |
-| `signatureBytes(Uint8List)` | Creates validated `SignatureBytes` from a 64-byte array. Throws on invalid input. |
-| `isSignature(String)` | Returns `true` if the string is a valid base58-encoded 64-byte signature. |
-| `isSignatureBytes(Uint8List)` | Returns `true` if the byte array is exactly 64 bytes. |
-| `assertIsSignature(String)` | Asserts the string is a valid base58 signature. Throws `SolanaError` on failure. |
-| `assertIsSignatureBytes(Uint8List)` | Asserts the byte array is exactly 64 bytes. Throws `SolanaError` on failure. |
+| Function                            | Description                                                                            |
+| ----------------------------------- | -------------------------------------------------------------------------------------- |
+| `signature(String)`                 | Creates a validated `Signature` from a base58-encoded string. Throws on invalid input. |
+| `signatureBytes(Uint8List)`         | Creates validated `SignatureBytes` from a 64-byte array. Throws on invalid input.      |
+| `isSignature(String)`               | Returns `true` if the string is a valid base58-encoded 64-byte signature.              |
+| `isSignatureBytes(Uint8List)`       | Returns `true` if the byte array is exactly 64 bytes.                                  |
+| `assertIsSignature(String)`         | Asserts the string is a valid base58 signature. Throws `SolanaError` on failure.       |
+| `assertIsSignatureBytes(Uint8List)` | Asserts the byte array is exactly 64 bytes. Throws `SolanaError` on failure.           |
 
 ### Private key validation
 
-| Function | Description |
-|----------|-------------|
+| Function                        | Description                                                                  |
+| ------------------------------- | ---------------------------------------------------------------------------- |
 | `assertIsPrivateKey(Uint8List)` | Asserts the byte array is exactly 32 bytes. Throws `SolanaError` on failure. |

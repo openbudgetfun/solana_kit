@@ -275,38 +275,38 @@ void main() {
 
 This umbrella package re-exports the following packages:
 
-| Package | Description |
-|---------|-------------|
-| `solana_kit_accounts` | Account fetching and decoding |
-| `solana_kit_addresses` | Base58 address utilities and PDA derivation |
-| `solana_kit_codecs` | Codec umbrella (core, numbers, strings, data structures) |
-| `solana_kit_errors` | Error codes, error class, and error conversion |
-| `solana_kit_fast_stable_stringify` | Deterministic JSON serialization |
-| `solana_kit_functional` | Functional programming utilities (pipe, compose) |
-| `solana_kit_instruction_plans` | Instruction plan composition |
-| `solana_kit_instructions` | Instruction types and account meta |
-| `solana_kit_keys` | Key pair generation and signature types |
-| `solana_kit_offchain_messages` | Off-chain message signing |
-| `solana_kit_options` | Borsh-compatible Option codec |
-| `solana_kit_program_client_core` | Program client building blocks |
-| `solana_kit_programs` | Program error identification |
-| `solana_kit_rpc` | RPC client factory |
-| `solana_kit_rpc_parsed_types` | Parsed RPC response types |
-| `solana_kit_rpc_spec_types` | RPC specification types |
-| `solana_kit_rpc_subscriptions` | WebSocket subscription client |
-| `solana_kit_rpc_transport_http` | HTTP transport for RPC |
-| `solana_kit_rpc_types` | RPC type definitions (Commitment, Lamports, etc.) |
-| `solana_kit_signers` | Transaction signer abstractions |
-| `solana_kit_subscribable` | Pub/sub event patterns |
-| `solana_kit_sysvars` | System variable account access |
-| `solana_kit_transaction_confirmation` | Transaction confirmation strategies |
-| `solana_kit_transaction_messages` | Transaction message building |
-| `solana_kit_transactions` | Transaction types and serialization |
+| Package                               | Description                                              |
+| ------------------------------------- | -------------------------------------------------------- |
+| `solana_kit_accounts`                 | Account fetching and decoding                            |
+| `solana_kit_addresses`                | Base58 address utilities and PDA derivation              |
+| `solana_kit_codecs`                   | Codec umbrella (core, numbers, strings, data structures) |
+| `solana_kit_errors`                   | Error codes, error class, and error conversion           |
+| `solana_kit_fast_stable_stringify`    | Deterministic JSON serialization                         |
+| `solana_kit_functional`               | Functional programming utilities (pipe, compose)         |
+| `solana_kit_instruction_plans`        | Instruction plan composition                             |
+| `solana_kit_instructions`             | Instruction types and account meta                       |
+| `solana_kit_keys`                     | Key pair generation and signature types                  |
+| `solana_kit_offchain_messages`        | Off-chain message signing                                |
+| `solana_kit_options`                  | Borsh-compatible Option codec                            |
+| `solana_kit_program_client_core`      | Program client building blocks                           |
+| `solana_kit_programs`                 | Program error identification                             |
+| `solana_kit_rpc`                      | RPC client factory                                       |
+| `solana_kit_rpc_parsed_types`         | Parsed RPC response types                                |
+| `solana_kit_rpc_spec_types`           | RPC specification types                                  |
+| `solana_kit_rpc_subscriptions`        | WebSocket subscription client                            |
+| `solana_kit_rpc_transport_http`       | HTTP transport for RPC                                   |
+| `solana_kit_rpc_types`                | RPC type definitions (Commitment, Lamports, etc.)        |
+| `solana_kit_signers`                  | Transaction signer abstractions                          |
+| `solana_kit_subscribable`             | Pub/sub event patterns                                   |
+| `solana_kit_sysvars`                  | System variable account access                           |
+| `solana_kit_transaction_confirmation` | Transaction confirmation strategies                      |
+| `solana_kit_transaction_messages`     | Transaction message building                             |
+| `solana_kit_transactions`             | Transaction types and serialization                      |
 
 ### Umbrella-specific helpers
 
-| Function | Description |
-|----------|-------------|
+| Function                                       | Description                                                                                                                    |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | `getMinimumBalanceForRentExemption(int space)` | Calculates the minimum lamports for rent exemption without an RPC call. Uses on-chain rent parameters from the Solana runtime. |
 
 ## API Reference

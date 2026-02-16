@@ -184,29 +184,29 @@ final fixedUtf8 = fixCodecSize(getUtf8Codec(), 32);
 
 ### Base encoders/decoders/codecs
 
-| Function | Description |
-|----------|-------------|
-| `getBase10Encoder()` / `getBase10Decoder()` / `getBase10Codec()` | Base-10 (decimal) encoding |
-| `getBase16Encoder()` / `getBase16Decoder()` / `getBase16Codec()` | Base-16 (hexadecimal) encoding |
+| Function                                                         | Description                         |
+| ---------------------------------------------------------------- | ----------------------------------- |
+| `getBase10Encoder()` / `getBase10Decoder()` / `getBase10Codec()` | Base-10 (decimal) encoding          |
+| `getBase16Encoder()` / `getBase16Decoder()` / `getBase16Codec()` | Base-16 (hexadecimal) encoding      |
 | `getBase58Encoder()` / `getBase58Decoder()` / `getBase58Codec()` | Base-58 (Bitcoin alphabet) encoding |
-| `getBase64Encoder()` / `getBase64Decoder()` / `getBase64Codec()` | Base-64 encoding |
+| `getBase64Encoder()` / `getBase64Decoder()` / `getBase64Codec()` | Base-64 encoding                    |
 
 ### UTF-8
 
-| Function | Description |
-|----------|-------------|
+| Function                                                   | Description           |
+| ---------------------------------------------------------- | --------------------- |
 | `getUtf8Encoder()` / `getUtf8Decoder()` / `getUtf8Codec()` | UTF-8 string encoding |
 
 ### Generic base-X
 
-| Function | Description |
-|----------|-------------|
-| `getBaseXEncoder(alphabet)` / `getBaseXDecoder(alphabet)` / `getBaseXCodec(alphabet)` | Custom base-X encoding using BigInt arithmetic |
+| Function                                                                                                                     | Description                                                                |
+| ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `getBaseXEncoder(alphabet)` / `getBaseXDecoder(alphabet)` / `getBaseXCodec(alphabet)`                                        | Custom base-X encoding using BigInt arithmetic                             |
 | `getBaseXResliceEncoder(alphabet, bits)` / `getBaseXResliceDecoder(alphabet, bits)` / `getBaseXResliceCodec(alphabet, bits)` | Custom base-X encoding using bit reslicing (for power-of-2 alphabet sizes) |
 
 ### Null character utilities
 
-| Function | Description |
-|----------|-------------|
-| `removeNullCharacters(string)` | Remove all `\u0000` characters from a string |
+| Function                            | Description                                         |
+| ----------------------------------- | --------------------------------------------------- |
+| `removeNullCharacters(string)`      | Remove all `\u0000` characters from a string        |
 | `padNullCharacters(string, length)` | Pad a string with `\u0000` to reach a target length |

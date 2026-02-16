@@ -146,32 +146,32 @@ void main() {
 
 ### Solana error matchers
 
-| Matcher / Function | Description |
-|--------------------|-------------|
-| `isSolanaErrorWithCode(int code)` | Matches a `SolanaError` with the given error code. |
-| `throwsSolanaErrorWithCode(int code)` | Matches a function that throws a `SolanaError` with the given code. |
+| Matcher / Function                                                        | Description                                                                              |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `isSolanaErrorWithCode(int code)`                                         | Matches a `SolanaError` with the given error code.                                       |
+| `throwsSolanaErrorWithCode(int code)`                                     | Matches a function that throws a `SolanaError` with the given code.                      |
 | `isSolanaErrorWithCodeAndContext(int code, Map<String, Object?> context)` | Matches a `SolanaError` with the given code whose context contains the expected entries. |
-| `isSolanaErrorMatcher` | Matches any `SolanaError` instance. |
-| `throwsSolanaError` | Matches a function that throws any `SolanaError`. |
+| `isSolanaErrorMatcher`                                                    | Matches any `SolanaError` instance.                                                      |
+| `throwsSolanaError`                                                       | Matches a function that throws any `SolanaError`.                                        |
 
 ### Address matchers
 
-| Matcher / Function | Description |
-|--------------------|-------------|
-| `isValidSolanaAddress` | Matches a value that is a valid Solana `Address`. |
+| Matcher / Function                | Description                                            |
+| --------------------------------- | ------------------------------------------------------ |
+| `isValidSolanaAddress`            | Matches a value that is a valid Solana `Address`.      |
 | `equalsAddress(Address expected)` | Matches an `Address` that equals the expected address. |
 
 ### Byte array matchers
 
-| Matcher / Function | Description |
-|--------------------|-------------|
-| `equalsBytes(Uint8List expected)` | Matches a `Uint8List` that is byte-for-byte equal to the expected value. |
-| `hasByteLength(int length)` | Matches a `Uint8List` with the given length. |
-| `startsWithBytes(Uint8List prefix)` | Matches a `Uint8List` that starts with the given prefix bytes. |
+| Matcher / Function                  | Description                                                              |
+| ----------------------------------- | ------------------------------------------------------------------------ |
+| `equalsBytes(Uint8List expected)`   | Matches a `Uint8List` that is byte-for-byte equal to the expected value. |
+| `hasByteLength(int length)`         | Matches a `Uint8List` with the given length.                             |
+| `startsWithBytes(Uint8List prefix)` | Matches a `Uint8List` that starts with the given prefix bytes.           |
 
 ### Transaction matchers
 
-| Matcher / Function | Description |
-|--------------------|-------------|
+| Matcher / Function                | Description                                                         |
+| --------------------------------- | ------------------------------------------------------------------- |
 | `isFullySignedTransactionMatcher` | Matches a `Transaction` with all signatures populated and non-zero. |
-| `hasSignatureCount(int count)` | Matches a `Transaction` with exactly `count` signatures. |
+| `hasSignatureCount(int count)`    | Matches a `Transaction` with exactly `count` signatures.            |

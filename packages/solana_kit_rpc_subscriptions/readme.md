@@ -163,40 +163,40 @@ void main() async {
 
 ### Factory functions
 
-| Function | Description |
-|----------|-------------|
-| `createSolanaRpcSubscriptions(String clusterUrl, [DefaultRpcSubscriptionsChannelConfig? config])` | Creates a fully-featured subscription client with BigInt JSON, autopinging, pooling, and coalescing. |
-| `createSolanaRpcSubscriptionsUnstable(String clusterUrl, [DefaultRpcSubscriptionsChannelConfig? config])` | Same as above, but includes unstable subscription methods. |
-| `createSolanaRpcSubscriptionsFromTransport(RpcSubscriptionsTransport transport)` | Creates a subscription client from a custom transport. |
-| `createSubscriptionRpc(RpcSubscriptionsConfig config)` | Low-level factory from an API and transport pair. |
-| `createDefaultRpcSubscriptionsTransport(DefaultRpcSubscriptionsTransportConfig config)` | Creates a transport with subscription coalescing from a channel creator. |
-| `createRpcSubscriptionsTransportFromChannelCreator(RpcSubscriptionsChannelCreator creator)` | Creates a transport from a raw channel creator. |
+| Function                                                                                                  | Description                                                                                          |
+| --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `createSolanaRpcSubscriptions(String clusterUrl, [DefaultRpcSubscriptionsChannelConfig? config])`         | Creates a fully-featured subscription client with BigInt JSON, autopinging, pooling, and coalescing. |
+| `createSolanaRpcSubscriptionsUnstable(String clusterUrl, [DefaultRpcSubscriptionsChannelConfig? config])` | Same as above, but includes unstable subscription methods.                                           |
+| `createSolanaRpcSubscriptionsFromTransport(RpcSubscriptionsTransport transport)`                          | Creates a subscription client from a custom transport.                                               |
+| `createSubscriptionRpc(RpcSubscriptionsConfig config)`                                                    | Low-level factory from an API and transport pair.                                                    |
+| `createDefaultRpcSubscriptionsTransport(DefaultRpcSubscriptionsTransportConfig config)`                   | Creates a transport with subscription coalescing from a channel creator.                             |
+| `createRpcSubscriptionsTransportFromChannelCreator(RpcSubscriptionsChannelCreator creator)`               | Creates a transport from a raw channel creator.                                                      |
 
 ### Channel creators
 
-| Function | Description |
-|----------|-------------|
-| `createDefaultSolanaRpcSubscriptionsChannelCreator(config)` | Creates a channel creator with BigInt JSON serialization, autopinging, and pooling. |
-| `createDefaultRpcSubscriptionsChannelCreator(config)` | Creates a channel creator with standard JSON serialization, autopinging, and pooling. |
-| `getChannelPoolingChannelCreator(creator, {maxSubscriptionsPerChannel, minChannels})` | Wraps a channel creator with connection pooling. |
-| `getRpcSubscriptionsChannelWithAutoping({abortSignal, channel, intervalMs})` | Wraps a channel to send periodic ping messages. |
-| `getRpcSubscriptionsTransportWithSubscriptionCoalescing(transport)` | Wraps a transport to deduplicate identical subscriptions. |
+| Function                                                                              | Description                                                                           |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `createDefaultSolanaRpcSubscriptionsChannelCreator(config)`                           | Creates a channel creator with BigInt JSON serialization, autopinging, and pooling.   |
+| `createDefaultRpcSubscriptionsChannelCreator(config)`                                 | Creates a channel creator with standard JSON serialization, autopinging, and pooling. |
+| `getChannelPoolingChannelCreator(creator, {maxSubscriptionsPerChannel, minChannels})` | Wraps a channel creator with connection pooling.                                      |
+| `getRpcSubscriptionsChannelWithAutoping({abortSignal, channel, intervalMs})`          | Wraps a channel to send periodic ping messages.                                       |
+| `getRpcSubscriptionsTransportWithSubscriptionCoalescing(transport)`                   | Wraps a transport to deduplicate identical subscriptions.                             |
 
 ### Classes
 
-| Class | Description |
-|-------|-------------|
-| `RpcSubscriptions` | The subscription client. Call `request(notificationName, [params])` to create pending subscription requests. |
-| `PendingRpcSubscriptionsRequest<T>` | A pending request. Call `subscribe(options)` to start receiving notifications as a `Stream<T>`. |
-| `RpcSubscribeOptions` | Options for subscribing, including an `AbortSignal`. |
-| `RpcSubscriptionsPlan<T>` | Describes a subscription plan with request details and execution logic. |
-| `DefaultRpcSubscriptionsChannelConfig` | Configuration for channel creation: URL, ping interval, pool size, buffer size. |
-| `RpcSubscriptionsRequest` | A subscription request with a method name and parameters. |
-| `RpcSubscriptionsTransportConfig` | Configuration passed to a transport function. |
+| Class                                  | Description                                                                                                  |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `RpcSubscriptions`                     | The subscription client. Call `request(notificationName, [params])` to create pending subscription requests. |
+| `PendingRpcSubscriptionsRequest<T>`    | A pending request. Call `subscribe(options)` to start receiving notifications as a `Stream<T>`.              |
+| `RpcSubscribeOptions`                  | Options for subscribing, including an `AbortSignal`.                                                         |
+| `RpcSubscriptionsPlan<T>`              | Describes a subscription plan with request details and execution logic.                                      |
+| `DefaultRpcSubscriptionsChannelConfig` | Configuration for channel creation: URL, ping interval, pool size, buffer size.                              |
+| `RpcSubscriptionsRequest`              | A subscription request with a method name and parameters.                                                    |
+| `RpcSubscriptionsTransportConfig`      | Configuration passed to a transport function.                                                                |
 
 ### Type aliases
 
-| Type | Description |
-|------|-------------|
-| `RpcSubscriptionsTransport` | `Future<DataPublisher> Function(RpcSubscriptionsTransportConfig)` -- the transport function type. |
+| Type                             | Description                                                                                         |
+| -------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `RpcSubscriptionsTransport`      | `Future<DataPublisher> Function(RpcSubscriptionsTransportConfig)` -- the transport function type.   |
 | `RpcSubscriptionsChannelCreator` | `Future<RpcSubscriptionsChannel> Function({required AbortSignal abortSignal})` -- creates channels. |

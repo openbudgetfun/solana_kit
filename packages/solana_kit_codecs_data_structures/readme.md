@@ -391,139 +391,139 @@ final decoded = codec.decode(bytes);
 
 ### Struct codecs
 
-| Function | Description |
-|----------|-------------|
-| `getStructEncoder(fields)` | Encode a `Map<String, Object?>` from named field encoders |
+| Function                   | Description                                                |
+| -------------------------- | ---------------------------------------------------------- |
+| `getStructEncoder(fields)` | Encode a `Map<String, Object?>` from named field encoders  |
 | `getStructDecoder(fields)` | Decode a `Map<String, Object?>` using named field decoders |
-| `getStructCodec(fields)` | Combined struct codec |
+| `getStructCodec(fields)`   | Combined struct codec                                      |
 
 ### Array codecs
 
-| Function | Description |
-|----------|-------------|
+| Function                        | Description                               |
+| ------------------------------- | ----------------------------------------- |
 | `getArrayEncoder(item, {size})` | Encode a `List<T>` with configurable size |
 | `getArrayDecoder(item, {size})` | Decode a `List<T>` with configurable size |
-| `getArrayCodec(item, {size})` | Combined array codec |
+| `getArrayCodec(item, {size})`   | Combined array codec                      |
 
 ### Array size types
 
-| Type | Description |
-|------|-------------|
+| Type                        | Description                                     |
+| --------------------------- | ----------------------------------------------- |
 | `PrefixedArraySize(prefix)` | Length stored as a number prefix (default: u32) |
-| `FixedArraySize(n)` | Fixed number of items, no prefix |
-| `RemainderArraySize()` | Infer count from remaining bytes |
+| `FixedArraySize(n)`         | Fixed number of items, no prefix                |
+| `RemainderArraySize()`      | Infer count from remaining bytes                |
 
 ### Tuple codecs
 
-| Function | Description |
-|----------|-------------|
+| Function                 | Description                                               |
+| ------------------------ | --------------------------------------------------------- |
 | `getTupleEncoder(items)` | Encode a `List<Object?>` with heterogeneous item encoders |
 | `getTupleDecoder(items)` | Decode a `List<Object?>` with heterogeneous item decoders |
-| `getTupleCodec(items)` | Combined tuple codec |
+| `getTupleCodec(items)`   | Combined tuple codec                                      |
 
 ### Boolean codecs
 
-| Function | Description |
-|----------|-------------|
+| Function                    | Description                             |
+| --------------------------- | --------------------------------------- |
 | `getBooleanEncoder({size})` | Encode `bool` as a number (default: u8) |
-| `getBooleanDecoder({size})` | Decode a number as `bool` |
-| `getBooleanCodec({size})` | Combined boolean codec |
+| `getBooleanDecoder({size})` | Decode a number as `bool`               |
+| `getBooleanCodec({size})`   | Combined boolean codec                  |
 
 ### Nullable codecs
 
-| Function | Description |
-|----------|-------------|
+| Function                                                   | Description                                    |
+| ---------------------------------------------------------- | ---------------------------------------------- |
 | `getNullableEncoder(item, {prefix, hasPrefix, noneValue})` | Encode nullable values with an optional prefix |
-| `getNullableDecoder(item, {prefix, hasPrefix, noneValue})` | Decode nullable values |
-| `getNullableCodec(item, {prefix, hasPrefix, noneValue})` | Combined nullable codec |
+| `getNullableDecoder(item, {prefix, hasPrefix, noneValue})` | Decode nullable values                         |
+| `getNullableCodec(item, {prefix, hasPrefix, noneValue})`   | Combined nullable codec                        |
 
 ### None value types
 
-| Type | Description |
-|------|-------------|
-| `OmitNoneValue()` | Null values are omitted (default) |
-| `ZeroesNoneValue()` | Null values are encoded as zeroes (fixed-size items only) |
-| `ConstantNoneValue(bytes)` | Null values are encoded as a specific byte sequence |
+| Type                       | Description                                               |
+| -------------------------- | --------------------------------------------------------- |
+| `OmitNoneValue()`          | Null values are omitted (default)                         |
+| `ZeroesNoneValue()`        | Null values are encoded as zeroes (fixed-size items only) |
+| `ConstantNoneValue(bytes)` | Null values are encoded as a specific byte sequence       |
 
 ### Map codecs
 
-| Function | Description |
-|----------|-------------|
-| `getMapEncoder(key, value, {size})` | Encode `Map<K, V>` as key-value pairs |
+| Function                            | Description                             |
+| ----------------------------------- | --------------------------------------- |
+| `getMapEncoder(key, value, {size})` | Encode `Map<K, V>` as key-value pairs   |
 | `getMapDecoder(key, value, {size})` | Decode key-value pairs into `Map<K, V>` |
-| `getMapCodec(key, value, {size})` | Combined map codec |
+| `getMapCodec(key, value, {size})`   | Combined map codec                      |
 
 ### Set codecs
 
-| Function | Description |
-|----------|-------------|
-| `getSetEncoder(item, {size})` | Encode `Set<T>` as an array |
+| Function                      | Description                   |
+| ----------------------------- | ----------------------------- |
+| `getSetEncoder(item, {size})` | Encode `Set<T>` as an array   |
 | `getSetDecoder(item, {size})` | Decode an array into `Set<T>` |
-| `getSetCodec(item, {size})` | Combined set codec |
+| `getSetCodec(item, {size})`   | Combined set codec            |
 
 ### Discriminated union codecs
 
-| Function | Description |
-|----------|-------------|
+| Function                                                        | Description                                  |
+| --------------------------------------------------------------- | -------------------------------------------- |
 | `getDiscriminatedUnionEncoder(variants, {discriminator, size})` | Encode a map with a `'__kind'` discriminator |
-| `getDiscriminatedUnionDecoder(variants, {discriminator, size})` | Decode a discriminated union |
-| `getDiscriminatedUnionCodec(variants, {discriminator, size})` | Combined discriminated union codec |
+| `getDiscriminatedUnionDecoder(variants, {discriminator, size})` | Decode a discriminated union                 |
+| `getDiscriminatedUnionCodec(variants, {discriminator, size})`   | Combined discriminated union codec           |
 
 ### Literal union codecs
 
-| Function | Description |
-|----------|-------------|
+| Function                                   | Description                           |
+| ------------------------------------------ | ------------------------------------- |
 | `getLiteralUnionEncoder(variants, {size})` | Encode a value as its index in a list |
-| `getLiteralUnionDecoder(variants, {size})` | Decode an index into a variant value |
-| `getLiteralUnionCodec(variants, {size})` | Combined literal union codec |
+| `getLiteralUnionDecoder(variants, {size})` | Decode an index into a variant value  |
+| `getLiteralUnionCodec(variants, {size})`   | Combined literal union codec          |
 
 ### Raw union codecs
 
-| Function | Description |
-|----------|-------------|
-| `getUnionEncoder(variants, getIndexFromValue)` | Encode using a user-defined variant selector |
-| `getUnionDecoder(variants, getIndexFromBytes)` | Decode using a user-defined variant selector |
-| `getUnionCodec(variants, getIndexFromValue, getIndexFromBytes)` | Combined union codec |
+| Function                                                        | Description                                  |
+| --------------------------------------------------------------- | -------------------------------------------- |
+| `getUnionEncoder(variants, getIndexFromValue)`                  | Encode using a user-defined variant selector |
+| `getUnionDecoder(variants, getIndexFromBytes)`                  | Decode using a user-defined variant selector |
+| `getUnionCodec(variants, getIndexFromValue, getIndexFromBytes)` | Combined union codec                         |
 
 ### Bit array codecs
 
-| Function | Description |
-|----------|-------------|
+| Function                               | Description                          |
+| -------------------------------------- | ------------------------------------ |
 | `getBitArrayEncoder(size, {backward})` | Encode `List<bool>` into packed bits |
 | `getBitArrayDecoder(size, {backward})` | Decode packed bits into `List<bool>` |
-| `getBitArrayCodec(size, {backward})` | Combined bit array codec |
+| `getBitArrayCodec(size, {backward})`   | Combined bit array codec             |
 
 ### Bytes codecs
 
-| Function | Description |
-|----------|-------------|
+| Function            | Description                  |
+| ------------------- | ---------------------------- |
 | `getBytesEncoder()` | Encode raw `Uint8List` as-is |
 | `getBytesDecoder()` | Decode raw `Uint8List` as-is |
-| `getBytesCodec()` | Combined bytes codec |
+| `getBytesCodec()`   | Combined bytes codec         |
 
 ### Constant codecs
 
-| Function | Description |
-|----------|-------------|
-| `getConstantEncoder(bytes)` | Always writes a fixed byte sequence |
+| Function                    | Description                                 |
+| --------------------------- | ------------------------------------------- |
+| `getConstantEncoder(bytes)` | Always writes a fixed byte sequence         |
 | `getConstantDecoder(bytes)` | Verifies and consumes a fixed byte sequence |
-| `getConstantCodec(bytes)` | Combined constant codec |
+| `getConstantCodec(bytes)`   | Combined constant codec                     |
 
 ### Unit codecs
 
-| Function | Description |
-|----------|-------------|
+| Function           | Description                  |
+| ------------------ | ---------------------------- |
 | `getUnitEncoder()` | Zero-size encoder for `void` |
 | `getUnitDecoder()` | Zero-size decoder for `void` |
-| `getUnitCodec()` | Combined unit codec |
+| `getUnitCodec()`   | Combined unit codec          |
 
 ### Hidden prefix/suffix codecs
 
-| Function | Description |
-|----------|-------------|
+| Function                                            | Description                         |
+| --------------------------------------------------- | ----------------------------------- |
 | `getHiddenPrefixEncoder(encoder, prefixedEncoders)` | Prepend hidden data before encoding |
-| `getHiddenPrefixDecoder(decoder, prefixedDecoders)` | Skip hidden prefix when decoding |
-| `getHiddenPrefixCodec(codec, prefixedCodecs)` | Combined hidden prefix codec |
-| `getHiddenSuffixEncoder(encoder, suffixedEncoders)` | Append hidden data after encoding |
-| `getHiddenSuffixDecoder(decoder, suffixedDecoders)` | Skip hidden suffix when decoding |
-| `getHiddenSuffixCodec(codec, suffixedCodecs)` | Combined hidden suffix codec |
+| `getHiddenPrefixDecoder(decoder, prefixedDecoders)` | Skip hidden prefix when decoding    |
+| `getHiddenPrefixCodec(codec, prefixedCodecs)`       | Combined hidden prefix codec        |
+| `getHiddenSuffixEncoder(encoder, suffixedEncoders)` | Append hidden data after encoding   |
+| `getHiddenSuffixDecoder(decoder, suffixedDecoders)` | Skip hidden suffix when decoding    |
+| `getHiddenSuffixCodec(codec, suffixedCodecs)`       | Combined hidden suffix codec        |

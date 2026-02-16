@@ -234,92 +234,92 @@ final size = getEncodedSize(myValue, myEncoder);
 
 ### Core types
 
-| Type | Description |
-|------|-------------|
-| `Encoder<T>` | Sealed class for encoding values to bytes |
-| `FixedSizeEncoder<T>` | Encoder with a fixed `fixedSize` |
-| `VariableSizeEncoder<T>` | Encoder with dynamic size via `getSizeFromValue` |
-| `Decoder<T>` | Sealed class for decoding bytes to values |
-| `FixedSizeDecoder<T>` | Decoder with a fixed `fixedSize` |
-| `VariableSizeDecoder<T>` | Decoder with dynamic size |
-| `Codec<TFrom, TTo>` | Sealed class combining encoding and decoding |
-| `FixedSizeCodec<TFrom, TTo>` | Codec with a fixed `fixedSize` |
-| `VariableSizeCodec<TFrom, TTo>` | Codec with dynamic size |
+| Type                            | Description                                      |
+| ------------------------------- | ------------------------------------------------ |
+| `Encoder<T>`                    | Sealed class for encoding values to bytes        |
+| `FixedSizeEncoder<T>`           | Encoder with a fixed `fixedSize`                 |
+| `VariableSizeEncoder<T>`        | Encoder with dynamic size via `getSizeFromValue` |
+| `Decoder<T>`                    | Sealed class for decoding bytes to values        |
+| `FixedSizeDecoder<T>`           | Decoder with a fixed `fixedSize`                 |
+| `VariableSizeDecoder<T>`        | Decoder with dynamic size                        |
+| `Codec<TFrom, TTo>`             | Sealed class combining encoding and decoding     |
+| `FixedSizeCodec<TFrom, TTo>`    | Codec with a fixed `fixedSize`                   |
+| `VariableSizeCodec<TFrom, TTo>` | Codec with dynamic size                          |
 
 ### Composition functions
 
-| Function | Description |
-|----------|-------------|
+| Function                         | Description                                       |
+| -------------------------------- | ------------------------------------------------- |
 | `combineCodec(encoder, decoder)` | Combine an `Encoder` and `Decoder` into a `Codec` |
-| `encoderFromCodec(codec)` | Extract an `Encoder` from a `Codec` |
-| `decoderFromCodec(codec)` | Extract a `Decoder` from a `Codec` |
+| `encoderFromCodec(codec)`        | Extract an `Encoder` from a `Codec`               |
+| `decoderFromCodec(codec)`        | Extract a `Decoder` from a `Codec`                |
 
 ### Transform functions
 
-| Function | Description |
-|----------|-------------|
-| `transformEncoder(encoder, unmap)` | Map input type before encoding |
-| `transformDecoder(decoder, map)` | Map output type after decoding |
+| Function                              | Description                     |
+| ------------------------------------- | ------------------------------- |
+| `transformEncoder(encoder, unmap)`    | Map input type before encoding  |
+| `transformDecoder(decoder, map)`      | Map output type after decoding  |
 | `transformCodec(codec, unmap, [map])` | Map both input and output types |
 
 ### Size manipulation
 
-| Function | Description |
-|----------|-------------|
+| Function                              | Description                            |
+| ------------------------------------- | -------------------------------------- |
 | `fixEncoderSize(encoder, fixedBytes)` | Fix an encoder to a constant byte size |
-| `fixDecoderSize(decoder, fixedBytes)` | Fix a decoder to a constant byte size |
-| `fixCodecSize(codec, fixedBytes)` | Fix a codec to a constant byte size |
-| `resizeEncoder(encoder, resize)` | Change the reported size of an encoder |
-| `resizeDecoder(decoder, resize)` | Change the reported size of a decoder |
-| `resizeCodec(codec, resize)` | Change the reported size of a codec |
+| `fixDecoderSize(decoder, fixedBytes)` | Fix a decoder to a constant byte size  |
+| `fixCodecSize(codec, fixedBytes)`     | Fix a codec to a constant byte size    |
+| `resizeEncoder(encoder, resize)`      | Change the reported size of an encoder |
+| `resizeDecoder(decoder, resize)`      | Change the reported size of a decoder  |
+| `resizeCodec(codec, resize)`          | Change the reported size of a codec    |
 
 ### Size prefix
 
-| Function | Description |
-|----------|-------------|
-| `addEncoderSizePrefix(encoder, prefix)` | Prefix encoded data with its byte length |
-| `addDecoderSizePrefix(decoder, prefix)` | Read a size prefix before decoding |
-| `addCodecSizePrefix(codec, prefix)` | Add size prefix to both encode and decode |
+| Function                                | Description                               |
+| --------------------------------------- | ----------------------------------------- |
+| `addEncoderSizePrefix(encoder, prefix)` | Prefix encoded data with its byte length  |
+| `addDecoderSizePrefix(decoder, prefix)` | Read a size prefix before decoding        |
+| `addCodecSizePrefix(codec, prefix)`     | Add size prefix to both encode and decode |
 
 ### Sentinel
 
-| Function | Description |
-|----------|-------------|
-| `addEncoderSentinel(encoder, sentinel)` | Append a sentinel after encoding |
-| `addDecoderSentinel(decoder, sentinel)` | Read until a sentinel when decoding |
-| `addCodecSentinel(codec, sentinel)` | Add sentinel to both encode and decode |
+| Function                                | Description                            |
+| --------------------------------------- | -------------------------------------- |
+| `addEncoderSentinel(encoder, sentinel)` | Append a sentinel after encoding       |
+| `addDecoderSentinel(decoder, sentinel)` | Read until a sentinel when decoding    |
+| `addCodecSentinel(codec, sentinel)`     | Add sentinel to both encode and decode |
 
 ### Offset and padding
 
-| Function | Description |
-|----------|-------------|
-| `offsetEncoder(encoder, config)` | Adjust pre/post offset of an encoder |
-| `offsetDecoder(decoder, config)` | Adjust pre/post offset of a decoder |
-| `offsetCodec(codec, config)` | Adjust pre/post offset of a codec |
-| `padLeftEncoder(encoder, offset)` | Add left (leading) zero padding |
-| `padRightEncoder(encoder, offset)` | Add right (trailing) zero padding |
-| `padLeftDecoder(decoder, offset)` | Skip left padding when decoding |
-| `padRightDecoder(decoder, offset)` | Skip right padding when decoding |
-| `padLeftCodec(codec, offset)` | Add left padding to both encode and decode |
-| `padRightCodec(codec, offset)` | Add right padding to both encode and decode |
+| Function                           | Description                                 |
+| ---------------------------------- | ------------------------------------------- |
+| `offsetEncoder(encoder, config)`   | Adjust pre/post offset of an encoder        |
+| `offsetDecoder(decoder, config)`   | Adjust pre/post offset of a decoder         |
+| `offsetCodec(codec, config)`       | Adjust pre/post offset of a codec           |
+| `padLeftEncoder(encoder, offset)`  | Add left (leading) zero padding             |
+| `padRightEncoder(encoder, offset)` | Add right (trailing) zero padding           |
+| `padLeftDecoder(decoder, offset)`  | Skip left padding when decoding             |
+| `padRightDecoder(decoder, offset)` | Skip right padding when decoding            |
+| `padLeftCodec(codec, offset)`      | Add left padding to both encode and decode  |
+| `padRightCodec(codec, offset)`     | Add right padding to both encode and decode |
 
 ### Byte reversal
 
-| Function | Description |
-|----------|-------------|
+| Function                  | Description                           |
+| ------------------------- | ------------------------------------- |
 | `reverseEncoder(encoder)` | Reverse bytes of a fixed-size encoder |
 | `reverseDecoder(decoder)` | Reverse bytes of a fixed-size decoder |
-| `reverseCodec(codec)` | Reverse bytes of a fixed-size codec |
+| `reverseCodec(codec)`     | Reverse bytes of a fixed-size codec   |
 
 ### Utility functions
 
-| Function | Description |
-|----------|-------------|
-| `getEncodedSize(value, encoder)` | Get the byte size of an encoded value |
-| `isFixedSize(object)` | Check if a codec/encoder/decoder is fixed-size |
-| `isVariableSize(object)` | Check if a codec/encoder/decoder is variable-size |
-| `assertIsFixedSize(object)` | Assert fixed-size or throw |
-| `assertIsVariableSize(object)` | Assert variable-size or throw |
-| `createDecoderThatConsumesEntireByteArray(decoder)` | Ensure all bytes are consumed |
-| `containsBytes(bytes, target, offset)` | Check if bytes contain a subsequence |
-| `fixBytes(bytes, length)` | Pad or truncate bytes to a fixed length |
+| Function                                            | Description                                       |
+| --------------------------------------------------- | ------------------------------------------------- |
+| `getEncodedSize(value, encoder)`                    | Get the byte size of an encoded value             |
+| `isFixedSize(object)`                               | Check if a codec/encoder/decoder is fixed-size    |
+| `isVariableSize(object)`                            | Check if a codec/encoder/decoder is variable-size |
+| `assertIsFixedSize(object)`                         | Assert fixed-size or throw                        |
+| `assertIsVariableSize(object)`                      | Assert variable-size or throw                     |
+| `createDecoderThatConsumesEntireByteArray(decoder)` | Ensure all bytes are consumed                     |
+| `containsBytes(bytes, target, offset)`              | Check if bytes contain a subsequence              |
+| `fixBytes(bytes, length)`                           | Pad or truncate bytes to a fixed length           |

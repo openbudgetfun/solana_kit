@@ -236,38 +236,38 @@ final option = decoder.decode(bytes);
 
 ### Option type
 
-| Type / Function | Description |
-|-----------------|-------------|
-| `Option<T>` | Sealed class: either `Some<T>` or `None<T>` |
-| `Some<T>(T value)` | Contains a present value |
-| `None<T>()` | Contains no value |
-| `some<T>(T value)` | Factory function for `Some<T>` |
-| `none<T>()` | Factory function for `None<T>` |
-| `isOption(input)` | Returns `true` if the input is an `Option` |
-| `isSome(option)` | Returns `true` if the option is `Some` |
-| `isNone(option)` | Returns `true` if the option is `None` |
+| Type / Function    | Description                                 |
+| ------------------ | ------------------------------------------- |
+| `Option<T>`        | Sealed class: either `Some<T>` or `None<T>` |
+| `Some<T>(T value)` | Contains a present value                    |
+| `None<T>()`        | Contains no value                           |
+| `some<T>(T value)` | Factory function for `Some<T>`              |
+| `none<T>()`        | Factory function for `None<T>`              |
+| `isOption(input)`  | Returns `true` if the input is an `Option`  |
+| `isSome(option)`   | Returns `true` if the option is `Some`      |
+| `isNone(option)`   | Returns `true` if the option is `None`      |
 
 ### Unwrap utilities
 
-| Function | Description |
-|----------|-------------|
-| `unwrapOption<T>(option)` | Returns the contained value or `null` |
-| `unwrapOptionOr<T>(option, fallback)` | Returns the contained value or calls `fallback()` |
-| `wrapNullable<T>(nullable)` | Converts `T?` into `Option<T>` |
+| Function                                     | Description                                            |
+| -------------------------------------------- | ------------------------------------------------------ |
+| `unwrapOption<T>(option)`                    | Returns the contained value or `null`                  |
+| `unwrapOptionOr<T>(option, fallback)`        | Returns the contained value or calls `fallback()`      |
+| `wrapNullable<T>(nullable)`                  | Converts `T?` into `Option<T>`                         |
 | `unwrapOptionRecursively(input, [fallback])` | Deep-unwraps nested options in maps, lists, and values |
 
 ### Option codecs
 
-| Function | Description |
-|----------|-------------|
-| `getOptionEncoder<T>(item, {prefix, hasPrefix, noneValue})` | Encode `Option<T>` or `T?` values |
-| `getOptionDecoder<T>(item, {prefix, hasPrefix, noneValue})` | Decode bytes into `Option<T>` |
-| `getOptionCodec<TFrom, TTo>(item, {prefix, hasPrefix, noneValue})` | Combined option codec |
+| Function                                                           | Description                       |
+| ------------------------------------------------------------------ | --------------------------------- |
+| `getOptionEncoder<T>(item, {prefix, hasPrefix, noneValue})`        | Encode `Option<T>` or `T?` values |
+| `getOptionDecoder<T>(item, {prefix, hasPrefix, noneValue})`        | Decode bytes into `Option<T>`     |
+| `getOptionCodec<TFrom, TTo>(item, {prefix, hasPrefix, noneValue})` | Combined option codec             |
 
 ### None value types
 
-| Type | Description |
-|------|-------------|
-| `OmitOptionNoneValue()` | `None` is omitted from encoding (default) |
-| `ZeroesOptionNoneValue()` | `None` is encoded as zeroes (requires fixed-size item) |
-| `ConstantOptionNoneValue(bytes)` | `None` is encoded as a specific byte sequence |
+| Type                             | Description                                            |
+| -------------------------------- | ------------------------------------------------------ |
+| `OmitOptionNoneValue()`          | `None` is omitted from encoding (default)              |
+| `ZeroesOptionNoneValue()`        | `None` is encoded as zeroes (requires fixed-size item) |
+| `ConstantOptionNoneValue(bytes)` | `None` is encoded as a specific byte sequence          |

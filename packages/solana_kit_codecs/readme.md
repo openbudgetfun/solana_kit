@@ -116,10 +116,10 @@ switch (result) {
 
 ## Re-exported packages
 
-| Package | Description |
-|---------|-------------|
-| [`solana_kit_codecs_core`](../solana_kit_codecs_core/) | Core interfaces and composition utilities |
-| [`solana_kit_codecs_numbers`](../solana_kit_codecs_numbers/) | Integer and float codecs |
-| [`solana_kit_codecs_strings`](../solana_kit_codecs_strings/) | String and base encoding codecs |
+| Package                                                                      | Description                                     |
+| ---------------------------------------------------------------------------- | ----------------------------------------------- |
+| [`solana_kit_codecs_core`](../solana_kit_codecs_core/)                       | Core interfaces and composition utilities       |
+| [`solana_kit_codecs_numbers`](../solana_kit_codecs_numbers/)                 | Integer and float codecs                        |
+| [`solana_kit_codecs_strings`](../solana_kit_codecs_strings/)                 | String and base encoding codecs                 |
 | [`solana_kit_codecs_data_structures`](../solana_kit_codecs_data_structures/) | Struct, array, enum, and other composite codecs |
-| [`solana_kit_options`](../solana_kit_options/) | Rust-like `Option<T>` type and codec |
+| [`solana_kit_options`](../solana_kit_options/)                               | Rust-like `Option<T>` type and codec            |

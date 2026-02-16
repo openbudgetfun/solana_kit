@@ -156,57 +156,57 @@ final keypaths = getAllowedNumericKeypaths();
 
 The package defines parameter types and builders for all 52 Solana JSON-RPC methods:
 
-| Method | Description |
-|--------|-------------|
-| `getAccountInfo` | Returns account information for a given address |
-| `getBalance` | Returns the balance in lamports for a given address |
-| `getBlock` | Returns identity and transaction information about a confirmed block |
-| `getBlockCommitment` | Returns commitment for a particular block |
-| `getBlockHeight` | Returns the current block height |
-| `getBlockProduction` | Returns recent block production information |
-| `getBlocks` | Returns a list of confirmed blocks between two slots |
-| `getBlocksWithLimit` | Returns a list of confirmed blocks starting at a given slot |
-| `getBlockTime` | Returns the estimated production time of a block |
-| `getClusterNodes` | Returns information about all nodes in the cluster |
-| `getEpochInfo` | Returns information about the current epoch |
-| `getEpochSchedule` | Returns epoch schedule information |
-| `getFeeForMessage` | Returns the fee for a given message |
-| `getFirstAvailableBlock` | Returns the slot of the lowest confirmed block |
-| `getGenesisHash` | Returns the genesis hash |
-| `getHealth` | Returns the current health of the node |
-| `getHighestSnapshotSlot` | Returns the highest slot with a snapshot |
-| `getIdentity` | Returns the identity pubkey of the current node |
-| `getInflationGovernor` | Returns the current inflation governor |
-| `getInflationRate` | Returns the current inflation rate |
-| `getInflationReward` | Returns the inflation reward for addresses |
-| `getLargestAccounts` | Returns the 20 largest accounts by lamport balance |
-| `getLatestBlockhash` | Returns the latest blockhash |
-| `getLeaderSchedule` | Returns the leader schedule |
-| `getMaxRetransmitSlot` | Returns the max slot seen from retransmit stage |
-| `getMaxShredInsertSlot` | Returns the max slot seen from shred insert stage |
-| `getMinimumBalanceForRentExemption` | Returns minimum balance for rent exemption |
-| `getMultipleAccounts` | Returns account information for a list of addresses |
-| `getProgramAccounts` | Returns all accounts owned by a program |
-| `getRecentPerformanceSamples` | Returns recent performance samples |
-| `getRecentPrioritizationFees` | Returns recent prioritization fees |
-| `getSignatureStatuses` | Returns the statuses of a list of signatures |
-| `getSignaturesForAddress` | Returns signatures for confirmed transactions involving an address |
-| `getSlot` | Returns the current slot |
-| `getSlotLeader` | Returns the current slot leader |
-| `getSlotLeaders` | Returns the slot leaders for a given slot range |
-| `getStakeMinimumDelegation` | Returns the stake minimum delegation |
-| `getSupply` | Returns information about the current supply |
-| `getTokenAccountBalance` | Returns the token balance of an SPL Token account |
-| `getTokenAccountsByDelegate` | Returns all SPL Token accounts by approved delegate |
-| `getTokenAccountsByOwner` | Returns all SPL Token accounts by token owner |
-| `getTokenLargestAccounts` | Returns the 20 largest token accounts |
-| `getTokenSupply` | Returns the total supply of an SPL Token type |
-| `getTransaction` | Returns transaction details for a confirmed signature |
-| `getTransactionCount` | Returns the current transaction count |
-| `getVersion` | Returns the current Solana version |
-| `getVoteAccounts` | Returns the account info and associated stake for all vote accounts |
-| `isBlockhashValid` | Returns whether a blockhash is still valid |
-| `minimumLedgerSlot` | Returns the lowest slot that the node has information about |
-| `requestAirdrop` | Requests an airdrop of lamports (test clusters only) |
-| `sendTransaction` | Submits a signed transaction |
-| `simulateTransaction` | Simulates sending a transaction |
+| Method                              | Description                                                          |
+| ----------------------------------- | -------------------------------------------------------------------- |
+| `getAccountInfo`                    | Returns account information for a given address                      |
+| `getBalance`                        | Returns the balance in lamports for a given address                  |
+| `getBlock`                          | Returns identity and transaction information about a confirmed block |
+| `getBlockCommitment`                | Returns commitment for a particular block                            |
+| `getBlockHeight`                    | Returns the current block height                                     |
+| `getBlockProduction`                | Returns recent block production information                          |
+| `getBlocks`                         | Returns a list of confirmed blocks between two slots                 |
+| `getBlocksWithLimit`                | Returns a list of confirmed blocks starting at a given slot          |
+| `getBlockTime`                      | Returns the estimated production time of a block                     |
+| `getClusterNodes`                   | Returns information about all nodes in the cluster                   |
+| `getEpochInfo`                      | Returns information about the current epoch                          |
+| `getEpochSchedule`                  | Returns epoch schedule information                                   |
+| `getFeeForMessage`                  | Returns the fee for a given message                                  |
+| `getFirstAvailableBlock`            | Returns the slot of the lowest confirmed block                       |
+| `getGenesisHash`                    | Returns the genesis hash                                             |
+| `getHealth`                         | Returns the current health of the node                               |
+| `getHighestSnapshotSlot`            | Returns the highest slot with a snapshot                             |
+| `getIdentity`                       | Returns the identity pubkey of the current node                      |
+| `getInflationGovernor`              | Returns the current inflation governor                               |
+| `getInflationRate`                  | Returns the current inflation rate                                   |
+| `getInflationReward`                | Returns the inflation reward for addresses                           |
+| `getLargestAccounts`                | Returns the 20 largest accounts by lamport balance                   |
+| `getLatestBlockhash`                | Returns the latest blockhash                                         |
+| `getLeaderSchedule`                 | Returns the leader schedule                                          |
+| `getMaxRetransmitSlot`              | Returns the max slot seen from retransmit stage                      |
+| `getMaxShredInsertSlot`             | Returns the max slot seen from shred insert stage                    |
+| `getMinimumBalanceForRentExemption` | Returns minimum balance for rent exemption                           |
+| `getMultipleAccounts`               | Returns account information for a list of addresses                  |
+| `getProgramAccounts`                | Returns all accounts owned by a program                              |
+| `getRecentPerformanceSamples`       | Returns recent performance samples                                   |
+| `getRecentPrioritizationFees`       | Returns recent prioritization fees                                   |
+| `getSignatureStatuses`              | Returns the statuses of a list of signatures                         |
+| `getSignaturesForAddress`           | Returns signatures for confirmed transactions involving an address   |
+| `getSlot`                           | Returns the current slot                                             |
+| `getSlotLeader`                     | Returns the current slot leader                                      |
+| `getSlotLeaders`                    | Returns the slot leaders for a given slot range                      |
+| `getStakeMinimumDelegation`         | Returns the stake minimum delegation                                 |
+| `getSupply`                         | Returns information about the current supply                         |
+| `getTokenAccountBalance`            | Returns the token balance of an SPL Token account                    |
+| `getTokenAccountsByDelegate`        | Returns all SPL Token accounts by approved delegate                  |
+| `getTokenAccountsByOwner`           | Returns all SPL Token accounts by token owner                        |
+| `getTokenLargestAccounts`           | Returns the 20 largest token accounts                                |
+| `getTokenSupply`                    | Returns the total supply of an SPL Token type                        |
+| `getTransaction`                    | Returns transaction details for a confirmed signature                |
+| `getTransactionCount`               | Returns the current transaction count                                |
+| `getVersion`                        | Returns the current Solana version                                   |
+| `getVoteAccounts`                   | Returns the account info and associated stake for all vote accounts  |
+| `isBlockhashValid`                  | Returns whether a blockhash is still valid                           |
+| `minimumLedgerSlot`                 | Returns the lowest slot that the node has information about          |
+| `requestAirdrop`                    | Requests an airdrop of lamports (test clusters only)                 |
+| `sendTransaction`                   | Submits a signed transaction                                         |
+| `simulateTransaction`               | Simulates sending a transaction                                      |
