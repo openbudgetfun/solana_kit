@@ -244,9 +244,9 @@
 
 ### solana_kit_program_client_core (~5 source files, ~7 test files)
 
-- [ ] T104 [P] [US2] Port base program client utilities from `.repos/kit/packages/program-client-core/src/` to `packages/solana_kit_program_client_core/lib/src/`
-- [ ] T105 [US2] Update barrel export `packages/solana_kit_program_client_core/lib/solana_kit_program_client_core.dart`
-- [ ] T106 [US2] Port all 7 test files from `.repos/kit/packages/program-client-core/src/__tests__/` to `packages/solana_kit_program_client_core/test/`
+- [x] T104 [P] [US2] Port base program client utilities from `.repos/kit/packages/program-client-core/src/` to `packages/solana_kit_program_client_core/lib/src/`
+- [x] T105 [US2] Update barrel export `packages/solana_kit_program_client_core/lib/solana_kit_program_client_core.dart`
+- [x] T106 [US2] Port all 7 test files from `.repos/kit/packages/program-client-core/src/__tests__/` to `packages/solana_kit_program_client_core/test/`
 
 **Checkpoint**: Full RPC client operational. Developers can query all 40+ Solana RPC methods with typed responses, fetch and decode accounts, and read sysvars. `melos test --scope="solana_kit_rpc*" --scope="solana_kit_accounts" --scope="solana_kit_sysvars" --scope="solana_kit_program_client_core"` passes.
 
