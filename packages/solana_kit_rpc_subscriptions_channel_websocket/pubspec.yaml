@@ -9,6 +9,9 @@ resolution: workspace
 
 dependencies:
   solana_kit_errors:
+  solana_kit_subscribable:
+  web_socket_channel: ^3.0.2
 
 dev_dependencies:
   solana_kit_lints:
+  test: ^1.25.8
