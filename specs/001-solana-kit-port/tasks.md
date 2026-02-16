@@ -238,9 +238,9 @@
 
 ### solana_kit_sysvars (~13 source files, ~12 test files)
 
-- [ ] T101 [P] [US2] Port Clock, EpochSchedule, Rent, and remaining sysvar types from `.repos/kit/packages/sysvars/src/` to `packages/solana_kit_sysvars/lib/src/`
-- [ ] T102 [US2] Update barrel export `packages/solana_kit_sysvars/lib/solana_kit_sysvars.dart`
-- [ ] T103 [US2] Port all 12 test files from `.repos/kit/packages/sysvars/src/__tests__/` to `packages/solana_kit_sysvars/test/`
+- [x] T101 [P] [US2] Port Clock, EpochSchedule, Rent, and remaining sysvar types from `.repos/kit/packages/sysvars/src/` to `packages/solana_kit_sysvars/lib/src/`
+- [x] T102 [US2] Update barrel export `packages/solana_kit_sysvars/lib/solana_kit_sysvars.dart`
+- [x] T103 [US2] Port all 12 test files from `.repos/kit/packages/sysvars/src/__tests__/` to `packages/solana_kit_sysvars/test/`
 
 ### solana_kit_program_client_core (~5 source files, ~7 test files)
 
