@@ -47,6 +47,11 @@ solana_kit_errors (foundation - no deps)
   └── solana_kit (umbrella - re-exports everything)
 ```
 
+## Important Rules
+
+- **Never delete files in `.changeset/`** — changeset files track release notes and versioning decisions. They are consumed by `knope release` and must not be manually removed.
+- **Always keep readme files and docs up to date** — when modifying a package's public API, behavior, or usage patterns, update its `readme.md` to reflect the changes. Documentation must stay in sync with the code.
+
 ## Coding Conventions
 
 - Modern Dart 3.10+ features: sealed classes, extension types, records, patterns
