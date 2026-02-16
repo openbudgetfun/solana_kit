@@ -266,9 +266,9 @@
 
 ### solana_kit_rpc_subscriptions_api (~11 source files, ~21 test files)
 
-- [ ] T110 [US4] Port all subscription method definitions (accountNotifications, blockNotifications, logsNotifications, etc.) from `.repos/kit/packages/rpc-subscriptions-api/src/` to `packages/solana_kit_rpc_subscriptions_api/lib/src/`
-- [ ] T111 [US4] Update barrel export `packages/solana_kit_rpc_subscriptions_api/lib/solana_kit_rpc_subscriptions_api.dart`
-- [ ] T112 [US4] Port all 21 test files from `.repos/kit/packages/rpc-subscriptions-api/src/__tests__/` to `packages/solana_kit_rpc_subscriptions_api/test/`
+- [x] T110 [US4] Port all subscription method definitions (accountNotifications, blockNotifications, logsNotifications, etc.) from `.repos/kit/packages/rpc-subscriptions-api/src/` to `packages/solana_kit_rpc_subscriptions_api/lib/src/`
+- [x] T111 [US4] Update barrel export `packages/solana_kit_rpc_subscriptions_api/lib/solana_kit_rpc_subscriptions_api.dart`
+- [x] T112 [US4] Port all 21 test files from `.repos/kit/packages/rpc-subscriptions-api/src/__tests__/` to `packages/solana_kit_rpc_subscriptions_api/test/`
 
 ### solana_kit_rpc_subscriptions_channel_websocket (~3 source files, ~3 test files)
 
