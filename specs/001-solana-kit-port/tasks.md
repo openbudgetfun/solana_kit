@@ -260,9 +260,9 @@
 
 ### solana_kit_subscribable (~5 source files, ~5 test files)
 
-- [ ] T107 [US4] Port DataPublisher, async iterable helpers from `.repos/kit/packages/subscribable/src/` to `packages/solana_kit_subscribable/lib/src/`
-- [ ] T108 [US4] Update barrel export `packages/solana_kit_subscribable/lib/solana_kit_subscribable.dart`
-- [ ] T109 [US4] Port all 5 test files from `.repos/kit/packages/subscribable/src/__tests__/` to `packages/solana_kit_subscribable/test/`
+- [x] T107 [US4] Port DataPublisher, async iterable helpers from `.repos/kit/packages/subscribable/src/` to `packages/solana_kit_subscribable/lib/src/`
+- [x] T108 [US4] Update barrel export `packages/solana_kit_subscribable/lib/solana_kit_subscribable.dart`
+- [x] T109 [US4] Port all 5 test files from `.repos/kit/packages/subscribable/src/__tests__/` to `packages/solana_kit_subscribable/test/`
 
 ### solana_kit_rpc_subscriptions_api (~11 source files, ~21 test files)
 
