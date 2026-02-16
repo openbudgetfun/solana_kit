@@ -10,50 +10,50 @@ The Solana Kit SDK consists of 35 publishable packages under `packages/` plus 2 
 
 ### Publishable Packages (35)
 
-| Layer | Package | Dependencies |
-|-------|---------|-------------|
-| 0 | `solana_kit_errors` | (none) |
-| 1 | `solana_kit_functional` | errors |
-| 1 | `solana_kit_fast_stable_stringify` | (none) |
-| 2 | `solana_kit_codecs_core` | errors |
-| 2 | `solana_kit_codecs_numbers` | codecs_core |
-| 2 | `solana_kit_codecs_strings` | codecs_core |
-| 2 | `solana_kit_codecs_data_structures` | codecs_core, codecs_numbers |
-| 2 | `solana_kit_options` | codecs_core, codecs_data_structures |
-| 2 | `solana_kit_codecs` | (umbrella re-export of all codec packages) |
-| 3 | `solana_kit_addresses` | errors, codecs_strings |
-| 3 | `solana_kit_keys` | errors, addresses, codecs_strings |
-| 3 | `solana_kit_rpc_spec_types` | errors |
-| 3 | `solana_kit_rpc_types` | errors, addresses, codecs_strings |
-| 4 | `solana_kit_instructions` | errors, addresses |
-| 4 | `solana_kit_programs` | errors |
-| 4 | `solana_kit_rpc_spec` | errors, rpc_spec_types |
-| 4 | `solana_kit_rpc_parsed_types` | addresses, rpc_types |
-| 4 | `solana_kit_rpc_transformers` | errors, rpc_spec_types, rpc_types |
-| 4 | `solana_kit_rpc_transport_http` | errors, rpc_spec_types |
-| 5 | `solana_kit_transaction_messages` | errors, addresses, codecs, instructions, keys |
-| 5 | `solana_kit_offchain_messages` | errors, addresses, codecs, keys |
-| 5 | `solana_kit_rpc_api` | addresses, rpc_spec, rpc_spec_types, rpc_types, rpc_parsed_types, rpc_transformers |
-| 5 | `solana_kit_subscribable` | errors |
-| 6 | `solana_kit_transactions` | errors, addresses, codecs, instructions, keys, transaction_messages |
-| 6 | `solana_kit_rpc` | rpc_api, rpc_spec, rpc_transport_http, rpc_transformers |
-| 6 | `solana_kit_rpc_subscriptions_api` | addresses, rpc_spec_types, rpc_types |
-| 6 | `solana_kit_rpc_subscriptions_channel_websocket` | errors, rpc_spec_types |
-| 7 | `solana_kit_signers` | errors, addresses, keys, transactions, transaction_messages |
-| 7 | `solana_kit_accounts` | errors, addresses, codecs, rpc_api, rpc_spec, rpc_types |
-| 7 | `solana_kit_sysvars` | errors, addresses, codecs, rpc_api, rpc_spec, rpc_types, accounts |
-| 7 | `solana_kit_program_client_core` | errors, addresses, instructions, rpc_api, rpc_spec |
-| 7 | `solana_kit_rpc_subscriptions` | errors, rpc_spec_types, rpc_subscriptions_api, rpc_subscriptions_channel_websocket, subscribable |
-| 8 | `solana_kit_transaction_confirmation` | errors, keys, rpc, rpc_subscriptions, rpc_types, transactions |
-| 8 | `solana_kit_instruction_plans` | errors, instructions, keys, transaction_messages, transactions |
-| 9 | `solana_kit` | (umbrella re-export of all packages above) |
+| Layer | Package                                          | Dependencies                                                                                     |
+| ----- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| 0     | `solana_kit_errors`                              | (none)                                                                                           |
+| 1     | `solana_kit_functional`                          | errors                                                                                           |
+| 1     | `solana_kit_fast_stable_stringify`               | (none)                                                                                           |
+| 2     | `solana_kit_codecs_core`                         | errors                                                                                           |
+| 2     | `solana_kit_codecs_numbers`                      | codecs_core                                                                                      |
+| 2     | `solana_kit_codecs_strings`                      | codecs_core                                                                                      |
+| 2     | `solana_kit_codecs_data_structures`              | codecs_core, codecs_numbers                                                                      |
+| 2     | `solana_kit_options`                             | codecs_core, codecs_data_structures                                                              |
+| 2     | `solana_kit_codecs`                              | (umbrella re-export of all codec packages)                                                       |
+| 3     | `solana_kit_addresses`                           | errors, codecs_strings                                                                           |
+| 3     | `solana_kit_keys`                                | errors, addresses, codecs_strings                                                                |
+| 3     | `solana_kit_rpc_spec_types`                      | errors                                                                                           |
+| 3     | `solana_kit_rpc_types`                           | errors, addresses, codecs_strings                                                                |
+| 4     | `solana_kit_instructions`                        | errors, addresses                                                                                |
+| 4     | `solana_kit_programs`                            | errors                                                                                           |
+| 4     | `solana_kit_rpc_spec`                            | errors, rpc_spec_types                                                                           |
+| 4     | `solana_kit_rpc_parsed_types`                    | addresses, rpc_types                                                                             |
+| 4     | `solana_kit_rpc_transformers`                    | errors, rpc_spec_types, rpc_types                                                                |
+| 4     | `solana_kit_rpc_transport_http`                  | errors, rpc_spec_types                                                                           |
+| 5     | `solana_kit_transaction_messages`                | errors, addresses, codecs, instructions, keys                                                    |
+| 5     | `solana_kit_offchain_messages`                   | errors, addresses, codecs, keys                                                                  |
+| 5     | `solana_kit_rpc_api`                             | addresses, rpc_spec, rpc_spec_types, rpc_types, rpc_parsed_types, rpc_transformers               |
+| 5     | `solana_kit_subscribable`                        | errors                                                                                           |
+| 6     | `solana_kit_transactions`                        | errors, addresses, codecs, instructions, keys, transaction_messages                              |
+| 6     | `solana_kit_rpc`                                 | rpc_api, rpc_spec, rpc_transport_http, rpc_transformers                                          |
+| 6     | `solana_kit_rpc_subscriptions_api`               | addresses, rpc_spec_types, rpc_types                                                             |
+| 6     | `solana_kit_rpc_subscriptions_channel_websocket` | errors, rpc_spec_types                                                                           |
+| 7     | `solana_kit_signers`                             | errors, addresses, keys, transactions, transaction_messages                                      |
+| 7     | `solana_kit_accounts`                            | errors, addresses, codecs, rpc_api, rpc_spec, rpc_types                                          |
+| 7     | `solana_kit_sysvars`                             | errors, addresses, codecs, rpc_api, rpc_spec, rpc_types, accounts                                |
+| 7     | `solana_kit_program_client_core`                 | errors, addresses, instructions, rpc_api, rpc_spec                                               |
+| 7     | `solana_kit_rpc_subscriptions`                   | errors, rpc_spec_types, rpc_subscriptions_api, rpc_subscriptions_channel_websocket, subscribable |
+| 8     | `solana_kit_transaction_confirmation`            | errors, keys, rpc, rpc_subscriptions, rpc_types, transactions                                    |
+| 8     | `solana_kit_instruction_plans`                   | errors, instructions, keys, transaction_messages, transactions                                   |
+| 9     | `solana_kit`                                     | (umbrella re-export of all packages above)                                                       |
 
 ### Internal Packages (not published)
 
-| Package | Purpose |
-|---------|---------|
-| `solana_kit_lints` | Shared lint rules (`very_good_analysis`) |
-| `solana_kit_test_matchers` | Solana-specific test matchers |
+| Package                    | Purpose                                  |
+| -------------------------- | ---------------------------------------- |
+| `solana_kit_lints`         | Shared lint rules (`very_good_analysis`) |
+| `solana_kit_test_matchers` | Solana-specific test matchers            |
 
 ## Versioning with Knope
 
@@ -76,6 +76,7 @@ Add support for program derived addresses with custom seeds.
 ```
 
 Bump types:
+
 - `patch` - Bug fixes, documentation changes
 - `minor` - New features, backwards-compatible additions
 - `major` - Breaking changes
@@ -89,6 +90,7 @@ knope release
 ```
 
 This workflow:
+
 1. Reads all changeset files in `.changeset/`
 2. Bumps versions in each package's `pubspec.yaml`
 3. Updates each package's `changelog.md`
@@ -148,6 +150,7 @@ Before publishing, verify each package meets these requirements:
 Packages must be published in dependency order (leaf packages first). The `knope publish` workflow handles this automatically by publishing packages in the order defined in `knope.toml`.
 
 The correct publishing order follows the layer table above:
+
 1. Layer 0: `solana_kit_errors`
 2. Layer 1: `solana_kit_functional`, `solana_kit_fast_stable_stringify`
 3. Layer 2: Codec packages (`codecs_core` -> `codecs_numbers`, `codecs_strings` -> `codecs_data_structures` -> `options` -> `codecs`)
@@ -233,6 +236,7 @@ The recommended CI/CD workflow for publishing:
 4. **Verification**: Check pub.dev for all packages with correct versions
 
 The GitHub Actions workflow should include:
+
 - A `release` job that runs `knope release` on push to main (when changesets exist)
 - A `publish` job that runs `knope publish` after the release job succeeds
 - The publish job needs `dart pub login` credentials (via `PUB_TOKEN` environment variable or `dart pub token add` with a service account)
