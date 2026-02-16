@@ -323,8 +323,8 @@
 - [x] T132 Run `melos analyze` across all 37 packages and fix any warnings
 - [x] T133 Run `melos test` across all 37 packages and verify all tests pass
 - [x] T134 Run `dprint check` and fix any formatting issues across entire codebase
-- [ ] T135 Validate quickstart.md code examples compile and run correctly
-- [ ] T136 Verify byte-identical codec output vs upstream TS SDK for representative test vectors
+- [x] T135 Validate quickstart.md code examples compile and run correctly
+- [x] T136 Verify byte-identical codec output vs upstream TS SDK for representative test vectors
 
 ---
 
