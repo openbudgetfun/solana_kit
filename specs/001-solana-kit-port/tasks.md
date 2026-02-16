@@ -304,11 +304,11 @@
 
 **Independent Test**: Following the guide, `melos exec -- dart pub publish --dry-run` succeeds for all packages without errors.
 
-- [ ] T125 [US5] Write publishing guide documenting dependency-order publishing strategy in `docs/publishing-guide.md`
-- [ ] T126 [US5] Document knope changeset workflow and melos publish process in `docs/publishing-guide.md`
-- [ ] T127 [US5] Document pre-publish checklist per package (readme, changelog, LICENSE, remove workspace resolution, add caret constraints, run pana) in `docs/publishing-guide.md`
-- [ ] T128 [US5] Document 37-package concerns (namespace reservation, rate limits, verified publisher, rollback procedures) in `docs/publishing-guide.md`
-- [ ] T129 [US5] Validate all 37 packages pass `dart pub publish --dry-run` and document any issues
+- [x] T125 [US5] Write publishing guide documenting dependency-order publishing strategy in `docs/publishing-guide.md`
+- [x] T126 [US5] Document knope changeset workflow and melos publish process in `docs/publishing-guide.md`
+- [x] T127 [US5] Document pre-publish checklist per package (readme, changelog, LICENSE, remove workspace resolution, add caret constraints, run pana) in `docs/publishing-guide.md`
+- [x] T128 [US5] Document 37-package concerns (namespace reservation, rate limits, verified publisher, rollback procedures) in `docs/publishing-guide.md`
+- [x] T129 [US5] Validate all 37 packages pass `dart pub publish --dry-run` and document any issues
 
 **Checkpoint**: Publishing guide complete and validated. Maintainer can follow the guide for a successful dry-run publish of all packages.
 
@@ -318,11 +318,11 @@
 
 **Purpose**: Finalization packages and cross-package validation
 
-- [ ] T130 [P] Implement solana_kit_test_matchers with Solana-specific test assertions in `packages/solana_kit_test_matchers/lib/src/`
-- [ ] T131 Create umbrella re-export package `packages/solana_kit/lib/solana_kit.dart` re-exporting all 36 other packages
-- [ ] T132 Run `melos analyze` across all 37 packages and fix any warnings
-- [ ] T133 Run `melos test` across all 37 packages and verify all tests pass
-- [ ] T134 Run `dprint check` and fix any formatting issues across entire codebase
+- [x] T130 [P] Implement solana_kit_test_matchers with Solana-specific test assertions in `packages/solana_kit_test_matchers/lib/src/`
+- [x] T131 Create umbrella re-export package `packages/solana_kit/lib/solana_kit.dart` re-exporting all 36 other packages
+- [x] T132 Run `melos analyze` across all 37 packages and fix any warnings
+- [x] T133 Run `melos test` across all 37 packages and verify all tests pass
+- [x] T134 Run `dprint check` and fix any formatting issues across entire codebase
 - [ ] T135 Validate quickstart.md code examples compile and run correctly
 - [ ] T136 Verify byte-identical codec output vs upstream TS SDK for representative test vectors
 

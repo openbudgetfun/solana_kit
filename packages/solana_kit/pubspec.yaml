@@ -22,7 +22,11 @@ dependencies:
   solana_kit_program_client_core:
   solana_kit_programs:
   solana_kit_rpc:
+  solana_kit_rpc_parsed_types:
+  solana_kit_rpc_spec_types:
   solana_kit_rpc_subscriptions:
+  solana_kit_rpc_transport_http:
+  solana_kit_rpc_types:
   solana_kit_signers:
   solana_kit_subscribable:
   solana_kit_sysvars:
@@ -32,3 +36,4 @@ dependencies:
 
 dev_dependencies:
   solana_kit_lints:
+  test: ^1.25.0
