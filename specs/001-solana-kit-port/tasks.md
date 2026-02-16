@@ -209,19 +209,19 @@
 
 ### solana_kit_rpc_api (~107 source files, ~61 test files)
 
-- [ ] T081 [US2] Port getAccountInfo, getBalance, getBlock, getBlockCommitment, getBlockHeight methods from `.repos/kit/packages/rpc-api/src/` to `packages/solana_kit_rpc_api/lib/src/`
-- [ ] T082 [US2] Port getBlockProduction, getBlocks, getBlocksWithLimit, getBlockTime, getClusterNodes methods in `packages/solana_kit_rpc_api/lib/src/`
-- [ ] T083 [US2] Port getEpochInfo, getEpochSchedule, getFeeForMessage, getFirstAvailableBlock, getGenesisHash methods in `packages/solana_kit_rpc_api/lib/src/`
-- [ ] T084 [US2] Port getHealth, getHighestSnapshotSlot, getIdentity, getInflationGovernor, getInflationRate, getInflationReward methods in `packages/solana_kit_rpc_api/lib/src/`
-- [ ] T085 [US2] Port getLargestAccounts, getLatestBlockhash, getLeaderSchedule, getMaxRetransmitSlot, getMaxShredInsertSlot methods in `packages/solana_kit_rpc_api/lib/src/`
-- [ ] T086 [US2] Port getMinimumBalanceForRentExemption, getMultipleAccounts, getProgramAccounts methods in `packages/solana_kit_rpc_api/lib/src/`
-- [ ] T087 [US2] Port getRecentPerformanceSamples, getRecentPrioritizationFees, getSignaturesForAddress, getSignatureStatuses methods in `packages/solana_kit_rpc_api/lib/src/`
-- [ ] T088 [US2] Port getSlot, getSlotLeader, getSlotLeaders, getStakeActivation, getStakeMinimumDelegation methods in `packages/solana_kit_rpc_api/lib/src/`
-- [ ] T089 [US2] Port getSupply, getTokenAccountBalance, getTokenAccountsByDelegate, getTokenAccountsByOwner methods in `packages/solana_kit_rpc_api/lib/src/`
-- [ ] T090 [US2] Port getTokenLargestAccounts, getTokenSupply, getTransaction, getTransactionCount methods in `packages/solana_kit_rpc_api/lib/src/`
-- [ ] T091 [US2] Port getVersion, getVoteAccounts, isBlockhashValid, minimumLedgerSlot, requestAirdrop, sendTransaction, simulateTransaction in `packages/solana_kit_rpc_api/lib/src/`
-- [ ] T092 [US2] Update barrel export `packages/solana_kit_rpc_api/lib/solana_kit_rpc_api.dart`
-- [ ] T093 [US2] Port all 61 test files from `.repos/kit/packages/rpc-api/src/__tests__/` to `packages/solana_kit_rpc_api/test/`
+- [x] T081 [US2] Port getAccountInfo, getBalance, getBlock, getBlockCommitment, getBlockHeight methods from `.repos/kit/packages/rpc-api/src/` to `packages/solana_kit_rpc_api/lib/src/`
+- [x] T082 [US2] Port getBlockProduction, getBlocks, getBlocksWithLimit, getBlockTime, getClusterNodes methods in `packages/solana_kit_rpc_api/lib/src/`
+- [x] T083 [US2] Port getEpochInfo, getEpochSchedule, getFeeForMessage, getFirstAvailableBlock, getGenesisHash methods in `packages/solana_kit_rpc_api/lib/src/`
+- [x] T084 [US2] Port getHealth, getHighestSnapshotSlot, getIdentity, getInflationGovernor, getInflationRate, getInflationReward methods in `packages/solana_kit_rpc_api/lib/src/`
+- [x] T085 [US2] Port getLargestAccounts, getLatestBlockhash, getLeaderSchedule, getMaxRetransmitSlot, getMaxShredInsertSlot methods in `packages/solana_kit_rpc_api/lib/src/`
+- [x] T086 [US2] Port getMinimumBalanceForRentExemption, getMultipleAccounts, getProgramAccounts methods in `packages/solana_kit_rpc_api/lib/src/`
+- [x] T087 [US2] Port getRecentPerformanceSamples, getRecentPrioritizationFees, getSignaturesForAddress, getSignatureStatuses methods in `packages/solana_kit_rpc_api/lib/src/`
+- [x] T088 [US2] Port getSlot, getSlotLeader, getSlotLeaders, getStakeActivation, getStakeMinimumDelegation methods in `packages/solana_kit_rpc_api/lib/src/`
+- [x] T089 [US2] Port getSupply, getTokenAccountBalance, getTokenAccountsByDelegate, getTokenAccountsByOwner methods in `packages/solana_kit_rpc_api/lib/src/`
+- [x] T090 [US2] Port getTokenLargestAccounts, getTokenSupply, getTransaction, getTransactionCount methods in `packages/solana_kit_rpc_api/lib/src/`
+- [x] T091 [US2] Port getVersion, getVoteAccounts, isBlockhashValid, minimumLedgerSlot, requestAirdrop, sendTransaction, simulateTransaction in `packages/solana_kit_rpc_api/lib/src/`
+- [x] T092 [US2] Update barrel export `packages/solana_kit_rpc_api/lib/solana_kit_rpc_api.dart`
+- [x] T093 [US2] Port all 61 test files from `.repos/kit/packages/rpc-api/src/__tests__/` to `packages/solana_kit_rpc_api/test/`
 
 ### solana_kit_rpc (~8 source files, ~6 test files)
 
