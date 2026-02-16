@@ -10,6 +10,11 @@ resolution: workspace
 dependencies:
   solana_kit_errors:
   solana_kit_instructions:
+  solana_kit_keys:
+  solana_kit_transaction_messages:
+  solana_kit_transactions:
 
 dev_dependencies:
+  solana_kit_addresses:
   solana_kit_lints:
+  test: ^1.25.8
