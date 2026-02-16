@@ -284,9 +284,9 @@
 
 ### solana_kit_transaction_confirmation (~10 source files, ~9 test files)
 
-- [ ] T119 [US4] Port confirmation strategies (blockheight, nonce, signature, timeout) from `.repos/kit/packages/transaction-confirmation/src/` to `packages/solana_kit_transaction_confirmation/lib/src/`
-- [ ] T120 [US4] Update barrel export `packages/solana_kit_transaction_confirmation/lib/solana_kit_transaction_confirmation.dart`
-- [ ] T121 [US4] Port all 9 test files from `.repos/kit/packages/transaction-confirmation/src/__tests__/` to `packages/solana_kit_transaction_confirmation/test/`
+- [x] T119 [US4] Port confirmation strategies (blockheight, nonce, signature, timeout) from `.repos/kit/packages/transaction-confirmation/src/` to `packages/solana_kit_transaction_confirmation/lib/src/`
+- [x] T120 [US4] Update barrel export `packages/solana_kit_transaction_confirmation/lib/solana_kit_transaction_confirmation.dart`
+- [x] T121 [US4] Port all 9 test files from `.repos/kit/packages/transaction-confirmation/src/__tests__/` to `packages/solana_kit_transaction_confirmation/test/`
 
 ### solana_kit_instruction_plans (~8 source files, ~15 test files)
 
