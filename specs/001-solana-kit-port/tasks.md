@@ -278,9 +278,9 @@
 
 ### solana_kit_rpc_subscriptions (~14 source files, ~9 test files)
 
-- [ ] T116 [US4] Port createSolanaRpcSubscriptions, autopinger, coalescer from `.repos/kit/packages/rpc-subscriptions/src/` to `packages/solana_kit_rpc_subscriptions/lib/src/`
-- [ ] T117 [US4] Update barrel export `packages/solana_kit_rpc_subscriptions/lib/solana_kit_rpc_subscriptions.dart`
-- [ ] T118 [US4] Port all 9 test files from `.repos/kit/packages/rpc-subscriptions/src/__tests__/` to `packages/solana_kit_rpc_subscriptions/test/`
+- [x] T116 [US4] Port createSolanaRpcSubscriptions, autopinger, coalescer from `.repos/kit/packages/rpc-subscriptions/src/` to `packages/solana_kit_rpc_subscriptions/lib/src/`
+- [x] T117 [US4] Update barrel export `packages/solana_kit_rpc_subscriptions/lib/solana_kit_rpc_subscriptions.dart`
+- [x] T118 [US4] Port all 9 test files from `.repos/kit/packages/rpc-subscriptions/src/__tests__/` to `packages/solana_kit_rpc_subscriptions/test/`
 
 ### solana_kit_transaction_confirmation (~10 source files, ~9 test files)
 
