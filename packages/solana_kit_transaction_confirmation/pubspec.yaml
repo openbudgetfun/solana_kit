@@ -9,7 +9,11 @@ resolution: workspace
 
 dependencies:
   solana_kit_errors:
+  solana_kit_rpc_subscriptions_channel_websocket:
   solana_kit_rpc_types:
+  solana_kit_subscribable:
 
 dev_dependencies:
+  fake_async: ^1.3.2
   solana_kit_lints:
+  test: ^1.25.8
