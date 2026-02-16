@@ -33,3 +33,6 @@ pubspec.lock
 
 # eget binaries (installed locally)
 .eget/bin/
+**/coverage/
+**/node_modules
+**/dist
