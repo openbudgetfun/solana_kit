@@ -290,9 +290,9 @@
 
 ### solana_kit_instruction_plans (~8 source files, ~15 test files)
 
-- [ ] T122 [P] [US4] Port InstructionPlan, TransactionPlan, execution utilities from `.repos/kit/packages/instruction-plans/src/` to `packages/solana_kit_instruction_plans/lib/src/`
-- [ ] T123 [US4] Update barrel export `packages/solana_kit_instruction_plans/lib/solana_kit_instruction_plans.dart`
-- [ ] T124 [US4] Port all 15 test files from `.repos/kit/packages/instruction-plans/src/__tests__/` to `packages/solana_kit_instruction_plans/test/`
+- [x] T122 [P] [US4] Port InstructionPlan, TransactionPlan, execution utilities from `.repos/kit/packages/instruction-plans/src/` to `packages/solana_kit_instruction_plans/lib/src/`
+- [x] T123 [US4] Update barrel export `packages/solana_kit_instruction_plans/lib/solana_kit_instruction_plans.dart`
+- [x] T124 [US4] Port all 15 test files from `.repos/kit/packages/instruction-plans/src/__tests__/` to `packages/solana_kit_instruction_plans/test/`
 
 **Checkpoint**: Real-time subscriptions and transaction confirmation operational. Developers can subscribe to account changes, slot updates, and await transaction confirmation. All subscription-related tests pass.
 
