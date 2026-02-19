@@ -14,7 +14,7 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
@@ -31,7 +31,7 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'my-api-key'),
+        const HeliusConfig(apiKey: 'my-api-key'),
         client: client,
       );
 

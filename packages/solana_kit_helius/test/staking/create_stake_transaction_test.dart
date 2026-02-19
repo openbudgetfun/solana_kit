@@ -23,12 +23,15 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.staking.createStakeTransaction(
-        CreateStakeTransactionRequest(from: 'owner-address', amount: 1000000),
+        const CreateStakeTransactionRequest(
+          from: 'owner-address',
+          amount: 1000000,
+        ),
       );
 
       expect(result.transaction, 'base64tx');
@@ -48,12 +51,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.staking.createStakeTransaction(
-        CreateStakeTransactionRequest(
+        const CreateStakeTransactionRequest(
           from: 'owner-address',
           amount: 500000,
           validatorVote: 'validator1',

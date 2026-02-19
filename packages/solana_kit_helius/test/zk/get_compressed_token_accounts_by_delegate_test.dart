@@ -32,9 +32,14 @@ void main() {
         );
       });
 
-      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
+      final helius = createHelius(
+        const HeliusConfig(apiKey: 'test'),
+        client: client,
+      );
       final result = await helius.zk.getCompressedTokenAccountsByDelegate(
-        GetCompressedTokenAccountsByDelegateRequest(delegate: 'test-delegate'),
+        const GetCompressedTokenAccountsByDelegateRequest(
+          delegate: 'test-delegate',
+        ),
       );
 
       expect(result.items, hasLength(1));

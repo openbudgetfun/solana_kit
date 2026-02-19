@@ -43,12 +43,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.transactions.sendSmartTransaction(
-        SendSmartTransactionInput(
+        const SendSmartTransactionInput(
           instructions: <Object?>['instr1'],
           skipPreflight: true,
         ),
@@ -76,13 +76,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.transactions.sendSmartTransaction(
-          SendSmartTransactionInput(instructions: <Object?>[]),
+          const SendSmartTransactionInput(instructions: <Object?>[]),
         ),
         throwsA(isA<Exception>()),
       );

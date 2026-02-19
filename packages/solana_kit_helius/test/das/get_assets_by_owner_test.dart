@@ -42,7 +42,7 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['method'], 'getAssetsByOwner');
         expect(body['jsonrpc'], '2.0');
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['ownerAddress'], 'owner-addr');
         return http.Response(
           jsonEncode(<String, Object?>{
@@ -56,12 +56,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.das.getAssetsByOwner(
-        GetAssetsByOwnerRequest(ownerAddress: 'owner-addr'),
+        const GetAssetsByOwnerRequest(ownerAddress: 'owner-addr'),
       );
 
       expect(result.total, 1);
@@ -80,7 +80,7 @@ void main() {
 
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['ownerAddress'], 'owner-addr');
         expect(params['page'], 3);
         expect(params['limit'], 20);
@@ -98,12 +98,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.das.getAssetsByOwner(
-        GetAssetsByOwnerRequest(
+        const GetAssetsByOwnerRequest(
           ownerAddress: 'owner-addr',
           page: 3,
           limit: 20,
@@ -133,13 +133,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.das.getAssetsByOwner(
-          GetAssetsByOwnerRequest(ownerAddress: 'bad'),
+          const GetAssetsByOwnerRequest(ownerAddress: 'bad'),
         ),
         throwsA(isA<Exception>()),
       );

@@ -32,12 +32,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final txns = await helius.enhanced.getTransactions(
-        GetTransactionsRequest(transactions: ['sig1', 'sig2']),
+        const GetTransactionsRequest(transactions: ['sig1', 'sig2']),
       );
 
       expect(txns, hasLength(1));
@@ -90,12 +90,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final txns = await helius.enhanced.getTransactions(
-        GetTransactionsRequest(transactions: ['sig1', 'sig2']),
+        const GetTransactionsRequest(transactions: ['sig1', 'sig2']),
       );
 
       expect(txns, hasLength(2));

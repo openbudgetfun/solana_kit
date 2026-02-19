@@ -29,12 +29,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final webhook = await helius.webhooks.updateWebhook(
-        UpdateWebhookRequest(
+        const UpdateWebhookRequest(
           webhookId: 'wh-1',
           webhookUrl: 'https://example.com/hook-updated',
           transactionTypes: ['TRANSFER', 'SWAP'],
@@ -71,12 +71,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final webhook = await helius.webhooks.updateWebhook(
-        UpdateWebhookRequest(webhookId: 'wh-1'),
+        const UpdateWebhookRequest(webhookId: 'wh-1'),
       );
 
       expect(webhook.webhookId, 'wh-1');

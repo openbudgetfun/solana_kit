@@ -30,12 +30,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final webhook = await helius.webhooks.createWebhook(
-        CreateWebhookRequest(
+        const CreateWebhookRequest(
           webhookUrl: 'https://example.com/hook',
           transactionTypes: ['TRANSFER'],
           accountAddresses: ['addr1'],
@@ -71,12 +71,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final webhook = await helius.webhooks.createWebhook(
-        CreateWebhookRequest(
+        const CreateWebhookRequest(
           webhookUrl: 'https://example.com/hook',
           transactionTypes: ['TRANSFER'],
           accountAddresses: ['addr1'],

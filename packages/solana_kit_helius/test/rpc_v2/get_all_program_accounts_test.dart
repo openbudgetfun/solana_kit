@@ -14,7 +14,7 @@ void main() {
         callCount++;
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['method'], 'getProgramAccountsV2');
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
 
         if (callCount == 1) {
           // First page: no cursor was sent
@@ -60,9 +60,12 @@ void main() {
         }
       });
 
-      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
+      final helius = createHelius(
+        const HeliusConfig(apiKey: 'test'),
+        client: client,
+      );
       final accounts = await helius.rpcV2.getAllProgramAccounts(
-        GetProgramAccountsV2Request(programAddress: 'program1'),
+        const GetProgramAccountsV2Request(programAddress: 'program1'),
       );
 
       expect(callCount, 2);
@@ -94,9 +97,12 @@ void main() {
         );
       });
 
-      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
+      final helius = createHelius(
+        const HeliusConfig(apiKey: 'test'),
+        client: client,
+      );
       final accounts = await helius.rpcV2.getAllProgramAccounts(
-        GetProgramAccountsV2Request(programAddress: 'program1'),
+        const GetProgramAccountsV2Request(programAddress: 'program1'),
       );
 
       expect(callCount, 1);

@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('createHelius', () {
     test('creates a HeliusClient with default config', () {
-      final helius = createHelius(HeliusConfig(apiKey: 'test-key'));
+      final helius = createHelius(const HeliusConfig(apiKey: 'test-key'));
       expect(helius, isNotNull);
       expect(helius.config.apiKey, 'test-key');
       expect(helius.config.cluster, HeliusCluster.mainnet);
@@ -12,13 +12,13 @@ void main() {
 
     test('creates a HeliusClient with devnet config', () {
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key', cluster: HeliusCluster.devnet),
+        const HeliusConfig(apiKey: 'test-key', cluster: HeliusCluster.devnet),
       );
       expect(helius.config.cluster, HeliusCluster.devnet);
     });
 
     test('exposes all sub-clients', () {
-      final helius = createHelius(HeliusConfig(apiKey: 'test-key'));
+      final helius = createHelius(const HeliusConfig(apiKey: 'test-key'));
       expect(helius.das, isNotNull);
       expect(helius.priorityFee, isNotNull);
       expect(helius.rpcV2, isNotNull);
@@ -33,14 +33,14 @@ void main() {
     });
 
     test('HeliusConfig computes correct URLs for mainnet', () {
-      final config = HeliusConfig(apiKey: 'abc');
+      const config = HeliusConfig(apiKey: 'abc');
       expect(config.rpcUrl, 'https://mainnet-beta.helius-rpc.com/?api-key=abc');
       expect(config.restBaseUrl, 'https://api.helius.xyz');
       expect(config.wsUrl, 'wss://mainnet-beta.helius-rpc.com/?api-key=abc');
     });
 
     test('HeliusConfig computes correct URLs for devnet', () {
-      final config = HeliusConfig(apiKey: 'abc', cluster: HeliusCluster.devnet);
+      const config = HeliusConfig(apiKey: 'abc', cluster: HeliusCluster.devnet);
       expect(config.rpcUrl, 'https://devnet.helius-rpc.com/?api-key=abc');
       expect(config.restBaseUrl, 'https://api-devnet.helius.xyz');
     });

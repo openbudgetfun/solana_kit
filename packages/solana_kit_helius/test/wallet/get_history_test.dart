@@ -36,12 +36,12 @@ void main() {
         });
 
         final helius = createHelius(
-          HeliusConfig(apiKey: 'test-key'),
+          const HeliusConfig(apiKey: 'test-key'),
           client: client,
         );
 
         final history = await helius.wallet.getHistory(
-          GetHistoryRequest(address: 'wallet-addr'),
+          const GetHistoryRequest(address: 'wallet-addr'),
         );
 
         expect(history, hasLength(1));
@@ -63,12 +63,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final history = await helius.wallet.getHistory(
-        GetHistoryRequest(address: 'new-wallet'),
+        const GetHistoryRequest(address: 'new-wallet'),
       );
 
       expect(history, isEmpty);

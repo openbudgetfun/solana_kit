@@ -42,7 +42,7 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['method'], 'searchAssets');
         expect(body['jsonrpc'], '2.0');
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['ownerAddress'], 'owner-addr');
         return http.Response(
           jsonEncode(<String, Object?>{
@@ -56,12 +56,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.das.searchAssets(
-        SearchAssetsRequest(ownerAddress: 'owner-addr'),
+        const SearchAssetsRequest(ownerAddress: 'owner-addr'),
       );
 
       expect(result.total, 1);
@@ -79,7 +79,7 @@ void main() {
 
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['ownerAddress'], 'owner-addr');
         expect(params['compressed'], true);
         expect(params['burnt'], false);
@@ -99,12 +99,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.das.searchAssets(
-        SearchAssetsRequest(
+        const SearchAssetsRequest(
           ownerAddress: 'owner-addr',
           compressed: true,
           burnt: false,
@@ -128,7 +128,7 @@ void main() {
 
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['creatorAddress'], 'creator-addr');
         expect(params['grouping'], 'collection:abc');
         return http.Response(
@@ -143,12 +143,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.das.searchAssets(
-        SearchAssetsRequest(
+        const SearchAssetsRequest(
           creatorAddress: 'creator-addr',
           grouping: 'collection:abc',
         ),
@@ -175,12 +175,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
-        () => helius.das.searchAssets(SearchAssetsRequest()),
+        () => helius.das.searchAssets(const SearchAssetsRequest()),
         throwsA(isA<Exception>()),
       );
     });

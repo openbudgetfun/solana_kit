@@ -32,9 +32,12 @@ void main() {
         );
       });
 
-      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
+      final helius = createHelius(
+        const HeliusConfig(apiKey: 'test'),
+        client: client,
+      );
       final result = await helius.zk.getCompressedMintTokenHolders(
-        GetCompressedMintTokenHoldersRequest(mint: 'test-mint'),
+        const GetCompressedMintTokenHoldersRequest(mint: 'test-mint'),
       );
 
       expect(result.items, hasLength(1));

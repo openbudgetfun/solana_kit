@@ -13,8 +13,8 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['method'], 'getSignatureStatuses');
         expect(body['jsonrpc'], '2.0');
-        final params = body['params'] as List<Object?>;
-        final signatures = params[0] as List<Object?>;
+        final params = body['params']! as List<Object?>;
+        final signatures = params[0]! as List<Object?>;
         expect(signatures, contains('sig-poll'));
         return http.Response(
           jsonEncode(<String, Object?>{
@@ -35,12 +35,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.transactions.pollTransactionConfirmation(
-        PollTransactionConfirmationRequest(
+        const PollTransactionConfirmationRequest(
           signature: 'sig-poll',
           timeoutMs: 10000,
           intervalMs: 100,
@@ -67,13 +67,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.transactions.pollTransactionConfirmation(
-          PollTransactionConfirmationRequest(
+          const PollTransactionConfirmationRequest(
             signature: 'sig-timeout',
             timeoutMs: 500,
             intervalMs: 100,

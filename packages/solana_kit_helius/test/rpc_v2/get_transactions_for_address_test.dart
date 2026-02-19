@@ -20,7 +20,7 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['jsonrpc'], '2.0');
         expect(body['method'], 'getTransactionsForAddress');
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['address'], 'addr1');
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResponse}),
@@ -28,9 +28,12 @@ void main() {
         );
       });
 
-      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
+      final helius = createHelius(
+        const HeliusConfig(apiKey: 'test'),
+        client: client,
+      );
       final result = await helius.rpcV2.getTransactionsForAddress(
-        GetTransactionsForAddressRequest(address: 'addr1'),
+        const GetTransactionsForAddressRequest(address: 'addr1'),
       );
 
       expect(result.transactions, hasLength(2));
@@ -51,7 +54,7 @@ void main() {
 
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['address'], 'addr1');
         expect(params['before'], 'beforeSig');
         expect(params['until'], 'untilSig');
@@ -63,9 +66,12 @@ void main() {
         );
       });
 
-      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
+      final helius = createHelius(
+        const HeliusConfig(apiKey: 'test'),
+        client: client,
+      );
       final result = await helius.rpcV2.getTransactionsForAddress(
-        GetTransactionsForAddressRequest(
+        const GetTransactionsForAddressRequest(
           address: 'addr1',
           before: 'beforeSig',
           until: 'untilSig',

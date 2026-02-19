@@ -528,14 +528,12 @@ const Map<int, String> solanaErrorMessages = {
       r'Transaction version must be in the range [0, 127]. $actualVersion given',
 
   // Helius errors
-  SolanaErrorCode.heliusRpcError:
-      r'Helius RPC error: $message',
+  SolanaErrorCode.heliusRpcError: r'Helius RPC error: $message',
   SolanaErrorCode.heliusRestError:
       r'Helius REST API error ($statusCode): $message',
   SolanaErrorCode.heliusApiKeyRequired:
       'A Helius API key is required for this operation.',
-  SolanaErrorCode.heliusWebSocketError:
-      r'Helius WebSocket error: $message',
+  SolanaErrorCode.heliusWebSocketError: r'Helius WebSocket error: $message',
   SolanaErrorCode.heliusTransactionConfirmationTimeout:
       r'Transaction confirmation timed out after $timeoutMs ms for signature: $signature.',
   SolanaErrorCode.heliusTransactionSimulationFailed:

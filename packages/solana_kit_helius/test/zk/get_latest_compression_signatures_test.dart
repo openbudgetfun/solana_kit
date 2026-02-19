@@ -25,9 +25,12 @@ void main() {
         );
       });
 
-      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
+      final helius = createHelius(
+        const HeliusConfig(apiKey: 'test'),
+        client: client,
+      );
       final result = await helius.zk.getLatestCompressionSignatures(
-        GetLatestCompressionSignaturesRequest(),
+        const GetLatestCompressionSignaturesRequest(),
       );
 
       expect(result.items, hasLength(1));

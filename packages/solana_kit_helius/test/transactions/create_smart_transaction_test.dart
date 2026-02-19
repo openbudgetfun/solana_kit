@@ -30,12 +30,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final blockhash = await helius.transactions.createSmartTransaction(
-        CreateSmartTransactionInput(instructions: <Object?>['instr1']),
+        const CreateSmartTransactionInput(instructions: <Object?>['instr1']),
       );
 
       expect(blockhash, 'bh123');
@@ -58,13 +58,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.transactions.createSmartTransaction(
-          CreateSmartTransactionInput(instructions: <Object?>[]),
+          const CreateSmartTransactionInput(instructions: <Object?>[]),
         ),
         throwsA(isA<Exception>()),
       );

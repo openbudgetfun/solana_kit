@@ -42,7 +42,7 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['method'], 'getAssetsByGroup');
         expect(body['jsonrpc'], '2.0');
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['groupKey'], 'collection');
         expect(params['groupValue'], 'coll-123');
         return http.Response(
@@ -57,12 +57,15 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.das.getAssetsByGroup(
-        GetAssetsByGroupRequest(groupKey: 'collection', groupValue: 'coll-123'),
+        const GetAssetsByGroupRequest(
+          groupKey: 'collection',
+          groupValue: 'coll-123',
+        ),
       );
 
       expect(result.total, 1);
@@ -80,7 +83,7 @@ void main() {
 
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['groupKey'], 'collection');
         expect(params['groupValue'], 'coll-456');
         expect(params['page'], 1);
@@ -97,12 +100,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.das.getAssetsByGroup(
-        GetAssetsByGroupRequest(
+        const GetAssetsByGroupRequest(
           groupKey: 'collection',
           groupValue: 'coll-456',
           page: 1,
@@ -131,13 +134,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.das.getAssetsByGroup(
-          GetAssetsByGroupRequest(groupKey: 'x', groupValue: 'y'),
+          const GetAssetsByGroupRequest(groupKey: 'x', groupValue: 'y'),
         ),
         throwsA(isA<Exception>()),
       );

@@ -40,7 +40,7 @@ void main() {
           final body = jsonDecode(request.body) as Map<String, Object?>;
           expect(body['method'], 'getAssetBatch');
           expect(body['jsonrpc'], '2.0');
-          final params = body['params'] as Map<String, Object?>;
+          final params = body['params']! as Map<String, Object?>;
           expect(params['ids'], ['a', 'b']);
           return http.Response(
             jsonEncode(<String, Object?>{
@@ -54,12 +54,12 @@ void main() {
         });
 
         final helius = createHelius(
-          HeliusConfig(apiKey: 'test-key'),
+          const HeliusConfig(apiKey: 'test-key'),
           client: client,
         );
 
         final assets = await helius.das.getAssetBatch(
-          GetAssetBatchRequest(ids: ['a', 'b']),
+          const GetAssetBatchRequest(ids: ['a', 'b']),
         );
 
         expect(assets.length, 2);
@@ -85,12 +85,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
-        () => helius.das.getAssetBatch(GetAssetBatchRequest(ids: ['x'])),
+        () => helius.das.getAssetBatch(const GetAssetBatchRequest(ids: ['x'])),
         throwsA(isA<Exception>()),
       );
     });

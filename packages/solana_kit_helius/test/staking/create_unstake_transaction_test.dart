@@ -23,12 +23,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.staking.createUnstakeTransaction(
-        CreateUnstakeTransactionRequest(
+        const CreateUnstakeTransactionRequest(
           from: 'owner-address',
           stakeAccount: 'stake-account-1',
         ),
@@ -43,13 +43,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.staking.createUnstakeTransaction(
-          CreateUnstakeTransactionRequest(
+          const CreateUnstakeTransactionRequest(
             from: 'owner-address',
             stakeAccount: 'stake-account-1',
           ),

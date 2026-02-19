@@ -26,12 +26,12 @@ void main() {
         });
 
         final helius = createHelius(
-          HeliusConfig(apiKey: 'test-key'),
+          const HeliusConfig(apiKey: 'test-key'),
           client: client,
         );
 
         final identity = await helius.wallet.getIdentity(
-          GetIdentityRequest(address: 'wallet-addr'),
+          const GetIdentityRequest(address: 'wallet-addr'),
         );
 
         expect(identity.name, 'Alice');
@@ -46,13 +46,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.wallet.getIdentity(
-          GetIdentityRequest(address: 'unknown-addr'),
+          const GetIdentityRequest(address: 'unknown-addr'),
         ),
         throwsA(isA<Exception>()),
       );

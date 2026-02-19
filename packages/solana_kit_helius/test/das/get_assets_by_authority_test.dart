@@ -42,7 +42,7 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['method'], 'getAssetsByAuthority');
         expect(body['jsonrpc'], '2.0');
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['authorityAddress'], 'auth-addr');
         return http.Response(
           jsonEncode(<String, Object?>{
@@ -56,12 +56,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.das.getAssetsByAuthority(
-        GetAssetsByAuthorityRequest(authorityAddress: 'auth-addr'),
+        const GetAssetsByAuthorityRequest(authorityAddress: 'auth-addr'),
       );
 
       expect(result.total, 1);
@@ -79,7 +79,7 @@ void main() {
 
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['authorityAddress'], 'auth-addr');
         expect(params['page'], 2);
         expect(params['limit'], 5);
@@ -95,12 +95,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.das.getAssetsByAuthority(
-        GetAssetsByAuthorityRequest(
+        const GetAssetsByAuthorityRequest(
           authorityAddress: 'auth-addr',
           page: 2,
           limit: 5,
@@ -128,13 +128,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.das.getAssetsByAuthority(
-          GetAssetsByAuthorityRequest(authorityAddress: 'bad'),
+          const GetAssetsByAuthorityRequest(authorityAddress: 'bad'),
         ),
         throwsA(isA<Exception>()),
       );

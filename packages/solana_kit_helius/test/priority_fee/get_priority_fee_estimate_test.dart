@@ -25,7 +25,7 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['jsonrpc'], '2.0');
         expect(body['method'], 'getPriorityFeeEstimate');
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['accountKeys'], ['key1']);
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResponse}),
@@ -33,9 +33,12 @@ void main() {
         );
       });
 
-      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
+      final helius = createHelius(
+        const HeliusConfig(apiKey: 'test'),
+        client: client,
+      );
       final result = await helius.priorityFee.getPriorityFeeEstimate(
-        GetPriorityFeeEstimateRequest(accountKeys: ['key1']),
+        const GetPriorityFeeEstimateRequest(accountKeys: ['key1']),
       );
 
       expect(result.priorityFeeEstimate, 1000.0);
@@ -54,9 +57,9 @@ void main() {
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['method'], 'getPriorityFeeEstimate');
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['transaction'], 'base64EncodedTx');
-        final options = params['options'] as Map<String, Object?>;
+        final options = params['options']! as Map<String, Object?>;
         expect(options['priorityLevel'], 'High');
         expect(options['includeAllPriorityFeeLevels'], true);
         return http.Response(
@@ -65,11 +68,14 @@ void main() {
         );
       });
 
-      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
+      final helius = createHelius(
+        const HeliusConfig(apiKey: 'test'),
+        client: client,
+      );
       final result = await helius.priorityFee.getPriorityFeeEstimate(
-        GetPriorityFeeEstimateRequest(
+        const GetPriorityFeeEstimateRequest(
           transaction: 'base64EncodedTx',
-          options: const PriorityFeeOptions(
+          options: PriorityFeeOptions(
             priorityLevel: PriorityLevel.high,
             includeAllPriorityFeeLevels: true,
           ),

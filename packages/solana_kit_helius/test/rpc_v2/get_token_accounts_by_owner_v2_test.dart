@@ -39,7 +39,7 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['jsonrpc'], '2.0');
         expect(body['method'], 'getTokenAccountsByOwnerV2');
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['ownerAddress'], 'owner1');
         expect(params['mint'], 'mintAddr');
         return http.Response(
@@ -48,9 +48,12 @@ void main() {
         );
       });
 
-      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
+      final helius = createHelius(
+        const HeliusConfig(apiKey: 'test'),
+        client: client,
+      );
       final result = await helius.rpcV2.getTokenAccountsByOwnerV2(
-        GetTokenAccountsByOwnerV2Request(
+        const GetTokenAccountsByOwnerV2Request(
           ownerAddress: 'owner1',
           mint: 'mintAddr',
         ),
@@ -79,9 +82,12 @@ void main() {
         );
       });
 
-      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
+      final helius = createHelius(
+        const HeliusConfig(apiKey: 'test'),
+        client: client,
+      );
       final result = await helius.rpcV2.getTokenAccountsByOwnerV2(
-        GetTokenAccountsByOwnerV2Request(ownerAddress: 'owner1'),
+        const GetTokenAccountsByOwnerV2Request(ownerAddress: 'owner1'),
       );
 
       expect(result.accounts, hasLength(1));

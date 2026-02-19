@@ -25,9 +25,12 @@ void main() {
         );
       });
 
-      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
+      final helius = createHelius(
+        const HeliusConfig(apiKey: 'test'),
+        client: client,
+      );
       final result = await helius.zk.getValidityProof(
-        GetValidityProofRequest(hashes: ['h1']),
+        const GetValidityProofRequest(hashes: ['h1']),
       );
 
       expect(result.compressedProof, ['p1']);

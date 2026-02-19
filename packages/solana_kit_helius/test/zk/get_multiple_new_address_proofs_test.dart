@@ -38,9 +38,12 @@ void main() {
         );
       });
 
-      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
+      final helius = createHelius(
+        const HeliusConfig(apiKey: 'test'),
+        client: client,
+      );
       final result = await helius.zk.getMultipleNewAddressProofs(
-        GetMultipleNewAddressProofsRequest(addresses: ['a1', 'a2']),
+        const GetMultipleNewAddressProofsRequest(addresses: ['a1', 'a2']),
       );
 
       expect(result, hasLength(2));

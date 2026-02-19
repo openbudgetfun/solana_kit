@@ -21,7 +21,7 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['method'], 'getAssetProof');
         expect(body['jsonrpc'], '2.0');
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['id'], 'x');
         return http.Response(
           jsonEncode(<String, Object?>{
@@ -35,12 +35,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final proof = await helius.das.getAssetProof(
-        GetAssetProofRequest(id: 'x'),
+        const GetAssetProofRequest(id: 'x'),
       );
 
       expect(proof.root, 'r');
@@ -67,12 +67,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
-        () => helius.das.getAssetProof(GetAssetProofRequest(id: 'bad')),
+        () => helius.das.getAssetProof(const GetAssetProofRequest(id: 'bad')),
         throwsA(isA<Exception>()),
       );
     });

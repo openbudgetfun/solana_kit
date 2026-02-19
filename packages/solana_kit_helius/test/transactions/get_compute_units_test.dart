@@ -15,9 +15,9 @@ void main() {
           final body = jsonDecode(request.body) as Map<String, Object?>;
           expect(body['method'], 'simulateTransaction');
           expect(body['jsonrpc'], '2.0');
-          final params = body['params'] as List<Object?>;
+          final params = body['params']! as List<Object?>;
           expect(params.length, 2);
-          final options = params[1] as Map<String, Object?>;
+          final options = params[1]! as Map<String, Object?>;
           expect(options['replaceRecentBlockhash'], true);
           expect(options['sigVerify'], false);
           return http.Response(
@@ -34,12 +34,14 @@ void main() {
         });
 
         final helius = createHelius(
-          HeliusConfig(apiKey: 'test-key'),
+          const HeliusConfig(apiKey: 'test-key'),
           client: client,
         );
 
         final estimate = await helius.transactions.getComputeUnits(
-          CreateSmartTransactionInput(instructions: <Object?>['instruction1']),
+          const CreateSmartTransactionInput(
+            instructions: <Object?>['instruction1'],
+          ),
         );
 
         expect(estimate.units, 150000);
@@ -60,12 +62,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final estimate = await helius.transactions.getComputeUnits(
-        CreateSmartTransactionInput(instructions: <Object?>[]),
+        const CreateSmartTransactionInput(instructions: <Object?>[]),
       );
 
       expect(estimate.units, 200000);

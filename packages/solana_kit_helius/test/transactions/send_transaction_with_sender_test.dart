@@ -15,9 +15,9 @@ void main() {
           final body = jsonDecode(request.body) as Map<String, Object?>;
           expect(body['method'], 'sendTransaction');
           expect(body['jsonrpc'], '2.0');
-          final params = body['params'] as List<Object?>;
+          final params = body['params']! as List<Object?>;
           expect(params[0], 'base64-tx-data');
-          final options = params[1] as Map<String, Object?>;
+          final options = params[1]! as Map<String, Object?>;
           expect(options['encoding'], 'base64');
           return http.Response(
             jsonEncode(<String, Object?>{
@@ -31,12 +31,12 @@ void main() {
         });
 
         final helius = createHelius(
-          HeliusConfig(apiKey: 'test-key'),
+          const HeliusConfig(apiKey: 'test-key'),
           client: client,
         );
 
         final signature = await helius.transactions.sendTransactionWithSender(
-          BroadcastTransactionRequest(transaction: 'base64-tx-data'),
+          const BroadcastTransactionRequest(transaction: 'base64-tx-data'),
         );
 
         expect(signature, 'sig-sender');
@@ -49,13 +49,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.transactions.sendTransactionWithSender(
-          BroadcastTransactionRequest(transaction: 'bad-tx'),
+          const BroadcastTransactionRequest(transaction: 'bad-tx'),
         ),
         throwsA(isA<Exception>()),
       );

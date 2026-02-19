@@ -22,12 +22,12 @@ void main() {
         });
 
         final helius = createHelius(
-          HeliusConfig(apiKey: 'test-key'),
+          const HeliusConfig(apiKey: 'test-key'),
           client: client,
         );
 
         final result = await helius.staking.getWithdrawableAmount(
-          GetWithdrawableAmountRequest(stakeAccount: 'stake-account-1'),
+          const GetWithdrawableAmountRequest(stakeAccount: 'stake-account-1'),
         );
 
         expect(result.amount, 500000);
@@ -40,13 +40,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.staking.getWithdrawableAmount(
-          GetWithdrawableAmountRequest(stakeAccount: 'bad-account'),
+          const GetWithdrawableAmountRequest(stakeAccount: 'bad-account'),
         ),
         throwsA(isA<Exception>()),
       );

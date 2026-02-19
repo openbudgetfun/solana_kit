@@ -39,7 +39,7 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['method'], 'getAsset');
         expect(body['jsonrpc'], '2.0');
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['id'], 'asset-123');
         return http.Response(
           jsonEncode(<String, Object?>{
@@ -53,11 +53,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
-      final asset = await helius.das.getAsset(GetAssetRequest(id: 'asset-123'));
+      final asset = await helius.das.getAsset(
+        const GetAssetRequest(id: 'asset-123'),
+      );
 
       expect(asset.id, 'asset-123');
       expect(asset.interface_, 'V1_NFT');
@@ -85,12 +87,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
-        () => helius.das.getAsset(GetAssetRequest(id: 'bad-id')),
+        () => helius.das.getAsset(const GetAssetRequest(id: 'bad-id')),
         throwsA(isA<Exception>()),
       );
     });

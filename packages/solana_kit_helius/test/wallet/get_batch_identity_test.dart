@@ -35,12 +35,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final identities = await helius.wallet.getBatchIdentity(
-        GetBatchIdentityRequest(addresses: ['addr1', 'addr2']),
+        const GetBatchIdentityRequest(addresses: ['addr1', 'addr2']),
       );
 
       expect(identities, hasLength(2));
@@ -56,13 +56,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.wallet.getBatchIdentity(
-          GetBatchIdentityRequest(addresses: ['addr1']),
+          const GetBatchIdentityRequest(addresses: ['addr1']),
         ),
         throwsA(isA<Exception>()),
       );

@@ -29,12 +29,12 @@ void main() {
         });
 
         final helius = createHelius(
-          HeliusConfig(apiKey: 'test-key'),
+          const HeliusConfig(apiKey: 'test-key'),
           client: client,
         );
 
         final result = await helius.auth.walletSignup(
-          WalletSignupRequest(
+          const WalletSignupRequest(
             walletAddress: 'wallet-addr',
             signature: 'sig-data',
             message: 'auth-message',
@@ -52,13 +52,17 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.auth.walletSignup(
-          WalletSignupRequest(walletAddress: 'w', signature: 's', message: 'm'),
+          const WalletSignupRequest(
+            walletAddress: 'w',
+            signature: 's',
+            message: 'm',
+          ),
         ),
         throwsA(isA<Exception>()),
       );

@@ -31,12 +31,12 @@ void main() {
         });
 
         final helius = createHelius(
-          HeliusConfig(apiKey: 'test-key'),
+          const HeliusConfig(apiKey: 'test-key'),
           client: client,
         );
 
         final result = await helius.wallet.getFundedBy(
-          GetFundedByRequest(address: 'wallet-addr'),
+          const GetFundedByRequest(address: 'wallet-addr'),
         );
 
         expect(result.transactions, hasLength(1));
@@ -57,12 +57,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.wallet.getFundedBy(
-        GetFundedByRequest(address: 'unfunded-wallet'),
+        const GetFundedByRequest(address: 'unfunded-wallet'),
       );
 
       expect(result.transactions, isEmpty);

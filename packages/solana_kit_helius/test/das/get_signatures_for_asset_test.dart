@@ -34,7 +34,7 @@ void main() {
           final body = jsonDecode(request.body) as Map<String, Object?>;
           expect(body['method'], 'getSignaturesForAsset');
           expect(body['jsonrpc'], '2.0');
-          final params = body['params'] as Map<String, Object?>;
+          final params = body['params']! as Map<String, Object?>;
           expect(params['id'], 'asset-abc');
           return http.Response(
             jsonEncode(<String, Object?>{
@@ -48,12 +48,12 @@ void main() {
         });
 
         final helius = createHelius(
-          HeliusConfig(apiKey: 'test-key'),
+          const HeliusConfig(apiKey: 'test-key'),
           client: client,
         );
 
         final result = await helius.das.getSignaturesForAsset(
-          GetSignaturesForAssetRequest(id: 'asset-abc'),
+          const GetSignaturesForAssetRequest(id: 'asset-abc'),
         );
 
         expect(result.total, 2);
@@ -77,7 +77,7 @@ void main() {
 
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['id'], 'asset-abc');
         expect(params['page'], 2);
         expect(params['limit'], 5);
@@ -93,12 +93,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.das.getSignaturesForAsset(
-        GetSignaturesForAssetRequest(id: 'asset-abc', page: 2, limit: 5),
+        const GetSignaturesForAssetRequest(id: 'asset-abc', page: 2, limit: 5),
       );
 
       expect(result.total, 0);
@@ -122,13 +122,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.das.getSignaturesForAsset(
-          GetSignaturesForAssetRequest(id: 'bad'),
+          const GetSignaturesForAssetRequest(id: 'bad'),
         ),
         throwsA(isA<Exception>()),
       );

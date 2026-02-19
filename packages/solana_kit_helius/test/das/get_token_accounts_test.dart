@@ -36,7 +36,7 @@ void main() {
           final body = jsonDecode(request.body) as Map<String, Object?>;
           expect(body['method'], 'getTokenAccounts');
           expect(body['jsonrpc'], '2.0');
-          final params = body['params'] as Map<String, Object?>;
+          final params = body['params']! as Map<String, Object?>;
           expect(params['owner'], 'owner-1');
           return http.Response(
             jsonEncode(<String, Object?>{
@@ -50,12 +50,12 @@ void main() {
         });
 
         final helius = createHelius(
-          HeliusConfig(apiKey: 'test-key'),
+          const HeliusConfig(apiKey: 'test-key'),
           client: client,
         );
 
         final result = await helius.das.getTokenAccounts(
-          GetTokenAccountsRequest(owner: 'owner-1'),
+          const GetTokenAccountsRequest(owner: 'owner-1'),
         );
 
         expect(result.total, 2);
@@ -88,7 +88,7 @@ void main() {
 
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['mint'], 'mint-x');
         return http.Response(
           jsonEncode(<String, Object?>{
@@ -102,12 +102,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final result = await helius.das.getTokenAccounts(
-        GetTokenAccountsRequest(mint: 'mint-x'),
+        const GetTokenAccountsRequest(mint: 'mint-x'),
       );
 
       expect(result.total, 1);
@@ -131,13 +131,14 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
-        () =>
-            helius.das.getTokenAccounts(GetTokenAccountsRequest(owner: 'bad')),
+        () => helius.das.getTokenAccounts(
+          const GetTokenAccountsRequest(owner: 'bad'),
+        ),
         throwsA(isA<Exception>()),
       );
     });

@@ -29,12 +29,12 @@ void main() {
         });
 
         final helius = createHelius(
-          HeliusConfig(apiKey: 'test-key'),
+          const HeliusConfig(apiKey: 'test-key'),
           client: client,
         );
 
         final accounts = await helius.staking.getHeliusStakeAccounts(
-          GetHeliusStakeAccountsRequest(owner: 'owner-address'),
+          const GetHeliusStakeAccountsRequest(owner: 'owner-address'),
         );
 
         expect(accounts, hasLength(1));
@@ -55,12 +55,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final accounts = await helius.staking.getHeliusStakeAccounts(
-        GetHeliusStakeAccountsRequest(owner: 'no-stakes-owner'),
+        const GetHeliusStakeAccountsRequest(owner: 'no-stakes-owner'),
       );
 
       expect(accounts, isEmpty);

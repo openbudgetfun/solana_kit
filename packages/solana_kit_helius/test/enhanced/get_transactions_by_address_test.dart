@@ -30,12 +30,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final txns = await helius.enhanced.getTransactionsByAddress(
-        GetTransactionsByAddressRequest(address: 'myAddress'),
+        const GetTransactionsByAddressRequest(address: 'myAddress'),
       );
 
       expect(txns, hasLength(1));
@@ -72,12 +72,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final txns = await helius.enhanced.getTransactionsByAddress(
-        GetTransactionsByAddressRequest(
+        const GetTransactionsByAddressRequest(
           address: 'myAddress',
           before: 'beforeSig',
           until: 'untilSig',

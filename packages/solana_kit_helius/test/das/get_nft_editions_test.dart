@@ -20,7 +20,7 @@ void main() {
           final body = jsonDecode(request.body) as Map<String, Object?>;
           expect(body['method'], 'getNftEditions');
           expect(body['jsonrpc'], '2.0');
-          final params = body['params'] as Map<String, Object?>;
+          final params = body['params']! as Map<String, Object?>;
           expect(params['mint'], 'master-mint');
           return http.Response(
             jsonEncode(<String, Object?>{
@@ -34,12 +34,12 @@ void main() {
         });
 
         final helius = createHelius(
-          HeliusConfig(apiKey: 'test-key'),
+          const HeliusConfig(apiKey: 'test-key'),
           client: client,
         );
 
         final editions = await helius.das.getNftEditions(
-          GetNftEditionsRequest(mint: 'master-mint'),
+          const GetNftEditionsRequest(mint: 'master-mint'),
         );
 
         expect(editions.length, 2);
@@ -57,7 +57,7 @@ void main() {
 
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
-        final params = body['params'] as Map<String, Object?>;
+        final params = body['params']! as Map<String, Object?>;
         expect(params['mint'], 'master-mint');
         expect(params['page'], 2);
         expect(params['limit'], 5);
@@ -73,12 +73,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final editions = await helius.das.getNftEditions(
-        GetNftEditionsRequest(mint: 'master-mint', page: 2, limit: 5),
+        const GetNftEditionsRequest(mint: 'master-mint', page: 2, limit: 5),
       );
 
       expect(editions.length, 1);
@@ -103,12 +103,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
-        () => helius.das.getNftEditions(GetNftEditionsRequest(mint: 'bad')),
+        () =>
+            helius.das.getNftEditions(const GetNftEditionsRequest(mint: 'bad')),
         throwsA(isA<Exception>()),
       );
     });

@@ -27,12 +27,12 @@ void main() {
         });
 
         final helius = createHelius(
-          HeliusConfig(apiKey: 'test-key'),
+          const HeliusConfig(apiKey: 'test-key'),
           client: client,
         );
 
         final balances = await helius.wallet.getBalances(
-          GetBalancesRequest(address: 'wallet-addr'),
+          const GetBalancesRequest(address: 'wallet-addr'),
         );
 
         expect(balances.nativeBalance, 1000000);
@@ -56,12 +56,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final balances = await helius.wallet.getBalances(
-        GetBalancesRequest(address: 'empty-wallet'),
+        const GetBalancesRequest(address: 'empty-wallet'),
       );
 
       expect(balances.nativeBalance, 0);

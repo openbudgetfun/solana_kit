@@ -27,12 +27,12 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final project = await helius.auth.createProject(
-        CreateProjectRequest(name: 'proj'),
+        const CreateProjectRequest(name: 'proj'),
       );
 
       expect(project.id, 'p1');
@@ -47,12 +47,14 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
-        () => helius.auth.createProject(CreateProjectRequest(name: 'dup-proj')),
+        () => helius.auth.createProject(
+          const CreateProjectRequest(name: 'dup-proj'),
+        ),
         throwsA(isA<Exception>()),
       );
     });

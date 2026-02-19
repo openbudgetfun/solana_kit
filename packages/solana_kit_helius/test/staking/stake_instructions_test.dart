@@ -26,12 +26,15 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       final instructions = await helius.staking.getStakeInstructions(
-        CreateStakeTransactionRequest(from: 'owner-address', amount: 1000000),
+        const CreateStakeTransactionRequest(
+          from: 'owner-address',
+          amount: 1000000,
+        ),
       );
 
       expect(instructions, isA<Map<String, Object?>>());
@@ -45,13 +48,13 @@ void main() {
       });
 
       final helius = createHelius(
-        HeliusConfig(apiKey: 'test-key'),
+        const HeliusConfig(apiKey: 'test-key'),
         client: client,
       );
 
       expect(
         () => helius.staking.getStakeInstructions(
-          CreateStakeTransactionRequest(from: 'owner', amount: 100),
+          const CreateStakeTransactionRequest(from: 'owner', amount: 100),
         ),
         throwsA(isA<Exception>()),
       );
