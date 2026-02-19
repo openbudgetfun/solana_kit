@@ -377,6 +377,17 @@ abstract final class SolanaErrorCode {
   static const int programClientsFailedToIdentifyAccount = 8500006;
 
   // ---------------------------------------------------------------------------
+  // Helius (8600000 - 8600099)
+  // ---------------------------------------------------------------------------
+
+  static const int heliusRpcError = 8600000;
+  static const int heliusRestError = 8600001;
+  static const int heliusApiKeyRequired = 8600002;
+  static const int heliusWebSocketError = 8600003;
+  static const int heliusTransactionConfirmationTimeout = 8600004;
+  static const int heliusTransactionSimulationFailed = 8600005;
+
+  // ---------------------------------------------------------------------------
   // Invariant Violations (9900000 - 9900999)
   // ---------------------------------------------------------------------------
 
