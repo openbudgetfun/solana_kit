@@ -377,6 +377,36 @@ abstract final class SolanaErrorCode {
   static const int programClientsFailedToIdentifyAccount = 8500006;
 
   // ---------------------------------------------------------------------------
+  // Mobile Wallet Adapter - Session (8400000 - 8400049)
+  // ---------------------------------------------------------------------------
+
+  static const int mwaAssociationPortOutOfRange = 8400000;
+  static const int mwaReflectorIdOutOfRange = 8400001;
+  static const int mwaForbiddenWalletBaseUrl = 8400002;
+  static const int mwaSessionClosed = 8400003;
+  static const int mwaSessionTimeout = 8400004;
+  static const int mwaWalletNotFound = 8400005;
+  static const int mwaInvalidProtocolVersion = 8400006;
+  static const int mwaPlatformNotSupported = 8400007;
+  static const int mwaSequenceNumberOverflow = 8400008;
+  static const int mwaInvalidSequenceNumber = 8400009;
+  static const int mwaDecryptionFailed = 8400010;
+  static const int mwaEncryptionFailed = 8400011;
+  static const int mwaHandshakeFailed = 8400012;
+  static const int mwaInvalidHelloResponse = 8400013;
+
+  // ---------------------------------------------------------------------------
+  // Mobile Wallet Adapter - Protocol JSON-RPC (8400100 - 8400199)
+  // ---------------------------------------------------------------------------
+
+  static const int mwaProtocolAuthorizationFailed = 8400100;
+  static const int mwaProtocolInvalidPayloads = 8400101;
+  static const int mwaProtocolNotSigned = 8400102;
+  static const int mwaProtocolNotSubmitted = 8400103;
+  static const int mwaProtocolTooManyPayloads = 8400104;
+  static const int mwaProtocolAttestOriginAndroid = 8400105;
+
+  // ---------------------------------------------------------------------------
   // Helius (8600000 - 8600099)
   // ---------------------------------------------------------------------------
 

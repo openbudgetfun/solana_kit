@@ -1,11 +1,11 @@
 # Solana Kit Dart SDK
 
-A Dart port of the [Solana TypeScript SDK](https://github.com/anza-xyz/kit) (`@solana/kit`), mirroring the TS package structure as ~37 Dart packages.
+A Dart port of the [Solana TypeScript SDK](https://github.com/anza-xyz/kit) (`@solana/kit`), mirroring the TS package structure as ~39 Dart packages.
 
 ## Architecture
 
 - **Monorepo**: Dart workspaces + Melos for workspace management
-- **37 packages** under `packages/`, flat structure (not nested by category)
+- **39 packages** under `packages/`, flat structure (not nested by category)
 - **Package prefix**: `solana_kit_` (except umbrella `solana_kit`)
 - **Modern Dart 3.10+**: sealed classes, extension types, records, patterns
 - **No code generation**: hand-written, no freezed/build_runner
@@ -44,6 +44,8 @@ solana_kit_errors (foundation - no deps)
   │     ├── solana_kit_rpc_spec
   │     ├── solana_kit_rpc_api
   │     └── solana_kit_rpc
+  ├── solana_kit_mobile_wallet_adapter_protocol (pure Dart MWA)
+  │     └── solana_kit_mobile_wallet_adapter (Flutter MWA plugin)
   └── solana_kit (umbrella - re-exports everything)
 ```
 
@@ -69,6 +71,7 @@ Clone with `clone:repos` to `.repos/`:
 
 - `.repos/kit` - [anza-xyz/kit](https://github.com/anza-xyz/kit) (TS source to port)
 - `.repos/espresso-cash-public` - [brij-digital/espresso-cash-public](https://github.com/brij-digital/espresso-cash-public) (existing Dart Solana reference)
+- `.repos/mobile-wallet-adapter` - [solana-mobile/mobile-wallet-adapter](https://github.com/solana-mobile/mobile-wallet-adapter) (MWA protocol reference)
 
 ## Commit Convention
 

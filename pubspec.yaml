@@ -21,6 +21,8 @@ workspace:
   - packages/solana_kit_instructions
   - packages/solana_kit_keys
   - packages/solana_kit_lints
+  - packages/solana_kit_mobile_wallet_adapter
+  - packages/solana_kit_mobile_wallet_adapter_protocol
   - packages/solana_kit_offchain_messages
   - packages/solana_kit_options
   - packages/solana_kit_program_client_core

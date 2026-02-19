@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
 
-A Dart port of the [Solana TypeScript SDK](https://github.com/anza-xyz/kit) (`@solana/kit`). This monorepo contains 37 packages that mirror the upstream TS package structure, built with modern Dart 3.10+ features including sealed classes, extension types, records, and patterns.
+A Dart port of the [Solana TypeScript SDK](https://github.com/anza-xyz/kit) (`@solana/kit`). This monorepo contains 39 packages that mirror the upstream TS package structure, built with modern Dart 3.10+ features including sealed classes, extension types, records, and patterns.
 
 ## Quick Start
 
@@ -64,7 +64,7 @@ fix:all
 
 ## Packages
 
-The SDK is organized into 37 packages under `packages/`. Most users only need the umbrella package `solana_kit`, but each sub-package can be imported independently for smaller dependency footprints.
+The SDK is organized into 39 packages under `packages/`. Most users only need the umbrella package `solana_kit`, but each sub-package can be imported independently for smaller dependency footprints.
 
 ### Umbrella Packages
 
@@ -150,6 +150,13 @@ The SDK is organized into 37 packages under `packages/`. Most users only need th
 | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | [`solana_kit_functional`](#solana_kit_functional)                       | Adds a `.pipe()` extension for functional pipeline composition, used throughout the SDK for building transaction messages. |
 | [`solana_kit_fast_stable_stringify`](#solana_kit_fast_stable_stringify) | Deterministic JSON serialization with sorted keys, used for request deduplication and hashing.                             |
+
+### Mobile Wallet Adapter
+
+| Package                                                                                   | Description                                                                                                                            |
+| ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| [`solana_kit_mobile_wallet_adapter_protocol`](#solana_kit_mobile_wallet_adapter_protocol) | Pure Dart MWA v2.0 protocol: P-256 cryptography, AES-128-GCM encryption, HELLO handshake, JSON-RPC messaging, association URIs.        |
+| [`solana_kit_mobile_wallet_adapter`](#solana_kit_mobile_wallet_adapter)                   | Flutter plugin for MWA on Android. dApp-side session management, wallet-side scenario callbacks, Kit-integrated typed APIs. iOS no-op. |
 
 ### Internal (Not Published)
 
@@ -552,6 +559,36 @@ Custom test matchers:
 
 Not published — internal to the monorepo.
 
+### solana_kit_mobile_wallet_adapter_protocol
+
+Pure Dart implementation of the [Solana Mobile Wallet Adapter](https://github.com/solana-mobile/mobile-wallet-adapter) v2.0 protocol. Zero Flutter dependency — usable in server-side Dart, CLI tools, or any Dart environment.
+
+- **P-256 ECDSA/ECDH cryptography** via `pointycastle` (pure Dart, cross-platform)
+- **AES-128-GCM encryption** with sequence number AAD for replay attack prevention
+- **HKDF-SHA256** key derivation with association public key as salt
+- **HELLO_REQ / HELLO_RSP** handshake for session establishment
+- **JSON-RPC 2.0** message encryption/decryption
+- **Association URI** building and parsing (local + remote)
+- **Wallet proxy** with v1/legacy backwards compatibility
+- **Sign In With Solana (SIWS)** message builder following EIP-4361
+- **JWS ES256** compact serialization for attestation
+
+Exists because: The MWA protocol requires complex cryptographic operations (P-256 ECDH key exchange, HKDF derivation, AES-GCM encrypted messaging) that need to be available in pure Dart for maximum portability. Separating the protocol from the Flutter plugin enables testing without a Flutter environment and reuse in non-Flutter Dart applications.
+
+### solana_kit_mobile_wallet_adapter
+
+Flutter plugin for the [Solana Mobile Wallet Adapter](https://github.com/solana-mobile/mobile-wallet-adapter) protocol on Android. Provides both dApp-side (client) and wallet-side (server) APIs.
+
+- **`transact()`** — one-call session lifecycle: launch wallet, handshake, execute callback, clean up
+- **`LocalAssociationScenario`** — full control over local WebSocket sessions with retry logic
+- **`RemoteAssociationScenario`** — remote sessions via WebSocket reflector (cross-device)
+- **`KitMobileWallet`** — typed API working with base64 payloads and Solana Kit types
+- **`WalletScenario`** — manages incoming dApp connections via native Android bridge
+- **`WalletScenarioCallbacks`** — interface for handling authorize, sign, and deauthorize requests
+- **Platform check** — `isMwaSupported()` / `assertMwaSupported()` (Android-only, iOS no-op)
+
+Exists because: MWA requires platform-specific transport (Android Intents for wallet launching, WebSocket for session communication) that must be bridged from native code. This plugin uses a hybrid architecture: all WebSocket handling, P-256 cryptography, and JSON-RPC messaging happen in pure Dart (via the protocol package), while only Android Intent launching and wallet scenario bridging use native MethodChannels.
+
 ## Architecture
 
 ### Package Dependency Graph
@@ -598,6 +635,9 @@ solana_kit_errors (foundation — no deps)
 │
 ├── solana_kit_functional (utility — no deps)
 ├── solana_kit_fast_stable_stringify (utility — no deps)
+│
+├── solana_kit_mobile_wallet_adapter_protocol (pure Dart MWA protocol)
+│   └── solana_kit_mobile_wallet_adapter (Flutter MWA plugin)
 │
 └── solana_kit (umbrella — re-exports everything)
 ```
