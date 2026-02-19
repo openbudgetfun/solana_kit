@@ -32,6 +32,9 @@ VariableSizeDecoder<String> getUtf8Decoder() {
   return VariableSizeDecoder<String>(
     read: (bytes, offset) {
       final slice = bytes.sublist(offset);
+      // TODO(security): removeNullCharacters silently strips null bytes from
+      // decoded strings, which is data loss without notification. This matches
+      // the TS SDK behavior, so changing it may break compatibility.
       final value = removeNullCharacters(convert.utf8.decode(slice));
       return (value, bytes.length);
     },

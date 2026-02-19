@@ -66,14 +66,20 @@ Decoder<TTo> addDecoderSizePrefix<TTo>(
     final (bigintSize, decoderOffset) = prefix.read(bytes, currentOffset);
     final size = bigintSize.toInt();
     final contentStart = decoderOffset;
+    // Validate that enough bytes remain before attempting to slice.
+    final remaining = bytes.length - contentStart;
+    assertByteArrayHasEnoughBytesForCodec(
+      'addDecoderSizePrefix',
+      size,
+      bytes.sublist(contentStart),
+    );
     // Slice the byte array to the contained size if necessary.
     Uint8List sliced;
-    if (contentStart > 0 || bytes.length > size) {
+    if (contentStart > 0 || remaining > size) {
       sliced = bytes.sublist(contentStart, contentStart + size);
     } else {
       sliced = bytes;
     }
-    assertByteArrayHasEnoughBytesForCodec('addDecoderSizePrefix', size, sliced);
     // Use decode() to contain the decoder within its own bounds.
     return (decoder.decode(sliced), contentStart + size);
   }

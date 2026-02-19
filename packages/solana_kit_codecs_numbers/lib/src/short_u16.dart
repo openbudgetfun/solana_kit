@@ -1,6 +1,6 @@
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
-
 import 'package:solana_kit_codecs_numbers/src/assertions.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 /// Creates a [VariableSizeEncoder] for Solana's shortU16 compact encoding.
 ///
@@ -49,11 +49,28 @@ VariableSizeDecoder<int> getShortU16Decoder() {
       var currentOffset = offset;
       var shift = 0;
       while (true) {
+        if (currentOffset >= bytes.length) {
+          throw SolanaError(SolanaErrorCode.codecsInvalidByteLength, {
+            'codecDescription': 'shortU16',
+            'expected': currentOffset - offset + 1,
+            'bytesLength': bytes.length - offset,
+          });
+        }
         final byte = bytes[currentOffset];
         result |= (byte & 0x7f) << shift;
         currentOffset++;
         if ((byte & 0x80) == 0) break;
         shift += 7;
+        // shortU16 uses at most 3 bytes (shifts 0, 7, 14). If shift exceeds
+        // 14, the input is malformed with too many continuation bytes.
+        if (shift > 14) {
+          throw SolanaError(SolanaErrorCode.codecsNumberOutOfRange, {
+            'codecDescription': 'shortU16',
+            'min': 0,
+            'max': 65535,
+            'value': result,
+          });
+        }
       }
       return (result, currentOffset);
     },

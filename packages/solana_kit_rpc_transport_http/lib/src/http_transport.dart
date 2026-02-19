@@ -32,13 +32,11 @@ RpcTransport createHttpTransport(
 }) {
   final HttpTransportConfig(:fromJson, :headers, :toJson, :url) = config;
 
-  // Validate headers in debug mode only.
-  assert(() {
-    if (headers != null) {
-      assertIsAllowedHttpRequestHeaders(headers);
-    }
-    return true;
-  }(), 'Header validation failed');
+  // Validate headers unconditionally to prevent forbidden headers in all
+  // build modes (debug and release).
+  if (headers != null) {
+    assertIsAllowedHttpRequestHeaders(headers);
+  }
 
   final customHeaders = headers != null ? normalizeHeaders(headers) : null;
   final effectiveClient = client ?? http.Client();
@@ -56,6 +54,8 @@ RpcTransport createHttpTransport(
       'content-type': 'application/json; charset=utf-8',
     };
 
+    // TODO(security): Production usage should enforce `https://` only. Not
+    // blocking because local development often uses `http://`.
     final response = await effectiveClient.post(
       Uri.parse(url),
       headers: mergedHeaders,

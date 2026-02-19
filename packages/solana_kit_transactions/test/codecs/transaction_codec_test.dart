@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
@@ -114,6 +115,44 @@ void main() {
 
       expect(decoded.signatures[feePayer], isNotNull);
       expect(decoded.signatures[feePayer]!.value, sigBytes.value);
+    });
+  });
+
+  group('getTransactionDecoder security', () {
+    test('throws when signer count exceeds static addresses', () {
+      // Craft a malformed transaction where the message header claims
+      // 5 required signatures but only 2 static addresses exist.
+      //
+      // Wire format:
+      //   [sigCount=0] (shortU16: 0x00 means 0 signatures)
+      //   [messageBytes...]:
+      //     version prefix: 0x80 (versioned, v0)
+      //     numRequiredSignatures: 5
+      //     numReadOnlySignedAccounts: 0
+      //     numReadOnlyUnsignedAccounts: 0
+      //     accountCount: 2 (shortU16)
+      //     addr1: 32 zero bytes
+      //     addr2: 32 zero bytes
+      //     ...remaining message bytes (blockhash etc)
+      final messageBytes = Uint8List.fromList([
+        0x80, // version flag: v0
+        5, // numRequiredSignatures = 5
+        0, // numReadOnlySignedAccounts
+        0, // numReadOnlyUnsignedAccounts
+        2, // accountCount shortU16 = 2
+        ...List<int>.filled(32, 0), // address 1
+        ...List<int>.filled(32, 0), // address 2
+        ...List<int>.filled(32, 0), // blockhash (32 bytes)
+        0, // instruction count (shortU16) = 0
+        0, // address table lookups count (shortU16) = 0
+      ]);
+
+      // Transaction wire format: [sigCount] [messageBytes]
+      // sigCount = 0 (shortU16 encoded as single 0x00 byte)
+      final txBytes = Uint8List.fromList([0x00, ...messageBytes]);
+
+      final decoder = getTransactionDecoder();
+      expect(() => decoder.decode(txBytes), throwsA(isA<SolanaError>()));
     });
   });
 

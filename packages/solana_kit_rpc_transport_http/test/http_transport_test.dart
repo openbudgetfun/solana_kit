@@ -99,8 +99,7 @@ void main() {
         expect(capturedRequest.headers['authorization'], 'Bearer token123');
       });
 
-      test('disallowed headers in custom headers throw a SolanaError '
-          'in debug mode', () {
+      test('disallowed headers in custom headers throw a SolanaError', () {
         final mockClient = MockClient(
           (request) async => http.Response(
             jsonEncode({'ok': true}),
@@ -114,6 +113,34 @@ void main() {
             const HttpTransportConfig(
               url: 'http://localhost',
               headers: {'aCcEpT': 'text/html'},
+            ),
+            client: mockClient,
+          ),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              SolanaErrorCode.rpcTransportHttpHeaderForbidden,
+            ),
+          ),
+        );
+      });
+
+      test('forbidden headers are rejected unconditionally', () {
+        final mockClient = MockClient(
+          (request) async => http.Response(
+            jsonEncode({'ok': true}),
+            200,
+            headers: {'content-type': 'application/json'},
+          ),
+        );
+
+        // 'host' is a forbidden header per MDN spec.
+        expect(
+          () => createHttpTransport(
+            const HttpTransportConfig(
+              url: 'http://localhost',
+              headers: {'Host': 'evil.example.com'},
             ),
             client: mockClient,
           ),

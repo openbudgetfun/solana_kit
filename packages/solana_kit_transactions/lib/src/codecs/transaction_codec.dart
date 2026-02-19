@@ -144,6 +144,13 @@ _SignerData _decodeSignerAddresses(Uint8List messageBytes) {
     pos = addrEnd;
   }
 
+  if (numRequiredSignatures > staticAddresses.length) {
+    throw SolanaError(SolanaErrorCode.transactionMessageSignaturesMismatch, {
+      'numRequiredSignatures': numRequiredSignatures,
+      'staticAddressesLength': staticAddresses.length,
+    });
+  }
+
   final signerAddresses = staticAddresses.sublist(0, numRequiredSignatures);
 
   return _SignerData(

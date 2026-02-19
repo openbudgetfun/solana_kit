@@ -4,6 +4,7 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/src/assertions.dart';
 import 'package:solana_kit_codecs_data_structures/src/utils.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 /// Determines how the size of an array-like codec is specified.
 sealed class ArrayLikeCodecSize {
@@ -148,6 +149,14 @@ Decoder<List<T>> getArrayDecoder<T>(
       final (prefixValue, newOffset) = prefix.read(bytes, offset);
       resolvedSize = prefixValue.toInt();
       offset = newOffset;
+    }
+
+    if (resolvedSize < 0) {
+      throw SolanaError(SolanaErrorCode.codecsInvalidNumberOfItems, {
+        'codecDescription': description ?? 'array',
+        'expected': 0,
+        'actual': resolvedSize,
+      });
     }
 
     for (var i = 0; i < resolvedSize; i++) {

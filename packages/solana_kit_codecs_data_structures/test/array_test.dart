@@ -74,5 +74,16 @@ void main() {
       // No bytes at all - the decoder should handle gracefully
       expect(codec.decode(b('')), isEmpty);
     });
+
+    test('throws on oversized prefix that would exhaust memory', () {
+      final decoder = getArrayDecoder(
+        getU8Decoder(),
+        size: PrefixedArraySize(getU32Decoder()),
+      );
+      // u32 prefix says 0xFFFFFFFF (4294967295) items but only 0 bytes of
+      // content follow. The decoder should fail when it runs out of bytes
+      // trying to read items, not allocate billions of entries.
+      expect(() => decoder.decode(b('ffffffff')), throwsA(anything));
+    });
   });
 }
