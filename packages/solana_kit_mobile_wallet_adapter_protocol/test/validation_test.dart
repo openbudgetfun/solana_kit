@@ -43,17 +43,11 @@ void main() {
     });
 
     test('rejects zero', () {
-      expect(
-        () => assertAssociationPort(0),
-        throwsA(isA<SolanaError>()),
-      );
+      expect(() => assertAssociationPort(0), throwsA(isA<SolanaError>()));
     });
 
     test('rejects negative port', () {
-      expect(
-        () => assertAssociationPort(-1),
-        throwsA(isA<SolanaError>()),
-      );
+      expect(() => assertAssociationPort(-1), throwsA(isA<SolanaError>()));
     });
   });
 

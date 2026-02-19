@@ -34,9 +34,7 @@ void main() {
 
   group('MwaAccount', () {
     test('fromJson parses required fields', () {
-      final account = MwaAccount.fromJson({
-        'address': 'dGVzdA==',
-      });
+      final account = MwaAccount.fromJson({'address': 'dGVzdA=='});
       expect(account.address, 'dGVzdA==');
       expect(account.label, isNull);
     });
@@ -58,10 +56,7 @@ void main() {
     });
 
     test('toJson round-trips', () {
-      final json = {
-        'address': 'dGVzdA==',
-        'label': 'My Wallet',
-      };
+      final json = {'address': 'dGVzdA==', 'label': 'My Wallet'};
       final account = MwaAccount.fromJson(json);
       final output = account.toJson();
       expect(output['address'], 'dGVzdA==');

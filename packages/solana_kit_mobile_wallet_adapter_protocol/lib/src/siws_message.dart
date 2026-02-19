@@ -25,7 +25,6 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/src/types.dart';
 /// ```
 String createSiwsMessage(SignInPayload payload) {
   final buffer = StringBuffer()
-
     // Header
     ..writeln(
       '${payload.domain ?? ''} wants you to sign in with your Solana account:',

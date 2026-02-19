@@ -1,6 +1,8 @@
 import 'package:flutter/services.dart';
-import 'package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart' show MobileWalletAdapterConfig;
-import 'package:solana_kit_mobile_wallet_adapter/src/wallet/wallet_config.dart' show MobileWalletAdapterConfig;
+import 'package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart'
+    show MobileWalletAdapterConfig;
+import 'package:solana_kit_mobile_wallet_adapter/src/wallet/wallet_config.dart'
+    show MobileWalletAdapterConfig;
 
 /// Platform-specific API for the wallet side of MWA on Android.
 ///
@@ -8,11 +10,11 @@ import 'package:solana_kit_mobile_wallet_adapter/src/wallet/wallet_config.dart' 
 /// and dApp request handling.
 class MwaWalletHostApi {
   MwaWalletHostApi({BinaryMessenger? binaryMessenger})
-      : _channel = MethodChannel(
-          'com.solana.solanakit.mobilewallet/wallet',
-          const StandardMethodCodec(),
-          binaryMessenger,
-        );
+    : _channel = MethodChannel(
+        'com.solana.solanakit.mobilewallet/wallet',
+        const StandardMethodCodec(),
+        binaryMessenger,
+      );
 
   final MethodChannel _channel;
 
@@ -26,27 +28,25 @@ class MwaWalletHostApi {
     required String walletName,
     required String configJson,
   }) async {
-    final result = await _channel.invokeMethod<String>(
-      'createScenario',
-      {'walletName': walletName, 'configJson': configJson},
-    );
+    final result = await _channel.invokeMethod<String>('createScenario', {
+      'walletName': walletName,
+      'configJson': configJson,
+    });
     return result!;
   }
 
   /// Starts the wallet scenario, beginning to accept connections.
   Future<void> startScenario({required String sessionId}) async {
-    await _channel.invokeMethod<void>(
-      'startScenario',
-      {'sessionId': sessionId},
-    );
+    await _channel.invokeMethod<void>('startScenario', {
+      'sessionId': sessionId,
+    });
   }
 
   /// Closes the wallet scenario and stops accepting connections.
   Future<void> closeScenario({required String sessionId}) async {
-    await _channel.invokeMethod<void>(
-      'closeScenario',
-      {'sessionId': sessionId},
-    );
+    await _channel.invokeMethod<void>('closeScenario', {
+      'sessionId': sessionId,
+    });
   }
 
   /// Resolves a pending request from a dApp with the given result.
@@ -55,14 +55,11 @@ class MwaWalletHostApi {
     required String requestId,
     required String resultJson,
   }) async {
-    await _channel.invokeMethod<void>(
-      'resolveRequest',
-      {
-        'sessionId': sessionId,
-        'requestId': requestId,
-        'resultJson': resultJson,
-      },
-    );
+    await _channel.invokeMethod<void>('resolveRequest', {
+      'sessionId': sessionId,
+      'requestId': requestId,
+      'resultJson': resultJson,
+    });
   }
 
   /// Sets the callback handler for wallet-side events from native code.

@@ -48,12 +48,11 @@ Uint8List encryptMessage(
   }
 
   // Build wire format: [seq (4)] [IV (12)] [ciphertext + tag]
-  final response = Uint8List(
-    mwaSequenceNumberBytes + mwaIvBytes + ciphertextWithTag.length,
-  )
-    ..setAll(0, sequenceNumberVector)
-    ..setAll(mwaSequenceNumberBytes, iv)
-    ..setAll(mwaSequenceNumberBytes + mwaIvBytes, ciphertextWithTag);
+  final response =
+      Uint8List(mwaSequenceNumberBytes + mwaIvBytes + ciphertextWithTag.length)
+        ..setAll(0, sequenceNumberVector)
+        ..setAll(mwaSequenceNumberBytes, iv)
+        ..setAll(mwaSequenceNumberBytes + mwaIvBytes, ciphertextWithTag);
 
   return response;
 }
@@ -63,10 +62,7 @@ Uint8List encryptMessage(
 /// Wire format: `[4B seq big-endian][12B random IV][ciphertext + 16B GCM tag]`
 ///
 /// Returns the decrypted plaintext and the extracted sequence number.
-DecryptedMessage decryptMessage(
-  Uint8List message,
-  Uint8List sharedSecret,
-) {
+DecryptedMessage decryptMessage(Uint8List message, Uint8List sharedSecret) {
   // Extract components from wire format.
   final sequenceNumberVector = message.sublist(0, mwaSequenceNumberBytes);
   final iv = message.sublist(
@@ -78,8 +74,9 @@ DecryptedMessage decryptMessage(
   );
 
   // Parse sequence number (big-endian uint32).
-  final sequenceNumber = ByteData.sublistView(sequenceNumberVector)
-      .getUint32(0);
+  final sequenceNumber = ByteData.sublistView(
+    sequenceNumberVector,
+  ).getUint32(0);
 
   List<int> plaintextBytes;
   try {

@@ -121,10 +121,7 @@ Uint8List aesGcmEncrypt({
   required Uint8List aad,
 }) {
   final cipher = GCMBlockCipher(AESEngine())
-    ..init(
-      true,
-      AEADParameters(KeyParameter(key), 128, nonce, aad),
-    );
+    ..init(true, AEADParameters(KeyParameter(key), 128, nonce, aad));
   final output = Uint8List(plaintext.length + 16); // +16 for GCM tag
   var offset = cipher.processBytes(plaintext, 0, plaintext.length, output, 0);
   offset += cipher.doFinal(output, offset);
@@ -144,10 +141,7 @@ Uint8List aesGcmDecrypt({
   required Uint8List aad,
 }) {
   final cipher = GCMBlockCipher(AESEngine())
-    ..init(
-      false,
-      AEADParameters(KeyParameter(key), 128, nonce, aad),
-    );
+    ..init(false, AEADParameters(KeyParameter(key), 128, nonce, aad));
   final output = Uint8List(ciphertextWithTag.length);
   var offset = cipher.processBytes(
     ciphertextWithTag,
@@ -163,9 +157,7 @@ Uint8List aesGcmDecrypt({
 /// Generates [length] cryptographically secure random bytes.
 Uint8List randomBytes(int length) {
   final random = Random.secure();
-  return Uint8List.fromList(
-    List.generate(length, (_) => random.nextInt(256)),
-  );
+  return Uint8List.fromList(List.generate(length, (_) => random.nextInt(256)));
 }
 
 /// Converts a [BigInt] to a fixed-length unsigned big-endian byte array.

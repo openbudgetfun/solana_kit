@@ -243,8 +243,7 @@ class WalletCapabilities {
 
   factory WalletCapabilities.fromJson(Map<String, Object?> json) {
     return WalletCapabilities(
-      maxTransactionsPerRequest:
-          json['max_transactions_per_request'] as int?,
+      maxTransactionsPerRequest: json['max_transactions_per_request'] as int?,
       maxMessagesPerRequest: json['max_messages_per_request'] as int?,
       supportedTransactionVersions:
           json['supported_transaction_versions'] as List<Object?>?,

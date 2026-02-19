@@ -19,11 +19,9 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// 8. Create [MobileWallet] proxy
 /// 9. Clean shutdown on close
 class LocalAssociationScenario {
-  LocalAssociationScenario({
-    MwaClientHostApi? clientApi,
-    String? baseUri,
-  })  : _clientApi = clientApi ?? MwaClientHostApi(),
-        _baseUri = baseUri;
+  LocalAssociationScenario({MwaClientHostApi? clientApi, String? baseUri})
+    : _clientApi = clientApi ?? MwaClientHostApi(),
+      _baseUri = baseUri;
 
   final MwaClientHostApi _clientApi;
   final String? _baseUri;
@@ -103,21 +101,18 @@ class LocalAssociationScenario {
     if (helloRsp.isEmpty) {
       // Resend HELLO_REQ and wait again.
       final retryCompleter = Completer<Uint8List>();
-      final retrySubscription = _channel!.stream.listen(
-        (message) {
-          if (!retryCompleter.isCompleted && message is List<int>) {
-            retryCompleter.complete(Uint8List.fromList(message));
-          }
-        },
-      );
+      final retrySubscription = _channel!.stream.listen((message) {
+        if (!retryCompleter.isCompleted && message is List<int>) {
+          retryCompleter.complete(Uint8List.fromList(message));
+        }
+      });
 
       _channel!.sink.add(helloReq);
 
       try {
         helloRsp = await retryCompleter.future.timeout(
           const Duration(milliseconds: mwaConnectionTimeoutMs),
-          onTimeout: () =>
-              throw SolanaError(SolanaErrorCode.mwaSessionTimeout),
+          onTimeout: () => throw SolanaError(SolanaErrorCode.mwaSessionTimeout),
         );
       } finally {
         await retrySubscription.cancel();
@@ -125,11 +120,7 @@ class LocalAssociationScenario {
     }
 
     // Step 6: Parse HELLO_RSP and derive shared secret.
-    final result = parseHelloRsp(
-      helloRsp,
-      associationKeyPair,
-      ecdhKeyPair,
-    );
+    final result = parseHelloRsp(helloRsp, associationKeyPair, ecdhKeyPair);
     _sharedSecret = result.sharedSecret;
 
     // Step 7: Parse session properties if present.
@@ -211,9 +202,7 @@ class LocalAssociationScenario {
 
   /// Connects to the wallet's WebSocket server with retry logic.
   Future<WebSocketChannel> _connectWithRetry(int port) async {
-    final uri = Uri.parse(
-      'ws://localhost:$port$mwaLocalWebSocketPath',
-    );
+    final uri = Uri.parse('ws://localhost:$port$mwaLocalWebSocketPath');
 
     final deadline = DateTime.now().add(
       const Duration(milliseconds: mwaConnectionTimeoutMs),

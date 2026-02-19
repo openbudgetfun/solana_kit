@@ -9,10 +9,7 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/src/constants.dart';
 /// [SolanaErrorCode.mwaReflectorIdOutOfRange].
 int assertReflectorId(int id) {
   if (id < 0 || id > mwaMaxReflectorId) {
-    throw SolanaError(
-      SolanaErrorCode.mwaReflectorIdOutOfRange,
-      {'id': id},
-    );
+    throw SolanaError(SolanaErrorCode.mwaReflectorIdOutOfRange, {'id': id});
   }
   return id;
 }

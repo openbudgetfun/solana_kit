@@ -1,7 +1,7 @@
-
 import 'package:solana_kit_keys/solana_kit_keys.dart' show SignatureBytes;
 import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
-import 'package:solana_kit_transactions/solana_kit_transactions.dart' show Transaction;
+import 'package:solana_kit_transactions/solana_kit_transactions.dart'
+    show Transaction;
 
 /// Kit-integrated mobile wallet API that works with Solana Kit types
 /// ([Transaction], [SignatureBytes]) instead of raw base64 strings.
@@ -33,9 +33,7 @@ abstract interface class KitMobileWallet {
   ///
   /// Each transaction is provided as a base64-encoded wire-format
   /// transaction, and returned the same way.
-  Future<List<String>> signTransactions({
-    required List<String> payloads,
-  });
+  Future<List<String>> signTransactions({required List<String> payloads});
 
   /// Signs one or more arbitrary messages.
   Future<List<String>> signMessages({
@@ -113,9 +111,7 @@ class _KitMobileWalletImpl implements KitMobileWallet {
   Future<List<String>> signTransactions({
     required List<String> payloads,
   }) async {
-    final result = await _wallet.signTransactions({
-      'payloads': payloads,
-    });
+    final result = await _wallet.signTransactions({'payloads': payloads});
     return (result['signed_payloads']! as List<Object?>).cast<String>();
   }
 

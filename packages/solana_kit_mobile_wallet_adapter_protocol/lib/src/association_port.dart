@@ -19,10 +19,9 @@ int getRandomAssociationPort() {
 /// [SolanaErrorCode.mwaAssociationPortOutOfRange].
 int assertAssociationPort(int port) {
   if (port < mwaMinAssociationPort || port > mwaMaxAssociationPort) {
-    throw SolanaError(
-      SolanaErrorCode.mwaAssociationPortOutOfRange,
-      {'port': port},
-    );
+    throw SolanaError(SolanaErrorCode.mwaAssociationPortOutOfRange, {
+      'port': port,
+    });
   }
   return port;
 }

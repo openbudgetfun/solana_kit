@@ -27,10 +27,9 @@ Uint8List createHelloReq(
   );
 
   // Concatenate: [ECDH pubkey (65)] [ECDSA signature (64)]
-  final response =
-      Uint8List(ecdhPublicKeyBytes.length + signatureBytes.length)
-        ..setAll(0, ecdhPublicKeyBytes)
-        ..setAll(ecdhPublicKeyBytes.length, signatureBytes);
+  final response = Uint8List(ecdhPublicKeyBytes.length + signatureBytes.length)
+    ..setAll(0, ecdhPublicKeyBytes)
+    ..setAll(ecdhPublicKeyBytes.length, signatureBytes);
 
   return response;
 }

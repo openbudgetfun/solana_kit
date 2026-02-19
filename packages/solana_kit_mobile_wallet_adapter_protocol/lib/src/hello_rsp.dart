@@ -40,10 +40,9 @@ HelloRspResult parseHelloRsp(
   EcdhKeypair ecdhKeyPair,
 ) {
   if (payload.length < mwaPublicKeyLengthBytes) {
-    throw SolanaError(
-      SolanaErrorCode.mwaInvalidHelloResponse,
-      {'actualLength': payload.length},
-    );
+    throw SolanaError(SolanaErrorCode.mwaInvalidHelloResponse, {
+      'actualLength': payload.length,
+    });
   }
 
   // Extract the wallet's ECDH public key (first 65 bytes).
@@ -52,8 +51,9 @@ HelloRspResult parseHelloRsp(
   );
 
   // Export the association public key bytes for use as HKDF salt.
-  final associationPublicKeyBytes =
-      exportPublicKeyBytes(associationKeyPair.publicKey);
+  final associationPublicKeyBytes = exportPublicKeyBytes(
+    associationKeyPair.publicKey,
+  );
 
   // Step 1: ECDH key agreement -> 256-bit shared secret.
   final sharedSecretBytes = ecdhSharedSecret(

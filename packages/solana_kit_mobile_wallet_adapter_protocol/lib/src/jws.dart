@@ -21,9 +21,7 @@ String getJws(ECPrivateKey privateKey, Map<String, Object?> payload) {
     privateKey,
   );
 
-  final signatureEncoded = base64Url
-      .encode(signatureBytes)
-      .replaceAll('=', '');
+  final signatureEncoded = base64Url.encode(signatureBytes).replaceAll('=', '');
 
   return '$message.$signatureEncoded';
 }

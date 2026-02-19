@@ -4,10 +4,11 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/src/constants.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/src/types.dart';
 
 /// Callback type for sending JSON-RPC requests to the wallet.
-typedef SendRequest = Future<Map<String, Object?>> Function(
-  String method,
-  Map<String, Object?> params,
-);
+typedef SendRequest =
+    Future<Map<String, Object?>> Function(
+      String method,
+      Map<String, Object?> params,
+    );
 
 /// Abstract interface for interacting with a mobile wallet via MWA.
 ///
@@ -124,9 +125,7 @@ class _MobileWalletProxy implements MobileWallet {
   }
 
   @override
-  Future<Map<String, Object?>> cloneAuthorization(
-    Map<String, Object?> params,
-  ) {
+  Future<Map<String, Object?>> cloneAuthorization(Map<String, Object?> params) {
     return _sendRequest('clone_authorization', params);
   }
 
@@ -149,8 +148,8 @@ class _MobileWalletProxy implements MobileWallet {
 
   /// Resolves the correct method name for authorize/reauthorize.
   String _resolveAuthorizeMethod(Map<String, Object?> params) {
-    final hasAuthToken = params.containsKey('auth_token') &&
-        params['auth_token'] != null;
+    final hasAuthToken =
+        params.containsKey('auth_token') && params['auth_token'] != null;
 
     if (hasAuthToken && _version == ProtocolVersion.legacy) {
       return 'reauthorize';

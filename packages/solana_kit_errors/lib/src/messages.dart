@@ -534,10 +534,8 @@ const Map<int, String> solanaErrorMessages = {
       r'Reflector ID must be between 0 and 2^53 - 1. $id given.',
   SolanaErrorCode.mwaForbiddenWalletBaseUrl:
       r'Wallet base URL must use HTTPS. $url given.',
-  SolanaErrorCode.mwaSessionClosed:
-      'Mobile wallet adapter session was closed.',
-  SolanaErrorCode.mwaSessionTimeout:
-      'Mobile wallet adapter session timed out.',
+  SolanaErrorCode.mwaSessionClosed: 'Mobile wallet adapter session was closed.',
+  SolanaErrorCode.mwaSessionTimeout: 'Mobile wallet adapter session timed out.',
   SolanaErrorCode.mwaWalletNotFound:
       'No compatible wallet app was found on this device.',
   SolanaErrorCode.mwaInvalidProtocolVersion:
@@ -552,8 +550,7 @@ const Map<int, String> solanaErrorMessages = {
       'Failed to decrypt mobile wallet adapter message.',
   SolanaErrorCode.mwaEncryptionFailed:
       'Failed to encrypt mobile wallet adapter message.',
-  SolanaErrorCode.mwaHandshakeFailed:
-      'Mobile wallet adapter handshake failed.',
+  SolanaErrorCode.mwaHandshakeFailed: 'Mobile wallet adapter handshake failed.',
   SolanaErrorCode.mwaInvalidHelloResponse:
       r'Invalid HELLO_RSP: expected at least 65 bytes, got $actualLength.',
 
@@ -562,8 +559,7 @@ const Map<int, String> solanaErrorMessages = {
       'Wallet authorization failed.',
   SolanaErrorCode.mwaProtocolInvalidPayloads:
       'The payloads provided to the wallet were invalid.',
-  SolanaErrorCode.mwaProtocolNotSigned:
-      'The wallet did not sign the payloads.',
+  SolanaErrorCode.mwaProtocolNotSigned: 'The wallet did not sign the payloads.',
   SolanaErrorCode.mwaProtocolNotSubmitted:
       'The wallet did not submit the transactions.',
   SolanaErrorCode.mwaProtocolTooManyPayloads:

@@ -44,9 +44,7 @@ abstract interface class WalletScenarioCallbacks {
   void onSignMessagesRequest(SignMessagesRequest request);
 
   /// Called when a dApp requests transaction signing and sending.
-  void onSignAndSendTransactionsRequest(
-    SignAndSendTransactionsRequest request,
-  );
+  void onSignAndSendTransactionsRequest(SignAndSendTransactionsRequest request);
 
   /// Called when a dApp deauthorizes (revokes its token).
   void onDeauthorizedEvent(DeauthorizedEvent event);
@@ -161,9 +159,7 @@ class WalletScenario {
       case 'onDeauthorizedEvent':
         await _handleDeauthorizedEvent(call);
       default:
-        throw MissingPluginException(
-          'No handler for method ${call.method}',
-        );
+        throw MissingPluginException('No handler for method ${call.method}');
     }
     return null;
   }
@@ -376,10 +372,7 @@ class WalletScenario {
       };
     }
     return {
-      'error': {
-        'code': -32603,
-        'message': error.toString(),
-      },
+      'error': {'code': -32603, 'message': error.toString()},
     };
   }
 }

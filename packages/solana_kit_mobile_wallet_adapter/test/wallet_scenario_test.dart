@@ -81,10 +81,7 @@ class _MockBinaryMessenger implements BinaryMessenger {
   Future<ByteData?> send(String channel, ByteData? message) async => null;
 
   @override
-  void setMessageHandler(
-    String channel,
-    MessageHandler? handler,
-  ) {}
+  void setMessageHandler(String channel, MessageHandler? handler) {}
 
   @override
   Future<void> handlePlatformMessage(
@@ -224,19 +221,21 @@ void main() {
       await mockApi.simulateNativeCall('onScenarioComplete');
       await mockApi.simulateNativeCall('onScenarioTeardownComplete');
 
-      expect(
-        callbacks.events,
-        ['ready', 'servingClients', 'servingComplete', 'complete', 'teardownComplete'],
-      );
+      expect(callbacks.events, [
+        'ready',
+        'servingClients',
+        'servingComplete',
+        'complete',
+        'teardownComplete',
+      ]);
     });
 
     test('error event is forwarded with error data', () async {
       await scenario.start();
 
-      await mockApi.simulateNativeCall(
-        'onScenarioError',
-        {'error': 'connection failed'},
-      );
+      await mockApi.simulateNativeCall('onScenarioError', {
+        'error': 'connection failed',
+      });
 
       expect(callbacks.events, ['error']);
       expect(callbacks.lastError, 'connection failed');
@@ -246,16 +245,13 @@ void main() {
       await scenario.start();
 
       // Simulate an authorize request from native.
-      final nativeFuture = mockApi.simulateNativeCall(
-        'onAuthorizeRequest',
-        {
-          'requestId': 'req-1',
-          'paramsJson': jsonEncode({
-            'identity': {'name': 'Test dApp'},
-            'chain': 'solana:mainnet',
-          }),
-        },
-      );
+      final nativeFuture = mockApi.simulateNativeCall('onAuthorizeRequest', {
+        'requestId': 'req-1',
+        'paramsJson': jsonEncode({
+          'identity': {'name': 'Test dApp'},
+          'chain': 'solana:mainnet',
+        }),
+      });
 
       // Let the microtask queue process.
       await Future<void>.delayed(Duration.zero);
@@ -277,21 +273,19 @@ void main() {
       expect(mockApi.calls['resolveRequest'], hasLength(1));
       final resolveCall = mockApi.calls['resolveRequest']!.first;
       expect(resolveCall['requestId'], 'req-1');
-      final resultJson = jsonDecode(resolveCall['resultJson']! as String)
-          as Map<String, Object?>;
+      final resultJson =
+          jsonDecode(resolveCall['resultJson']! as String)
+              as Map<String, Object?>;
       expect(resultJson['auth_token'], 'new-token');
     });
 
     test('authorize decline is forwarded as error', () async {
       await scenario.start();
 
-      final nativeFuture = mockApi.simulateNativeCall(
-        'onAuthorizeRequest',
-        {
-          'requestId': 'req-1',
-          'paramsJson': jsonEncode({'chain': 'solana:mainnet'}),
-        },
-      );
+      final nativeFuture = mockApi.simulateNativeCall('onAuthorizeRequest', {
+        'requestId': 'req-1',
+        'paramsJson': jsonEncode({'chain': 'solana:mainnet'}),
+      });
 
       await Future<void>.delayed(Duration.zero);
 
@@ -300,9 +294,11 @@ void main() {
       await nativeFuture;
 
       expect(mockApi.calls['resolveRequest'], hasLength(1));
-      final resultJson = jsonDecode(
-        mockApi.calls['resolveRequest']!.first['resultJson']! as String,
-      ) as Map<String, Object?>;
+      final resultJson =
+          jsonDecode(
+                mockApi.calls['resolveRequest']!.first['resultJson']! as String,
+              )
+              as Map<String, Object?>;
       expect(resultJson.containsKey('error'), isTrue);
     });
 
@@ -325,33 +321,31 @@ void main() {
       expect(callbacks.events, ['signTransactions']);
       expect(callbacks.lastSignTransactionsRequest!.payloads, ['dHgx', 'dHgy']);
 
-      callbacks.lastSignTransactionsRequest!
-          .completeWithSignedPayloads(['c2lnMQ==', 'c2lnMg==']);
+      callbacks.lastSignTransactionsRequest!.completeWithSignedPayloads([
+        'c2lnMQ==',
+        'c2lnMg==',
+      ]);
 
       await nativeFuture;
 
-      final resultJson = jsonDecode(
-        mockApi.calls['resolveRequest']!.first['resultJson']! as String,
-      ) as Map<String, Object?>;
-      expect(
-        resultJson['signed_payloads'],
-        ['c2lnMQ==', 'c2lnMg=='],
-      );
+      final resultJson =
+          jsonDecode(
+                mockApi.calls['resolveRequest']!.first['resultJson']! as String,
+              )
+              as Map<String, Object?>;
+      expect(resultJson['signed_payloads'], ['c2lnMQ==', 'c2lnMg==']);
     });
 
     test('signMessages request is forwarded', () async {
       await scenario.start();
 
-      final nativeFuture = mockApi.simulateNativeCall(
-        'onSignMessagesRequest',
-        {
-          'requestId': 'req-3',
-          'paramsJson': jsonEncode({
-            'payloads': ['bXNn'],
-            'addresses': ['addr1'],
-          }),
-        },
-      );
+      final nativeFuture = mockApi.simulateNativeCall('onSignMessagesRequest', {
+        'requestId': 'req-3',
+        'paramsJson': jsonEncode({
+          'payloads': ['bXNn'],
+          'addresses': ['addr1'],
+        }),
+      });
 
       await Future<void>.delayed(Duration.zero);
 
@@ -371,10 +365,7 @@ void main() {
           'requestId': 'req-4',
           'paramsJson': jsonEncode({
             'payloads': ['dHgx'],
-            'options': {
-              'commitment': 'confirmed',
-              'skip_preflight': true,
-            },
+            'options': {'commitment': 'confirmed', 'skip_preflight': true},
           }),
         },
       );
@@ -392,16 +383,13 @@ void main() {
     test('deauthorized event is forwarded', () async {
       await scenario.start();
 
-      final nativeFuture = mockApi.simulateNativeCall(
-        'onDeauthorizedEvent',
-        {
-          'requestId': 'req-5',
-          'paramsJson': jsonEncode({
-            'auth_token': 'revoked-token',
-            'chain': 'solana:mainnet',
-          }),
-        },
-      );
+      final nativeFuture = mockApi.simulateNativeCall('onDeauthorizedEvent', {
+        'requestId': 'req-5',
+        'paramsJson': jsonEncode({
+          'auth_token': 'revoked-token',
+          'chain': 'solana:mainnet',
+        }),
+      });
 
       await Future<void>.delayed(Duration.zero);
 
@@ -418,16 +406,13 @@ void main() {
     test('reauthorize request is forwarded', () async {
       await scenario.start();
 
-      final nativeFuture = mockApi.simulateNativeCall(
-        'onReauthorizeRequest',
-        {
-          'requestId': 'req-6',
-          'paramsJson': jsonEncode({
-            'auth_token': 'old-token',
-            'chain': 'solana:devnet',
-          }),
-        },
-      );
+      final nativeFuture = mockApi.simulateNativeCall('onReauthorizeRequest', {
+        'requestId': 'req-6',
+        'paramsJson': jsonEncode({
+          'auth_token': 'old-token',
+          'chain': 'solana:devnet',
+        }),
+      });
 
       await Future<void>.delayed(Duration.zero);
 

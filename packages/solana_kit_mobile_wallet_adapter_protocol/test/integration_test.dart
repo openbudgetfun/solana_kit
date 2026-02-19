@@ -58,8 +58,9 @@ class SimulatedWallet {
       _walletEcdhKeypair.privateKey,
       dAppEcdhPublicKey,
     );
-    final associationPubKeyBytes =
-        exportPublicKeyBytes(dAppAssociationKeypair.publicKey);
+    final associationPubKeyBytes = exportPublicKeyBytes(
+      dAppAssociationKeypair.publicKey,
+    );
     _sharedSecret = hkdfSha256(
       ikm: rawSecret,
       salt: associationPubKeyBytes,
@@ -69,8 +70,7 @@ class SimulatedWallet {
 
     // Build HELLO_RSP: [wallet ECDH pubkey (65)] [optional encrypted session
     //   props]
-    final walletPublicKeyBytes =
-        exportEcdhPublicKeyBytes(_walletEcdhKeypair);
+    final walletPublicKeyBytes = exportEcdhPublicKeyBytes(_walletEcdhKeypair);
 
     if (protocolVersion == ProtocolVersion.legacy) {
       // Legacy wallets don't send session properties.
@@ -80,17 +80,17 @@ class SimulatedWallet {
     // v1 wallets send encrypted session properties.
     final sessionPropsJson = json.encode({'v': 1});
     final encryptedProps = encryptMessage(sessionPropsJson, 0, _sharedSecret);
-    final result = Uint8List(walletPublicKeyBytes.length + encryptedProps.length)
-      ..setAll(0, walletPublicKeyBytes)
-      ..setAll(walletPublicKeyBytes.length, encryptedProps);
+    final result =
+        Uint8List(walletPublicKeyBytes.length + encryptedProps.length)
+          ..setAll(0, walletPublicKeyBytes)
+          ..setAll(walletPublicKeyBytes.length, encryptedProps);
     return result;
   }
 
   /// Processes an encrypted JSON-RPC request and returns an encrypted response.
   Uint8List handleEncryptedRequest(Uint8List encryptedRequest) {
     final decrypted = decryptMessage(encryptedRequest, _sharedSecret);
-    final request =
-        json.decode(decrypted.plaintext) as Map<String, Object?>;
+    final request = json.decode(decrypted.plaintext) as Map<String, Object?>;
 
     final method = request['method']! as String;
     final id = request['id']! as int;
@@ -101,17 +101,9 @@ class SimulatedWallet {
     // Build JSON-RPC response.
     final Map<String, Object?> response;
     if (result.containsKey('error')) {
-      response = {
-        'id': id,
-        'jsonrpc': '2.0',
-        'error': result['error'],
-      };
+      response = {'id': id, 'jsonrpc': '2.0', 'error': result['error']};
     } else {
-      response = {
-        'id': id,
-        'jsonrpc': '2.0',
-        'result': result,
-      };
+      response = {'id': id, 'jsonrpc': '2.0', 'result': result};
     }
 
     final responseJson = json.encode(response);
@@ -142,10 +134,7 @@ class SimulatedWallet {
         return _handleCloneAuthorization(params);
       default:
         return {
-          'error': {
-            'code': -32601,
-            'message': 'Method not found: $method',
-          },
+          'error': {'code': -32601, 'message': 'Method not found: $method'},
         };
     }
   }
@@ -167,10 +156,7 @@ class SimulatedWallet {
   Map<String, Object?> _handleReauthorize(Map<String, Object?> params) {
     return {
       'accounts': [
-        {
-          'address': 'dGVzdEFkZHJlc3M=',
-          'label': 'Test Wallet',
-        },
+        {'address': 'dGVzdEFkZHJlc3M=', 'label': 'Test Wallet'},
       ],
       'auth_token': 'renewed-auth-token-456',
     };
@@ -200,16 +186,12 @@ class SimulatedWallet {
   Map<String, Object?> _handleSignTransactions(Map<String, Object?> params) {
     final payloads = (params['payloads']! as List<Object?>).cast<String>();
     // Simulate signing by echoing payloads with 'signed_' prefix.
-    return {
-      'signed_payloads': payloads.map((p) => 'signed_$p').toList(),
-    };
+    return {'signed_payloads': payloads.map((p) => 'signed_$p').toList()};
   }
 
   Map<String, Object?> _handleSignMessages(Map<String, Object?> params) {
     final payloads = (params['payloads']! as List<Object?>).cast<String>();
-    return {
-      'signed_payloads': payloads.map((p) => 'signed_$p').toList(),
-    };
+    return {'signed_payloads': payloads.map((p) => 'signed_$p').toList()};
   }
 
   Map<String, Object?> _handleSignAndSendTransactions(
@@ -217,15 +199,11 @@ class SimulatedWallet {
   ) {
     final payloads = (params['payloads']! as List<Object?>).cast<String>();
     // Simulate signing and sending by returning fake signatures.
-    return {
-      'signatures': List.generate(payloads.length, (i) => 'sig_$i'),
-    };
+    return {'signatures': List.generate(payloads.length, (i) => 'sig_$i')};
   }
 
   Map<String, Object?> _handleCloneAuthorization(Map<String, Object?> params) {
-    return {
-      'auth_token': 'cloned-auth-token-789',
-    };
+    return {'auth_token': 'cloned-auth-token-789'};
   }
 }
 
@@ -243,8 +221,12 @@ class InProcessTransport {
     Uint8List sharedSecret,
   ) async {
     // Encrypt request.
-    final encrypted =
-        encryptJsonRpcRequest(sequenceNumber, method, params, sharedSecret);
+    final encrypted = encryptJsonRpcRequest(
+      sequenceNumber,
+      method,
+      params,
+      sharedSecret,
+    );
 
     // Pass through the simulated wallet.
     final encryptedResponse = _wallet.handleEncryptedRequest(encrypted);
@@ -273,10 +255,14 @@ void main() {
         wallet = SimulatedWallet(protocolVersion: ProtocolVersion.v1);
 
         // Perform handshake.
-        final helloReq =
-            createHelloReq(dAppEcdhKeypair, dAppAssociationKeypair);
-        final helloRsp =
-            wallet.handleHelloReq(helloReq, dAppAssociationKeypair);
+        final helloReq = createHelloReq(
+          dAppEcdhKeypair,
+          dAppAssociationKeypair,
+        );
+        final helloRsp = wallet.handleHelloReq(
+          helloReq,
+          dAppAssociationKeypair,
+        );
 
         // dApp side: parse HELLO_RSP.
         final result = parseHelloRsp(
@@ -299,12 +285,8 @@ void main() {
 
       test('authorize returns accounts and auth token', () async {
         final proxy = createMobileWalletProxy(
-          (method, params) => _sendViaWallet(
-            wallet,
-            method,
-            params,
-            sharedSecret,
-          ),
+          (method, params) =>
+              _sendViaWallet(wallet, method, params, sharedSecret),
           sessionProps,
         );
 
@@ -323,49 +305,37 @@ void main() {
 
       test('reauthorize returns renewed token', () async {
         final proxy = createMobileWalletProxy(
-          (method, params) => _sendViaWallet(
-            wallet,
-            method,
-            params,
-            sharedSecret,
-          ),
+          (method, params) =>
+              _sendViaWallet(wallet, method, params, sharedSecret),
           sessionProps,
         );
 
         // v1 proxy sends 'authorize' with auth_token for reauthorization.
-        final result = await proxy.reauthorize({
-          'auth_token': 'old-token',
-        });
+        final result = await proxy.reauthorize({'auth_token': 'old-token'});
 
         expect(result['auth_token'], isNotNull);
       });
 
-      test('getCapabilities returns features and legacy compat fields',
-          () async {
-        final proxy = createMobileWalletProxy(
-          (method, params) => _sendViaWallet(
-            wallet,
-            method,
-            params,
-            sharedSecret,
-          ),
-          sessionProps,
-        );
+      test(
+        'getCapabilities returns features and legacy compat fields',
+        () async {
+          final proxy = createMobileWalletProxy(
+            (method, params) =>
+                _sendViaWallet(wallet, method, params, sharedSecret),
+            sessionProps,
+          );
 
-        final result = await proxy.getCapabilities();
-        // v1 result should include legacy compat boolean.
-        expect(result['supports_sign_and_send_transactions'], isTrue);
-        expect(result['features'], isA<List<Object?>>());
-      });
+          final result = await proxy.getCapabilities();
+          // v1 result should include legacy compat boolean.
+          expect(result['supports_sign_and_send_transactions'], isTrue);
+          expect(result['features'], isA<List<Object?>>());
+        },
+      );
 
       test('signTransactions returns signed payloads', () async {
         final proxy = createMobileWalletProxy(
-          (method, params) => _sendViaWallet(
-            wallet,
-            method,
-            params,
-            sharedSecret,
-          ),
+          (method, params) =>
+              _sendViaWallet(wallet, method, params, sharedSecret),
           sessionProps,
         );
 
@@ -373,19 +343,15 @@ void main() {
           'payloads': ['dHgx', 'dHgy'],
         });
 
-        final signed =
-            (result['signed_payloads']! as List<Object?>).cast<String>();
+        final signed = (result['signed_payloads']! as List<Object?>)
+            .cast<String>();
         expect(signed, ['signed_dHgx', 'signed_dHgy']);
       });
 
       test('signMessages returns signed payloads', () async {
         final proxy = createMobileWalletProxy(
-          (method, params) => _sendViaWallet(
-            wallet,
-            method,
-            params,
-            sharedSecret,
-          ),
+          (method, params) =>
+              _sendViaWallet(wallet, method, params, sharedSecret),
           sessionProps,
         );
 
@@ -394,19 +360,15 @@ void main() {
           'addresses': ['addr1'],
         });
 
-        final signed =
-            (result['signed_payloads']! as List<Object?>).cast<String>();
+        final signed = (result['signed_payloads']! as List<Object?>)
+            .cast<String>();
         expect(signed, ['signed_bXNn']);
       });
 
       test('signAndSendTransactions returns signatures', () async {
         final proxy = createMobileWalletProxy(
-          (method, params) => _sendViaWallet(
-            wallet,
-            method,
-            params,
-            sharedSecret,
-          ),
+          (method, params) =>
+              _sendViaWallet(wallet, method, params, sharedSecret),
           sessionProps,
         );
 
@@ -414,19 +376,15 @@ void main() {
           'payloads': ['dHgx', 'dHgy'],
         });
 
-        final signatures =
-            (result['signatures']! as List<Object?>).cast<String>();
+        final signatures = (result['signatures']! as List<Object?>)
+            .cast<String>();
         expect(signatures, ['sig_0', 'sig_1']);
       });
 
       test('cloneAuthorization returns cloned token', () async {
         final proxy = createMobileWalletProxy(
-          (method, params) => _sendViaWallet(
-            wallet,
-            method,
-            params,
-            sharedSecret,
-          ),
+          (method, params) =>
+              _sendViaWallet(wallet, method, params, sharedSecret),
           sessionProps,
         );
 
@@ -439,12 +397,8 @@ void main() {
 
       test('deauthorize completes without error', () async {
         final proxy = createMobileWalletProxy(
-          (method, params) => _sendViaWallet(
-            wallet,
-            method,
-            params,
-            sharedSecret,
-          ),
+          (method, params) =>
+              _sendViaWallet(wallet, method, params, sharedSecret),
           sessionProps,
         );
 
@@ -465,10 +419,14 @@ void main() {
         wallet = SimulatedWallet(protocolVersion: ProtocolVersion.legacy);
 
         // Perform handshake.
-        final helloReq =
-            createHelloReq(dAppEcdhKeypair, dAppAssociationKeypair);
-        final helloRsp =
-            wallet.handleHelloReq(helloReq, dAppAssociationKeypair);
+        final helloReq = createHelloReq(
+          dAppEcdhKeypair,
+          dAppAssociationKeypair,
+        );
+        final helloRsp = wallet.handleHelloReq(
+          helloReq,
+          dAppAssociationKeypair,
+        );
 
         // dApp side: parse HELLO_RSP (no encrypted session props for legacy).
         final result = parseHelloRsp(
@@ -491,22 +449,12 @@ void main() {
 
       test('reauthorize uses reauthorize method for legacy', () async {
         final capturedMethods = <String>[];
-        final proxy = createMobileWalletProxy(
-          (method, params) {
-            capturedMethods.add(method);
-            return _sendViaWallet(
-              wallet,
-              method,
-              params,
-              sharedSecret,
-            );
-          },
-          sessionProps,
-        );
+        final proxy = createMobileWalletProxy((method, params) {
+          capturedMethods.add(method);
+          return _sendViaWallet(wallet, method, params, sharedSecret);
+        }, sessionProps);
 
-        await proxy.reauthorize({
-          'auth_token': 'old-token',
-        });
+        await proxy.reauthorize({'auth_token': 'old-token'});
 
         // Legacy proxy should send 'reauthorize' method.
         expect(capturedMethods, contains('reauthorize'));
@@ -514,18 +462,10 @@ void main() {
 
       test('authorize maps chain to legacy cluster name', () async {
         final capturedParams = <Map<String, Object?>>[];
-        final proxy = createMobileWalletProxy(
-          (method, params) {
-            capturedParams.add(Map.of(params));
-            return _sendViaWallet(
-              wallet,
-              method,
-              params,
-              sharedSecret,
-            );
-          },
-          sessionProps,
-        );
+        final proxy = createMobileWalletProxy((method, params) {
+          capturedParams.add(Map.of(params));
+          return _sendViaWallet(wallet, method, params, sharedSecret);
+        }, sessionProps);
 
         await proxy.authorize({
           'identity': {'name': 'Test dApp'},
@@ -538,12 +478,8 @@ void main() {
 
       test('getCapabilities adds features array for legacy', () async {
         final proxy = createMobileWalletProxy(
-          (method, params) => _sendViaWallet(
-            wallet,
-            method,
-            params,
-            sharedSecret,
-          ),
+          (method, params) =>
+              _sendViaWallet(wallet, method, params, sharedSecret),
           sessionProps,
         );
 
@@ -555,12 +491,8 @@ void main() {
 
       test('signTransactions works with legacy wallet', () async {
         final proxy = createMobileWalletProxy(
-          (method, params) => _sendViaWallet(
-            wallet,
-            method,
-            params,
-            sharedSecret,
-          ),
+          (method, params) =>
+              _sendViaWallet(wallet, method, params, sharedSecret),
           sessionProps,
         );
 
@@ -568,8 +500,8 @@ void main() {
           'payloads': ['dHgx'],
         });
 
-        final signed =
-            (result['signed_payloads']! as List<Object?>).cast<String>();
+        final signed = (result['signed_payloads']! as List<Object?>)
+            .cast<String>();
         expect(signed, ['signed_dHgx']);
       });
     });
@@ -581,10 +513,14 @@ void main() {
       setUp(() {
         wallet = SimulatedWallet(protocolVersion: ProtocolVersion.v1);
 
-        final helloReq =
-            createHelloReq(dAppEcdhKeypair, dAppAssociationKeypair);
-        final helloRsp =
-            wallet.handleHelloReq(helloReq, dAppAssociationKeypair);
+        final helloReq = createHelloReq(
+          dAppEcdhKeypair,
+          dAppAssociationKeypair,
+        );
+        final helloRsp = wallet.handleHelloReq(
+          helloReq,
+          dAppAssociationKeypair,
+        );
 
         final result = parseHelloRsp(
           helloRsp,
@@ -592,37 +528,22 @@ void main() {
           dAppEcdhKeypair,
         );
         sharedSecret = result.sharedSecret;
-        parseSessionProps(
-          result.encryptedSessionProps!,
-          sharedSecret,
-        );
+        parseSessionProps(result.encryptedSessionProps!, sharedSecret);
       });
 
       test('unknown method returns JSON-RPC error', () async {
         expect(
-          () => _sendViaWallet(
-            wallet,
-            'nonexistent_method',
-            {},
-            sharedSecret,
-          ),
+          () => _sendViaWallet(wallet, 'nonexistent_method', {}, sharedSecret),
           throwsA(
-            isA<MwaProtocolError>().having(
-              (e) => e.code,
-              'code',
-              -32601,
-            ),
+            isA<MwaProtocolError>().having((e) => e.code, 'code', -32601),
           ),
         );
       });
 
       test('tampered ciphertext fails decryption', () {
-        final encrypted = encryptJsonRpcRequest(
-          1,
-          'authorize',
-          {'chain': 'solana:mainnet'},
-          sharedSecret,
-        );
+        final encrypted = encryptJsonRpcRequest(1, 'authorize', {
+          'chain': 'solana:mainnet',
+        }, sharedSecret);
 
         // Tamper with the ciphertext.
         encrypted[encrypted.length - 5] ^= 0xFF;
@@ -634,12 +555,9 @@ void main() {
       });
 
       test('wrong shared secret fails decryption', () {
-        final encrypted = encryptJsonRpcRequest(
-          1,
-          'authorize',
-          {'chain': 'solana:mainnet'},
-          sharedSecret,
-        );
+        final encrypted = encryptJsonRpcRequest(1, 'authorize', {
+          'chain': 'solana:mainnet',
+        }, sharedSecret);
 
         // Use a different key.
         final wrongKey = Uint8List(16);
@@ -661,10 +579,14 @@ void main() {
       setUp(() {
         wallet = SimulatedWallet(protocolVersion: ProtocolVersion.v1);
 
-        final helloReq =
-            createHelloReq(dAppEcdhKeypair, dAppAssociationKeypair);
-        final helloRsp =
-            wallet.handleHelloReq(helloReq, dAppAssociationKeypair);
+        final helloReq = createHelloReq(
+          dAppEcdhKeypair,
+          dAppAssociationKeypair,
+        );
+        final helloRsp = wallet.handleHelloReq(
+          helloReq,
+          dAppAssociationKeypair,
+        );
 
         final result = parseHelloRsp(
           helloRsp,
@@ -697,17 +619,16 @@ void main() {
           {},
           sharedSecret,
         );
-        final encrypted2 = encryptJsonRpcRequest(
-          2,
-          'sign_transactions',
-          {'payloads': <String>[]},
-          sharedSecret,
-        );
+        final encrypted2 = encryptJsonRpcRequest(2, 'sign_transactions', {
+          'payloads': <String>[],
+        }, sharedSecret);
 
-        final seq1 =
-            ByteData.sublistView(encrypted1.sublist(0, 4)).getUint32(0);
-        final seq2 =
-            ByteData.sublistView(encrypted2.sublist(0, 4)).getUint32(0);
+        final seq1 = ByteData.sublistView(
+          encrypted1.sublist(0, 4),
+        ).getUint32(0);
+        final seq2 = ByteData.sublistView(
+          encrypted2.sublist(0, 4),
+        ).getUint32(0);
 
         expect(seq1, 1);
         expect(seq2, 2);
@@ -726,23 +647,24 @@ void main() {
         tampered[3] = 99; // Change sequence number byte
 
         // Decryption should fail because AAD no longer matches.
-        expect(
-          () => decryptMessage(tampered, sharedSecret),
-          throwsA(anything),
-        );
+        expect(() => decryptMessage(tampered, sharedSecret), throwsA(anything));
       });
     });
 
     group('handshake edge cases', () {
       test('HELLO_REQ has correct length (129 bytes)', () {
-        final helloReq =
-            createHelloReq(dAppEcdhKeypair, dAppAssociationKeypair);
+        final helloReq = createHelloReq(
+          dAppEcdhKeypair,
+          dAppAssociationKeypair,
+        );
         expect(helloReq.length, 129); // 65 + 64
       });
 
       test('HELLO_REQ ECDSA signature is verifiable', () {
-        final helloReq =
-            createHelloReq(dAppEcdhKeypair, dAppAssociationKeypair);
+        final helloReq = createHelloReq(
+          dAppEcdhKeypair,
+          dAppAssociationKeypair,
+        );
         final ecdhPubKeyBytes = helloReq.sublist(0, 65);
         final signature = helloReq.sublist(65, 129);
 
@@ -768,10 +690,14 @@ void main() {
       test('both sides derive the same shared secret', () {
         final wallet = SimulatedWallet(protocolVersion: ProtocolVersion.v1);
 
-        final helloReq =
-            createHelloReq(dAppEcdhKeypair, dAppAssociationKeypair);
-        final helloRsp =
-            wallet.handleHelloReq(helloReq, dAppAssociationKeypair);
+        final helloReq = createHelloReq(
+          dAppEcdhKeypair,
+          dAppAssociationKeypair,
+        );
+        final helloRsp = wallet.handleHelloReq(
+          helloReq,
+          dAppAssociationKeypair,
+        );
 
         final dAppResult = parseHelloRsp(
           helloRsp,
@@ -781,8 +707,7 @@ void main() {
 
         // Both sides should be able to encrypt/decrypt with the derived keys.
         // Encrypt from dApp side.
-        final encrypted =
-            encryptMessage('hello', 1, dAppResult.sharedSecret);
+        final encrypted = encryptMessage('hello', 1, dAppResult.sharedSecret);
         // Decrypt from wallet side (wallet has same shared secret).
         final decrypted = decryptMessage(encrypted, dAppResult.sharedSecret);
         expect(decrypted.plaintext, 'hello');
@@ -795,10 +720,14 @@ void main() {
         final wallet = SimulatedWallet(protocolVersion: ProtocolVersion.v1);
 
         // 1. Handshake
-        final helloReq =
-            createHelloReq(dAppEcdhKeypair, dAppAssociationKeypair);
-        final helloRsp =
-            wallet.handleHelloReq(helloReq, dAppAssociationKeypair);
+        final helloReq = createHelloReq(
+          dAppEcdhKeypair,
+          dAppAssociationKeypair,
+        );
+        final helloRsp = wallet.handleHelloReq(
+          helloReq,
+          dAppAssociationKeypair,
+        );
         final result = parseHelloRsp(
           helloRsp,
           dAppAssociationKeypair,
@@ -812,22 +741,19 @@ void main() {
 
         // 2. Create wallet proxy
         var seqNum = 0;
-        final proxy = createMobileWalletProxy(
-          (method, params) {
-            seqNum++;
-            final encrypted = encryptJsonRpcRequest(
-              seqNum,
-              method,
-              params,
-              sharedSecret,
-            );
-            final encryptedResponse = wallet.handleEncryptedRequest(encrypted);
-            return Future.value(
-              decryptJsonRpcResponse(encryptedResponse, sharedSecret),
-            );
-          },
-          sessionProps,
-        );
+        final proxy = createMobileWalletProxy((method, params) {
+          seqNum++;
+          final encrypted = encryptJsonRpcRequest(
+            seqNum,
+            method,
+            params,
+            sharedSecret,
+          );
+          final encryptedResponse = wallet.handleEncryptedRequest(encrypted);
+          return Future.value(
+            decryptJsonRpcResponse(encryptedResponse, sharedSecret),
+          );
+        }, sessionProps);
 
         // 3. Authorize
         final authResult = await proxy.authorize({
@@ -845,22 +771,20 @@ void main() {
         final signResult = await proxy.signTransactions({
           'payloads': ['dHgxMQ==', 'dHgyMg=='],
         });
-        final signed =
-            (signResult['signed_payloads']! as List<Object?>).cast<String>();
+        final signed = (signResult['signed_payloads']! as List<Object?>)
+            .cast<String>();
         expect(signed, hasLength(2));
 
         // 6. Sign and send
         final sendResult = await proxy.signAndSendTransactions({
           'payloads': ['dHgz'],
         });
-        final sigs =
-            (sendResult['signatures']! as List<Object?>).cast<String>();
+        final sigs = (sendResult['signatures']! as List<Object?>)
+            .cast<String>();
         expect(sigs, hasLength(1));
 
         // 7. Deauthorize
-        final deauthResult = await proxy.deauthorize({
-          'auth_token': authToken,
-        });
+        final deauthResult = await proxy.deauthorize({'auth_token': authToken});
         expect(deauthResult, isA<Map<String, Object?>>());
       });
     });
@@ -877,8 +801,7 @@ Future<Map<String, Object?>> _sendViaWallet(
   Uint8List sharedSecret,
 ) async {
   final seqNum = _nextSeqNum++;
-  final encrypted =
-      encryptJsonRpcRequest(seqNum, method, params, sharedSecret);
+  final encrypted = encryptJsonRpcRequest(seqNum, method, params, sharedSecret);
   final encryptedResponse = wallet.handleEncryptedRequest(encrypted);
   return decryptJsonRpcResponse(encryptedResponse, sharedSecret);
 }

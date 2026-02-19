@@ -29,11 +29,11 @@ class MobileWalletAdapterConfig {
 
   /// Converts this config to a JSON-compatible map for capabilities response.
   Map<String, Object?> toCapabilitiesJson() => {
-        'max_transactions_per_request': maxTransactionsPerSigningRequest,
-        'max_messages_per_request': maxMessagesPerSigningRequest,
-        'supported_transaction_versions': supportedTransactionVersions,
-        'features': optionalFeatures,
-      };
+    'max_transactions_per_request': maxTransactionsPerSigningRequest,
+    'max_messages_per_request': maxMessagesPerSigningRequest,
+    'supported_transaction_versions': supportedTransactionVersions,
+    'features': optionalFeatures,
+  };
 }
 
 /// Configuration for the wallet's authorization token issuer.

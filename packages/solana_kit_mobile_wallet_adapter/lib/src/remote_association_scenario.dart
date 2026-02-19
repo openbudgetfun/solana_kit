@@ -104,9 +104,7 @@ Future<KitMobileWallet> _connectRemote({
     },
     onDone: () {
       if (!completer.isCompleted) {
-        completer.completeError(
-          SolanaError(SolanaErrorCode.mwaSessionClosed),
-        );
+        completer.completeError(SolanaError(SolanaErrorCode.mwaSessionClosed));
       }
     },
   );
@@ -127,11 +125,7 @@ Future<KitMobileWallet> _connectRemote({
   }
 
   // Parse HELLO_RSP and derive shared secret.
-  final result = parseHelloRsp(
-    helloRsp,
-    associationKeyPair,
-    ecdhKeyPair,
-  );
+  final result = parseHelloRsp(helloRsp, associationKeyPair, ecdhKeyPair);
   final sharedSecret = result.sharedSecret;
 
   // Parse session properties.
@@ -150,50 +144,46 @@ Future<KitMobileWallet> _connectRemote({
   // Create wallet proxy with send function.
   var nextSequenceNumber = 1;
 
-  final wallet = createMobileWalletProxy(
-    (method, params) async {
-      if (isClosed()) {
-        throw SolanaError(SolanaErrorCode.mwaSessionClosed);
-      }
+  final wallet = createMobileWalletProxy((method, params) async {
+    if (isClosed()) {
+      throw SolanaError(SolanaErrorCode.mwaSessionClosed);
+    }
 
-      final seqNum = nextSequenceNumber++;
-      final encrypted = encryptJsonRpcRequest(
-        seqNum,
-        method,
-        params,
-        sharedSecret,
+    final seqNum = nextSequenceNumber++;
+    final encrypted = encryptJsonRpcRequest(
+      seqNum,
+      method,
+      params,
+      sharedSecret,
+    );
+
+    reflectorChannel.sink.add(encrypted);
+
+    // Wait for response.
+    final responseCompleter = Completer<Uint8List>();
+    final responseSub = reflectorChannel.stream.listen(
+      (message) {
+        if (!responseCompleter.isCompleted && message is List<int>) {
+          responseCompleter.complete(Uint8List.fromList(message));
+        }
+      },
+      onError: (Object error) {
+        if (!responseCompleter.isCompleted) {
+          responseCompleter.completeError(error);
+        }
+      },
+    );
+
+    try {
+      final responseBytes = await responseCompleter.future.timeout(
+        const Duration(milliseconds: mwaConnectionTimeoutMs),
+        onTimeout: () => throw SolanaError(SolanaErrorCode.mwaSessionTimeout),
       );
-
-      reflectorChannel.sink.add(encrypted);
-
-      // Wait for response.
-      final responseCompleter = Completer<Uint8List>();
-      final responseSub = reflectorChannel.stream.listen(
-        (message) {
-          if (!responseCompleter.isCompleted && message is List<int>) {
-            responseCompleter.complete(Uint8List.fromList(message));
-          }
-        },
-        onError: (Object error) {
-          if (!responseCompleter.isCompleted) {
-            responseCompleter.completeError(error);
-          }
-        },
-      );
-
-      try {
-        final responseBytes = await responseCompleter.future.timeout(
-          const Duration(milliseconds: mwaConnectionTimeoutMs),
-          onTimeout: () =>
-              throw SolanaError(SolanaErrorCode.mwaSessionTimeout),
-        );
-        return decryptJsonRpcResponse(responseBytes, sharedSecret);
-      } finally {
-        await responseSub.cancel();
-      }
-    },
-    sessionProps,
-  );
+      return decryptJsonRpcResponse(responseBytes, sharedSecret);
+    } finally {
+      await responseSub.cancel();
+    }
+  }, sessionProps);
 
   return wrapWithKitApi(wallet);
 }

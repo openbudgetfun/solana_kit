@@ -5,11 +5,11 @@ import 'package:flutter/services.dart';
 /// On iOS, all methods are no-ops that return safe default values.
 class MwaClientHostApi {
   MwaClientHostApi({BinaryMessenger? binaryMessenger})
-      : _channel = MethodChannel(
-          'com.solana.solanakit.mobilewallet/client',
-          const StandardMethodCodec(),
-          binaryMessenger,
-        );
+    : _channel = MethodChannel(
+        'com.solana.solanakit.mobilewallet/client',
+        const StandardMethodCodec(),
+        binaryMessenger,
+      );
 
   final MethodChannel _channel;
 

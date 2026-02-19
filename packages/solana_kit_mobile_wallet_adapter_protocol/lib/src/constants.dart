@@ -18,8 +18,7 @@ const List<int> mwaRetryDelayScheduleMs = [
 const int mwaConnectionTimeoutMs = 30000;
 
 /// WebSocket subprotocol for binary-encoded messages.
-const String mwaWebSocketProtocolBinary =
-    'com.solana.mobilewalletadapter.v1';
+const String mwaWebSocketProtocolBinary = 'com.solana.mobilewalletadapter.v1';
 
 /// WebSocket subprotocol for base64-encoded messages (used for remote
 /// reflector connections).
@@ -59,8 +58,7 @@ const int mwaMaxReflectorId = 9007199254740991;
 const String mwaFeatureSignTransactions = 'solana:signTransactions';
 
 /// MWA feature identifier for signing and sending transactions.
-const String mwaFeatureSignAndSendTransaction =
-    'solana:signAndSendTransaction';
+const String mwaFeatureSignAndSendTransaction = 'solana:signAndSendTransaction';
 
 /// MWA feature identifier for Sign In With Solana.
 const String mwaFeatureSignInWithSolana = 'solana:signInWithSolana';

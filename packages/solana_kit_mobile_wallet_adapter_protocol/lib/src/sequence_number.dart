@@ -11,12 +11,10 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/src/constants.dart';
 /// [SolanaErrorCode.mwaSequenceNumberOverflow] if [sequenceNumber] is >= 2^32.
 Uint8List createSequenceNumberVector(int sequenceNumber) {
   if (sequenceNumber >= mwaMaxSequenceNumber) {
-    throw SolanaError(
-      SolanaErrorCode.mwaSequenceNumberOverflow,
-      {'sequenceNumber': sequenceNumber},
-    );
+    throw SolanaError(SolanaErrorCode.mwaSequenceNumberOverflow, {
+      'sequenceNumber': sequenceNumber,
+    });
   }
-  final bytes = ByteData(mwaSequenceNumberBytes)
-    ..setUint32(0, sequenceNumber);
+  final bytes = ByteData(mwaSequenceNumberBytes)..setUint32(0, sequenceNumber);
   return bytes.buffer.asUint8List();
 }

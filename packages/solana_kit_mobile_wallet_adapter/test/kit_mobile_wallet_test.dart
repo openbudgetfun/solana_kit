@@ -45,9 +45,7 @@ class MockMobileWallet implements MobileWallet {
   }
 
   @override
-  Future<Map<String, Object?>> signMessages(
-    Map<String, Object?> params,
-  ) async {
+  Future<Map<String, Object?>> signMessages(Map<String, Object?> params) async {
     lastMethod = 'signMessages';
     lastParams = params;
     return nextResult;
@@ -96,10 +94,7 @@ void main() {
       );
 
       expect(mockWallet.lastMethod, 'authorize');
-      expect(
-        (mockWallet.lastParams!['identity']! as Map)['name'],
-        'Test App',
-      );
+      expect((mockWallet.lastParams!['identity']! as Map)['name'], 'Test App');
       expect(mockWallet.lastParams!['chain'], 'solana:mainnet');
       expect(result.authToken, 'token123');
       expect(result.accounts, hasLength(1));

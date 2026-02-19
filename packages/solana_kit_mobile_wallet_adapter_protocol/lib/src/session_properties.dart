@@ -34,10 +34,9 @@ SessionProperties parseSessionProps(
       case 'legacy':
         protocolVersion = ProtocolVersion.legacy;
       default:
-        throw SolanaError(
-          SolanaErrorCode.mwaInvalidProtocolVersion,
-          {'version': '$v'},
-        );
+        throw SolanaError(SolanaErrorCode.mwaInvalidProtocolVersion, {
+          'version': '$v',
+        });
     }
   }
 

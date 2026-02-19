@@ -103,10 +103,9 @@ Uri _getIntentUri(String methodPathname, String? intentUrlBase) {
   if (intentUrlBase != null) {
     final baseUrl = Uri.tryParse(intentUrlBase);
     if (baseUrl == null || baseUrl.scheme != 'https') {
-      throw SolanaError(
-        SolanaErrorCode.mwaForbiddenWalletBaseUrl,
-        {'url': intentUrlBase},
-      );
+      throw SolanaError(SolanaErrorCode.mwaForbiddenWalletBaseUrl, {
+        'url': intentUrlBase,
+      });
     }
     return baseUrl.resolve(methodPathname);
   }

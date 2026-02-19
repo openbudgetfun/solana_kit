@@ -25,11 +25,7 @@ void main() {
 
   group('Session properties', () {
     test('parses v1 from integer 1', () {
-      final encrypted = encryptMessage(
-        json.encode({'v': 1}),
-        0,
-        sharedSecret,
-      );
+      final encrypted = encryptMessage(json.encode({'v': 1}), 0, sharedSecret);
 
       final props = parseSessionProps(encrypted, sharedSecret);
       expect(props.protocolVersion, ProtocolVersion.v1);
@@ -69,11 +65,7 @@ void main() {
     });
 
     test('defaults to legacy when v field is missing', () {
-      final encrypted = encryptMessage(
-        json.encode({}),
-        0,
-        sharedSecret,
-      );
+      final encrypted = encryptMessage(json.encode({}), 0, sharedSecret);
 
       final props = parseSessionProps(encrypted, sharedSecret);
       expect(props.protocolVersion, ProtocolVersion.legacy);
@@ -101,12 +93,9 @@ void main() {
 
   group('JSON-RPC messages', () {
     test('encrypt and decrypt request round-trip', () {
-      final encrypted = encryptJsonRpcRequest(
-        1,
-        'authorize',
-        {'chain': 'solana:mainnet'},
-        sharedSecret,
-      );
+      final encrypted = encryptJsonRpcRequest(1, 'authorize', {
+        'chain': 'solana:mainnet',
+      }, sharedSecret);
 
       final decrypted = decryptMessage(encrypted, sharedSecret);
       final parsed = json.decode(decrypted.plaintext) as Map<String, Object?>;
@@ -127,42 +116,40 @@ void main() {
         'jsonrpc': '2.0',
         'result': {'auth_token': 'abc123', 'accounts': <Object?>[]},
       };
-      final encrypted = encryptMessage(
-        json.encode(response),
-        1,
-        sharedSecret,
-      );
+      final encrypted = encryptMessage(json.encode(response), 1, sharedSecret);
 
       final result = decryptJsonRpcResponse(encrypted, sharedSecret);
       expect(result['auth_token'], 'abc123');
     });
 
-    test('decryptJsonRpcResponse throws MwaProtocolError on error response',
-        () {
-      final errorResponse = {
-        'id': 2,
-        'jsonrpc': '2.0',
-        'error': {
-          'code': MwaProtocolErrorCode.authorizationFailed,
-          'message': 'User declined',
-        },
-      };
-      final encrypted = encryptMessage(
-        json.encode(errorResponse),
-        2,
-        sharedSecret,
-      );
+    test(
+      'decryptJsonRpcResponse throws MwaProtocolError on error response',
+      () {
+        final errorResponse = {
+          'id': 2,
+          'jsonrpc': '2.0',
+          'error': {
+            'code': MwaProtocolErrorCode.authorizationFailed,
+            'message': 'User declined',
+          },
+        };
+        final encrypted = encryptMessage(
+          json.encode(errorResponse),
+          2,
+          sharedSecret,
+        );
 
-      expect(
-        () => decryptJsonRpcResponse(encrypted, sharedSecret),
-        throwsA(
-          isA<MwaProtocolError>()
-              .having((e) => e.code, 'code', -1)
-              .having((e) => e.message, 'message', 'User declined')
-              .having((e) => e.jsonRpcMessageId, 'id', 2),
-        ),
-      );
-    });
+        expect(
+          () => decryptJsonRpcResponse(encrypted, sharedSecret),
+          throwsA(
+            isA<MwaProtocolError>()
+                .having((e) => e.code, 'code', -1)
+                .having((e) => e.message, 'message', 'User declined')
+                .having((e) => e.jsonRpcMessageId, 'id', 2),
+          ),
+        );
+      },
+    );
 
     test('decryptJsonRpcResponse passes error data through', () {
       final errorResponse = {
@@ -193,10 +180,7 @@ void main() {
   group('Association URIs', () {
     test('buildLocalAssociationUri creates correct format', () {
       final keyPair = generateAssociationKeypair();
-      final uri = buildLocalAssociationUri(
-        keyPair.publicKey,
-        50000,
-      );
+      final uri = buildLocalAssociationUri(keyPair.publicKey, 50000);
 
       expect(uri.scheme, 'solana-wallet');
       expect(uri.path, contains('v1/associate/local'));
@@ -282,17 +266,11 @@ void main() {
       String? capturedMethod;
       Map<String, Object?>? capturedParams;
 
-      final wallet = createMobileWalletProxy(
-        (method, params) async {
-          capturedMethod = method;
-          capturedParams = params;
-          return {
-            'accounts': <Object?>[],
-            'auth_token': 'token',
-          };
-        },
-        const SessionProperties(protocolVersion: ProtocolVersion.v1),
-      );
+      final wallet = createMobileWalletProxy((method, params) async {
+        capturedMethod = method;
+        capturedParams = params;
+        return {'accounts': <Object?>[], 'auth_token': 'token'};
+      }, const SessionProperties(protocolVersion: ProtocolVersion.v1));
 
       await wallet.authorize({
         'chain': 'solana:mainnet',
@@ -306,16 +284,10 @@ void main() {
     test('legacy proxy converts chain to cluster', () async {
       Map<String, Object?>? capturedParams;
 
-      final wallet = createMobileWalletProxy(
-        (method, params) async {
-          capturedParams = params;
-          return {
-            'accounts': <Object?>[],
-            'auth_token': 'token',
-          };
-        },
-        const SessionProperties(protocolVersion: ProtocolVersion.legacy),
-      );
+      final wallet = createMobileWalletProxy((method, params) async {
+        capturedParams = params;
+        return {'accounts': <Object?>[], 'auth_token': 'token'};
+      }, const SessionProperties(protocolVersion: ProtocolVersion.legacy));
 
       await wallet.authorize({
         'chain': 'solana:mainnet',
@@ -328,16 +300,10 @@ void main() {
     test('legacy proxy sends reauthorize method', () async {
       String? capturedMethod;
 
-      final wallet = createMobileWalletProxy(
-        (method, params) async {
-          capturedMethod = method;
-          return {
-            'accounts': <Object?>[],
-            'auth_token': 'token',
-          };
-        },
-        const SessionProperties(protocolVersion: ProtocolVersion.legacy),
-      );
+      final wallet = createMobileWalletProxy((method, params) async {
+        capturedMethod = method;
+        return {'accounts': <Object?>[], 'auth_token': 'token'};
+      }, const SessionProperties(protocolVersion: ProtocolVersion.legacy));
 
       await wallet.reauthorize({
         'auth_token': 'existing_token',
@@ -350,16 +316,10 @@ void main() {
     test('v1 proxy sends authorize for reauthorize with auth_token', () async {
       String? capturedMethod;
 
-      final wallet = createMobileWalletProxy(
-        (method, params) async {
-          capturedMethod = method;
-          return {
-            'accounts': <Object?>[],
-            'auth_token': 'token',
-          };
-        },
-        const SessionProperties(protocolVersion: ProtocolVersion.v1),
-      );
+      final wallet = createMobileWalletProxy((method, params) async {
+        capturedMethod = method;
+        return {'accounts': <Object?>[], 'auth_token': 'token'};
+      }, const SessionProperties(protocolVersion: ProtocolVersion.v1));
 
       await wallet.reauthorize({
         'auth_token': 'existing_token',
@@ -370,15 +330,12 @@ void main() {
     });
 
     test('v1 getCapabilities adds legacy compatibility fields', () async {
-      final wallet = createMobileWalletProxy(
-        (method, params) async {
-          return {
-            'max_transactions_per_request': 10,
-            'features': ['solana:signTransactions', 'solana:cloneAuthorization'],
-          };
-        },
-        const SessionProperties(protocolVersion: ProtocolVersion.v1),
-      );
+      final wallet = createMobileWalletProxy((method, params) async {
+        return {
+          'max_transactions_per_request': 10,
+          'features': ['solana:signTransactions', 'solana:cloneAuthorization'],
+        };
+      }, const SessionProperties(protocolVersion: ProtocolVersion.v1));
 
       final caps = await wallet.getCapabilities();
       expect(caps['supports_sign_and_send_transactions'], isTrue);
@@ -386,15 +343,12 @@ void main() {
     });
 
     test('legacy getCapabilities converts to features array', () async {
-      final wallet = createMobileWalletProxy(
-        (method, params) async {
-          return {
-            'max_transactions_per_request': 10,
-            'supports_clone_authorization': true,
-          };
-        },
-        const SessionProperties(protocolVersion: ProtocolVersion.legacy),
-      );
+      final wallet = createMobileWalletProxy((method, params) async {
+        return {
+          'max_transactions_per_request': 10,
+          'supports_clone_authorization': true,
+        };
+      }, const SessionProperties(protocolVersion: ProtocolVersion.legacy));
 
       final caps = await wallet.getCapabilities();
       final features = (caps['features']! as List<Object?>).cast<String>();
@@ -405,13 +359,10 @@ void main() {
     test('passthrough methods call correct RPC method', () async {
       String? capturedMethod;
 
-      final wallet = createMobileWalletProxy(
-        (method, params) async {
-          capturedMethod = method;
-          return {};
-        },
-        const SessionProperties(protocolVersion: ProtocolVersion.v1),
-      );
+      final wallet = createMobileWalletProxy((method, params) async {
+        capturedMethod = method;
+        return {};
+      }, const SessionProperties(protocolVersion: ProtocolVersion.v1));
 
       await wallet.signTransactions({'payloads': []});
       expect(capturedMethod, 'sign_transactions');
@@ -441,9 +392,7 @@ void main() {
 
       expect(
         message,
-        contains(
-          'example.com wants you to sign in with your Solana account:',
-        ),
+        contains('example.com wants you to sign in with your Solana account:'),
       );
       expect(message, contains('11111111111111111111111111111111'));
     });

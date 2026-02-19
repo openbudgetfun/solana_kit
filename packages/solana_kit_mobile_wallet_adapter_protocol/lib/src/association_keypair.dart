@@ -24,7 +24,10 @@ class AssociationKeypair {
 /// - Serve as the HKDF salt during shared secret derivation
 AssociationKeypair generateAssociationKeypair() {
   final pair = generateP256KeyPair();
-  return AssociationKeypair(publicKey: pair.publicKey, privateKey: pair.privateKey);
+  return AssociationKeypair(
+    publicKey: pair.publicKey,
+    privateKey: pair.privateKey,
+  );
 }
 
 /// Exports a public key as a 65-byte X9.62 uncompressed format.

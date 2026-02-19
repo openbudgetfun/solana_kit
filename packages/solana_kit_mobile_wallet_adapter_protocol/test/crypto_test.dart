@@ -135,11 +135,7 @@ void main() {
         ..setAll(0, walletPubKeyBytes)
         ..setAll(walletPubKeyBytes.length, List.filled(10, 0xAB));
 
-      final result = parseHelloRsp(
-        payload,
-        associationKeyPair,
-        appEcdhKeyPair,
-      );
+      final result = parseHelloRsp(payload, associationKeyPair, appEcdhKeyPair);
 
       expect(result.encryptedSessionProps, isNotNull);
       expect(result.encryptedSessionProps, hasLength(10));
@@ -180,8 +176,9 @@ void main() {
       );
 
       // Wallet performs the same derivation with app's ECDH public key
-      final associationPubKeyBytes =
-          exportPublicKeyBytes(associationKeyPair.publicKey);
+      final associationPubKeyBytes = exportPublicKeyBytes(
+        associationKeyPair.publicKey,
+      );
 
       final walletSharedBytes = ecdhSharedSecret(
         walletEcdhKeyPair.privateKey,
@@ -311,16 +308,12 @@ void main() {
       expect(parts, hasLength(3));
 
       // Decode header
-      final headerJson = utf8.decode(
-        base64Url.decode(_addPadding(parts[0])),
-      );
+      final headerJson = utf8.decode(base64Url.decode(_addPadding(parts[0])));
       final header = json.decode(headerJson) as Map<String, Object?>;
       expect(header['alg'], 'ES256');
 
       // Decode payload
-      final payloadJson = utf8.decode(
-        base64Url.decode(_addPadding(parts[1])),
-      );
+      final payloadJson = utf8.decode(base64Url.decode(_addPadding(parts[1])));
       final payload = json.decode(payloadJson) as Map<String, Object?>;
       expect(payload['test'], 'value');
 

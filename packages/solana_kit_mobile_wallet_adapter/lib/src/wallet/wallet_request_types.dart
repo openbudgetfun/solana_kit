@@ -33,10 +33,7 @@ class WalletRequestError implements Exception {
 /// completed by calling one of the `completeWith*` methods. Failing to
 /// complete a request will hang the dApp.
 sealed class WalletRequest {
-  WalletRequest({
-    required this.requestId,
-    required this.sessionId,
-  });
+  WalletRequest({required this.requestId, required this.sessionId});
 
   /// Unique identifier for this request within the session.
   final String requestId;
@@ -213,15 +210,15 @@ class AuthorizedAccount {
 
   /// Converts this account to a JSON-compatible map.
   Map<String, Object?> toJson() => {
-        'address': address,
-        if (displayAddress != null) 'display_address': displayAddress,
-        if (displayAddressFormat != null)
-          'display_address_format': displayAddressFormat,
-        if (label != null) 'label': label,
-        if (icon != null) 'icon': icon,
-        if (chains != null) 'chains': chains,
-        if (features != null) 'features': features,
-      };
+    'address': address,
+    if (displayAddress != null) 'display_address': displayAddress,
+    if (displayAddressFormat != null)
+      'display_address_format': displayAddressFormat,
+    if (label != null) 'label': label,
+    if (icon != null) 'icon': icon,
+    if (chains != null) 'chains': chains,
+    if (features != null) 'features': features,
+  };
 }
 
 /// A dApp is requesting reauthorization.
@@ -229,7 +226,8 @@ class ReauthorizeDappRequest extends WalletRequest {
   ReauthorizeDappRequest({
     required super.requestId,
     required super.sessionId,
-    required this.authorizationScope, this.identityName,
+    required this.authorizationScope,
+    this.identityName,
     this.identityUri,
     this.chain,
   });
@@ -275,7 +273,8 @@ class DeauthorizedEvent extends WalletRequest {
   DeauthorizedEvent({
     required super.requestId,
     required super.sessionId,
-    required this.authorizationScope, this.identityName,
+    required this.authorizationScope,
+    this.identityName,
     this.identityUri,
     this.chain,
   });

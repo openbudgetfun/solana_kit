@@ -44,18 +44,17 @@ void main() {
     });
 
     test('completeWithAuthorize resolves future', () async {
-      final request = AuthorizeDappRequest(
-        requestId: 'req-1',
-        sessionId: 'sess-1',
-      )..completeWithAuthorize(
-          accounts: [
-            const AuthorizedAccount(
-              address: 'dGVzdA==',
-              label: 'Test Account',
-            ),
-          ],
-          authToken: 'token123',
-        );
+      final request =
+          AuthorizeDappRequest(requestId: 'req-1', sessionId: 'sess-1')
+            ..completeWithAuthorize(
+              accounts: [
+                const AuthorizedAccount(
+                  address: 'dGVzdA==',
+                  label: 'Test Account',
+                ),
+              ],
+              authToken: 'token123',
+            );
 
       final result = await request.future;
       expect(result['auth_token'], 'token123');
@@ -71,11 +70,13 @@ void main() {
 
       expect(
         request.future,
-        throwsA(isA<WalletRequestError>().having(
-          (e) => e.code,
-          'code',
-          MwaProtocolErrorCode.authorizationFailed,
-        )),
+        throwsA(
+          isA<WalletRequestError>().having(
+            (e) => e.code,
+            'code',
+            MwaProtocolErrorCode.authorizationFailed,
+          ),
+        ),
       );
     });
 
@@ -85,23 +86,18 @@ void main() {
         sessionId: 'sess-1',
       )..completeWithClusterNotSupported();
 
-      expect(
-        request.future,
-        throwsA(isA<WalletRequestError>()),
-      );
+      expect(request.future, throwsA(isA<WalletRequestError>()));
     });
 
     test('cannot complete twice', () async {
-      final request = AuthorizeDappRequest(
-        requestId: 'req-1',
-        sessionId: 'sess-1',
-      )
-        ..completeWithAuthorize(
-          accounts: [const AuthorizedAccount(address: 'dGVzdA==')],
-          authToken: 'first',
-        )
-        // Second complete should be a no-op.
-        ..completeWithDecline();
+      final request =
+          AuthorizeDappRequest(requestId: 'req-1', sessionId: 'sess-1')
+            ..completeWithAuthorize(
+              accounts: [const AuthorizedAccount(address: 'dGVzdA==')],
+              authToken: 'first',
+            )
+            // Second complete should be a no-op.
+            ..completeWithDecline();
 
       final result = await request.future;
       expect(result['auth_token'], 'first');
@@ -110,10 +106,7 @@ void main() {
 
   group('AuthorizedAccount', () {
     test('toJson includes only non-null fields', () {
-      const account = AuthorizedAccount(
-        address: 'dGVzdA==',
-        label: 'Test',
-      );
+      const account = AuthorizedAccount(address: 'dGVzdA==', label: 'Test');
 
       final json = account.toJson();
       expect(json['address'], 'dGVzdA==');
@@ -144,14 +137,15 @@ void main() {
 
   group('ReauthorizeDappRequest', () {
     test('completeWithReauthorize resolves future', () async {
-      final request = ReauthorizeDappRequest(
-        requestId: 'req-1',
-        sessionId: 'sess-1',
-        authorizationScope: 'old-token',
-      )..completeWithReauthorize(
-          accounts: [const AuthorizedAccount(address: 'dGVzdA==')],
-          authToken: 'new-token',
-        );
+      final request =
+          ReauthorizeDappRequest(
+            requestId: 'req-1',
+            sessionId: 'sess-1',
+            authorizationScope: 'old-token',
+          )..completeWithReauthorize(
+            accounts: [const AuthorizedAccount(address: 'dGVzdA==')],
+            authToken: 'new-token',
+          );
 
       final result = await request.future;
       expect(result['auth_token'], 'new-token');
@@ -164,10 +158,7 @@ void main() {
         authorizationScope: 'token',
       )..completeWithDecline();
 
-      expect(
-        request.future,
-        throwsA(isA<WalletRequestError>()),
-      );
+      expect(request.future, throwsA(isA<WalletRequestError>()));
     });
   });
 
@@ -221,11 +212,13 @@ void main() {
 
       expect(
         request.future,
-        throwsA(isA<WalletRequestError>().having(
-          (e) => e.code,
-          'code',
-          MwaProtocolErrorCode.notSigned,
-        )),
+        throwsA(
+          isA<WalletRequestError>().having(
+            (e) => e.code,
+            'code',
+            MwaProtocolErrorCode.notSigned,
+          ),
+        ),
       );
     });
 
@@ -238,11 +231,13 @@ void main() {
 
       expect(
         request.future,
-        throwsA(isA<WalletRequestError>().having(
-          (e) => e.code,
-          'code',
-          MwaProtocolErrorCode.invalidPayloads,
-        )),
+        throwsA(
+          isA<WalletRequestError>().having(
+            (e) => e.code,
+            'code',
+            MwaProtocolErrorCode.invalidPayloads,
+          ),
+        ),
       );
     });
 
@@ -255,11 +250,13 @@ void main() {
 
       expect(
         request.future,
-        throwsA(isA<WalletRequestError>().having(
-          (e) => e.code,
-          'code',
-          MwaProtocolErrorCode.tooManyPayloads,
-        )),
+        throwsA(
+          isA<WalletRequestError>().having(
+            (e) => e.code,
+            'code',
+            MwaProtocolErrorCode.tooManyPayloads,
+          ),
+        ),
       );
     });
 
@@ -272,11 +269,13 @@ void main() {
 
       expect(
         request.future,
-        throwsA(isA<WalletRequestError>().having(
-          (e) => e.code,
-          'code',
-          MwaProtocolErrorCode.authorizationFailed,
-        )),
+        throwsA(
+          isA<WalletRequestError>().having(
+            (e) => e.code,
+            'code',
+            MwaProtocolErrorCode.authorizationFailed,
+          ),
+        ),
       );
     });
   });
@@ -371,11 +370,13 @@ void main() {
 
       expect(
         request.future,
-        throwsA(isA<WalletRequestError>().having(
-          (e) => e.code,
-          'code',
-          MwaProtocolErrorCode.notSubmitted,
-        )),
+        throwsA(
+          isA<WalletRequestError>().having(
+            (e) => e.code,
+            'code',
+            MwaProtocolErrorCode.notSubmitted,
+          ),
+        ),
       );
     });
   });
@@ -388,10 +389,7 @@ void main() {
         payloads: ['dHgx'],
       )..cancel();
 
-      expect(
-        request.future,
-        throwsA(isA<WalletRequestError>()),
-      );
+      expect(request.future, throwsA(isA<WalletRequestError>()));
     });
   });
 }
