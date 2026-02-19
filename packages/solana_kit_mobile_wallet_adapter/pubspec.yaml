@@ -1,0 +1,36 @@
+name: solana_kit_mobile_wallet_adapter
+description: >-
+  Flutter plugin for the Solana Mobile Wallet Adapter protocol. Enables dApps
+  to communicate with wallet apps for transaction signing on Android. iOS
+  compiles but is a no-op.
+version: 0.0.1
+
+environment:
+  sdk: ^3.10.1
+  flutter: ">=3.29.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  solana_kit_addresses:
+  solana_kit_errors:
+  solana_kit_keys:
+  solana_kit_mobile_wallet_adapter_protocol:
+  solana_kit_transactions:
+  web_socket_channel: ^3.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  solana_kit_lints:
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.solana.solanakit.mobilewallet
+        pluginClass: SolanaKitMobileWalletAdapterPlugin
+      ios:
+        pluginClass: SolanaKitMobileWalletAdapterPlugin

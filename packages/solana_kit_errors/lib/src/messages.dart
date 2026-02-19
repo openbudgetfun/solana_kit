@@ -527,6 +527,46 @@ const Map<int, String> solanaErrorMessages = {
   SolanaErrorCode.transactionVersionNumberOutOfRange:
       r'Transaction version must be in the range [0, 127]. $actualVersion given',
 
+  // Mobile Wallet Adapter - Session errors
+  SolanaErrorCode.mwaAssociationPortOutOfRange:
+      r'Association port number must be between 49152 and 65535. $port given.',
+  SolanaErrorCode.mwaReflectorIdOutOfRange:
+      r'Reflector ID must be between 0 and 2^53 - 1. $id given.',
+  SolanaErrorCode.mwaForbiddenWalletBaseUrl:
+      r'Wallet base URL must use HTTPS. $url given.',
+  SolanaErrorCode.mwaSessionClosed: 'Mobile wallet adapter session was closed.',
+  SolanaErrorCode.mwaSessionTimeout: 'Mobile wallet adapter session timed out.',
+  SolanaErrorCode.mwaWalletNotFound:
+      'No compatible wallet app was found on this device.',
+  SolanaErrorCode.mwaInvalidProtocolVersion:
+      r'Invalid MWA protocol version: $version.',
+  SolanaErrorCode.mwaPlatformNotSupported:
+      'Mobile Wallet Adapter is only supported on Android.',
+  SolanaErrorCode.mwaSequenceNumberOverflow:
+      r'Sequence number $sequenceNumber exceeds maximum value of 2^32 - 1.',
+  SolanaErrorCode.mwaInvalidSequenceNumber:
+      r'Expected sequence number $expected, got $actual.',
+  SolanaErrorCode.mwaDecryptionFailed:
+      'Failed to decrypt mobile wallet adapter message.',
+  SolanaErrorCode.mwaEncryptionFailed:
+      'Failed to encrypt mobile wallet adapter message.',
+  SolanaErrorCode.mwaHandshakeFailed: 'Mobile wallet adapter handshake failed.',
+  SolanaErrorCode.mwaInvalidHelloResponse:
+      r'Invalid HELLO_RSP: expected at least 65 bytes, got $actualLength.',
+
+  // Mobile Wallet Adapter - Protocol JSON-RPC errors
+  SolanaErrorCode.mwaProtocolAuthorizationFailed:
+      'Wallet authorization failed.',
+  SolanaErrorCode.mwaProtocolInvalidPayloads:
+      'The payloads provided to the wallet were invalid.',
+  SolanaErrorCode.mwaProtocolNotSigned: 'The wallet did not sign the payloads.',
+  SolanaErrorCode.mwaProtocolNotSubmitted:
+      'The wallet did not submit the transactions.',
+  SolanaErrorCode.mwaProtocolTooManyPayloads:
+      r'Too many payloads were provided. Maximum: $maxPayloads.',
+  SolanaErrorCode.mwaProtocolAttestOriginAndroid:
+      'Android origin attestation is required by the wallet.',
+
   // Helius errors
   SolanaErrorCode.heliusRpcError: r'Helius RPC error: $message',
   SolanaErrorCode.heliusRestError:

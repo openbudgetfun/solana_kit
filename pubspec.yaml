@@ -21,6 +21,8 @@ workspace:
   - packages/solana_kit_instructions
   - packages/solana_kit_keys
   - packages/solana_kit_lints
+  - packages/solana_kit_mobile_wallet_adapter
+  - packages/solana_kit_mobile_wallet_adapter_protocol
   - packages/solana_kit_offchain_messages
   - packages/solana_kit_options
   - packages/solana_kit_program_client_core
@@ -61,6 +63,14 @@ melos:
       exec: dart test
       packageFilters:
         dirExists: test
+        noDependsOn: flutter
+
+    flutter-test:
+      description: Run tests in Flutter packages.
+      exec: flutter test
+      packageFilters:
+        dirExists: test
+        dependsOn: flutter
 
     format:
       description: Format all Dart code.
