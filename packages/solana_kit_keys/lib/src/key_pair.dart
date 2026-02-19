@@ -9,15 +9,31 @@ import 'package:solana_kit_keys/src/signatures.dart';
 
 /// An Ed25519 key pair consisting of a 32-byte private key and a 32-byte
 /// public key.
+///
+/// Key bytes are stored internally and defensive copies are returned from
+/// getters to prevent external mutation of key material.
 class KeyPair {
   /// Creates a [KeyPair] from the given [privateKey] and [publicKey] bytes.
-  const KeyPair({required this.privateKey, required this.publicKey});
+  KeyPair({required Uint8List privateKey, required Uint8List publicKey})
+    : _privateKey = Uint8List.fromList(privateKey),
+      _publicKey = Uint8List.fromList(publicKey);
+
+  // TODO(security): Dart's GC makes deterministic memory wiping impossible.
+  // Private key material remains in memory until garbage collected. Consider
+  // wrapping in a secure key class if/when Dart adds finalizer-based memory
+  // zeroing support.
+  final Uint8List _privateKey;
+  final Uint8List _publicKey;
 
   /// The 32-byte Ed25519 private key (seed).
-  final Uint8List privateKey;
+  ///
+  /// Returns a defensive copy to prevent external mutation.
+  Uint8List get privateKey => Uint8List.fromList(_privateKey);
 
   /// The 32-byte Ed25519 public key.
-  final Uint8List publicKey;
+  ///
+  /// Returns a defensive copy to prevent external mutation.
+  Uint8List get publicKey => Uint8List.fromList(_publicKey);
 }
 
 /// Generates a new random Ed25519 key pair.
@@ -64,15 +80,9 @@ KeyPair createKeyPairFromBytes(Uint8List bytes) {
     throw SolanaError(SolanaErrorCode.keysPublicKeyMustMatchPrivateKey);
   }
 
-  // Also verify the provided public key matches the derived one.
-  var keysMatch = true;
-  for (var i = 0; i < 32; i++) {
-    if (publicKeyBytes[i] != derivedPublicKey[i]) {
-      keysMatch = false;
-      break;
-    }
-  }
-  if (!keysMatch) {
+  // Also verify the provided public key matches the derived one using
+  // constant-time comparison to prevent timing attacks.
+  if (!constantTimeEqual(publicKeyBytes, derivedPublicKey)) {
     throw SolanaError(SolanaErrorCode.keysPublicKeyMustMatchPrivateKey);
   }
 
@@ -95,4 +105,19 @@ KeyPair createKeyPairFromPrivateKeyBytes(Uint8List bytes) {
     privateKey: Uint8List.fromList(bytes),
     publicKey: publicKeyBytes,
   );
+}
+
+/// Compares two byte arrays in constant time to prevent timing attacks.
+///
+/// Returns `true` if both arrays have the same length and identical contents.
+/// The comparison always examines all bytes regardless of where mismatches
+/// occur, preventing an attacker from learning partial key information through
+/// timing side-channels.
+bool constantTimeEqual(Uint8List a, Uint8List b) {
+  if (a.length != b.length) return false;
+  var result = 0;
+  for (var i = 0; i < a.length; i++) {
+    result |= a[i] ^ b[i];
+  }
+  return result == 0;
 }

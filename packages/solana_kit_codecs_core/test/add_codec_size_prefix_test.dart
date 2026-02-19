@@ -1,4 +1,5 @@
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:test/test.dart';
 
 import 'setup.dart';
@@ -133,6 +134,51 @@ void main() {
       assertIsFixedSize(prefixedCodec);
       expect((prefixedCodec as FixedSizeCodec).fixedSize, equals(14));
     });
+
+    test(
+      'throws SolanaError when size prefix exceeds available bytes',
+      () {
+        // A 1-byte size prefix codec.
+        final numberCodec = FixedSizeCodec<num, num>(
+          fixedSize: 1,
+          write: (value, bytes, offset) {
+            bytes[offset] = value.toInt();
+            return offset + 1;
+          },
+          read: (bytes, offset) => (bytes[offset], offset + 1),
+        );
+
+        // A variable-size content codec.
+        final contentCodec = VariableSizeCodec<String, String>(
+          getSizeFromValue: (value) => (value.length / 2).ceil(),
+          write: (value, bytes, offset) {
+            final src = b(value);
+            bytes.setAll(offset, src);
+            return offset + src.length;
+          },
+          read: (bytes, offset) {
+            return (h(bytes.sublist(offset)), bytes.length);
+          },
+        );
+
+        final prefixedDecoder = addDecoderSizePrefix(
+          decoderFromCodec(contentCodec),
+          decoderFromCodec(numberCodec),
+        );
+
+        // Size prefix says 100 bytes but only 5 bytes of content follow.
+        expect(
+          () => prefixedDecoder.decode(b('640102030405')),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              equals(SolanaErrorCode.codecsInvalidByteLength),
+            ),
+          ),
+        );
+      },
+    );
 
     test('returns the correct variable size', () {
       final numberCodec = FixedSizeCodec<num, num>(

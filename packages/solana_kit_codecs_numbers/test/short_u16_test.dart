@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:test/test.dart';
 
 import 'setup.dart';
@@ -123,6 +126,37 @@ void main() {
         // 3-byte
         final (_, offset3) = decoder.read(b('808001'), 0);
         expect(offset3, equals(3));
+      });
+
+      test('throws SolanaError on truncated input with continuation bit', () {
+        final decoder = getShortU16Decoder();
+        // 0x80 has continuation bit set but no following byte.
+        expect(
+          () => decoder.decode(Uint8List.fromList([0x80])),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              equals(SolanaErrorCode.codecsInvalidByteLength),
+            ),
+          ),
+        );
+      });
+
+      test('throws SolanaError on too many continuation bytes', () {
+        final decoder = getShortU16Decoder();
+        // 4 bytes with continuation bits: [0x80, 0x80, 0x80, 0x01]
+        // shortU16 only supports up to 3 bytes.
+        expect(
+          () => decoder.decode(Uint8List.fromList([0x80, 0x80, 0x80, 0x01])),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              equals(SolanaErrorCode.codecsNumberOutOfRange),
+            ),
+          ),
+        );
       });
     });
 

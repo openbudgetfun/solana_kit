@@ -156,6 +156,32 @@ void main() {
       final sig = signBytes(keyPair.privateKey, data);
       expect(sig.value.length, equals(64));
     });
+
+    test('throws on invalid private key length (16 bytes)', () {
+      expect(
+        () => signBytes(Uint8List(16), Uint8List.fromList([1, 2, 3])),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            equals(SolanaErrorCode.keysInvalidPrivateKeyByteLength),
+          ),
+        ),
+      );
+    });
+
+    test('throws on empty private key', () {
+      expect(
+        () => signBytes(Uint8List(0), Uint8List.fromList([1, 2, 3])),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            equals(SolanaErrorCode.keysInvalidPrivateKeyByteLength),
+          ),
+        ),
+      );
+    });
   });
 
   group('verifySignature', () {
@@ -193,6 +219,24 @@ void main() {
       final wrongKey = Uint8List.fromList(List<int>.filled(32, 0));
       final result = verifySignature(
         wrongKey,
+        SignatureBytes(mockDataSignature),
+        mockData,
+      );
+      expect(result, isFalse);
+    });
+
+    test('returns false for invalid public key length (16 bytes)', () {
+      final result = verifySignature(
+        Uint8List(16),
+        SignatureBytes(mockDataSignature),
+        mockData,
+      );
+      expect(result, isFalse);
+    });
+
+    test('returns false for empty public key', () {
+      final result = verifySignature(
+        Uint8List(0),
         SignatureBytes(mockDataSignature),
         mockData,
       );

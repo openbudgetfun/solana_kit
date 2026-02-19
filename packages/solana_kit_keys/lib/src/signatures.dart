@@ -4,6 +4,8 @@ import 'package:ed25519_edwards/ed25519_edwards.dart' as ed;
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
+import 'package:solana_kit_keys/src/private_key.dart';
+
 /// A base58-encoded 64-byte Ed25519 signature.
 extension type const Signature(String value) {}
 
@@ -89,7 +91,12 @@ SignatureBytes signatureBytes(Uint8List value) {
 
 /// Signs [data] using the provided 32-byte [privateKeyBytes] and returns the
 /// 64-byte Ed25519 signature.
+///
+/// Throws a [SolanaError] with code
+/// [SolanaErrorCode.keysInvalidPrivateKeyByteLength] if [privateKeyBytes] is
+/// not exactly 32 bytes.
 SignatureBytes signBytes(Uint8List privateKeyBytes, Uint8List data) {
+  assertIsPrivateKey(privateKeyBytes);
   final privateKey = ed.newKeyFromSeed(privateKeyBytes);
   final sig = ed.sign(privateKey, data);
   return SignatureBytes(Uint8List.fromList(sig));
@@ -99,11 +106,17 @@ SignatureBytes signBytes(Uint8List privateKeyBytes, Uint8List data) {
 /// key corresponding to [publicKeyBytes].
 ///
 /// Returns `true` if the signature is valid, `false` otherwise.
+/// Returns `false` if [publicKeyBytes] is not exactly 32 bytes.
 bool verifySignature(
   Uint8List publicKeyBytes,
   SignatureBytes signature,
   Uint8List data,
 ) {
-  final publicKey = ed.PublicKey(publicKeyBytes);
-  return ed.verify(publicKey, data, Uint8List.fromList(signature.value));
+  if (publicKeyBytes.length != 32) return false;
+  try {
+    final publicKey = ed.PublicKey(publicKeyBytes);
+    return ed.verify(publicKey, data, Uint8List.fromList(signature.value));
+  } on Object {
+    return false;
+  }
 }

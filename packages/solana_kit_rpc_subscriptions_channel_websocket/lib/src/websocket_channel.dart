@@ -56,6 +56,8 @@ class WebSocketChannelConfig {
     this.signal,
   });
 
+  // TODO(security): Production usage should enforce `wss://` only. Not
+  // blocking because local development often uses `ws://`.
   /// The WebSocket server URL (must use ws:// or wss:// protocol).
   final Uri url;
 
