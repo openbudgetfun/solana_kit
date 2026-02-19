@@ -83,10 +83,7 @@ void main() {
       // u32 prefix says 0xFFFFFFFF (4294967295) items but only 0 bytes of
       // content follow. The decoder should fail when it runs out of bytes
       // trying to read items, not allocate billions of entries.
-      expect(
-        () => decoder.decode(b('ffffffff')),
-        throwsA(anything),
-      );
+      expect(() => decoder.decode(b('ffffffff')), throwsA(anything));
     });
   });
 }

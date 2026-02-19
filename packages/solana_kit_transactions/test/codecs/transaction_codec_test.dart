@@ -152,10 +152,7 @@ void main() {
       final txBytes = Uint8List.fromList([0x00, ...messageBytes]);
 
       final decoder = getTransactionDecoder();
-      expect(
-        () => decoder.decode(txBytes),
-        throwsA(isA<SolanaError>()),
-      );
+      expect(() => decoder.decode(txBytes), throwsA(isA<SolanaError>()));
     });
   });
 

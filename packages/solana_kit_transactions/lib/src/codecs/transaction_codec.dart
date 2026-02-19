@@ -145,13 +145,10 @@ _SignerData _decodeSignerAddresses(Uint8List messageBytes) {
   }
 
   if (numRequiredSignatures > staticAddresses.length) {
-    throw SolanaError(
-      SolanaErrorCode.transactionMessageSignaturesMismatch,
-      {
-        'numRequiredSignatures': numRequiredSignatures,
-        'staticAddressesLength': staticAddresses.length,
-      },
-    );
+    throw SolanaError(SolanaErrorCode.transactionMessageSignaturesMismatch, {
+      'numRequiredSignatures': numRequiredSignatures,
+      'staticAddressesLength': staticAddresses.length,
+    });
   }
 
   final signerAddresses = staticAddresses.sublist(0, numRequiredSignatures);
