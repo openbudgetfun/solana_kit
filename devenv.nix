@@ -39,6 +39,20 @@
   scripts = {
     "flutter" = {
       exec = ''
+        # Unset Nix toolchain variables that conflict with Xcode builds
+        unset CC CXX LD AR NM RANLIB STRIP OBJCOPY OBJDUMP SIZE STRINGS
+        unset NIX_CC NIX_BINTOOLS NIX_CFLAGS_COMPILE NIX_LDFLAGS
+        unset NIX_HARDENING_ENABLE NIX_ENFORCE_NO_NATIVE
+        unset NIX_DONT_SET_RPATH NIX_DONT_SET_RPATH_FOR_BUILD NIX_NO_SELF_RPATH
+        unset NIX_IGNORE_LD_THROUGH_GCC
+        unset NIX_BINTOOLS_WRAPPER_TARGET_HOST_arm64_apple_darwin
+        unset NIX_CC_WRAPPER_TARGET_HOST_arm64_apple_darwin
+        unset NIX_PKG_CONFIG_WRAPPER_TARGET_HOST_arm64_apple_darwin
+        unset SDKROOT MACOSX_DEPLOYMENT_TARGET
+        unset CFLAGS CXXFLAGS LDFLAGS ARCHFLAGS
+        unset PKG_CONFIG PKG_CONFIG_PATH
+        unset LD_LIBRARY_PATH LD_DYLD_PATH
+        unset cmakeFlags
         set -e
         fvm flutter $@
       '';
