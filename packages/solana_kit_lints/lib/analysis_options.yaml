@@ -13,3 +13,5 @@ linter:
   rules:
     public_member_api_docs: false
     lines_longer_than_80_chars: false
+    cancel_subscriptions: true
+    close_sinks: true
