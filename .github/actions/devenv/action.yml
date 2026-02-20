@@ -32,6 +32,12 @@ runs:
         nix profile add nixpkgs#devenv
       shell: bash
 
+    - name: install flutter sdk via fvm
+      run: |
+        fvm install
+        fvm use --force
+      shell: devenv shell -- bash -e {0}
+
     - name: install dependencies
       run: install:all
       shell: devenv shell -- bash -e {0}
