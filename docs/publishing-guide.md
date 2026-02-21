@@ -4,7 +4,7 @@ This guide covers how to version, release, and publish the `solana_kit` Dart SDK
 
 ## Overview
 
-The Solana Kit SDK consists of 38 publishable packages under `packages/` plus 2 internal packages (`solana_kit_lints` and `solana_kit_test_matchers`) that are not published. Versioning is managed by [knope](https://knope.tech/) using changesets stored in `.changeset/`. Publishing is executed via dependency-ordered knope workflows.
+The Solana Kit SDK consists of 38 publishable packages under `packages/` plus 2 internal packages (`solana_kit_lints` and `solana_kit_test_matchers`) that are not published. Versioning is managed by [knope](https://knope.tech/) using changesets stored in `.changeset/`. Publishing is executed via `knope` workflows that call `melos publish`, so Melos manages dependency-aware publish sequencing.
 
 ## Package Inventory
 
@@ -125,6 +125,8 @@ knope publish-day-2
 knope publish-day-3
 ```
 
+All day workflows call the same Melos publish command. This is intentional so you can rerun on later days and let Melos continue publishing unpublished package versions.
+
 If limits are not a concern, publish everything in one pass:
 
 ```bash
@@ -182,7 +184,7 @@ Before publishing, verify each package meets these requirements:
 
 ### Dependency-Order Publishing
 
-Packages must be published in dependency order (leaf packages first). The `knope publish` workflow handles this automatically by publishing packages in the order defined in `knope.toml`.
+Packages must be published in dependency order (leaf packages first). The `knope publish` workflow handles this automatically through `melos publish`, which computes package ordering from the workspace dependency graph.
 
 The correct publishing order follows the layer table above:
 
@@ -199,7 +201,7 @@ The correct publishing order follows the layer table above:
 knope publish
 ```
 
-This executes `dart pub publish --force` for each package in order. The `--force` flag skips the interactive confirmation prompt.
+This executes `melos publish --no-private --no-dry-run`, publishing all public workspace packages in dependency order.
 
 ### Dry Run
 
