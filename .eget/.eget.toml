@@ -6,4 +6,4 @@ all = true
 
 ["knope-dev/knope"]
 asset_filters = [".tgz"]
-tag = "knope/v0.21.7"
+tag = "knope/v0.22.3"
