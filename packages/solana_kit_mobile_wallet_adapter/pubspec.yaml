@@ -4,6 +4,7 @@ description: >-
   to communicate with wallet apps for transaction signing on Android. iOS
   compiles but is a no-op.
 version: 0.0.2
+repository: https://github.com/openbudgetfun/solana_kit
 
 environment:
   sdk: ^3.10.1

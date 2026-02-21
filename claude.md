@@ -59,7 +59,7 @@ solana_kit_errors (foundation - no deps)
 - Modern Dart 3.10+ features: sealed classes, extension types, records, patterns
 - No `dynamic` types - use `Object?` where needed
 - `const` constructors wherever possible
-- All markdown files use lowercase names (e.g. `readme.md`, `claude.md`, `changelog.md`)
+- All markdown files use lowercase names (e.g. `readme.md`, `claude.md`, `CHANGELOG.md`)
 - Error codes are `static const int` on `SolanaErrorCode` (abstract final class)
 - Error messages use `$variableName` interpolation
 - No code generation (no freezed, no build_runner)

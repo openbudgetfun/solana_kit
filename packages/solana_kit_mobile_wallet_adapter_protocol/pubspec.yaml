@@ -4,6 +4,7 @@ description: >-
   Provides cryptography, message framing, JSON-RPC types, and session
   management without Flutter dependencies.
 version: 0.0.2
+repository: https://github.com/openbudgetfun/solana_kit
 
 environment:
   sdk: ^3.10.1

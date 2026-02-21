@@ -96,7 +96,7 @@ This workflow:
 
 1. Reads all changeset files in `.changeset/`
 2. Bumps versions in each package's `pubspec.yaml`
-3. Updates each package's `changelog.md`
+3. Updates each package's `CHANGELOG.md`
 4. Formats with dprint
 5. Commits and pushes
 6. Creates a GitHub release
@@ -151,13 +151,13 @@ Before publishing, verify each package meets these requirements:
    - Dependencies use caret constraints (`^x.y.z`) for published packages
    - No `publish_to: none` (unless intentionally unpublished)
 
-2. **readme.md** exists with:
+2. **README.md** exists with:
    - Package purpose and features
    - Installation instructions
    - Basic usage example
    - Link to API docs
 
-3. **changelog.md** exists and is up to date (managed by knope)
+3. **CHANGELOG.md** exists and is up to date (managed by knope)
 
 4. **LICENSE** file exists at the repo root (applies to all packages)
 

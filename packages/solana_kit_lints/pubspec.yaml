@@ -1,6 +1,7 @@
 name: solana_kit_lints
 description: Shared lint rules for the Solana Kit Dart SDK.
 version: 0.0.2
+repository: https://github.com/openbudgetfun/solana_kit
 publish_to: none
 
 environment:

@@ -1,6 +1,7 @@
 name: solana_kit_keys
 description: Key pair and Ed25519 operations for the Solana Kit Dart SDK.
 version: 0.0.2
+repository: https://github.com/openbudgetfun/solana_kit
 
 environment:
   sdk: ^3.10.1

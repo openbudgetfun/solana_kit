@@ -12,7 +12,7 @@ ignore_conventional_commits = true
 [packages.solana_kit]
 versioned_files = ["packages/solana_kit/pubspec.yaml"]
 scopes = ["solana_kit"]
-changelog = "packages/solana_kit/changelog.md"
+changelog = "packages/solana_kit/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -21,7 +21,7 @@ extra_changelog_sections = [
 [packages.solana_kit_accounts]
 versioned_files = ["packages/solana_kit_accounts/pubspec.yaml"]
 scopes = ["solana_kit_accounts"]
-changelog = "packages/solana_kit_accounts/changelog.md"
+changelog = "packages/solana_kit_accounts/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -30,7 +30,7 @@ extra_changelog_sections = [
 [packages.solana_kit_addresses]
 versioned_files = ["packages/solana_kit_addresses/pubspec.yaml"]
 scopes = ["solana_kit_addresses"]
-changelog = "packages/solana_kit_addresses/changelog.md"
+changelog = "packages/solana_kit_addresses/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -39,7 +39,7 @@ extra_changelog_sections = [
 [packages.solana_kit_codecs]
 versioned_files = ["packages/solana_kit_codecs/pubspec.yaml"]
 scopes = ["solana_kit_codecs"]
-changelog = "packages/solana_kit_codecs/changelog.md"
+changelog = "packages/solana_kit_codecs/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -48,7 +48,7 @@ extra_changelog_sections = [
 [packages.solana_kit_codecs_core]
 versioned_files = ["packages/solana_kit_codecs_core/pubspec.yaml"]
 scopes = ["solana_kit_codecs_core"]
-changelog = "packages/solana_kit_codecs_core/changelog.md"
+changelog = "packages/solana_kit_codecs_core/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -57,7 +57,7 @@ extra_changelog_sections = [
 [packages.solana_kit_codecs_data_structures]
 versioned_files = ["packages/solana_kit_codecs_data_structures/pubspec.yaml"]
 scopes = ["solana_kit_codecs_data_structures"]
-changelog = "packages/solana_kit_codecs_data_structures/changelog.md"
+changelog = "packages/solana_kit_codecs_data_structures/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -66,7 +66,7 @@ extra_changelog_sections = [
 [packages.solana_kit_codecs_numbers]
 versioned_files = ["packages/solana_kit_codecs_numbers/pubspec.yaml"]
 scopes = ["solana_kit_codecs_numbers"]
-changelog = "packages/solana_kit_codecs_numbers/changelog.md"
+changelog = "packages/solana_kit_codecs_numbers/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -75,7 +75,7 @@ extra_changelog_sections = [
 [packages.solana_kit_codecs_strings]
 versioned_files = ["packages/solana_kit_codecs_strings/pubspec.yaml"]
 scopes = ["solana_kit_codecs_strings"]
-changelog = "packages/solana_kit_codecs_strings/changelog.md"
+changelog = "packages/solana_kit_codecs_strings/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -84,7 +84,7 @@ extra_changelog_sections = [
 [packages.solana_kit_errors]
 versioned_files = ["packages/solana_kit_errors/pubspec.yaml"]
 scopes = ["solana_kit_errors"]
-changelog = "packages/solana_kit_errors/changelog.md"
+changelog = "packages/solana_kit_errors/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -93,7 +93,7 @@ extra_changelog_sections = [
 [packages.solana_kit_fast_stable_stringify]
 versioned_files = ["packages/solana_kit_fast_stable_stringify/pubspec.yaml"]
 scopes = ["solana_kit_fast_stable_stringify"]
-changelog = "packages/solana_kit_fast_stable_stringify/changelog.md"
+changelog = "packages/solana_kit_fast_stable_stringify/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -102,7 +102,7 @@ extra_changelog_sections = [
 [packages.solana_kit_functional]
 versioned_files = ["packages/solana_kit_functional/pubspec.yaml"]
 scopes = ["solana_kit_functional"]
-changelog = "packages/solana_kit_functional/changelog.md"
+changelog = "packages/solana_kit_functional/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -111,7 +111,7 @@ extra_changelog_sections = [
 [packages.solana_kit_helius]
 versioned_files = ["packages/solana_kit_helius/pubspec.yaml"]
 scopes = ["solana_kit_helius"]
-changelog = "packages/solana_kit_helius/changelog.md"
+changelog = "packages/solana_kit_helius/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -120,7 +120,7 @@ extra_changelog_sections = [
 [packages.solana_kit_instruction_plans]
 versioned_files = ["packages/solana_kit_instruction_plans/pubspec.yaml"]
 scopes = ["solana_kit_instruction_plans"]
-changelog = "packages/solana_kit_instruction_plans/changelog.md"
+changelog = "packages/solana_kit_instruction_plans/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -129,7 +129,7 @@ extra_changelog_sections = [
 [packages.solana_kit_instructions]
 versioned_files = ["packages/solana_kit_instructions/pubspec.yaml"]
 scopes = ["solana_kit_instructions"]
-changelog = "packages/solana_kit_instructions/changelog.md"
+changelog = "packages/solana_kit_instructions/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -138,7 +138,7 @@ extra_changelog_sections = [
 [packages.solana_kit_keys]
 versioned_files = ["packages/solana_kit_keys/pubspec.yaml"]
 scopes = ["solana_kit_keys"]
-changelog = "packages/solana_kit_keys/changelog.md"
+changelog = "packages/solana_kit_keys/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -147,7 +147,7 @@ extra_changelog_sections = [
 [packages.solana_kit_lints]
 versioned_files = ["packages/solana_kit_lints/pubspec.yaml"]
 scopes = ["solana_kit_lints"]
-changelog = "packages/solana_kit_lints/changelog.md"
+changelog = "packages/solana_kit_lints/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -156,7 +156,7 @@ extra_changelog_sections = [
 [packages.solana_kit_mobile_wallet_adapter]
 versioned_files = ["packages/solana_kit_mobile_wallet_adapter/pubspec.yaml"]
 scopes = ["solana_kit_mobile_wallet_adapter"]
-changelog = "packages/solana_kit_mobile_wallet_adapter/changelog.md"
+changelog = "packages/solana_kit_mobile_wallet_adapter/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -165,7 +165,7 @@ extra_changelog_sections = [
 [packages.solana_kit_mobile_wallet_adapter_protocol]
 versioned_files = ["packages/solana_kit_mobile_wallet_adapter_protocol/pubspec.yaml"]
 scopes = ["solana_kit_mobile_wallet_adapter_protocol"]
-changelog = "packages/solana_kit_mobile_wallet_adapter_protocol/changelog.md"
+changelog = "packages/solana_kit_mobile_wallet_adapter_protocol/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -174,7 +174,7 @@ extra_changelog_sections = [
 [packages.solana_kit_offchain_messages]
 versioned_files = ["packages/solana_kit_offchain_messages/pubspec.yaml"]
 scopes = ["solana_kit_offchain_messages"]
-changelog = "packages/solana_kit_offchain_messages/changelog.md"
+changelog = "packages/solana_kit_offchain_messages/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -183,7 +183,7 @@ extra_changelog_sections = [
 [packages.solana_kit_options]
 versioned_files = ["packages/solana_kit_options/pubspec.yaml"]
 scopes = ["solana_kit_options"]
-changelog = "packages/solana_kit_options/changelog.md"
+changelog = "packages/solana_kit_options/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -192,7 +192,7 @@ extra_changelog_sections = [
 [packages.solana_kit_program_client_core]
 versioned_files = ["packages/solana_kit_program_client_core/pubspec.yaml"]
 scopes = ["solana_kit_program_client_core"]
-changelog = "packages/solana_kit_program_client_core/changelog.md"
+changelog = "packages/solana_kit_program_client_core/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -201,7 +201,7 @@ extra_changelog_sections = [
 [packages.solana_kit_programs]
 versioned_files = ["packages/solana_kit_programs/pubspec.yaml"]
 scopes = ["solana_kit_programs"]
-changelog = "packages/solana_kit_programs/changelog.md"
+changelog = "packages/solana_kit_programs/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -210,7 +210,7 @@ extra_changelog_sections = [
 [packages.solana_kit_rpc]
 versioned_files = ["packages/solana_kit_rpc/pubspec.yaml"]
 scopes = ["solana_kit_rpc"]
-changelog = "packages/solana_kit_rpc/changelog.md"
+changelog = "packages/solana_kit_rpc/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -219,7 +219,7 @@ extra_changelog_sections = [
 [packages.solana_kit_rpc_api]
 versioned_files = ["packages/solana_kit_rpc_api/pubspec.yaml"]
 scopes = ["solana_kit_rpc_api"]
-changelog = "packages/solana_kit_rpc_api/changelog.md"
+changelog = "packages/solana_kit_rpc_api/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -228,7 +228,7 @@ extra_changelog_sections = [
 [packages.solana_kit_rpc_parsed_types]
 versioned_files = ["packages/solana_kit_rpc_parsed_types/pubspec.yaml"]
 scopes = ["solana_kit_rpc_parsed_types"]
-changelog = "packages/solana_kit_rpc_parsed_types/changelog.md"
+changelog = "packages/solana_kit_rpc_parsed_types/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -237,7 +237,7 @@ extra_changelog_sections = [
 [packages.solana_kit_rpc_spec]
 versioned_files = ["packages/solana_kit_rpc_spec/pubspec.yaml"]
 scopes = ["solana_kit_rpc_spec"]
-changelog = "packages/solana_kit_rpc_spec/changelog.md"
+changelog = "packages/solana_kit_rpc_spec/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -246,7 +246,7 @@ extra_changelog_sections = [
 [packages.solana_kit_rpc_spec_types]
 versioned_files = ["packages/solana_kit_rpc_spec_types/pubspec.yaml"]
 scopes = ["solana_kit_rpc_spec_types"]
-changelog = "packages/solana_kit_rpc_spec_types/changelog.md"
+changelog = "packages/solana_kit_rpc_spec_types/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -255,7 +255,7 @@ extra_changelog_sections = [
 [packages.solana_kit_rpc_subscriptions]
 versioned_files = ["packages/solana_kit_rpc_subscriptions/pubspec.yaml"]
 scopes = ["solana_kit_rpc_subscriptions"]
-changelog = "packages/solana_kit_rpc_subscriptions/changelog.md"
+changelog = "packages/solana_kit_rpc_subscriptions/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -264,7 +264,7 @@ extra_changelog_sections = [
 [packages.solana_kit_rpc_subscriptions_api]
 versioned_files = ["packages/solana_kit_rpc_subscriptions_api/pubspec.yaml"]
 scopes = ["solana_kit_rpc_subscriptions_api"]
-changelog = "packages/solana_kit_rpc_subscriptions_api/changelog.md"
+changelog = "packages/solana_kit_rpc_subscriptions_api/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -273,7 +273,7 @@ extra_changelog_sections = [
 [packages.solana_kit_rpc_subscriptions_channel_websocket]
 versioned_files = ["packages/solana_kit_rpc_subscriptions_channel_websocket/pubspec.yaml"]
 scopes = ["solana_kit_rpc_subscriptions_channel_websocket"]
-changelog = "packages/solana_kit_rpc_subscriptions_channel_websocket/changelog.md"
+changelog = "packages/solana_kit_rpc_subscriptions_channel_websocket/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -282,7 +282,7 @@ extra_changelog_sections = [
 [packages.solana_kit_rpc_transport_http]
 versioned_files = ["packages/solana_kit_rpc_transport_http/pubspec.yaml"]
 scopes = ["solana_kit_rpc_transport_http"]
-changelog = "packages/solana_kit_rpc_transport_http/changelog.md"
+changelog = "packages/solana_kit_rpc_transport_http/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -291,7 +291,7 @@ extra_changelog_sections = [
 [packages.solana_kit_rpc_transformers]
 versioned_files = ["packages/solana_kit_rpc_transformers/pubspec.yaml"]
 scopes = ["solana_kit_rpc_transformers"]
-changelog = "packages/solana_kit_rpc_transformers/changelog.md"
+changelog = "packages/solana_kit_rpc_transformers/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -300,7 +300,7 @@ extra_changelog_sections = [
 [packages.solana_kit_rpc_types]
 versioned_files = ["packages/solana_kit_rpc_types/pubspec.yaml"]
 scopes = ["solana_kit_rpc_types"]
-changelog = "packages/solana_kit_rpc_types/changelog.md"
+changelog = "packages/solana_kit_rpc_types/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -309,7 +309,7 @@ extra_changelog_sections = [
 [packages.solana_kit_signers]
 versioned_files = ["packages/solana_kit_signers/pubspec.yaml"]
 scopes = ["solana_kit_signers"]
-changelog = "packages/solana_kit_signers/changelog.md"
+changelog = "packages/solana_kit_signers/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -318,7 +318,7 @@ extra_changelog_sections = [
 [packages.solana_kit_subscribable]
 versioned_files = ["packages/solana_kit_subscribable/pubspec.yaml"]
 scopes = ["solana_kit_subscribable"]
-changelog = "packages/solana_kit_subscribable/changelog.md"
+changelog = "packages/solana_kit_subscribable/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -327,7 +327,7 @@ extra_changelog_sections = [
 [packages.solana_kit_sysvars]
 versioned_files = ["packages/solana_kit_sysvars/pubspec.yaml"]
 scopes = ["solana_kit_sysvars"]
-changelog = "packages/solana_kit_sysvars/changelog.md"
+changelog = "packages/solana_kit_sysvars/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -336,7 +336,7 @@ extra_changelog_sections = [
 [packages.solana_kit_test_matchers]
 versioned_files = ["packages/solana_kit_test_matchers/pubspec.yaml"]
 scopes = ["solana_kit_test_matchers"]
-changelog = "packages/solana_kit_test_matchers/changelog.md"
+changelog = "packages/solana_kit_test_matchers/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -345,7 +345,7 @@ extra_changelog_sections = [
 [packages.solana_kit_transaction_confirmation]
 versioned_files = ["packages/solana_kit_transaction_confirmation/pubspec.yaml"]
 scopes = ["solana_kit_transaction_confirmation"]
-changelog = "packages/solana_kit_transaction_confirmation/changelog.md"
+changelog = "packages/solana_kit_transaction_confirmation/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -354,7 +354,7 @@ extra_changelog_sections = [
 [packages.solana_kit_transaction_messages]
 versioned_files = ["packages/solana_kit_transaction_messages/pubspec.yaml"]
 scopes = ["solana_kit_transaction_messages"]
-changelog = "packages/solana_kit_transaction_messages/changelog.md"
+changelog = "packages/solana_kit_transaction_messages/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
@@ -363,7 +363,7 @@ extra_changelog_sections = [
 [packages.solana_kit_transactions]
 versioned_files = ["packages/solana_kit_transactions/pubspec.yaml"]
 scopes = ["solana_kit_transactions"]
-changelog = "packages/solana_kit_transactions/changelog.md"
+changelog = "packages/solana_kit_transactions/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },
   { name = "Documentation", types = ["docs"] },
