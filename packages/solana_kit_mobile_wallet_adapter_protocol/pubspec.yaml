@@ -3,7 +3,7 @@ description: >-
   Pure Dart implementation of the Solana Mobile Wallet Adapter protocol v2.0.
   Provides cryptography, message framing, JSON-RPC types, and session
   management without Flutter dependencies.
-version: 0.0.2
+version: 0.1.0
 repository: https://github.com/openbudgetfun/solana_kit
 
 environment:
@@ -13,9 +13,9 @@ resolution: workspace
 
 dependencies:
   pointycastle: ^3.9.1
-  solana_kit_codecs_strings:
-  solana_kit_errors:
+  solana_kit_codecs_strings: ^0.1.0
+  solana_kit_errors: ^0.1.0
 
 dev_dependencies:
-  solana_kit_lints:
+  solana_kit_lints: ^0.1.0
   test: ^1.25.0

@@ -1,6 +1,6 @@
 name: solana_kit_transactions
 description: Transaction compilation and signing for the Solana Kit Dart SDK.
-version: 0.0.2
+version: 0.1.0
 repository: https://github.com/openbudgetfun/solana_kit
 
 environment:
@@ -10,16 +10,16 @@ resolution: workspace
 
 dependencies:
   meta: ^1.16.0
-  solana_kit_addresses:
-  solana_kit_codecs_core:
-  solana_kit_codecs_data_structures:
-  solana_kit_codecs_numbers:
-  solana_kit_codecs_strings:
-  solana_kit_errors:
-  solana_kit_instructions:
-  solana_kit_keys:
-  solana_kit_transaction_messages:
+  solana_kit_addresses: ^0.1.0
+  solana_kit_codecs_core: ^0.1.0
+  solana_kit_codecs_data_structures: ^0.1.0
+  solana_kit_codecs_numbers: ^0.1.0
+  solana_kit_codecs_strings: ^0.1.0
+  solana_kit_errors: ^0.1.0
+  solana_kit_instructions: ^0.1.0
+  solana_kit_keys: ^0.1.0
+  solana_kit_transaction_messages: ^0.1.0
 
 dev_dependencies:
-  solana_kit_lints:
+  solana_kit_lints: ^0.1.0
   test: ^1.25.0

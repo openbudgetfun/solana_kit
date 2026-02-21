@@ -1,6 +1,6 @@
 name: solana_kit_fast_stable_stringify
 description: Deterministic JSON serialization for the Solana Kit Dart SDK.
-version: 0.0.2
+version: 0.1.0
 repository: https://github.com/openbudgetfun/solana_kit
 
 environment:
@@ -9,5 +9,5 @@ environment:
 resolution: workspace
 
 dev_dependencies:
-  solana_kit_lints:
+  solana_kit_lints: ^0.1.0
   test: ^1.25.0
