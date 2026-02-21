@@ -1,6 +1,6 @@
 name: solana_kit
 description: Umbrella package re-exporting all Solana Kit Dart SDK packages.
-version: 0.0.1
+version: 0.0.2
 
 environment:
   sdk: ^3.10.1

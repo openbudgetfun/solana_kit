@@ -3,7 +3,7 @@ description: >-
   Flutter plugin for the Solana Mobile Wallet Adapter protocol. Enables dApps
   to communicate with wallet apps for transaction signing on Android. iOS
   compiles but is a no-op.
-version: 0.0.1
+version: 0.0.2
 
 environment:
   sdk: ^3.10.1

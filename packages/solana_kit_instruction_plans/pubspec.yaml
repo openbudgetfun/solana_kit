@@ -1,6 +1,6 @@
 name: solana_kit_instruction_plans
 description: Instruction planning for the Solana Kit Dart SDK.
-version: 0.0.1
+version: 0.0.2
 
 environment:
   sdk: ^3.10.1

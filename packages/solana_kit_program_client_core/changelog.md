@@ -1,3 +1,39 @@
 # Changelog
 
 All notable changes to this package will be documented in this file.
+
+## 0.0.2 (2026-02-21)
+
+### Features
+
+#### Implement program client core package ported from `@solana/program-client-core`.
+
+**solana_kit_program_client_core** (31 tests):
+
+- `InstructionWithByteDelta` mixin for tracking account storage size changes
+- `ResolvedInstructionAccount` type for resolved instruction account values
+- `getNonNullResolvedInstructionInput` null-safety validation with descriptive errors
+- `getAddressFromResolvedInstructionAccount` extracts Address from Address/PDA/TransactionSigner
+- `getResolvedInstructionAccountAsProgramDerivedAddress` validates and extracts PDA
+- `getResolvedInstructionAccountAsTransactionSigner` validates and extracts TransactionSigner
+- `getAccountMetaFactory` factory converting ResolvedInstructionAccount to AccountMeta with omitted/programId strategies
+- `SelfFetchFunctions` augmenting codecs with fetch/fetchMaybe/fetchAll/fetchAllMaybe methods
+- Stub for self-plan-and-send functions (pending instruction_plans implementation)
+
+#### Initial scaffold for 17 higher-level packages including the full RPC stack,
+
+program interaction layers, and the umbrella package. Each package has its
+pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
+and an empty barrel export file ready for implementation.
+
+Package groups scaffolded:
+
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
+  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
+  processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
+  rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
+  program_client_core (base client), sysvars (system variables)
+- **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
+- **Umbrella**: solana_kit (re-exports all packages for convenience)
