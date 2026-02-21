@@ -4,17 +4,18 @@ This guide covers how to version, release, and publish the `solana_kit` Dart SDK
 
 ## Overview
 
-The Solana Kit SDK consists of 35 publishable packages under `packages/` plus 2 internal packages (`solana_kit_lints` and `solana_kit_test_matchers`) that are not published. Versioning is managed by [knope](https://knope.tech/) using changesets stored in `.changeset/`. Publishing is executed via the `knope publish` workflow which runs `dart pub publish` for each package in dependency order.
+The Solana Kit SDK consists of 38 publishable packages under `packages/` plus 2 internal packages (`solana_kit_lints` and `solana_kit_test_matchers`) that are not published. Versioning is managed by [knope](https://knope.tech/) using changesets stored in `.changeset/`. Publishing is executed via dependency-ordered knope workflows.
 
 ## Package Inventory
 
-### Publishable Packages (35)
+### Publishable Packages (38)
 
 | Layer | Package                                          | Dependencies                                                                                     |
 | ----- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
 | 0     | `solana_kit_errors`                              | (none)                                                                                           |
 | 1     | `solana_kit_functional`                          | errors                                                                                           |
 | 1     | `solana_kit_fast_stable_stringify`               | (none)                                                                                           |
+| 1     | `solana_kit_helius`                              | errors                                                                                           |
 | 2     | `solana_kit_codecs_core`                         | errors                                                                                           |
 | 2     | `solana_kit_codecs_numbers`                      | codecs_core                                                                                      |
 | 2     | `solana_kit_codecs_strings`                      | codecs_core                                                                                      |
@@ -25,6 +26,7 @@ The Solana Kit SDK consists of 35 publishable packages under `packages/` plus 2 
 | 3     | `solana_kit_keys`                                | errors, addresses, codecs_strings                                                                |
 | 3     | `solana_kit_rpc_spec_types`                      | errors                                                                                           |
 | 3     | `solana_kit_rpc_types`                           | errors, addresses, codecs_strings                                                                |
+| 3     | `solana_kit_mobile_wallet_adapter_protocol`      | errors, codecs_strings                                                                           |
 | 4     | `solana_kit_instructions`                        | errors, addresses                                                                                |
 | 4     | `solana_kit_programs`                            | errors                                                                                           |
 | 4     | `solana_kit_rpc_spec`                            | errors, rpc_spec_types                                                                           |
@@ -44,6 +46,7 @@ The Solana Kit SDK consists of 35 publishable packages under `packages/` plus 2 
 | 7     | `solana_kit_sysvars`                             | errors, addresses, codecs, rpc_api, rpc_spec, rpc_types, accounts                                |
 | 7     | `solana_kit_program_client_core`                 | errors, addresses, instructions, rpc_api, rpc_spec                                               |
 | 7     | `solana_kit_rpc_subscriptions`                   | errors, rpc_spec_types, rpc_subscriptions_api, rpc_subscriptions_channel_websocket, subscribable |
+| 7     | `solana_kit_mobile_wallet_adapter`               | addresses, errors, keys, mobile_wallet_adapter_protocol, transactions                            |
 | 8     | `solana_kit_transaction_confirmation`            | errors, keys, rpc, rpc_subscriptions, rpc_types, transactions                                    |
 | 8     | `solana_kit_instruction_plans`                   | errors, instructions, keys, transaction_messages, transactions                                   |
 | 9     | `solana_kit`                                     | (umbrella re-export of all packages above)                                                       |
@@ -55,7 +58,7 @@ The Solana Kit SDK consists of 35 publishable packages under `packages/` plus 2 
 | `solana_kit_lints`         | Shared lint rules (`very_good_analysis`) |
 | `solana_kit_test_matchers` | Solana-specific test matchers            |
 
-## Versioning with Knope
+## Managing Release
 
 ### Creating a Changeset
 
@@ -97,6 +100,38 @@ This workflow:
 4. Formats with dprint
 5. Commits and pushes
 6. Creates a GitHub release
+
+### Publishing with Knope
+
+Use a dry run before any real publish:
+
+```bash
+knope --dry-run publish
+knope --dry-run publish-day-1
+knope --dry-run publish-day-2
+knope --dry-run publish-day-3
+```
+
+For the first release, publish in staged workflows to handle pub.dev limits:
+
+```bash
+# Day 1
+knope publish-day-1
+
+# Day 2
+knope publish-day-2
+
+# Day 3
+knope publish-day-3
+```
+
+If limits are not a concern, publish everything in one pass:
+
+```bash
+knope publish
+```
+
+After each day, verify published versions on pub.dev before moving to the next workflow.
 
 ## Publishing to pub.dev
 
@@ -175,7 +210,45 @@ To verify all packages are ready to publish without actually publishing:
 cd packages/solana_kit_errors && dart pub publish --dry-run
 
 # Check all packages (run from repo root)
-for dir in packages/solana_kit_errors packages/solana_kit_functional packages/solana_kit_fast_stable_stringify packages/solana_kit_codecs_core packages/solana_kit_codecs_numbers packages/solana_kit_codecs_strings packages/solana_kit_codecs_data_structures packages/solana_kit_options packages/solana_kit_codecs packages/solana_kit_addresses packages/solana_kit_keys packages/solana_kit_rpc_spec_types packages/solana_kit_rpc_types packages/solana_kit_instructions packages/solana_kit_programs packages/solana_kit_rpc_spec packages/solana_kit_rpc_parsed_types packages/solana_kit_rpc_transformers packages/solana_kit_rpc_transport_http packages/solana_kit_transaction_messages packages/solana_kit_offchain_messages packages/solana_kit_rpc_api packages/solana_kit_subscribable packages/solana_kit_transactions packages/solana_kit_rpc packages/solana_kit_rpc_subscriptions_api packages/solana_kit_rpc_subscriptions_channel_websocket packages/solana_kit_signers packages/solana_kit_accounts packages/solana_kit_sysvars packages/solana_kit_program_client_core packages/solana_kit_rpc_subscriptions packages/solana_kit_transaction_confirmation packages/solana_kit_instruction_plans packages/solana_kit; do
+for dir in \
+  packages/solana_kit_errors \
+  packages/solana_kit_functional \
+  packages/solana_kit_fast_stable_stringify \
+  packages/solana_kit_codecs_core \
+  packages/solana_kit_codecs_numbers \
+  packages/solana_kit_codecs_strings \
+  packages/solana_kit_codecs_data_structures \
+  packages/solana_kit_options \
+  packages/solana_kit_codecs \
+  packages/solana_kit_addresses \
+  packages/solana_kit_keys \
+  packages/solana_kit_rpc_spec_types \
+  packages/solana_kit_rpc_types \
+  packages/solana_kit_mobile_wallet_adapter_protocol \
+  packages/solana_kit_instructions \
+  packages/solana_kit_programs \
+  packages/solana_kit_rpc_spec \
+  packages/solana_kit_rpc_parsed_types \
+  packages/solana_kit_rpc_transformers \
+  packages/solana_kit_rpc_transport_http \
+  packages/solana_kit_transaction_messages \
+  packages/solana_kit_offchain_messages \
+  packages/solana_kit_rpc_api \
+  packages/solana_kit_subscribable \
+  packages/solana_kit_transactions \
+  packages/solana_kit_rpc \
+  packages/solana_kit_rpc_subscriptions_api \
+  packages/solana_kit_rpc_subscriptions_channel_websocket \
+  packages/solana_kit_helius \
+  packages/solana_kit_signers \
+  packages/solana_kit_accounts \
+  packages/solana_kit_sysvars \
+  packages/solana_kit_program_client_core \
+  packages/solana_kit_rpc_subscriptions \
+  packages/solana_kit_mobile_wallet_adapter \
+  packages/solana_kit_transaction_confirmation \
+  packages/solana_kit_instruction_plans \
+  packages/solana_kit; do
   echo "=== Checking $(basename $dir) ==="
   (cd "$dir" && dart pub publish --dry-run) || echo "FAILED: $dir"
 done
@@ -183,11 +256,11 @@ done
 
 ## Known Issues and Considerations
 
-### 37-Package Monorepo Concerns
+### 40-Package Monorepo Concerns
 
 1. **Namespace reservation**: All packages use the `solana_kit_` prefix. Once the first package is published, the namespace is effectively reserved. Ensure the verified publisher account is set up before initial publish.
 
-2. **pub.dev rate limits**: Publishing many packages in quick succession may trigger rate limits. The knope publish workflow publishes sequentially with `--force`, which should be sufficient. If rate-limited, add a delay between publishes.
+2. **pub.dev rate limits**: Publishing many packages in quick succession may trigger limits. For the first release, use staged workflows (`knope publish-day-1`, `knope publish-day-2`, `knope publish-day-3`) and verify results between days.
 
 3. **Verified publisher**: Set up a [verified publisher](https://dart.dev/tools/pub/verified-publishers) on pub.dev before publishing. This displays a verified badge and prevents package name squatting. All packages should be published under the same verified publisher.
 
@@ -222,8 +295,8 @@ Before the very first publish of any package:
 2. Set up a [verified publisher](https://dart.dev/tools/pub/verified-publishers)
 3. Run `dart pub login` to authenticate
 4. Verify all packages pass `dart pub publish --dry-run`
-5. Publish packages in dependency order starting from `solana_kit_errors`
-6. Verify each package appears on pub.dev before publishing dependent packages
+5. Publish packages in dependency order starting from `solana_kit_errors` (use staged knope workflows for first release)
+6. Verify each package appears on pub.dev before running the next publish workflow
 7. After all packages are published, verify the umbrella `solana_kit` package correctly resolves all dependencies from pub.dev
 
 ### CI/CD Integration
