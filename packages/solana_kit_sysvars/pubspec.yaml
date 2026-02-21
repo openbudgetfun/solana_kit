@@ -9,7 +9,7 @@ environment:
 resolution: workspace
 
 dependencies:
-  meta:
+  meta: ^1.17.0
   solana_kit_accounts: ^0.1.0
   solana_kit_addresses: ^0.1.0
   solana_kit_codecs_core: ^0.1.0
