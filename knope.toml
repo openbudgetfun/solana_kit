@@ -417,4 +417,41 @@ name = "publish"
 
 [[workflows.steps]]
 type = "Command"
-command = "melos publish --no-private --no-dry-run"
+command = "devenv shell -- bash -lc \"melos publish --no-private --no-flutter --no-dry-run --yes\""
+
+[[workflows.steps]]
+type = "Command"
+command = "devenv shell -- bash -lc \"melos publish --no-private --flutter --no-dry-run --yes\""
+
+[[workflows]]
+name = "publish-day-1"
+
+[[workflows.steps]]
+type = "Command"
+command = "devenv shell -- bash -lc \"melos publish --no-private --no-flutter --no-dry-run --yes\""
+
+[[workflows.steps]]
+type = "Command"
+command = "devenv shell -- bash -lc \"melos publish --no-private --flutter --no-dry-run --yes\""
+
+[[workflows]]
+name = "publish-day-2"
+
+[[workflows.steps]]
+type = "Command"
+command = "devenv shell -- bash -lc \"melos publish --no-private --no-flutter --no-dry-run --yes\""
+
+[[workflows.steps]]
+type = "Command"
+command = "devenv shell -- bash -lc \"melos publish --no-private --flutter --no-dry-run --yes\""
+
+[[workflows]]
+name = "publish-day-3"
+
+[[workflows.steps]]
+type = "Command"
+command = "devenv shell -- bash -lc \"melos publish --no-private --no-flutter --no-dry-run --yes\""
+
+[[workflows.steps]]
+type = "Command"
+command = "devenv shell -- bash -lc \"melos publish --no-private --flutter --no-dry-run --yes\""

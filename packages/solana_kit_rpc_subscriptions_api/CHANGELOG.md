@@ -2,6 +2,12 @@
 
 All notable changes to this package will be documented in this file.
 
+## 0.1.0 (2026-02-21)
+
+### Notes
+
+- First 0.1.0 release of this package.
+
 ## 0.0.2 (2026-02-21)
 
 ### Features

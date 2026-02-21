@@ -112,6 +112,11 @@ knope --dry-run publish-day-2
 knope --dry-run publish-day-3
 ```
 
+Important requirements before running publish workflows:
+
+- The git worktree must be clean. `pub publish --dry-run` returns a non-zero exit code when warnings are present, including "checked-in file is modified in git".
+- Each package `CHANGELOG.md` must contain the current package version heading (for this release: `0.1.0`).
+
 For the first release, publish in staged workflows to handle pub.dev limits:
 
 ```bash
@@ -201,59 +206,24 @@ The correct publishing order follows the layer table above:
 knope publish
 ```
 
-This executes `melos publish --no-private --no-dry-run`, publishing all public workspace packages in dependency order.
+This workflow runs two Melos passes through `devenv`:
+
+1. `melos publish --no-private --no-flutter --no-dry-run --yes`
+2. `melos publish --no-private --flutter --no-dry-run --yes`
+
+This keeps publishing non-interactive (`--yes`), uses the project SDK environment (`devenv`), and publishes the Flutter package separately after dependency packages.
 
 ### Dry Run
 
 To verify all packages are ready to publish without actually publishing:
 
 ```bash
-# Check a single package
-cd packages/solana_kit_errors && dart pub publish --dry-run
+# Full workflow dry run
+knope --dry-run publish
 
-# Check all packages (run from repo root)
-for dir in \
-  packages/solana_kit_errors \
-  packages/solana_kit_functional \
-  packages/solana_kit_fast_stable_stringify \
-  packages/solana_kit_codecs_core \
-  packages/solana_kit_codecs_numbers \
-  packages/solana_kit_codecs_strings \
-  packages/solana_kit_codecs_data_structures \
-  packages/solana_kit_options \
-  packages/solana_kit_codecs \
-  packages/solana_kit_addresses \
-  packages/solana_kit_keys \
-  packages/solana_kit_rpc_spec_types \
-  packages/solana_kit_rpc_types \
-  packages/solana_kit_mobile_wallet_adapter_protocol \
-  packages/solana_kit_instructions \
-  packages/solana_kit_programs \
-  packages/solana_kit_rpc_spec \
-  packages/solana_kit_rpc_parsed_types \
-  packages/solana_kit_rpc_transformers \
-  packages/solana_kit_rpc_transport_http \
-  packages/solana_kit_transaction_messages \
-  packages/solana_kit_offchain_messages \
-  packages/solana_kit_rpc_api \
-  packages/solana_kit_subscribable \
-  packages/solana_kit_transactions \
-  packages/solana_kit_rpc \
-  packages/solana_kit_rpc_subscriptions_api \
-  packages/solana_kit_rpc_subscriptions_channel_websocket \
-  packages/solana_kit_helius \
-  packages/solana_kit_signers \
-  packages/solana_kit_accounts \
-  packages/solana_kit_sysvars \
-  packages/solana_kit_program_client_core \
-  packages/solana_kit_rpc_subscriptions \
-  packages/solana_kit_mobile_wallet_adapter \
-  packages/solana_kit_transaction_confirmation \
-  packages/solana_kit_instruction_plans \
-  packages/solana_kit; do
-  echo "=== Checking $(basename $dir) ==="
-  (cd "$dir" && dart pub publish --dry-run) || echo "FAILED: $dir"
-done
+# Or run Melos directly in two passes
+devenv shell -- bash -lc "melos publish --no-private --no-flutter --yes"
+devenv shell -- bash -lc "melos publish --no-private --flutter --yes"
 ```
 
 ## Known Issues and Considerations
@@ -268,7 +238,7 @@ done
 
 4. **Workspace resolution**: Dart 3.10+ workspaces use `resolution: workspace` in each package's `pubspec.yaml`. This is valid for development but the resolver handles it correctly during `dart pub publish`. The workspace root's `pubspec.yaml` has `publish_to: none` so it is never published.
 
-5. **Dependency constraints for publishing**: When packages are published, their inter-package dependencies must use caret syntax (`^0.0.1`) rather than path dependencies. The Dart workspace system handles this automatically -- packages within the workspace resolve to local paths during development but use version constraints when published.
+5. **Dependency constraints for publishing**: When packages are published, their inter-package dependencies must use caret syntax (for this release, `^0.1.0`) rather than path dependencies. The Dart workspace system handles this automatically -- packages within the workspace resolve to local paths during development but use version constraints when published.
 
 6. **Rollback procedures**: If a published version has a critical bug:
    - Publish a patch version with the fix

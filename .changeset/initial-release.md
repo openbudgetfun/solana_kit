@@ -43,4 +43,4 @@ solana_kit_options: major
 
 # Initial Release
 
-The initial release of all libraries. 
+The initial release of all libraries.
