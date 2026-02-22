@@ -47,6 +47,7 @@ workspace:
   - packages/solana_kit_transactions
 
 dev_dependencies:
+  coverage: ^1.14.0
   melos: ^7.4.0
 
 melos:
@@ -79,3 +80,7 @@ melos:
     upgrade:
       description: Upgrade dependencies in all packages.
       exec: dart pub upgrade
+
+    coverage:
+      description: Generate merged LCOV coverage for all packages.
+      run: test:coverage

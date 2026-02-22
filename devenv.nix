@@ -104,6 +104,13 @@
       '';
       description = "Run the melos cli.";
     };
+    "format_coverage" = {
+      exec = ''
+        set -e
+        dart run coverage:format_coverage $@
+      '';
+      description = "Run the format_coverage command from the coverage package.";
+    };
     "knope" = {
       exec = ''
         set -e
@@ -206,6 +213,41 @@
         melos test
       '';
       description = "Run all tests via melos.";
+      binary = "bash";
+    };
+    "test:coverage" = {
+      exec = ''
+        set -e
+        repo_root="$DEVENV_ROOT"
+        cd "$repo_root"
+
+        rm -rf coverage
+        mkdir -p coverage
+
+        echo "Generating coverage for pure Dart packages..."
+        melos exec --dir-exists=test --no-flutter -- \
+          'rm -rf coverage && dart test --coverage=coverage && format_coverage --lcov --in=coverage --out=coverage/lcov.info --package=. --report-on=lib'
+
+        echo "Generating coverage for Flutter packages..."
+        melos exec --dir-exists=test --flutter -- \
+          'rm -rf coverage && flutter test --coverage'
+
+        echo "Merging LCOV reports..."
+        : > coverage/lcov.info
+
+        lcov_files="$(find packages -type f -path "*/coverage/lcov.info" | sort)"
+        if [[ -z "$lcov_files" ]]; then
+          echo "No package coverage reports were generated." >&2
+          exit 1
+        fi
+
+        while IFS= read -r lcov_file; do
+          sed -e "s|SF:$repo_root/|SF:|g" "$lcov_file" >> coverage/lcov.info
+        done <<< "$lcov_files"
+
+        echo "Merged coverage report: $repo_root/coverage/lcov.info"
+      '';
+      description = "Generate merged LCOV coverage for all packages.";
       binary = "bash";
     };
     "clone:repos" = {

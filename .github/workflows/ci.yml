@@ -28,3 +28,25 @@ jobs:
       - name: test
         run: test:all
         shell: devenv shell -- bash -e {0}
+
+  coverage:
+    if: github.ref == 'refs/heads/main'
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: coverage
+        run: test:coverage
+        shell: devenv shell -- bash -e {0}
+      - name: upload coverage
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/lcov.info
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true

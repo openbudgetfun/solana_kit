@@ -14,18 +14,19 @@ A Dart port of the [Solana TypeScript SDK](https://github.com/anza-xyz/kit) (`@s
 
 All commands are defined as devenv scripts (single source of truth):
 
-| Command         | Description                                 |
-| --------------- | ------------------------------------------- |
-| `dart pub get`  | Resolve all workspace dependencies          |
-| `melos analyze` | Run `dart analyze` across all packages      |
-| `melos test`    | Run tests in all packages with test dirs    |
-| `dprint check`  | Check formatting                            |
-| `dprint fmt`    | Fix formatting                              |
-| `clone:repos`   | Clone/update reference repos into `.repos/` |
-| `install:eget`  | Install binaries via eget                   |
-| `fix:all`       | Fix formatting + lint                       |
-| `lint:all`      | Check formatting + analyze                  |
-| `test:all`      | Run all tests via melos                     |
+| Command         | Description                                    |
+| --------------- | ---------------------------------------------- |
+| `dart pub get`  | Resolve all workspace dependencies             |
+| `melos analyze` | Run `dart analyze` across all packages         |
+| `melos test`    | Run tests in all packages with test dirs       |
+| `dprint check`  | Check formatting                               |
+| `dprint fmt`    | Fix formatting                                 |
+| `clone:repos`   | Clone/update reference repos into `.repos/`    |
+| `install:eget`  | Install binaries via eget                      |
+| `fix:all`       | Fix formatting + lint                          |
+| `lint:all`      | Check formatting + analyze                     |
+| `test:all`      | Run all tests via melos                        |
+| `test:coverage` | Generate merged LCOV coverage for all packages |
 
 ## Package Dependency Graph (Core)
 
