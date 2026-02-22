@@ -1,5 +1,10 @@
 # solana_kit_transactions
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_transactions.svg)](https://pub.dev/packages/solana_kit_transactions)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_transactions/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 Compile, sign, encode, and decode Solana transactions.
 
 This is the Dart port of [`@solana/transactions`](https://github.com/anza-xyz/kit/tree/main/packages/transactions) from the Solana TypeScript SDK.
@@ -17,6 +22,11 @@ Since this package is part of the `solana_kit` workspace, you can also use the u
 dependencies:
   solana_kit:
 ```
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_transactions
+- API reference: https://pub.dev/documentation/solana_kit_transactions/latest/
 
 ## Usage
 

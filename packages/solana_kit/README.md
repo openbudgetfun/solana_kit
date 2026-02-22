@@ -1,5 +1,10 @@
 # solana_kit
 
+[![pub package](https://img.shields.io/pub/v/solana_kit.svg)](https://pub.dev/packages/solana_kit)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 The Solana Kit Dart SDK -- a comprehensive, modular Dart port of the [Solana TypeScript SDK (`@solana/kit`)](https://github.com/anza-xyz/kit).
 
 This is the umbrella package that re-exports all 35 public packages in the SDK, giving you a single import for the entire Solana development toolkit.
@@ -50,6 +55,11 @@ Future<void> main() async {
   }
 }
 ```
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit
+- API reference: https://pub.dev/documentation/solana_kit/latest/
 
 ## Usage
 

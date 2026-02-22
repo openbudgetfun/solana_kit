@@ -1,5 +1,10 @@
 # solana_kit_signers
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_signers.svg)](https://pub.dev/packages/solana_kit_signers)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_signers/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 Signer interfaces and utilities for signing Solana messages and transactions -- a Dart port of [`@solana/signers`](https://github.com/anza-xyz/kit/tree/main/packages/signers).
 
 ## Installation
@@ -17,6 +22,11 @@ Or, if you are using the umbrella package:
 dependencies:
   solana_kit:
 ```
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_signers
+- API reference: https://pub.dev/documentation/solana_kit_signers/latest/
 
 ## Usage
 

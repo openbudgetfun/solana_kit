@@ -1,5 +1,10 @@
 # solana_kit_mobile_wallet_adapter
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_mobile_wallet_adapter.svg)](https://pub.dev/packages/solana_kit_mobile_wallet_adapter)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_mobile_wallet_adapter/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 Flutter plugin for the [Solana Mobile Wallet Adapter](https://github.com/solana-mobile/mobile-wallet-adapter) (MWA) protocol. Enables dApps and wallet apps to communicate for transaction signing on Android.
 
 **Android-only.** MWA is not supported on iOS. This plugin compiles and runs on iOS without crashing (no-op), so mixed-platform Flutter apps work without conditional compilation.
@@ -20,6 +25,19 @@ Flutter plugin for the [Solana Mobile Wallet Adapter](https://github.com/solana-
 - **`WalletScenarioCallbacks`** - Interface for handling authorize, sign, and deauthorize requests
 - **Typed request/response** - `AuthorizeDappRequest`, `SignTransactionsRequest`, etc. with `completeWith*` methods
 - **`MobileWalletAdapterConfig`** - Wallet capabilities (max payloads, features, transaction versions)
+
+## Installation
+
+```bash
+flutter pub add solana_kit_mobile_wallet_adapter
+```
+
+If you're working inside the `solana_kit` monorepo, workspace resolution uses local packages automatically.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_mobile_wallet_adapter
+- API reference: https://pub.dev/documentation/solana_kit_mobile_wallet_adapter/latest/
 
 ## Usage
 

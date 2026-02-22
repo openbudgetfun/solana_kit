@@ -1,19 +1,28 @@
 # solana_kit_rpc_api
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_rpc_api.svg)](https://pub.dev/packages/solana_kit_rpc_api)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_rpc_api/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 RPC method type definitions and API composition for the Solana Kit Dart SDK.
 
 This is the Dart port of [`@solana/rpc-api`](https://github.com/anza-xyz/kit/tree/main/packages/rpc-api) from the Solana TypeScript SDK.
 
 ## Installation
 
-Add the dependency to your `pubspec.yaml`:
+Install with:
 
-```yaml
-dependencies:
-  solana_kit_rpc_api:
+```bash
+dart pub add solana_kit_rpc_api
 ```
 
 If you are working within the `solana_kit` monorepo, the package resolves through the Dart workspace. Otherwise, specify a version or path as needed.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_rpc_api
+- API reference: https://pub.dev/documentation/solana_kit_rpc_api/latest/
 
 ## Usage
 

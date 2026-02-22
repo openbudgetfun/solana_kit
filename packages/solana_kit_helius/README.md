@@ -1,5 +1,10 @@
 # solana_kit_helius
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_helius.svg)](https://pub.dev/packages/solana_kit_helius)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_helius/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 Helius SDK for the Solana Kit Dart SDK. A Dart port of the [Helius TypeScript SDK](https://github.com/helius-labs/helius-sdk), providing DAS API, enhanced transactions, webhooks, smart transactions, ZK compression, staking, wallet API, WebSocket subscriptions, and auth.
 
 ## Features
@@ -15,6 +20,19 @@ Helius SDK for the Solana Kit Dart SDK. A Dart port of the [Helius TypeScript SD
 - **Auth** - Project and API key management
 - **Priority Fees** - Estimate priority fees for transactions
 - **RPC V2** - Enhanced RPC methods with pagination
+
+## Installation
+
+```bash
+dart pub add solana_kit_helius
+```
+
+If you're working inside the `solana_kit` monorepo, workspace resolution uses local packages automatically.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_helius
+- API reference: https://pub.dev/documentation/solana_kit_helius/latest/
 
 ## Usage
 

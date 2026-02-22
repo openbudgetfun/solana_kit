@@ -1,5 +1,10 @@
 # solana_kit_transaction_messages
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_transaction_messages.svg)](https://pub.dev/packages/solana_kit_transaction_messages)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_transaction_messages/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 Build, compile, and decompile Solana transaction messages.
 
 This is the Dart port of [`@solana/transaction-messages`](https://github.com/anza-xyz/kit/tree/main/packages/transaction-messages) from the Solana TypeScript SDK.
@@ -17,6 +22,11 @@ Since this package is part of the `solana_kit` workspace, you can also use the u
 dependencies:
   solana_kit:
 ```
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_transaction_messages
+- API reference: https://pub.dev/documentation/solana_kit_transaction_messages/latest/
 
 ## Usage
 

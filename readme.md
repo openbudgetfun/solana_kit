@@ -1,6 +1,7 @@
 # Solana Kit Dart SDK
 
 [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
 
 A Dart port of the [Solana TypeScript SDK](https://github.com/anza-xyz/kit) (`@solana/kit`). This monorepo contains 39 packages that mirror the upstream TS package structure, built with modern Dart 3.10+ features including sealed classes, extension types, records, and patterns.
 
@@ -58,9 +59,14 @@ lint:all
 # Run all tests
 test:all
 
+# Generate merged test coverage across all packages
+melos run coverage
+
 # Fix formatting and lint issues
 fix:all
 ```
+
+The merged LCOV report is written to `coverage/lcov.info`.
 
 ## Packages
 

@@ -1,5 +1,10 @@
 # solana_kit_mobile_wallet_adapter_protocol
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_mobile_wallet_adapter_protocol.svg)](https://pub.dev/packages/solana_kit_mobile_wallet_adapter_protocol)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_mobile_wallet_adapter_protocol/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 Pure Dart implementation of the [Solana Mobile Wallet Adapter](https://github.com/solana-mobile/mobile-wallet-adapter) v2.0 protocol. Handles P-256 cryptography, session handshakes, encrypted message framing, JSON-RPC request/response encoding, association URI building/parsing, and protocol version negotiation.
 
 This package has **zero Flutter dependency** and can be used in server-side Dart, CLI tools, or any Dart environment.
@@ -16,6 +21,19 @@ This package has **zero Flutter dependency** and can be used in server-side Dart
 - **Sign In With Solana (SIWS)** message builder following EIP-4361
 - **JWS ES256** compact serialization for attestation
 - **Central error codes** integrated with `solana_kit_errors`
+
+## Installation
+
+```bash
+dart pub add solana_kit_mobile_wallet_adapter_protocol
+```
+
+If you're working inside the `solana_kit` monorepo, workspace resolution uses local packages automatically.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_mobile_wallet_adapter_protocol
+- API reference: https://pub.dev/documentation/solana_kit_mobile_wallet_adapter_protocol/latest/
 
 ## Usage
 

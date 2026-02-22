@@ -1,5 +1,10 @@
 # solana_kit_program_client_core
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_program_client_core.svg)](https://pub.dev/packages/solana_kit_program_client_core)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_program_client_core/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 Core building blocks for generated Solana program clients in the Solana Kit Dart SDK.
 
 This package provides the foundational types and utilities used by generated program clients, including instruction types that track storage changes, self-fetch functions for decoder-based account retrieval, and instruction input resolution helpers.
@@ -19,6 +24,11 @@ Or, if you are using the umbrella package:
 dependencies:
   solana_kit:
 ```
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_program_client_core
+- API reference: https://pub.dev/documentation/solana_kit_program_client_core/latest/
 
 ## Usage
 

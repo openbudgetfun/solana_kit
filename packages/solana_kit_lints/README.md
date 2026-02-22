@@ -1,19 +1,28 @@
 # solana_kit_lints
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_lints.svg)](https://pub.dev/packages/solana_kit_lints)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_lints/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 Shared lint rules for all packages in the Solana Kit Dart SDK.
 
 This is an internal package (`publish_to: none`) that centralizes the analysis configuration for the monorepo. It is not published to pub.dev.
 
 ## Installation
 
-Add the dependency to your `pubspec.yaml`:
+Install with:
 
-```yaml
-dev_dependencies:
-  solana_kit_lints:
+```bash
+dart pub add --dev solana_kit_lints
 ```
 
 Within the `solana_kit` monorepo, the package resolves through the Dart workspace. This package is not intended for use outside the monorepo.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_lints
+- API reference: https://pub.dev/documentation/solana_kit_lints/latest/
 
 ## Usage
 

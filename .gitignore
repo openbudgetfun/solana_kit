@@ -13,6 +13,7 @@ devenv.local.yaml
 # Dart
 .dart_tool/
 build/
+coverage/
 .packages
 .pub/
 pubspec.lock

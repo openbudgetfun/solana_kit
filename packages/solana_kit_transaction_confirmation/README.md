@@ -1,5 +1,10 @@
 # solana_kit_transaction_confirmation
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_transaction_confirmation.svg)](https://pub.dev/packages/solana_kit_transaction_confirmation)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_transaction_confirmation/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 Transaction confirmation tracking for the Solana Kit Dart SDK -- provides multiple strategies to confirm or detect expiry of Solana transactions.
 
 This is the Dart port of [`@solana/transaction-confirmation`](https://github.com/anza-xyz/kit/tree/main/packages/transaction-confirmation) from the Solana TypeScript SDK.
@@ -19,6 +24,11 @@ Or, if you are using the umbrella package:
 dependencies:
   solana_kit:
 ```
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_transaction_confirmation
+- API reference: https://pub.dev/documentation/solana_kit_transaction_confirmation/latest/
 
 ## Usage
 

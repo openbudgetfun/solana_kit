@@ -1,5 +1,10 @@
 # solana_kit_offchain_messages
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_offchain_messages.svg)](https://pub.dev/packages/solana_kit_offchain_messages)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_offchain_messages/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 Create, compile, sign, and verify Solana offchain messages.
 
 Offchain messages allow wallets and applications to sign structured messages that are never submitted to the Solana network. This is the Dart implementation of the [Solana offchain message signing specification](https://github.com/solana-labs/solana/blob/master/docs/src/proposals/off-chain-message-signing.md), related to the signing capabilities in [`@solana/keys`](https://github.com/anza-xyz/kit/tree/main/packages/keys) from the Solana TypeScript SDK.
@@ -17,6 +22,11 @@ Since this package is part of the `solana_kit` workspace, you can also use the u
 dependencies:
   solana_kit:
 ```
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_offchain_messages
+- API reference: https://pub.dev/documentation/solana_kit_offchain_messages/latest/
 
 ## Usage
 

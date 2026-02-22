@@ -1,5 +1,10 @@
 # solana_kit_instruction_plans
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_instruction_plans.svg)](https://pub.dev/packages/solana_kit_instruction_plans)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_instruction_plans/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 Plan, organize, and execute complex multi-instruction and multi-transaction operations on Solana.
 
 This is the Dart port of [`@solana/instruction-plans`](https://github.com/anza-xyz/kit/tree/main/packages/instruction-plans) from the Solana TypeScript SDK.
@@ -32,6 +37,11 @@ The workflow has three stages:
 1. **Instruction Plan** -- Describe what needs to happen.
 2. **Transaction Planner** -- Convert instruction plans into transaction plans (decides how instructions are grouped into transactions).
 3. **Transaction Plan Executor** -- Compile, sign, send, and report results.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_instruction_plans
+- API reference: https://pub.dev/documentation/solana_kit_instruction_plans/latest/
 
 ## Usage
 

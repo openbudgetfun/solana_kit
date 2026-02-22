@@ -1,5 +1,10 @@
 # solana_kit_options
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_options.svg)](https://pub.dev/packages/solana_kit_options)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_options/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 A Rust-like `Option<T>` type and corresponding codec for encoding and decoding optional values in Solana on-chain data.
 
 This is a Dart port of [`@solana/options`](https://github.com/anza-xyz/kit/tree/main/packages/options) from the Solana TypeScript SDK.
@@ -12,6 +17,11 @@ dependencies:
 ```
 
 Since this package is part of the `solana_kit` Dart workspace, it is resolved automatically. For standalone use, point to the repository or use a path dependency.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_options
+- API reference: https://pub.dev/documentation/solana_kit_options/latest/
 
 ## Usage
 

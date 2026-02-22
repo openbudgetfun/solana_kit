@@ -22,7 +22,8 @@
       },
       {
         "command": "dartfmt {{file_path}}",
-        "exts": ["dart"]
+        "exts": ["dart"],
+        "stdin": false
       }
     ]
   },

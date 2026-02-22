@@ -1,5 +1,10 @@
 # solana_kit_test_matchers
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_test_matchers.svg)](https://pub.dev/packages/solana_kit_test_matchers)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_test_matchers/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 Custom test matchers for the Solana Kit Dart SDK -- provides assertion helpers for Solana errors, addresses, byte arrays, and transactions.
 
 This is an internal package (`publish_to: none`) used by other packages in the `solana_kit` monorepo for testing.
@@ -14,6 +19,11 @@ dev_dependencies:
 ```
 
 This package is not published to pub.dev.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_test_matchers
+- API reference: https://pub.dev/documentation/solana_kit_test_matchers/latest/
 
 ## Usage
 

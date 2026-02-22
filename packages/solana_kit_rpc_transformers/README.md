@@ -1,19 +1,28 @@
 # solana_kit_rpc_transformers
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_rpc_transformers.svg)](https://pub.dev/packages/solana_kit_rpc_transformers)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_rpc_transformers/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 Request and response transformers for the Solana Kit Dart SDK.
 
 This is the Dart port of [`@solana/rpc-transformers`](https://github.com/anza-xyz/kit/tree/main/packages/rpc-transformers) from the Solana TypeScript SDK.
 
 ## Installation
 
-Add the dependency to your `pubspec.yaml`:
+Install with:
 
-```yaml
-dependencies:
-  solana_kit_rpc_transformers:
+```bash
+dart pub add solana_kit_rpc_transformers
 ```
 
 If you are working within the `solana_kit` monorepo, the package resolves through the Dart workspace. Otherwise, specify a version or path as needed.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_rpc_transformers
+- API reference: https://pub.dev/documentation/solana_kit_rpc_transformers/latest/
 
 ## Usage
 

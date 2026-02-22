@@ -1,5 +1,10 @@
 # solana_kit_codecs_strings
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_codecs_strings.svg)](https://pub.dev/packages/solana_kit_codecs_strings)
+[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_codecs_strings/latest/)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+
 String codecs for encoding and decoding string data in various bases (base-10, base-16, base-58, base-64, UTF-8) for Solana data structures.
 
 This is a Dart port of [`@solana/codecs-strings`](https://github.com/anza-xyz/kit/tree/main/packages/codecs-strings) from the Solana TypeScript SDK.
@@ -12,6 +17,11 @@ dependencies:
 ```
 
 Since this package is part of the `solana_kit` Dart workspace, it is resolved automatically. For standalone use, point to the repository or use a path dependency.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_codecs_strings
+- API reference: https://pub.dev/documentation/solana_kit_codecs_strings/latest/
 
 ## Usage
 

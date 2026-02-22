@@ -7,14 +7,14 @@ on:
     branches: [main]
 
 jobs:
-  analyze:
+  lint:
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/devenv
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: analyze
+      - name: lint all
         run: lint:all
         shell: devenv shell -- bash -e {0}
 
