@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { join, dirname, relative, posix } from "node:path";
 
 import { type RootNode } from "@codama/nodes";
 import { rootNodeVisitor, visit } from "@codama/visitors-core";
@@ -40,7 +40,16 @@ export function renderVisitor(
       getRenderMapVisitor({ nameApi, dependencyMap }),
     );
 
-    // 3. Resolve imports and write files
+    // 3. Build a map of definedType module keys to their render map paths
+    const typePathMap: Record<string, string> = {};
+    for (const renderPath of renderMap.keys()) {
+      const match = renderPath.match(/^(?:.*\/)?types\/([a-z_]+)\.dart$/);
+      if (match) {
+        typePathMap[`definedType:${match[1]}`] = renderPath;
+      }
+    }
+
+    // 4. Resolve imports and write files
     for (const [filePath, frag] of renderMap.entries()) {
       const fullPath = join(outputDir, filePath);
       const dir = dirname(fullPath);
@@ -50,8 +59,21 @@ export function renderVisitor(
         mkdirSync(dir, { recursive: true });
       }
 
+      // Compute per-file internal import map (relative paths to defined types)
+      const fileDir = dirname(filePath);
+      const internalMap: Record<string, string> = {};
+      for (const [key, typePath] of Object.entries(typePathMap)) {
+        // Don't import yourself
+        if (typePath === filePath) continue;
+        let rel = posix.relative(fileDir, typePath);
+        if (!rel.startsWith(".")) {
+          rel = `./${rel}`;
+        }
+        internalMap[key] = rel;
+      }
+
       // Resolve fragment content with imports
-      const content = resolveFragmentContent(frag, dependencyMap ?? {});
+      const content = resolveFragmentContent(frag, dependencyMap ?? {}, internalMap);
       writeFileSync(fullPath, content, "utf-8");
     }
 
@@ -69,12 +91,9 @@ export function renderVisitor(
 function resolveFragmentContent(
   frag: Fragment,
   dependencyMap: Record<string, string>,
+  internalMap: Record<string, string> = {},
 ): string {
   const { content, imports } = frag;
-
-  // Build internal map (for cross-references between generated files)
-  // This is simplified — in practice, you'd compute relative paths
-  const internalMap: Record<string, string> = {};
 
   const importStr = imports.toString({
     ...internalMap,

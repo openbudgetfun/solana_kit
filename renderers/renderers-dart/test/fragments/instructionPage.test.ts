@@ -111,9 +111,9 @@ describe("getInstructionPageFragment", () => {
     });
     const frag = getInstructionPageFragment(node, createScope());
 
-    expect(frag.content).toContain("AccountRole.signerReadonly");
+    expect(frag.content).toContain("AccountRole.readonlySigner");
     expect(frag.content).toContain("AccountRole.writable");
-    expect(frag.content).toContain("AccountRole.signerWritable");
+    expect(frag.content).toContain("AccountRole.writableSigner");
     expect(frag.content).toContain("AccountRole.readonly");
   });
 
@@ -277,6 +277,8 @@ describe("getInstructionPageFragment", () => {
     expect(frag.imports.modules.has("solanaCodecsDataStructures")).toBe(true);
     expect(frag.imports.modules.has("solanaAddresses")).toBe(true);
     expect(frag.imports.modules.has("solanaInstructions")).toBe(true);
+    // Arg type imports should be merged in (u64 requires solanaCodecsNumbers)
+    expect(frag.imports.modules.has("solanaCodecsNumbers")).toBe(true);
   });
 
   it("handles instruction with no arguments", () => {

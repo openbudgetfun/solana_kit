@@ -38,20 +38,24 @@ export function getInstructionPageFragment(
   // Build the instruction data class
   const dataClassName = `${typeName}InstructionData`;
 
+  // Visit each arg type once and collect manifests for reuse
+  const allArgManifests = allArgs.map((arg) => ({
+    arg,
+    manifest: visit(arg.type, scope.typeManifestVisitor),
+  }));
+
   // Data fields (non-discriminator arguments)
-  const dataFieldDecls = allArgs
-    .map((arg) => {
-      const manifest = visit(arg.type, scope.typeManifestVisitor);
+  const dataFieldDecls = allArgManifests
+    .map(({ arg, manifest }) => {
       const fieldName = camelCase(arg.name as string);
       return `  final ${manifest.type.content} ${fieldName};`;
     })
     .join("\n");
 
-  const dataCtorParams = allArgs
-    .map((arg) => {
+  const dataCtorParams = allArgManifests
+    .map(({ arg }) => {
       const fieldName = camelCase(arg.name as string);
       if (isDiscriminatorArg(arg, node)) {
-        const manifest = visit(arg.type, scope.typeManifestVisitor);
         return `    this.${fieldName} = ${getDiscriminatorDefault(arg, node)},`;
       }
       return `    required this.${fieldName},`;
@@ -59,16 +63,14 @@ export function getInstructionPageFragment(
     .join("\n");
 
   // Encoder/decoder for instruction data
-  const encFields = allArgs
-    .map((arg) => {
-      const manifest = visit(arg.type, scope.typeManifestVisitor);
+  const encFields = allArgManifests
+    .map(({ arg, manifest }) => {
       return `    ('${arg.name as string}', ${manifest.encoder.content}),`;
     })
     .join("\n");
 
-  const decFields = allArgs
-    .map((arg) => {
-      const manifest = visit(arg.type, scope.typeManifestVisitor);
+  const decFields = allArgManifests
+    .map(({ arg, manifest }) => {
       return `    ('${arg.name as string}', ${manifest.decoder.content}),`;
     })
     .join("\n");
@@ -80,10 +82,12 @@ export function getInstructionPageFragment(
     )
     .join("\n");
 
-  const fromMapFields = allArgs
-    .map((arg) => {
-      const manifest = visit(arg.type, scope.typeManifestVisitor);
-      return `      ${camelCase(arg.name as string)}: map['${arg.name as string}']! as ${manifest.type.content},`;
+  const fromMapFields = allArgManifests
+    .map(({ arg, manifest }) => {
+      const typeStr = manifest.type.content;
+      const isNullable = typeStr.endsWith("?");
+      const accessor = isNullable ? `map['${arg.name as string}']` : `map['${arg.name as string}']!`;
+      return `      ${camelCase(arg.name as string)}: ${accessor} as ${typeStr},`;
     })
     .join("\n");
 
@@ -102,9 +106,11 @@ export function getInstructionPageFragment(
     })
     .join("\n");
 
+  // Build argParams using manifests from the allArgManifests (filtered to non-discriminator args)
+  const argManifestMap = new Map(allArgManifests.map(({ arg, manifest }) => [arg, manifest]));
   const argParams = args
     .map((arg) => {
-      const manifest = visit(arg.type, scope.typeManifestVisitor);
+      const manifest = argManifestMap.get(arg)!;
       const fieldName = camelCase(arg.name as string);
       const hasDefault = arg.defaultValue != null;
       if (hasDefault) {
@@ -197,7 +203,7 @@ ${fragmentFromString(decFields)}
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map) => ${fragmentFromString(dataClassName)}(
+    (Map<String, Object?> map, Uint8List bytes, int offset) => ${fragmentFromString(dataClassName)}(
 ${fragmentFromString(fromMapFields)}
     ),
   );
@@ -235,15 +241,24 @@ ${fragmentFromString(dataClassName)} ${fragmentFromString(parseFnName)}(Instruct
   return ${fragmentFromString(dataDecoderName)}().decode(instruction.data!);
 }`);
 
-  return mergeFragments(parts, (cs) => cs.join("\n"));
+  const result = mergeFragments(parts, (cs) => cs.join("\n"));
+
+  // Merge arg type manifest imports (encoder, decoder, type) into the result
+  for (const { manifest } of allArgManifests) {
+    result.imports.mergeWith(manifest.encoder.imports);
+    result.imports.mergeWith(manifest.decoder.imports);
+    result.imports.mergeWith(manifest.type.imports);
+  }
+
+  return result;
 }
 
 function getAccountRole(acc: InstructionAccountNode): string {
   const isSigner = acc.isSigner === true || acc.isSigner === "either";
   const isWritable = acc.isWritable ?? false;
 
-  if (isSigner && isWritable) return "AccountRole.signerWritable";
-  if (isSigner) return "AccountRole.signerReadonly";
+  if (isSigner && isWritable) return "AccountRole.writableSigner";
+  if (isSigner) return "AccountRole.readonlySigner";
   if (isWritable) return "AccountRole.writable";
   return "AccountRole.readonly";
 }

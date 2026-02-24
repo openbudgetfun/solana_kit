@@ -332,7 +332,7 @@ describe("E2E: renderVisitor", () => {
 
     // Account metas with correct roles
     expect(content).toContain("AccountMeta(address: counterAccount, role: AccountRole.writable)");
-    expect(content).toContain("AccountMeta(address: authority, role: AccountRole.signerReadonly)");
+    expect(content).toContain("AccountMeta(address: authority, role: AccountRole.readonlySigner)");
     expect(content).toContain("AccountMeta(address: systemProgram, role: AccountRole.readonly)");
 
     // Parse function
@@ -366,7 +366,7 @@ describe("E2E: renderVisitor", () => {
 
     // Account metas: authority is signer+writable
     expect(content).toContain("AccountMeta(address: counterAccount, role: AccountRole.writable)");
-    expect(content).toContain("AccountMeta(address: authority, role: AccountRole.signerWritable)");
+    expect(content).toContain("AccountMeta(address: authority, role: AccountRole.writableSigner)");
 
     // Parse function
     expect(content).toContain("IncrementInstructionData parseIncrementInstruction(Instruction instruction)");

@@ -28,9 +28,14 @@ export function getAccountPageFragment(
   // Fields from the struct data
   const fields = dataNode.fields;
 
-  const fieldDecls = fields
-    .map((f: StructFieldTypeNode) => {
-      const manifest = visit(f.type, scope.typeManifestVisitor);
+  // Visit each field type once and collect manifests for reuse
+  const fieldManifests = fields.map((f: StructFieldTypeNode) => ({
+    field: f,
+    manifest: visit(f.type, scope.typeManifestVisitor),
+  }));
+
+  const fieldDecls = fieldManifests
+    .map(({ field: f, manifest }) => {
       return `  final ${manifest.type.content} ${camelCase(f.name as string)};`;
     })
     .join("\n");
@@ -61,16 +66,14 @@ export function getAccountPageFragment(
     .join(", ");
 
   // Encoder fields
-  const encFields = fields
-    .map((f: StructFieldTypeNode) => {
-      const manifest = visit(f.type, scope.typeManifestVisitor);
+  const encFields = fieldManifests
+    .map(({ field: f, manifest }) => {
       return `    ('${f.name as string}', ${manifest.encoder.content}),`;
     })
     .join("\n");
 
-  const decFields = fields
-    .map((f: StructFieldTypeNode) => {
-      const manifest = visit(f.type, scope.typeManifestVisitor);
+  const decFields = fieldManifests
+    .map(({ field: f, manifest }) => {
       return `    ('${f.name as string}', ${manifest.decoder.content}),`;
     })
     .join("\n");
@@ -82,10 +85,12 @@ export function getAccountPageFragment(
     )
     .join("\n");
 
-  const fromMapFields = fields
-    .map((f: StructFieldTypeNode) => {
-      const manifest = visit(f.type, scope.typeManifestVisitor);
-      return `      ${camelCase(f.name as string)}: map['${f.name as string}']! as ${manifest.type.content},`;
+  const fromMapFields = fieldManifests
+    .map(({ field: f, manifest }) => {
+      const typeStr = manifest.type.content;
+      const isNullable = typeStr.endsWith("?");
+      const accessor = isNullable ? `map['${f.name as string}']` : `map['${f.name as string}']!`;
+      return `      ${camelCase(f.name as string)}: ${accessor} as ${typeStr},`;
     })
     .join("\n");
 
@@ -169,7 +174,7 @@ ${fragmentFromString(decFields)}
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map) => ${fragmentFromString(typeName)}(
+    (Map<String, Object?> map, Uint8List bytes, int offset) => ${fragmentFromString(typeName)}(
 ${fragmentFromString(fromMapFields)}
     ),
   );
@@ -183,5 +188,14 @@ Account<${fragmentFromString(typeName)}> ${fragmentFromString(decodeFnName)}(Enc
   return decodeAccount(encodedAccount, ${fragmentFromString(decoderName)}());
 }`);
 
-  return mergeFragments(parts, (cs) => cs.join("\n\n"));
+  const result = mergeFragments(parts, (cs) => cs.join("\n\n"));
+
+  // Merge field type manifest imports (encoder, decoder, type) into the result
+  for (const { manifest } of fieldManifests) {
+    result.imports.mergeWith(manifest.encoder.imports);
+    result.imports.mergeWith(manifest.decoder.imports);
+    result.imports.mergeWith(manifest.type.imports);
+  }
+
+  return result;
 }

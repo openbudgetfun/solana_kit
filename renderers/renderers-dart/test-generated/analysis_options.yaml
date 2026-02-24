@@ -1,0 +1,8 @@
+include: package:solana_kit_lints/analysis_options.yaml
+
+analyzer:
+  errors:
+    unused_import: ignore
+    unused_local_variable: ignore
+  exclude:
+    - lib/src/**

@@ -192,6 +192,42 @@ describe("getTypePageFragment", () => {
       expect(frag.content).toContain("// Auto-generated. Do not edit.");
       expect(frag.content).toContain("// ignore_for_file: type=lint");
     });
+
+    it("includes field type codec imports (e.g. solanaCodecsNumbers)", () => {
+      const node = definedTypeNode({
+        name: "myStruct",
+        type: structTypeNode([
+          structFieldTypeNode({
+            name: "amount",
+            type: numberTypeNode("u64"),
+          }),
+          structFieldTypeNode({
+            name: "count",
+            type: numberTypeNode("u16"),
+          }),
+        ]),
+      });
+      const frag = getTypePageFragment(node, createScope());
+
+      expect(frag.imports.modules.has("solanaCodecsNumbers")).toBe(true);
+      expect(frag.imports.modules.has("solanaCodecsCore")).toBe(true);
+      expect(frag.imports.modules.has("solanaCodecsDataStructures")).toBe(true);
+    });
+
+    it("includes field type imports for address fields", () => {
+      const node = definedTypeNode({
+        name: "myStruct",
+        type: structTypeNode([
+          structFieldTypeNode({
+            name: "owner",
+            type: publicKeyTypeNode(),
+          }),
+        ]),
+      });
+      const frag = getTypePageFragment(node, createScope());
+
+      expect(frag.imports.modules.has("solanaAddresses")).toBe(true);
+    });
   });
 
   describe("scalar enum types", () => {
@@ -239,7 +275,7 @@ describe("getTypePageFragment", () => {
 
       expect(frag.content).toContain("Decoder<Status> getStatusDecoder()");
       expect(frag.content).toContain("transformDecoder");
-      expect(frag.content).toContain("Status.values[value.toInt()]");
+      expect(frag.content).toContain("Status.values[value]");
     });
 
     it("generates codec function", () => {

@@ -84,8 +84,8 @@ ${use("Codec", "solanaCodecsCore")}
 ${use("combineCodec", "solanaCodecsCore")}
 ${use("transformEncoder", "solanaCodecsCore")}
 ${use("transformDecoder", "solanaCodecsCore")}
-${use("get${sizeCodecName}Encoder", "solanaCodecsNumbers")}
-${use("get${sizeCodecName}Decoder", "solanaCodecsNumbers")}
+${use(`get${sizeCodecName}Encoder`, "solanaCodecsNumbers")}
+${use(`get${sizeCodecName}Decoder`, "solanaCodecsNumbers")}
 
 enum ${fragmentFromString(typeName)} {
 ${fragmentFromString(variantLines)}
@@ -101,7 +101,7 @@ Encoder<${fragmentFromString(typeName)}> ${fragmentFromString(encoderName)}() {
 Decoder<${fragmentFromString(typeName)}> ${fragmentFromString(decoderName)}() {
   return transformDecoder(
     get${fragmentFromString(sizeCodecName)}Decoder(),
-    (num value) => ${fragmentFromString(typeName)}.values[value.toInt()],
+    (int value, Uint8List bytes, int offset) => ${fragmentFromString(typeName)}.values[value],
   );
 }
 
@@ -125,6 +125,8 @@ function getDataEnumPageFragment(
   const variantClasses: string[] = [];
   const encoderVariants: string[] = [];
   const decoderVariants: string[] = [];
+  // Collect all field type manifests from variants so we can merge their imports
+  const allVariantManifests: { encoder: Fragment; decoder: Fragment; type: Fragment }[] = [];
 
   for (let i = 0; i < enumNode.variants.length; i++) {
     const variant = enumNode.variants[i];
@@ -157,9 +159,18 @@ function getDataEnumPageFragment(
     } else if (variant.kind === "enumStructVariantTypeNode") {
       const resolvedStruct = resolveNestedTypeNode(variant.struct);
       const fields = resolvedStruct.fields;
-      const fieldDecls = fields
-        .map((f: StructFieldTypeNode) => {
-          const manifest = visit(f.type, scope.typeManifestVisitor);
+
+      // Visit each field type once and collect manifests
+      const fieldManifests = fields.map((f: StructFieldTypeNode) => ({
+        field: f,
+        manifest: visit(f.type, scope.typeManifestVisitor),
+      }));
+      for (const { manifest } of fieldManifests) {
+        allVariantManifests.push(manifest);
+      }
+
+      const fieldDecls = fieldManifests
+        .map(({ field: f, manifest }) => {
           return `  final ${manifest.type.content} ${camelCase(f.name as string)};`;
         })
         .join("\n");
@@ -200,24 +211,26 @@ ${fieldDecls}
   String toString() => '${typeName}.${variantClassName}(${toStringFields})';
 }`);
 
-      const encFields = fields
-        .map((f: StructFieldTypeNode) => {
-          const manifest = visit(f.type, scope.typeManifestVisitor);
+      const encFields = fieldManifests
+        .map(({ field: f, manifest }) => {
           return `('${f.name as string}', ${manifest.encoder.content})`;
         })
         .join(", ");
 
-      const decFields = fields
-        .map((f: StructFieldTypeNode) => {
-          const manifest = visit(f.type, scope.typeManifestVisitor);
+      const decFields = fieldManifests
+        .map(({ field: f, manifest }) => {
           return `('${f.name as string}', ${manifest.decoder.content})`;
         })
         .join(", ");
 
-      const fromMapFields = fields
+      const fromMapFields = fieldManifests
         .map(
-          (f: StructFieldTypeNode) =>
-            `${camelCase(f.name as string)}: map['${f.name as string}']! as ${visit(f.type, scope.typeManifestVisitor).type.content}`,
+          ({ field: f, manifest }) => {
+            const typeStr = manifest.type.content;
+            const isNullable = typeStr.endsWith("?");
+            const accessor = isNullable ? `map['${f.name as string}']` : `map['${f.name as string}']!`;
+            return `${camelCase(f.name as string)}: ${accessor} as ${typeStr}`;
+          },
         )
         .join(", ");
 
@@ -232,13 +245,14 @@ ${fieldDecls}
         `(${i}, transformEncoder(getStructEncoder([${encFields}]), (${variantClassName} value) => <String, Object?>{${toMapFields}}))`,
       );
       decoderVariants.push(
-        `(${i}, transformDecoder(getStructDecoder([${decFields}]), (Map<String, Object?> map) => ${variantClassName}(${fromMapFields})))`,
+        `(${i}, transformDecoder(getStructDecoder([${decFields}]), (Map<String, Object?> map, Uint8List bytes, int offset) => ${variantClassName}(${fromMapFields})))`,
       );
     } else if (variant.kind === "enumTupleVariantTypeNode") {
       const resolvedTuple = resolveNestedTypeNode(variant.tuple);
       const items = resolvedTuple.items;
       if (items.length === 1) {
         const manifest = visit(items[0], scope.typeManifestVisitor);
+        allVariantManifests.push(manifest);
         variantClasses.push(`final class ${variantClassName} extends ${typeName} {
   const ${variantClassName}(this.value);
 
@@ -259,7 +273,7 @@ ${fieldDecls}
           `(${i}, transformEncoder(${manifest.encoder.content}, (${variantClassName} value) => value.value))`,
         );
         decoderVariants.push(
-          `(${i}, transformDecoder(${manifest.decoder.content}, (${manifest.type.content} value) => ${variantClassName}(value)))`,
+          `(${i}, transformDecoder(${manifest.decoder.content}, (${manifest.type.content} value, Uint8List bytes, int offset) => ${variantClassName}(value)))`,
         );
       }
     }
@@ -287,8 +301,8 @@ ${use("getStructEncoder", "solanaCodecsDataStructures")}
 ${use("getStructDecoder", "solanaCodecsDataStructures")}
 ${use("getDiscriminatedUnionEncoder", "solanaCodecsDataStructures")}
 ${use("getDiscriminatedUnionDecoder", "solanaCodecsDataStructures")}
-${use("get${sizeCodecName}Encoder", "solanaCodecsNumbers")}
-${use("get${sizeCodecName}Decoder", "solanaCodecsNumbers")}
+${use(`get${sizeCodecName}Encoder`, "solanaCodecsNumbers")}
+${use(`get${sizeCodecName}Decoder`, "solanaCodecsNumbers")}
 
 sealed class ${fragmentFromString(typeName)} {
   const ${fragmentFromString(typeName)}();
@@ -312,6 +326,13 @@ Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragme
   return combineCodec(${fragmentFromString(encoderName)}(), ${fragmentFromString(decoderName)}());
 }`;
 
+  // Merge variant field type manifest imports into the result
+  for (const manifest of allVariantManifests) {
+    result.imports.mergeWith(manifest.encoder.imports);
+    result.imports.mergeWith(manifest.decoder.imports);
+    result.imports.mergeWith(manifest.type.imports);
+  }
+
   return result;
 }
 
@@ -329,9 +350,14 @@ function getStructPageFragment(
 
   const fields = structNode.fields;
 
-  const fieldDecls = fields
-    .map((f: StructFieldTypeNode) => {
-      const manifest = visit(f.type, scope.typeManifestVisitor);
+  // Visit each field type once and collect manifests for reuse
+  const fieldManifests = fields.map((f: StructFieldTypeNode) => ({
+    field: f,
+    manifest: visit(f.type, scope.typeManifestVisitor),
+  }));
+
+  const fieldDecls = fieldManifests
+    .map(({ field: f, manifest }) => {
       return `  final ${manifest.type.content} ${camelCase(f.name as string)};`;
     })
     .join("\n");
@@ -366,16 +392,14 @@ function getStructPageFragment(
   const codecName = scope.nameApi.codecFunction(name);
 
   // Build encoder/decoder field lists
-  const encFields = fields
-    .map((f: StructFieldTypeNode) => {
-      const manifest = visit(f.type, scope.typeManifestVisitor);
+  const encFields = fieldManifests
+    .map(({ field: f, manifest }) => {
       return `    ('${f.name as string}', ${manifest.encoder.content}),`;
     })
     .join("\n");
 
-  const decFields = fields
-    .map((f: StructFieldTypeNode) => {
-      const manifest = visit(f.type, scope.typeManifestVisitor);
+  const decFields = fieldManifests
+    .map(({ field: f, manifest }) => {
       return `    ('${f.name as string}', ${manifest.decoder.content}),`;
     })
     .join("\n");
@@ -387,10 +411,12 @@ function getStructPageFragment(
     )
     .join("\n");
 
-  const fromMapFields = fields
-    .map((f: StructFieldTypeNode) => {
-      const manifest = visit(f.type, scope.typeManifestVisitor);
-      return `      ${camelCase(f.name as string)}: map['${f.name as string}']! as ${manifest.type.content},`;
+  const fromMapFields = fieldManifests
+    .map(({ field: f, manifest }) => {
+      const typeStr = manifest.type.content;
+      const isNullable = typeStr.endsWith("?");
+      const accessor = isNullable ? `map['${f.name as string}']` : `map['${f.name as string}']!`;
+      return `      ${camelCase(f.name as string)}: ${accessor} as ${typeStr},`;
     })
     .join("\n");
 
@@ -450,7 +476,7 @@ ${fragmentFromString(decFields)}
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map) => ${fragmentFromString(typeName)}(
+    (Map<String, Object?> map, Uint8List bytes, int offset) => ${fragmentFromString(typeName)}(
 ${fragmentFromString(fromMapFields)}
     ),
   );
@@ -459,6 +485,13 @@ ${fragmentFromString(fromMapFields)}
 Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragmentFromString(codecName)}() {
   return combineCodec(${fragmentFromString(encoderName)}(), ${fragmentFromString(decoderName)}());
 }`;
+
+  // Merge field type manifest imports (encoder, decoder, type) into the result
+  for (const { manifest } of fieldManifests) {
+    result.imports.mergeWith(manifest.encoder.imports);
+    result.imports.mergeWith(manifest.decoder.imports);
+    result.imports.mergeWith(manifest.type.imports);
+  }
 
   return result;
 }

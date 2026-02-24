@@ -272,6 +272,8 @@ describe("getAccountPageFragment", () => {
     expect(frag.imports.modules.has("solanaCodecsCore")).toBe(true);
     expect(frag.imports.modules.has("solanaCodecsDataStructures")).toBe(true);
     expect(frag.imports.modules.has("solanaAccounts")).toBe(true);
+    // Field type imports should be merged in (u64 requires solanaCodecsNumbers)
+    expect(frag.imports.modules.has("solanaCodecsNumbers")).toBe(true);
   });
 
   it("generates field-specific encoder entries", () => {
