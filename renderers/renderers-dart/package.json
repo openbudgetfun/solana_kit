@@ -1,5 +1,5 @@
 {
-  "name": "@codama/renderers-dart",
+  "name": "codama-renderers-solana-kit-dart",
   "version": "0.1.0",
   "description": "Codama renderer for generating Dart code targeting the solana_kit SDK",
   "exports": {
@@ -26,7 +26,8 @@
     "build": "rimraf dist && tsup && tsc -p tsconfig.declarations.json",
     "lint": "eslint --ext .ts src",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "codama",
