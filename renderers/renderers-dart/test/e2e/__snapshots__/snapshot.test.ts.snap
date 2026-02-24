@@ -1,0 +1,1871 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Snapshot: Staking > should match snapshot for accounts/accounts.dart (barrel) 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+export 'stake_account.dart';
+export 'stake_pool.dart';
+
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for accounts/stake_account.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_accounts/solana_kit_accounts.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
+
+@immutable
+class StakeAccount {
+  const StakeAccount({
+    required this.discriminator,
+    required this.owner,
+    required this.pool,
+    required this.stakedAmount,
+    required this.rewardDebt,
+    required this.stakedAt,
+    required this.bump,
+  });
+
+  final Uint8List discriminator;
+  final Address owner;
+  final Address pool;
+  final BigInt stakedAmount;
+  final BigInt rewardDebt;
+  final BigInt stakedAt;
+  final int bump;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StakeAccount &&
+          runtimeType == other.runtimeType &&
+          discriminator == other.discriminator &&
+          owner == other.owner &&
+          pool == other.pool &&
+          stakedAmount == other.stakedAmount &&
+          rewardDebt == other.rewardDebt &&
+          stakedAt == other.stakedAt &&
+          bump == other.bump;
+
+  @override
+  int get hashCode => Object.hash(discriminator, owner, pool, stakedAmount, rewardDebt, stakedAt, bump);
+
+  @override
+  String toString() => 'StakeAccount(discriminator: $discriminator, owner: $owner, pool: $pool, stakedAmount: $stakedAmount, rewardDebt: $rewardDebt, stakedAt: $stakedAt, bump: $bump)';
+}
+
+
+/// The size of the [StakeAccount] account data in bytes.
+const int stakeAccountSize = 97;
+
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
+
+
+Encoder<StakeAccount> getStakeAccountEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    ('owner', getAddressEncoder()),
+    ('pool', getAddressEncoder()),
+    ('stakedAmount', getU64Encoder()),
+    ('rewardDebt', getU64Encoder()),
+    ('stakedAt', getI64Encoder()),
+    ('bump', getU8Encoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (StakeAccount value) => <String, Object?>{
+      'discriminator': value.discriminator,
+      'owner': value.owner,
+      'pool': value.pool,
+      'stakedAmount': value.stakedAmount,
+      'rewardDebt': value.rewardDebt,
+      'stakedAt': value.stakedAt,
+      'bump': value.bump,
+    },
+  );
+}
+
+Decoder<StakeAccount> getStakeAccountDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
+    ('owner', getAddressDecoder()),
+    ('pool', getAddressDecoder()),
+    ('stakedAmount', getU64Decoder()),
+    ('rewardDebt', getU64Decoder()),
+    ('stakedAt', getI64Decoder()),
+    ('bump', getU8Decoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => StakeAccount(
+      discriminator: map['discriminator']! as Uint8List,
+      owner: map['owner']! as Address,
+      pool: map['pool']! as Address,
+      stakedAmount: map['stakedAmount']! as BigInt,
+      rewardDebt: map['rewardDebt']! as BigInt,
+      stakedAt: map['stakedAt']! as BigInt,
+      bump: map['bump']! as int,
+    ),
+  );
+}
+
+Codec<StakeAccount, StakeAccount> getStakeAccountCodec() {
+  return combineCodec(getStakeAccountEncoder(), getStakeAccountDecoder());
+}
+
+Account<StakeAccount> decodeStakeAccount(EncodedAccount encodedAccount) {
+  return decodeAccount(encodedAccount, getStakeAccountDecoder());
+}
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for accounts/stake_pool.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_accounts/solana_kit_accounts.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
+
+@immutable
+class StakePool {
+  const StakePool({
+    required this.discriminator,
+    required this.admin,
+    required this.rewardMint,
+    required this.stakeMint,
+    required this.totalStaked,
+    required this.rewardRate,
+    required this.minStakeDuration,
+    required this.maxStakers,
+    required this.currentStakers,
+    required this.isActive,
+    required this.bump,
+  });
+
+  final Uint8List discriminator;
+  final Address admin;
+  final Address rewardMint;
+  final Address stakeMint;
+  final BigInt totalStaked;
+  final BigInt rewardRate;
+  final BigInt minStakeDuration;
+  final int maxStakers;
+  final int currentStakers;
+  final bool isActive;
+  final int bump;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StakePool &&
+          runtimeType == other.runtimeType &&
+          discriminator == other.discriminator &&
+          admin == other.admin &&
+          rewardMint == other.rewardMint &&
+          stakeMint == other.stakeMint &&
+          totalStaked == other.totalStaked &&
+          rewardRate == other.rewardRate &&
+          minStakeDuration == other.minStakeDuration &&
+          maxStakers == other.maxStakers &&
+          currentStakers == other.currentStakers &&
+          isActive == other.isActive &&
+          bump == other.bump;
+
+  @override
+  int get hashCode => Object.hash(discriminator, admin, rewardMint, stakeMint, totalStaked, rewardRate, minStakeDuration, maxStakers, currentStakers, isActive, bump);
+
+  @override
+  String toString() => 'StakePool(discriminator: $discriminator, admin: $admin, rewardMint: $rewardMint, stakeMint: $stakeMint, totalStaked: $totalStaked, rewardRate: $rewardRate, minStakeDuration: $minStakeDuration, maxStakers: $maxStakers, currentStakers: $currentStakers, isActive: $isActive, bump: $bump)';
+}
+
+
+/// The size of the [StakePool] account data in bytes.
+const int stakePoolSize = 138;
+
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
+
+
+Encoder<StakePool> getStakePoolEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    ('admin', getAddressEncoder()),
+    ('rewardMint', getAddressEncoder()),
+    ('stakeMint', getAddressEncoder()),
+    ('totalStaked', getU64Encoder()),
+    ('rewardRate', getU64Encoder()),
+    ('minStakeDuration', getI64Encoder()),
+    ('maxStakers', getU32Encoder()),
+    ('currentStakers', getU32Encoder()),
+    ('isActive', getBooleanEncoder()),
+    ('bump', getU8Encoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (StakePool value) => <String, Object?>{
+      'discriminator': value.discriminator,
+      'admin': value.admin,
+      'rewardMint': value.rewardMint,
+      'stakeMint': value.stakeMint,
+      'totalStaked': value.totalStaked,
+      'rewardRate': value.rewardRate,
+      'minStakeDuration': value.minStakeDuration,
+      'maxStakers': value.maxStakers,
+      'currentStakers': value.currentStakers,
+      'isActive': value.isActive,
+      'bump': value.bump,
+    },
+  );
+}
+
+Decoder<StakePool> getStakePoolDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
+    ('admin', getAddressDecoder()),
+    ('rewardMint', getAddressDecoder()),
+    ('stakeMint', getAddressDecoder()),
+    ('totalStaked', getU64Decoder()),
+    ('rewardRate', getU64Decoder()),
+    ('minStakeDuration', getI64Decoder()),
+    ('maxStakers', getU32Decoder()),
+    ('currentStakers', getU32Decoder()),
+    ('isActive', getBooleanDecoder()),
+    ('bump', getU8Decoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => StakePool(
+      discriminator: map['discriminator']! as Uint8List,
+      admin: map['admin']! as Address,
+      rewardMint: map['rewardMint']! as Address,
+      stakeMint: map['stakeMint']! as Address,
+      totalStaked: map['totalStaked']! as BigInt,
+      rewardRate: map['rewardRate']! as BigInt,
+      minStakeDuration: map['minStakeDuration']! as BigInt,
+      maxStakers: map['maxStakers']! as int,
+      currentStakers: map['currentStakers']! as int,
+      isActive: map['isActive']! as bool,
+      bump: map['bump']! as int,
+    ),
+  );
+}
+
+Codec<StakePool, StakePool> getStakePoolCodec() {
+  return combineCodec(getStakePoolEncoder(), getStakePoolDecoder());
+}
+
+Account<StakePool> decodeStakePool(EncodedAccount encodedAccount) {
+  return decodeAccount(encodedAccount, getStakePoolDecoder());
+}
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for errors/errors.dart (barrel) 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+export 'staking.dart';
+
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for errors/staking.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint, constant_identifier_names
+
+/// Error codes for the Staking program.
+
+/// PoolNotActive: The staking pool is not active.
+/// Message: "The staking pool is not active."
+const int stakingErrorPoolNotActive = 0x1770; // 6000
+
+/// MaxStakersReached: Maximum number of stakers has been reached.
+/// Message: "Maximum number of stakers has been reached."
+const int stakingErrorMaxStakersReached = 0x1771; // 6001
+
+/// StakeDurationNotMet: Minimum stake duration has not been met.
+/// Message: "Minimum stake duration has not been met."
+const int stakingErrorStakeDurationNotMet = 0x1772; // 6002
+
+/// NoRewardsAvailable: There are no rewards available to claim.
+/// Message: "There are no rewards available to claim."
+const int stakingErrorNoRewardsAvailable = 0x1773; // 6003
+
+/// InvalidStakeAmount: The stake amount must be greater than zero.
+/// Message: "The stake amount must be greater than zero."
+const int stakingErrorInvalidStakeAmount = 0x1774; // 6004
+
+/// Unauthorized: You are not authorized to perform this action.
+/// Message: "You are not authorized to perform this action."
+const int stakingErrorUnauthorized = 0x1775; // 6005
+
+/// Map of error codes to human-readable messages.
+const Map<int, String> _stakingErrorMessages = {
+    stakingErrorPoolNotActive: 'The staking pool is not active.',
+    stakingErrorMaxStakersReached: 'Maximum number of stakers has been reached.',
+    stakingErrorStakeDurationNotMet: 'Minimum stake duration has not been met.',
+    stakingErrorNoRewardsAvailable: 'There are no rewards available to claim.',
+    stakingErrorInvalidStakeAmount: 'The stake amount must be greater than zero.',
+    stakingErrorUnauthorized: 'You are not authorized to perform this action.',
+};
+
+/// Get the error message for a Staking program error code.
+String? getStakingErrorMessage(int code) {
+  return _stakingErrorMessages[code];
+}
+
+/// Check if an error code belongs to the Staking program.
+bool isStakingError(int code) {
+  return _stakingErrorMessages.containsKey(code);
+}
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for instructions/claim_rewards.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
+
+@immutable
+class ClaimRewardsInstructionData {
+  const ClaimRewardsInstructionData({
+    this.discriminator = 3,
+  });
+
+  final int discriminator;
+}
+
+Encoder<ClaimRewardsInstructionData> getClaimRewardsInstructionDataEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('discriminator', getU8Encoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (ClaimRewardsInstructionData value) => <String, Object?>{
+      'discriminator': value.discriminator,
+    },
+  );
+}
+
+Decoder<ClaimRewardsInstructionData> getClaimRewardsInstructionDataDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('discriminator', getU8Decoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => ClaimRewardsInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
+  );
+}
+
+Codec<ClaimRewardsInstructionData, ClaimRewardsInstructionData> getClaimRewardsInstructionDataCodec() {
+  return combineCodec(getClaimRewardsInstructionDataEncoder(), getClaimRewardsInstructionDataDecoder());
+}
+
+/// Creates a [ClaimRewards] instruction.
+Instruction getClaimRewardsInstruction({
+  required Address programAddress,
+  required Address pool,
+  required Address stakeAccount,
+  required Address staker,
+  required Address rewardTokenAccount,
+  required Address rewardVault,
+  required Address tokenProgram,
+
+}) {
+  final data = ClaimRewardsInstructionData(
+
+  );
+
+  return Instruction(
+    programAddress: programAddress,
+    accounts: [
+    AccountMeta(address: pool, role: AccountRole.writable),
+    AccountMeta(address: stakeAccount, role: AccountRole.writable),
+    AccountMeta(address: staker, role: AccountRole.readonlySigner),
+    AccountMeta(address: rewardTokenAccount, role: AccountRole.writable),
+    AccountMeta(address: rewardVault, role: AccountRole.writable),
+    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+    ],
+    data: getClaimRewardsInstructionDataEncoder().encode(data),
+  );
+}
+
+/// Parses a [ClaimRewards] instruction from raw instruction data.
+ClaimRewardsInstructionData parseClaimRewardsInstruction(Instruction instruction) {
+  return getClaimRewardsInstructionDataDecoder().decode(instruction.data!);
+}
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for instructions/initialize_pool.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
+
+@immutable
+class InitializePoolInstructionData {
+  const InitializePoolInstructionData({
+    this.discriminator = 0,
+    required this.rewardRate,
+    required this.minStakeDuration,
+    required this.maxStakers,
+  });
+
+  final int discriminator;
+  final BigInt rewardRate;
+  final BigInt minStakeDuration;
+  final int maxStakers;
+}
+
+Encoder<InitializePoolInstructionData> getInitializePoolInstructionDataEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('discriminator', getU8Encoder()),
+    ('rewardRate', getU64Encoder()),
+    ('minStakeDuration', getI64Encoder()),
+    ('maxStakers', getU32Encoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (InitializePoolInstructionData value) => <String, Object?>{
+      'discriminator': value.discriminator,
+      'rewardRate': value.rewardRate,
+      'minStakeDuration': value.minStakeDuration,
+      'maxStakers': value.maxStakers,
+    },
+  );
+}
+
+Decoder<InitializePoolInstructionData> getInitializePoolInstructionDataDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('discriminator', getU8Decoder()),
+    ('rewardRate', getU64Decoder()),
+    ('minStakeDuration', getI64Decoder()),
+    ('maxStakers', getU32Decoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializePoolInstructionData(
+      discriminator: map['discriminator']! as int,
+      rewardRate: map['rewardRate']! as BigInt,
+      minStakeDuration: map['minStakeDuration']! as BigInt,
+      maxStakers: map['maxStakers']! as int,
+    ),
+  );
+}
+
+Codec<InitializePoolInstructionData, InitializePoolInstructionData> getInitializePoolInstructionDataCodec() {
+  return combineCodec(getInitializePoolInstructionDataEncoder(), getInitializePoolInstructionDataDecoder());
+}
+
+/// Creates a [InitializePool] instruction.
+Instruction getInitializePoolInstruction({
+  required Address programAddress,
+  required Address pool,
+  required Address admin,
+  required Address rewardMint,
+  required Address stakeMint,
+  required Address systemProgram,
+  required BigInt rewardRate,
+  required BigInt minStakeDuration,
+  required int maxStakers,
+}) {
+  final data = InitializePoolInstructionData(
+      rewardRate: rewardRate,
+      minStakeDuration: minStakeDuration,
+      maxStakers: maxStakers,
+  );
+
+  return Instruction(
+    programAddress: programAddress,
+    accounts: [
+    AccountMeta(address: pool, role: AccountRole.writable),
+    AccountMeta(address: admin, role: AccountRole.writableSigner),
+    AccountMeta(address: rewardMint, role: AccountRole.readonly),
+    AccountMeta(address: stakeMint, role: AccountRole.readonly),
+    AccountMeta(address: systemProgram, role: AccountRole.readonly),
+    ],
+    data: getInitializePoolInstructionDataEncoder().encode(data),
+  );
+}
+
+/// Parses a [InitializePool] instruction from raw instruction data.
+InitializePoolInstructionData parseInitializePoolInstruction(Instruction instruction) {
+  return getInitializePoolInstructionDataDecoder().decode(instruction.data!);
+}
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for instructions/instructions.dart (barrel) 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+export 'claim_rewards.dart';
+export 'initialize_pool.dart';
+export 'stake.dart';
+export 'unstake.dart';
+
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for instructions/stake.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
+
+@immutable
+class StakeInstructionData {
+  const StakeInstructionData({
+    this.discriminator = 1,
+    required this.amount,
+  });
+
+  final int discriminator;
+  final BigInt amount;
+}
+
+Encoder<StakeInstructionData> getStakeInstructionDataEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('discriminator', getU8Encoder()),
+    ('amount', getU64Encoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (StakeInstructionData value) => <String, Object?>{
+      'discriminator': value.discriminator,
+      'amount': value.amount,
+    },
+  );
+}
+
+Decoder<StakeInstructionData> getStakeInstructionDataDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('discriminator', getU8Decoder()),
+    ('amount', getU64Decoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => StakeInstructionData(
+      discriminator: map['discriminator']! as int,
+      amount: map['amount']! as BigInt,
+    ),
+  );
+}
+
+Codec<StakeInstructionData, StakeInstructionData> getStakeInstructionDataCodec() {
+  return combineCodec(getStakeInstructionDataEncoder(), getStakeInstructionDataDecoder());
+}
+
+/// Creates a [Stake] instruction.
+Instruction getStakeInstruction({
+  required Address programAddress,
+  required Address pool,
+  required Address stakeAccount,
+  required Address staker,
+  required Address stakerTokenAccount,
+  required Address poolTokenAccount,
+  required Address tokenProgram,
+  required Address systemProgram,
+  required BigInt amount,
+}) {
+  final data = StakeInstructionData(
+      amount: amount,
+  );
+
+  return Instruction(
+    programAddress: programAddress,
+    accounts: [
+    AccountMeta(address: pool, role: AccountRole.writable),
+    AccountMeta(address: stakeAccount, role: AccountRole.writable),
+    AccountMeta(address: staker, role: AccountRole.writableSigner),
+    AccountMeta(address: stakerTokenAccount, role: AccountRole.writable),
+    AccountMeta(address: poolTokenAccount, role: AccountRole.writable),
+    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+    AccountMeta(address: systemProgram, role: AccountRole.readonly),
+    ],
+    data: getStakeInstructionDataEncoder().encode(data),
+  );
+}
+
+/// Parses a [Stake] instruction from raw instruction data.
+StakeInstructionData parseStakeInstruction(Instruction instruction) {
+  return getStakeInstructionDataDecoder().decode(instruction.data!);
+}
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for instructions/unstake.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
+
+@immutable
+class UnstakeInstructionData {
+  const UnstakeInstructionData({
+    this.discriminator = 2,
+  });
+
+  final int discriminator;
+}
+
+Encoder<UnstakeInstructionData> getUnstakeInstructionDataEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('discriminator', getU8Encoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (UnstakeInstructionData value) => <String, Object?>{
+      'discriminator': value.discriminator,
+    },
+  );
+}
+
+Decoder<UnstakeInstructionData> getUnstakeInstructionDataDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('discriminator', getU8Decoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => UnstakeInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
+  );
+}
+
+Codec<UnstakeInstructionData, UnstakeInstructionData> getUnstakeInstructionDataCodec() {
+  return combineCodec(getUnstakeInstructionDataEncoder(), getUnstakeInstructionDataDecoder());
+}
+
+/// Creates a [Unstake] instruction.
+Instruction getUnstakeInstruction({
+  required Address programAddress,
+  required Address pool,
+  required Address stakeAccount,
+  required Address staker,
+  required Address poolTokenAccount,
+  required Address stakerTokenAccount,
+  required Address tokenProgram,
+
+}) {
+  final data = UnstakeInstructionData(
+
+  );
+
+  return Instruction(
+    programAddress: programAddress,
+    accounts: [
+    AccountMeta(address: pool, role: AccountRole.writable),
+    AccountMeta(address: stakeAccount, role: AccountRole.writable),
+    AccountMeta(address: staker, role: AccountRole.writableSigner),
+    AccountMeta(address: poolTokenAccount, role: AccountRole.writable),
+    AccountMeta(address: stakerTokenAccount, role: AccountRole.writable),
+    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+    ],
+    data: getUnstakeInstructionDataEncoder().encode(data),
+  );
+}
+
+/// Parses a [Unstake] instruction from raw instruction data.
+UnstakeInstructionData parseUnstakeInstruction(Instruction instruction) {
+  return getUnstakeInstructionDataDecoder().decode(instruction.data!);
+}
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for programs/programs.dart (barrel) 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+export 'staking.dart';
+
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for programs/staking.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+
+
+/// The address of the Staking program.
+const stakingProgramAddress = Address('StaKe111111111111111111111111111111111111111');
+
+/// Known accounts for the Staking program.
+enum StakingAccount {
+  stakePool,
+  stakeAccount,
+}
+
+/// Known instructions for the Staking program.
+enum StakingInstruction {
+  initializePool,
+  stake,
+  unstake,
+  claimRewards,
+}
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for staking.dart (root barrel) 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+export 'accounts/accounts.dart';
+export 'errors/errors.dart';
+export 'instructions/instructions.dart';
+export 'programs/programs.dart';
+export 'types/types.dart';
+
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for types/pool_status.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
+
+enum PoolStatus {
+  uninitialized,
+  active,
+  paused,
+  deprecated,
+}
+
+Encoder<PoolStatus> getPoolStatusEncoder() {
+  return transformEncoder(
+    getU8Encoder(),
+    (PoolStatus value) => value.index,
+  );
+}
+
+Decoder<PoolStatus> getPoolStatusDecoder() {
+  return transformDecoder(
+    getU8Decoder(),
+    (int value, Uint8List bytes, int offset) => PoolStatus.values[value],
+  );
+}
+
+Codec<PoolStatus, PoolStatus> getPoolStatusCodec() {
+  return combineCodec(getPoolStatusEncoder(), getPoolStatusDecoder());
+}
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for types/stake_info.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
+
+@immutable
+class StakeInfo {
+  const StakeInfo({
+    required this.amount,
+    required this.startTime,
+    required this.endTime,
+    required this.isLocked,
+  });
+
+  final BigInt amount;
+  final BigInt startTime;
+  final BigInt? endTime;
+  final bool isLocked;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StakeInfo &&
+          runtimeType == other.runtimeType &&
+          amount == other.amount &&
+          startTime == other.startTime &&
+          endTime == other.endTime &&
+          isLocked == other.isLocked;
+
+  @override
+  int get hashCode => Object.hash(amount, startTime, endTime, isLocked);
+
+  @override
+  String toString() => 'StakeInfo(amount: $amount, startTime: $startTime, endTime: $endTime, isLocked: $isLocked)';
+}
+
+Encoder<StakeInfo> getStakeInfoEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('amount', getU64Encoder()),
+    ('startTime', getI64Encoder()),
+    ('endTime', getNullableEncoder(getI64Encoder())),
+    ('isLocked', getBooleanEncoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (StakeInfo value) => <String, Object?>{
+      'amount': value.amount,
+      'startTime': value.startTime,
+      'endTime': value.endTime,
+      'isLocked': value.isLocked,
+    },
+  );
+}
+
+Decoder<StakeInfo> getStakeInfoDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('amount', getU64Decoder()),
+    ('startTime', getI64Decoder()),
+    ('endTime', getNullableDecoder(getI64Decoder())),
+    ('isLocked', getBooleanDecoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => StakeInfo(
+      amount: map['amount']! as BigInt,
+      startTime: map['startTime']! as BigInt,
+      endTime: map['endTime'] as BigInt?,
+      isLocked: map['isLocked']! as bool,
+    ),
+  );
+}
+
+Codec<StakeInfo, StakeInfo> getStakeInfoCodec() {
+  return combineCodec(getStakeInfoEncoder(), getStakeInfoDecoder());
+}
+"
+`;
+
+exports[`Snapshot: Staking > should match snapshot for types/types.dart (barrel) 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+export 'pool_status.dart';
+export 'stake_info.dart';
+
+"
+`;
+
+exports[`Snapshot: Staking > should produce the expected file list 1`] = `
+[
+  "accounts/accounts.dart",
+  "accounts/stake_account.dart",
+  "accounts/stake_pool.dart",
+  "errors/errors.dart",
+  "errors/staking.dart",
+  "instructions/claim_rewards.dart",
+  "instructions/initialize_pool.dart",
+  "instructions/instructions.dart",
+  "instructions/stake.dart",
+  "instructions/unstake.dart",
+  "programs/programs.dart",
+  "programs/staking.dart",
+  "staking.dart",
+  "types/pool_status.dart",
+  "types/stake_info.dart",
+  "types/types.dart",
+]
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for accounts/accounts.dart (barrel) 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+export 'deposit_record.dart';
+export 'vault.dart';
+
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for accounts/deposit_record.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_accounts/solana_kit_accounts.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
+
+@immutable
+class DepositRecord {
+  const DepositRecord({
+    required this.discriminator,
+    required this.depositor,
+    required this.vault,
+    required this.amount,
+    required this.timestamp,
+  });
+
+  final Uint8List discriminator;
+  final Address depositor;
+  final Address vault;
+  final BigInt amount;
+  final BigInt timestamp;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DepositRecord &&
+          runtimeType == other.runtimeType &&
+          discriminator == other.discriminator &&
+          depositor == other.depositor &&
+          vault == other.vault &&
+          amount == other.amount &&
+          timestamp == other.timestamp;
+
+  @override
+  int get hashCode => Object.hash(discriminator, depositor, vault, amount, timestamp);
+
+  @override
+  String toString() => 'DepositRecord(discriminator: $discriminator, depositor: $depositor, vault: $vault, amount: $amount, timestamp: $timestamp)';
+}
+
+
+/// The size of the [DepositRecord] account data in bytes.
+const int depositRecordSize = 88;
+
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
+
+
+Encoder<DepositRecord> getDepositRecordEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    ('depositor', getAddressEncoder()),
+    ('vault', getAddressEncoder()),
+    ('amount', getU64Encoder()),
+    ('timestamp', getI64Encoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (DepositRecord value) => <String, Object?>{
+      'discriminator': value.discriminator,
+      'depositor': value.depositor,
+      'vault': value.vault,
+      'amount': value.amount,
+      'timestamp': value.timestamp,
+    },
+  );
+}
+
+Decoder<DepositRecord> getDepositRecordDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
+    ('depositor', getAddressDecoder()),
+    ('vault', getAddressDecoder()),
+    ('amount', getU64Decoder()),
+    ('timestamp', getI64Decoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => DepositRecord(
+      discriminator: map['discriminator']! as Uint8List,
+      depositor: map['depositor']! as Address,
+      vault: map['vault']! as Address,
+      amount: map['amount']! as BigInt,
+      timestamp: map['timestamp']! as BigInt,
+    ),
+  );
+}
+
+Codec<DepositRecord, DepositRecord> getDepositRecordCodec() {
+  return combineCodec(getDepositRecordEncoder(), getDepositRecordDecoder());
+}
+
+Account<DepositRecord> decodeDepositRecord(EncodedAccount encodedAccount) {
+  return decodeAccount(encodedAccount, getDepositRecordDecoder());
+}
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for accounts/vault.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_accounts/solana_kit_accounts.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
+import '../types/vault_status.dart';
+
+
+@immutable
+class Vault {
+  const Vault({
+    required this.discriminator,
+    required this.authority,
+    required this.tokenMint,
+    required this.totalDeposited,
+    required this.maxCapacity,
+    required this.status,
+    required this.createdAt,
+    required this.bumpSeed,
+  });
+
+  final Uint8List discriminator;
+  final Address authority;
+  final Address tokenMint;
+  final BigInt totalDeposited;
+  final BigInt maxCapacity;
+  final VaultStatus status;
+  final BigInt createdAt;
+  final int bumpSeed;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Vault &&
+          runtimeType == other.runtimeType &&
+          discriminator == other.discriminator &&
+          authority == other.authority &&
+          tokenMint == other.tokenMint &&
+          totalDeposited == other.totalDeposited &&
+          maxCapacity == other.maxCapacity &&
+          status == other.status &&
+          createdAt == other.createdAt &&
+          bumpSeed == other.bumpSeed;
+
+  @override
+  int get hashCode => Object.hash(discriminator, authority, tokenMint, totalDeposited, maxCapacity, status, createdAt, bumpSeed);
+
+  @override
+  String toString() => 'Vault(discriminator: $discriminator, authority: $authority, tokenMint: $tokenMint, totalDeposited: $totalDeposited, maxCapacity: $maxCapacity, status: $status, createdAt: $createdAt, bumpSeed: $bumpSeed)';
+}
+
+
+/// The size of the [Vault] account data in bytes.
+const int vaultSize = 98;
+
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
+
+
+Encoder<Vault> getVaultEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    ('authority', getAddressEncoder()),
+    ('tokenMint', getAddressEncoder()),
+    ('totalDeposited', getU64Encoder()),
+    ('maxCapacity', getU64Encoder()),
+    ('status', getVaultStatusEncoder()),
+    ('createdAt', getI64Encoder()),
+    ('bumpSeed', getU8Encoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (Vault value) => <String, Object?>{
+      'discriminator': value.discriminator,
+      'authority': value.authority,
+      'tokenMint': value.tokenMint,
+      'totalDeposited': value.totalDeposited,
+      'maxCapacity': value.maxCapacity,
+      'status': value.status,
+      'createdAt': value.createdAt,
+      'bumpSeed': value.bumpSeed,
+    },
+  );
+}
+
+Decoder<Vault> getVaultDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
+    ('authority', getAddressDecoder()),
+    ('tokenMint', getAddressDecoder()),
+    ('totalDeposited', getU64Decoder()),
+    ('maxCapacity', getU64Decoder()),
+    ('status', getVaultStatusDecoder()),
+    ('createdAt', getI64Decoder()),
+    ('bumpSeed', getU8Decoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => Vault(
+      discriminator: map['discriminator']! as Uint8List,
+      authority: map['authority']! as Address,
+      tokenMint: map['tokenMint']! as Address,
+      totalDeposited: map['totalDeposited']! as BigInt,
+      maxCapacity: map['maxCapacity']! as BigInt,
+      status: map['status']! as VaultStatus,
+      createdAt: map['createdAt']! as BigInt,
+      bumpSeed: map['bumpSeed']! as int,
+    ),
+  );
+}
+
+Codec<Vault, Vault> getVaultCodec() {
+  return combineCodec(getVaultEncoder(), getVaultDecoder());
+}
+
+Account<Vault> decodeVault(EncodedAccount encodedAccount) {
+  return decodeAccount(encodedAccount, getVaultDecoder());
+}
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for errors/errors.dart (barrel) 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+export 'token_vault.dart';
+
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for errors/token_vault.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint, constant_identifier_names
+
+/// Error codes for the TokenVault program.
+
+/// InvalidAuthority: The provided authority does not match the vault authority.
+/// Message: "The provided authority does not match the vault authority."
+const int tokenVaultErrorInvalidAuthority = 0x1770; // 6000
+
+/// VaultFull: The vault has reached its maximum capacity.
+/// Message: "The vault has reached its maximum capacity."
+const int tokenVaultErrorVaultFull = 0x1771; // 6001
+
+/// InsufficientFunds: Insufficient funds for this withdrawal.
+/// Message: "Insufficient funds for this withdrawal."
+const int tokenVaultErrorInsufficientFunds = 0x1772; // 6002
+
+/// VaultNotActive: The vault is not in active status.
+/// Message: "The vault is not in active status."
+const int tokenVaultErrorVaultNotActive = 0x1773; // 6003
+
+/// InvalidAmount: The specified amount is invalid.
+/// Message: "The specified amount is invalid."
+const int tokenVaultErrorInvalidAmount = 0x1774; // 6004
+
+/// Map of error codes to human-readable messages.
+const Map<int, String> _tokenVaultErrorMessages = {
+    tokenVaultErrorInvalidAuthority: 'The provided authority does not match the vault authority.',
+    tokenVaultErrorVaultFull: 'The vault has reached its maximum capacity.',
+    tokenVaultErrorInsufficientFunds: 'Insufficient funds for this withdrawal.',
+    tokenVaultErrorVaultNotActive: 'The vault is not in active status.',
+    tokenVaultErrorInvalidAmount: 'The specified amount is invalid.',
+};
+
+/// Get the error message for a TokenVault program error code.
+String? getTokenVaultErrorMessage(int code) {
+  return _tokenVaultErrorMessages[code];
+}
+
+/// Check if an error code belongs to the TokenVault program.
+bool isTokenVaultError(int code) {
+  return _tokenVaultErrorMessages.containsKey(code);
+}
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for instructions/deposit.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
+
+@immutable
+class DepositInstructionData {
+  const DepositInstructionData({
+    this.discriminator = 1,
+    required this.amount,
+  });
+
+  final int discriminator;
+  final BigInt amount;
+}
+
+Encoder<DepositInstructionData> getDepositInstructionDataEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('discriminator', getU8Encoder()),
+    ('amount', getU64Encoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (DepositInstructionData value) => <String, Object?>{
+      'discriminator': value.discriminator,
+      'amount': value.amount,
+    },
+  );
+}
+
+Decoder<DepositInstructionData> getDepositInstructionDataDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('discriminator', getU8Decoder()),
+    ('amount', getU64Decoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => DepositInstructionData(
+      discriminator: map['discriminator']! as int,
+      amount: map['amount']! as BigInt,
+    ),
+  );
+}
+
+Codec<DepositInstructionData, DepositInstructionData> getDepositInstructionDataCodec() {
+  return combineCodec(getDepositInstructionDataEncoder(), getDepositInstructionDataDecoder());
+}
+
+/// Creates a [Deposit] instruction.
+Instruction getDepositInstruction({
+  required Address programAddress,
+  required Address vault,
+  required Address depositor,
+  required Address depositorTokenAccount,
+  required Address vaultTokenAccount,
+  required Address tokenProgram,
+  required BigInt amount,
+}) {
+  final data = DepositInstructionData(
+      amount: amount,
+  );
+
+  return Instruction(
+    programAddress: programAddress,
+    accounts: [
+    AccountMeta(address: vault, role: AccountRole.writable),
+    AccountMeta(address: depositor, role: AccountRole.writableSigner),
+    AccountMeta(address: depositorTokenAccount, role: AccountRole.writable),
+    AccountMeta(address: vaultTokenAccount, role: AccountRole.writable),
+    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+    ],
+    data: getDepositInstructionDataEncoder().encode(data),
+  );
+}
+
+/// Parses a [Deposit] instruction from raw instruction data.
+DepositInstructionData parseDepositInstruction(Instruction instruction) {
+  return getDepositInstructionDataDecoder().decode(instruction.data!);
+}
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for instructions/initialize_vault.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
+
+@immutable
+class InitializeVaultInstructionData {
+  const InitializeVaultInstructionData({
+    this.discriminator = 0,
+    required this.maxCapacity,
+    required this.bumpSeed,
+  });
+
+  final int discriminator;
+  final BigInt maxCapacity;
+  final int bumpSeed;
+}
+
+Encoder<InitializeVaultInstructionData> getInitializeVaultInstructionDataEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('discriminator', getU8Encoder()),
+    ('maxCapacity', getU64Encoder()),
+    ('bumpSeed', getU8Encoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (InitializeVaultInstructionData value) => <String, Object?>{
+      'discriminator': value.discriminator,
+      'maxCapacity': value.maxCapacity,
+      'bumpSeed': value.bumpSeed,
+    },
+  );
+}
+
+Decoder<InitializeVaultInstructionData> getInitializeVaultInstructionDataDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('discriminator', getU8Decoder()),
+    ('maxCapacity', getU64Decoder()),
+    ('bumpSeed', getU8Decoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeVaultInstructionData(
+      discriminator: map['discriminator']! as int,
+      maxCapacity: map['maxCapacity']! as BigInt,
+      bumpSeed: map['bumpSeed']! as int,
+    ),
+  );
+}
+
+Codec<InitializeVaultInstructionData, InitializeVaultInstructionData> getInitializeVaultInstructionDataCodec() {
+  return combineCodec(getInitializeVaultInstructionDataEncoder(), getInitializeVaultInstructionDataDecoder());
+}
+
+/// Creates a [InitializeVault] instruction.
+Instruction getInitializeVaultInstruction({
+  required Address programAddress,
+  required Address vault,
+  required Address authority,
+  required Address tokenMint,
+  required Address systemProgram,
+  required BigInt maxCapacity,
+  required int bumpSeed,
+}) {
+  final data = InitializeVaultInstructionData(
+      maxCapacity: maxCapacity,
+      bumpSeed: bumpSeed,
+  );
+
+  return Instruction(
+    programAddress: programAddress,
+    accounts: [
+    AccountMeta(address: vault, role: AccountRole.writable),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: tokenMint, role: AccountRole.readonly),
+    AccountMeta(address: systemProgram, role: AccountRole.readonly),
+    ],
+    data: getInitializeVaultInstructionDataEncoder().encode(data),
+  );
+}
+
+/// Parses a [InitializeVault] instruction from raw instruction data.
+InitializeVaultInstructionData parseInitializeVaultInstruction(Instruction instruction) {
+  return getInitializeVaultInstructionDataDecoder().decode(instruction.data!);
+}
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for instructions/instructions.dart (barrel) 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+export 'deposit.dart';
+export 'initialize_vault.dart';
+export 'update_vault_status.dart';
+export 'withdraw.dart';
+
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for instructions/update_vault_status.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+
+import '../types/vault_status.dart';
+
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
+
+@immutable
+class UpdateVaultStatusInstructionData {
+  const UpdateVaultStatusInstructionData({
+    this.discriminator = 3,
+    required this.newStatus,
+  });
+
+  final int discriminator;
+  final VaultStatus newStatus;
+}
+
+Encoder<UpdateVaultStatusInstructionData> getUpdateVaultStatusInstructionDataEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('discriminator', getU8Encoder()),
+    ('newStatus', getVaultStatusEncoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (UpdateVaultStatusInstructionData value) => <String, Object?>{
+      'discriminator': value.discriminator,
+      'newStatus': value.newStatus,
+    },
+  );
+}
+
+Decoder<UpdateVaultStatusInstructionData> getUpdateVaultStatusInstructionDataDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('discriminator', getU8Decoder()),
+    ('newStatus', getVaultStatusDecoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateVaultStatusInstructionData(
+      discriminator: map['discriminator']! as int,
+      newStatus: map['newStatus']! as VaultStatus,
+    ),
+  );
+}
+
+Codec<UpdateVaultStatusInstructionData, UpdateVaultStatusInstructionData> getUpdateVaultStatusInstructionDataCodec() {
+  return combineCodec(getUpdateVaultStatusInstructionDataEncoder(), getUpdateVaultStatusInstructionDataDecoder());
+}
+
+/// Creates a [UpdateVaultStatus] instruction.
+Instruction getUpdateVaultStatusInstruction({
+  required Address programAddress,
+  required Address vault,
+  required Address authority,
+  required VaultStatus newStatus,
+}) {
+  final data = UpdateVaultStatusInstructionData(
+      newStatus: newStatus,
+  );
+
+  return Instruction(
+    programAddress: programAddress,
+    accounts: [
+    AccountMeta(address: vault, role: AccountRole.writable),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    ],
+    data: getUpdateVaultStatusInstructionDataEncoder().encode(data),
+  );
+}
+
+/// Parses a [UpdateVaultStatus] instruction from raw instruction data.
+UpdateVaultStatusInstructionData parseUpdateVaultStatusInstruction(Instruction instruction) {
+  return getUpdateVaultStatusInstructionDataDecoder().decode(instruction.data!);
+}
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for instructions/withdraw.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
+
+@immutable
+class WithdrawInstructionData {
+  const WithdrawInstructionData({
+    this.discriminator = 2,
+    required this.amount,
+  });
+
+  final int discriminator;
+  final BigInt amount;
+}
+
+Encoder<WithdrawInstructionData> getWithdrawInstructionDataEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('discriminator', getU8Encoder()),
+    ('amount', getU64Encoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (WithdrawInstructionData value) => <String, Object?>{
+      'discriminator': value.discriminator,
+      'amount': value.amount,
+    },
+  );
+}
+
+Decoder<WithdrawInstructionData> getWithdrawInstructionDataDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('discriminator', getU8Decoder()),
+    ('amount', getU64Decoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => WithdrawInstructionData(
+      discriminator: map['discriminator']! as int,
+      amount: map['amount']! as BigInt,
+    ),
+  );
+}
+
+Codec<WithdrawInstructionData, WithdrawInstructionData> getWithdrawInstructionDataCodec() {
+  return combineCodec(getWithdrawInstructionDataEncoder(), getWithdrawInstructionDataDecoder());
+}
+
+/// Creates a [Withdraw] instruction.
+Instruction getWithdrawInstruction({
+  required Address programAddress,
+  required Address vault,
+  required Address authority,
+  required Address vaultTokenAccount,
+  required Address destinationTokenAccount,
+  required Address tokenProgram,
+  required BigInt amount,
+}) {
+  final data = WithdrawInstructionData(
+      amount: amount,
+  );
+
+  return Instruction(
+    programAddress: programAddress,
+    accounts: [
+    AccountMeta(address: vault, role: AccountRole.writable),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: vaultTokenAccount, role: AccountRole.writable),
+    AccountMeta(address: destinationTokenAccount, role: AccountRole.writable),
+    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+    ],
+    data: getWithdrawInstructionDataEncoder().encode(data),
+  );
+}
+
+/// Parses a [Withdraw] instruction from raw instruction data.
+WithdrawInstructionData parseWithdrawInstruction(Instruction instruction) {
+  return getWithdrawInstructionDataDecoder().decode(instruction.data!);
+}
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for programs/programs.dart (barrel) 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+export 'token_vault.dart';
+
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for programs/token_vault.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+
+
+/// The address of the TokenVault program.
+const tokenVaultProgramAddress = Address('VauLT1111111111111111111111111111111111111111');
+
+/// Known accounts for the TokenVault program.
+enum TokenVaultAccount {
+  vault,
+  depositRecord,
+}
+
+/// Known instructions for the TokenVault program.
+enum TokenVaultInstruction {
+  initializeVault,
+  deposit,
+  withdraw,
+  updateVaultStatus,
+}
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for token_vault.dart (root barrel) 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+export 'accounts/accounts.dart';
+export 'errors/errors.dart';
+export 'instructions/instructions.dart';
+export 'programs/programs.dart';
+export 'types/types.dart';
+
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for types/types.dart (barrel) 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+export 'vault_config.dart';
+export 'vault_status.dart';
+
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for types/vault_config.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
+
+@immutable
+class VaultConfig {
+  const VaultConfig({
+    required this.maxCapacity,
+    required this.minDeposit,
+    required this.feeRate,
+    required this.isActive,
+  });
+
+  final BigInt maxCapacity;
+  final BigInt minDeposit;
+  final int feeRate;
+  final bool isActive;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is VaultConfig &&
+          runtimeType == other.runtimeType &&
+          maxCapacity == other.maxCapacity &&
+          minDeposit == other.minDeposit &&
+          feeRate == other.feeRate &&
+          isActive == other.isActive;
+
+  @override
+  int get hashCode => Object.hash(maxCapacity, minDeposit, feeRate, isActive);
+
+  @override
+  String toString() => 'VaultConfig(maxCapacity: $maxCapacity, minDeposit: $minDeposit, feeRate: $feeRate, isActive: $isActive)';
+}
+
+Encoder<VaultConfig> getVaultConfigEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    ('maxCapacity', getU64Encoder()),
+    ('minDeposit', getU64Encoder()),
+    ('feeRate', getU16Encoder()),
+    ('isActive', getBooleanEncoder()),
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (VaultConfig value) => <String, Object?>{
+      'maxCapacity': value.maxCapacity,
+      'minDeposit': value.minDeposit,
+      'feeRate': value.feeRate,
+      'isActive': value.isActive,
+    },
+  );
+}
+
+Decoder<VaultConfig> getVaultConfigDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+    ('maxCapacity', getU64Decoder()),
+    ('minDeposit', getU64Decoder()),
+    ('feeRate', getU16Decoder()),
+    ('isActive', getBooleanDecoder()),
+  ]);
+
+  return transformDecoder(
+    structDecoder,
+    (Map<String, Object?> map, Uint8List bytes, int offset) => VaultConfig(
+      maxCapacity: map['maxCapacity']! as BigInt,
+      minDeposit: map['minDeposit']! as BigInt,
+      feeRate: map['feeRate']! as int,
+      isActive: map['isActive']! as bool,
+    ),
+  );
+}
+
+Codec<VaultConfig, VaultConfig> getVaultConfigCodec() {
+  return combineCodec(getVaultConfigEncoder(), getVaultConfigDecoder());
+}
+"
+`;
+
+exports[`Snapshot: Token Vault > should match snapshot for types/vault_status.dart 1`] = `
+"// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
+
+enum VaultStatus {
+  active,
+  paused,
+  closed,
+  frozen,
+}
+
+Encoder<VaultStatus> getVaultStatusEncoder() {
+  return transformEncoder(
+    getU8Encoder(),
+    (VaultStatus value) => value.index,
+  );
+}
+
+Decoder<VaultStatus> getVaultStatusDecoder() {
+  return transformDecoder(
+    getU8Decoder(),
+    (int value, Uint8List bytes, int offset) => VaultStatus.values[value],
+  );
+}
+
+Codec<VaultStatus, VaultStatus> getVaultStatusCodec() {
+  return combineCodec(getVaultStatusEncoder(), getVaultStatusDecoder());
+}
+"
+`;
+
+exports[`Snapshot: Token Vault > should produce the expected file list 1`] = `
+[
+  "accounts/accounts.dart",
+  "accounts/deposit_record.dart",
+  "accounts/vault.dart",
+  "errors/errors.dart",
+  "errors/token_vault.dart",
+  "instructions/deposit.dart",
+  "instructions/initialize_vault.dart",
+  "instructions/instructions.dart",
+  "instructions/update_vault_status.dart",
+  "instructions/withdraw.dart",
+  "programs/programs.dart",
+  "programs/token_vault.dart",
+  "token_vault.dart",
+  "types/types.dart",
+  "types/vault_config.dart",
+  "types/vault_status.dart",
+]
+`;

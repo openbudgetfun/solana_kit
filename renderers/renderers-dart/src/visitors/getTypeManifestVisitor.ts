@@ -54,7 +54,7 @@ import {
   fragmentFromString,
   use,
 } from "../utils/index.js";
-import type { DartNameApi } from "../utils/nameTransformers.js";
+import { type DartNameApi, snakeCase } from "../utils/nameTransformers.js";
 
 /**
  * Type alias for the type manifest visitor.
@@ -640,15 +640,12 @@ export function getTypeManifestVisitor(input: {
       const name = node.name as string;
       const typeName = nameApi.dataType(name);
       const isNonScalar = nonScalarEnums.includes(node.name);
+      const moduleKey = `definedType:${snakeCase(name)}`;
 
       return {
-        type: fragmentFromString(typeName),
-        encoder: fragmentFromString(
-          `${nameApi.encoderFunction(name)}()`,
-        ),
-        decoder: fragmentFromString(
-          `${nameApi.decoderFunction(name)}()`,
-        ),
+        type: fragment`${use(typeName, moduleKey)}`,
+        encoder: fragment`${use(nameApi.encoderFunction(name), moduleKey)}()`,
+        decoder: fragment`${use(nameApi.decoderFunction(name), moduleKey)}()`,
         value: emptyTypeManifest().value,
         isEnum: !isNonScalar,
       };

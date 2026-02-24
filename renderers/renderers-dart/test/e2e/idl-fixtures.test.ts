@@ -421,13 +421,13 @@ describe("E2E: Staking IDL fixture", () => {
     expect(stakeContent).toContain("Instruction getStakeInstruction({");
     expect(stakeContent).toContain("required Address pool,");
     expect(stakeContent).toContain("required Address staker,");
-    expect(stakeContent).toContain("AccountMeta(address: staker, role: AccountRole.signerWritable)");
+    expect(stakeContent).toContain("AccountMeta(address: staker, role: AccountRole.writableSigner)");
     expect(stakeContent).toContain("AccountMeta(address: pool, role: AccountRole.writable)");
 
     // ClaimRewards: staker is signer but not writable
     const claimContent = readFileSync(join(outputDir, "instructions/claim_rewards.dart"), "utf-8");
     expect(claimContent).toContain("Instruction getClaimRewardsInstruction({");
-    expect(claimContent).toContain("AccountMeta(address: staker, role: AccountRole.signerReadonly)");
+    expect(claimContent).toContain("AccountMeta(address: staker, role: AccountRole.readonlySigner)");
   });
 
   it("should generate unstake instruction with no args (empty data)", () => {

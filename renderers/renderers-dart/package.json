@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@codama/nodes-from-anchor": "^1.3.9",
+    "@codama/renderers-js": "^2.0.2",
     "@types/node": "^25.3.0",
     "rimraf": "^6.0.1",
     "tsup": "^8.4.0",
