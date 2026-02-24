@@ -369,9 +369,9 @@ extra_changelog_sections = [
   { name = "Documentation", types = ["docs"] },
 ]
 
-[packages.codama_renderers_dart]
+[packages.codama_renderers_solana_kit_dart]
 versioned_files = ["renderers/renderers-dart/package.json"]
-scopes = ["codama_renderers_dart"]
+scopes = ["codama_renderers_solana_kit_dart"]
 changelog = "renderers/renderers-dart/CHANGELOG.md"
 extra_changelog_sections = [
   { name = "Notes", types = ["note"] },

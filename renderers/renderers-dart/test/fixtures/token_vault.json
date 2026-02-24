@@ -1,0 +1,147 @@
+{
+  "version": "0.1.0",
+  "name": "token_vault",
+  "instructions": [
+    {
+      "name": "initializeVault",
+      "accounts": [
+        { "name": "vault", "isMut": true, "isSigner": false },
+        { "name": "authority", "isMut": false, "isSigner": true },
+        { "name": "tokenMint", "isMut": false, "isSigner": false },
+        { "name": "systemProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": [
+        { "name": "maxCapacity", "type": "u64" },
+        { "name": "bumpSeed", "type": "u8" }
+      ],
+      "discriminant": { "type": "u8", "value": 0 }
+    },
+    {
+      "name": "deposit",
+      "accounts": [
+        { "name": "vault", "isMut": true, "isSigner": false },
+        { "name": "depositor", "isMut": true, "isSigner": true },
+        { "name": "depositorTokenAccount", "isMut": true, "isSigner": false },
+        { "name": "vaultTokenAccount", "isMut": true, "isSigner": false },
+        { "name": "tokenProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": [
+        { "name": "amount", "type": "u64" }
+      ],
+      "discriminant": { "type": "u8", "value": 1 }
+    },
+    {
+      "name": "withdraw",
+      "accounts": [
+        { "name": "vault", "isMut": true, "isSigner": false },
+        { "name": "authority", "isMut": false, "isSigner": true },
+        { "name": "vaultTokenAccount", "isMut": true, "isSigner": false },
+        { "name": "destinationTokenAccount", "isMut": true, "isSigner": false },
+        { "name": "tokenProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": [
+        { "name": "amount", "type": "u64" }
+      ],
+      "discriminant": { "type": "u8", "value": 2 }
+    },
+    {
+      "name": "updateVaultStatus",
+      "accounts": [
+        { "name": "vault", "isMut": true, "isSigner": false },
+        { "name": "authority", "isMut": false, "isSigner": true }
+      ],
+      "args": [
+        {
+          "name": "newStatus",
+          "type": { "defined": "VaultStatus" }
+        }
+      ],
+      "discriminant": { "type": "u8", "value": 3 }
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Vault",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "authority", "type": "publicKey" },
+          { "name": "tokenMint", "type": "publicKey" },
+          { "name": "totalDeposited", "type": "u64" },
+          { "name": "maxCapacity", "type": "u64" },
+          { "name": "status", "type": { "defined": "VaultStatus" } },
+          { "name": "createdAt", "type": "i64" },
+          { "name": "bumpSeed", "type": "u8" }
+        ]
+      }
+    },
+    {
+      "name": "DepositRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "depositor", "type": "publicKey" },
+          { "name": "vault", "type": "publicKey" },
+          { "name": "amount", "type": "u64" },
+          { "name": "timestamp", "type": "i64" }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "VaultStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          { "name": "Active" },
+          { "name": "Paused" },
+          { "name": "Closed" },
+          { "name": "Frozen" }
+        ]
+      }
+    },
+    {
+      "name": "VaultConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "maxCapacity", "type": "u64" },
+          { "name": "minDeposit", "type": "u64" },
+          { "name": "feeRate", "type": "u16" },
+          { "name": "isActive", "type": "bool" }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidAuthority",
+      "msg": "The provided authority does not match the vault authority."
+    },
+    {
+      "code": 6001,
+      "name": "VaultFull",
+      "msg": "The vault has reached its maximum capacity."
+    },
+    {
+      "code": 6002,
+      "name": "InsufficientFunds",
+      "msg": "Insufficient funds for this withdrawal."
+    },
+    {
+      "code": 6003,
+      "name": "VaultNotActive",
+      "msg": "The vault is not in active status."
+    },
+    {
+      "code": 6004,
+      "name": "InvalidAmount",
+      "msg": "The specified amount is invalid."
+    }
+  ],
+  "metadata": {
+    "address": "VauLT1111111111111111111111111111111111111111"
+  }
+}
