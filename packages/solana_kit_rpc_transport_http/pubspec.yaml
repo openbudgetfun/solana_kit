@@ -10,10 +10,14 @@ resolution: workspace
 
 dependencies:
   http: ^1.4.0
-  solana_kit_errors: ^0.1.0
-  solana_kit_rpc_spec: ^0.1.0
-  solana_kit_rpc_spec_types: ^0.1.0
+  solana_kit_errors:
+    workspace: true
+  solana_kit_rpc_spec:
+    workspace: true
+  solana_kit_rpc_spec_types:
+    workspace: true
 
 dev_dependencies:
-  solana_kit_lints: ^0.1.0
+  solana_kit_lints:
+    workspace: true
   test: ^1.25.0
