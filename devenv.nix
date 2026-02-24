@@ -178,7 +178,7 @@
     "fix:lint" = {
       exec = ''
         set -e
-        melos exec -- dart fix --apply
+        dart fix --apply
       '';
       description = "Fix lint issues across all packages.";
       binary = "bash";
@@ -202,7 +202,7 @@
     "lint:analyze" = {
       exec = ''
         set -e
-        melos analyze
+        dart analyze --fatal-infos .
       '';
       description = "Run dart analyze across all packages.";
       binary = "bash";
@@ -210,9 +210,41 @@
     "test:all" = {
       exec = ''
         set -e
-        melos test
+        failed=0
+        for pkg_dir in packages/*/; do
+          if [ ! -d "$pkg_dir/test" ]; then
+            continue
+          fi
+
+          # Skip Flutter packages (they need flutter test)
+          if grep -q "flutter:" "$pkg_dir/pubspec.yaml" 2>/dev/null; then
+            continue
+          fi
+
+          pkg_name="$(basename "$pkg_dir")"
+          echo "Testing $pkg_name..."
+          if ! dart test "$pkg_dir"; then
+            failed=1
+          fi
+        done
+
+        # Also test generated packages under renderers
+        for pkg_dir in renderers/*/test-generated/; do
+          if [ -d "$pkg_dir/test" ]; then
+            pkg_name="$(basename "$(dirname "$pkg_dir")")/test-generated"
+            echo "Testing $pkg_name..."
+            if ! dart test "$pkg_dir"; then
+              failed=1
+            fi
+          fi
+        done
+
+        if [ "$failed" -ne 0 ]; then
+          echo "Some tests failed."
+          exit 1
+        fi
       '';
-      description = "Run all tests via melos.";
+      description = "Run all tests across workspace packages.";
       binary = "bash";
     };
     "test:coverage" = {
@@ -224,13 +256,23 @@
         rm -rf coverage
         mkdir -p coverage
 
-        echo "Generating coverage for pure Dart packages..."
-        melos exec --dir-exists=test --no-flutter -- \
-          'rm -rf coverage && dart test --coverage=coverage && format_coverage --lcov --in=coverage --out=coverage/lcov.info --package=. --report-on=lib'
+        echo "Generating coverage for packages..."
+        for pkg_dir in packages/*/; do
+          if [ ! -d "$pkg_dir/test" ]; then
+            continue
+          fi
 
-        echo "Generating coverage for Flutter packages..."
-        melos exec --dir-exists=test --flutter -- \
-          'rm -rf coverage && flutter test --coverage'
+          pkg_name="$(basename "$pkg_dir")"
+
+          # Skip Flutter packages (they need flutter test)
+          if grep -q "flutter:" "$pkg_dir/pubspec.yaml" 2>/dev/null; then
+            echo "Generating coverage for Flutter package: $pkg_name"
+            (cd "$pkg_dir" && rm -rf coverage && flutter test --coverage) || true
+          else
+            echo "Generating coverage for Dart package: $pkg_name"
+            (cd "$pkg_dir" && rm -rf coverage && dart test --coverage=coverage && format_coverage --lcov --in=coverage --out=coverage/lcov.info --package=. --report-on=lib) || true
+          fi
+        done
 
         echo "Merging LCOV reports..."
         : > coverage/lcov.info

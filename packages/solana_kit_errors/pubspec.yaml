@@ -9,5 +9,6 @@ environment:
 resolution: workspace
 
 dev_dependencies:
-  solana_kit_lints: ^0.1.0
+  solana_kit_lints:
+    workspace: true
   test: ^1.25.0

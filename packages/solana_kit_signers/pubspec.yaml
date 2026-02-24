@@ -9,14 +9,22 @@ environment:
 resolution: workspace
 
 dependencies:
-  solana_kit_addresses: ^0.1.0
-  solana_kit_codecs_core: ^0.1.0
-  solana_kit_errors: ^0.1.0
-  solana_kit_instructions: ^0.1.0
-  solana_kit_keys: ^0.1.0
-  solana_kit_transaction_messages: ^0.1.0
-  solana_kit_transactions: ^0.1.0
+  solana_kit_addresses:
+    workspace: true
+  solana_kit_codecs_core:
+    workspace: true
+  solana_kit_errors:
+    workspace: true
+  solana_kit_instructions:
+    workspace: true
+  solana_kit_keys:
+    workspace: true
+  solana_kit_transaction_messages:
+    workspace: true
+  solana_kit_transactions:
+    workspace: true
 
 dev_dependencies:
-  solana_kit_lints: ^0.1.0
+  solana_kit_lints:
+    workspace: true
   test: ^1.25.0

@@ -10,15 +10,24 @@ resolution: workspace
 
 dependencies:
   http: ^1.4.0
-  solana_kit_errors: ^0.1.0
-  solana_kit_fast_stable_stringify: ^0.1.0
-  solana_kit_rpc_api: ^0.1.0
-  solana_kit_rpc_spec: ^0.1.0
-  solana_kit_rpc_spec_types: ^0.1.0
-  solana_kit_rpc_transformers: ^0.1.0
-  solana_kit_rpc_transport_http: ^0.1.0
-  solana_kit_rpc_types: ^0.1.0
+  solana_kit_errors:
+    workspace: true
+  solana_kit_fast_stable_stringify:
+    workspace: true
+  solana_kit_rpc_api:
+    workspace: true
+  solana_kit_rpc_spec:
+    workspace: true
+  solana_kit_rpc_spec_types:
+    workspace: true
+  solana_kit_rpc_transformers:
+    workspace: true
+  solana_kit_rpc_transport_http:
+    workspace: true
+  solana_kit_rpc_types:
+    workspace: true
 
 dev_dependencies:
-  solana_kit_lints: ^0.1.0
+  solana_kit_lints:
+    workspace: true
   test: ^1.25.0

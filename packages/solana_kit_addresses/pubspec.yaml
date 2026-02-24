@@ -10,10 +10,14 @@ resolution: workspace
 
 dependencies:
   crypto: ^3.0.6
-  solana_kit_codecs_core: ^0.1.0
-  solana_kit_codecs_strings: ^0.1.0
-  solana_kit_errors: ^0.1.0
+  solana_kit_codecs_core:
+    workspace: true
+  solana_kit_codecs_strings:
+    workspace: true
+  solana_kit_errors:
+    workspace: true
 
 dev_dependencies:
-  solana_kit_lints: ^0.1.0
+  solana_kit_lints:
+    workspace: true
   test: ^1.25.0

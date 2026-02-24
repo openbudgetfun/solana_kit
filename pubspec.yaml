@@ -49,39 +49,3 @@ workspace:
 
 dev_dependencies:
   coverage: ^1.14.0
-  melos: ^7.4.0
-
-melos:
-  name: solana_kit
-  sdkPath: .fvm/flutter_sdk
-
-  scripts:
-    analyze:
-      description: Run dart analyze across all packages.
-      exec: dart analyze --fatal-infos .
-
-    test:
-      description: Run tests in all packages.
-      exec: dart test
-      packageFilters:
-        dirExists: test
-        noDependsOn: flutter
-
-    flutter-test:
-      description: Run tests in Flutter packages.
-      exec: flutter test
-      packageFilters:
-        dirExists: test
-        dependsOn: flutter
-
-    format:
-      description: Format all Dart code.
-      run: dart format .
-
-    upgrade:
-      description: Upgrade dependencies in all packages.
-      exec: dart pub upgrade
-
-    coverage:
-      description: Generate merged LCOV coverage for all packages.
-      run: test:coverage
