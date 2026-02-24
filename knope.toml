@@ -369,6 +369,15 @@ extra_changelog_sections = [
   { name = "Documentation", types = ["docs"] },
 ]
 
+[packages.codama_renderers_dart]
+versioned_files = ["renderers/renderers-dart/package.json"]
+scopes = ["codama_renderers_dart"]
+changelog = "renderers/renderers-dart/CHANGELOG.md"
+extra_changelog_sections = [
+  { name = "Notes", types = ["note"] },
+  { name = "Documentation", types = ["docs"] },
+]
+
 # Workflows
 
 [[workflows]]
