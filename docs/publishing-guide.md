@@ -186,7 +186,7 @@ Before publishing, verify each package meets these requirements:
 
 8. **Formatting is correct**:
    ```bash
-   dart format --set-exit-if-changed packages/<package_name>
+   dprint check
    ```
 
 ### Dependency-Order Publishing
