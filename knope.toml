@@ -425,3 +425,36 @@ command = "melos publish"
 [[workflows.steps]]
 type = "Command"
 command = "pnpm -r publish"
+
+[[workflows]]
+name = "publish-day-1"
+
+[[workflows.steps]]
+type = "Command"
+command = "melos publish"
+
+[[workflows.steps]]
+type = "Command"
+command = "pnpm -r publish"
+
+[[workflows]]
+name = "publish-day-2"
+
+[[workflows.steps]]
+type = "Command"
+command = "melos publish"
+
+[[workflows.steps]]
+type = "Command"
+command = "pnpm -r publish"
+
+[[workflows]]
+name = "publish-day-3"
+
+[[workflows.steps]]
+type = "Command"
+command = "melos publish"
+
+[[workflows.steps]]
+type = "Command"
+command = "pnpm -r publish"

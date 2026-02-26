@@ -3,7 +3,7 @@
 [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
 [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
 
-A Dart port of the [Solana TypeScript SDK](https://github.com/anza-xyz/kit) (`@solana/kit`). This monorepo contains 39 packages that mirror the upstream TS package structure, built with modern Dart 3.10+ features including sealed classes, extension types, records, and patterns.
+A Dart port of the [Solana TypeScript SDK](https://github.com/anza-xyz/kit) (`@solana/kit`). This monorepo mirrors the upstream TS package structure, built with modern Dart 3.10+ features including sealed classes, extension types, records, and patterns.
 
 ## Quick Start
 
@@ -60,7 +60,7 @@ lint:all
 test:all
 
 # Generate merged test coverage across all packages
-melos run coverage
+test:coverage
 
 # Fix formatting and lint issues
 fix:all
@@ -70,7 +70,13 @@ The merged LCOV report is written to `coverage/lcov.info`.
 
 ## Packages
 
-The SDK is organized into 39 packages under `packages/`. Most users only need the umbrella package `solana_kit`, but each sub-package can be imported independently for smaller dependency footprints.
+<!-- workspace-summary:start -->
+
+This monorepo contains **40 packages** under `packages/`: **38 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
+
+<!-- workspace-summary:end -->
+
+Most users only need the umbrella package `solana_kit`, but each sub-package can be imported independently for smaller dependency footprints.
 
 ### Umbrella Packages
 
@@ -599,54 +605,54 @@ Exists because: MWA requires platform-specific transport (Android Intents for wa
 
 ### Package Dependency Graph
 
+Generated from package `pubspec.yaml` files with `scripts/workspace-doc-drift.sh --write`.
+
+<!-- workspace-dependency-graph:start -->
+
+```text
+solana_kit -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs, solana_kit_errors, solana_kit_fast_stable_stringify, solana_kit_functional, solana_kit_instruction_plans, solana_kit_instructions, solana_kit_keys, solana_kit_offchain_messages, solana_kit_options, solana_kit_program_client_core, solana_kit_programs, solana_kit_rpc, solana_kit_rpc_parsed_types, solana_kit_rpc_spec_types, solana_kit_rpc_subscriptions, solana_kit_rpc_transport_http, solana_kit_rpc_types, solana_kit_signers, solana_kit_subscribable, solana_kit_sysvars, solana_kit_transaction_confirmation, solana_kit_transaction_messages, solana_kit_transactions
+solana_kit_accounts -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_strings, solana_kit_errors, solana_kit_rpc_spec, solana_kit_rpc_types
+solana_kit_addresses -> solana_kit_codecs_core, solana_kit_codecs_strings, solana_kit_errors
+solana_kit_codecs -> solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_options
+solana_kit_codecs_core -> solana_kit_errors
+solana_kit_codecs_data_structures -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
+solana_kit_codecs_numbers -> solana_kit_codecs_core, solana_kit_errors
+solana_kit_codecs_strings -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
+solana_kit_errors -> (none)
+solana_kit_fast_stable_stringify -> (none)
+solana_kit_functional -> (none)
+solana_kit_helius -> solana_kit_errors
+solana_kit_instruction_plans -> solana_kit_errors, solana_kit_instructions, solana_kit_keys, solana_kit_transaction_messages, solana_kit_transactions
+solana_kit_instructions -> solana_kit_addresses, solana_kit_errors
+solana_kit_keys -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_strings, solana_kit_errors
+solana_kit_lints -> (none)
+solana_kit_mobile_wallet_adapter -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_mobile_wallet_adapter_protocol, solana_kit_transactions
+solana_kit_mobile_wallet_adapter_protocol -> solana_kit_codecs_strings, solana_kit_errors
+solana_kit_offchain_messages -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_keys
+solana_kit_options -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
+solana_kit_program_client_core -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_errors, solana_kit_instructions, solana_kit_rpc_spec, solana_kit_rpc_types, solana_kit_signers
+solana_kit_programs -> solana_kit_addresses, solana_kit_errors
+solana_kit_rpc -> solana_kit_errors, solana_kit_fast_stable_stringify, solana_kit_rpc_api, solana_kit_rpc_spec, solana_kit_rpc_spec_types, solana_kit_rpc_transformers, solana_kit_rpc_transport_http, solana_kit_rpc_types
+solana_kit_rpc_api -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_rpc_parsed_types, solana_kit_rpc_spec, solana_kit_rpc_spec_types, solana_kit_rpc_transformers, solana_kit_rpc_types, solana_kit_transaction_messages, solana_kit_transactions
+solana_kit_rpc_parsed_types -> solana_kit_addresses, solana_kit_errors, solana_kit_rpc_types
+solana_kit_rpc_spec -> solana_kit_errors, solana_kit_rpc_spec_types
+solana_kit_rpc_spec_types -> solana_kit_errors
+solana_kit_rpc_subscriptions -> solana_kit_errors, solana_kit_fast_stable_stringify, solana_kit_rpc_spec_types, solana_kit_rpc_subscriptions_api, solana_kit_rpc_subscriptions_channel_websocket, solana_kit_rpc_types, solana_kit_subscribable
+solana_kit_rpc_subscriptions_api -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_rpc_types
+solana_kit_rpc_subscriptions_channel_websocket -> solana_kit_errors, solana_kit_subscribable
+solana_kit_rpc_transformers -> solana_kit_errors, solana_kit_rpc_spec_types, solana_kit_rpc_types
+solana_kit_rpc_transport_http -> solana_kit_errors, solana_kit_rpc_spec, solana_kit_rpc_spec_types
+solana_kit_rpc_types -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors
+solana_kit_signers -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_errors, solana_kit_instructions, solana_kit_keys, solana_kit_transaction_messages, solana_kit_transactions
+solana_kit_subscribable -> solana_kit_errors
+solana_kit_sysvars -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_errors, solana_kit_rpc_spec, solana_kit_rpc_types
+solana_kit_test_matchers -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_transactions
+solana_kit_transaction_confirmation -> solana_kit_errors, solana_kit_rpc_subscriptions_channel_websocket, solana_kit_rpc_types, solana_kit_subscribable
+solana_kit_transaction_messages -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_functional, solana_kit_instructions
+solana_kit_transactions -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instructions, solana_kit_keys, solana_kit_transaction_messages
 ```
-solana_kit_errors (foundation — no deps)
-├── solana_kit_addresses
-│   └── solana_kit_keys
-│       └── solana_kit_signers
-│
-├── solana_kit_codecs_core
-│   ├── solana_kit_codecs_numbers
-│   ├── solana_kit_codecs_strings
-│   └── solana_kit_codecs_data_structures
-│       └── solana_kit_codecs (umbrella)
-│           └── solana_kit_options
-│
-├── solana_kit_instructions
-│   └── solana_kit_transaction_messages
-│       └── solana_kit_transactions
-│
-├── solana_kit_rpc_spec_types
-│   ├── solana_kit_rpc_spec
-│   │   ├── solana_kit_rpc_transport_http
-│   │   └── solana_kit_rpc_transformers
-│   ├── solana_kit_rpc_types
-│   ├── solana_kit_rpc_parsed_types
-│   └── solana_kit_rpc_api
-│       └── solana_kit_rpc (main client)
-│
-├── solana_kit_subscribable
-│   ├── solana_kit_rpc_subscriptions_channel_websocket
-│   ├── solana_kit_rpc_subscriptions_api
-│   └── solana_kit_rpc_subscriptions (subscription client)
-│
-├── solana_kit_accounts
-│   ├── solana_kit_sysvars
-│   └── solana_kit_program_client_core
-│
-├── solana_kit_transaction_confirmation
-├── solana_kit_instruction_plans
-├── solana_kit_offchain_messages
-├── solana_kit_programs
-│
-├── solana_kit_functional (utility — no deps)
-├── solana_kit_fast_stable_stringify (utility — no deps)
-│
-├── solana_kit_mobile_wallet_adapter_protocol (pure Dart MWA protocol)
-│   └── solana_kit_mobile_wallet_adapter (Flutter MWA plugin)
-│
-└── solana_kit (umbrella — re-exports everything)
-```
+
+<!-- workspace-dependency-graph:end -->
 
 ### Design Principles
 

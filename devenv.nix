@@ -216,15 +216,16 @@
             continue
           fi
 
-          # Skip Flutter packages (they need flutter test)
-          if grep -q "flutter:" "$pkg_dir/pubspec.yaml" 2>/dev/null; then
-            continue
-          fi
-
           pkg_name="$(basename "$pkg_dir")"
           echo "Testing $pkg_name..."
-          if ! dart test "$pkg_dir"; then
-            failed=1
+          if grep -q "flutter:" "$pkg_dir/pubspec.yaml" 2>/dev/null; then
+            if ! flutter test "$pkg_dir"; then
+              failed=1
+            fi
+          else
+            if ! dart test "$pkg_dir"; then
+              failed=1
+            fi
           fi
         done
 
@@ -255,6 +256,8 @@
 
         rm -rf coverage
         mkdir -p coverage
+        failed=0
+        failed_packages=()
 
         echo "Generating coverage for packages..."
         for pkg_dir in packages/*/; do
@@ -264,15 +267,21 @@
 
           pkg_name="$(basename "$pkg_dir")"
 
-          # Skip Flutter packages (they need flutter test)
-          if grep -q "flutter:" "$pkg_dir/pubspec.yaml" 2>/dev/null; then
-            echo "Generating coverage for Flutter package: $pkg_name"
-            (cd "$pkg_dir" && rm -rf coverage && flutter test --coverage) || true
-          else
-            echo "Generating coverage for Dart package: $pkg_name"
-            (cd "$pkg_dir" && rm -rf coverage && dart test --coverage=coverage && format_coverage --lcov --in=coverage --out=coverage/lcov.info --package=. --report-on=lib) || true
+          echo "Generating coverage for package: $pkg_name"
+          if ! (
+            rm -rf "$pkg_dir/coverage" &&
+            mkdir -p "$pkg_dir/coverage" &&
+            flutter test "$pkg_dir" --coverage --coverage-path="$pkg_dir/coverage/lcov.info"
+          ); then
+            failed=1
+            failed_packages+=("$pkg_name")
           fi
         done
+
+        if [ "$failed" -ne 0 ]; then
+          echo "Coverage generation failed for package(s): ''${failed_packages[*]}" >&2
+          exit 1
+        fi
 
         echo "Merging LCOV reports..."
         : > coverage/lcov.info
