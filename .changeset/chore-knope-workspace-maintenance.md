@@ -8,7 +8,6 @@ solana_kit_errors: patch
 solana_kit_helius: patch
 solana_kit_instruction_plans: patch
 solana_kit_keys: patch
-solana_kit_lints: patch
 solana_kit_mobile_wallet_adapter: patch
 solana_kit_mobile_wallet_adapter_protocol: patch
 solana_kit_offchain_messages: patch
