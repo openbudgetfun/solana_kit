@@ -148,7 +148,7 @@ void main() {
       serverSockets = [];
       server = await HttpServer.bind('localhost', 0);
       serverUrl = Uri.parse('ws://localhost:${server.port}');
-      server.transform(WebSocketTransformer()).listen((WebSocket ws) {
+      server.transform(WebSocketTransformer()).listen((ws) {
         serverSockets.add(ws);
       });
     });

@@ -36,7 +36,7 @@ Encoder<Map<String, Object?>> getStructEncoder(
   }
 
   return VariableSizeEncoder<Map<String, Object?>>(
-    getSizeFromValue: (Map<String, Object?> struct) {
+    getSizeFromValue: (struct) {
       var total = 0;
       for (final (key, codec) in fields) {
         total += getEncodedSize(struct[key], codec);

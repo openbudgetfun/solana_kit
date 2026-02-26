@@ -15,7 +15,7 @@ void main() {
           getU8Encoder() as Encoder<Object?>,
           getU32Encoder() as Encoder<Object?>,
         ],
-        (Object? value) {
+        (value) {
           // Use value > 255 as u32, otherwise u8
           if (value is num && value > 255) return 1;
           return 0;
@@ -55,7 +55,7 @@ void main() {
           getU8Codec() as Codec<Object?, Object?>,
           getU32Codec() as Codec<Object?, Object?>,
         ],
-        (Object? value) {
+        (value) {
           if (value is num && value > 255) return 1;
           return 0;
         },

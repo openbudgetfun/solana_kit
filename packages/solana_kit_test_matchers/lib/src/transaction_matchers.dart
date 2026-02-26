@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 import 'package:test/test.dart';
 
@@ -21,8 +20,8 @@ class _IsFullySignedTransactionMatcher extends Matcher {
     if (item is! Transaction) return false;
     return item.signatures.isNotEmpty &&
         item.signatures.values.every(
-          (SignatureBytes? sig) =>
-              sig != null && (sig as Uint8List).any((int byte) => byte != 0),
+          (sig) =>
+              sig != null && (sig as Uint8List).any((byte) => byte != 0),
         );
   }
 
@@ -47,7 +46,7 @@ class _IsFullySignedTransactionMatcher extends Matcher {
         .where(
           (e) =>
               e.value == null ||
-              (e.value! as Uint8List).every((int byte) => byte == 0),
+              (e.value! as Uint8List).every((byte) => byte == 0),
         )
         .map((e) => e.key.toString())
         .toList();

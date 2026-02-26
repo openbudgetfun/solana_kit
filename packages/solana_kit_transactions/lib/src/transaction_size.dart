@@ -10,13 +10,13 @@ const transactionPacketSize = 1280;
 
 /// The size of the transaction packet header in bytes.
 /// This includes the IPv6 header (40 bytes) and the fragment header (8 bytes).
-const transactionPacketHeader = 40 + 8;
+const int transactionPacketHeader = 40 + 8;
 
 /// The maximum size of a transaction in bytes.
 ///
 /// Note that this excludes the transaction packet header.
 /// In other words, this is how much content we can fit in a transaction packet.
-const transactionSizeLimit = transactionPacketSize - transactionPacketHeader;
+const int transactionSizeLimit = transactionPacketSize - transactionPacketHeader;
 
 /// Gets the size of a given transaction in bytes.
 int getTransactionSize(Transaction transaction) {

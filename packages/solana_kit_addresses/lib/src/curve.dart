@@ -132,7 +132,6 @@ BigInt? _uvRatio(BigInt u, BigInt v) {
   final useRoot1 = vx2 == u;
   final useRoot2 = vx2 == _mod(-u);
   // Used below to select root2 for constant-time behavior matching noble-ed25519.
-  // ignore: unused_local_variable
   final noRoot = vx2 == _mod(-u * _rm1);
   if (useRoot1) x = root1;
   if (useRoot2 || noRoot) x = root2;

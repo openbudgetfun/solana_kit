@@ -101,11 +101,11 @@ VariableSizeEncoder<SysvarStakeHistory> getSysvarStakeHistoryEncoder() {
   ]);
 
   return VariableSizeEncoder<SysvarStakeHistory>(
-    getSizeFromValue: (SysvarStakeHistory value) {
+    getSizeFromValue: (value) {
       // 8 bytes for the u64 length prefix + entry size * count.
       return 8 + _entrySize * value.length;
     },
-    write: (SysvarStakeHistory value, Uint8List bytes, int offset) {
+    write: (value, bytes, offset) {
       var o = offset;
       // Write the u64 length prefix.
       o = u64Encoder.write(BigInt.from(value.length), bytes, o);
@@ -134,7 +134,7 @@ VariableSizeDecoder<SysvarStakeHistory> getSysvarStakeHistoryDecoder() {
   ]);
 
   return VariableSizeDecoder<SysvarStakeHistory>(
-    read: (Uint8List bytes, int offset) {
+    read: (bytes, offset) {
       var o = offset;
       // Read the u64 length prefix.
       final (length, offsetAfterLen) = u64Decoder.read(bytes, o);

@@ -8,8 +8,8 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 /// The size of the encoded byte array is determined by the length of the input.
 VariableSizeEncoder<Uint8List> getBytesEncoder() {
   return VariableSizeEncoder<Uint8List>(
-    getSizeFromValue: (Uint8List value) => value.length,
-    write: (Uint8List value, Uint8List bytes, int offset) {
+    getSizeFromValue: (value) => value.length,
+    write: (value, bytes, offset) {
       bytes.setAll(offset, value);
       return offset + value.length;
     },
@@ -23,7 +23,7 @@ VariableSizeEncoder<Uint8List> getBytesEncoder() {
 /// the input.
 VariableSizeDecoder<Uint8List> getBytesDecoder() {
   return VariableSizeDecoder<Uint8List>(
-    read: (Uint8List bytes, int offset) {
+    read: (bytes, offset) {
       final slice = bytes.sublist(offset);
       return (slice, offset + slice.length);
     },

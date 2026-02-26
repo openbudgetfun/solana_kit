@@ -123,7 +123,7 @@ void main() {
     test('has the right sizes', () {
       final codec = VariableSizeCodec<Object?, String>(
         getSizeFromValue: (_) => 0,
-        write: (_, __, offset) => offset,
+        write: (_, _, offset) => offset,
         read: (_, offset) => ('', offset),
       );
       expect(fixCodecSize(codec, 12).fixedSize, equals(12));

@@ -117,7 +117,7 @@ FixedSizeDecoder<List<BigInt>> _getMemoizedU64ArrayDecoder() {
 FixedSizeEncoder<SysvarSlotHistory> getSysvarSlotHistoryEncoder() {
   return FixedSizeEncoder<SysvarSlotHistory>(
     fixedSize: sysvarSlotHistorySize,
-    write: (SysvarSlotHistory value, Uint8List bytes, int currentOffset) {
+    write: (value, bytes, currentOffset) {
       var o = currentOffset;
       // First byte is the bitvector discriminator.
       bytes[o] = bitvecDiscriminator;
@@ -142,7 +142,7 @@ FixedSizeEncoder<SysvarSlotHistory> getSysvarSlotHistoryEncoder() {
 FixedSizeDecoder<SysvarSlotHistory> getSysvarSlotHistoryDecoder() {
   return FixedSizeDecoder<SysvarSlotHistory>(
     fixedSize: sysvarSlotHistorySize,
-    read: (Uint8List bytes, int currentOffset) {
+    read: (bytes, currentOffset) {
       var o = currentOffset;
       // Byte length should be exact.
       if (bytes.length != sysvarSlotHistorySize) {

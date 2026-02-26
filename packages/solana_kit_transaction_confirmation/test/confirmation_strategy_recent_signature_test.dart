@@ -25,16 +25,16 @@ void main() {
             RecentSignatureConfirmationConfig(
               getSignatureStatuses:
                   (
-                    List<String> signatures, {
-                    required AbortSignal abortSignal,
+                    signatures, {
+                    required abortSignal,
                   }) {
                     return getSignatureStatusesCompleter.future;
                   },
               onSignatureNotification:
                   (
-                    String signature, {
-                    required Commitment commitment,
-                    required AbortSignal abortSignal,
+                    signature, {
+                    required commitment,
+                    required abortSignal,
                     required void Function({required Object? err})
                     onNotification,
                   }) async {
@@ -215,15 +215,15 @@ void main() {
       final confirmationFn = createRecentSignatureConfirmationPromiseFactory(
         RecentSignatureConfirmationConfig(
           getSignatureStatuses:
-              (List<String> signatures, {required AbortSignal abortSignal}) {
+              (signatures, {required abortSignal}) {
                 capturedAbortSignal = abortSignal;
                 return Completer<List<SignatureStatus?>>().future;
               },
           onSignatureNotification:
               (
-                String signature, {
-                required Commitment commitment,
-                required AbortSignal abortSignal,
+                signature, {
+                required commitment,
+                required abortSignal,
                 required void Function({required Object? err}) onNotification,
               }) async {
                 await Completer<void>().future;

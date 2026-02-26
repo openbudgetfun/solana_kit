@@ -67,8 +67,7 @@ SolanaError getSolanaErrorFromTransactionError(Object transactionError) {
         if (errorCode == SolanaErrorCode.transactionErrorUnknown) {
           return {
             'errorName': rpcErrorName,
-            if (rpcErrorContext != null)
-              'transactionErrorContext': rpcErrorContext,
+            'transactionErrorContext': ?rpcErrorContext,
           };
         } else if (errorCode ==
             SolanaErrorCode.transactionErrorDuplicateInstruction) {

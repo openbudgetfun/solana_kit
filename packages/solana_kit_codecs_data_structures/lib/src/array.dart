@@ -84,7 +84,7 @@ Encoder<List<T>> getArrayEncoder<T>(
   final computedMax = _computeArrayLikeCodecSize(effectiveSize, itemMaxSize);
 
   return VariableSizeEncoder<List<T>>(
-    getSizeFromValue: (List<T> array) {
+    getSizeFromValue: (array) {
       var prefixSize = 0;
       if (effectiveSize case final PrefixedArraySize prefixedSize) {
         prefixSize = getEncodedSize(

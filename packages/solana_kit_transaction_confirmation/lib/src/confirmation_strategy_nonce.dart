@@ -86,7 +86,7 @@ createNonceInvalidationPromiseFactory(NonceInvalidationConfig config) {
         nonceAccountAddress,
         abortSignal: abortController.signal,
         commitment: commitment,
-        onNotification: ({required String nonceValue}) {
+        onNotification: ({required nonceValue}) {
           if (nonceInvalidationCompleter.isCompleted) return;
           if (nonceValue != expectedNonceValue) {
             nonceInvalidationCompleter.completeError(

@@ -25,14 +25,14 @@ void main() {
           createBlockHeightExceedencePromiseFactory(
             BlockHeightExceedenceConfig(
               getEpochInfo:
-                  ({required AbortSignal abortSignal, Commitment? commitment}) {
+                  ({required abortSignal, commitment}) {
                     final completer = Completer<EpochInfo>();
                     epochInfoCompleters.add(completer);
                     return completer.future;
                   },
               onSlotNotification:
                   ({
-                    required AbortSignal abortSignal,
+                    required abortSignal,
                     required void Function(SlotNotification notification)
                     onNotification,
                   }) async {
@@ -237,8 +237,8 @@ void main() {
         BlockHeightExceedenceConfig(
           getEpochInfo:
               ({
-                required AbortSignal abortSignal,
-                Commitment? commitment,
+                required abortSignal,
+                commitment,
               }) async {
                 return EpochInfo(
                   absoluteSlot: BigInt.from(100),
@@ -247,7 +247,7 @@ void main() {
               },
           onSlotNotification:
               ({
-                required AbortSignal abortSignal,
+                required abortSignal,
                 required void Function(SlotNotification notification)
                 onNotification,
               }) async {
@@ -274,8 +274,8 @@ void main() {
         BlockHeightExceedenceConfig(
           getEpochInfo:
               ({
-                required AbortSignal abortSignal,
-                Commitment? commitment,
+                required abortSignal,
+                commitment,
               }) async {
                 capturedCommitment = commitment;
                 return EpochInfo(
@@ -285,7 +285,7 @@ void main() {
               },
           onSlotNotification:
               ({
-                required AbortSignal abortSignal,
+                required abortSignal,
                 required void Function(SlotNotification notification)
                 onNotification,
               }) async {

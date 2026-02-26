@@ -71,11 +71,9 @@ void main() {
     test('roundtrips base64 token data via base16', () {
       // 220 base64 chars = 165 decoded bytes = 330 hex chars.
       // Token data must be a single line to avoid string split issues.
-      // ignore: lines_longer_than_80_chars
       const base64TokenData =
           'AShNrkm2joOHhfQnRCzfSbrtDUkUcJSS7PJryR4PPjsnyyIWxL0ESVFoE7QWBowtz2B/iTtUGdb2EEyKbLuN5gEAAAAAAAAAAQAAAGCtpnOhgF7t+dM8By+nG51mKI9Dgb0RtO/6xvPX1w52AgAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
       // Hex encoding of the decoded base64 bytes above (165 bytes).
-      // ignore: lines_longer_than_80_chars
       const base16TokenData =
           '01284dae49b68e838785f427442cdf49baed0d4914709492ecf26bc91e0f3e3b27cb2216c4bd0449516813b416068c2dcf607f893b5419d6f6104c8a6cbb8de601000000000000000100000060ada673a1805eedf9d33c072fa71b9d66288f4381bd11b4effac6f3d7d70e76020000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 

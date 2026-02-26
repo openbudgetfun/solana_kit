@@ -74,12 +74,12 @@ createRecentSignatureConfirmationPromiseFactory(
 
       // The subscription future is intentionally not awaited because it runs
       // in parallel with the one-shot status check.
-      // ignore: unawaited_futures, document_ignores
+      // ignore: unawaited_futures
       config.onSignatureNotification(
         signature,
         abortSignal: abortController.signal,
         commitment: commitment,
-        onNotification: ({required Object? err}) {
+        onNotification: ({required err}) {
           if (signatureDidCommitCompleter.isCompleted) return;
           if (err != null) {
             signatureDidCommitCompleter.completeError(

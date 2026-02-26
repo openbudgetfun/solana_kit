@@ -85,7 +85,7 @@ FixedSizeEncoder<SysvarClock> getSysvarClockEncoder() {
 
   return FixedSizeEncoder<SysvarClock>(
     fixedSize: sysvarClockSize,
-    write: (SysvarClock value, Uint8List bytes, int offset) {
+    write: (value, bytes, offset) {
       return structEncoder.write(
         {
           'slot': value.slot,
@@ -115,7 +115,7 @@ FixedSizeDecoder<SysvarClock> getSysvarClockDecoder() {
 
   return FixedSizeDecoder<SysvarClock>(
     fixedSize: sysvarClockSize,
-    read: (Uint8List bytes, int offset) {
+    read: (bytes, offset) {
       final (map, newOffset) = structDecoder.read(bytes, offset);
       return (
         SysvarClock(

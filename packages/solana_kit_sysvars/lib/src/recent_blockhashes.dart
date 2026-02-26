@@ -90,11 +90,11 @@ getSysvarRecentBlockhashesEncoder() {
   final arrayEncoder = getArrayEncoder<Map<String, Object?>>(entryEncoder);
 
   return VariableSizeEncoder<SysvarRecentBlockhashes>(
-    getSizeFromValue: (SysvarRecentBlockhashes value) {
+    getSizeFromValue: (value) {
       final maps = _entriesToMaps(value);
       return getEncodedSize(maps, arrayEncoder);
     },
-    write: (SysvarRecentBlockhashes value, Uint8List bytes, int offset) {
+    write: (value, bytes, offset) {
       final maps = _entriesToMaps(value);
       return arrayEncoder.write(maps, bytes, offset);
     },
@@ -117,7 +117,7 @@ getSysvarRecentBlockhashesDecoder() {
   final arrayDecoder = getArrayDecoder<Map<String, Object?>>(entryDecoder);
 
   return VariableSizeDecoder<SysvarRecentBlockhashes>(
-    read: (Uint8List bytes, int offset) {
+    read: (bytes, offset) {
       final (maps, newOffset) = arrayDecoder.read(bytes, offset);
       final entries = maps.map(_mapToEntry).toList();
       return (entries, newOffset);

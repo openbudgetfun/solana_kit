@@ -131,7 +131,7 @@ void main() {
     test('returns fixedSize for fixed-size encoders', () {
       final encoder = FixedSizeEncoder<String>(
         fixedSize: 10,
-        write: (_, __, offset) => offset + 10,
+        write: (_, _, offset) => offset + 10,
       );
       expect(getEncodedSize('anything', encoder), equals(10));
     });
@@ -139,7 +139,7 @@ void main() {
     test('returns getSizeFromValue for variable-size encoders', () {
       final encoder = VariableSizeEncoder<String>(
         getSizeFromValue: (value) => value.length,
-        write: (_, __, offset) => offset,
+        write: (_, _, offset) => offset,
       );
       expect(getEncodedSize('hello', encoder), equals(5));
       expect(getEncodedSize('helloworld', encoder), equals(10));
@@ -150,7 +150,7 @@ void main() {
     test('identifies fixed-size encoder', () {
       final encoder = FixedSizeEncoder<int>(
         fixedSize: 4,
-        write: (_, __, offset) => offset + 4,
+        write: (_, _, offset) => offset + 4,
       );
       expect(isFixedSize(encoder), isTrue);
       expect(isVariableSize(encoder), isFalse);
@@ -159,7 +159,7 @@ void main() {
     test('identifies variable-size encoder', () {
       final encoder = VariableSizeEncoder<int>(
         getSizeFromValue: (_) => 4,
-        write: (_, __, offset) => offset + 4,
+        write: (_, _, offset) => offset + 4,
       );
       expect(isFixedSize(encoder), isFalse);
       expect(isVariableSize(encoder), isTrue);
@@ -185,7 +185,7 @@ void main() {
     test('identifies fixed-size codec', () {
       final codec = FixedSizeCodec<int, int>(
         fixedSize: 4,
-        write: (_, __, offset) => offset + 4,
+        write: (_, _, offset) => offset + 4,
         read: (_, offset) => (0, offset + 4),
       );
       expect(isFixedSize(codec), isTrue);
@@ -195,7 +195,7 @@ void main() {
     test('identifies variable-size codec', () {
       final codec = VariableSizeCodec<int, int>(
         getSizeFromValue: (_) => 4,
-        write: (_, __, offset) => offset + 4,
+        write: (_, _, offset) => offset + 4,
         read: (_, offset) => (0, offset + 4),
       );
       expect(isFixedSize(codec), isFalse);
@@ -207,7 +207,7 @@ void main() {
     test('assertIsFixedSize passes for fixed-size', () {
       final encoder = FixedSizeEncoder<int>(
         fixedSize: 4,
-        write: (_, __, offset) => offset + 4,
+        write: (_, _, offset) => offset + 4,
       );
       expect(() => assertIsFixedSize(encoder), returnsNormally);
     });
@@ -215,7 +215,7 @@ void main() {
     test('assertIsFixedSize throws for variable-size', () {
       final encoder = VariableSizeEncoder<int>(
         getSizeFromValue: (_) => 4,
-        write: (_, __, offset) => offset + 4,
+        write: (_, _, offset) => offset + 4,
       );
       expect(
         () => assertIsFixedSize(encoder),
@@ -232,7 +232,7 @@ void main() {
     test('assertIsVariableSize passes for variable-size', () {
       final encoder = VariableSizeEncoder<int>(
         getSizeFromValue: (_) => 4,
-        write: (_, __, offset) => offset + 4,
+        write: (_, _, offset) => offset + 4,
       );
       expect(() => assertIsVariableSize(encoder), returnsNormally);
     });
@@ -240,7 +240,7 @@ void main() {
     test('assertIsVariableSize throws for fixed-size', () {
       final encoder = FixedSizeEncoder<int>(
         fixedSize: 4,
-        write: (_, __, offset) => offset + 4,
+        write: (_, _, offset) => offset + 4,
       );
       expect(
         () => assertIsVariableSize(encoder),

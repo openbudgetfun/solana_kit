@@ -60,7 +60,7 @@ class HeliusWebSocket {
         'jsonrpc': '2.0',
         'id': id,
         'method': method,
-        if (params != null) 'params': params,
+        'params': ?params,
       }),
     );
 
@@ -81,7 +81,10 @@ class HeliusWebSocket {
 
   void _unsubscribe(int requestId) {
     final subId = _subscriptionIds.remove(requestId);
-    _controllers.remove(requestId)?.close();
+    final controller = _controllers.remove(requestId);
+    if (controller != null) {
+      unawaited(controller.close());
+    }
     if (subId != null && _channel != null) {
       _channel!.sink.add(
         jsonEncode({
@@ -138,7 +141,7 @@ class HeliusWebSocket {
 
   void _onDone() {
     for (final controller in _controllers.values) {
-      controller.close();
+      unawaited(controller.close());
     }
     _controllers.clear();
     _subscriptionIds.clear();

@@ -27,8 +27,8 @@ AsymmetricKeyPair<ECPublicKey, ECPrivateKey> generateP256KeyPair() {
     );
   final pair = generator.generateKeyPair();
   return AsymmetricKeyPair(
-    pair.publicKey as ECPublicKey,
-    pair.privateKey as ECPrivateKey,
+    pair.publicKey,
+    pair.privateKey,
   );
 }
 

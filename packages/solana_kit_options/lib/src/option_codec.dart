@@ -123,7 +123,7 @@ Encoder<Object?> getOptionEncoder<TFrom>(
   }
 
   return VariableSizeEncoder<Object?>(
-    getSizeFromValue: (Object? value) {
+    getSizeFromValue: (value) {
       final option = _toOption<TFrom>(value);
       if (isNone(option)) {
         final pSize = hasPrefix
@@ -282,7 +282,7 @@ Codec<Object?, Option<TTo>> getOptionCodec<TFrom, TTo extends TFrom>(
       : null;
 
   return VariableSizeCodec<Object?, Option<TTo>>(
-    getSizeFromValue: (Object? value) {
+    getSizeFromValue: (value) {
       if (encoder case VariableSizeEncoder<Object?>()) {
         return encoder.getSizeFromValue(value);
       }

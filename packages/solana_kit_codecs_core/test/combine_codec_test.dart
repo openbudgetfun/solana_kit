@@ -84,7 +84,7 @@ void main() {
     test('throws on mismatched fixed sizes', () {
       final encoder = FixedSizeEncoder<int>(
         fixedSize: 1,
-        write: (_, __, offset) => offset + 1,
+        write: (_, _, offset) => offset + 1,
       );
 
       final decoder = FixedSizeDecoder<int>(
@@ -107,7 +107,7 @@ void main() {
     test('throws on mismatched max sizes', () {
       final encoder = VariableSizeEncoder<int>(
         getSizeFromValue: (_) => 0,
-        write: (_, __, offset) => offset,
+        write: (_, _, offset) => offset,
         maxSize: 1,
       );
 
@@ -130,7 +130,7 @@ void main() {
     test('throws on mixed fixed/variable size', () {
       final fixedEncoder = FixedSizeEncoder<int>(
         fixedSize: 1,
-        write: (_, __, offset) => offset + 1,
+        write: (_, _, offset) => offset + 1,
       );
 
       final variableDecoder = VariableSizeDecoder<int>(

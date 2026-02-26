@@ -40,7 +40,7 @@ void main() {
         // 'Transformed' to the method name.
         final api = createJsonRpcApi(
           config: RpcApiConfig(
-            requestTransformer: (RpcRequest<Object?> request) =>
+            requestTransformer: (request) =>
                 RpcRequest<Object?>(
                   methodName: '${request.methodName}Transformed',
                   params: request.params,
@@ -65,7 +65,7 @@ void main() {
       // provided params.
       final api = createJsonRpcApi(
         config: RpcApiConfig(
-          requestTransformer: (RpcRequest<Object?> request) =>
+          requestTransformer: (request) =>
               RpcRequest<Object?>(
                 methodName: request.methodName,
                 params: (request.params! as List<Object?>)
@@ -95,7 +95,7 @@ void main() {
         final api = createJsonRpcApi(
           config: RpcApiConfig(
             responseTransformer:
-                (Object? response, RpcRequest<Object?> request) =>
+                (response, request) =>
                     (response! as int) * 2,
           ),
         );
@@ -155,7 +155,7 @@ void main() {
       // Given a dummy API with a request transformer.
       final api = createJsonRpcApi(
         config: RpcApiConfig(
-          requestTransformer: (RpcRequest<Object?> request) =>
+          requestTransformer: (request) =>
               RpcRequest<Object?>(
                 methodName: 'transformed',
                 params: request.params,

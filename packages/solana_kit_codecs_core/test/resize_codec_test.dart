@@ -7,7 +7,7 @@ void main() {
     test('resizes fixed-size codecs', () {
       final codec = FixedSizeCodec<Object?, String>(
         fixedSize: 42,
-        write: (_, __, offset) => offset + 42,
+        write: (_, _, offset) => offset + 42,
         read: (_, offset) => ('', offset + 42),
       );
 
@@ -28,7 +28,7 @@ void main() {
     test('resizes variable-size codecs', () {
       final codec = VariableSizeCodec<Object?, String>(
         getSizeFromValue: (_) => 42,
-        write: (_, __, offset) => offset,
+        write: (_, _, offset) => offset,
         read: (_, offset) => ('', offset),
       );
 
@@ -53,7 +53,7 @@ void main() {
     test('throws when fixed-size codecs have negative sizes', () {
       final codec = FixedSizeCodec<Object?, String>(
         fixedSize: 42,
-        write: (_, __, offset) => offset + 42,
+        write: (_, _, offset) => offset + 42,
         read: (_, offset) => ('', offset + 42),
       );
 
@@ -72,7 +72,7 @@ void main() {
     test('throws when variable-size codecs have negative sizes', () {
       final codec = VariableSizeCodec<Object?, String>(
         getSizeFromValue: (_) => 42,
-        write: (_, __, offset) => offset,
+        write: (_, _, offset) => offset,
         read: (_, offset) => ('', offset),
       );
 
@@ -95,7 +95,7 @@ void main() {
     test('resizes fixed-size encoders', () {
       final encoder = FixedSizeEncoder<int>(
         fixedSize: 10,
-        write: (_, __, offset) => offset + 10,
+        write: (_, _, offset) => offset + 10,
       );
 
       final resized = resizeEncoder(encoder, (size) => size + 5);
@@ -106,7 +106,7 @@ void main() {
     test('resizes variable-size encoders', () {
       final encoder = VariableSizeEncoder<int>(
         getSizeFromValue: (value) => value,
-        write: (_, __, offset) => offset,
+        write: (_, _, offset) => offset,
       );
 
       final resized = resizeEncoder(encoder, (size) => size * 2);

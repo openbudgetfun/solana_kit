@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
@@ -13,7 +12,7 @@ Encoder<Object?> getLiteralUnionEncoder(
   Encoder<num>? size,
 }) {
   final discriminator = size ?? getU8Encoder();
-  return transformEncoder<num, Object?>(discriminator, (Object? variant) {
+  return transformEncoder<num, Object?>(discriminator, (variant) {
     final index = variants.indexOf(variant);
     if (index < 0) {
       throw SolanaError(SolanaErrorCode.codecsInvalidLiteralUnionVariant, {
@@ -35,9 +34,9 @@ Decoder<Object?> getLiteralUnionDecoder(
 }) {
   final discriminator = size ?? getU8Decoder();
   return transformDecoder<num, Object?>(discriminator, (
-    num index,
-    Uint8List bytes,
-    int offset,
+    index,
+    bytes,
+    offset,
   ) {
     final i = index.toInt();
     if (i < 0 || i >= variants.length) {

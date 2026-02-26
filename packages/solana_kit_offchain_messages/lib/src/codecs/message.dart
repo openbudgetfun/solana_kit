@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
@@ -13,7 +12,7 @@ import 'package:solana_kit_offchain_messages/src/message.dart';
 /// to the appropriate version-specific decoder.
 Decoder<OffchainMessage> getOffchainMessageDecoder() {
   return VariableSizeDecoder<OffchainMessage>(
-    read: (Uint8List bytes, int offset) {
+    read: (bytes, offset) {
       // Read the version (after the 16-byte signing domain).
       final version = getHiddenPrefixDecoder(getU8Decoder() as Decoder<int>, [
         getOffchainMessageSigningDomainDecoder(),
@@ -38,7 +37,7 @@ Decoder<OffchainMessage> getOffchainMessageDecoder() {
 /// to the appropriate version-specific encoder.
 Encoder<OffchainMessage> getOffchainMessageEncoder() {
   return VariableSizeEncoder<OffchainMessage>(
-    getSizeFromValue: (OffchainMessage offchainMessage) {
+    getSizeFromValue: (offchainMessage) {
       return switch (offchainMessage) {
         OffchainMessageV0() =>
           (getOffchainMessageV0Encoder()
@@ -50,7 +49,7 @@ Encoder<OffchainMessage> getOffchainMessageEncoder() {
               .getSizeFromValue(offchainMessage),
       };
     },
-    write: (OffchainMessage offchainMessage, Uint8List bytes, int offset) {
+    write: (offchainMessage, bytes, offset) {
       return switch (offchainMessage) {
         OffchainMessageV0() => getOffchainMessageV0Encoder().write(
           offchainMessage,

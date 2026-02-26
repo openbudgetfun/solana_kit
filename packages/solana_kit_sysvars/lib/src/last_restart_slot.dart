@@ -48,7 +48,7 @@ FixedSizeEncoder<SysvarLastRestartSlot> getSysvarLastRestartSlotEncoder() {
 
   return FixedSizeEncoder<SysvarLastRestartSlot>(
     fixedSize: sysvarLastRestartSlotSize,
-    write: (SysvarLastRestartSlot value, Uint8List bytes, int offset) {
+    write: (value, bytes, offset) {
       return structEncoder.write(
         {'lastRestartSlot': value.lastRestartSlot},
         bytes,
@@ -66,7 +66,7 @@ FixedSizeDecoder<SysvarLastRestartSlot> getSysvarLastRestartSlotDecoder() {
 
   return FixedSizeDecoder<SysvarLastRestartSlot>(
     fixedSize: sysvarLastRestartSlotSize,
-    read: (Uint8List bytes, int offset) {
+    read: (bytes, offset) {
       final (map, newOffset) = structDecoder.read(bytes, offset);
       return (
         SysvarLastRestartSlot(

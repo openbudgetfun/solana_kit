@@ -30,19 +30,19 @@ void main() {
 
       getNonceInvalidationPromise =
           ({
-            required AbortSignal abortSignal,
-            required Commitment commitment,
-            required String expectedNonceValue,
-            required String nonceAccountAddress,
+            required abortSignal,
+            required commitment,
+            required expectedNonceValue,
+            required nonceAccountAddress,
           }) {
             return nonceInvalidationCompleter.future;
           };
 
       getRecentSignatureConfirmationPromise =
           ({
-            required AbortSignal abortSignal,
-            required Commitment commitment,
-            required String signature,
+            required abortSignal,
+            required commitment,
+            required signature,
           }) {
             return signatureConfirmationCompleter.future;
           };
@@ -106,9 +106,9 @@ void main() {
           getNonceInvalidationPromise: getNonceInvalidationPromise,
           getRecentSignatureConfirmationPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
-                required String signature,
+                required abortSignal,
+                required commitment,
+                required signature,
               }) {
                 return Completer<void>().future;
               },
@@ -131,10 +131,10 @@ void main() {
           commitment: Commitment.finalized,
           getNonceInvalidationPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
-                required String expectedNonceValue,
-                required String nonceAccountAddress,
+                required abortSignal,
+                required commitment,
+                required expectedNonceValue,
+                required nonceAccountAddress,
               }) {
                 return Completer<Never>().future;
               },
@@ -163,10 +163,10 @@ void main() {
             commitment: Commitment.finalized,
             getNonceInvalidationPromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
-                  required String expectedNonceValue,
-                  required String nonceAccountAddress,
+                  required abortSignal,
+                  required commitment,
+                  required expectedNonceValue,
+                  required nonceAccountAddress,
                 }) {
                   capturedNonceValue = expectedNonceValue;
                   capturedNonceAddress = nonceAccountAddress;
@@ -175,9 +175,9 @@ void main() {
                 },
             getRecentSignatureConfirmationPromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
-                  required String signature,
+                  required abortSignal,
+                  required commitment,
+                  required signature,
                 }) {
                   return Completer<void>().future;
                 },
@@ -207,18 +207,18 @@ void main() {
             commitment: Commitment.finalized,
             getNonceInvalidationPromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
-                  required String expectedNonceValue,
-                  required String nonceAccountAddress,
+                  required abortSignal,
+                  required commitment,
+                  required expectedNonceValue,
+                  required nonceAccountAddress,
                 }) {
                   return Completer<Never>().future;
                 },
             getRecentSignatureConfirmationPromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
-                  required String signature,
+                  required abortSignal,
+                  required commitment,
+                  required signature,
                 }) {
                   capturedSignature = signature;
                   capturedCommitment = commitment;
@@ -250,19 +250,19 @@ void main() {
             commitment: Commitment.finalized,
             getNonceInvalidationPromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
-                  required String expectedNonceValue,
-                  required String nonceAccountAddress,
+                  required abortSignal,
+                  required commitment,
+                  required expectedNonceValue,
+                  required nonceAccountAddress,
                 }) {
                   capturedNonceAbortSignal = abortSignal;
                   return Completer<Never>().future;
                 },
             getRecentSignatureConfirmationPromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
-                  required String signature,
+                  required abortSignal,
+                  required commitment,
+                  required signature,
                 }) {
                   capturedSignatureAbortSignal = abortSignal;
                   return Completer<void>().future;
@@ -310,18 +310,18 @@ void main() {
 
       getBlockHeightExceedencePromise =
           ({
-            required AbortSignal abortSignal,
-            required BigInt lastValidBlockHeight,
-            Commitment? commitment,
+            required abortSignal,
+            required lastValidBlockHeight,
+            commitment,
           }) {
             return blockHeightExceedenceCompleter.future;
           };
 
       getRecentSignatureConfirmationPromise =
           ({
-            required AbortSignal abortSignal,
-            required Commitment commitment,
-            required String signature,
+            required abortSignal,
+            required commitment,
+            required signature,
           }) {
             return signatureConfirmationCompleter.future;
           };
@@ -382,9 +382,9 @@ void main() {
           getBlockHeightExceedencePromise: getBlockHeightExceedencePromise,
           getRecentSignatureConfirmationPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
-                required String signature,
+                required abortSignal,
+                required commitment,
+                required signature,
               }) {
                 return Completer<void>().future;
               },
@@ -406,9 +406,9 @@ void main() {
           commitment: Commitment.finalized,
           getBlockHeightExceedencePromise:
               ({
-                required AbortSignal abortSignal,
-                required BigInt lastValidBlockHeight,
-                Commitment? commitment,
+                required abortSignal,
+                required lastValidBlockHeight,
+                commitment,
               }) {
                 return Completer<Never>().future;
               },
@@ -435,9 +435,9 @@ void main() {
             commitment: Commitment.finalized,
             getBlockHeightExceedencePromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required BigInt lastValidBlockHeight,
-                  Commitment? commitment,
+                  required abortSignal,
+                  required lastValidBlockHeight,
+                  commitment,
                 }) {
                   capturedCommitment = commitment;
                   capturedLastValidBlockHeight = lastValidBlockHeight;
@@ -445,9 +445,9 @@ void main() {
                 },
             getRecentSignatureConfirmationPromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
-                  required String signature,
+                  required abortSignal,
+                  required commitment,
+                  required signature,
                 }) {
                   return Completer<void>().future;
                 },
@@ -475,17 +475,17 @@ void main() {
             commitment: Commitment.finalized,
             getBlockHeightExceedencePromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required BigInt lastValidBlockHeight,
-                  Commitment? commitment,
+                  required abortSignal,
+                  required lastValidBlockHeight,
+                  commitment,
                 }) {
                   return Completer<Never>().future;
                 },
             getRecentSignatureConfirmationPromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
-                  required String signature,
+                  required abortSignal,
+                  required commitment,
+                  required signature,
                 }) {
                   capturedSignature = signature;
                   capturedCommitment = commitment;
@@ -516,18 +516,18 @@ void main() {
             commitment: Commitment.finalized,
             getBlockHeightExceedencePromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required BigInt lastValidBlockHeight,
-                  Commitment? commitment,
+                  required abortSignal,
+                  required lastValidBlockHeight,
+                  commitment,
                 }) {
                   capturedBlockHeightAbortSignal = abortSignal;
                   return Completer<Never>().future;
                 },
             getRecentSignatureConfirmationPromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
-                  required String signature,
+                  required abortSignal,
+                  required commitment,
+                  required signature,
                 }) {
                   capturedSignatureAbortSignal = abortSignal;
                   return Completer<void>().future;
@@ -557,22 +557,21 @@ void main() {
 
       await expectLater(
         // Deprecated method under test.
-        // ignore: deprecated_member_use_from_same_package
         waitForRecentTransactionConfirmationUntilTimeout(
           abortSignal: abortController.signal,
           commitment: Commitment.finalized,
           getTimeoutPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
+                required abortSignal,
+                required commitment,
               }) {
                 return Completer<Never>().future;
               },
           getRecentSignatureConfirmationPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
-                required String signature,
+                required abortSignal,
+                required commitment,
+                required signature,
               }) {
                 return Completer<void>().future;
               },
@@ -599,22 +598,21 @@ void main() {
       }).ignore();
 
       // Deprecated method under test.
-      // ignore: deprecated_member_use_from_same_package
       await waitForRecentTransactionConfirmationUntilTimeout(
         abortSignal: AbortController().signal,
         commitment: Commitment.finalized,
         getTimeoutPromise:
             ({
-              required AbortSignal abortSignal,
-              required Commitment commitment,
+              required abortSignal,
+              required commitment,
             }) {
               return timeoutCompleter.future;
             },
         getRecentSignatureConfirmationPromise:
             ({
-              required AbortSignal abortSignal,
-              required Commitment commitment,
-              required String signature,
+              required abortSignal,
+              required commitment,
+              required signature,
             }) async {},
         signature: 'test_signature',
       );
@@ -623,22 +621,21 @@ void main() {
     test('throws when the timeout promise throws', () async {
       await expectLater(
         // Deprecated method under test.
-        // ignore: deprecated_member_use_from_same_package
         waitForRecentTransactionConfirmationUntilTimeout(
           abortSignal: AbortController().signal,
           commitment: Commitment.finalized,
           getTimeoutPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
+                required abortSignal,
+                required commitment,
               }) async {
                 throw StateError('o no');
               },
           getRecentSignatureConfirmationPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
-                required String signature,
+                required abortSignal,
+                required commitment,
+                required signature,
               }) {
                 return Completer<void>().future;
               },
@@ -653,22 +650,21 @@ void main() {
     test('throws when the signature confirmation promise throws', () async {
       await expectLater(
         // Deprecated method under test.
-        // ignore: deprecated_member_use_from_same_package
         waitForRecentTransactionConfirmationUntilTimeout(
           abortSignal: AbortController().signal,
           commitment: Commitment.finalized,
           getTimeoutPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
+                required abortSignal,
+                required commitment,
               }) {
                 return Completer<Never>().future;
               },
           getRecentSignatureConfirmationPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
-                required String signature,
+                required abortSignal,
+                required commitment,
+                required signature,
               }) async {
                 throw StateError('o no');
               },
@@ -685,23 +681,22 @@ void main() {
 
       unawaited(
         // Deprecated method under test.
-        // ignore: deprecated_member_use_from_same_package
         waitForRecentTransactionConfirmationUntilTimeout(
           abortSignal: AbortController().signal,
           commitment: Commitment.finalized,
           getTimeoutPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
+                required abortSignal,
+                required commitment,
               }) {
                 capturedCommitment = commitment;
                 return Completer<Never>().future;
               },
           getRecentSignatureConfirmationPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
-                required String signature,
+                required abortSignal,
+                required commitment,
+                required signature,
               }) {
                 return Completer<void>().future;
               },

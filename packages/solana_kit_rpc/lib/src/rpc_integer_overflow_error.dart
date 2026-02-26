@@ -50,6 +50,6 @@ SolanaError createSolanaJsonRpcIntegerOverflowError(
     'methodName': methodName,
     'optionalPathLabel': optionalPathLabel,
     'value': value,
-    if (path != null) 'path': path,
+    'path': ?path,
   });
 }

@@ -144,8 +144,8 @@ class AuthorizeDappRequest extends WalletRequest {
   }) {
     _complete({
       'accounts': accounts.map((a) => a.toJson()).toList(),
-      if (walletUriBase != null) 'wallet_uri_base': walletUriBase,
-      if (authToken != null) 'auth_token': authToken,
+      'wallet_uri_base': ?walletUriBase,
+      'auth_token': ?authToken,
       if (signInResult != null) 'sign_in_result': signInResult.toJson(),
     });
   }
@@ -251,7 +251,7 @@ class ReauthorizeDappRequest extends WalletRequest {
   }) {
     _complete({
       'accounts': accounts.map((a) => a.toJson()).toList(),
-      if (authToken != null) 'auth_token': authToken,
+      'auth_token': ?authToken,
     });
   }
 

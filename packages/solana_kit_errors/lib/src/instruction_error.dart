@@ -82,8 +82,7 @@ SolanaError getSolanaErrorFromInstructionError(
           return {
             'errorName': rpcErrorName,
             'index': numberIndex,
-            if (rpcErrorContext != null)
-              'instructionErrorContext': rpcErrorContext,
+            'instructionErrorContext': ?rpcErrorContext,
           };
         } else if (errorCode == SolanaErrorCode.instructionErrorCustom) {
           return {

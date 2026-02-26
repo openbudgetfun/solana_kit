@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 
@@ -10,7 +9,7 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 FixedSizeEncoder<void> getUnitEncoder() {
   return FixedSizeEncoder<void>(
     fixedSize: 0,
-    write: (_, Uint8List bytes, int offset) => offset,
+    write: (_, bytes, offset) => offset,
   );
 }
 
@@ -20,7 +19,7 @@ FixedSizeEncoder<void> getUnitEncoder() {
 FixedSizeDecoder<void> getUnitDecoder() {
   return FixedSizeDecoder<void>(
     fixedSize: 0,
-    read: (Uint8List bytes, int offset) => (null, offset),
+    read: (bytes, offset) => (null, offset),
   );
 }
 

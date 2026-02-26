@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -28,7 +27,7 @@ Decoder<Map<String, Object?>> getOffchainMessageV0PreambleDecoder() {
               getAddressDecoder() as Decoder<Object?>,
               size: PrefixedArraySize(getU8Decoder()),
             ),
-            (signatoryAddresses, Uint8List bytes, int offset) {
+            (signatoryAddresses, bytes, offset) {
               final addresses = signatoryAddresses.cast<Address>();
               if (addresses.isEmpty) {
                 throw SolanaError(

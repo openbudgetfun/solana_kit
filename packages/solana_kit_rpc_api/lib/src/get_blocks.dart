@@ -25,7 +25,7 @@ List<Object?> getBlocksParams(
 ]) {
   return [
     startSlotInclusive,
-    if (endSlotInclusive != null) endSlotInclusive,
+    ?endSlotInclusive,
     if (config != null) config.toJson(),
   ];
 }

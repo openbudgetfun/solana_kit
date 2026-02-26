@@ -78,9 +78,10 @@ RpcSubscriptionsChannelCreator getChannelPoolingChannelCreator(
               destroyPoolEntry();
             });
           })
-          .onError<Object>((_, __) {
+          .onError<Object>((_, _) {
             destroyPoolEntry();
-          });
+          })
+          .ignore();
 
       poolEntry = ChannelPoolEntry(
         channel: newChannelFuture,

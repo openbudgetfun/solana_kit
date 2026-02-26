@@ -102,7 +102,7 @@ Encoder<T?> getNullableEncoder<T>(
   }
 
   return VariableSizeEncoder<T?>(
-    getSizeFromValue: (T? value) {
+    getSizeFromValue: (value) {
       if (value == null) {
         return getEncodedSize(false, prefixEncoder) +
             getEncodedSize(null, noneEncoder);
@@ -127,7 +127,7 @@ Decoder<T?> getNullableDecoder<T>(
   if (!hasPrefix) {
     prefixDecoder = transformDecoder<void, bool>(
       getUnitDecoder(),
-      (_, __, ___) => false,
+      (_, _, _) => false,
     );
   } else {
     prefixDecoder = getBooleanDecoder(size: prefix);

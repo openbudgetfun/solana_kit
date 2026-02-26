@@ -389,7 +389,7 @@ MessagePackerInstructionPlan getLinearMessagePackerInstructionPlan({
     var offset = 0;
     return MessagePacker(
       done: () => offset >= totalLength,
-      packMessageToCapacity: (TransactionMessage message) {
+      packMessageToCapacity: (message) {
         if (offset >= totalLength) {
           throw SolanaError(
             SolanaErrorCode.instructionPlansMessagePackerAlreadyComplete,
@@ -439,7 +439,7 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
     var instructionIndex = 0;
     return MessagePacker(
       done: () => instructionIndex >= instructions.length,
-      packMessageToCapacity: (TransactionMessage message) {
+      packMessageToCapacity: (message) {
         if (instructionIndex >= instructions.length) {
           throw SolanaError(
             SolanaErrorCode.instructionPlansMessagePackerAlreadyComplete,
