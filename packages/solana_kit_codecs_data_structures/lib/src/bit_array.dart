@@ -15,7 +15,7 @@ FixedSizeEncoder<List<bool>> getBitArrayEncoder(
 }) {
   return FixedSizeEncoder<List<bool>>(
     fixedSize: size,
-    write: (List<bool> value, Uint8List bytes, int offset) {
+    write: (value, bytes, offset) {
       final bytesToAdd = <int>[];
 
       for (var i = 0; i < size; i++) {
@@ -55,7 +55,7 @@ FixedSizeDecoder<List<bool>> getBitArrayDecoder(
 }) {
   return FixedSizeDecoder<List<bool>>(
     fixedSize: size,
-    read: (Uint8List bytes, int offset) {
+    read: (bytes, offset) {
       assertByteArrayHasEnoughBytesForCodec('bitArray', size, bytes, offset);
       final booleans = <bool>[];
       var slice = bytes.sublist(offset, offset + size);

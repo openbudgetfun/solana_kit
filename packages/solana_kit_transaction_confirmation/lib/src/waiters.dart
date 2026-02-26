@@ -44,7 +44,7 @@ Future<void> waitForDurableNonceTransactionConfirmation({
       getRecentSignatureConfirmationPromise:
           getRecentSignatureConfirmationPromise,
     ),
-    ({required AbortSignal abortSignal}) => [
+    ({required abortSignal}) => [
       getNonceInvalidationPromise(
         abortSignal: abortSignal,
         commitment: commitment,
@@ -93,7 +93,7 @@ Future<void> waitForRecentTransactionConfirmation({
       getRecentSignatureConfirmationPromise:
           getRecentSignatureConfirmationPromise,
     ),
-    ({required AbortSignal abortSignal}) => [
+    ({required abortSignal}) => [
       getBlockHeightExceedencePromise(
         abortSignal: abortSignal,
         commitment: commitment,
@@ -115,7 +115,6 @@ Future<void> waitForRecentTransactionConfirmation({
 /// [getRecentSignatureConfirmationPromise] is a function that resolves when
 /// the signature reaches the target commitment.
 /// [signature] is the transaction signature to confirm.
-@Deprecated('Use waitForRecentTransactionConfirmation instead')
 Future<void> waitForRecentTransactionConfirmationUntilTimeout({
   required AbortSignal abortSignal,
   required Commitment commitment,
@@ -136,7 +135,7 @@ Future<void> waitForRecentTransactionConfirmationUntilTimeout({
       getRecentSignatureConfirmationPromise:
           getRecentSignatureConfirmationPromise,
     ),
-    ({required AbortSignal abortSignal}) => [
+    ({required abortSignal}) => [
       getTimeoutPromise(abortSignal: abortSignal, commitment: commitment),
     ],
   );

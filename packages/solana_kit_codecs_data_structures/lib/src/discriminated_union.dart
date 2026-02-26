@@ -27,7 +27,7 @@ Encoder<Map<String, Object?>> getDiscriminatedUnionEncoder(
     final (index, (_, variant)) = entry;
     return transformEncoder<List<Object?>, Map<String, Object?>>(
       getTupleEncoder([prefix as Encoder<Object?>, variant]),
-      (Map<String, Object?> value) => <Object?>[index, value],
+      (value) => <Object?>[index, value],
     );
   }).toList();
 
@@ -55,7 +55,7 @@ Encoder<Map<String, Object?>> getDiscriminatedUnionEncoder(
   final maxSize = _getUnionMaxSize(variantEncoders);
 
   return VariableSizeEncoder<Map<String, Object?>>(
-    getSizeFromValue: (Map<String, Object?> value) {
+    getSizeFromValue: (value) {
       final index = getIndex(value);
       _assertValidVariantIndex(variantEncoders, index);
       return getEncodedSize(value, variantEncoders[index]);
@@ -86,7 +86,7 @@ Decoder<Map<String, Object?>> getDiscriminatedUnionDecoder(
     final (discriminatorValue, variant) = entry;
     return transformDecoder<List<Object?>, Map<String, Object?>>(
       getTupleDecoder([prefix as Decoder<Object?>, variant]),
-      (List<Object?> tuple, Uint8List bytes, int offset) {
+      (tuple, bytes, offset) {
         final value = tuple[1];
         final result = <String, Object?>{discriminator: discriminatorValue};
         if (value is Map<String, Object?>) {

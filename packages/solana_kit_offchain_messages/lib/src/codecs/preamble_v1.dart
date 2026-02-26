@@ -18,7 +18,7 @@ Decoder<Map<String, Object?>> getOffchainMessageV1PreambleDecoder() {
               fixDecoderSize(getBytesDecoder(), 32) as Decoder<Object?>,
               size: PrefixedArraySize(getU8Decoder()),
             ),
-            (signatoryAddressesBytes, Uint8List bytes, int offset) {
+            (signatoryAddressesBytes, bytes, offset) {
               final addressBytes = signatoryAddressesBytes.cast<Uint8List>();
               if (addressBytes.isEmpty) {
                 throw SolanaError(

@@ -37,7 +37,7 @@ void main() {
     });
 
     test('re-exports pipe from solana_kit_functional', () {
-      final result = 1.pipe((int n) => n + 1).pipe((int n) => n * 2);
+      final result = 1.pipe((n) => n + 1).pipe((n) => n * 2);
       expect(result, 4);
     });
   });

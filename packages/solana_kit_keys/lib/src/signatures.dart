@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:ed25519_edwards/ed25519_edwards.dart' as ed;
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
@@ -13,7 +14,7 @@ extension type const Signature(String value) {}
 extension type const SignatureBytes(Uint8List value) {}
 
 /// Cached base58 encoder instance.
-final _base58Encoder = getBase58Encoder();
+final VariableSizeEncoder<String> _base58Encoder = getBase58Encoder();
 
 /// Asserts that [putativeSignature] is a valid base58-encoded Ed25519
 /// signature.

@@ -17,15 +17,15 @@ void main() {
           commitment: Commitment.finalized,
           getRecentSignatureConfirmationPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
-                required String signature,
+                required abortSignal,
+                required commitment,
+                required signature,
               }) {
                 capturedSignal = abortSignal;
                 return Future.value();
               },
         ),
-        ({required AbortSignal abortSignal}) => [],
+        ({required abortSignal}) => [],
       );
 
       // After completion, the internal abort controller should be aborted.
@@ -47,16 +47,16 @@ void main() {
             commitment: Commitment.finalized,
             getRecentSignatureConfirmationPromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
-                  required String signature,
+                  required abortSignal,
+                  required commitment,
+                  required signature,
                 }) {
                   capturedSignal = abortSignal;
                   // Never resolve.
                   return Completer<void>().future;
                 },
           ),
-          ({required AbortSignal abortSignal}) => [
+          ({required abortSignal}) => [
             // Also never resolve.
             Completer<void>().future,
           ],
@@ -91,14 +91,14 @@ void main() {
             commitment: Commitment.finalized,
             getRecentSignatureConfirmationPromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
-                  required String signature,
+                  required abortSignal,
+                  required commitment,
+                  required signature,
                 }) {
                   return Future.value();
                 },
           ),
-          ({required AbortSignal abortSignal}) {
+          ({required abortSignal}) {
             capturedStrategySignal = abortSignal;
             return [];
           },
@@ -121,14 +121,14 @@ void main() {
           commitment: Commitment.finalized,
           getRecentSignatureConfirmationPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
-                required String signature,
+                required abortSignal,
+                required commitment,
+                required signature,
               }) {
                 return Completer<void>().future;
               },
         ),
-        ({required AbortSignal abortSignal}) {
+        ({required abortSignal}) {
           capturedStrategySignal = abortSignal;
           return [Completer<void>().future];
         },
@@ -153,14 +153,14 @@ void main() {
           commitment: Commitment.finalized,
           getRecentSignatureConfirmationPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
-                required String signature,
+                required abortSignal,
+                required commitment,
+                required signature,
               }) {
                 return Completer<void>().future;
               },
         ),
-        ({required AbortSignal abortSignal}) => [
+        ({required abortSignal}) => [
           Future.error(StateError('strategy failed')),
         ],
       );
@@ -175,14 +175,14 @@ void main() {
           commitment: Commitment.finalized,
           getRecentSignatureConfirmationPromise:
               ({
-                required AbortSignal abortSignal,
-                required Commitment commitment,
-                required String signature,
+                required abortSignal,
+                required commitment,
+                required signature,
               }) {
                 return Future.value();
               },
         ),
-        ({required AbortSignal abortSignal}) => [Completer<void>().future],
+        ({required abortSignal}) => [Completer<void>().future],
       );
       // If we reach here, it resolved successfully.
     });
@@ -198,14 +198,14 @@ void main() {
             commitment: Commitment.finalized,
             getRecentSignatureConfirmationPromise:
                 ({
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
-                  required String signature,
+                  required abortSignal,
+                  required commitment,
+                  required signature,
                 }) {
                   return Completer<void>().future;
                 },
           ),
-          ({required AbortSignal abortSignal}) => [],
+          ({required abortSignal}) => [],
         ),
         throwsA(isA<StateError>()),
       );

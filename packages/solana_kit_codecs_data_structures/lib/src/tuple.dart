@@ -37,7 +37,7 @@ Encoder<List<Object?>> getTupleEncoder(
   }
 
   return VariableSizeEncoder<List<Object?>>(
-    getSizeFromValue: (List<Object?> value) {
+    getSizeFromValue: (value) {
       var total = 0;
       for (var i = 0; i < items.length; i++) {
         total += getEncodedSize(value[i], items[i]);

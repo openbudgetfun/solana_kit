@@ -27,17 +27,17 @@ void main() {
         NonceInvalidationConfig(
           getNonceAccount:
               (
-                String nonceAccountAddress, {
-                required AbortSignal abortSignal,
-                required Commitment commitment,
+                nonceAccountAddress, {
+                required abortSignal,
+                required commitment,
               }) {
                 return getNonceAccountCompleter.future;
               },
           onAccountNotification:
               (
-                String nonceAccountAddress, {
-                required AbortSignal abortSignal,
-                required Commitment commitment,
+                nonceAccountAddress, {
+                required abortSignal,
+                required commitment,
                 required void Function({required String nonceValue})
                 onNotification,
               }) async {
@@ -203,18 +203,18 @@ void main() {
         NonceInvalidationConfig(
           getNonceAccount:
               (
-                String nonceAccountAddress, {
-                required AbortSignal abortSignal,
-                required Commitment commitment,
+                nonceAccountAddress, {
+                required abortSignal,
+                required commitment,
               }) {
                 capturedAbortSignal = abortSignal;
                 return Completer<NonceAccountInfo?>().future;
               },
           onAccountNotification:
               (
-                String nonceAccountAddress, {
-                required AbortSignal abortSignal,
-                required Commitment commitment,
+                nonceAccountAddress, {
+                required abortSignal,
+                required commitment,
                 required void Function({required String nonceValue})
                 onNotification,
               }) async {
@@ -252,18 +252,18 @@ void main() {
         NonceInvalidationConfig(
           getNonceAccount:
               (
-                String nonceAccountAddress, {
-                required AbortSignal abortSignal,
-                required Commitment commitment,
+                nonceAccountAddress, {
+                required abortSignal,
+                required commitment,
               }) async {
                 capturedCommitment = commitment;
                 return null;
               },
           onAccountNotification:
               (
-                String nonceAccountAddress, {
-                required AbortSignal abortSignal,
-                required Commitment commitment,
+                nonceAccountAddress, {
+                required abortSignal,
+                required commitment,
                 required void Function({required String nonceValue})
                 onNotification,
               }) async {
@@ -296,17 +296,17 @@ void main() {
           NonceInvalidationConfig(
             getNonceAccount:
                 (
-                  String nonceAccountAddress, {
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
+                  nonceAccountAddress, {
+                  required abortSignal,
+                  required commitment,
                 }) {
                   return Completer<NonceAccountInfo?>().future;
                 },
             onAccountNotification:
                 (
-                  String nonceAccountAddress, {
-                  required AbortSignal abortSignal,
-                  required Commitment commitment,
+                  nonceAccountAddress, {
+                  required abortSignal,
+                  required commitment,
                   required void Function({required String nonceValue})
                   onNotification,
                 }) async {

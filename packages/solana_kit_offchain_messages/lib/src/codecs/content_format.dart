@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
@@ -19,7 +18,7 @@ FixedSizeDecoder<OffchainMessageContentFormat>
 getOffchainMessageContentFormatDecoder() {
   return transformDecoder<int, OffchainMessageContentFormat>(
         getU8Decoder(),
-        (value, Uint8List bytes, int offset) =>
+        (value, bytes, offset) =>
             OffchainMessageContentFormat.fromValue(value),
       )
       as FixedSizeDecoder<OffchainMessageContentFormat>;

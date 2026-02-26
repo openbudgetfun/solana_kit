@@ -110,7 +110,7 @@ FixedSizeEncoder<SysvarEpochRewards> getSysvarEpochRewardsEncoder() {
 
   return FixedSizeEncoder<SysvarEpochRewards>(
     fixedSize: sysvarEpochRewardsSize,
-    write: (SysvarEpochRewards value, Uint8List bytes, int offset) {
+    write: (value, bytes, offset) {
       return structEncoder.write(
         {
           'distributionStartingBlockHeight':
@@ -145,7 +145,7 @@ FixedSizeDecoder<SysvarEpochRewards> getSysvarEpochRewardsDecoder() {
 
   return FixedSizeDecoder<SysvarEpochRewards>(
     fixedSize: sysvarEpochRewardsSize,
-    read: (Uint8List bytes, int offset) {
+    read: (bytes, offset) {
       final (map, newOffset) = structDecoder.read(bytes, offset);
       return (
         SysvarEpochRewards(

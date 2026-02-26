@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
@@ -119,13 +118,13 @@ Decoder<Lamports> _lamportsDecoderForInt(Decoder<int> innerDecoder) {
   return switch (innerDecoder) {
     FixedSizeDecoder<int>() => FixedSizeDecoder<Lamports>(
       fixedSize: innerDecoder.fixedSize,
-      read: (Uint8List bytes, int offset) {
+      read: (bytes, offset) {
         final (value, newOffset) = innerDecoder.read(bytes, offset);
         return (lamports(BigInt.from(value)), newOffset);
       },
     ),
     VariableSizeDecoder<int>() => VariableSizeDecoder<Lamports>(
-      read: (Uint8List bytes, int offset) {
+      read: (bytes, offset) {
         final (value, newOffset) = innerDecoder.read(bytes, offset);
         return (lamports(BigInt.from(value)), newOffset);
       },
@@ -163,7 +162,7 @@ Codec<Lamports, Lamports> _lamportsCodecForBigInt(
       fixedSize: innerCodec.fixedSize,
       write: (value, bytes, offset) =>
           innerCodec.write(value.value, bytes, offset),
-      read: (Uint8List bytes, int offset) {
+      read: (bytes, offset) {
         final (value, newOffset) = innerCodec.read(bytes, offset);
         return (lamports(value), newOffset);
       },
@@ -173,7 +172,7 @@ Codec<Lamports, Lamports> _lamportsCodecForBigInt(
         getSizeFromValue: (value) => innerCodec.getSizeFromValue(value.value),
         write: (value, bytes, offset) =>
             innerCodec.write(value.value, bytes, offset),
-        read: (Uint8List bytes, int offset) {
+        read: (bytes, offset) {
           final (value, newOffset) = innerCodec.read(bytes, offset);
           return (lamports(value), newOffset);
         },
@@ -188,7 +187,7 @@ Codec<Lamports, Lamports> _lamportsCodecForNum(Codec<num, int> innerCodec) {
       fixedSize: innerCodec.fixedSize,
       write: (value, bytes, offset) =>
           innerCodec.write(value.value.toInt(), bytes, offset),
-      read: (Uint8List bytes, int offset) {
+      read: (bytes, offset) {
         final (value, newOffset) = innerCodec.read(bytes, offset);
         return (lamports(BigInt.from(value)), newOffset);
       },
@@ -198,7 +197,7 @@ Codec<Lamports, Lamports> _lamportsCodecForNum(Codec<num, int> innerCodec) {
           innerCodec.getSizeFromValue(value.value.toInt()),
       write: (value, bytes, offset) =>
           innerCodec.write(value.value.toInt(), bytes, offset),
-      read: (Uint8List bytes, int offset) {
+      read: (bytes, offset) {
         final (value, newOffset) = innerCodec.read(bytes, offset);
         return (lamports(BigInt.from(value)), newOffset);
       },

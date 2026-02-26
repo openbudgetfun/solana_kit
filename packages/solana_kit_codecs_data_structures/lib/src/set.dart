@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/src/array.dart';
@@ -12,7 +11,7 @@ Encoder<Set<T>> getSetEncoder<T>(Encoder<T> item, {ArrayLikeCodecSize? size}) {
   final arrayEncoder = getArrayEncoder<T>(item, size: size);
   return transformEncoder<List<T>, Set<T>>(
     arrayEncoder,
-    (Set<T> set) => set.toList(),
+    (set) => set.toList(),
   );
 }
 
@@ -25,7 +24,7 @@ Decoder<Set<T>> getSetDecoder<T>(Decoder<T> item, {ArrayLikeCodecSize? size}) {
   final arrayDecoder = getArrayDecoder<T>(item, size: size);
   return transformDecoder<List<T>, Set<T>>(
     arrayDecoder,
-    (List<T> entries, Uint8List bytes, int offset) => entries.toSet(),
+    (entries, bytes, offset) => entries.toSet(),
   );
 }
 

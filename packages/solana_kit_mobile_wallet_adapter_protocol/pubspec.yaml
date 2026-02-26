@@ -12,7 +12,7 @@ environment:
 resolution: workspace
 
 dependencies:
-  pointycastle: ^3.9.1
+  pointycastle: ^4.0.0
   solana_kit_codecs_strings:
     workspace: true
   solana_kit_errors:

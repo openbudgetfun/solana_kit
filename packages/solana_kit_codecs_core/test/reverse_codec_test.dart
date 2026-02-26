@@ -47,7 +47,7 @@ void main() {
         () => reverseEncoder(
           // Force passing a VariableSizeEncoder as FixedSizeEncoder
           // This tests the assertIsFixedSize inside reverseEncoder.
-          FixedSizeEncoder<String>(fixedSize: 0, write: (_, __, ___) => 0),
+          FixedSizeEncoder<String>(fixedSize: 0, write: (_, _, _) => 0),
         ),
         returnsNormally,
       );

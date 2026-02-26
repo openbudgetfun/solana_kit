@@ -4,7 +4,7 @@ import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:test/test.dart';
 
 /// A value just above Dart's safe integer threshold for testing BigInt.
-final _maxSafeIntegerPlusOne =
+final BigInt _maxSafeIntegerPlusOne =
     BigInt.from(9007199254740991) + BigInt.one; // 2^53
 
 void main() {
@@ -19,8 +19,8 @@ void main() {
 
     test(
       'forwards JSON-serialized large integers to the underlying channel',
-      () {
-        getRpcSubscriptionsChannelWithBigIntJsonSerialization(
+      () async {
+        await getRpcSubscriptionsChannelWithBigIntJsonSerialization(
           mockChannel,
         ).send({'value': _maxSafeIntegerPlusOne});
 

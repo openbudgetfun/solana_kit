@@ -10,7 +10,7 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 FixedSizeEncoder<void> getConstantEncoder(Uint8List constant) {
   return FixedSizeEncoder<void>(
     fixedSize: constant.length,
-    write: (_, Uint8List bytes, int offset) {
+    write: (_, bytes, offset) {
       bytes.setAll(offset, constant);
       return offset + constant.length;
     },
@@ -24,7 +24,7 @@ FixedSizeEncoder<void> getConstantEncoder(Uint8List constant) {
 FixedSizeDecoder<void> getConstantDecoder(Uint8List constant) {
   return FixedSizeDecoder<void>(
     fixedSize: constant.length,
-    read: (Uint8List bytes, int offset) {
+    read: (bytes, offset) {
       if (!containsBytes(bytes, constant, offset)) {
         // Build hex strings inline to avoid dependency on codecs_strings.
         final hexConstant = _toHex(constant);

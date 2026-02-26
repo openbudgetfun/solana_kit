@@ -82,7 +82,7 @@ Decoder<OffchainMessageEnvelope> getOffchainMessageEnvelopeDecoder() {
       ),
       ('content', getBytesDecoder() as Decoder<Object?>),
     ]),
-    (decoded, Uint8List bytes, int offset) {
+    (decoded, bytes, offset) {
       final signatures = (decoded['signatures']! as List<Object?>)
           .cast<Uint8List>();
       final content = decoded['content']! as Uint8List;

@@ -49,11 +49,11 @@ VariableSizeEncoder<SysvarSlotHashes> getSysvarSlotHashesEncoder() {
   final arrayEncoder = getArrayEncoder<Map<String, Object?>>(entryEncoder);
 
   return VariableSizeEncoder<SysvarSlotHashes>(
-    getSizeFromValue: (SysvarSlotHashes value) {
+    getSizeFromValue: (value) {
       final maps = _entriesToMaps(value);
       return getEncodedSize(maps, arrayEncoder);
     },
-    write: (SysvarSlotHashes value, Uint8List bytes, int offset) {
+    write: (value, bytes, offset) {
       final maps = _entriesToMaps(value);
       return arrayEncoder.write(maps, bytes, offset);
     },
@@ -69,7 +69,7 @@ VariableSizeDecoder<SysvarSlotHashes> getSysvarSlotHashesDecoder() {
   final arrayDecoder = getArrayDecoder<Map<String, Object?>>(entryDecoder);
 
   return VariableSizeDecoder<SysvarSlotHashes>(
-    read: (Uint8List bytes, int offset) {
+    read: (bytes, offset) {
       final (maps, newOffset) = arrayDecoder.read(bytes, offset);
       final entries = maps.map(_mapToEntry).toList();
       return (entries, newOffset);

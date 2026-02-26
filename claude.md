@@ -51,6 +51,7 @@ solana_kit_errors (foundation - no deps)
 ## Important Rules
 
 - **Never delete files in `.changeset/`** — changeset files track release notes and versioning decisions. They are consumed by `knope release` and must not be manually removed.
+- **Always add a `.changeset/*.md` file when changing package code** — any PR that touches files under `packages/*` must include a changeset covering impacted packages. The `Require changes to be documented` check blocks merges when this is missing.
 - **Always keep readme files and docs up to date** — when modifying a package's public API, behavior, or usage patterns, update its `readme.md` to reflect the changes. Documentation must stay in sync with the code.
 
 ## Coding Conventions

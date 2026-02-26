@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
@@ -21,7 +20,7 @@ Decoder<OffchainMessageV0> getOffchainMessageV0Decoder() {
       getOffchainMessageV0PreambleDecoder() as Decoder<Object?>,
       getUtf8Decoder() as Decoder<Object?>,
     ]),
-    (tuple, Uint8List bytes, int offset) {
+    (tuple, bytes, offset) {
       final preamble = tuple[0]! as Map<String, Object?>;
       final text = tuple[1]! as String;
 

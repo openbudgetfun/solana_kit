@@ -38,11 +38,11 @@ RpcTransport createHttpTransportForSolanaRpc({
     HttpTransportConfig(
       url: url,
       headers: headers,
-      fromJson: (String rawResponse, Object? payload) =>
+      fromJson: (rawResponse, payload) =>
           isSolanaRequest(payload)
           ? parseJsonWithBigInts(rawResponse)
           : jsonDecode(rawResponse),
-      toJson: (Object? payload) => isSolanaRequest(payload)
+      toJson: (payload) => isSolanaRequest(payload)
           ? stringifyJsonWithBigInts(payload)
           : jsonEncode(payload),
     ),

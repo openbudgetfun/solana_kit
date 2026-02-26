@@ -30,7 +30,7 @@ Encoder<Object?> getUnionEncoder(
   final maxSize = _getUnionMaxSize(variants);
 
   return VariableSizeEncoder<Object?>(
-    getSizeFromValue: (Object? variant) {
+    getSizeFromValue: (variant) {
       final index = getIndexFromValue(variant);
       _assertValidVariantIndex(variants, index);
       return getEncodedSize(variant, variants[index]);

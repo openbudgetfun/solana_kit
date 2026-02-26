@@ -21,7 +21,7 @@ class BooleanCodecConfig {
 /// The `config` option allows customizing the number encoder used for storage.
 Encoder<bool> getBooleanEncoder({Encoder<num>? size}) {
   final numberEncoder = size ?? getU8Encoder();
-  return transformEncoder<num, bool>(numberEncoder, (bool value) {
+  return transformEncoder<num, bool>(numberEncoder, (value) {
     return value ? 1 : 0;
   });
 }
@@ -32,7 +32,7 @@ Encoder<bool> getBooleanEncoder({Encoder<num>? size}) {
 /// `false`.
 Decoder<bool> getBooleanDecoder({Decoder<num>? size}) {
   final numberDecoder = size ?? getU8Decoder();
-  return transformDecoder<num, bool>(numberDecoder, (num value, _, __) {
+  return transformDecoder<num, bool>(numberDecoder, (value, _, _) {
     return value.toInt() == 1;
   });
 }

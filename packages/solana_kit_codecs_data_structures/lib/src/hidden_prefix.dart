@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/src/tuple.dart';
@@ -17,7 +16,7 @@ Encoder<T> getHiddenPrefixEncoder<T>(
     encoder as Encoder<Object?>,
   ];
   final tupleEncoder = getTupleEncoder(allEncoders);
-  return transformEncoder<List<Object?>, T>(tupleEncoder, (T value) {
+  return transformEncoder<List<Object?>, T>(tupleEncoder, (value) {
     return <Object?>[
       ...List<Object?>.filled(prefixedEncoders.length, null),
       value,
@@ -42,7 +41,7 @@ Decoder<T> getHiddenPrefixDecoder<T>(
   final tupleDecoder = getTupleDecoder(allDecoders);
   return transformDecoder<List<Object?>, T>(
     tupleDecoder,
-    (List<Object?> tuple, Uint8List bytes, int offset) =>
+    (tuple, bytes, offset) =>
         tuple[tuple.length - 1] as T,
   );
 }

@@ -16,8 +16,8 @@ Decoder<Map<String, Object?>> createOffchainMessagePreambleDecoder(
 ) {
   final versionDecoder = transformDecoder<int, int>(getU8Decoder(), (
     value,
-    Uint8List bytes,
-    int offset,
+    bytes,
+    offset,
   ) {
     _validateVersion(value, expectedVersion);
     return value;
@@ -53,8 +53,8 @@ List<Address> decodeRequiredSignatoryAddresses(Uint8List bytes) {
   // First, decode the version and rest of bytes after version.
   final versionDecoder = transformDecoder<int, int>(getU8Decoder(), (
     value,
-    Uint8List bytes,
-    int offset,
+    bytes,
+    offset,
   ) {
     if (value > 1) {
       throw SolanaError(
@@ -88,7 +88,7 @@ List<Address> decodeRequiredSignatoryAddresses(Uint8List bytes) {
       getAddressDecoder() as Decoder<Object?>,
       size: PrefixedArraySize(getU8Decoder()),
     ),
-    (signatoryAddresses, Uint8List bytes, int offset) {
+    (signatoryAddresses, bytes, offset) {
       final addresses = signatoryAddresses.cast<Address>();
       if (addresses.isEmpty) {
         throw SolanaError(

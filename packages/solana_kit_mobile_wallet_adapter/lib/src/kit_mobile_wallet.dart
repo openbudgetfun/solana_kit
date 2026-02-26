@@ -72,9 +72,9 @@ class _KitMobileWalletImpl implements KitMobileWallet {
   }) async {
     final params = <String, Object?>{
       if (identity != null) 'identity': identity.toJson(),
-      if (chain != null) 'chain': chain,
-      if (features != null) 'features': features,
-      if (addresses != null) 'addresses': addresses,
+      'chain': ?chain,
+      'features': ?features,
+      'addresses': ?addresses,
       if (signInPayload != null) 'sign_in_payload': signInPayload.toJson(),
     };
 

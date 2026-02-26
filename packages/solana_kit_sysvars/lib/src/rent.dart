@@ -68,7 +68,7 @@ FixedSizeEncoder<SysvarRent> getSysvarRentEncoder() {
 
   return FixedSizeEncoder<SysvarRent>(
     fixedSize: sysvarRentSize,
-    write: (SysvarRent value, Uint8List bytes, int offset) {
+    write: (value, bytes, offset) {
       return structEncoder.write(
         {
           'lamportsPerByteYear': value.lamportsPerByteYear,
@@ -94,7 +94,7 @@ FixedSizeDecoder<SysvarRent> getSysvarRentDecoder() {
 
   return FixedSizeDecoder<SysvarRent>(
     fixedSize: sysvarRentSize,
-    read: (Uint8List bytes, int offset) {
+    read: (bytes, offset) {
       final (map, newOffset) = structDecoder.read(bytes, offset);
       return (
         SysvarRent(

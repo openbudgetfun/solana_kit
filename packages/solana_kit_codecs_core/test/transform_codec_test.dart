@@ -35,7 +35,7 @@ void main() {
       final mappedCodec = transformCodec<int, Object, int, String>(
         numberCodec,
         (value) => value is int ? value : (value as String).length,
-        (value, _, __) => 'x' * value,
+        (value, _, _) => 'x' * value,
       );
 
       final bytesA = mappedCodec.encode(42);
@@ -50,7 +50,7 @@ void main() {
       final mappedCodec = transformCodec<int, String, int, String>(
         numberCodec,
         (value) => value.length,
-        (value, _, __) => 'x' * value,
+        (value, _, _) => 'x' * value,
       );
 
       final bytesA = mappedCodec.encode('42');
@@ -66,7 +66,7 @@ void main() {
           transformCodec<int, Map<String, int>, int, Map<String, int>>(
             numberCodec,
             (value) => value['value']!,
-            (value, _, __) => {'value': value},
+            (value, _, _) => {'value': value},
           );
 
       final bytes = mappedCodec.encode({'value': 42});
@@ -216,7 +216,7 @@ void main() {
 
       final decoderB = transformDecoder<int, String>(
         decoder,
-        (value, _, __) => 'x' * value,
+        (value, _, _) => 'x' * value,
       );
 
       expect(decoderB, isA<FixedSizeDecoder<String>>());
@@ -232,7 +232,7 @@ void main() {
 
       final decoderB = transformDecoder<int, String>(
         decoder,
-        (value, _, __) => 'x' * value,
+        (value, _, _) => 'x' * value,
       );
 
       expect(decoderB, isA<VariableSizeDecoder<String>>());

@@ -83,7 +83,7 @@ FixedSizeEncoder<SysvarEpochSchedule> getSysvarEpochScheduleEncoder() {
 
   return FixedSizeEncoder<SysvarEpochSchedule>(
     fixedSize: sysvarEpochScheduleSize,
-    write: (SysvarEpochSchedule value, Uint8List bytes, int offset) {
+    write: (value, bytes, offset) {
       return structEncoder.write(
         {
           'slotsPerEpoch': value.slotsPerEpoch,
@@ -113,7 +113,7 @@ FixedSizeDecoder<SysvarEpochSchedule> getSysvarEpochScheduleDecoder() {
 
   return FixedSizeDecoder<SysvarEpochSchedule>(
     fixedSize: sysvarEpochScheduleSize,
-    read: (Uint8List bytes, int offset) {
+    read: (bytes, offset) {
       final (map, newOffset) = structDecoder.read(bytes, offset);
       return (
         SysvarEpochSchedule(

@@ -107,7 +107,7 @@ void main() {
     test('returns the correct fixed size', () {
       final fixedCodec = FixedSizeCodec<String, String>(
         fixedSize: 10,
-        write: (_, __, offset) => offset + 10,
+        write: (_, _, offset) => offset + 10,
         read: (_, offset) => ('', offset + 10),
       );
 
@@ -120,7 +120,7 @@ void main() {
     test('returns the correct variable size', () {
       final varCodec = VariableSizeCodec<String, String>(
         getSizeFromValue: (value) => 10,
-        write: (_, __, offset) => offset + 10,
+        write: (_, _, offset) => offset + 10,
         read: (_, offset) => ('', offset + 10),
       );
 

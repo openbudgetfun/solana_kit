@@ -23,7 +23,7 @@ String _findTestDir() {
 
 /// JavaScript's Number.MAX_SAFE_INTEGER equivalent.
 final _maxSafeInteger = BigInt.from(9007199254740991);
-final _maxSafeIntegerPlusOne = _maxSafeInteger + BigInt.one;
+final BigInt _maxSafeIntegerPlusOne = _maxSafeInteger + BigInt.one;
 
 void main() {
   group('parseJsonWithBigInts', () {

@@ -152,7 +152,7 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
         // Process slot notifications.
         final exceedenceCompleter = Completer<Never>();
 
-        slotNotificationCallback = (SlotNotification notification) {
+        slotNotificationCallback = (notification) {
           if (exceedenceCompleter.isCompleted) return;
 
           final slot = notification.slot;
@@ -187,9 +187,7 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
 
         // Also process any notifications that arrived before we set up
         // the callback.
-        for (final notification in slotNotifications) {
-          slotNotificationCallback(notification);
-        }
+        slotNotifications.forEach(slotNotificationCallback);
 
         return await exceedenceCompleter.future;
       }

@@ -106,7 +106,7 @@ void main() {
       // Content codec with fixedSize 256.
       final contentCodec = FixedSizeCodec<String, String>(
         fixedSize: 256,
-        write: (_, __, offset) => offset + 256,
+        write: (_, _, offset) => offset + 256,
         read: (_, offset) => ('', offset + 256),
       );
 
@@ -118,13 +118,13 @@ void main() {
     test('returns the correct fixed size', () {
       final numberCodec = FixedSizeCodec<num, num>(
         fixedSize: 4,
-        write: (_, __, offset) => offset + 4,
+        write: (_, _, offset) => offset + 4,
         read: (_, offset) => (0, offset + 4),
       );
 
       final contentCodec = FixedSizeCodec<String, String>(
         fixedSize: 10,
-        write: (_, __, offset) => offset + 10,
+        write: (_, _, offset) => offset + 10,
         read: (_, offset) => ('', offset + 10),
       );
 
@@ -180,13 +180,13 @@ void main() {
     test('returns the correct variable size', () {
       final numberCodec = FixedSizeCodec<num, num>(
         fixedSize: 4,
-        write: (_, __, offset) => offset + 4,
+        write: (_, _, offset) => offset + 4,
         read: (_, offset) => (0, offset + 4),
       );
 
       final contentCodec = VariableSizeCodec<String, String>(
         getSizeFromValue: (value) => 10,
-        write: (_, __, offset) => offset + 10,
+        write: (_, _, offset) => offset + 10,
         read: (_, offset) => ('', offset + 10),
       );
 

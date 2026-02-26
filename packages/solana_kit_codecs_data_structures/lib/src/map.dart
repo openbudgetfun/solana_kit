@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/src/array.dart';
@@ -21,7 +20,7 @@ Encoder<Map<K, V>> getMapEncoder<K, V>(
   final arrayEncoder = getArrayEncoder<List<Object?>>(tupleEncoder, size: size);
   return transformEncoder<List<List<Object?>>, Map<K, V>>(
     arrayEncoder,
-    (Map<K, V> map) =>
+    (map) =>
         map.entries.map((e) => <Object?>[e.key, e.value]).toList(),
   );
 }
@@ -42,9 +41,9 @@ Decoder<Map<K, V>> getMapDecoder<K, V>(
   ]);
   final arrayDecoder = getArrayDecoder<List<Object?>>(tupleDecoder, size: size);
   return transformDecoder<List<List<Object?>>, Map<K, V>>(arrayDecoder, (
-    List<List<Object?>> entries,
-    Uint8List bytes,
-    int offset,
+    entries,
+    bytes,
+    offset,
   ) {
     final map = <K, V>{};
     for (final entry in entries) {

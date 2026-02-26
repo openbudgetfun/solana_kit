@@ -167,7 +167,7 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
   if (config.signal != null) {
     config.signal!.future.then((_) {
       if (!isClosed) {
-        webSocketChannel.sink.close(normalClosureCode);
+        unawaited(webSocketChannel.sink.close(normalClosureCode));
       }
       // Clean up subscriptions.
       for (final sub in subscriptions) {
@@ -178,7 +178,7 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
 
   // Listen for messages from the WebSocket.
   final messageSub = webSocketChannel.stream.listen(
-    (Object? data) {
+    (data) {
       if (config.signal?.isAborted ?? false) return;
       dataPublisher.publish('message', data);
     },

@@ -68,6 +68,8 @@ When making changes to any package, create a changeset file:
 knope document-change
 ```
 
+This is a required step for PRs that modify files under `packages/*`. CI enforces this via the `Require changes to be documented` check.
+
 This interactively creates a Markdown file in `.changeset/` with the affected package(s) and a description. Each changeset file uses YAML frontmatter to specify the package and version bump type:
 
 ```markdown
@@ -184,7 +186,7 @@ Before publishing, verify each package meets these requirements:
 
 8. **Formatting is correct**:
    ```bash
-   dart format --set-exit-if-changed packages/<package_name>
+   dprint check
    ```
 
 ### Dependency-Order Publishing
