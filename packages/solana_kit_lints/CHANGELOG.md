@@ -2,6 +2,27 @@
 
 All notable changes to this package will be documented in this file.
 
+## 0.2.0 (2026-02-27)
+
+### Breaking Changes
+
+#### Initial Release
+
+The initial release of all libraries.
+
+### Fixes
+
+- Document chore: add nixpkgs tooling and stabilize coverage command.
+- Document ci: add publish and release workflow automation.
+- Document ci: enforce changesets for package modifications.
+- Document docs: add mdt workspace docs tooling and shared README sections.
+- Add runnable, non-placeholder examples for `solana_kit_lints` and `solana_kit_test_matchers`, including analyzer configuration guidance for lint usage and direct matcher usage examples.
+
+#### Add a `solana_kit_lints` workspace dependency checker and run it as part of
+
+`lint:all` to ensure internal package dependencies use `workspace: true` in
+`pubspec.yaml` files.
+
 ## 0.1.0 (2026-02-21)
 
 ### Notes

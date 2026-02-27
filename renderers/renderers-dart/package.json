@@ -1,6 +1,6 @@
 {
   "name": "codama-renderers-solana-kit-dart",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Codama renderer for generating Dart code targeting the solana_kit SDK",
   "exports": {
     "node": {
