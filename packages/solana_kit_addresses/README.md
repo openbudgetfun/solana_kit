@@ -263,3 +263,20 @@ Future<void> main() async {
 | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `getProgramDerivedAddress({required Address programAddress, required List<Object> seeds})`                     | Derives a PDA by searching for a valid bump seed (255 down to 0). Returns `Future<ProgramDerivedAddress>`. |
 | `createAddressWithSeed({required Address baseAddress, required Address programAddress, required Object seed})` | Creates a SHA-256-based derived address. Returns `Future<Address>`.                                        |
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_addresses"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_addresses/solana_kit_addresses.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_addresses`.
+
+- Import path: `package:solana_kit_addresses/solana_kit_addresses.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

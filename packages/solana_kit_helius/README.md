@@ -85,3 +85,20 @@ final helius = createHelius(
   client: http.Client(),
 );
 ```
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_helius"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_helius/solana_kit_helius.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_helius`.
+
+- Import path: `package:solana_kit_helius/solana_kit_helius.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

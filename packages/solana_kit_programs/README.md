@@ -165,3 +165,20 @@ void main() {
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `TransactionMessageInput` | A minimal transaction message representation with a `Map<int, InstructionInput> instructions` map indexed by instruction position. |
 | `InstructionInput`        | A minimal instruction representation containing only a `programAddress`.                                                           |
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_programs"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_programs/solana_kit_programs.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_programs`.
+
+- Import path: `package:solana_kit_programs/solana_kit_programs.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

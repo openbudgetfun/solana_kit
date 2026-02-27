@@ -62,6 +62,12 @@ test:all
 # Generate merged test coverage across all packages
 test:coverage
 
+# Validate documentation templates and generated workspace docs
+docs:check
+
+# Regenerate documentation template consumers and workspace docs
+docs:update
+
 # Fix formatting and lint issues
 fix:all
 ```

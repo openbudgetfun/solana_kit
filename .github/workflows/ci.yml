@@ -24,8 +24,12 @@ jobs:
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Check workspace documentation drift
-        run: scripts/workspace-doc-drift.sh --check
+        run: docs:check
+        shell: devenv shell -- bash -e {0}
 
   lint:
     runs-on: blacksmith-2vcpu-ubuntu-2404

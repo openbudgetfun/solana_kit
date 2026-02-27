@@ -332,3 +332,20 @@ Since this is an umbrella package, the complete API is the union of all re-expor
 - [solana_kit_programs](../solana_kit_programs/readme.md)
 - [solana_kit_program_client_core](../solana_kit_program_client_core/readme.md)
 - [solana_kit_transaction_confirmation](../solana_kit_transaction_confirmation/readme.md)
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit/solana_kit.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit`.
+
+- Import path: `package:solana_kit/solana_kit.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

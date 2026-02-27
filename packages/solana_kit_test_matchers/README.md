@@ -185,3 +185,20 @@ void main() {
 | --------------------------------- | ------------------------------------------------------------------- |
 | `isFullySignedTransactionMatcher` | Matches a `Transaction` with all signatures populated and non-zero. |
 | `hasSignatureCount(int count)`    | Matches a `Transaction` with exactly `count` signatures.            |
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_test_matchers"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_test_matchers/solana_kit_test_matchers.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_test_matchers`.
+
+- Import path: `package:solana_kit_test_matchers/solana_kit_test_matchers.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

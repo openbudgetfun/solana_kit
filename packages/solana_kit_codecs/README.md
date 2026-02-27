@@ -133,3 +133,20 @@ switch (result) {
 | [`solana_kit_codecs_strings`](../solana_kit_codecs_strings/)                 | String and base encoding codecs                 |
 | [`solana_kit_codecs_data_structures`](../solana_kit_codecs_data_structures/) | Struct, array, enum, and other composite codecs |
 | [`solana_kit_options`](../solana_kit_options/)                               | Rust-like `Option<T>` type and codec            |
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_codecs"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_codecs/solana_kit_codecs.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_codecs`.
+
+- Import path: `package:solana_kit_codecs/solana_kit_codecs.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

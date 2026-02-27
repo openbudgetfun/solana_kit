@@ -328,3 +328,20 @@ print(decoded['address']); // 11111111111111111111111111111111
 ### Constants
 
 - **`solanaErrorMessages`** -- `Map<int, String>` mapping every `SolanaErrorCode` to its human-readable message template.
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_errors"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_errors/solana_kit_errors.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_errors`.
+
+- Import path: `package:solana_kit_errors/solana_kit_errors.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

@@ -303,3 +303,20 @@ Future<void> main() async {
 | `EpochInfo`        | Epoch info: `absoluteSlot`, `blockHeight`.                      |
 | `SlotNotification` | A slot notification: `slot`.                                    |
 | `NonceAccountInfo` | Nonce account info: `nonceValue`.                               |
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_transaction_confirmation"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_transaction_confirmation`.
+
+- Import path: `package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->
