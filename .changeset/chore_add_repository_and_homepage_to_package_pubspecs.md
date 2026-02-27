@@ -41,4 +41,5 @@ solana_kit_transaction_messages: patch
 solana_kit_transactions: patch
 ---
 
-Add explicit repository and package homepage metadata to package pubspecs.
+Add explicit repository and package homepage metadata to package pubspecs, and
+consolidate package changelogs into a single root `CHANGELOG.md`.
