@@ -234,8 +234,11 @@ void main() {
 
     test('should detect valid error codes with isStakingError', () {
       for (var code = 6000; code <= 6005; code++) {
-        expect(isStakingError(code), isTrue,
-            reason: 'Expected $code to be a staking error');
+        expect(
+          isStakingError(code),
+          isTrue,
+          reason: 'Expected $code to be a staking error',
+        );
       }
     });
 

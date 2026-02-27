@@ -24,7 +24,8 @@ enum AccountRole {
   readonlySigner(2),
 
   /// A writable signer account.
-  writableSigner(3);
+  writableSigner(3)
+  ;
 
   const AccountRole(this.value);
 

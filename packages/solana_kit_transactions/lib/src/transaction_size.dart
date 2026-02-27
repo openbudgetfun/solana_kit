@@ -16,7 +16,8 @@ const int transactionPacketHeader = 40 + 8;
 ///
 /// Note that this excludes the transaction packet header.
 /// In other words, this is how much content we can fit in a transaction packet.
-const int transactionSizeLimit = transactionPacketSize - transactionPacketHeader;
+const int transactionSizeLimit =
+    transactionPacketSize - transactionPacketHeader;
 
 /// Gets the size of a given transaction in bytes.
 int getTransactionSize(Transaction transaction) {

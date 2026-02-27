@@ -40,8 +40,7 @@ RpcTransport createHttpTransportForSolanaRpc({
       url: url,
       allowInsecureHttp: allowInsecureHttp,
       headers: headers,
-      fromJson: (rawResponse, payload) =>
-          isSolanaRequest(payload)
+      fromJson: (rawResponse, payload) => isSolanaRequest(payload)
           ? parseJsonWithBigInts(rawResponse)
           : jsonDecode(rawResponse),
       toJson: (payload) => isSolanaRequest(payload)

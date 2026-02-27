@@ -7,7 +7,8 @@
 /// Helius cluster target for API requests.
 enum HeliusCluster {
   mainnet('mainnet-beta'),
-  devnet('devnet');
+  devnet('devnet')
+  ;
 
   const HeliusCluster(this.value);
 
@@ -40,7 +41,8 @@ enum HeliusAssetInterface {
   programmableNft('ProgrammableNFT'),
   fungibleToken('FungibleToken'),
   mplCoreAsset('MplCoreAsset'),
-  mplCoreCollection('MplCoreCollection');
+  mplCoreCollection('MplCoreCollection')
+  ;
 
   const HeliusAssetInterface(this.value);
 
@@ -77,7 +79,8 @@ enum HeliusAssetInterface {
 /// How ownership of an asset is modeled.
 enum HeliusOwnershipModel {
   single('single'),
-  token('token');
+  token('token')
+  ;
 
   const HeliusOwnershipModel(this.value);
 
@@ -105,7 +108,8 @@ enum HeliusOwnershipModel {
 enum HeliusRoyaltyModel {
   creators('creators'),
   fanout('fanout'),
-  single_('single');
+  single_('single')
+  ;
 
   const HeliusRoyaltyModel(this.value);
 
@@ -131,7 +135,8 @@ enum HeliusScope {
   full('full'),
   royalty('royalty'),
   metadata('metadata'),
-  extension_('extension');
+  extension_('extension')
+  ;
 
   const HeliusScope(this.value);
 
@@ -157,7 +162,8 @@ enum HeliusScope {
 enum HeliusUseMethod {
   burn('Burn'),
   single_('Single'),
-  multiple('Multiple');
+  multiple('Multiple')
+  ;
 
   const HeliusUseMethod(this.value);
 
@@ -186,7 +192,8 @@ enum HeliusContext {
   appMobile('app-mobile'),
   appDesktop('app-desktop'),
   app('app'),
-  vr('vr');
+  vr('vr')
+  ;
 
   const HeliusContext(this.value);
 
@@ -217,7 +224,8 @@ enum AssetSortBy {
   created('created'),
   updated('updated'),
   recentAction('recent_action'),
-  none_('none');
+  none_('none')
+  ;
 
   const AssetSortBy(this.value);
 
@@ -243,7 +251,8 @@ enum AssetSortBy {
 /// Sort direction for DAS asset queries.
 enum AssetSortDirection {
   asc('asc'),
-  desc('desc');
+  desc('desc')
+  ;
 
   const AssetSortDirection(this.value);
 
@@ -270,7 +279,8 @@ enum TokenStandard {
   fungible('Fungible'),
   fungibleAsset('FungibleAsset'),
   nonFungibleEdition('NonFungibleEdition'),
-  unknownStandard('UnknownStandard');
+  unknownStandard('UnknownStandard')
+  ;
 
   const TokenStandard(this.value);
 
@@ -302,7 +312,8 @@ enum PriorityLevel {
   high('High'),
   veryHigh('VeryHigh'),
   unsafeMax('UnsafeMax'),
-  default_('Default');
+  default_('Default')
+  ;
 
   const PriorityLevel(this.value);
 
@@ -333,7 +344,8 @@ enum UiTransactionEncoding {
   base64('base64'),
   base58('base58'),
   json('json'),
-  jsonParsed('jsonParsed');
+  jsonParsed('jsonParsed')
+  ;
 
   const UiTransactionEncoding(this.value);
 
@@ -367,7 +379,8 @@ enum WebhookType {
   raw('raw'),
   rawDevnet('rawDevnet'),
   discord('discord'),
-  discordDevnet('discordDevnet');
+  discordDevnet('discordDevnet')
+  ;
 
   const WebhookType(this.value);
 
@@ -395,7 +408,8 @@ enum WebhookType {
 enum TransactionStatus {
   all('all'),
   success('success'),
-  failed('failed');
+  failed('failed')
+  ;
 
   const TransactionStatus(this.value);
 
@@ -420,7 +434,8 @@ enum TransactionStatus {
 enum CommitmentLevel {
   processed('processed'),
   confirmed('confirmed'),
-  finalized('finalized');
+  finalized('finalized')
+  ;
 
   const CommitmentLevel(this.value);
 

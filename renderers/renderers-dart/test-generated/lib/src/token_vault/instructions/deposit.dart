@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -48,15 +47,20 @@ Decoder<DepositInstructionData> getDepositInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => DepositInstructionData(
-      discriminator: map['discriminator']! as int,
-      amount: map['amount']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        DepositInstructionData(
+          discriminator: map['discriminator']! as int,
+          amount: map['amount']! as BigInt,
+        ),
   );
 }
 
-Codec<DepositInstructionData, DepositInstructionData> getDepositInstructionDataCodec() {
-  return combineCodec(getDepositInstructionDataEncoder(), getDepositInstructionDataDecoder());
+Codec<DepositInstructionData, DepositInstructionData>
+getDepositInstructionDataCodec() {
+  return combineCodec(
+    getDepositInstructionDataEncoder(),
+    getDepositInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Deposit] instruction.
@@ -70,17 +74,17 @@ Instruction getDepositInstruction({
   required BigInt amount,
 }) {
   final data = DepositInstructionData(
-      amount: amount,
+    amount: amount,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: vault, role: AccountRole.writable),
-    AccountMeta(address: depositor, role: AccountRole.writableSigner),
-    AccountMeta(address: depositorTokenAccount, role: AccountRole.writable),
-    AccountMeta(address: vaultTokenAccount, role: AccountRole.writable),
-    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+      AccountMeta(address: vault, role: AccountRole.writable),
+      AccountMeta(address: depositor, role: AccountRole.writableSigner),
+      AccountMeta(address: depositorTokenAccount, role: AccountRole.writable),
+      AccountMeta(address: vaultTokenAccount, role: AccountRole.writable),
+      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
     data: getDepositInstructionDataEncoder().encode(data),
   );

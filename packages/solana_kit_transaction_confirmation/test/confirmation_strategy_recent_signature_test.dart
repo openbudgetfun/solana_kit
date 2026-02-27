@@ -214,11 +214,10 @@ void main() {
 
       final confirmationFn = createRecentSignatureConfirmationPromiseFactory(
         RecentSignatureConfirmationConfig(
-          getSignatureStatuses:
-              (signatures, {required abortSignal}) {
-                capturedAbortSignal = abortSignal;
-                return Completer<List<SignatureStatus?>>().future;
-              },
+          getSignatureStatuses: (signatures, {required abortSignal}) {
+            capturedAbortSignal = abortSignal;
+            return Completer<List<SignatureStatus?>>().future;
+          },
           onSignatureNotification:
               (
                 signature, {

@@ -29,12 +29,12 @@ const int stakingErrorUnauthorized = 0x1775; // 6005
 
 /// Map of error codes to human-readable messages.
 const Map<int, String> _stakingErrorMessages = {
-    stakingErrorPoolNotActive: 'The staking pool is not active.',
-    stakingErrorMaxStakersReached: 'Maximum number of stakers has been reached.',
-    stakingErrorStakeDurationNotMet: 'Minimum stake duration has not been met.',
-    stakingErrorNoRewardsAvailable: 'There are no rewards available to claim.',
-    stakingErrorInvalidStakeAmount: 'The stake amount must be greater than zero.',
-    stakingErrorUnauthorized: 'You are not authorized to perform this action.',
+  stakingErrorPoolNotActive: 'The staking pool is not active.',
+  stakingErrorMaxStakersReached: 'Maximum number of stakers has been reached.',
+  stakingErrorStakeDurationNotMet: 'Minimum stake duration has not been met.',
+  stakingErrorNoRewardsAvailable: 'There are no rewards available to claim.',
+  stakingErrorInvalidStakeAmount: 'The stake amount must be greater than zero.',
+  stakingErrorUnauthorized: 'You are not authorized to perform this action.',
 };
 
 /// Get the error message for a Staking program error code.

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -27,7 +26,8 @@ class UpdateVaultStatusInstructionData {
   final VaultStatus newStatus;
 }
 
-Encoder<UpdateVaultStatusInstructionData> getUpdateVaultStatusInstructionDataEncoder() {
+Encoder<UpdateVaultStatusInstructionData>
+getUpdateVaultStatusInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('newStatus', getVaultStatusEncoder()),
@@ -42,7 +42,8 @@ Encoder<UpdateVaultStatusInstructionData> getUpdateVaultStatusInstructionDataEnc
   );
 }
 
-Decoder<UpdateVaultStatusInstructionData> getUpdateVaultStatusInstructionDataDecoder() {
+Decoder<UpdateVaultStatusInstructionData>
+getUpdateVaultStatusInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('newStatus', getVaultStatusDecoder()),
@@ -50,15 +51,20 @@ Decoder<UpdateVaultStatusInstructionData> getUpdateVaultStatusInstructionDataDec
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateVaultStatusInstructionData(
-      discriminator: map['discriminator']! as int,
-      newStatus: map['newStatus']! as VaultStatus,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UpdateVaultStatusInstructionData(
+          discriminator: map['discriminator']! as int,
+          newStatus: map['newStatus']! as VaultStatus,
+        ),
   );
 }
 
-Codec<UpdateVaultStatusInstructionData, UpdateVaultStatusInstructionData> getUpdateVaultStatusInstructionDataCodec() {
-  return combineCodec(getUpdateVaultStatusInstructionDataEncoder(), getUpdateVaultStatusInstructionDataDecoder());
+Codec<UpdateVaultStatusInstructionData, UpdateVaultStatusInstructionData>
+getUpdateVaultStatusInstructionDataCodec() {
+  return combineCodec(
+    getUpdateVaultStatusInstructionDataEncoder(),
+    getUpdateVaultStatusInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [UpdateVaultStatus] instruction.
@@ -69,20 +75,22 @@ Instruction getUpdateVaultStatusInstruction({
   required VaultStatus newStatus,
 }) {
   final data = UpdateVaultStatusInstructionData(
-      newStatus: newStatus,
+    newStatus: newStatus,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: vault, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: vault, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getUpdateVaultStatusInstructionDataEncoder().encode(data),
   );
 }
 
 /// Parses a [UpdateVaultStatus] instruction from raw instruction data.
-UpdateVaultStatusInstructionData parseUpdateVaultStatusInstruction(Instruction instruction) {
+UpdateVaultStatusInstructionData parseUpdateVaultStatusInstruction(
+  Instruction instruction,
+) {
   return getUpdateVaultStatusInstructionDataDecoder().decode(instruction.data!);
 }

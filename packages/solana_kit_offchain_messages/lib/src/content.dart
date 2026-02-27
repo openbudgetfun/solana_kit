@@ -24,7 +24,8 @@ enum OffchainMessageContentFormat {
   utf81232BytesMax(1),
 
   /// UTF-8, max 65535 bytes.
-  utf865535BytesMax(2);
+  utf865535BytesMax(2)
+  ;
 
   const OffchainMessageContentFormat(this.value);
 

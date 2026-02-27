@@ -1,4 +1,3 @@
-
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/src/tuple.dart';
 
@@ -41,8 +40,7 @@ Decoder<T> getHiddenPrefixDecoder<T>(
   final tupleDecoder = getTupleDecoder(allDecoders);
   return transformDecoder<List<Object?>, T>(
     tupleDecoder,
-    (tuple, bytes, offset) =>
-        tuple[tuple.length - 1] as T,
+    (tuple, bytes, offset) => tuple[tuple.length - 1] as T,
   );
 }
 

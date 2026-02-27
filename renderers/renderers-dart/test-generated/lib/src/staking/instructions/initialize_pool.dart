@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -29,7 +28,8 @@ class InitializePoolInstructionData {
   final int maxStakers;
 }
 
-Encoder<InitializePoolInstructionData> getInitializePoolInstructionDataEncoder() {
+Encoder<InitializePoolInstructionData>
+getInitializePoolInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('rewardRate', getU64Encoder()),
@@ -48,7 +48,8 @@ Encoder<InitializePoolInstructionData> getInitializePoolInstructionDataEncoder()
   );
 }
 
-Decoder<InitializePoolInstructionData> getInitializePoolInstructionDataDecoder() {
+Decoder<InitializePoolInstructionData>
+getInitializePoolInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('rewardRate', getU64Decoder()),
@@ -58,17 +59,22 @@ Decoder<InitializePoolInstructionData> getInitializePoolInstructionDataDecoder()
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializePoolInstructionData(
-      discriminator: map['discriminator']! as int,
-      rewardRate: map['rewardRate']! as BigInt,
-      minStakeDuration: map['minStakeDuration']! as BigInt,
-      maxStakers: map['maxStakers']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializePoolInstructionData(
+          discriminator: map['discriminator']! as int,
+          rewardRate: map['rewardRate']! as BigInt,
+          minStakeDuration: map['minStakeDuration']! as BigInt,
+          maxStakers: map['maxStakers']! as int,
+        ),
   );
 }
 
-Codec<InitializePoolInstructionData, InitializePoolInstructionData> getInitializePoolInstructionDataCodec() {
-  return combineCodec(getInitializePoolInstructionDataEncoder(), getInitializePoolInstructionDataDecoder());
+Codec<InitializePoolInstructionData, InitializePoolInstructionData>
+getInitializePoolInstructionDataCodec() {
+  return combineCodec(
+    getInitializePoolInstructionDataEncoder(),
+    getInitializePoolInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializePool] instruction.
@@ -84,25 +90,27 @@ Instruction getInitializePoolInstruction({
   required int maxStakers,
 }) {
   final data = InitializePoolInstructionData(
-      rewardRate: rewardRate,
-      minStakeDuration: minStakeDuration,
-      maxStakers: maxStakers,
+    rewardRate: rewardRate,
+    minStakeDuration: minStakeDuration,
+    maxStakers: maxStakers,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: pool, role: AccountRole.writable),
-    AccountMeta(address: admin, role: AccountRole.writableSigner),
-    AccountMeta(address: rewardMint, role: AccountRole.readonly),
-    AccountMeta(address: stakeMint, role: AccountRole.readonly),
-    AccountMeta(address: systemProgram, role: AccountRole.readonly),
+      AccountMeta(address: pool, role: AccountRole.writable),
+      AccountMeta(address: admin, role: AccountRole.writableSigner),
+      AccountMeta(address: rewardMint, role: AccountRole.readonly),
+      AccountMeta(address: stakeMint, role: AccountRole.readonly),
+      AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
     data: getInitializePoolInstructionDataEncoder().encode(data),
   );
 }
 
 /// Parses a [InitializePool] instruction from raw instruction data.
-InitializePoolInstructionData parseInitializePoolInstruction(Instruction instruction) {
+InitializePoolInstructionData parseInitializePoolInstruction(
+  Instruction instruction,
+) {
   return getInitializePoolInstructionDataDecoder().decode(instruction.data!);
 }

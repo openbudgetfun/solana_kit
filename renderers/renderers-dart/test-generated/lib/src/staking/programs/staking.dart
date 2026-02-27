@@ -1,12 +1,12 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
-
 /// The address of the Staking program.
-const stakingProgramAddress = Address('StaKe111111111111111111111111111111111111111');
+const stakingProgramAddress = Address(
+  'StaKe111111111111111111111111111111111111111',
+);
 
 /// Known accounts for the Staking program.
 enum StakingAccount {

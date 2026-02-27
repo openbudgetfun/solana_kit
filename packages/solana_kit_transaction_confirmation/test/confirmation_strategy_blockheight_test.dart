@@ -24,12 +24,11 @@ void main() {
       getBlockHeightExceedencePromise =
           createBlockHeightExceedencePromiseFactory(
             BlockHeightExceedenceConfig(
-              getEpochInfo:
-                  ({required abortSignal, commitment}) {
-                    final completer = Completer<EpochInfo>();
-                    epochInfoCompleters.add(completer);
-                    return completer.future;
-                  },
+              getEpochInfo: ({required abortSignal, commitment}) {
+                final completer = Completer<EpochInfo>();
+                epochInfoCompleters.add(completer);
+                return completer.future;
+              },
               onSlotNotification:
                   ({
                     required abortSignal,

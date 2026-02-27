@@ -9,7 +9,8 @@ enum TransactionVersion {
   legacy,
 
   /// A version 0 transaction.
-  v0;
+  v0
+  ;
 
   /// The numeric value for versioned messages (0 for v0).
   /// Legacy has no numeric version.
