@@ -24,7 +24,6 @@ import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 /// - **Potential conflicts**. Since signers may decide to modify the given
 ///   transactions before sending them, they may invalidate previous
 ///   signatures.
-// ignore: one_member_abstracts
 abstract class TransactionSendingSigner {
   /// The base58-encoded address of this signer.
   Address get address;

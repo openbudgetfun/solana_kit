@@ -1,3 +1,6 @@
+// Legacy deprecated fields are retained for backward compatibility.
+// ignore_for_file: remove_deprecations_in_breaking_versions
+
 import 'package:solana_kit_rpc_types/src/stringified_bigint.dart';
 import 'package:solana_kit_rpc_types/src/stringified_number.dart';
 

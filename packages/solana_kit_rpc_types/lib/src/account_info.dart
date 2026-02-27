@@ -1,3 +1,6 @@
+// Legacy deprecated aliases are retained for backward compatibility.
+// ignore_for_file: remove_deprecations_in_breaking_versions
+
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
 import 'package:solana_kit_rpc_types/src/encoded_bytes.dart';

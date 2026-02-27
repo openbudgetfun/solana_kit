@@ -19,7 +19,6 @@ import 'package:solana_kit_signers/src/types.dart';
 ///   be used before a partial signer.
 /// - **Potential conflicts**. If more than one modifying signer is provided,
 ///   the second signer may invalidate the signature of the first one.
-// ignore: one_member_abstracts
 abstract class MessageModifyingSigner {
   /// The base58-encoded address of this signer.
   Address get address;

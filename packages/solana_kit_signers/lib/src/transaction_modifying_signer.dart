@@ -20,7 +20,6 @@ import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 /// - **Potential conflicts**. If more than one modifying signer is
 ///   provided, the second signer may invalidate the signature of the
 ///   first one.
-// ignore: one_member_abstracts
 abstract class TransactionModifyingSigner {
   /// The base58-encoded address of this signer.
   Address get address;
