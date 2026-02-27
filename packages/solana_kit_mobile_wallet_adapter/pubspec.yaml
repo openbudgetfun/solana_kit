@@ -15,24 +15,17 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  solana_kit_addresses:
-    workspace: true
-  solana_kit_errors:
-    workspace: true
-  solana_kit_keys:
-    workspace: true
-  solana_kit_mobile_wallet_adapter_protocol:
-    workspace: true
-  solana_kit_transactions:
-    workspace: true
+  solana_kit_addresses: ^0.2.0
+  solana_kit_errors: ^0.2.0
+  solana_kit_keys: ^0.2.0
+  solana_kit_mobile_wallet_adapter_protocol: ^0.2.0
+  solana_kit_transactions: ^0.2.0
   web_socket_channel: ^3.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  solana_kit_lints:
-    workspace: true
-
+  solana_kit_lints: ^0.2.0
 flutter:
   plugin:
     platforms:
