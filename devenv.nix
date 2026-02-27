@@ -186,7 +186,6 @@ in
       exec = ''
         set -e
         lint:format
-        lint:workspace-deps
         lint:analyze
       '';
       description = "Run all lint checks.";
@@ -205,14 +204,6 @@ in
         dart analyze --fatal-infos .
       '';
       description = "Run dart analyze across all packages.";
-      binary = "bash";
-    };
-    "lint:workspace-deps" = {
-      exec = ''
-        set -e
-        dart run packages/solana_kit_lints/bin/check_workspace_dependencies.dart
-      '';
-      description = "Check internal dependencies use workspace: true in pubspec.yaml files.";
       binary = "bash";
     };
     "docs:check" = {

@@ -9,17 +9,10 @@ environment:
 resolution: workspace
 
 dependencies:
-  solana_kit_codecs_core:
-    workspace: true
-  solana_kit_codecs_data_structures:
-    workspace: true
-  solana_kit_codecs_numbers:
-    workspace: true
-  solana_kit_codecs_strings:
-    workspace: true
-  solana_kit_options:
-    workspace: true
-
+  solana_kit_codecs_core: ^0.2.0
+  solana_kit_codecs_data_structures: ^0.2.0
+  solana_kit_codecs_numbers: ^0.2.0
+  solana_kit_codecs_strings: ^0.2.0
+  solana_kit_options: ^0.2.0
 dev_dependencies:
-  solana_kit_lints:
-    workspace: true
+  solana_kit_lints: ^0.2.0

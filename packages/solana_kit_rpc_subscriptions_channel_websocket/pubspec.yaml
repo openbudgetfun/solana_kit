@@ -9,13 +9,10 @@ environment:
 resolution: workspace
 
 dependencies:
-  solana_kit_errors:
-    workspace: true
-  solana_kit_subscribable:
-    workspace: true
+  solana_kit_errors: ^0.2.0
+  solana_kit_subscribable: ^0.2.0
   web_socket_channel: ^3.0.2
 
 dev_dependencies:
-  solana_kit_lints:
-    workspace: true
+  solana_kit_lints: ^0.2.0
   test: ^1.25.8

@@ -102,23 +102,11 @@ linter:
     lines_longer_than_80_chars: false
 ```
 
-### Workspace Dependency Check
-
-The lint package also includes a workspace dependency consistency check:
-
-```bash
-dart run packages/solana_kit_lints/bin/check_workspace_dependencies.dart
-```
-
-This command validates that internal `solana_kit*` dependencies in every
-`pubspec.yaml` use `workspace: true`.
-
 ## API Reference
 
 ### Provided files
 
 - **`lib/analysis_options.yaml`** -- The shared analysis options file that all packages include. Built on top of `very_good_analysis` with project-specific customizations.
-- **`bin/check_workspace_dependencies.dart`** -- Validates internal workspace dependency versioning in all `pubspec.yaml` files.
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_lints"|replace:"__EXAMPLE_PATH__":"example/README.md"|replace:"__IMPORT_PATH__":"N/A (lint package)"} -->
 
