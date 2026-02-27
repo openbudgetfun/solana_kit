@@ -7,6 +7,19 @@ on:
     branches: [main]
 
 jobs:
+  changeset-required:
+    if: github.event_name == 'pull_request'
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require changes to be documented
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: scripts/check-pr-changeset.sh
+
   lint:
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
