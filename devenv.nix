@@ -267,8 +267,8 @@ in
           fi
         done
 
-        # Also test generated packages under renderers
-        for pkg_dir in renderers/*/test-generated/; do
+        # Also test generated packages under codama renderers
+        for pkg_dir in packages/codama-renderers-dart/test-generated/; do
           if [ -d "$pkg_dir/test" ]; then
             pkg_name="$(basename "$(dirname "$pkg_dir")")/test-generated"
             echo "Testing $pkg_name..."
