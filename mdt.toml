@@ -1,0 +1,12 @@
+[padding]
+before = 0
+after = 0
+
+[exclude]
+patterns = [
+  "**/.dart_tool/**",
+  "**/build/**",
+  "**/coverage/**",
+  "**/.git/**",
+]
+markdown_codeblocks = true

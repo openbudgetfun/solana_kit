@@ -229,3 +229,20 @@ void main() {
 | ----------------------------------- | ------------------------------------------------------------------------------------ |
 | `OptionalAccountStrategy.omitted`   | Optional null accounts are excluded from the instruction.                            |
 | `OptionalAccountStrategy.programId` | Optional null accounts are replaced with the program address as a read-only account. |
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_program_client_core"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_program_client_core/solana_kit_program_client_core.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_program_client_core`.
+
+- Import path: `package:solana_kit_program_client_core/solana_kit_program_client_core.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

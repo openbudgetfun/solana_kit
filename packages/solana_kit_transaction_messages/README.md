@@ -280,3 +280,20 @@ assertIsTransactionMessageWithDurableNonceLifetime(messageWithNonce);
 ### Constants
 
 - **`maxSupportedTransactionVersion`** -- The maximum supported transaction version (currently `0`).
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_transaction_messages"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_transaction_messages`.
+
+- Import path: `package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

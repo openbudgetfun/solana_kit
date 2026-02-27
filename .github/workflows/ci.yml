@@ -20,6 +20,17 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: scripts/check-pr-changeset.sh
 
+  docs-drift:
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check workspace documentation drift
+        run: docs:check
+        shell: devenv shell -- bash -e {0}
+
   lint:
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:

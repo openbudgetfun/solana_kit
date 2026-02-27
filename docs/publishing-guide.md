@@ -4,7 +4,13 @@ This guide covers how to version, release, and publish the `solana_kit` Dart SDK
 
 ## Overview
 
-The Solana Kit SDK consists of 38 publishable packages under `packages/` plus 2 internal packages (`solana_kit_lints` and `solana_kit_test_matchers`) that are not published. Versioning is managed by [knope](https://knope.tech/) using changesets stored in `.changeset/`. Publishing is executed via `knope` workflows that call `melos publish`, so Melos manages dependency-aware publish sequencing.
+<!-- workspace-summary:start -->
+
+This monorepo contains **40 packages** under `packages/`: **38 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
+
+<!-- workspace-summary:end -->
+
+Versioning is managed by [knope](https://knope.tech/) using changesets stored in `.changeset/`. Publishing is executed via `knope` workflows that call `melos publish` (plus renderer npm publish), so Melos manages dependency-aware publish sequencing for Dart packages.
 
 ## Package Inventory
 
@@ -58,6 +64,57 @@ The Solana Kit SDK consists of 38 publishable packages under `packages/` plus 2 
 | `solana_kit_lints`         | Shared lint rules (`very_good_analysis`) |
 | `solana_kit_test_matchers` | Solana-specific test matchers            |
 
+### Workspace Dependency Graph (generated)
+
+Generated from package `pubspec.yaml` files with `scripts/workspace-doc-drift.sh --write`.
+
+<!-- workspace-dependency-graph:start -->
+
+```text
+solana_kit -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs, solana_kit_errors, solana_kit_fast_stable_stringify, solana_kit_functional, solana_kit_instruction_plans, solana_kit_instructions, solana_kit_keys, solana_kit_offchain_messages, solana_kit_options, solana_kit_program_client_core, solana_kit_programs, solana_kit_rpc, solana_kit_rpc_parsed_types, solana_kit_rpc_spec_types, solana_kit_rpc_subscriptions, solana_kit_rpc_transport_http, solana_kit_rpc_types, solana_kit_signers, solana_kit_subscribable, solana_kit_sysvars, solana_kit_transaction_confirmation, solana_kit_transaction_messages, solana_kit_transactions
+solana_kit_accounts -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_strings, solana_kit_errors, solana_kit_rpc_spec, solana_kit_rpc_types
+solana_kit_addresses -> solana_kit_codecs_core, solana_kit_codecs_strings, solana_kit_errors
+solana_kit_codecs -> solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_options
+solana_kit_codecs_core -> solana_kit_errors
+solana_kit_codecs_data_structures -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
+solana_kit_codecs_numbers -> solana_kit_codecs_core, solana_kit_errors
+solana_kit_codecs_strings -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
+solana_kit_errors -> (none)
+solana_kit_fast_stable_stringify -> (none)
+solana_kit_functional -> (none)
+solana_kit_helius -> solana_kit_errors
+solana_kit_instruction_plans -> solana_kit_errors, solana_kit_instructions, solana_kit_keys, solana_kit_transaction_messages, solana_kit_transactions
+solana_kit_instructions -> solana_kit_addresses, solana_kit_errors
+solana_kit_keys -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_strings, solana_kit_errors
+solana_kit_lints -> (none)
+solana_kit_mobile_wallet_adapter -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_mobile_wallet_adapter_protocol, solana_kit_transactions
+solana_kit_mobile_wallet_adapter_protocol -> solana_kit_codecs_strings, solana_kit_errors
+solana_kit_offchain_messages -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_keys
+solana_kit_options -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
+solana_kit_program_client_core -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_errors, solana_kit_instructions, solana_kit_rpc_spec, solana_kit_rpc_types, solana_kit_signers
+solana_kit_programs -> solana_kit_addresses, solana_kit_errors
+solana_kit_rpc -> solana_kit_errors, solana_kit_fast_stable_stringify, solana_kit_rpc_api, solana_kit_rpc_spec, solana_kit_rpc_spec_types, solana_kit_rpc_transformers, solana_kit_rpc_transport_http, solana_kit_rpc_types
+solana_kit_rpc_api -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_rpc_parsed_types, solana_kit_rpc_spec, solana_kit_rpc_spec_types, solana_kit_rpc_transformers, solana_kit_rpc_types, solana_kit_transaction_messages, solana_kit_transactions
+solana_kit_rpc_parsed_types -> solana_kit_addresses, solana_kit_errors, solana_kit_rpc_types
+solana_kit_rpc_spec -> solana_kit_errors, solana_kit_rpc_spec_types
+solana_kit_rpc_spec_types -> solana_kit_errors
+solana_kit_rpc_subscriptions -> solana_kit_errors, solana_kit_fast_stable_stringify, solana_kit_rpc_spec_types, solana_kit_rpc_subscriptions_api, solana_kit_rpc_subscriptions_channel_websocket, solana_kit_rpc_types, solana_kit_subscribable
+solana_kit_rpc_subscriptions_api -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_rpc_types
+solana_kit_rpc_subscriptions_channel_websocket -> solana_kit_errors, solana_kit_subscribable
+solana_kit_rpc_transformers -> solana_kit_errors, solana_kit_rpc_spec_types, solana_kit_rpc_types
+solana_kit_rpc_transport_http -> solana_kit_errors, solana_kit_rpc_spec, solana_kit_rpc_spec_types
+solana_kit_rpc_types -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors
+solana_kit_signers -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_errors, solana_kit_instructions, solana_kit_keys, solana_kit_transaction_messages, solana_kit_transactions
+solana_kit_subscribable -> solana_kit_errors
+solana_kit_sysvars -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_errors, solana_kit_rpc_spec, solana_kit_rpc_types
+solana_kit_test_matchers -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_transactions
+solana_kit_transaction_confirmation -> solana_kit_errors, solana_kit_rpc_subscriptions_channel_websocket, solana_kit_rpc_types, solana_kit_subscribable
+solana_kit_transaction_messages -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_functional, solana_kit_instructions
+solana_kit_transactions -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instructions, solana_kit_keys, solana_kit_transaction_messages
+```
+
+<!-- workspace-dependency-graph:end -->
+
 ## Managing Release
 
 ### Creating a Changeset
@@ -68,7 +125,7 @@ When making changes to any package, create a changeset file:
 knope document-change
 ```
 
-This is a required step for PRs that modify files under `packages/*`. CI enforces this via the `Require changes to be documented` check.
+This is required for PRs that modify files under `packages/*` (CI enforces this with `Require changes to be documented`).
 
 This interactively creates a Markdown file in `.changeset/` with the affected package(s) and a description. Each changeset file uses YAML frontmatter to specify the package and version bump type:
 
@@ -132,7 +189,7 @@ knope publish-day-2
 knope publish-day-3
 ```
 
-All day workflows call the same Melos publish command. This is intentional so you can rerun on later days and let Melos continue publishing unpublished package versions.
+All day workflows call the same publish command sequence as `knope publish`. This is intentional so you can rerun on later days and let Melos continue publishing unpublished package versions.
 
 If limits are not a concern, publish everything in one pass:
 
@@ -208,12 +265,10 @@ The correct publishing order follows the layer table above:
 knope publish
 ```
 
-This workflow runs two Melos passes through `devenv`:
+This workflow currently runs:
 
-1. `melos publish --no-private --no-flutter --no-dry-run --yes`
-2. `melos publish --no-private --flutter --no-dry-run --yes`
-
-This keeps publishing non-interactive (`--yes`), uses the project SDK environment (`devenv`), and publishes the Flutter package separately after dependency packages.
+1. `melos publish`
+2. `pnpm -r publish`
 
 ### Dry Run
 
@@ -223,9 +278,10 @@ To verify all packages are ready to publish without actually publishing:
 # Full workflow dry run
 knope --dry-run publish
 
-# Or run Melos directly in two passes
-devenv shell -- bash -lc "melos publish --no-private --no-flutter --yes"
-devenv shell -- bash -lc "melos publish --no-private --flutter --yes"
+# Staged workflow dry runs
+knope --dry-run publish-day-1
+knope --dry-run publish-day-2
+knope --dry-run publish-day-3
 ```
 
 ## Known Issues and Considerations
@@ -277,13 +333,13 @@ Before the very first publish of any package:
 
 The recommended CI/CD workflow for publishing:
 
-1. **PR merged to main**: Triggers CI checks (analyze, test, format)
-2. **Release preparation**: Run `knope release` to bump versions and create GitHub release
-3. **Publishing**: Run `knope publish` to publish all packages to pub.dev
+1. **PR merged to main**: CI checks run (analyze, test, format, changeset enforcement, docs drift check)
+2. **Release preparation**: Trigger the `Release` GitHub Actions workflow (`workflow_dispatch`) to run `knope release`
+3. **Publishing**: Trigger the `Publish` GitHub Actions workflow (`workflow_dispatch`) to run `knope publish` or `knope publish-day-*`
 4. **Verification**: Check pub.dev for all packages with correct versions
 
 The GitHub Actions workflow should include:
 
-- A `release` job that runs `knope release` on push to main (when changesets exist)
-- A `publish` job that runs `knope publish` after the release job succeeds
-- The publish job needs `dart pub login` credentials (via `PUB_TOKEN` environment variable or `dart pub token add` with a service account)
+- A manually triggered `Release` workflow that runs `knope release`
+- A manually triggered `Publish` workflow that runs `knope publish` or one of the staged publish-day workflows
+- The publish job needs pub.dev credentials (`PUB_TOKEN`) and npm credentials (`NPM_TOKEN`) because `knope publish` runs both Dart and renderer publish commands

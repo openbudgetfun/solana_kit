@@ -327,3 +327,20 @@ final keyPath = ['accounts', KEYPATH_WILDCARD, 'balance'];
 - **`jsonParsedAccountsConfigs`** -- Key paths for numeric values in all parsed accounts.
 - **`innerInstructionsConfigs`** -- Key paths for numeric values in inner instructions.
 - **`messageConfig`** -- Key paths for numeric values in transaction messages.
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_rpc_transformers"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_rpc_transformers/solana_kit_rpc_transformers.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_rpc_transformers`.
+
+- Import path: `package:solana_kit_rpc_transformers/solana_kit_rpc_transformers.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

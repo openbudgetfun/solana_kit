@@ -210,3 +210,20 @@ void main() async {
 | -------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `RpcSubscriptionsTransport`      | `Future<DataPublisher> Function(RpcSubscriptionsTransportConfig)` -- the transport function type.   |
 | `RpcSubscriptionsChannelCreator` | `Future<RpcSubscriptionsChannel> Function({required AbortSignal abortSignal})` -- creates channels. |
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_rpc_subscriptions"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_rpc_subscriptions`.
+
+- Import path: `package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

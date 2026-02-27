@@ -434,3 +434,20 @@ The package defines five abstract signer interfaces. Implementations can mix and
 | `getSignersFromTransactionMessage(TransactionMessage)`                  | Extracts and deduplicates all signers from a transaction message.                |
 | `isTransactionMessageWithSingleSendingSigner(TransactionMessage)`       | Returns `true` if the message has exactly one `TransactionSendingSigner`.        |
 | `assertIsTransactionMessageWithSingleSendingSigner(TransactionMessage)` | Asserts exactly one sending signer exists.                                       |
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_signers"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_signers/solana_kit_signers.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_signers`.
+
+- Import path: `package:solana_kit_signers/solana_kit_signers.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

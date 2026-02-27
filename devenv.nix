@@ -206,6 +206,24 @@ in
       description = "Run dart analyze across all packages.";
       binary = "bash";
     };
+    "docs:check" = {
+      exec = ''
+        set -e
+        mdt check
+        scripts/workspace-doc-drift.sh --check
+      '';
+      description = "Check documentation consistency with mdt and workspace metadata.";
+      binary = "bash";
+    };
+    "docs:update" = {
+      exec = ''
+        set -e
+        mdt update
+        scripts/workspace-doc-drift.sh --write
+      '';
+      description = "Update generated documentation blocks across the workspace.";
+      binary = "bash";
+    };
     "test:all" = {
       exec = ''
         set -e

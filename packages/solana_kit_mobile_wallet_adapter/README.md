@@ -141,3 +141,20 @@ This plugin uses a hybrid Dart + native approach:
 - **iOS Swift**: Empty no-op plugin that compiles cleanly
 
 This maximizes code sharing, testability, and reuse of the pure Dart protocol package.
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_mobile_wallet_adapter"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_mobile_wallet_adapter`.
+
+- Import path: `package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

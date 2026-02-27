@@ -237,3 +237,20 @@ void main() {
 - **`transactionPacketSize`** -- Maximum network packet size: `1280` bytes.
 - **`transactionPacketHeader`** -- Network header overhead: `48` bytes (IPv6 + fragment header).
 - **`transactionSizeLimit`** -- Maximum transaction content size: `1232` bytes.
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_transactions"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_transactions/solana_kit_transactions.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_transactions`.
+
+- Import path: `package:solana_kit_transactions/solana_kit_transactions.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

@@ -107,3 +107,20 @@ linter:
 ### Provided files
 
 - **`lib/analysis_options.yaml`** -- The shared analysis options file that all packages include. Built on top of `very_good_analysis` with project-specific customizations.
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_lints"|replace:"__EXAMPLE_PATH__":"example/README.md"|replace:"__IMPORT_PATH__":"N/A (lint package)"} -->
+
+## Example
+
+Use [`example/README.md`](./example/README.md) as a runnable starting point for `solana_kit_lints`.
+
+- Import path: `N/A (lint package)`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

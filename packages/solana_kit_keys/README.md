@@ -284,3 +284,20 @@ void main() {
 | Function                        | Description                                                                  |
 | ------------------------------- | ---------------------------------------------------------------------------- |
 | `assertIsPrivateKey(Uint8List)` | Asserts the byte array is exactly 32 bytes. Throws `SolanaError` on failure. |
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_keys"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_keys/solana_kit_keys.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_keys`.
+
+- Import path: `package:solana_kit_keys/solana_kit_keys.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

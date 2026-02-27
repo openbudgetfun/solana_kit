@@ -231,3 +231,20 @@ print(response); // {jsonrpc: 2.0, result: 42, id: 1}
   - `headers` (`Map<String, String>?`) -- Optional custom headers.
   - `toJson` (`String Function(Object?)?`) -- Optional custom JSON serializer.
   - `fromJson` (`Object? Function(String, Object?)?`) -- Optional custom JSON deserializer (receives raw response and request payload).
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_rpc_transport_http"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_rpc_transport_http`.
+
+- Import path: `package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->
