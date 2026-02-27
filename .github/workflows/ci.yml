@@ -7,13 +7,6 @@ on:
     branches: [main]
 
 jobs:
-  workspace-deps:
-    runs-on: blacksmith-2vcpu-ubuntu-2404
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check internal workspace dependency versioning
-        run: scripts/check-workspace-deps.sh
-
   changeset-required:
     if: github.event_name == 'pull_request'
     runs-on: blacksmith-2vcpu-ubuntu-2404

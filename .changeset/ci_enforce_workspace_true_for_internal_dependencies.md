@@ -2,4 +2,6 @@
 solana_kit_lints: patch
 ---
 
-Add CI enforcement to require internal workspace package dependencies to use `workspace: true` in `pubspec.yaml` files.
+Add a `solana_kit_lints` workspace dependency checker and run it as part of
+`lint:all` to ensure internal package dependencies use `workspace: true` in
+`pubspec.yaml` files.
