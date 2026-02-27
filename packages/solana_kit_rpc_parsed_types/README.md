@@ -286,3 +286,20 @@ print(voteInfo.votes.first.confirmationCount); // 31
 ### Sysvar Program
 
 - **`JsonParsedSysvarAccount`** -- Parsed sysvar account data (clock, rent, stakeHistory, etc.).
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_rpc_parsed_types"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_rpc_parsed_types/solana_kit_rpc_parsed_types.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_rpc_parsed_types`.
+
+- Import path: `package:solana_kit_rpc_parsed_types/solana_kit_rpc_parsed_types.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

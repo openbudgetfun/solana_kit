@@ -220,3 +220,20 @@ final fixedUtf8 = fixCodecSize(getUtf8Codec(), 32);
 | ----------------------------------- | --------------------------------------------------- |
 | `removeNullCharacters(string)`      | Remove all `\u0000` characters from a string        |
 | `padNullCharacters(string, length)` | Pad a string with `\u0000` to reach a target length |
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_codecs_strings"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_codecs_strings`.
+
+- Import path: `package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

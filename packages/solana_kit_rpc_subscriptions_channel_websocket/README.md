@@ -210,3 +210,20 @@ void main() async {
 | Constant            | Description                                                              |
 | ------------------- | ------------------------------------------------------------------------ |
 | `normalClosureCode` | `1000` -- the RFC 6455 normal closure code used when aborting a channel. |
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_rpc_subscriptions_channel_websocket"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_rpc_subscriptions_channel_websocket`.
+
+- Import path: `package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

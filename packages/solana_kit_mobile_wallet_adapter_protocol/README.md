@@ -130,3 +130,20 @@ The 4-byte sequence number is also used as AAD (Additional Authenticated Data) f
 
 - **v1**: Uses chain identifiers (`solana:mainnet`, `solana:devnet`, `solana:testnet`), feature arrays, and separate `reauthorize` method
 - **legacy**: Uses cluster names (`mainnet-beta`, `devnet`, `testnet`), boolean feature flags (`supports_sign_and_send_transactions`), and `authorize` with `auth_token` for reauthorization
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_mobile_wallet_adapter_protocol"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_mobile_wallet_adapter_protocol`.
+
+- Import path: `package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->

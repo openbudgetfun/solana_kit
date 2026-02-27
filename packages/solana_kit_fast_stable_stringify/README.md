@@ -186,3 +186,20 @@ print(key1 == key2); // true
 ### Mixins
 
 - **`ToJsonable`** -- Mixin for classes that implement `Object? toJson()`. When an object with this mixin is passed to `fastStableStringify`, its `toJson()` return value is recursively stringified.
+
+<!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_fast_stable_stringify"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_fast_stable_stringify/solana_kit_fast_stable_stringify.dart"} -->
+
+## Example
+
+Use [`example/main.dart`](./example/main.dart) as a runnable starting point for `solana_kit_fast_stable_stringify`.
+
+- Import path: `package:solana_kit_fast_stable_stringify/solana_kit_fast_stable_stringify.dart`
+- This section is centrally maintained with `mdt` to keep package guidance aligned.
+- After updating shared docs templates, run `docs:update` from the repo root.
+
+## Maintenance
+
+- Validate docs in CI and locally with `docs:check`.
+- Keep examples focused on one workflow and reference package README sections for deeper API details.
+
+<!-- {/packageExampleSection} -->
