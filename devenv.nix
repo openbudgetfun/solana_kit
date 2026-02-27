@@ -161,6 +161,8 @@ in
     "fix:all" = {
       exec = ''
         set -e
+        sync:write
+        docs:update
         fix:format
         fix:lint
       '';
@@ -182,9 +184,20 @@ in
       description = "Fix lint issues across all packages.";
       binary = "bash";
     };
+    "sync:write" = {
+      exec = ''
+        set -e
+        $DEVENV_ROOT/scripts/sync-workspace-dependency-versions.sh --write
+        $DEVENV_ROOT/scripts/sync-package-changelogs.sh --write
+      '';
+      description = "Sync packages.";
+      binary = "bash";
+    };
     "lint:all" = {
       exec = ''
         set -e
+        sync:check
+        docs:check
         lint:format
         lint:analyze
       '';
@@ -204,6 +217,15 @@ in
         dart analyze --fatal-infos .
       '';
       description = "Run dart analyze across all packages.";
+      binary = "bash";
+    };
+    "sync:check" = {
+      exec = ''
+        set -e
+        $DEVENV_ROOT/scripts/sync-workspace-dependency-versions.sh --check
+        $DEVENV_ROOT/scripts/sync-package-changelogs.sh --check
+      '';
+      description = "Check packages sync.";
       binary = "bash";
     };
     "docs:check" = {

@@ -2608,7 +2608,7 @@ Package groups scaffolded:
 
 #### Features
 
-- Add `codama-renderers-solana-kit-dart` - a Codama renderer that generates Dart code targeting the solana_kit SDK from Codama IDL definitions.
+- Add `codama-renderers-dart` - a Codama renderer that generates Dart code targeting the solana_kit SDK from Codama IDL definitions.
 
 #### Fixes
 
@@ -2621,7 +2621,7 @@ Package groups scaffolded:
 
 #### Features
 
-- Initial release of `codama-renderers-solana-kit-dart`
+- Initial release of `codama-renderers-dart`
 - Generate Dart code from Codama IDL targeting the solana_kit SDK
 - Support for accounts, instructions, defined types, errors, PDAs, and programs
 - Type manifest visitor mapping all Codama type nodes to Dart types and codecs
