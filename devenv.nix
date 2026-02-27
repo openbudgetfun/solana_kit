@@ -2,9 +2,13 @@
   pkgs,
   lib,
   config,
+  inputs,
   ...
 }:
 
+let
+  extra = inputs.ifiokjr-nixpkgs.packages.${pkgs.stdenv.system};
+in
 {
   packages =
     with pkgs;
@@ -16,6 +20,9 @@
       libiconv
       nixfmt
       shfmt
+      extra.knope
+      extra.mdt
+      extra.pnpm-standalone
     ]
     ++ lib.optionals stdenv.isDarwin [
       coreutils
@@ -110,14 +117,6 @@
         dart run coverage:format_coverage $@
       '';
       description = "Run the format_coverage command from the coverage package.";
-    };
-    "knope" = {
-      exec = ''
-        set -e
-        $DEVENV_ROOT/.eget/bin/knope $@
-      '';
-      description = "The knope executable for changeset and release management.";
-      binary = "bash";
     };
     "dartfmt" = {
       exec = ''
@@ -250,44 +249,21 @@
     "test:coverage" = {
       exec = ''
         set -e
-        repo_root="$DEVENV_ROOT"
-        cd "$repo_root"
 
-        rm -rf coverage
-        mkdir -p coverage
+        mapfile -t test_dirs < <(
+          find packages -mindepth 2 -maxdepth 2 -type d -name test \
+            | grep -v '^packages/solana_kit_mobile_wallet_adapter/test$' \
+            | sort
+        )
 
-        echo "Generating coverage for packages..."
-        for pkg_dir in packages/*/; do
-          if [ ! -d "$pkg_dir/test" ]; then
-            continue
-          fi
-
-          pkg_name="$(basename "$pkg_dir")"
-
-          # Skip Flutter packages (they need flutter test)
-          if grep -q "flutter:" "$pkg_dir/pubspec.yaml" 2>/dev/null; then
-            echo "Generating coverage for Flutter package: $pkg_name"
-            (cd "$pkg_dir" && rm -rf coverage && flutter test --coverage) || true
-          else
-            echo "Generating coverage for Dart package: $pkg_name"
-            (cd "$pkg_dir" && rm -rf coverage && dart test --coverage=coverage && format_coverage --lcov --in=coverage --out=coverage/lcov.info --package=. --report-on=lib) || true
-          fi
-        done
-
-        echo "Merging LCOV reports..."
-        : > coverage/lcov.info
-
-        lcov_files="$(find packages -type f -path "*/coverage/lcov.info" | sort)"
-        if [[ -z "$lcov_files" ]]; then
-          echo "No package coverage reports were generated." >&2
+        if [ ''${#test_dirs[@]} -eq 0 ]; then
+          echo "No package test directories were found."
           exit 1
         fi
 
-        while IFS= read -r lcov_file; do
-          sed -e "s|SF:$repo_root/|SF:|g" "$lcov_file" >> coverage/lcov.info
-        done <<< "$lcov_files"
-
-        echo "Merged coverage report: $repo_root/coverage/lcov.info"
+        echo "Running coverage for ''${#test_dirs[@]} package test directories..."
+        echo "Skipping packages/solana_kit_mobile_wallet_adapter/test (requires flutter test)."
+        dart run coverage:test_with_coverage -- "''${test_dirs[@]}"
       '';
       description = "Generate merged LCOV coverage for all packages.";
       binary = "bash";
