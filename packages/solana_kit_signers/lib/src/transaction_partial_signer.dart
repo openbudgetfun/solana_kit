@@ -17,7 +17,6 @@ import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 ///   partial signers to sign the same transaction in parallel.
 /// - **Flexible order**. The order in which we use these signers for
 ///   a given transaction doesn't matter.
-// ignore: one_member_abstracts
 abstract class TransactionPartialSigner {
   /// The base58-encoded address of this signer.
   Address get address;

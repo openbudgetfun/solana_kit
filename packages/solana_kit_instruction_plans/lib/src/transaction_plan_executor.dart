@@ -215,13 +215,9 @@ void _assertDivisibleSequentialPlansOnly(TransactionPlan transactionPlan) {
               .instructionPlansNonDivisibleTransactionPlansNotSupported,
         );
       }
-      for (final subPlan in plans) {
-        _assertDivisibleSequentialPlansOnly(subPlan);
-      }
+      plans.forEach(_assertDivisibleSequentialPlansOnly);
     case ParallelTransactionPlan(:final plans):
-      for (final subPlan in plans) {
-        _assertDivisibleSequentialPlansOnly(subPlan);
-      }
+      plans.forEach(_assertDivisibleSequentialPlansOnly);
     case SingleTransactionPlan():
       return;
   }

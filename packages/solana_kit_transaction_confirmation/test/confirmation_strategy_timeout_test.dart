@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fake_async/fake_async.dart';
 import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
@@ -12,16 +14,18 @@ void main() {
         Object? caughtError;
         final abortController = AbortController();
 
-        getTimeoutPromise(
-          abortSignal: abortController.signal,
-          commitment: Commitment.processed,
-        ).then<void>(
-          (_) {
-            isCompleted = true;
-          },
-          onError: (Object error) {
-            caughtError = error;
-          },
+        unawaited(
+          getTimeoutPromise(
+            abortSignal: abortController.signal,
+            commitment: Commitment.processed,
+          ).then<void>(
+            (_) {
+              isCompleted = true;
+            },
+            onError: (Object error) {
+              caughtError = error;
+            },
+          ),
         );
 
         // Advance to 29.999 seconds - should still be pending.
@@ -42,14 +46,16 @@ void main() {
         Object? caughtError;
         final abortController = AbortController();
 
-        getTimeoutPromise(
-          abortSignal: abortController.signal,
-          commitment: Commitment.confirmed,
-        ).then<void>(
-          (_) {},
-          onError: (Object error) {
-            caughtError = error;
-          },
+        unawaited(
+          getTimeoutPromise(
+            abortSignal: abortController.signal,
+            commitment: Commitment.confirmed,
+          ).then<void>(
+            (_) {},
+            onError: (Object error) {
+              caughtError = error;
+            },
+          ),
         );
 
         // Advance to 59.999 seconds - should still be pending.
@@ -69,14 +75,16 @@ void main() {
         Object? caughtError;
         final abortController = AbortController();
 
-        getTimeoutPromise(
-          abortSignal: abortController.signal,
-          commitment: Commitment.finalized,
-        ).then<void>(
-          (_) {},
-          onError: (Object error) {
-            caughtError = error;
-          },
+        unawaited(
+          getTimeoutPromise(
+            abortSignal: abortController.signal,
+            commitment: Commitment.finalized,
+          ).then<void>(
+            (_) {},
+            onError: (Object error) {
+              caughtError = error;
+            },
+          ),
         );
 
         // Advance to 59.999 seconds - should still be pending.
@@ -96,14 +104,16 @@ void main() {
         Object? caughtError;
         final abortController = AbortController();
 
-        getTimeoutPromise(
-          abortSignal: abortController.signal,
-          commitment: Commitment.finalized,
-        ).then<void>(
-          (_) {},
-          onError: (Object error) {
-            caughtError = error;
-          },
+        unawaited(
+          getTimeoutPromise(
+            abortSignal: abortController.signal,
+            commitment: Commitment.finalized,
+          ).then<void>(
+            (_) {},
+            onError: (Object error) {
+              caughtError = error;
+            },
+          ),
         );
 
         abortController.abort('test abort');

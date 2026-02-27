@@ -60,7 +60,8 @@ getRpcSubscriptionsTransportWithSubscriptionCoalescing(
           })
           .catchError((_) {
             // Ignore errors from the transport itself.
-          });
+          })
+          .ignore();
 
       cachedEntry = _CacheEntry(
         abortController: abortController,
