@@ -52,14 +52,21 @@ class WebSocketChannelConfig {
   /// Creates a [WebSocketChannelConfig].
   const WebSocketChannelConfig({
     required this.url,
+    this.allowInsecureWs = false,
     this.sendBufferHighWatermark = 128 * 1024,
     this.signal,
   });
 
-  // TODO(security): Production usage should enforce `wss://` only. Not
-  // blocking because local development often uses `ws://`.
-  /// The WebSocket server URL (must use ws:// or wss:// protocol).
+  /// The WebSocket server URL.
+  ///
+  /// By default only `wss://` URLs are allowed. Set [allowInsecureWs] to
+  /// `true` to allow `ws://` URLs for local development and testing.
   final Uri url;
+
+  /// Whether to allow insecure `ws://` URLs.
+  ///
+  /// Defaults to `false`, which enforces `wss://` URLs.
+  final bool allowInsecureWs;
 
   /// The number of bytes to admit into the send buffer before queueing
   /// messages on the client.
@@ -137,6 +144,11 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
     throw SolanaError(SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed);
   }
 
+  _validateWebSocketUrl(
+    config.url,
+    allowInsecureWs: config.allowInsecureWs,
+  );
+
   final dataPublisher = createDataPublisher();
 
   WebSocketChannel webSocketChannel;
@@ -208,6 +220,44 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
     dataPublisher: dataPublisher,
     webSocketChannel: webSocketChannel,
     isClosed: () => isClosed,
+  );
+}
+
+void _validateWebSocketUrl(
+  Uri url, {
+  required bool allowInsecureWs,
+}) {
+  final scheme = url.scheme.toLowerCase();
+
+  if (!url.isAbsolute || url.host.isEmpty) {
+    throw ArgumentError.value(
+      url.toString(),
+      'url',
+      'WebSocket URL must be an absolute URL.',
+    );
+  }
+
+  if (scheme == 'wss') {
+    return;
+  }
+
+  if (scheme == 'ws' && allowInsecureWs) {
+    return;
+  }
+
+  if (scheme == 'ws') {
+    throw ArgumentError.value(
+      url.toString(),
+      'url',
+      'Insecure WebSocket endpoints are disabled by default. '
+          'Use a wss:// URL or set allowInsecureWs: true for development.',
+    );
+  }
+
+  throw ArgumentError.value(
+    url.toString(),
+    'url',
+    "WebSocket URL must use either 'wss' or 'ws'.",
   );
 }
 

@@ -58,6 +58,13 @@ void main() {
   });
 
   group('WebSocketChannelConfig', () {
+    test('disallows insecure ws:// URLs by default', () {
+      final config = WebSocketChannelConfig(
+        url: Uri.parse('ws://example.com'),
+      );
+      expect(config.allowInsecureWs, isFalse);
+    });
+
     test('has default sendBufferHighWatermark of 128KB', () {
       final config = WebSocketChannelConfig(
         url: Uri.parse('wss://example.com'),
@@ -77,10 +84,12 @@ void main() {
       final url = Uri.parse('wss://example.com');
       final config = WebSocketChannelConfig(
         url: url,
+        allowInsecureWs: true,
         sendBufferHighWatermark: 42069,
         signal: signal,
       );
       expect(config.url, url);
+      expect(config.allowInsecureWs, isTrue);
       expect(config.sendBufferHighWatermark, 42069);
       expect(config.signal, same(signal));
     });
@@ -93,6 +102,7 @@ void main() {
         createWebSocketChannel(
           WebSocketChannelConfig(
             url: Uri.parse('ws://localhost:0'),
+            allowInsecureWs: true,
             signal: controller.signal,
           ),
         ),
@@ -115,6 +125,7 @@ void main() {
         createWebSocketChannel(
           WebSocketChannelConfig(
             url: Uri.parse('ws://localhost:0'),
+            allowInsecureWs: true,
             signal: controller.signal,
           ),
         ),
@@ -122,21 +133,36 @@ void main() {
       );
     });
 
-    test('throws when the connection fails', () async {
-      // Use a URL that will fail to connect (port 0 is not valid).
+    test('rejects insecure ws:// URLs by default', () async {
       await expectLater(
         createWebSocketChannel(
           WebSocketChannelConfig(url: Uri.parse('ws://localhost:1')),
         ),
-        throwsA(
-          isA<SolanaError>().having(
-            (e) => e.code,
-            'code',
-            SolanaErrorCode.rpcSubscriptionsChannelFailedToConnect,
-          ),
-        ),
+        throwsArgumentError,
       );
     });
+
+    test(
+      'throws when the connection fails with insecure ws:// enabled',
+      () async {
+        // Use a URL that will fail to connect.
+        await expectLater(
+          createWebSocketChannel(
+            WebSocketChannelConfig(
+              url: Uri.parse('ws://localhost:1'),
+              allowInsecureWs: true,
+            ),
+          ),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              SolanaErrorCode.rpcSubscriptionsChannelFailedToConnect,
+            ),
+          ),
+        );
+      },
+    );
   });
 
   group('a websocket channel', () {
@@ -162,7 +188,7 @@ void main() {
 
     test('resolves to a channel when the connection is established', () async {
       final channel = await createWebSocketChannel(
-        WebSocketChannelConfig(url: serverUrl),
+        WebSocketChannelConfig(url: serverUrl, allowInsecureWs: true),
       );
       expect(channel, isNotNull);
     });
@@ -170,7 +196,11 @@ void main() {
     test('publishes messages to message listeners', () async {
       final controller = AbortController();
       final channel = await createWebSocketChannel(
-        WebSocketChannelConfig(url: serverUrl, signal: controller.signal),
+        WebSocketChannelConfig(
+          url: serverUrl,
+          allowInsecureWs: true,
+          signal: controller.signal,
+        ),
       );
 
       final messages = <Object?>[];
@@ -190,7 +220,11 @@ void main() {
     test('publishes to multiple message listeners', () async {
       final controller = AbortController();
       final channel = await createWebSocketChannel(
-        WebSocketChannelConfig(url: serverUrl, signal: controller.signal),
+        WebSocketChannelConfig(
+          url: serverUrl,
+          allowInsecureWs: true,
+          signal: controller.signal,
+        ),
       );
 
       final messagesA = <Object?>[];
@@ -212,7 +246,11 @@ void main() {
     test('does not publish messages after abort', () async {
       final controller = AbortController();
       final channel = await createWebSocketChannel(
-        WebSocketChannelConfig(url: serverUrl, signal: controller.signal),
+        WebSocketChannelConfig(
+          url: serverUrl,
+          allowInsecureWs: true,
+          signal: controller.signal,
+        ),
       );
 
       final messages = <Object?>[];
@@ -231,7 +269,11 @@ void main() {
     test('sends a message to the websocket', () async {
       final controller = AbortController();
       final channel = await createWebSocketChannel(
-        WebSocketChannelConfig(url: serverUrl, signal: controller.signal),
+        WebSocketChannelConfig(
+          url: serverUrl,
+          allowInsecureWs: true,
+          signal: controller.signal,
+        ),
       );
 
       await _waitFor(() => serverSockets.isNotEmpty);
@@ -252,7 +294,11 @@ void main() {
       () async {
         final controller = AbortController();
         final channel = await createWebSocketChannel(
-          WebSocketChannelConfig(url: serverUrl, signal: controller.signal),
+          WebSocketChannelConfig(
+            url: serverUrl,
+            allowInsecureWs: true,
+            signal: controller.signal,
+          ),
         );
 
         final errors = <Object?>[];
@@ -282,7 +328,11 @@ void main() {
       () async {
         final controller = AbortController();
         final channel = await createWebSocketChannel(
-          WebSocketChannelConfig(url: serverUrl, signal: controller.signal),
+          WebSocketChannelConfig(
+            url: serverUrl,
+            allowInsecureWs: true,
+            signal: controller.signal,
+          ),
         );
 
         final errors = <Object?>[];
@@ -302,7 +352,11 @@ void main() {
     test('does not publish errors after abort', () async {
       final controller = AbortController();
       final channel = await createWebSocketChannel(
-        WebSocketChannelConfig(url: serverUrl, signal: controller.signal),
+        WebSocketChannelConfig(
+          url: serverUrl,
+          allowInsecureWs: true,
+          signal: controller.signal,
+        ),
       );
 
       final errors = <Object?>[];
@@ -322,7 +376,11 @@ void main() {
     test('throws when sending on a closed channel', () async {
       final controller = AbortController();
       final channel = await createWebSocketChannel(
-        WebSocketChannelConfig(url: serverUrl, signal: controller.signal),
+        WebSocketChannelConfig(
+          url: serverUrl,
+          allowInsecureWs: true,
+          signal: controller.signal,
+        ),
       );
 
       await _waitFor(() => serverSockets.isNotEmpty);
@@ -346,7 +404,11 @@ void main() {
     test('abort closes the websocket connection', () async {
       final controller = AbortController();
       await createWebSocketChannel(
-        WebSocketChannelConfig(url: serverUrl, signal: controller.signal),
+        WebSocketChannelConfig(
+          url: serverUrl,
+          allowInsecureWs: true,
+          signal: controller.signal,
+        ),
       );
 
       await _waitFor(() => serverSockets.isNotEmpty);
@@ -368,7 +430,11 @@ void main() {
     test('unsubscribing stops message delivery', () async {
       final controller = AbortController();
       final channel = await createWebSocketChannel(
-        WebSocketChannelConfig(url: serverUrl, signal: controller.signal),
+        WebSocketChannelConfig(
+          url: serverUrl,
+          allowInsecureWs: true,
+          signal: controller.signal,
+        ),
       );
 
       final messages = <Object?>[];

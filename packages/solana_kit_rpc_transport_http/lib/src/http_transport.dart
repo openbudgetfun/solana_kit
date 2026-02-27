@@ -30,7 +30,17 @@ RpcTransport createHttpTransport(
   HttpTransportConfig config, {
   http.Client? client,
 }) {
-  final HttpTransportConfig(:fromJson, :headers, :toJson, :url) = config;
+  final HttpTransportConfig(
+    :allowInsecureHttp,
+    :fromJson,
+    :headers,
+    :toJson,
+    :url,
+  ) = config;
+  final endpointUrl = _validateAndNormalizeHttpEndpoint(
+    url,
+    allowInsecureHttp: allowInsecureHttp,
+  );
 
   // Validate headers unconditionally to prevent forbidden headers in all
   // build modes (debug and release).
@@ -54,10 +64,8 @@ RpcTransport createHttpTransport(
       'content-type': 'application/json; charset=utf-8',
     };
 
-    // TODO(security): Production usage should enforce `https://` only. Not
-    // blocking because local development often uses `http://`.
     final response = await effectiveClient.post(
-      Uri.parse(url),
+      endpointUrl,
       headers: mergedHeaders,
       body: body,
     );
@@ -75,4 +83,44 @@ RpcTransport createHttpTransport(
 
     return jsonDecode(response.body);
   };
+}
+
+Uri _validateAndNormalizeHttpEndpoint(
+  String url, {
+  required bool allowInsecureHttp,
+}) {
+  final parsedUrl = Uri.parse(url);
+  final scheme = parsedUrl.scheme.toLowerCase();
+
+  if (!parsedUrl.isAbsolute || parsedUrl.host.isEmpty) {
+    throw ArgumentError.value(
+      url,
+      'url',
+      'HTTP transport URL must be an absolute URL.',
+    );
+  }
+
+  if (scheme == 'https') {
+    return parsedUrl;
+  }
+
+  if (scheme == 'http' && allowInsecureHttp) {
+    return parsedUrl;
+  }
+
+  if (scheme == 'http') {
+    throw ArgumentError.value(
+      url,
+      'url',
+      'Insecure HTTP endpoints are disabled by default. '
+          'Use an https:// URL or set allowInsecureHttp: true for '
+          'development.',
+    );
+  }
+
+  throw ArgumentError.value(
+    url,
+    'url',
+    "HTTP transport URL must use either 'https' or 'http'.",
+  );
 }

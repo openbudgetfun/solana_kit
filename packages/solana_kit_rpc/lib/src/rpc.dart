@@ -13,13 +13,22 @@ import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 /// final rpc = createSolanaRpc(url: 'https://api.mainnet-beta.solana.com');
 /// final slot = await rpc.request('getSlot').send();
 /// ```
+///
+/// By default, only `https://` URLs are allowed. Set [allowInsecureHttp] to
+/// `true` to allow `http://` URLs for local development/testing.
 Rpc createSolanaRpc({
   required String url,
+  bool allowInsecureHttp = false,
   Map<String, String>? headers,
   http.Client? client,
 }) {
   return createSolanaRpcFromTransport(
-    createDefaultRpcTransport(url: url, headers: headers, client: client),
+    createDefaultRpcTransport(
+      url: url,
+      allowInsecureHttp: allowInsecureHttp,
+      headers: headers,
+      client: client,
+    ),
   );
 }
 
