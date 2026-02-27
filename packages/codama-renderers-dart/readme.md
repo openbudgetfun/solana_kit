@@ -1,4 +1,4 @@
-# codama-renderers-solana-kit-dart
+# codama-renderers-dart
 
 A [Codama](https://github.com/codama-idl/codama) renderer that generates Dart code targeting the [solana_kit](https://github.com/openbudgetfun/solana_kit) SDK.
 
@@ -7,9 +7,9 @@ Given a Codama IDL (Interface Description Language) describing a Solana program,
 ## Installation
 
 ```bash
-pnpm add codama-renderers-solana-kit-dart
+pnpm add codama-renderers-dart
 # or
-npm install codama-renderers-solana-kit-dart
+npm install codama-renderers-dart
 ```
 
 ## Quick Start
@@ -17,7 +17,7 @@ npm install codama-renderers-solana-kit-dart
 ### Programmatic API
 
 ```typescript
-import { renderVisitor } from "codama-renderers-solana-kit-dart";
+import { renderVisitor } from "codama-renderers-dart";
 import { visit } from "@codama/visitors-core";
 import { rootNode, programNode /* ... */ } from "@codama/nodes";
 
@@ -40,7 +40,7 @@ Create a `codama.json` configuration file:
   "idl": "idl.json",
   "scripts": {
     "dart": {
-      "from": "codama-renderers-solana-kit-dart",
+      "from": "codama-renderers-dart",
       "args": ["lib/src/generated"]
     }
   }
@@ -232,7 +232,7 @@ Future<(Address, int)> findMyPdaPda({
 All naming conventions are customizable:
 
 ```typescript
-import { renderVisitor, createDartNameApi } from "codama-renderers-solana-kit-dart";
+import { renderVisitor, createDartNameApi } from "codama-renderers-dart";
 
 const nameApi = {
   ...createDartNameApi(),

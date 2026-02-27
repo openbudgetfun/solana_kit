@@ -2,6 +2,7 @@ name: solana_kit_rpc_parsed_types
 description: Parsed account data types for the Solana Kit Dart SDK.
 version: 0.2.0
 repository: https://github.com/openbudgetfun/solana_kit
+homepage: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_rpc_parsed_types/
 
 environment:
   sdk: ^3.10.1

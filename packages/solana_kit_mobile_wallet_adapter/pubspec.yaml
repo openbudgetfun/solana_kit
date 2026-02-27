@@ -5,6 +5,7 @@ description: >-
   compiles but is a no-op.
 version: 0.2.0
 repository: https://github.com/openbudgetfun/solana_kit
+homepage: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_mobile_wallet_adapter/
 
 environment:
   sdk: ^3.10.1

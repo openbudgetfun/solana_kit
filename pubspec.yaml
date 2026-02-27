@@ -45,7 +45,7 @@ workspace:
   - packages/solana_kit_transaction_confirmation
   - packages/solana_kit_transaction_messages
   - packages/solana_kit_transactions
-  - renderers/renderers-dart/test-generated
+  - packages/codama-renderers-dart/test-generated
 
 dev_dependencies:
   coverage: ^1.14.0
