@@ -2,6 +2,7 @@ name: solana_kit_accounts
 description: Account fetching and decoding for the Solana Kit Dart SDK.
 version: 0.2.0
 repository: https://github.com/openbudgetfun/solana_kit
+homepage: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_accounts/
 
 environment:
   sdk: ^3.10.1
