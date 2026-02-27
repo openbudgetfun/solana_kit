@@ -2,9 +2,13 @@
   pkgs,
   lib,
   config,
+  inputs,
   ...
 }:
 
+let
+  extra = inputs.ifiokjr-nixpkgs.packages.${pkgs.stdenv.system};
+in
 {
   packages =
     with pkgs;
@@ -16,6 +20,9 @@
       libiconv
       nixfmt
       shfmt
+      extra.knope
+      extra.mdt
+      extra.pnpm-standalone
     ]
     ++ lib.optionals stdenv.isDarwin [
       coreutils
@@ -110,14 +117,6 @@
         dart run coverage:format_coverage $@
       '';
       description = "Run the format_coverage command from the coverage package.";
-    };
-    "knope" = {
-      exec = ''
-        set -e
-        $DEVENV_ROOT/.eget/bin/knope $@
-      '';
-      description = "The knope executable for changeset and release management.";
-      binary = "bash";
     };
     "dartfmt" = {
       exec = ''
@@ -250,44 +249,22 @@
     };
     "test:coverage" = {
       exec = ''
-        set -e  
-        dart run coverage:test_with_coverage -- packages/solana_kit/test \
-          packages/solana_kit_accounts/test \
-          packages/solana_kit_addresses/test \
-          packages/solana_kit_codecs_core/test \
-          packages/solana_kit_codecs_data_structures/test \
-          packages/solana_kit_codecs_numbers/test \
-          packages/solana_kit_codecs_strings/test \
-          packages/solana_kit_errors/test \
-          packages/solana_kit_fast_stable_stringify/test \
-          packages/solana_kit_functional/test \
-          packages/solana_kit_helius/test \
-          packages/solana_kit_instruction_plans/test \
-          packages/solana_kit_instructions/test \
-          packages/solana_kit_keys/test \
-          packages/solana_kit_mobile_wallet_adapter_protocol/test \
-          packages/solana_kit_offchain_messages/test \
-          packages/solana_kit_options/test \
-          packages/solana_kit_program_client_core/test \
-          packages/solana_kit_programs/test \
-          packages/solana_kit_rpc/test \
-          packages/solana_kit_rpc_api/test \
-          packages/solana_kit_rpc_parsed_types/test \
-          packages/solana_kit_rpc_spec/test \
-          packages/solana_kit_rpc_spec_types/test \
-          packages/solana_kit_rpc_subscriptions/test \
-          packages/solana_kit_rpc_subscriptions_api/test \
-          packages/solana_kit_rpc_subscriptions_channel_websocket/test \
-          packages/solana_kit_rpc_transformers/test \
-          packages/solana_kit_rpc_transport_http/test \
-          packages/solana_kit_rpc_types/test \
-          packages/solana_kit_signers/test \
-          packages/solana_kit_subscribable/test \
-          packages/solana_kit_sysvars/test \
-          packages/solana_kit_test_matchers/test \
-          packages/solana_kit_transaction_confirmation/test \
-          packages/solana_kit_transaction_messages/test \
-          packages/solana_kit_transactions/test 
+        set -e
+
+        mapfile -t test_dirs < <(
+          find packages -mindepth 2 -maxdepth 2 -type d -name test \
+            | grep -v '^packages/solana_kit_mobile_wallet_adapter/test$' \
+            | sort
+        )
+
+        if [ ''${#test_dirs[@]} -eq 0 ]; then
+          echo "No package test directories were found."
+          exit 1
+        fi
+
+        echo "Running coverage for ''${#test_dirs[@]} package test directories..."
+        echo "Skipping packages/solana_kit_mobile_wallet_adapter/test (requires flutter test)."
+        dart run coverage:test_with_coverage -- "''${test_dirs[@]}"
       '';
       description = "Generate merged LCOV coverage for all packages.";
       binary = "bash";
