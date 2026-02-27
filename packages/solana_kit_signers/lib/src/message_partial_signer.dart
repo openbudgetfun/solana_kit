@@ -16,7 +16,6 @@ import 'package:solana_kit_signers/src/types.dart';
 ///   perform this operation in parallel to obtain all their signatures.
 /// - **Flexible order**. The order in which we use these signers for a
 ///   given message doesn't matter.
-// ignore: one_member_abstracts
 abstract class MessagePartialSigner {
   /// The base58-encoded address of this signer.
   Address get address;

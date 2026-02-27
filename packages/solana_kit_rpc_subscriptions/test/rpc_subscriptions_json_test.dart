@@ -15,13 +15,16 @@ void main() {
       mockChannel = _MockChannel(dataPublisher: dataPublisher);
     });
 
-    test('forwards JSON-serialized messages to the underlying channel', () {
-      getRpcSubscriptionsChannelWithJsonSerialization(
-        mockChannel,
-      ).send('hello');
+    test(
+      'forwards JSON-serialized messages to the underlying channel',
+      () async {
+        await getRpcSubscriptionsChannelWithJsonSerialization(
+          mockChannel,
+        ).send('hello');
 
-      expect(mockChannel.lastSentMessage, equals(jsonEncode('hello')));
-    });
+        expect(mockChannel.lastSentMessage, equals(jsonEncode('hello')));
+      },
+    );
 
     test(
       'deserializes messages received from the underlying channel as JSON',

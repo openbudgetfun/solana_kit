@@ -207,35 +207,6 @@ class SimulatedWallet {
   }
 }
 
-/// A simplified transport that routes encrypted requests through the
-/// simulated wallet directly (no WebSocket needed).
-class InProcessTransport {
-  InProcessTransport(this._wallet);
-
-  final SimulatedWallet _wallet;
-
-  Future<Map<String, Object?>> sendRequest(
-    String method,
-    Map<String, Object?> params,
-    int sequenceNumber,
-    Uint8List sharedSecret,
-  ) async {
-    // Encrypt request.
-    final encrypted = encryptJsonRpcRequest(
-      sequenceNumber,
-      method,
-      params,
-      sharedSecret,
-    );
-
-    // Pass through the simulated wallet.
-    final encryptedResponse = _wallet.handleEncryptedRequest(encrypted);
-
-    // Decrypt response.
-    return decryptJsonRpcResponse(encryptedResponse, sharedSecret);
-  }
-}
-
 void main() {
   group('Integration: full client↔wallet round-trip', () {
     late AssociationKeypair dAppAssociationKeypair;

@@ -29,14 +29,16 @@ RpcSubscriptionsChannel getRpcSubscriptionsChannelWithAutoping({
   }
 
   void sendPing() {
-    channel.send(pingPayload).catchError((Object e) {
-      if (isSolanaError(
-        e,
-        SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed,
-      )) {
-        pingerAbortController.abort();
-      }
-    });
+    unawaited(
+      channel.send(pingPayload).catchError((Object e) {
+        if (isSolanaError(
+          e,
+          SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed,
+        )) {
+          pingerAbortController.abort();
+        }
+      }),
+    );
   }
 
   void restartPingTimer() {

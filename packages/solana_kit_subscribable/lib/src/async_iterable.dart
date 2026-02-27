@@ -105,7 +105,7 @@ Stream<TData> createStreamFromDataPublisher<TData>(
       dataUnsubscribe = null;
       errorUnsubscribe?.call();
       errorUnsubscribe = null;
-      controller.close();
+      unawaited(controller.close());
     },
   );
 

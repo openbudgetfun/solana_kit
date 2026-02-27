@@ -46,7 +46,10 @@ RemoteAssociationResult startRemoteScenario(
   void close() {
     if (closed) return;
     closed = true;
-    channel?.sink.close();
+    final closeFuture = channel?.sink.close();
+    if (closeFuture != null) {
+      unawaited(closeFuture);
+    }
   }
 
   final walletFuture = _connectRemote(

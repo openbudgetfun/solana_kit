@@ -244,9 +244,7 @@ Future<Transaction> _signModifyingAndPartialTransactionSigners(
   final mergedSignatures = <Address, SignatureBytes?>{
     ...transaction.signatures,
   };
-  for (final sigDict in signatureDictionaries) {
-    mergedSignatures.addAll(sigDict);
-  }
+  signatureDictionaries.forEach(mergedSignatures.addAll);
 
   if (transaction is TransactionWithLifetime) {
     return TransactionWithLifetime(
