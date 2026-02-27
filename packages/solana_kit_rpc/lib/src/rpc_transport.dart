@@ -11,11 +11,14 @@ import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart
 ///   version of the Dart SDK (cannot be overridden by user-supplied headers).
 /// - Logic that coalesces multiple calls in the same microtask, for the same
 ///   methods with the same arguments, into a single network request.
+/// - HTTPS-only endpoints by default. Set [allowInsecureHttp] to `true` to
+///   allow `http://` URLs for local development/testing.
 ///
 /// Optionally pass an [http.Client] via [client] to control the HTTP client
 /// used for requests (useful for testing).
 RpcTransport createDefaultRpcTransport({
   required String url,
+  bool allowInsecureHttp = false,
   Map<String, String>? headers,
   http.Client? client,
 }) {
@@ -28,6 +31,7 @@ RpcTransport createDefaultRpcTransport({
 
   final baseTransport = createHttpTransportForSolanaRpc(
     url: url,
+    allowInsecureHttp: allowInsecureHttp,
     headers: mergedHeaders,
     client: client,
   );

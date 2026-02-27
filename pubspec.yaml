@@ -48,5 +48,5 @@ workspace:
   - renderers/renderers-dart/test-generated
 
 dev_dependencies:
-  coverage: ^1.14.0
+  coverage: ^1.15.0
   melos: ^7.4.0

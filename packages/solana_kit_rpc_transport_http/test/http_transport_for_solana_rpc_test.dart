@@ -8,6 +8,44 @@ import 'package:test/test.dart';
 
 void main() {
   group('createHttpTransportForSolanaRpc', () {
+    group('URL security', () {
+      test('rejects insecure http URLs by default', () {
+        expect(
+          () => createHttpTransportForSolanaRpc(url: 'http://localhost'),
+          throwsArgumentError,
+        );
+      });
+
+      test('allows insecure http URLs when explicitly enabled', () async {
+        late http.Request capturedRequest;
+        final mockClient = MockClient((request) async {
+          capturedRequest = request;
+          return http.Response(
+            '{"ok":true}',
+            200,
+            headers: {'content-type': 'application/json'},
+          );
+        });
+
+        final transport = createHttpTransportForSolanaRpc(
+          url: 'http://localhost',
+          allowInsecureHttp: true,
+          client: mockClient,
+        );
+
+        await transport(
+          const RpcTransportConfig(
+            payload: <String, Object?>{
+              'jsonrpc': '2.0',
+              'method': 'getSlot',
+            },
+          ),
+        );
+
+        expect(capturedRequest.url.toString(), 'http://localhost');
+      });
+    });
+
     group('when the request is from the Solana RPC API', () {
       test(
         'passes all BigInts as large numerical values in the request body',
@@ -23,7 +61,7 @@ void main() {
           });
 
           final transport = createHttpTransportForSolanaRpc(
-            url: 'http://localhost',
+            url: 'https://localhost',
             client: mockClient,
           );
 
@@ -76,7 +114,7 @@ void main() {
         );
 
         final transport = createHttpTransportForSolanaRpc(
-          url: 'http://localhost',
+          url: 'https://localhost',
           client: mockClient,
         );
 
@@ -108,7 +146,7 @@ void main() {
         );
 
         final transport = createHttpTransportForSolanaRpc(
-          url: 'http://localhost',
+          url: 'https://localhost',
           client: mockClient,
         );
 
@@ -144,7 +182,7 @@ void main() {
         );
 
         final transport = createHttpTransportForSolanaRpc(
-          url: 'http://localhost',
+          url: 'https://localhost',
           client: mockClient,
         );
 

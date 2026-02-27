@@ -10,6 +10,7 @@ class DefaultRpcSubscriptionsChannelConfig {
   /// Creates a [DefaultRpcSubscriptionsChannelConfig].
   const DefaultRpcSubscriptionsChannelConfig({
     required this.url,
+    this.allowInsecureWs = false,
     this.intervalMs = 5000,
     this.maxSubscriptionsPerChannel = 100,
     this.minChannels = 1,
@@ -18,6 +19,11 @@ class DefaultRpcSubscriptionsChannelConfig {
 
   /// The WebSocket server URL. Must use the `ws` or `wss` protocols.
   final String url;
+
+  /// Whether to allow insecure `ws://` URLs when connecting channels.
+  ///
+  /// Defaults to `false`, which enforces `wss://` URLs.
+  final bool allowInsecureWs;
 
   /// The number of milliseconds to wait since the last message sent or
   /// received over the channel before sending a ping message to keep the
@@ -103,6 +109,7 @@ RpcSubscriptionsChannelCreator _createDefaultRpcSubscriptionsChannelCreatorImpl(
     final channel = await createWebSocketChannel(
       WebSocketChannelConfig(
         url: Uri.parse(config.url),
+        allowInsecureWs: config.allowInsecureWs,
         sendBufferHighWatermark: config.sendBufferHighWatermark,
         signal: abortSignal,
       ),

@@ -216,15 +216,16 @@
             continue
           fi
 
-          # Skip Flutter packages (they need flutter test)
-          if grep -q "flutter:" "$pkg_dir/pubspec.yaml" 2>/dev/null; then
-            continue
-          fi
-
           pkg_name="$(basename "$pkg_dir")"
           echo "Testing $pkg_name..."
-          if ! dart test "$pkg_dir"; then
-            failed=1
+          if grep -q "flutter:" "$pkg_dir/pubspec.yaml" 2>/dev/null; then
+            if ! flutter test "$pkg_dir"; then
+              failed=1
+            fi
+          else
+            if ! dart test "$pkg_dir"; then
+              failed=1
+            fi
           fi
         done
 
@@ -249,45 +250,44 @@
     };
     "test:coverage" = {
       exec = ''
-        set -e
-        repo_root="$DEVENV_ROOT"
-        cd "$repo_root"
-
-        rm -rf coverage
-        mkdir -p coverage
-
-        echo "Generating coverage for packages..."
-        for pkg_dir in packages/*/; do
-          if [ ! -d "$pkg_dir/test" ]; then
-            continue
-          fi
-
-          pkg_name="$(basename "$pkg_dir")"
-
-          # Skip Flutter packages (they need flutter test)
-          if grep -q "flutter:" "$pkg_dir/pubspec.yaml" 2>/dev/null; then
-            echo "Generating coverage for Flutter package: $pkg_name"
-            (cd "$pkg_dir" && rm -rf coverage && flutter test --coverage) || true
-          else
-            echo "Generating coverage for Dart package: $pkg_name"
-            (cd "$pkg_dir" && rm -rf coverage && dart test --coverage=coverage && format_coverage --lcov --in=coverage --out=coverage/lcov.info --package=. --report-on=lib) || true
-          fi
-        done
-
-        echo "Merging LCOV reports..."
-        : > coverage/lcov.info
-
-        lcov_files="$(find packages -type f -path "*/coverage/lcov.info" | sort)"
-        if [[ -z "$lcov_files" ]]; then
-          echo "No package coverage reports were generated." >&2
-          exit 1
-        fi
-
-        while IFS= read -r lcov_file; do
-          sed -e "s|SF:$repo_root/|SF:|g" "$lcov_file" >> coverage/lcov.info
-        done <<< "$lcov_files"
-
-        echo "Merged coverage report: $repo_root/coverage/lcov.info"
+        set -e  
+        dart run coverage:test_with_coverage -- packages/solana_kit/test \
+          packages/solana_kit_accounts/test \
+          packages/solana_kit_addresses/test \
+          packages/solana_kit_codecs_core/test \
+          packages/solana_kit_codecs_data_structures/test \
+          packages/solana_kit_codecs_numbers/test \
+          packages/solana_kit_codecs_strings/test \
+          packages/solana_kit_errors/test \
+          packages/solana_kit_fast_stable_stringify/test \
+          packages/solana_kit_functional/test \
+          packages/solana_kit_helius/test \
+          packages/solana_kit_instruction_plans/test \
+          packages/solana_kit_instructions/test \
+          packages/solana_kit_keys/test \
+          packages/solana_kit_mobile_wallet_adapter_protocol/test \
+          packages/solana_kit_offchain_messages/test \
+          packages/solana_kit_options/test \
+          packages/solana_kit_program_client_core/test \
+          packages/solana_kit_programs/test \
+          packages/solana_kit_rpc/test \
+          packages/solana_kit_rpc_api/test \
+          packages/solana_kit_rpc_parsed_types/test \
+          packages/solana_kit_rpc_spec/test \
+          packages/solana_kit_rpc_spec_types/test \
+          packages/solana_kit_rpc_subscriptions/test \
+          packages/solana_kit_rpc_subscriptions_api/test \
+          packages/solana_kit_rpc_subscriptions_channel_websocket/test \
+          packages/solana_kit_rpc_transformers/test \
+          packages/solana_kit_rpc_transport_http/test \
+          packages/solana_kit_rpc_types/test \
+          packages/solana_kit_signers/test \
+          packages/solana_kit_subscribable/test \
+          packages/solana_kit_sysvars/test \
+          packages/solana_kit_test_matchers/test \
+          packages/solana_kit_transaction_confirmation/test \
+          packages/solana_kit_transaction_messages/test \
+          packages/solana_kit_transactions/test 
       '';
       description = "Generate merged LCOV coverage for all packages.";
       binary = "bash";

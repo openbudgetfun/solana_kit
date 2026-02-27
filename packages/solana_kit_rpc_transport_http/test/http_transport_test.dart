@@ -9,6 +9,41 @@ import 'package:test/test.dart';
 
 void main() {
   group('createHttpTransport', () {
+    group('URL security', () {
+      test('rejects insecure http URLs by default', () {
+        expect(
+          () => createHttpTransport(
+            const HttpTransportConfig(url: 'http://localhost'),
+          ),
+          throwsArgumentError,
+        );
+      });
+
+      test('allows insecure http URLs when explicitly enabled', () async {
+        late http.Request capturedRequest;
+        final mockClient = MockClient((request) async {
+          capturedRequest = request;
+          return http.Response(
+            jsonEncode({'ok': true}),
+            200,
+            headers: {'content-type': 'application/json'},
+          );
+        });
+
+        final transport = createHttpTransport(
+          const HttpTransportConfig(
+            url: 'http://localhost',
+            allowInsecureHttp: true,
+          ),
+          client: mockClient,
+        );
+
+        await transport(const RpcTransportConfig(payload: 123));
+
+        expect(capturedRequest.url.toString(), 'http://localhost');
+      });
+    });
+
     group('when the endpoint returns a well-formed JSON response', () {
       late http.Request capturedRequest;
       late RpcTransport transport;
@@ -24,14 +59,14 @@ void main() {
         });
 
         transport = createHttpTransport(
-          const HttpTransportConfig(url: 'http://localhost'),
+          const HttpTransportConfig(url: 'https://localhost'),
           client: mockClient,
         );
       });
 
       test('calls the specified URL', () async {
         await transport(const RpcTransportConfig(payload: 123));
-        expect(capturedRequest.url.toString(), 'http://localhost');
+        expect(capturedRequest.url.toString(), 'https://localhost');
       });
 
       test(
@@ -88,7 +123,7 @@ void main() {
 
         final transport = createHttpTransport(
           const HttpTransportConfig(
-            url: 'http://localhost',
+            url: 'https://localhost',
             headers: {'Authorization': 'Bearer token123'},
           ),
           client: mockClient,
@@ -111,7 +146,7 @@ void main() {
         expect(
           () => createHttpTransport(
             const HttpTransportConfig(
-              url: 'http://localhost',
+              url: 'https://localhost',
               headers: {'aCcEpT': 'text/html'},
             ),
             client: mockClient,
@@ -139,7 +174,7 @@ void main() {
         expect(
           () => createHttpTransport(
             const HttpTransportConfig(
-              url: 'http://localhost',
+              url: 'https://localhost',
               headers: {'Host': 'evil.example.com'},
             ),
             client: mockClient,
@@ -169,7 +204,7 @@ void main() {
 
           final transport = createHttpTransport(
             const HttpTransportConfig(
-              url: 'http://localhost',
+              url: 'https://localhost',
               headers: {'X-Custom-Header': 'custom-value'},
             ),
             client: mockClient,
@@ -196,7 +231,7 @@ void main() {
         );
 
         final transport = createHttpTransport(
-          const HttpTransportConfig(url: 'http://localhost'),
+          const HttpTransportConfig(url: 'https://localhost'),
           client: mockClient,
         );
 
@@ -224,7 +259,7 @@ void main() {
         );
 
         final transport = createHttpTransport(
-          const HttpTransportConfig(url: 'http://localhost'),
+          const HttpTransportConfig(url: 'https://localhost'),
           client: mockClient,
         );
 
@@ -253,7 +288,7 @@ void main() {
 
         final transport = createHttpTransport(
           HttpTransportConfig(
-            url: 'http://localhost',
+            url: 'https://localhost',
             toJson: (payload) => '{"someAugmented":"jsonString"}',
           ),
           client: mockClient,
@@ -276,7 +311,7 @@ void main() {
 
         final transport = createHttpTransport(
           HttpTransportConfig(
-            url: 'http://localhost',
+            url: 'https://localhost',
             toJson: (payload) {
               receivedPayload = payload;
               return jsonEncode(payload);
@@ -306,7 +341,7 @@ void main() {
 
         final transport = createHttpTransport(
           HttpTransportConfig(
-            url: 'http://localhost',
+            url: 'https://localhost',
             fromJson: (rawResponse, payload) {
               receivedRawResponse = rawResponse;
               receivedPayload = payload;
@@ -333,7 +368,7 @@ void main() {
 
         final transport = createHttpTransport(
           HttpTransportConfig(
-            url: 'http://localhost',
+            url: 'https://localhost',
             fromJson: (rawResponse, payload) => {'result': 456},
           ),
           client: mockClient,
@@ -360,7 +395,7 @@ void main() {
         });
 
         final transport = createHttpTransport(
-          const HttpTransportConfig(url: 'http://localhost'),
+          const HttpTransportConfig(url: 'https://localhost'),
           client: mockClient,
         );
 
