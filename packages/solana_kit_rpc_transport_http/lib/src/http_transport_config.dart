@@ -8,6 +8,7 @@ class HttpTransportConfig {
   /// The [url] parameter is required and must be a valid HTTP or HTTPS URL.
   const HttpTransportConfig({
     required this.url,
+    this.allowInsecureHttp = false,
     this.fromJson,
     this.headers,
     this.toJson,
@@ -15,8 +16,16 @@ class HttpTransportConfig {
 
   /// A string representing the target endpoint.
   ///
-  /// Must be an absolute URL using the `http` or `https` protocol.
+  /// Must be an absolute URL.
+  ///
+  /// By default only `https://` URLs are allowed. Set [allowInsecureHttp] to
+  /// `true` to allow `http://` URLs for local development and testing.
   final String url;
+
+  /// Whether to allow insecure `http://` URLs.
+  ///
+  /// Defaults to `false`, which enforces `https://` URLs.
+  final bool allowInsecureHttp;
 
   /// An optional function that takes the response as a JSON string and
   /// converts it to a JSON value.

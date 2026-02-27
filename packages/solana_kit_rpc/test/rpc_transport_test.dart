@@ -23,6 +23,7 @@ void main() {
 
       transport = createDefaultRpcTransport(
         url: 'http://localhost',
+        allowInsecureHttp: true,
         client: mockClient,
       );
     });
@@ -44,6 +45,7 @@ void main() {
 
       final customTransport = createDefaultRpcTransport(
         url: 'http://localhost',
+        allowInsecureHttp: true,
         headers: {'Solana-Client': 'fakeversion'},
         client: mockClient,
       );
@@ -65,6 +67,7 @@ void main() {
 
       final customTransport = createDefaultRpcTransport(
         url: 'http://localhost',
+        allowInsecureHttp: true,
         headers: {'aUtHoRiZaTiOn': 'Picard, 4 7 Alpha Tango'},
         client: mockClient,
       );
@@ -91,6 +94,7 @@ void main() {
 
         final coalescedTransport = createDefaultRpcTransport(
           url: 'http://localhost',
+          allowInsecureHttp: true,
           client: mockClient,
         );
 

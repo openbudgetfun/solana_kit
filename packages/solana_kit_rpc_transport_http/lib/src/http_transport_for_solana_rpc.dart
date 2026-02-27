@@ -31,12 +31,14 @@ import 'package:solana_kit_rpc_transport_http/src/is_solana_request.dart';
 /// used for requests (useful for testing).
 RpcTransport createHttpTransportForSolanaRpc({
   required String url,
+  bool allowInsecureHttp = false,
   Map<String, String>? headers,
   http.Client? client,
 }) {
   return createHttpTransport(
     HttpTransportConfig(
       url: url,
+      allowInsecureHttp: allowInsecureHttp,
       headers: headers,
       fromJson: (rawResponse, payload) =>
           isSolanaRequest(payload)
