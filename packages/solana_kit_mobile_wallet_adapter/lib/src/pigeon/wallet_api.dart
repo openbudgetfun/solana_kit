@@ -1,8 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart'
-    show MobileWalletAdapterConfig;
-import 'package:solana_kit_mobile_wallet_adapter/src/wallet/wallet_config.dart'
-    show MobileWalletAdapterConfig;
 
 /// Platform-specific API for the wallet side of MWA on Android.
 ///
@@ -21,7 +17,7 @@ class MwaWalletHostApi {
   /// Creates a new wallet scenario on the native side.
   ///
   /// [walletName] is the human-readable name of the wallet.
-  /// [configJson] is the JSON-encoded [MobileWalletAdapterConfig].
+  /// [configJson] is the JSON-encoded wallet config.
   ///
   /// Returns a session ID string.
   Future<String> createScenario({
@@ -59,6 +55,17 @@ class MwaWalletHostApi {
       'sessionId': sessionId,
       'requestId': requestId,
       'resultJson': resultJson,
+    });
+  }
+
+  /// Cancels a pending request without resolving it.
+  Future<void> cancelRequest({
+    required String sessionId,
+    required String requestId,
+  }) async {
+    await _channel.invokeMethod<void>('cancelRequest', {
+      'sessionId': sessionId,
+      'requestId': requestId,
     });
   }
 

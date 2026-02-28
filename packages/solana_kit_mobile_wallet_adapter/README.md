@@ -5,26 +5,38 @@
 [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
 [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
 
-Flutter plugin for the [Solana Mobile Wallet Adapter](https://github.com/solana-mobile/mobile-wallet-adapter) (MWA) protocol. Enables dApps and wallet apps to communicate for transaction signing on Android.
+Flutter plugin for the [Solana Mobile Wallet Adapter](https://github.com/solana-mobile/mobile-wallet-adapter) (MWA) protocol.
 
-**Android-only.** MWA is not supported on iOS. This plugin compiles and runs on iOS without crashing (no-op), so mixed-platform Flutter apps work without conditional compilation.
+This package provides both:
 
-## Features
+- dApp-side client flows (launch wallet, establish session, request signatures)
+- wallet-side server flows (receive authorize/sign requests from dApps)
 
-### dApp side (client)
+## Platform support
 
-- **`transact()`** - One-call session lifecycle: launch wallet, handshake, execute callback, clean up
-- **`LocalAssociationScenario`** - Full control over local WebSocket sessions with retry logic
-- **`RemoteAssociationScenario`** - Remote sessions via WebSocket reflector (cross-device)
-- **`KitMobileWallet`** - Typed API working with base64 payloads and Solana Kit types
-- **Platform check** - `isMwaSupported()` / `assertMwaSupported()`
+| Platform | dApp (client) | Wallet (server) |
+| -------- | ------------- | --------------- |
+| Android  | Supported     | Supported       |
+| iOS      | No-op         | No-op           |
+| Web      | N/A           | N/A             |
 
-### Wallet side (server)
+Use `isMwaSupported()` / `assertMwaSupported()` before invoking MWA APIs.
 
-- **`WalletScenario`** - Manages incoming dApp connections via native Android bridge
-- **`WalletScenarioCallbacks`** - Interface for handling authorize, sign, and deauthorize requests
-- **Typed request/response** - `AuthorizeDappRequest`, `SignTransactionsRequest`, etc. with `completeWith*` methods
-- **`MobileWalletAdapterConfig`** - Wallet capabilities (max payloads, features, transaction versions)
+## What this package includes
+
+### dApp-side APIs
+
+- `transact()` for simple one-call session lifecycle
+- `LocalAssociationScenario` for explicit same-device control
+- `startRemoteScenario()` for reflector-based cross-device sessions
+- `KitMobileWallet` typed wrapper over the protocol wallet interface
+
+### wallet-side APIs
+
+- `WalletScenario` lifecycle and request routing
+- `WalletScenarioCallbacks` for authorize/sign/deauthorize handling
+- Typed request objects (`AuthorizeDappRequest`, `SignTransactionsRequest`, etc.)
+- `MwaDigitalAssetLinksHostApi` for Android package verification
 
 ## Installation
 
@@ -32,38 +44,30 @@ Flutter plugin for the [Solana Mobile Wallet Adapter](https://github.com/solana-
 flutter pub add solana_kit_mobile_wallet_adapter
 ```
 
-If you're working inside the `solana_kit` monorepo, workspace resolution uses local packages automatically.
+Inside this monorepo, workspace dependency resolution is automatic.
 
-## Documentation
+## dApp usage
 
-- Package page: https://pub.dev/packages/solana_kit_mobile_wallet_adapter
-- API reference: https://pub.dev/documentation/solana_kit_mobile_wallet_adapter/latest/
-
-## Usage
-
-### dApp: Simple session
+### Simple lifecycle (`transact`)
 
 ```dart
 import 'package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart';
-import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
 
-final authResult = await transact((wallet) async {
-  // Authorize with the wallet.
-  final auth = await wallet.authorize(
+final auth = await transact((wallet) async {
+  final authorizeResult = await wallet.authorize(
     identity: const AppIdentity(name: 'My dApp'),
     chain: 'solana:mainnet',
   );
 
-  // Sign transactions.
-  final signed = await wallet.signTransactions(
+  await wallet.signTransactions(
     payloads: [base64EncodedTransaction],
   );
 
-  return auth;
+  return authorizeResult;
 });
 ```
 
-### dApp: Manual session control
+### Manual local association
 
 ```dart
 final scenario = LocalAssociationScenario();
@@ -85,16 +89,42 @@ try {
 }
 ```
 
-### Wallet: Handling requests
+### Remote association (cross-device)
+
+`startRemoteScenario` resolves once a real reflector ID has been negotiated and a valid association URI is available.
+
+```dart
+final remote = await startRemoteScenario(
+  const RemoteWalletAssociationConfig(
+    reflectorHost: 'reflector.example.com',
+  ),
+);
+
+// Display this as QR for wallet scan.
+final uriForQr = remote.associationUri;
+
+try {
+  final wallet = await remote.wallet;
+  await wallet.getCapabilities();
+} finally {
+  remote.close();
+}
+```
+
+## wallet usage
+
+### Start a wallet scenario
 
 ```dart
 class MyWalletCallbacks implements WalletScenarioCallbacks {
   @override
   void onAuthorizeRequest(AuthorizeDappRequest request) {
-    // Show UI to approve/decline.
     request.completeWithAuthorize(
       accounts: [
-        AuthorizedAccount(address: base64PublicKey, label: 'Main Account'),
+        AuthorizedAccount(
+          address: base64PublicKey,
+          label: 'Main Account',
+        ),
       ],
       authToken: 'issued-token',
     );
@@ -102,12 +132,44 @@ class MyWalletCallbacks implements WalletScenarioCallbacks {
 
   @override
   void onSignTransactionsRequest(SignTransactionsRequest request) {
-    // Sign the payloads.
     final signed = signPayloads(request.payloads);
     request.completeWithSignedPayloads(signed);
   }
 
-  // ... implement other callbacks
+  @override
+  void onReauthorizeRequest(ReauthorizeDappRequest request) {
+    request.completeWithReauthorize(
+      accounts: [AuthorizedAccount(address: base64PublicKey)],
+      authToken: 'renewed-token',
+    );
+  }
+
+  @override
+  void onScenarioReady() {}
+
+  @override
+  void onScenarioServingClients() {}
+
+  @override
+  void onScenarioServingComplete() {}
+
+  @override
+  void onScenarioComplete() {}
+
+  @override
+  void onScenarioError(Object? error) {}
+
+  @override
+  void onScenarioTeardownComplete() {}
+
+  @override
+  void onSignMessagesRequest(SignMessagesRequest request) {}
+
+  @override
+  void onSignAndSendTransactionsRequest(SignAndSendTransactionsRequest request) {}
+
+  @override
+  void onDeauthorizedEvent(DeauthorizedEvent event) {}
 }
 
 final scenario = WalletScenario(
@@ -122,25 +184,41 @@ final scenario = WalletScenario(
 await scenario.start();
 ```
 
-## Platform support
+### Digital Asset Links verification (wallet-side)
 
-| Platform | dApp (client) | Wallet (server) |
-| -------- | ------------- | --------------- |
-| Android  | Supported     | Supported       |
-| iOS      | No-op         | No-op           |
-| Web      | N/A           | N/A             |
+```dart
+final dal = MwaDigitalAssetLinksHostApi();
 
-Use `isMwaSupported()` to check at runtime before calling MWA APIs.
+final callingPackage = await dal.getCallingPackage();
+final isVerified = await dal.verifyCallingPackage(
+  clientIdentityUri: 'https://example.com',
+);
+```
+
+This is useful when wallet policy requires Android app-origin verification before honoring sensitive requests.
+
+## Native parity and behavior notes
+
+- Android wallet-side implementation is backed by Solana Mobile `walletlib` request/scenario APIs.
+- Request lifecycle is explicit:
+  - native request -> Dart callback -> `completeWith*` -> native resolve/cancel
+- Local/remote transport handling enforces inbound encrypted sequence ordering.
+- Remote association supports reflector protocol negotiation (`binary` and `base64`).
+
+## Maintenance and CI
+
+- Android native compile safety is enforced in CI by building a temporary Android Flutter app that depends on this plugin.
+- Local equivalent command:
+
+```bash
+./scripts/check-mobile-wallet-adapter-android-compile.sh
+```
 
 ## Architecture
 
-This plugin uses a hybrid Dart + native approach:
-
-- **Dart**: All WebSocket handling, P-256 cryptography, session handshake, JSON-RPC messaging, and protocol logic (via `solana_kit_mobile_wallet_adapter_protocol`)
-- **Android Kotlin**: Intent launching (`solana-wallet://` scheme) and wallet scenario bridge (MethodChannel)
-- **iOS Swift**: Empty no-op plugin that compiles cleanly
-
-This maximizes code sharing, testability, and reuse of the pure Dart protocol package.
+- Dart: protocol/session handling via `solana_kit_mobile_wallet_adapter_protocol`
+- Android Kotlin: intent launch + walletlib/DAL host bridges
+- iOS Swift: safe no-op plugin for mixed-platform app compatibility
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_mobile_wallet_adapter"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart"} -->
 

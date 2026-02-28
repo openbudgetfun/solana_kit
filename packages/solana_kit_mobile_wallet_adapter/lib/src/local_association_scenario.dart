@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
@@ -27,9 +28,19 @@ class LocalAssociationScenario {
   final String? _baseUri;
 
   WebSocketChannel? _channel;
+  StreamSubscription<Object?>? _subscription;
+
+  late AssociationKeypair _associationKeyPair;
+  late EcdhKeypair _ecdhKeyPair;
   Uint8List? _sharedSecret;
   late SessionProperties _sessionProps;
+
+  Completer<Uint8List>? _helloResponseCompleter;
+  final Map<int, Completer<Map<String, Object?>>> _pendingResponses =
+      <int, Completer<Map<String, Object?>>>{};
+
   int _nextOutboundSequenceNumber = 1;
+  int _lastKnownInboundSequenceNumber = 0;
   bool _closed = false;
 
   /// Starts the local association session and returns a [MobileWallet] proxy.
@@ -39,13 +50,12 @@ class LocalAssociationScenario {
   /// session.
   Future<MobileWallet> start() async {
     // Step 1: Generate keypairs.
-    final associationKeyPair = generateAssociationKeypair();
-    final ecdhKeyPair = generateEcdhKeypair();
+    _associationKeyPair = generateAssociationKeypair();
 
     // Step 2: Pick random port and build Intent URI.
     final port = getRandomAssociationPort();
     final intentUri = buildLocalAssociationUri(
-      associationKeyPair.publicKey,
+      _associationKeyPair.publicKey,
       port,
       baseUri: _baseUri,
     );
@@ -53,97 +63,62 @@ class LocalAssociationScenario {
     // Step 3: Launch wallet app via Intent.
     await _clientApi.launchIntent(intentUri.toString());
 
-    // Step 4: Connect WebSocket with retry.
-    _channel = await _connectWithRetry(port);
-
-    // Step 5: Perform handshake.
-    final helloReq = createHelloReq(ecdhKeyPair, associationKeyPair);
-
-    // Listen for the first response.
-    final completer = Completer<Uint8List>();
-    final subscription = _channel!.stream.listen(
-      (message) {
-        if (!completer.isCompleted) {
-          if (message is List<int>) {
-            completer.complete(Uint8List.fromList(message));
-          }
-        }
-      },
-      onError: (Object error) {
-        if (!completer.isCompleted) {
-          completer.completeError(error);
-        }
-      },
-      onDone: () {
-        if (!completer.isCompleted) {
-          completer.completeError(
-            SolanaError(SolanaErrorCode.mwaSessionClosed),
-          );
-        }
-      },
-    );
-
-    // Send HELLO_REQ.
-    _channel!.sink.add(helloReq);
-
-    // Wait for HELLO_RSP (handle APP_PING: empty message means resend).
-    Uint8List helloRsp;
     try {
-      helloRsp = await completer.future.timeout(
+      // Step 4: Connect WebSocket with retry.
+      _channel = await _connectWithRetry(port);
+      _subscription = _channel!.stream.listen(
+        _handleInboundMessage,
+        onError: _handleInboundError,
+        onDone: _handleInboundDone,
+      );
+
+      // Step 5: Perform handshake.
+      _helloResponseCompleter = Completer<Uint8List>();
+      _sendHelloReq();
+
+      final helloRsp = await _helloResponseCompleter!.future.timeout(
         const Duration(milliseconds: mwaConnectionTimeoutMs),
         onTimeout: () => throw SolanaError(SolanaErrorCode.mwaSessionTimeout),
       );
-    } finally {
-      await subscription.cancel();
-    }
 
-    // Handle APP_PING (empty response).
-    if (helloRsp.isEmpty) {
-      // Resend HELLO_REQ and wait again.
-      final retryCompleter = Completer<Uint8List>();
-      final retrySubscription = _channel!.stream.listen((message) {
-        if (!retryCompleter.isCompleted && message is List<int>) {
-          retryCompleter.complete(Uint8List.fromList(message));
-        }
-      });
+      // Step 6: Parse HELLO_RSP and derive shared secret.
+      final result = parseHelloRsp(helloRsp, _associationKeyPair, _ecdhKeyPair);
+      _sharedSecret = result.sharedSecret;
 
-      _channel!.sink.add(helloReq);
-
-      try {
-        helloRsp = await retryCompleter.future.timeout(
-          const Duration(milliseconds: mwaConnectionTimeoutMs),
-          onTimeout: () => throw SolanaError(SolanaErrorCode.mwaSessionTimeout),
+      // Step 7: Parse session properties if present.
+      if (result.encryptedSessionProps != null) {
+        _assertAndAdvanceInboundSequence(result.encryptedSessionProps!);
+        _sessionProps = parseSessionProps(
+          result.encryptedSessionProps!,
+          _sharedSecret!,
         );
-      } finally {
-        await retrySubscription.cancel();
+      } else {
+        _sessionProps = const SessionProperties(
+          protocolVersion: ProtocolVersion.legacy,
+        );
       }
+
+      // Step 8: Create wallet proxy.
+      return createMobileWalletProxy(_sendRequest, _sessionProps);
+    } on Object {
+      await close();
+      rethrow;
     }
-
-    // Step 6: Parse HELLO_RSP and derive shared secret.
-    final result = parseHelloRsp(helloRsp, associationKeyPair, ecdhKeyPair);
-    _sharedSecret = result.sharedSecret;
-
-    // Step 7: Parse session properties if present.
-    if (result.encryptedSessionProps != null) {
-      _sessionProps = parseSessionProps(
-        result.encryptedSessionProps!,
-        _sharedSecret!,
-      );
-    } else {
-      _sessionProps = const SessionProperties(
-        protocolVersion: ProtocolVersion.legacy,
-      );
-    }
-
-    // Step 8: Create wallet proxy.
-    return createMobileWalletProxy(_sendRequest, _sessionProps);
   }
 
   /// Closes the session and cleans up resources.
   Future<void> close() async {
     if (_closed) return;
     _closed = true;
+
+    final error = SolanaError(SolanaErrorCode.mwaSessionClosed);
+    _failPendingOperations(error);
+
+    await _subscription?.cancel();
+    _subscription = null;
+
     await _channel?.sink.close();
+    _channel = null;
   }
 
   /// Sends an encrypted JSON-RPC request and returns the decrypted response.
@@ -155,49 +130,198 @@ class LocalAssociationScenario {
       throw SolanaError(SolanaErrorCode.mwaSessionClosed);
     }
 
-    final sequenceNumber = _nextOutboundSequenceNumber++;
-
+    final requestId = _nextOutboundSequenceNumber++;
     final encrypted = encryptJsonRpcRequest(
-      sequenceNumber,
+      requestId,
       method,
       params,
       _sharedSecret!,
     );
 
+    final responseCompleter = Completer<Map<String, Object?>>();
+    _pendingResponses[requestId] = responseCompleter;
     _channel!.sink.add(encrypted);
 
-    // Wait for the response.
-    final completer = Completer<Uint8List>();
-    final subscription = _channel!.stream.listen(
-      (message) {
-        if (!completer.isCompleted && message is List<int>) {
-          completer.complete(Uint8List.fromList(message));
-        }
-      },
-      onError: (Object error) {
-        if (!completer.isCompleted) {
-          completer.completeError(error);
-        }
-      },
-      onDone: () {
-        if (!completer.isCompleted) {
-          completer.completeError(
-            SolanaError(SolanaErrorCode.mwaSessionClosed),
-          );
-        }
-      },
-    );
-
     try {
-      final responseBytes = await completer.future.timeout(
+      return await responseCompleter.future.timeout(
         const Duration(milliseconds: mwaConnectionTimeoutMs),
         onTimeout: () => throw SolanaError(SolanaErrorCode.mwaSessionTimeout),
       );
-
-      return decryptJsonRpcResponse(responseBytes, _sharedSecret!);
     } finally {
-      await subscription.cancel();
+      _pendingResponses.remove(requestId);
     }
+  }
+
+  void _sendHelloReq() {
+    _ecdhKeyPair = generateEcdhKeypair();
+    final helloReq = createHelloReq(_ecdhKeyPair, _associationKeyPair);
+    _channel?.sink.add(helloReq);
+  }
+
+  void _handleInboundMessage(Object? message) {
+    if (_closed) return;
+
+    if (message is! List<int>) {
+      _handleInboundError(
+        SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
+          'reason': 'Unexpected non-binary WebSocket payload type',
+        }),
+      );
+      return;
+    }
+
+    final payload = message is Uint8List
+        ? message
+        : Uint8List.fromList(message);
+
+    try {
+      if (_sharedSecret == null) {
+        _handleHandshakeMessage(payload);
+      } else {
+        _handleEncryptedMessage(payload);
+      }
+    } on Object catch (error) {
+      _handleInboundError(error);
+    }
+  }
+
+  void _handleHandshakeMessage(Uint8List payload) {
+    final helloCompleter = _helloResponseCompleter;
+    if (helloCompleter == null || helloCompleter.isCompleted) {
+      return;
+    }
+
+    // APP_PING (empty payload) can arrive before HELLO_RSP; resend HELLO_REQ.
+    if (payload.isEmpty) {
+      _sendHelloReq();
+      return;
+    }
+
+    helloCompleter.complete(payload);
+  }
+
+  void _handleEncryptedMessage(Uint8List payload) {
+    _assertAndAdvanceInboundSequence(payload);
+
+    final decoded = _decryptJsonRpcMessage(payload, _sharedSecret!);
+    final idValue = decoded['id'];
+    final requestId = idValue is num ? idValue.toInt() : null;
+    if (requestId == null) {
+      throw SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
+        'reason': 'Missing or invalid JSON-RPC id in wallet response',
+      });
+    }
+
+    final pending = _pendingResponses.remove(requestId);
+    if (pending == null || pending.isCompleted) {
+      return;
+    }
+
+    if (decoded.containsKey('error')) {
+      final errorJson = decoded['error'];
+      if (errorJson is! Map) {
+        pending.completeError(
+          SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
+            'reason': 'Invalid JSON-RPC error payload',
+          }),
+        );
+        return;
+      }
+      final typedError = errorJson.cast<Object?, Object?>();
+      pending.completeError(
+        MwaProtocolError(
+          jsonRpcMessageId: requestId,
+          code: (typedError['code'] as num?)?.toInt() ?? -32603,
+          message:
+              typedError['message']?.toString() ??
+              'Unknown wallet protocol error',
+          data: typedError['data'],
+        ),
+      );
+      return;
+    }
+
+    final result = decoded['result'];
+    if (result is! Map) {
+      pending.completeError(
+        SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
+          'reason': 'Missing or invalid JSON-RPC result payload',
+        }),
+      );
+      return;
+    }
+
+    pending.complete(result.cast<String, Object?>());
+  }
+
+  Map<String, Object?> _decryptJsonRpcMessage(
+    Uint8List message,
+    Uint8List sharedSecret,
+  ) {
+    final decrypted = decryptMessage(message, sharedSecret);
+    final jsonRpcMessage = json.decode(decrypted.plaintext);
+    if (jsonRpcMessage is! Map) {
+      throw SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
+        'reason': 'Wallet response is not a JSON object',
+      });
+    }
+    return jsonRpcMessage.cast<String, Object?>();
+  }
+
+  void _assertAndAdvanceInboundSequence(Uint8List message) {
+    if (message.length < mwaSequenceNumberBytes) {
+      throw SolanaError(SolanaErrorCode.mwaInvalidSequenceNumber, {
+        'reason': 'Encrypted message shorter than sequence number prefix',
+        'actualLength': message.length,
+      });
+    }
+
+    final sequenceNumber = ByteData.sublistView(
+      message,
+      0,
+      mwaSequenceNumberBytes,
+    ).getUint32(0);
+    final expectedSequence = _lastKnownInboundSequenceNumber + 1;
+    if (sequenceNumber != expectedSequence) {
+      throw SolanaError(SolanaErrorCode.mwaInvalidSequenceNumber, {
+        'expected': expectedSequence,
+        'actual': sequenceNumber,
+      });
+    }
+    _lastKnownInboundSequenceNumber = sequenceNumber;
+  }
+
+  void _handleInboundError(Object error) {
+    if (_closed) return;
+    _closed = true;
+
+    _failPendingOperations(error);
+
+    unawaited(_subscription?.cancel());
+    _subscription = null;
+
+    unawaited(_channel?.sink.close());
+    _channel = null;
+  }
+
+  void _handleInboundDone() {
+    if (_closed) return;
+    _handleInboundError(SolanaError(SolanaErrorCode.mwaSessionClosed));
+  }
+
+  void _failPendingOperations(Object error) {
+    final helloCompleter = _helloResponseCompleter;
+    if (helloCompleter != null && !helloCompleter.isCompleted) {
+      helloCompleter.completeError(error);
+    }
+    _helloResponseCompleter = null;
+
+    for (final completer in _pendingResponses.values) {
+      if (!completer.isCompleted) {
+        completer.completeError(error);
+      }
+    }
+    _pendingResponses.clear();
   }
 
   /// Connects to the wallet's WebSocket server with retry logic.

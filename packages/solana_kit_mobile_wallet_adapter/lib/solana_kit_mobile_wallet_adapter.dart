@@ -1,6 +1,7 @@
 export 'src/kit_mobile_wallet.dart';
 export 'src/local_association_scenario.dart';
 export 'src/pigeon/client_api.dart';
+export 'src/pigeon/digital_asset_links_api.dart';
 export 'src/pigeon/wallet_api.dart';
 export 'src/platform_check.dart';
 export 'src/remote_association_scenario.dart';
