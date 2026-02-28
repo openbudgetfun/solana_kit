@@ -53,6 +53,17 @@ class MockWalletHostApi extends MwaWalletHostApi {
   }
 
   @override
+  Future<void> cancelRequest({
+    required String sessionId,
+    required String requestId,
+  }) async {
+    _recordCall('cancelRequest', {
+      'sessionId': sessionId,
+      'requestId': requestId,
+    });
+  }
+
+  @override
   void setMethodCallHandler(
     Future<Object?> Function(MethodCall call)? handler,
   ) {
@@ -439,10 +450,10 @@ void main() {
       );
 
       final json = config.toCapabilitiesJson();
-      expect(json['max_transactions_per_request'], 10);
-      expect(json['max_messages_per_request'], 5);
-      expect(json['supported_transaction_versions'], ['legacy', '0']);
-      expect(json['features'], ['solana:signTransactions']);
+      expect(json['maxTransactionsPerSigningRequest'], 10);
+      expect(json['maxMessagesPerSigningRequest'], 5);
+      expect(json['supportedTransactionVersions'], ['legacy', '0']);
+      expect(json['optionalFeatures'], ['solana:signTransactions']);
     });
 
     test('default config has sensible defaults', () {
