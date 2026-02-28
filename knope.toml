@@ -153,4 +153,5 @@ command = "melos publish --no-dry-run"
 
 [[workflows.steps]]
 type = "Command"
-command = "pnpm --dir packages/codama-renderers-dart publish"
+command = "cd packages/codama-renderers-dart && pnpm publish"
+shell = true
