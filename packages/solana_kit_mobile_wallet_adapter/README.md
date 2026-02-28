@@ -220,6 +220,21 @@ This is useful when wallet policy requires Android app-origin verification befor
 - Android Kotlin: intent launch + walletlib/DAL host bridges
 - iOS Swift: safe no-op plugin for mixed-platform app compatibility
 
+## Manual testing app
+
+A runnable Flutter Android example app is available in [`example/`](./example/).
+
+```bash
+cd packages/solana_kit_mobile_wallet_adapter/example
+flutter pub get
+flutter run
+```
+
+For emulator/device wallet setup (including Solana's mock MWA wallet), follow:
+
+- [`example/README.md`](./example/README.md)
+- https://docs.solanamobile.com/get-started/development-setup#installation
+
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_mobile_wallet_adapter"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart"} -->
 
 ## Example

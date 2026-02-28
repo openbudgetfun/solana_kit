@@ -1,0 +1,24 @@
+name: solana_kit_mobile_wallet_adapter_example
+description: Manual testing app for the solana_kit_mobile_wallet_adapter package.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.1
+  flutter: ">=3.29.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  solana_kit_mobile_wallet_adapter:
+    path: ../
+  solana_kit_mobile_wallet_adapter_protocol: ^0.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  solana_kit_lints:
+    path: ../../solana_kit_lints
+
+flutter:
+  uses-material-design: true
