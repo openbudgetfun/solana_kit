@@ -22,3 +22,4 @@ export 'src/fee_payer.dart';
 export 'src/instructions.dart';
 export 'src/lifetime.dart';
 export 'src/transaction_message.dart';
+export 'src/transaction_message_extensions.dart';
