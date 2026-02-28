@@ -1,5 +1,5 @@
 ---
-"solana_kit_mobile_wallet_adapter": patch
+"solana_kit_mobile_wallet_adapter": minor
 ---
 
 Improve Android native wallet adapter parity and add CI Android compile verification.
