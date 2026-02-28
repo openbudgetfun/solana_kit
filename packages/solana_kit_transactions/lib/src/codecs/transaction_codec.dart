@@ -88,7 +88,7 @@ VariableSizeEncoder<Transaction> _getTransactionEncoderWithMessageFirst() {
       return transaction.messageBytes.length + signatureCount * 64;
     },
     write: (transaction, bytes, offset) {
-      var nextOffset = bytesEncoder.write(
+      final nextOffset = bytesEncoder.write(
         transaction.messageBytes,
         bytes,
         offset,
