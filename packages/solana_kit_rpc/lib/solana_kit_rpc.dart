@@ -12,6 +12,7 @@ library;
 export 'src/rpc.dart';
 export 'src/rpc_default_config.dart';
 export 'src/rpc_integer_overflow_error.dart';
+export 'src/rpc_methods.dart';
 export 'src/rpc_request_coalescer.dart';
 export 'src/rpc_request_deduplication.dart';
 export 'src/rpc_transport.dart';
