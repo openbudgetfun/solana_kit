@@ -305,6 +305,27 @@ final decoded = decodeEncodedContext(encoded);
 print(decoded['address']); // 11111111111111111111111111111111
 ```
 
+<!-- {=errorDomainHelpersSection} -->
+
+### Typed Error Domains
+
+`solana_kit_errors` includes domain helpers layered over numeric error codes.
+Use them to route error handling without hardcoding code ranges.
+
+```dart
+import 'package:solana_kit_errors/solana_kit_errors.dart';
+
+try {
+  // ...
+} on SolanaError catch (e) {
+  if (e.isInDomain(SolanaErrorDomain.rpc)) {
+    // Handle transport/server concerns.
+  }
+}
+```
+
+<!-- {/errorDomainHelpersSection} -->
+
 ## API Reference
 
 ### Classes
@@ -312,10 +333,14 @@ print(decoded['address']); // 11111111111111111111111111111111
 - **`SolanaError`** -- Core error class implementing `Exception`. Carries an `int code` and an unmodifiable `Map<String, Object?> context`.
 - **`SolanaErrorCode`** -- Abstract final class with 100+ `static const int` error codes grouped by category (general, JSON-RPC, addresses, accounts, keys, instructions, instruction errors, signers, transactions, transaction errors, codecs, RPC, RPC subscriptions, program clients, invariant violations).
 - **`RpcEnumErrorConfig`** -- Configuration class for mapping Solana RPC enum-style errors to `SolanaError` instances.
+- **`SolanaErrorDomain`** -- Enum describing high-level error domains (for example `rpc`, `transaction`, `codecs`, `mobileWalletAdapter`).
 
 ### Functions
 
 - **`isSolanaError(Object? e, [int? code])`** -- Type guard that checks whether a value is a `SolanaError`, optionally matching a specific code.
+- **`getSolanaErrorDomain(int code)`** -- Classifies numeric error codes into typed [SolanaErrorDomain] values.
+- **`isSolanaErrorCodeInDomain(int code, SolanaErrorDomain domain)`** -- Checks if a numeric code belongs to a domain.
+- **`isSolanaErrorInDomain(Object? error, SolanaErrorDomain domain)`** -- Checks if an `Object?` is a `SolanaError` in a domain.
 - **`getErrorMessage(int code, [Map<String, Object?> context])`** -- Returns the interpolated error message for a given error code and context.
 - **`getSolanaErrorFromJsonRpcError(Object?)`** -- Converts a JSON-RPC error response map into a `SolanaError`.
 - **`getSolanaErrorFromTransactionError(Object)`** -- Converts a Solana RPC transaction error into a `SolanaError`.

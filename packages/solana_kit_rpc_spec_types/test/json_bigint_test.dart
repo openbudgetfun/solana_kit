@@ -166,6 +166,29 @@ void main() {
     });
   });
 
+  group('parseJsonWithBigIntsAsync', () {
+    test('matches synchronous decoding by default', () async {
+      const input = '{"balance": 9007199254740993, "rate": 1.5}';
+      final sync = parseJsonWithBigInts(input);
+      final asyncDecoded = await parseJsonWithBigIntsAsync(input);
+      expect(asyncDecoded, sync);
+    });
+
+    test('can decode in an isolate when enabled', () async {
+      const input = '{"balance": 9007199254740993, "rate": 1.5}';
+      final decoded = await parseJsonWithBigIntsAsync(
+        input,
+        runInIsolate: true,
+        isolateThreshold: 0,
+      );
+
+      expect(
+        decoded,
+        equals({'balance': BigInt.parse('9007199254740993'), 'rate': 1.5}),
+      );
+    });
+  });
+
   group('stringifyJsonWithBigInts', () {
     group('stringifies BigInt as numerical value', () {
       final bigIntTestCases = <(BigInt, String)>[

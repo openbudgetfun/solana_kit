@@ -159,6 +159,28 @@ print(json); // {"balance":9007199254740993,"rate":1.5}
 // Note: BigInt values are rendered as raw integers, not quoted strings.
 ```
 
+<!-- {=isolateJsonDecodeSection|replace:"__RPC_TRANSPORT_IMPORT_PATH__":"package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart"|replace:"__RPC_URL__":"https://api.mainnet-beta.solana.com"} -->
+
+### Optional Isolate JSON Decoding
+
+For large Solana RPC payloads, you can offload BigInt-aware JSON parsing to a
+background isolate.
+
+```dart
+import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
+
+final transport = createHttpTransportForSolanaRpc(
+  url: 'https://api.mainnet-beta.solana.com',
+  decodeSolanaJsonInIsolate: true,
+  solanaJsonIsolateThreshold: 262144,
+);
+```
+
+For direct parsing, use `parseJsonWithBigIntsAsync(...)` with
+`runInIsolate: true`.
+
+<!-- {/isolateJsonDecodeSection} -->
+
 ## API Reference
 
 ### Classes
@@ -173,6 +195,7 @@ print(json); // {"balance":9007199254740993,"rate":1.5}
 
 - **`createRpcMessage<TParams>(RpcRequest<TParams> request)`** -- Creates a JSON-RPC 2.0 message map with auto-incrementing ID.
 - **`parseJsonWithBigInts(String json)`** -- Parses JSON, converting all integer values to `BigInt` while preserving floating-point numbers as `double`.
+- **`parseJsonWithBigIntsAsync(String json, {bool runInIsolate = false, int isolateThreshold = 262144})`** -- Async variant that can offload large payload parsing to a background isolate.
 - **`stringifyJsonWithBigInts(Object? value)`** -- Converts a value to JSON, rendering `BigInt` values as unquoted large integers.
 
 ### Typedefs

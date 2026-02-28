@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:isolate';
 
 /// Parses a JSON string, converting all integer values to [BigInt].
 ///
@@ -18,6 +20,35 @@ Object? parseJsonWithBigInts(String json) {
       return value;
     },
   );
+}
+
+/// Parses a JSON string using [parseJsonWithBigInts], optionally in an isolate.
+///
+/// Set [runInIsolate] to `true` for large payloads where moving CPU work off
+/// the current isolate can improve responsiveness. Values smaller than
+/// [isolateThreshold] are always decoded on the current isolate.
+///
+/// If isolate execution is unavailable on the current platform, this function
+/// automatically falls back to same-isolate decoding.
+Future<Object?> parseJsonWithBigIntsAsync(
+  String json, {
+  bool runInIsolate = false,
+  int isolateThreshold = 262144,
+}) async {
+  if (!runInIsolate || json.length < isolateThreshold) {
+    return parseJsonWithBigInts(json);
+  }
+
+  try {
+    return await Isolate.run<Object?>(
+      () => _parseJsonWithBigIntsInIsolate(json),
+    );
+  } catch (error) {
+    if (error is UnsupportedError || error is UnimplementedError) {
+      return parseJsonWithBigInts(json);
+    }
+    rethrow;
+  }
 }
 
 /// Converts a value to a JSON string, rendering [BigInt] values as large
@@ -105,6 +136,10 @@ String? _consumeNumber(String json, int ii) {
 
 String _wrapBigIntValueObject(String value) {
   return '{"\$n":"$value"}';
+}
+
+Object? _parseJsonWithBigIntsInIsolate(String json) {
+  return parseJsonWithBigInts(json);
 }
 
 BigInt _unwrapBigIntValueObject(Map<String, Object?> obj) {

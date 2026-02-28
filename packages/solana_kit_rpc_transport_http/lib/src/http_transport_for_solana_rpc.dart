@@ -29,10 +29,16 @@ import 'package:solana_kit_rpc_transport_http/src/is_solana_request.dart';
 ///
 /// Optionally pass an [http.Client] via [client] to control the HTTP client
 /// used for requests (useful for testing).
+///
+/// Set [decodeSolanaJsonInIsolate] to `true` to parse large Solana RPC
+/// responses in a background isolate. Responses shorter than
+/// [solanaJsonIsolateThreshold] bytes are decoded on the current isolate.
 RpcTransport createHttpTransportForSolanaRpc({
   required String url,
   bool allowInsecureHttp = false,
   Map<String, String>? headers,
+  bool decodeSolanaJsonInIsolate = false,
+  int solanaJsonIsolateThreshold = 262144,
   http.Client? client,
 }) {
   return createHttpTransport(
@@ -40,9 +46,12 @@ RpcTransport createHttpTransportForSolanaRpc({
       url: url,
       allowInsecureHttp: allowInsecureHttp,
       headers: headers,
-      fromJson: (rawResponse, payload) =>
-          isSolanaRequest(payload)
-          ? parseJsonWithBigInts(rawResponse)
+      fromJson: (rawResponse, payload) => isSolanaRequest(payload)
+          ? parseJsonWithBigIntsAsync(
+              rawResponse,
+              runInIsolate: decodeSolanaJsonInIsolate,
+              isolateThreshold: solanaJsonIsolateThreshold,
+            )
           : jsonDecode(rawResponse),
       toJson: (payload) => isSolanaRequest(payload)
           ? stringifyJsonWithBigInts(payload)

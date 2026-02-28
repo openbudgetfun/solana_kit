@@ -35,10 +35,7 @@ void main() {
 
         await transport(
           const RpcTransportConfig(
-            payload: <String, Object?>{
-              'jsonrpc': '2.0',
-              'method': 'getSlot',
-            },
+            payload: <String, Object?>{'jsonrpc': '2.0', 'method': 'getSlot'},
           ),
         );
 
@@ -133,6 +130,39 @@ void main() {
         expect(resultMap['unsafeNumber'], maxSafeIntegerPlusOne);
         expect(resultMap['numbersInString'], 'He said: "1, 2, 3, Soleil!"');
       });
+
+      test(
+        'can decode Solana responses using isolate-backed parsing',
+        () async {
+          final mockClient = MockClient(
+            (request) async => http.Response(
+              '{"lamports": 9007199254740993}',
+              200,
+              headers: {'content-type': 'application/json'},
+            ),
+          );
+
+          final transport = createHttpTransportForSolanaRpc(
+            url: 'https://localhost',
+            decodeSolanaJsonInIsolate: true,
+            solanaJsonIsolateThreshold: 0,
+            client: mockClient,
+          );
+
+          final result = await transport(
+            const RpcTransportConfig(
+              payload: <String, Object?>{
+                'jsonrpc': '2.0',
+                'method': 'getBalance',
+                'params': <Object?>['1234..5678'],
+              },
+            ),
+          );
+
+          final resultMap = result! as Map<String, Object?>;
+          expect(resultMap['lamports'], BigInt.parse('9007199254740993'));
+        },
+      );
     });
 
     group('when the request is not from the Solana RPC API', () {
