@@ -1,4 +1,4 @@
-package com.solana.solanakit.solana_kit_mobile_wallet_adapter_example
+package com.solana.solanakit.mobilewalletadapterexample
 
 import io.flutter.embedding.android.FlutterActivity
 
