@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
@@ -13,7 +14,7 @@ import 'package:solana_kit_keys/solana_kit_keys.dart';
 /// Throws a [SolanaError] with code
 /// [SolanaErrorCode.transactionCannotEncodeWithEmptySignatures] if the
 /// signatures map is empty.
-List<SignatureBytes> _getSignaturesToEncode(
+List<Uint8List> _getSignaturesToEncode(
   Map<Address, SignatureBytes?> signaturesMap,
 ) {
   final signatures = signaturesMap.values.toList();
@@ -25,9 +26,9 @@ List<SignatureBytes> _getSignaturesToEncode(
 
   return signatures.map((signature) {
     if (signature == null) {
-      return SignatureBytes(Uint8List(64));
+      return Uint8List(64);
     }
-    return signature;
+    return signature.value;
   }).toList();
 }
 
@@ -35,22 +36,28 @@ List<SignatureBytes> _getSignaturesToEncode(
 /// as an array with a shortU16 size prefix.
 VariableSizeEncoder<Map<Address, SignatureBytes?>>
 getSignaturesEncoderWithSizePrefix() {
-  final shortU16Enc = getShortU16Encoder();
+  return transformEncoder<List<Uint8List>, Map<Address, SignatureBytes?>>(
+        getArrayEncoder(
+          fixEncoderSize(getBytesEncoder(), 64) as Encoder<Uint8List>,
+          size: PrefixedArraySize(getShortU16Encoder()),
+        ),
+        _getSignaturesToEncode,
+      )
+      as VariableSizeEncoder<Map<Address, SignatureBytes?>>;
+}
 
-  return VariableSizeEncoder<Map<Address, SignatureBytes?>>(
-    getSizeFromValue: (signaturesMap) {
-      final sigs = _getSignaturesToEncode(signaturesMap);
-      final prefixSize = getEncodedSize(sigs.length, shortU16Enc);
-      return prefixSize + (sigs.length * 64);
-    },
-    write: (signaturesMap, bytes, offset) {
-      final sigs = _getSignaturesToEncode(signaturesMap);
-      var pos = shortU16Enc.write(sigs.length, bytes, offset);
-      for (final sig in sigs) {
-        bytes.setAll(pos, sig.value);
-        pos += 64;
-      }
-      return pos;
-    },
-  );
+/// Signatures encoder for v1 transactions, which encode signatures as a
+/// known-size array with no size prefix.
+FixedSizeEncoder<Map<Address, SignatureBytes?>> getSignaturesEncoderWithLength(
+  int size,
+) {
+  return transformEncoder<List<Uint8List>, Map<Address, SignatureBytes?>>(
+        getArrayEncoder(
+          fixEncoderSize(getBytesEncoder(), 64) as Encoder<Uint8List>,
+          size: FixedArraySize(size),
+          description: 'signatures',
+        ),
+        _getSignaturesToEncode,
+      )
+      as FixedSizeEncoder<Map<Address, SignatureBytes?>>;
 }

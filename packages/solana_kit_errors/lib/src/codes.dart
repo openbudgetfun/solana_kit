@@ -252,6 +252,7 @@ abstract final class SolanaErrorCode {
   static const int transactionExceedsSizeLimit = 5663020;
   static const int transactionVersionNumberNotSupported = 5663021;
   static const int transactionNonceAccountCannotBeInLookupTable = 5663022;
+  static const int transactionMalformedMessageBytes = 5663023;
 
   // ---------------------------------------------------------------------------
   // Transaction Errors (7050000 - 7050999)

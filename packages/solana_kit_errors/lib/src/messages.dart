@@ -523,9 +523,11 @@ const Map<int, String> solanaErrorMessages = {
   SolanaErrorCode.transactionSignaturesMissing:
       r'Transaction is missing signatures for addresses: $addresses.',
   SolanaErrorCode.transactionVersionNumberNotSupported:
-      r'This version of Kit does not support decoding transactions with version $unsupportedVersion.',
+      r'This version of Kit does not support decoding transactions with version $unsupportedVersion. The current max supported version is 0.',
   SolanaErrorCode.transactionVersionNumberOutOfRange:
       r'Transaction version must be in the range [0, 127]. $actualVersion given',
+  SolanaErrorCode.transactionMalformedMessageBytes:
+      r'Transaction message bytes are malformed: $messageBytes',
 
   // Mobile Wallet Adapter - Session errors
   SolanaErrorCode.mwaAssociationPortOutOfRange:
