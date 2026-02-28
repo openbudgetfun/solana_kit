@@ -17,6 +17,7 @@ in
       eget
       fvm
       gitleaks
+      ktlint
       libiconv
       nixfmt
       shfmt
@@ -173,8 +174,16 @@ in
       exec = ''
         set -e
         dprint fmt --config "$DEVENV_ROOT/dprint.json"
+
+        mapfile -t kotlin_files < <(git ls-files '*.kt' '*.kts')
+        if [ ''${#kotlin_files[@]} -gt 0 ]; then
+          ktlint --relative --format "''${kotlin_files[@]}"
+        else
+          echo "No Kotlin files found for ktlint formatting."
+        fi
       '';
       description = "Fix formatting for entire project.";
+      binary = "bash";
     };
     "fix:lint" = {
       exec = ''
@@ -199,6 +208,7 @@ in
         sync:check
         docs:check
         lint:format
+        lint:kotlin
         lint:analyze
       '';
       description = "Run all lint checks.";
@@ -217,6 +227,20 @@ in
         dart analyze --fatal-infos .
       '';
       description = "Run dart analyze across all packages.";
+      binary = "bash";
+    };
+    "lint:kotlin" = {
+      exec = ''
+        set -e
+
+        mapfile -t kotlin_files < <(git ls-files '*.kt' '*.kts')
+        if [ ''${#kotlin_files[@]} -gt 0 ]; then
+          ktlint --relative "''${kotlin_files[@]}"
+        else
+          echo "No Kotlin files found for ktlint linting."
+        fi
+      '';
+      description = "Lint tracked Kotlin files with ktlint.";
       binary = "bash";
     };
     "sync:check" = {

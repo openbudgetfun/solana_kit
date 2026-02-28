@@ -16,38 +16,49 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
-class SolanaKitMobileWalletAdapterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
+class SolanaKitMobileWalletAdapterPlugin :
+    FlutterPlugin,
+    MethodCallHandler,
+    ActivityAware {
     private lateinit var clientChannel: MethodChannel
     private var walletApi: WalletApiImpl? = null
     private var digitalAssetLinksApi: DigitalAssetLinksApiImpl? = null
     private var activity: Activity? = null
 
-    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onAttachedToEngine(
+        @NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding,
+    ) {
         // Client-side channel (dApp -> wallet).
-        clientChannel = MethodChannel(
-            flutterPluginBinding.binaryMessenger,
-            "com.solana.solanakit.mobilewallet/client"
-        )
+        clientChannel =
+            MethodChannel(
+                flutterPluginBinding.binaryMessenger,
+                "com.solana.solanakit.mobilewallet/client",
+            )
         clientChannel.setMethodCallHandler(this)
 
         // Wallet-side channel (wallet scenario management).
-        walletApi = WalletApiImpl(
-            flutterPluginBinding.applicationContext,
-            flutterPluginBinding.binaryMessenger,
-            activityProvider = { activity }
-        )
+        walletApi =
+            WalletApiImpl(
+                flutterPluginBinding.applicationContext,
+                flutterPluginBinding.binaryMessenger,
+                activityProvider = { activity },
+            )
         walletApi?.register()
 
         // Digital Asset Links bridge (wallet app security APIs).
-        digitalAssetLinksApi = DigitalAssetLinksApiImpl(
-            flutterPluginBinding.applicationContext,
-            flutterPluginBinding.binaryMessenger,
-            activityProvider = { activity }
-        )
+        digitalAssetLinksApi =
+            DigitalAssetLinksApiImpl(
+                flutterPluginBinding.applicationContext,
+                flutterPluginBinding.binaryMessenger,
+                activityProvider = { activity },
+            )
         digitalAssetLinksApi?.register()
     }
 
-    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+    override fun onMethodCall(
+        @NonNull call: MethodCall,
+        @NonNull result: Result,
+    ) {
         when (call.method) {
             "launchIntent" -> {
                 val uri = call.argument<String>("uri")
@@ -70,21 +81,26 @@ class SolanaKitMobileWalletAdapterPlugin : FlutterPlugin, MethodCallHandler, Act
                     result.error("LAUNCH_FAILED", e.message, null)
                 }
             }
+
             "isWalletEndpointAvailable" -> {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("solana-wallet:/"))
-                val available = activity?.packageManager?.resolveActivity(
-                    intent,
-                    PackageManager.MATCH_DEFAULT_ONLY
-                ) != null
+                val available =
+                    activity?.packageManager?.resolveActivity(
+                        intent,
+                        PackageManager.MATCH_DEFAULT_ONLY,
+                    ) != null
                 result.success(available)
             }
+
             else -> {
                 result.notImplemented()
             }
         }
     }
 
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onDetachedFromEngine(
+        @NonNull binding: FlutterPlugin.FlutterPluginBinding,
+    ) {
         clientChannel.setMethodCallHandler(null)
         walletApi?.unregister()
         walletApi = null

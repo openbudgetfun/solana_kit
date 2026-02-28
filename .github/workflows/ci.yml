@@ -38,7 +38,7 @@ jobs:
       - uses: ./.github/actions/devenv
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: lint all
+      - name: lint all (includes ktlint)
         run: lint:all
         shell: devenv shell -- bash -e {0}
 
