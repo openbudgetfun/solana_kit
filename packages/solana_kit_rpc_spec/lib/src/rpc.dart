@@ -133,12 +133,26 @@ class Rpc {
   /// The transport used to send RPC requests.
   final RpcTransport transport;
 
-  /// Creates a [PendingRpcRequest] for the given [methodName] and [params].
+  /// {@template solanaKitRpcSpecRequestSummary}
+  /// Creates a [PendingRpcRequest] for [methodName] and [params].
+  ///
+  /// The request is lazy. No network call happens until [PendingRpcRequest.send]
+  /// is invoked.
+  /// {@endtemplate}
+  ///
+  /// {@template solanaKitRpcSpecTypedRequest}
+  /// Use the optional generic [TResponse] to express the expected response type.
+  /// This helps downstream APIs expose typed convenience wrappers while
+  /// preserving the dynamic escape hatch.
+  /// {@endtemplate}
+  ///
+  /// {@macro solanaKitRpcSpecRequestSummary}
+  /// {@macro solanaKitRpcSpecTypedRequest}
   ///
   /// Throws a [SolanaError] with code
   /// [SolanaErrorCode.rpcApiPlanMissingForRpcMethod] if no API plan is
   /// available for the given method.
-  PendingRpcRequest<Object?> request(
+  PendingRpcRequest<TResponse> request<TResponse extends Object?>(
     String methodName, [
     List<Object?> params = const [],
   ]) {
@@ -149,7 +163,14 @@ class Rpc {
         'params': params,
       });
     }
-    return PendingRpcRequest<Object?>(plan: plan, transport: transport);
+    return PendingRpcRequest<TResponse>(
+      plan: RpcPlan<TResponse>(
+        execute: (config) async {
+          return await plan.execute(config) as TResponse;
+        },
+      ),
+      transport: transport,
+    );
   }
 }
 

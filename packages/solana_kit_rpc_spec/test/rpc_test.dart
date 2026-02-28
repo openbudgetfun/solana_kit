@@ -69,6 +69,24 @@ void main() {
         expect(result, 123);
       });
 
+      test('supports typed requests', () async {
+        makeHttpRequest = (config) async => 123;
+        rpc = createRpc(
+          RpcConfig(api: _ProxyRpcApi(), transport: makeHttpRequest),
+        );
+        final result = await rpc.request<int>('someMethod').send();
+        expect(result, 123);
+      });
+
+      test('throws when typed request cast is invalid', () async {
+        makeHttpRequest = (config) async => 123;
+        rpc = createRpc(
+          RpcConfig(api: _ProxyRpcApi(), transport: makeHttpRequest),
+        );
+        final sendFuture = rpc.request<String>('someMethod').send();
+        await expectLater(sendFuture, throwsA(isA<TypeError>()));
+      });
+
       test('throws errors from the transport', () async {
         final transportError = Exception('o no');
         makeHttpRequest = (config) async => throw transportError;

@@ -11,7 +11,7 @@ import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 ///
 /// ```dart
 /// final rpc = createSolanaRpc(url: 'https://api.mainnet-beta.solana.com');
-/// final slot = await rpc.request('getSlot').send();
+/// final slot = await rpc.getSlot().send();
 /// ```
 ///
 /// By default, only `https://` URLs are allowed. Set [allowInsecureHttp] to

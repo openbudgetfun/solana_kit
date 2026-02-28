@@ -7,8 +7,14 @@ A Dart port of the [Solana TypeScript SDK](https://github.com/anza-xyz/kit) (`@s
 
 ## Upstream Compatibility
 
+<!-- {=upstreamSupportSection|replace:"__SOLANA_KIT_VERSION__":"6.1.0"} -->
+
+## Upstream Compatibility
+
 - Latest supported `@solana/kit` version: `6.1.0`
 - This Dart port tracks upstream APIs and behavior through `v6.1.0`.
+
+<!-- {/upstreamSupportSection} -->
 
 ## Quick Start
 
@@ -16,7 +22,7 @@ A Dart port of the [Solana TypeScript SDK](https://github.com/anza-xyz/kit) (`@s
 import 'package:solana_kit/solana_kit.dart';
 
 // Create an RPC client
-final rpc = createSolanaRpc('https://api.mainnet-beta.solana.com');
+final rpc = createSolanaRpc(url: 'https://api.mainnet-beta.solana.com');
 
 // Generate a key pair
 final keyPair = await generateKeyPair();
@@ -27,6 +33,24 @@ final message = createTransactionMessage()
   .pipe(setTransactionMessageLifetimeUsingBlockhash(blockhash))
   .pipe(appendTransactionMessageInstruction(instruction));
 ```
+
+<!-- {=typedRpcMethodsSection|replace:"__RPC_IMPORT_PATH__":"package:solana_kit/solana_kit.dart"|replace:"__RPC_URL__":"https://api.mainnet-beta.solana.com"} -->
+
+### Typed RPC methods
+
+When working with an `Rpc`, prefer typed convenience helpers over stringly method calls:
+
+```dart
+import 'package:solana_kit/solana_kit.dart';
+
+final rpc = createSolanaRpc(url: 'https://api.mainnet-beta.solana.com');
+final slot = await rpc.getSlot().send();
+final blockHeight = await rpc.getBlockHeight().send();
+```
+
+These helpers forward to canonical params builders in `solana_kit_rpc_api` and return lazy `PendingRpcRequest<T>` values.
+
+<!-- {/typedRpcMethodsSection} -->
 
 ## Getting Started
 
@@ -643,7 +667,7 @@ solana_kit_offchain_messages -> solana_kit_addresses, solana_kit_codecs_core, so
 solana_kit_options -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
 solana_kit_program_client_core -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_errors, solana_kit_instructions, solana_kit_rpc_spec, solana_kit_rpc_types, solana_kit_signers
 solana_kit_programs -> solana_kit_addresses, solana_kit_errors
-solana_kit_rpc -> solana_kit_errors, solana_kit_fast_stable_stringify, solana_kit_rpc_api, solana_kit_rpc_spec, solana_kit_rpc_spec_types, solana_kit_rpc_transformers, solana_kit_rpc_transport_http, solana_kit_rpc_types
+solana_kit_rpc -> solana_kit_addresses, solana_kit_errors, solana_kit_fast_stable_stringify, solana_kit_keys, solana_kit_rpc_api, solana_kit_rpc_spec, solana_kit_rpc_spec_types, solana_kit_rpc_transformers, solana_kit_rpc_transport_http, solana_kit_rpc_types
 solana_kit_rpc_api -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_rpc_parsed_types, solana_kit_rpc_spec, solana_kit_rpc_spec_types, solana_kit_rpc_transformers, solana_kit_rpc_types, solana_kit_transaction_messages, solana_kit_transactions
 solana_kit_rpc_parsed_types -> solana_kit_addresses, solana_kit_errors, solana_kit_rpc_types
 solana_kit_rpc_spec -> solana_kit_errors, solana_kit_rpc_spec_types

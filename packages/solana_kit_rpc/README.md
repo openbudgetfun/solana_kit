@@ -31,20 +31,39 @@ If you are working within the `solana_kit` monorepo, the package resolves throug
 The simplest way to create an RPC client is with `createSolanaRpc`, which sets up a fully configured client with sensible defaults -- including request coalescing, BigInt handling, and a `solana-client` header.
 
 ```dart
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 
 final rpc = createSolanaRpc(url: 'https://api.mainnet-beta.solana.com');
 
 // Make an RPC call.
-final slot = await rpc.request('getSlot').send();
+final slot = await rpc.getSlot().send();
 print('Current slot: $slot');
 
 // Query an account balance.
-final balance = await rpc.request('getBalance', [
-  '83astBRguLMdt2h5U1Tbd4hU5SkfAWRkzG2HPM88BREAK',
-]).send();
+final balance = await rpc.getBalance(
+  const Address('83astBRguLMdt2h5U1Tbd4hU5SkfAWRkzG2HPM88BREAK'),
+).send();
 print('Balance: $balance');
 ```
+
+<!-- {=typedRpcMethodsSection|replace:"__RPC_IMPORT_PATH__":"package:solana_kit_rpc/solana_kit_rpc.dart"|replace:"__RPC_URL__":"https://api.mainnet-beta.solana.com"} -->
+
+### Typed RPC methods
+
+When working with an `Rpc`, prefer typed convenience helpers over stringly method calls:
+
+```dart
+import 'package:solana_kit_rpc/solana_kit_rpc.dart';
+
+final rpc = createSolanaRpc(url: 'https://api.mainnet-beta.solana.com');
+final slot = await rpc.getSlot().send();
+final blockHeight = await rpc.getBlockHeight().send();
+```
+
+These helpers forward to canonical params builders in `solana_kit_rpc_api` and return lazy `PendingRpcRequest<T>` values.
+
+<!-- {/typedRpcMethodsSection} -->
 
 You can pass custom headers and an `http.Client` instance:
 

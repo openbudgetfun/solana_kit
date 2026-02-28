@@ -9,6 +9,15 @@ The Solana Kit Dart SDK -- a comprehensive, modular Dart port of the [Solana Typ
 
 This is the umbrella package that re-exports all 35 public packages in the SDK, giving you a single import for the entire Solana development toolkit.
 
+<!-- {=upstreamSupportSection|replace:"__SOLANA_KIT_VERSION__":"6.1.0"} -->
+
+## Upstream Compatibility
+
+- Latest supported `@solana/kit` version: `6.1.0`
+- This Dart port tracks upstream APIs and behavior through `v6.1.0`.
+
+<!-- {/upstreamSupportSection} -->
+
 ## Installation
 
 Add `solana_kit` to your `pubspec.yaml`:
@@ -31,7 +40,7 @@ import 'package:solana_kit/solana_kit.dart';
 
 Future<void> main() async {
   // 1. Create an RPC client.
-  final rpc = createSolanaRpc('https://api.devnet.solana.com');
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   // 2. Generate a new Ed25519 key pair.
   final keyPair = await generateKeyPair();
@@ -39,10 +48,10 @@ Future<void> main() async {
   print('Address: ${signer.address}');
 
   // 3. Check the balance.
-  final balanceResponse = await rpc.request('getBalance', [
-    signer.address.value,
-    {'commitment': 'confirmed'},
-  ]).send();
+  final balanceResponse = await rpc.getBalance(
+    signer.address,
+    const GetBalanceConfig(commitment: Commitment.confirmed),
+  ).send();
   print('Balance: $balanceResponse');
 
   // 4. Fetch an account.
@@ -112,16 +121,34 @@ Future<void> main() async {
 
 Make JSON-RPC calls to a Solana node.
 
+<!-- {=typedRpcMethodsSection|replace:"__RPC_IMPORT_PATH__":"package:solana_kit/solana_kit.dart"|replace:"__RPC_URL__":"https://api.devnet.solana.com"} -->
+
+### Typed RPC methods
+
+When working with an `Rpc`, prefer typed convenience helpers over stringly method calls:
+
+```dart
+import 'package:solana_kit/solana_kit.dart';
+
+final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
+final slot = await rpc.getSlot().send();
+final blockHeight = await rpc.getBlockHeight().send();
+```
+
+These helpers forward to canonical params builders in `solana_kit_rpc_api` and return lazy `PendingRpcRequest<T>` values.
+
+<!-- {/typedRpcMethodsSection} -->
+
 ```dart
 import 'package:solana_kit/solana_kit.dart';
 
 Future<void> main() async {
-  final rpc = createSolanaRpc('https://api.devnet.solana.com');
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   // Get the latest blockhash.
-  final blockhashResponse = await rpc.request('getLatestBlockhash', [
-    {'commitment': 'confirmed'},
-  ]).send();
+  final blockhashResponse = await rpc.getLatestBlockhash(
+    const GetLatestBlockhashConfig(commitment: Commitment.confirmed),
+  ).send();
   print('Blockhash: $blockhashResponse');
 
   // Get the minimum balance for rent exemption.
