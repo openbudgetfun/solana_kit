@@ -1,3 +1,5 @@
+import 'dart:async';
+
 /// Configuration for creating an HTTP transport.
 ///
 /// Pass an instance of this class to `createHttpTransport` to create a
@@ -34,7 +36,11 @@ class HttpTransportConfig {
   ///
   /// When not provided, the response body will be decoded using
   /// `jsonDecode` from `dart:convert`.
-  final Object? Function(String rawResponse, Object? payload)? fromJson;
+  ///
+  /// This callback may return either a parsed value directly or a [Future]
+  /// resolving to one.
+  final FutureOr<Object?> Function(String rawResponse, Object? payload)?
+  fromJson;
 
   /// An optional map of headers to set on the request.
   ///

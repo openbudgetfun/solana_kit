@@ -65,4 +65,61 @@ void main() {
       expect(codec.decode(codec.encode(1000)), equals(1000));
     });
   });
+
+  group('typed union helpers', () {
+    test('encodes and decodes Union2 values', () {
+      final codec = getUnion2Codec<num, int, num, int>(
+        getU8Codec(),
+        getU32Codec(),
+        (bytes, offset) => bytes.length - offset > 1 ? 1 : 0,
+      );
+
+      final encodedSmall = codec.encode(const Union2Variant0<num, num>(42));
+      final encodedLarge = codec.encode(const Union2Variant1<num, num>(1000));
+
+      expect(hex(encodedSmall), equals('2a'));
+      expect(hex(encodedLarge), equals('e8030000'));
+      expect(codec.decode(encodedSmall), isA<Union2Variant0<int, int>>());
+      expect(
+        (codec.decode(encodedSmall) as Union2Variant0<int, int>).value,
+        equals(42),
+      );
+      expect(codec.decode(encodedLarge), isA<Union2Variant1<int, int>>());
+      expect(
+        (codec.decode(encodedLarge) as Union2Variant1<int, int>).value,
+        equals(1000),
+      );
+    });
+
+    test('encodes and decodes Union3 values', () {
+      final codec = getUnion3Codec<num, int, num, int, num, int>(
+        getU8Codec(),
+        getU16Codec(),
+        getU32Codec(),
+        (bytes, offset) {
+          final remaining = bytes.length - offset;
+          if (remaining == 1) return 0;
+          if (remaining == 2) return 1;
+          return 2;
+        },
+      );
+
+      final v0 = codec.decode(
+        codec.encode(const Union3Variant0<num, num, num>(7)),
+      );
+      final v1 = codec.decode(
+        codec.encode(const Union3Variant1<num, num, num>(700)),
+      );
+      final v2 = codec.decode(
+        codec.encode(const Union3Variant2<num, num, num>(70000)),
+      );
+
+      expect(v0, isA<Union3Variant0<int, int, int>>());
+      expect(v1, isA<Union3Variant1<int, int, int>>());
+      expect(v2, isA<Union3Variant2<int, int, int>>());
+      expect((v0 as Union3Variant0<int, int, int>).value, equals(7));
+      expect((v1 as Union3Variant1<int, int, int>).value, equals(700));
+      expect((v2 as Union3Variant2<int, int, int>).value, equals(70000));
+    });
+  });
 }

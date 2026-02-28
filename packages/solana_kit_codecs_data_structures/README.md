@@ -494,6 +494,12 @@ final decoded = codec.decode(bytes);
 | `getUnionEncoder(variants, getIndexFromValue)`                  | Encode using a user-defined variant selector |
 | `getUnionDecoder(variants, getIndexFromBytes)`                  | Decode using a user-defined variant selector |
 | `getUnionCodec(variants, getIndexFromValue, getIndexFromBytes)` | Combined union codec                         |
+| `getUnion2Encoder(variant0, variant1)`                          | Encode typed `Union2` values                 |
+| `getUnion2Decoder(variant0, variant1, getIndexFromBytes)`       | Decode typed `Union2` values                 |
+| `getUnion2Codec(variant0, variant1, getIndexFromBytes)`         | Combined typed two-variant union codec       |
+| `getUnion3Encoder(variant0, variant1, variant2)`                | Encode typed `Union3` values                 |
+| `getUnion3Decoder(variant0, variant1, variant2, ...)`           | Decode typed `Union3` values                 |
+| `getUnion3Codec(variant0, variant1, variant2, ...)`             | Combined typed three-variant union codec     |
 
 ### Bit array codecs
 
@@ -537,6 +543,29 @@ final decoded = codec.decode(bytes);
 | `getHiddenSuffixEncoder(encoder, suffixedEncoders)` | Append hidden data after encoding   |
 | `getHiddenSuffixDecoder(decoder, suffixedDecoders)` | Skip hidden suffix when decoding    |
 | `getHiddenSuffixCodec(codec, suffixedCodecs)`       | Combined hidden suffix codec        |
+
+<!-- {=typedUnionHelpersSection} -->
+
+### Typed Union Helpers
+
+Prefer typed union helpers when a codec has a fixed, small number of variants.
+They improve IDE type inference and reduce downstream casting.
+
+```dart
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
+final codec = getUnion2Codec(
+  getU8Codec(),
+  getU32Codec(),
+  (bytes, offset) => bytes.length - offset > 1 ? 1 : 0,
+);
+
+final encoded = codec.encode(const Union2Variant1<int, int>(1000));
+final decoded = codec.decode(encoded);
+```
+
+<!-- {/typedUnionHelpersSection} -->
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_codecs_data_structures"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart"} -->
 

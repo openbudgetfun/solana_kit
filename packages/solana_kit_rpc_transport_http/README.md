@@ -214,12 +214,34 @@ final response = await transport(
 print(response); // {jsonrpc: 2.0, result: 42, id: 1}
 ```
 
+<!-- {=isolateJsonDecodeSection|replace:"__RPC_TRANSPORT_IMPORT_PATH__":"package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart"|replace:"__RPC_URL__":"https://api.mainnet-beta.solana.com"} -->
+
+### Optional Isolate JSON Decoding
+
+For large Solana RPC payloads, you can offload BigInt-aware JSON parsing to a
+background isolate.
+
+```dart
+import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
+
+final transport = createHttpTransportForSolanaRpc(
+  url: 'https://api.mainnet-beta.solana.com',
+  decodeSolanaJsonInIsolate: true,
+  solanaJsonIsolateThreshold: 262144,
+);
+```
+
+For direct parsing, use `parseJsonWithBigIntsAsync(...)` with
+`runInIsolate: true`.
+
+<!-- {/isolateJsonDecodeSection} -->
+
 ## API Reference
 
 ### Functions
 
 - **`createHttpTransport(HttpTransportConfig config, {http.Client? client})`** -- Creates a generic `RpcTransport` that sends JSON-RPC requests over HTTP POST. Returns a function matching the `RpcTransport` typedef.
-- **`createHttpTransportForSolanaRpc({required String url, Map<String, String>? headers, http.Client? client})`** -- Creates an `RpcTransport` with BigInt-aware JSON serialization for Solana RPC requests. Uses `parseJsonWithBigInts`/`stringifyJsonWithBigInts` for known Solana methods.
+- **`createHttpTransportForSolanaRpc({required String url, bool allowInsecureHttp = false, Map<String, String>? headers, bool decodeSolanaJsonInIsolate = false, int solanaJsonIsolateThreshold = 262144, http.Client? client})`** -- Creates an `RpcTransport` with BigInt-aware JSON serialization for Solana RPC requests, with optional isolate-backed response decoding.
 - **`isSolanaRequest(Object? payload)`** -- Returns `true` if the payload is a JSON-RPC 2.0 request for a known Solana RPC method.
 - **`assertIsAllowedHttpRequestHeaders(Map<String, String> headers)`** -- Throws a `SolanaError` if any headers are forbidden or protocol-reserved.
 - **`normalizeHeaders(Map<String, String> headers)`** -- Returns a new map with all header names lowercased.
@@ -230,7 +252,7 @@ print(response); // {jsonrpc: 2.0, result: 42, id: 1}
   - `url` (`String`, required) -- The target endpoint URL.
   - `headers` (`Map<String, String>?`) -- Optional custom headers.
   - `toJson` (`String Function(Object?)?`) -- Optional custom JSON serializer.
-  - `fromJson` (`Object? Function(String, Object?)?`) -- Optional custom JSON deserializer (receives raw response and request payload).
+  - `fromJson` (`FutureOr<Object?> Function(String, Object?)?`) -- Optional custom JSON deserializer (receives raw response and request payload).
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_rpc_transport_http"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart"} -->
 

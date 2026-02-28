@@ -380,6 +380,36 @@ void main() {
 
         expect(result, {'result': 456});
       });
+
+      test('supports async fromJson callbacks', () async {
+        final mockClient = MockClient(
+          (request) async => http.Response(
+            '{"ok":true}',
+            200,
+            headers: {'content-type': 'application/json'},
+          ),
+        );
+
+        final transport = createHttpTransport(
+          HttpTransportConfig(
+            url: 'https://localhost',
+            fromJson: (rawResponse, payload) async {
+              await Future<void>.delayed(Duration.zero);
+              return {'async': true, 'payload': payload};
+            },
+          ),
+          client: mockClient,
+        );
+
+        final result = await transport(
+          const RpcTransportConfig(payload: {'foo': 123}),
+        );
+
+        expect(result, {
+          'async': true,
+          'payload': {'foo': 123},
+        });
+      });
     });
 
     group('content-length header for multi-byte characters', () {
