@@ -24,6 +24,7 @@
   - `packages/solana_kit_accounts/lib/src/fetch_account.dart`
 
 Impact:
+
 - Weak IDE autocomplete.
 - More runtime failures and manual shape validation.
 
@@ -35,6 +36,7 @@ Impact:
   - `packages/solana_kit_transaction_messages/lib/src/instructions.dart`
 
 Impact:
+
 - Less Dart-idiomatic than extension/fluent APIs.
 - Discoverability is lower from code completion on `TransactionMessage`.
 
@@ -47,6 +49,7 @@ Impact:
   - `packages/solana_kit_transactions/lib/src/compile_transaction.dart`
 
 Impact:
+
 - Harder to reason about correctness at compile time.
 - More runtime type checks and branching.
 
@@ -57,6 +60,7 @@ Impact:
   - `packages/solana_kit_codecs_data_structures/lib/src/union.dart`
 
 Impact:
+
 - Weaker type inference for users writing custom codecs.
 
 ## Dart-First Design Direction
