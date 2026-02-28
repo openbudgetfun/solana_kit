@@ -97,12 +97,7 @@ VariableSizeEncoder<Transaction> _getTransactionEncoderWithMessageFirst() {
         transaction.messageBytes,
       );
       final signaturesEncoder = getSignaturesEncoderWithLength(signatureCount);
-      nextOffset = signaturesEncoder.write(
-        transaction.signatures,
-        bytes,
-        nextOffset,
-      );
-      return nextOffset;
+      return signaturesEncoder.write(transaction.signatures, bytes, nextOffset);
     },
   );
 }
