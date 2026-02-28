@@ -10,6 +10,7 @@ export 'src/hidden_suffix.dart';
 export 'src/literal_union.dart';
 export 'src/map.dart';
 export 'src/nullable.dart';
+export 'src/predicate.dart';
 export 'src/set.dart';
 export 'src/struct.dart';
 export 'src/tuple.dart';

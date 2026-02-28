@@ -51,6 +51,60 @@ void main() {
       // 1 (shortU16 count) + 64 (signature) + 5 (message) = 70.
       expect(size, 70);
     });
+
+    test('encodes v1 transactions as message-first', () {
+      final transaction = Transaction(
+        messageBytes: Uint8List.fromList([129, 1, 5, 6]),
+        signatures: const {Address('11111111111111111111111111111111'): null},
+      );
+
+      final encoder = getTransactionEncoder();
+      final encoded = encoder.encode(transaction);
+
+      expect(encoded.length, 68);
+      expect(encoded.sublist(0, 4), [129, 1, 5, 6]);
+      for (var i = 4; i < encoded.length; i++) {
+        expect(encoded[i], 0);
+      }
+    });
+
+    test('throws for unsupported versioned message bytes', () {
+      final transaction = Transaction(
+        messageBytes: Uint8List.fromList([130, 1, 2, 3]),
+        signatures: const {Address('11111111111111111111111111111111'): null},
+      );
+
+      final encoder = getTransactionEncoder();
+      expect(
+        () => encoder.encode(transaction),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionVersionNumberNotSupported,
+          ),
+        ),
+      );
+    });
+
+    test('throws when v1 message bytes are malformed', () {
+      final transaction = Transaction(
+        messageBytes: Uint8List.fromList([129]),
+        signatures: const {Address('11111111111111111111111111111111'): null},
+      );
+
+      final encoder = getTransactionEncoder();
+      expect(
+        () => encoder.encode(transaction),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionMalformedMessageBytes,
+          ),
+        ),
+      );
+    });
   });
 
   group('getTransactionDecoder', () {

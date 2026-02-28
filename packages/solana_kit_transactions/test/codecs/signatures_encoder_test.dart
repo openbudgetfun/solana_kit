@@ -104,4 +104,70 @@ void main() {
       expect(size, 129);
     });
   });
+
+  group('getSignaturesEncoderWithLength', () {
+    test('throws when encoding an empty signatures map', () {
+      final encoder = getSignaturesEncoderWithLength(1);
+      expect(
+        () => encoder.encode(const {}),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionCannotEncodeWithEmptySignatures,
+          ),
+        ),
+      );
+    });
+
+    test('encodes a single null signature as 64 zero bytes without prefix', () {
+      final encoder = getSignaturesEncoderWithLength(1);
+      final encoded = encoder.encode(const {
+        Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): null,
+      });
+      expect(encoded.length, 64);
+      for (var i = 0; i < 64; i++) {
+        expect(encoded[i], 0);
+      }
+    });
+
+    test('encodes multiple signatures without prefix', () {
+      final sigA = SignatureBytes(Uint8List.fromList(List<int>.filled(64, 1)));
+      final sigB = SignatureBytes(Uint8List.fromList(List<int>.filled(64, 2)));
+      final encoder = getSignaturesEncoderWithLength(2);
+      final encoded = encoder.encode({
+        const Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): sigA,
+        const Address('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB'): sigB,
+      });
+      expect(encoded.length, 128);
+      for (var i = 0; i < 64; i++) {
+        expect(encoded[i], 1);
+      }
+      for (var i = 64; i < 128; i++) {
+        expect(encoded[i], 2);
+      }
+    });
+
+    test('throws when signature count exceeds configured length', () {
+      final sigA = SignatureBytes(Uint8List.fromList(List<int>.filled(64, 1)));
+      final sigB = SignatureBytes(Uint8List.fromList(List<int>.filled(64, 2)));
+      final sigC = SignatureBytes(Uint8List.fromList(List<int>.filled(64, 3)));
+      final encoder = getSignaturesEncoderWithLength(2);
+
+      expect(
+        () => encoder.encode({
+          const Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): sigA,
+          const Address('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB'): sigB,
+          const Address('CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC'): sigC,
+        }),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.codecsInvalidNumberOfItems,
+          ),
+        ),
+      );
+    });
+  });
 }

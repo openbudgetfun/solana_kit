@@ -5,6 +5,11 @@
 
 A Dart port of the [Solana TypeScript SDK](https://github.com/anza-xyz/kit) (`@solana/kit`). This monorepo mirrors the upstream TS package structure, built with modern Dart 3.10+ features including sealed classes, extension types, records, and patterns.
 
+## Upstream Compatibility
+
+- Latest supported `@solana/kit` version: `6.1.0`
+- This Dart port tracks upstream APIs and behavior through `v6.1.0`.
+
 ## Quick Start
 
 ```dart

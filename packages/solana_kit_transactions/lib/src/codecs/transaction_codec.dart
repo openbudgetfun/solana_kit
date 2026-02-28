@@ -11,10 +11,47 @@ import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.
 import 'package:solana_kit_transactions/src/codecs/signatures_encoder.dart';
 import 'package:solana_kit_transactions/src/transaction.dart';
 
+const _legacyVersionFlagMask = 0x80;
+const _versionFlagMask = 0x7f;
+
+enum _EnvelopeShape { signaturesFirst, messageFirst }
+
+_EnvelopeShape _getEncodeShapeForMessageBytes(Uint8List messageBytes) {
+  if (messageBytes.isEmpty) return _EnvelopeShape.signaturesFirst;
+
+  final firstByte = messageBytes[0];
+  if ((firstByte & _legacyVersionFlagMask) == 0) {
+    return _EnvelopeShape.signaturesFirst;
+  }
+
+  final version = firstByte & _versionFlagMask;
+  if (version == 0) {
+    return _EnvelopeShape.signaturesFirst;
+  }
+  if (version == 1) {
+    return _EnvelopeShape.messageFirst;
+  }
+
+  throw SolanaError(SolanaErrorCode.transactionVersionNumberNotSupported, {
+    'unsupportedVersion': version,
+  });
+}
+
 /// Returns an encoder that you can use to encode a [Transaction] to a byte
 /// array in a wire format appropriate for sending to the Solana network for
 /// execution.
 VariableSizeEncoder<Transaction> getTransactionEncoder() {
+  return getPredicateEncoder<Transaction>(
+        (transaction) =>
+            _getEncodeShapeForMessageBytes(transaction.messageBytes) ==
+            _EnvelopeShape.signaturesFirst,
+        _getTransactionEncoderWithSignaturesFirst(),
+        _getTransactionEncoderWithMessageFirst(),
+      )
+      as VariableSizeEncoder<Transaction>;
+}
+
+VariableSizeEncoder<Transaction> _getTransactionEncoderWithSignaturesFirst() {
   final signaturesEncoder = getSignaturesEncoderWithSizePrefix();
   final bytesEncoder = getBytesEncoder();
 
@@ -28,6 +65,45 @@ VariableSizeEncoder<Transaction> getTransactionEncoder() {
       bytes,
       signaturesEncoder.write(transaction.signatures, bytes, offset),
     ),
+  );
+}
+
+int _getSignatureCountForVersionedOrThrow(Uint8List messageBytes) {
+  if (messageBytes.length < 2) {
+    throw SolanaError(SolanaErrorCode.transactionMalformedMessageBytes, {
+      'messageBytes': messageBytes,
+    });
+  }
+  return messageBytes[1];
+}
+
+VariableSizeEncoder<Transaction> _getTransactionEncoderWithMessageFirst() {
+  final bytesEncoder = getBytesEncoder();
+
+  return VariableSizeEncoder<Transaction>(
+    getSizeFromValue: (transaction) {
+      final signatureCount = _getSignatureCountForVersionedOrThrow(
+        transaction.messageBytes,
+      );
+      return transaction.messageBytes.length + signatureCount * 64;
+    },
+    write: (transaction, bytes, offset) {
+      var nextOffset = bytesEncoder.write(
+        transaction.messageBytes,
+        bytes,
+        offset,
+      );
+      final signatureCount = _getSignatureCountForVersionedOrThrow(
+        transaction.messageBytes,
+      );
+      final signaturesEncoder = getSignaturesEncoderWithLength(signatureCount);
+      nextOffset = signaturesEncoder.write(
+        transaction.signatures,
+        bytes,
+        nextOffset,
+      );
+      return nextOffset;
+    },
   );
 }
 
