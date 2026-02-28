@@ -49,4 +49,5 @@ workspace:
 
 dev_dependencies:
   coverage: ^1.14.0
+  jaspr_cli: ^0.22.3
   melos: ^7.4.0

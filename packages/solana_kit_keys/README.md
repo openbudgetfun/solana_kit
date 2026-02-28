@@ -2,6 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_keys.svg)](https://pub.dev/packages/solana_kit_keys)
 [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_keys/latest/)
+[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/)
 [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
 [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
 
@@ -27,6 +28,7 @@ dependencies:
 
 - Package page: https://pub.dev/packages/solana_kit_keys
 - API reference: https://pub.dev/documentation/solana_kit_keys/latest/
+- Guides website: https://openbudgetfun.github.io/solana_kit/
 
 ## Usage
 

@@ -1,0 +1,14 @@
+include: package:lints/recommended.yaml
+
+analyzer:
+  plugins:
+    jaspr_lints:
+      version: ^0.6.0
+      diagnostics:
+        prefer_html_components: true
+        sort_children_last: true
+        styles_ordering: true
+
+formatter:
+  page_width: 120
+  trailing_commas: preserve

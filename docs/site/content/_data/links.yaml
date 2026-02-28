@@ -1,0 +1,6 @@
+repo: https://github.com/openbudgetfun/solana_kit
+issue_tracker: https://github.com/openbudgetfun/solana_kit/issues
+upstream_kit: https://github.com/anza-xyz/kit
+package: https://pub.dev/packages/solana_kit
+workspace_readme: https://github.com/openbudgetfun/solana_kit#readme
+jaspr_docs: https://docs.jaspr.site/content

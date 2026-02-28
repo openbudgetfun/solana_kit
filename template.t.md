@@ -107,3 +107,105 @@ try {
 ```
 
 <!-- {/errorDomainHelpersSection} -->
+
+<!-- {@docsWorkspaceSetupSection} -->
+
+```bash
+# Clone the repository
+git clone https://github.com/openbudgetfun/solana_kit.git
+cd solana_kit
+
+# Load devenv
+direnv allow
+
+# Install binary tools and Dart dependencies
+install:all
+dart pub get
+
+# Pull reference repositories used for compatibility checks
+clone:repos
+```
+
+<!-- {/docsWorkspaceSetupSection} -->
+
+<!-- {@docsWorkspaceDevCommandsSection} -->
+
+```bash
+# Lint, docs drift, formatting, and analysis checks
+lint:all
+
+# Run all package tests
+test:all
+
+# Validate markdown templates and generated docs
+docs:check
+
+# Regenerate documentation template consumers and workspace docs
+docs:update
+```
+
+<!-- {/docsWorkspaceDevCommandsSection} -->
+
+<!-- {@docsDocsSiteCommandsSection} -->
+
+```bash
+# Serve docs site locally at http://localhost:8080
+docs:site:serve
+
+# Build static docs output for GitHub Pages
+docs:site:build
+
+# Run a smoke test against the built docs site
+docs:site:smoke
+```
+
+<!-- {/docsDocsSiteCommandsSection} -->
+
+<!-- {@docsUpstreamCompatibilitySection} -->
+
+## Upstream Compatibility
+
+- Latest supported `@solana/kit` version: `6.1.0`
+- This Dart port tracks upstream APIs and behavior through `v6.1.0`.
+
+<!-- {/docsUpstreamCompatibilitySection} -->
+
+<!-- {@docsTypedRpcSolanaKitSection} -->
+
+### Typed RPC methods
+
+When working with an `Rpc`, prefer typed convenience helpers over stringly method calls:
+
+```dart
+import 'package:solana_kit/solana_kit.dart';
+
+final rpc = createSolanaRpc(url: 'https://api.mainnet-beta.solana.com');
+final slot = await rpc.getSlot().send();
+final blockHeight = await rpc.getBlockHeight().send();
+```
+
+These helpers forward to canonical params builders in `solana_kit_rpc_api` and return lazy `PendingRpcRequest<T>` values.
+
+<!-- {/docsTypedRpcSolanaKitSection} -->
+
+<!-- {@docsIsolateJsonDecodeHttpSection} -->
+
+### Optional Isolate JSON Decoding
+
+For large Solana RPC payloads, you can offload BigInt-aware JSON parsing to a
+background isolate.
+
+```dart
+import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
+
+final transport = createHttpTransportForSolanaRpc(
+  url: 'https://api.mainnet-beta.solana.com',
+  decodeSolanaJsonInIsolate: true,
+  solanaJsonIsolateThreshold: 262144,
+);
+```
+
+For direct parsing, use `parseJsonWithBigIntsAsync(...)` with
+`runInIsolate: true`.
+
+<!-- {/docsIsolateJsonDecodeHttpSection} -->

@@ -2,7 +2,7 @@ name: solana_kit_sysvars
 description: System variable access for the Solana Kit Dart SDK.
 version: 0.2.1
 repository: https://github.com/openbudgetfun/solana_kit
-homepage: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_sysvars/
+homepage: https://openbudgetfun.github.io/solana_kit/
 
 environment:
   sdk: ^3.10.1

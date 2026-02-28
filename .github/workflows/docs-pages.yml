@@ -1,0 +1,73 @@
+name: Docs Pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_path:
+        description: Optional base path override for GitHub Pages (for example /solana_kit/)
+        required: false
+        default: ""
+        type: string
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: docs-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - id: pages
+        uses: actions/configure-pages@v5
+      - name: Resolve docs base path
+        id: base
+        run: |
+          input_base='${{ inputs.base_path }}'
+          configured_base='${{ steps.pages.outputs.base_path }}'
+
+          if [[ -n "$input_base" ]]; then
+            base_path="$input_base"
+          elif [[ -n "$configured_base" ]]; then
+            base_path="$configured_base"
+          elif [[ "${GITHUB_REPOSITORY#*/}" == "${GITHUB_REPOSITORY_OWNER}.github.io" ]]; then
+            base_path='/'
+          else
+            base_path='/${GITHUB_REPOSITORY#*/}/'
+          fi
+
+          if [[ "$base_path" != "/" ]]; then
+            [[ "$base_path" != /* ]] && base_path="/$base_path"
+            [[ "$base_path" != */ ]] && base_path="$base_path/"
+          fi
+
+          echo "base_path=$base_path" >> "$GITHUB_OUTPUT"
+          echo "Using DOCS_BASE_PATH=$base_path"
+      - name: Build docs site
+        run: docs:site:build --dart-define=DOCS_BASE_PATH=${{ steps.base.outputs.base_path }}
+        shell: devenv shell -- bash -e {0}
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/site/build/jaspr
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

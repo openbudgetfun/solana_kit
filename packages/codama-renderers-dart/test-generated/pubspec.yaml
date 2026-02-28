@@ -1,5 +1,6 @@
 name: test_generated
 publish_to: none
+homepage: https://openbudgetfun.github.io/solana_kit/
 
 environment:
   sdk: ^3.10.0

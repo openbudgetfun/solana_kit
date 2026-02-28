@@ -112,6 +112,13 @@ in
       '';
       description = "Run the melos cli.";
     };
+    "jaspr" = {
+      exec = ''
+        set -e
+        dart run jaspr_cli:jaspr $@
+      '';
+      description = "Run the jaspr cli.";
+    };
     "format_coverage" = {
       exec = ''
         set -e
@@ -267,6 +274,35 @@ in
         scripts/workspace-doc-drift.sh --write
       '';
       description = "Update generated documentation blocks across the workspace.";
+      binary = "bash";
+    };
+    "docs:site:serve" = {
+      exec = ''
+        set -e
+        cd "$DEVENV_ROOT/docs/site"
+        flutter pub get
+        fvm dart run jaspr_cli:jaspr serve "$@"
+      '';
+      description = "Serve the Jaspr documentation site locally.";
+      binary = "bash";
+    };
+    "docs:site:build" = {
+      exec = ''
+        set -e
+        cd "$DEVENV_ROOT/docs/site"
+        flutter pub get
+        fvm dart run build_runner clean
+        PORT="''${DOCS_BUILD_PORT:-9080}" fvm dart run jaspr_cli:jaspr build "$@"
+      '';
+      description = "Build the Jaspr documentation site for static hosting.";
+      binary = "bash";
+    };
+    "docs:site:smoke" = {
+      exec = ''
+        set -e
+        "$DEVENV_ROOT/scripts/docs-site-smoke.sh" "$@"
+      '';
+      description = "Run smoke tests against the built documentation site.";
       binary = "bash";
     };
     "test:all" = {

@@ -1,9 +1,16 @@
 # Solana Kit Dart SDK
 
+<p align="center">
+  <img src="./assets/solana-kit-icon.svg" alt="Solana Kit logo" width="140" />
+</p>
+
 [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
 [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
+[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/)
 
 A Dart port of the [Solana TypeScript SDK](https://github.com/anza-xyz/kit) (`@solana/kit`). This monorepo mirrors the upstream TS package structure, built with modern Dart 3.10+ features including sealed classes, extension types, records, and patterns.
+
+Documentation website: https://openbudgetfun.github.io/solana_kit/
 
 ## Upstream Compatibility
 
@@ -96,6 +103,15 @@ docs:check
 
 # Regenerate documentation template consumers and workspace docs
 docs:update
+
+# Serve the Jaspr docs site locally
+docs:site:serve
+
+# Build static docs output (for GitHub Pages)
+docs:site:build
+
+# Run docs build + HTTP smoke checks
+docs:site:smoke
 
 # Fix formatting and lint issues
 fix:all

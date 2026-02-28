@@ -3,6 +3,8 @@
 This is a runnable Flutter Android app for manual testing of
 `solana_kit_mobile_wallet_adapter` against an MWA-compatible wallet.
 
+Documentation website: https://openbudgetfun.github.io/solana_kit/
+
 ## What this app tests
 
 - Android MWA support detection (`isMwaSupported`)

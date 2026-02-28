@@ -31,6 +31,17 @@ jobs:
         run: docs:check
         shell: devenv shell -- bash -e {0}
 
+  docs-site:
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and smoke test docs site
+        run: docs:site:smoke
+        shell: devenv shell -- bash -e {0}
+
   lint:
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:

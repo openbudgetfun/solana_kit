@@ -2,7 +2,7 @@ name: solana_kit_test_matchers
 description: Test assertion helpers for the Solana Kit Dart SDK.
 version: 0.2.1
 repository: https://github.com/openbudgetfun/solana_kit
-homepage: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_test_matchers/
+homepage: https://openbudgetfun.github.io/solana_kit/
 publish_to: none
 
 environment:
