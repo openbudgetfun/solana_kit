@@ -139,7 +139,6 @@ in
     "install:dart" = {
       exec = ''
         set -e
-        dart pub get
         flutter pub get
       '';
       description = "Install dart dependencies";
