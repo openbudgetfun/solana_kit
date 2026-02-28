@@ -90,6 +90,7 @@ class WalletScenario {
   final WalletScenarioCallbacks callbacks;
 
   final MwaWalletHostApi _walletApi;
+  final Set<String> _pendingRequestIds = <String>{};
 
   String? _sessionId;
   bool _closed = false;
@@ -111,7 +112,7 @@ class WalletScenario {
     // Create the scenario on the native side.
     _sessionId = await _walletApi.createScenario(
       walletName: walletName,
-      configJson: jsonEncode(config.toCapabilitiesJson()),
+      configJson: jsonEncode(config.toJson()),
     );
 
     // Start accepting connections.
@@ -124,6 +125,17 @@ class WalletScenario {
     _closed = true;
 
     if (_sessionId != null) {
+      final pending = List<String>.from(_pendingRequestIds);
+      for (final requestId in pending) {
+        try {
+          await _walletApi.cancelRequest(
+            sessionId: _sessionId!,
+            requestId: requestId,
+          );
+        } on Object {
+          // Ignore cancellation errors during teardown.
+        }
+      }
       await _walletApi.closeScenario(sessionId: _sessionId!);
     }
 
@@ -145,6 +157,8 @@ class WalletScenario {
         final args = call.arguments as Map<Object?, Object?>?;
         callbacks.onScenarioError(args?['error']);
       case 'onScenarioTeardownComplete':
+        callbacks.onScenarioTeardownComplete();
+      case 'onSessionTerminated':
         callbacks.onScenarioTeardownComplete();
       case 'onAuthorizeRequest':
         await _handleAuthorizeRequest(call);
@@ -168,6 +182,7 @@ class WalletScenario {
     final args = _decodeArgs(call);
     final requestId = args['requestId']! as String;
     final params = _decodeJsonMap(args['paramsJson'] as String?);
+    _pendingRequestIds.add(requestId);
 
     final request = AuthorizeDappRequest.fromParams(
       requestId: requestId,
@@ -191,6 +206,8 @@ class WalletScenario {
         requestId: requestId,
         resultJson: jsonEncode(_errorToJson(error)),
       );
+    } finally {
+      _pendingRequestIds.remove(requestId);
     }
   }
 
@@ -198,6 +215,7 @@ class WalletScenario {
     final args = _decodeArgs(call);
     final requestId = args['requestId']! as String;
     final params = _decodeJsonMap(args['paramsJson'] as String?);
+    _pendingRequestIds.add(requestId);
 
     final request = ReauthorizeDappRequest(
       requestId: requestId,
@@ -223,6 +241,8 @@ class WalletScenario {
         requestId: requestId,
         resultJson: jsonEncode(_errorToJson(error)),
       );
+    } finally {
+      _pendingRequestIds.remove(requestId);
     }
   }
 
@@ -230,6 +250,7 @@ class WalletScenario {
     final args = _decodeArgs(call);
     final requestId = args['requestId']! as String;
     final params = _decodeJsonMap(args['paramsJson'] as String?);
+    _pendingRequestIds.add(requestId);
 
     final request = SignTransactionsRequest.fromParams(
       requestId: requestId,
@@ -252,6 +273,8 @@ class WalletScenario {
         requestId: requestId,
         resultJson: jsonEncode(_errorToJson(error)),
       );
+    } finally {
+      _pendingRequestIds.remove(requestId);
     }
   }
 
@@ -259,6 +282,7 @@ class WalletScenario {
     final args = _decodeArgs(call);
     final requestId = args['requestId']! as String;
     final params = _decodeJsonMap(args['paramsJson'] as String?);
+    _pendingRequestIds.add(requestId);
 
     final request = SignMessagesRequest.fromParams(
       requestId: requestId,
@@ -281,6 +305,8 @@ class WalletScenario {
         requestId: requestId,
         resultJson: jsonEncode(_errorToJson(error)),
       );
+    } finally {
+      _pendingRequestIds.remove(requestId);
     }
   }
 
@@ -288,6 +314,7 @@ class WalletScenario {
     final args = _decodeArgs(call);
     final requestId = args['requestId']! as String;
     final params = _decodeJsonMap(args['paramsJson'] as String?);
+    _pendingRequestIds.add(requestId);
 
     final request = SignAndSendTransactionsRequest.fromParams(
       requestId: requestId,
@@ -310,6 +337,8 @@ class WalletScenario {
         requestId: requestId,
         resultJson: jsonEncode(_errorToJson(error)),
       );
+    } finally {
+      _pendingRequestIds.remove(requestId);
     }
   }
 
@@ -317,6 +346,7 @@ class WalletScenario {
     final args = _decodeArgs(call);
     final requestId = args['requestId']! as String;
     final params = _decodeJsonMap(args['paramsJson'] as String?);
+    _pendingRequestIds.add(requestId);
 
     final event = DeauthorizedEvent(
       requestId: requestId,
@@ -342,6 +372,8 @@ class WalletScenario {
         requestId: requestId,
         resultJson: jsonEncode(_errorToJson(error)),
       );
+    } finally {
+      _pendingRequestIds.remove(requestId);
     }
   }
 

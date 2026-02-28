@@ -27,13 +27,20 @@ class MobileWalletAdapterConfig {
   /// `solana:signTransactions`, `solana:cloneAuthorization`).
   final List<String> optionalFeatures;
 
-  /// Converts this config to a JSON-compatible map for capabilities response.
-  Map<String, Object?> toCapabilitiesJson() => {
-    'max_transactions_per_request': maxTransactionsPerSigningRequest,
-    'max_messages_per_request': maxMessagesPerSigningRequest,
-    'supported_transaction_versions': supportedTransactionVersions,
-    'features': optionalFeatures,
+  /// Converts this config to the upstream walletlib JSON shape.
+  ///
+  /// This is intentionally camelCase to match the official React Native
+  /// walletlib bridge contract.
+  Map<String, Object?> toJson() => {
+    'maxTransactionsPerSigningRequest': maxTransactionsPerSigningRequest,
+    'maxMessagesPerSigningRequest': maxMessagesPerSigningRequest,
+    'supportedTransactionVersions': supportedTransactionVersions,
+    'noConnectionWarningTimeoutMs': noConnectionWarningTimeoutMs,
+    'optionalFeatures': optionalFeatures,
   };
+
+  /// Legacy alias retained for compatibility.
+  Map<String, Object?> toCapabilitiesJson() => toJson();
 }
 
 /// Configuration for the wallet's authorization token issuer.
