@@ -27,11 +27,11 @@ import com.solana.mobilewalletadapter.walletlib.scenario.SignTransactionsRequest
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import org.json.JSONArray
+import org.json.JSONObject
 import java.nio.charset.StandardCharsets
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import org.json.JSONArray
-import org.json.JSONObject
 
 /**
  * Wallet-side Android bridge backed by `mobile-wallet-adapter-walletlib`.
@@ -43,28 +43,27 @@ import org.json.JSONObject
 class WalletApiImpl(
     private val context: Context,
     binaryMessenger: BinaryMessenger,
-    private val activityProvider: () -> Activity?
+    private val activityProvider: () -> Activity?,
 ) : MethodChannel.MethodCallHandler {
-
     private enum class PendingRequestType {
         AUTHORIZE,
         REAUTHORIZE,
         DEAUTHORIZE,
         SIGN_TRANSACTIONS,
         SIGN_MESSAGES,
-        SIGN_AND_SEND_TRANSACTIONS
+        SIGN_AND_SEND_TRANSACTIONS,
     }
 
     private data class ScenarioState(
         val sessionId: String,
         val associationUri: Uri,
-        val scenario: Scenario
+        val scenario: Scenario,
     )
 
     private data class PendingRequest(
         val sessionId: String,
         val type: PendingRequestType,
-        val request: ScenarioRequest
+        val request: ScenarioRequest,
     )
 
     companion object {
@@ -99,7 +98,10 @@ class WalletApiImpl(
         scenarios.clear()
     }
 
-    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+    override fun onMethodCall(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
         when (call.method) {
             "createScenario" -> createScenario(call, result)
             "startScenario" -> startScenario(call, result)
@@ -110,14 +112,17 @@ class WalletApiImpl(
         }
     }
 
-    private fun createScenario(call: MethodCall, result: MethodChannel.Result) {
+    private fun createScenario(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
         val walletName = call.argument<String>("walletName")
         val configJson = call.argument<String>("configJson")
         if (walletName == null || configJson == null) {
             result.error(
                 ERROR_INVALID_ARGUMENT,
                 "walletName and configJson are required",
-                null
+                null,
             )
             return
         }
@@ -129,7 +134,7 @@ class WalletApiImpl(
             result.error(
                 ERROR_INTENT_DATA_NOT_FOUND,
                 "Unable to get launch association URI from current activity intent",
-                null
+                null,
             )
             return
         }
@@ -139,7 +144,7 @@ class WalletApiImpl(
             result.error(
                 ERROR_SESSION_ALREADY_CREATED,
                 "Session already created for uri: $associationUriString",
-                null
+                null,
             )
             return
         }
@@ -149,7 +154,7 @@ class WalletApiImpl(
             result.error(
                 ERROR_UNSUPPORTED_ASSOCIATION_URI,
                 "Unsupported association URI: $associationUriString",
-                null
+                null,
             )
             return
         }
@@ -157,7 +162,7 @@ class WalletApiImpl(
             result.error(
                 ERROR_UNSUPPORTED_ASSOCIATION_TYPE,
                 "Only local association URIs are currently supported",
-                null
+                null,
             )
             return
         }
@@ -165,19 +170,23 @@ class WalletApiImpl(
         val sessionId = UUID.randomUUID().toString()
         val config = parseWalletConfig(configJson)
         val callbacks = WalletScenarioCallbacks(sessionId)
-        val scenario = associationUri.createScenario(
-            context,
-            config,
-            AuthIssuerConfig(walletName),
-            callbacks
-        )
+        val scenario =
+            associationUri.createScenario(
+                context,
+                config,
+                AuthIssuerConfig(walletName),
+                callbacks,
+            )
 
         scenarios[sessionId] = ScenarioState(sessionId, data, scenario)
         sessionByAssociationUri[associationUriString] = sessionId
         result.success(sessionId)
     }
 
-    private fun startScenario(call: MethodCall, result: MethodChannel.Result) {
+    private fun startScenario(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
         val sessionId = call.argument<String>("sessionId")
         if (sessionId == null) {
             result.error(ERROR_INVALID_ARGUMENT, "sessionId is required", null)
@@ -199,7 +208,10 @@ class WalletApiImpl(
         }
     }
 
-    private fun closeScenario(call: MethodCall, result: MethodChannel.Result) {
+    private fun closeScenario(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
         val sessionId = call.argument<String>("sessionId")
         if (sessionId == null) {
             result.error(ERROR_INVALID_ARGUMENT, "sessionId is required", null)
@@ -225,7 +237,10 @@ class WalletApiImpl(
         result.success(null)
     }
 
-    private fun cancelRequest(call: MethodCall, result: MethodChannel.Result) {
+    private fun cancelRequest(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
         val sessionId = call.argument<String>("sessionId")
         val requestId = call.argument<String>("requestId")
         if (sessionId == null || requestId == null) {
@@ -242,7 +257,10 @@ class WalletApiImpl(
         result.success(null)
     }
 
-    private fun resolveRequest(call: MethodCall, result: MethodChannel.Result) {
+    private fun resolveRequest(
+        call: MethodCall,
+        result: MethodChannel.Result,
+    ) {
         val sessionId = call.argument<String>("sessionId")
         val requestId = call.argument<String>("requestId")
         val resultJson = call.argument<String>("resultJson")
@@ -250,7 +268,7 @@ class WalletApiImpl(
             result.error(
                 ERROR_INVALID_ARGUMENT,
                 "sessionId, requestId, and resultJson are required",
-                null
+                null,
             )
             return
         }
@@ -277,13 +295,16 @@ class WalletApiImpl(
             sendLifecycleEvent(
                 "onScenarioError",
                 sessionId,
-                "Failed to resolve request: ${e.message}"
+                "Failed to resolve request: ${e.message}",
             )
             result.error("RESOLVE_FAILED", e.message, null)
         }
     }
 
-    private fun resolveFailure(pending: PendingRequest, errorObject: JSONObject?) {
+    private fun resolveFailure(
+        pending: PendingRequest,
+        errorObject: JSONObject?,
+    ) {
         val code = errorObject?.optInt("code", -32603) ?: -32603
         val data = errorObject?.opt("data")
 
@@ -295,6 +316,7 @@ class WalletApiImpl(
                     else -> request.completeWithInternalError(Exception("Authorize request failed: $code"))
                 }
             }
+
             PendingRequestType.REAUTHORIZE -> {
                 val request = pending.request as ReauthorizeRequest
                 when (code) {
@@ -302,16 +324,28 @@ class WalletApiImpl(
                     else -> request.completeWithInternalError(Exception("Reauthorize request failed: $code"))
                 }
             }
+
             PendingRequestType.DEAUTHORIZE -> {
                 pending.request.completeWithInternalError(Exception("Deauthorize event failed: $code"))
             }
+
             PendingRequestType.SIGN_TRANSACTIONS,
-            PendingRequestType.SIGN_MESSAGES -> {
+            PendingRequestType.SIGN_MESSAGES,
+            -> {
                 val request = pending.request as SignPayloadsRequest
                 when (code) {
-                    ProtocolContract.ERROR_NOT_SIGNED -> request.completeWithDecline()
-                    ProtocolContract.ERROR_TOO_MANY_PAYLOADS -> request.completeWithTooManyPayloads()
-                    ProtocolContract.ERROR_AUTHORIZATION_FAILED -> request.completeWithAuthorizationNotValid()
+                    ProtocolContract.ERROR_NOT_SIGNED -> {
+                        request.completeWithDecline()
+                    }
+
+                    ProtocolContract.ERROR_TOO_MANY_PAYLOADS -> {
+                        request.completeWithTooManyPayloads()
+                    }
+
+                    ProtocolContract.ERROR_AUTHORIZATION_FAILED -> {
+                        request.completeWithAuthorizationNotValid()
+                    }
+
                     ProtocolContract.ERROR_INVALID_PAYLOADS -> {
                         val valid = parseValidFlags(data)
                         if (valid != null) {
@@ -320,15 +354,28 @@ class WalletApiImpl(
                             request.completeWithInternalError(Exception("Missing valid flags for invalid payloads"))
                         }
                     }
-                    else -> request.completeWithInternalError(Exception("Sign payloads request failed: $code"))
+
+                    else -> {
+                        request.completeWithInternalError(Exception("Sign payloads request failed: $code"))
+                    }
                 }
             }
+
             PendingRequestType.SIGN_AND_SEND_TRANSACTIONS -> {
                 val request = pending.request as SignAndSendTransactionsRequest
                 when (code) {
-                    ProtocolContract.ERROR_NOT_SIGNED -> request.completeWithDecline()
-                    ProtocolContract.ERROR_TOO_MANY_PAYLOADS -> request.completeWithTooManyPayloads()
-                    ProtocolContract.ERROR_AUTHORIZATION_FAILED -> request.completeWithAuthorizationNotValid()
+                    ProtocolContract.ERROR_NOT_SIGNED -> {
+                        request.completeWithDecline()
+                    }
+
+                    ProtocolContract.ERROR_TOO_MANY_PAYLOADS -> {
+                        request.completeWithTooManyPayloads()
+                    }
+
+                    ProtocolContract.ERROR_AUTHORIZATION_FAILED -> {
+                        request.completeWithAuthorizationNotValid()
+                    }
+
                     ProtocolContract.ERROR_INVALID_PAYLOADS -> {
                         val valid = parseValidFlags(data)
                         if (valid != null) {
@@ -337,6 +384,7 @@ class WalletApiImpl(
                             request.completeWithInternalError(Exception("Missing valid flags for invalid signatures"))
                         }
                     }
+
                     ProtocolContract.ERROR_NOT_SUBMITTED -> {
                         val signatures = parseOpaqueByteArrayList(data, "signatures")
                         if (signatures != null) {
@@ -345,20 +393,27 @@ class WalletApiImpl(
                             request.completeWithInternalError(Exception("Missing signatures for not-submitted response"))
                         }
                     }
-                    else -> request.completeWithInternalError(
-                        Exception("Sign-and-send request failed: $code")
-                    )
+
+                    else -> {
+                        request.completeWithInternalError(
+                            Exception("Sign-and-send request failed: $code"),
+                        )
+                    }
                 }
             }
         }
     }
 
-    private fun resolveSuccess(pending: PendingRequest, response: JSONObject) {
+    private fun resolveSuccess(
+        pending: PendingRequest,
+        response: JSONObject,
+    ) {
         when (pending.type) {
             PendingRequestType.AUTHORIZE -> {
                 val request = pending.request as AuthorizeRequest
-                val accountsJson = response.optJSONArray("accounts")
-                    ?: throw IllegalArgumentException("Authorize response missing accounts")
+                val accountsJson =
+                    response.optJSONArray("accounts")
+                        ?: throw IllegalArgumentException("Authorize response missing accounts")
                 if (accountsJson.length() == 0) {
                     throw IllegalArgumentException("Authorize response has no accounts")
                 }
@@ -368,31 +423,40 @@ class WalletApiImpl(
                 val signInResult = response.optJSONObject("sign_in_result")?.let(::parseSignInResult)
                 request.completeWithAuthorize(accounts.first(), walletUriBase, scope, signInResult)
             }
+
             PendingRequestType.REAUTHORIZE -> {
                 val request = pending.request as ReauthorizeRequest
                 request.completeWithReauthorize()
             }
+
             PendingRequestType.DEAUTHORIZE -> {
                 val request = pending.request as DeauthorizedEvent
                 request.complete()
             }
+
             PendingRequestType.SIGN_TRANSACTIONS,
-            PendingRequestType.SIGN_MESSAGES -> {
+            PendingRequestType.SIGN_MESSAGES,
+            -> {
                 val request = pending.request as SignPayloadsRequest
-                val signedPayloads = parseOpaqueByteArrayList(response, "signed_payloads")
-                    ?: throw IllegalArgumentException("Missing signed_payloads")
+                val signedPayloads =
+                    parseOpaqueByteArrayList(response, "signed_payloads")
+                        ?: throw IllegalArgumentException("Missing signed_payloads")
                 request.completeWithSignedPayloads(signedPayloads)
             }
+
             PendingRequestType.SIGN_AND_SEND_TRANSACTIONS -> {
                 val request = pending.request as SignAndSendTransactionsRequest
-                val signatures = parseOpaqueByteArrayList(response, "signatures")
-                    ?: throw IllegalArgumentException("Missing signatures")
+                val signatures =
+                    parseOpaqueByteArrayList(response, "signatures")
+                        ?: throw IllegalArgumentException("Missing signatures")
                 request.completeWithSignatures(signatures)
             }
         }
     }
 
-    private inner class WalletScenarioCallbacks(private val sessionId: String) : LocalScenario.Callbacks {
+    private inner class WalletScenarioCallbacks(
+        private val sessionId: String,
+    ) : LocalScenario.Callbacks {
         override fun onScenarioReady() {
             sendLifecycleEvent("onScenarioReady", sessionId)
         }
@@ -432,7 +496,7 @@ class WalletApiImpl(
             sendLifecycleEvent(
                 "onScenarioError",
                 sessionId,
-                "Low power mode with no active connection"
+                "Low power mode with no active connection",
             )
         }
 
@@ -442,7 +506,7 @@ class WalletApiImpl(
                 sessionId = sessionId,
                 type = PendingRequestType.AUTHORIZE,
                 request = request,
-                params = createAuthorizeParams(request)
+                params = createAuthorizeParams(request),
             )
         }
 
@@ -452,43 +516,46 @@ class WalletApiImpl(
                 sessionId = sessionId,
                 type = PendingRequestType.REAUTHORIZE,
                 request = request,
-                params = createVerifiableIdentityParams(
-                    identityName = request.identityName,
-                    identityUri = request.identityUri,
-                    iconRelativeUri = request.iconRelativeUri,
-                    chain = request.chain,
-                    authorizationScope = request.authorizationScope
-                )
+                params =
+                    createVerifiableIdentityParams(
+                        identityName = request.identityName,
+                        identityUri = request.identityUri,
+                        iconRelativeUri = request.iconRelativeUri,
+                        chain = request.chain,
+                        authorizationScope = request.authorizationScope,
+                    ),
             )
         }
 
         override fun onSignTransactionsRequest(request: SignTransactionsRequest) {
-            val params = createSignPayloadParams(
-                identityName = request.identityName,
-                identityUri = request.identityUri,
-                iconRelativeUri = request.iconRelativeUri,
-                chain = request.chain,
-                authorizationScope = request.authorizationScope,
-                payloads = request.payloads
-            )
+            val params =
+                createSignPayloadParams(
+                    identityName = request.identityName,
+                    identityUri = request.identityUri,
+                    iconRelativeUri = request.iconRelativeUri,
+                    chain = request.chain,
+                    authorizationScope = request.authorizationScope,
+                    payloads = request.payloads,
+                )
             forwardRequestToDart(
                 methodName = "onSignTransactionsRequest",
                 sessionId = sessionId,
                 type = PendingRequestType.SIGN_TRANSACTIONS,
                 request = request,
-                params = params
+                params = params,
             )
         }
 
         override fun onSignMessagesRequest(request: SignMessagesRequest) {
-            val params = createSignPayloadParams(
-                identityName = request.identityName,
-                identityUri = request.identityUri,
-                iconRelativeUri = request.iconRelativeUri,
-                chain = request.chain,
-                authorizationScope = request.authorizationScope,
-                payloads = request.payloads
-            )
+            val params =
+                createSignPayloadParams(
+                    identityName = request.identityName,
+                    identityUri = request.identityUri,
+                    iconRelativeUri = request.iconRelativeUri,
+                    chain = request.chain,
+                    authorizationScope = request.authorizationScope,
+                    payloads = request.payloads,
+                )
             val addresses = JSONArray().put(encodeOpaqueBytes(request.authorizedPublicKey))
             params.put("addresses", addresses)
             forwardRequestToDart(
@@ -496,19 +563,20 @@ class WalletApiImpl(
                 sessionId = sessionId,
                 type = PendingRequestType.SIGN_MESSAGES,
                 request = request,
-                params = params
+                params = params,
             )
         }
 
         override fun onSignAndSendTransactionsRequest(request: SignAndSendTransactionsRequest) {
-            val params = createSignPayloadParams(
-                identityName = request.identityName,
-                identityUri = request.identityUri,
-                iconRelativeUri = request.iconRelativeUri,
-                chain = request.chain,
-                authorizationScope = request.authorizationScope,
-                payloads = request.payloads
-            )
+            val params =
+                createSignPayloadParams(
+                    identityName = request.identityName,
+                    identityUri = request.identityUri,
+                    iconRelativeUri = request.iconRelativeUri,
+                    chain = request.chain,
+                    authorizationScope = request.authorizationScope,
+                    payloads = request.payloads,
+                )
             val options = JSONObject()
             request.minContextSlot?.let { options.put("min_context_slot", it) }
             request.commitment?.let { options.put("commitment", it) }
@@ -525,7 +593,7 @@ class WalletApiImpl(
                 sessionId = sessionId,
                 type = PendingRequestType.SIGN_AND_SEND_TRANSACTIONS,
                 request = request,
-                params = params
+                params = params,
             )
         }
 
@@ -535,13 +603,14 @@ class WalletApiImpl(
                 sessionId = sessionId,
                 type = PendingRequestType.DEAUTHORIZE,
                 request = event,
-                params = createVerifiableIdentityParams(
-                    identityName = event.identityName,
-                    identityUri = event.identityUri,
-                    iconRelativeUri = event.iconRelativeUri,
-                    chain = event.chain,
-                    authorizationScope = event.authorizationScope
-                )
+                params =
+                    createVerifiableIdentityParams(
+                        identityName = event.identityName,
+                        identityUri = event.identityUri,
+                        iconRelativeUri = event.iconRelativeUri,
+                        chain = event.chain,
+                        authorizationScope = event.authorizationScope,
+                    ),
             )
         }
     }
@@ -551,19 +620,24 @@ class WalletApiImpl(
         sessionId: String,
         type: PendingRequestType,
         request: ScenarioRequest,
-        params: JSONObject
+        params: JSONObject,
     ) {
         val requestId = UUID.randomUUID().toString()
         pendingRequests[requestId] = PendingRequest(sessionId, type, request)
-        val args = mapOf(
-            "requestId" to requestId,
-            "sessionId" to sessionId,
-            "paramsJson" to params.toString()
-        )
+        val args =
+            mapOf(
+                "requestId" to requestId,
+                "sessionId" to sessionId,
+                "paramsJson" to params.toString(),
+            )
         invokeMethodOnMain(methodName, args)
     }
 
-    private fun sendLifecycleEvent(methodName: String, sessionId: String, error: String? = null) {
+    private fun sendLifecycleEvent(
+        methodName: String,
+        sessionId: String,
+        error: String? = null,
+    ) {
         val args = mutableMapOf<String, Any?>("sessionId" to sessionId)
         if (error != null) {
             args["error"] = error
@@ -571,7 +645,10 @@ class WalletApiImpl(
         invokeMethodOnMain(methodName, args)
     }
 
-    private fun invokeMethodOnMain(methodName: String, args: Map<String, Any?>) {
+    private fun invokeMethodOnMain(
+        methodName: String,
+        args: Map<String, Any?>,
+    ) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             channel.invokeMethod(methodName, args)
         } else {
@@ -584,26 +661,30 @@ class WalletApiImpl(
     private fun parseWalletConfig(configJson: String): MobileWalletAdapterConfig {
         val config = JSONObject(configJson)
 
-        val maxTransactions = config.optIntAny(
-            "maxTransactionsPerSigningRequest",
-            "max_transactions_per_request",
-            0
-        )
-        val maxMessages = config.optIntAny(
-            "maxMessagesPerSigningRequest",
-            "max_messages_per_request",
-            0
-        )
-        val noConnectionWarningTimeoutMs = config.optLongAny(
-            "noConnectionWarningTimeoutMs",
-            "no_connection_warning_timeout_ms",
-            0L
-        )
+        val maxTransactions =
+            config.optIntAny(
+                "maxTransactionsPerSigningRequest",
+                "max_transactions_per_request",
+                0,
+            )
+        val maxMessages =
+            config.optIntAny(
+                "maxMessagesPerSigningRequest",
+                "max_messages_per_request",
+                0,
+            )
+        val noConnectionWarningTimeoutMs =
+            config.optLongAny(
+                "noConnectionWarningTimeoutMs",
+                "no_connection_warning_timeout_ms",
+                0L,
+            )
 
-        val versionsArray = config.optJSONArrayAny(
-            "supportedTransactionVersions",
-            "supported_transaction_versions"
-        )
+        val versionsArray =
+            config.optJSONArrayAny(
+                "supportedTransactionVersions",
+                "supported_transaction_versions",
+            )
         val supportedTransactionVersions = mutableListOf<Any>()
         if (versionsArray == null || versionsArray.length() == 0) {
             supportedTransactionVersions.add(MobileWalletAdapterConfig.LEGACY_TRANSACTION_VERSION)
@@ -611,7 +692,10 @@ class WalletApiImpl(
             for (i in 0 until versionsArray.length()) {
                 val version = versionsArray.get(i)
                 when (version) {
-                    is Number -> supportedTransactionVersions.add(version.toInt())
+                    is Number -> {
+                        supportedTransactionVersions.add(version.toInt())
+                    }
+
                     is String -> {
                         val asInt = version.toIntOrNull()
                         supportedTransactionVersions.add(asInt ?: version)
@@ -639,7 +723,7 @@ class WalletApiImpl(
             maxMessages,
             supportedTransactionVersions.toTypedArray(),
             noConnectionWarningTimeoutMs,
-            optionalFeatures.toTypedArray()
+            optionalFeatures.toTypedArray(),
         )
     }
 
@@ -673,7 +757,7 @@ class WalletApiImpl(
         identityUri: Uri?,
         iconRelativeUri: Uri?,
         chain: String,
-        authorizationScope: ByteArray
+        authorizationScope: ByteArray,
     ): JSONObject {
         val params = JSONObject()
         params.put("chain", chain)
@@ -692,25 +776,27 @@ class WalletApiImpl(
         iconRelativeUri: Uri?,
         chain: String,
         authorizationScope: ByteArray,
-        payloads: Array<ByteArray>
+        payloads: Array<ByteArray>,
     ): JSONObject {
-        val params = createVerifiableIdentityParams(
-            identityName = identityName,
-            identityUri = identityUri,
-            iconRelativeUri = iconRelativeUri,
-            chain = chain,
-            authorizationScope = authorizationScope
-        )
+        val params =
+            createVerifiableIdentityParams(
+                identityName = identityName,
+                identityUri = identityUri,
+                iconRelativeUri = iconRelativeUri,
+                chain = chain,
+                authorizationScope = authorizationScope,
+            )
         params.put("payloads", encodeByteArrayList(payloads))
         return params
     }
 
-    private fun parseAuthorizedAccounts(accounts: JSONArray): Array<AuthorizedAccount> {
-        return Array(accounts.length()) { index ->
+    private fun parseAuthorizedAccounts(accounts: JSONArray): Array<AuthorizedAccount> =
+        Array(accounts.length()) { index ->
             val accountJson = accounts.getJSONObject(index)
-            val publicKey = decodeOpaqueToken(
-                accountJson.getString("address")
-            )
+            val publicKey =
+                decodeOpaqueToken(
+                    accountJson.getString("address"),
+                )
 
             val displayAddress = accountJson.optStringOrNull("display_address")
             val displayAddressFormat = accountJson.optStringOrNull("display_address_format")
@@ -726,19 +812,17 @@ class WalletApiImpl(
                 label,
                 icon,
                 chains,
-                features
+                features,
             )
         }
-    }
 
-    private fun parseSignInResult(json: JSONObject): SignInResult {
-        return SignInResult(
+    private fun parseSignInResult(json: JSONObject): SignInResult =
+        SignInResult(
             decodeOpaqueToken(json.getString("address")),
             decodeOpaqueToken(json.getString("signed_message")),
             decodeOpaqueToken(json.getString("signature")),
-            json.optStringOrNull("signature_type")
+            json.optStringOrNull("signature_type"),
         )
-    }
 
     private fun parseValidFlags(data: Any?): BooleanArray? {
         val obj = data as? JSONObject ?: return null
@@ -748,7 +832,10 @@ class WalletApiImpl(
         }
     }
 
-    private fun parseOpaqueByteArrayList(container: Any?, key: String): Array<ByteArray>? {
+    private fun parseOpaqueByteArrayList(
+        container: Any?,
+        key: String,
+    ): Array<ByteArray>? {
         val jsonObject = container as? JSONObject ?: return null
         val array = jsonObject.optJSONArray(key) ?: return null
         return Array(array.length()) { idx ->
@@ -764,17 +851,14 @@ class WalletApiImpl(
         return result
     }
 
-    private fun encodeOpaqueBytes(bytes: ByteArray): String {
-        return Base64.encodeToString(bytes, Base64.NO_WRAP)
-    }
+    private fun encodeOpaqueBytes(bytes: ByteArray): String = Base64.encodeToString(bytes, Base64.NO_WRAP)
 
-    private fun decodeOpaqueToken(value: String): ByteArray {
-        return try {
+    private fun decodeOpaqueToken(value: String): ByteArray =
+        try {
             Base64.decode(value, Base64.NO_WRAP)
         } catch (_: IllegalArgumentException) {
             value.toByteArray(StandardCharsets.UTF_8)
         }
-    }
 
     private fun JSONObject.optStringOrNull(key: String): String? {
         if (!has(key) || isNull(key)) {
@@ -791,23 +875,30 @@ class WalletApiImpl(
         }
     }
 
-    private fun JSONObject.optIntAny(primaryKey: String, fallbackKey: String, defaultValue: Int): Int {
-        return when {
+    private fun JSONObject.optIntAny(
+        primaryKey: String,
+        fallbackKey: String,
+        defaultValue: Int,
+    ): Int =
+        when {
             has(primaryKey) -> optInt(primaryKey, defaultValue)
             has(fallbackKey) -> optInt(fallbackKey, defaultValue)
             else -> defaultValue
         }
-    }
 
-    private fun JSONObject.optLongAny(primaryKey: String, fallbackKey: String, defaultValue: Long): Long {
-        return when {
+    private fun JSONObject.optLongAny(
+        primaryKey: String,
+        fallbackKey: String,
+        defaultValue: Long,
+    ): Long =
+        when {
             has(primaryKey) -> optLong(primaryKey, defaultValue)
             has(fallbackKey) -> optLong(fallbackKey, defaultValue)
             else -> defaultValue
         }
-    }
 
-    private fun JSONObject.optJSONArrayAny(primaryKey: String, fallbackKey: String): JSONArray? {
-        return optJSONArray(primaryKey) ?: optJSONArray(fallbackKey)
-    }
+    private fun JSONObject.optJSONArrayAny(
+        primaryKey: String,
+        fallbackKey: String,
+    ): JSONArray? = optJSONArray(primaryKey) ?: optJSONArray(fallbackKey)
 }
