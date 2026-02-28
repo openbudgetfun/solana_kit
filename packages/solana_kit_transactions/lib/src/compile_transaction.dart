@@ -1,4 +1,5 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 
@@ -12,6 +13,12 @@ import 'package:solana_kit_transactions/src/lifetime.dart';
 /// of these addresses.
 ///
 /// The transaction message must have a fee payer set and a lifetime constraint.
+///
+/// Throws a [SolanaError]:
+/// - [SolanaErrorCode.transactionExpectedBlockhashLifetime] when the message
+///   has no valid blockhash lifetime.
+/// - [SolanaErrorCode.transactionExpectedNonceLifetime] when the message has
+///   an invalid durable nonce lifetime setup.
 TransactionWithLifetime compileTransaction(
   TransactionMessage transactionMessage,
 ) {
@@ -32,45 +39,46 @@ TransactionWithLifetime compileTransaction(
     signatures[signerAddress] = null;
   }
 
-  // Extract lifetime constraint from the transaction message.
-  Object? lifetimeConstraint;
-  if (isTransactionMessageWithBlockhashLifetime(transactionMessage)) {
-    final constraint =
-        transactionMessage.lifetimeConstraint! as BlockhashLifetimeConstraint;
-    lifetimeConstraint = TransactionBlockhashLifetime(
-      blockhash: constraint.blockhash,
-      lastValidBlockHeight: constraint.lastValidBlockHeight,
-    );
-  } else if (isTransactionMessageWithDurableNonceLifetime(transactionMessage)) {
-    final constraint =
-        transactionMessage.lifetimeConstraint!
-            as DurableNonceLifetimeConstraint;
-    final nonceAccountAddress =
-        transactionMessage.instructions[0].accounts![0].address;
-    lifetimeConstraint = TransactionDurableNonceLifetime(
-      nonce: constraint.nonce,
-      nonceAccountAddress: nonceAccountAddress,
-    );
-  }
-
-  if (lifetimeConstraint != null) {
-    return TransactionWithLifetime(
-      messageBytes: messageBytes,
-      signatures: signatures,
-      lifetimeConstraint: lifetimeConstraint,
-    );
-  }
-
-  // Even without a lifetime constraint, return a TransactionWithLifetime
-  // with a placeholder. In practice, the TS code always requires one.
+  final lifetimeConstraint = _compileTransactionLifetimeConstraint(
+    transactionMessage,
+  );
   return TransactionWithLifetime(
     messageBytes: messageBytes,
     signatures: signatures,
-    lifetimeConstraint: const _NoLifetime(),
+    lifetimeConstraint: lifetimeConstraint,
   );
 }
 
-/// Placeholder used when no lifetime constraint is detected.
-class _NoLifetime {
-  const _NoLifetime();
+TransactionLifetimeConstraint _compileTransactionLifetimeConstraint(
+  TransactionMessage transactionMessage,
+) {
+  final messageLifetimeConstraint = transactionMessage.lifetimeConstraint;
+  if (messageLifetimeConstraint == null) {
+    throw SolanaError(SolanaErrorCode.transactionExpectedBlockhashLifetime);
+  }
+
+  switch (messageLifetimeConstraint) {
+    case BlockhashLifetimeConstraint(
+      :final blockhash,
+      :final lastValidBlockHeight,
+    ):
+      if (!isTransactionMessageWithBlockhashLifetime(transactionMessage)) {
+        throw SolanaError(SolanaErrorCode.transactionExpectedBlockhashLifetime);
+      }
+      return TransactionBlockhashLifetime(
+        blockhash: blockhash,
+        lastValidBlockHeight: lastValidBlockHeight,
+      );
+    case DurableNonceLifetimeConstraint(:final nonce):
+      if (!isTransactionMessageWithDurableNonceLifetime(transactionMessage)) {
+        throw SolanaError(SolanaErrorCode.transactionExpectedNonceLifetime);
+      }
+
+      final nonceAccountAddress =
+          transactionMessage.instructions.first.accounts!.first.address;
+      return TransactionDurableNonceLifetime(
+        nonce: nonce,
+        nonceAccountAddress: nonceAccountAddress,
+      );
+  }
 }

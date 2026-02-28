@@ -7,18 +7,29 @@ import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.
 
 import 'package:solana_kit_transactions/src/transaction.dart';
 
+/// Base type for lifetime constraints attached to a transaction.
+///
+/// Concrete variants:
+/// - [TransactionBlockhashLifetime]
+/// - [TransactionDurableNonceLifetime]
+@immutable
+sealed class TransactionLifetimeConstraint {
+  /// Creates a [TransactionLifetimeConstraint].
+  const TransactionLifetimeConstraint();
+}
+
 /// A lifetime constraint based on the age of a blockhash observed on the
 /// network.
 ///
 /// The transaction will continue to be eligible to land until the network
 /// considers the [blockhash] to be expired.
 @immutable
-class TransactionBlockhashLifetime {
+class TransactionBlockhashLifetime extends TransactionLifetimeConstraint {
   /// Creates a [TransactionBlockhashLifetime].
   const TransactionBlockhashLifetime({
     required this.blockhash,
     required this.lastValidBlockHeight,
-  });
+  }) : super();
 
   /// A recent blockhash observed by the transaction proposer.
   final String blockhash;
@@ -48,12 +59,12 @@ class TransactionBlockhashLifetime {
 /// The transaction will continue to be eligible to land until the network
 /// considers the [nonce] to have advanced.
 @immutable
-class TransactionDurableNonceLifetime {
+class TransactionDurableNonceLifetime extends TransactionLifetimeConstraint {
   /// Creates a [TransactionDurableNonceLifetime].
   const TransactionDurableNonceLifetime({
     required this.nonce,
     required this.nonceAccountAddress,
-  });
+  }) : super();
 
   /// A value contained in the account with address [nonceAccountAddress]
   /// at the time the transaction was prepared.
@@ -78,13 +89,6 @@ class TransactionDurableNonceLifetime {
       'nonceAccountAddress: $nonceAccountAddress)';
 }
 
-/// The lifetime constraint for a transaction.
-///
-/// This is a sealed class with two subtypes:
-/// - [TransactionBlockhashLifetime]
-/// - [TransactionDurableNonceLifetime]
-typedef TransactionLifetimeConstraint = Object;
-
 /// A transaction that has a lifetime constraint attached.
 class TransactionWithLifetime extends Transaction {
   /// Creates a [TransactionWithLifetime].
@@ -95,7 +99,7 @@ class TransactionWithLifetime extends Transaction {
   });
 
   /// The lifetime constraint for this transaction.
-  final Object lifetimeConstraint;
+  final TransactionLifetimeConstraint lifetimeConstraint;
 }
 
 /// Returns `true` if [transaction] has a blockhash-based lifetime constraint.
@@ -185,7 +189,8 @@ bool _isBlockhash(String value) {
 /// If the first instruction is an AdvanceNonceAccount instruction, returns
 /// a [TransactionDurableNonceLifetime]. Otherwise, returns a
 /// [TransactionBlockhashLifetime] with lastValidBlockHeight set to max u64.
-Future<Object> getTransactionLifetimeConstraintFromCompiledTransactionMessage(
+Future<TransactionLifetimeConstraint>
+getTransactionLifetimeConstraintFromCompiledTransactionMessage(
   CompiledTransactionMessage compiledTransactionMessage,
 ) async {
   final instructions = compiledTransactionMessage.instructions;
