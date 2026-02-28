@@ -12,6 +12,7 @@ const _systemProgram = Address('11111111111111111111111111111111');
 
 /// A valid fee payer address for testing.
 const _feePayer = Address('E9Nykp3rSdza2moQutaJ3K3RSC8E5iFERX2SqLTsQfjJ');
+const _blockhash = '11111111111111111111111111111111';
 
 /// Creates a simple test instruction using the system program address.
 ///
@@ -24,9 +25,13 @@ Instruction createInstructionWithData(int dataBytes) =>
     Instruction(programAddress: _systemProgram, data: Uint8List(dataBytes));
 
 /// Creates a test [TransactionMessage] with a fee payer.
-TransactionMessage createMessage([String? _]) => const TransactionMessage(
+TransactionMessage createMessage([String? _]) => TransactionMessage(
   version: TransactionVersion.v0,
   feePayer: _feePayer,
+  lifetimeConstraint: BlockhashLifetimeConstraint(
+    blockhash: _blockhash,
+    lastValidBlockHeight: BigInt.one,
+  ),
 );
 
 /// Creates a test [Transaction] with a dummy signature.

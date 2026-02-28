@@ -9,6 +9,9 @@ typedef TransactionPlanner =
     Future<TransactionPlan> Function(InstructionPlan instructionPlan);
 
 /// A function that creates a new transaction message.
+///
+/// The returned message must include a valid lifetime constraint (for example
+/// a blockhash) because planner sizing uses message serialization.
 typedef CreateTransactionMessage = Future<TransactionMessage> Function();
 
 /// A function called whenever a transaction message is updated.
@@ -24,6 +27,8 @@ class TransactionPlannerConfig {
   });
 
   /// Called whenever a new transaction message is needed.
+  ///
+  /// The returned message must include a valid lifetime constraint.
   final CreateTransactionMessage createTransactionMessage;
 
   /// Called whenever a transaction message is updated.
