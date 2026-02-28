@@ -1,0 +1,8 @@
+packages:
+  - packages/*
+
+useNodeVersion: 24.14.0
+nodeVersion: 24.14.0
+
+ignoredBuiltDependencies:
+  - esbuild

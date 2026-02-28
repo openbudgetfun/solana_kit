@@ -67,7 +67,7 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-          cache-dependency-path: packages/codama-renderers-dart/pnpm-lock.yaml
+          cache-dependency-path: pnpm-lock.yaml
       - name: install
         run: pnpm install --frozen-lockfile
       - name: typecheck

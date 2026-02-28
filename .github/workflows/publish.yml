@@ -43,7 +43,7 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-          cache-dependency-path: renderers/renderers-dart/pnpm-lock.yaml
+          cache-dependency-path: pnpm-lock.yaml
       - name: Validate target branch
         if: ${{ !inputs.dry_run }}
         run: |
