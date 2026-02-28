@@ -1,6 +1,6 @@
 name: solana_kit_rpc_subscriptions_api
 description: Subscription method definitions for the Solana Kit Dart SDK.
-version: 0.2.0
+version: 0.2.1
 repository: https://github.com/openbudgetfun/solana_kit
 homepage: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_rpc_subscriptions_api/
 
@@ -10,10 +10,10 @@ environment:
 resolution: workspace
 
 dependencies:
-  solana_kit_addresses: ^0.2.0
-  solana_kit_errors: ^0.2.0
-  solana_kit_keys: ^0.2.0
-  solana_kit_rpc_types: ^0.2.0
+  solana_kit_addresses: ^0.2.1
+  solana_kit_errors: ^0.2.1
+  solana_kit_keys: ^0.2.1
+  solana_kit_rpc_types: ^0.2.1
 dev_dependencies:
-  solana_kit_lints: ^0.2.0
+  solana_kit_lints: ^0.2.1
   test: ^1.25.8

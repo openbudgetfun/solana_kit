@@ -2627,3 +2627,66 @@ Package groups scaffolded:
 - Type manifest visitor mapping all Codama type nodes to Dart types and codecs
 - Fragment-based code generation with automatic import tracking
 - Comprehensive test suite with 261 tests
+
+## 0.2.1 (2026-02-28)
+
+### Fixes
+
+#### chore: add ktlint to devenv format/lint and CI lint pipeline
+
+##72 by @ifiokjr
+
+### Summary
+
+Adds Kotlin lint/format support to the repository `devenv` workflows and ensures CI runs those checks.
+
+### What changed
+
+- Added `ktlint` to `packages` in `devenv.nix`.
+- Updated `fix:format` to run Kotlin formatting via:
+  - `ktlint --relative --format` on tracked `*.kt` and `*.kts` files.
+- Added a new `lint:kotlin` script that runs:
+  - `ktlint --relative` on tracked Kotlin files.
+- Updated `lint:all` to include `lint:kotlin` so Kotlin linting is part of the standard CI lint command.
+- Updated CI lint step label to explicitly indicate ktlint is included.
+
+### Why
+
+The repo already linted and formatted Dart/Markdown/JSON/YAML paths, but Kotlin files were not covered by the same developer and CI workflows. This aligns Kotlin quality gates with the rest of the codebase.
+
+### Validation
+
+- `dprint check .github/workflows/ci.yml`
+- Structural verification of `devenv.nix` script blocks for:
+  - `fix:format`
+  - `lint:kotlin`
+  - `lint:all`
+
+#### chore: add flutter example app for mobile wallet adapter manual testing
+
+### Summary
+
+Adds a runnable Flutter Android example app under `packages/solana_kit_mobile_wallet_adapter/example/` for manual Mobile Wallet Adapter (MWA) testing on device/emulator.
+
+### What changed
+
+- Scaffolded a full Flutter Android example app for `solana_kit_mobile_wallet_adapter`.
+- Added manual-test UI flows for:
+  - Wallet endpoint detection
+  - `authorize`
+  - `getCapabilities`
+  - `signMessages`
+  - `deauthorize`
+- Added `example/README.md` with setup instructions and mock wallet installation guidance based on Solana Mobile docs.
+- Updated package README with a dedicated "Manual testing app" section linking to the new example and setup guide.
+
+### Why
+
+The previous example was not a runnable Flutter app for end-to-end manual testing with real/emulated wallets. This adds a practical test harness for validating adapter behavior in development.
+
+### Validation
+
+- `flutter pub get` (example app)
+- `flutter analyze` (example app)
+- `flutter test` (example app)
+- `devenv shell -- docs:check`
