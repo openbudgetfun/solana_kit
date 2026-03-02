@@ -1,1 +1,6 @@
 include: package:solana_kit_lints/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - docs/site/**
+    - packages/solana_kit_mobile_wallet_adapter/example/**
