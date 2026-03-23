@@ -31,6 +31,7 @@
     "**/.dart_tool/**",
     "**/build/**",
     "**/.devenv*/**",
+    ".mdt/**",
     "**/.direnv/**",
     "pubspec.lock",
     "**/pubspec.lock",
