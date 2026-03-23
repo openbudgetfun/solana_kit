@@ -135,7 +135,6 @@ import 'package:solana_kit/solana_kit.dart';
 final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 final slot = await rpc.getSlot().send();
 final blockHeight = await rpc.getBlockHeight().send();
-final epochInfo = await rpc.getEpochInfo().send();
 ```
 
 These helpers forward to canonical params builders in `solana_kit_rpc_api` and return lazy `PendingRpcRequest<T>` values.

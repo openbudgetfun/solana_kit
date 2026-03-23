@@ -23,7 +23,6 @@ in
       shfmt
       extra.knope
       extra.mdt
-      extra.pnpm-standalone
     ]
     ++ lib.optionals stdenv.isDarwin [
       coreutils
