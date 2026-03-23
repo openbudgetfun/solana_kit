@@ -63,6 +63,21 @@ extension SolanaRpcMethods on Rpc {
     return request<Slot>('getBlockHeight', getBlockHeightParams(config));
   }
 
+  /// Fetches information about the current epoch.
+  ///
+  /// This wraps the `getEpochInfo` RPC method.
+  ///
+  /// {@macro solanaKitRpcMethodPendingRequest}
+  /// {@macro solanaKitRpcMethodRawResponseShape}
+  PendingRpcRequest<Map<String, Object?>> getEpochInfo([
+    GetEpochInfoConfig? config,
+  ]) {
+    return request<Map<String, Object?>>(
+      'getEpochInfo',
+      getEpochInfoParams(config),
+    );
+  }
+
   /// Fetches the fee for a serialized transaction message.
   ///
   /// This wraps the `getFeeForMessage` RPC method.

@@ -11,6 +11,8 @@
 ///   (transaction expired).
 /// - **Timeout** - Simple timeout-based fallback.
 /// - **Strategy Racing** - Race multiple strategies to confirm or reject first.
+/// - **Polling Helpers** - Additive RPC-based helpers for waiting on a
+///   transaction or sending and confirming it in one step.
 ///
 /// This is the Dart port of the TypeScript `@solana/transaction-confirmation`
 /// package.
@@ -22,5 +24,6 @@ export 'src/confirmation_strategy_nonce.dart';
 export 'src/confirmation_strategy_racer.dart';
 export 'src/confirmation_strategy_recent_signature.dart';
 export 'src/confirmation_strategy_timeout.dart';
+export 'src/rpc_confirmation.dart';
 export 'src/signature_status.dart';
 export 'src/waiters.dart';

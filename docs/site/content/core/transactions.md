@@ -17,4 +17,13 @@ The transaction pipeline is intentionally modular:
 4. Sign with required signers.
 5. Send and confirm with strategy-based confirmation utilities.
 
-For confirmation tactics, see `solana_kit_transaction_confirmation`.
+For the most common signed-transaction flow, use the additive helper:
+
+```dart
+final signature = await sendAndConfirmTransaction(
+  rpc: rpc,
+  transaction: signedTransaction,
+);
+```
+
+For lower-level confirmation tactics, see `solana_kit_transaction_confirmation`.

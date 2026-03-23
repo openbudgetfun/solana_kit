@@ -42,6 +42,17 @@ jobs:
         run: docs:site:smoke
         shell: devenv shell -- bash -e {0}
 
+  upstream-compatibility:
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check tracked upstream compatibility metadata
+        run: scripts/check-upstream-compatibility.sh --clone-if-missing
+        shell: devenv shell -- bash -e {0}
+
   lint:
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:

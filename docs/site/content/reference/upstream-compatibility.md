@@ -15,6 +15,7 @@ description: How this workspace tracks @solana/kit compatibility.
 ## Validation Workflow
 
 - Keep `.repos/kit` updated (`clone:repos`).
+- Run `upstream:check` to verify tracked compatibility metadata remains internally consistent.
 - Compare API behavior against upstream fixtures/examples.
 - Record intentional deviations and migration notes.
 - Re-run benchmarks after major upstream alignment changes.

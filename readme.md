@@ -113,6 +113,12 @@ docs:site:build
 # Run docs build + HTTP smoke checks
 docs:site:smoke
 
+# Check tracked upstream compatibility metadata
+upstream:check
+
+# Run local benchmark scripts across benchmark-enabled packages
+bench:all
+
 # Fix formatting and lint issues
 fix:all
 ```
@@ -588,8 +594,10 @@ Transaction confirmation strategies:
 - `ConfirmationStrategyNonce` — watch for nonce advancement (durable transactions)
 - `ConfirmationStrategyTimeout` — simple time-based timeout
 - `ConfirmationStrategyRacer` — race multiple strategies, first to resolve wins
+- `waitForTransactionConfirmation()` — polling-based confirmation helper using transaction lifetime metadata
+- `sendAndConfirmTransaction()` — send a fully signed transaction, then wait for confirmation
 
-Exists because: Transaction confirmation on Solana is nuanced. A transaction might be confirmed, finalized, expired, or dropped. Multiple strategies handle different scenarios (recent transactions vs. durable nonce transactions) and the racer pattern provides reliable confirmation with timeout fallback.
+Exists because: Transaction confirmation on Solana is nuanced. A transaction might be confirmed, finalized, expired, or dropped. Multiple strategies handle different scenarios (recent transactions vs. durable nonce transactions), while the additive happy-path helpers reduce boilerplate for common app flows.
 
 ### solana_kit_functional
 
@@ -698,7 +706,7 @@ solana_kit_signers -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_e
 solana_kit_subscribable -> solana_kit_errors
 solana_kit_sysvars -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_errors, solana_kit_rpc_spec, solana_kit_rpc_types
 solana_kit_test_matchers -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_transactions
-solana_kit_transaction_confirmation -> solana_kit_errors, solana_kit_rpc_subscriptions_channel_websocket, solana_kit_rpc_types, solana_kit_subscribable
+solana_kit_transaction_confirmation -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_rpc, solana_kit_rpc_api, solana_kit_rpc_spec, solana_kit_rpc_subscriptions_channel_websocket, solana_kit_rpc_types, solana_kit_subscribable, solana_kit_transactions
 solana_kit_transaction_messages -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_functional, solana_kit_instructions
 solana_kit_transactions -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instructions, solana_kit_keys, solana_kit_transaction_messages
 ```

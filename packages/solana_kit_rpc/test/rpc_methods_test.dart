@@ -71,6 +71,30 @@ void main() {
       expect(response.result, BigInt.from(42));
     });
 
+    test('getEpochInfo sends method-specific params', () async {
+      final response = await _captureCall(
+        (rpc) => rpc
+            .getEpochInfo(
+              const GetEpochInfoConfig(commitment: Commitment.confirmed),
+            )
+            .send(),
+        rpcResult: {
+          'absoluteSlot': 42,
+          'blockHeight': 41,
+          'epoch': 2,
+          'slotIndex': 1,
+          'slotsInEpoch': 432000,
+          'transactionCount': 99,
+        },
+      );
+
+      expect(response.payload['method'], 'getEpochInfo');
+      expect(response.payload['params'], [
+        {'commitment': 'confirmed'},
+      ]);
+      expect(response.result, isA<Map<String, Object?>>());
+    });
+
     test('getFeeForMessage sends method-specific params', () async {
       final response = await _captureCall(
         (rpc) => rpc
