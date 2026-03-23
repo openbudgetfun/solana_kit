@@ -305,6 +305,41 @@ in
       description = "Run smoke tests against the built documentation site.";
       binary = "bash";
     };
+    "upstream:check" = {
+      exec = ''
+        set -e
+        "$DEVENV_ROOT/scripts/check-upstream-compatibility.sh" "$@"
+      '';
+      description = "Check tracked upstream compatibility metadata and local drift.";
+      binary = "bash";
+    };
+    "bench:all" = {
+      exec = ''
+        set -e
+        benchmark_manifest="$(mktemp)"
+        trap 'rm -f "$benchmark_manifest"' EXIT
+
+        find "$DEVENV_ROOT/packages" -mindepth 3 -maxdepth 3 -type f -path '*/benchmark/*.dart' | sort > "$benchmark_manifest"
+
+        if [ ! -s "$benchmark_manifest" ]; then
+          echo "No benchmark scripts were found under packages/*/benchmark/."
+          exit 1
+        fi
+
+        while IFS= read -r benchmark; do
+          pkg_dir="$(dirname "$(dirname "$benchmark")")"
+          rel_benchmark="''${benchmark#"$pkg_dir"/}"
+
+          echo "Running benchmark: $benchmark"
+          (
+            cd "$pkg_dir"
+            dart run "$rel_benchmark"
+          )
+        done < "$benchmark_manifest"
+      '';
+      description = "Run all local benchmark scripts across workspace packages.";
+      binary = "bash";
+    };
     "test:all" = {
       exec = ''
         set -e

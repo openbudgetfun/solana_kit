@@ -16,46 +16,46 @@ Versioning is managed by [knope](https://knope.tech/) using changesets stored in
 
 ### Publishable Packages (38)
 
-| Layer | Package                                          | Dependencies                                                                                     |
-| ----- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| 0     | `solana_kit_errors`                              | (none)                                                                                           |
-| 1     | `solana_kit_functional`                          | errors                                                                                           |
-| 1     | `solana_kit_fast_stable_stringify`               | (none)                                                                                           |
-| 1     | `solana_kit_helius`                              | errors                                                                                           |
-| 2     | `solana_kit_codecs_core`                         | errors                                                                                           |
-| 2     | `solana_kit_codecs_numbers`                      | codecs_core                                                                                      |
-| 2     | `solana_kit_codecs_strings`                      | codecs_core                                                                                      |
-| 2     | `solana_kit_codecs_data_structures`              | codecs_core, codecs_numbers                                                                      |
-| 2     | `solana_kit_options`                             | codecs_core, codecs_data_structures                                                              |
-| 2     | `solana_kit_codecs`                              | (umbrella re-export of all codec packages)                                                       |
-| 3     | `solana_kit_addresses`                           | errors, codecs_strings                                                                           |
-| 3     | `solana_kit_keys`                                | errors, addresses, codecs_strings                                                                |
-| 3     | `solana_kit_rpc_spec_types`                      | errors                                                                                           |
-| 3     | `solana_kit_rpc_types`                           | errors, addresses, codecs_strings                                                                |
-| 3     | `solana_kit_mobile_wallet_adapter_protocol`      | errors, codecs_strings                                                                           |
-| 4     | `solana_kit_instructions`                        | errors, addresses                                                                                |
-| 4     | `solana_kit_programs`                            | errors                                                                                           |
-| 4     | `solana_kit_rpc_spec`                            | errors, rpc_spec_types                                                                           |
-| 4     | `solana_kit_rpc_parsed_types`                    | addresses, rpc_types                                                                             |
-| 4     | `solana_kit_rpc_transformers`                    | errors, rpc_spec_types, rpc_types                                                                |
-| 4     | `solana_kit_rpc_transport_http`                  | errors, rpc_spec_types                                                                           |
-| 5     | `solana_kit_transaction_messages`                | errors, addresses, codecs, instructions, keys                                                    |
-| 5     | `solana_kit_offchain_messages`                   | errors, addresses, codecs, keys                                                                  |
-| 5     | `solana_kit_rpc_api`                             | addresses, rpc_spec, rpc_spec_types, rpc_types, rpc_parsed_types, rpc_transformers               |
-| 5     | `solana_kit_subscribable`                        | errors                                                                                           |
-| 6     | `solana_kit_transactions`                        | errors, addresses, codecs, instructions, keys, transaction_messages                              |
-| 6     | `solana_kit_rpc`                                 | rpc_api, rpc_spec, rpc_transport_http, rpc_transformers                                          |
-| 6     | `solana_kit_rpc_subscriptions_api`               | addresses, rpc_spec_types, rpc_types                                                             |
-| 6     | `solana_kit_rpc_subscriptions_channel_websocket` | errors, rpc_spec_types                                                                           |
-| 7     | `solana_kit_signers`                             | errors, addresses, keys, transactions, transaction_messages                                      |
-| 7     | `solana_kit_accounts`                            | errors, addresses, codecs, rpc_api, rpc_spec, rpc_types                                          |
-| 7     | `solana_kit_sysvars`                             | errors, addresses, codecs, rpc_api, rpc_spec, rpc_types, accounts                                |
-| 7     | `solana_kit_program_client_core`                 | errors, addresses, instructions, rpc_api, rpc_spec                                               |
-| 7     | `solana_kit_rpc_subscriptions`                   | errors, rpc_spec_types, rpc_subscriptions_api, rpc_subscriptions_channel_websocket, subscribable |
-| 7     | `solana_kit_mobile_wallet_adapter`               | addresses, errors, keys, mobile_wallet_adapter_protocol, transactions                            |
-| 8     | `solana_kit_transaction_confirmation`            | errors, keys, rpc, rpc_subscriptions, rpc_types, transactions                                    |
-| 8     | `solana_kit_instruction_plans`                   | errors, instructions, keys, transaction_messages, transactions                                   |
-| 9     | `solana_kit`                                     | (umbrella re-export of all packages above)                                                       |
+| Layer | Package                                          | Dependencies                                                                                                                |
+| ----- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| 0     | `solana_kit_errors`                              | (none)                                                                                                                      |
+| 1     | `solana_kit_functional`                          | errors                                                                                                                      |
+| 1     | `solana_kit_fast_stable_stringify`               | (none)                                                                                                                      |
+| 1     | `solana_kit_helius`                              | errors                                                                                                                      |
+| 2     | `solana_kit_codecs_core`                         | errors                                                                                                                      |
+| 2     | `solana_kit_codecs_numbers`                      | codecs_core                                                                                                                 |
+| 2     | `solana_kit_codecs_strings`                      | codecs_core                                                                                                                 |
+| 2     | `solana_kit_codecs_data_structures`              | codecs_core, codecs_numbers                                                                                                 |
+| 2     | `solana_kit_options`                             | codecs_core, codecs_data_structures                                                                                         |
+| 2     | `solana_kit_codecs`                              | (umbrella re-export of all codec packages)                                                                                  |
+| 3     | `solana_kit_addresses`                           | errors, codecs_strings                                                                                                      |
+| 3     | `solana_kit_keys`                                | errors, addresses, codecs_strings                                                                                           |
+| 3     | `solana_kit_rpc_spec_types`                      | errors                                                                                                                      |
+| 3     | `solana_kit_rpc_types`                           | errors, addresses, codecs_strings                                                                                           |
+| 3     | `solana_kit_mobile_wallet_adapter_protocol`      | errors, codecs_strings                                                                                                      |
+| 4     | `solana_kit_instructions`                        | errors, addresses                                                                                                           |
+| 4     | `solana_kit_programs`                            | errors                                                                                                                      |
+| 4     | `solana_kit_rpc_spec`                            | errors, rpc_spec_types                                                                                                      |
+| 4     | `solana_kit_rpc_parsed_types`                    | addresses, rpc_types                                                                                                        |
+| 4     | `solana_kit_rpc_transformers`                    | errors, rpc_spec_types, rpc_types                                                                                           |
+| 4     | `solana_kit_rpc_transport_http`                  | errors, rpc_spec_types                                                                                                      |
+| 5     | `solana_kit_transaction_messages`                | errors, addresses, codecs, instructions, keys                                                                               |
+| 5     | `solana_kit_offchain_messages`                   | errors, addresses, codecs, keys                                                                                             |
+| 5     | `solana_kit_rpc_api`                             | addresses, rpc_spec, rpc_spec_types, rpc_types, rpc_parsed_types, rpc_transformers                                          |
+| 5     | `solana_kit_subscribable`                        | errors                                                                                                                      |
+| 6     | `solana_kit_transactions`                        | errors, addresses, codecs, instructions, keys, transaction_messages                                                         |
+| 6     | `solana_kit_rpc`                                 | rpc_api, rpc_spec, rpc_transport_http, rpc_transformers                                                                     |
+| 6     | `solana_kit_rpc_subscriptions_api`               | addresses, rpc_spec_types, rpc_types                                                                                        |
+| 6     | `solana_kit_rpc_subscriptions_channel_websocket` | errors, rpc_spec_types                                                                                                      |
+| 7     | `solana_kit_signers`                             | errors, addresses, keys, transactions, transaction_messages                                                                 |
+| 7     | `solana_kit_accounts`                            | errors, addresses, codecs, rpc_api, rpc_spec, rpc_types                                                                     |
+| 7     | `solana_kit_sysvars`                             | errors, addresses, codecs, rpc_api, rpc_spec, rpc_types, accounts                                                           |
+| 7     | `solana_kit_program_client_core`                 | errors, addresses, instructions, rpc_api, rpc_spec                                                                          |
+| 7     | `solana_kit_rpc_subscriptions`                   | errors, rpc_spec_types, rpc_subscriptions_api, rpc_subscriptions_channel_websocket, subscribable                            |
+| 7     | `solana_kit_mobile_wallet_adapter`               | addresses, errors, keys, mobile_wallet_adapter_protocol, transactions                                                       |
+| 8     | `solana_kit_transaction_confirmation`            | addresses, errors, keys, rpc, rpc_api, rpc_spec, rpc_subscriptions_channel_websocket, rpc_types, subscribable, transactions |
+| 8     | `solana_kit_instruction_plans`                   | errors, instructions, keys, transaction_messages, transactions                                                              |
+| 9     | `solana_kit`                                     | (umbrella re-export of all packages above)                                                                                  |
 
 ### Internal Packages (not published)
 
@@ -108,7 +108,7 @@ solana_kit_signers -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_e
 solana_kit_subscribable -> solana_kit_errors
 solana_kit_sysvars -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_errors, solana_kit_rpc_spec, solana_kit_rpc_types
 solana_kit_test_matchers -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_transactions
-solana_kit_transaction_confirmation -> solana_kit_errors, solana_kit_rpc_subscriptions_channel_websocket, solana_kit_rpc_types, solana_kit_subscribable
+solana_kit_transaction_confirmation -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_rpc, solana_kit_rpc_api, solana_kit_rpc_spec, solana_kit_rpc_subscriptions_channel_websocket, solana_kit_rpc_types, solana_kit_subscribable, solana_kit_transactions
 solana_kit_transaction_messages -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_functional, solana_kit_instructions
 solana_kit_transactions -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instructions, solana_kit_keys, solana_kit_transaction_messages
 ```

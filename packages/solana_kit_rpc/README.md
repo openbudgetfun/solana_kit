@@ -61,9 +61,10 @@ import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 final rpc = createSolanaRpc(url: 'https://api.mainnet-beta.solana.com');
 final slot = await rpc.getSlot().send();
 final blockHeight = await rpc.getBlockHeight().send();
+final epochInfo = await rpc.getEpochInfo().send();
 ```
 
-These helpers forward to canonical params builders in `solana_kit_rpc_api` and return lazy `PendingRpcRequest<T>` values.
+These helpers forward to canonical params builders in `solana_kit_rpc_api` and return lazy `PendingRpcRequest<T>` values. The typed surface now includes `getEpochInfo()` alongside slot, balance, blockhash, account, and transaction helpers.
 
 <!-- {/typedRpcMethodsSection} -->
 

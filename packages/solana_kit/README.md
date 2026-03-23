@@ -135,6 +135,7 @@ import 'package:solana_kit/solana_kit.dart';
 final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 final slot = await rpc.getSlot().send();
 final blockHeight = await rpc.getBlockHeight().send();
+final epochInfo = await rpc.getEpochInfo().send();
 ```
 
 These helpers forward to canonical params builders in `solana_kit_rpc_api` and return lazy `PendingRpcRequest<T>` values.
@@ -273,19 +274,20 @@ Future<void> main() async {
 
 ### Transaction confirmation
 
-Confirm transactions using multiple strategies.
+Confirm transactions using multiple strategies, or use the additive happy-path helpers when you already have a signed transaction.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
 
-void main() {
-  // Compare commitment levels.
-  print(commitmentComparator(Commitment.finalized, Commitment.confirmed) > 0);
-  // true -- finalized is higher than confirmed
+Future<void> submitSignedTransaction(Transaction signedTransaction) async {
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
-  // Calculate rent exemption without an RPC call.
-  final balance = getMinimumBalanceForRentExemption(165);
-  print('Minimum balance: ${balance.value} lamports');
+  final signature = await sendAndConfirmTransaction(
+    rpc: rpc,
+    transaction: signedTransaction,
+  );
+
+  print('Confirmed signature: ${signature.value}');
 }
 ```
 

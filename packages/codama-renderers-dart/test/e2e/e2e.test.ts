@@ -473,13 +473,18 @@ describe("E2E: renderVisitor", () => {
     expect(content).toContain("findCounterPdaPda");
 
     // Constant seed
-    expect(content).toContain("utf8.encode('counter')");
+    expect(content).toContain("'counter'");
 
     // Variable seed
     expect(content).toContain("seeds.authority");
 
     // Seeds parameter
     expect(content).toContain("seeds,");
+
+    // Generated PDA derivation call
+    expect(content).toContain("return getProgramDerivedAddress(");
+    expect(content).toContain("final seeds = <Object>[");
+    expect(content).not.toContain("UnimplementedError");
 
     // Should NOT contain [object Object] from Fragment interpolation bugs
     expect(content).not.toContain("[object Object]");

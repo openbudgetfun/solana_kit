@@ -50,24 +50,26 @@ export function getPdaPageFragment(
     })
     .join("\n");
 
-  // Build the seed bytes list
-  const seedBytesList: string[] = [];
+  // Build the PDA seeds list.
+  const seedValues: string[] = [];
   for (const seed of seeds) {
     if (seed.kind === "constantPdaSeedNode") {
       if (seed.value.kind === "bytesValueNode") {
-        seedBytesList.push(`    ...${bytesValueToDart(seed.value.data)},`);
+        seedValues.push(`    Uint8List.fromList(${bytesValueToDart(seed.value.data)}),`);
       } else if (seed.value.kind === "stringValueNode") {
-        seedBytesList.push(`    ...utf8.encode('${seed.value.string}'),`);
+        seedValues.push(`    '${seed.value.string}',`);
       } else if (seed.value.kind === "publicKeyValueNode") {
-        seedBytesList.push(`    ...getAddressEncoder().encode(Address('${seed.value.publicKey}')),`);
+        seedValues.push(
+          `    getAddressEncoder().encode(Address('${seed.value.publicKey}')),`,
+        );
       } else if (seed.value.kind === "numberValueNode") {
         const manifest = visit(seed.type, scope.typeManifestVisitor);
-        seedBytesList.push(`    ...${manifest.encoder.content}.encode(${seed.value.number}),`);
+        seedValues.push(`    ${manifest.encoder.content}.encode(${seed.value.number}),`);
       }
     } else if (seed.kind === "variablePdaSeedNode") {
       const manifest = visit(seed.type, scope.typeManifestVisitor);
-      seedBytesList.push(
-        `    ...${manifest.encoder.content}.encode(seeds.${camelCase(seed.name as string)}),`,
+      seedValues.push(
+        `    ${manifest.encoder.content}.encode(seeds.${camelCase(seed.name as string)}),`,
       );
     }
   }
@@ -84,7 +86,8 @@ export function getPdaPageFragment(
 ${use("Uint8List", "dartTypedData")}
 ${use("immutable", "meta")}
 ${use("Address", "solanaAddresses")}
-${use("getAddressEncoder", "solanaAddresses")}`,
+${use("getAddressEncoder", "solanaAddresses")}
+${use("getProgramDerivedAddress", "solanaAddresses")}`,
   ];
 
   if (hasSeedsClass) {
@@ -107,12 +110,14 @@ Future<(Address, int)> ${fragmentFromString(findFnName)}({
 ${fragmentFromString(seedsParam)}
   ${fragmentFromString(programIdParam)},
 }) async {
-  final seedBytes = <int>[
-${fragmentFromString(seedBytesList.join("\n"))}
+  final seeds = <Object>[
+${fragmentFromString(seedValues.join("\n"))}
   ];
 
-  // TODO: Call getProgramDerivedAddress with seedBytes and programAddress
-  throw UnimplementedError('PDA derivation not yet implemented');
+  return getProgramDerivedAddress(
+    programAddress: programAddress,
+    seeds: seeds,
+  );
 }`);
 
   return mergeFragments(parts, (cs) => cs.join("\n"));

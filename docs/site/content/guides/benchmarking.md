@@ -7,6 +7,16 @@ description: Measure performance, enforce baselines, and prevent regressions.
 
 In Solana workloads, tight loops around encoding, message compilation, and parsing directly affect user latency and infrastructure cost.
 
+## Current Workspace Command
+
+Run all local benchmark scripts with:
+
+```bash
+bench:all
+```
+
+The initial suite covers address validation, transaction wire encoding, and BigInt-aware JSON parsing.
+
 ## Step 1: Pick Stable Benchmarks
 
 Target deterministic, high-frequency paths:

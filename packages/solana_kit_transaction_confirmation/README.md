@@ -44,6 +44,49 @@ This package provides five confirmation strategies that can be composed together
 4. **Timeout** -- A simple timeout-based fallback.
 5. **Strategy Racing** -- Races multiple strategies against each other, resolving with the first to complete.
 
+In addition to the low-level strategy primitives, the package now includes additive polling helpers for the common app flow of sending a signed transaction and waiting for confirmation without manually wiring each strategy yourself.
+
+### Sending and confirming a signed transaction
+
+```dart
+import 'package:solana_kit_rpc/solana_kit_rpc.dart';
+import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
+import 'package:solana_kit_transactions/solana_kit_transactions.dart';
+
+Future<void> submitSignedTransaction(Transaction signedTransaction) async {
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
+
+  final signature = await sendAndConfirmTransaction(
+    rpc: rpc,
+    transaction: signedTransaction,
+  );
+
+  print('Confirmed signature: ${signature.value}');
+}
+```
+
+### Confirming an already-sent transaction
+
+```dart
+import 'package:solana_kit_keys/solana_kit_keys.dart';
+import 'package:solana_kit_rpc/solana_kit_rpc.dart';
+import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
+import 'package:solana_kit_transactions/solana_kit_transactions.dart';
+
+Future<void> confirmExistingSubmission({
+  required Signature signature,
+  required Transaction transaction,
+}) async {
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
+
+  await waitForTransactionConfirmation(
+    rpc: rpc,
+    signature: signature,
+    transaction: transaction,
+  );
+}
+```
+
 ### Confirming a recent transaction (block height strategy)
 
 The recommended approach for confirming blockhash-based transactions is to race the signature confirmation against block height exceedence.
@@ -255,11 +298,13 @@ Future<void> main() async {
 
 ### Waiter functions
 
-| Function                                                  | Description                                                    |
-| --------------------------------------------------------- | -------------------------------------------------------------- |
-| `waitForRecentTransactionConfirmation({...})`             | Races signature confirmation against block height exceedence.  |
-| `waitForDurableNonceTransactionConfirmation({...})`       | Races signature confirmation against nonce invalidation.       |
-| `waitForRecentTransactionConfirmationUntilTimeout({...})` | _(Deprecated)_ Races signature confirmation against a timeout. |
+| Function                                                  | Description                                                                   |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `waitForTransactionConfirmation({...})`                   | Polling-based helper that confirms a transaction using its lifetime metadata. |
+| `waitForRecentTransactionConfirmation({...})`             | Races signature confirmation against block height exceedence.                 |
+| `waitForDurableNonceTransactionConfirmation({...})`       | Races signature confirmation against nonce invalidation.                      |
+| `waitForRecentTransactionConfirmationUntilTimeout({...})` | _(Deprecated)_ Races signature confirmation against a timeout.                |
+| `sendAndConfirmTransaction({...})`                        | Sends a fully signed transaction over RPC, then waits for confirmation.       |
 
 ### Factory functions
 
@@ -284,12 +329,14 @@ Future<void> main() async {
 
 ### Configuration classes
 
-| Class                                       | Description                                                                                              |
-| ------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `RecentSignatureConfirmationConfig`         | Config: `getSignatureStatuses`, `onSignatureNotification`.                                               |
-| `BlockHeightExceedenceConfig`               | Config: `getEpochInfo`, `onSlotNotification`.                                                            |
-| `NonceInvalidationConfig`                   | Config: `getNonceAccount`, `onAccountNotification`.                                                      |
-| `BaseTransactionConfirmationStrategyConfig` | Base config for `raceStrategies`: `commitment`, `getRecentSignatureConfirmationPromise`, `abortSignal?`. |
+| Class                                       | Description                                                                                                                  |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `RpcTransactionConfirmationConfig`          | Config for polling-based confirmation helpers: `abortSignal`, `commitment`, `pollInterval`, `searchTransactionHistory`.      |
+| `SendAndConfirmTransactionConfig`           | Extends polling config with send options such as `maxRetries`, `minContextSlot`, `preflightCommitment`, and `skipPreflight`. |
+| `RecentSignatureConfirmationConfig`         | Config: `getSignatureStatuses`, `onSignatureNotification`.                                                                   |
+| `BlockHeightExceedenceConfig`               | Config: `getEpochInfo`, `onSlotNotification`.                                                                                |
+| `NonceInvalidationConfig`                   | Config: `getNonceAccount`, `onAccountNotification`.                                                                          |
+| `BaseTransactionConfirmationStrategyConfig` | Base config for `raceStrategies`: `commitment`, `getRecentSignatureConfirmationPromise`, `abortSignal?`.                     |
 
 ### Type aliases
 
@@ -305,6 +352,12 @@ Future<void> main() async {
 | `EpochInfo`        | Epoch info: `absoluteSlot`, `blockHeight`.                      |
 | `SlotNotification` | A slot notification: `slot`.                                    |
 | `NonceAccountInfo` | Nonce account info: `nonceValue`.                               |
+
+### Constants
+
+| Constant                                     | Description                                        |
+| -------------------------------------------- | -------------------------------------------------- |
+| `defaultTransactionConfirmationPollInterval` | Default interval for polling confirmation helpers. |
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_transaction_confirmation"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart"} -->
 
