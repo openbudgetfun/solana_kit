@@ -1,10 +1,5 @@
 ---
-solana_kit_errors: minor
-solana_kit_codecs_data_structures: minor
-solana_kit_codecs_core: patch
-solana_kit_codecs_strings: patch
-solana_kit_signers: minor
-solana_kit_instruction_plans: patch
+default: major
 ---
 
 Sync with upstream @solana/kit v6.1.0 → v6.5.0 changes.
