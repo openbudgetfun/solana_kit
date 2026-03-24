@@ -71,7 +71,9 @@ VariableSizeEncoder<String> getBaseXEncoder(String alphabet) {
 VariableSizeDecoder<String> getBaseXDecoder(String alphabet) {
   return VariableSizeDecoder<String>(
     read: (rawBytes, offset) {
-      final bytes = offset == 0 ? rawBytes : rawBytes.sublist(offset);
+      final bytes = offset == 0 || offset <= -rawBytes.length
+          ? rawBytes
+          : rawBytes.sublist(offset);
       if (bytes.isEmpty) return ('', offset);
 
       // Handle leading zeroes.

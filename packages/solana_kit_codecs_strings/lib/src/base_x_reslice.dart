@@ -36,7 +36,9 @@ VariableSizeEncoder<String> getBaseXResliceEncoder(String alphabet, int bits) {
 VariableSizeDecoder<String> getBaseXResliceDecoder(String alphabet, int bits) {
   return VariableSizeDecoder<String>(
     read: (rawBytes, offset) {
-      final bytes = offset == 0 ? rawBytes : rawBytes.sublist(offset);
+      final bytes = offset == 0 || offset <= -rawBytes.length
+          ? rawBytes
+          : rawBytes.sublist(offset);
       if (bytes.isEmpty) return ('', rawBytes.length);
       final charIndices = _reslice(bytes.toList(), 8, bits, true);
       return (charIndices.map((i) => alphabet[i]).join(), rawBytes.length);

@@ -60,6 +60,10 @@ const Map<int, String> solanaErrorMessages = {
       r'Enum discriminator out of range. Expected a number in [$formattedValidDiscriminators], got $discriminator.',
   SolanaErrorCode.codecsExpectedDecoderToConsumeEntireByteArray:
       r'This decoder expected a byte array of exactly $expectedLength bytes, but $numExcessBytes unexpected excess bytes remained after decoding. Are you sure that you have chosen the correct decoder for this data?',
+  SolanaErrorCode.codecsInvalidPatternMatchValue:
+      'Invalid pattern match value. The provided value does not match any of the specified patterns.',
+  SolanaErrorCode.codecsInvalidPatternMatchBytes:
+      'Invalid pattern match bytes. The provided byte array does not match any of the specified patterns.',
   SolanaErrorCode.codecsExpectedFixedLength:
       'Expected a fixed-size codec, got a variable-size one.',
   SolanaErrorCode.codecsExpectedPositiveByteLength:
@@ -94,64 +98,68 @@ const Map<int, String> solanaErrorMessages = {
       r'Union variant out of range. Expected an index between $minRange and $maxRange, got $variant.',
   SolanaErrorCode.cryptoRandomValuesFunctionUnimplemented:
       'No random values implementation could be found.',
+  SolanaErrorCode.failedToSendTransaction:
+      r'Failed to send transaction$causeMessage',
+  SolanaErrorCode.failedToSendTransactions:
+      r'Failed to send transactions$causeMessages',
   SolanaErrorCode.instructionErrorAccountAlreadyInitialized:
-      'instruction requires an uninitialized account',
+      'Instruction requires an uninitialized account',
   SolanaErrorCode.instructionErrorAccountBorrowFailed:
-      'instruction tries to borrow reference for an account which is already borrowed',
+      'Instruction tries to borrow reference for an account which is already borrowed',
   SolanaErrorCode.instructionErrorAccountBorrowOutstanding:
-      'instruction left account with an outstanding borrowed reference',
+      'Instruction left account with an outstanding borrowed reference',
   SolanaErrorCode.instructionErrorAccountDataSizeChanged:
-      "program other than the account's owner changed the size of the account data",
+      "Program other than the account's owner changed the size of the account data",
   SolanaErrorCode.instructionErrorAccountDataTooSmall:
-      'account data too small for instruction',
+      'Account data too small for instruction',
   SolanaErrorCode.instructionErrorAccountNotExecutable:
-      'instruction expected an executable account',
+      'Instruction expected an executable account',
   SolanaErrorCode.instructionErrorAccountNotRentExempt:
       'An account does not have enough lamports to be rent-exempt',
   SolanaErrorCode.instructionErrorArithmeticOverflow:
       'Program arithmetic overflowed',
   SolanaErrorCode.instructionErrorBorshIoError:
-      r'Failed to serialize or deserialize account data: $encodedData',
+      'Failed to serialize or deserialize account data',
   SolanaErrorCode.instructionErrorBuiltinProgramsMustConsumeComputeUnits:
       'Builtin programs must consume compute units',
   SolanaErrorCode.instructionErrorCallDepth:
       'Cross-program invocation call depth too deep',
   SolanaErrorCode.instructionErrorComputationalBudgetExceeded:
       'Computational budget exceeded',
-  SolanaErrorCode.instructionErrorCustom: r'custom program error: #$code',
+  SolanaErrorCode.instructionErrorCustom: r'Custom program error: #$code',
   SolanaErrorCode.instructionErrorDuplicateAccountIndex:
-      'instruction contains duplicate accounts',
+      'Instruction contains duplicate accounts',
   SolanaErrorCode.instructionErrorDuplicateAccountOutOfSync:
-      'instruction modifications of multiply-passed account differ',
+      'Instruction modifications of multiply-passed account differ',
   SolanaErrorCode.instructionErrorExecutableAccountNotRentExempt:
-      'executable accounts must be rent exempt',
+      'Executable accounts must be rent exempt',
   SolanaErrorCode.instructionErrorExecutableDataModified:
-      'instruction changed executable accounts data',
+      'Instruction changed executable accounts data',
   SolanaErrorCode.instructionErrorExecutableLamportChange:
-      'instruction changed the balance of an executable account',
+      'Instruction changed the balance of an executable account',
   SolanaErrorCode.instructionErrorExecutableModified:
-      'instruction changed executable bit of an account',
+      'Instruction changed executable bit of an account',
   SolanaErrorCode.instructionErrorExternalAccountDataModified:
-      'instruction modified data of an account it does not own',
+      'Instruction modified data of an account it does not own',
   SolanaErrorCode.instructionErrorExternalAccountLamportSpend:
-      'instruction spent from the balance of an account it does not own',
-  SolanaErrorCode.instructionErrorGenericError: 'generic instruction error',
+      'Instruction spent from the balance of an account it does not own',
+  SolanaErrorCode.instructionErrorGenericError: 'Generic instruction error',
   SolanaErrorCode.instructionErrorIllegalOwner: 'Provided owner is not allowed',
   SolanaErrorCode.instructionErrorImmutable: 'Account is immutable',
   SolanaErrorCode.instructionErrorIncorrectAuthority:
       'Incorrect authority provided',
   SolanaErrorCode.instructionErrorIncorrectProgramId:
-      'incorrect program id for instruction',
+      'Incorrect program id for instruction',
   SolanaErrorCode.instructionErrorInsufficientFunds:
-      'insufficient funds for instruction',
+      'Insufficient funds for instruction',
   SolanaErrorCode.instructionErrorInvalidAccountData:
-      'invalid account data for instruction',
+      'Invalid account data for instruction',
   SolanaErrorCode.instructionErrorInvalidAccountOwner: 'Invalid account owner',
-  SolanaErrorCode.instructionErrorInvalidArgument: 'invalid program argument',
+  SolanaErrorCode.instructionErrorInvalidArgument: 'Invalid program argument',
   SolanaErrorCode.instructionErrorInvalidError:
-      'program returned invalid error code',
+      'Program returned invalid error code',
   SolanaErrorCode.instructionErrorInvalidInstructionData:
-      'invalid instruction data',
+      'Invalid instruction data',
   SolanaErrorCode.instructionErrorInvalidRealloc:
       'Failed to reallocate account data',
   SolanaErrorCode.instructionErrorInvalidSeeds:
@@ -166,11 +174,11 @@ const Map<int, String> solanaErrorMessages = {
   SolanaErrorCode.instructionErrorMissingAccount:
       'An account required by the instruction is missing',
   SolanaErrorCode.instructionErrorMissingRequiredSignature:
-      'missing required signature for instruction',
+      'Missing required signature for instruction',
   SolanaErrorCode.instructionErrorModifiedProgramId:
-      'instruction illegally modified the program id of an account',
+      'Instruction illegally modified the program id of an account',
   SolanaErrorCode.instructionErrorNotEnoughAccountKeys:
-      'insufficient account keys for instruction',
+      'Insufficient account keys for instruction',
   SolanaErrorCode.instructionErrorPrivilegeEscalation:
       'Cross-program invocation with unauthorized signer or writable account',
   SolanaErrorCode.instructionErrorProgramEnvironmentSetupFailure:
@@ -180,18 +188,19 @@ const Map<int, String> solanaErrorMessages = {
   SolanaErrorCode.instructionErrorProgramFailedToComplete:
       'Program failed to complete',
   SolanaErrorCode.instructionErrorReadonlyDataModified:
-      'instruction modified data of a read-only account',
+      'Instruction modified data of a read-only account',
   SolanaErrorCode.instructionErrorReadonlyLamportChange:
-      'instruction changed the balance of a read-only account',
+      'Instruction changed the balance of a read-only account',
   SolanaErrorCode.instructionErrorReentrancyNotAllowed:
       'Cross-program invocation reentrancy not allowed for this instruction',
   SolanaErrorCode.instructionErrorRentEpochModified:
-      'instruction modified rent epoch of an account',
+      'Instruction modified rent epoch of an account',
   SolanaErrorCode.instructionErrorUnbalancedInstruction:
-      'sum of account balances before and after instruction do not match',
+      'Sum of account balances before and after instruction do not match',
   SolanaErrorCode.instructionErrorUninitializedAccount:
-      'instruction requires an initialized account',
-  SolanaErrorCode.instructionErrorUnknown: '',
+      'Instruction requires an initialized account',
+  SolanaErrorCode.instructionErrorUnknown:
+      r'The instruction failed with the error: $errorName',
   SolanaErrorCode.instructionErrorUnsupportedProgramId:
       'Unsupported program id',
   SolanaErrorCode.instructionErrorUnsupportedSysvar: 'Unsupported sysvar',
@@ -389,6 +398,11 @@ const Map<int, String> solanaErrorMessages = {
       'More than one TransactionSendingSigner was identified.',
   SolanaErrorCode.signerTransactionSendingSignerMissing:
       'No TransactionSendingSigner was identified.',
+  SolanaErrorCode.signerWalletAccountCannotSignTransaction:
+      r'The wallet account $address cannot be used to create a transaction signer because it does not '
+      'implement either the `solana:signTransaction` or `solana:signAndSendTransaction` feature. '
+      'At least one of these features is required. '
+      r'The account supports the following features: $supportedFeatures.',
   SolanaErrorCode.signerWalletMultisignUnimplemented:
       'Wallet account signers do not support signing multiple messages/transactions in a single operation',
   SolanaErrorCode.subtleCryptoCannotExportNonExtractableKey:
@@ -523,11 +537,27 @@ const Map<int, String> solanaErrorMessages = {
   SolanaErrorCode.transactionSignaturesMissing:
       r'Transaction is missing signatures for addresses: $addresses.',
   SolanaErrorCode.transactionVersionNumberNotSupported:
-      r'This version of Kit does not support decoding transactions with version $unsupportedVersion. The current max supported version is 0.',
+      r'This version of Kit does not support decoding transactions with version $unsupportedVersion. The current max supported version is 1.',
   SolanaErrorCode.transactionVersionNumberOutOfRange:
       r'Transaction version must be in the range [0, 127]. $actualVersion given',
   SolanaErrorCode.transactionMalformedMessageBytes:
       r'Transaction message bytes are malformed: $messageBytes',
+  SolanaErrorCode.transactionCannotEncodeWithEmptyMessageBytes:
+      'Transaction message bytes are empty, so the transaction cannot be encoded',
+  SolanaErrorCode.transactionCannotDecodeEmptyTransactionBytes:
+      'Transaction bytes are empty, so no transaction can be decoded',
+  SolanaErrorCode.transactionVersionZeroMustBeEncodedWithSignaturesFirst:
+      r'Transaction version 0 must be encoded with signatures first. This transaction was encoded with first byte $firstByte, which is expected to be a signature count for v0 transactions.',
+  SolanaErrorCode.transactionSignatureCountTooHighForTransactionBytes:
+      r'The provided transaction bytes expect that there should be $numExpectedSignatures signatures, but the bytes are not long enough to contain a transaction message with this many signatures. The provided bytes are $transactionBytesLength bytes long.',
+  SolanaErrorCode.transactionInvalidConfigMaskPriorityFeeBits:
+      r'Invalid transaction config mask: $mask. Bits 0 and 1 must match (both set or both unset)',
+  SolanaErrorCode.transactionInvalidNonceAccountIndex:
+      r'The transaction has a durable nonce lifetime, but the nonce account index is invalid. Expected a nonce account index less than $numberOfStaticAccounts, got $nonceAccountIndex.',
+  SolanaErrorCode.transactionInvalidConfigValueKind:
+      r'The transaction config value for $configName has the incorrect kind. Expected $expectedKind, got $actualKind.',
+  SolanaErrorCode.transactionInstructionHeadersPayloadsMismatch:
+      r'The transaction does not have the same number of instruction headers and instruction payloads. Got $numInstructionHeaders instruction headers, and $numInstructionPayloads instruction payloads.',
 
   // Mobile Wallet Adapter - Session errors
   SolanaErrorCode.mwaAssociationPortOutOfRange:

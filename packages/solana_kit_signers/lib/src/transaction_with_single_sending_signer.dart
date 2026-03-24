@@ -26,6 +26,9 @@ bool isTransactionMessageWithSingleSendingSigner(
 /// Asserts that the provided transaction message has exactly one
 /// [TransactionSendingSigner].
 ///
+/// This delegates to [assertContainsResolvableTransactionSendingSigner]
+/// using the signers extracted from the transaction message.
+///
 /// Throws a [SolanaError] with code
 /// [SolanaErrorCode.signerTransactionSendingSignerMissing] if no sending
 /// signer exists.
@@ -36,7 +39,34 @@ bool isTransactionMessageWithSingleSendingSigner(
 void assertIsTransactionMessageWithSingleSendingSigner(
   TransactionMessage transactionMessage,
 ) {
-  final signers = getSignersFromTransactionMessage(transactionMessage);
+  assertContainsResolvableTransactionSendingSigner(
+    getSignersFromTransactionMessage(transactionMessage),
+  );
+}
+
+/// Asserts that the provided signers contain at least one
+/// [TransactionSendingSigner] that can be unambiguously resolved.
+///
+/// This means the signers must contain at least one sending signer, and at
+/// most one sending-only signer (i.e. a signer that implements
+/// [TransactionSendingSigner] but not [TransactionPartialSigner] or
+/// [TransactionModifyingSigner]). Composite signers that also implement
+/// other interfaces can be demoted to non-sending roles, so multiple
+/// composite sending signers are allowed.
+///
+/// Throws a [SolanaError] with code
+/// [SolanaErrorCode.signerTransactionSendingSignerMissing] if no sending
+/// signer is found.
+///
+/// Throws a [SolanaError] with code
+/// [SolanaErrorCode.signerTransactionCannotHaveMultipleSendingSigners] if
+/// more than one sending-only signer is found.
+///
+/// See also: `signAndSendTransactionWithSigners`,
+/// [assertIsTransactionMessageWithSingleSendingSigner].
+void assertContainsResolvableTransactionSendingSigner(
+  List<Object> signers,
+) {
   final sendingSigners = signers.where(isTransactionSendingSigner).toList();
 
   if (sendingSigners.isEmpty) {
