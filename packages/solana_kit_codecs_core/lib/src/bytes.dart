@@ -38,11 +38,16 @@ Uint8List fixBytes(Uint8List bytes, int length) {
 }
 
 /// Returns `true` if [data] contains [bytes] at the given [offset].
+///
+/// When [offset] is zero or a negative value whose magnitude is >= the data
+/// length, the comparison is performed directly without creating a sublist
+/// copy, avoiding unnecessary allocation.
 bool containsBytes(Uint8List data, Uint8List bytes, int offset) {
   if (offset + bytes.length > data.length) return false;
-  final slice = offset == 0 && data.length == bytes.length
-      ? data
-      : data.sublist(offset, offset + bytes.length);
+  final slice =
+      (offset == 0 || offset <= -data.length) && data.length == bytes.length
+          ? data
+          : data.sublist(offset, offset + bytes.length);
   return bytesEqual(slice, bytes);
 }
 

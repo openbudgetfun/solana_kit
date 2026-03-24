@@ -39,10 +39,13 @@ void main() {
       expect(message, contains(r'$address'));
     });
 
-    test('handles empty message template', () {
-      // instructionErrorUnknown has an empty message
-      final message = getErrorMessage(SolanaErrorCode.instructionErrorUnknown);
-      expect(message, contains('Solana error'));
+    test('handles instructionErrorUnknown message template', () {
+      // instructionErrorUnknown now has a real message with $errorName.
+      final message = getErrorMessage(
+        SolanaErrorCode.instructionErrorUnknown,
+        {'errorName': 'SomeError'},
+      );
+      expect(message, contains('SomeError'));
     });
 
     test('handles numeric context values', () {

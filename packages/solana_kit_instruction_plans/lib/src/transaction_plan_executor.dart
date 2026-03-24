@@ -63,10 +63,14 @@ TransactionPlanExecutor createTransactionPlanExecutor(
     );
 
     if (canceled) {
-      final cause = _findErrorFromTransactionPlanResult(transactionPlanResult);
+      final abortReason =
+          _findErrorFromTransactionPlanResult(transactionPlanResult);
       throw SolanaError(
         SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan,
-        {'cause': cause},
+        {
+          'abortReason': abortReason,
+          'transactionPlanResult': transactionPlanResult,
+        },
       );
     }
 

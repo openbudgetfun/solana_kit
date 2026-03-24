@@ -24,25 +24,23 @@ import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 ///
 /// This function ignores [TransactionSendingSigner]s as it does not send
 /// the transaction.
+///
+/// See also: [partiallySignTransactionWithSigners],
+/// [signTransactionMessageWithSigners],
+/// [signAndSendTransactionMessageWithSigners].
 Future<Transaction> partiallySignTransactionMessageWithSigners(
   TransactionMessage transactionMessage, [
   TransactionSignerConfig? config,
 ]) async {
-  final allSigners = deduplicateSigners(
-    getSignersFromTransactionMessage(
-      transactionMessage,
-    ).where(isTransactionSigner).toList(),
-  );
-
-  final categorized = _categorizeTransactionSigners(
-    allSigners,
-    identifySendingSigner: false,
-  );
-
-  return _signModifyingAndPartialTransactionSigners(
-    transactionMessage,
-    categorized.modifyingSigners,
-    categorized.partialSigners,
+  return partiallySignTransactionWithSigners(
+    getSignersFromTransactionMessage(transactionMessage)
+        .where(
+          (signer) =>
+              isTransactionModifyingSigner(signer) ||
+              isTransactionPartialSigner(signer),
+        )
+        .toList(),
+    compileTransaction(transactionMessage),
     config,
   );
 }
@@ -50,6 +48,10 @@ Future<Transaction> partiallySignTransactionMessageWithSigners(
 /// Extracts all transaction signers inside the provided transaction message
 /// and uses them to return a signed transaction before asserting that all
 /// signatures required by the transaction are present.
+///
+/// See also: [signTransactionWithSigners],
+/// [partiallySignTransactionMessageWithSigners],
+/// [signAndSendTransactionMessageWithSigners].
 Future<Transaction> signTransactionMessageWithSigners(
   TransactionMessage transactionMessage, [
   TransactionSignerConfig? config,
@@ -68,26 +70,134 @@ Future<Transaction> signTransactionMessageWithSigners(
 ///
 /// It returns the signature of the sent transaction (i.e. its identifier)
 /// as bytes.
+///
+/// See also: [signAndSendTransactionWithSigners],
+/// [assertIsTransactionMessageWithSingleSendingSigner],
+/// [partiallySignTransactionMessageWithSigners],
+/// [signTransactionMessageWithSigners].
 Future<SignatureBytes> signAndSendTransactionMessageWithSigners(
   TransactionMessage transactionMessage, [
   TransactionSignerConfig? config,
 ]) async {
-  assertIsTransactionMessageWithSingleSendingSigner(transactionMessage);
+  return signAndSendTransactionWithSigners(
+    getSignersFromTransactionMessage(transactionMessage)
+        .where(isTransactionSigner)
+        .toList(),
+    compileTransaction(transactionMessage),
+    config,
+  );
+}
 
-  final allSigners = deduplicateSigners(
-    getSignersFromTransactionMessage(
-      transactionMessage,
-    ).where(isTransactionSigner).toList(),
+/// Signs a transaction using the provided [TransactionModifyingSigner]s and
+/// [TransactionPartialSigner]s.
+///
+/// It first uses all [TransactionModifyingSigner]s sequentially before
+/// using all [TransactionPartialSigner]s in parallel.
+///
+/// If a composite signer implements both interfaces, it will be used as a
+/// [TransactionModifyingSigner] if no other signer implements that
+/// interface. Otherwise, it will be used as a [TransactionPartialSigner].
+///
+/// ```dart
+/// final signedTx = await partiallySignTransactionWithSigners(
+///   mySigners,
+///   compiledTransaction,
+/// );
+/// ```
+///
+/// See also: [signTransactionWithSigners],
+/// [signAndSendTransactionWithSigners],
+/// [partiallySignTransactionMessageWithSigners].
+Future<Transaction> partiallySignTransactionWithSigners(
+  List<Object> signers,
+  Transaction transaction, [
+  TransactionSignerConfig? config,
+]) async {
+  final categorized = _categorizeTransactionSigners(
+    deduplicateSigners(signers),
+    identifySendingSigner: false,
   );
 
-  final categorized = _categorizeTransactionSigners(allSigners);
+  return _signModifyingAndPartialTransactionSigners(
+    transaction,
+    categorized.modifyingSigners,
+    categorized.partialSigners,
+    config,
+  );
+}
+
+/// Signs a transaction using the provided signers and asserts that all
+/// signatures required by the transaction are present.
+///
+/// This function delegates to [partiallySignTransactionWithSigners] to
+/// sign the transaction, then asserts it is fully signed before returning.
+///
+/// ```dart
+/// final mySignedTx = await signTransactionWithSigners(
+///   mySigners,
+///   compiledTransaction,
+/// );
+/// ```
+///
+/// See also: [partiallySignTransactionWithSigners],
+/// [signAndSendTransactionWithSigners],
+/// [signTransactionMessageWithSigners].
+Future<Transaction> signTransactionWithSigners(
+  List<Object> signers,
+  Transaction transaction, [
+  TransactionSignerConfig? config,
+]) async {
+  final signedTransaction = await partiallySignTransactionWithSigners(
+    signers,
+    transaction,
+    config,
+  );
+  assertIsFullySignedTransaction(signedTransaction);
+  return signedTransaction;
+}
+
+/// Signs a transaction using the provided signers and sends it immediately
+/// to the blockchain.
+///
+/// It returns the signature of the sent transaction (i.e. its identifier)
+/// as bytes.
+///
+/// Similarly to [partiallySignTransactionWithSigners], it first uses all
+/// [TransactionModifyingSigner]s sequentially before using all
+/// [TransactionPartialSigner]s in parallel. It then sends the transaction
+/// using the [TransactionSendingSigner] it identified.
+///
+/// The provided signers must contain exactly one [TransactionSendingSigner]
+/// that can be unambiguously resolved.
+///
+/// ```dart
+/// final signature = await signAndSendTransactionWithSigners(
+///   mySigners,
+///   compiledTransaction,
+/// );
+/// ```
+///
+/// See also: [assertContainsResolvableTransactionSendingSigner],
+/// [partiallySignTransactionWithSigners],
+/// [signTransactionWithSigners],
+/// [signAndSendTransactionMessageWithSigners].
+Future<SignatureBytes> signAndSendTransactionWithSigners(
+  List<Object> signers,
+  Transaction transaction, [
+  TransactionSignerConfig? config,
+]) async {
+  assertContainsResolvableTransactionSendingSigner(signers);
+
+  final categorized = _categorizeTransactionSigners(
+    deduplicateSigners(signers),
+  );
 
   if (config != null && config.aborted) {
     throw StateError('The operation was aborted');
   }
 
   final signedTransaction = await _signModifyingAndPartialTransactionSigners(
-    transactionMessage,
+    transaction,
     categorized.modifyingSigners,
     categorized.partialSigners,
     config,
@@ -207,13 +317,12 @@ List<TransactionModifyingSigner> _identifyTransactionModifyingSigners(
 /// Signs a transaction using the provided TransactionModifyingSigners
 /// sequentially followed by the TransactionPartialSigners in parallel.
 Future<Transaction> _signModifyingAndPartialTransactionSigners(
-  TransactionMessage transactionMessage,
+  Transaction transaction,
   List<TransactionModifyingSigner> modifyingSigners,
   List<TransactionPartialSigner> partialSigners, [
   TransactionSignerConfig? config,
 ]) async {
-  // Compile the transaction.
-  var transaction = compileTransaction(transactionMessage) as Transaction;
+  var currentTransaction = transaction;
 
   // Handle modifying signers sequentially.
   for (final modifyingSigner in modifyingSigners) {
@@ -221,9 +330,9 @@ Future<Transaction> _signModifyingAndPartialTransactionSigners(
       throw StateError('The operation was aborted');
     }
     final results = await modifyingSigner.modifyAndSignTransactions([
-      transaction,
+      currentTransaction,
     ], config);
-    transaction = results[0];
+    currentTransaction = results[0];
   }
 
   // Handle partial signers in parallel.
@@ -234,7 +343,7 @@ Future<Transaction> _signModifyingAndPartialTransactionSigners(
   final signatureDictionaries = await Future.wait(
     partialSigners.map((partialSigner) async {
       final signatures = await partialSigner.signTransactions([
-        transaction,
+        currentTransaction,
       ], config);
       return signatures[0];
     }),
@@ -242,20 +351,20 @@ Future<Transaction> _signModifyingAndPartialTransactionSigners(
 
   // Merge all signatures.
   final mergedSignatures = <Address, SignatureBytes?>{
-    ...transaction.signatures,
+    ...currentTransaction.signatures,
   };
   signatureDictionaries.forEach(mergedSignatures.addAll);
 
-  if (transaction is TransactionWithLifetime) {
+  if (currentTransaction is TransactionWithLifetime) {
     return TransactionWithLifetime(
-      messageBytes: transaction.messageBytes,
+      messageBytes: currentTransaction.messageBytes,
       signatures: Map<Address, SignatureBytes?>.unmodifiable(mergedSignatures),
-      lifetimeConstraint: transaction.lifetimeConstraint,
+      lifetimeConstraint: currentTransaction.lifetimeConstraint,
     );
   }
 
   return Transaction(
-    messageBytes: transaction.messageBytes,
+    messageBytes: currentTransaction.messageBytes,
     signatures: Map<Address, SignatureBytes?>.unmodifiable(mergedSignatures),
   );
 }

@@ -57,9 +57,10 @@ Encoder<TFrom> addEncoderSentinel<TFrom>(
 /// Throws a [SolanaError] if the sentinel is not found in the byte array.
 Decoder<TTo> addDecoderSentinel<TTo>(Decoder<TTo> decoder, Uint8List sentinel) {
   (TTo, int) readImpl(Uint8List bytes, int currentOffset) {
-    final candidateBytes = currentOffset == 0
-        ? bytes
-        : bytes.sublist(currentOffset);
+    final candidateBytes =
+        currentOffset == 0 || currentOffset <= -bytes.length
+            ? bytes
+            : bytes.sublist(currentOffset);
     final sentinelIndex = _findSentinelIndex(candidateBytes, sentinel);
     if (sentinelIndex == -1) {
       throw SolanaError(SolanaErrorCode.codecsSentinelMissingInDecodedBytes, {

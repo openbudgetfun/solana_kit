@@ -19,6 +19,8 @@ abstract final class SolanaErrorCode {
   static const int malformedNumberString = 8;
   static const int timestampOutOfRange = 9;
   static const int malformedJsonRpcError = 10;
+  static const int failedToSendTransaction = 11;
+  static const int failedToSendTransactions = 12;
 
   // ---------------------------------------------------------------------------
   // JSON-RPC (-32768 to -32000)
@@ -192,6 +194,7 @@ abstract final class SolanaErrorCode {
   static const int signerTransactionCannotHaveMultipleSendingSigners = 5508009;
   static const int signerTransactionSendingSignerMissing = 5508010;
   static const int signerWalletMultisignUnimplemented = 5508011;
+  static const int signerWalletAccountCannotSignTransaction = 5508012;
 
   // ---------------------------------------------------------------------------
   // Offchain Message (5607000 - 5607999)
@@ -253,6 +256,16 @@ abstract final class SolanaErrorCode {
   static const int transactionVersionNumberNotSupported = 5663021;
   static const int transactionNonceAccountCannotBeInLookupTable = 5663022;
   static const int transactionMalformedMessageBytes = 5663023;
+  static const int transactionCannotEncodeWithEmptyMessageBytes = 5663024;
+  static const int transactionCannotDecodeEmptyTransactionBytes = 5663025;
+  static const int
+      transactionVersionZeroMustBeEncodedWithSignaturesFirst = 5663026;
+  static const int transactionSignatureCountTooHighForTransactionBytes =
+      5663027;
+  static const int transactionInvalidConfigMaskPriorityFeeBits = 5663028;
+  static const int transactionInvalidNonceAccountIndex = 5663029;
+  static const int transactionInvalidConfigValueKind = 5663030;
+  static const int transactionInstructionHeadersPayloadsMismatch = 5663031;
 
   // ---------------------------------------------------------------------------
   // Transaction Errors (7050000 - 7050999)
@@ -343,6 +356,8 @@ abstract final class SolanaErrorCode {
   static const int codecsSentinelMissingInDecodedBytes = 8078021;
   static const int codecsCannotUseLexicalValuesAsEnumDiscriminators = 8078022;
   static const int codecsExpectedDecoderToConsumeEntireByteArray = 8078023;
+  static const int codecsInvalidPatternMatchValue = 8078024;
+  static const int codecsInvalidPatternMatchBytes = 8078025;
 
   // ---------------------------------------------------------------------------
   // RPC (8100000 - 8100999)
