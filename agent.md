@@ -1,1 +1,1 @@
-claude.md
+AGENTS.md
