@@ -127,15 +127,17 @@ knope document-change
 
 This is required for PRs that modify files under `packages/*` (CI enforces this with `Require changes to be documented`).
 
-This interactively creates a Markdown file in `.changeset/` with the affected package(s) and a description. Each changeset file uses YAML frontmatter to specify the package and version bump type:
+This interactively creates a Markdown file in `.changeset/` with a release note description. Because this workspace shares one version across all published packages, each changeset file must use YAML frontmatter with a single `default:` entry instead of package names:
 
 ```markdown
 ---
-solana_kit_addresses: minor
+default: minor
 ---
 
 Add support for program derived addresses with custom seeds.
 ```
+
+If `knope document-change` generates package-specific keys, replace them with a single `default: patch|minor|major` entry before committing the changeset.
 
 Bump types:
 

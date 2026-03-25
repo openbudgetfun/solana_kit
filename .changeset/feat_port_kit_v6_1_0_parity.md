@@ -1,7 +1,5 @@
 ---
-solana_kit_codecs_data_structures: patch
-solana_kit_errors: patch
-solana_kit_transactions: patch
+default: patch
 ---
 
 Port `@solana/kit` `v6.1.0` parity updates for predicate codecs and

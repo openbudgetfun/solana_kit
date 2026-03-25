@@ -1,6 +1,5 @@
 ---
-solana_kit_rpc: minor
-solana_kit_rpc_spec: minor
+default: minor
 ---
 
 Add a typed RPC convenience facade for common Solana JSON-RPC calls.

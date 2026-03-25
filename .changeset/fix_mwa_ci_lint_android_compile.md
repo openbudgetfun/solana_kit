@@ -1,5 +1,5 @@
 ---
-"solana_kit_mobile_wallet_adapter": patch
+default: patch
 ---
 
 Fixes CI regressions in the mobile wallet adapter example and Android compile check.

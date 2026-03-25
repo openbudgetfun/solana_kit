@@ -1,11 +1,5 @@
 ---
-solana_kit: minor
-solana_kit_addresses: patch
-solana_kit_rpc: minor
-solana_kit_rpc_spec_types: patch
-solana_kit_transaction_confirmation: minor
-solana_kit_transactions: patch
-codama_renderers: patch
+default: minor
 ---
 
 Add additive next-step ergonomics and maintenance tooling without breaking the existing lower-level APIs.

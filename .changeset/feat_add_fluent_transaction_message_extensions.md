@@ -1,5 +1,5 @@
 ---
-solana_kit_transaction_messages: patch
+default: patch
 ---
 
 Add fluent extension methods to `TransactionMessage` for Dart-idiomatic

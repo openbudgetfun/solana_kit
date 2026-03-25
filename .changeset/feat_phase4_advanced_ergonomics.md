@@ -1,8 +1,5 @@
 ---
-solana_kit_codecs_data_structures: minor
-solana_kit_errors: minor
-solana_kit_rpc_spec_types: minor
-solana_kit_rpc_transport_http: minor
+default: minor
 ---
 
 Add Phase 4 advanced ergonomics and performance improvements.

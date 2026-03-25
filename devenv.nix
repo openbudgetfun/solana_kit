@@ -260,6 +260,7 @@ in
     "docs:check" = {
       exec = ''
         set -e
+        mkdir -p .mdt/cache
         mdt check
         scripts/workspace-doc-drift.sh --check
       '';
@@ -269,6 +270,7 @@ in
     "docs:update" = {
       exec = ''
         set -e
+        mkdir -p .mdt/cache
         mdt update
         scripts/workspace-doc-drift.sh --write
       '';

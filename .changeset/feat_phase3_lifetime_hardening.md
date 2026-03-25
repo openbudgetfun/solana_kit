@@ -1,5 +1,5 @@
 ---
-solana_kit_transactions: minor
+default: minor
 ---
 
 Harden transaction lifetime typing and compilation invariants.

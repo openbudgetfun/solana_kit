@@ -24,20 +24,30 @@ if [[ -z "$changed_files" ]]; then
   exit 0
 fi
 
+changeset_changes="$(printf '%s\n' "$changed_files" | grep '^\.changeset/.*\.md$' || true)"
+if [[ -n "$changeset_changes" ]]; then
+  changeset_args=()
+  while IFS= read -r changeset_path; do
+    [[ -n "$changeset_path" ]] && changeset_args+=("$changeset_path")
+  done <<< "$changeset_changes"
+
+  echo "Validating changed changeset frontmatter."
+  scripts/check-changeset-frontmatter.sh "${changeset_args[@]}"
+fi
+
 package_changes="$(printf '%s\n' "$changed_files" | grep '^packages/' || true)"
 if [[ -z "$package_changes" ]]; then
   echo "No package changes detected; changeset not required."
   exit 0
 fi
 
-changeset_changes="$(printf '%s\n' "$changed_files" | grep '^\.changeset/.*\.md$' || true)"
 if [[ -n "$changeset_changes" ]]; then
   echo "Changeset requirement satisfied."
   exit 0
 fi
 
 echo "Package changes were detected without a changeset file under .changeset/*.md." >&2
-echo "Run 'knope document-change' and commit the generated changeset." >&2
+echo "Run 'knope document-change', then replace the frontmatter with 'default: patch|minor|major', and commit the changeset." >&2
 echo "Changed package files:" >&2
 printf '%s\n' "$package_changes" >&2
 exit 1
