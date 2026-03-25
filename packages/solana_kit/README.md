@@ -10,12 +10,12 @@ The Solana Kit Dart SDK -- a comprehensive, modular Dart port of the [Solana Typ
 
 This is the umbrella package that re-exports all 35 public packages in the SDK, giving you a single import for the entire Solana development toolkit.
 
-<!-- {=upstreamSupportSection|replace:"__SOLANA_KIT_VERSION__":"6.1.0"} -->
+<!-- {=upstreamSupportSection|replace:"__SOLANA_KIT_VERSION__":"6.5.0"} -->
 
 ## Upstream Compatibility
 
-- Latest supported `@solana/kit` version: `6.1.0`
-- This Dart port tracks upstream APIs and behavior through `v6.1.0`.
+- Latest supported `@solana/kit` version: `6.5.0`
+- This Dart port tracks upstream APIs and behavior through `v6.5.0`.
 
 <!-- {/upstreamSupportSection} -->
 
