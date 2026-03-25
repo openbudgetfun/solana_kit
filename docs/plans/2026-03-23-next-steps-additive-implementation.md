@@ -135,5 +135,5 @@ Validated locally:
 
 Current upstream drift note observed during validation:
 
-- local compatibility metadata is internally consistent at `@solana/kit` `6.1.0`,
+- local compatibility metadata is internally consistent at `@solana/kit` `6.5.0`,
 - upstream `@solana/kit` is currently `6.5.0`, so parity work remains intentionally tracked rather than silently bumped.
