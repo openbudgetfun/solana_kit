@@ -4,6 +4,8 @@ after = 0
 
 [exclude]
 patterns = [
+  "AGENTS.md",
+  "docs/agents/**",
   "**/.dart_tool/**",
   "**/build/**",
   "**/coverage/**",
