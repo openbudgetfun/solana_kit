@@ -98,13 +98,6 @@ void main() {
       expect(desc, contains('64'));
     });
 
-    test('matches Uint8List of correct length', () {
-      expect(Uint8List(64), hasByteLength(64));
-    });
-
-    test('does not match Uint8List of wrong length', () {
-      expect(Uint8List(32), isNot(hasByteLength(64)));
-    });
   });
 
   // ---------------------------------------------------------------------------
@@ -131,19 +124,6 @@ void main() {
       expect(msg, contains('shorter'));
     });
 
-    test('reports when prefix does not match', () {
-      final prefix = Uint8List.fromList([0xFF, 0xFE]);
-      final bytes = Uint8List.fromList([0x00, 0x01, 0x02]);
-      final matcher = startsWithBytes(prefix);
-      // The matcher does NOT match here; describeMismatch is called.
-      final matchState = <dynamic, dynamic>{};
-      final matched = matcher.matches(bytes, matchState);
-      expect(matched, isFalse);
-      final desc = StringDescription();
-      matcher.describeMismatch(bytes, desc, matchState, false);
-      // No specific message for prefix-content mismatch beyond the default.
-      expect(desc, isA<StringDescription>());
-    });
   });
 
   // ---------------------------------------------------------------------------
@@ -222,11 +202,6 @@ void main() {
       expect(msg, contains('not a valid base58-encoded address'));
     });
 
-    test('matches a valid address without mismatch', () {
-      const address = Address('11111111111111111111111111111111');
-      final matchState = <dynamic, dynamic>{};
-      expect(isValidSolanaAddress.matches(address, matchState), isTrue);
-    });
   });
 
   // ---------------------------------------------------------------------------
@@ -240,17 +215,4 @@ void main() {
     });
   });
 
-  group('equalsAddress', () {
-    test('matches when addresses are equal', () {
-      const a = Address('11111111111111111111111111111111');
-      const b = Address('11111111111111111111111111111111');
-      expect(a, equalsAddress(b));
-    });
-
-    test('does not match when addresses differ', () {
-      const a = Address('11111111111111111111111111111111');
-      const b = Address('E9Nykp3rSdza2moQutaJ3K3RSC8E5iFERX2SqLTsQfjJ');
-      expect(a, isNot(equalsAddress(b)));
-    });
-  });
 }

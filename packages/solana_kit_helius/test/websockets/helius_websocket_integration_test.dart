@@ -1,19 +1,26 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:solana_kit_helius/solana_kit_helius.dart';
 import 'package:test/test.dart';
 
-Future<(HttpServer, StreamController<Map<String, Object?>>, List<Object?>)> _startServer() async {
+Future<(HttpServer, StreamController<Object?>, List<Object?>)> _startServer() async {
   final requests = <Object?>[];
-  final commands = StreamController<Map<String, Object?>>();
+  final commands = StreamController<Object?>();
   final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
 
   unawaited(() async {
     await for (final request in server) {
       final socket = await WebSocketTransformer.upgrade(request);
-      commands.stream.listen((message) => socket.add(jsonEncode(message)));
+      commands.stream.listen((message) {
+        if (message is Map<String, Object?>) {
+          socket.add(jsonEncode(message));
+        } else {
+          socket.add(message);
+        }
+      });
       socket.listen(requests.add);
     }
   }());
@@ -50,13 +57,13 @@ void main() {
       commands
         ..add({'jsonrpc': '2.0', 'id': 1, 'result': 99})
         ..add({
-        'jsonrpc': '2.0',
-        'method': 'accountNotification',
-        'params': {
-          'subscription': 99,
-          'result': {'value': 'ok'},
-        },
-      });
+          'jsonrpc': '2.0',
+          'method': 'accountNotification',
+          'params': {
+            'subscription': 99,
+            'result': {'value': 'ok'},
+          },
+        });
 
       expect(await nextEvent, {'value': 'ok'});
     });
@@ -111,14 +118,7 @@ void main() {
       commands.add({'jsonrpc': '2.0', 'id': 1, 'result': 55});
       await Future<void>.delayed(const Duration(milliseconds: 50));
 
-      // send binary message directly via a second websocket access path
-      // by reusing the upgraded socket from server side through command stream isn't possible;
-      // instead verify that a malformed message doesn't emit any events.
-      commands.add({
-        'jsonrpc': '2.0',
-        'method': 'other',
-        'params': {'subscription': 999},
-      });
+      commands.add(Uint8List.fromList([1, 2, 3, 4]));
       await Future<void>.delayed(const Duration(milliseconds: 50));
 
       expect(emitted, isEmpty);
