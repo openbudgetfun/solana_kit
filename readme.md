@@ -25,21 +25,97 @@ Documentation website: https://openbudgetfun.github.io/solana_kit/
 
 ## Quick Start
 
+<!-- {=docsCreateRpcClientSection} -->
+
+## Create an RPC client
+
+Start with a typed RPC client. It gives you method-specific helpers instead of
+building raw JSON-RPC requests by hand.
+
 ```dart
 import 'package:solana_kit/solana_kit.dart';
 
-// Create an RPC client
-final rpc = createSolanaRpc(url: 'https://api.mainnet-beta.solana.com');
+final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
-// Generate a key pair
-final keyPair = await generateKeyPair();
+final slot = await rpc.getSlot().send();
+final latestBlockhash = await rpc.getLatestBlockhash().send();
 
-// Create and send a transaction
-final message = createTransactionMessage()
-  .pipe(setTransactionMessageFeePayer(keyPair.address))
-  .pipe(setTransactionMessageLifetimeUsingBlockhash(blockhash))
-  .pipe(appendTransactionMessageInstruction(instruction));
+print('Current slot: $slot');
+print('Latest blockhash: ${latestBlockhash.value.blockhash}');
 ```
+
+Use `solana_kit_rpc_subscriptions` alongside `solana_kit_rpc` when you also
+need websocket notifications for accounts, signatures, logs, or slots.
+
+<!-- {/docsCreateRpcClientSection} -->
+
+<!-- {=docsGenerateSignerSection} -->
+
+## Generate a signer
+
+Most app flows need a signer for fee payment, message signing, or transaction
+submission. `generateKeyPair()` creates a new Ed25519 key pair and returns a
+`KeyPairSigner`.
+
+```dart
+import 'package:solana_kit/solana_kit.dart';
+
+final signer = await generateKeyPair();
+
+print('Address: ${signer.address}');
+```
+
+Use key-pair signers for local development, testing, and server-side flows.
+For wallet-driven applications, you can also model fee-payer, partial, and
+sending signers explicitly with `solana_kit_signers`.
+
+<!-- {/docsGenerateSignerSection} -->
+
+<!-- {=docsBuildTransactionSection} -->
+
+## Build a transaction message
+
+Transaction messages are assembled incrementally. The most common pattern is:
+
+1. Create an empty message.
+2. Set the fee payer.
+3. Set a lifetime constraint using a recent blockhash.
+4. Append one or more instructions.
+
+```dart
+import 'dart:typed_data';
+
+import 'package:solana_kit/solana_kit.dart';
+
+final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
+final feePayer = await generateKeyPair();
+final latestBlockhash = await rpc.getLatestBlockhash().send();
+
+final instruction = Instruction(
+  programAddress: const Address('11111111111111111111111111111111'),
+  accounts: [
+    AccountMeta(address: feePayer.address, role: AccountRole.writableSigner),
+  ],
+  data: Uint8List(0),
+);
+
+final message = createTransactionMessage()
+    .pipe(setTransactionMessageFeePayer(feePayer.address))
+    .pipe(
+      setTransactionMessageLifetimeUsingBlockhash(
+        BlockhashLifetimeConstraint(
+          blockhash: latestBlockhash.value.blockhash,
+          lastValidBlockHeight: latestBlockhash.value.lastValidBlockHeight,
+        ),
+      ),
+    )
+    .pipe(appendTransactionMessageInstruction(instruction));
+```
+
+This separation keeps transaction construction explicit and makes it easier to
+reason about fee payment, expiry, and instruction ordering.
+
+<!-- {/docsBuildTransactionSection} -->
 
 <!-- {=typedRpcMethodsSection|replace:"__RPC_IMPORT_PATH__":"package:solana_kit/solana_kit.dart"|replace:"__RPC_URL__":"https://api.mainnet-beta.solana.com"} -->
 
@@ -68,50 +144,52 @@ These helpers forward to canonical params builders in `solana_kit_rpc_api` and r
 
 ### Setup
 
+<!-- {=docsWorkspaceSetupSection} -->
+
 ```bash
 # Clone the repository
 git clone https://github.com/openbudgetfun/solana_kit.git
 cd solana_kit
 
-# Allow direnv (loads devenv automatically)
+# Load devenv
 direnv allow
 
-# Install binary dependencies
+# Install binary tools and Dart dependencies
 install:all
-
-# Resolve Dart dependencies
 dart pub get
 
-# Clone reference repositories
+# Pull reference repositories used for compatibility checks
 clone:repos
 ```
 
+<!-- {/docsWorkspaceSetupSection} -->
+
 ### Development
 
+<!-- {=docsWorkspaceDevCommandsSection} -->
+
 ```bash
-# Run all lint checks
+# Lint, docs drift, formatting, and analysis checks
 lint:all
 
-# Run all tests
+# Run all package tests
 test:all
 
 # Generate merged test coverage across all packages
 test:coverage
 
-# Validate documentation templates and generated workspace docs
+# Validate markdown templates and generated docs
+# (also runs mdt doctor and workspace docs drift checks)
 docs:check
 
 # Regenerate documentation template consumers and workspace docs
 docs:update
 
-# Serve the Jaspr docs site locally
-docs:site:serve
+# Inspect mdt provider/consumer state and cache reuse
+mdt:info
 
-# Build static docs output (for GitHub Pages)
-docs:site:build
-
-# Run docs build + HTTP smoke checks
-docs:site:smoke
+# Run actionable mdt health checks
+mdt:doctor
 
 # Check tracked upstream compatibility metadata
 upstream:check
@@ -119,9 +197,11 @@ upstream:check
 # Run local benchmark scripts across benchmark-enabled packages
 bench:all
 
-# Fix formatting and lint issues
+# Fix formatting and lint issues where possible
 fix:all
 ```
+
+<!-- {/docsWorkspaceDevCommandsSection} -->
 
 The merged LCOV report is written to `coverage/lcov.info`.
 

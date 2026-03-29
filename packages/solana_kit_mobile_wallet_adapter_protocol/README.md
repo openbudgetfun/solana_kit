@@ -23,19 +23,39 @@ This package has **zero Flutter dependency** and can be used in server-side Dart
 - **JWS ES256** compact serialization for attestation
 - **Central error codes** integrated with `solana_kit_errors`
 
+<!-- {=packageInstallSection:"solana_kit_mobile_wallet_adapter_protocol"} -->
+
 ## Installation
+
+Install the package directly:
 
 ```bash
 dart pub add solana_kit_mobile_wallet_adapter_protocol
 ```
 
-If you're working inside the `solana_kit` monorepo, workspace resolution uses local packages automatically.
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+<!-- {/packageInstallSection} -->
+
+<!-- {=packageDocumentationSection:"solana_kit_mobile_wallet_adapter_protocol"} -->
 
 ## Documentation
 
 - Package page: https://pub.dev/packages/solana_kit_mobile_wallet_adapter_protocol
 - API reference: https://pub.dev/documentation/solana_kit_mobile_wallet_adapter_protocol/latest/
-- Guides website: https://openbudgetfun.github.io/solana_kit/
+- Workspace docs: https://openbudgetfun.github.io/solana_kit/
+- Package catalog entry: https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_mobile_wallet_adapter_protocol
+- Source code: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_mobile_wallet_adapter_protocol
+
+For architecture notes, getting-started guides, and cross-package examples, start with the workspace docs site and then drill down into the package README and API reference.
+
+<!-- {/packageDocumentationSection} -->
 
 ## Usage
 

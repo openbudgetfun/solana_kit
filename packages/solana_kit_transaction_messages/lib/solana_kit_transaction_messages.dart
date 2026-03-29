@@ -1,3 +1,9 @@
+/// Transaction message builders and transforms for the Solana Kit Dart SDK.
+///
+/// Use this library to assemble immutable transaction messages, configure
+/// lifetimes, append instructions, and compile or decompile message state.
+library;
+
 export 'src/addresses_by_lookup_table_address.dart';
 export 'src/blockhash.dart';
 export 'src/codecs/address_table_lookup_codec.dart';

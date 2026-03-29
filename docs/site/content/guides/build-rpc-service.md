@@ -1,17 +1,22 @@
 ---
 title: Build an RPC Service
-description: Step-by-step guide for creating a production-ready Solana RPC service layer.
+description: Create a reusable application service that owns Solana RPC access, policy, and error mapping.
 ---
 
-This guide builds a reusable service that isolates RPC concerns from UI/business logic.
+This guide shows a practical pattern for keeping raw RPC details out of your UI, controllers, or domain services.
 
-## Why This Pattern Matters
+## Why this pattern works
 
-- It keeps transport/retry policy in one place.
-- It makes testing easier by mocking one service boundary.
-- It prevents ad-hoc method calls spread across the app.
+A dedicated RPC service gives you one place to own:
 
-## Step 1: Create a Service Class
+- endpoint configuration
+- commitment defaults
+- transport policy
+- retries/timeouts
+- error mapping
+- request-specific helper methods
+
+## Step 1: wrap the RPC client
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -21,51 +26,91 @@ class SolanaRpcService {
 
   final Rpc _rpc;
 
-  Future<BigInt> getBalance(Address address) async {
+  Future<Slot> getSlot() {
+    return _rpc.getSlot().send();
+  }
+
+  Future<Lamports> getBalance(Address address) async {
     final result = await _rpc.getBalance(address).send();
     return result.value;
   }
 
-  Future<int> getSlot() => _rpc.getSlot().send();
+  Future<MaybeEncodedAccount> getAccount(Address address) {
+    return fetchEncodedAccount(_rpc, address);
+  }
 }
 ```
 
-Reason: this turns request construction into a single testable dependency.
+This already pays off because callers no longer need to know which RPC method to call or how the result is shaped.
 
-## Step 2: Add Error Mapping
+## Step 2: centralize error classification
 
 ```dart
-Future<T> withSolanaErrorHandling<T>(Future<T> Function() operation) async {
+Future<T> mapSolanaErrors<T>(Future<T> Function() operation) async {
   try {
     return await operation();
   } on SolanaError catch (error) {
-    // Map to your app-level error model here.
+    if (error.isInDomain(SolanaErrorDomain.rpc)) {
+      // Map to a transport/service-level error in your app.
+      rethrow;
+    }
     rethrow;
   }
 }
 ```
 
-Reason: typed error handling avoids brittle string matching.
+Then use that wrapper inside service methods if your application has its own domain error model.
 
-## Step 3: Centralize Configuration
+## Step 3: expose task-oriented methods
 
-- Keep endpoint URLs in one config object.
-- Optionally inject a custom transport from `solana_kit_rpc_transport_http`.
-- Define commitment defaults at service initialization.
+Your application usually cares about workflows, not raw JSON-RPC calls.
 
-Reason: consistency and easier environment switching.
+```dart
+class WalletOverviewService {
+  WalletOverviewService(this._rpcService);
 
-## Step 4: Add Health and Latency Probes
+  final SolanaRpcService _rpcService;
 
-- call `getSlot()` as a health probe.
-- measure timing around critical methods.
-- emit metrics with method labels.
+  Future<(Lamports, Slot)> loadOverview(Address address) async {
+    final balance = await _rpcService.getBalance(address);
+    final slot = await _rpcService.getSlot();
+    return (balance, slot);
+  }
+}
+```
 
-Reason: Solana RPC reliability is workload-dependent and should be observable.
+This keeps your app code focused on product behavior rather than transport mechanics.
 
-## Step 5: Integrate in App Layer
+## Step 4: move transport configuration to the edge
 
-- provide `SolanaRpcService` via dependency injection.
-- keep widgets/controllers free of raw RPC method construction.
+If you need a custom HTTP client or transport policy, configure it at service creation time.
 
-Reason: cleaner architecture and easier migration/testing.
+```dart
+import 'package:http/http.dart' as http;
+import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
+
+final transport = createHttpTransportForSolanaRpc(
+  url: 'https://api.devnet.solana.com',
+  client: http.Client(),
+  headers: {'x-service-name': 'wallet-api'},
+);
+```
+
+That makes it much easier to switch providers, add observability, or test against a custom transport.
+
+## Step 5: test at the service boundary
+
+A service wrapper is a much more useful unit to test than many ad hoc RPC calls spread throughout the app.
+
+Typical test cases:
+
+- returns a typed balance result
+- maps missing accounts to the expected app behavior
+- classifies RPC-domain failures correctly
+- applies the right commitment or endpoint policy
+
+## Related docs
+
+- [RPC and Subscriptions](../core/rpc-and-subscriptions)
+- [Errors and Diagnostics](../core/errors-and-diagnostics)
+- [Fetch an Account](../getting-started/fetch-an-account)

@@ -10,27 +10,39 @@ Core building blocks for generated Solana program clients in the Solana Kit Dart
 
 This package provides the foundational types and utilities used by generated program clients, including instruction types that track storage changes, self-fetch functions for decoder-based account retrieval, and instruction input resolution helpers.
 
+<!-- {=packageInstallSection:"solana_kit_program_client_core"} -->
+
 ## Installation
 
-Add `solana_kit_program_client_core` to your `pubspec.yaml`:
+Install the package directly:
 
-```yaml
-dependencies:
-  solana_kit_program_client_core:
+```bash
+dart pub add solana_kit_program_client_core
 ```
 
-Or, if you are using the umbrella package:
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
 
-```yaml
-dependencies:
-  solana_kit:
+```bash
+dart pub add solana_kit
 ```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+<!-- {/packageInstallSection} -->
+
+<!-- {=packageDocumentationSection:"solana_kit_program_client_core"} -->
 
 ## Documentation
 
 - Package page: https://pub.dev/packages/solana_kit_program_client_core
 - API reference: https://pub.dev/documentation/solana_kit_program_client_core/latest/
-- Guides website: https://openbudgetfun.github.io/solana_kit/
+- Workspace docs: https://openbudgetfun.github.io/solana_kit/
+- Package catalog entry: https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_program_client_core
+- Source code: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_program_client_core
+
+For architecture notes, getting-started guides, and cross-package examples, start with the workspace docs site and then drill down into the package README and API reference.
+
+<!-- {/packageDocumentationSection} -->
 
 ## Usage
 

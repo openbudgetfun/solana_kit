@@ -1,3 +1,9 @@
+/// Composite data-structure codecs for the Solana Kit Dart SDK.
+///
+/// Provides codecs for arrays, structs, tuples, unions, maps, sets, nullable
+/// values, booleans, and other higher-level binary layouts.
+library;
+
 export 'src/array.dart';
 export 'src/assertions.dart';
 export 'src/bit_array.dart';

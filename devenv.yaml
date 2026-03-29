@@ -7,6 +7,9 @@ inputs:
         follows: nixpkgs
   ifiokjr-nixpkgs:
     url: github:ifiokjr/nixpkgs
+    inputs:
+      nixpkgs:
+        follows: nixpkgs
   nixpkgs:
     url: github:NixOS/nixpkgs/nixpkgs-unstable
 allowUnfree: true

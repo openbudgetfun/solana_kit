@@ -19,58 +19,39 @@ This is the umbrella package that re-exports all 35 public packages in the SDK, 
 
 <!-- {/upstreamSupportSection} -->
 
+<!-- {=packageInstallSection:"solana_kit"} -->
+
 ## Installation
 
-Add `solana_kit` to your `pubspec.yaml`:
+Install the package directly:
 
-```yaml
-dependencies:
-  solana_kit:
+```bash
+dart pub add solana_kit
 ```
 
-Then import everything with a single line:
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
 
-```dart
-import 'package:solana_kit/solana_kit.dart';
+```bash
+dart pub add solana_kit
 ```
 
-## Quick start
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
 
-```dart
-import 'package:solana_kit/solana_kit.dart';
+<!-- {/packageInstallSection} -->
 
-Future<void> main() async {
-  // 1. Create an RPC client.
-  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
-
-  // 2. Generate a new Ed25519 key pair.
-  final keyPair = await generateKeyPair();
-  final signer = await createKeyPairSignerFromKeyPair(keyPair);
-  print('Address: ${signer.address}');
-
-  // 3. Check the balance.
-  final balanceResponse = await rpc.getBalance(
-    signer.address,
-    const GetBalanceConfig(commitment: Commitment.confirmed),
-  ).send();
-  print('Balance: $balanceResponse');
-
-  // 4. Fetch an account.
-  final account = await fetchEncodedAccount(
-    rpc,
-    const Address('11111111111111111111111111111111'),
-  );
-  if (account.exists) {
-    print('System program account exists');
-  }
-}
-```
+<!-- {=packageDocumentationSection:"solana_kit"} -->
 
 ## Documentation
 
 - Package page: https://pub.dev/packages/solana_kit
 - API reference: https://pub.dev/documentation/solana_kit/latest/
-- Guides website: https://openbudgetfun.github.io/solana_kit/
+- Workspace docs: https://openbudgetfun.github.io/solana_kit/
+- Package catalog entry: https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit
+- Source code: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit
+
+For architecture notes, getting-started guides, and cross-package examples, start with the workspace docs site and then drill down into the package README and API reference.
+
+<!-- {/packageDocumentationSection} -->
 
 ## Usage
 

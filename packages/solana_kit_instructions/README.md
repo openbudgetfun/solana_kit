@@ -10,25 +10,39 @@ Types and helpers for creating Solana transaction instructions.
 
 This is the Dart port of [`@solana/instructions`](https://github.com/anza-xyz/kit/tree/main/packages/instructions) from the Solana TypeScript SDK.
 
+<!-- {=packageInstallSection:"solana_kit_instructions"} -->
+
 ## Installation
 
-```yaml
-dependencies:
-  solana_kit_instructions:
+Install the package directly:
+
+```bash
+dart pub add solana_kit_instructions
 ```
 
-Since this package is part of the `solana_kit` workspace, you can also use the umbrella package:
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
 
-```yaml
-dependencies:
-  solana_kit:
+```bash
+dart pub add solana_kit
 ```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+<!-- {/packageInstallSection} -->
+
+<!-- {=packageDocumentationSection:"solana_kit_instructions"} -->
 
 ## Documentation
 
 - Package page: https://pub.dev/packages/solana_kit_instructions
 - API reference: https://pub.dev/documentation/solana_kit_instructions/latest/
-- Guides website: https://openbudgetfun.github.io/solana_kit/
+- Workspace docs: https://openbudgetfun.github.io/solana_kit/
+- Package catalog entry: https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_instructions
+- Source code: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_instructions
+
+For architecture notes, getting-started guides, and cross-package examples, start with the workspace docs site and then drill down into the package README and API reference.
+
+<!-- {/packageDocumentationSection} -->
 
 ## Usage
 

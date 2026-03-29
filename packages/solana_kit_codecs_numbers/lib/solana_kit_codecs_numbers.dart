@@ -1,3 +1,9 @@
+/// Numeric codecs for the Solana Kit Dart SDK.
+///
+/// Includes little-endian integer and floating-point codecs commonly used in
+/// Solana instruction data and account layouts.
+library;
+
 export 'src/assertions.dart';
 export 'src/common.dart';
 export 'src/f32.dart';

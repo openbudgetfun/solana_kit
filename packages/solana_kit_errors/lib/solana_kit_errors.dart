@@ -1,3 +1,9 @@
+/// Structured error types and error-code utilities for the Solana Kit Dart SDK.
+///
+/// Exports `SolanaError`, numeric error codes, error domains, message
+/// formatting helpers, and Solana runtime/RPC error conversion utilities.
+library;
+
 export 'src/codes.dart';
 export 'src/context.dart';
 export 'src/error.dart';

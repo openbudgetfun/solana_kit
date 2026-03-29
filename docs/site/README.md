@@ -2,11 +2,14 @@
 
 Jaspr Content documentation site for the Solana Kit workspace.
 
+The site reuses shared Markdown template blocks via `mdt`, so run `docs:update` from the repository root whenever you change shared docs snippets.
+
 ## Run Locally
 
 From the repository root:
 
 ```bash
+docs:update
 docs:site:serve
 ```
 

@@ -1,3 +1,9 @@
+/// Core codec interfaces and composition helpers for the Solana Kit Dart SDK.
+///
+/// Use this library when you need foundational `Encoder`, `Decoder`, and
+/// `Codec` abstractions plus size, padding, transform, and sentinel helpers.
+library;
+
 export 'src/add_codec_sentinel.dart';
 export 'src/add_codec_size_prefix.dart';
 export 'src/assertions.dart';

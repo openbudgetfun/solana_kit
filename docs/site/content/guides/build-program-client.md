@@ -1,53 +1,110 @@
 ---
 title: Build a Program Client
-description: Step-by-step guide for creating a typed Solana program client in Dart.
+description: Combine codecs, instructions, and account decoding into a reusable typed client for a Solana program.
 ---
 
-Typed program clients reduce repeated boilerplate and make on-chain interactions safer.
+A program client packages three things together:
 
-## Why Program Clients Matter
+1. **instruction builders**
+2. **account decoders**
+3. **task-oriented helper methods**
 
-- instruction payloads become typed inputs.
-- account parsing becomes centralized and reusable.
-- teams avoid duplicating protocol assumptions.
+That gives the rest of your app one coherent boundary for interacting with a program.
 
-## Step 1: Define Domain Types
+## Step 1: define the instruction layout
 
-- model instruction inputs.
-- model decoded account state.
+```dart
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
-Reason: typed models provide compile-time guarantees.
+final incrementInstructionCodec = getStructCodec({
+  'discriminator': getU8Codec(),
+  'amount': getU64Codec(),
+});
+```
 
-## Step 2: Build Codecs for Program Data
+## Step 2: create an instruction builder
 
-- use `solana_kit_codecs_core` and `solana_kit_codecs_data_structures`.
-- encode instruction data and decode account state.
+```dart
+import 'package:solana_kit/solana_kit.dart';
 
-Reason: on-chain bytes must round-trip predictably.
+Instruction buildIncrementInstruction({
+  required Address programAddress,
+  required Address counterAddress,
+  required Address authority,
+  required BigInt amount,
+}) {
+  return Instruction(
+    programAddress: programAddress,
+    accounts: [
+      AccountMeta(address: counterAddress, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    ],
+    data: incrementInstructionCodec.encode({
+      'discriminator': 1,
+      'amount': amount,
+    }),
+  );
+}
+```
 
-## Step 3: Build Instruction Factories
+## Step 3: create an account decoder
 
-- use `solana_kit_instructions` types.
-- return typed instruction builders.
+```dart
+final counterAccountCodec = getStructCodec({
+  'count': getU64Codec(),
+});
+```
 
-Reason: keep account-role correctness in one place.
+Then decode fetched bytes:
 
-## Step 4: Add Account Fetch Helpers
+```dart
+final decoded = counterAccountCodec.decode(encodedAccount.data);
+print(decoded['count']);
+```
 
-- leverage `solana_kit_accounts` for typed fetch/decode wrappers.
-- add convenience helpers for key account types.
+## Step 4: wrap it in a client boundary
 
-Reason: data access consistency prevents decoder drift.
+```dart
+class CounterProgramClient {
+  const CounterProgramClient({required this.rpc, required this.programAddress});
 
-## Step 5: Add Error Mapping
+  final Rpc rpc;
+  final Address programAddress;
 
-- map `ProgramError` and `SolanaError` to domain-level app errors.
+  Future<MaybeEncodedAccount> fetchCounter(Address counterAddress) {
+    return fetchEncodedAccount(rpc, counterAddress);
+  }
 
-Reason: protocol errors should remain actionable at product boundaries.
+  Instruction buildIncrement({
+    required Address counterAddress,
+    required Address authority,
+    required BigInt amount,
+  }) {
+    return buildIncrementInstruction(
+      programAddress: programAddress,
+      counterAddress: counterAddress,
+      authority: authority,
+      amount: amount,
+    );
+  }
+}
+```
 
-## Step 6: Package and Reuse
+At this point, the rest of your app can depend on `CounterProgramClient` instead of knowing the raw layout and account-role details.
 
-- publish as an internal package or module.
-- expose a narrow public API.
+## Step 5: add higher-level workflows
 
-Reason: program upgrades then require changes in one location.
+Once the client owns the instruction and decode rules, you can add methods like:
+
+- `fetchAndDecodeCounter(...)`
+- `buildIncrementMessage(...)`
+- `submitIncrement(...)`
+
+Those methods are usually more stable and more meaningful to application code than the raw Solana details underneath.
+
+## Related docs
+
+- [Codecs](../core/codecs)
+- [Accounts](../core/accounts)
+- [Create Instructions](../getting-started/create-instructions)
