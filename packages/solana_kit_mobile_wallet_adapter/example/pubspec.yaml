@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   solana_kit_mobile_wallet_adapter:
     path: ../
-  solana_kit_mobile_wallet_adapter_protocol: ^0.2.0
+  solana_kit_mobile_wallet_adapter_protocol: ^0.3.0
 
 dev_dependencies:
   flutter_test:

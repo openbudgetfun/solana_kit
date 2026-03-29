@@ -27,30 +27,48 @@ flutter create \
 
 pushd "$TMP_APP" >/dev/null
 
-echo "Adding local plugin dependency from $PLUGIN_PATH"
-dart pub add solana_kit_mobile_wallet_adapter --path "$PLUGIN_PATH" >/dev/null
+echo "Adding local plugin dependency and workspace overrides"
+ROOT_DIR="$ROOT_DIR" PLUGIN_PATH="$PLUGIN_PATH" python3 <<'PY'
+from pathlib import Path
+import os
 
-echo "Adding local overrides for workspace solana_kit_* dependencies"
-{
-  echo
-  echo "dependency_overrides:"
-  while IFS= read -r package_pubspec; do
-    package_name="$(awk '/^name:[[:space:]]*/ { print $2; exit }' "$package_pubspec")"
-    if [[ "$package_name" == solana_kit_* ]]; then
-      package_dir="$(dirname "$package_pubspec")"
-      echo "  $package_name:"
-      echo "    path: $package_dir"
-    fi
-  done < <(find "$ROOT_DIR/packages" -mindepth 2 -maxdepth 2 -name pubspec.yaml | sort)
-} >> pubspec.yaml
+root_dir = Path(os.environ['ROOT_DIR'])
+plugin_path = Path(os.environ['PLUGIN_PATH'])
+pubspec_path = Path('pubspec.yaml')
 
-dartsdk_path="$(command -v dart || true)"
-if [[ -z "$dartsdk_path" ]]; then
-  echo "dart executable not found in PATH" >&2
-  exit 1
-fi
+entries = []
+for package_pubspec in sorted((root_dir / 'packages').glob('*/pubspec.yaml')):
+    name = None
+    for line in package_pubspec.read_text().splitlines():
+        if line.startswith('name:'):
+            name = line.split(':', 1)[1].strip()
+            break
+    if name and name.startswith('solana_kit_'):
+        entries.append((name, package_pubspec.parent))
 
-"$dartsdk_path" pub get >/dev/null
+lines = pubspec_path.read_text().splitlines()
+out = []
+inserted_dependency = False
+for index, line in enumerate(lines):
+    out.append(line)
+    if line.strip() == 'dependencies:' and not inserted_dependency:
+        out.append('  solana_kit_mobile_wallet_adapter:')
+        out.append(f'    path: {plugin_path}')
+        inserted_dependency = True
+
+if not inserted_dependency:
+    raise SystemExit('Could not find dependencies section in generated pubspec.yaml')
+
+out.append('')
+out.append('dependency_overrides:')
+for name, package_dir in entries:
+    out.append(f'  {name}:')
+    out.append(f'    path: {package_dir}')
+
+pubspec_path.write_text('\n'.join(out) + '\n')
+PY
+
+flutter pub get >/dev/null
 
 cat > lib/main.dart <<'DART'
 import 'package:flutter/material.dart';
