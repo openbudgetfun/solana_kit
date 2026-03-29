@@ -1,3 +1,9 @@
+/// Shared Solana RPC type models for the Solana Kit Dart SDK.
+///
+/// Exports common response, parameter, and value types used across account,
+/// block, balance, transaction, and commitment-oriented RPC flows.
+library;
+
 export 'src/account_filter.dart';
 export 'src/account_info.dart';
 export 'src/blockhash.dart';

@@ -257,24 +257,44 @@ in
       description = "Check packages sync.";
       binary = "bash";
     };
+    "mdt:info" = {
+      exec = ''
+        set -e
+        mkdir -p .mdt/cache
+        mdt info
+      '';
+      description = "Inspect discovered mdt providers/consumers and cache reuse telemetry.";
+      binary = "bash";
+    };
+    "mdt:doctor" = {
+      exec = ''
+        set -e
+        mkdir -p .mdt/cache
+        mdt doctor --format text
+      '';
+      description = "Run mdt health checks with actionable remediation hints.";
+      binary = "bash";
+    };
     "docs:check" = {
       exec = ''
         set -e
         mkdir -p .mdt/cache
-        mdt check
+        mdt check --verbose
+        mdt doctor --format text
         scripts/workspace-doc-drift.sh --check
       '';
-      description = "Check documentation consistency with mdt and workspace metadata.";
+      description = "Check documentation consistency with mdt, workspace metadata, and source comment consumers.";
       binary = "bash";
     };
     "docs:update" = {
       exec = ''
         set -e
         mkdir -p .mdt/cache
-        mdt update
+        mdt update --verbose
         scripts/workspace-doc-drift.sh --write
+        mdt info
       '';
-      description = "Update generated documentation blocks across the workspace.";
+      description = "Update generated documentation blocks across the workspace and print mdt diagnostics.";
       binary = "bash";
     };
     "docs:site:serve" = {

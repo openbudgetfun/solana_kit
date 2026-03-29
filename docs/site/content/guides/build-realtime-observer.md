@@ -1,48 +1,88 @@
 ---
 title: Build a Realtime Observer
-description: Step-by-step guide for account/log subscriptions and stream fanout.
+description: Turn Solana websocket notifications into a reusable observer layer for your app or service.
 ---
 
-Realtime dApps depend on reliable subscription pipelines.
+Realtime apps often need a thin layer between raw websocket subscriptions and the rest of the application.
 
-## Why a Dedicated Observer Layer
+That observer layer should own:
 
-- websocket lifecycle handling is non-trivial.
-- reconnection/fanout behavior should be centralized.
-- UI components should consume clean streams, not sockets.
+- websocket connection setup
+- subscription registration
+- cancellation
+- stream fanout
+- reconnect/replay policy
 
-## Step 1: Initialize Subscription Client
+## Step 1: create a subscription client
 
-- create client with `solana_kit_rpc_subscriptions`.
-- configure channel transport from websocket package.
+```dart
+import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
 
-Reason: keep transport details out of feature modules.
+final subscriptions = createSolanaRpcSubscriptions(
+  'wss://api.devnet.solana.com',
+);
+```
 
-## Step 2: Register Typed Subscriptions
+## Step 2: register a typed subscription request
 
-- account notifications
-- slot notifications
-- logs notifications
+```dart
+import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
+import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 
-Reason: typed methods prevent payload mismatch bugs.
+final controller = AbortController();
+final pending = subscriptions.request('slotNotifications');
 
-## Step 3: Convert to Stream Abstractions
+final stream = await pending.subscribe(
+  RpcSubscribeOptions(abortSignal: controller.signal),
+);
+```
 
-- use `solana_kit_subscribable` adapters.
-- expose stream interfaces to application consumers.
+## Step 3: adapt that stream to your own observer interface
 
-Reason: stream contracts decouple UI from transport protocol.
+```dart
+class SlotObserver {
+  SlotObserver(this._subscriptions);
 
-## Step 4: Add Backpressure Strategy
+  final RpcSubscriptions _subscriptions;
 
-- debounce noisy update types.
-- batch updates where downstream permits.
+  Stream<Object?> watchSlots() async* {
+    final controller = AbortController();
+    final pending = _subscriptions.request('slotNotifications');
+    final stream = await pending.subscribe(
+      RpcSubscribeOptions(abortSignal: controller.signal),
+    );
 
-Reason: high-frequency Solana events can overwhelm app state layers.
+    yield* stream;
+  }
+}
+```
 
-## Step 5: Reconnect and Replay
+In a production app, you would usually hold onto the abort controller so your service can cancel the subscription on shutdown or when the last listener disconnects.
 
-- reconnect with jittered backoff.
-- re-register subscriptions after reconnect.
+## Step 4: subscribe to account or logs updates
 
-Reason: websocket sessions can drop under network/provider churn.
+The same pattern works for account or logs subscriptions; only the notification name and params differ.
+
+```dart
+final pending = subscriptions.request('accountNotifications', [
+  '11111111111111111111111111111111',
+  {'encoding': 'base64', 'commitment': 'confirmed'},
+]);
+```
+
+## Step 5: make reconnect policy explicit
+
+Transport disruptions are normal. Decide up front how your observer should behave when the socket drops:
+
+- reconnect immediately or with backoff?
+- replay active subscriptions automatically?
+- publish a disconnected state to downstream consumers?
+- buffer, debounce, or drop noisy updates?
+
+Keeping this logic in one observer layer prevents UI code from learning socket lifecycle rules.
+
+## Related docs
+
+- [RPC and Subscriptions](../core/rpc-and-subscriptions)
+- [Build an RPC Service](build-rpc-service)
+- [Package Catalog](../reference/package-catalog)

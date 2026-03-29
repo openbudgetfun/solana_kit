@@ -1,3 +1,9 @@
+/// Signer interfaces and signing helpers for the Solana Kit Dart SDK.
+///
+/// Models key-pair, fee-payer, partial, modifying, and sending signers for
+/// message and transaction authorization flows.
+library;
+
 export 'src/account_signer_meta.dart';
 export 'src/add_signers.dart';
 export 'src/deduplicate_signers.dart';

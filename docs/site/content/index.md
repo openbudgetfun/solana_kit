@@ -1,9 +1,9 @@
 ---
 title: Solana Kit for Dart
-description: Comprehensive documentation for the Solana Kit Dart workspace.
+description: Comprehensive, example-driven documentation for the Solana Kit Dart workspace.
 ---
 
-A Dart-first Solana SDK workspace modeled after `@solana/kit`, with strongly typed APIs for addresses, instructions, transactions, RPC, subscriptions, and Mobile Wallet Adapter integrations.
+A Dart-first Solana SDK workspace modeled after `@solana/kit`, with strongly typed APIs for addresses, instructions, transactions, RPC, subscriptions, account decoding, and Mobile Wallet Adapter integrations.
 
 <!-- {=docsUpstreamCompatibilitySection} -->
 
@@ -14,24 +14,66 @@ A Dart-first Solana SDK workspace modeled after `@solana/kit`, with strongly typ
 
 <!-- {/docsUpstreamCompatibilitySection} -->
 
-## What You Can Build
+## What makes Solana Kit different?
 
-- Wallet-enabled dApps using typed transaction builders.
-- Program clients that decode account data with explicit codecs.
-- RPC and websocket workflows with strongly typed request/response models.
-- Flutter Android integrations through the Mobile Wallet Adapter package.
+- **Typed end to end** — addresses, RPC requests, subscriptions, transactions, and account models are all expressed with explicit Dart types.
+- **Modular by default** — import the umbrella package for convenience, or pull in only the packages you need.
+- **Composable primitives** — build transaction messages, codecs, program clients, and confirmation strategies from smaller reusable pieces.
+- **Dart-native ergonomics** — modern Dart 3 features like records, patterns, extension types, and sealed classes are used throughout the workspace.
+- **Upstream-aware** — the repo tracks `@solana/kit` compatibility and documents sync status explicitly.
+
+## Start here
+
+If you're new to the workspace, follow this path:
+
+1. [Installation](getting-started/installation)
+2. [Quick Start](getting-started/quick-start)
+3. [Generate a Signer](getting-started/generate-a-signer)
+4. [Fetch an Account](getting-started/fetch-an-account)
+5. [First Transaction](getting-started/first-transaction)
+6. [Transactions](core/transactions)
+7. [RPC and Subscriptions](core/rpc-and-subscriptions)
+
+## Common workflows
+
+### Read chain state
+
+- [Fetch an Account](getting-started/fetch-an-account)
+- [Accounts](core/accounts)
+- [RPC and Subscriptions](core/rpc-and-subscriptions)
+
+### Build and submit transactions
+
+- [Create Instructions](getting-started/create-instructions)
+- [Build a Transaction](getting-started/build-a-transaction)
+- [First Transaction](getting-started/first-transaction)
+- [Transactions](core/transactions)
+- [Signers](core/signers)
+
+### Work with binary layouts and account schemas
+
+- [Codecs](core/codecs)
+- [Build a Program Client](guides/build-program-client)
+
+### Build production integrations
+
+- [Build an RPC Service](guides/build-rpc-service)
+- [Build a Realtime Observer](guides/build-realtime-observer)
+- [Mobile Wallet Adapter](guides/mobile-wallet-adapter)
+- [Helius package](https://pub.dev/packages/solana_kit_helius)
 
 <Info>
-Use the header toggle button to switch between light and dark themes while reading the docs.
+Use the package catalog when you want to know which package to import. Use the core concept pages when you want to understand how the pieces fit together.
 </Info>
 
-## Read Next
+## Package map
 
-- [Installation](getting-started/installation)
-- [Quick Start](getting-started/quick-start)
-- [Build an RPC Service](guides/build-rpc-service)
-- [Build a Token Transfer Flow](guides/build-token-transfer-flow)
-- [Build a Program Client](guides/build-program-client)
-- [Build a Realtime Observer](guides/build-realtime-observer)
+- [Package Index](reference/package-index)
 - [Complete Package Catalog](reference/package-catalog)
+- [Upstream Compatibility](reference/upstream-compatibility)
+
+## Contributor resources
+
 - [Contributing](contributing)
+- [Release Process](guides/release-process)
+- [Benchmarking](guides/benchmarking)

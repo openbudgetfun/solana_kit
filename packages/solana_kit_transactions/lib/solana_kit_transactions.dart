@@ -1,3 +1,9 @@
+/// Signed transaction primitives and wire-format helpers for the Solana Kit Dart SDK.
+///
+/// Exports transaction models, signature collections, compile helpers, and
+/// serialization utilities for sending Solana transactions.
+library;
+
 export 'src/codecs/signatures_encoder.dart';
 export 'src/codecs/transaction_codec.dart';
 export 'src/compile_transaction.dart';

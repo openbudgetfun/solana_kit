@@ -10,17 +10,19 @@ Solana Kit is a multi-package Dart workspace that ports `@solana/kit` and relate
 
 Common workspace commands:
 
-| Command           | Purpose                                                                      |
-| ----------------- | ---------------------------------------------------------------------------- |
-| `install:all`     | Install workspace tooling and Dart dependencies.                             |
-| `fix:all`         | Apply sync, docs, formatting, and lint fixes.                                |
-| `lint:all`        | Run workspace sync, docs, formatting, Kotlin lint, and Dart analysis checks. |
-| `test:all`        | Run all workspace tests.                                                     |
-| `test:coverage`   | Generate merged LCOV coverage.                                               |
-| `docs:check`      | Validate generated docs blocks and workspace metadata.                       |
-| `docs:update`     | Refresh generated docs blocks.                                               |
-| `docs:site:smoke` | Build and smoke test the docs site.                                          |
-| `upstream:check`  | Validate tracked upstream compatibility metadata.                            |
+| Command           | Purpose                                                                           |
+| ----------------- | --------------------------------------------------------------------------------- |
+| `install:all`     | Install workspace tooling and Dart dependencies.                                  |
+| `fix:all`         | Apply sync, docs, formatting, and lint fixes.                                     |
+| `lint:all`        | Run workspace sync, docs, formatting, Kotlin lint, and Dart analysis checks.      |
+| `test:all`        | Run all workspace tests.                                                          |
+| `test:coverage`   | Generate merged LCOV coverage.                                                    |
+| `docs:check`      | Validate generated docs blocks, source comment consumers, and workspace metadata. |
+| `docs:update`     | Refresh generated docs blocks and print mdt diagnostics.                          |
+| `mdt:info`        | Inspect mdt providers/consumers and cache reuse telemetry.                        |
+| `mdt:doctor`      | Run actionable mdt health checks.                                                 |
+| `docs:site:smoke` | Build and smoke test the docs site.                                               |
+| `upstream:check`  | Validate tracked upstream compatibility metadata.                                 |
 
 ## Global rules
 

@@ -10,20 +10,39 @@ Codecs for encoding and decoding composite data structures -- structs, arrays, t
 
 This is a Dart port of [`@solana/codecs-data-structures`](https://github.com/anza-xyz/kit/tree/main/packages/codecs-data-structures) from the Solana TypeScript SDK.
 
+<!-- {=packageInstallSection:"solana_kit_codecs_data_structures"} -->
+
 ## Installation
 
-```yaml
-dependencies:
-  solana_kit_codecs_data_structures:
+Install the package directly:
+
+```bash
+dart pub add solana_kit_codecs_data_structures
 ```
 
-Since this package is part of the `solana_kit` Dart workspace, it is resolved automatically. For standalone use, point to the repository or use a path dependency.
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+<!-- {/packageInstallSection} -->
+
+<!-- {=packageDocumentationSection:"solana_kit_codecs_data_structures"} -->
 
 ## Documentation
 
 - Package page: https://pub.dev/packages/solana_kit_codecs_data_structures
 - API reference: https://pub.dev/documentation/solana_kit_codecs_data_structures/latest/
-- Guides website: https://openbudgetfun.github.io/solana_kit/
+- Workspace docs: https://openbudgetfun.github.io/solana_kit/
+- Package catalog entry: https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_codecs_data_structures
+- Source code: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_codecs_data_structures
+
+For architecture notes, getting-started guides, and cross-package examples, start with the workspace docs site and then drill down into the package README and API reference.
+
+<!-- {/packageDocumentationSection} -->
 
 ## Usage
 

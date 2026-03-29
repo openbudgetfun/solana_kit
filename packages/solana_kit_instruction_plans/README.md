@@ -10,40 +10,39 @@ Plan, organize, and execute complex multi-instruction and multi-transaction oper
 
 This is the Dart port of [`@solana/instruction-plans`](https://github.com/anza-xyz/kit/tree/main/packages/instruction-plans) from the Solana TypeScript SDK.
 
+<!-- {=packageInstallSection:"solana_kit_instruction_plans"} -->
+
 ## Installation
 
-```yaml
-dependencies:
-  solana_kit_instruction_plans:
+Install the package directly:
+
+```bash
+dart pub add solana_kit_instruction_plans
 ```
 
-Since this package is part of the `solana_kit` workspace, you can also use the umbrella package:
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
 
-```yaml
-dependencies:
-  solana_kit:
+```bash
+dart pub add solana_kit
 ```
 
-## Overview
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
 
-Instruction plans describe operations that may go beyond a single instruction and can span multiple transactions. They define a tree of instructions with constraints on execution order:
+<!-- {/packageInstallSection} -->
 
-- **Sequential** -- Instructions that must run in order.
-- **Parallel** -- Instructions that can run concurrently.
-- **Single** -- A leaf node wrapping one instruction.
-- **MessagePacker** -- A dynamic node that packs instructions into transaction messages to fill available space.
-
-The workflow has three stages:
-
-1. **Instruction Plan** -- Describe what needs to happen.
-2. **Transaction Planner** -- Convert instruction plans into transaction plans (decides how instructions are grouped into transactions).
-3. **Transaction Plan Executor** -- Compile, sign, send, and report results.
+<!-- {=packageDocumentationSection:"solana_kit_instruction_plans"} -->
 
 ## Documentation
 
 - Package page: https://pub.dev/packages/solana_kit_instruction_plans
 - API reference: https://pub.dev/documentation/solana_kit_instruction_plans/latest/
-- Guides website: https://openbudgetfun.github.io/solana_kit/
+- Workspace docs: https://openbudgetfun.github.io/solana_kit/
+- Package catalog entry: https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_instruction_plans
+- Source code: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_instruction_plans
+
+For architecture notes, getting-started guides, and cross-package examples, start with the workspace docs site and then drill down into the package README and API reference.
+
+<!-- {/packageDocumentationSection} -->
 
 ## Usage
 

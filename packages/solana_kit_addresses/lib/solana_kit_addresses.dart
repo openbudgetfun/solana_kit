@@ -1,3 +1,9 @@
+/// Solana address primitives for the Solana Kit Dart SDK.
+///
+/// Provides strongly typed addresses, validation helpers, base58 codecs, and
+/// program-derived address utilities.
+library;
+
 export 'src/address.dart';
 export 'src/address_codec.dart';
 export 'src/address_comparator.dart';
