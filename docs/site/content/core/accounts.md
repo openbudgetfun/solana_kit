@@ -65,10 +65,38 @@ Helpers:
 
 ## Typical decode flow
 
+<!-- {=docsDecodeAccountSection} -->
+
+## Decode a fetched account
+
+Keep transport and binary-layout logic separate: fetch the encoded account
+first, then decode it with the codec or decoder that matches your program.
+
 ```dart
-final maybeEncoded = await fetchEncodedAccount(rpc, address);
-final maybeDecoded = decodeMaybeAccount(maybeEncoded, myDecoder);
+import 'package:solana_kit/solana_kit.dart';
+import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
+
+Future<void> loadDecodedAccount(
+  Rpc rpc,
+  Address address,
+  Decoder<int> decoder,
+) async {
+  final maybeEncoded = await fetchEncodedAccount(rpc, address);
+  final maybeDecoded = decodeMaybeAccount(maybeEncoded, decoder);
+
+  switch (maybeDecoded) {
+    case ExistingAccount<int>(:final account):
+      print('Decoded value: ${account.data}');
+    case NonExistingAccount():
+      print('Account not found: $address');
+  }
+}
 ```
+
+This boundary keeps RPC concerns, existence handling, and binary decoding easy
+to test independently.
+
+<!-- {/docsDecodeAccountSection} -->
 
 This split is intentional:
 

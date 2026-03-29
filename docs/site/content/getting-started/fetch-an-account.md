@@ -22,22 +22,26 @@ import 'dart:typed_data';
 
 import 'package:solana_kit/solana_kit.dart';
 
-final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
-const address = Address('11111111111111111111111111111111');
+Future<void> main() async {
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
+  const address = Address('11111111111111111111111111111111');
 
-final maybeAccount = await fetchEncodedAccount(rpc, address);
+  final maybeAccount = await fetchEncodedAccount(rpc, address);
 
-switch (maybeAccount) {
-  case ExistingAccount<Uint8List>(:final account):
-    print('Owner: ${account.programAddress}');
-    print('Bytes: ${account.data.length}');
-  case NonExistingAccount():
-    print('No account exists at $address');
+  switch (maybeAccount) {
+    case ExistingAccount<Uint8List>(:final account):
+      print('Owner: ${account.programAddress}');
+      print('Bytes: ${account.data.length}');
+    case NonExistingAccount():
+      print('No account exists at $address');
+  }
 }
 ```
 
 Use `fetchJsonParsedAccount` when the RPC can return a structured
-`jsonParsed` representation for a well-known program.
+`jsonParsed` representation for a well-known program. Use encoded reads when
+you need byte-perfect custom decoding or when the RPC does not expose a parsed
+view for your program.
 
 <!-- {/docsFetchAccountSection} -->
 
@@ -59,13 +63,38 @@ Batch reads are especially useful when building dashboards, indexer workers, and
 
 ## Decode after fetching
 
-For custom programs, fetch encoded bytes first and then decode them with a codec or decoder:
+<!-- {=docsDecodeAccountSection} -->
+
+## Decode a fetched account
+
+Keep transport and binary-layout logic separate: fetch the encoded account
+first, then decode it with the codec or decoder that matches your program.
 
 ```dart
-final decodedAccount = decodeAccount(myEncodedAccount, myDecoder);
+import 'package:solana_kit/solana_kit.dart';
+import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
+
+Future<void> loadDecodedAccount(
+  Rpc rpc,
+  Address address,
+  Decoder<int> decoder,
+) async {
+  final maybeEncoded = await fetchEncodedAccount(rpc, address);
+  final maybeDecoded = decodeMaybeAccount(maybeEncoded, decoder);
+
+  switch (maybeDecoded) {
+    case ExistingAccount<int>(:final account):
+      print('Decoded value: ${account.data}');
+    case NonExistingAccount():
+      print('Account not found: $address');
+  }
+}
 ```
 
-This keeps transport concerns and binary-layout concerns separate.
+This boundary keeps RPC concerns, existence handling, and binary decoding easy
+to test independently.
+
+<!-- {/docsDecodeAccountSection} -->
 
 ## When to use jsonParsed
 

@@ -2,6 +2,60 @@
 ///
 /// Use this library to assemble immutable transaction messages, configure
 /// lifetimes, append instructions, and compile or decompile message state.
+///
+/// <!-- {=docsBuildTransactionSection} -->
+///
+/// ## Build a transaction message
+///
+/// Transaction messages are assembled incrementally. The most common pattern is:
+///
+/// 1. Create an empty message.
+/// 2. Set the fee payer.
+/// 3. Set a lifetime constraint using a recent blockhash.
+/// 4. Append one or more instructions.
+///
+/// ```dart
+/// import 'dart:typed_data';
+///
+/// import 'package:solana_kit/solana_kit.dart';
+///
+/// Future<void> main() async {
+///   final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
+///   final feePayer = generateKeyPairSigner();
+///   final latestBlockhash = await rpc.getLatestBlockhash().send();
+///
+///   final instruction = Instruction(
+///     programAddress: const Address('11111111111111111111111111111111'),
+///     accounts: [
+///       AccountMeta(
+///         address: feePayer.address,
+///         role: AccountRole.writableSigner,
+///       ),
+///     ],
+///     data: Uint8List(0),
+///   );
+///
+///   final message = createTransactionMessage(version: TransactionVersion.v0)
+///       .withFeePayer(feePayer.address)
+///       .withBlockhashLifetime(
+///         BlockhashLifetimeConstraint(
+///           blockhash: latestBlockhash['blockhash']! as String,
+///           lastValidBlockHeight:
+///               latestBlockhash['lastValidBlockHeight']! as BigInt,
+///         ),
+///       )
+///       .appendInstruction(instruction);
+///
+///   print(message);
+/// }
+/// ```
+///
+/// This separation keeps transaction construction explicit and makes it easier to
+/// reason about fee payment, expiry, and instruction ordering. If you prefer a
+/// more fluent style, the transaction-message extension methods build on the same
+/// underlying model.
+///
+/// <!-- {/docsBuildTransactionSection} -->
 library;
 
 export 'src/addresses_by_lookup_table_address.dart';

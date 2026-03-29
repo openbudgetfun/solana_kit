@@ -2,7 +2,7 @@
 
 Jaspr Content documentation site for the Solana Kit workspace.
 
-The site reuses shared Markdown template blocks via `mdt`, so run `docs:update` from the repository root whenever you change shared docs snippets.
+The site reuses shared Markdown template blocks via `mdt`, so run `docs:update` from the repository root whenever you change shared docs snippets. That command also refreshes synchronized `///` library doc comments that reuse the same provider blocks through `scripts/sync-dart-doc-comments.py`.
 
 ## Run Locally
 

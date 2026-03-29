@@ -28,6 +28,9 @@ You may need to represent:
 
 ## Build a transaction around signers
 
+When your signers live on the transaction message itself, the message-level
+helpers are still the most ergonomic path.
+
 ```dart
 final signer = await generateKeyPair();
 
@@ -35,17 +38,37 @@ final message = createTransactionMessage()
     .pipe(setTransactionMessageFeePayerSigner(signer));
 ```
 
-Once the message contains the required signers, use the higher-level helpers:
+When signer resolution happens outside the message, drop to the explicit
+transaction-level helpers:
+
+<!-- {=docsTransactionSignerHelpersSection} -->
+
+## Sign a compiled transaction with explicit signers
+
+Use the transaction-level signer helpers when your signers are resolved outside
+of the message itself or when you need to work with a compiled `Transaction`
+directly.
 
 ```dart
-final signedTransaction = await signTransactionMessageWithSigners(message);
+import 'package:solana_kit/solana_kit.dart';
+
+Future<void> partiallySign(
+  List<Object> signers,
+  Transaction transaction,
+) async {
+  final partiallySigned = await partiallySignTransactionWithSigners(
+    signers,
+    transaction,
+  );
+
+  print(partiallySigned.signatures.length);
+}
 ```
 
-Or, when a sending signer is embedded in the message:
+This is especially useful for wallet adapters, remote signers, or orchestration
+layers that gather signatures in more than one step.
 
-```dart
-final signature = await signAndSendTransactionMessageWithSigners(message);
-```
+<!-- {/docsTransactionSignerHelpersSection} -->
 
 ## Why explicit roles help
 

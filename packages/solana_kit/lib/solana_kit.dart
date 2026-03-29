@@ -1,27 +1,117 @@
 /// The Solana Kit Dart SDK.
 ///
-/// This is the main entry point for building Solana apps in Dart. It
-/// re-exports all public packages in the `@solana/kit` ecosystem and provides
-/// additional convenience helpers.
+/// Use this umbrella library when you want one import that re-exports the core
+/// Solana Kit packages for addresses, RPC, accounts, transactions, signers,
+/// and supporting codecs.
 ///
-/// ## Quick start
+/// <!-- {=docsCreateRpcClientSection} -->
+///
+/// ## Create an RPC client
+///
+/// Start with a typed RPC client. It gives you method-specific helpers instead of
+/// building raw JSON-RPC requests by hand, while still letting you swap transports
+/// or request middleware later.
 ///
 /// ```dart
 /// import 'package:solana_kit/solana_kit.dart';
 ///
-/// void main() async {
-///   // Create an RPC client.
-///   final rpc = createSolanaRpc('https://api.devnet.solana.com');
+/// Future<void> main() async {
+///   final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 ///
-///   // Generate a keypair.
-///   final keyPair = await generateKeyPair();
-///   final signer = await createKeyPairSignerFromKeyPair(keyPair);
+///   final slot = await rpc.getSlot().send();
+///   final latestBlockhash = await rpc.getLatestBlockhash().send();
 ///
-///   // Check balance.
-///   final balance = await rpc.getBalance(signer.address).send();
-///   print('Balance: ${balance.value}');
+///   print('Current slot: $slot');
+///   print('Latest blockhash: ${latestBlockhash['blockhash']}');
 /// }
 /// ```
+///
+/// A call like `rpc.getSlot()` builds a typed request first and only hits the
+/// network when you call `.send()`. That separation makes it easier to compose,
+/// cache, batch, or decorate RPC interactions.
+///
+/// Use `solana_kit_rpc_subscriptions` alongside `solana_kit_rpc` when you also
+/// need websocket notifications for accounts, signatures, logs, or slots.
+///
+/// <!-- {/docsCreateRpcClientSection} -->
+///
+/// <!-- {=docsGenerateSignerSection} -->
+///
+/// ## Generate a signer
+///
+/// Most app flows need a signer for fee payment, message signing, or transaction
+/// submission. `generateKeyPairSigner()` creates a new Ed25519 key-pair-backed
+/// `KeyPairSigner`.
+///
+/// ```dart
+/// import 'package:solana_kit/solana_kit.dart';
+///
+/// Future<void> main() async {
+///   final signer = generateKeyPairSigner();
+///
+///   print('Address: ${signer.address}');
+/// }
+/// ```
+///
+/// Use key-pair signers for local development, tests, automation, and server-side
+/// flows. For wallet-driven applications, you can also model fee-payer, partial,
+/// and sending signers explicitly with `solana_kit_signers`.
+///
+/// <!-- {/docsGenerateSignerSection} -->
+///
+/// <!-- {=docsBuildTransactionSection} -->
+///
+/// ## Build a transaction message
+///
+/// Transaction messages are assembled incrementally. The most common pattern is:
+///
+/// 1. Create an empty message.
+/// 2. Set the fee payer.
+/// 3. Set a lifetime constraint using a recent blockhash.
+/// 4. Append one or more instructions.
+///
+/// ```dart
+/// import 'dart:typed_data';
+///
+/// import 'package:solana_kit/solana_kit.dart';
+///
+/// Future<void> main() async {
+///   final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
+///   final feePayer = generateKeyPairSigner();
+///   final latestBlockhash = await rpc.getLatestBlockhash().send();
+///
+///   final instruction = Instruction(
+///     programAddress: const Address('11111111111111111111111111111111'),
+///     accounts: [
+///       AccountMeta(
+///         address: feePayer.address,
+///         role: AccountRole.writableSigner,
+///       ),
+///     ],
+///     data: Uint8List(0),
+///   );
+///
+///   final message = createTransactionMessage(version: TransactionVersion.v0)
+///       .withFeePayer(feePayer.address)
+///       .withBlockhashLifetime(
+///         BlockhashLifetimeConstraint(
+///           blockhash: latestBlockhash['blockhash']! as String,
+///           lastValidBlockHeight:
+///               latestBlockhash['lastValidBlockHeight']! as BigInt,
+///         ),
+///       )
+///       .appendInstruction(instruction);
+///
+///   print(message);
+/// }
+/// ```
+///
+/// This separation keeps transaction construction explicit and makes it easier to
+/// reason about fee payment, expiry, and instruction ordering. If you prefer a
+/// more fluent style, the transaction-message extension methods build on the same
+/// underlying model.
+///
+/// <!-- {/docsBuildTransactionSection} -->
 library;
 
 // Core packages.

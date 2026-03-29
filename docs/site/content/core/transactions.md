@@ -52,13 +52,19 @@ an end-to-end “send then wait for confirmation” flow.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
+import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 
-final signature = await sendAndConfirmTransaction(
-  rpc: rpc,
-  transaction: signedTransaction,
-);
+Future<void> sendAndWait(
+  Rpc rpc,
+  Transaction signedTransaction,
+) async {
+  final signature = await sendAndConfirmTransaction(
+    rpc: rpc,
+    transaction: signedTransaction,
+  );
 
-print('Confirmed signature: ${signature.value}');
+  print('Confirmed signature: ${signature.value}');
+}
 ```
 
 For lower-level control, `solana_kit_transaction_confirmation` also exposes
