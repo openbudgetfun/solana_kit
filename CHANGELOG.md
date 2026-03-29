@@ -2628,6 +2628,124 @@ Package groups scaffolded:
 - Fragment-based code generation with automatic import tracking
 - Comprehensive test suite with 261 tests
 
+## 0.3.0 (2026-03-29)
+
+### Breaking Changes
+
+#### Sync with upstream @solana/kit v6.1.0 → v6.5.0 changes.
+
+#### solana_kit_errors (minor)
+
+- Add new error codes: `failedToSendTransaction`, `failedToSendTransactions`, `signerWalletAccountCannotSignTransaction`, 8 new transaction error codes (`transactionCannotEncodeWithEmptyMessageBytes`, `transactionCannotDecodeEmptyTransactionBytes`, `transactionVersionZeroMustBeEncodedWithSignaturesFirst`, `transactionSignatureCountTooHighForTransactionBytes`, `transactionInvalidConfigMaskPriorityFeeBits`, `transactionInvalidNonceAccountIndex`, `transactionInvalidConfigValueKind`, `transactionInstructionHeadersPayloadsMismatch`), and 2 new codec error codes (`codecsInvalidPatternMatchValue`, `codecsInvalidPatternMatchBytes`).
+- Capitalize all instruction error messages for consistency.
+- Fix BORSH_IO_ERROR: remove stale `$encodedData` interpolation.
+- Fix `instructionErrorUnknown` message: was empty, now `'The instruction failed with the error: $errorName'`.
+- Update `transactionVersionNumberNotSupported` max supported version from 0 to 1.
+
+#### solana_kit_codecs_data_structures (minor)
+
+- Add `getPatternMatchEncoder`, `getPatternMatchDecoder`, and `getPatternMatchCodec` functions for selecting codecs based on value/byte pattern matching.
+
+#### solana_kit_codecs_core (patch)
+
+- Fix `containsBytes` to avoid unnecessary array slicing/cloning when using negative offsets matching the array length.
+- Fix `addDecoderSentinel` to handle negative offsets properly.
+
+#### solana_kit_codecs_strings (patch)
+
+- Fix `getBaseXDecoder` and `getBaseXResliceDecoder` to avoid unnecessary array slicing/cloning when using negative offsets matching the array length.
+
+#### solana_kit_signers (minor)
+
+- Add `partiallySignTransactionWithSigners`, `signTransactionWithSigners`, and `signAndSendTransactionWithSigners` functions that accept a set of signers and a compiled `Transaction` directly, without requiring signers to be embedded in a transaction message.
+- Add `assertContainsResolvableTransactionSendingSigner` to validate that a set of signers contains an unambiguously resolvable sending signer.
+- The existing transaction message helpers now delegate to these new functions internally.
+
+#### solana_kit_instruction_plans (patch)
+
+- Add `abortReason` and `transactionPlanResult` to the `instructionPlansFailedToExecuteTransactionPlan` error context.
+
+### Features
+
+#### Add additive next-step ergonomics and maintenance tooling without breaking the existing lower-level APIs.
+
+- Add `Rpc.getEpochInfo()` to the typed RPC convenience surface.
+- Add polling-based `waitForTransactionConfirmation(...)` and `sendAndConfirmTransaction(...)` helpers for signed transactions.
+- Add local benchmark scripts for address validation, transaction wire encoding, and BigInt-aware JSON parsing.
+- Add an upstream compatibility metadata check script plus CI coverage.
+- Complete Codama PDA rendering by generating `getProgramDerivedAddress(...)` calls instead of `UnimplementedError` placeholders.
+- Expand READMEs and docs to explain the new workflows.
+
+#### Improve Android native wallet adapter parity and add CI Android compile verification.
+
+- Replace wallet stub behavior with walletlib-backed scenario/request handling.
+- Add Digital Asset Links native bridge and Dart API surface.
+- Harden local/remote transport behavior and request routing.
+- Add a CI check that compiles a temporary Flutter Android app using the plugin.
+
+#### Add a typed RPC convenience facade for common Solana JSON-RPC calls.
+
+- Add generic `Rpc.request<TResponse>()` support in `solana_kit_rpc_spec`.
+- Add `SolanaRpcMethods` extension helpers in `solana_kit_rpc` for common RPC methods.
+- Expand docs with reusable markdown templates (`mdt`) and reusable Dart doc templates.
+
+#### Harden transaction lifetime typing and compilation invariants.
+
+- Replace `TransactionLifetimeConstraint` `Object` alias with a sealed hierarchy.
+- Remove the internal `_NoLifetime` fallback from `compileTransaction`.
+- Enforce lifetime presence during compile and throw explicit `SolanaErrorCode`
+  values for invalid lifetime states.
+- Expand transaction compile tests for missing and invalid lifetime paths.
+
+#### Add Phase 4 advanced ergonomics and performance improvements.
+
+- Add typed union helpers (`Union2`/`Union3`) with strongly-typed codec helpers.
+- Add optional isolate-backed BigInt JSON decoding via
+  `parseJsonWithBigIntsAsync` and Solana HTTP transport flags.
+- Add typed error-domain helpers layered over numeric `SolanaErrorCode`
+  values (`SolanaErrorDomain`, domain classifiers, and extensions).
+- Expand README/API docs and shared mdt templates for these features.
+
+### Fixes
+
+- Move renderer Node tooling to a root pnpm workspace, pin workspace pnpm/node versions, and run renderer publish through workspace-aware pnpm commands.
+- Update all upstream `@solana/kit` version references from 6.1.0 to 6.5.0 in documentation and README files.
+- Improve workspace documentation with richer getting-started guides, stronger docs-site coverage, expanded package library doc comments, and deeper mdt integration for shared README and site content.
+- Remove duplicate renderer devDependencies that are already provided by the root workspace, and update renderer scripts to invoke shared tools via `pnpm exec`.
+- Replace internal workspace dependency constraints with explicit semver constraints (for example, `^0.2.0`) across workspace packages, and remove the workspace dependency lint enforcement added previously.
+- Add comprehensive tests across multiple packages to increase code coverage toward 90%.
+
+#### Add explicit repository and package homepage metadata to package pubspecs, and
+
+consolidate package changelogs into a single root `CHANGELOG.md`.
+
+#### Fix workspace lint analysis scope so CI no longer fails when scanning
+
+non-workspace docs sources and nested example app files.
+
+#### Add fluent extension methods to `TransactionMessage` for Dart-idiomatic
+
+composition without requiring function + `.pipe` style.
+
+- `withFeePayer`
+- `withBlockhashLifetime`
+- `withDurableNonceLifetime`
+- `appendInstruction` / `appendInstructions`
+- `prependInstruction` / `prependInstructions`
+
+#### Port `@solana/kit` `v6.1.0` parity updates for predicate codecs and
+
+transaction encoding behavior.
+
+- Add `getPredicateEncoder`, `getPredicateDecoder`, and `getPredicateCodec`.
+- Add v1 message-first transaction encoding with fixed-length signatures.
+- Add transaction malformed message bytes error parity (`5663023`).
+
+#### Fixes CI regressions in the mobile wallet adapter example and Android compile check.
+
+- Renames the Android example package namespace to satisfy `ktlint` package-name rules.
+- Hardens `check-mobile-wallet-adapter-android-compile.sh` to use local workspace `solana_kit_*` dependency overrides during temp-app resolution.
+
 ## 0.2.1 (2026-02-28)
 
 ### Fixes
