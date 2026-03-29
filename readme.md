@@ -30,19 +30,26 @@ Documentation website: https://openbudgetfun.github.io/solana_kit/
 ## Create an RPC client
 
 Start with a typed RPC client. It gives you method-specific helpers instead of
-building raw JSON-RPC requests by hand.
+building raw JSON-RPC requests by hand, while still letting you swap transports
+or request middleware later.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
 
-final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
+Future<void> main() async {
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
-final slot = await rpc.getSlot().send();
-final latestBlockhash = await rpc.getLatestBlockhash().send();
+  final slot = await rpc.getSlot().send();
+  final latestBlockhash = await rpc.getLatestBlockhash().send();
 
-print('Current slot: $slot');
-print('Latest blockhash: ${latestBlockhash.value.blockhash}');
+  print('Current slot: $slot');
+  print('Latest blockhash: ${latestBlockhash['blockhash']}');
+}
 ```
+
+A call like `rpc.getSlot()` builds a typed request first and only hits the
+network when you call `.send()`. That separation makes it easier to compose,
+cache, batch, or decorate RPC interactions.
 
 Use `solana_kit_rpc_subscriptions` alongside `solana_kit_rpc` when you also
 need websocket notifications for accounts, signatures, logs, or slots.
@@ -54,20 +61,22 @@ need websocket notifications for accounts, signatures, logs, or slots.
 ## Generate a signer
 
 Most app flows need a signer for fee payment, message signing, or transaction
-submission. `generateKeyPair()` creates a new Ed25519 key pair and returns a
+submission. `generateKeyPairSigner()` creates a new Ed25519 key-pair-backed
 `KeyPairSigner`.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
 
-final signer = await generateKeyPair();
+Future<void> main() async {
+  final signer = generateKeyPairSigner();
 
-print('Address: ${signer.address}');
+  print('Address: ${signer.address}');
+}
 ```
 
-Use key-pair signers for local development, testing, and server-side flows.
-For wallet-driven applications, you can also model fee-payer, partial, and
-sending signers explicitly with `solana_kit_signers`.
+Use key-pair signers for local development, tests, automation, and server-side
+flows. For wallet-driven applications, you can also model fee-payer, partial,
+and sending signers explicitly with `solana_kit_signers`.
 
 <!-- {/docsGenerateSignerSection} -->
 
@@ -87,33 +96,41 @@ import 'dart:typed_data';
 
 import 'package:solana_kit/solana_kit.dart';
 
-final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
-final feePayer = await generateKeyPair();
-final latestBlockhash = await rpc.getLatestBlockhash().send();
+Future<void> main() async {
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
+  final feePayer = generateKeyPairSigner();
+  final latestBlockhash = await rpc.getLatestBlockhash().send();
 
-final instruction = Instruction(
-  programAddress: const Address('11111111111111111111111111111111'),
-  accounts: [
-    AccountMeta(address: feePayer.address, role: AccountRole.writableSigner),
-  ],
-  data: Uint8List(0),
-);
-
-final message = createTransactionMessage()
-    .pipe(setTransactionMessageFeePayer(feePayer.address))
-    .pipe(
-      setTransactionMessageLifetimeUsingBlockhash(
-        BlockhashLifetimeConstraint(
-          blockhash: latestBlockhash.value.blockhash,
-          lastValidBlockHeight: latestBlockhash.value.lastValidBlockHeight,
-        ),
+  final instruction = Instruction(
+    programAddress: const Address('11111111111111111111111111111111'),
+    accounts: [
+      AccountMeta(
+        address: feePayer.address,
+        role: AccountRole.writableSigner,
       ),
-    )
-    .pipe(appendTransactionMessageInstruction(instruction));
+    ],
+    data: Uint8List(0),
+  );
+
+  final message = createTransactionMessage(version: TransactionVersion.v0)
+      .withFeePayer(feePayer.address)
+      .withBlockhashLifetime(
+        BlockhashLifetimeConstraint(
+          blockhash: latestBlockhash['blockhash']! as String,
+          lastValidBlockHeight:
+              latestBlockhash['lastValidBlockHeight']! as BigInt,
+        ),
+      )
+      .appendInstruction(instruction);
+
+  print(message);
+}
 ```
 
 This separation keeps transaction construction explicit and makes it easier to
-reason about fee payment, expiry, and instruction ordering.
+reason about fee payment, expiry, and instruction ordering. If you prefer a
+more fluent style, the transaction-message extension methods build on the same
+underlying model.
 
 <!-- {/docsBuildTransactionSection} -->
 
@@ -121,17 +138,30 @@ reason about fee payment, expiry, and instruction ordering.
 
 ### Typed RPC methods
 
-When working with an `Rpc`, prefer typed convenience helpers over stringly method calls:
+When you already have an `Rpc`, prefer typed convenience helpers over raw
+method-name strings. They keep parameter builders and response models attached
+to the method itself, which makes refactors and autocomplete significantly
+safer.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
 
-final rpc = createSolanaRpc(url: 'https://api.mainnet-beta.solana.com');
-final slot = await rpc.getSlot().send();
-final blockHeight = await rpc.getBlockHeight().send();
+Future<void> main() async {
+  final rpc = createSolanaRpc(url: 'https://api.mainnet-beta.solana.com');
+
+  final slot = await rpc.getSlot().send();
+  final epochInfo = await rpc.getEpochInfo().send();
+  final latestBlockhash = await rpc.getLatestBlockhash().send();
+
+  print('Slot: $slot');
+  print('Epoch: ${epochInfo['epoch']}');
+  print('Latest blockhash: ${latestBlockhash['blockhash']}');
+}
 ```
 
-These helpers forward to canonical params builders in `solana_kit_rpc_api` and return lazy `PendingRpcRequest<T>` values.
+These helpers forward to canonical request builders in `solana_kit_rpc_api`,
+return lazy `PendingRpcRequest<T>` values, and make it clear which Solana RPC
+shape each call expects.
 
 <!-- {/typedRpcMethodsSection} -->
 
@@ -178,11 +208,14 @@ test:all
 # Generate merged test coverage across all packages
 test:coverage
 
-# Validate markdown templates and generated docs
+# Run doc-comment snippet checks extracted from synchronized library docs
+test:doc-snippets
+
+# Validate markdown templates, Dart doc comments, and generated docs
 # (also runs mdt doctor and workspace docs drift checks)
 docs:check
 
-# Regenerate documentation template consumers and workspace docs
+# Regenerate documentation template consumers, Dart doc comments, and workspace docs
 docs:update
 
 # Inspect mdt provider/consumer state and cache reuse

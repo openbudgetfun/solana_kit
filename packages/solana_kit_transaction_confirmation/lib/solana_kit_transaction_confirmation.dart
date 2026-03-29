@@ -1,21 +1,41 @@
 /// Confirmation tracking for the Solana Kit Dart SDK.
 ///
 /// This package provides utilities for confirming Solana transactions using
-/// multiple strategies:
-///
-/// - **Signature Confirmation** - Watch for a transaction signature to reach
-///   a target commitment level.
-/// - **Block Height Exceedence** - Detect when a blockhash-based transaction's
-///   lifetime has expired.
-/// - **Nonce Invalidation** - Detect when a durable nonce has been advanced
-///   (transaction expired).
-/// - **Timeout** - Simple timeout-based fallback.
-/// - **Strategy Racing** - Race multiple strategies to confirm or reject first.
-/// - **Polling Helpers** - Additive RPC-based helpers for waiting on a
-///   transaction or sending and confirming it in one step.
+/// multiple strategies such as signature tracking, block-height expiry,
+/// durable-nonce invalidation, timeouts, and additive polling helpers.
 ///
 /// This is the Dart port of the TypeScript `@solana/transaction-confirmation`
 /// package.
+///
+/// <!-- {=docsSendAndConfirmSection} -->
+///
+/// ## Send and confirm a signed transaction
+///
+/// Once you have a signed `Transaction`, use the additive confirmation helper for
+/// an end-to-end “send then wait for confirmation” flow.
+///
+/// ```dart
+/// import 'package:solana_kit/solana_kit.dart';
+/// import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
+///
+/// Future<void> sendAndWait(
+///   Rpc rpc,
+///   Transaction signedTransaction,
+/// ) async {
+///   final signature = await sendAndConfirmTransaction(
+///     rpc: rpc,
+///     transaction: signedTransaction,
+///   );
+///
+///   print('Confirmed signature: ${signature.value}');
+/// }
+/// ```
+///
+/// For lower-level control, `solana_kit_transaction_confirmation` also exposes
+/// strategy factories for block-height expiry, durable nonce invalidation,
+/// signature notifications, and timeout racing.
+///
+/// <!-- {/docsSendAndConfirmSection} -->
 library;
 
 export 'src/commitment_comparator.dart';

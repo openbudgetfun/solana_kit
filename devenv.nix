@@ -280,10 +280,11 @@ in
         set -e
         mkdir -p .mdt/cache
         mdt check --verbose
+        python3 "$DEVENV_ROOT/scripts/sync-dart-doc-comments.py" --check
         mdt doctor --format text
         scripts/workspace-doc-drift.sh --check
       '';
-      description = "Check documentation consistency with mdt, workspace metadata, and source comment consumers.";
+      description = "Check documentation consistency with mdt, synchronized Dart doc comments, and workspace metadata.";
       binary = "bash";
     };
     "docs:update" = {
@@ -291,10 +292,11 @@ in
         set -e
         mkdir -p .mdt/cache
         mdt update --verbose
+        python3 "$DEVENV_ROOT/scripts/sync-dart-doc-comments.py" --write
         scripts/workspace-doc-drift.sh --write
         mdt info
       '';
-      description = "Update generated documentation blocks across the workspace and print mdt diagnostics.";
+      description = "Update generated documentation blocks across Markdown and Dart doc comments, then print mdt diagnostics.";
       binary = "bash";
     };
     "docs:site:serve" = {
@@ -393,12 +395,27 @@ in
           fi
         done
 
+        if [ -d test ]; then
+          echo "Testing root workspace helpers..."
+          if ! dart test test; then
+            failed=1
+          fi
+        fi
+
         if [ "$failed" -ne 0 ]; then
           echo "Some tests failed."
           exit 1
         fi
       '';
-      description = "Run all tests across workspace packages.";
+      description = "Run all tests across workspace packages and root doc-comment checks.";
+      binary = "bash";
+    };
+    "test:doc-snippets" = {
+      exec = ''
+        set -e
+        dart test test/doc_comment_snippets_test.dart
+      '';
+      description = "Analyze synchronized Dart doc-comment snippets for compile-time drift.";
       binary = "bash";
     };
     "test:coverage" = {
@@ -452,8 +469,10 @@ in
         set -e
         devenv update
         flutter pub upgrade
+        sync:write
+        install:all
       '';
-      description = "Update devenv and pub dependencies.";
+      description = "Update devenv and pub dependencies, then resync workspace versions.";
       binary = "bash";
     };
   };

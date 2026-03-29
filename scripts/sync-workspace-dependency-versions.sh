@@ -103,12 +103,19 @@ for package_path in workspace_paths:
 section_pattern = re.compile(r'^(\s*)(dependencies|dev_dependencies|dependency_overrides):\s*$')
 indent_pattern = re.compile(r'^(\s*)')
 dependency_pattern = re.compile(r'^(\s*)([A-Za-z0-9_]+):\s*(.*)$')
+excluded_path_parts = {'.dart_tool', 'build', '.git'}
+
+target_pubspecs = sorted(
+    path
+    for path in repo_root.rglob('pubspec.yaml')
+    if path != root_pubspec and not any(part in excluded_path_parts for part in path.parts)
+)
 
 reports: list[str] = []
 total_mismatches = 0
 updated_files = 0
 
-for pubspec_path in workspace_pubspecs:
+for pubspec_path in target_pubspecs:
     original_lines = pubspec_path.read_text().splitlines()
     output_lines: list[str] = []
     in_dependency_section = False
@@ -184,7 +191,7 @@ if total_mismatches == 0:
     sys.exit(0)
 
 print(
-    f'Updated {updated_files} package pubspecs; fixed '
+    f'Updated {updated_files} pubspecs; fixed '
     f'{total_mismatches} workspace dependency constraints.'
 )
 PY

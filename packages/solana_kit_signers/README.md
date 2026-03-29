@@ -44,6 +44,35 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Usage
 
+<!-- {=docsTransactionSignerHelpersSection} -->
+
+## Sign a compiled transaction with explicit signers
+
+Use the transaction-level signer helpers when your signers are resolved outside
+of the message itself or when you need to work with a compiled `Transaction`
+directly.
+
+```dart
+import 'package:solana_kit/solana_kit.dart';
+
+Future<void> partiallySign(
+  List<Object> signers,
+  Transaction transaction,
+) async {
+  final partiallySigned = await partiallySignTransactionWithSigners(
+    signers,
+    transaction,
+  );
+
+  print(partiallySigned.signatures.length);
+}
+```
+
+This is especially useful for wallet adapters, remote signers, or orchestration
+layers that gather signatures in more than one step.
+
+<!-- {/docsTransactionSignerHelpersSection} -->
+
 ### Creating a key pair signer
 
 A `KeyPairSigner` is the most common signer -- it holds an Ed25519 key pair and implements both the `MessagePartialSigner` and `TransactionPartialSigner` interfaces.

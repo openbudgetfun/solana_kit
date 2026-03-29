@@ -184,20 +184,25 @@ print(json); // {"balance":9007199254740993,"rate":1.5}
 ### Optional Isolate JSON Decoding
 
 For large Solana RPC payloads, you can offload BigInt-aware JSON parsing to a
-background isolate.
+background isolate so the main isolate stays responsive.
 
 ```dart
 import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
 
-final transport = createHttpTransportForSolanaRpc(
-  url: 'https://api.mainnet-beta.solana.com',
-  decodeSolanaJsonInIsolate: true,
-  solanaJsonIsolateThreshold: 262144,
-);
+void main() {
+  final transport = createHttpTransportForSolanaRpc(
+    url: 'https://api.mainnet-beta.solana.com',
+    decodeSolanaJsonInIsolate: true,
+    solanaJsonIsolateThreshold: 262144,
+  );
+
+  print(transport);
+}
 ```
 
 For direct parsing, use `parseJsonWithBigIntsAsync(...)` with
-`runInIsolate: true`.
+`runInIsolate: true`. Reserve isolate parsing for larger payloads where the
+extra hop is worth the reduced UI or server-request blocking.
 
 <!-- {/isolateJsonDecodeSection} -->
 

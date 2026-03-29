@@ -79,11 +79,14 @@ test:all
 # Generate merged test coverage across all packages
 test:coverage
 
-# Validate markdown templates and generated docs
+# Run doc-comment snippet checks extracted from synchronized library docs
+test:doc-snippets
+
+# Validate markdown templates, Dart doc comments, and generated docs
 # (also runs mdt doctor and workspace docs drift checks)
 docs:check
 
-# Regenerate documentation template consumers and workspace docs
+# Regenerate documentation template consumers, Dart doc comments, and workspace docs
 docs:update
 
 # Inspect mdt provider/consumer state and cache reuse
@@ -108,12 +111,17 @@ For day-to-day contribution work, the most important commands are `lint:all`, `t
 
 ## Documentation tooling
 
-This workspace uses [`mdt`](https://github.com/ifiokjr/mdt) to keep shared README blocks, site snippets, and selected source doc comments synchronized.
+This workspace uses [`mdt`](https://github.com/ifiokjr/mdt) to keep shared README
+blocks and site snippets synchronized. The current `mdt` release still does not
+discover `.dart` consumers directly in this repo, so the same provider blocks
+are also projected into `///` library doc comments through
+`scripts/sync-dart-doc-comments.py`.
 
 Use:
 
-- `docs:update` to regenerate all consumer blocks
-- `docs:check` to verify everything is current in CI or before committing
+- `docs:update` to regenerate Markdown consumers and synchronized Dart doc comments
+- `docs:check` to verify Markdown and Dart doc consumers are current in CI or before committing
+- `test:doc-snippets` to analyze fenced Dart examples extracted from synchronized library doc comments
 - `mdt:info` to inspect providers, consumers, and cache reuse
 - `mdt:doctor` to diagnose template drift or config problems
 

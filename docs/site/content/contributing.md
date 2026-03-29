@@ -39,11 +39,14 @@ test:all
 # Generate merged test coverage across all packages
 test:coverage
 
-# Validate markdown templates and generated docs
+# Run doc-comment snippet checks extracted from synchronized library docs
+test:doc-snippets
+
+# Validate markdown templates, Dart doc comments, and generated docs
 # (also runs mdt doctor and workspace docs drift checks)
 docs:check
 
-# Regenerate documentation template consumers and workspace docs
+# Regenerate documentation template consumers, Dart doc comments, and workspace docs
 docs:update
 
 # Inspect mdt provider/consumer state and cache reuse

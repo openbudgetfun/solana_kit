@@ -1,6 +1,6 @@
 # Git and PR conventions
 
-Every commit and PR title should follow:
+Commit and PR titles should follow:
 
 ```text
 EMOJI TYPE(SCOPE): description
