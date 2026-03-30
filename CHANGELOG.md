@@ -2628,6 +2628,13 @@ Package groups scaffolded:
 - Fragment-based code generation with automatic import tracking
 - Comprehensive test suite with 261 tests
 
+## 0.3.1 (2026-03-30)
+
+### Fixes
+
+- Improve documentation reuse and guidance across the workspace by expanding shared `mdt` blocks, projecting them into synchronized Dart library doc comments, adding analyzable doc-comment snippet tests, and broadening accounts/signers/codecs examples in the docs site and package READMEs.
+- Fix release tooling portability on macOS/BSD userlands by removing the Bash 4 `mapfile` dependency and GNU-awk-specific parsing from the workspace sync scripts. Also fix the mobile wallet adapter example and Android compile check to use local workspace overrides so CI can resolve unreleased `solana_kit_*` package versions correctly.
+
 ## 0.3.0 (2026-03-29)
 
 ### Breaking Changes
