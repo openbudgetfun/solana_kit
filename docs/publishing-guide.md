@@ -83,7 +83,7 @@ solana_kit_errors -> (none)
 solana_kit_fast_stable_stringify -> (none)
 solana_kit_functional -> (none)
 solana_kit_helius -> solana_kit_errors
-solana_kit_instruction_plans -> solana_kit_errors, solana_kit_instructions, solana_kit_keys, solana_kit_transaction_messages, solana_kit_transactions
+solana_kit_instruction_plans -> solana_kit_errors, solana_kit_instructions, solana_kit_keys, solana_kit_signers, solana_kit_transaction_messages, solana_kit_transactions
 solana_kit_instructions -> solana_kit_addresses, solana_kit_errors
 solana_kit_keys -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_strings, solana_kit_errors
 solana_kit_lints -> (none)

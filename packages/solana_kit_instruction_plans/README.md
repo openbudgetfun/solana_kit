@@ -265,6 +265,46 @@ final executor = createTransactionPlanExecutor(
 final result = await executor(transactionPlan);
 ```
 
+### Higher-level execution boundary
+
+For app-facing flows, you can collapse planning, signing, and sending into one
+boundary that returns a structured outcome instead of forcing every caller to
+orchestrate those seams manually.
+
+```dart
+import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
+import 'package:solana_kit_signers/solana_kit_signers.dart';
+
+final feePayer = generateKeyPairSigner();
+
+final boundary = createSigningTransactionExecutionBoundary(
+  SigningTransactionExecutionBoundaryConfig(
+    createTransactionMessage: () async {
+      return TransactionMessage(
+        version: TransactionVersion.v0,
+        feePayer: feePayer.address,
+        lifetimeConstraint: BlockhashLifetimeConstraint(
+          blockhash: 'EkSnNWid2cvwEVnVx9aBqawnmiCNiDgp3gUdkDPTKN1N',
+          lastValidBlockHeight: BigInt.from(300000),
+        ),
+      );
+    },
+    signers: <Object>[feePayer],
+    sendSignedTransaction: (transaction) async {
+      return getSignatureFromTransaction(transaction);
+    },
+  ),
+);
+
+final outcome = await boundary(plan);
+print(outcome);
+```
+
+`SuccessfulTransactionExecution` returns both the planned transaction tree and
+its execution result tree. `FailedTransactionExecution` preserves the stage
+(`planning`, `signing`, `sending`, or `execution`) so callers can react without
+reconstructing that context manually.
+
 ### Inspecting execution results
 
 The execution returns a `TransactionPlanResult` tree that mirrors the plan structure:
@@ -355,16 +395,24 @@ print(parsedList is SequentialInstructionPlan); // true
 ### Classes
 
 - **`MessagePacker`** -- Returned by `MessagePackerInstructionPlan.getMessagePacker()`, with `done()` and `packMessageToCapacity(message)`.
+- **`TransactionExecutionOutcome`** -- Sealed base type for `SuccessfulTransactionExecution` and `FailedTransactionExecution`.
+- **`SuccessfulTransactionExecution`** -- Contains the planned transaction tree plus its execution result tree.
+- **`FailedTransactionExecution`** -- Contains the failure stage, error, and any partial plan/result tree.
 - **`TransactionPlannerConfig`** -- Configuration with `createTransactionMessage` and optional `onTransactionMessageUpdated`.
 - **`TransactionPlanExecutorConfig`** -- Configuration with `executeTransactionMessage`.
+- **`TransactionExecutionBoundaryConfig`** -- High-level planning/signing/sending boundary configuration.
+- **`SigningTransactionExecutionBoundaryConfig`** -- Convenience config that plans messages, signs with a signer list, and sends signed transactions.
 - **`TransactionPlanResultSummary`** -- Summary with `successful`, `successfulTransactions`, `failedTransactions`, `canceledTransactions`.
 
 ### Type aliases
 
 - **`TransactionPlanner`** -- `Future<TransactionPlan> Function(InstructionPlan)`.
 - **`TransactionPlanExecutor`** -- `Future<TransactionPlanResult> Function(TransactionPlan)`.
+- **`TransactionExecutionBoundary`** -- `Future<TransactionExecutionOutcome> Function(InstructionPlan)`.
 - **`CreateTransactionMessage`** -- `Future<TransactionMessage> Function()`.
 - **`ExecuteTransactionMessage`** -- `Future<Object> Function(Map<String, Object?>, TransactionMessage)`.
+- **`SignTransactionMessage`** -- `Future<Transaction> Function(TransactionMessage)`.
+- **`SendSignedTransaction`** -- `Future<Signature> Function(Transaction)`.
 
 ### Factory functions
 
@@ -406,13 +454,15 @@ print(parsedList is SequentialInstructionPlan); // true
 
 ### Planner and executor
 
-| Function                                    | Description                                                         |
-| ------------------------------------------- | ------------------------------------------------------------------- |
-| `createTransactionPlanner`                  | Creates a `TransactionPlanner` from config.                         |
-| `createTransactionPlanExecutor`             | Creates a `TransactionPlanExecutor` from config.                    |
-| `passthroughFailedTransactionPlanExecution` | Catches executor errors and returns the result instead of throwing. |
-| `summarizeTransactionPlanResult`            | Categorizes results into successful, failed, and canceled.          |
-| `getFirstFailedSingleTransactionPlanResult` | Finds the first failed result in a tree.                            |
+| Function                                    | Description                                                                 |
+| ------------------------------------------- | --------------------------------------------------------------------------- |
+| `createTransactionPlanner`                  | Creates a `TransactionPlanner` from config.                                 |
+| `createTransactionPlanExecutor`             | Creates a `TransactionPlanExecutor` from config.                            |
+| `createTransactionExecutionBoundary`        | Creates a higher-level execution boundary from planner/sign/send functions. |
+| `createSigningTransactionExecutionBoundary` | Creates a higher-level execution boundary that signs with a signer list.    |
+| `passthroughFailedTransactionPlanExecution` | Catches executor errors and returns the result instead of throwing.         |
+| `summarizeTransactionPlanResult`            | Categorizes results into successful, failed, and canceled.                  |
+| `getFirstFailedSingleTransactionPlanResult` | Finds the first failed result in a tree.                                    |
 
 ### Other functions
 
