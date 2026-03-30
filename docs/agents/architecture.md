@@ -10,8 +10,6 @@
 ## Design constraints
 
 - Port upstream `@solana/kit` behavior into idiomatic Dart.
-- Prefer additive, non-breaking changes unless the task explicitly calls for breaking changes.
-- Use modern Dart 3.10+ language features where they improve clarity.
 - Do not introduce code generation (`freezed`, `build_runner`, etc.).
 
 ## Core dependency flow

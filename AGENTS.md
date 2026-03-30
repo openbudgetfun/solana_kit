@@ -2,13 +2,13 @@
 
 Solana Kit is a multi-package Dart workspace that ports `@solana/kit` and related Solana tooling to Dart and Flutter packages.
 
-## Defaults
+## Universal defaults
 
-- Use `devenv` scripts as the default entrypoint for workspace tasks.
-- Use FVM-managed Dart and Flutter tooling when running Dart or Flutter directly.
-- Use `pnpm` only when working in `packages/codama-renderers-dart`.
+- Use `devenv` for routine workspace tasks. Outside a `devenv` shell, run `devenv shell -- bash -lc '<command>'`.
+- Use FVM-managed `dart` and `flutter` when running those tools directly.
+- Use `pnpm` only inside `packages/codama-renderers-dart`.
 
-## Common commands
+## Non-standard workspace commands
 
 - `install:all`
 - `fix:all`
@@ -21,15 +21,17 @@ Solana Kit is a multi-package Dart workspace that ports `@solana/kit` and relate
 
 ## Repo-wide rules
 
+- Prefer additive, non-breaking changes unless the task explicitly requires a breaking change.
 - Never delete files in `.changeset/`.
-- Any change under `packages/*` must include a `.changeset/*.md` file.
+- Changes under `packages/*` require a `.changeset/*.md` file before PR or merge.
 - Keep affected public docs in sync when public APIs or behavior change.
 
-## More guidance
+## Task-specific guides
 
-- [Workspace commands](docs/agents/workspace-commands.md)
-- [Architecture](docs/agents/architecture.md)
-- [Dart conventions](docs/agents/dart-conventions.md)
+- [Workspace commands and tooling](docs/agents/workspace-commands.md)
+- [Architecture and package boundaries](docs/agents/architecture.md)
+- [Dart conventions and API style](docs/agents/dart-conventions.md)
+- [Documentation updates](docs/agents/documentation.md)
 - [Changesets and releases](docs/agents/changesets-and-releases.md)
-- [Git and PR conventions](docs/agents/git-and-prs.md)
+- [Git and PR workflow](docs/agents/git-and-prs.md)
 - [Reference repos](docs/agents/reference-repos.md)

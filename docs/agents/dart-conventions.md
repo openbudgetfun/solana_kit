@@ -2,10 +2,9 @@
 
 ## Language and API style
 
-- Target modern Dart 3.10+ features where they improve the API.
+- Use modern Dart 3.10+ features when they improve clarity.
 - Avoid `dynamic`; use `Object?` when a value is intentionally untyped.
 - Prefer `const` constructors wherever possible.
-- Keep APIs additive and non-breaking unless the task explicitly calls for a breaking change.
 
 ## Error modeling
 
@@ -14,5 +13,4 @@
 
 ## Tooling constraints
 
-- Do not add code generation (`freezed`, `build_runner`, etc.).
 - Linting is driven by `very_good_analysis` through `solana_kit_lints`.
