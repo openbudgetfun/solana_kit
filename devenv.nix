@@ -20,6 +20,7 @@ in
       ktlint
       libiconv
       nixfmt
+      nodejs
       osv-scanner
       shfmt
       extra.knope
@@ -335,6 +336,14 @@ in
         "$DEVENV_ROOT/scripts/check-upstream-compatibility.sh" "$@"
       '';
       description = "Check tracked upstream compatibility metadata and local drift.";
+      binary = "bash";
+    };
+    "upstream:parity" = {
+      exec = ''
+        set -e
+        "$DEVENV_ROOT/scripts/check-upstream-parity.sh" "$@"
+      '';
+      description = "Generate runtime fixtures from the tracked @solana/kit release and compare selected behaviors against this Dart port.";
       binary = "bash";
     };
     "audit:deps" = {

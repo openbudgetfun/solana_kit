@@ -56,8 +56,8 @@ jobs:
       - uses: ./.github/actions/devenv
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check tracked upstream compatibility metadata
-        run: scripts/check-upstream-compatibility.sh --clone-if-missing
+      - name: Check tracked upstream parity metadata and behavior
+        run: upstream:parity --clone-if-missing
         shell: devenv shell -- bash -e {0}
 
   lint:

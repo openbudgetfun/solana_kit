@@ -58,6 +58,9 @@ mdt:doctor
 # Check tracked upstream compatibility metadata
 upstream:check
 
+# Compare selected Dart behaviors against the tracked @solana/kit release
+upstream:parity
+
 # Audit current Dart and pnpm lockfiles for known vulnerabilities
 audit:deps
 
