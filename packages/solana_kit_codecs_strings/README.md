@@ -178,13 +178,13 @@ final emoji = codec.encode('\u{1F680}'); // Rocket emoji
 
 #### Compatibility vs strict UTF-8 decoding
 
-<!-- {=compatibilityNoteCalloutSection|replace:"__COMPATIBILITY_BEHAVIOR__":"`getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters after UTF-8 decode."|replace:"__PREFERRED_BEHAVIOR__":"Prefer `getStrictUtf8Codec()` or `Utf8NullCharacterMode.reject` in new Dart code when silent data loss would be unsafe, and use `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly."} -->
+<!-- {=compatibilityNoteCalloutSection|replace:"COMPATIBILITY_BEHAVIOR_TOKEN":"`getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters after UTF-8 decode."|replace:"PREFERRED_BEHAVIOR_TOKEN":"Prefer `getStrictUtf8Codec()` or `Utf8NullCharacterMode.reject` in new Dart code when silent data loss would be unsafe, and use `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly."} -->
 
 > **Compatibility note**
 >
-> **COMPATIBILITY_BEHAVIOR**
+> `getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters after UTF-8 decode.
 >
-> **PREFERRED_BEHAVIOR**
+> Prefer `getStrictUtf8Codec()` or `Utf8NullCharacterMode.reject` in new Dart code when silent data loss would be unsafe, and use `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly.
 
 <!-- {/compatibilityNoteCalloutSection} -->
 

@@ -30,7 +30,7 @@ That means:
 
 Use `isMwaSupported()` / `assertMwaSupported()` to gate platform behavior explicitly.
 
-<!-- {=androidOnlyMwaCalloutSection|replace:"__MWA_FALLBACK_GUIDANCE__":"Gate wallet-handoff flows with `isMwaSupported()` / `assertMwaSupported()` and present a clear fallback such as browser-wallet instructions, a manual deep link path, or an explicit unsupported-platform message on iOS."} -->
+<!-- {=androidOnlyMwaCalloutSection|replace:"MWA_FALLBACK_GUIDANCE_TOKEN":"Gate wallet-handoff flows with `isMwaSupported()` / `assertMwaSupported()` and present a clear fallback such as browser-wallet instructions, a manual deep link path, or an explicit unsupported-platform message on iOS."} -->
 
 > **Android-only Mobile Wallet Adapter**
 >
@@ -40,7 +40,7 @@ Use `isMwaSupported()` / `assertMwaSupported()` to gate platform behavior explic
 > the current Solana MWA ecosystem does not expose an equivalent iOS
 > integration target.
 >
-> **MWA_FALLBACK_GUIDANCE**
+> Gate wallet-handoff flows with `isMwaSupported()` / `assertMwaSupported()` and present a clear fallback such as browser-wallet instructions, a manual deep link path, or an explicit unsupported-platform message on iOS.
 
 <!-- {/androidOnlyMwaCalloutSection} -->
 

@@ -35,13 +35,13 @@
 ///
 /// <!-- {/errorDomainHelpersSection} -->
 ///
-/// <!-- {=securityNoteCalloutSection|replace:"__SECURITY_GUIDANCE__":"Attach small, structured, non-sensitive context to `SolanaError` values so service boundaries can classify failures without parsing strings."|replace:"__SECURITY_AVOIDANCE__":"Avoid logging private keys, auth tokens, wallet session payloads, or full structured error contexts in production logs."} -->
+/// <!-- {=securityNoteCalloutSection|replace:"SECURITY_GUIDANCE_TOKEN":"Attach small, structured, non-sensitive context to `SolanaError` values so service boundaries can classify failures without parsing strings."|replace:"SECURITY_AVOIDANCE_TOKEN":"Avoid logging private keys, auth tokens, wallet session payloads, or full structured error contexts in production logs."} -->
 ///
 /// > **Security note**
 /// >
-/// > **SECURITY_GUIDANCE**
+/// > Attach small, structured, non-sensitive context to `SolanaError` values so service boundaries can classify failures without parsing strings.
 /// >
-/// > **SECURITY_AVOIDANCE**
+/// > Avoid logging private keys, auth tokens, wallet session payloads, or full structured error contexts in production logs.
 ///
 /// <!-- {/securityNoteCalloutSection} -->
 library;

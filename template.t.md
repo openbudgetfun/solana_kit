@@ -276,9 +276,9 @@ docs:site:smoke
 
 > **Preferred Dart path**
 >
-> **PREFERRED_PATH**
+> PREFERRED_PATH_TOKEN
 >
-> **ESCAPE_HATCH_GUIDANCE**
+> ESCAPE_HATCH_GUIDANCE_TOKEN
 
 <!-- {/preferredDartPathCalloutSection} -->
 
@@ -286,9 +286,9 @@ docs:site:smoke
 
 > **Compatibility note**
 >
-> **COMPATIBILITY_BEHAVIOR**
+> COMPATIBILITY_BEHAVIOR_TOKEN
 >
-> **PREFERRED_BEHAVIOR**
+> PREFERRED_BEHAVIOR_TOKEN
 
 <!-- {/compatibilityNoteCalloutSection} -->
 
@@ -296,9 +296,9 @@ docs:site:smoke
 
 > **Security note**
 >
-> **SECURITY_GUIDANCE**
+> SECURITY_GUIDANCE_TOKEN
 >
-> **SECURITY_AVOIDANCE**
+> SECURITY_AVOIDANCE_TOKEN
 
 <!-- {/securityNoteCalloutSection} -->
 
@@ -312,7 +312,7 @@ docs:site:smoke
 > the current Solana MWA ecosystem does not expose an equivalent iOS
 > integration target.
 >
-> **MWA_FALLBACK_GUIDANCE**
+> MWA_FALLBACK_GUIDANCE_TOKEN
 
 <!-- {/androidOnlyMwaCalloutSection} -->
 
@@ -320,9 +320,9 @@ docs:site:smoke
 
 > **Parity status**
 >
-> **PARITY_STATUS**
+> PARITY_STATUS_TOKEN
 >
-> **PARITY_NEXT**
+> PARITY_NEXT_TOKEN
 
 <!-- {/parityStatusCalloutSection} -->
 

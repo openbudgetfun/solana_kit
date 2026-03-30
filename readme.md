@@ -23,23 +23,23 @@ Documentation website: https://openbudgetfun.github.io/solana_kit/
 
 <!-- {/upstreamSupportSection} -->
 
-<!-- {=preferredDartPathCalloutSection|replace:"__PREFERRED_PATH__":"Start with `createSolanaRpc(...)`, typed request helpers like `rpc.getLatestBlockhashValue()`, and higher-level account or transaction helpers before dropping to lower-level package seams."|replace:"__ESCAPE_HATCH_GUIDANCE__":"Reach for raw `rpc.request(...)`, manual map peeling, or lower-level codec/transport primitives only when you are validating parity or integrating a surface that does not yet have a typed wrapper."} -->
+<!-- {=preferredDartPathCalloutSection|replace:"PREFERRED_PATH_TOKEN":"Start with `createSolanaRpc(...)`, typed request helpers like `rpc.getLatestBlockhashValue()`, and higher-level account or transaction helpers before dropping to lower-level package seams."|replace:"ESCAPE_HATCH_GUIDANCE_TOKEN":"Reach for raw `rpc.request(...)`, manual map peeling, or lower-level codec/transport primitives only when you are validating parity or integrating a surface that does not yet have a typed wrapper."} -->
 
 > **Preferred Dart path**
 >
-> **PREFERRED_PATH**
+> Start with `createSolanaRpc(...)`, typed request helpers like `rpc.getLatestBlockhashValue()`, and higher-level account or transaction helpers before dropping to lower-level package seams.
 >
-> **ESCAPE_HATCH_GUIDANCE**
+> Reach for raw `rpc.request(...)`, manual map peeling, or lower-level codec/transport primitives only when you are validating parity or integrating a surface that does not yet have a typed wrapper.
 
 <!-- {/preferredDartPathCalloutSection} -->
 
-<!-- {=parityStatusCalloutSection|replace:"__PARITY_STATUS__":"The workspace tracks `@solana/kit` `v6.5.0` with executable parity checks for stable, high-signal surfaces such as address/signature behavior, transaction compilation, serialization, and selected error semantics."|replace:"__PARITY_NEXT__":"When Dart intentionally diverges for safety or ergonomics, the divergence is documented explicitly instead of hidden behind silent compatibility changes."} -->
+<!-- {=parityStatusCalloutSection|replace:"PARITY_STATUS_TOKEN":"The workspace tracks `@solana/kit` `v6.5.0` with executable parity checks for stable, high-signal surfaces such as address/signature behavior, transaction compilation, serialization, and selected error semantics."|replace:"PARITY_NEXT_TOKEN":"When Dart intentionally diverges for safety or ergonomics, the divergence is documented explicitly instead of hidden behind silent compatibility changes."} -->
 
 > **Parity status**
 >
-> **PARITY_STATUS**
+> The workspace tracks `@solana/kit` `v6.5.0` with executable parity checks for stable, high-signal surfaces such as address/signature behavior, transaction compilation, serialization, and selected error semantics.
 >
-> **PARITY_NEXT**
+> When Dart intentionally diverges for safety or ergonomics, the divergence is documented explicitly instead of hidden behind silent compatibility changes.
 
 <!-- {/parityStatusCalloutSection} -->
 

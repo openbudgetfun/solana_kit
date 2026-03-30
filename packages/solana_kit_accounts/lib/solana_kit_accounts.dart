@@ -72,13 +72,13 @@
 ///
 /// <!-- {/docsDecodeAccountSection} -->
 ///
-/// <!-- {=preferredDartPathCalloutSection|replace:"__PREFERRED_PATH__":"Start with `SolanaAccountClient`, `fetchEncodedAccount`, and `MaybeAccount<T>` result models so transport, existence handling, and decoding stay separated."|replace:"__ESCAPE_HATCH_GUIDANCE__":"Drop to manual RPC request shaping or raw response peeling only when you are prototyping an unsupported RPC surface or validating upstream compatibility."} -->
+/// <!-- {=preferredDartPathCalloutSection|replace:"PREFERRED_PATH_TOKEN":"Start with `SolanaAccountClient`, `fetchEncodedAccount`, and `MaybeAccount<T>` result models so transport, existence handling, and decoding stay separated."|replace:"ESCAPE_HATCH_GUIDANCE_TOKEN":"Drop to manual RPC request shaping or raw response peeling only when you are prototyping an unsupported RPC surface or validating upstream compatibility."} -->
 ///
 /// > **Preferred Dart path**
 /// >
-/// > **PREFERRED_PATH**
+/// > Start with `SolanaAccountClient`, `fetchEncodedAccount`, and `MaybeAccount<T>` result models so transport, existence handling, and decoding stay separated.
 /// >
-/// > **ESCAPE_HATCH_GUIDANCE**
+/// > Drop to manual RPC request shaping or raw response peeling only when you are prototyping an unsupported RPC surface or validating upstream compatibility.
 ///
 /// <!-- {/preferredDartPathCalloutSection} -->
 library;

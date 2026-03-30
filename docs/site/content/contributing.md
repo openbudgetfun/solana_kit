@@ -95,13 +95,13 @@ docs:site:smoke
 
 ## Security and Platform Expectations
 
-<!-- {=securityNoteCalloutSection|replace:"__SECURITY_GUIDANCE__":"Keep `allowInsecureHttp` and `allowInsecureWs` disabled outside local development and controlled tests, and prefer small structured error context over ad hoc debug dumps."|replace:"__SECURITY_AVOIDANCE__":"Avoid logging private keys, auth tokens, wallet session payloads, or full structured error contexts that may contain sensitive material."} -->
+<!-- {=securityNoteCalloutSection|replace:"SECURITY_GUIDANCE_TOKEN":"Keep `allowInsecureHttp` and `allowInsecureWs` disabled outside local development and controlled tests, and prefer small structured error context over ad hoc debug dumps."|replace:"SECURITY_AVOIDANCE_TOKEN":"Avoid logging private keys, auth tokens, wallet session payloads, or full structured error contexts that may contain sensitive material."} -->
 
 > **Security note**
 >
-> **SECURITY_GUIDANCE**
+> Keep `allowInsecureHttp` and `allowInsecureWs` disabled outside local development and controlled tests, and prefer small structured error context over ad hoc debug dumps.
 >
-> **SECURITY_AVOIDANCE**
+> Avoid logging private keys, auth tokens, wallet session payloads, or full structured error contexts that may contain sensitive material.
 
 <!-- {/securityNoteCalloutSection} -->
 
