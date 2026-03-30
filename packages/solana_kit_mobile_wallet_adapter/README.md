@@ -23,6 +23,20 @@ This package provides both:
 
 Use `isMwaSupported()` / `assertMwaSupported()` before invoking MWA APIs.
 
+<!-- {=androidOnlyMwaCalloutSection|replace:"__MWA_FALLBACK_GUIDANCE__":"Gate wallet-handoff flows with `isMwaSupported()` / `assertMwaSupported()` and present a clear fallback such as browser-wallet instructions, a manual deep link path, or an explicit unsupported-platform message on iOS."} -->
+
+> **Android-only Mobile Wallet Adapter**
+>
+> Real wallet handoff is available only on Android today.
+>
+> On iOS, `solana_kit_mobile_wallet_adapter` remains a safe stub/no-op because
+> the current Solana MWA ecosystem does not expose an equivalent iOS
+> integration target.
+>
+> **MWA_FALLBACK_GUIDANCE**
+
+<!-- {/androidOnlyMwaCalloutSection} -->
+
 ## What this package includes
 
 ### dApp-side APIs

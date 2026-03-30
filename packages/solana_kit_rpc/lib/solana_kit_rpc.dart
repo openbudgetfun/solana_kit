@@ -69,6 +69,16 @@
 /// shape each call expects.
 ///
 /// <!-- {/typedRpcMethodsSection} -->
+///
+/// <!-- {=preferredDartPathCalloutSection|replace:"__PREFERRED_PATH__":"Start with `createSolanaRpc(...)` plus typed request helpers like `rpc.getSlot()` and `rpc.getLatestBlockhashValue()` before reaching for raw JSON-RPC method names."|replace:"__ESCAPE_HATCH_GUIDANCE__":"Use raw `rpc.request(...)` only when you need an upstream surface that has not yet been wrapped or when you are validating parity behavior."} -->
+///
+/// > **Preferred Dart path**
+/// >
+/// > **PREFERRED_PATH**
+/// >
+/// > **ESCAPE_HATCH_GUIDANCE**
+///
+/// <!-- {/preferredDartPathCalloutSection} -->
 library;
 
 export 'src/rpc.dart';

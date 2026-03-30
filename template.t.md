@@ -272,6 +272,60 @@ docs:site:smoke
 
 <!-- {/docsUpstreamCompatibilitySection} -->
 
+<!-- {@preferredDartPathCalloutSection} -->
+
+> **Preferred Dart path**
+>
+> **PREFERRED_PATH**
+>
+> **ESCAPE_HATCH_GUIDANCE**
+
+<!-- {/preferredDartPathCalloutSection} -->
+
+<!-- {@compatibilityNoteCalloutSection} -->
+
+> **Compatibility note**
+>
+> **COMPATIBILITY_BEHAVIOR**
+>
+> **PREFERRED_BEHAVIOR**
+
+<!-- {/compatibilityNoteCalloutSection} -->
+
+<!-- {@securityNoteCalloutSection} -->
+
+> **Security note**
+>
+> **SECURITY_GUIDANCE**
+>
+> **SECURITY_AVOIDANCE**
+
+<!-- {/securityNoteCalloutSection} -->
+
+<!-- {@androidOnlyMwaCalloutSection} -->
+
+> **Android-only Mobile Wallet Adapter**
+>
+> Real wallet handoff is available only on Android today.
+>
+> On iOS, `solana_kit_mobile_wallet_adapter` remains a safe stub/no-op because
+> the current Solana MWA ecosystem does not expose an equivalent iOS
+> integration target.
+>
+> **MWA_FALLBACK_GUIDANCE**
+
+<!-- {/androidOnlyMwaCalloutSection} -->
+
+<!-- {@parityStatusCalloutSection} -->
+
+> **Parity status**
+>
+> **PARITY_STATUS**
+>
+> **PARITY_NEXT**
+
+<!-- {/parityStatusCalloutSection} -->
+
 <!-- {@docsTypedRpcSolanaKitSection} -->
 
 ### Typed RPC methods

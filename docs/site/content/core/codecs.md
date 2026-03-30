@@ -118,6 +118,16 @@ union discriminator alone.
 
 ## Preferred UTF-8 decoding behavior
 
+<!-- {=compatibilityNoteCalloutSection|replace:"__COMPATIBILITY_BEHAVIOR__":"`getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters after UTF-8 decode."|replace:"__PREFERRED_BEHAVIOR__":"Prefer `getStrictUtf8Codec()` or `Utf8NullCharacterMode.reject` in new Dart code when silent data loss would be unsafe, and use `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly."} -->
+
+> **Compatibility note**
+>
+> **COMPATIBILITY_BEHAVIOR**
+>
+> **PREFERRED_BEHAVIOR**
+
+<!-- {/compatibilityNoteCalloutSection} -->
+
 `getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null
 characters.
 

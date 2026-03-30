@@ -10,6 +10,16 @@ Solana account reads usually fall into two categories:
 
 In Solana Kit, both paths return explicit result models so you can distinguish an account that is present from an account that does not exist.
 
+<!-- {=preferredDartPathCalloutSection|replace:"__PREFERRED_PATH__":"Start with `SolanaAccountClient`, `fetchEncodedAccount`, and `MaybeAccount<T>` result models so transport, existence handling, and decoding stay separated."|replace:"__ESCAPE_HATCH_GUIDANCE__":"Drop to manual RPC request shaping or raw response peeling only when you are prototyping an unsupported RPC surface or validating upstream compatibility."} -->
+
+> **Preferred Dart path**
+>
+> **PREFERRED_PATH**
+>
+> **ESCAPE_HATCH_GUIDANCE**
+
+<!-- {/preferredDartPathCalloutSection} -->
+
 <!-- {=docsFetchAccountSection} -->
 
 ## Fetch an account

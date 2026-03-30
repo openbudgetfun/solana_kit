@@ -43,6 +43,16 @@ shape each call expects.
 
 <!-- {/docsTypedRpcSolanaKitSection} -->
 
+<!-- {=preferredDartPathCalloutSection|replace:"__PREFERRED_PATH__":"Start with `createSolanaRpc(...)`, typed request helpers like `rpc.getSlot()` / `rpc.getLatestBlockhashValue()`, and typed subscription helpers before reaching for raw JSON-RPC method names."|replace:"__ESCAPE_HATCH_GUIDANCE__":"Use raw `rpc.request(...)` or custom subscription plans only when you need an upstream surface that has not yet been wrapped or when you are validating parity behavior."} -->
+
+> **Preferred Dart path**
+>
+> **PREFERRED_PATH**
+>
+> **ESCAPE_HATCH_GUIDANCE**
+
+<!-- {/preferredDartPathCalloutSection} -->
+
 ## Why typed RPC matters
 
 Typed RPC methods give you:

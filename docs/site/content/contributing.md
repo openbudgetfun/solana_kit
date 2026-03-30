@@ -95,6 +95,16 @@ docs:site:smoke
 
 ## Security and Platform Expectations
 
+<!-- {=securityNoteCalloutSection|replace:"__SECURITY_GUIDANCE__":"Keep `allowInsecureHttp` and `allowInsecureWs` disabled outside local development and controlled tests, and prefer small structured error context over ad hoc debug dumps."|replace:"__SECURITY_AVOIDANCE__":"Avoid logging private keys, auth tokens, wallet session payloads, or full structured error contexts that may contain sensitive material."} -->
+
+> **Security note**
+>
+> **SECURITY_GUIDANCE**
+>
+> **SECURITY_AVOIDANCE**
+
+<!-- {/securityNoteCalloutSection} -->
+
 - Keep `allowInsecureHttp` and `allowInsecureWs` disabled outside local development and controlled tests.
 - Use `audit:deps` to scan the current workspace `pubspec.lock` and `pnpm-lock.yaml` files present on disk for known vulnerabilities.
 - Do not log private keys, auth tokens, wallet session payloads, or full error contexts that may contain sensitive material.

@@ -12,6 +12,16 @@ description: How this workspace tracks @solana/kit compatibility.
 
 <!-- {/docsUpstreamCompatibilitySection} -->
 
+<!-- {=parityStatusCalloutSection|replace:"__PARITY_STATUS__":"Executable parity currently covers stable, CI-cheap surfaces: address/signature validation, derivation, transaction message compilation, wire serialization, and selected invalid-input error codes."|replace:"__PARITY_NEXT__":"Live RPC timing, subscription transport behavior, mobile platform adapters, and other intentionally documented divergences remain tracked separately rather than being implied by the current harness."} -->
+
+> **Parity status**
+>
+> **PARITY_STATUS**
+>
+> **PARITY_NEXT**
+
+<!-- {/parityStatusCalloutSection} -->
+
 ## Validation Workflow
 
 - Keep `.repos/kit` updated (`clone:repos`).

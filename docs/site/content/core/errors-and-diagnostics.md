@@ -46,6 +46,16 @@ numeric code and context payload when you need lower-level diagnostics.
 
 <!-- {/errorDomainHelpersSection} -->
 
+<!-- {=securityNoteCalloutSection|replace:"__SECURITY_GUIDANCE__":"Attach small, structured, non-sensitive context to `SolanaError` values so service boundaries can classify failures without parsing strings."|replace:"__SECURITY_AVOIDANCE__":"Avoid logging private keys, auth tokens, wallet session payloads, or full structured error contexts in production logs."} -->
+
+> **Security note**
+>
+> **SECURITY_GUIDANCE**
+>
+> **SECURITY_AVOIDANCE**
+
+<!-- {/securityNoteCalloutSection} -->
+
 ## Practical guidance
 
 ### Catch `SolanaError` at service boundaries

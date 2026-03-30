@@ -14,6 +14,26 @@ A Dart-first Solana SDK workspace modeled after `@solana/kit`, with strongly typ
 
 <!-- {/docsUpstreamCompatibilitySection} -->
 
+<!-- {=preferredDartPathCalloutSection|replace:"__PREFERRED_PATH__":"Start with typed RPC clients, typed account helpers, and explicit transaction/signer models. The workspace teaches those Dart-first surfaces before lower-level compatibility seams."|replace:"__ESCAPE_HATCH_GUIDANCE__":"Use raw JSON-RPC requests, manual map peeling, or compatibility-only paths when you need to match upstream behavior exactly or reach a surface that has not been wrapped yet."} -->
+
+> **Preferred Dart path**
+>
+> **PREFERRED_PATH**
+>
+> **ESCAPE_HATCH_GUIDANCE**
+
+<!-- {/preferredDartPathCalloutSection} -->
+
+<!-- {=parityStatusCalloutSection|replace:"__PARITY_STATUS__":"Executable parity checks already cover selected `@solana/kit` behaviors for validation, derivation, transaction compilation, serialization, and targeted error semantics."|replace:"__PARITY_NEXT__":"Additional parity areas are tracked explicitly in the roadmap; absence from the harness should be read as out of scope today, not silently compatible."} -->
+
+> **Parity status**
+>
+> **PARITY_STATUS**
+>
+> **PARITY_NEXT**
+
+<!-- {/parityStatusCalloutSection} -->
+
 ## What makes Solana Kit different?
 
 - **Typed end to end** — addresses, RPC requests, subscriptions, transactions, and account models are all expressed with explicit Dart types.
