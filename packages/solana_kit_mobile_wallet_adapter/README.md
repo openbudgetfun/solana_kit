@@ -237,7 +237,9 @@ This is useful when wallet policy requires Android app-origin verification befor
 
 ## Manual testing app
 
-A runnable Flutter Android example app is available in [`example/`](./example/).
+A runnable Android-first Flutter example app is available in [`example/`](./example/).
+
+It demonstrates explicit boundaries for platform support gating, wallet session state, message signing, and sign-and-send transaction handoff. On iOS, the example keeps the app shell alive and shows fallback UX instead of pretending wallet handoff is supported.
 
 ```bash
 cd packages/solana_kit_mobile_wallet_adapter/example
