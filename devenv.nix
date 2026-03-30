@@ -476,6 +476,14 @@ in
       description = "Generate merged LCOV coverage for all packages.";
       binary = "bash";
     };
+    "coverage:check" = {
+      exec = ''
+        set -e
+        python3 "$DEVENV_ROOT/scripts/check-risk-tier-coverage.py"
+      '';
+      description = "Run package-level coverage for risk-tier packages and enforce configured line-coverage floors.";
+      binary = "bash";
+    };
     "clone:repos" = {
       exec = ''
         set -e

@@ -211,6 +211,9 @@ test:all
 # Generate merged test coverage across all packages
 test:coverage
 
+# Enforce risk-tier package coverage floors
+coverage:check
+
 # Run doc-comment snippet checks extracted from synchronized library docs
 test:doc-snippets
 

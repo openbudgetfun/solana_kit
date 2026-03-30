@@ -39,6 +39,9 @@ test:all
 # Generate merged test coverage across all packages
 test:coverage
 
+# Enforce risk-tier package coverage floors
+coverage:check
+
 # Run doc-comment snippet checks extracted from synchronized library docs
 test:doc-snippets
 
@@ -97,6 +100,17 @@ docs:site:smoke
 - Do not log private keys, auth tokens, wallet session payloads, or full error contexts that may contain sensitive material.
 - Treat Mobile Wallet Adapter as Android-only for real wallet handoff today. iOS remains a safe stub/no-op because the current Solana MWA ecosystem does not provide an equivalent iOS integration target.
 - Gate MWA flows explicitly with `isMwaSupported()` / `assertMwaSupported()` and provide fallback UX on unsupported platforms.
+
+## Coverage Expectations
+
+- Run `coverage:check` before merging changes that touch transport, account parsing, typed RPC models, Helius integrations, or shared test utilities.
+- Current risk-tier coverage floors are enforced at **90% line coverage** for:
+  - `solana_kit_accounts`
+  - `solana_kit_helius`
+  - `solana_kit_rpc_subscriptions`
+  - `solana_kit_rpc_types`
+  - `solana_kit_test_matchers`
+- Treat these floors as minimums, not targets: new tests should keep changed high-risk packages comfortably above 90%.
 
 ## Pull Request Expectations
 

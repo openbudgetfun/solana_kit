@@ -1,0 +1,29 @@
+{
+  "packages": [
+    {
+      "package": "solana_kit_accounts",
+      "risk": "critical",
+      "minimumLineCoverage": 90
+    },
+    {
+      "package": "solana_kit_helius",
+      "risk": "critical",
+      "minimumLineCoverage": 90
+    },
+    {
+      "package": "solana_kit_rpc_subscriptions",
+      "risk": "critical",
+      "minimumLineCoverage": 90
+    },
+    {
+      "package": "solana_kit_rpc_types",
+      "risk": "critical",
+      "minimumLineCoverage": 90
+    },
+    {
+      "package": "solana_kit_test_matchers",
+      "risk": "support",
+      "minimumLineCoverage": 90
+    }
+  ]
+}

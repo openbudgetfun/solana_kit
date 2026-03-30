@@ -82,6 +82,17 @@ jobs:
         run: test:all
         shell: devenv shell -- bash -e {0}
 
+  coverage-risk-tiers:
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Enforce risk-tier coverage floors
+        run: coverage:check
+        shell: devenv shell -- bash -e {0}
+
   android-plugin-compile:
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:

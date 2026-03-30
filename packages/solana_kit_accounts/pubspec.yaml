@@ -21,4 +21,5 @@ dependencies:
   solana_kit_rpc_types: ^0.3.1
 dev_dependencies:
   solana_kit_lints: ^0.3.1
+  solana_kit_test_matchers: ^0.3.1
   test: ^1.25.0

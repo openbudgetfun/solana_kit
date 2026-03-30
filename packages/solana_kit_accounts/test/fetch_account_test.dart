@@ -1,55 +1,15 @@
 import 'dart:typed_data';
 
 import 'package:solana_kit_accounts/solana_kit_accounts.dart';
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
+import 'package:solana_kit_test_matchers/solana_kit_test_matchers.dart';
 import 'package:test/test.dart';
-
-/// Creates a mock Rpc that returns accounts for a given set of addresses.
-///
-/// The [accounts] map is keyed by address string and values are the RPC
-/// account data maps.
-Rpc _getMockRpc(Map<String, Map<String, dynamic>> accounts) {
-  final api = MapRpcApi({
-    'getAccountInfo': (params) => RpcPlan<Object?>(
-      execute: (config) async {
-        final addr = (params[0]! as String?)!;
-        final value = accounts[addr];
-        return <String, dynamic>{
-          'context': <String, dynamic>{'slot': BigInt.zero},
-          'value': value,
-        };
-      },
-    ),
-    'getMultipleAccounts': (params) => RpcPlan<Object?>(
-      execute: (config) async {
-        final addrs = (params[0]! as List?)!;
-        final values = addrs.map((a) => accounts[a! as String]).toList();
-        return <String, dynamic>{
-          'context': <String, dynamic>{'slot': BigInt.zero},
-          'value': values,
-        };
-      },
-    ),
-  });
-
-  return Rpc(api: api, transport: (config) async => null);
-}
 
 void main() {
   group('fetchEncodedAccount', () {
     test('fetches and parses an existing base64-encoded account', () async {
-      const addr = Address('GQE2yjns7SKKuMc89tveBDpzYHwXfeuB2PGAbGaPWc6G');
-      final rpc = _getMockRpc({
-        addr.value: <String, dynamic>{
-          'data': ['somedata', 'base64'],
-          'executable': false,
-          'lamports': 1000000000,
-          'owner': '11111111111111111111111111111111',
-          'space': 6,
-        },
-      });
+      const addr = testAccountAddressA;
+      final rpc = createAccountsFixtureRpc({addr: base64RpcAccountFixture()});
 
       final account = await fetchEncodedAccount(rpc, addr);
 
@@ -61,16 +21,13 @@ void main() {
       );
       expect(existing.executable, isFalse);
       expect(existing.lamports, Lamports(BigInt.from(1000000000)));
-      expect(
-        existing.programAddress,
-        const Address('11111111111111111111111111111111'),
-      );
+      expect(existing.programAddress, testOwnerAddress);
       expect(existing.space, BigInt.from(6));
     });
 
     test('fetches and parses a missing account', () async {
-      const addr = Address('GQE2yjns7SKKuMc89tveBDpzYHwXfeuB2PGAbGaPWc6G');
-      final rpc = _getMockRpc({});
+      const addr = testAccountAddressA;
+      final rpc = createAccountsFixtureRpc({});
 
       final account = await fetchEncodedAccount(rpc, addr);
 
@@ -82,16 +39,8 @@ void main() {
 
   group('SolanaAccountClient', () {
     test('fetches encoded accounts through the higher-level client', () async {
-      const addr = Address('GQE2yjns7SKKuMc89tveBDpzYHwXfeuB2PGAbGaPWc6G');
-      final rpc = _getMockRpc({
-        addr.value: <String, dynamic>{
-          'data': ['somedata', 'base64'],
-          'executable': false,
-          'lamports': 1000000000,
-          'owner': '11111111111111111111111111111111',
-          'space': 6,
-        },
-      });
+      const addr = testAccountAddressA;
+      final rpc = createAccountsFixtureRpc({addr: base64RpcAccountFixture()});
       final client = createSolanaAccountClient(rpc);
 
       final account = await client.fetchEncodedAccount(addr);
@@ -100,53 +49,34 @@ void main() {
       expect(account.address, addr);
     });
 
-    test('fetches jsonParsed accounts through the higher-level client', () async {
-      const addr = Address('GQE2yjns7SKKuMc89tveBDpzYHwXfeuB2PGAbGaPWc6G');
-      final rpc = _getMockRpc({
-        addr.value: <String, dynamic>{
-          'data': <String, dynamic>{
-            'parsed': <String, dynamic>{
-              'info': <String, dynamic>{'mint': '2222', 'owner': '3333'},
-              'type': 'token',
-            },
-            'program': 'splToken',
-            'space': 165,
-          },
-          'executable': false,
-          'lamports': 1000000000,
-          'owner': '11111111111111111111111111111111',
-          'space': 165,
-        },
-      });
-      final client = createSolanaAccountClient(rpc);
+    test(
+      'fetches jsonParsed accounts through the higher-level client',
+      () async {
+        const addr = testAccountAddressA;
+        final rpc = createAccountsFixtureRpc({
+          addr: jsonParsedRpcAccountFixture(),
+        });
+        final client = createSolanaAccountClient(rpc);
 
-      final account = await client.fetchJsonParsedAccount(addr);
+        final account = await client.fetchJsonParsedAccount(addr);
 
-      expect(account.exists, isTrue);
-      expect(account.address, addr);
-    });
+        expect(account.exists, isTrue);
+        expect(account.address, addr);
+      },
+    );
   });
 
   group('fetchEncodedAccounts', () {
     test('fetches and parses multiple accounts', () async {
-      const addrA = Address('GQE2yjns7SKKuMc89tveBDpzYHwXfeuB2PGAbGaPWc6G');
-      const addrB = Address('11111111111111111111111111111111');
+      const addrA = testAccountAddressA;
+      const addrB = testAccountAddressB;
 
-      final rpc = _getMockRpc({
-        addrA.value: <String, dynamic>{
-          'data': ['somedata', 'base64'],
-          'executable': false,
-          'lamports': 1000000000,
-          'owner': '11111111111111111111111111111111',
-          'space': 6,
-        },
-      });
+      final rpc = createAccountsFixtureRpc({addrA: base64RpcAccountFixture()});
 
       final accounts = await fetchEncodedAccounts(rpc, [addrA, addrB]);
 
       expect(accounts, hasLength(2));
 
-      // Account A exists
       expect(accounts[0].exists, isTrue);
       final existingA = accounts[0] as ExistingAccount<Uint8List>;
       expect(
@@ -154,7 +84,6 @@ void main() {
         equals(Uint8List.fromList([178, 137, 158, 117, 171, 90])),
       );
 
-      // Account B does not exist
       expect(accounts[1].exists, isFalse);
       expect(accounts[1].address, addrB);
     });
@@ -162,22 +91,9 @@ void main() {
 
   group('fetchJsonParsedAccount', () {
     test('fetches and parses an existing jsonParsed account', () async {
-      const addr = Address('GQE2yjns7SKKuMc89tveBDpzYHwXfeuB2PGAbGaPWc6G');
-      final rpc = _getMockRpc({
-        addr.value: <String, dynamic>{
-          'data': <String, dynamic>{
-            'parsed': <String, dynamic>{
-              'info': <String, dynamic>{'mint': '2222', 'owner': '3333'},
-              'type': 'token',
-            },
-            'program': 'splToken',
-            'space': 165,
-          },
-          'executable': false,
-          'lamports': 1000000000,
-          'owner': '11111111111111111111111111111111',
-          'space': 165,
-        },
+      const addr = testAccountAddressA;
+      final rpc = createAccountsFixtureRpc({
+        addr: jsonParsedRpcAccountFixture(),
       });
 
       final account = await fetchJsonParsedAccount(rpc, addr);
@@ -186,8 +102,8 @@ void main() {
     });
 
     test('fetches and parses a missing jsonParsed account', () async {
-      const addr = Address('GQE2yjns7SKKuMc89tveBDpzYHwXfeuB2PGAbGaPWc6G');
-      final rpc = _getMockRpc({});
+      const addr = testAccountAddressA;
+      final rpc = createAccountsFixtureRpc({});
 
       final account = await fetchJsonParsedAccount(rpc, addr);
 
@@ -198,34 +114,17 @@ void main() {
 
   group('fetchJsonParsedAccounts', () {
     test('fetches and parses multiple jsonParsed accounts', () async {
-      const addrA = Address('GQE2yjns7SKKuMc89tveBDpzYHwXfeuB2PGAbGaPWc6G');
-      const addrB = Address('11111111111111111111111111111111');
+      const addrA = testAccountAddressA;
+      const addrB = testAccountAddressB;
 
-      final rpc = _getMockRpc({
-        addrA.value: <String, dynamic>{
-          'data': <String, dynamic>{
-            'parsed': <String, dynamic>{
-              'info': <String, dynamic>{'mint': '2222', 'owner': '3333'},
-              'type': 'token',
-            },
-            'program': 'splToken',
-            'space': 165,
-          },
-          'executable': false,
-          'lamports': 1000000000,
-          'owner': '11111111111111111111111111111111',
-          'space': 165,
-        },
+      final rpc = createAccountsFixtureRpc({
+        addrA: jsonParsedRpcAccountFixture(),
       });
 
       final accounts = await fetchJsonParsedAccounts(rpc, [addrA, addrB]);
 
       expect(accounts, hasLength(2));
-
-      // Account A exists
       expect(accounts[0].exists, isTrue);
-
-      // Account B does not exist
       expect(accounts[1].exists, isFalse);
       expect(accounts[1].address, addrB);
     });

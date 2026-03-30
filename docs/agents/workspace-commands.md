@@ -17,6 +17,7 @@ devenv shell -- bash -lc '<command>'
 | `lint:all`        | Run sync checks, docs checks, formatting checks, Kotlin lint, and Dart analysis.                 |
 | `test:all`        | Run all workspace tests.                                                                         |
 | `test:coverage`   | Generate merged LCOV coverage.                                                                   |
+| `coverage:check`  | Run package-level coverage for risk-tier packages and enforce configured floors.                 |
 | `docs:check`      | Verify generated docs blocks, source comment consumers, and workspace metadata are up to date.   |
 | `docs:update`     | Refresh generated docs blocks and print mdt diagnostics.                                         |
 | `sync:check`      | Validate synced dependency versions and changelog outputs.                                       |
