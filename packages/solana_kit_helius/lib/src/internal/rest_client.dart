@@ -66,13 +66,25 @@ class RestClient {
   }
 
   Uri _buildUri(String path, [Map<String, String>? queryParameters]) {
-    final uri = Uri.parse('$baseUrl$path');
-    if (queryParameters != null && queryParameters.isNotEmpty) {
-      return uri.replace(
-        queryParameters: {...uri.queryParameters, ...queryParameters},
-      );
-    }
-    return uri;
+    final baseUri = Uri.parse(baseUrl);
+    final pathUri = Uri.parse(path);
+
+    final mergedPathSegments = <String>[
+      ...baseUri.pathSegments.where((segment) => segment.isNotEmpty),
+      ...pathUri.pathSegments.where((segment) => segment.isNotEmpty),
+    ];
+    final mergedQueryParameters = <String, String>{
+      ...baseUri.queryParameters,
+      ...pathUri.queryParameters,
+      if (queryParameters != null) ...queryParameters,
+    };
+
+    return baseUri.replace(
+      pathSegments: mergedPathSegments,
+      queryParameters: mergedQueryParameters.isEmpty
+          ? null
+          : mergedQueryParameters,
+    );
   }
 
   Object? _handleResponse(http.Response response) {

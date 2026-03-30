@@ -113,6 +113,20 @@ final helius = createHelius(
 `HeliusWebSocket` enforces `wss://` URLs by default. Use `allowInsecureWs: true`
 only for local development and controlled tests.
 
+## Testing strategy
+
+The Helius package keeps DTO smoke coverage, but long-term confidence should
+come from higher-level contracts:
+
+- shared REST and JSON-RPC client contract tests cover request shaping, headers,
+  query merging, and error mapping
+- endpoint tests focus on user-facing request/response behavior
+- websocket session tests cover subscribe, notification routing, unsubscribe,
+  and close boundaries across concurrent subscriptions
+
+When adding a new Helius surface, prefer extending one of these boundaries
+before adding large amounts of DTO-only roundtrip coverage.
+
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_helius"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_helius/solana_kit_helius.dart"} -->
 
 ## Example
