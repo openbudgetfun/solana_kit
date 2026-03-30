@@ -15,6 +15,8 @@ dependencies:
   solana_kit_codecs_core: ^0.3.1
   solana_kit_codecs_strings: ^0.3.1
   solana_kit_errors: ^0.3.1
+  solana_kit_rpc: ^0.3.1
+  solana_kit_rpc_api: ^0.3.1
   solana_kit_rpc_spec: ^0.3.1
   solana_kit_rpc_types: ^0.3.1
 dev_dependencies:

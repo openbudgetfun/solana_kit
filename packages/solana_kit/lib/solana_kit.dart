@@ -19,10 +19,10 @@
 ///   final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 ///
 ///   final slot = await rpc.getSlot().send();
-///   final latestBlockhash = await rpc.getLatestBlockhash().send();
+///   final latestBlockhash = await rpc.getLatestBlockhashValue().send();
 ///
 ///   print('Current slot: $slot');
-///   print('Latest blockhash: ${latestBlockhash['blockhash']}');
+///   print('Latest blockhash: ${latestBlockhash.value.blockhash}');
 /// }
 /// ```
 ///
@@ -78,7 +78,7 @@
 /// Future<void> main() async {
 ///   final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 ///   final feePayer = generateKeyPairSigner();
-///   final latestBlockhash = await rpc.getLatestBlockhash().send();
+///   final latestBlockhash = await rpc.getLatestBlockhashValue().send();
 ///
 ///   final instruction = Instruction(
 ///     programAddress: const Address('11111111111111111111111111111111'),
@@ -95,9 +95,8 @@
 ///       .withFeePayer(feePayer.address)
 ///       .withBlockhashLifetime(
 ///         BlockhashLifetimeConstraint(
-///           blockhash: latestBlockhash['blockhash']! as String,
-///           lastValidBlockHeight:
-///               latestBlockhash['lastValidBlockHeight']! as BigInt,
+///           blockhash: latestBlockhash.value.blockhash.value,
+///           lastValidBlockHeight: latestBlockhash.value.lastValidBlockHeight,
 ///         ),
 ///       )
 ///       .appendInstruction(instruction);

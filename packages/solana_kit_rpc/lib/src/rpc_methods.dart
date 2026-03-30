@@ -38,6 +38,21 @@ extension SolanaRpcMethods on Rpc {
     );
   }
 
+  /// Fetches account info and parses the result into a typed Solana RPC
+  /// response wrapper.
+  PendingRpcRequest<SolanaRpcResponse<Map<String, Object?>?>> getAccountInfoValue(
+    Address address, [
+    GetAccountInfoConfig? config,
+  ]) {
+    return _mapPendingRpcRequest(
+      request<Object?>(
+        'getAccountInfo',
+        getAccountInfoParams(address, config),
+      ),
+      _parseNullableMapRpcResponse,
+    );
+  }
+
   /// Fetches account balance with context metadata.
   ///
   /// This wraps the `getBalance` RPC method.
@@ -51,6 +66,21 @@ extension SolanaRpcMethods on Rpc {
     return request<Map<String, Object?>>(
       'getBalance',
       getBalanceParams(address, config),
+    );
+  }
+
+  /// Fetches balance and parses the result into a typed Solana RPC response
+  /// wrapper.
+  PendingRpcRequest<SolanaRpcResponse<Lamports>> getBalanceValue(
+    Address address, [
+    GetBalanceConfig? config,
+  ]) {
+    return _mapPendingRpcRequest(
+      request<Object?>(
+        'getBalance',
+        getBalanceParams(address, config),
+      ),
+      _parseLamportsRpcResponse,
     );
   }
 
@@ -106,6 +136,49 @@ extension SolanaRpcMethods on Rpc {
     return request<Map<String, Object?>>(
       'getLatestBlockhash',
       getLatestBlockhashParams(config),
+    );
+  }
+
+  /// Fetches the latest blockhash and parses it into a typed response model.
+  PendingRpcRequest<SolanaRpcResponse<LatestBlockhashValue>>
+  getLatestBlockhashValue([
+    GetLatestBlockhashConfig? config,
+  ]) {
+    return _mapPendingRpcRequest(
+      request<Object?>(
+        'getLatestBlockhash',
+        getLatestBlockhashParams(config),
+      ),
+      _parseLatestBlockhashRpcResponse,
+    );
+  }
+
+  /// Fetches details for multiple accounts.
+  ///
+  /// This wraps the `getMultipleAccounts` RPC method.
+  PendingRpcRequest<Map<String, Object?>> getMultipleAccounts(
+    List<Address> addresses, [
+    GetMultipleAccountsConfig? config,
+  ]) {
+    return request<Map<String, Object?>>(
+      'getMultipleAccounts',
+      getMultipleAccountsParams(addresses, config),
+    );
+  }
+
+  /// Fetches multiple account values and parses them into a typed Solana RPC
+  /// response wrapper.
+  PendingRpcRequest<SolanaRpcResponse<List<Map<String, Object?>?>>>
+  getMultipleAccountsValue(
+    List<Address> addresses, [
+    GetMultipleAccountsConfig? config,
+  ]) {
+    return _mapPendingRpcRequest(
+      request<Object?>(
+        'getMultipleAccounts',
+        getMultipleAccountsParams(addresses, config),
+      ),
+      _parseNullableMapListRpcResponse,
     );
   }
 
@@ -185,4 +258,79 @@ extension SolanaRpcMethods on Rpc {
       sendTransactionParams(base64EncodedWireTransaction, config),
     );
   }
+}
+
+PendingRpcRequest<TOutput> _mapPendingRpcRequest<TInput, TOutput>(
+  PendingRpcRequest<TInput> request,
+  TOutput Function(TInput value) mapper,
+) {
+  return PendingRpcRequest<TOutput>(
+    plan: RpcPlan<TOutput>(
+      execute: (config) async => mapper(await request.plan.execute(config)),
+    ),
+    transport: request.transport,
+  );
+}
+
+SolanaRpcResponse<Map<String, Object?>?> _parseNullableMapRpcResponse(
+  Object? response,
+) {
+  return _parseSolanaRpcResponse(response, (value) {
+    if (value == null) return null;
+    final typedValue = value as Map;
+    return typedValue.cast<String, Object?>();
+  });
+}
+
+SolanaRpcResponse<List<Map<String, Object?>?>> _parseNullableMapListRpcResponse(
+  Object? response,
+) {
+  return _parseSolanaRpcResponse(response, (value) {
+    final typedValue = (value as List<Object?>?) ?? const <Object?>[];
+    return typedValue.map((item) {
+      if (item == null) return null;
+      final typedItem = item as Map;
+      return typedItem.cast<String, Object?>();
+    }).toList(growable: false);
+  });
+}
+
+SolanaRpcResponse<Lamports> _parseLamportsRpcResponse(
+  Object? response,
+) {
+  return _parseSolanaRpcResponse(response, (value) {
+    return lamports(value! as BigInt);
+  });
+}
+
+SolanaRpcResponse<LatestBlockhashValue> _parseLatestBlockhashRpcResponse(
+  Object? response,
+) {
+  return _parseSolanaRpcResponse(response, (value) {
+    final typedValue = (value! as Map).cast<String, Object?>();
+    return LatestBlockhashValue(
+      blockhash: blockhash(typedValue['blockhash']! as String),
+      lastValidBlockHeight: typedValue['lastValidBlockHeight']! as BigInt,
+    );
+  });
+}
+
+SolanaRpcResponse<TValue> _parseSolanaRpcResponse<TValue>(
+  Object? response,
+  TValue Function(Object? value) parseValue,
+) {
+  final typedResponse = switch (response) {
+    Map() => response.cast<String, Object?>(),
+    _ => <String, Object?>{},
+  };
+  final typedContext = switch (typedResponse['context']) {
+    Map() => (typedResponse['context']! as Map).cast<String, Object?>(),
+    _ => <String, Object?>{},
+  };
+  return SolanaRpcResponse<TValue>(
+    context: RpcResponseContext(
+      slot: (typedContext['slot'] as Slot?) ?? BigInt.zero,
+    ),
+    value: parseValue(typedResponse['value']),
+  );
 }

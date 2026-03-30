@@ -106,6 +106,23 @@ Use `fetchJsonParsedAccount` or `fetchJsonParsedAccounts` when:
 
 Use encoded reads when you need full control over the layout or you are interacting with custom program data.
 
+## Reuse a higher-level account client
+
+If your app reads accounts from several places, create a `SolanaAccountClient`
+once and reuse it as the account boundary for your service or repository layer.
+
+```dart
+final accountClient = createSolanaAccountClient(rpc);
+final maybeAccount = await accountClient.fetchEncodedAccount(
+  const Address('11111111111111111111111111111111'),
+);
+
+print(maybeAccount.exists);
+```
+
+This keeps RPC request wiring in one place while preserving the same
+`MaybeAccount`-based result models.
+
 ## Next steps
 
 - [Accounts](../core/accounts)

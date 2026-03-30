@@ -33,6 +33,31 @@ void main() {
       expect(response.result, isA<Map<String, Object?>>());
     });
 
+    test('getAccountInfoValue returns a typed SolanaRpcResponse wrapper', () async {
+      final response = await _captureCall(
+        (rpc) => rpc
+            .getAccountInfoValue(
+              testAddress,
+              const GetAccountInfoConfig(encoding: 'base64'),
+            )
+            .send(),
+        rpcResult: {
+          'context': {'slot': 5},
+          'value': {
+            'data': ['AAAA', 'base64'],
+            'executable': false,
+            'lamports': 1,
+            'owner': '11111111111111111111111111111111',
+            'space': 0,
+          },
+        },
+      );
+
+      expect(response.payload['method'], 'getAccountInfo');
+      expect(response.result.context.slot, BigInt.from(5));
+      expect(response.result.value, isA<Map<String, Object?>>());
+    });
+
     test('getBalance sends method-specific params', () async {
       final response = await _captureCall(
         (rpc) => rpc
@@ -53,6 +78,25 @@ void main() {
         {'commitment': 'confirmed'},
       ]);
       expect(response.result, isA<Map<String, Object?>>());
+    });
+
+    test('getBalanceValue returns typed lamports with context', () async {
+      final response = await _captureCall(
+        (rpc) => rpc
+            .getBalanceValue(
+              testAddress,
+              const GetBalanceConfig(commitment: Commitment.confirmed),
+            )
+            .send(),
+        rpcResult: {
+          'context': {'slot': 7},
+          'value': 1000,
+        },
+      );
+
+      expect(response.payload['method'], 'getBalance');
+      expect(response.result.context.slot, BigInt.from(7));
+      expect(response.result.value, Lamports(BigInt.from(1000)));
     });
 
     test('getBlockHeight returns a typed slot', () async {
@@ -138,6 +182,91 @@ void main() {
         {'commitment': 'confirmed'},
       ]);
       expect(response.result, isA<Map<String, Object?>>());
+    });
+
+    test('getLatestBlockhashValue returns a typed blockhash wrapper', () async {
+      final response = await _captureCall(
+        (rpc) => rpc
+            .getLatestBlockhashValue(
+              const GetLatestBlockhashConfig(
+                commitment: Commitment.confirmed,
+              ),
+            )
+            .send(),
+        rpcResult: {
+          'context': {'slot': 3},
+          'value': {
+            'blockhash': 'J4yED2jcMAHyQUg61DBmm4njmEydUr2WqrV9cdEcDDgL',
+            'lastValidBlockHeight': 10,
+          },
+        },
+      );
+
+      expect(response.payload['method'], 'getLatestBlockhash');
+      expect(response.result.context.slot, BigInt.from(3));
+      expect(
+        response.result.value,
+        LatestBlockhashValue(
+          blockhash: const Blockhash('J4yED2jcMAHyQUg61DBmm4njmEydUr2WqrV9cdEcDDgL'),
+          lastValidBlockHeight: BigInt.from(10),
+        ),
+      );
+    });
+
+    test('getMultipleAccounts sends method-specific params', () async {
+      const secondAddress = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+
+      final response = await _captureCall(
+        (rpc) => rpc
+            .getMultipleAccounts(
+              [testAddress, secondAddress],
+              const GetMultipleAccountsConfig(encoding: 'base64'),
+            )
+            .send(),
+        rpcResult: {
+          'context': {'slot': 1},
+          'value': [null, null],
+        },
+      );
+
+      expect(response.payload['method'], 'getMultipleAccounts');
+      expect(response.payload['params'], [
+        [testAddress.value, secondAddress.value],
+        {'encoding': 'base64', 'commitment': 'confirmed'},
+      ]);
+      expect(response.result, isA<Map<String, Object?>>());
+    });
+
+    test('getMultipleAccountsValue returns typed list values', () async {
+      const secondAddress = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+
+      final response = await _captureCall(
+        (rpc) => rpc
+            .getMultipleAccountsValue(
+              [testAddress, secondAddress],
+              const GetMultipleAccountsConfig(encoding: 'base64'),
+            )
+            .send(),
+        rpcResult: {
+          'context': {'slot': 11},
+          'value': [
+            null,
+            {
+              'data': ['AAAA', 'base64'],
+              'executable': false,
+              'lamports': 1,
+              'owner': '11111111111111111111111111111111',
+              'space': 0,
+            },
+          ],
+        },
+      );
+
+      expect(response.payload['method'], 'getMultipleAccounts');
+      expect(response.result.context.slot, BigInt.from(11));
+      expect(response.result.value, hasLength(2));
+      expect(response.result.value.first, isNull);
+      expect(response.result.value.last, isA<Map<String, Object?>>());
     });
 
     test('getSignatureStatuses sends method-specific params', () async {

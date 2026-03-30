@@ -80,6 +80,53 @@ void main() {
     });
   });
 
+  group('SolanaAccountClient', () {
+    test('fetches encoded accounts through the higher-level client', () async {
+      const addr = Address('GQE2yjns7SKKuMc89tveBDpzYHwXfeuB2PGAbGaPWc6G');
+      final rpc = _getMockRpc({
+        addr.value: <String, dynamic>{
+          'data': ['somedata', 'base64'],
+          'executable': false,
+          'lamports': 1000000000,
+          'owner': '11111111111111111111111111111111',
+          'space': 6,
+        },
+      });
+      final client = createSolanaAccountClient(rpc);
+
+      final account = await client.fetchEncodedAccount(addr);
+
+      expect(account.exists, isTrue);
+      expect(account.address, addr);
+    });
+
+    test('fetches jsonParsed accounts through the higher-level client', () async {
+      const addr = Address('GQE2yjns7SKKuMc89tveBDpzYHwXfeuB2PGAbGaPWc6G');
+      final rpc = _getMockRpc({
+        addr.value: <String, dynamic>{
+          'data': <String, dynamic>{
+            'parsed': <String, dynamic>{
+              'info': <String, dynamic>{'mint': '2222', 'owner': '3333'},
+              'type': 'token',
+            },
+            'program': 'splToken',
+            'space': 165,
+          },
+          'executable': false,
+          'lamports': 1000000000,
+          'owner': '11111111111111111111111111111111',
+          'space': 165,
+        },
+      });
+      final client = createSolanaAccountClient(rpc);
+
+      final account = await client.fetchJsonParsedAccount(addr);
+
+      expect(account.exists, isTrue);
+      expect(account.address, addr);
+    });
+  });
+
   group('fetchEncodedAccounts', () {
     test('fetches and parses multiple accounts', () async {
       const addrA = Address('GQE2yjns7SKKuMc89tveBDpzYHwXfeuB2PGAbGaPWc6G');

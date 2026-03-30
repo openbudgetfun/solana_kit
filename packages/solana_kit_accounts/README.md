@@ -177,6 +177,8 @@ void handleAccount(MaybeAccount<Uint8List> maybeAccount) {
 
 Use `fetchEncodedAccount` and `fetchEncodedAccounts` to retrieve accounts from a Solana RPC node. These functions use the `getAccountInfo` and `getMultipleAccounts` RPC methods with base64 encoding.
 
+If you prefer a reusable higher-level boundary for account reads, create a `SolanaAccountClient` from your `Rpc` and call the same workflows through that client.
+
 ```dart
 import 'package:solana_kit_accounts/solana_kit_accounts.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -192,9 +194,15 @@ Future<void> main() async {
     const Address('11111111111111111111111111111111'),
   );
 
+  final accountClient = createSolanaAccountClient(rpc);
+  final sameAccount = await accountClient.fetchEncodedAccount(
+    const Address('11111111111111111111111111111111'),
+  );
+
   if (maybeAccount.exists) {
     print('Account found at ${maybeAccount.address}');
   }
+  print('Client fetch agrees: ${sameAccount.exists}');
 
   // Fetch with a specific commitment level.
   final confirmedAccount = await fetchEncodedAccount(

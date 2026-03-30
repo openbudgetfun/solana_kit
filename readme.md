@@ -40,10 +40,10 @@ Future<void> main() async {
   final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   final slot = await rpc.getSlot().send();
-  final latestBlockhash = await rpc.getLatestBlockhash().send();
+  final latestBlockhash = await rpc.getLatestBlockhashValue().send();
 
   print('Current slot: $slot');
-  print('Latest blockhash: ${latestBlockhash['blockhash']}');
+  print('Latest blockhash: ${latestBlockhash.value.blockhash}');
 }
 ```
 
@@ -99,7 +99,7 @@ import 'package:solana_kit/solana_kit.dart';
 Future<void> main() async {
   final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
   final feePayer = generateKeyPairSigner();
-  final latestBlockhash = await rpc.getLatestBlockhash().send();
+  final latestBlockhash = await rpc.getLatestBlockhashValue().send();
 
   final instruction = Instruction(
     programAddress: const Address('11111111111111111111111111111111'),
@@ -116,9 +116,8 @@ Future<void> main() async {
       .withFeePayer(feePayer.address)
       .withBlockhashLifetime(
         BlockhashLifetimeConstraint(
-          blockhash: latestBlockhash['blockhash']! as String,
-          lastValidBlockHeight:
-              latestBlockhash['lastValidBlockHeight']! as BigInt,
+          blockhash: latestBlockhash.value.blockhash.value,
+          lastValidBlockHeight: latestBlockhash.value.lastValidBlockHeight,
         ),
       )
       .appendInstruction(instruction);
@@ -151,11 +150,11 @@ Future<void> main() async {
 
   final slot = await rpc.getSlot().send();
   final epochInfo = await rpc.getEpochInfo().send();
-  final latestBlockhash = await rpc.getLatestBlockhash().send();
+  final latestBlockhash = await rpc.getLatestBlockhashValue().send();
 
   print('Slot: $slot');
   print('Epoch: ${epochInfo['epoch']}');
-  print('Latest blockhash: ${latestBlockhash['blockhash']}');
+  print('Latest blockhash: ${latestBlockhash.value.blockhash}');
 }
 ```
 
@@ -788,7 +787,7 @@ Generated from package `pubspec.yaml` files with `scripts/workspace-doc-drift.sh
 
 ```text
 solana_kit -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs, solana_kit_errors, solana_kit_fast_stable_stringify, solana_kit_functional, solana_kit_instruction_plans, solana_kit_instructions, solana_kit_keys, solana_kit_offchain_messages, solana_kit_options, solana_kit_program_client_core, solana_kit_programs, solana_kit_rpc, solana_kit_rpc_parsed_types, solana_kit_rpc_spec_types, solana_kit_rpc_subscriptions, solana_kit_rpc_transport_http, solana_kit_rpc_types, solana_kit_signers, solana_kit_subscribable, solana_kit_sysvars, solana_kit_transaction_confirmation, solana_kit_transaction_messages, solana_kit_transactions
-solana_kit_accounts -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_strings, solana_kit_errors, solana_kit_rpc_spec, solana_kit_rpc_types
+solana_kit_accounts -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_strings, solana_kit_errors, solana_kit_rpc, solana_kit_rpc_api, solana_kit_rpc_spec, solana_kit_rpc_types
 solana_kit_addresses -> solana_kit_codecs_core, solana_kit_codecs_strings, solana_kit_errors
 solana_kit_codecs -> solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_options
 solana_kit_codecs_core -> solana_kit_errors

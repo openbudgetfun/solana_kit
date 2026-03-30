@@ -23,10 +23,10 @@
 ///   final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 ///
 ///   final slot = await rpc.getSlot().send();
-///   final latestBlockhash = await rpc.getLatestBlockhash().send();
+///   final latestBlockhash = await rpc.getLatestBlockhashValue().send();
 ///
 ///   print('Current slot: $slot');
-///   print('Latest blockhash: ${latestBlockhash['blockhash']}');
+///   print('Latest blockhash: ${latestBlockhash.value.blockhash}');
 /// }
 /// ```
 ///
@@ -56,11 +56,11 @@
 ///
 ///   final slot = await rpc.getSlot().send();
 ///   final epochInfo = await rpc.getEpochInfo().send();
-///   final latestBlockhash = await rpc.getLatestBlockhash().send();
+///   final latestBlockhash = await rpc.getLatestBlockhashValue().send();
 ///
 ///   print('Slot: $slot');
 ///   print('Epoch: ${epochInfo['epoch']}');
-///   print('Latest blockhash: ${latestBlockhash['blockhash']}');
+///   print('Latest blockhash: ${latestBlockhash.value.blockhash}');
 /// }
 /// ```
 ///
