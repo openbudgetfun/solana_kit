@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_helius/solana_kit_helius.dart';
 import 'package:test/test.dart';
 
@@ -39,9 +40,11 @@ void main() {
 
       final ws = HeliusWebSocket(
         url: 'ws://${server.address.address}:${server.port}',
+        allowInsecureWs: true,
       );
       await ws.connect();
       addTearDown(ws.close);
+      expect(ws.isConnected, isTrue);
 
       final stream = ws.subscribe('accountSubscribe', ['acct-1']);
       final nextEvent = stream.first;
@@ -68,7 +71,7 @@ void main() {
       expect(await nextEvent, {'value': 'ok'});
     });
 
-    test('unsubscribe sends unsubscribe message when last listener cancels', () async {
+    test('unsubscribe uses the matching JSON-RPC unsubscribe method', () async {
       final (server, commands, requests) = await _startServer();
       addTearDown(() async {
         await commands.close();
@@ -77,6 +80,7 @@ void main() {
 
       final ws = HeliusWebSocket(
         url: 'ws://${server.address.address}:${server.port}',
+        allowInsecureWs: true,
       );
       await ws.connect();
       addTearDown(ws.close);
@@ -92,7 +96,7 @@ void main() {
       expect(requests.length, greaterThanOrEqualTo(2));
       final unsubscribeJson =
           jsonDecode(requests.last! as String) as Map<String, Object?>;
-      expect(unsubscribeJson['method'], 'unsubscribe');
+      expect(unsubscribeJson['method'], 'logsUnsubscribe');
       expect(unsubscribeJson['params'], [77]);
     });
 
@@ -105,6 +109,7 @@ void main() {
 
       final ws = HeliusWebSocket(
         url: 'ws://${server.address.address}:${server.port}',
+        allowInsecureWs: true,
       );
       await ws.connect();
       addTearDown(ws.close);
@@ -114,7 +119,6 @@ void main() {
       addTearDown(subscription.cancel);
       await Future<void>.delayed(const Duration(milliseconds: 50));
 
-      // confirm subscription
       commands.add({'jsonrpc': '2.0', 'id': 1, 'result': 55});
       await Future<void>.delayed(const Duration(milliseconds: 50));
 
@@ -123,6 +127,83 @@ void main() {
 
       expect(emitted, isEmpty);
       expect(requests, isNotEmpty);
+    });
+
+    test('invalid JSON payloads surface as SolanaError events', () async {
+      final (server, commands, requests) = await _startServer();
+      addTearDown(() async {
+        await commands.close();
+        await server.close(force: true);
+      });
+
+      final ws = HeliusWebSocket(
+        url: 'ws://${server.address.address}:${server.port}',
+        allowInsecureWs: true,
+      );
+      await ws.connect();
+      addTearDown(ws.close);
+
+      final errors = <Object>[];
+      final subscription = ws.subscribe('slotSubscribe').listen(
+        (_) {},
+        onError: errors.add,
+      );
+      addTearDown(subscription.cancel);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      commands.add({'jsonrpc': '2.0', 'id': 1, 'result': 55});
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      commands.add('{not valid json');
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      expect(
+        errors.single,
+        isA<SolanaError>().having(
+          (error) => error.code,
+          'code',
+          SolanaErrorCode.heliusWebSocketError,
+        ),
+      );
+      expect(requests, isNotEmpty);
+    });
+
+    test('subscription error responses surface on the matching stream', () async {
+      final (server, commands, _) = await _startServer();
+      addTearDown(() async {
+        await commands.close();
+        await server.close(force: true);
+      });
+
+      final ws = HeliusWebSocket(
+        url: 'ws://${server.address.address}:${server.port}',
+        allowInsecureWs: true,
+      );
+      await ws.connect();
+      addTearDown(ws.close);
+
+      final errors = <Object>[];
+      final subscription = ws.subscribe('accountSubscribe', ['acct-1']).listen(
+        (_) {},
+        onError: errors.add,
+      );
+      addTearDown(subscription.cancel);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      commands.add({
+        'jsonrpc': '2.0',
+        'id': 1,
+        'error': {'code': -32000, 'message': 'subscription denied'},
+      });
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      expect(
+        errors.single,
+        isA<SolanaError>().having(
+          (error) => error.code,
+          'code',
+          SolanaErrorCode.heliusWebSocketError,
+        ),
+      );
     });
 
     test('close disconnects and future subscribe calls fail', () async {
@@ -134,6 +215,7 @@ void main() {
 
       final ws = HeliusWebSocket(
         url: 'ws://${server.address.address}:${server.port}',
+        allowInsecureWs: true,
       );
       await ws.connect();
       final stream = ws.subscribe('signatureSubscribe', ['sig-1']);
@@ -143,9 +225,16 @@ void main() {
 
       await ws.close();
 
+      expect(ws.isConnected, isFalse);
       expect(
         () => ws.subscribe('signatureSubscribe', ['sig-1']),
-        throwsA(isA<Exception>()),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.heliusWebSocketError,
+          ),
+        ),
       );
     });
   });

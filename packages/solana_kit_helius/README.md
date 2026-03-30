@@ -108,6 +108,11 @@ final helius = createHelius(
 );
 ```
 
+## WebSocket security defaults
+
+`HeliusWebSocket` enforces `wss://` URLs by default. Use `allowInsecureWs: true`
+only for local development and controlled tests.
+
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_helius"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_helius/solana_kit_helius.dart"} -->
 
 ## Example
