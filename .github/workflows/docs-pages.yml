@@ -8,8 +8,11 @@ on:
         required: false
         default: ""
         type: string
-  release:
-    types: [published]
+  # GitHub Pages environment deployment is restricted to the `main` branch,
+  # so release-tag runs cannot complete the deploy job.
+  push:
+    branches:
+      - main
 
 permissions:
   contents: read
