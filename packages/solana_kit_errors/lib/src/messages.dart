@@ -64,6 +64,8 @@ const Map<int, String> solanaErrorMessages = {
       'Invalid pattern match value. The provided value does not match any of the specified patterns.',
   SolanaErrorCode.codecsInvalidPatternMatchBytes:
       'Invalid pattern match bytes. The provided byte array does not match any of the specified patterns.',
+  SolanaErrorCode.codecsStringContainsNullCharacters:
+      r'Decoded $encoding string contains null characters. Use compatibility stripping or preserve mode explicitly if this payload is expected.',
   SolanaErrorCode.codecsExpectedFixedLength:
       'Expected a fixed-size codec, got a variable-size one.',
   SolanaErrorCode.codecsExpectedPositiveByteLength:

@@ -116,6 +116,33 @@ union discriminator alone.
 
 <!-- {/docsPatternMatchCodecSection} -->
 
+## Preferred UTF-8 decoding behavior
+
+`getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null
+characters.
+
+Prefer a stricter Dart-first path when silent data loss would be risky:
+
+```dart
+import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
+
+void main() {
+  final strictUtf8 = getStrictUtf8Codec();
+  final preservedUtf8 = getUtf8Codec(
+    nullCharacterMode: Utf8NullCharacterMode.preserve,
+  );
+
+  print(strictUtf8);
+  print(preservedUtf8);
+}
+```
+
+- use `getStrictUtf8Codec()` to reject decoded null characters.
+- use `Utf8NullCharacterMode.preserve` when you need to surface null bytes
+  explicitly without compatibility stripping.
+- keep the default `getUtf8Codec()` only when you intentionally need upstream
+  compatibility behavior.
+
 ## When to use codecs
 
 Use codecs when you need:

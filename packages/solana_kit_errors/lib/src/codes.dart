@@ -358,6 +358,7 @@ abstract final class SolanaErrorCode {
   static const int codecsExpectedDecoderToConsumeEntireByteArray = 8078023;
   static const int codecsInvalidPatternMatchValue = 8078024;
   static const int codecsInvalidPatternMatchBytes = 8078025;
+  static const int codecsStringContainsNullCharacters = 8078026;
 
   // ---------------------------------------------------------------------------
   // RPC (8100000 - 8100999)

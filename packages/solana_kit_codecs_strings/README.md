@@ -67,6 +67,12 @@ void main() {
 These codecs are especially useful for addresses, signatures, blockhashes, and
 other values that appear as base-encoded strings at API boundaries.
 
+For UTF-8 specifically, `getUtf8Codec()` preserves `@solana/kit`
+compatibility by stripping decoded null characters. Prefer
+`getStrictUtf8Codec()` or
+`getUtf8Codec(nullCharacterMode: Utf8NullCharacterMode.reject)` when silent
+null-byte stripping would be risky.
+
 <!-- {/docsStringCodecSection} -->
 
 ## Usage
@@ -170,6 +176,34 @@ final emoji = codec.encode('\u{1F680}'); // Rocket emoji
 // emoji.length == 4 (UTF-8 encoding of a 4-byte character)
 ```
 
+#### Compatibility vs strict UTF-8 decoding
+
+`getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters.
+
+Prefer stricter Dart-first behavior when silent data loss would be risky:
+
+```dart
+import 'dart:typed_data';
+import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
+
+final strictUtf8 = getStrictUtf8Codec();
+final preservedUtf8 = getUtf8Codec(
+  nullCharacterMode: Utf8NullCharacterMode.preserve,
+);
+
+final value = preservedUtf8.decode(Uint8List.fromList([65, 0, 66]));
+// value == 'A\u0000B'
+
+strictUtf8.decode(Uint8List.fromList([65, 0, 66]));
+// throws SolanaErrorCode.codecsStringContainsNullCharacters
+```
+
+Use:
+
+- `getUtf8Codec()` for compatibility-preserving null stripping.
+- `getStrictUtf8Codec()` to reject decoded null characters.
+- `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly.
+
 ### Custom base-X encoding
 
 Create codecs for arbitrary alphabets using `getBaseXCodec`:
@@ -249,9 +283,11 @@ final fixedUtf8 = fixCodecSize(getUtf8Codec(), 32);
 
 ### UTF-8
 
-| Function                                                   | Description           |
-| ---------------------------------------------------------- | --------------------- |
-| `getUtf8Encoder()` / `getUtf8Decoder()` / `getUtf8Codec()` | UTF-8 string encoding |
+| Function                                                   | Description                                              |
+| ---------------------------------------------------------- | -------------------------------------------------------- |
+| `getUtf8Encoder()` / `getUtf8Decoder()` / `getUtf8Codec()` | UTF-8 string encoding with compatibility mode            |
+| `getStrictUtf8Decoder()` / `getStrictUtf8Codec()`          | UTF-8 decoding that rejects null characters              |
+| `Utf8NullCharacterMode`                                    | Select compatibility strip, preserve, or reject behavior |
 
 ### Generic base-X
 

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -42,6 +43,61 @@ void main() {
         utf8.decode(Uint8List.fromList([232, 170, 158])),
         equals('\u8a9e'),
       );
+    });
+
+    test('strips decoded null characters by default for compatibility', () {
+      final utf8 = getUtf8Codec();
+
+      expect(
+        utf8.decode(Uint8List.fromList([65, 0, 66, 0, 67])),
+        equals('ABC'),
+      );
+    });
+
+    test('can preserve decoded null characters explicitly', () {
+      final utf8 = getUtf8Codec(
+        nullCharacterMode: Utf8NullCharacterMode.preserve,
+      );
+
+      expect(
+        utf8.decode(Uint8List.fromList([65, 0, 66, 0, 67])),
+        equals('A\u0000B\u0000C'),
+      );
+    });
+  });
+
+  group('getStrictUtf8Decoder', () {
+    test('rejects decoded null characters', () {
+      final strictUtf8 = getStrictUtf8Decoder();
+
+      expect(
+        () => strictUtf8.decode(Uint8List.fromList([65, 0, 66])),
+        throwsA(
+          isA<SolanaError>()
+              .having(
+                (error) => error.code,
+                'code',
+                SolanaErrorCode.codecsStringContainsNullCharacters,
+              )
+              .having(
+                (error) => error.context['encoding'],
+                'encoding',
+                'utf8',
+              )
+              .having(
+                (error) => error.context['nullCharacterMode'],
+                'nullCharacterMode',
+                Utf8NullCharacterMode.reject.name,
+              ),
+        ),
+      );
+    });
+
+    test('strict codec still encodes and decodes clean UTF-8', () {
+      final strictUtf8 = getStrictUtf8Codec();
+      final bytes = strictUtf8.encode('Solana 🚀');
+
+      expect(strictUtf8.decode(bytes), equals('Solana 🚀'));
     });
   });
 }
