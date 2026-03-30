@@ -89,12 +89,16 @@ class RestClient {
 
   Object? _handleResponse(http.Response response) {
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw SolanaError(SolanaErrorCode.heliusRestError, {
-        'statusCode': response.statusCode,
-        'message': response.body.isNotEmpty
-            ? response.body
-            : (response.reasonPhrase ?? 'Unknown error'),
-      });
+      throw createSolanaError(
+        SolanaErrorCode.heliusRestError,
+        context: {
+          SolanaErrorContextKeys.operation: 'heliusRest',
+          SolanaErrorContextKeys.statusCode: response.statusCode,
+          'message': response.body.isNotEmpty
+              ? response.body
+              : (response.reasonPhrase ?? 'Unknown error'),
+        },
+      );
     }
 
     if (response.body.isEmpty) return null;

@@ -356,6 +356,29 @@ numeric code and context payload when you need lower-level diagnostics.
 
 <!-- {/errorDomainHelpersSection} -->
 
+### Preferred construction helpers
+
+Use `createSolanaError(...)` and `wrapSolanaError(...)` when you want
+consistent null stripping, shared context keys, and nested-cause preservation.
+
+```dart
+import 'package:solana_kit_errors/solana_kit_errors.dart';
+
+final error = wrapSolanaError(
+  SolanaErrorCode.accountsFailedToDecodeAccount,
+  StateError('decoder failed'),
+  context: {
+    SolanaErrorContextKeys.address: '11111111111111111111111111111111',
+    SolanaErrorContextKeys.operation: 'decodeAccount',
+  },
+);
+
+print(error.context[SolanaErrorContextKeys.causeType]); // StateError
+```
+
+Prefer shared keys such as `address`, `operation`, `methodName`, `path`,
+`statusCode`, and `url` so diagnostics stay predictable across packages.
+
 ## API Reference
 
 ### Classes
@@ -363,6 +386,7 @@ numeric code and context payload when you need lower-level diagnostics.
 - **`SolanaError`** -- Core error class implementing `Exception`. Carries an `int code` and an unmodifiable `Map<String, Object?> context`.
 - **`SolanaErrorCode`** -- Abstract final class with 100+ `static const int` error codes grouped by category (general, JSON-RPC, addresses, accounts, keys, instructions, instruction errors, signers, transactions, transaction errors, codecs, RPC, RPC subscriptions, program clients, invariant violations).
 - **`RpcEnumErrorConfig`** -- Configuration class for mapping Solana RPC enum-style errors to `SolanaError` instances.
+- **`SolanaErrorContextKeys`** -- Shared key names for structured diagnostics such as `address`, `operation`, `methodName`, `path`, `statusCode`, and nested cause fields.
 - **`SolanaErrorDomain`** -- Enum describing high-level error domains (for example `rpc`, `transaction`, `codecs`, `mobileWalletAdapter`).
 
 ### Functions
@@ -372,6 +396,9 @@ numeric code and context payload when you need lower-level diagnostics.
 - **`isSolanaErrorCodeInDomain(int code, SolanaErrorDomain domain)`** -- Checks if a numeric code belongs to a domain.
 - **`isSolanaErrorInDomain(Object? error, SolanaErrorDomain domain)`** -- Checks if an `Object?` is a `SolanaError` in a domain.
 - **`getErrorMessage(int code, [Map<String, Object?> context])`** -- Returns the interpolated error message for a given error code and context.
+- **`createSolanaError(int, {Map<String, Object?> context, Object? cause})`** -- Creates a `SolanaError` with normalized context and optional nested cause details.
+- **`wrapSolanaError(int, Object, {Map<String, Object?> context})`** -- Wraps an existing exception or `SolanaError` while preserving structured cause information.
+- **`createSolanaErrorContext(Map<String, Object?>, {Object? cause})`** -- Normalizes context maps by dropping nulls and attaching consistent nested-cause metadata.
 - **`getSolanaErrorFromJsonRpcError(Object?)`** -- Converts a JSON-RPC error response map into a `SolanaError`.
 - **`getSolanaErrorFromTransactionError(Object)`** -- Converts a Solana RPC transaction error into a `SolanaError`.
 - **`getSolanaErrorFromInstructionError(num index, Object)`** -- Converts a Solana RPC instruction error into a `SolanaError`.

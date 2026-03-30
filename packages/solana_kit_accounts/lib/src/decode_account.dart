@@ -25,10 +25,15 @@ Account<TData> decodeAccount<TData>(
       programAddress: encodedAccount.programAddress,
       space: encodedAccount.space,
     );
-  } on Object {
-    throw SolanaError(SolanaErrorCode.accountsFailedToDecodeAccount, {
-      'address': encodedAccount.address.value,
-    });
+  } on Object catch (error) {
+    throw wrapSolanaError(
+      SolanaErrorCode.accountsFailedToDecodeAccount,
+      error,
+      context: {
+        SolanaErrorContextKeys.address: encodedAccount.address.value,
+        SolanaErrorContextKeys.operation: 'decodeAccount',
+      },
+    );
   }
 }
 
@@ -60,9 +65,10 @@ MaybeAccount<TData> decodeMaybeAccount<TData>(
 /// still encoded.
 void assertAccountDecoded<TData>(Account<TData> account) {
   if (account.data is Uint8List) {
-    throw SolanaError(SolanaErrorCode.accountsExpectedDecodedAccount, {
-      'address': account.address.value,
-    });
+    throw createSolanaError(
+      SolanaErrorCode.accountsExpectedDecodedAccount,
+      context: {SolanaErrorContextKeys.address: account.address.value},
+    );
   }
 }
 
@@ -91,9 +97,10 @@ void assertAccountsDecoded<TData>(List<Account<TData>> accounts) {
   }
   if (encoded.isNotEmpty) {
     final encodedAddresses = encoded.map((a) => a.address.value).toList();
-    throw SolanaError(SolanaErrorCode.accountsExpectedAllAccountsToBeDecoded, {
-      'addresses': encodedAddresses,
-    });
+    throw createSolanaError(
+      SolanaErrorCode.accountsExpectedAllAccountsToBeDecoded,
+      context: {'addresses': encodedAddresses},
+    );
   }
 }
 
@@ -113,8 +120,9 @@ void assertMaybeAccountsDecoded<TData>(List<MaybeAccount<TData>> accounts) {
   }
   if (encoded.isNotEmpty) {
     final encodedAddresses = encoded.map((a) => a.address.value).toList();
-    throw SolanaError(SolanaErrorCode.accountsExpectedAllAccountsToBeDecoded, {
-      'addresses': encodedAddresses,
-    });
+    throw createSolanaError(
+      SolanaErrorCode.accountsExpectedAllAccountsToBeDecoded,
+      context: {'addresses': encodedAddresses},
+    );
   }
 }

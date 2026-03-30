@@ -50,6 +50,7 @@ export 'src/codes.dart';
 export 'src/context.dart';
 export 'src/error.dart';
 export 'src/error_domain.dart';
+export 'src/error_helpers.dart';
 export 'src/instruction_error.dart';
 export 'src/json_rpc_error.dart';
 export 'src/message_formatter.dart';

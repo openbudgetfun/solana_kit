@@ -65,6 +65,16 @@ void main() {
                 SolanaErrorCode.heliusRpcError,
               )
               .having(
+                (error) => error.context[SolanaErrorContextKeys.methodName],
+                'methodName',
+                'getAsset',
+              )
+              .having(
+                (error) => error.context[SolanaErrorContextKeys.statusCode],
+                'statusCode',
+                429,
+              )
+              .having(
                 (error) => error.context['message'],
                 'message',
                 contains('HTTP 429'),
@@ -97,6 +107,16 @@ void main() {
                 (error) => error.code,
                 'code',
                 SolanaErrorCode.heliusRpcError,
+              )
+              .having(
+                (error) => error.context[SolanaErrorContextKeys.methodName],
+                'methodName',
+                'getAsset',
+              )
+              .having(
+                (error) => error.context[SolanaErrorContextKeys.url],
+                'url',
+                'https://mainnet.helius-rpc.com/?api-key=test-key',
               )
               .having(
                 (error) => error.context['message'],

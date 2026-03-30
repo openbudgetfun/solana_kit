@@ -101,7 +101,12 @@ void main() {
                 SolanaErrorCode.heliusRestError,
               )
               .having(
-                (error) => error.context['statusCode'],
+                (error) => error.context[SolanaErrorContextKeys.operation],
+                'operation',
+                'heliusRest',
+              )
+              .having(
+                (error) => error.context[SolanaErrorContextKeys.statusCode],
                 'statusCode',
                 403,
               )

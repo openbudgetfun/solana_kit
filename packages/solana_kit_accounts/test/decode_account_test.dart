@@ -66,11 +66,27 @@ void main() {
       expect(
         () => decodeAccount(encodedAccount, decoder),
         throwsA(
-          isA<SolanaError>().having(
-            (e) => e.code,
-            'code',
-            SolanaErrorCode.accountsFailedToDecodeAccount,
-          ),
+          isA<SolanaError>()
+              .having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.accountsFailedToDecodeAccount,
+              )
+              .having(
+                (e) => e.context[SolanaErrorContextKeys.address],
+                'address',
+                encodedAccount.address.value,
+              )
+              .having(
+                (e) => e.context[SolanaErrorContextKeys.operation],
+                'operation',
+                'decodeAccount',
+              )
+              .having(
+                (e) => e.context[SolanaErrorContextKeys.causeType],
+                'causeType',
+                contains('Exception'),
+              ),
         ),
       );
     });

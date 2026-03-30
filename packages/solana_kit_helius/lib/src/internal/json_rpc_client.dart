@@ -38,19 +38,32 @@ class JsonRpcClient {
     );
 
     if (response.statusCode != 200) {
-      throw SolanaError(SolanaErrorCode.heliusRpcError, {
-        'message':
-            'HTTP ${response.statusCode}: ${response.reasonPhrase ?? 'Unknown error'}',
-      });
+      throw createSolanaError(
+        SolanaErrorCode.heliusRpcError,
+        context: {
+          SolanaErrorContextKeys.methodName: method,
+          SolanaErrorContextKeys.operation: 'heliusJsonRpc',
+          SolanaErrorContextKeys.statusCode: response.statusCode,
+          SolanaErrorContextKeys.url: url,
+          'message':
+              'HTTP ${response.statusCode}: ${response.reasonPhrase ?? 'Unknown error'}',
+        },
+      );
     }
 
     final json = jsonDecode(response.body) as Map<String, Object?>;
 
     if (json.containsKey('error')) {
       final error = json['error']! as Map<String, Object?>;
-      throw SolanaError(SolanaErrorCode.heliusRpcError, {
-        'message': error['message'] ?? 'Unknown RPC error',
-      });
+      throw createSolanaError(
+        SolanaErrorCode.heliusRpcError,
+        context: {
+          SolanaErrorContextKeys.methodName: method,
+          SolanaErrorContextKeys.operation: 'heliusJsonRpc',
+          SolanaErrorContextKeys.url: url,
+          'message': error['message'] ?? 'Unknown RPC error',
+        },
+      );
     }
 
     return json['result'];

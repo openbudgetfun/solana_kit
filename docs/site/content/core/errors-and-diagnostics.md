@@ -56,6 +56,31 @@ numeric code and context payload when you need lower-level diagnostics.
 
 <!-- {/securityNoteCalloutSection} -->
 
+## Preferred construction helper
+
+Use `createSolanaError(...)` and `wrapSolanaError(...)` when you want consistent null stripping, context naming, and nested-cause preservation.
+
+```dart
+import 'package:solana_kit_errors/solana_kit_errors.dart';
+
+void main() {
+  final cause = StateError('decoder failed');
+  final error = wrapSolanaError(
+    SolanaErrorCode.accountsFailedToDecodeAccount,
+    cause,
+    context: {
+      SolanaErrorContextKeys.address:
+          '11111111111111111111111111111111',
+      SolanaErrorContextKeys.operation: 'decodeAccount',
+    },
+  );
+
+  print(error.context[SolanaErrorContextKeys.causeType]);
+}
+```
+
+Prefer shared keys such as `address`, `operation`, `methodName`, `path`, `statusCode`, and `url` so diagnostics stay predictable across packages.
+
 ## Practical guidance
 
 ### Catch `SolanaError` at service boundaries

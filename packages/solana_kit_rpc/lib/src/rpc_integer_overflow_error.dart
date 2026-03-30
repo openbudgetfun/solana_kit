@@ -44,12 +44,15 @@ SolanaError createSolanaJsonRpcIntegerOverflowError(
 
   final optionalPathLabel = path != null ? ' at path `$path`' : '';
 
-  return SolanaError(SolanaErrorCode.rpcIntegerOverflow, {
-    'argumentLabel': argumentLabel,
-    'keyPath': keyPath,
-    'methodName': methodName,
-    'optionalPathLabel': optionalPathLabel,
-    'value': value,
-    'path': ?path,
-  });
+  return createSolanaError(
+    SolanaErrorCode.rpcIntegerOverflow,
+    context: {
+      'argumentLabel': argumentLabel,
+      'keyPath': keyPath,
+      SolanaErrorContextKeys.methodName: methodName,
+      'optionalPathLabel': optionalPathLabel,
+      'value': value,
+      SolanaErrorContextKeys.path: path,
+    },
+  );
 }
