@@ -813,7 +813,7 @@ solana_kit_rpc_api -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, 
 solana_kit_rpc_parsed_types -> solana_kit_addresses, solana_kit_errors, solana_kit_rpc_types
 solana_kit_rpc_spec -> solana_kit_errors, solana_kit_rpc_spec_types
 solana_kit_rpc_spec_types -> solana_kit_errors
-solana_kit_rpc_subscriptions -> solana_kit_errors, solana_kit_fast_stable_stringify, solana_kit_rpc_spec_types, solana_kit_rpc_subscriptions_api, solana_kit_rpc_subscriptions_channel_websocket, solana_kit_rpc_types, solana_kit_subscribable
+solana_kit_rpc_subscriptions -> solana_kit_addresses, solana_kit_errors, solana_kit_fast_stable_stringify, solana_kit_keys, solana_kit_rpc_spec_types, solana_kit_rpc_subscriptions_api, solana_kit_rpc_subscriptions_channel_websocket, solana_kit_rpc_types, solana_kit_subscribable
 solana_kit_rpc_subscriptions_api -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_rpc_types
 solana_kit_rpc_subscriptions_channel_websocket -> solana_kit_errors, solana_kit_subscribable
 solana_kit_rpc_transformers -> solana_kit_errors, solana_kit_rpc_spec_types, solana_kit_rpc_types

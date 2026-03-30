@@ -51,7 +51,9 @@ For architecture notes, getting-started guides, and cross-package examples, star
 The primary entry point is `createSolanaRpcSubscriptions`, which composes a fully-featured subscription client with BigInt-safe JSON serialization, autopinging, channel pooling, and subscription coalescing.
 
 ```dart
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
+import 'package:solana_kit_rpc_subscriptions_api/solana_kit_rpc_subscriptions_api.dart';
 import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 
 void main() async {
@@ -62,10 +64,13 @@ void main() async {
 
   // Subscribe to account notifications.
   final controller = AbortController();
-  final pending = subscriptions.request('accountNotifications', [
-    '11111111111111111111111111111111',
-    {'encoding': 'base64', 'commitment': 'confirmed'},
-  ]);
+  final pending = subscriptions.accountNotifications(
+    const Address('11111111111111111111111111111111'),
+    const AccountNotificationsConfig(
+      encoding: 'base64',
+      commitment: Commitment.confirmed,
+    ),
+  );
 
   final stream = await pending.subscribe(
     RpcSubscribeOptions(abortSignal: controller.signal),
@@ -93,7 +98,7 @@ void main() async {
   );
 
   final controller = AbortController();
-  final pending = subscriptions.request('slotsUpdatesNotifications');
+  final pending = subscriptions.slotsUpdatesNotifications();
 
   final stream = await pending.subscribe(
     RpcSubscribeOptions(abortSignal: controller.signal),
@@ -166,13 +171,13 @@ void main() async {
   // Both subscriptions share a single server-side subscription
   // because they have the same method and params.
   final controller1 = AbortController();
-  final pending1 = subscriptions.request('slotNotifications');
+  final pending1 = subscriptions.slotNotifications();
   final stream1 = await pending1.subscribe(
     RpcSubscribeOptions(abortSignal: controller1.signal),
   );
 
   final controller2 = AbortController();
-  final pending2 = subscriptions.request('slotNotifications');
+  final pending2 = subscriptions.slotNotifications();
   final stream2 = await pending2.subscribe(
     RpcSubscribeOptions(abortSignal: controller2.signal),
   );
@@ -208,15 +213,15 @@ void main() async {
 
 ### Classes
 
-| Class                                  | Description                                                                                                  |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `RpcSubscriptions`                     | The subscription client. Call `request(notificationName, [params])` to create pending subscription requests. |
-| `PendingRpcSubscriptionsRequest<T>`    | A pending request. Call `subscribe(options)` to start receiving notifications as a `Stream<T>`.              |
-| `RpcSubscribeOptions`                  | Options for subscribing, including an `AbortSignal`.                                                         |
-| `RpcSubscriptionsPlan<T>`              | Describes a subscription plan with request details and execution logic.                                      |
-| `DefaultRpcSubscriptionsChannelConfig` | Configuration for channel creation: URL, ping interval, pool size, buffer size.                              |
-| `RpcSubscriptionsRequest`              | A subscription request with a method name and parameters.                                                    |
-| `RpcSubscriptionsTransportConfig`      | Configuration passed to a transport function.                                                                |
+| Class                                  | Description                                                                                                                                                                        |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `RpcSubscriptions`                     | The subscription client. Prefer typed helpers like `slotNotifications()` and `accountNotifications(...)`; use `request(notificationName, [params])` as the low-level escape hatch. |
+| `PendingRpcSubscriptionsRequest<T>`    | A pending request. Call `subscribe(options)` to start receiving notifications as a `Stream<T>`.                                                                                    |
+| `RpcSubscribeOptions`                  | Options for subscribing, including an `AbortSignal`.                                                                                                                               |
+| `RpcSubscriptionsPlan<T>`              | Describes a subscription plan with request details and execution logic.                                                                                                            |
+| `DefaultRpcSubscriptionsChannelConfig` | Configuration for channel creation: URL, ping interval, pool size, buffer size.                                                                                                    |
+| `RpcSubscriptionsRequest`              | A subscription request with a method name and parameters.                                                                                                                          |
+| `RpcSubscriptionsTransportConfig`      | Configuration passed to a transport function.                                                                                                                                      |
 
 ### Type aliases
 

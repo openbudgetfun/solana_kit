@@ -30,7 +30,7 @@ import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
 import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 
 final controller = AbortController();
-final pending = subscriptions.request('slotNotifications');
+final pending = subscriptions.slotNotifications();
 
 final stream = await pending.subscribe(
   RpcSubscribeOptions(abortSignal: controller.signal),
@@ -47,7 +47,7 @@ class SlotObserver {
 
   Stream<Object?> watchSlots() async* {
     final controller = AbortController();
-    final pending = _subscriptions.request('slotNotifications');
+    final pending = _subscriptions.slotNotifications();
     final stream = await pending.subscribe(
       RpcSubscribeOptions(abortSignal: controller.signal),
     );
@@ -61,13 +61,16 @@ In a production app, you would usually hold onto the abort controller so your se
 
 ## Step 4: subscribe to account or logs updates
 
-The same pattern works for account or logs subscriptions; only the notification name and params differ.
+The same pattern works for account or logs subscriptions; only the typed helper and config change.
 
 ```dart
-final pending = subscriptions.request('accountNotifications', [
-  '11111111111111111111111111111111',
-  {'encoding': 'base64', 'commitment': 'confirmed'},
-]);
+final pending = subscriptions.accountNotifications(
+  const Address('11111111111111111111111111111111'),
+  const AccountNotificationsConfig(
+    encoding: 'base64',
+    commitment: Commitment.confirmed,
+  ),
+);
 ```
 
 ## Step 5: make reconnect policy explicit

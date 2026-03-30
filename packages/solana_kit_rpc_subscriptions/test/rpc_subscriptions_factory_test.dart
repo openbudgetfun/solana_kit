@@ -1,8 +1,12 @@
 import 'dart:async';
 
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
+import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
+import 'package:solana_kit_rpc_subscriptions_api/solana_kit_rpc_subscriptions_api.dart';
 import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
+import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:test/test.dart';
 
@@ -120,6 +124,83 @@ void main() {
 
       final pending = subscriptions.request('slotNotifications');
       expect(pending, isA<PendingRpcSubscriptionsRequest<Object?>>());
+    });
+  });
+
+  group('typed subscription methods', () {
+    test('accountNotifications builds method-specific params', () async {
+      RpcSubscriptionsTransportConfig? capturedConfig;
+      Future<DataPublisher> transport(
+        RpcSubscriptionsTransportConfig config,
+      ) async {
+        capturedConfig = config;
+        return createDataPublisher();
+      }
+
+      final rpc = createSolanaRpcSubscriptionsFromTransport(transport);
+      await rpc
+          .accountNotifications(
+            const Address('11111111111111111111111111111111'),
+            const AccountNotificationsConfig(
+              encoding: 'base64',
+              commitment: Commitment.confirmed,
+            ),
+          )
+          .subscribe(RpcSubscribeOptions(abortSignal: AbortController().signal));
+
+      expect(capturedConfig, isNotNull);
+      expect(capturedConfig!.request.methodName, 'accountNotifications');
+      expect(capturedConfig!.request.params, [
+        '11111111111111111111111111111111',
+        {'encoding': 'base64', 'commitment': 'confirmed'},
+      ]);
+    });
+
+    test('slotNotifications builds empty params', () async {
+      RpcSubscriptionsTransportConfig? capturedConfig;
+      Future<DataPublisher> transport(
+        RpcSubscriptionsTransportConfig config,
+      ) async {
+        capturedConfig = config;
+        return createDataPublisher();
+      }
+
+      final rpc = createSolanaRpcSubscriptionsFromTransport(transport);
+      await rpc
+          .slotNotifications()
+          .subscribe(RpcSubscribeOptions(abortSignal: AbortController().signal));
+
+      expect(capturedConfig, isNotNull);
+      expect(capturedConfig!.request.methodName, 'slotNotifications');
+      expect(capturedConfig!.request.params, isEmpty);
+    });
+
+    test('signatureNotifications builds method-specific params', () async {
+      RpcSubscriptionsTransportConfig? capturedConfig;
+      Future<DataPublisher> transport(
+        RpcSubscriptionsTransportConfig config,
+      ) async {
+        capturedConfig = config;
+        return createDataPublisher();
+      }
+
+      final rpc = createSolanaRpcSubscriptionsFromTransport(transport);
+      await rpc
+          .signatureNotifications(
+            const Signature('test-signature'),
+            const SignatureNotificationsConfig(
+              commitment: Commitment.confirmed,
+              enableReceivedNotification: true,
+            ),
+          )
+          .subscribe(RpcSubscribeOptions(abortSignal: AbortController().signal));
+
+      expect(capturedConfig, isNotNull);
+      expect(capturedConfig!.request.methodName, 'signatureNotifications');
+      expect(capturedConfig!.request.params, [
+        'test-signature',
+        {'commitment': 'confirmed', 'enableReceivedNotification': true},
+      ]);
     });
   });
 

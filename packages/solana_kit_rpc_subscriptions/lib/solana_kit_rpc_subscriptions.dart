@@ -26,4 +26,5 @@ export 'src/rpc_subscriptions_clusters.dart';
 export 'src/rpc_subscriptions_coalescer.dart';
 export 'src/rpc_subscriptions_json.dart';
 export 'src/rpc_subscriptions_json_bigint.dart';
+export 'src/rpc_subscriptions_methods.dart';
 export 'src/rpc_subscriptions_transport.dart';

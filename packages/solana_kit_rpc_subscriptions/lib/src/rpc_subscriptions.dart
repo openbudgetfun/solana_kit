@@ -99,9 +99,9 @@ class RpcSubscriptionsConfig {
 
 /// An RPC subscriptions client.
 ///
-/// Since Dart does not support JavaScript-style Proxy objects, subscription
-/// methods are called through the [request] method which takes a notification
-/// name and optional parameters.
+/// Since Dart does not support JavaScript-style Proxy objects, the base
+/// client exposes [request] as a low-level escape hatch for notification names
+/// and parameters. Prefer the typed convenience extensions when available.
 ///
 /// ```dart
 /// final subscriptions = createSubscriptionRpc(
@@ -111,7 +111,7 @@ class RpcSubscriptionsConfig {
 ///   ),
 /// );
 ///
-/// final pending = subscriptions.request('accountNotifications', ['address']);
+/// final pending = subscriptions.slotNotifications();
 /// final stream = await pending.subscribe(
 ///   RpcSubscribeOptions(abortSignal: controller.signal),
 /// );
