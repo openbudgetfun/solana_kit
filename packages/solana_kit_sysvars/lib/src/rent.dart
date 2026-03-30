@@ -9,6 +9,7 @@ import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 
 import 'package:solana_kit_sysvars/src/sysvar.dart';
+import 'package:solana_kit_sysvars/src/sysvar_layout.dart';
 
 /// The size in bytes of the Rent sysvar account data.
 const int sysvarRentSize = 17;
@@ -46,14 +47,18 @@ class SysvarRent {
           burnPercent == other.burnPercent;
 
   @override
-  int get hashCode =>
-      Object.hash(lamportsPerByteYear, exemptionThreshold, burnPercent);
+  int get hashCode => hashStructuredFields([
+    lamportsPerByteYear,
+    exemptionThreshold,
+    burnPercent,
+  ]);
 
   @override
-  String toString() =>
-      'SysvarRent(lamportsPerByteYear: ${lamportsPerByteYear.value}, '
-      'exemptionThreshold: $exemptionThreshold, '
-      'burnPercent: $burnPercent)';
+  String toString() => formatStructuredFields('SysvarRent', {
+    'lamportsPerByteYear': lamportsPerByteYear.value,
+    'exemptionThreshold': exemptionThreshold,
+    'burnPercent': burnPercent,
+  });
 }
 
 /// Returns a fixed-size encoder for the [SysvarRent] sysvar.
@@ -66,18 +71,13 @@ FixedSizeEncoder<SysvarRent> getSysvarRentEncoder() {
           ])
           as FixedSizeEncoder<Map<String, Object?>>;
 
-  return FixedSizeEncoder<SysvarRent>(
+  return mapFixedSizeStructEncoder(
     fixedSize: sysvarRentSize,
-    write: (value, bytes, offset) {
-      return structEncoder.write(
-        {
-          'lamportsPerByteYear': value.lamportsPerByteYear,
-          'exemptionThreshold': value.exemptionThreshold,
-          'burnPercent': value.burnPercent,
-        },
-        bytes,
-        offset,
-      );
+    structEncoder: structEncoder,
+    toFields: (value) => {
+      'lamportsPerByteYear': value.lamportsPerByteYear,
+      'exemptionThreshold': value.exemptionThreshold,
+      'burnPercent': value.burnPercent,
     },
   );
 }
@@ -92,26 +92,49 @@ FixedSizeDecoder<SysvarRent> getSysvarRentDecoder() {
           ])
           as FixedSizeDecoder<Map<String, Object?>>;
 
-  return FixedSizeDecoder<SysvarRent>(
+  return mapFixedSizeStructDecoder(
     fixedSize: sysvarRentSize,
-    read: (bytes, offset) {
-      final (map, newOffset) = structDecoder.read(bytes, offset);
-      return (
-        SysvarRent(
-          lamportsPerByteYear: map['lamportsPerByteYear']! as Lamports,
-          exemptionThreshold: map['exemptionThreshold']! as double,
-          burnPercent: map['burnPercent']! as int,
-        ),
-        newOffset,
-      );
-    },
+    structDecoder: structDecoder,
+    fromFields: (map) => SysvarRent(
+      lamportsPerByteYear: map['lamportsPerByteYear']! as Lamports,
+      exemptionThreshold: map['exemptionThreshold']! as double,
+      burnPercent: map['burnPercent']! as int,
+    ),
   );
 }
 
 /// Returns a fixed-size codec for the [SysvarRent] sysvar.
 FixedSizeCodec<SysvarRent, SysvarRent> getSysvarRentCodec() {
-  return combineCodec(getSysvarRentEncoder(), getSysvarRentDecoder())
-      as FixedSizeCodec<SysvarRent, SysvarRent>;
+  final structEncoder =
+      getStructEncoder([
+            ('lamportsPerByteYear', getDefaultLamportsEncoder()),
+            ('exemptionThreshold', getF64Encoder()),
+            ('burnPercent', getU8Encoder()),
+          ])
+          as FixedSizeEncoder<Map<String, Object?>>;
+  final structDecoder =
+      getStructDecoder([
+            ('lamportsPerByteYear', getDefaultLamportsDecoder()),
+            ('exemptionThreshold', getF64Decoder()),
+            ('burnPercent', getU8Decoder()),
+          ])
+          as FixedSizeDecoder<Map<String, Object?>>;
+
+  return mapFixedSizeStructCodec(
+    fixedSize: sysvarRentSize,
+    structEncoder: structEncoder,
+    structDecoder: structDecoder,
+    toFields: (value) => {
+      'lamportsPerByteYear': value.lamportsPerByteYear,
+      'exemptionThreshold': value.exemptionThreshold,
+      'burnPercent': value.burnPercent,
+    },
+    fromFields: (map) => SysvarRent(
+      lamportsPerByteYear: map['lamportsPerByteYear']! as Lamports,
+      exemptionThreshold: map['exemptionThreshold']! as double,
+      burnPercent: map['burnPercent']! as int,
+    ),
+  );
 }
 
 /// Fetches the `Rent` sysvar account using the provided RPC client.

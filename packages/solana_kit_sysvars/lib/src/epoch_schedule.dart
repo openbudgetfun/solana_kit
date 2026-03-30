@@ -8,6 +8,7 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 
 import 'package:solana_kit_sysvars/src/sysvar.dart';
+import 'package:solana_kit_sysvars/src/sysvar_layout.dart';
 
 /// The size in bytes of the EpochSchedule sysvar account data.
 const int sysvarEpochScheduleSize = 33;
@@ -53,20 +54,22 @@ class SysvarEpochSchedule {
           firstNormalSlot == other.firstNormalSlot;
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => hashStructuredFields([
     slotsPerEpoch,
     leaderScheduleSlotOffset,
     warmup,
     firstNormalEpoch,
     firstNormalSlot,
-  );
+  ]);
 
   @override
-  String toString() =>
-      'SysvarEpochSchedule(slotsPerEpoch: $slotsPerEpoch, '
-      'leaderScheduleSlotOffset: $leaderScheduleSlotOffset, '
-      'warmup: $warmup, firstNormalEpoch: $firstNormalEpoch, '
-      'firstNormalSlot: $firstNormalSlot)';
+  String toString() => formatStructuredFields('SysvarEpochSchedule', {
+    'slotsPerEpoch': slotsPerEpoch,
+    'leaderScheduleSlotOffset': leaderScheduleSlotOffset,
+    'warmup': warmup,
+    'firstNormalEpoch': firstNormalEpoch,
+    'firstNormalSlot': firstNormalSlot,
+  });
 }
 
 /// Returns a fixed-size encoder for the [SysvarEpochSchedule] sysvar.
@@ -81,20 +84,15 @@ FixedSizeEncoder<SysvarEpochSchedule> getSysvarEpochScheduleEncoder() {
           ])
           as FixedSizeEncoder<Map<String, Object?>>;
 
-  return FixedSizeEncoder<SysvarEpochSchedule>(
+  return mapFixedSizeStructEncoder(
     fixedSize: sysvarEpochScheduleSize,
-    write: (value, bytes, offset) {
-      return structEncoder.write(
-        {
-          'slotsPerEpoch': value.slotsPerEpoch,
-          'leaderScheduleSlotOffset': value.leaderScheduleSlotOffset,
-          'warmup': value.warmup,
-          'firstNormalEpoch': value.firstNormalEpoch,
-          'firstNormalSlot': value.firstNormalSlot,
-        },
-        bytes,
-        offset,
-      );
+    structEncoder: structEncoder,
+    toFields: (value) => {
+      'slotsPerEpoch': value.slotsPerEpoch,
+      'leaderScheduleSlotOffset': value.leaderScheduleSlotOffset,
+      'warmup': value.warmup,
+      'firstNormalEpoch': value.firstNormalEpoch,
+      'firstNormalSlot': value.firstNormalSlot,
     },
   );
 }
@@ -111,32 +109,60 @@ FixedSizeDecoder<SysvarEpochSchedule> getSysvarEpochScheduleDecoder() {
           ])
           as FixedSizeDecoder<Map<String, Object?>>;
 
-  return FixedSizeDecoder<SysvarEpochSchedule>(
+  return mapFixedSizeStructDecoder(
     fixedSize: sysvarEpochScheduleSize,
-    read: (bytes, offset) {
-      final (map, newOffset) = structDecoder.read(bytes, offset);
-      return (
-        SysvarEpochSchedule(
-          slotsPerEpoch: map['slotsPerEpoch']! as BigInt,
-          leaderScheduleSlotOffset: map['leaderScheduleSlotOffset']! as BigInt,
-          warmup: map['warmup']! as bool,
-          firstNormalEpoch: map['firstNormalEpoch']! as BigInt,
-          firstNormalSlot: map['firstNormalSlot']! as BigInt,
-        ),
-        newOffset,
-      );
-    },
+    structDecoder: structDecoder,
+    fromFields: (map) => SysvarEpochSchedule(
+      slotsPerEpoch: map['slotsPerEpoch']! as BigInt,
+      leaderScheduleSlotOffset: map['leaderScheduleSlotOffset']! as BigInt,
+      warmup: map['warmup']! as bool,
+      firstNormalEpoch: map['firstNormalEpoch']! as BigInt,
+      firstNormalSlot: map['firstNormalSlot']! as BigInt,
+    ),
   );
 }
 
 /// Returns a fixed-size codec for the [SysvarEpochSchedule] sysvar.
 FixedSizeCodec<SysvarEpochSchedule, SysvarEpochSchedule>
 getSysvarEpochScheduleCodec() {
-  return combineCodec(
-        getSysvarEpochScheduleEncoder(),
-        getSysvarEpochScheduleDecoder(),
-      )
-      as FixedSizeCodec<SysvarEpochSchedule, SysvarEpochSchedule>;
+  final structEncoder =
+      getStructEncoder([
+            ('slotsPerEpoch', getU64Encoder()),
+            ('leaderScheduleSlotOffset', getU64Encoder()),
+            ('warmup', getBooleanEncoder()),
+            ('firstNormalEpoch', getU64Encoder()),
+            ('firstNormalSlot', getU64Encoder()),
+          ])
+          as FixedSizeEncoder<Map<String, Object?>>;
+  final structDecoder =
+      getStructDecoder([
+            ('slotsPerEpoch', getU64Decoder()),
+            ('leaderScheduleSlotOffset', getU64Decoder()),
+            ('warmup', getBooleanDecoder()),
+            ('firstNormalEpoch', getU64Decoder()),
+            ('firstNormalSlot', getU64Decoder()),
+          ])
+          as FixedSizeDecoder<Map<String, Object?>>;
+
+  return mapFixedSizeStructCodec(
+    fixedSize: sysvarEpochScheduleSize,
+    structEncoder: structEncoder,
+    structDecoder: structDecoder,
+    toFields: (value) => {
+      'slotsPerEpoch': value.slotsPerEpoch,
+      'leaderScheduleSlotOffset': value.leaderScheduleSlotOffset,
+      'warmup': value.warmup,
+      'firstNormalEpoch': value.firstNormalEpoch,
+      'firstNormalSlot': value.firstNormalSlot,
+    },
+    fromFields: (map) => SysvarEpochSchedule(
+      slotsPerEpoch: map['slotsPerEpoch']! as BigInt,
+      leaderScheduleSlotOffset: map['leaderScheduleSlotOffset']! as BigInt,
+      warmup: map['warmup']! as bool,
+      firstNormalEpoch: map['firstNormalEpoch']! as BigInt,
+      firstNormalSlot: map['firstNormalSlot']! as BigInt,
+    ),
+  );
 }
 
 /// Fetches the `EpochSchedule` sysvar account using the provided RPC client.

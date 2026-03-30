@@ -8,6 +8,7 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 
 import 'package:solana_kit_sysvars/src/sysvar.dart';
+import 'package:solana_kit_sysvars/src/sysvar_layout.dart';
 
 /// The size in bytes of the Clock sysvar account data.
 const int sysvarClockSize = 40;
@@ -56,19 +57,22 @@ class SysvarClock {
           unixTimestamp == other.unixTimestamp;
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => hashStructuredFields([
     slot,
     epochStartTimestamp,
     epoch,
     leaderScheduleEpoch,
     unixTimestamp,
-  );
+  ]);
 
   @override
-  String toString() =>
-      'SysvarClock(slot: $slot, epochStartTimestamp: $epochStartTimestamp, '
-      'epoch: $epoch, leaderScheduleEpoch: $leaderScheduleEpoch, '
-      'unixTimestamp: $unixTimestamp)';
+  String toString() => formatStructuredFields('SysvarClock', {
+    'slot': slot,
+    'epochStartTimestamp': epochStartTimestamp,
+    'epoch': epoch,
+    'leaderScheduleEpoch': leaderScheduleEpoch,
+    'unixTimestamp': unixTimestamp,
+  });
 }
 
 /// Returns a fixed-size encoder for the [SysvarClock] sysvar.
@@ -83,20 +87,15 @@ FixedSizeEncoder<SysvarClock> getSysvarClockEncoder() {
           ])
           as FixedSizeEncoder<Map<String, Object?>>;
 
-  return FixedSizeEncoder<SysvarClock>(
+  return mapFixedSizeStructEncoder(
     fixedSize: sysvarClockSize,
-    write: (value, bytes, offset) {
-      return structEncoder.write(
-        {
-          'slot': value.slot,
-          'epochStartTimestamp': value.epochStartTimestamp,
-          'epoch': value.epoch,
-          'leaderScheduleEpoch': value.leaderScheduleEpoch,
-          'unixTimestamp': value.unixTimestamp,
-        },
-        bytes,
-        offset,
-      );
+    structEncoder: structEncoder,
+    toFields: (value) => {
+      'slot': value.slot,
+      'epochStartTimestamp': value.epochStartTimestamp,
+      'epoch': value.epoch,
+      'leaderScheduleEpoch': value.leaderScheduleEpoch,
+      'unixTimestamp': value.unixTimestamp,
     },
   );
 }
@@ -113,28 +112,59 @@ FixedSizeDecoder<SysvarClock> getSysvarClockDecoder() {
           ])
           as FixedSizeDecoder<Map<String, Object?>>;
 
-  return FixedSizeDecoder<SysvarClock>(
+  return mapFixedSizeStructDecoder(
     fixedSize: sysvarClockSize,
-    read: (bytes, offset) {
-      final (map, newOffset) = structDecoder.read(bytes, offset);
-      return (
-        SysvarClock(
-          slot: map['slot']! as BigInt,
-          epochStartTimestamp: map['epochStartTimestamp']! as BigInt,
-          epoch: map['epoch']! as BigInt,
-          leaderScheduleEpoch: map['leaderScheduleEpoch']! as BigInt,
-          unixTimestamp: map['unixTimestamp']! as BigInt,
-        ),
-        newOffset,
-      );
-    },
+    structDecoder: structDecoder,
+    fromFields: (map) => SysvarClock(
+      slot: map['slot']! as BigInt,
+      epochStartTimestamp: map['epochStartTimestamp']! as BigInt,
+      epoch: map['epoch']! as BigInt,
+      leaderScheduleEpoch: map['leaderScheduleEpoch']! as BigInt,
+      unixTimestamp: map['unixTimestamp']! as BigInt,
+    ),
   );
 }
 
 /// Returns a fixed-size codec for the [SysvarClock] sysvar.
 FixedSizeCodec<SysvarClock, SysvarClock> getSysvarClockCodec() {
-  return combineCodec(getSysvarClockEncoder(), getSysvarClockDecoder())
-      as FixedSizeCodec<SysvarClock, SysvarClock>;
+  final structEncoder =
+      getStructEncoder([
+            ('slot', getU64Encoder()),
+            ('epochStartTimestamp', getI64Encoder()),
+            ('epoch', getU64Encoder()),
+            ('leaderScheduleEpoch', getU64Encoder()),
+            ('unixTimestamp', getI64Encoder()),
+          ])
+          as FixedSizeEncoder<Map<String, Object?>>;
+  final structDecoder =
+      getStructDecoder([
+            ('slot', getU64Decoder()),
+            ('epochStartTimestamp', getI64Decoder()),
+            ('epoch', getU64Decoder()),
+            ('leaderScheduleEpoch', getU64Decoder()),
+            ('unixTimestamp', getI64Decoder()),
+          ])
+          as FixedSizeDecoder<Map<String, Object?>>;
+
+  return mapFixedSizeStructCodec(
+    fixedSize: sysvarClockSize,
+    structEncoder: structEncoder,
+    structDecoder: structDecoder,
+    toFields: (value) => {
+      'slot': value.slot,
+      'epochStartTimestamp': value.epochStartTimestamp,
+      'epoch': value.epoch,
+      'leaderScheduleEpoch': value.leaderScheduleEpoch,
+      'unixTimestamp': value.unixTimestamp,
+    },
+    fromFields: (map) => SysvarClock(
+      slot: map['slot']! as BigInt,
+      epochStartTimestamp: map['epochStartTimestamp']! as BigInt,
+      epoch: map['epoch']! as BigInt,
+      leaderScheduleEpoch: map['leaderScheduleEpoch']! as BigInt,
+      unixTimestamp: map['unixTimestamp']! as BigInt,
+    ),
+  );
 }
 
 /// Fetches the `Clock` sysvar account using the provided RPC client.
