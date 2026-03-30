@@ -22,6 +22,7 @@ devenv shell -- bash -lc '<command>'
 | `sync:check`     | Validate synced dependency versions and changelog outputs.                                     |
 | `sync:write`     | Rewrite synced dependency versions and changelog outputs.                                      |
 | `upstream:check` | Check tracked upstream compatibility metadata and local drift.                                 |
+| `audit:deps`     | Audit current Dart and pnpm lockfiles for known vulnerabilities with `osv-scanner`.            |
 | `update:deps`    | Update `devenv` and pub dependencies.                                                          |
 
 ## Direct tools

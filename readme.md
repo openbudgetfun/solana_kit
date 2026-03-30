@@ -227,6 +227,9 @@ mdt:doctor
 # Check tracked upstream compatibility metadata
 upstream:check
 
+# Audit current Dart and pnpm lockfiles for known vulnerabilities
+audit:deps
+
 # Run local benchmark scripts across benchmark-enabled packages
 bench:all
 
@@ -769,9 +772,11 @@ Flutter plugin for the [Solana Mobile Wallet Adapter](https://github.com/solana-
 - **`KitMobileWallet`** — typed API working with base64 payloads and Solana Kit types
 - **`WalletScenario`** — manages incoming dApp connections via native Android bridge
 - **`WalletScenarioCallbacks`** — interface for handling authorize, sign, and deauthorize requests
-- **Platform check** — `isMwaSupported()` / `assertMwaSupported()` (Android-only, iOS no-op)
+- **Platform check** — `isMwaSupported()` / `assertMwaSupported()` (Android-only, iOS safe stub/no-op)
 
 Exists because: MWA requires platform-specific transport (Android Intents for wallet launching, WebSocket for session communication) that must be bridged from native code. This plugin uses a hybrid architecture: all WebSocket handling, P-256 cryptography, and JSON-RPC messaging happen in pure Dart (via the protocol package), while only Android Intent launching and wallet scenario bridging use native MethodChannels.
+
+Important platform note: iOS is not a no-op because this workspace is choosing to ignore it. The current Solana Mobile Wallet Adapter ecosystem is Android-based, so there is no equivalent iOS wallet-handoff target for this package to integrate with today. The iOS stub exists so teams shipping shared Flutter apps to both Android and iOS can keep one dependency graph and gate MWA-only behavior explicitly.
 
 ## Architecture
 

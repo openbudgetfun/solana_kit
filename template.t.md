@@ -230,6 +230,9 @@ mdt:doctor
 # Check tracked upstream compatibility metadata
 upstream:check
 
+# Audit current Dart and pnpm lockfiles for known vulnerabilities
+audit:deps
+
 # Run local benchmark scripts across benchmark-enabled packages
 bench:all
 

@@ -10,6 +10,26 @@ description: Step-by-step guide for integrating Solana Mobile Wallet Adapter flo
 - protocol package: portable cryptography/session handshake logic.
 - flutter package: Android integration with wallet sessions.
 
+## Platform Support
+
+### Android
+
+Android is the only fully supported platform for Solana Mobile Wallet Adapter flows in this workspace.
+
+### iOS
+
+iOS is intentionally shipped as a safe stub/no-op layer for mixed-platform Flutter apps.
+
+This is not because this workspace does not want to support iOS. The current limitation comes from the Solana Mobile Wallet Adapter ecosystem itself: the wallet handoff model and supporting wallet infrastructure are Android-based today, so there is no equivalent iOS MWA target for this package to integrate with.
+
+That means:
+
+- apps can still compile and ship shared Flutter code to iOS.
+- `solana_kit_mobile_wallet_adapter` should be treated as unavailable on iOS.
+- iOS code paths should provide an alternate wallet strategy or a clear unsupported-platform UX.
+
+Use `isMwaSupported()` / `assertMwaSupported()` to gate platform behavior explicitly.
+
 ## Step-by-Step Integration
 
 ### Step 1: Choose Your Layer

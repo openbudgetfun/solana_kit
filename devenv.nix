@@ -20,6 +20,7 @@ in
       ktlint
       libiconv
       nixfmt
+      osv-scanner
       shfmt
       extra.knope
       extra.mdt
@@ -334,6 +335,32 @@ in
         "$DEVENV_ROOT/scripts/check-upstream-compatibility.sh" "$@"
       '';
       description = "Check tracked upstream compatibility metadata and local drift.";
+      binary = "bash";
+    };
+    "audit:deps" = {
+      exec = ''
+        set -e
+
+        mapfile -t lockfiles < <(
+          find "$DEVENV_ROOT" -type f \( -name 'pubspec.lock' -o -name 'pnpm-lock.yaml' \) \
+            | rg -v '/(\.git|\.dart_tool|\.repos|coverage|build|dist)/' \
+            | sort
+        )
+
+        if [ ''${#lockfiles[@]} -eq 0 ]; then
+          echo "No lockfiles were found to audit."
+          exit 1
+        fi
+
+        args=()
+        for lockfile in "''${lockfiles[@]}"; do
+          args+=("-L" "$lockfile")
+        done
+
+        echo "Auditing ''${#lockfiles[@]} lockfile(s) with osv-scanner..."
+        osv-scanner scan source "''${args[@]}" --allow-no-lockfiles
+      '';
+      description = "Audit current Dart and pnpm lockfiles for known vulnerabilities with osv-scanner.";
       binary = "bash";
     };
     "bench:all" = {

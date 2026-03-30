@@ -58,6 +58,9 @@ mdt:doctor
 # Check tracked upstream compatibility metadata
 upstream:check
 
+# Audit current Dart and pnpm lockfiles for known vulnerabilities
+audit:deps
+
 # Run local benchmark scripts across benchmark-enabled packages
 bench:all
 
@@ -83,6 +86,14 @@ docs:site:smoke
 ```
 
 <!-- {/docsDocsSiteCommandsSection} -->
+
+## Security and Platform Expectations
+
+- Keep `allowInsecureHttp` and `allowInsecureWs` disabled outside local development and controlled tests.
+- Use `audit:deps` to scan the current workspace `pubspec.lock` and `pnpm-lock.yaml` files present on disk for known vulnerabilities.
+- Do not log private keys, auth tokens, wallet session payloads, or full error contexts that may contain sensitive material.
+- Treat Mobile Wallet Adapter as Android-only for real wallet handoff today. iOS remains a safe stub/no-op because the current Solana MWA ecosystem does not provide an equivalent iOS integration target.
+- Gate MWA flows explicitly with `isMwaSupported()` / `assertMwaSupported()` and provide fallback UX on unsupported platforms.
 
 ## Pull Request Expectations
 

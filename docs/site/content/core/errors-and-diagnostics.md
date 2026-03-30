@@ -56,6 +56,19 @@ Boundary layers such as repositories, API services, or command handlers are good
 
 If you convert one failure into another, keep the original structured information whenever possible.
 
+### Keep secrets out of diagnostics
+
+Structured context is useful, but it should not become a dumping ground for secrets.
+
+Avoid attaching or logging:
+
+- private keys or seed material
+- auth tokens
+- full wallet session payloads
+- raw encrypted messages unless you are in a controlled debugging environment
+
+Prefer small, typed, non-sensitive context fields that still let you classify and route failures.
+
 ### Avoid broad untyped catches in core flows
 
 Catching `Object` too early can erase useful domain information.
