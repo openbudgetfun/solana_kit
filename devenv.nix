@@ -24,7 +24,7 @@ in
       shfmt
       extra.knope
       extra.mdt
-      extra.pnpm-standalone
+      (extra.pnpm-standalone.overrideAttrs { doInstallCheck = false; })
     ]
     ++ lib.optionals stdenv.isDarwin [
       coreutils
