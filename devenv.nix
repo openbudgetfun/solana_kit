@@ -20,15 +20,19 @@ in
       ktlint
       libiconv
       nixfmt
-      nodejs
       osv-scanner
       shfmt
       extra.knope
       extra.mdt
+      extra.pnpm-standalone
     ]
     ++ lib.optionals stdenv.isDarwin [
       coreutils
     ];
+
+  enterShell = ''
+    eval "$(pnpm-activate-env)"
+  '';
 
   dotenv.disableHint = true;
 
