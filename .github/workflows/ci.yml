@@ -105,7 +105,11 @@ jobs:
         with:
           channel: stable
           cache: true
-      - uses: android-actions/setup-android@v4
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          sdk-version: 34
+          ndk-version: "26.0.10792818"
       - name: Accept Android SDK licenses
         run: yes | sdkmanager --licenses >/dev/null || true
       - name: Install Android SDK components
