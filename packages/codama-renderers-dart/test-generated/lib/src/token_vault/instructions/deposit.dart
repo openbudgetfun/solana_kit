@@ -69,7 +69,7 @@ Instruction getDepositInstruction({
   required Address tokenProgram,
   required BigInt amount,
 }) {
-  final data = DepositInstructionData(
+  final instructionData = DepositInstructionData(
       amount: amount,
   );
 
@@ -82,7 +82,7 @@ Instruction getDepositInstruction({
     AccountMeta(address: vaultTokenAccount, role: AccountRole.writable),
     AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
-    data: getDepositInstructionDataEncoder().encode(data),
+    data: getDepositInstructionDataEncoder().encode(instructionData),
   );
 }
 

@@ -68,7 +68,7 @@ Instruction getUpdateVaultStatusInstruction({
   required Address authority,
   required VaultStatus newStatus,
 }) {
-  final data = UpdateVaultStatusInstructionData(
+  final instructionData = UpdateVaultStatusInstructionData(
       newStatus: newStatus,
   );
 
@@ -78,7 +78,7 @@ Instruction getUpdateVaultStatusInstruction({
     AccountMeta(address: vault, role: AccountRole.writable),
     AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getUpdateVaultStatusInstructionDataEncoder().encode(data),
+    data: getUpdateVaultStatusInstructionDataEncoder().encode(instructionData),
   );
 }
 

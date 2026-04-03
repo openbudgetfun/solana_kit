@@ -15,9 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 /// Offset: 0.
 
 @immutable
-class WithdrawInstructionData {
-  const WithdrawInstructionData({
-    this.discriminator = 2,
+class BurnInstructionData {
+  const BurnInstructionData({
+    this.discriminator = 8,
     required this.amount,
   });
 
@@ -25,7 +25,7 @@ class WithdrawInstructionData {
   final BigInt amount;
 }
 
-Encoder<WithdrawInstructionData> getWithdrawInstructionDataEncoder() {
+Encoder<BurnInstructionData> getBurnInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('amount', getU64Encoder()),
@@ -33,14 +33,14 @@ Encoder<WithdrawInstructionData> getWithdrawInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (WithdrawInstructionData value) => <String, Object?>{
+    (BurnInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
       'amount': value.amount,
     },
   );
 }
 
-Decoder<WithdrawInstructionData> getWithdrawInstructionDataDecoder() {
+Decoder<BurnInstructionData> getBurnInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('amount', getU64Decoder()),
@@ -48,45 +48,41 @@ Decoder<WithdrawInstructionData> getWithdrawInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => WithdrawInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) => BurnInstructionData(
       discriminator: map['discriminator']! as int,
       amount: map['amount']! as BigInt,
     ),
   );
 }
 
-Codec<WithdrawInstructionData, WithdrawInstructionData> getWithdrawInstructionDataCodec() {
-  return combineCodec(getWithdrawInstructionDataEncoder(), getWithdrawInstructionDataDecoder());
+Codec<BurnInstructionData, BurnInstructionData> getBurnInstructionDataCodec() {
+  return combineCodec(getBurnInstructionDataEncoder(), getBurnInstructionDataDecoder());
 }
 
-/// Creates a [Withdraw] instruction.
-Instruction getWithdrawInstruction({
+/// Creates a [Burn] instruction.
+Instruction getBurnInstruction({
   required Address programAddress,
-  required Address vault,
+  required Address account,
+  required Address mint,
   required Address authority,
-  required Address vaultTokenAccount,
-  required Address destinationTokenAccount,
-  required Address tokenProgram,
   required BigInt amount,
 }) {
-  final instructionData = WithdrawInstructionData(
+  final instructionData = BurnInstructionData(
       amount: amount,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: vault, role: AccountRole.writable),
+    AccountMeta(address: account, role: AccountRole.writable),
+    AccountMeta(address: mint, role: AccountRole.writable),
     AccountMeta(address: authority, role: AccountRole.readonlySigner),
-    AccountMeta(address: vaultTokenAccount, role: AccountRole.writable),
-    AccountMeta(address: destinationTokenAccount, role: AccountRole.writable),
-    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
-    data: getWithdrawInstructionDataEncoder().encode(instructionData),
+    data: getBurnInstructionDataEncoder().encode(instructionData),
   );
 }
 
-/// Parses a [Withdraw] instruction from raw instruction data.
-WithdrawInstructionData parseWithdrawInstruction(Instruction instruction) {
-  return getWithdrawInstructionDataDecoder().decode(instruction.data!);
+/// Parses a [Burn] instruction from raw instruction data.
+BurnInstructionData parseBurnInstruction(Instruction instruction) {
+  return getBurnInstructionDataDecoder().decode(instruction.data!);
 }
