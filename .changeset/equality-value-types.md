@@ -1,11 +1,5 @@
 ---
-"solana_kit_rpc_types": patch
-"solana_kit_rpc_api": patch
-"solana_kit_instructions": patch
-"solana_kit_transaction_messages": patch
-"solana_kit_transaction_confirmation": patch
-"solana_kit_rpc_spec_types": patch
-"solana_kit_rpc_parsed_types": patch
+default: patch
 ---
 
 Add `==` and `hashCode` to public value-type, config, and response classes.

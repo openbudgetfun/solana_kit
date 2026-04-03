@@ -23,15 +23,13 @@ This is the Dart port of [`@solana/functional`](https://github.com/anza-xyz/kit/
 
 ## Installation
 
-Install the package directly only if you need backwards compatibility with
-existing imports:
+Install the package directly:
 
 ```bash
 dart pub add solana_kit_functional
 ```
 
-For new code, prefer the umbrella package or transaction-message package
-instead:
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
 
 ```bash
 dart pub add solana_kit

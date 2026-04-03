@@ -1,5 +1,5 @@
 ---
-"solana_kit_helius": patch
+default: patch
 ---
 
 Introduce internal `JsonReader` helper that replaces unsafe `.cast<T>()` list
