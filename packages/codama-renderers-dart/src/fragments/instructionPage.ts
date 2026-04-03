@@ -112,11 +112,14 @@ export function getInstructionPageFragment(
     .map((arg) => {
       const manifest = argManifestMap.get(arg)!;
       const fieldName = camelCase(arg.name as string);
+      const typeStr = manifest.type.content;
       const hasDefault = arg.defaultValue != null;
       if (hasDefault) {
-        return `  ${manifest.type.content}? ${fieldName},`;
+        // Don't add `?` if the type is already nullable.
+        const nullableType = typeStr.endsWith("?") ? typeStr : `${typeStr}?`;
+        return `  ${nullableType} ${fieldName},`;
       }
-      return `  required ${manifest.type.content} ${fieldName},`;
+      return `  required ${typeStr} ${fieldName},`;
     })
     .join("\n");
 
@@ -140,6 +143,7 @@ export function getInstructionPageFragment(
       if (isDiscriminatorArg(arg, node)) {
         return ""; // Use default
       }
+      // Use 'arg_<name>' prefix to reference builder params without shadowing.
       return `      ${fieldName}: ${fieldName}${arg.defaultValue != null ? ` ?? ${getDefaultValue(arg)}` : ""},`;
     })
     .filter(Boolean)
@@ -221,7 +225,7 @@ Instruction ${fragmentFromString(instrFnName)}({
 ${fragmentFromString(accountParams)}
 ${fragmentFromString(argParams)}
 }) {
-  final data = ${fragmentFromString(dataClassName)}(
+  final instructionData = ${fragmentFromString(dataClassName)}(
 ${fragmentFromString(dataConstruction)}
   );
 
@@ -230,7 +234,7 @@ ${fragmentFromString(dataConstruction)}
     accounts: [
 ${fragmentFromString(accountMetas)}
     ],
-    data: ${fragmentFromString(dataEncoderName)}().encode(data),
+    data: ${fragmentFromString(dataEncoderName)}().encode(instructionData),
   );
 }`);
 
