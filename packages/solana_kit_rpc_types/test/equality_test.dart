@@ -758,4 +758,185 @@ void main() {
       expect(a, isNot(equals(b)));
     });
   });
+
+  // ---------------------------------------------------------------------------
+  // toString coverage
+  // ---------------------------------------------------------------------------
+  group('toString coverage', () {
+    test('DataSlice toString', () {
+      const s = DataSlice(offset: 0, length: 32);
+      expect(s.toString(), contains('DataSlice'));
+    });
+
+    test('MemcmpFilterBase58 toString', () {
+      final f = MemcmpFilterBase58(bytes: const Base58EncodedBytes('AAAA'), offset: BigInt.zero);
+      expect(f.toString(), contains('MemcmpFilter'));
+    });
+
+    test('GetProgramAccountsDatasizeFilter toString', () {
+      final f = GetProgramAccountsDatasizeFilter(dataSize: BigInt.from(165));
+      expect(f.toString(), contains('Datasize'));
+    });
+
+    test('MemcmpFilterBase64 toString', () {
+      final f = MemcmpFilterBase64(bytes: const Base64EncodedBytes('AA'), offset: BigInt.zero);
+      expect(f.toString(), contains('MemcmpFilter'));
+    });
+
+    test('AccountInfoBase toString', () {
+      final a = AccountInfoBase(
+        executable: false,
+        lamports: Lamports(BigInt.one),
+        owner: _addr1,
+        space: BigInt.zero,
+      );
+      expect(a.toString(), contains('AccountInfoBase'));
+    });
+
+    test('GetProgramAccountsMemcmpFilter toString', () {
+      final f = GetProgramAccountsMemcmpFilter(
+        memcmp: MemcmpFilterBase58(bytes: const Base58EncodedBytes('AA'), offset: BigInt.zero),
+      );
+      expect(f.toString(), contains('Memcmp'));
+    });
+
+    test('RpcResponseContext toString', () {
+      final c = RpcResponseContext(slot: BigInt.from(100));
+      expect(c.toString(), contains('RpcResponseContext'));
+    });
+
+    test('SolanaRpcResponse toString', () {
+      final r = SolanaRpcResponse(
+        context: RpcResponseContext(slot: BigInt.from(1)),
+        value: 42,
+      );
+      expect(r.toString(), contains('SolanaRpcResponse'));
+    });
+
+    test('TokenAmount toString', () {
+      final t = TokenAmount(
+        amount: const StringifiedBigInt('1000000'),
+        decimals: 6,
+        uiAmountString: StringifiedNumber('1.0'),
+      );
+      expect(t.toString(), contains('TokenAmount'));
+    });
+
+    test('TokenBalance toString', () {
+      final t = TokenBalance(
+        accountIndex: 0,
+        mint: _addr1,
+        uiTokenAmount: TokenAmount(
+          amount: const StringifiedBigInt('0'),
+          decimals: 6,
+          uiAmountString: StringifiedNumber('0'),
+        ),
+      );
+      expect(t.toString(), contains('TokenBalance'));
+    });
+
+    test('TransactionErrorSimple toString', () {
+      const e = TransactionErrorSimple('AccountNotFound');
+      expect(e.toString(), contains('AccountNotFound'));
+    });
+
+    test('TransactionErrorDuplicateInstruction toString', () {
+      const e = TransactionErrorDuplicateInstruction(0);
+      expect(e.toString(), contains('DuplicateInstruction'));
+    });
+
+    test('TransactionErrorInstructionError toString', () {
+      const e = TransactionErrorInstructionError(
+        0,
+        InstructionErrorSimple('GenericError'),
+      );
+      expect(e.toString(), contains('InstructionError'));
+    });
+
+    test('InstructionErrorSimple toString', () {
+      const e = InstructionErrorSimple('InvalidArgument');
+      expect(e.toString(), contains('InvalidArgument'));
+    });
+
+    test('InstructionErrorCustom toString', () {
+      const e = InstructionErrorCustom(42);
+      expect(e.toString(), contains('42'));
+    });
+
+    test('TransactionErrorInsufficientFundsForRent toString', () {
+      const e = TransactionErrorInsufficientFundsForRent(1);
+      expect(e.toString(), contains('InsufficientFundsForRent'));
+    });
+
+    test('TransactionErrorProgramExecutionTemporarilyRestricted toString', () {
+      const e = TransactionErrorProgramExecutionTemporarilyRestricted(2);
+      expect(e.toString(), contains('ProgramExecutionTemporarilyRestricted'));
+    });
+
+    test('TransactionVersion toString', () {
+      expect(const TransactionVersionLegacy().toString(), contains('legacy'));
+      expect(const TransactionVersionV0().toString(), contains('0'));
+    });
+
+    test('AddressTableLookup toString', () {
+      const a = AddressTableLookup(
+        accountKey: _addr1,
+        readonlyIndexes: [0],
+        writableIndexes: [1],
+      );
+      expect(a.toString(), contains('AddressTableLookup'));
+    });
+
+    test('RewardFeeOrRent toString', () {
+      final r = RewardFeeOrRent(
+        rewardLamports: BigInt.from(5000),
+        postBalance: Lamports(BigInt.from(1000000)),
+        pubkey: _addr1,
+        rewardType: 'fee',
+      );
+      expect(r.toString(), contains('RewardFeeOrRent'));
+    });
+
+    test('RewardVotingOrStaking toString', () {
+      final r = RewardVotingOrStaking(
+        commission: 10,
+        rewardLamports: BigInt.from(5000),
+        postBalance: Lamports(BigInt.from(1000000)),
+        pubkey: _addr1,
+        rewardType: 'voting',
+      );
+      expect(r.toString(), contains('RewardVotingOrStaking'));
+    });
+
+    test('ReturnData toString', () {
+      const r = ReturnData(
+        data: (Base64EncodedBytes('AAAA'), 'base64'),
+        programId: _addr1,
+      );
+      expect(r.toString(), contains('ReturnData'));
+    });
+
+    test('TransactionParsedAccount toString', () {
+      const a = TransactionParsedAccount(
+        pubkey: _addr1,
+        signer: true,
+        writable: false,
+        source: 'transaction',
+      );
+      expect(a.toString(), contains('TransactionParsedAccount'));
+    });
+
+    test('AccountInfoWithPubkey toString', () {
+      final a = AccountInfoWithPubkey(
+        account: AccountInfoBase(
+          executable: false,
+          lamports: Lamports(BigInt.one),
+          owner: _addr1,
+          space: BigInt.zero,
+        ),
+        pubkey: _addr1,
+      );
+      expect(a.toString(), contains('AccountInfoWithPubkey'));
+    });
+  });
 }
