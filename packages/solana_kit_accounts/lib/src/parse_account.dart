@@ -25,7 +25,7 @@ import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 /// ```
 MaybeEncodedAccount parseBase64RpcAccount(
   Address address,
-  Map<String, dynamic>? rpcAccount,
+  Map<String, Object?>? rpcAccount,
 ) {
   if (rpcAccount == null) {
     return NonExistingAccount<Uint8List>(address);
@@ -35,9 +35,9 @@ MaybeEncodedAccount parseBase64RpcAccount(
   final String base64String;
 
   if (data is List) {
-    base64String = data[0] as String;
+    base64String = data[0]! as String;
   } else {
-    base64String = data as String;
+    base64String = data! as String;
   }
 
   final decodedData = getBase64Encoder().encode(base64String);
@@ -75,7 +75,7 @@ MaybeEncodedAccount parseBase64RpcAccount(
 /// The data field may also be a plain base58 string (legacy format).
 MaybeEncodedAccount parseBase58RpcAccount(
   Address address,
-  Map<String, dynamic>? rpcAccount,
+  Map<String, Object?>? rpcAccount,
 ) {
   if (rpcAccount == null) {
     return NonExistingAccount<Uint8List>(address);
@@ -188,19 +188,19 @@ class JsonParsedAccountData<TData> {
 ///   "space": 165
 /// }
 /// ```
-MaybeAccount<JsonParsedAccountData<Map<String, dynamic>>> parseJsonRpcAccount(
+MaybeAccount<JsonParsedAccountData<Map<String, Object?>>> parseJsonRpcAccount(
   Address address,
-  Map<String, dynamic>? rpcAccount,
+  Map<String, Object?>? rpcAccount,
 ) {
   if (rpcAccount == null) {
-    return NonExistingAccount<JsonParsedAccountData<Map<String, dynamic>>>(
+    return NonExistingAccount<JsonParsedAccountData<Map<String, Object?>>>(
       address,
     );
   }
 
-  final dataField = rpcAccount['data'] as Map<String, dynamic>;
-  final parsed = dataField['parsed'] as Map<String, dynamic>;
-  final info = (parsed['info'] as Map<String, dynamic>?) ?? <String, dynamic>{};
+  final dataField = rpcAccount['data']! as Map<String, Object?>;
+  final parsed = dataField['parsed']! as Map<String, Object?>;
+  final info = (parsed['info'] as Map<String, Object?>?) ?? <String, Object?>{};
   final program = dataField['program'] as String?;
   final type = parsed['type'] as String?;
 
@@ -209,15 +209,15 @@ MaybeAccount<JsonParsedAccountData<Map<String, dynamic>>> parseJsonRpcAccount(
     meta = ParsedAccountMeta(program: program ?? '', type: type);
   }
 
-  final parsedData = JsonParsedAccountData<Map<String, dynamic>>(
+  final parsedData = JsonParsedAccountData<Map<String, Object?>>(
     data: info,
     parsedAccountMeta: meta,
   );
 
   final baseAccount = parseBaseAccount(rpcAccount);
 
-  return ExistingAccount<JsonParsedAccountData<Map<String, dynamic>>>(
-    Account<JsonParsedAccountData<Map<String, dynamic>>>(
+  return ExistingAccount<JsonParsedAccountData<Map<String, Object?>>>(
+    Account<JsonParsedAccountData<Map<String, Object?>>>(
       address: address,
       data: parsedData,
       executable: baseAccount.executable,
@@ -229,7 +229,7 @@ MaybeAccount<JsonParsedAccountData<Map<String, dynamic>>> parseJsonRpcAccount(
 }
 
 /// Parses the base account properties from an RPC account map.
-BaseAccount parseBaseAccount(Map<String, dynamic> rpcAccount) {
+BaseAccount parseBaseAccount(Map<String, Object?> rpcAccount) {
   final rawLamports = rpcAccount['lamports'];
   final BigInt lamportsValue;
   if (rawLamports is BigInt) {
@@ -251,9 +251,9 @@ BaseAccount parseBaseAccount(Map<String, dynamic> rpcAccount) {
   }
 
   return BaseAccount(
-    executable: rpcAccount['executable'] as bool,
+    executable: rpcAccount['executable']! as bool,
     lamports: Lamports(lamportsValue),
-    programAddress: Address(rpcAccount['owner'] as String),
+    programAddress: Address(rpcAccount['owner']! as String),
     space: spaceValue,
   );
 }
