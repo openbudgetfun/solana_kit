@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 /// Represents an instruction-level error returned by the Solana runtime.
 ///
 /// This is a sealed class hierarchy where most variants are simple string
@@ -19,6 +20,19 @@ class InstructionErrorCustom extends InstructionError {
 
   @override
   String get label => 'Custom';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is InstructionErrorCustom &&
+          runtimeType == other.runtimeType &&
+          code == other.code;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, code);
+
+  @override
+  String toString() => 'InstructionErrorCustom(code: $code)';
 }
 
 /// A simple instruction error identified by its string label.
@@ -27,6 +41,19 @@ class InstructionErrorSimple extends InstructionError {
 
   @override
   final String label;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is InstructionErrorSimple &&
+          runtimeType == other.runtimeType &&
+          label == other.label;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, label);
+
+  @override
+  String toString() => 'InstructionErrorSimple(label: $label)';
 }
 
 /// All known simple instruction error labels as constants.
@@ -111,6 +138,19 @@ class TransactionErrorSimple extends TransactionError {
 
   @override
   final String label;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TransactionErrorSimple &&
+          runtimeType == other.runtimeType &&
+          label == other.label;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, label);
+
+  @override
+  String toString() => 'TransactionErrorSimple(label: $label)';
 }
 
 /// A transaction error indicating a duplicate instruction at the given index.
@@ -122,6 +162,20 @@ class TransactionErrorDuplicateInstruction extends TransactionError {
 
   @override
   String get label => 'DuplicateInstruction';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TransactionErrorDuplicateInstruction &&
+          runtimeType == other.runtimeType &&
+          instructionIndex == other.instructionIndex;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, instructionIndex);
+
+  @override
+  String toString() =>
+      'TransactionErrorDuplicateInstruction(instructionIndex: $instructionIndex)';
 }
 
 /// A transaction error wrapping an instruction-level error.
@@ -139,6 +193,23 @@ class TransactionErrorInstructionError extends TransactionError {
 
   @override
   String get label => 'InstructionError';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TransactionErrorInstructionError &&
+          runtimeType == other.runtimeType &&
+          instructionIndex == other.instructionIndex &&
+          instructionError == other.instructionError;
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, instructionIndex, instructionError);
+
+  @override
+  String toString() =>
+      'TransactionErrorInstructionError(instructionIndex: $instructionIndex, '
+      'instructionError: $instructionError)';
 }
 
 /// A transaction error indicating insufficient funds for rent at the given
@@ -151,6 +222,20 @@ class TransactionErrorInsufficientFundsForRent extends TransactionError {
 
   @override
   String get label => 'InsufficientFundsForRent';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TransactionErrorInsufficientFundsForRent &&
+          runtimeType == other.runtimeType &&
+          accountIndex == other.accountIndex;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, accountIndex);
+
+  @override
+  String toString() =>
+      'TransactionErrorInsufficientFundsForRent(accountIndex: $accountIndex)';
 }
 
 /// A transaction error indicating that program execution is temporarily
@@ -166,6 +251,21 @@ class TransactionErrorProgramExecutionTemporarilyRestricted
 
   @override
   String get label => 'ProgramExecutionTemporarilyRestricted';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TransactionErrorProgramExecutionTemporarilyRestricted &&
+          runtimeType == other.runtimeType &&
+          accountIndex == other.accountIndex;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, accountIndex);
+
+  @override
+  String toString() =>
+      'TransactionErrorProgramExecutionTemporarilyRestricted('
+      'accountIndex: $accountIndex)';
 }
 
 /// All known simple transaction error labels as constants.

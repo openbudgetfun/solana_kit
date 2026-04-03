@@ -1,3 +1,6 @@
+// ignore_for_file: public_member_api_docs
+import 'package:solana_kit_helius/src/internal/json_reader.dart';
+
 /// A compressed account in ZK compression.
 class CompressedAccount {
   const CompressedAccount({
@@ -12,15 +15,16 @@ class CompressedAccount {
   });
 
   factory CompressedAccount.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CompressedAccount(
-      hash: json['hash']! as String,
-      address: json['address']! as String,
-      data: json['data']! as Map<String, Object?>,
-      owner: json['owner']! as String,
-      lamports: json['lamports']! as int,
-      leafIndex: json['leafIndex'] as int?,
-      tree: json['tree'] as String?,
-      seq: json['seq'] as int?,
+      hash: r.requireString('hash'),
+      address: r.requireString('address'),
+      data: r.requireMap('data'),
+      owner: r.requireString('owner'),
+      lamports: r.requireInt('lamports'),
+      leafIndex: r.optInt('leafIndex'),
+      tree: r.optString('tree'),
+      seq: r.optInt('seq'),
     );
   }
 
@@ -56,12 +60,13 @@ class CompressedAccountProof {
   });
 
   factory CompressedAccountProof.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CompressedAccountProof(
-      hash: json['hash']! as String,
-      root: json['root']! as String,
-      proof: (json['proof']! as List<Object?>).cast<String>(),
-      leafIndex: json['leafIndex']! as int,
-      tree: json['tree'] as String?,
+      hash: r.requireString('hash'),
+      root: r.requireString('root'),
+      proof: r.requireList<String>('proof'),
+      leafIndex: r.requireInt('leafIndex'),
+      tree: r.optString('tree'),
     );
   }
 
@@ -94,15 +99,16 @@ class CompressedTokenAccount {
   });
 
   factory CompressedTokenAccount.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CompressedTokenAccount(
-      hash: json['hash']! as String,
-      owner: json['owner']! as String,
-      mint: json['mint']! as String,
-      amount: json['amount']! as int,
-      delegate: json['delegate'] as String?,
-      frozen: json['frozen']! as bool,
-      leafIndex: json['leafIndex'] as int?,
-      tree: json['tree'] as String?,
+      hash: r.requireString('hash'),
+      owner: r.requireString('owner'),
+      mint: r.requireString('mint'),
+      amount: r.requireInt('amount'),
+      delegate: r.optString('delegate'),
+      frozen: r.requireBool('frozen'),
+      leafIndex: r.optInt('leafIndex'),
+      tree: r.optString('tree'),
     );
   }
 
@@ -132,7 +138,8 @@ class CompressedBalance {
   const CompressedBalance({required this.amount});
 
   factory CompressedBalance.fromJson(Map<String, Object?> json) {
-    return CompressedBalance(amount: json['amount']! as int);
+    final r = JsonReader(json);
+    return CompressedBalance(amount: r.requireInt('amount'));
   }
 
   final int amount;
@@ -145,9 +152,10 @@ class CompressedTokenBalance {
   const CompressedTokenBalance({required this.mint, required this.amount});
 
   factory CompressedTokenBalance.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CompressedTokenBalance(
-      mint: json['mint']! as String,
-      amount: json['amount']! as int,
+      mint: r.requireString('mint'),
+      amount: r.requireInt('amount'),
     );
   }
 
@@ -166,10 +174,11 @@ class CompressedTokenBalanceV2 {
   });
 
   factory CompressedTokenBalanceV2.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CompressedTokenBalanceV2(
-      mint: json['mint']! as String,
-      amount: json['amount']! as int,
-      decimals: json['decimals']! as int,
+      mint: r.requireString('mint'),
+      amount: r.requireInt('amount'),
+      decimals: r.requireInt('decimals'),
     );
   }
 
@@ -193,10 +202,11 @@ class CompressedSignature {
   });
 
   factory CompressedSignature.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CompressedSignature(
-      signature: json['signature']! as String,
-      slot: json['slot']! as int,
-      blockTime: json['blockTime'] as int?,
+      signature: r.requireString('signature'),
+      slot: r.requireInt('slot'),
+      blockTime: r.optInt('blockTime'),
     );
   }
 
@@ -216,7 +226,8 @@ class IndexerHealth {
   const IndexerHealth({required this.status});
 
   factory IndexerHealth.fromJson(Map<String, Object?> json) {
-    return IndexerHealth(status: json['status']! as String);
+    final r = JsonReader(json);
+    return IndexerHealth(status: r.requireString('status'));
   }
 
   final String status;
@@ -233,11 +244,11 @@ class ValidityProof {
   });
 
   factory ValidityProof.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return ValidityProof(
-      compressedProof: (json['compressedProof']! as List<Object?>)
-          .cast<String>(),
-      rootIndices: (json['rootIndices'] as List<Object?>?)?.cast<String>(),
-      leafIndices: json['leafIndices'] as String?,
+      compressedProof: r.requireList<String>('compressedProof'),
+      rootIndices: r.optList<String>('rootIndices'),
+      leafIndices: r.optString('leafIndices'),
     );
   }
 
@@ -263,12 +274,13 @@ class NewAddressProof {
   });
 
   factory NewAddressProof.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return NewAddressProof(
-      address: json['address']! as String,
-      root: json['root']! as String,
-      proof: (json['proof']! as List<Object?>).cast<String>(),
-      leafIndex: json['leafIndex']! as int,
-      tree: json['tree']! as String,
+      address: r.requireString('address'),
+      root: r.requireString('root'),
+      proof: r.requireList<String>('proof'),
+      leafIndex: r.requireInt('leafIndex'),
+      tree: r.requireString('tree'),
     );
   }
 
@@ -295,9 +307,10 @@ class TransactionWithCompressionInfo {
   });
 
   factory TransactionWithCompressionInfo.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return TransactionWithCompressionInfo(
-      transaction: json['transaction'],
-      compressionInfo: json['compressionInfo'] as Map<String, Object?>?,
+      transaction: r.raw('transaction'),
+      compressionInfo: r.optMap('compressionInfo'),
     );
   }
 
@@ -319,7 +332,8 @@ class GetCompressedAccountRequest {
   const GetCompressedAccountRequest({required this.hash});
 
   factory GetCompressedAccountRequest.fromJson(Map<String, Object?> json) {
-    return GetCompressedAccountRequest(hash: json['hash']! as String);
+    final r = JsonReader(json);
+    return GetCompressedAccountRequest(hash: r.requireString('hash'));
   }
 
   final String hash;
@@ -332,7 +346,8 @@ class GetCompressedAccountProofRequest {
   const GetCompressedAccountProofRequest({required this.hash});
 
   factory GetCompressedAccountProofRequest.fromJson(Map<String, Object?> json) {
-    return GetCompressedAccountProofRequest(hash: json['hash']! as String);
+    final r = JsonReader(json);
+    return GetCompressedAccountProofRequest(hash: r.requireString('hash'));
   }
 
   final String hash;
@@ -351,10 +366,11 @@ class GetCompressedAccountsByOwnerRequest {
   factory GetCompressedAccountsByOwnerRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetCompressedAccountsByOwnerRequest(
-      owner: json['owner']! as String,
-      cursor: json['cursor'] as String?,
-      limit: json['limit'] as int?,
+      owner: r.requireString('owner'),
+      cursor: r.optString('cursor'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -374,7 +390,8 @@ class GetCompressedBalanceRequest {
   const GetCompressedBalanceRequest({required this.hash});
 
   factory GetCompressedBalanceRequest.fromJson(Map<String, Object?> json) {
-    return GetCompressedBalanceRequest(hash: json['hash']! as String);
+    final r = JsonReader(json);
+    return GetCompressedBalanceRequest(hash: r.requireString('hash'));
   }
 
   final String hash;
@@ -389,7 +406,8 @@ class GetCompressedBalanceByOwnerRequest {
   factory GetCompressedBalanceByOwnerRequest.fromJson(
     Map<String, Object?> json,
   ) {
-    return GetCompressedBalanceByOwnerRequest(owner: json['owner']! as String);
+    final r = JsonReader(json);
+    return GetCompressedBalanceByOwnerRequest(owner: r.requireString('owner'));
   }
 
   final String owner;
@@ -408,10 +426,11 @@ class GetCompressedMintTokenHoldersRequest {
   factory GetCompressedMintTokenHoldersRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetCompressedMintTokenHoldersRequest(
-      mint: json['mint']! as String,
-      cursor: json['cursor'] as String?,
-      limit: json['limit'] as int?,
+      mint: r.requireString('mint'),
+      cursor: r.optString('cursor'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -433,9 +452,8 @@ class GetCompressedTokenAccountBalanceRequest {
   factory GetCompressedTokenAccountBalanceRequest.fromJson(
     Map<String, Object?> json,
   ) {
-    return GetCompressedTokenAccountBalanceRequest(
-      hash: json['hash']! as String,
-    );
+    final r = JsonReader(json);
+    return GetCompressedTokenAccountBalanceRequest(hash: r.requireString('hash'));
   }
 
   final String hash;
@@ -455,11 +473,12 @@ class GetCompressedTokenAccountsByDelegateRequest {
   factory GetCompressedTokenAccountsByDelegateRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetCompressedTokenAccountsByDelegateRequest(
-      delegate: json['delegate']! as String,
-      mint: json['mint'] as String?,
-      cursor: json['cursor'] as String?,
-      limit: json['limit'] as int?,
+      delegate: r.requireString('delegate'),
+      mint: r.optString('mint'),
+      cursor: r.optString('cursor'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -488,11 +507,12 @@ class GetCompressedTokenAccountsByOwnerRequest {
   factory GetCompressedTokenAccountsByOwnerRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetCompressedTokenAccountsByOwnerRequest(
-      owner: json['owner']! as String,
-      mint: json['mint'] as String?,
-      cursor: json['cursor'] as String?,
-      limit: json['limit'] as int?,
+      owner: r.requireString('owner'),
+      mint: r.optString('mint'),
+      cursor: r.optString('cursor'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -521,11 +541,12 @@ class GetCompressedTokenBalancesByOwnerRequest {
   factory GetCompressedTokenBalancesByOwnerRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetCompressedTokenBalancesByOwnerRequest(
-      owner: json['owner']! as String,
-      mint: json['mint'] as String?,
-      cursor: json['cursor'] as String?,
-      limit: json['limit'] as int?,
+      owner: r.requireString('owner'),
+      mint: r.optString('mint'),
+      cursor: r.optString('cursor'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -553,10 +574,11 @@ class GetCompressionSignaturesForAccountRequest {
   factory GetCompressionSignaturesForAccountRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetCompressionSignaturesForAccountRequest(
-      hash: json['hash']! as String,
-      cursor: json['cursor'] as String?,
-      limit: json['limit'] as int?,
+      hash: r.requireString('hash'),
+      cursor: r.optString('cursor'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -582,10 +604,11 @@ class GetCompressionSignaturesForAddressRequest {
   factory GetCompressionSignaturesForAddressRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetCompressionSignaturesForAddressRequest(
-      address: json['address']! as String,
-      cursor: json['cursor'] as String?,
-      limit: json['limit'] as int?,
+      address: r.requireString('address'),
+      cursor: r.optString('cursor'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -611,10 +634,11 @@ class GetCompressionSignaturesForOwnerRequest {
   factory GetCompressionSignaturesForOwnerRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetCompressionSignaturesForOwnerRequest(
-      owner: json['owner']! as String,
-      cursor: json['cursor'] as String?,
-      limit: json['limit'] as int?,
+      owner: r.requireString('owner'),
+      cursor: r.optString('cursor'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -641,11 +665,12 @@ class GetCompressionSignaturesForTokenOwnerRequest {
   factory GetCompressionSignaturesForTokenOwnerRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetCompressionSignaturesForTokenOwnerRequest(
-      owner: json['owner']! as String,
-      mint: json['mint'] as String?,
-      cursor: json['cursor'] as String?,
-      limit: json['limit'] as int?,
+      owner: r.requireString('owner'),
+      mint: r.optString('mint'),
+      cursor: r.optString('cursor'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -669,9 +694,10 @@ class GetLatestCompressionSignaturesRequest {
   factory GetLatestCompressionSignaturesRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetLatestCompressionSignaturesRequest(
-      cursor: json['cursor'] as String?,
-      limit: json['limit'] as int?,
+      cursor: r.optString('cursor'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -691,9 +717,10 @@ class GetLatestNonVotingSignaturesRequest {
   factory GetLatestNonVotingSignaturesRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetLatestNonVotingSignaturesRequest(
-      cursor: json['cursor'] as String?,
-      limit: json['limit'] as int?,
+      cursor: r.optString('cursor'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -713,8 +740,9 @@ class GetMultipleCompressedAccountProofsRequest {
   factory GetMultipleCompressedAccountProofsRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetMultipleCompressedAccountProofsRequest(
-      hashes: (json['hashes']! as List<Object?>).cast<String>(),
+      hashes: r.requireList<String>('hashes'),
     );
   }
 
@@ -730,8 +758,9 @@ class GetMultipleCompressedAccountsRequest {
   factory GetMultipleCompressedAccountsRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetMultipleCompressedAccountsRequest(
-      hashes: (json['hashes']! as List<Object?>).cast<String>(),
+      hashes: r.requireList<String>('hashes'),
     );
   }
 
@@ -747,8 +776,9 @@ class GetMultipleNewAddressProofsRequest {
   factory GetMultipleNewAddressProofsRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetMultipleNewAddressProofsRequest(
-      addresses: (json['addresses']! as List<Object?>).cast<String>(),
+      addresses: r.requireList<String>('addresses'),
     );
   }
 
@@ -764,8 +794,9 @@ class GetTransactionWithCompressionInfoRequest {
   factory GetTransactionWithCompressionInfoRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetTransactionWithCompressionInfoRequest(
-      signature: json['signature']! as String,
+      signature: r.requireString('signature'),
     );
   }
 
@@ -779,9 +810,10 @@ class GetValidityProofRequest {
   const GetValidityProofRequest({required this.hashes, this.newAddresses});
 
   factory GetValidityProofRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetValidityProofRequest(
-      hashes: (json['hashes']! as List<Object?>).cast<String>(),
-      newAddresses: (json['newAddresses'] as List<Object?>?)?.cast<String>(),
+      hashes: r.requireList<String>('hashes'),
+      newAddresses: r.optList<String>('newAddresses'),
     );
   }
 
@@ -803,10 +835,11 @@ class GetZkSignaturesForAssetRequest {
   });
 
   factory GetZkSignaturesForAssetRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetZkSignaturesForAssetRequest(
-      id: json['id']! as String,
-      cursor: json['cursor'] as String?,
-      limit: json['limit'] as int?,
+      id: r.requireString('id'),
+      cursor: r.optString('cursor'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -830,11 +863,10 @@ class CompressedAccountList {
   const CompressedAccountList({required this.items, this.cursor});
 
   factory CompressedAccountList.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CompressedAccountList(
-      items: (json['items']! as List<Object?>)
-          .map((e) => CompressedAccount.fromJson(e! as Map<String, Object?>))
-          .toList(),
-      cursor: json['cursor'] as String?,
+      items: r.requireDecodedList('items', CompressedAccount.fromJson),
+      cursor: r.optString('cursor'),
     );
   }
 
@@ -852,13 +884,10 @@ class CompressedTokenAccountList {
   const CompressedTokenAccountList({required this.items, this.cursor});
 
   factory CompressedTokenAccountList.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CompressedTokenAccountList(
-      items: (json['items']! as List<Object?>)
-          .map(
-            (e) => CompressedTokenAccount.fromJson(e! as Map<String, Object?>),
-          )
-          .toList(),
-      cursor: json['cursor'] as String?,
+      items: r.requireDecodedList('items', CompressedTokenAccount.fromJson),
+      cursor: r.optString('cursor'),
     );
   }
 
@@ -876,11 +905,10 @@ class CompressedSignatureList {
   const CompressedSignatureList({required this.items, this.cursor});
 
   factory CompressedSignatureList.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CompressedSignatureList(
-      items: (json['items']! as List<Object?>)
-          .map((e) => CompressedSignature.fromJson(e! as Map<String, Object?>))
-          .toList(),
-      cursor: json['cursor'] as String?,
+      items: r.requireDecodedList('items', CompressedSignature.fromJson),
+      cursor: r.optString('cursor'),
     );
   }
 
@@ -898,13 +926,10 @@ class CompressedTokenBalanceList {
   const CompressedTokenBalanceList({required this.items, this.cursor});
 
   factory CompressedTokenBalanceList.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CompressedTokenBalanceList(
-      items: (json['items']! as List<Object?>)
-          .map(
-            (e) => CompressedTokenBalance.fromJson(e! as Map<String, Object?>),
-          )
-          .toList(),
-      cursor: json['cursor'] as String?,
+      items: r.requireDecodedList('items', CompressedTokenBalance.fromJson),
+      cursor: r.optString('cursor'),
     );
   }
 
@@ -922,14 +947,10 @@ class CompressedTokenBalanceV2List {
   const CompressedTokenBalanceV2List({required this.items, this.cursor});
 
   factory CompressedTokenBalanceV2List.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CompressedTokenBalanceV2List(
-      items: (json['items']! as List<Object?>)
-          .map(
-            (e) =>
-                CompressedTokenBalanceV2.fromJson(e! as Map<String, Object?>),
-          )
-          .toList(),
-      cursor: json['cursor'] as String?,
+      items: r.requireDecodedList('items', CompressedTokenBalanceV2.fromJson),
+      cursor: r.optString('cursor'),
     );
   }
 

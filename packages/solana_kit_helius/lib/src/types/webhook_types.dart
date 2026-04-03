@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+import 'package:solana_kit_helius/src/internal/json_reader.dart';
 import 'package:solana_kit_helius/src/types/enums.dart';
 
 /// A Helius webhook configuration.
@@ -13,16 +15,15 @@ class Webhook {
   });
 
   factory Webhook.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return Webhook(
-      webhookId: json['webhookId']! as String,
-      wallet: json['wallet']! as String,
-      webhookUrl: json['webhookUrl']! as String,
-      transactionTypes: (json['transactionTypes']! as List<Object?>)
-          .cast<String>(),
-      accountAddresses: (json['accountAddresses']! as List<Object?>)
-          .cast<String>(),
-      webhookType: WebhookType.fromJson(json['webhookType']! as String),
-      authHeader: json['authHeader'] as String?,
+      webhookId: r.requireString('webhookId'),
+      wallet: r.requireString('wallet'),
+      webhookUrl: r.requireString('webhookUrl'),
+      transactionTypes: r.requireList<String>('transactionTypes'),
+      accountAddresses: r.requireList<String>('accountAddresses'),
+      webhookType: r.optEnum('webhookType', WebhookType.fromJson)!,
+      authHeader: r.optString('authHeader'),
     );
   }
 
@@ -57,15 +58,14 @@ class CreateWebhookRequest {
   });
 
   factory CreateWebhookRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CreateWebhookRequest(
-      webhookUrl: json['webhookUrl']! as String,
-      transactionTypes: (json['transactionTypes']! as List<Object?>)
-          .cast<String>(),
-      accountAddresses: (json['accountAddresses']! as List<Object?>)
-          .cast<String>(),
-      webhookType: WebhookType.fromJson(json['webhookType']! as String),
-      authHeader: json['authHeader'] as String?,
-      txnStatus: json['txnStatus'] as String?,
+      webhookUrl: r.requireString('webhookUrl'),
+      transactionTypes: r.requireList<String>('transactionTypes'),
+      accountAddresses: r.requireList<String>('accountAddresses'),
+      webhookType: r.optEnum('webhookType', WebhookType.fromJson)!,
+      authHeader: r.optString('authHeader'),
+      txnStatus: r.optString('txnStatus'),
     );
   }
 
@@ -99,18 +99,15 @@ class UpdateWebhookRequest {
   });
 
   factory UpdateWebhookRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return UpdateWebhookRequest(
-      webhookId: json['webhookId']! as String,
-      webhookUrl: json['webhookUrl'] as String?,
-      transactionTypes: (json['transactionTypes'] as List<Object?>?)
-          ?.cast<String>(),
-      accountAddresses: (json['accountAddresses'] as List<Object?>?)
-          ?.cast<String>(),
-      webhookType: json['webhookType'] != null
-          ? WebhookType.fromJson(json['webhookType']! as String)
-          : null,
-      authHeader: json['authHeader'] as String?,
-      txnStatus: json['txnStatus'] as String?,
+      webhookId: r.requireString('webhookId'),
+      webhookUrl: r.optString('webhookUrl'),
+      transactionTypes: r.optList<String>('transactionTypes'),
+      accountAddresses: r.optList<String>('accountAddresses'),
+      webhookType: r.optEnum('webhookType', WebhookType.fromJson),
+      authHeader: r.optString('authHeader'),
+      txnStatus: r.optString('txnStatus'),
     );
   }
 

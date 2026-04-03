@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+import 'package:solana_kit_helius/src/internal/json_reader.dart';
 import 'package:solana_kit_helius/src/types/enums.dart';
 
 /// Request to get program accounts with V2 pagination.
@@ -12,15 +14,14 @@ class GetProgramAccountsV2Request {
   });
 
   factory GetProgramAccountsV2Request.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetProgramAccountsV2Request(
-      programAddress: json['programAddress']! as String,
-      filters: (json['filters'] as List<Object?>?)
-          ?.map((e) => e! as Map<String, Object?>)
-          .toList(),
-      encoding: json['encoding'] as String?,
-      dataSlice: json['dataSlice'] as int?,
-      after: json['after'] as String?,
-      limit: json['limit'] as int?,
+      programAddress: r.requireString('programAddress'),
+      filters: r.optList<Map<String, Object?>>('filters'),
+      encoding: r.optString('encoding'),
+      dataSlice: r.optInt('dataSlice'),
+      after: r.optString('after'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -46,11 +47,13 @@ class GetProgramAccountsV2Response {
   const GetProgramAccountsV2Response({required this.accounts, this.cursor});
 
   factory GetProgramAccountsV2Response.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetProgramAccountsV2Response(
-      accounts: (json['accounts']! as List<Object?>)
-          .map((e) => ProgramAccountV2.fromJson(e! as Map<String, Object?>))
-          .toList(),
-      cursor: json['cursor'] as String?,
+      accounts: r.requireDecodedList(
+        'accounts',
+        ProgramAccountV2.fromJson,
+      ),
+      cursor: r.optString('cursor'),
     );
   }
 
@@ -68,9 +71,10 @@ class ProgramAccountV2 {
   const ProgramAccountV2({required this.pubkey, required this.account});
 
   factory ProgramAccountV2.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return ProgramAccountV2(
-      pubkey: json['pubkey']! as String,
-      account: json['account']! as Map<String, Object?>,
+      pubkey: r.requireString('pubkey'),
+      account: r.requireMap('account'),
     );
   }
 
@@ -92,13 +96,14 @@ class GetTokenAccountsByOwnerV2Request {
   });
 
   factory GetTokenAccountsByOwnerV2Request.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetTokenAccountsByOwnerV2Request(
-      ownerAddress: json['ownerAddress']! as String,
-      mint: json['mint'] as String?,
-      programId: json['programId'] as String?,
-      encoding: json['encoding'] as String?,
-      after: json['after'] as String?,
-      limit: json['limit'] as int?,
+      ownerAddress: r.requireString('ownerAddress'),
+      mint: r.optString('mint'),
+      programId: r.optString('programId'),
+      encoding: r.optString('encoding'),
+      after: r.optString('after'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -129,11 +134,13 @@ class GetTokenAccountsByOwnerV2Response {
   factory GetTokenAccountsByOwnerV2Response.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetTokenAccountsByOwnerV2Response(
-      accounts: (json['accounts']! as List<Object?>)
-          .map((e) => TokenAccountV2.fromJson(e! as Map<String, Object?>))
-          .toList(),
-      cursor: json['cursor'] as String?,
+      accounts: r.requireDecodedList(
+        'accounts',
+        TokenAccountV2.fromJson,
+      ),
+      cursor: r.optString('cursor'),
     );
   }
 
@@ -151,9 +158,10 @@ class TokenAccountV2 {
   const TokenAccountV2({required this.pubkey, required this.account});
 
   factory TokenAccountV2.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return TokenAccountV2(
-      pubkey: json['pubkey']! as String,
-      account: json['account']! as Map<String, Object?>,
+      pubkey: r.requireString('pubkey'),
+      account: r.requireMap('account'),
     );
   }
 
@@ -174,14 +182,13 @@ class GetTransactionsForAddressRequest {
   });
 
   factory GetTransactionsForAddressRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetTransactionsForAddressRequest(
-      address: json['address']! as String,
-      before: json['before'] as String?,
-      until: json['until'] as String?,
-      limit: json['limit'] as int?,
-      commitment: json['commitment'] != null
-          ? CommitmentLevel.fromJson(json['commitment']! as String)
-          : null,
+      address: r.requireString('address'),
+      before: r.optString('before'),
+      until: r.optString('until'),
+      limit: r.optInt('limit'),
+      commitment: r.optEnum('commitment', CommitmentLevel.fromJson),
     );
   }
 
@@ -207,12 +214,12 @@ class GetTransactionsForAddressResponse {
   factory GetTransactionsForAddressResponse.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return GetTransactionsForAddressResponse(
-      transactions: (json['transactions']! as List<Object?>)
-          .map(
-            (e) => TransactionForAddress.fromJson(e! as Map<String, Object?>),
-          )
-          .toList(),
+      transactions: r.requireDecodedList(
+        'transactions',
+        TransactionForAddress.fromJson,
+      ),
     );
   }
 
@@ -234,12 +241,13 @@ class TransactionForAddress {
   });
 
   factory TransactionForAddress.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return TransactionForAddress(
-      signature: json['signature']! as String,
-      slot: json['slot']! as int,
-      blockTime: json['blockTime'] as int?,
-      err: json['err'],
-      memo: json['memo'] as String?,
+      signature: r.requireString('signature'),
+      slot: r.requireInt('slot'),
+      blockTime: r.optInt('blockTime'),
+      err: r.raw('err'),
+      memo: r.optString('memo'),
     );
   }
 

@@ -6,6 +6,10 @@ typedef Subscriber<T> = void Function(T data);
 
 /// An object that publishes data to named channels.
 ///
+/// This is a compatibility abstraction carried over from the upstream
+/// TypeScript implementation. Prefer exposing Dart `Stream`s at public API
+/// boundaries when designing new Dart-first APIs.
+///
 /// Subscribers can listen on a named channel and receive data published to that
 /// channel. The [on] method returns an [UnsubscribeFn] that can be called to
 /// stop receiving further messages.
@@ -28,6 +32,9 @@ abstract interface class DataPublisher {
 }
 
 /// A [DataPublisher] that also supports publishing data to channels.
+///
+/// Prefer converting instances to `Stream`s before crossing higher-level API
+/// boundaries.
 abstract interface class WritableDataPublisher implements DataPublisher {
   /// Publish [data] to all subscribers listening on [channelName].
   void publish(String channelName, Object? data);
@@ -36,7 +43,9 @@ abstract interface class WritableDataPublisher implements DataPublisher {
 /// Creates a new [WritableDataPublisher].
 ///
 /// The returned publisher supports both subscribing to and publishing data on
-/// named channels.
+/// named channels. Prefer `Stream`-based APIs for new Dart-facing surfaces;
+/// this factory is primarily useful for compatibility layers and low-level
+/// adapters.
 WritableDataPublisher createDataPublisher() => _DataPublisherImpl();
 
 class _DataPublisherImpl implements WritableDataPublisher {

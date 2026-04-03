@@ -125,13 +125,14 @@ final messageWithPrepended = prependTransactionMessageInstruction(
 
 ### Building a full transaction message using the pipeline pattern
 
-The `pipe` extension (from `solana_kit_functional`) allows chaining transforms together in a readable pipeline:
+The `pipe` extension allows chaining transforms together in a readable
+pipeline. It is exported directly from `solana_kit_transaction_messages`, so
+new code does not need `solana_kit_functional`:
 
 ```dart
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_functional/solana_kit_functional.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 

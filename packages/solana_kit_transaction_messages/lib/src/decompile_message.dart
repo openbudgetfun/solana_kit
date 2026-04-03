@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
-import 'package:solana_kit_functional/solana_kit_functional.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 import 'package:solana_kit_transaction_messages/src/addresses_by_lookup_table_address.dart';
@@ -15,6 +14,7 @@ import 'package:solana_kit_transaction_messages/src/fee_payer.dart';
 import 'package:solana_kit_transaction_messages/src/instructions.dart'
     as tx_instructions;
 import 'package:solana_kit_transaction_messages/src/lifetime.dart';
+import 'package:solana_kit_transaction_messages/src/pipe.dart';
 import 'package:solana_kit_transaction_messages/src/transaction_message.dart';
 
 /// Configuration for decompiling a transaction message.

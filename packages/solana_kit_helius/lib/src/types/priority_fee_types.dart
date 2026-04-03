@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+import 'package:solana_kit_helius/src/internal/json_reader.dart';
 import 'package:solana_kit_helius/src/types/enums.dart';
 
 /// Request to estimate priority fees for a transaction.
@@ -9,14 +11,11 @@ class GetPriorityFeeEstimateRequest {
   });
 
   factory GetPriorityFeeEstimateRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetPriorityFeeEstimateRequest(
-      accountKeys: (json['accountKeys'] as List<Object?>?)?.cast<String>(),
-      transaction: json['transaction'] as String?,
-      options: json['options'] != null
-          ? PriorityFeeOptions.fromJson(
-              json['options']! as Map<String, Object?>,
-            )
-          : null,
+      accountKeys: r.optList<String>('accountKeys'),
+      transaction: r.optString('transaction'),
+      options: r.optDecoded('options', PriorityFeeOptions.fromJson),
     );
   }
 
@@ -43,15 +42,14 @@ class PriorityFeeOptions {
   });
 
   factory PriorityFeeOptions.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return PriorityFeeOptions(
-      priorityLevel: json['priorityLevel'] != null
-          ? PriorityLevel.fromJson(json['priorityLevel']! as String)
-          : null,
-      includeAllPriorityFeeLevels: json['includeAllPriorityFeeLevels'] as bool?,
-      transactionEncoding: json['transactionEncoding'] as String?,
-      lookbackSlots: json['lookbackSlots'] as bool?,
-      includeVote: json['includeVote'] as bool?,
-      recommended: json['recommended'] as bool?,
+      priorityLevel: r.optEnum('priorityLevel', PriorityLevel.fromJson),
+      includeAllPriorityFeeLevels: r.optBool('includeAllPriorityFeeLevels'),
+      transactionEncoding: r.optString('transactionEncoding'),
+      lookbackSlots: r.optBool('lookbackSlots'),
+      includeVote: r.optBool('includeVote'),
+      recommended: r.optBool('recommended'),
     );
   }
 
@@ -81,13 +79,13 @@ class GetPriorityFeeEstimateResponse {
   });
 
   factory GetPriorityFeeEstimateResponse.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetPriorityFeeEstimateResponse(
-      priorityFeeEstimate: (json['priorityFeeEstimate'] as num?)?.toDouble(),
-      priorityFeeLevels: json['priorityFeeLevels'] != null
-          ? MicroLamportPriorityFeeLevels.fromJson(
-              json['priorityFeeLevels']! as Map<String, Object?>,
-            )
-          : null,
+      priorityFeeEstimate: r.optDouble('priorityFeeEstimate'),
+      priorityFeeLevels: r.optDecoded(
+        'priorityFeeLevels',
+        MicroLamportPriorityFeeLevels.fromJson,
+      ),
     );
   }
 
@@ -113,13 +111,14 @@ class MicroLamportPriorityFeeLevels {
   });
 
   factory MicroLamportPriorityFeeLevels.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return MicroLamportPriorityFeeLevels(
-      min: (json['min'] as num?)?.toDouble(),
-      low: (json['low'] as num?)?.toDouble(),
-      medium: (json['medium'] as num?)?.toDouble(),
-      high: (json['high'] as num?)?.toDouble(),
-      veryHigh: (json['veryHigh'] as num?)?.toDouble(),
-      unsafeMax: (json['unsafeMax'] as num?)?.toDouble(),
+      min: r.optDouble('min'),
+      low: r.optDouble('low'),
+      medium: r.optDouble('medium'),
+      high: r.optDouble('high'),
+      veryHigh: r.optDouble('veryHigh'),
+      unsafeMax: r.optDouble('unsafeMax'),
     );
   }
 

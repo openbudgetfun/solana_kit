@@ -21,6 +21,21 @@ class GetBalanceConfig {
     if (minContextSlot != null) json['minContextSlot'] = minContextSlot;
     return json;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GetBalanceConfig &&
+          runtimeType == other.runtimeType &&
+          commitment == other.commitment &&
+          minContextSlot == other.minContextSlot;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, commitment, minContextSlot);
+
+  @override
+  String toString() =>
+      'GetBalanceConfig(commitment: $commitment, minContextSlot: $minContextSlot)';
 }
 
 /// Builds the JSON-RPC params list for `getBalance`.

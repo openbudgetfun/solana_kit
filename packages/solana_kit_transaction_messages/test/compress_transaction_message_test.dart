@@ -1,5 +1,4 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_functional/solana_kit_functional.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:test/test.dart';

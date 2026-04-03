@@ -430,7 +430,7 @@ void main() {
                 type: 'GetTransactionConfig',
                 actual: const GetTransactionConfig(
                   commitment: Commitment.finalized,
-                  encoding: 'json',
+                  encoding: TransactionEncoding.json,
                   maxSupportedTransactionVersion: 0,
                 ).toJson(),
                 expected: {
@@ -450,7 +450,7 @@ void main() {
                 type: 'GetProgramAccountsConfig',
                 actual: GetProgramAccountsConfig(
                   commitment: Commitment.confirmed,
-                  encoding: 'base64',
+                  encoding: AccountEncoding.base64,
                   dataSlice: const DataSlice(offset: 10, length: 20),
                   filters: const [
                     {'dataSize': 165},
@@ -484,7 +484,7 @@ void main() {
                 type: 'GetTokenAccountsByDelegateConfig',
                 actual: GetTokenAccountsByDelegateConfig(
                   commitment: Commitment.confirmed,
-                  encoding: 'base64',
+                  encoding: AccountEncoding.base64,
                   dataSlice: const DataSlice(offset: 4, length: 8),
                   minContextSlot: BigInt.from(2),
                 ).toJson(),
@@ -499,7 +499,7 @@ void main() {
                 type: 'GetMultipleAccountsConfig',
                 actual: GetMultipleAccountsConfig(
                   commitment: Commitment.processed,
-                  encoding: 'base64',
+                  encoding: AccountEncoding.base64,
                   dataSlice: const DataSlice(offset: 0, length: 32),
                   minContextSlot: BigInt.from(77),
                 ).toJson(),
@@ -521,7 +521,7 @@ void main() {
                 type: 'GetTokenAccountsByOwnerConfig',
                 actual: GetTokenAccountsByOwnerConfig(
                   commitment: Commitment.finalized,
-                  encoding: 'base64',
+                  encoding: AccountEncoding.base64,
                   dataSlice: const DataSlice(offset: 6, length: 12),
                   minContextSlot: BigInt.from(44),
                 ).toJson(),

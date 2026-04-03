@@ -1,4 +1,4 @@
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart' hide address;
 
 import 'package:solana_kit_instructions/src/roles.dart';
 
@@ -13,6 +13,20 @@ class AccountMeta {
 
   /// The role of the account in the transaction.
   final AccountRole role;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AccountMeta &&
+          runtimeType == other.runtimeType &&
+          address == other.address &&
+          role == other.role;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, address, role);
+
+  @override
+  String toString() => 'AccountMeta(address: $address, role: $role)';
 }
 
 /// Represents a lookup of the account's address in an address lookup table.
@@ -38,4 +52,28 @@ class AccountLookupMeta extends AccountMeta {
 
   /// The base58-encoded address of the lookup table account.
   final Address lookupTableAddress;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AccountLookupMeta &&
+          runtimeType == other.runtimeType &&
+          address == other.address &&
+          role == other.role &&
+          addressIndex == other.addressIndex &&
+          lookupTableAddress == other.lookupTableAddress;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    address,
+    role,
+    addressIndex,
+    lookupTableAddress,
+  );
+
+  @override
+  String toString() =>
+      'AccountLookupMeta(address: $address, role: $role, '
+      'addressIndex: $addressIndex, lookupTableAddress: $lookupTableAddress)';
 }

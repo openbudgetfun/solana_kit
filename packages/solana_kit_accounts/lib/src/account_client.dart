@@ -5,6 +5,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart';
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
+import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 
 /// Higher-level account client layered on top of a typed [Rpc].
 class SolanaAccountClient {
@@ -19,7 +20,10 @@ class SolanaAccountClient {
     FetchAccountConfig? config,
   }) async {
     final response = await _rpc
-        .getAccountInfoValue(address, _getAccountInfoConfig(config, 'base64'))
+        .getAccountInfoValue(
+          address,
+          _getAccountInfoConfig(config, AccountEncoding.base64),
+        )
         .send();
     return parseBase64RpcAccount(address, _castRpcAccount(response.value));
   }
@@ -33,7 +37,7 @@ class SolanaAccountClient {
     final response = await _rpc
         .getMultipleAccountsValue(
           addresses,
-          _getMultipleAccountsConfig(config, 'base64'),
+          _getMultipleAccountsConfig(config, AccountEncoding.base64),
         )
         .send();
 
@@ -55,7 +59,7 @@ class SolanaAccountClient {
     final response = await _rpc
         .getAccountInfoValue(
           address,
-          _getAccountInfoConfig(config, 'jsonParsed'),
+          _getAccountInfoConfig(config, AccountEncoding.jsonParsed),
         )
         .send();
 
@@ -81,7 +85,7 @@ class SolanaAccountClient {
     final response = await _rpc
         .getMultipleAccountsValue(
           addresses,
-          _getMultipleAccountsConfig(config, 'jsonParsed'),
+          _getMultipleAccountsConfig(config, AccountEncoding.jsonParsed),
         )
         .send();
 
@@ -111,7 +115,7 @@ SolanaAccountClient createSolanaAccountClient(Rpc rpc) {
 
 GetAccountInfoConfig _getAccountInfoConfig(
   FetchAccountConfig? config,
-  String encoding,
+  AccountEncoding encoding,
 ) {
   return GetAccountInfoConfig(
     commitment: config?.commitment,
@@ -122,7 +126,7 @@ GetAccountInfoConfig _getAccountInfoConfig(
 
 GetMultipleAccountsConfig _getMultipleAccountsConfig(
   FetchAccountConfig? config,
-  String encoding,
+  AccountEncoding encoding,
 ) {
   return GetMultipleAccountsConfig(
     commitment: config?.commitment,

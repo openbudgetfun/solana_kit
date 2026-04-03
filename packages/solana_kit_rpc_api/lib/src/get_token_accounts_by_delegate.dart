@@ -16,7 +16,7 @@ class GetTokenAccountsByDelegateConfig {
   final Commitment? commitment;
 
   /// Determines how the accounts' data should be encoded.
-  final String? encoding;
+  final AccountEncoding? encoding;
 
   /// Define which slice of the accounts' data to return.
   final DataSlice? dataSlice;
@@ -28,7 +28,7 @@ class GetTokenAccountsByDelegateConfig {
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
     if (commitment != null) json['commitment'] = commitment!.name;
-    if (encoding != null) json['encoding'] = encoding;
+    if (encoding != null) json['encoding'] = encoding!.toJson();
     if (dataSlice != null) {
       json['dataSlice'] = {
         'offset': dataSlice!.offset,
@@ -50,6 +50,19 @@ class TokenAccountMintFilter {
 
   /// Converts to a JSON map.
   Map<String, Object?> toJson() => {'mint': mint.value};
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TokenAccountMintFilter &&
+          runtimeType == other.runtimeType &&
+          mint == other.mint;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, mint);
+
+  @override
+  String toString() => 'TokenAccountMintFilter(mint: $mint)';
 }
 
 /// A filter for token accounts by program ID.
@@ -62,6 +75,20 @@ class TokenAccountProgramIdFilter {
 
   /// Converts to a JSON map.
   Map<String, Object?> toJson() => {'programId': programId.value};
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TokenAccountProgramIdFilter &&
+          runtimeType == other.runtimeType &&
+          programId == other.programId;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, programId);
+
+  @override
+  String toString() =>
+      'TokenAccountProgramIdFilter(programId: $programId)';
 }
 
 /// Builds the JSON-RPC params list for `getTokenAccountsByDelegate`.

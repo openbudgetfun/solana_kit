@@ -8,6 +8,11 @@
 
 Subscribable and observable patterns for the Solana Kit Dart SDK -- a publish/subscribe event system with named channels, Dart `Stream` bridging, and event demultiplexing.
 
+> [!NOTE]
+> New Dart-facing APIs should prefer exposing `Stream`s directly.
+> `DataPublisher` remains in this package as a compatibility layer for the
+> upstream TypeScript architecture and for lower-level adapters.
+
 This is the Dart port of [`@solana/subscribable`](https://github.com/anza-xyz/kit/tree/main/packages/subscribable) from the Solana TypeScript SDK.
 
 <!-- {=packageInstallSection:"solana_kit_subscribable"} -->
@@ -45,6 +50,12 @@ For architecture notes, getting-started guides, and cross-package examples, star
 <!-- {/packageDocumentationSection} -->
 
 ## Usage
+
+### Preferred: expose Dart Streams
+
+If you are designing a new Dart API, prefer returning `Stream<T>` directly.
+Use the `DataPublisher` primitives in this package when you need to adapt to
+existing Solana Kit internals or TypeScript-shaped channel publishers.
 
 ### Creating a data publisher
 

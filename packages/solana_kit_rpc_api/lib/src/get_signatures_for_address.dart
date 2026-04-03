@@ -40,6 +40,32 @@ class GetSignaturesForAddressConfig {
     if (until != null) json['until'] = until!.value;
     return json;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GetSignaturesForAddressConfig &&
+          runtimeType == other.runtimeType &&
+          before == other.before &&
+          commitment == other.commitment &&
+          limit == other.limit &&
+          minContextSlot == other.minContextSlot &&
+          until == other.until;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    before,
+    commitment,
+    limit,
+    minContextSlot,
+    until,
+  );
+
+  @override
+  String toString() =>
+      'GetSignaturesForAddressConfig(before: $before, commitment: $commitment, '
+      'limit: $limit, minContextSlot: $minContextSlot, until: $until)';
 }
 
 /// Builds the JSON-RPC params list for `getSignaturesForAddress`.

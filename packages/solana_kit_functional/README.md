@@ -8,19 +8,30 @@
 
 Pipe and compose utilities for the Solana Kit Dart SDK, enabling functional pipeline composition on any value.
 
+> [!WARNING]
+> This package is deprecated and kept only as a compatibility shim.
+> New code should import the `Pipe` extension from
+> `package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart`
+> or the umbrella `package:solana_kit/solana_kit.dart` instead.
+>
+> The standalone `solana_kit_functional` package may be removed in a future
+> release once downstream migration is complete.
+
 This is the Dart port of [`@solana/functional`](https://github.com/anza-xyz/kit/tree/main/packages/functional) from the Solana TypeScript SDK.
 
 <!-- {=packageInstallSection:"solana_kit_functional"} -->
 
 ## Installation
 
-Install the package directly:
+Install the package directly only if you need backwards compatibility with
+existing imports:
 
 ```bash
 dart pub add solana_kit_functional
 ```
 
-If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+For new code, prefer the umbrella package or transaction-message package
+instead:
 
 ```bash
 dart pub add solana_kit

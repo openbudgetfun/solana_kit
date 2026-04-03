@@ -194,7 +194,7 @@ void main() {
         const request = RpcRequest<Object?>(methodName: '', params: null);
         final response = <String, Object?>{
           'error': {
-            'code': SolanaErrorCode.jsonRpcParseError,
+            'code': SolanaErrorCode.jsonRpcParseError.value,
             'message': 'o no',
           },
         };

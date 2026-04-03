@@ -14,6 +14,20 @@ class RpcParsedType<TType extends String, TInfo extends Object> {
 
   /// The parsed account data.
   final TInfo info;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RpcParsedType<TType, TInfo> &&
+          runtimeType == other.runtimeType &&
+          type == other.type &&
+          info == other.info;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, type, info);
+
+  @override
+  String toString() => 'RpcParsedType(type: $type, info: $info)';
 }
 
 /// A parsed RPC account type that carries only an [info] payload without a
@@ -27,4 +41,17 @@ class RpcParsedInfo<TInfo extends Object> {
 
   /// The parsed account data.
   final TInfo info;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RpcParsedInfo<TInfo> &&
+          runtimeType == other.runtimeType &&
+          info == other.info;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, info);
+
+  @override
+  String toString() => 'RpcParsedInfo(info: $info)';
 }

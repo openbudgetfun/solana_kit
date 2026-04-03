@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 /// Types of MWA session lifecycle events.
 enum MwaSessionEventType {
   /// The scenario has been created and is ready.

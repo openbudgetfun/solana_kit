@@ -15,9 +15,7 @@ class GetTransactionConfig {
   final Commitment? commitment;
 
   /// Determines how the transaction should be encoded in the response.
-  ///
-  /// One of `'base58'`, `'base64'`, `'json'`, or `'jsonParsed'`.
-  final String? encoding;
+  final TransactionEncoding? encoding;
 
   /// The newest transaction version the caller wants to receive.
   ///
@@ -28,7 +26,7 @@ class GetTransactionConfig {
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
     if (commitment != null) json['commitment'] = commitment!.name;
-    if (encoding != null) json['encoding'] = encoding;
+    if (encoding != null) json['encoding'] = encoding!.toJson();
     if (maxSupportedTransactionVersion != null) {
       json['maxSupportedTransactionVersion'] = maxSupportedTransactionVersion;
     }

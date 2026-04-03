@@ -3,6 +3,15 @@ import 'package:test/test.dart';
 
 import 'test_helpers.dart';
 
+// Matches a FormatException whose message mentions [fieldName].
+Matcher _missingField(String fieldName) => throwsA(
+  isA<FormatException>().having(
+    (e) => e.message,
+    'message',
+    contains('"$fieldName"'),
+  ),
+);
+
 void main() {
   group('das request types', () {
     expectJsonRoundTrip(
@@ -459,6 +468,213 @@ void main() {
       },
       TokenAccountList.fromJson,
       (value) => value.toJson(),
+    );
+  });
+
+  // -------------------------------------------------------------------------
+  // Error-case tests: missing required fields
+  // -------------------------------------------------------------------------
+
+  group('error cases — das request types', () {
+    test(
+      'GetAssetRequest throws when id is absent',
+      () => expect(
+        () => GetAssetRequest.fromJson({}),
+        _missingField('id'),
+      ),
+    );
+
+    test(
+      'GetAssetBatchRequest throws when ids is absent',
+      () => expect(
+        () => GetAssetBatchRequest.fromJson({}),
+        _missingField('ids'),
+      ),
+    );
+
+    test(
+      'GetAssetProofRequest throws when id is absent',
+      () => expect(
+        () => GetAssetProofRequest.fromJson({}),
+        _missingField('id'),
+      ),
+    );
+
+    test(
+      'GetAssetsByAuthorityRequest throws when authorityAddress is absent',
+      () => expect(
+        () => GetAssetsByAuthorityRequest.fromJson({}),
+        _missingField('authorityAddress'),
+      ),
+    );
+
+    test(
+      'GetAssetsByCreatorRequest throws when creatorAddress is absent',
+      () => expect(
+        () => GetAssetsByCreatorRequest.fromJson({}),
+        _missingField('creatorAddress'),
+      ),
+    );
+
+    test(
+      'GetAssetsByGroupRequest throws when groupKey is absent',
+      () => expect(
+        () => GetAssetsByGroupRequest.fromJson({'groupValue': 'v-1'}),
+        _missingField('groupKey'),
+      ),
+    );
+
+    test(
+      'GetAssetsByOwnerRequest throws when ownerAddress is absent',
+      () => expect(
+        () => GetAssetsByOwnerRequest.fromJson({}),
+        _missingField('ownerAddress'),
+      ),
+    );
+  });
+
+  group('error cases — das model types', () {
+    test(
+      'HeliusAsset throws when id is absent',
+      () => expect(
+        () => HeliusAsset.fromJson({}),
+        _missingField('id'),
+      ),
+    );
+
+    test(
+      'HeliusAsset throws when id is null',
+      () => expect(
+        () => HeliusAsset.fromJson({'id': null}),
+        _missingField('id'),
+      ),
+    );
+
+    test(
+      'AssetAuthority throws when address is absent',
+      () => expect(
+        () => AssetAuthority.fromJson({}),
+        _missingField('address'),
+      ),
+    );
+
+    test(
+      'AssetCreator throws when address is absent',
+      () => expect(
+        () => AssetCreator.fromJson({'share': 50, 'verified': true}),
+        _missingField('address'),
+      ),
+    );
+
+    test(
+      'AssetCreator throws when share is absent',
+      () => expect(
+        () => AssetCreator.fromJson({'address': 'c-1', 'verified': true}),
+        _missingField('share'),
+      ),
+    );
+
+    test(
+      'AssetCreator throws when verified is absent',
+      () => expect(
+        () => AssetCreator.fromJson({'address': 'c-1', 'share': 50}),
+        _missingField('verified'),
+      ),
+    );
+
+    test(
+      'AssetGrouping throws when group_key is absent',
+      () => expect(
+        () => AssetGrouping.fromJson({'group_value': 'v-1'}),
+        _missingField('group_key'),
+      ),
+    );
+
+    test(
+      'AssetGrouping throws when group_value is absent',
+      () => expect(
+        () => AssetGrouping.fromJson({'group_key': 'collection'}),
+        _missingField('group_value'),
+      ),
+    );
+
+    test(
+      'AssetProof throws when root is absent',
+      () => expect(
+        () => AssetProof.fromJson({
+          'proof': <Object?>[],
+          'node_index': 0,
+          'leaf': 'leaf-1',
+          'tree_id': 'tree-1',
+        }),
+        _missingField('root'),
+      ),
+    );
+
+    test(
+      'AssetProof throws when proof list is absent',
+      () => expect(
+        () => AssetProof.fromJson({
+          'root': 'r-1',
+          'node_index': 0,
+          'leaf': 'leaf-1',
+          'tree_id': 'tree-1',
+        }),
+        _missingField('proof'),
+      ),
+    );
+
+    test(
+      'AssetProof proof cast throws eagerly on wrong-type element',
+      () {
+        // proof list contains an int instead of a String.
+        final r = AssetProof.fromJson({
+          'root': 'r-1',
+          'proof': <Object?>[42],
+          'node_index': 0,
+          'leaf': 'leaf-1',
+          'tree_id': 'tree-1',
+        });
+        expect(() => r.proof[0], throwsA(isA<TypeError>()));
+      },
+    );
+
+    test(
+      'NftEdition throws when mint is absent',
+      () => expect(
+        () => NftEdition.fromJson({'edition': 1}),
+        _missingField('mint'),
+      ),
+    );
+
+    test(
+      'NftEdition throws when edition is absent',
+      () => expect(
+        () => NftEdition.fromJson({'mint': 'm-1'}),
+        _missingField('edition'),
+      ),
+    );
+
+    test(
+      'AssetSignature throws when signature is absent',
+      () => expect(
+        () => AssetSignature.fromJson({}),
+        _missingField('signature'),
+      ),
+    );
+
+    test(
+      'TokenAccount throws when address is absent',
+      () => expect(
+        () => TokenAccount.fromJson({
+          'mint': 'm-1',
+          'owner': 'o-1',
+          'amount': 0,
+          'delegated_amount': 0,
+          'frozen': false,
+        }),
+        _missingField('address'),
+      ),
     );
   });
 }

@@ -50,6 +50,41 @@ void main() {
     });
   });
 
+  group('SolanaErrorCode enum', () {
+    test('value field returns the numeric code', () {
+      expect(SolanaErrorCode.blockHeightExceeded.value, 1);
+      expect(SolanaErrorCode.jsonRpcParseError.value, -32700);
+      expect(SolanaErrorCode.accountsOneOrMoreAccountsNotFound.value, 32300001);
+    });
+
+    test('fromValue returns matching enum for known codes', () {
+      expect(SolanaErrorCode.fromValue(1), SolanaErrorCode.blockHeightExceeded);
+      expect(SolanaErrorCode.fromValue(-32700), SolanaErrorCode.jsonRpcParseError);
+      expect(
+        SolanaErrorCode.fromValue(32300001),
+        SolanaErrorCode.accountsOneOrMoreAccountsNotFound,
+      );
+    });
+
+    test('fromValue returns null for unknown codes', () {
+      expect(SolanaErrorCode.fromValue(999999), isNull);
+      expect(SolanaErrorCode.fromValue(0), isNull);
+      expect(SolanaErrorCode.fromValue(-1), isNull);
+    });
+
+    test('fromValue round-trips all enum values', () {
+      for (final code in SolanaErrorCode.values) {
+        expect(SolanaErrorCode.fromValue(code.value), code);
+      }
+    });
+
+    test('all enum values have distinct numeric values', () {
+      final values = SolanaErrorCode.values.map((c) => c.value).toList();
+      final unique = values.toSet();
+      expect(unique.length, values.length);
+    });
+  });
+
   group('isSolanaError', () {
     test('returns true for SolanaError', () {
       final error = SolanaError(SolanaErrorCode.blockHeightExceeded);

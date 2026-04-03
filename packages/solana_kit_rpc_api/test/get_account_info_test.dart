@@ -19,7 +19,7 @@ void main() {
     });
 
     test('toJson includes encoding when set', () {
-      const config = GetAccountInfoConfig(encoding: 'base64');
+      const config = GetAccountInfoConfig(encoding: AccountEncoding.base64);
       final json = config.toJson();
       expect(json['encoding'], 'base64');
     });
@@ -41,7 +41,7 @@ void main() {
     test('toJson includes all fields when all set', () {
       final config = GetAccountInfoConfig(
         commitment: Commitment.confirmed,
-        encoding: 'jsonParsed',
+        encoding: AccountEncoding.jsonParsed,
         dataSlice: const DataSlice(offset: 10, length: 20),
         minContextSlot: BigInt.from(500),
       );

@@ -75,7 +75,7 @@ SolanaError getSolanaErrorFromInstructionError(
   return getSolanaErrorFromRpcError(
     RpcEnumErrorConfig(
       errorCodeBaseOffset:
-          SolanaErrorCode.instructionErrorGenericError, // 4615001
+          SolanaErrorCode.instructionErrorGenericError.value, // 4615001
       orderedErrorNames: _orderedErrorNames,
       getErrorContext: (errorCode, rpcErrorName, rpcErrorContext) {
         if (errorCode == SolanaErrorCode.instructionErrorUnknown) {

@@ -12,7 +12,7 @@ void main() {
     address,
     const AccountNotificationsConfig(
       commitment: Commitment.finalized,
-      encoding: 'base64',
+      encoding: AccountEncoding.base64,
     ),
   );
 

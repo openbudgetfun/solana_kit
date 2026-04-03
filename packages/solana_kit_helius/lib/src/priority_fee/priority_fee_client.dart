@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/priority_fee/get_priority_fee_estimate.dart';
 import 'package:solana_kit_helius/src/types/priority_fee_types.dart';

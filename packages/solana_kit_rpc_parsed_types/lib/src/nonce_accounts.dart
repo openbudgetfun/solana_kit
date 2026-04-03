@@ -25,6 +25,24 @@ class JsonParsedNonceInfo {
 
   /// The fee calculator associated with this nonce.
   final JsonParsedNonceFeeCalculator feeCalculator;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedNonceInfo &&
+          runtimeType == other.runtimeType &&
+          authority == other.authority &&
+          blockhash == other.blockhash &&
+          feeCalculator == other.feeCalculator;
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, authority, blockhash, feeCalculator);
+
+  @override
+  String toString() =>
+      'JsonParsedNonceInfo(authority: $authority, blockhash: $blockhash, '
+      'feeCalculator: $feeCalculator)';
 }
 
 /// The fee calculator within a nonce account.
@@ -34,4 +52,19 @@ class JsonParsedNonceFeeCalculator {
 
   /// The fee in lamports charged per signature.
   final StringifiedBigInt lamportsPerSignature;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedNonceFeeCalculator &&
+          runtimeType == other.runtimeType &&
+          lamportsPerSignature == other.lamportsPerSignature;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, lamportsPerSignature);
+
+  @override
+  String toString() =>
+      'JsonParsedNonceFeeCalculator(lamportsPerSignature: '
+      '$lamportsPerSignature)';
 }

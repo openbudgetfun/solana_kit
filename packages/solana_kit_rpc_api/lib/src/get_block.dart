@@ -16,10 +16,8 @@ class GetBlockConfig {
   final Commitment? commitment;
 
   /// Determines how the transaction property should be encoded.
-  ///
-  /// One of `'base58'`, `'base64'`, `'json'`, or `'jsonParsed'`.
   /// Defaults to `'json'`.
-  final String? encoding;
+  final TransactionEncoding? encoding;
 
   /// The newest transaction version the caller wants to receive.
   ///
@@ -40,7 +38,7 @@ class GetBlockConfig {
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
     if (commitment != null) json['commitment'] = commitment!.name;
-    if (encoding != null) json['encoding'] = encoding;
+    if (encoding != null) json['encoding'] = encoding!.toJson();
     if (maxSupportedTransactionVersion != null) {
       json['maxSupportedTransactionVersion'] = maxSupportedTransactionVersion;
     }
@@ -50,6 +48,33 @@ class GetBlockConfig {
     }
     return json;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GetBlockConfig &&
+          runtimeType == other.runtimeType &&
+          commitment == other.commitment &&
+          encoding == other.encoding &&
+          maxSupportedTransactionVersion == other.maxSupportedTransactionVersion &&
+          rewards == other.rewards &&
+          transactionDetails == other.transactionDetails;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    commitment,
+    encoding,
+    maxSupportedTransactionVersion,
+    rewards,
+    transactionDetails,
+  );
+
+  @override
+  String toString() =>
+      'GetBlockConfig(commitment: $commitment, encoding: $encoding, '
+      'maxSupportedTransactionVersion: $maxSupportedTransactionVersion, '
+      'rewards: $rewards, transactionDetails: $transactionDetails)';
 }
 
 /// Builds the JSON-RPC params list for `getBlock`.

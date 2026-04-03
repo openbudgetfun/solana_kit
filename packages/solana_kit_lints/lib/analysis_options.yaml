@@ -7,11 +7,12 @@ analyzer:
     unused_element: error
     unused_import: error
     unused_local_variable: error
+    document_ignores: ignore
     todo: ignore
 
 linter:
   rules:
-    public_member_api_docs: false
+    public_member_api_docs: true
     lines_longer_than_80_chars: false
     cancel_subscriptions: true
     close_sinks: true

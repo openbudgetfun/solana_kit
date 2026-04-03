@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 import 'dart:async';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -293,7 +294,10 @@ Future<void> _pollForNonceInvalidation({
     final response = await rpc
         .getAccountInfo(
           nonceAccountAddress,
-          GetAccountInfoConfig(commitment: commitment, encoding: 'jsonParsed'),
+          GetAccountInfoConfig(
+            commitment: commitment,
+            encoding: AccountEncoding.jsonParsed,
+          ),
         )
         .send(
           abortSignal == null

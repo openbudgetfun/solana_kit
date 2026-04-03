@@ -108,7 +108,7 @@ final balanceParams = getBalanceParams(addr, GetBalanceConfig(
 
 // getAccountInfo parameters.
 final accountParams = getAccountInfoParams(addr, GetAccountInfoConfig(
-  encoding: 'base64',
+  encoding: AccountEncoding.base64,
   commitment: Commitment.confirmed,
 ));
 ```

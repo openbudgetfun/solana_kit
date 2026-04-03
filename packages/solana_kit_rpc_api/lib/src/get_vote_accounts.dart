@@ -38,6 +38,32 @@ class GetVoteAccountsConfig {
     if (votePubkey != null) json['votePubkey'] = votePubkey!.value;
     return json;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GetVoteAccountsConfig &&
+          runtimeType == other.runtimeType &&
+          commitment == other.commitment &&
+          delinquentSlotDistance == other.delinquentSlotDistance &&
+          keepUnstakedDelinquents == other.keepUnstakedDelinquents &&
+          votePubkey == other.votePubkey;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    commitment,
+    delinquentSlotDistance,
+    keepUnstakedDelinquents,
+    votePubkey,
+  );
+
+  @override
+  String toString() =>
+      'GetVoteAccountsConfig(commitment: $commitment, '
+      'delinquentSlotDistance: $delinquentSlotDistance, '
+      'keepUnstakedDelinquents: $keepUnstakedDelinquents, '
+      'votePubkey: $votePubkey)';
 }
 
 /// Builds the JSON-RPC params list for `getVoteAccounts`.

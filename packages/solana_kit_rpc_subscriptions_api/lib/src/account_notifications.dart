@@ -14,15 +14,13 @@ class AccountNotificationsConfig {
   final Commitment? commitment;
 
   /// Determines how the account data should be encoded in the notification.
-  ///
-  /// One of `'base58'`, `'base64'`, `'base64+zstd'`, or `'jsonParsed'`.
-  final String? encoding;
+  final AccountEncoding? encoding;
 
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
     if (commitment != null) json['commitment'] = commitment!.name;
-    if (encoding != null) json['encoding'] = encoding;
+    if (encoding != null) json['encoding'] = encoding!.toJson();
     return json;
   }
 }

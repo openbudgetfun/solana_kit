@@ -14,4 +14,19 @@ class SignatureStatus {
   ///
   /// A non-null value indicates the transaction failed.
   final Object? err;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SignatureStatus &&
+          runtimeType == other.runtimeType &&
+          confirmationStatus == other.confirmationStatus &&
+          err == other.err;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, confirmationStatus, err);
+
+  @override
+  String toString() =>
+      'SignatureStatus(confirmationStatus: $confirmationStatus, err: $err)';
 }

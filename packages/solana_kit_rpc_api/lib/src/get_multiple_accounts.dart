@@ -16,7 +16,7 @@ class GetMultipleAccountsConfig {
   final Commitment? commitment;
 
   /// Determines how the accounts' data should be encoded in the response.
-  final String? encoding;
+  final AccountEncoding? encoding;
 
   /// Define which slice of the accounts' data to return.
   final DataSlice? dataSlice;
@@ -29,7 +29,7 @@ class GetMultipleAccountsConfig {
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
     if (commitment != null) json['commitment'] = commitment!.name;
-    if (encoding != null) json['encoding'] = encoding;
+    if (encoding != null) json['encoding'] = encoding!.toJson();
     if (dataSlice != null) {
       json['dataSlice'] = {
         'offset': dataSlice!.offset,

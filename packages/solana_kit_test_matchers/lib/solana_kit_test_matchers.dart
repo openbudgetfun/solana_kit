@@ -9,6 +9,11 @@ library;
 
 export 'src/address_matchers.dart';
 export 'src/bytes_matchers.dart';
+export 'src/canned_rpc_responses.dart';
+export 'src/fake_accounts.dart';
+export 'src/fake_rpc.dart';
+export 'src/fake_signers.dart';
 export 'src/solana_error_matchers.dart';
+export 'src/test_addresses.dart';
 export 'src/test_fixtures.dart';
 export 'src/transaction_matchers.dart';

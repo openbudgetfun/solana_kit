@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+import 'package:solana_kit_helius/src/internal/json_reader.dart';
 import 'package:solana_kit_helius/src/types/enhanced_types.dart';
 
 /// Request to get identity information for a wallet address.
@@ -5,7 +7,8 @@ class GetIdentityRequest {
   const GetIdentityRequest({required this.address});
 
   factory GetIdentityRequest.fromJson(Map<String, Object?> json) {
-    return GetIdentityRequest(address: json['address']! as String);
+    final r = JsonReader(json);
+    return GetIdentityRequest(address: r.requireString('address'));
   }
 
   final String address;
@@ -18,8 +21,9 @@ class GetBatchIdentityRequest {
   const GetBatchIdentityRequest({required this.addresses});
 
   factory GetBatchIdentityRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetBatchIdentityRequest(
-      addresses: (json['addresses']! as List<Object?>).cast<String>(),
+      addresses: r.requireList<String>('addresses'),
     );
   }
 
@@ -33,7 +37,8 @@ class GetBalancesRequest {
   const GetBalancesRequest({required this.address});
 
   factory GetBalancesRequest.fromJson(Map<String, Object?> json) {
-    return GetBalancesRequest(address: json['address']! as String);
+    final r = JsonReader(json);
+    return GetBalancesRequest(address: r.requireString('address'));
   }
 
   final String address;
@@ -52,12 +57,13 @@ class GetHistoryRequest {
   });
 
   factory GetHistoryRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetHistoryRequest(
-      address: json['address']! as String,
-      before: json['before'] as String?,
-      until: json['until'] as String?,
-      limit: json['limit'] as int?,
-      type: json['type'] as String?,
+      address: r.requireString('address'),
+      before: r.optString('before'),
+      until: r.optString('until'),
+      limit: r.optInt('limit'),
+      type: r.optString('type'),
     );
   }
 
@@ -86,11 +92,12 @@ class GetTransfersRequest {
   });
 
   factory GetTransfersRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetTransfersRequest(
-      address: json['address']! as String,
-      before: json['before'] as String?,
-      until: json['until'] as String?,
-      limit: json['limit'] as int?,
+      address: r.requireString('address'),
+      before: r.optString('before'),
+      until: r.optString('until'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -112,7 +119,8 @@ class GetFundedByRequest {
   const GetFundedByRequest({required this.address});
 
   factory GetFundedByRequest.fromJson(Map<String, Object?> json) {
-    return GetFundedByRequest(address: json['address']! as String);
+    final r = JsonReader(json);
+    return GetFundedByRequest(address: r.requireString('address'));
   }
 
   final String address;
@@ -125,11 +133,12 @@ class Identity {
   const Identity({required this.socials, this.name, this.pfpUrl, this.domain});
 
   factory Identity.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return Identity(
-      name: json['name'] as String?,
-      pfpUrl: json['pfpUrl'] as String?,
-      domain: json['domain'] as String?,
-      socials: json['socials']! as Map<String, Object?>,
+      name: r.optString('name'),
+      pfpUrl: r.optString('pfpUrl'),
+      domain: r.optString('domain'),
+      socials: r.requireMap('socials'),
     );
   }
 
@@ -151,11 +160,13 @@ class WalletBalances {
   const WalletBalances({required this.nativeBalance, required this.tokens});
 
   factory WalletBalances.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return WalletBalances(
-      nativeBalance: json['nativeBalance']! as int,
-      tokens: (json['tokens']! as List<Object?>)
-          .map((e) => WalletTokenBalance.fromJson(e! as Map<String, Object?>))
-          .toList(),
+      nativeBalance: r.requireInt('nativeBalance'),
+      tokens: r.requireDecodedList(
+        'tokens',
+        WalletTokenBalance.fromJson,
+      ),
     );
   }
 
@@ -178,11 +189,12 @@ class WalletTokenBalance {
   });
 
   factory WalletTokenBalance.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return WalletTokenBalance(
-      mint: json['mint']! as String,
-      amount: json['amount']! as int,
-      decimals: json['decimals']! as int,
-      tokenAccount: json['tokenAccount'] as String?,
+      mint: r.requireString('mint'),
+      amount: r.requireInt('amount'),
+      decimals: r.requireInt('decimals'),
+      tokenAccount: r.optString('tokenAccount'),
     );
   }
 
@@ -204,10 +216,12 @@ class WalletHistory {
   const WalletHistory({required this.transactions});
 
   factory WalletHistory.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return WalletHistory(
-      transactions: (json['transactions']! as List<Object?>)
-          .map((e) => EnhancedTransaction.fromJson(e! as Map<String, Object?>))
-          .toList(),
+      transactions: r.requireDecodedList(
+        'transactions',
+        EnhancedTransaction.fromJson,
+      ),
     );
   }
 
@@ -230,13 +244,14 @@ class WalletTransfer {
   });
 
   factory WalletTransfer.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return WalletTransfer(
-      signature: json['signature']! as String,
-      timestamp: json['timestamp'] as int?,
-      from: json['from']! as String,
-      to: json['to']! as String,
-      amount: json['amount']! as int,
-      mint: json['mint'] as String?,
+      signature: r.requireString('signature'),
+      timestamp: r.optInt('timestamp'),
+      from: r.requireString('from'),
+      to: r.requireString('to'),
+      amount: r.requireInt('amount'),
+      mint: r.optString('mint'),
     );
   }
 
@@ -262,10 +277,12 @@ class FundedByResult {
   const FundedByResult({required this.transactions});
 
   factory FundedByResult.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return FundedByResult(
-      transactions: (json['transactions']! as List<Object?>)
-          .map((e) => FundedByTransaction.fromJson(e! as Map<String, Object?>))
-          .toList(),
+      transactions: r.requireDecodedList(
+        'transactions',
+        FundedByTransaction.fromJson,
+      ),
     );
   }
 
@@ -286,11 +303,12 @@ class FundedByTransaction {
   });
 
   factory FundedByTransaction.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return FundedByTransaction(
-      signature: json['signature']! as String,
-      source: json['source']! as String,
-      amount: json['amount']! as int,
-      timestamp: json['timestamp'] as int?,
+      signature: r.requireString('signature'),
+      source: r.requireString('source'),
+      amount: r.requireInt('amount'),
+      timestamp: r.optInt('timestamp'),
     );
   }
 

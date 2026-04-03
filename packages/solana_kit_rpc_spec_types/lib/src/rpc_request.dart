@@ -8,6 +8,21 @@ class RpcRequest<TParams> {
 
   /// The parameters to be passed to the RPC server.
   final TParams params;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RpcRequest<TParams> &&
+          runtimeType == other.runtimeType &&
+          methodName == other.methodName &&
+          params == other.params;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, methodName, params);
+
+  @override
+  String toString() =>
+      'RpcRequest(methodName: $methodName, params: $params)';
 }
 
 /// A function that accepts an [RpcRequest] and returns another [RpcRequest].

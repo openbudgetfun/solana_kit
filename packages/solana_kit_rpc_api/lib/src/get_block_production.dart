@@ -18,6 +18,21 @@ class SlotRange {
     if (lastSlot != null) json['lastSlot'] = lastSlot;
     return json;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SlotRange &&
+          runtimeType == other.runtimeType &&
+          firstSlot == other.firstSlot &&
+          lastSlot == other.lastSlot;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, firstSlot, lastSlot);
+
+  @override
+  String toString() =>
+      'SlotRange(firstSlot: $firstSlot, lastSlot: $lastSlot)';
 }
 
 /// Configuration for the `getBlockProduction` RPC method.
@@ -43,6 +58,23 @@ class GetBlockProductionConfig {
     if (range != null) json['range'] = range!.toJson();
     return json;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GetBlockProductionConfig &&
+          runtimeType == other.runtimeType &&
+          commitment == other.commitment &&
+          identity == other.identity &&
+          range == other.range;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, commitment, identity, range);
+
+  @override
+  String toString() =>
+      'GetBlockProductionConfig(commitment: $commitment, identity: $identity, '
+      'range: $range)';
 }
 
 /// Builds the JSON-RPC params list for `getBlockProduction`.

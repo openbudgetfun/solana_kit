@@ -61,7 +61,7 @@ SolanaError getSolanaErrorFromTransactionError(Object transactionError) {
   return getSolanaErrorFromRpcError(
     RpcEnumErrorConfig(
       errorCodeBaseOffset:
-          SolanaErrorCode.transactionErrorAccountInUse, // 7050001
+          SolanaErrorCode.transactionErrorAccountInUse.value, // 7050001
       orderedErrorNames: _orderedErrorNames,
       getErrorContext: (errorCode, rpcErrorName, rpcErrorContext) {
         if (errorCode == SolanaErrorCode.transactionErrorUnknown) {

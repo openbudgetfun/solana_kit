@@ -16,7 +16,7 @@ void main() {
     });
 
     test('toJson includes encoding when set', () {
-      const config = GetBlockConfig(encoding: 'json');
+      const config = GetBlockConfig(encoding: TransactionEncoding.json);
       final json = config.toJson();
       expect(json['encoding'], 'json');
     });
@@ -42,7 +42,7 @@ void main() {
     test('toJson includes all fields when all set', () {
       const config = GetBlockConfig(
         commitment: Commitment.confirmed,
-        encoding: 'jsonParsed',
+        encoding: TransactionEncoding.jsonParsed,
         maxSupportedTransactionVersion: 0,
         rewards: true,
         transactionDetails: 'accounts',

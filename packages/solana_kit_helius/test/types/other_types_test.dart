@@ -1,7 +1,17 @@
 import 'package:solana_kit_helius/solana_kit_helius.dart';
+import 'package:solana_kit_helius/src/internal/json_reader.dart';
 import 'package:test/test.dart';
 
 import 'test_helpers.dart';
+
+// Matches a FormatException whose message mentions [fieldName].
+Matcher _missingField(String fieldName) => throwsA(
+  isA<FormatException>().having(
+    (e) => e.message,
+    'message',
+    contains('"$fieldName"'),
+  ),
+);
 
 void main() {
   group('smart_transaction_types', () {
@@ -458,4 +468,206 @@ void main() {
       (value) => value.toJson(),
     );
   });
+
+  // -------------------------------------------------------------------------
+  // Error-case tests: missing required fields
+  // -------------------------------------------------------------------------
+
+  group('error cases — smart_transaction_types', () {
+    test(
+      'CreateSmartTransactionInput throws when instructions is absent',
+      () => expect(
+        () => CreateSmartTransactionInput.fromJson({}),
+        _missingField('instructions'),
+      ),
+    );
+
+    test(
+      'SmartTransactionResult throws when signature is absent',
+      () => expect(
+        () => SmartTransactionResult.fromJson({}),
+        _missingField('signature'),
+      ),
+    );
+
+    test(
+      'BroadcastTransactionRequest throws when transaction is absent',
+      () => expect(
+        () => BroadcastTransactionRequest.fromJson({}),
+        _missingField('transaction'),
+      ),
+    );
+  });
+
+  group('error cases — auth_types', () {
+    test(
+      'AgenticSignupRequest throws when walletAddress is absent',
+      () => expect(
+        () => AgenticSignupRequest.fromJson({}),
+        _missingField('walletAddress'),
+      ),
+    );
+
+    test(
+      'AgenticSignupResponse throws when apiKey is absent',
+      () => expect(
+        () => AgenticSignupResponse.fromJson({'projectId': 'p-1'}),
+        _missingField('apiKey'),
+      ),
+    );
+
+    test(
+      'AgenticSignupResponse throws when projectId is absent',
+      () => expect(
+        () => AgenticSignupResponse.fromJson({'apiKey': 'k-1'}),
+        _missingField('projectId'),
+      ),
+    );
+
+    test(
+      'HeliusProject throws when id is absent',
+      () => expect(
+        () => HeliusProject.fromJson({
+          'name': 'My Project',
+          'apiKey': 'k-1',
+          'createdAt': 1,
+        }),
+        _missingField('id'),
+      ),
+    );
+
+    test(
+      'HeliusProject throws when createdAt is null',
+      () => expect(
+        () => HeliusProject.fromJson({
+          'id': 'p-1',
+          'name': 'My Project',
+          'apiKey': 'k-1',
+          'createdAt': null,
+        }),
+        _missingField('createdAt'),
+      ),
+    );
+
+    test(
+      'CheckBalancesResponse throws when credits is absent',
+      () => expect(
+        () => CheckBalancesResponse.fromJson({'creditsUsed': 0}),
+        _missingField('credits'),
+      ),
+    );
+  });
+
+  group('error cases — webhook_types', () {
+    test(
+      'Webhook throws when webhookId is absent',
+      () => expect(
+        () => Webhook.fromJson({
+          'wallet': 'w-1',
+          'webhookUrl': 'https://example.com',
+          'transactionTypes': <Object?>['SWAP'],
+          'accountAddresses': <Object?>['w-1'],
+          'webhookType': 'enhanced',
+        }),
+        _missingField('webhookId'),
+      ),
+    );
+
+    test(
+      'Webhook throws when transactionTypes is absent',
+      () => expect(
+        () => Webhook.fromJson({
+          'webhookId': 'h-1',
+          'wallet': 'w-1',
+          'webhookUrl': 'https://example.com',
+          'accountAddresses': <Object?>['w-1'],
+          'webhookType': 'enhanced',
+        }),
+        _missingField('transactionTypes'),
+      ),
+    );
+
+    test(
+      'Webhook transactionTypes cast throws eagerly on wrong-type element',
+      () {
+        // List contains an int instead of String — cast<String> will throw.
+        final badList = _reader(
+          <String, Object?>{
+            'webhookId': 'h-1',
+            'wallet': 'w-1',
+            'webhookUrl': 'https://example.com',
+            'transactionTypes': <Object?>[42],
+            'accountAddresses': <Object?>['w-1'],
+            'webhookType': 'enhanced',
+          },
+        );
+        final tx = badList.requireList<String>('transactionTypes');
+        expect(() => tx[0], throwsA(isA<TypeError>()));
+      },
+    );
+  });
+
+  group('error cases — rpc_v2_types', () {
+    test(
+      'ProgramAccountV2 throws when pubkey is absent',
+      () => expect(
+        () => ProgramAccountV2.fromJson({'account': <String, Object?>{}}),
+        _missingField('pubkey'),
+      ),
+    );
+
+    test(
+      'TransactionForAddress throws when signature is absent',
+      () => expect(
+        () => TransactionForAddress.fromJson({'slot': 1, 'blockTime': 0}),
+        _missingField('signature'),
+      ),
+    );
+
+    test(
+      'GetTransactionsForAddressRequest throws when address is absent',
+      () => expect(
+        () => GetTransactionsForAddressRequest.fromJson({}),
+        _missingField('address'),
+      ),
+    );
+  });
+
+  group('error cases — staking_types', () {
+    test(
+      'CreateStakeTransactionRequest throws when from is absent',
+      () => expect(
+        () => CreateStakeTransactionRequest.fromJson(
+          {'amount': 100, 'validatorVote': 'vote-1'},
+        ),
+        _missingField('from'),
+      ),
+    );
+
+    test(
+      'CreateStakeTransactionRequest throws when amount is null',
+      () => expect(
+        () => CreateStakeTransactionRequest.fromJson(
+          {'from': 'w-1', 'amount': null, 'validatorVote': 'vote-1'},
+        ),
+        _missingField('amount'),
+      ),
+    );
+
+    test(
+      'StakeAccountInfo throws when address is absent',
+      () => expect(
+        () => StakeAccountInfo.fromJson({
+          'lamports': 100,
+          'state': 'active',
+          'voter': 'v-1',
+          'activationEpoch': 1,
+          'deactivationEpoch': 2,
+        }),
+        _missingField('address'),
+      ),
+    );
+  });
 }
+
+JsonReader _reader(Map<String, Object?> json) => JsonReader(json);

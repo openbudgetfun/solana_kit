@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+import 'package:solana_kit_errors/src/codes.dart';
 import 'package:solana_kit_errors/src/error.dart';
 
 /// Configuration for mapping RPC enum errors to [SolanaError] instances.
@@ -17,7 +19,7 @@ class RpcEnumErrorConfig {
 
   /// Callback to compute context for a given error code.
   final Map<String, Object?>? Function(
-    int errorCode,
+    SolanaErrorCode errorCode,
     String rpcErrorName,
     Object? rpcErrorContext,
   )
@@ -46,7 +48,8 @@ SolanaError getSolanaErrorFromRpcError(
   }
 
   final codeOffset = config.orderedErrorNames.indexOf(rpcErrorName);
-  final errorCode = config.errorCodeBaseOffset + codeOffset;
+  final codeInt = config.errorCodeBaseOffset + codeOffset;
+  final errorCode = SolanaErrorCode.fromValue(codeInt)!;
   final errorContext = config.getErrorContext(
     errorCode,
     rpcErrorName,

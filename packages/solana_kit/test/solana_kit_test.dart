@@ -9,8 +9,8 @@ void main() {
     });
 
     test('re-exports SolanaError from solana_kit_errors', () {
-      final error = SolanaError(1);
-      expect(error.code, 1);
+      final error = SolanaError(SolanaErrorCode.blockHeightExceeded);
+      expect(error.code, SolanaErrorCode.blockHeightExceeded);
     });
 
     test('re-exports Instruction from solana_kit_instructions', () {
@@ -36,7 +36,7 @@ void main() {
       expect(lamports.value, BigInt.from(1000000));
     });
 
-    test('re-exports pipe from solana_kit_functional', () {
+    test('re-exports pipe via solana_kit_transaction_messages', () {
       final result = 1.pipe((n) => n + 1).pipe((n) => n * 2);
       expect(result, 4);
     });
