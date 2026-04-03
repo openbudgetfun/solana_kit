@@ -15,78 +15,82 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 /// Offset: 0.
 
 @immutable
-class WithdrawInstructionData {
-  const WithdrawInstructionData({
-    this.discriminator = 2,
+class BurnCheckedInstructionData {
+  const BurnCheckedInstructionData({
+    this.discriminator = 15,
     required this.amount,
+    required this.decimals,
   });
 
   final int discriminator;
   final BigInt amount;
+  final int decimals;
 }
 
-Encoder<WithdrawInstructionData> getWithdrawInstructionDataEncoder() {
+Encoder<BurnCheckedInstructionData> getBurnCheckedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('amount', getU64Encoder()),
+    ('decimals', getU8Encoder()),
   ]);
 
   return transformEncoder(
     structEncoder,
-    (WithdrawInstructionData value) => <String, Object?>{
+    (BurnCheckedInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
       'amount': value.amount,
+      'decimals': value.decimals,
     },
   );
 }
 
-Decoder<WithdrawInstructionData> getWithdrawInstructionDataDecoder() {
+Decoder<BurnCheckedInstructionData> getBurnCheckedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('amount', getU64Decoder()),
+    ('decimals', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => WithdrawInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) => BurnCheckedInstructionData(
       discriminator: map['discriminator']! as int,
       amount: map['amount']! as BigInt,
+      decimals: map['decimals']! as int,
     ),
   );
 }
 
-Codec<WithdrawInstructionData, WithdrawInstructionData> getWithdrawInstructionDataCodec() {
-  return combineCodec(getWithdrawInstructionDataEncoder(), getWithdrawInstructionDataDecoder());
+Codec<BurnCheckedInstructionData, BurnCheckedInstructionData> getBurnCheckedInstructionDataCodec() {
+  return combineCodec(getBurnCheckedInstructionDataEncoder(), getBurnCheckedInstructionDataDecoder());
 }
 
-/// Creates a [Withdraw] instruction.
-Instruction getWithdrawInstruction({
+/// Creates a [BurnChecked] instruction.
+Instruction getBurnCheckedInstruction({
   required Address programAddress,
-  required Address vault,
+  required Address account,
+  required Address mint,
   required Address authority,
-  required Address vaultTokenAccount,
-  required Address destinationTokenAccount,
-  required Address tokenProgram,
   required BigInt amount,
+  required int decimals,
 }) {
-  final instructionData = WithdrawInstructionData(
+  final instructionData = BurnCheckedInstructionData(
       amount: amount,
+      decimals: decimals,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: vault, role: AccountRole.writable),
+    AccountMeta(address: account, role: AccountRole.writable),
+    AccountMeta(address: mint, role: AccountRole.writable),
     AccountMeta(address: authority, role: AccountRole.readonlySigner),
-    AccountMeta(address: vaultTokenAccount, role: AccountRole.writable),
-    AccountMeta(address: destinationTokenAccount, role: AccountRole.writable),
-    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
-    data: getWithdrawInstructionDataEncoder().encode(instructionData),
+    data: getBurnCheckedInstructionDataEncoder().encode(instructionData),
   );
 }
 
-/// Parses a [Withdraw] instruction from raw instruction data.
-WithdrawInstructionData parseWithdrawInstruction(Instruction instruction) {
-  return getWithdrawInstructionDataDecoder().decode(instruction.data!);
+/// Parses a [BurnChecked] instruction from raw instruction data.
+BurnCheckedInstructionData parseBurnCheckedInstruction(Instruction instruction) {
+  return getBurnCheckedInstructionDataDecoder().decode(instruction.data!);
 }

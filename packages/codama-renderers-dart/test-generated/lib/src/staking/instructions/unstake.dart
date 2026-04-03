@@ -64,7 +64,7 @@ Instruction getUnstakeInstruction({
   required Address tokenProgram,
 
 }) {
-  final data = UnstakeInstructionData(
+  final instructionData = UnstakeInstructionData(
 
   );
 
@@ -78,7 +78,7 @@ Instruction getUnstakeInstruction({
     AccountMeta(address: stakerTokenAccount, role: AccountRole.writable),
     AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
-    data: getUnstakeInstructionDataEncoder().encode(data),
+    data: getUnstakeInstructionDataEncoder().encode(instructionData),
   );
 }
 

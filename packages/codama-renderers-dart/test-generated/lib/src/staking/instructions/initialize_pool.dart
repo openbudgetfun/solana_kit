@@ -83,7 +83,7 @@ Instruction getInitializePoolInstruction({
   required BigInt minStakeDuration,
   required int maxStakers,
 }) {
-  final data = InitializePoolInstructionData(
+  final instructionData = InitializePoolInstructionData(
       rewardRate: rewardRate,
       minStakeDuration: minStakeDuration,
       maxStakers: maxStakers,
@@ -98,7 +98,7 @@ Instruction getInitializePoolInstruction({
     AccountMeta(address: stakeMint, role: AccountRole.readonly),
     AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
-    data: getInitializePoolInstructionDataEncoder().encode(data),
+    data: getInitializePoolInstructionDataEncoder().encode(instructionData),
   );
 }
 

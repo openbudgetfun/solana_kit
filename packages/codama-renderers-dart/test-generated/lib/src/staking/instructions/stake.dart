@@ -71,7 +71,7 @@ Instruction getStakeInstruction({
   required Address systemProgram,
   required BigInt amount,
 }) {
-  final data = StakeInstructionData(
+  final instructionData = StakeInstructionData(
       amount: amount,
   );
 
@@ -86,7 +86,7 @@ Instruction getStakeInstruction({
     AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
-    data: getStakeInstructionDataEncoder().encode(data),
+    data: getStakeInstructionDataEncoder().encode(instructionData),
   );
 }
 

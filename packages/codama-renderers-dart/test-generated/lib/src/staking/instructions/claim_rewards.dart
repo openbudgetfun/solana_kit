@@ -64,7 +64,7 @@ Instruction getClaimRewardsInstruction({
   required Address tokenProgram,
 
 }) {
-  final data = ClaimRewardsInstructionData(
+  final instructionData = ClaimRewardsInstructionData(
 
   );
 
@@ -78,7 +78,7 @@ Instruction getClaimRewardsInstruction({
     AccountMeta(address: rewardVault, role: AccountRole.writable),
     AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
-    data: getClaimRewardsInstructionDataEncoder().encode(data),
+    data: getClaimRewardsInstructionDataEncoder().encode(instructionData),
   );
 }
 

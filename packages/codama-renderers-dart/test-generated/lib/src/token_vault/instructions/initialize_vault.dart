@@ -75,7 +75,7 @@ Instruction getInitializeVaultInstruction({
   required BigInt maxCapacity,
   required int bumpSeed,
 }) {
-  final data = InitializeVaultInstructionData(
+  final instructionData = InitializeVaultInstructionData(
       maxCapacity: maxCapacity,
       bumpSeed: bumpSeed,
   );
@@ -88,7 +88,7 @@ Instruction getInitializeVaultInstruction({
     AccountMeta(address: tokenMint, role: AccountRole.readonly),
     AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
-    data: getInitializeVaultInstructionDataEncoder().encode(data),
+    data: getInitializeVaultInstructionDataEncoder().encode(instructionData),
   );
 }
 
