@@ -1,0 +1,45 @@
+// Manual barrel that re-exports all generated code from both programs.
+// The auto-generated barrels have a multi-program clobbering issue;
+// this file works around that until the renderer is fixed.
+
+export 'accounts/mint.dart';
+export 'accounts/multisig.dart';
+export 'accounts/token.dart';
+export 'errors/associated_token.dart';
+export 'errors/token.dart';
+export 'instructions/amount_to_ui_amount.dart';
+export 'instructions/approve.dart';
+export 'instructions/approve_checked.dart';
+export 'instructions/batch.dart';
+export 'instructions/burn.dart';
+export 'instructions/burn_checked.dart';
+export 'instructions/close_account.dart';
+export 'instructions/create_associated_token.dart';
+export 'instructions/create_associated_token_idempotent.dart';
+export 'instructions/freeze_account.dart';
+export 'instructions/get_account_data_size.dart';
+export 'instructions/initialize_account.dart';
+export 'instructions/initialize_account2.dart';
+export 'instructions/initialize_account3.dart';
+export 'instructions/initialize_immutable_owner.dart';
+export 'instructions/initialize_mint.dart';
+export 'instructions/initialize_mint2.dart';
+export 'instructions/initialize_multisig.dart';
+export 'instructions/initialize_multisig2.dart';
+export 'instructions/mint_to.dart';
+export 'instructions/mint_to_checked.dart';
+export 'instructions/recover_nested_associated_token.dart';
+export 'instructions/revoke.dart';
+export 'instructions/set_authority.dart';
+export 'instructions/sync_native.dart';
+export 'instructions/thaw_account.dart';
+export 'instructions/transfer.dart';
+export 'instructions/transfer_checked.dart';
+export 'instructions/ui_amount_to_amount.dart';
+export 'instructions/unwrap_lamports.dart';
+export 'instructions/withdraw_excess_lamports.dart';
+export 'pdas/associated_token.dart';
+export 'programs/associated_token.dart';
+export 'programs/token.dart';
+export 'types/account_state.dart';
+export 'types/authority_type.dart';
