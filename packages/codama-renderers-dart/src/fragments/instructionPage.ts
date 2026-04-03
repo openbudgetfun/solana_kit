@@ -109,6 +109,12 @@ export function getInstructionPageFragment(
   const dataDecoderName = `get${typeName}InstructionDataDecoder`;
   const dataCodecName = `get${typeName}InstructionDataCodec`;
 
+  // Determine whether any arg or account name collides with 'programAddress'
+  const argNames = new Set(args.map((a) => camelCase(a.name as string)));
+  const accountNames = new Set(accounts.map((a) => camelCase(a.name as string)));
+  const hasProgramAddressCollision = argNames.has('programAddress') || accountNames.has('programAddress');
+  const instrProgramParam = hasProgramAddressCollision ? 'instructionProgramAddress' : 'programAddress';
+
   // Build the instruction builder function
   const accountParams = accounts
     .map((acc) => {
@@ -235,7 +241,7 @@ Codec<${fragmentFromString(dataClassName)}, ${fragmentFromString(dataClassName)}
   parts.push(fragment`
 /// Creates a [${fragmentFromString(typeName)}] instruction.
 Instruction ${fragmentFromString(instrFnName)}({
-  required Address programAddress,
+  required Address ${fragmentFromString(instrProgramParam)},
 ${fragmentFromString(accountParams)}
 ${fragmentFromString(argParams)}
 }) {
@@ -244,7 +250,7 @@ ${fragmentFromString(dataConstruction)}
   );
 
   return Instruction(
-    programAddress: programAddress,
+    programAddress: ${fragmentFromString(instrProgramParam)},
     accounts: [
 ${fragmentFromString(accountMetas)}
     ],

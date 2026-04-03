@@ -1,0 +1,7 @@
+{
+  "source": "https://github.com/solana-program/system",
+  "commit": "95897f3a381acb38f6cd9ca649c5e49b2cda6dc1",
+  "tag": "js@v0.12.0",
+  "file": "program/idl.json",
+  "sha256": "c3694b3557f1fdf2838113b7b112b49b2f79f768d7f9ed3bfe883e0c69fc287e"
+}

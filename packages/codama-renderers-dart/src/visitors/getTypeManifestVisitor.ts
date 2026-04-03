@@ -508,7 +508,26 @@ export function getTypeManifestVisitor(input: {
 
     visitSizePrefixType(node: SizePrefixTypeNode, { self }) {
       const innerManifest = visit(node.type, self);
-      const prefixManifest = visit(node.prefix, self);
+
+      // The Dart addEncoderSizePrefix / addDecoderSizePrefix APIs require
+      // Encoder<num> / Decoder<num> for the prefix. BigInt-width number types
+      // (u64, u128, i64, i128) return Encoder<BigInt> which is incompatible.
+      // When the IDL specifies such a prefix, substitute u32 which is wide
+      // enough for any realistic size prefix and satisfies the num constraint.
+      const bigIntFormats = new Set(["u64", "u128", "i64", "i128"]);
+      let prefixManifest;
+      if (
+        node.prefix.kind === "numberTypeNode" &&
+        bigIntFormats.has((node.prefix as any).format)
+      ) {
+        // Use u32 encoder/decoder instead of the oversized type.
+        prefixManifest = {
+          encoder: fragment`${use("getU32Encoder", "solanaCodecsNumbers")}()`,
+          decoder: fragment`${use("getU32Decoder", "solanaCodecsNumbers")}()`,
+        };
+      } else {
+        prefixManifest = visit(node.prefix, self);
+      }
 
       return {
         type: innerManifest.type,
