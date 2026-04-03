@@ -23,6 +23,7 @@ in
       shfmt
       extra.knope
       extra.mdt
+      extra.surfpool
       (extra.pnpm-standalone.overrideAttrs { doInstallCheck = false; })
     ]
     ++ lib.optionals stdenv.isDarwin [

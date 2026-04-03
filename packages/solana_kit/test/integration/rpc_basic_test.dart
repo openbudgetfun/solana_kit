@@ -6,6 +6,7 @@
 ///
 /// Run with: dart test integration_test/rpc_basic_test.dart
 @TestOn('vm')
+@Tags(['integration'])
 library;
 
 import 'package:solana_kit/solana_kit.dart';
@@ -15,11 +16,10 @@ import 'package:test/test.dart';
 const _localRpcUrl = 'http://localhost:8899';
 
 void main() {
-  late Rpc rpc;
-
-  setUpAll(() {
-    rpc = createSolanaRpc(url: _localRpcUrl);
-  });
+  late final rpc = createSolanaRpc(
+    url: _localRpcUrl,
+    allowInsecureHttp: true,
+  );
 
   group('basic RPC methods', () {
     test('getSlot returns a non-negative slot', () async {
