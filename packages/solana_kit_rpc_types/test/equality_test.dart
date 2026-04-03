@@ -814,8 +814,8 @@ void main() {
     });
 
     test('TokenAmount toString', () {
-      final t = TokenAmount(
-        amount: const StringifiedBigInt('1000000'),
+      const t = TokenAmount(
+        amount: StringifiedBigInt('1000000'),
         decimals: 6,
         uiAmountString: StringifiedNumber('1.0'),
       );
@@ -823,11 +823,11 @@ void main() {
     });
 
     test('TokenBalance toString', () {
-      final t = TokenBalance(
+      const t = TokenBalance(
         accountIndex: 0,
         mint: _addr1,
         uiTokenAmount: TokenAmount(
-          amount: const StringifiedBigInt('0'),
+          amount: StringifiedBigInt('0'),
           decimals: 6,
           uiAmountString: StringifiedNumber('0'),
         ),
