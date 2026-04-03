@@ -1,11 +1,11 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
+import 'package:solana_kit_system/solana_kit_system.dart';
 import 'package:solana_kit_token/src/generated/instructions/create_associated_token_idempotent.dart';
 import 'package:solana_kit_token/src/generated/instructions/transfer_checked.dart';
 import 'package:solana_kit_token/src/generated/pdas/associated_token.dart';
 import 'package:solana_kit_token/src/generated/programs/associated_token.dart';
 import 'package:solana_kit_token/src/generated/programs/token.dart';
-import 'package:solana_kit_token/src/system_create_account.dart';
 
 /// Input for [getTransferToAtaInstructionPlan].
 class TransferToAtaInput {

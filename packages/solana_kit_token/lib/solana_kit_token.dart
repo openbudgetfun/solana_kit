@@ -36,6 +36,7 @@
 library;
 
 export 'src/create_mint.dart';
-export 'src/generated/generated.dart';
+export 'src/generated/associated_token.dart';
+export 'src/generated/token.dart';
 export 'src/mint_to_ata.dart';
 export 'src/transfer_to_ata.dart';

@@ -425,17 +425,20 @@ export function getTypeManifestVisitor(input: {
       const prefixDecoderExpr = resolvedPrefix.format !== "u8"
         ? `, prefix: ${getNumberCodecExpression(resolvedPrefix.format, "Decoder")}`
         : "";
+      const noneValueExpr = node.fixed
+        ? ", noneValue: const ZeroesNoneValue()"
+        : "";
 
       return {
         type: fragment`${itemManifest.type}?`,
         encoder: fragment`${use(
           "getNullableEncoder",
           "solanaCodecsDataStructures",
-        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.encoder}${fragmentFromString(prefixExpr)})`,
+        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.encoder}${fragmentFromString(prefixExpr)}${fragmentFromString(noneValueExpr)})`,
         decoder: fragment`${use(
           "getNullableDecoder",
           "solanaCodecsDataStructures",
-        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.decoder}${fragmentFromString(prefixDecoderExpr)})`,
+        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.decoder}${fragmentFromString(prefixDecoderExpr)}${fragmentFromString(noneValueExpr)})`,
         value: emptyTypeManifest().value,
         isEnum: false,
       };

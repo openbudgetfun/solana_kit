@@ -55,11 +55,11 @@ const int mintSize = 82;
 
 Encoder<Mint> getMintEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('mintAuthority', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder())),
+    ('mintAuthority', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder(), noneValue: const ZeroesNoneValue())),
     ('supply', getU64Encoder()),
     ('decimals', getU8Encoder()),
     ('isInitialized', getBooleanEncoder()),
-    ('freezeAuthority', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder())),
+    ('freezeAuthority', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder(), noneValue: const ZeroesNoneValue())),
   ]);
 
   return transformEncoder(
@@ -76,11 +76,11 @@ Encoder<Mint> getMintEncoder() {
 
 Decoder<Mint> getMintDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('mintAuthority', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder())),
+    ('mintAuthority', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder(), noneValue: const ZeroesNoneValue())),
     ('supply', getU64Decoder()),
     ('decimals', getU8Decoder()),
     ('isInitialized', getBooleanDecoder()),
-    ('freezeAuthority', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder())),
+    ('freezeAuthority', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder(), noneValue: const ZeroesNoneValue())),
   ]);
 
   return transformDecoder(

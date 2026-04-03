@@ -1,10 +1,10 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 
+import 'package:solana_kit_system/solana_kit_system.dart';
 import 'package:solana_kit_token/src/generated/accounts/mint.dart';
 import 'package:solana_kit_token/src/generated/instructions/initialize_mint2.dart';
 import 'package:solana_kit_token/src/generated/programs/token.dart';
-import 'package:solana_kit_token/src/system_create_account.dart';
 
 /// Input for [getCreateMintInstructionPlan].
 class CreateMintInput {
@@ -82,13 +82,13 @@ InstructionPlan getCreateMintInstructionPlan(
   final lamports = input.mintAccountLamports ?? BigInt.from(1461600);
 
   return sequentialInstructionPlan([
-    getSystemCreateAccountInstruction(
+    getCreateAccountInstruction(
       payer: input.payer,
       newAccount: input.newMint,
       lamports: lamports,
-      space: mintSize,
+      space: BigInt.from(mintSize),
       programOwner: tokenProgram,
-      systemProgram: systemProgram,
+      programAddress: systemProgram,
     ),
     getInitializeMint2Instruction(
       programAddress: tokenProgram,
