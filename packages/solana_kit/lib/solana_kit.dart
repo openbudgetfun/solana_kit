@@ -138,7 +138,10 @@ export 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart'
     hide AddressTableLookup, TransactionVersion;
 export 'package:solana_kit_signers/solana_kit_signers.dart';
 export 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
+export 'package:solana_kit_system/solana_kit_system.dart'
+    hide systemProgramAddress;
 export 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
+export 'package:solana_kit_token/solana_kit_token.dart';
 export 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 export 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 export 'package:solana_kit_transactions/solana_kit_transactions.dart';

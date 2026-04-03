@@ -69,11 +69,11 @@ Encoder<Token> getTokenEncoder() {
     ('mint', getAddressEncoder()),
     ('owner', getAddressEncoder()),
     ('amount', getU64Encoder()),
-    ('delegate', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder())),
+    ('delegate', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder(), noneValue: const ZeroesNoneValue())),
     ('state', getAccountStateEncoder()),
-    ('isNative', getNullableEncoder<BigInt>(getU64Encoder(), prefix: getU32Encoder())),
+    ('isNative', getNullableEncoder<BigInt>(getU64Encoder(), prefix: getU32Encoder(), noneValue: const ZeroesNoneValue())),
     ('delegatedAmount', getU64Encoder()),
-    ('closeAuthority', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder())),
+    ('closeAuthority', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder(), noneValue: const ZeroesNoneValue())),
   ]);
 
   return transformEncoder(
@@ -96,11 +96,11 @@ Decoder<Token> getTokenDecoder() {
     ('mint', getAddressDecoder()),
     ('owner', getAddressDecoder()),
     ('amount', getU64Decoder()),
-    ('delegate', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder())),
+    ('delegate', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder(), noneValue: const ZeroesNoneValue())),
     ('state', getAccountStateDecoder()),
-    ('isNative', getNullableDecoder<BigInt>(getU64Decoder(), prefix: getU32Decoder())),
+    ('isNative', getNullableDecoder<BigInt>(getU64Decoder(), prefix: getU32Decoder(), noneValue: const ZeroesNoneValue())),
     ('delegatedAmount', getU64Decoder()),
-    ('closeAuthority', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder())),
+    ('closeAuthority', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder(), noneValue: const ZeroesNoneValue())),
   ]);
 
   return transformDecoder(

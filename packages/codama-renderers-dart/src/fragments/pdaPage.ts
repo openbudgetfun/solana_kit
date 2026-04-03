@@ -23,6 +23,11 @@ export function getPdaPageFragment(
   const seedsClassName = `${pascalCase(name)}Seeds`;
 
   const seeds = node.seeds ?? [];
+  const hasByteSeeds = seeds.some(
+    (seed) =>
+      seed.kind === "constantPdaSeedNode" &&
+      seed.value.kind === "bytesValueNode",
+  );
 
   // Separate variable seeds from constant seeds
   const variableSeeds = seeds.filter(
@@ -79,11 +84,15 @@ export function getPdaPageFragment(
     ? `Address programAddress = const Address('${node.programId}')`
     : "required Address programAddress";
 
+  const typedDataImport = hasByteSeeds
+    ? use("Uint8List", "dartTypedData")
+    : fragmentFromString("");
+
   const parts: Fragment[] = [
     fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-${use("Uint8List", "dartTypedData")}
+${typedDataImport}
 ${use("immutable", "meta")}
 ${use("Address", "solanaAddresses")}
 ${use("getAddressEncoder", "solanaAddresses")}

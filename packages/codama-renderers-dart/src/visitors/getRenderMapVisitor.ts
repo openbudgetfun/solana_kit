@@ -89,7 +89,10 @@ export function getRenderMapVisitor(
             ...node.additionalPrograms.map((p) => visit(p, self)),
           ];
 
-          return mergeRenderMaps(programMaps);
+          const mergedProgramMap = mergeRenderMaps(programMaps);
+          const categoryMaps = getSharedCategoryIndexMaps(mergedProgramMap);
+
+          return mergeRenderMaps([mergedProgramMap, ...categoryMaps]);
         },
 
         visitProgram(node: ProgramNode, { self }) {
@@ -151,76 +154,15 @@ export function getRenderMapVisitor(
             maps.push(errorMap);
           }
 
-          // Barrel exports
-          const categories: string[] = [];
-
-          if (accountFiles.length > 0) {
-            categories.push("accounts");
-            let indexMap = createRenderMap<Fragment>();
-            indexMap = addToRenderMap(
-              indexMap,
-              "accounts/accounts.dart",
-              getIndexPageFragment(accountFiles),
-            );
-            maps.push(indexMap);
-          }
-
-          if (instructionFiles.length > 0) {
-            categories.push("instructions");
-            let indexMap = createRenderMap<Fragment>();
-            indexMap = addToRenderMap(
-              indexMap,
-              "instructions/instructions.dart",
-              getIndexPageFragment(instructionFiles),
-            );
-            maps.push(indexMap);
-          }
-
-          if (typeFiles.length > 0) {
-            categories.push("types");
-            let indexMap = createRenderMap<Fragment>();
-            indexMap = addToRenderMap(
-              indexMap,
-              "types/types.dart",
-              getIndexPageFragment(typeFiles),
-            );
-            maps.push(indexMap);
-          }
-
-          if (pdaFiles.length > 0) {
-            categories.push("pdas");
-            let indexMap = createRenderMap<Fragment>();
-            indexMap = addToRenderMap(
-              indexMap,
-              "pdas/pdas.dart",
-              getIndexPageFragment(pdaFiles),
-            );
-            maps.push(indexMap);
-          }
-
-          if (errorFiles.length > 0) {
-            categories.push("errors");
-            let indexMap = createRenderMap<Fragment>();
-            indexMap = addToRenderMap(
-              indexMap,
-              "errors/errors.dart",
-              getIndexPageFragment(errorFiles),
-            );
-            maps.push(indexMap);
-          }
-
-          if (programFiles.length > 0) {
-            categories.push("programs");
-            let indexMap = createRenderMap<Fragment>();
-            indexMap = addToRenderMap(
-              indexMap,
-              "programs/programs.dart",
-              getIndexPageFragment(programFiles),
-            );
-            maps.push(indexMap);
-          }
-
           // Root barrel
+          const categories: string[] = [];
+          if (accountFiles.length > 0) categories.push("accounts");
+          if (instructionFiles.length > 0) categories.push("instructions");
+          if (typeFiles.length > 0) categories.push("types");
+          if (pdaFiles.length > 0) categories.push("pdas");
+          if (errorFiles.length > 0) categories.push("errors");
+          if (programFiles.length > 0) categories.push("programs");
+
           if (categories.length > 0) {
             let rootMap = createRenderMap<Fragment>();
             rootMap = addToRenderMap(
@@ -269,4 +211,47 @@ export function getRenderMapVisitor(
     (v) => recordNodeStackVisitor(v, stack),
     (v) => recordLinkablesOnFirstVisitVisitor(v, linkables),
   );
+}
+
+function getSharedCategoryIndexMaps(
+  renderMap: RenderMap<Fragment>,
+): RenderMap<Fragment>[] {
+  const categories = new Map<string, Set<string>>();
+  const categoryIndexNames: Record<string, string> = {
+    accounts: "accounts.dart",
+    instructions: "instructions.dart",
+    types: "types.dart",
+    pdas: "pdas.dart",
+    errors: "errors.dart",
+    programs: "programs.dart",
+  };
+
+  for (const renderPath of renderMap.keys()) {
+    const match = renderPath.match(
+      /^(accounts|instructions|types|pdas|errors|programs)\/([^/]+\.dart)$/,
+    );
+    if (!match) continue;
+
+    const [, category, fileName] = match;
+    if (fileName === categoryIndexNames[category]) continue;
+
+    if (!categories.has(category)) {
+      categories.set(category, new Set());
+    }
+    categories.get(category)!.add(fileName);
+  }
+
+  const maps: RenderMap<Fragment>[] = [];
+  for (const [category, files] of categories.entries()) {
+    const sortedFiles = [...files].sort();
+    let map = createRenderMap<Fragment>();
+    map = addToRenderMap(
+      map,
+      `${category}/${categoryIndexNames[category]}`,
+      getIndexPageFragment(sortedFiles),
+    );
+    maps.push(map);
+  }
+
+  return maps;
 }

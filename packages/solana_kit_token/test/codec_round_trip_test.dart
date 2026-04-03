@@ -16,9 +16,7 @@ void main() {
       );
 
       final encoded = getMintEncoder().encode(mint);
-      // Encoded size may differ from on-chain mintSize (82) because
-      // the Codama IDL uses fixed-size option fields.
-      expect(encoded, isNotEmpty);
+      expect(encoded.length, mintSize);
 
       final decoded = getMintDecoder().decode(encoded);
       expect(decoded.mintAuthority, mint.mintAuthority);
@@ -62,7 +60,7 @@ void main() {
       );
 
       final encoded = getTokenEncoder().encode(token);
-      expect(encoded, isNotEmpty);
+      expect(encoded.length, tokenSize);
 
       final decoded = getTokenDecoder().decode(encoded);
       expect(decoded.mint, mint);
