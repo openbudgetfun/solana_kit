@@ -483,7 +483,7 @@ describe("E2E: renderVisitor", () => {
 
     // Generated PDA derivation call
     expect(content).toContain("return getProgramDerivedAddress(");
-    expect(content).toContain("final seeds = <Object>[");
+    expect(content).toContain("final seedValues = <Object>[");
     expect(content).not.toContain("UnimplementedError");
 
     // Should NOT contain [object Object] from Fragment interpolation bugs
