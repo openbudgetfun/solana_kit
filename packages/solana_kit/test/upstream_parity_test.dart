@@ -41,7 +41,7 @@ void main() {
               () => address(input),
               throwsA(
                 isA<SolanaError>().having(
-                  (error) => error.code,
+                  (error) => error.code.value,
                   'code',
                   errorCode,
                 ),
@@ -90,7 +90,7 @@ void main() {
             seed: _decodeSeed(input['seed'] as Map<String, dynamic>),
           ),
           throwsA(
-            isA<SolanaError>().having((error) => error.code, 'code', errorCode),
+            isA<SolanaError>().having((error) => error.code.value, 'code', errorCode),
           ),
         );
       });
@@ -128,7 +128,7 @@ void main() {
                 .toList(growable: false),
           ),
           throwsA(
-            isA<SolanaError>().having((error) => error.code, 'code', errorCode),
+            isA<SolanaError>().having((error) => error.code.value, 'code', errorCode),
           ),
         );
       });
@@ -152,7 +152,7 @@ void main() {
               () => signature(input),
               throwsA(
                 isA<SolanaError>().having(
-                  (error) => error.code,
+                  (error) => error.code.value,
                   'code',
                   errorCode,
                 ),

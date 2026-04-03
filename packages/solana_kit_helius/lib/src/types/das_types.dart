@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+import 'package:solana_kit_helius/src/internal/json_reader.dart';
 import 'package:solana_kit_helius/src/types/enums.dart';
 
 // ---------------------------------------------------------------------------
@@ -9,9 +11,10 @@ class GetAssetRequest {
   const GetAssetRequest({required this.id, this.displayOptions});
 
   factory GetAssetRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetAssetRequest(
-      id: json['id']! as String,
-      displayOptions: json['displayOptions'] as bool?,
+      id: r.requireString('id'),
+      displayOptions: r.optBool('displayOptions'),
     );
   }
 
@@ -29,9 +32,10 @@ class GetAssetBatchRequest {
   const GetAssetBatchRequest({required this.ids, this.displayOptions});
 
   factory GetAssetBatchRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetAssetBatchRequest(
-      ids: (json['ids']! as List<Object?>).cast<String>(),
-      displayOptions: json['displayOptions'] as bool?,
+      ids: r.requireList<String>('ids'),
+      displayOptions: r.optBool('displayOptions'),
     );
   }
 
@@ -49,7 +53,8 @@ class GetAssetProofRequest {
   const GetAssetProofRequest({required this.id});
 
   factory GetAssetProofRequest.fromJson(Map<String, Object?> json) {
-    return GetAssetProofRequest(id: json['id']! as String);
+    final r = JsonReader(json);
+    return GetAssetProofRequest(id: r.requireString('id'));
   }
 
   final String id;
@@ -62,9 +67,8 @@ class GetAssetProofBatchRequest {
   const GetAssetProofBatchRequest({required this.ids});
 
   factory GetAssetProofBatchRequest.fromJson(Map<String, Object?> json) {
-    return GetAssetProofBatchRequest(
-      ids: (json['ids']! as List<Object?>).cast<String>(),
-    );
+    final r = JsonReader(json);
+    return GetAssetProofBatchRequest(ids: r.requireList<String>('ids'));
   }
 
   final List<String> ids;
@@ -85,18 +89,15 @@ class GetAssetsByAuthorityRequest {
   });
 
   factory GetAssetsByAuthorityRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetAssetsByAuthorityRequest(
-      authorityAddress: json['authorityAddress']! as String,
-      page: json['page'] as int?,
-      limit: json['limit'] as int?,
-      sortBy: json['sortBy'] != null
-          ? AssetSortBy.fromJson(json['sortBy']! as String)
-          : null,
-      sortDirection: json['sortDirection'] != null
-          ? AssetSortDirection.fromJson(json['sortDirection']! as String)
-          : null,
-      before: json['before'] as String?,
-      after: json['after'] as String?,
+      authorityAddress: r.requireString('authorityAddress'),
+      page: r.optInt('page'),
+      limit: r.optInt('limit'),
+      sortBy: r.optEnum('sortBy', AssetSortBy.fromJson),
+      sortDirection: r.optEnum('sortDirection', AssetSortDirection.fromJson),
+      before: r.optString('before'),
+      after: r.optString('after'),
     );
   }
 
@@ -133,19 +134,16 @@ class GetAssetsByCreatorRequest {
   });
 
   factory GetAssetsByCreatorRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetAssetsByCreatorRequest(
-      creatorAddress: json['creatorAddress']! as String,
-      onlyVerified: json['onlyVerified'] as bool?,
-      page: json['page'] as int?,
-      limit: json['limit'] as int?,
-      sortBy: json['sortBy'] != null
-          ? AssetSortBy.fromJson(json['sortBy']! as String)
-          : null,
-      sortDirection: json['sortDirection'] != null
-          ? AssetSortDirection.fromJson(json['sortDirection']! as String)
-          : null,
-      before: json['before'] as String?,
-      after: json['after'] as String?,
+      creatorAddress: r.requireString('creatorAddress'),
+      onlyVerified: r.optBool('onlyVerified'),
+      page: r.optInt('page'),
+      limit: r.optInt('limit'),
+      sortBy: r.optEnum('sortBy', AssetSortBy.fromJson),
+      sortDirection: r.optEnum('sortDirection', AssetSortDirection.fromJson),
+      before: r.optString('before'),
+      after: r.optString('after'),
     );
   }
 
@@ -184,19 +182,16 @@ class GetAssetsByGroupRequest {
   });
 
   factory GetAssetsByGroupRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetAssetsByGroupRequest(
-      groupKey: json['groupKey']! as String,
-      groupValue: json['groupValue']! as String,
-      page: json['page'] as int?,
-      limit: json['limit'] as int?,
-      sortBy: json['sortBy'] != null
-          ? AssetSortBy.fromJson(json['sortBy']! as String)
-          : null,
-      sortDirection: json['sortDirection'] != null
-          ? AssetSortDirection.fromJson(json['sortDirection']! as String)
-          : null,
-      before: json['before'] as String?,
-      after: json['after'] as String?,
+      groupKey: r.requireString('groupKey'),
+      groupValue: r.requireString('groupValue'),
+      page: r.optInt('page'),
+      limit: r.optInt('limit'),
+      sortBy: r.optEnum('sortBy', AssetSortBy.fromJson),
+      sortDirection: r.optEnum('sortDirection', AssetSortDirection.fromJson),
+      before: r.optString('before'),
+      after: r.optString('after'),
     );
   }
 
@@ -234,18 +229,15 @@ class GetAssetsByOwnerRequest {
   });
 
   factory GetAssetsByOwnerRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetAssetsByOwnerRequest(
-      ownerAddress: json['ownerAddress']! as String,
-      page: json['page'] as int?,
-      limit: json['limit'] as int?,
-      sortBy: json['sortBy'] != null
-          ? AssetSortBy.fromJson(json['sortBy']! as String)
-          : null,
-      sortDirection: json['sortDirection'] != null
-          ? AssetSortDirection.fromJson(json['sortDirection']! as String)
-          : null,
-      before: json['before'] as String?,
-      after: json['after'] as String?,
+      ownerAddress: r.requireString('ownerAddress'),
+      page: r.optInt('page'),
+      limit: r.optInt('limit'),
+      sortBy: r.optEnum('sortBy', AssetSortBy.fromJson),
+      sortDirection: r.optEnum('sortDirection', AssetSortDirection.fromJson),
+      before: r.optString('before'),
+      after: r.optString('after'),
     );
   }
 
@@ -273,10 +265,11 @@ class GetNftEditionsRequest {
   const GetNftEditionsRequest({required this.mint, this.page, this.limit});
 
   factory GetNftEditionsRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetNftEditionsRequest(
-      mint: json['mint']! as String,
-      page: json['page'] as int?,
-      limit: json['limit'] as int?,
+      mint: r.requireString('mint'),
+      page: r.optInt('page'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -302,12 +295,13 @@ class GetSignaturesForAssetRequest {
   });
 
   factory GetSignaturesForAssetRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetSignaturesForAssetRequest(
-      id: json['id']! as String,
-      page: json['page'] as int?,
-      limit: json['limit'] as int?,
-      before: json['before'] as String?,
-      after: json['after'] as String?,
+      id: r.requireString('id'),
+      page: r.optInt('page'),
+      limit: r.optInt('limit'),
+      before: r.optString('before'),
+      after: r.optString('after'),
     );
   }
 
@@ -331,11 +325,12 @@ class GetTokenAccountsRequest {
   const GetTokenAccountsRequest({this.owner, this.mint, this.page, this.limit});
 
   factory GetTokenAccountsRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetTokenAccountsRequest(
-      owner: json['owner'] as String?,
-      mint: json['mint'] as String?,
-      page: json['page'] as int?,
-      limit: json['limit'] as int?,
+      owner: r.optString('owner'),
+      mint: r.optString('mint'),
+      page: r.optInt('page'),
+      limit: r.optInt('limit'),
     );
   }
 
@@ -372,25 +367,22 @@ class SearchAssetsRequest {
   });
 
   factory SearchAssetsRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return SearchAssetsRequest(
-      ownerAddress: json['ownerAddress'] as String?,
-      creatorAddress: json['creatorAddress'] as String?,
-      grouping: json['grouping'] as String?,
-      compressed: json['compressed'] as bool?,
-      compressible: json['compressible'] as bool?,
-      frozen: json['frozen'] as bool?,
-      burnt: json['burnt'] as bool?,
-      jsonUri: json['jsonUri'] as String?,
-      page: json['page'] as int?,
-      limit: json['limit'] as int?,
-      sortBy: json['sortBy'] != null
-          ? AssetSortBy.fromJson(json['sortBy']! as String)
-          : null,
-      sortDirection: json['sortDirection'] != null
-          ? AssetSortDirection.fromJson(json['sortDirection']! as String)
-          : null,
-      before: json['before'] as String?,
-      after: json['after'] as String?,
+      ownerAddress: r.optString('ownerAddress'),
+      creatorAddress: r.optString('creatorAddress'),
+      grouping: r.optString('grouping'),
+      compressed: r.optBool('compressed'),
+      compressible: r.optBool('compressible'),
+      frozen: r.optBool('frozen'),
+      burnt: r.optBool('burnt'),
+      jsonUri: r.optString('jsonUri'),
+      page: r.optInt('page'),
+      limit: r.optInt('limit'),
+      sortBy: r.optEnum('sortBy', AssetSortBy.fromJson),
+      sortDirection: r.optEnum('sortDirection', AssetSortDirection.fromJson),
+      before: r.optString('before'),
+      after: r.optString('after'),
     );
   }
 
@@ -451,50 +443,22 @@ class HeliusAsset {
   });
 
   factory HeliusAsset.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return HeliusAsset(
-      id: json['id']! as String,
-      interface_: json['interface'] as String?,
-      content: json['content'] != null
-          ? AssetContent.fromJson(json['content']! as Map<String, Object?>)
-          : null,
-      authorities: json['authorities'] != null
-          ? (json['authorities']! as List<Object?>)
-                .cast<Map<String, Object?>>()
-                .map(AssetAuthority.fromJson)
-                .toList()
-          : null,
-      compression: json['compression'] != null
-          ? AssetCompression.fromJson(
-              json['compression']! as Map<String, Object?>,
-            )
-          : null,
-      grouping: json['grouping'] != null
-          ? (json['grouping']! as List<Object?>)
-                .cast<Map<String, Object?>>()
-                .map(AssetGrouping.fromJson)
-                .toList()
-          : null,
-      royalty: json['royalty'] != null
-          ? AssetRoyalty.fromJson(json['royalty']! as Map<String, Object?>)
-          : null,
-      creators: json['creators'] != null
-          ? (json['creators']! as List<Object?>)
-                .cast<Map<String, Object?>>()
-                .map(AssetCreator.fromJson)
-                .toList()
-          : null,
-      ownership: json['ownership'] != null
-          ? AssetOwnership.fromJson(json['ownership']! as Map<String, Object?>)
-          : null,
-      supply: json['supply'] != null
-          ? AssetSupply.fromJson(json['supply']! as Map<String, Object?>)
-          : null,
-      mutable: json['mutable'] as bool?,
-      burnt: json['burnt'] as bool?,
-      tokenInfo: json['token_info'] != null
-          ? AssetTokenInfo.fromJson(json['token_info']! as Map<String, Object?>)
-          : null,
-      mintExtensions: json['mint_extensions'] as Map<String, Object?>?,
+      id: r.requireString('id'),
+      interface_: r.optString('interface'),
+      content: r.optDecoded('content', AssetContent.fromJson),
+      authorities: r.optDecodedList('authorities', AssetAuthority.fromJson),
+      compression: r.optDecoded('compression', AssetCompression.fromJson),
+      grouping: r.optDecodedList('grouping', AssetGrouping.fromJson),
+      royalty: r.optDecoded('royalty', AssetRoyalty.fromJson),
+      creators: r.optDecodedList('creators', AssetCreator.fromJson),
+      ownership: r.optDecoded('ownership', AssetOwnership.fromJson),
+      supply: r.optDecoded('supply', AssetSupply.fromJson),
+      mutable: r.optBool('mutable'),
+      burnt: r.optBool('burnt'),
+      tokenInfo: r.optDecoded('token_info', AssetTokenInfo.fromJson),
+      mintExtensions: r.optMap('mint_extensions'),
     );
   }
 
@@ -537,18 +501,12 @@ class AssetContent {
   const AssetContent({this.jsonUri, this.files, this.metadata, this.links});
 
   factory AssetContent.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetContent(
-      jsonUri: json['json_uri'] as String?,
-      files: json['files'] != null
-          ? (json['files']! as List<Object?>)
-                .cast<Map<String, Object?>>()
-                .map(AssetFile.fromJson)
-                .toList()
-          : null,
-      metadata: json['metadata'] != null
-          ? AssetMetadata.fromJson(json['metadata']! as Map<String, Object?>)
-          : null,
-      links: json['links'] as Map<String, Object?>?,
+      jsonUri: r.optString('json_uri'),
+      files: r.optDecodedList('files', AssetFile.fromJson),
+      metadata: r.optDecoded('metadata', AssetMetadata.fromJson),
+      links: r.optMap('links'),
     );
   }
 
@@ -570,10 +528,11 @@ class AssetFile {
   const AssetFile({this.uri, this.cdnUri, this.mime});
 
   factory AssetFile.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetFile(
-      uri: json['uri'] as String?,
-      cdnUri: json['cdn_uri'] as String?,
-      mime: json['mime'] as String?,
+      uri: r.optString('uri'),
+      cdnUri: r.optString('cdn_uri'),
+      mime: r.optString('mime'),
     );
   }
 
@@ -598,16 +557,12 @@ class AssetMetadata {
   });
 
   factory AssetMetadata.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetMetadata(
-      name: json['name'] as String?,
-      symbol: json['symbol'] as String?,
-      description: json['description'] as String?,
-      attributes: json['attributes'] != null
-          ? (json['attributes']! as List<Object?>)
-                .cast<Map<String, Object?>>()
-                .map(AssetAttribute.fromJson)
-                .toList()
-          : null,
+      name: r.optString('name'),
+      symbol: r.optString('symbol'),
+      description: r.optString('description'),
+      attributes: r.optDecodedList('attributes', AssetAttribute.fromJson),
     );
   }
 
@@ -630,9 +585,10 @@ class AssetAttribute {
   const AssetAttribute({this.traitType, this.value});
 
   factory AssetAttribute.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetAttribute(
-      traitType: json['trait_type'] as String?,
-      value: json['value'],
+      traitType: r.optString('trait_type'),
+      value: r.raw('value'),
     );
   }
 
@@ -650,11 +606,10 @@ class AssetAuthority {
   const AssetAuthority({required this.address, this.scopes});
 
   factory AssetAuthority.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetAuthority(
-      address: json['address']! as String,
-      scopes: json['scopes'] != null
-          ? (json['scopes']! as List<Object?>).cast<String>()
-          : null,
+      address: r.requireString('address'),
+      scopes: r.optList<String>('scopes'),
     );
   }
 
@@ -681,15 +636,16 @@ class AssetCompression {
   });
 
   factory AssetCompression.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetCompression(
-      eligible: json['eligible'] as bool?,
-      compressed: json['compressed'] as bool?,
-      dataHash: json['data_hash'] as String?,
-      creatorHash: json['creator_hash'] as String?,
-      assetHash: json['asset_hash'] as String?,
-      tree: json['tree'] as String?,
-      seq: json['seq'] as int?,
-      leafId: json['leaf_id'] as int?,
+      eligible: r.optBool('eligible'),
+      compressed: r.optBool('compressed'),
+      dataHash: r.optString('data_hash'),
+      creatorHash: r.optString('creator_hash'),
+      assetHash: r.optString('asset_hash'),
+      tree: r.optString('tree'),
+      seq: r.optInt('seq'),
+      leafId: r.optInt('leaf_id'),
     );
   }
 
@@ -719,9 +675,10 @@ class AssetGrouping {
   const AssetGrouping({required this.groupKey, required this.groupValue});
 
   factory AssetGrouping.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetGrouping(
-      groupKey: json['group_key']! as String,
-      groupValue: json['group_value']! as String,
+      groupKey: r.requireString('group_key'),
+      groupValue: r.requireString('group_value'),
     );
   }
 
@@ -746,13 +703,14 @@ class AssetRoyalty {
   });
 
   factory AssetRoyalty.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetRoyalty(
-      royaltyModel: json['royalty_model'] as String?,
-      target: json['target'] as String?,
-      percent: (json['percent'] as num?)?.toDouble(),
-      basisPoints: json['basis_points'] as int?,
-      primarySaleHappened: json['primary_sale_happened'] as bool?,
-      locked: json['locked'] as bool?,
+      royaltyModel: r.optString('royalty_model'),
+      target: r.optString('target'),
+      percent: r.optDouble('percent'),
+      basisPoints: r.optInt('basis_points'),
+      primarySaleHappened: r.optBool('primary_sale_happened'),
+      locked: r.optBool('locked'),
     );
   }
 
@@ -783,10 +741,11 @@ class AssetCreator {
   });
 
   factory AssetCreator.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetCreator(
-      address: json['address']! as String,
-      share: json['share']! as int,
-      verified: json['verified']! as bool,
+      address: r.requireString('address'),
+      share: r.requireInt('share'),
+      verified: r.requireBool('verified'),
     );
   }
 
@@ -812,12 +771,13 @@ class AssetOwnership {
   });
 
   factory AssetOwnership.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetOwnership(
-      frozen: json['frozen'] as bool?,
-      delegated: json['delegated'] as bool?,
-      delegate: json['delegate'] as String?,
-      ownershipModel: json['ownership_model'] as String?,
-      owner: json['owner'] as String?,
+      frozen: r.optBool('frozen'),
+      delegated: r.optBool('delegated'),
+      delegate: r.optString('delegate'),
+      ownershipModel: r.optString('ownership_model'),
+      owner: r.optString('owner'),
     );
   }
 
@@ -845,10 +805,11 @@ class AssetSupply {
   });
 
   factory AssetSupply.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetSupply(
-      printMaxSupply: json['print_max_supply'] as int?,
-      printCurrentSupply: json['print_current_supply'] as int?,
-      editionNonce: json['edition_nonce'] as int?,
+      printMaxSupply: r.optInt('print_max_supply'),
+      printCurrentSupply: r.optInt('print_current_supply'),
+      editionNonce: r.optInt('edition_nonce'),
     );
   }
 
@@ -876,16 +837,15 @@ class AssetTokenInfo {
   });
 
   factory AssetTokenInfo.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetTokenInfo(
-      supply: json['supply'] as int?,
-      decimals: json['decimals'] as int?,
-      tokenProgram: json['token_program'] as String?,
-      associatedTokenAddress: json['associated_token_address'] as String?,
-      mintAuthority: json['mint_authority'] as String?,
-      freezeAuthority: json['freeze_authority'] as String?,
-      priceInfo: json['price_info'] != null
-          ? AssetPriceInfo.fromJson(json['price_info']! as Map<String, Object?>)
-          : null,
+      supply: r.optInt('supply'),
+      decimals: r.optInt('decimals'),
+      tokenProgram: r.optString('token_program'),
+      associatedTokenAddress: r.optString('associated_token_address'),
+      mintAuthority: r.optString('mint_authority'),
+      freezeAuthority: r.optString('freeze_authority'),
+      priceInfo: r.optDecoded('price_info', AssetPriceInfo.fromJson),
     );
   }
 
@@ -914,10 +874,11 @@ class AssetPriceInfo {
   const AssetPriceInfo({this.pricePerToken, this.totalPrice, this.currency});
 
   factory AssetPriceInfo.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetPriceInfo(
-      pricePerToken: (json['price_per_token'] as num?)?.toDouble(),
-      totalPrice: (json['total_price'] as num?)?.toDouble(),
-      currency: json['currency'] as String?,
+      pricePerToken: r.optDouble('price_per_token'),
+      totalPrice: r.optDouble('total_price'),
+      currency: r.optString('currency'),
     );
   }
 
@@ -943,12 +904,13 @@ class AssetProof {
   });
 
   factory AssetProof.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetProof(
-      root: json['root']! as String,
-      proof: (json['proof']! as List<Object?>).cast<String>(),
-      nodeIndex: json['node_index']! as int,
-      leaf: json['leaf']! as String,
-      treeId: json['tree_id']! as String,
+      root: r.requireString('root'),
+      proof: r.requireList<String>('proof'),
+      nodeIndex: r.requireInt('node_index'),
+      leaf: r.requireString('leaf'),
+      treeId: r.requireString('tree_id'),
     );
   }
 
@@ -972,9 +934,10 @@ class NftEdition {
   const NftEdition({required this.mint, required this.edition});
 
   factory NftEdition.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return NftEdition(
-      mint: json['mint']! as String,
-      edition: json['edition']! as int,
+      mint: r.requireString('mint'),
+      edition: r.requireInt('edition'),
     );
   }
 
@@ -994,11 +957,12 @@ class AssetSignature {
   });
 
   factory AssetSignature.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetSignature(
-      signature: json['signature']! as String,
-      type_: json['type'] as String?,
-      slot: json['slot'] as int?,
-      timestamp: json['timestamp'] as int?,
+      signature: r.requireString('signature'),
+      type_: r.optString('type'),
+      slot: r.optInt('slot'),
+      timestamp: r.optInt('timestamp'),
     );
   }
 
@@ -1025,14 +989,12 @@ class AssetSignatureList {
   });
 
   factory AssetSignatureList.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetSignatureList(
-      total: json['total']! as int,
-      limit: json['limit']! as int,
-      page: json['page'] as int?,
-      items: (json['items']! as List<Object?>)
-          .cast<Map<String, Object?>>()
-          .map(AssetSignature.fromJson)
-          .toList(),
+      total: r.requireInt('total'),
+      limit: r.requireInt('limit'),
+      page: r.optInt('page'),
+      items: r.requireDecodedList('items', AssetSignature.fromJson),
     );
   }
 
@@ -1059,14 +1021,12 @@ class AssetList {
   });
 
   factory AssetList.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AssetList(
-      total: json['total']! as int,
-      limit: json['limit']! as int,
-      page: json['page'] as int?,
-      items: (json['items']! as List<Object?>)
-          .cast<Map<String, Object?>>()
-          .map(HeliusAsset.fromJson)
-          .toList(),
+      total: r.requireInt('total'),
+      limit: r.requireInt('limit'),
+      page: r.optInt('page'),
+      items: r.requireDecodedList('items', HeliusAsset.fromJson),
     );
   }
 
@@ -1093,14 +1053,12 @@ class TokenAccountList {
   });
 
   factory TokenAccountList.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return TokenAccountList(
-      total: json['total']! as int,
-      limit: json['limit']! as int,
-      page: json['page'] as int?,
-      tokenAccounts: (json['token_accounts']! as List<Object?>)
-          .cast<Map<String, Object?>>()
-          .map(TokenAccount.fromJson)
-          .toList(),
+      total: r.requireInt('total'),
+      limit: r.requireInt('limit'),
+      page: r.optInt('page'),
+      tokenAccounts: r.requireDecodedList('token_accounts', TokenAccount.fromJson),
     );
   }
 
@@ -1129,13 +1087,14 @@ class TokenAccount {
   });
 
   factory TokenAccount.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return TokenAccount(
-      address: json['address']! as String,
-      mint: json['mint']! as String,
-      owner: json['owner']! as String,
-      amount: json['amount']! as int,
-      delegatedAmount: json['delegated_amount'] as int?,
-      frozen: json['frozen'] as bool?,
+      address: r.requireString('address'),
+      mint: r.requireString('mint'),
+      owner: r.requireString('owner'),
+      amount: r.requireInt('amount'),
+      delegatedAmount: r.optInt('delegated_amount'),
+      frozen: r.optBool('frozen'),
     );
   }
 

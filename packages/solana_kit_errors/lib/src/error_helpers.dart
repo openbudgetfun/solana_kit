@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+import 'package:solana_kit_errors/src/codes.dart';
 import 'package:solana_kit_errors/src/error.dart';
 
 /// Shared context key conventions for structured Solana diagnostics.
@@ -54,7 +56,7 @@ Map<String, Object?> createSolanaErrorContext(
 
 /// Creates a [SolanaError] using normalized context conventions.
 SolanaError createSolanaError(
-  int code, {
+  SolanaErrorCode code, {
   Map<String, Object?> context = const {},
   Object? cause,
 }) {
@@ -66,7 +68,7 @@ SolanaError createSolanaError(
 
 /// Creates a [SolanaError] that wraps an underlying [cause].
 SolanaError wrapSolanaError(
-  int code,
+  SolanaErrorCode code,
   Object cause, {
   Map<String, Object?> context = const {},
 }) {

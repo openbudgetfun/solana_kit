@@ -5,7 +5,7 @@ import 'package:solana_kit_errors/src/codes.dart';
 /// Template strings may contain `$`-prefixed placeholders (e.g. `$address`,
 /// `$actualLength`) that should be interpolated with context-specific values
 /// when constructing the final error message.
-const Map<int, String> solanaErrorMessages = {
+const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode.accountsAccountNotFound:
       r'Account not found at address: $address',
   SolanaErrorCode.accountsExpectedAllAccountsToBeDecoded:

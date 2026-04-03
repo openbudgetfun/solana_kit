@@ -20,6 +20,21 @@ class GetEpochInfoConfig {
     if (minContextSlot != null) json['minContextSlot'] = minContextSlot;
     return json;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GetEpochInfoConfig &&
+          runtimeType == other.runtimeType &&
+          commitment == other.commitment &&
+          minContextSlot == other.minContextSlot;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, commitment, minContextSlot);
+
+  @override
+  String toString() =>
+      'GetEpochInfoConfig(commitment: $commitment, minContextSlot: $minContextSlot)';
 }
 
 /// Response from the `getEpochInfo` RPC method.
@@ -51,6 +66,35 @@ class EpochInfo {
 
   /// Total number of transactions processed without error since genesis.
   final BigInt? transactionCount;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is EpochInfo &&
+          runtimeType == other.runtimeType &&
+          absoluteSlot == other.absoluteSlot &&
+          blockHeight == other.blockHeight &&
+          epoch == other.epoch &&
+          slotIndex == other.slotIndex &&
+          slotsInEpoch == other.slotsInEpoch &&
+          transactionCount == other.transactionCount;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    absoluteSlot,
+    blockHeight,
+    epoch,
+    slotIndex,
+    slotsInEpoch,
+    transactionCount,
+  );
+
+  @override
+  String toString() =>
+      'EpochInfo(absoluteSlot: $absoluteSlot, blockHeight: $blockHeight, '
+      'epoch: $epoch, slotIndex: $slotIndex, slotsInEpoch: $slotsInEpoch, '
+      'transactionCount: $transactionCount)';
 }
 
 /// Builds the JSON-RPC params list for `getEpochInfo`.

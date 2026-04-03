@@ -13,18 +13,36 @@ class SimulateTransactionAccountsConfig {
   final List<Address> addresses;
 
   /// Encoding for returned account data.
-  ///
-  /// One of `'base64'`, `'base64+zstd'`, or `'jsonParsed'`.
-  final String? encoding;
+  final AccountEncoding? encoding;
 
   /// Converts to a JSON map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{
       'addresses': [for (final address in addresses) address.value],
     };
-    if (encoding != null) json['encoding'] = encoding;
+    if (encoding != null) json['encoding'] = encoding!.toJson();
     return json;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SimulateTransactionAccountsConfig &&
+          runtimeType == other.runtimeType &&
+          _listEquals(addresses, other.addresses) &&
+          encoding == other.encoding;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    Object.hashAll(addresses),
+    encoding,
+  );
+
+  @override
+  String toString() =>
+      'SimulateTransactionAccountsConfig(addresses: $addresses, '
+      'encoding: $encoding)';
 }
 
 /// Configuration for the `simulateTransaction` RPC method.
@@ -48,7 +66,7 @@ class SimulateTransactionConfig {
   final Commitment? commitment;
 
   /// The encoding of the transaction. Defaults to `'base64'`.
-  final String? encoding;
+  final WireTransactionEncoding? encoding;
 
   /// If `true` the response will include inner instructions.
   final bool? innerInstructions;
@@ -69,7 +87,7 @@ class SimulateTransactionConfig {
     final json = <String, Object?>{};
     if (accounts != null) json['accounts'] = accounts!.toJson();
     if (commitment != null) json['commitment'] = commitment!.name;
-    if (encoding != null) json['encoding'] = encoding;
+    if (encoding != null) json['encoding'] = encoding!.toJson();
     if (innerInstructions != null) {
       json['innerInstructions'] = innerInstructions;
     }
@@ -80,6 +98,38 @@ class SimulateTransactionConfig {
     if (sigVerify != null) json['sigVerify'] = sigVerify;
     return json;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SimulateTransactionConfig &&
+          runtimeType == other.runtimeType &&
+          accounts == other.accounts &&
+          commitment == other.commitment &&
+          encoding == other.encoding &&
+          innerInstructions == other.innerInstructions &&
+          minContextSlot == other.minContextSlot &&
+          replaceRecentBlockhash == other.replaceRecentBlockhash &&
+          sigVerify == other.sigVerify;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    accounts,
+    commitment,
+    encoding,
+    innerInstructions,
+    minContextSlot,
+    replaceRecentBlockhash,
+    sigVerify,
+  );
+
+  @override
+  String toString() =>
+      'SimulateTransactionConfig(accounts: $accounts, commitment: $commitment, '
+      'encoding: $encoding, innerInstructions: $innerInstructions, '
+      'minContextSlot: $minContextSlot, '
+      'replaceRecentBlockhash: $replaceRecentBlockhash, sigVerify: $sigVerify)';
 }
 
 /// Builds the JSON-RPC params list for `simulateTransaction`.
@@ -88,4 +138,13 @@ List<Object?> simulateTransactionParams(
   SimulateTransactionConfig? config,
 ]) {
   return [encodedTransaction, if (config != null) config.toJson()];
+}
+
+bool _listEquals<T>(List<T> a, List<T> b) {
+  if (identical(a, b)) return true;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
 }

@@ -1,0 +1,31 @@
+include: package:solana_kit_lints/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+  errors:
+    # Examples intentionally use print() for console output.
+    avoid_print: ignore
+    # Example snippets prioritize readability over perfect cascade styling.
+    cascade_invocations: ignore
+    # Some example comment references point at symbols not imported directly.
+    comment_references: ignore
+    # Ignore comments for avoid_print are self-documenting in example files.
+    document_ignores: ignore
+    # Numbered filenames are intentional for ordered example discovery.
+    file_names: ignore
+    # Examples sometimes rely on inferred closure types for brevity.
+    inference_failure_on_untyped_parameter: ignore
+    # Example docs occasionally mention generic syntax like Option<T>.
+    unintended_html_in_doc_comment: ignore
+    # Example snippets optimize for clarity rather than const saturation.
+    prefer_const_constructors: ignore
+    prefer_const_literals_to_create_immutables: ignore
+    prefer_final_locals: ignore
+    prefer_int_literals: ignore
+    # Unnecessary casts in examples are sometimes needed for clarity.
+    unnecessary_cast: ignore
+    # Some examples intentionally show explicit arguments even when redundant.
+    avoid_redundant_argument_values: ignore
+    # Examples sometimes call methods on inferred values for readability.
+    avoid_dynamic_calls: ignore

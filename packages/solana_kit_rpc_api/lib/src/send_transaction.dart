@@ -12,7 +12,7 @@ class SendTransactionConfig {
   });
 
   /// The encoding of the transaction. Defaults to `'base64'`.
-  final String? encoding;
+  final WireTransactionEncoding? encoding;
 
   /// Maximum number of times for the RPC node to retry sending the
   /// transaction to the leader.
@@ -32,7 +32,7 @@ class SendTransactionConfig {
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
-    if (encoding != null) json['encoding'] = encoding;
+    if (encoding != null) json['encoding'] = encoding!.toJson();
     if (maxRetries != null) json['maxRetries'] = maxRetries;
     if (minContextSlot != null) json['minContextSlot'] = minContextSlot;
     if (preflightCommitment != null) {
@@ -41,6 +41,34 @@ class SendTransactionConfig {
     if (skipPreflight != null) json['skipPreflight'] = skipPreflight;
     return json;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SendTransactionConfig &&
+          runtimeType == other.runtimeType &&
+          encoding == other.encoding &&
+          maxRetries == other.maxRetries &&
+          minContextSlot == other.minContextSlot &&
+          preflightCommitment == other.preflightCommitment &&
+          skipPreflight == other.skipPreflight;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    encoding,
+    maxRetries,
+    minContextSlot,
+    preflightCommitment,
+    skipPreflight,
+  );
+
+  @override
+  String toString() =>
+      'SendTransactionConfig(encoding: $encoding, maxRetries: $maxRetries, '
+      'minContextSlot: $minContextSlot, '
+      'preflightCommitment: $preflightCommitment, '
+      'skipPreflight: $skipPreflight)';
 }
 
 /// Builds the JSON-RPC params list for `sendTransaction`.

@@ -23,6 +23,29 @@ class DurableNonceConfig {
 
   /// The address of the nonce authority.
   final Address nonceAuthorityAddress;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DurableNonceConfig &&
+          runtimeType == other.runtimeType &&
+          nonce == other.nonce &&
+          nonceAccountAddress == other.nonceAccountAddress &&
+          nonceAuthorityAddress == other.nonceAuthorityAddress;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    nonce,
+    nonceAccountAddress,
+    nonceAuthorityAddress,
+  );
+
+  @override
+  String toString() =>
+      'DurableNonceConfig(nonce: $nonce, '
+      'nonceAccountAddress: $nonceAccountAddress, '
+      'nonceAuthorityAddress: $nonceAuthorityAddress)';
 }
 
 /// Returns `true` if the transaction message has a durable nonce lifetime

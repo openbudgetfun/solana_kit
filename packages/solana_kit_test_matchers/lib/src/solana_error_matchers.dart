@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 /// ```dart
 /// expect(error, isSolanaErrorWithCode(SolanaErrorCode.someCode));
 /// ```
-Matcher isSolanaErrorWithCode(int code) =>
+Matcher isSolanaErrorWithCode(SolanaErrorCode code) =>
     isA<SolanaError>().having((e) => e.code, 'code', code);
 
 /// Returns a matcher that verifies a function throws a [SolanaError] with
@@ -16,7 +16,7 @@ Matcher isSolanaErrorWithCode(int code) =>
 /// ```dart
 /// expect(() => doSomething(), throwsSolanaErrorWithCode(SolanaErrorCode.someCode));
 /// ```
-Matcher throwsSolanaErrorWithCode(int code) =>
+Matcher throwsSolanaErrorWithCode(SolanaErrorCode code) =>
     throwsA(isSolanaErrorWithCode(code));
 
 /// Returns a matcher that verifies an object is a [SolanaError] with the
@@ -33,7 +33,7 @@ Matcher throwsSolanaErrorWithCode(int code) =>
 /// );
 /// ```
 Matcher isSolanaErrorWithCodeAndContext(
-  int code,
+  SolanaErrorCode code,
   Map<String, Object?> expectedContext,
 ) {
   var matcher = isSolanaErrorWithCode(code);

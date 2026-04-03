@@ -24,6 +24,22 @@ class RpcErrorResponsePayload {
 
   /// Optional additional data about the error.
   final Object? data;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RpcErrorResponsePayload &&
+          runtimeType == other.runtimeType &&
+          code == other.code &&
+          message == other.message &&
+          data == other.data;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, code, message, data);
+
+  @override
+  String toString() =>
+      'RpcErrorResponsePayload(code: $code, message: $message, data: $data)';
 }
 
 /// Represents the data of an RPC response, which is either an error or a
@@ -42,6 +58,20 @@ class RpcResponseResult<TResponse> extends RpcResponseData<TResponse> {
 
   /// The result data.
   final TResponse result;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RpcResponseResult<TResponse> &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          result == other.result;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, id, result);
+
+  @override
+  String toString() => 'RpcResponseResult(id: $id, result: $result)';
 }
 
 /// An RPC response containing an error.
@@ -51,4 +81,18 @@ class RpcResponseError<TResponse> extends RpcResponseData<TResponse> {
 
   /// The error payload.
   final RpcErrorResponsePayload error;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RpcResponseError<TResponse> &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          error == other.error;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, id, error);
+
+  @override
+  String toString() => 'RpcResponseError(id: $id, error: $error)';
 }

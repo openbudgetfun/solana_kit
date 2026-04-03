@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
 import 'package:solana_kit_rpc_types/src/token_amount.dart';
@@ -27,4 +28,30 @@ class TokenBalance {
 
   /// The token amount details.
   final TokenAmount uiTokenAmount;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TokenBalance &&
+          runtimeType == other.runtimeType &&
+          accountIndex == other.accountIndex &&
+          mint == other.mint &&
+          owner == other.owner &&
+          programId == other.programId &&
+          uiTokenAmount == other.uiTokenAmount;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    accountIndex,
+    mint,
+    owner,
+    programId,
+    uiTokenAmount,
+  );
+
+  @override
+  String toString() =>
+      'TokenBalance(accountIndex: $accountIndex, mint: $mint, '
+      'owner: $owner, programId: $programId, uiTokenAmount: $uiTokenAmount)';
 }

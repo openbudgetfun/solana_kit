@@ -19,6 +19,26 @@ class Instruction {
 
   /// The opaque data to pass to the program.
   final Uint8List? data;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Instruction &&
+          programAddress == other.programAddress &&
+          _listEquals(accounts, other.accounts) &&
+          _bytesEquals(data, other.data);
+
+  @override
+  int get hashCode => Object.hash(
+    programAddress,
+    accounts == null ? null : Object.hashAll(accounts!),
+    data == null ? null : Object.hashAll(data!),
+  );
+
+  @override
+  String toString() =>
+      'Instruction(programAddress: $programAddress, '
+      'accounts: $accounts, data: $data)';
 }
 
 /// Returns `true` if [instruction] is destined for the program at
@@ -76,4 +96,22 @@ void assertIsInstructionWithData(Instruction instruction) {
       'programAddress': instruction.programAddress.value,
     });
   }
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null || a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+bool _bytesEquals(Uint8List? a, Uint8List? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null || a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
 }

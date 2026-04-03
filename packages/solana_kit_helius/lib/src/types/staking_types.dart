@@ -1,3 +1,6 @@
+// ignore_for_file: public_member_api_docs
+import 'package:solana_kit_helius/src/internal/json_reader.dart';
+
 /// Request to create a stake transaction.
 class CreateStakeTransactionRequest {
   const CreateStakeTransactionRequest({
@@ -7,10 +10,11 @@ class CreateStakeTransactionRequest {
   });
 
   factory CreateStakeTransactionRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CreateStakeTransactionRequest(
-      from: json['from']! as String,
-      amount: json['amount']! as int,
-      validatorVote: json['validatorVote'] as String?,
+      from: r.requireString('from'),
+      amount: r.requireInt('amount'),
+      validatorVote: r.optString('validatorVote'),
     );
   }
 
@@ -33,9 +37,10 @@ class CreateUnstakeTransactionRequest {
   });
 
   factory CreateUnstakeTransactionRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CreateUnstakeTransactionRequest(
-      from: json['from']! as String,
-      stakeAccount: json['stakeAccount']! as String,
+      from: r.requireString('from'),
+      stakeAccount: r.requireString('stakeAccount'),
     );
   }
 
@@ -54,10 +59,11 @@ class CreateWithdrawTransactionRequest {
   });
 
   factory CreateWithdrawTransactionRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CreateWithdrawTransactionRequest(
-      from: json['from']! as String,
-      stakeAccount: json['stakeAccount']! as String,
-      amount: json['amount'] as int?,
+      from: r.requireString('from'),
+      stakeAccount: r.requireString('stakeAccount'),
+      amount: r.optInt('amount'),
     );
   }
 
@@ -84,13 +90,14 @@ class StakeAccountInfo {
   });
 
   factory StakeAccountInfo.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return StakeAccountInfo(
-      address: json['address']! as String,
-      lamports: json['lamports']! as int,
-      state: json['state']! as String,
-      voter: json['voter'] as String?,
-      activationEpoch: json['activationEpoch'] as int?,
-      deactivationEpoch: json['deactivationEpoch'] as int?,
+      address: r.requireString('address'),
+      lamports: r.requireInt('lamports'),
+      state: r.requireString('state'),
+      voter: r.optString('voter'),
+      activationEpoch: r.optInt('activationEpoch'),
+      deactivationEpoch: r.optInt('deactivationEpoch'),
     );
   }
 
@@ -116,7 +123,8 @@ class GetHeliusStakeAccountsRequest {
   const GetHeliusStakeAccountsRequest({required this.owner});
 
   factory GetHeliusStakeAccountsRequest.fromJson(Map<String, Object?> json) {
-    return GetHeliusStakeAccountsRequest(owner: json['owner']! as String);
+    final r = JsonReader(json);
+    return GetHeliusStakeAccountsRequest(owner: r.requireString('owner'));
   }
 
   final String owner;
@@ -129,8 +137,9 @@ class GetWithdrawableAmountRequest {
   const GetWithdrawableAmountRequest({required this.stakeAccount});
 
   factory GetWithdrawableAmountRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetWithdrawableAmountRequest(
-      stakeAccount: json['stakeAccount']! as String,
+      stakeAccount: r.requireString('stakeAccount'),
     );
   }
 
@@ -144,7 +153,8 @@ class WithdrawableAmount {
   const WithdrawableAmount({required this.amount});
 
   factory WithdrawableAmount.fromJson(Map<String, Object?> json) {
-    return WithdrawableAmount(amount: json['amount']! as int);
+    final r = JsonReader(json);
+    return WithdrawableAmount(amount: r.requireInt('amount'));
   }
 
   final int amount;
@@ -157,7 +167,8 @@ class StakeTransactionResult {
   const StakeTransactionResult({required this.transaction});
 
   factory StakeTransactionResult.fromJson(Map<String, Object?> json) {
-    return StakeTransactionResult(transaction: json['transaction']! as String);
+    final r = JsonReader(json);
+    return StakeTransactionResult(transaction: r.requireString('transaction'));
   }
 
   final String transaction;

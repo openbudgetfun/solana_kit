@@ -6,13 +6,16 @@
 ///
 /// The primary components are:
 ///
-/// - `DataPublisher` / `WritableDataPublisher` - subscription-based event
-///   system with `on(channelName, subscriber)` returning an unsubscribe
-///   function.
 /// - `createStreamFromDataPublisher` / `createAsyncIterableFromDataPublisher` -
-///   converts a `DataPublisher` into a Dart `Stream`.
+///   converts channel-based publishers into Dart `Stream`s.
+/// - `DataPublisher` / `WritableDataPublisher` - a compatibility layer for the
+///   upstream TypeScript channel-publisher abstraction.
 /// - `demultiplexDataPublisher` - splits a single channel into multiple typed
 ///   channels with lazy subscription and reference counting.
+///
+/// Prefer exposing `Stream`s at package boundaries when writing new Dart APIs.
+/// Keep `DataPublisher`-based APIs only where they are still needed for
+/// compatibility with the upstream Solana Kit design.
 library;
 
 export 'src/async_iterable.dart';

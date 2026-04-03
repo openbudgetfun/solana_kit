@@ -11,7 +11,7 @@ void main() {
     });
 
     test('toJson includes encoding when set', () {
-      const config = SendTransactionConfig(encoding: 'base64');
+      const config = SendTransactionConfig(encoding: WireTransactionEncoding.base64);
       final json = config.toJson();
       expect(json['encoding'], 'base64');
     });
@@ -44,7 +44,7 @@ void main() {
 
     test('toJson includes all fields when all set', () {
       final config = SendTransactionConfig(
-        encoding: 'base64',
+        encoding: WireTransactionEncoding.base64,
         maxRetries: BigInt.from(3),
         minContextSlot: BigInt.from(500),
         preflightCommitment: Commitment.finalized,
@@ -90,7 +90,7 @@ void main() {
       const config = SimulateTransactionConfig(
         accounts: SimulateTransactionAccountsConfig(
           addresses: [Address('11111111111111111111111111111111')],
-          encoding: 'base64',
+          encoding: AccountEncoding.base64,
         ),
       );
       final json = config.toJson();
@@ -106,7 +106,7 @@ void main() {
           addresses: [Address('11111111111111111111111111111111')],
         ),
         commitment: Commitment.confirmed,
-        encoding: 'base64',
+        encoding: WireTransactionEncoding.base64,
         innerInstructions: true,
         minContextSlot: BigInt.from(100),
         replaceRecentBlockhash: true,

@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+import 'package:solana_kit_helius/src/internal/json_reader.dart';
 import 'package:solana_kit_helius/src/types/enums.dart';
 
 /// Request to get transactions by their signatures.
@@ -5,8 +7,9 @@ class GetTransactionsRequest {
   const GetTransactionsRequest({required this.transactions});
 
   factory GetTransactionsRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetTransactionsRequest(
-      transactions: (json['transactions']! as List<Object?>).cast<String>(),
+      transactions: r.requireList<String>('transactions'),
     );
   }
 
@@ -26,14 +29,13 @@ class GetTransactionsByAddressRequest {
   });
 
   factory GetTransactionsByAddressRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return GetTransactionsByAddressRequest(
-      address: json['address']! as String,
-      before: json['before'] as String?,
-      until: json['until'] as String?,
-      commitment: json['commitment'] != null
-          ? CommitmentLevel.fromJson(json['commitment']! as String)
-          : null,
-      type: json['type'] as String?,
+      address: r.requireString('address'),
+      before: r.optString('before'),
+      until: r.optString('until'),
+      commitment: r.optEnum('commitment', CommitmentLevel.fromJson),
+      type: r.optString('type'),
     );
   }
 
@@ -71,28 +73,33 @@ class EnhancedTransaction {
   });
 
   factory EnhancedTransaction.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return EnhancedTransaction(
-      description: json['description'] as String?,
-      type: json['type']! as String,
-      source: json['source']! as String,
-      fee: json['fee']! as int,
-      feePayer: json['feePayer']! as int,
-      signature: json['signature']! as String,
-      slot: json['slot']! as int,
-      timestamp: json['timestamp'] as int?,
-      nativeTransfers: (json['nativeTransfers']! as List<Object?>)
-          .map((e) => NativeTransfer.fromJson(e! as Map<String, Object?>))
-          .toList(),
-      tokenTransfers: (json['tokenTransfers']! as List<Object?>)
-          .map((e) => TokenTransfer.fromJson(e! as Map<String, Object?>))
-          .toList(),
-      accountData: (json['accountData']! as List<Object?>)
-          .map((e) => AccountData.fromJson(e! as Map<String, Object?>))
-          .toList(),
-      instructions: (json['instructions']! as List<Object?>)
-          .map((e) => InnerInstruction.fromJson(e! as Map<String, Object?>))
-          .toList(),
-      events: json['events']! as Map<String, Object?>,
+      description: r.optString('description'),
+      type: r.requireString('type'),
+      source: r.requireString('source'),
+      fee: r.requireInt('fee'),
+      feePayer: r.requireInt('feePayer'),
+      signature: r.requireString('signature'),
+      slot: r.requireInt('slot'),
+      timestamp: r.optInt('timestamp'),
+      nativeTransfers: r.requireDecodedList(
+        'nativeTransfers',
+        NativeTransfer.fromJson,
+      ),
+      tokenTransfers: r.requireDecodedList(
+        'tokenTransfers',
+        TokenTransfer.fromJson,
+      ),
+      accountData: r.requireDecodedList(
+        'accountData',
+        AccountData.fromJson,
+      ),
+      instructions: r.requireDecodedList(
+        'instructions',
+        InnerInstruction.fromJson,
+      ),
+      events: r.requireMap('events'),
     );
   }
 
@@ -136,10 +143,11 @@ class NativeTransfer {
   });
 
   factory NativeTransfer.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return NativeTransfer(
-      fromUserAccount: json['fromUserAccount']! as String,
-      toUserAccount: json['toUserAccount']! as String,
-      amount: json['amount']! as int,
+      fromUserAccount: r.requireString('fromUserAccount'),
+      toUserAccount: r.requireString('toUserAccount'),
+      amount: r.requireInt('amount'),
     );
   }
 
@@ -167,14 +175,15 @@ class TokenTransfer {
   });
 
   factory TokenTransfer.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return TokenTransfer(
-      fromUserAccount: json['fromUserAccount']! as String,
-      toUserAccount: json['toUserAccount']! as String,
-      fromTokenAccount: json['fromTokenAccount']! as String,
-      toTokenAccount: json['toTokenAccount']! as String,
-      tokenAmount: json['tokenAmount']! as int,
-      mint: json['mint'] as String?,
-      tokenStandard: json['tokenStandard']! as String,
+      fromUserAccount: r.requireString('fromUserAccount'),
+      toUserAccount: r.requireString('toUserAccount'),
+      fromTokenAccount: r.requireString('fromTokenAccount'),
+      toTokenAccount: r.requireString('toTokenAccount'),
+      tokenAmount: r.requireInt('tokenAmount'),
+      mint: r.optString('mint'),
+      tokenStandard: r.requireString('tokenStandard'),
     );
   }
 
@@ -206,12 +215,14 @@ class AccountData {
   });
 
   factory AccountData.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AccountData(
-      account: json['account']! as String,
-      nativeBalanceChange: json['nativeBalanceChange']! as Map<String, Object?>,
-      tokenBalanceChanges: (json['tokenBalanceChanges']! as List<Object?>)
-          .map((e) => TokenBalanceChange.fromJson(e! as Map<String, Object?>))
-          .toList(),
+      account: r.requireString('account'),
+      nativeBalanceChange: r.requireMap('nativeBalanceChange'),
+      tokenBalanceChanges: r.requireDecodedList(
+        'tokenBalanceChanges',
+        TokenBalanceChange.fromJson,
+      ),
     );
   }
 
@@ -237,12 +248,13 @@ class TokenBalanceChange {
   });
 
   factory TokenBalanceChange.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return TokenBalanceChange(
-      mint: json['mint']! as String,
-      rawTokenAmount: json['rawTokenAmount']! as int,
-      decimals: json['decimals']! as int,
-      userAccount: json['userAccount']! as String,
-      tokenAccount: json['tokenAccount']! as String,
+      mint: r.requireString('mint'),
+      rawTokenAmount: r.requireInt('rawTokenAmount'),
+      decimals: r.requireInt('decimals'),
+      userAccount: r.requireString('userAccount'),
+      tokenAccount: r.requireString('tokenAccount'),
     );
   }
 
@@ -271,11 +283,12 @@ class InnerInstruction {
   });
 
   factory InnerInstruction.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return InnerInstruction(
-      accounts: json['accounts']! as List<Object?>,
-      data: json['data']! as String,
-      programId: json['programId']! as String,
-      innerInstructions: json['innerInstructions'],
+      accounts: r.requireList<Object?>('accounts'),
+      data: r.requireString('data'),
+      programId: r.requireString('programId'),
+      innerInstructions: r.raw('innerInstructions'),
     );
   }
 

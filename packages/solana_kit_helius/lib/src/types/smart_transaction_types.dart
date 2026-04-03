@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+import 'package:solana_kit_helius/src/internal/json_reader.dart';
 import 'package:solana_kit_helius/src/types/enums.dart';
 
 /// Input for creating a smart transaction.
@@ -12,13 +14,14 @@ class CreateSmartTransactionInput {
   });
 
   factory CreateSmartTransactionInput.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CreateSmartTransactionInput(
-      instructions: json['instructions']! as List<Object?>,
-      signers: (json['signers'] as List<Object?>?)?.cast<String>(),
-      feePayer: json['feePayer'] as String?,
-      computeUnitLimit: json['computeUnitLimit'] as int?,
-      computeUnitPrice: json['computeUnitPrice'] as int?,
-      lookupTableAddresses: json['lookupTableAddresses'] as String?,
+      instructions: r.requireList<Object?>('instructions'),
+      signers: r.optList<String>('signers'),
+      feePayer: r.optString('feePayer'),
+      computeUnitLimit: r.optInt('computeUnitLimit'),
+      computeUnitPrice: r.optInt('computeUnitPrice'),
+      lookupTableAddresses: r.optString('lookupTableAddresses'),
     );
   }
 
@@ -48,9 +51,10 @@ class SmartTransactionResult {
   });
 
   factory SmartTransactionResult.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return SmartTransactionResult(
-      signature: json['signature']! as String,
-      confirmationStatus: json['confirmationStatus'] as String?,
+      signature: r.requireString('signature'),
+      confirmationStatus: r.optString('confirmationStatus'),
     );
   }
 
@@ -75,13 +79,14 @@ class SendSmartTransactionInput {
   });
 
   factory SendSmartTransactionInput.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return SendSmartTransactionInput(
-      instructions: json['instructions']! as List<Object?>,
-      signers: (json['signers'] as List<Object?>?)?.cast<String>(),
-      feePayer: json['feePayer'] as String?,
-      computeUnitPrice: json['computeUnitPrice'] as int?,
-      skipPreflight: json['skipPreflight'] as bool?,
-      maxRetries: json['maxRetries'] as int?,
+      instructions: r.requireList<Object?>('instructions'),
+      signers: r.optList<String>('signers'),
+      feePayer: r.optString('feePayer'),
+      computeUnitPrice: r.optInt('computeUnitPrice'),
+      skipPreflight: r.optBool('skipPreflight'),
+      maxRetries: r.optInt('maxRetries'),
     );
   }
 
@@ -107,8 +112,9 @@ class BroadcastTransactionRequest {
   const BroadcastTransactionRequest({required this.transaction});
 
   factory BroadcastTransactionRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return BroadcastTransactionRequest(
-      transaction: json['transaction']! as String,
+      transaction: r.requireString('transaction'),
     );
   }
 
@@ -129,13 +135,12 @@ class PollTransactionConfirmationRequest {
   factory PollTransactionConfirmationRequest.fromJson(
     Map<String, Object?> json,
   ) {
+    final r = JsonReader(json);
     return PollTransactionConfirmationRequest(
-      signature: json['signature']! as String,
-      timeoutMs: json['timeoutMs'] as int?,
-      intervalMs: json['intervalMs'] as int?,
-      commitment: json['commitment'] != null
-          ? CommitmentLevel.fromJson(json['commitment']! as String)
-          : null,
+      signature: r.requireString('signature'),
+      timeoutMs: r.optInt('timeoutMs'),
+      intervalMs: r.optInt('intervalMs'),
+      commitment: r.optEnum('commitment', CommitmentLevel.fromJson),
     );
   }
 
@@ -157,7 +162,8 @@ class ComputeUnitsEstimate {
   const ComputeUnitsEstimate({required this.units});
 
   factory ComputeUnitsEstimate.fromJson(Map<String, Object?> json) {
-    return ComputeUnitsEstimate(units: json['units']! as int);
+    final r = JsonReader(json);
+    return ComputeUnitsEstimate(units: r.requireInt('units'));
   }
 
   final int units;

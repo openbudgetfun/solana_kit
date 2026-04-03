@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instruction_plans/src/instruction_plan.dart';
 import 'package:solana_kit_instruction_plans/src/transaction_plan.dart';

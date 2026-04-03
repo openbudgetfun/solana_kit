@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 import 'package:solana_kit_helius/src/das/get_asset.dart';
 import 'package:solana_kit_helius/src/das/get_asset_batch.dart';
 import 'package:solana_kit_helius/src/das/get_asset_proof.dart';

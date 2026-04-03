@@ -16,9 +16,7 @@ class GetAccountInfoConfig {
   final Commitment? commitment;
 
   /// Determines how the account data should be encoded in the response.
-  ///
-  /// One of `'base58'`, `'base64'`, `'base64+zstd'`, or `'jsonParsed'`.
-  final String? encoding;
+  final AccountEncoding? encoding;
 
   /// Define which slice of the account's data to return.
   ///
@@ -33,7 +31,7 @@ class GetAccountInfoConfig {
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
     if (commitment != null) json['commitment'] = commitment!.name;
-    if (encoding != null) json['encoding'] = encoding;
+    if (encoding != null) json['encoding'] = encoding!.toJson();
     if (dataSlice != null) {
       json['dataSlice'] = {
         'offset': dataSlice!.offset,
@@ -43,6 +41,30 @@ class GetAccountInfoConfig {
     if (minContextSlot != null) json['minContextSlot'] = minContextSlot;
     return json;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GetAccountInfoConfig &&
+          runtimeType == other.runtimeType &&
+          commitment == other.commitment &&
+          encoding == other.encoding &&
+          dataSlice == other.dataSlice &&
+          minContextSlot == other.minContextSlot;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    commitment,
+    encoding,
+    dataSlice,
+    minContextSlot,
+  );
+
+  @override
+  String toString() =>
+      'GetAccountInfoConfig(commitment: $commitment, encoding: $encoding, '
+      'dataSlice: $dataSlice, minContextSlot: $minContextSlot)';
 }
 
 /// Builds the JSON-RPC params list for `getAccountInfo`.

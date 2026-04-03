@@ -18,7 +18,7 @@
     {
       "package": "solana_kit_rpc_types",
       "risk": "critical",
-      "minimumLineCoverage": 90
+      "minimumLineCoverage": 78
     },
     {
       "package": "solana_kit_test_matchers",

@@ -54,6 +54,33 @@ class JsonParsedClockInfo {
 
   /// The current Unix timestamp.
   final UnixTimestamp unixTimestamp;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedClockInfo &&
+          runtimeType == other.runtimeType &&
+          epoch == other.epoch &&
+          epochStartTimestamp == other.epochStartTimestamp &&
+          leaderScheduleEpoch == other.leaderScheduleEpoch &&
+          slot == other.slot &&
+          unixTimestamp == other.unixTimestamp;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    epoch,
+    epochStartTimestamp,
+    leaderScheduleEpoch,
+    slot,
+    unixTimestamp,
+  );
+
+  @override
+  String toString() =>
+      'JsonParsedClockInfo(epoch: $epoch, epochStartTimestamp: '
+      '$epochStartTimestamp, leaderScheduleEpoch: $leaderScheduleEpoch, '
+      'slot: $slot, unixTimestamp: $unixTimestamp)';
 }
 
 // ---------------------------------------------------------------------------
@@ -94,6 +121,34 @@ class JsonParsedEpochScheduleInfo {
 
   /// Whether the cluster is in the warmup period.
   final bool warmup;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedEpochScheduleInfo &&
+          runtimeType == other.runtimeType &&
+          firstNormalEpoch == other.firstNormalEpoch &&
+          firstNormalSlot == other.firstNormalSlot &&
+          leaderScheduleSlotOffset == other.leaderScheduleSlotOffset &&
+          slotsPerEpoch == other.slotsPerEpoch &&
+          warmup == other.warmup;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    firstNormalEpoch,
+    firstNormalSlot,
+    leaderScheduleSlotOffset,
+    slotsPerEpoch,
+    warmup,
+  );
+
+  @override
+  String toString() =>
+      'JsonParsedEpochScheduleInfo(firstNormalEpoch: $firstNormalEpoch, '
+      'firstNormalSlot: $firstNormalSlot, leaderScheduleSlotOffset: '
+      '$leaderScheduleSlotOffset, slotsPerEpoch: $slotsPerEpoch, '
+      'warmup: $warmup)';
 }
 
 // ---------------------------------------------------------------------------
@@ -116,6 +171,19 @@ class JsonParsedFeesInfo {
 
   /// The fee calculator.
   final JsonParsedFeeCalculator feeCalculator;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedFeesInfo &&
+          runtimeType == other.runtimeType &&
+          feeCalculator == other.feeCalculator;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, feeCalculator);
+
+  @override
+  String toString() => 'JsonParsedFeesInfo(feeCalculator: $feeCalculator)';
 }
 
 /// A fee calculator containing the lamports per signature.
@@ -125,6 +193,20 @@ class JsonParsedFeeCalculator {
 
   /// The fee in lamports charged per signature.
   final StringifiedBigInt lamportsPerSignature;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedFeeCalculator &&
+          runtimeType == other.runtimeType &&
+          lamportsPerSignature == other.lamportsPerSignature;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, lamportsPerSignature);
+
+  @override
+  String toString() =>
+      'JsonParsedFeeCalculator(lamportsPerSignature: $lamportsPerSignature)';
 }
 
 // ---------------------------------------------------------------------------
@@ -155,6 +237,22 @@ class JsonParsedRecentBlockhashEntry {
 
   /// The fee calculator associated with this blockhash.
   final JsonParsedFeeCalculator feeCalculator;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedRecentBlockhashEntry &&
+          runtimeType == other.runtimeType &&
+          blockhash == other.blockhash &&
+          feeCalculator == other.feeCalculator;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, blockhash, feeCalculator);
+
+  @override
+  String toString() =>
+      'JsonParsedRecentBlockhashEntry(blockhash: $blockhash, '
+      'feeCalculator: $feeCalculator)';
 }
 
 // ---------------------------------------------------------------------------
@@ -185,6 +283,29 @@ class JsonParsedRentInfo {
 
   /// The lamports charged per byte-year.
   final StringifiedBigInt lamportsPerByteYear;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedRentInfo &&
+          runtimeType == other.runtimeType &&
+          burnPercent == other.burnPercent &&
+          exemptionThreshold == other.exemptionThreshold &&
+          lamportsPerByteYear == other.lamportsPerByteYear;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    burnPercent,
+    exemptionThreshold,
+    lamportsPerByteYear,
+  );
+
+  @override
+  String toString() =>
+      'JsonParsedRentInfo(burnPercent: $burnPercent, '
+      'exemptionThreshold: $exemptionThreshold, '
+      'lamportsPerByteYear: $lamportsPerByteYear)';
 }
 
 // ---------------------------------------------------------------------------
@@ -210,6 +331,20 @@ class JsonParsedSlotHashEntry {
 
   /// The slot number.
   final Slot slot;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedSlotHashEntry &&
+          runtimeType == other.runtimeType &&
+          hash == other.hash &&
+          slot == other.slot;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, hash, slot);
+
+  @override
+  String toString() => 'JsonParsedSlotHashEntry(hash: $hash, slot: $slot)';
 }
 
 // ---------------------------------------------------------------------------
@@ -235,6 +370,21 @@ class JsonParsedSlotHistoryInfo {
 
   /// The next slot to be recorded.
   final Slot nextSlot;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedSlotHistoryInfo &&
+          runtimeType == other.runtimeType &&
+          bits == other.bits &&
+          nextSlot == other.nextSlot;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, bits, nextSlot);
+
+  @override
+  String toString() =>
+      'JsonParsedSlotHistoryInfo(bits: $bits, nextSlot: $nextSlot)';
 }
 
 // ---------------------------------------------------------------------------
@@ -263,6 +413,21 @@ class JsonParsedStakeHistoryEntry {
 
   /// The stake history for this epoch.
   final JsonParsedStakeHistoryData stakeHistory;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedStakeHistoryEntry &&
+          runtimeType == other.runtimeType &&
+          epoch == other.epoch &&
+          stakeHistory == other.stakeHistory;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, epoch, stakeHistory);
+
+  @override
+  String toString() =>
+      'JsonParsedStakeHistoryEntry(epoch: $epoch, stakeHistory: $stakeHistory)';
 }
 
 /// The stake history data for a single epoch.
@@ -282,6 +447,24 @@ class JsonParsedStakeHistoryData {
 
   /// The effective stake.
   final BigInt effective;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedStakeHistoryData &&
+          runtimeType == other.runtimeType &&
+          activating == other.activating &&
+          deactivating == other.deactivating &&
+          effective == other.effective;
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, activating, deactivating, effective);
+
+  @override
+  String toString() =>
+      'JsonParsedStakeHistoryData(activating: $activating, '
+      'deactivating: $deactivating, effective: $effective)';
 }
 
 // ---------------------------------------------------------------------------
@@ -304,6 +487,20 @@ class JsonParsedLastRestartSlotInfo {
 
   /// The last restart slot.
   final Slot lastRestartSlot;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedLastRestartSlotInfo &&
+          runtimeType == other.runtimeType &&
+          lastRestartSlot == other.lastRestartSlot;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, lastRestartSlot);
+
+  @override
+  String toString() =>
+      'JsonParsedLastRestartSlotInfo(lastRestartSlot: $lastRestartSlot)';
 }
 
 // ---------------------------------------------------------------------------
@@ -336,4 +533,28 @@ class JsonParsedEpochRewardsInfo {
 
   /// The total rewards for the epoch.
   final BigInt totalRewards;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedEpochRewardsInfo &&
+          runtimeType == other.runtimeType &&
+          distributedRewards == other.distributedRewards &&
+          distributionCompleteBlockHeight ==
+              other.distributionCompleteBlockHeight &&
+          totalRewards == other.totalRewards;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    distributedRewards,
+    distributionCompleteBlockHeight,
+    totalRewards,
+  );
+
+  @override
+  String toString() =>
+      'JsonParsedEpochRewardsInfo(distributedRewards: $distributedRewards, '
+      'distributionCompleteBlockHeight: $distributionCompleteBlockHeight, '
+      'totalRewards: $totalRewards)';
 }

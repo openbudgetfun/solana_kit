@@ -1,11 +1,13 @@
+// ignore_for_file: public_member_api_docs
+import 'package:solana_kit_helius/src/internal/json_reader.dart';
+
 /// Request for agentic signup with a wallet address.
 class AgenticSignupRequest {
   const AgenticSignupRequest({required this.walletAddress});
 
   factory AgenticSignupRequest.fromJson(Map<String, Object?> json) {
-    return AgenticSignupRequest(
-      walletAddress: json['walletAddress']! as String,
-    );
+    final r = JsonReader(json);
+    return AgenticSignupRequest(walletAddress: r.requireString('walletAddress'));
   }
 
   final String walletAddress;
@@ -18,9 +20,10 @@ class AgenticSignupResponse {
   const AgenticSignupResponse({required this.apiKey, required this.projectId});
 
   factory AgenticSignupResponse.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return AgenticSignupResponse(
-      apiKey: json['apiKey']! as String,
-      projectId: json['projectId']! as String,
+      apiKey: r.requireString('apiKey'),
+      projectId: r.requireString('projectId'),
     );
   }
 
@@ -39,10 +42,11 @@ class WalletSignupRequest {
   });
 
   factory WalletSignupRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return WalletSignupRequest(
-      walletAddress: json['walletAddress']! as String,
-      signature: json['signature']! as String,
-      message: json['message']! as String,
+      walletAddress: r.requireString('walletAddress'),
+      signature: r.requireString('signature'),
+      message: r.requireString('message'),
     );
   }
 
@@ -62,9 +66,10 @@ class WalletSignupResponse {
   const WalletSignupResponse({required this.apiKey, required this.projectId});
 
   factory WalletSignupResponse.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return WalletSignupResponse(
-      apiKey: json['apiKey']! as String,
-      projectId: json['projectId']! as String,
+      apiKey: r.requireString('apiKey'),
+      projectId: r.requireString('projectId'),
     );
   }
 
@@ -79,7 +84,8 @@ class CreateProjectRequest {
   const CreateProjectRequest({required this.name});
 
   factory CreateProjectRequest.fromJson(Map<String, Object?> json) {
-    return CreateProjectRequest(name: json['name']! as String);
+    final r = JsonReader(json);
+    return CreateProjectRequest(name: r.requireString('name'));
   }
 
   final String name;
@@ -97,11 +103,12 @@ class HeliusProject {
   });
 
   factory HeliusProject.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return HeliusProject(
-      id: json['id']! as String,
-      name: json['name']! as String,
-      apiKey: json['apiKey']! as String,
-      createdAt: json['createdAt']! as int,
+      id: r.requireString('id'),
+      name: r.requireString('name'),
+      apiKey: r.requireString('apiKey'),
+      createdAt: r.requireInt('createdAt'),
     );
   }
 
@@ -123,9 +130,10 @@ class CreateApiKeyRequest {
   const CreateApiKeyRequest({required this.projectId, required this.name});
 
   factory CreateApiKeyRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CreateApiKeyRequest(
-      projectId: json['projectId']! as String,
-      name: json['name']! as String,
+      projectId: r.requireString('projectId'),
+      name: r.requireString('name'),
     );
   }
 
@@ -145,11 +153,12 @@ class HeliusApiKey {
   });
 
   factory HeliusApiKey.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return HeliusApiKey(
-      id: json['id']! as String,
-      key: json['key']! as String,
-      name: json['name']! as String,
-      createdAt: json['createdAt']! as int,
+      id: r.requireString('id'),
+      key: r.requireString('key'),
+      name: r.requireString('name'),
+      createdAt: r.requireInt('createdAt'),
     );
   }
 
@@ -174,9 +183,10 @@ class CheckBalancesResponse {
   });
 
   factory CheckBalancesResponse.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return CheckBalancesResponse(
-      credits: json['credits']! as int,
-      creditsUsed: json['creditsUsed']! as int,
+      credits: r.requireInt('credits'),
+      creditsUsed: r.requireInt('creditsUsed'),
     );
   }
 
@@ -194,9 +204,10 @@ class KeypairResult {
   const KeypairResult({required this.publicKey, required this.secretKey});
 
   factory KeypairResult.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return KeypairResult(
-      publicKey: json['publicKey']! as String,
-      secretKey: json['secretKey']! as String,
+      publicKey: r.requireString('publicKey'),
+      secretKey: r.requireString('secretKey'),
     );
   }
 
@@ -217,9 +228,10 @@ class SignAuthMessageRequest {
   });
 
   factory SignAuthMessageRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
     return SignAuthMessageRequest(
-      message: json['message']! as String,
-      secretKey: json['secretKey']! as String,
+      message: r.requireString('message'),
+      secretKey: r.requireString('secretKey'),
     );
   }
 
@@ -234,7 +246,8 @@ class SignAuthMessageResponse {
   const SignAuthMessageResponse({required this.signature});
 
   factory SignAuthMessageResponse.fromJson(Map<String, Object?> json) {
-    return SignAuthMessageResponse(signature: json['signature']! as String);
+    final r = JsonReader(json);
+    return SignAuthMessageResponse(signature: r.requireString('signature'));
   }
 
   final String signature;

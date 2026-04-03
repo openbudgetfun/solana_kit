@@ -82,8 +82,10 @@ void main() {
       for (final errorName in knownErrors) {
         final error = getSolanaErrorFromTransactionError(errorName);
         expect(
-          error.code,
-          greaterThanOrEqualTo(SolanaErrorCode.transactionErrorAccountInUse),
+          error.code.value,
+          greaterThanOrEqualTo(
+            SolanaErrorCode.transactionErrorAccountInUse.value,
+          ),
           reason: 'Error $errorName should have a valid error code',
         );
       }

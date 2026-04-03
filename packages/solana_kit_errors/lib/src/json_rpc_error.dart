@@ -10,9 +10,17 @@ SolanaError getSolanaErrorFromJsonRpcError(Object? putativeErrorResponse) {
   if (_isRpcErrorResponse(putativeErrorResponse)) {
     final response = putativeErrorResponse! as Map<String, Object?>;
     final rawCode = response['code']!;
-    final code = rawCode is num ? rawCode.toInt() : rawCode as int;
+    final codeInt = rawCode is num ? rawCode.toInt() : rawCode as int;
     final message = response['message']! as String;
     final data = response['data'];
+
+    final code = SolanaErrorCode.fromValue(codeInt);
+    if (code == null) {
+      return SolanaError(SolanaErrorCode.malformedJsonRpcError, {
+        'error': putativeErrorResponse,
+        'message': message,
+      });
+    }
 
     if (code ==
         SolanaErrorCode.jsonRpcServerErrorSendTransactionPreflightFailure) {
@@ -50,7 +58,7 @@ SolanaError getSolanaErrorFromJsonRpcError(Object? putativeErrorResponse) {
           .jsonRpcServerErrorTransactionPrecompileVerificationFailure:
       case SolanaErrorCode.jsonRpcServerErrorUnsupportedTransactionVersion:
         errorContext = {'__serverMessage': message};
-      default:
+      case _:
         if (data is Map<String, Object?>) {
           errorContext = data;
         }

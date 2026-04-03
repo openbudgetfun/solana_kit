@@ -16,7 +16,7 @@ void main() {
         (rpc) => rpc
             .getAccountInfo(
               testAddress,
-              const GetAccountInfoConfig(encoding: 'base64'),
+              const GetAccountInfoConfig(encoding: AccountEncoding.base64),
             )
             .send(),
         rpcResult: {
@@ -38,7 +38,7 @@ void main() {
         (rpc) => rpc
             .getAccountInfoValue(
               testAddress,
-              const GetAccountInfoConfig(encoding: 'base64'),
+              const GetAccountInfoConfig(encoding: AccountEncoding.base64),
             )
             .send(),
         rpcResult: {
@@ -220,7 +220,9 @@ void main() {
         (rpc) => rpc
             .getMultipleAccounts(
               [testAddress, secondAddress],
-              const GetMultipleAccountsConfig(encoding: 'base64'),
+              const GetMultipleAccountsConfig(
+                encoding: AccountEncoding.base64,
+              ),
             )
             .send(),
         rpcResult: {
@@ -244,7 +246,9 @@ void main() {
         (rpc) => rpc
             .getMultipleAccountsValue(
               [testAddress, secondAddress],
-              const GetMultipleAccountsConfig(encoding: 'base64'),
+              const GetMultipleAccountsConfig(
+                encoding: AccountEncoding.base64,
+              ),
             )
             .send(),
         rpcResult: {

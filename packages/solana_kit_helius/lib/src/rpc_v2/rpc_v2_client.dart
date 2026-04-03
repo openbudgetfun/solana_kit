@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/rpc_v2/get_all_program_accounts.dart';
 import 'package:solana_kit_helius/src/rpc_v2/get_all_token_accounts_by_owner.dart';

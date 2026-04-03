@@ -59,10 +59,8 @@ class BlockNotificationsConfig {
 
   /// Determines how the transaction property should be encoded in the
   /// response.
-  ///
-  /// One of `'base58'`, `'base64'`, `'json'`, or `'jsonParsed'`.
   /// Defaults to `'json'`.
-  final String? encoding;
+  final TransactionEncoding? encoding;
 
   /// The newest transaction version the caller wants to receive.
   ///
@@ -83,7 +81,7 @@ class BlockNotificationsConfig {
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
     if (commitment != null) json['commitment'] = commitment!.name;
-    if (encoding != null) json['encoding'] = encoding;
+    if (encoding != null) json['encoding'] = encoding!.toJson();
     if (maxSupportedTransactionVersion != null) {
       json['maxSupportedTransactionVersion'] = maxSupportedTransactionVersion;
     }

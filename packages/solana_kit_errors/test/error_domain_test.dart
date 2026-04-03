@@ -24,9 +24,9 @@ void main() {
       );
     });
 
-    test('returns unknown for uncategorized codes', () {
-      expect(getSolanaErrorDomain(123456789), SolanaErrorDomain.unknown);
-    });
+    // Note: SolanaErrorDomain.unknown is only reachable via getSolanaErrorDomain
+    // for enum values whose numeric value falls outside all known ranges.
+    // All current enum members map to a known domain.
   });
 
   group('domain helpers', () {

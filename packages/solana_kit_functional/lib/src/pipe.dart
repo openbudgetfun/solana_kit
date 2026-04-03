@@ -20,6 +20,12 @@
 ///     .pipe(setTransactionMessageLifetimeUsingBlockhash(blockhash))
 ///     .pipe(appendTransactionMessageInstruction(instruction));
 /// ```
+@Deprecated(
+  'Use the Pipe extension re-exported by '
+  'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart '
+  'or package:solana_kit/solana_kit.dart. This compatibility package will be '
+  'removed in a future release.',
+)
 extension Pipe<T> on T {
   /// Transforms this value using the given [transform] function and returns
   /// the result.

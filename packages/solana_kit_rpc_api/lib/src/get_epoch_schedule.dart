@@ -24,6 +24,34 @@ class EpochSchedule {
 
   /// Whether epochs start short and grow.
   final bool warmup;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is EpochSchedule &&
+          runtimeType == other.runtimeType &&
+          firstNormalEpoch == other.firstNormalEpoch &&
+          firstNormalSlot == other.firstNormalSlot &&
+          leaderScheduleSlotOffset == other.leaderScheduleSlotOffset &&
+          slotsPerEpoch == other.slotsPerEpoch &&
+          warmup == other.warmup;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    firstNormalEpoch,
+    firstNormalSlot,
+    leaderScheduleSlotOffset,
+    slotsPerEpoch,
+    warmup,
+  );
+
+  @override
+  String toString() =>
+      'EpochSchedule(firstNormalEpoch: $firstNormalEpoch, '
+      'firstNormalSlot: $firstNormalSlot, '
+      'leaderScheduleSlotOffset: $leaderScheduleSlotOffset, '
+      'slotsPerEpoch: $slotsPerEpoch, warmup: $warmup)';
 }
 
 /// Builds the JSON-RPC params list for `getEpochSchedule`.

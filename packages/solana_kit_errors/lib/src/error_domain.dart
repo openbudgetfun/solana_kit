@@ -71,77 +71,78 @@ enum SolanaErrorDomain {
 }
 
 /// Returns the [SolanaErrorDomain] for an error [code].
-SolanaErrorDomain getSolanaErrorDomain(int code) {
-  if (code >= -32768 && code <= -32000) {
+SolanaErrorDomain getSolanaErrorDomain(SolanaErrorCode code) {
+  final v = code.value;
+  if (v >= -32768 && v <= -32000) {
     return SolanaErrorDomain.jsonRpc;
   }
-  if (code >= 1 && code <= 10) {
+  if (v >= 1 && v <= 10) {
     return SolanaErrorDomain.general;
   }
-  if (code >= 2800000 && code <= 2800999) {
+  if (v >= 2800000 && v <= 2800999) {
     return SolanaErrorDomain.addresses;
   }
   // Includes a historical constant typo in the upstream-port map.
-  if ((code >= 3230000 && code <= 3230999) ||
+  if ((v >= 3230000 && v <= 3230999) ||
       code == SolanaErrorCode.accountsOneOrMoreAccountsNotFound) {
     return SolanaErrorDomain.accounts;
   }
-  if (code >= 3610000 && code <= 3610999) {
+  if (v >= 3610000 && v <= 3610999) {
     return SolanaErrorDomain.subtleCrypto;
   }
-  if (code >= 3611000 && code <= 3611050) {
+  if (v >= 3611000 && v <= 3611050) {
     return SolanaErrorDomain.crypto;
   }
-  if (code >= 3704000 && code <= 3704999) {
+  if (v >= 3704000 && v <= 3704999) {
     return SolanaErrorDomain.keys;
   }
-  if (code >= 4128000 && code <= 4128999) {
+  if (v >= 4128000 && v <= 4128999) {
     return SolanaErrorDomain.instruction;
   }
-  if (code >= 4615000 && code <= 4615999) {
+  if (v >= 4615000 && v <= 4615999) {
     return SolanaErrorDomain.instructionError;
   }
-  if (code >= 5508000 && code <= 5508999) {
+  if (v >= 5508000 && v <= 5508999) {
     return SolanaErrorDomain.signer;
   }
-  if (code >= 5607000 && code <= 5607999) {
+  if (v >= 5607000 && v <= 5607999) {
     return SolanaErrorDomain.offchainMessage;
   }
-  if (code >= 5663000 && code <= 5663999) {
+  if (v >= 5663000 && v <= 5663999) {
     return SolanaErrorDomain.transaction;
   }
-  if (code >= 7050000 && code <= 7050999) {
+  if (v >= 7050000 && v <= 7050999) {
     return SolanaErrorDomain.transactionError;
   }
-  if (code >= 7618000 && code <= 7618999) {
+  if (v >= 7618000 && v <= 7618999) {
     return SolanaErrorDomain.instructionPlans;
   }
-  if (code >= 8078000 && code <= 8078999) {
+  if (v >= 8078000 && v <= 8078999) {
     return SolanaErrorDomain.codecs;
   }
-  if (code >= 8100000 && code <= 8100999) {
+  if (v >= 8100000 && v <= 8100999) {
     return SolanaErrorDomain.rpc;
   }
-  if (code >= 8190000 && code <= 8190999) {
+  if (v >= 8190000 && v <= 8190999) {
     return SolanaErrorDomain.rpcSubscriptions;
   }
-  if (code >= 8400000 && code <= 8400199) {
+  if (v >= 8400000 && v <= 8400199) {
     return SolanaErrorDomain.mobileWalletAdapter;
   }
-  if (code >= 8500000 && code <= 8500999) {
+  if (v >= 8500000 && v <= 8500999) {
     return SolanaErrorDomain.programClients;
   }
-  if (code >= 8600000 && code <= 8600099) {
+  if (v >= 8600000 && v <= 8600099) {
     return SolanaErrorDomain.helius;
   }
-  if (code >= 9900000 && code <= 9900999) {
+  if (v >= 9900000 && v <= 9900999) {
     return SolanaErrorDomain.invariantViolation;
   }
   return SolanaErrorDomain.unknown;
 }
 
 /// Returns `true` when [code] belongs to [domain].
-bool isSolanaErrorCodeInDomain(int code, SolanaErrorDomain domain) {
+bool isSolanaErrorCodeInDomain(SolanaErrorCode code, SolanaErrorDomain domain) {
   return getSolanaErrorDomain(code) == domain;
 }
 
@@ -159,12 +160,12 @@ extension SolanaErrorDomainExtension on SolanaError {
   bool isInDomain(SolanaErrorDomain domain) => this.domain == domain;
 }
 
-/// Typed domain helpers for raw integer error codes.
-extension SolanaErrorCodeDomainExtension on int {
-  /// The [SolanaErrorDomain] corresponding to this numeric code.
+/// Typed domain helpers for [SolanaErrorCode] enum values.
+extension SolanaErrorCodeDomainExtension on SolanaErrorCode {
+  /// The [SolanaErrorDomain] corresponding to this error code.
   SolanaErrorDomain get solanaErrorDomain => getSolanaErrorDomain(this);
 
-  /// Returns `true` if this numeric code belongs to [domain].
+  /// Returns `true` if this error code belongs to [domain].
   bool isSolanaErrorDomain(SolanaErrorDomain domain) =>
       solanaErrorDomain == domain;
 }

@@ -32,6 +32,22 @@ class JsonParsedStakeConfigInfo {
 
   /// The warmup/cooldown rate.
   final double warmupCooldownRate;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedStakeConfigInfo &&
+          runtimeType == other.runtimeType &&
+          slashPenalty == other.slashPenalty &&
+          warmupCooldownRate == other.warmupCooldownRate;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, slashPenalty, warmupCooldownRate);
+
+  @override
+  String toString() =>
+      'JsonParsedStakeConfigInfo(slashPenalty: $slashPenalty, '
+      'warmupCooldownRate: $warmupCooldownRate)';
 }
 
 /// A parsed Config program 'validatorInfo' variant.
@@ -59,6 +75,22 @@ class JsonParsedValidatorInfoData {
 
   /// The list of keys associated with this validator info.
   final List<JsonParsedValidatorInfoKey> keys;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedValidatorInfoData &&
+          runtimeType == other.runtimeType &&
+          configData == other.configData &&
+          _listEquals(keys, other.keys);
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, configData, Object.hashAll(keys));
+
+  @override
+  String toString() =>
+      'JsonParsedValidatorInfoData(configData: $configData, keys: $keys)';
 }
 
 /// A key entry in a parsed validator info account.
@@ -74,4 +106,28 @@ class JsonParsedValidatorInfoKey {
 
   /// Whether this key is a signer.
   final bool signer;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedValidatorInfoKey &&
+          runtimeType == other.runtimeType &&
+          pubkey == other.pubkey &&
+          signer == other.signer;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, pubkey, signer);
+
+  @override
+  String toString() =>
+      'JsonParsedValidatorInfoKey(pubkey: $pubkey, signer: $signer)';
+}
+
+bool _listEquals<T>(List<T> a, List<T> b) {
+  if (identical(a, b)) return true;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
 }

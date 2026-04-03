@@ -316,7 +316,7 @@ This umbrella package re-exports the following packages:
 | `solana_kit_codecs`                   | Codec umbrella (core, numbers, strings, data structures) |
 | `solana_kit_errors`                   | Error codes, error class, and error conversion           |
 | `solana_kit_fast_stable_stringify`    | Deterministic JSON serialization                         |
-| `solana_kit_functional`               | Functional programming utilities (pipe, compose)         |
+| `solana_kit_functional`               | Deprecated compatibility shim for `pipe()`               |
 | `solana_kit_instruction_plans`        | Instruction plan composition                             |
 | `solana_kit_instructions`             | Instruction types and account meta                       |
 | `solana_kit_keys`                     | Key pair generation and signature types                  |

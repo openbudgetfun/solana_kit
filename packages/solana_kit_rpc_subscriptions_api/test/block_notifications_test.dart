@@ -34,7 +34,7 @@ void main() {
     });
 
     test('toJson includes encoding when set', () {
-      const config = BlockNotificationsConfig(encoding: 'base64');
+      const config = BlockNotificationsConfig(encoding: TransactionEncoding.base64);
       final json = config.toJson();
       expect(json, hasLength(1));
       expect(json['encoding'], 'base64');
@@ -66,7 +66,7 @@ void main() {
     test('toJson includes all fields when all set', () {
       const config = BlockNotificationsConfig(
         commitment: Commitment.confirmed,
-        encoding: 'json',
+        encoding: TransactionEncoding.json,
         maxSupportedTransactionVersion: 0,
         showRewards: true,
         transactionDetails: 'full',

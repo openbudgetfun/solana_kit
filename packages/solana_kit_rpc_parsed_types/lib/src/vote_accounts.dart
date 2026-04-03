@@ -49,6 +49,43 @@ class JsonParsedVoteInfo {
 
   /// The list of votes.
   final List<JsonParsedVote> votes;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedVoteInfo &&
+          runtimeType == other.runtimeType &&
+          _listEquals(authorizedVoters, other.authorizedVoters) &&
+          authorizedWithdrawer == other.authorizedWithdrawer &&
+          commission == other.commission &&
+          _listEquals(epochCredits, other.epochCredits) &&
+          lastTimestamp == other.lastTimestamp &&
+          nodePubkey == other.nodePubkey &&
+          _listEquals(priorVoters, other.priorVoters) &&
+          rootSlot == other.rootSlot &&
+          _listEquals(votes, other.votes);
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    Object.hashAll(authorizedVoters),
+    authorizedWithdrawer,
+    commission,
+    Object.hashAll(epochCredits),
+    lastTimestamp,
+    nodePubkey,
+    Object.hashAll(priorVoters),
+    rootSlot,
+    Object.hashAll(votes),
+  );
+
+  @override
+  String toString() =>
+      'JsonParsedVoteInfo(authorizedVoters: $authorizedVoters, '
+      'authorizedWithdrawer: $authorizedWithdrawer, commission: $commission, '
+      'epochCredits: $epochCredits, lastTimestamp: $lastTimestamp, '
+      'nodePubkey: $nodePubkey, priorVoters: $priorVoters, '
+      'rootSlot: $rootSlot, votes: $votes)';
 }
 
 /// An authorized voter entry in a vote account.
@@ -64,6 +101,22 @@ class JsonParsedAuthorizedVoter {
 
   /// The epoch for which this voter is authorized.
   final Epoch epoch;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedAuthorizedVoter &&
+          runtimeType == other.runtimeType &&
+          authorizedVoter == other.authorizedVoter &&
+          epoch == other.epoch;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, authorizedVoter, epoch);
+
+  @override
+  String toString() =>
+      'JsonParsedAuthorizedVoter(authorizedVoter: $authorizedVoter, '
+      'epoch: $epoch)';
 }
 
 /// An epoch credit entry in a vote account.
@@ -83,6 +136,24 @@ class JsonParsedEpochCredit {
 
   /// The credits from the previous epoch.
   final StringifiedBigInt previousCredits;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedEpochCredit &&
+          runtimeType == other.runtimeType &&
+          credits == other.credits &&
+          epoch == other.epoch &&
+          previousCredits == other.previousCredits;
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, credits, epoch, previousCredits);
+
+  @override
+  String toString() =>
+      'JsonParsedEpochCredit(credits: $credits, epoch: $epoch, '
+      'previousCredits: $previousCredits)';
 }
 
 /// The last timestamp recorded by a vote account.
@@ -95,6 +166,21 @@ class JsonParsedLastTimestamp {
 
   /// The Unix timestamp.
   final UnixTimestamp timestamp;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedLastTimestamp &&
+          runtimeType == other.runtimeType &&
+          slot == other.slot &&
+          timestamp == other.timestamp;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, slot, timestamp);
+
+  @override
+  String toString() =>
+      'JsonParsedLastTimestamp(slot: $slot, timestamp: $timestamp)';
 }
 
 /// A prior voter entry in a vote account.
@@ -114,6 +200,29 @@ class JsonParsedPriorVoter {
 
   /// The target epoch.
   final Epoch targetEpoch;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedPriorVoter &&
+          runtimeType == other.runtimeType &&
+          authorizedPubkey == other.authorizedPubkey &&
+          epochOfLastAuthorizedSwitch == other.epochOfLastAuthorizedSwitch &&
+          targetEpoch == other.targetEpoch;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    authorizedPubkey,
+    epochOfLastAuthorizedSwitch,
+    targetEpoch,
+  );
+
+  @override
+  String toString() =>
+      'JsonParsedPriorVoter(authorizedPubkey: $authorizedPubkey, '
+      'epochOfLastAuthorizedSwitch: $epochOfLastAuthorizedSwitch, '
+      'targetEpoch: $targetEpoch)';
 }
 
 /// A vote entry in a vote account.
@@ -126,4 +235,28 @@ class JsonParsedVote {
 
   /// The slot that was voted on.
   final Slot slot;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedVote &&
+          runtimeType == other.runtimeType &&
+          confirmationCount == other.confirmationCount &&
+          slot == other.slot;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, confirmationCount, slot);
+
+  @override
+  String toString() =>
+      'JsonParsedVote(confirmationCount: $confirmationCount, slot: $slot)';
+}
+
+bool _listEquals<T>(List<T> a, List<T> b) {
+  if (identical(a, b)) return true;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
 }

@@ -63,7 +63,7 @@ void main() {
     myAddress,
     AccountNotificationsConfig(
       commitment: Commitment.confirmed,
-      encoding: 'base64',
+      encoding: AccountEncoding.base64,
     ),
   );
 
@@ -143,7 +143,7 @@ void main() {
     tokenProgram,
     ProgramNotificationsConfig(
       commitment: Commitment.confirmed,
-      encoding: 'base64',
+      encoding: AccountEncoding.base64,
       filters: [
         {'dataSize': 165}, // Token account size.
       ],

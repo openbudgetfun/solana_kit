@@ -61,6 +61,53 @@ class ClusterNode {
 
   /// The software version of the node.
   final String? version;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ClusterNode &&
+          runtimeType == other.runtimeType &&
+          featureSet == other.featureSet &&
+          gossip == other.gossip &&
+          pubkey == other.pubkey &&
+          pubsub == other.pubsub &&
+          rpc == other.rpc &&
+          serveRepair == other.serveRepair &&
+          shredVersion == other.shredVersion &&
+          tpu == other.tpu &&
+          tpuForwards == other.tpuForwards &&
+          tpuForwardsQuic == other.tpuForwardsQuic &&
+          tpuQuic == other.tpuQuic &&
+          tpuVote == other.tpuVote &&
+          tvu == other.tvu &&
+          version == other.version;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    featureSet,
+    gossip,
+    pubkey,
+    pubsub,
+    rpc,
+    serveRepair,
+    shredVersion,
+    tpu,
+    tpuForwards,
+    tpuForwardsQuic,
+    tpuQuic,
+    tpuVote,
+    tvu,
+    version,
+  );
+
+  @override
+  String toString() =>
+      'ClusterNode(pubkey: $pubkey, featureSet: $featureSet, gossip: $gossip, '
+      'pubsub: $pubsub, rpc: $rpc, serveRepair: $serveRepair, '
+      'shredVersion: $shredVersion, tpu: $tpu, tpuForwards: $tpuForwards, '
+      'tpuForwardsQuic: $tpuForwardsQuic, tpuQuic: $tpuQuic, '
+      'tpuVote: $tpuVote, tvu: $tvu, version: $version)';
 }
 
 /// Builds the JSON-RPC params list for `getClusterNodes`.

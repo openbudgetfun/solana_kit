@@ -78,6 +78,45 @@ class JsonParsedTokenAccount {
 
   /// The token balance.
   final TokenAmount tokenAmount;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedTokenAccount &&
+          runtimeType == other.runtimeType &&
+          closeAuthority == other.closeAuthority &&
+          delegate == other.delegate &&
+          delegatedAmount == other.delegatedAmount &&
+          _nullableListEquals(extensions, other.extensions) &&
+          isNative == other.isNative &&
+          mint == other.mint &&
+          owner == other.owner &&
+          rentExemptReserve == other.rentExemptReserve &&
+          state == other.state &&
+          tokenAmount == other.tokenAmount;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    closeAuthority,
+    delegate,
+    delegatedAmount,
+    extensions == null ? null : Object.hashAll(extensions!),
+    isNative,
+    mint,
+    owner,
+    rentExemptReserve,
+    state,
+    tokenAmount,
+  );
+
+  @override
+  String toString() =>
+      'JsonParsedTokenAccount(closeAuthority: $closeAuthority, '
+      'delegate: $delegate, delegatedAmount: $delegatedAmount, '
+      'extensions: $extensions, isNative: $isNative, mint: $mint, '
+      'owner: $owner, rentExemptReserve: $rentExemptReserve, '
+      'state: $state, tokenAmount: $tokenAmount)';
 }
 
 /// A parsed Token program 'mint' variant.
@@ -116,6 +155,35 @@ class JsonParsedMintInfo {
 
   /// The total supply.
   final StringifiedBigInt supply;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedMintInfo &&
+          runtimeType == other.runtimeType &&
+          decimals == other.decimals &&
+          _nullableListEquals(extensions, other.extensions) &&
+          freezeAuthority == other.freezeAuthority &&
+          isInitialized == other.isInitialized &&
+          mintAuthority == other.mintAuthority &&
+          supply == other.supply;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    decimals,
+    extensions == null ? null : Object.hashAll(extensions!),
+    freezeAuthority,
+    isInitialized,
+    mintAuthority,
+    supply,
+  );
+
+  @override
+  String toString() =>
+      'JsonParsedMintInfo(decimals: $decimals, extensions: $extensions, '
+      'freezeAuthority: $freezeAuthority, isInitialized: $isInitialized, '
+      'mintAuthority: $mintAuthority, supply: $supply)';
 }
 
 /// A parsed Token program 'multisig' variant.
@@ -148,4 +216,44 @@ class JsonParsedMultisigInfo {
 
   /// The list of signer addresses.
   final List<Address> signers;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedMultisigInfo &&
+          runtimeType == other.runtimeType &&
+          isInitialized == other.isInitialized &&
+          numRequiredSigners == other.numRequiredSigners &&
+          numValidSigners == other.numValidSigners &&
+          _listEquals(signers, other.signers);
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    isInitialized,
+    numRequiredSigners,
+    numValidSigners,
+    Object.hashAll(signers),
+  );
+
+  @override
+  String toString() =>
+      'JsonParsedMultisigInfo(isInitialized: $isInitialized, '
+      'numRequiredSigners: $numRequiredSigners, '
+      'numValidSigners: $numValidSigners, signers: $signers)';
+}
+
+bool _listEquals<T>(List<T> a, List<T> b) {
+  if (identical(a, b)) return true;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+bool _nullableListEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return false;
+  return _listEquals(a, b);
 }

@@ -39,6 +39,20 @@ class JsonParsedStakeAccountInfo {
 
   /// The stake delegation data, or `null` if not yet delegated.
   final JsonParsedStakeData? stake;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedStakeAccountInfo &&
+          runtimeType == other.runtimeType &&
+          meta == other.meta &&
+          stake == other.stake;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, meta, stake);
+
+  @override
+  String toString() => 'JsonParsedStakeAccountInfo(meta: $meta, stake: $stake)';
 }
 
 /// Metadata for a parsed stake account.
@@ -58,6 +72,24 @@ class JsonParsedStakeMeta {
 
   /// The rent-exempt reserve amount.
   final StringifiedBigInt rentExemptReserve;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedStakeMeta &&
+          runtimeType == other.runtimeType &&
+          authorized == other.authorized &&
+          lockup == other.lockup &&
+          rentExemptReserve == other.rentExemptReserve;
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, authorized, lockup, rentExemptReserve);
+
+  @override
+  String toString() =>
+      'JsonParsedStakeMeta(authorized: $authorized, lockup: $lockup, '
+      'rentExemptReserve: $rentExemptReserve)';
 }
 
 /// The authorized staker and withdrawer for a stake account.
@@ -73,6 +105,21 @@ class JsonParsedStakeAuthorized {
 
   /// The address authorized to withdraw.
   final Address withdrawer;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedStakeAuthorized &&
+          runtimeType == other.runtimeType &&
+          staker == other.staker &&
+          withdrawer == other.withdrawer;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, staker, withdrawer);
+
+  @override
+  String toString() =>
+      'JsonParsedStakeAuthorized(staker: $staker, withdrawer: $withdrawer)';
 }
 
 /// The lockup configuration for a stake account.
@@ -92,6 +139,23 @@ class JsonParsedStakeLockup {
 
   /// The Unix timestamp at which the lockup expires.
   final UnixTimestamp unixTimestamp;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedStakeLockup &&
+          runtimeType == other.runtimeType &&
+          custodian == other.custodian &&
+          epoch == other.epoch &&
+          unixTimestamp == other.unixTimestamp;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, custodian, epoch, unixTimestamp);
+
+  @override
+  String toString() =>
+      'JsonParsedStakeLockup(custodian: $custodian, epoch: $epoch, '
+      'unixTimestamp: $unixTimestamp)';
 }
 
 /// The stake delegation data for a stake account.
@@ -107,6 +171,22 @@ class JsonParsedStakeData {
 
   /// The delegation details.
   final JsonParsedStakeDelegation delegation;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedStakeData &&
+          runtimeType == other.runtimeType &&
+          creditsObserved == other.creditsObserved &&
+          delegation == other.delegation;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, creditsObserved, delegation);
+
+  @override
+  String toString() =>
+      'JsonParsedStakeData(creditsObserved: $creditsObserved, '
+      'delegation: $delegation)';
 }
 
 /// The delegation details for a stake account.
@@ -134,4 +214,31 @@ class JsonParsedStakeDelegation {
 
   /// The warmup/cooldown rate.
   final double warmupCooldownRate;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedStakeDelegation &&
+          runtimeType == other.runtimeType &&
+          activationEpoch == other.activationEpoch &&
+          deactivationEpoch == other.deactivationEpoch &&
+          stake == other.stake &&
+          voter == other.voter &&
+          warmupCooldownRate == other.warmupCooldownRate;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    activationEpoch,
+    deactivationEpoch,
+    stake,
+    voter,
+    warmupCooldownRate,
+  );
+
+  @override
+  String toString() =>
+      'JsonParsedStakeDelegation(activationEpoch: $activationEpoch, '
+      'deactivationEpoch: $deactivationEpoch, stake: $stake, '
+      'voter: $voter, warmupCooldownRate: $warmupCooldownRate)';
 }

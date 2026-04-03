@@ -34,4 +34,41 @@ class JsonParsedAddressLookupTableInfo {
 
   /// The start index of the last extension within the slot.
   final int lastExtendedSlotStartIndex;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is JsonParsedAddressLookupTableInfo &&
+          runtimeType == other.runtimeType &&
+          _listEquals(addresses, other.addresses) &&
+          authority == other.authority &&
+          deactivationSlot == other.deactivationSlot &&
+          lastExtendedSlot == other.lastExtendedSlot &&
+          lastExtendedSlotStartIndex == other.lastExtendedSlotStartIndex;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    Object.hashAll(addresses),
+    authority,
+    deactivationSlot,
+    lastExtendedSlot,
+    lastExtendedSlotStartIndex,
+  );
+
+  @override
+  String toString() =>
+      'JsonParsedAddressLookupTableInfo(addresses: $addresses, '
+      'authority: $authority, deactivationSlot: $deactivationSlot, '
+      'lastExtendedSlot: $lastExtendedSlot, '
+      'lastExtendedSlotStartIndex: $lastExtendedSlotStartIndex)';
+}
+
+bool _listEquals<T>(List<T> a, List<T> b) {
+  if (identical(a, b)) return true;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
 }

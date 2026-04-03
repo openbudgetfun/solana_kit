@@ -114,8 +114,10 @@ void main() {
       for (final errorName in knownErrors) {
         final error = getSolanaErrorFromInstructionError(0, errorName);
         expect(
-          error.code,
-          greaterThanOrEqualTo(SolanaErrorCode.instructionErrorGenericError),
+          error.code.value,
+          greaterThanOrEqualTo(
+            SolanaErrorCode.instructionErrorGenericError.value,
+          ),
           reason: 'Error $errorName should have a valid error code',
         );
       }

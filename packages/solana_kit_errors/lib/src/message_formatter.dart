@@ -1,11 +1,15 @@
+import 'package:solana_kit_errors/src/codes.dart';
 import 'package:solana_kit_errors/src/messages.dart';
 
 /// Returns the human-readable error message for the given error [code],
 /// with `$variable` placeholders interpolated from [context].
-String getErrorMessage(int code, [Map<String, Object?> context = const {}]) {
+String getErrorMessage(
+  SolanaErrorCode code, [
+  Map<String, Object?> context = const {},
+]) {
   final template = solanaErrorMessages[code];
   if (template == null || template.isEmpty) {
-    return 'Solana error #$code';
+    return 'Solana error #${code.value}';
   }
   return _interpolate(template, context);
 }

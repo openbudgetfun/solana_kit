@@ -5,49 +5,80 @@ import 'package:test/test.dart';
 void main() {
   group('isSolanaErrorWithCode', () {
     test('matches a SolanaError with the correct code', () {
-      final error = SolanaError(1);
-      expect(error, isSolanaErrorWithCode(1));
+      final error = SolanaError(SolanaErrorCode.blockHeightExceeded);
+      expect(error, isSolanaErrorWithCode(SolanaErrorCode.blockHeightExceeded));
     });
 
     test('does not match a SolanaError with a different code', () {
-      final error = SolanaError(1);
-      expect(error, isNot(isSolanaErrorWithCode(2)));
+      final error = SolanaError(SolanaErrorCode.blockHeightExceeded);
+      expect(error, isNot(isSolanaErrorWithCode(SolanaErrorCode.invalidNonce)));
     });
 
     test('does not match non-SolanaError objects', () {
-      expect(Exception('oops'), isNot(isSolanaErrorWithCode(1)));
+      expect(
+        Exception('oops'),
+        isNot(isSolanaErrorWithCode(SolanaErrorCode.blockHeightExceeded)),
+      );
     });
   });
 
   group('throwsSolanaErrorWithCode', () {
     test('matches when function throws SolanaError with correct code', () {
-      expect(() => throw SolanaError(42), throwsSolanaErrorWithCode(42));
+      expect(
+        () => throw SolanaError(SolanaErrorCode.addressesMaxPdaSeedLengthExceeded),
+        throwsSolanaErrorWithCode(
+          SolanaErrorCode.addressesMaxPdaSeedLengthExceeded,
+        ),
+      );
     });
 
     test('does not match when function throws different code', () {
-      expect(() => throw SolanaError(42), isNot(throwsSolanaErrorWithCode(99)));
+      expect(
+        () => throw SolanaError(SolanaErrorCode.addressesMaxPdaSeedLengthExceeded),
+        isNot(throwsSolanaErrorWithCode(SolanaErrorCode.nonceAccountNotFound)),
+      );
     });
   });
 
   group('isSolanaErrorWithCodeAndContext', () {
     test('matches when code and context match', () {
-      final error = SolanaError(1, {'key': 'value'});
-      expect(error, isSolanaErrorWithCodeAndContext(1, {'key': 'value'}));
+      final error = SolanaError(
+        SolanaErrorCode.blockHeightExceeded,
+        {'key': 'value'},
+      );
+      expect(
+        error,
+        isSolanaErrorWithCodeAndContext(
+          SolanaErrorCode.blockHeightExceeded,
+          {'key': 'value'},
+        ),
+      );
     });
 
     test('does not match when context differs', () {
-      final error = SolanaError(1, {'key': 'wrong'});
+      final error = SolanaError(
+        SolanaErrorCode.blockHeightExceeded,
+        {'key': 'wrong'},
+      );
       expect(
         error,
-        isNot(isSolanaErrorWithCodeAndContext(1, {'key': 'value'})),
+        isNot(
+          isSolanaErrorWithCodeAndContext(
+            SolanaErrorCode.blockHeightExceeded,
+            {'key': 'value'},
+          ),
+        ),
       );
     });
   });
 
   group('isSolanaErrorMatcher', () {
     test('matches any SolanaError', () {
-      expect(SolanaError(1), isSolanaErrorMatcher);
-      expect(SolanaError(2, {'a': 'b'}), isSolanaErrorMatcher);
+      expect(SolanaError(SolanaErrorCode.blockHeightExceeded), isSolanaErrorMatcher);
+      expect(
+        SolanaError(SolanaErrorCode.invalidNonce, {'a': 'b'}),
+        isSolanaErrorMatcher,
+      );
     });
 
     test('does not match non-SolanaError', () {
@@ -58,7 +89,10 @@ void main() {
 
   group('throwsSolanaError', () {
     test('matches when function throws any SolanaError', () {
-      expect(() => throw SolanaError(99), throwsSolanaError);
+      expect(
+        () => throw SolanaError(SolanaErrorCode.nonceAccountNotFound),
+        throwsSolanaError,
+      );
     });
 
     test('does not match when function throws non-SolanaError', () {

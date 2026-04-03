@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 import 'package:solana_kit_helius/src/auth/agentic_signup.dart';
 import 'package:solana_kit_helius/src/auth/check_balances.dart';
 import 'package:solana_kit_helius/src/auth/create_api_key.dart';

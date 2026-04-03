@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 // Legacy deprecated fields are retained for backward compatibility.
 // ignore_for_file: remove_deprecations_in_breaking_versions
 
@@ -35,4 +36,23 @@ class TokenAmount {
   /// The string representation will use a decimal when necessary, but will
   /// never contain trailing zeros to the right of the decimal place.
   final StringifiedNumber uiAmountString;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TokenAmount &&
+          runtimeType == other.runtimeType &&
+          amount == other.amount &&
+          decimals == other.decimals &&
+          uiAmount == other.uiAmount &&
+          uiAmountString == other.uiAmountString;
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, amount, decimals, uiAmount, uiAmountString);
+
+  @override
+  String toString() =>
+      'TokenAmount(amount: $amount, decimals: $decimals, '
+      'uiAmount: $uiAmount, uiAmountString: $uiAmountString)';
 }

@@ -32,6 +32,10 @@ class PendingRpcSubscriptionsRequest<TNotification> {
   ///
   /// Returns a [Stream] that emits notifications of type [TNotification].
   /// The subscription will be cancelled when the abort signal fires.
+  ///
+  /// This is the preferred Dart-facing surface for subscriptions even though
+  /// the underlying transport still uses `DataPublisher` as a compatibility
+  /// layer.
   Future<Stream<TNotification>> subscribe(RpcSubscribeOptions options) async {
     final notificationsDataPublisher = await _transport(
       RpcSubscriptionsTransportConfig(

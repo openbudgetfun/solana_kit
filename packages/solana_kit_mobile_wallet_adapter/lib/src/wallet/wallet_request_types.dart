@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 import 'dart:async';
 
 import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';

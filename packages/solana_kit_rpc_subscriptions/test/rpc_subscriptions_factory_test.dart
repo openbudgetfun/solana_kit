@@ -122,7 +122,7 @@ void main() {
           .accountNotifications(
             testAccountAddressB,
             const AccountNotificationsConfig(
-              encoding: 'base64',
+              encoding: AccountEncoding.base64,
               commitment: Commitment.confirmed,
             ),
           )
@@ -180,7 +180,7 @@ void main() {
             const BlockFilterMentionsAccountOrProgram(testAccountAddressA),
             const BlockNotificationsConfig(
               commitment: Commitment.finalized,
-              encoding: 'json',
+              encoding: TransactionEncoding.json,
               showRewards: false,
               transactionDetails: 'signatures',
             ),
@@ -197,7 +197,7 @@ void main() {
             testProgramAddress,
             const ProgramNotificationsConfig(
               commitment: Commitment.processed,
-              encoding: 'base64',
+              encoding: AccountEncoding.base64,
               filters: [
                 {'dataSize': 165},
               ],

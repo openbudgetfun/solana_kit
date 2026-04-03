@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 import 'package:solana_kit_helius/src/internal/rest_client.dart';
 import 'package:solana_kit_helius/src/types/webhook_types.dart';
 import 'package:solana_kit_helius/src/webhooks/create_webhook.dart';

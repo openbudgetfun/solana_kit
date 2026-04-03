@@ -9,9 +9,10 @@ void main() {
       expect(message, contains('block'));
     });
 
-    test('returns fallback for unknown error code', () {
-      final message = getErrorMessage(999999);
-      expect(message, contains('999999'));
+    test('all enum values have non-empty messages', () {
+      for (final code in SolanaErrorCode.values) {
+        expect(getErrorMessage(code), isNotEmpty);
+      }
     });
 
     test('interpolates single variable', () {
