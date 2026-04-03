@@ -14,7 +14,6 @@ in
     with pkgs;
     [
       dprint
-      eget
       fvm
       gitleaks
       ktlint
@@ -39,9 +38,6 @@ in
   # Rely on the global sdk for now as the nix apple sdk is not working for me.
   apple.sdk = null;
 
-  env = {
-    EGET_CONFIG = "${config.env.DEVENV_ROOT}/.eget/.eget.toml";
-  };
 
   git-hooks = {
     package = pkgs.prek;
@@ -142,7 +138,6 @@ in
     "install:all" = {
       exec = ''
         set -e
-        install:eget
         install:dart
       '';
       description = "Run all install scripts.";
@@ -155,20 +150,6 @@ in
       '';
       description = "Install dart dependencies";
       binary = "bash";
-    };
-    "install:eget" = {
-      exec = ''
-        HASH=$(nix hash path --base32 ./.eget/.eget.toml)
-        echo "HASH: $HASH"
-        if [ ! -f ./.eget/bin/hash ] || [ "$HASH" != "$(cat ./.eget/bin/hash)" ]; then
-          echo "Updating eget binaries"
-          eget -D --to "$DEVENV_ROOT/.eget/bin"
-          echo "$HASH" > ./.eget/bin/hash
-        else
-          echo "eget binaries are up to date"
-        fi
-      '';
-      description = "Install github binaries with eget.";
     };
     "fix:all" = {
       exec = ''
