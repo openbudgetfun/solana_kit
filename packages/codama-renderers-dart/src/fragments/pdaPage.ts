@@ -110,13 +110,13 @@ Future<(Address, int)> ${fragmentFromString(findFnName)}({
 ${fragmentFromString(seedsParam)}
   ${fragmentFromString(programIdParam)},
 }) async {
-  final seeds = <Object>[
+  final seedValues = <Object>[
 ${fragmentFromString(seedValues.join("\n"))}
   ];
 
   return getProgramDerivedAddress(
     programAddress: programAddress,
-    seeds: seeds,
+    seeds: seedValues,
   );
 }`);
 
