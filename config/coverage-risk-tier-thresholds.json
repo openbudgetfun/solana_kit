@@ -6,9 +6,74 @@
       "minimumLineCoverage": 90
     },
     {
+      "package": "solana_kit_addresses",
+      "risk": "critical",
+      "minimumLineCoverage": 80
+    },
+    {
+      "package": "solana_kit_codecs_core",
+      "risk": "critical",
+      "minimumLineCoverage": 80
+    },
+    {
+      "package": "solana_kit_codecs_numbers",
+      "risk": "critical",
+      "minimumLineCoverage": 80
+    },
+    {
+      "package": "solana_kit_codecs_strings",
+      "risk": "critical",
+      "minimumLineCoverage": 80
+    },
+    {
+      "package": "solana_kit_codecs_data_structures",
+      "risk": "critical",
+      "minimumLineCoverage": 80
+    },
+    {
+      "package": "solana_kit_errors",
+      "risk": "critical",
+      "minimumLineCoverage": 80
+    },
+    {
       "package": "solana_kit_helius",
       "risk": "critical",
       "minimumLineCoverage": 90
+    },
+    {
+      "package": "solana_kit_instructions",
+      "risk": "critical",
+      "minimumLineCoverage": 80
+    },
+    {
+      "package": "solana_kit_keys",
+      "risk": "critical",
+      "minimumLineCoverage": 80
+    },
+    {
+      "package": "solana_kit_rpc",
+      "risk": "critical",
+      "minimumLineCoverage": 80
+    },
+    {
+      "package": "solana_kit_rpc_api",
+      "risk": "critical",
+      "minimumLineCoverage": 60
+    },
+    {
+      "package": "solana_kit_rpc_parsed_types",
+      "risk": "high",
+      "minimumLineCoverage": 55
+    },
+    {
+      "package": "solana_kit_rpc_spec",
+      "risk": "critical",
+      "minimumLineCoverage": 80
+    },
+    {
+      "package": "solana_kit_rpc_spec_types",
+      "risk": "high",
+      "minimumLineCoverage": 60
     },
     {
       "package": "solana_kit_rpc_subscriptions",
@@ -16,14 +81,49 @@
       "minimumLineCoverage": 90
     },
     {
+      "package": "solana_kit_rpc_subscriptions_api",
+      "risk": "high",
+      "minimumLineCoverage": 60
+    },
+    {
+      "package": "solana_kit_rpc_transformers",
+      "risk": "critical",
+      "minimumLineCoverage": 80
+    },
+    {
       "package": "solana_kit_rpc_types",
       "risk": "critical",
       "minimumLineCoverage": 78
     },
     {
+      "package": "solana_kit_signers",
+      "risk": "critical",
+      "minimumLineCoverage": 80
+    },
+    {
+      "package": "solana_kit_subscribable",
+      "risk": "high",
+      "minimumLineCoverage": 80
+    },
+    {
       "package": "solana_kit_test_matchers",
       "risk": "support",
       "minimumLineCoverage": 90
+    },
+    {
+      "package": "solana_kit_transaction_confirmation",
+      "risk": "critical",
+      "minimumLineCoverage": 60
+    },
+    {
+      "package": "solana_kit_transaction_messages",
+      "risk": "critical",
+      "minimumLineCoverage": 80
+    },
+    {
+      "package": "solana_kit_transactions",
+      "risk": "critical",
+      "minimumLineCoverage": 80
     }
   ]
 }

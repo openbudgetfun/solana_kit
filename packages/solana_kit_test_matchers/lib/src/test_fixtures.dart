@@ -55,14 +55,14 @@ Transaction createTransactionFixture({
 
 /// Builds a mock base64-encoded account payload using Solana RPC response
 /// fields.
-Map<String, dynamic> base64RpcAccountFixture({
+Map<String, Object?> base64RpcAccountFixture({
   String encodedData = 'somedata',
   bool executable = false,
   int lamports = 1000000000,
   Address owner = testOwnerAddress,
   int space = 6,
 }) {
-  return <String, dynamic>{
+  return <String, Object?>{
     'data': [encodedData, 'base64'],
     'executable': executable,
     'lamports': lamports,
@@ -72,8 +72,8 @@ Map<String, dynamic> base64RpcAccountFixture({
 }
 
 /// Builds a mock jsonParsed account payload using Solana RPC response fields.
-Map<String, dynamic> jsonParsedRpcAccountFixture({
-  Map<String, dynamic>? info,
+Map<String, Object?> jsonParsedRpcAccountFixture({
+  Map<String, Object?>? info,
   String type = 'token',
   String program = 'splToken',
   bool executable = false,
@@ -81,10 +81,10 @@ Map<String, dynamic> jsonParsedRpcAccountFixture({
   Address owner = testOwnerAddress,
   int space = 165,
 }) {
-  return <String, dynamic>{
-    'data': <String, dynamic>{
-      'parsed': <String, dynamic>{
-        'info': info ?? <String, dynamic>{'mint': '2222', 'owner': '3333'},
+  return <String, Object?>{
+    'data': <String, Object?>{
+      'parsed': <String, Object?>{
+        'info': info ?? <String, Object?>{'mint': '2222', 'owner': '3333'},
         'type': type,
       },
       'program': program,
@@ -100,11 +100,11 @@ Map<String, dynamic> jsonParsedRpcAccountFixture({
 /// Creates a mock [Rpc] that returns account fixtures for account-oriented
 /// tests.
 Rpc createAccountsFixtureRpc(
-  Map<Address, Map<String, dynamic>> accounts, {
+  Map<Address, Map<String, Object?>> accounts, {
   BigInt? slot,
 }) {
   final effectiveSlot = slot ?? BigInt.zero;
-  final accountMap = <String, Map<String, dynamic>>{
+  final accountMap = <String, Map<String, Object?>>{
     for (final entry in accounts.entries) entry.key.value: entry.value,
   };
 
@@ -112,8 +112,8 @@ Rpc createAccountsFixtureRpc(
     'getAccountInfo': (params) => RpcPlan<Object?>(
       execute: (_) async {
         final address = params[0]! as String;
-        return <String, dynamic>{
-          'context': <String, dynamic>{'slot': effectiveSlot},
+        return <String, Object?>{
+          'context': <String, Object?>{'slot': effectiveSlot},
           'value': accountMap[address],
         };
       },
@@ -121,8 +121,8 @@ Rpc createAccountsFixtureRpc(
     'getMultipleAccounts': (params) => RpcPlan<Object?>(
       execute: (_) async {
         final addresses = (params[0]! as List<Object?>).cast<String>();
-        return <String, dynamic>{
-          'context': <String, dynamic>{'slot': effectiveSlot},
+        return <String, Object?>{
+          'context': <String, Object?>{'slot': effectiveSlot},
           'value': addresses.map((address) => accountMap[address]).toList(),
         };
       },

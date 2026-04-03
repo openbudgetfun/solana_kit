@@ -56,7 +56,7 @@ class RpcConfig {
 /// There are two ways to create an [RpcApi]:
 ///
 /// 1. Use [JsonRpcApiAdapter] (wrapping a [JsonRpcApi] from
-///    [createJsonRpcApi]) for a dynamic approach where method names and
+///    [createJsonRpcApi]) for a Object? approach where method names and
 ///    params are passed as arguments.
 ///
 /// 2. Use [MapRpcApi] with a map of method handlers.
@@ -143,7 +143,7 @@ class Rpc {
   /// {@template solanaKitRpcSpecTypedRequest}
   /// Use the optional generic [TResponse] to express the expected response type.
   /// This helps downstream APIs expose typed convenience wrappers while
-  /// preserving the dynamic escape hatch.
+  /// preserving the Object? escape hatch.
   /// {@endtemplate}
   ///
   /// {@macro solanaKitRpcSpecRequestSummary}

@@ -25,7 +25,7 @@ class SolanaAccountClient {
           _getAccountInfoConfig(config, AccountEncoding.base64),
         )
         .send();
-    return parseBase64RpcAccount(address, _castRpcAccount(response.value));
+    return parseBase64RpcAccount(address, response.value);
   }
 
   /// Fetches encoded accounts using `getMultipleAccounts` with base64
@@ -45,7 +45,7 @@ class SolanaAccountClient {
       final accountData = index < response.value.length ? response.value[index] : null;
       return parseBase64RpcAccount(
         addresses[index],
-        _castRpcAccount(accountData),
+        accountData,
       );
     });
   }
@@ -63,7 +63,7 @@ class SolanaAccountClient {
         )
         .send();
 
-    final value = _castRpcAccount(response.value);
+    final value = response.value;
     if (value == null) {
       return parseBase64RpcAccount(address, null);
     }
@@ -90,9 +90,8 @@ class SolanaAccountClient {
         .send();
 
     return List.generate(addresses.length, (index) {
-      final accountData = _castRpcAccount(
-        index < response.value.length ? response.value[index] : null,
-      );
+      final accountData =
+          index < response.value.length ? response.value[index] : null;
       if (accountData == null) {
         return parseBase64RpcAccount(addresses[index], null)
             as MaybeAccount<Object>;
@@ -133,8 +132,4 @@ GetMultipleAccountsConfig _getMultipleAccountsConfig(
     encoding: encoding,
     minContextSlot: config?.minContextSlot,
   );
-}
-
-Map<String, dynamic>? _castRpcAccount(Map<String, Object?>? account) {
-  return account?.cast<String, dynamic>();
 }

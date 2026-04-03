@@ -23,6 +23,7 @@ in
       shfmt
       extra.knope
       extra.mdt
+      extra.surfpool
       (extra.pnpm-standalone.overrideAttrs { doInstallCheck = false; })
     ]
     ++ lib.optionals stdenv.isDarwin [
@@ -400,7 +401,7 @@ in
 
           pkg_name="$(basename "$pkg_dir")"
           echo "Testing $pkg_name..."
-          if ! dart test "$pkg_dir"; then
+          if ! dart test --exclude-tags integration "$pkg_dir"; then
             failed=1
           fi
         done

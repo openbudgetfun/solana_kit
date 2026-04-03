@@ -12,12 +12,12 @@ void main() {
       expect(base64['data'], ['somedata', 'base64']);
       expect(base64['owner'], testOwnerAddress.value);
       expect(
-        (jsonParsed['data'] as Map<String, dynamic>)['program'],
+        (jsonParsed['data']! as Map<String, Object?>)['program'],
         'splToken',
       );
       expect(
-        ((jsonParsed['data'] as Map<String, dynamic>)['parsed']
-            as Map<String, dynamic>)['type'],
+        ((jsonParsed['data']! as Map<String, Object?>)['parsed']!
+            as Map<String, Object?>)['type'],
         'token',
       );
     });
@@ -33,16 +33,16 @@ void main() {
             (await rpc.request('getAccountInfo', [
                   testAccountAddressA.value,
                 ]).send())!
-                as Map<String, dynamic>;
+                as Map<String, Object?>;
         final multi =
             (await rpc.request('getMultipleAccounts', [
                   [testAccountAddressA.value, testAccountAddressB.value],
                 ]).send())!
-                as Map<String, dynamic>;
+                as Map<String, Object?>;
 
         expect(single['value'], isNotNull);
         expect(
-          (single['context'] as Map<String, dynamic>)['slot'],
+          (single['context']! as Map<String, Object?>)['slot'],
           BigInt.zero,
         );
         expect(multi['value'], [isNotNull, isNull]);
