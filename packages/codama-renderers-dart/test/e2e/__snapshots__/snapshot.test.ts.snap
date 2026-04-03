@@ -412,7 +412,7 @@ Instruction getClaimRewardsInstruction({
   required Address tokenProgram,
 
 }) {
-  final data = ClaimRewardsInstructionData(
+  final instructionData = ClaimRewardsInstructionData(
 
   );
 
@@ -426,7 +426,7 @@ Instruction getClaimRewardsInstruction({
     AccountMeta(address: rewardVault, role: AccountRole.writable),
     AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
-    data: getClaimRewardsInstructionDataEncoder().encode(data),
+    data: getClaimRewardsInstructionDataEncoder().encode(instructionData),
   );
 }
 
@@ -523,7 +523,7 @@ Instruction getInitializePoolInstruction({
   required BigInt minStakeDuration,
   required int maxStakers,
 }) {
-  final data = InitializePoolInstructionData(
+  final instructionData = InitializePoolInstructionData(
       rewardRate: rewardRate,
       minStakeDuration: minStakeDuration,
       maxStakers: maxStakers,
@@ -538,7 +538,7 @@ Instruction getInitializePoolInstruction({
     AccountMeta(address: stakeMint, role: AccountRole.readonly),
     AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
-    data: getInitializePoolInstructionDataEncoder().encode(data),
+    data: getInitializePoolInstructionDataEncoder().encode(instructionData),
   );
 }
 
@@ -635,7 +635,7 @@ Instruction getStakeInstruction({
   required Address systemProgram,
   required BigInt amount,
 }) {
-  final data = StakeInstructionData(
+  final instructionData = StakeInstructionData(
       amount: amount,
   );
 
@@ -650,7 +650,7 @@ Instruction getStakeInstruction({
     AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
-    data: getStakeInstructionDataEncoder().encode(data),
+    data: getStakeInstructionDataEncoder().encode(instructionData),
   );
 }
 
@@ -728,7 +728,7 @@ Instruction getUnstakeInstruction({
   required Address tokenProgram,
 
 }) {
-  final data = UnstakeInstructionData(
+  final instructionData = UnstakeInstructionData(
 
   );
 
@@ -742,7 +742,7 @@ Instruction getUnstakeInstruction({
     AccountMeta(address: stakerTokenAccount, role: AccountRole.writable),
     AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
-    data: getUnstakeInstructionDataEncoder().encode(data),
+    data: getUnstakeInstructionDataEncoder().encode(instructionData),
   );
 }
 
@@ -888,7 +888,7 @@ Encoder<StakeInfo> getStakeInfoEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('amount', getU64Encoder()),
     ('startTime', getI64Encoder()),
-    ('endTime', getNullableEncoder(getI64Encoder())),
+    ('endTime', getNullableEncoder<BigInt>(getI64Encoder())),
     ('isLocked', getBooleanEncoder()),
   ]);
 
@@ -907,7 +907,7 @@ Decoder<StakeInfo> getStakeInfoDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('amount', getU64Decoder()),
     ('startTime', getI64Decoder()),
-    ('endTime', getNullableDecoder(getI64Decoder())),
+    ('endTime', getNullableDecoder<BigInt>(getI64Decoder())),
     ('isLocked', getBooleanDecoder()),
   ]);
 
@@ -1338,7 +1338,7 @@ Instruction getDepositInstruction({
   required Address tokenProgram,
   required BigInt amount,
 }) {
-  final data = DepositInstructionData(
+  final instructionData = DepositInstructionData(
       amount: amount,
   );
 
@@ -1351,7 +1351,7 @@ Instruction getDepositInstruction({
     AccountMeta(address: vaultTokenAccount, role: AccountRole.writable),
     AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
-    data: getDepositInstructionDataEncoder().encode(data),
+    data: getDepositInstructionDataEncoder().encode(instructionData),
   );
 }
 
@@ -1440,7 +1440,7 @@ Instruction getInitializeVaultInstruction({
   required BigInt maxCapacity,
   required int bumpSeed,
 }) {
-  final data = InitializeVaultInstructionData(
+  final instructionData = InitializeVaultInstructionData(
       maxCapacity: maxCapacity,
       bumpSeed: bumpSeed,
   );
@@ -1453,7 +1453,7 @@ Instruction getInitializeVaultInstruction({
     AccountMeta(address: tokenMint, role: AccountRole.readonly),
     AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
-    data: getInitializeVaultInstructionDataEncoder().encode(data),
+    data: getInitializeVaultInstructionDataEncoder().encode(instructionData),
   );
 }
 
@@ -1547,7 +1547,7 @@ Instruction getUpdateVaultStatusInstruction({
   required Address authority,
   required VaultStatus newStatus,
 }) {
-  final data = UpdateVaultStatusInstructionData(
+  final instructionData = UpdateVaultStatusInstructionData(
       newStatus: newStatus,
   );
 
@@ -1557,7 +1557,7 @@ Instruction getUpdateVaultStatusInstruction({
     AccountMeta(address: vault, role: AccountRole.writable),
     AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getUpdateVaultStatusInstructionDataEncoder().encode(data),
+    data: getUpdateVaultStatusInstructionDataEncoder().encode(instructionData),
   );
 }
 
@@ -1640,7 +1640,7 @@ Instruction getWithdrawInstruction({
   required Address tokenProgram,
   required BigInt amount,
 }) {
-  final data = WithdrawInstructionData(
+  final instructionData = WithdrawInstructionData(
       amount: amount,
   );
 
@@ -1653,7 +1653,7 @@ Instruction getWithdrawInstruction({
     AccountMeta(address: destinationTokenAccount, role: AccountRole.writable),
     AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
-    data: getWithdrawInstructionDataEncoder().encode(data),
+    data: getWithdrawInstructionDataEncoder().encode(instructionData),
   );
 }
 
