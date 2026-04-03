@@ -417,6 +417,7 @@ export function getTypeManifestVisitor(input: {
 
     visitOptionType(node: OptionTypeNode, { self }) {
       const itemManifest = visit(node.item, self);
+      const itemTypeStr = itemManifest.type.content;
       const resolvedPrefix = resolveNestedTypeNode(node.prefix);
       const prefixExpr = resolvedPrefix.format !== "u8"
         ? `, prefix: ${getNumberCodecExpression(resolvedPrefix.format, "Encoder")}`
@@ -430,11 +431,11 @@ export function getTypeManifestVisitor(input: {
         encoder: fragment`${use(
           "getNullableEncoder",
           "solanaCodecsDataStructures",
-        )}(${itemManifest.encoder}${fragmentFromString(prefixExpr)})`,
+        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.encoder}${fragmentFromString(prefixExpr)})`,
         decoder: fragment`${use(
           "getNullableDecoder",
           "solanaCodecsDataStructures",
-        )}(${itemManifest.decoder}${fragmentFromString(prefixDecoderExpr)})`,
+        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.decoder}${fragmentFromString(prefixDecoderExpr)})`,
         value: emptyTypeManifest().value,
         isEnum: false,
       };
@@ -445,17 +446,18 @@ export function getTypeManifestVisitor(input: {
       { self },
     ) {
       const itemManifest = visit(node.item, self);
+      const itemTypeStr = itemManifest.type.content;
 
       return {
         type: fragment`${itemManifest.type}?`,
         encoder: fragment`${use(
           "getNullableEncoder",
           "solanaCodecsDataStructures",
-        )}(${itemManifest.encoder}, hasPrefix: false)`,
+        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.encoder}, hasPrefix: false)`,
         decoder: fragment`${use(
           "getNullableDecoder",
           "solanaCodecsDataStructures",
-        )}(${itemManifest.decoder}, hasPrefix: false)`,
+        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.decoder}, hasPrefix: false)`,
         value: emptyTypeManifest().value,
         isEnum: false,
       };
@@ -466,17 +468,18 @@ export function getTypeManifestVisitor(input: {
       { self },
     ) {
       const itemManifest = visit(node.item, self);
+      const itemTypeStr = itemManifest.type.content;
 
       return {
         type: fragment`${itemManifest.type}?`,
         encoder: fragment`${use(
           "getNullableEncoder",
           "solanaCodecsDataStructures",
-        )}(${itemManifest.encoder}, hasPrefix: false, noneValue: const ZeroesNoneValue())`,
+        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.encoder}, hasPrefix: false, noneValue: const ZeroesNoneValue())`,
         decoder: fragment`${use(
           "getNullableDecoder",
           "solanaCodecsDataStructures",
-        )}(${itemManifest.decoder}, hasPrefix: false, noneValue: const ZeroesNoneValue())`,
+        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.decoder}, hasPrefix: false, noneValue: const ZeroesNoneValue())`,
         value: emptyTypeManifest().value,
         isEnum: false,
       };
