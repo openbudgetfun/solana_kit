@@ -1,0 +1,9 @@
+{
+  "description": "Pinned upstream Codama IDL for the SPL Token and Associated Token programs.",
+  "source": "https://github.com/solana-program/token",
+  "commit": "a17df15b8aa621a159b4c40c6261b273a9ff0fbf",
+  "tag": "js@v0.13.0",
+  "path": "program/idl.json",
+  "sha256": "c89ff1397238d09605423e2012e2d2d0a919ef469133df5b4127fd4348484994",
+  "pinnedAt": "2026-04-03"
+}
