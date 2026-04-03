@@ -19,13 +19,13 @@ dart test integration_test/
 
 ## Test coverage
 
-| Area | Status |
-|------|--------|
-| `getBalance` / `getAccountInfo` | ✅ |
-| `requestAirdrop` → verify balance | ✅ |
-| Build → sign → send → confirm | 🔜 Planned |
+| Area                               | Status     |
+| ---------------------------------- | ---------- |
+| `getBalance` / `getAccountInfo`    | ✅         |
+| `requestAirdrop` → verify balance  | ✅         |
+| Build → sign → send → confirm      | 🔜 Planned |
 | Account subscription notifications | 🔜 Planned |
-| Nonce-based transaction lifetime | 🔜 Planned |
+| Nonce-based transaction lifetime   | 🔜 Planned |
 
 ## CI
 

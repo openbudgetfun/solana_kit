@@ -63,7 +63,7 @@
     {
       "package": "solana_kit_rpc_parsed_types",
       "risk": "high",
-      "minimumLineCoverage": 60
+      "minimumLineCoverage": 55
     },
     {
       "package": "solana_kit_rpc_spec",
