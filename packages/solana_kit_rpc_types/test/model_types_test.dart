@@ -85,18 +85,12 @@ void main() {
         data: (Base64EncodedBytes('AQID'), 'base64'),
       );
       const zstd = AccountInfoWithBase64EncodedZStdCompressedData(
-        data: (
-          Base64EncodedZStdCompressedBytes('AQIDBA=='),
-          'base64+zstd',
-        ),
+        data: (Base64EncodedZStdCompressedBytes('AQIDBA=='), 'base64+zstd'),
       );
 
       expect(base64.data.$1, const Base64EncodedBytes('AQID'));
       expect(base64.data.$2, 'base64');
-      expect(
-        zstd.data.$1,
-        const Base64EncodedZStdCompressedBytes('AQIDBA=='),
-      );
+      expect(zstd.data.$1, const Base64EncodedZStdCompressedBytes('AQIDBA=='));
       expect(zstd.data.$2, 'base64+zstd');
     });
 
@@ -136,6 +130,88 @@ void main() {
 
       expect(wrapper.account, base);
       expect(wrapper.pubkey, _addressB);
+    });
+  });
+
+  group('Value object coverage', () {
+    test('LatestBlockhashValue supports equality, hashCode, and toString', () {
+      final a = LatestBlockhashValue(
+        blockhash: const Blockhash('abc'),
+        lastValidBlockHeight: BigInt.from(42),
+      );
+      final b = LatestBlockhashValue(
+        blockhash: const Blockhash('abc'),
+        lastValidBlockHeight: BigInt.from(42),
+      );
+      final c = LatestBlockhashValue(
+        blockhash: const Blockhash('def'),
+        lastValidBlockHeight: BigInt.from(42),
+      );
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(c));
+      expect(a.toString(), contains('lastValidBlockHeight: 42'));
+    });
+
+    test(
+      'ParsedAccountData equality handles null and differing map values',
+      () {
+        final a = ParsedAccountData(
+          type: 'mint',
+          program: 'spl-token',
+          space: BigInt.from(82),
+          info: {'decimals': 9},
+        );
+        final b = ParsedAccountData(
+          type: 'mint',
+          program: 'spl-token',
+          space: BigInt.from(82),
+          info: {'decimals': 9},
+        );
+        final c = ParsedAccountData(
+          type: 'mint',
+          program: 'spl-token',
+          space: BigInt.from(82),
+        );
+        final d = ParsedAccountData(
+          type: 'mint',
+          program: 'spl-token',
+          space: BigInt.from(82),
+          info: {'decimals': 8},
+        );
+
+        expect(a, b);
+        expect(a.hashCode, b.hashCode);
+        expect(a, isNot(c));
+        expect(a, isNot(d));
+        expect(a.toString(), contains('spl-token'));
+      },
+    );
+
+    test('account info wrappers support equality and toString', () {
+      const base58BytesA = AccountInfoWithBase58Bytes(
+        data: Base58EncodedBytes('1111111111'),
+      );
+      const base58BytesB = AccountInfoWithBase58Bytes(
+        data: Base58EncodedBytes('1111111111'),
+      );
+      const base58Encoded = AccountInfoWithBase58EncodedData(
+        data: (Base58EncodedBytes('1111111111'), 'base58'),
+      );
+      const base64Encoded = AccountInfoWithBase64EncodedData(
+        data: (Base64EncodedBytes('AQID'), 'base64'),
+      );
+      const base64Zstd = AccountInfoWithBase64EncodedZStdCompressedData(
+        data: (Base64EncodedZStdCompressedBytes('AQIDBA=='), 'base64+zstd'),
+      );
+
+      expect(base58BytesA, base58BytesB);
+      expect(base58BytesA.hashCode, base58BytesB.hashCode);
+      expect(base58BytesA.toString(), contains('Base58'));
+      expect(base58Encoded.toString(), contains('base58'));
+      expect(base64Encoded.toString(), contains('base64'));
+      expect(base64Zstd.toString(), contains('base64+zstd'));
     });
   });
 

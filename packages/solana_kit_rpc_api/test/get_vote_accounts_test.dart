@@ -19,8 +19,9 @@ void main() {
     });
 
     test('toJson includes delinquentSlotDistance when set', () {
-      final config =
-          GetVoteAccountsConfig(delinquentSlotDistance: BigInt.from(3));
+      final config = GetVoteAccountsConfig(
+        delinquentSlotDistance: BigInt.from(3),
+      );
       final json = config.toJson();
       expect(json['delinquentSlotDistance'], BigInt.from(3));
     });
@@ -50,6 +51,29 @@ void main() {
       expect(json['delinquentSlotDistance'], BigInt.from(5));
       expect(json['keepUnstakedDelinquents'], false);
       expect(json['votePubkey'], '11111111111111111111111111111111');
+    });
+  });
+
+  group('GetVoteAccountsConfig equality', () {
+    test('supports equality, hashCode, and toString', () {
+      final a = GetVoteAccountsConfig(
+        commitment: Commitment.finalized,
+        delinquentSlotDistance: BigInt.from(5),
+        keepUnstakedDelinquents: true,
+        votePubkey: testAddress,
+      );
+      final b = GetVoteAccountsConfig(
+        commitment: Commitment.finalized,
+        delinquentSlotDistance: BigInt.from(5),
+        keepUnstakedDelinquents: true,
+        votePubkey: testAddress,
+      );
+      const c = GetVoteAccountsConfig(votePubkey: testAddress);
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(c));
+      expect(a.toString(), contains('votePubkey: $testAddress'));
     });
   });
 

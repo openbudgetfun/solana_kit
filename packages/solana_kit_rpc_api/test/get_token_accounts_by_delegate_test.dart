@@ -33,6 +33,24 @@ void main() {
     expect(filter.toJson(), {'programId': mint.value});
   });
 
+  test('config includes minContextSlot when set', () {
+    final config = GetTokenAccountsByDelegateConfig(
+      minContextSlot: BigInt.from(99),
+    );
+    expect(config.toJson(), {'minContextSlot': BigInt.from(99)});
+  });
+
+  test('filters support equality, hashCode, and toString', () {
+    const mintFilterA = TokenAccountMintFilter(mint: mint);
+    const mintFilterB = TokenAccountMintFilter(mint: mint);
+    const programFilter = TokenAccountProgramIdFilter(programId: mint);
+
+    expect(mintFilterA, mintFilterB);
+    expect(mintFilterA.hashCode, mintFilterB.hashCode);
+    expect(mintFilterA.toString(), contains('mint: $mint'));
+    expect(programFilter.toString(), contains('programId: $mint'));
+  });
+
   test('params serialize delegate, filter, and config', () {
     final params = getTokenAccountsByDelegateParams(
       delegate,

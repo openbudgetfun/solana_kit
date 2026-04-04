@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
 import 'package:test/test.dart';
 
@@ -78,6 +79,55 @@ void main() {
       final b = SysvarSlotHistory(bits: bits2, nextSlot: BigInt.from(100));
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
+      expect(a.toString(), contains('nextSlot: 100'));
+    });
+
+    test('decoder rejects invalid byte length', () {
+      final bytes = Uint8List(sysvarSlotHistorySize - 1);
+      expect(
+        () => getSysvarSlotHistoryDecoder().decode(bytes),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.codecsInvalidByteLength,
+          ),
+        ),
+      );
+    });
+
+    test('decoder rejects invalid discriminator', () {
+      final bytes = Uint8List(sysvarSlotHistorySize)
+        ..[0] = 9
+        ..setAll(1, [0, 64, 0, 0, 0, 0, 0, 0])
+        ..setAll(1 + 8 + bitvecLength * 8, [0, 0, 16, 0, 0, 0, 0, 0]);
+      expect(
+        () => getSysvarSlotHistoryDecoder().decode(bytes),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.codecsEnumDiscriminatorOutOfRange,
+          ),
+        ),
+      );
+    });
+
+    test('decoder rejects unexpected bit-vector metadata', () {
+      final bytes = Uint8List(sysvarSlotHistorySize)
+        ..[0] = bitvecDiscriminator
+        ..setAll(1, List<int>.filled(8, 0))
+        ..setAll(1 + 8 + bitvecLength * 8, [0, 0, 16, 0, 0, 0, 0, 0]);
+      expect(
+        () => getSysvarSlotHistoryDecoder().decode(bytes),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.codecsInvalidNumberOfItems,
+          ),
+        ),
+      );
     });
   });
 }

@@ -224,5 +224,37 @@ void main() {
           fail('Expected clock sysvar');
       }
     });
+
+    test('sysvar models expose readable toString output', () {
+      final clock = JsonParsedClockInfo(
+        epoch: BigInt.zero,
+        epochStartTimestamp: UnixTimestamp(BigInt.from(1704907181)),
+        leaderScheduleEpoch: BigInt.one,
+        slot: BigInt.from(90829),
+        unixTimestamp: UnixTimestamp(BigInt.from(1704998009)),
+      );
+      const fees = JsonParsedFeesInfo(
+        feeCalculator: JsonParsedFeeCalculator(
+          lamportsPerSignature: StringifiedBigInt('5000'),
+        ),
+      );
+      final slotHistory = JsonParsedSlotHistoryInfo(
+        bits: '1111100000',
+        nextSlot: BigInt.from(150104),
+      );
+      final stakeHistory = JsonParsedStakeHistoryEntry(
+        epoch: BigInt.from(683),
+        stakeHistory: JsonParsedStakeHistoryData(
+          activating: BigInt.zero,
+          deactivating: BigInt.zero,
+          effective: BigInt.from(6561315032320),
+        ),
+      );
+
+      expect(clock.toString(), contains('leaderScheduleEpoch'));
+      expect(fees.toString(), contains('lamportsPerSignature: 5000'));
+      expect(slotHistory.toString(), contains('nextSlot: 150104'));
+      expect(stakeHistory.toString(), contains('effective: 6561315032320'));
+    });
   });
 }

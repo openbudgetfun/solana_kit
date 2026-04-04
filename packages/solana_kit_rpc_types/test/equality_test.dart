@@ -253,6 +253,40 @@ void main() {
       );
       expect(base64, isNot(equals(parsed)));
     });
+
+    test('wrappers and deprecated aliases preserve equality and toString', () {
+      const base58BytesA = AccountInfoWithBase58Bytes(
+        data: Base58EncodedBytes('1111111111'),
+      );
+      const base58BytesB = AccountInfoWithBase58Bytes(
+        data: Base58EncodedBytes('1111111111'),
+      );
+      const base58Encoded = AccountInfoWithBase58EncodedData(
+        data: (Base58EncodedBytes('1111111111'), 'base58'),
+      );
+      const base64Encoded = AccountInfoWithBase64EncodedData(data: data);
+      const zstd = AccountInfoWithBase64EncodedZStdCompressedData(
+        data: (
+          Base64EncodedZStdCompressedBytes('AQIDBA=='),
+          'base64+zstd',
+        ),
+      );
+      const wrappedA = AccountInfoWithJsonData(
+        data: AccountInfoJsonDataBase64(data: data),
+      );
+      const wrappedB = AccountInfoWithJsonData(
+        data: AccountInfoJsonDataBase64(data: data),
+      );
+
+      expect(base58BytesA, base58BytesB);
+      expect(base58BytesA.hashCode, base58BytesB.hashCode);
+      expect(wrappedA, wrappedB);
+      expect(wrappedA.hashCode, wrappedB.hashCode);
+      expect(base58Encoded.toString(), contains('base58'));
+      expect(base64Encoded.toString(), contains('base64'));
+      expect(zstd.toString(), contains('base64+zstd'));
+      expect(wrappedA.toString(), contains('AccountInfoWithJsonData'));
+    });
   });
 
   // ---------------------------------------------------------------------------

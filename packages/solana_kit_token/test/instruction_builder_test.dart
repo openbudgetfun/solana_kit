@@ -4,6 +4,7 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+import 'package:solana_kit_system/solana_kit_system.dart';
 import 'package:solana_kit_token/solana_kit_token.dart';
 import 'package:test/test.dart';
 
@@ -97,8 +98,7 @@ void main() {
       final seq = plan as SequentialInstructionPlan;
       expect(seq.plans, hasLength(2));
 
-      final createIx =
-          (seq.plans[0] as SingleInstructionPlan).instruction;
+      final createIx = (seq.plans[0] as SingleInstructionPlan).instruction;
       expect(
         createIx.programAddress,
         Address('11111111111111111111111111111111'),
@@ -107,6 +107,43 @@ void main() {
       final initIx = (seq.plans[1] as SingleInstructionPlan).instruction;
       expect(initIx.programAddress, tokenProgramAddress);
     });
+
+    test(
+      'supports freeze authority, custom lamports, and program overrides',
+      () {
+        const customSystemProgram = Address('11111111111111111111111111111114');
+        const customTokenProgram = Address('11111111111111111111111111111115');
+
+        final plan =
+            getCreateMintInstructionPlan(
+                  CreateMintInput(
+                    payer: owner,
+                    newMint: mint,
+                    decimals: 9,
+                    mintAuthority: authority,
+                    freezeAuthority: destination,
+                    mintAccountLamports: BigInt.from(99),
+                  ),
+                  const CreateMintConfig(
+                    tokenProgram: customTokenProgram,
+                    systemProgram: customSystemProgram,
+                  ),
+                )
+                as SequentialInstructionPlan;
+
+        final createIx = (plan.plans[0] as SingleInstructionPlan).instruction;
+        final parsedCreate = parseCreateAccountInstruction(createIx);
+        expect(createIx.programAddress, customSystemProgram);
+        expect(parsedCreate.lamports, BigInt.from(99));
+        expect(parsedCreate.programOwner, customTokenProgram);
+
+        final initIx = (plan.plans[1] as SingleInstructionPlan).instruction;
+        final parsedInit = parseInitializeMint2Instruction(initIx);
+        expect(initIx.programAddress, customTokenProgram);
+        expect(parsedInit.freezeAuthority, destination);
+        expect(parsedInit.decimals, 9);
+      },
+    );
   });
 
   group('getMintToAtaInstructionPlan', () {
@@ -127,14 +164,48 @@ void main() {
       final seq = plan as SequentialInstructionPlan;
       expect(seq.plans, hasLength(2));
 
-      final createAtaIx =
-          (seq.plans[0] as SingleInstructionPlan).instruction;
+      final createAtaIx = (seq.plans[0] as SingleInstructionPlan).instruction;
       expect(createAtaIx.programAddress, associatedTokenProgramAddress);
 
-      final mintToIx =
-          (seq.plans[1] as SingleInstructionPlan).instruction;
+      final mintToIx = (seq.plans[1] as SingleInstructionPlan).instruction;
       expect(mintToIx.programAddress, tokenProgramAddress);
     });
+
+    test(
+      'async helper derives the ATA and respects config overrides',
+      () async {
+        const customTokenProgram = Address('11111111111111111111111111111114');
+        const customAtaProgram = Address('11111111111111111111111111111115');
+        const customSystemProgram = Address('11111111111111111111111111111116');
+
+        final plan =
+            await getMintToAtaInstructionPlanAsync(
+                  payer: owner,
+                  owner: authority,
+                  mint: mint,
+                  mintAuthority: authority,
+                  amount: BigInt.from(500),
+                  decimals: 6,
+                  config: const MintToAtaConfig(
+                    tokenProgram: customTokenProgram,
+                    associatedTokenProgram: customAtaProgram,
+                    systemProgram: customSystemProgram,
+                  ),
+                )
+                as SequentialInstructionPlan;
+
+        final createAtaIx =
+            (plan.plans[0] as SingleInstructionPlan).instruction;
+        expect(createAtaIx.programAddress, customAtaProgram);
+        expect(createAtaIx.accounts![2].address, authority);
+        expect(createAtaIx.accounts![4].address, customSystemProgram);
+        expect(createAtaIx.accounts![5].address, customTokenProgram);
+
+        final mintToIx = (plan.plans[1] as SingleInstructionPlan).instruction;
+        expect(mintToIx.programAddress, customTokenProgram);
+        expect(mintToIx.accounts![1].address, createAtaIx.accounts![1].address);
+      },
+    );
   });
 
   group('getTransferToAtaInstructionPlan', () {
@@ -156,13 +227,47 @@ void main() {
       final seq = plan as SequentialInstructionPlan;
       expect(seq.plans, hasLength(2));
 
-      final createAtaIx =
-          (seq.plans[0] as SingleInstructionPlan).instruction;
+      final createAtaIx = (seq.plans[0] as SingleInstructionPlan).instruction;
       expect(createAtaIx.programAddress, associatedTokenProgramAddress);
 
-      final transferIx =
-          (seq.plans[1] as SingleInstructionPlan).instruction;
+      final transferIx = (seq.plans[1] as SingleInstructionPlan).instruction;
       expect(transferIx.programAddress, tokenProgramAddress);
+    });
+
+    test('async helper derives source and destination ATAs', () async {
+      const customTokenProgram = Address('11111111111111111111111111111114');
+      const customAtaProgram = Address('11111111111111111111111111111115');
+
+      final plan =
+          await getTransferToAtaInstructionPlanAsync(
+                payer: owner,
+                mint: mint,
+                authority: authority,
+                recipient: destination,
+                amount: BigInt.from(100),
+                decimals: 6,
+                config: const TransferToAtaConfig(
+                  tokenProgram: customTokenProgram,
+                  associatedTokenProgram: customAtaProgram,
+                ),
+              )
+              as SequentialInstructionPlan;
+
+      final createAtaIx = (plan.plans[0] as SingleInstructionPlan).instruction;
+      expect(createAtaIx.programAddress, customAtaProgram);
+      expect(createAtaIx.accounts![2].address, destination);
+      expect(createAtaIx.accounts![5].address, customTokenProgram);
+
+      final transferIx = (plan.plans[1] as SingleInstructionPlan).instruction;
+      final parsedTransfer = parseTransferCheckedInstruction(transferIx);
+      expect(transferIx.programAddress, customTokenProgram);
+      expect(transferIx.accounts![2].address, createAtaIx.accounts![1].address);
+      expect(
+        transferIx.accounts![0].address,
+        isNot(transferIx.accounts![2].address),
+      );
+      expect(transferIx.accounts![3].address, authority);
+      expect(parsedTransfer.amount, BigInt.from(100));
     });
   });
 
