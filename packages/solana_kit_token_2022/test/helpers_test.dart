@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_token_2022/solana_kit_token_2022.dart';
 import 'package:test/test.dart';
@@ -7,6 +9,7 @@ void main() {
   const authority = Address('11111111111111111111111111111112');
   const metadata = Address('11111111111111111111111111111113');
   const delegate = Address('11111111111111111111111111111114');
+  const alternateProgram = Address('11111111111111111111111111111115');
 
   group('size helpers', () {
     test('getMintSize matches encoded mint length', () {
@@ -115,6 +118,159 @@ void main() {
       );
       expect(mintCloseAuthority.closeAuthority, delegate);
     });
+
+    test(
+      'covers all supported mint extensions and ignores unsupported ones',
+      () {
+        final instructions = getPreInitializeInstructionsForMintExtensions(
+          mint: mint,
+          programAddress: alternateProgram,
+          extensions: <Extension>[
+            const ConfidentialTransferMint(
+              authority: authority,
+              autoApproveNewAccounts: true,
+              auditorElgamalPubkey: metadata,
+            ),
+            const DefaultAccountState(state: AccountState.frozen),
+            TransferFeeConfig(
+              transferFeeConfigAuthority: authority,
+              withdrawWithheldAuthority: delegate,
+              withheldAmount: BigInt.zero,
+              olderTransferFee: TransferFee(
+                epoch: BigInt.zero,
+                maximumFee: BigInt.zero,
+                transferFeeBasisPoints: 0,
+              ),
+              newerTransferFee: TransferFee(
+                epoch: BigInt.one,
+                maximumFee: BigInt.from(5),
+                transferFeeBasisPoints: 7,
+              ),
+            ),
+            const MetadataPointer(
+              authority: authority,
+              metadataAddress: metadata,
+            ),
+            InterestBearingConfig(
+              rateAuthority: authority,
+              initializationTimestamp: BigInt.zero,
+              preUpdateAverageRate: 1,
+              lastUpdateTimestamp: BigInt.one,
+              currentRate: 123,
+            ),
+            ScaledUiAmountConfig(
+              authority: authority,
+              multiplier: 1.5,
+              newMultiplierEffectiveTimestamp: BigInt.from(2),
+              newMultiplier: 2.5,
+            ),
+            const PausableConfig(authority: authority, paused: false),
+            const PermissionedBurn(authority: delegate),
+            const GroupPointer(authority: authority, groupAddress: metadata),
+            const GroupMemberPointer(
+              authority: authority,
+              memberAddress: delegate,
+            ),
+            const NonTransferable(),
+            const TransferHook(authority: authority, programId: delegate),
+            const PermanentDelegate(delegate: delegate),
+            ConfidentialTransferFee(
+              authority: authority,
+              elgamalPubkey: metadata,
+              harvestToMintEnabled: true,
+              withheldAmount: Uint8List(0),
+            ),
+            const MintCloseAuthority(closeAuthority: delegate),
+            const MemoTransfer(requireIncomingTransferMemos: true),
+          ],
+        );
+
+        expect(instructions, hasLength(15));
+        expect(
+          instructions.map((instruction) => instruction.programAddress),
+          everyElement(alternateProgram),
+        );
+
+        expect(
+          parseInitializeConfidentialTransferMintInstruction(
+            instructions[0],
+          ).authority,
+          authority,
+        );
+        expect(
+          parseInitializeDefaultAccountStateInstruction(instructions[1]).state,
+          AccountState.frozen,
+        );
+        expect(
+          parseInitializeTransferFeeConfigInstruction(
+            instructions[2],
+          ).transferFeeBasisPoints,
+          7,
+        );
+        expect(
+          parseInitializeMetadataPointerInstruction(
+            instructions[3],
+          ).metadataAddress,
+          metadata,
+        );
+        expect(
+          parseInitializeInterestBearingMintInstruction(instructions[4]).rate,
+          123,
+        );
+        expect(
+          parseInitializeScaledUiAmountMintInstruction(
+            instructions[5],
+          ).multiplier,
+          1.5,
+        );
+        expect(
+          parseInitializePausableConfigInstruction(instructions[6]).authority,
+          authority,
+        );
+        expect(
+          parseInitializePermissionedBurnInstruction(instructions[7]).authority,
+          delegate,
+        );
+        expect(
+          parseInitializeGroupPointerInstruction(instructions[8]).groupAddress,
+          metadata,
+        );
+        expect(
+          parseInitializeGroupMemberPointerInstruction(
+            instructions[9],
+          ).memberAddress,
+          delegate,
+        );
+        expect(
+          parseInitializeNonTransferableMintInstruction(
+            instructions[10],
+          ).discriminator,
+          isNonZero,
+        );
+        expect(
+          parseInitializeTransferHookInstruction(instructions[11]).programId,
+          delegate,
+        );
+        expect(
+          parseInitializePermanentDelegateInstruction(
+            instructions[12],
+          ).delegate,
+          delegate,
+        );
+        expect(
+          parseInitializeConfidentialTransferFeeInstruction(
+            instructions[13],
+          ).withdrawWithheldAuthorityElGamalPubkey,
+          metadata,
+        );
+        expect(
+          parseInitializeMintCloseAuthorityInstruction(
+            instructions[14],
+          ).closeAuthority,
+          delegate,
+        );
+      },
+    );
 
     test('throws when PermissionedBurn authority is null', () {
       expect(
