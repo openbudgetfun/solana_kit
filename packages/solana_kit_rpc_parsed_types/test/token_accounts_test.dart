@@ -99,5 +99,39 @@ void main() {
           fail('Expected mint, got multisig');
       }
     });
+
+    test('token account models expose readable toString output', () {
+      const tokenAccount = JsonParsedTokenAccount(
+        isNative: false,
+        mint: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
+        owner: Address('6UsGbaMgchgj4wiwKKuE1v5URHdcDfEiMSM25QpesKir'),
+        state: TokenAccountState.initialized,
+        tokenAmount: TokenAmount(
+          amount: StringifiedBigInt('9999999779500000'),
+          decimals: 6,
+          uiAmountString: StringifiedNumber('9999999779.5'),
+        ),
+        extensions: ['memo-transfer'],
+      );
+      const mintInfo = JsonParsedMintInfo(
+        decimals: 6,
+        isInitialized: true,
+        supply: StringifiedBigInt('1792635195340523528'),
+        extensions: ['transfer-fee'],
+      );
+      const multisigInfo = JsonParsedMultisigInfo(
+        isInitialized: true,
+        numRequiredSigners: 2,
+        numValidSigners: 2,
+        signers: [
+          Address('Fkc4FN7PPhyGsAcHPW3dBBJ4BvtYkDr2rBFBgFpvy3nB'),
+          Address('5scSndUhfZJ8j8wZz5UNHhvuPBhvN1RboTdkKSvFHLtW'),
+        ],
+      );
+
+      expect(tokenAccount.toString(), contains('extensions: [memo-transfer]'));
+      expect(mintInfo.toString(), contains('extensions: [transfer-fee]'));
+      expect(multisigInfo.toString(), contains('numRequiredSigners: 2'));
+    });
   });
 }

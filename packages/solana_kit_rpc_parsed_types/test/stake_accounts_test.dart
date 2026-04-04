@@ -95,5 +95,18 @@ void main() {
           fail('Expected initialized, got delegated');
       }
     });
+
+    test('stake account models expose readable toString output', () {
+      final stakeInfo = createStakeInfo();
+      expect(stakeInfo.toString(), contains('rentExemptReserve'));
+      expect(stakeInfo.meta.toString(), contains('authorized'));
+      expect(stakeInfo.meta.authorized.toString(), contains('staker'));
+      expect(stakeInfo.meta.lockup.toString(), contains('custodian'));
+      expect(stakeInfo.stake.toString(), contains('creditsObserved'));
+      expect(
+        stakeInfo.stake!.delegation.toString(),
+        contains('warmupCooldownRate: 0.25'),
+      );
+    });
   });
 }

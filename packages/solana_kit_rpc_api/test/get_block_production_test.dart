@@ -15,8 +15,10 @@ void main() {
     });
 
     test('toJson includes both slots when lastSlot provided', () {
-      final range =
-          SlotRange(firstSlot: BigInt.from(10), lastSlot: BigInt.from(20));
+      final range = SlotRange(
+        firstSlot: BigInt.from(10),
+        lastSlot: BigInt.from(20),
+      );
       final json = range.toJson();
       expect(json, hasLength(2));
       expect(json['firstSlot'], BigInt.from(10));
@@ -31,8 +33,7 @@ void main() {
     });
 
     test('toJson includes commitment when set', () {
-      const config =
-          GetBlockProductionConfig(commitment: Commitment.finalized);
+      const config = GetBlockProductionConfig(commitment: Commitment.finalized);
       final json = config.toJson();
       expect(json['commitment'], 'finalized');
     });
@@ -48,7 +49,10 @@ void main() {
         range: SlotRange(firstSlot: BigInt.from(5), lastSlot: BigInt.from(10)),
       );
       final json = config.toJson();
-      expect(json['range'], {'firstSlot': BigInt.from(5), 'lastSlot': BigInt.from(10)});
+      expect(json['range'], {
+        'firstSlot': BigInt.from(5),
+        'lastSlot': BigInt.from(10),
+      });
     });
 
     test('toJson includes all fields when all set', () {
@@ -62,6 +66,44 @@ void main() {
       expect(json['commitment'], 'confirmed');
       expect(json['identity'], '11111111111111111111111111111111');
       expect(json['range'], {'firstSlot': BigInt.from(1)});
+    });
+  });
+
+  group('equality and toString', () {
+    test('SlotRange supports equality, hashCode, and toString', () {
+      final a = SlotRange(
+        firstSlot: BigInt.from(10),
+        lastSlot: BigInt.from(20),
+      );
+      final b = SlotRange(
+        firstSlot: BigInt.from(10),
+        lastSlot: BigInt.from(20),
+      );
+      final c = SlotRange(firstSlot: BigInt.from(10));
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(c));
+      expect(a.toString(), contains('lastSlot: 20'));
+    });
+
+    test('GetBlockProductionConfig supports equality and toString', () {
+      final a = GetBlockProductionConfig(
+        commitment: Commitment.confirmed,
+        identity: testAddress,
+        range: SlotRange(firstSlot: BigInt.from(1)),
+      );
+      final b = GetBlockProductionConfig(
+        commitment: Commitment.confirmed,
+        identity: testAddress,
+        range: SlotRange(firstSlot: BigInt.from(1)),
+      );
+      const c = GetBlockProductionConfig(identity: testAddress);
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(c));
+      expect(a.toString(), contains('identity: $testAddress'));
     });
   });
 

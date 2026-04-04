@@ -35,6 +35,58 @@ void main() {
     });
   });
 
+  group('GetEpochInfoConfig equality', () {
+    test('supports equality, hashCode, and toString', () {
+      final a = GetEpochInfoConfig(
+        commitment: Commitment.finalized,
+        minContextSlot: BigInt.from(12),
+      );
+      final b = GetEpochInfoConfig(
+        commitment: Commitment.finalized,
+        minContextSlot: BigInt.from(12),
+      );
+      final c = GetEpochInfoConfig(minContextSlot: BigInt.from(13));
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(c));
+      expect(a.toString(), contains('minContextSlot: 12'));
+    });
+  });
+
+  group('EpochInfo', () {
+    test('supports equality, hashCode, and toString', () {
+      final a = EpochInfo(
+        absoluteSlot: BigInt.one,
+        blockHeight: BigInt.from(2),
+        epoch: BigInt.from(3),
+        slotIndex: BigInt.from(4),
+        slotsInEpoch: BigInt.from(5),
+        transactionCount: BigInt.from(6),
+      );
+      final b = EpochInfo(
+        absoluteSlot: BigInt.one,
+        blockHeight: BigInt.from(2),
+        epoch: BigInt.from(3),
+        slotIndex: BigInt.from(4),
+        slotsInEpoch: BigInt.from(5),
+        transactionCount: BigInt.from(6),
+      );
+      final c = EpochInfo(
+        absoluteSlot: BigInt.one,
+        blockHeight: BigInt.from(2),
+        epoch: BigInt.from(3),
+        slotIndex: BigInt.from(4),
+        slotsInEpoch: BigInt.from(5),
+      );
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(c));
+      expect(a.toString(), contains('transactionCount: 6'));
+    });
+  });
+
   group('getEpochInfoParams', () {
     test('returns empty list when no config', () {
       final params = getEpochInfoParams();

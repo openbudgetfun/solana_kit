@@ -2,7 +2,12 @@ import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_rpc_parsed_types/solana_kit_rpc_parsed_types.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart'
-    show Blockhash, StringifiedBigInt, UnixTimestamp;
+    show
+        Blockhash,
+        StringifiedBigInt,
+        StringifiedNumber,
+        TokenAmount,
+        UnixTimestamp;
 import 'package:test/test.dart';
 
 // ---------------------------------------------------------------------------
@@ -275,10 +280,16 @@ void main() {
 
     test('deep equality flows up through JsonParsedStakeConfig', () {
       const a = JsonParsedStakeConfig(
-        info: JsonParsedStakeConfigInfo(slashPenalty: 12, warmupCooldownRate: 0.25),
+        info: JsonParsedStakeConfigInfo(
+          slashPenalty: 12,
+          warmupCooldownRate: 0.25,
+        ),
       );
       const b = JsonParsedStakeConfig(
-        info: JsonParsedStakeConfigInfo(slashPenalty: 12, warmupCooldownRate: 0.25),
+        info: JsonParsedStakeConfigInfo(
+          slashPenalty: 12,
+          warmupCooldownRate: 0.25,
+        ),
       );
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
@@ -480,14 +491,8 @@ void main() {
 
   group('JsonParsedVote equality', () {
     test('equal when all fields match', () {
-      final a = JsonParsedVote(
-        confirmationCount: 32,
-        slot: BigInt.zero,
-      );
-      final b = JsonParsedVote(
-        confirmationCount: 32,
-        slot: BigInt.zero,
-      );
+      final a = JsonParsedVote(confirmationCount: 32, slot: BigInt.zero);
+      final b = JsonParsedVote(confirmationCount: 32, slot: BigInt.zero);
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
     });
@@ -829,6 +834,128 @@ void main() {
       );
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
+    });
+  });
+
+  group('low-coverage parsed account branches', () {
+    test(
+      'stake account wrappers include nested values in equality and toString',
+      () {
+        const authorized = JsonParsedStakeAuthorized(
+          staker: _addr1,
+          withdrawer: _addr2,
+        );
+        final lockup = JsonParsedStakeLockup(
+          custodian: _addr1,
+          epoch: BigInt.one,
+          unixTimestamp: UnixTimestamp(BigInt.from(2)),
+        );
+        const delegation = JsonParsedStakeDelegation(
+          activationEpoch: StringifiedBigInt('1'),
+          deactivationEpoch: StringifiedBigInt('2'),
+          stake: StringifiedBigInt('3'),
+          voter: _addr1,
+          warmupCooldownRate: 0.5,
+        );
+        final account = JsonParsedStakeAccountInfo(
+          meta: JsonParsedStakeMeta(
+            authorized: authorized,
+            lockup: lockup,
+            rentExemptReserve: const StringifiedBigInt('4'),
+          ),
+          stake: JsonParsedStakeData(
+            creditsObserved: BigInt.from(5),
+            delegation: delegation,
+          ),
+        );
+
+        expect(
+          JsonParsedDelegatedStake(info: account),
+          JsonParsedDelegatedStake(info: account),
+        );
+        expect(account.toString(), contains('rentExemptReserve: 4'));
+        expect(authorized.toString(), contains('withdrawer'));
+        expect(lockup.toString(), contains('custodian'));
+      },
+    );
+
+    test(
+      'token account list equality handles nulls and differing elements',
+      () {
+        const tokenAmount = TokenAmount(
+          amount: StringifiedBigInt('1'),
+          decimals: 6,
+          uiAmountString: StringifiedNumber('0.000001'),
+        );
+        const a = JsonParsedTokenAccount(
+          isNative: false,
+          mint: _addr1,
+          owner: _addr2,
+          state: TokenAccountState.initialized,
+          tokenAmount: tokenAmount,
+          extensions: ['memo'],
+        );
+        const b = JsonParsedTokenAccount(
+          isNative: false,
+          mint: _addr1,
+          owner: _addr2,
+          state: TokenAccountState.initialized,
+          tokenAmount: tokenAmount,
+          extensions: ['memo'],
+        );
+        const c = JsonParsedTokenAccount(
+          isNative: false,
+          mint: _addr1,
+          owner: _addr2,
+          state: TokenAccountState.initialized,
+          tokenAmount: tokenAmount,
+        );
+        const d = JsonParsedMintInfo(
+          decimals: 6,
+          isInitialized: true,
+          supply: StringifiedBigInt('9'),
+          extensions: ['memo'],
+        );
+
+        expect(a, b);
+        expect(a.hashCode, b.hashCode);
+        expect(a, isNot(c));
+        expect(a.toString(), contains('extensions: [memo]'));
+        expect(d.toString(), contains('extensions: [memo]'));
+        expect(
+          const JsonParsedTokenAccountVariant(info: a),
+          const JsonParsedTokenAccountVariant(info: a),
+        );
+      },
+    );
+
+    test('sysvar parsed models preserve list-like value semantics', () {
+      const recentBlockhash = JsonParsedRecentBlockhashEntry(
+        blockhash: Blockhash('hash'),
+        feeCalculator: JsonParsedFeeCalculator(
+          lamportsPerSignature: StringifiedBigInt('5000'),
+        ),
+      );
+      final stakeHistory = JsonParsedStakeHistoryEntry(
+        epoch: BigInt.zero,
+        stakeHistory: JsonParsedStakeHistoryData(
+          activating: BigInt.one,
+          deactivating: BigInt.from(2),
+          effective: BigInt.from(3),
+        ),
+      );
+      final a = JsonParsedSlotHistoryInfo(bits: '1010', nextSlot: BigInt.one);
+      final b = JsonParsedSlotHistoryInfo(bits: '1010', nextSlot: BigInt.one);
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a.toString(), contains('nextSlot: 1'));
+      expect(recentBlockhash.toString(), contains('hash'));
+      expect(stakeHistory.toString(), contains('effective: 3'));
+      expect(
+        const JsonParsedRecentBlockhashesSysvar(info: [recentBlockhash]),
+        const JsonParsedRecentBlockhashesSysvar(info: [recentBlockhash]),
+      );
     });
   });
 }

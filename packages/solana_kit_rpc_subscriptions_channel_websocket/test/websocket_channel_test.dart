@@ -59,9 +59,7 @@ void main() {
 
   group('WebSocketChannelConfig', () {
     test('disallows insecure ws:// URLs by default', () {
-      final config = WebSocketChannelConfig(
-        url: Uri.parse('ws://example.com'),
-      );
+      final config = WebSocketChannelConfig(url: Uri.parse('ws://example.com'));
       expect(config.allowInsecureWs, isFalse);
     });
 
@@ -133,10 +131,57 @@ void main() {
       );
     });
 
+    test(
+      'uses a SolanaError when already aborted with a non-error reason',
+      () async {
+        final controller = AbortController()..abort('cancelled');
+        await expectLater(
+          createWebSocketChannel(
+            WebSocketChannelConfig(
+              url: Uri.parse('ws://localhost:0'),
+              allowInsecureWs: true,
+              signal: controller.signal,
+            ),
+          ),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed,
+            ),
+          ),
+        );
+      },
+    );
+
     test('rejects insecure ws:// URLs by default', () async {
       await expectLater(
         createWebSocketChannel(
           WebSocketChannelConfig(url: Uri.parse('ws://localhost:1')),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('rejects non-websocket schemes', () async {
+      await expectLater(
+        createWebSocketChannel(
+          WebSocketChannelConfig(
+            url: Uri.parse('https://example.com/socket'),
+            allowInsecureWs: true,
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('rejects relative websocket URLs', () async {
+      await expectLater(
+        createWebSocketChannel(
+          WebSocketChannelConfig(
+            url: Uri.parse('/socket'),
+            allowInsecureWs: true,
+          ),
         ),
         throwsArgumentError,
       );
