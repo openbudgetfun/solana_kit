@@ -457,7 +457,7 @@ in
 
         echo "Running coverage for ''${#test_dirs[@]} package test directories..."
         echo "Skipping packages/solana_kit_mobile_wallet_adapter/test (requires flutter test)."
-        dart run coverage:test_with_coverage -- "''${test_dirs[@]}"
+        dart run coverage:test_with_coverage -- --exclude-tags integration "''${test_dirs[@]}"
       '';
       description = "Generate merged LCOV coverage for all packages.";
       binary = "bash";
