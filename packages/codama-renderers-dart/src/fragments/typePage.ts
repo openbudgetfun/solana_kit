@@ -125,6 +125,8 @@ function getDataEnumPageFragment(
   const variantClasses: string[] = [];
   const encoderVariants: string[] = [];
   const decoderVariants: string[] = [];
+  const encodeCases: string[] = [];
+  const decodeCases: string[] = [];
   // Collect all field type manifests from variants so we can merge their imports
   const allVariantManifests: { encoder: Fragment; decoder: Fragment; type: Fragment }[] = [];
 
@@ -154,8 +156,10 @@ function getDataEnumPageFragment(
         `(${i}, getStructEncoder(<(String, Encoder<Object?>)>[]))`,
       );
       decoderVariants.push(
-        `(${i}, getStructDecoder(<(String, Decoder<Object?>)>[]).map((_) => const ${variantClassName}()))`,
+        `(${i}, transformDecoder<Map<String, Object?>, Map<String, Object?>>(getStructDecoder(<(String, Decoder<Object?>)>[]), (Map<String, Object?> map, Uint8List bytes, int offset) => <String, Object?>{}))`,
       );
+      encodeCases.push(`${variantClassName}() => <String, Object?>{'__kind': ${i}},`);
+      decodeCases.push(`case ${i}: return const ${variantClassName}();`);
     } else if (variant.kind === "enumStructVariantTypeNode") {
       const resolvedStruct = resolveNestedTypeNode(variant.struct);
       const fields = resolvedStruct.fields;
@@ -178,23 +182,28 @@ function getDataEnumPageFragment(
       const ctorParams = fields
         .map((f: StructFieldTypeNode) => `    required this.${camelCase(f.name as string)},`)
         .join("\n");
+      const ctorSignature =
+        fields.length === 0
+          ? `  const ${variantClassName}();`
+          : `  const ${variantClassName}({\n${ctorParams}\n  });`;
 
-      const eqChecks = fields
-        .map((f: StructFieldTypeNode) => `${camelCase(f.name as string)} == other.${camelCase(f.name as string)}`)
-        .join(" &&\n          ");
+      const eqChecks =
+        fields.length === 0
+          ? "true"
+          : fields
+              .map((f: StructFieldTypeNode) => `${camelCase(f.name as string)} == other.${camelCase(f.name as string)}`)
+              .join(" &&\n          ");
 
-      const hashFields = fields
-        .map((f: StructFieldTypeNode) => camelCase(f.name as string))
-        .join(", ");
+      const hashExpression = getHashExpression(
+        fields.map((f: StructFieldTypeNode) => camelCase(f.name as string)),
+      );
 
       const toStringFields = fields
         .map((f: StructFieldTypeNode) => `${camelCase(f.name as string)}: $${camelCase(f.name as string)}`)
         .join(", ");
 
       variantClasses.push(`final class ${variantClassName} extends ${typeName} {
-  const ${variantClassName}({
-${ctorParams}
-  });
+${ctorSignature}
 
 ${fieldDecls}
 
@@ -205,7 +214,7 @@ ${fieldDecls}
           ${eqChecks};
 
   @override
-  int get hashCode => Object.hash(${hashFields});
+  int get hashCode => ${hashExpression};
 
   @override
   String toString() => '${typeName}.${variantClassName}(${toStringFields})';
@@ -242,11 +251,23 @@ ${fieldDecls}
         .join(", ");
 
       encoderVariants.push(
-        `(${i}, transformEncoder(getStructEncoder([${encFields}]), (${variantClassName} value) => <String, Object?>{${toMapFields}}))`,
+        `(${i}, getStructEncoder([${encFields}]))`,
       );
       decoderVariants.push(
-        `(${i}, transformDecoder(getStructDecoder([${decFields}]), (Map<String, Object?> map, Uint8List bytes, int offset) => ${variantClassName}(${fromMapFields})))`,
+        `(${i}, transformDecoder<Map<String, Object?>, Map<String, Object?>>(getStructDecoder([${decFields}]), (Map<String, Object?> map, Uint8List bytes, int offset) => map))`,
       );
+      const structPattern =
+        fields.length === 0
+          ? ''
+          : fields
+              .map((f: StructFieldTypeNode) => `${camelCase(f.name as string)}: final ${camelCase(f.name as string)}`)
+              .join(', ');
+      const structMapEntries =
+        fields.length === 0
+          ? ''
+          : `, ${fields.map((f: StructFieldTypeNode)=>`'${f.name as string}': ${camelCase(f.name as string)}`).join(', ')}`;
+      encodeCases.push(`${variantClassName}(${structPattern}) => <String, Object?>{'__kind': ${i}${structMapEntries}},`);
+      decodeCases.push(`case ${i}: return ${variantClassName}(${fromMapFields.replace(/\n/g, ' ').replace(/,$/, '')});`);
     } else if (variant.kind === "enumTupleVariantTypeNode") {
       const resolvedTuple = resolveNestedTypeNode(variant.tuple);
       const items = resolvedTuple.items;
@@ -270,11 +291,13 @@ ${fieldDecls}
   String toString() => '${typeName}.${variantClassName}(\$value)';
 }`);
         encoderVariants.push(
-          `(${i}, transformEncoder(${manifest.encoder.content}, (${variantClassName} value) => value.value))`,
+          `(${i}, transformEncoder<${manifest.type.content}, Map<String, Object?>>(${manifest.encoder.content}, (Map<String, Object?> map) => map['value']! as ${manifest.type.content}))`,
         );
         decoderVariants.push(
-          `(${i}, transformDecoder(${manifest.decoder.content}, (${manifest.type.content} value, Uint8List bytes, int offset) => ${variantClassName}(value)))`,
+          `(${i}, transformDecoder<${manifest.type.content}, Map<String, Object?>>(${manifest.decoder.content}, (${manifest.type.content} value, Uint8List bytes, int offset) => <String, Object?>{'value': value}))`,
         );
+        encodeCases.push(`${variantClassName}(value: final value) => <String, Object?>{'__kind': ${i}, 'value': value},`);
+        decodeCases.push(`case ${i}: return ${variantClassName}(map['value']! as ${manifest.type.content});`);
       }
     }
   }
@@ -290,7 +313,6 @@ ${fieldDecls}
 // ignore_for_file: type=lint
 
 ${use("Uint8List", "dartTypedData")}
-${use("immutable", "meta")}
 ${use("Encoder", "solanaCodecsCore")}
 ${use("Decoder", "solanaCodecsCore")}
 ${use("Codec", "solanaCodecsCore")}
@@ -311,15 +333,28 @@ sealed class ${fragmentFromString(typeName)} {
 ${fragmentFromString(variantClasses.join("\n\n"))}
 
 Encoder<${fragmentFromString(typeName)}> ${fragmentFromString(encoderName)}() {
-  return getDiscriminatedUnionEncoder([
-    ${fragmentFromString(encoderVariants.join(",\n    "))},
-  ], size: get${fragmentFromString(sizeCodecName)}Encoder());
+  return transformEncoder<Map<String, Object?>, ${fragmentFromString(typeName)}>(
+    getDiscriminatedUnionEncoder([
+      ${fragmentFromString(encoderVariants.join(",\n      "))},
+    ], size: get${fragmentFromString(sizeCodecName)}Encoder()),
+    (${fragmentFromString(typeName)} value) => switch (value) {
+      ${fragmentFromString(encodeCases.join("\n      "))}
+    },
+  );
 }
 
 Decoder<${fragmentFromString(typeName)}> ${fragmentFromString(decoderName)}() {
-  return getDiscriminatedUnionDecoder([
-    ${fragmentFromString(decoderVariants.join(",\n    "))},
-  ], size: get${fragmentFromString(sizeCodecName)}Decoder());
+  return transformDecoder<Map<String, Object?>, ${fragmentFromString(typeName)}>(
+    getDiscriminatedUnionDecoder([
+      ${fragmentFromString(decoderVariants.join(",\n      "))},
+    ], size: get${fragmentFromString(sizeCodecName)}Decoder()),
+    (Map<String, Object?> map, Uint8List bytes, int offset) {
+      switch (map['__kind']) {
+        ${fragmentFromString(decodeCases.join("\n        "))}
+      }
+      throw StateError('Unsupported ${typeName} discriminator: \${map['__kind']}');
+    },
+  );
 }
 
 Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragmentFromString(codecName)}() {
@@ -365,6 +400,10 @@ function getStructPageFragment(
   const ctorParams = fields
     .map((f: StructFieldTypeNode) => `    required this.${camelCase(f.name as string)},`)
     .join("\n");
+  const ctorSignature =
+    fields.length === 0
+      ? `  const ${typeName}();`
+      : `  const ${typeName}({\n${ctorParams}\n  });`;
 
   const eqChecks =
     fields.length === 0
@@ -376,9 +415,12 @@ function getStructPageFragment(
           )
           .join(" &&\n          ");
 
-  const hashFields = fields
-    .map((f: StructFieldTypeNode) => camelCase(f.name as string))
-    .join(", ");
+  const hashFields =
+    fields.length === 0
+      ? "runtimeType"
+      : fields
+          .map((f: StructFieldTypeNode) => camelCase(f.name as string))
+          .join(", ");
 
   const toStringFields = fields
     .map(
@@ -436,9 +478,7 @@ ${use("getStructDecoder", "solanaCodecsDataStructures")}
 
 @immutable
 class ${fragmentFromString(typeName)} {
-  const ${fragmentFromString(typeName)}({
-${fragmentFromString(ctorParams)}
-  });
+${fragmentFromString(ctorSignature)}
 
 ${fragmentFromString(fieldDecls)}
 
@@ -450,7 +490,7 @@ ${fragmentFromString(fieldDecls)}
           ${fragmentFromString(eqChecks)};
 
   @override
-  int get hashCode => Object.hash(${fragmentFromString(hashFields)});
+  int get hashCode => ${fragmentFromString(getHashExpression(fields.map((f: StructFieldTypeNode) => camelCase(f.name as string))))};
 
   @override
   String toString() => '${fragmentFromString(typeName)}(${fragmentFromString(toStringFields)})';
@@ -532,6 +572,12 @@ Decoder<${fragmentFromString(typeName)}> ${fragmentFromString(decoderName)}() {
 Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragmentFromString(codecName)}() {
   return combineCodec(${fragmentFromString(encoderName)}(), ${fragmentFromString(decoderName)}());
 }`;
+}
+
+function getHashExpression(fields: string[]): string {
+  if (fields.length === 0) return "runtimeType.hashCode";
+  if (fields.length === 1) return `${fields[0]}.hashCode`;
+  return `Object.hash(${fields.join(", ")})`;
 }
 
 function getNumberCodecName(format: string): string {

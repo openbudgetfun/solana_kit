@@ -527,7 +527,7 @@ export function getTypeManifestVisitor(input: {
 
     visitHiddenPrefixType(node: HiddenPrefixTypeNode, { self }) {
       const innerManifest = visit(node.type, self);
-      const prefixes = node.prefix.map((p) => visit(p, self));
+      const prefixes = node.prefix.map((p) => getHiddenAffixManifest(p, self));
       const prefixEncoders = prefixes
         .map((p) => p.encoder.content)
         .join(", ");
@@ -562,7 +562,7 @@ export function getTypeManifestVisitor(input: {
 
     visitHiddenSuffixType(node: HiddenSuffixTypeNode, { self }) {
       const innerManifest = visit(node.type, self);
-      const suffixes = node.suffix.map((s) => visit(s, self));
+      const suffixes = node.suffix.map((s) => getHiddenAffixManifest(s, self));
       const suffixEncoders = suffixes
         .map((s) => s.encoder.content)
         .join(", ");
@@ -797,4 +797,56 @@ function getSetSizeExpression(node: SetTypeNode): string {
     default:
       return "";
   }
+}
+
+type HiddenAffixManifest = {
+  encoder: Fragment;
+  decoder: Fragment;
+};
+
+function getHiddenAffixManifest(
+  node: any,
+  self: Visitor<TypeManifest>,
+): HiddenAffixManifest {
+  if (node?.kind !== "constantValueNode") {
+    const manifest = visit(node, self);
+    return { encoder: manifest.encoder, decoder: manifest.decoder };
+  }
+
+  const constantBytes = getConstantBytesExpression(node);
+  return {
+    encoder: fragment`${use("getConstantEncoder", "solanaCodecsDataStructures")}(${constantBytes})`,
+    decoder: fragment`${use("getConstantDecoder", "solanaCodecsDataStructures")}(${constantBytes})`,
+  };
+}
+
+function getConstantBytesExpression(node: any): Fragment {
+  const valueNode = node.value;
+  const typeNode = node.type;
+
+  if (valueNode?.kind !== "numberValueNode") {
+    throw new Error(
+      `Unsupported hidden affix constant value kind: ${valueNode?.kind}`,
+    );
+  }
+
+  const value = Number(valueNode.number);
+
+  if (typeNode?.kind === "numberTypeNode") {
+    return fragment`${use(`get${getNumberCodecName(typeNode.format)}Encoder`, "solanaCodecsNumbers")}().encode(${value})`;
+  }
+
+  if (typeNode?.kind === "preOffsetTypeNode") {
+    const inner = typeNode.type;
+    if (inner?.kind !== "numberTypeNode") {
+      throw new Error(
+        `Unsupported hidden affix pre-offset inner type kind: ${inner?.kind}`,
+      );
+    }
+    return fragment`${use("padLeftEncoder", "solanaCodecsCore")}(${use(`get${getNumberCodecName(inner.format)}Encoder`, "solanaCodecsNumbers")}(), ${typeNode.offset}).encode(${value})`;
+  }
+
+  throw new Error(
+    `Unsupported hidden affix constant type kind: ${typeNode?.kind}`,
+  );
 }
