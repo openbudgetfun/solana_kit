@@ -73,7 +73,7 @@ void main() {
     });
 
     test('codec round-trip preserves decimals and mintAuthority', () {
-      final data = InitializeMintInstructionData(decimals: 9, mintAuthority: _owner, freezeAuthority: null);
+      const data = InitializeMintInstructionData(decimals: 9, mintAuthority: _owner, freezeAuthority: null);
       final encoded = getInitializeMintInstructionDataEncoder().encode(data);
       final decoded = getInitializeMintInstructionDataDecoder().decode(encoded);
       expect(decoded.decimals, 9);
@@ -82,7 +82,7 @@ void main() {
     });
 
     test('codec round-trip with freezeAuthority', () {
-      final data = InitializeMintInstructionData(
+      const data = InitializeMintInstructionData(
         decimals: 6,
         mintAuthority: _owner,
         freezeAuthority: _delegate,
@@ -134,7 +134,7 @@ void main() {
     });
 
     test('codec round-trip preserves m value', () {
-      final data = InitializeMultisigInstructionData(m: 3);
+      const data = InitializeMultisigInstructionData(m: 3);
       final encoded = getInitializeMultisigInstructionDataEncoder().encode(data);
       final decoded = getInitializeMultisigInstructionDataDecoder().decode(encoded);
       expect(decoded.m, 3);
@@ -230,7 +230,7 @@ void main() {
     });
 
     test('codec round-trip', () {
-      final data = RevokeInstructionData();
+      const data = RevokeInstructionData();
       final encoded = getRevokeInstructionDataEncoder().encode(data);
       final decoded = getRevokeInstructionDataDecoder().decode(encoded);
       expect(decoded.discriminator, 5);
@@ -251,7 +251,7 @@ void main() {
     });
 
     test('codec round-trip with authorityType=mintTokens and new authority', () {
-      final data = SetAuthorityInstructionData(
+      const data = SetAuthorityInstructionData(
         authorityType: AuthorityType.mintTokens,
         newAuthority: _delegate,
       );
@@ -262,7 +262,7 @@ void main() {
     });
 
     test('codec round-trip with null new authority', () {
-      final data = SetAuthorityInstructionData(
+      const data = SetAuthorityInstructionData(
         authorityType: AuthorityType.closeAccount,
         newAuthority: null,
       );
@@ -531,7 +531,7 @@ void main() {
     });
 
     test('codec round-trip preserves owner', () {
-      final data = InitializeAccount2InstructionData(owner: _owner);
+      const data = InitializeAccount2InstructionData(owner: _owner);
       final encoded = getInitializeAccount2InstructionDataEncoder().encode(data);
       final decoded = getInitializeAccount2InstructionDataDecoder().decode(encoded);
       expect(decoded.owner, _owner);
@@ -571,7 +571,7 @@ void main() {
     });
 
     test('codec round-trip preserves owner', () {
-      final data = InitializeAccount3InstructionData(owner: _owner);
+      const data = InitializeAccount3InstructionData(owner: _owner);
       final encoded = getInitializeAccount3InstructionDataEncoder().encode(data);
       final decoded = getInitializeAccount3InstructionDataDecoder().decode(encoded);
       expect(decoded.owner, _owner);
@@ -590,7 +590,7 @@ void main() {
     });
 
     test('codec round-trip preserves m', () {
-      final data = InitializeMultisig2InstructionData(m: 3);
+      const data = InitializeMultisig2InstructionData(m: 3);
       final encoded = getInitializeMultisig2InstructionDataEncoder().encode(data);
       final decoded = getInitializeMultisig2InstructionDataDecoder().decode(encoded);
       expect(decoded.m, 3);
@@ -622,7 +622,7 @@ void main() {
     });
 
     test('codec round-trip with and without freezeAuthority', () {
-      final noFreeze = InitializeMint2InstructionData(
+      const noFreeze = InitializeMint2InstructionData(
         decimals: 0,
         mintAuthority: _owner,
         freezeAuthority: null,
@@ -631,7 +631,7 @@ void main() {
       final decodedNoFreeze = getInitializeMint2InstructionDataDecoder().decode(encodedNoFreeze);
       expect(decodedNoFreeze.freezeAuthority, isNull);
 
-      final withFreeze = InitializeMint2InstructionData(
+      const withFreeze = InitializeMint2InstructionData(
         decimals: 9,
         mintAuthority: _owner,
         freezeAuthority: _delegate,
@@ -714,7 +714,7 @@ void main() {
     });
 
     test('codec round-trip preserves uiAmount string', () {
-      final data = UiAmountToAmountInstructionData(uiAmount: '2.5');
+      const data = UiAmountToAmountInstructionData(uiAmount: '2.5');
       final encoded = getUiAmountToAmountInstructionDataEncoder().encode(data);
       final decoded = getUiAmountToAmountInstructionDataDecoder().decode(encoded);
       expect(decoded.uiAmount, '2.5');
