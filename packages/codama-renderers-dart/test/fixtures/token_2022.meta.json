@@ -1,0 +1,7 @@
+{
+  "source": "https://github.com/solana-program/token-2022",
+  "commit": "ee17cb4f09b91c0a04a0a59579cc73929e94c67d",
+  "tag": "js@v0.9.0",
+  "file": "interface/idl.json",
+  "sha256": "e005c76d2324439f8e50483c61f4238b6ce72cd74736bd28bbfa53181e1d0573"
+}

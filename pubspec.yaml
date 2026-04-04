@@ -44,6 +44,7 @@ workspace:
   - packages/solana_kit_sysvars
   - packages/solana_kit_test_matchers
   - packages/solana_kit_token
+  - packages/solana_kit_token_2022
   - packages/solana_kit_transaction_confirmation
   - packages/solana_kit_transaction_messages
   - packages/solana_kit_transactions

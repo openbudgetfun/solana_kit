@@ -53,14 +53,27 @@ export function getInstructionPageFragment(
     .join("\n");
 
   const dataCtorParams = allArgManifests
-    .map(({ arg }) => {
+    .map(({ arg, manifest }) => {
       const fieldName = camelCase(arg.name as string);
       if (isDiscriminatorArg(arg, node)) {
-        return `    this.${fieldName} = ${getDiscriminatorDefault(arg, node)},`;
+        return isConstDefaultValue(arg.defaultValue)
+          ? `    this.${fieldName} = ${getDiscriminatorDefault(arg, node)},`
+          : `    ${manifest.type.content}? ${fieldName},`;
       }
       return `    required this.${fieldName},`;
     })
     .join("\n");
+
+  const dataCtorInitializers = allArgManifests
+    .map(({ arg }) => {
+      const fieldName = camelCase(arg.name as string);
+      if (isDiscriminatorArg(arg, node) && !isConstDefaultValue(arg.defaultValue)) {
+        return `      ${fieldName} = ${fieldName} ?? ${getDiscriminatorDefault(arg, node)}`;
+      }
+      return null;
+    })
+    .filter((value): value is string => value !== null)
+    .join(",\n");
 
   // Encoder/decoder for instruction data
   const encFields = allArgManifests
@@ -91,6 +104,7 @@ export function getInstructionPageFragment(
     })
     .join("\n");
 
+  const dataCtorKeyword = dataCtorInitializers ? "" : "const ";
   const dataEncoderName = `get${typeName}InstructionDataEncoder`;
   const dataDecoderName = `get${typeName}InstructionDataDecoder`;
   const dataCodecName = `get${typeName}InstructionDataCodec`;
@@ -178,9 +192,9 @@ ${use("AccountRole", "solanaInstructions")}`,
   parts.push(fragment`
 @immutable
 class ${fragmentFromString(dataClassName)} {
-  const ${fragmentFromString(dataClassName)}({
+  ${fragmentFromString(dataCtorKeyword)}${fragmentFromString(dataClassName)}({
 ${fragmentFromString(dataCtorParams)}
-  });
+  })${fragmentFromString(dataCtorInitializers ? ` :\n${dataCtorInitializers}` : "")};
 
 ${fragmentFromString(dataFieldDecls)}
 }`);
@@ -286,8 +300,26 @@ function getDiscriminatorDefault(
     if (arg.defaultValue.kind === "numberValueNode") {
       return String(arg.defaultValue.number);
     }
+    if (arg.defaultValue.kind === "bytesValueNode") {
+      const data = arg.defaultValue.data as string;
+      const bytes = data.match(/.{1,2}/g)?.map((b) => parseInt(b, 16)) ?? [];
+      return `Uint8List.fromList([${bytes.join(", ")}])`;
+    }
   }
   return "0";
+}
+
+function isConstDefaultValue(defaultValue: InstructionArgumentNode["defaultValue"]): boolean {
+  if (!defaultValue) return false;
+  switch (defaultValue.kind) {
+    case "numberValueNode":
+    case "booleanValueNode":
+    case "stringValueNode":
+    case "noneValueNode":
+      return true;
+    default:
+      return false;
+  }
 }
 
 function getDefaultValue(arg: InstructionArgumentNode): string {
@@ -304,6 +336,10 @@ function getDefaultValue(arg: InstructionArgumentNode): string {
       return `Address('${dv.publicKey}')`;
     case "noneValueNode":
       return "null";
+    case "bytesValueNode": {
+      const bytes = dv.data.match(/.{1,2}/g)?.map((b) => parseInt(b, 16)) ?? [];
+      return `Uint8List.fromList([${bytes.join(", ")}])`;
+    }
     default:
       return "null";
   }
