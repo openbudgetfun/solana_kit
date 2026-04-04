@@ -1,8 +1,5 @@
 ---
-"codama-renderers-dart": minor
-"solana_kit_system": minor
-"solana_kit_token": patch
-"solana_kit": patch
+default: minor
 ---
 
 Port System Program from upstream Codama IDL

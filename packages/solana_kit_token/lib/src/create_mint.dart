@@ -83,12 +83,12 @@ InstructionPlan getCreateMintInstructionPlan(
 
   return sequentialInstructionPlan([
     getCreateAccountInstruction(
-      instructionProgramAddress: systemProgram,
       payer: input.payer,
       newAccount: input.newMint,
       lamports: lamports,
       space: BigInt.from(mintSize),
-      programAddress: tokenProgram,
+      programOwner: tokenProgram,
+      programAddress: systemProgram,
     ),
     getInitializeMint2Instruction(
       programAddress: tokenProgram,
