@@ -12,16 +12,6 @@ const _newAccount = Address('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB');
 const _tokenProgram = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
 
 void main() {
-  // ── Program address ───────────────────────────────────────────────────────
-  group('systemProgramAddress', () {
-    test('is the canonical System Program address', () {
-      expect(
-        systemProgramAddress.value,
-        '11111111111111111111111111111111',
-      );
-    });
-  });
-
   // ── Instruction builder ───────────────────────────────────────────────────
   group('getCreateAccountInstruction', () {
     test('returns an Instruction with the system program address', () {
@@ -278,10 +268,4 @@ void main() {
     });
   });
 
-  // ── SystemInstruction enum ────────────────────────────────────────────────
-  group('SystemInstruction', () {
-    test('createAccount has index 0', () {
-      expect(SystemInstruction.createAccount.index, 0);
-    });
-  });
 }

@@ -17,7 +17,7 @@ void main() {
       const ataProgramAddress = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe');
 
       final (address, nonce) = await findAssociatedTokenPda(
-        seeds: AssociatedTokenSeeds(
+        seeds: const AssociatedTokenSeeds(
           owner: owner,
           tokenProgram: tokenProgram,
           mint: mint,
@@ -39,7 +39,7 @@ void main() {
       const tokenProgram = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
       const ataProgramAddress = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe');
 
-      final seeds = AssociatedTokenSeeds(
+      const seeds = AssociatedTokenSeeds(
         owner: owner,
         tokenProgram: tokenProgram,
         mint: mint,
@@ -66,7 +66,7 @@ void main() {
       const ataProgramAddress = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe');
 
       final (addr1, _) = await findAssociatedTokenPda(
-        seeds: AssociatedTokenSeeds(
+        seeds: const AssociatedTokenSeeds(
           owner: owner1,
           tokenProgram: tokenProgram,
           mint: mint,
@@ -74,7 +74,7 @@ void main() {
         programAddress: ataProgramAddress,
       );
       final (addr2, _) = await findAssociatedTokenPda(
-        seeds: AssociatedTokenSeeds(
+        seeds: const AssociatedTokenSeeds(
           owner: owner2,
           tokenProgram: tokenProgram,
           mint: mint,
@@ -93,7 +93,7 @@ void main() {
       const ataProgramAddress = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe');
 
       final (addr1, _) = await findAssociatedTokenPda(
-        seeds: AssociatedTokenSeeds(
+        seeds: const AssociatedTokenSeeds(
           owner: owner,
           tokenProgram: tokenProgram,
           mint: mint1,
@@ -101,7 +101,7 @@ void main() {
         programAddress: ataProgramAddress,
       );
       final (addr2, _) = await findAssociatedTokenPda(
-        seeds: AssociatedTokenSeeds(
+        seeds: const AssociatedTokenSeeds(
           owner: owner,
           tokenProgram: tokenProgram,
           mint: mint2,
@@ -120,7 +120,7 @@ void main() {
       const ataProgramAddress = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe');
 
       final (addrToken, _) = await findAssociatedTokenPda(
-        seeds: AssociatedTokenSeeds(
+        seeds: const AssociatedTokenSeeds(
           owner: owner,
           tokenProgram: tokenProgram,
           mint: mint,
@@ -128,7 +128,7 @@ void main() {
         programAddress: ataProgramAddress,
       );
       final (addrToken2022, _) = await findAssociatedTokenPda(
-        seeds: AssociatedTokenSeeds(
+        seeds: const AssociatedTokenSeeds(
           owner: owner,
           tokenProgram: token2022Program,
           mint: mint,
@@ -147,7 +147,7 @@ void main() {
       const mint = Address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
       const tokenProgram = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
 
-      final seeds = AssociatedTokenSeeds(
+      const seeds = AssociatedTokenSeeds(
         owner: owner,
         tokenProgram: tokenProgram,
         mint: mint,

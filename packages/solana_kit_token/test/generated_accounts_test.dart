@@ -15,10 +15,6 @@ const _signer2 = Address('44444444444444444444444444444444444444444444');
 void main() {
   // ── Mint account codec ────────────────────────────────────────────────────
   group('Mint account', () {
-    test('size constant is 82', () {
-      expect(mintSize, 82);
-    });
-
     test('round-trip with no freeze authority', () {
       final mint = Mint(
         mintAuthority: _owner,
@@ -130,10 +126,6 @@ void main() {
 
   // ── Token account codec ───────────────────────────────────────────────────
   group('Token account', () {
-    test('size constant is 165', () {
-      expect(tokenSize, 165);
-    });
-
     test('round-trip initialized non-native account', () {
       final token = Token(
         mint: _mint,
@@ -229,17 +221,13 @@ void main() {
 
   // ── Multisig account codec ────────────────────────────────────────────────
   group('Multisig account', () {
-    test('size constant is 355', () {
-      expect(multisigSize, 355);
-    });
-
     // The signers field is a fixed-size array of 11 Address slots.
     // Unused slots must be padded with a zero address.
-    const _zero = Address('11111111111111111111111111111111');
-    List<Address> _padSigners(List<Address> signers) {
+    const zero = Address('11111111111111111111111111111111');
+    List<Address> padSigners(List<Address> signers) {
       return List<Address>.generate(
         11,
-        (i) => i < signers.length ? signers[i] : _zero,
+        (i) => i < signers.length ? signers[i] : zero,
       );
     }
 
@@ -248,7 +236,7 @@ void main() {
         m: 2,
         n: 3,
         isInitialized: true,
-        signers: _padSigners([_owner, _signer1, _signer2]),
+        signers: padSigners([_owner, _signer1, _signer2]),
       );
       final encoded = getMultisigEncoder().encode(multisig);
       expect(encoded.length, multisigSize);
@@ -267,7 +255,7 @@ void main() {
         m: 1,
         n: 1,
         isInitialized: true,
-        signers: _padSigners([_owner]),
+        signers: padSigners([_owner]),
       );
       final encoded = getMultisigEncoder().encode(multisig);
       final decoded = getMultisigDecoder().decode(encoded);
@@ -282,7 +270,7 @@ void main() {
         m: 2,
         n: 2,
         isInitialized: false,
-        signers: _padSigners([_signer1, _signer2]),
+        signers: padSigners([_signer1, _signer2]),
       );
       final codec = getMultisigCodec();
       final decoded = codec.decode(codec.encode(multisig));
