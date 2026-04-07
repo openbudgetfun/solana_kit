@@ -6,7 +6,25 @@ Clone or update reference repos with:
 clone:repos
 ```
 
-They are stored under `.repos/`.
+Check whether your local clones still match the configured refs with:
+
+```bash
+clone:repos:status
+```
+
+Reference repo definitions live in [`config/reference-repos.json`](../../config/reference-repos.json).
+They are cloned under `.repos/`.
+
+## Config-driven workflow
+
+`clone:repos` reads the JSON file and applies each configured ref:
+
+- `branch` — clones or fast-forwards a named branch
+- `tag` — clones or checks out a pinned tag
+- `commit` — clones or checks out a pinned commit hash
+
+When you need to update an upstream pin, change the JSON config first instead of
+editing `devenv.nix` directly.
 
 ## Core SDK references
 
@@ -16,10 +34,10 @@ They are stored under `.repos/`.
 
 ## solana-program/* references
 
-Each program repo is pinned to a specific tag or commit. When a new version
-ships upstream, update the pin in `devenv.nix` under `clone:repos`, run
-`clone:repos`, regenerate the affected package with `codama-renderers-dart`,
-bump the package version, and add a changeset.
+Each program repo is pinned to a specific tag or commit in
+`config/reference-repos.json`. When a new version ships upstream, update the
+config, run `clone:repos`, regenerate the affected package with
+`codama-renderers-dart`, bump the package version, and add a changeset.
 
 | Path                                             | Repo                                                                                                  | Pinned version                            | Used by                                                                                |
 | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------- |
@@ -37,8 +55,9 @@ bump the package version, and add a changeset.
 
 ## Updating a pinned version
 
-1. Find the new tag on the upstream repo (e.g. `js@v0.14.0`).
-2. Update the tag string in `devenv.nix` under `clone:repos`.
-3. Run `clone:repos` to fetch the new version.
-4. Re-run the Codama generator for the affected Dart package.
-5. Review the generated diff, update the package, bump version, add a changeset.
+1. Find the new upstream tag or commit.
+2. Update `config/reference-repos.json`.
+3. Run `clone:repos` to fetch the new revision.
+4. Run `clone:repos:status` to confirm your local clones match the config.
+5. Re-run the Codama generator or handwritten implementation work for the affected package.
+6. Review the diff, bump the package version, and add a changeset.
