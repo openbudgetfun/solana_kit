@@ -490,6 +490,50 @@ in
           echo "Cloning brij-digital/espresso-cash-public..."
           git clone https://github.com/brij-digital/espresso-cash-public "$DEVENV_ROOT/.repos/espresso-cash-public"
         fi
+
+        # solana-program/* repos — pinned to specific tags/commits for stability.
+        # Update the tag and re-run clone:repos when a new program version ships.
+        mkdir -p "$DEVENV_ROOT/.repos/solana-program"
+
+        clone_or_update_at_tag() {
+          local repo="$1" tag="$2" dest="$3"
+          if [ -d "$dest" ]; then
+            echo "Checking $repo at $tag..."
+            cd "$dest"
+            git fetch --tags --quiet
+            git checkout --quiet "$tag"
+          else
+            echo "Cloning $repo at $tag..."
+            git clone --branch "$tag" --depth 1 \
+              "https://github.com/solana-program/$repo" "$dest"
+          fi
+        }
+
+        clone_or_update_at_tag system           js@v0.12.0                          "$DEVENV_ROOT/.repos/solana-program/system"
+        clone_or_update_at_tag token            js@v0.13.0                          "$DEVENV_ROOT/.repos/solana-program/token"
+        clone_or_update_at_tag token-2022       js@v0.9.0                           "$DEVENV_ROOT/.repos/solana-program/token-2022"
+        clone_or_update_at_tag associated-token-account program@v8.0.0             "$DEVENV_ROOT/.repos/solana-program/associated-token-account"
+        clone_or_update_at_tag address-lookup-table js@v0.11.0                     "$DEVENV_ROOT/.repos/solana-program/address-lookup-table"
+        clone_or_update_at_tag memo             js@v0.11.0                          "$DEVENV_ROOT/.repos/solana-program/memo"
+        clone_or_update_at_tag compute-budget   js@v0.15.0                          "$DEVENV_ROOT/.repos/solana-program/compute-budget"
+        clone_or_update_at_tag stake            js@v0.6.0                           "$DEVENV_ROOT/.repos/solana-program/stake"
+        clone_or_update_at_tag config           solana-config-program-client@v1.1.0 "$DEVENV_ROOT/.repos/solana-program/config"
+        clone_or_update_at_tag loader-v3        js@v0.3.0                           "$DEVENV_ROOT/.repos/solana-program/loader-v3"
+
+        # loader-v4 has no versioned release yet; pin to a specific commit.
+        # Pinned: 5df834d (2026-03-08)
+        if [ -d "$DEVENV_ROOT/.repos/solana-program/loader-v4" ]; then
+          echo "Checking loader-v4 at 5df834d..."
+          cd "$DEVENV_ROOT/.repos/solana-program/loader-v4"
+          git fetch --quiet
+          git checkout --quiet 5df834d
+        else
+          echo "Cloning loader-v4 at 5df834d..."
+          git clone https://github.com/solana-program/loader-v4 \
+            "$DEVENV_ROOT/.repos/solana-program/loader-v4"
+          cd "$DEVENV_ROOT/.repos/solana-program/loader-v4"
+          git checkout --quiet 5df834d
+        fi
       '';
       description = "Clone or update reference repos into .repos/.";
       binary = "bash";
