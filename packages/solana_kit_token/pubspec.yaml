@@ -13,6 +13,7 @@ dependencies:
   meta: ^1.16.0
   solana_kit_accounts: ^0.3.1
   solana_kit_addresses: ^0.3.1
+  solana_kit_associated_token_account: ^0.3.1
   solana_kit_codecs_core: ^0.3.1
   solana_kit_codecs_data_structures: ^0.3.1
   solana_kit_codecs_numbers: ^0.3.1

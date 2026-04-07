@@ -270,7 +270,7 @@ The merged LCOV report is written to `coverage/lcov.info`.
 
 <!-- workspace-summary:start -->
 
-This monorepo contains **43 packages** under `packages/`: **41 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
+This monorepo contains **44 packages** under `packages/`: **42 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
 
 <!-- workspace-summary:end -->
 
@@ -341,12 +341,13 @@ Most users only need the umbrella package `solana_kit`, but each sub-package can
 
 ### Accounts & Programs
 
-| Package                                                             | Description                                                                                                        |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [`solana_kit_accounts`](#solana_kit_accounts)                       | Fetch, decode, and parse on-chain account data with typed `Account<T>` and `MaybeAccount<T>` wrappers.             |
-| [`solana_kit_programs`](#solana_kit_programs)                       | Program error handling utilities: `ProgramError` representation and program-specific error detection.              |
-| [`solana_kit_program_client_core`](#solana_kit_program_client_core) | Core utilities for building typed program clients: instruction input resolution and self-fetching account helpers. |
-| [`solana_kit_sysvars`](#solana_kit_sysvars)                         | Type-safe access to Solana sysvars: `Clock`, `Rent`, `EpochSchedule`, `SlotHashes`, `StakeHistory`, and more.      |
+| Package                                                                       | Description                                                                                                        |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| [`solana_kit_accounts`](#solana_kit_accounts)                                 | Fetch, decode, and parse on-chain account data with typed `Account<T>` and `MaybeAccount<T>` wrappers.             |
+| [`solana_kit_programs`](#solana_kit_programs)                                 | Program error handling utilities: `ProgramError` representation and program-specific error detection.              |
+| [`solana_kit_program_client_core`](#solana_kit_program_client_core)           | Core utilities for building typed program clients: instruction input resolution and self-fetching account helpers. |
+| [`solana_kit_associated_token_account`](#solana_kit_associated_token_account) | Shared Associated Token Account PDA helpers and instruction builders used by SPL Token and Token-2022.             |
+| [`solana_kit_sysvars`](#solana_kit_sysvars)                                   | Type-safe access to Solana sysvars: `Clock`, `Rent`, `EpochSchedule`, `SlotHashes`, `StakeHistory`, and more.      |
 
 ### Transaction Confirmation
 
@@ -714,6 +715,19 @@ Building blocks for typed program clients:
 
 Exists because: Code-generated program clients (e.g., for SPL Token or custom Anchor programs) share common patterns for resolving instruction inputs and fetching accounts. This package provides those shared utilities.
 
+### solana_kit_associated_token_account
+
+Handwritten Associated Token Account primitives shared by `solana_kit_token` and `solana_kit_token_2022`:
+
+- `ataProgramAddress` / `associatedTokenProgramAddress` — canonical ATA program address constants
+- `findAssociatedTokenPda()` / `findAssociatedTokenPdaSync()` — derive ATA PDAs for a wallet + mint + token program
+- `getAssociatedTokenAddressSync()` — derive just the ATA address
+- `getCreateAssociatedTokenInstruction()` — create an ATA and fail if it already exists
+- `getCreateAssociatedTokenIdempotentInstruction()` — create an ATA and no-op if it already exists
+- `getRecoverNestedAssociatedTokenInstruction()` — recover lamports from nested ATAs
+
+Exists because: ATA behavior is shared across SPL Token and Token-2022, but it does not have a Codama-generated client of its own. A dedicated handwritten package keeps the logic canonical and reusable instead of duplicating ATA helpers in multiple token packages.
+
 ### solana_kit_sysvars
 
 Type-safe sysvar access:
@@ -815,6 +829,7 @@ Generated from package `pubspec.yaml` files with `scripts/workspace-doc-drift.sh
 solana_kit -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs, solana_kit_errors, solana_kit_fast_stable_stringify, solana_kit_instruction_plans, solana_kit_instructions, solana_kit_keys, solana_kit_offchain_messages, solana_kit_options, solana_kit_program_client_core, solana_kit_programs, solana_kit_rpc, solana_kit_rpc_parsed_types, solana_kit_rpc_spec_types, solana_kit_rpc_subscriptions, solana_kit_rpc_transport_http, solana_kit_rpc_types, solana_kit_signers, solana_kit_subscribable, solana_kit_system, solana_kit_sysvars, solana_kit_token, solana_kit_transaction_confirmation, solana_kit_transaction_messages, solana_kit_transactions
 solana_kit_accounts -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_strings, solana_kit_errors, solana_kit_rpc, solana_kit_rpc_api, solana_kit_rpc_spec, solana_kit_rpc_types
 solana_kit_addresses -> solana_kit_codecs_core, solana_kit_codecs_strings, solana_kit_errors
+solana_kit_associated_token_account -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_errors, solana_kit_instructions
 solana_kit_codecs -> solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_options
 solana_kit_codecs_core -> solana_kit_errors
 solana_kit_codecs_data_structures -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
@@ -850,8 +865,8 @@ solana_kit_subscribable -> solana_kit_errors
 solana_kit_system -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_instructions
 solana_kit_sysvars -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_errors, solana_kit_rpc_spec, solana_kit_rpc_types
 solana_kit_test_matchers -> solana_kit_accounts, solana_kit_addresses, solana_kit_errors, solana_kit_instructions, solana_kit_keys, solana_kit_rpc, solana_kit_rpc_spec, solana_kit_rpc_subscriptions, solana_kit_rpc_types, solana_kit_signers, solana_kit_subscribable, solana_kit_transaction_messages, solana_kit_transactions
-solana_kit_token -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instruction_plans, solana_kit_instructions, solana_kit_system
-solana_kit_token_2022 -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instruction_plans, solana_kit_instructions, solana_kit_options, solana_kit_signers, solana_kit_system
+solana_kit_token -> solana_kit_accounts, solana_kit_addresses, solana_kit_associated_token_account, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instruction_plans, solana_kit_instructions, solana_kit_system
+solana_kit_token_2022 -> solana_kit_accounts, solana_kit_addresses, solana_kit_associated_token_account, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instruction_plans, solana_kit_instructions, solana_kit_options, solana_kit_signers, solana_kit_system
 solana_kit_transaction_confirmation -> solana_kit_addresses, solana_kit_errors, solana_kit_keys, solana_kit_rpc, solana_kit_rpc_api, solana_kit_rpc_spec, solana_kit_rpc_subscriptions_channel_websocket, solana_kit_rpc_types, solana_kit_subscribable, solana_kit_transactions
 solana_kit_transaction_messages -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instructions
 solana_kit_transactions -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instructions, solana_kit_keys, solana_kit_transaction_messages

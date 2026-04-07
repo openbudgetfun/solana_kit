@@ -1,16 +1,3 @@
-// Auto-generated. Do not edit.
-// ignore_for_file: type=lint
+// Handwritten compatibility shim.
 
-
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-
-
-/// The address of the AssociatedToken program.
-const associatedTokenProgramAddress = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
-
-/// Known instructions for the AssociatedToken program.
-enum AssociatedTokenInstruction {
-  createAssociatedToken,
-  createAssociatedTokenIdempotent,
-  recoverNestedAssociatedToken,
-}
+export 'package:solana_kit_associated_token_account/solana_kit_associated_token_account.dart';
