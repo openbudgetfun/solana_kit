@@ -1,0 +1,112 @@
+{
+  "repos": [
+    {
+      "name": "kit",
+      "path": ".repos/kit",
+      "url": "https://github.com/anza-xyz/kit",
+      "ref": { "type": "branch", "value": "main" },
+      "notes": "upstream TypeScript source from anza-xyz/kit"
+    },
+    {
+      "name": "espresso-cash-public",
+      "path": ".repos/espresso-cash-public",
+      "url": "https://github.com/brij-digital/espresso-cash-public",
+      "ref": { "type": "branch", "value": "main" },
+      "notes": "Dart Solana reference from brij-digital/espresso-cash-public"
+    },
+    {
+      "name": "mobile-wallet-adapter",
+      "path": ".repos/mobile-wallet-adapter",
+      "url": "https://github.com/solana-mobile/mobile-wallet-adapter",
+      "ref": { "type": "branch", "value": "main" },
+      "notes": "Solana Mobile Wallet Adapter reference from solana-mobile/mobile-wallet-adapter"
+    },
+    {
+      "name": "system",
+      "path": ".repos/solana-program/system",
+      "url": "https://github.com/solana-program/system",
+      "ref": { "type": "tag", "value": "js@v0.12.0" },
+      "package": "solana_kit_system",
+      "issue": 131
+    },
+    {
+      "name": "token",
+      "path": ".repos/solana-program/token",
+      "url": "https://github.com/solana-program/token",
+      "ref": { "type": "tag", "value": "js@v0.13.0" },
+      "package": "solana_kit_token"
+    },
+    {
+      "name": "token-2022",
+      "path": ".repos/solana-program/token-2022",
+      "url": "https://github.com/solana-program/token-2022",
+      "ref": { "type": "tag", "value": "js@v0.9.0" },
+      "package": "solana_kit_token_2022"
+    },
+    {
+      "name": "associated-token-account",
+      "path": ".repos/solana-program/associated-token-account",
+      "url": "https://github.com/solana-program/associated-token-account",
+      "ref": { "type": "tag", "value": "program@v8.0.0" },
+      "package": "solana_kit_associated_token_account",
+      "issue": 132
+    },
+    {
+      "name": "address-lookup-table",
+      "path": ".repos/solana-program/address-lookup-table",
+      "url": "https://github.com/solana-program/address-lookup-table",
+      "ref": { "type": "tag", "value": "js@v0.11.0" },
+      "package": "solana_kit_address_lookup_table",
+      "issue": 134
+    },
+    {
+      "name": "memo",
+      "path": ".repos/solana-program/memo",
+      "url": "https://github.com/solana-program/memo",
+      "ref": { "type": "tag", "value": "js@v0.11.0" },
+      "package": "solana_kit_memo",
+      "issue": 135
+    },
+    {
+      "name": "compute-budget",
+      "path": ".repos/solana-program/compute-budget",
+      "url": "https://github.com/solana-program/compute-budget",
+      "ref": { "type": "tag", "value": "js@v0.15.0" },
+      "package": "solana_kit_compute_budget",
+      "issue": 133
+    },
+    {
+      "name": "stake",
+      "path": ".repos/solana-program/stake",
+      "url": "https://github.com/solana-program/stake",
+      "ref": { "type": "tag", "value": "js@v0.6.0" },
+      "package": "solana_kit_stake",
+      "issue": 136
+    },
+    {
+      "name": "config",
+      "path": ".repos/solana-program/config",
+      "url": "https://github.com/solana-program/config",
+      "ref": { "type": "tag", "value": "solana-config-program-client@v1.1.0" },
+      "package": "solana_kit_config",
+      "issue": 137
+    },
+    {
+      "name": "loader-v3",
+      "path": ".repos/solana-program/loader-v3",
+      "url": "https://github.com/solana-program/loader-v3",
+      "ref": { "type": "tag", "value": "js@v0.3.0" },
+      "package": "solana_kit_loader",
+      "issue": 138
+    },
+    {
+      "name": "loader-v4",
+      "path": ".repos/solana-program/loader-v4",
+      "url": "https://github.com/solana-program/loader-v4",
+      "ref": { "type": "commit", "value": "5df834d" },
+      "package": "solana_kit_loader",
+      "issue": 138,
+      "notes": "Pinned to commit 5df834d (2026-03-08) because no versioned release exists yet"
+    }
+  ]
+}

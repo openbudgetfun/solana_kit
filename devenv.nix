@@ -16,6 +16,7 @@ in
       dprint
       fvm
       gitleaks
+      jq
       ktlint
       libiconv
       nixfmt
@@ -38,7 +39,6 @@ in
 
   # Rely on the global sdk for now as the nix apple sdk is not working for me.
   apple.sdk = null;
-
 
   git-hooks = {
     package = pkgs.prek;
@@ -472,70 +472,134 @@ in
     };
     "clone:repos" = {
       exec = ''
-        set -e
+        set -euo pipefail
+        config_file="$DEVENV_ROOT/config/reference-repos.json"
+        jq_bin="${pkgs.jq}/bin/jq"
+
         mkdir -p "$DEVENV_ROOT/.repos"
 
-        if [ -d "$DEVENV_ROOT/.repos/kit" ]; then
-          echo "Updating .repos/kit..."
-          cd "$DEVENV_ROOT/.repos/kit" && git pull --ff-only
-        else
-          echo "Cloning anza-xyz/kit..."
-          git clone https://github.com/anza-xyz/kit "$DEVENV_ROOT/.repos/kit"
-        fi
+        sync_reference_repo() {
+          local name="$1" path="$2" url="$3" ref_type="$4" ref_value="$5"
+          local dest="$DEVENV_ROOT/$path"
 
-        if [ -d "$DEVENV_ROOT/.repos/espresso-cash-public" ]; then
-          echo "Updating .repos/espresso-cash-public..."
-          cd "$DEVENV_ROOT/.repos/espresso-cash-public" && git pull --ff-only
-        else
-          echo "Cloning brij-digital/espresso-cash-public..."
-          git clone https://github.com/brij-digital/espresso-cash-public "$DEVENV_ROOT/.repos/espresso-cash-public"
-        fi
+          mkdir -p "$(dirname "$dest")"
 
-        # solana-program/* repos — pinned to specific tags/commits for stability.
-        # Update the tag and re-run clone:repos when a new program version ships.
-        mkdir -p "$DEVENV_ROOT/.repos/solana-program"
-
-        clone_or_update_at_tag() {
-          local repo="$1" tag="$2" dest="$3"
-          if [ -d "$dest" ]; then
-            echo "Checking $repo at $tag..."
-            cd "$dest"
-            git fetch --tags --quiet
-            git checkout --quiet "$tag"
-          else
-            echo "Cloning $repo at $tag..."
-            git clone --branch "$tag" --depth 1 \
-              "https://github.com/solana-program/$repo" "$dest"
-          fi
+          case "$ref_type" in
+            branch)
+              if [ -d "$dest/.git" ]; then
+                echo "Updating $path on branch $ref_value..."
+                git -C "$dest" fetch origin --quiet
+                git -C "$dest" checkout --quiet "$ref_value"
+                git -C "$dest" pull --ff-only origin "$ref_value"
+              else
+                echo "Cloning $name on branch $ref_value..."
+                git clone --branch "$ref_value" "$url" "$dest"
+              fi
+              ;;
+            tag)
+              if [ -d "$dest/.git" ]; then
+                echo "Checking $path at tag $ref_value..."
+                git -C "$dest" fetch origin --tags --quiet
+                git -C "$dest" checkout --quiet "$ref_value"
+              else
+                echo "Cloning $name at tag $ref_value..."
+                git clone --branch "$ref_value" --depth 1 "$url" "$dest"
+              fi
+              ;;
+            commit)
+              if [ -d "$dest/.git" ]; then
+                echo "Checking $path at commit $ref_value..."
+                git -C "$dest" fetch origin --quiet
+              else
+                echo "Cloning $name at commit $ref_value..."
+                git clone "$url" "$dest"
+              fi
+              git -C "$dest" checkout --quiet "$ref_value"
+              ;;
+            *)
+              echo "Unknown ref type '$ref_type' for $name" >&2
+              return 1
+              ;;
+          esac
         }
 
-        clone_or_update_at_tag system           js@v0.12.0                          "$DEVENV_ROOT/.repos/solana-program/system"
-        clone_or_update_at_tag token            js@v0.13.0                          "$DEVENV_ROOT/.repos/solana-program/token"
-        clone_or_update_at_tag token-2022       js@v0.9.0                           "$DEVENV_ROOT/.repos/solana-program/token-2022"
-        clone_or_update_at_tag associated-token-account program@v8.0.0             "$DEVENV_ROOT/.repos/solana-program/associated-token-account"
-        clone_or_update_at_tag address-lookup-table js@v0.11.0                     "$DEVENV_ROOT/.repos/solana-program/address-lookup-table"
-        clone_or_update_at_tag memo             js@v0.11.0                          "$DEVENV_ROOT/.repos/solana-program/memo"
-        clone_or_update_at_tag compute-budget   js@v0.15.0                          "$DEVENV_ROOT/.repos/solana-program/compute-budget"
-        clone_or_update_at_tag stake            js@v0.6.0                           "$DEVENV_ROOT/.repos/solana-program/stake"
-        clone_or_update_at_tag config           solana-config-program-client@v1.1.0 "$DEVENV_ROOT/.repos/solana-program/config"
-        clone_or_update_at_tag loader-v3        js@v0.3.0                           "$DEVENV_ROOT/.repos/solana-program/loader-v3"
-
-        # loader-v4 has no versioned release yet; pin to a specific commit.
-        # Pinned: 5df834d (2026-03-08)
-        if [ -d "$DEVENV_ROOT/.repos/solana-program/loader-v4" ]; then
-          echo "Checking loader-v4 at 5df834d..."
-          cd "$DEVENV_ROOT/.repos/solana-program/loader-v4"
-          git fetch --quiet
-          git checkout --quiet 5df834d
-        else
-          echo "Cloning loader-v4 at 5df834d..."
-          git clone https://github.com/solana-program/loader-v4 \
-            "$DEVENV_ROOT/.repos/solana-program/loader-v4"
-          cd "$DEVENV_ROOT/.repos/solana-program/loader-v4"
-          git checkout --quiet 5df834d
-        fi
+        while IFS= read -r repo_json; do
+          name="$($jq_bin -r '.name' <<<"$repo_json")"
+          path="$($jq_bin -r '.path' <<<"$repo_json")"
+          url="$($jq_bin -r '.url' <<<"$repo_json")"
+          ref_type="$($jq_bin -r '.ref.type' <<<"$repo_json")"
+          ref_value="$($jq_bin -r '.ref.value' <<<"$repo_json")"
+          sync_reference_repo "$name" "$path" "$url" "$ref_type" "$ref_value"
+        done < <($jq_bin -c '.repos[]' "$config_file")
       '';
-      description = "Clone or update reference repos into .repos/.";
+      description = "Clone or update reference repos listed in config/reference-repos.json into .repos/.";
+      binary = "bash";
+    };
+    "clone:repos:status" = {
+      exec = ''
+                set -euo pipefail
+                config_file="$DEVENV_ROOT/config/reference-repos.json"
+                jq_bin="${pkgs.jq}/bin/jq"
+                status=0
+
+                while IFS= read -r repo_json; do
+                  name="$($jq_bin -r '.name' <<<"$repo_json")"
+                  path="$($jq_bin -r '.path' <<<"$repo_json")"
+                  ref_type="$($jq_bin -r '.ref.type' <<<"$repo_json")"
+                  ref_value="$($jq_bin -r '.ref.value' <<<"$repo_json")"
+                  dest="$DEVENV_ROOT/$path"
+
+                  if [ ! -d "$dest/.git" ]; then
+                    echo "MISSING  $path ($ref_type:$ref_value)"
+                    status=1
+                    continue
+                  fi
+
+                  git -C "$dest" fetch origin --tags --quiet >/dev/null 2>&1 || true
+                  head_short="$(git -C "$dest" rev-parse --short HEAD)"
+
+                  case "$ref_type" in
+                    branch)
+                      if git -C "$dest" show-ref --verify --quiet "refs/remotes/origin/$ref_value"; then
+                        read -r ahead behind <<EOF
+        $(git -C "$dest" rev-list --left-right --count "HEAD...origin/$ref_value")
+        EOF
+                        if [ "$ahead" -eq 0 ] && [ "$behind" -eq 0 ]; then
+                          echo "OK       $path @ $head_short (branch $ref_value in sync)"
+                        else
+                          echo "DRIFT    $path @ $head_short (branch $ref_value ahead=$ahead behind=$behind)"
+                          status=1
+                        fi
+                      else
+                        echo "UNKNOWN  $path @ $head_short (missing origin/$ref_value)"
+                        status=1
+                      fi
+                      ;;
+                    tag)
+                      expected_commit="$(git -C "$dest" rev-list -n 1 "$ref_value")"
+                      current_commit="$(git -C "$dest" rev-parse HEAD)"
+                      if [ "$current_commit" = "$expected_commit" ]; then
+                        echo "OK       $path @ $head_short (tag $ref_value)"
+                      else
+                        echo "DRIFT    $path @ $head_short (expected tag $ref_value -> ''${expected_commit:0:7})"
+                        status=1
+                      fi
+                      ;;
+                    commit)
+                      current_commit="$(git -C "$dest" rev-parse HEAD)"
+                      if [ "$current_commit" = "$(git -C "$dest" rev-parse "$ref_value^{commit}")" ]; then
+                        echo "OK       $path @ $head_short (commit $ref_value)"
+                      else
+                        echo "DRIFT    $path @ $head_short (expected commit $ref_value)"
+                        status=1
+                      fi
+                      ;;
+                  esac
+                done < <($jq_bin -c '.repos[]' "$config_file")
+
+                exit "$status"
+      '';
+      description = "Report whether cloned reference repos match config/reference-repos.json.";
       binary = "bash";
     };
     "update:deps" = {
