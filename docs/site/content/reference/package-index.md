@@ -51,6 +51,7 @@ Then move to smaller packages only when you want a narrower dependency surface o
 - [`solana_kit_accounts`](https://pub.dev/packages/solana_kit_accounts)
 - [`solana_kit_programs`](https://pub.dev/packages/solana_kit_programs)
 - [`solana_kit_program_client_core`](https://pub.dev/packages/solana_kit_program_client_core)
+- [`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account)
 - [`solana_kit_sysvars`](https://pub.dev/packages/solana_kit_sysvars)
 - [`solana_kit_rpc_parsed_types`](https://pub.dev/packages/solana_kit_rpc_parsed_types)
 

@@ -245,6 +245,13 @@ Each subsection below maps one package to its role in the Solana ecosystem and t
 - What it does: exposes shared utilities for building typed program clients.
 - Use it when: generating or hand-writing client SDK wrappers.
 
+### solana_kit_associated_token_account
+
+- Pub.dev: [solana_kit_associated_token_account](https://pub.dev/packages/solana_kit_associated_token_account)
+- Why it exists: associated token account flows are shared by both SPL Token and Token-2022.
+- What it does: provides the canonical ATA program address, PDA derivation helpers, and handwritten ATA instruction builders.
+- Use it when: deriving ATA addresses or building create/idempotent/recover ATA instructions directly.
+
 ### solana_kit_sysvars
 
 - Pub.dev: [solana_kit_sysvars](https://pub.dev/packages/solana_kit_sysvars)

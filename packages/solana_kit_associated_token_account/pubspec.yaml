@@ -1,5 +1,5 @@
-name: solana_kit_token_2022
-description: SPL Token 2022 and Associated Token Account client for the Solana Kit Dart SDK. Generated from the upstream Codama IDL with focused ergonomic helpers.
+name: solana_kit_associated_token_account
+description: Associated Token Account instruction builders and PDA helpers for the Solana Kit Dart SDK.
 version: 0.3.1
 repository: https://github.com/openbudgetfun/solana_kit
 homepage: https://openbudgetfun.github.io/solana_kit/
@@ -10,22 +10,15 @@ environment:
 resolution: workspace
 
 dependencies:
+  crypto: ^3.0.6
   meta: ^1.16.0
-  solana_kit_accounts: ^0.3.1
   solana_kit_addresses: ^0.3.1
-  solana_kit_associated_token_account: ^0.3.1
   solana_kit_codecs_core: ^0.3.1
   solana_kit_codecs_data_structures: ^0.3.1
   solana_kit_codecs_numbers: ^0.3.1
-  solana_kit_codecs_strings: ^0.3.1
   solana_kit_errors: ^0.3.1
-  solana_kit_instruction_plans: ^0.3.1
   solana_kit_instructions: ^0.3.1
-  solana_kit_options: ^0.3.1
-  solana_kit_signers: ^0.3.1
-  solana_kit_system: ^0.3.1
 
 dev_dependencies:
   solana_kit_lints: ^0.3.1
-  solana_kit_test_matchers: ^0.3.1
   test: ^1.25.0

@@ -1,9 +1,12 @@
-/// SPL Token and Associated Token Account client for the Solana Kit Dart SDK.
+/// SPL Token client for the Solana Kit Dart SDK.
 ///
 /// This package provides a generated low-level client for the SPL Token
-/// program and the Associated Token Account program, plus handwritten
-/// ergonomic helpers for common workflows like creating mints, minting
-/// to ATAs, and transferring to ATAs.
+/// program plus handwritten ergonomic helpers for common workflows like
+/// creating mints, minting to ATAs, and transferring to ATAs.
+///
+/// Associated Token Account APIs are shared from
+/// `solana_kit_associated_token_account` and re-exported here for
+/// convenience.
 ///
 /// ## Generated layer
 ///
@@ -35,8 +38,9 @@
 /// - `getTransferToAtaInstructionPlan` — transfer to a recipient's ATA
 library;
 
+export 'package:solana_kit_associated_token_account/solana_kit_associated_token_account.dart';
+
 export 'src/create_mint.dart';
-export 'src/generated/associated_token.dart';
 export 'src/generated/token.dart';
 export 'src/mint_to_ata.dart';
 export 'src/transfer_to_ata.dart';

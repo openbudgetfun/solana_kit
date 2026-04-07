@@ -13,16 +13,15 @@ void main() {
     test('derives a PDA with a valid nonce (0–255)', () async {
       const owner = Address('2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S');
       const mint = Address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
-      const tokenProgram = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
-      const ataProgramAddress = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe');
-
+      const tokenProgram = Address(
+        'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+      );
       final (address, nonce) = await findAssociatedTokenPda(
         seeds: const AssociatedTokenSeeds(
           owner: owner,
           tokenProgram: tokenProgram,
           mint: mint,
         ),
-        programAddress: ataProgramAddress,
       );
 
       // Nonce must be a valid bump seed (0–255)
@@ -36,8 +35,9 @@ void main() {
     test('same seeds always derive the same PDA', () async {
       const owner = Address('11111111111111111111111111111111');
       const mint = Address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
-      const tokenProgram = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
-      const ataProgramAddress = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe');
+      const tokenProgram = Address(
+        'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+      );
 
       const seeds = AssociatedTokenSeeds(
         owner: owner,
@@ -45,14 +45,8 @@ void main() {
         mint: mint,
       );
 
-      final (addr1, nonce1) = await findAssociatedTokenPda(
-        seeds: seeds,
-        programAddress: ataProgramAddress,
-      );
-      final (addr2, nonce2) = await findAssociatedTokenPda(
-        seeds: seeds,
-        programAddress: ataProgramAddress,
-      );
+      final (addr1, nonce1) = await findAssociatedTokenPda(seeds: seeds);
+      final (addr2, nonce2) = await findAssociatedTokenPda(seeds: seeds);
 
       expect(addr1, equals(addr2));
       expect(nonce1, equals(nonce2));
@@ -62,8 +56,9 @@ void main() {
       const owner1 = Address('11111111111111111111111111111111');
       const owner2 = Address('22222222222222222222222222222222222222222222');
       const mint = Address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
-      const tokenProgram = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
-      const ataProgramAddress = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe');
+      const tokenProgram = Address(
+        'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+      );
 
       final (addr1, _) = await findAssociatedTokenPda(
         seeds: const AssociatedTokenSeeds(
@@ -71,7 +66,6 @@ void main() {
           tokenProgram: tokenProgram,
           mint: mint,
         ),
-        programAddress: ataProgramAddress,
       );
       final (addr2, _) = await findAssociatedTokenPda(
         seeds: const AssociatedTokenSeeds(
@@ -79,7 +73,6 @@ void main() {
           tokenProgram: tokenProgram,
           mint: mint,
         ),
-        programAddress: ataProgramAddress,
       );
 
       expect(addr1, isNot(equals(addr2)));
@@ -89,8 +82,9 @@ void main() {
       const owner = Address('11111111111111111111111111111111');
       const mint1 = Address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
       const mint2 = Address('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB');
-      const tokenProgram = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
-      const ataProgramAddress = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe');
+      const tokenProgram = Address(
+        'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+      );
 
       final (addr1, _) = await findAssociatedTokenPda(
         seeds: const AssociatedTokenSeeds(
@@ -98,7 +92,6 @@ void main() {
           tokenProgram: tokenProgram,
           mint: mint1,
         ),
-        programAddress: ataProgramAddress,
       );
       final (addr2, _) = await findAssociatedTokenPda(
         seeds: const AssociatedTokenSeeds(
@@ -106,38 +99,41 @@ void main() {
           tokenProgram: tokenProgram,
           mint: mint2,
         ),
-        programAddress: ataProgramAddress,
       );
 
       expect(addr1, isNot(equals(addr2)));
     });
 
-    test('Token-2022 program produces different PDA than Token program', () async {
-      const owner = Address('11111111111111111111111111111111');
-      const mint = Address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
-      const tokenProgram = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
-      const token2022Program = Address('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
-      const ataProgramAddress = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe');
+    test(
+      'Token-2022 program produces different PDA than Token program',
+      () async {
+        const owner = Address('11111111111111111111111111111111');
+        const mint = Address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
+        const tokenProgram = Address(
+          'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+        );
+        const token2022Program = Address(
+          'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb',
+        );
 
-      final (addrToken, _) = await findAssociatedTokenPda(
-        seeds: const AssociatedTokenSeeds(
-          owner: owner,
-          tokenProgram: tokenProgram,
-          mint: mint,
-        ),
-        programAddress: ataProgramAddress,
-      );
-      final (addrToken2022, _) = await findAssociatedTokenPda(
-        seeds: const AssociatedTokenSeeds(
-          owner: owner,
-          tokenProgram: token2022Program,
-          mint: mint,
-        ),
-        programAddress: ataProgramAddress,
-      );
+        final (addrToken, _) = await findAssociatedTokenPda(
+          seeds: const AssociatedTokenSeeds(
+            owner: owner,
+            tokenProgram: tokenProgram,
+            mint: mint,
+          ),
+        );
+        final (addrToken2022, _) = await findAssociatedTokenPda(
+          seeds: const AssociatedTokenSeeds(
+            owner: owner,
+            tokenProgram: token2022Program,
+            mint: mint,
+          ),
+        );
 
-      expect(addrToken, isNot(equals(addrToken2022)));
-    });
+        expect(addrToken, isNot(equals(addrToken2022)));
+      },
+    );
   });
 
   // ── AssociatedTokenSeeds value semantics ──────────────────────────────────
@@ -145,7 +141,9 @@ void main() {
     test('stores owner, tokenProgram, mint', () {
       const owner = Address('11111111111111111111111111111111');
       const mint = Address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
-      const tokenProgram = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+      const tokenProgram = Address(
+        'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+      );
 
       const seeds = AssociatedTokenSeeds(
         owner: owner,
