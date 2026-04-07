@@ -10,6 +10,7 @@ workspace:
   - packages/solana_kit_addresses
   - packages/solana_kit_associated_token_account
   - packages/solana_kit_codecs
+  - packages/solana_kit_compute_budget
   - packages/solana_kit_codecs_core
   - packages/solana_kit_codecs_data_structures
   - packages/solana_kit_codecs_numbers

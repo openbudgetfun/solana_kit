@@ -252,6 +252,13 @@ Each subsection below maps one package to its role in the Solana ecosystem and t
 - What it does: provides the canonical ATA program address, PDA derivation helpers, and handwritten ATA instruction builders.
 - Use it when: deriving ATA addresses or building create/idempotent/recover ATA instructions directly.
 
+### solana_kit_compute_budget
+
+- Pub.dev: [solana_kit_compute_budget](https://pub.dev/packages/solana_kit_compute_budget)
+- Why it exists: priority fees and compute limits are needed by virtually every non-trivial transaction.
+- What it does: provides instruction builders, codecs, and parsers for all five Compute Budget instructions.
+- Use it when: setting compute unit limits, priority fees, heap frames, or loaded accounts data size limits.
+
 ### solana_kit_sysvars
 
 - Pub.dev: [solana_kit_sysvars](https://pub.dev/packages/solana_kit_sysvars)

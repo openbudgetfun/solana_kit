@@ -270,7 +270,7 @@ The merged LCOV report is written to `coverage/lcov.info`.
 
 <!-- workspace-summary:start -->
 
-This monorepo contains **44 packages** under `packages/`: **42 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
+This monorepo contains **45 packages** under `packages/`: **43 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
 
 <!-- workspace-summary:end -->
 
@@ -347,6 +347,7 @@ Most users only need the umbrella package `solana_kit`, but each sub-package can
 | [`solana_kit_programs`](#solana_kit_programs)                                 | Program error handling utilities: `ProgramError` representation and program-specific error detection.              |
 | [`solana_kit_program_client_core`](#solana_kit_program_client_core)           | Core utilities for building typed program clients: instruction input resolution and self-fetching account helpers. |
 | [`solana_kit_associated_token_account`](#solana_kit_associated_token_account) | Shared Associated Token Account PDA helpers and instruction builders used by SPL Token and Token-2022.             |
+| [`solana_kit_compute_budget`](#solana_kit_compute_budget)                     | Compute Budget program: set compute unit limits, priority fees, heap frames, and loaded accounts data limits.      |
 | [`solana_kit_sysvars`](#solana_kit_sysvars)                                   | Type-safe access to Solana sysvars: `Clock`, `Rent`, `EpochSchedule`, `SlotHashes`, `StakeHistory`, and more.      |
 
 ### Transaction Confirmation
@@ -835,6 +836,7 @@ solana_kit_codecs_core -> solana_kit_errors
 solana_kit_codecs_data_structures -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
 solana_kit_codecs_numbers -> solana_kit_codecs_core, solana_kit_errors
 solana_kit_codecs_strings -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
+solana_kit_compute_budget -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_instructions
 solana_kit_errors -> (none)
 solana_kit_fast_stable_stringify -> (none)
 solana_kit_functional -> (none)

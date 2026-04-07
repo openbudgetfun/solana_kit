@@ -51,7 +51,6 @@ Then move to smaller packages only when you want a narrower dependency surface o
 - [`solana_kit_accounts`](https://pub.dev/packages/solana_kit_accounts)
 - [`solana_kit_programs`](https://pub.dev/packages/solana_kit_programs)
 - [`solana_kit_program_client_core`](https://pub.dev/packages/solana_kit_program_client_core)
-- [`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account)
 - [`solana_kit_sysvars`](https://pub.dev/packages/solana_kit_sysvars)
 - [`solana_kit_rpc_parsed_types`](https://pub.dev/packages/solana_kit_rpc_parsed_types)
 
@@ -62,6 +61,14 @@ Then move to smaller packages only when you want a narrower dependency surface o
 - [`solana_kit_codecs_strings`](https://pub.dev/packages/solana_kit_codecs_strings)
 - [`solana_kit_codecs_data_structures`](https://pub.dev/packages/solana_kit_codecs_data_structures)
 - [`solana_kit_options`](https://pub.dev/packages/solana_kit_options)
+
+## Program clients
+
+- [`solana_kit_system`](https://pub.dev/packages/solana_kit_system)
+- [`solana_kit_token`](https://pub.dev/packages/solana_kit_token)
+- [`solana_kit_token_2022`](https://pub.dev/packages/solana_kit_token_2022)
+- [`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account)
+- [`solana_kit_compute_budget`](https://pub.dev/packages/solana_kit_compute_budget)
 
 ## Specialized integrations
 
