@@ -30,9 +30,7 @@ dependencies:
   solana_kit_rpc_types: ^0.3.1
   solana_kit_signers: ^0.3.1
   solana_kit_subscribable: ^0.3.1
-  solana_kit_system: ^0.3.1
   solana_kit_sysvars: ^0.3.1
-  solana_kit_token: ^0.3.1
   solana_kit_transaction_confirmation: ^0.3.1
   solana_kit_transaction_messages: ^0.3.1
   solana_kit_transactions: ^0.3.1

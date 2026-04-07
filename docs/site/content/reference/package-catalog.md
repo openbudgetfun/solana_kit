@@ -11,7 +11,7 @@ Each subsection below maps one package to its role in the Solana ecosystem and t
 
 - Pub.dev: [solana_kit](https://pub.dev/packages/solana_kit)
 - Why it exists: most app teams need one import surface, not dozens of package imports.
-- What it does: re-exports the public SDK package set behind one stable entrypoint.
+- What it does: re-exports the core SDK package set behind one stable entrypoint while leaving program-specific packages as explicit imports.
 - Use it when: building application code that uses multiple Solana features.
 
 ### solana_kit_codecs

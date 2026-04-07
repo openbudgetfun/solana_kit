@@ -8,7 +8,9 @@
 
 The Solana Kit Dart SDK -- a comprehensive, modular Dart port of the [Solana TypeScript SDK (`@solana/kit`)](https://github.com/anza-xyz/kit).
 
-This is the umbrella package that re-exports all 35 public packages in the SDK, giving you a single import for the entire Solana development toolkit.
+This is the umbrella package for the core SDK surface. It gives you a single import for the most common address, RPC, transaction, signer, sysvar, and codec workflows.
+
+Program-specific packages are intentionally **not** re-exported here. Import packages like `solana_kit_system`, `solana_kit_token`, and future program clients explicitly so your dependency graph reflects the programs your app actually uses.
 
 <!-- {=upstreamSupportSection|replace:"__SOLANA_KIT_VERSION__":"6.5.0"} -->
 
@@ -307,7 +309,9 @@ void main() {
 
 ## Re-exported packages
 
-This umbrella package re-exports the following packages:
+This umbrella package re-exports the core SDK packages below.
+Program packages such as `solana_kit_system` and `solana_kit_token` must be
+imported explicitly.
 
 | Package                               | Description                                              |
 | ------------------------------------- | -------------------------------------------------------- |
@@ -316,7 +320,6 @@ This umbrella package re-exports the following packages:
 | `solana_kit_codecs`                   | Codec umbrella (core, numbers, strings, data structures) |
 | `solana_kit_errors`                   | Error codes, error class, and error conversion           |
 | `solana_kit_fast_stable_stringify`    | Deterministic JSON serialization                         |
-| `solana_kit_functional`               | Deprecated compatibility shim for `pipe()`               |
 | `solana_kit_instruction_plans`        | Instruction plan composition                             |
 | `solana_kit_instructions`             | Instruction types and account meta                       |
 | `solana_kit_keys`                     | Key pair generation and signature types                  |
@@ -345,7 +348,7 @@ This umbrella package re-exports the following packages:
 
 ## API Reference
 
-Since this is an umbrella package, the complete API is the union of all re-exported packages. Refer to each package's readme for detailed API documentation:
+Since this is an umbrella package, the complete API is the union of the core packages re-exported above. Import program packages explicitly when you need them, and refer to each package README for detailed API documentation:
 
 - [solana_kit_errors](../solana_kit_errors/readme.md)
 - [solana_kit_addresses](../solana_kit_addresses/readme.md)

@@ -9,11 +9,11 @@ For full per-package rationale and package-by-package usage guidance, continue t
 
 ## Start with the umbrella package unless you have a reason not to
 
-If you're building an application and want the smoothest experience, start with:
+If you're building an application and want the smoothest experience for the core SDK surface, start with:
 
 - [`solana_kit`](https://pub.dev/packages/solana_kit)
 
-Then move to smaller packages only when you want a narrower dependency surface or a stricter architectural boundary.
+Then move to smaller packages only when you want a narrower dependency surface or a stricter architectural boundary. Program-specific packages such as `solana_kit_system` and `solana_kit_token` should always be imported explicitly.
 
 ## Umbrella
 

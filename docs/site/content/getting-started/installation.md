@@ -10,7 +10,7 @@ Solana Kit supports two common setups:
 
 ## Install in an app
 
-If you want the full SDK surface, install the umbrella package:
+If you want the core SDK surface, install the umbrella package:
 
 ```bash
 dart pub add solana_kit
@@ -21,6 +21,8 @@ Then import it in your application code:
 ```dart
 import 'package:solana_kit/solana_kit.dart';
 ```
+
+Program packages are intentionally imported explicitly. For example, install `solana_kit_system`, `solana_kit_token`, or other program clients directly when your app depends on those programs.
 
 ### When to install a smaller package instead
 
