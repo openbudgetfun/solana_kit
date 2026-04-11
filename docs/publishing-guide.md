@@ -6,7 +6,7 @@ This guide covers how to version, release, and publish the `solana_kit` Dart SDK
 
 <!-- workspace-summary:start -->
 
-This monorepo contains **45 packages** under `packages/`: **43 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
+This monorepo contains **46 packages** under `packages/`: **44 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
 
 <!-- workspace-summary:end -->
 
@@ -45,6 +45,7 @@ Versioning is managed by [knope](https://knope.tech/) using changesets stored in
 | 5     | `solana_kit_subscribable`                        | errors                                                                                                                                                                                |
 | 5     | `solana_kit_system`                              | addresses, codecs_core, codecs_data_structures, codecs_numbers, instructions                                                                                                          |
 | 5     | `solana_kit_associated_token_account`            | addresses, codecs_core, codecs_data_structures, codecs_numbers, errors, instructions                                                                                                  |
+| 5     | `solana_kit_address_lookup_table`                | addresses, codecs_core, codecs_data_structures, codecs_numbers, instructions                                                                                                          |
 | 5     | `solana_kit_compute_budget`                      | addresses, codecs_core, codecs_data_structures, codecs_numbers, instructions                                                                                                          |
 | 6     | `solana_kit_transactions`                        | errors, addresses, codecs, instructions, keys, transaction_messages                                                                                                                   |
 | 6     | `solana_kit_rpc`                                 | rpc_api, rpc_spec, rpc_transport_http, rpc_transformers                                                                                                                               |
@@ -85,6 +86,7 @@ solana_kit_codecs_core -> solana_kit_errors
 solana_kit_codecs_data_structures -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
 solana_kit_codecs_numbers -> solana_kit_codecs_core, solana_kit_errors
 solana_kit_codecs_strings -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
+solana_kit_address_lookup_table -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_instructions
 solana_kit_compute_budget -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_instructions
 solana_kit_errors -> (none)
 solana_kit_fast_stable_stringify -> (none)

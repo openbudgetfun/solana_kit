@@ -68,6 +68,7 @@ Then move to smaller packages only when you want a narrower dependency surface o
 - [`solana_kit_token`](https://pub.dev/packages/solana_kit_token)
 - [`solana_kit_token_2022`](https://pub.dev/packages/solana_kit_token_2022)
 - [`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account)
+- [`solana_kit_address_lookup_table`](https://pub.dev/packages/solana_kit_address_lookup_table)
 - [`solana_kit_compute_budget`](https://pub.dev/packages/solana_kit_compute_budget)
 
 ## Specialized integrations
