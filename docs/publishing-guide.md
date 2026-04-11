@@ -6,7 +6,7 @@ This guide covers how to version, release, and publish the `solana_kit` Dart SDK
 
 <!-- workspace-summary:start -->
 
-This monorepo contains **52 packages** under `packages/`: **50 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
+This monorepo contains **53 packages** under `packages/`: **51 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
 
 <!-- workspace-summary:end -->
 
@@ -46,6 +46,7 @@ Versioning is managed by [monochange](https://github.com/monochange/monochange) 
 | 5     | `solana_kit_subscribable`                        | errors                                                                                                                                                                                |
 | 5     | `solana_kit_system`                              | addresses, codecs_core, codecs_data_structures, codecs_numbers, instructions                                                                                                          |
 | 5     | `solana_kit_associated_token_account`            | addresses, codecs_core, codecs_data_structures, codecs_numbers, errors, instructions                                                                                                  |
+| 5     | `solana_kit_address_lookup_table`                | addresses, codecs_core, codecs_data_structures, codecs_numbers, instructions                                                                                                          |
 | 5     | `solana_kit_compute_budget`                      | addresses, codecs_core, codecs_data_structures, codecs_numbers, instructions                                                                                                          |
 | 5     | `solana_kit_memo`                                | addresses, codecs_core, codecs_data_structures, codecs_strings, instructions                                                                                                          |
 | 6     | `solana_kit_transactions`                        | errors, addresses, codecs, instructions, keys, transaction_messages                                                                                                                   |
@@ -92,6 +93,7 @@ solana_kit_codecs_core -> solana_kit_errors
 solana_kit_codecs_data_structures -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
 solana_kit_codecs_numbers -> solana_kit_codecs_core, solana_kit_errors
 solana_kit_codecs_strings -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
+solana_kit_address_lookup_table -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_instructions
 solana_kit_compute_budget -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_instructions
 solana_kit_config -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_instructions
 solana_kit_errors -> (none)
