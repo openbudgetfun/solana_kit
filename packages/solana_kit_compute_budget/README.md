@@ -38,13 +38,13 @@ final dataLimitIx = getSetLoadedAccountsDataSizeLimitInstruction(
 
 ## Instructions
 
-| Instruction | Discriminator | Description |
-|---|---|---|
-| `RequestUnits` | 0 | **Deprecated.** Use `SetComputeUnitLimit` + `SetComputeUnitPrice` instead. |
-| `RequestHeapFrame` | 1 | Request a specific heap frame size in bytes. |
-| `SetComputeUnitLimit` | 2 | Set the transaction-wide compute unit limit. |
-| `SetComputeUnitPrice` | 3 | Set the compute unit price for priority fees. |
-| `SetLoadedAccountsDataSizeLimit` | 4 | Set a limit on loaded accounts data size. |
+| Instruction                      | Discriminator | Description                                                                |
+| -------------------------------- | ------------- | -------------------------------------------------------------------------- |
+| `RequestUnits`                   | 0             | **Deprecated.** Use `SetComputeUnitLimit` + `SetComputeUnitPrice` instead. |
+| `RequestHeapFrame`               | 1             | Request a specific heap frame size in bytes.                               |
+| `SetComputeUnitLimit`            | 2             | Set the transaction-wide compute unit limit.                               |
+| `SetComputeUnitPrice`            | 3             | Set the compute unit price for priority fees.                              |
+| `SetLoadedAccountsDataSizeLimit` | 4             | Set a limit on loaded accounts data size.                                  |
 
 ## Upstream reference
 
