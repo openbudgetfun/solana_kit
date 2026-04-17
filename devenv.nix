@@ -269,6 +269,10 @@ in
         mkdir -p .mdt/cache
         mdt check --verbose
         python3 "$DEVENV_ROOT/scripts/sync-dart-doc-comments.py" --check
+        # Prime the cache history so mdt doctor can evaluate cache efficiency
+        # in fresh CI checkouts without returning a cache-history-only skip.
+        mdt info >/dev/null
+        mdt info >/dev/null
         mdt doctor --format text
         scripts/workspace-doc-drift.sh --check
       '';

@@ -21,10 +21,7 @@ void main() {
     test('encodes discriminator 0 as u32 LE at offset 0', () {
       final encoder = getCreateLookupTableInstructionDataEncoder();
       final bytes = encoder.encode(
-        CreateLookupTableInstructionData(
-          recentSlot: BigInt.zero,
-          bump: 0,
-        ),
+        CreateLookupTableInstructionData(recentSlot: BigInt.zero, bump: 0),
       );
       // u32 LE discriminator: 0x00 0x00 0x00 0x00
       expect(bytes[0], equals(0));
@@ -36,10 +33,7 @@ void main() {
     test('encodes recentSlot as little-endian u64', () {
       final encoder = getCreateLookupTableInstructionDataEncoder();
       final bytes = encoder.encode(
-        CreateLookupTableInstructionData(
-          recentSlot: BigInt.one,
-          bump: 0,
-        ),
+        CreateLookupTableInstructionData(recentSlot: BigInt.one, bump: 0),
       );
       // discriminator(4) + u64 LE(8) + bump(1) = 13
       expect(bytes.length, equals(13));
@@ -146,6 +140,11 @@ void main() {
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
     });
+
+    test('toString includes discriminator', () {
+      const data = FreezeLookupTableInstructionData();
+      expect(data.toString(), contains('discriminator: 1'));
+    });
   });
 
   group('ExtendLookupTable', () {
@@ -230,6 +229,14 @@ void main() {
       expect(a.hashCode, equals(b.hashCode));
       expect(a, isNot(equals(c)));
     });
+
+    test('toString includes field values', () {
+      const addr = Address('11111111111111111111111111111111');
+      const data = ExtendLookupTableInstructionData(addresses: [addr]);
+      final str = data.toString();
+      expect(str, contains('discriminator: 2'));
+      expect(str, contains('addresses: [11111111111111111111111111111111]'));
+    });
   });
 
   group('DeactivateLookupTable', () {
@@ -239,10 +246,7 @@ void main() {
       final encoded = codec.encode(original);
       final decoded = codec.decode(encoded);
       expect(decoded, equals(original));
-      expect(
-        decoded.discriminator,
-        equals(deactivateLookupTableDiscriminator),
-      );
+      expect(decoded.discriminator, equals(deactivateLookupTableDiscriminator));
     });
 
     test('encodes discriminator 3 as u32 LE', () {
@@ -280,6 +284,11 @@ void main() {
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
     });
+
+    test('toString includes discriminator', () {
+      const data = DeactivateLookupTableInstructionData();
+      expect(data.toString(), contains('discriminator: 3'));
+    });
   });
 
   group('CloseLookupTable', () {
@@ -294,9 +303,7 @@ void main() {
 
     test('encodes discriminator 4 as u32 LE', () {
       final encoder = getCloseLookupTableInstructionDataEncoder();
-      final bytes = encoder.encode(
-        const CloseLookupTableInstructionData(),
-      );
+      final bytes = encoder.encode(const CloseLookupTableInstructionData());
       expect(bytes.length, equals(4));
       expect(bytes[0], equals(4));
       expect(bytes[1], equals(0));
@@ -329,6 +336,11 @@ void main() {
       const b = CloseLookupTableInstructionData();
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
+    });
+
+    test('toString includes discriminator', () {
+      const data = CloseLookupTableInstructionData();
+      expect(data.toString(), contains('discriminator: 4'));
     });
   });
 }
