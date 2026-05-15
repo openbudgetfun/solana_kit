@@ -1,0 +1,11 @@
+name: setup-mc
+description: "Install and configure the monochange CLI"
+
+runs:
+  using: composite
+  steps:
+    - name: Install monochange
+      run: |
+        curl -fsSL https://github.com/monochange/monochange/releases/latest/download/mc-x86_64-unknown-linux-gnu.tar.gz | tar xz -C /usr/local/bin
+        mc --version
+      shell: bash

@@ -22,7 +22,7 @@ in
       nixfmt
       osv-scanner
       shfmt
-      extra.knope
+      extra.monochange
       extra.mdt
       extra.surfpool
       (extra.pnpm-standalone.overrideAttrs { doInstallCheck = false; })

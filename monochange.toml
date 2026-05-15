@@ -1,0 +1,323 @@
+[defaults]
+package_type = "dart"
+parent_bump = "patch"
+include_private = false
+
+[defaults.changelog]
+path = "{{ path }}/CHANGELOG.md"
+format = "keep_a_changelog"
+
+[source]
+provider = "github"
+owner = "openbudgetfun"
+repo = "solana_kit"
+
+[source.releases]
+enabled = true
+draft = false
+prerelease = false
+source = "monochange"
+
+[source.pull_requests]
+enabled = true
+branch_prefix = "monochange/release"
+base = "main"
+title = "chore(release): prepare release"
+labels = ["release", "automated"]
+auto_merge = false
+
+# --- Dart packages ---
+
+[package.solana_kit]
+path = "packages/solana_kit"
+type = "dart"
+
+[package.solana_kit_accounts]
+path = "packages/solana_kit_accounts"
+type = "dart"
+
+[package.solana_kit_addresses]
+path = "packages/solana_kit_addresses"
+type = "dart"
+
+[package.solana_kit_associated_token_account]
+path = "packages/solana_kit_associated_token_account"
+type = "dart"
+
+[package.solana_kit_codecs]
+path = "packages/solana_kit_codecs"
+type = "dart"
+
+[package.solana_kit_codecs_core]
+path = "packages/solana_kit_codecs_core"
+type = "dart"
+
+[package.solana_kit_codecs_data_structures]
+path = "packages/solana_kit_codecs_data_structures"
+type = "dart"
+
+[package.solana_kit_codecs_numbers]
+path = "packages/solana_kit_codecs_numbers"
+type = "dart"
+
+[package.solana_kit_codecs_strings]
+path = "packages/solana_kit_codecs_strings"
+type = "dart"
+
+[package.solana_kit_compute_budget]
+path = "packages/solana_kit_compute_budget"
+type = "dart"
+
+[package.solana_kit_errors]
+path = "packages/solana_kit_errors"
+type = "dart"
+
+[package.solana_kit_fast_stable_stringify]
+path = "packages/solana_kit_fast_stable_stringify"
+type = "dart"
+
+[package.solana_kit_functional]
+path = "packages/solana_kit_functional"
+type = "dart"
+
+[package.solana_kit_helius]
+path = "packages/solana_kit_helius"
+type = "dart"
+
+[package.solana_kit_instruction_plans]
+path = "packages/solana_kit_instruction_plans"
+type = "dart"
+
+[package.solana_kit_instructions]
+path = "packages/solana_kit_instructions"
+type = "dart"
+
+[package.solana_kit_keys]
+path = "packages/solana_kit_keys"
+type = "dart"
+
+[package.solana_kit_lints]
+path = "packages/solana_kit_lints"
+type = "dart"
+
+[package.solana_kit_mobile_wallet_adapter]
+path = "packages/solana_kit_mobile_wallet_adapter"
+type = "dart"
+
+[package.solana_kit_mobile_wallet_adapter_protocol]
+path = "packages/solana_kit_mobile_wallet_adapter_protocol"
+type = "dart"
+
+[package.solana_kit_offchain_messages]
+path = "packages/solana_kit_offchain_messages"
+type = "dart"
+
+[package.solana_kit_options]
+path = "packages/solana_kit_options"
+type = "dart"
+
+[package.solana_kit_program_client_core]
+path = "packages/solana_kit_program_client_core"
+type = "dart"
+
+[package.solana_kit_programs]
+path = "packages/solana_kit_programs"
+type = "dart"
+
+[package.solana_kit_rpc]
+path = "packages/solana_kit_rpc"
+type = "dart"
+
+[package.solana_kit_rpc_api]
+path = "packages/solana_kit_rpc_api"
+type = "dart"
+
+[package.solana_kit_rpc_parsed_types]
+path = "packages/solana_kit_rpc_parsed_types"
+type = "dart"
+
+[package.solana_kit_rpc_spec]
+path = "packages/solana_kit_rpc_spec"
+type = "dart"
+
+[package.solana_kit_rpc_spec_types]
+path = "packages/solana_kit_rpc_spec_types"
+type = "dart"
+
+[package.solana_kit_rpc_subscriptions]
+path = "packages/solana_kit_rpc_subscriptions"
+type = "dart"
+
+[package.solana_kit_rpc_subscriptions_api]
+path = "packages/solana_kit_rpc_subscriptions_api"
+type = "dart"
+
+[package.solana_kit_rpc_subscriptions_channel_websocket]
+path = "packages/solana_kit_rpc_subscriptions_channel_websocket"
+type = "dart"
+
+[package.solana_kit_rpc_transformers]
+path = "packages/solana_kit_rpc_transformers"
+type = "dart"
+
+[package.solana_kit_rpc_transport_http]
+path = "packages/solana_kit_rpc_transport_http"
+type = "dart"
+
+[package.solana_kit_rpc_types]
+path = "packages/solana_kit_rpc_types"
+type = "dart"
+
+[package.solana_kit_signers]
+path = "packages/solana_kit_signers"
+type = "dart"
+
+[package.solana_kit_subscribable]
+path = "packages/solana_kit_subscribable"
+type = "dart"
+
+[package.solana_kit_system]
+path = "packages/solana_kit_system"
+type = "dart"
+
+[package.solana_kit_sysvars]
+path = "packages/solana_kit_sysvars"
+type = "dart"
+
+[package.solana_kit_test_matchers]
+path = "packages/solana_kit_test_matchers"
+type = "dart"
+
+[package.solana_kit_token]
+path = "packages/solana_kit_token"
+type = "dart"
+
+[package.solana_kit_token_2022]
+path = "packages/solana_kit_token_2022"
+type = "dart"
+
+[package.solana_kit_transaction_confirmation]
+path = "packages/solana_kit_transaction_confirmation"
+type = "dart"
+
+[package.solana_kit_transaction_messages]
+path = "packages/solana_kit_transaction_messages"
+type = "dart"
+
+[package.solana_kit_transactions]
+path = "packages/solana_kit_transactions"
+type = "dart"
+
+# --- npm package ---
+
+[package.codama_renderers_dart]
+path = "packages/codama-renderers-dart"
+type = "npm"
+
+# --- Lockstep version group ---
+
+[group.all]
+packages = [
+  "solana_kit",
+  "solana_kit_accounts",
+  "solana_kit_addresses",
+  "solana_kit_associated_token_account",
+  "solana_kit_codecs",
+  "solana_kit_codecs_core",
+  "solana_kit_codecs_data_structures",
+  "solana_kit_codecs_numbers",
+  "solana_kit_codecs_strings",
+  "solana_kit_compute_budget",
+  "solana_kit_errors",
+  "solana_kit_fast_stable_stringify",
+  "solana_kit_functional",
+  "solana_kit_helius",
+  "solana_kit_instruction_plans",
+  "solana_kit_instructions",
+  "solana_kit_keys",
+  "solana_kit_lints",
+  "solana_kit_mobile_wallet_adapter",
+  "solana_kit_mobile_wallet_adapter_protocol",
+  "solana_kit_offchain_messages",
+  "solana_kit_options",
+  "solana_kit_program_client_core",
+  "solana_kit_programs",
+  "solana_kit_rpc",
+  "solana_kit_rpc_api",
+  "solana_kit_rpc_parsed_types",
+  "solana_kit_rpc_spec",
+  "solana_kit_rpc_spec_types",
+  "solana_kit_rpc_subscriptions",
+  "solana_kit_rpc_subscriptions_api",
+  "solana_kit_rpc_subscriptions_channel_websocket",
+  "solana_kit_rpc_transformers",
+  "solana_kit_rpc_transport_http",
+  "solana_kit_rpc_types",
+  "solana_kit_signers",
+  "solana_kit_subscribable",
+  "solana_kit_system",
+  "solana_kit_sysvars",
+  "solana_kit_test_matchers",
+  "solana_kit_token",
+  "solana_kit_token_2022",
+  "solana_kit_transaction_confirmation",
+  "solana_kit_transaction_messages",
+  "solana_kit_transactions",
+  "codama_renderers_dart",
+]
+tag = true
+release = true
+version_format = "namespaced"
+changelog = { path = "CHANGELOG.md", format = "keep_a_changelog", include = "all" }
+
+# --- Ecosystems ---
+
+[ecosystems.dart]
+enabled = true
+roots = ["packages/*"]
+
+[ecosystems.npm]
+enabled = true
+
+# --- Changeset policy ---
+
+[changesets.affected]
+enabled = true
+required = true
+skip_labels = ["no-changeset-required", "release"]
+comment_on_failure = true
+
+# --- CLI workflows ---
+
+[cli.change]
+help_text = "Create a change file for one or more packages"
+inputs = [
+  { name = "interactive", type = "boolean", default = false },
+  { name = "package", type = "string_list", required = true },
+  { name = "bump", type = "choice", choices = ["none", "patch", "minor", "major"], default = "patch" },
+  { name = "reason", type = "string", required = true },
+  { name = "version", type = "string" },
+  { name = "type", type = "string" },
+  { name = "caused_by", type = "string_list" },
+  { name = "details", type = "string" },
+  { name = "output", type = "path" },
+]
+steps = [
+  { name = "create change file", type = "CreateChangeFile", inputs = ["interactive", "package", "bump", "version", "reason", "type", "details", "output"] },
+]
+
+[cli.release]
+help_text = "Prepare a release from pending changesets (release-pr only)"
+inputs = [
+  { name = "format", type = "choice", choices = ["text", "json", "markdown"], default = "markdown" },
+  { name = "no_verify", type = "boolean", default = true },
+  { name = "commit", help_text = "Whether to commit the changes", type = "boolean", default = false },
+  { name = "create_pr", help_text = "Whether to create the PR after the commit", type = "boolean", default = false },
+]
+steps = [
+  { type = "PrepareRelease", name = "plan release" },
+  { type = "Command", name = "sync workspace versions", when = "{{ number_of_changesets > 0 }}", command = "sync:write" },
+  { type = "Command", name = "format changed files", when = "{{ number_of_changesets > 0 }}", command = "dprint fmt --config dprint.json" },
+  { type = "CommitRelease", name = "create release commit", when = "{{ number_of_changesets > 0 && inputs.commit }}", inputs = { no_verify = "{{ inputs.no_verify }}" } },
+  { type = "OpenReleaseRequest", name = "create the release PR", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.create_pr }}", inputs = { no_verify = "{{ inputs.no_verify }}" } },
+]

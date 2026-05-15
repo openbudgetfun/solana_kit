@@ -1,0 +1,27 @@
+name: Changeset policy
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check-changesets:
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: ./.github/actions/setup-mc
+      - name: Check changeset coverage
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mc step:affected-packages --base-sha ${{ github.event.pull_request.base.sha }} --head-sha ${{ github.event.pull_request.head.sha }} --pr-number ${{ github.event.pull_request.number }}
+        shell: devenv shell -- bash -e {0}

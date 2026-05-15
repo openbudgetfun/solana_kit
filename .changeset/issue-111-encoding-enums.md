@@ -1,5 +1,6 @@
 ---
-default: minor
+solana_kit: minor
 ---
 
-Replace string encoding fields with AccountEncoding, TransactionEncoding, and WireTransactionEncoding enums across RPC API and subscriptions API packages.
+# Replace string encoding fields with AccountEncoding, TransactionEncoding, and WireTransactionEncoding enums across RPC API and subscriptions API packages.
+

@@ -1,8 +1,8 @@
 ---
-default: patch
+solana_kit: patch
 ---
 
-Make codama-renderers-dart production-ready for real Solana program IDLs.
+# Make codama-renderers-dart production-ready for real Solana program IDLs.
 
 - Pin upstream SPL Token Codama JSON as acceptance fixture with provenance metadata
 - Fix nullable codec type inference by emitting explicit type parameters
@@ -11,3 +11,4 @@ Make codama-renderers-dart production-ready for real Solana program IDLs.
 - Add SPL Token acceptance test with dart analyze gate (28→0 errors)
 - Add JS-vs-Dart structural parity tests for the SPL Token fixture
 - Expose surfpool in devenv shell for validator-backed testing
+

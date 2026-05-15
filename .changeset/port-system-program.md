@@ -1,8 +1,8 @@
 ---
-default: minor
+solana_kit: minor
 ---
 
-Port System Program from upstream Codama IDL
+# Port System Program from upstream Codama IDL
 
 ## codama-renderers-dart
 
@@ -21,3 +21,4 @@ Port System Program from upstream Codama IDL
 ## solana_kit
 
 - Re-export `solana_kit_system` with `systemProgramAddress` hidden to avoid conflict with `solana_kit_transaction_messages`.
+

@@ -1,5 +1,6 @@
 ---
-default: patch
+solana_kit: patch
 ---
 
-Improve handwritten test coverage across RPC, token, websocket, and sysvar packages.
+# Improve handwritten test coverage across RPC, token, websocket, and sysvar packages.
+

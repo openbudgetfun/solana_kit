@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: release-main
@@ -26,10 +27,7 @@ jobs:
       - uses: ./.github/actions/devenv
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Configure git identity
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - uses: ./.github/actions/setup-mc
       - name: Validate target branch
         if: ${{ !inputs.dry_run }}
         run: |
@@ -43,8 +41,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [[ "${{ inputs.dry_run }}" == "true" ]]; then
-            knope --dry-run release
+            mc release --dry-run --format markdown
           else
-            knope release
+            mc release --commit --create-pr --format markdown
           fi
         shell: devenv shell -- bash -e {0}

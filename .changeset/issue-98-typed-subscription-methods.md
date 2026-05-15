@@ -1,5 +1,6 @@
 ---
-default: patch
+solana_kit: patch
 ---
 
-Add typed convenience methods for common Solana RPC subscription requests so callers can avoid assembling notification names and params manually.
+# Add typed convenience methods for common Solana RPC subscription requests so callers can avoid assembling notification names and params manually.
+
