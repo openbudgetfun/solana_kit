@@ -27,7 +27,6 @@ jobs:
       - uses: ./.github/actions/devenv
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: ./.github/actions/setup-mc
       - name: Validate target branch
         if: ${{ !inputs.dry_run }}
         run: |
