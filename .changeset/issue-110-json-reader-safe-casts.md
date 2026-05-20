@@ -1,5 +1,5 @@
 ---
-solana_kit: patch
+default: patch
 ---
 
 # Introduce internal `JsonReader` helper that replaces unsafe `.cast<T>()` list
@@ -11,4 +11,3 @@ element access. All ten type files (`das_types`, `enhanced_types`, `zk_types`,
 `wallet_types`, `webhook_types`, `rpc_v2_types`, `auth_types`, `staking_types`,
 `priority_fee_types`, `smart_transaction_types`) have been migrated. The public
 API is unchanged.
-

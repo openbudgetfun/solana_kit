@@ -1,5 +1,5 @@
 ---
-solana_kit: patch
+default: patch
 ---
 
 # Make codama-renderers-dart production-ready for real Solana program IDLs.
@@ -11,4 +11,3 @@ solana_kit: patch
 - Add SPL Token acceptance test with dart analyze gate (28→0 errors)
 - Add JS-vs-Dart structural parity tests for the SPL Token fixture
 - Expose surfpool in devenv shell for validator-backed testing
-

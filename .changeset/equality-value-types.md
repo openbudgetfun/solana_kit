@@ -1,5 +1,5 @@
 ---
-solana_kit: patch
+default: patch
 ---
 
 # Add `==` and `hashCode` to public value-type, config, and response classes.
@@ -16,4 +16,3 @@ is already `final`.
 Packages that did not previously depend on `meta` now declare `meta: any`
 explicitly (`solana_kit_rpc_api`, `solana_kit_transaction_confirmation`,
 `solana_kit_rpc_spec_types`, `solana_kit_rpc_parsed_types`).
-
