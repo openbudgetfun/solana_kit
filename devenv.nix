@@ -7,7 +7,7 @@
 }:
 
 let
-  extra = inputs.ifiokjr-nixpkgs.packages.${pkgs.stdenv.system};
+  monochangePkgs = inputs.ifiokjr-nixpkgs.packages.${pkgs.stdenv.system};
 in
 {
   packages =
@@ -22,10 +22,10 @@ in
       nixfmt
       osv-scanner
       shfmt
-      extra.monochange
-      extra.mdt
-      extra.surfpool
-      (extra.pnpm-standalone.overrideAttrs { doInstallCheck = false; })
+      monochangePkgs.monochange
+      monochangePkgs.mdt
+      monochangePkgs.surfpool
+      (inputs.ifiokjr-nixpkgs.packages.${pkgs.stdenv.system}.pnpm-standalone.overrideAttrs { doInstallCheck = false; })
     ]
     ++ lib.optionals stdenv.isDarwin [
       coreutils
