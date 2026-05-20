@@ -22,5 +22,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mc step:affected-packages --from ${{ github.event.pull_request.base.sha }} --verify
+        run: mc step:validate
         shell: devenv shell -- bash -e {0}
