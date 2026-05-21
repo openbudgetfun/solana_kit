@@ -1,5 +1,5 @@
 ---
-default: minor
+solana_kit: feat
 ---
 
 # Port System Program from upstream Codama IDL

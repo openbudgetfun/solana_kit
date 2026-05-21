@@ -8,7 +8,7 @@ python3 - "$@" <<'PY'
 from pathlib import Path
 import sys
 
-allowed_values = {"patch", "minor", "major"}
+allowed_values = {"patch", "minor", "major", "feat", "fix", "docs", "note"}
 
 paths = [Path(arg) for arg in sys.argv[1:]]
 if not paths:

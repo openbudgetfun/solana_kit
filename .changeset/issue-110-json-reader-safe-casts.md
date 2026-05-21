@@ -1,5 +1,5 @@
 ---
-default: patch
+solana_kit: fix
 ---
 
 # Introduce internal `JsonReader` helper that replaces unsafe `.cast<T>()` list

@@ -1,5 +1,5 @@
 ---
-default: patch
+solana_kit: fix
 ---
 
 # Make codama-renderers-dart production-ready for real Solana program IDLs.
