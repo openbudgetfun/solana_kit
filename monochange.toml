@@ -321,3 +321,9 @@ steps = [
   { type = "CommitRelease", name = "create release commit", when = "{{ number_of_changesets > 0 && inputs.commit }}", inputs = { no_verify = "{{ inputs.no_verify }}" } },
   { type = "OpenReleaseRequest", name = "create the release PR", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.create_pr }}", inputs = { no_verify = "{{ inputs.no_verify }}" } },
 ]
+
+# --- Lint configuration ---
+
+[lints.rules]
+"dart/internal-path-dependency-policy" = "off"
+"dart/unlisted-package-private" = "off"

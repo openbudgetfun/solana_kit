@@ -1,5 +1,6 @@
 name: solana_kit_docs_site
 description: Solana Kit documentation site built with Jaspr Content
+publish_to: none
 version: 0.0.1
 
 environment:
