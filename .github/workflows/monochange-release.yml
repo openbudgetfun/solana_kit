@@ -1,0 +1,102 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+concurrency:
+  group: release-main
+  cancel-in-progress: false
+
+jobs:
+  release-pr:
+    if: github.ref == 'refs/heads/main'
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        shell: devenv shell -- bash -e {0}
+
+      - name: Refresh release pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mc release --commit --create-pr
+        shell: devenv shell -- bash -e {0}
+
+  release-post-merge:
+    needs: release-pr
+    if: github.ref == 'refs/heads/main'
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Detect and tag release commit
+        id: tag_release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if is_release_commit="$(mc step:release-record --from HEAD --format json --jq '.resolvedCommit == .recordCommit')"; then
+            echo "is_release_commit=${is_release_commit}" >> "$GITHUB_OUTPUT"
+            if [ "${is_release_commit}" = "true" ]; then
+              mc step:tag-release --from HEAD --push=true --format json | tee /tmp/tag-report.json
+            fi
+          else
+            subject="$(git log -1 --pretty=%s)"
+            if [[ "$subject" == chore\(release\):\ prepare\ release* ]]; then
+              echo "Release-looking commit could not be read as a release record; failing instead of silently skipping release automation."
+              mc step:release-record --from HEAD --format json
+              exit 1
+            fi
+            echo "is_release_commit=false" >> "$GITHUB_OUTPUT"
+          fi
+        shell: devenv shell -- bash -e {0}
+
+      - name: Publish GitHub release
+        if: steps.tag_release.outputs.is_release_commit == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mc step:publish-release --from-ref="HEAD" --format json
+        shell: devenv shell -- bash -e {0}
+
+      - name: Trigger publish workflow
+        if: steps.tag_release.outputs.is_release_commit == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="$(jq -r '.tags.main // empty' /tmp/tag-report.json)"
+          if [ -z "$tag" ]; then
+            echo "No main group tag found; nothing to tag."
+            exit 0
+          fi
+          echo "Tag $tag created. Publishing is currently handled locally via melos publish and pnpm publish."
+        shell: devenv shell -- bash -e {0}

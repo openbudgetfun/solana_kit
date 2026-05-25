@@ -17,7 +17,6 @@ Solana Kit is a multi-package Dart workspace that ports `@solana/kit` and relate
 - `docs:check`
 - `docs:update`
 - `sync:check`
-- `sync:write`
 
 ## Repo-wide rules
 

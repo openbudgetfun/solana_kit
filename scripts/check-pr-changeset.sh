@@ -47,7 +47,7 @@ if [[ -n "$changeset_changes" ]]; then
 fi
 
 echo "Package changes were detected without a changeset file under .changeset/*.md." >&2
-echo "Run 'knope document-change', then replace the frontmatter with 'default: patch|minor|major', and commit the changeset." >&2
+echo "Run 'mc step:document' to create a properly formatted changeset, then commit the file." >&2
 echo "Changed package files:" >&2
 printf '%s\n' "$package_changes" >&2
 exit 1

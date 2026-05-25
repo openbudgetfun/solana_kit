@@ -1,6 +1,12 @@
 {
   "name": "solana_kit",
   "private": true,
+  "description": "Solana Kit Dart SDK monorepo root",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openbudgetfun/solana_kit.git"
+  },
+  "license": "MIT",
   "packageManager": "pnpm@10.30.3",
   "workspaces": [
     "packages/*"

@@ -71,6 +71,10 @@ jobs:
         run: lint:all
         shell: devenv shell -- bash -e {0}
 
+      - name: Validate monochange configuration
+        run: mc step:validate
+        shell: devenv shell -- bash -e {0}
+
   test:
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:

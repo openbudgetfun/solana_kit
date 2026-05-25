@@ -21,7 +21,6 @@ devenv shell -- bash -lc '<command>'
 | `docs:check`      | Verify generated docs blocks, source comment consumers, and workspace metadata are up to date.   |
 | `docs:update`     | Refresh generated docs blocks and print mdt diagnostics.                                         |
 | `sync:check`      | Validate synced dependency versions and changelog outputs.                                       |
-| `sync:write`      | Rewrite synced dependency versions and changelog outputs.                                        |
 | `upstream:check`  | Check tracked upstream compatibility metadata and local drift.                                   |
 | `upstream:parity` | Generate runtime fixtures from the tracked `@solana/kit` release and compare selected behaviors. |
 | `audit:deps`      | Audit current Dart and pnpm lockfiles for known vulnerabilities with `osv-scanner`.              |

@@ -1,5 +1,5 @@
 ---
-default: minor
+main: minor
 ---
 
 Port System Program from upstream Codama IDL

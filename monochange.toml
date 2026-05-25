@@ -1,0 +1,860 @@
+# =============================================================================
+# monochange.toml — repository configuration for monochange
+# =============================================================================
+#
+# This file is the single source of truth for release planning, CLI commands,
+# changelog generation, and automation flows in this monorepo.
+#
+# Run `mc step:validate` to check this file against the workspace.
+# Run `mc init` to generate a starter config from detected packages.
+
+# =============================================================================
+# [defaults] — repository-wide defaults applied to every package unless
+# overridden at the package or group level.
+# =============================================================================
+
+[defaults]
+# Bump severity applied to transitive dependents when a dependency changes.
+# When package A depends on package B, and B gets a minor bump, A receives
+# whichever bump is configured here.
+#
+# Options: "none", "patch", "minor", "major"
+# Default: "patch"
+parent_bump = "patch"
+
+# Whether to include private packages (publish = false) in discovery and
+# release planning. When false, private packages are discovered but excluded
+# from release plans and version bumps.
+#
+# Default: false
+include_private = false
+
+# Emit a warning when version-group members have mismatched current versions.
+# Helps catch accidental version drift in grouped packages.
+#
+# Default: true
+warn_on_group_mismatch = true
+
+# Default package type for all packages that don't declare their own `type`.
+# Setting this avoids repeating `type = "cargo"` on every [package.*] entry.
+#
+# Options: "cargo", "npm", "deno", "dart", "python"
+# Default: none (each package must declare its own type)
+package_type = "dart"
+
+# Default changelog configuration applied to every package that doesn't
+# declare its own `changelog` field.
+#
+# Accepts three forms:
+#   true                           → use "{{ path }}/CHANGELOG.md" for every package
+#   false                          → disable changelogs by default
+#   "{{ path }}/changelog.md"      → pattern where {{ path }} is replaced with each package path
+#
+# As a table, you can set path, format, and the initial header used when
+# monochange creates a changelog from empty content:
+#   [defaults.changelog]
+#   path = "{{ path }}/changelog.md"
+#   format = "keep_a_changelog"
+#   initial_header = """
+#   # Changelog
+#
+#   All notable changes to this project will be documented in this file.
+#   """
+#
+# Supported formats: "monochange" (default), "keep_a_changelog"
+# Default: none (changelogs are disabled unless configured)
+[defaults.changelog]
+path = "{{ path }}/CHANGELOG.md"
+format = "keep_a_changelog"
+initial_header = """
+ # Changelog
+
+ All notable changes to this project will be documented in this file.
+
+ This changelog is managed by [monochange](https://github.com/monochange/monochange).
+ """
+
+# Default changelog configuration. When [changelog] is not specified,
+# built-in defaults provide standard sections (Major, Breaking Change, Added,
+# Minor, Changed, Fixed, Patch, Testing, Refactor, Documentation, Security,
+# Performance, None) and corresponding types. See [changelog] section below
+# for customization.
+# [changelog] — workspace-wide changelog configuration
+#
+# Controls templates, sections, and types for changelog rendering.
+# When omitted, built-in defaults provide standard sections and types.
+#
+# [changelog]
+# templates — Templates that control how individual change entries render.
+# Each template is tried in order; the first one whose required variables are
+# all present wins. If none match, falls back to "- ".
+#
+# sections — Named changelog sections with heading and priority (lower = first).
+# The built-in defaults provide standard sections matching the commented example.
+#
+# section_thresholds — Optional rendering cutoffs based on section priority.
+# Use these to collapse lower-priority sections into markdown <details> blocks
+# or omit them entirely.
+#
+# types — Change type definitions mapping changeset types to section and bump severity.
+# Each type key references a section key and declares a default bump severity.
+# The built-in defaults provide standard types matching the commented example.
+
+# [changelog.templates]
+# Add custom templates if the defaults don't match your style.
+
+# [changelog.sections]
+# major = { heading = "Major", description = "Major version bumps", priority = 5 }
+# breaking = { heading = "Breaking Change", description = "API changes requiring migration", priority = 10 }
+# minor = { heading = "Minor", description = "Minor version bumps", priority = 15 }
+# feat = { heading = "Added", description = "New features added", priority = 20 }
+# change = { heading = "Changed", description = "Changes to existing functionality", priority = 25 }
+# fix = { heading = "Fixed", description = "Bug fixes", priority = 30 }
+# patch = { heading = "Patch", description = "Patch version bumps", priority = 35 }
+# test = { heading = "Testing", description = "Changes that only modify tests", priority = 40 }
+# refactor = { heading = "Refactor", description = "Code refactoring without functional changes", priority = 40 }
+# docs = { heading = "Documentation", description = "Changes that only modify documentation", priority = 40 }
+# security = { heading = "Security", description = "Security-related changes", priority = 40 }
+# perf = { heading = "Performance", description = "Performance improvements", priority = 40 }
+# none = { heading = "None", description = "No version bump", priority = 50 }
+
+# [changelog.section_thresholds]
+# collapse = 127
+# ignored = 127
+
+# [changelog.types]
+# breaking = { section = "breaking", bump = "major" }
+# major = { section = "major", bump = "major" }
+# feat = { section = "feat", bump = "minor" }
+# minor = { section = "minor", bump = "minor" }
+# change = { section = "change", bump = "minor" }
+# fix = { section = "fix", bump = "patch" }
+# patch = { section = "patch", bump = "patch" }
+# test = { section = "test" }
+# none = { section = "none" }
+# docs = { section = "docs" }
+# security = { section = "security" }
+# refactor = { section = "refactor", bump = "patch" }
+# perf = { heading = "perf" }
+
+# Default empty_update_message applied when a package is bumped but has no
+# direct changeset entries (e.g. transitive dependency bumps or group
+# synchronization). Template placeholders are interpolated at render time
+# using minijinja syntax.
+#
+# Available placeholders:
+#   {{ package }}, {{ package_name }}, {{ package_id }}
+#   {{ group }}, {{ group_name }}, {{ group_id }}
+#   {{ version }}, {{ new_version }}, {{ current_version }}, {{ previous_version }}
+#   {{ bump }}, {{ trigger }}, {{ ecosystem }}
+#   {{ release_owner }}, {{ release_owner_kind }}
+#   {{ members }}, {{ member_count }}  (group changelogs only)
+#   {{ reasons }}
+#
+# Precedence: package → group → defaults → built-in message
+# Default: built-in message varies by grouped/ungrouped context
+#
+# empty_update_message = "No direct changes; {{ package }} updated to {{ version }}."
+
+# Default release_title applied when creating provider releases.
+# This is a plain-text title used for GitHub, GitLab, and Gitea releases.
+#
+# Available placeholders:
+#   {{ version }}, {{ id }}, {{ date }}, {{ time }}, {{ datetime }}
+#   {{ changes_count }}, {{ tag_url }}, {{ compare_url }}
+#
+# Defaults:
+#   Primary versioning:    " ()"
+#   Namespaced versioning: "  ()"
+#
+# release_title = "{{ version }} ({{ date }})"
+
+# Default changelog_version_title controls how changelog version headings render.
+# This is markdown-capable and supports links.
+#
+# Available placeholders: same as release_title above.
+#
+# Defaults:
+#   Primary:    "[]() ()" (linked when source configured)
+#   Namespaced: " []() ()"
+#
+# To restore headings without dates (the previous default), set:
+#   changelog_version_title = "{{ version }}"
+#
+# changelog_version_title = "[{{ version }}]({{ tag_url }}) ({{ date }})"
+
+# =============================================================================
+# [changelog] — workspace-wide changelog configuration
+# =============================================================================
+
+# [changelog]
+# Templates that control how individual change entries render in changelogs.
+# Each template is tried in order; the first one whose required variables are
+# all present wins (uses minijinja strict mode — all referenced variables must
+# be defined). If none match, falls back to "- {{ summary }}".
+#
+# Available variables:
+#   {{ summary }}       — the change summary from the changeset
+#   {{ details }}       — optional multi-line details block
+#   {{ package }}       — package name
+#   {{ version }}       — planned version
+#   {{ target_id }}     — release owner id (package or group)
+#   {{ bump }}          — bump severity (none, patch, minor, major)
+#   {{ type }}          — optional change type (e.g. "security", "note")
+#   {{ context }}       — rendered context context block
+#   {{ context }}    — alias for {{ context }}
+#   {{ changeset_path }} — path to the changeset file
+#   {{ change_owner }}, {{ change_owner_link }}
+#   {{ review_request }}, {{ review_request_link }}
+#   {{ introduced_commit }}, {{ introduced_commit_link }}
+#   {{ last_updated_commit }}, {{ last_updated_commit_link }}
+#   {{ related_issues }}, {{ related_issue_links }}
+#   {{ closed_issues }}, {{ closed_issue_links }}
+#
+# Default: ["#### {{ summary }}\n\n{{ details }}", "- {{ summary }}"]
+# templates = [
+#   "#### {{ summary }}\n\n{{ details }}\n\n{{ context }}",
+#   "#### {{ summary }}\n\n{{ context }}",
+#   "#### {{ summary }}\n\n{{ details }}",
+#   "- {{ summary }}",
+# ]
+
+# =============================================================================
+# [package.*] — declare each release-managed package explicitly
+# =============================================================================
+#
+# Required fields:
+#   path  — relative path from repo root to the package directory
+#
+# Optional fields:
+#   type                    — "cargo", "npm", "deno", "dart", "flutter", "python"
+#                             (not needed when defaults.package_type is set)
+#   changelog               — true, false, "path/to/changelog.md", or a table
+#                             with { path, format, initial_header }; overrides
+#                             [defaults.changelog]
+#   excluded_changelog_types — list of changelog type keys to exclude from this target
+#   empty_update_message    — per-package fallback text for transitive bumps
+#   versioned_files         — additional files to update with the new version
+#                             package-scoped string entries infer the package ecosystem,
+#                             e.g. ["Cargo.toml"] or ["**/crates/*/Cargo.toml"]
+#                             explicit typed entries remain supported, e.g.
+#                             [{ path = "group.toml", type = "cargo" }]
+#                             typed manifest entries can update dependency
+#                             sections and arbitrary string fields inside TOML
+#                             or JSON manifests, e.g.
+#                             [{ path = "Cargo.toml", type = "cargo", fields = ["workspace.metadata.bin.monochange.version"], prefix = "" }]
+#                             regex entries update plain-text files and must include a
+#                             named `version` capture group, e.g.
+#                             [{ path = "README.md", regex = 'v(?<version>\d+\.\d+\.\d+)' }]
+#                             regex entries cannot set `type`, `prefix`, `fields`, or `name`
+#                             lockfiles can still be listed explicitly, but
+#                             ecosystem-level lockfile refresh now prefers
+#                             [ecosystems.<name>].lockfile_commands
+#   ignore_ecosystem_versioned_files — opt out of inherited [ecosystems.<name>].versioned_files
+#                             defaults for this package (default: false)
+#   ignored_paths           — glob patterns for paths within this package to
+#                             exclude from changeset verification
+#   additional_paths        — glob patterns for paths outside the package
+#                             directory that should trigger changeset verification
+#   publish                 — package publishing settings; package values
+#                             override inherited [ecosystems.<name>].publish
+#                             defaults
+#     enabled               — include this package in managed publishing
+#                             flows (default: true)
+#     mode                  — "builtin" for monochange-managed publishing to
+#                             the default public registry for the ecosystem, or
+#                             "external" when your CI or scripts handle
+#                             publishing themselves (default: "builtin").
+#                             npm-family workspaces use the detected workspace
+#                             manager for built-in publish commands, so pnpm
+#                             workspaces publish via `pnpm publish`.
+#     registry              — registry override. Built-in publishing only
+#                             supports the default public registry for each
+#                             ecosystem: "crates_io", "npm", "jsr", or
+#                             "pub_dev". Custom/private registries must use
+#                             mode = "external".
+#     trusted_publishing    — whether this package is expected to use registry
+#                             trusted/OIDC publishing flows when available.
+#                             Set `trusted_publishing = true` for defaults, or
+#                             use a table to override GitHub trust metadata:
+#                             enabled, repository, workflow, environment
+#                             (default: enabled)
+#     rate_limits.enforce   — block built-in publish runs when the selected
+#                             package set requires more than one known registry
+#                             rate-limit window. Use `mc publish-plan` to inspect
+#                             batches first. (default: false)
+#     placeholder.readme    — inline README text to use when publishing a
+#                             placeholder package for the first bootstrap
+#                             release
+#     placeholder.readme_file — workspace-relative path to a README file used
+#                             for placeholder publishing. Set either
+#                             placeholder.readme or placeholder.readme_file.
+#   tag                     — whether to create a git tag for this package (default: false)
+#   release                 — whether to create a provider release (default: false)
+#   version_format          — "namespaced" (default: "pkg/v1.0.0") or
+#                             "primary" (just "v1.0.0"); only one package/group
+#                             may use "primary"
+
+[package.solana_kit_docs_site]
+path = "docs/site"
+
+[package.solana_kit_examples]
+path = "examples"
+
+[package.solana_kit]
+path = "packages/solana_kit"
+
+[package.solana_kit_accounts]
+path = "packages/solana_kit_accounts"
+
+[package.solana_kit_addresses]
+path = "packages/solana_kit_addresses"
+
+[package.solana_kit_associated_token_account]
+path = "packages/solana_kit_associated_token_account"
+
+[package.solana_kit_codecs]
+path = "packages/solana_kit_codecs"
+
+[package.solana_kit_codecs_core]
+path = "packages/solana_kit_codecs_core"
+
+[package.solana_kit_codecs_data_structures]
+path = "packages/solana_kit_codecs_data_structures"
+
+[package.solana_kit_codecs_numbers]
+path = "packages/solana_kit_codecs_numbers"
+
+[package.solana_kit_codecs_strings]
+path = "packages/solana_kit_codecs_strings"
+
+[package.solana_kit_compute_budget]
+path = "packages/solana_kit_compute_budget"
+
+[package.solana_kit_errors]
+path = "packages/solana_kit_errors"
+
+[package.solana_kit_fast_stable_stringify]
+path = "packages/solana_kit_fast_stable_stringify"
+
+[package.solana_kit_functional]
+path = "packages/solana_kit_functional"
+
+[package.solana_kit_helius]
+path = "packages/solana_kit_helius"
+
+[package.solana_kit_instruction_plans]
+path = "packages/solana_kit_instruction_plans"
+
+[package.solana_kit_instructions]
+path = "packages/solana_kit_instructions"
+
+[package.solana_kit_keys]
+path = "packages/solana_kit_keys"
+
+[package.solana_kit_lints]
+path = "packages/solana_kit_lints"
+
+[package.solana_kit_mobile_wallet_adapter]
+path = "packages/solana_kit_mobile_wallet_adapter"
+
+[package.solana_kit_mobile_wallet_adapter_protocol]
+path = "packages/solana_kit_mobile_wallet_adapter_protocol"
+
+[package.solana_kit_offchain_messages]
+path = "packages/solana_kit_offchain_messages"
+
+[package.solana_kit_options]
+path = "packages/solana_kit_options"
+
+[package.solana_kit_program_client_core]
+path = "packages/solana_kit_program_client_core"
+
+[package.solana_kit_programs]
+path = "packages/solana_kit_programs"
+
+[package.solana_kit_rpc]
+path = "packages/solana_kit_rpc"
+
+[package.solana_kit_rpc_api]
+path = "packages/solana_kit_rpc_api"
+
+[package.solana_kit_rpc_parsed_types]
+path = "packages/solana_kit_rpc_parsed_types"
+
+[package.solana_kit_rpc_spec]
+path = "packages/solana_kit_rpc_spec"
+
+[package.solana_kit_rpc_spec_types]
+path = "packages/solana_kit_rpc_spec_types"
+
+[package.solana_kit_rpc_subscriptions]
+path = "packages/solana_kit_rpc_subscriptions"
+
+[package.solana_kit_rpc_subscriptions_api]
+path = "packages/solana_kit_rpc_subscriptions_api"
+
+[package.solana_kit_rpc_subscriptions_channel_websocket]
+path = "packages/solana_kit_rpc_subscriptions_channel_websocket"
+
+[package.solana_kit_rpc_transformers]
+path = "packages/solana_kit_rpc_transformers"
+
+[package.solana_kit_rpc_transport_http]
+path = "packages/solana_kit_rpc_transport_http"
+
+[package.solana_kit_rpc_types]
+path = "packages/solana_kit_rpc_types"
+
+[package.solana_kit_signers]
+path = "packages/solana_kit_signers"
+
+[package.solana_kit_subscribable]
+path = "packages/solana_kit_subscribable"
+
+[package.solana_kit_system]
+path = "packages/solana_kit_system"
+
+[package.solana_kit_sysvars]
+path = "packages/solana_kit_sysvars"
+
+[package.solana_kit_test_matchers]
+path = "packages/solana_kit_test_matchers"
+
+[package.solana_kit_token]
+path = "packages/solana_kit_token"
+
+[package.solana_kit_token_2022]
+path = "packages/solana_kit_token_2022"
+
+[package.solana_kit_transaction_confirmation]
+path = "packages/solana_kit_transaction_confirmation"
+
+[package.solana_kit_transaction_messages]
+path = "packages/solana_kit_transaction_messages"
+
+[package.solana_kit_transactions]
+path = "packages/solana_kit_transactions"
+
+[package.test_generated]
+path = "packages/codama-renderers-dart/test-generated"
+
+[package.codama-renderers-dart]
+path = "packages/codama-renderers-dart"
+type = "npm"
+
+# =============================================================================
+# [group.*] — version groups that share a single release identity
+# =============================================================================
+#
+# When packages belong to a group, they share a synchronized version and a
+# single release tag/identity. If any member bumps, all members bump to the
+# group's highest severity.
+#
+# Required fields:
+#   packages — list of [package.*] ids that belong to this group
+#
+# Optional fields:
+#   changelog               — path or table for the group-level changelog;
+#                             tables may also set `include = "all"`,
+#                             `include = "group-only"`, or
+#                             `include = ["package-id"]` to control which
+#                             member-targeted changesets appear in the group
+#                             changelog (direct group-targeted changesets are
+#                             always included; default: "all")
+#   excluded_changelog_types — list of changelog type keys to exclude from this target
+#   empty_update_message    — fallback text when the group bumps but a
+#                             specific member has no direct changeset entries
+#   versioned_files         — additional files to version-bump with the group
+#                             groups must use explicit typed entries because the
+#                             ecosystem cannot be inferred from a bare string;
+#                             regex entries are also supported, e.g.
+#                             [{ path = "**/install.sh", regex = 'SDK_VERSION="(?<version>\d+\.\d+\.\d+)"' }]
+#   tag                     — create a git tag for the group release (default: false)
+#   release                 — create a provider release for the group (default: false)
+#   version_format          — "namespaced" (default) or "primary"
+#
+# Rules:
+#   - group members must be declared under [package.*]
+#   - package and group ids share one namespace (no collisions)
+#   - a package may belong to only one group
+#   - only one package or group may use version_format = "primary"
+#   - group tag/release/version_format override member package settings
+#   - prefer package ids in authored changesets when possible; dependents and
+#     grouped members propagate automatically, so group ids are best for
+#     intentionally group-owned releases
+
+[group.main]
+packages = [
+  "solana_kit_docs_site",
+  "solana_kit_examples",
+  "test_generated",
+  "solana_kit",
+  "solana_kit_accounts",
+  "solana_kit_addresses",
+  "solana_kit_associated_token_account",
+  "solana_kit_codecs",
+  "solana_kit_codecs_core",
+  "solana_kit_codecs_data_structures",
+  "solana_kit_codecs_numbers",
+  "solana_kit_codecs_strings",
+  "solana_kit_compute_budget",
+  "solana_kit_errors",
+  "solana_kit_fast_stable_stringify",
+  "solana_kit_functional",
+  "solana_kit_helius",
+  "solana_kit_instruction_plans",
+  "solana_kit_instructions",
+  "solana_kit_keys",
+  "solana_kit_lints",
+  "solana_kit_mobile_wallet_adapter",
+  "solana_kit_mobile_wallet_adapter_protocol",
+  "solana_kit_offchain_messages",
+  "solana_kit_options",
+  "solana_kit_program_client_core",
+  "solana_kit_programs",
+  "solana_kit_rpc",
+  "solana_kit_rpc_api",
+  "solana_kit_rpc_parsed_types",
+  "solana_kit_rpc_spec",
+  "solana_kit_rpc_spec_types",
+  "solana_kit_rpc_subscriptions",
+  "solana_kit_rpc_subscriptions_api",
+  "solana_kit_rpc_subscriptions_channel_websocket",
+  "solana_kit_rpc_transformers",
+  "solana_kit_rpc_transport_http",
+  "solana_kit_rpc_types",
+  "solana_kit_signers",
+  "solana_kit_subscribable",
+  "solana_kit_system",
+  "solana_kit_sysvars",
+  "solana_kit_test_matchers",
+  "solana_kit_token",
+  "solana_kit_token_2022",
+  "solana_kit_transaction_confirmation",
+  "solana_kit_transaction_messages",
+  "solana_kit_transactions",
+  "codama-renderers-dart",
+]
+tag = true
+release = true
+version_format = "primary"
+changelog = { path = "CHANGELOG.md" }
+# include = ["package-id"]
+
+versioned_files = [
+  { path = "**/pubspec.yaml", type = "dart" },
+  { path = "packages/codama-renderers-dart/package.json", type = "npm" },
+]
+
+# =============================================================================
+# [[deployments]] — deployment intent definitions
+# =============================================================================
+#
+# Deployments are structured intents emitted in the release manifest so
+# downstream CI can decide when and how to execute them. monochange does not
+# run deployments directly — it declares them.
+#
+# Fields:
+#   name            — unique deployment name
+#   trigger         — when to deploy: "workflow" (manual), "release_pr_merge",
+#                     or "release_published"
+#   workflow        — CI workflow to trigger
+#   environment     — target environment name (optional)
+#   release_targets — which release targets activate this deployment (default: all)
+#   requires        — dependencies that must be met before deploying
+#   metadata        — arbitrary key-value pairs passed to the workflow
+#
+# Example:
+# [[deployments]]
+# name = "docs"
+# trigger = "release_published"
+# workflow = "docs-release"
+# environment = "github-pages"
+# release_targets = ["main"]
+# requires = ["main"]
+# metadata = { site = "github-pages" }
+
+# =============================================================================
+# [ecosystems.*] — per-ecosystem discovery and publishing settings
+# =============================================================================
+#
+# Each supported ecosystem can be configured independently.
+#
+# Fields:
+#   enabled  — opt-in/opt-out of discovery for this ecosystem (default: none,
+#              meaning discovery runs when manifests are found)
+#   roots    — restrict discovery to specific directories (default: scan entire repo)
+#   exclude  — glob patterns to exclude from discovery
+#   dependency_version_prefix — default dependency prefix for typed versioned_files
+#   versioned_files — ecosystem-wide default versioned_files inherited by matching packages;
+#                     entries may be typed manifest updates (including
+#                     arbitrary TOML/JSON field paths) or plain-text regex
+#                     replacements with a named `version` capture, e.g.
+#                     [{ path = "src/lib.rs", regex = 'VERSION: &str = "(?<version>\d+\.\d+\.\d+)"' }]
+#   lockfile_commands — optional escape-hatch commands that refresh ecosystem
+#                       lockfiles after a release updates manifest versions.
+#                       By default monochange rewrites supported lockfiles
+#                       directly from the release plan so `mc release` stays on
+#                       the fast path. Cargo is not re-run automatically anymore,
+#                       so incomplete Cargo.lock files should be refreshed with
+#                       explicit commands here or manually afterwards. When set,
+#                       these commands fully own lockfile refresh for that ecosystem.
+#   publish          — ecosystem-wide publishing defaults inherited by matching
+#                      packages unless the package overrides them
+#     enabled        — enable managed publishing for the ecosystem (default: true)
+#     mode           — "builtin" or "external" (default: "builtin")
+#     registry       — default public registry for this ecosystem. Built-in
+#                      publishing only supports the ecosystem’s canonical public
+#                      registry.
+#     trusted_publishing — whether packages in this ecosystem should default to
+#                      trusted/OIDC publishing flows when available. Set
+#                      `trusted_publishing = true` for defaults, or use a table
+#                      with enabled/repository/workflow/environment to inherit
+#                      trust metadata into matching packages (default: enabled)
+#     rate_limits.enforce — block built-in publish runs for matching packages
+#                      when the selected package set exceeds a known single
+#                      registry window. (default: false)
+#     placeholder.readme / placeholder.readme_file — default placeholder README
+#                      source inherited by packages during bootstrap publishing
+
+# =============================================================================
+# [lints] — manifest lint configuration
+# =============================================================================
+#
+# Configure lint presets, global rules, and scoped overrides for package
+# manifests. Lint suites live in ecosystem crates, but configuration lives in
+# this top-level section.
+#
+# [lints]
+# use = ["cargo/recommended", "npm/recommended"]
+# include = ["crates/**", "packages/**"]
+# exclude = ["examples/**"]
+# disable_gitignore = false
+#
+# Fields:
+#   use               — preset ids enabled globally
+#   include           — optional glob patterns that opt specific manifest paths
+#                       into linting; when omitted, every non-gitignored
+#                       manifest is considered
+#   exclude           — glob patterns removed from linting after include/default
+#                       selection
+#   disable_gitignore — set true to lint gitignored manifests too; this is not
+#                       recommended for normal repositories
+#
+# [lints.rules]
+# "cargo/internal-dependency-workspace" = "error"
+# "npm/workspace-protocol" = "error"
+#
+# [[lints.scopes]]
+# name = "published cargo packages"
+# match = { ecosystems = ["cargo"], managed = true, publishable = true }
+# use = ["cargo/recommended"]
+# rules = { "cargo/required-package-fields" = "error" }
+#
+# Scope selector fields inside `match`:
+#   ecosystems  — ecosystem ids like cargo, npm, or dart
+#   paths       — glob patterns against manifest paths relative to the workspace root
+#   package_ids — configured package ids to target directly
+#   group_ids   — configured group ids to target via group membership
+#   managed     — include only managed/unmanaged packages when set
+#   private     — include only private/public packages when set
+#   publishable — include only publishable/non-publishable packages when set
+
+# [ecosystems.cargo]
+#
+# Configures the repository host for release automation: creating releases,
+# opening release pull requests, and evaluating changeset policy.
+#
+# Required fields:
+#   provider — "github", "gitlab", or "gitea"
+#   owner    — repository owner or organization
+#   repo     — repository name
+#
+# Optional fields:
+#   host    — custom host URL for self-hosted instances
+#   api_url — custom API URL (e.g. for GitHub Enterprise)
+
+#
+# [source]
+# provider = "github"
+# owner = "your-org"
+# repo = "your-repo"
+
+# [source.releases] — provider release settings and release branch policy
+#
+# Controls whether and how releases are created on the provider when the
+# PublishRelease CLI step runs. Release refs are verified by commit reachability.
+# Tags and publish steps are enforced by default; commit-release stays flexible
+# unless you opt in.
+#
+# Fields:
+#   enabled             — enable/disable release creation (default: true)
+#   draft               — create releases as drafts (default: false)
+#   prerelease          — mark releases as pre-releases (default: false)
+#   generate_notes      — ask the provider to auto-generate release notes (default: false)
+#   source              — release notes source: "monochange" (use monochange-rendered
+#                         notes) or "github_generated" (use provider-generated notes)
+#                         Default: "monochange"
+#   branches            — release branch names or globs, e.g. ["main", "release/*"]
+#   enforce_for_tags    — reject unsafe tag-release refs (default: true)
+#   enforce_for_publish — reject unsafe publish refs (default: true)
+#   enforce_for_commit  — reject unsafe commit-release refs (default: false)
+#   changeset_context_timeout_seconds — hosted-source enrichment timeout (default: 120)
+#
+# [source.releases]
+# enabled = true
+# draft = false
+# prerelease = false
+# source = "monochange"
+# branches = ["main"]
+# enforce_for_tags = true
+# enforce_for_publish = true
+# enforce_for_commit = false
+# changeset_context_timeout_seconds = 120
+
+# [source.pull_requests] — release pull request settings
+#
+# Controls the OpenReleaseRequest CLI step which creates or updates a release
+# PR with version bumps, changelog updates, and changeset cleanup.
+#
+# Fields:
+#   enabled       — enable/disable release PR creation (default: true)
+#   branch_prefix — branch name prefix for release PRs (default: "monochange/release")
+#   base          — target branch for the release PR (default: "main")
+#   title         — PR title template (default: "chore(release): prepare release")
+#   labels        — labels applied to the release PR (default: ["release", "automated"]
+#   auto_merge    — enable auto-merge on the PR when supported (default: false)
+#
+# [source.pull_requests]
+# enabled = true
+# branch_prefix = "monochange/release"
+# base = "main"
+# title = "chore(release): prepare release"
+# labels = ["release", "automated"]
+# auto_merge = false
+
+[ecosystems.dart]
+enabled = true
+publish.enabled = true
+publish.mode = "external"
+publish.registry = "pub_dev"
+
+[ecosystems.npm]
+enabled = true
+roots = ["packages/codama-renderers-dart"]
+publish.enabled = true
+publish.mode = "external"
+publish.registry = "npm"
+
+[source]
+provider = "github"
+owner = "openbudgetfun"
+repo = "solana_kit"
+
+[source.releases]
+enabled = true
+source = "monochange"
+branches = ["main"]
+enforce_for_tags = true
+enforce_for_publish = true
+enforce_for_commit = false
+
+[source.pull_requests]
+enabled = true
+branch_prefix = "monochange/release"
+base = "main"
+title = "chore(release): prepare release"
+labels = ["release", "automated"]
+auto_merge = false
+
+# =============================================================================
+# [changesets.affected] — changeset verification settings
+# =============================================================================
+#
+# Controls the `AffectedPackages` CLI step which checks whether pull requests
+# include changeset files that cover all changed packages.
+#
+# This section works independently of any source provider.
+
+[changesets.affected]
+# Whether changeset verification is enabled. When false, the AffectedPackages
+# step will refuse to run.
+# Default: true
+enabled = true
+
+# Whether a missing changeset is treated as a failure (true) or just a
+# warning (false).
+# Default: true
+required = true
+
+# Pull-request labels that skip verification entirely. When any label on the
+# PR matches an entry here, the verify step returns "skipped" instead of
+# evaluating coverage.
+# Default: []
+skip_labels = []
+
+# Whether to render a failure comment body in the evaluation output for
+# CI integrations to post back to the pull request.
+# Default: true
+comment_on_failure = true
+
+# Additional non-package root-level paths that should also trigger changeset
+# requirements when changed. Package directories are included automatically.
+# Default: []
+changed_paths = []
+
+# Files that should not trigger changeset requirements.
+# Default: []
+ignored_paths = []
+
+# =============================================================================
+# [cli.*] — optional user-defined CLI commands
+# =============================================================================
+#
+# `mc init` intentionally leaves the starter config without [cli.*] command
+# tables. Most built-in operations are available directly as immutable
+# `mc step:*` commands, so new projects do not need generated workflow aliases
+# just to validate, discover, release, publish, or inspect diagnostics.
+#
+# Add [cli.<name>] tables only for project-specific workflows that combine
+# multiple steps, add custom shell commands, or provide organization-specific
+# command names. Each table becomes a top-level `mc <name>` command.
+#
+# See the configuration guide for the full [cli.*] schema, input types, and
+# step definition examples.
+
+# =============================================================================
+# [cli.*] — ported from knope.toml workflows
+# =============================================================================
+
+[cli.document]
+help_text = "Create a changeset file and format workspace files"
+steps = [
+  { type = "CreateChangeFile", name = "create changeset" },
+  { type = "Command", name = "format with dprint", command = "dprint fmt --config dprint.json" },
+]
+
+[cli.release]
+help_text = "Prepare a release: plan bumps, sync files, format, and optionally commit + open PR"
+inputs = [
+  { name = "format", type = "choice", choices = ["text", "json", "markdown"], default = "markdown" },
+  { name = "no_verify", type = "boolean", default = true },
+  { name = "commit", help_text = "Whether to commit the changes", type = "boolean", default = false },
+  { name = "create_pr", help_text = "Whether to create the PR after the commit", type = "boolean", default = false },
+]
+steps = [
+  { type = "PrepareRelease", name = "plan release", allow_empty_changesets = true },
+  { type = "Command", name = "sync workspace files", when = "{{ number_of_changesets > 0 }}", command = "sync:write" },
+  { type = "Command", name = "format with dprint", when = "{{ number_of_changesets > 0 }}", command = "dprint fmt --config dprint.json" },
+  { type = "CommitRelease", name = "create release commit", when = "{{ number_of_changesets > 0 && inputs.commit }}", inputs = { no_verify = "{{ inputs.no_verify }}", stage_all = true } },
+  { type = "OpenReleaseRequest", name = "create the pr", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.create_pr }}", inputs = { no_verify = "{{ inputs.no_verify }}", stage_all = true } },
+]
+
+[cli.publish]
+help_text = "Publish packages to registries (Dart via melos, NPM via pnpm). Must be run from a tagged release commit."
+dry_run = false
+steps = [
+  { type = "Command", name = "publish Dart packages", command = "melos publish --no-dry-run" },
+  { type = "Command", name = "publish NPM renderer", command = "pnpm --filter codama-renderers-dart publish" },
+]

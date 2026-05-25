@@ -24,8 +24,9 @@ in
       shfmt
       extra.knope
       extra.mdt
+      extra.monochange
+      extra.pnpm
       extra.surfpool
-      (extra.pnpm-standalone.overrideAttrs { doInstallCheck = false; })
     ]
     ++ lib.optionals stdenv.isDarwin [
       coreutils

@@ -1,6 +1,8 @@
 name: solana_kit_docs_site
 description: Solana Kit documentation site built with Jaspr Content
 version: 0.0.1
+publish_to: none
+repository: https://github.com/openbudgetfun/solana_kit
 
 environment:
   sdk: ^3.10.0

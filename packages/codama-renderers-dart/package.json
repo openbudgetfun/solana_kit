@@ -37,6 +37,11 @@
     "code-generator"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openbudgetfun/solana_kit.git",
+    "directory": "packages/codama-renderers-dart"
+  },
   "dependencies": {
     "@codama/errors": "^1.4.4",
     "@codama/nodes": "^1.4.4",

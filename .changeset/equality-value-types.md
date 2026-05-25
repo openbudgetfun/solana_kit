@@ -1,5 +1,5 @@
 ---
-default: patch
+main: patch
 ---
 
 Add `==` and `hashCode` to public value-type, config, and response classes.

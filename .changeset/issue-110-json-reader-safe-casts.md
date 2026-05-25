@@ -1,5 +1,5 @@
 ---
-default: patch
+main: patch
 ---
 
 Introduce internal `JsonReader` helper that replaces unsafe `.cast<T>()` list
