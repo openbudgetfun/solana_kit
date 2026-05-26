@@ -21,6 +21,7 @@ in
       libiconv
       nixfmt
       osv-scanner
+      ripgrep
       shfmt
       extra.knope
       extra.mdt
