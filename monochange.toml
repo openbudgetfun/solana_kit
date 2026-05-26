@@ -661,6 +661,9 @@ versioned_files = [
 #   private     — include only private/public packages when set
 #   publishable — include only publishable/non-publishable packages when set
 
+[lints.rules]
+"dart/internal-path-dependency-policy" = "off"
+
 # [ecosystems.cargo]
 #
 # Configures the repository host for release automation: creating releases,
@@ -836,12 +839,14 @@ steps = [
 ]
 
 [cli.release]
-help_text = "Prepare a release: plan bumps, sync files, format, and optionally commit + open PR"
+help_text = "Prepare a local release: plan bumps, sync files, format, optionally commit, tag, and publish the GitHub release"
 inputs = [
   { name = "format", type = "choice", choices = ["text", "json", "markdown"], default = "markdown" },
   { name = "no_verify", type = "boolean", default = true },
-  { name = "commit", help_text = "Whether to commit the changes", type = "boolean", default = false },
-  { name = "create_pr", help_text = "Whether to create the PR after the commit", type = "boolean", default = false },
+  { name = "commit", help_text = "Whether to commit the release changes", type = "boolean", default = false },
+  { name = "create_pr", help_text = "Whether to create the release PR after the commit", type = "boolean", default = false },
+  { name = "tag", help_text = "Whether to create and push release tags from the release commit", type = "boolean", default = false },
+  { name = "publish_release", help_text = "Whether to publish the GitHub release object for the release tag", type = "boolean", default = false },
 ]
 steps = [
   { type = "PrepareRelease", name = "plan release", allow_empty_changesets = true },
@@ -849,6 +854,8 @@ steps = [
   { type = "Command", name = "format with dprint", when = "{{ number_of_changesets > 0 }}", command = "dprint fmt --config dprint.json" },
   { type = "CommitRelease", name = "create release commit", when = "{{ number_of_changesets > 0 && inputs.commit }}", inputs = { no_verify = "{{ inputs.no_verify }}", stage_all = true } },
   { type = "OpenReleaseRequest", name = "create the pr", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.create_pr }}", inputs = { no_verify = "{{ inputs.no_verify }}", stage_all = true } },
+  { type = "TagRelease", name = "create and push release tags", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.tag }}", inputs = { from = "HEAD", push = true, format = "json" } },
+  { type = "PublishRelease", name = "publish GitHub release", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.tag && inputs.publish_release }}", inputs = { from-ref = "HEAD", draft = false, format = "json" } },
 ]
 
 [cli.publish]
