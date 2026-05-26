@@ -1,0 +1,174 @@
+codecov:
+  require_ci_to_pass: true
+
+ignore:
+  - "**/*.g.dart"
+  - "**/*.freezed.dart"
+  - "**/*.mocks.dart"
+  - "**/generated/**"
+  - "**/.dart_tool/**"
+  - "**/build/**"
+  - "**/dist/**"
+  - "docs/**"
+  - "examples/**"
+
+flags:
+  solana_kit:
+    paths:
+      - packages/solana_kit
+  solana_kit_accounts:
+    paths:
+      - packages/solana_kit_accounts
+  solana_kit_addresses:
+    paths:
+      - packages/solana_kit_addresses
+  solana_kit_associated_token_account:
+    paths:
+      - packages/solana_kit_associated_token_account
+  solana_kit_codecs:
+    paths:
+      - packages/solana_kit_codecs
+  solana_kit_codecs_core:
+    paths:
+      - packages/solana_kit_codecs_core
+  solana_kit_codecs_data_structures:
+    paths:
+      - packages/solana_kit_codecs_data_structures
+  solana_kit_codecs_numbers:
+    paths:
+      - packages/solana_kit_codecs_numbers
+  solana_kit_codecs_strings:
+    paths:
+      - packages/solana_kit_codecs_strings
+  solana_kit_compute_budget:
+    paths:
+      - packages/solana_kit_compute_budget
+  solana_kit_errors:
+    paths:
+      - packages/solana_kit_errors
+  solana_kit_fast_stable_stringify:
+    paths:
+      - packages/solana_kit_fast_stable_stringify
+  solana_kit_functional:
+    paths:
+      - packages/solana_kit_functional
+  solana_kit_helius:
+    paths:
+      - packages/solana_kit_helius
+  solana_kit_instruction_plans:
+    paths:
+      - packages/solana_kit_instruction_plans
+  solana_kit_instructions:
+    paths:
+      - packages/solana_kit_instructions
+  solana_kit_keys:
+    paths:
+      - packages/solana_kit_keys
+  solana_kit_lints:
+    paths:
+      - packages/solana_kit_lints
+  solana_kit_mobile_wallet_adapter:
+    paths:
+      - packages/solana_kit_mobile_wallet_adapter
+  solana_kit_mobile_wallet_adapter_protocol:
+    paths:
+      - packages/solana_kit_mobile_wallet_adapter_protocol
+  solana_kit_offchain_messages:
+    paths:
+      - packages/solana_kit_offchain_messages
+  solana_kit_options:
+    paths:
+      - packages/solana_kit_options
+  solana_kit_program_client_core:
+    paths:
+      - packages/solana_kit_program_client_core
+  solana_kit_programs:
+    paths:
+      - packages/solana_kit_programs
+  solana_kit_rpc:
+    paths:
+      - packages/solana_kit_rpc
+  solana_kit_rpc_api:
+    paths:
+      - packages/solana_kit_rpc_api
+  solana_kit_rpc_parsed_types:
+    paths:
+      - packages/solana_kit_rpc_parsed_types
+  solana_kit_rpc_spec:
+    paths:
+      - packages/solana_kit_rpc_spec
+  solana_kit_rpc_spec_types:
+    paths:
+      - packages/solana_kit_rpc_spec_types
+  solana_kit_rpc_subscriptions:
+    paths:
+      - packages/solana_kit_rpc_subscriptions
+  solana_kit_rpc_subscriptions_api:
+    paths:
+      - packages/solana_kit_rpc_subscriptions_api
+  solana_kit_rpc_subscriptions_channel_websocket:
+    paths:
+      - packages/solana_kit_rpc_subscriptions_channel_websocket
+  solana_kit_rpc_transformers:
+    paths:
+      - packages/solana_kit_rpc_transformers
+  solana_kit_rpc_transport_http:
+    paths:
+      - packages/solana_kit_rpc_transport_http
+  solana_kit_rpc_types:
+    paths:
+      - packages/solana_kit_rpc_types
+  solana_kit_signers:
+    paths:
+      - packages/solana_kit_signers
+  solana_kit_subscribable:
+    paths:
+      - packages/solana_kit_subscribable
+  solana_kit_system:
+    paths:
+      - packages/solana_kit_system
+  solana_kit_sysvars:
+    paths:
+      - packages/solana_kit_sysvars
+  solana_kit_test_matchers:
+    paths:
+      - packages/solana_kit_test_matchers
+  solana_kit_token:
+    paths:
+      - packages/solana_kit_token
+  solana_kit_token_2022:
+    paths:
+      - packages/solana_kit_token_2022
+  solana_kit_transaction_confirmation:
+    paths:
+      - packages/solana_kit_transaction_confirmation
+  solana_kit_transaction_messages:
+    paths:
+      - packages/solana_kit_transaction_messages
+  solana_kit_transactions:
+    paths:
+      - packages/solana_kit_transactions
+  codama_renderers_dart:
+    paths:
+      - packages/codama-renderers-dart
+
+coverage:
+  precision: 2
+  round: down
+  range: "60...100"
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+        if_ci_failed: error
+    patch:
+      default:
+        target: 95%
+        threshold: 0%
+        if_ci_failed: error
+
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+  require_changes: false
