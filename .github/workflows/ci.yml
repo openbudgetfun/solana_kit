@@ -129,6 +129,7 @@ jobs:
         shell: devenv shell -- bash -e {0}
       - name: NPM renderer coverage
         run: pnpm --filter codama-renderers-dart test:coverage
+        shell: devenv shell -- bash -e {0}
       - name: prepare Codecov flag reports
         id: prepare-codecov-flags
         run: dart run scripts/prepare_codecov_flags.dart --lcov coverage/lcov.info --out-dir coverage/flags --github-output "$GITHUB_OUTPUT"
