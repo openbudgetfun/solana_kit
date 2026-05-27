@@ -16,7 +16,7 @@ import 'package:solana_kit_mpl_bubblegum/solana_kit_mpl_bubblegum.dart';
 import 'package:test/test.dart';
 
 /// Default RPC URL for a local SurfPool validator.
-const _localRpcUrl = 'http://localhost:8899';
+// Integration tests use SurfPool at localhost:8899.
 
 void main() {
   group('mpl-bubblegum integration', () {
