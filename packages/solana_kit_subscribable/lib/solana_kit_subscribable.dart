@@ -21,3 +21,4 @@ library;
 export 'src/async_iterable.dart';
 export 'src/data_publisher.dart';
 export 'src/demultiplex.dart';
+export 'src/reactive_store.dart';

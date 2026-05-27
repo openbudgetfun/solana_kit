@@ -1,0 +1,14 @@
+name: solana_kit_fixed_points
+description: Fixed-point number helpers for the Solana Kit Dart SDK.
+version: 0.3.1
+repository: https://github.com/openbudgetfun/solana_kit
+homepage: https://openbudgetfun.github.io/solana_kit/
+
+environment:
+  sdk: ^3.10.1
+
+resolution: workspace
+
+dev_dependencies:
+  solana_kit_lints: ^0.3.1
+  test: ^1.25.0

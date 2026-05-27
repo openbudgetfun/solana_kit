@@ -10,7 +10,9 @@ SolanaError getSolanaErrorFromJsonRpcError(Object? putativeErrorResponse) {
   if (_isRpcErrorResponse(putativeErrorResponse)) {
     final response = putativeErrorResponse! as Map<String, Object?>;
     final rawCode = response['code']!;
-    final codeInt = rawCode is num ? rawCode.toInt() : rawCode as int;
+    final codeInt = rawCode is BigInt
+        ? rawCode.toInt()
+        : (rawCode as num).toInt();
     final message = response['message']! as String;
     final data = response['data'];
 
@@ -28,6 +30,7 @@ SolanaError getSolanaErrorFromJsonRpcError(Object? putativeErrorResponse) {
       final err = preflightData['err'];
       final preflightContext = Map<String, Object?>.from(preflightData)
         ..remove('err');
+      _addSendTransactionPreflightDefaults(preflightContext);
 
       if (err != null) {
         final cause = getSolanaErrorFromTransactionError(err);
@@ -79,9 +82,31 @@ SolanaError getSolanaErrorFromJsonRpcError(Object? putativeErrorResponse) {
   });
 }
 
+void _addSendTransactionPreflightDefaults(Map<String, Object?> context) {
+  for (final key in _sendTransactionPreflightResultKeys) {
+    context.putIfAbsent(key, () => null);
+  }
+}
+
+const _sendTransactionPreflightResultKeys = [
+  'accounts',
+  'fee',
+  'innerInstructions',
+  'loadedAccountsDataSize',
+  'loadedAddresses',
+  'logs',
+  'postBalances',
+  'postTokenBalances',
+  'preBalances',
+  'preTokenBalances',
+  'replacementBlockhash',
+  'returnData',
+  'unitsConsumed',
+];
+
 bool _isRpcErrorResponse(Object? value) {
   if (value is! Map<String, Object?>) return false;
   final code = value['code'];
   final message = value['message'];
-  return (code is num || code is int) && message is String;
+  return (code is num || code is BigInt) && message is String;
 }

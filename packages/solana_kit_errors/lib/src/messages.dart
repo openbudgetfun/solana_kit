@@ -66,6 +66,34 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'Invalid pattern match bytes. The provided byte array does not match any of the specified patterns.',
   SolanaErrorCode.codecsStringContainsNullCharacters:
       r'Decoded $encoding string contains null characters. Use compatibility stripping or preserve mode explicitly if this payload is expected.',
+  SolanaErrorCode.fixedPointsArithmeticOverflow:
+      r'Fixed-point operation `$operation` of kind `$kind` overflowed. Expected a raw bigint in [$min, $max], got $result.',
+  SolanaErrorCode.fixedPointsDivisionByZero:
+      r'Fixed-point division by zero for value of kind `$kind` ($signedness, $totalBits bits).',
+  SolanaErrorCode.fixedPointsFractionalBitsExceedTotalBits:
+      r'`fractionalBits` ($fractionalBits) must not exceed `totalBits` ($totalBits).',
+  SolanaErrorCode.fixedPointsInvalidDecimals:
+      r'Invalid `decimals`. Expected a non-negative integer, got $decimals.',
+  SolanaErrorCode.fixedPointsInvalidFractionalBits:
+      r'Invalid `fractionalBits`. Expected a non-negative integer, got $fractionalBits.',
+  SolanaErrorCode.fixedPointsInvalidString:
+      r'Invalid string `$input` for fixed-point value of kind `$kind`.',
+  SolanaErrorCode.fixedPointsInvalidTotalBits:
+      r'Invalid `totalBits`. Expected a positive integer, got $totalBits.',
+  SolanaErrorCode.fixedPointsInvalidZeroDenominatorRatio:
+      r'Invalid ratio $numerator/$denominator for fixed-point value of kind `$kind`. Denominator must be non-zero.',
+  SolanaErrorCode.fixedPointsMalformedRawValue:
+      r'Fixed-point value of kind `$kind` has a malformed `raw` field. Expected a bigint, got `$raw`.',
+  SolanaErrorCode.fixedPointsShapeMismatch:
+      r'Fixed-point `$operation` operation expected $expectedKind ($expectedSignedness, $expectedTotalBits bits, $expectedScale $expectedScaleLabel); got $actualKind ($actualSignedness, $actualTotalBits bits, $actualScale $actualScaleLabel).',
+  SolanaErrorCode.fixedPointsStrictModePrecisionLoss:
+      r'Fixed-point operation `$operation` of kind `$kind` cannot be performed exactly; pass a rounding mode other than `strict` to allow a rounded result.',
+  SolanaErrorCode.fixedPointsTotalBitsNotByteAligned:
+      r'Fixed-point codec of kind `$kind` requires `totalBits` to be a multiple of 8; got $totalBits.',
+  SolanaErrorCode.fixedPointsValueOutOfRange:
+      r'Fixed-point value of kind `$kind` is out of range for $signedness $totalBits-bit storage. Expected a raw bigint in [$min, $max], got $raw.',
+  SolanaErrorCode.fsUnsupportedEnvironment:
+      r'Filesystem operation `$operation` is not supported in this environment.',
   SolanaErrorCode.codecsExpectedFixedLength:
       'Expected a fixed-size codec, got a variable-size one.',
   SolanaErrorCode.codecsExpectedPositiveByteLength:
@@ -304,6 +332,10 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'The provided private key does not match the provided public key.',
   SolanaErrorCode.keysSignatureStringLengthOutOfRange:
       r'Expected base58-encoded signature string of length in the range [64, 88]. Actual length: $actualLength.',
+  SolanaErrorCode.keysInvalidBase58InGrindRegex:
+      r'The grind regex `/$source/` contains the character `$character`, which is not in the base58 alphabet and can never match a Solana address.',
+  SolanaErrorCode.keysWriteKeyPairUnsupportedEnvironment:
+      'Writing a key pair to disk is not supported in this environment.',
   SolanaErrorCode.lamportsOutOfRange:
       'Lamports value must be in the range [0, 2e64-1]',
   SolanaErrorCode.malformedBigintString: r'$value cannot be parsed as a BigInt',
@@ -560,6 +592,19 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       r'The transaction config value for $configName has the incorrect kind. Expected $expectedKind, got $actualKind.',
   SolanaErrorCode.transactionInstructionHeadersPayloadsMismatch:
       r'The transaction does not have the same number of instruction headers and instruction payloads. Got $numInstructionHeaders instruction headers, and $numInstructionPayloads instruction payloads.',
+  SolanaErrorCode.transactionTooManySignerAddresses:
+      r'Transaction has $actualCount unique signer addresses but the maximum allowed is $maxAllowed',
+  SolanaErrorCode.transactionTooManyAccountAddresses:
+      r'Transaction has $actualCount unique account addresses but the maximum allowed is $maxAllowed',
+  SolanaErrorCode.transactionTooManyInstructions:
+      r'Transaction has $actualCount instructions but the maximum allowed is $maxAllowed',
+  SolanaErrorCode.transactionTooManyAccountsInInstruction:
+      r'The instruction at index $instructionIndex has $actualCount account references but the maximum allowed is $maxAllowed',
+  SolanaErrorCode.walletNotConnected: 'Wallet not connected',
+  SolanaErrorCode.walletNoSignerConnected:
+      r'No signing wallet connected (status: $status)',
+  SolanaErrorCode.walletSignerNotAvailable:
+      'Connected wallet does not support signing',
 
   // Mobile Wallet Adapter - Session errors
   SolanaErrorCode.mwaAssociationPortOutOfRange:

@@ -57,6 +57,71 @@ void main() {
     });
   });
 
+  group('abortable futures', () {
+    test('isAbortError recognizes AbortError only', () {
+      expect(isAbortError(const AbortError()), isTrue);
+      expect(isAbortError(StateError('not abort')), isFalse);
+      expect(
+        const AbortError().toString(),
+        'AbortError: The operation was aborted.',
+      );
+    });
+
+    test(
+      'getAbortableFuture returns original future without a signal',
+      () async {
+        await expectLater(getAbortableFuture(Future.value(42)), completion(42));
+      },
+    );
+
+    test('getAbortableFuture resolves when the input future wins', () async {
+      final controller = AbortController();
+
+      await expectLater(
+        getAbortableFuture(Future.value('done'), controller.signal),
+        completion('done'),
+      );
+    });
+
+    test(
+      'getAbortableFuture rejects when already aborted without reason',
+      () async {
+        final controller = AbortController()..abort();
+
+        await expectLater(
+          getAbortableFuture(
+            Future<void>.delayed(const Duration(days: 1)),
+            controller.signal,
+          ),
+          throwsA(isA<AbortError>()),
+        );
+      },
+    );
+
+    test('getAbortableFuture rejects with a custom abort reason', () async {
+      final controller = AbortController();
+      final reason = StateError('cancelled');
+      final future = getAbortableFuture(
+        Future<void>.delayed(const Duration(days: 1)),
+        controller.signal,
+      );
+
+      controller.abort(reason);
+
+      await expectLater(future, throwsA(same(reason)));
+    });
+
+    test('getAbortableFuture forwards input errors', () async {
+      final controller = AbortController();
+      final error = StateError('boom');
+
+      await expectLater(
+        getAbortableFuture(Future<void>.error(error), controller.signal),
+        throwsA(same(error)),
+      );
+    });
+  });
+
   group('WebSocketChannelConfig', () {
     test('disallows insecure ws:// URLs by default', () {
       final config = WebSocketChannelConfig(url: Uri.parse('ws://example.com'));

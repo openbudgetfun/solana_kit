@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
@@ -24,6 +26,44 @@ void main() {
       final kp1 = generateKeyPair();
       final kp2 = generateKeyPair();
       expect(kp1.privateKey, isNot(equals(kp2.privateKey)));
+    });
+  });
+
+  group('grindKeyPairs', () {
+    test('returns the requested amount using a predicate matcher', () async {
+      final keyPairs = await grindKeyPairs(
+        matches: (String _) => true,
+        amount: 2,
+        concurrency: 1,
+      );
+
+      expect(keyPairs, hasLength(2));
+    });
+
+    test('returns an empty list when amount is zero', () async {
+      final keyPairs = await grindKeyPairs(matches: RegExp('1'), amount: 0);
+      expect(keyPairs, isEmpty);
+    });
+
+    test('throws when regex contains impossible base58 characters', () {
+      expect(
+        () => grindKeyPairs(matches: RegExp('^ab0'), amount: 0),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.keysInvalidBase58InGrindRegex,
+          ),
+        ),
+      );
+    });
+  });
+
+  group('grindKeyPair', () {
+    test('returns one key pair matching a regexp', () async {
+      final keyPair = await grindKeyPair(matches: RegExp('.*'), concurrency: 1);
+      expect(keyPair.privateKey, hasLength(32));
+      expect(keyPair.publicKey, hasLength(32));
     });
   });
 
@@ -80,6 +120,60 @@ void main() {
           ),
         ),
       );
+    });
+  });
+
+  group('writeKeyPair', () {
+    test('writes a solana-keygen-compatible JSON byte array', () async {
+      final directory = await Directory.systemTemp.createTemp(
+        'solana-keypair-',
+      );
+      addTearDown(() => directory.delete(recursive: true));
+      final path = '${directory.path}/nested/keypair.json';
+      final keyPair = createKeyPairFromBytes(mockKeyBytes);
+
+      await writeKeyPair(keyPair, path);
+
+      final file = File(path);
+      final bytes = (jsonDecode(await file.readAsString()) as List<dynamic>)
+          .cast<int>();
+      expect(bytes, mockKeyBytes);
+      if (!Platform.isWindows) {
+        expect(FileStat.statSync(path).mode & 0x1FF, 0x180);
+      }
+    });
+
+    test('does not overwrite an existing file by default', () async {
+      final directory = await Directory.systemTemp.createTemp(
+        'solana-keypair-',
+      );
+      addTearDown(() => directory.delete(recursive: true));
+      final path = '${directory.path}/keypair.json';
+      final keyPair = createKeyPairFromBytes(mockKeyBytes);
+      await File(path).writeAsString('existing');
+
+      await expectLater(
+        writeKeyPair(keyPair, path),
+        throwsA(isA<FileSystemException>()),
+      );
+      expect(await File(path).readAsString(), 'existing');
+    });
+
+    test('overwrites an existing file when explicitly allowed', () async {
+      final directory = await Directory.systemTemp.createTemp(
+        'solana-keypair-',
+      );
+      addTearDown(() => directory.delete(recursive: true));
+      final path = '${directory.path}/keypair.json';
+      final keyPair = createKeyPairFromBytes(mockKeyBytes);
+      await File(path).writeAsString('existing');
+
+      await writeKeyPair(keyPair, path, unsafelyOverwriteExistingKeyPair: true);
+
+      final bytes =
+          (jsonDecode(await File(path).readAsString()) as List<dynamic>)
+              .cast<int>();
+      expect(bytes, mockKeyBytes);
     });
   });
 

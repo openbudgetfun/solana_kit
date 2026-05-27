@@ -8,6 +8,7 @@ import 'package:solana_kit_transaction_messages/src/compile_lifetime_token.dart'
 import 'package:solana_kit_transaction_messages/src/compile_static_accounts.dart';
 import 'package:solana_kit_transaction_messages/src/compiled_transaction_message.dart';
 import 'package:solana_kit_transaction_messages/src/transaction_message.dart';
+import 'package:solana_kit_transaction_messages/src/transaction_message_limits.dart';
 
 /// Converts a [TransactionMessage] into a [CompiledTransactionMessage]
 /// suitable for encoding and execution on the network.
@@ -26,6 +27,10 @@ CompiledTransactionMessage compileTransactionMessage(
   final orderedAccounts = getOrderedAccountsFromInstructions(
     transactionMessage.feePayer!,
     transactionMessage.instructions,
+  );
+  assertTransactionMessageIsWithinLimits(
+    transactionMessage,
+    orderedAccounts: orderedAccounts,
   );
   final lifetimeConstraint = transactionMessage.lifetimeConstraint;
 

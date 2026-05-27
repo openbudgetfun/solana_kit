@@ -328,15 +328,13 @@ Future<_MutableSingleTransactionPlan?> _selectAndMutateCandidate(
     try {
       final updatedMessage = predicate(candidate.message);
       final message = await context.onTransactionMessageUpdated(updatedMessage);
-      if (getTransactionMessageSize(message) <= transactionSizeLimit) {
+      if (getTransactionMessageSize(message) <=
+          getTransactionMessageSizeLimit(message)) {
         candidate.message = message;
         return candidate;
       }
     } on Object catch (error) {
-      if (isSolanaError(
-        error,
-        SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
-      )) {
+      if (_isCandidateOverflowError(error)) {
         // Try the next candidate.
         continue;
       }
@@ -355,18 +353,30 @@ Future<TransactionMessage> _createNewMessage(
     predicate(newMessage),
   );
   final updatedMessageSize = getTransactionMessageSize(updatedMessage);
-  if (updatedMessageSize > transactionSizeLimit) {
+  if (updatedMessageSize > getTransactionMessageSizeLimit(updatedMessage)) {
     final newMessageSize = getTransactionMessageSize(newMessage);
     throw SolanaError(
       SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
       {
         'numBytesRequired': updatedMessageSize - newMessageSize,
-        'numFreeBytes': transactionSizeLimit - newMessageSize,
+        'numFreeBytes':
+            getTransactionMessageSizeLimit(newMessage) - newMessageSize,
       },
     );
   }
   return updatedMessage;
 }
+
+const _candidateOverflowErrorCodes = {
+  SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
+  SolanaErrorCode.transactionTooManyAccountAddresses,
+  SolanaErrorCode.transactionTooManyAccountsInInstruction,
+  SolanaErrorCode.transactionTooManyInstructions,
+  SolanaErrorCode.transactionTooManySignerAddresses,
+};
+
+bool _isCandidateOverflowError(Object error) =>
+    error is SolanaError && _candidateOverflowErrorCodes.contains(error.code);
 
 TransactionPlan _freezeTransactionPlan(_MutableTransactionPlan plan) {
   switch (plan) {
@@ -401,13 +411,14 @@ TransactionMessage _fitEntirePlanInsideMessage(
         instruction,
       ], message);
       final newMessageSize = getTransactionMessageSize(newMessage);
-      if (newMessageSize > transactionSizeLimit) {
+      if (newMessageSize > getTransactionMessageSizeLimit(newMessage)) {
         final baseMessageSize = getTransactionMessageSize(message);
         throw SolanaError(
           SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
           {
             'numBytesRequired': newMessageSize - baseMessageSize,
-            'numFreeBytes': transactionSizeLimit - baseMessageSize,
+            'numFreeBytes':
+                getTransactionMessageSizeLimit(message) - baseMessageSize,
           },
         );
       }

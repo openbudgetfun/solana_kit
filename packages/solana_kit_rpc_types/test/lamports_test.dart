@@ -116,6 +116,12 @@ void main() {
       expect(buffer, equals(Uint8List.fromList([0, 202, 154, 59, 0, 0, 0, 0])));
     });
 
+    test('encodes SOL values as raw lamports', () {
+      final encoder = getDefaultLamportsEncoder();
+      final buffer = encoder.encode(sol('1.5'));
+      expect(buffer, equals(Uint8List.fromList([0, 47, 104, 89, 0, 0, 0, 0])));
+    });
+
     test('has a fixed size of 8', () {
       final encoder = getDefaultLamportsEncoder();
       expect(encoder.fixedSize, equals(8));

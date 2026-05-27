@@ -119,6 +119,14 @@ void main() {
       final data = Uint8List.fromList([1, 2, 3]);
       expect(containsBytes(data, Uint8List.fromList([1, 2, 3]), 0), isTrue);
     });
+
+    test('matches JavaScript slice behavior for negative offsets', () {
+      final data = Uint8List.fromList([1, 2, 3]);
+      expect(containsBytes(data, Uint8List.fromList([1, 2, 3]), -3), isTrue);
+      expect(containsBytes(data, Uint8List.fromList([1, 2, 3]), -4), isTrue);
+      expect(containsBytes(data, Uint8List.fromList([2, 3]), -2), isFalse);
+      expect(containsBytes(data, Uint8List.fromList([1]), -1), isFalse);
+    });
   });
 
   group('bytesEqual', () {

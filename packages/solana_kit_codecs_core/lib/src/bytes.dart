@@ -46,9 +46,24 @@ bool containsBytes(Uint8List data, Uint8List bytes, int offset) {
   if (offset + bytes.length > data.length) return false;
   final slice =
       (offset == 0 || offset <= -data.length) && data.length == bytes.length
-          ? data
-          : data.sublist(offset, offset + bytes.length);
+      ? data
+      : _sliceBytesLikeJs(data, offset, offset + bytes.length);
   return bytesEqual(slice, bytes);
+}
+
+Uint8List _sliceBytesLikeJs(Uint8List data, int start, int end) {
+  final normalizedStart = _normalizeSliceIndex(start, data.length);
+  final normalizedEnd = _normalizeSliceIndex(end, data.length);
+  if (normalizedEnd <= normalizedStart) return Uint8List(0);
+  return data.sublist(normalizedStart, normalizedEnd);
+}
+
+int _normalizeSliceIndex(int index, int length) {
+  if (index < 0) {
+    final fromEnd = length + index;
+    return fromEnd < 0 ? 0 : fromEnd;
+  }
+  return index > length ? length : index;
 }
 
 /// Returns `true` if [bytes1] and [bytes2] are element-wise equal.

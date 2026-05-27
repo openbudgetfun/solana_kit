@@ -20,6 +20,12 @@ class JsonParsedVoteInfo {
     required this.nodePubkey,
     required this.priorVoters,
     required this.votes,
+    this.blockRevenueCollector,
+    this.blockRevenueCommissionBps,
+    this.blsPubkeyCompressed,
+    this.inflationRewardsCollector,
+    this.inflationRewardsCommissionBps,
+    this.pendingDelegatorRewards,
     this.rootSlot,
   });
 
@@ -29,17 +35,35 @@ class JsonParsedVoteInfo {
   /// The address authorized to withdraw from this vote account.
   final Address authorizedWithdrawer;
 
+  /// The address that collects block revenue tips and MEV, if reported.
+  final Address? blockRevenueCollector;
+
+  /// Block revenue commission in basis points, if reported.
+  final BigInt? blockRevenueCommissionBps;
+
+  /// The compressed BLS public key, or `null` if absent or not reported.
+  final String? blsPubkeyCompressed;
+
   /// The commission percentage (0-100).
   final int commission;
 
   /// The list of epoch credits.
   final List<JsonParsedEpochCredit> epochCredits;
 
+  /// The address that collects inflation rewards, if reported.
+  final Address? inflationRewardsCollector;
+
+  /// Inflation rewards commission in basis points, if reported.
+  final BigInt? inflationRewardsCommissionBps;
+
   /// The last timestamp recorded by this vote account.
   final JsonParsedLastTimestamp lastTimestamp;
 
   /// The node public key.
   final Address nodePubkey;
+
+  /// Pending delegator rewards, if reported.
+  final StringifiedBigInt? pendingDelegatorRewards;
 
   /// The list of prior voters.
   final List<JsonParsedPriorVoter> priorVoters;
@@ -57,10 +81,17 @@ class JsonParsedVoteInfo {
           runtimeType == other.runtimeType &&
           _listEquals(authorizedVoters, other.authorizedVoters) &&
           authorizedWithdrawer == other.authorizedWithdrawer &&
+          blockRevenueCollector == other.blockRevenueCollector &&
+          blockRevenueCommissionBps == other.blockRevenueCommissionBps &&
+          blsPubkeyCompressed == other.blsPubkeyCompressed &&
           commission == other.commission &&
           _listEquals(epochCredits, other.epochCredits) &&
+          inflationRewardsCollector == other.inflationRewardsCollector &&
+          inflationRewardsCommissionBps ==
+              other.inflationRewardsCommissionBps &&
           lastTimestamp == other.lastTimestamp &&
           nodePubkey == other.nodePubkey &&
+          pendingDelegatorRewards == other.pendingDelegatorRewards &&
           _listEquals(priorVoters, other.priorVoters) &&
           rootSlot == other.rootSlot &&
           _listEquals(votes, other.votes);
@@ -70,10 +101,16 @@ class JsonParsedVoteInfo {
     runtimeType,
     Object.hashAll(authorizedVoters),
     authorizedWithdrawer,
+    blockRevenueCollector,
+    blockRevenueCommissionBps,
+    blsPubkeyCompressed,
     commission,
     Object.hashAll(epochCredits),
+    inflationRewardsCollector,
+    inflationRewardsCommissionBps,
     lastTimestamp,
     nodePubkey,
+    pendingDelegatorRewards,
     Object.hashAll(priorVoters),
     rootSlot,
     Object.hashAll(votes),
@@ -82,10 +119,16 @@ class JsonParsedVoteInfo {
   @override
   String toString() =>
       'JsonParsedVoteInfo(authorizedVoters: $authorizedVoters, '
-      'authorizedWithdrawer: $authorizedWithdrawer, commission: $commission, '
-      'epochCredits: $epochCredits, lastTimestamp: $lastTimestamp, '
-      'nodePubkey: $nodePubkey, priorVoters: $priorVoters, '
-      'rootSlot: $rootSlot, votes: $votes)';
+      'authorizedWithdrawer: $authorizedWithdrawer, '
+      'blockRevenueCollector: $blockRevenueCollector, '
+      'blockRevenueCommissionBps: $blockRevenueCommissionBps, '
+      'blsPubkeyCompressed: $blsPubkeyCompressed, commission: $commission, '
+      'epochCredits: $epochCredits, '
+      'inflationRewardsCollector: $inflationRewardsCollector, '
+      'inflationRewardsCommissionBps: $inflationRewardsCommissionBps, '
+      'lastTimestamp: $lastTimestamp, nodePubkey: $nodePubkey, '
+      'pendingDelegatorRewards: $pendingDelegatorRewards, '
+      'priorVoters: $priorVoters, rootSlot: $rootSlot, votes: $votes)';
 }
 
 /// An authorized voter entry in a vote account.
@@ -147,8 +190,7 @@ class JsonParsedEpochCredit {
           previousCredits == other.previousCredits;
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, credits, epoch, previousCredits);
+  int get hashCode => Object.hash(runtimeType, credits, epoch, previousCredits);
 
   @override
   String toString() =>
@@ -228,10 +270,17 @@ class JsonParsedPriorVoter {
 /// A vote entry in a vote account.
 class JsonParsedVote {
   /// Creates a new [JsonParsedVote].
-  const JsonParsedVote({required this.confirmationCount, required this.slot});
+  const JsonParsedVote({
+    required this.confirmationCount,
+    required this.slot,
+    this.latency,
+  });
 
   /// The number of confirmations.
   final int confirmationCount;
+
+  /// The latency of this vote, in slots, if reported.
+  final BigInt? latency;
 
   /// The slot that was voted on.
   final Slot slot;
@@ -242,14 +291,16 @@ class JsonParsedVote {
       other is JsonParsedVote &&
           runtimeType == other.runtimeType &&
           confirmationCount == other.confirmationCount &&
+          latency == other.latency &&
           slot == other.slot;
 
   @override
-  int get hashCode => Object.hash(runtimeType, confirmationCount, slot);
+  int get hashCode =>
+      Object.hash(runtimeType, confirmationCount, latency, slot);
 
   @override
   String toString() =>
-      'JsonParsedVote(confirmationCount: $confirmationCount, slot: $slot)';
+      'JsonParsedVote(confirmationCount: $confirmationCount, latency: $latency, slot: $slot)';
 }
 
 bool _listEquals<T>(List<T> a, List<T> b) {

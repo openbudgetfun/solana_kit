@@ -68,6 +68,24 @@ void main() {
       expect(messagePacker2.done(), isFalse);
     });
 
+    test('throws when the first instruction cannot fit in a message', () {
+      final plan = getMessagePackerInstructionPlanFromInstructions([
+        createInstructionWithData(5000),
+      ]);
+      final messagePacker = plan.getMessagePacker();
+
+      expect(
+        () => messagePacker.packMessageToCapacity(createMessage()),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
+          ),
+        ),
+      );
+    });
+
     test('handles empty instruction list', () {
       final plan = getMessagePackerInstructionPlanFromInstructions([]);
 
@@ -121,6 +139,25 @@ void main() {
             (e) => e.code,
             'code',
             SolanaErrorCode.instructionPlansMessagePackerAlreadyComplete,
+          ),
+        ),
+      );
+    });
+
+    test('throws when even a base instruction cannot fit', () {
+      final plan = getLinearMessagePackerInstructionPlan(
+        getInstruction: (_, _) => createInstructionWithData(5000),
+        totalLength: 1,
+      );
+      final messagePacker = plan.getMessagePacker();
+
+      expect(
+        () => messagePacker.packMessageToCapacity(createMessage()),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
           ),
         ),
       );
