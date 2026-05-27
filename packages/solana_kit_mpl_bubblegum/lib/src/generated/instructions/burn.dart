@@ -26,7 +26,7 @@ class BurnInstructionData {
   final List<int> root;
   final List<int> dataHash;
   final List<int> creatorHash;
-  final int nonce;
+  final BigInt nonce;
   final int index;
 }
 
@@ -69,7 +69,7 @@ Decoder<BurnInstructionData> getBurnInstructionDataDecoder() {
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
           creatorHash: map['creatorHash']! as List<int>,
-          nonce: map['nonce']! as int,
+          nonce: map['nonce']! as BigInt,
           index: map['index']! as int,
         ),
   );
@@ -95,7 +95,7 @@ Instruction getBurnInstruction({
   required List<int> root,
   required List<int> dataHash,
   required List<int> creatorHash,
-  required int nonce,
+  required BigInt nonce,
   required int index,
 }) {
   final instructionData = BurnInstructionData(

@@ -29,7 +29,7 @@ class UpdateMetadataV2InstructionData {
   final List<int> root;
   final List<int>? assetDataHash;
   final int? flags;
-  final int nonce;
+  final BigInt nonce;
   final int index;
   final MetadataArgsV2 currentMetadata;
   final UpdateArgs updateArgs;
@@ -80,7 +80,7 @@ Decoder<UpdateMetadataV2InstructionData> getUpdateMetadataV2InstructionDataDecod
           root: map['root']! as List<int>,
           assetDataHash: map['assetDataHash']! as List<int>?,
           flags: map['flags']! as int?,
-          nonce: map['nonce']! as int,
+          nonce: map['nonce']! as BigInt,
           index: map['index']! as int,
           currentMetadata: map['currentMetadata']! as MetadataArgsV2,
           updateArgs: map['updateArgs']! as UpdateArgs,
@@ -111,7 +111,7 @@ Instruction getUpdateMetadataV2Instruction({
   required List<int> root,
   required List<int>? assetDataHash,
   required int? flags,
-  required int nonce,
+  required BigInt nonce,
   required int index,
   required MetadataArgsV2 currentMetadata,
   required UpdateArgs updateArgs,

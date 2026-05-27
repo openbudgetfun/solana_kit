@@ -13,11 +13,11 @@ import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart'
 class decompressV1InstructionData {
   const decompressV1InstructionData({
     this.discriminator = 8,
-    required this.message,
+    required this.metadataArgs,
   });
 
   final int discriminator;
-  final MetadataArgs message;
+  final MetadataArgs metadataArgs;
 }
 
 /// Creates a [decompressV1] instruction.
@@ -36,9 +36,9 @@ Instruction getdecompressV1Instruction({
   required Address tokenProgram,
   required Address associatedTokenProgram,
   required Address logWrapper,
-  required MetadataArgs message,
+  required MetadataArgs metadataArgs,
 }) {
-  final messageBytes = encodeMetadataArgs(message);
+  final messageBytes = encodeMetadataArgs(metadataArgs);
   final data = Uint8List(1 + messageBytes.length);
   data[0] = 8;
   data.setRange(1, data.length, messageBytes);

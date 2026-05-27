@@ -13,11 +13,11 @@ import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart'
 class verifyCreatorInstructionData {
   const verifyCreatorInstructionData({
     this.discriminator = 34,
-    required this.message,
+    required this.metadataArgs,
   });
 
   final int discriminator;
-  final MetadataArgs message;
+  final MetadataArgs metadataArgs;
 }
 
 /// Creates a [verifyCreator] instruction.
@@ -32,9 +32,9 @@ Instruction getverifyCreatorInstruction({
   required Address logWrapper,
   required Address compressionProgram,
   required Address systemProgram,
-  required MetadataArgs message,
+  required MetadataArgs metadataArgs,
 }) {
-  final messageBytes = encodeMetadataArgs(message);
+  final messageBytes = encodeMetadataArgs(metadataArgs);
   final data = Uint8List(1 + messageBytes.length);
   data[0] = 34;
   data.setRange(1, data.length, messageBytes);

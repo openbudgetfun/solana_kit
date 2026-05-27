@@ -30,7 +30,7 @@ class DelegateInput {
   final List<int> creatorHash;
 
   /// The nonce (asset ID) of the compressed NFT.
-  final int nonce;
+  final BigInt nonce;
 
   /// The index of the leaf in the Merkle tree.
   final int index;

@@ -13,11 +13,11 @@ import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart'
 class unverifyCollectionInstructionData {
   const unverifyCollectionInstructionData({
     this.discriminator = 27,
-    required this.message,
+    required this.metadataArgs,
   });
 
   final int discriminator;
-  final MetadataArgs message;
+  final MetadataArgs metadataArgs;
 }
 
 /// Creates a [unverifyCollection] instruction.
@@ -39,9 +39,9 @@ Instruction getunverifyCollectionInstruction({
   required Address compressionProgram,
   required Address tokenMetadataProgram,
   required Address systemProgram,
-  required MetadataArgs message,
+  required MetadataArgs metadataArgs,
 }) {
-  final messageBytes = encodeMetadataArgs(message);
+  final messageBytes = encodeMetadataArgs(metadataArgs);
   final data = Uint8List(1 + messageBytes.length);
   data[0] = 27;
   data.setRange(1, data.length, messageBytes);

@@ -13,11 +13,11 @@ import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart'
 class updateMetadataInstructionData {
   const updateMetadataInstructionData({
     this.discriminator = 31,
-    required this.message,
+    required this.metadataArgs,
   });
 
   final int discriminator;
-  final MetadataArgs message;
+  final MetadataArgs metadataArgs;
 }
 
 /// Creates a [updateMetadata] instruction.
@@ -36,9 +36,9 @@ Instruction getupdateMetadataInstruction({
   required Address compressionProgram,
   required Address tokenMetadataProgram,
   required Address systemProgram,
-  required MetadataArgs message,
+  required MetadataArgs metadataArgs,
 }) {
-  final messageBytes = encodeMetadataArgs(message);
+  final messageBytes = encodeMetadataArgs(metadataArgs);
   final data = Uint8List(1 + messageBytes.length);
   data[0] = 31;
   data.setRange(1, data.length, messageBytes);

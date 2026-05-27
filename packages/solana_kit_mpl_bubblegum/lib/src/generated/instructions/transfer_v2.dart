@@ -30,7 +30,7 @@ class TransferV2InstructionData {
   final List<int> creatorHash;
   final List<int>? assetDataHash;
   final int? flags;
-  final int nonce;
+  final BigInt nonce;
   final int index;
 }
 
@@ -81,7 +81,7 @@ Decoder<TransferV2InstructionData> getTransferV2InstructionDataDecoder() {
           creatorHash: map['creatorHash']! as List<int>,
           assetDataHash: map['assetDataHash']! as List<int>?,
           flags: map['flags']! as int?,
-          nonce: map['nonce']! as int,
+          nonce: map['nonce']! as BigInt,
           index: map['index']! as int,
         ),
   );
@@ -113,7 +113,7 @@ Instruction getTransferV2Instruction({
   required List<int> creatorHash,
   required List<int>? assetDataHash,
   required int? flags,
-  required int nonce,
+  required BigInt nonce,
   required int index,
 }) {
   final instructionData = TransferV2InstructionData(

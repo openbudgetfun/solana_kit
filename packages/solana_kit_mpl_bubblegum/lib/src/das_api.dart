@@ -232,7 +232,7 @@ class AssetWithProof {
   final Uint8List creatorHash;
 
   /// The nonce (leaf index).
-  final int nonce;
+  final BigInt nonce;
 
   /// The leaf index.
   final int index;
@@ -276,7 +276,7 @@ Future<AssetWithProof> getAssetWithProof({
     root: rootBytes,
     dataHash: _base58ToBytes(asset.compression.dataHash),
     creatorHash: _base58ToBytes(asset.compression.creatorHash),
-    nonce: nonce,
+    nonce: BigInt.from(nonce),
     index: proof.nodeIndex,
     proof: proofNodes,
   );

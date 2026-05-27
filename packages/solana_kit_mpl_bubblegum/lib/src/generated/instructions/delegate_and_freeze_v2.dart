@@ -32,7 +32,7 @@ class DelegateAndFreezeV2InstructionData {
   final List<int>? collectionHash;
   final List<int>? assetDataHash;
   final int? flags;
-  final int nonce;
+  final BigInt nonce;
   final int index;
 }
 
@@ -87,7 +87,7 @@ Decoder<DelegateAndFreezeV2InstructionData> getDelegateAndFreezeV2InstructionDat
           collectionHash: map['collectionHash']! as List<int>?,
           assetDataHash: map['assetDataHash']! as List<int>?,
           flags: map['flags']! as int?,
-          nonce: map['nonce']! as int,
+          nonce: map['nonce']! as BigInt,
           index: map['index']! as int,
         ),
   );
@@ -118,7 +118,7 @@ Instruction getDelegateAndFreezeV2Instruction({
   required List<int>? collectionHash,
   required List<int>? assetDataHash,
   required int? flags,
-  required int nonce,
+  required BigInt nonce,
   required int index,
 }) {
   final instructionData = DelegateAndFreezeV2InstructionData(

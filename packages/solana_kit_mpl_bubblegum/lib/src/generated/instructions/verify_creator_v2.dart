@@ -28,7 +28,7 @@ class VerifyCreatorV2InstructionData {
   final List<int> root;
   final List<int>? assetDataHash;
   final int? flags;
-  final int nonce;
+  final BigInt nonce;
   final int index;
   final MetadataArgsV2 message;
 }
@@ -75,7 +75,7 @@ Decoder<VerifyCreatorV2InstructionData> getVerifyCreatorV2InstructionDataDecoder
           root: map['root']! as List<int>,
           assetDataHash: map['assetDataHash']! as List<int>?,
           flags: map['flags']! as int?,
-          nonce: map['nonce']! as int,
+          nonce: map['nonce']! as BigInt,
           index: map['index']! as int,
           message: map['message']! as MetadataArgsV2,
         ),
@@ -104,7 +104,7 @@ Instruction getVerifyCreatorV2Instruction({
   required List<int> root,
   required List<int>? assetDataHash,
   required int? flags,
-  required int nonce,
+  required BigInt nonce,
   required int index,
   required MetadataArgsV2 message,
 }) {

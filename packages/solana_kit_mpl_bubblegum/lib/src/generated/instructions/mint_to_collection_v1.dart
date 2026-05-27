@@ -13,11 +13,11 @@ import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart'
 class mintToCollectionV1InstructionData {
   const mintToCollectionV1InstructionData({
     this.discriminator = 13,
-    required this.message,
+    required this.metadataArgs,
   });
 
   final int discriminator;
-  final MetadataArgs message;
+  final MetadataArgs metadataArgs;
 }
 
 /// Creates a [mintToCollectionV1] instruction.
@@ -39,9 +39,9 @@ Instruction getmintToCollectionV1Instruction({
   required Address compressionProgram,
   required Address tokenMetadataProgram,
   required Address systemProgram,
-  required MetadataArgs message,
+  required MetadataArgs metadataArgs,
 }) {
-  final messageBytes = encodeMetadataArgs(message);
+  final messageBytes = encodeMetadataArgs(metadataArgs);
   final data = Uint8List(1 + messageBytes.length);
   data[0] = 13;
   data.setRange(1, data.length, messageBytes);

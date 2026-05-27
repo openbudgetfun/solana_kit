@@ -33,7 +33,7 @@ class UpdateAssetDataV2InstructionData {
   final List<int> creatorHash;
   final List<int>? previousAssetDataHash;
   final int? flags;
-  final int nonce;
+  final BigInt nonce;
   final int index;
   final List<int>? newAssetData;
   final AssetDataSchema? newAssetDataSchema;
@@ -92,7 +92,7 @@ Decoder<UpdateAssetDataV2InstructionData> getUpdateAssetDataV2InstructionDataDec
           creatorHash: map['creatorHash']! as List<int>,
           previousAssetDataHash: map['previousAssetDataHash']! as List<int>?,
           flags: map['flags']! as int?,
-          nonce: map['nonce']! as int,
+          nonce: map['nonce']! as BigInt,
           index: map['index']! as int,
           newAssetData: map['newAssetData']! as List<int>?,
           newAssetDataSchema: map['newAssetDataSchema']! as AssetDataSchema?,
@@ -125,7 +125,7 @@ Instruction getUpdateAssetDataV2Instruction({
   required List<int> creatorHash,
   required List<int>? previousAssetDataHash,
   required int? flags,
-  required int nonce,
+  required BigInt nonce,
   required int index,
   required List<int>? newAssetData,
   required AssetDataSchema? newAssetDataSchema,
