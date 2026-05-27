@@ -10,11 +10,11 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-/// CreateTree instruction data for mpl-bubblegum compressed NFTs.
+/// CreateTreeV2 instruction data for mpl-bubblegum compressed NFTs.
 @immutable
-class CreateTreeInstructionData {
-  const CreateTreeInstructionData({
-    this.discriminator = 6,
+class CreateTreeV2InstructionData {
+  const CreateTreeV2InstructionData({
+    this.discriminator = 7,
     required this.maxDepth,
     required this.maxBufferSize,
     this.public,
@@ -26,7 +26,7 @@ class CreateTreeInstructionData {
   final bool? public;
 }
 
-Encoder<CreateTreeInstructionData> getCreateTreeInstructionDataEncoder() {
+Encoder<CreateTreeV2InstructionData> getCreateTreeV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
       ('maxDepth', getU32Encoder()),
       ('maxBufferSize', getU32Encoder()),
@@ -35,7 +35,7 @@ Encoder<CreateTreeInstructionData> getCreateTreeInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (CreateTreeInstructionData value) => <String, Object?>{
+    (CreateTreeV2InstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
       'maxDepth': value.maxDepth,
       'maxBufferSize': value.maxBufferSize,
@@ -44,7 +44,7 @@ Encoder<CreateTreeInstructionData> getCreateTreeInstructionDataEncoder() {
   );
 }
 
-Decoder<CreateTreeInstructionData> getCreateTreeInstructionDataDecoder() {
+Decoder<CreateTreeV2InstructionData> getCreateTreeV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
       ('maxDepth', getU32Decoder()),
@@ -54,7 +54,7 @@ Decoder<CreateTreeInstructionData> getCreateTreeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateTreeInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateTreeV2InstructionData(
           discriminator: map['discriminator']! as int,
           maxDepth: map['maxDepth']! as int,
           maxBufferSize: map['maxBufferSize']! as int,
@@ -63,15 +63,15 @@ Decoder<CreateTreeInstructionData> getCreateTreeInstructionDataDecoder() {
   );
 }
 
-Codec<CreateTreeInstructionData, CreateTreeInstructionData> getCreateTreeInstructionDataCodec() {
+Codec<CreateTreeV2InstructionData, CreateTreeV2InstructionData> getCreateTreeV2InstructionDataCodec() {
   return combineCodec(
-    getCreateTreeInstructionDataEncoder(),
-    getCreateTreeInstructionDataDecoder(),
+    getCreateTreeV2InstructionDataEncoder(),
+    getCreateTreeV2InstructionDataDecoder(),
   );
 }
 
-/// Creates a [CreateTree] instruction.
-Instruction getCreateTreeInstruction({
+/// Creates a [CreateTreeV2] instruction.
+Instruction getCreateTreeV2Instruction({
   required Address programAddress,
   required Address treeAuthority,
   required Address merkleTree,
@@ -84,7 +84,7 @@ Instruction getCreateTreeInstruction({
   required int maxBufferSize,
   required bool? public,
 }) {
-  final instructionData = CreateTreeInstructionData(
+  final instructionData = CreateTreeV2InstructionData(
       maxDepth: maxDepth,
       maxBufferSize: maxBufferSize,
       public: public,
@@ -101,6 +101,6 @@ Instruction getCreateTreeInstruction({
       AccountMeta(address: compressionProgram, role: AccountRole.readonly),
       AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
-    data: getCreateTreeInstructionDataEncoder().encode(instructionData),
+    data: getCreateTreeV2InstructionDataEncoder().encode(instructionData),
   );
 }

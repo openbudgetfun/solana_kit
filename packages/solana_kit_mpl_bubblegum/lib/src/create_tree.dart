@@ -93,7 +93,7 @@ InstructionPlan getCreateTreeInstructionPlan(
       systemProgram: systemProgram,
       maxDepth: input.maxDepth,
       maxBufferSize: input.maxBufferSize,
-      isPublic: input.isPublic,
+      public: input.isPublic,
     ),
   ]);
 }

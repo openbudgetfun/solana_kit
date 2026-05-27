@@ -130,7 +130,7 @@ InstructionPlan getMintV1InstructionPlan(
       logWrapper: logWrapper,
       compressionProgram: compressionProgram,
       systemProgram: systemProgram,
-      metadataArgs: metadataArgs,
+      message: metadataArgs,
     ),
   ]);
 }

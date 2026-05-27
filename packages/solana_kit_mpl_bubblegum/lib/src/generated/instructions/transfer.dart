@@ -30,15 +30,13 @@ class TransferInstructionData {
   final int index;
 }
 
-/// Returns the encoder for [TransferInstructionData].
 Encoder<TransferInstructionData> getTransferInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
-    ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-    ('dataHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-    ('creatorHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-    ('nonce', getU64Encoder()),
-    ('index', getU32Encoder()),
+      ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+      ('dataHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+      ('creatorHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+      ('nonce', getU64Encoder()),
+      ('index', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -54,34 +52,30 @@ Encoder<TransferInstructionData> getTransferInstructionDataEncoder() {
   );
 }
 
-/// Returns the decoder for [TransferInstructionData].
 Decoder<TransferInstructionData> getTransferInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-    ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-    ('dataHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-    ('creatorHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-    ('nonce', getU64Decoder()),
-    ('index', getU32Decoder()),
+      ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+      ('dataHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+      ('creatorHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+      ('nonce', getU64Decoder()),
+      ('index', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        TransferInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) => TransferInstructionData(
           discriminator: map['discriminator']! as int,
-          root: (map['root']! as List<int>).toList(),
-          dataHash: (map['dataHash']! as List<int>).toList(),
-          creatorHash: (map['creatorHash']! as List<int>).toList(),
+          root: map['root']! as List<int>,
+          dataHash: map['dataHash']! as List<int>,
+          creatorHash: map['creatorHash']! as List<int>,
           nonce: map['nonce']! as int,
           index: map['index']! as int,
         ),
   );
 }
 
-/// Returns the codec for [TransferInstructionData].
-Codec<TransferInstructionData, TransferInstructionData>
-    getTransferInstructionDataCodec() {
+Codec<TransferInstructionData, TransferInstructionData> getTransferInstructionDataCodec() {
   return combineCodec(
     getTransferInstructionDataEncoder(),
     getTransferInstructionDataDecoder(),
@@ -89,19 +83,6 @@ Codec<TransferInstructionData, TransferInstructionData>
 }
 
 /// Creates a [Transfer] instruction.
-///
-/// Transfers ownership of a compressed NFT. The transaction must be
-/// signed by either the leaf owner or leaf delegate.
-///
-/// ## Accounts
-/// - [treeAuthority] — Read-only
-/// - [leafOwner] — Read-only (the current asset owner)
-/// - [leafDelegate] — Read-only (if delegated, else same as leafOwner)
-/// - [newLeafOwner] — Read-only (the new asset owner)
-/// - [merkleTree] — Writable
-/// - [logWrapper] — Read-only (noop program)
-/// - [compressionProgram] — Read-only
-/// - [systemProgram] — Read-only
 Instruction getTransferInstruction({
   required Address programAddress,
   required Address treeAuthority,
@@ -119,11 +100,11 @@ Instruction getTransferInstruction({
   required int index,
 }) {
   final instructionData = TransferInstructionData(
-    root: root,
-    dataHash: dataHash,
-    creatorHash: creatorHash,
-    nonce: nonce,
-    index: index,
+      root: root,
+      dataHash: dataHash,
+      creatorHash: creatorHash,
+      nonce: nonce,
+      index: index,
   );
 
   return Instruction(

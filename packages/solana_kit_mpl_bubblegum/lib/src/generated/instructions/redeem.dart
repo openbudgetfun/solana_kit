@@ -10,11 +10,11 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-/// Burn instruction data for mpl-bubblegum compressed NFTs.
+/// Redeem instruction data for mpl-bubblegum compressed NFTs.
 @immutable
-class BurnInstructionData {
-  const BurnInstructionData({
-    this.discriminator = 0,
+class RedeemInstructionData {
+  const RedeemInstructionData({
+    this.discriminator = 16,
     required this.root,
     required this.dataHash,
     required this.creatorHash,
@@ -30,7 +30,7 @@ class BurnInstructionData {
   final int index;
 }
 
-Encoder<BurnInstructionData> getBurnInstructionDataEncoder() {
+Encoder<RedeemInstructionData> getRedeemInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
       ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
       ('dataHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
@@ -41,7 +41,7 @@ Encoder<BurnInstructionData> getBurnInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (BurnInstructionData value) => <String, Object?>{
+    (RedeemInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
       'root': Uint8List.fromList(value.root),
       'dataHash': Uint8List.fromList(value.dataHash),
@@ -52,7 +52,7 @@ Encoder<BurnInstructionData> getBurnInstructionDataEncoder() {
   );
 }
 
-Decoder<BurnInstructionData> getBurnInstructionDataDecoder() {
+Decoder<RedeemInstructionData> getRedeemInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
       ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
@@ -64,7 +64,7 @@ Decoder<BurnInstructionData> getBurnInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => BurnInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) => RedeemInstructionData(
           discriminator: map['discriminator']! as int,
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
@@ -75,20 +75,21 @@ Decoder<BurnInstructionData> getBurnInstructionDataDecoder() {
   );
 }
 
-Codec<BurnInstructionData, BurnInstructionData> getBurnInstructionDataCodec() {
+Codec<RedeemInstructionData, RedeemInstructionData> getRedeemInstructionDataCodec() {
   return combineCodec(
-    getBurnInstructionDataEncoder(),
-    getBurnInstructionDataDecoder(),
+    getRedeemInstructionDataEncoder(),
+    getRedeemInstructionDataDecoder(),
   );
 }
 
-/// Creates a [Burn] instruction.
-Instruction getBurnInstruction({
+/// Creates a [Redeem] instruction.
+Instruction getRedeemInstruction({
   required Address programAddress,
   required Address treeAuthority,
   required Address leafOwner,
   required Address leafDelegate,
   required Address merkleTree,
+  required Address voucher,
   required Address logWrapper,
   required Address compressionProgram,
   required Address systemProgram,
@@ -98,7 +99,7 @@ Instruction getBurnInstruction({
   required int nonce,
   required int index,
 }) {
-  final instructionData = BurnInstructionData(
+  final instructionData = RedeemInstructionData(
       root: root,
       dataHash: dataHash,
       creatorHash: creatorHash,
@@ -110,13 +111,14 @@ Instruction getBurnInstruction({
     programAddress: programAddress,
     accounts: [
       AccountMeta(address: treeAuthority, role: AccountRole.readonly),
-      AccountMeta(address: leafOwner, role: AccountRole.readonly),
+      AccountMeta(address: leafOwner, role: AccountRole.writableSigner),
       AccountMeta(address: leafDelegate, role: AccountRole.readonly),
       AccountMeta(address: merkleTree, role: AccountRole.writable),
+      AccountMeta(address: voucher, role: AccountRole.writable),
       AccountMeta(address: logWrapper, role: AccountRole.readonly),
       AccountMeta(address: compressionProgram, role: AccountRole.readonly),
       AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
-    data: getBurnInstructionDataEncoder().encode(instructionData),
+    data: getRedeemInstructionDataEncoder().encode(instructionData),
   );
 }

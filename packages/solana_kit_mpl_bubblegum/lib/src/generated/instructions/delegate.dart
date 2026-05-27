@@ -30,15 +30,13 @@ class DelegateInstructionData {
   final int index;
 }
 
-/// Returns the encoder for [DelegateInstructionData].
 Encoder<DelegateInstructionData> getDelegateInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
-    ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-    ('dataHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-    ('creatorHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-    ('nonce', getU64Encoder()),
-    ('index', getU32Encoder()),
+      ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+      ('dataHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+      ('creatorHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+      ('nonce', getU64Encoder()),
+      ('index', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -54,34 +52,30 @@ Encoder<DelegateInstructionData> getDelegateInstructionDataEncoder() {
   );
 }
 
-/// Returns the decoder for [DelegateInstructionData].
 Decoder<DelegateInstructionData> getDelegateInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-    ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-    ('dataHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-    ('creatorHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-    ('nonce', getU64Decoder()),
-    ('index', getU32Decoder()),
+      ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+      ('dataHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+      ('creatorHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+      ('nonce', getU64Decoder()),
+      ('index', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        DelegateInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) => DelegateInstructionData(
           discriminator: map['discriminator']! as int,
-          root: (map['root']! as List<int>).toList(),
-          dataHash: (map['dataHash']! as List<int>).toList(),
-          creatorHash: (map['creatorHash']! as List<int>).toList(),
+          root: map['root']! as List<int>,
+          dataHash: map['dataHash']! as List<int>,
+          creatorHash: map['creatorHash']! as List<int>,
           nonce: map['nonce']! as int,
           index: map['index']! as int,
         ),
   );
 }
 
-/// Returns the codec for [DelegateInstructionData].
-Codec<DelegateInstructionData, DelegateInstructionData>
-    getDelegateInstructionDataCodec() {
+Codec<DelegateInstructionData, DelegateInstructionData> getDelegateInstructionDataCodec() {
   return combineCodec(
     getDelegateInstructionDataEncoder(),
     getDelegateInstructionDataDecoder(),
@@ -89,25 +83,12 @@ Codec<DelegateInstructionData, DelegateInstructionData>
 }
 
 /// Creates a [Delegate] instruction.
-///
-/// Delegates a compressed NFT to another address. The delegate can then
-/// perform authorized actions on behalf of the owner.
-///
-/// ## Accounts
-/// - [treeAuthority] — Read-only
-/// - [leafOwner] — Read-only (the current asset owner)
-/// - [previousDelegate] — Read-only (the previous delegate, if any)
-/// - [newDelegate] — Read-only (the new delegate address)
-/// - [merkleTree] — Writable
-/// - [logWrapper] — Read-only (noop program)
-/// - [compressionProgram] — Read-only
-/// - [systemProgram] — Read-only
 Instruction getDelegateInstruction({
   required Address programAddress,
   required Address treeAuthority,
   required Address leafOwner,
-  required Address previousDelegate,
-  required Address newDelegate,
+  required Address previousLeafDelegate,
+  required Address newLeafDelegate,
   required Address merkleTree,
   required Address logWrapper,
   required Address compressionProgram,
@@ -119,20 +100,20 @@ Instruction getDelegateInstruction({
   required int index,
 }) {
   final instructionData = DelegateInstructionData(
-    root: root,
-    dataHash: dataHash,
-    creatorHash: creatorHash,
-    nonce: nonce,
-    index: index,
+      root: root,
+      dataHash: dataHash,
+      creatorHash: creatorHash,
+      nonce: nonce,
+      index: index,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
       AccountMeta(address: treeAuthority, role: AccountRole.readonly),
-      AccountMeta(address: leafOwner, role: AccountRole.readonly),
-      AccountMeta(address: previousDelegate, role: AccountRole.readonly),
-      AccountMeta(address: newDelegate, role: AccountRole.readonly),
+      AccountMeta(address: leafOwner, role: AccountRole.readonlySigner),
+      AccountMeta(address: previousLeafDelegate, role: AccountRole.readonly),
+      AccountMeta(address: newLeafDelegate, role: AccountRole.readonly),
       AccountMeta(address: merkleTree, role: AccountRole.writable),
       AccountMeta(address: logWrapper, role: AccountRole.readonly),
       AccountMeta(address: compressionProgram, role: AccountRole.readonly),
