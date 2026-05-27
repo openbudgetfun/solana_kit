@@ -15,6 +15,9 @@
 /// - **PDA derivation** for tree authority, leaf asset ID (V2), and
 ///   bubblegum signer
 /// - **Flag utilities** for leaf schema and asset metadata parsing
+/// - **Composite helpers** ([getCreateTreeInstructionPlan],
+///   [getMintV1InstructionPlan], [getBurnInstructionPlan],
+///   [getTransferInstructionPlan], [getDelegateInstructionPlan])
 ///
 /// ## Dependencies
 ///
@@ -23,13 +26,25 @@
 /// [solana_kit_codecs_core] for the Keccak-256 hash function.
 library;
 
+// Burn asset composite helper.
+export 'src/burn_asset.dart';
+
 // Can transfer.
 export 'src/can_transfer.dart';
+
+// DAS API abstraction.
+export 'src/das_api.dart';
+
+// Create tree composite helper.
+export 'src/create_tree.dart';
+
+// Delegate asset composite helper.
+export 'src/delegate_asset.dart';
 
 // Flags.
 export 'src/flags/leaf_schema_flags.dart';
 
-// Generated (Codama) — will be populated by IDL → Dart code generation.
+// Generated (Codama-style).
 export 'src/generated/mpl_bubblegum.dart';
 
 // Hand-written hashing utilities.
@@ -42,6 +57,9 @@ export 'src/leaf/leaf_schema.dart';
 // Merkle tree.
 export 'src/merkle/merkle_tree.dart';
 
+// Mint V1 composite helper.
+export 'src/mint_v1.dart';
+
 // PDA derivation.
 export 'src/pda/bubblegum_signer.dart';
 export 'src/pda/leaf_asset_id.dart';
@@ -49,3 +67,6 @@ export 'src/pda/tree_authority.dart';
 
 // Program addresses.
 export 'src/program_address.dart';
+
+// Transfer asset composite helper.
+export 'src/transfer_asset.dart';
