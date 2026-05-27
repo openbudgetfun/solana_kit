@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:test/test.dart';
@@ -34,6 +36,46 @@ void main() {
       );
       expect(config.copyWith().heapSize, 2);
       expect(config.copyWith(heapSize: 5).heapSize, 5);
+    });
+
+    test('compiled config values support value equality', () {
+      final priorityFee = CompiledTransactionConfigValue.u64(BigInt.from(40));
+      final samePriorityFee = CompiledTransactionConfigValue.u64(
+        BigInt.from(40),
+      );
+      const computeUnitLimit = CompiledTransactionConfigValue.u32(10);
+
+      expect(priorityFee, samePriorityFee);
+      expect(priorityFee.hashCode, samePriorityFee.hashCode);
+      expect(priorityFee, isNot(computeUnitLimit));
+    });
+
+    test('v1 instruction header and payload support value equality', () {
+      const header = V1InstructionHeader(
+        programAccountIndex: 1,
+        numInstructionAccounts: 2,
+        numInstructionDataBytes: 3,
+      );
+      const sameHeader = V1InstructionHeader(
+        programAccountIndex: 1,
+        numInstructionAccounts: 2,
+        numInstructionDataBytes: 3,
+      );
+      final payload = V1InstructionPayload(
+        // ignore: prefer_const_literals_to_create_immutables
+        instructionAccountIndices: [1, 2],
+        instructionData: Uint8List.fromList([3, 4]),
+      );
+      final samePayload = V1InstructionPayload(
+        // ignore: prefer_const_literals_to_create_immutables
+        instructionAccountIndices: [1, 2],
+        instructionData: Uint8List.fromList([3, 4]),
+      );
+
+      expect(header, sameHeader);
+      expect(header.hashCode, sameHeader.hashCode);
+      expect(payload, samePayload);
+      expect(payload.hashCode, samePayload.hashCode);
     });
 
     test('computes masks and values in wire order', () {

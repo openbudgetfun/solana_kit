@@ -207,6 +207,16 @@ class CompiledTransactionConfigValue {
 
   /// The value.
   final Object value;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CompiledTransactionConfigValue &&
+          kind == other.kind &&
+          value == other.value;
+
+  @override
+  int get hashCode => Object.hash(kind, value);
 }
 
 /// A fixed-size v1 instruction header.
@@ -227,6 +237,21 @@ class V1InstructionHeader {
 
   /// Number of data bytes in the payload.
   final int numInstructionDataBytes;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is V1InstructionHeader &&
+          programAccountIndex == other.programAccountIndex &&
+          numInstructionAccounts == other.numInstructionAccounts &&
+          numInstructionDataBytes == other.numInstructionDataBytes;
+
+  @override
+  int get hashCode => Object.hash(
+    programAccountIndex,
+    numInstructionAccounts,
+    numInstructionDataBytes,
+  );
 }
 
 /// A variable-size v1 instruction payload.
@@ -243,4 +268,20 @@ class V1InstructionPayload {
 
   /// Instruction data.
   final Uint8List instructionData;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is V1InstructionPayload &&
+          _listEquals(
+            instructionAccountIndices,
+            other.instructionAccountIndices,
+          ) &&
+          _uint8ListEquals(instructionData, other.instructionData);
+
+  @override
+  int get hashCode => Object.hash(
+    Object.hashAll(instructionAccountIndices),
+    Object.hashAll(instructionData),
+  );
 }
