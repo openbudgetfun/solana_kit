@@ -28,6 +28,32 @@ class PendingRpcSubscriptionsRequest<TNotification> {
   final RpcSubscriptionsTransport _transport;
   final RpcSubscriptionsPlan<TNotification> _plan;
 
+  /// Subscribes to the notification stream and returns a reactive store.
+  ///
+  /// The store tracks the latest notification, exposes the first error via
+  /// [ReactiveStore.getError], and can be observed with
+  /// [ReactiveStore.subscribe].
+  Future<ReactiveStore<TNotification>> reactive(
+    RpcSubscribeOptions options,
+  ) async {
+    final notificationsDataPublisher = await getAbortableFuture(
+      _transport(
+        RpcSubscriptionsTransportConfig(
+          execute: _plan.execute,
+          request: _plan.request,
+          signal: options.abortSignal,
+        ),
+      ),
+      options.abortSignal,
+    );
+
+    return createReactiveStoreFromDataPublisher<TNotification>(
+      dataChannelName: 'notification',
+      dataPublisher: notificationsDataPublisher,
+      errorChannelName: 'error',
+    );
+  }
+
   /// Subscribes to the notification stream.
   ///
   /// Returns a [Stream] that emits notifications of type [TNotification].
@@ -37,12 +63,15 @@ class PendingRpcSubscriptionsRequest<TNotification> {
   /// the underlying transport still uses `DataPublisher` as a compatibility
   /// layer.
   Future<Stream<TNotification>> subscribe(RpcSubscribeOptions options) async {
-    final notificationsDataPublisher = await _transport(
-      RpcSubscriptionsTransportConfig(
-        execute: _plan.execute,
-        request: _plan.request,
-        signal: options.abortSignal,
+    final notificationsDataPublisher = await getAbortableFuture(
+      _transport(
+        RpcSubscriptionsTransportConfig(
+          execute: _plan.execute,
+          request: _plan.request,
+          signal: options.abortSignal,
+        ),
       ),
+      options.abortSignal,
     );
 
     return createStreamFromDataPublisher<TNotification>(

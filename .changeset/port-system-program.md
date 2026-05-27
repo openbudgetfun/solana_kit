@@ -1,5 +1,5 @@
 ---
-main: minor
+"solana_kit_system": minor
 ---
 
 Port System Program from upstream Codama IDL

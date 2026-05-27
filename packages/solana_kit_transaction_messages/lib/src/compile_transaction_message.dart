@@ -8,6 +8,8 @@ import 'package:solana_kit_transaction_messages/src/compile_lifetime_token.dart'
 import 'package:solana_kit_transaction_messages/src/compile_static_accounts.dart';
 import 'package:solana_kit_transaction_messages/src/compiled_transaction_message.dart';
 import 'package:solana_kit_transaction_messages/src/transaction_message.dart';
+import 'package:solana_kit_transaction_messages/src/transaction_message_limits.dart';
+import 'package:solana_kit_transaction_messages/src/v1_transaction_config.dart';
 
 /// Converts a [TransactionMessage] into a [CompiledTransactionMessage]
 /// suitable for encoding and execution on the network.
@@ -27,15 +29,45 @@ CompiledTransactionMessage compileTransactionMessage(
     transactionMessage.feePayer!,
     transactionMessage.instructions,
   );
+  assertTransactionMessageIsWithinLimits(
+    transactionMessage,
+    orderedAccounts: orderedAccounts,
+  );
   final lifetimeConstraint = transactionMessage.lifetimeConstraint;
+  final lifetimeToken = lifetimeConstraint != null
+      ? getCompiledLifetimeToken(lifetimeConstraint)
+      : null;
+
+  if (transactionMessage.version == TransactionVersion.v1) {
+    final accountIndex = getAccountIndex(orderedAccounts);
+    return CompiledTransactionMessage(
+      version: TransactionVersion.v1,
+      header: getCompiledMessageHeader(orderedAccounts),
+      staticAccounts: orderedAccounts
+          .map((account) => account.address)
+          .toList(),
+      lifetimeToken: lifetimeToken,
+      instructions: const [],
+      configMask: getTransactionConfigMask(transactionMessage.config),
+      configValues: getTransactionConfigValues(transactionMessage.config),
+      instructionHeaders: transactionMessage.instructions
+          .map((instruction) => getInstructionHeader(instruction, accountIndex))
+          .toList(),
+      instructionPayloads: transactionMessage.instructions
+          .map(
+            (instruction) => getInstructionPayload(instruction, accountIndex),
+          )
+          .toList(),
+      numInstructions: transactionMessage.instructions.length,
+      numStaticAccounts: orderedAccounts.length,
+    );
+  }
 
   return CompiledTransactionMessage(
     version: transactionMessage.version,
     header: getCompiledMessageHeader(orderedAccounts),
     staticAccounts: getCompiledStaticAccounts(orderedAccounts),
-    lifetimeToken: lifetimeConstraint != null
-        ? getCompiledLifetimeToken(lifetimeConstraint)
-        : null,
+    lifetimeToken: lifetimeToken,
     instructions: getCompiledInstructions(
       transactionMessage.instructions,
       orderedAccounts,

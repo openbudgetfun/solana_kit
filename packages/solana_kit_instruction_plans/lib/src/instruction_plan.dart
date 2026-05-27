@@ -404,7 +404,9 @@ MessagePackerInstructionPlan getLinearMessagePackerInstructionPlan({
         );
         // Leeway for shortU16 numbers in transaction headers.
         final freeSpace =
-            transactionSizeLimit - messageSizeWithBaseInstruction - 1;
+            getTransactionMessageSizeLimit(message) -
+            messageSizeWithBaseInstruction -
+            1;
 
         if (freeSpace <= 0) {
           final messageSize = getTransactionMessageSize(message);
@@ -413,7 +415,8 @@ MessagePackerInstructionPlan getLinearMessagePackerInstructionPlan({
             {
               'numBytesRequired':
                   messageSizeWithBaseInstruction - messageSize + 1,
-              'numFreeBytes': transactionSizeLimit - messageSize - 1,
+              'numFreeBytes':
+                  getTransactionMessageSizeLimit(message) - messageSize - 1,
             },
           );
         }
@@ -460,13 +463,15 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
           );
           final messageSize = getTransactionMessageSize(currentMessage);
 
-          if (messageSize > transactionSizeLimit) {
+          if (messageSize > getTransactionMessageSizeLimit(currentMessage)) {
             if (index == instructionIndex) {
               throw SolanaError(
                 SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
                 {
                   'numBytesRequired': messageSize - originalMessageSize,
-                  'numFreeBytes': transactionSizeLimit - originalMessageSize,
+                  'numFreeBytes':
+                      getTransactionMessageSizeLimit(message) -
+                      originalMessageSize,
                 },
               );
             }

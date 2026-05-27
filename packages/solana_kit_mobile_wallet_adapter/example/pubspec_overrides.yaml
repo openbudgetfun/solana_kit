@@ -17,6 +17,8 @@ dependency_overrides:
     path: ../../solana_kit_errors
   solana_kit_fast_stable_stringify:
     path: ../../solana_kit_fast_stable_stringify
+  solana_kit_fixed_points:
+    path: ../../solana_kit_fixed_points
   solana_kit_functional:
     path: ../../solana_kit_functional
   solana_kit_helius:

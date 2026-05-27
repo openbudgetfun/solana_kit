@@ -68,6 +68,30 @@ void main() {
       expect(identical(txWithSameFeePayer, txWithFeePayer), isFalse);
     });
 
+    test(
+      'preserves v1 config when setting and copying the fee payer signer',
+      () {
+        final feePayer = MockTransactionPartialSigner(
+          const Address('11111111111111111111111111111111'),
+        );
+        final baseTx = setTransactionMessageConfig(
+          const V1TransactionConfig(computeUnitLimit: 1000),
+          createTransactionMessage(version: TransactionVersion.v1),
+        );
+
+        final txWithFeePayer = setTransactionMessageFeePayerSigner(
+          feePayer,
+          baseTx,
+        );
+        final copied = txWithFeePayer.copyWith(instructions: const []);
+        final cleared = txWithFeePayer.copyWith(clearFeePayer: true);
+
+        expect(txWithFeePayer.config, baseTx.config);
+        expect(copied.config, baseTx.config);
+        expect(cleared.config, baseTx.config);
+      },
+    );
+
     test('overrides a non-signer fee payer with a signer fee payer', () {
       final feePayer = MockTransactionPartialSigner(
         const Address('11111111111111111111111111111111'),

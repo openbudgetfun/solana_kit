@@ -57,6 +57,42 @@ void main() {
       );
     });
 
+    test('deduplicates equivalent noop signers with the same address', () {
+      const address = Address('11111111111111111111111111111111');
+      final noopSignerA = createNoopSigner(address);
+      final noopSignerB = createNoopSigner(address);
+
+      final deduplicatedSigners = deduplicateSigners([
+        noopSignerA,
+        noopSignerB,
+      ]);
+
+      expect(deduplicatedSigners, hasLength(1));
+      expect(identical(deduplicatedSigners.single, noopSignerA), isTrue);
+    });
+
+    test(
+      'fails when a noop signer and a real signer share the same address',
+      () {
+        const address = Address('11111111111111111111111111111111');
+        final signers = <Object>[
+          createNoopSigner(address),
+          MockTransactionPartialSigner(address),
+        ];
+
+        expect(
+          () => deduplicateSigners(signers),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              SolanaErrorCode.signerAddressCannotHaveMultipleSigners,
+            ),
+          ),
+        );
+      },
+    );
+
     test('filters signers without cloning them', () {
       final signerA = MockTransactionPartialSigner(
         const Address('11111111111111111111111111111111'),

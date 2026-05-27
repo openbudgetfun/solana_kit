@@ -324,6 +324,9 @@ path = "packages/solana_kit_codecs_numbers"
 [package.solana_kit_codecs_strings]
 path = "packages/solana_kit_codecs_strings"
 
+[package.solana_kit_fixed_points]
+path = "packages/solana_kit_fixed_points"
+
 [package.solana_kit_compute_budget]
 path = "packages/solana_kit_compute_budget"
 tag = true
@@ -510,6 +513,8 @@ packages = [
   "solana_kit_codecs_data_structures",
   "solana_kit_codecs_numbers",
   "solana_kit_codecs_strings",
+  "solana_kit_fixed_points",
+  "solana_kit_compute_budget",
   "solana_kit_errors",
   "solana_kit_fast_stable_stringify",
   "solana_kit_functional",

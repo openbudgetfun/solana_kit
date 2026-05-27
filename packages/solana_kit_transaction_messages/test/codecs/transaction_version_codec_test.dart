@@ -47,11 +47,17 @@ void main() {
       expect(offset, equals(1));
     });
 
+    test('deserializes to v1 for a version 1 transaction', () {
+      final decoder = getTransactionVersionDecoder();
+      final result = decoder.decode(Uint8List.fromList([0x81]));
+      expect(result, equals(TransactionVersion.v1));
+    });
+
     test('throws for unsupported version numbers', () {
       final decoder = getTransactionVersionDecoder();
-      // Version 1 with the flag = 0x81.
+      // Version 2 with the flag = 0x82.
       expect(
-        () => decoder.decode(Uint8List.fromList([0x81])),
+        () => decoder.decode(Uint8List.fromList([0x82])),
         throwsA(isA<Exception>()),
       );
     });
@@ -69,6 +75,14 @@ void main() {
       final encoded = codec.encode(TransactionVersion.v0);
       final decoded = codec.decode(encoded);
       expect(decoded, equals(TransactionVersion.v0));
+    });
+
+    test('round-trips v1 version', () {
+      final codec = getTransactionVersionCodec();
+      final encoded = codec.encode(TransactionVersion.v1);
+      final decoded = codec.decode(encoded);
+      expect(encoded, equals(Uint8List.fromList([0x81])));
+      expect(decoded, equals(TransactionVersion.v1));
     });
   });
 }

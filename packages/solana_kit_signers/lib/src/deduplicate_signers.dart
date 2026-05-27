@@ -2,6 +2,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_signers/src/message_modifying_signer.dart';
 import 'package:solana_kit_signers/src/message_partial_signer.dart';
+import 'package:solana_kit_signers/src/noop_signer.dart';
 import 'package:solana_kit_signers/src/transaction_modifying_signer.dart';
 import 'package:solana_kit_signers/src/transaction_partial_signer.dart';
 import 'package:solana_kit_signers/src/transaction_sending_signer.dart';
@@ -30,7 +31,7 @@ List<T> deduplicateSigners<T extends Object>(List<T> signers) {
     final existing = deduplicated[addr];
     if (existing == null) {
       deduplicated[addr] = signer;
-    } else if (!identical(existing, signer)) {
+    } else if (!_signersAreEquivalent(existing, signer)) {
       throw SolanaError(
         SolanaErrorCode.signerAddressCannotHaveMultipleSigners,
         {'address': addr.value},
@@ -39,4 +40,11 @@ List<T> deduplicateSigners<T extends Object>(List<T> signers) {
   }
 
   return deduplicated.values.toList();
+}
+
+bool _signersAreEquivalent(Object a, Object b) {
+  if (identical(a, b) || a == b) return true;
+  if (a is NoopSigner && b is NoopSigner) return a.address == b.address;
+
+  return false;
 }

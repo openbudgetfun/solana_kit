@@ -109,6 +109,14 @@ enum SolanaErrorCode {
   keysInvalidSignatureByteLength(3704002),
   keysSignatureStringLengthOutOfRange(3704003),
   keysPublicKeyMustMatchPrivateKey(3704004),
+  keysInvalidBase58InGrindRegex(3704005),
+  keysWriteKeyPairUnsupportedEnvironment(3704006),
+
+  // ---------------------------------------------------------------------------
+  // Filesystem (3712000 - 3712999)
+  // ---------------------------------------------------------------------------
+
+  fsUnsupportedEnvironment(3712000),
 
   // ---------------------------------------------------------------------------
   // Instruction (4128000 - 4128999)
@@ -237,9 +245,7 @@ enum SolanaErrorCode {
   transactionFeePayerMissing(5663011),
   transactionFeePayerSignatureMissing(5663012),
   transactionInvalidNonceTransactionInstructionsMissing(5663013),
-  transactionInvalidNonceTransactionFirstInstructionMustBeAdvanceNonce(
-    5663014,
-  ),
+  transactionInvalidNonceTransactionFirstInstructionMustBeAdvanceNonce(5663014),
   transactionAddressesCannotSignTransaction(5663015),
   transactionCannotEncodeWithEmptySignatures(5663016),
   transactionMessageSignaturesMismatch(5663017),
@@ -257,6 +263,10 @@ enum SolanaErrorCode {
   transactionInvalidNonceAccountIndex(5663029),
   transactionInvalidConfigValueKind(5663030),
   transactionInstructionHeadersPayloadsMismatch(5663031),
+  transactionTooManySignerAddresses(5663032),
+  transactionTooManyAccountAddresses(5663033),
+  transactionTooManyInstructions(5663034),
+  transactionTooManyAccountsInInstruction(5663035),
 
   // ---------------------------------------------------------------------------
   // Transaction Errors (7050000 - 7050999)
@@ -348,6 +358,24 @@ enum SolanaErrorCode {
   codecsStringContainsNullCharacters(8078026),
 
   // ---------------------------------------------------------------------------
+  // Fixed Points (8090000 - 8090999)
+  // ---------------------------------------------------------------------------
+
+  fixedPointsInvalidTotalBits(8090000),
+  fixedPointsInvalidFractionalBits(8090001),
+  fixedPointsInvalidDecimals(8090002),
+  fixedPointsFractionalBitsExceedTotalBits(8090003),
+  fixedPointsValueOutOfRange(8090004),
+  fixedPointsInvalidString(8090005),
+  fixedPointsInvalidZeroDenominatorRatio(8090006),
+  fixedPointsArithmeticOverflow(8090007),
+  fixedPointsShapeMismatch(8090008),
+  fixedPointsDivisionByZero(8090009),
+  fixedPointsStrictModePrecisionLoss(8090010),
+  fixedPointsMalformedRawValue(8090011),
+  fixedPointsTotalBitsNotByteAligned(8090012),
+
+  // ---------------------------------------------------------------------------
   // RPC (8100000 - 8100999)
   // ---------------------------------------------------------------------------
 
@@ -418,6 +446,14 @@ enum SolanaErrorCode {
   heliusWebSocketError(8600003),
   heliusTransactionConfirmationTimeout(8600004),
   heliusTransactionSimulationFailed(8600005),
+
+  // ---------------------------------------------------------------------------
+  // Wallet (8900000 - 8900999)
+  // ---------------------------------------------------------------------------
+
+  walletNotConnected(8900000),
+  walletNoSignerConnected(8900001),
+  walletSignerNotAvailable(8900002),
 
   // ---------------------------------------------------------------------------
   // Invariant Violations (9900000 - 9900999)

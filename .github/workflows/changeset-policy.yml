@@ -29,6 +29,26 @@ jobs:
         id: changed
         uses: tj-actions/changed-files@v46
 
+      - name: reject group-targeted changesets
+        env:
+          CHANGED_FILES: ${{ steps.changed.outputs.all_changed_files }}
+        run: |
+          set -euo pipefail
+
+          changesets=()
+          for path in $CHANGED_FILES; do
+            if [[ "$path" == .changeset/*.md ]]; then
+              changesets+=("$path")
+            fi
+          done
+
+          if (( ${#changesets[@]} > 0 )); then
+            scripts/check-changeset-package-targets.sh "${changesets[@]}"
+          else
+            echo "No changed changeset files to validate."
+          fi
+        shell: devenv shell -- bash -e {0}
+
       - name: check changeset policy
         env:
           CHANGED_FILES: ${{ steps.changed.outputs.all_changed_files }}

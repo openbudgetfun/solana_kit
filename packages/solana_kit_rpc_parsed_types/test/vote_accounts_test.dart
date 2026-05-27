@@ -19,6 +19,11 @@ void main() {
           authorizedWithdrawer: const Address(
             'HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr',
           ),
+          blockRevenueCollector: const Address(
+            'Vote111111111111111111111111111111111111111',
+          ),
+          blockRevenueCommissionBps: BigInt.from(125),
+          blsPubkeyCompressed: 'bls-compressed-key',
           commission: 50,
           epochCredits: [
             JsonParsedEpochCredit(
@@ -32,6 +37,10 @@ void main() {
               previousCredits: const StringifiedBigInt('68697256'),
             ),
           ],
+          inflationRewardsCollector: const Address(
+            'Vote111111111111111111111111111111111111111',
+          ),
+          inflationRewardsCommissionBps: BigInt.from(250),
           lastTimestamp: JsonParsedLastTimestamp(
             slot: BigInt.from(228884530),
             timestamp: UnixTimestamp(BigInt.from(1689090220)),
@@ -39,10 +48,15 @@ void main() {
           nodePubkey: const Address(
             'HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr',
           ),
+          pendingDelegatorRewards: const StringifiedBigInt('123456789'),
           priorVoters: [],
           rootSlot: BigInt.from(228884499),
           votes: [
-            JsonParsedVote(confirmationCount: 31, slot: BigInt.from(228884500)),
+            JsonParsedVote(
+              confirmationCount: 31,
+              latency: BigInt.from(2),
+              slot: BigInt.from(228884500),
+            ),
             JsonParsedVote(confirmationCount: 30, slot: BigInt.from(228884501)),
           ],
         ),
@@ -58,6 +72,12 @@ void main() {
         account.info.authorizedWithdrawer.value,
         'HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr',
       );
+      expect(
+        account.info.blockRevenueCollector?.value,
+        'Vote111111111111111111111111111111111111111',
+      );
+      expect(account.info.blockRevenueCommissionBps, BigInt.from(125));
+      expect(account.info.blsPubkeyCompressed, 'bls-compressed-key');
       expect(account.info.commission, 50);
       expect(account.info.epochCredits, hasLength(2));
       expect(account.info.epochCredits[0].credits.value, '68697256');
@@ -70,11 +90,75 @@ void main() {
         account.info.nodePubkey.value,
         'HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr',
       );
+      expect(
+        account.info.inflationRewardsCollector?.value,
+        'Vote111111111111111111111111111111111111111',
+      );
+      expect(account.info.inflationRewardsCommissionBps, BigInt.from(250));
+      expect(account.info.pendingDelegatorRewards?.value, '123456789');
       expect(account.info.priorVoters, isEmpty);
       expect(account.info.rootSlot, BigInt.from(228884499));
       expect(account.info.votes, hasLength(2));
       expect(account.info.votes[0].confirmationCount, 31);
+      expect(account.info.votes[0].latency, BigInt.from(2));
       expect(account.info.votes[0].slot, BigInt.from(228884500));
+    });
+
+    test('compares and formats Agave v3 fields', () {
+      const collector = Address('Vote111111111111111111111111111111111111111');
+      const withdrawer = Address('HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr');
+      final timestamp = JsonParsedLastTimestamp(
+        slot: BigInt.one,
+        timestamp: UnixTimestamp(BigInt.two),
+      );
+      final vote = JsonParsedVote(
+        confirmationCount: 1,
+        latency: BigInt.from(3),
+        slot: BigInt.from(4),
+      );
+      final sameVote = JsonParsedVote(
+        confirmationCount: 1,
+        latency: BigInt.from(3),
+        slot: BigInt.from(4),
+      );
+      final info = JsonParsedVoteInfo(
+        authorizedVoters: const [],
+        authorizedWithdrawer: withdrawer,
+        blockRevenueCollector: collector,
+        blockRevenueCommissionBps: BigInt.from(500),
+        commission: 10,
+        epochCredits: const [],
+        inflationRewardsCollector: collector,
+        inflationRewardsCommissionBps: BigInt.from(600),
+        lastTimestamp: timestamp,
+        nodePubkey: withdrawer,
+        pendingDelegatorRewards: const StringifiedBigInt('42'),
+        priorVoters: const [],
+        votes: [vote],
+      );
+      final sameInfo = JsonParsedVoteInfo(
+        authorizedVoters: const [],
+        authorizedWithdrawer: withdrawer,
+        blockRevenueCollector: collector,
+        blockRevenueCommissionBps: BigInt.from(500),
+        commission: 10,
+        epochCredits: const [],
+        inflationRewardsCollector: collector,
+        inflationRewardsCommissionBps: BigInt.from(600),
+        lastTimestamp: timestamp,
+        nodePubkey: withdrawer,
+        pendingDelegatorRewards: const StringifiedBigInt('42'),
+        priorVoters: const [],
+        votes: [sameVote],
+      );
+
+      expect(vote, sameVote);
+      expect(vote.hashCode, sameVote.hashCode);
+      expect(vote.toString(), contains('latency: 3'));
+      expect(info, sameInfo);
+      expect(info.hashCode, sameInfo.hashCode);
+      expect(info.toString(), contains('blockRevenueCommissionBps: 500'));
+      expect(info.toString(), contains('pendingDelegatorRewards: 42'));
     });
 
     test('can be constructed with null rootSlot', () {

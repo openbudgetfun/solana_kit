@@ -78,6 +78,35 @@ KeyPairSigner generateKeyPairSigner() {
   return createSignerFromKeyPair(generateKeyPair());
 }
 
+/// Generates [amount] key-pair signers whose addresses satisfy [matches].
+///
+/// This wraps [grindKeyPairs] and converts each matching key pair to a
+/// [KeyPairSigner]. See [grindKeyPairs] for matcher behavior and validation.
+Future<List<KeyPairSigner>> grindKeyPairSigners({
+  required Object matches,
+  int amount = 1,
+  int concurrency = 32,
+}) async {
+  final keyPairs = await grindKeyPairs(
+    matches: matches,
+    amount: amount,
+    concurrency: concurrency,
+  );
+  return keyPairs.map(createSignerFromKeyPair).toList();
+}
+
+/// Generates one key-pair signer whose address satisfies [matches].
+Future<KeyPairSigner> grindKeyPairSigner({
+  required Object matches,
+  int concurrency = 32,
+}) async {
+  final signers = await grindKeyPairSigners(
+    matches: matches,
+    concurrency: concurrency,
+  );
+  return signers.single;
+}
+
 /// Creates a new [KeyPairSigner] from a 64-bytes [Uint8List] secret key
 /// (private key and public key).
 ///
@@ -110,6 +139,27 @@ bool isKeyPairSigner(Object? value) {
 /// [SolanaErrorCode.signerExpectedKeyPairSigner] if the check fails.
 void assertIsKeyPairSigner(Object? value) {
   if (!isKeyPairSigner(value)) {
-    throw SolanaError(SolanaErrorCode.signerExpectedKeyPairSigner);
+    final address = switch (value) {
+      MessagePartialSigner(:final address) => address,
+      TransactionPartialSigner(:final address) => address,
+      _ => null,
+    };
+    throw SolanaError(SolanaErrorCode.signerExpectedKeyPairSigner, {
+      if (address != null) 'address': address,
+    });
   }
+}
+
+/// Writes a [KeyPairSigner]'s key pair to disk using the JSON byte-array format
+/// produced by `solana-keygen`.
+Future<void> writeKeyPairSigner(
+  KeyPairSigner signer,
+  String path, {
+  bool unsafelyOverwriteExistingKeyPair = false,
+}) {
+  return writeKeyPair(
+    signer.keyPair,
+    path,
+    unsafelyOverwriteExistingKeyPair: unsafelyOverwriteExistingKeyPair,
+  );
 }

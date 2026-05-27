@@ -58,7 +58,10 @@ VariableSizeDecoder<TransactionVersion> getTransactionVersionDecoder() {
             {'unsupportedVersion': version},
           );
         }
-        return (TransactionVersion.v0, offset + 1);
+        return (
+          version == 0 ? TransactionVersion.v0 : TransactionVersion.v1,
+          offset + 1,
+        );
       }
     },
   );

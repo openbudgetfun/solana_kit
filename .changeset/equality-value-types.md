@@ -1,5 +1,5 @@
 ---
-main: patch
+"solana_kit_transaction_messages": patch
 ---
 
 Add `==` and `hashCode` to public value-type, config, and response classes.

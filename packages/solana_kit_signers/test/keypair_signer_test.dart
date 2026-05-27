@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -29,11 +31,34 @@ void main() {
       expect(
         () => assertIsKeyPairSigner('not a signer'),
         throwsA(
-          isA<SolanaError>().having(
-            (e) => e.code,
-            'code',
-            SolanaErrorCode.signerExpectedKeyPairSigner,
-          ),
+          isA<SolanaError>()
+              .having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.signerExpectedKeyPairSigner,
+              )
+              .having((e) => e.context, 'context', isEmpty),
+        ),
+      );
+    });
+
+    test('includes signer address in assertion failure context', () {
+      const invalidSigner = NoopSigner(
+        address: Address('11111111111111111111111111111111'),
+      );
+
+      expect(
+        () => assertIsKeyPairSigner(invalidSigner),
+        throwsA(
+          isA<SolanaError>()
+              .having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.signerExpectedKeyPairSigner,
+              )
+              .having((e) => e.context, 'context', {
+                'address': invalidSigner.address,
+              }),
         ),
       );
     });
@@ -77,6 +102,47 @@ void main() {
     });
   });
 
+  group('grindKeyPairSigners', () {
+    test('generates matching key-pair signers', () async {
+      final signers = await grindKeyPairSigners(
+        matches: (String address) => address.isNotEmpty,
+        amount: 2,
+      );
+
+      expect(signers, hasLength(2));
+      for (final signer in signers) {
+        expect(signer.address.value, isNotEmpty);
+        expect(
+          signer.address,
+          equals(getAddressFromPublicKey(signer.keyPair.publicKey)),
+        );
+      }
+    });
+
+    test('returns an empty list for non-positive amount', () async {
+      final signers = await grindKeyPairSigners(
+        matches: (String address) => address.isNotEmpty,
+        amount: 0,
+      );
+
+      expect(signers, isEmpty);
+    });
+  });
+
+  group('grindKeyPairSigner', () {
+    test('generates one matching key-pair signer', () async {
+      final signer = await grindKeyPairSigner(
+        matches: (String address) => address.isNotEmpty,
+      );
+
+      expect(signer.address.value, isNotEmpty);
+      expect(
+        signer.address,
+        equals(getAddressFromPublicKey(signer.keyPair.publicKey)),
+      );
+    });
+  });
+
   group('KeyPairSigner.signMessages', () {
     test('signs messages using the key pair', () async {
       final signer = generateKeyPairSigner();
@@ -116,6 +182,26 @@ void main() {
         ),
         throwsUnsupportedError,
       );
+    });
+  });
+
+  group('writeKeyPairSigner', () {
+    test('writes the signer key pair to disk', () async {
+      final directory = await Directory.systemTemp.createTemp('solana-signer-');
+      addTearDown(() => directory.delete(recursive: true));
+      final path = '${directory.path}/keypair.json';
+      final signer = generateKeyPairSigner();
+      final expectedBytes = <int>[
+        ...signer.keyPair.privateKey,
+        ...signer.keyPair.publicKey,
+      ];
+
+      await writeKeyPairSigner(signer, path);
+
+      final actualBytes =
+          (jsonDecode(await File(path).readAsString()) as List<dynamic>)
+              .cast<int>();
+      expect(actualBytes, expectedBytes);
     });
   });
 

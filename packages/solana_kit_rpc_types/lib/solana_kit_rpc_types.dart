@@ -14,6 +14,7 @@ export 'src/encoding.dart';
 export 'src/lamports.dart';
 export 'src/latest_blockhash_value.dart';
 export 'src/rpc_response.dart';
+export 'src/sol.dart';
 export 'src/stringified_bigint.dart';
 export 'src/stringified_number.dart';
 export 'src/token_amount.dart';

@@ -5,9 +5,7 @@ import 'package:test/test.dart';
 import 'test_helpers.dart';
 
 void main() {
-  TransactionPlanner makePlanner({
-    Future<void> Function(String)? onUpdate,
-  }) =>
+  TransactionPlanner makePlanner({Future<void> Function(String)? onUpdate}) =>
       createTransactionPlanner(
         TransactionPlannerConfig(
           createTransactionMessage: () async => createMessage(),
@@ -39,9 +37,7 @@ void main() {
 
     test('throws for a deeply nested empty plan', () async {
       final planner = makePlanner();
-      final plan = sequentialInstructionPlan([
-        parallelInstructionPlan([]),
-      ]);
+      final plan = sequentialInstructionPlan([parallelInstructionPlan([])]);
 
       expect(
         () => planner(plan),
@@ -65,53 +61,58 @@ void main() {
       expect(singlePlan.message.instructions, hasLength(1));
     });
 
-    test('parallel plan with multiple instructions packs into one transaction',
-        () async {
-      final planner = makePlanner();
-      final plan = parallelInstructionPlan([
-        createInstruction('A'),
-        createInstruction('B'),
-        createInstruction('C'),
-      ]);
-
-      final result = await planner(plan);
-      // All fit in one transaction → returns SingleTransactionPlan.
-      expect(result, isA<SingleTransactionPlan>());
-      final singlePlan = result as SingleTransactionPlan;
-      expect(singlePlan.message.instructions, hasLength(3));
-    });
-
-    test('non-divisible sequential inside parallel fits in one transaction',
-        () async {
-      final planner = makePlanner();
-      final plan = parallelInstructionPlan([
-        nonDivisibleSequentialInstructionPlan([
+    test(
+      'parallel plan with multiple instructions packs into one transaction',
+      () async {
+        final planner = makePlanner();
+        final plan = parallelInstructionPlan([
           createInstruction('A'),
           createInstruction('B'),
-        ]),
-      ]);
+          createInstruction('C'),
+        ]);
 
-      final result = await planner(plan);
-      expect(result, isA<SingleTransactionPlan>());
-      final singlePlan = result as SingleTransactionPlan;
-      expect(singlePlan.message.instructions, hasLength(2));
-    });
-
-    test('parallel plan with a message packer plan produces transactions',
-        () async {
-      final planner = makePlanner();
-      final packerPlan = getMessagePackerInstructionPlanFromInstructions([
-        createInstruction('A'),
-        createInstruction('B'),
-      ]);
-      final plan = parallelInstructionPlan([packerPlan]);
-
-      final result = await planner(plan);
-      expect(result, isA<TransactionPlan>());
-    });
+        final result = await planner(plan);
+        // All fit in one transaction → returns SingleTransactionPlan.
+        expect(result, isA<SingleTransactionPlan>());
+        final singlePlan = result as SingleTransactionPlan;
+        expect(singlePlan.message.instructions, hasLength(3));
+      },
+    );
 
     test(
-        'sequential plan with two separate non-divisible blocks produces a '
+      'non-divisible sequential inside parallel fits in one transaction',
+      () async {
+        final planner = makePlanner();
+        final plan = parallelInstructionPlan([
+          nonDivisibleSequentialInstructionPlan([
+            createInstruction('A'),
+            createInstruction('B'),
+          ]),
+        ]);
+
+        final result = await planner(plan);
+        expect(result, isA<SingleTransactionPlan>());
+        final singlePlan = result as SingleTransactionPlan;
+        expect(singlePlan.message.instructions, hasLength(2));
+      },
+    );
+
+    test(
+      'parallel plan with a message packer plan produces transactions',
+      () async {
+        final planner = makePlanner();
+        final packerPlan = getMessagePackerInstructionPlanFromInstructions([
+          createInstruction('A'),
+          createInstruction('B'),
+        ]);
+        final plan = parallelInstructionPlan([packerPlan]);
+
+        final result = await planner(plan);
+        expect(result, isA<TransactionPlan>());
+      },
+    );
+
+    test('sequential plan with two separate non-divisible blocks produces a '
         'sequential result', () async {
       final planner = makePlanner();
       final plan = sequentialInstructionPlan([
@@ -124,6 +125,76 @@ void main() {
       // both fit in the same base message they'll be merged.
       expect(result, isA<TransactionPlan>());
     });
+
+    test('throws when a fresh message cannot accommodate a plan', () async {
+      final planner = makePlanner();
+      final plan = singleInstructionPlan(createInstructionWithData(5000));
+
+      expect(
+        () => planner(plan),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
+          ),
+        ),
+      );
+    });
+
+    test(
+      'throws when an entire child plan cannot fit in a parent candidate',
+      () async {
+        final planner = makePlanner();
+        final plan = parallelInstructionPlan([
+          singleInstructionPlan(createInstruction('A')),
+          nonDivisibleSequentialInstructionPlan([
+            createInstructionWithData(5000),
+          ]),
+        ]);
+
+        expect(
+          () => planner(plan),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'tries a fresh message when candidate hits a transaction limit',
+      () async {
+        var updateCount = 0;
+        final planner = createTransactionPlanner(
+          TransactionPlannerConfig(
+            createTransactionMessage: () async => createMessage(),
+            onTransactionMessageUpdated: (msg) async {
+              updateCount++;
+              if (updateCount == 2) {
+                throw SolanaError(
+                  SolanaErrorCode.transactionTooManyInstructions,
+                );
+              }
+              return msg;
+            },
+          ),
+        );
+        final plan = sequentialInstructionPlan([
+          createInstruction('A'),
+          createInstruction('B'),
+        ]);
+
+        final result = await planner(plan);
+
+        expect(result, isA<SequentialTransactionPlan>());
+        expect(updateCount, 3);
+      },
+    );
 
     test('onTransactionMessageUpdated is called when provided', () async {
       final calls = <String>[];
@@ -164,23 +235,24 @@ void main() {
       expect(createCount, greaterThan(firstCount));
     });
 
-    test('sequential plan with message packer creates transaction plan',
-        () async {
-      final planner = makePlanner();
-      final plan = sequentialInstructionPlan([
-        createInstruction('A'),
-        getMessagePackerInstructionPlanFromInstructions([
-          createInstruction('B'),
-          createInstruction('C'),
-        ]),
-      ]);
-
-      final result = await planner(plan);
-      expect(result, isA<TransactionPlan>());
-    });
-
     test(
-        'linear message packer instruction plan produces a transaction plan '
+      'sequential plan with message packer creates transaction plan',
+      () async {
+        final planner = makePlanner();
+        final plan = sequentialInstructionPlan([
+          createInstruction('A'),
+          getMessagePackerInstructionPlanFromInstructions([
+            createInstruction('B'),
+            createInstruction('C'),
+          ]),
+        ]);
+
+        final result = await planner(plan);
+        expect(result, isA<TransactionPlan>());
+      },
+    );
+
+    test('linear message packer instruction plan produces a transaction plan '
         'when used in the planner', () async {
       final planner = makePlanner();
       final plan = getLinearMessagePackerInstructionPlan(
@@ -194,19 +266,21 @@ void main() {
   });
 
   group('TransactionPlannerConfig', () {
-    test('null onTransactionMessageUpdated default passes message through',
-        () async {
-      // The default is (msg) async => msg when not provided.
-      final planner = createTransactionPlanner(
-        TransactionPlannerConfig(
-          createTransactionMessage: () async => createMessage(),
-          // onTransactionMessageUpdated not provided → null
-        ),
-      );
+    test(
+      'null onTransactionMessageUpdated default passes message through',
+      () async {
+        // The default is (msg) async => msg when not provided.
+        final planner = createTransactionPlanner(
+          TransactionPlannerConfig(
+            createTransactionMessage: () async => createMessage(),
+            // onTransactionMessageUpdated not provided → null
+          ),
+        );
 
-      final plan = singleInstructionPlan(createInstruction('A'));
-      final result = await planner(plan);
-      expect(result, isA<SingleTransactionPlan>());
-    });
+        final plan = singleInstructionPlan(createInstruction('A'));
+        final result = await planner(plan);
+        expect(result, isA<SingleTransactionPlan>());
+      },
+    );
   });
 }

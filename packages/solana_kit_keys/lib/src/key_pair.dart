@@ -1,6 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:ed25519_edwards/ed25519_edwards.dart' as ed;
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 import 'package:solana_kit_keys/src/private_key.dart';
@@ -48,6 +51,85 @@ KeyPair generateKeyPair() {
     privateKey: Uint8List.fromList(seed),
     publicKey: Uint8List.fromList(publicKeyBytes),
   );
+}
+
+/// A predicate used to test whether a generated address satisfies a key grind.
+typedef GrindKeyPairPredicate = bool Function(String address);
+
+const _base58Alphabet =
+    '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+/// Generates [amount] key pairs whose base58-encoded public key satisfies
+/// [matches].
+///
+/// [matches] may be a [RegExp] or a [GrindKeyPairPredicate]. A regular
+/// expression's literal characters are validated against the base58 alphabet to
+/// catch impossible grinds like `RegExp(r'^ab0')` before key generation starts.
+Future<List<KeyPair>> grindKeyPairs({
+  required Object matches,
+  int amount = 1,
+  int concurrency = 32,
+}) async {
+  final matcher = _createGrindMatcher(matches);
+  if (amount <= 0) return <KeyPair>[];
+
+  final found = <KeyPair>[];
+  final batchSize = concurrency <= 0 ? 1 : concurrency;
+  while (found.length < amount) {
+    for (var i = 0; i < batchSize && found.length < amount; i++) {
+      final keyPair = generateKeyPair();
+      final addr = getAddressFromPublicKey(keyPair.publicKey).value;
+      if (matcher(addr)) found.add(keyPair);
+    }
+    await Future<void>.delayed(Duration.zero);
+  }
+
+  return found;
+}
+
+/// Generates one key pair whose base58-encoded public key satisfies [matches].
+Future<KeyPair> grindKeyPair({
+  required Object matches,
+  int concurrency = 32,
+}) async {
+  final keyPairs = await grindKeyPairs(
+    matches: matches,
+    concurrency: concurrency,
+  );
+  return keyPairs.single;
+}
+
+GrindKeyPairPredicate _createGrindMatcher(Object matches) {
+  if (matches is GrindKeyPairPredicate) return matches;
+  if (matches is RegExp) {
+    _assertGrindRegexIsValid(matches);
+    return matches.hasMatch;
+  }
+
+  throw ArgumentError.value(matches, 'matches', 'Expected RegExp or predicate');
+}
+
+void _assertGrindRegexIsValid(RegExp regex) {
+  final stripped = regex.pattern
+      .replaceAll(RegExp(r'\\.|\[[^\]]*\]|\{[^}]*\}|\([^)]*\)'), '')
+      .replaceAll(RegExp(r'[$()*+./?\[\]^{|}]'), '');
+
+  for (final rune in stripped.runes) {
+    final character = String.fromCharCode(rune);
+    if (!_isBase58Character(character, caseSensitive: regex.isCaseSensitive)) {
+      throw SolanaError(SolanaErrorCode.keysInvalidBase58InGrindRegex, {
+        'character': character,
+        'source': regex.pattern,
+      });
+    }
+  }
+}
+
+bool _isBase58Character(String character, {required bool caseSensitive}) {
+  if (_base58Alphabet.contains(character)) return true;
+  return !caseSensitive &&
+      (_base58Alphabet.contains(character.toLowerCase()) ||
+          _base58Alphabet.contains(character.toUpperCase()));
 }
 
 /// Creates a [KeyPair] from a 64-byte array where the first 32 bytes
@@ -105,6 +187,46 @@ KeyPair createKeyPairFromPrivateKeyBytes(Uint8List bytes) {
     privateKey: Uint8List.fromList(bytes),
     publicKey: publicKeyBytes,
   );
+}
+
+/// Writes a [KeyPair] to disk using the JSON byte-array format produced by
+/// `solana-keygen`.
+///
+/// The first 32 bytes are the private key and the last 32 bytes are the public
+/// key. Parent directories are created automatically. Existing files are not
+/// overwritten unless [unsafelyOverwriteExistingKeyPair] is `true`.
+Future<void> writeKeyPair(
+  KeyPair keyPair,
+  String path, {
+  bool unsafelyOverwriteExistingKeyPair = false,
+}) async {
+  final privateKey = keyPair.privateKey;
+  final publicKey = keyPair.publicKey;
+  assertIsPrivateKey(privateKey);
+
+  final bytes = Uint8List(64)
+    ..setRange(0, 32, privateKey)
+    ..setRange(32, 64, publicKey);
+  final file = File(path);
+  final parent = file.parent;
+  if (parent.path.isNotEmpty) {
+    await parent.create(recursive: true);
+  }
+
+  if (!unsafelyOverwriteExistingKeyPair && file.existsSync()) {
+    throw FileSystemException('Key pair file already exists', path);
+  }
+
+  final sink = await file.open(mode: FileMode.writeOnly);
+  try {
+    await sink.writeString(jsonEncode(bytes.toList()));
+  } finally {
+    await sink.close();
+  }
+
+  if (!Platform.isWindows) {
+    await Process.run('chmod', ['600', path]);
+  }
 }
 
 /// Compares two byte arrays in constant time to prevent timing attacks.

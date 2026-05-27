@@ -7,6 +7,60 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// The normal closure code as defined by RFC 6455 Section 7.4.1.
 const int normalClosureCode = 1000;
 
+/// Error used when an operation is canceled without a custom abort reason.
+class AbortError implements Exception {
+  /// Creates a new [AbortError].
+  const AbortError([this.message = 'The operation was aborted.']);
+
+  /// Human-readable abort message.
+  final String message;
+
+  @override
+  String toString() => 'AbortError: $message';
+}
+
+/// Returns whether [error] represents an abort cancellation.
+bool isAbortError(Object? error) => error is AbortError;
+
+/// Wraps [future] so it completes with the abort reason if [abortSignal] fires.
+Future<T> getAbortableFuture<T>(Future<T> future, [AbortSignal? abortSignal]) {
+  if (abortSignal == null) return future;
+
+  final completer = Completer<T>();
+  void abort() => _completeAbort(completer, abortSignal);
+
+  if (abortSignal.isAborted) {
+    abort();
+  } else {
+    unawaited(abortSignal.future.then((_) => abort()));
+  }
+
+  unawaited(
+    future.then(
+      (value) {
+        if (!completer.isCompleted) completer.complete(value);
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        if (!completer.isCompleted) {
+          completer.completeError(error, stackTrace);
+        }
+      },
+    ),
+  );
+
+  return completer.future;
+}
+
+void _completeAbort<T>(Completer<T> completer, AbortSignal signal) {
+  if (completer.isCompleted) return;
+  final reason = signal.reason ?? const AbortError();
+  if (reason is Error) {
+    completer.completeError(reason, reason.stackTrace);
+  } else {
+    completer.completeError(reason);
+  }
+}
+
 /// An abort signal that can be used to close a WebSocket channel.
 ///
 /// Create with [AbortController] and pass the `signal` to
@@ -144,10 +198,7 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
     throw SolanaError(SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed);
   }
 
-  _validateWebSocketUrl(
-    config.url,
-    allowInsecureWs: config.allowInsecureWs,
-  );
+  _validateWebSocketUrl(config.url, allowInsecureWs: config.allowInsecureWs);
 
   final dataPublisher = createDataPublisher();
 
@@ -223,10 +274,7 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
   );
 }
 
-void _validateWebSocketUrl(
-  Uri url, {
-  required bool allowInsecureWs,
-}) {
+void _validateWebSocketUrl(Uri url, {required bool allowInsecureWs}) {
   final scheme = url.scheme.toLowerCase();
 
   if (!url.isAbsolute || url.host.isEmpty) {

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:test/test.dart';
 
@@ -12,6 +13,109 @@ void main() {
   // 3yS1JFVT284y8z1LC9MRoWxZjzFrdoD5axKsZiyMsfC7 decodes to [44{32}]
 
   group('Compiled transaction message encoder', () {
+    test('round-trips a v1 transaction message', () {
+      final codec = getCompiledTransactionMessageCodec();
+      final message = CompiledTransactionMessage(
+        version: TransactionVersion.v1,
+        header: const MessageHeader(
+          numSignerAccounts: 1,
+          numReadonlySignerAccounts: 0,
+          numReadonlyNonSignerAccounts: 1,
+        ),
+        configMask: 31,
+        configValues: [
+          CompiledTransactionConfigValue.u64(BigInt.from(9)),
+          const CompiledTransactionConfigValue.u32(10),
+          const CompiledTransactionConfigValue.u32(11),
+          const CompiledTransactionConfigValue.u32(12),
+        ],
+        staticAccounts: const [
+          Address('k7FaK87WHGVXzkaoHb7CdVPgkKDQhZ29VLDeBVbDfYn'),
+          Address('2VDW9dFE1ZXz4zWAbaBDQFynNVdRpQ73HyfSHMzBSL6Z'),
+        ],
+        lifetimeToken: '3EKkiwNLWqoUbzFkPrmKbtUB4EweE6f4STzevYUmezeL',
+        numInstructions: 1,
+        numStaticAccounts: 2,
+        instructionHeaders: const [
+          V1InstructionHeader(
+            programAccountIndex: 1,
+            numInstructionAccounts: 1,
+            numInstructionDataBytes: 2,
+          ),
+        ],
+        instructionPayloads: [
+          V1InstructionPayload(
+            instructionAccountIndices: const [0],
+            instructionData: Uint8List.fromList([7, 8]),
+          ),
+        ],
+        instructions: const [],
+      );
+
+      final encoded = codec.encode(message);
+      final decoded = codec.decode(encoded);
+
+      expect(encoded.first, 0x81);
+      expect(decoded.version, TransactionVersion.v1);
+      expect(decoded.configMask, 31);
+      expect(decoded.configValues?.map((value) => (value.kind, value.value)), [
+        ('u64', BigInt.from(9)),
+        ('u32', 10),
+        ('u32', 11),
+        ('u32', 12),
+      ]);
+      expect(decoded.staticAccounts, message.staticAccounts);
+      expect(decoded.instructionHeaders!.single.programAccountIndex, 1);
+      expect(decoded.instructionPayloads!.single.instructionAccountIndices, [
+        0,
+      ]);
+      expect(
+        decoded.instructionPayloads!.single.instructionData,
+        Uint8List.fromList([7, 8]),
+      );
+    });
+
+    test('throws when a v1 config value has an invalid kind', () {
+      final encoder = getCompiledTransactionMessageEncoder();
+      const message = CompiledTransactionMessage(
+        version: TransactionVersion.v1,
+        header: MessageHeader(
+          numSignerAccounts: 0,
+          numReadonlySignerAccounts: 0,
+          numReadonlyNonSignerAccounts: 0,
+        ),
+        staticAccounts: [],
+        instructions: [],
+        configMask: 0,
+        configValues: [CompiledTransactionConfigValue.u32(1)],
+      );
+      const invalid = CompiledTransactionConfigValue.u32(1);
+      final badMessage = CompiledTransactionMessage(
+        version: message.version,
+        header: message.header,
+        staticAccounts: message.staticAccounts,
+        instructions: message.instructions,
+        configMask: message.configMask,
+        configValues: [
+          CompiledTransactionConfigValue.raw(
+            kind: 'invalid',
+            value: invalid.value,
+          ),
+        ],
+      );
+
+      expect(
+        () => encoder.encode(badMessage),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.transactionInvalidConfigValueKind,
+          ),
+        ),
+      );
+    });
+
     test('serializes a versioned transaction according to the spec', () {
       final encoder = getCompiledTransactionMessageEncoder();
       final byteArray = encoder.encode(

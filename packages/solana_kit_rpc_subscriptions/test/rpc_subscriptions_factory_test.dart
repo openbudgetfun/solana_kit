@@ -39,6 +39,45 @@ void main() {
       expect(await firstEvent, {'slot': 123});
     });
 
+    test(
+      'reactive returns a store backed by subscription notifications',
+      () async {
+        final captured = CapturingSubscriptionsTransport();
+        final pending = PendingRpcSubscriptionsRequest<Object?>(
+          transport: captured.transport,
+          plan: const RpcSubscriptionsPlan<Object?>(
+            execute: _planPublisherExecute,
+            request: RpcSubscriptionsRequest(
+              methodName: 'slotNotifications',
+              params: [],
+            ),
+          ),
+        );
+        final abortController = AbortController();
+
+        final store = await pending.reactive(
+          RpcSubscribeOptions(abortSignal: abortController.signal),
+        );
+
+        expect(captured.lastConfig.request.methodName, 'slotNotifications');
+        expect(captured.lastConfig.signal, same(abortController.signal));
+        expect(store.getState(), isNull);
+        expect(store.getError(), isNull);
+
+        var updates = 0;
+        final unsubscribe = store.subscribe(() => updates++);
+        captured.publisher.publish('notification', {'slot': 124});
+        captured.publisher.publish('error', 'boom');
+
+        expect(store.getState(), {'slot': 124});
+        expect(store.getError(), 'boom');
+        expect(updates, 2);
+
+        unsubscribe();
+        store.dispose();
+      },
+    );
+
     test('subscribe forwards error events from the data publisher', () async {
       final captured = CapturingSubscriptionsTransport();
       final pending = PendingRpcSubscriptionsRequest<Object?>(
@@ -65,6 +104,35 @@ void main() {
       expect(await errorCompleter.future, 'boom');
 
       await subscription.cancel();
+    });
+
+    test('subscribe rejects if aborted while transport is pending', () async {
+      final transport = _DeferredSubscriptionsTransport();
+      final pending = _pendingRequestForTransport(transport.transport);
+      final controller = AbortController();
+      final reason = StateError('cancelled before subscription');
+
+      final future = pending.subscribe(
+        RpcSubscribeOptions(abortSignal: controller.signal),
+      );
+      await Future<void>.delayed(Duration.zero);
+      controller.abort(reason);
+
+      await expectLater(future, throwsA(same(reason)));
+    });
+
+    test('reactive rejects if aborted while transport is pending', () async {
+      final transport = _DeferredSubscriptionsTransport();
+      final pending = _pendingRequestForTransport(transport.transport);
+      final controller = AbortController();
+
+      final future = pending.reactive(
+        RpcSubscribeOptions(abortSignal: controller.signal),
+      );
+      await Future<void>.delayed(Duration.zero);
+      controller.abort();
+
+      await expectLater(future, throwsA(isA<AbortError>()));
     });
   });
 
@@ -317,6 +385,29 @@ void main() {
 Future<DataPublisher> _planPublisherExecute(
   RpcSubscriptionsTransportExecuteConfig _,
 ) async => createDataPublisher();
+
+PendingRpcSubscriptionsRequest<Object?> _pendingRequestForTransport(
+  RpcSubscriptionsTransport transport,
+) {
+  return PendingRpcSubscriptionsRequest<Object?>(
+    transport: transport,
+    plan: const RpcSubscriptionsPlan<Object?>(
+      execute: _planPublisherExecute,
+      request: RpcSubscriptionsRequest(
+        methodName: 'slotNotifications',
+        params: [],
+      ),
+    ),
+  );
+}
+
+class _DeferredSubscriptionsTransport {
+  final _completer = Completer<DataPublisher>();
+
+  Future<DataPublisher> transport(RpcSubscriptionsTransportConfig _) {
+    return _completer.future;
+  }
+}
 
 class _TestApi extends RpcSubscriptionsApi {
   _TestApi({Map<String, RpcSubscriptionsPlan<Object?>>? plans})
