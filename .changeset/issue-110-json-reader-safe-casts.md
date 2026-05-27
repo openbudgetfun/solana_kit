@@ -1,5 +1,7 @@
 ---
-main: patch
+"solana_kit_rpc_api": patch
+"solana_kit_rpc_parsed_types": patch
+"solana_kit_rpc_types": patch
 ---
 
 Introduce internal `JsonReader` helper that replaces unsafe `.cast<T>()` list
