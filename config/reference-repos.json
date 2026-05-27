@@ -107,6 +107,24 @@
       "package": "solana_kit_loader",
       "issue": 138,
       "notes": "Pinned to commit 5df834d (2026-03-08) because no versioned release exists yet"
+    },
+    {
+      "name": "account-compression",
+      "path": ".repos/solana-program/account-compression",
+      "url": "https://github.com/solana-program/account-compression",
+      "ref": { "type": "branch", "value": "main" },
+      "package": "solana_kit_spl_account_compression",
+      "issue": 131,
+      "notes": "SPL Account Compression IDL for Codama Dart code generation"
+    },
+    {
+      "name": "mpl-bubblegum",
+      "path": ".repos/metaplex-foundation/mpl-bubblegum",
+      "url": "https://github.com/metaplex-foundation/mpl-bubblegum",
+      "ref": { "type": "branch", "value": "main" },
+      "package": "solana_kit_mpl_bubblegum",
+      "issue": 131,
+      "notes": "Metaplex Bubblegum IDL for Codama Dart code generation (currently Solita format — needs Codama conversion)"
     }
   ]
 }

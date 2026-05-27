@@ -434,6 +434,16 @@ release = true
 [package.solana_kit_test_matchers]
 path = "packages/solana_kit_test_matchers"
 
+[package.solana_kit_spl_account_compression]
+path = "packages/solana_kit_spl_account_compression"
+tag = true
+release = true
+
+[package.solana_kit_mpl_bubblegum]
+path = "packages/solana_kit_mpl_bubblegum"
+tag = true
+release = true
+
 [package.solana_kit_token]
 path = "packages/solana_kit_token"
 tag = true
@@ -549,9 +559,8 @@ version_format = "primary"
 changelog = { path = "CHANGELOG.md" }
 # include = ["package-id"]
 
-versioned_files = [
-  { path = "**/pubspec.yaml", type = "dart" },
-]
+# Group versioned_files not needed — the Dart ecosystem versioned_files below
+# handles pubspec version bumps for all workspace packages.
 
 # =============================================================================
 # [[deployments]] — deployment intent definitions
