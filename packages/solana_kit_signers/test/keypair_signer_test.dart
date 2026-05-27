@@ -31,11 +31,34 @@ void main() {
       expect(
         () => assertIsKeyPairSigner('not a signer'),
         throwsA(
-          isA<SolanaError>().having(
-            (e) => e.code,
-            'code',
-            SolanaErrorCode.signerExpectedKeyPairSigner,
-          ),
+          isA<SolanaError>()
+              .having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.signerExpectedKeyPairSigner,
+              )
+              .having((e) => e.context, 'context', isEmpty),
+        ),
+      );
+    });
+
+    test('includes signer address in assertion failure context', () {
+      const invalidSigner = NoopSigner(
+        address: Address('11111111111111111111111111111111'),
+      );
+
+      expect(
+        () => assertIsKeyPairSigner(invalidSigner),
+        throwsA(
+          isA<SolanaError>()
+              .having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.signerExpectedKeyPairSigner,
+              )
+              .having((e) => e.context, 'context', {
+                'address': invalidSigner.address,
+              }),
         ),
       );
     });

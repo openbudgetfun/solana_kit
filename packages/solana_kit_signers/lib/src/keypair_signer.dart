@@ -139,7 +139,14 @@ bool isKeyPairSigner(Object? value) {
 /// [SolanaErrorCode.signerExpectedKeyPairSigner] if the check fails.
 void assertIsKeyPairSigner(Object? value) {
   if (!isKeyPairSigner(value)) {
-    throw SolanaError(SolanaErrorCode.signerExpectedKeyPairSigner);
+    final address = switch (value) {
+      MessagePartialSigner(:final address) => address,
+      TransactionPartialSigner(:final address) => address,
+      _ => null,
+    };
+    throw SolanaError(SolanaErrorCode.signerExpectedKeyPairSigner, {
+      if (address != null) 'address': address,
+    });
   }
 }
 

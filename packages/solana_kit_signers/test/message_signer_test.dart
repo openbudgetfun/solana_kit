@@ -45,11 +45,34 @@ void main() {
       expect(
         () => assertIsMessageSigner('not a signer'),
         throwsA(
-          isA<SolanaError>().having(
-            (e) => e.code,
-            'code',
-            SolanaErrorCode.signerExpectedMessageSigner,
-          ),
+          isA<SolanaError>()
+              .having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.signerExpectedMessageSigner,
+              )
+              .having((e) => e.context, 'context', isEmpty),
+        ),
+      );
+    });
+
+    test('includes signer address in assertion failure context', () {
+      final invalidSigner = MockTransactionPartialSigner(
+        const Address('Gp7YgHcJciP4px5FdFnywUiMG4UcfMZV9UagSAZzDxdy'),
+      );
+
+      expect(
+        () => assertIsMessageSigner(invalidSigner),
+        throwsA(
+          isA<SolanaError>()
+              .having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.signerExpectedMessageSigner,
+              )
+              .having((e) => e.context, 'context', {
+                'address': invalidSigner.address,
+              }),
         ),
       );
     });
