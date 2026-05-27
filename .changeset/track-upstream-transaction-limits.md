@@ -1,10 +1,12 @@
 ---
 "solana_kit": patch
 "solana_kit_codecs": patch
+"solana_kit_codecs_core": patch
 "solana_kit_errors": patch
 "solana_kit_fixed_points": patch
 "solana_kit_keys": patch
 "solana_kit_instruction_plans": patch
+"solana_kit_mobile_wallet_adapter": patch
 "solana_kit_rpc_api": patch
 "solana_kit_rpc_parsed_types": patch
 "solana_kit_rpc_subscriptions": patch
