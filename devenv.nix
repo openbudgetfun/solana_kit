@@ -192,9 +192,8 @@ in
       exec = ''
         set -e
         $DEVENV_ROOT/scripts/sync-workspace-dependency-versions.sh --write
-        $DEVENV_ROOT/scripts/sync-package-changelogs.sh --write
       '';
-      description = "Sync packages.";
+      description = "Sync workspace dependency versions.";
       binary = "bash";
     };
     "lint:all" = {
@@ -242,9 +241,8 @@ in
       exec = ''
         set -e
         $DEVENV_ROOT/scripts/sync-workspace-dependency-versions.sh --check
-        $DEVENV_ROOT/scripts/sync-package-changelogs.sh --check
       '';
-      description = "Check packages sync.";
+      description = "Check workspace dependency version sync.";
       binary = "bash";
     };
     "mdt:info" = {

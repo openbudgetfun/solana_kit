@@ -549,9 +549,8 @@ version_format = "primary"
 changelog = { path = "CHANGELOG.md" }
 # include = ["package-id"]
 
-versioned_files = [
-  { path = "**/pubspec.yaml", type = "dart" },
-]
+# Group versioned_files not needed — the Dart ecosystem versioned_files below
+# handles pubspec version bumps for all workspace packages.
 
 # =============================================================================
 # [[deployments]] — deployment intent definitions
