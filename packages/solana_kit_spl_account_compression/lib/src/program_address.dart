@@ -16,7 +16,7 @@ const splAccountCompressionProgramAddress =
     'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi';
 
 /// The [Address] representation of the SPL Account Compression program address.
-final splAccountCompressionProgramAddressObject = Address(
+const splAccountCompressionProgramAddressObject = Address(
   splAccountCompressionProgramAddress,
 );
 
@@ -26,4 +26,4 @@ final splAccountCompressionProgramAddressObject = Address(
 const noopProgramAddress = 'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK';
 
 /// The [Address] representation of the Noop program address.
-final noopProgramAddressObject = Address(noopProgramAddress);
+const noopProgramAddressObject = Address(noopProgramAddress);

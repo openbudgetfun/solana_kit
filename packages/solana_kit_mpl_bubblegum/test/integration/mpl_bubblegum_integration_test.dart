@@ -139,10 +139,10 @@ void main() {
     group('composite helpers', () {
       test('getCreateTreeInstructionPlan returns valid plan', () {
         final plan = getCreateTreeInstructionPlan(
-          CreateTreeInput(
-            merkleTree: const Address('11111111111111111111111111111112'),
-            payer: const Address('11111111111111111111111111111112'),
-            treeCreator: const Address('11111111111111111111111111111112'),
+          const CreateTreeInput(
+            merkleTree: Address('11111111111111111111111111111112'),
+            payer: Address('11111111111111111111111111111112'),
+            treeCreator: Address('11111111111111111111111111111112'),
             maxDepth: 14,
             maxBufferSize: 64,
           ),
@@ -206,12 +206,12 @@ void main() {
 
       test('getMintV1InstructionPlan returns valid plan', () {
         final plan = getMintV1InstructionPlan(
-          MintV1Input(
-            merkleTree: const Address('11111111111111111111111111111112'),
-            leafOwner: const Address('11111111111111111111111111111112'),
-            leafDelegate: const Address('11111111111111111111111111111112'),
-            payer: const Address('11111111111111111111111111111112'),
-            treeDelegate: const Address('11111111111111111111111111111112'),
+          const MintV1Input(
+            merkleTree: Address('11111111111111111111111111111112'),
+            leafOwner: Address('11111111111111111111111111111112'),
+            leafDelegate: Address('11111111111111111111111111111112'),
+            payer: Address('11111111111111111111111111111112'),
+            treeDelegate: Address('11111111111111111111111111111112'),
             name: 'Test NFT',
             uri: 'https://example.com/metadata.json',
           ),
@@ -223,7 +223,7 @@ void main() {
 
     group('DAS API abstraction', () {
       test('DasAssetProof can be created', () {
-        final proof = DasAssetProof(
+        const proof = DasAssetProof(
           root: 'abc123',
           proof: ['def456', 'ghi789'],
           nodeIndex: 0,
@@ -236,10 +236,10 @@ void main() {
       });
 
       test('AssetWithProof can be created', () {
-        final asset = DasAsset(
+        const asset = DasAsset(
           id: 'test-id',
-          ownership: const DasAssetOwnership(frozen: false, nonTransferable: false),
-          compression: const DasAssetCompression(
+          ownership: DasAssetOwnership(frozen: false, nonTransferable: false),
+          compression: DasAssetCompression(
             compressed: true,
             dataHash: 'hash1',
             creatorHash: 'hash2',
@@ -249,11 +249,11 @@ void main() {
             leafId: 0,
           ),
           content: null,
-          creators: const [],
-          grouping: const [],
+          creators: [],
+          grouping: [],
         );
 
-        final proof = DasAssetProof(
+        const proof = DasAssetProof(
           root: 'root1',
           proof: ['proof1'],
           nodeIndex: 0,
