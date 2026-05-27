@@ -47,3 +47,4 @@ export 'src/pad_codec.dart';
 export 'src/resize_codec.dart';
 export 'src/reverse_codec.dart';
 export 'src/transform_codec.dart';
+export 'src/hash/keccak256.dart';
