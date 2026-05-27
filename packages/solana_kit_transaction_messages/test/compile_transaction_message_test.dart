@@ -172,5 +172,30 @@ void main() {
         Uint8List.fromList([9, 8, 7]),
       );
     });
+
+    test('compiles all v1 accounts as static accounts', () {
+      const lookupAccount = Address('lookupAccount');
+      final tx = appendTransactionMessageInstruction(
+        const Instruction(
+          programAddress: programAddress,
+          accounts: [
+            AccountLookupMeta(
+              address: lookupAccount,
+              addressIndex: 0,
+              lookupTableAddress: Address('lookupTableAddress'),
+              role: AccountRole.readonly,
+            ),
+          ],
+        ),
+        createTransactionMessage(
+          version: TransactionVersion.v1,
+        ).copyWith(feePayer: feePayer),
+      );
+
+      final compiled = compileTransactionMessage(tx);
+
+      expect(compiled.staticAccounts, contains(lookupAccount));
+      expect(compiled.numStaticAccounts, compiled.staticAccounts.length);
+    });
   });
 }

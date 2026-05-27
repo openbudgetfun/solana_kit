@@ -46,8 +46,12 @@ int getTransactionSizeLimit(Object versionOrTransaction) {
   if (versionOrTransaction is Transaction) {
     if (versionOrTransaction.messageBytes.isEmpty) return transactionSizeLimit;
 
+    const versionPrefixMask = 0x80;
     const versionFlagMask = 0x7f;
-    final version = versionOrTransaction.messageBytes.first & versionFlagMask;
+    final firstMessageByte = versionOrTransaction.messageBytes.first;
+    if (firstMessageByte & versionPrefixMask == 0) return transactionSizeLimit;
+
+    final version = firstMessageByte & versionFlagMask;
     return version == 1 ? transactionV1SizeLimit : transactionSizeLimit;
   }
 

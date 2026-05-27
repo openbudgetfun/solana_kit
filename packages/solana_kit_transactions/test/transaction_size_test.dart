@@ -195,6 +195,10 @@ void main() {
         getTransactionSizeLimit(rawTransaction([0x81])),
         transactionV1SizeLimit,
       );
+      expect(
+        getTransactionSizeLimit(rawTransaction([0x01])),
+        transactionSizeLimit,
+      );
       expect(getTransactionSizeLimit(rawTransaction([])), transactionSizeLimit);
     });
 

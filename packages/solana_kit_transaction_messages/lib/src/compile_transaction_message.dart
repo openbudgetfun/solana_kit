@@ -43,7 +43,9 @@ CompiledTransactionMessage compileTransactionMessage(
     return CompiledTransactionMessage(
       version: TransactionVersion.v1,
       header: getCompiledMessageHeader(orderedAccounts),
-      staticAccounts: getCompiledStaticAccounts(orderedAccounts),
+      staticAccounts: orderedAccounts
+          .map((account) => account.address)
+          .toList(),
       lifetimeToken: lifetimeToken,
       instructions: const [],
       configMask: getTransactionConfigMask(transactionMessage.config),
