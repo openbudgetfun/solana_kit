@@ -4,6 +4,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 import 'package:solana_kit_transaction_messages/src/transaction_message.dart';
+import 'package:solana_kit_transaction_messages/src/v1_transaction_config.dart';
 
 /// A provisional compute unit limit used as a placeholder before estimation.
 const provisoryComputeUnitLimit = 0;
@@ -26,6 +27,10 @@ typedef EstimateComputeUnitLimit =
 int? getTransactionMessageComputeUnitLimit(
   TransactionMessage transactionMessage,
 ) {
+  if (transactionMessage.version == TransactionVersion.v1) {
+    return transactionMessage.config?.computeUnitLimit;
+  }
+
   final instruction = transactionMessage.instructions
       .where(_isSetComputeUnitLimitInstruction)
       .firstOrNull;
@@ -42,6 +47,13 @@ TransactionMessage setTransactionMessageComputeUnitLimit(
   int? computeUnitLimit,
   TransactionMessage transactionMessage,
 ) {
+  if (transactionMessage.version == TransactionVersion.v1) {
+    return _setTransactionMessageComputeUnitLimitUsingConfig(
+      computeUnitLimit,
+      transactionMessage,
+    );
+  }
+
   final existingIndex = transactionMessage.instructions.indexWhere(
     _isSetComputeUnitLimitInstruction,
   );
@@ -117,6 +129,27 @@ estimateAndSetComputeUnitLimitFactory(
       transactionMessage,
     );
   };
+}
+
+TransactionMessage _setTransactionMessageComputeUnitLimitUsingConfig(
+  int? computeUnitLimit,
+  TransactionMessage transactionMessage,
+) {
+  final nextConfig = computeUnitLimit == null
+      ? transactionMessage.config?.copyWith(clearComputeUnitLimit: true)
+      : setTransactionMessageConfig(
+          V1TransactionConfig(computeUnitLimit: computeUnitLimit),
+          transactionMessage,
+        ).config;
+
+  if (nextConfig == null || nextConfig.isEmpty) {
+    return transactionMessage.config == null
+        ? transactionMessage
+        : transactionMessage.copyWith(clearConfig: true);
+  }
+
+  if (transactionMessage.config == nextConfig) return transactionMessage;
+  return transactionMessage.copyWith(config: nextConfig);
 }
 
 Instruction _getSetComputeUnitLimitInstruction({required int units}) {

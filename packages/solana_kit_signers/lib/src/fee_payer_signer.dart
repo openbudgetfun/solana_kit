@@ -15,6 +15,7 @@ class TransactionMessageWithFeePayerSigner extends TransactionMessage {
     required super.version,
     super.instructions,
     super.lifetimeConstraint,
+    super.config,
   }) : super(feePayer: getTransactionSignerAddress(feePayerSigner));
 
   /// The transaction signer to use as the fee payer.
@@ -28,6 +29,8 @@ class TransactionMessageWithFeePayerSigner extends TransactionMessage {
     bool clearFeePayer = false,
     LifetimeConstraint? lifetimeConstraint,
     bool clearLifetimeConstraint = false,
+    V1TransactionConfig? config,
+    bool clearConfig = false,
   }) {
     // If clearing the fee payer, fall back to the base TransactionMessage.
     if (clearFeePayer) {
@@ -37,6 +40,7 @@ class TransactionMessageWithFeePayerSigner extends TransactionMessage {
         lifetimeConstraint: clearLifetimeConstraint
             ? null
             : (lifetimeConstraint ?? this.lifetimeConstraint),
+        config: clearConfig ? null : (config ?? this.config),
       );
     }
 
@@ -47,6 +51,7 @@ class TransactionMessageWithFeePayerSigner extends TransactionMessage {
       lifetimeConstraint: clearLifetimeConstraint
           ? null
           : (lifetimeConstraint ?? this.lifetimeConstraint),
+      config: clearConfig ? null : (config ?? this.config),
     );
   }
 }
@@ -69,5 +74,6 @@ TransactionMessageWithFeePayerSigner setTransactionMessageFeePayerSigner(
     version: transactionMessage.version,
     instructions: transactionMessage.instructions,
     lifetimeConstraint: transactionMessage.lifetimeConstraint,
+    config: transactionMessage.config,
   );
 }

@@ -124,5 +124,53 @@ void main() {
       expect(compiled.addressTableLookups, isNotNull);
       expect(compiled.addressTableLookups, isEmpty);
     });
+
+    test('compiles v1 config, instruction headers, and payloads', () {
+      final tx = createTransactionMessage(version: TransactionVersion.v1)
+          .copyWith(
+            feePayer: feePayer,
+            config: V1TransactionConfig(
+              computeUnitLimit: 200000,
+              heapSize: 32768,
+              loadedAccountsDataSizeLimit: 65536,
+              priorityFeeLamports: BigInt.from(5000),
+            ),
+          );
+      final txWithInstruction = appendTransactionMessageInstruction(
+        Instruction(
+          programAddress: programAddress,
+          accounts: const [
+            AccountMeta(
+              address: Address('H4RdPRWYk3pKw2CkNznxQK6J6herjgQke2pzFJW4GC6x'),
+              role: AccountRole.writableSigner,
+            ),
+          ],
+          data: Uint8List.fromList([9, 8, 7]),
+        ),
+        tx,
+      );
+
+      final compiled = compileTransactionMessage(txWithInstruction);
+
+      expect(compiled.version, TransactionVersion.v1);
+      expect(compiled.configMask, 31);
+      expect(compiled.configValues?.map((value) => (value.kind, value.value)), [
+        ('u64', BigInt.from(5000)),
+        ('u32', 200000),
+        ('u32', 65536),
+        ('u32', 32768),
+      ]);
+      expect(compiled.instructions, isEmpty);
+      expect(compiled.addressTableLookups, isNull);
+      expect(compiled.numInstructions, 1);
+      expect(compiled.numStaticAccounts, compiled.staticAccounts.length);
+      expect(compiled.instructionHeaders, hasLength(1));
+      expect(compiled.instructionHeaders!.single.numInstructionAccounts, 1);
+      expect(compiled.instructionHeaders!.single.numInstructionDataBytes, 3);
+      expect(
+        compiled.instructionPayloads!.single.instructionData,
+        Uint8List.fromList([9, 8, 7]),
+      );
+    });
   });
 }

@@ -142,6 +142,12 @@ class CompiledTransactionMessage {
     required this.instructions,
     this.lifetimeToken,
     this.addressTableLookups,
+    this.configMask,
+    this.configValues,
+    this.instructionHeaders,
+    this.instructionPayloads,
+    this.numInstructions,
+    this.numStaticAccounts,
   });
 
   /// The version of this compiled transaction message.
@@ -161,4 +167,80 @@ class CompiledTransactionMessage {
 
   /// The address table lookups (only for versioned messages).
   final List<AddressTableLookup>? addressTableLookups;
+
+  /// V1 config mask.
+  final int? configMask;
+
+  /// V1 config values in wire order.
+  final List<CompiledTransactionConfigValue>? configValues;
+
+  /// V1 instruction headers.
+  final List<V1InstructionHeader>? instructionHeaders;
+
+  /// V1 instruction payloads.
+  final List<V1InstructionPayload>? instructionPayloads;
+
+  /// V1 instruction count.
+  final int? numInstructions;
+
+  /// V1 static account count.
+  final int? numStaticAccounts;
+}
+
+/// A v1 transaction config value.
+@immutable
+class CompiledTransactionConfigValue {
+  /// Creates a v1 transaction config value.
+  const CompiledTransactionConfigValue.u32(int this.value) : kind = 'u32';
+
+  /// Creates a v1 transaction config value with an explicit wire kind.
+  const CompiledTransactionConfigValue.raw({
+    required this.kind,
+    required this.value,
+  });
+
+  /// Creates a v1 transaction config value.
+  const CompiledTransactionConfigValue.u64(BigInt this.value) : kind = 'u64';
+
+  /// The wire kind.
+  final String kind;
+
+  /// The value.
+  final Object value;
+}
+
+/// A fixed-size v1 instruction header.
+@immutable
+class V1InstructionHeader {
+  /// Creates a [V1InstructionHeader].
+  const V1InstructionHeader({
+    required this.programAccountIndex,
+    required this.numInstructionAccounts,
+    required this.numInstructionDataBytes,
+  });
+
+  /// Program account index.
+  final int programAccountIndex;
+
+  /// Number of account indices in the payload.
+  final int numInstructionAccounts;
+
+  /// Number of data bytes in the payload.
+  final int numInstructionDataBytes;
+}
+
+/// A variable-size v1 instruction payload.
+@immutable
+class V1InstructionPayload {
+  /// Creates a [V1InstructionPayload].
+  const V1InstructionPayload({
+    required this.instructionAccountIndices,
+    required this.instructionData,
+  });
+
+  /// Account indices.
+  final List<int> instructionAccountIndices;
+
+  /// Instruction data.
+  final Uint8List instructionData;
 }

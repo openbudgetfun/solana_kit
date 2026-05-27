@@ -180,6 +180,10 @@ void main() {
         getTransactionSizeLimit(TransactionVersion.v0),
         transactionSizeLimit,
       );
+      expect(
+        getTransactionSizeLimit(TransactionVersion.v1),
+        transactionV1SizeLimit,
+      );
     });
 
     test('detects the transaction limit from message bytes', () {

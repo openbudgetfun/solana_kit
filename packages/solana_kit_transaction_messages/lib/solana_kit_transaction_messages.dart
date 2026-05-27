@@ -85,3 +85,4 @@ export 'src/pipe.dart';
 export 'src/transaction_message.dart';
 export 'src/transaction_message_extensions.dart';
 export 'src/transaction_message_limits.dart';
+export 'src/v1_transaction_config.dart';

@@ -39,6 +39,7 @@ int getTransactionSizeLimit(Object versionOrTransaction) {
     return switch (versionOrTransaction) {
       TransactionVersion.legacy ||
       TransactionVersion.v0 => transactionSizeLimit,
+      TransactionVersion.v1 => transactionV1SizeLimit,
     };
   }
 

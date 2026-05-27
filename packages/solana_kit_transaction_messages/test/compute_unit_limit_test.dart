@@ -13,6 +13,15 @@ void main() {
       expect(getTransactionMessageComputeUnitLimit(message), isNull);
     });
 
+    test('returns v1 compute unit limit from config', () {
+      final message = setTransactionMessageConfig(
+        const V1TransactionConfig(computeUnitLimit: 123),
+        createTransactionMessage(version: TransactionVersion.v1),
+      );
+
+      expect(getTransactionMessageComputeUnitLimit(message), 123);
+    });
+
     test('returns the first set compute unit limit instruction units', () {
       final message = createTransactionMessage(version: TransactionVersion.v0)
           .appendInstructions([
@@ -53,6 +62,60 @@ void main() {
       expect(updated.instructions, hasLength(1));
       expect(getTransactionMessageComputeUnitLimit(updated), 200000);
       expect(getTransactionMessageComputeUnitLimit(message), isNull);
+    });
+
+    test('sets a v1 compute unit limit in config', () {
+      final message = createTransactionMessage(version: TransactionVersion.v1);
+      final updated = setTransactionMessageComputeUnitLimit(200000, message);
+
+      expect(updated.instructions, isEmpty);
+      expect(updated.config?.computeUnitLimit, 200000);
+      expect(getTransactionMessageComputeUnitLimit(updated), 200000);
+    });
+
+    test(
+      'returns the same v1 message when setting the existing config limit',
+      () {
+        final message = setTransactionMessageComputeUnitLimit(
+          200000,
+          createTransactionMessage(version: TransactionVersion.v1),
+        );
+
+        expect(
+          setTransactionMessageComputeUnitLimit(200000, message),
+          same(message),
+        );
+      },
+    );
+
+    test('removes a v1 compute unit limit and preserves other config', () {
+      final message = setTransactionMessageConfig(
+        const V1TransactionConfig(computeUnitLimit: 1, heapSize: 32),
+        createTransactionMessage(version: TransactionVersion.v1),
+      );
+      final updated = setTransactionMessageComputeUnitLimit(null, message);
+
+      expect(updated.config?.computeUnitLimit, isNull);
+      expect(updated.config?.heapSize, 32);
+    });
+
+    test('clears v1 config when removing its only compute unit limit', () {
+      final message = setTransactionMessageComputeUnitLimit(
+        1,
+        createTransactionMessage(version: TransactionVersion.v1),
+      );
+      final updated = setTransactionMessageComputeUnitLimit(null, message);
+
+      expect(updated.config, isNull);
+    });
+
+    test('returns the same v1 message when removing a missing limit', () {
+      final message = createTransactionMessage(version: TransactionVersion.v1);
+
+      expect(
+        setTransactionMessageComputeUnitLimit(null, message),
+        same(message),
+      );
     });
 
     test('returns the same message when setting the existing limit', () {
