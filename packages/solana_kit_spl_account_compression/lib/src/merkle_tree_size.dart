@@ -1,3 +1,4 @@
+// ignore_for_file: comment_references
 /// Merkle tree size calculation utilities for SPL Account Compression.
 ///
 /// Provides the [getConcurrentMerkleTreeAccountSize] function that returns

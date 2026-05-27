@@ -7,7 +7,9 @@ import 'package:solana_kit_mpl_bubblegum/src/generated/instructions/transfer.dar
 import 'package:solana_kit_mpl_bubblegum/src/generated/programs/mpl_bubblegum.dart';
 
 /// Input for transferring a compressed NFT.
+/// Input for TransferInput.
 class TransferInput {
+  /// Creates a [TransferInput].
   const TransferInput({
     required this.root,
     required this.dataHash,
@@ -49,7 +51,9 @@ class TransferInput {
 }
 
 /// Configuration for [getTransferInstructionPlan].
+/// Configuration for TransferConfig.
 class TransferConfig {
+  /// Creates a [TransferConfig].
   const TransferConfig({
     this.logWrapper,
     this.compressionProgram,

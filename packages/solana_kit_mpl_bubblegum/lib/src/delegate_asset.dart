@@ -7,7 +7,9 @@ import 'package:solana_kit_mpl_bubblegum/src/generated/instructions/delegate.dar
 import 'package:solana_kit_mpl_bubblegum/src/generated/programs/mpl_bubblegum.dart';
 
 /// Input for delegating a compressed NFT.
+/// Input for DelegateInput.
 class DelegateInput {
+  /// Creates a [DelegateInput].
   const DelegateInput({
     required this.root,
     required this.dataHash,
@@ -49,7 +51,9 @@ class DelegateInput {
 }
 
 /// Configuration for [getDelegateInstructionPlan].
+/// Configuration for DelegateConfig.
 class DelegateConfig {
+  /// Creates a [DelegateConfig].
   const DelegateConfig({
     this.logWrapper,
     this.compressionProgram,

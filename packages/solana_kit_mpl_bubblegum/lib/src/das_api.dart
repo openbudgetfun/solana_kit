@@ -8,6 +8,7 @@ import 'dart:typed_data';
 
 /// The result of a DAS `getAssetProof` call.
 class DasAssetProof {
+  /// Creates a [DasAssetProof].
   const DasAssetProof({
     required this.root,
     required this.proof,
@@ -33,7 +34,9 @@ class DasAssetProof {
 }
 
 /// The result of a DAS `getAsset` call (simplified for proof generation).
+/// DAS API asset data.
 class DasAsset {
+  /// Creates a [DasAsset].
   const DasAsset({
     required this.id,
     required this.ownership,
@@ -63,7 +66,9 @@ class DasAsset {
 }
 
 /// Ownership information for a DAS asset.
+/// DAS API asset ownership data.
 class DasAssetOwnership {
+  /// Creates a [DasAssetOwnership].
   const DasAssetOwnership({
     required this.frozen,
     required this.nonTransferable,
@@ -77,7 +82,9 @@ class DasAssetOwnership {
 }
 
 /// Compression information for a DAS asset.
+/// DAS API asset compression data.
 class DasAssetCompression {
+  /// Creates a [DasAssetCompression].
   const DasAssetCompression({
     required this.compressed,
     required this.dataHash,
@@ -111,7 +118,9 @@ class DasAssetCompression {
 }
 
 /// Content information for a DAS asset.
+/// DAS API asset content data.
 class DasAssetContent {
+  /// Creates a [DasAssetContent].
   const DasAssetContent({
     this.metadata,
   });
@@ -121,7 +130,9 @@ class DasAssetContent {
 }
 
 /// Metadata for a DAS asset.
+/// DAS API asset metadata.
 class DasAssetMetadata {
+  /// Creates a [DasAssetMetadata].
   const DasAssetMetadata({
     this.name,
     this.symbol,
@@ -143,7 +154,9 @@ class DasAssetMetadata {
 }
 
 /// Creator information for a DAS asset.
+/// DAS API asset creator data.
 class DasAssetCreator {
+  /// Creates a [DasAssetCreator].
   const DasAssetCreator({
     required this.address,
     required this.share,
@@ -161,7 +174,9 @@ class DasAssetCreator {
 }
 
 /// Grouping information for a DAS asset (e.g., collection).
+/// DAS API asset grouping data.
 class DasAssetGrouping {
+  /// Creates a [DasAssetGrouping].
   const DasAssetGrouping({
     required this.groupKey,
     required this.groupValue,
@@ -192,7 +207,9 @@ abstract class DasApiClient {
 /// This is the result of [getAssetWithProof] and contains everything
 /// needed to perform operations (transfer, burn, delegate, etc.) on a
 /// compressed NFT.
+/// Complete compressed NFT data with Merkle proof.
 class AssetWithProof {
+  /// Creates a [AssetWithProof].
   const AssetWithProof({
     required this.rpcAsset,
     required this.rpcAssetProof,

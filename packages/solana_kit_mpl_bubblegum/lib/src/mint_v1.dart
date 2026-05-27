@@ -9,7 +9,9 @@ import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart'
 import 'package:solana_kit_mpl_bubblegum/src/generated/types/types.dart';
 
 /// Input for minting a compressed NFT.
+/// Input for MintV1Input.
 class MintV1Input {
+  /// Creates a [MintV1Input].
   const MintV1Input({
     required this.merkleTree,
     required this.leafOwner,
@@ -59,7 +61,9 @@ class MintV1Input {
 }
 
 /// Configuration for [getMintV1InstructionPlan].
+/// Configuration for MintV1Config.
 class MintV1Config {
+  /// Creates a [MintV1Config].
   const MintV1Config({
     this.logWrapper,
     this.compressionProgram,

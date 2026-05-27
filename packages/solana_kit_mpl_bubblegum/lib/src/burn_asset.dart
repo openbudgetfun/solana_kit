@@ -7,7 +7,9 @@ import 'package:solana_kit_mpl_bubblegum/src/generated/instructions/burn.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/programs/mpl_bubblegum.dart';
 
 /// Input for burning a compressed NFT.
+/// Input for BurnInput.
 class BurnInput {
+  /// Creates a [BurnInput].
   const BurnInput({
     required this.root,
     required this.dataHash,
@@ -45,7 +47,9 @@ class BurnInput {
 }
 
 /// Configuration for [getBurnInstructionPlan].
+/// Configuration for BurnConfig.
 class BurnConfig {
+  /// Creates a [BurnConfig].
   const BurnConfig({
     this.logWrapper,
     this.compressionProgram,

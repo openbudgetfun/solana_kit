@@ -1,3 +1,4 @@
+// ignore_for_file: comment_references
 /// SPL Account Compression Program client for the Solana Kit Dart SDK.
 ///
 /// Provides instruction builders and helpers for interacting with the

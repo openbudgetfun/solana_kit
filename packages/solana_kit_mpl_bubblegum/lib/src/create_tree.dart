@@ -7,7 +7,9 @@ import 'package:solana_kit_mpl_bubblegum/src/generated/instructions/create_tree.
 import 'package:solana_kit_mpl_bubblegum/src/generated/programs/mpl_bubblegum.dart';
 
 /// Input for creating a compressed NFT tree.
+/// Input for CreateTreeInput.
 class CreateTreeInput {
+  /// Creates a [CreateTreeInput].
   const CreateTreeInput({
     required this.merkleTree,
     required this.payer,
@@ -37,7 +39,9 @@ class CreateTreeInput {
 }
 
 /// Configuration for [getCreateTreeInstructionPlan].
+/// Configuration for CreateTreeConfig.
 class CreateTreeConfig {
+  /// Creates a [CreateTreeConfig].
   const CreateTreeConfig({
     this.logWrapper,
     this.compressionProgram,
