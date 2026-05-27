@@ -6,7 +6,7 @@ library;
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
-import '../program_address.dart';
+import 'package:solana_kit_mpl_bubblegum/src/program_address.dart';
 
 /// Derives the tree authority PDA for a given Merkle tree address.
 ///

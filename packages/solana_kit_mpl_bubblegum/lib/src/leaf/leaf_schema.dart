@@ -13,6 +13,15 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 /// Represents the data stored at a V1 leaf in the Merkle tree.
 /// The leaf hash is computed from these fields.
 class LeafSchemaV1 {
+
+  /// Creates a V1 leaf schema.
+  const LeafSchemaV1({
+    required this.leafIndex,
+    required this.merkleTree,
+    required this.owner,
+    required this.delegate,
+    this.metadataHash,
+  });
   /// The leaf index within the Merkle tree.
   final int leafIndex;
 
@@ -27,15 +36,6 @@ class LeafSchemaV1 {
 
   /// The pre-computed metadata hash.
   final Uint8List? metadataHash;
-
-  /// Creates a V1 leaf schema.
-  const LeafSchemaV1({
-    required this.leafIndex,
-    required this.merkleTree,
-    required this.owner,
-    required this.delegate,
-    this.metadataHash,
-  });
 }
 
 /// V2 leaf schema for compressed NFTs.
@@ -43,6 +43,18 @@ class LeafSchemaV1 {
 /// Represents the data stored at a V2 leaf in the Merkle tree.
 /// V2 adds collection, asset data, and flags fields compared to V1.
 class LeafSchemaV2 {
+
+  /// Creates a V2 leaf schema.
+  const LeafSchemaV2({
+    required this.leafIndex,
+    required this.merkleTree,
+    required this.owner,
+    required this.delegate,
+    this.collection,
+    this.assetData,
+    this.flags = 0,
+    this.metadataHash,
+  });
   /// The leaf index within the Merkle tree.
   final int leafIndex;
 
@@ -66,16 +78,4 @@ class LeafSchemaV2 {
 
   /// The pre-computed metadata hash.
   final Uint8List? metadataHash;
-
-  /// Creates a V2 leaf schema.
-  const LeafSchemaV2({
-    required this.leafIndex,
-    required this.merkleTree,
-    required this.owner,
-    required this.delegate,
-    this.collection,
-    this.assetData,
-    this.flags = 0,
-    this.metadataHash,
-  });
 }

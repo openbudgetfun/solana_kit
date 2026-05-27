@@ -17,11 +17,11 @@ const nodeSize = 32;
 
 /// A node in the Merkle tree.
 final class _MerkleNode {
+
+  _MerkleNode(this.hash, {this.left, this.right});
   final Uint8List hash;
   final _MerkleNode? left;
   final _MerkleNode? right;
-
-  _MerkleNode(this.hash, {this.left, this.right});
 }
 
 /// A sparse Merkle tree using Keccak-256 hashing, compatible with the
@@ -32,9 +32,6 @@ final class _MerkleNode {
 /// and empty nodes at depth `d` are `keccak256(emptyNode(d-1) || emptyNode(d-1))`
 /// with `emptyNode(0) = zeros(32)`.
 class MerkleTree {
-  final int depth;
-  late final _MerkleNode _root;
-  final List<Uint8List> _leaves;
 
   /// Creates a Merkle tree from the given [leaves] with the specified
   /// [depth].
@@ -45,6 +42,14 @@ class MerkleTree {
   MerkleTree(List<Uint8List> leaves, this.depth) : _leaves = List.of(leaves) {
     _root = _buildTree(_leaves, depth);
   }
+  /// The depth of the tree.
+  final int depth;
+
+  /// The root node.
+  late final _MerkleNode _root;
+
+  /// The leaves of the tree.
+  final List<Uint8List> _leaves;
 
   /// Returns the root hash of the tree.
   Uint8List getRoot() => _root.hash;

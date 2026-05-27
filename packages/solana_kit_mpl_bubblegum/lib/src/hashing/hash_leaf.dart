@@ -1,3 +1,4 @@
+// ignore_for_file: comment_references
 /// Leaf hashing utilities for mpl-bubblegum V1 and V2 compressed NFTs.
 ///
 /// Provides [hashLeafV1] and [hashLeafV2] functions that compute the
@@ -18,9 +19,8 @@ import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
-
-import 'package:solana_kit_mpl_bubblegum/src/hashing/hash.dart';
 import 'package:solana_kit_mpl_bubblegum/src/flags/leaf_schema_flags.dart';
+import 'package:solana_kit_mpl_bubblegum/src/hashing/hash.dart';
 
 /// Encodes an [Address] into its 32-byte representation.
 ///
