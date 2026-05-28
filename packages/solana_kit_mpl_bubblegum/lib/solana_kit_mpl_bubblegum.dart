@@ -26,6 +26,12 @@
 /// [solana_kit_codecs_core] for the Keccak-256 hash function.
 library;
 
+// Generated (Codama-style).
+// Program addresses are exported directly from src/program_address.dart.
+// The generated file re-exports them; hide to avoid ambiguity.
+export 'package:solana_kit_mpl_bubblegum/src/generated/mpl_bubblegum.dart'
+    hide mplBubblegumProgramAddress, mplBubblegumProgramAddressObject;
+
 // Burn asset composite helper.
 export 'src/burn_asset.dart';
 
@@ -49,9 +55,6 @@ export 'src/delegate_asset.dart';
 
 // Flags.
 export 'src/flags/leaf_schema_flags.dart';
-
-// Generated (Codama-style).
-export 'src/generated/mpl_bubblegum.dart';
 
 // Hand-written hashing utilities.
 export 'src/hashing/hash.dart';
@@ -88,5 +91,3 @@ export 'src/transfer_asset.dart';
 
 // Byte utilities.
 export 'src/utils/bytes.dart';
-
-
