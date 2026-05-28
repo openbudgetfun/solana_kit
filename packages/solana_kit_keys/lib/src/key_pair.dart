@@ -10,33 +10,91 @@ import 'package:solana_kit_keys/src/private_key.dart';
 import 'package:solana_kit_keys/src/public_key.dart';
 import 'package:solana_kit_keys/src/signatures.dart';
 
+/// Finalizer that zeros out byte arrays when KeyPair instances are GC'd.
+///
+/// This is a best-effort mitigation against private key material persisting
+/// in memory. Dart's GC does not guarantee deterministic finalization, so
+/// the zeroing may happen later than desired or not at all if the process
+/// terminates abruptly.
+final Finalizer<(Uint8List, Uint8List)> _keyPairFinalizer =
+    Finalizer((keys) {
+  _zeroBytes(keys.$1);
+  _zeroBytes(keys.$2);
+});
+
+/// Zeros out all bytes in a [Uint8List].
+///
+/// Note: The Dart VM may theoretically optimize this away if it determines
+/// the buffer is no longer read. In practice, this provides reasonable
+/// protection against casual memory inspection.
+void _zeroBytes(Uint8List bytes) {
+  for (var i = 0; i < bytes.length; i++) {
+    bytes[i] = 0;
+  }
+}
+
 /// An Ed25519 key pair consisting of a 32-byte private key and a 32-byte
 /// public key.
 ///
 /// Key bytes are stored internally and defensive copies are returned from
 /// getters to prevent external mutation of key material.
+///
+/// When the [KeyPair] is garbage collected, the internal key bytes are
+/// zeroed out as a best-effort security measure. For explicit control,
+/// call [dispose] to zero the bytes immediately.
 class KeyPair {
   /// Creates a [KeyPair] from the given [privateKey] and [publicKey] bytes.
   KeyPair({required Uint8List privateKey, required Uint8List publicKey})
     : _privateKey = Uint8List.fromList(privateKey),
-      _publicKey = Uint8List.fromList(publicKey);
+      _publicKey = Uint8List.fromList(publicKey) {
+    _keyPairFinalizer.attach(this, (_privateKey, _publicKey), detach: this);
+  }
 
-  // TODO(security): Dart's GC makes deterministic memory wiping impossible.
-  // Private key material remains in memory until garbage collected. Consider
-  // wrapping in a secure key class if/when Dart adds finalizer-based memory
-  // zeroing support.
   final Uint8List _privateKey;
   final Uint8List _publicKey;
+
+  bool _isDisposed = false;
+
+  /// Whether [dispose] has been called.
+  bool get isDisposed => _isDisposed;
 
   /// The 32-byte Ed25519 private key (seed).
   ///
   /// Returns a defensive copy to prevent external mutation.
-  Uint8List get privateKey => Uint8List.fromList(_privateKey);
+  /// Throws [StateError] if [dispose] has been called.
+  Uint8List get privateKey {
+    if (_isDisposed) {
+      throw StateError('KeyPair has been disposed');
+    }
+    return Uint8List.fromList(_privateKey);
+  }
 
   /// The 32-byte Ed25519 public key.
   ///
   /// Returns a defensive copy to prevent external mutation.
-  Uint8List get publicKey => Uint8List.fromList(_publicKey);
+  /// Throws [StateError] if [dispose] has been called.
+  Uint8List get publicKey {
+    if (_isDisposed) {
+      throw StateError('KeyPair has been disposed');
+    }
+    return Uint8List.fromList(_publicKey);
+  }
+
+  /// Explicitly zeros out the internal key bytes.
+  ///
+  /// After calling this method, [privateKey] and [publicKey] getters will
+  /// throw [StateError]. This is idempotent - calling dispose multiple times
+  /// is safe.
+  ///
+  /// This is recommended when you're done with a key pair to minimize the
+  /// window where sensitive material exists in memory.
+  void dispose() {
+    if (_isDisposed) return;
+    _isDisposed = true;
+    _zeroBytes(_privateKey);
+    _zeroBytes(_publicKey);
+    _keyPairFinalizer.detach(this);
+  }
 }
 
 /// Generates a new random Ed25519 key pair.
