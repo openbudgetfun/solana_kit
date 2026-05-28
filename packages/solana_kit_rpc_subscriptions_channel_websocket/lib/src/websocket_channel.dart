@@ -107,6 +107,7 @@ class WebSocketChannelConfig {
   const WebSocketChannelConfig({
     required this.url,
     this.allowInsecureWs = false,
+    this.allowPrivateHosts = false,
     this.sendBufferHighWatermark = 128 * 1024,
     this.signal,
   });
@@ -124,6 +125,14 @@ class WebSocketChannelConfig {
   /// debug mode. In release/profile mode, this flag is ignored and
   /// `wss://` is always required.
   final bool allowInsecureWs;
+
+  /// Whether to allow connections to private/internal hosts.
+  ///
+  /// Defaults to `false`, which blocks connections to localhost, loopback,
+  /// and private IP ranges (10.x, 172.16-31.x, 192.168.x, 169.254.x, fc/fd::).
+  ///
+  /// Set to `true` for local development and testing against local validators.
+  final bool allowPrivateHosts;
 
   /// The number of bytes to admit into the send buffer before queueing
   /// messages on the client.
@@ -201,7 +210,11 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
     throw SolanaError(SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed);
   }
 
-  _validateWebSocketUrl(config.url, allowInsecureWs: config.allowInsecureWs);
+  _validateWebSocketUrl(
+    config.url,
+    allowInsecureWs: config.allowInsecureWs,
+    allowPrivateHosts: config.allowPrivateHosts,
+  );
 
   final dataPublisher = createDataPublisher();
 
@@ -277,7 +290,11 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
   );
 }
 
-void _validateWebSocketUrl(Uri url, {required bool allowInsecureWs}) {
+void _validateWebSocketUrl(
+  Uri url, {
+  required bool allowInsecureWs,
+  required bool allowPrivateHosts,
+}) {
   final scheme = url.scheme.toLowerCase();
 
   if (!url.isAbsolute || url.host.isEmpty) {
@@ -286,6 +303,11 @@ void _validateWebSocketUrl(Uri url, {required bool allowInsecureWs}) {
       'url',
       'WebSocket URL must be an absolute URL.',
     );
+  }
+
+  // SSRF protection: block connections to private/internal hosts.
+  if (!allowPrivateHosts) {
+    _assertHostIsNotPrivate(url);
   }
 
   if (scheme == 'wss') {
@@ -324,6 +346,87 @@ void _validateWebSocketUrl(Uri url, {required bool allowInsecureWs}) {
     'url',
     "WebSocket URL must use either 'wss' or 'ws'.",
   );
+}
+
+/// Hostnames that are always blocked to prevent SSRF attacks.
+const _blockedHostnames = {
+  'localhost',
+  '0.0.0.0',
+  '::',
+  '::1',
+  '0:0:0:0:0:0:0:1',
+};
+
+/// Throws [ArgumentError] if [url] targets a private/internal host.
+///
+/// This is a best-effort SSRF mitigation. It blocks known private hostnames
+/// and IP-literal ranges (10.x, 172.16-31.x, 192.168.x, 169.254.x, fc-fd::).
+/// It does NOT perform DNS resolution.
+void _assertHostIsNotPrivate(Uri url) {
+  final host = url.host.toLowerCase();
+
+  if (_blockedHostnames.contains(host)) {
+    throw ArgumentError.value(
+      url.toString(),
+      'url',
+      'WebSocket URL must not target a private or loopback host.',
+    );
+  }
+
+  // IPv4 private ranges: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16
+  if (_isPrivateIpv4(host)) {
+    throw ArgumentError.value(
+      url.toString(),
+      'url',
+      'WebSocket URL must not target a private IPv4 address.',
+    );
+  }
+
+  // IPv6 private range: fc00::/7 (unique local addresses)
+  if (_isPrivateIpv6(host)) {
+    throw ArgumentError.value(
+      url.toString(),
+      'url',
+      'WebSocket URL must not target a private IPv6 address.',
+    );
+  }
+}
+
+bool _isPrivateIpv4(String host) {
+  // Strip port if present (e.g., '192.168.1.1:8080')
+  final ip = host.contains(':') && !host.contains('[')
+      ? host.substring(0, host.lastIndexOf(':'))
+      : host;
+
+  final parts = ip.split('.');
+  if (parts.length != 4) return false;
+
+  final first = int.tryParse(parts[0]);
+  final second = int.tryParse(parts[1]);
+  if (first == null || second == null) return false;
+
+  // 10.0.0.0/8
+  if (first == 10) return true;
+
+  // 172.16.0.0/12
+  if (first == 172 && second >= 16 && second <= 31) return true;
+
+  // 192.168.0.0/16
+  if (first == 192 && second == 168) return true;
+
+  // 169.254.0.0/16 (link-local)
+  if (first == 169 && second == 254) return true;
+
+  return false;
+}
+
+bool _isPrivateIpv6(String host) {
+  // Normalize: strip brackets and zone ID
+  var h = host.replaceAll('[', '').replaceAll(']', '');
+  if (h.contains('%')) h = h.substring(0, h.indexOf('%'));
+
+  // fc00::/7 covers fc00:: through fdff:...
+  return h.startsWith('fc') || h.startsWith('fd');
 }
 
 class _WebSocketRpcChannel implements RpcSubscriptionsChannel {
