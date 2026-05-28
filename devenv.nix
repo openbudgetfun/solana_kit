@@ -385,6 +385,57 @@ in
       description = "Run all local benchmark scripts across workspace packages.";
       binary = "bash";
     };
+    "test:integration" = {
+      exec = ''
+        set -e
+
+        # Start SurfPool in daemon mode
+        echo "Starting SurfPool..."
+        surfpool start --daemon --ci
+
+        # Wait for SurfPool to be ready
+        echo "Waiting for SurfPool to be ready..."
+        for i in $(seq 1 30); do
+          if curl -s http://localhost:8899 > /dev/null 2>&1; then
+            echo "SurfPool is ready."
+            break
+          fi
+          if [ $i -eq 30 ]; then
+            echo "SurfPool failed to start within 30 seconds."
+            exit 1
+          fi
+          sleep 1
+        done
+
+        # Run integration tests
+        echo "Running integration tests..."
+        failed=0
+        for pkg_dir in packages/*/; do
+          if [ ! -d "$pkg_dir/test/integration" ]; then
+            continue
+          fi
+
+          pkg_name="$(basename "$pkg_dir")"
+          echo "Testing $pkg_name integration..."
+          if ! fvm flutter test --tags integration "$pkg_dir"; then
+            failed=1
+          fi
+        done
+
+        # Stop SurfPool
+        echo "Stopping SurfPool..."
+        surfpool stop 2>/dev/null || true
+
+        if [ "$failed" -ne 0 ]; then
+          echo "Some integration tests failed."
+          exit 1
+        fi
+
+        echo "All integration tests passed."
+      '';
+      description = "Run all integration tests against SurfPool local validator.";
+      binary = "bash";
+    };
     "test:all" = {
       exec = ''
         set -e
