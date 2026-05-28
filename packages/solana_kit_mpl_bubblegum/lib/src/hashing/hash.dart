@@ -42,6 +42,7 @@ Uint8List bubblegumHash(List<Uint8List> input) {
   return keccak256(
     input.fold<Uint8List>(
       Uint8List(0),
+      // ignore: unnecessary_lambdas
       (acc, chunk) => concatBytes(acc, chunk),
     ),
   );
