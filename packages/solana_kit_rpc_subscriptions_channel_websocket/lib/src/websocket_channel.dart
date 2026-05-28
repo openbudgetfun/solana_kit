@@ -120,6 +120,9 @@ class WebSocketChannelConfig {
   /// Whether to allow insecure `ws://` URLs.
   ///
   /// Defaults to `false`, which enforces `wss://` URLs.
+  /// When set to `true`, insecure `ws://` URLs are only allowed in
+  /// debug mode. In release/profile mode, this flag is ignored and
+  /// `wss://` is always required.
   final bool allowInsecureWs;
 
   /// The number of bytes to admit into the send buffer before queueing
@@ -290,6 +293,20 @@ void _validateWebSocketUrl(Uri url, {required bool allowInsecureWs}) {
   }
 
   if (scheme == 'ws' && allowInsecureWs) {
+    // In release/profile mode, ws:// is never allowed regardless of
+    // the allowInsecureWs flag. This prevents accidental use of
+    // insecure WebSocket connections in production.
+    const isProduction = bool.fromEnvironment('dart.vm.product');
+    // coverage:ignore-start - unreachable in debug/test mode
+    if (isProduction) {
+      throw ArgumentError.value(
+        url.toString(),
+        'url',
+        'Insecure WebSocket endpoints are not allowed in release mode. '  
+            'Use a wss:// URL instead.',
+      );
+    }
+    // coverage:ignore-end
     return;
   }
 
