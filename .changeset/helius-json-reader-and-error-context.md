@@ -2,6 +2,8 @@
 "solana_kit_helius": patch
 ---
 
+# Introduce internal JsonReader helper and structured error…
+
 Introduce internal `JsonReader` helper and structured error context for Helius type deserialization.
 
 ## JsonReader

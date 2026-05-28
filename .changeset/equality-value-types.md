@@ -2,6 +2,8 @@
 "solana_kit_transaction_messages": patch
 ---
 
+# Add == and hashCode to public value-type
+
 Add `==` and `hashCode` to public value-type, config, and response classes.
 
 Implements issue #114. All config, request, and response classes in the RPC

@@ -2,6 +2,8 @@
 "solana_kit_rpc_subscriptions_api": major
 ---
 
+# Replace string encoding fields with typed enums in…
+
 Replace string encoding fields with typed enums in subscription notification config classes.
 
 The `encoding` field on `AccountNotificationsConfig`, `BlockNotificationsConfig`, and `ProgramNotificationsConfig` has been changed from `String?` to `AccountEncoding?` or `TransactionEncoding?` respectively. This is a breaking change: callers that previously passed raw strings like `'base64'` or `'jsonParsed'` must now use the corresponding enum values such as `AccountEncoding.base64` or `AccountEncoding.jsonParsed`.

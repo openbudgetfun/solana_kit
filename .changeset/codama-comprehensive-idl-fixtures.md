@@ -2,6 +2,8 @@
 "codama-renderers-dart": patch
 ---
 
+# Add comprehensive Codama IDL acceptance fixtures for SPL…
+
 Add comprehensive Codama IDL acceptance fixtures for SPL Token, Token-2022, and System programs.
 
 Three new Codama JSON IDL fixtures are added under `test/fixtures/`:

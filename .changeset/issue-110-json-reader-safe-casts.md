@@ -4,7 +4,10 @@
 "solana_kit_rpc_types": patch
 ---
 
+# Introduce internal JsonReader helper that replaces unsafe…
+
 Introduce internal `JsonReader` helper that replaces unsafe `.cast<T>()` list
+
 casts and bare `as` casts in all `fromJson` factories with explicit typed
 accessors. Parse errors now surface at construction time via a descriptive
 `FormatException` that includes the field name, rather than deferring until

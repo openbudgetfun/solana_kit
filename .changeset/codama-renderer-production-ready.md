@@ -2,6 +2,8 @@
 "codama-renderers-dart": patch
 ---
 
+# Make codama-renderers-dart production-ready for real…
+
 Make codama-renderers-dart production-ready for real Solana program IDLs.
 
 - Pin upstream SPL Token Codama JSON as acceptance fixture with provenance metadata

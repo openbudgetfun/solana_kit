@@ -5,4 +5,6 @@
 "solana_kit_sysvars": patch
 ---
 
+# Improve handwritten test coverage across RPC
+
 Improve handwritten test coverage across RPC, token, websocket, and sysvar packages.
