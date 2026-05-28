@@ -1,6 +1,6 @@
 name: solana_kit_mpl_bubblegum
 description: mpl-bubblegum (compressed NFT) instruction builders and helpers for the Solana Kit Dart SDK.
-version: 0.2.0
+version: 0.1.0
 repository: https://github.com/openbudgetfun/solana_kit
 homepage: https://openbudgetfun.github.io/solana_kit/
 
