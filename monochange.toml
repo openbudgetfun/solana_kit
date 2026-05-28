@@ -635,9 +635,6 @@ changelog = { path = "CHANGELOG.md" }
 #     placeholder.readme / placeholder.readme_file — default placeholder README
 #                      source inherited by packages during bootstrap publishing
 
-[ecosystem.dart]
-versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
-
 # =============================================================================
 # [lints] — manifest lint configuration
 # =============================================================================
@@ -758,6 +755,7 @@ versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 # auto_merge = false
 
 [ecosystems.dart]
+versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 enabled = true
 publish.enabled = true
 publish.mode = "external"
