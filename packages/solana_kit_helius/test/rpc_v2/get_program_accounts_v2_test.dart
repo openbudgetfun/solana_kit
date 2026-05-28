@@ -48,7 +48,7 @@ void main() {
       });
 
       final helius = createHelius(
-        const HeliusConfig(apiKey: 'test'),
+        HeliusConfig(apiKey: 'test'),
         client: client,
       );
       final result = await helius.rpcV2.getProgramAccountsV2(
@@ -79,7 +79,7 @@ void main() {
       });
 
       final helius = createHelius(
-        const HeliusConfig(apiKey: 'test'),
+        HeliusConfig(apiKey: 'test'),
         client: client,
       );
       final result = await helius.rpcV2.getProgramAccountsV2(

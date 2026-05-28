@@ -1,18 +1,28 @@
+import 'package:solana_kit_helius/src/sensitive_string.dart';
 import 'package:solana_kit_helius/src/types/enums.dart';
 
 /// Configuration for connecting to Helius APIs.
+///
+/// The [apiKey] is wrapped in a [SensitiveString] to prevent accidental
+/// exposure in logs, error messages, or debug output. Use [apiKey] to
+/// access the raw value for legitimate API calls.
 class HeliusConfig {
   /// Creates a new Helius configuration.
   ///
   /// An [apiKey] is required for all Helius operations.
   /// The [cluster] defaults to [HeliusCluster.mainnet].
-  const HeliusConfig({
-    required this.apiKey,
+  HeliusConfig({
+    required String apiKey,
     this.cluster = HeliusCluster.mainnet,
-  });
+  }) : _apiKey = SensitiveString(apiKey);
+
+  final SensitiveString _apiKey;
 
   /// The Helius API key.
-  final String apiKey;
+  ///
+  /// This is the raw key value for use in API calls. For display purposes,
+  /// use [toString] which redacts the key.
+  String get apiKey => _apiKey.value;
 
   /// The Solana cluster to connect to.
   final HeliusCluster cluster;
@@ -44,4 +54,7 @@ class HeliusConfig {
     HeliusCluster.mainnet => 'https://mainnet.helius-rpc.com/?api-key=$apiKey',
     HeliusCluster.devnet => 'https://devnet.helius-rpc.com/?api-key=$apiKey',
   };
+
+  @override
+  String toString() => 'HeliusConfig(apiKey: ${_apiKey.redacted()}, cluster: $cluster)';
 }
