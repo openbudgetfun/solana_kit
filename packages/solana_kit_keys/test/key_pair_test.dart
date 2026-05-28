@@ -211,6 +211,57 @@ void main() {
     });
   });
 
+  group('KeyPair dispose', () {
+    test('isDisposed is false initially', () {
+      final keyPair = generateKeyPair();
+      expect(keyPair.isDisposed, isFalse);
+    });
+
+    test('dispose zeros internal key bytes', () {
+      final keyPair = generateKeyPair();
+      final originalPrivateKey = keyPair.privateKey;
+      final originalPublicKey = keyPair.publicKey;
+
+      // Verify keys are non-zero before dispose.
+      expect(originalPrivateKey.any((b) => b != 0), isTrue);
+      expect(originalPublicKey.any((b) => b != 0), isTrue);
+
+      keyPair.dispose();
+      expect(keyPair.isDisposed, isTrue);
+    });
+
+    test('dispose is idempotent', () {
+      final keyPair = generateKeyPair();
+      // ignore: cascade_invocations
+      keyPair
+        ..dispose()
+        ..dispose(); // Should not throw.
+      expect(keyPair.isDisposed, isTrue);
+    });
+
+    test('privateKey throws StateError after dispose', () {
+      final keyPair = generateKeyPair();
+      // ignore: cascade_invocations
+      keyPair.dispose();
+
+      expect(
+        () => keyPair.privateKey,
+        throwsA(isA<StateError>()),
+      );
+    });
+
+    test('publicKey throws StateError after dispose', () {
+      final keyPair = generateKeyPair();
+      // ignore: cascade_invocations
+      keyPair.dispose();
+
+      expect(
+        () => keyPair.publicKey,
+        throwsA(isA<StateError>()),
+      );
+    });
+  });
+
   group('KeyPair immutability', () {
     test('mutating returned privateKey does not affect internal state', () {
       final keyPair = generateKeyPair();
