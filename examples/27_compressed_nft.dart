@@ -15,6 +15,7 @@ import 'dart:typed_data';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_mpl_bubblegum/solana_kit_mpl_bubblegum.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
+import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_signers/solana_kit_signers.dart';
 
 Future<void> main() async {
