@@ -319,7 +319,7 @@ void _validateWebSocketUrl(
     // the allowInsecureWs flag. This prevents accidental use of
     // insecure WebSocket connections in production.
     const isProduction = bool.fromEnvironment('dart.vm.product');
-    // coverage:ignore-start - unreachable in debug/test mode
+    
     if (isProduction) {
       throw ArgumentError.value(
         url.toString(),
@@ -328,7 +328,7 @@ void _validateWebSocketUrl(
             'Use a wss:// URL instead.',
       );
     }
-    // coverage:ignore-end
+    
     return;
   }
 
