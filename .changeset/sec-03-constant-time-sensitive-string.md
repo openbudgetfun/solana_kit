@@ -2,7 +2,7 @@
 "solana_kit_helius": patch
 ---
 
-# SEC-03
+# Constant-time comparison for sensitive strings
 
 SEC-03: Use constant-time comparison for SensitiveString equality to prevent timing side-channel attacks.
 

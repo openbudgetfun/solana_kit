@@ -2,7 +2,10 @@
 "solana_kit_rpc_subscriptions_api": major
 ---
 
-# Replace string encoding fields with typed enums in…
+# Replace string encodings with typed enums
+
+Replace string encoding fields with typed enums in…
+
 
 Replace string encoding fields with typed enums in subscription notification config classes.
 

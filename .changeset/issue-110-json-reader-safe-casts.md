@@ -4,7 +4,10 @@
 "solana_kit_rpc_types": patch
 ---
 
-# Introduce internal JsonReader helper that replaces unsafe…
+# Replace unsafe .cast() with JsonReader
+
+Introduce internal JsonReader helper that replaces unsafe…
+
 
 Introduce internal `JsonReader` helper that replaces unsafe `.cast<T>()` list
 

@@ -2,7 +2,10 @@
 "codama-renderers-dart": patch
 ---
 
-# Make codama-renderers-dart production-ready for real…
+# Make Codama renderer production-ready
+
+Make codama-renderers-dart production-ready for real…
+
 
 Make codama-renderers-dart production-ready for real Solana program IDLs.
 

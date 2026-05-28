@@ -2,7 +2,7 @@
 "solana_kit_keys": patch
 ---
 
-# SEC-02
+# Zero KeyPair private key memory on GC
 
 SEC-02: Add Finalizer-based memory zeroing for KeyPair private keys.
 

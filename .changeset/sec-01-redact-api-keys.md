@@ -2,7 +2,7 @@
 "solana_kit_helius": patch
 ---
 
-# SEC-01
+# Redact API keys in Helius config output
 
 SEC-01: Redact API keys in `HeliusConfig.toString()` output to prevent accidental exposure in logs, error messages, or debug output.
 

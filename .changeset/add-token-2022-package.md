@@ -2,7 +2,10 @@
 "solana_kit_token_2022": minor
 ---
 
-# Add a generated solana_kit_token_2022 package from the…
+# Add generated Token-2022 package
+
+Add a generated solana_kit_token_2022 package from the…
+
 
 Add a generated `solana_kit_token_2022` package from the upstream Token-2022 Codama IDL, with focused helpers for mint/token sizing and pre-initialize mint extension instructions.
 

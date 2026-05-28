@@ -2,7 +2,10 @@
 "solana_kit_rpc": minor
 ---
 
-# Add typed value convenience methods to SolanaRpcMethods…
+# Add typed value methods to RPC methods
+
+Add typed value convenience methods to SolanaRpcMethods…
+
 
 Add typed value convenience methods to `SolanaRpcMethods` extension
 
