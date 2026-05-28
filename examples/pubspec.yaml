@@ -21,6 +21,7 @@ dependencies:
   solana_kit_helius: ^0.3.1
   solana_kit_instructions: ^0.3.1
   solana_kit_keys: ^0.3.1
+  solana_kit_mpl_bubblegum: ^0.1.0
   solana_kit_offchain_messages: ^0.3.1
   solana_kit_options: ^0.3.1
   solana_kit_rpc: ^0.3.1
@@ -28,9 +29,8 @@ dependencies:
   solana_kit_rpc_subscriptions: ^0.3.1
   solana_kit_rpc_subscriptions_channel_websocket: ^0.3.1
   solana_kit_rpc_types: ^0.3.1
-  solana_kit_mpl_bubblegum: ^0.1.0
-  solana_kit_spl_account_compression: ^0.1.0
   solana_kit_signers: ^0.3.1
+  solana_kit_spl_account_compression: ^0.1.0
   solana_kit_sysvars: ^0.3.1
   solana_kit_transaction_confirmation: ^0.3.1
   solana_kit_transaction_messages: ^0.3.1

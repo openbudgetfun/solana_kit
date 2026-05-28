@@ -49,7 +49,7 @@ void main() {
       try {
         await rpc.getSlot().send();
         surfPoolRunning = true;
-      } on Exception catch (e) {
+      } on Exception catch (_) {
         print('Skipping: SurfPool not running at $_rpcUrl');
         return;
       }
