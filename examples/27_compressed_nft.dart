@@ -225,7 +225,7 @@ Future<void> main() async {
   print('✅ transfer plan created');
 
   // Delegate plan
-  final delegatePlan = getDelegateInstructionPlan(
+  getDelegateInstructionPlan(
     DelegateInput(
       root: List.filled(32, 0),
       dataHash: List.filled(32, 0),
