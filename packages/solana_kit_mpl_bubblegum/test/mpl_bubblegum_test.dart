@@ -80,12 +80,10 @@ void main() {
     test('values list contains all flags', () {
       expect(LeafSchemaV2Flags.values.length, 4);
       expect(LeafSchemaV2Flags.values, contains(LeafSchemaV2Flags.none));
+      expect(LeafSchemaV2Flags.values, contains(LeafSchemaV2Flags.hasCollection));
+      expect(LeafSchemaV2Flags.values, contains(LeafSchemaV2Flags.hasAssetData));
       expect(
-          LeafSchemaV2Flags.values, contains(LeafSchemaV2Flags.hasCollection));
-      expect(
-          LeafSchemaV2Flags.values, contains(LeafSchemaV2Flags.hasAssetData));
-      expect(LeafSchemaV2Flags.values,
-          contains(LeafSchemaV2Flags.hasCollectionAndAssetData));
+          LeafSchemaV2Flags.values, contains(LeafSchemaV2Flags.hasCollectionAndAssetData));
     });
   });
 
@@ -327,5 +325,356 @@ void main() {
     });
   });
 
+  group('MetadataArgsV2 encoder', () {
+    test('encodeMetadataArgsV2 produces valid bytes', () {
+      final bytes = encodeMetadataArgsV2(
+        name: 'Test NFT',
+        symbol: 'TNFT',
+        uri: 'https://example.com/metadata.json',
+        sellerFeeBasisPoints: 500,
+        primarySaleHappened: false,
+        isMutable: true,
+        editionNonce: null,
+        tokenStandard: 0, // NonFungible
+        collection: null,
+        uses: null,
+        tokenProgramVersion: 0, // Original
+        creators: [],
+      );
 
+      // Should produce non-empty bytes
+      expect(bytes.isNotEmpty, isTrue);
+      // Should start with the name length (8 bytes for 'Test NFT')
+      expect(bytes[0], 8); // 'Test NFT'.length = 8
+    });
+
+    test('encodeMetadataArgsV2 with collection', () {
+      final bytes = encodeMetadataArgsV2(
+        name: 'Test NFT',
+        symbol: 'TNFT',
+        uri: 'https://example.com/metadata.json',
+        sellerFeeBasisPoints: 500,
+        primarySaleHappened: false,
+        isMutable: true,
+        editionNonce: null,
+        tokenStandard: 0,
+        collection: const Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'),
+        uses: null,
+        tokenProgramVersion: 0,
+        creators: [],
+      );
+
+      expect(bytes.isNotEmpty, isTrue);
+    });
+
+    test('encodeMetadataArgsV2 with creators', () {
+      final bytes = encodeMetadataArgsV2(
+        name: 'Test NFT',
+        symbol: 'TNFT',
+        uri: 'https://example.com/metadata.json',
+        sellerFeeBasisPoints: 500,
+        primarySaleHappened: false,
+        isMutable: true,
+        editionNonce: null,
+        tokenStandard: 0,
+        collection: null,
+        uses: null,
+        tokenProgramVersion: 0,
+        creators: [
+          const Creator(
+            address: Address('11111111111111111111111111111111'),
+            verified: false,
+            share: 100,
+          ),
+        ],
+      );
+
+      expect(bytes.isNotEmpty, isTrue);
+    });
+
+    test('encodeMetadataArgsV2 includes editionNonce when set', () {
+      final withNonce = encodeMetadataArgsV2(
+        name: 'Test',
+        symbol: '',
+        uri: 'https://example.com',
+        sellerFeeBasisPoints: 0,
+        primarySaleHappened: false,
+        isMutable: true,
+        editionNonce: 42,
+        tokenStandard: 0,
+        collection: null,
+        uses: null,
+        tokenProgramVersion: 0,
+        creators: [],
+      );
+
+      final withoutNonce = encodeMetadataArgsV2(
+        name: 'Test',
+        symbol: '',
+        uri: 'https://example.com',
+        sellerFeeBasisPoints: 0,
+        primarySaleHappened: false,
+        isMutable: true,
+        editionNonce: null,
+        tokenStandard: 0,
+        collection: null,
+        uses: null,
+        tokenProgramVersion: 0,
+        creators: [],
+      );
+
+      // With nonce should include the Some flag byte
+      expect(withNonce.length, greaterThan(withoutNonce.length));
+    });
+  });
+
+  group('Composite helpers', () {
+    group('getBurnInstructionPlan', () {
+      test('returns an InstructionPlan', () {
+        final plan = getBurnInstructionPlan(
+          BurnInput(
+            root: List.filled(32, 0),
+            dataHash: List.filled(32, 0),
+            creatorHash: List.filled(32, 0),
+            nonce: BigInt.zero,
+            index: 0,
+            leafOwner: const Address('11111111111111111111111111111111'),
+            leafDelegate: const Address('11111111111111111111111111111111'),
+            merkleTree: const Address('11111111111111111111111111111111'),
+          ),
+        );
+
+        expect(plan, isNotNull);
+      });
+    });
+
+    group('getCreateTreeInstructionPlan', () {
+      test('returns an InstructionPlan', () {
+        final plan = getCreateTreeInstructionPlan(
+          const CreateTreeInput(
+            merkleTree: Address('11111111111111111111111111111111'),
+            payer: Address('11111111111111111111111111111111'),
+            treeCreator: Address('11111111111111111111111111111111'),
+            maxDepth: 14,
+            maxBufferSize: 64,
+          ),
+        );
+
+        expect(plan, isNotNull);
+      });
+
+      test('supports public tree option', () {
+        final plan = getCreateTreeInstructionPlan(
+          const CreateTreeInput(
+            merkleTree: Address('11111111111111111111111111111111'),
+            payer: Address('11111111111111111111111111111111'),
+            treeCreator: Address('11111111111111111111111111111111'),
+            maxDepth: 14,
+            maxBufferSize: 64,
+            isPublic: true,
+          ),
+        );
+
+        expect(plan, isNotNull);
+      });
+    });
+
+    group('getCreateTreeV2InstructionPlan', () {
+      test('returns an InstructionPlan', () {
+        final plan = getCreateTreeV2InstructionPlan(
+          const CreateTreeV2Input(
+            merkleTree: Address('11111111111111111111111111111111'),
+            payer: Address('11111111111111111111111111111111'),
+            treeCreator: Address('11111111111111111111111111111111'),
+            maxDepth: 14,
+            maxBufferSize: 64,
+          ),
+        );
+
+        expect(plan, isNotNull);
+      });
+
+      test('supports public tree option', () {
+        final plan = getCreateTreeV2InstructionPlan(
+          const CreateTreeV2Input(
+            merkleTree: Address('11111111111111111111111111111111'),
+            payer: Address('11111111111111111111111111111111'),
+            treeCreator: Address('11111111111111111111111111111111'),
+            maxDepth: 14,
+            maxBufferSize: 64,
+            isPublic: true,
+          ),
+        );
+
+        expect(plan, isNotNull);
+      });
+    });
+
+    group('getMintV1InstructionPlan', () {
+      test('returns an InstructionPlan', () {
+        final plan = getMintV1InstructionPlan(
+          const MintV1Input(
+            merkleTree: Address('11111111111111111111111111111111'),
+            leafOwner: Address('11111111111111111111111111111111'),
+            leafDelegate: Address('11111111111111111111111111111111'),
+            payer: Address('11111111111111111111111111111111'),
+            treeDelegate: Address('11111111111111111111111111111111'),
+            name: 'Test NFT',
+            uri: 'https://example.com/metadata.json',
+            creators: [
+              Creator(
+                address: Address('11111111111111111111111111111111'),
+                verified: false,
+                share: 100,
+              ),
+            ],
+          ),
+        );
+
+        expect(plan, isNotNull);
+      });
+    });
+
+    group('getMintV2InstructionPlan', () {
+      test('returns an InstructionPlan', () {
+        final plan = getMintV2InstructionPlan(
+          const MintV2Input(
+            merkleTree: Address('11111111111111111111111111111111'),
+            leafOwner: Address('11111111111111111111111111111111'),
+            leafDelegate: Address('11111111111111111111111111111111'),
+            payer: Address('11111111111111111111111111111111'),
+            treeDelegate: Address('11111111111111111111111111111111'),
+            collectionAuthority: Address('11111111111111111111111111111111'),
+            name: 'Test NFT',
+            uri: 'https://example.com/metadata.json',
+            creators: [
+              Creator(
+                address: Address('11111111111111111111111111111111'),
+                verified: false,
+                share: 100,
+              ),
+            ],
+          ),
+        );
+
+        expect(plan, isNotNull);
+      });
+    });
+
+    group('getMintToCollectionV1InstructionPlan', () {
+      test('returns an InstructionPlan', () {
+        final plan = getMintToCollectionV1InstructionPlan(
+          const MintToCollectionV1Input(
+            merkleTree: Address('11111111111111111111111111111111'),
+            leafOwner: Address('11111111111111111111111111111111'),
+            leafDelegate: Address('11111111111111111111111111111111'),
+            payer: Address('11111111111111111111111111111111'),
+            treeDelegate: Address('11111111111111111111111111111111'),
+            collectionAuthority: Address('11111111111111111111111111111111'),
+            collectionAuthorityRecordPda: Address('11111111111111111111111111111111'),
+            collectionMint: Address('11111111111111111111111111111111'),
+            collectionMetadata: Address('11111111111111111111111111111111'),
+            editionAccount: Address('11111111111111111111111111111111'),
+            name: 'Test NFT',
+            uri: 'https://example.com/metadata.json',
+            creators: [
+              Creator(
+                address: Address('11111111111111111111111111111111'),
+                verified: false,
+                share: 100,
+              ),
+            ],
+          ),
+        );
+
+        expect(plan, isNotNull);
+      });
+    });
+
+    group('getTransferInstructionPlan', () {
+      test('returns an InstructionPlan', () {
+        final plan = getTransferInstructionPlan(
+          TransferInput(
+            root: List.filled(32, 0),
+            dataHash: List.filled(32, 0),
+            creatorHash: List.filled(32, 0),
+            nonce: BigInt.zero,
+            index: 0,
+            leafOwner: const Address('11111111111111111111111111111111'),
+            leafDelegate: const Address('11111111111111111111111111111111'),
+            newLeafOwner: const Address('11111111111111111111111111111111'),
+            merkleTree: const Address('11111111111111111111111111111111'),
+          ),
+        );
+
+        expect(plan, isNotNull);
+      });
+    });
+
+    group('getDelegateInstructionPlan', () {
+      test('returns an InstructionPlan', () {
+        final plan = getDelegateInstructionPlan(
+          DelegateInput(
+            root: List.filled(32, 0),
+            dataHash: List.filled(32, 0),
+            creatorHash: List.filled(32, 0),
+            nonce: BigInt.zero,
+            index: 0,
+            leafOwner: const Address('11111111111111111111111111111111'),
+            previousDelegate: const Address('11111111111111111111111111111111'),
+            newDelegate: const Address('11111111111111111111111111111111'),
+            merkleTree: const Address('11111111111111111111111111111111'),
+          ),
+        );
+
+        expect(plan, isNotNull);
+      });
+    });
+  });
+
+  group('HeliusDasClient', () {
+    test('can be instantiated with a URL', () {
+      const client = HeliusDasClient(
+        rpcUrl: 'https://mainnet.helius-rpc.com/?api-key=test',
+      );
+      expect(client.rpcUrl, 'https://mainnet.helius-rpc.com/?api-key=test');
+    });
+  });
+
+  group('DasApiClient types', () {
+    test('DasAssetProof can be created', () {
+      const proof = DasAssetProof(
+        root: 'root',
+        proof: ['node1', 'node2'],
+        nodeIndex: 0,
+        leaf: 'leaf',
+        treeId: 'tree',
+      );
+      expect(proof.root, 'root');
+      expect(proof.proof.length, 2);
+      expect(proof.nodeIndex, 0);
+    });
+
+    test('DasAsset can be created', () {
+      const asset = DasAsset(
+        id: 'test-id',
+        ownership: DasAssetOwnership(frozen: false, nonTransferable: false),
+        compression: DasAssetCompression(
+          compressed: true,
+          dataHash: 'hash',
+          creatorHash: 'hash',
+          assetHash: 'hash',
+          tree: 'tree',
+          seq: 1,
+          leafId: 0,
+        ),
+        content: null,
+        creators: [],
+        grouping: [],
+      );
+      expect(asset.id, 'test-id');
+      expect(asset.compression.compressed, isTrue);
+      expect(asset.ownership.frozen, isFalse);
+    });
+  });
 }
