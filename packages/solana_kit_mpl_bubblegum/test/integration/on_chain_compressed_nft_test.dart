@@ -42,14 +42,14 @@ void main() {
 
   group('compressed NFT on-chain', () {
     KeyPairSigner? payer;
-    bool surfPoolRunning = false;
+    var surfPoolRunning = false;
 
     setUpAll(() async {
       // Check if SurfPool is running
       try {
         await rpc.getSlot().send();
         surfPoolRunning = true;
-      } catch (e) {
+      } on Exception catch (e) {
         print('Skipping: SurfPool not running at $_rpcUrl');
         return;
       }
