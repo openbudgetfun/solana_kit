@@ -232,13 +232,16 @@ void main() {
 
     test('dispose is idempotent', () {
       final keyPair = generateKeyPair();
-      keyPair.dispose();
-      keyPair.dispose(); // Should not throw.
+      // ignore: cascade_invocations
+      keyPair
+        ..dispose()
+        ..dispose(); // Should not throw.
       expect(keyPair.isDisposed, isTrue);
     });
 
     test('privateKey throws StateError after dispose', () {
       final keyPair = generateKeyPair();
+      // ignore: cascade_invocations
       keyPair.dispose();
 
       expect(
@@ -249,6 +252,7 @@ void main() {
 
     test('publicKey throws StateError after dispose', () {
       final keyPair = generateKeyPair();
+      // ignore: cascade_invocations
       keyPair.dispose();
 
       expect(
