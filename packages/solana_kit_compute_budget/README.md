@@ -1,5 +1,7 @@
 # solana_kit_compute_budget
 
+
+[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_compute_budget)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_compute_budget)
 Compute Budget program client for the
 [Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart SDK.
 

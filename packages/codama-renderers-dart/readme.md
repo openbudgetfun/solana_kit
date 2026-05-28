@@ -1,5 +1,9 @@
 # codama-renderers-dart
 
+[![pub package](https://img.shields.io/pub/v/codama-renderers-dart.svg)](https://pub.dev/packages/codama-renderers-dart)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=codama-renderers-dart)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=codama-renderers-dart)
+
 A [Codama](https://github.com/codama-idl/codama) renderer that generates Dart code targeting the [solana_kit](https://github.com/openbudgetfun/solana_kit) SDK.
 
 Given a Codama IDL (Interface Description Language) describing a Solana program, this renderer produces a complete Dart package with typed account classes, instruction builders, codec functions, error definitions, PDA helpers, and barrel exports.
@@ -9,6 +13,10 @@ Given a Codama IDL (Interface Description Language) describing a Solana program,
 ```bash
 pnpm add codama-renderers-dart
 # or
+
+[![pub package](https://img.shields.io/pub/v/codama-renderers-dart.svg)](https://pub.dev/packages/codama-renderers-dart)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=codama-renderers-dart)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=codama-renderers-dart)
 npm install codama-renderers-dart
 ```
 
@@ -277,18 +285,38 @@ Key source files:
 
 ```bash
 # Install dependencies
+
+[![pub package](https://img.shields.io/pub/v/codama-renderers-dart.svg)](https://pub.dev/packages/codama-renderers-dart)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=codama-renderers-dart)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=codama-renderers-dart)
 pnpm install
 
 # Type check
+
+[![pub package](https://img.shields.io/pub/v/codama-renderers-dart.svg)](https://pub.dev/packages/codama-renderers-dart)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=codama-renderers-dart)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=codama-renderers-dart)
 npx tsc --noEmit
 
 # Run tests
+
+[![pub package](https://img.shields.io/pub/v/codama-renderers-dart.svg)](https://pub.dev/packages/codama-renderers-dart)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=codama-renderers-dart)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=codama-renderers-dart)
 pnpm test
 
 # Watch mode
+
+[![pub package](https://img.shields.io/pub/v/codama-renderers-dart.svg)](https://pub.dev/packages/codama-renderers-dart)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=codama-renderers-dart)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=codama-renderers-dart)
 pnpm test:watch
 
 # Build
+
+[![pub package](https://img.shields.io/pub/v/codama-renderers-dart.svg)](https://pub.dev/packages/codama-renderers-dart)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=codama-renderers-dart)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=codama-renderers-dart)
 pnpm build
 ```
 
