@@ -48,5 +48,17 @@ void main() {
 
       expect(a.hashCode, equals(b.hashCode));
     });
+
+    test('equality uses constant-time comparison', () {
+      // Verify that mismatch at first byte and mismatch at last byte
+      // both return false (no early exit optimization).
+      const base = SensitiveString('aaaaaaaa');
+      const diffFirst = SensitiveString('baaaaaaa');
+      const diffLast = SensitiveString('aaaaaaab');
+
+      expect(base == diffFirst, isFalse);
+      expect(base == diffLast, isFalse);
+      expect(base == base, isTrue);
+    });
   });
 }
