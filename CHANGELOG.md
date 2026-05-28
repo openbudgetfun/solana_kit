@@ -2628,6 +2628,511 @@ Package groups scaffolded:
 - Fragment-based code generation with automatic import tracking
 - Comprehensive test suite with 261 tests
 
+## [0.4.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.4.0) (2026-05-28)
+
+Grouped release for `main`.
+
+### 💥 Breaking Change
+
+#### New package available
+
+_Packages:_ _solana_kit_compute_budget_
+
+Compute Budget program client for the Solana Kit Dart SDK. Provides instruction builders for setting compute unit limits and priorities on Solana transactions.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`fccec7f`](https://github.com/openbudgetfun/solana_kit/commit/fccec7f2c1aba7d58766e43cd9a5201ff2b9621a) · _Last updated in:_ [`3c175c3`](https://github.com/openbudgetfun/solana_kit/commit/3c175c3a852f04df89145f1edc5c458abaab253d)
+
+#### Replace string encoding fields with typed enums in subscription notification config classes.
+
+_Packages:_ _solana_kit_rpc_subscriptions_api_
+
+The `encoding` field on `AccountNotificationsConfig`, `BlockNotificationsConfig`, and `ProgramNotificationsConfig` has been changed from `String?` to `AccountEncoding?` or `TransactionEncoding?` respectively. This is a breaking change: callers that previously passed raw strings like `'base64'` or `'jsonParsed'` must now use the corresponding enum values such as `AccountEncoding.base64` or `AccountEncoding.jsonParsed`.
+
+This aligns the subscriptions API with the same encoding-enum migration applied to the RPC request API, ensuring consistent type safety across both surfaces. The wire format is unchanged — the enums serialize to the same JSON strings — so no server-side compatibility is affected.
+
+Migration example:
+
+```dart
+// Before
+AccountNotificationsConfig(encoding: 'base64')
+// After
+AccountNotificationsConfig(encoding: AccountEncoding.base64)
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`6fd8642`](https://github.com/openbudgetfun/solana_kit/commit/6fd8642354f778981f1ef9b84cdbd611326b680b)
+
+### 🚀 Feature
+
+#### Remove program-specific package exports from the `solana_kit` umbrella package so program clients remain explicit imports.
+
+_Packages:_ _solana_kit_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`8285b34`](https://github.com/openbudgetfun/solana_kit/commit/8285b34dc7b78f04693fc0558b6854a776ad03a2) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add `SolanaAccountClient` as the single implementation layer for `fetchEncodedAccount`, `fetchEncodedAccounts`, `fetchJsonParsedAccount`, and `fetchJsonParsedAccounts`, delegating all RPC calls through typed API methods instead of raw request maps. Extract `FetchAccountConfig` into its own file. Migrate parse helpers from `Map<String, dynamic>` to `Map<String, Object?>`. Switch error construction to the standardized `createSolanaError` and `wrapSolanaError` helpers with `SolanaErrorContextKeys`.
+
+_Packages:_ _solana_kit_accounts_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`6fd8642`](https://github.com/openbudgetfun/solana_kit/commit/6fd8642354f778981f1ef9b84cdbd611326b680b)
+
+#### Re-export `solana_kit_fixed_points` from the umbrella codecs package so callers can access fixed-point codec APIs through the standard `solana_kit_codecs` entrypoint.
+
+_Packages:_ _solana_kit_codecs_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`6fd8642`](https://github.com/openbudgetfun/solana_kit/commit/6fd8642354f778981f1ef9b84cdbd611326b680b)
+
+#### Add Keccak-256 hash function
+
+_Packages:_ _solana_kit_codecs_core_
+
+Adds a pure-Dart Keccak-256 implementation (`keccak256()`) to `solana_kit_codecs_core`. This is the hash function used by the Bubblegum compressed NFT program (not to be confused with SHA3-256, which uses different padding).
+
+Note: Keccak-256 round constants exceed 2^53, so `ignore_for_file: avoid_js_rounded_ints` is applied to the implementation file. This is acceptable because the Solana SDK targets native platforms where `int` is 64-bit.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`fccec7f`](https://github.com/openbudgetfun/solana_kit/commit/fccec7f2c1aba7d58766e43cd9a5201ff2b9621a)
+
+#### Add `solana_kit_compute_budget` package with the full generated+helpers Compute Budget program client. Includes all five instructions (RequestUnits, RequestHeapFrame, SetComputeUnitLimit, SetComputeUnitPrice, SetLoadedAccountsDataSizeLimit), codec round-trip tests, instruction identification, and parsed instruction types.
+
+_Packages:_ _solana_kit_compute_budget_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`3a0e076`](https://github.com/openbudgetfun/solana_kit/commit/3a0e076245cbed19e5015a912edf3bb6fc7e0f0b) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Convert SolanaErrorCode from a static-int abstract class to a Dart enum with a numeric value field, enabling exhaustive switches, type safety, and cleaner API usage.
+
+_Packages:_ _solana_kit_errors_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Deprecate solana_kit_functional; the Pipe extension is now re-exported from solana_kit_transaction_messages and the umbrella package.
+
+_Packages:_ _solana_kit_functional_, _solana_kit_transaction_messages_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add typed value convenience methods to `SolanaRpcMethods` extension
+
+_Packages:_ _solana_kit_rpc_
+
+Five new methods join the existing raw-request helpers on `Rpc`:
+
+- `getAccountInfoValue(address, config)` — returns `PendingRpcRequest<SolanaRpcResponse<Map<String, Object?>?>>`, parsing the JSON-RPC response envelope into a typed `SolanaRpcResponse` wrapper so callers access `.value` and `.context.slot` directly instead of manually navigating the raw map.
+- `getBalanceValue(address, config)` — returns `PendingRpcRequest<SolanaRpcResponse<Lamports>>`, converting the integer balance into a `Lamports` value type.
+- `getLatestBlockhashValue(config)` — returns `PendingRpcRequest<SolanaRpcResponse<LatestBlockhashValue>>`, parsing the blockhash and last-valid-block-height into a structured model.
+- `getMultipleAccounts(addresses, config)` — raw multi-account fetch returning `PendingRpcRequest<Map<String, Object?>>`.
+- `getMultipleAccountsValue(addresses, config)` — typed multi-account fetch returning `PendingRpcRequest<SolanaRpcResponse<List<Map<String, Object?>?>>>`.
+
+Each `*Value` method uses an internal `_mapPendingRpcRequest` adapter that wraps the underlying raw request plan and applies a response parser, keeping the transport and plan plumbing intact. The existing raw methods (`getAccountInfo`, `getBalance`, `getLatestBlockhash`, etc.) remain unchanged, so this is purely additive.
+
+Additionally, the `createSolanaJsonRpcIntegerOverflowError` helper now calls `createSolanaError(...)` instead of the `SolanaError(...)` constructor, and uses `SolanaErrorContextKeys.methodName` and `SolanaErrorContextKeys.path` for standardised context keys. This aligns error construction with the rest of the `solana_kit_errors` surface.
+
+The README code examples have been updated to demonstrate the preferred typed-call pattern (`rpc.getLatestBlockhashValue().send()`) and a new "Preferred Dart path" callout section guides users toward typed helpers before falling back to raw `rpc.request(...)`.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`6fd8642`](https://github.com/openbudgetfun/solana_kit/commit/6fd8642354f778981f1ef9b84cdbd611326b680b)
+
+#### Replace string encoding fields with AccountEncoding, TransactionEncoding, and WireTransactionEncoding enums across RPC API and subscriptions API packages.
+
+_Packages:_ _solana_kit_rpc_api_, _solana_kit_rpc_types_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add `LatestBlockhashValue` model and full `Sol` fixed-point type
+
+_Packages:_ _solana_kit_rpc_types_
+
+**`LatestBlockhashValue`** (`lib/src/latest_blockhash_value.dart`):
+
+A new `@immutable` value class that wraps the two fields returned by `getLatestBlockhash` — a `Blockhash` and a `BigInt lastValidBlockHeight`. This gives downstream callers a typed model instead of navigating a raw `Map` for the latest-blockhash response. The class implements structural equality (`==` / `hashCode`) and a descriptive `toString`.
+
+**`Sol` extension type and helpers** (`lib/src/sol.dart`):
+
+A complete fixed-point SOL representation backed by an exact Lamports `BigInt`:
+
+- `Sol` is an `extension type` implementing both `Lamports` and `Object`, so it interops seamlessly with existing `Lamports`-accepting APIs.
+- `sol(String, {RoundingMode})` parses a decimal SOL string (up to 9 fractional digits) into `Sol`. A `RoundingMode` enum (`strict`, `down`, `up`, `halfUp`) controls behaviour when the input has excess precision.
+- `solToLamports` / `lamportsToSol` provide lossless round-trip conversions.
+- `Sol.toDecimalString()` formats the value back to a human-readable decimal string without trailing zeros.
+- `getSolEncoder()`, `getSolDecoder()`, and `getSolCodec()` produce binary codecs that read/write the underlying 64-bit little-endian Lamports count, matching the on-chain wire format.
+
+Both types are exported from the package barrel (`solana_kit_rpc_types.dart`). The `LatestBlockhashValue` export enables `solana_kit_rpc` to use it in its new typed `getLatestBlockhashValue` method. The `Sol` type adds a long-requested ergonomic layer for displaying and parsing SOL amounts without manual BigInt arithmetic.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`6fd8642`](https://github.com/openbudgetfun/solana_kit/commit/6fd8642354f778981f1ef9b84cdbd611326b680b)
+
+### 📝 Changed
+
+#### Restructure release groups
+
+_Packages:_ _solana_kit_, _solana_kit_accounts_, _solana_kit_addresses_, _solana_kit_codecs_, _solana_kit_codecs_core_, _solana_kit_codecs_data_structures_, _solana_kit_codecs_numbers_, _solana_kit_codecs_strings_, _solana_kit_errors_, _solana_kit_fast_stable_stringify_, _solana_kit_functional_, _solana_kit_instruction_plans_, _solana_kit_instructions_, _solana_kit_keys_, _solana_kit_options_, _solana_kit_program_client_core_, _solana_kit_programs_, _solana_kit_rpc_, _solana_kit_rpc_api_, _solana_kit_rpc_parsed_types_, _solana_kit_rpc_spec_, _solana_kit_rpc_spec_types_, _solana_kit_rpc_subscriptions_, _solana_kit_rpc_subscriptions_api_, _solana_kit_rpc_subscriptions_channel_websocket_, _solana_kit_rpc_transformers_, _solana_kit_rpc_transport_http_, _solana_kit_rpc_types_, _solana_kit_signers_, _solana_kit_subscribable_, _solana_kit_test_matchers_, _solana_kit_transaction_confirmation_, _solana_kit_transaction_messages_, _solana_kit_transactions_
+
+Move program-specific and domain-specific packages out of the main release group into standalone release schedules with independent versioning. Core SDK packages remain synchronized in the main group.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`fccec7f`](https://github.com/openbudgetfun/solana_kit/commit/fccec7f2c1aba7d58766e43cd9a5201ff2b9621a)
+
+### 🐛 Fixed
+
+#### Add per-package coverage badges
+
+_Packages:_ _solana_kit_, _solana_kit_accounts_, _solana_kit_addresses_, _solana_kit_codecs_, _solana_kit_codecs_core_, _solana_kit_codecs_data_structures_, _solana_kit_codecs_numbers_, _solana_kit_codecs_strings_, _solana_kit_compute_budget_, _solana_kit_errors_, _solana_kit_fast_stable_stringify_, _solana_kit_functional_, _solana_kit_instruction_plans_, _solana_kit_instructions_, _solana_kit_keys_, _solana_kit_lints_, _solana_kit_options_, _solana_kit_program_client_core_, _solana_kit_programs_, _solana_kit_rpc_, _solana_kit_rpc_api_, _solana_kit_rpc_parsed_types_, _solana_kit_rpc_spec_, _solana_kit_rpc_spec_types_, _solana_kit_rpc_subscriptions_, _solana_kit_rpc_subscriptions_api_, _solana_kit_rpc_subscriptions_channel_websocket_, _solana_kit_rpc_transformers_, _solana_kit_rpc_transport_http_, _solana_kit_rpc_types_, _solana_kit_signers_, _solana_kit_subscribable_, _solana_kit_test_matchers_, _solana_kit_transaction_confirmation_, _solana_kit_transaction_messages_, _solana_kit_transactions_
+
+Add codecov flags and per-package coverage badges to all package READMEs.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`bed1b1f`](https://github.com/openbudgetfun/solana_kit/commit/bed1b1f1241fa99e2f6c71e7ad5024c1fa42e910)
+
+#### Add integration tests CI job
+
+_Packages:_ _solana_kit_
+
+Add SurfPool integration test CI job and devenv command for running integration tests.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`7983fb5`](https://github.com/openbudgetfun/solana_kit/commit/7983fb5835a8fc4093fab46317f162da76fc47cc)
+
+#### Add Codecov patch coverage and package-level coverage flags for Dart and renderer packages.
+
+_Packages:_ _solana_kit_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`30e1d19`](https://github.com/openbudgetfun/solana_kit/commit/30e1d192192800481fbdc6afa57dc1a1fd255986) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Deploy the docs site from `main` pushes instead of release-tag events so GitHub Pages deployments comply with the repository's `github-pages` environment branch policy.
+
+_Packages:_ _solana_kit_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`8543d72`](https://github.com/openbudgetfun/solana_kit/commit/8543d72c37cef9f94189c4be9209d57863ebcf88) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add shared workspace test fixtures plus risk-tier package coverage gates so high-risk Solana Kit packages stay above 90% line coverage in CI.
+
+_Packages:_ _solana_kit_, _solana_kit_test_matchers_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`ba96efb`](https://github.com/openbudgetfun/solana_kit/commit/ba96efba2e88ada3944ab2a9b0694d18d315a89d) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Expand MDT-backed documentation callouts for preferred Dart paths, compatibility notes, parity status, security guidance, and Android-only Mobile Wallet Adapter platform messaging across the workspace docs and package surfaces.
+
+_Packages:_ _solana_kit_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`53acc17`](https://github.com/openbudgetfun/solana_kit/commit/53acc174471dc42d8f0c6ce92ca9f636754401e9) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Replace dynamic with Object? across lib source files; remaining dynamic usage is only in test matcher API signatures required by the test package.
+
+_Packages:_ _solana_kit_, _solana_kit_rpc_api_, _solana_kit_rpc_types_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`fe249a4`](https://github.com/openbudgetfun/solana_kit/commit/fe249a46e06edf2f4cc924b30c4c463e8ea9a910) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add barrel-file re-export tests for solana_kit and solana_kit_codecs umbrella packages.
+
+_Packages:_ _solana_kit_, _solana_kit_codecs_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Expand per-package coverage thresholds from 5 packages to 26 packages; core packages at 80%+, high-risk at 60%+.
+
+_Packages:_ _solana_kit_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`fe249a4`](https://github.com/openbudgetfun/solana_kit/commit/fe249a46e06edf2f4cc924b30c4c463e8ea9a910) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add integration test directory with basic RPC tests designed for SurfPool local validator; not run in CI automatically.
+
+_Packages:_ _solana_kit_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`fe249a4`](https://github.com/openbudgetfun/solana_kit/commit/fe249a46e06edf2f4cc924b30c4c463e8ea9a910) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Enable public_member_api_docs lint rule with file-level suppressions for incremental backfill.
+
+_Packages:_ _solana_kit_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add a top-level `examples/` directory with 26 standalone Dart example scripts and a README covering addresses, keys, codecs, structs, options, errors, sysvars, offchain messages, transaction building/signing/confirmation, RPC, subscriptions, accounts, Helius DAS/priority-fees, functional pipe, fast-stable-stringify, address comparator, union codecs, and transaction serialisation.
+
+_Packages:_ _solana_kit_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add solana-program/* reference repos to clone:repos with pinned version tracking for all 11 program repos.
+
+_Packages:_ _solana_kit_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`0d394fb`](https://github.com/openbudgetfun/solana_kit/commit/0d394fba231feb79137da5f74a015180a2c13c99) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add a higher-level transaction execution boundary that combines instruction-plan planning, signing, and sending into a single structured outcome, with a signer-based convenience wrapper for common app flows.
+
+_Packages:_ _solana_kit_, _solana_kit_instruction_plans_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`69db7ef`](https://github.com/openbudgetfun/solana_kit/commit/69db7ef8dce81e51e5980c4254a382c76082617c) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add a higher-level Solana account client plus typed RPC response wrappers for common account, balance, blockhash, and multi-account request flows.
+
+_Packages:_ _solana_kit_, _solana_kit_rpc_api_, _solana_kit_rpc_types_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`aa54336`](https://github.com/openbudgetfun/solana_kit/commit/aa54336c1e9a6c4ae5df1adafc1822cfccf342fa) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add an executable upstream parity harness that compares selected Solana Kit Dart behaviors against the tracked `@solana/kit` release in CI and local development.
+
+_Packages:_ _solana_kit_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`bf0f168`](https://github.com/openbudgetfun/solana_kit/commit/bf0f168606f039e9029a4f5c25942e591ef9940d) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Expose the new upstream-compatible convenience surface from the umbrella package. This re-exports the fixed-point helpers, functional helpers, compute-unit estimation helpers, Dart-native client/plugin composition APIs, identity and payer capability interfaces, and slot-tracking stream/reactive-store helpers used to combine an initial RPC value with live subscription updates.
+
+_Packages:_ _solana_kit_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Fix MDT product callout rendering so preferred-path, compatibility, parity, security, and Android-only MWA notes substitute their configured content across synchronized docs.
+
+_Packages:_ _solana_kit_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`a7355ff`](https://github.com/openbudgetfun/solana_kit/commit/a7355ffb6f9227fcf9462cdc1d13608fa3d5242b) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Move reference repo pins out of `devenv.nix` into `config/reference-repos.json`, and teach `clone:repos` to read that config and report repo status.
+
+_Packages:_ _solana_kit_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`731da8d`](https://github.com/openbudgetfun/solana_kit/commit/731da8da45af0a34e66ad9347f19dbcd6b461485) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Re-export byte containment compatibility helpers from the umbrella codecs package so callers can access the @solana/kit 6.9 byte APIs through the expected public entrypoint.
+
+_Packages:_ _solana_kit_codecs_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Align byte containment helpers with upstream behavior for negative offsets and boundary checks, including regression coverage for offset handling.
+
+_Packages:_ _solana_kit_codecs_core_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add strict and explicit UTF-8 null-character decoding controls to `solana_kit_codecs_strings`, while preserving the default `@solana/kit` compatibility behavior that strips decoded null characters.
+
+_Packages:_ _solana_kit_codecs_strings_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`ad3e6ad`](https://github.com/openbudgetfun/solana_kit/commit/ad3e6ad2cef3860dd70c2802650b773a25f3b356) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add the fixed-point helper package that ports @solana/fixed-points APIs, including binary and decimal fixed-point arithmetic, conversions, comparisons, formatting, codecs, parsing helpers, rounding, and raw range utilities.
+
+_Packages:_ _solana_kit_fixed_points_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add upstream 6.9 Solana error codes and messages for transaction account/instruction limit failures, invalid v1 config masks and config value kinds, filesystem write failures, and JSON-RPC errors with BigInt-compatible codes.
+
+_Packages:_ _solana_kit_errors_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add Solana error codes and messages for downstream package features: fixed-point arithmetic (`fixedPoints*`), wallet connectivity (`wallet*`), UTF-8 null-character validation (`codecsStringContainsNullCharacters`), and key-pair grinding/filesystem helpers (`keysInvalidBase58InGrindRegex`, `keysWriteKeyPairUnsupportedEnvironment`).
+
+_Packages:_ _solana_kit_errors_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`6fd8642`](https://github.com/openbudgetfun/solana_kit/commit/6fd8642354f778981f1ef9b84cdbd611326b680b)
+
+#### Document the upstream error-code typo for accountsOneOrMoreAccountsNotFound (32300001) in codes.dart.
+
+_Packages:_ _solana_kit_errors_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add shared Solana error construction helpers and context key conventions, then migrate representative account, RPC, and Helius call sites to preserve structured cause metadata more consistently.
+
+_Packages:_ _solana_kit_errors_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`63778e5`](https://github.com/openbudgetfun/solana_kit/commit/63778e5865705ebf4370427a35466d2d3b2c75b4) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Make transaction planning use version-aware transaction-message size limits, preserve compile-time transaction limit precedence, and retry packing with the correct transaction limit behavior when a plan exceeds Agave packet constraints.
+
+_Packages:_ _solana_kit_instruction_plans_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add structural equality and toString to AccountMeta, AccountLookupMeta, and Instruction
+
+_Packages:_ _solana_kit_instructions_
+
+Implement `operator ==` and `hashCode` on `AccountMeta`, `AccountLookupMeta`, and `Instruction` so these core value types behave correctly in `Set`s, as `Map` keys, and in test assertions using `expect(...)`.
+
+`AccountMeta` compares by `address` and `role`. `AccountLookupMeta` extends that to also compare `addressIndex` and `lookupTableAddress`. `Instruction` compares `programAddress`, and performs deep equality on the `accounts` list and `data` byte buffer.
+
+All three classes also gain a `toString()` override that prints their fields, making debug output and test failure messages far more readable than the default `Instance of ...` representation.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`6fd8642`](https://github.com/openbudgetfun/solana_kit/commit/6fd8642354f778981f1ef9b84cdbd611326b680b)
+
+#### Add key-pair filesystem and grinding compatibility helpers, including writing key pairs to disk with Solana-compatible JSON byte arrays and grinding generated key pairs until they match a predicate.
+
+_Packages:_ _solana_kit_keys_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### SEC-02: Add Finalizer-based memory zeroing for KeyPair private keys.
+
+_Packages:_ _solana_kit_keys_
+
+- Added `Finalizer` that zeros internal key bytes when `KeyPair` is garbage collected
+- Added `dispose()` method to explicitly zero key bytes on demand
+- Added `isDisposed` property to check if `dispose()` has been called
+- `privateKey` and `publicKey` getters now throw `StateError` after `dispose()`
+- Documented limitations of Dart's GC-based finalization
+- 4 new tests covering dispose behavior
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`3c175c3`](https://github.com/openbudgetfun/solana_kit/commit/3c175c3a852f04df89145f1edc5c458abaab253d)
+
+#### Improve handwritten test coverage across RPC, token, websocket, and sysvar packages.
+
+_Packages:_ _solana_kit_rpc_api_, _solana_kit_rpc_subscriptions_channel_websocket_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`68fa2e3`](https://github.com/openbudgetfun/solana_kit/commit/68fa2e39683da95e11b79ec3d45e03624948cbe9) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Expand RPC API test coverage with per-method config/params tests and shared param-builder contract tests.
+
+_Packages:_ _solana_kit_rpc_api_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Introduce internal `JsonReader` helper that replaces unsafe `.cast<T>()` list
+
+_Packages:_ _solana_kit_rpc_api_, _solana_kit_rpc_parsed_types_, _solana_kit_rpc_types_
+
+casts and bare `as` casts in all `fromJson` factories with explicit typed
+accessors. Parse errors now surface at construction time via a descriptive
+`FormatException` that includes the field name, rather than deferring until
+element access. All ten type files (`das_types`, `enhanced_types`, `zk_types`,
+`wallet_types`, `webhook_types`, `rpc_v2_types`, `auth_types`, `staking_types`,
+`priority_fee_types`, `smart_transaction_types`) have been migrated. The public
+API is unchanged.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add == / hashCode / toString to value types across rpc_types, rpc_api, rpc_parsed_types, rpc_spec_types, instructions, transaction_messages, and transaction_confirmation.
+
+_Packages:_ _solana_kit_rpc_api_, _solana_kit_rpc_parsed_types_, _solana_kit_rpc_spec_types_, _solana_kit_rpc_types_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Align sendTransaction and simulateTransaction behavior with upstream 6.9, including preflight metadata defaults, nullable Agave metadata, BigInt JSON-RPC error code handling, and expanded simulation response metadata types.
+
+_Packages:_ _solana_kit_rpc_api_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add Agave v3 parsed vote-account fields and parsing coverage so vote account responses accept the new epoch credit and commission metadata returned by recent validators.
+
+_Packages:_ _solana_kit_rpc_parsed_types_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Document stream-first preference in solana_kit_subscribable and rpc_subscriptions; DataPublisher remains as a compatibility layer.
+
+_Packages:_ _solana_kit_rpc_subscriptions_, _solana_kit_subscribable_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add typed convenience methods for common Solana RPC subscription requests so callers can avoid assembling notification names and params manually.
+
+_Packages:_ _solana_kit_rpc_subscriptions_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`0bb3747`](https://github.com/openbudgetfun/solana_kit/commit/0bb37479312578d167009108206a573555be6156) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add pending RPC subscription reactive-store helpers and typed subscription composition coverage for the upstream 6.9 subscription utility surface.
+
+_Packages:_ _solana_kit_rpc_subscriptions_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### SEC-04: Restrict allowInsecureWs to debug mode only.
+
+_Packages:_ _solana_kit_rpc_subscriptions_channel_websocket_
+
+- In release/profile mode, `ws://` URLs are now always rejected regardless of the `allowInsecureWs` flag
+- Prevents accidental use of insecure WebSocket connections in production
+- Updated documentation to reflect the debug-only behavior
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`f462724`](https://github.com/openbudgetfun/solana_kit/commit/f46272452cbc81021286b10e0e739b27b40c5b5b)
+
+#### SEC-05: Add SSRF protection for WebSocket URLs.
+
+_Packages:_ _solana_kit_rpc_subscriptions_channel_websocket_
+
+- Block connections to private/internal hosts by default (localhost, 10.x, 172.16-31.x, 192.168.x, 169.254.x, fc/fd::)
+- Added `allowPrivateHosts` option to `WebSocketChannelConfig` for local development
+- 5 new SSRF protection tests
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`e77206e`](https://github.com/openbudgetfun/solana_kit/commit/e77206e37c0f793e9dc2b6b1632131b20ef9b959)
+
+#### Add abortable websocket connection behavior and tests so subscription channels can be cancelled consistently with upstream promise abort helpers.
+
+_Packages:_ _solana_kit_rpc_subscriptions_channel_websocket_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add version constant plumbing so the solana-client header includes the package version.
+
+_Packages:_ _solana_kit_rpc_transport_http_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add SOL conversion helpers alongside lamports helpers, keep lamports codecs exported consistently, and cover conversion and formatting behavior with dedicated tests.
+
+_Packages:_ _solana_kit_rpc_types_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Align signer utilities with upstream 6.9 by deduplicating equivalent noop signers, preserving fee-payer signer config when transaction message config changes, supporting key-pair signer grinding helpers, and including useful assertion context for invalid signer-like values.
+
+_Packages:_ _solana_kit_signers_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add the reactive store helper used by slot-tracking RPC/subscription flows, including subscriber notification, initial value, and update coverage.
+
+_Packages:_ _solana_kit_subscribable_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add shared test helpers (FakeRpcTransport, canned responses, fake accounts/signers, test addresses) to solana_kit_test_matchers.
+
+_Packages:_ _solana_kit_test_matchers_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add `==`, `hashCode`, and `toString` to `SignatureStatus` for structural equality support.
+
+_Packages:_ _solana_kit_transaction_confirmation_
+
+`SignatureStatus` now implements value-type equality based on its `confirmationStatus` and `err` fields. This enables correct behavior when using `SignatureStatus` instances in `Set`s, as `Map` keys, and in test assertions that compare expected vs. actual status values.
+
+A `toString` override is also included for readable diagnostics during debugging and test failure output.
+
+This completes the value-semantics initiative (issue #114) for the transaction confirmation package, which was listed in the original scope but omitted from the changeset frontmatter.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`6fd8642`](https://github.com/openbudgetfun/solana_kit/commit/6fd8642354f778981f1ef9b84cdbd611326b680b)
+
+#### Add `==` and `hashCode` to public value-type, config, and response classes.
+
+_Packages:_ _solana_kit_transaction_messages_
+
+Implements issue #114. All config, request, and response classes in the RPC
+layer, as well as core instruction and transaction-message value types, now
+support structural equality. This enables correct use in `Set`s, as `Map` keys,
+and in test assertions.
+
+All affected classes are also annotated with `@immutable` to satisfy the
+`avoid_equals_and_hash_code_on_mutable_classes` lint rule, since every field
+is already `final`.
+
+Packages that did not previously depend on `meta` now declare `meta: any`
+explicitly (`solana_kit_rpc_api`, `solana_kit_transaction_confirmation`,
+`solana_kit_rpc_spec_types`, `solana_kit_rpc_parsed_types`).
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add full transaction message v1 support: v1 config values and masks, compile/encode/decode paths, instruction headers and payloads, compute-unit config helpers, version-aware message limits, value equality for v1 compiled helper types, and regression coverage for static account preservation.
+
+_Packages:_ _solana_kit_transaction_messages_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
+#### Add version-aware transaction size helpers and constants, including Agave 4096-byte v1 limits, legacy packet payload aliases, empty transaction handling, and wire-byte version detection that distinguishes legacy messages from v1 messages.
+
+_Packages:_ _solana_kit_transactions_
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b)
+
 ## 0.3.1 (2026-03-30)
 
 ### Fixes

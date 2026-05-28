@@ -1,6 +1,6 @@
 name: solana_kit_token
 description: SPL Token and Associated Token Account client for the Solana Kit Dart SDK. Generated from the upstream Codama IDL with handwritten ergonomic helpers.
-version: 0.3.1
+version: 0.4.0
 repository: https://github.com/openbudgetfun/solana_kit
 homepage: https://openbudgetfun.github.io/solana_kit/
 
