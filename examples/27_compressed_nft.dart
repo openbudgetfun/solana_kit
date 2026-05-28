@@ -1,10 +1,10 @@
 // ignore_for_file: avoid_print
 /// Example 27: Compressed NFTs with mpl-bubblegum.
 ///
-/// Demonstrates the full compressed NFT workflow:
-///   create tree → mint V1 → transfer → burn.
+/// Demonstrates the compressed NFT instruction builders and helpers.
 ///
-/// ⚠️  Requires a running SurfPool instance at localhost:8899.
+/// ⚠️  Requires a running SurfPool instance at localhost:8899
+///     for on-chain operations (not needed for instruction building demos).
 ///
 /// Run:
 ///   dart examples/27_compressed_nft.dart
@@ -13,15 +13,9 @@ library;
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_mpl_bubblegum/solana_kit_mpl_bubblegum.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
-import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart'
-    hide TransactionVersion;
 import 'package:solana_kit_signers/solana_kit_signers.dart';
-import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
-import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
-import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 
 Future<void> main() async {
   // ── 1. Setup ─────────────────────────────────────────────────────────────
@@ -33,12 +27,12 @@ Future<void> main() async {
   final payer = generateKeyPairSigner();
   print('Payer: ${payer.address.value}');
 
-  // Request airdrop
+  // Request airdrop (requires SurfPool)
   print('Requesting 10 SOL airdrop …');
   await rpc
       .requestAirdrop(
         payer.address,
-        const Lamports(BigInt.from(10000000000)),
+        Lamports(BigInt.from(10000000000)),
       )
       .send();
 
@@ -168,7 +162,7 @@ Future<void> main() async {
   print('\n=== Composite Helpers ===\n');
 
   // Create Tree plan
-  final createTreePlan = getCreateTreeInstructionPlan(
+  getCreateTreeInstructionPlan(
     CreateTreeInput(
       merkleTree: payer.address,
       payer: payer.address,
@@ -180,7 +174,7 @@ Future<void> main() async {
   print('✅ createTree plan created');
 
   // Mint V1 plan
-  final mintPlan = getMintV1InstructionPlan(
+  getMintV1InstructionPlan(
     MintV1Input(
       merkleTree: payer.address,
       leafOwner: payer.address,
@@ -194,7 +188,7 @@ Future<void> main() async {
   print('✅ mintV1 plan created');
 
   // Burn plan
-  final burnPlan = getBurnInstructionPlan(
+  getBurnInstructionPlan(
     BurnInput(
       root: List.filled(32, 0),
       dataHash: List.filled(32, 0),
@@ -209,7 +203,7 @@ Future<void> main() async {
   print('✅ burn plan created');
 
   // Transfer plan
-  final transferPlan = getTransferInstructionPlan(
+  getTransferInstructionPlan(
     TransferInput(
       root: List.filled(32, 0),
       dataHash: List.filled(32, 0),
@@ -259,7 +253,6 @@ Future<void> main() async {
   print('\n=== PDA Derivation ===\n');
 
   // Note: PDA derivation is async and requires the full Ed25519 curve check
-  // This just shows the API exists
   print('Tree Authority PDA: findTreeAuthorityPda(merkleTree: ...) → Future<PDA>');
   print('Leaf Asset ID PDA: findLeafAssetIdPda(merkleTree:, nonce:, index:) → Future<PDA>');
   print('Bubblegum Signer PDA: findBubblegumSignerPda() → Future<PDA>');
