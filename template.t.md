@@ -267,8 +267,8 @@ docs:site:smoke
 
 ## Upstream Compatibility
 
-- Latest supported `@solana/kit` version: `6.5.0`
-- This Dart port tracks upstream APIs and behavior through `v6.5.0`.
+- Latest supported `@solana/kit` version: `6.9.0`
+- This Dart port tracks upstream APIs and behavior through `v6.9.0`.
 
 <!-- {/docsUpstreamCompatibilitySection} -->
 

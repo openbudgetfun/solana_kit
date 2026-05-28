@@ -14,12 +14,12 @@ Documentation website: https://openbudgetfun.github.io/solana_kit/
 
 ## Upstream Compatibility
 
-<!-- {=upstreamSupportSection|replace:"__SOLANA_KIT_VERSION__":"6.5.0"} -->
+<!-- {=upstreamSupportSection|replace:"__SOLANA_KIT_VERSION__":"6.9.0"} -->
 
 ## Upstream Compatibility
 
-- Latest supported `@solana/kit` version: `6.5.0`
-- This Dart port tracks upstream APIs and behavior through `v6.5.0`.
+- Latest supported `@solana/kit` version: `6.9.0`
+- This Dart port tracks upstream APIs and behavior through `v6.9.0`.
 
 <!-- {/upstreamSupportSection} -->
 
@@ -33,11 +33,11 @@ Documentation website: https://openbudgetfun.github.io/solana_kit/
 
 <!-- {/preferredDartPathCalloutSection} -->
 
-<!-- {=parityStatusCalloutSection|replace:"PARITY_STATUS_TOKEN":"The workspace tracks `@solana/kit` `v6.5.0` with executable parity checks for stable, high-signal surfaces such as address/signature behavior, transaction compilation, serialization, and selected error semantics."|replace:"PARITY_NEXT_TOKEN":"When Dart intentionally diverges for safety or ergonomics, the divergence is documented explicitly instead of hidden behind silent compatibility changes."} -->
+<!-- {=parityStatusCalloutSection|replace:"PARITY_STATUS_TOKEN":"The workspace tracks `@solana/kit` `v6.9.0` with executable parity checks for stable, high-signal surfaces such as address/signature behavior, transaction compilation, serialization, and selected error semantics."|replace:"PARITY_NEXT_TOKEN":"When Dart intentionally diverges for safety or ergonomics, the divergence is documented explicitly instead of hidden behind silent compatibility changes."} -->
 
 > **Parity status**
 >
-> The workspace tracks `@solana/kit` `v6.5.0` with executable parity checks for stable, high-signal surfaces such as address/signature behavior, transaction compilation, serialization, and selected error semantics.
+> The workspace tracks `@solana/kit` `v6.9.0` with executable parity checks for stable, high-signal surfaces such as address/signature behavior, transaction compilation, serialization, and selected error semantics.
 >
 > When Dart intentionally diverges for safety or ergonomics, the divergence is documented explicitly instead of hidden behind silent compatibility changes.
 

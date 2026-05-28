@@ -7,8 +7,8 @@ description: How this workspace tracks @solana/kit compatibility.
 
 ## Upstream Compatibility
 
-- Latest supported `@solana/kit` version: `6.5.0`
-- This Dart port tracks upstream APIs and behavior through `v6.5.0`.
+- Latest supported `@solana/kit` version: `6.9.0`
+- This Dart port tracks upstream APIs and behavior through `v6.9.0`.
 
 <!-- {/docsUpstreamCompatibilitySection} -->
 
@@ -37,8 +37,24 @@ The first harness focuses on stable, high-signal surfaces that are cheap to run 
 - address validation and coercion semantics
 - address encoding and derivation helpers
 - signature validation/coercion semantics
-- transaction message compilation and wire serialization
+- signer deduplication and assertion context parity
+- transaction message v1 compilation and wire serialization
+- transaction message v0 compilation and wire serialization
+- transaction size limits (legacy, v0, v1)
+- transaction message size limit version-aware helpers
 - error-code parity for selected invalid inputs
+- JSON-RPC error BigInt code support
+- sendTransaction preflight context defaults
+- simulateTransaction metadata defaults
+- compute-unit helpers (set/limit estimation)
+- SOL/Lamports type helpers
+- reactive store and slot-tracking subscription helpers
+- abortable websocket subscription helpers
+- key-pair writing and grinding helpers
+- fixed-point binary/decimal arithmetic
+- vote-account Agave v3 parsed types
+- client/plugin composition helpers
+- instruction-plan version-aware size compatibility
 
 The harness intentionally does **not** yet cover live RPC behavior, subscription transport timing, mobile-wallet platform adapters, Helius-specific extensions, or stricter Dart-only transaction-construction invariants such as requiring an explicit lifetime before compilation. Those remain tracked separately in the roadmap and issue set.
 
