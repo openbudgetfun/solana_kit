@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('AuthClient.signAuthMessage', () {
     test('returns a non-empty signature', () async {
-      final helius = createHelius(const HeliusConfig(apiKey: 'test'));
+      final helius = createHelius(HeliusConfig(apiKey: 'test'));
       final result = await helius.auth.signAuthMessage(
         const SignAuthMessageRequest(
           message: 'hello',
@@ -15,7 +15,7 @@ void main() {
     });
 
     test('signature is a base64-encoded string', () async {
-      final helius = createHelius(const HeliusConfig(apiKey: 'test'));
+      final helius = createHelius(HeliusConfig(apiKey: 'test'));
       final result = await helius.auth.signAuthMessage(
         const SignAuthMessageRequest(
           message: 'test-message',
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('different messages produce different signatures', () async {
-      final helius = createHelius(const HeliusConfig(apiKey: 'test'));
+      final helius = createHelius(HeliusConfig(apiKey: 'test'));
       final result1 = await helius.auth.signAuthMessage(
         const SignAuthMessageRequest(message: 'message-a', secretKey: 'key'),
       );

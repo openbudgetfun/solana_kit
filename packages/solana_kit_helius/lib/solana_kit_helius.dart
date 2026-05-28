@@ -12,6 +12,7 @@ export 'src/helius_client.dart';
 export 'src/helius_config.dart';
 export 'src/priority_fee/priority_fee_client.dart';
 export 'src/rpc_v2/rpc_v2_client.dart';
+export 'src/sensitive_string.dart';
 export 'src/staking/staking_client.dart';
 export 'src/transactions/transactions_client.dart';
 export 'src/types/auth_types.dart';
