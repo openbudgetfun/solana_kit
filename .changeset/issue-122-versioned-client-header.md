@@ -6,5 +6,4 @@
 
 Add version constant plumbing so the solana-client header…
 
-
 Add version constant plumbing so the solana-client header includes the package version.

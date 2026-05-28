@@ -6,7 +6,6 @@
 
 Add typed value convenience methods to SolanaRpcMethods…
 
-
 Add typed value convenience methods to `SolanaRpcMethods` extension
 
 Five new methods join the existing raw-request helpers on `Rpc`:

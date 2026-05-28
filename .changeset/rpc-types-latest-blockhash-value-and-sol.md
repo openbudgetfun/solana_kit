@@ -6,7 +6,6 @@
 
 Add LatestBlockhashValue model and full Sol fixed-point…
 
-
 Add `LatestBlockhashValue` model and full `Sol` fixed-point type
 
 **`LatestBlockhashValue`** (`lib/src/latest_blockhash_value.dart`):

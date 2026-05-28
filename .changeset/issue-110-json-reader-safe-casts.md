@@ -8,7 +8,6 @@
 
 Introduce internal JsonReader helper that replaces unsafe…
 
-
 Introduce internal `JsonReader` helper that replaces unsafe `.cast<T>()` list
 
 casts and bare `as` casts in all `fromJson` factories with explicit typed
