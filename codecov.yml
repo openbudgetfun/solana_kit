@@ -151,6 +151,12 @@ flags:
   codama_renderers_dart:
     paths:
       - packages/codama-renderers-dart
+  solana_kit_mpl_bubblegum:
+    paths:
+      - packages/solana_kit_mpl_bubblegum
+  solana_kit_spl_account_compression:
+    paths:
+      - packages/solana_kit_spl_account_compression
 
 coverage:
   precision: 2

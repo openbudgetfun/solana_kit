@@ -1,5 +1,9 @@
 # solana_kit_associated_token_account
 
+[![pub package](https://img.shields.io/pub/v/solana_kit_associated_token_account.svg)](https://pub.dev/packages/solana_kit_associated_token_account)
+[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_associated_token_account)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_associated_token_account)
+
 Handwritten Associated Token Account (ATA) client for the Solana Kit Dart SDK.
 
 This package exposes the canonical ATA program address, PDA derivation helpers,
