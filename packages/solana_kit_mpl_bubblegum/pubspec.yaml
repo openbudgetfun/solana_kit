@@ -26,4 +26,11 @@ dependencies:
 
 dev_dependencies:
   solana_kit_lints: ^0.3.1
+  solana_kit_rpc: ^0.3.1
+  solana_kit_rpc_types: ^0.3.1
+  solana_kit_signers: ^0.3.1
+  solana_kit_spl_account_compression: ^0.1.0
+  solana_kit_transaction_confirmation: ^0.3.1
+  solana_kit_transaction_messages: ^0.3.1
+  solana_kit_transactions: ^0.3.1
   test: ^1.25.0
