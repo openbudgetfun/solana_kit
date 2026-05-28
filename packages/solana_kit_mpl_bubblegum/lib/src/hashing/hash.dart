@@ -15,6 +15,7 @@ library;
 import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_mpl_bubblegum/src/utils/bytes.dart';
 
 /// Computes a Keccak-256 hash of the input.
 ///
@@ -41,7 +42,8 @@ Uint8List bubblegumHash(List<Uint8List> input) {
   return keccak256(
     input.fold<Uint8List>(
       Uint8List(0),
-      (acc, chunk) => Uint8List.fromList([...acc, ...chunk]),
+      // ignore: unnecessary_lambdas
+      (acc, chunk) => concatBytes(acc, chunk),
     ),
   );
 }

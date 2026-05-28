@@ -10,15 +10,17 @@ library;
 
 import 'dart:typed_data';
 
+import 'package:meta/meta.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_mpl_bubblegum/src/utils/bytes.dart';
 
 /// The size of a hash node in bytes (Keccak-256 output).
 const nodeSize = 32;
 
 /// A node in the Merkle tree.
+@immutable
 final class _MerkleNode {
-
-  _MerkleNode(this.hash, {this.left, this.right});
+  const _MerkleNode(this.hash, {this.left, this.right});
   final Uint8List hash;
   final _MerkleNode? left;
   final _MerkleNode? right;
@@ -68,11 +70,11 @@ class MerkleTree {
     for (var i = 0; i < proof.length; i++) {
       if ((leafIndex >> i) & 1 == 0) {
         computedHash = keccak256(
-          Uint8List.fromList([...computedHash, ...proof[i]]),
+          concatBytes(computedHash, proof[i]),
         );
       } else {
         computedHash = keccak256(
-          Uint8List.fromList([...proof[i], ...computedHash]),
+          concatBytes(proof[i], computedHash),
         );
       }
     }
@@ -100,9 +102,7 @@ class MerkleTree {
     final emptyNodes = <int, Uint8List>{};
     emptyNodes[0] = Uint8List(nodeSize);
     for (var i = 1; i <= depth; i++) {
-      emptyNodes[i] = keccak256(
-        Uint8List.fromList([...emptyNodes[i - 1]!, ...emptyNodes[i - 1]!]),
-      );
+      emptyNodes[i] = keccak256(concatBytes(emptyNodes[i - 1]!, emptyNodes[i - 1]!));
     }
 
     for (var level = 0; level < depth; level++) {
@@ -141,5 +141,5 @@ Uint8List computeEmptyNode(int level) {
     return Uint8List(nodeSize);
   }
   final child = computeEmptyNode(level - 1);
-  return keccak256(Uint8List.fromList([...child, ...child]));
+  return keccak256(concatBytes(child, child));
 }

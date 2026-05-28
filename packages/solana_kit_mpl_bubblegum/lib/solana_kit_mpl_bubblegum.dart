@@ -65,3 +65,6 @@ export 'src/pda/tree_authority.dart';
 export 'src/program_address.dart';
 // Transfer asset composite helper.
 export 'src/transfer_asset.dart';
+
+// Byte utilities.
+export 'src/utils/bytes.dart';
