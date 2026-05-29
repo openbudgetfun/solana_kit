@@ -4,11 +4,11 @@ after = 0
 
 [exclude]
 patterns = [
-	"AGENTS.md",
-	"docs/agents/**",
-	"**/.dart_tool/**",
-	"**/build/**",
-	"**/coverage/**",
-	"**/.git/**",
+  "AGENTS.md",
+  "docs/agents/**",
+  "**/.dart_tool/**",
+  "**/build/**",
+  "**/coverage/**",
+  "**/.git/**",
 ]
 markdown_codeblocks = true

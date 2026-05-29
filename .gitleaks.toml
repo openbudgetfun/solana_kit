@@ -3,5 +3,5 @@ title = "Gitleaks Configuration"
 [allowlist]
 description = "Allow test fixture data that resembles high-entropy secrets"
 paths = [
-	'''.*_test\.dart$''',
+  '''.*_test\.dart$''',
 ]
