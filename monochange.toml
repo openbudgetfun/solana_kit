@@ -30,7 +30,6 @@ path = "packages/solana_kit_addresses"
 path = "packages/solana_kit_associated_token_account"
 tag = true
 release = false
-versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 
 [package.solana_kit_codecs]
 path = "packages/solana_kit_codecs"
@@ -54,7 +53,6 @@ path = "packages/solana_kit_fixed_points"
 path = "packages/solana_kit_compute_budget"
 tag = true
 release = false
-versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 
 [package.solana_kit_errors]
 path = "packages/solana_kit_errors"
@@ -69,7 +67,6 @@ path = "packages/solana_kit_functional"
 path = "packages/solana_kit_helius"
 tag = true
 release = false
-versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 
 [package.solana_kit_instruction_plans]
 path = "packages/solana_kit_instruction_plans"
@@ -87,19 +84,16 @@ path = "packages/solana_kit_lints"
 path = "packages/solana_kit_mobile_wallet_adapter"
 tag = true
 release = false
-versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 
 [package.solana_kit_mobile_wallet_adapter_protocol]
 path = "packages/solana_kit_mobile_wallet_adapter_protocol"
 tag = true
 release = false
-versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 
 [package.solana_kit_offchain_messages]
 path = "packages/solana_kit_offchain_messages"
 tag = true
 release = false
-versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 
 [package.solana_kit_options]
 path = "packages/solana_kit_options"
@@ -153,13 +147,11 @@ path = "packages/solana_kit_subscribable"
 path = "packages/solana_kit_system"
 tag = true
 release = false
-versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 
 [package.solana_kit_sysvars]
 path = "packages/solana_kit_sysvars"
 tag = true
 release = false
-versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 
 [package.solana_kit_test_matchers]
 path = "packages/solana_kit_test_matchers"
@@ -168,25 +160,21 @@ path = "packages/solana_kit_test_matchers"
 path = "packages/solana_kit_spl_account_compression"
 tag = true
 release = false
-versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 
 [package.solana_kit_mpl_bubblegum]
 path = "packages/solana_kit_mpl_bubblegum"
 tag = true
 release = false
-versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 
 [package.solana_kit_token]
 path = "packages/solana_kit_token"
 tag = true
 release = false
-versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 
 [package.solana_kit_token_2022]
 path = "packages/solana_kit_token_2022"
 tag = true
 release = false
-versioned_files = [{ path = "**/pubspec.yaml", type = "dart" }]
 
 [package.solana_kit_transaction_confirmation]
 path = "packages/solana_kit_transaction_confirmation"
@@ -250,9 +238,6 @@ tag = true
 release = true
 version_format = "primary"
 changelog = { path = "CHANGELOG.md" }
-versioned_files = [
-  { path = "**/pubspec.yaml", type = "dart", fields = ["dependencies", "dev_dependencies"] },
-]
 
 [lints.rules]
 "dart/internal-path-dependency-policy" = "off"
@@ -262,6 +247,9 @@ enabled = true
 publish.enabled = true
 publish.mode = "external"
 publish.registry = "pub_dev"
+versioned_files = [
+  { path = "**/pubspec.yaml", type = "dart", fields = ["dependencies", "dev_dependencies"] },
+]
 
 [ecosystems.npm]
 enabled = true
@@ -319,7 +307,6 @@ inputs = [
 steps = [
   { type = "PrepareRelease", name = "plan release", allow_empty_changesets = true },
   { type = "Command", name = "format with dprint", when = "{{ number_of_changesets > 0 }}", command = "dprint fmt --config dprint.json" },
-  { type = "Command", name = "update dart lockfiles", when = "{{ number_of_changesets > 0 }}", command = "dart pub get" },
   { type = "Command", name = "update flutter lockfiles", when = "{{ number_of_changesets > 0 }}", command = "flutter pub get" },
   { type = "Command", name = "generate pnpm lockfile", when = "{{ number_of_changesets > 0 }}", command = "pnpm install --lockfile-only --no-frozen-lockfile --link-workspace-packages" },
   { type = "CommitRelease", name = "create release commit", when = "{{ number_of_changesets > 0 && inputs.commit }}", inputs = { no_verify = "{{ inputs.no_verify }}", stage_all = true } },
