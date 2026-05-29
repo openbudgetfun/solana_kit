@@ -23,6 +23,7 @@ in
       osv-scanner
       ripgrep
       shfmt
+      taplo
       extra.knope
       extra.mdt
       extra.monochange
