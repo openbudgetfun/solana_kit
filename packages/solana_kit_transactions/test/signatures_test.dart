@@ -2,7 +2,9 @@ import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
+import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
+import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 import 'package:test/test.dart';
 
@@ -258,6 +260,23 @@ void main() {
         );
       },
     );
+
+    test(
+      'returns a Transaction (no lifetime) when the input has no lifetime',
+      () async {
+        final transaction = Transaction(
+          messageBytes: Uint8List.fromList([1, 2, 3]),
+          signatures: {addressA: null},
+        );
+
+        final signed =
+            await partiallySignTransaction([keyPairA], transaction);
+        expect(signed, isA<Transaction>());
+        expect(signed, isNot(isA<TransactionWithLifetime>()));
+        expect(signed.signatures[addressA], isNotNull);
+        expect(signed.signatures[addressA]!.value.length, 64);
+      },
+    );
   });
 
   group('signTransaction', () {
@@ -324,6 +343,111 @@ void main() {
         expect(signed.messageBytes, messageBytes);
       },
     );
+  });
+
+  group('isSendableTransaction', () {
+    test('returns true for a fully signed small transaction', () {
+      final sigA = SignatureBytes(Uint8List(64));
+      final transaction = TransactionWithLifetime(
+        lifetimeConstraint: TransactionBlockhashLifetime(
+          blockhash: '11111111111111111111111111111111',
+          lastValidBlockHeight: BigInt.zero,
+        ),
+        messageBytes: Uint8List.fromList([1, 2, 3]),
+        signatures: {
+          const Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): sigA,
+        },
+      );
+      expect(isSendableTransaction(transaction), isTrue);
+    });
+
+    test('returns false if not fully signed', () {
+      final transaction = TransactionWithLifetime(
+        lifetimeConstraint: TransactionBlockhashLifetime(
+          blockhash: '11111111111111111111111111111111',
+          lastValidBlockHeight: BigInt.zero,
+        ),
+        messageBytes: Uint8List(0),
+        signatures: const {
+          Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): null,
+        },
+      );
+      expect(isSendableTransaction(transaction), isFalse);
+    });
+
+    test('returns false if transaction exceeds size limit', () {
+      final sigA = SignatureBytes(Uint8List(64));
+      final message = const TransactionMessage(
+        version: TransactionVersion.v0,
+      ).copyWith(
+        feePayer: const Address('22222222222222222222222222222222222222222222'),
+        lifetimeConstraint: BlockhashLifetimeConstraint(
+          blockhash: '11111111111111111111111111111111',
+          lastValidBlockHeight: BigInt.zero,
+        ),
+        instructions: [
+          Instruction(
+            data: Uint8List(transactionSizeLimit + 1),
+            programAddress: const Address(
+              '33333333333333333333333333333333333333333333',
+            ),
+          ),
+        ],
+      );
+      final compiled = compileTransaction(message);
+      // Force all signatures to be non-null
+      final signedSigs = <Address, SignatureBytes?>{};
+      for (final entry in compiled.signatures.entries) {
+        signedSigs[entry.key] = sigA;
+      }
+      final signed = TransactionWithLifetime(
+        lifetimeConstraint: compiled.lifetimeConstraint,
+        messageBytes: compiled.messageBytes,
+        signatures: signedSigs,
+      );
+      expect(isSendableTransaction(signed), isFalse);
+    });
+  });
+
+  group('assertIsSendableTransaction', () {
+    test('does not throw for a fully signed small transaction', () {
+      final sigA = SignatureBytes(Uint8List(64));
+      final transaction = TransactionWithLifetime(
+        lifetimeConstraint: TransactionBlockhashLifetime(
+          blockhash: '11111111111111111111111111111111',
+          lastValidBlockHeight: BigInt.zero,
+        ),
+        messageBytes: Uint8List.fromList([1, 2, 3]),
+        signatures: {
+          const Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): sigA,
+        },
+      );
+      expect(
+        () => assertIsSendableTransaction(transaction),
+        returnsNormally,
+      );
+    });
+
+    test('throws if not fully signed', () {
+      final transaction = TransactionWithLifetime(
+        lifetimeConstraint: TransactionBlockhashLifetime(
+          blockhash: '11111111111111111111111111111111',
+          lastValidBlockHeight: BigInt.zero,
+        ),
+        messageBytes: Uint8List(0),
+        signatures: const {
+          Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): null,
+        },
+      );
+      expect(
+        () => assertIsSendableTransaction(transaction),
+        throwsA(isA<SolanaError>().having(
+          (e) => e.code,
+          'code',
+          SolanaErrorCode.transactionSignaturesMissing,
+        )),
+      );
+    });
   });
 
   group('isFullySignedTransaction', () {

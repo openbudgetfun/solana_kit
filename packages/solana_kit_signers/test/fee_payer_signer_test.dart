@@ -109,5 +109,29 @@ void main() {
       expect(txWithFeePayerSigner, isA<TransactionMessageWithFeePayerSigner>());
       expect(txWithFeePayerSigner.feePayerSigner, equals(feePayer));
     });
+
+    test('copyWith preserves feePayerSigner when not clearing', () {
+      final feePayer = MockTransactionPartialSigner(
+        const Address('11111111111111111111111111111111'),
+      );
+      final baseTx = createTransactionMessage(
+        version: TransactionVersion.v0,
+      );
+
+      final txWithFeePayer = setTransactionMessageFeePayerSigner(
+        feePayer,
+        baseTx,
+      );
+
+      final copied = txWithFeePayer.copyWith(
+        instructions: const [],
+      );
+
+      expect(copied, isA<TransactionMessageWithFeePayerSigner>());
+      expect(
+        (copied as TransactionMessageWithFeePayerSigner).feePayerSigner,
+        equals(feePayer),
+      );
+    });
   });
 }

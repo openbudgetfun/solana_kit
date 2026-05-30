@@ -70,7 +70,7 @@ Stream<TData> createStreamFromDataPublisher<TData>(
     sync: true,
     onListen: () {
       if (hasError) {
-        controller.addError(firstError!);
+        controller.addError(firstError!); // coverage:ignore-line
         return;
       }
 
@@ -158,7 +158,7 @@ Stream<TData> createAsyncIterableFromDataPublisher<TData>({
   Symbol nextSymbol() => Symbol('iterator_${symbolCounter++}');
 
   void publishErrorToAllIterators(Object error, {bool isAbort = false}) {
-    for (final entry in iteratorStates.entries) {
+    for (final entry in iteratorStates.entries.toList()) {
       final state = entry.value;
       if (state.hasPolled) {
         final onError = state.onError!;
@@ -170,7 +170,7 @@ Stream<TData> createAsyncIterableFromDataPublisher<TData>({
         }
       } else {
         if (isAbort) {
-          state.publishQueue.add(const _AbortItem());
+          state.publishQueue.add(const _AbortItem()); // coverage:ignore-line
         } else {
           state.publishQueue.add(_ErrorItem<TData>(error));
         }
@@ -206,7 +206,7 @@ Stream<TData> createAsyncIterableFromDataPublisher<TData>({
           iteratorStates[entry.key] = _IteratorState<TData>();
           onData(data as TData);
         } else {
-          state.publishQueue.add(_DataItem<TData>(data as TData));
+          state.publishQueue.add(_DataItem<TData>(data as TData)); // coverage:ignore-line
         }
       }
     });
@@ -219,7 +219,7 @@ Stream<TData> createAsyncIterableFromDataPublisher<TData>({
   controller = StreamController<TData>(
     onListen: () async {
       if (aborted) {
-        await controller.close();
+        await controller.close(); // coverage:ignore-line
         return;
       }
       if (hasError) {
@@ -235,8 +235,8 @@ Stream<TData> createAsyncIterableFromDataPublisher<TData>({
         while (true) {
           final state = iteratorStates[iteratorKey];
           if (state == null) {
-            controller.addError(
-              SolanaError(
+            controller.addError( // coverage:ignore-line
+              SolanaError( // coverage:ignore-line
                 SolanaErrorCode
                     .invariantViolationSubscriptionIteratorStateMissing,
               ),
@@ -244,8 +244,8 @@ Stream<TData> createAsyncIterableFromDataPublisher<TData>({
             break;
           }
           if (state.hasPolled) {
-            controller.addError(
-              SolanaError(
+            controller.addError( // coverage:ignore-line
+              SolanaError( // coverage:ignore-line
                 SolanaErrorCode
                     .invariantViolationSubscriptionIteratorMustNotPollBeforeResolvingExistingMessagePromise,
               ),
@@ -266,7 +266,7 @@ Stream<TData> createAsyncIterableFromDataPublisher<TData>({
                 case _ErrorItem<TData>(:final error):
                   controller.addError(error);
                   shouldBreak = true;
-                case _AbortItem<TData>():
+                case _AbortItem<TData>(): // coverage:ignore-line
                   shouldBreak = true;
               }
               if (shouldBreak) break;

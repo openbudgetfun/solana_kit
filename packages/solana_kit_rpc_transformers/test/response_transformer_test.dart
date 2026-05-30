@@ -243,4 +243,23 @@ void main() {
       expect(result['slot'], BigInt.from(100)); // upcasted to BigInt
     });
   });
+
+  group('allowed numeric value configs', () {
+    test('messageConfig contains expected key paths', () {
+      expect(messageConfig, isNotEmpty);
+      // Verify specific key paths are present.
+      expect(
+        messageConfig,
+        contains(containsAll(['header', 'numReadonlySignedAccounts'])),
+      );
+      expect(
+        messageConfig,
+        contains(containsAll(['header', 'numReadonlyUnsignedAccounts'])),
+      );
+      expect(
+        messageConfig,
+        contains(containsAll(['header', 'numRequiredSignatures'])),
+      );
+    });
+  });
 }

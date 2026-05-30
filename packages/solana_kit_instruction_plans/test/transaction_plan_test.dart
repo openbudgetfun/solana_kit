@@ -467,6 +467,19 @@ void main() {
 
       expect(transformedPlan, isA<SequentialTransactionPlan>());
     });
+
+    test('transforms parallel transaction plans bottom-up', () {
+      final plan = parallelTransactionPlan([createMessage(), createMessage()]);
+      var transformCount = 0;
+      final transformedPlan = transformTransactionPlan(plan, (p) {
+        transformCount++;
+        return p;
+      });
+
+      expect(transformedPlan, isA<ParallelTransactionPlan>());
+      // Bottom-up: 2 singles + 1 parallel = 3 transforms
+      expect(transformCount, 3);
+    });
   });
 
   group('isTransactionPlan', () {

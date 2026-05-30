@@ -92,12 +92,10 @@ String? _stringify(Object? val, bool isArrayProp) {
     return _stringify(val.toJson(), isArrayProp);
   }
 
-  // For other objects, try to encode with jsonEncode
-  try {
-    return jsonEncode(val);
-  } on Object {
-    return isArrayProp ? 'null' : null;
-  }
+  // Note: There is no jsonEncode fallback here because all types that
+  // jsonEncode can handle (Map, List, num, String, bool, null) are
+  // already handled by explicit checks above.
+  return isArrayProp ? 'null' : null;
 }
 
 /// Mixin for objects that implement a `toJson()` method, enabling

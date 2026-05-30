@@ -108,5 +108,32 @@ void main() {
       expect(identical(deduplicatedSigners[0], signerA), isTrue);
       expect(identical(deduplicatedSigners[1], signerB), isTrue);
     });
+    test('getSignerAddress works with MessageModifyingSigner', () {
+      final signer = MockMessageModifyingSigner(
+        const Address('33333333333333333333333333333333'),
+      );
+
+      expect(
+        getSignerAddress(signer),
+        equals(const Address('33333333333333333333333333333333')),
+      );
+    });
+
+    test('getSignerAddress throws for non-signer object', () {
+      expect(
+        () => getSignerAddress('not a signer'),
+        throwsArgumentError,
+      );
+    });
+
+    test('getSignerAddress works with TransactionSendingSigner', () {
+      final signer = MockTransactionSendingSigner(
+        const Address('44444444444444444444444444444444'),
+      );
+      expect(
+        getSignerAddress(signer),
+        equals(const Address('44444444444444444444444444444444')),
+      );
+    });
   });
 }

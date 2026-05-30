@@ -123,5 +123,68 @@ void main() {
       expect(merged.config?.heapSize, 2);
       expect(merged.toString(), contains('config:'));
     });
+
+    test('clears config when merged result is empty and current is not null',
+        () {
+      // Create a message with a non-null but empty config
+      final message = createTransactionMessage(
+        version: TransactionVersion.v1,
+      ).copyWith(
+        config: const V1TransactionConfig(),
+      );
+      // Verify the config is actually set (non-null)
+      expect(message.config, isNotNull);
+
+      final result = setTransactionMessageConfig(
+        const V1TransactionConfig(),
+        message,
+      );
+      // When merged is empty and current is not null, it should clear config
+      expect(result.config, isNull);
+    });
+
+    test('returns original when merged equals current config', () {
+      final message = createTransactionMessage(
+        version: TransactionVersion.v1,
+      ).copyWith(
+        config: const V1TransactionConfig(computeUnitLimit: 100),
+      );
+      final result = setTransactionMessageConfig(
+        const V1TransactionConfig(computeUnitLimit: 100),
+        message,
+      );
+      expect(identical(result, message), isTrue);
+    });
+
+    test('returns original when config is empty and current is null', () {
+      final message = createTransactionMessage(version: TransactionVersion.v1);
+      final result = setTransactionMessageConfig(
+        const V1TransactionConfig(),
+        message,
+      );
+      expect(identical(result, message), isTrue);
+    });
+
+    test('config mask bit check helpers return correct values', () {
+      expect(transactionConfigMaskHasComputeUnitLimit(4), isTrue);
+      expect(transactionConfigMaskHasComputeUnitLimit(0), isFalse);
+      expect(transactionConfigMaskHasLoadedAccountsDataSizeLimit(8), isTrue);
+      expect(transactionConfigMaskHasLoadedAccountsDataSizeLimit(0), isFalse);
+      expect(transactionConfigMaskHasHeapSize(16), isTrue);
+      expect(transactionConfigMaskHasHeapSize(0), isFalse);
+      expect(transactionConfigMaskHasPriorityFee(3), isTrue);
+      expect(transactionConfigMaskHasPriorityFee(0), isFalse);
+    });
+
+    test('raw constructor creates config value with explicit kind', () {
+      const raw = CompiledTransactionConfigValue.raw(kind: 'custom', value: 42);
+      expect(raw.kind, 'custom');
+      expect(raw.value, 42);
+    });
+
+    test('config value equality rejects different type', () {
+      const a = CompiledTransactionConfigValue.u32(1);
+      expect(a, isNot(equals('not a config value')));
+    });
   });
 }

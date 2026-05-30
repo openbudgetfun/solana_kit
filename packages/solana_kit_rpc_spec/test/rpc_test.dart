@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
@@ -134,6 +136,47 @@ void main() {
         expect(payload['params'], [123, 'augmented', 'params']);
         expect(payload['id'], isA<String>());
       });
+    });
+  });
+
+  group('RpcSendOptions', () {
+    test('can be created without arguments', () {
+      const options = RpcSendOptions();
+      expect(options.abortSignal, isNull);
+    });
+
+    test('can be created with an abort signal', () {
+      final completer = Completer<void>();
+      final options = RpcSendOptions(abortSignal: completer.future);
+      expect(options.abortSignal, isNotNull);
+    });
+  });
+
+  group('JsonRpcApiAdapter', () {
+    test('delegates getPlan to the wrapped JsonRpcApi', () {
+      final jsonRpcApi = createJsonRpcApi();
+      final adapter = JsonRpcApiAdapter(jsonRpcApi);
+      final plan = adapter.getPlan('someMethod', [1, 'two']);
+      expect(plan, isNotNull);
+      expect(plan.execute, isA<Function>());
+    });
+
+    test('returns a plan that can be executed', () async {
+      late RpcTransportConfig capturedConfig;
+      Future<Object?> transport(RpcTransportConfig config) async {
+        capturedConfig = config;
+        return null;
+      }
+
+      final jsonRpcApi = createJsonRpcApi();
+      final adapter = JsonRpcApiAdapter(jsonRpcApi);
+      final plan = adapter.getPlan('testMethod', ['param1']);
+
+      await plan.execute(RpcPlanExecuteConfig(transport: transport));
+      final payload =
+          capturedConfig.payload! as Map<String, Object?>;
+      expect(payload['method'], 'testMethod');
+      expect(payload['params'], ['param1']);
     });
   });
 }

@@ -1,4 +1,5 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart';
@@ -7,8 +8,48 @@ import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:test/test.dart';
 
 void main() {
+  const testAddress = Address('11111111111111111111111111111111');
+
+  group('createSolanaRpc', () {
+    test('returns an Rpc instance with api and transport', () {
+      final rpc = createSolanaRpc(
+        url: 'https://api.devnet.solana.com',
+      );
+      expect(rpc, isA<Rpc>());
+      expect(rpc.api, isNotNull);
+      expect(rpc.transport, isNotNull);
+    });
+
+    test('allows http URLs when allowInsecureHttp is true', () {
+      final rpc = createSolanaRpc(
+        url: 'http://localhost:8899',
+        allowInsecureHttp: true,
+      );
+      expect(rpc, isA<Rpc>());
+    });
+  });
+
+  group('defaultRpcConfig', () {
+    test('onIntegerOverflow throws SolanaError on BigInt overflow', () {
+      final rpc = createSolanaRpcFromTransport((config) async => null);
+
+      expect(
+        () => rpc.requestAirdrop(
+          testAddress,
+          Lamports(BigInt.parse('9007199254740992')),
+        ),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.rpcIntegerOverflow,
+          ),
+        ),
+      );
+    });
+  });
+
   group('SolanaRpcMethods', () {
-    const testAddress = Address('11111111111111111111111111111111');
     const testSignature = Signature('test-signature');
 
     test('getAccountInfo sends method-specific params', () async {
@@ -338,6 +379,29 @@ void main() {
       expect(params[1], anyOf(BigInt.from(5000), 5000));
       expect(params[2], {'commitment': 'confirmed'});
       expect(response.result, 'airdrop-signature');
+    });
+
+    test('getAccountInfoValue handles non-Map result gracefully', () async {
+      final response = await _captureCall(
+        (rpc) => rpc.getAccountInfoValue(testAddress).send(),
+        rpcResult: null,
+      );
+
+      expect(response.result.value, isNull);
+      expect(response.result.context.slot, BigInt.zero);
+    });
+
+    test('getAccountInfoValue handles result with non-Map context', () async {
+      final response = await _captureCall(
+        (rpc) => rpc.getAccountInfoValue(testAddress).send(),
+        rpcResult: {
+          'context': 'not-a-map',
+          'value': null,
+        },
+      );
+
+      expect(response.result.value, isNull);
+      expect(response.result.context.slot, BigInt.zero);
     });
 
     test('sendTransaction returns transaction signature', () async {

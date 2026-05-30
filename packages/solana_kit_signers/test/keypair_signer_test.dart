@@ -6,6 +6,8 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_signers/solana_kit_signers.dart';
+import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
+import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -182,6 +184,40 @@ void main() {
         ),
         throwsUnsupportedError,
       );
+
+    });
+  });
+  group('KeyPairSigner.signTransactions', () {
+    test('signs transactions using the key pair', () async {
+      final signer = generateKeyPairSigner();
+      // Create a minimal transaction message and compile it.
+      var message = TransactionMessage(
+        version: TransactionVersion.v0,
+        feePayer: signer.address,
+        instructions: [],
+      );
+      message = setTransactionMessageLifetimeUsingBlockhash(
+        BlockhashLifetimeConstraint(
+          blockhash: 'Ep1Aq1hQ8oZ1FMd94KxvFSTiigHmGF4iYwYkiigZcKhB',
+          lastValidBlockHeight: BigInt.from(42),
+        ),
+        message,
+      );
+      final compiled = compileTransaction(message);
+      final transaction = Transaction(
+        messageBytes: compiled.messageBytes,
+        signatures: {signer.address: null},
+      );
+
+      final signatureDictionaries =
+          await signer.signTransactions([transaction]);
+
+      expect(signatureDictionaries, hasLength(1));
+      expect(
+        signatureDictionaries[0].containsKey(signer.address),
+        isTrue,
+      );
+      expect(signatureDictionaries[0][signer.address], isNotNull);
     });
   });
 

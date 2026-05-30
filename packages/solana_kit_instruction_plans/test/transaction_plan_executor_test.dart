@@ -189,6 +189,39 @@ void main() {
         );
       }
     });
+
+    test('returns canceled result when execution is already canceled',
+        () async {
+      final messageA = createMessage();
+      final messageB = createMessage();
+      var callCount = 0;
+
+      final executor = createTransactionPlanExecutor(
+        TransactionPlanExecutorConfig(
+          executeTransactionMessage: (context, msg) async {
+            callCount++;
+            if (callCount == 1) {
+              throw Exception('first transaction failed');
+            }
+            return Signature('sig'.padRight(64, '0')).toString();
+          },
+        ),
+      );
+
+      // Execute a sequential plan where the first fails.
+      // The second should be canceled.
+      final plan = sequentialTransactionPlan([messageA, messageB]);
+
+      try {
+        await executor(plan);
+        fail('Expected SolanaError');
+      } on SolanaError catch (_) {
+        // Expected
+      }
+
+      // Only 1 call should have been made (second was canceled).
+      expect(callCount, 1);
+    });
   });
 
   group('TransactionPlanExecutorConfig', () {

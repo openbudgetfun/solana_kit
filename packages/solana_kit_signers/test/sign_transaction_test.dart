@@ -177,5 +177,97 @@ void main() {
         ),
       );
     });
+
+    test('throws when config is aborted before sending', () async {
+      final signerA = MockTransactionPartialSigner(_addressA);
+      final signerB = MockTransactionSendingSigner(_addressB);
+      final transactionMessage = createMockTransactionMessageWithSigners([
+        signerA,
+        signerB,
+      ]);
+
+      signerA.signTransactionsMock = (transactions, config) async {
+        return transactions.map((_) {
+          return <Address, SignatureBytes>{
+            _addressA: SignatureBytes(Uint8List.fromList(List.filled(64, 1))),
+          };
+        }).toList();
+      };
+
+      // Config that starts aborted.
+      const config = TransactionSignerConfig(aborted: true);
+
+      await expectLater(
+        () => signAndSendTransactionMessageWithSigners(
+          transactionMessage,
+          config,
+        ),
+        throwsStateError,
+      );
+    });
+
+    test(
+      'prefers sending-only signer over composite sending+partial signer',
+      () async {
+        // signerA is pure sending signer (no other interfaces).
+        final signerA = MockTransactionSendingSigner(_addressA);
+        // signerB is composite sending+partial.
+        final signerB = MockTransactionSendingPartialSigner(_addressB);
+        final transactionMessage = createMockTransactionMessageWithSigners([
+          signerA,
+          signerB,
+        ]);
+
+        final expectedSignature = SignatureBytes(
+          Uint8List.fromList([1, 2, 3, ...List.filled(61, 0)]),
+        );
+        signerA.signAndSendTransactionsMock = (transactions, config) async {
+          return [expectedSignature];
+        };
+
+        final transactionSignature =
+            await signAndSendTransactionMessageWithSigners(
+          transactionMessage,
+        );
+
+        expect(transactionSignature.value, equals(expectedSignature.value));
+      },
+    );
+
+    test(
+      'uses composite signer as modifying signer when it is the only one',
+      () async {
+        // signerA implements all three interfaces.
+        final signerA = MockTransactionCompositeSigner(_addressA);
+        final transactionMessage = createMockTransactionMessageWithSigners([
+          signerA,
+        ]);
+
+        signerA.modifyAndSignTransactionsMock = (transactions, config) async {
+          return transactions.map((tx) {
+            return Transaction(
+              messageBytes: tx.messageBytes,
+              signatures: <Address, SignatureBytes?>{
+                _addressA: SignatureBytes(Uint8List.fromList(List.filled(64, 1))),
+              },
+            );
+          }).toList();
+        };
+
+        final expectedSignature = SignatureBytes(
+          Uint8List.fromList([1, 2, 3, ...List.filled(61, 0)]),
+        );
+        signerA.signAndSendTransactionsMock = (transactions, config) async {
+          return [expectedSignature];
+        };
+
+        final transactionSignature =
+            await signAndSendTransactionMessageWithSigners(
+          transactionMessage,
+        );
+
+        expect(transactionSignature.value, equals(expectedSignature.value));
+      },
+    );
   });
 }

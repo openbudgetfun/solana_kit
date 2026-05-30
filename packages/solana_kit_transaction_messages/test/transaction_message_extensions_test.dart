@@ -64,5 +64,17 @@ void main() {
         isTrue,
       );
     });
+
+    test('prependInstructions appends multiple instructions', () {
+      final message = createTransactionMessage(version: TransactionVersion.v0)
+          .prependInstructions([
+        const Instruction(programAddress: programA),
+        const Instruction(programAddress: programB),
+      ]);
+
+      expect(message.instructions.length, 2);
+      expect(message.instructions[0].programAddress, programA);
+      expect(message.instructions[1].programAddress, programB);
+    });
   });
 }

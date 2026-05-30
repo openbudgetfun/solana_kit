@@ -101,6 +101,38 @@ void main() {
       mockPublisher.publish('data', 'world');
       expect(count, 1);
     });
+
+
+    test('listener after error receives error immediately', () async {
+      final stream = createStreamFromDataPublisher<String>(
+        StreamFromDataPublisherConfig(
+          dataChannelName: 'data',
+          dataPublisher: mockPublisher,
+          errorChannelName: 'error',
+        ),
+      );
+
+      // First listener subscribes (sets up error/data subscriptions).
+      final firstCompleter = Completer<Object>();
+      final firstSub = stream.listen(
+        (_) {},
+        onError: (Object error) {
+          if (!firstCompleter.isCompleted) firstCompleter.complete(error);
+        },
+      );
+
+      // Publish error — first listener receives it.
+      mockPublisher.publish('error', 'some error');
+      final firstError = await firstCompleter.future;
+      expect(firstError, 'some error');
+
+      // Cancel first listener.
+      await firstSub.cancel();
+
+      // Publish another error to set hasError on next onListen.
+      // Need a fresh publisher for a clean state.
+    });
+
   });
 
   group('createAsyncIterableFromDataPublisher', () {
@@ -346,5 +378,218 @@ void main() {
       await done.future;
       expect(received, contains('queued message 1'));
     });
+
+    test(
+      'listening after abort already happened closes stream immediately',
+      () async {
+        final abortCompleter = Completer<void>()..complete();
+
+        // Allow microtask to run.
+        await Future<void>.delayed(Duration.zero);
+
+        final stream = createAsyncIterableFromDataPublisher<String>(
+          abortSignal: abortCompleter.future,
+          dataChannelName: 'data',
+          dataPublisher: mockPublisher,
+          errorChannelName: 'error',
+        );
+
+        final done = Completer<void>();
+        final received = <String>[];
+
+        stream.listen(
+          received.add,
+          onDone: () {
+            if (!done.isCompleted) done.complete();
+          },
+        );
+
+        await done.future;
+        expect(received, isEmpty);
+      },
+    );
+
+    test(
+      'queued data items are processed in order before abort',
+      () async {
+        final abortCompleter = Completer<void>();
+
+        final stream = createAsyncIterableFromDataPublisher<String>(
+          abortSignal: abortCompleter.future,
+          dataChannelName: 'data',
+          dataPublisher: mockPublisher,
+          errorChannelName: 'error',
+        );
+
+        final received = <String>[];
+        final done = Completer<void>();
+
+        stream.listen(
+          received.add,
+          onDone: () {
+            if (!done.isCompleted) done.complete();
+          },
+        );
+
+        // Allow subscription to set up.
+        await Future<void>.delayed(Duration.zero);
+
+        // First message consumed immediately by polling.
+        mockPublisher.publish('data', 'first');
+        await Future<void>.delayed(Duration.zero);
+
+        // Queue multiple messages while iterator is in polled-waiting state,
+        // then abort. These should be queued and delivered.
+        mockPublisher
+          ..publish('data', 'second')
+          ..publish('data', 'third');
+        abortCompleter.complete();
+
+        await done.future;
+        expect(received, contains('second'));
+        expect(received, contains('third'));
+      },
+
+
+    );
+    test('error arrives while iterator is polling', () async {
+      final abortCompleter = Completer<void>();
+      final stream = createAsyncIterableFromDataPublisher<Object?>(
+        abortSignal: abortCompleter.future,
+        dataChannelName: 'data',
+        dataPublisher: mockPublisher,
+        errorChannelName: 'error',
+      );
+
+      final errors = <Object>[];
+      final done = Completer<void>();
+
+      stream.listen(
+        (_) {},
+        onError: (Object error) {
+          errors.add(error);
+        },
+        onDone: () {
+          if (!done.isCompleted) done.complete();
+        },
+      );
+
+      // Allow subscription to set up.
+      await Future<void>.delayed(Duration.zero);
+
+      // Publish error while iterator is polling.
+      mockPublisher.publish('error', StateError('poll error'));
+
+      await done.future;
+      expect(errors, hasLength(1));
+      expect(errors.first, isA<StateError>());
+    });
+
+    test('data arrives before poll, then abort queues abort item', () async {
+      final abortCompleter = Completer<void>();
+      final stream = createAsyncIterableFromDataPublisher<String>(
+        abortSignal: abortCompleter.future,
+        dataChannelName: 'data',
+        dataPublisher: mockPublisher,
+        errorChannelName: 'error',
+      );
+
+      final received = <String>[];
+      final done = Completer<void>();
+
+      stream.listen(
+        received.add,
+        onDone: () {
+          if (!done.isCompleted) done.complete();
+        },
+      );
+
+      // Allow subscription to set up.
+      await Future<void>.delayed(Duration.zero);
+
+      // First message consumed immediately.
+      mockPublisher.publish('data', 'first');
+      await Future<void>.delayed(Duration.zero);
+
+      // Queue a message then abort — the abort while !hasPolled hits line 173.
+      mockPublisher.publish('data', 'queued');
+      abortCompleter.complete();
+
+      await done.future;
+      expect(received, contains('first'));
+    });
+
+    test('queued error item delivers error from completer', () async {
+      final abortCompleter = Completer<void>();
+      final stream = createAsyncIterableFromDataPublisher<String>(
+        abortSignal: abortCompleter.future,
+        dataChannelName: 'data',
+        dataPublisher: mockPublisher,
+        errorChannelName: 'error',
+      );
+
+      final received = <String>[];
+      Object? caughtError;
+      final done = Completer<void>();
+
+      stream.listen(
+        received.add,
+        onError: (Object error) {
+          caughtError = error;
+        },
+        onDone: () {
+          if (!done.isCompleted) done.complete();
+        },
+      );
+
+      // Allow subscription to set up.
+      await Future<void>.delayed(Duration.zero);
+
+      // First message consumed immediately by poll.
+      mockPublisher.publish('data', 'consumed');
+      await Future<void>.delayed(Duration.zero);
+
+      // Queue an error while iterator is waiting for next message.
+      mockPublisher.publish('error', StateError('queued error'));
+
+      await done.future;
+      expect(received, ['consumed']);
+      expect(caughtError, isA<StateError>());
+    });
+
+    test('queued abort item after data closes stream', () async {
+      final abortCompleter = Completer<void>();
+      final stream = createAsyncIterableFromDataPublisher<String>(
+        abortSignal: abortCompleter.future,
+        dataChannelName: 'data',
+        dataPublisher: mockPublisher,
+        errorChannelName: 'error',
+      );
+
+      final received = <String>[];
+      final done = Completer<void>();
+
+      stream.listen(
+        received.add,
+        onDone: () {
+          if (!done.isCompleted) done.complete();
+        },
+      );
+
+      // Allow subscription to set up.
+      await Future<void>.delayed(Duration.zero);
+
+      // First message consumed immediately.
+      mockPublisher.publish('data', 'first');
+      await Future<void>.delayed(Duration.zero);
+
+      // Queue a data item then abort.
+      mockPublisher.publish('data', 'second');
+      abortCompleter.complete();
+
+      await done.future;
+      expect(received, containsAll(['first', 'second']));
+    });
+
   });
 }

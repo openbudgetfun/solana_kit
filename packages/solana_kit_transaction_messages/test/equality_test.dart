@@ -63,6 +63,14 @@ void main() {
     test('not equal to a different type', () {
       expect(a, isNot(equals('abc')));
     });
+
+    test('toString returns formatted string', () {
+      final str = a.toString();
+      expect(str, contains('DurableNonceConfig'));
+      expect(str, contains('nonce: abc'));
+      expect(str, contains('nonceAccountAddress:'));
+      expect(str, contains('nonceAuthorityAddress:'));
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -192,6 +200,215 @@ void main() {
 
     test('not equal to a different type', () {
       expect(base, isNot(equals('not a TransactionMessage')));
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // DurableNonceLifetimeConstraint
+  // ---------------------------------------------------------------------------
+  group('DurableNonceLifetimeConstraint equality', () {
+    test('equal when nonce matches', () {
+      const a = DurableNonceLifetimeConstraint(nonce: 'abc');
+      const b = DurableNonceLifetimeConstraint(nonce: 'abc');
+      expect(a, equals(b));
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('not equal when nonce differs', () {
+      const a = DurableNonceLifetimeConstraint(nonce: 'abc');
+      const b = DurableNonceLifetimeConstraint(nonce: 'xyz');
+      expect(a, isNot(equals(b)));
+    });
+
+    test('identical instance equals itself', () {
+      const a = DurableNonceLifetimeConstraint(nonce: 'abc');
+      expect(a, equals(a));
+    });
+
+    test('not equal to a different type', () {
+      const a = DurableNonceLifetimeConstraint(nonce: 'abc');
+      expect(a, isNot(equals('abc')));
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // CompiledInstruction
+  // ---------------------------------------------------------------------------
+  group('CompiledInstruction equality', () {
+    test('equal when all fields match', () {
+      const a = CompiledInstruction(
+        programAddressIndex: 1,
+        accountIndices: [2, 3],
+      );
+      const b = CompiledInstruction(
+        programAddressIndex: 1,
+        accountIndices: [2, 3],
+      );
+      expect(a, equals(b));
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('not equal when programAddressIndex differs', () {
+      const a = CompiledInstruction(programAddressIndex: 1);
+      const b = CompiledInstruction(programAddressIndex: 2);
+      expect(a, isNot(equals(b)));
+    });
+
+    test('not equal when accountIndices differ', () {
+      const a = CompiledInstruction(
+        programAddressIndex: 1,
+        accountIndices: [2],
+      );
+      const b = CompiledInstruction(
+        programAddressIndex: 1,
+        accountIndices: [3],
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('not equal when one has null accountIndices', () {
+      const a = CompiledInstruction(programAddressIndex: 1);
+      const b = CompiledInstruction(
+        programAddressIndex: 1,
+        accountIndices: [2],
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('not equal to a different type', () {
+      const a = CompiledInstruction(programAddressIndex: 1);
+      expect(a, isNot(equals('not an instruction')));
+    });
+
+    test('equal with null data', () {
+      const a = CompiledInstruction(programAddressIndex: 1);
+      const b = CompiledInstruction(programAddressIndex: 1);
+      expect(a, equals(b));
+      expect(a.hashCode, b.hashCode);
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // AddressTableLookup
+  // ---------------------------------------------------------------------------
+  group('AddressTableLookup equality', () {
+    test('equal when all fields match', () {
+      const a = AddressTableLookup(
+        lookupTableAddress: Address('11111111111111111111111111111111'),
+        writableIndexes: [0, 1],
+        readonlyIndexes: [2],
+      );
+      const b = AddressTableLookup(
+        lookupTableAddress: Address('11111111111111111111111111111111'),
+        writableIndexes: [0, 1],
+        readonlyIndexes: [2],
+      );
+      expect(a, equals(b));
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('not equal when lookupTableAddress differs', () {
+      const a = AddressTableLookup(
+        lookupTableAddress: Address('11111111111111111111111111111111'),
+        writableIndexes: [0],
+        readonlyIndexes: [],
+      );
+      const b = AddressTableLookup(
+        lookupTableAddress: Address('22222222222222222222222222222222'),
+        writableIndexes: [0],
+        readonlyIndexes: [],
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('not equal when writableIndexes differ', () {
+      const a = AddressTableLookup(
+        lookupTableAddress: Address('11111111111111111111111111111111'),
+        writableIndexes: [0],
+        readonlyIndexes: [],
+      );
+      const b = AddressTableLookup(
+        lookupTableAddress: Address('11111111111111111111111111111111'),
+        writableIndexes: [1],
+        readonlyIndexes: [],
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('not equal when readonlyIndexes differ', () {
+      const a = AddressTableLookup(
+        lookupTableAddress: Address('11111111111111111111111111111111'),
+        writableIndexes: [],
+        readonlyIndexes: [0],
+      );
+      const b = AddressTableLookup(
+        lookupTableAddress: Address('11111111111111111111111111111111'),
+        writableIndexes: [],
+        readonlyIndexes: [1],
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('not equal to a different type', () {
+      const a = AddressTableLookup(
+        lookupTableAddress: Address('11111111111111111111111111111111'),
+        writableIndexes: [],
+        readonlyIndexes: [],
+      );
+      expect(a, isNot(equals('not a lookup')));
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // V1InstructionHeader
+  // ---------------------------------------------------------------------------
+  group('V1InstructionHeader inequality', () {
+    test('not equal when programAccountIndex differs', () {
+      const a = V1InstructionHeader(
+        programAccountIndex: 1,
+        numInstructionAccounts: 2,
+        numInstructionDataBytes: 3,
+      );
+      const b = V1InstructionHeader(
+        programAccountIndex: 2,
+        numInstructionAccounts: 2,
+        numInstructionDataBytes: 3,
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('not equal to a different type', () {
+      const a = V1InstructionHeader(
+        programAccountIndex: 1,
+        numInstructionAccounts: 2,
+        numInstructionDataBytes: 3,
+      );
+      expect(a, isNot(equals('not a header')));
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // V1InstructionPayload
+  // ---------------------------------------------------------------------------
+  group('V1InstructionPayload inequality', () {
+    test('not equal when instructionData differs', () {
+      final a = V1InstructionPayload(
+        instructionAccountIndices: const [1],
+        instructionData: Uint8List.fromList([1, 2]),
+      );
+      final b = V1InstructionPayload(
+        instructionAccountIndices: const [1],
+        instructionData: Uint8List.fromList([3, 4]),
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('not equal to a different type', () {
+      final a = V1InstructionPayload(
+        instructionAccountIndices: const [1],
+        instructionData: Uint8List.fromList([1]),
+      );
+      expect(a, isNot(equals('not a payload')));
     });
   });
 }

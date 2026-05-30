@@ -165,6 +165,56 @@ void main() {
       final bytesC = mappedCodec.encode((42, 'Hello world'));
       expect(mappedCodec.decode(bytesC), equals((42, 'xxxxxxxxxxx')));
     });
+
+    test('transformCodec with VariableSizeCodec without map', () {
+      final variableCodec = VariableSizeCodec<String, int>(
+        getSizeFromValue: (value) => value.length,
+        write: (value, bytes, offset) {
+          for (var i = 0; i < value.length; i++) {
+            bytes[offset + i] = value.codeUnitAt(i);
+          }
+          return offset + value.length;
+        },
+        read: (bytes, offset) {
+          var end = offset;
+          while (end < bytes.length && bytes[end] != 0) {
+            end++;
+          }
+          final str = String.fromCharCodes(bytes.sublist(offset, end));
+          return (str.length, end);
+        },
+      );
+
+      final mappedCodec = transformCodec<String, String, int, int>(
+        variableCodec,
+        (value) => value.toUpperCase(),
+      );
+
+      expect(mappedCodec, isA<VariableSizeCodec<String, int>>());
+      final bytes = mappedCodec.encode('hello');
+      expect(mappedCodec.decode(bytes), equals(5));
+    });
+
+    test('_combineEncoderDecoder with VariableSizeEncoder', () {
+      // Use transformCodec with map to trigger _combineEncoderDecoder
+      final variableCodec = VariableSizeCodec<int, int>(
+        getSizeFromValue: (value) => value,
+        write: (value, bytes, offset) {
+          bytes[offset] = value;
+          return offset + 1;
+        },
+        read: (bytes, offset) => (bytes[offset], offset + 1),
+      );
+
+      final codec = transformCodec<int, String, int, String>(
+        variableCodec,
+        (value) => value.length,
+        (value, _, _) => value.toString(),
+      );
+
+      final bytes = codec.encode('hi');
+      expect(codec.decode(bytes), isA<String>());
+    });
   });
 
   group('transformEncoder', () {
@@ -204,6 +254,10 @@ void main() {
 
       expect(encoderB, isA<VariableSizeEncoder<String>>());
       expect((encoderB as VariableSizeEncoder).maxSize, equals(10));
+      // Actually exercise the write and getSizeFromValue methods.
+      expect((encoderB as VariableSizeEncoder<String>).getSizeFromValue('hello'), equals(1));
+      final bytes = Uint8List(10);
+      expect(encoderB.write('hello', bytes, 0), equals(1));
     });
   });
 
@@ -237,6 +291,11 @@ void main() {
 
       expect(decoderB, isA<VariableSizeDecoder<String>>());
       expect((decoderB as VariableSizeDecoder).maxSize, equals(10));
+      // Actually exercise the read method.
+      final bytes = Uint8List.fromList([5, 0, 0]);
+      final (result, newOffset) = decoderB.read(bytes, 0);
+      expect(result, equals('xxxxx'));
+      expect(newOffset, equals(1));
     });
   });
 }

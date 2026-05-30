@@ -159,6 +159,52 @@ void main() {
           throwsA(isA<SolanaError>()),
         );
       });
+
+      test('throws SolanaError when error code is BigInt -32002', () {
+        final transformer = getThrowSolanaErrorResponseTransformer();
+        final errorResponse = <String, Object?>{
+          'error': {
+            'code': BigInt.from(-32002),
+            'message': 'Transaction simulation failed',
+          },
+        };
+
+        expect(
+          () => transformer(errorResponse, request),
+          throwsA(isA<SolanaError>()),
+        );
+      });
+
+      test(
+          'transforms BigInt values in error.data when error code is '
+          'BigInt -32002', () {
+        final transformer = getThrowSolanaErrorResponseTransformer();
+        final errorResponse = <String, Object?>{
+          'error': {
+            'code': BigInt.from(-32002),
+            'message': 'Transaction simulation failed',
+            'data': {
+              'accounts': null,
+              'err': 'InsufficientFundsForRent',
+              'innerInstructions': null,
+              'loadedAccountsDataSize': BigInt.from(100),
+              'logs': ['log1', 'log2'],
+              'unitsConsumed': BigInt.from(5000),
+            },
+          },
+        };
+
+        try {
+          transformer(errorResponse, request);
+          fail('Expected SolanaError to be thrown');
+        } on SolanaError catch (e) {
+          expect(
+            e.code,
+            SolanaErrorCode
+                .jsonRpcServerErrorSendTransactionPreflightFailure,
+          );
+        }
+      });
     });
   });
 }

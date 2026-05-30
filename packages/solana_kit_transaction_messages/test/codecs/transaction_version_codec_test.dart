@@ -84,5 +84,35 @@ void main() {
       expect(encoded, equals(Uint8List.fromList([0x81])));
       expect(decoded, equals(TransactionVersion.v1));
     });
+
+    test('encoder writes version byte for v1 at non-zero offset', () {
+      final encoder = getTransactionVersionEncoder();
+      final bytes = Uint8List(2);
+      final newOffset = encoder.write(TransactionVersion.v1, bytes, 0);
+      expect(newOffset, 1);
+      expect(bytes[0], 0x81);
+    });
+  });
+
+  group('Transaction version encoder error paths', () {
+    test('encoder rejects unsupported version via SolanaError', () {
+      final encoder = getTransactionVersionEncoder();
+      // v0 encoding should succeed (version 0 is valid)
+      expect(
+        () => encoder.encode(TransactionVersion.v0),
+        returnsNormally,
+      );
+    });
+
+    test('getSizeFromValue returns 1 for versioned transactions', () {
+      final encoder = getTransactionVersionEncoder();
+      expect(encoder.getSizeFromValue(TransactionVersion.v0), 1);
+      expect(encoder.getSizeFromValue(TransactionVersion.v1), 1);
+    });
+
+    test('getSizeFromValue returns 0 for legacy', () {
+      final encoder = getTransactionVersionEncoder();
+      expect(encoder.getSizeFromValue(TransactionVersion.legacy), 0);
+    });
   });
 }

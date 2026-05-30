@@ -56,5 +56,33 @@ void main() {
         isTrue,
       );
     });
+
+    test('isSolanaErrorCodeInDomain returns true for matching domain', () {
+      expect(
+        isSolanaErrorCodeInDomain(
+          SolanaErrorCode.jsonRpcInternalError,
+          SolanaErrorDomain.jsonRpc,
+        ),
+        isTrue,
+      );
+    });
+
+    test('isSolanaErrorCodeInDomain returns false for non-matching domain',
+        () {
+      expect(
+        isSolanaErrorCodeInDomain(
+          SolanaErrorCode.jsonRpcInternalError,
+          SolanaErrorDomain.transaction,
+        ),
+        isFalse,
+      );
+    });
+
+    test('isSolanaErrorInDomain returns false for non-SolanaError', () {
+      expect(
+        isSolanaErrorInDomain('not a SolanaError', SolanaErrorDomain.rpc),
+        isFalse,
+      );
+    });
   });
 }
