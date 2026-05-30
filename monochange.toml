@@ -54,6 +54,11 @@ path = "packages/solana_kit_compute_budget"
 tag = true
 release = false
 
+[package.solana_kit_config]
+path = "packages/solana_kit_config"
+tag = true
+release = false
+
 [package.solana_kit_errors]
 path = "packages/solana_kit_errors"
 
@@ -216,6 +221,7 @@ packages = [
   "solana_kit_codecs_strings",
   "solana_kit_fixed_points",
   "solana_kit_compute_budget",
+  "solana_kit_config",
   "solana_kit_errors",
   "solana_kit_fast_stable_stringify",
   "solana_kit_functional",

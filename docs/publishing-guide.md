@@ -6,7 +6,7 @@ This guide covers how to version, release, and publish the `solana_kit` Dart SDK
 
 <!-- workspace-summary:start -->
 
-This monorepo contains **50 packages** under `packages/`: **48 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
+This monorepo contains **51 packages** under `packages/`: **49 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
 
 <!-- workspace-summary:end -->
 
@@ -86,6 +86,7 @@ solana_kit_codecs_data_structures -> solana_kit_codecs_core, solana_kit_codecs_n
 solana_kit_codecs_numbers -> solana_kit_codecs_core, solana_kit_errors
 solana_kit_codecs_strings -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
 solana_kit_compute_budget -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_instructions
+solana_kit_config -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_instructions
 solana_kit_errors -> (none)
 solana_kit_fast_stable_stringify -> (none)
 solana_kit_fixed_points -> (none)
