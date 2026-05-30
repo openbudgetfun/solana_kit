@@ -318,6 +318,6 @@ steps = [
 [cli.publish]
 help_text = "Publish packages to registries (Dart via melos, NPM via pnpm). Must be run from a tagged release commit."
 steps = [
-  { type = "Command", name = "publish Dart packages", command = "melos publish --no-dry-run", dry_run_command = "melos publish" },
+  { type = "Command", name = "publish Dart packages", command = "melos publish --no-dry-run --yes", dry_run_command = "melos publish" },
   { type = "Command", name = "publish NPM renderer", command = "pnpm --filter codama-renderers-dart publish", dry_run_command = "pnpm --filter codama-renderers-dart publish --dry-run" },
 ]
