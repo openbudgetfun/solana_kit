@@ -73,6 +73,9 @@ flags:
   solana_kit_mobile_wallet_adapter_protocol:
     paths:
       - packages/solana_kit_mobile_wallet_adapter_protocol
+  solana_kit_memo:
+    paths:
+      - packages/solana_kit_memo
   solana_kit_offchain_messages:
     paths:
       - packages/solana_kit_offchain_messages
