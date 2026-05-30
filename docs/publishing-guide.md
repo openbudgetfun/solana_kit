@@ -6,7 +6,7 @@ This guide covers how to version, release, and publish the `solana_kit` Dart SDK
 
 <!-- workspace-summary:start -->
 
-This monorepo contains **51 packages** under `packages/`: **49 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
+This monorepo contains **52 packages** under `packages/`: **50 publishable** and **2 internal** (`solana_kit_lints`, `solana_kit_test_matchers`).
 
 <!-- workspace-summary:end -->
 
@@ -14,13 +14,14 @@ Versioning is managed by [monochange](https://github.com/monochange/monochange) 
 
 ## Package Inventory
 
-### Publishable Packages (41)
+### Publishable Packages
 
 | Layer | Package                                          | Dependencies                                                                                                                                                                          |
 | ----- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 0     | `solana_kit_errors`                              | (none)                                                                                                                                                                                |
 | 1     | `solana_kit_functional`                          | errors                                                                                                                                                                                |
 | 1     | `solana_kit_fast_stable_stringify`               | (none)                                                                                                                                                                                |
+| 1     | `solana_kit_fixed_points`                        | (none)                                                                                                                                                                                |
 | 1     | `solana_kit_helius`                              | errors                                                                                                                                                                                |
 | 2     | `solana_kit_codecs_core`                         | errors                                                                                                                                                                                |
 | 2     | `solana_kit_codecs_numbers`                      | codecs_core                                                                                                                                                                           |
@@ -46,6 +47,7 @@ Versioning is managed by [monochange](https://github.com/monochange/monochange) 
 | 5     | `solana_kit_system`                              | addresses, codecs_core, codecs_data_structures, codecs_numbers, instructions                                                                                                          |
 | 5     | `solana_kit_associated_token_account`            | addresses, codecs_core, codecs_data_structures, codecs_numbers, errors, instructions                                                                                                  |
 | 5     | `solana_kit_compute_budget`                      | addresses, codecs_core, codecs_data_structures, codecs_numbers, instructions                                                                                                          |
+| 5     | `solana_kit_memo`                                | addresses, codecs_core, codecs_data_structures, codecs_strings, instructions                                                                                                          |
 | 6     | `solana_kit_transactions`                        | errors, addresses, codecs, instructions, keys, transaction_messages                                                                                                                   |
 | 6     | `solana_kit_rpc`                                 | rpc_api, rpc_spec, rpc_transport_http, rpc_transformers                                                                                                                               |
 | 6     | `solana_kit_rpc_subscriptions_api`               | addresses, rpc_spec_types, rpc_types                                                                                                                                                  |
@@ -58,10 +60,14 @@ Versioning is managed by [monochange](https://github.com/monochange/monochange) 
 | 7     | `solana_kit_mobile_wallet_adapter`               | addresses, errors, keys, mobile_wallet_adapter_protocol, transactions                                                                                                                 |
 | 8     | `solana_kit_transaction_confirmation`            | addresses, errors, keys, rpc, rpc_api, rpc_spec, rpc_subscriptions_channel_websocket, rpc_types, subscribable, transactions                                                           |
 | 8     | `solana_kit_instruction_plans`                   | errors, instructions, keys, transaction_messages, transactions                                                                                                                        |
+| 8     | `solana_kit_config`                              | accounts, addresses, codecs_core, codecs_data_structures, codecs_numbers, instructions                                                                                                |
+| 9     | `solana_kit_loader`                              | addresses, codecs_core, codecs_data_structures, codecs_numbers, instruction_plans, instructions                                                                                       |
+| 9     | `solana_kit_spl_account_compression`             | accounts, addresses, codecs, codecs_core, codecs_data_structures, codecs_numbers, errors, instruction_plans, instructions, keys                                                       |
 | 9     | `solana_kit_stake`                               | accounts, addresses, codecs_core, codecs_data_structures, codecs_numbers, codecs_strings, instruction_plans, instructions, system, sysvars                                            |
 | 9     | `solana_kit_token`                               | accounts, addresses, associated_token_account, codecs_core, codecs_data_structures, codecs_numbers, codecs_strings, errors, instruction_plans, instructions, system                   |
 | 9     | `solana_kit_token_2022`                          | accounts, addresses, associated_token_account, codecs_core, codecs_data_structures, codecs_numbers, codecs_strings, errors, instruction_plans, instructions, options, signers, system |
-| 9     | `solana_kit`                                     | (umbrella re-export of all packages above)                                                                                                                                            |
+| 10    | `solana_kit_mpl_bubblegum`                       | accounts, addresses, codecs, codecs_core, codecs_data_structures, codecs_numbers, errors, instruction_plans, instructions, keys, spl_account_compression                              |
+| 10    | `solana_kit`                                     | (umbrella re-export of all packages above)                                                                                                                                            |
 
 ### Internal Packages (not published)
 

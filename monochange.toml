@@ -251,6 +251,7 @@ packages = [
   "solana_kit_rpc_transport_http",
   "solana_kit_rpc_types",
   "solana_kit_signers",
+  "solana_kit_stake",
   "solana_kit_subscribable",
   "solana_kit_test_matchers",
   "solana_kit_transaction_confirmation",
