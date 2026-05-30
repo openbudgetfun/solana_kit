@@ -31,6 +31,7 @@
     ]
   },
   "excludes": [
+    "**/pnpm-lock.yaml",
     "**/.dart_tool/**",
     "**/build/**",
     "**/.devenv*/**",
