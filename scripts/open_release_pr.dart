@@ -2,6 +2,8 @@ import 'dart:io';
 
 const _noReleasablePackages =
     'no releaseable packages were found in discovered changesets';
+const _actionsCannotCreatePullRequests =
+    'GitHub Actions is not permitted to create or approve pull requests';
 
 Future<void> main(List<String> args) async {
   final result = await Process.run('mc', ['release-pr', ...args]);
@@ -19,6 +21,15 @@ Future<void> main(List<String> args) async {
   if (output.contains(_noReleasablePackages)) {
     stderr.writeln(
       'No releasable monochange entries were found; skipping release PR update.',
+    );
+    return;
+  }
+
+  if (output.contains(_actionsCannotCreatePullRequests)) {
+    stderr.writeln(
+      'GitHub Actions cannot create pull requests in this repository; '
+      'skipping release PR update. Enable the repository Actions setting or '
+      'run mc release-pr manually.',
     );
     return;
   }
