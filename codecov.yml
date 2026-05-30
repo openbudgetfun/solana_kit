@@ -136,6 +136,9 @@ flags:
   solana_kit_system:
     paths:
       - packages/solana_kit_system
+  solana_kit_stake:
+    paths:
+      - packages/solana_kit_stake
   solana_kit_sysvars:
     paths:
       - packages/solana_kit_sysvars

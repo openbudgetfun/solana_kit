@@ -445,14 +445,21 @@ in
             continue
           fi
 
-          # Skip Flutter packages (they need flutter test)
+          if [ -z "$(find "$pkg_dir/test" -name '*_test.dart' -print -quit)" ]; then
+            continue
+          fi
+
+          # Skip Flutter plugin packages (covered by dedicated checks)
           if grep -q "flutter:" "$pkg_dir/pubspec.yaml" 2>/dev/null; then
             continue
           fi
 
           pkg_name="$(basename "$pkg_dir")"
           echo "Testing $pkg_name..."
-          if ! dart test --exclude-tags integration "$pkg_dir"; then
+          if ! (
+            cd "$pkg_dir"
+            fvm flutter test --exclude-tags integration
+          ); then
             failed=1
           fi
         done
@@ -462,7 +469,10 @@ in
           if [ -d "$pkg_dir/test" ]; then
             pkg_name="$(basename "$(dirname "$pkg_dir")")/test-generated"
             echo "Testing $pkg_name..."
-            if ! dart test "$pkg_dir"; then
+            if ! (
+              cd "$pkg_dir"
+              fvm flutter test
+            ); then
               failed=1
             fi
           fi
@@ -470,7 +480,7 @@ in
 
         if [ -d test ]; then
           echo "Testing root workspace helpers..."
-          if ! dart test test; then
+          if ! fvm flutter test test; then
             failed=1
           fi
         fi

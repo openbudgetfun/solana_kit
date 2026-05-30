@@ -259,6 +259,13 @@ Each subsection below maps one package to its role in the Solana ecosystem and t
 - What it does: provides instruction builders, codecs, and parsers for all five Compute Budget instructions.
 - Use it when: setting compute unit limits, priority fees, heap frames, or loaded accounts data size limits.
 
+### solana_kit_stake
+
+- Pub.dev: [solana_kit_stake](https://pub.dev/packages/solana_kit_stake)
+- Why it exists: staking, delegation, and stake-account state decoding need a typed program client.
+- What it does: provides generated Stake Program instruction builders, stake state codecs, `StakeAccount` decoding, and instruction-plan helpers.
+- Use it when: creating stake accounts, delegating stake, parsing stake instructions, or decoding stake account data.
+
 ### solana_kit_sysvars
 
 - Pub.dev: [solana_kit_sysvars](https://pub.dev/packages/solana_kit_sysvars)
