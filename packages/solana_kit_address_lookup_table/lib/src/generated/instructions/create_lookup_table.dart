@@ -3,6 +3,7 @@
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
+import 'package:solana_kit_address_lookup_table/src/generated/pdas/address_lookup_table.dart';
 import 'package:solana_kit_address_lookup_table/src/generated/programs/address_lookup_table.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -130,11 +131,35 @@ Instruction getCreateLookupTableInstruction({
   );
 }
 
+/// Creates a CreateLookupTable instruction after deriving its PDA and bump.
+Future<Instruction> getCreateLookupTableInstructionWithPda({
+  required Address authority,
+  required Address payer,
+  required BigInt recentSlot,
+  Address programAddress = addressLookupTableProgramAddress,
+  Address systemProgramAddress = const Address(
+    '11111111111111111111111111111111',
+  ),
+}) async {
+  final (address, bump) = await findAddressLookupTablePda(
+    authority: authority,
+    recentSlot: recentSlot,
+    programAddress: programAddress,
+  );
+  return getCreateLookupTableInstruction(
+    address: address,
+    authority: authority,
+    payer: payer,
+    recentSlot: recentSlot,
+    bump: bump,
+    programAddress: programAddress,
+    systemProgramAddress: systemProgramAddress,
+  );
+}
+
 /// Parses a CreateLookupTable instruction from [instruction].
 CreateLookupTableInstructionData parseCreateLookupTableInstruction(
   Instruction instruction,
 ) {
-  return getCreateLookupTableInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+  return getCreateLookupTableInstructionDataDecoder().decode(instruction.data!);
 }

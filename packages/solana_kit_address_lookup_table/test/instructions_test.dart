@@ -65,6 +65,26 @@ void main() {
       expect(parsed.recentSlot, equals(BigInt.from(42)));
       expect(parsed.bump, equals(254));
       expect(parsed.discriminator, equals(0));
+      expect(ix.byteDelta, equals(lookupTableMetaSize));
+    });
+
+    test('derives PDA and bump for convenience builder', () async {
+      const authority = Address('11111111111111111111111111111111');
+      const payer = Address('Payer11111111111111111111111111111111111111');
+      final recentSlot = BigInt.from(42);
+
+      final pda = await findAddressLookupTablePda(
+        authority: authority,
+        recentSlot: recentSlot,
+      );
+      final instruction = await getCreateLookupTableInstructionWithPda(
+        authority: authority,
+        payer: payer,
+        recentSlot: recentSlot,
+      );
+
+      expect(instruction.accounts![0].address, equals(pda.$1));
+      expect(parseCreateLookupTableInstruction(instruction).bump, pda.$2);
     });
 
     test('value equality', () {
@@ -211,6 +231,16 @@ void main() {
       final parsed = parseExtendLookupTableInstruction(ix);
       expect(parsed.addresses, hasLength(1));
       expect(parsed.addresses[0], equals(addr1));
+      expect(ix.byteDelta, equals(32));
+    });
+
+    test('reports byte delta from address count', () {
+      const addr = Address('11111111111111111111111111111111');
+      expect(getExtendLookupTableInstructionByteDelta(const []), equals(0));
+      expect(
+        getExtendLookupTableInstructionByteDelta(const [addr, addr]),
+        equals(64),
+      );
     });
 
     test('handles empty addresses list', () {

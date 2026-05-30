@@ -2,6 +2,7 @@
 
 import 'dart:typed_data';
 
+import 'package:solana_kit_address_lookup_table/src/generated/constants.dart';
 import 'package:solana_kit_address_lookup_table/src/generated/instructions/close_lookup_table.dart';
 import 'package:solana_kit_address_lookup_table/src/generated/instructions/create_lookup_table.dart';
 import 'package:solana_kit_address_lookup_table/src/generated/instructions/deactivate_lookup_table.dart';
@@ -10,10 +11,32 @@ import 'package:solana_kit_address_lookup_table/src/generated/instructions/freez
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-/// The canonical Address Lookup Table program address.
-const addressLookupTableProgramAddress = Address(
-  'AddressLookupTab1e1111111111111111111111111',
-);
+export 'package:solana_kit_address_lookup_table/src/generated/constants.dart';
+
+/// Number of bytes added by a CreateLookupTable instruction.
+const createLookupTableInstructionByteDelta = lookupTableMetaSize;
+
+/// Number of bytes added by an ExtendLookupTable instruction for [addresses].
+int getExtendLookupTableInstructionByteDelta(List<Address> addresses) {
+  return addresses.length * 32;
+}
+
+/// Address Lookup Table byte-delta metadata for instructions.
+extension AddressLookupTableInstructionByteDelta on Instruction {
+  /// Returns the byte delta for create and extend instructions, if known.
+  int? get byteDelta {
+    if (programAddress != addressLookupTableProgramAddress || data == null) {
+      return null;
+    }
+    final parsedInstruction = parseAddressLookupTableInstruction(this);
+    return switch (parsedInstruction) {
+      ParsedCreateLookupTable() => createLookupTableInstructionByteDelta,
+      ParsedExtendLookupTable(:final data) =>
+        getExtendLookupTableInstructionByteDelta(data.addresses),
+      _ => null,
+    };
+  }
+}
 
 /// Known instruction types for the Address Lookup Table program.
 enum AddressLookupTableInstruction {
@@ -67,8 +90,7 @@ sealed class ParsedAddressLookupTableInstruction {
 }
 
 /// A parsed [AddressLookupTableInstruction.createLookupTable] instruction.
-class ParsedCreateLookupTable
-    implements ParsedAddressLookupTableInstruction {
+class ParsedCreateLookupTable implements ParsedAddressLookupTableInstruction {
   /// Creates a [ParsedCreateLookupTable].
   const ParsedCreateLookupTable(this.data);
 
@@ -81,8 +103,7 @@ class ParsedCreateLookupTable
 }
 
 /// A parsed [AddressLookupTableInstruction.freezeLookupTable] instruction.
-class ParsedFreezeLookupTable
-    implements ParsedAddressLookupTableInstruction {
+class ParsedFreezeLookupTable implements ParsedAddressLookupTableInstruction {
   /// Creates a [ParsedFreezeLookupTable].
   const ParsedFreezeLookupTable(this.data);
 
@@ -95,8 +116,7 @@ class ParsedFreezeLookupTable
 }
 
 /// A parsed [AddressLookupTableInstruction.extendLookupTable] instruction.
-class ParsedExtendLookupTable
-    implements ParsedAddressLookupTableInstruction {
+class ParsedExtendLookupTable implements ParsedAddressLookupTableInstruction {
   /// Creates a [ParsedExtendLookupTable].
   const ParsedExtendLookupTable(this.data);
 
@@ -123,8 +143,7 @@ class ParsedDeactivateLookupTable
 }
 
 /// A parsed [AddressLookupTableInstruction.closeLookupTable] instruction.
-class ParsedCloseLookupTable
-    implements ParsedAddressLookupTableInstruction {
+class ParsedCloseLookupTable implements ParsedAddressLookupTableInstruction {
   /// Creates a [ParsedCloseLookupTable].
   const ParsedCloseLookupTable(this.data);
 
@@ -151,25 +170,21 @@ ParsedAddressLookupTableInstruction parseAddressLookupTableInstruction(
   final type = identifyAddressLookupTableInstruction(data);
 
   return switch (type) {
-    AddressLookupTableInstruction.createLookupTable =>
-      ParsedCreateLookupTable(
-        getCreateLookupTableInstructionDataDecoder().decode(data),
-      ),
-    AddressLookupTableInstruction.freezeLookupTable =>
-      ParsedFreezeLookupTable(
-        getFreezeLookupTableInstructionDataDecoder().decode(data),
-      ),
-    AddressLookupTableInstruction.extendLookupTable =>
-      ParsedExtendLookupTable(
-        getExtendLookupTableInstructionDataDecoder().decode(data),
-      ),
+    AddressLookupTableInstruction.createLookupTable => ParsedCreateLookupTable(
+      getCreateLookupTableInstructionDataDecoder().decode(data),
+    ),
+    AddressLookupTableInstruction.freezeLookupTable => ParsedFreezeLookupTable(
+      getFreezeLookupTableInstructionDataDecoder().decode(data),
+    ),
+    AddressLookupTableInstruction.extendLookupTable => ParsedExtendLookupTable(
+      getExtendLookupTableInstructionDataDecoder().decode(data),
+    ),
     AddressLookupTableInstruction.deactivateLookupTable =>
       ParsedDeactivateLookupTable(
         getDeactivateLookupTableInstructionDataDecoder().decode(data),
       ),
-    AddressLookupTableInstruction.closeLookupTable =>
-      ParsedCloseLookupTable(
-        getCloseLookupTableInstructionDataDecoder().decode(data),
-      ),
+    AddressLookupTableInstruction.closeLookupTable => ParsedCloseLookupTable(
+      getCloseLookupTableInstructionDataDecoder().decode(data),
+    ),
   };
 }

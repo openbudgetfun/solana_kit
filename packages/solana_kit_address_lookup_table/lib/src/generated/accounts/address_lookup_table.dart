@@ -3,10 +3,14 @@
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
+import 'package:solana_kit_accounts/solana_kit_accounts.dart';
+import 'package:solana_kit_address_lookup_table/src/generated/constants.dart';
+import 'package:solana_kit_address_lookup_table/src/generated/pdas/address_lookup_table.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 
 /// Account discriminator for the AddressLookupTable account.
 const addressLookupTableAccountDiscriminator = 1;
@@ -145,8 +149,7 @@ getAddressLookupTableAccountDataDecoder() {
           discriminator: map['discriminator']! as int,
           deactivationSlot: map['deactivationSlot']! as BigInt,
           lastExtendedSlot: map['lastExtendedSlot']! as BigInt,
-          lastExtendedSlotStartIndex:
-              map['lastExtendedSlotStartIndex']! as int,
+          lastExtendedSlotStartIndex: map['lastExtendedSlotStartIndex']! as int,
           authority: map['authority'] as Address?,
           addresses: (map['addresses']! as List).cast<Address>(),
         ),
@@ -160,4 +163,81 @@ getAddressLookupTableAccountDataCodec() {
     getAddressLookupTableAccountDataEncoder(),
     getAddressLookupTableAccountDataDecoder(),
   );
+}
+
+/// Decodes an encoded Address Lookup Table account.
+Account<AddressLookupTableAccountData> decodeAddressLookupTable(
+  EncodedAccount encodedAccount,
+) {
+  return decodeAccount(
+    encodedAccount,
+    getAddressLookupTableAccountDataDecoder(),
+  );
+}
+
+/// Fetches and decodes an Address Lookup Table account.
+Future<Account<AddressLookupTableAccountData>> fetchAddressLookupTable(
+  Rpc rpc,
+  Address address, {
+  FetchAccountConfig? config,
+}) async {
+  final maybeAccount = await fetchMaybeAddressLookupTable(
+    rpc,
+    address,
+    config: config,
+  );
+  assertAccountExists(maybeAccount);
+  return (maybeAccount as ExistingAccount<AddressLookupTableAccountData>)
+      .account;
+}
+
+/// Fetches and decodes an Address Lookup Table account if it exists.
+Future<MaybeAccount<AddressLookupTableAccountData>>
+fetchMaybeAddressLookupTable(
+  Rpc rpc,
+  Address address, {
+  FetchAccountConfig? config,
+}) async {
+  final maybeEncodedAccount = await fetchEncodedAccount(
+    rpc,
+    address,
+    config: config,
+  );
+  return decodeMaybeAccount(
+    maybeEncodedAccount,
+    getAddressLookupTableAccountDataDecoder(),
+  );
+}
+
+/// Derives, fetches, and decodes an Address Lookup Table account.
+Future<Account<AddressLookupTableAccountData>> fetchAddressLookupTableFromSeeds(
+  Rpc rpc, {
+  required Address authority,
+  required BigInt recentSlot,
+  Address programAddress = addressLookupTableProgramAddress,
+  FetchAccountConfig? config,
+}) async {
+  final (address, _) = await findAddressLookupTablePda(
+    authority: authority,
+    recentSlot: recentSlot,
+    programAddress: programAddress,
+  );
+  return fetchAddressLookupTable(rpc, address, config: config);
+}
+
+/// Derives, fetches, and decodes an Address Lookup Table account if it exists.
+Future<MaybeAccount<AddressLookupTableAccountData>>
+fetchMaybeAddressLookupTableFromSeeds(
+  Rpc rpc, {
+  required Address authority,
+  required BigInt recentSlot,
+  Address programAddress = addressLookupTableProgramAddress,
+  FetchAccountConfig? config,
+}) async {
+  final (address, _) = await findAddressLookupTablePda(
+    authority: authority,
+    recentSlot: recentSlot,
+    programAddress: programAddress,
+  );
+  return fetchMaybeAddressLookupTable(rpc, address, config: config);
 }

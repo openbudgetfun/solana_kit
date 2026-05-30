@@ -1,5 +1,7 @@
+import 'package:solana_kit_accounts/solana_kit_accounts.dart';
 import 'package:solana_kit_address_lookup_table/solana_kit_address_lookup_table.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -59,6 +61,9 @@ void main() {
       );
       // u32(4) + u64(8) + u64(8) + u8(1) + option(33) + padding(2) = 56
       expect(bytes.length, equals(56));
+      expect(lookupTableMetaSize, equals(56));
+      expect(lookupTableMaxAddresses, equals(256));
+      expect(lookupTableMaxNewAddresses, equals(256));
     });
 
     test('each address adds 32 bytes', () {
@@ -131,6 +136,29 @@ void main() {
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
       expect(a, isNot(equals(c)));
+    });
+
+    test('decodeAddressLookupTable decodes encoded account data', () {
+      const address = Address('11111111111111111111111111111111');
+      final data = AddressLookupTableAccountData(
+        deactivationSlot: BigInt.zero,
+        lastExtendedSlot: BigInt.one,
+        lastExtendedSlotStartIndex: 0,
+        addresses: const [],
+      );
+      final encodedAccount = EncodedAccount(
+        address: address,
+        data: getAddressLookupTableAccountDataEncoder().encode(data),
+        executable: false,
+        lamports: lamports(BigInt.from(123)),
+        programAddress: addressLookupTableProgramAddress,
+        space: BigInt.from(lookupTableMetaSize),
+      );
+
+      final decoded = decodeAddressLookupTable(encodedAccount);
+
+      expect(decoded.address, equals(address));
+      expect(decoded.data, equals(data));
     });
 
     test('toString includes field values', () {
