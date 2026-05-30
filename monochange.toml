@@ -166,6 +166,11 @@ path = "packages/solana_kit_mpl_bubblegum"
 tag = true
 release = false
 
+[package.solana_kit_memo]
+path = "packages/solana_kit_memo"
+tag = true
+release = false
+
 [package.solana_kit_token]
 path = "packages/solana_kit_token"
 tag = true
@@ -213,6 +218,7 @@ packages = [
   "solana_kit_instructions",
   "solana_kit_keys",
   "solana_kit_lints",
+  "solana_kit_memo",
   "solana_kit_options",
   "solana_kit_program_client_core",
   "solana_kit_programs",
