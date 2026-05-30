@@ -22,6 +22,10 @@ jobs:
       - uses: ./.github/actions/devenv
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: configure git author
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
       - name: create or update release PR
         run: dart run scripts/open_release_pr.dart
         shell: devenv shell -- bash -e {0}
