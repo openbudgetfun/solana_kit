@@ -43,6 +43,9 @@ flags:
   solana_kit_compute_budget:
     paths:
       - packages/solana_kit_compute_budget
+  solana_kit_config:
+    paths:
+      - packages/solana_kit_config
   solana_kit_errors:
     paths:
       - packages/solana_kit_errors
