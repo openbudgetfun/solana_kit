@@ -23,6 +23,9 @@ path = "packages/solana_kit"
 [package.solana_kit_accounts]
 path = "packages/solana_kit_accounts"
 
+[package.solana_kit_address_lookup_table]
+path = "packages/solana_kit_address_lookup_table"
+
 [package.solana_kit_addresses]
 path = "packages/solana_kit_addresses"
 
@@ -218,6 +221,7 @@ versioned_files = [
 packages = [
   "solana_kit",
   "solana_kit_accounts",
+  "solana_kit_address_lookup_table",
   "solana_kit_addresses",
   "solana_kit_codecs",
   "solana_kit_codecs_core",

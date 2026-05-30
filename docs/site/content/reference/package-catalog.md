@@ -252,6 +252,13 @@ Each subsection below maps one package to its role in the Solana ecosystem and t
 - What it does: provides the canonical ATA program address, PDA derivation helpers, and handwritten ATA instruction builders.
 - Use it when: deriving ATA addresses or building create/idempotent/recover ATA instructions directly.
 
+### solana_kit_address_lookup_table
+
+- Pub.dev: [solana_kit_address_lookup_table](https://pub.dev/packages/solana_kit_address_lookup_table)
+- Why it exists: address lookup tables are required for versioned (v0) transactions that reference more than 32 accounts.
+- What it does: provides instruction builders, codecs, account decoders, and parsers for all five Address Lookup Table instructions.
+- Use it when: creating, extending, deactivating, or closing address lookup tables.
+
 ### solana_kit_compute_budget
 
 - Pub.dev: [solana_kit_compute_budget](https://pub.dev/packages/solana_kit_compute_budget)
