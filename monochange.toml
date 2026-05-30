@@ -158,6 +158,11 @@ path = "packages/solana_kit_system"
 tag = true
 release = false
 
+[package.solana_kit_stake]
+path = "packages/solana_kit_stake"
+tag = true
+release = false
+
 [package.solana_kit_sysvars]
 path = "packages/solana_kit_sysvars"
 tag = true
