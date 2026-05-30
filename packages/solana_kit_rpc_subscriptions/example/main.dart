@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 // Examples intentionally print CLI output for demonstration purposes.
 // ignore_for_file: avoid_print
 
@@ -10,7 +12,9 @@ import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 Future<void> main() async {
   final publisher = createDataPublisher();
   final baseChannel = _MockChannel(dataPublisher: publisher);
-  final jsonChannel = getRpcSubscriptionsChannelWithJsonSerialization(baseChannel);
+  final jsonChannel = getRpcSubscriptionsChannelWithJsonSerialization(
+    baseChannel,
+  );
 
   Object? received;
   jsonChannel.on('message', (data) {

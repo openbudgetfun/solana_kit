@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 
 import 'package:solana_kit_fast_stable_stringify/solana_kit_fast_stable_stringify.dart';
@@ -53,10 +55,15 @@ getRpcSubscriptionsTransportWithSubscriptionCoalescing(
       // Listen for errors on the data publisher to invalidate the cache.
       dataPublisherFuture
           .then((dataPublisher) {
-            dataPublisher.on('error', (_) {
-              cache.remove(subscriptionConfigurationHash);
-              abortController.abort();
-            });
+            final errorSubscription = dataPublisher
+                .stream<Object?>('error')
+                .listen((_) {
+                  cache.remove(subscriptionConfigurationHash);
+                  abortController.abort();
+                });
+            abortController.signal.future.then((_) {
+              unawaited(errorSubscription.cancel());
+            }).ignore();
           })
           .catchError((_) {
             // Ignore errors from the transport itself.

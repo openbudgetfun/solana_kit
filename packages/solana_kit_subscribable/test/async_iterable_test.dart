@@ -1,9 +1,65 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:test/test.dart';
 
 void main() {
+  group('createStreamFromDataAndErrorStreams', () {
+    test('emits data and forwards the first error from streams', () async {
+      final dataController = StreamController<String>.broadcast(sync: true);
+      final errorController = StreamController<Object?>.broadcast(sync: true);
+      final stream = createStreamFromDataAndErrorStreams<String>(
+        dataStream: dataController.stream,
+        errorStream: errorController.stream,
+      );
+      final received = <String>[];
+      final errorCompleter = Completer<Object>();
+      final subscription = stream.listen(
+        received.add,
+        onError: (Object error) {
+          if (!errorCompleter.isCompleted) errorCompleter.complete(error);
+        },
+      );
+
+      dataController.add('hello');
+      errorController.add(StateError('boom'));
+
+      expect(received, ['hello']);
+      expect(await errorCompleter.future, isA<StateError>());
+      await subscription.cancel();
+      await dataController.close();
+      await errorController.close();
+    });
+
+    test('cancels data and error stream subscriptions on cancel', () async {
+      var dataCancelCount = 0;
+      var errorCancelCount = 0;
+      final dataController = StreamController<String>.broadcast(
+        onCancel: () => dataCancelCount++,
+        sync: true,
+      );
+      final errorController = StreamController<Object?>.broadcast(
+        onCancel: () => errorCancelCount++,
+        sync: true,
+      );
+      final stream = createStreamFromDataAndErrorStreams<String>(
+        dataStream: dataController.stream,
+        errorStream: errorController.stream,
+      );
+
+      final subscription = stream.listen((_) {});
+      await subscription.cancel();
+      await Future<void>.delayed(Duration.zero);
+
+      expect(dataCancelCount, 1);
+      expect(errorCancelCount, 1);
+      await dataController.close();
+      await errorController.close();
+    });
+  });
+
   group('createStreamFromDataPublisher', () {
     late WritableDataPublisher mockPublisher;
 
@@ -102,7 +158,6 @@ void main() {
       expect(count, 1);
     });
 
-
     test('listener after error receives error immediately', () async {
       final stream = createStreamFromDataPublisher<String>(
         StreamFromDataPublisherConfig(
@@ -132,7 +187,6 @@ void main() {
       // Publish another error to set hasError on next onListen.
       // Need a fresh publisher for a clean state.
     });
-
   });
 
   group('createAsyncIterableFromDataPublisher', () {
@@ -409,49 +463,44 @@ void main() {
       },
     );
 
-    test(
-      'queued data items are processed in order before abort',
-      () async {
-        final abortCompleter = Completer<void>();
+    test('queued data items are processed in order before abort', () async {
+      final abortCompleter = Completer<void>();
 
-        final stream = createAsyncIterableFromDataPublisher<String>(
-          abortSignal: abortCompleter.future,
-          dataChannelName: 'data',
-          dataPublisher: mockPublisher,
-          errorChannelName: 'error',
-        );
+      final stream = createAsyncIterableFromDataPublisher<String>(
+        abortSignal: abortCompleter.future,
+        dataChannelName: 'data',
+        dataPublisher: mockPublisher,
+        errorChannelName: 'error',
+      );
 
-        final received = <String>[];
-        final done = Completer<void>();
+      final received = <String>[];
+      final done = Completer<void>();
 
-        stream.listen(
-          received.add,
-          onDone: () {
-            if (!done.isCompleted) done.complete();
-          },
-        );
+      stream.listen(
+        received.add,
+        onDone: () {
+          if (!done.isCompleted) done.complete();
+        },
+      );
 
-        // Allow subscription to set up.
-        await Future<void>.delayed(Duration.zero);
+      // Allow subscription to set up.
+      await Future<void>.delayed(Duration.zero);
 
-        // First message consumed immediately by polling.
-        mockPublisher.publish('data', 'first');
-        await Future<void>.delayed(Duration.zero);
+      // First message consumed immediately by polling.
+      mockPublisher.publish('data', 'first');
+      await Future<void>.delayed(Duration.zero);
 
-        // Queue multiple messages while iterator is in polled-waiting state,
-        // then abort. These should be queued and delivered.
-        mockPublisher
-          ..publish('data', 'second')
-          ..publish('data', 'third');
-        abortCompleter.complete();
+      // Queue multiple messages while iterator is in polled-waiting state,
+      // then abort. These should be queued and delivered.
+      mockPublisher
+        ..publish('data', 'second')
+        ..publish('data', 'third');
+      abortCompleter.complete();
 
-        await done.future;
-        expect(received, contains('second'));
-        expect(received, contains('third'));
-      },
-
-
-    );
+      await done.future;
+      expect(received, contains('second'));
+      expect(received, contains('third'));
+    });
     test('error arrives while iterator is polling', () async {
       final abortCompleter = Completer<void>();
       final stream = createAsyncIterableFromDataPublisher<Object?>(
@@ -590,6 +639,5 @@ void main() {
       await done.future;
       expect(received, containsAll(['first', 'second']));
     });
-
   });
 }

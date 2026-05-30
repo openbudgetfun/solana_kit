@@ -1,6 +1,11 @@
+// ignore_for_file: deprecated_member_use
+
+import 'dart:async';
+
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_channel_pool_internal.dart';
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_transport.dart';
 import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 /// Wraps a channel creator to pool channels.
 ///
@@ -74,9 +79,14 @@ RpcSubscriptionsChannelCreator getChannelPoolingChannelCreator(
 
       newChannelFuture
           .then((newChannel) {
-            newChannel.on('error', (_) {
-              destroyPoolEntry();
-            });
+            final errorSubscription = newChannel
+                .stream<Object?>('error')
+                .listen((_) {
+                  destroyPoolEntry();
+                });
+            abortController.signal.future.then((_) {
+              unawaited(errorSubscription.cancel());
+            }).ignore();
           })
           .onError<Object>((_, _) {
             destroyPoolEntry();

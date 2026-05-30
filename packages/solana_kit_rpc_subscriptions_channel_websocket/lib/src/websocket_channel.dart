@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
@@ -65,7 +67,15 @@ void _completeAbort<T>(Completer<T> completer, AbortSignal signal) {
 ///
 /// Create with [AbortController] and pass the `signal` to
 /// [createWebSocketChannel].
+@Deprecated(
+  'Use StreamSubscription.cancel() or a Dart cancellation token instead. '
+  'This compatibility API will be removed in the next major version.',
+)
 class AbortSignal {
+  @Deprecated(
+    'Use StreamSubscription.cancel() or a Dart cancellation token instead. '
+    'This compatibility API will be removed in the next major version.',
+  )
   AbortSignal._(this._completer);
 
   final Completer<void> _completer;
@@ -83,8 +93,16 @@ class AbortSignal {
 }
 
 /// A controller for creating and managing an [AbortSignal].
+@Deprecated(
+  'Use StreamSubscription.cancel() or a Dart cancellation token instead. '
+  'This compatibility API will be removed in the next major version.',
+)
 class AbortController {
   /// Creates a new [AbortController] with a fresh [AbortSignal].
+  @Deprecated(
+    'Use StreamSubscription.cancel() or a Dart cancellation token instead. '
+    'This compatibility API will be removed in the next major version.',
+  )
   AbortController() : signal = AbortSignal._(Completer<void>());
 
   /// The signal associated with this controller.
@@ -319,16 +337,16 @@ void _validateWebSocketUrl(
     // the allowInsecureWs flag. This prevents accidental use of
     // insecure WebSocket connections in production.
     const isProduction = bool.fromEnvironment('dart.vm.product');
-    
+
     if (isProduction) {
       throw ArgumentError.value(
         url.toString(),
         'url',
-        'Insecure WebSocket endpoints are not allowed in release mode. '  
+        'Insecure WebSocket endpoints are not allowed in release mode. '
             'Use a wss:// URL instead.',
       );
     }
-    
+
     return;
   }
 

@@ -1,9 +1,48 @@
+// ignore_for_file: cancel_subscriptions
+
+import 'dart:async';
+
 import 'package:solana_kit_subscribable/src/data_publisher.dart';
 
 /// A function that transforms a source message into a destination channel name
 /// and message pair, or returns `null` to drop the message.
 typedef MessageTransformer<TSourceData> =
     (String channelName, Object? message)? Function(TSourceData message);
+
+/// Splits a stream into per-channel broadcast streams.
+///
+/// The source stream is listened to lazily when the first destination listener
+/// subscribes and cancelled when the last destination listener cancels.
+Stream<TDestination> demultiplexStream<TSourceData, TDestination>({
+  required Stream<TSourceData> source,
+  required String channelName,
+  required MessageTransformer<TSourceData> messageTransformer,
+}) {
+  StreamSubscription<TSourceData>? sourceSubscription;
+
+  late final StreamController<TDestination> controller;
+  controller = StreamController<TDestination>.broadcast(
+    sync: true,
+    onListen: () {
+      sourceSubscription ??= source.listen((sourceMessage) {
+        final transformResult = messageTransformer(sourceMessage);
+        if (transformResult == null) return;
+
+        final (destinationChannelName, message) = transformResult;
+        if (destinationChannelName == channelName && !controller.isClosed) {
+          controller.add(message as TDestination);
+        }
+      }, onError: controller.addError);
+    },
+    onCancel: () {
+      final subscription = sourceSubscription;
+      sourceSubscription = null;
+      if (subscription != null) unawaited(subscription.cancel());
+    },
+  );
+
+  return controller.stream;
+}
 
 /// Splits a single source channel of a [DataPublisher] into multiple derived
 /// channels using a [messageTransformer].
@@ -16,69 +55,55 @@ typedef MessageTransformer<TSourceData> =
 ///   subscription.
 /// - Unsubscribe functions are idempotent.
 ///
-/// ```dart
-/// final demuxed = demultiplexDataPublisher(
-///   sourcePublisher: publisher,
-///   sourceChannelName: 'message',
-///   messageTransformer: (message) {
-///     final id = (message as Map)['subscriberId'];
-///     return ('notification-for:$id', message);
-///   },
-/// );
-///
-/// final unsubscribe = demuxed.on('notification-for:123', (message) {
-///   print('Got a message for subscriber 123: $message');
-/// });
-/// ```
+/// Prefer [demultiplexStream] for stream-native code.
 DataPublisher demultiplexDataPublisher<TSourceData>({
   required DataPublisher sourcePublisher,
   required String sourceChannelName,
   required MessageTransformer<TSourceData> messageTransformer,
 }) {
-  _InnerPublisherState? innerPublisherState;
-  final innerPublisher = createDataPublisher();
+  StreamSubscription<Object?>? sourceSubscription;
+  final channels = ChannelStreamController();
+  var numSubscribers = 0;
 
-  return _DemultiplexedDataPublisher(
-    onSubscribe: (channelName, subscriber) {
-      if (innerPublisherState == null) {
-        final sourceUnsubscribe = sourcePublisher.on(sourceChannelName, (
-          sourceMessage,
-        ) {
+  void startSourceSubscription() {
+    sourceSubscription ??= sourcePublisher
+        .stream<Object?>(sourceChannelName)
+        .listen((sourceMessage) {
           final transformResult = messageTransformer(
             sourceMessage as TSourceData,
           );
           if (transformResult == null) return;
+
           final (destinationChannelName, message) = transformResult;
-          innerPublisher.publish(destinationChannelName, message);
+          channels.add(destinationChannelName, message);
         });
-        innerPublisherState = _InnerPublisherState(dispose: sourceUnsubscribe);
-      }
+  }
 
-      innerPublisherState!.numSubscribers++;
-      final innerUnsubscribe = innerPublisher.on(channelName, subscriber);
+  void stopSourceSubscription() {
+    final subscription = sourceSubscription;
+    sourceSubscription = null;
+    if (subscription != null) unawaited(subscription.cancel());
+  }
 
+  return _DemultiplexedDataPublisher(
+    onSubscribe: (channelName, subscriber) {
+      numSubscribers++;
+      startSourceSubscription();
+
+      final subscription = channels
+          .stream<Object?>(channelName)
+          .listen(subscriber);
       var isActive = true;
-      void handleUnsubscribe() {
+
+      return () {
         if (!isActive) return;
         isActive = false;
-        innerPublisherState!.numSubscribers--;
-        if (innerPublisherState!.numSubscribers == 0) {
-          innerPublisherState!.dispose();
-          innerPublisherState = null;
-        }
-        innerUnsubscribe();
-      }
-
-      return handleUnsubscribe;
+        numSubscribers--;
+        unawaited(subscription.cancel());
+        if (numSubscribers == 0) stopSourceSubscription();
+      };
     },
   );
-}
-
-class _InnerPublisherState {
-  _InnerPublisherState({required this.dispose});
-
-  final UnsubscribeFn dispose;
-  int numSubscribers = 0;
 }
 
 class _DemultiplexedDataPublisher implements DataPublisher {
