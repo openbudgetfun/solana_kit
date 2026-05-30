@@ -43,6 +43,8 @@ dart examples/<file>.dart
 | 24 | [24_fetch_encoded_account.dart](24_fetch_encoded_account.dart)               | `fetchEncodedAccount`, `fetchEncodedAccounts`, `ExistingAccount` / `NonExistingAccount` (devnet)   |
 | 25 | [25_union_codec.dart](25_union_codec.dart)                                   | `Union2` typed variants and `getDiscriminatedUnionEncoder/Decoder` for Anchor-style discriminators |
 | 26 | [26_transaction_serialization.dart](26_transaction_serialization.dart)       | Base64 wire format, `getTransactionSize`, `isFullySignedTransaction`, raw message bytes            |
+| 27 | [27_compressed_nft.dart](27_compressed_nft.dart)                             | Compressed NFT tree sizing, Bubblegum PDAs, metadata hashing, and DAS client setup                 |
+| 28 | [28_program_clients.dart](28_program_clients.dart)                           | Offline builders for Memo, Config, Address Lookup Table, Loader, and Stake program instructions    |
 
 ---
 
@@ -98,6 +100,8 @@ Get a free API key at <https://helius.dev> and replace the placeholder.
 | RPC subscriptions            | `solana_kit_rpc_subscriptions`, `solana_kit_rpc_subscriptions_channel_websocket`                                                             |
 | Transaction confirmation     | `solana_kit_transaction_confirmation`                                                                                                        |
 | Accounts                     | `solana_kit_accounts`                                                                                                                        |
+| Program clients              | `solana_kit_memo`, `solana_kit_config`, `solana_kit_address_lookup_table`, `solana_kit_loader`, `solana_kit_stake`                           |
+| Compressed NFTs              | `solana_kit_mpl_bubblegum`, `solana_kit_spl_account_compression`                                                                             |
 | Offchain messages            | `solana_kit_offchain_messages`                                                                                                               |
 | Helius                       | `solana_kit_helius`                                                                                                                          |
 | Functional (deprecated shim) | `solana_kit_functional`                                                                                                                      |
