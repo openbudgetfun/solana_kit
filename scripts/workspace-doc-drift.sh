@@ -17,10 +17,9 @@ if [[ "$mode" != "--check" && "$mode" != "--write" ]]; then
 fi
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-readme_file="$repo_root/readme.md"
 publishing_guide_file="$repo_root/docs/publishing-guide.md"
 
-for file in "$readme_file" "$publishing_guide_file"; do
+for file in "$publishing_guide_file"; do
   if [[ ! -f "$file" ]]; then
     echo "Missing required file: $file" >&2
     exit 2
@@ -182,7 +181,6 @@ apply_or_check_file() {
   fi
 }
 
-apply_or_check_file "$readme_file"
 apply_or_check_file "$publishing_guide_file"
 
 if [[ "$mode" == "--write" ]]; then
