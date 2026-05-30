@@ -34,7 +34,7 @@ Use direct tools only when you specifically need them instead of a workspace tas
 - `flutter`
 - `melos`
 - `jaspr`
-- `knope`
+- `mc` (monochange)
 - `dprint`
 
 ## Renderer package
