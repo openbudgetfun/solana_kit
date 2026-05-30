@@ -67,6 +67,9 @@ flags:
   solana_kit_lints:
     paths:
       - packages/solana_kit_lints
+  solana_kit_loader:
+    paths:
+      - packages/solana_kit_loader
   solana_kit_mobile_wallet_adapter:
     paths:
       - packages/solana_kit_mobile_wallet_adapter

@@ -49,7 +49,7 @@ dependencies:
   solana_kit: ^0.4.0
 ```
 
-Program packages can be added separately when you need a smaller dependency graph or a specific on-chain program. Browse the full package map on the [documentation website](https://openbudgetfun.github.io/solana_kit/).
+Program packages such as `solana_kit_loader` can be added separately when you need a smaller dependency graph or a specific on-chain program. Browse the full package map on the [documentation website](https://openbudgetfun.github.io/solana_kit/).
 
 ### Create an RPC client
 
