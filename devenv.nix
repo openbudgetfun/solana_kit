@@ -24,7 +24,6 @@ in
       ripgrep
       shfmt
       taplo
-      extra.knope
       extra.mdt
       extra.monochange
       extra.pnpm

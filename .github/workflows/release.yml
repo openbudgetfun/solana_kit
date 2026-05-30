@@ -1,0 +1,59 @@
+name: release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: create or update release PR
+        run: dart run scripts/open_release_pr.dart
+        shell: devenv shell -- bash -e {0}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  tag-release:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: detect monochange release record
+        id: release-record
+        continue-on-error: true
+        run: mc step:release-record --from HEAD --format json
+        shell: devenv shell -- bash -e {0}
+      - name: tag release commit
+        if: steps.release-record.outcome == 'success'
+        run: mc step:tag-release --from HEAD --push=true --format json
+        shell: devenv shell -- bash -e {0}
+      - name: publish GitHub release notes
+        if: steps.release-record.outcome == 'success'
+        run: mc step:publish-release --from-ref HEAD --format json
+        shell: devenv shell -- bash -e {0}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

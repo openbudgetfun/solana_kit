@@ -10,7 +10,7 @@ This monorepo contains **48 packages** under `packages/`: **46 publishable** and
 
 <!-- workspace-summary:end -->
 
-Versioning is managed by [knope](https://knope.tech/) using changesets stored in `.changeset/`. Publishing is executed via `knope` workflows that call `melos publish` (plus renderer npm publish), so Melos manages dependency-aware publish sequencing for Dart packages.
+Versioning is managed by [monochange](https://github.com/monochange/monochange) using changesets stored in `.changeset/`. Release PRs, release tags, GitHub release notes, and package publishing are executed through the configured `mc` workflows in `monochange.toml`.
 
 ## Package Inventory
 
@@ -135,22 +135,22 @@ solana_kit_transactions -> solana_kit_addresses, solana_kit_codecs_core, solana_
 When making changes to any package, create a changeset file:
 
 ```bash
-knope document-change
+mc document
 ```
 
 This is required for PRs that modify files under `packages/*` (CI enforces this with `Require changes to be documented`).
 
-This interactively creates a Markdown file in `.changeset/` with a release note description. Because this workspace shares one version across all published packages, each changeset file must use YAML frontmatter with a single `default:` entry instead of package names:
+This interactively creates a Markdown file in `.changeset/` with a release note description. Use YAML frontmatter keyed by monochange package ids:
 
 ```markdown
 ---
-default: minor
+"solana_kit_rpc": minor
 ---
 
 Add support for program derived addresses with custom seeds.
 ```
 
-If `knope document-change` generates package-specific keys, replace them with a single `default: patch|minor|major` entry before committing the changeset.
+Use monochange package ids from `monochange.toml` in changeset frontmatter. For lockstep Dart releases, listing the affected package ids is enough; `group.main` propagates the bump to the grouped packages.
 
 Bump types:
 
@@ -163,7 +163,7 @@ Bump types:
 When ready to release, run:
 
 ```bash
-knope release
+mc release --commit --push --tag --publish-release
 ```
 
 This workflow:
@@ -175,15 +175,13 @@ This workflow:
 5. Commits and pushes
 6. Creates a GitHub release
 
-### Publishing with Knope
+### Publishing with monochange
 
 Use a dry run before any real publish:
 
 ```bash
-knope --dry-run publish
-knope --dry-run publish-day-1
-knope --dry-run publish-day-2
-knope --dry-run publish-day-3
+mc step:publish-readiness --from HEAD --format json
+mc publish --dry-run
 ```
 
 Important requirements before running publish workflows:
@@ -194,25 +192,20 @@ Important requirements before running publish workflows:
 For the first release, publish in staged workflows to handle pub.dev limits:
 
 ```bash
-# Day 1
-knope publish-day-1
-
-# Day 2
-knope publish-day-2
-
-# Day 3
-knope publish-day-3
+mc step:plan-publish-rate-limits --from HEAD --format md
+mc publish --dry-run
+mc publish
 ```
 
-All day workflows call the same publish command sequence as `knope publish`. This is intentional so you can rerun on later days and let Melos continue publishing unpublished package versions.
+For large publish sets, use monochange publish-readiness output and registry rate-limit planning to decide whether to publish in batches. The configured `mc publish` workflow delegates Dart package ordering to Melos and publishes the renderer package with pnpm.
 
 If limits are not a concern, publish everything in one pass:
 
 ```bash
-knope publish
+mc publish
 ```
 
-After each day, verify published versions on pub.dev before moving to the next workflow.
+After any publish batch, verify published versions on pub.dev before continuing.
 
 ## Publishing to pub.dev
 
@@ -236,7 +229,7 @@ Before publishing, verify each package meets these requirements:
    - Basic usage example
    - Link to API docs
 
-3. **CHANGELOG.md** exists and is up to date (managed by knope)
+3. **CHANGELOG.md** exists and is up to date (managed by monochange)
 
 4. **LICENSE** file exists at the repo root (applies to all packages)
 
@@ -263,7 +256,7 @@ Before publishing, verify each package meets these requirements:
 
 ### Dependency-Order Publishing
 
-Packages must be published in dependency order (leaf packages first). The `knope publish` workflow handles this automatically through `melos publish`, which computes package ordering from the workspace dependency graph.
+Packages must be published in dependency order (leaf packages first). The configured `mc publish` workflow handles this automatically through `melos publish`, which computes package ordering from the workspace dependency graph.
 
 The correct publishing order follows the layer table above:
 
@@ -277,26 +270,21 @@ The correct publishing order follows the layer table above:
 ### Running the Publish Workflow
 
 ```bash
-knope publish
+mc publish
 ```
 
 This workflow currently runs:
 
 1. `melos publish`
-2. `pnpm -r publish`
+2. `pnpm --filter codama-renderers-dart publish --access public --no-git-checks`
 
 ### Dry Run
 
 To verify all packages are ready to publish without actually publishing:
 
 ```bash
-# Full workflow dry run
-knope --dry-run publish
-
-# Staged workflow dry runs
-knope --dry-run publish-day-1
-knope --dry-run publish-day-2
-knope --dry-run publish-day-3
+mc step:publish-readiness --from HEAD --format json
+mc publish --dry-run
 ```
 
 ## Known Issues and Considerations
@@ -305,7 +293,7 @@ knope --dry-run publish-day-3
 
 1. **Namespace reservation**: All packages use the `solana_kit_` prefix. Once the first package is published, the namespace is effectively reserved. Ensure the verified publisher account is set up before initial publish.
 
-2. **pub.dev rate limits**: Publishing many packages in quick succession may trigger limits. For the first release, use staged workflows (`knope publish-day-1`, `knope publish-day-2`, `knope publish-day-3`) and verify results between days.
+2. **pub.dev rate limits**: Publishing many packages in quick succession may trigger limits. For the first release, use `mc step:plan-publish-rate-limits --from HEAD --format md` and verify results between any manual batches.
 
 3. **Verified publisher**: Set up a [verified publisher](https://dart.dev/tools/pub/verified-publishers) on pub.dev before publishing. This displays a verified badge and prevents package name squatting. All packages should be published under the same verified publisher.
 
@@ -340,7 +328,7 @@ Before the very first publish of any package:
 2. Set up a [verified publisher](https://dart.dev/tools/pub/verified-publishers)
 3. Run `dart pub login` to authenticate
 4. Verify all packages pass `dart pub publish --dry-run`
-5. Publish packages in dependency order starting from `solana_kit_errors` (use staged knope workflows for first release)
+5. Publish packages in dependency order starting from `solana_kit_errors` (use monochange readiness and rate-limit planning for first release)
 6. Verify each package appears on pub.dev before running the next publish workflow
 7. After all packages are published, verify the umbrella `solana_kit` package correctly resolves all dependencies from pub.dev
 
@@ -349,12 +337,12 @@ Before the very first publish of any package:
 The recommended CI/CD workflow for publishing:
 
 1. **PR merged to main**: CI checks run (analyze, test, format, changeset enforcement, docs drift check)
-2. **Release preparation**: Trigger the `Release` GitHub Actions workflow (`workflow_dispatch`) to run `knope release`
-3. **Publishing**: Trigger the `Publish` GitHub Actions workflow (`workflow_dispatch`) to run `knope publish` or `knope publish-day-*`
+2. **Release preparation**: The `release` GitHub Actions workflow opens or updates a monochange release PR with `mc release-pr`
+3. **Publishing**: Trigger the `publish` GitHub Actions workflow (`workflow_dispatch`) for a release tag after publish-readiness passes
 4. **Verification**: Check pub.dev for all packages with correct versions
 
 The GitHub Actions workflow should include:
 
-- A manually triggered `Release` workflow that runs `knope release`
-- A manually triggered `Publish` workflow that runs `knope publish` or one of the staged publish-day workflows
-- The publish job needs pub.dev credentials (`PUB_TOKEN`) and npm credentials (`NPM_TOKEN`) because `knope publish` runs both Dart and renderer publish commands
+- A `release` workflow that opens/updates the monochange release PR and tags release commits after merge
+- A manually triggered `publish` workflow that checks publish readiness and runs `mc publish` from a release tag
+- The publish job uses GitHub Actions OIDC trusted publishing (`id-token: write`) for pub.dev and npm provenance; configure trusted publishers in pub.dev and npm before using it.

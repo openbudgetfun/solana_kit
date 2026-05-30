@@ -294,6 +294,17 @@ steps = [
   { type = "Command", name = "format with dprint", command = "dprint fmt --config dprint.json" },
 ]
 
+[cli.release-pr]
+help_text = "Prepare release changes and open or update the monochange release PR"
+inputs = [
+  { name = "format", type = "choice", choices = ["text", "json", "markdown"], default = "markdown" },
+  { name = "no_verify", type = "boolean", default = true },
+]
+steps = [
+  { type = "PrepareRelease", name = "plan release", allow_empty_changesets = true, inputs = ["format"] },
+  { type = "OpenReleaseRequest", name = "open release PR", when = "{{ number_of_changesets > 0 }}", inputs = { format = "markdown", no_verify = "{{ inputs.no_verify }}", stage_all = true } },
+]
+
 [cli.release]
 help_text = "Prepare a local release: plan bumps, sync files, format, optionally commit, tag, and publish the GitHub release"
 inputs = [
@@ -318,6 +329,6 @@ steps = [
 [cli.publish]
 help_text = "Publish packages to registries (Dart via melos, NPM via pnpm). Must be run from a tagged release commit."
 steps = [
-  { type = "Command", name = "publish Dart packages", command = "melos publish --no-dry-run --yes", dry_run_command = "melos publish" },
-  { type = "Command", name = "publish NPM renderer", command = "pnpm --filter codama-renderers-dart publish", dry_run_command = "pnpm --filter codama-renderers-dart publish --dry-run" },
+  { type = "Command", name = "publish Dart packages", command = "melos publish --no-dry-run --yes", dry_run_command = "melos publish --dry-run --yes" },
+  { type = "Command", name = "publish NPM renderer", command = "pnpm --filter codama-renderers-dart publish --access public --no-git-checks", dry_run_command = "pnpm --filter codama-renderers-dart publish --dry-run --access public --no-git-checks" },
 ]
