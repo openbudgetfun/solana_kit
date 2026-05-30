@@ -142,7 +142,7 @@ jobs:
       - name: Build NPM renderer package
         run: pnpm --filter codama-renderers-dart build
       - name: Validate NPM renderer publish metadata
-        run: pnpm --filter codama-renderers-dart publish --dry-run
+        run: pnpm --filter codama-renderers-dart publish --dry-run --no-git-checks
 
   coverage:
     runs-on: ubuntu-latest
