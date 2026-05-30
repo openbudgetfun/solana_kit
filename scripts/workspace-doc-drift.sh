@@ -150,9 +150,37 @@ replace_block() {
     ' "$input_file" > "$output_file"
 }
 
+has_line() {
+  local file="$1"
+  local line="$2"
+
+  grep -Fxq "$line" "$file"
+}
+
 apply_or_check_file() {
   local file="$1"
   local updated_file="$tmp_dir/$(basename "$file").updated"
+
+  local has_summary_start=0
+  local has_summary_end=0
+  local has_graph_start=0
+  local has_graph_end=0
+
+  has_line "$file" '<!-- workspace-summary:start -->' && has_summary_start=1
+  has_line "$file" '<!-- workspace-summary:end -->' && has_summary_end=1
+  has_line "$file" '<!-- workspace-dependency-graph:start -->' && has_graph_start=1
+  has_line "$file" '<!-- workspace-dependency-graph:end -->' && has_graph_end=1
+
+  local marker_count=$((has_summary_start + has_summary_end + has_graph_start + has_graph_end))
+  if [[ $marker_count -eq 0 ]]; then
+    echo "Workspace documentation blocks are not configured in $file; skipping."
+    return 0
+  fi
+
+  if [[ $marker_count -ne 4 ]]; then
+    echo "Incomplete workspace documentation markers in $file" >&2
+    exit 3
+  fi
 
   cp "$file" "$updated_file.base"
 

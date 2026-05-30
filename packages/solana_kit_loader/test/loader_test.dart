@@ -205,5 +205,20 @@ void main() {
       );
       expect((upgrade as SequentialInstructionPlan).plans, hasLength(3));
     });
+
+    test('rejects non-positive write chunk sizes', () {
+      expect(
+        () => getDeployProgramInstructionPlan(
+          payerAccount: a1,
+          programDataAccount: a2,
+          programAccount: a3,
+          bufferAccount: a4,
+          authority: a5,
+          programBytes: Uint8List.fromList([1]),
+          chunkSize: 0,
+        ),
+        throwsArgumentError,
+      );
+    });
   });
 }
