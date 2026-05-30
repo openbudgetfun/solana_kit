@@ -238,26 +238,26 @@ Stream<TData> createAsyncIterableFromDataPublisher<TData>({
         while (true) {
           final state = iteratorStates[iteratorKey];
           if (state == null) {
+            // coverage:ignore-start
             controller.addError(
-              // coverage:ignore-line
               SolanaError(
-                // coverage:ignore-line
                 SolanaErrorCode
                     .invariantViolationSubscriptionIteratorStateMissing,
               ),
             );
             break;
+            // coverage:ignore-end
           }
           if (state.hasPolled) {
+            // coverage:ignore-start
             controller.addError(
-              // coverage:ignore-line
               SolanaError(
-                // coverage:ignore-line
                 SolanaErrorCode
                     .invariantViolationSubscriptionIteratorMustNotPollBeforeResolvingExistingMessagePromise,
               ),
             );
             break;
+            // coverage:ignore-end
           }
 
           final publishQueue = state.publishQueue;

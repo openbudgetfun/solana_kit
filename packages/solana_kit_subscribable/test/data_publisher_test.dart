@@ -176,6 +176,21 @@ void main() {
       await channels.close();
     });
 
+    test('emits errors on named channels', () async {
+      final channels = ChannelStreamController();
+      final error = StateError('boom');
+      final caught = Completer<Object>();
+      final subscription = channels
+          .stream<Object>('errors')
+          .listen(null, onError: caught.complete);
+
+      channels.addError('errors', error);
+
+      expect(await caught.future, same(error));
+      await subscription.cancel();
+      await channels.close();
+    });
+
     test('closes all channel streams', () async {
       final channels = ChannelStreamController();
       final doneA = Completer<void>();
