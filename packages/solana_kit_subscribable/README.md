@@ -10,8 +10,9 @@ Subscribable and observable patterns for the Solana Kit Dart SDK -- a publish/su
 
 > [!NOTE]
 > New Dart-facing APIs should prefer exposing `Stream`s directly.
-> `DataPublisher` remains in this package as a compatibility layer for the
-> upstream TypeScript architecture and for lower-level adapters.
+> `DataPublisher`, `WritableDataPublisher`, and `createDataPublisher()` remain
+> available as deprecated compatibility APIs. Prefer `Stream<T>`,
+> `StreamController<T>`, and `ChannelStreamController` for new Dart code.
 
 This is the Dart port of [`@solana/subscribable`](https://github.com/anza-xyz/kit/tree/main/packages/subscribable) from the Solana TypeScript SDK.
 
@@ -57,37 +58,31 @@ If you are designing a new Dart API, prefer returning `Stream<T>` directly.
 Use the `DataPublisher` primitives in this package when you need to adapt to
 existing Solana Kit internals or TypeScript-shaped channel publishers.
 
-### Creating a data publisher
+### Stream-native channel controllers
 
-The `createDataPublisher()` factory returns a `WritableDataPublisher` that supports both subscribing to and publishing data on named channels.
+Use `ChannelStreamController` when you need named channels internally while still exposing Dart `Stream`s to callers.
 
 ```dart
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
-void main() {
-  final publisher = createDataPublisher();
+Future<void> main() async {
+  final channels = ChannelStreamController();
 
-  // Subscribe to the 'data' channel.
-  final unsubscribe = publisher.on('data', (message) {
+  final subscription = channels.stream<String>('data').listen((message) {
     print('Got message: $message');
   });
 
-  // Publish a message.
-  publisher.publish('data', 'hello');
+  channels.add('data', 'hello');
   // Prints: Got message: hello
 
-  publisher.publish('data', 'world');
-  // Prints: Got message: world
-
-  // Unsubscribe -- idempotent and safe to call multiple times.
-  unsubscribe();
-
-  // This message is not received.
-  publisher.publish('data', 'ignored');
+  await subscription.cancel();
+  await channels.close();
 }
 ```
 
-### Multiple channels and subscribers
+### Deprecated compatibility: data publishers
+
+The deprecated `createDataPublisher()` factory returns a `WritableDataPublisher` that supports both subscribing to and publishing data on named channels. Use this only when maintaining compatibility with `DataPublisher`-based APIs.
 
 A single publisher supports multiple named channels, and each channel can have multiple subscribers.
 
@@ -121,9 +116,9 @@ void main() {
 }
 ```
 
-### Converting a data publisher to a Dart Stream
+### Combining data and error Streams
 
-The `createStreamFromDataPublisher` function bridges the `DataPublisher` pattern to Dart's native `Stream` API. It creates a broadcast stream that forwards messages from a data channel and errors from an error channel.
+The `createStreamFromDataAndErrorStreams` function creates a broadcast stream that forwards values from a data stream and errors from an error stream. `createStreamFromDataPublisher` remains available as a compatibility bridge from `DataPublisher`.
 
 ```dart
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
@@ -247,19 +242,22 @@ void main() {
 
 ### Interfaces
 
-| Interface               | Description                                                                                      |
-| ----------------------- | ------------------------------------------------------------------------------------------------ |
-| `DataPublisher`         | Subscribe to named channels via `on(channelName, subscriber)`, which returns an `UnsubscribeFn`. |
-| `WritableDataPublisher` | Extends `DataPublisher` with `publish(channelName, data)` for emitting events.                   |
+| Interface                 | Description                                                                                                             |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `ChannelStreamController` | Stream-native named-channel controller for compatibility adapters that still need string-keyed channels.                |
+| `DataPublisher`           | Deprecated compatibility API. Subscribe to named channels via `on(channelName, subscriber)`, returning `UnsubscribeFn`. |
+| `WritableDataPublisher`   | Deprecated compatibility API. Extends `DataPublisher` with `publish(channelName, data)` for emitting events.            |
 
 ### Factory functions
 
-| Function                                                                                | Description                                                                                  |
-| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `createDataPublisher()`                                                                 | Creates a new `WritableDataPublisher` with named channel support.                            |
-| `createStreamFromDataPublisher<T>(config)`                                              | Creates a broadcast `Stream<T>` from a `DataPublisher`.                                      |
-| `createAsyncIterableFromDataPublisher<T>({...})`                                        | Creates a single-subscription `Stream<T>` with abort signal support.                         |
-| `demultiplexDataPublisher<T>({sourcePublisher, sourceChannelName, messageTransformer})` | Splits one channel into many derived channels with lazy subscription and reference counting. |
+| Function                                                                                | Description                                                                              |
+| --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `createDataPublisher()`                                                                 | Deprecated compatibility factory for `WritableDataPublisher` with named channel support. |
+| `createStreamFromDataAndErrorStreams<T>({dataStream, errorStream})`                     | Creates a broadcast `Stream<T>` from separate data and error streams.                    |
+| `createStreamFromDataPublisher<T>(config)`                                              | Compatibility bridge that creates a broadcast `Stream<T>` from a `DataPublisher`.        |
+| `createAsyncIterableFromDataPublisher<T>({...})`                                        | Creates a single-subscription `Stream<T>` with abort signal support.                     |
+| `demultiplexStream<TSource, TDestination>({...})`                                       | Splits a source stream into one derived channel stream with lazy subscription.           |
+| `demultiplexDataPublisher<T>({sourcePublisher, sourceChannelName, messageTransformer})` | Compatibility bridge that splits one channel into many derived channels.                 |
 
 ### Type aliases
 

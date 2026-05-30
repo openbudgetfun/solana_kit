@@ -1,25 +1,25 @@
+import 'dart:async';
+
 import 'package:solana_kit_subscribable/src/data_publisher.dart';
 
 /// A callback invoked when a [ReactiveStore] changes.
 typedef ReactiveStoreSubscriber = void Function();
 
-/// A small external-store facade over a [DataPublisher].
+/// A small external-store facade over data and error streams.
 ///
-/// The store keeps the latest value published to `dataChannelName`, preserves the
-/// first error published to `errorChannelName`, and notifies subscribers for both
-/// data and error events. Call [dispose] to disconnect the store from the
-/// underlying publisher.
+/// The store keeps the latest data value, preserves the first error, and
+/// notifies subscribers for both data and error events. Call [dispose] to cancel
+/// the underlying stream subscriptions.
 class ReactiveStore<T> {
   ReactiveStore._({
-    required DataPublisher dataPublisher,
-    required String dataChannelName,
-    required String errorChannelName,
+    required Stream<T> dataStream,
+    required Stream<Object?> errorStream,
   }) {
-    _unsubscribeData = dataPublisher.on(dataChannelName, (data) {
-      _state = data as T;
+    _dataSubscription = dataStream.listen((data) {
+      _state = data;
       _notifySubscribers();
     });
-    _unsubscribeError = dataPublisher.on(errorChannelName, (error) {
+    _errorSubscription = errorStream.listen((error) {
       if (_error != null) return;
       _error = error;
       _notifySubscribers();
@@ -29,14 +29,14 @@ class ReactiveStore<T> {
   final Set<ReactiveStoreSubscriber> _subscribers = {};
   T? _state;
   Object? _error;
-  UnsubscribeFn? _unsubscribeData;
-  UnsubscribeFn? _unsubscribeError;
+  StreamSubscription<T>? _dataSubscription;
+  StreamSubscription<Object?>? _errorSubscription;
   bool _isDisposed = false;
 
-  /// The first error received from the error channel, or `null`.
+  /// The first error received from the error stream, or `null`.
   Object? getError() => _error;
 
-  /// The most recent value received from the data channel, or `null`.
+  /// The most recent value received from the data stream, or `null`.
   T? getState() => _state;
 
   /// Registers [callback] for state and error updates.
@@ -54,12 +54,12 @@ class ReactiveStore<T> {
     };
   }
 
-  /// Disconnects the store from its data publisher and clears subscribers.
+  /// Disconnects the store from its streams and clears subscribers.
   void dispose() {
     if (_isDisposed) return;
     _isDisposed = true;
-    _unsubscribeData?.call();
-    _unsubscribeError?.call();
+    unawaited(_dataSubscription?.cancel());
+    unawaited(_errorSubscription?.cancel());
     _subscribers.clear();
   }
 
@@ -70,15 +70,24 @@ class ReactiveStore<T> {
   }
 }
 
+/// Creates a [ReactiveStore] backed by streams.
+ReactiveStore<T> createReactiveStoreFromStreams<T>({
+  required Stream<T> dataStream,
+  required Stream<Object?> errorStream,
+}) {
+  return ReactiveStore<T>._(dataStream: dataStream, errorStream: errorStream);
+}
+
 /// Creates a [ReactiveStore] backed by a [DataPublisher].
+///
+/// Prefer [createReactiveStoreFromStreams] for stream-native code.
 ReactiveStore<T> createReactiveStoreFromDataPublisher<T>({
   required DataPublisher dataPublisher,
   required String dataChannelName,
   required String errorChannelName,
 }) {
-  return ReactiveStore<T>._(
-    dataPublisher: dataPublisher,
-    dataChannelName: dataChannelName,
-    errorChannelName: errorChannelName,
+  return createReactiveStoreFromStreams<T>(
+    dataStream: dataPublisher.stream<T>(dataChannelName),
+    errorStream: dataPublisher.stream<Object?>(errorChannelName),
   );
 }

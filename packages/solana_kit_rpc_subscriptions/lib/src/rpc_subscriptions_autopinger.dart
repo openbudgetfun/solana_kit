@@ -1,3 +1,5 @@
+// ignore_for_file: cascade_invocations, deprecated_member_use
+
 import 'dart:async';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
@@ -58,17 +60,34 @@ RpcSubscriptionsChannel getRpcSubscriptionsChannelWithAutoping({
     pingerAbortController.abort();
   }).ignore();
 
+  final channelSubscriptions = <StreamSubscription<Object?>>[];
+
+  void cancelChannelSubscriptions() {
+    for (final subscription in channelSubscriptions) {
+      unawaited(subscription.cancel());
+    }
+    channelSubscriptions.clear();
+  }
+
+  pingerAbortController.signal.future.then((_) {
+    cancelChannelSubscriptions();
+  }).ignore();
+
   // Stop pinging on channel errors.
-  channel
-    ..on('error', (_) {
+  channelSubscriptions.add(
+    channel.stream<Object?>('error').listen((_) {
       pingerAbortController.abort();
-    })
-    // Restart the ping timer on every received message.
-    ..on('message', (_) {
+    }),
+  );
+
+  // Restart the ping timer on every received message.
+  channelSubscriptions.add(
+    channel.stream<Object?>('message').listen((_) {
       if (!pingerAbortController.signal.isAborted) {
         restartPingTimer();
       }
-    });
+    }),
+  );
 
   // Start the ping timer immediately (no browser-specific offline detection
   // since Dart does not run in a browser context in the same way as JS).

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_channel.dart';
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_transport.dart';
@@ -47,10 +49,11 @@ class PendingRpcSubscriptionsRequest<TNotification> {
       options.abortSignal,
     );
 
-    return createReactiveStoreFromDataPublisher<TNotification>(
-      dataChannelName: 'notification',
-      dataPublisher: notificationsDataPublisher,
-      errorChannelName: 'error',
+    return createReactiveStoreFromStreams<TNotification>(
+      dataStream: notificationsDataPublisher.stream<TNotification>(
+        'notification',
+      ),
+      errorStream: notificationsDataPublisher.stream<Object?>('error'),
     );
   }
 
@@ -74,12 +77,11 @@ class PendingRpcSubscriptionsRequest<TNotification> {
       options.abortSignal,
     );
 
-    return createStreamFromDataPublisher<TNotification>(
-      StreamFromDataPublisherConfig(
-        dataChannelName: 'notification',
-        dataPublisher: notificationsDataPublisher,
-        errorChannelName: 'error',
+    return createStreamFromDataAndErrorStreams<TNotification>(
+      dataStream: notificationsDataPublisher.stream<TNotification>(
+        'notification',
       ),
+      errorStream: notificationsDataPublisher.stream<Object?>('error'),
     );
   }
 }

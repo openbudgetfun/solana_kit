@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';

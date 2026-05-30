@@ -30,6 +30,53 @@ class StreamFromDataPublisherConfig {
   final String errorChannelName;
 }
 
+/// Creates a broadcast stream from data and error streams.
+Stream<TData> createStreamFromDataAndErrorStreams<TData>({
+  required Stream<TData> dataStream,
+  required Stream<Object?> errorStream,
+}) {
+  Object? firstError;
+  var hasError = false;
+  StreamSubscription<TData>? dataSubscription;
+  StreamSubscription<Object?>? errorSubscription;
+
+  late final StreamController<TData> controller;
+  controller = StreamController<TData>.broadcast(
+    sync: true,
+    onListen: () {
+      if (hasError) {
+        controller.addError(firstError!); // coverage:ignore-line
+        return;
+      }
+
+      errorSubscription ??= errorStream.listen((err) {
+        if (!hasError) {
+          hasError = true;
+          firstError = err;
+          controller.addError(err ?? StateError('Unknown error'));
+          unawaited(dataSubscription?.cancel());
+          dataSubscription = null;
+          unawaited(errorSubscription?.cancel());
+          errorSubscription = null;
+        }
+      });
+
+      dataSubscription ??= dataStream.listen((data) {
+        if (!controller.isClosed) controller.add(data);
+      });
+    },
+    onCancel: () {
+      unawaited(dataSubscription?.cancel());
+      dataSubscription = null;
+      unawaited(errorSubscription?.cancel());
+      errorSubscription = null;
+      unawaited(controller.close());
+    },
+  );
+
+  return controller.stream;
+}
+
 /// Creates a broadcast `Stream` from a `DataPublisher`.
 ///
 /// The stream will emit data published to the configured data channel name
@@ -60,56 +107,10 @@ class StreamFromDataPublisherConfig {
 Stream<TData> createStreamFromDataPublisher<TData>(
   StreamFromDataPublisherConfig config,
 ) {
-  Object? firstError;
-  var hasError = false;
-  UnsubscribeFn? dataUnsubscribe;
-  UnsubscribeFn? errorUnsubscribe;
-
-  late final StreamController<TData> controller;
-  controller = StreamController<TData>.broadcast(
-    sync: true,
-    onListen: () {
-      if (hasError) {
-        controller.addError(firstError!); // coverage:ignore-line
-        return;
-      }
-
-      // Subscribe to the error channel.
-      errorUnsubscribe ??= config.dataPublisher.on(config.errorChannelName, (
-        err,
-      ) {
-        if (!hasError) {
-          hasError = true;
-          firstError = err;
-          controller.addError(err ?? StateError('Unknown error'));
-
-          // Clean up subscriptions after error.
-          dataUnsubscribe?.call();
-          dataUnsubscribe = null;
-          errorUnsubscribe?.call();
-          errorUnsubscribe = null;
-        }
-      });
-
-      // Subscribe to the data channel.
-      dataUnsubscribe ??= config.dataPublisher.on(config.dataChannelName, (
-        data,
-      ) {
-        if (!controller.isClosed) {
-          controller.add(data as TData);
-        }
-      });
-    },
-    onCancel: () {
-      dataUnsubscribe?.call();
-      dataUnsubscribe = null;
-      errorUnsubscribe?.call();
-      errorUnsubscribe = null;
-      unawaited(controller.close());
-    },
+  return createStreamFromDataAndErrorStreams<TData>(
+    dataStream: config.dataPublisher.stream<TData>(config.dataChannelName),
+    errorStream: config.dataPublisher.stream<Object?>(config.errorChannelName),
   );
-
-  return controller.stream;
 }
 
 /// Creates a single-subscription `Stream` from a `DataPublisher`.
@@ -206,7 +207,9 @@ Stream<TData> createAsyncIterableFromDataPublisher<TData>({
           iteratorStates[entry.key] = _IteratorState<TData>();
           onData(data as TData);
         } else {
-          state.publishQueue.add(_DataItem<TData>(data as TData)); // coverage:ignore-line
+          state.publishQueue.add(
+            _DataItem<TData>(data as TData),
+          ); // coverage:ignore-line
         }
       }
     });
@@ -235,22 +238,26 @@ Stream<TData> createAsyncIterableFromDataPublisher<TData>({
         while (true) {
           final state = iteratorStates[iteratorKey];
           if (state == null) {
-            controller.addError( // coverage:ignore-line
-              SolanaError( // coverage:ignore-line
+            // coverage:ignore-start
+            controller.addError(
+              SolanaError(
                 SolanaErrorCode
                     .invariantViolationSubscriptionIteratorStateMissing,
               ),
             );
             break;
+            // coverage:ignore-end
           }
           if (state.hasPolled) {
-            controller.addError( // coverage:ignore-line
-              SolanaError( // coverage:ignore-line
+            // coverage:ignore-start
+            controller.addError(
+              SolanaError(
                 SolanaErrorCode
                     .invariantViolationSubscriptionIteratorMustNotPollBeforeResolvingExistingMessagePromise,
               ),
             );
             break;
+            // coverage:ignore-end
           }
 
           final publishQueue = state.publishQueue;

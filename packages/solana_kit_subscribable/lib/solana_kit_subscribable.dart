@@ -6,12 +6,14 @@
 ///
 /// The primary components are:
 ///
-/// - `createStreamFromDataPublisher` / `createAsyncIterableFromDataPublisher` -
-///   converts channel-based publishers into Dart `Stream`s.
-/// - `DataPublisher` / `WritableDataPublisher` - a compatibility layer for the
-///   upstream TypeScript channel-publisher abstraction.
-/// - `demultiplexDataPublisher` - splits a single channel into multiple typed
-///   channels with lazy subscription and reference counting.
+/// - `ChannelStreamController` - a stream-native named-channel controller for
+///   compatibility adapters.
+/// - `createStreamFromDataAndErrorStreams` - combines data and error streams
+///   into one broadcast stream.
+/// - `demultiplexStream` - splits a source stream into lazily subscribed typed
+///   channel streams.
+/// - `DataPublisher` / `WritableDataPublisher` - deprecated compatibility
+///   layers for the upstream TypeScript channel-publisher abstraction.
 ///
 /// Prefer exposing `Stream`s at package boundaries when writing new Dart APIs.
 /// Keep `DataPublisher`-based APIs only where they are still needed for

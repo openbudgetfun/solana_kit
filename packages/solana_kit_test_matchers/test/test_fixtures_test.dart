@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
 import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_test_matchers/solana_kit_test_matchers.dart';
