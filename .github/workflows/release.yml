@@ -41,17 +41,34 @@ jobs:
       - uses: ./.github/actions/devenv
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: detect monochange release record
+      - name: detect exact monochange release commit
         id: release-record
-        continue-on-error: true
-        run: mc step:release-record --from HEAD --format json
+        run: |
+          set +e
+          mc step:release-record --from HEAD --format json > release-record.json
+          status=$?
+          cat release-record.json
+
+          if [ "$status" -ne 0 ]; then
+            echo "exact=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          distance="$(python3 -c "import json; print(json.load(open('release-record.json'))['distance'])")"
+          echo "distance=$distance" >> "$GITHUB_OUTPUT"
+
+          if [ "$distance" = "0" ]; then
+            echo "exact=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exact=false" >> "$GITHUB_OUTPUT"
+          fi
         shell: devenv shell -- bash -e {0}
       - name: tag release commit
-        if: steps.release-record.outcome == 'success'
+        if: steps.release-record.outputs.exact == 'true'
         run: mc step:tag-release --from HEAD --push=true --format json
         shell: devenv shell -- bash -e {0}
       - name: publish GitHub release notes
-        if: steps.release-record.outcome == 'success'
+        if: steps.release-record.outputs.exact == 'true'
         run: mc step:publish-release --from-ref HEAD --format json
         shell: devenv shell -- bash -e {0}
         env:
