@@ -170,6 +170,21 @@ void main() {
     );
 
     test(
+      'fatals when supplied an invalid seed type (not String or Uint8List)',
+      () async {
+        await expectLater(
+          getProgramDerivedAddress(
+            programAddress: const Address(
+              '5eUi55m4FVaDqKubGH9r6ca1TxjmimmXEU9v1WUZJ47Z',
+            ),
+            seeds: [123],
+          ),
+          throwsA(isA<ArgumentError>()),
+        );
+      },
+    );
+
+    test(
       'returns a PDA after trying multiple bumps with a UTF-8 string seed',
       () async {
         final result = await getProgramDerivedAddress(
@@ -256,6 +271,24 @@ void main() {
         ),
       );
     });
+
+    test(
+      'fails when supplied an invalid seed type (not String or Uint8List)',
+      () async {
+        await expectLater(
+          createAddressWithSeed(
+            baseAddress: const Address(
+              'Bh1uUDP3ApWLeccVNHwyQKpnfGQbuE2UECbGA6M4jiZJ',
+            ),
+            programAddress: const Address(
+              'FGrddpvjBUAG6VdV4fR8Q2hEZTHS6w4SEveVBgfwbfdm',
+            ),
+            seed: 123,
+          ),
+          throwsA(isA<ArgumentError>()),
+        );
+      },
+    );
 
     test(
       'fails with a malicious programAddress that ends with PDA marker',

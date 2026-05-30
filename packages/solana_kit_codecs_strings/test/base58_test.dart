@@ -5,6 +5,26 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:test/test.dart';
 
 void main() {
+  group('getBase58Encoder', () {
+    test('encodes base 58 strings', () {
+      final encoder = getBase58Encoder();
+
+      expect(encoder.encode(''), equals(Uint8List(0)));
+      expect(encoder.encode('2'), equals(Uint8List.fromList([1])));
+      expect(encoder.encode('j'), equals(Uint8List.fromList([42])));
+    });
+  });
+
+  group('getBase58Decoder', () {
+    test('decodes base 58 strings', () {
+      final decoder = getBase58Decoder();
+
+      expect(decoder.decode(Uint8List(0)), equals(''));
+      expect(decoder.decode(Uint8List.fromList([1])), equals('2'));
+      expect(decoder.decode(Uint8List.fromList([42])), equals('j'));
+    });
+  });
+
   group('getBase58Codec', () {
     test('can encode base 58 strings', () {
       final base58 = getBase58Codec();

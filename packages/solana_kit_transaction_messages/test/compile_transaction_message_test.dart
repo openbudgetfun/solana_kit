@@ -197,5 +197,104 @@ void main() {
       expect(compiled.staticAccounts, contains(lookupAccount));
       expect(compiled.numStaticAccounts, compiled.staticAccounts.length);
     });
+
+    test('compiles a transaction with readonly signer account', () {
+      const readonlySigner = Address('readonlySigner1111111111111111111111');
+      final tx = createTransactionMessage(
+        version: TransactionVersion.v0,
+      ).copyWith(feePayer: feePayer);
+
+      final txWithIx = appendTransactionMessageInstruction(
+        const Instruction(
+          programAddress: programAddress,
+          accounts: [
+            AccountMeta(
+              address: readonlySigner,
+              role: AccountRole.readonlySigner,
+            ),
+          ],
+        ),
+        tx,
+      );
+
+      final compiled = compileTransactionMessage(txWithIx);
+
+      // Fee payer (writable signer), readonly signer, program (readonly)
+      expect(compiled.header.numSignerAccounts, 2);
+      expect(compiled.header.numReadonlySignerAccounts, 1);
+      expect(compiled.header.numReadonlyNonSignerAccounts, 1);
+    });
+
+    test('compiles v0 with lookup table accounts producing writable and '
+        'readonly indexes', () {
+      const writableLookup = Address('writableLookup');
+      const readonlyLookup = Address('readonlyLookup');
+      const lookupTableAddr = Address('lookupTableAddress');
+
+      final tx = appendTransactionMessageInstruction(
+        const Instruction(
+          programAddress: programAddress,
+          accounts: [
+            AccountLookupMeta(
+              address: writableLookup,
+              addressIndex: 0,
+              lookupTableAddress: lookupTableAddr,
+              role: AccountRole.writable,
+            ),
+            AccountLookupMeta(
+              address: readonlyLookup,
+              addressIndex: 1,
+              lookupTableAddress: lookupTableAddr,
+              role: AccountRole.readonly,
+            ),
+          ],
+        ),
+        createTransactionMessage(
+          version: TransactionVersion.v0,
+        ).copyWith(feePayer: feePayer),
+      );
+
+      final compiled = compileTransactionMessage(tx);
+
+      expect(compiled.addressTableLookups, isNotNull);
+      expect(compiled.addressTableLookups!.length, 1);
+      expect(compiled.addressTableLookups![0].writableIndexes, [0]);
+      expect(compiled.addressTableLookups![0].readonlyIndexes, [1]);
+    });
+
+    test('compiles v0 with multiple lookup tables', () {
+      const lookup1 = Address('lookup1Account');
+      const lookup2 = Address('lookup2Account');
+      const table1 = Address('table1');
+      const table2 = Address('table2');
+
+      final tx = appendTransactionMessageInstruction(
+        const Instruction(
+          programAddress: programAddress,
+          accounts: [
+            AccountLookupMeta(
+              address: lookup1,
+              addressIndex: 0,
+              lookupTableAddress: table1,
+              role: AccountRole.readonly,
+            ),
+            AccountLookupMeta(
+              address: lookup2,
+              addressIndex: 0,
+              lookupTableAddress: table2,
+              role: AccountRole.readonly,
+            ),
+          ],
+        ),
+        createTransactionMessage(
+          version: TransactionVersion.v0,
+        ).copyWith(feePayer: feePayer),
+      );
+
+      final compiled = compileTransactionMessage(tx);
+
+      expect(compiled.addressTableLookups, isNotNull);
+      expect(compiled.addressTableLookups!.length, 2);
+    });
   });
 }

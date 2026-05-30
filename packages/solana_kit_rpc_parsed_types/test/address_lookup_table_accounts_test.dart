@@ -50,5 +50,55 @@ void main() {
       expect(account.info.authority, isNull);
       expect(account.info.addresses, isEmpty);
     });
+
+    test('equality compares all fields', () {
+      const info1 = JsonParsedAddressLookupTableInfo(
+        addresses: [],
+        authority: Address('4msgK65vdz5ADUAB3eTQGpF388NuQUAoknLxutUQJd5B'),
+        deactivationSlot: StringifiedBigInt('204699277'),
+        lastExtendedSlot: StringifiedBigInt('204699234'),
+        lastExtendedSlotStartIndex: 20,
+      );
+      const info2 = JsonParsedAddressLookupTableInfo(
+        addresses: [],
+        authority: Address('4msgK65vdz5ADUAB3eTQGpF388NuQUAoknLxutUQJd5B'),
+        deactivationSlot: StringifiedBigInt('204699277'),
+        lastExtendedSlot: StringifiedBigInt('204699234'),
+        lastExtendedSlotStartIndex: 20,
+      );
+      const info3 = JsonParsedAddressLookupTableInfo(
+        addresses: [],
+        authority: Address('4msgK65vdz5ADUAB3eTQGpF388NuQUAoknLxutUQJd5B'),
+        deactivationSlot: StringifiedBigInt('999'),
+        lastExtendedSlot: StringifiedBigInt('204699234'),
+        lastExtendedSlotStartIndex: 20,
+      );
+
+      expect(info1, equals(info2));
+      expect(info1.hashCode, equals(info2.hashCode));
+      expect(info1 == info3, isFalse);
+      expect(info1.toString(), contains('deactivationSlot'));
+    });
+
+    test('equality with different addresses', () {
+      const info1 = JsonParsedAddressLookupTableInfo(
+        addresses: [
+          Address('F1Vc6AGoxXLwGB7QV8f4So3C5d8SXEk3KKGHxKGEJ8qn'),
+        ],
+        deactivationSlot: StringifiedBigInt('0'),
+        lastExtendedSlot: StringifiedBigInt('0'),
+        lastExtendedSlotStartIndex: 0,
+      );
+      const info2 = JsonParsedAddressLookupTableInfo(
+        addresses: [
+          Address('FWscgV4VDSsMxkQg7jZ4HksqjLyadJS5RiCnAVZv2se9'),
+        ],
+        deactivationSlot: StringifiedBigInt('0'),
+        lastExtendedSlot: StringifiedBigInt('0'),
+        lastExtendedSlotStartIndex: 0,
+      );
+
+      expect(info1 == info2, isFalse);
+    });
   });
 }

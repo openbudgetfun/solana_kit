@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_signers/solana_kit_signers.dart';
@@ -107,6 +108,41 @@ void main() {
         isA<SuccessfulSingleTransactionPlanResult>(),
       );
       expect(sentTransactions, hasLength(1));
+    });
+  });
+  group('createTransactionExecutionBoundary error paths', () {
+    test('handles SolanaError with transactionPlanResult in context', () async {
+      final message = _createMessage();
+      final result = failedSingleTransactionPlanResult(
+        message,
+        StateError('execution failed'),
+        {},
+      );
+
+      final boundary = createTransactionExecutionBoundary(
+        TransactionExecutionBoundaryConfig(
+          planTransactions: (_) async => singleTransactionPlan(message),
+          signTransactionMessage: (_) async {
+            throw SolanaError(
+              SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan,
+              {'transactionPlanResult': result},
+            );
+          },
+          sendSignedTransaction: (_) async => throw UnimplementedError(),
+        ),
+      );
+
+      final outcome = await boundary(
+        singleInstructionPlan(
+          const Instruction(
+            programAddress: Address('11111111111111111111111111111111'),
+          ),
+        ),
+      );
+
+      expect(outcome, isA<FailedTransactionExecution>());
+      final failed = outcome as FailedTransactionExecution;
+      expect(failed.transactionPlanResult, isA<FailedSingleTransactionPlanResult>());
     });
   });
 }

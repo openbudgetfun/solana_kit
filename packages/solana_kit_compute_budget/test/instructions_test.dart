@@ -119,6 +119,15 @@ void main() {
       expect(parsed.discriminator, equals(3));
     });
 
+    test('toString includes field values', () {
+      final data = SetComputeUnitPriceInstructionData(
+        microLamports: BigInt.from(999),
+      );
+      final str = data.toString();
+      expect(str, contains('SetComputeUnitPriceInstructionData'));
+      expect(str, contains('999'));
+    });
+
     test('value equality', () {
       final a = SetComputeUnitPriceInstructionData(
         microLamports: BigInt.from(100),
@@ -163,6 +172,13 @@ void main() {
       expect(parsed.bytes, equals(32768));
     });
 
+    test('toString includes field values', () {
+      const data = RequestHeapFrameInstructionData(bytes: 4096);
+      final str = data.toString();
+      expect(str, contains('RequestHeapFrameInstructionData'));
+      expect(str, contains('4096'));
+    });
+
     test('value equality', () {
       const a = RequestHeapFrameInstructionData(bytes: 1024);
       const b = RequestHeapFrameInstructionData(bytes: 1024);
@@ -203,6 +219,25 @@ void main() {
       );
       // discriminator(1) + units(4) + additionalFee(4) = 9
       expect(bytes.length, equals(9));
+    });
+
+    test('toString includes field values', () {
+      const data =
+          RequestUnitsInstructionData(units: 500, additionalFee: 100);
+      final str = data.toString();
+      expect(str, contains('RequestUnitsInstructionData'));
+      expect(str, contains('500'));
+      expect(str, contains('100'));
+    });
+
+    test('deprecated instruction builder', () {
+      // ignore: deprecated_member_use
+      final ix = getRequestUnitsInstruction(units: 1000, additionalFee: 500);
+      expect(ix.programAddress, equals(computeBudgetProgramAddress));
+      expect(ix.accounts, isEmpty);
+      final parsed = parseRequestUnitsInstruction(ix);
+      expect(parsed.units, equals(1000));
+      expect(parsed.additionalFee, equals(500));
     });
 
     test('value equality', () {
@@ -251,6 +286,15 @@ void main() {
 
       final parsed = parseSetLoadedAccountsDataSizeLimitInstruction(ix);
       expect(parsed.accountDataSizeLimit, equals(128000));
+    });
+
+    test('toString includes field values', () {
+      const data =
+          SetLoadedAccountsDataSizeLimitInstructionData(accountDataSizeLimit: 512);
+      final str = data.toString();
+      expect(str,
+          contains('SetLoadedAccountsDataSizeLimitInstructionData'));
+      expect(str, contains('512'));
     });
 
     test('value equality', () {

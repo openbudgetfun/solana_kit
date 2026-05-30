@@ -215,6 +215,90 @@ void main() {
       );
     });
 
+    test('throws if aborted after initial info fetch when block height exceeded',
+        () async {
+      final abortController = AbortController();
+
+      final fn = createBlockHeightExceedencePromiseFactory(
+        BlockHeightExceedenceConfig(
+          getEpochInfo: ({required abortSignal, commitment}) async {
+            if (abortSignal.isAborted) {
+              throw StateError('aborted: ${abortSignal.reason}');
+            }
+            return EpochInfo(
+              absoluteSlot: BigInt.from(200),
+              blockHeight: BigInt.from(101),
+            );
+          },
+          onSlotNotification: ({
+            required abortSignal,
+            required void Function(SlotNotification notification)
+                onNotification,
+          }) async {
+            await Completer<void>().future;
+          },
+        ),
+      );
+
+      // Abort immediately so the second check fires.
+      abortController.abort('test abort after fetch');
+
+      await expectLater(
+        fn(
+          abortSignal: abortController.signal,
+          lastValidBlockHeight: BigInt.from(100),
+        ),
+        throwsA(
+          isA<StateError>().having(
+            (e) => e.message,
+            'message',
+            contains('operation was aborted'),
+          ),
+        ),
+      );
+    });
+
+    test('throws if aborted after block height processing completes',
+        () async {
+      final abortController = AbortController();
+
+      final fn = createBlockHeightExceedencePromiseFactory(
+        BlockHeightExceedenceConfig(
+          getEpochInfo: ({required abortSignal, commitment}) async {
+            return EpochInfo(
+              absoluteSlot: BigInt.from(100),
+              blockHeight: BigInt.from(50),
+            );
+          },
+          onSlotNotification: ({
+            required abortSignal,
+            required void Function(SlotNotification notification)
+                onNotification,
+          }) async {
+            // Keep subscription open.
+            await Completer<void>().future;
+          },
+        ),
+      );
+
+      // Abort immediately.
+      abortController.abort('test abort after block height');
+
+      await expectLater(
+        fn(
+          abortSignal: abortController.signal,
+          lastValidBlockHeight: BigInt.from(100),
+        ),
+        throwsA(
+          isA<StateError>().having(
+            (e) => e.message,
+            'message',
+            contains('operation was aborted'),
+          ),
+        ),
+      );
+    });
+
     test('throws errors thrown from the epoch info fetcher', () async {
       final future = getBlockHeightExceedencePromise(
         abortSignal: AbortController().signal,
@@ -267,6 +351,68 @@ void main() {
       );
     });
 
+    test(
+      'throws when the recheck after a slot notification fails with an error',
+      () async {
+        final future = getBlockHeightExceedencePromise(
+          abortSignal: AbortController().signal,
+          lastValidBlockHeight: BigInt.from(100),
+        );
+
+        await Future<void>.delayed(Duration.zero);
+
+        // Initial: slot 198, height 98 (difference of 100).
+        epochInfoCompleters[0].complete(
+          EpochInfo(
+              absoluteSlot: BigInt.from(198),
+              blockHeight: BigInt.from(98)),
+        );
+
+        await Future<void>.delayed(Duration.zero);
+        await Future<void>.delayed(Duration.zero);
+
+        // Emit slot notification that would trigger recheck.
+        slotCallback!(SlotNotification(slot: BigInt.from(201)));
+
+        await Future<void>.delayed(Duration.zero);
+
+        // Recheck fails.
+        epochInfoCompleters[1].completeError(StateError('recheck error'));
+
+        await expectLater(
+          future,
+          throwsA(
+            isA<StateError>().having(
+              (e) => e.message,
+              'message',
+              equals('recheck error'),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'aborts after initial fetch when block height not yet exceeded',
+      () async {
+        final abortController = AbortController()..abort('pre-abort');
+
+        await expectLater(
+          getBlockHeightExceedencePromise(
+            abortSignal: abortController.signal,
+            lastValidBlockHeight: BigInt.from(100),
+          ),
+          throwsA(
+            isA<StateError>().having(
+              (e) => e.message,
+              'message',
+              contains('operation was aborted'),
+            ),
+          ),
+        );
+      },
+    );
+
     test('passes commitment to the epoch info getter', () async {
       Commitment? capturedCommitment;
 
@@ -305,6 +451,49 @@ void main() {
       }
 
       expect(capturedCommitment, equals(Commitment.confirmed));
+    });
+
+    test('aborts internal abort controller when caller aborts', () async {
+      AbortSignal? capturedAbortSignal;
+      final callerAbortController = AbortController();
+
+      final fn = createBlockHeightExceedencePromiseFactory(
+        BlockHeightExceedenceConfig(
+          getEpochInfo: ({required abortSignal, commitment}) async {
+            capturedAbortSignal = abortSignal;
+            // Never complete - keep waiting.
+            await Completer<EpochInfo>().future;
+            return EpochInfo(
+              absoluteSlot: BigInt.zero,
+              blockHeight: BigInt.zero,
+            );
+          },
+          onSlotNotification: ({
+            required abortSignal,
+            required void Function(SlotNotification notification)
+                onNotification,
+          }) async {
+            await Completer<void>().future;
+          },
+        ),
+      );
+
+      unawaited(
+        fn(
+          abortSignal: callerAbortController.signal,
+          lastValidBlockHeight: BigInt.from(100),
+        ).then<void>((_) {}).catchError((_) {}),
+      );
+
+      await Future<void>.delayed(Duration.zero);
+
+      expect(capturedAbortSignal, isNotNull);
+      expect(capturedAbortSignal!.isAborted, isFalse);
+
+      callerAbortController.abort('test');
+      await Future<void>.delayed(Duration.zero);
+
+      expect(capturedAbortSignal!.isAborted, isTrue);
     });
   });
 }

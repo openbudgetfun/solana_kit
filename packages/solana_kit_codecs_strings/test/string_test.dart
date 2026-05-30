@@ -153,4 +153,19 @@ void main() {
       expect(codec.decode(b('41424303')), equals('ABC'));
     });
   });
+
+  group('null character helpers', () {
+    test('removeNullCharacters strips null bytes', () {
+      expect(removeNullCharacters('abc'), equals('abc'));
+      expect(removeNullCharacters('a\u0000b\u0000c'), equals('abc'));
+      expect(removeNullCharacters('\u0000\u0000'), equals(''));
+    });
+
+    test('padNullCharacters pads with null bytes', () {
+      expect(padNullCharacters('', 3), equals('\u0000\u0000\u0000'));
+      expect(padNullCharacters('a', 3), equals('a\u0000\u0000'));
+      expect(padNullCharacters('abc', 3), equals('abc'));
+      expect(padNullCharacters('abcdef', 3), equals('abcdef'));
+    });
+  });
 }

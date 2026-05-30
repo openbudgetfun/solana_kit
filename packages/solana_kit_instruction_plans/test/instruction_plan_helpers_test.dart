@@ -242,6 +242,22 @@ void main() {
       expect(transformedPlan, isA<ParallelInstructionPlan>());
     });
 
+    test('transforms message packer instruction plans', () {
+      final messagePackerPlan = getMessagePackerInstructionPlanFromInstructions(
+        [createInstruction('A')],
+      );
+      var wasTransformed = false;
+      final transformedPlan = transformInstructionPlan(messagePackerPlan, (p) {
+        if (p is MessagePackerInstructionPlan) {
+          wasTransformed = true;
+        }
+        return p;
+      });
+
+      expect(wasTransformed, isTrue);
+      expect(transformedPlan, isA<MessagePackerInstructionPlan>());
+    });
+
     test('transforms using a bottom-up approach', () {
       final plan = sequentialInstructionPlan([
         createInstruction('A'),

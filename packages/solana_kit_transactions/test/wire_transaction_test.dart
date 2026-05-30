@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 import 'package:test/test.dart';
@@ -22,9 +23,8 @@ void main() {
           224, 143, 184, 35, 238, 1, 2, 1, 1, 0, 0,
         ]),
         signatures: {
-          const Address('22222222222222222222222222222222222222222222'): null,
           const Address(
-            '44444444444444444444444444444444444444444444',
+            '22222222222222222222222222222222222222222222',
           ): SignatureBytes(
             Uint8List.fromList([
               0x65, 0xc9, 0xfa, 0x89, 0xe6, 0xab, 0xdb, 0x8b, //
@@ -61,6 +61,40 @@ void main() {
       final encoded1 = getBase64EncodedWireTransaction(transaction);
       final encoded2 = getBase64EncodedWireTransaction(transaction);
       expect(encoded1, encoded2);
+    });
+  });
+
+  group('getTransactionDecoder', () {
+    test('throws when signer count mismatches signature count', () {
+      // Construct a malformed wire transaction:
+      // - shortU16(1) = 1 signature
+      // - 64 zero bytes for the signature
+      // - Message: numRequiredSignatures=2, numReadonlySigned=0,
+      //   numReadonlyUnsigned=0
+      // - 1 account address (32 zero bytes)
+      // This creates a mismatch: message requires 2 signers but only 1
+      // signature is provided.
+      final malformedBytes = Uint8List.fromList([
+        1, // shortU16: 1 signature
+        ...List.filled(64, 0), // 1 signature (64 bytes)
+        2, 0, 0, // message header: numRequiredSignatures=2
+        1, // shortU16: 1 account
+        ...List.filled(32, 0), // 1 account address (32 bytes)
+        0, // shortU16: 0 instructions
+        ...List.filled(32, 0), // lifetime token (32 bytes)
+      ]);
+
+      final decoder = getTransactionDecoder();
+      expect(
+        () => decoder.decode(malformedBytes),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionMessageSignaturesMismatch,
+          ),
+        ),
+      );
     });
   });
 }

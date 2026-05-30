@@ -43,5 +43,19 @@ void main() {
         ),
       );
     });
+
+    test('throws on a single invalid hex character', () {
+      final base16 = getBase16Codec();
+      expect(
+        () => base16.encode('g'),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            equals(SolanaErrorCode.codecsInvalidStringForBase),
+          ),
+        ),
+      );
+    });
   });
 }

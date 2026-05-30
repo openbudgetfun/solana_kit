@@ -259,5 +259,80 @@ void main() {
 
       expect(identical(transactionWithSigners, transaction), isTrue);
     });
+
+    test(
+      'wraps fee payer in TransactionMessageWithFeePayerSigner when '
+      'fee payer address matches a signer', () {
+      final feePayerSigner = MockTransactionPartialSigner(
+        const Address('11111111111111111111111111111111'),
+      );
+      final instruction = Instruction(
+        programAddress: const Address(
+          '9999999999999999999999999999999999999999999',
+        ),
+        accounts: [
+          const AccountMeta(
+            address: Address('22222222222222222222222222222222'),
+            role: AccountRole.writableSigner,
+          ),
+        ],
+        data: Uint8List(0),
+      );
+
+      // Transaction with fee payer set as plain address.
+      final transaction = TransactionMessage(
+        version: TransactionVersion.v0,
+        feePayer: const Address('11111111111111111111111111111111'),
+        instructions: [instruction],
+      );
+
+      final result = addSignersToTransactionMessage(
+        [feePayerSigner],
+        transaction,
+      );
+
+      expect(result, isA<TransactionMessageWithFeePayerSigner>());
+      final withSigner = result as TransactionMessageWithFeePayerSigner;
+      expect(withSigner.feePayerSigner, equals(feePayerSigner));
+    });
+
+    test(
+      'preserves existing feePayerSigner when message already has one', () {
+      final feePayerSigner = MockTransactionPartialSigner(
+        const Address('11111111111111111111111111111111'),
+      );
+      final otherSigner = MockTransactionPartialSigner(
+        const Address('22222222222222222222222222222222'),
+      );
+
+      final instruction = Instruction(
+        programAddress: const Address(
+          '9999999999999999999999999999999999999999999',
+        ),
+        accounts: [
+          const AccountMeta(
+            address: Address('22222222222222222222222222222222'),
+            role: AccountRole.writableSigner,
+          ),
+        ],
+        data: Uint8List(0),
+      );
+
+      // Transaction already has a FeePayerSigner.
+      final transaction = TransactionMessageWithFeePayerSigner(
+        feePayerSigner: feePayerSigner,
+        version: TransactionVersion.v0,
+        instructions: [instruction],
+      );
+
+      final result = addSignersToTransactionMessage(
+        [otherSigner],
+        transaction,
+      );
+
+      expect(result, isA<TransactionMessageWithFeePayerSigner>());
+      final withSigner = result as TransactionMessageWithFeePayerSigner;
+      expect(withSigner.feePayerSigner, equals(feePayerSigner));
+    });
   });
 }

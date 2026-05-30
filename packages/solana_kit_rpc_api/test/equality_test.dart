@@ -424,4 +424,149 @@ void main() {
       expect(a, isNot(equals(b)));
     });
   });
+
+  // ---------------------------------------------------------------------------
+  // toString() coverage
+  // ---------------------------------------------------------------------------
+  group('toString() coverage', () {
+    test('GetAccountInfoConfig toString', () {
+      const config = GetAccountInfoConfig(
+        commitment: Commitment.confirmed,
+        encoding: AccountEncoding.base64,
+      );
+      expect(config.toString(), contains('GetAccountInfoConfig'));
+    });
+
+    test('GetBalanceConfig toString', () {
+      const config = GetBalanceConfig(
+        commitment: Commitment.confirmed,
+      );
+      expect(config.toString(), contains('GetBalanceConfig'));
+    });
+
+    test('GetBlockConfig toString', () {
+      const config = GetBlockConfig(
+        commitment: Commitment.confirmed,
+      );
+      expect(config.toString(), contains('GetBlockConfig'));
+    });
+
+    test('ClusterNode toString', () {
+      const node = ClusterNode(
+        pubkey: _addr1,
+        gossip: '127.0.0.1:8001',
+        version: '1.18.0',
+      );
+      expect(node.toString(), contains('ClusterNode'));
+    });
+
+    test('EpochSchedule toString', () {
+      final schedule = EpochSchedule(
+        firstNormalEpoch: BigInt.zero,
+        firstNormalSlot: BigInt.zero,
+        leaderScheduleSlotOffset: BigInt.from(432000),
+        slotsPerEpoch: BigInt.from(432000),
+        warmup: false,
+      );
+      expect(schedule.toString(), contains('EpochSchedule'));
+    });
+
+    test('GetSignaturesForAddressConfig toString', () {
+      const config = GetSignaturesForAddressConfig(
+        commitment: Commitment.confirmed,
+      );
+      expect(config.toString(), contains('GetSignaturesForAddressConfig'));
+    });
+
+    test('SendTransactionConfig toString', () {
+      const config = SendTransactionConfig();
+      expect(config.toString(), contains('SendTransactionConfig'));
+    });
+
+    test('SimulateTransactionConfig toString', () {
+      const config = SimulateTransactionConfig(
+        commitment: Commitment.confirmed,
+      );
+      expect(config.toString(), contains('SimulateTransactionConfig'));
+    });
+
+    test('SimulateTransactionAccountsConfig toString', () {
+      const config = SimulateTransactionAccountsConfig(
+        addresses: [],
+      );
+      expect(config.toString(), contains('SimulateTransactionAccountsConfig'));
+    });
+
+    test('TokenAccountProgramIdFilter toString', () {
+      const filter = TokenAccountProgramIdFilter(
+        programId: _addr1,
+      );
+      expect(filter.toString(), contains('TokenAccountProgramIdFilter'));
+    });
+
+    test('TokenAccountProgramIdFilter == and hashCode', () {
+      const a = TokenAccountProgramIdFilter(programId: _addr1);
+      const b = TokenAccountProgramIdFilter(programId: _addr1);
+      expect(a, equals(b));
+      expect(a.hashCode, equals(b.hashCode));
+    });
+
+    test('SimulateTransactionAccountsConfig == and hashCode', () {
+      const a = SimulateTransactionAccountsConfig(addresses: []);
+      const b = SimulateTransactionAccountsConfig(addresses: []);
+      expect(a, equals(b));
+      expect(a.hashCode, equals(b.hashCode));
+    });
+
+    test('SimulateTransactionConfig == with all fields', () {
+      final a = SimulateTransactionConfig(
+        commitment: Commitment.confirmed,
+        sigVerify: true,
+        replaceRecentBlockhash: false,
+        innerInstructions: true,
+        minContextSlot: BigInt.from(100),
+      );
+      final b = SimulateTransactionConfig(
+        commitment: Commitment.confirmed,
+        sigVerify: true,
+        replaceRecentBlockhash: false,
+        innerInstructions: true,
+        minContextSlot: BigInt.from(100),
+      );
+      expect(a, equals(b));
+      expect(a.hashCode, equals(b.hashCode));
+    });
+
+    test('GetSignaturesForAddressConfig == and hashCode', () {
+      final a = GetSignaturesForAddressConfig(
+        commitment: Commitment.confirmed,
+        limit: 10,
+        minContextSlot: BigInt.from(100),
+      );
+      final b = GetSignaturesForAddressConfig(
+        commitment: Commitment.confirmed,
+        limit: 10,
+        minContextSlot: BigInt.from(100),
+      );
+      expect(a, equals(b));
+      expect(a.hashCode, equals(b.hashCode));
+    });
+
+    test('SendTransactionConfig == and hashCode', () {
+      final a = SendTransactionConfig(
+        maxRetries: BigInt.from(3),
+        minContextSlot: BigInt.from(100),
+        preflightCommitment: Commitment.confirmed,
+        skipPreflight: false,
+      );
+      final b = SendTransactionConfig(
+        maxRetries: BigInt.from(3),
+        minContextSlot: BigInt.from(100),
+        preflightCommitment: Commitment.confirmed,
+        skipPreflight: false,
+      );
+      expect(a, equals(b));
+      expect(a.hashCode, equals(b.hashCode));
+    });
+  });
 }

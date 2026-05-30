@@ -133,5 +133,164 @@ void main() {
       expect(mintInfo.toString(), contains('extensions: [transfer-fee]'));
       expect(multisigInfo.toString(), contains('numRequiredSigners: 2'));
     });
+
+    test('JsonParsedTokenAccount equality, hashCode, and toString', () {
+      const info1 = JsonParsedTokenAccount(
+        isNative: false,
+        mint: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
+        owner: Address('6UsGbaMgchgj4wiwKKuE1v5URHdcDfEiMSM25QpesKir'),
+        state: TokenAccountState.initialized,
+        tokenAmount: TokenAmount(
+          amount: StringifiedBigInt('9999999779500000'),
+          decimals: 6,
+          uiAmountString: StringifiedNumber('9999999779.5'),
+        ),
+      );
+      const info2 = JsonParsedTokenAccount(
+        isNative: false,
+        mint: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
+        owner: Address('6UsGbaMgchgj4wiwKKuE1v5URHdcDfEiMSM25QpesKir'),
+        state: TokenAccountState.initialized,
+        tokenAmount: TokenAmount(
+          amount: StringifiedBigInt('9999999779500000'),
+          decimals: 6,
+          uiAmountString: StringifiedNumber('9999999779.5'),
+        ),
+      );
+      const info3 = JsonParsedTokenAccount(
+        isNative: true,
+        mint: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
+        owner: Address('6UsGbaMgchgj4wiwKKuE1v5URHdcDfEiMSM25QpesKir'),
+        state: TokenAccountState.initialized,
+        tokenAmount: TokenAmount(
+          amount: StringifiedBigInt('9999999779500000'),
+          decimals: 6,
+          uiAmountString: StringifiedNumber('9999999779.5'),
+        ),
+      );
+
+      expect(info1, equals(info2));
+      expect(info1.hashCode, equals(info2.hashCode));
+      expect(info1 == info3, isFalse);
+      expect(info1.toString(), contains('mint'));
+    });
+
+    test('JsonParsedTokenAccount equality with different extensions', () {
+      const info1 = JsonParsedTokenAccount(
+        isNative: false,
+        mint: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
+        owner: Address('6UsGbaMgchgj4wiwKKuE1v5URHdcDfEiMSM25QpesKir'),
+        state: TokenAccountState.initialized,
+        tokenAmount: TokenAmount(
+          amount: StringifiedBigInt('100'),
+          decimals: 6,
+          uiAmountString: StringifiedNumber('0.0001'),
+        ),
+        extensions: ['memo-transfer'],
+      );
+      const info2 = JsonParsedTokenAccount(
+        isNative: false,
+        mint: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
+        owner: Address('6UsGbaMgchgj4wiwKKuE1v5URHdcDfEiMSM25QpesKir'),
+        state: TokenAccountState.initialized,
+        tokenAmount: TokenAmount(
+          amount: StringifiedBigInt('100'),
+          decimals: 6,
+          uiAmountString: StringifiedNumber('0.0001'),
+        ),
+        extensions: ['transfer-fee'],
+      );
+
+      expect(info1 == info2, isFalse);
+    });
+
+    test('JsonParsedTokenAccount equality with null vs non-null extensions', () {
+      const info1 = JsonParsedTokenAccount(
+        isNative: false,
+        mint: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
+        owner: Address('6UsGbaMgchgj4wiwKKuE1v5URHdcDfEiMSM25QpesKir'),
+        state: TokenAccountState.initialized,
+        tokenAmount: TokenAmount(
+          amount: StringifiedBigInt('100'),
+          decimals: 6,
+          uiAmountString: StringifiedNumber('0.0001'),
+        ),
+      );
+      const info2 = JsonParsedTokenAccount(
+        isNative: false,
+        mint: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
+        owner: Address('6UsGbaMgchgj4wiwKKuE1v5URHdcDfEiMSM25QpesKir'),
+        state: TokenAccountState.initialized,
+        tokenAmount: TokenAmount(
+          amount: StringifiedBigInt('100'),
+          decimals: 6,
+          uiAmountString: StringifiedNumber('0.0001'),
+        ),
+        extensions: ['memo-transfer'],
+      );
+
+      expect(info1 == info2, isFalse);
+    });
+
+    test('JsonParsedMintInfo equality, hashCode, and toString', () {
+      const info1 = JsonParsedMintInfo(
+        decimals: 6,
+        isInitialized: true,
+        supply: StringifiedBigInt('1792635195340523528'),
+        mintAuthority: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
+      );
+      const info2 = JsonParsedMintInfo(
+        decimals: 6,
+        isInitialized: true,
+        supply: StringifiedBigInt('1792635195340523528'),
+        mintAuthority: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
+      );
+      const info3 = JsonParsedMintInfo(
+        decimals: 9,
+        isInitialized: true,
+        supply: StringifiedBigInt('1792635195340523528'),
+        mintAuthority: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
+      );
+
+      expect(info1, equals(info2));
+      expect(info1.hashCode, equals(info2.hashCode));
+      expect(info1 == info3, isFalse);
+      expect(info1.toString(), contains('decimals'));
+    });
+
+    test('JsonParsedMultisigInfo equality, hashCode, and toString', () {
+      const info1 = JsonParsedMultisigInfo(
+        isInitialized: true,
+        numRequiredSigners: 2,
+        numValidSigners: 2,
+        signers: [
+          Address('Fkc4FN7PPhyGsAcHPW3dBBJ4BvtYkDr2rBFBgFpvy3nB'),
+          Address('5scSndUhfZJ8j8wZz5UNHhvuPBhvN1RboTdkKSvFHLtW'),
+        ],
+      );
+      const info2 = JsonParsedMultisigInfo(
+        isInitialized: true,
+        numRequiredSigners: 2,
+        numValidSigners: 2,
+        signers: [
+          Address('Fkc4FN7PPhyGsAcHPW3dBBJ4BvtYkDr2rBFBgFpvy3nB'),
+          Address('5scSndUhfZJ8j8wZz5UNHhvuPBhvN1RboTdkKSvFHLtW'),
+        ],
+      );
+      const info3 = JsonParsedMultisigInfo(
+        isInitialized: true,
+        numRequiredSigners: 3,
+        numValidSigners: 2,
+        signers: [
+          Address('Fkc4FN7PPhyGsAcHPW3dBBJ4BvtYkDr2rBFBgFpvy3nB'),
+          Address('5scSndUhfZJ8j8wZz5UNHhvuPBhvN1RboTdkKSvFHLtW'),
+        ],
+      );
+
+      expect(info1, equals(info2));
+      expect(info1.hashCode, equals(info2.hashCode));
+      expect(info1 == info3, isFalse);
+      expect(info1.toString(), contains('numRequiredSigners'));
+    });
   });
 }

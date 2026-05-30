@@ -52,7 +52,18 @@ void main() {
       expect(error.context['index'], 2);
     });
 
-    test('converts unknown transaction error', () {
+    test('converts unknown transaction error with context from map', () {
+      final error = getSolanaErrorFromTransactionError({
+        'UnknownFutureError': 'some context',
+      });
+      expect(error.context['errorName'], 'UnknownFutureError');
+      expect(
+        error.context['transactionErrorContext'],
+        'some context',
+      );
+    });
+
+    test('converts unknown transaction error without context', () {
       final error = getSolanaErrorFromTransactionError('UnknownFutureError');
       expect(error.context['errorName'], 'UnknownFutureError');
     });

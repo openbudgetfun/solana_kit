@@ -286,6 +286,47 @@ void main() {
       expect(capturedCommitment, equals(Commitment.confirmed));
     });
 
+    test('fatals when the getNonceAccount call throws an error', () async {
+      final fn = createNonceInvalidationPromiseFactory(
+        NonceInvalidationConfig(
+          getNonceAccount:
+              (
+                nonceAccountAddress, {
+                required abortSignal,
+                required commitment,
+              }) async {
+                throw StateError('rpc failure');
+              },
+          onAccountNotification:
+              (
+                nonceAccountAddress, {
+                required abortSignal,
+                required commitment,
+                required void Function({required String nonceValue})
+                onNotification,
+              }) async {
+                await Completer<void>().future;
+              },
+        ),
+      );
+
+      await expectLater(
+        fn(
+          abortSignal: AbortController().signal,
+          commitment: Commitment.finalized,
+          expectedNonceValue: 'expected_nonce',
+          nonceAccountAddress: 'nonce_address',
+        ),
+        throwsA(
+          isA<StateError>().having(
+            (e) => e.message,
+            'message',
+            equals('rpc failure'),
+          ),
+        ),
+      );
+    });
+
     test(
       'passes address and commitment to the account notification subscriber',
       () async {

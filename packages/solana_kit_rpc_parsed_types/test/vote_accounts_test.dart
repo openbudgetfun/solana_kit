@@ -184,5 +184,114 @@ void main() {
 
       expect(account.info.rootSlot, isNull);
     });
+
+    test('JsonParsedAuthorizedVoter equality, hashCode, and toString', () {
+      final voter1 = JsonParsedAuthorizedVoter(
+        authorizedVoter: const Address('HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr'),
+        epoch: BigInt.from(529),
+      );
+      final voter2 = JsonParsedAuthorizedVoter(
+        authorizedVoter: const Address('HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr'),
+        epoch: BigInt.from(529),
+      );
+      final voter3 = JsonParsedAuthorizedVoter(
+        authorizedVoter: const Address('HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr'),
+        epoch: BigInt.from(999),
+      );
+
+      expect(voter1, equals(voter2));
+      expect(voter1.hashCode, equals(voter2.hashCode));
+      expect(voter1 == voter3, isFalse);
+      expect(voter1.toString(), contains('authorizedVoter'));
+    });
+
+    test('JsonParsedEpochCredit equality, hashCode, and toString', () {
+      final credit1 = JsonParsedEpochCredit(
+        credits: const StringifiedBigInt('68697256'),
+        epoch: BigInt.from(466),
+        previousCredits: const StringifiedBigInt('68325825'),
+      );
+      final credit2 = JsonParsedEpochCredit(
+        credits: const StringifiedBigInt('68697256'),
+        epoch: BigInt.from(466),
+        previousCredits: const StringifiedBigInt('68325825'),
+      );
+      final credit3 = JsonParsedEpochCredit(
+        credits: const StringifiedBigInt('99999999'),
+        epoch: BigInt.from(466),
+        previousCredits: const StringifiedBigInt('68325825'),
+      );
+
+      expect(credit1, equals(credit2));
+      expect(credit1.hashCode, equals(credit2.hashCode));
+      expect(credit1 == credit3, isFalse);
+      expect(credit1.toString(), contains('credits'));
+    });
+
+    test('JsonParsedPriorVoter equality, hashCode, and toString', () {
+      final pv1 = JsonParsedPriorVoter(
+        authorizedPubkey: const Address('HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr'),
+        epochOfLastAuthorizedSwitch: BigInt.from(100),
+        targetEpoch: BigInt.from(200),
+      );
+      final pv2 = JsonParsedPriorVoter(
+        authorizedPubkey: const Address('HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr'),
+        epochOfLastAuthorizedSwitch: BigInt.from(100),
+        targetEpoch: BigInt.from(200),
+      );
+      final pv3 = JsonParsedPriorVoter(
+        authorizedPubkey: const Address('HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr'),
+        epochOfLastAuthorizedSwitch: BigInt.from(100),
+        targetEpoch: BigInt.from(999),
+      );
+
+      expect(pv1, equals(pv2));
+      expect(pv1.hashCode, equals(pv2.hashCode));
+      expect(pv1 == pv3, isFalse);
+      expect(pv1.toString(), contains('authorizedPubkey'));
+    });
+
+    test('JsonParsedLastTimestamp equality, hashCode, and toString', () {
+      final ts1 = JsonParsedLastTimestamp(
+        slot: BigInt.from(228884530),
+        timestamp: UnixTimestamp(BigInt.from(1689090220)),
+      );
+      final ts2 = JsonParsedLastTimestamp(
+        slot: BigInt.from(228884530),
+        timestamp: UnixTimestamp(BigInt.from(1689090220)),
+      );
+      final ts3 = JsonParsedLastTimestamp(
+        slot: BigInt.from(999),
+        timestamp: UnixTimestamp(BigInt.from(1689090220)),
+      );
+
+      expect(ts1, equals(ts2));
+      expect(ts1.hashCode, equals(ts2.hashCode));
+      expect(ts1 == ts3, isFalse);
+      expect(ts1.toString(), contains('slot'));
+    });
+
+    test('JsonParsedVote equality, hashCode, and toString', () {
+      final vote1 = JsonParsedVote(
+        confirmationCount: 31,
+        latency: BigInt.from(2),
+        slot: BigInt.from(228884500),
+      );
+      final vote2 = JsonParsedVote(
+        confirmationCount: 31,
+        latency: BigInt.from(2),
+        slot: BigInt.from(228884500),
+      );
+      final vote3 = JsonParsedVote(
+        confirmationCount: 10,
+        latency: BigInt.from(2),
+        slot: BigInt.from(228884500),
+      );
+
+      expect(vote1, equals(vote2));
+      expect(vote1.hashCode, equals(vote2.hashCode));
+      expect(vote1 == vote3, isFalse);
+      expect(vote1.toString(), contains('confirmationCount'));
+    });
   });
 }

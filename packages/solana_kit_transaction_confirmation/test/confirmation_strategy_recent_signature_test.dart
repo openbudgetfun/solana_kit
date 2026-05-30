@@ -251,5 +251,42 @@ void main() {
 
       expect(capturedAbortSignal!.isAborted, isTrue);
     });
+
+    test('fatals when the getSignatureStatuses call throws an error',
+        () async {
+      final fn = createRecentSignatureConfirmationPromiseFactory(
+        RecentSignatureConfirmationConfig(
+          getSignatureStatuses:
+              (signatures, {required abortSignal}) async {
+                throw StateError('rpc failure');
+              },
+          onSignatureNotification:
+              (
+                signature, {
+                required commitment,
+                required abortSignal,
+                required void Function({required Object? err})
+                onNotification,
+              }) async {
+                await Completer<void>().future;
+              },
+        ),
+      );
+
+      await expectLater(
+        fn(
+          abortSignal: AbortController().signal,
+          commitment: Commitment.finalized,
+          signature: 'abc',
+        ),
+        throwsA(
+          isA<StateError>().having(
+            (e) => e.message,
+            'message',
+            equals('rpc failure'),
+          ),
+        ),
+      );
+    });
   });
 }

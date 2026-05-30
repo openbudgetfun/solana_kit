@@ -64,5 +64,75 @@ void main() {
           fail('Expected stakeConfig, got validatorInfo');
       }
     });
+
+    test('StakeConfigInfo equality, hashCode, and toString', () {
+      const info1 = JsonParsedStakeConfigInfo(
+        slashPenalty: 12,
+        warmupCooldownRate: 0.25,
+      );
+      const info2 = JsonParsedStakeConfigInfo(
+        slashPenalty: 12,
+        warmupCooldownRate: 0.25,
+      );
+      const info3 = JsonParsedStakeConfigInfo(
+        slashPenalty: 50,
+        warmupCooldownRate: 0.25,
+      );
+
+      expect(info1, equals(info2));
+      expect(info1.hashCode, equals(info2.hashCode));
+      expect(info1 == info3, isFalse);
+      expect(info1.toString(), contains('slashPenalty'));
+    });
+
+    test('ValidatorInfoData equality, hashCode, and toString', () {
+      const info1 = JsonParsedValidatorInfoData(
+        configData: {'name': 'Test'},
+        keys: [
+          JsonParsedValidatorInfoKey(
+            pubkey: Address('Va1idator1nfo111111111111111111111111111111'),
+            signer: true,
+          ),
+        ],
+      );
+      const info2 = JsonParsedValidatorInfoData(
+        configData: {'name': 'Test'},
+        keys: [
+          JsonParsedValidatorInfoKey(
+            pubkey: Address('Va1idator1nfo111111111111111111111111111111'),
+            signer: true,
+          ),
+        ],
+      );
+      const info3 = JsonParsedValidatorInfoData(
+        configData: {'name': 'Different'},
+        keys: [],
+      );
+
+      expect(info1, equals(info2));
+      expect(info1.hashCode, equals(info2.hashCode));
+      expect(info1 == info3, isFalse);
+      expect(info1.toString(), contains('configData'));
+    });
+
+    test('ValidatorInfoKey equality, hashCode, and toString', () {
+      const key1 = JsonParsedValidatorInfoKey(
+        pubkey: Address('Va1idator1nfo111111111111111111111111111111'),
+        signer: true,
+      );
+      const key2 = JsonParsedValidatorInfoKey(
+        pubkey: Address('Va1idator1nfo111111111111111111111111111111'),
+        signer: true,
+      );
+      const key3 = JsonParsedValidatorInfoKey(
+        pubkey: Address('Va1idator1nfo111111111111111111111111111111'),
+        signer: false,
+      );
+
+      expect(key1, equals(key2));
+      expect(key1.hashCode, equals(key2.hashCode));
+      expect(key1 == key3, isFalse);
+      expect(key1.toString(), contains('pubkey'));
+    });
   });
 }

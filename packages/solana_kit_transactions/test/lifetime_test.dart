@@ -351,4 +351,180 @@ void main() {
       },
     );
   });
+
+  group('TransactionBlockhashLifetime', () {
+    test('== returns true for identical instances', () {
+      final a = TransactionBlockhashLifetime(
+        blockhash: '11111111111111111111111111111111',
+        lastValidBlockHeight: BigInt.one,
+      );
+      final b = TransactionBlockhashLifetime(
+        blockhash: '11111111111111111111111111111111',
+        lastValidBlockHeight: BigInt.one,
+      );
+      expect(a == b, isTrue);
+    });
+
+    test('== returns false for different blockhash', () {
+      final a = TransactionBlockhashLifetime(
+        blockhash: '11111111111111111111111111111111',
+        lastValidBlockHeight: BigInt.one,
+      );
+      final b = TransactionBlockhashLifetime(
+        blockhash: '22222222222222222222222222222222',
+        lastValidBlockHeight: BigInt.one,
+      );
+      expect(a == b, isFalse);
+    });
+
+    test('== returns false for different lastValidBlockHeight', () {
+      final a = TransactionBlockhashLifetime(
+        blockhash: '11111111111111111111111111111111',
+        lastValidBlockHeight: BigInt.one,
+      );
+      final b = TransactionBlockhashLifetime(
+        blockhash: '11111111111111111111111111111111',
+        lastValidBlockHeight: BigInt.two,
+      );
+      expect(a == b, isFalse);
+    });
+
+    test('== returns false for different type', () {
+      final a = TransactionBlockhashLifetime(
+        blockhash: '11111111111111111111111111111111',
+        lastValidBlockHeight: BigInt.one,
+      );
+      const b = TransactionDurableNonceLifetime(
+        nonce: '11111111111111111111111111111111',
+        nonceAccountAddress:
+            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+      );
+      expect(a == b, isFalse);
+    });
+
+    test('== returns true for same instance', () {
+      final a = TransactionBlockhashLifetime(
+        blockhash: '11111111111111111111111111111111',
+        lastValidBlockHeight: BigInt.one,
+      );
+      expect(a == a, isTrue);
+    });
+
+    test('hashCode is consistent for equal instances', () {
+      final a = TransactionBlockhashLifetime(
+        blockhash: '11111111111111111111111111111111',
+        lastValidBlockHeight: BigInt.one,
+      );
+      final b = TransactionBlockhashLifetime(
+        blockhash: '11111111111111111111111111111111',
+        lastValidBlockHeight: BigInt.one,
+      );
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('toString returns expected format', () {
+      final lifetime = TransactionBlockhashLifetime(
+        blockhash: '11111111111111111111111111111111',
+        lastValidBlockHeight: BigInt.one,
+      );
+      expect(
+        lifetime.toString(),
+        'TransactionBlockhashLifetime(blockhash: 11111111111111111111111111111111, '
+        'lastValidBlockHeight: 1)',
+      );
+    });
+  });
+
+  group('TransactionDurableNonceLifetime', () {
+    test('== returns true for identical instances', () {
+      const a = TransactionDurableNonceLifetime(
+        nonce: 'abcd',
+        nonceAccountAddress:
+            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+      );
+      const b = TransactionDurableNonceLifetime(
+        nonce: 'abcd',
+        nonceAccountAddress:
+            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+      );
+      expect(a == b, isTrue);
+    });
+
+    test('== returns false for different nonce', () {
+      const a = TransactionDurableNonceLifetime(
+        nonce: 'abcd',
+        nonceAccountAddress:
+            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+      );
+      const b = TransactionDurableNonceLifetime(
+        nonce: 'efgh',
+        nonceAccountAddress:
+            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+      );
+      expect(a == b, isFalse);
+    });
+
+    test('== returns false for different nonceAccountAddress', () {
+      const a = TransactionDurableNonceLifetime(
+        nonce: 'abcd',
+        nonceAccountAddress:
+            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+      );
+      const b = TransactionDurableNonceLifetime(
+        nonce: 'abcd',
+        nonceAccountAddress:
+            Address('33333333333333333333333333333333333333333333'),
+      );
+      expect(a == b, isFalse);
+    });
+
+    test('== returns false for different type', () {
+      const a = TransactionDurableNonceLifetime(
+        nonce: 'abcd',
+        nonceAccountAddress:
+            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+      );
+      final b = TransactionBlockhashLifetime(
+        blockhash: 'abcd',
+        lastValidBlockHeight: BigInt.one,
+      );
+      expect(a == b, isFalse);
+    });
+
+    test('== returns true for same instance', () {
+      const a = TransactionDurableNonceLifetime(
+        nonce: 'abcd',
+        nonceAccountAddress:
+            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+      );
+      expect(a == a, isTrue);
+    });
+
+    test('hashCode is consistent for equal instances', () {
+      const a = TransactionDurableNonceLifetime(
+        nonce: 'abcd',
+        nonceAccountAddress:
+            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+      );
+      const b = TransactionDurableNonceLifetime(
+        nonce: 'abcd',
+        nonceAccountAddress:
+            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+      );
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('toString returns expected format', () {
+      const lifetime = TransactionDurableNonceLifetime(
+        nonce: 'abcd',
+        nonceAccountAddress:
+            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+      );
+      expect(
+        lifetime.toString(),
+        'TransactionDurableNonceLifetime(nonce: abcd, '
+        'nonceAccountAddress: 2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS)',
+      );
+    });
+  });
 }

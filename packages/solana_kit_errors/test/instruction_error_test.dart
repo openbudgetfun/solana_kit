@@ -40,18 +40,32 @@ void main() {
       expect(error.code, SolanaErrorCode.instructionErrorBorshIoError);
     });
 
-    test('converts unknown instruction error', () {
+    test('converts unknown instruction error with context from map', () {
+      final error = getSolanaErrorFromInstructionError(0, {
+        'SomeNewUnknownError': 'some context data',
+      });
+      // Unknown errors get code offset -1 from base, which wraps to unknown
+      expect(error.context['errorName'], 'SomeNewUnknownError');
+      expect(error.context['instructionErrorContext'], 'some context data');
+    });
+
+    test('converts unknown instruction error with null context', () {
       final error = getSolanaErrorFromInstructionError(
         0,
         'SomeNewUnknownError',
       );
-      // Unknown errors get code offset -1 from base, which wraps to unknown
       expect(error.context['errorName'], 'SomeNewUnknownError');
     });
 
     test('passes instruction index in context', () {
       final error = getSolanaErrorFromInstructionError(5, 'InvalidArgument');
       expect(error.context['index'], 5);
+    });
+
+    test('converts instruction error with non-string non-map value', () {
+      final error = getSolanaErrorFromInstructionError(0, 42);
+      // 42.toString() = '42', which won't match any known error name
+      expect(error.context['errorName'], '42');
     });
 
     test('converts all known instruction error names', () {

@@ -108,5 +108,147 @@ void main() {
         contains('warmupCooldownRate: 0.25'),
       );
     });
+
+    test('JsonParsedStakeAccountInfo equality and hashCode', () {
+      final info1 = createStakeInfo();
+      final info2 = createStakeInfo();
+      final info3 = JsonParsedStakeAccountInfo(
+        meta: JsonParsedStakeMeta(
+          authorized: const JsonParsedStakeAuthorized(
+            staker: Address('3HRNKNXafhr3wE9NSXRpNVdFYt6EVygdqFwqf6WpG57V'),
+            withdrawer: Address('3HRNKNXafhr3wE9NSXRpNVdFYt6EVygdqFwqf6WpG57V'),
+          ),
+          lockup: JsonParsedStakeLockup(
+            custodian: const Address('11111111111111111111111111111111'),
+            epoch: BigInt.zero,
+            unixTimestamp: UnixTimestamp(BigInt.zero),
+          ),
+          rentExemptReserve: const StringifiedBigInt('2282880'),
+        ),
+      );
+
+      expect(info1, equals(info2));
+      expect(info1.hashCode, equals(info2.hashCode));
+      expect(info1 == info3, isFalse);
+    });
+
+    test('JsonParsedStakeMeta equality, hashCode, and toString', () {
+      final meta1 = JsonParsedStakeMeta(
+        authorized: const JsonParsedStakeAuthorized(
+          staker: Address('3HRNKNXafhr3wE9NSXRpNVdFYt6EVygdqFwqf6WpG57V'),
+          withdrawer: Address('3HRNKNXafhr3wE9NSXRpNVdFYt6EVygdqFwqf6WpG57V'),
+        ),
+        lockup: JsonParsedStakeLockup(
+          custodian: const Address('11111111111111111111111111111111'),
+          epoch: BigInt.zero,
+          unixTimestamp: UnixTimestamp(BigInt.zero),
+        ),
+        rentExemptReserve: const StringifiedBigInt('2282880'),
+      );
+      final meta2 = JsonParsedStakeMeta(
+        authorized: const JsonParsedStakeAuthorized(
+          staker: Address('3HRNKNXafhr3wE9NSXRpNVdFYt6EVygdqFwqf6WpG57V'),
+          withdrawer: Address('3HRNKNXafhr3wE9NSXRpNVdFYt6EVygdqFwqf6WpG57V'),
+        ),
+        lockup: JsonParsedStakeLockup(
+          custodian: const Address('11111111111111111111111111111111'),
+          epoch: BigInt.zero,
+          unixTimestamp: UnixTimestamp(BigInt.zero),
+        ),
+        rentExemptReserve: const StringifiedBigInt('2282880'),
+      );
+      final meta3 = JsonParsedStakeMeta(
+        authorized: const JsonParsedStakeAuthorized(
+          staker: Address('3HRNKNXafhr3wE9NSXRpNVdFYt6EVygdqFwqf6WpG57V'),
+          withdrawer: Address('3HRNKNXafhr3wE9NSXRpNVdFYt6EVygdqFwqf6WpG57V'),
+        ),
+        lockup: JsonParsedStakeLockup(
+          custodian: const Address('11111111111111111111111111111111'),
+          epoch: BigInt.zero,
+          unixTimestamp: UnixTimestamp(BigInt.zero),
+        ),
+        rentExemptReserve: const StringifiedBigInt('999999'),
+      );
+
+      expect(meta1, equals(meta2));
+      expect(meta1.hashCode, equals(meta2.hashCode));
+      expect(meta1 == meta3, isFalse);
+      expect(meta1.toString(), contains('rentExemptReserve'));
+    });
+
+    test('JsonParsedStakeAuthorized toString', () {
+      const auth = JsonParsedStakeAuthorized(
+        staker: Address('3HRNKNXafhr3wE9NSXRpNVdFYt6EVygdqFwqf6WpG57V'),
+        withdrawer: Address('3HRNKNXafhr3wE9NSXRpNVdFYt6EVygdqFwqf6WpG57V'),
+      );
+      expect(auth.toString(), contains('staker'));
+    });
+
+    test('JsonParsedStakeData equality, hashCode, and toString', () {
+      final data1 = JsonParsedStakeData(
+        creditsObserved: BigInt.from(169965713),
+        delegation: const JsonParsedStakeDelegation(
+          activationEpoch: StringifiedBigInt('386'),
+          deactivationEpoch: StringifiedBigInt('471'),
+          stake: StringifiedBigInt('8007935'),
+          voter: Address('CertusDeBmqN8ZawdkxK5kFGMwBXdudvWHYwtNgNhvLu'),
+          warmupCooldownRate: 0.25,
+        ),
+      );
+      final data2 = JsonParsedStakeData(
+        creditsObserved: BigInt.from(169965713),
+        delegation: const JsonParsedStakeDelegation(
+          activationEpoch: StringifiedBigInt('386'),
+          deactivationEpoch: StringifiedBigInt('471'),
+          stake: StringifiedBigInt('8007935'),
+          voter: Address('CertusDeBmqN8ZawdkxK5kFGMwBXdudvWHYwtNgNhvLu'),
+          warmupCooldownRate: 0.25,
+        ),
+      );
+      final data3 = JsonParsedStakeData(
+        creditsObserved: BigInt.from(999),
+        delegation: const JsonParsedStakeDelegation(
+          activationEpoch: StringifiedBigInt('386'),
+          deactivationEpoch: StringifiedBigInt('471'),
+          stake: StringifiedBigInt('8007935'),
+          voter: Address('CertusDeBmqN8ZawdkxK5kFGMwBXdudvWHYwtNgNhvLu'),
+          warmupCooldownRate: 0.25,
+        ),
+      );
+
+      expect(data1, equals(data2));
+      expect(data1.hashCode, equals(data2.hashCode));
+      expect(data1 == data3, isFalse);
+      expect(data1.toString(), contains('creditsObserved'));
+    });
+
+    test('JsonParsedStakeDeequality, hashCode, and toString', () {
+      const d1 = JsonParsedStakeDelegation(
+        activationEpoch: StringifiedBigInt('386'),
+        deactivationEpoch: StringifiedBigInt('471'),
+        stake: StringifiedBigInt('8007935'),
+        voter: Address('CertusDeBmqN8ZawdkxK5kFGMwBXdudvWHYwtNgNhvLu'),
+        warmupCooldownRate: 0.25,
+      );
+      const d2 = JsonParsedStakeDelegation(
+        activationEpoch: StringifiedBigInt('386'),
+        deactivationEpoch: StringifiedBigInt('471'),
+        stake: StringifiedBigInt('8007935'),
+        voter: Address('CertusDeBmqN8ZawdkxK5kFGMwBXdudvWHYwtNgNhvLu'),
+        warmupCooldownRate: 0.25,
+      );
+      const d3 = JsonParsedStakeDelegation(
+        activationEpoch: StringifiedBigInt('999'),
+        deactivationEpoch: StringifiedBigInt('471'),
+        stake: StringifiedBigInt('8007935'),
+        voter: Address('CertusDeBmqN8ZawdkxK5kFGMwBXdudvWHYwtNgNhvLu'),
+        warmupCooldownRate: 0.25,
+      );
+
+      expect(d1, equals(d2));
+      expect(d1.hashCode, equals(d2.hashCode));
+      expect(d1 == d3, isFalse);
+      expect(d1.toString(), contains('warmupCooldownRate'));
+    });
   });
 }

@@ -122,6 +122,74 @@ void main() {
     });
   });
 
+  group('data class value semantics', () {
+    test('CreateAssociatedTokenInstructionData toString/==/hashCode', () {
+      const a = CreateAssociatedTokenInstructionData();
+      const b = CreateAssociatedTokenInstructionData();
+      const c = CreateAssociatedTokenInstructionData(discriminator: 1);
+
+      expect(a.toString(), contains('CreateAssociatedTokenInstructionData'));
+      expect(a, b);
+      expect(a == c, isFalse);
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('CreateAssociatedTokenIdempotentInstructionData toString/==/hashCode',
+        () {
+      const a = CreateAssociatedTokenIdempotentInstructionData();
+      const b =
+          CreateAssociatedTokenIdempotentInstructionData();
+      const c =
+          CreateAssociatedTokenIdempotentInstructionData(discriminator: 0);
+
+      expect(a.toString(),
+          contains('CreateAssociatedTokenIdempotentInstructionData'));
+      expect(a, b);
+      expect(a == c, isFalse);
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('RecoverNestedAssociatedTokenInstructionData toString/==/hashCode',
+        () {
+      const a = RecoverNestedAssociatedTokenInstructionData();
+      const b = RecoverNestedAssociatedTokenInstructionData();
+      const c = RecoverNestedAssociatedTokenInstructionData(discriminator: 0);
+
+      expect(a.toString(),
+          contains('RecoverNestedAssociatedTokenInstructionData'));
+      expect(a, b);
+      expect(a == c, isFalse);
+      expect(a.hashCode, b.hashCode);
+    });
+  });
+
+  group('getCreateAssociatedTokenAccountIdempotentInstruction', () {
+    test('alias produces the same instruction', () {
+      final direct = getCreateAssociatedTokenIdempotentInstruction(
+        programAddress: associatedTokenProgramAddress,
+        payer: payer,
+        ata: ata,
+        owner: owner,
+        mint: mint,
+        systemProgram: systemProgram,
+        tokenProgram: tokenProgram,
+      );
+      final alias = getCreateAssociatedTokenAccountIdempotentInstruction(
+        programAddress: associatedTokenProgramAddress,
+        payer: payer,
+        ata: ata,
+        owner: owner,
+        mint: mint,
+        systemProgram: systemProgram,
+        tokenProgram: tokenProgram,
+      );
+
+      expect(alias.programAddress, direct.programAddress);
+      expect(alias.accounts, direct.accounts);
+      expect(alias.data, direct.data);
+    });
+  });
+
   group('error helpers', () {
     test('recognize invalid owner', () {
       expect(associatedTokenErrorInvalidOwner, 0);

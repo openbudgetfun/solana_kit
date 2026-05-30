@@ -126,5 +126,23 @@ void main() {
         );
       });
     });
+
+    test('throws immediately when abortSignal is already aborted', () {
+      final abortController = AbortController()..abort('pre-abort');
+
+      expect(
+        () => getTimeoutPromise(
+          abortSignal: abortController.signal,
+          commitment: Commitment.processed,
+        ),
+        throwsA(
+          isA<StateError>().having(
+            (e) => e.message,
+            'message',
+            contains('operation was aborted'),
+          ),
+        ),
+      );
+    });
   });
 }

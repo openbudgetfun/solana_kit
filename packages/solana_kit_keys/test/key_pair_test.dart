@@ -328,4 +328,27 @@ void main() {
       );
     });
   });
+
+  group('createKeyPairFromBytes', () {
+    test(
+      'throws when public key does not match private key',
+      () {
+        final keyPair = generateKeyPair();
+        final badBytes = Uint8List(64)
+          ..setAll(0, keyPair.privateKey)
+          // Fill public half with zeros — won't match derived public key.
+          ..setAll(32, Uint8List(32));
+        expect(
+          () => createKeyPairFromBytes(badBytes),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              equals(SolanaErrorCode.keysPublicKeyMustMatchPrivateKey),
+            ),
+          ),
+        );
+      },
+    );
+  });
 }
