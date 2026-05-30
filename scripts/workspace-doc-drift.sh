@@ -155,6 +155,14 @@ apply_or_check_file() {
   local file="$1"
   local updated_file="$tmp_dir/$(basename "$file").updated"
 
+  if ! grep -Fq '<!-- workspace-summary:start -->' "$file" || \
+    ! grep -Fq '<!-- workspace-summary:end -->' "$file" || \
+    ! grep -Fq '<!-- workspace-dependency-graph:start -->' "$file" || \
+    ! grep -Fq '<!-- workspace-dependency-graph:end -->' "$file"; then
+    echo "Skipping workspace documentation drift check for $file; no generated workspace blocks found."
+    return 0
+  fi
+
   cp "$file" "$updated_file.base"
 
   replace_block \
