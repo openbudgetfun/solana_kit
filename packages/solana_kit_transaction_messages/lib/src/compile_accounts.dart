@@ -251,8 +251,8 @@ List<OrderedAccount> _getOrderedAccountsFromAddressMap(
           rightEntry.type == AddressMapEntryType.lookupTable &&
           leftEntry.lookupTableAddress != rightEntry.lookupTableAddress) {
         return addressComparator!(
-          leftEntry.lookupTableAddress!,
-          rightEntry.lookupTableAddress!,
+          leftEntry.lookupTableAddress,
+          rightEntry.lookupTableAddress,
         );
       }
       return addressComparator!(Address(a.key), Address(b.key));

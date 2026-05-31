@@ -1,4 +1,3 @@
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_offchain_messages/src/codecs/message_v0.dart';
 import 'package:solana_kit_offchain_messages/src/codecs/message_v1.dart';

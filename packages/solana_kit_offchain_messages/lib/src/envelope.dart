@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 
 /// An envelope wrapping an encoded offchain message with its signatures.

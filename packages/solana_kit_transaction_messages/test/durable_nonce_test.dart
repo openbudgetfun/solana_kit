@@ -51,7 +51,7 @@ void main() {
             nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
           ),
         ],
-        lifetimeConstraint: DurableNonceLifetimeConstraint(
+        lifetimeConstraint: const DurableNonceLifetimeConstraint(
           nonce: nonceConstraintA.nonce,
         ),
       );
@@ -86,7 +86,7 @@ void main() {
             data: durableNonceTx.instructions[0].data,
           ),
         ],
-        lifetimeConstraint: DurableNonceLifetimeConstraint(
+        lifetimeConstraint: const DurableNonceLifetimeConstraint(
           nonce: nonceConstraintA.nonce,
         ),
       );
@@ -114,7 +114,7 @@ void main() {
             data: Uint8List.fromList([2, 0, 0, 0]),
           ),
         ],
-        lifetimeConstraint: DurableNonceLifetimeConstraint(
+        lifetimeConstraint: const DurableNonceLifetimeConstraint(
           nonce: nonceConstraintA.nonce,
         ),
       );
@@ -141,7 +141,7 @@ void main() {
             data: durableNonceTx.instructions[0].data,
           ),
         ],
-        lifetimeConstraint: DurableNonceLifetimeConstraint(
+        lifetimeConstraint: const DurableNonceLifetimeConstraint(
           nonce: nonceConstraintA.nonce,
         ),
       );
@@ -217,7 +217,7 @@ void main() {
       final tx = TransactionMessage(
         version: TransactionVersion.v0,
         instructions: [updatedInstruction],
-        lifetimeConstraint: DurableNonceLifetimeConstraint(
+        lifetimeConstraint: const DurableNonceLifetimeConstraint(
           nonce: nonceConstraintA.nonce,
         ),
       );
@@ -247,7 +247,7 @@ void main() {
     test('sets the lifetime constraint on the transaction to the supplied '
         'durable nonce constraint', () {
       final durableNonceTx = setTransactionMessageLifetimeUsingDurableNonce(
-        DurableNonceConfig(
+        const DurableNonceConfig(
           nonce: nonceConstraintA.nonce,
           nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
           nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
@@ -266,7 +266,7 @@ void main() {
 
     test('prepends an AdvanceNonceAccount instruction', () {
       final durableNonceTx = setTransactionMessageLifetimeUsingDurableNonce(
-        DurableNonceConfig(
+        const DurableNonceConfig(
           nonce: nonceConstraintA.nonce,
           nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
           nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
@@ -297,7 +297,7 @@ void main() {
           instructions: [instruction, baseTx.instructions[0]],
         );
         final durableNonceTx = setTransactionMessageLifetimeUsingDurableNonce(
-          DurableNonceConfig(
+          const DurableNonceConfig(
             nonce: nonceConstraintA.nonce,
             nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
             nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
@@ -329,7 +329,7 @@ void main() {
             ],
           );
           final durableNonceTx = setTransactionMessageLifetimeUsingDurableNonce(
-            DurableNonceConfig(
+            const DurableNonceConfig(
               nonce: nonceConstraintA.nonce,
               nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
               nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
@@ -366,7 +366,7 @@ void main() {
               ),
             ),
           ],
-          lifetimeConstraint: DurableNonceLifetimeConstraint(
+          lifetimeConstraint: const DurableNonceLifetimeConstraint(
             nonce: nonceConstraintA.nonce,
           ),
         );
@@ -375,7 +375,7 @@ void main() {
       test('sets the new durable nonce constraint on the transaction when '
           'it differs from the existing one', () {
         final durableNonceTxB = setTransactionMessageLifetimeUsingDurableNonce(
-          DurableNonceConfig(
+          const DurableNonceConfig(
             nonce: nonceConstraintB.nonce,
             nonceAccountAddress: nonceConstraintB.nonceAccountAddress,
             nonceAuthorityAddress: nonceConstraintB.nonceAuthorityAddress,
@@ -395,7 +395,7 @@ void main() {
       test('replaces the advance nonce account instruction when it differs '
           'from the existing one', () {
         final durableNonceTxB = setTransactionMessageLifetimeUsingDurableNonce(
-          DurableNonceConfig(
+          const DurableNonceConfig(
             nonce: nonceConstraintB.nonce,
             nonceAccountAddress: nonceConstraintB.nonceAccountAddress,
             nonceAuthorityAddress: nonceConstraintB.nonceAuthorityAddress,
@@ -417,7 +417,7 @@ void main() {
           'durable nonce constraint again', () {
         final txWithSameNonceLifetime =
             setTransactionMessageLifetimeUsingDurableNonce(
-              DurableNonceConfig(
+              const DurableNonceConfig(
                 nonce: nonceConstraintA.nonce,
                 nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
                 nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,

@@ -17,7 +17,7 @@ void main() {
       final captured = CapturingSubscriptionsTransport();
       final plan = RpcSubscriptionsPlan<Object?>(
         execute: (_) async => createDataPublisher(),
-        request: RpcSubscriptionsRequest(
+        request: const RpcSubscriptionsRequest(
           methodName: 'accountNotifications',
           params: [testAccountAddressB.value],
         ),

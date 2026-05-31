@@ -142,8 +142,6 @@ void assertIsTransactionWithDurableNonceLifetime(Transaction transaction) {
   }
 }
 
-
-
 /// Checks if a compiled instruction is an AdvanceNonceAccount instruction.
 bool _compiledInstructionIsAdvanceNonceInstruction(
   CompiledInstruction instruction,

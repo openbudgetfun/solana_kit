@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 
 /// Defines a message that needs signing and its current set of signatures

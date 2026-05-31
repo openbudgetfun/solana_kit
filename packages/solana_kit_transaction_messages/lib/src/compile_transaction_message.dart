@@ -26,7 +26,7 @@ CompiledTransactionMessage compileTransactionMessage(
   }
 
   final orderedAccounts = getOrderedAccountsFromInstructions(
-    transactionMessage.feePayer!,
+    transactionMessage.feePayer,
     transactionMessage.instructions,
   );
   assertTransactionMessageIsWithinLimits(

@@ -1,4 +1,3 @@
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 
 /// Accounts configuration for `simulateTransaction`.

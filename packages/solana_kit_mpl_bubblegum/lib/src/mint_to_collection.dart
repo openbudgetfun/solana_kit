@@ -157,7 +157,7 @@ InstructionPlan getMintToCollectionV1InstructionPlan(
     sellerFeeBasisPoints: input.sellerFeeBasisPoints,
     creators: input.creators,
     collection: input.collection != null
-        ? Collection(verified: false, key: input.collection!)
+        ? Collection(verified: false, key: input.collection)
         : null,
   );
 

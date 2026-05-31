@@ -1,5 +1,3 @@
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-
 import 'package:solana_kit_transaction_messages/src/compile_accounts.dart';
 
 /// Extracts the static (non-lookup) accounts from the ordered accounts.

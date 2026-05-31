@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 
 /// A compiled transaction consisting of message bytes and a signatures map.
