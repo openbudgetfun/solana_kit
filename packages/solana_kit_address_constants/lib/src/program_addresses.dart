@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs
 
-import 'package:solana_kit_addresses/src/address.dart';
+import 'package:solana_kit_address/solana_kit_address.dart';
 
 // ---------------------------------------------------------------------------
 // Agave / Solana native program addresses

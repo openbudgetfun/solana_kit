@@ -1,4 +1,4 @@
-import 'package:solana_kit_addresses/src/address.dart';
+import 'package:solana_kit_address/src/address.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 

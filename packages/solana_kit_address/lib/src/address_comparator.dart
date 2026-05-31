@@ -1,4 +1,4 @@
-import 'package:solana_kit_addresses/src/address.dart';
+import 'package:solana_kit_address/src/address.dart';
 
 /// Returns a [Comparator] that sorts [Address] values using base58 collation
 /// rules.

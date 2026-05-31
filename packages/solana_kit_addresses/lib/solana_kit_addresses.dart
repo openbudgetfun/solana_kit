@@ -34,14 +34,7 @@
 /// <!-- {/docsAddressPrimitivesSection} -->
 library;
 
-export 'src/address.dart';
-export 'src/address_codec.dart';
-export 'src/address_comparator.dart';
+export 'package:solana_kit_address/solana_kit_address.dart';
+export 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
 export 'src/curve.dart';
-export 'src/metaplex_addresses.dart';
-export 'src/program_addresses.dart';
 export 'src/program_derived_address.dart';
-export 'src/public_key.dart';
-export 'src/spl_addresses.dart';
-export 'src/sysvar_addresses.dart';
-export 'src/well_known_addresses.dart';
