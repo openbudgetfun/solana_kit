@@ -16,35 +16,15 @@
 /// import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 ///
 /// Future<void> main() async {
-///   // Use a well-known address constant instead of hardcoding strings.
-///   final pda = await getProgramDerivedAddress(
-///     programAddress: systemProgramAddress,
+///   const programAddress = Address('11111111111111111111111111111111');
+///
+///   final (pda, bump) = await getProgramDerivedAddress(
+///     programAddress: programAddress,
 ///     seeds: ['vault', 'user-42'],
 ///   );
 ///
-///   print('PDA: ${pda.$1.value}');
-///   print('Bump: ${pda.$2}');
-/// }
-/// ```
-///
-/// ## Well-known addresses
-///
-/// This package exports constants for all Agave/Solana native program addresses,
-/// sysvar addresses, SPL program addresses, Metaplex program addresses, and
-/// common token mint addresses. Import them directly:
-///
-/// ```dart
-/// import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-///
-/// void main() {
-///   // Native program addresses
-///   print(systemProgramAddress.value); // 11111111111111111111111111111111
-///
-///   // SPL program addresses
-///   print(tokenProgramAddress.value); // TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA
-///
-///   // Well-known token mints
-///   print(wrappedSolMintAddress.value); // So11111111111111111111111111111111111111112
+///   print('PDA: ${pda.value}');
+///   print('Bump: $bump');
 /// }
 /// ```
 ///
