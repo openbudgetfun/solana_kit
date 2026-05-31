@@ -1,6 +1,6 @@
 name: solana_kit_loader
 description: BPF Loader v3 (Upgradeable) and Loader v4 instructions, accounts, and helpers for Solana Kit.
-version: 0.4.0
+version: 0.0.0
 repository: https://github.com/openbudgetfun/solana_kit
 homepage: https://openbudgetfun.github.io/solana_kit/
 resolution: workspace

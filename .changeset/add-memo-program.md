@@ -1,5 +1,5 @@
 ---
-"solana_kit_memo": minor
+"solana_kit_memo": major
 ---
 
 # Add Memo program package

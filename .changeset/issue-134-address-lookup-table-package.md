@@ -1,5 +1,5 @@
 ---
-"solana_kit_address_lookup_table": minor
+"solana_kit_address_lookup_table": major
 ---
 
 # Add Address Lookup Table program package

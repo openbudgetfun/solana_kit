@@ -4,7 +4,6 @@
 "solana_kit_codecs_core": test
 "solana_kit_codecs_data_structures": test
 "solana_kit_codecs_strings": test
-"solana_kit_compute_budget": test
 "solana_kit_errors": test
 "solana_kit_fast_stable_stringify": test
 "solana_kit_instruction_plans": test

@@ -1,6 +1,6 @@
 name: solana_kit_stake
 description: Stake Program instruction builders and account codecs for the Solana Kit Dart SDK.
-version: 0.1.0
+version: 0.0.0
 repository: https://github.com/openbudgetfun/solana_kit
 homepage: https://openbudgetfun.github.io/solana_kit/
 
