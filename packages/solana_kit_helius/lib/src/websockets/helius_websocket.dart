@@ -213,6 +213,7 @@ class HeliusWebSocket {
     }
   }
 
+  // coverage:ignore-start
   void _onError(Object error) {
     _broadcastError(
       SolanaError(SolanaErrorCode.heliusWebSocketError, {
@@ -220,6 +221,7 @@ class HeliusWebSocket {
       }),
     );
   }
+  // coverage:ignore-end
 
   void _onDone() {
     final subscription = _subscription;

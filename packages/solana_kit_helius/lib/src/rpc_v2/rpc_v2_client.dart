@@ -5,6 +5,7 @@ import 'package:solana_kit_helius/src/rpc_v2/get_all_token_accounts_by_owner.dar
 import 'package:solana_kit_helius/src/rpc_v2/get_program_accounts_v2.dart';
 import 'package:solana_kit_helius/src/rpc_v2/get_token_accounts_by_owner_v2.dart';
 import 'package:solana_kit_helius/src/rpc_v2/get_transactions_for_address.dart';
+import 'package:solana_kit_helius/src/rpc_v2/get_transfers_by_address.dart';
 import 'package:solana_kit_helius/src/types/rpc_v2_types.dart';
 
 /// Client for Helius RPC V2 API methods with cursor-based pagination.
@@ -40,4 +41,9 @@ class RpcV2Client {
   Future<GetTransactionsForAddressResponse> getTransactionsForAddress(
     GetTransactionsForAddressRequest request,
   ) => rpcV2GetTransactionsForAddress(_rpcClient, request);
+
+  /// Returns parsed token and native SOL transfers for the given address.
+  Future<GetTransfersByAddressResponse> getTransfersByAddress(
+    GetTransfersByAddressRequest request,
+  ) => rpcV2GetTransfersByAddress(_rpcClient, request);
 }

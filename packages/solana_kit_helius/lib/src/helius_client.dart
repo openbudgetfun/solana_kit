@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:solana_kit_helius/src/admin/admin_client.dart';
 import 'package:solana_kit_helius/src/auth/auth_client.dart';
 import 'package:solana_kit_helius/src/das/das_client.dart';
 import 'package:solana_kit_helius/src/enhanced/enhanced_client.dart';
@@ -58,6 +59,11 @@ HeliusClient createHelius(HeliusConfig config, {http.Client? client}) {
       ),
       apiKey: config.apiKey,
     ),
+    admin: AdminClient(
+      baseUrl: config.adminBaseUrl,
+      apiKey: config.apiKey,
+      client: effectiveClient,
+    ),
   );
 }
 
@@ -79,6 +85,7 @@ class HeliusClient {
     required this.wallet,
     required this.websocket,
     required this.auth,
+    required this.admin,
   });
 
   /// The configuration used to create this client.
@@ -116,4 +123,7 @@ class HeliusClient {
 
   /// Auth and project management methods.
   final AuthClient auth;
+
+  /// Admin API methods.
+  final AdminClient admin;
 }

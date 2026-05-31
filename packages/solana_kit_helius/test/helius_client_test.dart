@@ -35,7 +35,7 @@ void main() {
     test('HeliusConfig computes correct URLs for mainnet', () {
       final config = HeliusConfig(apiKey: 'abc');
       expect(config.rpcUrl, 'https://mainnet-beta.helius-rpc.com/?api-key=abc');
-      expect(config.restBaseUrl, 'https://api.helius.xyz');
+      expect(config.restBaseUrl, 'https://api-mainnet.helius-rpc.com');
       expect(config.wsUrl, 'wss://mainnet-beta.helius-rpc.com/?api-key=abc');
     });
 
@@ -74,7 +74,10 @@ void main() {
 
     test('HeliusConfig.restUrl includes api key', () {
       final config = HeliusConfig(apiKey: 'test_key');
-      expect(config.restUrl, 'https://api.helius.xyz/v0?api-key=test_key');
+      expect(
+        config.restUrl,
+        'https://api-mainnet.helius-rpc.com/v0?api-key=test_key',
+      );
     });
 
     test('HeliusConfig.restUrl includes devnet api key', () {
@@ -82,7 +85,10 @@ void main() {
         apiKey: 'dev_key',
         cluster: HeliusCluster.devnet,
       );
-      expect(config.restUrl, 'https://api-devnet.helius.xyz/v0?api-key=dev_key');
+      expect(
+        config.restUrl,
+        'https://api-devnet.helius.xyz/v0?api-key=dev_key',
+      );
     });
   });
 }

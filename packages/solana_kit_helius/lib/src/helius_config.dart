@@ -11,10 +11,8 @@ class HeliusConfig {
   ///
   /// An [apiKey] is required for all Helius operations.
   /// The [cluster] defaults to [HeliusCluster.mainnet].
-  HeliusConfig({
-    required String apiKey,
-    this.cluster = HeliusCluster.mainnet,
-  }) : _apiKey = SensitiveString(apiKey);
+  HeliusConfig({required String apiKey, this.cluster = HeliusCluster.mainnet})
+    : _apiKey = SensitiveString(apiKey);
 
   final SensitiveString _apiKey;
 
@@ -33,7 +31,7 @@ class HeliusConfig {
 
   /// The Helius REST API base URL for REST endpoints (webhooks, enhanced, etc.).
   String get restBaseUrl => switch (cluster) {
-    HeliusCluster.mainnet => 'https://api.helius.xyz',
+    HeliusCluster.mainnet => 'https://api-mainnet.helius-rpc.com',
     HeliusCluster.devnet => 'https://api-devnet.helius.xyz',
   };
 
@@ -49,6 +47,9 @@ class HeliusConfig {
   /// The Helius auth API base URL.
   String get authBaseUrl => 'https://auth-api.helius.xyz';
 
+  /// The Helius admin API base URL.
+  String get adminBaseUrl => 'https://admin-api.helius.xyz/v0';
+
   /// The Helius sender API base URL.
   String get senderBaseUrl => switch (cluster) {
     HeliusCluster.mainnet => 'https://mainnet.helius-rpc.com/?api-key=$apiKey',
@@ -56,5 +57,6 @@ class HeliusConfig {
   };
 
   @override
-  String toString() => 'HeliusConfig(apiKey: ${_apiKey.redacted()}, cluster: $cluster)';
+  String toString() =>
+      'HeliusConfig(apiKey: ${_apiKey.redacted()}, cluster: $cluster)';
 }

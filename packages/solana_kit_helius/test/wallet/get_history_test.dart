@@ -73,5 +73,26 @@ void main() {
 
       expect(history, isEmpty);
     });
+
+    test('adds limit query parameter when provided', () async {
+      final client = MockClient((request) async {
+        expect(request.url.queryParameters['limit'], '3');
+        return http.Response(
+          jsonEncode(<Object?>[]),
+          200,
+          headers: {'content-type': 'application/json'},
+        );
+      });
+      final helius = createHelius(
+        HeliusConfig(apiKey: 'test-key'),
+        client: client,
+      );
+
+      final history = await helius.wallet.getHistory(
+        const GetHistoryRequest(address: 'wallet-addr', limit: 3),
+      );
+
+      expect(history, isEmpty);
+    });
   });
 }

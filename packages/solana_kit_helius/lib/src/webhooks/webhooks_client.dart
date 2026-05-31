@@ -5,6 +5,7 @@ import 'package:solana_kit_helius/src/webhooks/create_webhook.dart';
 import 'package:solana_kit_helius/src/webhooks/delete_webhook.dart';
 import 'package:solana_kit_helius/src/webhooks/get_all_webhooks.dart';
 import 'package:solana_kit_helius/src/webhooks/get_webhook.dart';
+import 'package:solana_kit_helius/src/webhooks/toggle_webhook.dart';
 import 'package:solana_kit_helius/src/webhooks/update_webhook.dart';
 
 /// Client for Helius Webhooks API methods.
@@ -31,6 +32,10 @@ class WebhooksClient {
   /// Updates an existing webhook with the given configuration.
   Future<Webhook> updateWebhook(UpdateWebhookRequest request) =>
       webhooksUpdateWebhook(_restClient, _apiKey, request);
+
+  /// Toggles the webhook active state.
+  Future<Webhook> toggleWebhook(String webhookId, {required bool active}) =>
+      webhooksToggleWebhook(_restClient, _apiKey, webhookId, active: active);
 
   /// Deletes the webhook with the given [webhookId].
   Future<void> deleteWebhook(String webhookId) =>

@@ -15,6 +15,17 @@
       "notes": "Dart Solana reference from brij-digital/espresso-cash-public"
     },
     {
+      "name": "helius-sdk",
+      "path": ".repos/helius-labs/helius-sdk",
+      "url": "https://github.com/helius-labs/helius-sdk",
+      "ref": {
+        "type": "commit",
+        "value": "4c0c55b86eab0e3abde7896c0aa23c4b6515e9b0"
+      },
+      "package": "solana_kit_helius",
+      "notes": "Pinned to the v3.0.0 release commit because no v3.0.0 Git tag exists"
+    },
+    {
       "name": "mobile-wallet-adapter",
       "path": ".repos/mobile-wallet-adapter",
       "url": "https://github.com/solana-mobile/mobile-wallet-adapter",
