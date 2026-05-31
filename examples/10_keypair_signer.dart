@@ -36,8 +36,10 @@ Future<void> main() async {
   final fromPrivateKey = createKeyPairSignerFromPrivateKeyBytes(
     existingKp.keyPair.privateKey,
   );
-  print('\nReconstructed address matches: '
-      '${fromPrivateKey.address == existingKp.address}');
+  print(
+    '\nReconstructed address matches: '
+    '${fromPrivateKey.address == existingKp.address}',
+  );
 
   // ── 4. Deduplicate a signer list ──────────────────────────────────────────
   final s1 = generateKeyPairSigner();

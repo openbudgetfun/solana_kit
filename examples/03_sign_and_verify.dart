@@ -22,8 +22,10 @@ void main() {
   final message = Uint8List.fromList(utf8.encode('Hello, Solana!'));
   final signatureBytes = signBytes(keyPair.privateKey, message);
 
-  print('Signature bytes (${signatureBytes.value.length} bytes): '
-      '${_hexDump(signatureBytes.value).substring(0, 16)}…');
+  print(
+    'Signature bytes (${signatureBytes.value.length} bytes): '
+    '${_hexDump(signatureBytes.value).substring(0, 16)}…',
+  );
 
   // ── 3. Verify the signature ───────────────────────────────────────────────
   final publicKey = getPublicKeyFromPrivateKey(keyPair.privateKey);

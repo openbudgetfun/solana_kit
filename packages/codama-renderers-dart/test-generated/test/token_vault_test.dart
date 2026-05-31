@@ -202,9 +202,7 @@ void main() {
     test('should return error message for known code', () {
       expect(
         getTokenVaultErrorMessage(6000),
-        equals(
-          'The provided authority does not match the vault authority.',
-        ),
+        equals('The provided authority does not match the vault authority.'),
       );
       expect(
         getTokenVaultErrorMessage(6001),
@@ -235,9 +233,7 @@ void main() {
     test('should have correct program address', () {
       expect(
         tokenVaultProgramAddress,
-        equals(
-          const Address('VauLT1111111111111111111111111111111111111111'),
-        ),
+        equals(const Address('VauLT1111111111111111111111111111111111111111')),
       );
     });
 

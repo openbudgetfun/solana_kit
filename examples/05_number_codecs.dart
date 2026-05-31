@@ -28,8 +28,10 @@ void main() {
   final u32Codec = getU32Codec();
   final u32Encoded = u32Codec.encode(0xDEADBEEF);
   final u32Decoded = u32Codec.decode(u32Encoded);
-  print('u32 0xDEADBEEF → bytes: $u32Encoded → decoded: 0x'
-      '${u32Decoded.toRadixString(16).toUpperCase()}');
+  print(
+    'u32 0xDEADBEEF → bytes: $u32Encoded → decoded: 0x'
+    '${u32Decoded.toRadixString(16).toUpperCase()}',
+  );
 
   // ── u64 (8 bytes, little-endian, BigInt) ──────────────────────────────────
   // u64 uses BigInt because Dart's int is 64-bit signed; u64 max exceeds it.

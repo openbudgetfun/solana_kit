@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -10,7 +9,6 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
-
 
 @immutable
 class StakeAccount {
@@ -46,19 +44,26 @@ class StakeAccount {
           bump == other.bump;
 
   @override
-  int get hashCode => Object.hash(discriminator, owner, pool, stakedAmount, rewardDebt, stakedAt, bump);
+  int get hashCode => Object.hash(
+    discriminator,
+    owner,
+    pool,
+    stakedAmount,
+    rewardDebt,
+    stakedAt,
+    bump,
+  );
 
   @override
-  String toString() => 'StakeAccount(discriminator: $discriminator, owner: $owner, pool: $pool, stakedAmount: $stakedAmount, rewardDebt: $rewardDebt, stakedAt: $stakedAt, bump: $bump)';
+  String toString() =>
+      'StakeAccount(discriminator: $discriminator, owner: $owner, pool: $pool, stakedAmount: $stakedAmount, rewardDebt: $rewardDebt, stakedAt: $stakedAt, bump: $bump)';
 }
-
 
 /// The size of the [StakeAccount] account data in bytes.
 const int stakeAccountSize = 97;
 
 /// The discriminator field name: 'discriminator'.
 /// Offset: 0.
-
 
 Encoder<StakeAccount> getStakeAccountEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[

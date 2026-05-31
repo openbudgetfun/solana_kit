@@ -26,9 +26,9 @@ void main() {
   // getStructCodec takes no type parameters – it always works with
   // Map<String, Object?>.
   final tokenAccountCodec = getStructCodec([
-    ('mint', mintCodec),                 // 32 bytes
-    ('owner', mintCodec),                // 32 bytes
-    ('amount', getU64Codec()),           // 8 bytes (BigInt)
+    ('mint', mintCodec), // 32 bytes
+    ('owner', mintCodec), // 32 bytes
+    ('amount', getU64Codec()), // 8 bytes (BigInt)
     ('isInitialized', getBooleanCodec()), // 1 byte
   ]);
 

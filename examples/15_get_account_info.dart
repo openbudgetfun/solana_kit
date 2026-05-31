@@ -22,15 +22,19 @@ Future<void> main() async {
   const systemProgram = Address('11111111111111111111111111111111');
 
   final rawInfo = await rpc.getAccountInfo(systemProgram).send();
-  print('System program raw response keys: ${(rawInfo['value'] as Map?)?.keys}');
+  print(
+    'System program raw response keys: ${(rawInfo['value'] as Map?)?.keys}',
+  );
 
   // ── 2. Typed wrapper: SolanaRpcResponse<Map?> ─────────────────────────────
   // getAccountInfoValue parses the result into a typed response wrapper
   // that includes context (slot) and value (account or null).
-  final typedInfo = await rpc.getAccountInfoValue(
-    systemProgram,
-    GetAccountInfoConfig(encoding: AccountEncoding.base64),
-  ).send();
+  final typedInfo = await rpc
+      .getAccountInfoValue(
+        systemProgram,
+        GetAccountInfoConfig(encoding: AccountEncoding.base64),
+      )
+      .send();
 
   final account = typedInfo.value;
   if (account != null) {
@@ -51,9 +55,10 @@ Future<void> main() async {
 
   // ── 4. Fetch multiple accounts in one call ────────────────────────────────
   const tokenProgram = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
-  final multi = await rpc.getMultipleAccountsValue(
-    [systemProgram, tokenProgram],
-  ).send();
+  final multi = await rpc.getMultipleAccountsValue([
+    systemProgram,
+    tokenProgram,
+  ]).send();
 
   print('\ngetMultipleAccounts returned ${multi.value.length} results:');
   for (var i = 0; i < multi.value.length; i++) {

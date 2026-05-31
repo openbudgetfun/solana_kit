@@ -52,10 +52,7 @@ Future<void> main() async {
   final memoInstruction = Instruction(
     programAddress: memoProgram,
     accounts: [
-      AccountMeta(
-        address: feePayer.address,
-        role: AccountRole.readonlySigner,
-      ),
+      AccountMeta(address: feePayer.address, role: AccountRole.readonlySigner),
     ],
     data: memoData,
   );
@@ -71,10 +68,7 @@ Future<void> main() async {
   print('Compiled transaction signatures: ${transaction.signatures.length}');
 
   // ── 8. Sign the transaction ───────────────────────────────────────────────
-  final signedTx = await signTransactionWithSigners(
-    [feePayer],
-    transaction,
-  );
+  final signedTx = await signTransactionWithSigners([feePayer], transaction);
 
   final sig = signedTx.signatures[feePayer.address];
   print('Signed: ${sig != null}');

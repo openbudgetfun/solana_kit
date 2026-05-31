@@ -21,10 +21,14 @@ void main() {
   // The public key is the 32-byte compressed Ed25519 point.
   final publicKeyBytes = keyPair.publicKey; // Uint8List(32)
 
-  print('Private key (${privateKeyBytes.length} bytes): '
-      '${_hexDump(privateKeyBytes)}');
-  print('Public key  (${publicKeyBytes.length} bytes): '
-      '${_hexDump(publicKeyBytes)}');
+  print(
+    'Private key (${privateKeyBytes.length} bytes): '
+    '${_hexDump(privateKeyBytes)}',
+  );
+  print(
+    'Public key  (${publicKeyBytes.length} bytes): '
+    '${_hexDump(publicKeyBytes)}',
+  );
 
   // ── 2. Defensive copies ───────────────────────────────────────────────────
   // KeyPair returns defensive copies, so mutating the returned slice does NOT
@@ -36,8 +40,10 @@ void main() {
   // ── 3. Round-trip via createKeyPairFromPrivateKeyBytes ───────────────────
   // Reconstruct a key pair from just the private-key seed.
   final reconstructed = createKeyPairFromPrivateKeyBytes(keyPair.privateKey);
-  print('Public keys match after round-trip: '
-      '${constantTimeEqual(keyPair.publicKey, reconstructed.publicKey)}');
+  print(
+    'Public keys match after round-trip: '
+    '${constantTimeEqual(keyPair.publicKey, reconstructed.publicKey)}',
+  );
 
   // ── 4. Round-trip via createKeyPairFromBytes (64-byte form) ──────────────
   // Some wallets store keys as a 64-byte array [private(32) || public(32)].
@@ -46,8 +52,10 @@ void main() {
     ..setAll(32, keyPair.publicKey);
 
   final fromBytes = createKeyPairFromBytes(combined);
-  print('Reconstructed from 64-byte array: '
-      '${constantTimeEqual(keyPair.publicKey, fromBytes.publicKey)}');
+  print(
+    'Reconstructed from 64-byte array: '
+    '${constantTimeEqual(keyPair.publicKey, fromBytes.publicKey)}',
+  );
 }
 
 /// Returns a lower-case hex string for a small byte array.

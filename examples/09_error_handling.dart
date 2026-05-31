@@ -13,10 +13,9 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 void main() {
   // ── 1. Construct a SolanaError directly ──────────────────────────────────
-  final err = SolanaError(
-    SolanaErrorCode.accountsAccountNotFound,
-    {'address': '9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g'},
-  );
+  final err = SolanaError(SolanaErrorCode.accountsAccountNotFound, {
+    'address': '9B5XszUGdMaxCZ7uSQhPzdks5ZQSmWxrmzCSvtJ6Ns6g',
+  });
   print('Error code   : ${err.code}');
   print('Error message: $err');
 
@@ -26,7 +25,9 @@ void main() {
   } on SolanaError catch (e) {
     print('\nCaught validation error:');
     print('  code : ${e.code}');
-    print('  is addresses domain: ${e.isInDomain(SolanaErrorDomain.addresses)}');
+    print(
+      '  is addresses domain: ${e.isInDomain(SolanaErrorDomain.addresses)}',
+    );
   }
 
   // ── 3. Domain routing ─────────────────────────────────────────────────────

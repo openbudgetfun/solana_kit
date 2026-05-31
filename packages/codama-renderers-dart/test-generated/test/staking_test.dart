@@ -234,8 +234,11 @@ void main() {
 
     test('should detect valid error codes with isStakingError', () {
       for (var code = 6000; code <= 6005; code++) {
-        expect(isStakingError(code), isTrue,
-            reason: 'Expected $code to be a staking error');
+        expect(
+          isStakingError(code),
+          isTrue,
+          reason: 'Expected $code to be a staking error',
+        );
       }
     });
 
@@ -250,9 +253,7 @@ void main() {
     test('should have correct program address', () {
       expect(
         stakingProgramAddress,
-        equals(
-          const Address('StaKe111111111111111111111111111111111111111'),
-        ),
+        equals(const Address('StaKe111111111111111111111111111111111111111')),
       );
     });
 

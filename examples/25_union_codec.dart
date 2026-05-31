@@ -72,10 +72,14 @@ void main() {
     'balance': BigInt.from(1_000_000_000),
   };
   final vaultEncoded = discriminatedEncoder.encode(vaultMap);
-  print('\nDiscriminated vault encoded: $vaultEncoded '
-      '(${vaultEncoded.length} bytes)');
-  print('First byte (discriminator): 0x'
-      '${vaultEncoded[0].toRadixString(16).padLeft(2, '0')}');
+  print(
+    '\nDiscriminated vault encoded: $vaultEncoded '
+    '(${vaultEncoded.length} bytes)',
+  );
+  print(
+    'First byte (discriminator): 0x'
+    '${vaultEncoded[0].toRadixString(16).padLeft(2, '0')}',
+  );
 
   final vaultDecoded = discriminatedDecoder.decode(vaultEncoded);
   print('Decoded __kind  : ${vaultDecoded['__kind']}');

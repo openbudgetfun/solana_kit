@@ -49,17 +49,20 @@ Future<void> main() async {
   const tokenProgram = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
   const ataProgram = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe1bsn');
 
-  final accounts = await fetchEncodedAccounts(
-    rpc,
-    [systemProgram, tokenProgram, ataProgram],
-  );
+  final accounts = await fetchEncodedAccounts(rpc, [
+    systemProgram,
+    tokenProgram,
+    ataProgram,
+  ]);
 
   print('\nMultiple accounts:');
   for (final acct in accounts) {
     switch (acct) {
       case ExistingAccount(:final account):
-        print('  ${account.address.value}: '
-            '${account.data.length} bytes, owner=${account.programAddress.value}');
+        print(
+          '  ${account.address.value}: '
+          '${account.data.length} bytes, owner=${account.programAddress.value}',
+        );
       case NonExistingAccount(:final address):
         print('  ${address.value}: MISSING');
     }

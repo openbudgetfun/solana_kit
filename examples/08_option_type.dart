@@ -45,8 +45,10 @@ void main() {
   final optU32Codec = getOptionCodec(getU32Codec());
 
   final encodedSome = optU32Codec.encode(Some(0xCAFEBABE));
-  print('\nencoded Some(0xCAFEBABE): $encodedSome '
-      '(${encodedSome.length} bytes)');
+  print(
+    '\nencoded Some(0xCAFEBABE): $encodedSome '
+    '(${encodedSome.length} bytes)',
+  );
 
   final encodedNone = optU32Codec.encode(None<int>());
   print('encoded None: $encodedNone (${encodedNone.length} bytes)');

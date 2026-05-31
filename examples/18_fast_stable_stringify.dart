@@ -13,11 +13,7 @@ import 'package:solana_kit_fast_stable_stringify/solana_kit_fast_stable_stringif
 
 void main() {
   // ── 1. Object with out-of-order keys ──────────────────────────────────────
-  final unsorted = {
-    'z': 3,
-    'a': 1,
-    'm': 2,
-  };
+  final unsorted = {'z': 3, 'a': 1, 'm': 2};
 
   final json = fastStableStringify(unsorted);
   print('Sorted keys: $json');
@@ -43,11 +39,7 @@ void main() {
   print('Array order preserved: ${fastStableStringify(withArray)}');
 
   // ── 4. Null and boolean values ────────────────────────────────────────────
-  final withNulls = {
-    'c': null,
-    'b': false,
-    'a': true,
-  };
+  final withNulls = {'c': null, 'b': false, 'a': true};
   print('Null/bool: ${fastStableStringify(withNulls)}');
 
   // ── 5. Determinism check ──────────────────────────────────────────────────

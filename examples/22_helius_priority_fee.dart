@@ -43,9 +43,11 @@ Future<void> main() async {
   // Typical priority levels: min, low, medium, high, veryHigh, unsafeMax.
   // Use `high` for time-sensitive transactions and `medium` for routine ones.
   print('\nTip: multiply the fee by your compute units to get total lamports.');
-  print('Example: 100_000 CUs × ${feeEstimate.priorityFeeEstimate ?? 0} '
-      'µL/CU = '
-      '${((feeEstimate.priorityFeeEstimate ?? 0) * 100000 / 1000).toStringAsFixed(0)} lamports');
+  print(
+    'Example: 100_000 CUs × ${feeEstimate.priorityFeeEstimate ?? 0} '
+    'µL/CU = '
+    '${((feeEstimate.priorityFeeEstimate ?? 0) * 100000 / 1000).toStringAsFixed(0)} lamports',
+  );
 }
 
 void _printStructureDoc() {

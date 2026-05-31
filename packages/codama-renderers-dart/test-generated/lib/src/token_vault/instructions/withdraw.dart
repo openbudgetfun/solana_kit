@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -16,10 +15,7 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class WithdrawInstructionData {
-  const WithdrawInstructionData({
-    this.discriminator = 2,
-    required this.amount,
-  });
+  const WithdrawInstructionData({this.discriminator = 2, required this.amount});
 
   final int discriminator;
   final BigInt amount;
@@ -48,15 +44,20 @@ Decoder<WithdrawInstructionData> getWithdrawInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => WithdrawInstructionData(
-      discriminator: map['discriminator']! as int,
-      amount: map['amount']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        WithdrawInstructionData(
+          discriminator: map['discriminator']! as int,
+          amount: map['amount']! as BigInt,
+        ),
   );
 }
 
-Codec<WithdrawInstructionData, WithdrawInstructionData> getWithdrawInstructionDataCodec() {
-  return combineCodec(getWithdrawInstructionDataEncoder(), getWithdrawInstructionDataDecoder());
+Codec<WithdrawInstructionData, WithdrawInstructionData>
+getWithdrawInstructionDataCodec() {
+  return combineCodec(
+    getWithdrawInstructionDataEncoder(),
+    getWithdrawInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Withdraw] instruction.
@@ -69,18 +70,16 @@ Instruction getWithdrawInstruction({
   required Address tokenProgram,
   required BigInt amount,
 }) {
-  final instructionData = WithdrawInstructionData(
-      amount: amount,
-  );
+  final instructionData = WithdrawInstructionData(amount: amount);
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: vault, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
-    AccountMeta(address: vaultTokenAccount, role: AccountRole.writable),
-    AccountMeta(address: destinationTokenAccount, role: AccountRole.writable),
-    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+      AccountMeta(address: vault, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: vaultTokenAccount, role: AccountRole.writable),
+      AccountMeta(address: destinationTokenAccount, role: AccountRole.writable),
+      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
     data: getWithdrawInstructionDataEncoder().encode(instructionData),
   );

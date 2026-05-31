@@ -39,16 +39,17 @@ void main() {
         ),
       )
       .pipe(
-        (TransactionMessage m) => m.appendInstruction(
-          const Instruction(programAddress: memoProgram),
-        ),
+        (TransactionMessage m) =>
+            m.appendInstruction(const Instruction(programAddress: memoProgram)),
       );
 
   print('\nTransaction message version  : ${message.version}');
   print('Fee payer                    : ${message.feePayer?.value}');
   print('Instruction count            : ${message.instructions.length}');
-  print('Has blockhash lifetime       : '
-      '${message.lifetimeConstraint is BlockhashLifetimeConstraint}');
+  print(
+    'Has blockhash lifetime       : '
+    '${message.lifetimeConstraint is BlockhashLifetimeConstraint}',
+  );
 
   // ── 3. Pipe for data transforms ───────────────────────────────────────────
   final lamports = BigInt.from(1_000_000_000)

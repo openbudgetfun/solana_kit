@@ -11,11 +11,10 @@ void main() {
 
   group('synchronized Dart doc comments', () {
     test('consumer blocks are up to date', () async {
-      final result = await Process.run(
-        'python3',
-        ['scripts/sync-dart-doc-comments.py', '--check'],
-        workingDirectory: repoRoot.path,
-      );
+      final result = await Process.run('python3', [
+        'scripts/sync-dart-doc-comments.py',
+        '--check',
+      ], workingDirectory: repoRoot.path);
 
       if (result.exitCode != 0) {
         fail(
@@ -41,8 +40,12 @@ void main() {
 
       var snippetCount = 0;
       for (final relativePath in documentedLibraries) {
-        final file = File('${repoRoot.path}${Platform.pathSeparator}$relativePath');
-        final docMarkdown = _extractTopLevelDocMarkdown(file.readAsStringSync());
+        final file = File(
+          '${repoRoot.path}${Platform.pathSeparator}$relativePath',
+        );
+        final docMarkdown = _extractTopLevelDocMarkdown(
+          file.readAsStringSync(),
+        );
         final snippets = _extractDartCodeBlocks(docMarkdown);
         expect(
           snippets,
@@ -60,11 +63,10 @@ void main() {
 
       expect(snippetCount, greaterThan(0));
 
-      final result = await Process.run(
-        'dart',
-        ['analyze', docSnippetRoot.path],
-        workingDirectory: repoRoot.path,
-      );
+      final result = await Process.run('dart', [
+        'analyze',
+        docSnippetRoot.path,
+      ], workingDirectory: repoRoot.path);
 
       if (result.exitCode != 0) {
         fail(

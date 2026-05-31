@@ -31,10 +31,7 @@ Future<void> main() async {
   // Request airdrop (requires SurfPool)
   print('Requesting 10 SOL airdrop …');
   await rpc
-      .requestAirdrop(
-        payer.address,
-        Lamports(BigInt.from(10000000000)),
-      )
+      .requestAirdrop(payer.address, Lamports(BigInt.from(10000000000)))
       .send();
 
   await Future<void>.delayed(const Duration(seconds: 5));
@@ -43,8 +40,12 @@ Future<void> main() async {
   print('Balance: ${balance.value} lamports');
 
   // ── 2. Program Addresses ─────────────────────────────────────────────────
-  const bubblegumProgram = Address('BGUMAp9Gph7G9Jn2tU58R5L2qPG1Mj9HP7G3G7VYV2Ma');
-  const compressionProgram = Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi');
+  const bubblegumProgram = Address(
+    'BGUMAp9Gph7G9Jn2tU58R5L2qPG1Mj9HP7G3G7VYV2Ma',
+  );
+  const compressionProgram = Address(
+    'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+  );
   const noopProgram = Address('noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK');
   const systemProgram = Address('11111111111111111111111111111111');
 
@@ -238,24 +239,22 @@ Future<void> main() async {
   // ── 6. canTransfer Demo ──────────────────────────────────────────────────
   print('\n=== Transfer Eligibility ===\n');
 
-  final canTransferResult = canTransfer(
-    frozen: false,
-    nonTransferable: false,
-  );
+  final canTransferResult = canTransfer(frozen: false, nonTransferable: false);
   print('Can transfer (not frozen, transferable): $canTransferResult');
 
-  final cannotTransfer = canTransfer(
-    frozen: true,
-    nonTransferable: false,
-  );
+  final cannotTransfer = canTransfer(frozen: true, nonTransferable: false);
   print('Can transfer (frozen): $cannotTransfer');
 
   // ── 7. PDA Derivation Demo ───────────────────────────────────────────────
   print('\n=== PDA Derivation ===\n');
 
   // Note: PDA derivation is async and requires the full Ed25519 curve check
-  print('Tree Authority PDA: findTreeAuthorityPda(merkleTree: ...) → Future<PDA>');
-  print('Leaf Asset ID PDA: findLeafAssetIdPda(merkleTree:, nonce:, index:) → Future<PDA>');
+  print(
+    'Tree Authority PDA: findTreeAuthorityPda(merkleTree: ...) → Future<PDA>',
+  );
+  print(
+    'Leaf Asset ID PDA: findLeafAssetIdPda(merkleTree:, nonce:, index:) → Future<PDA>',
+  );
   print('Bubblegum Signer PDA: findBubblegumSignerPda() → Future<PDA>');
 
   print('\n✅ All examples completed successfully!');

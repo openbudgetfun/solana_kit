@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -16,10 +15,7 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class StakeInstructionData {
-  const StakeInstructionData({
-    this.discriminator = 1,
-    required this.amount,
-  });
+  const StakeInstructionData({this.discriminator = 1, required this.amount});
 
   final int discriminator;
   final BigInt amount;
@@ -48,15 +44,20 @@ Decoder<StakeInstructionData> getStakeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => StakeInstructionData(
-      discriminator: map['discriminator']! as int,
-      amount: map['amount']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        StakeInstructionData(
+          discriminator: map['discriminator']! as int,
+          amount: map['amount']! as BigInt,
+        ),
   );
 }
 
-Codec<StakeInstructionData, StakeInstructionData> getStakeInstructionDataCodec() {
-  return combineCodec(getStakeInstructionDataEncoder(), getStakeInstructionDataDecoder());
+Codec<StakeInstructionData, StakeInstructionData>
+getStakeInstructionDataCodec() {
+  return combineCodec(
+    getStakeInstructionDataEncoder(),
+    getStakeInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Stake] instruction.
@@ -71,20 +72,18 @@ Instruction getStakeInstruction({
   required Address systemProgram,
   required BigInt amount,
 }) {
-  final instructionData = StakeInstructionData(
-      amount: amount,
-  );
+  final instructionData = StakeInstructionData(amount: amount);
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: pool, role: AccountRole.writable),
-    AccountMeta(address: stakeAccount, role: AccountRole.writable),
-    AccountMeta(address: staker, role: AccountRole.writableSigner),
-    AccountMeta(address: stakerTokenAccount, role: AccountRole.writable),
-    AccountMeta(address: poolTokenAccount, role: AccountRole.writable),
-    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
-    AccountMeta(address: systemProgram, role: AccountRole.readonly),
+      AccountMeta(address: pool, role: AccountRole.writable),
+      AccountMeta(address: stakeAccount, role: AccountRole.writable),
+      AccountMeta(address: staker, role: AccountRole.writableSigner),
+      AccountMeta(address: stakerTokenAccount, role: AccountRole.writable),
+      AccountMeta(address: poolTokenAccount, role: AccountRole.writable),
+      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+      AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
     data: getStakeInstructionDataEncoder().encode(instructionData),
   );

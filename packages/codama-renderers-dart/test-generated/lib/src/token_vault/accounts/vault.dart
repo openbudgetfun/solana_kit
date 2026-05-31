@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -12,7 +11,6 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 import '../types/vault_status.dart';
-
 
 @immutable
 class Vault {
@@ -51,19 +49,27 @@ class Vault {
           bumpSeed == other.bumpSeed;
 
   @override
-  int get hashCode => Object.hash(discriminator, authority, tokenMint, totalDeposited, maxCapacity, status, createdAt, bumpSeed);
+  int get hashCode => Object.hash(
+    discriminator,
+    authority,
+    tokenMint,
+    totalDeposited,
+    maxCapacity,
+    status,
+    createdAt,
+    bumpSeed,
+  );
 
   @override
-  String toString() => 'Vault(discriminator: $discriminator, authority: $authority, tokenMint: $tokenMint, totalDeposited: $totalDeposited, maxCapacity: $maxCapacity, status: $status, createdAt: $createdAt, bumpSeed: $bumpSeed)';
+  String toString() =>
+      'Vault(discriminator: $discriminator, authority: $authority, tokenMint: $tokenMint, totalDeposited: $totalDeposited, maxCapacity: $maxCapacity, status: $status, createdAt: $createdAt, bumpSeed: $bumpSeed)';
 }
-
 
 /// The size of the [Vault] account data in bytes.
 const int vaultSize = 98;
 
 /// The discriminator field name: 'discriminator'.
 /// Offset: 0.
-
 
 Encoder<Vault> getVaultEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[

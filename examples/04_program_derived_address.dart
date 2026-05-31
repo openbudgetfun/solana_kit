@@ -17,8 +17,9 @@ Future<void> main() async {
   // ── 1. Well-known program addresses ──────────────────────────────────────
   const systemProgram = Address('11111111111111111111111111111111');
   const tokenProgram = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
-  const associatedTokenProgram =
-      Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe1bsn');
+  const associatedTokenProgram = Address(
+    'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe1bsn',
+  );
 
   print('System program   : ${systemProgram.value}');
   print('Token program    : ${tokenProgram.value}');
@@ -62,11 +63,7 @@ Future<void> main() async {
   final enc = getAddressEncoder();
   final (ataPda, ataBump) = await getProgramDerivedAddress(
     programAddress: associatedTokenProgram,
-    seeds: [
-      enc.encode(wallet),
-      enc.encode(tokenProgram),
-      enc.encode(mint),
-    ],
+    seeds: [enc.encode(wallet), enc.encode(tokenProgram), enc.encode(mint)],
   );
 
   print('\nWrapped-SOL ATA PDA : ${ataPda.value}');

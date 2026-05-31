@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -10,7 +9,6 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
-
 
 @immutable
 class DepositRecord {
@@ -40,19 +38,19 @@ class DepositRecord {
           timestamp == other.timestamp;
 
   @override
-  int get hashCode => Object.hash(discriminator, depositor, vault, amount, timestamp);
+  int get hashCode =>
+      Object.hash(discriminator, depositor, vault, amount, timestamp);
 
   @override
-  String toString() => 'DepositRecord(discriminator: $discriminator, depositor: $depositor, vault: $vault, amount: $amount, timestamp: $timestamp)';
+  String toString() =>
+      'DepositRecord(discriminator: $discriminator, depositor: $depositor, vault: $vault, amount: $amount, timestamp: $timestamp)';
 }
-
 
 /// The size of the [DepositRecord] account data in bytes.
 const int depositRecordSize = 88;
 
 /// The discriminator field name: 'discriminator'.
 /// Offset: 0.
-
 
 Encoder<DepositRecord> getDepositRecordEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[

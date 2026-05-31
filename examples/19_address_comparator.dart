@@ -21,8 +21,10 @@ void main() {
 
   // ── 2. Simple two-address comparison ──────────────────────────────────────
   final result = cmp(systemProgram, tokenProgram);
-  print('compare(systemProgram, tokenProgram): $result '
-      '(negative = system < token by base58 order)');
+  print(
+    'compare(systemProgram, tokenProgram): $result '
+    '(negative = system < token by base58 order)',
+  );
 
   // ── 3. Sort a list of addresses ───────────────────────────────────────────
   final addresses = [tokenProgram, walletAddr, systemProgram];
@@ -35,10 +37,9 @@ void main() {
   // ── 4. Verify determinism ─────────────────────────────────────────────────
   final list2 = [walletAddr, systemProgram, tokenProgram];
   list2.sort(cmp);
-  final same = addresses
-      .map((a) => a.value)
-      .toList()
-      .join(',') == list2.map((a) => a.value).toList().join(',');
+  final same =
+      addresses.map((a) => a.value).toList().join(',') ==
+      list2.map((a) => a.value).toList().join(',');
   print('\nTwo differently-ordered inputs sort identically: $same');
 
   // ── 5. Equality by byte value ─────────────────────────────────────────────

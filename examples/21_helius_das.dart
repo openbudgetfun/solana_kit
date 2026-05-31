@@ -37,8 +37,10 @@ Future<void> main() async {
 
   print('Total assets: ${assetList.total}');
   for (final asset in assetList.items) {
-    print('  id: ${asset.id}, '
-        'name: ${asset.content?.metadata?.name ?? '<no name>'}');
+    print(
+      '  id: ${asset.id}, '
+      'name: ${asset.content?.metadata?.name ?? '<no name>'}',
+    );
   }
 
   // ── 2. Fetch a single asset by ID ─────────────────────────────────────────

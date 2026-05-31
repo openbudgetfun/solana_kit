@@ -21,8 +21,10 @@ void main() {
   // Encode a base58 string into bytes.
   const systemProgram = '11111111111111111111111111111111';
   final addrBytes = base58Codec.encode(systemProgram);
-  print('base58 → bytes (${addrBytes.length}): '
-      '${addrBytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join('')}');
+  print(
+    'base58 → bytes (${addrBytes.length}): '
+    '${addrBytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join('')}',
+  );
 
   // Decode bytes back to a base58 string.
   final addrStr = base58Codec.decode(addrBytes);

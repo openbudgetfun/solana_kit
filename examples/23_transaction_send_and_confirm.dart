@@ -16,7 +16,8 @@ import 'dart:typed_data';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
-import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart' hide TransactionVersion;
+import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart'
+    hide TransactionVersion;
 import 'package:solana_kit_signers/solana_kit_signers.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
