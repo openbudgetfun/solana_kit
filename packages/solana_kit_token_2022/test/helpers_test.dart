@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    hide token2022ProgramAddress;
 import 'package:solana_kit_token_2022/solana_kit_token_2022.dart';
 import 'package:test/test.dart';
 

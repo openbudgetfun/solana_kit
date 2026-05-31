@@ -1,7 +1,8 @@
 // Test addresses are constructed dynamically.
 // ignore_for_file: prefer_const_constructors
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    hide tokenProgramAddress;
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_system/solana_kit_system.dart';

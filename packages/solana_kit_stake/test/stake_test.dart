@@ -1,7 +1,6 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_stake/solana_kit_stake.dart';
-import 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
 import 'package:test/test.dart';
 
 void main() {

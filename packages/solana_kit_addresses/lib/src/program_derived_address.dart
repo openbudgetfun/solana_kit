@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:solana_kit_address/solana_kit_address.dart';
-import 'package:solana_kit_address/solana_kit_address.dart';
 import 'package:solana_kit_addresses/src/curve.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';

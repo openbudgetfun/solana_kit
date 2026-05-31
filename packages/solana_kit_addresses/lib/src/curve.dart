@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:solana_kit_address/solana_kit_address.dart';
-import 'package:solana_kit_address/solana_kit_address.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 // ---------------------------------------------------------------------------

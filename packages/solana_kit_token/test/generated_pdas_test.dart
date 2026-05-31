@@ -1,6 +1,7 @@
 // Tests for generated SPL Token PDA derivation.
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    hide tokenProgramAddress;
 import 'package:solana_kit_token/solana_kit_token.dart';
 import 'package:test/test.dart';
 
