@@ -1,5 +1,22 @@
 ---
 "solana_kit_addresses": minor
+"solana_kit": patch
+"solana_kit_address_lookup_table": patch
+"solana_kit_associated_token_account": patch
+"solana_kit_compute_budget": patch
+"solana_kit_config": patch
+"solana_kit_loader": patch
+"solana_kit_memo": patch
+"solana_kit_mpl_bubblegum": patch
+"solana_kit_spl_account_compression": patch
+"solana_kit_stake": patch
+"solana_kit_system": patch
+"solana_kit_sysvars": patch
+"solana_kit_token": patch
+"solana_kit_token_2022": patch
+"solana_kit_transaction_messages": patch
+"solana_kit_transactions": patch
+"codama-renderers-dart": minor
 ---
 
 # Add well-known program, sysvar, SPL, Metaplex, and token mint address constants
