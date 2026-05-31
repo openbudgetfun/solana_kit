@@ -10,6 +10,7 @@ import {
 } from "../utils/fragment.js";
 import type { RenderScope } from "../utils/options.js";
 import { camelCase, pascalCase } from "../utils/nameTransformers.js";
+import { WELL_KNOWN_ADDRESSES } from "../utils/wellKnownAddresses.js";
 
 /**
  * Generate a full Dart file for a PDA.
@@ -64,9 +65,17 @@ export function getPdaPageFragment(
       } else if (seed.value.kind === "stringValueNode") {
         seedValues.push(`    '${seed.value.string}',`);
       } else if (seed.value.kind === "publicKeyValueNode") {
-        seedValues.push(
-          `    getAddressEncoder().encode(Address('${seed.value.publicKey}')),`,
-        );
+        const wellKnownSeedName = WELL_KNOWN_ADDRESSES.get(seed.value.publicKey);
+        if (wellKnownSeedName) {
+          use(wellKnownSeedName, "solanaAddresses");
+          seedValues.push(
+            `    getAddressEncoder().encode(${wellKnownSeedName}),`,
+          );
+        } else {
+          seedValues.push(
+            `    getAddressEncoder().encode(Address('${seed.value.publicKey}')),`,
+          );
+        }
       } else if (seed.value.kind === "numberValueNode") {
         const manifest = visit(seed.type, scope.typeManifestVisitor);
         seedValues.push(`    ${manifest.encoder.content}.encode(${seed.value.number}),`);
@@ -80,8 +89,16 @@ export function getPdaPageFragment(
   }
 
   // Program address parameter
+  const wellKnownProgramName = node.programId
+    ? WELL_KNOWN_ADDRESSES.get(node.programId)
+    : undefined;
+  if (wellKnownProgramName) {
+    use(wellKnownProgramName, "solanaAddresses");
+  }
   const programIdParam = node.programId
-    ? `Address programAddress = const Address('${node.programId}')`
+    ? wellKnownProgramName
+      ? `Address programAddress = ${wellKnownProgramName}`
+      : `Address programAddress = const Address('${node.programId}')`
     : "required Address programAddress";
 
   const typedDataImport = hasByteSeeds

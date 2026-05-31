@@ -5,3 +5,4 @@ export * from "./importMap.js";
 export * from "./nameTransformers.js";
 export * from "./options.js";
 export * from "./typeManifest.js";
+export * from "./wellKnownAddresses.js";
