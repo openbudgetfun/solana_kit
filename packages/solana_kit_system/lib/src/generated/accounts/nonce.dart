@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -13,7 +12,6 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 import '../types/nonce_state.dart';
 import '../types/nonce_version.dart';
-
 
 @immutable
 class Nonce {
@@ -43,16 +41,16 @@ class Nonce {
           lamportsPerSignature == other.lamportsPerSignature;
 
   @override
-  int get hashCode => Object.hash(version, state, authority, blockhash, lamportsPerSignature);
+  int get hashCode =>
+      Object.hash(version, state, authority, blockhash, lamportsPerSignature);
 
   @override
-  String toString() => 'Nonce(version: $version, state: $state, authority: $authority, blockhash: $blockhash, lamportsPerSignature: $lamportsPerSignature)';
+  String toString() =>
+      'Nonce(version: $version, state: $state, authority: $authority, blockhash: $blockhash, lamportsPerSignature: $lamportsPerSignature)';
 }
-
 
 /// The size of the [Nonce] account data in bytes.
 const int nonceSize = 80;
-
 
 Encoder<Nonce> getNonceEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[

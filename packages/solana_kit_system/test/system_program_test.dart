@@ -94,23 +94,25 @@ void main() {
         programOwner: _tokenProgram,
       );
       // Discriminator is u32 little-endian at offset 0
-      final disc = ByteData.view(ix.data!.buffer)
-          .getUint32(0, Endian.little);
+      final disc = ByteData.view(ix.data!.buffer).getUint32(0, Endian.little);
       expect(disc, 0);
     });
   });
 
   // ── Codec ─────────────────────────────────────────────────────────────────
   group('CreateAccountInstructionData codec', () {
-    test('encoder produces 52 bytes (4 disc + 8 lamports + 8 space + 32 owner)', () {
-      final data = CreateAccountInstructionData(
-        lamports: BigInt.from(1461600),
-        space: BigInt.from(82),
-        programOwner: _tokenProgram,
-      );
-      final encoded = getCreateAccountInstructionDataEncoder().encode(data);
-      expect(encoded.length, 52);
-    });
+    test(
+      'encoder produces 52 bytes (4 disc + 8 lamports + 8 space + 32 owner)',
+      () {
+        final data = CreateAccountInstructionData(
+          lamports: BigInt.from(1461600),
+          space: BigInt.from(82),
+          programOwner: _tokenProgram,
+        );
+        final encoded = getCreateAccountInstructionDataEncoder().encode(data);
+        expect(encoded.length, 52);
+      },
+    );
 
     test('discriminator is always 0', () {
       final data = CreateAccountInstructionData(
@@ -267,5 +269,4 @@ void main() {
       expect(original.data, equals(rebuilt.data));
     });
   });
-
 }

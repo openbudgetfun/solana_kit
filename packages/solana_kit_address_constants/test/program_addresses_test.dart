@@ -7,10 +7,7 @@ import 'package:test/test.dart';
 void main() {
   group('program_addresses.dart', () {
     test('systemProgramAddress has the correct value', () {
-      expect(
-        systemProgramAddress.value,
-        '11111111111111111111111111111111',
-      );
+      expect(systemProgramAddress.value, '11111111111111111111111111111111');
     });
 
     test('addressLookupTableProgramAddress has the correct value', () {
@@ -130,7 +127,11 @@ void main() {
       ];
 
       for (final address in addresses) {
-        expect(address.value.length, greaterThanOrEqualTo(32), reason: '${address.value} should be a valid base58 address');
+        expect(
+          address.value.length,
+          greaterThanOrEqualTo(32),
+          reason: '${address.value} should be a valid base58 address',
+        );
       }
     });
   });
@@ -196,7 +197,11 @@ void main() {
       ];
 
       for (final address in addresses) {
-        expect(address.value.length, greaterThanOrEqualTo(32), reason: '${address.value} should be a valid base58 address');
+        expect(
+          address.value.length,
+          greaterThanOrEqualTo(32),
+          reason: '${address.value} should be a valid base58 address',
+        );
       }
     });
   });
@@ -247,7 +252,11 @@ void main() {
       ];
 
       for (final address in addresses) {
-        expect(address.value.length, greaterThanOrEqualTo(32), reason: '${address.value} should be a valid base58 address');
+        expect(
+          address.value.length,
+          greaterThanOrEqualTo(32),
+          reason: '${address.value} should be a valid base58 address',
+        );
       }
     });
   });
@@ -278,7 +287,11 @@ void main() {
       ];
 
       for (final address in addresses) {
-        expect(address.value.length, greaterThanOrEqualTo(32), reason: '${address.value} should be a valid base58 address');
+        expect(
+          address.value.length,
+          greaterThanOrEqualTo(32),
+          reason: '${address.value} should be a valid base58 address',
+        );
       }
     });
   });
@@ -305,16 +318,23 @@ void main() {
       );
     });
 
-    test('all well-known mint addresses are valid 32-byte Address instances', () {
-      final addresses = <Address>[
-        wrappedSolMintAddress,
-        usdcMintAddress,
-        usdtMintAddress,
-      ];
+    test(
+      'all well-known mint addresses are valid 32-byte Address instances',
+      () {
+        final addresses = <Address>[
+          wrappedSolMintAddress,
+          usdcMintAddress,
+          usdtMintAddress,
+        ];
 
-      for (final address in addresses) {
-        expect(address.value.length, greaterThanOrEqualTo(32), reason: '${address.value} should be a valid base58 address');
-      }
-    });
+        for (final address in addresses) {
+          expect(
+            address.value.length,
+            greaterThanOrEqualTo(32),
+            reason: '${address.value} should be a valid base58 address',
+          );
+        }
+      },
+    );
   });
 }

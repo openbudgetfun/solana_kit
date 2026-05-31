@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -53,16 +52,21 @@ Decoder<MintToCheckedInstructionData> getMintToCheckedInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => MintToCheckedInstructionData(
-      discriminator: map['discriminator']! as int,
-      amount: map['amount']! as BigInt,
-      decimals: map['decimals']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        MintToCheckedInstructionData(
+          discriminator: map['discriminator']! as int,
+          amount: map['amount']! as BigInt,
+          decimals: map['decimals']! as int,
+        ),
   );
 }
 
-Codec<MintToCheckedInstructionData, MintToCheckedInstructionData> getMintToCheckedInstructionDataCodec() {
-  return combineCodec(getMintToCheckedInstructionDataEncoder(), getMintToCheckedInstructionDataDecoder());
+Codec<MintToCheckedInstructionData, MintToCheckedInstructionData>
+getMintToCheckedInstructionDataCodec() {
+  return combineCodec(
+    getMintToCheckedInstructionDataEncoder(),
+    getMintToCheckedInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [MintToChecked] instruction.
@@ -75,22 +79,24 @@ Instruction getMintToCheckedInstruction({
   required int decimals,
 }) {
   final instructionData = MintToCheckedInstructionData(
-      amount: amount,
-      decimals: decimals,
+    amount: amount,
+    decimals: decimals,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    AccountMeta(address: token, role: AccountRole.writable),
-    AccountMeta(address: mintAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: mint, role: AccountRole.writable),
+      AccountMeta(address: token, role: AccountRole.writable),
+      AccountMeta(address: mintAuthority, role: AccountRole.readonlySigner),
     ],
     data: getMintToCheckedInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [MintToChecked] instruction from raw instruction data.
-MintToCheckedInstructionData parseMintToCheckedInstruction(Instruction instruction) {
+MintToCheckedInstructionData parseMintToCheckedInstruction(
+  Instruction instruction,
+) {
   return getMintToCheckedInstructionDataDecoder().decode(instruction.data!);
 }

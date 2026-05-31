@@ -1,7 +1,7 @@
 ---
-"solana_kit_address": minor
+"solana_kit_address": patch
 ---
 
-Extract the core `Address` extension type, codecs, comparator, and `PublicKey` helpers from `solana_kit_addresses` into a standalone `solana_kit_address` package.
+# 0.0.0
 
-This allows other packages to depend on the address primitives without pulling in well-known address constants or program-derived address logic.
+Initial release of `solana_kit_address` — core Address extension type, codecs, comparator, and PublicKey type extracted from `solana_kit_addresses`.

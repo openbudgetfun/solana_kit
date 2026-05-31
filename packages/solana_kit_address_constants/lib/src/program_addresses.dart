@@ -85,9 +85,7 @@ const stakeProgramAddress = Address(
 );
 
 /// The address of the Stake Config program.
-const stakeConfigAddress = Address(
-  'StakeConfig1111111111111111111111111111',
-);
+const stakeConfigAddress = Address('StakeConfig1111111111111111111111111111');
 
 /// The address of the Vote program.
 const voteProgramAddress = Address(

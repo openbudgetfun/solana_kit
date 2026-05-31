@@ -18,11 +18,7 @@ const wrappedSolMintAddress = Address(
 );
 
 /// The mint address of USDC (USD Coin) on Solana mainnet.
-const usdcMintAddress = Address(
-  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-);
+const usdcMintAddress = Address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
 
 /// The mint address of USDT (Tether) on Solana mainnet.
-const usdtMintAddress = Address(
-  'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
-);
+const usdtMintAddress = Address('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB');

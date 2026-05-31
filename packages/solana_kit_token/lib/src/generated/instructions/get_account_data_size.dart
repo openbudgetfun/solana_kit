@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -16,14 +15,13 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class GetAccountDataSizeInstructionData {
-  const GetAccountDataSizeInstructionData({
-    this.discriminator = 21,
-  });
+  const GetAccountDataSizeInstructionData({this.discriminator = 21});
 
   final int discriminator;
 }
 
-Encoder<GetAccountDataSizeInstructionData> getGetAccountDataSizeInstructionDataEncoder() {
+Encoder<GetAccountDataSizeInstructionData>
+getGetAccountDataSizeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,43 +34,48 @@ Encoder<GetAccountDataSizeInstructionData> getGetAccountDataSizeInstructionDataE
   );
 }
 
-Decoder<GetAccountDataSizeInstructionData> getGetAccountDataSizeInstructionDataDecoder() {
+Decoder<GetAccountDataSizeInstructionData>
+getGetAccountDataSizeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => GetAccountDataSizeInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        GetAccountDataSizeInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<GetAccountDataSizeInstructionData, GetAccountDataSizeInstructionData> getGetAccountDataSizeInstructionDataCodec() {
-  return combineCodec(getGetAccountDataSizeInstructionDataEncoder(), getGetAccountDataSizeInstructionDataDecoder());
+Codec<GetAccountDataSizeInstructionData, GetAccountDataSizeInstructionData>
+getGetAccountDataSizeInstructionDataCodec() {
+  return combineCodec(
+    getGetAccountDataSizeInstructionDataEncoder(),
+    getGetAccountDataSizeInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [GetAccountDataSize] instruction.
 Instruction getGetAccountDataSizeInstruction({
   required Address programAddress,
   required Address mint,
-
 }) {
-  final instructionData = GetAccountDataSizeInstructionData(
-
-  );
+  final instructionData = GetAccountDataSizeInstructionData();
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    ],
+    accounts: [AccountMeta(address: mint, role: AccountRole.readonly)],
     data: getGetAccountDataSizeInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [GetAccountDataSize] instruction from raw instruction data.
-GetAccountDataSizeInstructionData parseGetAccountDataSizeInstruction(Instruction instruction) {
-  return getGetAccountDataSizeInstructionDataDecoder().decode(instruction.data!);
+GetAccountDataSizeInstructionData parseGetAccountDataSizeInstruction(
+  Instruction instruction,
+) {
+  return getGetAccountDataSizeInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

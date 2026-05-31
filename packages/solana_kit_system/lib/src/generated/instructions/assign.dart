@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -48,15 +47,20 @@ Decoder<AssignInstructionData> getAssignInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => AssignInstructionData(
-      discriminator: map['discriminator']! as int,
-      programAddress: map['programAddress']! as Address,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        AssignInstructionData(
+          discriminator: map['discriminator']! as int,
+          programAddress: map['programAddress']! as Address,
+        ),
   );
 }
 
-Codec<AssignInstructionData, AssignInstructionData> getAssignInstructionDataCodec() {
-  return combineCodec(getAssignInstructionDataEncoder(), getAssignInstructionDataDecoder());
+Codec<AssignInstructionData, AssignInstructionData>
+getAssignInstructionDataCodec() {
+  return combineCodec(
+    getAssignInstructionDataEncoder(),
+    getAssignInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Assign] instruction.
@@ -65,15 +69,11 @@ Instruction getAssignInstruction({
   required Address account,
   required Address programAddress,
 }) {
-  final instructionData = AssignInstructionData(
-      programAddress: programAddress,
-  );
+  final instructionData = AssignInstructionData(programAddress: programAddress);
 
   return Instruction(
     programAddress: instructionProgramAddress,
-    accounts: [
-    AccountMeta(address: account, role: AccountRole.writableSigner),
-    ],
+    accounts: [AccountMeta(address: account, role: AccountRole.writableSigner)],
     data: getAssignInstructionDataEncoder().encode(instructionData),
   );
 }

@@ -3,4 +3,3 @@
 
 export 'account_state.dart';
 export 'authority_type.dart';
-

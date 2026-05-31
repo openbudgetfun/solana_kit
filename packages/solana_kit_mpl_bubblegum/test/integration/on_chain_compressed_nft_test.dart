@@ -32,10 +32,7 @@ import 'package:test/test.dart';
 const _rpcUrl = 'http://localhost:8899';
 
 void main() {
-  late final rpc = createSolanaRpc(
-    url: _rpcUrl,
-    allowInsecureHttp: true,
-  );
+  late final rpc = createSolanaRpc(url: _rpcUrl, allowInsecureHttp: true);
 
   group('compressed NFT on-chain', () {
     KeyPairSigner? payer;
@@ -78,25 +75,30 @@ void main() {
         merkleTree: const Address('11111111111111111111111111111112'),
         payer: const Address('11111111111111111111111111111112'),
         treeCreator: const Address('11111111111111111111111111111112'),
-        logWrapper:
-            const Address('noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK'),
-        compressionProgram:
-            const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi'),
+        logWrapper: const Address(
+          'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
+        ),
+        compressionProgram: const Address(
+          'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+        ),
         systemProgram: const Address('11111111111111111111111111111112'),
         maxDepth: 14,
         maxBufferSize: 64,
         public: true,
       );
 
-      expect(instruction.programAddress,
-          equals(mplBubblegumProgramAddressObject));
+      expect(
+        instruction.programAddress,
+        equals(mplBubblegumProgramAddressObject),
+      );
       expect(instruction.data, isNotNull);
     });
 
     test('initEmptyMerkleTree instruction can be built', () {
       final instruction = getInitEmptyMerkleTreeInstruction(
-        programAddress:
-            const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi'),
+        programAddress: const Address(
+          'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+        ),
         merkleTree: const Address('11111111111111111111111111111112'),
         authority: const Address('11111111111111111111111111111112'),
         noop: const Address('noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK'),
@@ -105,9 +107,9 @@ void main() {
       );
 
       expect(
-          instruction.programAddress,
-          equals(
-              const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi')));
+        instruction.programAddress,
+        equals(const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi')),
+      );
       expect(instruction.data, isNotNull);
     });
 

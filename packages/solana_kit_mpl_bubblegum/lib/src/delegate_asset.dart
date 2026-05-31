@@ -1,7 +1,12 @@
 /// Composite helper for delegating a compressed NFT.
 library;
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart' hide noopProgramAddress, splAccountCompressionProgramAddress, systemProgramAddress, tokenProgramAddress;
+import 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    hide
+        noopProgramAddress,
+        splAccountCompressionProgramAddress,
+        systemProgramAddress,
+        tokenProgramAddress;
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_mpl_bubblegum/src/constants/program_addresses.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/instructions/delegate.dart';

@@ -1,7 +1,7 @@
 ---
-"solana_kit_address_constants": minor
+"solana_kit_address_constants": patch
 ---
 
-Extract well-known address constants (program addresses, sysvar addresses, SPL program addresses, Metaplex addresses, and token mint addresses) from `solana_kit_addresses` into a standalone `solana_kit_address_constants` package.
+# 0.0.0
 
-This package depends only on `solana_kit_address` and provides centralized constants without requiring the full address module.
+Initial release of `solana_kit_address_constants` — well-known address constants for native programs, sysvars, SPL programs, Metaplex programs, and token mints extracted from `solana_kit_addresses`.

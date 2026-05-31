@@ -10,9 +10,7 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// System Program instruction discriminators.
-enum SystemInstruction {
-  createAccount,
-}
+enum SystemInstruction { createAccount }
 
 /// Data payload for the System Program `CreateAccount` instruction.
 @immutable

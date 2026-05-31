@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -30,7 +29,8 @@ class TransferSolWithSeedInstructionData {
   final Address fromOwner;
 }
 
-Encoder<TransferSolWithSeedInstructionData> getTransferSolWithSeedInstructionDataEncoder() {
+Encoder<TransferSolWithSeedInstructionData>
+getTransferSolWithSeedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('amount', getU64Encoder()),
@@ -49,7 +49,8 @@ Encoder<TransferSolWithSeedInstructionData> getTransferSolWithSeedInstructionDat
   );
 }
 
-Decoder<TransferSolWithSeedInstructionData> getTransferSolWithSeedInstructionDataDecoder() {
+Decoder<TransferSolWithSeedInstructionData>
+getTransferSolWithSeedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('amount', getU64Decoder()),
@@ -59,17 +60,22 @@ Decoder<TransferSolWithSeedInstructionData> getTransferSolWithSeedInstructionDat
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => TransferSolWithSeedInstructionData(
-      discriminator: map['discriminator']! as int,
-      amount: map['amount']! as BigInt,
-      fromSeed: map['fromSeed']! as String,
-      fromOwner: map['fromOwner']! as Address,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        TransferSolWithSeedInstructionData(
+          discriminator: map['discriminator']! as int,
+          amount: map['amount']! as BigInt,
+          fromSeed: map['fromSeed']! as String,
+          fromOwner: map['fromOwner']! as Address,
+        ),
   );
 }
 
-Codec<TransferSolWithSeedInstructionData, TransferSolWithSeedInstructionData> getTransferSolWithSeedInstructionDataCodec() {
-  return combineCodec(getTransferSolWithSeedInstructionDataEncoder(), getTransferSolWithSeedInstructionDataDecoder());
+Codec<TransferSolWithSeedInstructionData, TransferSolWithSeedInstructionData>
+getTransferSolWithSeedInstructionDataCodec() {
+  return combineCodec(
+    getTransferSolWithSeedInstructionDataEncoder(),
+    getTransferSolWithSeedInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [TransferSolWithSeed] instruction.
@@ -83,23 +89,29 @@ Instruction getTransferSolWithSeedInstruction({
   required Address fromOwner,
 }) {
   final instructionData = TransferSolWithSeedInstructionData(
-      amount: amount,
-      fromSeed: fromSeed,
-      fromOwner: fromOwner,
+    amount: amount,
+    fromSeed: fromSeed,
+    fromOwner: fromOwner,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: source, role: AccountRole.writable),
-    AccountMeta(address: baseAccount, role: AccountRole.readonlySigner),
-    AccountMeta(address: destination, role: AccountRole.writable),
+      AccountMeta(address: source, role: AccountRole.writable),
+      AccountMeta(address: baseAccount, role: AccountRole.readonlySigner),
+      AccountMeta(address: destination, role: AccountRole.writable),
     ],
-    data: getTransferSolWithSeedInstructionDataEncoder().encode(instructionData),
+    data: getTransferSolWithSeedInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [TransferSolWithSeed] instruction from raw instruction data.
-TransferSolWithSeedInstructionData parseTransferSolWithSeedInstruction(Instruction instruction) {
-  return getTransferSolWithSeedInstructionDataDecoder().decode(instruction.data!);
+TransferSolWithSeedInstructionData parseTransferSolWithSeedInstruction(
+  Instruction instruction,
+) {
+  return getTransferSolWithSeedInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

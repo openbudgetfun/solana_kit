@@ -1,5 +1,6 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_associated_token_account/solana_kit_associated_token_account.dart' hide associatedTokenProgramAddress;
+import 'package:solana_kit_associated_token_account/solana_kit_associated_token_account.dart'
+    hide associatedTokenProgramAddress;
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_token/src/generated/instructions/transfer_checked.dart';
 

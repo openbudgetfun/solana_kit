@@ -76,4 +76,54 @@ describe("getPdaPageFragment", () => {
     // No programId means required Address parameter
     expect(frag.content).toContain("required Address programAddress");
   });
+
+  it("uses well-known address name for publicKey seed", () => {
+    // Construct PDA with a publicKey seed using a well-known address
+    const node = pdaNode({
+      name: "testPda",
+      seeds: [
+        constantPdaSeedNodeFromString("utf8", "seed"),
+        // Manually construct the seed to match Codama IDL structure
+        {
+          kind: "constantPdaSeedNode",
+          type: { kind: "publicKeyTypeNode" },
+          value: {
+            kind: "publicKeyValueNode",
+            publicKey: "11111111111111111111111111111111",
+          },
+        },
+      ],
+    });
+    const frag = getPdaPageFragment(node, createScope());
+
+    // Well-known seed should use canonical constant name (systemProgramAddress)
+    expect(frag.content).toContain("systemProgramAddress");
+    // Should not fall back to Address('1111...') for a known key
+    expect(frag.content).not.toContain(
+      "Address('11111111111111111111111111111111')",
+    );
+  });
+
+  it("uses Address fallback for unknown publicKey seed", () => {
+    const node = pdaNode({
+      name: "testPda",
+      seeds: [
+        constantPdaSeedNodeFromString("utf8", "seed"),
+        {
+          kind: "constantPdaSeedNode",
+          type: { kind: "publicKeyTypeNode" },
+          value: {
+            kind: "publicKeyValueNode",
+            publicKey: "UnknownProgram1111111111111111111111",
+          },
+        },
+      ],
+    });
+    const frag = getPdaPageFragment(node, createScope());
+
+    // Unknown address should fall back to Address('...')
+    expect(frag.content).toContain(
+      "Address('UnknownProgram1111111111111111111111')",
+    );
+  });
 });

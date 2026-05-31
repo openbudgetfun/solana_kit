@@ -41,10 +41,7 @@ class CreateMintInput {
 /// Configuration for [getCreateMintInstructionPlan].
 class CreateMintConfig {
   /// Creates a [CreateMintConfig].
-  const CreateMintConfig({
-    this.tokenProgram,
-    this.systemProgram,
-  });
+  const CreateMintConfig({this.tokenProgram, this.systemProgram});
 
   /// Token program address. Defaults to [tokenProgramAddress].
   final Address? tokenProgram;

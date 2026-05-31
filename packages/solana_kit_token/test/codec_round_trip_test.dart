@@ -6,9 +6,7 @@ void main() {
   group('Mint account codec', () {
     test('round-trips through encoder/decoder', () {
       final mint = Mint(
-        mintAuthority: const Address(
-          '11111111111111111111111111111111',
-        ),
+        mintAuthority: const Address('11111111111111111111111111111111'),
         supply: BigInt.from(1000000),
         decimals: 6,
         isInitialized: true,
@@ -100,10 +98,10 @@ void main() {
         freezeAuthority: null,
       );
 
-      final encoded =
-          getInitializeMint2InstructionDataEncoder().encode(data);
-      final decoded =
-          getInitializeMint2InstructionDataDecoder().decode(encoded);
+      final encoded = getInitializeMint2InstructionDataEncoder().encode(data);
+      final decoded = getInitializeMint2InstructionDataDecoder().decode(
+        encoded,
+      );
 
       expect(decoded.discriminator, 20);
       expect(decoded.decimals, 6);
@@ -114,9 +112,7 @@ void main() {
 
   group('Transfer instruction codec', () {
     test('round-trips instruction data', () {
-      final data = TransferInstructionData(
-        amount: BigInt.from(42),
-      );
+      final data = TransferInstructionData(amount: BigInt.from(42));
 
       final encoded = getTransferInstructionDataEncoder().encode(data);
       final decoded = getTransferInstructionDataDecoder().decode(encoded);

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -25,7 +24,8 @@ class InitializeMultisigInstructionData {
   final int m;
 }
 
-Encoder<InitializeMultisigInstructionData> getInitializeMultisigInstructionDataEncoder() {
+Encoder<InitializeMultisigInstructionData>
+getInitializeMultisigInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('m', getU8Encoder()),
@@ -40,7 +40,8 @@ Encoder<InitializeMultisigInstructionData> getInitializeMultisigInstructionDataE
   );
 }
 
-Decoder<InitializeMultisigInstructionData> getInitializeMultisigInstructionDataDecoder() {
+Decoder<InitializeMultisigInstructionData>
+getInitializeMultisigInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('m', getU8Decoder()),
@@ -48,15 +49,20 @@ Decoder<InitializeMultisigInstructionData> getInitializeMultisigInstructionDataD
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeMultisigInstructionData(
-      discriminator: map['discriminator']! as int,
-      m: map['m']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializeMultisigInstructionData(
+          discriminator: map['discriminator']! as int,
+          m: map['m']! as int,
+        ),
   );
 }
 
-Codec<InitializeMultisigInstructionData, InitializeMultisigInstructionData> getInitializeMultisigInstructionDataCodec() {
-  return combineCodec(getInitializeMultisigInstructionDataEncoder(), getInitializeMultisigInstructionDataDecoder());
+Codec<InitializeMultisigInstructionData, InitializeMultisigInstructionData>
+getInitializeMultisigInstructionDataCodec() {
+  return combineCodec(
+    getInitializeMultisigInstructionDataEncoder(),
+    getInitializeMultisigInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializeMultisig] instruction.
@@ -66,21 +72,23 @@ Instruction getInitializeMultisigInstruction({
   required Address rent,
   required int m,
 }) {
-  final instructionData = InitializeMultisigInstructionData(
-      m: m,
-  );
+  final instructionData = InitializeMultisigInstructionData(m: m);
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: multisig, role: AccountRole.writable),
-    AccountMeta(address: rent, role: AccountRole.readonly),
+      AccountMeta(address: multisig, role: AccountRole.writable),
+      AccountMeta(address: rent, role: AccountRole.readonly),
     ],
     data: getInitializeMultisigInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [InitializeMultisig] instruction from raw instruction data.
-InitializeMultisigInstructionData parseInitializeMultisigInstruction(Instruction instruction) {
-  return getInitializeMultisigInstructionDataDecoder().decode(instruction.data!);
+InitializeMultisigInstructionData parseInitializeMultisigInstruction(
+  Instruction instruction,
+) {
+  return getInitializeMultisigInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

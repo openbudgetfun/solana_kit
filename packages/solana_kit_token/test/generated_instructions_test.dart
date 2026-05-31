@@ -73,7 +73,11 @@ void main() {
     });
 
     test('codec round-trip preserves decimals and mintAuthority', () {
-      const data = InitializeMintInstructionData(decimals: 9, mintAuthority: _owner, freezeAuthority: null);
+      const data = InitializeMintInstructionData(
+        decimals: 9,
+        mintAuthority: _owner,
+        freezeAuthority: null,
+      );
       final encoded = getInitializeMintInstructionDataEncoder().encode(data);
       final decoded = getInitializeMintInstructionDataDecoder().decode(encoded);
       expect(decoded.decimals, 9);
@@ -135,8 +139,12 @@ void main() {
 
     test('codec round-trip preserves m value', () {
       const data = InitializeMultisigInstructionData(m: 3);
-      final encoded = getInitializeMultisigInstructionDataEncoder().encode(data);
-      final decoded = getInitializeMultisigInstructionDataDecoder().decode(encoded);
+      final encoded = getInitializeMultisigInstructionDataEncoder().encode(
+        data,
+      );
+      final decoded = getInitializeMultisigInstructionDataDecoder().decode(
+        encoded,
+      );
       expect(decoded.m, 3);
     });
   });
@@ -250,16 +258,19 @@ void main() {
       expect(_disc(ix), 6);
     });
 
-    test('codec round-trip with authorityType=mintTokens and new authority', () {
-      const data = SetAuthorityInstructionData(
-        authorityType: AuthorityType.mintTokens,
-        newAuthority: _delegate,
-      );
-      final encoded = getSetAuthorityInstructionDataEncoder().encode(data);
-      final decoded = getSetAuthorityInstructionDataDecoder().decode(encoded);
-      expect(decoded.authorityType, AuthorityType.mintTokens);
-      expect(decoded.newAuthority, _delegate);
-    });
+    test(
+      'codec round-trip with authorityType=mintTokens and new authority',
+      () {
+        const data = SetAuthorityInstructionData(
+          authorityType: AuthorityType.mintTokens,
+          newAuthority: _delegate,
+        );
+        final encoded = getSetAuthorityInstructionDataEncoder().encode(data);
+        final decoded = getSetAuthorityInstructionDataDecoder().decode(encoded);
+        expect(decoded.authorityType, AuthorityType.mintTokens);
+        expect(decoded.newAuthority, _delegate);
+      },
+    );
 
     test('codec round-trip with null new authority', () {
       const data = SetAuthorityInstructionData(
@@ -285,19 +296,22 @@ void main() {
       expect(_disc(ix), 7);
     });
 
-    test('has 3 accounts: mint (writable), token (writable), authority (signer)', () {
-      final ix = getMintToInstruction(
-        programAddress: _prog,
-        mint: _mint,
-        token: _account,
-        mintAuthority: _owner,
-        amount: BigInt.from(1),
-      );
-      expect(ix.accounts, hasLength(3));
-      expect(ix.accounts![0].role, AccountRole.writable);
-      expect(ix.accounts![1].role, AccountRole.writable);
-      expect(ix.accounts![2].role, AccountRole.readonlySigner);
-    });
+    test(
+      'has 3 accounts: mint (writable), token (writable), authority (signer)',
+      () {
+        final ix = getMintToInstruction(
+          programAddress: _prog,
+          mint: _mint,
+          token: _account,
+          mintAuthority: _owner,
+          amount: BigInt.from(1),
+        );
+        expect(ix.accounts, hasLength(3));
+        expect(ix.accounts![0].role, AccountRole.writable);
+        expect(ix.accounts![1].role, AccountRole.writable);
+        expect(ix.accounts![2].role, AccountRole.readonlySigner);
+      },
+    );
 
     test('codec round-trip preserves amount', () {
       final amount = BigInt.from(1000000000);
@@ -425,7 +439,9 @@ void main() {
         decimals: 9,
       );
       final encoded = getTransferCheckedInstructionDataEncoder().encode(data);
-      final decoded = getTransferCheckedInstructionDataDecoder().decode(encoded);
+      final decoded = getTransferCheckedInstructionDataDecoder().decode(
+        encoded,
+      );
       expect(decoded.amount, BigInt.from(12345));
       expect(decoded.decimals, 9);
     });
@@ -460,7 +476,10 @@ void main() {
     });
 
     test('codec round-trip', () {
-      final data = ApproveCheckedInstructionData(amount: BigInt.from(99), decimals: 2);
+      final data = ApproveCheckedInstructionData(
+        amount: BigInt.from(99),
+        decimals: 2,
+      );
       final encoded = getApproveCheckedInstructionDataEncoder().encode(data);
       final decoded = getApproveCheckedInstructionDataDecoder().decode(encoded);
       expect(decoded.amount, BigInt.from(99));
@@ -509,7 +528,10 @@ void main() {
     });
 
     test('codec round-trip', () {
-      final data = BurnCheckedInstructionData(amount: BigInt.from(250), decimals: 4);
+      final data = BurnCheckedInstructionData(
+        amount: BigInt.from(250),
+        decimals: 4,
+      );
       final encoded = getBurnCheckedInstructionDataEncoder().encode(data);
       final decoded = getBurnCheckedInstructionDataDecoder().decode(encoded);
       expect(decoded.amount, BigInt.from(250));
@@ -532,8 +554,12 @@ void main() {
 
     test('codec round-trip preserves owner', () {
       const data = InitializeAccount2InstructionData(owner: _owner);
-      final encoded = getInitializeAccount2InstructionDataEncoder().encode(data);
-      final decoded = getInitializeAccount2InstructionDataDecoder().decode(encoded);
+      final encoded = getInitializeAccount2InstructionDataEncoder().encode(
+        data,
+      );
+      final decoded = getInitializeAccount2InstructionDataDecoder().decode(
+        encoded,
+      );
       expect(decoded.owner, _owner);
     });
   });
@@ -572,8 +598,12 @@ void main() {
 
     test('codec round-trip preserves owner', () {
       const data = InitializeAccount3InstructionData(owner: _owner);
-      final encoded = getInitializeAccount3InstructionDataEncoder().encode(data);
-      final decoded = getInitializeAccount3InstructionDataDecoder().decode(encoded);
+      final encoded = getInitializeAccount3InstructionDataEncoder().encode(
+        data,
+      );
+      final decoded = getInitializeAccount3InstructionDataDecoder().decode(
+        encoded,
+      );
       expect(decoded.owner, _owner);
     });
   });
@@ -591,8 +621,12 @@ void main() {
 
     test('codec round-trip preserves m', () {
       const data = InitializeMultisig2InstructionData(m: 3);
-      final encoded = getInitializeMultisig2InstructionDataEncoder().encode(data);
-      final decoded = getInitializeMultisig2InstructionDataDecoder().decode(encoded);
+      final encoded = getInitializeMultisig2InstructionDataEncoder().encode(
+        data,
+      );
+      final decoded = getInitializeMultisig2InstructionDataDecoder().decode(
+        encoded,
+      );
       expect(decoded.m, 3);
     });
   });
@@ -627,8 +661,12 @@ void main() {
         mintAuthority: _owner,
         freezeAuthority: null,
       );
-      final encodedNoFreeze = getInitializeMint2InstructionDataEncoder().encode(noFreeze);
-      final decodedNoFreeze = getInitializeMint2InstructionDataDecoder().decode(encodedNoFreeze);
+      final encodedNoFreeze = getInitializeMint2InstructionDataEncoder().encode(
+        noFreeze,
+      );
+      final decodedNoFreeze = getInitializeMint2InstructionDataDecoder().decode(
+        encodedNoFreeze,
+      );
       expect(decodedNoFreeze.freezeAuthority, isNull);
 
       const withFreeze = InitializeMint2InstructionData(
@@ -636,8 +674,10 @@ void main() {
         mintAuthority: _owner,
         freezeAuthority: _delegate,
       );
-      final encodedWithFreeze = getInitializeMint2InstructionDataEncoder().encode(withFreeze);
-      final decodedWithFreeze = getInitializeMint2InstructionDataDecoder().decode(encodedWithFreeze);
+      final encodedWithFreeze = getInitializeMint2InstructionDataEncoder()
+          .encode(withFreeze);
+      final decodedWithFreeze = getInitializeMint2InstructionDataDecoder()
+          .decode(encodedWithFreeze);
       expect(decodedWithFreeze.decimals, 9);
       expect(decodedWithFreeze.freezeAuthority, _delegate);
     });
@@ -697,7 +737,9 @@ void main() {
     test('codec round-trip preserves amount', () {
       final data = AmountToUiAmountInstructionData(amount: BigInt.from(500));
       final encoded = getAmountToUiAmountInstructionDataEncoder().encode(data);
-      final decoded = getAmountToUiAmountInstructionDataDecoder().decode(encoded);
+      final decoded = getAmountToUiAmountInstructionDataDecoder().decode(
+        encoded,
+      );
       expect(decoded.amount, BigInt.from(500));
     });
   });
@@ -716,7 +758,9 @@ void main() {
     test('codec round-trip preserves uiAmount string', () {
       const data = UiAmountToAmountInstructionData(uiAmount: '2.5');
       final encoded = getUiAmountToAmountInstructionDataEncoder().encode(data);
-      final decoded = getUiAmountToAmountInstructionDataDecoder().decode(encoded);
+      final decoded = getUiAmountToAmountInstructionDataDecoder().decode(
+        encoded,
+      );
       expect(decoded.uiAmount, '2.5');
     });
   });
@@ -748,9 +792,9 @@ void main() {
       );
       expect(ix.accounts, hasLength(6));
       expect(ix.accounts![0].address, _owner); // payer
-      expect(ix.accounts![1].address, _ata);   // ata
+      expect(ix.accounts![1].address, _ata); // ata
       expect(ix.accounts![2].address, _owner); // owner
-      expect(ix.accounts![3].address, _mint);  // mint
+      expect(ix.accounts![3].address, _mint); // mint
     });
   });
 
