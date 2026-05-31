@@ -51,6 +51,38 @@ void main() {
       expect(result.confirmationStatus, 'confirmed');
     });
 
+    test('uses default polling options and accepts finalized status', () async {
+      final client = MockClient((request) async {
+        return http.Response(
+          jsonEncode(<String, Object?>{
+            'jsonrpc': '2.0',
+            'id': 1,
+            'result': <String, Object?>{
+              'value': <Object?>[
+                <String, Object?>{
+                  'confirmationStatus': 'finalized',
+                  'err': null,
+                },
+              ],
+            },
+          }),
+          200,
+          headers: {'content-type': 'application/json'},
+        );
+      });
+      final helius = createHelius(
+        HeliusConfig(apiKey: 'test-key'),
+        client: client,
+      );
+
+      final result = await helius.transactions.pollTransactionConfirmation(
+        const PollTransactionConfirmationRequest(signature: 'sig-finalized'),
+      );
+
+      expect(result.signature, 'sig-finalized');
+      expect(result.confirmationStatus, 'finalized');
+    });
+
     test('times out when status is never confirmed', () async {
       final client = MockClient((request) async {
         return http.Response(

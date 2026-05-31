@@ -36,7 +36,7 @@ void main() {
       );
     });
 
-    test('POST and PUT send JSON bodies with canonical headers', () async {
+    test('POST, PUT, and PATCH send JSON bodies with canonical headers', () async {
       final requests = <http.Request>[];
       final client = RestClient(
         baseUrl: 'https://api.helius.xyz',
@@ -52,21 +52,27 @@ void main() {
 
       await client.post('/v0/webhooks', body: {'webhookURL': 'https://example.com'});
       await client.put('/v0/webhooks/123', body: {'status': 'active'});
+      await client.patch('/v0/webhooks/123', body: {'isActive': false});
 
-      expect(requests, hasLength(2));
-      expect(requests.first.method, 'POST');
-      expect(requests.last.method, 'PUT');
+      expect(requests, hasLength(3));
+      expect(requests[0].method, 'POST');
+      expect(requests[1].method, 'PUT');
+      expect(requests[2].method, 'PATCH');
       expect(
         requests.first.headers,
         containsPair('content-type', 'application/json; charset=utf-8'),
       );
       expect(
-        jsonDecode(requests.first.body),
+        jsonDecode(requests[0].body),
         {'webhookURL': 'https://example.com'},
       );
       expect(
-        jsonDecode(requests.last.body),
+        jsonDecode(requests[1].body),
         {'status': 'active'},
+      );
+      expect(
+        jsonDecode(requests[2].body),
+        {'isActive': false},
       );
     });
 
@@ -81,6 +87,26 @@ void main() {
 
       final response = await client.delete('/v0/webhooks/123');
       expect(response, isNull);
+    });
+
+    test('uses the reason phrase for empty non-2xx responses', () async {
+      final client = RestClient(
+        baseUrl: 'https://api.helius.xyz',
+        client: MockClient(
+          (_) async => http.Response('', 503, reasonPhrase: 'Service Unavailable'),
+        ),
+      );
+
+      await expectLater(
+        client.get('/v0/addresses/demo/balances'),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.context['message'],
+            'message',
+            'Service Unavailable',
+          ),
+        ),
+      );
     });
 
     test('throws SolanaError for non-2xx responses', () async {

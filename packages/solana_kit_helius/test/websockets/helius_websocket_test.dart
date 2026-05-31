@@ -37,6 +37,21 @@ void main() {
       expect(ws.url, wsUrl);
     });
 
+    test('connect rejects relative URLs', () async {
+      final ws = HeliusWebSocket(url: '/subscriptions');
+
+      await expectLater(
+        ws.connect(),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains('must be an absolute URL'),
+          ),
+        ),
+      );
+    });
+
     test('connect rejects insecure ws URLs by default', () async {
       final ws = HeliusWebSocket(url: 'ws://localhost:1234');
 

@@ -33,9 +33,7 @@ Future<SmartTransactionResult> txPollTransactionConfirmation(
         final confirmationStatus = status['confirmationStatus'] as String?;
         if (confirmationStatus != null) {
           if (confirmationStatus == commitment ||
-              confirmationStatus == 'finalized' ||
-              (commitment == 'confirmed' &&
-                  confirmationStatus == 'finalized')) {
+              confirmationStatus == 'finalized') {
             return SmartTransactionResult(
               signature: request.signature,
               confirmationStatus: confirmationStatus,

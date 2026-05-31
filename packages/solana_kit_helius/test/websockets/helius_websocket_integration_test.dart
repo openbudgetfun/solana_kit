@@ -31,6 +31,22 @@ _startServer() async {
   return (server, commands, requests);
 }
 
+Future<(HttpServer, List<WebSocket>, List<Object?>)> _startSocketServer() async {
+  final sockets = <WebSocket>[];
+  final requests = <Object?>[];
+  final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+
+  unawaited(() async {
+    await for (final request in server) {
+      final socket = await WebSocketTransformer.upgrade(request);
+      sockets.add(socket);
+      socket.listen(requests.add);
+    }
+  }());
+
+  return (server, sockets, requests);
+}
+
 void main() {
   group('HeliusWebSocket integration', () {
     test('connects, subscribes, confirms, and emits notifications', () async {
@@ -165,6 +181,98 @@ void main() {
         ),
       );
       expect(requests, isNotEmpty);
+    });
+
+    test('connection failures surface as SolanaError', () async {
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      final url = 'ws://${server.address.address}:${server.port}';
+      await server.close(force: true);
+
+      final ws = HeliusWebSocket(url: url, allowInsecureWs: true);
+
+      await expectLater(
+        ws.connect(),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.heliusWebSocketError,
+          ),
+        ),
+      );
+      expect(ws.isConnected, isFalse);
+    });
+
+    test('non-object JSON payloads surface as SolanaError events', () async {
+      final (server, commands, _) = await _startServer();
+      addTearDown(() async {
+        await commands.close();
+        await server.close(force: true);
+      });
+
+      final ws = HeliusWebSocket(
+        url: 'ws://${server.address.address}:${server.port}',
+        allowInsecureWs: true,
+      );
+      await ws.connect();
+      addTearDown(ws.close);
+
+      final errors = <Object>[];
+      final subscription = ws
+          .subscribe('slotSubscribe')
+          .listen((_) {}, onError: errors.add);
+      addTearDown(subscription.cancel);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      commands.add(jsonEncode([1, 2, 3]));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      expect(
+        errors.single,
+        isA<SolanaError>().having(
+          (error) => error.code,
+          'code',
+          SolanaErrorCode.heliusWebSocketError,
+        ),
+      );
+    });
+
+    test('server close resets state and closes subscription streams', () async {
+      final (server, sockets, requests) = await _startSocketServer();
+      addTearDown(() async {
+        for (final socket in sockets) {
+          await socket.close();
+        }
+        await server.close(force: true);
+      });
+
+      final ws = HeliusWebSocket(
+        url: 'ws://${server.address.address}:${server.port}',
+        allowInsecureWs: true,
+      );
+      await ws.connect();
+
+      final done = Completer<void>();
+      final stream = ws.subscribe('accountSubscribe', ['acct-1']);
+      final subscription = stream.listen((_) {}, onDone: done.complete);
+      addTearDown(subscription.cancel);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(requests, isNotEmpty);
+
+      await sockets.single.close();
+      await done.future.timeout(const Duration(seconds: 1));
+
+      expect(ws.isConnected, isFalse);
+      expect(
+        () => ws.subscribe('accountSubscribe', ['acct-1']),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.heliusWebSocketError,
+          ),
+        ),
+      );
     });
 
     test(
