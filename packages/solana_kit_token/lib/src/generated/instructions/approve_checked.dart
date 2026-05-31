@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -27,7 +26,8 @@ class ApproveCheckedInstructionData {
   final int decimals;
 }
 
-Encoder<ApproveCheckedInstructionData> getApproveCheckedInstructionDataEncoder() {
+Encoder<ApproveCheckedInstructionData>
+getApproveCheckedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('amount', getU64Encoder()),
@@ -44,7 +44,8 @@ Encoder<ApproveCheckedInstructionData> getApproveCheckedInstructionDataEncoder()
   );
 }
 
-Decoder<ApproveCheckedInstructionData> getApproveCheckedInstructionDataDecoder() {
+Decoder<ApproveCheckedInstructionData>
+getApproveCheckedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('amount', getU64Decoder()),
@@ -53,16 +54,21 @@ Decoder<ApproveCheckedInstructionData> getApproveCheckedInstructionDataDecoder()
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ApproveCheckedInstructionData(
-      discriminator: map['discriminator']! as int,
-      amount: map['amount']! as BigInt,
-      decimals: map['decimals']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        ApproveCheckedInstructionData(
+          discriminator: map['discriminator']! as int,
+          amount: map['amount']! as BigInt,
+          decimals: map['decimals']! as int,
+        ),
   );
 }
 
-Codec<ApproveCheckedInstructionData, ApproveCheckedInstructionData> getApproveCheckedInstructionDataCodec() {
-  return combineCodec(getApproveCheckedInstructionDataEncoder(), getApproveCheckedInstructionDataDecoder());
+Codec<ApproveCheckedInstructionData, ApproveCheckedInstructionData>
+getApproveCheckedInstructionDataCodec() {
+  return combineCodec(
+    getApproveCheckedInstructionDataEncoder(),
+    getApproveCheckedInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [ApproveChecked] instruction.
@@ -76,23 +82,25 @@ Instruction getApproveCheckedInstruction({
   required int decimals,
 }) {
   final instructionData = ApproveCheckedInstructionData(
-      amount: amount,
-      decimals: decimals,
+    amount: amount,
+    decimals: decimals,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: source, role: AccountRole.writable),
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    AccountMeta(address: delegate, role: AccountRole.readonly),
-    AccountMeta(address: owner, role: AccountRole.readonlySigner),
+      AccountMeta(address: source, role: AccountRole.writable),
+      AccountMeta(address: mint, role: AccountRole.readonly),
+      AccountMeta(address: delegate, role: AccountRole.readonly),
+      AccountMeta(address: owner, role: AccountRole.readonlySigner),
     ],
     data: getApproveCheckedInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [ApproveChecked] instruction from raw instruction data.
-ApproveCheckedInstructionData parseApproveCheckedInstruction(Instruction instruction) {
+ApproveCheckedInstructionData parseApproveCheckedInstruction(
+  Instruction instruction,
+) {
   return getApproveCheckedInstructionDataDecoder().decode(instruction.data!);
 }

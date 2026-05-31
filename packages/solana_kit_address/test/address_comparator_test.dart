@@ -1,4 +1,4 @@
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_address/solana_kit_address.dart';
 import 'package:test/test.dart';
 
 void main() {

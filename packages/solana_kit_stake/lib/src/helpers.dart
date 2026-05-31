@@ -1,13 +1,9 @@
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    hide sysvarClockAddress, sysvarRentAddress, sysvarStakeHistoryAddress;
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_stake/src/generated/solana_stake_interface.dart';
 import 'package:solana_kit_system/solana_kit_system.dart' as system;
 import 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
-
-/// The unused account formerly used as the Stake Config account.
-const Address stakeConfigAddress = Address(
-  'StakeConfig11111111111111111111111111111111',
-);
 
 /// Builds a sequential plan that creates and initializes a stake account.
 InstructionPlan getCreateStakeAccountInstructionPlan({
@@ -23,7 +19,7 @@ InstructionPlan getCreateStakeAccountInstructionPlan({
       Lockup(
         unixTimestamp: BigInt.zero,
         epoch: BigInt.zero,
-        custodian: const Address('11111111111111111111111111111111'),
+        custodian: systemProgramAddress,
       );
 
   return SequentialInstructionPlan(

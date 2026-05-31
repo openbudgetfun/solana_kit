@@ -13,24 +13,18 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 /// CollectV2 instruction data for mpl-bubblegum compressed NFTs.
 @immutable
 class CollectV2InstructionData {
-  const CollectV2InstructionData({
-    this.discriminator = 4,
-  });
+  const CollectV2InstructionData({this.discriminator = 4});
 
   final int discriminator;
-
 }
 
 Encoder<CollectV2InstructionData> getCollectV2InstructionDataEncoder() {
-  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-
-  ]);
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[]);
 
   return transformEncoder(
     structEncoder,
     (CollectV2InstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-
     },
   );
 }
@@ -38,19 +32,17 @@ Encoder<CollectV2InstructionData> getCollectV2InstructionDataEncoder() {
 Decoder<CollectV2InstructionData> getCollectV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CollectV2InstructionData(
-          discriminator: map['discriminator']! as int,
-
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CollectV2InstructionData(discriminator: map['discriminator']! as int),
   );
 }
 
-Codec<CollectV2InstructionData, CollectV2InstructionData> getCollectV2InstructionDataCodec() {
+Codec<CollectV2InstructionData, CollectV2InstructionData>
+getCollectV2InstructionDataCodec() {
   return combineCodec(
     getCollectV2InstructionDataEncoder(),
     getCollectV2InstructionDataDecoder(),
@@ -63,9 +55,7 @@ Instruction getCollectV2Instruction({
   required Address treeAuthority,
   required Address destination,
 }) {
-  final instructionData = CollectV2InstructionData(
-
-  );
+  final instructionData = CollectV2InstructionData();
 
   return Instruction(
     programAddress: programAddress,

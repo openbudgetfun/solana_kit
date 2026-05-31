@@ -13,44 +13,40 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 /// SetTreeDelegate instruction data for mpl-bubblegum compressed NFTs.
 @immutable
 class SetTreeDelegateInstructionData {
-  const SetTreeDelegateInstructionData({
-    this.discriminator = 22,
-  });
+  const SetTreeDelegateInstructionData({this.discriminator = 22});
 
   final int discriminator;
-
 }
 
-Encoder<SetTreeDelegateInstructionData> getSetTreeDelegateInstructionDataEncoder() {
-  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-
-  ]);
+Encoder<SetTreeDelegateInstructionData>
+getSetTreeDelegateInstructionDataEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[]);
 
   return transformEncoder(
     structEncoder,
     (SetTreeDelegateInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-
     },
   );
 }
 
-Decoder<SetTreeDelegateInstructionData> getSetTreeDelegateInstructionDataDecoder() {
+Decoder<SetTreeDelegateInstructionData>
+getSetTreeDelegateInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => SetTreeDelegateInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SetTreeDelegateInstructionData(
           discriminator: map['discriminator']! as int,
-
         ),
   );
 }
 
-Codec<SetTreeDelegateInstructionData, SetTreeDelegateInstructionData> getSetTreeDelegateInstructionDataCodec() {
+Codec<SetTreeDelegateInstructionData, SetTreeDelegateInstructionData>
+getSetTreeDelegateInstructionDataCodec() {
   return combineCodec(
     getSetTreeDelegateInstructionDataEncoder(),
     getSetTreeDelegateInstructionDataDecoder(),
@@ -66,9 +62,7 @@ Instruction getSetTreeDelegateInstruction({
   required Address merkleTree,
   required Address systemProgram,
 }) {
-  final instructionData = SetTreeDelegateInstructionData(
-
-  );
+  final instructionData = SetTreeDelegateInstructionData();
 
   return Instruction(
     programAddress: programAddress,

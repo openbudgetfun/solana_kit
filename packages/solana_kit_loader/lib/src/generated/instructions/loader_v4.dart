@@ -8,7 +8,6 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
-import 'package:solana_kit_loader/src/generated/programs/loader_v4.dart';
 
 const loaderV4WriteDiscriminator = 0;
 const truncateDiscriminator = 1;

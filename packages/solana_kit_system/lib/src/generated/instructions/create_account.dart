@@ -9,13 +9,8 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-/// The address of the System Program.
-const systemProgramAddress = Address('11111111111111111111111111111111');
-
 /// System Program instruction discriminators.
-enum SystemInstruction {
-  createAccount,
-}
+enum SystemInstruction { createAccount }
 
 /// Data payload for the System Program `CreateAccount` instruction.
 @immutable

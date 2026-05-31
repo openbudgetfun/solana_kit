@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -16,14 +15,13 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class InitializeAccountInstructionData {
-  const InitializeAccountInstructionData({
-    this.discriminator = 1,
-  });
+  const InitializeAccountInstructionData({this.discriminator = 1});
 
   final int discriminator;
 }
 
-Encoder<InitializeAccountInstructionData> getInitializeAccountInstructionDataEncoder() {
+Encoder<InitializeAccountInstructionData>
+getInitializeAccountInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,21 +34,27 @@ Encoder<InitializeAccountInstructionData> getInitializeAccountInstructionDataEnc
   );
 }
 
-Decoder<InitializeAccountInstructionData> getInitializeAccountInstructionDataDecoder() {
+Decoder<InitializeAccountInstructionData>
+getInitializeAccountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeAccountInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializeAccountInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<InitializeAccountInstructionData, InitializeAccountInstructionData> getInitializeAccountInstructionDataCodec() {
-  return combineCodec(getInitializeAccountInstructionDataEncoder(), getInitializeAccountInstructionDataDecoder());
+Codec<InitializeAccountInstructionData, InitializeAccountInstructionData>
+getInitializeAccountInstructionDataCodec() {
+  return combineCodec(
+    getInitializeAccountInstructionDataEncoder(),
+    getInitializeAccountInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializeAccount] instruction.
@@ -60,25 +64,24 @@ Instruction getInitializeAccountInstruction({
   required Address mint,
   required Address owner,
   required Address rent,
-
 }) {
-  final instructionData = InitializeAccountInstructionData(
-
-  );
+  final instructionData = InitializeAccountInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: account, role: AccountRole.writable),
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    AccountMeta(address: owner, role: AccountRole.readonly),
-    AccountMeta(address: rent, role: AccountRole.readonly),
+      AccountMeta(address: account, role: AccountRole.writable),
+      AccountMeta(address: mint, role: AccountRole.readonly),
+      AccountMeta(address: owner, role: AccountRole.readonly),
+      AccountMeta(address: rent, role: AccountRole.readonly),
     ],
     data: getInitializeAccountInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [InitializeAccount] instruction from raw instruction data.
-InitializeAccountInstructionData parseInitializeAccountInstruction(Instruction instruction) {
+InitializeAccountInstructionData parseInitializeAccountInstruction(
+  Instruction instruction,
+) {
   return getInitializeAccountInstructionDataDecoder().decode(instruction.data!);
 }

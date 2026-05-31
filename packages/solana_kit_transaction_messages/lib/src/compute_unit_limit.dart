@@ -12,11 +12,6 @@ const provisoryComputeUnitLimit = 0;
 /// The maximum compute unit limit accepted by the Compute Budget program.
 const maxComputeUnitLimit = 1400000;
 
-/// Address of the Compute Budget program.
-const computeBudgetProgramAddress = Address(
-  'ComputeBudget111111111111111111111111111111',
-);
-
 const _setComputeUnitLimitDiscriminator = 2;
 
 /// A function that estimates the compute unit limit for [transactionMessage].

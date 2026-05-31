@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:meta/meta.dart';
-import 'package:solana_kit_address_lookup_table/src/generated/programs/address_lookup_table.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
@@ -126,9 +125,7 @@ Instruction getExtendLookupTableInstruction({
   required Address payer,
   required List<Address> addresses,
   Address programAddress = addressLookupTableProgramAddress,
-  Address systemProgramAddress = const Address(
-    '11111111111111111111111111111111',
-  ),
+  Address systemProgramAddress = systemProgramAddress,
 }) {
   final data = ExtendLookupTableInstructionData(addresses: addresses);
   return Instruction(

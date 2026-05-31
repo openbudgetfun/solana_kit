@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -55,16 +54,21 @@ Decoder<SetAuthorityInstructionData> getSetAuthorityInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => SetAuthorityInstructionData(
-      discriminator: map['discriminator']! as int,
-      authorityType: map['authorityType']! as AuthorityType,
-      newAuthority: map['newAuthority'] as Address?,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SetAuthorityInstructionData(
+          discriminator: map['discriminator']! as int,
+          authorityType: map['authorityType']! as AuthorityType,
+          newAuthority: map['newAuthority'] as Address?,
+        ),
   );
 }
 
-Codec<SetAuthorityInstructionData, SetAuthorityInstructionData> getSetAuthorityInstructionDataCodec() {
-  return combineCodec(getSetAuthorityInstructionDataEncoder(), getSetAuthorityInstructionDataDecoder());
+Codec<SetAuthorityInstructionData, SetAuthorityInstructionData>
+getSetAuthorityInstructionDataCodec() {
+  return combineCodec(
+    getSetAuthorityInstructionDataEncoder(),
+    getSetAuthorityInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [SetAuthority] instruction.
@@ -76,21 +80,23 @@ Instruction getSetAuthorityInstruction({
   required Address? newAuthority,
 }) {
   final instructionData = SetAuthorityInstructionData(
-      authorityType: authorityType,
-      newAuthority: newAuthority,
+    authorityType: authorityType,
+    newAuthority: newAuthority,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: owned, role: AccountRole.writable),
-    AccountMeta(address: owner, role: AccountRole.readonlySigner),
+      AccountMeta(address: owned, role: AccountRole.writable),
+      AccountMeta(address: owner, role: AccountRole.readonlySigner),
     ],
     data: getSetAuthorityInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [SetAuthority] instruction from raw instruction data.
-SetAuthorityInstructionData parseSetAuthorityInstruction(Instruction instruction) {
+SetAuthorityInstructionData parseSetAuthorityInstruction(
+  Instruction instruction,
+) {
   return getSetAuthorityInstructionDataDecoder().decode(instruction.data!);
 }

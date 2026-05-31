@@ -1,7 +1,12 @@
 /// Composite helper for minting a compressed NFT.
 library;
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    hide
+        noopProgramAddress,
+        splAccountCompressionProgramAddress,
+        systemProgramAddress,
+        tokenProgramAddress;
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_mpl_bubblegum/src/constants/program_addresses.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/instructions/mint_v1.dart';
@@ -105,12 +110,10 @@ InstructionPlan getMintV1InstructionPlan(
   MintV1Input input, [
   MintV1Config config = const MintV1Config(),
 ]) {
-  final logWrapper =
-      config.logWrapper ?? noopProgramAddress;
+  final logWrapper = config.logWrapper ?? noopProgramAddress;
   final compressionProgram =
       config.compressionProgram ?? splAccountCompressionProgramAddress;
-  final systemProgram =
-      config.systemProgram ?? systemProgramAddress;
+  final systemProgram = config.systemProgram ?? systemProgramAddress;
 
   final metadataArgs = MetadataArgs(
     name: input.name,

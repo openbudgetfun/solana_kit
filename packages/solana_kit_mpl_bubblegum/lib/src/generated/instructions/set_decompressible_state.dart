@@ -23,9 +23,10 @@ class SetDecompressibleStateInstructionData {
   final DecompressibleState decompressableState;
 }
 
-Encoder<SetDecompressibleStateInstructionData> getSetDecompressibleStateInstructionDataEncoder() {
+Encoder<SetDecompressibleStateInstructionData>
+getSetDecompressibleStateInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('decompressableState', getU8Encoder()),
+    ('decompressableState', getU8Encoder()),
   ]);
 
   return transformEncoder(
@@ -37,22 +38,29 @@ Encoder<SetDecompressibleStateInstructionData> getSetDecompressibleStateInstruct
   );
 }
 
-Decoder<SetDecompressibleStateInstructionData> getSetDecompressibleStateInstructionDataDecoder() {
+Decoder<SetDecompressibleStateInstructionData>
+getSetDecompressibleStateInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('decompressableState', getU8Decoder()),
+    ('decompressableState', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => SetDecompressibleStateInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SetDecompressibleStateInstructionData(
           discriminator: map['discriminator']! as int,
-          decompressableState: map['decompressableState']! as DecompressibleState,
+          decompressableState:
+              map['decompressableState']! as DecompressibleState,
         ),
   );
 }
 
-Codec<SetDecompressibleStateInstructionData, SetDecompressibleStateInstructionData> getSetDecompressibleStateInstructionDataCodec() {
+Codec<
+  SetDecompressibleStateInstructionData,
+  SetDecompressibleStateInstructionData
+>
+getSetDecompressibleStateInstructionDataCodec() {
   return combineCodec(
     getSetDecompressibleStateInstructionDataEncoder(),
     getSetDecompressibleStateInstructionDataDecoder(),
@@ -67,7 +75,7 @@ Instruction getSetDecompressibleStateInstruction({
   required DecompressibleState decompressableState,
 }) {
   final instructionData = SetDecompressibleStateInstructionData(
-      decompressableState: decompressableState,
+    decompressableState: decompressableState,
   );
 
   return Instruction(
@@ -76,6 +84,8 @@ Instruction getSetDecompressibleStateInstruction({
       AccountMeta(address: treeAuthority, role: AccountRole.writable),
       AccountMeta(address: treeCreator, role: AccountRole.readonlySigner),
     ],
-    data: getSetDecompressibleStateInstructionDataEncoder().encode(instructionData),
+    data: getSetDecompressibleStateInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }

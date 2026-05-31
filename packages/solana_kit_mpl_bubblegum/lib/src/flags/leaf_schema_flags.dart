@@ -9,8 +9,8 @@ library;
 /// These flags are stored as a single byte in the leaf hash input and
 /// determine how the leaf data should be interpreted.
 class LeafSchemaV2Flags {
-
   const LeafSchemaV2Flags._(this.value);
+
   /// The raw flag value.
   final int value;
 

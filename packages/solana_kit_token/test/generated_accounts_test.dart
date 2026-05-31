@@ -282,7 +282,9 @@ void main() {
   // ── AccountState enum codec ───────────────────────────────────────────────
   group('AccountState codec', () {
     test('encodes uninitialized as 0', () {
-      final encoded = getAccountStateEncoder().encode(AccountState.uninitialized);
+      final encoded = getAccountStateEncoder().encode(
+        AccountState.uninitialized,
+      );
       expect(encoded[0], 0);
     });
 
@@ -297,20 +299,17 @@ void main() {
     });
 
     test('decodes 0 → uninitialized', () {
-      final decoded = getAccountStateDecoder()
-          .decode(Uint8List.fromList([0]));
+      final decoded = getAccountStateDecoder().decode(Uint8List.fromList([0]));
       expect(decoded, AccountState.uninitialized);
     });
 
     test('decodes 1 → initialized', () {
-      final decoded = getAccountStateDecoder()
-          .decode(Uint8List.fromList([1]));
+      final decoded = getAccountStateDecoder().decode(Uint8List.fromList([1]));
       expect(decoded, AccountState.initialized);
     });
 
     test('decodes 2 → frozen', () {
-      final decoded = getAccountStateDecoder()
-          .decode(Uint8List.fromList([2]));
+      final decoded = getAccountStateDecoder().decode(Uint8List.fromList([2]));
       expect(decoded, AccountState.frozen);
     });
 
@@ -337,15 +336,24 @@ void main() {
     });
 
     test('encodes freezeAccount as 1', () {
-      expect(getAuthorityTypeEncoder().encode(AuthorityType.freezeAccount)[0], 1);
+      expect(
+        getAuthorityTypeEncoder().encode(AuthorityType.freezeAccount)[0],
+        1,
+      );
     });
 
     test('encodes accountOwner as 2', () {
-      expect(getAuthorityTypeEncoder().encode(AuthorityType.accountOwner)[0], 2);
+      expect(
+        getAuthorityTypeEncoder().encode(AuthorityType.accountOwner)[0],
+        2,
+      );
     });
 
     test('encodes closeAccount as 3', () {
-      expect(getAuthorityTypeEncoder().encode(AuthorityType.closeAccount)[0], 3);
+      expect(
+        getAuthorityTypeEncoder().encode(AuthorityType.closeAccount)[0],
+        3,
+      );
     });
 
     test('codec round-trips all variants', () {

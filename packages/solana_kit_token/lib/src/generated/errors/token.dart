@@ -85,26 +85,32 @@ const int tokenErrorNonNativeNotSupported = 0x13; // 19
 
 /// Map of error codes to human-readable messages.
 const Map<int, String> _tokenErrorMessages = {
-    tokenErrorNotRentExempt: 'Lamport balance below rent-exempt threshold',
-    tokenErrorInsufficientFunds: 'Insufficient funds',
-    tokenErrorInvalidMint: 'Invalid Mint',
-    tokenErrorMintMismatch: 'Account not associated with this Mint',
-    tokenErrorOwnerMismatch: 'Owner does not match',
-    tokenErrorFixedSupply: 'Fixed supply',
-    tokenErrorAlreadyInUse: 'Already in use',
-    tokenErrorInvalidNumberOfProvidedSigners: 'Invalid number of provided signers',
-    tokenErrorInvalidNumberOfRequiredSigners: 'Invalid number of required signers',
-    tokenErrorUninitializedState: 'State is unititialized',
-    tokenErrorNativeNotSupported: 'Instruction does not support native tokens',
-    tokenErrorNonNativeHasBalance: 'Non-native account can only be closed if its balance is zero',
-    tokenErrorInvalidInstruction: 'Invalid instruction',
-    tokenErrorInvalidState: 'State is invalid for requested operation',
-    tokenErrorOverflow: 'Operation overflowed',
-    tokenErrorAuthorityTypeNotSupported: 'Account does not support specified authority type',
-    tokenErrorMintCannotFreeze: 'This token mint cannot freeze accounts',
-    tokenErrorAccountFrozen: 'Account is frozen',
-    tokenErrorMintDecimalsMismatch: 'The provided decimals value different from the Mint decimals',
-    tokenErrorNonNativeNotSupported: 'Instruction does not support non-native tokens',
+  tokenErrorNotRentExempt: 'Lamport balance below rent-exempt threshold',
+  tokenErrorInsufficientFunds: 'Insufficient funds',
+  tokenErrorInvalidMint: 'Invalid Mint',
+  tokenErrorMintMismatch: 'Account not associated with this Mint',
+  tokenErrorOwnerMismatch: 'Owner does not match',
+  tokenErrorFixedSupply: 'Fixed supply',
+  tokenErrorAlreadyInUse: 'Already in use',
+  tokenErrorInvalidNumberOfProvidedSigners:
+      'Invalid number of provided signers',
+  tokenErrorInvalidNumberOfRequiredSigners:
+      'Invalid number of required signers',
+  tokenErrorUninitializedState: 'State is unititialized',
+  tokenErrorNativeNotSupported: 'Instruction does not support native tokens',
+  tokenErrorNonNativeHasBalance:
+      'Non-native account can only be closed if its balance is zero',
+  tokenErrorInvalidInstruction: 'Invalid instruction',
+  tokenErrorInvalidState: 'State is invalid for requested operation',
+  tokenErrorOverflow: 'Operation overflowed',
+  tokenErrorAuthorityTypeNotSupported:
+      'Account does not support specified authority type',
+  tokenErrorMintCannotFreeze: 'This token mint cannot freeze accounts',
+  tokenErrorAccountFrozen: 'Account is frozen',
+  tokenErrorMintDecimalsMismatch:
+      'The provided decimals value different from the Mint decimals',
+  tokenErrorNonNativeNotSupported:
+      'Instruction does not support non-native tokens',
 };
 
 /// Get the error message for a Token program error code.

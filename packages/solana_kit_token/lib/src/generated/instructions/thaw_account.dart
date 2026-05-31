@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -16,9 +15,7 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class ThawAccountInstructionData {
-  const ThawAccountInstructionData({
-    this.discriminator = 11,
-  });
+  const ThawAccountInstructionData({this.discriminator = 11});
 
   final int discriminator;
 }
@@ -43,14 +40,17 @@ Decoder<ThawAccountInstructionData> getThawAccountInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ThawAccountInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        ThawAccountInstructionData(discriminator: map['discriminator']! as int),
   );
 }
 
-Codec<ThawAccountInstructionData, ThawAccountInstructionData> getThawAccountInstructionDataCodec() {
-  return combineCodec(getThawAccountInstructionDataEncoder(), getThawAccountInstructionDataDecoder());
+Codec<ThawAccountInstructionData, ThawAccountInstructionData>
+getThawAccountInstructionDataCodec() {
+  return combineCodec(
+    getThawAccountInstructionDataEncoder(),
+    getThawAccountInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [ThawAccount] instruction.
@@ -59,24 +59,23 @@ Instruction getThawAccountInstruction({
   required Address account,
   required Address mint,
   required Address owner,
-
 }) {
-  final instructionData = ThawAccountInstructionData(
-
-  );
+  final instructionData = ThawAccountInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: account, role: AccountRole.writable),
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    AccountMeta(address: owner, role: AccountRole.readonlySigner),
+      AccountMeta(address: account, role: AccountRole.writable),
+      AccountMeta(address: mint, role: AccountRole.readonly),
+      AccountMeta(address: owner, role: AccountRole.readonlySigner),
     ],
     data: getThawAccountInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [ThawAccount] instruction from raw instruction data.
-ThawAccountInstructionData parseThawAccountInstruction(Instruction instruction) {
+ThawAccountInstructionData parseThawAccountInstruction(
+  Instruction instruction,
+) {
   return getThawAccountInstructionDataDecoder().decode(instruction.data!);
 }

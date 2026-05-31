@@ -8,7 +8,6 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
-import 'package:solana_kit_memo/src/generated/programs/memo.dart';
 
 /// Data for the AddMemo instruction.
 @immutable

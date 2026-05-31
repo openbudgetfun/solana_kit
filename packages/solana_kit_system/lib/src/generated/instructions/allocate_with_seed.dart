@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -32,7 +31,8 @@ class AllocateWithSeedInstructionData {
   final Address programAddress;
 }
 
-Encoder<AllocateWithSeedInstructionData> getAllocateWithSeedInstructionDataEncoder() {
+Encoder<AllocateWithSeedInstructionData>
+getAllocateWithSeedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('base', getAddressEncoder()),
@@ -53,7 +53,8 @@ Encoder<AllocateWithSeedInstructionData> getAllocateWithSeedInstructionDataEncod
   );
 }
 
-Decoder<AllocateWithSeedInstructionData> getAllocateWithSeedInstructionDataDecoder() {
+Decoder<AllocateWithSeedInstructionData>
+getAllocateWithSeedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('base', getAddressDecoder()),
@@ -64,18 +65,23 @@ Decoder<AllocateWithSeedInstructionData> getAllocateWithSeedInstructionDataDecod
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => AllocateWithSeedInstructionData(
-      discriminator: map['discriminator']! as int,
-      base: map['base']! as Address,
-      seed: map['seed']! as String,
-      space: map['space']! as BigInt,
-      programAddress: map['programAddress']! as Address,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        AllocateWithSeedInstructionData(
+          discriminator: map['discriminator']! as int,
+          base: map['base']! as Address,
+          seed: map['seed']! as String,
+          space: map['space']! as BigInt,
+          programAddress: map['programAddress']! as Address,
+        ),
   );
 }
 
-Codec<AllocateWithSeedInstructionData, AllocateWithSeedInstructionData> getAllocateWithSeedInstructionDataCodec() {
-  return combineCodec(getAllocateWithSeedInstructionDataEncoder(), getAllocateWithSeedInstructionDataDecoder());
+Codec<AllocateWithSeedInstructionData, AllocateWithSeedInstructionData>
+getAllocateWithSeedInstructionDataCodec() {
+  return combineCodec(
+    getAllocateWithSeedInstructionDataEncoder(),
+    getAllocateWithSeedInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [AllocateWithSeed] instruction.
@@ -89,23 +95,25 @@ Instruction getAllocateWithSeedInstruction({
   required Address programAddress,
 }) {
   final instructionData = AllocateWithSeedInstructionData(
-      base: base,
-      seed: seed,
-      space: space,
-      programAddress: programAddress,
+    base: base,
+    seed: seed,
+    space: space,
+    programAddress: programAddress,
   );
 
   return Instruction(
     programAddress: instructionProgramAddress,
     accounts: [
-    AccountMeta(address: newAccount, role: AccountRole.writable),
-    AccountMeta(address: baseAccount, role: AccountRole.readonlySigner),
+      AccountMeta(address: newAccount, role: AccountRole.writable),
+      AccountMeta(address: baseAccount, role: AccountRole.readonlySigner),
     ],
     data: getAllocateWithSeedInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [AllocateWithSeed] instruction from raw instruction data.
-AllocateWithSeedInstructionData parseAllocateWithSeedInstruction(Instruction instruction) {
+AllocateWithSeedInstructionData parseAllocateWithSeedInstruction(
+  Instruction instruction,
+) {
   return getAllocateWithSeedInstructionDataDecoder().decode(instruction.data!);
 }

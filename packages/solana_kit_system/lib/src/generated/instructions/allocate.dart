@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -16,10 +15,7 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class AllocateInstructionData {
-  const AllocateInstructionData({
-    this.discriminator = 8,
-    required this.space,
-  });
+  const AllocateInstructionData({this.discriminator = 8, required this.space});
 
   final int discriminator;
   final BigInt space;
@@ -48,15 +44,20 @@ Decoder<AllocateInstructionData> getAllocateInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => AllocateInstructionData(
-      discriminator: map['discriminator']! as int,
-      space: map['space']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        AllocateInstructionData(
+          discriminator: map['discriminator']! as int,
+          space: map['space']! as BigInt,
+        ),
   );
 }
 
-Codec<AllocateInstructionData, AllocateInstructionData> getAllocateInstructionDataCodec() {
-  return combineCodec(getAllocateInstructionDataEncoder(), getAllocateInstructionDataDecoder());
+Codec<AllocateInstructionData, AllocateInstructionData>
+getAllocateInstructionDataCodec() {
+  return combineCodec(
+    getAllocateInstructionDataEncoder(),
+    getAllocateInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Allocate] instruction.
@@ -65,14 +66,12 @@ Instruction getAllocateInstruction({
   required Address newAccount,
   required BigInt space,
 }) {
-  final instructionData = AllocateInstructionData(
-      space: space,
-  );
+  final instructionData = AllocateInstructionData(space: space);
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: newAccount, role: AccountRole.writableSigner),
+      AccountMeta(address: newAccount, role: AccountRole.writableSigner),
     ],
     data: getAllocateInstructionDataEncoder().encode(instructionData),
   );

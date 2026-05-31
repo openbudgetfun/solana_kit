@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:solana_kit_addresses/src/address.dart';
-import 'package:solana_kit_addresses/src/address_codec.dart';
+import 'package:solana_kit_address/src/address.dart';
+import 'package:solana_kit_address/src/address_codec.dart';
 
 /// Returns the [Address] corresponding to a 32-byte Ed25519 public key.
 ///

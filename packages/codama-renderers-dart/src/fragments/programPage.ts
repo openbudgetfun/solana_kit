@@ -10,6 +10,7 @@ import {
 } from "../utils/fragment.js";
 import type { RenderScope } from "../utils/options.js";
 import { camelCase, pascalCase } from "../utils/nameTransformers.js";
+import { WELL_KNOWN_ADDRESSES } from "../utils/wellKnownAddresses.js";
 
 /**
  * Generate a full Dart file for a program.
@@ -21,15 +22,36 @@ export function getProgramPageFragment(
   const name = node.name as string;
   const addressConstName = scope.nameApi.programAddressConstant(name);
 
-  const parts: Fragment[] = [
-    fragment`// Auto-generated. Do not edit.
+  const wellKnownName = WELL_KNOWN_ADDRESSES.get(node.publicKey);
+
+  // For well-known addresses, export and alias the canonical constant from
+  // solana_kit_addresses instead of hardcoding the address string.
+  // When the generated name matches the canonical name, a simple export suffices.
+  // When they differ, we also need a local const alias.
+  // For unknown addresses, fall back to the original Address('...') pattern.
+  const addressDeclaration: Fragment = wellKnownName
+    ? addressConstName === wellKnownName
+      ? fragment`// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+/// The address of the ${fragmentFromString(pascalCase(name))} program.
+export 'package:solana_kit_addresses/solana_kit_addresses.dart' show ${fragmentFromString(wellKnownName)};`
+      : fragment`${use(wellKnownName, "solanaAddresses")}
+
+// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+/// The address of the ${fragmentFromString(pascalCase(name))} program.
+const ${fragmentFromString(addressConstName)} = ${fragmentFromString(wellKnownName)};`
+    : fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
 ${use("Address", "solanaAddresses")}
 
 /// The address of the ${fragmentFromString(pascalCase(name))} program.
-const ${fragmentFromString(addressConstName)} = Address('${fragmentFromString(node.publicKey)}');`,
-  ];
+const ${fragmentFromString(addressConstName)} = Address('${fragmentFromString(node.publicKey)}');`;
+
+  const parts: Fragment[] = [addressDeclaration];
 
   // Account identifier enum
   const accounts = node.accounts ?? [];

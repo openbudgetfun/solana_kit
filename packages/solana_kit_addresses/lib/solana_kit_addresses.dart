@@ -1,7 +1,9 @@
-/// Solana address primitives for the Solana Kit Dart SDK.
+/// Solana address primitives and well-known program addresses for the Solana Kit Dart SDK.
 ///
-/// Provides strongly typed addresses, validation helpers, base58 codecs, and
-/// program-derived address utilities.
+/// Provides strongly typed addresses, validation helpers, base58 codecs,
+/// program-derived address utilities, and constants for all native program
+/// addresses, sysvar addresses, SPL program addresses, and well-known token
+/// mint addresses.
 ///
 /// <!-- {=docsAddressPrimitivesSection} -->
 ///
@@ -32,9 +34,7 @@
 /// <!-- {/docsAddressPrimitivesSection} -->
 library;
 
-export 'src/address.dart';
-export 'src/address_codec.dart';
-export 'src/address_comparator.dart';
+export 'package:solana_kit_address/solana_kit_address.dart';
+export 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
 export 'src/curve.dart';
 export 'src/program_derived_address.dart';
-export 'src/public_key.dart';

@@ -4,7 +4,6 @@ import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_system/solana_kit_system.dart';
 import 'package:solana_kit_token/src/generated/accounts/mint.dart';
 import 'package:solana_kit_token/src/generated/instructions/initialize_mint2.dart';
-import 'package:solana_kit_token/src/generated/programs/token.dart';
 
 /// Input for [getCreateMintInstructionPlan].
 class CreateMintInput {
@@ -42,10 +41,7 @@ class CreateMintInput {
 /// Configuration for [getCreateMintInstructionPlan].
 class CreateMintConfig {
   /// Creates a [CreateMintConfig].
-  const CreateMintConfig({
-    this.tokenProgram,
-    this.systemProgram,
-  });
+  const CreateMintConfig({this.tokenProgram, this.systemProgram});
 
   /// Token program address. Defaults to [tokenProgramAddress].
   final Address? tokenProgram;

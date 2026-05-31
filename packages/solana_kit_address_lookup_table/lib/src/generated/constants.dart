@@ -1,11 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-
-/// The canonical Address Lookup Table program address.
-const addressLookupTableProgramAddress = Address(
-  'AddressLookupTab1e1111111111111111111111111',
-);
+export 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    show addressLookupTableProgramAddress;
 
 /// Number of bytes used by the lookup table metadata before stored addresses.
 const addressLookupTableMetaSize = 56;

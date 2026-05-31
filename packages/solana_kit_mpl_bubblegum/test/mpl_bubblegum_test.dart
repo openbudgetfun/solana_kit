@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    hide mplBubblegumProgramAddress, tokenMetadataProgramAddress;
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_mpl_bubblegum/solana_kit_mpl_bubblegum.dart';
 import 'package:test/test.dart';
@@ -8,31 +9,19 @@ import 'package:test/test.dart';
 void main() {
   group('canTransfer', () {
     test('returns true when not frozen and not nonTransferable', () {
-      expect(
-        canTransfer(frozen: false, nonTransferable: false),
-        isTrue,
-      );
+      expect(canTransfer(frozen: false, nonTransferable: false), isTrue);
     });
 
     test('returns false when frozen', () {
-      expect(
-        canTransfer(frozen: true, nonTransferable: false),
-        isFalse,
-      );
+      expect(canTransfer(frozen: true, nonTransferable: false), isFalse);
     });
 
     test('returns false when nonTransferable', () {
-      expect(
-        canTransfer(frozen: false, nonTransferable: true),
-        isFalse,
-      );
+      expect(canTransfer(frozen: false, nonTransferable: true), isFalse);
     });
 
     test('returns false when both frozen and nonTransferable', () {
-      expect(
-        canTransfer(frozen: true, nonTransferable: true),
-        isFalse,
-      );
+      expect(canTransfer(frozen: true, nonTransferable: true), isFalse);
     });
   });
 
@@ -80,10 +69,18 @@ void main() {
     test('values list contains all flags', () {
       expect(LeafSchemaV2Flags.values.length, 4);
       expect(LeafSchemaV2Flags.values, contains(LeafSchemaV2Flags.none));
-      expect(LeafSchemaV2Flags.values, contains(LeafSchemaV2Flags.hasCollection));
-      expect(LeafSchemaV2Flags.values, contains(LeafSchemaV2Flags.hasAssetData));
       expect(
-          LeafSchemaV2Flags.values, contains(LeafSchemaV2Flags.hasCollectionAndAssetData));
+        LeafSchemaV2Flags.values,
+        contains(LeafSchemaV2Flags.hasCollection),
+      );
+      expect(
+        LeafSchemaV2Flags.values,
+        contains(LeafSchemaV2Flags.hasAssetData),
+      );
+      expect(
+        LeafSchemaV2Flags.values,
+        contains(LeafSchemaV2Flags.hasCollectionAndAssetData),
+      );
     });
   });
 
@@ -106,18 +103,11 @@ void main() {
     test('verify returns true for valid proof', () {
       final leaf = Uint8List.fromList(List.filled(32, 42));
       final emptyNode = Uint8List(32);
-      final root = keccak256(
-        Uint8List.fromList([...leaf, ...emptyNode]),
-      );
+      final root = keccak256(Uint8List.fromList([...leaf, ...emptyNode]));
       final proof = <Uint8List>[emptyNode];
 
       expect(
-        MerkleTree.verify(
-          root: root,
-          leaf: leaf,
-          leafIndex: 0,
-          proof: proof,
-        ),
+        MerkleTree.verify(root: root, leaf: leaf, leafIndex: 0, proof: proof),
         isTrue,
       );
     });
@@ -126,9 +116,7 @@ void main() {
       final leaf = Uint8List.fromList(List.filled(32, 1));
       final wrongLeaf = Uint8List.fromList(List.filled(32, 2));
       final emptyNode = Uint8List(32);
-      final root = keccak256(
-        Uint8List.fromList([...leaf, ...emptyNode]),
-      );
+      final root = keccak256(Uint8List.fromList([...leaf, ...emptyNode]));
       final proof = <Uint8List>[emptyNode];
 
       expect(
@@ -151,15 +139,15 @@ void main() {
       // Keccak-256("") = c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470
       const sha3OfEmpty =
           'a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a';
-      final resultHex =
-          result.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+      final resultHex = result
+          .map((b) => b.toRadixString(16).padLeft(2, '0'))
+          .join();
       expect(resultHex, isNot(equals(sha3OfEmpty)));
     });
 
     test('empty string matches known vector', () {
       final result = keccak256(Uint8List(0));
-      final hex =
-          result.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+      final hex = result.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
       expect(
         hex,
         'c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470',
@@ -237,7 +225,9 @@ void main() {
         metadataHashV2: metadataHash,
         flags: flags,
         // Use another valid address for collection
-        collection: const Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'),
+        collection: const Address(
+          'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+        ),
       );
 
       final withoutCollection = hashLeafV2(
@@ -293,18 +283,14 @@ void main() {
     test('depth 1 returns keccak256(zeros || zeros)', () {
       final node1 = computeEmptyNode(1);
       final zeros = Uint8List(32);
-      final expected = keccak256(
-        Uint8List.fromList([...zeros, ...zeros]),
-      );
+      final expected = keccak256(Uint8List.fromList([...zeros, ...zeros]));
       expect(node1, equals(expected));
     });
 
     test('depth 2 returns keccak256(emptyNode1 || emptyNode1)', () {
       final node2 = computeEmptyNode(2);
       final node1 = computeEmptyNode(1);
-      final expected = keccak256(
-        Uint8List.fromList([...node1, ...node1]),
-      );
+      final expected = keccak256(Uint8List.fromList([...node1, ...node1]));
       expect(node2, equals(expected));
     });
   });
@@ -358,7 +344,9 @@ void main() {
         isMutable: true,
         editionNonce: null,
         tokenStandard: 0,
-        collection: const Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'),
+        collection: const Address(
+          'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+        ),
         uses: null,
         tokenProgramVersion: 0,
         creators: [],
@@ -571,7 +559,9 @@ void main() {
             payer: Address('11111111111111111111111111111111'),
             treeDelegate: Address('11111111111111111111111111111111'),
             collectionAuthority: Address('11111111111111111111111111111111'),
-            collectionAuthorityRecordPda: Address('11111111111111111111111111111111'),
+            collectionAuthorityRecordPda: Address(
+              '11111111111111111111111111111111',
+            ),
             collectionMint: Address('11111111111111111111111111111111'),
             collectionMetadata: Address('11111111111111111111111111111111'),
             editionAccount: Address('11111111111111111111111111111111'),

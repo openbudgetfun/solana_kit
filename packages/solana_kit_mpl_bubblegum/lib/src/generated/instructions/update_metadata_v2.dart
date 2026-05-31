@@ -35,15 +35,21 @@ class UpdateMetadataV2InstructionData {
   final UpdateArgs updateArgs;
 }
 
-Encoder<UpdateMetadataV2InstructionData> getUpdateMetadataV2InstructionDataEncoder() {
+Encoder<UpdateMetadataV2InstructionData>
+getUpdateMetadataV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('assetDataHash', getNullableEncoder(getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableEncoder(getU8Encoder())),
-      ('nonce', getU64Encoder()),
-      ('index', getU32Encoder()),
-      ('currentMetadata', getU8Encoder()),
-      ('updateArgs', getU8Encoder()),
+    ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+    (
+      'assetDataHash',
+      getNullableEncoder(
+        getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableEncoder(getU8Encoder())),
+    ('nonce', getU64Encoder()),
+    ('index', getU32Encoder()),
+    ('currentMetadata', getU8Encoder()),
+    ('updateArgs', getU8Encoder()),
   ]);
 
   return transformEncoder(
@@ -61,21 +67,28 @@ Encoder<UpdateMetadataV2InstructionData> getUpdateMetadataV2InstructionDataEncod
   );
 }
 
-Decoder<UpdateMetadataV2InstructionData> getUpdateMetadataV2InstructionDataDecoder() {
+Decoder<UpdateMetadataV2InstructionData>
+getUpdateMetadataV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('assetDataHash', getNullableDecoder(getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableDecoder(getU8Decoder())),
-      ('nonce', getU64Decoder()),
-      ('index', getU32Decoder()),
-      ('currentMetadata', getU8Decoder()),
-      ('updateArgs', getU8Decoder()),
+    ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+    (
+      'assetDataHash',
+      getNullableDecoder(
+        getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableDecoder(getU8Decoder())),
+    ('nonce', getU64Decoder()),
+    ('index', getU32Decoder()),
+    ('currentMetadata', getU8Decoder()),
+    ('updateArgs', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateMetadataV2InstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UpdateMetadataV2InstructionData(
           discriminator: map['discriminator']! as int,
           root: map['root']! as List<int>,
           assetDataHash: map['assetDataHash']! as List<int>?,
@@ -88,7 +101,8 @@ Decoder<UpdateMetadataV2InstructionData> getUpdateMetadataV2InstructionDataDecod
   );
 }
 
-Codec<UpdateMetadataV2InstructionData, UpdateMetadataV2InstructionData> getUpdateMetadataV2InstructionDataCodec() {
+Codec<UpdateMetadataV2InstructionData, UpdateMetadataV2InstructionData>
+getUpdateMetadataV2InstructionDataCodec() {
   return combineCodec(
     getUpdateMetadataV2InstructionDataEncoder(),
     getUpdateMetadataV2InstructionDataDecoder(),
@@ -117,13 +131,13 @@ Instruction getUpdateMetadataV2Instruction({
   required UpdateArgs updateArgs,
 }) {
   final instructionData = UpdateMetadataV2InstructionData(
-      root: root,
-      assetDataHash: assetDataHash,
-      flags: flags,
-      nonce: nonce,
-      index: index,
-      currentMetadata: currentMetadata,
-      updateArgs: updateArgs,
+    root: root,
+    assetDataHash: assetDataHash,
+    flags: flags,
+    nonce: nonce,
+    index: index,
+    currentMetadata: currentMetadata,
+    updateArgs: updateArgs,
   );
 
   return Instruction(

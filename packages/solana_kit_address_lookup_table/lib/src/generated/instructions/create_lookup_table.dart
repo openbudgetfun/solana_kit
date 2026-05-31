@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 import 'package:solana_kit_address_lookup_table/src/generated/pdas/address_lookup_table.dart';
-import 'package:solana_kit_address_lookup_table/src/generated/programs/address_lookup_table.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
@@ -111,9 +110,7 @@ Instruction getCreateLookupTableInstruction({
   required BigInt recentSlot,
   required int bump,
   Address programAddress = addressLookupTableProgramAddress,
-  Address systemProgramAddress = const Address(
-    '11111111111111111111111111111111',
-  ),
+  Address systemProgramAddress = systemProgramAddress,
 }) {
   final data = CreateLookupTableInstructionData(
     recentSlot: recentSlot,
@@ -137,9 +134,7 @@ Future<Instruction> getCreateLookupTableInstructionWithPda({
   required Address payer,
   required BigInt recentSlot,
   Address programAddress = addressLookupTableProgramAddress,
-  Address systemProgramAddress = const Address(
-    '11111111111111111111111111111111',
-  ),
+  Address systemProgramAddress = systemProgramAddress,
 }) async {
   final (address, bump) = await findAddressLookupTablePda(
     authority: authority,

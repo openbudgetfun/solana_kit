@@ -29,9 +29,9 @@ class MintV2InstructionData {
 
 Encoder<MintV2InstructionData> getMintV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('metadataArgs', getU8Encoder()),
-      ('assetData', getNullableEncoder(getBytesEncoder())),
-      ('assetDataSchema', getNullableEncoder(getU8Encoder())),
+    ('metadataArgs', getU8Encoder()),
+    ('assetData', getNullableEncoder(getBytesEncoder())),
+    ('assetDataSchema', getNullableEncoder(getU8Encoder())),
   ]);
 
   return transformEncoder(
@@ -48,14 +48,15 @@ Encoder<MintV2InstructionData> getMintV2InstructionDataEncoder() {
 Decoder<MintV2InstructionData> getMintV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('metadataArgs', getU8Decoder()),
-      ('assetData', getNullableDecoder(getBytesDecoder())),
-      ('assetDataSchema', getNullableDecoder(getU8Decoder())),
+    ('metadataArgs', getU8Decoder()),
+    ('assetData', getNullableDecoder(getBytesDecoder())),
+    ('assetDataSchema', getNullableDecoder(getU8Decoder())),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => MintV2InstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        MintV2InstructionData(
           discriminator: map['discriminator']! as int,
           metadataArgs: map['metadataArgs']! as MetadataArgsV2,
           assetData: map['assetData']! as List<int>?,
@@ -64,7 +65,8 @@ Decoder<MintV2InstructionData> getMintV2InstructionDataDecoder() {
   );
 }
 
-Codec<MintV2InstructionData, MintV2InstructionData> getMintV2InstructionDataCodec() {
+Codec<MintV2InstructionData, MintV2InstructionData>
+getMintV2InstructionDataCodec() {
   return combineCodec(
     getMintV2InstructionDataEncoder(),
     getMintV2InstructionDataDecoder(),
@@ -92,9 +94,9 @@ Instruction getMintV2Instruction({
   required AssetDataSchema? assetDataSchema,
 }) {
   final instructionData = MintV2InstructionData(
-      metadataArgs: metadataArgs,
-      assetData: assetData,
-      assetDataSchema: assetDataSchema,
+    metadataArgs: metadataArgs,
+    assetData: assetData,
+    assetDataSchema: assetDataSchema,
   );
 
   return Instruction(
@@ -103,7 +105,10 @@ Instruction getMintV2Instruction({
       AccountMeta(address: treeAuthority, role: AccountRole.writable),
       AccountMeta(address: payer, role: AccountRole.writableSigner),
       AccountMeta(address: treeDelegate, role: AccountRole.readonlySigner),
-      AccountMeta(address: collectionAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: collectionAuthority,
+        role: AccountRole.readonlySigner,
+      ),
       AccountMeta(address: leafOwner, role: AccountRole.readonly),
       AccountMeta(address: leafDelegate, role: AccountRole.readonly),
       AccountMeta(address: merkleTree, role: AccountRole.writable),

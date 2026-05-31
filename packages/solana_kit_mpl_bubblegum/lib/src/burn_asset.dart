@@ -1,7 +1,12 @@
 /// Composite helper for burning a compressed NFT.
 library;
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    hide
+        noopProgramAddress,
+        splAccountCompressionProgramAddress,
+        systemProgramAddress,
+        tokenProgramAddress;
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_mpl_bubblegum/src/constants/program_addresses.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/instructions/burn.dart';
@@ -90,12 +95,10 @@ InstructionPlan getBurnInstructionPlan(
   BurnInput input, [
   BurnConfig config = const BurnConfig(),
 ]) {
-  final logWrapper =
-      config.logWrapper ?? noopProgramAddress;
+  final logWrapper = config.logWrapper ?? noopProgramAddress;
   final compressionProgram =
       config.compressionProgram ?? splAccountCompressionProgramAddress;
-  final systemProgram =
-      config.systemProgram ?? systemProgramAddress;
+  final systemProgram = config.systemProgram ?? systemProgramAddress;
 
   return sequentialInstructionPlan([
     getBurnInstruction(

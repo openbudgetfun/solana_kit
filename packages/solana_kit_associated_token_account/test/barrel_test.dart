@@ -8,7 +8,7 @@ void main() {
       expect(ataProgramAddress, associatedTokenProgramAddress);
       expect(
         associatedTokenProgramAddress.value,
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe',
+        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25ef7s3c8BnQKu',
       );
 
       final (address, bump) = await findAssociatedTokenPda(

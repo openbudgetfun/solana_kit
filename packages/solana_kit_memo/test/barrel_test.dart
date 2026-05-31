@@ -6,11 +6,11 @@ void main() {
     test('program addresses are accessible', () {
       expect(
         memoProgramAddress.value,
-        equals('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
+        equals('Memo1UhkJ4AsZNBm8hWoQeYfRDfaK9K7a8Kj9vOUdhM7Q'),
       );
       expect(
         memoLegacyProgramAddress.value,
-        equals('Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo'),
+        equals('MemoSq4gqABb5KBAsS3tQ9UJMKg7hXe3LF7tu4RssKE3'),
       );
     });
 

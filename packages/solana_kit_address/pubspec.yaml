@@ -1,0 +1,19 @@
+name: solana_kit_address
+description: Core Address extension type, codecs, comparator, and PublicKey type for the Solana Kit Dart SDK.
+version: 0.0.0
+repository: https://github.com/openbudgetfun/solana_kit
+homepage: https://openbudgetfun.github.io/solana_kit/
+
+environment:
+  sdk: ^3.10.1
+
+resolution: workspace
+
+dependencies:
+  solana_kit_codecs_core: ^0.4.0
+  solana_kit_codecs_strings: ^0.4.0
+  solana_kit_errors: ^0.4.0
+
+dev_dependencies:
+  solana_kit_lints: ^0.4.0
+  test: ^1.25.0

@@ -36,13 +36,24 @@ class BurnV2InstructionData {
 
 Encoder<BurnV2InstructionData> getBurnV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('assetDataHash', getNullableEncoder(getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableEncoder(getU8Encoder())),
-      ('nonce', getU64Encoder()),
-      ('index', getU32Encoder()),
+    ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'assetDataHash',
+      getNullableEncoder(
+        getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableEncoder(getU8Encoder())),
+    ('nonce', getU64Encoder()),
+    ('index', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -63,18 +74,30 @@ Encoder<BurnV2InstructionData> getBurnV2InstructionDataEncoder() {
 Decoder<BurnV2InstructionData> getBurnV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('assetDataHash', getNullableDecoder(getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableDecoder(getU8Decoder())),
-      ('nonce', getU64Decoder()),
-      ('index', getU32Decoder()),
+    ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'assetDataHash',
+      getNullableDecoder(
+        getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableDecoder(getU8Decoder())),
+    ('nonce', getU64Decoder()),
+    ('index', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => BurnV2InstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        BurnV2InstructionData(
           discriminator: map['discriminator']! as int,
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
@@ -87,7 +110,8 @@ Decoder<BurnV2InstructionData> getBurnV2InstructionDataDecoder() {
   );
 }
 
-Codec<BurnV2InstructionData, BurnV2InstructionData> getBurnV2InstructionDataCodec() {
+Codec<BurnV2InstructionData, BurnV2InstructionData>
+getBurnV2InstructionDataCodec() {
   return combineCodec(
     getBurnV2InstructionDataEncoder(),
     getBurnV2InstructionDataDecoder(),
@@ -118,13 +142,13 @@ Instruction getBurnV2Instruction({
   required int index,
 }) {
   final instructionData = BurnV2InstructionData(
-      root: root,
-      dataHash: dataHash,
-      creatorHash: creatorHash,
-      assetDataHash: assetDataHash,
-      flags: flags,
-      nonce: nonce,
-      index: index,
+    root: root,
+    dataHash: dataHash,
+    creatorHash: creatorHash,
+    assetDataHash: assetDataHash,
+    flags: flags,
+    nonce: nonce,
+    index: index,
   );
 
   return Instruction(

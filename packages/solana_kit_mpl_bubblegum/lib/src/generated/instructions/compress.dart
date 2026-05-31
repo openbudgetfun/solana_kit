@@ -13,24 +13,18 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 /// Compress instruction data for mpl-bubblegum compressed NFTs.
 @immutable
 class CompressInstructionData {
-  const CompressInstructionData({
-    this.discriminator = 5,
-  });
+  const CompressInstructionData({this.discriminator = 5});
 
   final int discriminator;
-
 }
 
 Encoder<CompressInstructionData> getCompressInstructionDataEncoder() {
-  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-
-  ]);
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[]);
 
   return transformEncoder(
     structEncoder,
     (CompressInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-
     },
   );
 }
@@ -38,19 +32,17 @@ Encoder<CompressInstructionData> getCompressInstructionDataEncoder() {
 Decoder<CompressInstructionData> getCompressInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CompressInstructionData(
-          discriminator: map['discriminator']! as int,
-
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CompressInstructionData(discriminator: map['discriminator']! as int),
   );
 }
 
-Codec<CompressInstructionData, CompressInstructionData> getCompressInstructionDataCodec() {
+Codec<CompressInstructionData, CompressInstructionData>
+getCompressInstructionDataCodec() {
   return combineCodec(
     getCompressInstructionDataEncoder(),
     getCompressInstructionDataDecoder(),
@@ -75,9 +67,7 @@ Instruction getCompressInstruction({
   required Address tokenMetadataProgram,
   required Address systemProgram,
 }) {
-  final instructionData = CompressInstructionData(
-
-  );
+  final instructionData = CompressInstructionData();
 
   return Instruction(
     programAddress: programAddress,

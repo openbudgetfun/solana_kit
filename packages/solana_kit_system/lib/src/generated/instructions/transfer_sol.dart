@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -48,15 +47,20 @@ Decoder<TransferSolInstructionData> getTransferSolInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => TransferSolInstructionData(
-      discriminator: map['discriminator']! as int,
-      amount: map['amount']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        TransferSolInstructionData(
+          discriminator: map['discriminator']! as int,
+          amount: map['amount']! as BigInt,
+        ),
   );
 }
 
-Codec<TransferSolInstructionData, TransferSolInstructionData> getTransferSolInstructionDataCodec() {
-  return combineCodec(getTransferSolInstructionDataEncoder(), getTransferSolInstructionDataDecoder());
+Codec<TransferSolInstructionData, TransferSolInstructionData>
+getTransferSolInstructionDataCodec() {
+  return combineCodec(
+    getTransferSolInstructionDataEncoder(),
+    getTransferSolInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [TransferSol] instruction.
@@ -66,21 +70,21 @@ Instruction getTransferSolInstruction({
   required Address destination,
   required BigInt amount,
 }) {
-  final instructionData = TransferSolInstructionData(
-      amount: amount,
-  );
+  final instructionData = TransferSolInstructionData(amount: amount);
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: source, role: AccountRole.writableSigner),
-    AccountMeta(address: destination, role: AccountRole.writable),
+      AccountMeta(address: source, role: AccountRole.writableSigner),
+      AccountMeta(address: destination, role: AccountRole.writable),
     ],
     data: getTransferSolInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [TransferSol] instruction from raw instruction data.
-TransferSolInstructionData parseTransferSolInstruction(Instruction instruction) {
+TransferSolInstructionData parseTransferSolInstruction(
+  Instruction instruction,
+) {
   return getTransferSolInstructionDataDecoder().decode(instruction.data!);
 }

@@ -33,14 +33,20 @@ class UnverifyCreatorV2InstructionData {
   final MetadataArgsV2 message;
 }
 
-Encoder<UnverifyCreatorV2InstructionData> getUnverifyCreatorV2InstructionDataEncoder() {
+Encoder<UnverifyCreatorV2InstructionData>
+getUnverifyCreatorV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('assetDataHash', getNullableEncoder(getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableEncoder(getU8Encoder())),
-      ('nonce', getU64Encoder()),
-      ('index', getU32Encoder()),
-      ('message', getU8Encoder()),
+    ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+    (
+      'assetDataHash',
+      getNullableEncoder(
+        getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableEncoder(getU8Encoder())),
+    ('nonce', getU64Encoder()),
+    ('index', getU32Encoder()),
+    ('message', getU8Encoder()),
   ]);
 
   return transformEncoder(
@@ -57,20 +63,27 @@ Encoder<UnverifyCreatorV2InstructionData> getUnverifyCreatorV2InstructionDataEnc
   );
 }
 
-Decoder<UnverifyCreatorV2InstructionData> getUnverifyCreatorV2InstructionDataDecoder() {
+Decoder<UnverifyCreatorV2InstructionData>
+getUnverifyCreatorV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('assetDataHash', getNullableDecoder(getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableDecoder(getU8Decoder())),
-      ('nonce', getU64Decoder()),
-      ('index', getU32Decoder()),
-      ('message', getU8Decoder()),
+    ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+    (
+      'assetDataHash',
+      getNullableDecoder(
+        getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableDecoder(getU8Decoder())),
+    ('nonce', getU64Decoder()),
+    ('index', getU32Decoder()),
+    ('message', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UnverifyCreatorV2InstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UnverifyCreatorV2InstructionData(
           discriminator: map['discriminator']! as int,
           root: map['root']! as List<int>,
           assetDataHash: map['assetDataHash']! as List<int>?,
@@ -82,7 +95,8 @@ Decoder<UnverifyCreatorV2InstructionData> getUnverifyCreatorV2InstructionDataDec
   );
 }
 
-Codec<UnverifyCreatorV2InstructionData, UnverifyCreatorV2InstructionData> getUnverifyCreatorV2InstructionDataCodec() {
+Codec<UnverifyCreatorV2InstructionData, UnverifyCreatorV2InstructionData>
+getUnverifyCreatorV2InstructionDataCodec() {
   return combineCodec(
     getUnverifyCreatorV2InstructionDataEncoder(),
     getUnverifyCreatorV2InstructionDataDecoder(),
@@ -109,12 +123,12 @@ Instruction getUnverifyCreatorV2Instruction({
   required MetadataArgsV2 message,
 }) {
   final instructionData = UnverifyCreatorV2InstructionData(
-      root: root,
-      assetDataHash: assetDataHash,
-      flags: flags,
-      nonce: nonce,
-      index: index,
-      message: message,
+    root: root,
+    assetDataHash: assetDataHash,
+    flags: flags,
+    nonce: nonce,
+    index: index,
+    message: message,
   );
 
   return Instruction(

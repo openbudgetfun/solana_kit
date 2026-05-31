@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -25,7 +24,8 @@ class WithdrawNonceAccountInstructionData {
   final BigInt withdrawAmount;
 }
 
-Encoder<WithdrawNonceAccountInstructionData> getWithdrawNonceAccountInstructionDataEncoder() {
+Encoder<WithdrawNonceAccountInstructionData>
+getWithdrawNonceAccountInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('withdrawAmount', getU64Encoder()),
@@ -40,7 +40,8 @@ Encoder<WithdrawNonceAccountInstructionData> getWithdrawNonceAccountInstructionD
   );
 }
 
-Decoder<WithdrawNonceAccountInstructionData> getWithdrawNonceAccountInstructionDataDecoder() {
+Decoder<WithdrawNonceAccountInstructionData>
+getWithdrawNonceAccountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('withdrawAmount', getU64Decoder()),
@@ -48,15 +49,20 @@ Decoder<WithdrawNonceAccountInstructionData> getWithdrawNonceAccountInstructionD
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => WithdrawNonceAccountInstructionData(
-      discriminator: map['discriminator']! as int,
-      withdrawAmount: map['withdrawAmount']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        WithdrawNonceAccountInstructionData(
+          discriminator: map['discriminator']! as int,
+          withdrawAmount: map['withdrawAmount']! as BigInt,
+        ),
   );
 }
 
-Codec<WithdrawNonceAccountInstructionData, WithdrawNonceAccountInstructionData> getWithdrawNonceAccountInstructionDataCodec() {
-  return combineCodec(getWithdrawNonceAccountInstructionDataEncoder(), getWithdrawNonceAccountInstructionDataDecoder());
+Codec<WithdrawNonceAccountInstructionData, WithdrawNonceAccountInstructionData>
+getWithdrawNonceAccountInstructionDataCodec() {
+  return combineCodec(
+    getWithdrawNonceAccountInstructionDataEncoder(),
+    getWithdrawNonceAccountInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [WithdrawNonceAccount] instruction.
@@ -70,23 +76,29 @@ Instruction getWithdrawNonceAccountInstruction({
   required BigInt withdrawAmount,
 }) {
   final instructionData = WithdrawNonceAccountInstructionData(
-      withdrawAmount: withdrawAmount,
+    withdrawAmount: withdrawAmount,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: nonceAccount, role: AccountRole.writable),
-    AccountMeta(address: recipientAccount, role: AccountRole.writable),
-    AccountMeta(address: recentBlockhashesSysvar, role: AccountRole.readonly),
-    AccountMeta(address: rentSysvar, role: AccountRole.readonly),
-    AccountMeta(address: nonceAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: nonceAccount, role: AccountRole.writable),
+      AccountMeta(address: recipientAccount, role: AccountRole.writable),
+      AccountMeta(address: recentBlockhashesSysvar, role: AccountRole.readonly),
+      AccountMeta(address: rentSysvar, role: AccountRole.readonly),
+      AccountMeta(address: nonceAuthority, role: AccountRole.readonlySigner),
     ],
-    data: getWithdrawNonceAccountInstructionDataEncoder().encode(instructionData),
+    data: getWithdrawNonceAccountInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [WithdrawNonceAccount] instruction from raw instruction data.
-WithdrawNonceAccountInstructionData parseWithdrawNonceAccountInstruction(Instruction instruction) {
-  return getWithdrawNonceAccountInstructionDataDecoder().decode(instruction.data!);
+WithdrawNonceAccountInstructionData parseWithdrawNonceAccountInstruction(
+  Instruction instruction,
+) {
+  return getWithdrawNonceAccountInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

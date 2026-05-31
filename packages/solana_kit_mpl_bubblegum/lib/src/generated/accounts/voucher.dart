@@ -87,7 +87,9 @@ VoucherAccount decodeVoucherAccount(Uint8List data) {
 
   // leafSchema (enum variant)
   final versionByte = data[offset];
-  final version = versionByte == 0 ? LeafSchemaVersion.v1 : LeafSchemaVersion.v2;
+  final version = versionByte == 0
+      ? LeafSchemaVersion.v1
+      : LeafSchemaVersion.v2;
   offset += 1;
 
   // id (32 bytes)
@@ -133,7 +135,8 @@ VoucherAccount decodeVoucherAccount(Uint8List data) {
   );
 
   // index (u32 LE)
-  final index = data[offset] |
+  final index =
+      data[offset] |
       (data[offset + 1] << 8) |
       (data[offset + 2] << 16) |
       (data[offset + 3] << 24);
@@ -173,7 +176,10 @@ String _bytesToBase58(List<int> bytes) {
   }
 
   while (num > BigInt.zero) {
-    final (quotient, remainder) = (num ~/ BigInt.from(58), num % BigInt.from(58));
+    final (quotient, remainder) = (
+      num ~/ BigInt.from(58),
+      num % BigInt.from(58),
+    );
     result.add(alphabet.codeUnitAt(remainder.toInt()));
     num = quotient;
   }

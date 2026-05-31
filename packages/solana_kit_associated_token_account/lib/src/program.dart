@@ -1,12 +1,13 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
-/// The canonical Associated Token Account program address.
-const ataProgramAddress = Address(
-  'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe',
-);
+export 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    show associatedTokenProgramAddress;
 
-/// Backwards-compatible alias for [ataProgramAddress].
-const associatedTokenProgramAddress = ataProgramAddress;
+/// Backward-compatible alias for [associatedTokenProgramAddress].
+///
+/// Many codebases reference the ATA program using the shorter [ataProgramAddress]
+/// name. This alias preserves that convention.
+const ataProgramAddress = associatedTokenProgramAddress;
 
 /// Known instructions for the Associated Token Account program.
 enum AssociatedTokenInstruction {

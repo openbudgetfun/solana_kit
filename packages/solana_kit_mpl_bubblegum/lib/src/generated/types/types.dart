@@ -48,10 +48,7 @@ class Creator {
 
 /// Collection information for a compressed NFT.
 class Collection {
-  const Collection({
-    required this.verified,
-    required this.key,
-  });
+  const Collection({required this.verified, required this.key});
 
   final bool verified;
   final Address key;

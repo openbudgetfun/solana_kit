@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -53,16 +52,21 @@ Decoder<BurnCheckedInstructionData> getBurnCheckedInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => BurnCheckedInstructionData(
-      discriminator: map['discriminator']! as int,
-      amount: map['amount']! as BigInt,
-      decimals: map['decimals']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        BurnCheckedInstructionData(
+          discriminator: map['discriminator']! as int,
+          amount: map['amount']! as BigInt,
+          decimals: map['decimals']! as int,
+        ),
   );
 }
 
-Codec<BurnCheckedInstructionData, BurnCheckedInstructionData> getBurnCheckedInstructionDataCodec() {
-  return combineCodec(getBurnCheckedInstructionDataEncoder(), getBurnCheckedInstructionDataDecoder());
+Codec<BurnCheckedInstructionData, BurnCheckedInstructionData>
+getBurnCheckedInstructionDataCodec() {
+  return combineCodec(
+    getBurnCheckedInstructionDataEncoder(),
+    getBurnCheckedInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [BurnChecked] instruction.
@@ -75,22 +79,24 @@ Instruction getBurnCheckedInstruction({
   required int decimals,
 }) {
   final instructionData = BurnCheckedInstructionData(
-      amount: amount,
-      decimals: decimals,
+    amount: amount,
+    decimals: decimals,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: account, role: AccountRole.writable),
-    AccountMeta(address: mint, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: account, role: AccountRole.writable),
+      AccountMeta(address: mint, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getBurnCheckedInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [BurnChecked] instruction from raw instruction data.
-BurnCheckedInstructionData parseBurnCheckedInstruction(Instruction instruction) {
+BurnCheckedInstructionData parseBurnCheckedInstruction(
+  Instruction instruction,
+) {
   return getBurnCheckedInstructionDataDecoder().decode(instruction.data!);
 }

@@ -175,22 +175,43 @@ describe("getProgramPageFragment", () => {
     );
   });
 
-  it("includes documentation comment for instruction enum", () => {
+  it("uses export for well-known address with matching name", () => {
+    // System program — well-known name matches generated name
     const node = programNode({
-      name: "myProgram",
-      publicKey: "MyProgram1111111111111111111111111111111111",
-      instructions: [
-        instructionNode({
-          name: "doStuff",
-          accounts: [],
-          arguments: [],
-        }),
-      ],
+      name: "system",
+      publicKey: "11111111111111111111111111111111",
     });
     const frag = getProgramPageFragment(node, createScope());
 
-    expect(frag.content).toContain(
-      "/// Known instructions for the MyProgram program.",
-    );
+    expect(frag.content).toContain("export 'package:solana_kit_addresses/solana_kit_addresses.dart' show systemProgramAddress");
+    expect(frag.content).not.toContain("const systemProgramAddress = Address(");
+    expect(frag.imports.modules.has("solanaAddresses")).toBe(false); // export, not import
+  });
+
+  it("uses const alias for well-known address with different name", () => {
+    // Staking program — generated name 'stakingProgramAddress' differs from canonical 'stakeProgramAddress'
+    const node = programNode({
+      name: "staking",
+      publicKey: "Stake11111111111111111111111111111111111111",
+    });
+    const frag = getProgramPageFragment(node, createScope());
+
+    expect(frag.content).toContain("const stakingProgramAddress = stakeProgramAddress");
+    expect(frag.content).toContain("/// The address of the Staking program.");
+    expect(frag.imports.modules.has("solanaAddresses")).toBe(true);
+    expect(frag.imports.modules.has("Address")).toBe(false); // should not import Address since using canonical name
+  });
+
+  it("uses Address for unknown address", () => {
+    // Unknown program — falls back to Address('...')
+    const node = programNode({
+      name: "myProgram",
+      publicKey: "MyProgram1111111111111111111111111111111111",
+    });
+    const frag = getProgramPageFragment(node, createScope());
+
+    expect(frag.content).toContain("const myProgramProgramAddress = Address('");
+    expect(frag.content).toContain("MyProgram1111111111111111111111111111111111");
+    expect(frag.imports.modules.has("solanaAddresses")).toBe(true);
   });
 });

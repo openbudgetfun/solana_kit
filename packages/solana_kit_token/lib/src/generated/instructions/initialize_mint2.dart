@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -29,7 +28,8 @@ class InitializeMint2InstructionData {
   final Address? freezeAuthority;
 }
 
-Encoder<InitializeMint2InstructionData> getInitializeMint2InstructionDataEncoder() {
+Encoder<InitializeMint2InstructionData>
+getInitializeMint2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('decimals', getU8Encoder()),
@@ -48,7 +48,8 @@ Encoder<InitializeMint2InstructionData> getInitializeMint2InstructionDataEncoder
   );
 }
 
-Decoder<InitializeMint2InstructionData> getInitializeMint2InstructionDataDecoder() {
+Decoder<InitializeMint2InstructionData>
+getInitializeMint2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('decimals', getU8Decoder()),
@@ -58,17 +59,22 @@ Decoder<InitializeMint2InstructionData> getInitializeMint2InstructionDataDecoder
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeMint2InstructionData(
-      discriminator: map['discriminator']! as int,
-      decimals: map['decimals']! as int,
-      mintAuthority: map['mintAuthority']! as Address,
-      freezeAuthority: map['freezeAuthority'] as Address?,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializeMint2InstructionData(
+          discriminator: map['discriminator']! as int,
+          decimals: map['decimals']! as int,
+          mintAuthority: map['mintAuthority']! as Address,
+          freezeAuthority: map['freezeAuthority'] as Address?,
+        ),
   );
 }
 
-Codec<InitializeMint2InstructionData, InitializeMint2InstructionData> getInitializeMint2InstructionDataCodec() {
-  return combineCodec(getInitializeMint2InstructionDataEncoder(), getInitializeMint2InstructionDataDecoder());
+Codec<InitializeMint2InstructionData, InitializeMint2InstructionData>
+getInitializeMint2InstructionDataCodec() {
+  return combineCodec(
+    getInitializeMint2InstructionDataEncoder(),
+    getInitializeMint2InstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializeMint2] instruction.
@@ -80,21 +86,21 @@ Instruction getInitializeMint2Instruction({
   Address? freezeAuthority,
 }) {
   final instructionData = InitializeMint2InstructionData(
-      decimals: decimals,
-      mintAuthority: mintAuthority,
-      freezeAuthority: freezeAuthority ?? null,
+    decimals: decimals,
+    mintAuthority: mintAuthority,
+    freezeAuthority: freezeAuthority ?? null,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    ],
+    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
     data: getInitializeMint2InstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [InitializeMint2] instruction from raw instruction data.
-InitializeMint2InstructionData parseInitializeMint2Instruction(Instruction instruction) {
+InitializeMint2InstructionData parseInitializeMint2Instruction(
+  Instruction instruction,
+) {
   return getInitializeMint2InstructionDataDecoder().decode(instruction.data!);
 }

@@ -50,7 +50,10 @@ Instruction getupdateMetadataInstruction({
       AccountMeta(address: authority, role: AccountRole.readonlySigner),
       AccountMeta(address: collectionMint, role: AccountRole.readonly),
       AccountMeta(address: collectionMetadata, role: AccountRole.readonly),
-      AccountMeta(address: collectionAuthorityRecordPda, role: AccountRole.readonly),
+      AccountMeta(
+        address: collectionAuthorityRecordPda,
+        role: AccountRole.readonly,
+      ),
       AccountMeta(address: leafOwner, role: AccountRole.readonly),
       AccountMeta(address: leafDelegate, role: AccountRole.readonly),
       AccountMeta(address: payer, role: AccountRole.readonlySigner),

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -25,7 +24,8 @@ class UnwrapLamportsInstructionData {
   final BigInt? amount;
 }
 
-Encoder<UnwrapLamportsInstructionData> getUnwrapLamportsInstructionDataEncoder() {
+Encoder<UnwrapLamportsInstructionData>
+getUnwrapLamportsInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('amount', getNullableEncoder<BigInt>(getU64Encoder())),
@@ -40,7 +40,8 @@ Encoder<UnwrapLamportsInstructionData> getUnwrapLamportsInstructionDataEncoder()
   );
 }
 
-Decoder<UnwrapLamportsInstructionData> getUnwrapLamportsInstructionDataDecoder() {
+Decoder<UnwrapLamportsInstructionData>
+getUnwrapLamportsInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('amount', getNullableDecoder<BigInt>(getU64Decoder())),
@@ -48,15 +49,20 @@ Decoder<UnwrapLamportsInstructionData> getUnwrapLamportsInstructionDataDecoder()
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UnwrapLamportsInstructionData(
-      discriminator: map['discriminator']! as int,
-      amount: map['amount'] as BigInt?,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UnwrapLamportsInstructionData(
+          discriminator: map['discriminator']! as int,
+          amount: map['amount'] as BigInt?,
+        ),
   );
 }
 
-Codec<UnwrapLamportsInstructionData, UnwrapLamportsInstructionData> getUnwrapLamportsInstructionDataCodec() {
-  return combineCodec(getUnwrapLamportsInstructionDataEncoder(), getUnwrapLamportsInstructionDataDecoder());
+Codec<UnwrapLamportsInstructionData, UnwrapLamportsInstructionData>
+getUnwrapLamportsInstructionDataCodec() {
+  return combineCodec(
+    getUnwrapLamportsInstructionDataEncoder(),
+    getUnwrapLamportsInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [UnwrapLamports] instruction.
@@ -67,22 +73,22 @@ Instruction getUnwrapLamportsInstruction({
   required Address authority,
   BigInt? amount,
 }) {
-  final instructionData = UnwrapLamportsInstructionData(
-      amount: amount ?? null,
-  );
+  final instructionData = UnwrapLamportsInstructionData(amount: amount ?? null);
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: source, role: AccountRole.writable),
-    AccountMeta(address: destination, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: source, role: AccountRole.writable),
+      AccountMeta(address: destination, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getUnwrapLamportsInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [UnwrapLamports] instruction from raw instruction data.
-UnwrapLamportsInstructionData parseUnwrapLamportsInstruction(Instruction instruction) {
+UnwrapLamportsInstructionData parseUnwrapLamportsInstruction(
+  Instruction instruction,
+) {
   return getUnwrapLamportsInstructionDataDecoder().decode(instruction.data!);
 }

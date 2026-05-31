@@ -142,8 +142,7 @@ void assertIsTransactionWithDurableNonceLifetime(Transaction transaction) {
   }
 }
 
-/// The System Program address.
-const _systemProgramAddress = Address('11111111111111111111111111111111');
+
 
 /// Checks if a compiled instruction is an AdvanceNonceAccount instruction.
 bool _compiledInstructionIsAdvanceNonceInstruction(
@@ -151,7 +150,7 @@ bool _compiledInstructionIsAdvanceNonceInstruction(
   List<Address> staticAddresses,
 ) {
   return staticAddresses[instruction.programAddressIndex] ==
-          _systemProgramAddress &&
+          systemProgramAddress &&
       instruction.data != null &&
       _isAdvanceNonceAccountInstructionData(instruction.data!) &&
       instruction.accountIndices != null &&

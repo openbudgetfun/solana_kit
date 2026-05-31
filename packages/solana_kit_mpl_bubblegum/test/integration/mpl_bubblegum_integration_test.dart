@@ -28,15 +28,22 @@ void main() {
           merkleTree: const Address('11111111111111111111111111111112'),
           payer: const Address('11111111111111111111111111111112'),
           treeCreator: const Address('11111111111111111111111111111112'),
-          logWrapper: const Address('noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK'),
-          compressionProgram: const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi'),
+          logWrapper: const Address(
+            'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
+          ),
+          compressionProgram: const Address(
+            'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+          ),
           systemProgram: const Address('11111111111111111111111111111112'),
           maxDepth: 14,
           maxBufferSize: 64,
           public: true,
         );
 
-        expect(instruction.programAddress, equals(mplBubblegumProgramAddressObject));
+        expect(
+          instruction.programAddress,
+          equals(mplBubblegumProgramAddressObject),
+        );
         expect(instruction.accounts!.length, equals(7));
         expect(instruction.data, isNotNull);
         expect(instruction.data!.length, greaterThan(0));
@@ -49,8 +56,12 @@ void main() {
           leafOwner: const Address('11111111111111111111111111111112'),
           leafDelegate: const Address('11111111111111111111111111111112'),
           merkleTree: const Address('11111111111111111111111111111112'),
-          logWrapper: const Address('noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK'),
-          compressionProgram: const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi'),
+          logWrapper: const Address(
+            'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
+          ),
+          compressionProgram: const Address(
+            'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+          ),
           systemProgram: const Address('11111111111111111111111111111112'),
           root: List.filled(32, 0),
           dataHash: List.filled(32, 0),
@@ -59,7 +70,10 @@ void main() {
           index: 0,
         );
 
-        expect(instruction.programAddress, equals(mplBubblegumProgramAddressObject));
+        expect(
+          instruction.programAddress,
+          equals(mplBubblegumProgramAddressObject),
+        );
         expect(instruction.accounts!.length, equals(7));
       });
 
@@ -71,8 +85,12 @@ void main() {
           leafDelegate: const Address('11111111111111111111111111111112'),
           newLeafOwner: const Address('11111111111111111111111111111112'),
           merkleTree: const Address('11111111111111111111111111111112'),
-          logWrapper: const Address('noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK'),
-          compressionProgram: const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi'),
+          logWrapper: const Address(
+            'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
+          ),
+          compressionProgram: const Address(
+            'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+          ),
           systemProgram: const Address('11111111111111111111111111111112'),
           root: List.filled(32, 0),
           dataHash: List.filled(32, 0),
@@ -81,7 +99,10 @@ void main() {
           index: 0,
         );
 
-        expect(instruction.programAddress, equals(mplBubblegumProgramAddressObject));
+        expect(
+          instruction.programAddress,
+          equals(mplBubblegumProgramAddressObject),
+        );
         expect(instruction.accounts!.length, equals(8));
       });
 
@@ -90,11 +111,17 @@ void main() {
           programAddress: mplBubblegumProgramAddressObject,
           treeAuthority: const Address('11111111111111111111111111111112'),
           leafOwner: const Address('11111111111111111111111111111112'),
-          previousLeafDelegate: const Address('11111111111111111111111111111112'),
+          previousLeafDelegate: const Address(
+            '11111111111111111111111111111112',
+          ),
           newLeafDelegate: const Address('11111111111111111111111111111112'),
           merkleTree: const Address('11111111111111111111111111111112'),
-          logWrapper: const Address('noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK'),
-          compressionProgram: const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi'),
+          logWrapper: const Address(
+            'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
+          ),
+          compressionProgram: const Address(
+            'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+          ),
           systemProgram: const Address('11111111111111111111111111111112'),
           root: List.filled(32, 0),
           dataHash: List.filled(32, 0),
@@ -103,7 +130,10 @@ void main() {
           index: 0,
         );
 
-        expect(instruction.programAddress, equals(mplBubblegumProgramAddressObject));
+        expect(
+          instruction.programAddress,
+          equals(mplBubblegumProgramAddressObject),
+        );
         expect(instruction.accounts!.length, equals(8));
       });
 
@@ -116,8 +146,12 @@ void main() {
           merkleTree: const Address('11111111111111111111111111111112'),
           payer: const Address('11111111111111111111111111111112'),
           treeDelegate: const Address('11111111111111111111111111111112'),
-          logWrapper: const Address('noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK'),
-          compressionProgram: const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi'),
+          logWrapper: const Address(
+            'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
+          ),
+          compressionProgram: const Address(
+            'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+          ),
           systemProgram: const Address('11111111111111111111111111111112'),
           message: const MetadataArgs(
             name: 'Test NFT',
@@ -127,7 +161,10 @@ void main() {
           ),
         );
 
-        expect(instruction.programAddress, equals(mplBubblegumProgramAddressObject));
+        expect(
+          instruction.programAddress,
+          equals(mplBubblegumProgramAddressObject),
+        );
         expect(instruction.accounts!.length, equals(9));
         expect(instruction.data, isNotNull);
         expect(instruction.data!.length, greaterThan(1));

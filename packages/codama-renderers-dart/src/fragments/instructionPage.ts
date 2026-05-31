@@ -1,4 +1,4 @@
-import type {
+import {
   InstructionAccountNode,
   InstructionArgumentNode,
   InstructionNode,
@@ -16,6 +16,7 @@ import {
 import type { RenderScope } from "../utils/options.js";
 import { camelCase, pascalCase } from "../utils/nameTransformers.js";
 import { getDiscriminatorConstantsFragment } from "./discriminatorConstants.js";
+import { WELL_KNOWN_ADDRESSES } from "../utils/wellKnownAddresses.js";
 
 /**
  * Generate a full Dart file for an instruction.
@@ -338,8 +339,14 @@ function getDefaultValue(arg: InstructionArgumentNode): string {
       return String(dv.boolean);
     case "stringValueNode":
       return `'${dv.string}'`;
-    case "publicKeyValueNode":
+    case "publicKeyValueNode": {
+      const wellKnownName = WELL_KNOWN_ADDRESSES.get(dv.publicKey);
+      if (wellKnownName) {
+        use(wellKnownName, "solanaAddresses");
+        return wellKnownName;
+      }
       return `Address('${dv.publicKey}')`;
+    }
     case "noneValueNode":
       return "null";
     case "bytesValueNode": {

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -16,14 +15,13 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class AdvanceNonceAccountInstructionData {
-  const AdvanceNonceAccountInstructionData({
-    this.discriminator = 4,
-  });
+  const AdvanceNonceAccountInstructionData({this.discriminator = 4});
 
   final int discriminator;
 }
 
-Encoder<AdvanceNonceAccountInstructionData> getAdvanceNonceAccountInstructionDataEncoder() {
+Encoder<AdvanceNonceAccountInstructionData>
+getAdvanceNonceAccountInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
   ]);
@@ -36,21 +34,27 @@ Encoder<AdvanceNonceAccountInstructionData> getAdvanceNonceAccountInstructionDat
   );
 }
 
-Decoder<AdvanceNonceAccountInstructionData> getAdvanceNonceAccountInstructionDataDecoder() {
+Decoder<AdvanceNonceAccountInstructionData>
+getAdvanceNonceAccountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => AdvanceNonceAccountInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        AdvanceNonceAccountInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<AdvanceNonceAccountInstructionData, AdvanceNonceAccountInstructionData> getAdvanceNonceAccountInstructionDataCodec() {
-  return combineCodec(getAdvanceNonceAccountInstructionDataEncoder(), getAdvanceNonceAccountInstructionDataDecoder());
+Codec<AdvanceNonceAccountInstructionData, AdvanceNonceAccountInstructionData>
+getAdvanceNonceAccountInstructionDataCodec() {
+  return combineCodec(
+    getAdvanceNonceAccountInstructionDataEncoder(),
+    getAdvanceNonceAccountInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [AdvanceNonceAccount] instruction.
@@ -59,24 +63,27 @@ Instruction getAdvanceNonceAccountInstruction({
   required Address nonceAccount,
   required Address recentBlockhashesSysvar,
   required Address nonceAuthority,
-
 }) {
-  final instructionData = AdvanceNonceAccountInstructionData(
-
-  );
+  final instructionData = AdvanceNonceAccountInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: nonceAccount, role: AccountRole.writable),
-    AccountMeta(address: recentBlockhashesSysvar, role: AccountRole.readonly),
-    AccountMeta(address: nonceAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: nonceAccount, role: AccountRole.writable),
+      AccountMeta(address: recentBlockhashesSysvar, role: AccountRole.readonly),
+      AccountMeta(address: nonceAuthority, role: AccountRole.readonlySigner),
     ],
-    data: getAdvanceNonceAccountInstructionDataEncoder().encode(instructionData),
+    data: getAdvanceNonceAccountInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [AdvanceNonceAccount] instruction from raw instruction data.
-AdvanceNonceAccountInstructionData parseAdvanceNonceAccountInstruction(Instruction instruction) {
-  return getAdvanceNonceAccountInstructionDataDecoder().decode(instruction.data!);
+AdvanceNonceAccountInstructionData parseAdvanceNonceAccountInstruction(
+  Instruction instruction,
+) {
+  return getAdvanceNonceAccountInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }
