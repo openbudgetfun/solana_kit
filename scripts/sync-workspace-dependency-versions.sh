@@ -3,7 +3,7 @@
 set -euo pipefail
 
 usage() {
-  cat <<'EOF'
+	cat <<'EOF'
 Usage: scripts/sync-workspace-dependency-versions.sh [--check|--write]
 
   --check  Validate that all workspace-internal dependencies use ^<package_version>
@@ -14,26 +14,26 @@ EOF
 mode="write"
 
 case "${1:-}" in
-  "" ) ;;
-  --check ) mode="check" ;;
-  --write ) mode="write" ;;
-  -h|--help )
-    usage
-    exit 0
-    ;;
-  * )
-    echo "Unknown argument: $1" >&2
-    usage >&2
-    exit 2
-    ;;
+"") ;;
+--check) mode="check" ;;
+--write) mode="write" ;;
+-h | --help)
+	usage
+	exit 0
+	;;
+*)
+	echo "Unknown argument: $1" >&2
+	usage >&2
+	exit 2
+	;;
 esac
 
 repo_root="$(git rev-parse --show-toplevel)"
 root_pubspec="$repo_root/pubspec.yaml"
 
 if [[ ! -f "$root_pubspec" ]]; then
-  echo "Could not find workspace root pubspec: $root_pubspec" >&2
-  exit 1
+	echo "Could not find workspace root pubspec: $root_pubspec" >&2
+	exit 1
 fi
 
 python3 - "$mode" "$repo_root" "$root_pubspec" <<'PY'

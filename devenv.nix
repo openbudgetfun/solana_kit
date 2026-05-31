@@ -156,10 +156,10 @@ in
         set -euo pipefail
         sync:write
         docs:update
-        fix:format
         fix:lint
         mc step:validate
         mc check --fix
+        fix:format
       '';
       description = "Fix all fixable issues.";
       binary = "bash";

@@ -16,23 +16,23 @@ server_pid=$!
 trap 'kill "$server_pid" >/dev/null 2>&1 || true' EXIT
 
 for _ in {1..20}; do
-  if curl -fsS "http://127.0.0.1:${port}/" >/tmp/solana-kit-docs-home.html 2>/dev/null; then
-    break
-  fi
-  sleep 0.5
+	if curl -fsS "http://127.0.0.1:${port}/" >/tmp/solana-kit-docs-home.html 2>/dev/null; then
+		break
+	fi
+	sleep 0.5
 done
 
 curl -fsS "http://127.0.0.1:${port}/" >/tmp/solana-kit-docs-home.html
 curl -fsS "http://127.0.0.1:${port}/getting-started/quick-start/" >/tmp/solana-kit-docs-quick-start.html
 
 if ! rg -q "Solana Kit" /tmp/solana-kit-docs-home.html; then
-  echo "Smoke check failed: homepage did not contain expected text." >&2
-  exit 1
+	echo "Smoke check failed: homepage did not contain expected text." >&2
+	exit 1
 fi
 
 if ! rg -q "Quick Start" /tmp/solana-kit-docs-quick-start.html; then
-  echo "Smoke check failed: quick-start page did not contain expected text." >&2
-  exit 1
+	echo "Smoke check failed: quick-start page did not contain expected text." >&2
+	exit 1
 fi
 
 echo "Docs smoke test passed."
