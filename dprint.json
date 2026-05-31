@@ -25,8 +25,7 @@
       },
       {
         "command": "dartfmt {{file_path}}",
-        "exts": ["dart"],
-        "stdin": false
+        "exts": ["dart"]
       }
     ]
   },
@@ -35,14 +34,10 @@
     "**/.dart_tool/**",
     "**/build/**",
     "**/.devenv*/**",
-    ".mdt/**",
     "**/.direnv/**",
     "pubspec.lock",
     "**/pubspec.lock",
-    ".repos/**",
-    "**/*.dart",
-    "**/*.nix",
-    "**/*.sh"
+    ".repos/**"
   ],
   "plugins": [
     "https://plugins.dprint.dev/json-0.21.1.wasm",

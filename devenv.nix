@@ -34,6 +34,7 @@ in
     ];
 
   enterShell = ''
+    set -euo pipefail
     eval "$(pnpm-activate-env)"
   '';
 
@@ -97,42 +98,42 @@ in
         unset PKG_CONFIG PKG_CONFIG_PATH
         unset LD_LIBRARY_PATH LD_DYLD_PATH
         unset cmakeFlags
-        set -e
+        set -euo pipefail
         fvm flutter $@
       '';
       description = "Run flutter commands.";
     };
     "dart" = {
       exec = ''
-        set -e
+        set -euo pipefail
         fvm dart $@
       '';
       description = "Run dart commands.";
     };
     "melos" = {
       exec = ''
-        set -e
+        set -euo pipefail
         dart run melos $@
       '';
       description = "Run the melos cli.";
     };
     "jaspr" = {
       exec = ''
-        set -e
+        set -euo pipefail
         dart run jaspr_cli:jaspr $@
       '';
       description = "Run the jaspr cli.";
     };
     "format_coverage" = {
       exec = ''
-        set -e
+        set -euo pipefail
         dart run coverage:format_coverage $@
       '';
       description = "Run the format_coverage command from the coverage package.";
     };
     "dartfmt" = {
       exec = ''
-        set -e
+        set -euo pipefail
         dart format -o show $@ | head -n -1
       '';
       description = "The dart format executable for formatting the workspace.";
@@ -140,7 +141,7 @@ in
     };
     "install:all" = {
       exec = ''
-        set -e
+        set -euo pipefail
         install:dart
       '';
       description = "Run all install scripts.";
@@ -148,7 +149,7 @@ in
     };
     "install:dart" = {
       exec = ''
-        set -e
+        set -euo pipefail
         flutter pub get
       '';
       description = "Install dart dependencies";
@@ -156,41 +157,37 @@ in
     };
     "fix:all" = {
       exec = ''
-        set -e
+        set -euo pipefail
         sync:write
         docs:update
         fix:format
         fix:lint
+        mc step:validate
+        mc check --fix
       '';
       description = "Fix all fixable issues.";
       binary = "bash";
     };
     "fix:format" = {
       exec = ''
-        set -e
+        set -euo pipefail
         dprint fmt --config "$DEVENV_ROOT/dprint.json"
-
-        mapfile -t kotlin_files < <(git ls-files '*.kt' '*.kts')
-        if [ ''${#kotlin_files[@]} -gt 0 ]; then
-          ktlint --relative --format "''${kotlin_files[@]}"
-        else
-          echo "No Kotlin files found for ktlint formatting."
-        fi
       '';
       description = "Fix formatting for entire project.";
       binary = "bash";
     };
     "fix:lint" = {
       exec = ''
-        set -e
+        set -euo pipefail
         dart fix --apply
+        ktlint -F
       '';
       description = "Fix lint issues across all packages.";
       binary = "bash";
     };
     "sync:write" = {
       exec = ''
-        set -e
+        set -euo pipefail
         $DEVENV_ROOT/scripts/sync-workspace-dependency-versions.sh --write
       '';
       description = "Sync workspace dependency versions.";
@@ -198,26 +195,27 @@ in
     };
     "lint:all" = {
       exec = ''
-        set -e
+        set -euo pipefail
         sync:check
         docs:check
         lint:format
         lint:kotlin
         lint:analyze
+        mc check
       '';
       description = "Run all lint checks.";
       binary = "bash";
     };
     "lint:format" = {
       exec = ''
-        set -e
+        set -euo pipefail
         dprint check
       '';
       description = "Check all formatting is correct.";
     };
     "lint:analyze" = {
       exec = ''
-        set -e
+        set -euo pipefail
         dart analyze --fatal-infos .
       '';
       description = "Run dart analyze across all packages.";
@@ -225,21 +223,14 @@ in
     };
     "lint:kotlin" = {
       exec = ''
-        set -e
-
-        mapfile -t kotlin_files < <(git ls-files '*.kt' '*.kts')
-        if [ ''${#kotlin_files[@]} -gt 0 ]; then
-          ktlint --relative "''${kotlin_files[@]}"
-        else
-          echo "No Kotlin files found for ktlint linting."
-        fi
+        ktlint
       '';
       description = "Lint tracked Kotlin files with ktlint.";
       binary = "bash";
     };
     "sync:check" = {
       exec = ''
-        set -e
+        set -euo pipefail
         $DEVENV_ROOT/scripts/sync-workspace-dependency-versions.sh --check
       '';
       description = "Check workspace dependency version sync.";
@@ -247,7 +238,7 @@ in
     };
     "mdt:info" = {
       exec = ''
-        set -e
+        set -euo pipefail
         mkdir -p .mdt/cache
         mdt info
       '';
@@ -256,7 +247,7 @@ in
     };
     "mdt:doctor" = {
       exec = ''
-        set -e
+        set -euo pipefail
         mkdir -p .mdt/cache
         mdt doctor --format text
       '';
@@ -265,7 +256,7 @@ in
     };
     "docs:check" = {
       exec = ''
-        set -e
+        set -euo pipefail
         mkdir -p .mdt/cache
         mdt check --verbose
         python3 "$DEVENV_ROOT/scripts/sync-dart-doc-comments.py" --check
@@ -281,7 +272,7 @@ in
     };
     "docs:update" = {
       exec = ''
-        set -e
+        set -euo pipefail
         mkdir -p .mdt/cache
         mdt update --verbose
         python3 "$DEVENV_ROOT/scripts/sync-dart-doc-comments.py" --write
@@ -293,7 +284,7 @@ in
     };
     "docs:site:serve" = {
       exec = ''
-        set -e
+        set -euo pipefail
         cd "$DEVENV_ROOT/docs/site"
         flutter pub get
         fvm dart run jaspr_cli:jaspr serve "$@"
@@ -303,7 +294,7 @@ in
     };
     "docs:site:build" = {
       exec = ''
-        set -e
+        set -euo pipefail
         cd "$DEVENV_ROOT/docs/site"
         flutter pub get
         fvm dart run build_runner clean
@@ -314,7 +305,7 @@ in
     };
     "docs:site:smoke" = {
       exec = ''
-        set -e
+        set -euo pipefail
         "$DEVENV_ROOT/scripts/docs-site-smoke.sh" "$@"
       '';
       description = "Run smoke tests against the built documentation site.";
@@ -322,7 +313,7 @@ in
     };
     "upstream:check" = {
       exec = ''
-        set -e
+        set -euo pipefail
         "$DEVENV_ROOT/scripts/check-upstream-compatibility.sh" "$@"
       '';
       description = "Check tracked upstream compatibility metadata and local drift.";
@@ -330,7 +321,7 @@ in
     };
     "upstream:parity" = {
       exec = ''
-        set -e
+        set -euo pipefail
         "$DEVENV_ROOT/scripts/check-upstream-parity.sh" "$@"
       '';
       description = "Generate runtime fixtures from the tracked @solana/kit release and compare selected behaviors against this Dart port.";
@@ -338,7 +329,7 @@ in
     };
     "audit:deps" = {
       exec = ''
-        set -e
+        set -euo pipefail
 
         mapfile -t lockfiles < <(
           find "$DEVENV_ROOT" -type f \( -name 'pubspec.lock' -o -name 'pnpm-lock.yaml' \) \
@@ -364,7 +355,7 @@ in
     };
     "bench:all" = {
       exec = ''
-        set -e
+        set -euo pipefail
         benchmark_manifest="$(mktemp)"
         trap 'rm -f "$benchmark_manifest"' EXIT
 
@@ -391,7 +382,7 @@ in
     };
     "test:integration" = {
       exec = ''
-        set -e
+        set -euo pipefail
 
         # Start SurfPool in daemon mode
         echo "Starting SurfPool..."
@@ -442,7 +433,7 @@ in
     };
     "test:all" = {
       exec = ''
-        set -e
+        set -euo pipefail
         failed=0
         for pkg_dir in packages/*/; do
           if [ ! -d "$pkg_dir/test" ]; then
@@ -499,7 +490,7 @@ in
     };
     "test:doc-snippets" = {
       exec = ''
-        set -e
+        set -euo pipefail
         dart test test/doc_comment_snippets_test.dart
       '';
       description = "Analyze synchronized Dart doc-comment snippets for compile-time drift.";
@@ -507,7 +498,7 @@ in
     };
     "test:coverage" = {
       exec = ''
-        set -e
+        set -euo pipefail
 
         mapfile -t test_dirs < <(
           find packages -mindepth 2 -maxdepth 2 -type d -name test \
@@ -529,7 +520,7 @@ in
     };
     "coverage:check" = {
       exec = ''
-        set -e
+        set -euo pipefail
         python3 "$DEVENV_ROOT/scripts/check-risk-tier-coverage.py"
       '';
       description = "Run package-level coverage for risk-tier packages and enforce configured line-coverage floors.";
@@ -669,7 +660,7 @@ in
     };
     "update:deps" = {
       exec = ''
-        set -e
+        set -euo pipefail
         devenv update
         flutter pub upgrade
         sync:write
