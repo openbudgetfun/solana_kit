@@ -13,24 +13,18 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 /// CloseTreeV2 instruction data for mpl-bubblegum compressed NFTs.
 @immutable
 class CloseTreeV2InstructionData {
-  const CloseTreeV2InstructionData({
-    this.discriminator = 3,
-  });
+  const CloseTreeV2InstructionData({this.discriminator = 3});
 
   final int discriminator;
-
 }
 
 Encoder<CloseTreeV2InstructionData> getCloseTreeV2InstructionDataEncoder() {
-  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-
-  ]);
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[]);
 
   return transformEncoder(
     structEncoder,
     (CloseTreeV2InstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-
     },
   );
 }
@@ -38,19 +32,17 @@ Encoder<CloseTreeV2InstructionData> getCloseTreeV2InstructionDataEncoder() {
 Decoder<CloseTreeV2InstructionData> getCloseTreeV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CloseTreeV2InstructionData(
-          discriminator: map['discriminator']! as int,
-
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CloseTreeV2InstructionData(discriminator: map['discriminator']! as int),
   );
 }
 
-Codec<CloseTreeV2InstructionData, CloseTreeV2InstructionData> getCloseTreeV2InstructionDataCodec() {
+Codec<CloseTreeV2InstructionData, CloseTreeV2InstructionData>
+getCloseTreeV2InstructionDataCodec() {
   return combineCodec(
     getCloseTreeV2InstructionDataEncoder(),
     getCloseTreeV2InstructionDataDecoder(),
@@ -68,9 +60,7 @@ Instruction getCloseTreeV2Instruction({
   required Address logWrapper,
   required Address systemProgram,
 }) {
-  final instructionData = CloseTreeV2InstructionData(
-
-  );
+  final instructionData = CloseTreeV2InstructionData();
 
   return Instruction(
     programAddress: programAddress,

@@ -121,9 +121,7 @@ class DasAssetCompression {
 /// DAS API asset content data.
 class DasAssetContent {
   /// Creates a [DasAssetContent].
-  const DasAssetContent({
-    this.metadata,
-  });
+  const DasAssetContent({this.metadata});
 
   /// Metadata information.
   final DasAssetMetadata? metadata;
@@ -177,10 +175,7 @@ class DasAssetCreator {
 /// DAS API asset grouping data.
 class DasAssetGrouping {
   /// Creates a [DasAssetGrouping].
-  const DasAssetGrouping({
-    required this.groupKey,
-    required this.groupValue,
-  });
+  const DasAssetGrouping({required this.groupKey, required this.groupValue});
 
   /// The grouping key (e.g., "collection").
   final String groupKey;
@@ -306,7 +301,8 @@ Uint8List _base58ToBytes(String encoded) {
   var num = BigInt.zero;
   for (var i = 0; i < encoded.length; i++) {
     final charIndex = alphabet.indexOf(encoded[i]);
-    if (charIndex < 0) throw FormatException('Invalid base58 character: ${encoded[i]}');
+    if (charIndex < 0)
+      throw FormatException('Invalid base58 character: ${encoded[i]}');
     num = num * BigInt.from(58) + BigInt.from(charIndex);
   }
   while (num > BigInt.zero) {

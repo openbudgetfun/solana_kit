@@ -24,10 +24,8 @@ class HeliusDasClient implements DasApiClient {
   ///
   /// [rpcUrl] is the full Helius RPC URL including the API key.
   /// For example: `https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY`
-  const HeliusDasClient({
-    required this.rpcUrl,
-    http.Client? client,
-  }) : _client = client;
+  const HeliusDasClient({required this.rpcUrl, http.Client? client})
+    : _client = client;
 
   /// The Helius RPC URL (including API key).
   final String rpcUrl;
@@ -102,8 +100,7 @@ class HeliusDasClient implements DasApiClient {
     final creatorsList = (data['creators'] as List<dynamic>?) ?? [];
     final groupingList = (data['grouping'] as List<dynamic>?) ?? [];
 
-    final contentMetadata =
-        content?['metadata'] as Map<String, dynamic>?;
+    final contentMetadata = content?['metadata'] as Map<String, dynamic>?;
 
     return DasAsset(
       id: (data['id'] as String?) ?? '',
@@ -167,11 +164,7 @@ class HeliusDasClient implements DasApiClient {
 /// Exception thrown by the Helius DAS API client.
 class HeliusDasException implements Exception {
   /// Creates a [HeliusDasException].
-  const HeliusDasException(
-    this.message, {
-    this.code,
-    this.statusCode,
-  });
+  const HeliusDasException(this.message, {this.code, this.statusCode});
 
   /// The error message.
   final String message;

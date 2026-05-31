@@ -33,14 +33,20 @@ class SetCollectionV2InstructionData {
   final MetadataArgsV2 message;
 }
 
-Encoder<SetCollectionV2InstructionData> getSetCollectionV2InstructionDataEncoder() {
+Encoder<SetCollectionV2InstructionData>
+getSetCollectionV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('assetDataHash', getNullableEncoder(getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableEncoder(getU8Encoder())),
-      ('nonce', getU64Encoder()),
-      ('index', getU32Encoder()),
-      ('message', getU8Encoder()),
+    ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+    (
+      'assetDataHash',
+      getNullableEncoder(
+        getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableEncoder(getU8Encoder())),
+    ('nonce', getU64Encoder()),
+    ('index', getU32Encoder()),
+    ('message', getU8Encoder()),
   ]);
 
   return transformEncoder(
@@ -57,20 +63,27 @@ Encoder<SetCollectionV2InstructionData> getSetCollectionV2InstructionDataEncoder
   );
 }
 
-Decoder<SetCollectionV2InstructionData> getSetCollectionV2InstructionDataDecoder() {
+Decoder<SetCollectionV2InstructionData>
+getSetCollectionV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('assetDataHash', getNullableDecoder(getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableDecoder(getU8Decoder())),
-      ('nonce', getU64Decoder()),
-      ('index', getU32Decoder()),
-      ('message', getU8Decoder()),
+    ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+    (
+      'assetDataHash',
+      getNullableDecoder(
+        getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableDecoder(getU8Decoder())),
+    ('nonce', getU64Decoder()),
+    ('index', getU32Decoder()),
+    ('message', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => SetCollectionV2InstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SetCollectionV2InstructionData(
           discriminator: map['discriminator']! as int,
           root: map['root']! as List<int>,
           assetDataHash: map['assetDataHash']! as List<int>?,
@@ -82,7 +95,8 @@ Decoder<SetCollectionV2InstructionData> getSetCollectionV2InstructionDataDecoder
   );
 }
 
-Codec<SetCollectionV2InstructionData, SetCollectionV2InstructionData> getSetCollectionV2InstructionDataCodec() {
+Codec<SetCollectionV2InstructionData, SetCollectionV2InstructionData>
+getSetCollectionV2InstructionDataCodec() {
   return combineCodec(
     getSetCollectionV2InstructionDataEncoder(),
     getSetCollectionV2InstructionDataDecoder(),
@@ -114,12 +128,12 @@ Instruction getSetCollectionV2Instruction({
   required MetadataArgsV2 message,
 }) {
   final instructionData = SetCollectionV2InstructionData(
-      root: root,
-      assetDataHash: assetDataHash,
-      flags: flags,
-      nonce: nonce,
-      index: index,
-      message: message,
+    root: root,
+    assetDataHash: assetDataHash,
+    flags: flags,
+    nonce: nonce,
+    index: index,
+    message: message,
   );
 
   return Instruction(
@@ -128,7 +142,10 @@ Instruction getSetCollectionV2Instruction({
       AccountMeta(address: treeAuthority, role: AccountRole.writable),
       AccountMeta(address: payer, role: AccountRole.writableSigner),
       AccountMeta(address: authority, role: AccountRole.readonlySigner),
-      AccountMeta(address: newCollectionAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: newCollectionAuthority,
+        role: AccountRole.readonlySigner,
+      ),
       AccountMeta(address: leafOwner, role: AccountRole.readonly),
       AccountMeta(address: leafDelegate, role: AccountRole.readonly),
       AccountMeta(address: merkleTree, role: AccountRole.writable),

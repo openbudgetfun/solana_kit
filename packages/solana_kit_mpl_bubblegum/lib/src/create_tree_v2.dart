@@ -78,16 +78,18 @@ InstructionPlan getCreateTreeV2InstructionPlan(
   CreateTreeV2Config config = const CreateTreeV2Config(),
 ]) {
   final logWrapper =
-      config.logWrapper ?? const Address('noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK');
+      config.logWrapper ??
+      const Address('noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK');
   final compressionProgram =
-      config.compressionProgram ?? const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi');
-  final systemProgram =
-      config.systemProgram ?? const Address('11111111111111111111111111111112');
+      config.compressionProgram ??
+      const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi');
+  final systemProgram = config.systemProgram ?? systemProgramAddress;
 
   return sequentialInstructionPlan([
     getCreateTreeV2Instruction(
       programAddress: mplBubblegumProgramAddressObject,
-      treeAuthority: input.merkleTree, // tree authority PDA is derived from tree
+      treeAuthority:
+          input.merkleTree, // tree authority PDA is derived from tree
       merkleTree: input.merkleTree,
       payer: input.payer,
       treeCreator: input.treeCreator,

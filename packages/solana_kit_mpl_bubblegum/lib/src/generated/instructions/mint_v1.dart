@@ -11,10 +11,7 @@ import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart'
 /// MintV1 instruction data for mpl-bubblegum compressed NFTs.
 @immutable
 class MintV1InstructionData {
-  const MintV1InstructionData({
-    this.discriminator = 14,
-    required this.message,
-  });
+  const MintV1InstructionData({this.discriminator = 14, required this.message});
 
   final int discriminator;
   final MetadataArgs message;

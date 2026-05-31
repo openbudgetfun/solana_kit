@@ -28,9 +28,9 @@ class CreateTreeV2InstructionData {
 
 Encoder<CreateTreeV2InstructionData> getCreateTreeV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('maxDepth', getU32Encoder()),
-      ('maxBufferSize', getU32Encoder()),
-      ('public', getNullableEncoder(getBooleanEncoder())),
+    ('maxDepth', getU32Encoder()),
+    ('maxBufferSize', getU32Encoder()),
+    ('public', getNullableEncoder(getBooleanEncoder())),
   ]);
 
   return transformEncoder(
@@ -47,14 +47,15 @@ Encoder<CreateTreeV2InstructionData> getCreateTreeV2InstructionDataEncoder() {
 Decoder<CreateTreeV2InstructionData> getCreateTreeV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('maxDepth', getU32Decoder()),
-      ('maxBufferSize', getU32Decoder()),
-      ('public', getNullableDecoder(getBooleanDecoder())),
+    ('maxDepth', getU32Decoder()),
+    ('maxBufferSize', getU32Decoder()),
+    ('public', getNullableDecoder(getBooleanDecoder())),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateTreeV2InstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CreateTreeV2InstructionData(
           discriminator: map['discriminator']! as int,
           maxDepth: map['maxDepth']! as int,
           maxBufferSize: map['maxBufferSize']! as int,
@@ -63,7 +64,8 @@ Decoder<CreateTreeV2InstructionData> getCreateTreeV2InstructionDataDecoder() {
   );
 }
 
-Codec<CreateTreeV2InstructionData, CreateTreeV2InstructionData> getCreateTreeV2InstructionDataCodec() {
+Codec<CreateTreeV2InstructionData, CreateTreeV2InstructionData>
+getCreateTreeV2InstructionDataCodec() {
   return combineCodec(
     getCreateTreeV2InstructionDataEncoder(),
     getCreateTreeV2InstructionDataDecoder(),
@@ -85,9 +87,9 @@ Instruction getCreateTreeV2Instruction({
   required bool? public,
 }) {
   final instructionData = CreateTreeV2InstructionData(
-      maxDepth: maxDepth,
-      maxBufferSize: maxBufferSize,
-      public: public,
+    maxDepth: maxDepth,
+    maxBufferSize: maxBufferSize,
+    public: public,
   );
 
   return Instruction(

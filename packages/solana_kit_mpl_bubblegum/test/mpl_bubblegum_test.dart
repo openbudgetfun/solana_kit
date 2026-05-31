@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart' hide mplBubblegumProgramAddress, tokenMetadataProgramAddress;
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_mpl_bubblegum/solana_kit_mpl_bubblegum.dart';
 import 'package:test/test.dart';

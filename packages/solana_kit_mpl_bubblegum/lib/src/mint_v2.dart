@@ -131,17 +131,21 @@ InstructionPlan getMintV2InstructionPlan(
   MintV2Config config = const MintV2Config(),
 ]) {
   final logWrapper =
-      config.logWrapper ?? const Address('noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK');
+      config.logWrapper ??
+      const Address('noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK');
   final compressionProgram =
-      config.compressionProgram ?? const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi');
-  final systemProgram =
-      config.systemProgram ?? const Address('11111111111111111111111111111112');
+      config.compressionProgram ??
+      const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi');
+  final systemProgram = config.systemProgram ?? systemProgramAddress;
   final mplCoreProgram =
-      config.mplCoreProgram ?? const Address('CoREENxT6tW1HoJmSkLZP4xizQrmYMahYpv2UKJF2mLQ');
+      config.mplCoreProgram ??
+      const Address('CoREENxT6tW1HoJmSkLZP4xizQrmYMahYpv2UKJF2mLQ');
   final mplCoreCpiSigner =
-      config.mplCoreCpiSigner ?? const Address('CpiSigner111111111111111111111111111111111111');
+      config.mplCoreCpiSigner ??
+      const Address('CpiSigner111111111111111111111111111111111111');
   final coreCollection =
-      config.coreCollection ?? input.merkleTree; // Default to tree if not provided
+      config.coreCollection ??
+      input.merkleTree; // Default to tree if not provided
 
   // Encode the MetadataArgsV2 manually since the generated encoder has a bug
   final metadataBytes = encodeMetadataArgsV2(
@@ -164,7 +168,9 @@ InstructionPlan getMintV2InstructionPlan(
   final assetData = input.assetData;
   final assetDataSchema = input.assetDataSchema;
 
-  final dataSize = 1 + metadataBytes.length +
+  final dataSize =
+      1 +
+      metadataBytes.length +
       (assetData != null ? 4 + assetData.length + 1 : 0);
   final data = Uint8List(dataSize);
 
@@ -197,8 +203,14 @@ InstructionPlan getMintV2InstructionPlan(
       accounts: [
         AccountMeta(address: input.merkleTree, role: AccountRole.writable),
         AccountMeta(address: input.payer, role: AccountRole.writableSigner),
-        AccountMeta(address: input.treeDelegate, role: AccountRole.readonlySigner),
-        AccountMeta(address: input.collectionAuthority, role: AccountRole.readonlySigner),
+        AccountMeta(
+          address: input.treeDelegate,
+          role: AccountRole.readonlySigner,
+        ),
+        AccountMeta(
+          address: input.collectionAuthority,
+          role: AccountRole.readonlySigner,
+        ),
         AccountMeta(address: input.leafOwner, role: AccountRole.readonly),
         AccountMeta(address: input.leafDelegate, role: AccountRole.readonly),
         AccountMeta(address: input.merkleTree, role: AccountRole.writable),

@@ -34,7 +34,6 @@ final class _MerkleNode {
 /// and empty nodes at depth `d` are `keccak256(emptyNode(d-1) || emptyNode(d-1))`
 /// with `emptyNode(0) = zeros(32)`.
 class MerkleTree {
-
   /// Creates a Merkle tree from the given [leaves] with the specified
   /// [depth].
   ///
@@ -44,6 +43,7 @@ class MerkleTree {
   MerkleTree(List<Uint8List> leaves, this.depth) : _leaves = List.of(leaves) {
     _root = _buildTree(_leaves, depth);
   }
+
   /// The depth of the tree.
   final int depth;
 
@@ -69,13 +69,9 @@ class MerkleTree {
     var computedHash = leaf;
     for (var i = 0; i < proof.length; i++) {
       if ((leafIndex >> i) & 1 == 0) {
-        computedHash = keccak256(
-          concatBytes(computedHash, proof[i]),
-        );
+        computedHash = keccak256(concatBytes(computedHash, proof[i]));
       } else {
-        computedHash = keccak256(
-          concatBytes(proof[i], computedHash),
-        );
+        computedHash = keccak256(concatBytes(proof[i], computedHash));
       }
     }
     return _bytesEqual(computedHash, root);
@@ -102,7 +98,9 @@ class MerkleTree {
     final emptyNodes = <int, Uint8List>{};
     emptyNodes[0] = Uint8List(nodeSize);
     for (var i = 1; i <= depth; i++) {
-      emptyNodes[i] = keccak256(concatBytes(emptyNodes[i - 1]!, emptyNodes[i - 1]!));
+      emptyNodes[i] = keccak256(
+        concatBytes(emptyNodes[i - 1]!, emptyNodes[i - 1]!),
+      );
     }
 
     for (var level = 0; level < depth; level++) {

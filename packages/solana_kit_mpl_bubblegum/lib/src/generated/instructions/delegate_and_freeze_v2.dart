@@ -36,16 +36,33 @@ class DelegateAndFreezeV2InstructionData {
   final int index;
 }
 
-Encoder<DelegateAndFreezeV2InstructionData> getDelegateAndFreezeV2InstructionDataEncoder() {
+Encoder<DelegateAndFreezeV2InstructionData>
+getDelegateAndFreezeV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('collectionHash', getNullableEncoder(getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)))),
-      ('assetDataHash', getNullableEncoder(getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableEncoder(getU8Encoder())),
-      ('nonce', getU64Encoder()),
-      ('index', getU32Encoder()),
+    ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'collectionHash',
+      getNullableEncoder(
+        getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    (
+      'assetDataHash',
+      getNullableEncoder(
+        getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableEncoder(getU8Encoder())),
+    ('nonce', getU64Encoder()),
+    ('index', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -64,22 +81,40 @@ Encoder<DelegateAndFreezeV2InstructionData> getDelegateAndFreezeV2InstructionDat
   );
 }
 
-Decoder<DelegateAndFreezeV2InstructionData> getDelegateAndFreezeV2InstructionDataDecoder() {
+Decoder<DelegateAndFreezeV2InstructionData>
+getDelegateAndFreezeV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('collectionHash', getNullableDecoder(getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)))),
-      ('assetDataHash', getNullableDecoder(getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableDecoder(getU8Decoder())),
-      ('nonce', getU64Decoder()),
-      ('index', getU32Decoder()),
+    ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'collectionHash',
+      getNullableDecoder(
+        getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    (
+      'assetDataHash',
+      getNullableDecoder(
+        getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableDecoder(getU8Decoder())),
+    ('nonce', getU64Decoder()),
+    ('index', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => DelegateAndFreezeV2InstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        DelegateAndFreezeV2InstructionData(
           discriminator: map['discriminator']! as int,
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
@@ -93,7 +128,8 @@ Decoder<DelegateAndFreezeV2InstructionData> getDelegateAndFreezeV2InstructionDat
   );
 }
 
-Codec<DelegateAndFreezeV2InstructionData, DelegateAndFreezeV2InstructionData> getDelegateAndFreezeV2InstructionDataCodec() {
+Codec<DelegateAndFreezeV2InstructionData, DelegateAndFreezeV2InstructionData>
+getDelegateAndFreezeV2InstructionDataCodec() {
   return combineCodec(
     getDelegateAndFreezeV2InstructionDataEncoder(),
     getDelegateAndFreezeV2InstructionDataDecoder(),
@@ -122,14 +158,14 @@ Instruction getDelegateAndFreezeV2Instruction({
   required int index,
 }) {
   final instructionData = DelegateAndFreezeV2InstructionData(
-      root: root,
-      dataHash: dataHash,
-      creatorHash: creatorHash,
-      collectionHash: collectionHash,
-      assetDataHash: assetDataHash,
-      flags: flags,
-      nonce: nonce,
-      index: index,
+    root: root,
+    dataHash: dataHash,
+    creatorHash: creatorHash,
+    collectionHash: collectionHash,
+    assetDataHash: assetDataHash,
+    flags: flags,
+    nonce: nonce,
+    index: index,
   );
 
   return Instruction(
@@ -145,6 +181,8 @@ Instruction getDelegateAndFreezeV2Instruction({
       AccountMeta(address: compressionProgram, role: AccountRole.readonly),
       AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
-    data: getDelegateAndFreezeV2InstructionDataEncoder().encode(instructionData),
+    data: getDelegateAndFreezeV2InstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }

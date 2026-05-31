@@ -39,17 +39,29 @@ class UpdateAssetDataV2InstructionData {
   final AssetDataSchema? newAssetDataSchema;
 }
 
-Encoder<UpdateAssetDataV2InstructionData> getUpdateAssetDataV2InstructionDataEncoder() {
+Encoder<UpdateAssetDataV2InstructionData>
+getUpdateAssetDataV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('previousAssetDataHash', getNullableEncoder(getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableEncoder(getU8Encoder())),
-      ('nonce', getU64Encoder()),
-      ('index', getU32Encoder()),
-      ('newAssetData', getNullableEncoder(getBytesEncoder())),
-      ('newAssetDataSchema', getNullableEncoder(getU8Encoder())),
+    ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'previousAssetDataHash',
+      getNullableEncoder(
+        getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableEncoder(getU8Encoder())),
+    ('nonce', getU64Encoder()),
+    ('index', getU32Encoder()),
+    ('newAssetData', getNullableEncoder(getBytesEncoder())),
+    ('newAssetDataSchema', getNullableEncoder(getU8Encoder())),
   ]);
 
   return transformEncoder(
@@ -69,23 +81,36 @@ Encoder<UpdateAssetDataV2InstructionData> getUpdateAssetDataV2InstructionDataEnc
   );
 }
 
-Decoder<UpdateAssetDataV2InstructionData> getUpdateAssetDataV2InstructionDataDecoder() {
+Decoder<UpdateAssetDataV2InstructionData>
+getUpdateAssetDataV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('previousAssetDataHash', getNullableDecoder(getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableDecoder(getU8Decoder())),
-      ('nonce', getU64Decoder()),
-      ('index', getU32Decoder()),
-      ('newAssetData', getNullableDecoder(getBytesDecoder())),
-      ('newAssetDataSchema', getNullableDecoder(getU8Decoder())),
+    ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'previousAssetDataHash',
+      getNullableDecoder(
+        getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableDecoder(getU8Decoder())),
+    ('nonce', getU64Decoder()),
+    ('index', getU32Decoder()),
+    ('newAssetData', getNullableDecoder(getBytesDecoder())),
+    ('newAssetDataSchema', getNullableDecoder(getU8Decoder())),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateAssetDataV2InstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UpdateAssetDataV2InstructionData(
           discriminator: map['discriminator']! as int,
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
@@ -100,7 +125,8 @@ Decoder<UpdateAssetDataV2InstructionData> getUpdateAssetDataV2InstructionDataDec
   );
 }
 
-Codec<UpdateAssetDataV2InstructionData, UpdateAssetDataV2InstructionData> getUpdateAssetDataV2InstructionDataCodec() {
+Codec<UpdateAssetDataV2InstructionData, UpdateAssetDataV2InstructionData>
+getUpdateAssetDataV2InstructionDataCodec() {
   return combineCodec(
     getUpdateAssetDataV2InstructionDataEncoder(),
     getUpdateAssetDataV2InstructionDataDecoder(),
@@ -131,15 +157,15 @@ Instruction getUpdateAssetDataV2Instruction({
   required AssetDataSchema? newAssetDataSchema,
 }) {
   final instructionData = UpdateAssetDataV2InstructionData(
-      root: root,
-      dataHash: dataHash,
-      creatorHash: creatorHash,
-      previousAssetDataHash: previousAssetDataHash,
-      flags: flags,
-      nonce: nonce,
-      index: index,
-      newAssetData: newAssetData,
-      newAssetDataSchema: newAssetDataSchema,
+    root: root,
+    dataHash: dataHash,
+    creatorHash: creatorHash,
+    previousAssetDataHash: previousAssetDataHash,
+    flags: flags,
+    nonce: nonce,
+    index: index,
+    newAssetData: newAssetData,
+    newAssetDataSchema: newAssetDataSchema,
   );
 
   return Instruction(

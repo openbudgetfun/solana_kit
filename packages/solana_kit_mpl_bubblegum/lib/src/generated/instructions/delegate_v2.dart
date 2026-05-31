@@ -38,14 +38,30 @@ class DelegateV2InstructionData {
 
 Encoder<DelegateV2InstructionData> getDelegateV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('collectionHash', getNullableEncoder(getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)))),
-      ('assetDataHash', getNullableEncoder(getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableEncoder(getU8Encoder())),
-      ('nonce', getU64Encoder()),
-      ('index', getU32Encoder()),
+    ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'collectionHash',
+      getNullableEncoder(
+        getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    (
+      'assetDataHash',
+      getNullableEncoder(
+        getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableEncoder(getU8Encoder())),
+    ('nonce', getU64Encoder()),
+    ('index', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -67,19 +83,36 @@ Encoder<DelegateV2InstructionData> getDelegateV2InstructionDataEncoder() {
 Decoder<DelegateV2InstructionData> getDelegateV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('collectionHash', getNullableDecoder(getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)))),
-      ('assetDataHash', getNullableDecoder(getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableDecoder(getU8Decoder())),
-      ('nonce', getU64Decoder()),
-      ('index', getU32Decoder()),
+    ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'collectionHash',
+      getNullableDecoder(
+        getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    (
+      'assetDataHash',
+      getNullableDecoder(
+        getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableDecoder(getU8Decoder())),
+    ('nonce', getU64Decoder()),
+    ('index', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => DelegateV2InstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        DelegateV2InstructionData(
           discriminator: map['discriminator']! as int,
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
@@ -93,7 +126,8 @@ Decoder<DelegateV2InstructionData> getDelegateV2InstructionDataDecoder() {
   );
 }
 
-Codec<DelegateV2InstructionData, DelegateV2InstructionData> getDelegateV2InstructionDataCodec() {
+Codec<DelegateV2InstructionData, DelegateV2InstructionData>
+getDelegateV2InstructionDataCodec() {
   return combineCodec(
     getDelegateV2InstructionDataEncoder(),
     getDelegateV2InstructionDataDecoder(),
@@ -122,14 +156,14 @@ Instruction getDelegateV2Instruction({
   required int index,
 }) {
   final instructionData = DelegateV2InstructionData(
-      root: root,
-      dataHash: dataHash,
-      creatorHash: creatorHash,
-      collectionHash: collectionHash,
-      assetDataHash: assetDataHash,
-      flags: flags,
-      nonce: nonce,
-      index: index,
+    root: root,
+    dataHash: dataHash,
+    creatorHash: creatorHash,
+    collectionHash: collectionHash,
+    assetDataHash: assetDataHash,
+    flags: flags,
+    nonce: nonce,
+    index: index,
   );
 
   return Instruction(

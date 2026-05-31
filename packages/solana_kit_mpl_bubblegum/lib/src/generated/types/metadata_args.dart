@@ -102,9 +102,7 @@ Uint8List encodeMetadataArgs(MetadataArgs args) {
   if (args.collection != null) {
     buffer.addByte(1); // Some
     buffer.addByte(args.collection!.verified ? 1 : 0);
-    buffer.add(
-      getAddressEncoder().encode(args.collection!.key),
-    );
+    buffer.add(getAddressEncoder().encode(args.collection!.key));
   } else {
     buffer.addByte(0); // None
   }

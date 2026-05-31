@@ -1,7 +1,7 @@
 /// Composite helper for creating a compressed NFT tree.
 library;
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart' hide noopProgramAddress, splAccountCompressionProgramAddress, systemProgramAddress, tokenProgramAddress;
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_mpl_bubblegum/src/constants/program_addresses.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/instructions/create_tree.dart';
@@ -79,17 +79,16 @@ InstructionPlan getCreateTreeInstructionPlan(
   CreateTreeInput input, [
   CreateTreeConfig config = const CreateTreeConfig(),
 ]) {
-  final logWrapper =
-      config.logWrapper ?? noopProgramAddress;
+  final logWrapper = config.logWrapper ?? noopProgramAddress;
   final compressionProgram =
       config.compressionProgram ?? splAccountCompressionProgramAddress;
-  final systemProgram =
-      config.systemProgram ?? systemProgramAddress;
+  final systemProgram = config.systemProgram ?? systemProgramAddress;
 
   return sequentialInstructionPlan([
     getCreateTreeInstruction(
       programAddress: mplBubblegumProgramAddressObject,
-      treeAuthority: input.merkleTree, // tree authority PDA is derived from tree
+      treeAuthority:
+          input.merkleTree, // tree authority PDA is derived from tree
       merkleTree: input.merkleTree,
       payer: input.payer,
       treeCreator: input.treeCreator,

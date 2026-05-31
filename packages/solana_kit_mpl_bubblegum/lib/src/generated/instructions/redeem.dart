@@ -32,11 +32,17 @@ class RedeemInstructionData {
 
 Encoder<RedeemInstructionData> getRedeemInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('nonce', getU64Encoder()),
-      ('index', getU32Encoder()),
+    ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    ('nonce', getU64Encoder()),
+    ('index', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -55,16 +61,23 @@ Encoder<RedeemInstructionData> getRedeemInstructionDataEncoder() {
 Decoder<RedeemInstructionData> getRedeemInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('nonce', getU64Decoder()),
-      ('index', getU32Decoder()),
+    ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    ('nonce', getU64Decoder()),
+    ('index', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => RedeemInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        RedeemInstructionData(
           discriminator: map['discriminator']! as int,
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
@@ -75,7 +88,8 @@ Decoder<RedeemInstructionData> getRedeemInstructionDataDecoder() {
   );
 }
 
-Codec<RedeemInstructionData, RedeemInstructionData> getRedeemInstructionDataCodec() {
+Codec<RedeemInstructionData, RedeemInstructionData>
+getRedeemInstructionDataCodec() {
   return combineCodec(
     getRedeemInstructionDataEncoder(),
     getRedeemInstructionDataDecoder(),
@@ -100,11 +114,11 @@ Instruction getRedeemInstruction({
   required int index,
 }) {
   final instructionData = RedeemInstructionData(
-      root: root,
-      dataHash: dataHash,
-      creatorHash: creatorHash,
-      nonce: nonce,
-      index: index,
+    root: root,
+    dataHash: dataHash,
+    creatorHash: creatorHash,
+    nonce: nonce,
+    index: index,
   );
 
   return Instruction(

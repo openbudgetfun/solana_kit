@@ -28,9 +28,9 @@ class CreateTreeInstructionData {
 
 Encoder<CreateTreeInstructionData> getCreateTreeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('maxDepth', getU32Encoder()),
-      ('maxBufferSize', getU32Encoder()),
-      ('public', getNullableEncoder(getBooleanEncoder())),
+    ('maxDepth', getU32Encoder()),
+    ('maxBufferSize', getU32Encoder()),
+    ('public', getNullableEncoder(getBooleanEncoder())),
   ]);
 
   return transformEncoder(
@@ -47,14 +47,15 @@ Encoder<CreateTreeInstructionData> getCreateTreeInstructionDataEncoder() {
 Decoder<CreateTreeInstructionData> getCreateTreeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('maxDepth', getU32Decoder()),
-      ('maxBufferSize', getU32Decoder()),
-      ('public', getNullableDecoder(getBooleanDecoder())),
+    ('maxDepth', getU32Decoder()),
+    ('maxBufferSize', getU32Decoder()),
+    ('public', getNullableDecoder(getBooleanDecoder())),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateTreeInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CreateTreeInstructionData(
           discriminator: map['discriminator']! as int,
           maxDepth: map['maxDepth']! as int,
           maxBufferSize: map['maxBufferSize']! as int,
@@ -63,7 +64,8 @@ Decoder<CreateTreeInstructionData> getCreateTreeInstructionDataDecoder() {
   );
 }
 
-Codec<CreateTreeInstructionData, CreateTreeInstructionData> getCreateTreeInstructionDataCodec() {
+Codec<CreateTreeInstructionData, CreateTreeInstructionData>
+getCreateTreeInstructionDataCodec() {
   return combineCodec(
     getCreateTreeInstructionDataEncoder(),
     getCreateTreeInstructionDataDecoder(),
@@ -85,9 +87,9 @@ Instruction getCreateTreeInstruction({
   required bool? public,
 }) {
   final instructionData = CreateTreeInstructionData(
-      maxDepth: maxDepth,
-      maxBufferSize: maxBufferSize,
-      public: public,
+    maxDepth: maxDepth,
+    maxBufferSize: maxBufferSize,
+    public: public,
   );
 
   return Instruction(

@@ -223,8 +223,7 @@ const Map<int, String> _mplBubblegumErrorMessages = {
       'Collection must be a sized collection',
   MplBubblegumError.metadataMintMismatch:
       'Metadata mint does not match collection mint',
-  MplBubblegumError.invalidCollectionAuthority:
-      'Invalid collection authority',
+  MplBubblegumError.invalidCollectionAuthority: 'Invalid collection authority',
   MplBubblegumError.invalidDelegateRecordPda:
       'Invalid delegate record PDA derivation',
   MplBubblegumError.editionMismatch: "Edition account doesn't match collection",
@@ -248,8 +247,7 @@ const Map<int, String> _mplBubblegumErrorMessages = {
   MplBubblegumError.canopySizeTooSmall:
       'Canopy size should be set bigger for this tree',
   MplBubblegumError.invalidLogWrapper: 'Invalid log wrapper program',
-  MplBubblegumError.invalidCompressionProgram:
-      'Invalid compression program',
+  MplBubblegumError.invalidCompressionProgram: 'Invalid compression program',
   MplBubblegumError.leafMustBeDelegated:
       'Leaf must be delegated to someone other than the leaf owner',
   MplBubblegumError.assetFrozen: 'Asset is frozen',

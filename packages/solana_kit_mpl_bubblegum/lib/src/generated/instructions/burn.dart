@@ -32,11 +32,17 @@ class BurnInstructionData {
 
 Encoder<BurnInstructionData> getBurnInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('nonce', getU64Encoder()),
-      ('index', getU32Encoder()),
+    ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    ('nonce', getU64Encoder()),
+    ('index', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -55,16 +61,23 @@ Encoder<BurnInstructionData> getBurnInstructionDataEncoder() {
 Decoder<BurnInstructionData> getBurnInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('nonce', getU64Decoder()),
-      ('index', getU32Decoder()),
+    ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    ('nonce', getU64Decoder()),
+    ('index', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => BurnInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        BurnInstructionData(
           discriminator: map['discriminator']! as int,
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
@@ -99,11 +112,11 @@ Instruction getBurnInstruction({
   required int index,
 }) {
   final instructionData = BurnInstructionData(
-      root: root,
-      dataHash: dataHash,
-      creatorHash: creatorHash,
-      nonce: nonce,
-      index: index,
+    root: root,
+    dataHash: dataHash,
+    creatorHash: creatorHash,
+    nonce: nonce,
+    index: index,
   );
 
   return Instruction(

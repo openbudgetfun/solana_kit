@@ -36,16 +36,33 @@ class ThawAndRevokeV2InstructionData {
   final int index;
 }
 
-Encoder<ThawAndRevokeV2InstructionData> getThawAndRevokeV2InstructionDataEncoder() {
+Encoder<ThawAndRevokeV2InstructionData>
+getThawAndRevokeV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
-      ('collectionHash', getNullableEncoder(getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)))),
-      ('assetDataHash', getNullableEncoder(getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableEncoder(getU8Encoder())),
-      ('nonce', getU64Encoder()),
-      ('index', getU32Encoder()),
+    ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'collectionHash',
+      getNullableEncoder(
+        getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    (
+      'assetDataHash',
+      getNullableEncoder(
+        getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableEncoder(getU8Encoder())),
+    ('nonce', getU64Encoder()),
+    ('index', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -64,22 +81,40 @@ Encoder<ThawAndRevokeV2InstructionData> getThawAndRevokeV2InstructionDataEncoder
   );
 }
 
-Decoder<ThawAndRevokeV2InstructionData> getThawAndRevokeV2InstructionDataDecoder() {
+Decoder<ThawAndRevokeV2InstructionData>
+getThawAndRevokeV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('dataHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('creatorHash', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
-      ('collectionHash', getNullableDecoder(getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)))),
-      ('assetDataHash', getNullableDecoder(getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)))),
-      ('flags', getNullableDecoder(getU8Decoder())),
-      ('nonce', getU64Decoder()),
-      ('index', getU32Decoder()),
+    ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+    (
+      'dataHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'creatorHash',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+    ),
+    (
+      'collectionHash',
+      getNullableDecoder(
+        getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    (
+      'assetDataHash',
+      getNullableDecoder(
+        getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32)),
+      ),
+    ),
+    ('flags', getNullableDecoder(getU8Decoder())),
+    ('nonce', getU64Decoder()),
+    ('index', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ThawAndRevokeV2InstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        ThawAndRevokeV2InstructionData(
           discriminator: map['discriminator']! as int,
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
@@ -93,7 +128,8 @@ Decoder<ThawAndRevokeV2InstructionData> getThawAndRevokeV2InstructionDataDecoder
   );
 }
 
-Codec<ThawAndRevokeV2InstructionData, ThawAndRevokeV2InstructionData> getThawAndRevokeV2InstructionDataCodec() {
+Codec<ThawAndRevokeV2InstructionData, ThawAndRevokeV2InstructionData>
+getThawAndRevokeV2InstructionDataCodec() {
   return combineCodec(
     getThawAndRevokeV2InstructionDataEncoder(),
     getThawAndRevokeV2InstructionDataDecoder(),
@@ -121,14 +157,14 @@ Instruction getThawAndRevokeV2Instruction({
   required int index,
 }) {
   final instructionData = ThawAndRevokeV2InstructionData(
-      root: root,
-      dataHash: dataHash,
-      creatorHash: creatorHash,
-      collectionHash: collectionHash,
-      assetDataHash: assetDataHash,
-      flags: flags,
-      nonce: nonce,
-      index: index,
+    root: root,
+    dataHash: dataHash,
+    creatorHash: creatorHash,
+    collectionHash: collectionHash,
+    assetDataHash: assetDataHash,
+    flags: flags,
+    nonce: nonce,
+    index: index,
   );
 
   return Instruction(

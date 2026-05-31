@@ -55,8 +55,14 @@ Instruction getmintToCollectionV1Instruction({
       AccountMeta(address: merkleTree, role: AccountRole.writable),
       AccountMeta(address: payer, role: AccountRole.readonlySigner),
       AccountMeta(address: treeDelegate, role: AccountRole.readonlySigner),
-      AccountMeta(address: collectionAuthority, role: AccountRole.readonlySigner),
-      AccountMeta(address: collectionAuthorityRecordPda, role: AccountRole.readonly),
+      AccountMeta(
+        address: collectionAuthority,
+        role: AccountRole.readonlySigner,
+      ),
+      AccountMeta(
+        address: collectionAuthorityRecordPda,
+        role: AccountRole.readonly,
+      ),
       AccountMeta(address: collectionMint, role: AccountRole.readonly),
       AccountMeta(address: collectionMetadata, role: AccountRole.writable),
       AccountMeta(address: editionAccount, role: AccountRole.readonly),

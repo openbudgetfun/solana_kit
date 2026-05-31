@@ -24,7 +24,7 @@ class CancelRedeemInstructionData {
 
 Encoder<CancelRedeemInstructionData> getCancelRedeemInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-      ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
+    ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
   ]);
 
   return transformEncoder(
@@ -39,19 +39,21 @@ Encoder<CancelRedeemInstructionData> getCancelRedeemInstructionDataEncoder() {
 Decoder<CancelRedeemInstructionData> getCancelRedeemInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-      ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
+    ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CancelRedeemInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CancelRedeemInstructionData(
           discriminator: map['discriminator']! as int,
           root: map['root']! as List<int>,
         ),
   );
 }
 
-Codec<CancelRedeemInstructionData, CancelRedeemInstructionData> getCancelRedeemInstructionDataCodec() {
+Codec<CancelRedeemInstructionData, CancelRedeemInstructionData>
+getCancelRedeemInstructionDataCodec() {
   return combineCodec(
     getCancelRedeemInstructionDataEncoder(),
     getCancelRedeemInstructionDataDecoder(),
@@ -70,9 +72,7 @@ Instruction getCancelRedeemInstruction({
   required Address systemProgram,
   required List<int> root,
 }) {
-  final instructionData = CancelRedeemInstructionData(
-      root: root,
-  );
+  final instructionData = CancelRedeemInstructionData(root: root);
 
   return Instruction(
     programAddress: programAddress,

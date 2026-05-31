@@ -134,7 +134,10 @@ String _bytesToBase58(List<int> bytes) {
   }
 
   while (num > BigInt.zero) {
-    final (quotient, remainder) = (num ~/ BigInt.from(58), num % BigInt.from(58));
+    final (quotient, remainder) = (
+      num ~/ BigInt.from(58),
+      num % BigInt.from(58),
+    );
     result.add(alphabet.codeUnitAt(remainder.toInt()));
     num = quotient;
   }
