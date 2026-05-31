@@ -145,7 +145,8 @@ export 'package:solana_kit_signers/solana_kit_signers.dart';
 export 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 export 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
 export 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
-export 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart' hide recentBlockhashesSysvarAddress;
+export 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart'
+    hide recentBlockhashesSysvarAddress;
 export 'package:solana_kit_transactions/solana_kit_transactions.dart';
 
 // Umbrella-specific helpers.
