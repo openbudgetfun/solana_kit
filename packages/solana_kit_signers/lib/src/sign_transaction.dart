@@ -1,3 +1,4 @@
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_signers/src/account_signer_meta.dart';
