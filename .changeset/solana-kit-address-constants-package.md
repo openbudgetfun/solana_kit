@@ -1,5 +1,5 @@
 ---
-"solana_kit_address_constants": patch
+"solana_kit_address_constants": major
 ---
 
 # 0.0.0
