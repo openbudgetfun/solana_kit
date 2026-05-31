@@ -62,21 +62,17 @@ in
         pass_filenames = false;
         stages = [ "pre-push" ];
       };
-      format = {
-        enable = true;
-        name = "format";
-        description = "Format files with dprint before commit.";
-        entry = "${pkgs.dprint}/bin/dprint fmt --allow-no-files";
-        stages = [ "pre-commit" ];
-      };
       lint = {
         enable = true;
         name = "lint";
-        description = "Run linting and formatting checks on every commit.";
-        entry = "${config.env.DEVENV_PROFILE}/bin/dart analyze --fatal-infos";
+        description = "Run linting and formatting checks on every commit and push.";
+        entry = "${config.env.DEVENV_PROFILE}/bin/lint:all";
         pass_filenames = true;
         always_run = true;
-        stages = [ "pre-commit" ];
+        stages = [
+          "pre-commit"
+          "pre-push"
+        ];
       };
     };
   };
@@ -171,7 +167,7 @@ in
     "fix:format" = {
       exec = ''
         set -euo pipefail
-        dprint fmt --config "$DEVENV_ROOT/dprint.json"
+        dprint fmt --config "$DEVENV_ROOT/dprint.json" -L debug
       '';
       description = "Fix formatting for entire project.";
       binary = "bash";
