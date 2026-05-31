@@ -34,7 +34,9 @@ void main() {
     });
 
     test('toJson includes encoding when set', () {
-      const config = BlockNotificationsConfig(encoding: TransactionEncoding.base64);
+      const config = BlockNotificationsConfig(
+        encoding: TransactionEncoding.base64,
+      );
       final json = config.toJson();
       expect(json, hasLength(1));
       expect(json['encoding'], 'base64');

@@ -445,12 +445,8 @@ void main() {
     });
 
     test('JsonParsedLastRestartSlotInfo equality, hashCode, and toString', () {
-      final info1 = JsonParsedLastRestartSlotInfo(
-        lastRestartSlot: BigInt.zero,
-      );
-      final info2 = JsonParsedLastRestartSlotInfo(
-        lastRestartSlot: BigInt.zero,
-      );
+      final info1 = JsonParsedLastRestartSlotInfo(lastRestartSlot: BigInt.zero);
+      final info2 = JsonParsedLastRestartSlotInfo(lastRestartSlot: BigInt.zero);
       final info3 = JsonParsedLastRestartSlotInfo(
         lastRestartSlot: BigInt.from(999),
       );

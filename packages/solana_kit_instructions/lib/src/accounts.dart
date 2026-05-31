@@ -64,13 +64,8 @@ class AccountLookupMeta extends AccountMeta {
           lookupTableAddress == other.lookupTableAddress;
 
   @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    address,
-    role,
-    addressIndex,
-    lookupTableAddress,
-  );
+  int get hashCode =>
+      Object.hash(runtimeType, address, role, addressIndex, lookupTableAddress);
 
   @override
   String toString() =>

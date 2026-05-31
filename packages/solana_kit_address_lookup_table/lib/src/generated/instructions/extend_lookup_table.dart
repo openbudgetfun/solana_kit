@@ -61,11 +61,7 @@ getExtendLookupTableInstructionDataEncoder() {
     write: (value, bytes, offset) {
       var pos = offset;
       pos = discEncoder.write(value.discriminator, bytes, pos);
-      pos = countEncoder.write(
-        BigInt.from(value.addresses.length),
-        bytes,
-        pos,
-      );
+      pos = countEncoder.write(BigInt.from(value.addresses.length), bytes, pos);
       for (final addr in value.addresses) {
         pos = addrEncoder.write(addr, bytes, pos);
       }
@@ -144,7 +140,5 @@ Instruction getExtendLookupTableInstruction({
 ExtendLookupTableInstructionData parseExtendLookupTableInstruction(
   Instruction instruction,
 ) {
-  return getExtendLookupTableInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+  return getExtendLookupTableInstructionDataDecoder().decode(instruction.data!);
 }

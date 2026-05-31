@@ -25,8 +25,7 @@ void main() {
   SequentialTransactionPlanResult makeNonDivSeq() =>
       nonDivisibleSequentialTransactionPlanResult([]);
 
-  ParallelTransactionPlanResult makePar() =>
-      parallelTransactionPlanResult([]);
+  ParallelTransactionPlanResult makePar() => parallelTransactionPlanResult([]);
 
   // ---------------------------------------------------------------------------
   // assertIsSuccessfulSingleTransactionPlanResult
@@ -271,24 +270,28 @@ void main() {
   group('assertIsNonDivisibleSequentialTransactionPlanResult', () {
     test('does nothing for a non-divisible sequential result', () {
       expect(
-        () =>
-            assertIsNonDivisibleSequentialTransactionPlanResult(makeNonDivSeq()),
+        () => assertIsNonDivisibleSequentialTransactionPlanResult(
+          makeNonDivSeq(),
+        ),
         returnsNormally,
       );
     });
 
-    test('throws for a divisible sequential result with actualKind qualified', () {
-      expect(
-        () => assertIsNonDivisibleSequentialTransactionPlanResult(makeSeq()),
-        throwsA(
-          isA<SolanaError>().having(
-            (e) => e.code,
-            'code',
-            SolanaErrorCode.instructionPlansUnexpectedTransactionPlanResult,
+    test(
+      'throws for a divisible sequential result with actualKind qualified',
+      () {
+        expect(
+          () => assertIsNonDivisibleSequentialTransactionPlanResult(makeSeq()),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              SolanaErrorCode.instructionPlansUnexpectedTransactionPlanResult,
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
 
     test('throws for a parallel result using kind as actualKind', () {
       expect(
@@ -386,21 +389,24 @@ void main() {
   // ---------------------------------------------------------------------------
   // successfulSingleTransactionPlanResultFromTransaction: extra context fields
   // ---------------------------------------------------------------------------
-  group('successfulSingleTransactionPlanResultFromTransaction extra context', () {
-    test('merges extra context alongside signature and transaction', () {
-      final msg = createMessage();
-      final tx = createTransaction();
-      final result = successfulSingleTransactionPlanResultFromTransaction(
-        msg,
-        tx,
-        {'customKey': 'customValue'},
-      );
+  group(
+    'successfulSingleTransactionPlanResultFromTransaction extra context',
+    () {
+      test('merges extra context alongside signature and transaction', () {
+        final msg = createMessage();
+        final tx = createTransaction();
+        final result = successfulSingleTransactionPlanResultFromTransaction(
+          msg,
+          tx,
+          {'customKey': 'customValue'},
+        );
 
-      expect(result.context['customKey'], 'customValue');
-      expect(result.context.containsKey('signature'), isTrue);
-      expect(result.context.containsKey('transaction'), isTrue);
-    });
-  });
+        expect(result.context['customKey'], 'customValue');
+        expect(result.context.containsKey('signature'), isTrue);
+        expect(result.context.containsKey('transaction'), isTrue);
+      });
+    },
+  );
 
   // ---------------------------------------------------------------------------
   // getFirstFailedSingleTransactionPlanResult – deeply nested

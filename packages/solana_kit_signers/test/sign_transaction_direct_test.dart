@@ -16,23 +16,23 @@ void main() {
   group('partiallySignTransactionWithSigners', () {
     test('signs a compiled transaction directly', () async {
       final signer = MockTransactionPartialSigner(_addressA)
-        ..signTransactionsMock = (transactions, config) async =>
-            transactions
-                .map(
-                  (_) => <Address, SignatureBytes>{
-                    _addressA: SignatureBytes(Uint8List.fromList(List<int>.filled(64, 1))),
-                  },
-                )
-                .toList();
+        ..signTransactionsMock = (transactions, config) async => transactions
+            .map(
+              (_) => <Address, SignatureBytes>{
+                _addressA: SignatureBytes(
+                  Uint8List.fromList(List<int>.filled(64, 1)),
+                ),
+              },
+            )
+            .toList();
 
       final transaction = compileTransaction(
         createMockTransactionMessageWithSigners([signer]),
       );
 
-      final result = await partiallySignTransactionWithSigners(
-        [signer],
-        transaction,
-      );
+      final result = await partiallySignTransactionWithSigners([
+        signer,
+      ], transaction);
 
       expect(result.signatures[_addressA], isNotNull);
     });
@@ -50,7 +50,9 @@ void main() {
           return transactions
               .map(
                 (_) => <Address, SignatureBytes>{
-                  _addressB: SignatureBytes(Uint8List.fromList(List<int>.filled(64, 2))),
+                  _addressB: SignatureBytes(
+                    Uint8List.fromList(List<int>.filled(64, 2)),
+                  ),
                 },
               )
               .toList();
@@ -60,10 +62,10 @@ void main() {
         createMockTransactionMessageWithSigners([modifying, partial]),
       );
 
-      await partiallySignTransactionWithSigners(
-        [modifying, partial],
-        transaction,
-      );
+      await partiallySignTransactionWithSigners([
+        modifying,
+        partial,
+      ], transaction);
 
       expect(order, ['modify', 'partial']);
     });
@@ -88,14 +90,15 @@ void main() {
   group('signTransactionWithSigners', () {
     test('returns fully signed transaction for compiled transaction', () async {
       final signer = MockTransactionPartialSigner(_addressA)
-        ..signTransactionsMock = (transactions, config) async =>
-            transactions
-                .map(
-                  (_) => <Address, SignatureBytes>{
-                    _addressA: SignatureBytes(Uint8List.fromList(List<int>.filled(64, 1))),
-                  },
-                )
-                .toList();
+        ..signTransactionsMock = (transactions, config) async => transactions
+            .map(
+              (_) => <Address, SignatureBytes>{
+                _addressA: SignatureBytes(
+                  Uint8List.fromList(List<int>.filled(64, 1)),
+                ),
+              },
+            )
+            .toList();
       final transaction = compileTransaction(
         createMockTransactionMessageWithSigners([signer]),
       );
@@ -109,26 +112,27 @@ void main() {
   group('signAndSendTransactionWithSigners', () {
     test('sends a compiled transaction directly', () async {
       final partial = MockTransactionPartialSigner(_addressA)
-        ..signTransactionsMock = (transactions, config) async =>
-            transactions
-                .map(
-                  (_) => <Address, SignatureBytes>{
-                    _addressA: SignatureBytes(Uint8List.fromList(List<int>.filled(64, 1))),
-                  },
-                )
-                .toList();
+        ..signTransactionsMock = (transactions, config) async => transactions
+            .map(
+              (_) => <Address, SignatureBytes>{
+                _addressA: SignatureBytes(
+                  Uint8List.fromList(List<int>.filled(64, 1)),
+                ),
+              },
+            )
+            .toList();
       final sending = MockTransactionSendingSigner(_addressB)
         ..signAndSendTransactionsMock = (transactions, config) async => [
-              SignatureBytes(Uint8List.fromList([9, ...List<int>.filled(63, 0)])),
-            ];
+          SignatureBytes(Uint8List.fromList([9, ...List<int>.filled(63, 0)])),
+        ];
       final transaction = compileTransaction(
         createMockTransactionMessageWithSigners([partial, sending]),
       );
 
-      final signature = await signAndSendTransactionWithSigners(
-        [partial, sending],
-        transaction,
-      );
+      final signature = await signAndSendTransactionWithSigners([
+        partial,
+        sending,
+      ], transaction);
 
       expect(signature.value.first, 9);
     });
@@ -174,7 +178,10 @@ void main() {
       final signerB = MockTransactionCompositeSigner(_addressB);
 
       expect(
-        () => assertContainsResolvableTransactionSendingSigner([signerA, signerB]),
+        () => assertContainsResolvableTransactionSendingSigner([
+          signerA,
+          signerB,
+        ]),
         returnsNormally,
       );
     });
@@ -184,7 +191,10 @@ void main() {
       final signerB = MockTransactionSendingSigner(_addressB);
 
       expect(
-        () => assertContainsResolvableTransactionSendingSigner([signerA, signerB]),
+        () => assertContainsResolvableTransactionSendingSigner([
+          signerA,
+          signerB,
+        ]),
         throwsA(
           isA<SolanaError>().having(
             (e) => e.code,

@@ -40,15 +40,10 @@ extension SolanaRpcMethods on Rpc {
 
   /// Fetches account info and parses the result into a typed Solana RPC
   /// response wrapper.
-  PendingRpcRequest<SolanaRpcResponse<Map<String, Object?>?>> getAccountInfoValue(
-    Address address, [
-    GetAccountInfoConfig? config,
-  ]) {
+  PendingRpcRequest<SolanaRpcResponse<Map<String, Object?>?>>
+  getAccountInfoValue(Address address, [GetAccountInfoConfig? config]) {
     return _mapPendingRpcRequest(
-      request<Object?>(
-        'getAccountInfo',
-        getAccountInfoParams(address, config),
-      ),
+      request<Object?>('getAccountInfo', getAccountInfoParams(address, config)),
       _parseNullableMapRpcResponse,
     );
   }
@@ -76,10 +71,7 @@ extension SolanaRpcMethods on Rpc {
     GetBalanceConfig? config,
   ]) {
     return _mapPendingRpcRequest(
-      request<Object?>(
-        'getBalance',
-        getBalanceParams(address, config),
-      ),
+      request<Object?>('getBalance', getBalanceParams(address, config)),
       _parseLamportsRpcResponse,
     );
   }
@@ -141,14 +133,9 @@ extension SolanaRpcMethods on Rpc {
 
   /// Fetches the latest blockhash and parses it into a typed response model.
   PendingRpcRequest<SolanaRpcResponse<LatestBlockhashValue>>
-  getLatestBlockhashValue([
-    GetLatestBlockhashConfig? config,
-  ]) {
+  getLatestBlockhashValue([GetLatestBlockhashConfig? config]) {
     return _mapPendingRpcRequest(
-      request<Object?>(
-        'getLatestBlockhash',
-        getLatestBlockhashParams(config),
-      ),
+      request<Object?>('getLatestBlockhash', getLatestBlockhashParams(config)),
       _parseLatestBlockhashRpcResponse,
     );
   }
@@ -287,17 +274,17 @@ SolanaRpcResponse<List<Map<String, Object?>?>> _parseNullableMapListRpcResponse(
 ) {
   return _parseSolanaRpcResponse(response, (value) {
     final typedValue = (value as List<Object?>?) ?? const <Object?>[];
-    return typedValue.map((item) {
-      if (item == null) return null;
-      final typedItem = item as Map;
-      return typedItem.cast<String, Object?>();
-    }).toList(growable: false);
+    return typedValue
+        .map((item) {
+          if (item == null) return null;
+          final typedItem = item as Map;
+          return typedItem.cast<String, Object?>();
+        })
+        .toList(growable: false);
   });
 }
 
-SolanaRpcResponse<Lamports> _parseLamportsRpcResponse(
-  Object? response,
-) {
+SolanaRpcResponse<Lamports> _parseLamportsRpcResponse(Object? response) {
   return _parseSolanaRpcResponse(response, (value) {
     return lamports(value! as BigInt);
   });

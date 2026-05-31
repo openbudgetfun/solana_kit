@@ -7,7 +7,9 @@ void main() {
       const request = GetProgramAccountsV2Request(
         programAddress: 'program-1',
         filters: [
-          {'memcmp': {'offset': 0, 'bytes': 'abc'}},
+          {
+            'memcmp': {'offset': 0, 'bytes': 'abc'},
+          },
         ],
         encoding: 'base64',
         dataSlice: 32,
@@ -52,7 +54,9 @@ void main() {
         limit: 25,
       );
       final requestJson = request.toJson();
-      final parsedRequest = GetTokenAccountsByOwnerV2Request.fromJson(requestJson);
+      final parsedRequest = GetTokenAccountsByOwnerV2Request.fromJson(
+        requestJson,
+      );
 
       expect(parsedRequest.ownerAddress, 'owner-1');
       expect(parsedRequest.mint, 'mint-1');
@@ -90,7 +94,9 @@ void main() {
         commitment: CommitmentLevel.confirmed,
       );
       final requestJson = request.toJson();
-      final parsedRequest = GetTransactionsForAddressRequest.fromJson(requestJson);
+      final parsedRequest = GetTransactionsForAddressRequest.fromJson(
+        requestJson,
+      );
 
       expect(parsedRequest.address, 'address-1');
       expect(parsedRequest.before, 'sig-before');
@@ -105,7 +111,9 @@ void main() {
             'signature': 'sig-1',
             'slot': 123,
             'blockTime': 456,
-            'err': {'InstructionError': [0, 'Custom']},
+            'err': {
+              'InstructionError': [0, 'Custom'],
+            },
             'memo': 'memo text',
           },
         ],
@@ -113,51 +121,62 @@ void main() {
       final response = GetTransactionsForAddressResponse.fromJson(responseJson);
 
       expect(response.transactions.single.signature, 'sig-1');
-      expect(response.transactions.single.err, {'InstructionError': [0, 'Custom']});
+      expect(response.transactions.single.err, {
+        'InstructionError': [0, 'Custom'],
+      });
       expect(response.toJson(), responseJson);
     });
 
-    test('transfer request, config, response, and transfer record serialize JSON', () {
-      const config = GetTransfersByAddressConfig(
-        withAddress: 'counterparty',
-        direction: 'inbound',
-        mint: 'mint-1',
-        solMode: 'exclude',
-        filters: {'type': 'transfer'},
-        limit: 50,
-        paginationToken: 'page-1',
-        commitment: CommitmentLevel.finalized,
-        sortOrder: 'asc',
-      );
-      const request = GetTransfersByAddressRequest(address: 'owner-1', config: config);
-      final configJson = {
-        'with': 'counterparty',
-        'direction': 'inbound',
-        'mint': 'mint-1',
-        'solMode': 'exclude',
-        'filters': {'type': 'transfer'},
-        'limit': 50,
-        'paginationToken': 'page-1',
-        'commitment': 'finalized',
-        'sortOrder': 'asc',
-      };
+    test(
+      'transfer request, config, response, and transfer record serialize JSON',
+      () {
+        const config = GetTransfersByAddressConfig(
+          withAddress: 'counterparty',
+          direction: 'inbound',
+          mint: 'mint-1',
+          solMode: 'exclude',
+          filters: {'type': 'transfer'},
+          limit: 50,
+          paginationToken: 'page-1',
+          commitment: CommitmentLevel.finalized,
+          sortOrder: 'asc',
+        );
+        const request = GetTransfersByAddressRequest(
+          address: 'owner-1',
+          config: config,
+        );
+        final configJson = {
+          'with': 'counterparty',
+          'direction': 'inbound',
+          'mint': 'mint-1',
+          'solMode': 'exclude',
+          'filters': {'type': 'transfer'},
+          'limit': 50,
+          'paginationToken': 'page-1',
+          'commitment': 'finalized',
+          'sortOrder': 'asc',
+        };
 
-      expect(config.toJson(), configJson);
-      expect(request.toJson(), ['owner-1', configJson]);
-      expect(const GetTransfersByAddressRequest(address: 'owner-1').toJson(), ['owner-1']);
+        expect(config.toJson(), configJson);
+        expect(request.toJson(), ['owner-1', configJson]);
+        expect(
+          const GetTransfersByAddressRequest(address: 'owner-1').toJson(),
+          ['owner-1'],
+        );
 
-      final transferJson = addressTransferJson();
-      final responseJson = {
-        'data': [transferJson],
-        'paginationToken': 'next-page',
-      };
-      final response = GetTransfersByAddressResponse.fromJson(responseJson);
+        final transferJson = addressTransferJson();
+        final responseJson = {
+          'data': [transferJson],
+          'paginationToken': 'next-page',
+        };
+        final response = GetTransfersByAddressResponse.fromJson(responseJson);
 
-      expect(response.data.single.signature, 'sig-transfer');
-      expect(response.data.single.fromTokenAccount, 'from-token');
-      expect(response.paginationToken, 'next-page');
-      expect(response.toJson(), responseJson);
-    });
+        expect(response.data.single.signature, 'sig-transfer');
+        expect(response.data.single.fromTokenAccount, 'from-token');
+        expect(response.paginationToken, 'next-page');
+        expect(response.toJson(), responseJson);
+      },
+    );
   });
 }
 

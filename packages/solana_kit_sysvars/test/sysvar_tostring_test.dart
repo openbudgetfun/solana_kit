@@ -489,9 +489,7 @@ void main() {
     });
 
     test('not equal when slot differs', () {
-      const hash = Blockhash(
-        '4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi',
-      );
+      const hash = Blockhash('4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi');
       final a = SlotHashEntry(slot: BigInt.from(1), hash: hash);
       final b = SlotHashEntry(slot: BigInt.from(2), hash: hash);
       expect(a, isNot(equals(b)));
@@ -531,12 +529,8 @@ void main() {
     });
 
     test('FeeCalculator not equal when lamportsPerSignature differs', () {
-      final a = FeeCalculator(
-        lamportsPerSignature: Lamports(BigInt.from(100)),
-      );
-      final b = FeeCalculator(
-        lamportsPerSignature: Lamports(BigInt.from(200)),
-      );
+      final a = FeeCalculator(lamportsPerSignature: Lamports(BigInt.from(100)));
+      final b = FeeCalculator(lamportsPerSignature: Lamports(BigInt.from(200)));
       expect(a, isNot(equals(b)));
     });
 
@@ -555,9 +549,7 @@ void main() {
     });
 
     test('RecentBlockhashEntry not equal when feeCalculator differs', () {
-      const bh = Blockhash(
-        '4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi',
-      );
+      const bh = Blockhash('4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi');
       final a = RecentBlockhashEntry(
         blockhash: bh,
         feeCalculator: FeeCalculator(

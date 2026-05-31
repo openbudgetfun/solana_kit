@@ -104,14 +104,11 @@ String _applyUtf8NullCharacterMode(
       return value;
     case Utf8NullCharacterMode.reject:
       if (value.contains('\u0000')) {
-        throw SolanaError(
-          SolanaErrorCode.codecsStringContainsNullCharacters,
-          {
-            'encoding': 'utf8',
-            'byteLength': byteLength,
-            'nullCharacterMode': nullCharacterMode.name,
-          },
-        );
+        throw SolanaError(SolanaErrorCode.codecsStringContainsNullCharacters, {
+          'encoding': 'utf8',
+          'byteLength': byteLength,
+          'nullCharacterMode': nullCharacterMode.name,
+        });
       }
       return value;
   }

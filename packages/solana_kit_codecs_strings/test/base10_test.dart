@@ -36,10 +36,7 @@ void main() {
       expect(base10.read(Uint8List.fromList([0]), 0), equals(('0', 1)));
 
       expect(base10.encode('000'), equals(Uint8List.fromList([0, 0, 0])));
-      expect(
-        base10.read(Uint8List.fromList([0, 0, 0]), 0),
-        equals(('000', 3)),
-      );
+      expect(base10.read(Uint8List.fromList([0, 0, 0]), 0), equals(('000', 3)));
 
       expect(base10.encode('1'), equals(Uint8List.fromList([1])));
       expect(base10.read(Uint8List.fromList([1]), 0), equals(('1', 1)));
@@ -48,10 +45,7 @@ void main() {
       expect(base10.read(Uint8List.fromList([42]), 0), equals(('42', 1)));
 
       expect(base10.encode('1024'), equals(Uint8List.fromList([4, 0])));
-      expect(
-        base10.read(Uint8List.fromList([4, 0]), 0),
-        equals(('1024', 2)),
-      );
+      expect(base10.read(Uint8List.fromList([4, 0]), 0), equals(('1024', 2)));
 
       expect(base10.encode('65535'), equals(Uint8List.fromList([255, 255])));
       expect(

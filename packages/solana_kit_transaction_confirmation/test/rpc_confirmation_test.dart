@@ -192,45 +192,42 @@ void main() {
       );
     });
 
-    test(
-      'throws when signature status has an error field',
-      () async {
-        final transport = _ScriptedRpcTransport(
-          queuedResults: {
-            'getSignatureStatuses': [
-              _signatureStatusesResponse([
-                const {
-                  'confirmationStatus': 'confirmed',
-                  'err': {'InstructionError': [0, 'Custom']},
+    test('throws when signature status has an error field', () async {
+      final transport = _ScriptedRpcTransport(
+        queuedResults: {
+          'getSignatureStatuses': [
+            _signatureStatusesResponse([
+              const {
+                'confirmationStatus': 'confirmed',
+                'err': {
+                  'InstructionError': [0, 'Custom'],
                 },
-              ]),
-            ],
-          },
-          fallbackResults: {
-            'getEpochInfo': _epochInfoResponse(blockHeight: 90),
-          },
-        );
-        final rpc = createSolanaRpcFromTransport(transport.call);
+              },
+            ]),
+          ],
+        },
+        fallbackResults: {'getEpochInfo': _epochInfoResponse(blockHeight: 90)},
+      );
+      final rpc = createSolanaRpcFromTransport(transport.call);
 
-        await expectLater(
-          () => waitForTransactionConfirmation(
-            rpc: rpc,
-            signature: const Signature(_signatureValue),
-            transaction: _blockhashTransaction(),
-            config: const RpcTransactionConfirmationConfig(
-              pollInterval: Duration.zero,
-            ),
+      await expectLater(
+        () => waitForTransactionConfirmation(
+          rpc: rpc,
+          signature: const Signature(_signatureValue),
+          transaction: _blockhashTransaction(),
+          config: const RpcTransactionConfirmationConfig(
+            pollInterval: Duration.zero,
           ),
-          throwsA(
-            isA<StateError>().having(
-              (error) => error.message,
-              'message',
-              contains('Transaction failed'),
-            ),
+        ),
+        throwsA(
+          isA<StateError>().having(
+            (error) => error.message,
+            'message',
+            contains('Transaction failed'),
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     test(
       'throws when the durable nonce account is not found (null value)',
@@ -266,79 +263,70 @@ void main() {
       },
     );
 
-    test(
-      'throws when abort signal fires during poll wait',
-      () async {
-        final abortController = AbortController();
-        final transport = _ScriptedRpcTransport(
-          fallbackResults: {
-            'getSignatureStatuses': _signatureStatusesResponse([null]),
-            'getEpochInfo': _epochInfoResponse(blockHeight: 90),
-          },
-        );
-        final rpc = createSolanaRpcFromTransport(transport.call);
+    test('throws when abort signal fires during poll wait', () async {
+      final abortController = AbortController();
+      final transport = _ScriptedRpcTransport(
+        fallbackResults: {
+          'getSignatureStatuses': _signatureStatusesResponse([null]),
+          'getEpochInfo': _epochInfoResponse(blockHeight: 90),
+        },
+      );
+      final rpc = createSolanaRpcFromTransport(transport.call);
 
-        // Abort after a short delay to trigger during _waitForNextPoll
-        Future<void>.delayed(
-          const Duration(milliseconds: 10),
-          () => abortController.abort('abort during wait'),
-        );
+      // Abort after a short delay to trigger during _waitForNextPoll
+      Future<void>.delayed(
+        const Duration(milliseconds: 10),
+        () => abortController.abort('abort during wait'),
+      );
 
-        await expectLater(
-          () => waitForTransactionConfirmation(
-            rpc: rpc,
-            signature: const Signature(_signatureValue),
-            transaction: _blockhashTransaction(),
-            config: RpcTransactionConfirmationConfig(
-              abortSignal: abortController.signal,
-              pollInterval: const Duration(milliseconds: 200),
-            ),
-          ),
-          throwsA(
-            isA<StateError>().having(
-              (error) => error.message,
-              'message',
-              contains('abort during wait'),
-            ),
-          ),
-        );
-      },
-    );
-
-    test(
-      'confirms durable nonce with abort signal provided',
-      () async {
-        final abortController = AbortController();
-        final transport = _ScriptedRpcTransport(
-          queuedResults: {
-            'getSignatureStatuses': [
-              _signatureStatusesResponse([null]),
-              _signatureStatusesResponse([
-                const {
-                  'confirmationStatus': 'finalized',
-                  'err': null,
-                },
-              ]),
-            ],
-          },
-          fallbackResults: {
-            'getAccountInfo': _nonceAccountInfoResponse(_expectedNonceValue),
-            'getEpochInfo': _epochInfoResponse(blockHeight: 90),
-          },
-        );
-        final rpc = createSolanaRpcFromTransport(transport.call);
-
-        await waitForTransactionConfirmation(
+      await expectLater(
+        () => waitForTransactionConfirmation(
           rpc: rpc,
           signature: const Signature(_signatureValue),
-          transaction: _durableNonceTransaction(),
+          transaction: _blockhashTransaction(),
           config: RpcTransactionConfirmationConfig(
             abortSignal: abortController.signal,
-            pollInterval: Duration.zero,
+            pollInterval: const Duration(milliseconds: 200),
           ),
-        );
-      },
-    );
+        ),
+        throwsA(
+          isA<StateError>().having(
+            (error) => error.message,
+            'message',
+            contains('abort during wait'),
+          ),
+        ),
+      );
+    });
+
+    test('confirms durable nonce with abort signal provided', () async {
+      final abortController = AbortController();
+      final transport = _ScriptedRpcTransport(
+        queuedResults: {
+          'getSignatureStatuses': [
+            _signatureStatusesResponse([null]),
+            _signatureStatusesResponse([
+              const {'confirmationStatus': 'finalized', 'err': null},
+            ]),
+          ],
+        },
+        fallbackResults: {
+          'getAccountInfo': _nonceAccountInfoResponse(_expectedNonceValue),
+          'getEpochInfo': _epochInfoResponse(blockHeight: 90),
+        },
+      );
+      final rpc = createSolanaRpcFromTransport(transport.call);
+
+      await waitForTransactionConfirmation(
+        rpc: rpc,
+        signature: const Signature(_signatureValue),
+        transaction: _durableNonceTransaction(),
+        config: RpcTransactionConfirmationConfig(
+          abortSignal: abortController.signal,
+          pollInterval: Duration.zero,
+        ),
+      );
+    });
 
     test('throws for transactions without lifetime metadata', () async {
       final rpc = createSolanaRpcFromTransport((_) async {
@@ -403,42 +391,36 @@ void main() {
       ]);
     });
 
-    test(
-      'sends with abort signal when provided',
-      () async {
-        final abortController = AbortController();
-        final transport = _ScriptedRpcTransport(
-          queuedResults: {
-            'getSignatureStatuses': [
-              _signatureStatusesResponse([
-                const {
-                  'confirmationStatus': 'finalized',
-                  'err': null,
-                },
-              ]),
-            ],
-          },
-          fallbackResults: {
-            'sendTransaction': _signatureValue,
-            'getEpochInfo': _epochInfoResponse(blockHeight: 90),
-          },
-        );
-        final rpc = createSolanaRpcFromTransport(transport.call);
+    test('sends with abort signal when provided', () async {
+      final abortController = AbortController();
+      final transport = _ScriptedRpcTransport(
+        queuedResults: {
+          'getSignatureStatuses': [
+            _signatureStatusesResponse([
+              const {'confirmationStatus': 'finalized', 'err': null},
+            ]),
+          ],
+        },
+        fallbackResults: {
+          'sendTransaction': _signatureValue,
+          'getEpochInfo': _epochInfoResponse(blockHeight: 90),
+        },
+      );
+      final rpc = createSolanaRpcFromTransport(transport.call);
 
-        final signature = await sendAndConfirmTransaction(
-          rpc: rpc,
-          transaction: _blockhashTransaction(),
-          config: SendAndConfirmTransactionConfig(
-            abortSignal: abortController.signal,
-            commitment: Commitment.processed,
-            pollInterval: Duration.zero,
-            skipPreflight: true,
-          ),
-        );
+      final signature = await sendAndConfirmTransaction(
+        rpc: rpc,
+        transaction: _blockhashTransaction(),
+        config: SendAndConfirmTransactionConfig(
+          abortSignal: abortController.signal,
+          commitment: Commitment.processed,
+          pollInterval: Duration.zero,
+          skipPreflight: true,
+        ),
+      );
 
-        expect(signature.value, _signatureValue);
-      },
-    );
+      expect(signature.value, _signatureValue);
+    });
 
     test(
       'throws before sending when the transaction is not fully signed',

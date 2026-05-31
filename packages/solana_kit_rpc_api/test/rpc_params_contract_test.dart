@@ -155,35 +155,27 @@ void main() {
       expect(getRecentPerformanceSamplesParams(32), [32]);
 
       expect(getRecentPrioritizationFeesParams(), isEmpty);
-      expect(
-        getRecentPrioritizationFeesParams([_addressA, _addressB]),
-        [
-          [_addressA.value, _addressB.value],
-        ],
-      );
+      expect(getRecentPrioritizationFeesParams([_addressA, _addressB]), [
+        [_addressA.value, _addressB.value],
+      ]);
 
       expect(getBlocksParams(BigInt.from(1)), [BigInt.from(1)]);
-      expect(
-        getBlocksParams(BigInt.from(1), BigInt.from(2)),
-        [BigInt.from(1), BigInt.from(2)],
-      );
+      expect(getBlocksParams(BigInt.from(1), BigInt.from(2)), [
+        BigInt.from(1),
+        BigInt.from(2),
+      ]);
 
       expect(getLeaderScheduleParams(), [null]);
-      expect(
-        getLeaderScheduleParams(BigInt.from(9)),
-        [BigInt.from(9)],
-      );
+      expect(getLeaderScheduleParams(BigInt.from(9)), [BigInt.from(9)]);
     });
 
     test('filter helpers serialize to RPC payload shape', () {
-      expect(
-        const TokenAccountMintFilter(mint: _addressB).toJson(),
-        {'mint': _addressB.value},
-      );
-      expect(
-        const TokenAccountProgramIdFilter(programId: _addressB).toJson(),
-        {'programId': _addressB.value},
-      );
+      expect(const TokenAccountMintFilter(mint: _addressB).toJson(), {
+        'mint': _addressB.value,
+      });
+      expect(const TokenAccountProgramIdFilter(programId: _addressB).toJson(), {
+        'programId': _addressB.value,
+      });
       expect(
         getTokenAccountsByOwnerParams(
           _addressA,

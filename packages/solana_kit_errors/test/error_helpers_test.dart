@@ -9,10 +9,9 @@ void main() {
         SolanaErrorContextKeys.path: null,
       });
 
-      expect(
-        context,
-        {SolanaErrorContextKeys.address: '11111111111111111111111111111111'},
-      );
+      expect(context, {
+        SolanaErrorContextKeys.address: '11111111111111111111111111111111',
+      });
     });
 
     test('captures nested SolanaError details when wrapping a cause', () {
@@ -20,10 +19,9 @@ void main() {
         'slot': 55,
       });
 
-      final context = createSolanaErrorContext(
-        {SolanaErrorContextKeys.operation: 'testOperation'},
-        cause: cause,
-      );
+      final context = createSolanaErrorContext({
+        SolanaErrorContextKeys.operation: 'testOperation',
+      }, cause: cause);
 
       expect(context[SolanaErrorContextKeys.operation], 'testOperation');
       expect(context[SolanaErrorContextKeys.cause], cause.toString());
@@ -41,20 +39,15 @@ void main() {
       final error = createSolanaError(
         SolanaErrorCode.accountsAccountNotFound,
         context: {
-          SolanaErrorContextKeys.address:
-              '11111111111111111111111111111111',
+          SolanaErrorContextKeys.address: '11111111111111111111111111111111',
           SolanaErrorContextKeys.path: null,
         },
       );
 
       expect(error.code, SolanaErrorCode.accountsAccountNotFound);
-      expect(
-        error.context,
-        {
-          SolanaErrorContextKeys.address:
-              '11111111111111111111111111111111',
-        },
-      );
+      expect(error.context, {
+        SolanaErrorContextKeys.address: '11111111111111111111111111111111',
+      });
     });
 
     test('wraps arbitrary causes consistently', () {

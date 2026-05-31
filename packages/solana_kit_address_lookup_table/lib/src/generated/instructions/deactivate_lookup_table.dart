@@ -68,8 +68,10 @@ getDeactivateLookupTableInstructionDataDecoder() {
 }
 
 /// Returns the codec for [DeactivateLookupTableInstructionData].
-Codec<DeactivateLookupTableInstructionData,
-    DeactivateLookupTableInstructionData>
+Codec<
+  DeactivateLookupTableInstructionData,
+  DeactivateLookupTableInstructionData
+>
 getDeactivateLookupTableInstructionDataCodec() {
   return combineCodec(
     getDeactivateLookupTableInstructionDataEncoder(),

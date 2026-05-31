@@ -147,14 +147,12 @@ ParsedComputeBudgetInstruction parseComputeBudgetInstruction(
     ComputeBudgetInstruction.requestHeapFrame => ParsedRequestHeapFrame(
       getRequestHeapFrameInstructionDataDecoder().decode(data),
     ),
-    ComputeBudgetInstruction.setComputeUnitLimit =>
-      ParsedSetComputeUnitLimit(
-        getSetComputeUnitLimitInstructionDataDecoder().decode(data),
-      ),
-    ComputeBudgetInstruction.setComputeUnitPrice =>
-      ParsedSetComputeUnitPrice(
-        getSetComputeUnitPriceInstructionDataDecoder().decode(data),
-      ),
+    ComputeBudgetInstruction.setComputeUnitLimit => ParsedSetComputeUnitLimit(
+      getSetComputeUnitLimitInstructionDataDecoder().decode(data),
+    ),
+    ComputeBudgetInstruction.setComputeUnitPrice => ParsedSetComputeUnitPrice(
+      getSetComputeUnitPriceInstructionDataDecoder().decode(data),
+    ),
     ComputeBudgetInstruction.setLoadedAccountsDataSizeLimit =>
       ParsedSetLoadedAccountsDataSizeLimit(
         getSetLoadedAccountsDataSizeLimitInstructionDataDecoder().decode(data),

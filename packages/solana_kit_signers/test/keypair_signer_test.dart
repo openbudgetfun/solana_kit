@@ -184,7 +184,6 @@ void main() {
         ),
         throwsUnsupportedError,
       );
-
     });
   });
   group('KeyPairSigner.signTransactions', () {
@@ -209,14 +208,12 @@ void main() {
         signatures: {signer.address: null},
       );
 
-      final signatureDictionaries =
-          await signer.signTransactions([transaction]);
+      final signatureDictionaries = await signer.signTransactions([
+        transaction,
+      ]);
 
       expect(signatureDictionaries, hasLength(1));
-      expect(
-        signatureDictionaries[0].containsKey(signer.address),
-        isTrue,
-      );
+      expect(signatureDictionaries[0].containsKey(signer.address), isTrue);
       expect(signatureDictionaries[0][signer.address], isNotNull);
     });
   });

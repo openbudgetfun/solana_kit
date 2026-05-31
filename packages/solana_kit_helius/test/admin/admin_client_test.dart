@@ -14,7 +14,10 @@ void main() {
         apiKey: 'admin-key',
         client: MockClient((request) async {
           expect(request.method, 'GET');
-          expect(request.url.toString(), 'https://api.helius.xyz/v0/admin/projects/project-1/usage');
+          expect(
+            request.url.toString(),
+            'https://api.helius.xyz/v0/admin/projects/project-1/usage',
+          );
           expect(request.headers['accept'], 'application/json');
           expect(request.headers['content-type'], 'application/json');
           expect(request.headers['x-api-key'], 'admin-key');
@@ -40,7 +43,11 @@ void main() {
         client.getProjectUsage('project-1'),
         throwsA(
           isA<SolanaError>()
-              .having((error) => error.code, 'code', SolanaErrorCode.heliusRestError)
+              .having(
+                (error) => error.code,
+                'code',
+                SolanaErrorCode.heliusRestError,
+              )
               .having(
                 (error) => error.context[SolanaErrorContextKeys.operation],
                 'operation',
@@ -51,7 +58,11 @@ void main() {
                 'statusCode',
                 403,
               )
-              .having((error) => error.context['message'], 'message', 'forbidden'),
+              .having(
+                (error) => error.context['message'],
+                'message',
+                'forbidden',
+              ),
         ),
       );
     });

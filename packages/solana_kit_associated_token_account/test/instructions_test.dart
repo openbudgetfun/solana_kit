@@ -134,33 +134,41 @@ void main() {
       expect(a.hashCode, b.hashCode);
     });
 
-    test('CreateAssociatedTokenIdempotentInstructionData toString/==/hashCode',
-        () {
-      const a = CreateAssociatedTokenIdempotentInstructionData();
-      const b =
-          CreateAssociatedTokenIdempotentInstructionData();
-      const c =
-          CreateAssociatedTokenIdempotentInstructionData(discriminator: 0);
+    test(
+      'CreateAssociatedTokenIdempotentInstructionData toString/==/hashCode',
+      () {
+        const a = CreateAssociatedTokenIdempotentInstructionData();
+        const b = CreateAssociatedTokenIdempotentInstructionData();
+        const c = CreateAssociatedTokenIdempotentInstructionData(
+          discriminator: 0,
+        );
 
-      expect(a.toString(),
-          contains('CreateAssociatedTokenIdempotentInstructionData'));
-      expect(a, b);
-      expect(a == c, isFalse);
-      expect(a.hashCode, b.hashCode);
-    });
+        expect(
+          a.toString(),
+          contains('CreateAssociatedTokenIdempotentInstructionData'),
+        );
+        expect(a, b);
+        expect(a == c, isFalse);
+        expect(a.hashCode, b.hashCode);
+      },
+    );
 
-    test('RecoverNestedAssociatedTokenInstructionData toString/==/hashCode',
-        () {
-      const a = RecoverNestedAssociatedTokenInstructionData();
-      const b = RecoverNestedAssociatedTokenInstructionData();
-      const c = RecoverNestedAssociatedTokenInstructionData(discriminator: 0);
+    test(
+      'RecoverNestedAssociatedTokenInstructionData toString/==/hashCode',
+      () {
+        const a = RecoverNestedAssociatedTokenInstructionData();
+        const b = RecoverNestedAssociatedTokenInstructionData();
+        const c = RecoverNestedAssociatedTokenInstructionData(discriminator: 0);
 
-      expect(a.toString(),
-          contains('RecoverNestedAssociatedTokenInstructionData'));
-      expect(a, b);
-      expect(a == c, isFalse);
-      expect(a.hashCode, b.hashCode);
-    });
+        expect(
+          a.toString(),
+          contains('RecoverNestedAssociatedTokenInstructionData'),
+        );
+        expect(a, b);
+        expect(a == c, isFalse);
+        expect(a.hashCode, b.hashCode);
+      },
+    );
   });
 
   group('getCreateAssociatedTokenAccountIdempotentInstruction', () {

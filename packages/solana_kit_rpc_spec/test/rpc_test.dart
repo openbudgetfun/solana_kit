@@ -173,8 +173,7 @@ void main() {
       final plan = adapter.getPlan('testMethod', ['param1']);
 
       await plan.execute(RpcPlanExecuteConfig(transport: transport));
-      final payload =
-          capturedConfig.payload! as Map<String, Object?>;
+      final payload = capturedConfig.payload! as Map<String, Object?>;
       expect(payload['method'], 'testMethod');
       expect(payload['params'], ['param1']);
     });

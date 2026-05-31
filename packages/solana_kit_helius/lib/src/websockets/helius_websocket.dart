@@ -11,10 +11,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// [Stream] of notification payloads.
 class HeliusWebSocket {
   /// Creates a new [HeliusWebSocket] with the given WebSocket [url].
-  HeliusWebSocket({
-    required this.url,
-    this.allowInsecureWs = false,
-  });
+  HeliusWebSocket({required this.url, this.allowInsecureWs = false});
 
   /// The Helius WebSocket endpoint URL.
   final String url;

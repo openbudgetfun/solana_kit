@@ -13,8 +13,7 @@ void main() {
     });
 
     test('returns list with address strings when addresses provided', () {
-      final params =
-          getRecentPrioritizationFeesParams([addressA, addressB]);
+      final params = getRecentPrioritizationFeesParams([addressA, addressB]);
       expect(params, hasLength(1));
       expect(params[0], [addressA.value, addressB.value]);
     });

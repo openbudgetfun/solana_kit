@@ -28,7 +28,10 @@ void main() {
         client: client,
       );
 
-      final webhook = await helius.webhooks.toggleWebhook('wh-1', active: false);
+      final webhook = await helius.webhooks.toggleWebhook(
+        'wh-1',
+        active: false,
+      );
 
       expect(webhook.webhookId, 'wh-1');
       expect(webhook.webhookType, WebhookType.enhanced);

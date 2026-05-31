@@ -31,7 +31,8 @@ _startServer() async {
   return (server, commands, requests);
 }
 
-Future<(HttpServer, List<WebSocket>, List<Object?>)> _startSocketServer() async {
+Future<(HttpServer, List<WebSocket>, List<Object?>)>
+_startSocketServer() async {
   final sockets = <WebSocket>[];
   final requests = <Object?>[];
   final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);

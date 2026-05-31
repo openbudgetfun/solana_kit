@@ -22,19 +22,13 @@ void main() {
         recentSlot: BigInt.one,
         bump: 0,
       );
-      expect(
-        createIx.programAddress,
-        equals(addressLookupTableProgramAddress),
-      );
+      expect(createIx.programAddress, equals(addressLookupTableProgramAddress));
 
       final freezeIx = getFreezeLookupTableInstruction(
         address: addr,
         authority: addr,
       );
-      expect(
-        freezeIx.programAddress,
-        equals(addressLookupTableProgramAddress),
-      );
+      expect(freezeIx.programAddress, equals(addressLookupTableProgramAddress));
 
       final extendIx = getExtendLookupTableInstruction(
         address: addr,
@@ -42,10 +36,7 @@ void main() {
         payer: addr,
         addresses: const [addr],
       );
-      expect(
-        extendIx.programAddress,
-        equals(addressLookupTableProgramAddress),
-      );
+      expect(extendIx.programAddress, equals(addressLookupTableProgramAddress));
 
       final deactivateIx = getDeactivateLookupTableInstruction(
         address: addr,
@@ -61,10 +52,7 @@ void main() {
         authority: addr,
         recipient: addr,
       );
-      expect(
-        closeIx.programAddress,
-        equals(addressLookupTableProgramAddress),
-      );
+      expect(closeIx.programAddress, equals(addressLookupTableProgramAddress));
     });
 
     test('account data codec is accessible', () {

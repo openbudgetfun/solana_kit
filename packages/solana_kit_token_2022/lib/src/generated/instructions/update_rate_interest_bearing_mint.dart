@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -30,7 +29,8 @@ class UpdateRateInterestBearingMintInstructionData {
   final int rate;
 }
 
-Encoder<UpdateRateInterestBearingMintInstructionData> getUpdateRateInterestBearingMintInstructionDataEncoder() {
+Encoder<UpdateRateInterestBearingMintInstructionData>
+getUpdateRateInterestBearingMintInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('interestBearingMintDiscriminator', getU8Encoder()),
@@ -41,13 +41,15 @@ Encoder<UpdateRateInterestBearingMintInstructionData> getUpdateRateInterestBeari
     structEncoder,
     (UpdateRateInterestBearingMintInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'interestBearingMintDiscriminator': value.interestBearingMintDiscriminator,
+      'interestBearingMintDiscriminator':
+          value.interestBearingMintDiscriminator,
       'rate': value.rate,
     },
   );
 }
 
-Decoder<UpdateRateInterestBearingMintInstructionData> getUpdateRateInterestBearingMintInstructionDataDecoder() {
+Decoder<UpdateRateInterestBearingMintInstructionData>
+getUpdateRateInterestBearingMintInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('interestBearingMintDiscriminator', getU8Decoder()),
@@ -56,16 +58,25 @@ Decoder<UpdateRateInterestBearingMintInstructionData> getUpdateRateInterestBeari
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateRateInterestBearingMintInstructionData(
-      discriminator: map['discriminator']! as int,
-      interestBearingMintDiscriminator: map['interestBearingMintDiscriminator']! as int,
-      rate: map['rate']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UpdateRateInterestBearingMintInstructionData(
+          discriminator: map['discriminator']! as int,
+          interestBearingMintDiscriminator:
+              map['interestBearingMintDiscriminator']! as int,
+          rate: map['rate']! as int,
+        ),
   );
 }
 
-Codec<UpdateRateInterestBearingMintInstructionData, UpdateRateInterestBearingMintInstructionData> getUpdateRateInterestBearingMintInstructionDataCodec() {
-  return combineCodec(getUpdateRateInterestBearingMintInstructionDataEncoder(), getUpdateRateInterestBearingMintInstructionDataDecoder());
+Codec<
+  UpdateRateInterestBearingMintInstructionData,
+  UpdateRateInterestBearingMintInstructionData
+>
+getUpdateRateInterestBearingMintInstructionDataCodec() {
+  return combineCodec(
+    getUpdateRateInterestBearingMintInstructionDataEncoder(),
+    getUpdateRateInterestBearingMintInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [UpdateRateInterestBearingMint] instruction.
@@ -76,20 +87,25 @@ Instruction getUpdateRateInterestBearingMintInstruction({
   required int rate,
 }) {
   final instructionData = UpdateRateInterestBearingMintInstructionData(
-      rate: rate,
+    rate: rate,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    AccountMeta(address: rateAuthority, role: AccountRole.writableSigner),
+      AccountMeta(address: mint, role: AccountRole.writable),
+      AccountMeta(address: rateAuthority, role: AccountRole.writableSigner),
     ],
-    data: getUpdateRateInterestBearingMintInstructionDataEncoder().encode(instructionData),
+    data: getUpdateRateInterestBearingMintInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [UpdateRateInterestBearingMint] instruction from raw instruction data.
-UpdateRateInterestBearingMintInstructionData parseUpdateRateInterestBearingMintInstruction(Instruction instruction) {
-  return getUpdateRateInterestBearingMintInstructionDataDecoder().decode(instruction.data!);
+UpdateRateInterestBearingMintInstructionData
+parseUpdateRateInterestBearingMintInstruction(Instruction instruction) {
+  return getUpdateRateInterestBearingMintInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

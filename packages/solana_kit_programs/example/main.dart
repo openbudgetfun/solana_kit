@@ -8,15 +8,13 @@ import 'package:solana_kit_programs/solana_kit_programs.dart';
 void main() {
   const programAddress = Address('11111111111111111111111111111111');
   const message = TransactionMessageInput(
-    instructions: {
-      0: InstructionInput(programAddress: programAddress),
-    },
+    instructions: {0: InstructionInput(programAddress: programAddress)},
   );
 
-  final error = SolanaError(
-    SolanaErrorCode.instructionErrorCustom,
-    {'index': 0, 'code': 6000},
-  );
+  final error = SolanaError(SolanaErrorCode.instructionErrorCustom, {
+    'index': 0,
+    'code': 6000,
+  });
 
   final isForProgram = isProgramError(error, message, programAddress);
   print('Program error detected: $isForProgram');

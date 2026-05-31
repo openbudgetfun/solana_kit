@@ -21,8 +21,7 @@ class RpcRequest<TParams> {
   int get hashCode => Object.hash(runtimeType, methodName, params);
 
   @override
-  String toString() =>
-      'RpcRequest(methodName: $methodName, params: $params)';
+  String toString() => 'RpcRequest(methodName: $methodName, params: $params)';
 }
 
 /// A function that accepts an [RpcRequest] and returns another [RpcRequest].

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -22,8 +21,9 @@ class InitializeTokenMetadataInstructionData {
     required this.name,
     required this.symbol,
     required this.uri,
-  }) :
-      discriminator = discriminator ?? Uint8List.fromList([210, 225, 30, 162, 88, 184, 77, 141]);
+  }) : discriminator =
+           discriminator ??
+           Uint8List.fromList([210, 225, 30, 162, 88, 184, 77, 141]);
 
   final Uint8List discriminator;
   final String name;
@@ -31,7 +31,8 @@ class InitializeTokenMetadataInstructionData {
   final String uri;
 }
 
-Encoder<InitializeTokenMetadataInstructionData> getInitializeTokenMetadataInstructionDataEncoder() {
+Encoder<InitializeTokenMetadataInstructionData>
+getInitializeTokenMetadataInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getBytesEncoder()),
     ('name', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
@@ -50,7 +51,8 @@ Encoder<InitializeTokenMetadataInstructionData> getInitializeTokenMetadataInstru
   );
 }
 
-Decoder<InitializeTokenMetadataInstructionData> getInitializeTokenMetadataInstructionDataDecoder() {
+Decoder<InitializeTokenMetadataInstructionData>
+getInitializeTokenMetadataInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getBytesDecoder()),
     ('name', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
@@ -60,17 +62,25 @@ Decoder<InitializeTokenMetadataInstructionData> getInitializeTokenMetadataInstru
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeTokenMetadataInstructionData(
-      discriminator: map['discriminator']! as Uint8List,
-      name: map['name']! as String,
-      symbol: map['symbol']! as String,
-      uri: map['uri']! as String,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializeTokenMetadataInstructionData(
+          discriminator: map['discriminator']! as Uint8List,
+          name: map['name']! as String,
+          symbol: map['symbol']! as String,
+          uri: map['uri']! as String,
+        ),
   );
 }
 
-Codec<InitializeTokenMetadataInstructionData, InitializeTokenMetadataInstructionData> getInitializeTokenMetadataInstructionDataCodec() {
-  return combineCodec(getInitializeTokenMetadataInstructionDataEncoder(), getInitializeTokenMetadataInstructionDataDecoder());
+Codec<
+  InitializeTokenMetadataInstructionData,
+  InitializeTokenMetadataInstructionData
+>
+getInitializeTokenMetadataInstructionDataCodec() {
+  return combineCodec(
+    getInitializeTokenMetadataInstructionDataEncoder(),
+    getInitializeTokenMetadataInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializeTokenMetadata] instruction.
@@ -85,24 +95,30 @@ Instruction getInitializeTokenMetadataInstruction({
   required String uri,
 }) {
   final instructionData = InitializeTokenMetadataInstructionData(
-      name: name,
-      symbol: symbol,
-      uri: uri,
+    name: name,
+    symbol: symbol,
+    uri: uri,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: metadata, role: AccountRole.writable),
-    AccountMeta(address: updateAuthority, role: AccountRole.readonly),
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    AccountMeta(address: mintAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: metadata, role: AccountRole.writable),
+      AccountMeta(address: updateAuthority, role: AccountRole.readonly),
+      AccountMeta(address: mint, role: AccountRole.readonly),
+      AccountMeta(address: mintAuthority, role: AccountRole.readonlySigner),
     ],
-    data: getInitializeTokenMetadataInstructionDataEncoder().encode(instructionData),
+    data: getInitializeTokenMetadataInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [InitializeTokenMetadata] instruction from raw instruction data.
-InitializeTokenMetadataInstructionData parseInitializeTokenMetadataInstruction(Instruction instruction) {
-  return getInitializeTokenMetadataInstructionDataDecoder().decode(instruction.data!);
+InitializeTokenMetadataInstructionData parseInitializeTokenMetadataInstruction(
+  Instruction instruction,
+) {
+  return getInitializeTokenMetadataInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

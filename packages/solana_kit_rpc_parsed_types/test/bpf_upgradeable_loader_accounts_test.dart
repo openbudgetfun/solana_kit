@@ -80,22 +80,30 @@ void main() {
 
     test('BpfProgramDataInfo equality, hashCode, and toString', () {
       final info1 = JsonParsedBpfProgramDataInfo(
-        authority: const Address('7g4Los4WMQnpxYiBJpU1HejBiM6xCk5RDFGCABhWE9M6'),
+        authority: const Address(
+          '7g4Los4WMQnpxYiBJpU1HejBiM6xCk5RDFGCABhWE9M6',
+        ),
         data: (const Base64EncodedBytes('f0VMRgIBAAAAAAAAA'), 'base64'),
         slot: BigInt.from(259942942),
       );
       final info2 = JsonParsedBpfProgramDataInfo(
-        authority: const Address('7g4Los4WMQnpxYiBJpU1HejBiM6xCk5RDFGCABhWE9M6'),
+        authority: const Address(
+          '7g4Los4WMQnpxYiBJpU1HejBiM6xCk5RDFGCABhWE9M6',
+        ),
         data: (const Base64EncodedBytes('f0VMRgIBAAAAAAAAA'), 'base64'),
         slot: BigInt.from(259942942),
       );
       final info3 = JsonParsedBpfProgramDataInfo(
-        authority: const Address('7g4Los4WMQnpxYiBJpU1HejBiM6xCk5RDFGCABhWE9M6'),
+        authority: const Address(
+          '7g4Los4WMQnpxYiBJpU1HejBiM6xCk5RDFGCABhWE9M6',
+        ),
         data: (const Base64EncodedBytes('different'), 'base64'),
         slot: BigInt.from(259942942),
       );
       final info4 = JsonParsedBpfProgramDataInfo(
-        authority: const Address('7g4Los4WMQnpxYiBJpU1HejBiM6xCk5RDFGCABhWE9M6'),
+        authority: const Address(
+          '7g4Los4WMQnpxYiBJpU1HejBiM6xCk5RDFGCABhWE9M6',
+        ),
         data: (const Base64EncodedBytes('f0VMRgIBAAAAAAAAA'), 'base64'),
         slot: BigInt.from(999),
       );

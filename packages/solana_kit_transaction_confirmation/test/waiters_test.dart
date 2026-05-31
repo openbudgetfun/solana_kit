@@ -41,11 +41,7 @@ void main() {
           };
 
       getRecentSignatureConfirmationPromise =
-          ({
-            required abortSignal,
-            required commitment,
-            required signature,
-          }) {
+          ({required abortSignal, required commitment, required signature}) {
             return signatureConfirmationCompleter.future;
           };
     });
@@ -311,20 +307,12 @@ void main() {
       signatureConfirmationCompleter = Completer<void>();
 
       getBlockHeightExceedencePromise =
-          ({
-            required abortSignal,
-            required lastValidBlockHeight,
-            commitment,
-          }) {
+          ({required abortSignal, required lastValidBlockHeight, commitment}) {
             return blockHeightExceedenceCompleter.future;
           };
 
       getRecentSignatureConfirmationPromise =
-          ({
-            required abortSignal,
-            required commitment,
-            required signature,
-          }) {
+          ({required abortSignal, required commitment, required signature}) {
             return signatureConfirmationCompleter.future;
           };
     });
@@ -562,13 +550,9 @@ void main() {
         waitForRecentTransactionConfirmationUntilTimeout(
           abortSignal: abortController.signal,
           commitment: Commitment.finalized,
-          getTimeoutPromise:
-              ({
-                required abortSignal,
-                required commitment,
-              }) {
-                return Completer<Never>().future;
-              },
+          getTimeoutPromise: ({required abortSignal, required commitment}) {
+            return Completer<Never>().future;
+          },
           getRecentSignatureConfirmationPromise:
               ({
                 required abortSignal,
@@ -603,13 +587,9 @@ void main() {
       await waitForRecentTransactionConfirmationUntilTimeout(
         abortSignal: AbortController().signal,
         commitment: Commitment.finalized,
-        getTimeoutPromise:
-            ({
-              required abortSignal,
-              required commitment,
-            }) {
-              return timeoutCompleter.future;
-            },
+        getTimeoutPromise: ({required abortSignal, required commitment}) {
+          return timeoutCompleter.future;
+        },
         getRecentSignatureConfirmationPromise:
             ({
               required abortSignal,
@@ -627,10 +607,7 @@ void main() {
           abortSignal: AbortController().signal,
           commitment: Commitment.finalized,
           getTimeoutPromise:
-              ({
-                required abortSignal,
-                required commitment,
-              }) async {
+              ({required abortSignal, required commitment}) async {
                 throw StateError('o no');
               },
           getRecentSignatureConfirmationPromise:
@@ -655,13 +632,9 @@ void main() {
         waitForRecentTransactionConfirmationUntilTimeout(
           abortSignal: AbortController().signal,
           commitment: Commitment.finalized,
-          getTimeoutPromise:
-              ({
-                required abortSignal,
-                required commitment,
-              }) {
-                return Completer<Never>().future;
-              },
+          getTimeoutPromise: ({required abortSignal, required commitment}) {
+            return Completer<Never>().future;
+          },
           getRecentSignatureConfirmationPromise:
               ({
                 required abortSignal,
@@ -686,14 +659,10 @@ void main() {
         waitForRecentTransactionConfirmationUntilTimeout(
           abortSignal: AbortController().signal,
           commitment: Commitment.finalized,
-          getTimeoutPromise:
-              ({
-                required abortSignal,
-                required commitment,
-              }) {
-                capturedCommitment = commitment;
-                return Completer<Never>().future;
-              },
+          getTimeoutPromise: ({required abortSignal, required commitment}) {
+            capturedCommitment = commitment;
+            return Completer<Never>().future;
+          },
           getRecentSignatureConfirmationPromise:
               ({
                 required abortSignal,

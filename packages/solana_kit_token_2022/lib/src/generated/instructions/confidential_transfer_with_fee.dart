@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -42,7 +41,8 @@ class ConfidentialTransferWithFeeInstructionData {
   final int rangeProofInstructionOffset;
 }
 
-Encoder<ConfidentialTransferWithFeeInstructionData> getConfidentialTransferWithFeeInstructionDataEncoder() {
+Encoder<ConfidentialTransferWithFeeInstructionData>
+getConfidentialTransferWithFeeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferDiscriminator', getU8Encoder()),
@@ -58,18 +58,23 @@ Encoder<ConfidentialTransferWithFeeInstructionData> getConfidentialTransferWithF
     structEncoder,
     (ConfidentialTransferWithFeeInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialTransferDiscriminator': value.confidentialTransferDiscriminator,
-      'newSourceDecryptableAvailableBalance': value.newSourceDecryptableAvailableBalance,
+      'confidentialTransferDiscriminator':
+          value.confidentialTransferDiscriminator,
+      'newSourceDecryptableAvailableBalance':
+          value.newSourceDecryptableAvailableBalance,
       'equalityProofInstructionOffset': value.equalityProofInstructionOffset,
-      'transferAmountCiphertextValidityProofInstructionOffset': value.transferAmountCiphertextValidityProofInstructionOffset,
+      'transferAmountCiphertextValidityProofInstructionOffset':
+          value.transferAmountCiphertextValidityProofInstructionOffset,
       'feeSigmaProofInstructionOffset': value.feeSigmaProofInstructionOffset,
-      'feeCiphertextValidityProofInstructionOffset': value.feeCiphertextValidityProofInstructionOffset,
+      'feeCiphertextValidityProofInstructionOffset':
+          value.feeCiphertextValidityProofInstructionOffset,
       'rangeProofInstructionOffset': value.rangeProofInstructionOffset,
     },
   );
 }
 
-Decoder<ConfidentialTransferWithFeeInstructionData> getConfidentialTransferWithFeeInstructionDataDecoder() {
+Decoder<ConfidentialTransferWithFeeInstructionData>
+getConfidentialTransferWithFeeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferDiscriminator', getU8Decoder()),
@@ -83,21 +88,38 @@ Decoder<ConfidentialTransferWithFeeInstructionData> getConfidentialTransferWithF
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ConfidentialTransferWithFeeInstructionData(
+    (
+      Map<String, Object?> map,
+      Uint8List bytes,
+      int offset,
+    ) => ConfidentialTransferWithFeeInstructionData(
       discriminator: map['discriminator']! as int,
-      confidentialTransferDiscriminator: map['confidentialTransferDiscriminator']! as int,
-      newSourceDecryptableAvailableBalance: map['newSourceDecryptableAvailableBalance']! as DecryptableBalance,
-      equalityProofInstructionOffset: map['equalityProofInstructionOffset']! as int,
-      transferAmountCiphertextValidityProofInstructionOffset: map['transferAmountCiphertextValidityProofInstructionOffset']! as int,
-      feeSigmaProofInstructionOffset: map['feeSigmaProofInstructionOffset']! as int,
-      feeCiphertextValidityProofInstructionOffset: map['feeCiphertextValidityProofInstructionOffset']! as int,
+      confidentialTransferDiscriminator:
+          map['confidentialTransferDiscriminator']! as int,
+      newSourceDecryptableAvailableBalance:
+          map['newSourceDecryptableAvailableBalance']! as DecryptableBalance,
+      equalityProofInstructionOffset:
+          map['equalityProofInstructionOffset']! as int,
+      transferAmountCiphertextValidityProofInstructionOffset:
+          map['transferAmountCiphertextValidityProofInstructionOffset']! as int,
+      feeSigmaProofInstructionOffset:
+          map['feeSigmaProofInstructionOffset']! as int,
+      feeCiphertextValidityProofInstructionOffset:
+          map['feeCiphertextValidityProofInstructionOffset']! as int,
       rangeProofInstructionOffset: map['rangeProofInstructionOffset']! as int,
     ),
   );
 }
 
-Codec<ConfidentialTransferWithFeeInstructionData, ConfidentialTransferWithFeeInstructionData> getConfidentialTransferWithFeeInstructionDataCodec() {
-  return combineCodec(getConfidentialTransferWithFeeInstructionDataEncoder(), getConfidentialTransferWithFeeInstructionDataDecoder());
+Codec<
+  ConfidentialTransferWithFeeInstructionData,
+  ConfidentialTransferWithFeeInstructionData
+>
+getConfidentialTransferWithFeeInstructionDataCodec() {
+  return combineCodec(
+    getConfidentialTransferWithFeeInstructionDataEncoder(),
+    getConfidentialTransferWithFeeInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [ConfidentialTransferWithFee] instruction.
@@ -121,33 +143,52 @@ Instruction getConfidentialTransferWithFeeInstruction({
   required int rangeProofInstructionOffset,
 }) {
   final instructionData = ConfidentialTransferWithFeeInstructionData(
-      newSourceDecryptableAvailableBalance: newSourceDecryptableAvailableBalance,
-      equalityProofInstructionOffset: equalityProofInstructionOffset,
-      transferAmountCiphertextValidityProofInstructionOffset: transferAmountCiphertextValidityProofInstructionOffset,
-      feeSigmaProofInstructionOffset: feeSigmaProofInstructionOffset,
-      feeCiphertextValidityProofInstructionOffset: feeCiphertextValidityProofInstructionOffset,
-      rangeProofInstructionOffset: rangeProofInstructionOffset,
+    newSourceDecryptableAvailableBalance: newSourceDecryptableAvailableBalance,
+    equalityProofInstructionOffset: equalityProofInstructionOffset,
+    transferAmountCiphertextValidityProofInstructionOffset:
+        transferAmountCiphertextValidityProofInstructionOffset,
+    feeSigmaProofInstructionOffset: feeSigmaProofInstructionOffset,
+    feeCiphertextValidityProofInstructionOffset:
+        feeCiphertextValidityProofInstructionOffset,
+    rangeProofInstructionOffset: rangeProofInstructionOffset,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: sourceToken, role: AccountRole.writable),
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    AccountMeta(address: destinationToken, role: AccountRole.writable),
-    if (instructionsSysvar != null) AccountMeta(address: instructionsSysvar, role: AccountRole.readonly),
-    if (equalityRecord != null) AccountMeta(address: equalityRecord, role: AccountRole.readonly),
-    if (transferAmountCiphertextValidityRecord != null) AccountMeta(address: transferAmountCiphertextValidityRecord, role: AccountRole.readonly),
-    if (feeSigmaRecord != null) AccountMeta(address: feeSigmaRecord, role: AccountRole.readonly),
-    if (feeCiphertextValidityRecord != null) AccountMeta(address: feeCiphertextValidityRecord, role: AccountRole.readonly),
-    if (rangeRecord != null) AccountMeta(address: rangeRecord, role: AccountRole.readonly),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: sourceToken, role: AccountRole.writable),
+      AccountMeta(address: mint, role: AccountRole.readonly),
+      AccountMeta(address: destinationToken, role: AccountRole.writable),
+      if (instructionsSysvar != null)
+        AccountMeta(address: instructionsSysvar, role: AccountRole.readonly),
+      if (equalityRecord != null)
+        AccountMeta(address: equalityRecord, role: AccountRole.readonly),
+      if (transferAmountCiphertextValidityRecord != null)
+        AccountMeta(
+          address: transferAmountCiphertextValidityRecord,
+          role: AccountRole.readonly,
+        ),
+      if (feeSigmaRecord != null)
+        AccountMeta(address: feeSigmaRecord, role: AccountRole.readonly),
+      if (feeCiphertextValidityRecord != null)
+        AccountMeta(
+          address: feeCiphertextValidityRecord,
+          role: AccountRole.readonly,
+        ),
+      if (rangeRecord != null)
+        AccountMeta(address: rangeRecord, role: AccountRole.readonly),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getConfidentialTransferWithFeeInstructionDataEncoder().encode(instructionData),
+    data: getConfidentialTransferWithFeeInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [ConfidentialTransferWithFee] instruction from raw instruction data.
-ConfidentialTransferWithFeeInstructionData parseConfidentialTransferWithFeeInstruction(Instruction instruction) {
-  return getConfidentialTransferWithFeeInstructionDataDecoder().decode(instruction.data!);
+ConfidentialTransferWithFeeInstructionData
+parseConfidentialTransferWithFeeInstruction(Instruction instruction) {
+  return getConfidentialTransferWithFeeInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

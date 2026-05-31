@@ -67,8 +67,7 @@ void main() {
       );
     });
 
-    test('isSolanaErrorCodeInDomain returns false for non-matching domain',
-        () {
+    test('isSolanaErrorCodeInDomain returns false for non-matching domain', () {
       expect(
         isSolanaErrorCodeInDomain(
           SolanaErrorCode.jsonRpcInternalError,

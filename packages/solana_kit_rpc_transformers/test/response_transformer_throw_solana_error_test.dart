@@ -175,8 +175,7 @@ void main() {
         );
       });
 
-      test(
-          'transforms BigInt values in error.data when error code is '
+      test('transforms BigInt values in error.data when error code is '
           'BigInt -32002', () {
         final transformer = getThrowSolanaErrorResponseTransformer();
         final errorResponse = <String, Object?>{
@@ -200,8 +199,7 @@ void main() {
         } on SolanaError catch (e) {
           expect(
             e.code,
-            SolanaErrorCode
-                .jsonRpcServerErrorSendTransactionPreflightFailure,
+            SolanaErrorCode.jsonRpcServerErrorSendTransactionPreflightFailure,
           );
         }
       });

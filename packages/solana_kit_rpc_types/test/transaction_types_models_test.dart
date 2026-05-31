@@ -63,9 +63,7 @@ void main() {
   group('Transaction status and metadata models', () {
     test('deprecated TransactionStatus variants are constructible', () {
       const ok = TransactionStatusOk();
-      const err = TransactionStatusErr(
-        TransactionErrorSimple('AccountInUse'),
-      );
+      const err = TransactionStatusErr(TransactionErrorSimple('AccountInUse'));
 
       expect(ok, isA<TransactionStatus>());
       expect(err, isA<TransactionStatus>());

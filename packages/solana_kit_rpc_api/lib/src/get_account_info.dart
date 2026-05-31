@@ -53,13 +53,8 @@ class GetAccountInfoConfig {
           minContextSlot == other.minContextSlot;
 
   @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    commitment,
-    encoding,
-    dataSlice,
-    minContextSlot,
-  );
+  int get hashCode =>
+      Object.hash(runtimeType, commitment, encoding, dataSlice, minContextSlot);
 
   @override
   String toString() =>

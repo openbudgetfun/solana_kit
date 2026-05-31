@@ -242,17 +242,20 @@ void main() {
       expect(a.hashCode, equals(b.hashCode));
     });
 
-    test('AccountInfoJsonDataBase64 not equal to AccountInfoJsonDataParsed', () {
-      const base64 = AccountInfoJsonDataBase64(data: data);
-      final parsed = AccountInfoJsonDataParsed(
-        parsed: ParsedAccountData(
-          type: 'mint',
-          program: 'spl-token',
-          space: BigInt.zero,
-        ),
-      );
-      expect(base64, isNot(equals(parsed)));
-    });
+    test(
+      'AccountInfoJsonDataBase64 not equal to AccountInfoJsonDataParsed',
+      () {
+        const base64 = AccountInfoJsonDataBase64(data: data);
+        final parsed = AccountInfoJsonDataParsed(
+          parsed: ParsedAccountData(
+            type: 'mint',
+            program: 'spl-token',
+            space: BigInt.zero,
+          ),
+        );
+        expect(base64, isNot(equals(parsed)));
+      },
+    );
 
     test('wrappers and deprecated aliases preserve equality and toString', () {
       const base58BytesA = AccountInfoWithBase58Bytes(
@@ -266,10 +269,7 @@ void main() {
       );
       const base64Encoded = AccountInfoWithBase64EncodedData(data: data);
       const zstd = AccountInfoWithBase64EncodedZStdCompressedData(
-        data: (
-          Base64EncodedZStdCompressedBytes('AQIDBA=='),
-          'base64+zstd',
-        ),
+        data: (Base64EncodedZStdCompressedBytes('AQIDBA=='), 'base64+zstd'),
       );
       const wrappedA = AccountInfoWithJsonData(
         data: AccountInfoJsonDataBase64(data: data),
@@ -536,48 +536,39 @@ void main() {
       expect(a.hashCode, equals(b.hashCode));
     });
 
-    test('TransactionErrorDuplicateInstruction not equal when index differs',
-        () {
-      const a = TransactionErrorDuplicateInstruction(1);
-      const b = TransactionErrorDuplicateInstruction(2);
-      expect(a, isNot(equals(b)));
-    });
+    test(
+      'TransactionErrorDuplicateInstruction not equal when index differs',
+      () {
+        const a = TransactionErrorDuplicateInstruction(1);
+        const b = TransactionErrorDuplicateInstruction(2);
+        expect(a, isNot(equals(b)));
+      },
+    );
 
     test('TransactionErrorInstructionError equal when both fields match', () {
-      const a = TransactionErrorInstructionError(
-        1,
-        InstructionErrorCustom(42),
-      );
-      const b = TransactionErrorInstructionError(
-        1,
-        InstructionErrorCustom(42),
-      );
+      const a = TransactionErrorInstructionError(1, InstructionErrorCustom(42));
+      const b = TransactionErrorInstructionError(1, InstructionErrorCustom(42));
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
     });
 
     test('TransactionErrorInstructionError not equal when error differs', () {
-      const a = TransactionErrorInstructionError(
-        1,
-        InstructionErrorCustom(1),
-      );
-      const b = TransactionErrorInstructionError(
-        1,
-        InstructionErrorCustom(2),
-      );
+      const a = TransactionErrorInstructionError(1, InstructionErrorCustom(1));
+      const b = TransactionErrorInstructionError(1, InstructionErrorCustom(2));
       expect(a, isNot(equals(b)));
     });
 
-    test('TransactionErrorInsufficientFundsForRent equal when index matches',
-        () {
-      const a = TransactionErrorInsufficientFundsForRent(0);
-      const b = TransactionErrorInsufficientFundsForRent(0);
-      expect(a, equals(b));
-      expect(a.hashCode, equals(b.hashCode));
-    });
-
     test(
-        'TransactionErrorProgramExecutionTemporarilyRestricted equal when '
+      'TransactionErrorInsufficientFundsForRent equal when index matches',
+      () {
+        const a = TransactionErrorInsufficientFundsForRent(0);
+        const b = TransactionErrorInsufficientFundsForRent(0);
+        expect(a, equals(b));
+        expect(a.hashCode, equals(b.hashCode));
+      },
+    );
+
+    test('TransactionErrorProgramExecutionTemporarilyRestricted equal when '
         'index matches', () {
       const a = TransactionErrorProgramExecutionTemporarilyRestricted(2);
       const b = TransactionErrorProgramExecutionTemporarilyRestricted(2);
@@ -803,7 +794,10 @@ void main() {
     });
 
     test('MemcmpFilterBase58 toString', () {
-      final f = MemcmpFilterBase58(bytes: const Base58EncodedBytes('AAAA'), offset: BigInt.zero);
+      final f = MemcmpFilterBase58(
+        bytes: const Base58EncodedBytes('AAAA'),
+        offset: BigInt.zero,
+      );
       expect(f.toString(), contains('MemcmpFilter'));
     });
 
@@ -813,7 +807,10 @@ void main() {
     });
 
     test('MemcmpFilterBase64 toString', () {
-      final f = MemcmpFilterBase64(bytes: const Base64EncodedBytes('AA'), offset: BigInt.zero);
+      final f = MemcmpFilterBase64(
+        bytes: const Base64EncodedBytes('AA'),
+        offset: BigInt.zero,
+      );
       expect(f.toString(), contains('MemcmpFilter'));
     });
 
@@ -829,7 +826,10 @@ void main() {
 
     test('GetProgramAccountsMemcmpFilter toString', () {
       final f = GetProgramAccountsMemcmpFilter(
-        memcmp: MemcmpFilterBase58(bytes: const Base58EncodedBytes('AA'), offset: BigInt.zero),
+        memcmp: MemcmpFilterBase58(
+          bytes: const Base58EncodedBytes('AA'),
+          offset: BigInt.zero,
+        ),
       );
       expect(f.toString(), contains('Memcmp'));
     });

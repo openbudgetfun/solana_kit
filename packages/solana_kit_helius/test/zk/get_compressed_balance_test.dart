@@ -21,10 +21,7 @@ void main() {
         );
       });
 
-      final helius = createHelius(
-        HeliusConfig(apiKey: 'test'),
-        client: client,
-      );
+      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
       final result = await helius.zk.getCompressedBalance(
         const GetCompressedBalanceRequest(hash: 'test-hash'),
       );

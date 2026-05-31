@@ -80,9 +80,9 @@ Future<SignatureBytes> signAndSendTransactionMessageWithSigners(
   TransactionSignerConfig? config,
 ]) async {
   return signAndSendTransactionWithSigners(
-    getSignersFromTransactionMessage(transactionMessage)
-        .where(isTransactionSigner)
-        .toList(),
+    getSignersFromTransactionMessage(
+      transactionMessage,
+    ).where(isTransactionSigner).toList(),
     compileTransaction(transactionMessage),
     config,
   );

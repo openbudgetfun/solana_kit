@@ -28,7 +28,10 @@ void main() {
     });
 
     test('nested admin value objects serialize to JSON', () {
-      const billingCycle = AdminBillingCycle(start: '2026-01-01', end: '2026-02-01');
+      const billingCycle = AdminBillingCycle(
+        start: '2026-01-01',
+        end: '2026-02-01',
+      );
       const subscription = AdminSubscriptionDetails(
         billingCycle: billingCycle,
         creditsLimit: 500,
@@ -55,7 +58,10 @@ void main() {
         usage: usage,
       );
 
-      expect(billingCycle.toJson(), {'start': '2026-01-01', 'end': '2026-02-01'});
+      expect(billingCycle.toJson(), {
+        'start': '2026-01-01',
+        'end': '2026-02-01',
+      });
       expect(subscription.toJson(), {
         'billingCycle': {'start': '2026-01-01', 'end': '2026-02-01'},
         'creditsLimit': 500,

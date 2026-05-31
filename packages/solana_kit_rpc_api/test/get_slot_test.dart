@@ -42,8 +42,9 @@ void main() {
     });
 
     test('returns list with config map when config provided', () {
-      final params =
-          getSlotParams(const GetSlotConfig(commitment: Commitment.finalized));
+      final params = getSlotParams(
+        const GetSlotConfig(commitment: Commitment.finalized),
+      );
       expect(params, hasLength(1));
       expect(params[0], isA<Map<String, Object?>>());
       final config = params[0]! as Map<String, Object?>;

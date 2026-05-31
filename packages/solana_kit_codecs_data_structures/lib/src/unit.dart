@@ -1,4 +1,3 @@
-
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 
 /// Returns an encoder for `void` values.

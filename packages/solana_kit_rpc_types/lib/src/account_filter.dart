@@ -136,6 +136,5 @@ class GetProgramAccountsDatasizeFilter {
   int get hashCode => Object.hash(runtimeType, dataSize);
 
   @override
-  String toString() =>
-      'GetProgramAccountsDatasizeFilter(dataSize: $dataSize)';
+  String toString() => 'GetProgramAccountsDatasizeFilter(dataSize: $dataSize)';
 }

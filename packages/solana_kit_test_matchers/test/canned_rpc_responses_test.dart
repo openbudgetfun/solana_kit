@@ -25,9 +25,7 @@ void main() {
     });
 
     test('getAccountInfoRpcResult accepts custom value', () {
-      final result = getAccountInfoRpcResult(
-        value: {'data': 'test'},
-      );
+      final result = getAccountInfoRpcResult(value: {'data': 'test'});
       expect(result['value'], {'data': 'test'});
     });
 

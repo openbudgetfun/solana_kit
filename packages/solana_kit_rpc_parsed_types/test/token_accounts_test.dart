@@ -204,33 +204,36 @@ void main() {
       expect(info1 == info2, isFalse);
     });
 
-    test('JsonParsedTokenAccount equality with null vs non-null extensions', () {
-      const info1 = JsonParsedTokenAccount(
-        isNative: false,
-        mint: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
-        owner: Address('6UsGbaMgchgj4wiwKKuE1v5URHdcDfEiMSM25QpesKir'),
-        state: TokenAccountState.initialized,
-        tokenAmount: TokenAmount(
-          amount: StringifiedBigInt('100'),
-          decimals: 6,
-          uiAmountString: StringifiedNumber('0.0001'),
-        ),
-      );
-      const info2 = JsonParsedTokenAccount(
-        isNative: false,
-        mint: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
-        owner: Address('6UsGbaMgchgj4wiwKKuE1v5URHdcDfEiMSM25QpesKir'),
-        state: TokenAccountState.initialized,
-        tokenAmount: TokenAmount(
-          amount: StringifiedBigInt('100'),
-          decimals: 6,
-          uiAmountString: StringifiedNumber('0.0001'),
-        ),
-        extensions: ['memo-transfer'],
-      );
+    test(
+      'JsonParsedTokenAccount equality with null vs non-null extensions',
+      () {
+        const info1 = JsonParsedTokenAccount(
+          isNative: false,
+          mint: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
+          owner: Address('6UsGbaMgchgj4wiwKKuE1v5URHdcDfEiMSM25QpesKir'),
+          state: TokenAccountState.initialized,
+          tokenAmount: TokenAmount(
+            amount: StringifiedBigInt('100'),
+            decimals: 6,
+            uiAmountString: StringifiedNumber('0.0001'),
+          ),
+        );
+        const info2 = JsonParsedTokenAccount(
+          isNative: false,
+          mint: Address('Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr'),
+          owner: Address('6UsGbaMgchgj4wiwKKuE1v5URHdcDfEiMSM25QpesKir'),
+          state: TokenAccountState.initialized,
+          tokenAmount: TokenAmount(
+            amount: StringifiedBigInt('100'),
+            decimals: 6,
+            uiAmountString: StringifiedNumber('0.0001'),
+          ),
+          extensions: ['memo-transfer'],
+        );
 
-      expect(info1 == info2, isFalse);
-    });
+        expect(info1 == info2, isFalse);
+      },
+    );
 
     test('JsonParsedMintInfo equality, hashCode, and toString', () {
       const info1 = JsonParsedMintInfo(

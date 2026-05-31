@@ -255,7 +255,10 @@ void main() {
       expect(encoderB, isA<VariableSizeEncoder<String>>());
       expect((encoderB as VariableSizeEncoder).maxSize, equals(10));
       // Actually exercise the write and getSizeFromValue methods.
-      expect((encoderB as VariableSizeEncoder<String>).getSizeFromValue('hello'), equals(1));
+      expect(
+        (encoderB as VariableSizeEncoder<String>).getSizeFromValue('hello'),
+        equals(1),
+      );
       final bytes = Uint8List(10);
       expect(encoderB.write('hello', bytes, 0), equals(1));
     });

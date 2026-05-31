@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -30,11 +29,19 @@ class UpdateTransferHookInstructionData {
   final Address? programId;
 }
 
-Encoder<UpdateTransferHookInstructionData> getUpdateTransferHookInstructionDataEncoder() {
+Encoder<UpdateTransferHookInstructionData>
+getUpdateTransferHookInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('transferHookDiscriminator', getU8Encoder()),
-    ('programId', getNullableEncoder<Address>(getAddressEncoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'programId',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformEncoder(
@@ -47,25 +54,38 @@ Encoder<UpdateTransferHookInstructionData> getUpdateTransferHookInstructionDataE
   );
 }
 
-Decoder<UpdateTransferHookInstructionData> getUpdateTransferHookInstructionDataDecoder() {
+Decoder<UpdateTransferHookInstructionData>
+getUpdateTransferHookInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('transferHookDiscriminator', getU8Decoder()),
-    ('programId', getNullableDecoder<Address>(getAddressDecoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'programId',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateTransferHookInstructionData(
-      discriminator: map['discriminator']! as int,
-      transferHookDiscriminator: map['transferHookDiscriminator']! as int,
-      programId: map['programId'] as Address?,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UpdateTransferHookInstructionData(
+          discriminator: map['discriminator']! as int,
+          transferHookDiscriminator: map['transferHookDiscriminator']! as int,
+          programId: map['programId'] as Address?,
+        ),
   );
 }
 
-Codec<UpdateTransferHookInstructionData, UpdateTransferHookInstructionData> getUpdateTransferHookInstructionDataCodec() {
-  return combineCodec(getUpdateTransferHookInstructionDataEncoder(), getUpdateTransferHookInstructionDataDecoder());
+Codec<UpdateTransferHookInstructionData, UpdateTransferHookInstructionData>
+getUpdateTransferHookInstructionDataCodec() {
+  return combineCodec(
+    getUpdateTransferHookInstructionDataEncoder(),
+    getUpdateTransferHookInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [UpdateTransferHook] instruction.
@@ -76,20 +96,24 @@ Instruction getUpdateTransferHookInstruction({
   required Address? programId,
 }) {
   final instructionData = UpdateTransferHookInstructionData(
-      programId: programId,
+    programId: programId,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: mint, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getUpdateTransferHookInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [UpdateTransferHook] instruction from raw instruction data.
-UpdateTransferHookInstructionData parseUpdateTransferHookInstruction(Instruction instruction) {
-  return getUpdateTransferHookInstructionDataDecoder().decode(instruction.data!);
+UpdateTransferHookInstructionData parseUpdateTransferHookInstruction(
+  Instruction instruction,
+) {
+  return getUpdateTransferHookInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

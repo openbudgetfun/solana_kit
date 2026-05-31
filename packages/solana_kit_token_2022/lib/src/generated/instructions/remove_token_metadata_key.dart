@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -21,15 +20,17 @@ class RemoveTokenMetadataKeyInstructionData {
     Uint8List? discriminator,
     required this.idempotent,
     required this.key,
-  }) :
-      discriminator = discriminator ?? Uint8List.fromList([234, 18, 32, 56, 89, 141, 37, 181]);
+  }) : discriminator =
+           discriminator ??
+           Uint8List.fromList([234, 18, 32, 56, 89, 141, 37, 181]);
 
   final Uint8List discriminator;
   final bool idempotent;
   final String key;
 }
 
-Encoder<RemoveTokenMetadataKeyInstructionData> getRemoveTokenMetadataKeyInstructionDataEncoder() {
+Encoder<RemoveTokenMetadataKeyInstructionData>
+getRemoveTokenMetadataKeyInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getBytesEncoder()),
     ('idempotent', getBooleanEncoder()),
@@ -46,7 +47,8 @@ Encoder<RemoveTokenMetadataKeyInstructionData> getRemoveTokenMetadataKeyInstruct
   );
 }
 
-Decoder<RemoveTokenMetadataKeyInstructionData> getRemoveTokenMetadataKeyInstructionDataDecoder() {
+Decoder<RemoveTokenMetadataKeyInstructionData>
+getRemoveTokenMetadataKeyInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getBytesDecoder()),
     ('idempotent', getBooleanDecoder()),
@@ -55,16 +57,24 @@ Decoder<RemoveTokenMetadataKeyInstructionData> getRemoveTokenMetadataKeyInstruct
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => RemoveTokenMetadataKeyInstructionData(
-      discriminator: map['discriminator']! as Uint8List,
-      idempotent: map['idempotent']! as bool,
-      key: map['key']! as String,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        RemoveTokenMetadataKeyInstructionData(
+          discriminator: map['discriminator']! as Uint8List,
+          idempotent: map['idempotent']! as bool,
+          key: map['key']! as String,
+        ),
   );
 }
 
-Codec<RemoveTokenMetadataKeyInstructionData, RemoveTokenMetadataKeyInstructionData> getRemoveTokenMetadataKeyInstructionDataCodec() {
-  return combineCodec(getRemoveTokenMetadataKeyInstructionDataEncoder(), getRemoveTokenMetadataKeyInstructionDataDecoder());
+Codec<
+  RemoveTokenMetadataKeyInstructionData,
+  RemoveTokenMetadataKeyInstructionData
+>
+getRemoveTokenMetadataKeyInstructionDataCodec() {
+  return combineCodec(
+    getRemoveTokenMetadataKeyInstructionDataEncoder(),
+    getRemoveTokenMetadataKeyInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [RemoveTokenMetadataKey] instruction.
@@ -76,21 +86,27 @@ Instruction getRemoveTokenMetadataKeyInstruction({
   required String key,
 }) {
   final instructionData = RemoveTokenMetadataKeyInstructionData(
-      idempotent: idempotent ?? false,
-      key: key,
+    idempotent: idempotent ?? false,
+    key: key,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: metadata, role: AccountRole.writable),
-    AccountMeta(address: updateAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: metadata, role: AccountRole.writable),
+      AccountMeta(address: updateAuthority, role: AccountRole.readonlySigner),
     ],
-    data: getRemoveTokenMetadataKeyInstructionDataEncoder().encode(instructionData),
+    data: getRemoveTokenMetadataKeyInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [RemoveTokenMetadataKey] instruction from raw instruction data.
-RemoveTokenMetadataKeyInstructionData parseRemoveTokenMetadataKeyInstruction(Instruction instruction) {
-  return getRemoveTokenMetadataKeyInstructionDataDecoder().decode(instruction.data!);
+RemoveTokenMetadataKeyInstructionData parseRemoveTokenMetadataKeyInstruction(
+  Instruction instruction,
+) {
+  return getRemoveTokenMetadataKeyInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

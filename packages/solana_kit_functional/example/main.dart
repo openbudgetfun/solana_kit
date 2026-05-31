@@ -8,9 +8,7 @@ void main() {
       .pipe((value) => '$value KIT')
       .pipe((value) => '$value SDK');
 
-  final score = 5
-      .pipe((value) => value * 2)
-      .pipe((value) => value + 7);
+  final score = 5.pipe((value) => value * 2).pipe((value) => value + 7);
 
   print(label);
   print('Pipeline score: $score');

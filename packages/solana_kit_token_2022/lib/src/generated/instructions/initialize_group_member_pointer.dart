@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -32,12 +31,27 @@ class InitializeGroupMemberPointerInstructionData {
   final Address? memberAddress;
 }
 
-Encoder<InitializeGroupMemberPointerInstructionData> getInitializeGroupMemberPointerInstructionDataEncoder() {
+Encoder<InitializeGroupMemberPointerInstructionData>
+getInitializeGroupMemberPointerInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('groupMemberPointerDiscriminator', getU8Encoder()),
-    ('authority', getNullableEncoder<Address>(getAddressEncoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
-    ('memberAddress', getNullableEncoder<Address>(getAddressEncoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'authority',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
+    (
+      'memberAddress',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformEncoder(
@@ -51,27 +65,51 @@ Encoder<InitializeGroupMemberPointerInstructionData> getInitializeGroupMemberPoi
   );
 }
 
-Decoder<InitializeGroupMemberPointerInstructionData> getInitializeGroupMemberPointerInstructionDataDecoder() {
+Decoder<InitializeGroupMemberPointerInstructionData>
+getInitializeGroupMemberPointerInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('groupMemberPointerDiscriminator', getU8Decoder()),
-    ('authority', getNullableDecoder<Address>(getAddressDecoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
-    ('memberAddress', getNullableDecoder<Address>(getAddressDecoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'authority',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
+    (
+      'memberAddress',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeGroupMemberPointerInstructionData(
-      discriminator: map['discriminator']! as int,
-      groupMemberPointerDiscriminator: map['groupMemberPointerDiscriminator']! as int,
-      authority: map['authority'] as Address?,
-      memberAddress: map['memberAddress'] as Address?,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializeGroupMemberPointerInstructionData(
+          discriminator: map['discriminator']! as int,
+          groupMemberPointerDiscriminator:
+              map['groupMemberPointerDiscriminator']! as int,
+          authority: map['authority'] as Address?,
+          memberAddress: map['memberAddress'] as Address?,
+        ),
   );
 }
 
-Codec<InitializeGroupMemberPointerInstructionData, InitializeGroupMemberPointerInstructionData> getInitializeGroupMemberPointerInstructionDataCodec() {
-  return combineCodec(getInitializeGroupMemberPointerInstructionDataEncoder(), getInitializeGroupMemberPointerInstructionDataDecoder());
+Codec<
+  InitializeGroupMemberPointerInstructionData,
+  InitializeGroupMemberPointerInstructionData
+>
+getInitializeGroupMemberPointerInstructionDataCodec() {
+  return combineCodec(
+    getInitializeGroupMemberPointerInstructionDataEncoder(),
+    getInitializeGroupMemberPointerInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializeGroupMemberPointer] instruction.
@@ -82,20 +120,23 @@ Instruction getInitializeGroupMemberPointerInstruction({
   required Address? memberAddress,
 }) {
   final instructionData = InitializeGroupMemberPointerInstructionData(
-      authority: authority,
-      memberAddress: memberAddress,
+    authority: authority,
+    memberAddress: memberAddress,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    ],
-    data: getInitializeGroupMemberPointerInstructionDataEncoder().encode(instructionData),
+    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    data: getInitializeGroupMemberPointerInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [InitializeGroupMemberPointer] instruction from raw instruction data.
-InitializeGroupMemberPointerInstructionData parseInitializeGroupMemberPointerInstruction(Instruction instruction) {
-  return getInitializeGroupMemberPointerInstructionDataDecoder().decode(instruction.data!);
+InitializeGroupMemberPointerInstructionData
+parseInitializeGroupMemberPointerInstruction(Instruction instruction) {
+  return getInitializeGroupMemberPointerInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

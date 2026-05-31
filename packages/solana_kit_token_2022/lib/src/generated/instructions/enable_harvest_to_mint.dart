@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -28,7 +27,8 @@ class EnableHarvestToMintInstructionData {
   final int confidentialTransferFeeDiscriminator;
 }
 
-Encoder<EnableHarvestToMintInstructionData> getEnableHarvestToMintInstructionDataEncoder() {
+Encoder<EnableHarvestToMintInstructionData>
+getEnableHarvestToMintInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferFeeDiscriminator', getU8Encoder()),
@@ -38,12 +38,14 @@ Encoder<EnableHarvestToMintInstructionData> getEnableHarvestToMintInstructionDat
     structEncoder,
     (EnableHarvestToMintInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialTransferFeeDiscriminator': value.confidentialTransferFeeDiscriminator,
+      'confidentialTransferFeeDiscriminator':
+          value.confidentialTransferFeeDiscriminator,
     },
   );
 }
 
-Decoder<EnableHarvestToMintInstructionData> getEnableHarvestToMintInstructionDataDecoder() {
+Decoder<EnableHarvestToMintInstructionData>
+getEnableHarvestToMintInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferFeeDiscriminator', getU8Decoder()),
@@ -51,15 +53,21 @@ Decoder<EnableHarvestToMintInstructionData> getEnableHarvestToMintInstructionDat
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => EnableHarvestToMintInstructionData(
-      discriminator: map['discriminator']! as int,
-      confidentialTransferFeeDiscriminator: map['confidentialTransferFeeDiscriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        EnableHarvestToMintInstructionData(
+          discriminator: map['discriminator']! as int,
+          confidentialTransferFeeDiscriminator:
+              map['confidentialTransferFeeDiscriminator']! as int,
+        ),
   );
 }
 
-Codec<EnableHarvestToMintInstructionData, EnableHarvestToMintInstructionData> getEnableHarvestToMintInstructionDataCodec() {
-  return combineCodec(getEnableHarvestToMintInstructionDataEncoder(), getEnableHarvestToMintInstructionDataDecoder());
+Codec<EnableHarvestToMintInstructionData, EnableHarvestToMintInstructionData>
+getEnableHarvestToMintInstructionDataCodec() {
+  return combineCodec(
+    getEnableHarvestToMintInstructionDataEncoder(),
+    getEnableHarvestToMintInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [EnableHarvestToMint] instruction.
@@ -67,23 +75,26 @@ Instruction getEnableHarvestToMintInstruction({
   required Address programAddress,
   required Address mint,
   required Address authority,
-
 }) {
-  final instructionData = EnableHarvestToMintInstructionData(
-
-  );
+  final instructionData = EnableHarvestToMintInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: mint, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getEnableHarvestToMintInstructionDataEncoder().encode(instructionData),
+    data: getEnableHarvestToMintInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [EnableHarvestToMint] instruction from raw instruction data.
-EnableHarvestToMintInstructionData parseEnableHarvestToMintInstruction(Instruction instruction) {
-  return getEnableHarvestToMintInstructionDataDecoder().decode(instruction.data!);
+EnableHarvestToMintInstructionData parseEnableHarvestToMintInstruction(
+  Instruction instruction,
+) {
+  return getEnableHarvestToMintInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -16,14 +15,13 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class InitializeNonTransferableMintInstructionData {
-  const InitializeNonTransferableMintInstructionData({
-    this.discriminator = 32,
-  });
+  const InitializeNonTransferableMintInstructionData({this.discriminator = 32});
 
   final int discriminator;
 }
 
-Encoder<InitializeNonTransferableMintInstructionData> getInitializeNonTransferableMintInstructionDataEncoder() {
+Encoder<InitializeNonTransferableMintInstructionData>
+getInitializeNonTransferableMintInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,43 +34,52 @@ Encoder<InitializeNonTransferableMintInstructionData> getInitializeNonTransferab
   );
 }
 
-Decoder<InitializeNonTransferableMintInstructionData> getInitializeNonTransferableMintInstructionDataDecoder() {
+Decoder<InitializeNonTransferableMintInstructionData>
+getInitializeNonTransferableMintInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeNonTransferableMintInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializeNonTransferableMintInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<InitializeNonTransferableMintInstructionData, InitializeNonTransferableMintInstructionData> getInitializeNonTransferableMintInstructionDataCodec() {
-  return combineCodec(getInitializeNonTransferableMintInstructionDataEncoder(), getInitializeNonTransferableMintInstructionDataDecoder());
+Codec<
+  InitializeNonTransferableMintInstructionData,
+  InitializeNonTransferableMintInstructionData
+>
+getInitializeNonTransferableMintInstructionDataCodec() {
+  return combineCodec(
+    getInitializeNonTransferableMintInstructionDataEncoder(),
+    getInitializeNonTransferableMintInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializeNonTransferableMint] instruction.
 Instruction getInitializeNonTransferableMintInstruction({
   required Address programAddress,
   required Address mint,
-
 }) {
-  final instructionData = InitializeNonTransferableMintInstructionData(
-
-  );
+  final instructionData = InitializeNonTransferableMintInstructionData();
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    ],
-    data: getInitializeNonTransferableMintInstructionDataEncoder().encode(instructionData),
+    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    data: getInitializeNonTransferableMintInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [InitializeNonTransferableMint] instruction from raw instruction data.
-InitializeNonTransferableMintInstructionData parseInitializeNonTransferableMintInstruction(Instruction instruction) {
-  return getInitializeNonTransferableMintInstructionDataDecoder().decode(instruction.data!);
+InitializeNonTransferableMintInstructionData
+parseInitializeNonTransferableMintInstruction(Instruction instruction) {
+  return getInitializeNonTransferableMintInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

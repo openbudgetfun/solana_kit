@@ -13,10 +13,7 @@ Future<void> main() async {
             execute: (config) => config.transport(
               RpcTransportConfig(
                 payload: createRpcMessage(
-                  RpcRequest<List<Object?>>(
-                    methodName: 'ping',
-                    params: params,
-                  ),
+                  RpcRequest<List<Object?>>(methodName: 'ping', params: params),
                 ),
                 signal: config.signal,
               ),

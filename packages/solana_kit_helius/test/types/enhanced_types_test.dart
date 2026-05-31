@@ -29,11 +29,7 @@ void main() {
 
     expectJsonRoundTrip(
       'NativeTransfer roundtrips',
-      {
-        'fromUserAccount': 'from',
-        'toUserAccount': 'to',
-        'amount': 10,
-      },
+      {'fromUserAccount': 'from', 'toUserAccount': 'to', 'amount': 10},
       NativeTransfer.fromJson,
       (value) => value.toJson(),
     );
@@ -88,7 +84,11 @@ void main() {
     expectJsonRoundTrip(
       'InnerInstruction roundtrips',
       {
-        'accounts': ['a', 1, {'nested': true}],
+        'accounts': [
+          'a',
+          1,
+          {'nested': true},
+        ],
         'data': '010203',
         'programId': 'program-1',
         'innerInstructions': {'depth': 2},
@@ -109,11 +109,7 @@ void main() {
         'slot': 42,
         'timestamp': 1234567890,
         'nativeTransfers': [
-          {
-            'fromUserAccount': 'from',
-            'toUserAccount': 'to',
-            'amount': 10,
-          },
+          {'fromUserAccount': 'from', 'toUserAccount': 'to', 'amount': 10},
         ],
         'tokenTransfers': [
           {
@@ -143,7 +139,11 @@ void main() {
         ],
         'instructions': [
           {
-            'accounts': ['a', 1, {'nested': true}],
+            'accounts': [
+              'a',
+              1,
+              {'nested': true},
+            ],
             'data': '010203',
             'programId': 'program-1',
             'innerInstructions': {'depth': 2},

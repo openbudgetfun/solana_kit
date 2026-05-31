@@ -10,16 +10,14 @@ void main() {
     });
 
     test('toJson includes commitment when set', () {
-      const config =
-          GetLatestBlockhashConfig(commitment: Commitment.confirmed);
+      const config = GetLatestBlockhashConfig(commitment: Commitment.confirmed);
       final json = config.toJson();
       expect(json, hasLength(1));
       expect(json['commitment'], 'confirmed');
     });
 
     test('toJson includes minContextSlot when set', () {
-      final config =
-          GetLatestBlockhashConfig(minContextSlot: BigInt.from(33));
+      final config = GetLatestBlockhashConfig(minContextSlot: BigInt.from(33));
       final json = config.toJson();
       expect(json, hasLength(1));
       expect(json['minContextSlot'], BigInt.from(33));

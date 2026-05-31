@@ -1,4 +1,3 @@
-
 import 'package:solana_kit_compute_budget/solana_kit_compute_budget.dart';
 import 'package:test/test.dart';
 
@@ -100,9 +99,7 @@ void main() {
       // max u64
       final maxU64 = BigInt.parse('18446744073709551615');
       final codec = getSetComputeUnitPriceInstructionDataCodec();
-      final data = SetComputeUnitPriceInstructionData(
-        microLamports: maxU64,
-      );
+      final data = SetComputeUnitPriceInstructionData(microLamports: maxU64);
       final decoded = codec.decode(codec.encode(data));
       expect(decoded.microLamports, equals(maxU64));
     });
@@ -222,8 +219,7 @@ void main() {
     });
 
     test('toString includes field values', () {
-      const data =
-          RequestUnitsInstructionData(units: 500, additionalFee: 100);
+      const data = RequestUnitsInstructionData(units: 500, additionalFee: 100);
       final str = data.toString();
       expect(str, contains('RequestUnitsInstructionData'));
       expect(str, contains('500'));
@@ -267,8 +263,7 @@ void main() {
     });
 
     test('encodes discriminator 4 at offset 0', () {
-      final encoder =
-          getSetLoadedAccountsDataSizeLimitInstructionDataEncoder();
+      final encoder = getSetLoadedAccountsDataSizeLimitInstructionDataEncoder();
       final bytes = encoder.encode(
         const SetLoadedAccountsDataSizeLimitInstructionData(
           accountDataSizeLimit: 100,
@@ -289,11 +284,11 @@ void main() {
     });
 
     test('toString includes field values', () {
-      const data =
-          SetLoadedAccountsDataSizeLimitInstructionData(accountDataSizeLimit: 512);
+      const data = SetLoadedAccountsDataSizeLimitInstructionData(
+        accountDataSizeLimit: 512,
+      );
       final str = data.toString();
-      expect(str,
-          contains('SetLoadedAccountsDataSizeLimitInstructionData'));
+      expect(str, contains('SetLoadedAccountsDataSizeLimitInstructionData'));
       expect(str, contains('512'));
     });
 

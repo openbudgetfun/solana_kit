@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -36,7 +35,8 @@ class ConfigureConfidentialTransferAccountInstructionData {
   final int proofInstructionOffset;
 }
 
-Encoder<ConfigureConfidentialTransferAccountInstructionData> getConfigureConfidentialTransferAccountInstructionDataEncoder() {
+Encoder<ConfigureConfidentialTransferAccountInstructionData>
+getConfigureConfidentialTransferAccountInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferDiscriminator', getU8Encoder()),
@@ -47,17 +47,21 @@ Encoder<ConfigureConfidentialTransferAccountInstructionData> getConfigureConfide
 
   return transformEncoder(
     structEncoder,
-    (ConfigureConfidentialTransferAccountInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'confidentialTransferDiscriminator': value.confidentialTransferDiscriminator,
-      'decryptableZeroBalance': value.decryptableZeroBalance,
-      'maximumPendingBalanceCreditCounter': value.maximumPendingBalanceCreditCounter,
-      'proofInstructionOffset': value.proofInstructionOffset,
-    },
+    (ConfigureConfidentialTransferAccountInstructionData value) =>
+        <String, Object?>{
+          'discriminator': value.discriminator,
+          'confidentialTransferDiscriminator':
+              value.confidentialTransferDiscriminator,
+          'decryptableZeroBalance': value.decryptableZeroBalance,
+          'maximumPendingBalanceCreditCounter':
+              value.maximumPendingBalanceCreditCounter,
+          'proofInstructionOffset': value.proofInstructionOffset,
+        },
   );
 }
 
-Decoder<ConfigureConfidentialTransferAccountInstructionData> getConfigureConfidentialTransferAccountInstructionDataDecoder() {
+Decoder<ConfigureConfidentialTransferAccountInstructionData>
+getConfigureConfidentialTransferAccountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferDiscriminator', getU8Decoder()),
@@ -68,18 +72,29 @@ Decoder<ConfigureConfidentialTransferAccountInstructionData> getConfigureConfide
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ConfigureConfidentialTransferAccountInstructionData(
-      discriminator: map['discriminator']! as int,
-      confidentialTransferDiscriminator: map['confidentialTransferDiscriminator']! as int,
-      decryptableZeroBalance: map['decryptableZeroBalance']! as DecryptableBalance,
-      maximumPendingBalanceCreditCounter: map['maximumPendingBalanceCreditCounter']! as BigInt,
-      proofInstructionOffset: map['proofInstructionOffset']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        ConfigureConfidentialTransferAccountInstructionData(
+          discriminator: map['discriminator']! as int,
+          confidentialTransferDiscriminator:
+              map['confidentialTransferDiscriminator']! as int,
+          decryptableZeroBalance:
+              map['decryptableZeroBalance']! as DecryptableBalance,
+          maximumPendingBalanceCreditCounter:
+              map['maximumPendingBalanceCreditCounter']! as BigInt,
+          proofInstructionOffset: map['proofInstructionOffset']! as int,
+        ),
   );
 }
 
-Codec<ConfigureConfidentialTransferAccountInstructionData, ConfigureConfidentialTransferAccountInstructionData> getConfigureConfidentialTransferAccountInstructionDataCodec() {
-  return combineCodec(getConfigureConfidentialTransferAccountInstructionDataEncoder(), getConfigureConfidentialTransferAccountInstructionDataDecoder());
+Codec<
+  ConfigureConfidentialTransferAccountInstructionData,
+  ConfigureConfidentialTransferAccountInstructionData
+>
+getConfigureConfidentialTransferAccountInstructionDataCodec() {
+  return combineCodec(
+    getConfigureConfidentialTransferAccountInstructionDataEncoder(),
+    getConfigureConfidentialTransferAccountInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [ConfigureConfidentialTransferAccount] instruction.
@@ -95,25 +110,33 @@ Instruction getConfigureConfidentialTransferAccountInstruction({
   required int proofInstructionOffset,
 }) {
   final instructionData = ConfigureConfidentialTransferAccountInstructionData(
-      decryptableZeroBalance: decryptableZeroBalance,
-      maximumPendingBalanceCreditCounter: maximumPendingBalanceCreditCounter,
-      proofInstructionOffset: proofInstructionOffset,
+    decryptableZeroBalance: decryptableZeroBalance,
+    maximumPendingBalanceCreditCounter: maximumPendingBalanceCreditCounter,
+    proofInstructionOffset: proofInstructionOffset,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: token, role: AccountRole.writable),
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    AccountMeta(address: instructionsSysvarOrContextState, role: AccountRole.readonly),
-    if (record != null) AccountMeta(address: record, role: AccountRole.readonly),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: token, role: AccountRole.writable),
+      AccountMeta(address: mint, role: AccountRole.readonly),
+      AccountMeta(
+        address: instructionsSysvarOrContextState,
+        role: AccountRole.readonly,
+      ),
+      if (record != null)
+        AccountMeta(address: record, role: AccountRole.readonly),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getConfigureConfidentialTransferAccountInstructionDataEncoder().encode(instructionData),
+    data: getConfigureConfidentialTransferAccountInstructionDataEncoder()
+        .encode(instructionData),
   );
 }
 
 /// Parses a [ConfigureConfidentialTransferAccount] instruction from raw instruction data.
-ConfigureConfidentialTransferAccountInstructionData parseConfigureConfidentialTransferAccountInstruction(Instruction instruction) {
-  return getConfigureConfidentialTransferAccountInstructionDataDecoder().decode(instruction.data!);
+ConfigureConfidentialTransferAccountInstructionData
+parseConfigureConfidentialTransferAccountInstruction(Instruction instruction) {
+  return getConfigureConfidentialTransferAccountInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

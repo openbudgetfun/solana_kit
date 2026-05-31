@@ -17,10 +17,9 @@ Future<MaybeEncodedAccount> fetchEncodedAccount(
   Address address, {
   FetchAccountConfig? config,
 }) {
-  return createSolanaAccountClient(rpc).fetchEncodedAccount(
-    address,
-    config: config,
-  );
+  return createSolanaAccountClient(
+    rpc,
+  ).fetchEncodedAccount(address, config: config);
 }
 
 /// Fetches an array of [MaybeEncodedAccount]s from the provided RPC client
@@ -40,10 +39,9 @@ Future<List<MaybeEncodedAccount>> fetchEncodedAccounts(
   List<Address> addresses, {
   FetchAccountConfig? config,
 }) {
-  return createSolanaAccountClient(rpc).fetchEncodedAccounts(
-    addresses,
-    config: config,
-  );
+  return createSolanaAccountClient(
+    rpc,
+  ).fetchEncodedAccounts(addresses, config: config);
 }
 
 /// Fetches a [MaybeAccount] from the provided RPC client and address by
@@ -60,10 +58,9 @@ Future<MaybeAccount<Object>> fetchJsonParsedAccount(
   Address address, {
   FetchAccountConfig? config,
 }) {
-  return createSolanaAccountClient(rpc).fetchJsonParsedAccount(
-    address,
-    config: config,
-  );
+  return createSolanaAccountClient(
+    rpc,
+  ).fetchJsonParsedAccount(address, config: config);
 }
 
 /// Fetches an array of [MaybeAccount]s from the provided RPC client and
@@ -84,8 +81,7 @@ Future<List<MaybeAccount<Object>>> fetchJsonParsedAccounts(
   List<Address> addresses, {
   FetchAccountConfig? config,
 }) {
-  return createSolanaAccountClient(rpc).fetchJsonParsedAccounts(
-    addresses,
-    config: config,
-  );
+  return createSolanaAccountClient(
+    rpc,
+  ).fetchJsonParsedAccounts(addresses, config: config);
 }

@@ -82,17 +82,13 @@ void main() {
 
     test('equality with different addresses', () {
       const info1 = JsonParsedAddressLookupTableInfo(
-        addresses: [
-          Address('F1Vc6AGoxXLwGB7QV8f4So3C5d8SXEk3KKGHxKGEJ8qn'),
-        ],
+        addresses: [Address('F1Vc6AGoxXLwGB7QV8f4So3C5d8SXEk3KKGHxKGEJ8qn')],
         deactivationSlot: StringifiedBigInt('0'),
         lastExtendedSlot: StringifiedBigInt('0'),
         lastExtendedSlotStartIndex: 0,
       );
       const info2 = JsonParsedAddressLookupTableInfo(
-        addresses: [
-          Address('FWscgV4VDSsMxkQg7jZ4HksqjLyadJS5RiCnAVZv2se9'),
-        ],
+        addresses: [Address('FWscgV4VDSsMxkQg7jZ4HksqjLyadJS5RiCnAVZv2se9')],
         deactivationSlot: StringifiedBigInt('0'),
         lastExtendedSlot: StringifiedBigInt('0'),
         lastExtendedSlotStartIndex: 0,

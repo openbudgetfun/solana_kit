@@ -139,10 +139,7 @@ void main() {
       }
     });
     test('fromJson throws on unknown value', () {
-      expect(
-        () => UiTransactionEncoding.fromJson('bad'),
-        throwsArgumentError,
-      );
+      expect(() => UiTransactionEncoding.fromJson('bad'), throwsArgumentError);
     });
   });
 

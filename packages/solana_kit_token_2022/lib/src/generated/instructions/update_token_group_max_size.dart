@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -19,14 +18,16 @@ class UpdateTokenGroupMaxSizeInstructionData {
   UpdateTokenGroupMaxSizeInstructionData({
     Uint8List? discriminator,
     required this.maxSize,
-  }) :
-      discriminator = discriminator ?? Uint8List.fromList([108, 37, 171, 143, 248, 30, 18, 110]);
+  }) : discriminator =
+           discriminator ??
+           Uint8List.fromList([108, 37, 171, 143, 248, 30, 18, 110]);
 
   final Uint8List discriminator;
   final BigInt maxSize;
 }
 
-Encoder<UpdateTokenGroupMaxSizeInstructionData> getUpdateTokenGroupMaxSizeInstructionDataEncoder() {
+Encoder<UpdateTokenGroupMaxSizeInstructionData>
+getUpdateTokenGroupMaxSizeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getBytesEncoder()),
     ('maxSize', getU64Encoder()),
@@ -41,7 +42,8 @@ Encoder<UpdateTokenGroupMaxSizeInstructionData> getUpdateTokenGroupMaxSizeInstru
   );
 }
 
-Decoder<UpdateTokenGroupMaxSizeInstructionData> getUpdateTokenGroupMaxSizeInstructionDataDecoder() {
+Decoder<UpdateTokenGroupMaxSizeInstructionData>
+getUpdateTokenGroupMaxSizeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getBytesDecoder()),
     ('maxSize', getU64Decoder()),
@@ -49,15 +51,23 @@ Decoder<UpdateTokenGroupMaxSizeInstructionData> getUpdateTokenGroupMaxSizeInstru
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateTokenGroupMaxSizeInstructionData(
-      discriminator: map['discriminator']! as Uint8List,
-      maxSize: map['maxSize']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UpdateTokenGroupMaxSizeInstructionData(
+          discriminator: map['discriminator']! as Uint8List,
+          maxSize: map['maxSize']! as BigInt,
+        ),
   );
 }
 
-Codec<UpdateTokenGroupMaxSizeInstructionData, UpdateTokenGroupMaxSizeInstructionData> getUpdateTokenGroupMaxSizeInstructionDataCodec() {
-  return combineCodec(getUpdateTokenGroupMaxSizeInstructionDataEncoder(), getUpdateTokenGroupMaxSizeInstructionDataDecoder());
+Codec<
+  UpdateTokenGroupMaxSizeInstructionData,
+  UpdateTokenGroupMaxSizeInstructionData
+>
+getUpdateTokenGroupMaxSizeInstructionDataCodec() {
+  return combineCodec(
+    getUpdateTokenGroupMaxSizeInstructionDataEncoder(),
+    getUpdateTokenGroupMaxSizeInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [UpdateTokenGroupMaxSize] instruction.
@@ -68,20 +78,26 @@ Instruction getUpdateTokenGroupMaxSizeInstruction({
   required BigInt maxSize,
 }) {
   final instructionData = UpdateTokenGroupMaxSizeInstructionData(
-      maxSize: maxSize,
+    maxSize: maxSize,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: group, role: AccountRole.writable),
-    AccountMeta(address: updateAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: group, role: AccountRole.writable),
+      AccountMeta(address: updateAuthority, role: AccountRole.readonlySigner),
     ],
-    data: getUpdateTokenGroupMaxSizeInstructionDataEncoder().encode(instructionData),
+    data: getUpdateTokenGroupMaxSizeInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [UpdateTokenGroupMaxSize] instruction from raw instruction data.
-UpdateTokenGroupMaxSizeInstructionData parseUpdateTokenGroupMaxSizeInstruction(Instruction instruction) {
-  return getUpdateTokenGroupMaxSizeInstructionDataDecoder().decode(instruction.data!);
+UpdateTokenGroupMaxSizeInstructionData parseUpdateTokenGroupMaxSizeInstruction(
+  Instruction instruction,
+) {
+  return getUpdateTokenGroupMaxSizeInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

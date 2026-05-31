@@ -60,10 +60,7 @@ SolanaError createSolanaError(
   Map<String, Object?> context = const {},
   Object? cause,
 }) {
-  return SolanaError(
-    code,
-    createSolanaErrorContext(context, cause: cause),
-  );
+  return SolanaError(code, createSolanaErrorContext(context, cause: cause));
 }
 
 /// Creates a [SolanaError] that wraps an underlying [cause].

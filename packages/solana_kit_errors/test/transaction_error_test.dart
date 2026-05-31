@@ -57,10 +57,7 @@ void main() {
         'UnknownFutureError': 'some context',
       });
       expect(error.context['errorName'], 'UnknownFutureError');
-      expect(
-        error.context['transactionErrorContext'],
-        'some context',
-      );
+      expect(error.context['transactionErrorContext'], 'some context');
     });
 
     test('converts unknown transaction error without context', () {

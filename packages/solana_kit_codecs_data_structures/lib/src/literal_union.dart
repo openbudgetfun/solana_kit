@@ -1,4 +1,3 @@
-
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
@@ -33,11 +32,7 @@ Decoder<Object?> getLiteralUnionDecoder(
   Decoder<num>? size,
 }) {
   final discriminator = size ?? getU8Decoder();
-  return transformDecoder<num, Object?>(discriminator, (
-    index,
-    bytes,
-    offset,
-  ) {
+  return transformDecoder<num, Object?>(discriminator, (index, bytes, offset) {
     final i = index.toInt();
     if (i < 0 || i >= variants.length) {
       throw SolanaError(

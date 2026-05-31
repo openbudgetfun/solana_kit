@@ -61,10 +61,7 @@ class SensitiveString {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is SensitiveString &&
-          _constantTimeBytesEqual(
-            utf8.encode(value),
-            utf8.encode(other.value),
-          );
+          _constantTimeBytesEqual(utf8.encode(value), utf8.encode(other.value));
 
   @override
   int get hashCode => value.hashCode;

@@ -5,6 +5,5 @@
 /// Mirrors the upstream Codama-generated TypeScript at `js@v0.15.0`.
 library;
 
-
 export 'instructions/instructions.dart';
 export 'programs/programs.dart';

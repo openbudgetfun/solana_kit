@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -28,7 +27,8 @@ class HarvestWithheldTokensToMintInstructionData {
   final int transferFeeDiscriminator;
 }
 
-Encoder<HarvestWithheldTokensToMintInstructionData> getHarvestWithheldTokensToMintInstructionDataEncoder() {
+Encoder<HarvestWithheldTokensToMintInstructionData>
+getHarvestWithheldTokensToMintInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('transferFeeDiscriminator', getU8Encoder()),
@@ -43,7 +43,8 @@ Encoder<HarvestWithheldTokensToMintInstructionData> getHarvestWithheldTokensToMi
   );
 }
 
-Decoder<HarvestWithheldTokensToMintInstructionData> getHarvestWithheldTokensToMintInstructionDataDecoder() {
+Decoder<HarvestWithheldTokensToMintInstructionData>
+getHarvestWithheldTokensToMintInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('transferFeeDiscriminator', getU8Decoder()),
@@ -51,37 +52,45 @@ Decoder<HarvestWithheldTokensToMintInstructionData> getHarvestWithheldTokensToMi
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => HarvestWithheldTokensToMintInstructionData(
-      discriminator: map['discriminator']! as int,
-      transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        HarvestWithheldTokensToMintInstructionData(
+          discriminator: map['discriminator']! as int,
+          transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
+        ),
   );
 }
 
-Codec<HarvestWithheldTokensToMintInstructionData, HarvestWithheldTokensToMintInstructionData> getHarvestWithheldTokensToMintInstructionDataCodec() {
-  return combineCodec(getHarvestWithheldTokensToMintInstructionDataEncoder(), getHarvestWithheldTokensToMintInstructionDataDecoder());
+Codec<
+  HarvestWithheldTokensToMintInstructionData,
+  HarvestWithheldTokensToMintInstructionData
+>
+getHarvestWithheldTokensToMintInstructionDataCodec() {
+  return combineCodec(
+    getHarvestWithheldTokensToMintInstructionDataEncoder(),
+    getHarvestWithheldTokensToMintInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [HarvestWithheldTokensToMint] instruction.
 Instruction getHarvestWithheldTokensToMintInstruction({
   required Address programAddress,
   required Address mint,
-
 }) {
-  final instructionData = HarvestWithheldTokensToMintInstructionData(
-
-  );
+  final instructionData = HarvestWithheldTokensToMintInstructionData();
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    ],
-    data: getHarvestWithheldTokensToMintInstructionDataEncoder().encode(instructionData),
+    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    data: getHarvestWithheldTokensToMintInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [HarvestWithheldTokensToMint] instruction from raw instruction data.
-HarvestWithheldTokensToMintInstructionData parseHarvestWithheldTokensToMintInstruction(Instruction instruction) {
-  return getHarvestWithheldTokensToMintInstructionDataDecoder().decode(instruction.data!);
+HarvestWithheldTokensToMintInstructionData
+parseHarvestWithheldTokensToMintInstruction(Instruction instruction) {
+  return getHarvestWithheldTokensToMintInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

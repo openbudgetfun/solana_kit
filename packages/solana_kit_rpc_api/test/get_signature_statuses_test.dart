@@ -17,16 +17,16 @@ void main() {
     });
 
     test('toJson includes searchTransactionHistory when set to true', () {
-      const config =
-          GetSignatureStatusesConfig(searchTransactionHistory: true);
+      const config = GetSignatureStatusesConfig(searchTransactionHistory: true);
       final json = config.toJson();
       expect(json, hasLength(1));
       expect(json['searchTransactionHistory'], true);
     });
 
     test('toJson includes searchTransactionHistory when set to false', () {
-      const config =
-          GetSignatureStatusesConfig(searchTransactionHistory: false);
+      const config = GetSignatureStatusesConfig(
+        searchTransactionHistory: false,
+      );
       final json = config.toJson();
       expect(json, hasLength(1));
       expect(json['searchTransactionHistory'], false);
@@ -40,17 +40,19 @@ void main() {
       expect(params[0], [sigA.value, sigB.value]);
     });
 
-    test('returns list with signature array and config when config provided', () {
-      final params = getSignatureStatusesParams(
-        [sigA],
-        const GetSignatureStatusesConfig(searchTransactionHistory: true),
-      );
-      expect(params, hasLength(2));
-      expect(params[0], [sigA.value]);
-      expect(params[1], isA<Map<String, Object?>>());
-      final config = params[1]! as Map<String, Object?>;
-      expect(config['searchTransactionHistory'], true);
-    });
+    test(
+      'returns list with signature array and config when config provided',
+      () {
+        final params = getSignatureStatusesParams([
+          sigA,
+        ], const GetSignatureStatusesConfig(searchTransactionHistory: true));
+        expect(params, hasLength(2));
+        expect(params[0], [sigA.value]);
+        expect(params[1], isA<Map<String, Object?>>());
+        final config = params[1]! as Map<String, Object?>;
+        expect(config['searchTransactionHistory'], true);
+      },
+    );
 
     test('handles empty signature list', () {
       final params = getSignatureStatusesParams([]);

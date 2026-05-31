@@ -21,10 +21,7 @@ void main() {
     });
 
     test('re-exports data structure codecs', () {
-      final codec = getArrayCodec(
-        getU8Codec(),
-        size: const FixedArraySize(2),
-      );
+      final codec = getArrayCodec(getU8Codec(), size: const FixedArraySize(2));
       expect(codec.decode(Uint8List.fromList([1, 2])), [1, 2]);
     });
 

@@ -12,9 +12,7 @@ void main() {
 
   group('createSolanaRpc', () {
     test('returns an Rpc instance with api and transport', () {
-      final rpc = createSolanaRpc(
-        url: 'https://api.devnet.solana.com',
-      );
+      final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
       expect(rpc, isA<Rpc>());
       expect(rpc.api, isNotNull);
       expect(rpc.transport, isNotNull);
@@ -74,30 +72,33 @@ void main() {
       expect(response.result, isA<Map<String, Object?>>());
     });
 
-    test('getAccountInfoValue returns a typed SolanaRpcResponse wrapper', () async {
-      final response = await _captureCall(
-        (rpc) => rpc
-            .getAccountInfoValue(
-              testAddress,
-              const GetAccountInfoConfig(encoding: AccountEncoding.base64),
-            )
-            .send(),
-        rpcResult: {
-          'context': {'slot': 5},
-          'value': {
-            'data': ['AAAA', 'base64'],
-            'executable': false,
-            'lamports': 1,
-            'owner': '11111111111111111111111111111111',
-            'space': 0,
+    test(
+      'getAccountInfoValue returns a typed SolanaRpcResponse wrapper',
+      () async {
+        final response = await _captureCall(
+          (rpc) => rpc
+              .getAccountInfoValue(
+                testAddress,
+                const GetAccountInfoConfig(encoding: AccountEncoding.base64),
+              )
+              .send(),
+          rpcResult: {
+            'context': {'slot': 5},
+            'value': {
+              'data': ['AAAA', 'base64'],
+              'executable': false,
+              'lamports': 1,
+              'owner': '11111111111111111111111111111111',
+              'space': 0,
+            },
           },
-        },
-      );
+        );
 
-      expect(response.payload['method'], 'getAccountInfo');
-      expect(response.result.context.slot, BigInt.from(5));
-      expect(response.result.value, isA<Map<String, Object?>>());
-    });
+        expect(response.payload['method'], 'getAccountInfo');
+        expect(response.result.context.slot, BigInt.from(5));
+        expect(response.result.value, isA<Map<String, Object?>>());
+      },
+    );
 
     test('getBalance sends method-specific params', () async {
       final response = await _captureCall(
@@ -229,9 +230,7 @@ void main() {
       final response = await _captureCall(
         (rpc) => rpc
             .getLatestBlockhashValue(
-              const GetLatestBlockhashConfig(
-                commitment: Commitment.confirmed,
-              ),
+              const GetLatestBlockhashConfig(commitment: Commitment.confirmed),
             )
             .send(),
         rpcResult: {
@@ -248,24 +247,24 @@ void main() {
       expect(
         response.result.value,
         LatestBlockhashValue(
-          blockhash: const Blockhash('J4yED2jcMAHyQUg61DBmm4njmEydUr2WqrV9cdEcDDgL'),
+          blockhash: const Blockhash(
+            'J4yED2jcMAHyQUg61DBmm4njmEydUr2WqrV9cdEcDDgL',
+          ),
           lastValidBlockHeight: BigInt.from(10),
         ),
       );
     });
 
     test('getMultipleAccounts sends method-specific params', () async {
-      const secondAddress = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+      const secondAddress = Address(
+        'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+      );
 
       final response = await _captureCall(
-        (rpc) => rpc
-            .getMultipleAccounts(
-              [testAddress, secondAddress],
-              const GetMultipleAccountsConfig(
-                encoding: AccountEncoding.base64,
-              ),
-            )
-            .send(),
+        (rpc) => rpc.getMultipleAccounts(
+          [testAddress, secondAddress],
+          const GetMultipleAccountsConfig(encoding: AccountEncoding.base64),
+        ).send(),
         rpcResult: {
           'context': {'slot': 1},
           'value': [null, null],
@@ -281,17 +280,15 @@ void main() {
     });
 
     test('getMultipleAccountsValue returns typed list values', () async {
-      const secondAddress = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+      const secondAddress = Address(
+        'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+      );
 
       final response = await _captureCall(
-        (rpc) => rpc
-            .getMultipleAccountsValue(
-              [testAddress, secondAddress],
-              const GetMultipleAccountsConfig(
-                encoding: AccountEncoding.base64,
-              ),
-            )
-            .send(),
+        (rpc) => rpc.getMultipleAccountsValue(
+          [testAddress, secondAddress],
+          const GetMultipleAccountsConfig(encoding: AccountEncoding.base64),
+        ).send(),
         rpcResult: {
           'context': {'slot': 11},
           'value': [
@@ -394,10 +391,7 @@ void main() {
     test('getAccountInfoValue handles result with non-Map context', () async {
       final response = await _captureCall(
         (rpc) => rpc.getAccountInfoValue(testAddress).send(),
-        rpcResult: {
-          'context': 'not-a-map',
-          'value': null,
-        },
+        rpcResult: {'context': 'not-a-map', 'value': null},
       );
 
       expect(response.result.value, isNull);

@@ -40,8 +40,9 @@ void main() {
     });
 
     test('toJson includes minContextSlot when set', () {
-      final config =
-          GetSignaturesForAddressConfig(minContextSlot: BigInt.from(55));
+      final config = GetSignaturesForAddressConfig(
+        minContextSlot: BigInt.from(55),
+      );
       final json = config.toJson();
       expect(json['minContextSlot'], BigInt.from(55));
     });

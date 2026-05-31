@@ -6,10 +6,7 @@ void main() {
   final payload = <String, Object?>{
     'z': true,
     'a': 1,
-    'nested': <String, Object?>{
-      'b': 2,
-      'a': 1,
-    },
+    'nested': <String, Object?>{'b': 2, 'a': 1},
   };
 
   final stableJson = fastStableStringify(payload);

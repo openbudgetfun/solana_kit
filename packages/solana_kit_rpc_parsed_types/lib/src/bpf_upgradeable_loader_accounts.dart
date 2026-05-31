@@ -37,8 +37,7 @@ class JsonParsedBpfProgramInfo {
   int get hashCode => Object.hash(runtimeType, programData);
 
   @override
-  String toString() =>
-      'JsonParsedBpfProgramInfo(programData: $programData)';
+  String toString() => 'JsonParsedBpfProgramInfo(programData: $programData)';
 }
 
 /// A parsed BPF Upgradeable Loader 'programData' variant.

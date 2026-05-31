@@ -181,9 +181,7 @@ void main() {
       'GetMultipleNewAddressProofsRequest': {
         'addresses': ['addr-1', 'addr-2'],
       },
-      'GetTransactionWithCompressionInfoRequest': {
-        'signature': 'sig-1',
-      },
+      'GetTransactionWithCompressionInfoRequest': {'signature': 'sig-1'},
       'GetValidityProofRequest': {
         'hashes': ['hash-1', 'hash-2'],
         'newAddresses': ['addr-1', 'addr-2'],
@@ -197,14 +195,16 @@ void main() {
       test('${entry.key} roundtrips', () {
         final json = entry.value;
         final actual = switch (entry.key) {
-          'GetCompressedAccountRequest' =>
-            GetCompressedAccountRequest.fromJson(json).toJson(),
+          'GetCompressedAccountRequest' => GetCompressedAccountRequest.fromJson(
+            json,
+          ).toJson(),
           'GetCompressedAccountProofRequest' =>
             GetCompressedAccountProofRequest.fromJson(json).toJson(),
           'GetCompressedAccountsByOwnerRequest' =>
             GetCompressedAccountsByOwnerRequest.fromJson(json).toJson(),
-          'GetCompressedBalanceRequest' =>
-            GetCompressedBalanceRequest.fromJson(json).toJson(),
+          'GetCompressedBalanceRequest' => GetCompressedBalanceRequest.fromJson(
+            json,
+          ).toJson(),
           'GetCompressedBalanceByOwnerRequest' =>
             GetCompressedBalanceByOwnerRequest.fromJson(json).toJson(),
           'GetCompressedMintTokenHoldersRequest' =>
@@ -224,8 +224,9 @@ void main() {
           'GetCompressionSignaturesForOwnerRequest' =>
             GetCompressionSignaturesForOwnerRequest.fromJson(json).toJson(),
           'GetCompressionSignaturesForTokenOwnerRequest' =>
-            GetCompressionSignaturesForTokenOwnerRequest.fromJson(json)
-                .toJson(),
+            GetCompressionSignaturesForTokenOwnerRequest.fromJson(
+              json,
+            ).toJson(),
           'GetLatestCompressionSignaturesRequest' =>
             GetLatestCompressionSignaturesRequest.fromJson(json).toJson(),
           'GetLatestNonVotingSignaturesRequest' =>
@@ -238,8 +239,9 @@ void main() {
             GetMultipleNewAddressProofsRequest.fromJson(json).toJson(),
           'GetTransactionWithCompressionInfoRequest' =>
             GetTransactionWithCompressionInfoRequest.fromJson(json).toJson(),
-          'GetValidityProofRequest' =>
-            GetValidityProofRequest.fromJson(json).toJson(),
+          'GetValidityProofRequest' => GetValidityProofRequest.fromJson(
+            json,
+          ).toJson(),
           'GetZkSignaturesForAssetRequest' =>
             GetZkSignaturesForAssetRequest.fromJson(json).toJson(),
           _ => throw StateError('Unhandled ${entry.key}'),

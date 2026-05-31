@@ -31,18 +31,21 @@ void main() {
       expect(params[1], BigInt.from(5));
     });
 
-    test('returns list with start slot and config when only config provided', () {
-      final params = getBlocksParams(
-        BigInt.from(10),
-        null,
-        const GetBlocksConfig(commitment: Commitment.confirmed),
-      );
-      expect(params, hasLength(2));
-      expect(params[0], BigInt.from(10));
-      expect(params[1], isA<Map<String, Object?>>());
-      final config = params[1]! as Map<String, Object?>;
-      expect(config['commitment'], 'confirmed');
-    });
+    test(
+      'returns list with start slot and config when only config provided',
+      () {
+        final params = getBlocksParams(
+          BigInt.from(10),
+          null,
+          const GetBlocksConfig(commitment: Commitment.confirmed),
+        );
+        expect(params, hasLength(2));
+        expect(params[0], BigInt.from(10));
+        expect(params[1], isA<Map<String, Object?>>());
+        final config = params[1]! as Map<String, Object?>;
+        expect(config['commitment'], 'confirmed');
+      },
+    );
 
     test('returns all three elements when all args provided', () {
       final params = getBlocksParams(

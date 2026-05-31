@@ -64,9 +64,7 @@ void assertIsTransactionMessageWithSingleSendingSigner(
 ///
 /// See also: `signAndSendTransactionWithSigners`,
 /// [assertIsTransactionMessageWithSingleSendingSigner].
-void assertContainsResolvableTransactionSendingSigner(
-  List<Object> signers,
-) {
+void assertContainsResolvableTransactionSendingSigner(List<Object> signers) {
   final sendingSigners = signers.where(isTransactionSendingSigner).toList();
 
   if (sendingSigners.isEmpty) {

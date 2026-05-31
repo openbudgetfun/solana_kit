@@ -16,8 +16,7 @@ void main() {
     });
 
     test('toJson includes excludeNonCirculatingAccountsList when set', () {
-      const config =
-          GetSupplyConfig(excludeNonCirculatingAccountsList: true);
+      const config = GetSupplyConfig(excludeNonCirculatingAccountsList: true);
       final json = config.toJson();
       expect(json['excludeNonCirculatingAccountsList'], true);
     });

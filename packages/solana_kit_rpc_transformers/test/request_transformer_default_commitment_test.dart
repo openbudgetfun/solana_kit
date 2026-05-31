@@ -103,26 +103,23 @@ void main() {
             }
 
             if (defaultCommitment != Commitment.finalized) {
-              test(
-                  'merges existing config properties when config has no '
+              test('merges existing config properties when config has no '
                   'commitment property', () {
-              final params = [
-                ...List<Object?>.filled(expectedPosition, null),
-                <String, Object?>{
+                final params = [
+                  ...List<Object?>.filled(expectedPosition, null),
+                  <String, Object?>{'someOtherProperty': 'value'},
+                ];
+                final result = applyDefaultCommitment(
+                  commitmentPropertyName: _mockCommitmentPropertyName,
+                  optionsObjectPositionInParams: expectedPosition,
+                  overrideCommitment: defaultCommitment,
+                  params: params,
+                );
+                expect(result[expectedPosition], {
                   'someOtherProperty': 'value',
-                },
-              ];
-              final result = applyDefaultCommitment(
-                commitmentPropertyName: _mockCommitmentPropertyName,
-                optionsObjectPositionInParams: expectedPosition,
-                overrideCommitment: defaultCommitment,
-                params: params,
-              );
-              expect(result[expectedPosition], {
-                'someOtherProperty': 'value',
-                _mockCommitmentPropertyName: defaultCommitment.name,
+                  _mockCommitmentPropertyName: defaultCommitment.name,
+                });
               });
-            });
             }
           });
         }

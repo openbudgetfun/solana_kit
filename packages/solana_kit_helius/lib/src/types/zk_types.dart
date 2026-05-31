@@ -453,7 +453,9 @@ class GetCompressedTokenAccountBalanceRequest {
     Map<String, Object?> json,
   ) {
     final r = JsonReader(json);
-    return GetCompressedTokenAccountBalanceRequest(hash: r.requireString('hash'));
+    return GetCompressedTokenAccountBalanceRequest(
+      hash: r.requireString('hash'),
+    );
   }
 
   final String hash;

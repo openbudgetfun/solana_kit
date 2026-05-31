@@ -17,7 +17,8 @@ const setComputeUnitPriceDiscriminator = 3;
 class SetComputeUnitPriceInstructionData {
   /// Creates [SetComputeUnitPriceInstructionData].
   const SetComputeUnitPriceInstructionData({
-    required this.microLamports, this.discriminator = setComputeUnitPriceDiscriminator,
+    required this.microLamports,
+    this.discriminator = setComputeUnitPriceDiscriminator,
   });
 
   /// The instruction discriminator byte.
@@ -94,9 +95,7 @@ Instruction getSetComputeUnitPriceInstruction({
   required BigInt microLamports,
   Address programAddress = computeBudgetProgramAddress,
 }) {
-  final data = SetComputeUnitPriceInstructionData(
-    microLamports: microLamports,
-  );
+  final data = SetComputeUnitPriceInstructionData(microLamports: microLamports);
   return Instruction(
     programAddress: programAddress,
     accounts: const [],

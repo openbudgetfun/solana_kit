@@ -20,7 +20,9 @@ const requestUnitsDiscriminator = 0;
 class RequestUnitsInstructionData {
   /// Creates [RequestUnitsInstructionData].
   const RequestUnitsInstructionData({
-    required this.units, required this.additionalFee, this.discriminator = requestUnitsDiscriminator,
+    required this.units,
+    required this.additionalFee,
+    this.discriminator = requestUnitsDiscriminator,
   });
 
   /// The instruction discriminator byte.
@@ -51,8 +53,7 @@ class RequestUnitsInstructionData {
 }
 
 /// Returns the encoder for [RequestUnitsInstructionData].
-Encoder<RequestUnitsInstructionData>
-getRequestUnitsInstructionDataEncoder() {
+Encoder<RequestUnitsInstructionData> getRequestUnitsInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('units', getU32Encoder()),
@@ -70,8 +71,7 @@ getRequestUnitsInstructionDataEncoder() {
 }
 
 /// Returns the decoder for [RequestUnitsInstructionData].
-Decoder<RequestUnitsInstructionData>
-getRequestUnitsInstructionDataDecoder() {
+Decoder<RequestUnitsInstructionData> getRequestUnitsInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('units', getU32Decoder()),

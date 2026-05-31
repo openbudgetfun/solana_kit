@@ -42,7 +42,8 @@ class JsonParsedStakeConfigInfo {
           warmupCooldownRate == other.warmupCooldownRate;
 
   @override
-  int get hashCode => Object.hash(runtimeType, slashPenalty, warmupCooldownRate);
+  int get hashCode =>
+      Object.hash(runtimeType, slashPenalty, warmupCooldownRate);
 
   @override
   String toString() =>

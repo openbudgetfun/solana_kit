@@ -43,8 +43,7 @@ class JsonReader {
 
   /// Returns a [List] for [key] and casts each element to [E].
   /// Throws if absent or null.
-  List<E> requireList<E>(String key) =>
-      _require<List<Object?>>(key).cast<E>();
+  List<E> requireList<E>(String key) => _require<List<Object?>>(key).cast<E>();
 
   /// Returns a required [List] and maps each element to [T] via [mapper].
   ///
@@ -59,10 +58,9 @@ class JsonReader {
   List<T> requireDecodedList<T>(
     String key,
     T Function(Map<String, Object?>) decoder,
-  ) =>
-      _require<List<Object?>>(key)
-          .map((e) => decoder(e! as Map<String, Object?>))
-          .toList();
+  ) => _require<List<Object?>>(
+    key,
+  ).map((e) => decoder(e! as Map<String, Object?>)).toList();
 
   // -------------------------------------------------------------------------
   // Optional (nullable) accessors — return null when key is absent or null.
@@ -88,8 +86,7 @@ class JsonReader {
 
   /// Returns a typed [List] for [key] casting each element to [E], or null if
   /// absent / null.
-  List<E>? optList<E>(String key) =>
-      (_json[key] as List<Object?>?)?.cast<E>();
+  List<E>? optList<E>(String key) => (_json[key] as List<Object?>?)?.cast<E>();
 
   /// Returns a mapped [List] for [key] via [mapper], or null if absent / null.
   List<T>? optMappedList<T>(String key, T Function(Object?) mapper) =>
@@ -103,19 +100,15 @@ class JsonReader {
   List<T>? optDecodedList<T>(
     String key,
     T Function(Map<String, Object?>) decoder,
-  ) =>
-      (_json[key] as List<Object?>?)
-          ?.map((e) => decoder(e! as Map<String, Object?>))
-          .toList();
+  ) => (_json[key] as List<Object?>?)
+      ?.map((e) => decoder(e! as Map<String, Object?>))
+      .toList();
 
   /// Returns a typed value decoded by [decoder] when the key is present and
   /// non-null, otherwise null.
   ///
   /// Useful for nested objects: `r.optDecoded('content', AssetContent.fromJson)`
-  T? optDecoded<T>(
-    String key,
-    T Function(Map<String, Object?>) decoder,
-  ) {
+  T? optDecoded<T>(String key, T Function(Map<String, Object?>) decoder) {
     final raw = _json[key];
     if (raw == null) return null;
     return decoder(raw as Map<String, Object?>);
@@ -149,8 +142,6 @@ class JsonReader {
   }
 
   Never _missing(String key) {
-    throw FormatException(
-      'JsonReader: required key "$key" is absent or null',
-    );
+    throw FormatException('JsonReader: required key "$key" is absent or null');
   }
 }

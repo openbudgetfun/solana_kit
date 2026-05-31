@@ -58,8 +58,7 @@ Encoder<TFrom> getPatternMatchEncoder<TFrom>(
     return index;
   }
 
-  final variants =
-      patterns.map((p) => p.$2 as Encoder<Object?>).toList();
+  final variants = patterns.map((p) => p.$2 as Encoder<Object?>).toList();
   final fixedSize = _getFixedSize(variants);
 
   int writeImpl(TFrom value, Uint8List bytes, int offset) {
@@ -111,16 +110,14 @@ Decoder<TTo> getPatternMatchDecoder<TTo>(
   int getIndexFromBytes(Uint8List bytes, int offset) {
     final index = patterns.indexWhere((p) => p.$1(bytes));
     if (index == -1) {
-      throw SolanaError(
-        SolanaErrorCode.codecsInvalidPatternMatchBytes,
-        {'bytes': bytes},
-      );
+      throw SolanaError(SolanaErrorCode.codecsInvalidPatternMatchBytes, {
+        'bytes': bytes,
+      });
     }
     return index;
   }
 
-  final variants =
-      patterns.map((p) => p.$2 as Decoder<Object?>).toList();
+  final variants = patterns.map((p) => p.$2 as Decoder<Object?>).toList();
   final fixedSize = _getFixedSize(variants);
 
   (TTo, int) readImpl(Uint8List bytes, int offset) {

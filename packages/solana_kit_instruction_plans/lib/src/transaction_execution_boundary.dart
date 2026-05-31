@@ -15,12 +15,15 @@ typedef SignTransactionMessage =
     Future<Transaction> Function(TransactionMessage message);
 
 /// Sends a signed transaction and returns its signature.
-typedef SendSignedTransaction = Future<Signature> Function(Transaction transaction);
+typedef SendSignedTransaction =
+    Future<Signature> Function(Transaction transaction);
 
 /// Creates a transaction execution boundary that accepts an instruction plan
 /// and returns a structured execution outcome.
 typedef TransactionExecutionBoundary =
-    Future<TransactionExecutionOutcome> Function(InstructionPlan instructionPlan);
+    Future<TransactionExecutionOutcome> Function(
+      InstructionPlan instructionPlan,
+    );
 
 /// High-level execution stages for transaction workflows.
 enum TransactionExecutionFailureStage {
@@ -264,7 +267,9 @@ Object? _findFirstSingleTransactionError(TransactionPlanResult result) {
   }
 }
 
-Future<TransactionPlanResult?> _passthroughExecutionFailure(Object error) async {
+Future<TransactionPlanResult?> _passthroughExecutionFailure(
+  Object error,
+) async {
   try {
     return await passthroughFailedTransactionPlanExecution(
       Future<TransactionPlanResult>.error(error),

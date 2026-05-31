@@ -42,11 +42,10 @@ class SolanaAccountClient {
         .send();
 
     return List.generate(addresses.length, (index) {
-      final accountData = index < response.value.length ? response.value[index] : null;
-      return parseBase64RpcAccount(
-        addresses[index],
-        accountData,
-      );
+      final accountData = index < response.value.length
+          ? response.value[index]
+          : null;
+      return parseBase64RpcAccount(addresses[index], accountData);
     });
   }
 
@@ -90,8 +89,9 @@ class SolanaAccountClient {
         .send();
 
     return List.generate(addresses.length, (index) {
-      final accountData =
-          index < response.value.length ? response.value[index] : null;
+      final accountData = index < response.value.length
+          ? response.value[index]
+          : null;
       if (accountData == null) {
         return parseBase64RpcAccount(addresses[index], null)
             as MaybeAccount<Object>;

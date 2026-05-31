@@ -22,7 +22,9 @@ void main() {
     });
 
     test('toJson includes encoding when set', () {
-      const config = AccountNotificationsConfig(encoding: AccountEncoding.base64);
+      const config = AccountNotificationsConfig(
+        encoding: AccountEncoding.base64,
+      );
       final json = config.toJson();
       expect(json, hasLength(1));
       expect(json['encoding'], 'base64');

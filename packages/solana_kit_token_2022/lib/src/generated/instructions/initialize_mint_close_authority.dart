@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -25,7 +24,8 @@ class InitializeMintCloseAuthorityInstructionData {
   final Address? closeAuthority;
 }
 
-Encoder<InitializeMintCloseAuthorityInstructionData> getInitializeMintCloseAuthorityInstructionDataEncoder() {
+Encoder<InitializeMintCloseAuthorityInstructionData>
+getInitializeMintCloseAuthorityInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('closeAuthority', getNullableEncoder<Address>(getAddressEncoder())),
@@ -40,7 +40,8 @@ Encoder<InitializeMintCloseAuthorityInstructionData> getInitializeMintCloseAutho
   );
 }
 
-Decoder<InitializeMintCloseAuthorityInstructionData> getInitializeMintCloseAuthorityInstructionDataDecoder() {
+Decoder<InitializeMintCloseAuthorityInstructionData>
+getInitializeMintCloseAuthorityInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('closeAuthority', getNullableDecoder<Address>(getAddressDecoder())),
@@ -48,15 +49,23 @@ Decoder<InitializeMintCloseAuthorityInstructionData> getInitializeMintCloseAutho
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeMintCloseAuthorityInstructionData(
-      discriminator: map['discriminator']! as int,
-      closeAuthority: map['closeAuthority'] as Address?,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializeMintCloseAuthorityInstructionData(
+          discriminator: map['discriminator']! as int,
+          closeAuthority: map['closeAuthority'] as Address?,
+        ),
   );
 }
 
-Codec<InitializeMintCloseAuthorityInstructionData, InitializeMintCloseAuthorityInstructionData> getInitializeMintCloseAuthorityInstructionDataCodec() {
-  return combineCodec(getInitializeMintCloseAuthorityInstructionDataEncoder(), getInitializeMintCloseAuthorityInstructionDataDecoder());
+Codec<
+  InitializeMintCloseAuthorityInstructionData,
+  InitializeMintCloseAuthorityInstructionData
+>
+getInitializeMintCloseAuthorityInstructionDataCodec() {
+  return combineCodec(
+    getInitializeMintCloseAuthorityInstructionDataEncoder(),
+    getInitializeMintCloseAuthorityInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializeMintCloseAuthority] instruction.
@@ -66,19 +75,22 @@ Instruction getInitializeMintCloseAuthorityInstruction({
   required Address? closeAuthority,
 }) {
   final instructionData = InitializeMintCloseAuthorityInstructionData(
-      closeAuthority: closeAuthority,
+    closeAuthority: closeAuthority,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    ],
-    data: getInitializeMintCloseAuthorityInstructionDataEncoder().encode(instructionData),
+    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    data: getInitializeMintCloseAuthorityInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [InitializeMintCloseAuthority] instruction from raw instruction data.
-InitializeMintCloseAuthorityInstructionData parseInitializeMintCloseAuthorityInstruction(Instruction instruction) {
-  return getInitializeMintCloseAuthorityInstructionDataDecoder().decode(instruction.data!);
+InitializeMintCloseAuthorityInstructionData
+parseInitializeMintCloseAuthorityInstruction(Instruction instruction) {
+  return getInitializeMintCloseAuthorityInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

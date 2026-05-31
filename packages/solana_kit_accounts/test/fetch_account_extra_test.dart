@@ -44,13 +44,14 @@ Rpc _makeRpc(
   return Rpc(api: api, transport: (config) async => null);
 }
 
-Map<String, dynamic> _accountData({bool executable = false}) => <String, dynamic>{
-  'data': ['AAEC', 'base64'],
-  'executable': executable,
-  'lamports': 1000,
-  'owner': _owner,
-  'space': 3,
-};
+Map<String, dynamic> _accountData({bool executable = false}) =>
+    <String, dynamic>{
+      'data': ['AAEC', 'base64'],
+      'executable': executable,
+      'lamports': 1000,
+      'owner': _owner,
+      'space': 3,
+    };
 
 void main() {
   // ---------------------------------------------------------------------------
@@ -127,28 +128,26 @@ void main() {
   // fetchEncodedAccounts – with null response
   // ---------------------------------------------------------------------------
   group('fetchEncodedAccounts edge cases', () {
-    test('returns non-existing accounts when top-level response is null',
-        () async {
-      final rpc = _makeRpc({}, nullTopLevelResponse: true);
+    test(
+      'returns non-existing accounts when top-level response is null',
+      () async {
+        final rpc = _makeRpc({}, nullTopLevelResponse: true);
 
-      final accounts = await fetchEncodedAccounts(rpc, [_addr, _addrB]);
+        final accounts = await fetchEncodedAccounts(rpc, [_addr, _addrB]);
 
-      expect(accounts, hasLength(2));
-      expect(accounts[0].exists, isFalse);
-      expect(accounts[1].exists, isFalse);
-    });
+        expect(accounts, hasLength(2));
+        expect(accounts[0].exists, isFalse);
+        expect(accounts[1].exists, isFalse);
+      },
+    );
 
     test('fetches with commitment config', () async {
-      final rpc = _makeRpc({
-        _addr.value: _accountData(),
-        _addrB.value: null,
-      });
+      final rpc = _makeRpc({_addr.value: _accountData(), _addrB.value: null});
 
-      final accounts = await fetchEncodedAccounts(
-        rpc,
-        [_addr, _addrB],
-        config: const FetchAccountConfig(commitment: Commitment.processed),
-      );
+      final accounts = await fetchEncodedAccounts(rpc, [
+        _addr,
+        _addrB,
+      ], config: const FetchAccountConfig(commitment: Commitment.processed));
 
       expect(accounts, hasLength(2));
       expect(accounts[0].exists, isTrue);
@@ -160,15 +159,17 @@ void main() {
   // fetchJsonParsedAccount – edge cases
   // ---------------------------------------------------------------------------
   group('fetchJsonParsedAccount edge cases', () {
-    test('returns NonExistingAccount when top-level response is null',
-        () async {
-      final rpc = _makeRpc({}, nullTopLevelResponse: true);
+    test(
+      'returns NonExistingAccount when top-level response is null',
+      () async {
+        final rpc = _makeRpc({}, nullTopLevelResponse: true);
 
-      final account = await fetchJsonParsedAccount(rpc, _addr);
+        final account = await fetchJsonParsedAccount(rpc, _addr);
 
-      expect(account.exists, isFalse);
-      expect(account.address, _addr);
-    });
+        expect(account.exists, isFalse);
+        expect(account.address, _addr);
+      },
+    );
 
     test('returns NonExistingAccount when value is null', () async {
       final rpc = _makeRpc({_addr.value: null});
@@ -214,16 +215,18 @@ void main() {
   // fetchJsonParsedAccounts – edge cases
   // ---------------------------------------------------------------------------
   group('fetchJsonParsedAccounts edge cases', () {
-    test('returns non-existing accounts when top-level response is null',
-        () async {
-      final rpc = _makeRpc({}, nullTopLevelResponse: true);
+    test(
+      'returns non-existing accounts when top-level response is null',
+      () async {
+        final rpc = _makeRpc({}, nullTopLevelResponse: true);
 
-      final accounts = await fetchJsonParsedAccounts(rpc, [_addr, _addrB]);
+        final accounts = await fetchJsonParsedAccounts(rpc, [_addr, _addrB]);
 
-      expect(accounts, hasLength(2));
-      expect(accounts[0].exists, isFalse);
-      expect(accounts[1].exists, isFalse);
-    });
+        expect(accounts, hasLength(2));
+        expect(accounts[0].exists, isFalse);
+        expect(accounts[1].exists, isFalse);
+      },
+    );
 
     test('handles null account data in the value list', () async {
       final rpc = _makeRpc({_addr.value: null, _addrB.value: null});
@@ -258,11 +261,9 @@ void main() {
     test('fetches with minContextSlot config', () async {
       final rpc = _makeRpc({_addr.value: _accountData()});
 
-      final accounts = await fetchJsonParsedAccounts(
-        rpc,
-        [_addr],
-        config: FetchAccountConfig(minContextSlot: BigInt.from(5)),
-      );
+      final accounts = await fetchJsonParsedAccounts(rpc, [
+        _addr,
+      ], config: FetchAccountConfig(minContextSlot: BigInt.from(5)));
 
       expect(accounts, hasLength(1));
       expect(accounts[0].exists, isTrue);

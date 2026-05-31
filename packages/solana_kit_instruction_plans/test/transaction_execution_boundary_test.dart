@@ -23,9 +23,7 @@ void main() {
       final outcome = await boundary(
         singleInstructionPlan(
           const Instruction(
-            programAddress: Address(
-              '11111111111111111111111111111111',
-            ),
+            programAddress: Address('11111111111111111111111111111111'),
           ),
         ),
       );
@@ -43,7 +41,8 @@ void main() {
       final boundary = createTransactionExecutionBoundary(
         TransactionExecutionBoundaryConfig(
           planTransactions: (_) async => singleTransactionPlan(message),
-          signTransactionMessage: (_) async => throw StateError('signing failed'),
+          signTransactionMessage: (_) async =>
+              throw StateError('signing failed'),
           sendSignedTransaction: (_) async => throw UnimplementedError(),
         ),
       );
@@ -55,7 +54,10 @@ void main() {
       expect(failed.stage, TransactionExecutionFailureStage.signing);
       expect(failed.error, isA<StateError>());
       expect(failed.transactionPlan, isNotNull);
-      expect(failed.transactionPlanResult, isA<FailedSingleTransactionPlanResult>());
+      expect(
+        failed.transactionPlanResult,
+        isA<FailedSingleTransactionPlanResult>(),
+      );
     });
 
     test('returns sending failures without throwing', () async {
@@ -68,7 +70,8 @@ void main() {
             <Object>[feePayer],
             compileTransaction(message),
           ),
-          sendSignedTransaction: (_) async => throw StateError('sending failed'),
+          sendSignedTransaction: (_) async =>
+              throw StateError('sending failed'),
         ),
       );
 
@@ -142,7 +145,10 @@ void main() {
 
       expect(outcome, isA<FailedTransactionExecution>());
       final failed = outcome as FailedTransactionExecution;
-      expect(failed.transactionPlanResult, isA<FailedSingleTransactionPlanResult>());
+      expect(
+        failed.transactionPlanResult,
+        isA<FailedSingleTransactionPlanResult>(),
+      );
     });
   });
 }
@@ -158,7 +164,9 @@ InstructionPlan _singleInstructionPlan() {
 }
 
 TransactionMessage _createMessage({
-  Address feePayer = const Address('7EqQdEULxWcraVx3mXKFjc84LhCkMGZCkRuDpvcMwJeK'),
+  Address feePayer = const Address(
+    '7EqQdEULxWcraVx3mXKFjc84LhCkMGZCkRuDpvcMwJeK',
+  ),
 }) {
   return createTransactionMessage(version: TransactionVersion.v0).copyWith(
     feePayer: feePayer,

@@ -22,11 +22,9 @@ void main() {
   });
 
   test('params serialize owner, filter, and config', () {
-    final params = getTokenAccountsByOwnerParams(
-      owner,
-      {'programId': programId.value},
-      const GetTokenAccountsByOwnerConfig(encoding: AccountEncoding.base58),
-    );
+    final params = getTokenAccountsByOwnerParams(owner, {
+      'programId': programId.value,
+    }, const GetTokenAccountsByOwnerConfig(encoding: AccountEncoding.base58));
 
     expect(params[0], owner.value);
     expect(params[1], {'programId': programId.value});

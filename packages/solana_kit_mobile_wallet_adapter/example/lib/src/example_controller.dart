@@ -115,7 +115,9 @@ class MwaExampleController extends ChangeNotifier {
           ? (authorization.accounts.first.displayAddress ??
                 authorization.accounts.first.address)
           : 'No accounts returned';
-      _appendLog('Authorized $accountCount account(s). First account: $preview');
+      _appendLog(
+        'Authorized $accountCount account(s). First account: $preview',
+      );
       notifyListeners();
     });
   }

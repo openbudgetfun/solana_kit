@@ -396,8 +396,9 @@ void main() {
       );
       const b = TransactionDurableNonceLifetime(
         nonce: '11111111111111111111111111111111',
-        nonceAccountAddress:
-            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+        nonceAccountAddress: Address(
+          '2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS',
+        ),
       );
       expect(a == b, isFalse);
     });
@@ -439,13 +440,15 @@ void main() {
     test('== returns true for identical instances', () {
       const a = TransactionDurableNonceLifetime(
         nonce: 'abcd',
-        nonceAccountAddress:
-            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+        nonceAccountAddress: Address(
+          '2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS',
+        ),
       );
       const b = TransactionDurableNonceLifetime(
         nonce: 'abcd',
-        nonceAccountAddress:
-            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+        nonceAccountAddress: Address(
+          '2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS',
+        ),
       );
       expect(a == b, isTrue);
     });
@@ -453,13 +456,15 @@ void main() {
     test('== returns false for different nonce', () {
       const a = TransactionDurableNonceLifetime(
         nonce: 'abcd',
-        nonceAccountAddress:
-            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+        nonceAccountAddress: Address(
+          '2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS',
+        ),
       );
       const b = TransactionDurableNonceLifetime(
         nonce: 'efgh',
-        nonceAccountAddress:
-            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+        nonceAccountAddress: Address(
+          '2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS',
+        ),
       );
       expect(a == b, isFalse);
     });
@@ -467,13 +472,15 @@ void main() {
     test('== returns false for different nonceAccountAddress', () {
       const a = TransactionDurableNonceLifetime(
         nonce: 'abcd',
-        nonceAccountAddress:
-            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+        nonceAccountAddress: Address(
+          '2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS',
+        ),
       );
       const b = TransactionDurableNonceLifetime(
         nonce: 'abcd',
-        nonceAccountAddress:
-            Address('33333333333333333333333333333333333333333333'),
+        nonceAccountAddress: Address(
+          '33333333333333333333333333333333333333333333',
+        ),
       );
       expect(a == b, isFalse);
     });
@@ -481,8 +488,9 @@ void main() {
     test('== returns false for different type', () {
       const a = TransactionDurableNonceLifetime(
         nonce: 'abcd',
-        nonceAccountAddress:
-            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+        nonceAccountAddress: Address(
+          '2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS',
+        ),
       );
       final b = TransactionBlockhashLifetime(
         blockhash: 'abcd',
@@ -494,8 +502,9 @@ void main() {
     test('== returns true for same instance', () {
       const a = TransactionDurableNonceLifetime(
         nonce: 'abcd',
-        nonceAccountAddress:
-            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+        nonceAccountAddress: Address(
+          '2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS',
+        ),
       );
       expect(a == a, isTrue);
     });
@@ -503,13 +512,15 @@ void main() {
     test('hashCode is consistent for equal instances', () {
       const a = TransactionDurableNonceLifetime(
         nonce: 'abcd',
-        nonceAccountAddress:
-            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+        nonceAccountAddress: Address(
+          '2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS',
+        ),
       );
       const b = TransactionDurableNonceLifetime(
         nonce: 'abcd',
-        nonceAccountAddress:
-            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+        nonceAccountAddress: Address(
+          '2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS',
+        ),
       );
       expect(a.hashCode, b.hashCode);
     });
@@ -517,8 +528,9 @@ void main() {
     test('toString returns expected format', () {
       const lifetime = TransactionDurableNonceLifetime(
         nonce: 'abcd',
-        nonceAccountAddress:
-            Address('2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS'),
+        nonceAccountAddress: Address(
+          '2B7hCrBozp5hPV31mw1qUh5XhXYs9f6p1GsRdHNjF4xS',
+        ),
       );
       expect(
         lifetime.toString(),

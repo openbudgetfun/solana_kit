@@ -7,15 +7,11 @@ void main() {
   // SignatureStatus
   // ---------------------------------------------------------------------------
   group('SignatureStatus equality', () {
-    const confirmed = SignatureStatus(
-      confirmationStatus: Commitment.confirmed,
-    );
+    const confirmed = SignatureStatus(confirmationStatus: Commitment.confirmed);
     const confirmedCopy = SignatureStatus(
       confirmationStatus: Commitment.confirmed,
     );
-    const finalized = SignatureStatus(
-      confirmationStatus: Commitment.finalized,
-    );
+    const finalized = SignatureStatus(confirmationStatus: Commitment.finalized);
     const withErr = SignatureStatus(
       confirmationStatus: Commitment.confirmed,
       err: 'TransactionExpiredBlockheightExceededError',

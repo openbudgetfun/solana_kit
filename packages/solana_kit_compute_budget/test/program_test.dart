@@ -56,10 +56,7 @@ void main() {
 
     test('throws on unknown discriminator', () {
       final data = Uint8List.fromList([255]);
-      expect(
-        () => identifyComputeBudgetInstruction(data),
-        throwsArgumentError,
-      );
+      expect(() => identifyComputeBudgetInstruction(data), throwsArgumentError);
     });
   });
 
@@ -121,10 +118,7 @@ void main() {
         programAddress: computeBudgetProgramAddress,
         accounts: [],
       );
-      expect(
-        () => parseComputeBudgetInstruction(ix),
-        throwsArgumentError,
-      );
+      expect(() => parseComputeBudgetInstruction(ix), throwsArgumentError);
     });
 
     test('throws on instruction with unknown discriminator', () {
@@ -133,10 +127,7 @@ void main() {
         accounts: const [],
         data: Uint8List.fromList([99, 0, 0, 0]),
       );
-      expect(
-        () => parseComputeBudgetInstruction(ix),
-        throwsArgumentError,
-      );
+      expect(() => parseComputeBudgetInstruction(ix), throwsArgumentError);
     });
   });
 

@@ -1058,7 +1058,10 @@ class TokenAccountList {
       total: r.requireInt('total'),
       limit: r.requireInt('limit'),
       page: r.optInt('page'),
-      tokenAccounts: r.requireDecodedList('token_accounts', TokenAccount.fromJson),
+      tokenAccounts: r.requireDecodedList(
+        'token_accounts',
+        TokenAccount.fromJson,
+      ),
     );
   }
 

@@ -10,18 +10,18 @@ import 'setup.dart';
 
 /// Helper: FixedSizeEncoder that writes a single fixed byte.
 Encoder<num> _fixedNumEncoder(int byte) => FixedSizeEncoder<num>(
-      fixedSize: 1,
-      write: (_, bytes, offset) {
-        bytes[offset] = byte;
-        return offset + 1;
-      },
-    );
+  fixedSize: 1,
+  write: (_, bytes, offset) {
+    bytes[offset] = byte;
+    return offset + 1;
+  },
+);
 
 /// Helper: FixedSizeDecoder that reads a single byte and returns a constant.
 Decoder<num> _fixedNumDecoder(num value) => FixedSizeDecoder<num>(
-      fixedSize: 1,
-      read: (_, offset) => (value, offset + 1),
-    );
+  fixedSize: 1,
+  read: (_, offset) => (value, offset + 1),
+);
 
 void main() {
   // ---- utils.dart coverage ----
@@ -106,8 +106,7 @@ void main() {
         () => customDecoder.decode(Uint8List.fromList([0])),
         throwsA(
           predicate(
-            (e) =>
-                isSolanaError(e, SolanaErrorCode.codecsInvalidNumberOfItems),
+            (e) => isSolanaError(e, SolanaErrorCode.codecsInvalidNumberOfItems),
           ),
         ),
       );
@@ -154,10 +153,7 @@ void main() {
 
   group('nullable: getNullableCodec with prefix codec', () {
     test('encodes and decodes with u32 prefix codec', () {
-      final codec = getNullableCodec<num>(
-        getU8Codec(),
-        prefix: getU32Codec(),
-      );
+      final codec = getNullableCodec<num>(getU8Codec(), prefix: getU32Codec());
       expect(hex(codec.encode(null)), equals('00000000'));
       expect(hex(codec.encode(42)), equals('010000002a'));
       expect(codec.decode(b('00000000')), isNull);
@@ -170,22 +166,19 @@ void main() {
     test('encodes variable-size struct fields', () {
       final encoder = getStructEncoder([
         ('x', getU8Encoder() as Encoder<Object?>),
-        (
-          'arr',
-          getArrayEncoder<Object?>(getU8Encoder() as Encoder<Object?>),
-        ),
+        ('arr', getArrayEncoder<Object?>(getU8Encoder() as Encoder<Object?>)),
       ]);
-      final result = encoder.encode({'x': 5, 'arr': [1, 2, 3]});
+      final result = encoder.encode({
+        'x': 5,
+        'arr': [1, 2, 3],
+      });
       expect(hex(result), equals('0503000000010203'));
     });
 
     test('decodes variable-size struct fields', () {
       final decoder = getStructDecoder([
         ('x', getU8Decoder() as Decoder<Object?>),
-        (
-          'arr',
-          getArrayDecoder<Object?>(getU8Decoder() as Decoder<Object?>),
-        ),
+        ('arr', getArrayDecoder<Object?>(getU8Decoder() as Decoder<Object?>)),
       ]);
       final result = decoder.decode(b('0503000000010203'));
       expect(result['x'], equals(5));
@@ -200,7 +193,10 @@ void main() {
         getU8Encoder() as Encoder<Object?>,
         getArrayEncoder<Object?>(getU8Encoder() as Encoder<Object?>),
       ]);
-      final result = encoder.encode([5, [1, 2, 3]]);
+      final result = encoder.encode([
+        5,
+        [1, 2, 3],
+      ]);
       expect(hex(result), equals('0503000000010203'));
     });
 
@@ -245,26 +241,26 @@ void main() {
   // ---- discriminated_union.dart coverage ----
   group('discriminated union: codec with custom size', () {
     test('splits u32 size for encoder/decoder', () {
-      final encoder = getDiscriminatedUnionEncoder(
-        [
-          ('A', getUnitEncoder() as Encoder<Object?>),
-          ('B', getStructEncoder([
+      final encoder = getDiscriminatedUnionEncoder([
+        ('A', getUnitEncoder() as Encoder<Object?>),
+        (
+          'B',
+          getStructEncoder([
             ('x', getU8Encoder() as Encoder<Object?>),
             ('y', getU8Encoder() as Encoder<Object?>),
-          ])),
-        ],
-        size: getU32Encoder(),
-      );
-      final decoder = getDiscriminatedUnionDecoder(
-        [
-          ('A', getUnitDecoder() as Decoder<Object?>),
-          ('B', getStructDecoder([
+          ]),
+        ),
+      ], size: getU32Encoder());
+      final decoder = getDiscriminatedUnionDecoder([
+        ('A', getUnitDecoder() as Decoder<Object?>),
+        (
+          'B',
+          getStructDecoder([
             ('x', getU8Decoder() as Decoder<Object?>),
             ('y', getU8Decoder() as Decoder<Object?>),
-          ])),
-        ],
-        size: getU32Decoder(),
-      );
+          ]),
+        ),
+      ], size: getU32Decoder());
       // A = index 0, u32 prefix
       expect(hex(encoder.encode({'__kind': 'A'})), equals('00000000'));
       // B = index 1, u32 prefix + struct
@@ -304,10 +300,8 @@ void main() {
         () => decoder.decode(b('05')),
         throwsA(
           predicate(
-            (e) => isSolanaError(
-              e,
-              SolanaErrorCode.codecsUnionVariantOutOfRange,
-            ),
+            (e) =>
+                isSolanaError(e, SolanaErrorCode.codecsUnionVariantOutOfRange),
           ),
         ),
       );
@@ -502,13 +496,10 @@ void main() {
 
   group('union: getUnionEncoder fixed-size', () {
     test('returns FixedSizeEncoder when all variants are fixed-size', () {
-      final encoder = getUnionEncoder(
-        [
-          getU8Encoder() as Encoder<Object?>,
-          getU8Encoder() as Encoder<Object?>,
-        ],
-        (value) => (value! as num).toInt() > 127 ? 1 : 0,
-      );
+      final encoder = getUnionEncoder([
+        getU8Encoder() as Encoder<Object?>,
+        getU8Encoder() as Encoder<Object?>,
+      ], (value) => (value! as num).toInt() > 127 ? 1 : 0);
       expect(encoder, isA<FixedSizeEncoder<Object?>>());
       expect(encoder.encode(42), [42]);
       expect(encoder.encode(200), [200]);
@@ -517,13 +508,10 @@ void main() {
 
   group('union: getUnionDecoder fixed-size', () {
     test('returns FixedSizeDecoder when all variants are fixed-size', () {
-      final decoder = getUnionDecoder(
-        [
-          getU8Decoder() as Decoder<Object?>,
-          getU8Decoder() as Decoder<Object?>,
-        ],
-        (bytes, offset) => bytes[offset] > 127 ? 1 : 0,
-      );
+      final decoder = getUnionDecoder([
+        getU8Decoder() as Decoder<Object?>,
+        getU8Decoder() as Decoder<Object?>,
+      ], (bytes, offset) => bytes[offset] > 127 ? 1 : 0);
       expect(decoder, isA<FixedSizeDecoder<Object?>>());
       expect(decoder.decode(b('2a')), equals(42));
       expect(decoder.decode(b('c8')), equals(200));
@@ -568,10 +556,8 @@ void main() {
         () => decoder.decode(Uint8List.fromList([0])),
         throwsA(
           predicate(
-            (e) => isSolanaError(
-              e,
-              SolanaErrorCode.codecsUnionVariantOutOfRange,
-            ),
+            (e) =>
+                isSolanaError(e, SolanaErrorCode.codecsUnionVariantOutOfRange),
           ),
         ),
       );
@@ -616,10 +602,8 @@ void main() {
         () => decoder.decode(Uint8List.fromList([0])),
         throwsA(
           predicate(
-            (e) => isSolanaError(
-              e,
-              SolanaErrorCode.codecsUnionVariantOutOfRange,
-            ),
+            (e) =>
+                isSolanaError(e, SolanaErrorCode.codecsUnionVariantOutOfRange),
           ),
         ),
       );

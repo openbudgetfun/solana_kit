@@ -269,8 +269,7 @@ void main() {
           signatures: {addressA: null},
         );
 
-        final signed =
-            await partiallySignTransaction([keyPairA], transaction);
+        final signed = await partiallySignTransaction([keyPairA], transaction);
         expect(signed, isA<Transaction>());
         expect(signed, isNot(isA<TransactionWithLifetime>()));
         expect(signed.signatures[addressA], isNotNull);
@@ -354,9 +353,7 @@ void main() {
           lastValidBlockHeight: BigInt.zero,
         ),
         messageBytes: Uint8List.fromList([1, 2, 3]),
-        signatures: {
-          const Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): sigA,
-        },
+        signatures: {const Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): sigA},
       );
       expect(isSendableTransaction(transaction), isTrue);
     });
@@ -368,32 +365,31 @@ void main() {
           lastValidBlockHeight: BigInt.zero,
         ),
         messageBytes: Uint8List(0),
-        signatures: const {
-          Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): null,
-        },
+        signatures: const {Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): null},
       );
       expect(isSendableTransaction(transaction), isFalse);
     });
 
     test('returns false if transaction exceeds size limit', () {
       final sigA = SignatureBytes(Uint8List(64));
-      final message = const TransactionMessage(
-        version: TransactionVersion.v0,
-      ).copyWith(
-        feePayer: const Address('22222222222222222222222222222222222222222222'),
-        lifetimeConstraint: BlockhashLifetimeConstraint(
-          blockhash: '11111111111111111111111111111111',
-          lastValidBlockHeight: BigInt.zero,
-        ),
-        instructions: [
-          Instruction(
-            data: Uint8List(transactionSizeLimit + 1),
-            programAddress: const Address(
-              '33333333333333333333333333333333333333333333',
+      final message = const TransactionMessage(version: TransactionVersion.v0)
+          .copyWith(
+            feePayer: const Address(
+              '22222222222222222222222222222222222222222222',
             ),
-          ),
-        ],
-      );
+            lifetimeConstraint: BlockhashLifetimeConstraint(
+              blockhash: '11111111111111111111111111111111',
+              lastValidBlockHeight: BigInt.zero,
+            ),
+            instructions: [
+              Instruction(
+                data: Uint8List(transactionSizeLimit + 1),
+                programAddress: const Address(
+                  '33333333333333333333333333333333333333333333',
+                ),
+              ),
+            ],
+          );
       final compiled = compileTransaction(message);
       // Force all signatures to be non-null
       final signedSigs = <Address, SignatureBytes?>{};
@@ -418,14 +414,9 @@ void main() {
           lastValidBlockHeight: BigInt.zero,
         ),
         messageBytes: Uint8List.fromList([1, 2, 3]),
-        signatures: {
-          const Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): sigA,
-        },
+        signatures: {const Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): sigA},
       );
-      expect(
-        () => assertIsSendableTransaction(transaction),
-        returnsNormally,
-      );
+      expect(() => assertIsSendableTransaction(transaction), returnsNormally);
     });
 
     test('throws if not fully signed', () {
@@ -435,17 +426,17 @@ void main() {
           lastValidBlockHeight: BigInt.zero,
         ),
         messageBytes: Uint8List(0),
-        signatures: const {
-          Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): null,
-        },
+        signatures: const {Address('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'): null},
       );
       expect(
         () => assertIsSendableTransaction(transaction),
-        throwsA(isA<SolanaError>().having(
-          (e) => e.code,
-          'code',
-          SolanaErrorCode.transactionSignaturesMissing,
-        )),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionSignaturesMissing,
+          ),
+        ),
       );
     });
   });

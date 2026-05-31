@@ -164,9 +164,7 @@ void main() {
     });
 
     test('not equal when feePayer is null vs non-null', () {
-      const diff = TransactionMessage(
-        version: TransactionVersion.v0,
-      );
+      const diff = TransactionMessage(version: TransactionVersion.v0);
       const withFeePayer = TransactionMessage(
         version: TransactionVersion.v0,
         feePayer: Address('44444444444444444444444444444444'),

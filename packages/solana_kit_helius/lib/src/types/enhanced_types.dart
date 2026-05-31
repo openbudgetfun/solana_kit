@@ -91,10 +91,7 @@ class EnhancedTransaction {
         'tokenTransfers',
         TokenTransfer.fromJson,
       ),
-      accountData: r.requireDecodedList(
-        'accountData',
-        AccountData.fromJson,
-      ),
+      accountData: r.requireDecodedList('accountData', AccountData.fromJson),
       instructions: r.requireDecodedList(
         'instructions',
         InnerInstruction.fromJson,

@@ -148,13 +148,8 @@ class RewardFeeOrRent extends Reward {
           rewardType == other.rewardType;
 
   @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    rewardLamports,
-    postBalance,
-    pubkey,
-    rewardType,
-  );
+  int get hashCode =>
+      Object.hash(runtimeType, rewardLamports, postBalance, pubkey, rewardType);
 
   @override
   String toString() =>
@@ -349,8 +344,7 @@ class ReturnData {
   int get hashCode => Object.hash(runtimeType, data, programId);
 
   @override
-  String toString() =>
-      'ReturnData(data: $data, programId: $programId)';
+  String toString() => 'ReturnData(data: $data, programId: $programId)';
 }
 
 // ---------------------------------------------------------------------------
@@ -390,7 +384,8 @@ class TransactionParsedAccount {
           source == other.source;
 
   @override
-  int get hashCode => Object.hash(runtimeType, pubkey, signer, writable, source);
+  int get hashCode =>
+      Object.hash(runtimeType, pubkey, signer, writable, source);
 
   @override
   String toString() =>

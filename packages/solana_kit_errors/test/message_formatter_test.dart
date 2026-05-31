@@ -42,10 +42,9 @@ void main() {
 
     test('handles instructionErrorUnknown message template', () {
       // instructionErrorUnknown now has a real message with $errorName.
-      final message = getErrorMessage(
-        SolanaErrorCode.instructionErrorUnknown,
-        {'errorName': 'SomeError'},
-      );
+      final message = getErrorMessage(SolanaErrorCode.instructionErrorUnknown, {
+        'errorName': 'SomeError',
+      });
       expect(message, contains('SomeError'));
     });
 
@@ -61,20 +60,18 @@ void main() {
       // Since all messages are from the messages map, we test interpolation
       // by ensuring escape sequences are handled correctly.
       // instructionErrorUnknown uses $errorName, so test with backslash in value.
-      final message = getErrorMessage(
-        SolanaErrorCode.accountsAccountNotFound,
-        {'address': r'test\value'},
-      );
+      final message = getErrorMessage(SolanaErrorCode.accountsAccountNotFound, {
+        'address': r'test\value',
+      });
       expect(message, isNotEmpty);
     });
 
     test('handles standalone dollar sign in template', () {
       // Test that a standalone $ (not followed by a word char) is preserved.
       // Use a message and verify it's formatted correctly.
-      final message = getErrorMessage(
-        SolanaErrorCode.accountsAccountNotFound,
-        {'address': 'MyAddr'},
-      );
+      final message = getErrorMessage(SolanaErrorCode.accountsAccountNotFound, {
+        'address': 'MyAddr',
+      });
       expect(message, contains('MyAddr'));
     });
 

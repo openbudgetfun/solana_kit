@@ -10,15 +10,13 @@ void main() {
     });
 
     test('toJson includes commitment when set', () {
-      const config =
-          GetLargestAccountsConfig(commitment: Commitment.confirmed);
+      const config = GetLargestAccountsConfig(commitment: Commitment.confirmed);
       final json = config.toJson();
       expect(json['commitment'], 'confirmed');
     });
 
     test('toJson includes filter when set', () {
-      const config =
-          GetLargestAccountsConfig(filter: 'circulating');
+      const config = GetLargestAccountsConfig(filter: 'circulating');
       final json = config.toJson();
       expect(json['filter'], 'circulating');
     });

@@ -120,10 +120,7 @@ void main() {
     });
 
     test('getSignerAddress throws for non-signer object', () {
-      expect(
-        () => getSignerAddress('not a signer'),
-        throwsArgumentError,
-      );
+      expect(() => getSignerAddress('not a signer'), throwsArgumentError);
     });
 
     test('getSignerAddress works with TransactionSendingSigner', () {

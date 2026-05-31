@@ -136,7 +136,8 @@ InstructionPlan getMintV2InstructionPlan(
   final compressionProgram =
       config.compressionProgram ??
       const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi');
-  final systemProgram = config.systemProgram ?? systemProgramAddress;
+  final systemProgram =
+      config.systemProgram ?? const Address('11111111111111111111111111111112');
   final mplCoreProgram =
       config.mplCoreProgram ??
       const Address('CoREENxT6tW1HoJmSkLZP4xizQrmYMahYpv2UKJF2mLQ');

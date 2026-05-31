@@ -187,15 +187,21 @@ void main() {
 
     test('JsonParsedAuthorizedVoter equality, hashCode, and toString', () {
       final voter1 = JsonParsedAuthorizedVoter(
-        authorizedVoter: const Address('HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr'),
+        authorizedVoter: const Address(
+          'HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr',
+        ),
         epoch: BigInt.from(529),
       );
       final voter2 = JsonParsedAuthorizedVoter(
-        authorizedVoter: const Address('HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr'),
+        authorizedVoter: const Address(
+          'HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr',
+        ),
         epoch: BigInt.from(529),
       );
       final voter3 = JsonParsedAuthorizedVoter(
-        authorizedVoter: const Address('HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr'),
+        authorizedVoter: const Address(
+          'HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr',
+        ),
         epoch: BigInt.from(999),
       );
 
@@ -230,17 +236,23 @@ void main() {
 
     test('JsonParsedPriorVoter equality, hashCode, and toString', () {
       final pv1 = JsonParsedPriorVoter(
-        authorizedPubkey: const Address('HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr'),
+        authorizedPubkey: const Address(
+          'HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr',
+        ),
         epochOfLastAuthorizedSwitch: BigInt.from(100),
         targetEpoch: BigInt.from(200),
       );
       final pv2 = JsonParsedPriorVoter(
-        authorizedPubkey: const Address('HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr'),
+        authorizedPubkey: const Address(
+          'HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr',
+        ),
         epochOfLastAuthorizedSwitch: BigInt.from(100),
         targetEpoch: BigInt.from(200),
       );
       final pv3 = JsonParsedPriorVoter(
-        authorizedPubkey: const Address('HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr'),
+        authorizedPubkey: const Address(
+          'HMU77m6WSL9Xew9YvVCgz1hLuhzamz74eD9avi4XPdr',
+        ),
         epochOfLastAuthorizedSwitch: BigInt.from(100),
         targetEpoch: BigInt.from(999),
       );

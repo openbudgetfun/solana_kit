@@ -18,10 +18,7 @@ void main() {
     },
   );
 
-  final terminatedCodec = addCodecSentinel(
-    asciiCodec,
-    Uint8List.fromList([0]),
-  );
+  final terminatedCodec = addCodecSentinel(asciiCodec, Uint8List.fromList([0]));
 
   final encoded = terminatedCodec.encode('HELLO');
   final decoded = terminatedCodec.decode(encoded);

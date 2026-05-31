@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -25,7 +24,8 @@ class InitializePermanentDelegateInstructionData {
   final Address delegate;
 }
 
-Encoder<InitializePermanentDelegateInstructionData> getInitializePermanentDelegateInstructionDataEncoder() {
+Encoder<InitializePermanentDelegateInstructionData>
+getInitializePermanentDelegateInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('delegate', getAddressEncoder()),
@@ -40,7 +40,8 @@ Encoder<InitializePermanentDelegateInstructionData> getInitializePermanentDelega
   );
 }
 
-Decoder<InitializePermanentDelegateInstructionData> getInitializePermanentDelegateInstructionDataDecoder() {
+Decoder<InitializePermanentDelegateInstructionData>
+getInitializePermanentDelegateInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('delegate', getAddressDecoder()),
@@ -48,15 +49,23 @@ Decoder<InitializePermanentDelegateInstructionData> getInitializePermanentDelega
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializePermanentDelegateInstructionData(
-      discriminator: map['discriminator']! as int,
-      delegate: map['delegate']! as Address,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializePermanentDelegateInstructionData(
+          discriminator: map['discriminator']! as int,
+          delegate: map['delegate']! as Address,
+        ),
   );
 }
 
-Codec<InitializePermanentDelegateInstructionData, InitializePermanentDelegateInstructionData> getInitializePermanentDelegateInstructionDataCodec() {
-  return combineCodec(getInitializePermanentDelegateInstructionDataEncoder(), getInitializePermanentDelegateInstructionDataDecoder());
+Codec<
+  InitializePermanentDelegateInstructionData,
+  InitializePermanentDelegateInstructionData
+>
+getInitializePermanentDelegateInstructionDataCodec() {
+  return combineCodec(
+    getInitializePermanentDelegateInstructionDataEncoder(),
+    getInitializePermanentDelegateInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializePermanentDelegate] instruction.
@@ -66,19 +75,22 @@ Instruction getInitializePermanentDelegateInstruction({
   required Address delegate,
 }) {
   final instructionData = InitializePermanentDelegateInstructionData(
-      delegate: delegate,
+    delegate: delegate,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    ],
-    data: getInitializePermanentDelegateInstructionDataEncoder().encode(instructionData),
+    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    data: getInitializePermanentDelegateInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [InitializePermanentDelegate] instruction from raw instruction data.
-InitializePermanentDelegateInstructionData parseInitializePermanentDelegateInstruction(Instruction instruction) {
-  return getInitializePermanentDelegateInstructionDataDecoder().decode(instruction.data!);
+InitializePermanentDelegateInstructionData
+parseInitializePermanentDelegateInstruction(Instruction instruction) {
+  return getInitializePermanentDelegateInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

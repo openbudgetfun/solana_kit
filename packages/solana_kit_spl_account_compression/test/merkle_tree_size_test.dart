@@ -5,10 +5,8 @@ void main() {
   group('getConcurrentMerkleTreeAccountSize', () {
     test('throws for invalid depth-size pair', () {
       expect(
-        () => getConcurrentMerkleTreeAccountSize(
-          maxDepth: 14,
-          maxBufferSize: 32,
-        ),
+        () =>
+            getConcurrentMerkleTreeAccountSize(maxDepth: 14, maxBufferSize: 32),
         throwsA(isA<ArgumentError>()),
       );
     });
@@ -119,10 +117,7 @@ void main() {
     });
 
     test('noopProgramAddress is correct', () {
-      expect(
-        noopProgramAddress,
-        'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
-      );
+      expect(noopProgramAddress, 'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK');
     });
   });
 

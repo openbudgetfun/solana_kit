@@ -20,8 +20,7 @@ class _IsFullySignedTransactionMatcher extends Matcher {
     if (item is! Transaction) return false;
     return item.signatures.isNotEmpty &&
         item.signatures.values.every(
-          (sig) =>
-              sig != null && (sig as Uint8List).any((byte) => byte != 0),
+          (sig) => sig != null && (sig as Uint8List).any((byte) => byte != 0),
         );
   }
 

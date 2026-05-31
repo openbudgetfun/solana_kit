@@ -1,4 +1,3 @@
-
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/src/array.dart';
 
@@ -9,10 +8,7 @@ import 'package:solana_kit_codecs_data_structures/src/array.dart';
 /// using a `u32` codec by default.
 Encoder<Set<T>> getSetEncoder<T>(Encoder<T> item, {ArrayLikeCodecSize? size}) {
   final arrayEncoder = getArrayEncoder<T>(item, size: size);
-  return transformEncoder<List<T>, Set<T>>(
-    arrayEncoder,
-    (set) => set.toList(),
-  );
+  return transformEncoder<List<T>, Set<T>>(arrayEncoder, (set) => set.toList());
 }
 
 /// Returns a decoder for sets.

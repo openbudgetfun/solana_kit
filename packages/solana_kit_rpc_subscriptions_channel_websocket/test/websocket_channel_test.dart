@@ -147,7 +147,8 @@ void main() {
       final url = Uri.parse('wss://example.com');
       final config = WebSocketChannelConfig(
         url: url,
-        allowInsecureWs: true, allowPrivateHosts: true,
+        allowInsecureWs: true,
+        allowPrivateHosts: true,
         sendBufferHighWatermark: 42069,
         signal: signal,
       );
@@ -165,7 +166,8 @@ void main() {
         createWebSocketChannel(
           WebSocketChannelConfig(
             url: Uri.parse('ws://localhost:0'),
-            allowInsecureWs: true, allowPrivateHosts: true,
+            allowInsecureWs: true,
+            allowPrivateHosts: true,
             signal: controller.signal,
           ),
         ),
@@ -188,7 +190,8 @@ void main() {
         createWebSocketChannel(
           WebSocketChannelConfig(
             url: Uri.parse('ws://localhost:0'),
-            allowInsecureWs: true, allowPrivateHosts: true,
+            allowInsecureWs: true,
+            allowPrivateHosts: true,
             signal: controller.signal,
           ),
         ),
@@ -204,7 +207,8 @@ void main() {
           createWebSocketChannel(
             WebSocketChannelConfig(
               url: Uri.parse('ws://localhost:0'),
-              allowInsecureWs: true, allowPrivateHosts: true,
+              allowInsecureWs: true,
+              allowPrivateHosts: true,
               signal: controller.signal,
             ),
           ),
@@ -233,7 +237,8 @@ void main() {
         createWebSocketChannel(
           WebSocketChannelConfig(
             url: Uri.parse('https://example.com/socket'),
-            allowInsecureWs: true, allowPrivateHosts: true,
+            allowInsecureWs: true,
+            allowPrivateHosts: true,
           ),
         ),
         throwsArgumentError,
@@ -245,7 +250,8 @@ void main() {
         createWebSocketChannel(
           WebSocketChannelConfig(
             url: Uri.parse('/socket'),
-            allowInsecureWs: true, allowPrivateHosts: true,
+            allowInsecureWs: true,
+            allowPrivateHosts: true,
           ),
         ),
         throwsArgumentError,
@@ -260,7 +266,8 @@ void main() {
           createWebSocketChannel(
             WebSocketChannelConfig(
               url: Uri.parse('ws://localhost:1'),
-              allowInsecureWs: true, allowPrivateHosts: true,
+              allowInsecureWs: true,
+              allowPrivateHosts: true,
             ),
           ),
           throwsA(
@@ -298,7 +305,11 @@ void main() {
 
     test('resolves to a channel when the connection is established', () async {
       final channel = await createWebSocketChannel(
-        WebSocketChannelConfig(url: serverUrl, allowInsecureWs: true, allowPrivateHosts: true),
+        WebSocketChannelConfig(
+          url: serverUrl,
+          allowInsecureWs: true,
+          allowPrivateHosts: true,
+        ),
       );
       expect(channel, isNotNull);
     });
@@ -308,7 +319,8 @@ void main() {
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
-          allowInsecureWs: true, allowPrivateHosts: true,
+          allowInsecureWs: true,
+          allowPrivateHosts: true,
           signal: controller.signal,
         ),
       );
@@ -332,7 +344,8 @@ void main() {
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
-          allowInsecureWs: true, allowPrivateHosts: true,
+          allowInsecureWs: true,
+          allowPrivateHosts: true,
           signal: controller.signal,
         ),
       );
@@ -358,7 +371,8 @@ void main() {
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
-          allowInsecureWs: true, allowPrivateHosts: true,
+          allowInsecureWs: true,
+          allowPrivateHosts: true,
           signal: controller.signal,
         ),
       );
@@ -381,7 +395,8 @@ void main() {
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
-          allowInsecureWs: true, allowPrivateHosts: true,
+          allowInsecureWs: true,
+          allowPrivateHosts: true,
           signal: controller.signal,
         ),
       );
@@ -406,7 +421,8 @@ void main() {
         final channel = await createWebSocketChannel(
           WebSocketChannelConfig(
             url: serverUrl,
-            allowInsecureWs: true, allowPrivateHosts: true,
+            allowInsecureWs: true,
+            allowPrivateHosts: true,
             signal: controller.signal,
           ),
         );
@@ -440,7 +456,8 @@ void main() {
         final channel = await createWebSocketChannel(
           WebSocketChannelConfig(
             url: serverUrl,
-            allowInsecureWs: true, allowPrivateHosts: true,
+            allowInsecureWs: true,
+            allowPrivateHosts: true,
             signal: controller.signal,
           ),
         );
@@ -464,7 +481,8 @@ void main() {
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
-          allowInsecureWs: true, allowPrivateHosts: true,
+          allowInsecureWs: true,
+          allowPrivateHosts: true,
           signal: controller.signal,
         ),
       );
@@ -488,7 +506,8 @@ void main() {
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
-          allowInsecureWs: true, allowPrivateHosts: true,
+          allowInsecureWs: true,
+          allowPrivateHosts: true,
           signal: controller.signal,
         ),
       );
@@ -516,7 +535,8 @@ void main() {
       await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
-          allowInsecureWs: true, allowPrivateHosts: true,
+          allowInsecureWs: true,
+          allowPrivateHosts: true,
           signal: controller.signal,
         ),
       );
@@ -542,7 +562,8 @@ void main() {
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
-          allowInsecureWs: true, allowPrivateHosts: true,
+          allowInsecureWs: true,
+          allowPrivateHosts: true,
           signal: controller.signal,
         ),
       );
@@ -570,9 +591,7 @@ void main() {
     test('blocks localhost by default', () async {
       await expectLater(
         () => createWebSocketChannel(
-          WebSocketChannelConfig(
-            url: Uri.parse('wss://localhost:8080'),
-          ),
+          WebSocketChannelConfig(url: Uri.parse('wss://localhost:8080')),
         ),
         throwsA(isA<ArgumentError>()),
       );
@@ -581,9 +600,7 @@ void main() {
     test('blocks 10.x.x.x by default', () async {
       await expectLater(
         () => createWebSocketChannel(
-          WebSocketChannelConfig(
-            url: Uri.parse('wss://10.0.0.1:8080'),
-          ),
+          WebSocketChannelConfig(url: Uri.parse('wss://10.0.0.1:8080')),
         ),
         throwsA(isA<ArgumentError>()),
       );
@@ -592,9 +609,7 @@ void main() {
     test('blocks 192.168.x.x by default', () async {
       await expectLater(
         () => createWebSocketChannel(
-          WebSocketChannelConfig(
-            url: Uri.parse('wss://192.168.1.1:8080'),
-          ),
+          WebSocketChannelConfig(url: Uri.parse('wss://192.168.1.1:8080')),
         ),
         throwsA(isA<ArgumentError>()),
       );
@@ -603,9 +618,7 @@ void main() {
     test('blocks 172.16-31.x.x by default', () async {
       await expectLater(
         () => createWebSocketChannel(
-          WebSocketChannelConfig(
-            url: Uri.parse('wss://172.16.0.1:8080'),
-          ),
+          WebSocketChannelConfig(url: Uri.parse('wss://172.16.0.1:8080')),
         ),
         throwsA(isA<ArgumentError>()),
       );
@@ -614,9 +627,7 @@ void main() {
     test('blocks 169.254.x.x by default', () async {
       await expectLater(
         () => createWebSocketChannel(
-          WebSocketChannelConfig(
-            url: Uri.parse('wss://169.254.1.1:8080'),
-          ),
+          WebSocketChannelConfig(url: Uri.parse('wss://169.254.1.1:8080')),
         ),
         throwsA(isA<ArgumentError>()),
       );

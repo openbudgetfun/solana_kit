@@ -10,8 +10,7 @@ void main() {
     });
 
     test('toJson includes commitment when set', () {
-      const config =
-          GetBlocksWithLimitConfig(commitment: Commitment.confirmed);
+      const config = GetBlocksWithLimitConfig(commitment: Commitment.confirmed);
       final json = config.toJson();
       expect(json, hasLength(1));
       expect(json['commitment'], 'confirmed');

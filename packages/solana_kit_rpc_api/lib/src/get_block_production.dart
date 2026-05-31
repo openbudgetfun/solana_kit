@@ -31,8 +31,7 @@ class SlotRange {
   int get hashCode => Object.hash(runtimeType, firstSlot, lastSlot);
 
   @override
-  String toString() =>
-      'SlotRange(firstSlot: $firstSlot, lastSlot: $lastSlot)';
+  String toString() => 'SlotRange(firstSlot: $firstSlot, lastSlot: $lastSlot)';
 }
 
 /// Configuration for the `getBlockProduction` RPC method.

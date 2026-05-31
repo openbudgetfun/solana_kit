@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -32,46 +31,89 @@ class InitializeConfidentialTransferFeeInstructionData {
   final Address? withdrawWithheldAuthorityElGamalPubkey;
 }
 
-Encoder<InitializeConfidentialTransferFeeInstructionData> getInitializeConfidentialTransferFeeInstructionDataEncoder() {
+Encoder<InitializeConfidentialTransferFeeInstructionData>
+getInitializeConfidentialTransferFeeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferFeeDiscriminator', getU8Encoder()),
-    ('authority', getNullableEncoder<Address>(getAddressEncoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
-    ('withdrawWithheldAuthorityElGamalPubkey', getNullableEncoder<Address>(getAddressEncoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'authority',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
+    (
+      'withdrawWithheldAuthorityElGamalPubkey',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformEncoder(
     structEncoder,
-    (InitializeConfidentialTransferFeeInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'confidentialTransferFeeDiscriminator': value.confidentialTransferFeeDiscriminator,
-      'authority': value.authority,
-      'withdrawWithheldAuthorityElGamalPubkey': value.withdrawWithheldAuthorityElGamalPubkey,
-    },
+    (InitializeConfidentialTransferFeeInstructionData value) =>
+        <String, Object?>{
+          'discriminator': value.discriminator,
+          'confidentialTransferFeeDiscriminator':
+              value.confidentialTransferFeeDiscriminator,
+          'authority': value.authority,
+          'withdrawWithheldAuthorityElGamalPubkey':
+              value.withdrawWithheldAuthorityElGamalPubkey,
+        },
   );
 }
 
-Decoder<InitializeConfidentialTransferFeeInstructionData> getInitializeConfidentialTransferFeeInstructionDataDecoder() {
+Decoder<InitializeConfidentialTransferFeeInstructionData>
+getInitializeConfidentialTransferFeeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferFeeDiscriminator', getU8Decoder()),
-    ('authority', getNullableDecoder<Address>(getAddressDecoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
-    ('withdrawWithheldAuthorityElGamalPubkey', getNullableDecoder<Address>(getAddressDecoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'authority',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
+    (
+      'withdrawWithheldAuthorityElGamalPubkey',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeConfidentialTransferFeeInstructionData(
-      discriminator: map['discriminator']! as int,
-      confidentialTransferFeeDiscriminator: map['confidentialTransferFeeDiscriminator']! as int,
-      authority: map['authority'] as Address?,
-      withdrawWithheldAuthorityElGamalPubkey: map['withdrawWithheldAuthorityElGamalPubkey'] as Address?,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializeConfidentialTransferFeeInstructionData(
+          discriminator: map['discriminator']! as int,
+          confidentialTransferFeeDiscriminator:
+              map['confidentialTransferFeeDiscriminator']! as int,
+          authority: map['authority'] as Address?,
+          withdrawWithheldAuthorityElGamalPubkey:
+              map['withdrawWithheldAuthorityElGamalPubkey'] as Address?,
+        ),
   );
 }
 
-Codec<InitializeConfidentialTransferFeeInstructionData, InitializeConfidentialTransferFeeInstructionData> getInitializeConfidentialTransferFeeInstructionDataCodec() {
-  return combineCodec(getInitializeConfidentialTransferFeeInstructionDataEncoder(), getInitializeConfidentialTransferFeeInstructionDataDecoder());
+Codec<
+  InitializeConfidentialTransferFeeInstructionData,
+  InitializeConfidentialTransferFeeInstructionData
+>
+getInitializeConfidentialTransferFeeInstructionDataCodec() {
+  return combineCodec(
+    getInitializeConfidentialTransferFeeInstructionDataEncoder(),
+    getInitializeConfidentialTransferFeeInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializeConfidentialTransferFee] instruction.
@@ -82,20 +124,24 @@ Instruction getInitializeConfidentialTransferFeeInstruction({
   required Address? withdrawWithheldAuthorityElGamalPubkey,
 }) {
   final instructionData = InitializeConfidentialTransferFeeInstructionData(
-      authority: authority,
-      withdrawWithheldAuthorityElGamalPubkey: withdrawWithheldAuthorityElGamalPubkey,
+    authority: authority,
+    withdrawWithheldAuthorityElGamalPubkey:
+        withdrawWithheldAuthorityElGamalPubkey,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    ],
-    data: getInitializeConfidentialTransferFeeInstructionDataEncoder().encode(instructionData),
+    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    data: getInitializeConfidentialTransferFeeInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [InitializeConfidentialTransferFee] instruction from raw instruction data.
-InitializeConfidentialTransferFeeInstructionData parseInitializeConfidentialTransferFeeInstruction(Instruction instruction) {
-  return getInitializeConfidentialTransferFeeInstructionDataDecoder().decode(instruction.data!);
+InitializeConfidentialTransferFeeInstructionData
+parseInitializeConfidentialTransferFeeInstruction(Instruction instruction) {
+  return getInitializeConfidentialTransferFeeInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

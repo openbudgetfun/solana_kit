@@ -301,8 +301,9 @@ Uint8List _base58ToBytes(String encoded) {
   var num = BigInt.zero;
   for (var i = 0; i < encoded.length; i++) {
     final charIndex = alphabet.indexOf(encoded[i]);
-    if (charIndex < 0)
+    if (charIndex < 0) {
       throw FormatException('Invalid base58 character: ${encoded[i]}');
+    }
     num = num * BigInt.from(58) + BigInt.from(charIndex);
   }
   while (num > BigInt.zero) {

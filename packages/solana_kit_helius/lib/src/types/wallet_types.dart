@@ -163,10 +163,7 @@ class WalletBalances {
     final r = JsonReader(json);
     return WalletBalances(
       nativeBalance: r.requireInt('nativeBalance'),
-      tokens: r.requireDecodedList(
-        'tokens',
-        WalletTokenBalance.fromJson,
-      ),
+      tokens: r.requireDecodedList('tokens', WalletTokenBalance.fromJson),
     );
   }
 

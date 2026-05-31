@@ -1,8 +1,12 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-export 'package:solana_kit_addresses/solana_kit_addresses.dart'
-    show tokenProgramAddress;
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+
+/// The address of the Token program.
+const tokenProgramAddress = Address(
+  'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+);
 
 /// Known accounts for the Token program.
 enum TokenAccount { mint, token, multisig }

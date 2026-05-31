@@ -100,7 +100,5 @@ Instruction getFreezeLookupTableInstruction({
 FreezeLookupTableInstructionData parseFreezeLookupTableInstruction(
   Instruction instruction,
 ) {
-  return getFreezeLookupTableInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+  return getFreezeLookupTableInstructionDataDecoder().decode(instruction.data!);
 }

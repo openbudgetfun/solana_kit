@@ -357,10 +357,7 @@ void main() {
     });
 
     test('returns null when absent', () {
-      expect(
-        reader({}).optMappedList<String>('vals', (e) => '$e'),
-        isNull,
-      );
+      expect(reader({}).optMappedList<String>('vals', (e) => '$e'), isNull);
     });
 
     test('returns null when value is null', () {
@@ -385,10 +382,7 @@ void main() {
     });
 
     test('returns null when absent', () {
-      expect(
-        reader({}).optDecodedList<String>('items', (m) => ''),
-        isNull,
-      );
+      expect(reader({}).optDecodedList<String>('items', (m) => ''), isNull);
     });
 
     test('returns null when value is null', () {
@@ -411,10 +405,7 @@ void main() {
     });
 
     test('returns null when key is absent', () {
-      expect(
-        reader({}).optDecoded<String>('obj', (m) => ''),
-        isNull,
-      );
+      expect(reader({}).optDecoded<String>('obj', (m) => ''), isNull);
     });
 
     test('returns null when value is null', () {
@@ -436,7 +427,10 @@ void main() {
     }
 
     test('decodes string to enum value when present', () {
-      expect(reader({'e': 'alpha'}).optEnum<String>('e', strictDecode), 'alpha');
+      expect(
+        reader({'e': 'alpha'}).optEnum<String>('e', strictDecode),
+        'alpha',
+      );
     });
 
     test('returns null when key is absent', () {

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -38,7 +37,8 @@ class ConfidentialTransferInstructionData {
   final int rangeProofInstructionOffset;
 }
 
-Encoder<ConfidentialTransferInstructionData> getConfidentialTransferInstructionDataEncoder() {
+Encoder<ConfidentialTransferInstructionData>
+getConfidentialTransferInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferDiscriminator', getU8Encoder()),
@@ -52,16 +52,20 @@ Encoder<ConfidentialTransferInstructionData> getConfidentialTransferInstructionD
     structEncoder,
     (ConfidentialTransferInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialTransferDiscriminator': value.confidentialTransferDiscriminator,
-      'newSourceDecryptableAvailableBalance': value.newSourceDecryptableAvailableBalance,
+      'confidentialTransferDiscriminator':
+          value.confidentialTransferDiscriminator,
+      'newSourceDecryptableAvailableBalance':
+          value.newSourceDecryptableAvailableBalance,
       'equalityProofInstructionOffset': value.equalityProofInstructionOffset,
-      'ciphertextValidityProofInstructionOffset': value.ciphertextValidityProofInstructionOffset,
+      'ciphertextValidityProofInstructionOffset':
+          value.ciphertextValidityProofInstructionOffset,
       'rangeProofInstructionOffset': value.rangeProofInstructionOffset,
     },
   );
 }
 
-Decoder<ConfidentialTransferInstructionData> getConfidentialTransferInstructionDataDecoder() {
+Decoder<ConfidentialTransferInstructionData>
+getConfidentialTransferInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferDiscriminator', getU8Decoder()),
@@ -73,19 +77,31 @@ Decoder<ConfidentialTransferInstructionData> getConfidentialTransferInstructionD
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ConfidentialTransferInstructionData(
+    (
+      Map<String, Object?> map,
+      Uint8List bytes,
+      int offset,
+    ) => ConfidentialTransferInstructionData(
       discriminator: map['discriminator']! as int,
-      confidentialTransferDiscriminator: map['confidentialTransferDiscriminator']! as int,
-      newSourceDecryptableAvailableBalance: map['newSourceDecryptableAvailableBalance']! as DecryptableBalance,
-      equalityProofInstructionOffset: map['equalityProofInstructionOffset']! as int,
-      ciphertextValidityProofInstructionOffset: map['ciphertextValidityProofInstructionOffset']! as int,
+      confidentialTransferDiscriminator:
+          map['confidentialTransferDiscriminator']! as int,
+      newSourceDecryptableAvailableBalance:
+          map['newSourceDecryptableAvailableBalance']! as DecryptableBalance,
+      equalityProofInstructionOffset:
+          map['equalityProofInstructionOffset']! as int,
+      ciphertextValidityProofInstructionOffset:
+          map['ciphertextValidityProofInstructionOffset']! as int,
       rangeProofInstructionOffset: map['rangeProofInstructionOffset']! as int,
     ),
   );
 }
 
-Codec<ConfidentialTransferInstructionData, ConfidentialTransferInstructionData> getConfidentialTransferInstructionDataCodec() {
-  return combineCodec(getConfidentialTransferInstructionDataEncoder(), getConfidentialTransferInstructionDataDecoder());
+Codec<ConfidentialTransferInstructionData, ConfidentialTransferInstructionData>
+getConfidentialTransferInstructionDataCodec() {
+  return combineCodec(
+    getConfidentialTransferInstructionDataEncoder(),
+    getConfidentialTransferInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [ConfidentialTransfer] instruction.
@@ -105,29 +121,43 @@ Instruction getConfidentialTransferInstruction({
   required int rangeProofInstructionOffset,
 }) {
   final instructionData = ConfidentialTransferInstructionData(
-      newSourceDecryptableAvailableBalance: newSourceDecryptableAvailableBalance,
-      equalityProofInstructionOffset: equalityProofInstructionOffset,
-      ciphertextValidityProofInstructionOffset: ciphertextValidityProofInstructionOffset,
-      rangeProofInstructionOffset: rangeProofInstructionOffset,
+    newSourceDecryptableAvailableBalance: newSourceDecryptableAvailableBalance,
+    equalityProofInstructionOffset: equalityProofInstructionOffset,
+    ciphertextValidityProofInstructionOffset:
+        ciphertextValidityProofInstructionOffset,
+    rangeProofInstructionOffset: rangeProofInstructionOffset,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: sourceToken, role: AccountRole.writable),
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    AccountMeta(address: destinationToken, role: AccountRole.writable),
-    if (instructionsSysvar != null) AccountMeta(address: instructionsSysvar, role: AccountRole.readonly),
-    if (equalityRecord != null) AccountMeta(address: equalityRecord, role: AccountRole.readonly),
-    if (ciphertextValidityRecord != null) AccountMeta(address: ciphertextValidityRecord, role: AccountRole.readonly),
-    if (rangeRecord != null) AccountMeta(address: rangeRecord, role: AccountRole.readonly),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: sourceToken, role: AccountRole.writable),
+      AccountMeta(address: mint, role: AccountRole.readonly),
+      AccountMeta(address: destinationToken, role: AccountRole.writable),
+      if (instructionsSysvar != null)
+        AccountMeta(address: instructionsSysvar, role: AccountRole.readonly),
+      if (equalityRecord != null)
+        AccountMeta(address: equalityRecord, role: AccountRole.readonly),
+      if (ciphertextValidityRecord != null)
+        AccountMeta(
+          address: ciphertextValidityRecord,
+          role: AccountRole.readonly,
+        ),
+      if (rangeRecord != null)
+        AccountMeta(address: rangeRecord, role: AccountRole.readonly),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getConfidentialTransferInstructionDataEncoder().encode(instructionData),
+    data: getConfidentialTransferInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [ConfidentialTransfer] instruction from raw instruction data.
-ConfidentialTransferInstructionData parseConfidentialTransferInstruction(Instruction instruction) {
-  return getConfidentialTransferInstructionDataDecoder().decode(instruction.data!);
+ConfidentialTransferInstructionData parseConfidentialTransferInstruction(
+  Instruction instruction,
+) {
+  return getConfidentialTransferInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

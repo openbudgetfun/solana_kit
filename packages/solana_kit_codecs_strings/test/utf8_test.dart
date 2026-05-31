@@ -79,11 +79,7 @@ void main() {
                 'code',
                 SolanaErrorCode.codecsStringContainsNullCharacters,
               )
-              .having(
-                (error) => error.context['encoding'],
-                'encoding',
-                'utf8',
-              )
+              .having((error) => error.context['encoding'], 'encoding', 'utf8')
               .having(
                 (error) => error.context['nullCharacterMode'],
                 'nullCharacterMode',

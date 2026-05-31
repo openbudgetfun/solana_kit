@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -36,12 +35,19 @@ class InitializeTransferFeeConfigInstructionData {
   final BigInt maximumFee;
 }
 
-Encoder<InitializeTransferFeeConfigInstructionData> getInitializeTransferFeeConfigInstructionDataEncoder() {
+Encoder<InitializeTransferFeeConfigInstructionData>
+getInitializeTransferFeeConfigInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('transferFeeDiscriminator', getU8Encoder()),
-    ('transferFeeConfigAuthority', getNullableEncoder<Address>(getAddressEncoder())),
-    ('withdrawWithheldAuthority', getNullableEncoder<Address>(getAddressEncoder())),
+    (
+      'transferFeeConfigAuthority',
+      getNullableEncoder<Address>(getAddressEncoder()),
+    ),
+    (
+      'withdrawWithheldAuthority',
+      getNullableEncoder<Address>(getAddressEncoder()),
+    ),
     ('transferFeeBasisPoints', getU16Encoder()),
     ('maximumFee', getU64Encoder()),
   ]);
@@ -59,19 +65,30 @@ Encoder<InitializeTransferFeeConfigInstructionData> getInitializeTransferFeeConf
   );
 }
 
-Decoder<InitializeTransferFeeConfigInstructionData> getInitializeTransferFeeConfigInstructionDataDecoder() {
+Decoder<InitializeTransferFeeConfigInstructionData>
+getInitializeTransferFeeConfigInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('transferFeeDiscriminator', getU8Decoder()),
-    ('transferFeeConfigAuthority', getNullableDecoder<Address>(getAddressDecoder())),
-    ('withdrawWithheldAuthority', getNullableDecoder<Address>(getAddressDecoder())),
+    (
+      'transferFeeConfigAuthority',
+      getNullableDecoder<Address>(getAddressDecoder()),
+    ),
+    (
+      'withdrawWithheldAuthority',
+      getNullableDecoder<Address>(getAddressDecoder()),
+    ),
     ('transferFeeBasisPoints', getU16Decoder()),
     ('maximumFee', getU64Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeTransferFeeConfigInstructionData(
+    (
+      Map<String, Object?> map,
+      Uint8List bytes,
+      int offset,
+    ) => InitializeTransferFeeConfigInstructionData(
       discriminator: map['discriminator']! as int,
       transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
       transferFeeConfigAuthority: map['transferFeeConfigAuthority'] as Address?,
@@ -82,8 +99,15 @@ Decoder<InitializeTransferFeeConfigInstructionData> getInitializeTransferFeeConf
   );
 }
 
-Codec<InitializeTransferFeeConfigInstructionData, InitializeTransferFeeConfigInstructionData> getInitializeTransferFeeConfigInstructionDataCodec() {
-  return combineCodec(getInitializeTransferFeeConfigInstructionDataEncoder(), getInitializeTransferFeeConfigInstructionDataDecoder());
+Codec<
+  InitializeTransferFeeConfigInstructionData,
+  InitializeTransferFeeConfigInstructionData
+>
+getInitializeTransferFeeConfigInstructionDataCodec() {
+  return combineCodec(
+    getInitializeTransferFeeConfigInstructionDataEncoder(),
+    getInitializeTransferFeeConfigInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializeTransferFeeConfig] instruction.
@@ -96,22 +120,25 @@ Instruction getInitializeTransferFeeConfigInstruction({
   required BigInt maximumFee,
 }) {
   final instructionData = InitializeTransferFeeConfigInstructionData(
-      transferFeeConfigAuthority: transferFeeConfigAuthority,
-      withdrawWithheldAuthority: withdrawWithheldAuthority,
-      transferFeeBasisPoints: transferFeeBasisPoints,
-      maximumFee: maximumFee,
+    transferFeeConfigAuthority: transferFeeConfigAuthority,
+    withdrawWithheldAuthority: withdrawWithheldAuthority,
+    transferFeeBasisPoints: transferFeeBasisPoints,
+    maximumFee: maximumFee,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    ],
-    data: getInitializeTransferFeeConfigInstructionDataEncoder().encode(instructionData),
+    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    data: getInitializeTransferFeeConfigInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [InitializeTransferFeeConfig] instruction from raw instruction data.
-InitializeTransferFeeConfigInstructionData parseInitializeTransferFeeConfigInstruction(Instruction instruction) {
-  return getInitializeTransferFeeConfigInstructionDataDecoder().decode(instruction.data!);
+InitializeTransferFeeConfigInstructionData
+parseInitializeTransferFeeConfigInstruction(Instruction instruction) {
+  return getInitializeTransferFeeConfigInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

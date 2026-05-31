@@ -102,7 +102,5 @@ Instruction getCloseLookupTableInstruction({
 CloseLookupTableInstructionData parseCloseLookupTableInstruction(
   Instruction instruction,
 ) {
-  return getCloseLookupTableInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+  return getCloseLookupTableInstructionDataDecoder().decode(instruction.data!);
 }

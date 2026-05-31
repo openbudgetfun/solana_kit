@@ -98,10 +98,7 @@ void main() {
     test('encoder rejects unsupported version via SolanaError', () {
       final encoder = getTransactionVersionEncoder();
       // v0 encoding should succeed (version 0 is valid)
-      expect(
-        () => encoder.encode(TransactionVersion.v0),
-        returnsNormally,
-      );
+      expect(() => encoder.encode(TransactionVersion.v0), returnsNormally);
     });
 
     test('getSizeFromValue returns 1 for versioned transactions', () {

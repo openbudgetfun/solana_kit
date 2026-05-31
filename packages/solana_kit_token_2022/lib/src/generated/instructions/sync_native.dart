@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -16,9 +15,7 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class SyncNativeInstructionData {
-  const SyncNativeInstructionData({
-    this.discriminator = 17,
-  });
+  const SyncNativeInstructionData({this.discriminator = 17});
 
   final int discriminator;
 }
@@ -43,31 +40,29 @@ Decoder<SyncNativeInstructionData> getSyncNativeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => SyncNativeInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SyncNativeInstructionData(discriminator: map['discriminator']! as int),
   );
 }
 
-Codec<SyncNativeInstructionData, SyncNativeInstructionData> getSyncNativeInstructionDataCodec() {
-  return combineCodec(getSyncNativeInstructionDataEncoder(), getSyncNativeInstructionDataDecoder());
+Codec<SyncNativeInstructionData, SyncNativeInstructionData>
+getSyncNativeInstructionDataCodec() {
+  return combineCodec(
+    getSyncNativeInstructionDataEncoder(),
+    getSyncNativeInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [SyncNative] instruction.
 Instruction getSyncNativeInstruction({
   required Address programAddress,
   required Address account,
-
 }) {
-  final instructionData = SyncNativeInstructionData(
-
-  );
+  final instructionData = SyncNativeInstructionData();
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-    AccountMeta(address: account, role: AccountRole.writable),
-    ],
+    accounts: [AccountMeta(address: account, role: AccountRole.writable)],
     data: getSyncNativeInstructionDataEncoder().encode(instructionData),
   );
 }

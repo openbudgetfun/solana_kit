@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -28,7 +27,8 @@ class HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData {
   final int confidentialTransferFeeDiscriminator;
 }
 
-Encoder<HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData> getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataEncoder() {
+Encoder<HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData>
+getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferFeeDiscriminator', getU8Encoder()),
@@ -36,14 +36,19 @@ Encoder<HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData> ge
 
   return transformEncoder(
     structEncoder,
-    (HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData value) => <String, Object?>{
+    (
+      HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData
+      value,
+    ) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialTransferFeeDiscriminator': value.confidentialTransferFeeDiscriminator,
+      'confidentialTransferFeeDiscriminator':
+          value.confidentialTransferFeeDiscriminator,
     },
   );
 }
 
-Decoder<HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData> getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataDecoder() {
+Decoder<HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData>
+getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferFeeDiscriminator', getU8Decoder()),
@@ -51,37 +56,49 @@ Decoder<HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData> ge
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData(
-      discriminator: map['discriminator']! as int,
-      confidentialTransferFeeDiscriminator: map['confidentialTransferFeeDiscriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData(
+          discriminator: map['discriminator']! as int,
+          confidentialTransferFeeDiscriminator:
+              map['confidentialTransferFeeDiscriminator']! as int,
+        ),
   );
 }
 
-Codec<HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData, HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData> getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataCodec() {
-  return combineCodec(getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataEncoder(), getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataDecoder());
+Codec<
+  HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData,
+  HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData
+>
+getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataCodec() {
+  return combineCodec(
+    getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataEncoder(),
+    getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [HarvestWithheldTokensToMintForConfidentialTransferFee] instruction.
-Instruction getHarvestWithheldTokensToMintForConfidentialTransferFeeInstruction({
+Instruction
+getHarvestWithheldTokensToMintForConfidentialTransferFeeInstruction({
   required Address programAddress,
   required Address mint,
-
 }) {
-  final instructionData = HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData(
-
-  );
+  final instructionData =
+      HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData();
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    ],
-    data: getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataEncoder().encode(instructionData),
+    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    data:
+        getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataEncoder()
+            .encode(instructionData),
   );
 }
 
 /// Parses a [HarvestWithheldTokensToMintForConfidentialTransferFee] instruction from raw instruction data.
-HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData parseHarvestWithheldTokensToMintForConfidentialTransferFeeInstruction(Instruction instruction) {
-  return getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataDecoder().decode(instruction.data!);
+HarvestWithheldTokensToMintForConfidentialTransferFeeInstructionData
+parseHarvestWithheldTokensToMintForConfidentialTransferFeeInstruction(
+  Instruction instruction,
+) {
+  return getHarvestWithheldTokensToMintForConfidentialTransferFeeInstructionDataDecoder()
+      .decode(instruction.data!);
 }

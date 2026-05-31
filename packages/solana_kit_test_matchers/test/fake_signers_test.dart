@@ -35,18 +35,20 @@ void main() {
       expect(signer.address, addr);
     });
 
-    test('modifyAndSignTransactions returns original transactions by default',
-        () async {
-      const addr = Address('11111111111111111111111111111111');
-      final signer = MockTransactionModifyingSigner(addr);
-      final txn = Transaction(
-        messageBytes: Uint8List(32),
-        signatures: {addr: SignatureBytes(Uint8List(64))},
-      );
-      final result = await signer.modifyAndSignTransactions([txn]);
-      expect(result, hasLength(1));
-      expect(identical(result.first, txn), isTrue);
-    });
+    test(
+      'modifyAndSignTransactions returns original transactions by default',
+      () async {
+        const addr = Address('11111111111111111111111111111111');
+        final signer = MockTransactionModifyingSigner(addr);
+        final txn = Transaction(
+          messageBytes: Uint8List(32),
+          signatures: {addr: SignatureBytes(Uint8List(64))},
+        );
+        final result = await signer.modifyAndSignTransactions([txn]);
+        expect(result, hasLength(1));
+        expect(identical(result.first, txn), isTrue);
+      },
+    );
   });
 
   group('MockTransactionSendingSigner', () {
@@ -56,19 +58,21 @@ void main() {
       expect(signer.address, addr);
     });
 
-    test('signAndSendTransactions returns zero signatures by default',
-        () async {
-      const addr = Address('11111111111111111111111111111111');
-      final signer = MockTransactionSendingSigner(addr);
-      final result = await signer.signAndSendTransactions([
-        Transaction(
-          messageBytes: Uint8List(32),
-          signatures: {addr: SignatureBytes(Uint8List(64))},
-        ),
-      ]);
-      expect(result, hasLength(1));
-      expect(result.first.value, hasLength(64));
-    });
+    test(
+      'signAndSendTransactions returns zero signatures by default',
+      () async {
+        const addr = Address('11111111111111111111111111111111');
+        final signer = MockTransactionSendingSigner(addr);
+        final result = await signer.signAndSendTransactions([
+          Transaction(
+            messageBytes: Uint8List(32),
+            signatures: {addr: SignatureBytes(Uint8List(64))},
+          ),
+        ]);
+        expect(result, hasLength(1));
+        expect(result.first.value, hasLength(64));
+      },
+    );
   });
 
   group('createMockInstructionWithSigners', () {

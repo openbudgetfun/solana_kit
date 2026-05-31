@@ -114,18 +114,14 @@ void main() {
       final feePayer = MockTransactionPartialSigner(
         const Address('11111111111111111111111111111111'),
       );
-      final baseTx = createTransactionMessage(
-        version: TransactionVersion.v0,
-      );
+      final baseTx = createTransactionMessage(version: TransactionVersion.v0);
 
       final txWithFeePayer = setTransactionMessageFeePayerSigner(
         feePayer,
         baseTx,
       );
 
-      final copied = txWithFeePayer.copyWith(
-        instructions: const [],
-      );
+      final copied = txWithFeePayer.copyWith(instructions: const []);
 
       expect(copied, isA<TransactionMessageWithFeePayerSigner>());
       expect(

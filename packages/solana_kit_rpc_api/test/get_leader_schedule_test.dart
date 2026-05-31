@@ -13,8 +13,7 @@ void main() {
     });
 
     test('toJson includes commitment when set', () {
-      const config =
-          GetLeaderScheduleConfig(commitment: Commitment.confirmed);
+      const config = GetLeaderScheduleConfig(commitment: Commitment.confirmed);
       final json = config.toJson();
       expect(json['commitment'], 'confirmed');
     });

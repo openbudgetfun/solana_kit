@@ -26,10 +26,7 @@ AsymmetricKeyPair<ECPublicKey, ECPrivateKey> generateP256KeyPair() {
       ),
     );
   final pair = generator.generateKeyPair();
-  return AsymmetricKeyPair(
-    pair.publicKey,
-    pair.privateKey,
-  );
+  return AsymmetricKeyPair(pair.publicKey, pair.privateKey);
 }
 
 /// Signs [data] using ECDSA with SHA-256 and returns the signature as

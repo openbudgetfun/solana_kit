@@ -6,61 +6,69 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wall
 
 void main() {
   group('MwaExampleController', () {
-    test('tracks unsupported platforms without hitting wallet session flows', () async {
-      final controller = MwaExampleController(
-        platformService: const _FakePlatformSupportService(
-          isSupported: false,
-          walletEndpointAvailable: false,
-        ),
-        sessionService: _FakeSessionService(),
-      );
+    test(
+      'tracks unsupported platforms without hitting wallet session flows',
+      () async {
+        final controller = MwaExampleController(
+          platformService: const _FakePlatformSupportService(
+            isSupported: false,
+            walletEndpointAvailable: false,
+          ),
+          sessionService: _FakeSessionService(),
+        );
 
-      await controller.initialize();
+        await controller.initialize();
 
-      expect(controller.isSupported, isFalse);
-      expect(controller.walletEndpointAvailable, isFalse);
-      expect(controller.logs.first, contains('unavailable on this platform'));
-    });
+        expect(controller.isSupported, isFalse);
+        expect(controller.walletEndpointAvailable, isFalse);
+        expect(controller.logs.first, contains('unavailable on this platform'));
+      },
+    );
 
-    test('drives authorize, capabilities, sign, send, and deauthorize flows', () async {
-      final sessionService = _FakeSessionService();
-      final controller = MwaExampleController(
-        platformService: const _FakePlatformSupportService(
-          isSupported: true,
-          walletEndpointAvailable: true,
-        ),
-        sessionService: sessionService,
-        initialTransactionDraft: 'dGVzdC10cmFuc2FjdGlvbg==',
-      );
+    test(
+      'drives authorize, capabilities, sign, send, and deauthorize flows',
+      () async {
+        final sessionService = _FakeSessionService();
+        final controller = MwaExampleController(
+          platformService: const _FakePlatformSupportService(
+            isSupported: true,
+            walletEndpointAvailable: true,
+          ),
+          sessionService: sessionService,
+          initialTransactionDraft: 'dGVzdC10cmFuc2FjdGlvbg==',
+        );
 
-      await controller.initialize();
-      expect(controller.walletEndpointAvailable, isTrue);
+        await controller.initialize();
+        expect(controller.walletEndpointAvailable, isTrue);
 
-      await controller.authorize();
-      expect(controller.hasAuthorization, isTrue);
-      expect(controller.activeAccountLabel, 'Demo Wallet Account');
+        await controller.authorize();
+        expect(controller.hasAuthorization, isTrue);
+        expect(controller.activeAccountLabel, 'Demo Wallet Account');
 
-      await controller.loadCapabilities();
-      expect(
-        controller.capabilities?.features,
-        containsAll(<String>[
-          'solana:signMessages',
-          'solana:signAndSendTransactions',
-        ]),
-      );
+        await controller.loadCapabilities();
+        expect(
+          controller.capabilities?.features,
+          containsAll(<String>[
+            'solana:signMessages',
+            'solana:signAndSendTransactions',
+          ]),
+        );
 
-      controller.setMessageDraft('Hello integration test');
-      await controller.signMessage();
-      expect(controller.lastSignedPayload, sessionService.signedPayload);
+        controller.setMessageDraft('Hello integration test');
+        await controller.signMessage();
+        expect(controller.lastSignedPayload, sessionService.signedPayload);
 
-      await controller.signAndSendTransaction();
-      expect(controller.lastSubmittedSignatures, const <String>['demo-signature-1']);
+        await controller.signAndSendTransaction();
+        expect(controller.lastSubmittedSignatures, const <String>[
+          'demo-signature-1',
+        ]);
 
-      await controller.deauthorize();
-      expect(controller.hasAuthorization, isFalse);
-      expect(sessionService.deauthorizedAuthTokens, contains('auth-token-1'));
-      expect(controller.logs.first, contains('Deauthorize succeeded.'));
-    });
+        await controller.deauthorize();
+        expect(controller.hasAuthorization, isFalse);
+        expect(sessionService.deauthorizedAuthTokens, contains('auth-token-1'));
+        expect(controller.logs.first, contains('Deauthorize succeeded.'));
+      },
+    );
   });
 }
 

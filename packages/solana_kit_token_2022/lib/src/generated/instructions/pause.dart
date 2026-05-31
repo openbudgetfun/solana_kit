@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -51,15 +50,20 @@ Decoder<PauseInstructionData> getPauseInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => PauseInstructionData(
-      discriminator: map['discriminator']! as int,
-      pausableDiscriminator: map['pausableDiscriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        PauseInstructionData(
+          discriminator: map['discriminator']! as int,
+          pausableDiscriminator: map['pausableDiscriminator']! as int,
+        ),
   );
 }
 
-Codec<PauseInstructionData, PauseInstructionData> getPauseInstructionDataCodec() {
-  return combineCodec(getPauseInstructionDataEncoder(), getPauseInstructionDataDecoder());
+Codec<PauseInstructionData, PauseInstructionData>
+getPauseInstructionDataCodec() {
+  return combineCodec(
+    getPauseInstructionDataEncoder(),
+    getPauseInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Pause] instruction.
@@ -67,17 +71,14 @@ Instruction getPauseInstruction({
   required Address programAddress,
   required Address mint,
   required Address authority,
-
 }) {
-  final instructionData = PauseInstructionData(
-
-  );
+  final instructionData = PauseInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: mint, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getPauseInstructionDataEncoder().encode(instructionData),
   );

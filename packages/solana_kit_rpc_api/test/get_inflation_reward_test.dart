@@ -14,8 +14,7 @@ void main() {
     });
 
     test('toJson includes commitment when set', () {
-      const config =
-          GetInflationRewardConfig(commitment: Commitment.confirmed);
+      const config = GetInflationRewardConfig(commitment: Commitment.confirmed);
       final json = config.toJson();
       expect(json['commitment'], 'confirmed');
     });
@@ -27,8 +26,7 @@ void main() {
     });
 
     test('toJson includes minContextSlot when set', () {
-      final config =
-          GetInflationRewardConfig(minContextSlot: BigInt.from(300));
+      final config = GetInflationRewardConfig(minContextSlot: BigInt.from(300));
       final json = config.toJson();
       expect(json['minContextSlot'], BigInt.from(300));
     });
@@ -51,17 +49,13 @@ void main() {
     test('returns list with address array when no config', () {
       final params = getInflationRewardParams([addressA, addressB]);
       expect(params, hasLength(1));
-      expect(
-        params[0],
-        [addressA.value, addressB.value],
-      );
+      expect(params[0], [addressA.value, addressB.value]);
     });
 
     test('returns list with address array and config when config provided', () {
-      final params = getInflationRewardParams(
-        [addressA],
-        const GetInflationRewardConfig(commitment: Commitment.finalized),
-      );
+      final params = getInflationRewardParams([
+        addressA,
+      ], const GetInflationRewardConfig(commitment: Commitment.finalized));
       expect(params, hasLength(2));
       expect(params[0], [addressA.value]);
       expect(params[1], isA<Map<String, Object?>>());

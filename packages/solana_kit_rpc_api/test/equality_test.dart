@@ -5,7 +5,9 @@ import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:test/test.dart';
 
 const _addr1 = Address('11111111111111111111111111111111');
-const _sig1 = Signature('1111111111111111111111111111111111111111111111111111111111111111');
+const _sig1 = Signature(
+  '1111111111111111111111111111111111111111111111111111111111111111',
+);
 
 void main() {
   // ---------------------------------------------------------------------------
@@ -286,12 +288,8 @@ void main() {
     });
 
     test('not equal when commitment differs', () {
-      const a = SimulateTransactionConfig(
-        commitment: Commitment.confirmed,
-      );
-      const b = SimulateTransactionConfig(
-        commitment: Commitment.finalized,
-      );
+      const a = SimulateTransactionConfig(commitment: Commitment.confirmed);
+      const b = SimulateTransactionConfig(commitment: Commitment.finalized);
       expect(a, isNot(equals(b)));
     });
   });
@@ -314,12 +312,8 @@ void main() {
     });
 
     test('not equal when addresses differ', () {
-      const a = SimulateTransactionAccountsConfig(
-        addresses: [_addr1],
-      );
-      const b = SimulateTransactionAccountsConfig(
-        addresses: [],
-      );
+      const a = SimulateTransactionAccountsConfig(addresses: [_addr1]);
+      const b = SimulateTransactionAccountsConfig(addresses: []);
       expect(a, isNot(equals(b)));
     });
   });
@@ -438,16 +432,12 @@ void main() {
     });
 
     test('GetBalanceConfig toString', () {
-      const config = GetBalanceConfig(
-        commitment: Commitment.confirmed,
-      );
+      const config = GetBalanceConfig(commitment: Commitment.confirmed);
       expect(config.toString(), contains('GetBalanceConfig'));
     });
 
     test('GetBlockConfig toString', () {
-      const config = GetBlockConfig(
-        commitment: Commitment.confirmed,
-      );
+      const config = GetBlockConfig(commitment: Commitment.confirmed);
       expect(config.toString(), contains('GetBlockConfig'));
     });
 
@@ -491,16 +481,12 @@ void main() {
     });
 
     test('SimulateTransactionAccountsConfig toString', () {
-      const config = SimulateTransactionAccountsConfig(
-        addresses: [],
-      );
+      const config = SimulateTransactionAccountsConfig(addresses: []);
       expect(config.toString(), contains('SimulateTransactionAccountsConfig'));
     });
 
     test('TokenAccountProgramIdFilter toString', () {
-      const filter = TokenAccountProgramIdFilter(
-        programId: _addr1,
-      );
+      const filter = TokenAccountProgramIdFilter(programId: _addr1);
       expect(filter.toString(), contains('TokenAccountProgramIdFilter'));
     });
 

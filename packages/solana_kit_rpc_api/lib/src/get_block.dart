@@ -56,7 +56,8 @@ class GetBlockConfig {
           runtimeType == other.runtimeType &&
           commitment == other.commitment &&
           encoding == other.encoding &&
-          maxSupportedTransactionVersion == other.maxSupportedTransactionVersion &&
+          maxSupportedTransactionVersion ==
+              other.maxSupportedTransactionVersion &&
           rewards == other.rewards &&
           transactionDetails == other.transactionDetails;
 

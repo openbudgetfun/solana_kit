@@ -24,10 +24,7 @@ void main() {
         fixedSize: structEncoder.fixedSize,
         structEncoder: structEncoder,
         structDecoder: structDecoder,
-        toFields: (value) => {
-          'slot': value.slot,
-          'warmup': value.warmup,
-        },
+        toFields: (value) => {'slot': value.slot, 'warmup': value.warmup},
         fromFields: (fields) => _ExampleLayout(
           slot: fields['slot']! as BigInt,
           warmup: fields['warmup']! as bool,

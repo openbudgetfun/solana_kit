@@ -38,9 +38,7 @@ void main() {
     });
 
     test('describe uses truncated format for arrays longer than 8 bytes', () {
-      final expected = Uint8List.fromList(
-        List.generate(12, (i) => i + 1),
-      );
+      final expected = Uint8List.fromList(List.generate(12, (i) => i + 1));
       final matcher = equalsBytes(expected);
       final desc = _describe(matcher);
       // Should contain "..." to indicate truncation.
@@ -97,7 +95,6 @@ void main() {
       final desc = _describe(matcher);
       expect(desc, contains('64'));
     });
-
   });
 
   // ---------------------------------------------------------------------------
@@ -123,7 +120,6 @@ void main() {
       final msg = _mismatch(matcher, Uint8List.fromList([1, 2]));
       expect(msg, contains('shorter'));
     });
-
   });
 
   // ---------------------------------------------------------------------------
@@ -143,10 +139,7 @@ void main() {
     });
 
     test('reports "has no signatures" for empty signatures map', () {
-      final tx = Transaction(
-        messageBytes: Uint8List(32),
-        signatures: const {},
-      );
+      final tx = Transaction(messageBytes: Uint8List(32), signatures: const {});
       final msg = _mismatch(isFullySignedTransactionMatcher, tx);
       expect(msg, contains('no signatures'));
     });
@@ -201,7 +194,6 @@ void main() {
       final msg = _mismatch(isValidSolanaAddress, 'bad!address');
       expect(msg, contains('not a valid base58-encoded address'));
     });
-
   });
 
   // ---------------------------------------------------------------------------
@@ -214,5 +206,4 @@ void main() {
       expect(desc, contains('11111111111111111111111111111111'));
     });
   });
-
 }

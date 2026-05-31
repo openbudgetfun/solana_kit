@@ -11,7 +11,9 @@ void main() {
     });
 
     test('toJson includes encoding when set', () {
-      const config = SendTransactionConfig(encoding: WireTransactionEncoding.base64);
+      const config = SendTransactionConfig(
+        encoding: WireTransactionEncoding.base64,
+      );
       final json = config.toJson();
       expect(json['encoding'], 'base64');
     });

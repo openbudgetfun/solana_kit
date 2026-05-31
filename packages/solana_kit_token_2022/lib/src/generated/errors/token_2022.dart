@@ -85,26 +85,33 @@ const int token2022ErrorNonNativeNotSupported = 0x13; // 19
 
 /// Map of error codes to human-readable messages.
 const Map<int, String> _token2022ErrorMessages = {
-    token2022ErrorNotRentExempt: 'Lamport balance below rent-exempt threshold',
-    token2022ErrorInsufficientFunds: 'Insufficient funds',
-    token2022ErrorInvalidMint: 'Invalid Mint',
-    token2022ErrorMintMismatch: 'Account not associated with this Mint',
-    token2022ErrorOwnerMismatch: 'Owner does not match',
-    token2022ErrorFixedSupply: 'Fixed supply',
-    token2022ErrorAlreadyInUse: 'Already in use',
-    token2022ErrorInvalidNumberOfProvidedSigners: 'Invalid number of provided signers',
-    token2022ErrorInvalidNumberOfRequiredSigners: 'Invalid number of required signers',
-    token2022ErrorUninitializedState: 'State is unititialized',
-    token2022ErrorNativeNotSupported: 'Instruction does not support native tokens',
-    token2022ErrorNonNativeHasBalance: 'Non-native account can only be closed if its balance is zero',
-    token2022ErrorInvalidInstruction: 'Invalid instruction',
-    token2022ErrorInvalidState: 'State is invalid for requested operation',
-    token2022ErrorOverflow: 'Operation overflowed',
-    token2022ErrorAuthorityTypeNotSupported: 'Account does not support specified authority type',
-    token2022ErrorMintCannotFreeze: 'This token mint cannot freeze accounts',
-    token2022ErrorAccountFrozen: 'Account is frozen',
-    token2022ErrorMintDecimalsMismatch: 'The provided decimals value different from the Mint decimals',
-    token2022ErrorNonNativeNotSupported: 'Instruction does not support non-native tokens',
+  token2022ErrorNotRentExempt: 'Lamport balance below rent-exempt threshold',
+  token2022ErrorInsufficientFunds: 'Insufficient funds',
+  token2022ErrorInvalidMint: 'Invalid Mint',
+  token2022ErrorMintMismatch: 'Account not associated with this Mint',
+  token2022ErrorOwnerMismatch: 'Owner does not match',
+  token2022ErrorFixedSupply: 'Fixed supply',
+  token2022ErrorAlreadyInUse: 'Already in use',
+  token2022ErrorInvalidNumberOfProvidedSigners:
+      'Invalid number of provided signers',
+  token2022ErrorInvalidNumberOfRequiredSigners:
+      'Invalid number of required signers',
+  token2022ErrorUninitializedState: 'State is unititialized',
+  token2022ErrorNativeNotSupported:
+      'Instruction does not support native tokens',
+  token2022ErrorNonNativeHasBalance:
+      'Non-native account can only be closed if its balance is zero',
+  token2022ErrorInvalidInstruction: 'Invalid instruction',
+  token2022ErrorInvalidState: 'State is invalid for requested operation',
+  token2022ErrorOverflow: 'Operation overflowed',
+  token2022ErrorAuthorityTypeNotSupported:
+      'Account does not support specified authority type',
+  token2022ErrorMintCannotFreeze: 'This token mint cannot freeze accounts',
+  token2022ErrorAccountFrozen: 'Account is frozen',
+  token2022ErrorMintDecimalsMismatch:
+      'The provided decimals value different from the Mint decimals',
+  token2022ErrorNonNativeNotSupported:
+      'Instruction does not support non-native tokens',
 };
 
 /// Get the error message for a Token2022 program error code.

@@ -26,12 +26,11 @@ void main() {
       getBlockHeightExceedencePromise =
           createBlockHeightExceedencePromiseFactory(
             BlockHeightExceedenceConfig(
-              getEpochInfo:
-                  ({required abortSignal, commitment}) {
-                    final completer = Completer<EpochInfo>();
-                    epochInfoCompleters.add(completer);
-                    return completer.future;
-                  },
+              getEpochInfo: ({required abortSignal, commitment}) {
+                final completer = Completer<EpochInfo>();
+                epochInfoCompleters.add(completer);
+                return completer.future;
+              },
               onSlotNotification:
                   ({
                     required abortSignal,
@@ -217,51 +216,53 @@ void main() {
       );
     });
 
-    test('throws if aborted after initial info fetch when block height exceeded',
-        () async {
-      final abortController = AbortController();
+    test(
+      'throws if aborted after initial info fetch when block height exceeded',
+      () async {
+        final abortController = AbortController();
 
-      final fn = createBlockHeightExceedencePromiseFactory(
-        BlockHeightExceedenceConfig(
-          getEpochInfo: ({required abortSignal, commitment}) async {
-            if (abortSignal.isAborted) {
-              throw StateError('aborted: ${abortSignal.reason}');
-            }
-            return EpochInfo(
-              absoluteSlot: BigInt.from(200),
-              blockHeight: BigInt.from(101),
-            );
-          },
-          onSlotNotification: ({
-            required abortSignal,
-            required void Function(SlotNotification notification)
-                onNotification,
-          }) async {
-            await Completer<void>().future;
-          },
-        ),
-      );
-
-      // Abort immediately so the second check fires.
-      abortController.abort('test abort after fetch');
-
-      await expectLater(
-        fn(
-          abortSignal: abortController.signal,
-          lastValidBlockHeight: BigInt.from(100),
-        ),
-        throwsA(
-          isA<StateError>().having(
-            (e) => e.message,
-            'message',
-            contains('operation was aborted'),
+        final fn = createBlockHeightExceedencePromiseFactory(
+          BlockHeightExceedenceConfig(
+            getEpochInfo: ({required abortSignal, commitment}) async {
+              if (abortSignal.isAborted) {
+                throw StateError('aborted: ${abortSignal.reason}');
+              }
+              return EpochInfo(
+                absoluteSlot: BigInt.from(200),
+                blockHeight: BigInt.from(101),
+              );
+            },
+            onSlotNotification:
+                ({
+                  required abortSignal,
+                  required void Function(SlotNotification notification)
+                  onNotification,
+                }) async {
+                  await Completer<void>().future;
+                },
           ),
-        ),
-      );
-    });
+        );
 
-    test('throws if aborted after block height processing completes',
-        () async {
+        // Abort immediately so the second check fires.
+        abortController.abort('test abort after fetch');
+
+        await expectLater(
+          fn(
+            abortSignal: abortController.signal,
+            lastValidBlockHeight: BigInt.from(100),
+          ),
+          throwsA(
+            isA<StateError>().having(
+              (e) => e.message,
+              'message',
+              contains('operation was aborted'),
+            ),
+          ),
+        );
+      },
+    );
+
+    test('throws if aborted after block height processing completes', () async {
       final abortController = AbortController();
 
       final fn = createBlockHeightExceedencePromiseFactory(
@@ -272,14 +273,15 @@ void main() {
               blockHeight: BigInt.from(50),
             );
           },
-          onSlotNotification: ({
-            required abortSignal,
-            required void Function(SlotNotification notification)
+          onSlotNotification:
+              ({
+                required abortSignal,
+                required void Function(SlotNotification notification)
                 onNotification,
-          }) async {
-            // Keep subscription open.
-            await Completer<void>().future;
-          },
+              }) async {
+                // Keep subscription open.
+                await Completer<void>().future;
+              },
         ),
       );
 
@@ -321,16 +323,12 @@ void main() {
     test('throws errors thrown from the slot subscription', () async {
       final fn = createBlockHeightExceedencePromiseFactory(
         BlockHeightExceedenceConfig(
-          getEpochInfo:
-              ({
-                required abortSignal,
-                commitment,
-              }) async {
-                return EpochInfo(
-                  absoluteSlot: BigInt.from(100),
-                  blockHeight: BigInt.from(100),
-                );
-              },
+          getEpochInfo: ({required abortSignal, commitment}) async {
+            return EpochInfo(
+              absoluteSlot: BigInt.from(100),
+              blockHeight: BigInt.from(100),
+            );
+          },
           onSlotNotification:
               ({
                 required abortSignal,
@@ -366,8 +364,9 @@ void main() {
         // Initial: slot 198, height 98 (difference of 100).
         epochInfoCompleters[0].complete(
           EpochInfo(
-              absoluteSlot: BigInt.from(198),
-              blockHeight: BigInt.from(98)),
+            absoluteSlot: BigInt.from(198),
+            blockHeight: BigInt.from(98),
+          ),
         );
 
         await Future<void>.delayed(Duration.zero);
@@ -420,17 +419,13 @@ void main() {
 
       final fn = createBlockHeightExceedencePromiseFactory(
         BlockHeightExceedenceConfig(
-          getEpochInfo:
-              ({
-                required abortSignal,
-                commitment,
-              }) async {
-                capturedCommitment = commitment;
-                return EpochInfo(
-                  absoluteSlot: BigInt.from(101),
-                  blockHeight: BigInt.from(101),
-                );
-              },
+          getEpochInfo: ({required abortSignal, commitment}) async {
+            capturedCommitment = commitment;
+            return EpochInfo(
+              absoluteSlot: BigInt.from(101),
+              blockHeight: BigInt.from(101),
+            );
+          },
           onSlotNotification:
               ({
                 required abortSignal,
@@ -470,13 +465,14 @@ void main() {
               blockHeight: BigInt.zero,
             );
           },
-          onSlotNotification: ({
-            required abortSignal,
-            required void Function(SlotNotification notification)
+          onSlotNotification:
+              ({
+                required abortSignal,
+                required void Function(SlotNotification notification)
                 onNotification,
-          }) async {
-            await Completer<void>().future;
-          },
+              }) async {
+                await Completer<void>().future;
+              },
         ),
       );
 

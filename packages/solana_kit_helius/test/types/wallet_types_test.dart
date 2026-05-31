@@ -66,9 +66,7 @@ void main() {
         'name': 'Loris',
         'pfpUrl': 'https://example.com/pfp.png',
         'domain': 'loris.sol',
-        'socials': {
-          'twitter': '@loris',
-        },
+        'socials': {'twitter': '@loris'},
       },
       Identity.fromJson,
       (value) => value.toJson(),
@@ -113,11 +111,7 @@ void main() {
       'slot': 99,
       'timestamp': 1234567890,
       'nativeTransfers': [
-        {
-          'fromUserAccount': 'from',
-          'toUserAccount': 'to',
-          'amount': 1,
-        },
+        {'fromUserAccount': 'from', 'toUserAccount': 'to', 'amount': 1},
       ],
       'tokenTransfers': [
         {
@@ -150,14 +144,10 @@ void main() {
           'accounts': ['a', 'b'],
           'data': 'deadbeef',
           'programId': 'program-1',
-          'innerInstructions': {
-            'child': true,
-          },
+          'innerInstructions': {'child': true},
         },
       ],
-      'events': {
-        'swap': true,
-      },
+      'events': {'swap': true},
     };
 
     expectJsonRoundTrip(

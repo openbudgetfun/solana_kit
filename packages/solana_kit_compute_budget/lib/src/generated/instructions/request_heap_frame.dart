@@ -17,7 +17,8 @@ const requestHeapFrameDiscriminator = 1;
 class RequestHeapFrameInstructionData {
   /// Creates [RequestHeapFrameInstructionData].
   const RequestHeapFrameInstructionData({
-    required this.bytes, this.discriminator = requestHeapFrameDiscriminator,
+    required this.bytes,
+    this.discriminator = requestHeapFrameDiscriminator,
   });
 
   /// The instruction discriminator byte.

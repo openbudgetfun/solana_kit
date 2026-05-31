@@ -124,31 +124,29 @@ void main() {
       expect(merged.toString(), contains('config:'));
     });
 
-    test('clears config when merged result is empty and current is not null',
-        () {
-      // Create a message with a non-null but empty config
-      final message = createTransactionMessage(
-        version: TransactionVersion.v1,
-      ).copyWith(
-        config: const V1TransactionConfig(),
-      );
-      // Verify the config is actually set (non-null)
-      expect(message.config, isNotNull);
+    test(
+      'clears config when merged result is empty and current is not null',
+      () {
+        // Create a message with a non-null but empty config
+        final message = createTransactionMessage(
+          version: TransactionVersion.v1,
+        ).copyWith(config: const V1TransactionConfig());
+        // Verify the config is actually set (non-null)
+        expect(message.config, isNotNull);
 
-      final result = setTransactionMessageConfig(
-        const V1TransactionConfig(),
-        message,
-      );
-      // When merged is empty and current is not null, it should clear config
-      expect(result.config, isNull);
-    });
+        final result = setTransactionMessageConfig(
+          const V1TransactionConfig(),
+          message,
+        );
+        // When merged is empty and current is not null, it should clear config
+        expect(result.config, isNull);
+      },
+    );
 
     test('returns original when merged equals current config', () {
       final message = createTransactionMessage(
         version: TransactionVersion.v1,
-      ).copyWith(
-        config: const V1TransactionConfig(computeUnitLimit: 100),
-      );
+      ).copyWith(config: const V1TransactionConfig(computeUnitLimit: 100));
       final result = setTransactionMessageConfig(
         const V1TransactionConfig(computeUnitLimit: 100),
         message,

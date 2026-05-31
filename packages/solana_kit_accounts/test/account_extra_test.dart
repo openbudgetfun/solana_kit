@@ -8,12 +8,13 @@ import 'package:test/test.dart';
 const _addr = Address('GQE2yjns7SKKuMc89tveBDpzYHwXfeuB2PGAbGaPWc6G');
 const _systemProgram = Address('11111111111111111111111111111111');
 
-BaseAccount _makeBase({bool executable = false, int lamports = 0}) => BaseAccount(
-  executable: executable,
-  lamports: Lamports(BigInt.from(lamports)),
-  programAddress: _systemProgram,
-  space: BigInt.zero,
-);
+BaseAccount _makeBase({bool executable = false, int lamports = 0}) =>
+    BaseAccount(
+      executable: executable,
+      lamports: Lamports(BigInt.from(lamports)),
+      programAddress: _systemProgram,
+      space: BigInt.zero,
+    );
 
 Account<Uint8List> _makeAccount({Uint8List? data}) => Account<Uint8List>(
   address: _addr,
@@ -199,30 +200,32 @@ void main() {
       expect(a, equals(b));
     });
 
-    test('two ExistingAccounts with different inner accounts are not equal',
-        () {
-      final a = ExistingAccount<Uint8List>(
-        Account<Uint8List>(
-          address: _addr,
-          data: Uint8List.fromList([1]),
-          executable: false,
-          lamports: Lamports(BigInt.from(1)),
-          programAddress: _systemProgram,
-          space: BigInt.one,
-        ),
-      );
-      final b = ExistingAccount<Uint8List>(
-        Account<Uint8List>(
-          address: _addr,
-          data: Uint8List.fromList([2]),
-          executable: false,
-          lamports: Lamports(BigInt.from(1)),
-          programAddress: _systemProgram,
-          space: BigInt.one,
-        ),
-      );
-      expect(a, isNot(equals(b)));
-    });
+    test(
+      'two ExistingAccounts with different inner accounts are not equal',
+      () {
+        final a = ExistingAccount<Uint8List>(
+          Account<Uint8List>(
+            address: _addr,
+            data: Uint8List.fromList([1]),
+            executable: false,
+            lamports: Lamports(BigInt.from(1)),
+            programAddress: _systemProgram,
+            space: BigInt.one,
+          ),
+        );
+        final b = ExistingAccount<Uint8List>(
+          Account<Uint8List>(
+            address: _addr,
+            data: Uint8List.fromList([2]),
+            executable: false,
+            lamports: Lamports(BigInt.from(1)),
+            programAddress: _systemProgram,
+            space: BigInt.one,
+          ),
+        );
+        expect(a, isNot(equals(b)));
+      },
+    );
   });
 
   // ---------------------------------------------------------------------------

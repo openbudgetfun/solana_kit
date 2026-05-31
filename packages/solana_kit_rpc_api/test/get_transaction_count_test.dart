@@ -10,16 +10,16 @@ void main() {
     });
 
     test('toJson includes commitment when set', () {
-      const config =
-          GetTransactionCountConfig(commitment: Commitment.finalized);
+      const config = GetTransactionCountConfig(
+        commitment: Commitment.finalized,
+      );
       final json = config.toJson();
       expect(json, hasLength(1));
       expect(json['commitment'], 'finalized');
     });
 
     test('toJson includes minContextSlot when set', () {
-      final config =
-          GetTransactionCountConfig(minContextSlot: BigInt.from(20));
+      final config = GetTransactionCountConfig(minContextSlot: BigInt.from(20));
       final json = config.toJson();
       expect(json, hasLength(1));
       expect(json['minContextSlot'], BigInt.from(20));

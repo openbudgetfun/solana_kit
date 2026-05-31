@@ -156,7 +156,8 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
                                 child: const Text('Authorize'),
                               ),
                               ElevatedButton(
-                                onPressed: _controller.isBusy ||
+                                onPressed:
+                                    _controller.isBusy ||
                                         !_controller.hasAuthorization
                                     ? null
                                     : () => _runWithFeedback(
@@ -167,7 +168,8 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
                                 child: const Text('Get Capabilities'),
                               ),
                               OutlinedButton(
-                                onPressed: _controller.isBusy ||
+                                onPressed:
+                                    _controller.isBusy ||
                                         !_controller.hasAuthorization
                                     ? null
                                     : () => _runWithFeedback(
@@ -183,18 +185,22 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
                           _StatusLine(
                             label: 'Wallet features',
                             value:
-                                _controller.capabilities?.features?.join(', ') ??
+                                _controller.capabilities?.features?.join(
+                                  ', ',
+                                ) ??
                                 'Not loaded',
                           ),
                           _StatusLine(
                             label: 'Max messages/request',
-                            value: _controller.capabilities?.maxMessagesPerRequest
+                            value:
+                                _controller.capabilities?.maxMessagesPerRequest
                                     ?.toString() ??
                                 'Not loaded',
                           ),
                           _StatusLine(
                             label: 'Max tx/request',
-                            value: _controller
+                            value:
+                                _controller
                                     .capabilities
                                     ?.maxTransactionsPerRequest
                                     ?.toString() ??
@@ -228,7 +234,8 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
                           ),
                           const SizedBox(height: 12),
                           ElevatedButton.icon(
-                            onPressed: _controller.isBusy ||
+                            onPressed:
+                                _controller.isBusy ||
                                     !_controller.hasAuthorization
                                 ? null
                                 : () => _runWithFeedback(
@@ -275,7 +282,8 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
                           ),
                           const SizedBox(height: 12),
                           ElevatedButton.icon(
-                            onPressed: _controller.isBusy ||
+                            onPressed:
+                                _controller.isBusy ||
                                     !_controller.hasAuthorization
                                 ? null
                                 : () => _runWithFeedback(
@@ -290,7 +298,9 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
                           SelectableText(
                             _controller.lastSubmittedSignatures.isEmpty
                                 ? 'No transaction signatures yet.'
-                                : _controller.lastSubmittedSignatures.join('\n'),
+                                : _controller.lastSubmittedSignatures.join(
+                                    '\n',
+                                  ),
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
@@ -350,7 +360,9 @@ class _UnsupportedPlatformCard extends StatelessWidget {
           const SizedBox(height: 12),
           const Text('Recommended iOS fallback UX:'),
           const SizedBox(height: 8),
-          const Text('• Explain that wallet handoff is unavailable on iOS today.'),
+          const Text(
+            '• Explain that wallet handoff is unavailable on iOS today.',
+          ),
           const Text('• Offer a browser-wallet or desktop-wallet alternative.'),
           const Text('• Keep the rest of the Flutter app functional.'),
           const SizedBox(height: 12),

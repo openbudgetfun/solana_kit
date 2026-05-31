@@ -87,8 +87,7 @@ class TokenAccountProgramIdFilter {
   int get hashCode => Object.hash(runtimeType, programId);
 
   @override
-  String toString() =>
-      'TokenAccountProgramIdFilter(programId: $programId)';
+  String toString() => 'TokenAccountProgramIdFilter(programId: $programId)';
 }
 
 /// Builds the JSON-RPC params list for `getTokenAccountsByDelegate`.

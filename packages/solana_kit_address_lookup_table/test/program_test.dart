@@ -175,10 +175,7 @@ void main() {
         programAddress: addressLookupTableProgramAddress,
         accounts: [],
       );
-      expect(
-        () => parseAddressLookupTableInstruction(ix),
-        throwsArgumentError,
-      );
+      expect(() => parseAddressLookupTableInstruction(ix), throwsArgumentError);
     });
 
     test('throws on instruction with unknown discriminator', () {
@@ -187,10 +184,7 @@ void main() {
         accounts: const [],
         data: Uint8List.fromList([99, 0, 0, 0]),
       );
-      expect(
-        () => parseAddressLookupTableInstruction(ix),
-        throwsArgumentError,
-      );
+      expect(() => parseAddressLookupTableInstruction(ix), throwsArgumentError);
     });
   });
 

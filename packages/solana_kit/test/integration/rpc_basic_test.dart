@@ -16,10 +16,7 @@ import 'package:test/test.dart';
 const _localRpcUrl = 'http://localhost:8899';
 
 void main() {
-  late final rpc = createSolanaRpc(
-    url: _localRpcUrl,
-    allowInsecureHttp: true,
-  );
+  late final rpc = createSolanaRpc(url: _localRpcUrl, allowInsecureHttp: true);
 
   group('basic RPC methods', () {
     test('getSlot returns a non-negative slot', () async {
@@ -35,10 +32,7 @@ void main() {
     test('getLatestBlockhash returns a valid blockhash', () async {
       final result = await rpc.getLatestBlockhashValue().send();
       expect(result.value.blockhash.value, isNotEmpty);
-      expect(
-        result.value.lastValidBlockHeight,
-        greaterThan(BigInt.zero),
-      );
+      expect(result.value.lastValidBlockHeight, greaterThan(BigInt.zero));
     });
 
     test('getBalance for system program returns non-null', () async {

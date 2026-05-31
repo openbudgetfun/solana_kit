@@ -60,10 +60,7 @@ void main() {
         }
       });
 
-      final helius = createHelius(
-        HeliusConfig(apiKey: 'test'),
-        client: client,
-      );
+      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
       final accounts = await helius.rpcV2.getAllTokenAccountsByOwner(
         const GetTokenAccountsByOwnerV2Request(ownerAddress: 'owner1'),
       );
@@ -97,10 +94,7 @@ void main() {
         );
       });
 
-      final helius = createHelius(
-        HeliusConfig(apiKey: 'test'),
-        client: client,
-      );
+      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
       final accounts = await helius.rpcV2.getAllTokenAccountsByOwner(
         const GetTokenAccountsByOwnerV2Request(ownerAddress: 'owner1'),
       );

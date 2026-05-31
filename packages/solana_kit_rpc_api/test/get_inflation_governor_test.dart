@@ -10,8 +10,9 @@ void main() {
     });
 
     test('toJson includes commitment when set', () {
-      const config =
-          GetInflationGovernorConfig(commitment: Commitment.finalized);
+      const config = GetInflationGovernorConfig(
+        commitment: Commitment.finalized,
+      );
       final json = config.toJson();
       expect(json, hasLength(1));
       expect(json['commitment'], 'finalized');

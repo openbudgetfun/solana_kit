@@ -36,10 +36,7 @@ void main() {
         );
       });
 
-      final helius = createHelius(
-        HeliusConfig(apiKey: 'test'),
-        client: client,
-      );
+      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
       final result = await helius.zk.getMultipleCompressedAccountProofs(
         const GetMultipleCompressedAccountProofsRequest(hashes: ['h1', 'h2']),
       );

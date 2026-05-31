@@ -13,10 +13,7 @@ void main() {
   final instruction = Instruction(
     programAddress: const Address('11111111111111111111111111111111'),
     accounts: [
-      AccountMeta(
-        address: signer.address,
-        role: AccountRole.readonlySigner,
-      ),
+      AccountMeta(address: signer.address, role: AccountRole.readonlySigner),
     ],
     data: Uint8List(0),
   );

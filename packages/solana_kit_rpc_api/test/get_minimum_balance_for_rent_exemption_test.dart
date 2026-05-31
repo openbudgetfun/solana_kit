@@ -21,8 +21,7 @@ void main() {
 
   group('getMinimumBalanceForRentExemptionParams', () {
     test('returns list with only size when no config', () {
-      final params =
-          getMinimumBalanceForRentExemptionParams(BigInt.from(165));
+      final params = getMinimumBalanceForRentExemptionParams(BigInt.from(165));
       expect(params, hasLength(1));
       expect(params[0], BigInt.from(165));
     });

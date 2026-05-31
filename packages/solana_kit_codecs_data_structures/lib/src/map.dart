@@ -1,4 +1,3 @@
-
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/src/array.dart';
 import 'package:solana_kit_codecs_data_structures/src/tuple.dart';
@@ -20,8 +19,7 @@ Encoder<Map<K, V>> getMapEncoder<K, V>(
   final arrayEncoder = getArrayEncoder<List<Object?>>(tupleEncoder, size: size);
   return transformEncoder<List<List<Object?>>, Map<K, V>>(
     arrayEncoder,
-    (map) =>
-        map.entries.map((e) => <Object?>[e.key, e.value]).toList(),
+    (map) => map.entries.map((e) => <Object?>[e.key, e.value]).toList(),
   );
 }
 

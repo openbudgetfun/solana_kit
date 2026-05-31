@@ -410,22 +410,24 @@ void main() {
   // token_amount.dart coverage (lines 47-48)
   // ---------------------------------------------------------------------------
   group('TokenAmount equality', () {
-    test('equal when all fields match including uiAmount and uiAmountString',
-        () {
-      const a = TokenAmount(
-        amount: StringifiedBigInt('100'),
-        decimals: 2,
-        uiAmountString: StringifiedNumber('1'),
-        uiAmount: 1,
-      );
-      const b = TokenAmount(
-        amount: StringifiedBigInt('100'),
-        decimals: 2,
-        uiAmountString: StringifiedNumber('1'),
-        uiAmount: 1,
-      );
-      expect(a, equals(b));
-    });
+    test(
+      'equal when all fields match including uiAmount and uiAmountString',
+      () {
+        const a = TokenAmount(
+          amount: StringifiedBigInt('100'),
+          decimals: 2,
+          uiAmountString: StringifiedNumber('1'),
+          uiAmount: 1,
+        );
+        const b = TokenAmount(
+          amount: StringifiedBigInt('100'),
+          decimals: 2,
+          uiAmountString: StringifiedNumber('1'),
+          uiAmount: 1,
+        );
+        expect(a, equals(b));
+      },
+    );
 
     test('not equal when uiAmount differs', () {
       const a = TokenAmount(
@@ -1170,7 +1172,8 @@ void main() {
       // getShortU16Encoder returns VariableSizeEncoder<num>
       // This exercises the VariableSizeEncoder<num> branch
       final encoder =
-          getLamportsEncoder(getShortU16Encoder()) as VariableSizeEncoder<Lamports>;
+          getLamportsEncoder(getShortU16Encoder())
+              as VariableSizeEncoder<Lamports>;
       final lamportsValue = lamports(BigInt.from(300));
       final buffer = encoder.encode(lamportsValue);
       expect(buffer, isNotEmpty);
@@ -1183,7 +1186,8 @@ void main() {
       // getShortU16Decoder returns VariableSizeDecoder<int>
       // This exercises the VariableSizeDecoder<int> branch
       final decoder =
-          getLamportsDecoder(getShortU16Decoder()) as VariableSizeDecoder<Lamports>;
+          getLamportsDecoder(getShortU16Decoder())
+              as VariableSizeDecoder<Lamports>;
       // Encode 300 using shortU16: [172, 2]
       final buffer = Uint8List.fromList([172, 2]);
       final (value, _) = decoder.read(buffer, 0);
@@ -1226,8 +1230,7 @@ void main() {
       expect(a, equals(b));
     });
 
-    test('not equal when both token balance lists are non-null but differ',
-        () {
+    test('not equal when both token balance lists are non-null but differ', () {
       const tokenAmount = TokenAmount(
         amount: StringifiedBigInt('100'),
         decimals: 2,

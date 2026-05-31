@@ -20,7 +20,9 @@ void main() {
     data: Uint8List.fromList([1, 2, 3]),
   );
 
-  print('Matches program: ${isInstructionForProgram(instruction, programAddress)}');
+  print(
+    'Matches program: ${isInstructionForProgram(instruction, programAddress)}',
+  );
   print('Has accounts: ${isInstructionWithAccounts(instruction)}');
   print('Has data: ${isInstructionWithData(instruction)}');
 }

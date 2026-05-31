@@ -17,8 +17,7 @@ void main() {
     });
 
     test('toJson includes minContextSlot when set', () {
-      final config =
-          GetFeeForMessageConfig(minContextSlot: BigInt.from(42));
+      final config = GetFeeForMessageConfig(minContextSlot: BigInt.from(42));
       final json = config.toJson();
       expect(json, hasLength(1));
       expect(json['minContextSlot'], BigInt.from(42));

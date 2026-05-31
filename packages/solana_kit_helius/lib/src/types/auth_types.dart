@@ -7,7 +7,9 @@ class AgenticSignupRequest {
 
   factory AgenticSignupRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-    return AgenticSignupRequest(walletAddress: r.requireString('walletAddress'));
+    return AgenticSignupRequest(
+      walletAddress: r.requireString('walletAddress'),
+    );
   }
 
   final String walletAddress;

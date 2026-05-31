@@ -55,39 +55,25 @@ void main() {
 
     expectJsonRoundTrip(
       'GetAssetsByAuthorityRequest roundtrips',
-      {
-        'authorityAddress': 'authority-1',
-        ...sortableJson,
-      },
+      {'authorityAddress': 'authority-1', ...sortableJson},
       GetAssetsByAuthorityRequest.fromJson,
       (value) => value.toJson(),
     );
     expectJsonRoundTrip(
       'GetAssetsByCreatorRequest roundtrips',
-      {
-        'creatorAddress': 'creator-1',
-        'onlyVerified': true,
-        ...sortableJson,
-      },
+      {'creatorAddress': 'creator-1', 'onlyVerified': true, ...sortableJson},
       GetAssetsByCreatorRequest.fromJson,
       (value) => value.toJson(),
     );
     expectJsonRoundTrip(
       'GetAssetsByGroupRequest roundtrips',
-      {
-        'groupKey': 'collection',
-        'groupValue': 'value-1',
-        ...sortableJson,
-      },
+      {'groupKey': 'collection', 'groupValue': 'value-1', ...sortableJson},
       GetAssetsByGroupRequest.fromJson,
       (value) => value.toJson(),
     );
     expectJsonRoundTrip(
       'GetAssetsByOwnerRequest roundtrips',
-      {
-        'ownerAddress': 'owner-1',
-        ...sortableJson,
-      },
+      {'ownerAddress': 'owner-1', ...sortableJson},
       GetAssetsByOwnerRequest.fromJson,
       (value) => value.toJson(),
     );
@@ -146,10 +132,7 @@ void main() {
     );
     expectJsonRoundTrip(
       'AssetAttribute roundtrips dynamic value',
-      {
-        'trait_type': 'rarity',
-        'value': 'legendary',
-      },
+      {'trait_type': 'rarity', 'value': 'legendary'},
       AssetAttribute.fromJson,
       (value) => value.toJson(),
     );
@@ -253,21 +236,13 @@ void main() {
     );
     expectJsonRoundTrip(
       'AssetSupply roundtrips',
-      {
-        'print_max_supply': 10,
-        'print_current_supply': 5,
-        'edition_nonce': 2,
-      },
+      {'print_max_supply': 10, 'print_current_supply': 5, 'edition_nonce': 2},
       AssetSupply.fromJson,
       (value) => value.toJson(),
     );
     expectJsonRoundTrip(
       'AssetPriceInfo roundtrips',
-      {
-        'price_per_token': 1.5,
-        'total_price': 7.5,
-        'currency': 'SOL',
-      },
+      {'price_per_token': 1.5, 'total_price': 7.5, 'currency': 'SOL'},
       AssetPriceInfo.fromJson,
       (value) => value.toJson(),
     );
@@ -398,12 +373,7 @@ void main() {
     );
     expectJsonRoundTrip(
       'AssetSignature roundtrips',
-      {
-        'signature': 'sig-1',
-        'type': 'mint',
-        'slot': 9,
-        'timestamp': 123456,
-      },
+      {'signature': 'sig-1', 'type': 'mint', 'slot': 9, 'timestamp': 123456},
       AssetSignature.fromJson,
       (value) => value.toJson(),
     );
@@ -478,26 +448,19 @@ void main() {
   group('error cases — das request types', () {
     test(
       'GetAssetRequest throws when id is absent',
-      () => expect(
-        () => GetAssetRequest.fromJson({}),
-        _missingField('id'),
-      ),
+      () => expect(() => GetAssetRequest.fromJson({}), _missingField('id')),
     );
 
     test(
       'GetAssetBatchRequest throws when ids is absent',
-      () => expect(
-        () => GetAssetBatchRequest.fromJson({}),
-        _missingField('ids'),
-      ),
+      () =>
+          expect(() => GetAssetBatchRequest.fromJson({}), _missingField('ids')),
     );
 
     test(
       'GetAssetProofRequest throws when id is absent',
-      () => expect(
-        () => GetAssetProofRequest.fromJson({}),
-        _missingField('id'),
-      ),
+      () =>
+          expect(() => GetAssetProofRequest.fromJson({}), _missingField('id')),
     );
 
     test(
@@ -536,26 +499,18 @@ void main() {
   group('error cases — das model types', () {
     test(
       'HeliusAsset throws when id is absent',
-      () => expect(
-        () => HeliusAsset.fromJson({}),
-        _missingField('id'),
-      ),
+      () => expect(() => HeliusAsset.fromJson({}), _missingField('id')),
     );
 
     test(
       'HeliusAsset throws when id is null',
-      () => expect(
-        () => HeliusAsset.fromJson({'id': null}),
-        _missingField('id'),
-      ),
+      () =>
+          expect(() => HeliusAsset.fromJson({'id': null}), _missingField('id')),
     );
 
     test(
       'AssetAuthority throws when address is absent',
-      () => expect(
-        () => AssetAuthority.fromJson({}),
-        _missingField('address'),
-      ),
+      () => expect(() => AssetAuthority.fromJson({}), _missingField('address')),
     );
 
     test(
@@ -624,20 +579,17 @@ void main() {
       ),
     );
 
-    test(
-      'AssetProof proof cast throws eagerly on wrong-type element',
-      () {
-        // proof list contains an int instead of a String.
-        final r = AssetProof.fromJson({
-          'root': 'r-1',
-          'proof': <Object?>[42],
-          'node_index': 0,
-          'leaf': 'leaf-1',
-          'tree_id': 'tree-1',
-        });
-        expect(() => r.proof[0], throwsA(isA<TypeError>()));
-      },
-    );
+    test('AssetProof proof cast throws eagerly on wrong-type element', () {
+      // proof list contains an int instead of a String.
+      final r = AssetProof.fromJson({
+        'root': 'r-1',
+        'proof': <Object?>[42],
+        'node_index': 0,
+        'leaf': 'leaf-1',
+        'tree_id': 'tree-1',
+      });
+      expect(() => r.proof[0], throwsA(isA<TypeError>()));
+    });
 
     test(
       'NftEdition throws when mint is absent',
@@ -657,10 +609,8 @@ void main() {
 
     test(
       'AssetSignature throws when signature is absent',
-      () => expect(
-        () => AssetSignature.fromJson({}),
-        _missingField('signature'),
-      ),
+      () =>
+          expect(() => AssetSignature.fromJson({}), _missingField('signature')),
     );
 
     test(

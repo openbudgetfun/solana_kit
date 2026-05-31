@@ -36,45 +36,44 @@ void main() {
       );
     });
 
-    test('POST, PUT, and PATCH send JSON bodies with canonical headers', () async {
-      final requests = <http.Request>[];
-      final client = RestClient(
-        baseUrl: 'https://api.helius.xyz',
-        client: MockClient((request) async {
-          requests.add(request);
-          return http.Response(
-            jsonEncode({'ok': true}),
-            200,
-            headers: {'content-type': 'application/json'},
-          );
-        }),
-      );
+    test(
+      'POST, PUT, and PATCH send JSON bodies with canonical headers',
+      () async {
+        final requests = <http.Request>[];
+        final client = RestClient(
+          baseUrl: 'https://api.helius.xyz',
+          client: MockClient((request) async {
+            requests.add(request);
+            return http.Response(
+              jsonEncode({'ok': true}),
+              200,
+              headers: {'content-type': 'application/json'},
+            );
+          }),
+        );
 
-      await client.post('/v0/webhooks', body: {'webhookURL': 'https://example.com'});
-      await client.put('/v0/webhooks/123', body: {'status': 'active'});
-      await client.patch('/v0/webhooks/123', body: {'isActive': false});
+        await client.post(
+          '/v0/webhooks',
+          body: {'webhookURL': 'https://example.com'},
+        );
+        await client.put('/v0/webhooks/123', body: {'status': 'active'});
+        await client.patch('/v0/webhooks/123', body: {'isActive': false});
 
-      expect(requests, hasLength(3));
-      expect(requests[0].method, 'POST');
-      expect(requests[1].method, 'PUT');
-      expect(requests[2].method, 'PATCH');
-      expect(
-        requests.first.headers,
-        containsPair('content-type', 'application/json; charset=utf-8'),
-      );
-      expect(
-        jsonDecode(requests[0].body),
-        {'webhookURL': 'https://example.com'},
-      );
-      expect(
-        jsonDecode(requests[1].body),
-        {'status': 'active'},
-      );
-      expect(
-        jsonDecode(requests[2].body),
-        {'isActive': false},
-      );
-    });
+        expect(requests, hasLength(3));
+        expect(requests[0].method, 'POST');
+        expect(requests[1].method, 'PUT');
+        expect(requests[2].method, 'PATCH');
+        expect(
+          requests.first.headers,
+          containsPair('content-type', 'application/json; charset=utf-8'),
+        );
+        expect(jsonDecode(requests[0].body), {
+          'webhookURL': 'https://example.com',
+        });
+        expect(jsonDecode(requests[1].body), {'status': 'active'});
+        expect(jsonDecode(requests[2].body), {'isActive': false});
+      },
+    );
 
     test('DELETE returns null for empty success bodies', () async {
       final client = RestClient(
@@ -93,7 +92,8 @@ void main() {
       final client = RestClient(
         baseUrl: 'https://api.helius.xyz',
         client: MockClient(
-          (_) async => http.Response('', 503, reasonPhrase: 'Service Unavailable'),
+          (_) async =>
+              http.Response('', 503, reasonPhrase: 'Service Unavailable'),
         ),
       );
 
@@ -136,11 +136,7 @@ void main() {
                 'statusCode',
                 403,
               )
-              .having(
-                (error) => error.context['message'],
-                'message',
-                'denied',
-              ),
+              .having((error) => error.context['message'], 'message', 'denied'),
         ),
       );
     });

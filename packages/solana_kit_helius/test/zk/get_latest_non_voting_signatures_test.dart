@@ -25,10 +25,7 @@ void main() {
         );
       });
 
-      final helius = createHelius(
-        HeliusConfig(apiKey: 'test'),
-        client: client,
-      );
+      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
       final result = await helius.zk.getLatestNonVotingSignatures(
         const GetLatestNonVotingSignaturesRequest(),
       );

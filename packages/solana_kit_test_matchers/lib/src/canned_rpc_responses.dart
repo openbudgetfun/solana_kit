@@ -1,10 +1,7 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
 /// Returns a canned `getBalance` result payload.
-Map<String, Object?> getBalanceRpcResult({
-  BigInt? slot,
-  BigInt? lamports,
-}) {
+Map<String, Object?> getBalanceRpcResult({BigInt? slot, BigInt? lamports}) {
   return {
     'context': {'slot': slot ?? BigInt.one},
     'value': lamports ?? BigInt.zero,

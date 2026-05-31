@@ -17,7 +17,8 @@ const setLoadedAccountsDataSizeLimitDiscriminator = 4;
 class SetLoadedAccountsDataSizeLimitInstructionData {
   /// Creates [SetLoadedAccountsDataSizeLimitInstructionData].
   const SetLoadedAccountsDataSizeLimitInstructionData({
-    required this.accountDataSizeLimit, this.discriminator = setLoadedAccountsDataSizeLimitDiscriminator,
+    required this.accountDataSizeLimit,
+    this.discriminator = setLoadedAccountsDataSizeLimitDiscriminator,
   });
 
   /// The instruction discriminator byte.

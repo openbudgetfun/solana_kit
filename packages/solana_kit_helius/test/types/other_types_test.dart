@@ -33,10 +33,7 @@ void main() {
 
     expectJsonRoundTrip(
       'SmartTransactionResult roundtrips',
-      {
-        'signature': 'sig-1',
-        'confirmationStatus': 'confirmed',
-      },
+      {'signature': 'sig-1', 'confirmationStatus': 'confirmed'},
       SmartTransactionResult.fromJson,
       (value) => value.toJson(),
     );
@@ -99,11 +96,7 @@ void main() {
     );
     expectJsonRoundTrip(
       'WalletSignupRequest roundtrips',
-      {
-        'walletAddress': 'wallet-1',
-        'signature': 'sig-1',
-        'message': 'hello',
-      },
+      {'walletAddress': 'wallet-1', 'signature': 'sig-1', 'message': 'hello'},
       WalletSignupRequest.fromJson,
       (value) => value.toJson(),
     );
@@ -262,11 +255,7 @@ void main() {
     );
     expectJsonRoundTrip(
       'TransactionForAddress roundtrips',
-      {
-        'signature': 'sig-1',
-        'slot': 10,
-        'blockTime': 123456,
-      },
+      {'signature': 'sig-1', 'slot': 10, 'blockTime': 123456},
       TransactionForAddress.fromJson,
       (value) => value.toJson(),
     );
@@ -591,16 +580,14 @@ void main() {
       'Webhook transactionTypes cast throws eagerly on wrong-type element',
       () {
         // List contains an int instead of String — cast<String> will throw.
-        final badList = _reader(
-          <String, Object?>{
-            'webhookId': 'h-1',
-            'wallet': 'w-1',
-            'webhookUrl': 'https://example.com',
-            'transactionTypes': <Object?>[42],
-            'accountAddresses': <Object?>['w-1'],
-            'webhookType': 'enhanced',
-          },
-        );
+        final badList = _reader(<String, Object?>{
+          'webhookId': 'h-1',
+          'wallet': 'w-1',
+          'webhookUrl': 'https://example.com',
+          'transactionTypes': <Object?>[42],
+          'accountAddresses': <Object?>['w-1'],
+          'webhookType': 'enhanced',
+        });
         final tx = badList.requireList<String>('transactionTypes');
         expect(() => tx[0], throwsA(isA<TypeError>()));
       },
@@ -637,9 +624,10 @@ void main() {
     test(
       'CreateStakeTransactionRequest throws when from is absent',
       () => expect(
-        () => CreateStakeTransactionRequest.fromJson(
-          {'amount': 100, 'validatorVote': 'vote-1'},
-        ),
+        () => CreateStakeTransactionRequest.fromJson({
+          'amount': 100,
+          'validatorVote': 'vote-1',
+        }),
         _missingField('from'),
       ),
     );
@@ -647,9 +635,11 @@ void main() {
     test(
       'CreateStakeTransactionRequest throws when amount is null',
       () => expect(
-        () => CreateStakeTransactionRequest.fromJson(
-          {'from': 'w-1', 'amount': null, 'validatorVote': 'vote-1'},
-        ),
+        () => CreateStakeTransactionRequest.fromJson({
+          'from': 'w-1',
+          'amount': null,
+          'validatorVote': 'vote-1',
+        }),
         _missingField('amount'),
       ),
     );

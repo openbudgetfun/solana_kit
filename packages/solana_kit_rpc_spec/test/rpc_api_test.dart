@@ -40,11 +40,10 @@ void main() {
         // 'Transformed' to the method name.
         final api = createJsonRpcApi(
           config: RpcApiConfig(
-            requestTransformer: (request) =>
-                RpcRequest<Object?>(
-                  methodName: '${request.methodName}Transformed',
-                  params: request.params,
-                ),
+            requestTransformer: (request) => RpcRequest<Object?>(
+              methodName: '${request.methodName}Transformed',
+              params: request.params,
+            ),
           ),
         );
 
@@ -65,14 +64,13 @@ void main() {
       // provided params.
       final api = createJsonRpcApi(
         config: RpcApiConfig(
-          requestTransformer: (request) =>
-              RpcRequest<Object?>(
-                methodName: request.methodName,
-                params: (request.params! as List<Object?>)
-                    .cast<int>()
-                    .map((x) => x * 2)
-                    .toList(),
-              ),
+          requestTransformer: (request) => RpcRequest<Object?>(
+            methodName: request.methodName,
+            params: (request.params! as List<Object?>)
+                .cast<int>()
+                .map((x) => x * 2)
+                .toList(),
+          ),
         ),
       );
 
@@ -94,9 +92,7 @@ void main() {
         // the response.
         final api = createJsonRpcApi(
           config: RpcApiConfig(
-            responseTransformer:
-                (response, request) =>
-                    (response! as int) * 2,
+            responseTransformer: (response, request) => (response! as int) * 2,
           ),
         );
 
@@ -155,11 +151,10 @@ void main() {
       // Given a dummy API with a request transformer.
       final api = createJsonRpcApi(
         config: RpcApiConfig(
-          requestTransformer: (request) =>
-              RpcRequest<Object?>(
-                methodName: 'transformed',
-                params: request.params,
-              ),
+          requestTransformer: (request) => RpcRequest<Object?>(
+            methodName: 'transformed',
+            params: request.params,
+          ),
         ),
       );
 

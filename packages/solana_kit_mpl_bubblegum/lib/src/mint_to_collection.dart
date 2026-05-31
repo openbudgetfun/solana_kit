@@ -144,7 +144,8 @@ InstructionPlan getMintToCollectionV1InstructionPlan(
   final tokenMetadataProgram =
       config.tokenMetadataProgram ??
       const Address('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
-  final systemProgram = config.systemProgram ?? systemProgramAddress;
+  final systemProgram =
+      config.systemProgram ?? const Address('11111111111111111111111111111112');
   final bubblegumSigner =
       config.bubblegumSigner ??
       const Address('4ewWZC8gFBALAtdMk8KJgFnH3hBzALPjg4wLWtK6VF9k');

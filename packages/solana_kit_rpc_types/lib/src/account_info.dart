@@ -40,7 +40,8 @@ class AccountInfoBase {
           space == other.space;
 
   @override
-  int get hashCode => Object.hash(runtimeType, executable, lamports, owner, space);
+  int get hashCode =>
+      Object.hash(runtimeType, executable, lamports, owner, space);
 
   @override
   String toString() =>
@@ -288,5 +289,6 @@ bool _mapEquals(Map<String, Object?>? a, Map<String, Object?>? b) {
   return true;
 }
 
-int _mapHash(Map<String, Object?> map) =>
-    Object.hashAll(map.entries.map((entry) => Object.hash(entry.key, entry.value)));
+int _mapHash(Map<String, Object?> map) => Object.hashAll(
+  map.entries.map((entry) => Object.hash(entry.key, entry.value)),
+);

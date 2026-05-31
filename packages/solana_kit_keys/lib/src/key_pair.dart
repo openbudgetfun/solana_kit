@@ -16,8 +16,7 @@ import 'package:solana_kit_keys/src/signatures.dart';
 /// in memory. Dart's GC does not guarantee deterministic finalization, so
 /// the zeroing may happen later than desired or not at all if the process
 /// terminates abruptly.
-final Finalizer<(Uint8List, Uint8List)> _keyPairFinalizer =
-    Finalizer((keys) {
+final Finalizer<(Uint8List, Uint8List)> _keyPairFinalizer = Finalizer((keys) {
   _zeroBytes(keys.$1);
   _zeroBytes(keys.$2);
 });

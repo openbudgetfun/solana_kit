@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -32,7 +31,8 @@ class ConfidentialDepositInstructionData {
   final int decimals;
 }
 
-Encoder<ConfidentialDepositInstructionData> getConfidentialDepositInstructionDataEncoder() {
+Encoder<ConfidentialDepositInstructionData>
+getConfidentialDepositInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferDiscriminator', getU8Encoder()),
@@ -44,14 +44,16 @@ Encoder<ConfidentialDepositInstructionData> getConfidentialDepositInstructionDat
     structEncoder,
     (ConfidentialDepositInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialTransferDiscriminator': value.confidentialTransferDiscriminator,
+      'confidentialTransferDiscriminator':
+          value.confidentialTransferDiscriminator,
       'amount': value.amount,
       'decimals': value.decimals,
     },
   );
 }
 
-Decoder<ConfidentialDepositInstructionData> getConfidentialDepositInstructionDataDecoder() {
+Decoder<ConfidentialDepositInstructionData>
+getConfidentialDepositInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferDiscriminator', getU8Decoder()),
@@ -61,17 +63,23 @@ Decoder<ConfidentialDepositInstructionData> getConfidentialDepositInstructionDat
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ConfidentialDepositInstructionData(
-      discriminator: map['discriminator']! as int,
-      confidentialTransferDiscriminator: map['confidentialTransferDiscriminator']! as int,
-      amount: map['amount']! as BigInt,
-      decimals: map['decimals']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        ConfidentialDepositInstructionData(
+          discriminator: map['discriminator']! as int,
+          confidentialTransferDiscriminator:
+              map['confidentialTransferDiscriminator']! as int,
+          amount: map['amount']! as BigInt,
+          decimals: map['decimals']! as int,
+        ),
   );
 }
 
-Codec<ConfidentialDepositInstructionData, ConfidentialDepositInstructionData> getConfidentialDepositInstructionDataCodec() {
-  return combineCodec(getConfidentialDepositInstructionDataEncoder(), getConfidentialDepositInstructionDataDecoder());
+Codec<ConfidentialDepositInstructionData, ConfidentialDepositInstructionData>
+getConfidentialDepositInstructionDataCodec() {
+  return combineCodec(
+    getConfidentialDepositInstructionDataEncoder(),
+    getConfidentialDepositInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [ConfidentialDeposit] instruction.
@@ -84,22 +92,28 @@ Instruction getConfidentialDepositInstruction({
   required int decimals,
 }) {
   final instructionData = ConfidentialDepositInstructionData(
-      amount: amount,
-      decimals: decimals,
+    amount: amount,
+    decimals: decimals,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: token, role: AccountRole.writable),
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: token, role: AccountRole.writable),
+      AccountMeta(address: mint, role: AccountRole.readonly),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getConfidentialDepositInstructionDataEncoder().encode(instructionData),
+    data: getConfidentialDepositInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [ConfidentialDeposit] instruction from raw instruction data.
-ConfidentialDepositInstructionData parseConfidentialDepositInstruction(Instruction instruction) {
-  return getConfidentialDepositInstructionDataDecoder().decode(instruction.data!);
+ConfidentialDepositInstructionData parseConfidentialDepositInstruction(
+  Instruction instruction,
+) {
+  return getConfidentialDepositInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

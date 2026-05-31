@@ -244,10 +244,7 @@ void main() {
       // ignore: cascade_invocations
       keyPair.dispose();
 
-      expect(
-        () => keyPair.privateKey,
-        throwsA(isA<StateError>()),
-      );
+      expect(() => keyPair.privateKey, throwsA(isA<StateError>()));
     });
 
     test('publicKey throws StateError after dispose', () {
@@ -255,10 +252,7 @@ void main() {
       // ignore: cascade_invocations
       keyPair.dispose();
 
-      expect(
-        () => keyPair.publicKey,
-        throwsA(isA<StateError>()),
-      );
+      expect(() => keyPair.publicKey, throwsA(isA<StateError>()));
     });
   });
 
@@ -330,25 +324,22 @@ void main() {
   });
 
   group('createKeyPairFromBytes', () {
-    test(
-      'throws when public key does not match private key',
-      () {
-        final keyPair = generateKeyPair();
-        final badBytes = Uint8List(64)
-          ..setAll(0, keyPair.privateKey)
-          // Fill public half with zeros — won't match derived public key.
-          ..setAll(32, Uint8List(32));
-        expect(
-          () => createKeyPairFromBytes(badBytes),
-          throwsA(
-            isA<SolanaError>().having(
-              (e) => e.code,
-              'code',
-              equals(SolanaErrorCode.keysPublicKeyMustMatchPrivateKey),
-            ),
+    test('throws when public key does not match private key', () {
+      final keyPair = generateKeyPair();
+      final badBytes = Uint8List(64)
+        ..setAll(0, keyPair.privateKey)
+        // Fill public half with zeros — won't match derived public key.
+        ..setAll(32, Uint8List(32));
+      expect(
+        () => createKeyPairFromBytes(badBytes),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            equals(SolanaErrorCode.keysPublicKeyMustMatchPrivateKey),
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
   });
 }

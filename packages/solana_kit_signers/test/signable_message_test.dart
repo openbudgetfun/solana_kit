@@ -79,10 +79,7 @@ void main() {
       );
     });
     test('throws ArgumentError for invalid content type', () {
-      expect(
-        () => createSignableMessage(42),
-        throwsArgumentError,
-      );
+      expect(() => createSignableMessage(42), throwsArgumentError);
     });
   });
 }

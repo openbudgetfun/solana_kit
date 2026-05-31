@@ -260,9 +260,8 @@ void main() {
       expect(identical(transactionWithSigners, transaction), isTrue);
     });
 
-    test(
-      'wraps fee payer in TransactionMessageWithFeePayerSigner when '
-      'fee payer address matches a signer', () {
+    test('wraps fee payer in TransactionMessageWithFeePayerSigner when '
+        'fee payer address matches a signer', () {
       final feePayerSigner = MockTransactionPartialSigner(
         const Address('11111111111111111111111111111111'),
       );
@@ -286,18 +285,16 @@ void main() {
         instructions: [instruction],
       );
 
-      final result = addSignersToTransactionMessage(
-        [feePayerSigner],
-        transaction,
-      );
+      final result = addSignersToTransactionMessage([
+        feePayerSigner,
+      ], transaction);
 
       expect(result, isA<TransactionMessageWithFeePayerSigner>());
       final withSigner = result as TransactionMessageWithFeePayerSigner;
       expect(withSigner.feePayerSigner, equals(feePayerSigner));
     });
 
-    test(
-      'preserves existing feePayerSigner when message already has one', () {
+    test('preserves existing feePayerSigner when message already has one', () {
       final feePayerSigner = MockTransactionPartialSigner(
         const Address('11111111111111111111111111111111'),
       );
@@ -325,10 +322,7 @@ void main() {
         instructions: [instruction],
       );
 
-      final result = addSignersToTransactionMessage(
-        [otherSigner],
-        transaction,
-      );
+      final result = addSignersToTransactionMessage([otherSigner], transaction);
 
       expect(result, isA<TransactionMessageWithFeePayerSigner>());
       final withSigner = result as TransactionMessageWithFeePayerSigner;

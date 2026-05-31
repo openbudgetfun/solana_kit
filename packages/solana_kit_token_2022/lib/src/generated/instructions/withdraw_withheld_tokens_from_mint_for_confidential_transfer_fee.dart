@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -34,7 +33,8 @@ class WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData {
   final DecryptableBalance newDecryptableAvailableBalance;
 }
 
-Encoder<WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData> getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataEncoder() {
+Encoder<WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData>
+getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferFeeDiscriminator', getU8Encoder()),
@@ -44,16 +44,21 @@ Encoder<WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData>
 
   return transformEncoder(
     structEncoder,
-    (WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData value) => <String, Object?>{
+    (
+      WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData
+      value,
+    ) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialTransferFeeDiscriminator': value.confidentialTransferFeeDiscriminator,
+      'confidentialTransferFeeDiscriminator':
+          value.confidentialTransferFeeDiscriminator,
       'proofInstructionOffset': value.proofInstructionOffset,
       'newDecryptableAvailableBalance': value.newDecryptableAvailableBalance,
     },
   );
 }
 
-Decoder<WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData> getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataDecoder() {
+Decoder<WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData>
+getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferFeeDiscriminator', getU8Decoder()),
@@ -63,21 +68,32 @@ Decoder<WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData>
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData(
-      discriminator: map['discriminator']! as int,
-      confidentialTransferFeeDiscriminator: map['confidentialTransferFeeDiscriminator']! as int,
-      proofInstructionOffset: map['proofInstructionOffset']! as int,
-      newDecryptableAvailableBalance: map['newDecryptableAvailableBalance']! as DecryptableBalance,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData(
+          discriminator: map['discriminator']! as int,
+          confidentialTransferFeeDiscriminator:
+              map['confidentialTransferFeeDiscriminator']! as int,
+          proofInstructionOffset: map['proofInstructionOffset']! as int,
+          newDecryptableAvailableBalance:
+              map['newDecryptableAvailableBalance']! as DecryptableBalance,
+        ),
   );
 }
 
-Codec<WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData, WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData> getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataCodec() {
-  return combineCodec(getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataEncoder(), getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataDecoder());
+Codec<
+  WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData,
+  WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData
+>
+getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataCodec() {
+  return combineCodec(
+    getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataEncoder(),
+    getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [WithdrawWithheldTokensFromMintForConfidentialTransferFee] instruction.
-Instruction getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstruction({
+Instruction
+getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstruction({
   required Address programAddress,
   required Address mint,
   required Address destination,
@@ -87,25 +103,36 @@ Instruction getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructi
   required int proofInstructionOffset,
   required DecryptableBalance newDecryptableAvailableBalance,
 }) {
-  final instructionData = WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData(
-      proofInstructionOffset: proofInstructionOffset,
-      newDecryptableAvailableBalance: newDecryptableAvailableBalance,
-  );
+  final instructionData =
+      WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData(
+        proofInstructionOffset: proofInstructionOffset,
+        newDecryptableAvailableBalance: newDecryptableAvailableBalance,
+      );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    AccountMeta(address: destination, role: AccountRole.writable),
-    AccountMeta(address: instructionsSysvarOrContextState, role: AccountRole.readonly),
-    if (record != null) AccountMeta(address: record, role: AccountRole.readonly),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: mint, role: AccountRole.writable),
+      AccountMeta(address: destination, role: AccountRole.writable),
+      AccountMeta(
+        address: instructionsSysvarOrContextState,
+        role: AccountRole.readonly,
+      ),
+      if (record != null)
+        AccountMeta(address: record, role: AccountRole.readonly),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataEncoder().encode(instructionData),
+    data:
+        getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataEncoder()
+            .encode(instructionData),
   );
 }
 
 /// Parses a [WithdrawWithheldTokensFromMintForConfidentialTransferFee] instruction from raw instruction data.
-WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData parseWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstruction(Instruction instruction) {
-  return getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataDecoder().decode(instruction.data!);
+WithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionData
+parseWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstruction(
+  Instruction instruction,
+) {
+  return getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstructionDataDecoder()
+      .decode(instruction.data!);
 }

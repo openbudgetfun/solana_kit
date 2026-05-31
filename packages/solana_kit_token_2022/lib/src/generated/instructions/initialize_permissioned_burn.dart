@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -30,7 +29,8 @@ class InitializePermissionedBurnInstructionData {
   final Address authority;
 }
 
-Encoder<InitializePermissionedBurnInstructionData> getInitializePermissionedBurnInstructionDataEncoder() {
+Encoder<InitializePermissionedBurnInstructionData>
+getInitializePermissionedBurnInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('permissionedBurnDiscriminator', getU8Encoder()),
@@ -47,7 +47,8 @@ Encoder<InitializePermissionedBurnInstructionData> getInitializePermissionedBurn
   );
 }
 
-Decoder<InitializePermissionedBurnInstructionData> getInitializePermissionedBurnInstructionDataDecoder() {
+Decoder<InitializePermissionedBurnInstructionData>
+getInitializePermissionedBurnInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('permissionedBurnDiscriminator', getU8Decoder()),
@@ -56,16 +57,25 @@ Decoder<InitializePermissionedBurnInstructionData> getInitializePermissionedBurn
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializePermissionedBurnInstructionData(
-      discriminator: map['discriminator']! as int,
-      permissionedBurnDiscriminator: map['permissionedBurnDiscriminator']! as int,
-      authority: map['authority']! as Address,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializePermissionedBurnInstructionData(
+          discriminator: map['discriminator']! as int,
+          permissionedBurnDiscriminator:
+              map['permissionedBurnDiscriminator']! as int,
+          authority: map['authority']! as Address,
+        ),
   );
 }
 
-Codec<InitializePermissionedBurnInstructionData, InitializePermissionedBurnInstructionData> getInitializePermissionedBurnInstructionDataCodec() {
-  return combineCodec(getInitializePermissionedBurnInstructionDataEncoder(), getInitializePermissionedBurnInstructionDataDecoder());
+Codec<
+  InitializePermissionedBurnInstructionData,
+  InitializePermissionedBurnInstructionData
+>
+getInitializePermissionedBurnInstructionDataCodec() {
+  return combineCodec(
+    getInitializePermissionedBurnInstructionDataEncoder(),
+    getInitializePermissionedBurnInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializePermissionedBurn] instruction.
@@ -75,19 +85,22 @@ Instruction getInitializePermissionedBurnInstruction({
   required Address authority,
 }) {
   final instructionData = InitializePermissionedBurnInstructionData(
-      authority: authority,
+    authority: authority,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    ],
-    data: getInitializePermissionedBurnInstructionDataEncoder().encode(instructionData),
+    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    data: getInitializePermissionedBurnInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [InitializePermissionedBurn] instruction from raw instruction data.
-InitializePermissionedBurnInstructionData parseInitializePermissionedBurnInstruction(Instruction instruction) {
-  return getInitializePermissionedBurnInstructionDataDecoder().decode(instruction.data!);
+InitializePermissionedBurnInstructionData
+parseInitializePermissionedBurnInstruction(Instruction instruction) {
+  return getInitializePermissionedBurnInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

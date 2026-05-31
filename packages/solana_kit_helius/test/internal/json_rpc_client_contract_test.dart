@@ -15,7 +15,11 @@ void main() {
         client: MockClient((request) async {
           requests.add(request);
           return http.Response(
-            jsonEncode({'jsonrpc': '2.0', 'id': requests.length, 'result': 'ok'}),
+            jsonEncode({
+              'jsonrpc': '2.0',
+              'id': requests.length,
+              'result': 'ok',
+            }),
             200,
             headers: {'content-type': 'application/json'},
           );
@@ -51,7 +55,11 @@ void main() {
       final client = JsonRpcClient(
         url: 'https://mainnet.helius-rpc.com/?api-key=test-key',
         client: MockClient(
-          (_) async => http.Response('rate limited', 429, reasonPhrase: 'Too Many Requests'),
+          (_) async => http.Response(
+            'rate limited',
+            429,
+            reasonPhrase: 'Too Many Requests',
+          ),
         ),
       );
 

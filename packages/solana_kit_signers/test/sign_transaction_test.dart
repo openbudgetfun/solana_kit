@@ -226,9 +226,7 @@ void main() {
         };
 
         final transactionSignature =
-            await signAndSendTransactionMessageWithSigners(
-          transactionMessage,
-        );
+            await signAndSendTransactionMessageWithSigners(transactionMessage);
 
         expect(transactionSignature.value, equals(expectedSignature.value));
       },
@@ -248,7 +246,9 @@ void main() {
             return Transaction(
               messageBytes: tx.messageBytes,
               signatures: <Address, SignatureBytes?>{
-                _addressA: SignatureBytes(Uint8List.fromList(List.filled(64, 1))),
+                _addressA: SignatureBytes(
+                  Uint8List.fromList(List.filled(64, 1)),
+                ),
               },
             );
           }).toList();
@@ -262,9 +262,7 @@ void main() {
         };
 
         final transactionSignature =
-            await signAndSendTransactionMessageWithSigners(
-          transactionMessage,
-        );
+            await signAndSendTransactionMessageWithSigners(transactionMessage);
 
         expect(transactionSignature.value, equals(expectedSignature.value));
       },

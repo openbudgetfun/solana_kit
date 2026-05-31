@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -30,11 +29,19 @@ class InitializePausableConfigInstructionData {
   final Address? authority;
 }
 
-Encoder<InitializePausableConfigInstructionData> getInitializePausableConfigInstructionDataEncoder() {
+Encoder<InitializePausableConfigInstructionData>
+getInitializePausableConfigInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('pausableDiscriminator', getU8Encoder()),
-    ('authority', getNullableEncoder<Address>(getAddressEncoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'authority',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformEncoder(
@@ -47,25 +54,41 @@ Encoder<InitializePausableConfigInstructionData> getInitializePausableConfigInst
   );
 }
 
-Decoder<InitializePausableConfigInstructionData> getInitializePausableConfigInstructionDataDecoder() {
+Decoder<InitializePausableConfigInstructionData>
+getInitializePausableConfigInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('pausableDiscriminator', getU8Decoder()),
-    ('authority', getNullableDecoder<Address>(getAddressDecoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'authority',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializePausableConfigInstructionData(
-      discriminator: map['discriminator']! as int,
-      pausableDiscriminator: map['pausableDiscriminator']! as int,
-      authority: map['authority'] as Address?,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializePausableConfigInstructionData(
+          discriminator: map['discriminator']! as int,
+          pausableDiscriminator: map['pausableDiscriminator']! as int,
+          authority: map['authority'] as Address?,
+        ),
   );
 }
 
-Codec<InitializePausableConfigInstructionData, InitializePausableConfigInstructionData> getInitializePausableConfigInstructionDataCodec() {
-  return combineCodec(getInitializePausableConfigInstructionDataEncoder(), getInitializePausableConfigInstructionDataDecoder());
+Codec<
+  InitializePausableConfigInstructionData,
+  InitializePausableConfigInstructionData
+>
+getInitializePausableConfigInstructionDataCodec() {
+  return combineCodec(
+    getInitializePausableConfigInstructionDataEncoder(),
+    getInitializePausableConfigInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializePausableConfig] instruction.
@@ -75,19 +98,22 @@ Instruction getInitializePausableConfigInstruction({
   required Address? authority,
 }) {
   final instructionData = InitializePausableConfigInstructionData(
-      authority: authority,
+    authority: authority,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    ],
-    data: getInitializePausableConfigInstructionDataEncoder().encode(instructionData),
+    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    data: getInitializePausableConfigInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [InitializePausableConfig] instruction from raw instruction data.
-InitializePausableConfigInstructionData parseInitializePausableConfigInstruction(Instruction instruction) {
-  return getInitializePausableConfigInstructionDataDecoder().decode(instruction.data!);
+InitializePausableConfigInstructionData
+parseInitializePausableConfigInstruction(Instruction instruction) {
+  return getInitializePausableConfigInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

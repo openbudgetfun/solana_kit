@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -32,46 +31,72 @@ class UpdateConfidentialTransferMintInstructionData {
   final Address? auditorElgamalPubkey;
 }
 
-Encoder<UpdateConfidentialTransferMintInstructionData> getUpdateConfidentialTransferMintInstructionDataEncoder() {
+Encoder<UpdateConfidentialTransferMintInstructionData>
+getUpdateConfidentialTransferMintInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferDiscriminator', getU8Encoder()),
     ('autoApproveNewAccounts', getBooleanEncoder()),
-    ('auditorElgamalPubkey', getNullableEncoder<Address>(getAddressEncoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'auditorElgamalPubkey',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformEncoder(
     structEncoder,
     (UpdateConfidentialTransferMintInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialTransferDiscriminator': value.confidentialTransferDiscriminator,
+      'confidentialTransferDiscriminator':
+          value.confidentialTransferDiscriminator,
       'autoApproveNewAccounts': value.autoApproveNewAccounts,
       'auditorElgamalPubkey': value.auditorElgamalPubkey,
     },
   );
 }
 
-Decoder<UpdateConfidentialTransferMintInstructionData> getUpdateConfidentialTransferMintInstructionDataDecoder() {
+Decoder<UpdateConfidentialTransferMintInstructionData>
+getUpdateConfidentialTransferMintInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferDiscriminator', getU8Decoder()),
     ('autoApproveNewAccounts', getBooleanDecoder()),
-    ('auditorElgamalPubkey', getNullableDecoder<Address>(getAddressDecoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'auditorElgamalPubkey',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateConfidentialTransferMintInstructionData(
-      discriminator: map['discriminator']! as int,
-      confidentialTransferDiscriminator: map['confidentialTransferDiscriminator']! as int,
-      autoApproveNewAccounts: map['autoApproveNewAccounts']! as bool,
-      auditorElgamalPubkey: map['auditorElgamalPubkey'] as Address?,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UpdateConfidentialTransferMintInstructionData(
+          discriminator: map['discriminator']! as int,
+          confidentialTransferDiscriminator:
+              map['confidentialTransferDiscriminator']! as int,
+          autoApproveNewAccounts: map['autoApproveNewAccounts']! as bool,
+          auditorElgamalPubkey: map['auditorElgamalPubkey'] as Address?,
+        ),
   );
 }
 
-Codec<UpdateConfidentialTransferMintInstructionData, UpdateConfidentialTransferMintInstructionData> getUpdateConfidentialTransferMintInstructionDataCodec() {
-  return combineCodec(getUpdateConfidentialTransferMintInstructionDataEncoder(), getUpdateConfidentialTransferMintInstructionDataDecoder());
+Codec<
+  UpdateConfidentialTransferMintInstructionData,
+  UpdateConfidentialTransferMintInstructionData
+>
+getUpdateConfidentialTransferMintInstructionDataCodec() {
+  return combineCodec(
+    getUpdateConfidentialTransferMintInstructionDataEncoder(),
+    getUpdateConfidentialTransferMintInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [UpdateConfidentialTransferMint] instruction.
@@ -83,21 +108,26 @@ Instruction getUpdateConfidentialTransferMintInstruction({
   required Address? auditorElgamalPubkey,
 }) {
   final instructionData = UpdateConfidentialTransferMintInstructionData(
-      autoApproveNewAccounts: autoApproveNewAccounts,
-      auditorElgamalPubkey: auditorElgamalPubkey,
+    autoApproveNewAccounts: autoApproveNewAccounts,
+    auditorElgamalPubkey: auditorElgamalPubkey,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: mint, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getUpdateConfidentialTransferMintInstructionDataEncoder().encode(instructionData),
+    data: getUpdateConfidentialTransferMintInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [UpdateConfidentialTransferMint] instruction from raw instruction data.
-UpdateConfidentialTransferMintInstructionData parseUpdateConfidentialTransferMintInstruction(Instruction instruction) {
-  return getUpdateConfidentialTransferMintInstructionDataDecoder().decode(instruction.data!);
+UpdateConfidentialTransferMintInstructionData
+parseUpdateConfidentialTransferMintInstruction(Instruction instruction) {
+  return getUpdateConfidentialTransferMintInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

@@ -17,7 +17,8 @@ const setComputeUnitLimitDiscriminator = 2;
 class SetComputeUnitLimitInstructionData {
   /// Creates [SetComputeUnitLimitInstructionData].
   const SetComputeUnitLimitInstructionData({
-    required this.units, this.discriminator = setComputeUnitLimitDiscriminator,
+    required this.units,
+    this.discriminator = setComputeUnitLimitDiscriminator,
   });
 
   /// The instruction discriminator byte.

@@ -7,7 +7,10 @@ import 'package:solana_kit_program_client_core/solana_kit_program_client_core.da
 void main() {
   const account = Address('11111111111111111111111111111111');
 
-  final requiredValue = getNonNullResolvedInstructionInput('authority', account);
+  final requiredValue = getNonNullResolvedInstructionInput(
+    'authority',
+    account,
+  );
   final resolvedAddress = getAddressFromResolvedInstructionAccount(
     'authority',
     requiredValue,

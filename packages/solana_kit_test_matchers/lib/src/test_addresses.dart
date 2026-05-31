@@ -1,9 +1,7 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
 /// System program address used by many tests.
-const systemProgramTestAddress = Address(
-  '11111111111111111111111111111111',
-);
+const systemProgramTestAddress = Address('11111111111111111111111111111111');
 
 /// SPL token program address used by many tests.
 const tokenProgramTestAddress = Address(

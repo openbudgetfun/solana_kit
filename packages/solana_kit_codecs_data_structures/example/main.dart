@@ -5,10 +5,7 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 void main() {
-  final fixedCodec = getArrayCodec(
-    getU8Codec(),
-    size: const FixedArraySize(3),
-  );
+  final fixedCodec = getArrayCodec(getU8Codec(), size: const FixedArraySize(3));
 
   final encoded = fixedCodec.encode([10, 20, 30]);
   final decoded = fixedCodec.decode(encoded);

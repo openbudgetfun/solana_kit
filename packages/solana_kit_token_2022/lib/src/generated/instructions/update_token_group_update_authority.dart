@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -18,17 +17,26 @@ class UpdateTokenGroupUpdateAuthorityInstructionData {
   UpdateTokenGroupUpdateAuthorityInstructionData({
     Uint8List? discriminator,
     required this.newUpdateAuthority,
-  }) :
-      discriminator = discriminator ?? Uint8List.fromList([161, 105, 88, 1, 237, 221, 216, 203]);
+  }) : discriminator =
+           discriminator ??
+           Uint8List.fromList([161, 105, 88, 1, 237, 221, 216, 203]);
 
   final Uint8List discriminator;
   final Address? newUpdateAuthority;
 }
 
-Encoder<UpdateTokenGroupUpdateAuthorityInstructionData> getUpdateTokenGroupUpdateAuthorityInstructionDataEncoder() {
+Encoder<UpdateTokenGroupUpdateAuthorityInstructionData>
+getUpdateTokenGroupUpdateAuthorityInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getBytesEncoder()),
-    ('newUpdateAuthority', getNullableEncoder<Address>(getAddressEncoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'newUpdateAuthority',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformEncoder(
@@ -40,23 +48,39 @@ Encoder<UpdateTokenGroupUpdateAuthorityInstructionData> getUpdateTokenGroupUpdat
   );
 }
 
-Decoder<UpdateTokenGroupUpdateAuthorityInstructionData> getUpdateTokenGroupUpdateAuthorityInstructionDataDecoder() {
+Decoder<UpdateTokenGroupUpdateAuthorityInstructionData>
+getUpdateTokenGroupUpdateAuthorityInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getBytesDecoder()),
-    ('newUpdateAuthority', getNullableDecoder<Address>(getAddressDecoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'newUpdateAuthority',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateTokenGroupUpdateAuthorityInstructionData(
-      discriminator: map['discriminator']! as Uint8List,
-      newUpdateAuthority: map['newUpdateAuthority'] as Address?,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UpdateTokenGroupUpdateAuthorityInstructionData(
+          discriminator: map['discriminator']! as Uint8List,
+          newUpdateAuthority: map['newUpdateAuthority'] as Address?,
+        ),
   );
 }
 
-Codec<UpdateTokenGroupUpdateAuthorityInstructionData, UpdateTokenGroupUpdateAuthorityInstructionData> getUpdateTokenGroupUpdateAuthorityInstructionDataCodec() {
-  return combineCodec(getUpdateTokenGroupUpdateAuthorityInstructionDataEncoder(), getUpdateTokenGroupUpdateAuthorityInstructionDataDecoder());
+Codec<
+  UpdateTokenGroupUpdateAuthorityInstructionData,
+  UpdateTokenGroupUpdateAuthorityInstructionData
+>
+getUpdateTokenGroupUpdateAuthorityInstructionDataCodec() {
+  return combineCodec(
+    getUpdateTokenGroupUpdateAuthorityInstructionDataEncoder(),
+    getUpdateTokenGroupUpdateAuthorityInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [UpdateTokenGroupUpdateAuthority] instruction.
@@ -67,20 +91,25 @@ Instruction getUpdateTokenGroupUpdateAuthorityInstruction({
   required Address? newUpdateAuthority,
 }) {
   final instructionData = UpdateTokenGroupUpdateAuthorityInstructionData(
-      newUpdateAuthority: newUpdateAuthority,
+    newUpdateAuthority: newUpdateAuthority,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: group, role: AccountRole.writable),
-    AccountMeta(address: updateAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: group, role: AccountRole.writable),
+      AccountMeta(address: updateAuthority, role: AccountRole.readonlySigner),
     ],
-    data: getUpdateTokenGroupUpdateAuthorityInstructionDataEncoder().encode(instructionData),
+    data: getUpdateTokenGroupUpdateAuthorityInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [UpdateTokenGroupUpdateAuthority] instruction from raw instruction data.
-UpdateTokenGroupUpdateAuthorityInstructionData parseUpdateTokenGroupUpdateAuthorityInstruction(Instruction instruction) {
-  return getUpdateTokenGroupUpdateAuthorityInstructionDataDecoder().decode(instruction.data!);
+UpdateTokenGroupUpdateAuthorityInstructionData
+parseUpdateTokenGroupUpdateAuthorityInstruction(Instruction instruction) {
+  return getUpdateTokenGroupUpdateAuthorityInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

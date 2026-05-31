@@ -1,26 +1,17 @@
 /// Plans a single transaction input.
-typedef PlanTransactionFn<TInput, TPlan> =
-    Future<TPlan> Function(
-      TInput input,
-    );
+typedef PlanTransactionFn<TInput, TPlan> = Future<TPlan> Function(TInput input);
 
 /// Sends a single transaction input.
 typedef SendTransactionFn<TInput, TResult> =
-    Future<TResult> Function(
-      TInput input,
-    );
+    Future<TResult> Function(TInput input);
 
 /// Plans a batch of transaction inputs.
 typedef PlanTransactionsFn<TInput, TPlan> =
-    Future<List<TPlan>> Function(
-      List<TInput> inputs,
-    );
+    Future<List<TPlan>> Function(List<TInput> inputs);
 
 /// Sends a batch of transaction inputs.
 typedef SendTransactionsFn<TInput, TResult> =
-    Future<List<TResult>> Function(
-      List<TInput> inputs,
-    );
+    Future<List<TResult>> Function(List<TInput> inputs);
 
 /// Minimal self-plan/send function bundle for generated program clients.
 ///

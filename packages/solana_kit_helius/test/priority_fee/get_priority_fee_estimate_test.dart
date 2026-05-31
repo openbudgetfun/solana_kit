@@ -33,10 +33,7 @@ void main() {
         );
       });
 
-      final helius = createHelius(
-        HeliusConfig(apiKey: 'test'),
-        client: client,
-      );
+      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
       final result = await helius.priorityFee.getPriorityFeeEstimate(
         const GetPriorityFeeEstimateRequest(accountKeys: ['key1']),
       );
@@ -68,10 +65,7 @@ void main() {
         );
       });
 
-      final helius = createHelius(
-        HeliusConfig(apiKey: 'test'),
-        client: client,
-      );
+      final helius = createHelius(HeliusConfig(apiKey: 'test'), client: client);
       final result = await helius.priorityFee.getPriorityFeeEstimate(
         const GetPriorityFeeEstimateRequest(
           transaction: 'base64EncodedTx',

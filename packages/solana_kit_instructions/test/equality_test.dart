@@ -37,18 +37,20 @@ void main() {
       expect(a, equals(a));
     });
 
-    test('AccountLookupMeta does not equal AccountMeta with same address/role',
-        () {
-      const meta = AccountMeta(address: addr1, role: AccountRole.readonly);
-      const lookup = AccountLookupMeta(
-        address: addr1,
-        role: AccountRole.readonly,
-        addressIndex: 0,
-        lookupTableAddress: addr2,
-      );
-      // AccountMeta.== checks runtimeType, so these must not be equal.
-      expect(meta, isNot(equals(lookup)));
-    });
+    test(
+      'AccountLookupMeta does not equal AccountMeta with same address/role',
+      () {
+        const meta = AccountMeta(address: addr1, role: AccountRole.readonly);
+        const lookup = AccountLookupMeta(
+          address: addr1,
+          role: AccountRole.readonly,
+          addressIndex: 0,
+          lookupTableAddress: addr2,
+        );
+        // AccountMeta.== checks runtimeType, so these must not be equal.
+        expect(meta, isNot(equals(lookup)));
+      },
+    );
 
     test('toString contains fields', () {
       const a = AccountMeta(address: addr1, role: AccountRole.writable);

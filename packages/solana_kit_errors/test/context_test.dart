@@ -34,7 +34,9 @@ void main() {
     });
 
     test('round-trips list values as encoded string', () {
-      final context = <String, Object?>{'items': ['a', 'b', 'c']};
+      final context = <String, Object?>{
+        'items': ['a', 'b', 'c'],
+      };
       final encoded = encodeContextObject(context);
       final decoded = decodeEncodedContext(encoded);
       // Lists are encoded as comma-separated values but decoded as string.
