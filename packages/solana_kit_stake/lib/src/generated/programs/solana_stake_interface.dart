@@ -1,12 +1,11 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    show stakeProgramAddress;
 
 /// The address of the SolanaStakeInterface program.
-const solanaStakeInterfaceProgramAddress = Address(
-  'Stake11111111111111111111111111111111111111',
-);
+const solanaStakeInterfaceProgramAddress = stakeProgramAddress;
 
 /// Known instructions for the SolanaStakeInterface program.
 enum SolanaStakeInterfaceInstruction {

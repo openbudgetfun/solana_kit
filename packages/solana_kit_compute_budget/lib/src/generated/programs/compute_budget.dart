@@ -2,7 +2,6 @@
 
 import 'dart:typed_data';
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_compute_budget/src/generated/instructions/request_heap_frame.dart';
 import 'package:solana_kit_compute_budget/src/generated/instructions/request_units.dart';
 import 'package:solana_kit_compute_budget/src/generated/instructions/set_compute_unit_limit.dart';
@@ -10,10 +9,8 @@ import 'package:solana_kit_compute_budget/src/generated/instructions/set_compute
 import 'package:solana_kit_compute_budget/src/generated/instructions/set_loaded_accounts_data_size_limit.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-/// The canonical Compute Budget program address.
-const computeBudgetProgramAddress = Address(
-  'ComputeBudget111111111111111111111111111111',
-);
+export 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    show computeBudgetProgramAddress;
 
 /// Known instruction types for the Compute Budget program.
 enum ComputeBudgetInstruction {

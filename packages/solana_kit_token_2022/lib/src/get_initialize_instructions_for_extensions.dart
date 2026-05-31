@@ -15,7 +15,6 @@ import 'package:solana_kit_token_2022/src/generated/instructions/initialize_perm
 import 'package:solana_kit_token_2022/src/generated/instructions/initialize_scaled_ui_amount_mint.dart';
 import 'package:solana_kit_token_2022/src/generated/instructions/initialize_transfer_fee_config.dart';
 import 'package:solana_kit_token_2022/src/generated/instructions/initialize_transfer_hook.dart';
-import 'package:solana_kit_token_2022/src/generated/programs/token_2022.dart';
 import 'package:solana_kit_token_2022/src/generated/types/extension.dart';
 
 /// Returns the instructions that must run before `initializeMint` for the

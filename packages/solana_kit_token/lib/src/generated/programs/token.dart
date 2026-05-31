@@ -2,11 +2,8 @@
 // ignore_for_file: type=lint
 
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-
-
-/// The address of the Token program.
-const tokenProgramAddress = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+export 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    show tokenProgramAddress;
 
 /// Known accounts for the Token program.
 enum TokenAccount {

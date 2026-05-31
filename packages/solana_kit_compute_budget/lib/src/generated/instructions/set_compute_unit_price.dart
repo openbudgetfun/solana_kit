@@ -7,7 +7,6 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
-import 'package:solana_kit_compute_budget/src/generated/programs/compute_budget.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// Discriminator byte for the SetComputeUnitPrice instruction.

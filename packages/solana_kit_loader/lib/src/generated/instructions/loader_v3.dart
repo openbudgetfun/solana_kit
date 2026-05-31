@@ -8,7 +8,6 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
-import 'package:solana_kit_loader/src/generated/programs/bpf_loader_upgradeable.dart';
 
 const initializeBufferDiscriminator = 0;
 const loaderV3WriteDiscriminator = 1;
@@ -16,16 +15,14 @@ const deployWithMaxProgramLenDiscriminator = 2;
 const upgradeDiscriminator = 3;
 const setAuthorityDiscriminator = 4;
 const closeDiscriminator = 5;
+
+/// Backward-compatible alias for [sysvarRentAddress].
+const rentSysvarAddress = sysvarRentAddress;
+
+/// Backward-compatible alias for [sysvarClockAddress].
+const clockSysvarAddress = sysvarClockAddress;
 const extendProgramDiscriminator = 6;
 const setAuthorityCheckedDiscriminator = 7;
-
-const rentSysvarAddress = Address(
-  'SysvarRent111111111111111111111111111111111',
-);
-const clockSysvarAddress = Address(
-  'SysvarC1ock11111111111111111111111111111111',
-);
-const systemProgramAddress = Address('11111111111111111111111111111111');
 
 AccountMeta _account(
   Address address, {

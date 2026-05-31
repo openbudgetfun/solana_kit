@@ -4,6 +4,6 @@
 export 'accounts/accounts.dart';
 export 'errors/errors.dart';
 export 'instructions/instructions.dart'
-    hide systemProgramAddress, SystemInstruction;
+    hide SystemInstruction;
 export 'programs/programs.dart';
 export 'types/types.dart';

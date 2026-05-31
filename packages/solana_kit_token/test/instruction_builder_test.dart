@@ -282,7 +282,7 @@ void main() {
     test('associatedTokenProgramAddress is correct', () {
       expect(
         associatedTokenProgramAddress,
-        Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe'),
+        Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25ef7s3c8BnQKu'),
       );
     });
 

@@ -17,7 +17,7 @@ import 'package:test/test.dart';
 // ---------------------------------------------------------------------------
 
 const _prog = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
-const _ataProg = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe8bSe');
+const _ataProg = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25ef7s3c8BnQKu');
 const _mint = Address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
 const _owner = Address('11111111111111111111111111111111');
 const _account = Address('22222222222222222222222222222222222222222222');

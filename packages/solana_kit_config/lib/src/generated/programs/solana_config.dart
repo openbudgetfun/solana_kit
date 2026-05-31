@@ -5,9 +5,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The address of the Solana Config program.
-const solanaConfigProgramAddress = Address(
-  'Config1111111111111111111111111111111111111',
-);
+const solanaConfigProgramAddress = configProgramAddress;
 
 /// Returns true when [programAddress] identifies the Solana Config program.
 bool identifySolanaConfigProgram(Address programAddress) =>

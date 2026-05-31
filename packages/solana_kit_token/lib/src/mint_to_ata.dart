@@ -1,9 +1,7 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_associated_token_account/solana_kit_associated_token_account.dart';
+import 'package:solana_kit_associated_token_account/solana_kit_associated_token_account.dart' hide associatedTokenProgramAddress;
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
-import 'package:solana_kit_system/solana_kit_system.dart';
 import 'package:solana_kit_token/src/generated/instructions/mint_to_checked.dart';
-import 'package:solana_kit_token/src/generated/programs/token.dart';
 
 /// Input for [getMintToAtaInstructionPlan].
 class MintToAtaInput {
