@@ -45,19 +45,19 @@ final usdc = usdcMintAddress;
 
 ## Key APIs
 
-| Constant                             | Description                                          |
-| ------------------------------------- | ---------------------------------------------------- |
-| `systemProgramAddress`               | System program address                               |
-| `stakeProgramAddress`                | Stake program address                                |
-| `voteProgramAddress`                  | Vote program address                                 |
-| `computeBudgetProgramAddress`         | Compute Budget program address                       |
-| `sysvarOwnerAddress`                  | Owner address for all sysvar accounts                |
-| `sysvarClockAddress`                  | Clock sysvar address                                 |
-| `sysvarRentAddress`                   | Rent sysvar address                                  |
-| `tokenProgramAddress`                 | SPL Token program address                            |
-| `token2022ProgramAddress`             | Token-2022 (Token Extensions) program address        |
-| `associatedTokenProgramAddress`       | SPL Associated Token Account program address         |
-| `tokenMetadataProgramAddress`         | Metaplex Token Metadata program address              |
-| `wrappedSolMintAddress`              | Wrapped SOL mint address                             |
-| `usdcMintAddress`                    | USDC mint address                                    |
-| `usdtMintAddress`                    | USDT mint address                                    |
+| Constant                        | Description                                   |
+| ------------------------------- | --------------------------------------------- |
+| `systemProgramAddress`          | System program address                        |
+| `stakeProgramAddress`           | Stake program address                         |
+| `voteProgramAddress`            | Vote program address                          |
+| `computeBudgetProgramAddress`   | Compute Budget program address                |
+| `sysvarOwnerAddress`            | Owner address for all sysvar accounts         |
+| `sysvarClockAddress`            | Clock sysvar address                          |
+| `sysvarRentAddress`             | Rent sysvar address                           |
+| `tokenProgramAddress`           | SPL Token program address                     |
+| `token2022ProgramAddress`       | Token-2022 (Token Extensions) program address |
+| `associatedTokenProgramAddress` | SPL Associated Token Account program address  |
+| `tokenMetadataProgramAddress`   | Metaplex Token Metadata program address       |
+| `wrappedSolMintAddress`         | Wrapped SOL mint address                      |
+| `usdcMintAddress`               | USDC mint address                             |
+| `usdtMintAddress`               | USDT mint address                             |

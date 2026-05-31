@@ -46,15 +46,15 @@ final addrFromKey = getAddressFromPublicKey(publicKeyBytes);
 
 ## Key APIs
 
-| API                      | Description                                              |
-| ------------------------ | -------------------------------------------------------- |
-| `Address`                | Extension type wrapping a validated base58 string        |
-| `address()`              | Factory that validates and creates an `Address`          |
-| `assertIsAddress()`      | Throws if the string is not a valid address              |
-| `isAddress()`            | Returns `true`/`false` without throwing                  |
-| `getAddressCodec()`      | Returns a fixed-size codec for encoding/decoding         |
-| `getAddressEncoder()`    | Returns an encoder that produces exactly 32 bytes         |
-| `getAddressDecoder()`    | Returns a decoder that reads 32 bytes into an `Address`   |
-| `getAddressComparator()` | Returns a base58 collation-order `Comparator<Address>`   |
-| `getAddressFromPublicKey()` | Converts 32-byte Ed25519 public key to `Address`      |
-| `getPublicKeyFromAddress()` | Converts an `Address` to 32-byte Ed25519 public key   |
+| API                         | Description                                             |
+| --------------------------- | ------------------------------------------------------- |
+| `Address`                   | Extension type wrapping a validated base58 string       |
+| `address()`                 | Factory that validates and creates an `Address`         |
+| `assertIsAddress()`         | Throws if the string is not a valid address             |
+| `isAddress()`               | Returns `true`/`false` without throwing                 |
+| `getAddressCodec()`         | Returns a fixed-size codec for encoding/decoding        |
+| `getAddressEncoder()`       | Returns an encoder that produces exactly 32 bytes       |
+| `getAddressDecoder()`       | Returns a decoder that reads 32 bytes into an `Address` |
+| `getAddressComparator()`    | Returns a base58 collation-order `Comparator<Address>`  |
+| `getAddressFromPublicKey()` | Converts 32-byte Ed25519 public key to `Address`        |
+| `getPublicKeyFromAddress()` | Converts an `Address` to 32-byte Ed25519 public key     |
