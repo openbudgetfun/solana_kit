@@ -66,7 +66,7 @@ in
         enable = true;
         name = "lint";
         description = "Run linting and formatting checks on every commit and push.";
-        entry = "${config.env.DEVENV_PROFILE}/bin/lint:all";
+        entry = "${config.env.DEVENV_PROFILE}/bin/lint:format";
         pass_filenames = true;
         always_run = true;
         stages = [
@@ -154,7 +154,6 @@ in
     "fix:all" = {
       exec = ''
         set -euo pipefail
-        sync:write
         docs:update
         fix:lint
         mc step:validate
@@ -181,18 +180,9 @@ in
       description = "Fix lint issues across all packages.";
       binary = "bash";
     };
-    "sync:write" = {
-      exec = ''
-        set -euo pipefail
-        $DEVENV_ROOT/scripts/sync-workspace-dependency-versions.sh --write
-      '';
-      description = "Sync workspace dependency versions.";
-      binary = "bash";
-    };
     "lint:all" = {
       exec = ''
         set -euo pipefail
-        sync:check
         docs:check
         lint:format
         lint:kotlin
@@ -222,14 +212,6 @@ in
         ktlint
       '';
       description = "Lint tracked Kotlin files with ktlint.";
-      binary = "bash";
-    };
-    "sync:check" = {
-      exec = ''
-        set -euo pipefail
-        $DEVENV_ROOT/scripts/sync-workspace-dependency-versions.sh --check
-      '';
-      description = "Check workspace dependency version sync.";
       binary = "bash";
     };
     "mdt:info" = {
@@ -659,7 +641,6 @@ in
         set -euo pipefail
         devenv update
         flutter pub upgrade
-        sync:write
         install:all
       '';
       description = "Update devenv and pub dependencies, then resync workspace versions.";
