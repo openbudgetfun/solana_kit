@@ -6,6 +6,7 @@ import {
   numberTypeNode,
   numberValueNode,
   publicKeyTypeNode,
+  publicKeyValueNode,
 } from "@codama/nodes";
 import { LinkableDictionary, NodeStack } from "@codama/visitors-core";
 import { describe, expect, it } from "vitest";
@@ -297,5 +298,51 @@ describe("getInstructionPageFragment", () => {
 
     expect(frag.content).toContain("class InitializeInstructionData");
     expect(frag.content).toContain("Instruction getInitializeInstruction(");
+  });
+
+  it("uses well-known address name for publicKeyValueNode default", () => {
+    const node = instructionNode({
+      name: "createAccount",
+      accounts: [],
+      arguments: [
+        instructionArgumentNode({
+          name: "owner",
+          type: publicKeyTypeNode(),
+          defaultValue: publicKeyValueNode(
+            "11111111111111111111111111111111",
+          ),
+        }),
+      ],
+    });
+    const frag = getInstructionPageFragment(node, createScope());
+
+    // well-known address should emit canonical constant name
+    expect(frag.content).toContain("systemProgramAddress");
+    // should not emit Address('1111...') for a known address
+    expect(frag.content).not.toContain(
+      "Address('11111111111111111111111111111111')",
+    );
+  });
+
+  it("uses Address fallback for unknown publicKeyValueNode default", () => {
+    const node = instructionNode({
+      name: "createAccount",
+      accounts: [],
+      arguments: [
+        instructionArgumentNode({
+          name: "owner",
+          type: publicKeyTypeNode(),
+          defaultValue: publicKeyValueNode(
+            "UnknownProgram1111111111111111111111",
+          ),
+        }),
+      ],
+    });
+    const frag = getInstructionPageFragment(node, createScope());
+
+    // unknown address should fall back to Address('...')
+    expect(frag.content).toContain(
+      "Address('UnknownProgram1111111111111111111111')",
+    );
   });
 });
