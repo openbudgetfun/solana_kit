@@ -56,6 +56,17 @@ class RestClient {
     return _handleResponse(response);
   }
 
+  /// Sends a PATCH request to [path] with an optional JSON [body].
+  Future<Object?> patch(String path, {Object? body}) async {
+    final uri = _buildUri(path);
+    final response = await _client.patch(
+      uri,
+      headers: _jsonHeaders,
+      body: body != null ? jsonEncode(body) : null,
+    );
+    return _handleResponse(response);
+  }
+
   /// Sends a DELETE request to [path].
   Future<Object?> delete(String path) async {
     final uri = _buildUri(path);

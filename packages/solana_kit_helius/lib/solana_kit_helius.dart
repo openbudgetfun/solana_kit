@@ -1,10 +1,11 @@
-/// Helius SDK for the Solana Kit Dart SDK.
+/// Helius client package for Solana Kit Dart.
 ///
 /// Provides access to Helius APIs including DAS (Digital Asset Standard),
 /// enhanced transactions, webhooks, smart transactions, ZK compression,
 /// staking, wallet operations, WebSocket subscriptions, and auth.
 library;
 
+export 'src/admin/admin_client.dart';
 export 'src/auth/auth_client.dart';
 export 'src/das/das_client.dart';
 export 'src/enhanced/enhanced_client.dart';
@@ -15,6 +16,7 @@ export 'src/rpc_v2/rpc_v2_client.dart';
 export 'src/sensitive_string.dart';
 export 'src/staking/staking_client.dart';
 export 'src/transactions/transactions_client.dart';
+export 'src/types/admin_types.dart';
 export 'src/types/auth_types.dart';
 export 'src/types/das_types.dart';
 export 'src/types/enhanced_types.dart';

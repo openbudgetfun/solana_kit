@@ -6,7 +6,7 @@
 [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
 [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_helius)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_helius)
 
-Helius SDK for the Solana Kit Dart SDK. A Dart port of the [Helius TypeScript SDK](https://github.com/helius-labs/helius-sdk), providing DAS API, enhanced transactions, webhooks, smart transactions, ZK compression, staking, wallet API, WebSocket subscriptions, and auth.
+Helius client package for Solana Kit Dart. A Dart port of the [Helius TypeScript SDK](https://github.com/helius-labs/helius-sdk), providing DAS API, enhanced transactions, webhooks, smart transactions, ZK compression, staking, wallet API, WebSocket subscriptions, and auth.
 
 ## Features
 
@@ -21,6 +21,14 @@ Helius SDK for the Solana Kit Dart SDK. A Dart port of the [Helius TypeScript SD
 - **Auth** - Project and API key management
 - **Priority Fees** - Estimate priority fees for transactions
 - **RPC V2** - Enhanced RPC methods with pagination
+
+## Upstream compatibility
+
+This package was audited against `helius-labs/helius-sdk` v3.0.0 at commit [`4c0c55b86eab0e3abde7896c0aa23c4b6515e9b0`](https://github.com/helius-labs/helius-sdk/commit/4c0c55b86eab0e3abde7896c0aa23c4b6515e9b0) (`chore(release): Update CHANGELOG (#330)`, 2026-05-30). Helius has not published a Git tag for that release, so this commit is the comparison baseline.
+
+The package covers the broad v3 surface: DAS, priority fees, RPC v2 including `getTransfersByAddress`, enhanced transactions, webhook CRUD/toggle, ZK compression, staking, wallet operations, Sender/smart transactions, auth/project basics, Admin project usage, and WebSocket subscriptions. The mainnet REST default follows v3's `https://api-mainnet.helius-rpc.com/v0` host, while devnet enhanced REST continues to use `https://api-devnet.helius.xyz/v0`.
+
+Known v3 gaps to port next are the newer auth/checkout/payment primitives including `oauthTokenExchange`, smart-transaction tip helpers, and enhanced WebSocket account/transaction subscriptions.
 
 <!-- {=packageInstallSection:"solana_kit_helius"} -->
 
