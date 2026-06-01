@@ -8,7 +8,7 @@ repository: https://github.com/openbudgetfun/solana_kit
 homepage: https://openbudgetfun.github.io/solana_kit/
 
 environment:
-  sdk: ^3.10.1
+  sdk: ^3.12.0
 
 resolution: workspace
 

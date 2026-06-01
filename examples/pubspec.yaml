@@ -3,7 +3,7 @@ description: Runnable Dart examples for the Solana Kit SDK.
 publish_to: none
 
 environment:
-  sdk: ^3.10.1
+  sdk: ^3.12.0
 
 resolution: workspace
 

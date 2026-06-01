@@ -23,3 +23,5 @@ dev_dependencies:
 jaspr:
   mode: static
   port: 9080
+
+resolution: workspace
