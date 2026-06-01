@@ -82,18 +82,27 @@ Future<void> main(List<String> args) async {
 
 Future<void> _serveStatic(HttpServer server, Directory root) async {
   await for (final request in server) {
-    final path = request.uri.path == '/' ? '/index.html' : request.uri.path;
-    final file = File(
-      '${root.path}${path.endsWith('/') ? '${path}index.html' : path}',
-    );
-    if (!file.existsSync()) {
-      request.response.statusCode = HttpStatus.notFound;
+    try {
+      final path = request.uri.path == '/' ? '/index.html' : request.uri.path;
+      final file = File(
+        '${root.path}${path.endsWith('/') ? '${path}index.html' : path}',
+      );
+      if (!file.existsSync()) {
+        request.response.statusCode = HttpStatus.notFound;
+        await request.response.close();
+        continue;
+      }
+      request.response.headers.contentType = _contentType(file.path);
+      await request.response.addStream(file.openRead());
       await request.response.close();
-      continue;
+    } on Object catch (error) {
+      stderr.writeln('Static server request failed: $error');
+      try {
+        await request.response.close();
+      } on Object {
+        // The client may already have closed the connection.
+      }
     }
-    request.response.headers.contentType = _contentType(file.path);
-    await request.response.addStream(file.openRead());
-    await request.response.close();
   }
 }
 
@@ -105,14 +114,18 @@ ContentType _contentType(String path) {
 }
 
 Future<void> _waitForServer(int port) async {
+  Object? lastError;
   for (var attempt = 0; attempt < 20; attempt += 1) {
     try {
       await _fetch(port, '/');
       return;
-    } catch (_) {
+    } catch (error) {
+      lastError = error;
       await Future<void>.delayed(const Duration(milliseconds: 500));
     }
   }
+
+  throw StateError('Docs smoke server did not respond: $lastError');
 }
 
 Future<String> _fetch(int port, String path) async {
@@ -127,7 +140,7 @@ Future<String> _fetch(int port, String path) async {
     }
     return response.transform(const SystemEncoding().decoder).join();
   } finally {
-    client.close(force: true);
+    client.close();
   }
 }
 
