@@ -24,8 +24,7 @@ class HeliusDasClient implements DasApiClient {
   ///
   /// [rpcUrl] is the full Helius RPC URL including the API key.
   /// For example: `https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY`
-  const HeliusDasClient({required this.rpcUrl, http.Client? client})
-    : _client = client;
+  const HeliusDasClient({required this.rpcUrl, this._client});
 
   /// The Helius RPC URL (including API key).
   final String rpcUrl;

@@ -5,8 +5,7 @@ import 'package:solana_kit_helius/src/types/priority_fee_types.dart';
 
 /// Client for Helius priority fee estimation API methods.
 class PriorityFeeClient {
-  const PriorityFeeClient({required JsonRpcClient rpcClient})
-    : _rpcClient = rpcClient;
+  const PriorityFeeClient({required this._rpcClient});
 
   final JsonRpcClient _rpcClient;
 

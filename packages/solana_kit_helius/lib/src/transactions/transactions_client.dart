@@ -13,15 +13,13 @@ import 'package:solana_kit_helius/src/types/smart_transaction_types.dart';
 /// Provides methods for creating, sending, broadcasting, and polling
 /// smart transactions through Helius infrastructure.
 class TransactionsClient {
-  /// Creates a [TransactionsClient] with the given [rpcClient], [restClient],
-  /// and [senderUrl] for SWQOS-based transaction sending.
+  /// Creates a [TransactionsClient] with the given [_rpcClient], [_restClient],
+  /// and [_senderUrl] for SWQOS-based transaction sending.
   const TransactionsClient({
-    required JsonRpcClient rpcClient,
-    required RestClient restClient,
-    required String senderUrl,
-  }) : _rpcClient = rpcClient,
-       _restClient = restClient,
-       _senderUrl = senderUrl;
+    required this._rpcClient,
+    required this._restClient,
+    required this._senderUrl,
+  });
 
   final JsonRpcClient _rpcClient;
   final RestClient _restClient;

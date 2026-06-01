@@ -7,12 +7,10 @@ import 'package:solana_kit_helius/src/types/admin_types.dart';
 
 class AdminClient {
   const AdminClient({
-    required String baseUrl,
-    required String apiKey,
-    required http.Client client,
-  }) : _baseUrl = baseUrl,
-       _apiKey = apiKey,
-       _client = client;
+    required this._baseUrl,
+    required this._apiKey,
+    required this._client,
+  });
 
   final String _baseUrl;
   final String _apiKey;

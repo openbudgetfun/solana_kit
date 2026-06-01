@@ -21,9 +21,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// 8. Create [MobileWallet] proxy
 /// 9. Clean shutdown on close
 class LocalAssociationScenario {
-  LocalAssociationScenario({MwaClientHostApi? clientApi, String? baseUri})
-    : _clientApi = clientApi ?? MwaClientHostApi(),
-      _baseUri = baseUri;
+  LocalAssociationScenario({MwaClientHostApi? clientApi, this._baseUri})
+    : _clientApi = clientApi ?? MwaClientHostApi();
 
   final MwaClientHostApi _clientApi;
   final String? _baseUri;

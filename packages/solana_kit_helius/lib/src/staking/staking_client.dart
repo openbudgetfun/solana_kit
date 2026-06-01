@@ -13,10 +13,8 @@ import 'package:solana_kit_helius/src/types/staking_types.dart';
 /// as well as querying stake accounts and withdrawable amounts through the
 /// Helius REST API.
 class StakingClient {
-  /// Creates a [StakingClient] with the given [restClient] and [apiKey].
-  const StakingClient({required RestClient restClient, required String apiKey})
-    : _restClient = restClient,
-      _apiKey = apiKey;
+  /// Creates a [StakingClient] with the given [_restClient] and [_apiKey].
+  const StakingClient({required this._restClient, required this._apiKey});
 
   final RestClient _restClient;
   final String _apiKey;

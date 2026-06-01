@@ -16,10 +16,8 @@ import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 /// // account.data is of type TData.
 /// ```
 class SelfFetchFunctions<TData> {
-  /// Creates a [SelfFetchFunctions] wrapping the given [decoder] and [rpc].
-  SelfFetchFunctions({required Decoder<TData> decoder, required Rpc rpc})
-    : _decoder = decoder,
-      _rpc = rpc;
+  /// Creates a [SelfFetchFunctions] wrapping the given [_decoder] and [_rpc].
+  SelfFetchFunctions({required this._decoder, required this._rpc});
 
   final Decoder<TData> _decoder;
   final Rpc _rpc;

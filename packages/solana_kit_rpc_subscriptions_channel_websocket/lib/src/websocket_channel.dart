@@ -449,12 +449,10 @@ bool _isPrivateIpv6(String host) {
 
 class _WebSocketRpcChannel implements RpcSubscriptionsChannel {
   _WebSocketRpcChannel({
-    required WritableDataPublisher dataPublisher,
-    required WebSocketChannel webSocketChannel,
-    required bool Function() isClosed,
-  }) : _dataPublisher = dataPublisher,
-       _webSocketChannel = webSocketChannel,
-       _isClosed = isClosed;
+    required this._dataPublisher,
+    required this._webSocketChannel,
+    required this._isClosed,
+  });
 
   final WritableDataPublisher _dataPublisher;
   final WebSocketChannel _webSocketChannel;

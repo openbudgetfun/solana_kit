@@ -20,18 +20,15 @@ typedef SendTransactionsFn<TInput, TResult> =
 class SelfPlanAndSendFunctions<TInput, TPlan, TResult> {
   /// Creates a [SelfPlanAndSendFunctions] wrapper.
   ///
-  /// If [planTransactions] or [sendTransactions] are omitted, batch behavior
+  /// If [_planTransactions] or [_sendTransactions] are omitted, batch behavior
   /// defaults to applying the single-item callback to each input and awaiting
   /// all results.
   SelfPlanAndSendFunctions({
-    required PlanTransactionFn<TInput, TPlan> planTransaction,
-    required SendTransactionFn<TInput, TResult> sendTransaction,
-    PlanTransactionsFn<TInput, TPlan>? planTransactions,
-    SendTransactionsFn<TInput, TResult>? sendTransactions,
-  }) : _planTransaction = planTransaction,
-       _sendTransaction = sendTransaction,
-       _planTransactions = planTransactions,
-       _sendTransactions = sendTransactions;
+    required this._planTransaction,
+    required this._sendTransaction,
+    this._planTransactions,
+    this._sendTransactions,
+  });
 
   final PlanTransactionFn<TInput, TPlan> _planTransaction;
   final SendTransactionFn<TInput, TResult> _sendTransaction;

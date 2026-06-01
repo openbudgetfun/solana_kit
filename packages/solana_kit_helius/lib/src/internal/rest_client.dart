@@ -10,8 +10,7 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 /// success, or throws a [SolanaError] with [SolanaErrorCode.heliusRestError]
 /// on failure.
 class RestClient {
-  RestClient({required this.baseUrl, required http.Client client})
-    : _client = client;
+  RestClient({required this.baseUrl, required this._client});
 
   final String baseUrl;
   final http.Client _client;

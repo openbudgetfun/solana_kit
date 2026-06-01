@@ -29,7 +29,7 @@ import 'package:solana_kit_helius/src/zk/get_transaction_with_compression_info.d
 import 'package:solana_kit_helius/src/zk/get_validity_proof.dart';
 
 class ZkClient {
-  const ZkClient({required JsonRpcClient rpcClient}) : _rpcClient = rpcClient;
+  const ZkClient({required this._rpcClient});
 
   final JsonRpcClient _rpcClient;
 

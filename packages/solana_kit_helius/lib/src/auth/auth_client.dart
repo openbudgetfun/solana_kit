@@ -13,9 +13,7 @@ import 'package:solana_kit_helius/src/types/auth_types.dart';
 
 /// Client for Helius Auth API methods.
 class AuthClient {
-  const AuthClient({required RestClient restClient, required String apiKey})
-    : _restClient = restClient,
-      _apiKey = apiKey;
+  const AuthClient({required this._restClient, required this._apiKey});
 
   final RestClient _restClient;
   final String _apiKey;

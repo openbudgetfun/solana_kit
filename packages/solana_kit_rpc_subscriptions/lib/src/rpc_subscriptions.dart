@@ -22,10 +22,9 @@ class RpcSubscribeOptions {
 class PendingRpcSubscriptionsRequest<TNotification> {
   /// Creates a new [PendingRpcSubscriptionsRequest].
   const PendingRpcSubscriptionsRequest({
-    required RpcSubscriptionsTransport transport,
-    required RpcSubscriptionsPlan<TNotification> plan,
-  }) : _transport = transport,
-       _plan = plan;
+    required this._transport,
+    required this._plan,
+  });
 
   final RpcSubscriptionsTransport _transport;
   final RpcSubscriptionsPlan<TNotification> _plan;

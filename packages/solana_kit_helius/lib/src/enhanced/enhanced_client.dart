@@ -6,9 +6,7 @@ import 'package:solana_kit_helius/src/types/enhanced_types.dart';
 
 /// Client for Helius Enhanced Transactions API methods.
 class EnhancedClient {
-  const EnhancedClient({required RestClient restClient, required String apiKey})
-    : _restClient = restClient,
-      _apiKey = apiKey;
+  const EnhancedClient({required this._restClient, required this._apiKey});
 
   final RestClient _restClient;
   final String _apiKey;

@@ -24,12 +24,9 @@ sealed class Encoder<T> {
 /// A fixed-size encoder where every encoded value occupies exactly
 /// [fixedSize] bytes.
 final class FixedSizeEncoder<T> extends Encoder<T> {
-  /// Creates a fixed-size encoder with the given [fixedSize] and [write]
+  /// Creates a fixed-size encoder with the given [fixedSize] and [_write]
   /// callback.
-  FixedSizeEncoder({
-    required this.fixedSize,
-    required int Function(T value, Uint8List bytes, int offset) write,
-  }) : _write = write;
+  FixedSizeEncoder({required this.fixedSize, required this._write});
 
   /// The fixed number of bytes produced by this encoder.
   final int fixedSize;
@@ -53,11 +50,10 @@ final class FixedSizeEncoder<T> extends Encoder<T> {
 final class VariableSizeEncoder<T> extends Encoder<T> {
   /// Creates a variable-size encoder.
   VariableSizeEncoder({
-    required int Function(T value) getSizeFromValue,
-    required int Function(T value, Uint8List bytes, int offset) write,
+    required this._getSizeFromValue,
+    required this._write,
     this.maxSize,
-  }) : _getSizeFromValue = getSizeFromValue,
-       _write = write;
+  });
 
   final int Function(T value) _getSizeFromValue;
   final int Function(T value, Uint8List bytes, int offset) _write;
@@ -102,12 +98,9 @@ sealed class Decoder<T> {
 
 /// A fixed-size decoder that always reads exactly [fixedSize] bytes.
 final class FixedSizeDecoder<T> extends Decoder<T> {
-  /// Creates a fixed-size decoder with the given [fixedSize] and [read]
+  /// Creates a fixed-size decoder with the given [fixedSize] and [_read]
   /// callback.
-  FixedSizeDecoder({
-    required this.fixedSize,
-    required (T value, int offset) Function(Uint8List bytes, int offset) read,
-  }) : _read = read;
+  FixedSizeDecoder({required this.fixedSize, required this._read});
 
   /// The fixed number of bytes consumed by this decoder.
   final int fixedSize;
@@ -124,10 +117,7 @@ final class FixedSizeDecoder<T> extends Decoder<T> {
 /// A variable-size decoder whose byte consumption depends on the data.
 final class VariableSizeDecoder<T> extends Decoder<T> {
   /// Creates a variable-size decoder.
-  VariableSizeDecoder({
-    required (T value, int offset) Function(Uint8List bytes, int offset) read,
-    this.maxSize,
-  }) : _read = read;
+  VariableSizeDecoder({required this._read, this.maxSize});
 
   final (T value, int offset) Function(Uint8List bytes, int offset) _read;
 
@@ -175,10 +165,9 @@ final class FixedSizeCodec<TFrom, TTo> extends Codec<TFrom, TTo> {
   /// Creates a fixed-size codec.
   FixedSizeCodec({
     required this.fixedSize,
-    required int Function(TFrom value, Uint8List bytes, int offset) write,
-    required (TTo value, int offset) Function(Uint8List bytes, int offset) read,
-  }) : _write = write,
-       _read = read;
+    required this._write,
+    required this._read,
+  });
 
   /// The fixed number of bytes used by this codec.
   final int fixedSize;
@@ -209,13 +198,11 @@ final class FixedSizeCodec<TFrom, TTo> extends Codec<TFrom, TTo> {
 final class VariableSizeCodec<TFrom, TTo> extends Codec<TFrom, TTo> {
   /// Creates a variable-size codec.
   VariableSizeCodec({
-    required int Function(TFrom value) getSizeFromValue,
-    required int Function(TFrom value, Uint8List bytes, int offset) write,
-    required (TTo value, int offset) Function(Uint8List bytes, int offset) read,
+    required this._getSizeFromValue,
+    required this._write,
+    required this._read,
     this.maxSize,
-  }) : _getSizeFromValue = getSizeFromValue,
-       _write = write,
-       _read = read;
+  });
 
   final int Function(TFrom value) _getSizeFromValue;
   final int Function(TFrom value, Uint8List bytes, int offset) _write;

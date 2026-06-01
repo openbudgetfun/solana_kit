@@ -9,8 +9,7 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 /// Sends `POST` requests with a JSON-RPC 2.0 envelope and returns the
 /// `result` field on success, or throws a [SolanaError] on failure.
 class JsonRpcClient {
-  JsonRpcClient({required this.url, required http.Client client})
-    : _client = client;
+  JsonRpcClient({required this.url, required this._client});
 
   final String url;
   final http.Client _client;
