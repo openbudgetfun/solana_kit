@@ -10,7 +10,7 @@ environment:
 resolution: workspace
 
 dependencies:
-  meta: any
+  meta: ^1.18.0
   solana_kit_addresses: ^0.5.0
   solana_kit_codecs_core: ^0.5.0
   solana_kit_codecs_numbers: ^0.5.0
