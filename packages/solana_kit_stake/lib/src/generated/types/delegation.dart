@@ -18,14 +18,14 @@ class Delegation {
     required this.stake,
     required this.activationEpoch,
     required this.deactivationEpoch,
-    required this.warmupCooldownRate,
+    required this.reserved,
   });
 
   final Address voterPubkey;
   final BigInt stake;
   final Epoch activationEpoch;
   final Epoch deactivationEpoch;
-  final double warmupCooldownRate;
+  final List<int> reserved;
 
   @override
   bool operator ==(Object other) =>
@@ -36,7 +36,7 @@ class Delegation {
           stake == other.stake &&
           activationEpoch == other.activationEpoch &&
           deactivationEpoch == other.deactivationEpoch &&
-          warmupCooldownRate == other.warmupCooldownRate;
+          _listEquals(reserved, other.reserved);
 
   @override
   int get hashCode => Object.hash(
@@ -44,12 +44,12 @@ class Delegation {
     stake,
     activationEpoch,
     deactivationEpoch,
-    warmupCooldownRate,
+    Object.hashAll(reserved),
   );
 
   @override
   String toString() =>
-      'Delegation(voterPubkey: $voterPubkey, stake: $stake, activationEpoch: $activationEpoch, deactivationEpoch: $deactivationEpoch, warmupCooldownRate: $warmupCooldownRate)';
+      'Delegation(voterPubkey: $voterPubkey, stake: $stake, activationEpoch: $activationEpoch, deactivationEpoch: $deactivationEpoch, reserved: $reserved)';
 }
 
 Encoder<Delegation> getDelegationEncoder() {
@@ -58,7 +58,10 @@ Encoder<Delegation> getDelegationEncoder() {
     ('stake', getU64Encoder()),
     ('activationEpoch', getEpochEncoder()),
     ('deactivationEpoch', getEpochEncoder()),
-    ('warmupCooldownRate', getF64Encoder()),
+    (
+      'reserved',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
   ]);
 
   return transformEncoder(
@@ -68,7 +71,7 @@ Encoder<Delegation> getDelegationEncoder() {
       'stake': value.stake,
       'activationEpoch': value.activationEpoch,
       'deactivationEpoch': value.deactivationEpoch,
-      'warmupCooldownRate': value.warmupCooldownRate,
+      'reserved': value.reserved,
     },
   );
 }
@@ -79,7 +82,10 @@ Decoder<Delegation> getDelegationDecoder() {
     ('stake', getU64Decoder()),
     ('activationEpoch', getEpochDecoder()),
     ('deactivationEpoch', getEpochDecoder()),
-    ('warmupCooldownRate', getF64Decoder()),
+    (
+      'reserved',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
   ]);
 
   return transformDecoder(
@@ -89,11 +95,20 @@ Decoder<Delegation> getDelegationDecoder() {
       stake: map['stake']! as BigInt,
       activationEpoch: map['activationEpoch']! as Epoch,
       deactivationEpoch: map['deactivationEpoch']! as Epoch,
-      warmupCooldownRate: map['warmupCooldownRate']! as double,
+      reserved: (map['reserved']! as List).cast<int>(),
     ),
   );
 }
 
 Codec<Delegation, Delegation> getDelegationCodec() {
   return combineCodec(getDelegationEncoder(), getDelegationDecoder());
+}
+
+bool _listEquals<T>(List<T> a, List<T> b) {
+  if (identical(a, b)) return true;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
 }

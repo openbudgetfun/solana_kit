@@ -10,14 +10,14 @@ enum StakeAuthorize { staker, withdrawer }
 
 Encoder<StakeAuthorize> getStakeAuthorizeEncoder() {
   return transformEncoder(
-    getU8Encoder(),
+    getU32Encoder(),
     (StakeAuthorize value) => value.index,
   );
 }
 
 Decoder<StakeAuthorize> getStakeAuthorizeDecoder() {
   return transformDecoder(
-    getU8Decoder(),
+    getU32Decoder(),
     (int value, Uint8List bytes, int offset) => StakeAuthorize.values[value],
   );
 }

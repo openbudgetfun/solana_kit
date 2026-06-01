@@ -12,6 +12,14 @@ import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 
 import './stake_authorize.dart';
 
+Encoder<num> _getU64SizePrefixEncoder() =>
+    transformEncoder<BigInt, num>(getU64Encoder(), BigInt.from);
+
+Decoder<num> _getU64SizePrefixDecoder() => transformDecoder<BigInt, num>(
+  getU64Decoder(),
+  (value, _, _) => value.toInt(),
+);
+
 @immutable
 class AuthorizeWithSeedParams {
   const AuthorizeWithSeedParams({
@@ -53,7 +61,10 @@ Encoder<AuthorizeWithSeedParams> getAuthorizeWithSeedParamsEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('newAuthorizedPubkey', getAddressEncoder()),
     ('stakeAuthorize', getStakeAuthorizeEncoder()),
-    ('authoritySeed', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
+    (
+      'authoritySeed',
+      addEncoderSizePrefix(getUtf8Encoder(), _getU64SizePrefixEncoder()),
+    ),
     ('authorityOwner', getAddressEncoder()),
   ]);
 
@@ -72,7 +83,10 @@ Decoder<AuthorizeWithSeedParams> getAuthorizeWithSeedParamsDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('newAuthorizedPubkey', getAddressDecoder()),
     ('stakeAuthorize', getStakeAuthorizeDecoder()),
-    ('authoritySeed', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
+    (
+      'authoritySeed',
+      addDecoderSizePrefix(getUtf8Decoder(), _getU64SizePrefixDecoder()),
+    ),
     ('authorityOwner', getAddressDecoder()),
   ]);
 

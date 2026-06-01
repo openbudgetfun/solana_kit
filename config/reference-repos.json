@@ -4,15 +4,23 @@
       "name": "kit",
       "path": ".repos/kit",
       "url": "https://github.com/anza-xyz/kit",
-      "ref": { "type": "branch", "value": "main" },
-      "notes": "upstream TypeScript source from anza-xyz/kit"
+      "ref": {
+        "type": "branch",
+        "value": "main"
+      },
+      "notes": "upstream TypeScript source from anza-xyz/kit",
+      "checkedCommit": "6cd177b14bed"
     },
     {
       "name": "espresso-cash-public",
       "path": ".repos/espresso-cash-public",
       "url": "https://github.com/brij-digital/espresso-cash-public",
-      "ref": { "type": "branch", "value": "main" },
-      "notes": "Dart Solana reference from brij-digital/espresso-cash-public"
+      "ref": {
+        "type": "branch",
+        "value": "master"
+      },
+      "notes": "Dart Solana reference from brij-digital/espresso-cash-public (default branch master)",
+      "checkedCommit": "77150680d6bf"
     },
     {
       "name": "helius-sdk",
@@ -23,20 +31,33 @@
         "value": "4c0c55b86eab0e3abde7896c0aa23c4b6515e9b0"
       },
       "package": "solana_kit_helius",
-      "notes": "Pinned to the v3.0.0 release commit because no v3.0.0 Git tag exists"
+      "notes": "Pinned to the v3.0.0 release commit because no v3.0.0 Git tag exists",
+      "checkedCommit": "4c0c55b86eab"
     },
     {
       "name": "mobile-wallet-adapter",
       "path": ".repos/mobile-wallet-adapter",
       "url": "https://github.com/solana-mobile/mobile-wallet-adapter",
-      "ref": { "type": "branch", "value": "main" },
-      "notes": "Solana Mobile Wallet Adapter reference from solana-mobile/mobile-wallet-adapter"
+      "ref": {
+        "type": "branch",
+        "value": "main"
+      },
+      "notes": "Solana Mobile Wallet Adapter reference for the adapter and protocol packages from solana-mobile/mobile-wallet-adapter",
+      "package": "solana_kit_mobile_wallet_adapter",
+      "packages": [
+        "solana_kit_mobile_wallet_adapter",
+        "solana_kit_mobile_wallet_adapter_protocol"
+      ],
+      "checkedCommit": "bed51fa2f177"
     },
     {
       "name": "system",
       "path": ".repos/solana-program/system",
       "url": "https://github.com/solana-program/system",
-      "ref": { "type": "tag", "value": "js@v0.12.0" },
+      "ref": {
+        "type": "tag",
+        "value": "js@v0.12.2"
+      },
       "package": "solana_kit_system",
       "issue": 131
     },
@@ -44,21 +65,30 @@
       "name": "token",
       "path": ".repos/solana-program/token",
       "url": "https://github.com/solana-program/token",
-      "ref": { "type": "tag", "value": "js@v0.13.0" },
+      "ref": {
+        "type": "tag",
+        "value": "js@v0.13.0"
+      },
       "package": "solana_kit_token"
     },
     {
       "name": "token-2022",
       "path": ".repos/solana-program/token-2022",
       "url": "https://github.com/solana-program/token-2022",
-      "ref": { "type": "tag", "value": "js@v0.9.0" },
+      "ref": {
+        "type": "tag",
+        "value": "js@v0.9.0"
+      },
       "package": "solana_kit_token_2022"
     },
     {
       "name": "associated-token-account",
       "path": ".repos/solana-program/associated-token-account",
       "url": "https://github.com/solana-program/associated-token-account",
-      "ref": { "type": "tag", "value": "program@v8.0.0" },
+      "ref": {
+        "type": "tag",
+        "value": "program@v8.0.0"
+      },
       "package": "solana_kit_associated_token_account",
       "issue": 132
     },
@@ -66,7 +96,10 @@
       "name": "address-lookup-table",
       "path": ".repos/solana-program/address-lookup-table",
       "url": "https://github.com/solana-program/address-lookup-table",
-      "ref": { "type": "tag", "value": "js@v0.11.0" },
+      "ref": {
+        "type": "tag",
+        "value": "js@v0.11.0"
+      },
       "package": "solana_kit_address_lookup_table",
       "issue": 134
     },
@@ -74,7 +107,10 @@
       "name": "memo",
       "path": ".repos/solana-program/memo",
       "url": "https://github.com/solana-program/memo",
-      "ref": { "type": "tag", "value": "js@v0.11.0" },
+      "ref": {
+        "type": "tag",
+        "value": "js@v0.11.1"
+      },
       "package": "solana_kit_memo",
       "issue": 135
     },
@@ -82,7 +118,10 @@
       "name": "compute-budget",
       "path": ".repos/solana-program/compute-budget",
       "url": "https://github.com/solana-program/compute-budget",
-      "ref": { "type": "tag", "value": "js@v0.15.0" },
+      "ref": {
+        "type": "tag",
+        "value": "js@v0.15.0"
+      },
       "package": "solana_kit_compute_budget",
       "issue": 133
     },
@@ -90,7 +129,10 @@
       "name": "stake",
       "path": ".repos/solana-program/stake",
       "url": "https://github.com/solana-program/stake",
-      "ref": { "type": "tag", "value": "js@v0.6.0" },
+      "ref": {
+        "type": "tag",
+        "value": "js@v0.6.1"
+      },
       "package": "solana_kit_stake",
       "issue": 136
     },
@@ -98,7 +140,10 @@
       "name": "config",
       "path": ".repos/solana-program/config",
       "url": "https://github.com/solana-program/config",
-      "ref": { "type": "tag", "value": "solana-config-program-client@v1.1.0" },
+      "ref": {
+        "type": "tag",
+        "value": "solana-config-program-client@v1.1.0"
+      },
       "package": "solana_kit_config",
       "issue": 137
     },
@@ -106,7 +151,10 @@
       "name": "loader-v3",
       "path": ".repos/solana-program/loader-v3",
       "url": "https://github.com/solana-program/loader-v3",
-      "ref": { "type": "tag", "value": "js@v0.3.0" },
+      "ref": {
+        "type": "tag",
+        "value": "js@v0.3.0"
+      },
       "package": "solana_kit_loader",
       "issue": 138
     },
@@ -114,28 +162,40 @@
       "name": "loader-v4",
       "path": ".repos/solana-program/loader-v4",
       "url": "https://github.com/solana-program/loader-v4",
-      "ref": { "type": "commit", "value": "5df834d" },
+      "ref": {
+        "type": "commit",
+        "value": "5df834d"
+      },
       "package": "solana_kit_loader",
       "issue": 138,
-      "notes": "Pinned to commit 5df834d (2026-03-08) because no versioned release exists yet"
+      "notes": "Pinned to commit 5df834d (2026-03-08) because no versioned release exists yet",
+      "checkedCommit": "5df834d03975"
     },
     {
       "name": "account-compression",
       "path": ".repos/solana-program/account-compression",
       "url": "https://github.com/solana-program/account-compression",
-      "ref": { "type": "branch", "value": "main" },
+      "ref": {
+        "type": "branch",
+        "value": "ac-mainnet-tag"
+      },
       "package": "solana_kit_spl_account_compression",
       "issue": 131,
-      "notes": "SPL Account Compression IDL for Codama Dart code generation"
+      "notes": "SPL Account Compression IDL for Codama Dart code generation (default branch ac-mainnet-tag)",
+      "checkedCommit": "b229799e395"
     },
     {
       "name": "mpl-bubblegum",
       "path": ".repos/metaplex-foundation/mpl-bubblegum",
       "url": "https://github.com/metaplex-foundation/mpl-bubblegum",
-      "ref": { "type": "branch", "value": "main" },
+      "ref": {
+        "type": "branch",
+        "value": "main"
+      },
       "package": "solana_kit_mpl_bubblegum",
       "issue": 131,
-      "notes": "Metaplex Bubblegum IDL for Codama Dart code generation (currently Solita format — needs Codama conversion)"
+      "notes": "Metaplex Bubblegum IDL for Codama Dart code generation (currently Solita format \u2014 needs Codama conversion)",
+      "checkedCommit": "02c16414e4e0"
     }
   ]
 }
