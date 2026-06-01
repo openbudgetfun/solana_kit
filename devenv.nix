@@ -65,8 +65,8 @@ in
       lint = {
         enable = true;
         name = "lint";
-        description = "Run linting and formatting checks on every commit and push.";
-        entry = "${config.env.DEVENV_PROFILE}/bin/lint:format";
+        description = "Run linting checks on every commit and push.";
+        entry = "${config.env.DEVENV_PROFILE}/bin/lint:all";
         pass_filenames = true;
         always_run = true;
         stages = [
