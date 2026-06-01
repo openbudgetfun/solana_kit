@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -43,7 +41,7 @@ getCreateAssociatedTokenIdempotentInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (CreateAssociatedTokenIdempotentInstructionData value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': value.discriminator,
     },
   );
@@ -58,10 +56,9 @@ getCreateAssociatedTokenIdempotentInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        CreateAssociatedTokenIdempotentInstructionData(
-          discriminator: map['discriminator']! as int,
-        ),
+    (map, bytes, offset) => CreateAssociatedTokenIdempotentInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
   );
 }
 

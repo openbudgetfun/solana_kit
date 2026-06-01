@@ -77,7 +77,7 @@ bool isValidDepthSizePair({required int maxDepth, required int maxBufferSize}) {
 /// - 8 bytes: creationSlot (u64)
 /// - 6 bytes: padding
 /// Total: 56 bytes
-const concurrentMerkleTreeHeaderSizeV1 = 2 + 54;
+const int concurrentMerkleTreeHeaderSizeV1 = 2 + 54;
 
 /// Returns the account space (in bytes) needed for the ConcurrentMerkleTree
 /// data structure for the given [maxDepth] and [maxBufferSize].

@@ -28,7 +28,7 @@ void assertIsMessageSigner(Object? value) {
       _ => null,
     };
     throw SolanaError(SolanaErrorCode.signerExpectedMessageSigner, {
-      if (address != null) 'address': address,
+      'address': ?address,
     });
   }
 }

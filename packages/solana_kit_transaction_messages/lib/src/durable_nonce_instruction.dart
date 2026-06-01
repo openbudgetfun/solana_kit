@@ -4,7 +4,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// Backward-compatible alias for [sysvarRecentBlockhashesAddress].
-const recentBlockhashesSysvarAddress = sysvarRecentBlockhashesAddress;
+const Address recentBlockhashesSysvarAddress = sysvarRecentBlockhashesAddress;
 
 /// The data bytes for the AdvanceNonceAccount instruction.
 final Uint8List _advanceNonceData = Uint8List.fromList([4, 0, 0, 0]);

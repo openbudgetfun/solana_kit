@@ -32,7 +32,7 @@ const _stateSize = 25;
 const _rateBytes = 136;
 
 /// The rate in 64-bit lanes.
-const _rateLanes = _rateBytes ~/ 8; // = 17
+const int _rateLanes = _rateBytes ~/ 8; // = 17
 
 /// The Keccak-f[1600] round constants.
 ///

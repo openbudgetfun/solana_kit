@@ -367,7 +367,7 @@ Future<TransactionMessage> _createNewMessage(
   return updatedMessage;
 }
 
-const _candidateOverflowErrorCodes = {
+const Set<SolanaErrorCode> _candidateOverflowErrorCodes = {
   SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
   SolanaErrorCode.transactionTooManyAccountAddresses,
   SolanaErrorCode.transactionTooManyAccountsInInstruction,

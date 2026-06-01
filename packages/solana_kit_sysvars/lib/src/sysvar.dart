@@ -19,7 +19,7 @@ export 'package:solana_kit_addresses/solana_kit_addresses.dart'
         sysvarStakeHistoryAddress;
 
 /// Backward-compatible alias for [sysvarRecentBlockhashesAddress].
-const recentBlockhashesSysvarAddress = sysvarRecentBlockhashesAddress;
+const Address recentBlockhashesSysvarAddress = sysvarRecentBlockhashesAddress;
 
 /// Fetches an encoded sysvar account.
 ///

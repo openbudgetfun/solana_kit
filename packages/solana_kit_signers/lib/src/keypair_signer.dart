@@ -145,7 +145,7 @@ void assertIsKeyPairSigner(Object? value) {
       _ => null,
     };
     throw SolanaError(SolanaErrorCode.signerExpectedKeyPairSigner, {
-      if (address != null) 'address': address,
+      'address': ?address,
     });
   }
 }

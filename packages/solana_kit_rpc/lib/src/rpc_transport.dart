@@ -24,7 +24,7 @@ RpcTransport createDefaultRpcTransport({
 }) {
   final normalizedHeaders = headers != null ? _normalizeHeaders(headers) : null;
   final mergedHeaders = <String, String>{
-    if (normalizedHeaders != null) ...normalizedHeaders,
+    ...?normalizedHeaders,
     // Applied last so it cannot be overridden.
     'solana-client': 'dart/0.0.1',
   };

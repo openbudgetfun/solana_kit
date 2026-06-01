@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 /// WebSocket channel for RPC subscriptions for the Solana Kit Dart SDK.
 ///
 /// This package provides a WebSocket-based transport channel for Solana RPC

@@ -87,7 +87,7 @@ class RestClient {
     final mergedQueryParameters = <String, String>{
       ...baseUri.queryParameters,
       ...pathUri.queryParameters,
-      if (queryParameters != null) ...queryParameters,
+      ...?queryParameters,
     };
 
     return baseUri.replace(

@@ -92,7 +92,7 @@ class HeliusWebSocket {
         'jsonrpc': '2.0',
         'id': id,
         'method': method,
-        if (params != null) 'params': params,
+        'params': ?params,
       }),
     );
 

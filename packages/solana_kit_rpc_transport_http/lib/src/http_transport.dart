@@ -57,7 +57,7 @@ RpcTransport createHttpTransport(
     final bodyBytes = utf8.encode(body);
 
     final mergedHeaders = <String, String>{
-      if (customHeaders != null) ...customHeaders,
+      ...?customHeaders,
       // Protocol headers are applied last so they cannot be overridden.
       'accept': 'application/json',
       'content-length': bodyBytes.length.toString(),

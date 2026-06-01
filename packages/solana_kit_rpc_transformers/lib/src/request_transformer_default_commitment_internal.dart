@@ -59,7 +59,7 @@ List<Object?> applyDefaultCommitment({
         nextParams.add(null);
       }
       nextParams[optionsObjectPositionInParams] = <String, Object?>{
-        if (configMap != null) ...configMap,
+        ...?configMap,
         commitmentPropertyName: overrideCommitment.name,
       };
       return nextParams;

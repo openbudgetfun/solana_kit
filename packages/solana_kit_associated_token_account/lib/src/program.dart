@@ -7,7 +7,7 @@ export 'package:solana_kit_addresses/solana_kit_addresses.dart'
 ///
 /// Many codebases reference the ATA program using the shorter [ataProgramAddress]
 /// name. This alias preserves that convention.
-const ataProgramAddress = associatedTokenProgramAddress;
+const Address ataProgramAddress = associatedTokenProgramAddress;
 
 /// Known instructions for the Associated Token Account program.
 enum AssociatedTokenInstruction {
