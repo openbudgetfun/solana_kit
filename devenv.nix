@@ -130,7 +130,14 @@ in
     "dartfmt" = {
       exec = ''
         set -euo pipefail
-        dart format -o show $@ | head -n -1
+        file="$1"
+        shift || true
+        dir="$(dirname "$file")"
+        base="$(basename "$file")"
+        (
+          cd "$dir"
+          dart format -o show "$base" "$@" | sed '$d'
+        )
       '';
       description = "The dart format executable for formatting the workspace.";
       binary = "bash";
