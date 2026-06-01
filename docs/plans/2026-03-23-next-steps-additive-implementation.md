@@ -116,7 +116,7 @@ Completed in this worktree:
   - `packages/solana_kit_addresses/benchmark/address_benchmark.dart`
   - `packages/solana_kit_transactions/benchmark/wire_transaction_benchmark.dart`
   - `packages/solana_kit_rpc_spec_types/benchmark/json_bigint_benchmark.dart`
-- Added `scripts/check-upstream-compatibility.sh` plus `upstream:check` and CI coverage.
+- Added `dart run scripts/check_upstream_compatibility.dart` plus `upstream:check` and CI coverage.
 - Completed Codama PDA rendering by generating real `getProgramDerivedAddress(...)` calls.
 - Updated READMEs and site docs to explain the new workflows.
 
@@ -130,8 +130,8 @@ Validated locally:
 - benchmark script smoke runs for addresses, transactions, and rpc-spec-types
 - `pnpm typecheck` in `packages/codama-renderers-dart`
 - `pnpm test` in `packages/codama-renderers-dart`
-- `scripts/workspace-doc-drift.sh --check`
-- `scripts/check-upstream-compatibility.sh` and `scripts/check-upstream-compatibility.sh --clone-if-missing`
+- `dart run scripts/workspace_doc_drift.dart --check`
+- `dart run scripts/check_upstream_compatibility.dart` and `dart run scripts/check_upstream_compatibility.dart --clone-if-missing`
 
 Current upstream drift note observed during validation:
 

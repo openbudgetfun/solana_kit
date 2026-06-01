@@ -249,13 +249,13 @@ in
         set -euo pipefail
         mkdir -p .mdt/cache
         mdt check --verbose
-        python3 "$DEVENV_ROOT/scripts/sync-dart-doc-comments.py" --check
+        dart run "$DEVENV_ROOT/scripts/sync_dart_doc_comments.dart" --check
         # Prime the cache history so mdt doctor can evaluate cache efficiency
         # in fresh CI checkouts without returning a cache-history-only skip.
         mdt info >/dev/null
         mdt info >/dev/null
         mdt doctor --format text
-        scripts/workspace-doc-drift.sh --check
+        dart run scripts/workspace_doc_drift.dart --check
       '';
       description = "Check documentation consistency with mdt, synchronized Dart doc comments, and workspace metadata.";
       binary = "bash";
@@ -265,8 +265,8 @@ in
         set -euo pipefail
         mkdir -p .mdt/cache
         mdt update --verbose
-        python3 "$DEVENV_ROOT/scripts/sync-dart-doc-comments.py" --write
-        scripts/workspace-doc-drift.sh --write
+        dart run "$DEVENV_ROOT/scripts/sync_dart_doc_comments.dart" --write
+        dart run scripts/workspace_doc_drift.dart --write
         mdt info
       '';
       description = "Update generated documentation blocks across Markdown and Dart doc comments, then print mdt diagnostics.";
@@ -296,7 +296,7 @@ in
     "docs:site:smoke" = {
       exec = ''
         set -euo pipefail
-        "$DEVENV_ROOT/scripts/docs-site-smoke.sh" "$@"
+        dart run "$DEVENV_ROOT/scripts/docs_site_smoke.dart" "$@"
       '';
       description = "Run smoke tests against the built documentation site.";
       binary = "bash";
@@ -304,7 +304,7 @@ in
     "upstream:check" = {
       exec = ''
         set -euo pipefail
-        "$DEVENV_ROOT/scripts/check-upstream-compatibility.sh" "$@"
+        dart run "$DEVENV_ROOT/scripts/check_upstream_compatibility.dart" "$@"
       '';
       description = "Check tracked upstream compatibility metadata and local drift.";
       binary = "bash";
@@ -312,7 +312,7 @@ in
     "upstream:parity" = {
       exec = ''
         set -euo pipefail
-        "$DEVENV_ROOT/scripts/check-upstream-parity.sh" "$@"
+        dart run "$DEVENV_ROOT/scripts/check_upstream_parity.dart" "$@"
       '';
       description = "Generate runtime fixtures from the tracked @solana/kit release and compare selected behaviors against this Dart port.";
       binary = "bash";
@@ -405,7 +405,7 @@ in
     "coverage:check" = {
       exec = ''
         set -euo pipefail
-        python3 "$DEVENV_ROOT/scripts/check-risk-tier-coverage.py"
+        dart run "$DEVENV_ROOT/scripts/check_risk_tier_coverage.dart"
       '';
       description = "Run package-level coverage for risk-tier packages and enforce configured line-coverage floors.";
       binary = "bash";

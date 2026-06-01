@@ -266,7 +266,7 @@ Make Solana Kit a **Dart/Flutter product with a strict compatibility core**:
 #### Primary files
 
 - `.repos/kit` usage via scripts/tests
-- `scripts/check-upstream-compatibility.sh`
+- `dart run scripts/check_upstream_compatibility.dart`
 - new parity test locations under selected packages
 - docs in `docs/site/content/reference/upstream-compatibility.md`
 
@@ -319,7 +319,7 @@ Make Solana Kit a **Dart/Flutter product with a strict compatibility core**:
 
 - `template.t.md`
 - `mdt.toml`
-- `scripts/sync-dart-doc-comments.py`
+- `dart run scripts/sync_dart_doc_comments.dart`
 - root `readme.md`
 - `docs/site/content/core/*.md`
 - package READMEs where later changes are worth a changeset
