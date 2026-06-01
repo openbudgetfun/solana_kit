@@ -124,7 +124,7 @@ void main() {
               .having(
                 (error) => error.context[SolanaErrorContextKeys.url],
                 'url',
-                'https://mainnet.helius-rpc.com/?api-key=test-key',
+                'https://mainnet.helius-rpc.com/?api-key=%5BREDACTED%5D',
               )
               .having(
                 (error) => error.context['message'],

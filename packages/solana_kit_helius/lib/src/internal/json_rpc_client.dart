@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:solana_kit_errors/solana_kit_errors.dart';
+import 'package:solana_kit_helius/src/internal/redact_url.dart';
 
 /// Internal JSON-RPC 2.0 caller for Helius RPC endpoints.
 ///
@@ -44,7 +45,7 @@ class JsonRpcClient {
           SolanaErrorContextKeys.methodName: method,
           SolanaErrorContextKeys.operation: 'heliusJsonRpc',
           SolanaErrorContextKeys.statusCode: response.statusCode,
-          SolanaErrorContextKeys.url: url,
+          SolanaErrorContextKeys.url: redactUrl(url),
           'message':
               'HTTP ${response.statusCode}: ${response.reasonPhrase ?? 'Unknown error'}',
         },
@@ -60,7 +61,7 @@ class JsonRpcClient {
         context: {
           SolanaErrorContextKeys.methodName: method,
           SolanaErrorContextKeys.operation: 'heliusJsonRpc',
-          SolanaErrorContextKeys.url: url,
+          SolanaErrorContextKeys.url: redactUrl(url),
           'message': error['message'] ?? 'Unknown RPC error',
         },
       );
