@@ -258,6 +258,19 @@ void main() {
       expect(encrypted1, isNot(equals(encrypted2)));
     });
 
+    test('malformed ciphertext fails decryption without range errors', () {
+      expect(
+        () => decryptMessage(Uint8List(3), sharedSecret),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.mwaDecryptionFailed,
+          ),
+        ),
+      );
+    });
+
     test('tampered ciphertext fails decryption', () {
       final encrypted = encryptMessage('test', 0, sharedSecret);
 
