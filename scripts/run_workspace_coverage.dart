@@ -3,89 +3,77 @@ import 'dart:io';
 Future<void> main(List<String> args) async {
   await _ensurePackageConfig();
 
-  final root = Directory.current;
-  final testDirectories = <String>[];
-
-  final packagesDirectory = Directory('packages');
-  if (packagesDirectory.existsSync()) {
-    final packageDirectories =
-        packagesDirectory
-            .listSync()
-            .whereType<Directory>()
-            .where(
-              (directory) =>
-                  File('${directory.path}/pubspec.yaml').existsSync(),
-            )
-            .toList()
-          ..sort((left, right) => left.path.compareTo(right.path));
-
-    for (final packageDirectory in packageDirectories) {
-      final testDirectory = Directory('${packageDirectory.path}/test');
-      if (!testDirectory.existsSync() || !_hasDartTests(testDirectory)) {
-        continue;
-      }
-
-      final pubspec = File(
-        '${packageDirectory.path}/pubspec.yaml',
-      ).readAsStringSync();
-      if (pubspec.contains(RegExp(r'^flutter:\s*$', multiLine: true))) {
-        continue;
-      }
-
-      testDirectories.add(testDirectory.path);
-    }
-  }
-
-  final generatedTestDirectory = Directory(
-    'packages/codama-renderers-dart/test-generated/test',
-  );
-  if (generatedTestDirectory.existsSync() &&
-      _hasDartTests(generatedTestDirectory) &&
-      !testDirectories.contains(generatedTestDirectory.path)) {
-    testDirectories.add(generatedTestDirectory.path);
-  }
-
-  final rootTestDirectory = Directory('test');
-  if (rootTestDirectory.existsSync() && _hasDartTests(rootTestDirectory)) {
-    testDirectories.add(rootTestDirectory.path);
-  }
-
+  final testDirectories = _discoverPackageTestDirectories();
   if (testDirectories.isEmpty) {
-    stderr.writeln('No Dart test directories were found.');
+    stderr.writeln('No package test directories were found.');
     exitCode = 1;
     return;
   }
 
+  final testArgs = _withDefaultTestArgs(args);
+
   stdout
     ..writeln(
-      'Running ${testDirectories.length} test directories in one Dart test process.',
+      'Running coverage for ${testDirectories.length} package test directories.',
     )
     ..writeln(
       'Skipping Flutter plugin packages; they are covered by dedicated checks.',
     );
 
-  final testArgs = _withDefaultTestArgs(args);
   final stopwatch = Stopwatch()..start();
   final result = await Process.start(
-    'fvm',
+    'dart',
     [
-      'dart',
-      'test',
+      'run',
+      'coverage:test_with_coverage',
+      '--',
       '--exclude-tags',
       'integration',
       ...testArgs,
       ...testDirectories,
     ],
-    workingDirectory: root.path,
     mode: ProcessStartMode.inheritStdio,
   );
 
   final code = await result.exitCode;
   stopwatch.stop();
   stdout.writeln(
-    'Workspace tests finished in ${_formatDuration(stopwatch.elapsed)}.',
+    'Workspace coverage finished in ${_formatDuration(stopwatch.elapsed)}.',
   );
   exitCode = code;
+}
+
+List<String> _discoverPackageTestDirectories() {
+  final packagesDirectory = Directory('packages');
+  if (!packagesDirectory.existsSync()) {
+    return const [];
+  }
+
+  final testDirectories = <String>[];
+  final packageDirectories =
+      packagesDirectory
+          .listSync()
+          .whereType<Directory>()
+          .where(
+            (directory) => File('${directory.path}/pubspec.yaml').existsSync(),
+          )
+          .toList()
+        ..sort((left, right) => left.path.compareTo(right.path));
+
+  for (final packageDirectory in packageDirectories) {
+    final testDirectory = Directory('${packageDirectory.path}/test');
+    if (!testDirectory.existsSync() || !_hasDartTests(testDirectory)) {
+      continue;
+    }
+
+    if (_isFlutterPackage(packageDirectory)) {
+      continue;
+    }
+
+    testDirectories.add(testDirectory.path);
+  }
+
+  return testDirectories;
 }
 
 List<String> _withDefaultTestArgs(List<String> args) {
@@ -118,6 +106,13 @@ int _defaultConcurrency() {
     return 1;
   }
   return processors > 12 ? 12 : processors;
+}
+
+bool _isFlutterPackage(Directory packageDirectory) {
+  final pubspec = File(
+    '${packageDirectory.path}/pubspec.yaml',
+  ).readAsStringSync();
+  return pubspec.contains(RegExp(r'^flutter:\s*$', multiLine: true));
 }
 
 bool _hasDartTests(Directory directory) {
