@@ -424,56 +424,7 @@ in
     "test:all" = {
       exec = ''
         set -euo pipefail
-        failed=0
-        for pkg_dir in packages/*/; do
-          if [ ! -d "$pkg_dir/test" ]; then
-            continue
-          fi
-
-          if [ -z "$(find "$pkg_dir/test" -name '*_test.dart' -print -quit)" ]; then
-            continue
-          fi
-
-          # Skip Flutter plugin packages (covered by dedicated checks)
-          if grep -q "flutter:" "$pkg_dir/pubspec.yaml" 2>/dev/null; then
-            continue
-          fi
-
-          pkg_name="$(basename "$pkg_dir")"
-          echo "Testing $pkg_name..."
-          if ! (
-            cd "$pkg_dir"
-            fvm flutter test --exclude-tags integration
-          ); then
-            failed=1
-          fi
-        done
-
-        # Also test generated packages under codama renderers
-        for pkg_dir in packages/codama-renderers-dart/test-generated/; do
-          if [ -d "$pkg_dir/test" ]; then
-            pkg_name="$(basename "$(dirname "$pkg_dir")")/test-generated"
-            echo "Testing $pkg_name..."
-            if ! (
-              cd "$pkg_dir"
-              fvm flutter test
-            ); then
-              failed=1
-            fi
-          fi
-        done
-
-        if [ -d test ]; then
-          echo "Testing root workspace helpers..."
-          if ! fvm flutter test test; then
-            failed=1
-          fi
-        fi
-
-        if [ "$failed" -ne 0 ]; then
-          echo "Some tests failed."
-          exit 1
-        fi
+        dart "$DEVENV_ROOT/scripts/run_workspace_tests.dart" "$@"
       '';
       description = "Run all tests across workspace packages and root doc-comment checks.";
       binary = "bash";
