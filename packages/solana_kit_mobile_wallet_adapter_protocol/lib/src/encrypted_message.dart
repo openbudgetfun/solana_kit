@@ -26,8 +26,9 @@ class DecryptedMessage {
 ///
 /// Wire format: `[4B seq big-endian][12B random IV][ciphertext + 16B GCM tag]`
 ///
-/// The sequence number is used as Additional Authenticated Data (AAD) to
-/// prevent replay attacks.
+/// The sequence number is used as Additional Authenticated Data (AAD) so it
+/// cannot be tampered with. Callers must still enforce monotonic sequence
+/// numbers per session to reject replayed ciphertexts.
 Uint8List encryptMessage(
   String plaintext,
   int sequenceNumber,
@@ -64,6 +65,12 @@ Uint8List encryptMessage(
 ///
 /// Returns the decrypted plaintext and the extracted sequence number.
 DecryptedMessage decryptMessage(Uint8List message, Uint8List sharedSecret) {
+  const minimumMessageLength =
+      mwaSequenceNumberBytes + mwaIvBytes + (mwaGcmTagBits ~/ 8);
+  if (message.length < minimumMessageLength) {
+    throw SolanaError(SolanaErrorCode.mwaDecryptionFailed);
+  }
+
   // Extract components from wire format.
   final sequenceNumberVector = message.sublist(0, mwaSequenceNumberBytes);
   final iv = message.sublist(

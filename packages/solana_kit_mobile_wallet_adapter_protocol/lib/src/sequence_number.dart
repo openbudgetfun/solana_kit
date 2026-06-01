@@ -8,9 +8,10 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/src/constants.dart';
 /// as additional authenticated data (AAD) in AES-GCM encryption.
 ///
 /// Throws a [SolanaError] with code
-/// [SolanaErrorCode.mwaSequenceNumberOverflow] if [sequenceNumber] is >= 2^32.
+/// [SolanaErrorCode.mwaSequenceNumberOverflow] if [sequenceNumber] is outside
+/// the unsigned 32-bit range.
 Uint8List createSequenceNumberVector(int sequenceNumber) {
-  if (sequenceNumber >= mwaMaxSequenceNumber) {
+  if (sequenceNumber < 0 || sequenceNumber >= mwaMaxSequenceNumber) {
     throw SolanaError(SolanaErrorCode.mwaSequenceNumberOverflow, {
       'sequenceNumber': sequenceNumber,
     });

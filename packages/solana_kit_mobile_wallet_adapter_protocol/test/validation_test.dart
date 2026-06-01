@@ -115,6 +115,19 @@ void main() {
       expect(vector, [255, 255, 255, 255]);
     });
 
+    test('throws on negative sequence numbers', () {
+      expect(
+        () => createSequenceNumberVector(-1),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.mwaSequenceNumberOverflow,
+          ),
+        ),
+      );
+    });
+
     test('throws on overflow at 2^32', () {
       expect(
         () => createSequenceNumberVector(4294967296),
