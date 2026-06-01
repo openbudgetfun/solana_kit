@@ -1,7 +1,3 @@
-// ignore_for_file: public_member_api_docs
-
-import 'dart:typed_data';
-
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -53,7 +49,7 @@ getSetComputeUnitPriceInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (SetComputeUnitPriceInstructionData value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': value.discriminator,
       'microLamports': value.microLamports,
     },
@@ -70,11 +66,10 @@ getSetComputeUnitPriceInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        SetComputeUnitPriceInstructionData(
-          discriminator: map['discriminator']! as int,
-          microLamports: map['microLamports']! as BigInt,
-        ),
+    (map, bytes, offset) => SetComputeUnitPriceInstructionData(
+      discriminator: map['discriminator']! as int,
+      microLamports: map['microLamports']! as BigInt,
+    ),
   );
 }
 

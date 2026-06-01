@@ -51,7 +51,7 @@ Encoder<LoaderV4WriteInstructionData> getLoaderV4WriteInstructionDataEncoder() {
   ]);
   return transformEncoder(
     structEncoder,
-    (LoaderV4WriteInstructionData value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': value.discriminator,
       'offset': value.offset,
       'bytes': value.bytes,
@@ -67,7 +67,7 @@ Decoder<LoaderV4WriteInstructionData> getLoaderV4WriteInstructionDataDecoder() {
   ]);
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, _, _) => LoaderV4WriteInstructionData(
+    (map, _, _) => LoaderV4WriteInstructionData(
       discriminator: map['discriminator']! as int,
       offset: map['offset']! as int,
       bytes: map['bytes']! as Uint8List,
@@ -93,7 +93,7 @@ Encoder<TruncateInstructionData> getTruncateInstructionDataEncoder() {
   ]);
   return transformEncoder(
     structEncoder,
-    (TruncateInstructionData value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': value.discriminator,
       'newSize': value.newSize,
     },
@@ -107,7 +107,7 @@ Decoder<TruncateInstructionData> getTruncateInstructionDataDecoder() {
   ]);
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, _, _) => TruncateInstructionData(
+    (map, _, _) => TruncateInstructionData(
       discriminator: map['discriminator']! as int,
       newSize: map['newSize']! as int,
     ),

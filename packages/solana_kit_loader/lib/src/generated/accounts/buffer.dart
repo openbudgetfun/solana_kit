@@ -41,7 +41,7 @@ Encoder<BufferAccount> getBufferAccountEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (BufferAccount value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': bufferAccountDiscriminator,
       'authorityAddress': value.authorityAddress,
     },
@@ -63,7 +63,7 @@ Decoder<BufferAccount> getBufferAccountDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, _, _) =>
+    (map, _, _) =>
         BufferAccount(authorityAddress: map['authorityAddress'] as Address?),
   );
 }

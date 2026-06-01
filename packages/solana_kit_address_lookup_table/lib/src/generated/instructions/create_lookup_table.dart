@@ -1,7 +1,3 @@
-// ignore_for_file: public_member_api_docs
-
-import 'dart:typed_data';
-
 import 'package:meta/meta.dart';
 import 'package:solana_kit_address_lookup_table/src/generated/pdas/address_lookup_table.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -61,7 +57,7 @@ getCreateLookupTableInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (CreateLookupTableInstructionData value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': value.discriminator,
       'recentSlot': value.recentSlot,
       'bump': value.bump,
@@ -80,12 +76,11 @@ getCreateLookupTableInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        CreateLookupTableInstructionData(
-          discriminator: map['discriminator']! as int,
-          recentSlot: map['recentSlot']! as BigInt,
-          bump: map['bump']! as int,
-        ),
+    (map, bytes, offset) => CreateLookupTableInstructionData(
+      discriminator: map['discriminator']! as int,
+      recentSlot: map['recentSlot']! as BigInt,
+      bump: map['bump']! as int,
+    ),
   );
 }
 

@@ -1,7 +1,3 @@
-// ignore_for_file: public_member_api_docs
-
-import 'dart:typed_data';
-
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -53,7 +49,7 @@ getSetLoadedAccountsDataSizeLimitInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (SetLoadedAccountsDataSizeLimitInstructionData value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': value.discriminator,
       'accountDataSizeLimit': value.accountDataSizeLimit,
     },
@@ -70,11 +66,10 @@ getSetLoadedAccountsDataSizeLimitInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        SetLoadedAccountsDataSizeLimitInstructionData(
-          discriminator: map['discriminator']! as int,
-          accountDataSizeLimit: map['accountDataSizeLimit']! as int,
-        ),
+    (map, bytes, offset) => SetLoadedAccountsDataSizeLimitInstructionData(
+      discriminator: map['discriminator']! as int,
+      accountDataSizeLimit: map['accountDataSizeLimit']! as int,
+    ),
   );
 }
 

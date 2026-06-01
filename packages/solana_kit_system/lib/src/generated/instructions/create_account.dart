@@ -1,7 +1,5 @@
 // ignore_for_file: public_member_api_docs
 
-import 'dart:typed_data';
-
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -38,7 +36,7 @@ Encoder<CreateAccountInstructionData> getCreateAccountInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (CreateAccountInstructionData value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': value.discriminator,
       'lamports': value.lamports,
       'space': value.space,
@@ -57,13 +55,12 @@ Decoder<CreateAccountInstructionData> getCreateAccountInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        CreateAccountInstructionData(
-          discriminator: map['discriminator']! as int,
-          lamports: map['lamports']! as BigInt,
-          space: map['space']! as BigInt,
-          programOwner: map['programOwner']! as Address,
-        ),
+    (map, bytes, offset) => CreateAccountInstructionData(
+      discriminator: map['discriminator']! as int,
+      lamports: map['lamports']! as BigInt,
+      space: map['space']! as BigInt,
+      programOwner: map['programOwner']! as Address,
+    ),
   );
 }
 

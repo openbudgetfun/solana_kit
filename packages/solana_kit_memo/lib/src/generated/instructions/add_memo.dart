@@ -1,7 +1,3 @@
-// ignore_for_file: public_member_api_docs
-
-import 'dart:typed_data';
-
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -37,7 +33,7 @@ Encoder<AddMemoInstructionData> getAddMemoInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (AddMemoInstructionData value) => <String, Object?>{'memo': value.memo},
+    (value) => <String, Object?>{'memo': value.memo},
   );
 }
 
@@ -49,7 +45,7 @@ Decoder<AddMemoInstructionData> getAddMemoInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+    (map, bytes, offset) =>
         AddMemoInstructionData(memo: map['memo']! as String),
   );
 }

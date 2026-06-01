@@ -47,7 +47,7 @@ Encoder<ProgramDataAccount> getProgramDataAccountEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (ProgramDataAccount value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': programDataAccountDiscriminator,
       'slot': value.slot,
       'upgradeAuthorityAddress': value.upgradeAuthorityAddress,
@@ -71,7 +71,7 @@ Decoder<ProgramDataAccount> getProgramDataAccountDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, _, _) => ProgramDataAccount(
+    (map, _, _) => ProgramDataAccount(
       slot: map['slot']! as BigInt,
       upgradeAuthorityAddress: map['upgradeAuthorityAddress'] as Address?,
     ),

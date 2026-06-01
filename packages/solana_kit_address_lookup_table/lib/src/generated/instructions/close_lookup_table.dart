@@ -1,7 +1,3 @@
-// ignore_for_file: public_member_api_docs
-
-import 'dart:typed_data';
-
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -45,7 +41,7 @@ getCloseLookupTableInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (CloseLookupTableInstructionData value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': value.discriminator,
     },
   );
@@ -60,10 +56,9 @@ getCloseLookupTableInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        CloseLookupTableInstructionData(
-          discriminator: map['discriminator']! as int,
-        ),
+    (map, bytes, offset) => CloseLookupTableInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
   );
 }
 

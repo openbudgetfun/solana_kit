@@ -41,11 +41,11 @@ class ProgramStateAccount {
 }
 
 Encoder<LoaderV4Status> getLoaderV4StatusEncoder() =>
-    transformEncoder(getU8Encoder(), (LoaderV4Status value) => value.index);
+    transformEncoder(getU8Encoder(), (value) => value.index);
 
 Decoder<LoaderV4Status> getLoaderV4StatusDecoder() => transformDecoder(
   getU8Decoder(),
-  (int value, _, _) => LoaderV4Status.values[value],
+  (value, _, _) => LoaderV4Status.values[value],
 );
 
 Codec<LoaderV4Status, LoaderV4Status> getLoaderV4StatusCodec() =>

@@ -1,7 +1,3 @@
-// ignore_for_file: public_member_api_docs
-
-import 'dart:typed_data';
-
 import 'package:meta/meta.dart';
 import 'package:solana_kit_accounts/solana_kit_accounts.dart';
 import 'package:solana_kit_address_lookup_table/src/generated/pdas/address_lookup_table.dart';
@@ -107,7 +103,7 @@ getAddressLookupTableAccountDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (AddressLookupTableAccountData value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': value.discriminator,
       'deactivationSlot': value.deactivationSlot,
       'lastExtendedSlot': value.lastExtendedSlot,
@@ -143,15 +139,14 @@ getAddressLookupTableAccountDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        AddressLookupTableAccountData(
-          discriminator: map['discriminator']! as int,
-          deactivationSlot: map['deactivationSlot']! as BigInt,
-          lastExtendedSlot: map['lastExtendedSlot']! as BigInt,
-          lastExtendedSlotStartIndex: map['lastExtendedSlotStartIndex']! as int,
-          authority: map['authority'] as Address?,
-          addresses: (map['addresses']! as List).cast<Address>(),
-        ),
+    (map, bytes, offset) => AddressLookupTableAccountData(
+      discriminator: map['discriminator']! as int,
+      deactivationSlot: map['deactivationSlot']! as BigInt,
+      lastExtendedSlot: map['lastExtendedSlot']! as BigInt,
+      lastExtendedSlotStartIndex: map['lastExtendedSlotStartIndex']! as int,
+      authority: map['authority'] as Address?,
+      addresses: (map['addresses']! as List).cast<Address>(),
+    ),
   );
 }
 

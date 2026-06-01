@@ -1,5 +1,3 @@
-// ignore_for_file: public_member_api_docs
-
 import 'dart:typed_data';
 
 import 'package:solana_kit_address_lookup_table/src/generated/constants.dart';
@@ -14,7 +12,7 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 export 'package:solana_kit_address_lookup_table/src/generated/constants.dart';
 
 /// Number of bytes added by a CreateLookupTable instruction.
-const createLookupTableInstructionByteDelta = lookupTableMetaSize;
+const int createLookupTableInstructionByteDelta = lookupTableMetaSize;
 
 /// Number of bytes added by an ExtendLookupTable instruction for [addresses].
 int getExtendLookupTableInstructionByteDelta(List<Address> addresses) {

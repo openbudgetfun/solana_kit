@@ -1,7 +1,3 @@
-// ignore_for_file: public_member_api_docs
-
-import 'dart:typed_data';
-
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -55,7 +51,7 @@ getRequestHeapFrameInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (RequestHeapFrameInstructionData value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': value.discriminator,
       'bytes': value.bytes,
     },
@@ -72,11 +68,10 @@ getRequestHeapFrameInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        RequestHeapFrameInstructionData(
-          discriminator: map['discriminator']! as int,
-          bytes: map['bytes']! as int,
-        ),
+    (map, bytes, offset) => RequestHeapFrameInstructionData(
+      discriminator: map['discriminator']! as int,
+      bytes: map['bytes']! as int,
+    ),
   );
 }
 

@@ -17,10 +17,10 @@ const setAuthorityDiscriminator = 4;
 const closeDiscriminator = 5;
 
 /// Backward-compatible alias for [sysvarRentAddress].
-const rentSysvarAddress = sysvarRentAddress;
+const Address rentSysvarAddress = sysvarRentAddress;
 
 /// Backward-compatible alias for [sysvarClockAddress].
-const clockSysvarAddress = sysvarClockAddress;
+const Address clockSysvarAddress = sysvarClockAddress;
 const extendProgramDiscriminator = 6;
 const setAuthorityCheckedDiscriminator = 7;
 
@@ -70,7 +70,7 @@ Encoder<LoaderV3WriteInstructionData> getLoaderV3WriteInstructionDataEncoder() {
   ]);
   return transformEncoder(
     structEncoder,
-    (LoaderV3WriteInstructionData value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': value.discriminator,
       'offset': value.offset,
       'bytes': value.bytes,
@@ -89,7 +89,7 @@ Decoder<LoaderV3WriteInstructionData> getLoaderV3WriteInstructionDataDecoder() {
   ]);
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, _, _) => LoaderV3WriteInstructionData(
+    (map, _, _) => LoaderV3WriteInstructionData(
       discriminator: map['discriminator']! as int,
       offset: map['offset']! as int,
       bytes: map['bytes']! as Uint8List,
@@ -116,7 +116,7 @@ getDeployWithMaxProgramLenInstructionDataEncoder() {
   ]);
   return transformEncoder(
     structEncoder,
-    (DeployWithMaxProgramLenInstructionData value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': value.discriminator,
       'maxDataLen': value.maxDataLen,
     },
@@ -131,7 +131,7 @@ getDeployWithMaxProgramLenInstructionDataDecoder() {
   ]);
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, _, _) => DeployWithMaxProgramLenInstructionData(
+    (map, _, _) => DeployWithMaxProgramLenInstructionData(
       discriminator: map['discriminator']! as int,
       maxDataLen: map['maxDataLen']! as BigInt,
     ),
@@ -156,7 +156,7 @@ Encoder<ExtendProgramInstructionData> getExtendProgramInstructionDataEncoder() {
   ]);
   return transformEncoder(
     structEncoder,
-    (ExtendProgramInstructionData value) => <String, Object?>{
+    (value) => <String, Object?>{
       'discriminator': value.discriminator,
       'additionalBytes': value.additionalBytes,
     },
@@ -170,7 +170,7 @@ Decoder<ExtendProgramInstructionData> getExtendProgramInstructionDataDecoder() {
   ]);
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, _, _) => ExtendProgramInstructionData(
+    (map, _, _) => ExtendProgramInstructionData(
       discriminator: map['discriminator']! as int,
       additionalBytes: map['additionalBytes']! as int,
     ),
