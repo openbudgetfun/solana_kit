@@ -1,5 +1,3 @@
-// ignore_for_file: public_member_api_docs
-
 import 'package:solana_kit_address/solana_kit_address.dart';
 import 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
 import 'package:test/test.dart';
