@@ -1,4 +1,5 @@
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    hide systemProgramAddress;
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 
 import 'package:solana_kit_system/solana_kit_system.dart';
