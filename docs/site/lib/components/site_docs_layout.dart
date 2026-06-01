@@ -3,6 +3,7 @@ import 'package:jaspr_content/jaspr_content.dart';
 
 /// A DocsLayout variant that enforces a deployment base path.
 class SiteDocsLayout extends DocsLayout {
+  /// Creates a docs layout that emits links relative to [basePath].
   const SiteDocsLayout({
     required this.basePath,
     super.header,
@@ -10,6 +11,7 @@ class SiteDocsLayout extends DocsLayout {
     super.footer,
   });
 
+  /// Base path where the documentation site is deployed.
   final String basePath;
 
   @override

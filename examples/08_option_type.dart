@@ -57,9 +57,7 @@ void main() {
   final decodedNone = optU32Codec.decode(encodedNone);
   // The codec's decode type is Option<Object?> since the generic is erased;
   // cast it back so our describe() helper can switch on Some/None.
-  // ignore: avoid_as
   print('decoded Some: ${describe(decodedSome as Option<int>)}');
-  // ignore: avoid_as
   print('decoded None: ${describe(decodedNone as Option<int>)}');
 
   // ── 6. Equality ───────────────────────────────────────────────────────────

@@ -11,8 +11,7 @@ environment:
 resolution: workspace
 
 dependencies:
-  solana_kit_address:
-    path: ../solana_kit_address
+  solana_kit_address: ^0.0.0
 
 dev_dependencies:
   test: ^1.25.0

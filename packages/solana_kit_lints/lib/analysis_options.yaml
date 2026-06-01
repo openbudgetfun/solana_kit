@@ -7,7 +7,11 @@ analyzer:
     unused_element: error
     unused_import: error
     unused_local_variable: error
+    deprecated_member_use_from_same_package: ignore
+    discarded_futures: ignore
     document_ignores: ignore
+    prefer_foreach: ignore
+    remove_deprecations_in_breaking_versions: ignore
     todo: ignore
 
 linter:

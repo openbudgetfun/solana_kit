@@ -11,10 +11,8 @@ resolution: workspace
 
 dependencies:
   crypto: ^3.0.6
-  solana_kit_address:
-    path: ../solana_kit_address
-  solana_kit_address_constants:
-    path: ../solana_kit_address_constants
+  solana_kit_address: ^0.0.0
+  solana_kit_address_constants: ^0.0.0
   solana_kit_codecs_core: ^0.4.0
   solana_kit_codecs_strings: ^0.4.0
   solana_kit_errors: ^0.4.0

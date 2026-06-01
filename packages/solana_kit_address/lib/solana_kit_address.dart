@@ -1,7 +1,7 @@
 /// Core Address extension type, codecs, comparator, and PublicKey utilities
 /// for the Solana Kit Dart SDK.
 ///
-/// Provides the [Address] extension type for validated base58-encoded Solana
+/// Provides the `Address` extension type for validated base58-encoded Solana
 /// addresses, codecs for serializing and deserializing addresses,
 /// a comparator for sorting addresses by base58 collation rules,
 /// and helpers for converting between public key bytes and addresses.
@@ -21,9 +21,6 @@
 /// final comparator = getAddressComparator();
 /// ```
 library;
-
-import 'package:solana_kit_address/solana_kit_address.dart' show Address;
-import 'package:solana_kit_address/src/address.dart' show Address;
 
 export 'src/address.dart';
 export 'src/address_codec.dart';

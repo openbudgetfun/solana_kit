@@ -32,6 +32,7 @@ workspace:
   - packages/solana_kit_keys
   - packages/solana_kit_lints
   - packages/solana_kit_mobile_wallet_adapter
+  - packages/solana_kit_mobile_wallet_adapter/example
   - packages/solana_kit_mobile_wallet_adapter_protocol
   - packages/solana_kit_mpl_bubblegum
   - packages/solana_kit_memo

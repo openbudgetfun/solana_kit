@@ -1,3 +1,4 @@
+/// Normalizes a deployment base path so it starts and ends with a slash.
 String normalizeBasePath(String value) {
   var basePath = value.trim();
   if (basePath.isEmpty || basePath == '/') {
@@ -15,6 +16,7 @@ String normalizeBasePath(String value) {
   return basePath;
 }
 
+/// Builds a documentation route relative to [basePath].
 String docsRoute(String basePath, String route) {
   final normalizedBasePath = normalizeBasePath(basePath);
 

@@ -5,6 +5,7 @@ import 'package:jaspr_content/components/sidebar_toggle_button.dart';
 
 /// A header component that supports custom docs base paths.
 class SiteHeader extends StatelessComponent {
+  /// Creates a site header using links relative to [basePath].
   const SiteHeader({
     required this.basePath,
     required this.logo,
@@ -14,10 +15,19 @@ class SiteHeader extends StatelessComponent {
     super.key,
   });
 
+  /// Base path where the documentation site is deployed.
   final String basePath;
+
+  /// Source URL for the header logo image.
   final String logo;
+
+  /// Text shown next to the logo.
   final String title;
+
+  /// Components shown before the header title.
   final List<Component> leading;
+
+  /// Components shown on the trailing side of the header.
   final List<Component> items;
 
   @override

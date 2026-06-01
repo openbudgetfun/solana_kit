@@ -6,8 +6,10 @@ import 'package:solana_kit_docs_site/components/site_paths.dart';
 
 /// Sidebar configuration for Solana Kit docs.
 class SiteSidebar extends StatelessComponent {
+  /// Creates a sidebar whose links are relative to [basePath].
   const SiteSidebar({required this.basePath, super.key});
 
+  /// Base path where the documentation site is deployed.
   final String basePath;
 
   @override
