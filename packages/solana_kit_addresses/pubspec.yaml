@@ -1,6 +1,6 @@
 name: solana_kit_addresses
 description: Base58 address utilities for the Solana Kit Dart SDK.
-version: 0.4.0
+version: 0.5.0
 repository: https://github.com/openbudgetfun/solana_kit
 homepage: https://openbudgetfun.github.io/solana_kit/
 
@@ -15,9 +15,9 @@ dependencies:
     path: ../solana_kit_address
   solana_kit_address_constants:
     path: ../solana_kit_address_constants
-  solana_kit_codecs_core: ^0.4.0
-  solana_kit_codecs_strings: ^0.4.0
-  solana_kit_errors: ^0.4.0
+  solana_kit_codecs_core: ^0.5.0
+  solana_kit_codecs_strings: ^0.5.0
+  solana_kit_errors: ^0.5.0
 dev_dependencies:
-  solana_kit_lints: ^0.4.0
+  solana_kit_lints: ^0.5.0
   test: ^1.25.0

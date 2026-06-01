@@ -66,3 +66,23 @@ _Owner:_ Ifiok Jr. · _Introduced in:_ [`d5765af`](https://github.com/openbudget
 - Add `zeroBytes32()`, `bytes32FromHex()`, `bytes32ToHex()` utilities for 32-byte arrays
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`9dc6bc6`](https://github.com/openbudgetfun/solana_kit/commit/9dc6bc6bf16d1e883c2ebb1e806c1a710468dfd3) · _Last updated in:_ [`93b3cd3`](https://github.com/openbudgetfun/solana_kit/commit/93b3cd3a255039e6d5025da78154c3d99bd7eb3e)
+
+## solana_kit_mpl_bubblegum [0.2.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mpl_bubblegum/v0.2.1) (2026-06-01)
+
+### 🐛 Fixed
+
+#### Add well-known program, sysvar, SPL, Metaplex, and token mint address constants
+
+Add centralized address constants to `solana_kit_addresses` so that any package can reference well-known on-chain addresses without importing the full domain package or hardcoding strings.
+
+New exports:
+
+- `program_addresses.dart` — All Agave/Solana native program addresses (system, ALT, BPF loaders, compute budget, config, stake, vote, etc.)
+- `sysvar_addresses.dart` — All sysvar addresses (clock, rent, recentBlockhashes, fees, rewards, etc.) plus the sysvar owner address
+- `spl_addresses.dart` — SPL program addresses (Token, Token-2022, ATA, Memo, Memo Legacy)
+- `metaplex_addresses.dart` — Metaplex program addresses (Token Metadata, Bubblegum, Auth Rules, Core, SPL Account Compression, Noop)
+- `well_known_addresses.dart` — Well-known token mint addresses (Wrapped SOL, USDC, USDT)
+
+Also re-exports from `solana_kit_address` (Address type, codecs, comparator, PublicKey) and `solana_kit_address_constants` (well-known address constants).
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #177](https://github.com/openbudgetfun/solana_kit/pull/177) · _Related issues:_ [#134](https://github.com/openbudgetfun/solana_kit/issues/134)

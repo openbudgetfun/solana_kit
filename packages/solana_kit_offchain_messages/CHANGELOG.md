@@ -21,3 +21,9 @@ _Owner:_ Ifiok Jr. · _Introduced in:_ [`fccec7f`](https://github.com/openbudget
 Add codecov flags and per-package coverage badges to all package READMEs.
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`bed1b1f`](https://github.com/openbudgetfun/solana_kit/commit/bed1b1f1241fa99e2f6c71e7ad5024c1fa42e910) · _Last updated in:_ [`93b3cd3`](https://github.com/openbudgetfun/solana_kit/commit/93b3cd3a255039e6d5025da78154c3d99bd7eb3e)
+
+## solana_kit_offchain_messages [0.3.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_offchain_messages/v0.3.3) (2026-06-01)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_offchain_messages` was updated to 0.3.3.

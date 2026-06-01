@@ -75,3 +75,13 @@ SEC-03: Use constant-time comparison for SensitiveString equality to prevent tim
 - Added test verifying no early exit on mismatch
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`76f2c14`](https://github.com/openbudgetfun/solana_kit/commit/76f2c1456cc408da94ab54da5f68a92e4f42e965) · _Last updated in:_ [`12316d5`](https://github.com/openbudgetfun/solana_kit/commit/12316d50aadfeefc7563665fbad750e37cba1fd5)
+
+## solana_kit_helius [0.3.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_helius/v0.3.3) (2026-06-01)
+
+### 🐛 Fixed
+
+#### Align Helius v3 defaults
+
+Update the mainnet REST host to match upstream Helius v3.0.0, add Admin project usage, webhook toggle, and `getTransfersByAddress` parity, refresh package metadata, and document the exact upstream commit used for the v3 audit.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #176](https://github.com/openbudgetfun/solana_kit/pull/176)

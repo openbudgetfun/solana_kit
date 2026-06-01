@@ -1,6 +1,6 @@
 name: solana_kit_associated_token_account
 description: Associated Token Account instruction builders and PDA helpers for the Solana Kit Dart SDK.
-version: 0.4.0
+version: 0.4.1
 repository: https://github.com/openbudgetfun/solana_kit
 homepage: https://openbudgetfun.github.io/solana_kit/
 
@@ -12,13 +12,13 @@ resolution: workspace
 dependencies:
   crypto: ^3.0.6
   meta: ^1.16.0
-  solana_kit_addresses: ^0.4.0
-  solana_kit_codecs_core: ^0.4.0
-  solana_kit_codecs_data_structures: ^0.4.0
-  solana_kit_codecs_numbers: ^0.4.0
-  solana_kit_errors: ^0.4.0
-  solana_kit_instructions: ^0.4.0
+  solana_kit_addresses: ^0.5.0
+  solana_kit_codecs_core: ^0.5.0
+  solana_kit_codecs_data_structures: ^0.5.0
+  solana_kit_codecs_numbers: ^0.5.0
+  solana_kit_errors: ^0.5.0
+  solana_kit_instructions: ^0.5.0
 
 dev_dependencies:
-  solana_kit_lints: ^0.4.0
+  solana_kit_lints: ^0.5.0
   test: ^1.25.0
