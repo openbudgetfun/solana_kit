@@ -1,0 +1,27 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    # Keep Solana Kit analyzer severities aligned with the Dart lint preset.
+    missing_return: error
+    dead_code: error
+    unused_element: error
+    unused_import: error
+    unused_local_variable: error
+    document_ignores: ignore
+    todo: ignore
+
+linter:
+  rules:
+    # Solana Kit project policy layered on top of Flutter's recommended rules.
+    public_member_api_docs: true
+    lines_longer_than_80_chars: false
+    cancel_subscriptions: true
+    close_sinks: true
+    avoid_equals_and_hash_code_on_mutable_classes: false
+
+    # Extra strict Flutter checks that are useful for package-quality widgets.
+    diagnostic_describe_all_properties: true
+    use_colored_box: true
+    use_decorated_box: true
+    use_full_hex_values_for_flutter_colors: true

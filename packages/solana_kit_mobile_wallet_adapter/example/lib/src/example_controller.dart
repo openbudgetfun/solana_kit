@@ -6,14 +6,12 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wall
 
 class MwaExampleController extends ChangeNotifier {
   MwaExampleController({
-    required MwaPlatformSupportService platformService,
-    required MwaSessionService sessionService,
+    required this._platformService,
+    required this._sessionService,
     String initialMessageDraft =
         'Hello from the Solana Kit Android-first Flutter example',
     String initialTransactionDraft = '',
-  }) : _platformService = platformService,
-       _sessionService = sessionService,
-       _messageDraft = initialMessageDraft,
+  }) : _messageDraft = initialMessageDraft,
        _transactionDraft = initialTransactionDraft;
 
   factory MwaExampleController.live() {

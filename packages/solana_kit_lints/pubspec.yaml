@@ -11,4 +11,5 @@ environment:
 resolution: workspace
 
 dependencies:
+  flutter_lints: ^5.0.0
   very_good_analysis: ^7.0.0
