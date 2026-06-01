@@ -35,12 +35,11 @@ mc release --dry-run --diff
 mc release-pr --dry-run
 ```
 
-`mc release-pr` prepares version bumps, changelogs, release metadata, and opens or updates the configured monochange release PR. After the release PR merges to `main`, GitHub Actions tags the release commit and publishes GitHub release notes from the embedded monochange release record.
+`mc release-pr` prepares version bumps, changelogs, release metadata, and opens or updates the configured monochange release PR. After the release PR merges to `main`, the current flow is to tag and publish locally from the reviewed release commit.
 
-Publishing package artifacts is a separate trusted-publishing workflow:
+Before publishing package artifacts from the maintainer machine, verify readiness and dry-run the publish from the release commit:
 
 ```bash
 mc step:publish-readiness --from HEAD --format json
 mc publish --dry-run
-mc publish
 ```

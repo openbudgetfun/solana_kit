@@ -347,17 +347,14 @@ Before the very first publish of any package:
 6. Verify each package appears on pub.dev before running the next publish workflow
 7. After all packages are published, verify the umbrella `solana_kit` package correctly resolves all dependencies from pub.dev
 
-### CI/CD Integration
+### Release and Publishing Integration
 
-The recommended CI/CD workflow for publishing:
+The current release flow is run locally by a maintainer and is intentionally review-first:
 
 1. **PR merged to main**: CI checks run (analyze, test, format, changeset enforcement, docs drift check)
-2. **Release preparation**: The `release` GitHub Actions workflow opens or updates a monochange release PR with `mc release-pr`
-3. **Publishing**: Trigger the `publish` GitHub Actions workflow (`workflow_dispatch`) for a release tag after publish-readiness passes
-4. **Verification**: Check pub.dev for all packages with correct versions
+2. **Release preparation**: From a local checkout, prepare a release branch or PR that applies changesets, updates package versions, and refreshes changelogs
+3. **Publish readiness**: Run publish dry-runs from the release commit and verify package metadata before publishing
+4. **Publishing**: Publish changed packages from the maintainer machine in dependency order or in small batches when many packages changed
+5. **Verification**: Check pub.dev for all packages with correct versions and smoke test a clean consumer project
 
-The GitHub Actions workflow should include:
-
-- A `release` workflow that opens/updates the monochange release PR and tags release commits after merge
-- A manually triggered `publish` workflow that checks publish readiness and runs `mc publish` from a release tag
-- The publish job uses GitHub Actions OIDC trusted publishing (`id-token: write`) for pub.dev and npm provenance; configure trusted publishers in pub.dev and npm before using it.
+Trusted Publishing is planned for a future iteration. Until then, registry credentials and release authority live with the maintainer running the local release. Keep public release notes focused on consumer-visible changes, minimum SDK constraints, and migration steps.

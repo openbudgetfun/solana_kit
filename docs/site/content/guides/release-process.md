@@ -1,17 +1,17 @@
 ---
 title: Release Process
-description: End-to-end release guidance and why each stage exists.
+description: End-to-end release guidance for preparing and publishing package releases.
 ---
 
-## Why the Release Pipeline Is Structured
+## Release Goals
 
-The release flow separates versioning from publication so teams can validate artifacts before package publish.
+The current release flow is run locally by a maintainer. It separates version preparation from package publication so version bumps, changelogs, and package metadata can be reviewed before anything is published to pub.dev.
 
 ## Step-by-Step Release Flow
 
 ### Step 1: Validate Workspace Health
 
-Run:
+Run the standard workspace checks before preparing a release:
 
 ```bash
 lint:all
@@ -19,35 +19,32 @@ test:all
 docs:check
 ```
 
-Reason: release quality gates should fail fast.
+Reason: release quality gates should fail fast before versions or changelogs change.
 
-### Step 2: Run Dry-Run Release
+### Step 2: Prepare Release Changes
 
-- trigger `release.yml` with dry-run.
+From a local checkout, create a release branch or PR that applies the pending changesets, updates package versions, and refreshes changelogs. Review the generated package versions and release notes before merging.
 
-Reason: validates changelog/version logic before state changes.
+Reason: package consumers should see accurate version numbers and user-facing release notes.
 
-### Step 3: Execute Release from `main`
+### Step 3: Publish Package Artifacts
 
-- trigger non-dry-run release.
+After the release changes are merged and tagged, publish the changed packages from the release commit on the maintainer machine. Always run a publish dry run first, then publish in dependency order or in small batches when many packages changed.
 
-Reason: keeps canonical release history linear and auditable.
+Reason: phased publishing reduces blast radius and makes it easier to recover if registry limits or package metadata problems appear.
 
-### Step 4: Publish in Managed Phases
+### Step 4: Validate Published Artifacts
 
-- run `publish.yml` with intended phase option.
+- Verify package metadata on pub.dev.
+- Confirm each published package resolves from a clean consumer project.
+- Smoke test critical quick-start paths.
 
-Reason: phased publish reduces blast radius for package clusters.
-
-### Step 5: Validate Published Artifacts
-
-- verify package metadata on pub.dev.
-- smoke test critical quick-start paths.
-
-Reason: publishing success alone does not guarantee usability.
+Reason: publishing success alone does not guarantee downstream usability.
 
 ## Operational Guidance
 
-- keep release cadence predictable.
-- batch breaking changes with migration notes.
-- document justified exceptions in release notes.
+- Keep release cadence predictable.
+- Batch breaking changes with migration notes.
+- Document user-visible changes and minimum SDK changes clearly.
+- Verify the umbrella package resolves after publishing dependent packages.
+- Move publication to Trusted Publishing once registry setup is ready.
