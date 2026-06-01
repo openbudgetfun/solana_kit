@@ -22,6 +22,9 @@
 /// ```
 library;
 
+import 'package:solana_kit_address/solana_kit_address.dart' show Address;
+import 'package:solana_kit_address/src/address.dart' show Address;
+
 export 'src/address.dart';
 export 'src/address_codec.dart';
 export 'src/address_comparator.dart';
