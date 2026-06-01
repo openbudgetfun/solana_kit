@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.5.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.5.0) (2026-06-01)
+
+### 💥 Breaking Change
+
+#### Raise minimum Dart SDK to 3.12
+
+Raise the minimum supported Dart SDK constraint to `^3.12.0` across public Dart packages.
+
+This is a breaking change because consumers must use Dart 3.12 or newer. Flutter consumers must use a Flutter SDK that bundles Dart 3.12 or newer.
+
+```yaml
+environment:
+  sdk: ^3.12.0
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`32d5d36`](https://github.com/openbudgetfun/solana_kit/commit/32d5d367abb7615fea5ee341f03d17c2bc0d66dd)
+
 ## [0.4.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.4.0) (2026-05-30)
 
 ### 💥 Breaking Change

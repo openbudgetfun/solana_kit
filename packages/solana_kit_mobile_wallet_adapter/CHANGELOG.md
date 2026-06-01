@@ -37,3 +37,28 @@ Update the mobile wallet adapter example override…
 Update the mobile wallet adapter example override metadata so the example remains aligned with the workspace package graph after the 6.9 compatibility additions.
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudgetfun/solana_kit/commit/9ee2e442b5831d9abe1a7b1494955c1728063b6b) · _Last updated in:_ [`0ee3d60`](https://github.com/openbudgetfun/solana_kit/commit/0ee3d604028aa8a0fcbcf7e7da9840db39755ccf)
+
+## solana_kit_mobile_wallet_adapter [0.4.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mobile_wallet_adapter/v0.4.0) (2026-06-01)
+
+### 💥 Breaking Change
+
+#### Raise minimum Dart SDK to 3.12
+
+Raise the minimum supported Dart SDK constraint to `^3.12.0` across public Dart packages.
+
+This is a breaking change because consumers must use Dart 3.12 or newer. Flutter consumers must use a Flutter SDK that bundles Dart 3.12 or newer.
+
+```yaml
+environment:
+  sdk: ^3.12.0
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`32d5d36`](https://github.com/openbudgetfun/solana_kit/commit/32d5d367abb7615fea5ee341f03d17c2bc0d66dd)
+
+### 🔖 None
+
+#### Update Android compile check command
+
+Update the README maintenance command for the Android compile check to use the Dart project script.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`17fb23f`](https://github.com/openbudgetfun/solana_kit/commit/17fb23fce427bce1dd22b34fea8482ef2278c161)

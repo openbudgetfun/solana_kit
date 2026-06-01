@@ -75,3 +75,28 @@ SEC-03: Use constant-time comparison for SensitiveString equality to prevent tim
 - Added test verifying no early exit on mismatch
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`76f2c14`](https://github.com/openbudgetfun/solana_kit/commit/76f2c1456cc408da94ab54da5f68a92e4f42e965) · _Last updated in:_ [`12316d5`](https://github.com/openbudgetfun/solana_kit/commit/12316d50aadfeefc7563665fbad750e37cba1fd5)
+
+## solana_kit_helius [0.4.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_helius/v0.4.0) (2026-06-01)
+
+### 💥 Breaking Change
+
+#### Raise minimum Dart SDK to 3.12
+
+Raise the minimum supported Dart SDK constraint to `^3.12.0` across public Dart packages.
+
+This is a breaking change because consumers must use Dart 3.12 or newer. Flutter consumers must use a Flutter SDK that bundles Dart 3.12 or newer.
+
+```yaml
+environment:
+  sdk: ^3.12.0
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`32d5d36`](https://github.com/openbudgetfun/solana_kit/commit/32d5d367abb7615fea5ee341f03d17c2bc0d66dd)
+
+### 🐛 Fixed
+
+#### Align Helius v3 defaults
+
+Update the mainnet REST host to match upstream Helius v3.0.0, add Admin project usage, webhook toggle, and `getTransfersByAddress` parity, refresh package metadata, and document the exact upstream commit used for the v3 audit.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`ee30ae0`](https://github.com/openbudgetfun/solana_kit/commit/ee30ae03357be744bc81669041f0319149844af6)

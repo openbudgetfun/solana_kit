@@ -1,7 +1,7 @@
 name: solana_kit_address_constants
 publish_to: none
 description: Well-known Solana address constants for programs, sysvars, SPL programs, Metaplex programs, and token mints.
-version: 0.0.0
+version: 0.5.0
 repository: https://github.com/openbudgetfun/solana_kit
 homepage: https://openbudgetfun.github.io/solana_kit/
 
@@ -11,7 +11,7 @@ environment:
 resolution: workspace
 
 dependencies:
-  solana_kit_address: ^0.0.0
+  solana_kit_address: ^0.5.0
 
 dev_dependencies:
   test: ^1.25.0

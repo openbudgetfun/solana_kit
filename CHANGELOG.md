@@ -2628,6 +2628,127 @@ Package groups scaffolded:
 - Fragment-based code generation with automatic import tracking
 - Comprehensive test suite with 261 tests
 
+## [0.5.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.5.0) (2026-06-01)
+
+Grouped release for `main`.
+
+### 💥 Breaking Change
+
+#### Raise minimum Dart SDK to 3.12
+
+_Packages:_ _solana_kit_, _solana_kit_accounts_, _solana_kit_addresses_, _solana_kit_codecs_, _solana_kit_codecs_core_, _solana_kit_codecs_data_structures_, _solana_kit_codecs_numbers_, _solana_kit_codecs_strings_, _solana_kit_fixed_points_, _solana_kit_errors_, _solana_kit_fast_stable_stringify_, _solana_kit_functional_, _solana_kit_instruction_plans_, _solana_kit_instructions_, _solana_kit_keys_, _solana_kit_options_, _solana_kit_program_client_core_, _solana_kit_programs_, _solana_kit_rpc_, _solana_kit_rpc_api_, _solana_kit_rpc_parsed_types_, _solana_kit_rpc_spec_, _solana_kit_rpc_spec_types_, _solana_kit_rpc_subscriptions_, _solana_kit_rpc_subscriptions_api_, _solana_kit_rpc_subscriptions_channel_websocket_, _solana_kit_rpc_transformers_, _solana_kit_rpc_transport_http_, _solana_kit_rpc_types_, _solana_kit_signers_, _solana_kit_subscribable_, _solana_kit_transaction_confirmation_, _solana_kit_transaction_messages_, _solana_kit_transactions_
+
+Raise the minimum supported Dart SDK constraint to `^3.12.0` across public Dart packages.
+
+This is a breaking change because consumers must use Dart 3.12 or newer. Flutter consumers must use a Flutter SDK that bundles Dart 3.12 or newer.
+
+```yaml
+environment:
+  sdk: ^3.12.0
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`32d5d36`](https://github.com/openbudgetfun/solana_kit/commit/32d5d367abb7615fea5ee341f03d17c2bc0d66dd)
+
+#### new `solana_kit_address` package
+
+_Packages:_ _solana_kit_address_
+
+Initial release of `solana_kit_address` — core Address extension type, codecs, comparator, and PublicKey type extracted from `solana_kit_addresses`.
+
+```dart
+import 'package:solana_kit_address/solana_kit_address.dart';
+
+final address = Address('11111111111111111111111111111111');
+final codec = Address.codec();
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`3f596ef`](https://github.com/openbudgetfun/solana_kit/commit/3f596ef95c0d00714db97a4338ac9342f1fabfb7) · _Last updated in:_ [`249e14e`](https://github.com/openbudgetfun/solana_kit/commit/249e14e1d2976cca8b407d1fda3ac57104104ce4)
+
+#### New `solana_kit_address_constants` package
+
+_Packages:_ _solana_kit_address_constants_
+
+Initial release of `solana_kit_address_constants` — well-known address constants for native programs, sysvars, SPL programs, Metaplex programs, and token mints extracted from `solana_kit_addresses`.
+
+```dart
+import 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
+
+final address = systemProgramAddress; // native program
+final sysvar = clockSysvarAddress;   // sysvar
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`3f596ef`](https://github.com/openbudgetfun/solana_kit/commit/3f596ef95c0d00714db97a4338ac9342f1fabfb7) · _Last updated in:_ [`249e14e`](https://github.com/openbudgetfun/solana_kit/commit/249e14e1d2976cca8b407d1fda3ac57104104ce4)
+
+### 🚀 Feature
+
+#### Add well-known program, sysvar, SPL, Metaplex, and token mint address constants
+
+_Packages:_ _solana_kit_addresses_
+
+Add centralized address constants to `solana_kit_addresses` so that any package can reference well-known on-chain addresses without importing the full domain package or hardcoding strings.
+
+New exports:
+
+- `program_addresses.dart` — All Agave/Solana native program addresses (system, ALT, BPF loaders, compute budget, config, stake, vote, etc.)
+- `sysvar_addresses.dart` — All sysvar addresses (clock, rent, recentBlockhashes, fees, rewards, etc.) plus the sysvar owner address
+- `spl_addresses.dart` — SPL program addresses (Token, Token-2022, ATA, Memo, Memo Legacy)
+- `metaplex_addresses.dart` — Metaplex program addresses (Token Metadata, Bubblegum, Auth Rules, Core, SPL Account Compression, Noop)
+- `well_known_addresses.dart` — Well-known token mint addresses (Wrapped SOL, USDC, USDT)
+
+Also re-exports from `solana_kit_address` (Address type, codecs, comparator, PublicKey) and `solana_kit_address_constants` (well-known address constants).
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`3f596ef`](https://github.com/openbudgetfun/solana_kit/commit/3f596ef95c0d00714db97a4338ac9342f1fabfb7) · _Last updated in:_ [`4643648`](https://github.com/openbudgetfun/solana_kit/commit/46436481a28eab1c803175bee56e98e89fe8fac6)
+
+#### Refactor subscriptions to stream-native APIs
+
+_Packages:_ _solana_kit_rpc_subscriptions_, _solana_kit_rpc_subscriptions_channel_websocket_, _solana_kit_subscribable_, _solana_kit_transaction_confirmation_
+
+Refactor subscription internals toward stream-native Dart APIs while keeping the existing `DataPublisher` and `AbortSignal` compatibility APIs available as deprecated APIs.
+
+Added stream-native helpers for channel streams, demultiplexing, reactive stores, and data/error stream composition, and migrated internal subscription consumers to use Dart `Stream`/`StreamSubscription` flows where possible.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`6fcc74a`](https://github.com/openbudgetfun/solana_kit/commit/6fcc74a6860a5201fdfff03a56411f2084da5444) · _Last updated in:_ [`9988103`](https://github.com/openbudgetfun/solana_kit/commit/99881033c4f8a121f811c217a19c092c629103e4)
+
+### 🐛 Fixed
+
+#### Add well-known program, sysvar, SPL, Metaplex, and token mint address constants
+
+_Packages:_ _solana_kit_, _solana_kit_address_, _solana_kit_address_constants_, _solana_kit_transaction_messages_, _solana_kit_transactions_
+
+Add centralized address constants to `solana_kit_addresses` so that any package can reference well-known on-chain addresses without importing the full domain package or hardcoding strings.
+
+New exports:
+
+- `program_addresses.dart` — All Agave/Solana native program addresses (system, ALT, BPF loaders, compute budget, config, stake, vote, etc.)
+- `sysvar_addresses.dart` — All sysvar addresses (clock, rent, recentBlockhashes, fees, rewards, etc.) plus the sysvar owner address
+- `spl_addresses.dart` — SPL program addresses (Token, Token-2022, ATA, Memo, Memo Legacy)
+- `metaplex_addresses.dart` — Metaplex program addresses (Token Metadata, Bubblegum, Auth Rules, Core, SPL Account Compression, Noop)
+- `well_known_addresses.dart` — Well-known token mint addresses (Wrapped SOL, USDC, USDT)
+
+Also re-exports from `solana_kit_address` (Address type, codecs, comparator, PublicKey) and `solana_kit_address_constants` (well-known address constants).
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`3f596ef`](https://github.com/openbudgetfun/solana_kit/commit/3f596ef95c0d00714db97a4338ac9342f1fabfb7) · _Last updated in:_ [`4643648`](https://github.com/openbudgetfun/solana_kit/commit/46436481a28eab1c803175bee56e98e89fe8fac6)
+
+### 🧪 Testing
+
+#### Improve test coverage to 95%+ across all packages
+
+_Packages:_ _solana_kit_addresses_, _solana_kit_codecs_core_, _solana_kit_codecs_data_structures_, _solana_kit_codecs_strings_, _solana_kit_errors_, _solana_kit_fast_stable_stringify_, _solana_kit_instruction_plans_, _solana_kit_keys_, _solana_kit_rpc_, _solana_kit_rpc_api_, _solana_kit_rpc_parsed_types_, _solana_kit_rpc_spec_, _solana_kit_rpc_transformers_, _solana_kit_rpc_types_, _solana_kit_signers_, _solana_kit_subscribable_, _solana_kit_transaction_confirmation_, _solana_kit_transaction_messages_, _solana_kit_transactions_
+
+Added 500+ tests covering equality/hashCode/toString, codec edge cases, error paths, and constructor variants. Removed dead code in fast_stable_stringify. Fixed concurrent modification bug in subscribable.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`48216f9`](https://github.com/openbudgetfun/solana_kit/commit/48216f9af0ff058d7db83994e5bdb3b9be95fdf8) · _Last updated in:_ [`b7f5419`](https://github.com/openbudgetfun/solana_kit/commit/b7f5419bbe792d4ba1731eba227088d8f74a3ebb)
+
+#### Refactor subscriptions to stream-native APIs
+
+_Packages:_ _solana_kit_test_matchers_
+
+Refactor subscription internals toward stream-native Dart APIs while keeping the existing `DataPublisher` and `AbortSignal` compatibility APIs available as deprecated APIs.
+
+Added stream-native helpers for channel streams, demultiplexing, reactive stores, and data/error stream composition, and migrated internal subscription consumers to use Dart `Stream`/`StreamSubscription` flows where possible.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`6fcc74a`](https://github.com/openbudgetfun/solana_kit/commit/6fcc74a6860a5201fdfff03a56411f2084da5444) · _Last updated in:_ [`9988103`](https://github.com/openbudgetfun/solana_kit/commit/99881033c4f8a121f811c217a19c092c629103e4)
+
 ## [0.4.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.4.0) (2026-05-30)
 
 Grouped release for `main`.
