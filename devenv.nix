@@ -163,7 +163,6 @@ in
         set -euo pipefail
         docs:update
         fix:lint
-        mc step:validate
         mc check --fix
         fix:format
       '';
