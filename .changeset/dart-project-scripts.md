@@ -1,5 +1,5 @@
 ---
-"solana_kit_mobile_wallet_adapter": patch
+"solana_kit_mobile_wallet_adapter": none
 ---
 
 # Update Android compile check command
