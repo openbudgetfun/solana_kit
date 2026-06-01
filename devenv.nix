@@ -62,17 +62,23 @@ in
         pass_filenames = false;
         stages = [ "pre-push" ];
       };
-      lint = {
+      "lint:commit" = {
         enable = true;
-        name = "lint";
-        description = "Run linting checks on every commit and push.";
+        name = "lint:commit";
+        description = "Run formatting checks on every commit.";
+        entry = "${config.env.DEVENV_PROFILE}/bin/lint:format";
+        pass_filenames = true;
+        always_run = true;
+        stages = [ "pre-commit" ];
+      };
+      "lint:push" = {
+        enable = true;
+        name = "lint:push";
+        description = "Run linting checks on every push.";
         entry = "${config.env.DEVENV_PROFILE}/bin/lint:all";
         pass_filenames = true;
         always_run = true;
-        stages = [
-          "pre-commit"
-          "pre-push"
-        ];
+        stages = [ "pre-push" ];
       };
     };
   };
