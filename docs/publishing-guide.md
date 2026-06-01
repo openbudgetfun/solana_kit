@@ -79,7 +79,7 @@ Versioning is managed by [monochange](https://github.com/monochange/monochange) 
 
 ### Workspace Dependency Graph (generated)
 
-Generated from package `pubspec.yaml` files with `scripts/workspace-doc-drift.sh --write`.
+Generated from package `pubspec.yaml` files with `dart run scripts/workspace_doc_drift.dart --write`.
 
 <!-- workspace-dependency-graph:start -->
 

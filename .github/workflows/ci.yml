@@ -88,7 +88,7 @@ jobs:
       - name: Install Android SDK components
         run: sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
       - name: Verify mobile wallet adapter Android compilation
-        run: ./scripts/check-mobile-wallet-adapter-android-compile.sh
+        run: dart run scripts/check_mobile_wallet_adapter_android_compile.dart
 
   renderer-test:
     runs-on: ubuntu-latest

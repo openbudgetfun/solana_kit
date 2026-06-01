@@ -126,7 +126,7 @@ This workspace uses [`mdt`](https://github.com/ifiokjr/mdt) to keep shared READM
 blocks and site snippets synchronized. The current `mdt` release still does not
 discover `.dart` consumers directly in this repo, so the same provider blocks
 are also projected into `///` library doc comments through
-`scripts/sync-dart-doc-comments.py`.
+`dart run scripts/sync_dart_doc_comments.dart`.
 
 Use:
 

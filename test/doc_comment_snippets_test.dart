@@ -11,8 +11,9 @@ void main() {
 
   group('synchronized Dart doc comments', () {
     test('consumer blocks are up to date', () async {
-      final result = await Process.run('python3', [
-        'scripts/sync-dart-doc-comments.py',
+      final result = await Process.run('dart', [
+        'run',
+        'scripts/sync_dart_doc_comments.dart',
         '--check',
       ], workingDirectory: repoRoot.path);
 

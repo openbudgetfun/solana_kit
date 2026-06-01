@@ -43,7 +43,7 @@ jobs:
           done
 
           if (( ${#changesets[@]} > 0 )); then
-            scripts/check-changeset-package-targets.sh "${changesets[@]}"
+            dart run scripts/check_changeset_package_targets.dart "${changesets[@]}"
           else
             echo "No changed changeset files to validate."
           fi

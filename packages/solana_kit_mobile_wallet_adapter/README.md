@@ -226,7 +226,7 @@ This is useful when wallet policy requires Android app-origin verification befor
 - Local equivalent command:
 
 ```bash
-./scripts/check-mobile-wallet-adapter-android-compile.sh
+dart run scripts/check_mobile_wallet_adapter_android_compile.dart
 ```
 
 ## Architecture
