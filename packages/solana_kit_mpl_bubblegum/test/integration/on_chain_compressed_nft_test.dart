@@ -59,12 +59,20 @@ void main() {
           )
           .send();
 
-      // Wait for airdrop
-      await Future<void>.delayed(const Duration(seconds: 5));
+      // SurfPool usually applies local airdrops immediately. Poll briefly
+      // instead of always sleeping for a fixed five seconds.
+      var balance = await rpc.getBalanceValue(payer!.address).send();
+      for (
+        var attempt = 0;
+        balance.value.value == BigInt.zero && attempt < 20;
+        attempt += 1
+      ) {
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        balance = await rpc.getBalanceValue(payer!.address).send();
+      }
 
-      final balance = await rpc.getBalanceValue(payer!.address).send();
-      print('Balance: ${balance.value} lamports');
-      expect(balance.value, greaterThan(BigInt.zero));
+      print('Balance: ${balance.value.value} lamports');
+      expect(balance.value.value, greaterThan(BigInt.zero));
     });
 
     test('create tree instruction can be built', () {
