@@ -4,14 +4,10 @@ library;
 import 'package:jaspr/client.dart';
 
 // This file is generated automatically by Jaspr, do not remove or edit.
-import 'main.client.options.dart';
+import 'package:solana_kit_docs_site/main.client.options.dart';
 
 void main() {
-  Jaspr.initializeApp(
-    options: defaultClientOptions,
-  );
+  Jaspr.initializeApp(options: defaultClientOptions);
 
-  runApp(
-    const ClientApp(),
-  );
+  runApp(const ClientApp());
 }

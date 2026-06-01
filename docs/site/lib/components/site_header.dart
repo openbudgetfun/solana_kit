@@ -30,9 +30,7 @@ class SiteHeader extends StatelessComponent {
           img(src: logo, alt: 'Solana Kit'),
           span([Component.text(title)]),
         ]),
-        div(classes: 'header-content', [
-          div(classes: 'header-items', items),
-        ]),
+        div(classes: 'header-content', [div(classes: 'header-items', items)]),
       ]),
     ]);
   }
@@ -45,12 +43,14 @@ class SiteHeader extends StatelessComponent {
         alignItems: AlignItems.center,
         gap: Gap.column(1.rem),
         padding: Padding.symmetric(horizontal: 1.rem, vertical: .25.rem),
-        margin: Margin.symmetric(horizontal: Unit.auto),
+        margin: const Margin.symmetric(horizontal: Unit.auto),
         border: Border.only(
-          bottom: BorderSide(color: Color('#0000000d'), width: 1.px),
+          bottom: BorderSide(color: const Color('#0000000d'), width: 1.px),
         ),
       ),
-      css.media(MediaQuery.all(minWidth: 768.px), [css('&').styles(padding: Padding.symmetric(horizontal: 2.5.rem))]),
+      css.media(MediaQuery.all(minWidth: 768.px), [
+        css('&').styles(padding: Padding.symmetric(horizontal: 2.5.rem)),
+      ]),
       css('.header-title', [
         css('&').styles(
           display: Display.inlineFlex,
@@ -64,15 +64,12 @@ class SiteHeader extends StatelessComponent {
       css('.header-content', [
         css('&').styles(
           display: Display.flex,
-          flex: Flex(grow: 1),
+          flex: const Flex(grow: 1),
           justifyContent: JustifyContent.end,
         ),
       ]),
       css('.header-items', [
-        css('&').styles(
-          display: Display.flex,
-          gap: Gap.column(0.25.rem),
-        ),
+        css('&').styles(display: Display.flex, gap: Gap.column(0.25.rem)),
       ]),
     ]),
   ];

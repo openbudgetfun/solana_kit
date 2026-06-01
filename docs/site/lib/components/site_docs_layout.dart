@@ -23,7 +23,6 @@ class SiteDocsLayout extends DocsLayout {
     return Document(
       lang: lang,
       base: basePath,
-      meta: const {},
       head: buildHead(page).toList(),
       body: buildBody(page, child),
     );
