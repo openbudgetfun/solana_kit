@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 /// Integration tests for mpl-bubblegum compressed NFT operations.
 ///
 /// These tests require a running SurfPool instance at localhost:8899.

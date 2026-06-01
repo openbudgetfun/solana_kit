@@ -16,9 +16,9 @@ import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.
 void main() {
   // ── 1. Basic pipe on primitive values ─────────────────────────────────────
   final result = 'hello'
-      .pipe((String s) => s.toUpperCase())
-      .pipe((String s) => '$s, SOLANA!')
-      .pipe((String s) => s.split(', '));
+      .pipe((s) => s.toUpperCase())
+      .pipe((s) => '$s, SOLANA!')
+      .pipe((s) => s.split(', '));
 
   print('Piped result: $result');
 
@@ -29,9 +29,9 @@ void main() {
   const memoProgram = Address('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr');
 
   final message = createTransactionMessage(version: TransactionVersion.v0)
-      .pipe((TransactionMessage m) => m.withFeePayer(feePayer))
+      .pipe((m) => m.withFeePayer(feePayer))
       .pipe(
-        (TransactionMessage m) => m.withBlockhashLifetime(
+        (m) => m.withBlockhashLifetime(
           BlockhashLifetimeConstraint(
             blockhash: '4FJML71TpEbUPnxJFTFwN1bGDPpR7bPTFWXxGmNnGRpZ',
             lastValidBlockHeight: BigInt.from(99999999),
@@ -39,7 +39,7 @@ void main() {
         ),
       )
       .pipe(
-        (TransactionMessage m) =>
+        (m) =>
             m.appendInstruction(const Instruction(programAddress: memoProgram)),
       );
 
@@ -53,8 +53,8 @@ void main() {
 
   // ── 3. Pipe for data transforms ───────────────────────────────────────────
   final lamports = BigInt.from(1_000_000_000)
-      .pipe((BigInt n) => n / BigInt.from(1_000_000_000)) // to SOL
-      .pipe((num sol) => '${sol.toStringAsFixed(3)} SOL');
+      .pipe((n) => n / BigInt.from(1_000_000_000)) // to SOL
+      .pipe((sol) => '${sol.toStringAsFixed(3)} SOL');
 
   print('\n1 SOL in lamports → $lamports');
 }

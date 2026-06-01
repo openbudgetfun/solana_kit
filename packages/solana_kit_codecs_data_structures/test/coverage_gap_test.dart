@@ -96,7 +96,7 @@ void main() {
     test('throws on negative prefix size', () {
       final negDecoder = transformDecoder<num, num>(
         getU8Decoder(),
-        (_, __, ___) => -1,
+        (_, _, _) => -1,
       );
       final customDecoder = getArrayDecoder<Object?>(
         getUnitDecoder() as Decoder<Object?>,

@@ -227,7 +227,6 @@ void main() {
     });
 
     test('deprecated instruction builder', () {
-      // ignore: deprecated_member_use
       final ix = getRequestUnitsInstruction(units: 1000, additionalFee: 500);
       expect(ix.programAddress, equals(computeBudgetProgramAddress));
       expect(ix.accounts, isEmpty);

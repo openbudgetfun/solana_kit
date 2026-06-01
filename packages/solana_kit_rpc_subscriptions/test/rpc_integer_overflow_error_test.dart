@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
 import 'package:test/test.dart';

@@ -10,8 +10,6 @@
 ///   dart examples/25_union_codec.dart
 library;
 
-import 'dart:typed_data';
-
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
@@ -26,7 +24,7 @@ void main() {
   final union2Codec = getUnion2Codec(
     getU32Codec(),
     getU8Codec(),
-    (Uint8List bytes, int offset) => bytes[offset] < 4 ? 0 : 1,
+    (bytes, offset) => bytes[offset] < 4 ? 0 : 1,
   );
 
   // Encode variant 0 (u32 value 42).

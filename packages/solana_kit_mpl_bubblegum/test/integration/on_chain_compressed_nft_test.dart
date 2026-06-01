@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, public_member_api_docs
+// ignore_for_file: avoid_print
 /// On-chain integration tests for compressed NFT operations.
 ///
 /// These tests run against a local SurfPool validator at localhost:8899.

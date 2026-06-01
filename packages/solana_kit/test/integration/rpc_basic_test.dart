@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 /// Basic RPC integration tests against a local validator (SurfPool).
 ///
 /// These tests require a running SurfPool instance at localhost:8899.

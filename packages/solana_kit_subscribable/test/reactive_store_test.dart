@@ -1,4 +1,4 @@
-// ignore_for_file: cascade_invocations, deprecated_member_use
+// ignore_for_file: cascade_invocations
 
 import 'dart:async';
 
