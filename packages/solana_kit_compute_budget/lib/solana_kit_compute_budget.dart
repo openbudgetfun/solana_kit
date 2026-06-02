@@ -20,3 +20,4 @@
 library;
 
 export 'src/generated/compute_budget.dart';
+export 'src/message_helpers.dart';
