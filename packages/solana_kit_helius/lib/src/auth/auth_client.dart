@@ -6,7 +6,8 @@ import 'package:solana_kit_helius/src/auth/create_project.dart';
 import 'package:solana_kit_helius/src/auth/generate_keypair.dart';
 import 'package:solana_kit_helius/src/auth/get_project.dart';
 import 'package:solana_kit_helius/src/auth/list_projects.dart';
-import 'package:solana_kit_helius/src/auth/sign_auth_message.dart';
+import 'package:solana_kit_helius/src/auth/sign_auth_message.dart'
+    as sign_auth_message;
 import 'package:solana_kit_helius/src/auth/wallet_signup.dart';
 import 'package:solana_kit_helius/src/internal/rest_client.dart';
 import 'package:solana_kit_helius/src/types/auth_types.dart';
@@ -52,5 +53,5 @@ class AuthClient {
   /// Signs an authentication message with the given secret key.
   Future<SignAuthMessageResponse> signAuthMessage(
     SignAuthMessageRequest request,
-  ) => authSignAuthMessage(request);
+  ) => sign_auth_message.signAuthMessage(request);
 }

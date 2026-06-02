@@ -1,5 +1,9 @@
 // ignore_for_file: public_member_api_docs
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:solana_kit_helius/src/internal/json_reader.dart';
+import 'package:solana_kit_keys/solana_kit_keys.dart' show KeyPair;
 
 /// Request for agentic signup with a wallet address.
 class AgenticSignupRequest {
@@ -225,34 +229,96 @@ class KeypairResult {
 /// Request to sign an auth message.
 class SignAuthMessageRequest {
   const SignAuthMessageRequest({
-    required this.message,
     required this.secretKey,
+    this.message,
+    this.timestamp,
   });
 
   factory SignAuthMessageRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
     return SignAuthMessageRequest(
-      message: r.requireString('message'),
+      message: r.optString('message'),
       secretKey: r.requireString('secretKey'),
+      timestamp: r.optInt('timestamp'),
     );
   }
 
-  final String message;
+  /// Creates a request from Solana CLI-format secret key bytes.
+  ///
+  /// The bytes are base64-encoded into [secretKey], preserving the current JSON
+  /// shape while avoiding base64 work at call sites.
+  factory SignAuthMessageRequest.fromSecretKeyBytes(
+    List<int> secretKeyBytes, {
+    String? message,
+    int? timestamp,
+  }) {
+    return SignAuthMessageRequest(
+      message: message,
+      secretKey: base64Encode(secretKeyBytes),
+      timestamp: timestamp,
+    );
+  }
+
+  /// Creates a request from a [KeyPair].
+  ///
+  /// The key pair is converted to Solana CLI-format secret key bytes by
+  /// concatenating the 32-byte private key and 32-byte public key.
+  factory SignAuthMessageRequest.fromKeyPair(
+    KeyPair keyPair, {
+    String? message,
+    int? timestamp,
+  }) {
+    final secretKeyBytes = Uint8List(64)
+      ..setRange(0, 32, keyPair.privateKey)
+      ..setRange(32, 64, keyPair.publicKey);
+
+    return SignAuthMessageRequest.fromSecretKeyBytes(
+      secretKeyBytes,
+      message: message,
+      timestamp: timestamp,
+    );
+  }
+
+  /// Message to sign.
+  ///
+  /// If omitted, the signer creates the upstream Helius auth message JSON with
+  /// the configured or current timestamp.
+  final String? message;
+
+  /// Base64-encoded 64-byte Solana CLI-format secret key.
   final String secretKey;
 
-  Map<String, Object?> toJson() => {'message': message, 'secretKey': secretKey};
+  /// Millisecond timestamp used when generating the upstream Helius auth
+  /// message. If omitted, the current time is used.
+  final int? timestamp;
+
+  Map<String, Object?> toJson() => {
+    if (message != null) 'message': message,
+    'secretKey': secretKey,
+    if (timestamp != null) 'timestamp': timestamp,
+  };
 }
 
 /// Response containing a signed auth message.
 class SignAuthMessageResponse {
-  const SignAuthMessageResponse({required this.signature});
+  const SignAuthMessageResponse({required this.signature, this.message});
 
   factory SignAuthMessageResponse.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-    return SignAuthMessageResponse(signature: r.requireString('signature'));
+    return SignAuthMessageResponse(
+      signature: r.requireString('signature'),
+      message: r.optString('message'),
+    );
   }
 
+  /// The message that was signed, when locally available.
+  final String? message;
+
+  /// Base58-encoded Ed25519 signature bytes.
   final String signature;
 
-  Map<String, Object?> toJson() => {'signature': signature};
+  Map<String, Object?> toJson() => {
+    if (message != null) 'message': message,
+    'signature': signature,
+  };
 }

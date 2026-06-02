@@ -15,6 +15,12 @@ void main() {
         expect(body['jsonrpc'], '2.0');
         final params = body['params']! as List<Object?>;
         expect(params[0], 'base64-encoded-tx');
+        final options = params[1]! as Map<String, Object?>;
+        expect(options, {
+          'encoding': 'base64',
+          'skipPreflight': true,
+          'maxRetries': 0,
+        });
         return http.Response(
           jsonEncode(<String, Object?>{
             'jsonrpc': '2.0',
@@ -36,6 +42,75 @@ void main() {
       );
 
       expect(signature, 'sig-123');
+    });
+
+    test('handles a bare-string JSON response', () async {
+      final client = MockClient((request) async {
+        return http.Response(jsonEncode('sig-bare'), 200);
+      });
+
+      final helius = createHelius(
+        HeliusConfig(apiKey: 'test-key'),
+        client: client,
+      );
+
+      final signature = await helius.transactions.broadcastTransaction(
+        const BroadcastTransactionRequest(transaction: 'base64-encoded-tx'),
+      );
+
+      expect(signature, 'sig-bare');
+    });
+
+    test('throws on JSON-RPC error object', () async {
+      final client = MockClient((request) async {
+        return http.Response(
+          jsonEncode({
+            'error': {'message': 'sender rejected transaction'},
+          }),
+          200,
+        );
+      });
+
+      final helius = createHelius(
+        HeliusConfig(apiKey: 'test-key'),
+        client: client,
+      );
+
+      expect(
+        () => helius.transactions.broadcastTransaction(
+          const BroadcastTransactionRequest(transaction: 'bad-tx'),
+        ),
+        throwsA(
+          isA<Exception>().having(
+            (error) => error.toString(),
+            'message',
+            contains('sender rejected transaction'),
+          ),
+        ),
+      );
+    });
+
+    test('throws on malformed JSON-RPC success response', () async {
+      final client = MockClient(
+        (_) async => http.Response(jsonEncode({'jsonrpc': '2.0'}), 200),
+      );
+      final helius = createHelius(
+        HeliusConfig(apiKey: 'test-key'),
+        client: client,
+      );
+
+      expect(
+        () => helius.transactions.broadcastTransaction(
+          const BroadcastTransactionRequest(transaction: 'bad-tx'),
+        ),
+        throwsA(
+          isA<Exception>().having(
+            (error) => error.toString(),
+            'message',
+            contains('Unexpected Sender response'),
+          ),
+        ),
+      );
     });
 
     test('throws on HTTP error', () async {
