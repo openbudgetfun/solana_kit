@@ -14,9 +14,24 @@ Future<String> txBroadcastTransaction(
       'jsonrpc': '2.0',
       'id': 1,
       'method': 'sendTransaction',
-      'params': [request.transaction],
+      'params': [
+        request.transaction,
+        {'encoding': 'base64', 'skipPreflight': true, 'maxRetries': 0},
+      ],
     },
   );
-  final response = result! as Map<String, Object?>;
-  return response['result']! as String;
+  return _readSenderSignature(result);
+}
+
+String _readSenderSignature(Object? result) {
+  if (result case final String signature) return signature;
+
+  if (result case final Map<String, Object?> response) {
+    final error = response['error'];
+    if (error != null) throw Exception(error);
+
+    if (response['result'] case final String signature) return signature;
+  }
+
+  throw Exception('Unexpected Sender response: $result');
 }

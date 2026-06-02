@@ -11,7 +11,9 @@ resolution: workspace
 
 dependencies:
   http: ^1.4.0
+  solana_kit_codecs_strings: ^0.5.0
   solana_kit_errors: ^0.5.0
+  solana_kit_keys: ^0.5.0
   web_socket_channel: ^3.0.2
 
 dev_dependencies:
