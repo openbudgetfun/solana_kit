@@ -18,6 +18,34 @@ void main() {
   });
 
   group('CreateAccount instruction', () {
+    test('builds CreateAccountAllowPrefund correctly', () {
+      const newAccount = Address('11111111111111111111111111111111');
+      const payer = Address('11111111111111111111111111111112');
+      const owner = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+
+      final ix = getCreateAccountAllowPrefundInstruction(
+        newAccount: newAccount,
+        payer: payer,
+        lamports: BigInt.from(10),
+        space: BigInt.from(82),
+        ownerProgramAddress: owner,
+      );
+
+      expect(ix.programAddress, system_program.systemProgramAddress);
+      final accounts = ix.accounts!;
+      expect(accounts, hasLength(2));
+      expect(accounts[0].address, newAccount);
+      expect(accounts[0].role, AccountRole.writableSigner);
+      expect(accounts[1].address, payer);
+      expect(accounts[1].role, AccountRole.writableSigner);
+
+      final parsed = parseCreateAccountAllowPrefundInstruction(ix);
+      expect(parsed.discriminator, createAccountAllowPrefundDiscriminator);
+      expect(parsed.lamports, BigInt.from(10));
+      expect(parsed.space, BigInt.from(82));
+      expect(parsed.programAddress, owner);
+    });
+
     test('builds and parses correctly', () {
       const payer = Address('11111111111111111111111111111111');
       const newAccount = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');

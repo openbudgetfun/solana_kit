@@ -8,6 +8,7 @@ export 'assign.dart';
 export 'assign_with_seed.dart';
 export 'authorize_nonce_account.dart';
 export 'create_account.dart';
+export 'create_account_allow_prefund.dart';
 export 'create_account_with_seed.dart';
 export 'initialize_nonce_account.dart';
 export 'transfer_sol.dart';
