@@ -62,3 +62,9 @@ _Owner:_ Ifiok Jr. · _Introduced in:_ [`32d5d36`](https://github.com/openbudget
 Update the README maintenance command for the Android compile check to use the Dart project script.
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`17fb23f`](https://github.com/openbudgetfun/solana_kit/commit/17fb23fce427bce1dd22b34fea8482ef2278c161)
+
+## solana_kit_mobile_wallet_adapter [0.4.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mobile_wallet_adapter/v0.4.1) (2026-06-03)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_mobile_wallet_adapter` was updated to 0.4.1.

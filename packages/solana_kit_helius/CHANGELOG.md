@@ -100,3 +100,27 @@ _Owner:_ Ifiok Jr. · _Introduced in:_ [`32d5d36`](https://github.com/openbudget
 Update the mainnet REST host to match upstream Helius v3.0.0, add Admin project usage, webhook toggle, and `getTransfersByAddress` parity, refresh package metadata, and document the exact upstream commit used for the v3 audit.
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`ee30ae0`](https://github.com/openbudgetfun/solana_kit/commit/ee30ae03357be744bc81669041f0319149844af6)
+
+## solana_kit_helius [0.4.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_helius/v0.4.1) (2026-06-03)
+
+### 🐛 Fixed
+
+#### Harden security audit findings
+
+Disable placeholder Helius auth signing, redact Helius API keys from JSON-RPC error context, validate malformed encrypted mobile-wallet messages before slicing, and reject negative mobile-wallet sequence numbers.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #181](https://github.com/openbudgetfun/solana_kit/pull/181)
+
+#### Add Helius transaction parity helpers
+
+Add helpers for sender regions, sendViaSender, and createTxMessage.
+Expand sender and broadcast coverage.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #183](https://github.com/openbudgetfun/solana_kit/pull/183)
+
+#### Add Helius auth signing helpers
+
+Implement upstream-compatible Helius auth message signing with Ed25519 signatures.
+Also add request factories for secret key bytes and key pairs.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #183](https://github.com/openbudgetfun/solana_kit/pull/183)

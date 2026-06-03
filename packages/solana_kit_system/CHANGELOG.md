@@ -80,3 +80,22 @@ New exports:
 Also re-exports from `solana_kit_address` (Address type, codecs, comparator, PublicKey) and `solana_kit_address_constants` (well-known address constants).
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`3f596ef`](https://github.com/openbudgetfun/solana_kit/commit/3f596ef95c0d00714db97a4338ac9342f1fabfb7) · _Last updated in:_ [`4643648`](https://github.com/openbudgetfun/solana_kit/commit/46436481a28eab1c803175bee56e98e89fe8fac6)
+
+## solana_kit_system [0.4.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_system/v0.4.1) (2026-06-03)
+
+### 🚀 Feature
+
+#### Update upstream program references
+
+Update generated Solana program packages to the latest checked upstream refs:
+
+```text
+solana_kit_system: solana-program/system js@v0.12.2
+solana_kit_stake: solana-program/stake js@v0.6.1
+solana_kit_memo: solana-program/memo js@v0.11.1
+```
+
+`solana_kit_system` adds the `CreateAccountAllowPrefund` instruction helpers.
+`solana_kit_stake` includes the authority seed `u64` size-prefix fix and updated stake delegation layout.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #182](https://github.com/openbudgetfun/solana_kit/pull/182)

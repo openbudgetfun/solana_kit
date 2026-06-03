@@ -72,3 +72,9 @@ New exports:
 Also re-exports from `solana_kit_address` (Address type, codecs, comparator, PublicKey) and `solana_kit_address_constants` (well-known address constants).
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`3f596ef`](https://github.com/openbudgetfun/solana_kit/commit/3f596ef95c0d00714db97a4338ac9342f1fabfb7) · _Last updated in:_ [`4643648`](https://github.com/openbudgetfun/solana_kit/commit/46436481a28eab1c803175bee56e98e89fe8fac6)
+
+## solana_kit_token [0.5.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_token/v0.5.1) (2026-06-03)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_token` was updated to 0.5.1.

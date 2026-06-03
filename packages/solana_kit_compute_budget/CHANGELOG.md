@@ -47,6 +47,16 @@ Added 500+ tests covering equality/hashCode/toString, codec edge cases, error pa
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`48216f9`](https://github.com/openbudgetfun/solana_kit/commit/48216f9af0ff058d7db83994e5bdb3b9be95fdf8) · _Last updated in:_ [`b7f5419`](https://github.com/openbudgetfun/solana_kit/commit/b7f5419bbe792d4ba1731eba227088d8f74a3ebb)
 
+## solana_kit_compute_budget [0.5.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_compute_budget/v0.5.1) (2026-06-03)
+
+### 🚀 Feature
+
+#### Add Compute Budget message helpers
+
+Add transaction-message helper APIs for Compute Budget instructions, including introspection and update-or-append helpers for compute unit limits and prices.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #184](https://github.com/openbudgetfun/solana_kit/pull/184)
+
 ## [0.4.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.4.0) (2026-05-30)
 
 ### 💥 Breaking Change

@@ -20,11 +20,11 @@ dependencies:
   solana_kit_config: ^0.1.0
   solana_kit_errors: ^0.5.0
   solana_kit_fast_stable_stringify: ^0.5.0
-  solana_kit_helius: ^0.4.0
+  solana_kit_helius: ^0.4.1
   solana_kit_instructions: ^0.5.0
   solana_kit_keys: ^0.5.0
   solana_kit_loader: ^0.1.0
-  solana_kit_memo: ^0.1.0
+  solana_kit_memo: ^0.1.1
   solana_kit_mpl_bubblegum: ^0.3.0
   solana_kit_offchain_messages: ^0.4.0
   solana_kit_options: ^0.5.0
@@ -35,7 +35,7 @@ dependencies:
   solana_kit_rpc_types: ^0.5.0
   solana_kit_signers: ^0.5.0
   solana_kit_spl_account_compression: ^0.3.0
-  solana_kit_stake: ^0.1.0
+  solana_kit_stake: ^0.2.0
   solana_kit_sysvars: ^0.4.0
   solana_kit_transaction_confirmation: ^0.5.0
   solana_kit_transaction_messages: ^0.5.0
