@@ -7,6 +7,7 @@
 }:
 
 let
+  currentDir = builtins.dirOf __curPos.file;
   extra = inputs.ifiokjr-nixpkgs.packages.${pkgs.stdenv.system};
 in
 {
@@ -25,6 +26,7 @@ in
       shfmt
       taplo
       extra.mdt
+      extra.melos
       extra.monochange
       extra.pnpm
       extra.surfpool
@@ -75,7 +77,7 @@ in
         enable = true;
         name = "lint:push";
         description = "Run linting checks on every push.";
-        entry = "${config.env.DEVENV_PROFILE}/bin/lint:all";
+        entry = "${config.env.DEVENV_PROFILE}/bin/lint:push";
         pass_filenames = true;
         always_run = true;
         stages = [ "pre-push" ];
@@ -111,13 +113,6 @@ in
         fvm dart $@
       '';
       description = "Run dart commands.";
-    };
-    "melos" = {
-      exec = ''
-        set -euo pipefail
-        dart run melos $@
-      '';
-      description = "Run the melos cli.";
     };
     "jaspr" = {
       exec = ''
@@ -204,10 +199,23 @@ in
       description = "Run all lint checks.";
       binary = "bash";
     };
+    "lint:push" = {
+      exec = ''
+        set -euo pipefail
+
+        ${currentDir}/.devenv/profile/bin/docs:check
+        ${currentDir}/.devenv/profile/bin/lint:format
+        ${currentDir}/.devenv/profile/bin/lint:kotlin
+        ${currentDir}/.devenv/profile/bin/lint:analyze
+        ${extra.monochange}/bin/mc check
+      '';
+      description = "Run all lint checks before `git push`.";
+      binary = "bash";
+    };
     "lint:format" = {
       exec = ''
         set -euo pipefail
-        dprint check
+        ${pkgs.dprint}/bin/dprint check
       '';
       description = "Check all formatting is correct.";
     };
