@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class ClaimRewardsInstructionData {
-  const ClaimRewardsInstructionData({this.discriminator = 3});
+  const ClaimRewardsInstructionData({
+    this.discriminator = 3,
+  });
 
   final int discriminator;
 }

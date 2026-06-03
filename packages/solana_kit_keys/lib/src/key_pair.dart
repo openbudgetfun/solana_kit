@@ -274,15 +274,18 @@ Future<void> writeKeyPair(
     throw FileSystemException('Key pair file already exists', path);
   }
 
+  if (!Platform.isWindows && file.existsSync()) {
+    await Process.run('chmod', ['600', path]);
+  }
+
   final sink = await file.open(mode: FileMode.writeOnly);
   try {
+    if (!Platform.isWindows) {
+      await Process.run('chmod', ['600', path]);
+    }
     await sink.writeString(jsonEncode(bytes.toList()));
   } finally {
     await sink.close();
-  }
-
-  if (!Platform.isWindows) {
-    await Process.run('chmod', ['600', path]);
   }
 }
 

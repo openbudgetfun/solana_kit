@@ -9,7 +9,15 @@ const stakingProgramAddress = Address(
 );
 
 /// Known accounts for the Staking program.
-enum StakingAccount { stakePool, stakeAccount }
+enum StakingAccount {
+  stakePool,
+  stakeAccount,
+}
 
 /// Known instructions for the Staking program.
-enum StakingInstruction { initializePool, stake, unstake, claimRewards }
+enum StakingInstruction {
+  initializePool,
+  stake,
+  unstake,
+  claimRewards,
+}

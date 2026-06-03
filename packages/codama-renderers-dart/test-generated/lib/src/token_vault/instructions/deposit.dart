@@ -15,7 +15,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class DepositInstructionData {
-  const DepositInstructionData({this.discriminator = 1, required this.amount});
+  const DepositInstructionData({
+    this.discriminator = 1,
+    required this.amount,
+  });
 
   final int discriminator;
   final BigInt amount;
@@ -70,7 +73,9 @@ Instruction getDepositInstruction({
   required Address tokenProgram,
   required BigInt amount,
 }) {
-  final instructionData = DepositInstructionData(amount: amount);
+  final instructionData = DepositInstructionData(
+    amount: amount,
+  );
 
   return Instruction(
     programAddress: programAddress,

@@ -58,6 +58,8 @@ bool ecdsaVerify(
   Uint8List signatureBytes,
   ECPublicKey publicKey,
 ) {
+  if (signatureBytes.length != 64) return false;
+
   final r = _bytesToBigInt(signatureBytes.sublist(0, 32));
   final s = _bytesToBigInt(signatureBytes.sublist(32, 64));
 
@@ -85,6 +87,14 @@ Uint8List ecPublicKeyToBytes(ECPublicKey publicKey) {
 
 /// Imports a 65-byte X9.62 uncompressed public key as an [ECPublicKey].
 ECPublicKey ecPublicKeyFromBytes(Uint8List bytes) {
+  if (bytes.length != 65 || bytes.first != 0x04) {
+    throw ArgumentError.value(
+      bytes,
+      'bytes',
+      'Expected 65-byte uncompressed X9.62 P-256 public key',
+    );
+  }
+
   final point = p256.curve.decodePoint(bytes);
   return ECPublicKey(point, p256);
 }
