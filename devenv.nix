@@ -26,7 +26,6 @@ in
       shfmt
       taplo
       extra.mdt
-      extra.melos
       extra.monochange
       extra.pnpm
       extra.surfpool
@@ -38,6 +37,7 @@ in
   enterShell = ''
     set -euo pipefail
     eval "$(pnpm-activate-env)"
+    dartfmt:hash
   '';
 
   dotenv.disableHint = true;
@@ -121,6 +121,13 @@ in
       '';
       description = "Run the jaspr cli.";
     };
+    "melos" = {
+      exec = ''
+        set -euo pipefail
+        dart run melos $@
+      '';
+      description = "Run the melos cli.";
+    };
     "format_coverage" = {
       exec = ''
         set -euo pipefail
@@ -141,6 +148,20 @@ in
         )
       '';
       description = "The dart format executable for formatting the workspace.";
+      binary = "bash";
+    };
+    "dartfmt:hash" = {
+      exec = ''
+        set -euo pipefail
+        cd "''${DEVENV_ROOT:-${currentDir}}"
+
+        find . \( -name pubspec.yaml -o -name analysis_options.yaml -o -name pubspec.lock \) \
+          | sort \
+          | ${pkgs.findutils}/bin/xargs ${pkgs.coreutils}/bin/sha256sum \
+          | ${pkgs.coreutils}/bin/sha256sum \
+          | cut -d' ' -f1 > .dartfmt.txt
+      '';
+      description = "Write .dartfmt.txt from pubspec, analysis options, and lockfile contents.";
       binary = "bash";
     };
     "install:all" = {

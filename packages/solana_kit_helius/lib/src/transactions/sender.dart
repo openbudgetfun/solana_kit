@@ -22,8 +22,7 @@ enum SenderRegion {
   apSingapore('AP_SINGAPORE'),
 
   /// Tokyo, Japan.
-  apTokyo('AP_TOKYO')
-  ;
+  apTokyo('AP_TOKYO');
 
   const SenderRegion(this.value);
 
