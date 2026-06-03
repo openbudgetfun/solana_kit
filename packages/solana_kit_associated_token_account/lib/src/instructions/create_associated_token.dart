@@ -39,9 +39,7 @@ getCreateAssociatedTokenInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (value) => <String, Object?>{
-      'discriminator': value.discriminator,
-    },
+    (value) => <String, Object?>{'discriminator': value.discriminator},
   );
 }
 
