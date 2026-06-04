@@ -22,8 +22,9 @@ This is the Dart port of [`@solana/subscribable`](https://github.com/anza-xyz/ki
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_subscribable
+```yaml
+dependencies:
+  "solana_kit_subscribable": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

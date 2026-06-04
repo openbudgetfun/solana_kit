@@ -10,10 +10,26 @@ Ports the [`@solana/kit` fixed-points](https://github.com/anza-xyz/kit/tree/main
 
 ## Installation
 
+<!-- {=packageInstallSection:"solana_kit_fixed_points"} -->
+
+## Installation
+
+Install the package directly:
+
 ```yaml
 dependencies:
-  solana_kit_fixed_points: ^0.4.0
+  "solana_kit_fixed_points": ^0.5.0
 ```
+
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+<!-- {/packageInstallSection} -->
 
 ## Usage
 

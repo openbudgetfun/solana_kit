@@ -18,8 +18,9 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 Install the package directly:
 
-```bash
-dart pub add {{ package_name }}
+```yaml
+dependencies:
+  "{{ package_name }}": ^{{ versions[package_name] }}
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -53,8 +54,8 @@ Use [`__EXAMPLE_PATH__`](./__EXAMPLE_PATH__) as a runnable starting point for `_
 
 ## Upstream Compatibility
 
-- Latest supported `@solana/kit` version: `__SOLANA_KIT_VERSION__`
-- This Dart port tracks upstream APIs and behavior through `v__SOLANA_KIT_VERSION__`.
+- Latest supported `@solana/kit` version: `{{ versions['@solana/kit'] }}`
+- This Dart port tracks upstream APIs and behavior through `v{{ versions['@solana/kit'] }}`.
 
 <!-- {/upstreamSupportSection} -->
 
@@ -267,8 +268,8 @@ docs:site:smoke
 
 ## Upstream Compatibility
 
-- Latest supported `@solana/kit` version: `6.9.0`
-- This Dart port tracks upstream APIs and behavior through `v6.9.0`.
+- Latest supported `@solana/kit` version: `{{ versions['@solana/kit'] }}`
+- This Dart port tracks upstream APIs and behavior through `v{{ versions['@solana/kit'] }}`.
 
 <!-- {/docsUpstreamCompatibilitySection} -->
 

@@ -16,8 +16,9 @@ This is the Dart port of [`@solana/fast-stable-stringify`](https://github.com/an
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_fast_stable_stringify
+```yaml
+dependencies:
+  "solana_kit_fast_stable_stringify": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
