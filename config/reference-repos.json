@@ -82,6 +82,18 @@
       "package": "solana_kit_token_2022"
     },
     {
+      "name": "subscriptions",
+      "path": ".repos/solana-foundation/subscriptions",
+      "url": "https://github.com/solana-foundation/subscriptions",
+      "ref": {
+        "type": "tag",
+        "value": "ts-client-v0.3.0"
+      },
+      "package": "solana_kit_subscriptions",
+      "notes": "Solana Foundation Subscriptions program IDL and TypeScript client for Codama Dart code generation",
+      "checkedCommit": "d3edb5646418"
+    },
+    {
       "name": "associated-token-account",
       "path": ".repos/solana-program/associated-token-account",
       "url": "https://github.com/solana-program/associated-token-account",

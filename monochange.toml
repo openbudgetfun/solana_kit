@@ -164,6 +164,11 @@ path = "packages/solana_kit_signers"
 [package.solana_kit_subscribable]
 path = "packages/solana_kit_subscribable"
 
+[package.solana_kit_subscriptions]
+path = "packages/solana_kit_subscriptions"
+tag = true
+release = false
+
 [package.solana_kit_system]
 path = "packages/solana_kit_system"
 tag = true
