@@ -74,6 +74,30 @@ class SiteSidebar extends StatelessComponent {
               href: link('/guides/build-realtime-observer'),
             ),
             SidebarLink(
+              text: 'Subscriptions Overview',
+              href: link('/guides/subscriptions-overview'),
+            ),
+            SidebarLink(
+              text: 'Create a Subscription Authority',
+              href: link('/guides/subscriptions-authority'),
+            ),
+            SidebarLink(
+              text: 'Fixed Delegation',
+              href: link('/guides/subscriptions-fixed-delegation'),
+            ),
+            SidebarLink(
+              text: 'Recurring Delegation',
+              href: link('/guides/subscriptions-recurring-delegation'),
+            ),
+            SidebarLink(
+              text: 'Subscription Plans',
+              href: link('/guides/subscriptions-plan'),
+            ),
+            SidebarLink(
+              text: 'Close a Subscription Authority',
+              href: link('/guides/subscriptions-close-authority'),
+            ),
+            SidebarLink(
               text: 'Mobile Wallet Adapter',
               href: link('/guides/mobile-wallet-adapter'),
             ),

@@ -133,6 +133,9 @@ flags:
   solana_kit_subscribable:
     paths:
       - packages/solana_kit_subscribable
+  solana_kit_subscriptions:
+    paths:
+      - packages/solana_kit_subscriptions
   solana_kit_system:
     paths:
       - packages/solana_kit_system
