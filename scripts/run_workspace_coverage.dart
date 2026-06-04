@@ -21,19 +21,15 @@ Future<void> main(List<String> args) async {
     );
 
   final stopwatch = Stopwatch()..start();
-  final result = await Process.start(
-    'dart',
-    [
-      'run',
-      'coverage:test_with_coverage',
-      '--',
-      '--exclude-tags',
-      'integration',
-      ...testArgs,
-      ...testDirectories,
-    ],
-    mode: ProcessStartMode.inheritStdio,
-  );
+  final result = await Process.start('dart', [
+    'run',
+    'coverage:test_with_coverage',
+    '--',
+    '--exclude-tags',
+    'integration',
+    ...testArgs,
+    ...testDirectories,
+  ], mode: ProcessStartMode.inheritStdio);
 
   final code = await result.exitCode;
   stopwatch.stop();
@@ -130,11 +126,11 @@ Future<void> _ensurePackageConfig() async {
   stdout.writeln(
     'Resolving workspace dependencies with `fvm flutter pub get`...',
   );
-  final result = await Process.start(
-    'fvm',
-    ['flutter', 'pub', 'get'],
-    mode: ProcessStartMode.inheritStdio,
-  );
+  final result = await Process.start('fvm', [
+    'flutter',
+    'pub',
+    'get',
+  ], mode: ProcessStartMode.inheritStdio);
   final code = await result.exitCode;
   if (code != 0) {
     exitCode = code;

@@ -13,7 +13,7 @@ runs:
   using: composite
   steps:
     - name: cache pnpm node
-      uses: actions/cache@v5
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
       with:
         path: ~/.local/share/pnpm
         key: ${{ runner.os }}-pnpm-node-${{ inputs.cache-version }}-${{ hashFiles('pnpm-workspace.yaml') }}
@@ -21,7 +21,7 @@ runs:
           ${{ runner.os }}-pnpm-node-${{ inputs.cache-version }}-
 
     - name: install nix
-      uses: cachix/install-nix-action@v31
+      uses: cachix/install-nix-action@b97f05dcb019ddea06450a50ef6203d2fdc19fee # v31
       with:
         github_access_token: ${{ inputs.github-token }}
 
@@ -34,10 +34,15 @@ runs:
 
     - name: install flutter sdk via fvm
       run: |
+        devenv shell -- bash -e <<'EOF'
         fvm install
         fvm use --force
-      shell: devenv shell -- bash -e {0}
+        EOF
+      shell: bash
 
     - name: install dependencies
-      run: install:all
-      shell: devenv shell -- bash -e {0}
+      run: |
+        devenv shell -- bash -e <<'EOF'
+        install:all
+        EOF
+      shell: bash

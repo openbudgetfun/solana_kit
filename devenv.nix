@@ -25,6 +25,7 @@ in
       ripgrep
       shfmt
       taplo
+      zizmor
       extra.mdt
       extra.monochange
       extra.pnpm
@@ -185,6 +186,7 @@ in
         set -euo pipefail
         docs:update
         fix:lint
+        fix:workflows
         mc check --fix
         fix:format
       '';
@@ -215,6 +217,7 @@ in
         lint:format
         lint:kotlin
         lint:analyze
+        lint:workflows
         mc check
       '';
       description = "Run all lint checks.";
@@ -228,6 +231,7 @@ in
         ${currentDir}/.devenv/profile/bin/lint:format
         ${currentDir}/.devenv/profile/bin/lint:kotlin
         ${currentDir}/.devenv/profile/bin/lint:analyze
+        ${currentDir}/.devenv/profile/bin/lint:workflows
         ${extra.monochange}/bin/mc check
       '';
       description = "Run all lint checks before `git push`.";
@@ -253,6 +257,22 @@ in
         ktlint
       '';
       description = "Lint tracked Kotlin files with ktlint.";
+      binary = "bash";
+    };
+    "lint:workflows" = {
+      exec = ''
+        set -euo pipefail
+        zizmor .github/workflows/ .github/actions/
+      '';
+      description = "Scan GitHub Actions workflows and actions for security vulnerabilities with zizmor.";
+      binary = "bash";
+    };
+    "fix:workflows" = {
+      exec = ''
+        set -euo pipefail
+        zizmor --fix .github/workflows/ .github/actions/
+      '';
+      description = "Auto-fix zizmor findings in GitHub Actions workflows where possible.";
       binary = "bash";
     };
     "mdt:info" = {

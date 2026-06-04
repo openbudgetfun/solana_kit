@@ -135,11 +135,11 @@ Future<void> _ensurePackageConfig() async {
   stdout.writeln(
     'Resolving workspace dependencies with `fvm flutter pub get`...',
   );
-  final result = await Process.start(
-    'fvm',
-    ['flutter', 'pub', 'get'],
-    mode: ProcessStartMode.inheritStdio,
-  );
+  final result = await Process.start('fvm', [
+    'flutter',
+    'pub',
+    'get',
+  ], mode: ProcessStartMode.inheritStdio);
   final code = await result.exitCode;
   if (code != 0) {
     exitCode = code;

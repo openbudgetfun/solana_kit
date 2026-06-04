@@ -107,9 +107,7 @@ Instruction getCreateAccountAllowPrefundInstruction({
 
 /// Parses a System Program `CreateAccountAllowPrefund` instruction.
 CreateAccountAllowPrefundInstructionData
-parseCreateAccountAllowPrefundInstruction(
-  Instruction instruction,
-) {
+parseCreateAccountAllowPrefundInstruction(Instruction instruction) {
   return getCreateAccountAllowPrefundInstructionDataDecoder().decode(
     instruction.data!,
   );

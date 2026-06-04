@@ -29,18 +29,14 @@ Future<void> main(List<String> args) async {
     stdout.writeln(
       'Running ${testDirectories.length} integration test directories.',
     );
-    final result = await Process.start(
-      'fvm',
-      [
-        'dart',
-        'test',
-        '--tags',
-        'integration',
-        ...testArgs,
-        ...testDirectories,
-      ],
-      mode: ProcessStartMode.inheritStdio,
-    );
+    final result = await Process.start('fvm', [
+      'dart',
+      'test',
+      '--tags',
+      'integration',
+      ...testArgs,
+      ...testDirectories,
+    ], mode: ProcessStartMode.inheritStdio);
 
     exitCode = await result.exitCode;
   } finally {
@@ -174,11 +170,11 @@ Future<void> _ensurePackageConfig() async {
   stdout.writeln(
     'Resolving workspace dependencies with `fvm flutter pub get`...',
   );
-  final result = await Process.start(
-    'fvm',
-    ['flutter', 'pub', 'get'],
-    mode: ProcessStartMode.inheritStdio,
-  );
+  final result = await Process.start('fvm', [
+    'flutter',
+    'pub',
+    'get',
+  ], mode: ProcessStartMode.inheritStdio);
   final code = await result.exitCode;
   if (code != 0) {
     exitCode = code;
