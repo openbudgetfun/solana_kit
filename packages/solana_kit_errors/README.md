@@ -16,8 +16,9 @@ This is the Dart port of [`@solana/errors`](https://github.com/anza-xyz/kit/tree
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_errors
+```yaml
+dependencies:
+  "solana_kit_errors": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

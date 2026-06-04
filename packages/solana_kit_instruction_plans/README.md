@@ -16,8 +16,9 @@ This is the Dart port of [`@solana/instruction-plans`](https://github.com/anza-x
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_instruction_plans
+```yaml
+dependencies:
+  "solana_kit_instruction_plans": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

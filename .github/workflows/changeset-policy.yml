@@ -15,6 +15,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+      issues: write
     steps:
       - name: checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
@@ -51,24 +52,9 @@ jobs:
         shell: devenv shell -- bash -e {0}
 
       - name: check changeset policy
-        env:
-          CHANGED_FILES: ${{ steps.changed.outputs.all_changed_files }}
-          PR_LABELS_JSON: ${{ toJson(github.event.pull_request.labels.*.name) }}
-        run: |
-          set -euo pipefail
-
-          mapfile -t labels < <(jq -r '.[]' <<<"$PR_LABELS_JSON")
-          args=(step:affected-packages --format json --verify)
-
-          for path in $CHANGED_FILES; do
-            args+=(--changed-paths "$path")
-          done
-
-          for label in "${labels[@]}"; do
-            args+=(--label "$label")
-          done
-
-          mc "${args[@]}" | tee policy.raw
-          awk 'BEGIN{c=0}/^\{/{c=1}c{print}' policy.raw > policy.json
-          jq -e '.status != "failed"' policy.json >/dev/null
-        shell: devenv shell -- bash -e {0}
+        uses: monochange/actions/changeset-policy@a80339fb79c09059383469608d98b75577fe18a1 # v0.8.0
+        with:
+          setup-monochange: devenv shell monochange
+          changed-paths: ${{ steps.changed.outputs.all_changed_files }}
+          labels: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}

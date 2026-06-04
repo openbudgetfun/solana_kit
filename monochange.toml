@@ -5,6 +5,9 @@ parent_bump = "patch"
 include_private = false
 warn_on_group_mismatch = true
 package_type = "dart"
+versioned_files = [
+  { path = "versions.json", format = "json", fields = ["{{ name }}"] },
+]
 
 [defaults.changelog]
 path = "{{ path }}/CHANGELOG.md"
@@ -223,6 +226,7 @@ tag = true
 release = true
 versioned_files = [
   { path = "packages/codama-renderers-dart/package.json", type = "npm" },
+  { path = "versions.json", format = "json", fields = ["{{ name }}"] },
 ]
 
 [group.main]

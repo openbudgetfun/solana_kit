@@ -16,8 +16,9 @@ This is a Dart port of [`@solana/codecs`](https://github.com/anza-xyz/kit/tree/m
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_codecs
+```yaml
+dependencies:
+  "solana_kit_codecs": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

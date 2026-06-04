@@ -6,7 +6,11 @@ const _actionsCannotCreatePullRequests =
     'GitHub Actions is not permitted to create or approve pull requests';
 
 Future<void> main(List<String> args) async {
-  final result = await Process.run('mc', ['release-pr', ...args]);
+  final result = await Process.run('monochange', [
+    'run',
+    'release-pr',
+    ...args,
+  ]);
   final stdoutText = result.stdout.toString();
   final stderrText = result.stderr.toString();
 
@@ -29,7 +33,7 @@ Future<void> main(List<String> args) async {
     stderr.writeln(
       'GitHub Actions cannot create pull requests in this repository; '
       'skipping release PR update. Enable the repository Actions setting or '
-      'run mc release-pr manually.',
+      'run monochange run release-pr manually.',
     );
     return;
   }

@@ -19,12 +19,26 @@ This package provides a low-level interface for interacting with the [SPL Accoun
 
 ## Installation
 
-Add to your `pubspec.yaml`:
+<!-- {=packageInstallSection:"solana_kit_spl_account_compression"} -->
+
+## Installation
+
+Install the package directly:
 
 ```yaml
 dependencies:
-  solana_kit_spl_account_compression: ^0.1.0
+  "solana_kit_spl_account_compression": ^0.3.0
 ```
+
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+<!-- {/packageInstallSection} -->
 
 ## Usage
 

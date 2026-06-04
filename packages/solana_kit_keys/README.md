@@ -14,8 +14,9 @@ Ed25519 key pair generation, signing, and signature verification for the Solana 
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_keys
+```yaml
+dependencies:
+  "solana_kit_keys": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

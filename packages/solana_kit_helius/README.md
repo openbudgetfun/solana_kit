@@ -36,8 +36,9 @@ Known v3 gaps to port next are the newer auth/checkout/payment primitives includ
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_helius
+```yaml
+dependencies:
+  "solana_kit_helius": ^0.4.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
