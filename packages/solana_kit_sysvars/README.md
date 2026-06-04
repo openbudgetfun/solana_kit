@@ -16,8 +16,9 @@ This is the Dart port of [`@solana/sysvars`](https://github.com/anza-xyz/kit/tre
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_sysvars
+```yaml
+dependencies:
+  "solana_kit_sysvars": ^0.4.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

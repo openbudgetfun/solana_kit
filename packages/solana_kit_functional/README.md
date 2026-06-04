@@ -25,8 +25,9 @@ This is the Dart port of [`@solana/functional`](https://github.com/anza-xyz/kit/
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_functional
+```yaml
+dependencies:
+  "solana_kit_functional": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

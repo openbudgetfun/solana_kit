@@ -29,10 +29,14 @@ It is designed for apps, CLIs, servers, Flutter projects, tests, and tooling tha
 - **Subscriptions** — consume account, signature, log, slot, and program notifications through WebSocket-backed clients.
 - **Program tooling** — use generated and handwritten clients for core Solana programs and Metaplex/SPL surfaces.
 
-## Upstream compatibility
+<!-- {=docsUpstreamCompatibilitySection} -->
+
+## Upstream Compatibility
 
 - Latest supported `@solana/kit` version: `6.9.0`
 - This Dart port tracks upstream APIs and behavior through `v6.9.0`.
+
+<!-- {/docsUpstreamCompatibilitySection} -->
 
 > **Parity with intent**
 >
@@ -44,10 +48,26 @@ It is designed for apps, CLIs, servers, Flutter projects, tests, and tooling tha
 
 ### Add the package
 
+<!-- {=packageInstallSection:"solana_kit"} -->
+
+## Installation
+
+Install the package directly:
+
 ```yaml
 dependencies:
-  solana_kit: ^0.4.0
+  "solana_kit": ^0.5.0
 ```
+
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+<!-- {/packageInstallSection} -->
 
 Program packages such as `solana_kit_loader` can be added separately when you need a smaller dependency graph or a specific on-chain program. Browse the full package map on the [documentation website](https://openbudgetfun.github.io/solana_kit/).
 

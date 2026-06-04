@@ -16,8 +16,9 @@ Offchain messages allow wallets and applications to sign structured messages tha
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_offchain_messages
+```yaml
+dependencies:
+  "solana_kit_offchain_messages": ^0.4.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

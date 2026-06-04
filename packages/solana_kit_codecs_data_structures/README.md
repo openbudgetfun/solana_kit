@@ -16,8 +16,9 @@ This is a Dart port of [`@solana/codecs-data-structures`](https://github.com/anz
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_codecs_data_structures
+```yaml
+dependencies:
+  "solana_kit_codecs_data_structures": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

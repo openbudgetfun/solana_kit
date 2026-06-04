@@ -16,8 +16,9 @@ This is the Dart port of [`@solana/programs`](https://github.com/anza-xyz/kit/tr
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_programs
+```yaml
+dependencies:
+  "solana_kit_programs": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

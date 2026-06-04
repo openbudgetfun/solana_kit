@@ -16,8 +16,9 @@ This is the Dart port of [`@solana/transaction-confirmation`](https://github.com
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_transaction_confirmation
+```yaml
+dependencies:
+  "solana_kit_transaction_confirmation": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
