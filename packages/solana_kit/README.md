@@ -12,7 +12,7 @@ This is the umbrella package for the core SDK surface. It gives you a single imp
 
 Program-specific packages are intentionally **not** re-exported here. Import packages like `solana_kit_system`, `solana_kit_token`, and future program clients explicitly so your dependency graph reflects the programs your app actually uses.
 
-<!-- {=upstreamSupportSection|replace:"__SOLANA_KIT_VERSION__":"6.9.0"} -->
+<!-- {=upstreamSupportSection} -->
 
 ## Upstream Compatibility
 
@@ -27,8 +27,9 @@ Program-specific packages are intentionally **not** re-exported here. Import pac
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit
+```yaml
+dependencies:
+  "solana_kit": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

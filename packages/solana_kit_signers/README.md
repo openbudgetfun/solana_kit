@@ -14,8 +14,9 @@ Signer interfaces and utilities for signing Solana messages and transactions -- 
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_signers
+```yaml
+dependencies:
+  "solana_kit_signers": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

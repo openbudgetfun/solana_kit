@@ -2,6 +2,9 @@
 before = 0
 after = 0
 
+[data]
+versions = "versions.json"
+
 [exclude]
 patterns = [
   "AGENTS.md",

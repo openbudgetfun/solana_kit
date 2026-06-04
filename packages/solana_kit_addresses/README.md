@@ -14,8 +14,9 @@ Base58-encoded Solana address utilities for the Solana Kit Dart SDK -- a Dart po
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_addresses
+```yaml
+dependencies:
+  "solana_kit_addresses": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

@@ -16,8 +16,9 @@ This is the Dart port of [`@solana/rpc-spec-types`](https://github.com/anza-xyz/
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_rpc_spec_types
+```yaml
+dependencies:
+  "solana_kit_rpc_spec_types": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

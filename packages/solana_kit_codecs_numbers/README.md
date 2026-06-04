@@ -16,8 +16,9 @@ This is a Dart port of [`@solana/codecs-numbers`](https://github.com/anza-xyz/ki
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_codecs_numbers
+```yaml
+dependencies:
+  "solana_kit_codecs_numbers": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

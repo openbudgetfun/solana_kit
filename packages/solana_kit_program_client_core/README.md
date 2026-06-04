@@ -16,8 +16,9 @@ This package provides the foundational types and utilities used by generated pro
 
 Install the package directly:
 
-```bash
-dart pub add solana_kit_program_client_core
+```yaml
+dependencies:
+  "solana_kit_program_client_core": ^0.5.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
