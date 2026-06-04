@@ -1,5 +1,7 @@
 # Subscription plans
 
+<!-- {=docsSubscriptionsPlanSection} -->
+
 Subscription plans let a merchant publish reusable terms. A subscriber accepts a plan with `getSubscribeInstruction`, which creates a subscription delegation account tied to the accepted terms.
 
 ```dart
@@ -29,3 +31,5 @@ final createPlanInstruction = getCreatePlanInstruction(
 ```
 
 After the plan exists, derive the subscription delegation PDA and call `getSubscribeInstruction`. Use `getTransferSubscriptionInstruction` for billing, `getCancelSubscriptionInstruction` for subscriber cancellation, and `getResumeSubscriptionInstruction` to resume a paused subscription.
+
+<!-- {/docsSubscriptionsPlanSection} -->

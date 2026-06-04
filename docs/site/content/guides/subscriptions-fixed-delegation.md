@@ -1,5 +1,7 @@
 # Fixed delegation
 
+<!-- {=docsSubscriptionsFixedDelegationSection} -->
+
 A fixed delegation lets a delegatee pull up to a fixed token amount. Each successful transfer reduces the remaining allowance. Use `expiryTs: BigInt.zero` for no expiry.
 
 ```dart
@@ -30,3 +32,5 @@ final instruction = getCreateFixedDelegationInstruction(
 ```
 
 The delegator signs setup and revoke transactions. The delegatee signs transfer transactions built with `getTransferFixedInstruction`.
+
+<!-- {/docsSubscriptionsFixedDelegationSection} -->

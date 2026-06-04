@@ -1,5 +1,7 @@
 # Subscriptions overview
 
+<!-- {=docsSubscriptionsOverviewSection} -->
+
 The Subscriptions Delegation Program lets users authorize future SPL Token or Token-2022 transfers with explicit limits. In Dart, use `solana_kit_subscriptions` for generated PDAs, account decoders, and instruction builders.
 
 Each `(user, token mint)` pair gets a program-controlled **Subscription Authority**. The user's token account approves that authority once. The program then checks every requested pull against an active authorization record.
@@ -28,3 +30,5 @@ Future<void> main() async {
 ```
 
 Amounts are token base units. For a 6-decimal token, `1_000_000` means `1` token.
+
+<!-- {/docsSubscriptionsOverviewSection} -->

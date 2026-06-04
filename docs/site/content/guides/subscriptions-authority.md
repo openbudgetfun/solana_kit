@@ -1,5 +1,7 @@
 # Create a Subscription Authority
 
+<!-- {=docsSubscriptionsAuthoritySection} -->
+
 Create a Subscription Authority once per `(user, token mint)` pair. The user's associated token account must exist first. Build the instruction with `getInitSubscriptionAuthorityInstruction`, add it to a transaction, and sign with the owner.
 
 ```dart
@@ -33,3 +35,5 @@ Future<void> main() async {
 ```
 
 Fetch and decode `SubscriptionAuthority` before creating it when your app may have initialized the authority already.
+
+<!-- {/docsSubscriptionsAuthoritySection} -->
