@@ -15,7 +15,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class StakeInstructionData {
-  const StakeInstructionData({this.discriminator = 1, required this.amount});
+  const StakeInstructionData({
+    this.discriminator = 1,
+    required this.amount,
+  });
 
   final int discriminator;
   final BigInt amount;
@@ -72,7 +75,9 @@ Instruction getStakeInstruction({
   required Address systemProgram,
   required BigInt amount,
 }) {
-  final instructionData = StakeInstructionData(amount: amount);
+  final instructionData = StakeInstructionData(
+    amount: amount,
+  );
 
   return Instruction(
     programAddress: programAddress,

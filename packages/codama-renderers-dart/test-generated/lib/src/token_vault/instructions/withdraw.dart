@@ -15,7 +15,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class WithdrawInstructionData {
-  const WithdrawInstructionData({this.discriminator = 2, required this.amount});
+  const WithdrawInstructionData({
+    this.discriminator = 2,
+    required this.amount,
+  });
 
   final int discriminator;
   final BigInt amount;
@@ -70,7 +73,9 @@ Instruction getWithdrawInstruction({
   required Address tokenProgram,
   required BigInt amount,
 }) {
-  final instructionData = WithdrawInstructionData(amount: amount);
+  final instructionData = WithdrawInstructionData(
+    amount: amount,
+  );
 
   return Instruction(
     programAddress: programAddress,

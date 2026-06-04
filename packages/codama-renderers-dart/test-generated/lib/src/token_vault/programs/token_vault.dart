@@ -9,7 +9,10 @@ const tokenVaultProgramAddress = Address(
 );
 
 /// Known accounts for the TokenVault program.
-enum TokenVaultAccount { vault, depositRecord }
+enum TokenVaultAccount {
+  vault,
+  depositRecord,
+}
 
 /// Known instructions for the TokenVault program.
 enum TokenVaultInstruction {

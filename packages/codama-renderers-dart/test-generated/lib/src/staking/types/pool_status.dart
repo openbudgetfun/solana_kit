@@ -6,10 +6,18 @@ import 'dart:typed_data';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
-enum PoolStatus { uninitialized, active, paused, deprecated }
+enum PoolStatus {
+  uninitialized,
+  active,
+  paused,
+  deprecated,
+}
 
 Encoder<PoolStatus> getPoolStatusEncoder() {
-  return transformEncoder(getU8Encoder(), (PoolStatus value) => value.index);
+  return transformEncoder(
+    getU8Encoder(),
+    (PoolStatus value) => value.index,
+  );
 }
 
 Decoder<PoolStatus> getPoolStatusDecoder() {

@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class UnstakeInstructionData {
-  const UnstakeInstructionData({this.discriminator = 2});
+  const UnstakeInstructionData({
+    this.discriminator = 2,
+  });
 
   final int discriminator;
 }
@@ -41,7 +43,9 @@ Decoder<UnstakeInstructionData> getUnstakeInstructionDataDecoder() {
   return transformDecoder(
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        UnstakeInstructionData(discriminator: map['discriminator']! as int),
+        UnstakeInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 

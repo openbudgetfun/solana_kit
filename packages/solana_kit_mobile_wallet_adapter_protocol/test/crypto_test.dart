@@ -30,6 +30,25 @@ void main() {
       );
     });
 
+    test('ecPublicKeyFromBytes rejects malformed public keys', () {
+      expect(
+        () => ecPublicKeyFromBytes(Uint8List(64)),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => ecPublicKeyFromBytes(
+          Uint8List.fromList([0x02, ...List.filled(64, 0)]),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => ecPublicKeyFromBytes(
+          Uint8List.fromList([0x04, ...List.filled(64, 0xff)]),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
     test('getAssociationToken returns base64url string', () {
       final keyPair = generateAssociationKeypair();
       final token = getAssociationToken(keyPair.publicKey);
@@ -100,6 +119,29 @@ void main() {
       );
 
       expect(isValid, isTrue);
+    });
+
+    test('signature verification returns false for malformed signatures', () {
+      final associationKeyPair = generateAssociationKeypair();
+      final ecdhKeyPair = generateEcdhKeypair();
+      final ecdhPubKeyBytes = exportEcdhPublicKeyBytes(ecdhKeyPair);
+
+      expect(
+        ecdsaVerify(
+          ecdhPubKeyBytes,
+          Uint8List(63),
+          associationKeyPair.publicKey,
+        ),
+        isFalse,
+      );
+      expect(
+        ecdsaVerify(
+          ecdhPubKeyBytes,
+          Uint8List(65),
+          associationKeyPair.publicKey,
+        ),
+        isFalse,
+      );
     });
   });
 
