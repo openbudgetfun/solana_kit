@@ -187,7 +187,7 @@ in
         docs:update
         fix:lint
         fix:workflows
-        mc check --fix
+        monochange check --fix
         fix:format
       '';
       description = "Fix all fixable issues.";
@@ -218,7 +218,7 @@ in
         lint:kotlin
         lint:analyze
         lint:workflows
-        mc check
+        monochange check
       '';
       description = "Run all lint checks.";
       binary = "bash";
@@ -232,7 +232,7 @@ in
         ${currentDir}/.devenv/profile/bin/lint:kotlin
         ${currentDir}/.devenv/profile/bin/lint:analyze
         ${currentDir}/.devenv/profile/bin/lint:workflows
-        ${extra.monochange}/bin/mc check
+        ${extra.monochange}/bin/monochange check
       '';
       description = "Run all lint checks before `git push`.";
       binary = "bash";

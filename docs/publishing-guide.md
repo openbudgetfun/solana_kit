@@ -10,7 +10,7 @@ This monorepo contains **56 packages** under `packages/`: **54 publishable** and
 
 <!-- workspace-summary:end -->
 
-Versioning is managed by [monochange](https://github.com/monochange/monochange) using changesets stored in `.changeset/`. Release PRs, release tags, GitHub release notes, and package publishing are executed through the configured `mc` workflows in `monochange.toml`.
+Versioning is managed by [monochange](https://github.com/monochange/monochange) using changesets stored in `.changeset/`. Release PRs, release tags, GitHub release notes, and package publishing are executed through the configured `monochange run` workflows in `monochange.toml`.
 
 ## Package Inventory
 
@@ -151,7 +151,7 @@ solana_kit_transactions -> solana_kit_addresses, solana_kit_codecs_core, solana_
 When making changes to any package, create a changeset file:
 
 ```bash
-mc document
+monochange run document
 ```
 
 This is required for PRs that modify files under `packages/*` (CI enforces this with `Require changes to be documented`).
@@ -179,7 +179,7 @@ Bump types:
 When ready to release, run:
 
 ```bash
-mc release --commit --push --tag --publish-release
+monochange run release --commit --push --tag --publish-release
 ```
 
 This workflow:
@@ -196,8 +196,8 @@ This workflow:
 Use a dry run before any real publish:
 
 ```bash
-mc step:publish-readiness --from HEAD --format json
-mc publish --dry-run
+monochange step publish-readiness --from HEAD --format json
+monochange run publish --dry-run
 ```
 
 Important requirements before running publish workflows:
@@ -208,17 +208,17 @@ Important requirements before running publish workflows:
 For the first release, publish in staged workflows to handle pub.dev limits:
 
 ```bash
-mc step:plan-publish-rate-limits --from HEAD --format md
-mc publish --dry-run
-mc publish
+monochange step plan-publish-rate-limits --from HEAD --format md
+monochange run publish --dry-run
+monochange run publish
 ```
 
-For large publish sets, use monochange publish-readiness output and registry rate-limit planning to decide whether to publish in batches. The configured `mc publish` workflow delegates Dart package ordering to Melos and publishes the renderer package with pnpm.
+For large publish sets, use monochange publish-readiness output and registry rate-limit planning to decide whether to publish in batches. The configured `monochange run publish` workflow delegates Dart package ordering to Melos and publishes the renderer package with pnpm.
 
 If limits are not a concern, publish everything in one pass:
 
 ```bash
-mc publish
+monochange run publish
 ```
 
 After any publish batch, verify published versions on pub.dev before continuing.
@@ -272,7 +272,7 @@ Before publishing, verify each package meets these requirements:
 
 ### Dependency-Order Publishing
 
-Packages must be published in dependency order (leaf packages first). The configured `mc publish` workflow handles this automatically through `melos publish`, which computes package ordering from the workspace dependency graph.
+Packages must be published in dependency order (leaf packages first). The configured `monochange run publish` workflow handles this automatically through `melos publish`, which computes package ordering from the workspace dependency graph.
 
 The correct publishing order follows the layer table above:
 
@@ -286,7 +286,7 @@ The correct publishing order follows the layer table above:
 ### Running the Publish Workflow
 
 ```bash
-mc publish
+monochange run publish
 ```
 
 This workflow currently runs:
@@ -299,8 +299,8 @@ This workflow currently runs:
 To verify all packages are ready to publish without actually publishing:
 
 ```bash
-mc step:publish-readiness --from HEAD --format json
-mc publish --dry-run
+monochange step publish-readiness --from HEAD --format json
+monochange run publish --dry-run
 ```
 
 ## Known Issues and Considerations
@@ -309,7 +309,7 @@ mc publish --dry-run
 
 1. **Namespace reservation**: All packages use the `solana_kit_` prefix. Once the first package is published, the namespace is effectively reserved. Ensure the verified publisher account is set up before initial publish.
 
-2. **pub.dev rate limits**: Publishing many packages in quick succession may trigger limits. For the first release, use `mc step:plan-publish-rate-limits --from HEAD --format md` and verify results between any manual batches.
+2. **pub.dev rate limits**: Publishing many packages in quick succession may trigger limits. For the first release, use `monochange step plan-publish-rate-limits --from HEAD --format md` and verify results between any manual batches.
 
 3. **Verified publisher**: Set up a [verified publisher](https://dart.dev/tools/pub/verified-publishers) on pub.dev before publishing. This displays a verified badge and prevents package name squatting. All packages should be published under the same verified publisher.
 

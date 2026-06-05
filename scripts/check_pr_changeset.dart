@@ -87,7 +87,7 @@ Future<void> main() async {
     'Package changes were detected without a changeset file under .changeset/*.md.',
   );
   stderr.writeln(
-    'Run `mc step:document` to create a properly formatted changeset, then commit the file.',
+    'Run `monochange run document` to create a properly formatted changeset, then commit the file.',
   );
   stderr.writeln('Changed package files:');
   for (final path in packageChanges) {
