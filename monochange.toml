@@ -353,6 +353,7 @@ inputs = [
 ]
 steps = [
   { type = "PrepareRelease", name = "plan release", allow_empty_changesets = true, inputs = ["format"] },
+  { type = "Command", name = "sync dependency versions", when = "{{ number_of_changesets > 0 }}", command = "monochange versions sync" },
   { type = "OpenReleaseRequest", name = "open release PR", when = "{{ number_of_changesets > 0 }}", inputs = { format = "markdown", no_verify = "{{ inputs.no_verify }}", stage_all = true } },
 ]
 
@@ -368,6 +369,7 @@ inputs = [
 ]
 steps = [
   { type = "PrepareRelease", name = "plan release", allow_empty_changesets = true },
+  { type = "Command", name = "sync dependency versions", when = "{{ number_of_changesets > 0 }}", command = "monochange versions sync" },
   { type = "Command", name = "format with dprint", when = "{{ number_of_changesets > 0 }}", command = "dprint fmt --config dprint.json" },
   { type = "Command", name = "update flutter lockfiles", when = "{{ number_of_changesets > 0 }}", command = "flutter pub get" },
   { type = "Command", name = "generate pnpm lockfile", when = "{{ number_of_changesets > 0 }}", command = "pnpm install --lockfile-only --no-frozen-lockfile --link-workspace-packages" },
