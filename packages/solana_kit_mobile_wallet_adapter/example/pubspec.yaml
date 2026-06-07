@@ -1,7 +1,7 @@
 name: solana_kit_mobile_wallet_adapter_example
 description: Manual testing app for the solana_kit_mobile_wallet_adapter package.
 publish_to: "none"
-version: 1.0.0+1
+version: 0.0.0+1
 homepage: https://openbudgetfun.github.io/solana_kit/
 
 environment:
