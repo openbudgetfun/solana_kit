@@ -210,7 +210,7 @@ jobs:
           retention-days: 7
       - name: upload coverage
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-        uses: codecov/codecov-action@75cd11691c0faa626561e295848008c8a7dddffe # v5
+        uses: codecov/codecov-action@a99c28d3f0da835de33ff2feb2e15691c7b9641f # v7
         with:
           files: ./coverage/lcov.info,./packages/codama-renderers-dart/coverage/lcov.info
           disable_search: true
@@ -241,7 +241,7 @@ jobs:
           name: codecov-flag-reports
           path: coverage/flags
       - name: upload package coverage flag to Codecov
-        uses: codecov/codecov-action@75cd11691c0faa626561e295848008c8a7dddffe # v5
+        uses: codecov/codecov-action@a99c28d3f0da835de33ff2feb2e15691c7b9641f # v7
         with:
           files: ./coverage/flags/${{ matrix.flag }}.lcov
           disable_search: true
