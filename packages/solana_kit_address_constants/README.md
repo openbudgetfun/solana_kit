@@ -1,6 +1,7 @@
 # solana_kit_address_constants
 
 [![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_address_constants)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_address_constants)
+[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_address_constants)
 
 Well-known Solana address constants for programs, sysvars, SPL programs,
 Metaplex programs, and token mints for the
