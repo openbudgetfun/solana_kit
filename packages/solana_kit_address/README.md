@@ -1,6 +1,7 @@
 # solana_kit_address
 
 [![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_address)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_address)
+[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_address)
 
 Core Address extension type, codecs, comparator, and PublicKey utilities for the
 [Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart SDK.

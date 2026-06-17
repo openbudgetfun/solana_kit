@@ -32,12 +32,26 @@ Each subsection below maps one package to its role in the Solana ecosystem and t
 
 ## Address, Keys, and Signers
 
+### solana_kit_address
+
+- Pub.dev: [solana_kit_address](https://pub.dev/packages/solana_kit_address)
+- Why it exists: the lowest-level address type and codecs need a small dependency surface.
+- What it does: provides the `Address` extension type, validation, codecs, comparators, and public-key conversion helpers.
+- Use it when: another package needs address primitives without the broader address helper surface.
+
 ### solana_kit_addresses
 
 - Pub.dev: [solana_kit_addresses](https://pub.dev/packages/solana_kit_addresses)
 - Why it exists: addresses are core Solana identity primitives and need strict validation.
 - What it does: validates addresses, supports encoding/decoding, and derives PDAs.
 - Use it when: creating account references, PDAs, and address comparisons.
+
+### solana_kit_address_constants
+
+- Pub.dev: [solana_kit_address_constants](https://pub.dev/packages/solana_kit_address_constants)
+- Why it exists: well-known program, sysvar, SPL, Metaplex, and mint addresses should not be hardcoded throughout the workspace.
+- What it does: centralizes typed `Address` constants for common on-chain addresses.
+- Use it when: referencing native programs, sysvars, SPL programs, Metaplex programs, or common token mints.
 
 ### solana_kit_keys
 
@@ -89,6 +103,13 @@ Each subsection below maps one package to its role in the Solana ecosystem and t
 - Why it exists: many Solana structures use optional values with Rust-like semantics.
 - What it does: offers typed option variants and optional-value codec support.
 - Use it when: serializing optional account fields or params.
+
+### solana_kit_fixed_points
+
+- Pub.dev: [solana_kit_fixed_points](https://pub.dev/packages/solana_kit_fixed_points)
+- Why it exists: token, fee, and decimal arithmetic need exact fixed-point behavior instead of floating-point approximations.
+- What it does: provides binary and decimal fixed-point arithmetic, parsing, formatting, comparison, conversion, and codecs.
+- Use it when: representing precise on-chain numeric values with explicit scale or precision.
 
 ## Instructions and Transactions
 
@@ -245,6 +266,48 @@ Each subsection below maps one package to its role in the Solana ecosystem and t
 - What it does: exposes shared utilities for building typed program clients.
 - Use it when: generating or hand-writing client SDK wrappers.
 
+### solana_kit_system
+
+- Pub.dev: [solana_kit_system](https://pub.dev/packages/solana_kit_system)
+- Why it exists: System Program instructions are foundational to account creation, lamport transfers, and ownership changes.
+- What it does: provides generated instruction builders, account decoders, errors, PDA helpers, and program constants for the System Program.
+- Use it when: creating accounts, transferring SOL, assigning ownership, allocating data, or using nonce flows.
+
+### solana_kit_config
+
+- Pub.dev: [solana_kit_config](https://pub.dev/packages/solana_kit_config)
+- Why it exists: Solana's native Config program needs typed builders and decoders.
+- What it does: provides Config program codecs, account decoders, instruction builders, and helpers for storing configuration data.
+- Use it when: reading or writing native Config program accounts.
+
+### solana_kit_loader
+
+- Pub.dev: [solana_kit_loader](https://pub.dev/packages/solana_kit_loader)
+- Why it exists: program deployment and upgrade flows require typed loader instructions and account models.
+- What it does: supports BPF Loader v3/Upgradeable and Loader v4 instructions, account codecs, and deployment/upgrade planning helpers.
+- Use it when: writing tooling around program buffers, deploys, upgrades, authority changes, or loader account decoding.
+
+### solana_kit_memo
+
+- Pub.dev: [solana_kit_memo](https://pub.dev/packages/solana_kit_memo)
+- Why it exists: memo instructions are simple but common enough to deserve a typed helper.
+- What it does: builds Memo program instructions and exposes current and legacy Memo program addresses.
+- Use it when: attaching UTF-8 memo text to transactions.
+
+### solana_kit_token
+
+- Pub.dev: [solana_kit_token](https://pub.dev/packages/solana_kit_token)
+- Why it exists: SPL Token workflows need generated coverage plus ergonomic helpers.
+- What it does: provides SPL Token instruction builders, parsers, codecs, and convenience exports for associated token account flows.
+- Use it when: minting, transferring, burning, approving, freezing, or managing classic SPL Token accounts.
+
+### solana_kit_token_2022
+
+- Pub.dev: [solana_kit_token_2022](https://pub.dev/packages/solana_kit_token_2022)
+- Why it exists: Token-2022 adds extension-aware token behavior that should be modeled separately from classic SPL Token.
+- What it does: provides generated Token-2022 builders plus focused helpers for extension-aware token workflows.
+- Use it when: working with token extensions or Token-2022 mints/accounts.
+
 ### solana_kit_associated_token_account
 
 - Pub.dev: [solana_kit_associated_token_account](https://pub.dev/packages/solana_kit_associated_token_account)
@@ -272,6 +335,27 @@ Each subsection below maps one package to its role in the Solana ecosystem and t
 - Why it exists: staking, delegation, and stake-account state decoding need a typed program client.
 - What it does: provides generated Stake Program instruction builders, stake state codecs, `StakeAccount` decoding, and instruction-plan helpers.
 - Use it when: creating stake accounts, delegating stake, parsing stake instructions, or decoding stake account data.
+
+### solana_kit_spl_account_compression
+
+- Pub.dev: [solana_kit_spl_account_compression](https://pub.dev/packages/solana_kit_spl_account_compression)
+- Why it exists: compressed account and compressed NFT flows depend on SPL Account Compression primitives.
+- What it does: provides SPL Account Compression instruction builders, program addresses, concurrent Merkle tree sizing helpers, and valid depth/size metadata.
+- Use it when: creating or interacting with concurrent Merkle trees used by compressed assets.
+
+### solana_kit_mpl_bubblegum
+
+- Pub.dev: [solana_kit_mpl_bubblegum](https://pub.dev/packages/solana_kit_mpl_bubblegum)
+- Why it exists: compressed NFT workflows need Bubblegum-specific instructions, PDAs, hashes, and proof helpers.
+- What it does: provides mpl-bubblegum instruction builders, composite helpers, DAS API abstractions, hashing utilities, and Merkle proof support.
+- Use it when: minting, transferring, burning, delegating, or querying compressed NFTs.
+
+### solana_kit_subscriptions
+
+- Pub.dev: [solana_kit_subscriptions](https://pub.dev/packages/solana_kit_subscriptions)
+- Why it exists: the Subscriptions Delegation Program needs typed generated accounts, instructions, PDAs, and codecs.
+- What it does: models subscription authorities, fixed delegations, recurring delegations, and subscription-plan flows.
+- Use it when: building token subscription, delegated payment, or recurring authorization workflows.
 
 ### solana_kit_sysvars
 

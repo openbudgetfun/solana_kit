@@ -1,6 +1,7 @@
 # solana_kit_associated_token_account
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_associated_token_account.svg)](https://pub.dev/packages/solana_kit_associated_token_account)
+[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_associated_token_account)
 [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
 [![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_associated_token_account)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_associated_token_account)
 

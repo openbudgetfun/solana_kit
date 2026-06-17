@@ -22,7 +22,9 @@ Then move to smaller packages only when you want a narrower dependency surface o
 
 ## Core primitives
 
+- [`solana_kit_address`](https://pub.dev/packages/solana_kit_address)
 - [`solana_kit_addresses`](https://pub.dev/packages/solana_kit_addresses)
+- [`solana_kit_address_constants`](https://pub.dev/packages/solana_kit_address_constants)
 - [`solana_kit_keys`](https://pub.dev/packages/solana_kit_keys)
 - [`solana_kit_signers`](https://pub.dev/packages/solana_kit_signers)
 - [`solana_kit_errors`](https://pub.dev/packages/solana_kit_errors)
@@ -34,13 +36,17 @@ Then move to smaller packages only when you want a narrower dependency surface o
 - [`solana_kit_transactions`](https://pub.dev/packages/solana_kit_transactions)
 - [`solana_kit_transaction_confirmation`](https://pub.dev/packages/solana_kit_transaction_confirmation)
 - [`solana_kit_instruction_plans`](https://pub.dev/packages/solana_kit_instruction_plans)
+- [`solana_kit_offchain_messages`](https://pub.dev/packages/solana_kit_offchain_messages)
 
 ## RPC + subscriptions
 
 - [`solana_kit_rpc`](https://pub.dev/packages/solana_kit_rpc)
 - [`solana_kit_rpc_api`](https://pub.dev/packages/solana_kit_rpc_api)
 - [`solana_kit_rpc_types`](https://pub.dev/packages/solana_kit_rpc_types)
+- [`solana_kit_rpc_spec`](https://pub.dev/packages/solana_kit_rpc_spec)
+- [`solana_kit_rpc_spec_types`](https://pub.dev/packages/solana_kit_rpc_spec_types)
 - [`solana_kit_rpc_transport_http`](https://pub.dev/packages/solana_kit_rpc_transport_http)
+- [`solana_kit_rpc_transformers`](https://pub.dev/packages/solana_kit_rpc_transformers)
 - [`solana_kit_rpc_subscriptions`](https://pub.dev/packages/solana_kit_rpc_subscriptions)
 - [`solana_kit_rpc_subscriptions_api`](https://pub.dev/packages/solana_kit_rpc_subscriptions_api)
 - [`solana_kit_rpc_subscriptions_channel_websocket`](https://pub.dev/packages/solana_kit_rpc_subscriptions_channel_websocket)
@@ -61,16 +67,23 @@ Then move to smaller packages only when you want a narrower dependency surface o
 - [`solana_kit_codecs_strings`](https://pub.dev/packages/solana_kit_codecs_strings)
 - [`solana_kit_codecs_data_structures`](https://pub.dev/packages/solana_kit_codecs_data_structures)
 - [`solana_kit_options`](https://pub.dev/packages/solana_kit_options)
+- [`solana_kit_fixed_points`](https://pub.dev/packages/solana_kit_fixed_points)
 
 ## Program clients
 
 - [`solana_kit_system`](https://pub.dev/packages/solana_kit_system)
+- [`solana_kit_config`](https://pub.dev/packages/solana_kit_config)
+- [`solana_kit_loader`](https://pub.dev/packages/solana_kit_loader)
+- [`solana_kit_memo`](https://pub.dev/packages/solana_kit_memo)
 - [`solana_kit_token`](https://pub.dev/packages/solana_kit_token)
 - [`solana_kit_token_2022`](https://pub.dev/packages/solana_kit_token_2022)
 - [`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account)
 - [`solana_kit_address_lookup_table`](https://pub.dev/packages/solana_kit_address_lookup_table)
 - [`solana_kit_compute_budget`](https://pub.dev/packages/solana_kit_compute_budget)
 - [`solana_kit_stake`](https://pub.dev/packages/solana_kit_stake)
+- [`solana_kit_spl_account_compression`](https://pub.dev/packages/solana_kit_spl_account_compression)
+- [`solana_kit_mpl_bubblegum`](https://pub.dev/packages/solana_kit_mpl_bubblegum)
+- [`solana_kit_subscriptions`](https://pub.dev/packages/solana_kit_subscriptions)
 
 ## Specialized integrations
 
@@ -82,6 +95,11 @@ Then move to smaller packages only when you want a narrower dependency surface o
 
 - [`solana_kit_functional`](https://pub.dev/packages/solana_kit_functional)
 - [`solana_kit_fast_stable_stringify`](https://pub.dev/packages/solana_kit_fast_stable_stringify)
+
+## Workspace support
+
+- [`solana_kit_lints`](https://pub.dev/packages/solana_kit_lints)
+- [`solana_kit_test_matchers`](https://pub.dev/packages/solana_kit_test_matchers)
 
 ## Helpful follow-ups
 

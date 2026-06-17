@@ -1,5 +1,7 @@
 # solana_kit_address_lookup_table
 
+[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_address_lookup_table)
+
 Address Lookup Table program client for the
 [Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart SDK.
 

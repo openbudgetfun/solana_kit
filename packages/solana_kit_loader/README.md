@@ -1,6 +1,7 @@
 # solana_kit_loader
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_loader.svg)](https://pub.dev/packages/solana_kit_loader)
+[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_loader)
 [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg)](https://codecov.io/gh/openbudgetfun/solana_kit)
 
