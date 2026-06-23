@@ -1,0 +1,549 @@
+[
+  {
+    "title": "Solana Kit for Dart",
+    "description": "Comprehensive, example-driven documentation for the Solana Kit Dart workspace.",
+    "route": "/",
+    "headings": [
+      "Upstream Compatibility",
+      "What makes Solana Kit different?",
+      "Start here",
+      "Common workflows",
+      "Read chain state",
+      "Build and submit transactions",
+      "Work with binary layouts and account schemas",
+      "Build production integrations",
+      "Package map",
+      "Contributor resources"
+    ],
+    "content": "A Dart-first Solana SDK workspace modeled after @solana/kit, with strongly typed APIs for addresses, instructions, transactions, RPC, subscriptions, account decoding, and Mobile Wallet Adapter integrations. Upstream Compatibility Latest supported @solana/kit version: 6.9.0 This Dart port tracks upstream APIs and behavior through v6.9.0. Preferred Dart path Start with typed RPC clients, typed account helpers, and explicit transaction/signer models. The workspace teaches those Dart-first surfaces before lower-level compatibility seams. Use raw JSON-RPC requests, manual map peeling, or compatibility-only paths when you need to match upstream behavior exactly or reach a surface that has not been wrapped yet. Parity status Executable parity checks already cover selected @solana/kit behaviors for validation, derivation, transaction compilation, serialization, and targeted error semantics. Additional parity areas are tracked explicitly in the roadmap; absence from the harness should be read as out of scope today, not silently compatible. What makes Solana Kit different? Typed end to end — addresses, RPC requests, subscriptions, transactions, and account models are all expressed with explicit Dart types. Modular by default — import the umbrella package for convenience, or pull in only the packages you need. Composable primitives — build transaction messages, codecs, program clients, and confirmation strategies from smaller reusable pieces. Dart-native ergonomics — modern Dart 3 features like records, patterns, extension types, and sealed classes are used throughout the workspace. Upstream-aware — the repo tracks @solana/kit compatibility and documents sync status explicitly. Start here If you're new to the workspace, follow this path: 1. Installation 2. Quick Start 3. Generate a Signer 4. Fetch an Account 5. First Transaction 6. Transactions 7. RPC and Subscriptions Common workflows Read chain state Fetch an Account Accounts RPC and Subscriptions Build and submit transactions Create Instructions Build a Transaction First Transaction Transactions Signers Work with binary layouts and account schemas Codecs Build a Program Client Build production integrations Build an RPC Service Build a Realtime Observer Mobile Wallet Adapter Helius package Use the package catalog when you want to know which package to import. Use the core concept pages when you want to understand how the pieces fit together. Package map Package Index Complete Package Catalog Upstream Compatibility Contributor resources Contributing Release Process Benchmarking"
+  },
+  {
+    "title": "Contributing",
+    "description": "Local development, docs workflow, and contribution standards.",
+    "route": "/contributing",
+    "headings": [
+      "Local Setup",
+      "Clone the repository",
+      "Load devenv",
+      "Install binary tools and Dart dependencies",
+      "Pull reference repositories used for compatibility checks",
+      "Day-to-Day Commands",
+      "Lint, docs drift, formatting, and analysis checks",
+      "Run all package tests",
+      "Generate merged test coverage across all packages",
+      "Enforce risk-tier package coverage floors",
+      "Run doc-comment snippet checks extracted from synchronized library docs",
+      "Validate markdown templates, Dart doc comments, and generated docs",
+      "(also runs mdt doctor and workspace docs drift checks)",
+      "Regenerate documentation template consumers, Dart doc comments, and workspace docs",
+      "Inspect mdt provider/consumer state and cache reuse",
+      "Run actionable mdt health checks",
+      "Check tracked upstream compatibility metadata",
+      "Compare selected Dart behaviors against the tracked @solana/kit release",
+      "Audit current Dart and pnpm lockfiles for known vulnerabilities",
+      "Run local benchmark scripts across benchmark-enabled packages",
+      "Fix formatting and lint issues where possible",
+      "Documentation Site Commands",
+      "Serve docs site locally at http://localhost:8080",
+      "Build static docs output for GitHub Pages",
+      "Run a smoke test against the built docs site",
+      "Security and Platform Expectations",
+      "Coverage Expectations",
+      "Pull Request Expectations"
+    ],
+    "content": "Local Setup Day-to-Day Commands Documentation Site Commands Security and Platform Expectations Security note Keep allowInsecureHttp and allowInsecureWs disabled outside local development and controlled tests, and prefer small structured error context over ad hoc debug dumps. Avoid logging private keys, auth tokens, wallet session payloads, or full structured error contexts that may contain sensitive material. Keep allowInsecureHttp and allowInsecureWs disabled outside local development and controlled tests. Use audit:deps to scan the current workspace pubspec.lock and pnpm-lock.yaml files present on disk for known vulnerabilities. Do not log private keys, auth tokens, wallet session payloads, or full error contexts that may contain sensitive material. Treat Mobile Wallet Adapter as Android-only for real wallet handoff today. iOS remains a safe stub/no-op because the current Solana MWA ecosystem does not provide an equivalent iOS integration target. Gate MWA flows explicitly with isMwaSupported() / assertMwaSupported() and provide fallback UX on unsupported platforms. Coverage Expectations Run coverage:check before merging changes that touch transport, account parsing, typed RPC models, Helius integrations, or shared test utilities. Current risk-tier coverage floors are enforced at 90% line coverage for: - solanakitaccounts - solanakithelius - solanakitrpcsubscriptions - solanakitrpctypes - solanakittestmatchers Treat these floors as minimums, not targets: new tests should keep changed high-risk packages comfortably above 90%. Pull Request Expectations Keep changes scoped and include tests where behavior changes. Update documentation when APIs or workflows change. Prefer typed APIs over stringly-typed calls in new code."
+  },
+  {
+    "title": "Accounts",
+    "description": "Understand encoded accounts, maybe-account wrappers, jsonParsed reads, and decode flows.",
+    "route": "/core/accounts",
+    "headings": [
+      "Core account models",
+      "Account",
+      "MaybeAccount",
+      "Encoded vs parsed reads",
+      "Encoded reads",
+      "Parsed reads",
+      "Typical decode flow",
+      "Decode a fetched account",
+      "Account assertions",
+      "Related packages",
+      "Read next"
+    ],
+    "content": "Accounts are where most Solana application state lives. Solana Kit gives you a few distinct layers so you can choose the right boundary for your use case. Core account models Account Represents an existing account with: address data lamports programAddress space executable MaybeAccount A sealed result type for “this account may or may not exist”. Pattern matching keeps the control flow explicit: Encoded vs parsed reads Encoded reads Use encoded reads when: the account belongs to a custom program you need byte-perfect control over decoding you already have codecs/decoders for the layout Helpers: fetchEncodedAccount fetchEncodedAccounts decodeAccount decodeMaybeAccount Parsed reads Use parsed reads when: the RPC supports jsonParsed for the account type you want a human-readable result quickly you are working with common system or SPL account types Helpers: fetchJsonParsedAccount fetchJsonParsedAccounts Typical decode flow Decode a fetched account Keep transport and binary-layout logic separate: fetch the encoded account first, then decode it with the codec or decoder that matches your program. This boundary keeps RPC concerns, existence handling, and binary decoding easy to test independently. This split is intentional: transport and RPC behavior stay in the fetch layer binary-layout knowledge stays in your decoder or codec layer Account assertions The package also provides assertion helpers for workflows that expect an account to exist or decode successfully. These helpers are useful when you want domain-specific errors instead of open-ended nullable control flow. Related packages solanakitaccounts — fetch, parse, and decode helpers solanakitrpctypes — shared account response models solanakitrpcparsedtypes — typed parsed-account models for known programs solanakitcodecs — custom binary layouts solanakitprogramclientcore — higher-level patterns for typed program clients Read next Fetch an Account Codecs Build a Program Client"
+  },
+  {
+    "title": "Architecture",
+    "description": "Understand the workspace structure and package boundaries.",
+    "route": "/core/architecture",
+    "headings": [
+      "Primary Layers"
+    ],
+    "content": "The workspace is split into focused packages with explicit responsibilities. Primary Layers | Layer | Core packages | Responsibility | | ----------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------- | | Core primitives | solanakitaddresses, solanakitkeys, solanakitsigners | Address/key/signature modeling | | Binary codecs | solanakitcodecs | Serialization primitives and composites | | Transaction stack | solanakitinstructions, solanakittransactionmessages, solanakittransactions | Message and transaction construction | | RPC stack | solanakitrpc | Typed request/response and transport | | Program/account helpers | solanakitaccounts, solanakitprogramclientcore, solanakitprograms | Account fetching and program error handling | | Integration | solanakitmobilewalletadapter, solanakithelius | Platform and provider-specific integrations | For a package-by-package breakdown, use Package Index."
+  },
+  {
+    "title": "Codecs",
+    "description": "Build deterministic binary layouts with Solana Kit codecs for numbers, strings, structs, tuples, unions, and options.",
+    "route": "/core/codecs",
+    "headings": [
+      "Core concepts",
+      "Encoder",
+      "Decoder",
+      "Codec",
+      "Package map",
+      "Example: build a simple struct codec",
+      "Example: choose among variants",
+      "Typed Union Helpers",
+      "Pattern-driven codec selection",
+      "Pattern-match codecs",
+      "Preferred UTF-8 decoding behavior",
+      "When to use codecs",
+      "Read next"
+    ],
+    "content": "Codecs are the foundation for instruction data, account layouts, sysvar schemas, and many protocol-level payloads. The codec layer is split into focused packages so you can keep dependencies small while still composing rich layouts. Core concepts Encoder Turns a value into bytes. Decoder Turns bytes into a value. Codec Combines both directions. Package map solanakitcodecscore — base abstractions and composition helpers solanakitcodecsnumbers — little-endian integers and floats solanakitcodecsstrings — base16/base58/base64/utf8/baseX encoders solanakitcodecsdatastructures — structs, tuples, arrays, maps, unions, nullable values, and more solanakitoptions — Rust-style Option modeling and codec support Example: build a simple struct codec Example: choose among variants Typed Union Helpers Prefer typed union helpers when a codec has a fixed, small number of variants. They improve IDE type inference, make exhaustive matching easier, and reduce unstructured casting in downstream code. Use these helpers when your wire format has “one of a few known cases” and you want the Dart type system to preserve that fact. Pattern-driven codec selection Pattern-match codecs Use pattern-match codecs when you need to choose a codec based on either the incoming bytes or the value being encoded. Reach for this when a layout cannot be described as a single fixed struct or union discriminator alone. Preferred UTF-8 decoding behavior Compatibility note getUtf8Codec() keeps @solana/kit compatibility by stripping decoded null characters after UTF-8 decode. Prefer getStrictUtf8Codec() or Utf8NullCharacterMode.reject in new Dart code when silent data loss would be unsafe, and use Utf8NullCharacterMode.preserve when you need to surface null bytes explicitly. getUtf8Codec() keeps @solana/kit compatibility by stripping decoded null characters. Prefer a stricter Dart-first path when silent data loss would be risky: use getStrictUtf8Codec() to reject decoded null characters. use Utf8NullCharacterMode.preserve when you need to surface null bytes explicitly without compatibility stripping. keep the default getUtf8Codec() only when you intentionally need upstream compatibility behavior. When to use codecs Use codecs when you need: deterministic byte layouts testable encode/decode logic reuse across program clients and account decoders confidence that a Dart representation matches an upstream wire format Avoid ad hoc Uint8List slicing once a layout becomes non-trivial. A codec pays for itself quickly. Read next Create Instructions Accounts Build a Program Client"
+  },
+  {
+    "title": "Errors and Diagnostics",
+    "description": "Handle structured Solana errors, preserve context, and build recoverable failure flows.",
+    "route": "/core/errors-and-diagnostics",
+    "headings": [
+      "Domain helpers",
+      "Typed Error Domains",
+      "Preferred construction helper",
+      "Practical guidance",
+      "Catch SolanaError at service boundaries",
+      "Preserve context when rethrowing",
+      "Keep secrets out of diagnostics",
+      "Avoid broad untyped catches in core flows",
+      "Why this matters",
+      "Read next"
+    ],
+    "content": "Solana Kit favors structured errors over string parsing. That means you can reason about failures by: error code error domain attached structured context instead of brittle substring matching against user-facing messages. Domain helpers Typed Error Domains solanakiterrors includes domain helpers layered over numeric error codes. Use them to route error handling without hardcoding code ranges throughout your application. This keeps your error-routing logic readable while still preserving the exact numeric code and context payload when you need lower-level diagnostics. Security note Attach small, structured, non-sensitive context to SolanaError values so service boundaries can classify failures without parsing strings. Avoid logging private keys, auth tokens, wallet session payloads, or full structured error contexts in production logs. Preferred construction helper Use createSolanaError(...) and wrapSolanaError(...) when you want consistent null stripping, context naming, and nested-cause preservation. Prefer shared keys such as address, operation, methodName, path, statusCode, and url so diagnostics stay predictable across packages. Practical guidance Catch SolanaError at service boundaries Boundary layers such as repositories, API services, or command handlers are good places to classify and map errors. Preserve context when rethrowing If you convert one failure into another, keep the original structured information whenever possible. Keep secrets out of diagnostics Structured context is useful, but it should not become a dumping ground for secrets. Avoid attaching or logging: private keys or seed material auth tokens full wallet session payloads raw encrypted messages unless you are in a controlled debugging environment Prefer small, typed, non-sensitive context fields that still let you classify and route failures. Avoid broad untyped catches in core flows Catching Object too early can erase useful domain information. Why this matters Typed diagnostics help you answer questions like: was this an RPC transport failure? was the account data malformed? was the transaction missing a signer? did a lifetime constraint expire? did a program-specific error occur during execution? That is much easier than parsing free-form strings downstream. Read next Transactions RPC and Subscriptions Package Catalog"
+  },
+  {
+    "title": "RPC and Subscriptions",
+    "description": "Typed RPC methods, transport choices, websocket subscriptions, and production guidance.",
+    "route": "/core/rpc-and-subscriptions",
+    "headings": [
+      "Typed RPC requests",
+      "Typed RPC methods",
+      "Why typed RPC matters",
+      "Subscription clients",
+      "Typical split of responsibilities",
+      "Large payload handling",
+      "Optional Isolate JSON Decoding",
+      "Read next"
+    ],
+    "content": "solanakitrpc and solanakitrpcsubscriptions are the backbone of most application-facing Solana I/O. Use them together when you need both: request/response flows over JSON-RPC HTTP realtime notifications over websockets Typed RPC requests Typed RPC methods When you already have an Rpc, prefer typed convenience helpers over raw method-name strings. They keep parameter builders and response models attached to the method itself, which makes refactors and autocomplete significantly safer. These helpers forward to canonical request builders in solanakitrpcapi, return lazy PendingRpcRequest values, and make it clear which Solana RPC shape each call expects. Preferred Dart path Start with createSolanaRpc(...), typed request helpers like rpc.getSlot() / rpc.getLatestBlockhashValue(), and typed subscription helpers before reaching for raw JSON-RPC method names. Use raw rpc.request(...) or custom subscription plans only when you need an upstream surface that has not yet been wrapped or when you are validating parity behavior. Why typed RPC matters Typed RPC methods give you: discoverable method names in IDE autocomplete compile-time parameter shapes fewer raw Map escape hatches in application code reusable request logic across services and tests Subscription clients Use websocket subscriptions for account changes, signature updates, program logs, and slot notifications. Packages involved: solanakitrpcsubscriptions — high-level orchestration solanakitrpcsubscriptionsapi — typed subscription method builders solanakitrpcsubscriptionschannelwebsocket — websocket transport/channel implementation solanakitsubscribable — stream-friendly subscription primitives Typical split of responsibilities use rpc for reads, writes, and transaction submission use rpcSubscriptions for realtime updates keep transport setup at your app boundary so you can tune timeouts, headers, or connection reuse centrally Large payload handling Optional Isolate JSON Decoding For large Solana RPC payloads, you can offload BigInt-aware JSON parsing to a background isolate so the main isolate stays responsive. For direct parsing, use parseJsonWithBigIntsAsync(...) with runInIsolate: true. Reserve isolate parsing for larger payloads where the extra hop is worth the reduced UI or server-request blocking. Read next Quick Start Accounts Transactions Build an RPC Service Build a Realtime Observer"
+  },
+  {
+    "title": "Signers",
+    "description": "Model fee payers, partial signers, modifying signers, and sending signers explicitly.",
+    "route": "/core/signers",
+    "headings": [
+      "Why the signer model matters",
+      "Common signer interfaces",
+      "Build a transaction around signers",
+      "Sign a compiled transaction with explicit signers",
+      "Why explicit roles help",
+      "Read next"
+    ],
+    "content": "Solana Kit treats signers as capabilities, not just as key material. That gives you a better fit for real-world flows involving wallets, mobile adapters, remote signers, and multi-party signing. Why the signer model matters In many SDKs, “a signer” is just a private key. In production Solana apps, that is often not enough. You may need to represent: a local key pair that signs directly a wallet that signs and sends in one step a system that mutates the transaction before signing a fee payer that differs from another signing authority a partially signed transaction that must be completed later Common signer interfaces KeyPairSigner — local Ed25519 key pair plus signing methods FeePayerSigner — signer designated as the fee payer TransactionPartialSigner — can contribute one or more transaction signatures TransactionModifyingSigner — can edit a transaction before signature application TransactionSendingSigner — can sign and submit a transaction MessagePartialSigner — signs off-chain messages instead of transactions Build a transaction around signers When your signers live on the transaction message itself, the message-level helpers are still the most ergonomic path. When signer resolution happens outside the message, drop to the explicit transaction-level helpers: Sign a compiled transaction with explicit signers Use the transaction-level signer helpers when your signers are resolved outside of the message itself or when you need to work with a compiled Transaction directly. This is especially useful for wallet adapters, remote signers, or orchestration layers that gather signatures in more than one step. Why explicit roles help This separation gives you: better modeling for wallet integrations more honest test seams cleaner handling of partial signatures safer transaction pipelines for complex orchestration Read next Generate a Signer First Transaction Transactions"
+  },
+  {
+    "title": "Transactions",
+    "description": "Compose messages, attach signers, compile transactions, and confirm results with explicit typed steps.",
+    "route": "/core/transactions",
+    "headings": [
+      "Recommended mental model",
+      "Message construction",
+      "Signing strategies",
+      "Confirmation strategies",
+      "Send and confirm a signed transaction",
+      "When to use instruction plans",
+      "Read next"
+    ],
+    "content": "Solana Kit intentionally splits the transaction stack into a few focused layers. solanakitinstructions models program invocations. solanakittransactionmessages builds immutable message state. solanakitsigners models who can authorize, mutate, or submit a transaction. solanakittransactions handles wire-format transactions and signatures. solanakittransactionconfirmation handles confirmation strategies. Recommended mental model Think in four phases: 1. Describe intent — create instructions. 2. Build message state — set fee payer, lifetime, and instruction order. 3. Authorize — attach signers and produce signatures. 4. Submit and confirm — send the signed transaction and wait for a final outcome. Message construction Use immutable message transforms: This style makes transaction assembly predictable and easy to test. Signing strategies Use signTransactionMessageWithSigners(...) when all required signers are attached to the message and you want a fully signed transaction. Use partiallySignTransactionMessageWithSigners(...) when a transaction will move through multiple signing stages. Use signAndSendTransactionMessageWithSigners(...) when the message contains a TransactionSendingSigner, such as a wallet adapter. Confirmation strategies Send and confirm a signed transaction Once you have a signed Transaction, use the additive confirmation helper for an end-to-end “send then wait for confirmation” flow. For lower-level control, solanakittransactionconfirmation also exposes strategy factories for block-height expiry, durable nonce invalidation, signature notifications, and timeout racing. When to use instruction plans If your operation spans multiple transactions or has parallel/sequential structure, move up to solanakitinstructionplans. That package helps you model transaction orchestration explicitly instead of hiding it in ad hoc control flow. Read next Create Instructions Build a Transaction Signers Build a Token Transfer Flow"
+  },
+  {
+    "title": "Build a Transaction",
+    "description": "Assemble a transaction message with a fee payer, a lifetime, and one or more instructions.",
+    "route": "/getting-started/build-a-transaction",
+    "headings": [
+      "Build a transaction message",
+      "Why the lifetime constraint matters",
+      "Blockhash-based lifetime",
+      "Durable nonce lifetime",
+      "Compile the message",
+      "Next steps"
+    ],
+    "content": "Solana Kit models transaction construction as a sequence of immutable transformations. This keeps the transaction pipeline easy to inspect and test. Build a transaction message Transaction messages are assembled incrementally. The most common pattern is: 1. Create an empty message. 2. Set the fee payer. 3. Set a lifetime constraint using a recent blockhash. 4. Append one or more instructions. This separation keeps transaction construction explicit and makes it easier to reason about fee payment, expiry, and instruction ordering. If you prefer a more fluent style, the transaction-message extension methods build on the same underlying model. Why the lifetime constraint matters Without a recent blockhash or a durable nonce, the network cannot determine whether a transaction is still valid. Solana Kit makes lifetime setup explicit so expiry handling is not hidden behind a large helper. Blockhash-based lifetime Use BlockhashLifetimeConstraint for the common case. Durable nonce lifetime Use setTransactionMessageLifetimeUsingDurableNonce(...) when the transaction must remain valid until a nonce account changes. Compile the message Once the message is fully assembled, compile it into the wire-level message representation: At this stage you have a canonical message layout that can be signed and serialized. Next steps First Transaction Send and confirm a transaction Signers"
+  },
+  {
+    "title": "Create Instructions",
+    "description": "Model Solana instructions explicitly with program addresses, account roles, and binary payloads.",
+    "route": "/getting-started/create-instructions",
+    "headings": [
+      "Minimal instruction",
+      "Instruction with account metadata",
+      "Choosing the right account role",
+      "Encoding instruction data",
+      "Where instructions go next",
+      "Next steps"
+    ],
+    "content": "An instruction is the smallest unit of program interaction on Solana. It answers three questions: 1. Which program should execute? 2. Which accounts should the program read or write? 3. What binary payload should the program receive? Minimal instruction This is valid as a model, though most real program interactions require one or more accounts and a structured data payload. Instruction with account metadata Choosing the right account role Use account roles to express exactly how the runtime should treat each account. readonly — read-only, not a signer writable — mutable, not a signer readonlySigner — signer, but not writable writableSigner — signer and writable A wrong role can cause transaction failures even when the program address and data payload are correct. Encoding instruction data In simple examples, Uint8List.fromList(...) is enough. In real applications, prefer codecs so your instruction layouts are: deterministic testable reusable across encode/decode flows See Codecs for the recommended approach. Where instructions go next Instructions are usually appended to a transaction message: Or combined in a pipeline: Next steps Build a Transaction Transactions Codecs"
+  },
+  {
+    "title": "Fetch an Account",
+    "description": "Read encoded or jsonParsed account data and handle missing accounts safely.",
+    "route": "/getting-started/fetch-an-account",
+    "headings": [
+      "Fetch an account",
+      "Fetch multiple accounts",
+      "Decode after fetching",
+      "Decode a fetched account",
+      "When to use jsonParsed",
+      "Reuse a higher-level account client",
+      "Next steps"
+    ],
+    "content": "Solana account reads usually fall into two categories: encoded reads — get the raw bytes and decode them yourself jsonParsed reads — let the RPC return a structured representation for known programs In Solana Kit, both paths return explicit result models so you can distinguish an account that is present from an account that does not exist. Preferred Dart path Start with SolanaAccountClient, fetchEncodedAccount, and MaybeAccount result models so transport, existence handling, and decoding stay separated. Drop to manual RPC request shaping or raw response peeling only when you are prototyping an unsupported RPC surface or validating upstream compatibility. Fetch an account Use fetchEncodedAccount when you want the raw account bytes plus its Solana metadata. Decode it later with the codec or parser that matches your program. Use fetchJsonParsedAccount when the RPC can return a structured jsonParsed representation for a well-known program. Use encoded reads when you need byte-perfect custom decoding or when the RPC does not expose a parsed view for your program. Fetch multiple accounts Batch reads are especially useful when building dashboards, indexer workers, and program clients that need to hydrate several related accounts at once. Decode after fetching Decode a fetched account Keep transport and binary-layout logic separate: fetch the encoded account first, then decode it with the codec or decoder that matches your program. This boundary keeps RPC concerns, existence handling, and binary decoding easy to test independently. When to use jsonParsed Use fetchJsonParsedAccount or fetchJsonParsedAccounts when: the RPC already knows how to structure the account data you are reading a well-known system/SPL account type you prefer a human-readable response over a byte-oriented decode flow Use encoded reads when you need full control over the layout or you are interacting with custom program data. Reuse a higher-level account client If your app reads accounts from several places, create a SolanaAccountClient once and reuse it as the account boundary for your service or repository layer. This keeps RPC request wiring in one place while preserving the same MaybeAccount-based result models. Next steps Accounts Codecs Build a Program Client"
+  },
+  {
+    "title": "First Transaction",
+    "description": "Build, sign, send, and confirm a Solana transaction with explicit typed steps.",
+    "route": "/getting-started/first-transaction",
+    "headings": [
+      "1. Create the dependencies",
+      "2. Build an instruction",
+      "3. Build the transaction message",
+      "4. Sign the message",
+      "5. Send and confirm",
+      "Send and confirm a signed transaction",
+      "Why this explicit flow is useful",
+      "Next steps"
+    ],
+    "content": "A production-grade transaction flow usually has these phases: 1. create or obtain the required signers 2. fetch a recent blockhash 3. build a transaction message 4. compile and sign the transaction 5. send the signed transaction 6. confirm the result This guide focuses on the shape of the workflow rather than a specific on-chain program client. 1. Create the dependencies 2. Build an instruction For a real application, this would usually come from a typed program client or an instruction builder backed by codecs. 3. Build the transaction message 4. Sign the message This high-level helper resolves the signers attached to the message, compiles the transaction, and asserts that every required signature is present. 5. Send and confirm Send and confirm a signed transaction Once you have a signed Transaction, use the additive confirmation helper for an end-to-end “send then wait for confirmation” flow. For lower-level control, solanakittransactionconfirmation also exposes strategy factories for block-height expiry, durable nonce invalidation, signature notifications, and timeout racing. Why this explicit flow is useful The workflow may look more verbose than a single convenience function, but it gives you strong control over: signer attachment and signer role modeling blockhash expiry handling instruction ordering testability of each step substitution of wallet/mobile/remote signing behavior Next steps Transactions Signers Build a Token Transfer Flow"
+  },
+  {
+    "title": "Generate a Signer",
+    "description": "Create local key-pair signers and understand the signer roles used across the SDK.",
+    "route": "/getting-started/generate-a-signer",
+    "headings": [
+      "Start with a key-pair signer",
+      "Sign a message",
+      "Attach a signer to a transaction message",
+      "Understand signer roles",
+      "Next steps"
+    ],
+    "content": "Signers are the bridge between transaction intent and cryptographic authorization. In Solana Kit, the signer model is intentionally more expressive than “just a key pair” because real applications often need to distinguish: a fee payer a partial signer a signer that can modify a transaction before signing a signer that can also send a transaction Start with a key-pair signer A generated key pair is useful for: local testing backend automation server-side services examples and fixtures Sign a message Attach a signer to a transaction message This is the most common starting point for building a signable transaction. Understand signer roles solanakitsigners separates roles so transaction pipelines stay explicit. KeyPairSigner — local Ed25519 key pair plus signing methods MessagePartialSigner — can sign signable off-chain messages TransactionPartialSigner — can sign a compiled transaction TransactionModifyingSigner — can mutate a transaction before signing TransactionSendingSigner — can sign and immediately submit a transaction FeePayerSigner — indicates the signer is also the transaction fee payer This modeling matters when integrating wallets, mobile adapters, remote signers, or multi-party signing flows. Next steps Create Instructions Build a Transaction Signers"
+  },
+  {
+    "title": "Installation",
+    "description": "Install Solana Kit in an application or set up the full workspace for contribution.",
+    "route": "/getting-started/installation",
+    "headings": [
+      "Install in an app",
+      "When to install a smaller package instead",
+      "Set up the workspace for contribution",
+      "Clone the repository",
+      "Load devenv",
+      "Install binary tools and Dart dependencies",
+      "Pull reference repositories used for compatibility checks",
+      "Verify the toolchain",
+      "Lint, docs drift, formatting, and analysis checks",
+      "Run all package tests",
+      "Generate merged test coverage across all packages",
+      "Enforce risk-tier package coverage floors",
+      "Run doc-comment snippet checks extracted from synchronized library docs",
+      "Validate markdown templates, Dart doc comments, and generated docs",
+      "(also runs mdt doctor and workspace docs drift checks)",
+      "Regenerate documentation template consumers, Dart doc comments, and workspace docs",
+      "Inspect mdt provider/consumer state and cache reuse",
+      "Run actionable mdt health checks",
+      "Check tracked upstream compatibility metadata",
+      "Compare selected Dart behaviors against the tracked @solana/kit release",
+      "Audit current Dart and pnpm lockfiles for known vulnerabilities",
+      "Run local benchmark scripts across benchmark-enabled packages",
+      "Fix formatting and lint issues where possible",
+      "Documentation tooling",
+      "Next steps"
+    ],
+    "content": "Solana Kit supports two common setups: 1. Application usage — install solanakit or a smaller sub-package in your Dart or Flutter app. 2. Workspace contribution — clone the monorepo and use devenv to get the full toolchain, docs tooling, and reference repos. Install in an app If you want the core SDK surface, install the umbrella package: Then import it in your application code: Program packages are intentionally imported explicitly. For example, install solanakitsystem, solanakittoken, or other program clients directly when your app depends on those programs. When to install a smaller package instead Prefer a smaller package when: you only need one feature area, such as addresses, codecs, RPC, or signers you are building a library and want a narrower dependency surface you want your package imports to reflect a specific architectural boundary Examples: Set up the workspace for contribution Use the monorepo when you want to run tests, update docs, compare against upstream @solana/kit, or contribute changes across packages. Verify the toolchain Run these commands from the repository root: For day-to-day contribution work, the most important commands are lint:all, test:all, docs:check, and docs:update. Documentation tooling This workspace uses mdt to keep shared README blocks and site snippets synchronized. The current mdt release still does not discover .dart consumers directly in this repo, so the same provider blocks are also projected into /// library doc comments through dart run scripts/syncdartdoccomments.dart. Use: docs:update to regenerate Markdown consumers and synchronized Dart doc comments docs:check to verify Markdown and Dart doc consumers are current in CI or before committing test:doc-snippets to analyze fenced Dart examples extracted from synchronized library doc comments mdt:info to inspect providers, consumers, and cache reuse mdt:doctor to diagnose template drift or config problems Next steps Quick Start Generate a Signer Fetch an Account First Transaction"
+  },
+  {
+    "title": "Quick Start",
+    "description": "Connect to RPC, create a signer, and read your first typed Solana data.",
+    "route": "/getting-started/quick-start",
+    "headings": [
+      "Create an RPC client",
+      "Generate a signer",
+      "Fetch an account",
+      "What to read next"
+    ],
+    "content": "This page gives you a fast tour of the three building blocks most apps start with: 1. a typed RPC client 2. a signer 3. an account read Create an RPC client Start with a typed RPC client. It gives you method-specific helpers instead of building raw JSON-RPC requests by hand, while still letting you swap transports or request middleware later. A call like rpc.getSlot() builds a typed request first and only hits the network when you call .send(). That separation makes it easier to compose, cache, batch, or decorate RPC interactions. Use solanakitrpcsubscriptions alongside solanakitrpc when you also need websocket notifications for accounts, signatures, logs, or slots. Generate a signer Most app flows need a signer for fee payment, message signing, or transaction submission. generateKeyPairSigner() creates a new Ed25519 key-pair-backed KeyPairSigner. Use key-pair signers for local development, tests, automation, and server-side flows. For wallet-driven applications, you can also model fee-payer, partial, and sending signers explicitly with solanakitsigners. Fetch an account Use fetchEncodedAccount when you want the raw account bytes plus its Solana metadata. Decode it later with the codec or parser that matches your program. Use fetchJsonParsedAccount when the RPC can return a structured jsonParsed representation for a well-known program. Use encoded reads when you need byte-perfect custom decoding or when the RPC does not expose a parsed view for your program. What to read next Create Instructions Build a Transaction First Transaction RPC and Subscriptions Accounts"
+  },
+  {
+    "title": "Benchmarking",
+    "description": "Measure performance, enforce baselines, and prevent regressions.",
+    "route": "/guides/benchmarking",
+    "headings": [
+      "Why Benchmarking Is Critical",
+      "Current Workspace Command",
+      "Step 1: Pick Stable Benchmarks",
+      "Step 2: Freeze Input Fixtures",
+      "Step 3: Define Regression Policy",
+      "Step 4: Track Baseline and Prior Versions",
+      "Step 5: Report Meaningful Metrics",
+      "Step 6: Automate in CI"
+    ],
+    "content": "Why Benchmarking Is Critical In Solana workloads, tight loops around encoding, message compilation, and parsing directly affect user latency and infrastructure cost. Current Workspace Command Run all local benchmark scripts with: The initial suite covers address validation, transaction wire encoding, and BigInt-aware JSON parsing. Step 1: Pick Stable Benchmarks Target deterministic, high-frequency paths: address validation and encode/decode transaction message compilation key derivation/signing hot paths RPC payload parsing and transformation Reason: stable microbenchmarks produce actionable trend lines. Step 2: Freeze Input Fixtures commit representative fixture inputs. avoid network-dependent benchmark inputs. Reason: fixture drift makes regression data unreliable. Step 3: Define Regression Policy set thresholds by operation class. require justification for regressions beyond threshold. Reason: performance budgets should be explicit engineering policy. Step 4: Track Baseline and Prior Versions compare current branch vs baseline. compare current branch vs previous release tags. Reason: catches both accidental slowdowns and long-term drift. Step 5: Report Meaningful Metrics median and p95 runtime throughput where relevant absolute delta and percent delta Reason: single-number summaries hide variance and tail behavior. Step 6: Automate in CI run benchmark checks on PRs. upload machine-readable result artifacts. Reason: manual-only benchmarking does not scale."
+  },
+  {
+    "title": "Build a Program Client",
+    "description": "Combine codecs, instructions, and account decoding into a reusable typed client for a Solana program.",
+    "route": "/guides/build-program-client",
+    "headings": [
+      "Step 1: define the instruction layout",
+      "Step 2: create an instruction builder",
+      "Step 3: create an account decoder",
+      "Step 4: wrap it in a client boundary",
+      "Step 5: add higher-level workflows",
+      "Related docs"
+    ],
+    "content": "A program client packages three things together: 1. instruction builders 2. account decoders 3. task-oriented helper methods That gives the rest of your app one coherent boundary for interacting with a program. Step 1: define the instruction layout Step 2: create an instruction builder Step 3: create an account decoder Then decode fetched bytes: Step 4: wrap it in a client boundary At this point, the rest of your app can depend on CounterProgramClient instead of knowing the raw layout and account-role details. Step 5: add higher-level workflows Once the client owns the instruction and decode rules, you can add methods like: fetchAndDecodeCounter(...) buildIncrementMessage(...) submitIncrement(...) Those methods are usually more stable and more meaningful to application code than the raw Solana details underneath. Related docs Codecs Accounts Create Instructions"
+  },
+  {
+    "title": "Build a Realtime Observer",
+    "description": "Turn Solana websocket notifications into a reusable observer layer for your app or service.",
+    "route": "/guides/build-realtime-observer",
+    "headings": [
+      "Step 1: create a subscription client",
+      "Step 2: register a typed subscription request",
+      "Step 3: adapt that stream to your own observer interface",
+      "Step 4: subscribe to account or logs updates",
+      "Step 5: make reconnect policy explicit",
+      "Related docs"
+    ],
+    "content": "Realtime apps often need a thin layer between raw websocket subscriptions and the rest of the application. That observer layer should own: websocket connection setup subscription registration cancellation stream fanout reconnect/replay policy Step 1: create a subscription client Step 2: register a typed subscription request Step 3: adapt that stream to your own observer interface In a production app, you would usually hold onto the abort controller so your service can cancel the subscription on shutdown or when the last listener disconnects. Step 4: subscribe to account or logs updates The same pattern works for account or logs subscriptions; only the typed helper and config change. Step 5: make reconnect policy explicit Transport disruptions are normal. Decide up front how your observer should behave when the socket drops: reconnect immediately or with backoff? replay active subscriptions automatically? publish a disconnected state to downstream consumers? buffer, debounce, or drop noisy updates? Keeping this logic in one observer layer prevents UI code from learning socket lifecycle rules. Related docs RPC and Subscriptions Build an RPC Service Package Catalog"
+  },
+  {
+    "title": "Build an RPC Service",
+    "description": "Create a reusable application service that owns Solana RPC access, policy, and error mapping.",
+    "route": "/guides/build-rpc-service",
+    "headings": [
+      "Why this pattern works",
+      "Step 1: wrap the RPC client",
+      "Step 2: centralize error classification",
+      "Step 3: expose task-oriented methods",
+      "Step 4: move transport configuration to the edge",
+      "Step 5: test at the service boundary",
+      "Related docs"
+    ],
+    "content": "This guide shows a practical pattern for keeping raw RPC details out of your UI, controllers, or domain services. Why this pattern works A dedicated RPC service gives you one place to own: endpoint configuration commitment defaults transport policy retries/timeouts error mapping request-specific helper methods Step 1: wrap the RPC client This already pays off because callers no longer need to know which RPC method to call or how the result is shaped. Step 2: centralize error classification Then use that wrapper inside service methods if your application has its own domain error model. Step 3: expose task-oriented methods Your application usually cares about workflows, not raw JSON-RPC calls. This keeps your app code focused on product behavior rather than transport mechanics. Step 4: move transport configuration to the edge If you need a custom HTTP client or transport policy, configure it at service creation time. That makes it much easier to switch providers, add observability, or test against a custom transport. Step 5: test at the service boundary A service wrapper is a much more useful unit to test than many ad hoc RPC calls spread throughout the app. Typical test cases: returns a typed balance result maps missing accounts to the expected app behavior classifies RPC-domain failures correctly applies the right commitment or endpoint policy Related docs RPC and Subscriptions Errors and Diagnostics Fetch an Account"
+  },
+  {
+    "title": "Build a Token Transfer Flow",
+    "description": "Assemble a production-friendly transfer pipeline from inputs to confirmation.",
+    "route": "/guides/build-token-transfer-flow",
+    "headings": [
+      "Step 1: gather the inputs",
+      "Step 2: fetch the latest blockhash",
+      "Step 3: build the transfer instruction",
+      "Step 4: build the transaction message",
+      "Step 5: sign and submit",
+      "Step 6: map failures by domain",
+      "Why this structure scales",
+      "Related docs"
+    ],
+    "content": "A transfer flow is more than a single helper call. In practice, you need to: 1. collect inputs 2. fetch chain state 3. build the message 4. sign 5. send 6. confirm 7. classify failures This guide focuses on the shape of that pipeline so you can adapt it to SOL transfers, SPL token transfers, or your own typed program client. Step 1: gather the inputs Typical transfer inputs: the sender signer or wallet the recipient address the amount an instruction builder or program client an RPC client Keeping these explicit at the function boundary makes the transfer flow easier to test. Step 2: fetch the latest blockhash A blockhash-based transaction must include a valid lifetime constraint before it can be signed. Step 3: build the transfer instruction Whether you use a system-program helper, a token-program client, or a custom instruction builder, the output should be an Instruction. Step 4: build the transaction message Step 5: sign and submit Step 6: map failures by domain Useful high-level buckets: RPC failures — provider downtime, transport errors, malformed responses transaction failures — missing signers, expired blockhash, signature issues program/instruction failures — insufficient funds, invalid accounts, program-specific rules SolanaError domains make it easier to route these to the right product behavior. Why this structure scales This shape works equally well for: one-off wallet sends backend automation mobile wallet adapter integrations typed program clients instruction-plan-based multi-step workflows Related docs First Transaction Transactions Signers Errors and Diagnostics"
+  },
+  {
+    "title": "Mobile Wallet Adapter",
+    "description": "Step-by-step guide for integrating Solana Mobile Wallet Adapter flows.",
+    "route": "/guides/mobile-wallet-adapter",
+    "headings": [
+      "Why MWA Exists in This Workspace",
+      "Platform Support",
+      "Android",
+      "iOS",
+      "Example app architecture",
+      "Step-by-Step Integration",
+      "Step 1: Choose Your Layer",
+      "Step 2: Configure Session Lifecycle",
+      "Step 3: Bind Signing and Transaction Calls",
+      "Step 4: Add User-Facing Failure Modes",
+      "Step 5: Validate on Device"
+    ],
+    "content": "Why MWA Exists in This Workspace solanakitmobilewalletadapterprotocol and solanakitmobilewalletadapter separate protocol behavior from Flutter platform wiring. protocol package: portable cryptography/session handshake logic. flutter package: Android integration with wallet sessions. Platform Support Android Android is the only fully supported platform for Solana Mobile Wallet Adapter flows in this workspace. iOS iOS is intentionally shipped as a safe stub/no-op layer for mixed-platform Flutter apps. This is not because this workspace does not want to support iOS. The current limitation comes from the Solana Mobile Wallet Adapter ecosystem itself: the wallet handoff model and supporting wallet infrastructure are Android-based today, so there is no equivalent iOS MWA target for this package to integrate with. That means: apps can still compile and ship shared Flutter code to iOS. solanakitmobilewalletadapter should be treated as unavailable on iOS. iOS code paths should provide an alternate wallet strategy or a clear unsupported-platform UX. Use isMwaSupported() / assertMwaSupported() to gate platform behavior explicitly. Android-only Mobile Wallet Adapter Real wallet handoff is available only on Android today. On iOS, solanakitmobilewalletadapter remains a safe stub/no-op because the current Solana MWA ecosystem does not expose an equivalent iOS integration target. Gate wallet-handoff flows with isMwaSupported() / assertMwaSupported() and present a clear fallback such as browser-wallet instructions, a manual deep link path, or an explicit unsupported-platform message on iOS. Example app architecture For Flutter apps, keep three boundaries explicit: platform support gate — use isMwaSupported() / assertMwaSupported() plus endpoint checks before launching wallet handoff. wallet session state — keep authorize, reauthorize, capabilities, and deauthorize flows inside a dedicated controller/service boundary. transaction submission boundary — prepare or fetch base64 transaction payloads outside the widget tree, then hand them to the wallet layer for sign-and-send. The package example app demonstrates this Android-first structure and keeps a clear unsupported-platform UX on iOS. Step-by-Step Integration Step 1: Choose Your Layer Use protocol-only package for pure Dart flows. Use Flutter package for Android app integrations. Reason: keeps platform code isolated from protocol contracts. Step 2: Configure Session Lifecycle establish association URI flow. start and manage wallet sessions. enforce session timeout/cleanup behavior. Reason: session lifecycle errors are the most common production issue. Step 3: Bind Signing and Transaction Calls connect session methods to your solanakit transaction builders. keep wallet interactions behind one abstraction. Reason: easier to swap/mock wallet behavior in tests. Step 4: Add User-Facing Failure Modes wallet unavailable session rejected signing denied Reason: explicit UX handling improves trust and recovery. Step 5: Validate on Device test on real Android hardware. verify deep link/session resumption flows. Reason: emulator-only testing misses many wallet handoff issues."
+  },
+  {
+    "title": "Release Process",
+    "description": "End-to-end release guidance for preparing and publishing package releases.",
+    "route": "/guides/release-process",
+    "headings": [
+      "Release Goals",
+      "Step-by-Step Release Flow",
+      "Step 1: Validate Workspace Health",
+      "Step 2: Prepare Release Changes",
+      "Step 3: Publish Package Artifacts",
+      "Step 4: Validate Published Artifacts",
+      "Operational Guidance"
+    ],
+    "content": "Release Goals The current release flow is run locally by a maintainer. It separates version preparation from package publication so version bumps, changelogs, and package metadata can be reviewed before anything is published to pub.dev. Step-by-Step Release Flow Step 1: Validate Workspace Health Run the standard workspace checks before preparing a release: Reason: release quality gates should fail fast before versions or changelogs change. Step 2: Prepare Release Changes From a local checkout, create a release branch or PR that applies the pending changesets, updates package versions, and refreshes changelogs. Review the generated package versions and release notes before merging. Reason: package consumers should see accurate version numbers and user-facing release notes. Step 3: Publish Package Artifacts After the release changes are merged and tagged, publish the changed packages from the release commit on the maintainer machine. Always run a publish dry run first, then publish in dependency order or in small batches when many packages changed. Reason: phased publishing reduces blast radius and makes it easier to recover if registry limits or package metadata problems appear. Step 4: Validate Published Artifacts Verify package metadata on pub.dev. Confirm each published package resolves from a clean consumer project. Smoke test critical quick-start paths. Reason: publishing success alone does not guarantee downstream usability. Operational Guidance Keep release cadence predictable. Batch breaking changes with migration notes. Document user-visible changes and minimum SDK changes clearly. Verify the umbrella package resolves after publishing dependent packages. Move publication to Trusted Publishing once registry setup is ready."
+  },
+  {
+    "title": "Create a Subscription Authority",
+    "route": "/guides/subscriptions-authority",
+    "headings": [
+      "Create a Subscription Authority"
+    ],
+    "content": "Create a Subscription Authority Create a Subscription Authority once per (user, token mint) pair. The user's associated token account must exist first. Build the instruction with getInitSubscriptionAuthorityInstruction, add it to a transaction, and sign with the owner. Fetch and decode SubscriptionAuthority before creating it when your app may have initialized the authority already."
+  },
+  {
+    "title": "Close a Subscription Authority",
+    "route": "/guides/subscriptions-close-authority",
+    "headings": [
+      "Close a Subscription Authority"
+    ],
+    "content": "Close a Subscription Authority Close the Subscription Authority after all fixed, recurring, and subscription delegations that depend on it have been closed or revoked. Closing returns the authority account rent and removes the program authority for that (user, token mint) pair. The user signs the transaction. If your app stores derived addresses, recompute the PDA before closing so the instruction targets the canonical authority for the user and mint."
+  },
+  {
+    "title": "Fixed delegation",
+    "route": "/guides/subscriptions-fixed-delegation",
+    "headings": [
+      "Fixed delegation"
+    ],
+    "content": "Fixed delegation A fixed delegation lets a delegatee pull up to a fixed token amount. Each successful transfer reduces the remaining allowance. Use expiryTs: BigInt.zero for no expiry. The delegator signs setup and revoke transactions. The delegatee signs transfer transactions built with getTransferFixedInstruction."
+  },
+  {
+    "title": "Subscriptions overview",
+    "route": "/guides/subscriptions-overview",
+    "headings": [
+      "Subscriptions overview"
+    ],
+    "content": "Subscriptions overview The Subscriptions Delegation Program lets users authorize future SPL Token or Token-2022 transfers with explicit limits. In Dart, use solanakitsubscriptions for generated PDAs, account decoders, and instruction builders. Each (user, token mint) pair gets a program-controlled Subscription Authority. The user's token account approves that authority once. The program then checks every requested pull against an active authorization record. | Model | Use | | -------------------- | ------------------------------------------------------------------------------------ | | Fixed delegation | Let a delegatee spend up to one total allowance, optionally with an expiry. | | Recurring delegation | Let a delegatee spend up to a limit that resets each period. | | Subscription plan | Let a merchant publish terms that subscribers accept and approved collectors charge. | Amounts are token base units. For a 6-decimal token, 1000000 means 1 token."
+  },
+  {
+    "title": "Subscription plans",
+    "route": "/guides/subscriptions-plan",
+    "headings": [
+      "Subscription plans"
+    ],
+    "content": "Subscription plans Subscription plans let a merchant publish reusable terms. A subscriber accepts a plan with getSubscribeInstruction, which creates a subscription delegation account tied to the accepted terms. After the plan exists, derive the subscription delegation PDA and call getSubscribeInstruction. Use getTransferSubscriptionInstruction for billing, getCancelSubscriptionInstruction for subscriber cancellation, and getResumeSubscriptionInstruction to resume a paused subscription."
+  },
+  {
+    "title": "Recurring delegation",
+    "route": "/guides/subscriptions-recurring-delegation",
+    "headings": [
+      "Recurring delegation"
+    ],
+    "content": "Recurring delegation A recurring delegation lets a delegatee pull up to a token limit that resets every period. The program rejects transfers that exceed the current period's remaining allowance. Use getTransferRecurringInstruction for collection. It updates the recurring delegation account so the remaining allowance and billing window stay consistent on-chain."
+  },
+  {
+    "title": "Complete Package Catalog",
+    "description": "Every Solana Kit package, why it exists, what it does, and when to use it.",
+    "route": "/reference/package-catalog",
+    "headings": [
+      "Umbrella Packages",
+      "solanakit",
+      "solanakitcodecs",
+      "Error and Domain Foundations",
+      "solanakiterrors",
+      "Address, Keys, and Signers",
+      "solanakitaddress",
+      "solanakitaddresses",
+      "solanakitaddressconstants",
+      "solanakitkeys",
+      "solanakitsigners",
+      "Codec Layer",
+      "solanakitcodecscore",
+      "solanakitcodecsnumbers",
+      "solanakitcodecsstrings",
+      "solanakitcodecsdatastructures",
+      "solanakitoptions",
+      "solanakitfixedpoints",
+      "Instructions and Transactions",
+      "solanakitinstructions",
+      "solanakittransactionmessages",
+      "solanakittransactions",
+      "solanakitoffchainmessages",
+      "solanakitinstructionplans",
+      "solanakittransactionconfirmation",
+      "RPC and Protocol Types",
+      "solanakitrpc",
+      "solanakitrpcapi",
+      "solanakitrpctypes",
+      "solanakitrpcspec",
+      "solanakitrpcspectypes",
+      "solanakitrpcparsedtypes",
+      "solanakitrpctransformers",
+      "solanakitrpctransporthttp",
+      "Subscriptions and Streaming",
+      "solanakitrpcsubscriptions",
+      "solanakitrpcsubscriptionsapi",
+      "solanakitrpcsubscriptionschannelwebsocket",
+      "solanakitsubscribable",
+      "Accounts and Programs",
+      "solanakitaccounts",
+      "solanakitprograms",
+      "solanakitprogramclientcore",
+      "solanakitsystem",
+      "solanakitconfig",
+      "solanakitloader",
+      "solanakitmemo",
+      "solanakittoken",
+      "solanakittoken2022",
+      "solanakitassociatedtokenaccount",
+      "solanakitaddresslookuptable",
+      "solanakitcomputebudget",
+      "solanakitstake",
+      "solanakitsplaccountcompression",
+      "solanakitmplbubblegum",
+      "solanakitsubscriptions",
+      "solanakitsysvars",
+      "Utilities and Ecosystem Integrations",
+      "solanakitfunctional",
+      "solanakitfaststablestringify",
+      "solanakitmobilewalletadapterprotocol",
+      "solanakitmobilewalletadapter",
+      "solanakithelius",
+      "Internal and Workspace Support Packages",
+      "solanakitlints",
+      "solanakittestmatchers",
+      "codama-renderers-dart/test-generated"
+    ],
+    "content": "Each subsection below maps one package to its role in the Solana ecosystem and this workspace. Umbrella Packages solanakit Pub.dev: solanakit Why it exists: most app teams need one import surface, not dozens of package imports. What it does: re-exports the core SDK package set behind one stable entrypoint while leaving program-specific packages as explicit imports. Use it when: building application code that uses multiple Solana features. solanakitcodecs Pub.dev: solanakitcodecs Why it exists: codec-heavy apps need one import for all binary serialization helpers. What it does: re-exports codec core, number, string, and data-structure codecs. Use it when: writing account/program serializers or data ingestion pipelines. Error and Domain Foundations solanakiterrors Pub.dev: solanakiterrors Why it exists: Solana failures are domain-specific and should be machine-handleable. What it does: provides SolanaError, domain helpers, and numeric error codes. Use it when: mapping low-level failures to recoverable app behavior. Address, Keys, and Signers solanakitaddress Pub.dev: solanakitaddress Why it exists: the lowest-level address type and codecs need a small dependency surface. What it does: provides the Address extension type, validation, codecs, comparators, and public-key conversion helpers. Use it when: another package needs address primitives without the broader address helper surface. solanakitaddresses Pub.dev: solanakitaddresses Why it exists: addresses are core Solana identity primitives and need strict validation. What it does: validates addresses, supports encoding/decoding, and derives PDAs. Use it when: creating account references, PDAs, and address comparisons. solanakitaddressconstants Pub.dev: solanakitaddressconstants Why it exists: well-known program, sysvar, SPL, Metaplex, and mint addresses should not be hardcoded throughout the workspace. What it does: centralizes typed Address constants for common on-chain addresses. Use it when: referencing native programs, sysvars, SPL programs, Metaplex programs, or common token mints. solanakitkeys Pub.dev: solanakitkeys Why it exists: signing and key generation should be typed and standardized across apps. What it does: generates key pairs and exposes Solana-compatible key utilities. Use it when: generating wallets, deriving public keys, or signing messages. solanakitsigners Pub.dev: solanakitsigners Why it exists: signing flows vary (fee payer, partial signer, delegated signer). What it does: defines signer contracts used by transaction and message pipelines. Use it when: coordinating multi-signer transaction workflows. Codec Layer solanakitcodecscore Pub.dev: solanakitcodecscore Why it exists: protocol encoding primitives should stay framework-agnostic. What it does: provides foundational Codec, Encoder, and Decoder abstractions. Use it when: implementing reusable encoding logic across programs. solanakitcodecsnumbers Pub.dev: solanakitcodecsnumbers Why it exists: Solana wire formats are numeric-heavy and endian-sensitive. What it does: offers numeric codecs like u8, u64, i128, and float codecs. Use it when: encoding instruction data and account binary payloads. solanakitcodecsstrings Pub.dev: solanakitcodecsstrings Why it exists: common Solana encodings (base58/base64/utf8) should be consistent. What it does: provides codecs for textual and base-encoded representations. Use it when: handling wallet addresses, memo strings, and encoded blobs. solanakitcodecsdatastructures Pub.dev: solanakitcodecsdatastructures Why it exists: Solana program data is often nested and variant-rich. What it does: builds composite codecs for structs, unions, tuples, arrays, and maps. Use it when: modeling complex account/program data layouts. solanakitoptions Pub.dev: solanakitoptions Why it exists: many Solana structures use optional values with Rust-like semantics. What it does: offers typed option variants and optional-value codec support. Use it when: serializing optional account fields or params. solanakitfixedpoints Pub.dev: solanakitfixedpoints Why it exists: token, fee, and decimal arithmetic need exact fixed-point behavior instead of floating-point approximations. What it does: provides binary and decimal fixed-point arithmetic, parsing, formatting, comparison, conversion, and codecs. Use it when: representing precise on-chain numeric values with explicit scale or precision. Instructions and Transactions solanakitinstructions Pub.dev: solanakitinstructions Why it exists: instructions are the core unit of Solana program interaction. What it does: models instruction payloads and account metadata roles. Use it when: building program invocations at a typed boundary. solanakittransactionmessages Pub.dev: solanakittransactionmessages Why it exists: message assembly has protocol-specific lifetime and payer constraints. What it does: constructs and mutates transaction messages before signing. Use it when: composing transaction intent prior to wire encoding. solanakittransactions Pub.dev: solanakittransactions Why it exists: finalized transaction wire objects need deterministic serialization. What it does: compiles messages into signed transactions and wire bytes. Use it when: sending transactions to Solana RPC endpoints. solanakitoffchainmessages Pub.dev: solanakitoffchainmessages Why it exists: off-chain signatures need typed envelopes and replay-safe structure. What it does: builds/signs off-chain message formats. Use it when: signing auth payloads or attestations outside chain execution. solanakitinstructionplans Pub.dev: solanakitinstructionplans Why it exists: many dApp operations need multi-step transaction orchestration. What it does: models sequential/parallel instruction planning utilities. Use it when: composing larger workflows across multiple instructions. solanakittransactionconfirmation Pub.dev: solanakittransactionconfirmation Why it exists: confirmation strategy varies by risk tolerance and latency goals. What it does: provides confirmation strategies and racing behavior. Use it when: handling production-grade send-and-confirm flows. RPC and Protocol Types solanakitrpc Pub.dev: solanakitrpc Why it exists: apps need a high-level, typed RPC entrypoint. What it does: exposes client factories and common RPC sending workflows. Use it when: issuing JSON-RPC requests from app/business logic. solanakitrpcapi Pub.dev: solanakitrpcapi Why it exists: method signatures should be typed, not stringly. What it does: defines strongly typed RPC method builders and params. Use it when: authoring method-specific request code. solanakitrpctypes Pub.dev: solanakitrpctypes Why it exists: typed response models reduce runtime parsing bugs. What it does: defines shared RPC response/parameter type models. Use it when: handling typed account, balance, block, and signature data. solanakitrpcspec Pub.dev: solanakitrpcspec Why it exists: transport-agnostic RPC contracts improve composability. What it does: defines core JSON-RPC interfaces and abstractions. Use it when: building custom transports or API adapters. solanakitrpcspectypes Pub.dev: solanakitrpcspectypes Why it exists: low-level protocol frames need reusable typed definitions. What it does: defines low-level request/response protocol value types. Use it when: interfacing with transport internals or middleware. solanakitrpcparsedtypes Pub.dev: solanakitrpcparsedtypes Why it exists: parsed account data should be typed across known programs. What it does: models parsed token/stake/system/etc. account responses. Use it when: consuming parsed account RPC responses. solanakitrpctransformers Pub.dev: solanakitrpctransformers Why it exists: response normalization and error transformation should be reusable. What it does: transforms RPC payloads, errors, and bigint values. Use it when: centralizing transport and payload policy. solanakitrpctransporthttp Pub.dev: solanakitrpctransporthttp Why it exists: HTTP transport concerns should be isolated from business logic. What it does: provides HTTP transport implementations for RPC. Use it when: connecting to hosted or self-managed RPC endpoints. Subscriptions and Streaming solanakitrpcsubscriptions Pub.dev: solanakitrpcsubscriptions Why it exists: realtime apps need managed subscription clients. What it does: exposes high-level subscription orchestration APIs. Use it when: building live updates for account/slot/log changes. solanakitrpcsubscriptionsapi Pub.dev: solanakitrpcsubscriptionsapi Why it exists: websocket subscription methods should be type-safe. What it does: defines typed subscription method builders. Use it when: wiring notification pipelines with compile-time method checks. solanakitrpcsubscriptionschannelwebsocket Pub.dev: solanakitrpcsubscriptionschannelwebsocket Why it exists: websocket channel behavior should be encapsulated. What it does: provides a websocket channel implementation for subscriptions. Use it when: customizing socket lifecycle and reconnection behavior. solanakitsubscribable Pub.dev: solanakitsubscribable Why it exists: subscription sources should map cleanly to streams/iterables. What it does: wraps subscribable patterns and stream adapters. Use it when: bridging subscription APIs to Dart stream consumers. Accounts and Programs solanakitaccounts Pub.dev: solanakitaccounts Why it exists: account fetch/decode logic should be standardized. What it does: fetches and decodes account payloads into typed wrappers. Use it when: reading on-chain state safely and repeatedly. solanakitprograms Pub.dev: solanakitprograms Why it exists: program error handling is nuanced and repetitive. What it does: provides helpers for program-focused error interpretation. Use it when: handling custom program-specific failures. solanakitprogramclientcore Pub.dev: solanakitprogramclientcore Why it exists: program clients need common reusable foundations. What it does: exposes shared utilities for building typed program clients. Use it when: generating or hand-writing client SDK wrappers. solanakitsystem Pub.dev: solanakitsystem Why it exists: System Program instructions are foundational to account creation, lamport transfers, and ownership changes. What it does: provides generated instruction builders, account decoders, errors, PDA helpers, and program constants for the System Program. Use it when: creating accounts, transferring SOL, assigning ownership, allocating data, or using nonce flows. solanakitconfig Pub.dev: solanakitconfig Why it exists: Solana's native Config program needs typed builders and decoders. What it does: provides Config program codecs, account decoders, instruction builders, and helpers for storing configuration data. Use it when: reading or writing native Config program accounts. solanakitloader Pub.dev: solanakitloader Why it exists: program deployment and upgrade flows require typed loader instructions and account models. What it does: supports BPF Loader v3/Upgradeable and Loader v4 instructions, account codecs, and deployment/upgrade planning helpers. Use it when: writing tooling around program buffers, deploys, upgrades, authority changes, or loader account decoding. solanakitmemo Pub.dev: solanakitmemo Why it exists: memo instructions are simple but common enough to deserve a typed helper. What it does: builds Memo program instructions and exposes current and legacy Memo program addresses. Use it when: attaching UTF-8 memo text to transactions. solanakittoken Pub.dev: solanakittoken Why it exists: SPL Token workflows need generated coverage plus ergonomic helpers. What it does: provides SPL Token instruction builders, parsers, codecs, and convenience exports for associated token account flows. Use it when: minting, transferring, burning, approving, freezing, or managing classic SPL Token accounts. solanakittoken2022 Pub.dev: solanakittoken2022 Why it exists: Token-2022 adds extension-aware token behavior that should be modeled separately from classic SPL Token. What it does: provides generated Token-2022 builders plus focu"
+  },
+  {
+    "title": "Package Index",
+    "description": "Category-level map of the Solana Kit workspace packages with guidance on where to start.",
+    "route": "/reference/package-index",
+    "headings": [
+      "Start with the umbrella package unless you have a reason not to",
+      "Umbrella",
+      "Core primitives",
+      "Transaction stack",
+      "RPC + subscriptions",
+      "Accounts + programs",
+      "Codecs + options",
+      "Program clients",
+      "Specialized integrations",
+      "Utilities",
+      "Workspace support",
+      "Helpful follow-ups"
+    ],
+    "content": "Use this page when you need to answer: which package should I import? For full per-package rationale and package-by-package usage guidance, continue to Complete Package Catalog. Start with the umbrella package unless you have a reason not to If you're building an application and want the smoothest experience for the core SDK surface, start with: solanakit Then move to smaller packages only when you want a narrower dependency surface or a stricter architectural boundary. Program-specific packages such as solanakitsystem and solanakittoken should always be imported explicitly. Umbrella solanakit solanakitcodecs Core primitives solanakitaddress solanakitaddresses solanakitaddressconstants solanakitkeys solanakitsigners solanakiterrors Transaction stack solanakitinstructions solanakittransactionmessages solanakittransactions solanakittransactionconfirmation solanakitinstructionplans solanakitoffchainmessages RPC + subscriptions solanakitrpc solanakitrpcapi solanakitrpctypes solanakitrpcspec solanakitrpcspectypes solanakitrpctransporthttp solanakitrpctransformers solanakitrpcsubscriptions solanakitrpcsubscriptionsapi solanakitrpcsubscriptionschannelwebsocket solanakitsubscribable Accounts + programs solanakitaccounts solanakitprograms solanakitprogramclientcore solanakitsysvars solanakitrpcparsedtypes Codecs + options solanakitcodecscore solanakitcodecsnumbers solanakitcodecsstrings solanakitcodecsdatastructures solanakitoptions solanakitfixedpoints Program clients solanakitsystem solanakitconfig solanakitloader solanakitmemo solanakittoken solanakittoken2022 solanakitassociatedtokenaccount solanakitaddresslookuptable solanakitcomputebudget solanakitstake solanakitsplaccountcompression solanakitmplbubblegum solanakitsubscriptions Specialized integrations solanakitmobilewalletadapter solanakitmobilewalletadapterprotocol solanakithelius Utilities solanakitfunctional solanakitfaststablestringify Workspace support solanakitlints solanakittestmatchers Helpful follow-ups Quick Start Accounts Codecs Transactions Complete Package Catalog"
+  },
+  {
+    "title": "Upstream Compatibility",
+    "description": "How this workspace tracks @solana/kit compatibility.",
+    "route": "/reference/upstream-compatibility",
+    "headings": [
+      "Upstream Compatibility",
+      "Validation Workflow",
+      "Current Executable Parity Scope",
+      "Versioning Guidance"
+    ],
+    "content": "Upstream Compatibility Latest supported @solana/kit version: 6.9.0 This Dart port tracks upstream APIs and behavior through v6.9.0. Parity status Executable parity currently covers stable, CI-cheap surfaces: address/signature validation, derivation, transaction message compilation, wire serialization, and selected invalid-input error codes. Live RPC timing, subscription transport behavior, mobile platform adapters, and other intentionally documented divergences remain tracked separately rather than being implied by the current harness. Validation Workflow Keep .repos/kit updated (clone:repos). Run upstream:check to verify tracked compatibility metadata remains internally consistent. Run upstream:parity to install the tracked @solana/kit release in a local cache, generate runtime fixtures, and compare selected Dart behaviors against upstream. Record intentional deviations and migration notes. Re-run benchmarks after major upstream alignment changes. Current Executable Parity Scope The first harness focuses on stable, high-signal surfaces that are cheap to run in CI: address validation and coercion semantics address encoding and derivation helpers signature validation/coercion semantics signer deduplication and assertion context parity transaction message v1 compilation and wire serialization transaction message v0 compilation and wire serialization transaction size limits (legacy, v0, v1) transaction message size limit version-aware helpers error-code parity for selected invalid inputs JSON-RPC error BigInt code support sendTransaction preflight context defaults simulateTransaction metadata defaults compute-unit helpers (set/limit estimation) SOL/Lamports type helpers reactive store and slot-tracking subscription helpers abortable websocket subscription helpers key-pair writing and grinding helpers fixed-point binary/decimal arithmetic vote-account Agave v3 parsed types client/plugin composition helpers instruction-plan version-aware size compatibility The harness intentionally does not yet cover live RPC behavior, subscription transport timing, mobile-wallet platform adapters, Helius-specific extensions, or stricter Dart-only transaction-construction invariants such as requiring an explicit lifetime before compilation. Those remain tracked separately in the roadmap and issue set. Versioning Guidance When upstream introduces breaking API behavior, prefer explicit compatibility notes and migration docs over silent behavior changes."
+  }
+]

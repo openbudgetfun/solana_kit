@@ -50,11 +50,11 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ),
   },
   styles: () => [
-    ..._zoomable_image.ZoomableImage.styles,
     ..._callout.Callout.styles,
     ..._github_button.GitHubButton.styles,
     ..._image.Image.styles,
     ..._theme_toggle.ThemeToggleState.styles,
+    ..._zoomable_image.ZoomableImage.styles,
   ],
 );
 
