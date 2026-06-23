@@ -11,6 +11,7 @@ import 'package:jaspr_content/theme.dart';
 import 'package:solana_kit_docs_site/components/site_docs_layout.dart';
 import 'package:solana_kit_docs_site/components/site_header.dart';
 import 'package:solana_kit_docs_site/components/site_paths.dart';
+import 'package:solana_kit_docs_site/components/site_search.dart';
 import 'package:solana_kit_docs_site/components/site_sidebar.dart';
 // This file is generated automatically by Jaspr, do not remove or edit.
 import 'package:solana_kit_docs_site/main.server.options.dart';
@@ -38,9 +39,10 @@ void main() {
             basePath: docsRoute(docsBasePath, '/'),
             title: 'Solana Kit Docs',
             logo: docsRoute(docsBasePath, '/images/logo.svg'),
-            items: const [
-              ThemeToggle(),
-              GitHubButton(repo: 'openbudgetfun/solana_kit'),
+            items: [
+              SiteSearch(basePath: docsBasePath),
+              const ThemeToggle(),
+              const GitHubButton(repo: 'openbudgetfun/solana_kit'),
             ],
           ),
           sidebar: SiteSidebar(basePath: docsBasePath),

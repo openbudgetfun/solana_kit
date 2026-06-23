@@ -299,6 +299,7 @@ in
         mkdir -p .mdt/cache
         mdt check --verbose
         dart run "$DEVENV_ROOT/scripts/sync_dart_doc_comments.dart" --check
+        dart run scripts/generate_docs_search_index.dart --check
         # Prime the cache history so mdt doctor can evaluate cache efficiency
         # in fresh CI checkouts without returning a cache-history-only skip.
         mdt info >/dev/null
@@ -324,6 +325,7 @@ in
     "docs:site:serve" = {
       exec = ''
         set -euo pipefail
+        dart run "$DEVENV_ROOT/scripts/generate_docs_search_index.dart"
         cd "$DEVENV_ROOT/docs/site"
         flutter pub get
         fvm dart run jaspr_cli:jaspr serve "$@"
@@ -334,6 +336,7 @@ in
     "docs:site:build" = {
       exec = ''
         set -euo pipefail
+        dart run "$DEVENV_ROOT/scripts/generate_docs_search_index.dart"
         cd "$DEVENV_ROOT/docs/site"
         flutter pub get
         fvm dart run build_runner clean
