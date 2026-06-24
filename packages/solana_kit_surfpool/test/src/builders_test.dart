@@ -20,8 +20,9 @@ void main() {
           .withExecutable(executable: false);
 
       data[0] = 9;
-      final exposedData = builder.data!;
-      exposedData[1] = 9;
+      final exposedData = builder.data;
+      expect(exposedData, isNotNull);
+      exposedData![1] = 9;
 
       expect(builder.data, <int>[0, 1, 2, 255]);
       expect(builder.method, 'surfnet_setAccount');

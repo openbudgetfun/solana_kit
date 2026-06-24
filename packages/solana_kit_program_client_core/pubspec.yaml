@@ -1,14 +1,11 @@
 name: solana_kit_program_client_core
 description: Program client core for the Solana Kit Dart SDK.
 version: 0.5.0
-repository: https://github.com/openbudgetfun/solana_kit
+repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_program_client_core
 homepage: https://openbudgetfun.github.io/solana_kit/
-
 environment:
   sdk: ^3.12.0
-
 resolution: workspace
-
 dependencies:
   solana_kit_accounts: ^0.5.0
   solana_kit_addresses: ^0.5.0

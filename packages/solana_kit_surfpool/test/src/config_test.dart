@@ -48,8 +48,9 @@ void main() {
       enables.clear();
       disables.clear();
       payerSecretKey[0] = 9;
-      final exposedSecretKey = config.payerSecretKey!;
-      exposedSecretKey[1] = 9;
+      final exposedSecretKey = config.payerSecretKey;
+      expect(exposedSecretKey, isNotNull);
+      exposedSecretKey![1] = 9;
 
       expect(config.airdropAddresses, <Address>[account]);
       expect(config.enableFeatures, <Address>[feature]);

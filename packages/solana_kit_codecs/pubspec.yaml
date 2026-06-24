@@ -1,14 +1,11 @@
 name: solana_kit_codecs
 description: Umbrella package re-exporting all codec sub-packages for the Solana Kit Dart SDK.
 version: 0.5.0
-repository: https://github.com/openbudgetfun/solana_kit
+repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_codecs
 homepage: https://openbudgetfun.github.io/solana_kit/
-
 environment:
   sdk: ^3.12.0
-
 resolution: workspace
-
 dependencies:
   solana_kit_codecs_core: ^0.5.0
   solana_kit_codecs_data_structures: ^0.5.0

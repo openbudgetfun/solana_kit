@@ -1,15 +1,12 @@
 name: solana_kit_test_matchers
 description: Test assertion helpers for the Solana Kit Dart SDK.
 version: 0.5.0
-repository: https://github.com/openbudgetfun/solana_kit
+repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_test_matchers
 homepage: https://openbudgetfun.github.io/solana_kit/
 publish_to: none
-
 environment:
   sdk: ^3.12.0
-
 resolution: workspace
-
 dependencies:
   solana_kit_accounts: ^0.5.0
   solana_kit_addresses: ^0.5.0
@@ -25,7 +22,6 @@ dependencies:
   solana_kit_transaction_messages: ^0.5.0
   solana_kit_transactions: ^0.5.0
   test: ^1.25.0
-
 dev_dependencies:
   solana_kit_lints: ^0.5.0
   solana_kit_rpc_subscriptions_channel_websocket: ^0.5.0

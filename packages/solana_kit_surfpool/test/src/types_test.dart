@@ -115,8 +115,9 @@ void main() {
       final options = DeployOptions(programId: account, soBytes: soBytes);
 
       soBytes[0] = 9;
-      final exposedBytes = options.soBytes!;
-      exposedBytes[1] = 9;
+      final exposedBytes = options.soBytes;
+      expect(exposedBytes, isNotNull);
+      exposedBytes![1] = 9;
 
       expect(options.programId, account);
       expect(options.soPath, isNull);
