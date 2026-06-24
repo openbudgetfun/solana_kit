@@ -401,6 +401,13 @@ Each subsection below maps one package to its role in the Solana ecosystem and t
 - What it does: adds Helius-specific API ergonomics and models.
 - Use it when: your infra depends on Helius endpoints and features.
 
+### solana_kit_surfpool
+
+- Pub.dev: [solana_kit_surfpool](https://pub.dev/packages/solana_kit_surfpool)
+- Why it exists: Surfpool cheatcodes make Solana integration tests faster and more deterministic without native Dart bindings.
+- What it does: starts a CLI-backed Surfnet, wraps Surfpool JSON-RPC cheatcodes, time travel, token/account mutation, and program deployment helpers.
+- Use it when: writing Dart tests that need an isolated local Surfpool network or mainnet-forked account state.
+
 ## Internal and Workspace Support Packages
 
 ### solana_kit_lints

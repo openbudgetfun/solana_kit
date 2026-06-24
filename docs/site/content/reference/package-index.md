@@ -90,6 +90,7 @@ Then move to smaller packages only when you want a narrower dependency surface o
 - [`solana_kit_mobile_wallet_adapter`](https://pub.dev/packages/solana_kit_mobile_wallet_adapter)
 - [`solana_kit_mobile_wallet_adapter_protocol`](https://pub.dev/packages/solana_kit_mobile_wallet_adapter_protocol)
 - [`solana_kit_helius`](https://pub.dev/packages/solana_kit_helius)
+- [`solana_kit_surfpool`](https://pub.dev/packages/solana_kit_surfpool)
 
 ## Utilities
 
