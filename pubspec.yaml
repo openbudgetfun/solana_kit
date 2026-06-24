@@ -53,6 +53,7 @@ workspace:
   - packages/solana_kit_rpc_types
   - packages/solana_kit_signers
   - packages/solana_kit_spl_account_compression
+  - packages/solana_kit_surfpool
   - packages/solana_kit_subscriptions
   - packages/solana_kit_subscribable
   - packages/solana_kit_system

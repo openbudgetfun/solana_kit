@@ -48,6 +48,7 @@
   "solana_kit_rpc_types": "0.5.0",
   "solana_kit_signers": "0.5.0",
   "solana_kit_spl_account_compression": "0.3.0",
+  "solana_kit_surfpool": "0.0.0",
   "solana_kit_stake": "0.2.0",
   "solana_kit_subscribable": "0.5.0",
   "solana_kit_system": "0.4.1",
