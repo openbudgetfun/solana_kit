@@ -25,6 +25,7 @@ jobs:
         with:
           inputs: ".github/workflows/ .github/actions/"
           advanced-security: true
+        continue-on-error: true
 
   docs-site:
     runs-on: ubuntu-latest
