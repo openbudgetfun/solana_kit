@@ -290,6 +290,23 @@ void main() {
         dataController.close().ignore();
         errorController.close().ignore();
       });
+
+      test('unsubscribe is idempotent', () {
+        final dataController = StreamController<int>.broadcast(sync: true);
+        final errorController = StreamController<Object?>.broadcast(sync: true);
+        final store = createReactiveStreamStore<int>(
+          dataStream: dataController.stream,
+          errorStream: errorController.stream,
+        );
+
+        final unsubscribe = store.subscribe(() {});
+        unsubscribe();
+        unsubscribe();
+
+        store.dispose();
+        dataController.close().ignore();
+        errorController.close().ignore();
+      });
     });
 
     group('dispose', () {
@@ -375,6 +392,27 @@ void main() {
       store.dispose();
       await dataController.close();
       await errorController.close();
+    });
+  });
+
+  group('createReactiveStreamStoreFromDataPublisher', () {
+    test('creates a working store backed by a DataPublisher', () async {
+      final publisher = createDataPublisher();
+      final store = createReactiveStreamStoreFromDataPublisher<int>(
+        dataPublisher: publisher,
+        dataChannelName: 'data',
+        errorChannelName: 'error',
+      );
+
+      expect(store.getUnifiedState().status, ReactiveStreamState.loading);
+
+      publisher.publish('data', 42);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(store.getUnifiedState().status, ReactiveStreamState.loaded);
+      expect(store.getState(), 42);
+
+      store.dispose();
     });
   });
 }
