@@ -6,7 +6,7 @@ ignore:
   - "**/*.freezed.dart"
   - "**/*.mocks.dart"
   - "**/generated/**"
-  - "**/test-generated/**
+  - "**/test-generated/**"
   - "**/.dart_tool/**"
   - "**/build/**"
   - "**/dist/**"
