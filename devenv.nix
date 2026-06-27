@@ -184,10 +184,21 @@ in
     "fix:all" = {
       exec = ''
         set -euo pipefail
+
         docs:update
         fix:lint
         fix:workflows
         monochange check --fix
+        fix:format
+      '';
+      description = "Fix all fixable issues.";
+      binary = "bash";
+    };
+    "fix:release" = {
+      exec = ''
+        set -euo pipefail
+
+        docs:update
         fix:format
       '';
       description = "Fix all fixable issues.";

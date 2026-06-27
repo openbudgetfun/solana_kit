@@ -361,9 +361,9 @@ inputs = [
 steps = [
   { type = "PrepareRelease", name = "plan release", allow_empty_changesets = true },
   { type = "Command", name = "sync dependency versions", when = "{{ number_of_changesets > 0 }}", command = "monochange versions sync" },
-  { type = "Command", name = "format with dprint", when = "{{ number_of_changesets > 0 }}", command = "dprint fmt --config dprint.json" },
   { type = "Command", name = "update flutter lockfiles", when = "{{ number_of_changesets > 0 }}", command = "flutter pub get" },
   { type = "Command", name = "generate pnpm lockfile", when = "{{ number_of_changesets > 0 }}", command = "pnpm install --lockfile-only --no-frozen-lockfile --link-workspace-packages" },
+  { type = "Command", name = "update docs", when = "{{ number_of_changesets > 0 }}", command = "devenv shell fix:release" },
   { type = "CommitRelease", name = "create release commit", when = "{{ number_of_changesets > 0 && inputs.commit }}", inputs = { no_verify = "{{ inputs.no_verify }}", stage_all = true } },
   { type = "Command", name = "push release commit", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.push}}", command = "git push" },
   { type = "TagRelease", name = "create and push release tags", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.tag }}", inputs = { from = "HEAD", push = true, format = "json" } },
