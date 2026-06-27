@@ -28,7 +28,7 @@ class InitializeConfidentialTransferFeeInstructionData {
   final int discriminator;
   final int confidentialTransferFeeDiscriminator;
   final Address? authority;
-  final Address? withdrawWithheldAuthorityElGamalPubkey;
+  final Address withdrawWithheldAuthorityElGamalPubkey;
 }
 
 Encoder<InitializeConfidentialTransferFeeInstructionData>
@@ -44,14 +44,7 @@ getInitializeConfidentialTransferFeeInstructionDataEncoder() {
         noneValue: const ZeroesNoneValue(),
       ),
     ),
-    (
-      'withdrawWithheldAuthorityElGamalPubkey',
-      getNullableEncoder<Address>(
-        getAddressEncoder(),
-        hasPrefix: false,
-        noneValue: const ZeroesNoneValue(),
-      ),
-    ),
+    ('withdrawWithheldAuthorityElGamalPubkey', getAddressEncoder()),
   ]);
 
   return transformEncoder(
@@ -81,14 +74,7 @@ getInitializeConfidentialTransferFeeInstructionDataDecoder() {
         noneValue: const ZeroesNoneValue(),
       ),
     ),
-    (
-      'withdrawWithheldAuthorityElGamalPubkey',
-      getNullableDecoder<Address>(
-        getAddressDecoder(),
-        hasPrefix: false,
-        noneValue: const ZeroesNoneValue(),
-      ),
-    ),
+    ('withdrawWithheldAuthorityElGamalPubkey', getAddressDecoder()),
   ]);
 
   return transformDecoder(
@@ -100,7 +86,7 @@ getInitializeConfidentialTransferFeeInstructionDataDecoder() {
               map['confidentialTransferFeeDiscriminator']! as int,
           authority: map['authority'] as Address?,
           withdrawWithheldAuthorityElGamalPubkey:
-              map['withdrawWithheldAuthorityElGamalPubkey'] as Address?,
+              map['withdrawWithheldAuthorityElGamalPubkey']! as Address,
         ),
   );
 }
@@ -121,7 +107,7 @@ Instruction getInitializeConfidentialTransferFeeInstruction({
   required Address programAddress,
   required Address mint,
   required Address? authority,
-  required Address? withdrawWithheldAuthorityElGamalPubkey,
+  required Address withdrawWithheldAuthorityElGamalPubkey,
 }) {
   final instructionData = InitializeConfidentialTransferFeeInstructionData(
     authority: authority,
@@ -131,7 +117,9 @@ Instruction getInitializeConfidentialTransferFeeInstruction({
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    accounts: [
+      AccountMeta(address: mint, role: AccountRole.writable),
+    ],
     data: getInitializeConfidentialTransferFeeInstructionDataEncoder().encode(
       instructionData,
     ),

@@ -13,7 +13,7 @@ The package is generated from the upstream `solana-foundation/subscriptions` Cod
 ## Upstream Compatibility
 
 - Upstream repository: [`solana-foundation/subscriptions`](https://github.com/solana-foundation/subscriptions)
-- Supported upstream baseline: `ts-client-v0.3.0`
+- Supported upstream baseline: `ts-client-v0.4.0-rc.2`
 - Program address: `De1egAFMkMWZSN5rYXRj9CAdheBamobVNubTsi9avR44`
 - IDL source: generated upstream from Codama-annotated Pinocchio Rust code
 

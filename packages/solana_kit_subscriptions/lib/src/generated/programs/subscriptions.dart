@@ -34,4 +34,7 @@ enum SubscriptionsInstruction {
   subscribe,
   cancelSubscription,
   resumeSubscription,
+  revokeSubscriptionAuthority,
+  revokeAbandonedDelegation,
+  revokeAbandonedSubscription,
 }

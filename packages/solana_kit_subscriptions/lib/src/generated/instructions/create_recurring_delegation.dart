@@ -79,6 +79,7 @@ Instruction getCreateRecurringDelegationInstruction({
   required Address delegationAccount,
   required Address delegatee,
   required Address systemProgram,
+  Address? payer,
   required CreateRecurringDelegationData recurringDelegation,
 }) {
   final instructionData = CreateRecurringDelegationInstructionData(
@@ -93,6 +94,8 @@ Instruction getCreateRecurringDelegationInstruction({
       AccountMeta(address: delegationAccount, role: AccountRole.writable),
       AccountMeta(address: delegatee, role: AccountRole.readonly),
       AccountMeta(address: systemProgram, role: AccountRole.readonly),
+      if (payer != null)
+        AccountMeta(address: payer, role: AccountRole.writableSigner),
     ],
     data: getCreateRecurringDelegationInstructionDataEncoder().encode(
       instructionData,

@@ -44,6 +44,11 @@ export function getAccountPageFragment(
     .map((f: StructFieldTypeNode) => `    required this.${camelCase(f.name as string)},`)
     .join("\n");
 
+  // Empty structs use a no-arg constructor; `const Foo({})` is invalid Dart.
+  const ctorSignature = fields.length === 0
+    ? `const ${typeName}();`
+    : `const ${typeName}({\n${ctorParams}\n  });`;
+
   const eqChecks =
     fields.length === 0
       ? "true"
@@ -54,9 +59,14 @@ export function getAccountPageFragment(
           )
           .join(" &&\n          ");
 
-  const hashFields = fields
-    .map((f: StructFieldTypeNode) => camelCase(f.name as string))
-    .join(", ");
+  const hashFieldNames = fields.map((f: StructFieldTypeNode) => camelCase(f.name as string));
+  // `Object.hash()` requires at least two arguments, so handle 0/1 fields specially.
+  const hashCodeExpr =
+    hashFieldNames.length === 0
+      ? "0"
+      : hashFieldNames.length === 1
+        ? `${hashFieldNames[0]}.hashCode`
+        : `Object.hash(${hashFieldNames.join(", ")})`;
 
   const toStringFields = fields
     .map(
@@ -129,9 +139,7 @@ ${use("decodeAccount", "solanaAccounts")}
 
 @immutable
 class ${fragmentFromString(typeName)} {
-  const ${fragmentFromString(typeName)}({
-${fragmentFromString(ctorParams)}
-  });
+  ${fragmentFromString(ctorSignature)}
 
 ${fragmentFromString(fieldDecls)}
 
@@ -143,7 +151,7 @@ ${fragmentFromString(fieldDecls)}
           ${fragmentFromString(eqChecks)};
 
   @override
-  int get hashCode => Object.hash(${fragmentFromString(hashFields)});
+  int get hashCode => ${fragmentFromString(hashCodeExpr)};
 
   @override
   String toString() => '${fragmentFromString(typeName)}(${fragmentFromString(toStringFields)})';

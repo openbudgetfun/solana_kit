@@ -10,6 +10,7 @@ import {
 } from "../utils/fragment.js";
 import type { RenderScope } from "../utils/options.js";
 import { camelCase, pascalCase } from "../utils/nameTransformers.js";
+import type { TypeManifest } from "../utils/typeManifest.js";
 import { WELL_KNOWN_ADDRESSES } from "../utils/wellKnownAddresses.js";
 
 /**
@@ -41,10 +42,14 @@ export function getPdaPageFragment(
   // Build seeds class if there are variable seeds
   const hasSeedsClass = variableSeeds.length > 0;
 
+  // Collect type manifests so their imports can be merged into the result.
+  const seedManifests: TypeManifest[] = [];
+
   const seedFieldDecls = variableSeeds
     .map((s) => {
       if (s.kind !== "variablePdaSeedNode") return "";
       const manifest = visit(s.type, scope.typeManifestVisitor);
+      seedManifests.push(manifest);
       return `  final ${manifest.type.content} ${camelCase(s.name as string)};`;
     })
     .join("\n");
@@ -78,10 +83,12 @@ export function getPdaPageFragment(
         }
       } else if (seed.value.kind === "numberValueNode") {
         const manifest = visit(seed.type, scope.typeManifestVisitor);
+        seedManifests.push(manifest);
         seedValues.push(`    ${manifest.encoder.content}.encode(${seed.value.number}),`);
       }
     } else if (seed.kind === "variablePdaSeedNode") {
       const manifest = visit(seed.type, scope.typeManifestVisitor);
+      seedManifests.push(manifest);
       seedValues.push(
         `    ${manifest.encoder.content}.encode(seeds.${camelCase(seed.name as string)}),`,
       );
@@ -105,12 +112,15 @@ export function getPdaPageFragment(
     ? use("Uint8List", "dartTypedData")
     : fragmentFromString("");
 
+  // `@immutable` is only needed when a seeds class is emitted.
+  const metaImport = hasSeedsClass ? use("immutable", "meta") : fragmentFromString("");
+
   const parts: Fragment[] = [
     fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
 ${typedDataImport}
-${use("immutable", "meta")}
+${metaImport}
 ${use("Address", "solanaAddresses")}
 ${use("getAddressEncoder", "solanaAddresses")}
 ${use("getProgramDerivedAddress", "solanaAddresses")}`,
@@ -146,7 +156,16 @@ ${fragmentFromString(seedValues.join("\n"))}
   );
 }`);
 
-  return mergeFragments(parts, (cs) => cs.join("\n"));
+  const result = mergeFragments(parts, (cs) => cs.join("\n"));
+
+  // Merge seed type manifest imports (encoders/types) into the result so that
+  // helpers like `getU64Encoder` are imported.
+  for (const manifest of seedManifests) {
+    result.imports.mergeWith(manifest.encoder.imports);
+    result.imports.mergeWith(manifest.type.imports);
+  }
+
+  return result;
 }
 
 function bytesValueToDart(hex: string): string {

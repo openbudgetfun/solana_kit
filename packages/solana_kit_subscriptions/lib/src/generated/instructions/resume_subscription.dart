@@ -65,6 +65,7 @@ Instruction getResumeSubscriptionInstruction({
   required Address subscriber,
   required Address planPda,
   required Address subscriptionPda,
+  required Address subscriptionAuthority,
   required Address eventAuthority,
   required Address selfProgram,
 }) {
@@ -76,6 +77,7 @@ Instruction getResumeSubscriptionInstruction({
       AccountMeta(address: subscriber, role: AccountRole.readonlySigner),
       AccountMeta(address: planPda, role: AccountRole.readonly),
       AccountMeta(address: subscriptionPda, role: AccountRole.writable),
+      AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
       AccountMeta(address: eventAuthority, role: AccountRole.readonly),
       AccountMeta(address: selfProgram, role: AccountRole.readonly),
     ],

@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class WithdrawExcessLamportsInstructionData {
-  const WithdrawExcessLamportsInstructionData({this.discriminator = 38});
+  const WithdrawExcessLamportsInstructionData({
+    this.discriminator = 38,
+  });
 
   final int discriminator;
 }
@@ -63,8 +65,8 @@ getWithdrawExcessLamportsInstructionDataCodec() {
 /// Creates a [WithdrawExcessLamports] instruction.
 Instruction getWithdrawExcessLamportsInstruction({
   required Address programAddress,
-  required Address sourceAccount,
-  required Address destinationAccount,
+  required Address source,
+  required Address destination,
   required Address authority,
 }) {
   final instructionData = WithdrawExcessLamportsInstructionData();
@@ -72,8 +74,8 @@ Instruction getWithdrawExcessLamportsInstruction({
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: sourceAccount, role: AccountRole.writable),
-      AccountMeta(address: destinationAccount, role: AccountRole.writable),
+      AccountMeta(address: source, role: AccountRole.writable),
+      AccountMeta(address: destination, role: AccountRole.writable),
       AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getWithdrawExcessLamportsInstructionDataEncoder().encode(

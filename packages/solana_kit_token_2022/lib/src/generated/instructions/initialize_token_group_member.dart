@@ -14,10 +14,11 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class InitializeTokenGroupMemberInstructionData {
-  InitializeTokenGroupMemberInstructionData({Uint8List? discriminator})
-    : discriminator =
-          discriminator ??
-          Uint8List.fromList([152, 32, 222, 176, 223, 237, 116, 134]);
+  InitializeTokenGroupMemberInstructionData({
+    Uint8List? discriminator,
+  }) : discriminator =
+           discriminator ??
+           Uint8List.fromList([152, 32, 222, 176, 223, 237, 116, 134]);
 
   final Uint8List discriminator;
 }

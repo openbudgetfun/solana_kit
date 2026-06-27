@@ -25,15 +25,17 @@ enum ExtensionType {
   transferHookAccount,
   confidentialTransferFee,
   confidentialTransferFeeAmount,
-  scaledUiAmountConfig,
-  pausableConfig,
-  pausableAccount,
   metadataPointer,
   tokenMetadata,
   groupPointer,
   tokenGroup,
   groupMemberPointer,
   tokenGroupMember,
+  confidentialMintBurn,
+  scaledUiAmountConfig,
+  pausableConfig,
+  pausableAccount,
+  permissionedBurn,
 }
 
 Encoder<ExtensionType> getExtensionTypeEncoder() {

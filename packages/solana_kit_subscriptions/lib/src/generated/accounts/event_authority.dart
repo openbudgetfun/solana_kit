@@ -38,8 +38,7 @@ Decoder<EventAuthority> getEventAuthorityDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        const EventAuthority(),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => EventAuthority(),
   );
 }
 

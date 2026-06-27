@@ -87,7 +87,9 @@ Instruction getEmitTokenMetadataInstruction({
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [AccountMeta(address: metadata, role: AccountRole.readonly)],
+    accounts: [
+      AccountMeta(address: metadata, role: AccountRole.readonly),
+    ],
     data: getEmitTokenMetadataInstructionDataEncoder().encode(instructionData),
   );
 }

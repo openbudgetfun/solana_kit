@@ -68,4 +68,4 @@ final dataLimitIx = getSetLoadedAccountsDataSizeLimitInstruction(
 
 Generated layer mirrors
 [solana-program/compute-budget](https://github.com/solana-program/compute-budget)
-at `js@v0.15.0`.
+at `js@v0.16.0`.

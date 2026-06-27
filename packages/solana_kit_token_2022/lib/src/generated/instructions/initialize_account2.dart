@@ -73,7 +73,9 @@ Instruction getInitializeAccount2Instruction({
   required Address rent,
   required Address owner,
 }) {
-  final instructionData = InitializeAccount2InstructionData(owner: owner);
+  final instructionData = InitializeAccount2InstructionData(
+    owner: owner,
+  );
 
   return Instruction(
     programAddress: programAddress,

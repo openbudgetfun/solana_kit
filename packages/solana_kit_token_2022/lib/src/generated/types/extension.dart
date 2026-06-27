@@ -72,7 +72,9 @@ final class TransferFeeConfig extends Extension {
 }
 
 final class TransferFeeAmount extends Extension {
-  const TransferFeeAmount({required this.withheldAmount});
+  const TransferFeeAmount({
+    required this.withheldAmount,
+  });
 
   final BigInt withheldAmount;
 
@@ -90,7 +92,9 @@ final class TransferFeeAmount extends Extension {
 }
 
 final class MintCloseAuthority extends Extension {
-  const MintCloseAuthority({required this.closeAuthority});
+  const MintCloseAuthority({
+    required this.closeAuthority,
+  });
 
   final Address closeAuthority;
 
@@ -206,7 +210,9 @@ final class ConfidentialTransferAccount extends Extension {
 }
 
 final class DefaultAccountState extends Extension {
-  const DefaultAccountState({required this.state});
+  const DefaultAccountState({
+    required this.state,
+  });
 
   final AccountState state;
 
@@ -237,7 +243,9 @@ final class ImmutableOwner extends Extension {
 }
 
 final class MemoTransfer extends Extension {
-  const MemoTransfer({required this.requireIncomingTransferMemos});
+  const MemoTransfer({
+    required this.requireIncomingTransferMemos,
+  });
 
   final bool requireIncomingTransferMemos;
 
@@ -309,7 +317,9 @@ final class InterestBearingConfig extends Extension {
 }
 
 final class CpiGuard extends Extension {
-  const CpiGuard({required this.lockCpi});
+  const CpiGuard({
+    required this.lockCpi,
+  });
 
   final bool lockCpi;
 
@@ -325,7 +335,9 @@ final class CpiGuard extends Extension {
 }
 
 final class PermanentDelegate extends Extension {
-  const PermanentDelegate({required this.delegate});
+  const PermanentDelegate({
+    required this.delegate,
+  });
 
   final Address delegate;
 
@@ -356,7 +368,10 @@ final class NonTransferableAccount extends Extension {
 }
 
 final class TransferHook extends Extension {
-  const TransferHook({required this.authority, required this.programId});
+  const TransferHook({
+    required this.authority,
+    required this.programId,
+  });
 
   final Address authority;
   final Address programId;
@@ -377,7 +392,9 @@ final class TransferHook extends Extension {
 }
 
 final class TransferHookAccount extends Extension {
-  const TransferHookAccount({required this.transferring});
+  const TransferHookAccount({
+    required this.transferring,
+  });
 
   final bool transferring;
 
@@ -430,7 +447,9 @@ final class ConfidentialTransferFee extends Extension {
 }
 
 final class ConfidentialTransferFeeAmount extends Extension {
-  const ConfidentialTransferFeeAmount({required this.withheldAmount});
+  const ConfidentialTransferFeeAmount({
+    required this.withheldAmount,
+  });
 
   final EncryptedBalance withheldAmount;
 
@@ -510,7 +529,10 @@ final class TokenMetadata extends Extension {
 }
 
 final class GroupPointer extends Extension {
-  const GroupPointer({required this.authority, required this.groupAddress});
+  const GroupPointer({
+    required this.authority,
+    required this.groupAddress,
+  });
 
   final Address? authority;
   final Address? groupAddress;
@@ -612,17 +634,38 @@ final class TokenGroupMember extends Extension {
 }
 
 final class ConfidentialMintBurn extends Extension {
-  const ConfidentialMintBurn();
+  const ConfidentialMintBurn({
+    required this.confidentialSupply,
+    required this.decryptableSupply,
+    required this.supplyElgamalPubkey,
+    required this.pendingBurn,
+  });
+
+  final EncryptedBalance confidentialSupply;
+  final DecryptableBalance decryptableSupply;
+  final Address supplyElgamalPubkey;
+  final EncryptedBalance pendingBurn;
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is ConfidentialMintBurn && true;
+      identical(this, other) ||
+      other is ConfidentialMintBurn &&
+          confidentialSupply == other.confidentialSupply &&
+          decryptableSupply == other.decryptableSupply &&
+          supplyElgamalPubkey == other.supplyElgamalPubkey &&
+          pendingBurn == other.pendingBurn;
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(
+    confidentialSupply,
+    decryptableSupply,
+    supplyElgamalPubkey,
+    pendingBurn,
+  );
 
   @override
-  String toString() => 'Extension.ConfidentialMintBurn()';
+  String toString() =>
+      'Extension.ConfidentialMintBurn(confidentialSupply: $confidentialSupply, decryptableSupply: $decryptableSupply, supplyElgamalPubkey: $supplyElgamalPubkey, pendingBurn: $pendingBurn)';
 }
 
 final class ScaledUiAmountConfig extends Extension {
@@ -662,7 +705,10 @@ final class ScaledUiAmountConfig extends Extension {
 }
 
 final class PausableConfig extends Extension {
-  const PausableConfig({required this.authority, required this.paused});
+  const PausableConfig({
+    required this.authority,
+    required this.paused,
+  });
 
   final Address? authority;
   final bool paused;
@@ -697,7 +743,9 @@ final class PausableAccount extends Extension {
 }
 
 final class PermissionedBurn extends Extension {
-  const PermissionedBurn({required this.authority});
+  const PermissionedBurn({
+    required this.authority,
+  });
 
   final Address? authority;
 
@@ -929,7 +977,15 @@ Encoder<Extension> getExtensionEncoder() {
           ('memberNumber', getU64Encoder()),
         ]),
       ),
-      (24, getStructEncoder([])),
+      (
+        24,
+        getStructEncoder([
+          ('confidentialSupply', getEncryptedBalanceEncoder()),
+          ('decryptableSupply', getDecryptableBalanceEncoder()),
+          ('supplyElgamalPubkey', getAddressEncoder()),
+          ('pendingBurn', getEncryptedBalanceEncoder()),
+        ]),
+      ),
       (
         25,
         getStructEncoder([
@@ -1160,7 +1216,19 @@ Encoder<Extension> getExtensionEncoder() {
           'group': group,
           'memberNumber': memberNumber,
         },
-      ConfidentialMintBurn() => <String, Object?>{'__kind': 24},
+      ConfidentialMintBurn(
+        confidentialSupply: final confidentialSupply,
+        decryptableSupply: final decryptableSupply,
+        supplyElgamalPubkey: final supplyElgamalPubkey,
+        pendingBurn: final pendingBurn,
+      ) =>
+        <String, Object?>{
+          '__kind': 24,
+          'confidentialSupply': confidentialSupply,
+          'decryptableSupply': decryptableSupply,
+          'supplyElgamalPubkey': supplyElgamalPubkey,
+          'pendingBurn': pendingBurn,
+        },
       ScaledUiAmountConfig(
         authority: final authority,
         multiplier: final multiplier,
@@ -1511,7 +1579,12 @@ Decoder<Extension> getExtensionDecoder() {
       (
         24,
         transformDecoder<Map<String, Object?>, Map<String, Object?>>(
-          getStructDecoder([]),
+          getStructDecoder([
+            ('confidentialSupply', getEncryptedBalanceDecoder()),
+            ('decryptableSupply', getDecryptableBalanceDecoder()),
+            ('supplyElgamalPubkey', getAddressDecoder()),
+            ('pendingBurn', getEncryptedBalanceDecoder()),
+          ]),
           (Map<String, Object?> map, Uint8List bytes, int offset) => map,
         ),
       ),
@@ -1701,7 +1774,12 @@ Decoder<Extension> getExtensionDecoder() {
             memberNumber: map['memberNumber']! as BigInt,
           );
         case 24:
-          return ConfidentialMintBurn();
+          return ConfidentialMintBurn(
+            confidentialSupply: map['confidentialSupply']! as EncryptedBalance,
+            decryptableSupply: map['decryptableSupply']! as DecryptableBalance,
+            supplyElgamalPubkey: map['supplyElgamalPubkey']! as Address,
+            pendingBurn: map['pendingBurn']! as EncryptedBalance,
+          );
         case 25:
           return ScaledUiAmountConfig(
             authority: map['authority']! as Address,

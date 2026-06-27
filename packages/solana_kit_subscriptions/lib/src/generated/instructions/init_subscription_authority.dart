@@ -71,6 +71,7 @@ Instruction getInitSubscriptionAuthorityInstruction({
   required Address userAta,
   required Address systemProgram,
   required Address tokenProgram,
+  Address? payer,
 }) {
   final instructionData = InitSubscriptionAuthorityInstructionData();
 
@@ -83,6 +84,8 @@ Instruction getInitSubscriptionAuthorityInstruction({
       AccountMeta(address: userAta, role: AccountRole.writable),
       AccountMeta(address: systemProgram, role: AccountRole.readonly),
       AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+      if (payer != null)
+        AccountMeta(address: payer, role: AccountRole.writableSigner),
     ],
     data: getInitSubscriptionAuthorityInstructionDataEncoder().encode(
       instructionData,

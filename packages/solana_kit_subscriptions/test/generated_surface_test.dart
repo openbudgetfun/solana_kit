@@ -25,7 +25,7 @@ void main() {
         const Address('De1egAFMkMWZSN5rYXRj9CAdheBamobVNubTsi9avR44'),
       );
       expect(SubscriptionsAccount.values, hasLength(6));
-      expect(SubscriptionsInstruction.values, hasLength(14));
+      expect(SubscriptionsInstruction.values, hasLength(17));
     });
   });
 
@@ -330,6 +330,8 @@ void main() {
             programAddress: subscriptionsProgramAddress,
             owner: a1,
             planPda: a2,
+            eventAuthority: a3,
+            selfProgram: subscriptionsProgramAddress,
             updatePlanData: _updatePlanData,
           ),
           UpdatePlanInstructionData(updatePlanData: _updatePlanData),
@@ -391,6 +393,7 @@ void main() {
             subscriber: a1,
             planPda: a2,
             subscriptionPda: a3,
+            subscriptionAuthority: a4,
             eventAuthority: a4,
             selfProgram: subscriptionsProgramAddress,
           ),

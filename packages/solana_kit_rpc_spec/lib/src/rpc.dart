@@ -1,6 +1,7 @@
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_rpc_spec/src/rpc_api.dart';
 import 'package:solana_kit_rpc_spec/src/rpc_transport.dart';
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 /// Options for sending an RPC request.
 class RpcSendOptions {
@@ -31,6 +32,17 @@ class PendingRpcRequest<TResponse> {
   Future<TResponse> send([RpcSendOptions? options]) {
     return plan.execute(
       RpcPlanExecuteConfig(transport: transport, signal: options?.abortSignal),
+    );
+  }
+
+  /// Returns a [ReactiveActionStore] that can be used to dispatch this request
+  /// reactively, tracking idle/running/success/error states.
+  ///
+  /// Mirrors the upstream `PendingRpcRequest.reactiveStore()` API added in
+  /// `@solana/rpc-spec` v6.10.
+  ReactiveActionStore<List<Object?>, TResponse> reactiveStore() {
+    return createReactiveActionStore<List<Object?>, TResponse>(
+      (args) => send(),
     );
   }
 }

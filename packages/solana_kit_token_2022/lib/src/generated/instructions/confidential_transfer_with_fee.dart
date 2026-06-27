@@ -11,6 +11,7 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 import '../types/decryptable_balance.dart';
+import '../types/encrypted_balance.dart';
 
 /// The discriminator field name: 'discriminator'.
 /// Offset: 0.
@@ -24,6 +25,8 @@ class ConfidentialTransferWithFeeInstructionData {
     this.discriminator = 27,
     this.confidentialTransferDiscriminator = 13,
     required this.newSourceDecryptableAvailableBalance,
+    required this.transferAmountAuditorCiphertextLo,
+    required this.transferAmountAuditorCiphertextHi,
     required this.equalityProofInstructionOffset,
     required this.transferAmountCiphertextValidityProofInstructionOffset,
     required this.feeSigmaProofInstructionOffset,
@@ -34,6 +37,8 @@ class ConfidentialTransferWithFeeInstructionData {
   final int discriminator;
   final int confidentialTransferDiscriminator;
   final DecryptableBalance newSourceDecryptableAvailableBalance;
+  final EncryptedBalance transferAmountAuditorCiphertextLo;
+  final EncryptedBalance transferAmountAuditorCiphertextHi;
   final int equalityProofInstructionOffset;
   final int transferAmountCiphertextValidityProofInstructionOffset;
   final int feeSigmaProofInstructionOffset;
@@ -47,6 +52,8 @@ getConfidentialTransferWithFeeInstructionDataEncoder() {
     ('discriminator', getU8Encoder()),
     ('confidentialTransferDiscriminator', getU8Encoder()),
     ('newSourceDecryptableAvailableBalance', getDecryptableBalanceEncoder()),
+    ('transferAmountAuditorCiphertextLo', getEncryptedBalanceEncoder()),
+    ('transferAmountAuditorCiphertextHi', getEncryptedBalanceEncoder()),
     ('equalityProofInstructionOffset', getI8Encoder()),
     ('transferAmountCiphertextValidityProofInstructionOffset', getI8Encoder()),
     ('feeSigmaProofInstructionOffset', getI8Encoder()),
@@ -62,6 +69,10 @@ getConfidentialTransferWithFeeInstructionDataEncoder() {
           value.confidentialTransferDiscriminator,
       'newSourceDecryptableAvailableBalance':
           value.newSourceDecryptableAvailableBalance,
+      'transferAmountAuditorCiphertextLo':
+          value.transferAmountAuditorCiphertextLo,
+      'transferAmountAuditorCiphertextHi':
+          value.transferAmountAuditorCiphertextHi,
       'equalityProofInstructionOffset': value.equalityProofInstructionOffset,
       'transferAmountCiphertextValidityProofInstructionOffset':
           value.transferAmountCiphertextValidityProofInstructionOffset,
@@ -79,6 +90,8 @@ getConfidentialTransferWithFeeInstructionDataDecoder() {
     ('discriminator', getU8Decoder()),
     ('confidentialTransferDiscriminator', getU8Decoder()),
     ('newSourceDecryptableAvailableBalance', getDecryptableBalanceDecoder()),
+    ('transferAmountAuditorCiphertextLo', getEncryptedBalanceDecoder()),
+    ('transferAmountAuditorCiphertextHi', getEncryptedBalanceDecoder()),
     ('equalityProofInstructionOffset', getI8Decoder()),
     ('transferAmountCiphertextValidityProofInstructionOffset', getI8Decoder()),
     ('feeSigmaProofInstructionOffset', getI8Decoder()),
@@ -98,6 +111,10 @@ getConfidentialTransferWithFeeInstructionDataDecoder() {
           map['confidentialTransferDiscriminator']! as int,
       newSourceDecryptableAvailableBalance:
           map['newSourceDecryptableAvailableBalance']! as DecryptableBalance,
+      transferAmountAuditorCiphertextLo:
+          map['transferAmountAuditorCiphertextLo']! as EncryptedBalance,
+      transferAmountAuditorCiphertextHi:
+          map['transferAmountAuditorCiphertextHi']! as EncryptedBalance,
       equalityProofInstructionOffset:
           map['equalityProofInstructionOffset']! as int,
       transferAmountCiphertextValidityProofInstructionOffset:
@@ -136,6 +153,8 @@ Instruction getConfidentialTransferWithFeeInstruction({
   Address? rangeRecord,
   required Address authority,
   required DecryptableBalance newSourceDecryptableAvailableBalance,
+  required EncryptedBalance transferAmountAuditorCiphertextLo,
+  required EncryptedBalance transferAmountAuditorCiphertextHi,
   required int equalityProofInstructionOffset,
   required int transferAmountCiphertextValidityProofInstructionOffset,
   required int feeSigmaProofInstructionOffset,
@@ -144,6 +163,8 @@ Instruction getConfidentialTransferWithFeeInstruction({
 }) {
   final instructionData = ConfidentialTransferWithFeeInstructionData(
     newSourceDecryptableAvailableBalance: newSourceDecryptableAvailableBalance,
+    transferAmountAuditorCiphertextLo: transferAmountAuditorCiphertextLo,
+    transferAmountAuditorCiphertextHi: transferAmountAuditorCiphertextHi,
     equalityProofInstructionOffset: equalityProofInstructionOffset,
     transferAmountCiphertextValidityProofInstructionOffset:
         transferAmountCiphertextValidityProofInstructionOffset,

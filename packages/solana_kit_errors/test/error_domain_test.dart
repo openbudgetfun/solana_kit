@@ -17,6 +17,39 @@ void main() {
       );
     });
 
+    test('classifies subscribable codes', () {
+      expect(
+        getSolanaErrorDomain(SolanaErrorCode.subscribableRetryNotSupported),
+        SolanaErrorDomain.subscribable,
+      );
+    });
+
+    test('classifies wallet codes', () {
+      expect(
+        getSolanaErrorDomain(SolanaErrorCode.walletAccountNotAvailable),
+        SolanaErrorDomain.wallet,
+      );
+    });
+
+    test('classifies new JSON-RPC server codes', () {
+      expect(
+        getSolanaErrorDomain(
+          SolanaErrorCode.jsonRpcServerErrorNoSlotHistory,
+        ),
+        SolanaErrorDomain.jsonRpc,
+      );
+    });
+
+    test('classifies new transaction estimation codes', () {
+      expect(
+        getSolanaErrorDomain(
+          SolanaErrorCode
+              .transactionFailedToEstimateLoadedAccountsDataSizeLimit,
+        ),
+        SolanaErrorDomain.transaction,
+      );
+    });
+
     test('classifies codecs codes', () {
       expect(
         getSolanaErrorDomain(SolanaErrorCode.codecsUnionVariantOutOfRange),

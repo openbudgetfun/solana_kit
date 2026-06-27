@@ -103,7 +103,6 @@ Instruction getConfigureConfidentialTransferAccountInstruction({
   required Address token,
   required Address mint,
   required Address instructionsSysvarOrContextState,
-  Address? record,
   required Address authority,
   required DecryptableBalance decryptableZeroBalance,
   required BigInt maximumPendingBalanceCreditCounter,
@@ -124,8 +123,6 @@ Instruction getConfigureConfidentialTransferAccountInstruction({
         address: instructionsSysvarOrContextState,
         role: AccountRole.readonly,
       ),
-      if (record != null)
-        AccountMeta(address: record, role: AccountRole.readonly),
       AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getConfigureConfidentialTransferAccountInstructionDataEncoder()

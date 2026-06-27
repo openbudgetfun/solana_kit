@@ -115,6 +115,9 @@ const int subscriptionsErrorDelegationAlreadyExists = 0x87; // 135
 /// Message: "Delegation init_id does not match current SubscriptionAuthority"
 const int subscriptionsErrorStaleSubscriptionAuthority = 0x88; // 136
 
+/// Message: "Too many transfer hook accounts provided"
+const int subscriptionsErrorTransferHookTooManyAccounts = 0x89; // 137
+
 /// Message: "Transfer amount exceeds delegation limit"
 const int subscriptionsErrorAmountExceedsLimit = 0x12c; // 300
 
@@ -148,6 +151,10 @@ const int subscriptionsErrorRecurringDelegationAmountZero = 0x196; // 406
 
 /// Message: "Delegation period has not started yet"
 const int subscriptionsErrorDelegationNotStarted = 0x197; // 407
+
+/// Message: "start_ts of 0 (start on landing) requires a non-zero expiry"
+const int subscriptionsErrorRecurringDelegationStartOnLandingRequiresExpiry =
+    0x198; // 408
 
 /// Message: "Plan is in sunset status"
 const int subscriptionsErrorPlanSunset = 0x1f4; // 500
@@ -209,6 +216,9 @@ const int subscriptionsErrorPlanAlreadyExists = 0x206; // 518
 /// Message: "Subscription plan terms do not match the current plan"
 const int subscriptionsErrorPlanTermsMismatch = 0x207; // 519
 
+/// Message: "A finite plan end timestamp can only be shortened, not removed or extended"
+const int subscriptionsErrorPlanEndTsCannotExtend = 0x208; // 520
+
 /// Message: "Invalid event authority PDA"
 const int subscriptionsErrorInvalidEventAuthority = 0x258; // 600
 
@@ -220,6 +230,9 @@ const int subscriptionsErrorInvalidEventTag = 0x25a; // 602
 
 /// Message: "Unknown event discriminator"
 const int subscriptionsErrorInvalidEventDiscriminator = 0x25b; // 603
+
+/// Message: "Self program account does not match this program"
+const int subscriptionsErrorInvalidSelfProgram = 0x25c; // 604
 
 /// Map of error codes to human-readable messages.
 const Map<int, String> _subscriptionsErrorMessages = {
@@ -276,6 +289,8 @@ const Map<int, String> _subscriptionsErrorMessages = {
       'Delegation account already exists',
   subscriptionsErrorStaleSubscriptionAuthority:
       'Delegation init_id does not match current SubscriptionAuthority',
+  subscriptionsErrorTransferHookTooManyAccounts:
+      'Too many transfer hook accounts provided',
   subscriptionsErrorAmountExceedsLimit:
       'Transfer amount exceeds delegation limit',
   subscriptionsErrorFixedDelegationExpiryInPast:
@@ -294,6 +309,8 @@ const Map<int, String> _subscriptionsErrorMessages = {
   subscriptionsErrorRecurringDelegationAmountZero: 'zero amount specified',
   subscriptionsErrorDelegationNotStarted:
       'Delegation period has not started yet',
+  subscriptionsErrorRecurringDelegationStartOnLandingRequiresExpiry:
+      'start_ts of 0 (start on landing) requires a non-zero expiry',
   subscriptionsErrorPlanSunset: 'Plan is in sunset status',
   subscriptionsErrorPlanExpired: 'Plan has expired',
   subscriptionsErrorInvalidPlanPda: 'Invalid Plan PDA derivation',
@@ -322,10 +339,14 @@ const Map<int, String> _subscriptionsErrorMessages = {
   subscriptionsErrorPlanAlreadyExists: 'Plan account already exists',
   subscriptionsErrorPlanTermsMismatch:
       'Subscription plan terms do not match the current plan',
+  subscriptionsErrorPlanEndTsCannotExtend:
+      'A finite plan end timestamp can only be shortened, not removed or extended',
   subscriptionsErrorInvalidEventAuthority: 'Invalid event authority PDA',
   subscriptionsErrorInvalidEventData: 'Invalid event data',
   subscriptionsErrorInvalidEventTag: 'Invalid event tag prefix',
   subscriptionsErrorInvalidEventDiscriminator: 'Unknown event discriminator',
+  subscriptionsErrorInvalidSelfProgram:
+      'Self program account does not match this program',
 };
 
 /// Get the error message for a Subscriptions program error code.

@@ -5,6 +5,7 @@ class ClusterNode {
   /// Creates a new [ClusterNode].
   const ClusterNode({
     required this.pubkey,
+    this.clientId,
     this.featureSet,
     this.gossip,
     this.pubsub,
@@ -29,6 +30,9 @@ class ClusterNode {
   /// Node public key, as base-58 encoded string.
   final Address pubkey;
 
+  /// The identity key of the node's client, if available.
+  final String? clientId;
+
   /// WebSocket PubSub network address for the node.
   final String? pubsub;
 
@@ -42,9 +46,15 @@ class ClusterNode {
   final int? shredVersion;
 
   /// TPU network address for the node.
+  ///
+  /// Prefer [tpuQuic] for QUIC-based communication. This UDP field is
+  /// deprecated upstream in favor of QUIC.
   final String? tpu;
 
   /// TPU UDP forwards network address for the node.
+  ///
+  /// Prefer [tpuForwardsQuic] for QUIC-based communication. This UDP field is
+  /// deprecated upstream in favor of QUIC.
   final String? tpuForwards;
 
   /// TPU QUIC forwards network address for the node.
@@ -70,6 +80,7 @@ class ClusterNode {
           featureSet == other.featureSet &&
           gossip == other.gossip &&
           pubkey == other.pubkey &&
+          clientId == other.clientId &&
           pubsub == other.pubsub &&
           rpc == other.rpc &&
           serveRepair == other.serveRepair &&
@@ -88,6 +99,7 @@ class ClusterNode {
     featureSet,
     gossip,
     pubkey,
+    clientId,
     pubsub,
     rpc,
     serveRepair,
@@ -103,7 +115,7 @@ class ClusterNode {
 
   @override
   String toString() =>
-      'ClusterNode(pubkey: $pubkey, featureSet: $featureSet, gossip: $gossip, '
+      'ClusterNode(pubkey: $pubkey, clientId: $clientId, featureSet: $featureSet, gossip: $gossip, '
       'pubsub: $pubsub, rpc: $rpc, serveRepair: $serveRepair, '
       'shredVersion: $shredVersion, tpu: $tpu, tpuForwards: $tpuForwards, '
       'tpuForwardsQuic: $tpuForwardsQuic, tpuQuic: $tpuQuic, '

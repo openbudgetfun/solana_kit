@@ -85,7 +85,6 @@ Instruction getEmptyConfidentialTransferAccountInstruction({
   required Address programAddress,
   required Address token,
   required Address instructionsSysvarOrContextState,
-  Address? record,
   required Address authority,
   required int proofInstructionOffset,
 }) {
@@ -101,8 +100,6 @@ Instruction getEmptyConfidentialTransferAccountInstruction({
         address: instructionsSysvarOrContextState,
         role: AccountRole.readonly,
       ),
-      if (record != null)
-        AccountMeta(address: record, role: AccountRole.readonly),
       AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getEmptyConfidentialTransferAccountInstructionDataEncoder().encode(

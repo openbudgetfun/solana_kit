@@ -78,6 +78,7 @@ Instruction getCreateFixedDelegationInstruction({
   required Address delegationAccount,
   required Address delegatee,
   required Address systemProgram,
+  Address? payer,
   required CreateFixedDelegationData fixedDelegation,
 }) {
   final instructionData = CreateFixedDelegationInstructionData(
@@ -92,6 +93,8 @@ Instruction getCreateFixedDelegationInstruction({
       AccountMeta(address: delegationAccount, role: AccountRole.writable),
       AccountMeta(address: delegatee, role: AccountRole.readonly),
       AccountMeta(address: systemProgram, role: AccountRole.readonly),
+      if (payer != null)
+        AccountMeta(address: payer, role: AccountRole.writableSigner),
     ],
     data: getCreateFixedDelegationInstructionDataEncoder().encode(
       instructionData,

@@ -70,6 +70,8 @@ Instruction getUpdatePlanInstruction({
   required Address programAddress,
   required Address owner,
   required Address planPda,
+  required Address eventAuthority,
+  required Address selfProgram,
   required UpdatePlanData updatePlanData,
 }) {
   final instructionData = UpdatePlanInstructionData(
@@ -81,6 +83,8 @@ Instruction getUpdatePlanInstruction({
     accounts: [
       AccountMeta(address: owner, role: AccountRole.readonlySigner),
       AccountMeta(address: planPda, role: AccountRole.writable),
+      AccountMeta(address: eventAuthority, role: AccountRole.readonly),
+      AccountMeta(address: selfProgram, role: AccountRole.readonly),
     ],
     data: getUpdatePlanInstructionDataEncoder().encode(instructionData),
   );

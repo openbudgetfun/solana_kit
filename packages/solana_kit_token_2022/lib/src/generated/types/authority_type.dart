@@ -28,7 +28,10 @@ enum AuthorityType {
 }
 
 Encoder<AuthorityType> getAuthorityTypeEncoder() {
-  return transformEncoder(getU8Encoder(), (AuthorityType value) => value.index);
+  return transformEncoder(
+    getU8Encoder(),
+    (AuthorityType value) => value.index,
+  );
 }
 
 Decoder<AuthorityType> getAuthorityTypeDecoder() {

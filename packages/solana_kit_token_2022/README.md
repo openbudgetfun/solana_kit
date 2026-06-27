@@ -109,4 +109,5 @@ without adding a separate dependency.
 ## Upstream reference
 
 Generated layer mirrors
-[solana-program/token-2022](https://github.com/solana-program/token-2022).
+[solana-program/token-2022](https://github.com/solana-program/token-2022)
+at `js@v0.12.0`.

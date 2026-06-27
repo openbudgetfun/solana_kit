@@ -15,7 +15,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class ApproveInstructionData {
-  const ApproveInstructionData({this.discriminator = 4, required this.amount});
+  const ApproveInstructionData({
+    this.discriminator = 4,
+    required this.amount,
+  });
 
   final int discriminator;
   final BigInt amount;
@@ -68,7 +71,9 @@ Instruction getApproveInstruction({
   required Address owner,
   required BigInt amount,
 }) {
-  final instructionData = ApproveInstructionData(amount: amount);
+  final instructionData = ApproveInstructionData(
+    amount: amount,
+  );
 
   return Instruction(
     programAddress: programAddress,

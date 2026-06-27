@@ -297,4 +297,51 @@ describe("getAccountPageFragment", () => {
     expect(frag.content).toContain("('balance', getU64Decoder())");
     expect(frag.content).toContain("('isActive', getU8Decoder())");
   });
+
+  it("generates no-arg constructor for empty structs", () => {
+    const node = accountNode({
+      name: "emptyAccount",
+      data: structTypeNode([]),
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain("const EmptyAccount();");
+    expect(frag.content).not.toContain("const EmptyAccount({");
+  });
+
+  it("generates 'true' equality for empty structs", () => {
+    const node = accountNode({
+      name: "emptyAccount",
+      data: structTypeNode([]),
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain("other is EmptyAccount");
+    expect(frag.content).toContain("true");
+  });
+
+  it("generates hashCode of 0 for empty structs", () => {
+    const node = accountNode({
+      name: "emptyAccount",
+      data: structTypeNode([]),
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain("int get hashCode => 0;");
+  });
+
+  it("generates single-field hashCode without Object.hash", () => {
+    const node = accountNode({
+      name: "singleFieldAccount",
+      data: structTypeNode([
+        structFieldTypeNode({
+          name: "value",
+          type: numberTypeNode("u8"),
+        }),
+      ]),
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain("int get hashCode => value.hashCode;");
+  });
 });

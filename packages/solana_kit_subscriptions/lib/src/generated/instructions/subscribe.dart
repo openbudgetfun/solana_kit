@@ -76,6 +76,7 @@ Instruction getSubscribeInstruction({
   required Address systemProgram,
   required Address eventAuthority,
   required Address selfProgram,
+  Address? payer,
   required SubscribeData subscribeData,
 }) {
   final instructionData = SubscribeInstructionData(
@@ -96,6 +97,8 @@ Instruction getSubscribeInstruction({
       AccountMeta(address: systemProgram, role: AccountRole.readonly),
       AccountMeta(address: eventAuthority, role: AccountRole.readonly),
       AccountMeta(address: selfProgram, role: AccountRole.readonly),
+      if (payer != null)
+        AccountMeta(address: payer, role: AccountRole.writableSigner),
     ],
     data: getSubscribeInstructionDataEncoder().encode(instructionData),
   );

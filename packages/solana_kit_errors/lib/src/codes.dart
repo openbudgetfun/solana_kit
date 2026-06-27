@@ -32,6 +32,8 @@ enum SolanaErrorCode {
   jsonRpcInvalidParams(-32602),
   jsonRpcMethodNotFound(-32601),
   jsonRpcInvalidRequest(-32600),
+  jsonRpcServerErrorNoSlotHistory(-32021),
+  jsonRpcServerErrorFilterTransactionNotFound(-32020),
   jsonRpcServerErrorLongTermStorageUnreachable(-32019),
   jsonRpcServerErrorSlotNotEpochBoundary(-32018),
   jsonRpcServerErrorEpochRewardsPeriodActive(-32017),
@@ -267,6 +269,8 @@ enum SolanaErrorCode {
   transactionTooManyAccountAddresses(5663033),
   transactionTooManyInstructions(5663034),
   transactionTooManyAccountsInInstruction(5663035),
+  transactionFailedToEstimateLoadedAccountsDataSizeLimit(5663036),
+  transactionFailedWhenSimulatingToEstimateResourceLimits(5663037),
 
   // ---------------------------------------------------------------------------
   // Transaction Errors (7050000 - 7050999)
@@ -395,6 +399,12 @@ enum SolanaErrorCode {
   rpcSubscriptionsChannelFailedToConnect(8190004),
 
   // ---------------------------------------------------------------------------
+  // Subscribable (8195000 - 8195999)
+  // ---------------------------------------------------------------------------
+
+  subscribableRetryNotSupported(8195000),
+
+  // ---------------------------------------------------------------------------
   // Program Clients (8500000 - 8500999)
   // ---------------------------------------------------------------------------
 
@@ -454,6 +464,7 @@ enum SolanaErrorCode {
   walletNotConnected(8900000),
   walletNoSignerConnected(8900001),
   walletSignerNotAvailable(8900002),
+  walletAccountNotAvailable(8900003),
 
   // ---------------------------------------------------------------------------
   // Invariant Violations (9900000 - 9900999)

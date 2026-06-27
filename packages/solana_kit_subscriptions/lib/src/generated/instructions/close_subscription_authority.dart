@@ -67,6 +67,7 @@ Instruction getCloseSubscriptionAuthorityInstruction({
   required Address programAddress,
   required Address user,
   required Address subscriptionAuthority,
+  Address? receiver,
 }) {
   final instructionData = CloseSubscriptionAuthorityInstructionData();
 
@@ -75,6 +76,8 @@ Instruction getCloseSubscriptionAuthorityInstruction({
     accounts: [
       AccountMeta(address: user, role: AccountRole.writableSigner),
       AccountMeta(address: subscriptionAuthority, role: AccountRole.writable),
+      if (receiver != null)
+        AccountMeta(address: receiver, role: AccountRole.writable),
     ],
     data: getCloseSubscriptionAuthorityInstructionDataEncoder().encode(
       instructionData,

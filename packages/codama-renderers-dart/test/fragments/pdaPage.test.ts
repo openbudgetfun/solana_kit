@@ -126,4 +126,21 @@ describe("getPdaPageFragment", () => {
       "Address('UnknownProgram1111111111111111111111')",
     );
   });
+
+  it("encodes number constant seed", () => {
+    const node = pdaNode({
+      name: "testPda",
+      seeds: [
+        constantPdaSeedNodeFromString("utf8", "seed"),
+        {
+          kind: "constantPdaSeedNode",
+          type: { kind: "numberTypeNode", format: "u32" },
+          value: { kind: "numberValueNode", number: 42 },
+        },
+      ],
+    });
+    const frag = getPdaPageFragment(node, createScope());
+
+    expect(frag.content).toContain(".encode(42)");
+  });
 });

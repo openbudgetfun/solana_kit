@@ -34,3 +34,4 @@ node_modules/
 # Reference repos
 .repos/
 
+coverage_tmp/

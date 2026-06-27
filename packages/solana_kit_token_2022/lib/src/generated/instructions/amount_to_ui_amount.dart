@@ -71,11 +71,15 @@ Instruction getAmountToUiAmountInstruction({
   required Address mint,
   required BigInt amount,
 }) {
-  final instructionData = AmountToUiAmountInstructionData(amount: amount);
+  final instructionData = AmountToUiAmountInstructionData(
+    amount: amount,
+  );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [AccountMeta(address: mint, role: AccountRole.readonly)],
+    accounts: [
+      AccountMeta(address: mint, role: AccountRole.readonly),
+    ],
     data: getAmountToUiAmountInstructionDataEncoder().encode(instructionData),
   );
 }
