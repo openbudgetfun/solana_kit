@@ -1,6 +1,4 @@
 // ignore_for_file: public_member_api_docs
-// Legacy deprecated fields are retained for backward compatibility.
-// ignore_for_file: remove_deprecations_in_breaking_versions
 
 import 'package:solana_kit_rpc_types/src/stringified_bigint.dart';
 import 'package:solana_kit_rpc_types/src/stringified_number.dart';
@@ -11,7 +9,6 @@ class TokenAmount {
     required this.amount,
     required this.decimals,
     required this.uiAmountString,
-    @Deprecated('Use uiAmountString instead') this.uiAmount,
   });
 
   /// The quantity, in fractional units.
@@ -27,10 +24,6 @@ class TokenAmount {
   /// each representing 10^(-6) tokens.
   final int decimals;
 
-  /// The balance as a floating-point number.
-  @Deprecated('Use uiAmountString instead')
-  final double? uiAmount;
-
   /// The balance of whole tokens, as a string.
   ///
   /// The string representation will use a decimal when necessary, but will
@@ -44,15 +37,14 @@ class TokenAmount {
           runtimeType == other.runtimeType &&
           amount == other.amount &&
           decimals == other.decimals &&
-          uiAmount == other.uiAmount &&
           uiAmountString == other.uiAmountString;
 
   @override
   int get hashCode =>
-      Object.hash(runtimeType, amount, decimals, uiAmount, uiAmountString);
+      Object.hash(runtimeType, amount, decimals, uiAmountString);
 
   @override
   String toString() =>
       'TokenAmount(amount: $amount, decimals: $decimals, '
-      'uiAmount: $uiAmount, uiAmountString: $uiAmountString)';
+      'uiAmountString: $uiAmountString)';
 }

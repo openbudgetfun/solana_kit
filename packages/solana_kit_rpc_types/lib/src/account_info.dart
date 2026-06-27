@@ -1,6 +1,4 @@
 // ignore_for_file: public_member_api_docs
-// Legacy deprecated aliases are retained for backward compatibility.
-// ignore_for_file: remove_deprecations_in_breaking_versions
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
@@ -47,52 +45,6 @@ class AccountInfoBase {
   String toString() =>
       'AccountInfoBase(executable: $executable, lamports: $lamports, '
       'owner: $owner, space: $space)';
-}
-
-/// Account info with base58-encoded bytes as data.
-@Deprecated('Use AccountInfoWithBase64EncodedData instead')
-class AccountInfoWithBase58Bytes {
-  @Deprecated('Use AccountInfoWithBase64EncodedData instead')
-  const AccountInfoWithBase58Bytes({required this.data});
-
-  /// The account data as base58-encoded bytes.
-  final Base58EncodedBytes data;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AccountInfoWithBase58Bytes &&
-          runtimeType == other.runtimeType &&
-          data == other.data;
-
-  @override
-  int get hashCode => Object.hash(runtimeType, data);
-
-  @override
-  String toString() => 'AccountInfoWithBase58Bytes(data: $data)';
-}
-
-/// Account info with base58-encoded data response.
-@Deprecated('Use AccountInfoWithBase64EncodedData instead')
-class AccountInfoWithBase58EncodedData {
-  @Deprecated('Use AccountInfoWithBase64EncodedData instead')
-  const AccountInfoWithBase58EncodedData({required this.data});
-
-  /// The account data as a (base58String, 'base58') tuple.
-  final Base58EncodedDataResponse data;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AccountInfoWithBase58EncodedData &&
-          runtimeType == other.runtimeType &&
-          data == other.data;
-
-  @override
-  int get hashCode => Object.hash(runtimeType, data);
-
-  @override
-  String toString() => 'AccountInfoWithBase58EncodedData(data: $data)';
 }
 
 /// Account info with base64-encoded data.

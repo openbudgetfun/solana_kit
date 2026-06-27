@@ -1,4 +1,3 @@
-// ignore_for_file: deprecated_member_use_from_same_package
 // ignore_for_file: document_ignores
 
 import 'dart:typed_data';
@@ -16,80 +15,6 @@ void main() {
   // ---------------------------------------------------------------------------
   // account_info.dart coverage
   // ---------------------------------------------------------------------------
-  group('AccountInfoWithBase58Bytes equality', () {
-    test('equal when data matches', () {
-      const a = AccountInfoWithBase58Bytes(data: Base58EncodedBytes('abc'));
-      const b = AccountInfoWithBase58Bytes(data: Base58EncodedBytes('abc'));
-      expect(a, equals(b));
-      expect(a.hashCode, equals(b.hashCode));
-    });
-
-    test('not equal when data differs', () {
-      const a = AccountInfoWithBase58Bytes(data: Base58EncodedBytes('abc'));
-      const b = AccountInfoWithBase58Bytes(data: Base58EncodedBytes('xyz'));
-      expect(a, isNot(equals(b)));
-    });
-
-    test('not equal to different type', () {
-      const a = AccountInfoWithBase58Bytes(data: Base58EncodedBytes('abc'));
-      expect(a, isNot(equals('not a AccountInfoWithBase58Bytes')));
-    });
-
-    test('identical instance equals itself', () {
-      const a = AccountInfoWithBase58Bytes(data: Base58EncodedBytes('abc'));
-      expect(a, equals(a));
-    });
-
-    test('toString', () {
-      const a = AccountInfoWithBase58Bytes(data: Base58EncodedBytes('abc'));
-      expect(a.toString(), contains('AccountInfoWithBase58Bytes'));
-    });
-  });
-
-  group('AccountInfoWithBase58EncodedData equality', () {
-    test('equal when data matches', () {
-      const a = AccountInfoWithBase58EncodedData(
-        data: (Base58EncodedBytes('abc'), 'base58'),
-      );
-      const b = AccountInfoWithBase58EncodedData(
-        data: (Base58EncodedBytes('abc'), 'base58'),
-      );
-      expect(a, equals(b));
-      expect(a.hashCode, equals(b.hashCode));
-    });
-
-    test('not equal when data differs', () {
-      const a = AccountInfoWithBase58EncodedData(
-        data: (Base58EncodedBytes('abc'), 'base58'),
-      );
-      const b = AccountInfoWithBase58EncodedData(
-        data: (Base58EncodedBytes('xyz'), 'base58'),
-      );
-      expect(a, isNot(equals(b)));
-    });
-
-    test('not equal to different type', () {
-      const a = AccountInfoWithBase58EncodedData(
-        data: (Base58EncodedBytes('abc'), 'base58'),
-      );
-      expect(a, isNot(equals('other')));
-    });
-
-    test('identical instance equals itself', () {
-      const a = AccountInfoWithBase58EncodedData(
-        data: (Base58EncodedBytes('abc'), 'base58'),
-      );
-      expect(a, equals(a));
-    });
-
-    test('toString', () {
-      const a = AccountInfoWithBase58EncodedData(
-        data: (Base58EncodedBytes('abc'), 'base58'),
-      );
-      expect(a.toString(), contains('AccountInfoWithBase58EncodedData'));
-    });
-  });
-
   group('AccountInfoWithBase64EncodedData equality', () {
     test('equal when data matches', () {
       const a = AccountInfoWithBase64EncodedData(
@@ -411,52 +336,32 @@ void main() {
   // ---------------------------------------------------------------------------
   group('TokenAmount equality', () {
     test(
-      'equal when all fields match including uiAmount and uiAmountString',
+      'equal when all fields match including uiAmountString',
       () {
         const a = TokenAmount(
           amount: StringifiedBigInt('100'),
           decimals: 2,
           uiAmountString: StringifiedNumber('1'),
-          uiAmount: 1,
         );
         const b = TokenAmount(
           amount: StringifiedBigInt('100'),
           decimals: 2,
           uiAmountString: StringifiedNumber('1'),
-          uiAmount: 1,
         );
         expect(a, equals(b));
       },
     );
-
-    test('not equal when uiAmount differs', () {
-      const a = TokenAmount(
-        amount: StringifiedBigInt('100'),
-        decimals: 2,
-        uiAmountString: StringifiedNumber('1'),
-        uiAmount: 1,
-      );
-      const b = TokenAmount(
-        amount: StringifiedBigInt('100'),
-        decimals: 2,
-        uiAmountString: StringifiedNumber('1'),
-        uiAmount: 2,
-      );
-      expect(a, isNot(equals(b)));
-    });
 
     test('not equal when uiAmountString differs', () {
       const a = TokenAmount(
         amount: StringifiedBigInt('100'),
         decimals: 2,
         uiAmountString: StringifiedNumber('1'),
-        uiAmount: 1,
       );
       const b = TokenAmount(
         amount: StringifiedBigInt('100'),
         decimals: 2,
         uiAmountString: StringifiedNumber('2'),
-        uiAmount: 1,
       );
       expect(a, isNot(equals(b)));
     });
@@ -730,42 +635,6 @@ void main() {
         writableIndexes: [1],
       );
       expect(a.toString(), contains('AddressTableLookup'));
-    });
-  });
-
-  group('TransactionStatusOk equality', () {
-    test('equal instances', () {
-      const a = TransactionStatusOk();
-      const b = TransactionStatusOk();
-      expect(a, equals(b));
-      expect(a.hashCode, equals(b.hashCode));
-    });
-
-    test('not equal to different type', () {
-      const a = TransactionStatusOk();
-      const err = TransactionStatusErr(TransactionErrorSimple('test'));
-      expect(a, isNot(equals(err)));
-    });
-  });
-
-  group('TransactionStatusErr equality', () {
-    test('equal when error matches', () {
-      const err = TransactionErrorSimple('test');
-      const a = TransactionStatusErr(err);
-      const b = TransactionStatusErr(err);
-      expect(a, equals(b));
-      expect(a.hashCode, equals(b.hashCode));
-    });
-
-    test('not equal when error differs', () {
-      const a = TransactionStatusErr(TransactionErrorSimple('test1'));
-      const b = TransactionStatusErr(TransactionErrorSimple('test2'));
-      expect(a, isNot(equals(b)));
-    });
-
-    test('not equal to different type', () {
-      const a = TransactionStatusErr(TransactionErrorSimple('test'));
-      expect(a, isNot(equals(const TransactionStatusOk())));
     });
   });
 

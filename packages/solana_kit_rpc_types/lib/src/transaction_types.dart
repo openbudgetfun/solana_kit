@@ -1,6 +1,4 @@
 // ignore_for_file: public_member_api_docs
-// Legacy deprecated status aliases are retained for backward compatibility.
-// ignore_for_file: remove_deprecations_in_breaking_versions
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
@@ -208,51 +206,6 @@ class RewardVotingOrStaking extends Reward {
       'RewardVotingOrStaking(rewardLamports: $rewardLamports, '
       'postBalance: $postBalance, pubkey: $pubkey, rewardType: $rewardType, '
       'commission: $commission)';
-}
-
-// ---------------------------------------------------------------------------
-// Transaction Status (deprecated)
-// ---------------------------------------------------------------------------
-
-/// Deprecated transaction status type.
-@Deprecated('Use TransactionError instead')
-sealed class TransactionStatus {
-  @Deprecated('Use TransactionError instead')
-  const TransactionStatus();
-}
-
-/// Transaction succeeded.
-@Deprecated('Use TransactionError instead')
-class TransactionStatusOk extends TransactionStatus {
-  @Deprecated('Use TransactionError instead')
-  const TransactionStatusOk();
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) || other is TransactionStatusOk;
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-}
-
-/// Transaction failed with an error.
-@Deprecated('Use TransactionError instead')
-class TransactionStatusErr extends TransactionStatus {
-  @Deprecated('Use TransactionError instead')
-  const TransactionStatusErr(this.error);
-
-  /// The error that caused the transaction to fail.
-  final TransactionError error;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is TransactionStatusErr &&
-          runtimeType == other.runtimeType &&
-          error == other.error;
-
-  @override
-  int get hashCode => Object.hash(runtimeType, error);
 }
 
 // ---------------------------------------------------------------------------
