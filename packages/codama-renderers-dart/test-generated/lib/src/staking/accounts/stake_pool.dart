@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -10,7 +9,6 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
-
 
 @immutable
 class StakePool {
@@ -58,19 +56,30 @@ class StakePool {
           bump == other.bump;
 
   @override
-  int get hashCode => Object.hash(discriminator, admin, rewardMint, stakeMint, totalStaked, rewardRate, minStakeDuration, maxStakers, currentStakers, isActive, bump);
+  int get hashCode => Object.hash(
+    discriminator,
+    admin,
+    rewardMint,
+    stakeMint,
+    totalStaked,
+    rewardRate,
+    minStakeDuration,
+    maxStakers,
+    currentStakers,
+    isActive,
+    bump,
+  );
 
   @override
-  String toString() => 'StakePool(discriminator: $discriminator, admin: $admin, rewardMint: $rewardMint, stakeMint: $stakeMint, totalStaked: $totalStaked, rewardRate: $rewardRate, minStakeDuration: $minStakeDuration, maxStakers: $maxStakers, currentStakers: $currentStakers, isActive: $isActive, bump: $bump)';
+  String toString() =>
+      'StakePool(discriminator: $discriminator, admin: $admin, rewardMint: $rewardMint, stakeMint: $stakeMint, totalStaked: $totalStaked, rewardRate: $rewardRate, minStakeDuration: $minStakeDuration, maxStakers: $maxStakers, currentStakers: $currentStakers, isActive: $isActive, bump: $bump)';
 }
-
 
 /// The size of the [StakePool] account data in bytes.
 const int stakePoolSize = 138;
 
 /// The discriminator field name: 'discriminator'.
 /// Offset: 0.
-
 
 Encoder<StakePool> getStakePoolEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
