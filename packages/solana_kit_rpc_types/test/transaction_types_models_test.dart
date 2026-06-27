@@ -1,6 +1,3 @@
-// This file verifies deprecated status model compatibility during transition.
-// ignore_for_file: deprecated_member_use_from_same_package
-
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:test/test.dart';
@@ -61,15 +58,6 @@ void main() {
   });
 
   group('Transaction status and metadata models', () {
-    test('deprecated TransactionStatus variants are constructible', () {
-      const ok = TransactionStatusOk();
-      const err = TransactionStatusErr(TransactionErrorSimple('AccountInUse'));
-
-      expect(ok, isA<TransactionStatus>());
-      expect(err, isA<TransactionStatus>());
-      expect(err.error.label, 'AccountInUse');
-    });
-
     test('TransactionForAccountsMetaBase stores balance/token metadata', () {
       const tokenAmount = TokenAmount(
         amount: StringifiedBigInt('100'),

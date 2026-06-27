@@ -1,6 +1,3 @@
-// This file validates deprecated model compatibility while migration is active.
-// ignore_for_file: deprecated_member_use_from_same_package
-
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:test/test.dart';
@@ -65,19 +62,6 @@ void main() {
       expect(accountInfo.lamports, lamports(BigInt.from(5000)));
       expect(accountInfo.owner, _addressA);
       expect(accountInfo.space, BigInt.from(128));
-    });
-
-    test('deprecated base58 wrappers preserve encoded tuple data', () {
-      const bytes = AccountInfoWithBase58Bytes(
-        data: Base58EncodedBytes('1111111111'),
-      );
-      const encoded = AccountInfoWithBase58EncodedData(
-        data: (Base58EncodedBytes('1111111111'), 'base58'),
-      );
-
-      expect(bytes.data, const Base58EncodedBytes('1111111111'));
-      expect(encoded.data.$1, const Base58EncodedBytes('1111111111'));
-      expect(encoded.data.$2, 'base58');
     });
 
     test('base64 wrappers preserve encoded tuple data', () {
@@ -190,15 +174,6 @@ void main() {
     );
 
     test('account info wrappers support equality and toString', () {
-      const base58BytesA = AccountInfoWithBase58Bytes(
-        data: Base58EncodedBytes('1111111111'),
-      );
-      const base58BytesB = AccountInfoWithBase58Bytes(
-        data: Base58EncodedBytes('1111111111'),
-      );
-      const base58Encoded = AccountInfoWithBase58EncodedData(
-        data: (Base58EncodedBytes('1111111111'), 'base58'),
-      );
       const base64Encoded = AccountInfoWithBase64EncodedData(
         data: (Base64EncodedBytes('AQID'), 'base64'),
       );
@@ -206,10 +181,6 @@ void main() {
         data: (Base64EncodedZStdCompressedBytes('AQIDBA=='), 'base64+zstd'),
       );
 
-      expect(base58BytesA, base58BytesB);
-      expect(base58BytesA.hashCode, base58BytesB.hashCode);
-      expect(base58BytesA.toString(), contains('Base58'));
-      expect(base58Encoded.toString(), contains('base58'));
       expect(base64Encoded.toString(), contains('base64'));
       expect(base64Zstd.toString(), contains('base64+zstd'));
     });
@@ -265,7 +236,6 @@ void main() {
       const amount = TokenAmount(
         amount: StringifiedBigInt('4200'),
         decimals: 2,
-        uiAmount: 42,
         uiAmountString: StringifiedNumber('42'),
       );
       const balance = TokenBalance(
@@ -278,7 +248,6 @@ void main() {
 
       expect(amount.amount, const StringifiedBigInt('4200'));
       expect(amount.decimals, 2);
-      expect(amount.uiAmount, 42.0);
       expect(amount.uiAmountString, const StringifiedNumber('42'));
       expect(balance.accountIndex, 3);
       expect(balance.mint, _addressB);
