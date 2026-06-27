@@ -11,6 +11,7 @@ analyzer:
     discarded_futures: ignore
     document_ignores: ignore
     prefer_foreach: ignore
+    remove_deprecations_in_breaking_versions: ignore
     todo: ignore
 
 linter:

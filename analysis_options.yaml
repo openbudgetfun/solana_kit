@@ -5,5 +5,6 @@ analyzer:
     deprecated_member_use_from_same_package: ignore
     discarded_futures: ignore
     prefer_foreach: ignore
+    remove_deprecations_in_breaking_versions: ignore
   exclude:
     - packages/solana_kit_mobile_wallet_adapter/example/**
