@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -12,7 +11,6 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 import '../types/header.dart';
-
 
 @immutable
 class RecurringDelegation {
@@ -51,12 +49,21 @@ class RecurringDelegation {
           amountPulledInPeriod == other.amountPulledInPeriod;
 
   @override
-  int get hashCode => Object.hash(header, subscriptionAuthority, mint, currentPeriodStartTs, periodLengthS, expiryTs, amountPerPeriod, amountPulledInPeriod);
+  int get hashCode => Object.hash(
+    header,
+    subscriptionAuthority,
+    mint,
+    currentPeriodStartTs,
+    periodLengthS,
+    expiryTs,
+    amountPerPeriod,
+    amountPulledInPeriod,
+  );
 
   @override
-  String toString() => 'RecurringDelegation(header: $header, subscriptionAuthority: $subscriptionAuthority, mint: $mint, currentPeriodStartTs: $currentPeriodStartTs, periodLengthS: $periodLengthS, expiryTs: $expiryTs, amountPerPeriod: $amountPerPeriod, amountPulledInPeriod: $amountPulledInPeriod)';
+  String toString() =>
+      'RecurringDelegation(header: $header, subscriptionAuthority: $subscriptionAuthority, mint: $mint, currentPeriodStartTs: $currentPeriodStartTs, periodLengthS: $periodLengthS, expiryTs: $expiryTs, amountPerPeriod: $amountPerPeriod, amountPulledInPeriod: $amountPulledInPeriod)';
 }
-
 
 Encoder<RecurringDelegation> getRecurringDelegationEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
@@ -99,23 +106,29 @@ Decoder<RecurringDelegation> getRecurringDelegationDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => RecurringDelegation(
-      header: map['header']! as Header,
-      subscriptionAuthority: map['subscriptionAuthority']! as Address,
-      mint: map['mint']! as Address,
-      currentPeriodStartTs: map['currentPeriodStartTs']! as BigInt,
-      periodLengthS: map['periodLengthS']! as BigInt,
-      expiryTs: map['expiryTs']! as BigInt,
-      amountPerPeriod: map['amountPerPeriod']! as BigInt,
-      amountPulledInPeriod: map['amountPulledInPeriod']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        RecurringDelegation(
+          header: map['header']! as Header,
+          subscriptionAuthority: map['subscriptionAuthority']! as Address,
+          mint: map['mint']! as Address,
+          currentPeriodStartTs: map['currentPeriodStartTs']! as BigInt,
+          periodLengthS: map['periodLengthS']! as BigInt,
+          expiryTs: map['expiryTs']! as BigInt,
+          amountPerPeriod: map['amountPerPeriod']! as BigInt,
+          amountPulledInPeriod: map['amountPulledInPeriod']! as BigInt,
+        ),
   );
 }
 
 Codec<RecurringDelegation, RecurringDelegation> getRecurringDelegationCodec() {
-  return combineCodec(getRecurringDelegationEncoder(), getRecurringDelegationDecoder());
+  return combineCodec(
+    getRecurringDelegationEncoder(),
+    getRecurringDelegationDecoder(),
+  );
 }
 
-Account<RecurringDelegation> decodeRecurringDelegation(EncodedAccount encodedAccount) {
+Account<RecurringDelegation> decodeRecurringDelegation(
+  EncodedAccount encodedAccount,
+) {
   return decodeAccount(encodedAccount, getRecurringDelegationDecoder());
 }

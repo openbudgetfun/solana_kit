@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,7 +22,8 @@ class RevokeAbandonedDelegationInstructionData {
   final int discriminator;
 }
 
-Encoder<RevokeAbandonedDelegationInstructionData> getRevokeAbandonedDelegationInstructionDataEncoder() {
+Encoder<RevokeAbandonedDelegationInstructionData>
+getRevokeAbandonedDelegationInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,21 +36,30 @@ Encoder<RevokeAbandonedDelegationInstructionData> getRevokeAbandonedDelegationIn
   );
 }
 
-Decoder<RevokeAbandonedDelegationInstructionData> getRevokeAbandonedDelegationInstructionDataDecoder() {
+Decoder<RevokeAbandonedDelegationInstructionData>
+getRevokeAbandonedDelegationInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => RevokeAbandonedDelegationInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        RevokeAbandonedDelegationInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<RevokeAbandonedDelegationInstructionData, RevokeAbandonedDelegationInstructionData> getRevokeAbandonedDelegationInstructionDataCodec() {
-  return combineCodec(getRevokeAbandonedDelegationInstructionDataEncoder(), getRevokeAbandonedDelegationInstructionDataDecoder());
+Codec<
+  RevokeAbandonedDelegationInstructionData,
+  RevokeAbandonedDelegationInstructionData
+>
+getRevokeAbandonedDelegationInstructionDataCodec() {
+  return combineCodec(
+    getRevokeAbandonedDelegationInstructionDataEncoder(),
+    getRevokeAbandonedDelegationInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [RevokeAbandonedDelegation] instruction.
@@ -59,24 +68,26 @@ Instruction getRevokeAbandonedDelegationInstruction({
   required Address payer,
   required Address delegationAccount,
   required Address subscriptionAuthority,
-
 }) {
-  final instructionData = RevokeAbandonedDelegationInstructionData(
-
-  );
+  final instructionData = RevokeAbandonedDelegationInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: payer, role: AccountRole.writableSigner),
-    AccountMeta(address: delegationAccount, role: AccountRole.writable),
-    AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
+      AccountMeta(address: payer, role: AccountRole.writableSigner),
+      AccountMeta(address: delegationAccount, role: AccountRole.writable),
+      AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
     ],
-    data: getRevokeAbandonedDelegationInstructionDataEncoder().encode(instructionData),
+    data: getRevokeAbandonedDelegationInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [RevokeAbandonedDelegation] instruction from raw instruction data.
-RevokeAbandonedDelegationInstructionData parseRevokeAbandonedDelegationInstruction(Instruction instruction) {
-  return getRevokeAbandonedDelegationInstructionDataDecoder().decode(instruction.data!);
+RevokeAbandonedDelegationInstructionData
+parseRevokeAbandonedDelegationInstruction(Instruction instruction) {
+  return getRevokeAbandonedDelegationInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

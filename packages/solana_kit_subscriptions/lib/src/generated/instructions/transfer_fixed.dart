@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -50,15 +49,20 @@ Decoder<TransferFixedInstructionData> getTransferFixedInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => TransferFixedInstructionData(
-      discriminator: map['discriminator']! as int,
-      transferData: map['transferData']! as TransferData,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        TransferFixedInstructionData(
+          discriminator: map['discriminator']! as int,
+          transferData: map['transferData']! as TransferData,
+        ),
   );
 }
 
-Codec<TransferFixedInstructionData, TransferFixedInstructionData> getTransferFixedInstructionDataCodec() {
-  return combineCodec(getTransferFixedInstructionDataEncoder(), getTransferFixedInstructionDataDecoder());
+Codec<TransferFixedInstructionData, TransferFixedInstructionData>
+getTransferFixedInstructionDataCodec() {
+  return combineCodec(
+    getTransferFixedInstructionDataEncoder(),
+    getTransferFixedInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [TransferFixed] instruction.
@@ -76,27 +80,29 @@ Instruction getTransferFixedInstruction({
   required TransferData transferData,
 }) {
   final instructionData = TransferFixedInstructionData(
-      transferData: transferData,
+    transferData: transferData,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: delegationPda, role: AccountRole.writable),
-    AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
-    AccountMeta(address: delegatorAta, role: AccountRole.writable),
-    AccountMeta(address: receiverAta, role: AccountRole.writable),
-    AccountMeta(address: tokenMint, role: AccountRole.readonly),
-    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
-    AccountMeta(address: delegatee, role: AccountRole.readonlySigner),
-    AccountMeta(address: eventAuthority, role: AccountRole.readonly),
-    AccountMeta(address: selfProgram, role: AccountRole.readonly),
+      AccountMeta(address: delegationPda, role: AccountRole.writable),
+      AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
+      AccountMeta(address: delegatorAta, role: AccountRole.writable),
+      AccountMeta(address: receiverAta, role: AccountRole.writable),
+      AccountMeta(address: tokenMint, role: AccountRole.readonly),
+      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+      AccountMeta(address: delegatee, role: AccountRole.readonlySigner),
+      AccountMeta(address: eventAuthority, role: AccountRole.readonly),
+      AccountMeta(address: selfProgram, role: AccountRole.readonly),
     ],
     data: getTransferFixedInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [TransferFixed] instruction from raw instruction data.
-TransferFixedInstructionData parseTransferFixedInstruction(Instruction instruction) {
+TransferFixedInstructionData parseTransferFixedInstruction(
+  Instruction instruction,
+) {
   return getTransferFixedInstructionDataDecoder().decode(instruction.data!);
 }

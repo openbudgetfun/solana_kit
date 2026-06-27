@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -27,7 +26,8 @@ class TransferRecurringInstructionData {
   final TransferData transferData;
 }
 
-Encoder<TransferRecurringInstructionData> getTransferRecurringInstructionDataEncoder() {
+Encoder<TransferRecurringInstructionData>
+getTransferRecurringInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('transferData', getTransferDataEncoder()),
@@ -42,7 +42,8 @@ Encoder<TransferRecurringInstructionData> getTransferRecurringInstructionDataEnc
   );
 }
 
-Decoder<TransferRecurringInstructionData> getTransferRecurringInstructionDataDecoder() {
+Decoder<TransferRecurringInstructionData>
+getTransferRecurringInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('transferData', getTransferDataDecoder()),
@@ -50,15 +51,20 @@ Decoder<TransferRecurringInstructionData> getTransferRecurringInstructionDataDec
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => TransferRecurringInstructionData(
-      discriminator: map['discriminator']! as int,
-      transferData: map['transferData']! as TransferData,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        TransferRecurringInstructionData(
+          discriminator: map['discriminator']! as int,
+          transferData: map['transferData']! as TransferData,
+        ),
   );
 }
 
-Codec<TransferRecurringInstructionData, TransferRecurringInstructionData> getTransferRecurringInstructionDataCodec() {
-  return combineCodec(getTransferRecurringInstructionDataEncoder(), getTransferRecurringInstructionDataDecoder());
+Codec<TransferRecurringInstructionData, TransferRecurringInstructionData>
+getTransferRecurringInstructionDataCodec() {
+  return combineCodec(
+    getTransferRecurringInstructionDataEncoder(),
+    getTransferRecurringInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [TransferRecurring] instruction.
@@ -76,27 +82,29 @@ Instruction getTransferRecurringInstruction({
   required TransferData transferData,
 }) {
   final instructionData = TransferRecurringInstructionData(
-      transferData: transferData,
+    transferData: transferData,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: delegationPda, role: AccountRole.writable),
-    AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
-    AccountMeta(address: delegatorAta, role: AccountRole.writable),
-    AccountMeta(address: receiverAta, role: AccountRole.writable),
-    AccountMeta(address: tokenMint, role: AccountRole.readonly),
-    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
-    AccountMeta(address: delegatee, role: AccountRole.readonlySigner),
-    AccountMeta(address: eventAuthority, role: AccountRole.readonly),
-    AccountMeta(address: selfProgram, role: AccountRole.readonly),
+      AccountMeta(address: delegationPda, role: AccountRole.writable),
+      AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
+      AccountMeta(address: delegatorAta, role: AccountRole.writable),
+      AccountMeta(address: receiverAta, role: AccountRole.writable),
+      AccountMeta(address: tokenMint, role: AccountRole.readonly),
+      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+      AccountMeta(address: delegatee, role: AccountRole.readonlySigner),
+      AccountMeta(address: eventAuthority, role: AccountRole.readonly),
+      AccountMeta(address: selfProgram, role: AccountRole.readonly),
     ],
     data: getTransferRecurringInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [TransferRecurring] instruction from raw instruction data.
-TransferRecurringInstructionData parseTransferRecurringInstruction(Instruction instruction) {
+TransferRecurringInstructionData parseTransferRecurringInstruction(
+  Instruction instruction,
+) {
   return getTransferRecurringInstructionDataDecoder().decode(instruction.data!);
 }

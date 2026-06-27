@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,7 +22,8 @@ class ResumeSubscriptionInstructionData {
   final int discriminator;
 }
 
-Encoder<ResumeSubscriptionInstructionData> getResumeSubscriptionInstructionDataEncoder() {
+Encoder<ResumeSubscriptionInstructionData>
+getResumeSubscriptionInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,21 +36,27 @@ Encoder<ResumeSubscriptionInstructionData> getResumeSubscriptionInstructionDataE
   );
 }
 
-Decoder<ResumeSubscriptionInstructionData> getResumeSubscriptionInstructionDataDecoder() {
+Decoder<ResumeSubscriptionInstructionData>
+getResumeSubscriptionInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ResumeSubscriptionInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        ResumeSubscriptionInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<ResumeSubscriptionInstructionData, ResumeSubscriptionInstructionData> getResumeSubscriptionInstructionDataCodec() {
-  return combineCodec(getResumeSubscriptionInstructionDataEncoder(), getResumeSubscriptionInstructionDataDecoder());
+Codec<ResumeSubscriptionInstructionData, ResumeSubscriptionInstructionData>
+getResumeSubscriptionInstructionDataCodec() {
+  return combineCodec(
+    getResumeSubscriptionInstructionDataEncoder(),
+    getResumeSubscriptionInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [ResumeSubscription] instruction.
@@ -62,27 +68,28 @@ Instruction getResumeSubscriptionInstruction({
   required Address subscriptionAuthority,
   required Address eventAuthority,
   required Address selfProgram,
-
 }) {
-  final instructionData = ResumeSubscriptionInstructionData(
-
-  );
+  final instructionData = ResumeSubscriptionInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: subscriber, role: AccountRole.readonlySigner),
-    AccountMeta(address: planPda, role: AccountRole.readonly),
-    AccountMeta(address: subscriptionPda, role: AccountRole.writable),
-    AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
-    AccountMeta(address: eventAuthority, role: AccountRole.readonly),
-    AccountMeta(address: selfProgram, role: AccountRole.readonly),
+      AccountMeta(address: subscriber, role: AccountRole.readonlySigner),
+      AccountMeta(address: planPda, role: AccountRole.readonly),
+      AccountMeta(address: subscriptionPda, role: AccountRole.writable),
+      AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
+      AccountMeta(address: eventAuthority, role: AccountRole.readonly),
+      AccountMeta(address: selfProgram, role: AccountRole.readonly),
     ],
     data: getResumeSubscriptionInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [ResumeSubscription] instruction from raw instruction data.
-ResumeSubscriptionInstructionData parseResumeSubscriptionInstruction(Instruction instruction) {
-  return getResumeSubscriptionInstructionDataDecoder().decode(instruction.data!);
+ResumeSubscriptionInstructionData parseResumeSubscriptionInstruction(
+  Instruction instruction,
+) {
+  return getResumeSubscriptionInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

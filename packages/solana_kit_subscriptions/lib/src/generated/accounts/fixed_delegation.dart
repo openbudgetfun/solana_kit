@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -12,7 +11,6 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 import '../types/header.dart';
-
 
 @immutable
 class FixedDelegation {
@@ -42,12 +40,13 @@ class FixedDelegation {
           expiryTs == other.expiryTs;
 
   @override
-  int get hashCode => Object.hash(header, subscriptionAuthority, mint, amount, expiryTs);
+  int get hashCode =>
+      Object.hash(header, subscriptionAuthority, mint, amount, expiryTs);
 
   @override
-  String toString() => 'FixedDelegation(header: $header, subscriptionAuthority: $subscriptionAuthority, mint: $mint, amount: $amount, expiryTs: $expiryTs)';
+  String toString() =>
+      'FixedDelegation(header: $header, subscriptionAuthority: $subscriptionAuthority, mint: $mint, amount: $amount, expiryTs: $expiryTs)';
 }
-
 
 Encoder<FixedDelegation> getFixedDelegationEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[

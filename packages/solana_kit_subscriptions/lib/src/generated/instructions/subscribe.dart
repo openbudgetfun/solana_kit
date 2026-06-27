@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -50,15 +49,20 @@ Decoder<SubscribeInstructionData> getSubscribeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => SubscribeInstructionData(
-      discriminator: map['discriminator']! as int,
-      subscribeData: map['subscribeData']! as SubscribeData,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SubscribeInstructionData(
+          discriminator: map['discriminator']! as int,
+          subscribeData: map['subscribeData']! as SubscribeData,
+        ),
   );
 }
 
-Codec<SubscribeInstructionData, SubscribeInstructionData> getSubscribeInstructionDataCodec() {
-  return combineCodec(getSubscribeInstructionDataEncoder(), getSubscribeInstructionDataDecoder());
+Codec<SubscribeInstructionData, SubscribeInstructionData>
+getSubscribeInstructionDataCodec() {
+  return combineCodec(
+    getSubscribeInstructionDataEncoder(),
+    getSubscribeInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Subscribe] instruction.
@@ -76,21 +80,25 @@ Instruction getSubscribeInstruction({
   required SubscribeData subscribeData,
 }) {
   final instructionData = SubscribeInstructionData(
-      subscribeData: subscribeData,
+    subscribeData: subscribeData,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: subscriber, role: AccountRole.writableSigner),
-    AccountMeta(address: merchant, role: AccountRole.readonly),
-    AccountMeta(address: planPda, role: AccountRole.readonly),
-    AccountMeta(address: subscriptionPda, role: AccountRole.writable),
-    AccountMeta(address: subscriptionAuthorityPda, role: AccountRole.readonly),
-    AccountMeta(address: systemProgram, role: AccountRole.readonly),
-    AccountMeta(address: eventAuthority, role: AccountRole.readonly),
-    AccountMeta(address: selfProgram, role: AccountRole.readonly),
-    if (payer != null) AccountMeta(address: payer, role: AccountRole.writableSigner),
+      AccountMeta(address: subscriber, role: AccountRole.writableSigner),
+      AccountMeta(address: merchant, role: AccountRole.readonly),
+      AccountMeta(address: planPda, role: AccountRole.readonly),
+      AccountMeta(address: subscriptionPda, role: AccountRole.writable),
+      AccountMeta(
+        address: subscriptionAuthorityPda,
+        role: AccountRole.readonly,
+      ),
+      AccountMeta(address: systemProgram, role: AccountRole.readonly),
+      AccountMeta(address: eventAuthority, role: AccountRole.readonly),
+      AccountMeta(address: selfProgram, role: AccountRole.readonly),
+      if (payer != null)
+        AccountMeta(address: payer, role: AccountRole.writableSigner),
     ],
     data: getSubscribeInstructionDataEncoder().encode(instructionData),
   );

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -50,15 +49,20 @@ Decoder<UpdatePlanInstructionData> getUpdatePlanInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdatePlanInstructionData(
-      discriminator: map['discriminator']! as int,
-      updatePlanData: map['updatePlanData']! as UpdatePlanData,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UpdatePlanInstructionData(
+          discriminator: map['discriminator']! as int,
+          updatePlanData: map['updatePlanData']! as UpdatePlanData,
+        ),
   );
 }
 
-Codec<UpdatePlanInstructionData, UpdatePlanInstructionData> getUpdatePlanInstructionDataCodec() {
-  return combineCodec(getUpdatePlanInstructionDataEncoder(), getUpdatePlanInstructionDataDecoder());
+Codec<UpdatePlanInstructionData, UpdatePlanInstructionData>
+getUpdatePlanInstructionDataCodec() {
+  return combineCodec(
+    getUpdatePlanInstructionDataEncoder(),
+    getUpdatePlanInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [UpdatePlan] instruction.
@@ -71,16 +75,16 @@ Instruction getUpdatePlanInstruction({
   required UpdatePlanData updatePlanData,
 }) {
   final instructionData = UpdatePlanInstructionData(
-      updatePlanData: updatePlanData,
+    updatePlanData: updatePlanData,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: owner, role: AccountRole.readonlySigner),
-    AccountMeta(address: planPda, role: AccountRole.writable),
-    AccountMeta(address: eventAuthority, role: AccountRole.readonly),
-    AccountMeta(address: selfProgram, role: AccountRole.readonly),
+      AccountMeta(address: owner, role: AccountRole.readonlySigner),
+      AccountMeta(address: planPda, role: AccountRole.writable),
+      AccountMeta(address: eventAuthority, role: AccountRole.readonly),
+      AccountMeta(address: selfProgram, role: AccountRole.readonly),
     ],
     data: getUpdatePlanInstructionDataEncoder().encode(instructionData),
   );

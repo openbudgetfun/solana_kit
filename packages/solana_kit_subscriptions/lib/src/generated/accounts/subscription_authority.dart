@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -10,7 +9,6 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
-
 
 @immutable
 class SubscriptionAuthority {
@@ -43,12 +41,13 @@ class SubscriptionAuthority {
           initId == other.initId;
 
   @override
-  int get hashCode => Object.hash(discriminator, user, tokenMint, payer, bump, initId);
+  int get hashCode =>
+      Object.hash(discriminator, user, tokenMint, payer, bump, initId);
 
   @override
-  String toString() => 'SubscriptionAuthority(discriminator: $discriminator, user: $user, tokenMint: $tokenMint, payer: $payer, bump: $bump, initId: $initId)';
+  String toString() =>
+      'SubscriptionAuthority(discriminator: $discriminator, user: $user, tokenMint: $tokenMint, payer: $payer, bump: $bump, initId: $initId)';
 }
-
 
 Encoder<SubscriptionAuthority> getSubscriptionAuthorityEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
@@ -85,21 +84,28 @@ Decoder<SubscriptionAuthority> getSubscriptionAuthorityDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => SubscriptionAuthority(
-      discriminator: map['discriminator']! as int,
-      user: map['user']! as Address,
-      tokenMint: map['tokenMint']! as Address,
-      payer: map['payer']! as Address,
-      bump: map['bump']! as int,
-      initId: map['initId']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SubscriptionAuthority(
+          discriminator: map['discriminator']! as int,
+          user: map['user']! as Address,
+          tokenMint: map['tokenMint']! as Address,
+          payer: map['payer']! as Address,
+          bump: map['bump']! as int,
+          initId: map['initId']! as BigInt,
+        ),
   );
 }
 
-Codec<SubscriptionAuthority, SubscriptionAuthority> getSubscriptionAuthorityCodec() {
-  return combineCodec(getSubscriptionAuthorityEncoder(), getSubscriptionAuthorityDecoder());
+Codec<SubscriptionAuthority, SubscriptionAuthority>
+getSubscriptionAuthorityCodec() {
+  return combineCodec(
+    getSubscriptionAuthorityEncoder(),
+    getSubscriptionAuthorityDecoder(),
+  );
 }
 
-Account<SubscriptionAuthority> decodeSubscriptionAuthority(EncodedAccount encodedAccount) {
+Account<SubscriptionAuthority> decodeSubscriptionAuthority(
+  EncodedAccount encodedAccount,
+) {
   return decodeAccount(encodedAccount, getSubscriptionAuthorityDecoder());
 }

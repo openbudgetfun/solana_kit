@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -12,7 +11,6 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 import '../types/header.dart';
 import '../types/plan_terms.dart';
-
 
 @immutable
 class SubscriptionDelegation {
@@ -42,12 +40,18 @@ class SubscriptionDelegation {
           expiresAtTs == other.expiresAtTs;
 
   @override
-  int get hashCode => Object.hash(header, terms, amountPulledInPeriod, currentPeriodStartTs, expiresAtTs);
+  int get hashCode => Object.hash(
+    header,
+    terms,
+    amountPulledInPeriod,
+    currentPeriodStartTs,
+    expiresAtTs,
+  );
 
   @override
-  String toString() => 'SubscriptionDelegation(header: $header, terms: $terms, amountPulledInPeriod: $amountPulledInPeriod, currentPeriodStartTs: $currentPeriodStartTs, expiresAtTs: $expiresAtTs)';
+  String toString() =>
+      'SubscriptionDelegation(header: $header, terms: $terms, amountPulledInPeriod: $amountPulledInPeriod, currentPeriodStartTs: $currentPeriodStartTs, expiresAtTs: $expiresAtTs)';
 }
-
 
 Encoder<SubscriptionDelegation> getSubscriptionDelegationEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
@@ -81,20 +85,27 @@ Decoder<SubscriptionDelegation> getSubscriptionDelegationDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => SubscriptionDelegation(
-      header: map['header']! as Header,
-      terms: map['terms']! as PlanTerms,
-      amountPulledInPeriod: map['amountPulledInPeriod']! as BigInt,
-      currentPeriodStartTs: map['currentPeriodStartTs']! as BigInt,
-      expiresAtTs: map['expiresAtTs']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SubscriptionDelegation(
+          header: map['header']! as Header,
+          terms: map['terms']! as PlanTerms,
+          amountPulledInPeriod: map['amountPulledInPeriod']! as BigInt,
+          currentPeriodStartTs: map['currentPeriodStartTs']! as BigInt,
+          expiresAtTs: map['expiresAtTs']! as BigInt,
+        ),
   );
 }
 
-Codec<SubscriptionDelegation, SubscriptionDelegation> getSubscriptionDelegationCodec() {
-  return combineCodec(getSubscriptionDelegationEncoder(), getSubscriptionDelegationDecoder());
+Codec<SubscriptionDelegation, SubscriptionDelegation>
+getSubscriptionDelegationCodec() {
+  return combineCodec(
+    getSubscriptionDelegationEncoder(),
+    getSubscriptionDelegationDecoder(),
+  );
 }
 
-Account<SubscriptionDelegation> decodeSubscriptionDelegation(EncodedAccount encodedAccount) {
+Account<SubscriptionDelegation> decodeSubscriptionDelegation(
+  EncodedAccount encodedAccount,
+) {
   return decodeAccount(encodedAccount, getSubscriptionDelegationDecoder());
 }

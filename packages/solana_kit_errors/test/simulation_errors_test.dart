@@ -27,6 +27,27 @@ void main() {
       expect(unwrapped, same(cause));
     });
 
+    test('unwraps resource limit estimation error with cause', () {
+      final error = SolanaError(
+        SolanaErrorCode.transactionFailedWhenSimulatingToEstimateResourceLimits,
+        {'cause': 'inner error'},
+      );
+      final unwrapped = unwrapSimulationError(error);
+      expect(unwrapped, 'inner error');
+    });
+
+    test('unwraps resource limit estimation error with SolanaError cause', () {
+      final cause = SolanaError(
+        SolanaErrorCode.transactionErrorBlockhashNotFound,
+      );
+      final error = SolanaError(
+        SolanaErrorCode.transactionFailedWhenSimulatingToEstimateResourceLimits,
+        {'cause': cause},
+      );
+      final unwrapped = unwrapSimulationError(error);
+      expect(unwrapped, same(cause));
+    });
+
     test('returns original error if not simulation error', () {
       final error = SolanaError(SolanaErrorCode.blockHeightExceeded);
       final unwrapped = unwrapSimulationError(error);

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -43,14 +42,19 @@ Decoder<DeletePlanInstructionData> getDeletePlanInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => DeletePlanInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        DeletePlanInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<DeletePlanInstructionData, DeletePlanInstructionData> getDeletePlanInstructionDataCodec() {
-  return combineCodec(getDeletePlanInstructionDataEncoder(), getDeletePlanInstructionDataDecoder());
+Codec<DeletePlanInstructionData, DeletePlanInstructionData>
+getDeletePlanInstructionDataCodec() {
+  return combineCodec(
+    getDeletePlanInstructionDataEncoder(),
+    getDeletePlanInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [DeletePlan] instruction.
@@ -58,17 +62,14 @@ Instruction getDeletePlanInstruction({
   required Address programAddress,
   required Address owner,
   required Address planPda,
-
 }) {
-  final instructionData = DeletePlanInstructionData(
-
-  );
+  final instructionData = DeletePlanInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: owner, role: AccountRole.writableSigner),
-    AccountMeta(address: planPda, role: AccountRole.writable),
+      AccountMeta(address: owner, role: AccountRole.writableSigner),
+      AccountMeta(address: planPda, role: AccountRole.writable),
     ],
     data: getDeletePlanInstructionDataEncoder().encode(instructionData),
   );

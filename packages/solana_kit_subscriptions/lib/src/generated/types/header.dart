@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -9,7 +8,6 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
-
 
 @immutable
 class Header {
@@ -45,10 +43,19 @@ class Header {
           initId == other.initId;
 
   @override
-  int get hashCode => Object.hash(discriminator, version, bump, delegator, delegatee, payer, initId);
+  int get hashCode => Object.hash(
+    discriminator,
+    version,
+    bump,
+    delegator,
+    delegatee,
+    payer,
+    initId,
+  );
 
   @override
-  String toString() => 'Header(discriminator: $discriminator, version: $version, bump: $bump, delegator: $delegator, delegatee: $delegatee, payer: $payer, initId: $initId)';
+  String toString() =>
+      'Header(discriminator: $discriminator, version: $version, bump: $bump, delegator: $delegator, delegatee: $delegatee, payer: $payer, initId: $initId)';
 }
 
 Encoder<Header> getHeaderEncoder() {

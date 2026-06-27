@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -50,15 +49,20 @@ Decoder<CreatePlanInstructionData> getCreatePlanInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CreatePlanInstructionData(
-      discriminator: map['discriminator']! as int,
-      planData: map['planData']! as PlanData,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CreatePlanInstructionData(
+          discriminator: map['discriminator']! as int,
+          planData: map['planData']! as PlanData,
+        ),
   );
 }
 
-Codec<CreatePlanInstructionData, CreatePlanInstructionData> getCreatePlanInstructionDataCodec() {
-  return combineCodec(getCreatePlanInstructionDataEncoder(), getCreatePlanInstructionDataDecoder());
+Codec<CreatePlanInstructionData, CreatePlanInstructionData>
+getCreatePlanInstructionDataCodec() {
+  return combineCodec(
+    getCreatePlanInstructionDataEncoder(),
+    getCreatePlanInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [CreatePlan] instruction.
@@ -72,17 +76,17 @@ Instruction getCreatePlanInstruction({
   required PlanData planData,
 }) {
   final instructionData = CreatePlanInstructionData(
-      planData: planData,
+    planData: planData,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: merchant, role: AccountRole.writableSigner),
-    AccountMeta(address: planPda, role: AccountRole.writable),
-    AccountMeta(address: tokenMint, role: AccountRole.readonly),
-    AccountMeta(address: systemProgram, role: AccountRole.readonly),
-    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+      AccountMeta(address: merchant, role: AccountRole.writableSigner),
+      AccountMeta(address: planPda, role: AccountRole.writable),
+      AccountMeta(address: tokenMint, role: AccountRole.readonly),
+      AccountMeta(address: systemProgram, role: AccountRole.readonly),
+      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
     data: getCreatePlanInstructionDataEncoder().encode(instructionData),
   );

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,7 +22,8 @@ class RevokeAbandonedSubscriptionInstructionData {
   final int discriminator;
 }
 
-Encoder<RevokeAbandonedSubscriptionInstructionData> getRevokeAbandonedSubscriptionInstructionDataEncoder() {
+Encoder<RevokeAbandonedSubscriptionInstructionData>
+getRevokeAbandonedSubscriptionInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,21 +36,30 @@ Encoder<RevokeAbandonedSubscriptionInstructionData> getRevokeAbandonedSubscripti
   );
 }
 
-Decoder<RevokeAbandonedSubscriptionInstructionData> getRevokeAbandonedSubscriptionInstructionDataDecoder() {
+Decoder<RevokeAbandonedSubscriptionInstructionData>
+getRevokeAbandonedSubscriptionInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => RevokeAbandonedSubscriptionInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        RevokeAbandonedSubscriptionInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<RevokeAbandonedSubscriptionInstructionData, RevokeAbandonedSubscriptionInstructionData> getRevokeAbandonedSubscriptionInstructionDataCodec() {
-  return combineCodec(getRevokeAbandonedSubscriptionInstructionDataEncoder(), getRevokeAbandonedSubscriptionInstructionDataDecoder());
+Codec<
+  RevokeAbandonedSubscriptionInstructionData,
+  RevokeAbandonedSubscriptionInstructionData
+>
+getRevokeAbandonedSubscriptionInstructionDataCodec() {
+  return combineCodec(
+    getRevokeAbandonedSubscriptionInstructionDataEncoder(),
+    getRevokeAbandonedSubscriptionInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [RevokeAbandonedSubscription] instruction.
@@ -60,25 +69,27 @@ Instruction getRevokeAbandonedSubscriptionInstruction({
   required Address subscriptionAccount,
   required Address subscriptionAuthority,
   required Address planPda,
-
 }) {
-  final instructionData = RevokeAbandonedSubscriptionInstructionData(
-
-  );
+  final instructionData = RevokeAbandonedSubscriptionInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: payer, role: AccountRole.writableSigner),
-    AccountMeta(address: subscriptionAccount, role: AccountRole.writable),
-    AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
-    AccountMeta(address: planPda, role: AccountRole.readonly),
+      AccountMeta(address: payer, role: AccountRole.writableSigner),
+      AccountMeta(address: subscriptionAccount, role: AccountRole.writable),
+      AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
+      AccountMeta(address: planPda, role: AccountRole.readonly),
     ],
-    data: getRevokeAbandonedSubscriptionInstructionDataEncoder().encode(instructionData),
+    data: getRevokeAbandonedSubscriptionInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [RevokeAbandonedSubscription] instruction from raw instruction data.
-RevokeAbandonedSubscriptionInstructionData parseRevokeAbandonedSubscriptionInstruction(Instruction instruction) {
-  return getRevokeAbandonedSubscriptionInstructionDataDecoder().decode(instruction.data!);
+RevokeAbandonedSubscriptionInstructionData
+parseRevokeAbandonedSubscriptionInstruction(Instruction instruction) {
+  return getRevokeAbandonedSubscriptionInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

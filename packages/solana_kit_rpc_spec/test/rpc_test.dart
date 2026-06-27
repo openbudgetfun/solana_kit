@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -149,6 +150,88 @@ void main() {
       final completer = Completer<void>();
       final options = RpcSendOptions(abortSignal: completer.future);
       expect(options.abortSignal, isNotNull);
+    });
+  });
+
+  group('PendingRpcRequest.reactiveStore', () {
+    late List<RpcTransportConfig> transportCalls;
+
+    setUp(() {
+      transportCalls = [];
+    });
+
+    test('returns a ReactiveActionStore in the idle state', () {
+      Future<Object?> transport(RpcTransportConfig config) async => null;
+      final request = PendingRpcRequest<int>(
+        plan: RpcPlan<int>(
+          execute: (config) async {
+            final response = await config.transport(
+              RpcTransportConfig(payload: null, signal: config.signal),
+            );
+            return response! as int;
+          },
+        ),
+        transport: transport,
+      );
+
+      final store = request.reactiveStore();
+
+      expect(store, isA<ReactiveActionStore<List<Object?>, int>>());
+      expect(store.getState().status, ReactiveActionState.idle);
+      expect(store.getState().isIdle, isTrue);
+    });
+
+    test(
+      'dispatchAsync triggers send() and returns the transport response',
+      () async {
+        Future<Object?> transport(RpcTransportConfig config) async {
+          transportCalls.add(config);
+          return 42;
+        }
+
+        final request = PendingRpcRequest<int>(
+          plan: RpcPlan<int>(
+            execute: (config) async {
+              final response = await config.transport(
+                RpcTransportConfig(payload: null, signal: config.signal),
+              );
+              return response! as int;
+            },
+          ),
+          transport: transport,
+        );
+
+        final store = request.reactiveStore();
+        final result = await store.dispatchAsync([]);
+
+        expect(result, 42);
+        expect(transportCalls, hasLength(1));
+        expect(store.getState().status, ReactiveActionState.success);
+        expect(store.getState().result, 42);
+      },
+    );
+
+    test('propagates errors from send() to the store', () async {
+      final error = Exception('boom');
+      Future<Object?> transport(RpcTransportConfig config) async => throw error;
+      final request = PendingRpcRequest<int>(
+        plan: RpcPlan<int>(
+          execute: (config) async {
+            final response = await config.transport(
+              RpcTransportConfig(payload: null, signal: config.signal),
+            );
+            return response! as int;
+          },
+        ),
+        transport: transport,
+      );
+
+      final store = request.reactiveStore();
+
+      await expectLater(store.dispatchAsync([]), throwsA(error));
+
+      expect(store.getState().status, ReactiveActionState.error);
+      expect(store.getState().error, error);
     });
   });
 

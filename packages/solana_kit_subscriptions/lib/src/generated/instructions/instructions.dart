@@ -18,4 +18,3 @@ export 'transfer_fixed.dart';
 export 'transfer_recurring.dart';
 export 'transfer_subscription.dart';
 export 'update_plan.dart';
-

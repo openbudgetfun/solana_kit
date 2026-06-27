@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,7 +22,8 @@ class RevokeSubscriptionAuthorityInstructionData {
   final int discriminator;
 }
 
-Encoder<RevokeSubscriptionAuthorityInstructionData> getRevokeSubscriptionAuthorityInstructionDataEncoder() {
+Encoder<RevokeSubscriptionAuthorityInstructionData>
+getRevokeSubscriptionAuthorityInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,21 +36,30 @@ Encoder<RevokeSubscriptionAuthorityInstructionData> getRevokeSubscriptionAuthori
   );
 }
 
-Decoder<RevokeSubscriptionAuthorityInstructionData> getRevokeSubscriptionAuthorityInstructionDataDecoder() {
+Decoder<RevokeSubscriptionAuthorityInstructionData>
+getRevokeSubscriptionAuthorityInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => RevokeSubscriptionAuthorityInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        RevokeSubscriptionAuthorityInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<RevokeSubscriptionAuthorityInstructionData, RevokeSubscriptionAuthorityInstructionData> getRevokeSubscriptionAuthorityInstructionDataCodec() {
-  return combineCodec(getRevokeSubscriptionAuthorityInstructionDataEncoder(), getRevokeSubscriptionAuthorityInstructionDataDecoder());
+Codec<
+  RevokeSubscriptionAuthorityInstructionData,
+  RevokeSubscriptionAuthorityInstructionData
+>
+getRevokeSubscriptionAuthorityInstructionDataCodec() {
+  return combineCodec(
+    getRevokeSubscriptionAuthorityInstructionDataEncoder(),
+    getRevokeSubscriptionAuthorityInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [RevokeSubscriptionAuthority] instruction.
@@ -62,27 +71,30 @@ Instruction getRevokeSubscriptionAuthorityInstruction({
   required Address tokenProgram,
   required Address subscriptionAuthority,
   Address? receiver,
-
 }) {
-  final instructionData = RevokeSubscriptionAuthorityInstructionData(
-
-  );
+  final instructionData = RevokeSubscriptionAuthorityInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: user, role: AccountRole.writableSigner),
-    AccountMeta(address: userAta, role: AccountRole.writable),
-    AccountMeta(address: tokenMint, role: AccountRole.readonly),
-    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
-    AccountMeta(address: subscriptionAuthority, role: AccountRole.writable),
-    if (receiver != null) AccountMeta(address: receiver, role: AccountRole.writable),
+      AccountMeta(address: user, role: AccountRole.writableSigner),
+      AccountMeta(address: userAta, role: AccountRole.writable),
+      AccountMeta(address: tokenMint, role: AccountRole.readonly),
+      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+      AccountMeta(address: subscriptionAuthority, role: AccountRole.writable),
+      if (receiver != null)
+        AccountMeta(address: receiver, role: AccountRole.writable),
     ],
-    data: getRevokeSubscriptionAuthorityInstructionDataEncoder().encode(instructionData),
+    data: getRevokeSubscriptionAuthorityInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [RevokeSubscriptionAuthority] instruction from raw instruction data.
-RevokeSubscriptionAuthorityInstructionData parseRevokeSubscriptionAuthorityInstruction(Instruction instruction) {
-  return getRevokeSubscriptionAuthorityInstructionDataDecoder().decode(instruction.data!);
+RevokeSubscriptionAuthorityInstructionData
+parseRevokeSubscriptionAuthorityInstruction(Instruction instruction) {
+  return getRevokeSubscriptionAuthorityInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

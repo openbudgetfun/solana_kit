@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,7 +22,8 @@ class CancelSubscriptionInstructionData {
   final int discriminator;
 }
 
-Encoder<CancelSubscriptionInstructionData> getCancelSubscriptionInstructionDataEncoder() {
+Encoder<CancelSubscriptionInstructionData>
+getCancelSubscriptionInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,21 +36,27 @@ Encoder<CancelSubscriptionInstructionData> getCancelSubscriptionInstructionDataE
   );
 }
 
-Decoder<CancelSubscriptionInstructionData> getCancelSubscriptionInstructionDataDecoder() {
+Decoder<CancelSubscriptionInstructionData>
+getCancelSubscriptionInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CancelSubscriptionInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CancelSubscriptionInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<CancelSubscriptionInstructionData, CancelSubscriptionInstructionData> getCancelSubscriptionInstructionDataCodec() {
-  return combineCodec(getCancelSubscriptionInstructionDataEncoder(), getCancelSubscriptionInstructionDataDecoder());
+Codec<CancelSubscriptionInstructionData, CancelSubscriptionInstructionData>
+getCancelSubscriptionInstructionDataCodec() {
+  return combineCodec(
+    getCancelSubscriptionInstructionDataEncoder(),
+    getCancelSubscriptionInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [CancelSubscription] instruction.
@@ -61,26 +67,27 @@ Instruction getCancelSubscriptionInstruction({
   required Address subscriptionPda,
   required Address eventAuthority,
   required Address selfProgram,
-
 }) {
-  final instructionData = CancelSubscriptionInstructionData(
-
-  );
+  final instructionData = CancelSubscriptionInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: subscriber, role: AccountRole.readonlySigner),
-    AccountMeta(address: planPda, role: AccountRole.readonly),
-    AccountMeta(address: subscriptionPda, role: AccountRole.writable),
-    AccountMeta(address: eventAuthority, role: AccountRole.readonly),
-    AccountMeta(address: selfProgram, role: AccountRole.readonly),
+      AccountMeta(address: subscriber, role: AccountRole.readonlySigner),
+      AccountMeta(address: planPda, role: AccountRole.readonly),
+      AccountMeta(address: subscriptionPda, role: AccountRole.writable),
+      AccountMeta(address: eventAuthority, role: AccountRole.readonly),
+      AccountMeta(address: selfProgram, role: AccountRole.readonly),
     ],
     data: getCancelSubscriptionInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [CancelSubscription] instruction from raw instruction data.
-CancelSubscriptionInstructionData parseCancelSubscriptionInstruction(Instruction instruction) {
-  return getCancelSubscriptionInstructionDataDecoder().decode(instruction.data!);
+CancelSubscriptionInstructionData parseCancelSubscriptionInstruction(
+  Instruction instruction,
+) {
+  return getCancelSubscriptionInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

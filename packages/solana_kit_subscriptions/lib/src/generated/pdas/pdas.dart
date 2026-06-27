@@ -7,4 +7,3 @@ export 'plan.dart';
 export 'recurring_delegation.dart';
 export 'subscription_authority.dart';
 export 'subscription_delegation.dart';
-

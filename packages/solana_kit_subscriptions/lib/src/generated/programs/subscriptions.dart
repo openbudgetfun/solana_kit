@@ -1,12 +1,12 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
-
 /// The address of the Subscriptions program.
-const subscriptionsProgramAddress = Address('De1egAFMkMWZSN5rYXRj9CAdheBamobVNubTsi9avR44');
+const subscriptionsProgramAddress = Address(
+  'De1egAFMkMWZSN5rYXRj9CAdheBamobVNubTsi9avR44',
+);
 
 /// Known accounts for the Subscriptions program.
 enum SubscriptionsAccount {

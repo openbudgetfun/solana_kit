@@ -28,7 +28,8 @@ const int subscriptionsErrorInvalidToken2022MintAccountData = 0x6a; // 106
 const int subscriptionsErrorInvalidToken2022TokenAccountData = 0x6b; // 107
 
 /// Message: "Invalid associated token account address"
-const int subscriptionsErrorInvalidAssociatedTokenAccountDerivedAddress = 0x6c; // 108
+const int subscriptionsErrorInvalidAssociatedTokenAccountDerivedAddress =
+    0x6c; // 108
 
 /// Message: "Invalid SPL Token mint account data"
 const int subscriptionsErrorInvalidTokenSplMintAccountData = 0x6d; // 109
@@ -142,7 +143,8 @@ const int subscriptionsErrorInvalidPayerData = 0x193; // 403
 const int subscriptionsErrorRecurringDelegationStartTimeInPast = 0x194; // 404
 
 /// Message: "start time specified is greater than expiry"
-const int subscriptionsErrorRecurringDelegationStartTimeGreaterThanExpiry = 0x195; // 405
+const int subscriptionsErrorRecurringDelegationStartTimeGreaterThanExpiry =
+    0x195; // 405
 
 /// Message: "zero amount specified"
 const int subscriptionsErrorRecurringDelegationAmountZero = 0x196; // 406
@@ -151,7 +153,8 @@ const int subscriptionsErrorRecurringDelegationAmountZero = 0x196; // 406
 const int subscriptionsErrorDelegationNotStarted = 0x197; // 407
 
 /// Message: "start_ts of 0 (start on landing) requires a non-zero expiry"
-const int subscriptionsErrorRecurringDelegationStartOnLandingRequiresExpiry = 0x198; // 408
+const int subscriptionsErrorRecurringDelegationStartOnLandingRequiresExpiry =
+    0x198; // 408
 
 /// Message: "Plan is in sunset status"
 const int subscriptionsErrorPlanSunset = 0x1f4; // 500
@@ -233,82 +236,117 @@ const int subscriptionsErrorInvalidSelfProgram = 0x25c; // 604
 
 /// Map of error codes to human-readable messages.
 const Map<int, String> _subscriptionsErrorMessages = {
-    subscriptionsErrorNotSigner: 'Account must be a signer',
-    subscriptionsErrorInvalidAddress: 'Invalid account address',
-    subscriptionsErrorInvalidEscrowPda: 'Invalid escrow PDA derivation',
-    subscriptionsErrorInvalidSubscriptionAuthorityPda: 'Invalid subscription-authority PDA derivation',
-    subscriptionsErrorNotSystemProgram: 'Expected system program',
-    subscriptionsErrorInvalidTokenProgram: 'Token Program does not match other accounts',
-    subscriptionsErrorInvalidToken2022MintAccountData: 'Invalid Token-2022 mint account data',
-    subscriptionsErrorInvalidToken2022TokenAccountData: 'Invalid Token-2022 token account data',
-    subscriptionsErrorInvalidAssociatedTokenAccountDerivedAddress: 'Invalid associated token account address',
-    subscriptionsErrorInvalidTokenSplMintAccountData: 'Invalid SPL Token mint account data',
-    subscriptionsErrorInvalidTokenSplTokenAccountData: 'Invalid SPL Token account data',
-    subscriptionsErrorInvalidAccountData: 'Invalid account data',
-    subscriptionsErrorInvalidInstructionData: 'Invalid instruction data',
-    subscriptionsErrorNotEnoughAccountKeys: 'Not enough account keys provided',
-    subscriptionsErrorInvalidInstruction: 'Invalid instruction',
-    subscriptionsErrorArithmeticOverflow: 'Arithmetic Overflow',
-    subscriptionsErrorArithmeticUnderflow: 'Arithmetic Underflow',
-    subscriptionsErrorInvalidAccountDiscriminator: 'Invalid account discriminator',
-    subscriptionsErrorMintHasConfidentialTransfer: 'Mint has ConfidentialTransfer extension',
-    subscriptionsErrorMintHasNonTransferable: 'Mint has NonTransferable extension',
-    subscriptionsErrorMintHasPermanentDelegate: 'Mint has PermanentDelegate extension',
-    subscriptionsErrorMintHasTransferHook: 'Mint has TransferHook extension',
-    subscriptionsErrorMintHasTransferFee: 'Mint has TransferFee extension',
-    subscriptionsErrorMintHasMintCloseAuthority: 'Mint has MintCloseAuthority extension',
-    subscriptionsErrorMintHasPausable: 'Mint has Pausable extension',
-    subscriptionsErrorMintMismatch: 'Token mint mismatch',
-    subscriptionsErrorInvalidDelegatePda: 'Invalid delegation PDA derivation',
-    subscriptionsErrorInvalidHeaderData: 'Invalid header data',
-    subscriptionsErrorDelegationExpired: 'Delegation has expired',
-    subscriptionsErrorInvalidAmount: 'Invalid amount specified',
-    subscriptionsErrorUnauthorized: 'Caller not authorized for this action',
-    subscriptionsErrorAccountNotWritable: 'Account must be writable',
-    subscriptionsErrorAtaOwnerMismatch: 'Token account owner does not match expected',
-    subscriptionsErrorDelegationVersionMismatch: 'Delegation header version is not compatible',
-    subscriptionsErrorMigrationRequired: 'Account requires explicit migration',
-    subscriptionsErrorDelegationAlreadyExists: 'Delegation account already exists',
-    subscriptionsErrorStaleSubscriptionAuthority: 'Delegation init_id does not match current SubscriptionAuthority',
-    subscriptionsErrorTransferHookTooManyAccounts: 'Too many transfer hook accounts provided',
-    subscriptionsErrorAmountExceedsLimit: 'Transfer amount exceeds delegation limit',
-    subscriptionsErrorFixedDelegationExpiryInPast: 'Expiry time specified is less than current time',
-    subscriptionsErrorFixedDelegationAmountZero: 'zero amount specified',
-    subscriptionsErrorAmountExceedsPeriodLimit: 'Transfer amount exceeds period limit',
-    subscriptionsErrorPeriodNotElapsed: 'Period has not elapsed yet',
-    subscriptionsErrorInvalidPeriodLength: 'Invalid Period length',
-    subscriptionsErrorInvalidPayerData: 'Payer provided does not match delegation',
-    subscriptionsErrorRecurringDelegationStartTimeInPast: 'Past start time specified',
-    subscriptionsErrorRecurringDelegationStartTimeGreaterThanExpiry: 'start time specified is greater than expiry',
-    subscriptionsErrorRecurringDelegationAmountZero: 'zero amount specified',
-    subscriptionsErrorDelegationNotStarted: 'Delegation period has not started yet',
-    subscriptionsErrorRecurringDelegationStartOnLandingRequiresExpiry: 'start_ts of 0 (start on landing) requires a non-zero expiry',
-    subscriptionsErrorPlanSunset: 'Plan is in sunset status',
-    subscriptionsErrorPlanExpired: 'Plan has expired',
-    subscriptionsErrorInvalidPlanPda: 'Invalid Plan PDA derivation',
-    subscriptionsErrorInvalidSubscriptionPda: 'Invalid subscription PDA derivation',
-    subscriptionsErrorNotPlanOwner: 'Caller is not the plan owner',
-    subscriptionsErrorSubscriptionPlanMismatch: 'Subscription does not belong to this plan',
-    subscriptionsErrorUnauthorizedDestination: 'Destination not in plan whitelist',
-    subscriptionsErrorInvalidNumDestinations: 'No valid destinations provided',
-    subscriptionsErrorSubscriptionCancelled: 'Subscription cancelled and past valid period',
-    subscriptionsErrorSubscriptionAlreadyCancelled: 'Subscription already cancelled',
-    subscriptionsErrorSubscriptionNotCancelled: 'Subscription is not cancelled',
-    subscriptionsErrorInvalidEndTs: 'End timestamp must be zero or in the future',
-    subscriptionsErrorInvalidPlanStatus: 'Invalid plan status value',
-    subscriptionsErrorPlanImmutableAfterSunset: 'Plan cannot be updated after sunset',
-    subscriptionsErrorSunsetRequiresEndTs: 'Sunset requires a non-zero end timestamp',
-    subscriptionsErrorPlanNotExpired: 'Plan must be expired to delete',
-    subscriptionsErrorPlanClosed: 'Plan account has been closed',
-    subscriptionsErrorAlreadySubscribed: 'Already subscribed to this plan',
-    subscriptionsErrorPlanAlreadyExists: 'Plan account already exists',
-    subscriptionsErrorPlanTermsMismatch: 'Subscription plan terms do not match the current plan',
-    subscriptionsErrorPlanEndTsCannotExtend: 'A finite plan end timestamp can only be shortened, not removed or extended',
-    subscriptionsErrorInvalidEventAuthority: 'Invalid event authority PDA',
-    subscriptionsErrorInvalidEventData: 'Invalid event data',
-    subscriptionsErrorInvalidEventTag: 'Invalid event tag prefix',
-    subscriptionsErrorInvalidEventDiscriminator: 'Unknown event discriminator',
-    subscriptionsErrorInvalidSelfProgram: 'Self program account does not match this program',
+  subscriptionsErrorNotSigner: 'Account must be a signer',
+  subscriptionsErrorInvalidAddress: 'Invalid account address',
+  subscriptionsErrorInvalidEscrowPda: 'Invalid escrow PDA derivation',
+  subscriptionsErrorInvalidSubscriptionAuthorityPda:
+      'Invalid subscription-authority PDA derivation',
+  subscriptionsErrorNotSystemProgram: 'Expected system program',
+  subscriptionsErrorInvalidTokenProgram:
+      'Token Program does not match other accounts',
+  subscriptionsErrorInvalidToken2022MintAccountData:
+      'Invalid Token-2022 mint account data',
+  subscriptionsErrorInvalidToken2022TokenAccountData:
+      'Invalid Token-2022 token account data',
+  subscriptionsErrorInvalidAssociatedTokenAccountDerivedAddress:
+      'Invalid associated token account address',
+  subscriptionsErrorInvalidTokenSplMintAccountData:
+      'Invalid SPL Token mint account data',
+  subscriptionsErrorInvalidTokenSplTokenAccountData:
+      'Invalid SPL Token account data',
+  subscriptionsErrorInvalidAccountData: 'Invalid account data',
+  subscriptionsErrorInvalidInstructionData: 'Invalid instruction data',
+  subscriptionsErrorNotEnoughAccountKeys: 'Not enough account keys provided',
+  subscriptionsErrorInvalidInstruction: 'Invalid instruction',
+  subscriptionsErrorArithmeticOverflow: 'Arithmetic Overflow',
+  subscriptionsErrorArithmeticUnderflow: 'Arithmetic Underflow',
+  subscriptionsErrorInvalidAccountDiscriminator:
+      'Invalid account discriminator',
+  subscriptionsErrorMintHasConfidentialTransfer:
+      'Mint has ConfidentialTransfer extension',
+  subscriptionsErrorMintHasNonTransferable:
+      'Mint has NonTransferable extension',
+  subscriptionsErrorMintHasPermanentDelegate:
+      'Mint has PermanentDelegate extension',
+  subscriptionsErrorMintHasTransferHook: 'Mint has TransferHook extension',
+  subscriptionsErrorMintHasTransferFee: 'Mint has TransferFee extension',
+  subscriptionsErrorMintHasMintCloseAuthority:
+      'Mint has MintCloseAuthority extension',
+  subscriptionsErrorMintHasPausable: 'Mint has Pausable extension',
+  subscriptionsErrorMintMismatch: 'Token mint mismatch',
+  subscriptionsErrorInvalidDelegatePda: 'Invalid delegation PDA derivation',
+  subscriptionsErrorInvalidHeaderData: 'Invalid header data',
+  subscriptionsErrorDelegationExpired: 'Delegation has expired',
+  subscriptionsErrorInvalidAmount: 'Invalid amount specified',
+  subscriptionsErrorUnauthorized: 'Caller not authorized for this action',
+  subscriptionsErrorAccountNotWritable: 'Account must be writable',
+  subscriptionsErrorAtaOwnerMismatch:
+      'Token account owner does not match expected',
+  subscriptionsErrorDelegationVersionMismatch:
+      'Delegation header version is not compatible',
+  subscriptionsErrorMigrationRequired: 'Account requires explicit migration',
+  subscriptionsErrorDelegationAlreadyExists:
+      'Delegation account already exists',
+  subscriptionsErrorStaleSubscriptionAuthority:
+      'Delegation init_id does not match current SubscriptionAuthority',
+  subscriptionsErrorTransferHookTooManyAccounts:
+      'Too many transfer hook accounts provided',
+  subscriptionsErrorAmountExceedsLimit:
+      'Transfer amount exceeds delegation limit',
+  subscriptionsErrorFixedDelegationExpiryInPast:
+      'Expiry time specified is less than current time',
+  subscriptionsErrorFixedDelegationAmountZero: 'zero amount specified',
+  subscriptionsErrorAmountExceedsPeriodLimit:
+      'Transfer amount exceeds period limit',
+  subscriptionsErrorPeriodNotElapsed: 'Period has not elapsed yet',
+  subscriptionsErrorInvalidPeriodLength: 'Invalid Period length',
+  subscriptionsErrorInvalidPayerData:
+      'Payer provided does not match delegation',
+  subscriptionsErrorRecurringDelegationStartTimeInPast:
+      'Past start time specified',
+  subscriptionsErrorRecurringDelegationStartTimeGreaterThanExpiry:
+      'start time specified is greater than expiry',
+  subscriptionsErrorRecurringDelegationAmountZero: 'zero amount specified',
+  subscriptionsErrorDelegationNotStarted:
+      'Delegation period has not started yet',
+  subscriptionsErrorRecurringDelegationStartOnLandingRequiresExpiry:
+      'start_ts of 0 (start on landing) requires a non-zero expiry',
+  subscriptionsErrorPlanSunset: 'Plan is in sunset status',
+  subscriptionsErrorPlanExpired: 'Plan has expired',
+  subscriptionsErrorInvalidPlanPda: 'Invalid Plan PDA derivation',
+  subscriptionsErrorInvalidSubscriptionPda:
+      'Invalid subscription PDA derivation',
+  subscriptionsErrorNotPlanOwner: 'Caller is not the plan owner',
+  subscriptionsErrorSubscriptionPlanMismatch:
+      'Subscription does not belong to this plan',
+  subscriptionsErrorUnauthorizedDestination:
+      'Destination not in plan whitelist',
+  subscriptionsErrorInvalidNumDestinations: 'No valid destinations provided',
+  subscriptionsErrorSubscriptionCancelled:
+      'Subscription cancelled and past valid period',
+  subscriptionsErrorSubscriptionAlreadyCancelled:
+      'Subscription already cancelled',
+  subscriptionsErrorSubscriptionNotCancelled: 'Subscription is not cancelled',
+  subscriptionsErrorInvalidEndTs: 'End timestamp must be zero or in the future',
+  subscriptionsErrorInvalidPlanStatus: 'Invalid plan status value',
+  subscriptionsErrorPlanImmutableAfterSunset:
+      'Plan cannot be updated after sunset',
+  subscriptionsErrorSunsetRequiresEndTs:
+      'Sunset requires a non-zero end timestamp',
+  subscriptionsErrorPlanNotExpired: 'Plan must be expired to delete',
+  subscriptionsErrorPlanClosed: 'Plan account has been closed',
+  subscriptionsErrorAlreadySubscribed: 'Already subscribed to this plan',
+  subscriptionsErrorPlanAlreadyExists: 'Plan account already exists',
+  subscriptionsErrorPlanTermsMismatch:
+      'Subscription plan terms do not match the current plan',
+  subscriptionsErrorPlanEndTsCannotExtend:
+      'A finite plan end timestamp can only be shortened, not removed or extended',
+  subscriptionsErrorInvalidEventAuthority: 'Invalid event authority PDA',
+  subscriptionsErrorInvalidEventData: 'Invalid event data',
+  subscriptionsErrorInvalidEventTag: 'Invalid event tag prefix',
+  subscriptionsErrorInvalidEventDiscriminator: 'Unknown event discriminator',
+  subscriptionsErrorInvalidSelfProgram:
+      'Self program account does not match this program',
 };
 
 /// Get the error message for a Subscriptions program error code.

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -12,7 +11,6 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 import '../types/plan_data.dart';
-
 
 @immutable
 class Plan {
@@ -45,9 +43,9 @@ class Plan {
   int get hashCode => Object.hash(discriminator, owner, bump, status, data);
 
   @override
-  String toString() => 'Plan(discriminator: $discriminator, owner: $owner, bump: $bump, status: $status, data: $data)';
+  String toString() =>
+      'Plan(discriminator: $discriminator, owner: $owner, bump: $bump, status: $status, data: $data)';
 }
-
 
 Encoder<Plan> getPlanEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[

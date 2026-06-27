@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -27,7 +26,8 @@ class CreateRecurringDelegationInstructionData {
   final CreateRecurringDelegationData recurringDelegation;
 }
 
-Encoder<CreateRecurringDelegationInstructionData> getCreateRecurringDelegationInstructionDataEncoder() {
+Encoder<CreateRecurringDelegationInstructionData>
+getCreateRecurringDelegationInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('recurringDelegation', getCreateRecurringDelegationDataEncoder()),
@@ -42,7 +42,8 @@ Encoder<CreateRecurringDelegationInstructionData> getCreateRecurringDelegationIn
   );
 }
 
-Decoder<CreateRecurringDelegationInstructionData> getCreateRecurringDelegationInstructionDataDecoder() {
+Decoder<CreateRecurringDelegationInstructionData>
+getCreateRecurringDelegationInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('recurringDelegation', getCreateRecurringDelegationDataDecoder()),
@@ -50,15 +51,24 @@ Decoder<CreateRecurringDelegationInstructionData> getCreateRecurringDelegationIn
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateRecurringDelegationInstructionData(
-      discriminator: map['discriminator']! as int,
-      recurringDelegation: map['recurringDelegation']! as CreateRecurringDelegationData,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CreateRecurringDelegationInstructionData(
+          discriminator: map['discriminator']! as int,
+          recurringDelegation:
+              map['recurringDelegation']! as CreateRecurringDelegationData,
+        ),
   );
 }
 
-Codec<CreateRecurringDelegationInstructionData, CreateRecurringDelegationInstructionData> getCreateRecurringDelegationInstructionDataCodec() {
-  return combineCodec(getCreateRecurringDelegationInstructionDataEncoder(), getCreateRecurringDelegationInstructionDataDecoder());
+Codec<
+  CreateRecurringDelegationInstructionData,
+  CreateRecurringDelegationInstructionData
+>
+getCreateRecurringDelegationInstructionDataCodec() {
+  return combineCodec(
+    getCreateRecurringDelegationInstructionDataEncoder(),
+    getCreateRecurringDelegationInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [CreateRecurringDelegation] instruction.
@@ -73,24 +83,30 @@ Instruction getCreateRecurringDelegationInstruction({
   required CreateRecurringDelegationData recurringDelegation,
 }) {
   final instructionData = CreateRecurringDelegationInstructionData(
-      recurringDelegation: recurringDelegation,
+    recurringDelegation: recurringDelegation,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: delegator, role: AccountRole.writableSigner),
-    AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
-    AccountMeta(address: delegationAccount, role: AccountRole.writable),
-    AccountMeta(address: delegatee, role: AccountRole.readonly),
-    AccountMeta(address: systemProgram, role: AccountRole.readonly),
-    if (payer != null) AccountMeta(address: payer, role: AccountRole.writableSigner),
+      AccountMeta(address: delegator, role: AccountRole.writableSigner),
+      AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
+      AccountMeta(address: delegationAccount, role: AccountRole.writable),
+      AccountMeta(address: delegatee, role: AccountRole.readonly),
+      AccountMeta(address: systemProgram, role: AccountRole.readonly),
+      if (payer != null)
+        AccountMeta(address: payer, role: AccountRole.writableSigner),
     ],
-    data: getCreateRecurringDelegationInstructionDataEncoder().encode(instructionData),
+    data: getCreateRecurringDelegationInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [CreateRecurringDelegation] instruction from raw instruction data.
-CreateRecurringDelegationInstructionData parseCreateRecurringDelegationInstruction(Instruction instruction) {
-  return getCreateRecurringDelegationInstructionDataDecoder().decode(instruction.data!);
+CreateRecurringDelegationInstructionData
+parseCreateRecurringDelegationInstruction(Instruction instruction) {
+  return getCreateRecurringDelegationInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }
