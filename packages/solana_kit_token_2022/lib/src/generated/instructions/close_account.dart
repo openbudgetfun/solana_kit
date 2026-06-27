@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class CloseAccountInstructionData {
-  const CloseAccountInstructionData({this.discriminator = 9});
+  const CloseAccountInstructionData({
+    this.discriminator = 9,
+  });
 
   final int discriminator;
 }

@@ -1,12 +1,14 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
 
 @immutable
 class CreateRecurringDelegationData {
@@ -36,26 +38,16 @@ class CreateRecurringDelegationData {
           periodLengthS == other.periodLengthS &&
           startTs == other.startTs &&
           expiryTs == other.expiryTs &&
-          expectedSubscriptionAuthorityInitId ==
-              other.expectedSubscriptionAuthorityInitId;
+          expectedSubscriptionAuthorityInitId == other.expectedSubscriptionAuthorityInitId;
 
   @override
-  int get hashCode => Object.hash(
-    nonce,
-    amountPerPeriod,
-    periodLengthS,
-    startTs,
-    expiryTs,
-    expectedSubscriptionAuthorityInitId,
-  );
+  int get hashCode => Object.hash(nonce, amountPerPeriod, periodLengthS, startTs, expiryTs, expectedSubscriptionAuthorityInitId);
 
   @override
-  String toString() =>
-      'CreateRecurringDelegationData(nonce: $nonce, amountPerPeriod: $amountPerPeriod, periodLengthS: $periodLengthS, startTs: $startTs, expiryTs: $expiryTs, expectedSubscriptionAuthorityInitId: $expectedSubscriptionAuthorityInitId)';
+  String toString() => 'CreateRecurringDelegationData(nonce: $nonce, amountPerPeriod: $amountPerPeriod, periodLengthS: $periodLengthS, startTs: $startTs, expiryTs: $expiryTs, expectedSubscriptionAuthorityInitId: $expectedSubscriptionAuthorityInitId)';
 }
 
-Encoder<CreateRecurringDelegationData>
-getCreateRecurringDelegationDataEncoder() {
+Encoder<CreateRecurringDelegationData> getCreateRecurringDelegationDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('nonce', getU64Encoder()),
     ('amountPerPeriod', getU64Encoder()),
@@ -73,14 +65,12 @@ getCreateRecurringDelegationDataEncoder() {
       'periodLengthS': value.periodLengthS,
       'startTs': value.startTs,
       'expiryTs': value.expiryTs,
-      'expectedSubscriptionAuthorityInitId':
-          value.expectedSubscriptionAuthorityInitId,
+      'expectedSubscriptionAuthorityInitId': value.expectedSubscriptionAuthorityInitId,
     },
   );
 }
 
-Decoder<CreateRecurringDelegationData>
-getCreateRecurringDelegationDataDecoder() {
+Decoder<CreateRecurringDelegationData> getCreateRecurringDelegationDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('nonce', getU64Decoder()),
     ('amountPerPeriod', getU64Decoder()),
@@ -92,23 +82,17 @@ getCreateRecurringDelegationDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        CreateRecurringDelegationData(
-          nonce: map['nonce']! as BigInt,
-          amountPerPeriod: map['amountPerPeriod']! as BigInt,
-          periodLengthS: map['periodLengthS']! as BigInt,
-          startTs: map['startTs']! as BigInt,
-          expiryTs: map['expiryTs']! as BigInt,
-          expectedSubscriptionAuthorityInitId:
-              map['expectedSubscriptionAuthorityInitId']! as BigInt,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateRecurringDelegationData(
+      nonce: map['nonce']! as BigInt,
+      amountPerPeriod: map['amountPerPeriod']! as BigInt,
+      periodLengthS: map['periodLengthS']! as BigInt,
+      startTs: map['startTs']! as BigInt,
+      expiryTs: map['expiryTs']! as BigInt,
+      expectedSubscriptionAuthorityInitId: map['expectedSubscriptionAuthorityInitId']! as BigInt,
+    ),
   );
 }
 
-Codec<CreateRecurringDelegationData, CreateRecurringDelegationData>
-getCreateRecurringDelegationDataCodec() {
-  return combineCodec(
-    getCreateRecurringDelegationDataEncoder(),
-    getCreateRecurringDelegationDataDecoder(),
-  );
+Codec<CreateRecurringDelegationData, CreateRecurringDelegationData> getCreateRecurringDelegationDataCodec() {
+  return combineCodec(getCreateRecurringDelegationDataEncoder(), getCreateRecurringDelegationDataDecoder());
 }

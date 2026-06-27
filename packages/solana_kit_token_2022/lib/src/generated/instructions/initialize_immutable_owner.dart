@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class InitializeImmutableOwnerInstructionData {
-  const InitializeImmutableOwnerInstructionData({this.discriminator = 22});
+  const InitializeImmutableOwnerInstructionData({
+    this.discriminator = 22,
+  });
 
   final int discriminator;
 }
@@ -69,7 +71,9 @@ Instruction getInitializeImmutableOwnerInstruction({
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [AccountMeta(address: account, role: AccountRole.writable)],
+    accounts: [
+      AccountMeta(address: account, role: AccountRole.writable),
+    ],
     data: getInitializeImmutableOwnerInstructionDataEncoder().encode(
       instructionData,
     ),

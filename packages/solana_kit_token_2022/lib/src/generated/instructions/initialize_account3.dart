@@ -72,7 +72,9 @@ Instruction getInitializeAccount3Instruction({
   required Address mint,
   required Address owner,
 }) {
-  final instructionData = InitializeAccount3InstructionData(owner: owner);
+  final instructionData = InitializeAccount3InstructionData(
+    owner: owner,
+  );
 
   return Instruction(
     programAddress: programAddress,

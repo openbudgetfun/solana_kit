@@ -14,6 +14,7 @@ Object? unwrapSimulationError(Object? error) {
   const simulationCodes = [
     SolanaErrorCode.jsonRpcServerErrorSendTransactionPreflightFailure,
     SolanaErrorCode.transactionFailedWhenSimulatingToEstimateComputeLimit,
+    SolanaErrorCode.transactionFailedWhenSimulatingToEstimateResourceLimits,
   ];
 
   if (error is SolanaError &&

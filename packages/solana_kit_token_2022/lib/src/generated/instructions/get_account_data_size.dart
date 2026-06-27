@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class GetAccountDataSizeInstructionData {
-  const GetAccountDataSizeInstructionData({this.discriminator = 21});
+  const GetAccountDataSizeInstructionData({
+    this.discriminator = 21,
+  });
 
   final int discriminator;
 }
@@ -66,7 +68,9 @@ Instruction getGetAccountDataSizeInstruction({
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [AccountMeta(address: mint, role: AccountRole.readonly)],
+    accounts: [
+      AccountMeta(address: mint, role: AccountRole.readonly),
+    ],
     data: getGetAccountDataSizeInstructionDataEncoder().encode(instructionData),
   );
 }

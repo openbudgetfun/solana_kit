@@ -125,7 +125,9 @@ Instruction getInitializeGroupPointerInstruction({
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    accounts: [
+      AccountMeta(address: mint, role: AccountRole.writable),
+    ],
     data: getInitializeGroupPointerInstructionDataEncoder().encode(
       instructionData,
     ),

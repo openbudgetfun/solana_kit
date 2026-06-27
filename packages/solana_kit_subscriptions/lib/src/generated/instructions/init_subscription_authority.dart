@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -22,8 +23,7 @@ class InitSubscriptionAuthorityInstructionData {
   final int discriminator;
 }
 
-Encoder<InitSubscriptionAuthorityInstructionData>
-getInitSubscriptionAuthorityInstructionDataEncoder() {
+Encoder<InitSubscriptionAuthorityInstructionData> getInitSubscriptionAuthorityInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,30 +36,21 @@ getInitSubscriptionAuthorityInstructionDataEncoder() {
   );
 }
 
-Decoder<InitSubscriptionAuthorityInstructionData>
-getInitSubscriptionAuthorityInstructionDataDecoder() {
+Decoder<InitSubscriptionAuthorityInstructionData> getInitSubscriptionAuthorityInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitSubscriptionAuthorityInstructionData(
-          discriminator: map['discriminator']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => InitSubscriptionAuthorityInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
   );
 }
 
-Codec<
-  InitSubscriptionAuthorityInstructionData,
-  InitSubscriptionAuthorityInstructionData
->
-getInitSubscriptionAuthorityInstructionDataCodec() {
-  return combineCodec(
-    getInitSubscriptionAuthorityInstructionDataEncoder(),
-    getInitSubscriptionAuthorityInstructionDataDecoder(),
-  );
+Codec<InitSubscriptionAuthorityInstructionData, InitSubscriptionAuthorityInstructionData> getInitSubscriptionAuthorityInstructionDataCodec() {
+  return combineCodec(getInitSubscriptionAuthorityInstructionDataEncoder(), getInitSubscriptionAuthorityInstructionDataDecoder());
 }
 
 /// Creates a [InitSubscriptionAuthority] instruction.
@@ -71,29 +62,29 @@ Instruction getInitSubscriptionAuthorityInstruction({
   required Address userAta,
   required Address systemProgram,
   required Address tokenProgram,
+  Address? payer,
+
 }) {
-  final instructionData = InitSubscriptionAuthorityInstructionData();
+  final instructionData = InitSubscriptionAuthorityInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: owner, role: AccountRole.writableSigner),
-      AccountMeta(address: subscriptionAuthority, role: AccountRole.writable),
-      AccountMeta(address: tokenMint, role: AccountRole.readonly),
-      AccountMeta(address: userAta, role: AccountRole.writable),
-      AccountMeta(address: systemProgram, role: AccountRole.readonly),
-      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+    AccountMeta(address: owner, role: AccountRole.writableSigner),
+    AccountMeta(address: subscriptionAuthority, role: AccountRole.writable),
+    AccountMeta(address: tokenMint, role: AccountRole.readonly),
+    AccountMeta(address: userAta, role: AccountRole.writable),
+    AccountMeta(address: systemProgram, role: AccountRole.readonly),
+    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+    if (payer != null) AccountMeta(address: payer, role: AccountRole.writableSigner),
     ],
-    data: getInitSubscriptionAuthorityInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getInitSubscriptionAuthorityInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [InitSubscriptionAuthority] instruction from raw instruction data.
-InitSubscriptionAuthorityInstructionData
-parseInitSubscriptionAuthorityInstruction(Instruction instruction) {
-  return getInitSubscriptionAuthorityInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+InitSubscriptionAuthorityInstructionData parseInitSubscriptionAuthorityInstruction(Instruction instruction) {
+  return getInitSubscriptionAuthorityInstructionDataDecoder().decode(instruction.data!);
 }

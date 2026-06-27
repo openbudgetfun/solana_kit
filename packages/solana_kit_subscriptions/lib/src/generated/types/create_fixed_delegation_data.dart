@@ -1,12 +1,14 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
 
 @immutable
 class CreateFixedDelegationData {
@@ -30,16 +32,13 @@ class CreateFixedDelegationData {
           nonce == other.nonce &&
           amount == other.amount &&
           expiryTs == other.expiryTs &&
-          expectedSubscriptionAuthorityInitId ==
-              other.expectedSubscriptionAuthorityInitId;
+          expectedSubscriptionAuthorityInitId == other.expectedSubscriptionAuthorityInitId;
 
   @override
-  int get hashCode =>
-      Object.hash(nonce, amount, expiryTs, expectedSubscriptionAuthorityInitId);
+  int get hashCode => Object.hash(nonce, amount, expiryTs, expectedSubscriptionAuthorityInitId);
 
   @override
-  String toString() =>
-      'CreateFixedDelegationData(nonce: $nonce, amount: $amount, expiryTs: $expiryTs, expectedSubscriptionAuthorityInitId: $expectedSubscriptionAuthorityInitId)';
+  String toString() => 'CreateFixedDelegationData(nonce: $nonce, amount: $amount, expiryTs: $expiryTs, expectedSubscriptionAuthorityInitId: $expectedSubscriptionAuthorityInitId)';
 }
 
 Encoder<CreateFixedDelegationData> getCreateFixedDelegationDataEncoder() {
@@ -56,8 +55,7 @@ Encoder<CreateFixedDelegationData> getCreateFixedDelegationDataEncoder() {
       'nonce': value.nonce,
       'amount': value.amount,
       'expiryTs': value.expiryTs,
-      'expectedSubscriptionAuthorityInitId':
-          value.expectedSubscriptionAuthorityInitId,
+      'expectedSubscriptionAuthorityInitId': value.expectedSubscriptionAuthorityInitId,
     },
   );
 }
@@ -72,21 +70,15 @@ Decoder<CreateFixedDelegationData> getCreateFixedDelegationDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        CreateFixedDelegationData(
-          nonce: map['nonce']! as BigInt,
-          amount: map['amount']! as BigInt,
-          expiryTs: map['expiryTs']! as BigInt,
-          expectedSubscriptionAuthorityInitId:
-              map['expectedSubscriptionAuthorityInitId']! as BigInt,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateFixedDelegationData(
+      nonce: map['nonce']! as BigInt,
+      amount: map['amount']! as BigInt,
+      expiryTs: map['expiryTs']! as BigInt,
+      expectedSubscriptionAuthorityInitId: map['expectedSubscriptionAuthorityInitId']! as BigInt,
+    ),
   );
 }
 
-Codec<CreateFixedDelegationData, CreateFixedDelegationData>
-getCreateFixedDelegationDataCodec() {
-  return combineCodec(
-    getCreateFixedDelegationDataEncoder(),
-    getCreateFixedDelegationDataDecoder(),
-  );
+Codec<CreateFixedDelegationData, CreateFixedDelegationData> getCreateFixedDelegationDataCodec() {
+  return combineCodec(getCreateFixedDelegationDataEncoder(), getCreateFixedDelegationDataDecoder());
 }

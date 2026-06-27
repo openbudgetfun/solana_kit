@@ -54,6 +54,9 @@ enum SolanaErrorDomain {
   /// RPC subscription and channel errors.
   rpcSubscriptions,
 
+  /// Subscribable reactive store errors.
+  subscribable,
+
   /// Program client resolution errors.
   programClients,
 
@@ -62,6 +65,9 @@ enum SolanaErrorDomain {
 
   /// Helius integration errors.
   helius,
+
+  /// Wallet connection and signer availability errors.
+  wallet,
 
   /// Invariant violations that indicate internal SDK logic issues.
   invariantViolation,
@@ -126,6 +132,9 @@ SolanaErrorDomain getSolanaErrorDomain(SolanaErrorCode code) {
   if (v >= 8190000 && v <= 8190999) {
     return SolanaErrorDomain.rpcSubscriptions;
   }
+  if (v >= 8195000 && v <= 8195999) {
+    return SolanaErrorDomain.subscribable;
+  }
   if (v >= 8400000 && v <= 8400199) {
     return SolanaErrorDomain.mobileWalletAdapter;
   }
@@ -134,6 +143,9 @@ SolanaErrorDomain getSolanaErrorDomain(SolanaErrorCode code) {
   }
   if (v >= 8600000 && v <= 8600099) {
     return SolanaErrorDomain.helius;
+  }
+  if (v >= 8900000 && v <= 8900999) {
+    return SolanaErrorDomain.wallet;
   }
   if (v >= 9900000 && v <= 9900999) {
     return SolanaErrorDomain.invariantViolation;

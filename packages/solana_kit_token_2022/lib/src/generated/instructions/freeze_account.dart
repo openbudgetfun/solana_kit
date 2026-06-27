@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class FreezeAccountInstructionData {
-  const FreezeAccountInstructionData({this.discriminator = 10});
+  const FreezeAccountInstructionData({
+    this.discriminator = 10,
+  });
 
   final int discriminator;
 }

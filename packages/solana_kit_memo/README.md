@@ -61,4 +61,4 @@ final legacyInstruction = getAddMemoInstruction(
 
 Generated layer mirrors
 [solana-program/memo](https://github.com/solana-program/memo)
-at `js@v0.11.0`.
+at `js@v0.11.2`.

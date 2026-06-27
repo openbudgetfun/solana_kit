@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -8,6 +9,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
 
 @immutable
 class SubscribeData {
@@ -40,23 +42,13 @@ class SubscribeData {
           expectedAmount == other.expectedAmount &&
           expectedPeriodHours == other.expectedPeriodHours &&
           expectedCreatedAt == other.expectedCreatedAt &&
-          expectedSubscriptionAuthorityInitId ==
-              other.expectedSubscriptionAuthorityInitId;
+          expectedSubscriptionAuthorityInitId == other.expectedSubscriptionAuthorityInitId;
 
   @override
-  int get hashCode => Object.hash(
-    planId,
-    planBump,
-    expectedMint,
-    expectedAmount,
-    expectedPeriodHours,
-    expectedCreatedAt,
-    expectedSubscriptionAuthorityInitId,
-  );
+  int get hashCode => Object.hash(planId, planBump, expectedMint, expectedAmount, expectedPeriodHours, expectedCreatedAt, expectedSubscriptionAuthorityInitId);
 
   @override
-  String toString() =>
-      'SubscribeData(planId: $planId, planBump: $planBump, expectedMint: $expectedMint, expectedAmount: $expectedAmount, expectedPeriodHours: $expectedPeriodHours, expectedCreatedAt: $expectedCreatedAt, expectedSubscriptionAuthorityInitId: $expectedSubscriptionAuthorityInitId)';
+  String toString() => 'SubscribeData(planId: $planId, planBump: $planBump, expectedMint: $expectedMint, expectedAmount: $expectedAmount, expectedPeriodHours: $expectedPeriodHours, expectedCreatedAt: $expectedCreatedAt, expectedSubscriptionAuthorityInitId: $expectedSubscriptionAuthorityInitId)';
 }
 
 Encoder<SubscribeData> getSubscribeDataEncoder() {
@@ -79,8 +71,7 @@ Encoder<SubscribeData> getSubscribeDataEncoder() {
       'expectedAmount': value.expectedAmount,
       'expectedPeriodHours': value.expectedPeriodHours,
       'expectedCreatedAt': value.expectedCreatedAt,
-      'expectedSubscriptionAuthorityInitId':
-          value.expectedSubscriptionAuthorityInitId,
+      'expectedSubscriptionAuthorityInitId': value.expectedSubscriptionAuthorityInitId,
     },
   );
 }
@@ -105,8 +96,7 @@ Decoder<SubscribeData> getSubscribeDataDecoder() {
       expectedAmount: map['expectedAmount']! as BigInt,
       expectedPeriodHours: map['expectedPeriodHours']! as BigInt,
       expectedCreatedAt: map['expectedCreatedAt']! as BigInt,
-      expectedSubscriptionAuthorityInitId:
-          map['expectedSubscriptionAuthorityInitId']! as BigInt,
+      expectedSubscriptionAuthorityInitId: map['expectedSubscriptionAuthorityInitId']! as BigInt,
     ),
   );
 }

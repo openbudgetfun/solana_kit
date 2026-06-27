@@ -9,8 +9,8 @@ A Dart-first Solana SDK workspace modeled after `@solana/kit`, with strongly typ
 
 ## Upstream Compatibility
 
-- Latest supported `@solana/kit` version: `6.9.0`
-- This Dart port tracks upstream APIs and behavior through `v6.9.0`.
+- Latest supported `@solana/kit` version: `6.10.0`
+- This Dart port tracks upstream APIs and behavior through `v6.10.0`.
 
 <!-- {/docsUpstreamCompatibilitySection} -->
 

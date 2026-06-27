@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class CreateNativeMintInstructionData {
-  const CreateNativeMintInstructionData({this.discriminator = 31});
+  const CreateNativeMintInstructionData({
+    this.discriminator = 31,
+  });
 
   final int discriminator;
 }

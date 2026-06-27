@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -9,6 +10,7 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
+
 
 @immutable
 class UpdatePlanData {
@@ -38,8 +40,7 @@ class UpdatePlanData {
   int get hashCode => Object.hash(status, endTs, pullers, metadataUri);
 
   @override
-  String toString() =>
-      'UpdatePlanData(status: $status, endTs: $endTs, pullers: $pullers, metadataUri: $metadataUri)';
+  String toString() => 'UpdatePlanData(status: $status, endTs: $endTs, pullers: $pullers, metadataUri: $metadataUri)';
 }
 
 Encoder<UpdatePlanData> getUpdatePlanDataEncoder() {

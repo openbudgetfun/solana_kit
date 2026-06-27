@@ -307,6 +307,9 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode.jsonRpcServerErrorNodeUnhealthy:
       r'Node is unhealthy; behind by $numSlotsBehind slots',
   SolanaErrorCode.jsonRpcServerErrorNoSnapshot: 'No snapshot',
+  SolanaErrorCode.jsonRpcServerErrorNoSlotHistory: r'$__serverMessage',
+  SolanaErrorCode.jsonRpcServerErrorFilterTransactionNotFound:
+      r'$__serverMessage',
   SolanaErrorCode.jsonRpcServerErrorSendTransactionPreflightFailure:
       'Transaction simulation failed',
   SolanaErrorCode.jsonRpcServerErrorSlotNotEpochBoundary:
@@ -407,6 +410,8 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'WebSocket failed to connect',
   SolanaErrorCode.rpcSubscriptionsExpectedServerSubscriptionId:
       'Failed to obtain a subscription id from the server',
+  SolanaErrorCode.subscribableRetryNotSupported:
+      'This data publisher does not support retrying.',
   SolanaErrorCode.rpcTransportHttpError: r'HTTP error ($statusCode): $message',
   SolanaErrorCode.rpcTransportHttpHeaderForbidden:
       r'HTTP header(s) forbidden: $headers.',
@@ -551,6 +556,10 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'Failed to estimate the compute unit consumption for this transaction message.',
   SolanaErrorCode.transactionFailedWhenSimulatingToEstimateComputeLimit:
       'Transaction failed when it was simulated in order to estimate the compute unit consumption.',
+  SolanaErrorCode.transactionFailedToEstimateLoadedAccountsDataSizeLimit:
+      'Failed to estimate the loaded accounts data size limit for this transaction message.',
+  SolanaErrorCode.transactionFailedWhenSimulatingToEstimateResourceLimits:
+      'Transaction failed when it was simulated in order to estimate resource limits.',
   SolanaErrorCode.transactionFeePayerMissing:
       'Transaction is missing a fee payer.',
   SolanaErrorCode.transactionFeePayerSignatureMissing:
@@ -605,6 +614,8 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       r'No signing wallet connected (status: $status)',
   SolanaErrorCode.walletSignerNotAvailable:
       'Connected wallet does not support signing',
+  SolanaErrorCode.walletAccountNotAvailable:
+      r'Wallet account $address is not available in wallet $walletName.',
 
   // Mobile Wallet Adapter - Session errors
   SolanaErrorCode.mwaAssociationPortOutOfRange:

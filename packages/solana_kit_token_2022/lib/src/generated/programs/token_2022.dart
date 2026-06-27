@@ -9,7 +9,11 @@ const token2022ProgramAddress = Address(
 );
 
 /// Known accounts for the Token2022 program.
-enum Token2022Account { mint, token, multisig }
+enum Token2022Account {
+  mint,
+  token,
+  multisig,
+}
 
 /// Known instructions for the Token2022 program.
 enum Token2022Instruction {
@@ -59,6 +63,7 @@ enum Token2022Instruction {
   enableNonConfidentialCredits,
   disableNonConfidentialCredits,
   confidentialTransferWithFee,
+  configureConfidentialTransferAccountWithRegistry,
   initializeDefaultAccountState,
   updateDefaultAccountState,
   reallocate,
@@ -86,6 +91,12 @@ enum Token2022Instruction {
   updateGroupPointer,
   initializeGroupMemberPointer,
   updateGroupMemberPointer,
+  initializeConfidentialMintBurn,
+  rotateSupplyElgamalPubkey,
+  updateConfidentialMintBurnDecryptableSupply,
+  confidentialMint,
+  confidentialBurn,
+  applyConfidentialPendingBurn,
   initializeScaledUiAmountMint,
   updateMultiplierScaledUiMint,
   initializePausableConfig,
@@ -104,4 +115,6 @@ enum Token2022Instruction {
   initializePermissionedBurn,
   permissionedBurn,
   permissionedBurnChecked,
+  permissionedConfidentialBurn,
+  batch,
 }

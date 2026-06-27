@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -11,6 +12,7 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 
 import './plan_terms.dart';
+
 
 @immutable
 class PlanData {
@@ -46,19 +48,10 @@ class PlanData {
           metadataUri == other.metadataUri;
 
   @override
-  int get hashCode => Object.hash(
-    planId,
-    mint,
-    terms,
-    endTs,
-    destinations,
-    pullers,
-    metadataUri,
-  );
+  int get hashCode => Object.hash(planId, mint, terms, endTs, destinations, pullers, metadataUri);
 
   @override
-  String toString() =>
-      'PlanData(planId: $planId, mint: $mint, terms: $terms, endTs: $endTs, destinations: $destinations, pullers: $pullers, metadataUri: $metadataUri)';
+  String toString() => 'PlanData(planId: $planId, mint: $mint, terms: $terms, endTs: $endTs, destinations: $destinations, pullers: $pullers, metadataUri: $metadataUri)';
 }
 
 Encoder<PlanData> getPlanDataEncoder() {
@@ -67,10 +60,7 @@ Encoder<PlanData> getPlanDataEncoder() {
     ('mint', getAddressEncoder()),
     ('terms', getPlanTermsEncoder()),
     ('endTs', getI64Encoder()),
-    (
-      'destinations',
-      getArrayEncoder(getAddressEncoder(), size: FixedArraySize(4)),
-    ),
+    ('destinations', getArrayEncoder(getAddressEncoder(), size: FixedArraySize(4))),
     ('pullers', getArrayEncoder(getAddressEncoder(), size: FixedArraySize(4))),
     ('metadataUri', fixEncoderSize(getUtf8Encoder(), 128)),
   ]);
@@ -95,10 +85,7 @@ Decoder<PlanData> getPlanDataDecoder() {
     ('mint', getAddressDecoder()),
     ('terms', getPlanTermsDecoder()),
     ('endTs', getI64Decoder()),
-    (
-      'destinations',
-      getArrayDecoder(getAddressDecoder(), size: FixedArraySize(4)),
-    ),
+    ('destinations', getArrayDecoder(getAddressDecoder(), size: FixedArraySize(4))),
     ('pullers', getArrayDecoder(getAddressDecoder(), size: FixedArraySize(4))),
     ('metadataUri', fixDecoderSize(getUtf8Decoder(), 128)),
   ]);

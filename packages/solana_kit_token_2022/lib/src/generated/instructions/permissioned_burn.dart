@@ -84,7 +84,9 @@ Instruction getPermissionedBurnInstruction({
   required Address authority,
   required BigInt amount,
 }) {
-  final instructionData = PermissionedBurnInstructionData(amount: amount);
+  final instructionData = PermissionedBurnInstructionData(
+    amount: amount,
+  );
 
   return Instruction(
     programAddress: programAddress,

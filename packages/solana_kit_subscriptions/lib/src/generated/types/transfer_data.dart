@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -8,6 +9,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
 
 @immutable
 class TransferData {
@@ -34,8 +36,7 @@ class TransferData {
   int get hashCode => Object.hash(amount, delegator, mint);
 
   @override
-  String toString() =>
-      'TransferData(amount: $amount, delegator: $delegator, mint: $mint)';
+  String toString() => 'TransferData(amount: $amount, delegator: $delegator, mint: $mint)';
 }
 
 Encoder<TransferData> getTransferDataEncoder() {

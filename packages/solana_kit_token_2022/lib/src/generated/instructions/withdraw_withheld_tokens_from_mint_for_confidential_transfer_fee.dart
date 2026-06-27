@@ -98,7 +98,6 @@ getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstruction({
   required Address mint,
   required Address destination,
   required Address instructionsSysvarOrContextState,
-  Address? record,
   required Address authority,
   required int proofInstructionOffset,
   required DecryptableBalance newDecryptableAvailableBalance,
@@ -118,8 +117,6 @@ getWithdrawWithheldTokensFromMintForConfidentialTransferFeeInstruction({
         address: instructionsSysvarOrContextState,
         role: AccountRole.readonly,
       ),
-      if (record != null)
-        AccountMeta(address: record, role: AccountRole.readonly),
       AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data:

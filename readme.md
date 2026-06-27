@@ -33,8 +33,8 @@ It is designed for apps, CLIs, servers, Flutter projects, tests, and tooling tha
 
 ## Upstream Compatibility
 
-- Latest supported `@solana/kit` version: `6.9.0`
-- This Dart port tracks upstream APIs and behavior through `v6.9.0`.
+- Latest supported `@solana/kit` version: `6.10.0`
+- This Dart port tracks upstream APIs and behavior through `v6.10.0`.
 
 <!-- {/docsUpstreamCompatibilitySection} -->
 

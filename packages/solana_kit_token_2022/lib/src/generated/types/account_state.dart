@@ -6,10 +6,17 @@ import 'dart:typed_data';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
-enum AccountState { uninitialized, initialized, frozen }
+enum AccountState {
+  uninitialized,
+  initialized,
+  frozen,
+}
 
 Encoder<AccountState> getAccountStateEncoder() {
-  return transformEncoder(getU8Encoder(), (AccountState value) => value.index);
+  return transformEncoder(
+    getU8Encoder(),
+    (AccountState value) => value.index,
+  );
 }
 
 Decoder<AccountState> getAccountStateDecoder() {

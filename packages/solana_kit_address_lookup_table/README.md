@@ -88,4 +88,4 @@ addresses.
 
 Generated layer mirrors
 [solana-program/address-lookup-table](https://github.com/solana-program/address-lookup-table)
-at `js@v0.11.0`.
+at `js@v0.12.1`.

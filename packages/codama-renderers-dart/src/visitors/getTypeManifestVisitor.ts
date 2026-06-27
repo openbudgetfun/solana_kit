@@ -137,9 +137,8 @@ export function getTypeManifestVisitor(input: {
       const codecName = getNumberCodecName(format);
 
       return {
-        type: dartType === "BigInt"
-          ? use("BigInt", "dartTypedData")
-          : fragmentFromString(dartType),
+        // `BigInt` and other number types live in `dart:core` and need no import.
+        type: fragmentFromString(dartType),
         encoder: fragment`${use(
           `get${codecName}Encoder`,
           "solanaCodecsNumbers",

@@ -122,4 +122,5 @@ without adding a separate dependency.
 ## Upstream reference
 
 Generated layer mirrors
-[solana-program/token](https://github.com/solana-program/token).
+[solana-program/token](https://github.com/solana-program/token)
+at `js@v0.14.0`.

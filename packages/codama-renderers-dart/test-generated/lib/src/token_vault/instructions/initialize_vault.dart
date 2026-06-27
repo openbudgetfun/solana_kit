@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -26,8 +27,7 @@ class InitializeVaultInstructionData {
   final int bumpSeed;
 }
 
-Encoder<InitializeVaultInstructionData>
-getInitializeVaultInstructionDataEncoder() {
+Encoder<InitializeVaultInstructionData> getInitializeVaultInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('maxCapacity', getU64Encoder()),
@@ -44,8 +44,7 @@ getInitializeVaultInstructionDataEncoder() {
   );
 }
 
-Decoder<InitializeVaultInstructionData>
-getInitializeVaultInstructionDataDecoder() {
+Decoder<InitializeVaultInstructionData> getInitializeVaultInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('maxCapacity', getU64Decoder()),
@@ -54,21 +53,16 @@ getInitializeVaultInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializeVaultInstructionData(
-          discriminator: map['discriminator']! as int,
-          maxCapacity: map['maxCapacity']! as BigInt,
-          bumpSeed: map['bumpSeed']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeVaultInstructionData(
+      discriminator: map['discriminator']! as int,
+      maxCapacity: map['maxCapacity']! as BigInt,
+      bumpSeed: map['bumpSeed']! as int,
+    ),
   );
 }
 
-Codec<InitializeVaultInstructionData, InitializeVaultInstructionData>
-getInitializeVaultInstructionDataCodec() {
-  return combineCodec(
-    getInitializeVaultInstructionDataEncoder(),
-    getInitializeVaultInstructionDataDecoder(),
-  );
+Codec<InitializeVaultInstructionData, InitializeVaultInstructionData> getInitializeVaultInstructionDataCodec() {
+  return combineCodec(getInitializeVaultInstructionDataEncoder(), getInitializeVaultInstructionDataDecoder());
 }
 
 /// Creates a [InitializeVault] instruction.
@@ -82,25 +76,23 @@ Instruction getInitializeVaultInstruction({
   required int bumpSeed,
 }) {
   final instructionData = InitializeVaultInstructionData(
-    maxCapacity: maxCapacity,
-    bumpSeed: bumpSeed,
+      maxCapacity: maxCapacity,
+      bumpSeed: bumpSeed,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: vault, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
-      AccountMeta(address: tokenMint, role: AccountRole.readonly),
-      AccountMeta(address: systemProgram, role: AccountRole.readonly),
+    AccountMeta(address: vault, role: AccountRole.writable),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: tokenMint, role: AccountRole.readonly),
+    AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
     data: getInitializeVaultInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [InitializeVault] instruction from raw instruction data.
-InitializeVaultInstructionData parseInitializeVaultInstruction(
-  Instruction instruction,
-) {
+InitializeVaultInstructionData parseInitializeVaultInstruction(Instruction instruction) {
   return getInitializeVaultInstructionDataDecoder().decode(instruction.data!);
 }

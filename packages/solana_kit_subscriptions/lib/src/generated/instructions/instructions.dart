@@ -9,9 +9,13 @@ export 'create_recurring_delegation.dart';
 export 'delete_plan.dart';
 export 'init_subscription_authority.dart';
 export 'resume_subscription.dart';
+export 'revoke_abandoned_delegation.dart';
+export 'revoke_abandoned_subscription.dart';
 export 'revoke_delegation.dart';
+export 'revoke_subscription_authority.dart';
 export 'subscribe.dart';
 export 'transfer_fixed.dart';
 export 'transfer_recurring.dart';
 export 'transfer_subscription.dart';
 export 'update_plan.dart';
+

@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class InitializeNonTransferableMintInstructionData {
-  const InitializeNonTransferableMintInstructionData({this.discriminator = 32});
+  const InitializeNonTransferableMintInstructionData({
+    this.discriminator = 32,
+  });
 
   final int discriminator;
 }
@@ -69,7 +71,9 @@ Instruction getInitializeNonTransferableMintInstruction({
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    accounts: [
+      AccountMeta(address: mint, role: AccountRole.writable),
+    ],
     data: getInitializeNonTransferableMintInstructionDataEncoder().encode(
       instructionData,
     ),

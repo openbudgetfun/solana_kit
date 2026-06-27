@@ -14,6 +14,10 @@
 ///   channel streams.
 /// - `DataPublisher` / `WritableDataPublisher` - deprecated compatibility
 ///   layers for the upstream TypeScript channel-publisher abstraction.
+/// - `ReactiveActionStore` - a reactive store for dispatchable actions (e.g.
+///   RPC requests) with idle/running/success/error states.
+/// - `ReactiveStreamStore` - a reactive store for streaming data with
+///   loading/loaded/error/retry states.
 ///
 /// Prefer exposing `Stream`s at package boundaries when writing new Dart APIs.
 /// Keep `DataPublisher`-based APIs only where they are still needed for
@@ -23,4 +27,6 @@ library;
 export 'src/async_iterable.dart';
 export 'src/data_publisher.dart';
 export 'src/demultiplex.dart';
+export 'src/reactive_action_store.dart';
 export 'src/reactive_store.dart';
+export 'src/reactive_stream_store.dart';

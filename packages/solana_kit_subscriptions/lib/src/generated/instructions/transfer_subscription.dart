@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -26,8 +27,7 @@ class TransferSubscriptionInstructionData {
   final TransferData transferData;
 }
 
-Encoder<TransferSubscriptionInstructionData>
-getTransferSubscriptionInstructionDataEncoder() {
+Encoder<TransferSubscriptionInstructionData> getTransferSubscriptionInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('transferData', getTransferDataEncoder()),
@@ -42,8 +42,7 @@ getTransferSubscriptionInstructionDataEncoder() {
   );
 }
 
-Decoder<TransferSubscriptionInstructionData>
-getTransferSubscriptionInstructionDataDecoder() {
+Decoder<TransferSubscriptionInstructionData> getTransferSubscriptionInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('transferData', getTransferDataDecoder()),
@@ -51,20 +50,15 @@ getTransferSubscriptionInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        TransferSubscriptionInstructionData(
-          discriminator: map['discriminator']! as int,
-          transferData: map['transferData']! as TransferData,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => TransferSubscriptionInstructionData(
+      discriminator: map['discriminator']! as int,
+      transferData: map['transferData']! as TransferData,
+    ),
   );
 }
 
-Codec<TransferSubscriptionInstructionData, TransferSubscriptionInstructionData>
-getTransferSubscriptionInstructionDataCodec() {
-  return combineCodec(
-    getTransferSubscriptionInstructionDataEncoder(),
-    getTransferSubscriptionInstructionDataDecoder(),
-  );
+Codec<TransferSubscriptionInstructionData, TransferSubscriptionInstructionData> getTransferSubscriptionInstructionDataCodec() {
+  return combineCodec(getTransferSubscriptionInstructionDataEncoder(), getTransferSubscriptionInstructionDataDecoder());
 }
 
 /// Creates a [TransferSubscription] instruction.
@@ -83,34 +77,28 @@ Instruction getTransferSubscriptionInstruction({
   required TransferData transferData,
 }) {
   final instructionData = TransferSubscriptionInstructionData(
-    transferData: transferData,
+      transferData: transferData,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: subscriptionPda, role: AccountRole.writable),
-      AccountMeta(address: planPda, role: AccountRole.readonly),
-      AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
-      AccountMeta(address: delegatorAta, role: AccountRole.writable),
-      AccountMeta(address: receiverAta, role: AccountRole.writable),
-      AccountMeta(address: caller, role: AccountRole.readonlySigner),
-      AccountMeta(address: tokenMint, role: AccountRole.readonly),
-      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
-      AccountMeta(address: eventAuthority, role: AccountRole.readonly),
-      AccountMeta(address: selfProgram, role: AccountRole.readonly),
+    AccountMeta(address: subscriptionPda, role: AccountRole.writable),
+    AccountMeta(address: planPda, role: AccountRole.readonly),
+    AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
+    AccountMeta(address: delegatorAta, role: AccountRole.writable),
+    AccountMeta(address: receiverAta, role: AccountRole.writable),
+    AccountMeta(address: caller, role: AccountRole.readonlySigner),
+    AccountMeta(address: tokenMint, role: AccountRole.readonly),
+    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+    AccountMeta(address: eventAuthority, role: AccountRole.readonly),
+    AccountMeta(address: selfProgram, role: AccountRole.readonly),
     ],
-    data: getTransferSubscriptionInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getTransferSubscriptionInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [TransferSubscription] instruction from raw instruction data.
-TransferSubscriptionInstructionData parseTransferSubscriptionInstruction(
-  Instruction instruction,
-) {
-  return getTransferSubscriptionInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+TransferSubscriptionInstructionData parseTransferSubscriptionInstruction(Instruction instruction) {
+  return getTransferSubscriptionInstructionDataDecoder().decode(instruction.data!);
 }

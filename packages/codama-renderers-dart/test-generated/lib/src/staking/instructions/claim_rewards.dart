@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -42,19 +43,14 @@ Decoder<ClaimRewardsInstructionData> getClaimRewardsInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ClaimRewardsInstructionData(
-          discriminator: map['discriminator']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => ClaimRewardsInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
   );
 }
 
-Codec<ClaimRewardsInstructionData, ClaimRewardsInstructionData>
-getClaimRewardsInstructionDataCodec() {
-  return combineCodec(
-    getClaimRewardsInstructionDataEncoder(),
-    getClaimRewardsInstructionDataDecoder(),
-  );
+Codec<ClaimRewardsInstructionData, ClaimRewardsInstructionData> getClaimRewardsInstructionDataCodec() {
+  return combineCodec(getClaimRewardsInstructionDataEncoder(), getClaimRewardsInstructionDataDecoder());
 }
 
 /// Creates a [ClaimRewards] instruction.
@@ -66,26 +62,27 @@ Instruction getClaimRewardsInstruction({
   required Address rewardTokenAccount,
   required Address rewardVault,
   required Address tokenProgram,
+
 }) {
-  final instructionData = ClaimRewardsInstructionData();
+  final instructionData = ClaimRewardsInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: pool, role: AccountRole.writable),
-      AccountMeta(address: stakeAccount, role: AccountRole.writable),
-      AccountMeta(address: staker, role: AccountRole.readonlySigner),
-      AccountMeta(address: rewardTokenAccount, role: AccountRole.writable),
-      AccountMeta(address: rewardVault, role: AccountRole.writable),
-      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+    AccountMeta(address: pool, role: AccountRole.writable),
+    AccountMeta(address: stakeAccount, role: AccountRole.writable),
+    AccountMeta(address: staker, role: AccountRole.readonlySigner),
+    AccountMeta(address: rewardTokenAccount, role: AccountRole.writable),
+    AccountMeta(address: rewardVault, role: AccountRole.writable),
+    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
     data: getClaimRewardsInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [ClaimRewards] instruction from raw instruction data.
-ClaimRewardsInstructionData parseClaimRewardsInstruction(
-  Instruction instruction,
-) {
+ClaimRewardsInstructionData parseClaimRewardsInstruction(Instruction instruction) {
   return getClaimRewardsInstructionDataDecoder().decode(instruction.data!);
 }
