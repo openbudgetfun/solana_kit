@@ -1,14 +1,15 @@
 /// Basic RPC integration tests against a local validator (SurfPool).
 ///
 /// These tests require a running SurfPool instance at localhost:8899.
-/// They are NOT run in CI automatically.
+/// They are run in CI by the `test:integration` workspace script.
 ///
-/// Run with: dart test integration_test/rpc_basic_test.dart
+/// Run with: dart test packages/solana_kit/test/integration/rpc_basic_test.dart
 @TestOn('vm')
 @Tags(['integration'])
 library;
 
 import 'package:solana_kit/solana_kit.dart';
+import 'package:solana_kit_surfpool/solana_kit_surfpool.dart';
 import 'package:test/test.dart';
 
 /// Default RPC URL for a local SurfPool validator.
@@ -42,23 +43,21 @@ void main() {
   });
 
   group('airdrop and balance', () {
-    test('requestAirdrop increases balance', () async {
+    test('fundSol increases balance', () async {
       final signer = generateKeyPairSigner();
+      final surfnet = Surfnet.connect(rpcUrl: Uri.parse(_localRpcUrl));
 
-      // Check initial balance
-      final before = await rpc.getBalanceValue(signer.address).send();
-      expect(before.value.value, equals(BigInt.zero));
+      try {
+        final before = await rpc.getBalanceValue(signer.address).send();
+        expect(before.value.value, equals(BigInt.zero));
 
-      // Request airdrop
-      final airdropAmount = Lamports(BigInt.from(1000000000)); // 1 SOL
-      await rpc.requestAirdrop(signer.address, airdropAmount).send();
+        await surfnet.fundSol(signer.address, 1000000000);
 
-      // Wait a moment for confirmation
-      await Future<void>.delayed(const Duration(seconds: 2));
-
-      // Check new balance
-      final after = await rpc.getBalanceValue(signer.address).send();
-      expect(after.value.value, greaterThan(BigInt.zero));
+        final after = await rpc.getBalanceValue(signer.address).send();
+        expect(after.value.value, greaterThan(BigInt.zero));
+      } finally {
+        await surfnet.stop();
+      }
     });
   });
 }

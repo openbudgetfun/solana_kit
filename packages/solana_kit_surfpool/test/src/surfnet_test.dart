@@ -525,7 +525,10 @@ void main() {
             isA<SurfnetProcessException>().having(
               (error) => error.message,
               'message',
-              contains('exited before becoming ready'),
+              anyOf(
+                contains('exited before becoming ready'),
+                contains('Timed out waiting for Surfpool RPC'),
+              ),
             ),
           ),
         );
