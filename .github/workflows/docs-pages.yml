@@ -31,22 +31,15 @@ jobs:
       - uses: ./.github/actions/devenv
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - id: pages
-        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
-        continue-on-error: true
       - name: Resolve docs base path
         id: base
         env:
           INPUT_BASE_PATH: ${{ inputs.base_path }}
-          CONFIGURED_BASE_PATH: ${{ steps.pages.outputs.base_path }}
         run: |
           input_base="$INPUT_BASE_PATH"
-          configured_base="$CONFIGURED_BASE_PATH"
 
           if [[ -n "$input_base" ]]; then
             base_path="$input_base"
-          elif [[ -n "$configured_base" ]]; then
-            base_path="$configured_base"
           elif [[ "${GITHUB_REPOSITORY#*/}" == "${GITHUB_REPOSITORY_OWNER}.github.io" ]]; then
             base_path='/'
           else
