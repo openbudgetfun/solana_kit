@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 /// Configuration for a Mobile Wallet Adapter wallet endpoint.
 ///
 /// Specifies the wallet's capabilities and limits for incoming MWA sessions.

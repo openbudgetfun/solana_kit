@@ -1,5 +1,3 @@
-// ignore_for_file: public_member_api_docs
-
 import 'package:http/http.dart' as http;
 import 'package:solana_kit_helius/src/transactions/fetch_tip_floor.dart';
 import 'package:solana_kit_helius/src/transactions/lamports.dart';

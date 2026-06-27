@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 import 'package:solana_kit_rpc_types/src/encoded_bytes.dart';
 
 /// Describes a slice of account data to retrieve.

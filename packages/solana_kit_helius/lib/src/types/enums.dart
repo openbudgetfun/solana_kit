@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 // Enums for the Helius SDK, mirroring the Helius TypeScript SDK enum
 // definitions.
 //

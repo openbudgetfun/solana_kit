@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 import 'package:flutter/services.dart';
 
 /// Platform API for Android Digital Asset Links verification.

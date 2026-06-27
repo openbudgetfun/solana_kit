@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 /// Internal JSON reading helpers for Helius type deserialization.
 ///
 /// [JsonReader] wraps a raw `Map<String, Object?>` and provides typed

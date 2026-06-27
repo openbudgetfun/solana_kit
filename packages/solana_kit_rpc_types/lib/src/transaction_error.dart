@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 /// Represents an instruction-level error returned by the Solana runtime.
 ///
 /// This is a sealed class hierarchy where most variants are simple string

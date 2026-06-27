@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 /// All Solana error code constants ported from the TypeScript `@solana/errors`
 /// package.
 ///

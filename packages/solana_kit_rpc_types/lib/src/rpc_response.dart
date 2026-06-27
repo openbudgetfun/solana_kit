@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 import 'package:solana_kit_rpc_types/src/typed_numbers.dart';
 
 /// Context information included with every RPC response.

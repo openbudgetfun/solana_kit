@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 
 typedef StructuredFields = Map<String, Object?>;

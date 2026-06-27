@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
 import 'package:solana_kit_rpc_types/src/token_amount.dart';
