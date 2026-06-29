@@ -9,6 +9,8 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/src/ecdh_keypair.dart'
 
 /// Result of parsing a HELLO_RSP message.
 class HelloRspResult {
+  /// Creates a HELLO_RSP result with the derived [sharedSecret] and optional
+  /// [encryptedSessionProps].
   const HelloRspResult({
     required this.sharedSecret,
     this.encryptedSessionProps,

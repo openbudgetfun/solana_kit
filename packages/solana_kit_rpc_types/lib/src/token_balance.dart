@@ -5,6 +5,7 @@ import 'package:solana_kit_rpc_types/src/token_amount.dart';
 /// Represents a token balance for an account at a specific index in a
 /// transaction.
 class TokenBalance {
+  /// Creates a token balance for the account at [accountIndex].
   const TokenBalance({
     required this.accountIndex,
     required this.mint,

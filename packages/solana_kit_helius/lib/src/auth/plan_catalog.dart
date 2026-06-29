@@ -1,4 +1,6 @@
+/// Catalog of Helius billing plans with their pricing and limits.
 class PlanInfo {
+  /// Creates a [PlanInfo] with the given name, pricing, and limits.
   const PlanInfo({
     required this.name,
     required this.monthlyPrice,
@@ -7,13 +9,23 @@ class PlanInfo {
     required this.requestsPerSecond,
   });
 
+  /// Display name of the plan.
   final String name;
+
+  /// Monthly price in the smallest currency unit.
   final int monthlyPrice;
+
+  /// Yearly price in the smallest currency unit.
   final int yearlyPrice;
+
+  /// Number of credits included in the plan.
   final int credits;
+
+  /// Maximum allowed requests per second for the plan.
   final int requestsPerSecond;
 }
 
+/// Catalog of available Helius plans keyed by plan identifier.
 const planCatalog = <String, PlanInfo>{
   'developer': PlanInfo(
     name: 'Developer',
@@ -38,6 +50,7 @@ const planCatalog = <String, PlanInfo>{
   ),
 };
 
+/// Mapping of Helius plan identifiers to usage plan identifiers.
 const planToUsagePlan = <String, String>{
   'developer': 'developer_v4',
   'business': 'business_v4',

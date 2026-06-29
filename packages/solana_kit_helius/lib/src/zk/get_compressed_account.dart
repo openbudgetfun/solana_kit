@@ -1,6 +1,7 @@
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/types/zk_types.dart';
 
+/// Returns a compressed account by its address.
 Future<CompressedAccount> zkGetCompressedAccount(
   JsonRpcClient rpcClient,
   GetCompressedAccountRequest request,

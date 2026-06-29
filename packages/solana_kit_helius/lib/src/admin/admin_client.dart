@@ -4,7 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_helius/src/types/admin_types.dart';
 
+/// Client for Helius Admin API methods.
 class AdminClient {
+  /// Creates an AdminClient for the given base URL, API key, and HTTP client.
   const AdminClient({
     required this._baseUrl,
     required this._apiKey,
@@ -15,6 +17,7 @@ class AdminClient {
   final String _apiKey;
   final http.Client _client;
 
+  /// Returns usage statistics for the given [projectId].
   Future<ProjectUsage> getProjectUsage(String projectId) async {
     final uri = Uri.parse(_baseUrl).replace(
       pathSegments: [

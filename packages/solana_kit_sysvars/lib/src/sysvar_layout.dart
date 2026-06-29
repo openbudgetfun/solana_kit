@@ -1,7 +1,10 @@
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 
+/// A map of field names to their encoded values used by struct codecs.
 typedef StructuredFields = Map<String, Object?>;
 
+/// Creates a fixed-size encoder that converts a value into structured fields
+/// before writing them with the provided struct encoder.
 FixedSizeEncoder<T> mapFixedSizeStructEncoder<T>({
   required int fixedSize,
   required FixedSizeEncoder<StructuredFields> structEncoder,
@@ -15,6 +18,8 @@ FixedSizeEncoder<T> mapFixedSizeStructEncoder<T>({
   );
 }
 
+/// Creates a fixed-size decoder that reads structured fields with the provided
+/// struct decoder and maps them back into a value.
 FixedSizeDecoder<T> mapFixedSizeStructDecoder<T>({
   required int fixedSize,
   required FixedSizeDecoder<StructuredFields> structDecoder,
@@ -29,6 +34,8 @@ FixedSizeDecoder<T> mapFixedSizeStructDecoder<T>({
   );
 }
 
+/// Creates a fixed-size codec that combines the matching fixed-size struct
+/// encoder and decoder for symmetric encoding and decoding.
 FixedSizeCodec<T, T> mapFixedSizeStructCodec<T>({
   required int fixedSize,
   required FixedSizeEncoder<StructuredFields> structEncoder,
@@ -51,8 +58,11 @@ FixedSizeCodec<T, T> mapFixedSizeStructCodec<T>({
       as FixedSizeCodec<T, T>;
 }
 
+/// Computes a stable hash for the given structured fields.
 int hashStructuredFields(Iterable<Object?> fields) => Object.hashAll(fields);
 
+/// Formats the given structured fields as a human-readable
+/// `typeName(key: value, ...)` string.
 String formatStructuredFields(String typeName, StructuredFields fields) {
   final entries = fields.entries.map((entry) => '${entry.key}: ${entry.value}');
   return '$typeName(${entries.join(', ')})';

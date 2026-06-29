@@ -7,6 +7,7 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/src/crypto.dart';
 
 /// An MWA association keypair used for ECDSA signing during the handshake.
 class AssociationKeypair {
+  /// Creates an association keypair from the given [publicKey] and [privateKey].
   const AssociationKeypair({required this.publicKey, required this.privateKey});
 
   /// The ECDSA P-256 public key.

@@ -9,6 +9,7 @@
 /// This file is intentionally **not** exported from
 /// `lib/solana_kit_helius.dart` — it is an implementation detail.
 class JsonReader {
+  /// Creates a JsonReader wrapping the given JSON map.
   const JsonReader(this._json);
 
   final Map<String, Object?> _json;

@@ -3,6 +3,7 @@ import 'package:solana_kit_helius/src/types/enums.dart';
 
 /// A Helius webhook configuration.
 class Webhook {
+  /// Creates a webhook configuration.
   const Webhook({
     required this.webhookId,
     required this.wallet,
@@ -13,6 +14,7 @@ class Webhook {
     this.authHeader,
   });
 
+  /// Creates a [Webhook] from a JSON map.
   factory Webhook.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
     return Webhook(
@@ -26,14 +28,28 @@ class Webhook {
     );
   }
 
+  /// Unique identifier of the webhook.
   final String webhookId;
+
+  /// Wallet address that owns the webhook.
   final String wallet;
+
+  /// URL where webhook payloads are delivered.
   final String webhookUrl;
+
+  /// Transaction types that trigger the webhook.
   final List<String> transactionTypes;
+
+  /// Account addresses monitored by the webhook.
   final List<String> accountAddresses;
+
+  /// Delivery format for webhook payloads.
   final WebhookType webhookType;
+
+  /// Optional authorization header sent with webhook deliveries.
   final String? authHeader;
 
+  /// Serializes this webhook to a JSON map.
   Map<String, Object?> toJson() => {
     'webhookId': webhookId,
     'wallet': wallet,
@@ -47,6 +63,7 @@ class Webhook {
 
 /// Request to create a new webhook.
 class CreateWebhookRequest {
+  /// Creates a create-webhook request.
   const CreateWebhookRequest({
     required this.webhookUrl,
     required this.transactionTypes,
@@ -56,6 +73,7 @@ class CreateWebhookRequest {
     this.txnStatus,
   });
 
+  /// Creates a [CreateWebhookRequest] from a JSON map.
   factory CreateWebhookRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
     return CreateWebhookRequest(
@@ -68,13 +86,25 @@ class CreateWebhookRequest {
     );
   }
 
+  /// URL where webhook payloads are delivered.
   final String webhookUrl;
+
+  /// Transaction types that trigger the webhook.
   final List<String> transactionTypes;
+
+  /// Account addresses monitored by the webhook.
   final List<String> accountAddresses;
+
+  /// Delivery format for webhook payloads.
   final WebhookType webhookType;
+
+  /// Optional authorization header sent with webhook deliveries.
   final String? authHeader;
+
+  /// Optional filter for the transaction status to deliver.
   final String? txnStatus;
 
+  /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'webhookUrl': webhookUrl,
     'transactionTypes': transactionTypes,
@@ -87,6 +117,7 @@ class CreateWebhookRequest {
 
 /// Request to update an existing webhook.
 class UpdateWebhookRequest {
+  /// Creates an update-webhook request.
   const UpdateWebhookRequest({
     required this.webhookId,
     this.webhookUrl,
@@ -97,6 +128,7 @@ class UpdateWebhookRequest {
     this.txnStatus,
   });
 
+  /// Creates an [UpdateWebhookRequest] from a JSON map.
   factory UpdateWebhookRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
     return UpdateWebhookRequest(
@@ -110,14 +142,28 @@ class UpdateWebhookRequest {
     );
   }
 
+  /// Unique identifier of the webhook to update.
   final String webhookId;
+
+  /// Updated URL where webhook payloads are delivered.
   final String? webhookUrl;
+
+  /// Updated transaction types that trigger the webhook.
   final List<String>? transactionTypes;
+
+  /// Updated account addresses monitored by the webhook.
   final List<String>? accountAddresses;
+
+  /// Updated delivery format for webhook payloads.
   final WebhookType? webhookType;
+
+  /// Updated authorization header sent with webhook deliveries.
   final String? authHeader;
+
+  /// Updated filter for the transaction status to deliver.
   final String? txnStatus;
 
+  /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'webhookId': webhookId,
     if (webhookUrl != null) 'webhookUrl': webhookUrl,

@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 ///
 /// On iOS, all methods are no-ops that return safe default values.
 class MwaClientHostApi {
+  /// Creates the client-side platform API, optionally overriding the
+  /// [binaryMessenger] used for the method channel.
   MwaClientHostApi({BinaryMessenger? binaryMessenger})
     : _channel = MethodChannel(
         'com.solana.solanakit.mobilewallet/client',

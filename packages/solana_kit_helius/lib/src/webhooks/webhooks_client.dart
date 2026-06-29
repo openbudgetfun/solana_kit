@@ -9,6 +9,7 @@ import 'package:solana_kit_helius/src/webhooks/update_webhook.dart';
 
 /// Client for Helius Webhooks API methods.
 class WebhooksClient {
+  /// Creates a WebhooksClient backed by the given REST client and API key.
   const WebhooksClient({required this._restClient, required this._apiKey});
 
   final RestClient _restClient;

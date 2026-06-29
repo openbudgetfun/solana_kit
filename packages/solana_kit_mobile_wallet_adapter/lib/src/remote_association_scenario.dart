@@ -9,6 +9,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 /// Result of starting a remote association session.
 class RemoteAssociationResult {
+  /// Creates a remote association result with the [associationUri], [wallet]
+  /// future, and [close] callback.
   const RemoteAssociationResult({
     required this.associationUri,
     required this.wallet,

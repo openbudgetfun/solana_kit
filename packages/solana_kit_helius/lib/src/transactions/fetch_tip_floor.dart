@@ -2,8 +2,11 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+/// URL for the Helius priority fee estimate endpoint.
 const heliusTipFloorUrl = 'https://mainnet.helius-rpc.com/';
 
+/// Fetches the 75th percentile landed tip floor from the Helius RPC
+/// endpoint, or null if it cannot be determined.
 Future<double?> fetchTipFloor75th({
   http.Client? client,
   String endpoint = heliusTipFloorUrl,

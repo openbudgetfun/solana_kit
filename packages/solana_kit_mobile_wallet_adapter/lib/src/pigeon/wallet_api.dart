@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 /// This bridges to the Android `walletlib` for WebSocket server management
 /// and dApp request handling.
 class MwaWalletHostApi {
+  /// Creates the wallet-side platform API, optionally overriding the
+  /// [binaryMessenger] used for the method channel.
   MwaWalletHostApi({BinaryMessenger? binaryMessenger})
     : _channel = MethodChannel(
         'com.solana.solanakit.mobilewallet/wallet',

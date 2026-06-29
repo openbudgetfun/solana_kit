@@ -1,6 +1,7 @@
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/types/zk_types.dart';
 
+/// Returns the state proof hash path for a compressed account.
 Future<CompressedAccountProof> zkGetCompressedAccountProof(
   JsonRpcClient rpcClient,
   GetCompressedAccountProofRequest request,

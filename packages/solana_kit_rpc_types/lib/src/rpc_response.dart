@@ -2,6 +2,7 @@ import 'package:solana_kit_rpc_types/src/typed_numbers.dart';
 
 /// Context information included with every RPC response.
 class RpcResponseContext {
+  /// Creates the RPC response context for the supplied [slot].
   const RpcResponseContext({required this.slot});
 
   /// The slot at which the response was generated.
@@ -24,6 +25,7 @@ class RpcResponseContext {
 /// A standard Solana RPC response wrapper containing a [context] and a
 /// [value].
 class SolanaRpcResponse<TValue> {
+  /// Creates a Solana RPC response wrapping [context] and [value].
   const SolanaRpcResponse({required this.context, required this.value});
 
   /// The context in which this response was generated.

@@ -1,6 +1,7 @@
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/types/zk_types.dart';
 
+/// Returns compressed token accounts delegated to the given delegate.
 Future<CompressedTokenAccountList> zkGetCompressedTokenAccountsByDelegate(
   JsonRpcClient rpcClient,
   GetCompressedTokenAccountsByDelegateRequest request,

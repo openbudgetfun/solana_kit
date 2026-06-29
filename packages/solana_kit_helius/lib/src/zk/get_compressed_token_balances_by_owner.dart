@@ -1,6 +1,7 @@
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/types/zk_types.dart';
 
+/// Returns compressed token balances for the given owner address.
 Future<CompressedTokenBalanceList> zkGetCompressedTokenBalancesByOwner(
   JsonRpcClient rpcClient,
   GetCompressedTokenBalancesByOwnerRequest request,

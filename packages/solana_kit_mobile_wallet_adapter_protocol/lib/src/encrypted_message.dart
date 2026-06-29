@@ -9,6 +9,7 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/src/sequence_number.da
 
 /// Result of decrypting an MWA encrypted message.
 class DecryptedMessage {
+  /// Creates a decrypted message with its [plaintext] and [sequenceNumber].
   const DecryptedMessage({
     required this.plaintext,
     required this.sequenceNumber,

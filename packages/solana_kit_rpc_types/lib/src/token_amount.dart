@@ -3,6 +3,7 @@ import 'package:solana_kit_rpc_types/src/stringified_number.dart';
 
 /// Represents a token amount as returned by the Solana RPC.
 class TokenAmount {
+  /// Creates a token amount with [amount], [decimals], and [uiAmountString].
   const TokenAmount({
     required this.amount,
     required this.decimals,

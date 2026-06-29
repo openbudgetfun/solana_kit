@@ -24,6 +24,8 @@ enum MwaSessionEventType {
 
 /// A session lifecycle event from the MWA scenario.
 class MwaSessionEvent {
+  /// Creates a session event with the given [type], [sessionId], and optional
+  /// [error].
   const MwaSessionEvent({
     required this.type,
     required this.sessionId,

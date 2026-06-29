@@ -46,6 +46,7 @@ sealed class TransactionExecutionOutcome {
 
 /// Successful higher-level execution result.
 class SuccessfulTransactionExecution extends TransactionExecutionOutcome {
+  /// Creates a successful execution outcome.
   const SuccessfulTransactionExecution({
     required this.transactionPlan,
     required this.transactionPlanResult,
@@ -60,6 +61,7 @@ class SuccessfulTransactionExecution extends TransactionExecutionOutcome {
 
 /// Failed higher-level execution result.
 class FailedTransactionExecution extends TransactionExecutionOutcome {
+  /// Creates a failed execution outcome.
   const FailedTransactionExecution({
     required this.stage,
     required this.error,
@@ -82,6 +84,7 @@ class FailedTransactionExecution extends TransactionExecutionOutcome {
 
 /// Configuration for a higher-level transaction execution boundary.
 class TransactionExecutionBoundaryConfig {
+  /// Creates a configuration for a transaction execution boundary.
   const TransactionExecutionBoundaryConfig({
     required this.planTransactions,
     required this.signTransactionMessage,
@@ -101,6 +104,7 @@ class TransactionExecutionBoundaryConfig {
 /// Convenience configuration for execution boundaries that resolve signers and
 /// create a planner internally.
 class SigningTransactionExecutionBoundaryConfig {
+  /// Creates a configuration for a signing-based execution boundary.
   const SigningTransactionExecutionBoundaryConfig({
     required this.createTransactionMessage,
     required this.signers,

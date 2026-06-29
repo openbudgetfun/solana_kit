@@ -3,6 +3,8 @@ import 'package:solana_kit_errors/src/error.dart';
 
 /// Configuration for mapping RPC enum errors to [SolanaError] instances.
 class RpcEnumErrorConfig {
+  /// Creates an [RpcEnumErrorConfig] with the given base offset, ordered
+  /// error names, and context-building callback.
   const RpcEnumErrorConfig({
     required this.errorCodeBaseOffset,
     required this.orderedErrorNames,

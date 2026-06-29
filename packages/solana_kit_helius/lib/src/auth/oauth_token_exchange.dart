@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
+/// Base URL for the Helius developer API.
 const heliusDeveloperApiUrl = 'https://dev-api.helius.xyz/v0';
 
+/// Request body for the Helius OAuth token exchange endpoint.
 class OAuthTokenExchangeRequest {
+  /// Creates an [OAuthTokenExchangeRequest] for the given authorization code.
   const OAuthTokenExchangeRequest({
     required this.code,
     required this.codeVerifier,
@@ -14,14 +17,25 @@ class OAuthTokenExchangeRequest {
     this.userAgent,
   });
 
+  /// Authorization code returned by the OAuth provider.
   final String code;
+
+  /// PKCE code verifier used to exchange the authorization code.
   final String codeVerifier;
+
+  /// OAuth client identifier.
   final String clientId;
+
+  /// Redirect URI registered for the OAuth client.
   final String redirectUri;
+
+  /// Optional User-Agent header sent with the token exchange request.
   final String? userAgent;
 }
 
+/// Response payload for the Helius OAuth token exchange endpoint.
 class OAuthTokenResponse {
+  /// Creates an [OAuthTokenResponse] with the issued token and user info.
   const OAuthTokenResponse({
     required this.accessToken,
     required this.tokenType,
@@ -29,6 +43,7 @@ class OAuthTokenResponse {
     required this.user,
   });
 
+  /// Creates an [OAuthTokenResponse] from a JSON map.
   factory OAuthTokenResponse.fromJson(Map<String, Object?> json) {
     return OAuthTokenResponse(
       accessToken: json['access_token']! as String,
@@ -38,15 +53,25 @@ class OAuthTokenResponse {
     );
   }
 
+  /// Access token issued by the OAuth provider.
   final String accessToken;
+
+  /// Token type (e.g. `Bearer`).
   final String tokenType;
+
+  /// Lifetime of the access token in seconds.
   final int expiresIn;
+
+  /// Authenticated user information.
   final OAuthUser user;
 }
 
+/// Authenticated user information returned by the OAuth token exchange.
 class OAuthUser {
+  /// Creates an [OAuthUser] with the given [id] and [email].
   const OAuthUser({required this.id, required this.email});
 
+  /// Creates an [OAuthUser] from a JSON map.
   factory OAuthUser.fromJson(Map<String, Object?> json) {
     return OAuthUser(
       id: json['id']! as String,
@@ -54,10 +79,14 @@ class OAuthUser {
     );
   }
 
+  /// Unique identifier for the user.
   final String id;
+
+  /// Email address for the user.
   final String email;
 }
 
+/// Exchanges an OAuth authorization code for an access token.
 Future<OAuthTokenResponse> oauthTokenExchange(
   OAuthTokenExchangeRequest request, {
   http.Client? client,

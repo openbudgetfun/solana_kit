@@ -6,6 +6,7 @@ import 'package:solana_kit_errors/src/message_formatter.dart';
 /// Each error carries a [SolanaErrorCode] [code] and an optional
 /// [context] map containing structured data about the error.
 class SolanaError implements Exception {
+  /// Creates a [SolanaError] with the given [code] and optional [context].
   SolanaError(this.code, [Map<String, Object?>? context])
     : context = context != null
           ? Map<String, Object?>.unmodifiable(context)

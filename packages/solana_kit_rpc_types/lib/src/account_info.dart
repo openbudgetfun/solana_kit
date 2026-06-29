@@ -5,6 +5,7 @@ import 'package:solana_kit_rpc_types/src/lamports.dart';
 
 /// Base account information shared by all account info variants.
 class AccountInfoBase {
+  /// Creates the shared account info.
   const AccountInfoBase({
     required this.executable,
     required this.lamports,
@@ -47,6 +48,7 @@ class AccountInfoBase {
 
 /// Account info with base64-encoded data.
 class AccountInfoWithBase64EncodedData {
+  /// Creates account info wrapping base64-encoded data.
   const AccountInfoWithBase64EncodedData({required this.data});
 
   /// The account data as a (base64String, 'base64') tuple.
@@ -68,6 +70,7 @@ class AccountInfoWithBase64EncodedData {
 
 /// Account info with base64-encoded zstd-compressed data.
 class AccountInfoWithBase64EncodedZStdCompressedData {
+  /// Creates account info wrapping base64-encoded, zstd-compressed data.
   const AccountInfoWithBase64EncodedZStdCompressedData({required this.data});
 
   /// The account data as a (base64+zstdString, 'base64+zstd') tuple.
@@ -90,6 +93,7 @@ class AccountInfoWithBase64EncodedZStdCompressedData {
 
 /// Parsed account data from jsonParsed encoding.
 class ParsedAccountData {
+  /// Creates parsed account data from jsonParsed encoding.
   const ParsedAccountData({
     required this.type,
     required this.program,
@@ -142,6 +146,7 @@ sealed class AccountInfoJsonData {
 
 /// Parsed account data variant.
 class AccountInfoJsonDataParsed extends AccountInfoJsonData {
+  /// Creates the parsed account data variant.
   const AccountInfoJsonDataParsed({required this.parsed});
 
   /// The parsed account data.
@@ -164,6 +169,7 @@ class AccountInfoJsonDataParsed extends AccountInfoJsonData {
 /// Fallback base64-encoded data variant (used when jsonParsed encoding is
 /// requested but a parser cannot be found).
 class AccountInfoJsonDataBase64 extends AccountInfoJsonData {
+  /// Creates the fallback base64-encoded data variant.
   const AccountInfoJsonDataBase64({required this.data});
 
   /// The account data as a (base64String, 'base64') tuple.
@@ -185,6 +191,7 @@ class AccountInfoJsonDataBase64 extends AccountInfoJsonData {
 
 /// Account info with json-parsed data.
 class AccountInfoWithJsonData {
+  /// Creates account info wrapping json-parsed data.
   const AccountInfoWithJsonData({required this.data});
 
   /// The account data, either parsed or base64-encoded.
@@ -206,6 +213,7 @@ class AccountInfoWithJsonData {
 
 /// Wraps account info with the account's public key.
 class AccountInfoWithPubkey<TAccount extends AccountInfoBase> {
+  /// Wraps [account] info with its [pubkey].
   const AccountInfoWithPubkey({required this.account, required this.pubkey});
 
   /// The account information.

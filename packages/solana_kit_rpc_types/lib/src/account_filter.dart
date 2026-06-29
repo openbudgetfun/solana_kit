@@ -2,6 +2,7 @@ import 'package:solana_kit_rpc_types/src/encoded_bytes.dart';
 
 /// Describes a slice of account data to retrieve.
 class DataSlice {
+  /// Creates a data slice describing [length] bytes starting at [offset].
   const DataSlice({required this.length, required this.offset});
 
   /// The number of bytes to return.
@@ -27,6 +28,7 @@ class DataSlice {
 
 /// A memory comparison filter for account data, using base58 encoding.
 class MemcmpFilterBase58 {
+  /// Creates a base58-encoded memory comparison filter.
   const MemcmpFilterBase58({required this.bytes, required this.offset});
 
   /// The bytes to match, as a base-58 encoded string.
@@ -59,6 +61,7 @@ class MemcmpFilterBase58 {
 
 /// A memory comparison filter for account data, using base64 encoding.
 class MemcmpFilterBase64 {
+  /// Creates a base64-encoded memory comparison filter.
   const MemcmpFilterBase64({required this.bytes, required this.offset});
 
   /// The bytes to match, as a base-64 encoded string.
@@ -94,6 +97,7 @@ class MemcmpFilterBase64 {
 /// This filter matches when the bytes supplied are equal to the account data
 /// at the given offset.
 class GetProgramAccountsMemcmpFilter {
+  /// Creates a memory comparison filter wrapping [memcmp].
   const GetProgramAccountsMemcmpFilter({required this.memcmp});
 
   /// The memory comparison parameters.
@@ -119,6 +123,7 @@ class GetProgramAccountsMemcmpFilter {
 ///
 /// This filter matches when the account data length is equal to [dataSize].
 class GetProgramAccountsDatasizeFilter {
+  /// Creates a data size filter matching accounts with the given [dataSize].
   const GetProgramAccountsDatasizeFilter({required this.dataSize});
 
   /// The expected data size in bytes.

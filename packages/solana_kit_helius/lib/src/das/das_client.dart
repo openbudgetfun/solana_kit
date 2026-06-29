@@ -15,6 +15,7 @@ import 'package:solana_kit_helius/src/types/das_types.dart';
 
 /// Client for Helius Digital Asset Standard (DAS) API methods.
 class DasClient {
+  /// Creates a DasClient backed by the given JSON-RPC client.
   const DasClient({required this._rpcClient});
 
   final JsonRpcClient _rpcClient;

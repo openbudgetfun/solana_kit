@@ -6,7 +6,10 @@
 
 /// Helius cluster target for API requests.
 enum HeliusCluster {
+  /// Solana mainnet-beta.
   mainnet('mainnet-beta'),
+
+  /// Solana devnet.
   devnet('devnet');
 
   const HeliusCluster(this.value);
@@ -29,17 +32,40 @@ enum HeliusCluster {
 
 /// Asset interface type -- identifies the on-chain program standard.
 enum HeliusAssetInterface {
+  /// Metaplex Token Metadata v1 NFT.
   v1Nft('V1_NFT'),
+
+  /// Custom asset interface.
   custom('Custom'),
+
+  /// Metaplex Token Metadata v1 print edition.
   v1Print('V1_PRINT'),
+
+  /// Legacy NFT standard.
   legacyNft('Legacy_NFT'),
+
+  /// Metaplex Token Metadata v2 NFT.
   v2Nft('V2_NFT'),
+
+  /// Fungible asset standard.
   fungibleAsset('FungibleAsset'),
+
+  /// Identity asset standard.
   identity('Identity'),
+
+  /// Executable asset standard.
   executable('Executable'),
+
+  /// Programmable NFT standard.
   programmableNft('ProgrammableNFT'),
+
+  /// Fungible token standard.
   fungibleToken('FungibleToken'),
+
+  /// Metaplex Core asset standard.
   mplCoreAsset('MplCoreAsset'),
+
+  /// Metaplex Core collection standard.
   mplCoreCollection('MplCoreCollection');
 
   const HeliusAssetInterface(this.value);
@@ -76,7 +102,10 @@ enum HeliusAssetInterface {
 
 /// How ownership of an asset is modeled.
 enum HeliusOwnershipModel {
+  /// Single owner holding the asset.
   single('single'),
+
+  /// Ownership tracked via token balances.
   token('token');
 
   const HeliusOwnershipModel(this.value);
@@ -103,8 +132,13 @@ enum HeliusOwnershipModel {
 
 /// Royalty distribution model for an asset.
 enum HeliusRoyaltyModel {
+  /// Royalties split across creators.
   creators('creators'),
+
+  /// Royalties fanned out to holders.
   fanout('fanout'),
+
+  /// Royalty owed to a single recipient.
   single_('single');
 
   const HeliusRoyaltyModel(this.value);
@@ -128,9 +162,16 @@ enum HeliusRoyaltyModel {
 
 /// Authority scope level for an asset.
 enum HeliusScope {
+  /// Full authority over the asset.
   full('full'),
+
+  /// Authority limited to royalties.
   royalty('royalty'),
+
+  /// Authority limited to metadata.
   metadata('metadata'),
+
+  /// Authority limited to extensions.
   extension_('extension');
 
   const HeliusScope(this.value);
@@ -155,8 +196,13 @@ enum HeliusScope {
 
 /// Method governing how an asset's uses are consumed.
 enum HeliusUseMethod {
+  /// Burn the asset on use.
   burn('Burn'),
+
+  /// Single use only.
   single_('Single'),
+
+  /// Multiple uses allowed.
   multiple('Multiple');
 
   const HeliusUseMethod(this.value);
@@ -180,12 +226,25 @@ enum HeliusUseMethod {
 
 /// Display context in which a file or asset is intended to be rendered.
 enum HeliusContext {
+  /// Default wallet rendering context.
   walletDefault('wallet-default'),
+
+  /// Desktop web rendering context.
   webDesktop('web-desktop'),
+
+  /// Mobile web rendering context.
   webMobile('web-mobile'),
+
+  /// Mobile app rendering context.
   appMobile('app-mobile'),
+
+  /// Desktop app rendering context.
   appDesktop('app-desktop'),
+
+  /// Generic app rendering context.
   app('app'),
+
+  /// Virtual reality rendering context.
   vr('vr');
 
   const HeliusContext(this.value);
@@ -213,10 +272,19 @@ enum HeliusContext {
 
 /// Field by which DAS asset queries can be sorted.
 enum AssetSortBy {
+  /// Sort by asset identifier.
   id('id'),
+
+  /// Sort by creation time.
   created('created'),
+
+  /// Sort by last update time.
   updated('updated'),
+
+  /// Sort by most recent action.
   recentAction('recent_action'),
+
+  /// No sorting.
   none_('none');
 
   const AssetSortBy(this.value);
@@ -242,7 +310,10 @@ enum AssetSortBy {
 
 /// Sort direction for DAS asset queries.
 enum AssetSortDirection {
+  /// Ascending order.
   asc('asc'),
+
+  /// Descending order.
   desc('desc');
 
   const AssetSortDirection(this.value);
@@ -265,11 +336,22 @@ enum AssetSortDirection {
 
 /// Token standard classification.
 enum TokenStandard {
+  /// Programmable non-fungible token.
   programmableNonFungible('ProgrammableNonFungible'),
+
+  /// Non-fungible token.
   nonFungible('NonFungible'),
+
+  /// Fungible token.
   fungible('Fungible'),
+
+  /// Fungible asset.
   fungibleAsset('FungibleAsset'),
+
+  /// Non-fungible edition.
   nonFungibleEdition('NonFungibleEdition'),
+
+  /// Unrecognized token standard.
   unknownStandard('UnknownStandard');
 
   const TokenStandard(this.value);
@@ -296,12 +378,25 @@ enum TokenStandard {
 
 /// Priority fee level hint for the `getPriorityFeeEstimate` API.
 enum PriorityLevel {
+  /// Minimum priority fee level.
   min('Min'),
+
+  /// Low priority fee level.
   low('Low'),
+
+  /// Medium priority fee level.
   medium('Medium'),
+
+  /// High priority fee level.
   high('High'),
+
+  /// Very high priority fee level.
   veryHigh('VeryHigh'),
+
+  /// Maximum priority fee level, may be unsafe.
   unsafeMax('UnsafeMax'),
+
+  /// Default priority fee level.
   default_('Default');
 
   const PriorityLevel(this.value);
@@ -329,10 +424,19 @@ enum PriorityLevel {
 
 /// Transaction encoding format for UI / RPC requests.
 enum UiTransactionEncoding {
+  /// Binary encoding.
   binary('binary'),
+
+  /// Base64 encoding.
   base64('base64'),
+
+  /// Base58 encoding.
   base58('base58'),
+
+  /// JSON encoding.
   json('json'),
+
+  /// Parsed JSON encoding.
   jsonParsed('jsonParsed');
 
   const UiTransactionEncoding(this.value);
@@ -362,11 +466,22 @@ enum UiTransactionEncoding {
 
 /// Delivery format for Helius webhook payloads.
 enum WebhookType {
+  /// Enhanced transaction payload on mainnet.
   enhanced('enhanced'),
+
+  /// Enhanced transaction payload on devnet.
   enhancedDevnet('enhancedDevnet'),
+
+  /// Raw transaction payload on mainnet.
   raw('raw'),
+
+  /// Raw transaction payload on devnet.
   rawDevnet('rawDevnet'),
+
+  /// Discord-formatted payload on mainnet.
   discord('discord'),
+
+  /// Discord-formatted payload on devnet.
   discordDevnet('discordDevnet');
 
   const WebhookType(this.value);
@@ -393,8 +508,13 @@ enum WebhookType {
 
 /// Filter by transaction status for webhook subscriptions.
 enum TransactionStatus {
+  /// Deliver all transactions.
   all('all'),
+
+  /// Deliver only successful transactions.
   success('success'),
+
+  /// Deliver only failed transactions.
   failed('failed');
 
   const TransactionStatus(this.value);
@@ -418,8 +538,13 @@ enum TransactionStatus {
 
 /// Commitment level for Solana RPC requests via Helius.
 enum CommitmentLevel {
+  /// Processed by the current node.
   processed('processed'),
+
+  /// Confirmed by a supermajority of the cluster.
   confirmed('confirmed'),
+
+  /// Finalized by the cluster.
   finalized('finalized');
 
   const CommitmentLevel(this.value);

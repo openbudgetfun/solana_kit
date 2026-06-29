@@ -73,6 +73,7 @@ abstract interface class WalletScenarioCallbacks {
 /// await scenario.close();
 /// ```
 class WalletScenario {
+  /// Creates a wallet scenario with the [walletName], [config], and [callbacks].
   WalletScenario({
     required this.walletName,
     required this.config,

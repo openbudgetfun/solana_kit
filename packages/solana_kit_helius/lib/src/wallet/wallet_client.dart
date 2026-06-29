@@ -10,6 +10,7 @@ import 'package:solana_kit_helius/src/wallet/get_transfers.dart';
 
 /// Client for Helius Wallet API methods.
 class WalletClient {
+  /// Creates a WalletClient backed by the given REST client and API key.
   const WalletClient({required this._restClient, required this._apiKey});
 
   final RestClient _restClient;

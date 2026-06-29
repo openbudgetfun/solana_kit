@@ -8,6 +8,8 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wall
 /// represents errors received _from_ a wallet. This class represents errors
 /// produced _by_ the wallet.
 class WalletRequestError implements Exception {
+  /// Creates a wallet request error with the given [code], [message], and
+  /// optional [data].
   const WalletRequestError({
     required this.code,
     required this.message,
@@ -33,6 +35,7 @@ class WalletRequestError implements Exception {
 /// completed by calling one of the `completeWith*` methods. Failing to
 /// complete a request will hang the dApp.
 sealed class WalletRequest {
+  /// Creates a wallet request with the given [requestId] and [sessionId].
   WalletRequest({required this.requestId, required this.sessionId});
 
   /// Unique identifier for this request within the session.
@@ -77,6 +80,8 @@ sealed class WalletRequest {
 
 /// A dApp is requesting authorization.
 class AuthorizeDappRequest extends WalletRequest {
+  /// Creates an authorize request with the dApp identity and authorization
+  /// parameters.
   AuthorizeDappRequest({
     required super.requestId,
     required super.sessionId,
@@ -177,6 +182,8 @@ class AuthorizeDappRequest extends WalletRequest {
 
 /// Account authorized by the wallet, returned to the dApp.
 class AuthorizedAccount {
+  /// Creates an authorized account with its base64 [address] and optional
+  /// metadata.
   const AuthorizedAccount({
     required this.address,
     this.displayAddress,
@@ -223,6 +230,8 @@ class AuthorizedAccount {
 
 /// A dApp is requesting reauthorization.
 class ReauthorizeDappRequest extends WalletRequest {
+  /// Creates a reauthorize request with the dApp identity and the
+  /// [authorizationScope] to revalidate.
   ReauthorizeDappRequest({
     required super.requestId,
     required super.sessionId,
@@ -270,6 +279,8 @@ class ReauthorizeDappRequest extends WalletRequest {
 
 /// A dApp has deauthorized — an event, not a request.
 class DeauthorizedEvent extends WalletRequest {
+  /// Creates a deauthorized event with the dApp identity and the
+  /// [authorizationScope] that was revoked.
   DeauthorizedEvent({
     required super.requestId,
     required super.sessionId,
@@ -299,6 +310,8 @@ class DeauthorizedEvent extends WalletRequest {
 
 /// A dApp is requesting transaction signing.
 class SignTransactionsRequest extends WalletRequest {
+  /// Creates a sign-transactions request with the [payloads] to sign and the
+  /// dApp's authorization context.
   SignTransactionsRequest({
     required super.requestId,
     required super.sessionId,
@@ -388,6 +401,8 @@ class SignTransactionsRequest extends WalletRequest {
 
 /// A dApp is requesting message signing.
 class SignMessagesRequest extends WalletRequest {
+  /// Creates a sign-messages request with the [payloads] to sign, the
+  /// [addresses] that should sign, and the dApp's authorization context.
   SignMessagesRequest({
     required super.requestId,
     required super.sessionId,
@@ -470,6 +485,8 @@ class SignMessagesRequest extends WalletRequest {
 
 /// A dApp is requesting transaction signing and sending.
 class SignAndSendTransactionsRequest extends WalletRequest {
+  /// Creates a sign-and-send-transactions request with the [payloads] to sign
+  /// and send, plus the dApp's authorization context and send options.
   SignAndSendTransactionsRequest({
     required super.requestId,
     required super.sessionId,

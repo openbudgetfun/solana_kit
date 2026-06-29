@@ -9,6 +9,7 @@ import 'package:solana_kit_helius/src/types/rpc_v2_types.dart';
 
 /// Client for Helius RPC V2 API methods with cursor-based pagination.
 class RpcV2Client {
+  /// Creates an RpcV2Client backed by the given JSON-RPC client.
   const RpcV2Client({required this._rpcClient});
 
   final JsonRpcClient _rpcClient;

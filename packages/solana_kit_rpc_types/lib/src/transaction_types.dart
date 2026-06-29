@@ -19,6 +19,7 @@ sealed class TransactionVersion {
 
 /// Legacy transaction version.
 class TransactionVersionLegacy extends TransactionVersion {
+  /// Creates a legacy transaction version marker.
   const TransactionVersionLegacy();
 
   @override
@@ -34,6 +35,7 @@ class TransactionVersionLegacy extends TransactionVersion {
 
 /// Version 0 transaction.
 class TransactionVersionV0 extends TransactionVersion {
+  /// Creates a version 0 transaction version marker.
   const TransactionVersionV0();
 
   @override
@@ -53,6 +55,7 @@ class TransactionVersionV0 extends TransactionVersion {
 
 /// An address lookup table reference within a versioned transaction.
 class AddressTableLookup {
+  /// Creates an address table lookup reference.
   const AddressTableLookup({
     required this.accountKey,
     required this.readonlyIndexes,
@@ -114,6 +117,7 @@ sealed class Reward {
 
 /// A fee or rent reward (no commission).
 class RewardFeeOrRent extends Reward {
+  /// Creates a fee or rent reward.
   const RewardFeeOrRent({
     required this.rewardLamports,
     required this.postBalance,
@@ -155,6 +159,7 @@ class RewardFeeOrRent extends Reward {
 
 /// A voting or staking reward (includes commission).
 class RewardVotingOrStaking extends Reward {
+  /// Creates a voting or staking reward.
   const RewardVotingOrStaking({
     required this.rewardLamports,
     required this.postBalance,
@@ -212,6 +217,7 @@ class RewardVotingOrStaking extends Reward {
 
 /// Base transaction metadata shared by all transaction detail levels.
 class TransactionForAccountsMetaBase {
+  /// Creates the shared transaction metadata.
   const TransactionForAccountsMetaBase({
     required this.err,
     required this.fee,
@@ -275,6 +281,7 @@ class TransactionForAccountsMetaBase {
 
 /// Return data from a transaction.
 class ReturnData {
+  /// Creates the return data from a transaction.
   const ReturnData({required this.data, required this.programId});
 
   /// The return data as a base64-encoded response.
@@ -304,6 +311,7 @@ class ReturnData {
 
 /// A parsed account key in a transaction.
 class TransactionParsedAccount {
+  /// Creates a parsed account entry in a transaction.
   const TransactionParsedAccount({
     required this.pubkey,
     required this.signer,

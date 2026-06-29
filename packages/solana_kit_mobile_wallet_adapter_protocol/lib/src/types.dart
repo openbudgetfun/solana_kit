@@ -11,6 +11,7 @@ enum ProtocolVersion {
 
 /// Properties of an MWA session, negotiated during the handshake.
 class SessionProperties {
+  /// Creates session properties for the negotiated [protocolVersion].
   const SessionProperties({required this.protocolVersion});
 
   /// The protocol version negotiated for this session.
@@ -19,6 +20,7 @@ class SessionProperties {
 
 /// Application identity information sent to the wallet during authorization.
 class AppIdentity {
+  /// Creates an app identity with an optional [uri], [icon], and [name].
   const AppIdentity({this.uri, this.icon, this.name});
 
   /// The application's URI.
@@ -30,6 +32,7 @@ class AppIdentity {
   /// The application's display name.
   final String? name;
 
+  /// Serializes this identity to a JSON-compatible map, omitting `null` fields.
   Map<String, Object?> toJson() => {
     if (uri != null) 'uri': uri.toString(),
     if (icon != null) 'icon': icon,
@@ -39,6 +42,7 @@ class AppIdentity {
 
 /// A wallet account returned during authorization.
 class MwaAccount {
+  /// Creates a wallet account with its base64 [address] and optional metadata.
   const MwaAccount({
     required this.address,
     this.displayAddress,
@@ -48,6 +52,7 @@ class MwaAccount {
     this.features,
   });
 
+  /// Creates an [MwaAccount] from a JSON map produced by the wallet.
   factory MwaAccount.fromJson(Map<String, Object?> json) {
     return MwaAccount(
       address: json['address']! as String,
@@ -77,6 +82,7 @@ class MwaAccount {
   /// Feature identifiers this account supports.
   final List<String>? features;
 
+  /// Serializes this account to a JSON-compatible map, omitting `null` fields.
   Map<String, Object?> toJson() => {
     'address': address,
     if (displayAddress != null) 'display_address': displayAddress,
@@ -89,6 +95,8 @@ class MwaAccount {
 
 /// Result of a Sign In With Solana (SIWS) operation.
 class SignInResult {
+  /// Creates a sign-in result with the [address], [signedMessage], [signature],
+  /// and optional [signatureType].
   const SignInResult({
     required this.address,
     required this.signedMessage,
@@ -96,6 +104,7 @@ class SignInResult {
     this.signatureType,
   });
 
+  /// Creates a [SignInResult] from a JSON map produced by the wallet.
   factory SignInResult.fromJson(Map<String, Object?> json) {
     return SignInResult(
       address: json['address']! as String,
@@ -117,6 +126,7 @@ class SignInResult {
   /// The signature type (e.g. `ed25519`).
   final String? signatureType;
 
+  /// Serializes this result to a JSON-compatible map, omitting `null` fields.
   Map<String, Object?> toJson() => {
     'address': address,
     'signed_message': signedMessage,
@@ -127,6 +137,8 @@ class SignInResult {
 
 /// The full authorization result returned by the wallet.
 class AuthorizationResult {
+  /// Creates an authorization result with the authorized [accounts], the
+  /// [authToken], and optional [walletUriBase] and [signInResult].
   const AuthorizationResult({
     required this.accounts,
     required this.authToken,
@@ -134,6 +146,7 @@ class AuthorizationResult {
     this.signInResult,
   });
 
+  /// Creates an [AuthorizationResult] from a JSON map produced by the wallet.
   factory AuthorizationResult.fromJson(Map<String, Object?> json) {
     return AuthorizationResult(
       accounts: (json['accounts']! as List<Object?>)
@@ -165,6 +178,7 @@ class AuthorizationResult {
 
 /// Payload for a Sign In With Solana request.
 class SignInPayload {
+  /// Creates a SIWS payload with the optional signing fields.
   const SignInPayload({
     this.domain,
     this.address,
@@ -216,6 +230,7 @@ class SignInPayload {
   /// A list of URIs the user is authorizing access to.
   final List<String>? resources;
 
+  /// Serializes this payload to a JSON-compatible map, omitting `null` fields.
   Map<String, Object?> toJson() => {
     if (domain != null) 'domain': domain,
     if (address != null) 'address': address,
@@ -234,6 +249,8 @@ class SignInPayload {
 
 /// Wallet capabilities returned by `getCapabilities`.
 class WalletCapabilities {
+  /// Creates a wallet capabilities descriptor with the wallet's limits and
+  /// supported features.
   const WalletCapabilities({
     this.maxTransactionsPerRequest,
     this.maxMessagesPerRequest,
@@ -241,6 +258,7 @@ class WalletCapabilities {
     this.features,
   });
 
+  /// Creates [WalletCapabilities] from a JSON map produced by the wallet.
   factory WalletCapabilities.fromJson(Map<String, Object?> json) {
     return WalletCapabilities(
       maxTransactionsPerRequest: json['max_transactions_per_request'] as int?,
@@ -266,6 +284,7 @@ class WalletCapabilities {
 
 /// Options for the `signAndSendTransactions` method.
 class SignAndSendOptions {
+  /// Creates options for `signAndSendTransactions`.
   const SignAndSendOptions({
     this.minContextSlot,
     this.commitment,
@@ -289,6 +308,7 @@ class SignAndSendOptions {
   /// Whether to wait for commitment before sending the next transaction.
   final bool? waitForCommitmentToSendNextTransaction;
 
+  /// Serializes these options to a JSON-compatible map, omitting `null` fields.
   Map<String, Object?> toJson() => {
     if (minContextSlot != null) 'min_context_slot': minContextSlot,
     if (commitment != null) 'commitment': commitment,
@@ -302,6 +322,7 @@ class SignAndSendOptions {
 
 /// Configuration for a local wallet association session.
 class WalletAssociationConfig {
+  /// Creates a local association config with an optional [baseUri].
   const WalletAssociationConfig({this.baseUri});
 
   /// An optional base URI for the wallet Intent.
@@ -310,6 +331,8 @@ class WalletAssociationConfig {
 
 /// Configuration for a remote wallet association session.
 class RemoteWalletAssociationConfig {
+  /// Creates a remote association config with the required [reflectorHost] and
+  /// an optional [baseUri].
   const RemoteWalletAssociationConfig({
     required this.reflectorHost,
     this.baseUri,
@@ -324,6 +347,8 @@ class RemoteWalletAssociationConfig {
 
 /// Parsed association URI parameters.
 sealed class AssociationParams {
+  /// Creates association parameters with the [associationPublicKey] and
+  /// [protocol].
   const AssociationParams({
     required this.associationPublicKey,
     required this.protocol,
@@ -338,6 +363,8 @@ sealed class AssociationParams {
 
 /// Parameters for a local association.
 class LocalAssociationParams extends AssociationParams {
+  /// Creates local association parameters with the [associationPublicKey],
+  /// [protocol], and [port].
   const LocalAssociationParams({
     required super.associationPublicKey,
     required super.protocol,
@@ -350,6 +377,8 @@ class LocalAssociationParams extends AssociationParams {
 
 /// Parameters for a remote association via reflector.
 class RemoteAssociationParams extends AssociationParams {
+  /// Creates remote association parameters with the [associationPublicKey],
+  /// [protocol], [reflectorHost], and [reflectorId].
   const RemoteAssociationParams({
     required super.associationPublicKey,
     required super.protocol,

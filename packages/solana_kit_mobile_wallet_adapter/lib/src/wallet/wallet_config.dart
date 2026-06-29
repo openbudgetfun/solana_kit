@@ -2,6 +2,7 @@
 ///
 /// Specifies the wallet's capabilities and limits for incoming MWA sessions.
 class MobileWalletAdapterConfig {
+  /// Creates a wallet endpoint config with the given capabilities and limits.
   const MobileWalletAdapterConfig({
     this.maxTransactionsPerSigningRequest = 0,
     this.maxMessagesPerSigningRequest = 0,
@@ -45,6 +46,8 @@ class MobileWalletAdapterConfig {
 
 /// Configuration for the wallet's authorization token issuer.
 class AuthIssuerConfig {
+  /// Creates an authorization token issuer config with the wallet [name] and
+  /// token validity durations.
   const AuthIssuerConfig({
     required this.name,
     this.maxOutstandingTokensPerIdentity = 50,

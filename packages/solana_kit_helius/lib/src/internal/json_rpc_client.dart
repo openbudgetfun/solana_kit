@@ -9,8 +9,10 @@ import 'package:solana_kit_helius/src/internal/redact_url.dart';
 /// Sends `POST` requests with a JSON-RPC 2.0 envelope and returns the
 /// `result` field on success, or throws a [SolanaError] on failure.
 class JsonRpcClient {
+  /// Creates a JsonRpcClient for the given RPC URL and HTTP client.
   JsonRpcClient({required this.url, required this._client});
 
+  /// Base URL for the JSON-RPC endpoint.
   final String url;
   final http.Client _client;
   int _nextId = 1;

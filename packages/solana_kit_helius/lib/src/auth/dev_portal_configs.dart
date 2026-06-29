@@ -4,9 +4,12 @@ import 'package:http/http.dart' as http;
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_helius/src/auth/oauth_token_exchange.dart';
 
+/// Response payload for the Helius developer portal configs endpoint.
 class DevPortalConfigsResponse {
+  /// Creates a [DevPortalConfigsResponse] with the given Stripe configuration.
   const DevPortalConfigsResponse({required this.stripe, this.openPay});
 
+  /// Creates a [DevPortalConfigsResponse] from a JSON map.
   factory DevPortalConfigsResponse.fromJson(Map<String, Object?> json) {
     return DevPortalConfigsResponse(
       stripe: StripeConfig.fromJson(json['stripe']! as Map<String, Object?>),
@@ -16,13 +19,20 @@ class DevPortalConfigsResponse {
     );
   }
 
+  /// Stripe billing configuration for the portal.
   final StripeConfig stripe;
+
+  /// Optional OpenPay billing configuration, when enabled.
   final StripeConfig? openPay;
 }
 
+/// Stripe billing configuration returned by the developer portal.
 class StripeConfig {
+  /// Creates a [StripeConfig] with the given [priceIds] and optional prepaid
+  /// credits plans.
   const StripeConfig({required this.priceIds, this.prepaidCreditsPlans});
 
+  /// Creates a [StripeConfig] from a JSON map.
   factory StripeConfig.fromJson(Map<String, Object?> json) {
     return StripeConfig(
       priceIds: PriceIds.fromJson(json['priceIds']! as Map<String, Object?>),
@@ -31,13 +41,19 @@ class StripeConfig {
     );
   }
 
+  /// Available Stripe price identifiers for the configured plans.
   final PriceIds priceIds;
+
+  /// Optional prepaid credits plan price identifiers keyed by currency.
   final Map<String, String>? prepaidCreditsPlans;
 }
 
+/// Stripe price identifiers for the available billing plans.
 class PriceIds {
+  /// Creates a [PriceIds] with the given monthly, yearly, and agent plan prices.
   const PriceIds({required this.monthly, required this.yearly, this.agentPlan});
 
+  /// Creates a [PriceIds] from a JSON map.
   factory PriceIds.fromJson(Map<String, Object?> json) {
     return PriceIds(
       monthly: (json['Monthly']! as Map).cast<String, String>(),
@@ -46,11 +62,17 @@ class PriceIds {
     );
   }
 
+  /// Monthly billing price identifiers keyed by currency.
   final Map<String, String> monthly;
+
+  /// Yearly billing price identifiers keyed by currency.
   final Map<String, String> yearly;
+
+  /// Optional price identifier for the agent plan.
   final String? agentPlan;
 }
 
+/// Fetches the developer portal configs for the given [jwt].
 Future<DevPortalConfigsResponse> fetchDevPortalConfigs(
   String jwt, {
   bool includeAgentPlan = false,
@@ -92,6 +114,7 @@ Future<DevPortalConfigsResponse> fetchDevPortalConfigs(
   }
 }
 
+/// Fetches the Stripe price identifiers for the given [jwt].
 Future<PriceIds> fetchStripePriceIds(
   String jwt, {
   bool includeAgentPlan = false,
@@ -109,6 +132,7 @@ Future<PriceIds> fetchStripePriceIds(
   return configs.stripe.priceIds;
 }
 
+/// Fetches the prepaid credits price identifiers for the given [jwt].
 Future<Map<String, String>> fetchPrepaidCreditsPriceIds(
   String jwt, {
   String? userAgent,

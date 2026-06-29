@@ -1,6 +1,7 @@
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/types/zk_types.dart';
 
+/// Returns validity proofs for multiple new addresses.
 Future<List<NewAddressProof>> zkGetMultipleNewAddressProofs(
   JsonRpcClient rpcClient,
   GetMultipleNewAddressProofsRequest request,

@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 ///
 /// On non-Android platforms these methods return null/false defaults.
 class MwaDigitalAssetLinksHostApi {
+  /// Creates the Digital Asset Links platform API, optionally overriding the
+  /// [binaryMessenger] used for the method channel.
   MwaDigitalAssetLinksHostApi({BinaryMessenger? binaryMessenger})
     : _channel = MethodChannel(
         'com.solana.solanakit.mobilewallet/digital_asset_links',

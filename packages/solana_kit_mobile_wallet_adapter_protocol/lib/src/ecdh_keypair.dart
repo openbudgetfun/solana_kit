@@ -6,6 +6,7 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/src/crypto.dart';
 
 /// An MWA ephemeral ECDH keypair used for key exchange during the handshake.
 class EcdhKeypair {
+  /// Creates an ECDH keypair from the given [publicKey] and [privateKey].
   const EcdhKeypair({required this.publicKey, required this.privateKey});
 
   /// The ECDH P-256 public key.

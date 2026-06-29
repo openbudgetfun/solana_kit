@@ -1,6 +1,7 @@
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/types/zk_types.dart';
 
+/// Returns state proofs for multiple compressed accounts.
 Future<List<CompressedAccountProof>> zkGetMultipleCompressedAccountProofs(
   JsonRpcClient rpcClient,
   GetMultipleCompressedAccountProofsRequest request,

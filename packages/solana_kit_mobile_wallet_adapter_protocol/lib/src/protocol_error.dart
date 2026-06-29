@@ -25,6 +25,8 @@ abstract final class MwaProtocolErrorCode {
 
 /// A JSON-RPC error returned by the wallet during an MWA session.
 class MwaProtocolError implements Exception {
+  /// Creates a protocol error with the [jsonRpcMessageId], [code], [message],
+  /// and optional [data] returned by the wallet.
   const MwaProtocolError({
     required this.jsonRpcMessageId,
     required this.code,
