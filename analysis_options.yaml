@@ -7,3 +7,5 @@ analyzer:
     prefer_foreach: ignore
   exclude:
     - packages/solana_kit_mobile_wallet_adapter/example/**
+    - packages/solana_kit_loader/lib/src/generated/**
+    - packages/solana_kit_system/lib/src/generated/**
