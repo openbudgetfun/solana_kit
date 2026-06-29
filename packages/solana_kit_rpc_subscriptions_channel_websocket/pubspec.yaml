@@ -1,15 +1,15 @@
 name: solana_kit_rpc_subscriptions_channel_websocket
 description: WebSocket channel for RPC subscriptions for the Solana Kit Dart SDK.
-version: 0.5.0
+version: 0.6.0
 repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_rpc_subscriptions_channel_websocket
 homepage: https://openbudgetfun.github.io/solana_kit/
 environment:
   sdk: ^3.12.0
 resolution: workspace
 dependencies:
-  solana_kit_errors: ^0.5.0
-  solana_kit_subscribable: ^0.5.0
+  solana_kit_errors: ^0.6.0
+  solana_kit_subscribable: ^0.6.0
   web_socket_channel: ^3.0.2
 dev_dependencies:
-  solana_kit_lints: ^0.5.0
+  solana_kit_lints: ^0.6.0
   test: ^1.25.8

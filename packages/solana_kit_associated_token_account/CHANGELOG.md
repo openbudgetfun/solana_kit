@@ -74,3 +74,21 @@ _Owner:_ Ifiok Jr. · _Introduced in:_ [`3f596ef`](https://github.com/openbudget
 Added 500+ tests covering equality/hashCode/toString, codec edge cases, error paths, and constructor variants. Removed dead code in fast_stable_stringify. Fixed concurrent modification bug in subscribable.
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`48216f9`](https://github.com/openbudgetfun/solana_kit/commit/48216f9af0ff058d7db83994e5bdb3b9be95fdf8) · _Last updated in:_ [`b7f5419`](https://github.com/openbudgetfun/solana_kit/commit/b7f5419bbe792d4ba1731eba227088d8f74a3ebb)
+
+## solana_kit_associated_token_account [0.5.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_associated_token_account/v0.5.1) (2026-06-29)
+
+### 📖 Documentation
+
+#### Point package README website badges at package docs
+
+Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`a4c5169`](https://github.com/openbudgetfun/solana_kit/commit/a4c5169c0e891c211f39958219268ae9ad8b9934)
+
+### 🔖 None
+
+#### Format workflow lint follow-up files
+
+Apply formatting-only changes discovered while adding the GitHub Actions workflow lint gate.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`e611148`](https://github.com/openbudgetfun/solana_kit/commit/e611148d1af6884297196096ca5e03f784496ebe)

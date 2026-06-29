@@ -38,3 +38,19 @@ environment:
 ```
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`32d5d36`](https://github.com/openbudgetfun/solana_kit/commit/32d5d367abb7615fea5ee341f03d17c2bc0d66dd)
+
+## solana_kit_offchain_messages [0.4.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_offchain_messages/v0.4.1) (2026-06-29)
+
+### 📖 Documentation
+
+#### Centralize package version documentation
+
+Centralize package version metadata in `versions.json` and render package installation snippets from the shared MDT data source. Published package behavior is unchanged.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`914f224`](https://github.com/openbudgetfun/solana_kit/commit/914f224a81e16a40c21554cd6766845ead05a6e9)
+
+#### Point package README website badges at package docs
+
+Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`a4c5169`](https://github.com/openbudgetfun/solana_kit/commit/a4c5169c0e891c211f39958219268ae9ad8b9934)

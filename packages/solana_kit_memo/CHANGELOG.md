@@ -70,6 +70,43 @@ solana_kit_memo: solana-program/memo js@v0.11.1
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #182](https://github.com/openbudgetfun/solana_kit/pull/182)
 
+## solana_kit_memo [0.1.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_memo/v0.1.2) (2026-06-29)
+
+### 🐛 Fixed
+
+#### Bump program reference pins to latest upstream tags
+
+Updates `config/reference-repos.json` and docs to track the latest
+upstream tags for program packages whose IDLs are unchanged or
+tooling-only:
+
+- Token: `js@v0.13.0` → `js@v0.14.0`
+- Address Lookup Table: `js@v0.11.0` → `js@v0.12.1`
+- Memo: `js@v0.11.1` → `js@v0.11.2`
+- Compute Budget: `js@v0.15.0` → `js@v0.16.0`
+- Stake: `js@v0.6.1` → `js@v0.7.2`
+- Loader v3: `js@v0.3.0` → `js@v0.4.0`
+
+No generated Dart API changes for these packages — IDL comparison
+confirmed semantic equivalence. Updates are reference pin and
+documentation only.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`89b3457`](https://github.com/openbudgetfun/solana_kit/commit/89b3457135968f975f0a002a1ef1b33072de6320)
+
+### 📖 Documentation
+
+#### Centralize package version documentation
+
+Centralize package version metadata in `versions.json` and render package installation snippets from the shared MDT data source. Published package behavior is unchanged.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`914f224`](https://github.com/openbudgetfun/solana_kit/commit/914f224a81e16a40c21554cd6766845ead05a6e9)
+
+#### Point package README website badges at package docs
+
+Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`a4c5169`](https://github.com/openbudgetfun/solana_kit/commit/a4c5169c0e891c211f39958219268ae9ad8b9934)
+
 ## 0.0.0
 
 Placeholder publication.

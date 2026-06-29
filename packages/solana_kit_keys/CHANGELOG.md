@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.6.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.6.0) (2026-06-29)
+
+### 🐛 Fixed
+
+#### Harden cryptographic input handling
+
+Harden keypair file writes, validate malformed mobile wallet cryptographic inputs, and update vulnerable renderer test dependencies.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`428d78e`](https://github.com/openbudgetfun/solana_kit/commit/428d78e467f0b3bc4709507e8e3a179c2f239943) · _Last updated in:_ [`ba0a07e`](https://github.com/openbudgetfun/solana_kit/commit/ba0a07e584f46d10f494c655556150da8a51ffd1)
+
+### 📖 Documentation
+
+#### Centralize package version documentation
+
+Centralize package version metadata in `versions.json` and render package installation snippets from the shared MDT data source. Published package behavior is unchanged.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`914f224`](https://github.com/openbudgetfun/solana_kit/commit/914f224a81e16a40c21554cd6766845ead05a6e9)
+
+#### Point package README website badges at package docs
+
+Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`a4c5169`](https://github.com/openbudgetfun/solana_kit/commit/a4c5169c0e891c211f39958219268ae9ad8b9934)
+
 ## [0.5.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.5.0) (2026-06-01)
 
 ### 💥 Breaking Change

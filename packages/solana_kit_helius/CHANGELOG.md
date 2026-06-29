@@ -124,3 +124,19 @@ Implement upstream-compatible Helius auth message signing with Ed25519 signature
 Also add request factories for secret key bytes and key pairs.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #183](https://github.com/openbudgetfun/solana_kit/pull/183)
+
+## solana_kit_helius [0.4.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_helius/v0.4.2) (2026-06-29)
+
+### 📖 Documentation
+
+#### Centralize package version documentation
+
+Centralize package version metadata in `versions.json` and render package installation snippets from the shared MDT data source. Published package behavior is unchanged.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`914f224`](https://github.com/openbudgetfun/solana_kit/commit/914f224a81e16a40c21554cd6766845ead05a6e9)
+
+#### Point package README website badges at package docs
+
+Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`a4c5169`](https://github.com/openbudgetfun/solana_kit/commit/a4c5169c0e891c211f39958219268ae9ad8b9934)
