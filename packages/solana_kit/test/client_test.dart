@@ -47,13 +47,6 @@ void main() {
     });
   });
 
-  test('createEmptyClient aliases createClient', () {
-    // ignore: deprecated_member_use_from_same_package
-    final client = createEmptyClient({'ready': true});
-
-    expect(client.value, {'ready': true});
-  });
-
   group('extendClient', () {
     test('adds properties and keeps the result immutable', () {
       final client = extendClient({'rpc': 'local'}, {'payer': 'generated'});

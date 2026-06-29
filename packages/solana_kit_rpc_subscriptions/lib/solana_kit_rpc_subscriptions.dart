@@ -15,6 +15,9 @@
 /// - JSON serialization: standard and BigInt-safe variants
 library;
 
+export 'package:solana_kit_subscribable/solana_kit_subscribable.dart'
+    show CancellationToken, CancellationTokenSource;
+
 export 'src/rpc_default_config.dart';
 export 'src/rpc_integer_overflow_error.dart';
 export 'src/rpc_subscriptions.dart';

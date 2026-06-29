@@ -75,14 +75,6 @@ void main() {
     );
     expect(
       divideDecimalFixedPoint(
-        signedUsd('-1.00'),
-        BigInt.from(3),
-        FixedPointRoundingMode.up,
-      ).toDecimalString(),
-      '-0.34',
-    );
-    expect(
-      divideDecimalFixedPoint(
         usd('1.00'),
         BigInt.from(3),
         FixedPointRoundingMode.floor,

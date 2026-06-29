@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_autopinger.dart';
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_channel_pool.dart';
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_json.dart';
@@ -106,7 +104,7 @@ RpcSubscriptionsChannelCreator _createDefaultRpcSubscriptionsChannelCreatorImpl(
   }
 
   Future<RpcSubscriptionsChannel> baseChannelCreator({
-    required AbortSignal abortSignal,
+    required CancellationToken abortSignal,
   }) async {
     final channel = await createWebSocketChannel(
       WebSocketChannelConfig(

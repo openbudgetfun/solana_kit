@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:fake_async/fake_async.dart';
@@ -14,25 +12,23 @@ const _mockIntervalMs = 60000;
 void main() {
   group('getRpcSubscriptionsChannelWithAutoping', () {
     late _MockChannel mockChannel;
-    late WritableDataPublisher dataPublisher;
 
     void receiveError([Object? error]) {
-      dataPublisher.publish('error', error);
+      mockChannel.publishError(error);
     }
 
     void receiveMessage(Object? message) {
-      dataPublisher.publish('message', message);
+      mockChannel.publishMessage(message);
     }
 
     setUp(() {
-      dataPublisher = createDataPublisher();
-      mockChannel = _MockChannel(dataPublisher: dataPublisher);
+      mockChannel = _MockChannel();
     });
 
     test('sends a ping message to the channel at the specified interval', () {
       FakeAsync().run((async) {
         getRpcSubscriptionsChannelWithAutoping(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           channel: mockChannel,
           intervalMs: _mockIntervalMs,
         );
@@ -75,7 +71,7 @@ void main() {
           mockChannel.sendError = 'o no';
 
           getRpcSubscriptionsChannelWithAutoping(
-            abortSignal: AbortController().signal,
+            abortSignal: CancellationTokenSource().token,
             channel: mockChannel,
             intervalMs: _mockIntervalMs,
           );
@@ -97,7 +93,7 @@ void main() {
         'message', () {
       FakeAsync().run((async) {
         final autopingChannel = getRpcSubscriptionsChannelWithAutoping(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           channel: mockChannel,
           intervalMs: _mockIntervalMs,
         );
@@ -133,7 +129,7 @@ void main() {
         'received message', () {
       FakeAsync().run((async) {
         getRpcSubscriptionsChannelWithAutoping(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           channel: mockChannel,
           intervalMs: _mockIntervalMs,
         );
@@ -163,7 +159,7 @@ void main() {
     test('does not send a ping after a channel error', () {
       FakeAsync().run((async) {
         getRpcSubscriptionsChannelWithAutoping(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           channel: mockChannel,
           intervalMs: _mockIntervalMs,
         );
@@ -183,7 +179,7 @@ void main() {
     });
 
     test(
-      'does not send a ping after send fatals with a connection closed error',
+      'does not send a ping after send fataled with a connection closed error',
       () {
         FakeAsync().run((async) {
           mockChannel.sendError = SolanaError(
@@ -191,7 +187,7 @@ void main() {
           );
 
           getRpcSubscriptionsChannelWithAutoping(
-            abortSignal: AbortController().signal,
+            abortSignal: CancellationTokenSource().token,
             channel: mockChannel,
             intervalMs: _mockIntervalMs,
           );
@@ -209,12 +205,12 @@ void main() {
       },
     );
 
-    test('does not send a ping after the abort signal fires', () {
+    test('does not send a ping after the cancellation token fires', () {
       FakeAsync().run((async) {
-        final abortController = AbortController();
+        final source = CancellationTokenSource();
 
         getRpcSubscriptionsChannelWithAutoping(
-          abortSignal: abortController.signal,
+          abortSignal: source.token,
           channel: mockChannel,
           intervalMs: _mockIntervalMs,
         );
@@ -223,7 +219,7 @@ void main() {
         async.elapse(const Duration(milliseconds: _mockIntervalMs));
         expect(mockChannel.sendCallCount, equals(1));
 
-        abortController.abort();
+        source.cancel();
         async.flushMicrotasks();
 
         // No more pings.
@@ -236,9 +232,12 @@ void main() {
 }
 
 class _MockChannel implements RpcSubscriptionsChannel {
-  _MockChannel({required this.dataPublisher});
+  _MockChannel()
+    : _messagesController = StreamController<Object?>.broadcast(sync: true),
+      _errorsController = StreamController<Object?>.broadcast(sync: true);
 
-  final WritableDataPublisher dataPublisher;
+  final StreamController<Object?> _messagesController;
+  final StreamController<Object?> _errorsController;
   Object? lastSentMessage;
   int sendCallCount = 0;
   Object? sendError;
@@ -248,10 +247,19 @@ class _MockChannel implements RpcSubscriptionsChannel {
     lastSentMessage = null;
   }
 
-  @override
-  UnsubscribeFn on(String channelName, Subscriber<Object?> subscriber) {
-    return dataPublisher.on(channelName, subscriber);
+  void publishMessage(Object? data) {
+    if (!_messagesController.isClosed) _messagesController.add(data);
   }
+
+  void publishError(Object? error) {
+    if (!_errorsController.isClosed) _errorsController.add(error);
+  }
+
+  @override
+  NotificationStreams get streams => NotificationStreams(
+    notifications: _messagesController.stream,
+    errors: _errorsController.stream,
+  );
 
   @override
   Future<void> send(Object message) {

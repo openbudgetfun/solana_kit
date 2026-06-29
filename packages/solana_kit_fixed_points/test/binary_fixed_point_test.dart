@@ -95,34 +95,17 @@ void main() {
         BinaryFixedPoint.parse(
           '0.1',
           fractionalBits: 4,
-          rounding: FixedPointRoundingMode.down,
+          rounding: FixedPointRoundingMode.trunc,
         ).raw,
         BigInt.one,
       );
       expect(
         BinaryFixedPoint.parse(
-          '0.1',
-          fractionalBits: 4,
-          rounding: FixedPointRoundingMode.up,
-        ).raw,
-        BigInt.two,
-      );
-      expect(
-        BinaryFixedPoint.parse(
           '0.09375',
           fractionalBits: 4,
-          rounding: FixedPointRoundingMode.halfUp,
+          rounding: FixedPointRoundingMode.round,
         ).raw,
         BigInt.two,
-      );
-      expect(
-        BinaryFixedPoint.parse(
-          '-0.1',
-          fractionalBits: 4,
-          rounding: FixedPointRoundingMode.up,
-          signedness: FixedPointSignedness.signed,
-        ).raw,
-        BigInt.from(-2),
       );
       expect(
         BinaryFixedPoint.parse(
@@ -285,16 +268,8 @@ void main() {
       final ratio = ratioBinaryFixedPoint(FixedPointSignedness.signed, 16, 4);
 
       expect(
-        ratio(BigInt.one, BigInt.from(3), FixedPointRoundingMode.down).raw,
+        ratio(BigInt.one, BigInt.from(3), FixedPointRoundingMode.trunc).raw,
         BigInt.from(5),
-      );
-      expect(
-        ratio(BigInt.one, BigInt.from(3), FixedPointRoundingMode.up).raw,
-        BigInt.from(6),
-      );
-      expect(
-        ratio(-BigInt.one, BigInt.from(3), FixedPointRoundingMode.up).raw,
-        BigInt.from(-6),
       );
       expect(
         ratio(-BigInt.one, BigInt.from(3), FixedPointRoundingMode.floor).raw,
@@ -317,7 +292,7 @@ void main() {
         BigInt.from(3),
       );
       expect(
-        ratio(BigInt.one, BigInt.from(6), FixedPointRoundingMode.halfUp).raw,
+        ratio(BigInt.one, BigInt.from(6), FixedPointRoundingMode.round).raw,
         BigInt.from(3),
       );
       expect(() => ratio(BigInt.one, BigInt.from(3)), throwsFormatException);

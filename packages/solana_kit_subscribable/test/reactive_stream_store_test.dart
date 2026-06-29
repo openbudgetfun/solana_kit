@@ -394,25 +394,4 @@ void main() {
       await errorController.close();
     });
   });
-
-  group('createReactiveStreamStoreFromDataPublisher', () {
-    test('creates a working store backed by a DataPublisher', () async {
-      final publisher = createDataPublisher();
-      final store = createReactiveStreamStoreFromDataPublisher<int>(
-        dataPublisher: publisher,
-        dataChannelName: 'data',
-        errorChannelName: 'error',
-      );
-
-      expect(store.getUnifiedState().status, ReactiveStreamState.loading);
-
-      publisher.publish('data', 42);
-      await Future<void>.delayed(Duration.zero);
-
-      expect(store.getUnifiedState().status, ReactiveStreamState.loaded);
-      expect(store.getState(), 42);
-
-      store.dispose();
-    });
-  });
 }

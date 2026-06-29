@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
@@ -28,7 +26,7 @@ void main() {
         );
 
         final result = await poolingChannelCreator(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
         );
 
         expect(createChannel.callCount, equals(1));
@@ -46,10 +44,10 @@ void main() {
         );
 
         final channelA = await poolingChannelCreator(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
         );
         final channelB = await poolingChannelCreator(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
         );
 
         expect(channelA, same(channelB));
@@ -66,8 +64,8 @@ void main() {
         );
 
         final results = await Future.wait([
-          poolingChannelCreator(abortSignal: AbortController().signal),
-          poolingChannelCreator(abortSignal: AbortController().signal),
+          poolingChannelCreator(abortSignal: CancellationTokenSource().token),
+          poolingChannelCreator(abortSignal: CancellationTokenSource().token),
         ]);
 
         expect(results[0], same(results[1]));
@@ -75,7 +73,8 @@ void main() {
     );
 
     test(
-      'fires a created channel abort signal when the outer signal is aborted',
+      'fires a created channel cancellation token when the outer token is '
+      'cancelled',
       () async {
         final poolingChannelCreator = getChannelPoolingChannelCreator(
           createChannel.create,
@@ -83,21 +82,21 @@ void main() {
           minChannels: 1,
         );
 
-        final abortController = AbortController();
-        await poolingChannelCreator(abortSignal: abortController.signal);
+        final source = CancellationTokenSource();
+        await poolingChannelCreator(abortSignal: source.token);
 
-        abortController.abort();
+        source.cancel();
 
         // Wait for microtasks.
         await Future<void>.delayed(Duration.zero);
 
-        expect(createChannel.lastAbortSignal?.isAborted, isTrue);
+        expect(createChannel.lastAbortSignal?.isCancelled, isTrue);
       },
     );
 
     test(
-      'fires a created channel abort signal when the outer signal is aborted '
-      'within the runloop',
+      'fires a created channel cancellation token when the outer token is '
+      'cancelled within the runloop',
       () async {
         final poolingChannelCreator = getChannelPoolingChannelCreator(
           createChannel.create,
@@ -105,15 +104,15 @@ void main() {
           minChannels: 1,
         );
 
-        final abortController = AbortController();
-        poolingChannelCreator(abortSignal: abortController.signal).ignore();
+        final source = CancellationTokenSource();
+        poolingChannelCreator(abortSignal: source.token).ignore();
 
-        abortController.abort();
+        source.cancel();
 
         // Wait for microtasks.
         await Future<void>.delayed(Duration.zero);
 
-        expect(createChannel.lastAbortSignal?.isAborted, isTrue);
+        expect(createChannel.lastAbortSignal?.isCancelled, isTrue);
       },
     );
 
@@ -125,8 +124,12 @@ void main() {
         minChannels: 1,
       );
 
-      poolingChannelCreator(abortSignal: AbortController().signal).ignore();
-      poolingChannelCreator(abortSignal: AbortController().signal).ignore();
+      poolingChannelCreator(
+        abortSignal: CancellationTokenSource().token,
+      ).ignore();
+      poolingChannelCreator(
+        abortSignal: CancellationTokenSource().token,
+      ).ignore();
 
       expect(createChannel.callCount, equals(2));
     });
@@ -138,21 +141,21 @@ void main() {
         minChannels: 1,
       );
 
-      final abortController = AbortController();
-      poolingChannelCreator(abortSignal: abortController.signal).ignore();
+      final source = CancellationTokenSource();
+      poolingChannelCreator(abortSignal: source.token).ignore();
 
       // Wait for channel creation.
       await Future<void>.delayed(Duration.zero);
 
       expect(createChannel.callCount, equals(1));
 
-      abortController.abort();
+      source.cancel();
 
       // Wait for the abort to propagate.
       await Future<void>.delayed(Duration.zero);
 
-      // The channel's own abort signal should have fired.
-      expect(createChannel.lastAbortSignal?.isAborted, isTrue);
+      // The channel's own cancellation token should have fired.
+      expect(createChannel.lastAbortSignal?.isCancelled, isTrue);
     });
 
     test('does not create a channel pool entry when the channel fails to '
@@ -166,10 +169,10 @@ void main() {
       );
 
       final channelA = poolingChannelCreator(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
       );
       final channelB = poolingChannelCreator(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
       );
 
       await expectLater(channelA, throwsA(equals('o no')));
@@ -187,8 +190,12 @@ void main() {
         minChannels: 1,
       );
 
-      poolingChannelCreator(abortSignal: AbortController().signal).ignore();
-      poolingChannelCreator(abortSignal: AbortController().signal).ignore();
+      poolingChannelCreator(
+        abortSignal: CancellationTokenSource().token,
+      ).ignore();
+      poolingChannelCreator(
+        abortSignal: CancellationTokenSource().token,
+      ).ignore();
 
       // Wait for channels to open and error listeners to attach.
       await Future<void>.delayed(Duration.zero);
@@ -199,26 +206,33 @@ void main() {
         listener('o no');
       }
 
-      // After error, the channel's abort signal should be fired.
-      expect(createChannel.lastAbortSignal?.isAborted, isTrue);
+      // After error, the channel's cancellation token should be fired.
+      expect(createChannel.lastAbortSignal?.isCancelled, isTrue);
     });
   });
 }
 
 class _MockChannel implements RpcSubscriptionsChannel {
-  _MockChannel({WritableDataPublisher? dataPublisher})
-    : _dataPublisher = dataPublisher ?? createDataPublisher();
+  _MockChannel({this.onErrorListener});
 
-  final WritableDataPublisher _dataPublisher;
-  void Function(void Function(Object?))? onErrorListener;
+  final void Function(void Function(Object?))? onErrorListener;
+  final StreamController<Object?> _messagesController =
+      StreamController<Object?>.broadcast(sync: true);
+  late final StreamController<Object?> _errorsController =
+      StreamController<Object?>.broadcast(
+        sync: true,
+        onListen: () {
+          onErrorListener?.call((callback) {
+            _errorsController.add(null);
+          });
+        },
+      );
 
   @override
-  UnsubscribeFn on(String channelName, Subscriber<Object?> subscriber) {
-    if (channelName == 'error' && onErrorListener != null) {
-      onErrorListener!(subscriber);
-    }
-    return _dataPublisher.on(channelName, subscriber);
-  }
+  NotificationStreams get streams => NotificationStreams(
+    notifications: _messagesController.stream,
+    errors: _errorsController.stream,
+  );
 
   @override
   Future<void> send(Object message) async {}
@@ -226,12 +240,14 @@ class _MockChannel implements RpcSubscriptionsChannel {
 
 class _MockChannelCreator {
   int callCount = 0;
-  AbortSignal? lastAbortSignal;
+  CancellationToken? lastAbortSignal;
   bool shouldFail = false;
   final List<_MockChannel> nextChannels = [];
   void Function(void Function(Object?))? onErrorListener;
 
-  Future<RpcSubscriptionsChannel> create({required AbortSignal abortSignal}) {
+  Future<RpcSubscriptionsChannel> create({
+    required CancellationToken abortSignal,
+  }) {
     callCount++;
     lastAbortSignal = abortSignal;
 
@@ -239,9 +255,11 @@ class _MockChannelCreator {
       return Future.error('o no');
     }
 
-    final channel =
-        nextChannels.isNotEmpty ? nextChannels.removeAt(0) : _MockChannel()
-          ..onErrorListener = onErrorListener;
+    final channel = nextChannels.isNotEmpty
+        ? nextChannels.removeAt(0)
+        : _MockChannel(
+            onErrorListener: onErrorListener,
+          );
     return Future.value(channel);
   }
 }

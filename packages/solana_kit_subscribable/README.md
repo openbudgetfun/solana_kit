@@ -6,13 +6,12 @@
 [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
 [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_subscribable)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_subscribable)
 
-Subscribable and observable patterns for the Solana Kit Dart SDK -- a publish/subscribe event system with named channels, Dart `Stream` bridging, and event demultiplexing.
+Subscribable and observable patterns for the Solana Kit Dart SDK -- a publish/subscribe event system with named channels, Dart `Stream` bridging, cancellation tokens, and event demultiplexing.
 
 > [!NOTE]
-> New Dart-facing APIs should prefer exposing `Stream`s directly.
-> `DataPublisher`, `WritableDataPublisher`, and `createDataPublisher()` remain
-> available as deprecated compatibility APIs. Prefer `Stream<T>`,
-> `StreamController<T>`, and `ChannelStreamController` for new Dart code.
+> New Dart-facing APIs should prefer exposing `Stream`s directly. Use
+> `CancellationToken` / `CancellationTokenSource` for cancellation, and
+> `ChannelStreamController` for named-channel compatibility adapters.
 
 This is the Dart port of [`@solana/subscribable`](https://github.com/anza-xyz/kit/tree/main/packages/subscribable) from the Solana TypeScript SDK.
 
@@ -56,8 +55,8 @@ For architecture notes, getting-started guides, and cross-package examples, star
 ### Preferred: expose Dart Streams
 
 If you are designing a new Dart API, prefer returning `Stream<T>` directly.
-Use the `DataPublisher` primitives in this package when you need to adapt to
-existing Solana Kit internals or TypeScript-shaped channel publishers.
+Use the `ChannelStreamController` primitive in this package when you need
+named channels internally while still exposing Dart `Stream`s to callers.
 
 ### Stream-native channel controllers
 
@@ -81,58 +80,76 @@ Future<void> main() async {
 }
 ```
 
-### Deprecated compatibility: data publishers
+### Cancellation tokens
 
-The deprecated `createDataPublisher()` factory returns a `WritableDataPublisher` that supports both subscribing to and publishing data on named channels. Use this only when maintaining compatibility with `DataPublisher`-based APIs.
-
-A single publisher supports multiple named channels, and each channel can have multiple subscribers.
+Use `CancellationTokenSource` and `CancellationToken` to coordinate
+cancellation across long-running operations. Multiple listeners can react to
+the same cancellation via `CancellationToken.future`.
 
 ```dart
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 void main() {
-  final publisher = createDataPublisher();
+  final source = CancellationTokenSource();
 
-  // Subscribe to different channels.
-  publisher.on('message', (data) {
-    print('Message: $data');
+  // Pass the token to operations that should observe cancellation.
+  source.token.future.then((_) {
+    print('Operation was cancelled: ${source.token.reason}');
   });
 
-  publisher.on('error', (data) {
-    print('Error: $data');
-  });
+  // Trigger cancellation when ready.
+  source.cancel('user requested');
+  // Prints: Operation was cancelled: user requested
+}
+```
 
-  publisher.on('message', (data) {
-    print('Also got: $data');
-  });
+### Notification streams
 
-  publisher.publish('message', 'hello');
+`NotificationStreams` bundles a pair of broadcast streams -- `notifications`
+and `errors` -- and is the standard transport contract for subscription
+notification channels.
+
+```dart
+import 'dart:async';
+
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
+
+void main() {
+  final messages = StreamController<Object?>.broadcast(sync: true);
+  final errors = StreamController<Object?>.broadcast(sync: true);
+  final streams = NotificationStreams(
+    notifications: messages.stream,
+    errors: errors.stream,
+  );
+
+  streams.notifications.listen((data) => print('Notification: $data'));
+  streams.errors.listen((error) => print('Error: $error'));
+
+  messages.add('hello');
+  errors.add('something failed');
   // Prints:
-  //   Message: hello
-  //   Also got: hello
-
-  publisher.publish('error', 'something failed');
-  // Prints:
+  //   Notification: hello
   //   Error: something failed
 }
 ```
 
-### Combining data and error Streams
+### Combining data and error streams
 
-The `createStreamFromDataAndErrorStreams` function creates a broadcast stream that forwards values from a data stream and errors from an error stream. `createStreamFromDataPublisher` remains available as a compatibility bridge from `DataPublisher`.
+The `createStreamFromDataAndErrorStreams` function creates a broadcast stream
+that forwards values from a data stream and errors from an error stream.
 
 ```dart
+import 'dart:async';
+
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 void main() {
-  final publisher = createDataPublisher();
+  final dataController = StreamController<String>.broadcast(sync: true);
+  final errorController = StreamController<Object?>.broadcast(sync: true);
 
-  final stream = createStreamFromDataPublisher<String>(
-    StreamFromDataPublisherConfig(
-      dataChannelName: 'notification',
-      dataPublisher: publisher,
-      errorChannelName: 'error',
-    ),
+  final stream = createStreamFromDataAndErrorStreams<String>(
+    dataStream: dataController.stream,
+    errorStream: errorController.stream,
   );
 
   stream.listen(
@@ -140,102 +157,75 @@ void main() {
     onError: (Object error) => print('Error: $error'),
   );
 
-  // Messages are forwarded to the stream.
-  publisher.publish('notification', 'update 1');
+  dataController.add('update 1');
   // Prints: Got: update 1
 
-  publisher.publish('notification', 'update 2');
-  // Prints: Got: update 2
-
-  // Errors are forwarded as stream errors.
-  publisher.publish('error', StateError('connection lost'));
+  errorController.add(StateError('connection lost'));
   // Prints: Error: Bad state: connection lost
 }
 ```
 
-### Async iterable from a data publisher
+### Demultiplexing streams
 
-The `createAsyncIterableFromDataPublisher` function creates a single-subscription `Stream` that closely matches the TypeScript async iterable behavior. It supports abort signals for lifecycle control.
+The `demultiplexStream` function splits a source stream into per-channel
+broadcast streams. The source subscription is lazy -- it only starts when the
+first destination listener subscribes and stops when the last listener
+cancels.
 
 ```dart
 import 'dart:async';
 
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
-void main() async {
-  final publisher = createDataPublisher();
-  final abortCompleter = Completer<void>();
-
-  final stream = createAsyncIterableFromDataPublisher<String>(
-    dataPublisher: publisher,
-    dataChannelName: 'message',
-    errorChannelName: 'error',
-    abortSignal: abortCompleter.future,
-  );
-
-  // Publish some messages first (they will be queued until listened to).
-  publisher.publish('message', 'first');
-  publisher.publish('message', 'second');
-
-  // Listen with await for.
-  var count = 0;
-  await for (final message in stream) {
-    print('Got: $message');
-    count++;
-    if (count >= 2) {
-      abortCompleter.complete(); // Stop the stream.
-    }
-  }
-  // Prints:
-  //   Got: first
-  //   Got: second
-}
-```
-
-### Demultiplexing events
-
-The `demultiplexDataPublisher` function splits a single source channel into multiple derived channels using a message transformer. The source subscription is lazy -- it only starts when the first subscriber appears and stops when the last one unsubscribes.
-
-```dart
-import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
-
 void main() {
-  final sourcePublisher = createDataPublisher();
+  final source = StreamController<Map<String, Object?>>.broadcast(sync: true);
 
-  // Create a demultiplexed publisher that routes by subscriber ID.
-  final demuxed = demultiplexDataPublisher<Map<String, Object?>>(
-    sourcePublisher: sourcePublisher,
-    sourceChannelName: 'message',
+  // Create a derived stream that only forwards messages for 'matched'.
+  final stream = demultiplexStream<Map<String, Object?>, Object?>(
+    source: source.stream,
+    channelName: 'matched',
     messageTransformer: (message) {
-      final id = message['subscriberId'] as String;
-      return ('notification-for:$id', message);
+      final channel = message['channel']! as String;
+      return (channel, message['payload']);
     },
   );
 
-  // Subscribe to notifications for specific subscriber IDs.
-  final unsub1 = demuxed.on('notification-for:abc', (data) {
-    print('Subscriber abc got: $data');
+  stream.listen((data) => print('Matched: $data'));
+
+  source.add({'channel': 'ignored', 'payload': 'nope'});
+  source.add({'channel': 'matched', 'payload': 'hello'});
+  // Prints: Matched: hello
+}
+```
+
+### Reactive stores
+
+`ReactiveStore` tracks the latest data value and first error from a pair of
+streams. `ReactiveStreamStore` adds lifecycle states (loading, loaded, error,
+retrying) with optional retry support.
+
+```dart
+import 'dart:async';
+
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
+
+void main() {
+  final dataController = StreamController<int>.broadcast(sync: true);
+  final errorController = StreamController<Object?>.broadcast(sync: true);
+
+  final store = createReactiveStoreFromStreams<int>(
+    dataStream: dataController.stream,
+    errorStream: errorController.stream,
+  );
+
+  store.subscribe(() {
+    print('State: ${store.getState()}, Error: ${store.getError()}');
   });
 
-  demuxed.on('notification-for:xyz', (data) {
-    print('Subscriber xyz got: $data');
-  });
+  dataController.add(42);
+  // Prints: State: 42, Error: null
 
-  // Publish to the source -- messages are routed to the right subscribers.
-  sourcePublisher.publish('message', {
-    'subscriberId': 'abc',
-    'value': 42,
-  });
-  // Prints: Subscriber abc got: {subscriberId: abc, value: 42}
-
-  sourcePublisher.publish('message', {
-    'subscriberId': 'xyz',
-    'value': 99,
-  });
-  // Prints: Subscriber xyz got: {subscriberId: xyz, value: 99}
-
-  // When all subscribers unsubscribe, the source subscription is cancelled.
-  unsub1();
+  store.dispose();
 }
 ```
 
@@ -243,36 +233,29 @@ void main() {
 
 ### Interfaces
 
-| Interface                 | Description                                                                                                             |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `ChannelStreamController` | Stream-native named-channel controller for compatibility adapters that still need string-keyed channels.                |
-| `DataPublisher`           | Deprecated compatibility API. Subscribe to named channels via `on(channelName, subscriber)`, returning `UnsubscribeFn`. |
-| `WritableDataPublisher`   | Deprecated compatibility API. Extends `DataPublisher` with `publish(channelName, data)` for emitting events.            |
+| Interface                 | Description                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `ChannelStreamController` | Stream-native named-channel controller for compatibility adapters that still need string-keyed channels.     |
+| `CancellationToken`       | A readable token that completes when an operation is cancelled. Obtain one from a `CancellationTokenSource`. |
+| `CancellationTokenSource` | A source that owns a `CancellationToken` and can cancel it.                                                  |
+| `NotificationStreams`     | A pair of broadcast streams carrying subscription `notifications` and `errors`.                              |
 
 ### Factory functions
 
-| Function                                                                                | Description                                                                              |
-| --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `createDataPublisher()`                                                                 | Deprecated compatibility factory for `WritableDataPublisher` with named channel support. |
-| `createStreamFromDataAndErrorStreams<T>({dataStream, errorStream})`                     | Creates a broadcast `Stream<T>` from separate data and error streams.                    |
-| `createStreamFromDataPublisher<T>(config)`                                              | Compatibility bridge that creates a broadcast `Stream<T>` from a `DataPublisher`.        |
-| `createAsyncIterableFromDataPublisher<T>({...})`                                        | Creates a single-subscription `Stream<T>` with abort signal support.                     |
-| `demultiplexStream<TSource, TDestination>({...})`                                       | Splits a source stream into one derived channel stream with lazy subscription.           |
-| `demultiplexDataPublisher<T>({sourcePublisher, sourceChannelName, messageTransformer})` | Compatibility bridge that splits one channel into many derived channels.                 |
+| Function                                                            | Description                                                                     |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `createStreamFromDataAndErrorStreams<T>({dataStream, errorStream})` | Creates a broadcast `Stream<T>` from separate data and error streams.           |
+| `demultiplexStream<TSource, TDestination>({...})`                   | Splits a source stream into one derived channel stream with lazy subscription.  |
+| `createReactiveStoreFromStreams<T>({dataStream, errorStream})`      | Creates a `ReactiveStore<T>` backed by data and error streams.                  |
+| `createReactiveStreamStore<T>({dataStream, errorStream, retry})`    | Creates a `ReactiveStreamStore<T>` backed by data and error streams with retry. |
 
 ### Type aliases
 
 | Type                    | Description                                                                                                     |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `UnsubscribeFn`         | `void Function()` -- returned by `on()` to unsubscribe a listener.                                              |
+| `UnsubscribeFn`         | `void Function()` -- returned by `subscribe()` to unsubscribe a listener.                                       |
 | `Subscriber<T>`         | `void Function(T data)` -- a function that receives published data.                                             |
 | `MessageTransformer<T>` | `(String, Object?)? Function(T)` -- transforms a source message into a channel/message pair, or `null` to drop. |
-
-### Configuration classes
-
-| Class                           | Description                                                                                                |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `StreamFromDataPublisherConfig` | Configuration for `createStreamFromDataPublisher`: `dataChannelName`, `dataPublisher`, `errorChannelName`. |
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_subscribable"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_subscribable/solana_kit_subscribable.dart"} -->
 

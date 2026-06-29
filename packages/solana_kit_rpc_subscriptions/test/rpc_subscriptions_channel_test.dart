@@ -1,12 +1,9 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:test/test.dart';
 
@@ -143,13 +140,15 @@ void main() {
           intervalMs: 60000,
         ),
       );
-      final abortController = AbortController();
-      final channel = await creator(abortSignal: abortController.signal);
-      addTearDown(abortController.abort);
+      final source = CancellationTokenSource();
+      final channel = await creator(abortSignal: source.token);
+      addTearDown(source.cancel);
 
       final nextMessage = Completer<Object?>();
-      final unsubscribe = channel.on('message', nextMessage.complete);
-      addTearDown(unsubscribe);
+      final subscription = channel.streams.notifications.listen(
+        nextMessage.complete,
+      );
+      addTearDown(subscription.cancel);
 
       await channel.send({'ping': 'pong'});
       await Future<void>.delayed(const Duration(milliseconds: 50));

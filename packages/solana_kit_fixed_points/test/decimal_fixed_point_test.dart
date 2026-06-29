@@ -100,23 +100,15 @@ void main() {
         DecimalFixedPoint.parse(
           '1.239',
           decimals: 2,
-          rounding: FixedPointRoundingMode.down,
+          rounding: FixedPointRoundingMode.trunc,
         ).toDecimalString(),
         '1.23',
       );
       expect(
         DecimalFixedPoint.parse(
-          '1.2301',
-          decimals: 2,
-          rounding: FixedPointRoundingMode.up,
-        ).toDecimalString(),
-        '1.24',
-      );
-      expect(
-        DecimalFixedPoint.parse(
           '1.235',
           decimals: 2,
-          rounding: FixedPointRoundingMode.halfUp,
+          rounding: FixedPointRoundingMode.round,
         ).toDecimalString(),
         '1.24',
       );
@@ -124,18 +116,9 @@ void main() {
         DecimalFixedPoint.parse(
           '1.234',
           decimals: 2,
-          rounding: FixedPointRoundingMode.halfUp,
+          rounding: FixedPointRoundingMode.round,
         ).toDecimalString(),
         '1.23',
-      );
-      expect(
-        DecimalFixedPoint.parse(
-          '-1.2301',
-          decimals: 2,
-          rounding: FixedPointRoundingMode.up,
-          signedness: FixedPointSignedness.signed,
-        ).toDecimalString(),
-        '-1.24',
       );
       expect(
         DecimalFixedPoint.parse(
@@ -300,16 +283,8 @@ void main() {
       final ratio = ratioDecimalFixedPoint(FixedPointSignedness.signed, 16, 2);
 
       expect(
-        ratio(BigInt.one, BigInt.from(3), FixedPointRoundingMode.down).raw,
+        ratio(BigInt.one, BigInt.from(3), FixedPointRoundingMode.trunc).raw,
         BigInt.from(33),
-      );
-      expect(
-        ratio(BigInt.one, BigInt.from(3), FixedPointRoundingMode.up).raw,
-        BigInt.from(34),
-      );
-      expect(
-        ratio(-BigInt.one, BigInt.from(3), FixedPointRoundingMode.up).raw,
-        BigInt.from(-34),
       );
       expect(
         ratio(-BigInt.one, BigInt.from(3), FixedPointRoundingMode.floor).raw,
@@ -332,7 +307,7 @@ void main() {
         BigInt.from(17),
       );
       expect(
-        ratio(BigInt.one, BigInt.from(6), FixedPointRoundingMode.halfUp).raw,
+        ratio(BigInt.one, BigInt.from(6), FixedPointRoundingMode.round).raw,
         BigInt.from(17),
       );
       expect(() => ratio(BigInt.one, BigInt.from(3)), throwsFormatException);

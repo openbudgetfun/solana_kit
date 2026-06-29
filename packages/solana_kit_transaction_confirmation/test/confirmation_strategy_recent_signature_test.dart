@@ -1,8 +1,5 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 import 'package:test/test.dart';
@@ -12,7 +9,7 @@ void main() {
     late Completer<List<SignatureStatus?>> getSignatureStatusesCompleter;
     late void Function({required Object? err})? signatureNotificationCallback;
     late Future<void> Function({
-      required AbortSignal abortSignal,
+      required CancellationToken abortSignal,
       required Commitment commitment,
       required String signature,
     })
@@ -51,7 +48,7 @@ void main() {
       ]);
 
       await getSignatureConfirmationPromise(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
         commitment: Commitment.finalized,
         signature: 'abc',
       );
@@ -65,7 +62,7 @@ void main() {
       ]);
 
       await getSignatureConfirmationPromise(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
         commitment: Commitment.confirmed,
         signature: 'abc',
       );
@@ -80,7 +77,7 @@ void main() {
       final completer = Completer<String>();
       unawaited(
         getSignatureConfirmationPromise(
-              abortSignal: AbortController().signal,
+              abortSignal: CancellationTokenSource().token,
               commitment: Commitment.finalized,
               signature: 'abc',
             )
@@ -114,7 +111,7 @@ void main() {
       final completer = Completer<String>();
       unawaited(
         getSignatureConfirmationPromise(
-              abortSignal: AbortController().signal,
+              abortSignal: CancellationTokenSource().token,
               commitment: Commitment.finalized,
               signature: 'abc',
             )
@@ -150,7 +147,7 @@ void main() {
 
       await expectLater(
         getSignatureConfirmationPromise(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.finalized,
           signature: 'abc',
         ),
@@ -168,7 +165,7 @@ void main() {
       // Don't resolve the one-shot query.
 
       final future = getSignatureConfirmationPromise(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
         commitment: Commitment.finalized,
         signature: 'abc',
       );
@@ -185,7 +182,7 @@ void main() {
 
     test('fatals when the signature subscription returns an error', () async {
       final future = getSignatureConfirmationPromise(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
         commitment: Commitment.finalized,
         signature: 'abc',
       );
@@ -208,12 +205,12 @@ void main() {
     });
 
     test('aborts internal abort controller when caller aborts', () async {
-      AbortSignal? capturedAbortSignal;
+      CancellationToken? capturedCancellationToken;
 
       final confirmationFn = createRecentSignatureConfirmationPromiseFactory(
         RecentSignatureConfirmationConfig(
           getSignatureStatuses: (signatures, {required abortSignal}) {
-            capturedAbortSignal = abortSignal;
+            capturedCancellationToken = abortSignal;
             return Completer<List<SignatureStatus?>>().future;
           },
           onSignatureNotification:
@@ -228,10 +225,10 @@ void main() {
         ),
       );
 
-      final callerAbortController = AbortController();
+      final callerCancellationTokenSource = CancellationTokenSource();
       unawaited(
         confirmationFn(
-          abortSignal: callerAbortController.signal,
+          abortSignal: callerCancellationTokenSource.token,
           commitment: Commitment.finalized,
           signature: 'abc',
         ).catchError((_) {}),
@@ -240,13 +237,13 @@ void main() {
       await Future<void>.delayed(Duration.zero);
       await Future<void>.delayed(Duration.zero);
 
-      expect(capturedAbortSignal, isNotNull);
-      expect(capturedAbortSignal!.isAborted, isFalse);
+      expect(capturedCancellationToken, isNotNull);
+      expect(capturedCancellationToken!.isCancelled, isFalse);
 
-      callerAbortController.abort('test');
+      callerCancellationTokenSource.cancel('test');
       await Future<void>.delayed(Duration.zero);
 
-      expect(capturedAbortSignal!.isAborted, isTrue);
+      expect(capturedCancellationToken!.isCancelled, isTrue);
     });
 
     test('fatals when the getSignatureStatuses call throws an error', () async {
@@ -269,7 +266,7 @@ void main() {
 
       await expectLater(
         fn(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.finalized,
           signature: 'abc',
         ),

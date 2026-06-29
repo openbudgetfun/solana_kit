@@ -1,10 +1,8 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 /// The result of fetching a nonce account's current nonce value.
 class NonceAccountInfo {
@@ -28,7 +26,7 @@ class NonceInvalidationConfig {
   /// Returns `null` if the account is not found.
   final Future<NonceAccountInfo?> Function(
     String nonceAccountAddress, {
-    required AbortSignal abortSignal,
+    required CancellationToken abortSignal,
     required Commitment commitment,
   })
   getNonceAccount;
@@ -40,7 +38,7 @@ class NonceInvalidationConfig {
   /// subscription ends.
   final Future<void> Function(
     String nonceAccountAddress, {
-    required AbortSignal abortSignal,
+    required CancellationToken abortSignal,
     required Commitment commitment,
     required void Function({required String nonceValue}) onNotification,
   })
@@ -59,22 +57,22 @@ class NonceInvalidationConfig {
 /// - [SolanaErrorCode.nonceAccountNotFound] when the nonce account is not
 ///   found.
 Future<Never> Function({
-  required AbortSignal abortSignal,
+  required CancellationToken abortSignal,
   required Commitment commitment,
   required String expectedNonceValue,
   required String nonceAccountAddress,
 })
 createNonceInvalidationPromiseFactory(NonceInvalidationConfig config) {
   return ({
-    required AbortSignal abortSignal,
+    required CancellationToken abortSignal,
     required Commitment commitment,
     required String expectedNonceValue,
     required String nonceAccountAddress,
   }) async {
-    final abortController = AbortController();
+    final abortController = CancellationTokenSource();
 
     abortSignal.future.then((_) {
-      abortController.abort(abortSignal.reason);
+      abortController.cancel(abortSignal.reason);
     }).ignore();
 
     try {
@@ -86,7 +84,7 @@ createNonceInvalidationPromiseFactory(NonceInvalidationConfig config) {
       // ignore: unawaited_futures
       config.onAccountNotification(
         nonceAccountAddress,
-        abortSignal: abortController.signal,
+        abortSignal: abortController.token,
         commitment: commitment,
         onNotification: ({required nonceValue}) {
           if (nonceInvalidationCompleter.isCompleted) return;
@@ -108,7 +106,7 @@ createNonceInvalidationPromiseFactory(NonceInvalidationConfig config) {
         config
             .getNonceAccount(
               nonceAccountAddress,
-              abortSignal: abortController.signal,
+              abortSignal: abortController.token,
               commitment: commitment,
             )
             .then((nonceAccount) {
@@ -141,7 +139,7 @@ createNonceInvalidationPromiseFactory(NonceInvalidationConfig config) {
         nonceIsAlreadyInvalidCompleter.future,
       ]);
     } finally {
-      abortController.abort();
+      abortController.cancel();
     }
   };
 }

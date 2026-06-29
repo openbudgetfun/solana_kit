@@ -1,9 +1,6 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:test/test.dart';
 
@@ -13,8 +10,8 @@ void main() {
     late RpcSubscriptionsTransport coalescedTransport;
 
     void receiveError([Object? err]) {
-      for (final mockOn in mockInnerTransport.mockOns) {
-        mockOn.fireError(err);
+      for (final mock in mockInnerTransport.mockStreams) {
+        mock.fireError(err);
       }
     }
 
@@ -26,29 +23,35 @@ void main() {
           );
     });
 
+    NotificationStreams streamsForExecute() {
+      final mock = _MockNotificationStreams();
+      mockInnerTransport.mockStreams.add(mock);
+      return mock.streams;
+    }
+
     test('returns the inner transport', () async {
       final config = RpcSubscriptionsTransportConfig(
-        execute: (_) async => createDataPublisher(),
+        execute: (_) async => streamsForExecute(),
         request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-        signal: AbortController().signal,
+        signal: CancellationTokenSource().token,
       );
 
       final result = await coalescedTransport(config);
-      // The result should be the WrappedDataPublisher created by the mock.
-      expect(result, same(mockInnerTransport.lastWrappedPublisher));
+      // The result should be the NotificationStreams created by the mock.
+      expect(result, same(mockInnerTransport.lastStreams));
     });
 
     test('passes the execute config to the inner transport', () {
-      Future<DataPublisher> execute(
+      Future<NotificationStreams> execute(
         RpcSubscriptionsTransportExecuteConfig config,
       ) async {
-        return createDataPublisher();
+        return streamsForExecute();
       }
 
       final config = RpcSubscriptionsTransportConfig(
         execute: execute,
         request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-        signal: AbortController().signal,
+        signal: CancellationTokenSource().token,
       );
 
       coalescedTransport(config).ignore();
@@ -59,9 +62,9 @@ void main() {
 
     test('passes the rpcRequest config to the inner transport', () {
       final config = RpcSubscriptionsTransportConfig(
-        execute: (_) async => createDataPublisher(),
+        execute: (_) async => streamsForExecute(),
         request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-        signal: AbortController().signal,
+        signal: CancellationTokenSource().token,
       );
 
       coalescedTransport(config).ignore();
@@ -71,10 +74,10 @@ void main() {
 
     test('calls the inner transport once per subscriber whose hashes do not '
         'match, in the same runloop', () {
-      Future<DataPublisher> execute(
+      Future<NotificationStreams> execute(
         RpcSubscriptionsTransportExecuteConfig config,
       ) async {
-        return createDataPublisher();
+        return streamsForExecute();
       }
 
       coalescedTransport(
@@ -84,7 +87,7 @@ void main() {
             methodName: 'methodA',
             params: [],
           ),
-          signal: AbortController().signal,
+          signal: CancellationTokenSource().token,
         ),
       ).ignore();
       coalescedTransport(
@@ -94,7 +97,7 @@ void main() {
             methodName: 'methodB',
             params: [],
           ),
-          signal: AbortController().signal,
+          signal: CancellationTokenSource().token,
         ),
       ).ignore();
 
@@ -103,10 +106,10 @@ void main() {
 
     test('calls the inner transport once per subscriber whose hashes do not '
         'match, in different runloops', () async {
-      Future<DataPublisher> execute(
+      Future<NotificationStreams> execute(
         RpcSubscriptionsTransportExecuteConfig config,
       ) async {
-        return createDataPublisher();
+        return streamsForExecute();
       }
 
       await coalescedTransport(
@@ -116,7 +119,7 @@ void main() {
             methodName: 'methodA',
             params: [],
           ),
-          signal: AbortController().signal,
+          signal: CancellationTokenSource().token,
         ),
       );
       await coalescedTransport(
@@ -126,7 +129,7 @@ void main() {
             methodName: 'methodB',
             params: [],
           ),
-          signal: AbortController().signal,
+          signal: CancellationTokenSource().token,
         ),
       );
 
@@ -135,9 +138,9 @@ void main() {
 
     test('only calls the inner transport once, in the same runloop', () {
       final config = RpcSubscriptionsTransportConfig(
-        execute: (_) async => createDataPublisher(),
+        execute: (_) async => streamsForExecute(),
         request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-        signal: AbortController().signal,
+        signal: CancellationTokenSource().token,
       );
 
       coalescedTransport(config).ignore();
@@ -150,9 +153,9 @@ void main() {
       'only calls the inner transport once, in different runloops',
       () async {
         final config = RpcSubscriptionsTransportConfig(
-          execute: (_) async => createDataPublisher(),
+          execute: (_) async => streamsForExecute(),
           request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-          signal: AbortController().signal,
+          signal: CancellationTokenSource().token,
         );
 
         await coalescedTransport(config);
@@ -166,9 +169,9 @@ void main() {
       'delivers the same value to each subscriber, in the same runloop',
       () async {
         final config = RpcSubscriptionsTransportConfig(
-          execute: (_) async => createDataPublisher(),
+          execute: (_) async => streamsForExecute(),
           request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-          signal: AbortController().signal,
+          signal: CancellationTokenSource().token,
         );
 
         final results = await Future.wait([
@@ -184,83 +187,83 @@ void main() {
       'delivers the same value to each subscriber, in different runloops',
       () async {
         final config = RpcSubscriptionsTransportConfig(
-          execute: (_) async => createDataPublisher(),
+          execute: (_) async => streamsForExecute(),
           request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-          signal: AbortController().signal,
+          signal: CancellationTokenSource().token,
         );
 
-        final publisherA = await coalescedTransport(config);
-        final publisherB = await coalescedTransport(config);
+        final streamsA = await coalescedTransport(config);
+        final streamsB = await coalescedTransport(config);
 
-        expect(publisherA, same(publisherB));
+        expect(streamsA, same(streamsB));
       },
     );
 
-    test('does not fire the inner abort signal if fewer than all subscribers '
-        'abort, in the same runloop', () async {
+    test('does not fire the inner cancellation token if fewer than all '
+        'subscribers abort, in the same runloop', () async {
       final config = RpcSubscriptionsTransportConfig(
-        execute: (_) async => createDataPublisher(),
+        execute: (_) async => streamsForExecute(),
         request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-        signal: AbortController().signal,
+        signal: CancellationTokenSource().token,
       );
 
-      final abortControllerB = AbortController();
+      final sourceB = CancellationTokenSource();
       coalescedTransport(config).ignore();
       coalescedTransport(
         RpcSubscriptionsTransportConfig(
           execute: config.execute,
           request: config.request,
-          signal: abortControllerB.signal,
+          signal: sourceB.token,
         ),
       ).ignore();
 
-      abortControllerB.abort();
+      sourceB.cancel();
 
       // Run all microtasks.
       await Future<void>.delayed(Duration.zero);
 
-      expect(mockInnerTransport.lastConfig?.signal.isAborted, isFalse);
+      expect(mockInnerTransport.lastConfig?.signal.isCancelled, isFalse);
     });
 
-    test('fires the inner abort signal if all subscribers abort, in the same '
-        'runloop', () async {
-      final abortControllerA = AbortController();
-      final abortControllerB = AbortController();
+    test('fires the inner cancellation token if all subscribers abort, in the '
+        'same runloop', () async {
+      final sourceA = CancellationTokenSource();
+      final sourceB = CancellationTokenSource();
 
       coalescedTransport(
         RpcSubscriptionsTransportConfig(
-          execute: (_) async => createDataPublisher(),
+          execute: (_) async => streamsForExecute(),
           request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-          signal: abortControllerA.signal,
+          signal: sourceA.token,
         ),
       ).ignore();
       coalescedTransport(
         RpcSubscriptionsTransportConfig(
-          execute: (_) async => createDataPublisher(),
+          execute: (_) async => streamsForExecute(),
           request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-          signal: abortControllerB.signal,
+          signal: sourceB.token,
         ),
       ).ignore();
 
-      abortControllerA.abort();
-      abortControllerB.abort();
+      sourceA.cancel();
+      sourceB.cancel();
 
       // Run all microtasks.
       await Future<void>.delayed(Duration.zero);
 
-      expect(mockInnerTransport.lastConfig?.signal.isAborted, isTrue);
+      expect(mockInnerTransport.lastConfig?.signal.isCancelled, isTrue);
     });
 
-    test('fires the inner abort signal if all subscribers abort, in different '
-        'runloops', () async {
-      final abortControllerA = AbortController();
-      final abortControllerB = AbortController();
+    test('fires the inner cancellation token if all subscribers abort, in '
+        'different runloops', () async {
+      final sourceA = CancellationTokenSource();
+      final sourceB = CancellationTokenSource();
 
       coalescedTransport(
         RpcSubscriptionsTransportConfig(
-          execute: (_) async => createDataPublisher(),
+          execute: (_) async => streamsForExecute(),
           request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-          signal: abortControllerA.signal,
+          signal: sourceA.token,
         ),
       ).ignore();
 
@@ -268,63 +271,72 @@ void main() {
 
       coalescedTransport(
         RpcSubscriptionsTransportConfig(
-          execute: (_) async => createDataPublisher(),
+          execute: (_) async => streamsForExecute(),
           request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-          signal: abortControllerB.signal,
+          signal: sourceB.token,
         ),
       ).ignore();
 
       await Future<void>.delayed(Duration.zero);
 
-      abortControllerA.abort();
-      abortControllerB.abort();
+      sourceA.cancel();
+      sourceB.cancel();
 
       // Run all microtasks.
       await Future<void>.delayed(Duration.zero);
 
-      expect(mockInnerTransport.lastConfig?.signal.isAborted, isTrue);
+      expect(mockInnerTransport.lastConfig?.signal.isCancelled, isTrue);
     });
 
-    test('does not fire the inner abort signal if the subscriber count is non '
-        'zero at the end of the runloop, despite having aborted all in the '
-        'middle of it', () async {
-      final abortControllerA = AbortController();
+    test(
+      'does not fire the inner cancellation token if the subscriber count is '
+      'non zero at the end of the runloop, despite having aborted all in the '
+      'middle of it',
+      () async {
+        final sourceA = CancellationTokenSource();
 
-      coalescedTransport(
-        RpcSubscriptionsTransportConfig(
-          execute: (_) async => createDataPublisher(),
-          request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-          signal: abortControllerA.signal,
-        ),
-      ).ignore();
+        coalescedTransport(
+          RpcSubscriptionsTransportConfig(
+            execute: (_) async => streamsForExecute(),
+            request: const RpcSubscriptionsRequest(
+              methodName: 'foo',
+              params: [],
+            ),
+            signal: sourceA.token,
+          ),
+        ).ignore();
 
-      abortControllerA.abort();
+        sourceA.cancel();
 
-      coalescedTransport(
-        RpcSubscriptionsTransportConfig(
-          execute: (_) async => createDataPublisher(),
-          request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
-          signal: AbortController().signal,
-        ),
-      ).ignore();
+        coalescedTransport(
+          RpcSubscriptionsTransportConfig(
+            execute: (_) async => streamsForExecute(),
+            request: const RpcSubscriptionsRequest(
+              methodName: 'foo',
+              params: [],
+            ),
+            signal: CancellationTokenSource().token,
+          ),
+        ).ignore();
 
-      // Run all microtasks.
-      await Future<void>.delayed(Duration.zero);
+        // Run all microtasks.
+        await Future<void>.delayed(Duration.zero);
 
-      expect(mockInnerTransport.lastConfig?.signal.isAborted, isFalse);
-    });
+        expect(mockInnerTransport.lastConfig?.signal.isCancelled, isFalse);
+      },
+    );
 
     test(
       'does not re-coalesce new requests behind an errored transport',
       () async {
         coalescedTransport(
           RpcSubscriptionsTransportConfig(
-            execute: (_) async => createDataPublisher(),
+            execute: (_) async => streamsForExecute(),
             request: const RpcSubscriptionsRequest(
               methodName: 'foo',
               params: [],
             ),
-            signal: AbortController().signal,
+            signal: CancellationTokenSource().token,
           ),
         ).ignore();
 
@@ -334,12 +346,12 @@ void main() {
 
         coalescedTransport(
           RpcSubscriptionsTransportConfig(
-            execute: (_) async => createDataPublisher(),
+            execute: (_) async => streamsForExecute(),
             request: const RpcSubscriptionsRequest(
               methodName: 'foo',
               params: [],
             ),
-            signal: AbortController().signal,
+            signal: CancellationTokenSource().token,
           ),
         ).ignore();
 
@@ -351,17 +363,17 @@ void main() {
       'does not cancel a newly-coalesced transport when an old errored one is '
       'aborted',
       () async {
-        final abortControllerA = AbortController();
+        final sourceA = CancellationTokenSource();
 
         // PHASE 1: Create and fail a transport.
         await coalescedTransport(
           RpcSubscriptionsTransportConfig(
-            execute: (_) async => createDataPublisher(),
+            execute: (_) async => streamsForExecute(),
             request: const RpcSubscriptionsRequest(
               methodName: 'foo',
               params: [],
             ),
-            signal: abortControllerA.signal,
+            signal: sourceA.token,
           ),
         );
 
@@ -369,96 +381,79 @@ void main() {
         mockInnerTransport.resetCallCount();
 
         // PHASE 2: Create a new transport.
-        final publisherA = await coalescedTransport(
+        final streamsA = await coalescedTransport(
           RpcSubscriptionsTransportConfig(
-            execute: (_) async => createDataPublisher(),
+            execute: (_) async => streamsForExecute(),
             request: const RpcSubscriptionsRequest(
               methodName: 'foo',
               params: [],
             ),
-            signal: AbortController().signal,
+            signal: CancellationTokenSource().token,
           ),
         );
 
         // PHASE 3: Abort the original subscriber.
-        abortControllerA.abort();
+        sourceA.cancel();
         await Future<void>.delayed(Duration.zero);
 
         // PHASE 4: Create a new transport and expect it to coalesce.
-        final publisherB = await coalescedTransport(
+        final streamsB = await coalescedTransport(
           RpcSubscriptionsTransportConfig(
-            execute: (_) async => createDataPublisher(),
+            execute: (_) async => streamsForExecute(),
             request: const RpcSubscriptionsRequest(
               methodName: 'foo',
               params: [],
             ),
-            signal: AbortController().signal,
+            signal: CancellationTokenSource().token,
           ),
         );
 
-        expect(publisherA, same(publisherB));
+        expect(streamsA, same(streamsB));
         expect(mockInnerTransport.callCount, equals(1));
       },
     );
   });
 }
 
-class _MockOn {
-  final List<void Function(Object?)> errorListeners = [];
+class _MockNotificationStreams {
+  _MockNotificationStreams()
+    : _messagesController = StreamController<Object?>.broadcast(sync: true),
+      _errorsController = StreamController<Object?>.broadcast(sync: true);
+
+  final StreamController<Object?> _messagesController;
+  final StreamController<Object?> _errorsController;
+
+  late final NotificationStreams streams = NotificationStreams(
+    notifications: _messagesController.stream,
+    errors: _errorsController.stream,
+  );
 
   void fireError([Object? err]) {
-    for (final listener in errorListeners) {
-      listener(err);
-    }
+    if (!_errorsController.isClosed) _errorsController.add(err);
   }
 }
 
 class _MockTransport {
   int callCount = 0;
   RpcSubscriptionsTransportConfig? lastConfig;
-  WritableDataPublisher? lastDataPublisher;
-  _WrappedDataPublisher? lastWrappedPublisher;
-  final List<_MockOn> mockOns = [];
+  NotificationStreams? lastStreams;
+  final List<_MockNotificationStreams> mockStreams = [];
 
   void resetCallCount() {
     callCount = 0;
   }
 
-  Future<DataPublisher> Function(RpcSubscriptionsTransportConfig config)
+  Future<NotificationStreams> Function(RpcSubscriptionsTransportConfig config)
   get transport {
     return (RpcSubscriptionsTransportConfig config) {
       callCount++;
       lastConfig = config;
 
-      final dataPublisher = createDataPublisher();
-      lastDataPublisher = dataPublisher;
+      final mock = _MockNotificationStreams();
+      mockStreams.add(mock);
+      lastStreams = mock.streams;
 
-      final mockOn = _MockOn();
-      mockOns.add(mockOn);
-
-      // Register error listener for the coalescer.
-      final wrappedPublisher = _WrappedDataPublisher(dataPublisher, mockOn);
-      lastWrappedPublisher = wrappedPublisher;
-
-      return Future.value(wrappedPublisher);
+      return Future.value(mock.streams);
     };
-  }
-}
-
-class _WrappedDataPublisher implements DataPublisher {
-  _WrappedDataPublisher(this._inner, this._mockOn);
-
-  final WritableDataPublisher _inner;
-  final _MockOn _mockOn;
-
-  @override
-  UnsubscribeFn on(String channelName, Subscriber<Object?> subscriber) {
-    if (channelName == 'error') {
-      _mockOn.errorListeners.add(subscriber);
-      return () {
-        _mockOn.errorListeners.remove(subscriber);
-      };
-    }
-    return _inner.on(channelName, subscriber);
   }
 }

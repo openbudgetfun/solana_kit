@@ -69,14 +69,6 @@ void main() {
     );
     expect(
       divideBinaryFixedPoint(
-        signedQ4('-1'),
-        BigInt.from(3),
-        FixedPointRoundingMode.up,
-      ).toDecimalString(),
-      '-0.375',
-    );
-    expect(
-      divideBinaryFixedPoint(
         q4('1'),
         BigInt.from(3),
         FixedPointRoundingMode.floor,

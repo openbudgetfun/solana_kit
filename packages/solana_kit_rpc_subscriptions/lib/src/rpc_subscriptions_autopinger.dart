@@ -1,4 +1,4 @@
-// ignore_for_file: cascade_invocations, deprecated_member_use
+// ignore_for_file: cascade_invocations
 
 import 'dart:async';
 
@@ -18,12 +18,12 @@ const Map<String, Object> pingPayload = {'jsonrpc': '2.0', 'method': 'ping'};
 ///
 /// Returns a new [RpcSubscriptionsChannel] that wraps the original [channel].
 RpcSubscriptionsChannel getRpcSubscriptionsChannelWithAutoping({
-  required AbortSignal abortSignal,
+  required CancellationToken abortSignal,
   required RpcSubscriptionsChannel channel,
   required int intervalMs,
 }) {
   Timer? timer;
-  final pingerAbortController = AbortController();
+  final pingerAbortSource = CancellationTokenSource();
 
   void stopPinging() {
     timer?.cancel();
@@ -37,7 +37,7 @@ RpcSubscriptionsChannel getRpcSubscriptionsChannelWithAutoping({
           e,
           SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed,
         )) {
-          pingerAbortController.abort();
+          pingerAbortSource.cancel();
         }
       }),
     );
@@ -50,14 +50,14 @@ RpcSubscriptionsChannel getRpcSubscriptionsChannelWithAutoping({
     });
   }
 
-  // Stop pinging when the pinger abort controller fires.
-  pingerAbortController.signal.future.then((_) {
+  // Stop pinging when the pinger abort source fires.
+  pingerAbortSource.token.future.then((_) {
     stopPinging();
   }).ignore();
 
-  // Stop pinging when the caller's abort signal fires.
+  // Stop pinging when the caller's cancellation token fires.
   abortSignal.future.then((_) {
-    pingerAbortController.abort();
+    pingerAbortSource.cancel();
   }).ignore();
 
   final channelSubscriptions = <StreamSubscription<Object?>>[];
@@ -69,21 +69,21 @@ RpcSubscriptionsChannel getRpcSubscriptionsChannelWithAutoping({
     channelSubscriptions.clear();
   }
 
-  pingerAbortController.signal.future.then((_) {
+  pingerAbortSource.token.future.then((_) {
     cancelChannelSubscriptions();
   }).ignore();
 
   // Stop pinging on channel errors.
   channelSubscriptions.add(
-    channel.stream<Object?>('error').listen((_) {
-      pingerAbortController.abort();
+    channel.streams.errors.listen((_) {
+      pingerAbortSource.cancel();
     }),
   );
 
   // Restart the ping timer on every received message.
   channelSubscriptions.add(
-    channel.stream<Object?>('message').listen((_) {
-      if (!pingerAbortController.signal.isAborted) {
+    channel.streams.notifications.listen((_) {
+      if (!pingerAbortSource.token.isCancelled) {
         restartPingTimer();
       }
     }),
@@ -95,7 +95,7 @@ RpcSubscriptionsChannel getRpcSubscriptionsChannelWithAutoping({
 
   return _AutopingChannel(
     channel: channel,
-    pingerAbortController: pingerAbortController,
+    pingerAbortSource: pingerAbortSource,
     restartPingTimer: restartPingTimer,
   );
 }
@@ -103,22 +103,20 @@ RpcSubscriptionsChannel getRpcSubscriptionsChannelWithAutoping({
 class _AutopingChannel implements RpcSubscriptionsChannel {
   _AutopingChannel({
     required this.channel,
-    required this.pingerAbortController,
+    required this.pingerAbortSource,
     required this.restartPingTimer,
   });
 
   final RpcSubscriptionsChannel channel;
-  final AbortController pingerAbortController;
+  final CancellationTokenSource pingerAbortSource;
   final void Function() restartPingTimer;
 
   @override
-  UnsubscribeFn on(String channelName, Subscriber<Object?> subscriber) {
-    return channel.on(channelName, subscriber);
-  }
+  NotificationStreams get streams => channel.streams;
 
   @override
   Future<void> send(Object message) {
-    if (!pingerAbortController.signal.isAborted) {
+    if (!pingerAbortSource.token.isCancelled) {
       restartPingTimer();
     }
     return channel.send(message);

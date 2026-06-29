@@ -298,7 +298,7 @@ BigInt _divideWithRounding(
     FixedPointRoundingMode.strict => throw const FormatException(
       'Binary fixed-point value cannot be represented without precision loss.',
     ),
-    FixedPointRoundingMode.trunc || FixedPointRoundingMode.down => quotient,
+    FixedPointRoundingMode.trunc => quotient,
     FixedPointRoundingMode.floor =>
       _roundsTowardPositiveInfinity(numerator, denominator)
           ? quotient
@@ -307,9 +307,7 @@ BigInt _divideWithRounding(
       _roundsTowardPositiveInfinity(numerator, denominator)
           ? quotient + BigInt.one
           : quotient,
-    FixedPointRoundingMode.up =>
-      quotient + _roundingDirection(numerator, denominator),
-    FixedPointRoundingMode.round || FixedPointRoundingMode.halfUp =>
+    FixedPointRoundingMode.round =>
       (remainder.abs() * BigInt.two >= denominator.abs())
           ? quotient + _roundingDirection(numerator, denominator)
           : quotient,

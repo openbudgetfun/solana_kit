@@ -75,16 +75,6 @@ void main() {
       );
       expect(
         decimalFixedPointToString(
-          signed('-1.234'),
-          const FixedPointToStringOptions(
-            decimals: 2,
-            rounding: FixedPointRoundingMode.up,
-          ),
-        ),
-        '-1.24',
-      );
-      expect(
-        decimalFixedPointToString(
           signed('1.235'),
           const FixedPointToStringOptions(
             decimals: 2,

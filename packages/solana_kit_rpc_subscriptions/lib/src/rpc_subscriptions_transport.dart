@@ -1,15 +1,13 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_coalescer.dart';
 import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 /// A function that creates an [RpcSubscriptionsChannel].
 ///
-/// The created channel should be torn down when the [AbortSignal] fires.
+/// The created channel should be torn down when the [CancellationToken] fires.
 typedef RpcSubscriptionsChannelCreator =
     Future<RpcSubscriptionsChannel> Function({
-      required AbortSignal abortSignal,
+      required CancellationToken abortSignal,
     });
 
 /// Configuration for executing a subscription on a channel.
@@ -23,8 +21,8 @@ class RpcSubscriptionsTransportExecuteConfig {
   /// The channel to execute the subscription on.
   final RpcSubscriptionsChannel channel;
 
-  /// Signal for aborting the subscription.
-  final AbortSignal signal;
+  /// Cancellation token for aborting the subscription.
+  final CancellationToken signal;
 }
 
 /// An RPC subscriptions request containing a method name and optional
@@ -50,7 +48,7 @@ class RpcSubscriptionsTransportConfig {
   });
 
   /// Function that executes the subscription on a created channel.
-  final Future<DataPublisher> Function(
+  final Future<NotificationStreams> Function(
     RpcSubscriptionsTransportExecuteConfig config,
   )
   execute;
@@ -58,24 +56,26 @@ class RpcSubscriptionsTransportConfig {
   /// The RPC request containing method name and params.
   final RpcSubscriptionsRequest request;
 
-  /// Signal for aborting the subscription.
-  final AbortSignal signal;
+  /// Cancellation token for aborting the subscription.
+  final CancellationToken signal;
 }
 
 /// A function that acts as an RPC subscriptions transport.
 ///
-/// Given a configuration containing a request, an execute function, and an
-/// abort signal, it returns a [Future] that resolves to a [DataPublisher]
-/// which publishes subscription notifications.
+/// Given a configuration containing a request, an execute function, and a
+/// cancellation token, it returns a [Future] that resolves to a
+/// [NotificationStreams] which publishes subscription notifications.
 typedef RpcSubscriptionsTransport =
-    Future<DataPublisher> Function(RpcSubscriptionsTransportConfig config);
+    Future<NotificationStreams> Function(
+      RpcSubscriptionsTransportConfig config,
+    );
 
 /// Creates an [RpcSubscriptionsTransport] from a channel creator.
 ///
 /// The returned transport, when called, will:
-/// 1. Create a channel using [createChannel] with the abort signal.
-/// 2. Call the `execute` function from the config with the channel and signal.
-/// 3. Return the resulting [DataPublisher].
+/// 1. Create a channel using [createChannel] with the cancellation token.
+/// 2. Call the `execute` function from the config with the channel and token.
+/// 3. Return the resulting [NotificationStreams].
 RpcSubscriptionsTransport createRpcSubscriptionsTransportFromChannelCreator(
   RpcSubscriptionsChannelCreator createChannel,
 ) {

@@ -1,8 +1,8 @@
-// ignore_for_file: avoid_print, deprecated_member_use
+// ignore_for_file: avoid_print
 /// Example 16: Subscribe to slot notifications via WebSocket (devnet).
 ///
-/// Demonstrates [createSolanaRpcSubscriptions], [AbortController], and how to
-/// receive a stream of notifications and cleanly unsubscribe.
+/// Demonstrates [createSolanaRpcSubscriptions], [CancellationTokenSource], and
+/// how to receive a stream of notifications and cleanly unsubscribe.
 ///
 /// ⚠️  This example opens a live WebSocket to the Solana devnet and waits for
 ///     3 slot notifications before disconnecting.  Requires internet access.
@@ -14,7 +14,6 @@ library;
 import 'dart:async';
 
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 
 Future<void> main() async {
   // ── 1. Create a subscription client ──────────────────────────────────────
@@ -24,9 +23,10 @@ Future<void> main() async {
     'wss://api.devnet.solana.com',
   );
 
-  // ── 2. Create an abort controller ────────────────────────────────────────
-  // The abort signal is passed to `subscribe()` and triggers clean teardown.
-  final controller = AbortController();
+  // ── 2. Create a cancellation token source ─────────────────────────────────
+  // The cancellation token is passed to `subscribe()` and triggers clean
+  // teardown.
+  final controller = CancellationTokenSource();
 
   print('Subscribing to slotNotifications on devnet …');
 
@@ -35,7 +35,7 @@ Future<void> main() async {
 
   // ── 4. Subscribe and stream notifications ────────────────────────────────
   final stream = await pending.subscribe(
-    RpcSubscribeOptions(abortSignal: controller.signal),
+    RpcSubscribeOptions(abortSignal: controller.token),
   );
 
   // ── 5. Listen for 3 notifications then unsubscribe ───────────────────────
@@ -49,7 +49,7 @@ Future<void> main() async {
       count++;
       print('Slot notification #$count: $notification');
       if (count >= 3) {
-        controller.abort('received enough notifications');
+        controller.cancel('received enough notifications');
         subscription.cancel();
         completer.complete();
       }

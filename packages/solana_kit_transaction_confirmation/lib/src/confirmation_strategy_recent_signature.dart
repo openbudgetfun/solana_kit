@@ -1,9 +1,7 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:solana_kit_transaction_confirmation/src/signature_status.dart';
 
 /// Configuration for the recent signature confirmation strategy factory.
@@ -20,7 +18,7 @@ class RecentSignatureConfirmationConfig {
   /// signature. The result may be `null` if the signature is not found.
   final Future<List<SignatureStatus?>> Function(
     List<String> signatures, {
-    required AbortSignal abortSignal,
+    required CancellationToken abortSignal,
   })
   getSignatureStatuses;
 
@@ -33,7 +31,7 @@ class RecentSignatureConfirmationConfig {
   /// The callback receives an `err` field (null if no error).
   final Future<void> Function(
     String signature, {
-    required AbortSignal abortSignal,
+    required CancellationToken abortSignal,
     required Commitment commitment,
     required void Function({required Object? err}) onNotification,
   })
@@ -52,7 +50,7 @@ class RecentSignatureConfirmationConfig {
 ///    the signature reached the target commitment before the subscription
 ///    started.
 Future<void> Function({
-  required AbortSignal abortSignal,
+  required CancellationToken abortSignal,
   required Commitment commitment,
   required String signature,
 })
@@ -60,14 +58,14 @@ createRecentSignatureConfirmationPromiseFactory(
   RecentSignatureConfirmationConfig config,
 ) {
   return ({
-    required AbortSignal abortSignal,
+    required CancellationToken abortSignal,
     required Commitment commitment,
     required String signature,
   }) async {
-    final abortController = AbortController();
+    final abortController = CancellationTokenSource();
 
     abortSignal.future.then((_) {
-      abortController.abort(abortSignal.reason);
+      abortController.cancel(abortSignal.reason);
     }).ignore();
 
     try {
@@ -79,7 +77,7 @@ createRecentSignatureConfirmationPromiseFactory(
       // ignore: unawaited_futures
       config.onSignatureNotification(
         signature,
-        abortSignal: abortController.signal,
+        abortSignal: abortController.token,
         commitment: commitment,
         onNotification: ({required err}) {
           if (signatureDidCommitCompleter.isCompleted) return;
@@ -100,7 +98,7 @@ createRecentSignatureConfirmationPromiseFactory(
         config
             .getSignatureStatuses([
               signature,
-            ], abortSignal: abortController.signal)
+            ], abortSignal: abortController.token)
             .then((results) {
               if (signatureStatusLookupCompleter.isCompleted) return;
               final signatureStatus = results.isNotEmpty ? results[0] : null;
@@ -130,7 +128,7 @@ createRecentSignatureConfirmationPromiseFactory(
         signatureStatusLookupCompleter.future,
       ]);
     } finally {
-      abortController.abort();
+      abortController.cancel();
     }
   };
 }

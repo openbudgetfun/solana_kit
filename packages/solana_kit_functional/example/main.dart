@@ -1,6 +1,6 @@
 // Examples intentionally print CLI output for demonstration purposes.
 // ignore_for_file: avoid_print
-import 'package:solana_kit_functional/solana_kit_functional.dart';
+import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 
 void main() {
   final label = 'solana'

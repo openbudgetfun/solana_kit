@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
@@ -13,33 +11,36 @@ import 'package:test/test.dart';
 
 void main() {
   group('PendingRpcSubscriptionsRequest', () {
-    test('subscribe wires plan request/abort signal into transport', () async {
-      final captured = CapturingSubscriptionsTransport();
-      final plan = RpcSubscriptionsPlan<Object?>(
-        execute: (_) async => createDataPublisher(),
-        request: RpcSubscriptionsRequest(
-          methodName: 'accountNotifications',
-          params: [testAccountAddressB.value],
-        ),
-      );
+    test(
+      'subscribe wires plan request/cancellation token into transport',
+      () async {
+        final captured = CapturingSubscriptionsTransport();
+        final plan = RpcSubscriptionsPlan<Object?>(
+          execute: (_) async => captured.streams,
+          request: RpcSubscriptionsRequest(
+            methodName: 'accountNotifications',
+            params: [testAccountAddressB.value],
+          ),
+        );
 
-      final pending = PendingRpcSubscriptionsRequest<Object?>(
-        transport: captured.transport,
-        plan: plan,
-      );
-      final abortController = AbortController();
-      final stream = await pending.subscribe(
-        RpcSubscribeOptions(abortSignal: abortController.signal),
-      );
+        final pending = PendingRpcSubscriptionsRequest<Object?>(
+          transport: captured.transport,
+          plan: plan,
+        );
+        final source = CancellationTokenSource();
+        final stream = await pending.subscribe(
+          RpcSubscribeOptions(abortSignal: source.token),
+        );
 
-      expect(captured.lastConfig.request.methodName, 'accountNotifications');
-      expect(captured.lastConfig.request.params, [testAccountAddressB.value]);
-      expect(captured.lastConfig.signal, same(abortController.signal));
+        expect(captured.lastConfig.request.methodName, 'accountNotifications');
+        expect(captured.lastConfig.request.params, [testAccountAddressB.value]);
+        expect(captured.lastConfig.signal, same(source.token));
 
-      final firstEvent = stream.first;
-      captured.publisher.publish('notification', {'slot': 123});
-      expect(await firstEvent, {'slot': 123});
-    });
+        final firstEvent = stream.first;
+        captured.publishNotification({'slot': 123});
+        expect(await firstEvent, {'slot': 123});
+      },
+    );
 
     test(
       'reactive returns a store backed by subscription notifications',
@@ -48,28 +49,29 @@ void main() {
         final pending = PendingRpcSubscriptionsRequest<Object?>(
           transport: captured.transport,
           plan: const RpcSubscriptionsPlan<Object?>(
-            execute: _planPublisherExecute,
+            execute: _planStreamsExecute,
             request: RpcSubscriptionsRequest(
               methodName: 'slotNotifications',
               params: [],
             ),
           ),
         );
-        final abortController = AbortController();
+        final source = CancellationTokenSource();
 
         final store = await pending.reactive(
-          RpcSubscribeOptions(abortSignal: abortController.signal),
+          RpcSubscribeOptions(abortSignal: source.token),
         );
 
         expect(captured.lastConfig.request.methodName, 'slotNotifications');
-        expect(captured.lastConfig.signal, same(abortController.signal));
+        expect(captured.lastConfig.signal, same(source.token));
         expect(store.getState(), isNull);
         expect(store.getError(), isNull);
 
         var updates = 0;
         final unsubscribe = store.subscribe(() => updates++);
-        captured.publisher.publish('notification', {'slot': 124});
-        captured.publisher.publish('error', 'boom');
+        captured
+          ..publishNotification({'slot': 124})
+          ..publishError('boom');
 
         expect(store.getState(), {'slot': 124});
         expect(store.getError(), 'boom');
@@ -80,45 +82,48 @@ void main() {
       },
     );
 
-    test('subscribe forwards error events from the data publisher', () async {
-      final captured = CapturingSubscriptionsTransport();
-      final pending = PendingRpcSubscriptionsRequest<Object?>(
-        transport: captured.transport,
-        plan: const RpcSubscriptionsPlan<Object?>(
-          execute: _planPublisherExecute,
-          request: RpcSubscriptionsRequest(
-            methodName: 'logsNotifications',
-            params: [],
+    test(
+      'subscribe forwards error events from the notification streams',
+      () async {
+        final captured = CapturingSubscriptionsTransport();
+        final pending = PendingRpcSubscriptionsRequest<Object?>(
+          transport: captured.transport,
+          plan: const RpcSubscriptionsPlan<Object?>(
+            execute: _planStreamsExecute,
+            request: RpcSubscriptionsRequest(
+              methodName: 'logsNotifications',
+              params: [],
+            ),
           ),
-        ),
-      );
+        );
 
-      final stream = await pending.subscribe(
-        RpcSubscribeOptions(abortSignal: AbortController().signal),
-      );
-      final errorCompleter = Completer<Object?>();
-      final subscription = stream.listen(
-        (_) {},
-        onError: errorCompleter.complete,
-      );
+        final stream = await pending.subscribe(
+          RpcSubscribeOptions(abortSignal: CancellationTokenSource().token),
+        );
+        final errorCompleter = Completer<Object?>();
+        final subscription = stream.listen(
+          (_) {},
+          onError: errorCompleter.complete,
+        );
 
-      captured.publisher.publish('error', 'boom');
-      expect(await errorCompleter.future, 'boom');
+        captured.publishError('boom');
+        expect(await errorCompleter.future, 'boom');
 
-      await subscription.cancel();
-    });
+        await subscription.cancel();
+      },
+    );
 
     test('subscribe rejects if aborted while transport is pending', () async {
       final transport = _DeferredSubscriptionsTransport();
       final pending = _pendingRequestForTransport(transport.transport);
-      final controller = AbortController();
+      final source = CancellationTokenSource();
       final reason = StateError('cancelled before subscription');
 
       final future = pending.subscribe(
-        RpcSubscribeOptions(abortSignal: controller.signal),
+        RpcSubscribeOptions(abortSignal: source.token),
       );
       await Future<void>.delayed(Duration.zero);
-      controller.abort(reason);
+      source.cancel(reason);
 
       await expectLater(future, throwsA(same(reason)));
     });
@@ -126,13 +131,13 @@ void main() {
     test('reactive rejects if aborted while transport is pending', () async {
       final transport = _DeferredSubscriptionsTransport();
       final pending = _pendingRequestForTransport(transport.transport);
-      final controller = AbortController();
+      final source = CancellationTokenSource();
 
       final future = pending.reactive(
-        RpcSubscribeOptions(abortSignal: controller.signal),
+        RpcSubscribeOptions(abortSignal: source.token),
       );
       await Future<void>.delayed(Duration.zero);
-      controller.abort();
+      source.cancel();
 
       await expectLater(future, throwsA(isA<AbortError>()));
     });
@@ -142,7 +147,7 @@ void main() {
     test('throws SolanaError when API cannot build a plan', () {
       final subscriptions = RpcSubscriptions(
         api: _TestApi(),
-        transport: (_) async => createDataPublisher(),
+        transport: (_) async => _emptyStreams(),
       );
 
       expect(
@@ -168,7 +173,7 @@ void main() {
         api: _TestApi(
           plans: {
             'slotNotifications': const RpcSubscriptionsPlan<Object?>(
-              execute: _planPublisherExecute,
+              execute: _planStreamsExecute,
               request: RpcSubscriptionsRequest(
                 methodName: 'slotNotifications',
                 params: [],
@@ -176,7 +181,7 @@ void main() {
             ),
           },
         ),
-        transport: (_) async => createDataPublisher(),
+        transport: (_) async => _emptyStreams(),
       );
 
       final pending = subscriptions.request('slotNotifications');
@@ -197,7 +202,7 @@ void main() {
             ),
           )
           .subscribe(
-            RpcSubscribeOptions(abortSignal: AbortController().signal),
+            RpcSubscribeOptions(abortSignal: CancellationTokenSource().token),
           );
 
       expect(captured.lastConfig.request.methodName, 'accountNotifications');
@@ -211,7 +216,7 @@ void main() {
       final captured = CapturingSubscriptionsTransport();
       final rpc = createSolanaRpcSubscriptionsFromTransport(captured.transport);
       await rpc.slotNotifications().subscribe(
-        RpcSubscribeOptions(abortSignal: AbortController().signal),
+        RpcSubscribeOptions(abortSignal: CancellationTokenSource().token),
       );
 
       expect(captured.lastConfig.request.methodName, 'slotNotifications');
@@ -230,7 +235,7 @@ void main() {
             ),
           )
           .subscribe(
-            RpcSubscribeOptions(abortSignal: AbortController().signal),
+            RpcSubscribeOptions(abortSignal: CancellationTokenSource().token),
           );
 
       expect(captured.lastConfig.request.methodName, 'signatureNotifications');
@@ -243,7 +248,7 @@ void main() {
     test('remaining typed helpers build method-specific params', () async {
       final captured = CapturingSubscriptionsTransport();
       final rpc = createSolanaRpcSubscriptionsFromTransport(captured.transport);
-      final abortSignal = AbortController().signal;
+      final abortSignal = CancellationTokenSource().token;
 
       await rpc
           .blockNotifications(
@@ -327,9 +332,9 @@ void main() {
   group('factory functions', () {
     test('createSubscriptionRpc preserves api and transport references', () {
       final api = _TestApi();
-      Future<DataPublisher> transport(
+      Future<NotificationStreams> transport(
         RpcSubscriptionsTransportConfig _,
-      ) async => createDataPublisher();
+      ) async => _emptyStreams();
       final rpc = createSubscriptionRpc(
         RpcSubscriptionsConfig(api: api, transport: transport),
       );
@@ -347,7 +352,7 @@ void main() {
         );
         final pending = rpc.request('accountNotifications', ['pubkey', 'json']);
         await pending.subscribe(
-          RpcSubscribeOptions(abortSignal: AbortController().signal),
+          RpcSubscribeOptions(abortSignal: CancellationTokenSource().token),
         );
 
         expect(captured.lastConfig.request.methodName, 'accountNotifications');
@@ -357,10 +362,10 @@ void main() {
         final executeResult = await captured.lastConfig.execute(
           RpcSubscriptionsTransportExecuteConfig(
             channel: channel,
-            signal: AbortController().signal,
+            signal: CancellationTokenSource().token,
           ),
         );
-        expect(executeResult, same(channel));
+        expect(executeResult, same(channel.streams));
       },
     );
 
@@ -384,9 +389,25 @@ void main() {
   });
 }
 
-Future<DataPublisher> _planPublisherExecute(
+Future<NotificationStreams> _planStreamsExecute(
   RpcSubscriptionsTransportExecuteConfig _,
-) async => createDataPublisher();
+) async {
+  final messages = StreamController<Object?>.broadcast(sync: true);
+  final errors = StreamController<Object?>.broadcast(sync: true);
+  return NotificationStreams(
+    notifications: messages.stream,
+    errors: errors.stream,
+  );
+}
+
+NotificationStreams _emptyStreams() {
+  final messages = StreamController<Object?>.broadcast(sync: true);
+  final errors = StreamController<Object?>.broadcast(sync: true);
+  return NotificationStreams(
+    notifications: messages.stream,
+    errors: errors.stream,
+  );
+}
 
 PendingRpcSubscriptionsRequest<Object?> _pendingRequestForTransport(
   RpcSubscriptionsTransport transport,
@@ -394,7 +415,7 @@ PendingRpcSubscriptionsRequest<Object?> _pendingRequestForTransport(
   return PendingRpcSubscriptionsRequest<Object?>(
     transport: transport,
     plan: const RpcSubscriptionsPlan<Object?>(
-      execute: _planPublisherExecute,
+      execute: _planStreamsExecute,
       request: RpcSubscriptionsRequest(
         methodName: 'slotNotifications',
         params: [],
@@ -404,9 +425,9 @@ PendingRpcSubscriptionsRequest<Object?> _pendingRequestForTransport(
 }
 
 class _DeferredSubscriptionsTransport {
-  final _completer = Completer<DataPublisher>();
+  final _completer = Completer<NotificationStreams>();
 
-  Future<DataPublisher> transport(RpcSubscriptionsTransportConfig _) {
+  Future<NotificationStreams> transport(RpcSubscriptionsTransportConfig _) {
     return _completer.future;
   }
 }
@@ -427,14 +448,18 @@ class _TestApi extends RpcSubscriptionsApi {
 }
 
 class _MockChannel implements RpcSubscriptionsChannel {
-  _MockChannel() : _publisher = createDataPublisher();
+  _MockChannel()
+    : _messagesController = StreamController<Object?>.broadcast(sync: true),
+      _errorsController = StreamController<Object?>.broadcast(sync: true);
 
-  final WritableDataPublisher _publisher;
+  final StreamController<Object?> _messagesController;
+  final StreamController<Object?> _errorsController;
 
   @override
-  UnsubscribeFn on(String channelName, Subscriber<Object?> subscriber) {
-    return _publisher.on(channelName, subscriber);
-  }
+  late final NotificationStreams streams = NotificationStreams(
+    notifications: _messagesController.stream,
+    errors: _errorsController.stream,
+  );
 
   @override
   Future<void> send(Object message) async {}

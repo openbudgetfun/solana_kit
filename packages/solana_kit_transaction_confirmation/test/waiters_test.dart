@@ -1,8 +1,5 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 import 'package:test/test.dart';
@@ -10,14 +7,14 @@ import 'package:test/test.dart';
 void main() {
   group('waitForDurableNonceTransactionConfirmation', () {
     late Future<Never> Function({
-      required AbortSignal abortSignal,
+      required CancellationToken abortSignal,
       required Commitment commitment,
       required String expectedNonceValue,
       required String nonceAccountAddress,
     })
     getNonceInvalidationPromise;
     late Future<void> Function({
-      required AbortSignal abortSignal,
+      required CancellationToken abortSignal,
       required Commitment commitment,
       required String signature,
     })
@@ -47,11 +44,11 @@ void main() {
     });
 
     test('throws when the signal is already aborted', () async {
-      final abortController = AbortController()..abort();
+      final abortController = CancellationTokenSource()..cancel();
 
       await expectLater(
         waitForDurableNonceTransactionConfirmation(
-          abortSignal: abortController.signal,
+          abortSignal: abortController.token,
           commitment: Commitment.finalized,
           getNonceInvalidationPromise: getNonceInvalidationPromise,
           getRecentSignatureConfirmationPromise:
@@ -82,7 +79,7 @@ void main() {
       }).ignore();
 
       await waitForDurableNonceTransactionConfirmation(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
         commitment: Commitment.finalized,
         getNonceInvalidationPromise: getNonceInvalidationPromise,
         getRecentSignatureConfirmationPromise:
@@ -99,7 +96,7 @@ void main() {
 
       await expectLater(
         waitForDurableNonceTransactionConfirmation(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.finalized,
           getNonceInvalidationPromise: getNonceInvalidationPromise,
           getRecentSignatureConfirmationPromise:
@@ -125,7 +122,7 @@ void main() {
 
       await expectLater(
         waitForDurableNonceTransactionConfirmation(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.finalized,
           getNonceInvalidationPromise:
               ({
@@ -157,7 +154,7 @@ void main() {
 
         unawaited(
           waitForDurableNonceTransactionConfirmation(
-            abortSignal: AbortController().signal,
+            abortSignal: CancellationTokenSource().token,
             commitment: Commitment.finalized,
             getNonceInvalidationPromise:
                 ({
@@ -201,7 +198,7 @@ void main() {
 
         unawaited(
           waitForDurableNonceTransactionConfirmation(
-            abortSignal: AbortController().signal,
+            abortSignal: CancellationTokenSource().token,
             commitment: Commitment.finalized,
             getNonceInvalidationPromise:
                 ({
@@ -238,13 +235,13 @@ void main() {
     test(
       'aborts the abort signal passed to strategies when caller aborts',
       () async {
-        AbortSignal? capturedNonceAbortSignal;
-        AbortSignal? capturedSignatureAbortSignal;
-        final callerAbortController = AbortController();
+        CancellationToken? capturedNonceCancellationToken;
+        CancellationToken? capturedSignatureCancellationToken;
+        final callerCancellationTokenSource = CancellationTokenSource();
 
         unawaited(
           waitForDurableNonceTransactionConfirmation(
-            abortSignal: callerAbortController.signal,
+            abortSignal: callerCancellationTokenSource.token,
             commitment: Commitment.finalized,
             getNonceInvalidationPromise:
                 ({
@@ -253,7 +250,7 @@ void main() {
                   required expectedNonceValue,
                   required nonceAccountAddress,
                 }) {
-                  capturedNonceAbortSignal = abortSignal;
+                  capturedNonceCancellationToken = abortSignal;
                   return Completer<Never>().future;
                 },
             getRecentSignatureConfirmationPromise:
@@ -262,7 +259,7 @@ void main() {
                   required commitment,
                   required signature,
                 }) {
-                  capturedSignatureAbortSignal = abortSignal;
+                  capturedSignatureCancellationToken = abortSignal;
                   return Completer<void>().future;
                 },
             nonceAccountAddress: 'nonce_address',
@@ -273,14 +270,14 @@ void main() {
 
         await Future<void>.delayed(Duration.zero);
 
-        expect(capturedNonceAbortSignal!.isAborted, isFalse);
-        expect(capturedSignatureAbortSignal!.isAborted, isFalse);
+        expect(capturedNonceCancellationToken!.isCancelled, isFalse);
+        expect(capturedSignatureCancellationToken!.isCancelled, isFalse);
 
-        callerAbortController.abort('test');
+        callerCancellationTokenSource.cancel('test');
         await Future<void>.delayed(Duration.zero);
 
-        expect(capturedNonceAbortSignal!.isAborted, isTrue);
-        expect(capturedSignatureAbortSignal!.isAborted, isTrue);
+        expect(capturedNonceCancellationToken!.isCancelled, isTrue);
+        expect(capturedSignatureCancellationToken!.isCancelled, isTrue);
       },
     );
   });
@@ -290,13 +287,13 @@ void main() {
     late Completer<void> signatureConfirmationCompleter;
 
     late Future<Never> Function({
-      required AbortSignal abortSignal,
+      required CancellationToken abortSignal,
       required BigInt lastValidBlockHeight,
       Commitment? commitment,
     })
     getBlockHeightExceedencePromise;
     late Future<void> Function({
-      required AbortSignal abortSignal,
+      required CancellationToken abortSignal,
       required Commitment commitment,
       required String signature,
     })
@@ -318,11 +315,11 @@ void main() {
     });
 
     test('throws when the signal is already aborted', () async {
-      final abortController = AbortController()..abort();
+      final abortController = CancellationTokenSource()..cancel();
 
       await expectLater(
         waitForRecentTransactionConfirmation(
-          abortSignal: abortController.signal,
+          abortSignal: abortController.token,
           commitment: Commitment.finalized,
           getBlockHeightExceedencePromise: getBlockHeightExceedencePromise,
           getRecentSignatureConfirmationPromise:
@@ -352,7 +349,7 @@ void main() {
       }).ignore();
 
       await waitForRecentTransactionConfirmation(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
         commitment: Commitment.finalized,
         getBlockHeightExceedencePromise: getBlockHeightExceedencePromise,
         getRecentSignatureConfirmationPromise:
@@ -367,7 +364,7 @@ void main() {
 
       await expectLater(
         waitForRecentTransactionConfirmation(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.finalized,
           getBlockHeightExceedencePromise: getBlockHeightExceedencePromise,
           getRecentSignatureConfirmationPromise:
@@ -392,7 +389,7 @@ void main() {
 
       await expectLater(
         waitForRecentTransactionConfirmation(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.finalized,
           getBlockHeightExceedencePromise:
               ({
@@ -421,7 +418,7 @@ void main() {
 
         unawaited(
           waitForRecentTransactionConfirmation(
-            abortSignal: AbortController().signal,
+            abortSignal: CancellationTokenSource().token,
             commitment: Commitment.finalized,
             getBlockHeightExceedencePromise:
                 ({
@@ -461,7 +458,7 @@ void main() {
 
         unawaited(
           waitForRecentTransactionConfirmation(
-            abortSignal: AbortController().signal,
+            abortSignal: CancellationTokenSource().token,
             commitment: Commitment.finalized,
             getBlockHeightExceedencePromise:
                 ({
@@ -496,13 +493,13 @@ void main() {
     test(
       'aborts the abort signal passed to strategies when caller aborts',
       () async {
-        AbortSignal? capturedBlockHeightAbortSignal;
-        AbortSignal? capturedSignatureAbortSignal;
-        final callerAbortController = AbortController();
+        CancellationToken? capturedBlockHeightCancellationToken;
+        CancellationToken? capturedSignatureCancellationToken;
+        final callerCancellationTokenSource = CancellationTokenSource();
 
         unawaited(
           waitForRecentTransactionConfirmation(
-            abortSignal: callerAbortController.signal,
+            abortSignal: callerCancellationTokenSource.token,
             commitment: Commitment.finalized,
             getBlockHeightExceedencePromise:
                 ({
@@ -510,7 +507,7 @@ void main() {
                   required lastValidBlockHeight,
                   commitment,
                 }) {
-                  capturedBlockHeightAbortSignal = abortSignal;
+                  capturedBlockHeightCancellationToken = abortSignal;
                   return Completer<Never>().future;
                 },
             getRecentSignatureConfirmationPromise:
@@ -519,7 +516,7 @@ void main() {
                   required commitment,
                   required signature,
                 }) {
-                  capturedSignatureAbortSignal = abortSignal;
+                  capturedSignatureCancellationToken = abortSignal;
                   return Completer<void>().future;
                 },
             lastValidBlockHeight: BigInt.from(123),
@@ -529,26 +526,26 @@ void main() {
 
         await Future<void>.delayed(Duration.zero);
 
-        expect(capturedBlockHeightAbortSignal!.isAborted, isFalse);
-        expect(capturedSignatureAbortSignal!.isAborted, isFalse);
+        expect(capturedBlockHeightCancellationToken!.isCancelled, isFalse);
+        expect(capturedSignatureCancellationToken!.isCancelled, isFalse);
 
-        callerAbortController.abort('test');
+        callerCancellationTokenSource.cancel('test');
         await Future<void>.delayed(Duration.zero);
 
-        expect(capturedBlockHeightAbortSignal!.isAborted, isTrue);
-        expect(capturedSignatureAbortSignal!.isAborted, isTrue);
+        expect(capturedBlockHeightCancellationToken!.isCancelled, isTrue);
+        expect(capturedSignatureCancellationToken!.isCancelled, isTrue);
       },
     );
   });
 
   group('waitForRecentTransactionConfirmationUntilTimeout', () {
     test('throws when the signal is already aborted', () async {
-      final abortController = AbortController()..abort();
+      final abortController = CancellationTokenSource()..cancel();
 
       await expectLater(
         // Deprecated method under test.
         waitForRecentTransactionConfirmationUntilTimeout(
-          abortSignal: abortController.signal,
+          abortSignal: abortController.token,
           commitment: Commitment.finalized,
           getTimeoutPromise: ({required abortSignal, required commitment}) {
             return Completer<Never>().future;
@@ -585,7 +582,7 @@ void main() {
 
       // Deprecated method under test.
       await waitForRecentTransactionConfirmationUntilTimeout(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
         commitment: Commitment.finalized,
         getTimeoutPromise: ({required abortSignal, required commitment}) {
           return timeoutCompleter.future;
@@ -604,7 +601,7 @@ void main() {
       await expectLater(
         // Deprecated method under test.
         waitForRecentTransactionConfirmationUntilTimeout(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.finalized,
           getTimeoutPromise:
               ({required abortSignal, required commitment}) async {
@@ -630,7 +627,7 @@ void main() {
       await expectLater(
         // Deprecated method under test.
         waitForRecentTransactionConfirmationUntilTimeout(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.finalized,
           getTimeoutPromise: ({required abortSignal, required commitment}) {
             return Completer<Never>().future;
@@ -657,7 +654,7 @@ void main() {
       unawaited(
         // Deprecated method under test.
         waitForRecentTransactionConfirmationUntilTimeout(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.finalized,
           getTimeoutPromise: ({required abortSignal, required commitment}) {
             capturedCommitment = commitment;

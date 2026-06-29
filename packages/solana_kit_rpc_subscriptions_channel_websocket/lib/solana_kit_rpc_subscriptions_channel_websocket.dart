@@ -7,30 +7,34 @@
 /// The primary entry point is `createWebSocketChannel`, which opens a WebSocket
 /// connection and returns an `RpcSubscriptionsChannel` that provides:
 ///
-/// - `on('message', subscriber)` to receive incoming messages
-/// - `on('error', subscriber)` to receive error events
+/// - `streams.notifications` to receive incoming messages
+/// - `streams.errors` to receive error events
 /// - `send(message)` to send outgoing messages
 ///
-/// Use `AbortController` and `AbortSignal` to manage the channel lifecycle:
+/// Use `CancellationTokenSource` and `CancellationToken` to manage the channel
+/// lifecycle:
 ///
 /// ```dart
-/// final controller = AbortController();
+/// final source = CancellationTokenSource();
 /// final channel = await createWebSocketChannel(
 ///   WebSocketChannelConfig(
 ///     url: Uri.parse('wss://api.mainnet-beta.solana.com'),
-///     signal: controller.signal,
+///     signal: source.token,
 ///   ),
 /// );
 ///
-/// channel.on('message', (data) {
+/// channel.streams.notifications.listen((data) {
 ///   print('Received: $data');
 /// });
 ///
 /// await channel.send('hello');
 ///
 /// // Close the channel:
-/// controller.abort();
+/// source.cancel();
 /// ```
 library;
+
+export 'package:solana_kit_subscribable/solana_kit_subscribable.dart'
+    show CancellationToken, CancellationTokenSource;
 
 export 'src/websocket_channel.dart';

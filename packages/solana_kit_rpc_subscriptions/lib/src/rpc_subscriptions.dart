@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_channel.dart';
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_transport.dart';
@@ -11,8 +9,8 @@ class RpcSubscribeOptions {
   /// Creates [RpcSubscribeOptions].
   const RpcSubscribeOptions({required this.abortSignal});
 
-  /// The abort signal to fire when you want to unsubscribe.
-  final AbortSignal abortSignal;
+  /// The cancellation token to fire when you want to unsubscribe.
+  final CancellationToken abortSignal;
 }
 
 /// A pending RPC subscription request.
@@ -37,7 +35,7 @@ class PendingRpcSubscriptionsRequest<TNotification> {
   Future<ReactiveStore<TNotification>> reactive(
     RpcSubscribeOptions options,
   ) async {
-    final notificationsDataPublisher = await getAbortableFuture(
+    final streams = await getAbortableFuture(
       _transport(
         RpcSubscriptionsTransportConfig(
           execute: _plan.execute,
@@ -49,23 +47,17 @@ class PendingRpcSubscriptionsRequest<TNotification> {
     );
 
     return createReactiveStoreFromStreams<TNotification>(
-      dataStream: notificationsDataPublisher.stream<TNotification>(
-        'notification',
-      ),
-      errorStream: notificationsDataPublisher.stream<Object?>('error'),
+      dataStream: streams.notifications.cast<TNotification>(),
+      errorStream: streams.errors,
     );
   }
 
   /// Subscribes to the notification stream.
   ///
   /// Returns a [Stream] that emits notifications of type [TNotification].
-  /// The subscription will be cancelled when the abort signal fires.
-  ///
-  /// This is the preferred Dart-facing surface for subscriptions even though
-  /// the underlying transport still uses `DataPublisher` as a compatibility
-  /// layer.
+  /// The subscription will be cancelled when the cancellation token fires.
   Future<Stream<TNotification>> subscribe(RpcSubscribeOptions options) async {
-    final notificationsDataPublisher = await getAbortableFuture(
+    final streams = await getAbortableFuture(
       _transport(
         RpcSubscriptionsTransportConfig(
           execute: _plan.execute,
@@ -77,10 +69,8 @@ class PendingRpcSubscriptionsRequest<TNotification> {
     );
 
     return createStreamFromDataAndErrorStreams<TNotification>(
-      dataStream: notificationsDataPublisher.stream<TNotification>(
-        'notification',
-      ),
-      errorStream: notificationsDataPublisher.stream<Object?>('error'),
+      dataStream: streams.notifications.cast<TNotification>(),
+      errorStream: streams.errors,
     );
   }
 }
@@ -92,7 +82,7 @@ class RpcSubscriptionsPlan<TNotification> {
   const RpcSubscriptionsPlan({required this.execute, required this.request});
 
   /// The execute function that performs the subscription on a channel.
-  final Future<DataPublisher> Function(
+  final Future<NotificationStreams> Function(
     RpcSubscriptionsTransportExecuteConfig config,
   )
   execute;
@@ -147,7 +137,7 @@ class RpcSubscriptionsConfig {
 ///
 /// final pending = subscriptions.slotNotifications();
 /// final stream = await pending.subscribe(
-///   RpcSubscribeOptions(abortSignal: controller.signal),
+///   RpcSubscribeOptions(abortSignal: source.token),
 /// );
 /// await for (final notification in stream) {
 ///   print('Got notification: $notification');
@@ -260,7 +250,7 @@ class _PassthroughSubscriptionsApi extends RpcSubscriptionsApi {
     return RpcSubscriptionsPlan<Object?>(
       execute: (config) async {
         // The actual execution is delegated to the transport.
-        return config.channel;
+        return config.channel.streams;
       },
       request: RpcSubscriptionsRequest(
         methodName: notificationName,

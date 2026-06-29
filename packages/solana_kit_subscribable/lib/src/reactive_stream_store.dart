@@ -172,19 +172,3 @@ ReactiveStreamStore<T> createReactiveStreamStore<T>({
     retryFn: retry,
   );
 }
-
-/// Creates a [ReactiveStreamStore] backed by a [DataPublisher].
-///
-/// Prefer [createReactiveStreamStore] for stream-native code.
-ReactiveStreamStore<T> createReactiveStreamStoreFromDataPublisher<T>({
-  required DataPublisher dataPublisher,
-  required String dataChannelName,
-  required String errorChannelName,
-  Future<void> Function()? retry,
-}) {
-  return createReactiveStreamStore<T>(
-    dataStream: dataPublisher.stream<T>(dataChannelName),
-    errorStream: dataPublisher.stream<Object?>(errorChannelName),
-    retry: retry,
-  );
-}

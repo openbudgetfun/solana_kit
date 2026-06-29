@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -13,8 +11,8 @@ import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart'
         GetSignatureStatusesConfig,
         SendTransactionConfig;
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:solana_kit_transaction_confirmation/src/confirmation_strategy_blockheight.dart';
 import 'package:solana_kit_transaction_confirmation/src/confirmation_strategy_nonce.dart';
 import 'package:solana_kit_transaction_confirmation/src/signature_status.dart';
@@ -35,7 +33,7 @@ class RpcTransactionConfirmationConfig {
   });
 
   /// Optional abort signal used to stop polling.
-  final AbortSignal? abortSignal;
+  final CancellationToken? abortSignal;
 
   /// Target commitment to wait for.
   final Commitment commitment;
@@ -73,6 +71,7 @@ class SendAndConfirmTransactionConfig extends RpcTransactionConfirmationConfig {
   /// Whether to skip preflight simulation.
   final bool? skipPreflight;
 
+  /// Builds the RPC send-transaction config from this confirmation config.
   SendTransactionConfig toSendTransactionConfig() {
     return SendTransactionConfig(
       maxRetries: maxRetries,
@@ -104,7 +103,7 @@ Future<void> waitForTransactionConfirmation({
 }) async {
   _throwIfAborted(config.abortSignal);
 
-  final stopController = AbortController();
+  final stopController = CancellationTokenSource();
   final transactionWithLifetime = _requireTransactionWithLifetime(transaction);
 
   try {
@@ -115,7 +114,7 @@ Future<void> waitForTransactionConfirmation({
       pollInterval: config.pollInterval,
       searchTransactionHistory: config.searchTransactionHistory,
       abortSignal: config.abortSignal,
-      stopSignal: stopController.signal,
+      stopSignal: stopController.token,
     );
 
     final lifetimeFuture = switch (transactionWithLifetime.lifetimeConstraint) {
@@ -126,7 +125,7 @@ Future<void> waitForTransactionConfirmation({
           commitment: config.commitment,
           pollInterval: config.pollInterval,
           abortSignal: config.abortSignal,
-          stopSignal: stopController.signal,
+          stopSignal: stopController.token,
         ),
       TransactionDurableNonceLifetime(
         :final nonce,
@@ -139,13 +138,13 @@ Future<void> waitForTransactionConfirmation({
           commitment: config.commitment,
           pollInterval: config.pollInterval,
           abortSignal: config.abortSignal,
-          stopSignal: stopController.signal,
+          stopSignal: stopController.token,
         ),
     };
 
     await Future.any([confirmationFuture, lifetimeFuture]);
   } finally {
-    stopController.abort();
+    stopController.cancel();
   }
 }
 
@@ -197,11 +196,11 @@ Future<void> _pollForSignatureConfirmation({
   required Commitment commitment,
   required Duration pollInterval,
   required bool searchTransactionHistory,
-  required AbortSignal? abortSignal,
-  required AbortSignal stopSignal,
+  required CancellationToken? abortSignal,
+  required CancellationToken stopSignal,
 }) async {
   while (true) {
-    if (stopSignal.isAborted) return;
+    if (stopSignal.isCancelled) return;
     _throwIfAborted(abortSignal);
 
     final response = await rpc
@@ -217,7 +216,7 @@ Future<void> _pollForSignatureConfirmation({
               : RpcSendOptions(abortSignal: abortSignal.future),
         );
 
-    if (stopSignal.isAborted) return;
+    if (stopSignal.isCancelled) return;
     _throwIfAborted(abortSignal);
 
     final statuses = _parseSignatureStatusesResponse(response);
@@ -245,11 +244,11 @@ Future<void> _pollForBlockHeightExceedence({
   required BigInt lastValidBlockHeight,
   required Commitment commitment,
   required Duration pollInterval,
-  required AbortSignal? abortSignal,
-  required AbortSignal stopSignal,
+  required CancellationToken? abortSignal,
+  required CancellationToken stopSignal,
 }) async {
   while (true) {
-    if (stopSignal.isAborted) return;
+    if (stopSignal.isCancelled) return;
     _throwIfAborted(abortSignal);
 
     final response = await rpc
@@ -260,7 +259,7 @@ Future<void> _pollForBlockHeightExceedence({
               : RpcSendOptions(abortSignal: abortSignal.future),
         );
 
-    if (stopSignal.isAborted) return;
+    if (stopSignal.isCancelled) return;
     _throwIfAborted(abortSignal);
 
     final epochInfo = _parseEpochInfoResponse(response);
@@ -285,11 +284,11 @@ Future<void> _pollForNonceInvalidation({
   required Address nonceAccountAddress,
   required Commitment commitment,
   required Duration pollInterval,
-  required AbortSignal? abortSignal,
-  required AbortSignal stopSignal,
+  required CancellationToken? abortSignal,
+  required CancellationToken stopSignal,
 }) async {
   while (true) {
-    if (stopSignal.isAborted) return;
+    if (stopSignal.isCancelled) return;
     _throwIfAborted(abortSignal);
 
     final response = await rpc
@@ -306,7 +305,7 @@ Future<void> _pollForNonceInvalidation({
               : RpcSendOptions(abortSignal: abortSignal.future),
         );
 
-    if (stopSignal.isAborted) return;
+    if (stopSignal.isCancelled) return;
     _throwIfAborted(abortSignal);
 
     final nonceAccount = _parseNonceAccountInfoResponse(
@@ -331,10 +330,10 @@ Future<void> _pollForNonceInvalidation({
 
 Future<void> _waitForNextPoll(
   Duration pollInterval, {
-  required AbortSignal? abortSignal,
-  required AbortSignal stopSignal,
+  required CancellationToken? abortSignal,
+  required CancellationToken stopSignal,
 }) async {
-  if (stopSignal.isAborted) return;
+  if (stopSignal.isCancelled) return;
   _throwIfAborted(abortSignal);
 
   final completer = Completer<void>();
@@ -376,8 +375,8 @@ TransactionWithLifetime _requireTransactionWithLifetime(
   );
 }
 
-void _throwIfAborted(AbortSignal? abortSignal) {
-  if (abortSignal?.isAborted ?? false) {
+void _throwIfAborted(CancellationToken? abortSignal) {
+  if (abortSignal?.isCancelled ?? false) {
     throw StateError('The operation was aborted: ${abortSignal!.reason}');
   }
 }

@@ -38,11 +38,6 @@ SolanaKitClient<T> createClient<T extends Object>([T? value]) {
   return SolanaKitClient<T>._(clientValue as T);
 }
 
-/// Deprecated alias for [createClient].
-@Deprecated('Use createClient instead.')
-SolanaKitClient<T> createEmptyClient<T extends Object>([T? value]) =>
-    createClient<T>(value);
-
 /// Extends a map-backed client with [additions].
 ///
 /// This mirrors the upstream `extendClient` helper for Dart's common map-backed

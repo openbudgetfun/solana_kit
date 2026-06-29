@@ -24,18 +24,6 @@ enum FixedPointRoundingMode {
 
   /// Round to the nearest unit, with ties away from zero.
   round,
-
-  /// Truncate extra digits toward zero.
-  @Deprecated('Use FixedPointRoundingMode.trunc instead.')
-  down,
-
-  /// Round away from zero when any discarded digit is non-zero.
-  @Deprecated('Use floor or ceil depending on the sign, or round for nearest.')
-  up,
-
-  /// Round to the nearest unit, with ties away from zero.
-  @Deprecated('Use FixedPointRoundingMode.round instead.')
-  halfUp,
 }
 
 /// A decimal fixed-point value.
@@ -89,12 +77,10 @@ final class DecimalFixedPoint implements Comparable<DecimalFixedPoint> {
           'Decimal fixed-point value cannot be represented without precision loss.',
           value,
         ),
-        FixedPointRoundingMode.trunc || FixedPointRoundingMode.down => false,
+        FixedPointRoundingMode.trunc => false,
         FixedPointRoundingMode.floor => negative && hasTruncatedValue,
         FixedPointRoundingMode.ceil => !negative && hasTruncatedValue,
-        FixedPointRoundingMode.up => hasTruncatedValue,
-        FixedPointRoundingMode.round ||
-        FixedPointRoundingMode.halfUp => int.parse(extra[0]) >= 5,
+        FixedPointRoundingMode.round => int.parse(extra[0]) >= 5,
       };
       fractionPart = fractionPart.substring(0, decimals);
     }
@@ -334,7 +320,7 @@ BigInt _divideWithRounding(
     FixedPointRoundingMode.strict => throw const FormatException(
       'Ratio cannot be represented without precision loss.',
     ),
-    FixedPointRoundingMode.trunc || FixedPointRoundingMode.down => quotient,
+    FixedPointRoundingMode.trunc => quotient,
     FixedPointRoundingMode.floor =>
       _roundsTowardPositiveInfinity(numerator, denominator)
           ? quotient
@@ -343,9 +329,7 @@ BigInt _divideWithRounding(
       _roundsTowardPositiveInfinity(numerator, denominator)
           ? quotient + BigInt.one
           : quotient,
-    FixedPointRoundingMode.up =>
-      quotient + _roundingDirection(numerator, denominator),
-    FixedPointRoundingMode.round || FixedPointRoundingMode.halfUp =>
+    FixedPointRoundingMode.round =>
       (remainder.abs() * BigInt.two >= denominator.abs())
           ? quotient + _roundingDirection(numerator, denominator)
           : quotient,

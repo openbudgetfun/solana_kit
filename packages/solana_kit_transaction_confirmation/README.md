@@ -110,7 +110,7 @@ import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 
 Future<void> confirmTransaction(String signature) async {
-  final controller = AbortController();
+  final controller = CancellationTokenSource();
 
   // Create the signature confirmation factory.
   // This watches the RPC for signature status updates.
@@ -157,7 +157,7 @@ Future<void> confirmTransaction(String signature) async {
 
   // Wait for confirmation, racing against block height expiry.
   await waitForRecentTransactionConfirmation(
-    abortSignal: controller.signal,
+    abortSignal: controller.token,
     commitment: Commitment.confirmed,
     getBlockHeightExceedencePromise: getBlockHeightExceedence,
     getRecentSignatureConfirmationPromise: getRecentSignatureConfirmation,
@@ -184,7 +184,7 @@ Future<void> confirmNonceTransaction({
   required String nonceValue,
   required GetRecentSignatureConfirmationPromise getRecentSignatureConfirmation,
 }) async {
-  final controller = AbortController();
+  final controller = CancellationTokenSource();
 
   // Create the nonce invalidation factory.
   // This monitors a nonce account and rejects when its value changes,
@@ -211,7 +211,7 @@ Future<void> confirmNonceTransaction({
 
   // Wait for confirmation, racing against nonce invalidation.
   await waitForDurableNonceTransactionConfirmation(
-    abortSignal: controller.signal,
+    abortSignal: controller.token,
     commitment: Commitment.confirmed,
     getNonceInvalidationPromise: getNonceInvalidation,
     getRecentSignatureConfirmationPromise: getRecentSignatureConfirmation,
@@ -262,17 +262,17 @@ Future<void> confirmWithCustomStrategy({
   required String signature,
   required GetRecentSignatureConfirmationPromise confirmationFactory,
 }) async {
-  final controller = AbortController();
+  final controller = CancellationTokenSource();
 
   // Race signature confirmation against both a timeout and a custom strategy.
   await raceStrategies(
     signature,
     BaseTransactionConfirmationStrategyConfig(
-      abortSignal: controller.signal,
+      abortSignal: controller.token,
       commitment: Commitment.confirmed,
       getRecentSignatureConfirmationPromise: confirmationFactory,
     ),
-    ({required AbortSignal abortSignal}) => [
+    ({required CancellationToken abortSignal}) => [
       getTimeoutPromise(
         abortSignal: abortSignal,
         commitment: Commitment.confirmed,
@@ -294,11 +294,11 @@ import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 
 Future<void> main() async {
-  final controller = AbortController();
+  final controller = CancellationTokenSource();
 
   try {
     await getTimeoutPromise(
-      abortSignal: controller.signal,
+      abortSignal: controller.token,
       commitment: Commitment.confirmed,
     );
   } on TimeoutException {
@@ -353,9 +353,9 @@ Future<void> main() async {
 
 ### Type aliases
 
-| Type                                    | Description                                                                                                                                                       |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GetRecentSignatureConfirmationPromise` | Function type for signature confirmation: `Future<void> Function({required AbortSignal abortSignal, required Commitment commitment, required String signature})`. |
+| Type                                    | Description                                                                                                                                                             |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GetRecentSignatureConfirmationPromise` | Function type for signature confirmation: `Future<void> Function({required CancellationToken abortSignal, required Commitment commitment, required String signature})`. |
 
 ### Data classes
 

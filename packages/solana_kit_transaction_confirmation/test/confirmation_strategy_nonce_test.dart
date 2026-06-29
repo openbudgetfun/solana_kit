@@ -1,9 +1,6 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 import 'package:test/test.dart';
@@ -14,7 +11,7 @@ void main() {
     late void Function({required String nonceValue})?
     accountNotificationCallback;
     late Future<Never> Function({
-      required AbortSignal abortSignal,
+      required CancellationToken abortSignal,
       required Commitment commitment,
       required String expectedNonceValue,
       required String nonceAccountAddress,
@@ -60,7 +57,7 @@ void main() {
       final completer = Completer<String>();
       unawaited(
         getNonceInvalidationPromise(
-              abortSignal: AbortController().signal,
+              abortSignal: CancellationTokenSource().token,
               commitment: Commitment.finalized,
               expectedNonceValue: 'expected_nonce',
               nonceAccountAddress: 'nonce_address',
@@ -93,7 +90,7 @@ void main() {
 
       await expectLater(
         getNonceInvalidationPromise(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.finalized,
           expectedNonceValue: 'expected_nonce',
           nonceAccountAddress: 'nonce_address',
@@ -116,7 +113,7 @@ void main() {
 
       await expectLater(
         getNonceInvalidationPromise(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.finalized,
           expectedNonceValue: 'expected_nonce',
           nonceAccountAddress: 'nonce_address',
@@ -138,7 +135,7 @@ void main() {
       final completer = Completer<String>();
       unawaited(
         getNonceInvalidationPromise(
-              abortSignal: AbortController().signal,
+              abortSignal: CancellationTokenSource().token,
               commitment: Commitment.finalized,
               expectedNonceValue: 'expected_nonce',
               nonceAccountAddress: 'nonce_address',
@@ -175,7 +172,7 @@ void main() {
     test('fatals when the nonce value returned by the account subscription '
         'is different than the expected one', () async {
       final future = getNonceInvalidationPromise(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
         commitment: Commitment.finalized,
         expectedNonceValue: 'expected_nonce',
         nonceAccountAddress: 'nonce_address',
@@ -199,7 +196,7 @@ void main() {
     });
 
     test('aborts internal abort controller when caller aborts', () async {
-      AbortSignal? capturedAbortSignal;
+      CancellationToken? capturedCancellationToken;
 
       final fn = createNonceInvalidationPromiseFactory(
         NonceInvalidationConfig(
@@ -209,7 +206,7 @@ void main() {
                 required abortSignal,
                 required commitment,
               }) {
-                capturedAbortSignal = abortSignal;
+                capturedCancellationToken = abortSignal;
                 return Completer<NonceAccountInfo?>().future;
               },
           onAccountNotification:
@@ -225,10 +222,10 @@ void main() {
         ),
       );
 
-      final callerAbortController = AbortController();
+      final callerCancellationTokenSource = CancellationTokenSource();
       unawaited(
         fn(
-          abortSignal: callerAbortController.signal,
+          abortSignal: callerCancellationTokenSource.token,
           commitment: Commitment.finalized,
           expectedNonceValue: 'expected_nonce',
           nonceAccountAddress: 'nonce_address',
@@ -238,13 +235,13 @@ void main() {
       await Future<void>.delayed(Duration.zero);
       await Future<void>.delayed(Duration.zero);
 
-      expect(capturedAbortSignal, isNotNull);
-      expect(capturedAbortSignal!.isAborted, isFalse);
+      expect(capturedCancellationToken, isNotNull);
+      expect(capturedCancellationToken!.isCancelled, isFalse);
 
-      callerAbortController.abort('test');
+      callerCancellationTokenSource.cancel('test');
       await Future<void>.delayed(Duration.zero);
 
-      expect(capturedAbortSignal!.isAborted, isTrue);
+      expect(capturedCancellationToken!.isCancelled, isTrue);
     });
 
     test('passes commitment to the nonce account getter', () async {
@@ -276,7 +273,7 @@ void main() {
 
       try {
         await fn(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.confirmed,
           expectedNonceValue: 'expected_nonce',
           nonceAccountAddress: 'nonce_address',
@@ -314,7 +311,7 @@ void main() {
 
       await expectLater(
         fn(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.finalized,
           expectedNonceValue: 'expected_nonce',
           nonceAccountAddress: 'nonce_address',
@@ -362,7 +359,7 @@ void main() {
 
         unawaited(
           fn(
-            abortSignal: AbortController().signal,
+            abortSignal: CancellationTokenSource().token,
             commitment: Commitment.finalized,
             expectedNonceValue: 'expected_nonce',
             nonceAccountAddress: 'my_nonce_address',

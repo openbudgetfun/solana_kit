@@ -1,10 +1,8 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 /// Information about the current epoch.
 class EpochInfo {
@@ -37,7 +35,7 @@ class BlockHeightExceedenceConfig {
 
   /// Function to get epoch info from the RPC.
   final Future<EpochInfo> Function({
-    required AbortSignal abortSignal,
+    required CancellationToken abortSignal,
     Commitment? commitment,
   })
   getEpochInfo;
@@ -47,7 +45,7 @@ class BlockHeightExceedenceConfig {
   /// Should call the `onNotification` callback for each slot notification,
   /// and return a future that completes when the subscription ends.
   final Future<void> Function({
-    required AbortSignal abortSignal,
+    required CancellationToken abortSignal,
     required void Function(SlotNotification notification) onNotification,
   })
   onSlotNotification;
@@ -63,24 +61,24 @@ class BlockHeightExceedenceConfig {
 /// Throws [SolanaError] with [SolanaErrorCode.blockHeightExceeded] when the
 /// block height has been exceeded.
 Future<Never> Function({
-  required AbortSignal abortSignal,
+  required CancellationToken abortSignal,
   required BigInt lastValidBlockHeight,
   Commitment? commitment,
 })
 createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
   return ({
-    required AbortSignal abortSignal,
+    required CancellationToken abortSignal,
     required BigInt lastValidBlockHeight,
     Commitment? commitment,
   }) async {
-    if (abortSignal.isAborted) {
+    if (abortSignal.isCancelled) {
       throw StateError('The operation was aborted: ${abortSignal.reason}');
     }
 
-    final abortController = AbortController();
+    final abortController = CancellationTokenSource();
 
     abortSignal.future.then((_) {
-      abortController.abort(abortSignal.reason);
+      abortController.cancel(abortSignal.reason);
     }).ignore();
 
     Future<
@@ -88,7 +86,7 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
     >
     getBlockHeightAndDifference() async {
       final epochInfo = await config.getEpochInfo(
-        abortSignal: abortController.signal,
+        abortSignal: abortController.token,
         commitment: commitment,
       );
       return (
@@ -113,7 +111,7 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
       unawaited(
         config
             .onSlotNotification(
-              abortSignal: abortController.signal,
+              abortSignal: abortController.token,
               onNotification: (notification) {
                 slotNotificationCallback(notification);
               },
@@ -141,7 +139,7 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
 
       final initialInfo = await initialInfoCompleter.future;
 
-      if (abortSignal.isAborted) {
+      if (abortSignal.isCancelled) {
         throw StateError('The operation was aborted: ${abortSignal.reason}');
       }
 
@@ -194,7 +192,7 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
         return await exceedenceCompleter.future;
       }
 
-      if (abortSignal.isAborted) {
+      if (abortSignal.isCancelled) {
         throw StateError('The operation was aborted: ${abortSignal.reason}');
       }
 
@@ -203,7 +201,7 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
         'lastValidBlockHeight': lastValidBlockHeight,
       });
     } finally {
-      abortController.abort();
+      abortController.cancel();
     }
   };
 }

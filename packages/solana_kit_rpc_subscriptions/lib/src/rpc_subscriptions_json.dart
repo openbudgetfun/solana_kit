@@ -21,13 +21,14 @@ class _JsonSerializedChannel implements RpcSubscriptionsChannel {
   final RpcSubscriptionsChannel channel;
 
   @override
-  UnsubscribeFn on(String channelName, Subscriber<Object?> subscriber) {
-    if (channelName != 'message') {
-      return channel.on(channelName, subscriber);
-    }
-    return channel.on('message', (data) {
-      subscriber(jsonDecode(data! as String));
+  NotificationStreams get streams {
+    final decoded = channel.streams.notifications.map((data) {
+      return jsonDecode(data! as String);
     });
+    return NotificationStreams(
+      notifications: decoded,
+      errors: channel.streams.errors,
+    );
   }
 
   @override

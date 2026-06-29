@@ -6,54 +6,54 @@ import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_su
 import 'package:test/test.dart';
 
 void main() {
-  group('AbortController', () {
-    test('creates a signal that is not aborted', () {
-      final controller = AbortController();
-      expect(controller.signal.isAborted, isFalse);
-      expect(controller.signal.reason, isNull);
+  group('CancellationTokenSource', () {
+    test('creates a token that is not cancelled', () {
+      final source = CancellationTokenSource();
+      expect(source.token.isCancelled, isFalse);
+      expect(source.token.reason, isNull);
     });
 
-    test('abort sets isAborted to true', () {
-      final controller = AbortController()..abort();
-      expect(controller.signal.isAborted, isTrue);
+    test('cancel sets isCancelled to true', () {
+      final source = CancellationTokenSource()..cancel();
+      expect(source.token.isCancelled, isTrue);
     });
 
-    test('abort with reason sets the reason', () {
-      final controller = AbortController();
+    test('cancel with reason sets the reason', () {
+      final source = CancellationTokenSource();
       final reason = StateError('test');
-      controller.abort(reason);
-      expect(controller.signal.isAborted, isTrue);
-      expect(controller.signal.reason, same(reason));
+      source.cancel(reason);
+      expect(source.token.isCancelled, isTrue);
+      expect(source.token.reason, same(reason));
     });
 
-    test('abort without reason leaves reason as null', () {
-      final controller = AbortController()..abort();
-      expect(controller.signal.reason, isNull);
+    test('cancel without reason leaves reason as null', () {
+      final source = CancellationTokenSource()..cancel();
+      expect(source.token.reason, isNull);
     });
 
-    test('abort completes the signal future', () async {
-      final controller = AbortController();
+    test('cancel completes the token future', () async {
+      final source = CancellationTokenSource();
       var futureCompleted = false;
       unawaited(
-        controller.signal.future.then((_) {
+        source.token.future.then((_) {
           futureCompleted = true;
         }),
       );
-      controller.abort();
+      source.cancel();
       // Allow microtask to run.
       await Future<void>.delayed(Duration.zero);
       expect(futureCompleted, isTrue);
     });
 
-    test('calling abort multiple times is idempotent', () {
-      final controller = AbortController();
+    test('calling cancel multiple times is idempotent', () {
+      final source = CancellationTokenSource();
       final reason1 = StateError('first');
       final reason2 = StateError('second');
-      controller
-        ..abort(reason1)
-        ..abort(reason2);
-      expect(controller.signal.isAborted, isTrue);
-      expect(controller.signal.reason, same(reason1));
+      source
+        ..cancel(reason1)
+        ..cancel(reason2);
+      expect(source.token.isCancelled, isTrue);
+      expect(source.token.reason, same(reason1));
     });
   });
 
@@ -68,55 +68,55 @@ void main() {
     });
 
     test(
-      'getAbortableFuture returns original future without a signal',
+      'getAbortableFuture returns original future without a token',
       () async {
         await expectLater(getAbortableFuture(Future.value(42)), completion(42));
       },
     );
 
     test('getAbortableFuture resolves when the input future wins', () async {
-      final controller = AbortController();
+      final source = CancellationTokenSource();
 
       await expectLater(
-        getAbortableFuture(Future.value('done'), controller.signal),
+        getAbortableFuture(Future.value('done'), source.token),
         completion('done'),
       );
     });
 
     test(
-      'getAbortableFuture rejects when already aborted without reason',
+      'getAbortableFuture rejects when already cancelled without reason',
       () async {
-        final controller = AbortController()..abort();
+        final source = CancellationTokenSource()..cancel();
 
         await expectLater(
           getAbortableFuture(
             Future<void>.delayed(const Duration(days: 1)),
-            controller.signal,
+            source.token,
           ),
           throwsA(isA<AbortError>()),
         );
       },
     );
 
-    test('getAbortableFuture rejects with a custom abort reason', () async {
-      final controller = AbortController();
+    test('getAbortableFuture rejects with a custom cancel reason', () async {
+      final source = CancellationTokenSource();
       final reason = StateError('cancelled');
       final future = getAbortableFuture(
         Future<void>.delayed(const Duration(days: 1)),
-        controller.signal,
+        source.token,
       );
 
-      controller.abort(reason);
+      source.cancel(reason);
 
       await expectLater(future, throwsA(same(reason)));
     });
 
     test('getAbortableFuture forwards input errors', () async {
-      final controller = AbortController();
+      final source = CancellationTokenSource();
       final error = StateError('boom');
 
       await expectLater(
-        getAbortableFuture(Future<void>.error(error), controller.signal),
+        getAbortableFuture(Future<void>.error(error), source.token),
         throwsA(same(error)),
       );
     });
@@ -143,32 +143,32 @@ void main() {
     });
 
     test('stores provided values', () {
-      final signal = AbortController().signal;
+      final token = CancellationTokenSource().token;
       final url = Uri.parse('wss://example.com');
       final config = WebSocketChannelConfig(
         url: url,
         allowInsecureWs: true,
         allowPrivateHosts: true,
         sendBufferHighWatermark: 42069,
-        signal: signal,
+        signal: token,
       );
       expect(config.url, url);
       expect(config.allowInsecureWs, isTrue);
       expect(config.sendBufferHighWatermark, 42069);
-      expect(config.signal, same(signal));
+      expect(config.signal, same(token));
     });
   });
 
   group('createWebSocketChannel', () {
-    test('throws when the signal is already aborted', () async {
-      final controller = AbortController()..abort();
+    test('throws when the token is already cancelled', () async {
+      final source = CancellationTokenSource()..cancel();
       await expectLater(
         createWebSocketChannel(
           WebSocketChannelConfig(
             url: Uri.parse('ws://localhost:0'),
             allowInsecureWs: true,
             allowPrivateHosts: true,
-            signal: controller.signal,
+            signal: source.token,
           ),
         ),
         throwsA(
@@ -181,18 +181,18 @@ void main() {
       );
     });
 
-    test('throws abort reason when signal is already aborted with '
+    test('throws cancel reason when token is already cancelled with '
         'an Exception reason', () async {
-      final controller = AbortController();
+      final source = CancellationTokenSource();
       final reason = StateError('user cancelled');
-      controller.abort(reason);
+      source.cancel(reason);
       await expectLater(
         createWebSocketChannel(
           WebSocketChannelConfig(
             url: Uri.parse('ws://localhost:0'),
             allowInsecureWs: true,
             allowPrivateHosts: true,
-            signal: controller.signal,
+            signal: source.token,
           ),
         ),
         throwsA(same(reason)),
@@ -200,16 +200,16 @@ void main() {
     });
 
     test(
-      'uses a SolanaError when already aborted with a non-error reason',
+      'uses a SolanaError when already cancelled with a non-error reason',
       () async {
-        final controller = AbortController()..abort('cancelled');
+        final source = CancellationTokenSource()..cancel('cancelled');
         await expectLater(
           createWebSocketChannel(
             WebSocketChannelConfig(
               url: Uri.parse('ws://localhost:0'),
               allowInsecureWs: true,
               allowPrivateHosts: true,
-              signal: controller.signal,
+              signal: source.token,
             ),
           ),
           throwsA(
@@ -315,18 +315,18 @@ void main() {
     });
 
     test('publishes messages to message listeners', () async {
-      final controller = AbortController();
+      final source = CancellationTokenSource();
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
           allowInsecureWs: true,
           allowPrivateHosts: true,
-          signal: controller.signal,
+          signal: source.token,
         ),
       );
 
       final messages = <Object?>[];
-      channel.on('message', messages.add);
+      final subscription = channel.streams.notifications.listen(messages.add);
 
       // Wait for server socket to be ready.
       await _waitFor(() => serverSockets.isNotEmpty);
@@ -336,25 +336,25 @@ void main() {
       await _waitFor(() => messages.isNotEmpty);
       expect(messages, ['hello']);
 
-      controller.abort();
+      await subscription.cancel();
+      source.cancel();
     });
 
     test('publishes to multiple message listeners', () async {
-      final controller = AbortController();
+      final source = CancellationTokenSource();
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
           allowInsecureWs: true,
           allowPrivateHosts: true,
-          signal: controller.signal,
+          signal: source.token,
         ),
       );
 
       final messagesA = <Object?>[];
       final messagesB = <Object?>[];
-      channel
-        ..on('message', messagesA.add)
-        ..on('message', messagesB.add);
+      final subA = channel.streams.notifications.listen(messagesA.add);
+      final subB = channel.streams.notifications.listen(messagesB.add);
 
       await _waitFor(() => serverSockets.isNotEmpty);
       serverSockets.first.add('hello');
@@ -363,24 +363,26 @@ void main() {
       expect(messagesA, ['hello']);
       expect(messagesB, ['hello']);
 
-      controller.abort();
+      await subA.cancel();
+      await subB.cancel();
+      source.cancel();
     });
 
-    test('does not publish messages after abort', () async {
-      final controller = AbortController();
+    test('does not publish messages after cancel', () async {
+      final source = CancellationTokenSource();
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
           allowInsecureWs: true,
           allowPrivateHosts: true,
-          signal: controller.signal,
+          signal: source.token,
         ),
       );
 
       final messages = <Object?>[];
-      channel.on('message', messages.add);
+      final subscription = channel.streams.notifications.listen(messages.add);
 
-      controller.abort();
+      source.cancel();
 
       await _waitFor(() => serverSockets.isNotEmpty);
       serverSockets.first.add('should not arrive');
@@ -388,16 +390,17 @@ void main() {
       // Give some time for the message to potentially arrive.
       await Future<void>.delayed(const Duration(milliseconds: 50));
       expect(messages, isEmpty);
+      await subscription.cancel();
     });
 
     test('sends a message to the websocket', () async {
-      final controller = AbortController();
+      final source = CancellationTokenSource();
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
           allowInsecureWs: true,
           allowPrivateHosts: true,
-          signal: controller.signal,
+          signal: source.token,
         ),
       );
 
@@ -411,24 +414,24 @@ void main() {
       await _waitFor(() => serverMessages.isNotEmpty);
       expect(serverMessages, ['outgoing message']);
 
-      controller.abort();
+      source.cancel();
     });
 
     test(
       'publishes errors when connection closes with non-1000 code',
       () async {
-        final controller = AbortController();
+        final source = CancellationTokenSource();
         final channel = await createWebSocketChannel(
           WebSocketChannelConfig(
             url: serverUrl,
             allowInsecureWs: true,
             allowPrivateHosts: true,
-            signal: controller.signal,
+            signal: source.token,
           ),
         );
 
         final errors = <Object?>[];
-        channel.on('error', errors.add);
+        final subscription = channel.streams.errors.listen(errors.add);
 
         await _waitFor(() => serverSockets.isNotEmpty);
 
@@ -446,24 +449,25 @@ void main() {
             SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed,
           ),
         );
+        await subscription.cancel();
       },
     );
 
     test(
       'does not publish errors when connection closes with code 1000',
       () async {
-        final controller = AbortController();
+        final source = CancellationTokenSource();
         final channel = await createWebSocketChannel(
           WebSocketChannelConfig(
             url: serverUrl,
             allowInsecureWs: true,
             allowPrivateHosts: true,
-            signal: controller.signal,
+            signal: source.token,
           ),
         );
 
         final errors = <Object?>[];
-        channel.on('error', errors.add);
+        final subscription = channel.streams.errors.listen(errors.add);
 
         await _waitFor(() => serverSockets.isNotEmpty);
 
@@ -473,24 +477,25 @@ void main() {
         // Give time for events to propagate.
         await Future<void>.delayed(const Duration(milliseconds: 50));
         expect(errors, isEmpty);
+        await subscription.cancel();
       },
     );
 
-    test('does not publish errors after abort', () async {
-      final controller = AbortController();
+    test('does not publish errors after cancel', () async {
+      final source = CancellationTokenSource();
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
           allowInsecureWs: true,
           allowPrivateHosts: true,
-          signal: controller.signal,
+          signal: source.token,
         ),
       );
 
       final errors = <Object?>[];
-      channel.on('error', errors.add);
+      final subscription = channel.streams.errors.listen(errors.add);
 
-      controller.abort();
+      source.cancel();
 
       await _waitFor(() => serverSockets.isNotEmpty);
       // Note: 1006 is reserved and cannot be sent via close(), use 1011.
@@ -499,16 +504,17 @@ void main() {
       // Give time for events to propagate.
       await Future<void>.delayed(const Duration(milliseconds: 50));
       expect(errors, isEmpty);
+      await subscription.cancel();
     });
 
     test('throws when sending on a closed channel', () async {
-      final controller = AbortController();
+      final source = CancellationTokenSource();
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
           allowInsecureWs: true,
           allowPrivateHosts: true,
-          signal: controller.signal,
+          signal: source.token,
         ),
       );
 
@@ -530,14 +536,14 @@ void main() {
       );
     });
 
-    test('abort closes the websocket connection', () async {
-      final controller = AbortController();
+    test('cancel closes the websocket connection', () async {
+      final source = CancellationTokenSource();
       await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
           allowInsecureWs: true,
           allowPrivateHosts: true,
-          signal: controller.signal,
+          signal: source.token,
         ),
       );
 
@@ -550,7 +556,7 @@ void main() {
       // fires when the underlying connection closes.
       serverWs.listen(null, onDone: closeCompleter.complete);
 
-      controller.abort();
+      source.cancel();
 
       // The server socket should detect the closure.
       await closeCompleter.future.timeout(const Duration(seconds: 5));
@@ -558,18 +564,18 @@ void main() {
     });
 
     test('unsubscribing stops message delivery', () async {
-      final controller = AbortController();
+      final source = CancellationTokenSource();
       final channel = await createWebSocketChannel(
         WebSocketChannelConfig(
           url: serverUrl,
           allowInsecureWs: true,
           allowPrivateHosts: true,
-          signal: controller.signal,
+          signal: source.token,
         ),
       );
 
       final messages = <Object?>[];
-      final unsubscribe = channel.on('message', messages.add);
+      final subscription = channel.streams.notifications.listen(messages.add);
 
       await _waitFor(() => serverSockets.isNotEmpty);
 
@@ -577,13 +583,13 @@ void main() {
       await _waitFor(() => messages.isNotEmpty);
       expect(messages, ['first']);
 
-      unsubscribe();
+      await subscription.cancel();
 
       serverSockets.first.add('second');
       await Future<void>.delayed(const Duration(milliseconds: 50));
       expect(messages, ['first']);
 
-      controller.abort();
+      source.cancel();
     });
   });
 

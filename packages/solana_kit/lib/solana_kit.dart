@@ -123,7 +123,6 @@ export 'package:solana_kit_addresses/solana_kit_addresses.dart';
 export 'package:solana_kit_codecs/solana_kit_codecs.dart';
 export 'package:solana_kit_errors/solana_kit_errors.dart';
 export 'package:solana_kit_fast_stable_stringify/solana_kit_fast_stable_stringify.dart';
-export 'package:solana_kit_functional/solana_kit_functional.dart' hide Pipe;
 export 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 export 'package:solana_kit_instructions/solana_kit_instructions.dart';
 export 'package:solana_kit_keys/solana_kit_keys.dart';

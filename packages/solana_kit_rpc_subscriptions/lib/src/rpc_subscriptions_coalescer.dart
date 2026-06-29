@@ -1,20 +1,17 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:solana_kit_fast_stable_stringify/solana_kit_fast_stable_stringify.dart';
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_transport.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 class _CacheEntry {
   _CacheEntry({
-    required this.abortController,
-    required this.dataPublisherFuture,
+    required this.abortSource,
+    required this.streamsFuture,
   });
 
-  final AbortController abortController;
-  final Future<DataPublisher> dataPublisherFuture;
+  final CancellationTokenSource abortSource;
+  final Future<NotificationStreams> streamsFuture;
   int numSubscribers = 0;
 }
 
@@ -22,8 +19,8 @@ class _CacheEntry {
 ///
 /// When multiple callers subscribe to the same method with the same params,
 /// only one subscription is created on the server. All callers share the same
-/// [DataPublisher]. When the last caller unsubscribes (by aborting their
-/// signal), the server subscription is cancelled.
+/// [NotificationStreams]. When the last caller unsubscribes (by cancelling their
+/// token), the server subscription is cancelled.
 ///
 /// The determination of whether a subscription is the same as another is based
 /// on a hash of the method name and parameters using
@@ -43,25 +40,23 @@ getRpcSubscriptionsTransportWithSubscriptionCoalescing(
 
     var cachedEntry = cache[subscriptionConfigurationHash];
     if (cachedEntry == null) {
-      final abortController = AbortController();
-      final dataPublisherFuture = transport(
+      final abortSource = CancellationTokenSource();
+      final streamsFuture = transport(
         RpcSubscriptionsTransportConfig(
           execute: config.execute,
           request: config.request,
-          signal: abortController.signal,
+          signal: abortSource.token,
         ),
       );
 
-      // Listen for errors on the data publisher to invalidate the cache.
-      dataPublisherFuture
-          .then((dataPublisher) {
-            final errorSubscription = dataPublisher
-                .stream<Object?>('error')
-                .listen((_) {
-                  cache.remove(subscriptionConfigurationHash);
-                  abortController.abort();
-                });
-            abortController.signal.future.then((_) {
+      // Listen for errors on the streams to invalidate the cache.
+      streamsFuture
+          .then((streams) {
+            final errorSubscription = streams.errors.listen((_) {
+              cache.remove(subscriptionConfigurationHash);
+              abortSource.cancel();
+            });
+            abortSource.token.future.then((_) {
               unawaited(errorSubscription.cancel());
             }).ignore();
           })
@@ -71,15 +66,15 @@ getRpcSubscriptionsTransportWithSubscriptionCoalescing(
           .ignore();
 
       cachedEntry = _CacheEntry(
-        abortController: abortController,
-        dataPublisherFuture: dataPublisherFuture,
+        abortSource: abortSource,
+        streamsFuture: streamsFuture,
       );
       cache[subscriptionConfigurationHash] = cachedEntry;
     }
 
     cachedEntry.numSubscribers++;
 
-    // Listen for the caller's abort signal.
+    // Listen for the caller's cancellation token.
     final entry = cachedEntry;
 
     void handleAbort() {
@@ -90,18 +85,18 @@ getRpcSubscriptionsTransportWithSubscriptionCoalescing(
           if (entry.numSubscribers == 0 &&
               cache[subscriptionConfigurationHash] == entry) {
             cache.remove(subscriptionConfigurationHash);
-            entry.abortController.abort();
+            entry.abortSource.cancel();
           }
         });
       }
     }
 
-    if (signal.isAborted) {
+    if (signal.isCancelled) {
       handleAbort();
     } else {
       signal.future.then((_) => handleAbort()).ignore();
     }
 
-    return entry.dataPublisherFuture;
+    return entry.streamsFuture;
   };
 }

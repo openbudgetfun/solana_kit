@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+import 'dart:async';
 
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
 import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
@@ -12,11 +12,9 @@ final BigInt _maxSafeIntegerPlusOne =
 void main() {
   group('getRpcSubscriptionsChannelWithBigIntJsonSerialization', () {
     late _MockChannel mockChannel;
-    late WritableDataPublisher dataPublisher;
 
     setUp(() {
-      dataPublisher = createDataPublisher();
-      mockChannel = _MockChannel(dataPublisher: dataPublisher);
+      mockChannel = _MockChannel();
     });
 
     test(
@@ -40,29 +38,42 @@ void main() {
       );
 
       Object? receivedMessage;
-      channel.on('message', (data) {
+      final subscription = channel.streams.notifications.listen((data) {
         receivedMessage = data;
       });
 
-      dataPublisher.publish('message', '{"value":$_maxSafeIntegerPlusOne}');
+      mockChannel.publishMessage('{"value":$_maxSafeIntegerPlusOne}');
 
       expect(receivedMessage, isA<Map<String, Object?>>());
       final map = receivedMessage! as Map<String, Object?>;
       expect(map['value'], equals(_maxSafeIntegerPlusOne));
+      subscription.cancel();
     });
   });
 }
 
 class _MockChannel implements RpcSubscriptionsChannel {
-  _MockChannel({required this.dataPublisher});
+  _MockChannel()
+    : _messagesController = StreamController<Object?>.broadcast(sync: true),
+      _errorsController = StreamController<Object?>.broadcast(sync: true);
 
-  final WritableDataPublisher dataPublisher;
+  final StreamController<Object?> _messagesController;
+  final StreamController<Object?> _errorsController;
   Object? lastSentMessage;
 
-  @override
-  UnsubscribeFn on(String channelName, Subscriber<Object?> subscriber) {
-    return dataPublisher.on(channelName, subscriber);
+  void publishMessage(Object? data) {
+    if (!_messagesController.isClosed) _messagesController.add(data);
   }
+
+  void publishError(Object? error) {
+    if (!_errorsController.isClosed) _errorsController.add(error);
+  }
+
+  @override
+  NotificationStreams get streams => NotificationStreams(
+    notifications: _messagesController.stream,
+    errors: _errorsController.stream,
+  );
 
   @override
   Future<void> send(Object message) async {

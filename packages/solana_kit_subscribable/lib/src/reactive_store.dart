@@ -77,17 +77,3 @@ ReactiveStore<T> createReactiveStoreFromStreams<T>({
 }) {
   return ReactiveStore<T>._(dataStream: dataStream, errorStream: errorStream);
 }
-
-/// Creates a [ReactiveStore] backed by a [DataPublisher].
-///
-/// Prefer [createReactiveStoreFromStreams] for stream-native code.
-ReactiveStore<T> createReactiveStoreFromDataPublisher<T>({
-  required DataPublisher dataPublisher,
-  required String dataChannelName,
-  required String errorChannelName,
-}) {
-  return createReactiveStoreFromStreams<T>(
-    dataStream: dataPublisher.stream<T>(dataChannelName),
-    errorStream: dataPublisher.stream<Object?>(errorChannelName),
-  );
-}

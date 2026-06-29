@@ -4,16 +4,18 @@
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 void main() {
-  final publisher = createDataPublisher();
+  final channels = ChannelStreamController();
 
-  final unsubscribe = publisher.on('slot', (data) {
+  final subscription = channels.stream<int>('slot').listen((data) {
     print('Received slot update: $data');
   });
 
-  publisher
-    ..publish('slot', 100)
-    ..publish('slot', 101);
+  channels
+    ..add('slot', 100)
+    ..add('slot', 101);
 
-  unsubscribe();
-  publisher.publish('slot', 102);
+  subscription.cancel();
+  channels
+    ..add('slot', 102)
+    ..close();
 }

@@ -1,4 +1,4 @@
-import 'package:solana_kit_functional/solana_kit_functional.dart';
+import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:test/test.dart';
 
 void main() {

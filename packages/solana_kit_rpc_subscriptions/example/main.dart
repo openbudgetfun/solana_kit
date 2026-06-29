@@ -1,8 +1,7 @@
-// ignore_for_file: deprecated_member_use
-
 // Examples intentionally print CLI output for demonstration purposes.
 // ignore_for_file: avoid_print
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
@@ -10,34 +9,43 @@ import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_su
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 Future<void> main() async {
-  final publisher = createDataPublisher();
-  final baseChannel = _MockChannel(dataPublisher: publisher);
+  final baseChannel = _MockChannel();
   final jsonChannel = getRpcSubscriptionsChannelWithJsonSerialization(
     baseChannel,
   );
 
   Object? received;
-  jsonChannel.on('message', (data) {
+  final subscription = jsonChannel.streams.notifications.listen((data) {
     received = data;
   });
 
   await jsonChannel.send('hello');
-  publisher.publish('message', jsonEncode('world'));
+  baseChannel.publishMessage(jsonEncode('world'));
 
   print('Outbound message: ${baseChannel.lastSentMessage}');
   print('Inbound message: $received');
+
+  await subscription.cancel();
 }
 
 class _MockChannel implements RpcSubscriptionsChannel {
-  _MockChannel({required this.dataPublisher});
+  _MockChannel()
+    : _messagesController = StreamController<Object?>.broadcast(sync: true),
+      _errorsController = StreamController<Object?>.broadcast(sync: true);
 
-  final WritableDataPublisher dataPublisher;
+  final StreamController<Object?> _messagesController;
+  final StreamController<Object?> _errorsController;
   Object? lastSentMessage;
 
-  @override
-  UnsubscribeFn on(String channelName, Subscriber<Object?> subscriber) {
-    return dataPublisher.on(channelName, subscriber);
+  void publishMessage(Object? data) {
+    if (!_messagesController.isClosed) _messagesController.add(data);
   }
+
+  @override
+  NotificationStreams get streams => NotificationStreams(
+    notifications: _messagesController.stream,
+    errors: _errorsController.stream,
+  );
 
   @override
   Future<void> send(Object message) async {

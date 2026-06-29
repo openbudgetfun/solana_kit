@@ -1,9 +1,6 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:fake_async/fake_async.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 import 'package:test/test.dart';
@@ -14,11 +11,11 @@ void main() {
       fakeAsync((async) {
         var isCompleted = false;
         Object? caughtError;
-        final abortController = AbortController();
+        final abortController = CancellationTokenSource();
 
         unawaited(
           getTimeoutPromise(
-            abortSignal: abortController.signal,
+            abortSignal: abortController.token,
             commitment: Commitment.processed,
           ).then<void>(
             (_) {
@@ -39,18 +36,18 @@ void main() {
         async.elapse(const Duration(milliseconds: 1));
         expect(caughtError, isNotNull);
 
-        abortController.abort();
+        abortController.cancel();
       });
     });
 
     test('pends for 60 seconds when the commitment is confirmed', () {
       fakeAsync((async) {
         Object? caughtError;
-        final abortController = AbortController();
+        final abortController = CancellationTokenSource();
 
         unawaited(
           getTimeoutPromise(
-            abortSignal: abortController.signal,
+            abortSignal: abortController.token,
             commitment: Commitment.confirmed,
           ).then<void>(
             (_) {},
@@ -68,18 +65,18 @@ void main() {
         async.elapse(const Duration(milliseconds: 1));
         expect(caughtError, isNotNull);
 
-        abortController.abort();
+        abortController.cancel();
       });
     });
 
     test('pends for 60 seconds when the commitment is finalized', () {
       fakeAsync((async) {
         Object? caughtError;
-        final abortController = AbortController();
+        final abortController = CancellationTokenSource();
 
         unawaited(
           getTimeoutPromise(
-            abortSignal: abortController.signal,
+            abortSignal: abortController.token,
             commitment: Commitment.finalized,
           ).then<void>(
             (_) {},
@@ -97,18 +94,18 @@ void main() {
         async.elapse(const Duration(milliseconds: 1));
         expect(caughtError, isNotNull);
 
-        abortController.abort();
+        abortController.cancel();
       });
     });
 
     test('throws a StateError when aborted before the timeout', () {
       fakeAsync((async) {
         Object? caughtError;
-        final abortController = AbortController();
+        final abortController = CancellationTokenSource();
 
         unawaited(
           getTimeoutPromise(
-            abortSignal: abortController.signal,
+            abortSignal: abortController.token,
             commitment: Commitment.finalized,
           ).then<void>(
             (_) {},
@@ -118,7 +115,7 @@ void main() {
           ),
         );
 
-        abortController.abort('test abort');
+        abortController.cancel('test abort');
         async.elapse(Duration.zero);
 
         expect(caughtError, isA<StateError>());
@@ -130,11 +127,11 @@ void main() {
     });
 
     test('throws immediately when abortSignal is already aborted', () {
-      final abortController = AbortController()..abort('pre-abort');
+      final abortController = CancellationTokenSource()..cancel('pre-abort');
 
       expect(
         () => getTimeoutPromise(
-          abortSignal: abortController.signal,
+          abortSignal: abortController.token,
           commitment: Commitment.processed,
         ),
         throwsA(

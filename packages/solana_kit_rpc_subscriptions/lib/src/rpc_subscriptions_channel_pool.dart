@@ -1,11 +1,8 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_channel_pool_internal.dart';
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_transport.dart';
 import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
-import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 /// Wraps a channel creator to pool channels.
 ///
@@ -21,8 +18,8 @@ import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 /// 4. Once all channels carry the number of subscribers specified by
 ///    [maxSubscriptionsPerChannel], new channels in excess of [minChannels]
 ///    will be created, returned, and added to the pool.
-/// 5. A channel will be destroyed once all of its subscribers' abort signals
-///    fire.
+/// 5. A channel will be destroyed once all of its subscribers' cancellation
+///    tokens fire.
 RpcSubscriptionsChannelCreator getChannelPoolingChannelCreator(
   RpcSubscriptionsChannelCreator createChannel, {
   required int maxSubscriptionsPerChannel,
@@ -59,7 +56,7 @@ RpcSubscriptionsChannelCreator getChannelPoolingChannelCreator(
     pool.freeChannelIndex = mostFreePoolIndex ?? -1;
   }
 
-  return ({required AbortSignal abortSignal}) {
+  return ({required CancellationToken abortSignal}) {
     late ChannelPoolEntry poolEntry;
 
     void destroyPoolEntry() {
@@ -72,19 +69,17 @@ RpcSubscriptionsChannelCreator getChannelPoolingChannelCreator(
     }
 
     if (pool.freeChannelIndex == -1) {
-      final abortController = AbortController();
+      final abortSource = CancellationTokenSource();
       final newChannelFuture = createChannel(
-        abortSignal: abortController.signal,
+        abortSignal: abortSource.token,
       );
 
       newChannelFuture
           .then((newChannel) {
-            final errorSubscription = newChannel
-                .stream<Object?>('error')
-                .listen((_) {
-                  destroyPoolEntry();
-                });
-            abortController.signal.future.then((_) {
+            final errorSubscription = newChannel.streams.errors.listen((_) {
+              destroyPoolEntry();
+            });
+            abortSource.token.future.then((_) {
               unawaited(errorSubscription.cancel());
             }).ignore();
           })
@@ -95,7 +90,7 @@ RpcSubscriptionsChannelCreator getChannelPoolingChannelCreator(
 
       poolEntry = ChannelPoolEntry(
         channel: newChannelFuture,
-        dispose: abortController.abort,
+        dispose: abortSource.cancel,
       );
       pool.entries.add(poolEntry);
     } else {

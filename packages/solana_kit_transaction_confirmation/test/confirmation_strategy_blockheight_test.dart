@@ -1,9 +1,6 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 import 'package:test/test.dart';
@@ -13,7 +10,7 @@ void main() {
     late List<Completer<EpochInfo>> epochInfoCompleters;
     late void Function(SlotNotification notification)? slotCallback;
     late Future<Never> Function({
-      required AbortSignal abortSignal,
+      required CancellationToken abortSignal,
       required BigInt lastValidBlockHeight,
       Commitment? commitment,
     })
@@ -50,7 +47,7 @@ void main() {
       () async {
         epochInfoCompleters.clear();
         final future = getBlockHeightExceedencePromise(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           lastValidBlockHeight: BigInt.from(100),
         );
 
@@ -78,7 +75,7 @@ void main() {
     test('continues to pend when the block height in the initial fetch '
         'is equal to the last valid block height', () async {
       final future = getBlockHeightExceedencePromise(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
         lastValidBlockHeight: BigInt.from(100),
       );
 
@@ -106,7 +103,7 @@ void main() {
     test('throws when the slot at which the block height is expected to '
         'be exceeded is reached', () async {
       final future = getBlockHeightExceedencePromise(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
         lastValidBlockHeight: BigInt.from(100),
       );
 
@@ -154,7 +151,7 @@ void main() {
     test('continues to pend when the recheck shows block height has not '
         'actually exceeded (difference grew)', () async {
       final future = getBlockHeightExceedencePromise(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
         lastValidBlockHeight: BigInt.from(100),
       );
 
@@ -199,11 +196,11 @@ void main() {
     });
 
     test('throws if started aborted', () async {
-      final abortController = AbortController()..abort();
+      final abortController = CancellationTokenSource()..cancel();
 
       await expectLater(
         getBlockHeightExceedencePromise(
-          abortSignal: abortController.signal,
+          abortSignal: abortController.token,
           lastValidBlockHeight: BigInt.from(100),
         ),
         throwsA(
@@ -219,12 +216,12 @@ void main() {
     test(
       'throws if aborted after initial info fetch when block height exceeded',
       () async {
-        final abortController = AbortController();
+        final abortController = CancellationTokenSource();
 
         final fn = createBlockHeightExceedencePromiseFactory(
           BlockHeightExceedenceConfig(
             getEpochInfo: ({required abortSignal, commitment}) async {
-              if (abortSignal.isAborted) {
+              if (abortSignal.isCancelled) {
                 throw StateError('aborted: ${abortSignal.reason}');
               }
               return EpochInfo(
@@ -244,11 +241,11 @@ void main() {
         );
 
         // Abort immediately so the second check fires.
-        abortController.abort('test abort after fetch');
+        abortController.cancel('test abort after fetch');
 
         await expectLater(
           fn(
-            abortSignal: abortController.signal,
+            abortSignal: abortController.token,
             lastValidBlockHeight: BigInt.from(100),
           ),
           throwsA(
@@ -263,7 +260,7 @@ void main() {
     );
 
     test('throws if aborted after block height processing completes', () async {
-      final abortController = AbortController();
+      final abortController = CancellationTokenSource();
 
       final fn = createBlockHeightExceedencePromiseFactory(
         BlockHeightExceedenceConfig(
@@ -286,11 +283,11 @@ void main() {
       );
 
       // Abort immediately.
-      abortController.abort('test abort after block height');
+      abortController.cancel('test abort after block height');
 
       await expectLater(
         fn(
-          abortSignal: abortController.signal,
+          abortSignal: abortController.token,
           lastValidBlockHeight: BigInt.from(100),
         ),
         throwsA(
@@ -305,7 +302,7 @@ void main() {
 
     test('throws errors thrown from the epoch info fetcher', () async {
       final future = getBlockHeightExceedencePromise(
-        abortSignal: AbortController().signal,
+        abortSignal: CancellationTokenSource().token,
         lastValidBlockHeight: BigInt.from(100),
       );
 
@@ -342,7 +339,7 @@ void main() {
 
       await expectLater(
         fn(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           lastValidBlockHeight: BigInt.from(100),
         ),
         throwsA(
@@ -355,7 +352,7 @@ void main() {
       'throws when the recheck after a slot notification fails with an error',
       () async {
         final future = getBlockHeightExceedencePromise(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           lastValidBlockHeight: BigInt.from(100),
         );
 
@@ -396,11 +393,11 @@ void main() {
     test(
       'aborts after initial fetch when block height not yet exceeded',
       () async {
-        final abortController = AbortController()..abort('pre-abort');
+        final abortController = CancellationTokenSource()..cancel('pre-abort');
 
         await expectLater(
           getBlockHeightExceedencePromise(
-            abortSignal: abortController.signal,
+            abortSignal: abortController.token,
             lastValidBlockHeight: BigInt.from(100),
           ),
           throwsA(
@@ -439,7 +436,7 @@ void main() {
 
       try {
         await fn(
-          abortSignal: AbortController().signal,
+          abortSignal: CancellationTokenSource().token,
           commitment: Commitment.confirmed,
           lastValidBlockHeight: BigInt.from(100),
         );
@@ -451,13 +448,13 @@ void main() {
     });
 
     test('aborts internal abort controller when caller aborts', () async {
-      AbortSignal? capturedAbortSignal;
-      final callerAbortController = AbortController();
+      CancellationToken? capturedCancellationToken;
+      final callerCancellationTokenSource = CancellationTokenSource();
 
       final fn = createBlockHeightExceedencePromiseFactory(
         BlockHeightExceedenceConfig(
           getEpochInfo: ({required abortSignal, commitment}) async {
-            capturedAbortSignal = abortSignal;
+            capturedCancellationToken = abortSignal;
             // Never complete - keep waiting.
             await Completer<EpochInfo>().future;
             return EpochInfo(
@@ -478,20 +475,20 @@ void main() {
 
       unawaited(
         fn(
-          abortSignal: callerAbortController.signal,
+          abortSignal: callerCancellationTokenSource.token,
           lastValidBlockHeight: BigInt.from(100),
         ).then<void>((_) {}).catchError((_) {}),
       );
 
       await Future<void>.delayed(Duration.zero);
 
-      expect(capturedAbortSignal, isNotNull);
-      expect(capturedAbortSignal!.isAborted, isFalse);
+      expect(capturedCancellationToken, isNotNull);
+      expect(capturedCancellationToken!.isCancelled, isFalse);
 
-      callerAbortController.abort('test');
+      callerCancellationTokenSource.cancel('test');
       await Future<void>.delayed(Duration.zero);
 
-      expect(capturedAbortSignal!.isAborted, isTrue);
+      expect(capturedCancellationToken!.isCancelled, isTrue);
     });
   });
 }

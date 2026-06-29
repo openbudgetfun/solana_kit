@@ -1,10 +1,7 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
-
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:solana_kit_transaction_confirmation/src/confirmation_strategy_racer.dart';
 
 /// Waits for a transaction using a durable nonce to confirm.
@@ -23,10 +20,10 @@ import 'package:solana_kit_transaction_confirmation/src/confirmation_strategy_ra
 /// [nonceValue] is the expected nonce value.
 /// [signature] is the transaction signature to confirm.
 Future<void> waitForDurableNonceTransactionConfirmation({
-  required AbortSignal abortSignal,
+  required CancellationToken abortSignal,
   required Commitment commitment,
   required Future<Never> Function({
-    required AbortSignal abortSignal,
+    required CancellationToken abortSignal,
     required Commitment commitment,
     required String expectedNonceValue,
     required String nonceAccountAddress,
@@ -74,10 +71,10 @@ Future<void> waitForDurableNonceTransactionConfirmation({
 /// is still valid.
 /// [signature] is the transaction signature to confirm.
 Future<void> waitForRecentTransactionConfirmation({
-  required AbortSignal abortSignal,
+  required CancellationToken abortSignal,
   required Commitment commitment,
   required Future<Never> Function({
-    required AbortSignal abortSignal,
+    required CancellationToken abortSignal,
     required BigInt lastValidBlockHeight,
     Commitment? commitment,
   })
@@ -118,10 +115,10 @@ Future<void> waitForRecentTransactionConfirmation({
 /// the signature reaches the target commitment.
 /// [signature] is the transaction signature to confirm.
 Future<void> waitForRecentTransactionConfirmationUntilTimeout({
-  required AbortSignal abortSignal,
+  required CancellationToken abortSignal,
   required Commitment commitment,
   required Future<Never> Function({
-    required AbortSignal abortSignal,
+    required CancellationToken abortSignal,
     required Commitment commitment,
   })
   getTimeoutPromise,

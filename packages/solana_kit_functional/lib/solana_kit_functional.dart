@@ -1,9 +1,7 @@
-/// Pipe and compose utilities for the Solana Kit Dart SDK.
+/// Deprecated compatibility package.
 ///
-/// Deprecated: the `Pipe` extension now lives with transaction-message helpers
-/// and is re-exported by `package:solana_kit_transaction_messages/`
-/// `solana_kit_transaction_messages.dart` and `package:solana_kit/solana_kit.dart`.
-/// This library remains as a compatibility shim.
+/// The `Pipe` extension now lives in
+/// `package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart`
+/// and is re-exported by `package:solana_kit/solana_kit.dart`. This package is
+/// kept as an empty placeholder; it will be retired in a future release.
 library;
-
-export 'src/pipe.dart';

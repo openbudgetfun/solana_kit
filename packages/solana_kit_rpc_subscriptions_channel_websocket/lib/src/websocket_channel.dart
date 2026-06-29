@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
@@ -24,17 +22,21 @@ class AbortError implements Exception {
 /// Returns whether [error] represents an abort cancellation.
 bool isAbortError(Object? error) => error is AbortError;
 
-/// Wraps [future] so it completes with the abort reason if [abortSignal] fires.
-Future<T> getAbortableFuture<T>(Future<T> future, [AbortSignal? abortSignal]) {
-  if (abortSignal == null) return future;
+/// Wraps [future] so it completes with the cancel reason if [cancellationToken]
+/// fires.
+Future<T> getAbortableFuture<T>(
+  Future<T> future, [
+  CancellationToken? cancellationToken,
+]) {
+  if (cancellationToken == null) return future;
 
   final completer = Completer<T>();
-  void abort() => _completeAbort(completer, abortSignal);
+  void abort() => _completeAbort(completer, cancellationToken);
 
-  if (abortSignal.isAborted) {
+  if (cancellationToken.isCancelled) {
     abort();
   } else {
-    unawaited(abortSignal.future.then((_) => abort()));
+    unawaited(cancellationToken.future.then((_) => abort()));
   }
 
   unawaited(
@@ -53,69 +55,13 @@ Future<T> getAbortableFuture<T>(Future<T> future, [AbortSignal? abortSignal]) {
   return completer.future;
 }
 
-void _completeAbort<T>(Completer<T> completer, AbortSignal signal) {
+void _completeAbort<T>(Completer<T> completer, CancellationToken token) {
   if (completer.isCompleted) return;
-  final reason = signal.reason ?? const AbortError();
+  final reason = token.reason ?? const AbortError();
   if (reason is Error) {
     completer.completeError(reason, reason.stackTrace);
   } else {
     completer.completeError(reason);
-  }
-}
-
-/// An abort signal that can be used to close a WebSocket channel.
-///
-/// Create with [AbortController] and pass the `signal` to
-/// [createWebSocketChannel].
-@Deprecated(
-  'Use StreamSubscription.cancel() or a Dart cancellation token instead. '
-  'This compatibility API will be removed in the next major version.',
-)
-class AbortSignal {
-  @Deprecated(
-    'Use StreamSubscription.cancel() or a Dart cancellation token instead. '
-    'This compatibility API will be removed in the next major version.',
-  )
-  AbortSignal._(this._completer);
-
-  final Completer<void> _completer;
-  bool _isAborted = false;
-  Object? _reason;
-
-  /// Whether this signal has been aborted.
-  bool get isAborted => _isAborted;
-
-  /// The reason the signal was aborted, if any.
-  Object? get reason => _reason;
-
-  /// A future that completes when the signal is aborted.
-  Future<void> get future => _completer.future;
-}
-
-/// A controller for creating and managing an [AbortSignal].
-@Deprecated(
-  'Use StreamSubscription.cancel() or a Dart cancellation token instead. '
-  'This compatibility API will be removed in the next major version.',
-)
-class AbortController {
-  /// Creates a new [AbortController] with a fresh [AbortSignal].
-  @Deprecated(
-    'Use StreamSubscription.cancel() or a Dart cancellation token instead. '
-    'This compatibility API will be removed in the next major version.',
-  )
-  AbortController() : signal = AbortSignal._(Completer<void>());
-
-  /// The signal associated with this controller.
-  final AbortSignal signal;
-
-  /// Abort the signal with an optional [reason].
-  void abort([Object? reason]) {
-    if (signal._isAborted) return;
-    signal._isAborted = true;
-    signal._reason = reason;
-    if (!signal._completer.isCompleted) {
-      signal._completer.complete();
-    }
   }
 }
 
@@ -159,24 +105,27 @@ class WebSocketChannelConfig {
   /// message to a buffer rather than send it right away. In the event that the
   /// buffered amount exceeds the value configured here, messages will be added
   /// to a queue in your application code instead of being sent to the
-  /// WebSocket, until such time as the buffered amount falls back below the
+  /// WebSocket, until such time that the buffered amount falls back below the
   /// high watermark.
   final int sendBufferHighWatermark;
 
-  /// An optional signal to abort the connection.
+  /// An optional cancellation token used to abort the connection.
   ///
-  /// When the signal is aborted the WebSocket will be closed with a normal
+  /// When the token is cancelled the WebSocket will be closed with a normal
   /// closure code (1000). If the channel has not been established yet, firing
-  /// this signal will cause the [createWebSocketChannel] future to complete
-  /// with the abort reason as an error.
-  final AbortSignal? signal;
+  /// this token will cause the [createWebSocketChannel] future to complete
+  /// with the cancel reason as an error.
+  final CancellationToken? signal;
 }
 
 /// An RPC subscriptions channel that uses WebSocket transport.
 ///
-/// Provides a [DataPublisher] interface for subscribing to `'message'` and
-/// `'error'` events, plus a [send] method for outgoing messages.
-abstract interface class RpcSubscriptionsChannel implements DataPublisher {
+/// Provides a [NotificationStreams] interface for subscribing to message and
+/// error events, plus a [send] method for outgoing messages.
+abstract interface class RpcSubscriptionsChannel {
+  /// The broadcast streams carrying notifications and errors.
+  NotificationStreams get streams;
+
   /// Send a message through the WebSocket channel.
   ///
   /// Throws [SolanaError] with code
@@ -193,32 +142,32 @@ abstract interface class RpcSubscriptionsChannel implements DataPublisher {
 /// Throws [SolanaError] with code:
 /// - [SolanaErrorCode.rpcSubscriptionsChannelFailedToConnect] if the
 ///   connection fails.
-/// - The abort signal's reason if aborted before connection.
+/// - The cancellation token's reason if cancelled before connection.
 ///
 /// Example:
 /// ```dart
-/// final controller = AbortController();
+/// final source = CancellationTokenSource();
 /// final channel = await createWebSocketChannel(
 ///   WebSocketChannelConfig(
 ///     url: Uri.parse('wss://api.mainnet-beta.solana.com'),
-///     signal: controller.signal,
+///     signal: source.token,
 ///   ),
 /// );
 ///
-/// channel.on('message', (data) {
+/// channel.streams.notifications.listen((data) {
 ///   print('Received: $data');
 /// });
 ///
 /// await channel.send('{"jsonrpc":"2.0","method":"accountSubscribe",...}');
 ///
 /// // Later, close the channel:
-/// controller.abort();
+/// source.cancel();
 /// ```
 Future<RpcSubscriptionsChannel> createWebSocketChannel(
   WebSocketChannelConfig config,
 ) async {
-  // Check if already aborted.
-  if (config.signal?.isAborted ?? false) {
+  // Check if already cancelled.
+  if (config.signal?.isCancelled ?? false) {
     final reason = config.signal!.reason;
     if (reason is Exception || reason is Error) {
       // The reason is known to be an Exception or Error at this point.
@@ -234,7 +183,8 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
     allowPrivateHosts: config.allowPrivateHosts,
   );
 
-  final dataPublisher = createDataPublisher();
+  final messagesController = StreamController<Object?>.broadcast(sync: true);
+  final errorsController = StreamController<Object?>.broadcast(sync: true);
 
   WebSocketChannel webSocketChannel;
 
@@ -243,7 +193,7 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
     // Wait for the connection to be established.
     await webSocketChannel.ready;
   } on Object {
-    if (config.signal?.isAborted ?? false) {
+    if (config.signal?.isCancelled ?? false) {
       final reason = config.signal!.reason;
       if (reason is Exception || reason is Error) {
         // The reason is known to be an Exception or Error at this point.
@@ -260,7 +210,7 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
   var isClosed = false;
   final subscriptions = <StreamSubscription<void>>[];
 
-  // Handle abort signal.
+  // Handle cancellation token.
   if (config.signal != null) {
     config.signal!.future.then((_) {
       if (!isClosed) {
@@ -276,33 +226,38 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
   // Listen for messages from the WebSocket.
   final messageSub = webSocketChannel.stream.listen(
     (data) {
-      if (config.signal?.isAborted ?? false) return;
-      dataPublisher.publish('message', data);
+      if (config.signal?.isCancelled ?? false) return;
+      if (!messagesController.isClosed) messagesController.add(data);
     },
     onError: (Object error) {
-      if (config.signal?.isAborted ?? false) return;
-      dataPublisher.publish('error', error);
+      if (config.signal?.isCancelled ?? false) return;
+      if (!errorsController.isClosed) errorsController.addError(error);
     },
     onDone: () {
       isClosed = true;
-      if (config.signal?.isAborted ?? false) return;
+      if (config.signal?.isCancelled ?? false) return;
       // Connection closed unexpectedly.
       final closeCode = webSocketChannel.closeCode;
       if (closeCode != null && closeCode != normalClosureCode) {
-        dataPublisher.publish(
-          'error',
-          SolanaError(SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed, {
-            'code': closeCode,
-            'reason': webSocketChannel.closeReason ?? '',
-          }),
-        );
+        if (!errorsController.isClosed) {
+          errorsController.add(
+            SolanaError(
+              SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed,
+              {
+                'code': closeCode,
+                'reason': webSocketChannel.closeReason ?? '',
+              },
+            ),
+          );
+        }
       }
     },
   );
   subscriptions.add(messageSub);
 
   return _WebSocketRpcChannel(
-    dataPublisher: dataPublisher,
+    messagesController: messagesController,
+    errorsController: errorsController,
     webSocketChannel: webSocketChannel,
     isClosed: () => isClosed,
   );
@@ -449,19 +404,22 @@ bool _isPrivateIpv6(String host) {
 
 class _WebSocketRpcChannel implements RpcSubscriptionsChannel {
   _WebSocketRpcChannel({
-    required this._dataPublisher,
+    required this._messagesController,
+    required this._errorsController,
     required this._webSocketChannel,
     required this._isClosed,
   });
 
-  final WritableDataPublisher _dataPublisher;
+  final StreamController<Object?> _messagesController;
+  final StreamController<Object?> _errorsController;
   final WebSocketChannel _webSocketChannel;
   final bool Function() _isClosed;
 
   @override
-  UnsubscribeFn on(String channelName, Subscriber<Object?> subscriber) {
-    return _dataPublisher.on(channelName, subscriber);
-  }
+  NotificationStreams get streams => NotificationStreams(
+    notifications: _messagesController.stream,
+    errors: _errorsController.stream,
+  );
 
   @override
   Future<void> send(Object message) async {

@@ -1,5 +1,4 @@
-// ignore_for_file: deprecated_member_use
-
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
@@ -10,11 +9,9 @@ import 'package:test/test.dart';
 void main() {
   group('getRpcSubscriptionsChannelWithJsonSerialization', () {
     late _MockChannel mockChannel;
-    late WritableDataPublisher dataPublisher;
 
     setUp(() {
-      dataPublisher = createDataPublisher();
-      mockChannel = _MockChannel(dataPublisher: dataPublisher);
+      mockChannel = _MockChannel();
     });
 
     test(
@@ -30,33 +27,47 @@ void main() {
 
     test(
       'deserializes messages received from the underlying channel as JSON',
-      () {
+      () async {
         final channelWithJsonSerialization =
             getRpcSubscriptionsChannelWithJsonSerialization(mockChannel);
 
         Object? receivedMessage;
-        channelWithJsonSerialization.on('message', (data) {
-          receivedMessage = data;
-        });
+        final subscription = channelWithJsonSerialization.streams.notifications
+            .listen((data) {
+              receivedMessage = data;
+            });
 
-        dataPublisher.publish('message', jsonEncode('hello'));
+        mockChannel.publishMessage(jsonEncode('hello'));
 
         expect(receivedMessage, equals('hello'));
+        await subscription.cancel();
       },
     );
   });
 }
 
 class _MockChannel implements RpcSubscriptionsChannel {
-  _MockChannel({required this.dataPublisher});
+  _MockChannel()
+    : _messagesController = StreamController<Object?>.broadcast(sync: true),
+      _errorsController = StreamController<Object?>.broadcast(sync: true);
 
-  final WritableDataPublisher dataPublisher;
+  final StreamController<Object?> _messagesController;
+  final StreamController<Object?> _errorsController;
   Object? lastSentMessage;
 
-  @override
-  UnsubscribeFn on(String channelName, Subscriber<Object?> subscriber) {
-    return dataPublisher.on(channelName, subscriber);
+  void publishMessage(Object? data) {
+    if (!_messagesController.isClosed) _messagesController.add(data);
   }
+
+  void publishError(Object? error) {
+    if (!_errorsController.isClosed) _errorsController.add(error);
+  }
+
+  @override
+  NotificationStreams get streams => NotificationStreams(
+    notifications: _messagesController.stream,
+    errors: _errorsController.stream,
+  );
 
   @override
   Future<void> send(Object message) async {

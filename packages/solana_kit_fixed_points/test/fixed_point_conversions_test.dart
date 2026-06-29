@@ -104,15 +104,6 @@ void main() {
         ).toDecimalString(),
         '-1.24',
       );
-      expect(
-        rescaleDecimalFixedPoint(
-          value,
-          32,
-          2,
-          FixedPointRoundingMode.up,
-        ).toDecimalString(),
-        '1.24',
-      );
     });
 
     test('reject invalid decimal rescale results', () {
@@ -226,15 +217,6 @@ void main() {
           FixedPointRoundingMode.round,
         ).toDecimalString(),
         '-1.5',
-      );
-      expect(
-        rescaleBinaryFixedPoint(
-          value,
-          32,
-          2,
-          FixedPointRoundingMode.up,
-        ).toDecimalString(),
-        '1.5',
       );
     });
 

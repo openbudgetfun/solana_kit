@@ -1,17 +1,14 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('raceStrategies', () {
-    test('aborts the AbortSignal passed to '
+    test('aborts the CancellationToken passed to '
         'getRecentSignatureConfirmationPromise when finished', () async {
-      AbortSignal? capturedSignal;
+      CancellationToken? capturedSignal;
 
       await raceStrategies(
         'abc',
@@ -32,20 +29,20 @@ void main() {
 
       // After completion, the internal abort controller should be aborted.
       expect(capturedSignal, isNotNull);
-      expect(capturedSignal!.isAborted, isTrue);
+      expect(capturedSignal!.isCancelled, isTrue);
     });
 
     test(
-      'aborts the AbortSignal passed to '
+      'aborts the CancellationToken passed to '
       'getRecentSignatureConfirmationPromise when the caller aborts',
       () async {
-        AbortSignal? capturedSignal;
-        final callerAbortController = AbortController();
+        CancellationToken? capturedSignal;
+        final callerCancellationTokenSource = CancellationTokenSource();
 
         final future = raceStrategies(
           'abc',
           BaseTransactionConfirmationStrategyConfig(
-            abortSignal: callerAbortController.signal,
+            abortSignal: callerCancellationTokenSource.token,
             commitment: Commitment.finalized,
             getRecentSignatureConfirmationPromise:
                 ({
@@ -66,14 +63,14 @@ void main() {
 
         // Signal should not be aborted yet.
         expect(capturedSignal, isNotNull);
-        expect(capturedSignal!.isAborted, isFalse);
+        expect(capturedSignal!.isCancelled, isFalse);
 
-        callerAbortController.abort('test');
+        callerCancellationTokenSource.cancel('test');
 
         // Give microtask queue a chance to process.
         await Future<void>.delayed(Duration.zero);
 
-        expect(capturedSignal!.isAborted, isTrue);
+        expect(capturedSignal!.isCancelled, isTrue);
 
         // The future should eventually settle.
         // We don't await it since nothing resolves the inner completers,
@@ -83,9 +80,9 @@ void main() {
     );
 
     test(
-      'aborts the AbortSignal passed to specific strategies when finished',
+      'aborts the CancellationToken passed to specific strategies when finished',
       () async {
-        AbortSignal? capturedStrategySignal;
+        CancellationToken? capturedStrategySignal;
 
         await raceStrategies(
           'abc',
@@ -107,19 +104,19 @@ void main() {
         );
 
         expect(capturedStrategySignal, isNotNull);
-        expect(capturedStrategySignal!.isAborted, isTrue);
+        expect(capturedStrategySignal!.isCancelled, isTrue);
       },
     );
 
-    test('aborts the AbortSignal passed to specific strategies '
+    test('aborts the CancellationToken passed to specific strategies '
         'when the caller aborts', () async {
-      AbortSignal? capturedStrategySignal;
-      final callerAbortController = AbortController();
+      CancellationToken? capturedStrategySignal;
+      final callerCancellationTokenSource = CancellationTokenSource();
 
       final future = raceStrategies(
         'abc',
         BaseTransactionConfirmationStrategyConfig(
-          abortSignal: callerAbortController.signal,
+          abortSignal: callerCancellationTokenSource.token,
           commitment: Commitment.finalized,
           getRecentSignatureConfirmationPromise:
               ({
@@ -137,13 +134,13 @@ void main() {
       );
 
       expect(capturedStrategySignal, isNotNull);
-      expect(capturedStrategySignal!.isAborted, isFalse);
+      expect(capturedStrategySignal!.isCancelled, isFalse);
 
-      callerAbortController.abort('test');
+      callerCancellationTokenSource.cancel('test');
 
       await Future<void>.delayed(Duration.zero);
 
-      expect(capturedStrategySignal!.isAborted, isTrue);
+      expect(capturedStrategySignal!.isCancelled, isTrue);
 
       unawaited(future.catchError((_) {}));
     });
@@ -190,13 +187,13 @@ void main() {
     });
 
     test('throws when the signal is already aborted', () async {
-      final abortController = AbortController()..abort();
+      final abortController = CancellationTokenSource()..cancel();
 
       await expectLater(
         raceStrategies(
           'abc',
           BaseTransactionConfirmationStrategyConfig(
-            abortSignal: abortController.signal,
+            abortSignal: abortController.token,
             commitment: Commitment.finalized,
             getRecentSignatureConfirmationPromise:
                 ({

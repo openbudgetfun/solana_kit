@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
@@ -10,11 +8,11 @@ import 'package:test/test.dart';
 void main() {
   group('createRpcSubscriptionsTransportFromChannelCreator', () {
     test(
-      'creates a function that calls createChannel with the abort signal',
+      'creates a function that calls createChannel with the cancellation token',
       () {
-        AbortSignal? capturedSignal;
+        CancellationToken? capturedSignal;
         Future<RpcSubscriptionsChannel> mockCreateChannel({
-          required AbortSignal abortSignal,
+          required CancellationToken abortSignal,
         }) {
           capturedSignal = abortSignal;
           return Completer<RpcSubscriptionsChannel>().future;
@@ -24,19 +22,19 @@ void main() {
           mockCreateChannel,
         );
 
-        final abortController = AbortController();
+        final source = CancellationTokenSource();
         creator(
           RpcSubscriptionsTransportConfig(
-            execute: (_) async => createDataPublisher(),
+            execute: (_) async => mockStreams(),
             request: const RpcSubscriptionsRequest(
               methodName: 'foo',
               params: [],
             ),
-            signal: abortController.signal,
+            signal: source.token,
           ),
         ).ignore();
 
-        expect(capturedSignal, same(abortController.signal));
+        expect(capturedSignal, same(source.token));
       },
     );
 
@@ -45,7 +43,7 @@ void main() {
       () async {
         final mockChannel = _MockChannel();
         Future<RpcSubscriptionsChannel> mockCreateChannel({
-          required AbortSignal abortSignal,
+          required CancellationToken abortSignal,
         }) async {
           return mockChannel;
         }
@@ -59,13 +57,13 @@ void main() {
           RpcSubscriptionsTransportConfig(
             execute: (config) async {
               capturedConfig = config;
-              return createDataPublisher();
+              return mockStreams();
             },
             request: const RpcSubscriptionsRequest(
               methodName: 'foo',
               params: [],
             ),
-            signal: AbortController().signal,
+            signal: CancellationTokenSource().token,
           ),
         ).ignore();
 
@@ -78,11 +76,11 @@ void main() {
     );
 
     test(
-      'creates a function that calls execute with the abort signal',
+      'creates a function that calls execute with the cancellation token',
       () async {
         final mockChannel = _MockChannel();
         Future<RpcSubscriptionsChannel> mockCreateChannel({
-          required AbortSignal abortSignal,
+          required CancellationToken abortSignal,
         }) async {
           return mockChannel;
         }
@@ -91,20 +89,20 @@ void main() {
           mockCreateChannel,
         );
 
-        final abortController = AbortController();
+        final source = CancellationTokenSource();
         RpcSubscriptionsTransportExecuteConfig? capturedConfig;
 
         creator(
           RpcSubscriptionsTransportConfig(
             execute: (config) async {
               capturedConfig = config;
-              return createDataPublisher();
+              return mockStreams();
             },
             request: const RpcSubscriptionsRequest(
               methodName: 'foo',
               params: [],
             ),
-            signal: abortController.signal,
+            signal: source.token,
           ),
         ).ignore();
 
@@ -112,17 +110,27 @@ void main() {
         await Future<void>.delayed(Duration.zero);
 
         expect(capturedConfig, isNotNull);
-        expect(capturedConfig!.signal, same(abortController.signal));
+        expect(capturedConfig!.signal, same(source.token));
       },
     );
   });
 }
 
+NotificationStreams mockStreams() {
+  final messages = StreamController<Object?>.broadcast(sync: true);
+  final errors = StreamController<Object?>.broadcast(sync: true);
+  return NotificationStreams(
+    notifications: messages.stream,
+    errors: errors.stream,
+  );
+}
+
 class _MockChannel implements RpcSubscriptionsChannel {
   @override
-  UnsubscribeFn on(String channelName, Subscriber<Object?> subscriber) {
-    return () {};
-  }
+  NotificationStreams get streams => const NotificationStreams(
+    notifications: Stream<Object?>.empty(),
+    errors: Stream<Object?>.empty(),
+  );
 
   @override
   Future<void> send(Object message) async {}

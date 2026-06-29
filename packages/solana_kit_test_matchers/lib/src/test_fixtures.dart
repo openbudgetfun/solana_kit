@@ -1,5 +1,4 @@
-// ignore_for_file: deprecated_member_use
-
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -134,25 +133,43 @@ Rpc createAccountsFixtureRpc(
   return Rpc(api: api, transport: (_) async => null);
 }
 
-/// Captures subscription transport requests while returning a stable publisher.
+/// Captures subscription transport requests while returning stable
+/// [NotificationStreams].
 class CapturingSubscriptionsTransport {
   /// Creates a [CapturingSubscriptionsTransport].
-  CapturingSubscriptionsTransport({WritableDataPublisher? publisher})
-    : publisher = publisher ?? createDataPublisher();
+  CapturingSubscriptionsTransport()
+    : _messagesController = StreamController<Object?>.broadcast(sync: true),
+      _errorsController = StreamController<Object?>.broadcast(sync: true);
 
-  /// The publisher returned to subscription callers.
-  final WritableDataPublisher publisher;
+  final StreamController<Object?> _messagesController;
+  final StreamController<Object?> _errorsController;
+
+  /// The [NotificationStreams] returned to subscription callers.
+  late final NotificationStreams streams = NotificationStreams(
+    notifications: _messagesController.stream,
+    errors: _errorsController.stream,
+  );
+
+  /// Publishes a notification value to all subscribers.
+  void publishNotification(Object? data) {
+    if (!_messagesController.isClosed) _messagesController.add(data);
+  }
+
+  /// Publishes an error value to all subscribers.
+  void publishError(Object? error) {
+    if (!_errorsController.isClosed) _errorsController.add(error);
+  }
 
   /// Every transport config observed by [transport].
   final List<RpcSubscriptionsTransportConfig> configs =
       <RpcSubscriptionsTransportConfig>[];
 
-  /// Transport implementation that records the config and returns [publisher].
-  Future<DataPublisher> transport(
+  /// Transport implementation that records the config and returns [streams].
+  Future<NotificationStreams> transport(
     RpcSubscriptionsTransportConfig config,
   ) async {
     configs.add(config);
-    return publisher;
+    return streams;
   }
 
   /// The most recent transport config.

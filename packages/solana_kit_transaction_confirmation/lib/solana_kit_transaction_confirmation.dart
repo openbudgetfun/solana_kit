@@ -38,6 +38,9 @@
 /// <!-- {/docsSendAndConfirmSection} -->
 library;
 
+export 'package:solana_kit_subscribable/solana_kit_subscribable.dart'
+    show CancellationToken, CancellationTokenSource;
+
 export 'src/commitment_comparator.dart';
 export 'src/confirmation_strategy_blockheight.dart';
 export 'src/confirmation_strategy_nonce.dart';

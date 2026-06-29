@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -7,7 +5,6 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
@@ -158,11 +155,11 @@ void main() {
     });
 
     test('throws when the operation is aborted mid-poll', () async {
-      final abortController = AbortController();
+      final abortController = CancellationTokenSource();
       final transport = _ScriptedRpcTransport(
         onRequest: (method, callIndex, _) {
           if (method == 'getSignatureStatuses' && callIndex == 1) {
-            abortController.abort('stop polling');
+            abortController.cancel('stop polling');
           }
           if (method == 'getSignatureStatuses') {
             return _signatureStatusesResponse([null]);
@@ -178,7 +175,7 @@ void main() {
           signature: const Signature(_signatureValue),
           transaction: _blockhashTransaction(),
           config: RpcTransactionConfirmationConfig(
-            abortSignal: abortController.signal,
+            abortSignal: abortController.token,
             pollInterval: Duration.zero,
           ),
         ),
@@ -264,7 +261,7 @@ void main() {
     );
 
     test('throws when abort signal fires during poll wait', () async {
-      final abortController = AbortController();
+      final abortController = CancellationTokenSource();
       final transport = _ScriptedRpcTransport(
         fallbackResults: {
           'getSignatureStatuses': _signatureStatusesResponse([null]),
@@ -276,7 +273,7 @@ void main() {
       // Abort after a short delay to trigger during _waitForNextPoll
       Future<void>.delayed(
         const Duration(milliseconds: 10),
-        () => abortController.abort('abort during wait'),
+        () => abortController.cancel('abort during wait'),
       );
 
       await expectLater(
@@ -285,7 +282,7 @@ void main() {
           signature: const Signature(_signatureValue),
           transaction: _blockhashTransaction(),
           config: RpcTransactionConfirmationConfig(
-            abortSignal: abortController.signal,
+            abortSignal: abortController.token,
             pollInterval: const Duration(milliseconds: 200),
           ),
         ),
@@ -300,7 +297,7 @@ void main() {
     });
 
     test('confirms durable nonce with abort signal provided', () async {
-      final abortController = AbortController();
+      final abortController = CancellationTokenSource();
       final transport = _ScriptedRpcTransport(
         queuedResults: {
           'getSignatureStatuses': [
@@ -322,7 +319,7 @@ void main() {
         signature: const Signature(_signatureValue),
         transaction: _durableNonceTransaction(),
         config: RpcTransactionConfirmationConfig(
-          abortSignal: abortController.signal,
+          abortSignal: abortController.token,
           pollInterval: Duration.zero,
         ),
       );
@@ -392,7 +389,7 @@ void main() {
     });
 
     test('sends with abort signal when provided', () async {
-      final abortController = AbortController();
+      final abortController = CancellationTokenSource();
       final transport = _ScriptedRpcTransport(
         queuedResults: {
           'getSignatureStatuses': [
@@ -412,7 +409,7 @@ void main() {
         rpc: rpc,
         transaction: _blockhashTransaction(),
         config: SendAndConfirmTransactionConfig(
-          abortSignal: abortController.signal,
+          abortSignal: abortController.token,
           commitment: Commitment.processed,
           pollInterval: Duration.zero,
           skipPreflight: true,

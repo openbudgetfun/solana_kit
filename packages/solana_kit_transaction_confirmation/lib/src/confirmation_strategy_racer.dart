@@ -1,14 +1,12 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 /// The type of a function that creates a recent signature confirmation promise.
 typedef GetRecentSignatureConfirmationPromise =
     Future<void> Function({
-      required AbortSignal abortSignal,
+      required CancellationToken abortSignal,
       required Commitment commitment,
       required String signature,
     });
@@ -23,7 +21,7 @@ class BaseTransactionConfirmationStrategyConfig {
   });
 
   /// An optional abort signal to cancel the confirmation.
-  final AbortSignal? abortSignal;
+  final CancellationToken? abortSignal;
 
   /// The target commitment level.
   final Commitment commitment;
@@ -46,30 +44,32 @@ class BaseTransactionConfirmationStrategyConfig {
 Future<void> raceStrategies(
   String signature,
   BaseTransactionConfirmationStrategyConfig config,
-  List<Future<void>> Function({required AbortSignal abortSignal})
+  List<Future<void>> Function({required CancellationToken abortSignal})
   getSpecificStrategiesForRace,
 ) async {
-  final callerAbortSignal = config.abortSignal;
+  final callerCancellationToken = config.abortSignal;
 
-  if (callerAbortSignal != null && callerAbortSignal.isAborted) {
-    throw StateError('The operation was aborted: ${callerAbortSignal.reason}');
+  if (callerCancellationToken != null && callerCancellationToken.isCancelled) {
+    throw StateError(
+      'The operation was aborted: ${callerCancellationToken.reason}',
+    );
   }
 
-  final abortController = AbortController();
+  final abortController = CancellationTokenSource();
 
-  if (callerAbortSignal != null) {
-    callerAbortSignal.future.then((_) {
-      abortController.abort(callerAbortSignal.reason);
+  if (callerCancellationToken != null) {
+    callerCancellationToken.future.then((_) {
+      abortController.cancel(callerCancellationToken.reason);
     }).ignore();
   }
 
   try {
     final specificStrategies = getSpecificStrategiesForRace(
-      abortSignal: abortController.signal,
+      abortSignal: abortController.token,
     );
 
     final signatureConfirmation = config.getRecentSignatureConfirmationPromise(
-      abortSignal: abortController.signal,
+      abortSignal: abortController.token,
       commitment: config.commitment,
       signature: signature,
     );
@@ -101,6 +101,6 @@ Future<void> raceStrategies(
 
     await raceCompleter.future;
   } finally {
-    abortController.abort();
+    abortController.cancel();
   }
 }

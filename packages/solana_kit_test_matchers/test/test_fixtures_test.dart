@@ -1,7 +1,4 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_test_matchers/solana_kit_test_matchers.dart';
 import 'package:test/test.dart';
 
@@ -68,21 +65,21 @@ void main() {
 
   group('subscription fixtures', () {
     test(
-      'CapturingSubscriptionsTransport records configs and returns publisher',
+      'CapturingSubscriptionsTransport records configs and returns streams',
       () async {
         final transport = CapturingSubscriptionsTransport();
         final config = RpcSubscriptionsTransportConfig(
-          execute: (_) async => transport.publisher,
+          execute: (_) async => transport.streams,
           request: const RpcSubscriptionsRequest(
             methodName: 'slotNotifications',
             params: [],
           ),
-          signal: AbortController().signal,
+          signal: CancellationTokenSource().token,
         );
 
-        final publisher = await transport.transport(config);
+        final streams = await transport.transport(config);
 
-        expect(publisher, same(transport.publisher));
+        expect(streams, same(transport.streams));
         expect(transport.lastConfig.request.methodName, 'slotNotifications');
       },
     );

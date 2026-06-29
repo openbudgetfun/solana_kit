@@ -249,12 +249,12 @@ Future<void> main() async {
     'wss://api.devnet.solana.com',
   );
 
-  final controller = AbortController();
+  final controller = CancellationTokenSource();
 
   // Subscribe to slot notifications.
   final pending = subscriptions.request('slotNotifications');
   final stream = await pending.subscribe(
-    RpcSubscribeOptions(abortSignal: controller.signal),
+    RpcSubscribeOptions(abortSignal: controller.token),
   );
 
   var count = 0;
@@ -262,7 +262,7 @@ Future<void> main() async {
     print('Slot: $notification');
     count++;
     if (count >= 3) {
-      controller.abort();
+      controller.cancel();
     }
   }
 }

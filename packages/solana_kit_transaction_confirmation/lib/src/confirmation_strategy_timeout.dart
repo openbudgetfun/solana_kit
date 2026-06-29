@@ -1,9 +1,7 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 /// Returns a [Future] that rejects after a timeout.
 ///
@@ -17,12 +15,12 @@ import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 /// Throws a [TimeoutException] after the timeout elapses.
 /// Throws a [StateError] if the [abortSignal] is aborted before the timeout.
 Future<Never> getTimeoutPromise({
-  required AbortSignal abortSignal,
+  required CancellationToken abortSignal,
   required Commitment commitment,
 }) async {
   final completer = Completer<Never>();
 
-  if (abortSignal.isAborted) {
+  if (abortSignal.isCancelled) {
     throw StateError('The operation was aborted: ${abortSignal.reason}');
   }
 
