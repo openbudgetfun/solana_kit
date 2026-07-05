@@ -32,14 +32,17 @@ Use dry runs before real release actions.
 
 ```bash
 monochange run release --dry-run --diff
-monochange run release-pr --dry-run
+monochange step publish-packages --dry-run --all --format json
 ```
 
-`monochange run release-pr` prepares version bumps, changelogs, release metadata, and opens or updates the configured monochange release PR. After the release PR merges to `main`, the current flow is to tag and publish locally from the reviewed release commit.
+Pushes to `main` run `.github/workflows/release-pr.yml`, which prepares version bumps, changelogs, lockfiles, docs, and a MonoChange release commit on `monochange/release/main`, then opens or updates the automated release PR.
 
-Before publishing package artifacts from the maintainer machine, verify readiness and dry-run the publish from the release commit:
+After that release PR merges to `main`, the same workflow detects the merged release commit, creates the MonoChange tags, extracts the direct `v*` tag from the `main` release target, and dispatches `.github/workflows/publish.yml` with that tag. The publish workflow checks out the tag, verifies readiness, publishes changed packages with `monochange step publish-packages`, and then publishes GitHub release objects.
+
+For local verification from a release commit, run:
 
 ```bash
+monochange step release-record --from HEAD --format json
 monochange step publish-readiness --from HEAD --format json
-monochange run publish --dry-run
+monochange step publish-packages --dry-run --format json
 ```

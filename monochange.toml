@@ -299,8 +299,9 @@ changelog = { path = "CHANGELOG.md" }
 [ecosystems.dart]
 enabled = true
 publish.enabled = true
-publish.mode = "external"
+publish.mode = "builtin"
 publish.registry = "pub_dev"
+publish.trusted_publishing = true
 versioned_files = [
   { path = "**/pubspec.yaml", type = "dart", fields = ["dependencies", "dev_dependencies"] },
 ]
@@ -309,8 +310,9 @@ versioned_files = [
 enabled = true
 roots = ["packages/codama-renderers-dart"]
 publish.enabled = true
-publish.mode = "external"
+publish.mode = "builtin"
 publish.registry = "npm"
+publish.trusted_publishing = true
 
 [source]
 provider = "github"
@@ -368,11 +370,4 @@ steps = [
   { type = "Command", name = "push release commit", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.push}}", command = "git push" },
   { type = "TagRelease", name = "create and push release tags", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.tag }}", inputs = { from = "HEAD", push = true, format = "json" } },
   { type = "PublishRelease", name = "publish GitHub release", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.tag && inputs.publish_release }}", inputs = { from-ref = "HEAD", draft = false, format = "json" } },
-]
-
-[cli.publish]
-help_text = "Publish packages to registries (Dart via melos, NPM via pnpm). Must be run from a tagged release commit."
-steps = [
-  { type = "Command", name = "publish Dart packages", command = "melos publish --no-dry-run --yes", dry_run_command = "melos publish --dry-run --yes" },
-  { type = "Command", name = "publish NPM renderer", command = "pnpm --filter codama-renderers-dart publish --access public --no-git-checks", dry_run_command = "pnpm --filter codama-renderers-dart publish --dry-run --access public --no-git-checks" },
 ]

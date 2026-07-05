@@ -10,7 +10,7 @@ This monorepo contains **57 packages** under `packages/`: **55 publishable** and
 
 <!-- workspace-summary:end -->
 
-Versioning is managed by [monochange](https://github.com/monochange/monochange) using changesets stored in `.changeset/`. Release PRs, release tags, GitHub release notes, and package publishing are executed through the configured `monochange run` workflows in `monochange.toml`.
+Versioning is managed by [monochange](https://github.com/monochange/monochange) using changesets stored in `.changeset/`. Release PRs, release tags, GitHub release notes, and package publishing are executed through MonoChange's built-in release and publishing steps in GitHub Actions.
 
 ## Package Inventory
 
@@ -177,52 +177,52 @@ Bump types:
 
 ### Preparing a Release
 
-When ready to release, run:
-
-```bash
-monochange run release --commit --push --tag --publish-release
-```
-
-This workflow:
+Release preparation is automated. Every push to `main` runs `.github/workflows/release-pr.yml`, which:
 
 1. Reads all changeset files in `.changeset/`
 2. Bumps versions in each package's `pubspec.yaml`
 3. Updates each package's `CHANGELOG.md`
-4. Formats with dprint
-5. Commits and pushes
-6. Creates a GitHub release
+4. Refreshes lockfiles and generated release documentation
+5. Commits the release changes to `monochange/release/main`
+6. Opens or updates the `chore(release): prepare release` PR
+
+Review and merge that release PR when the generated versions and release notes are correct.
+
+For local previewing, use dry runs only:
+
+```bash
+monochange run release --dry-run --diff
+monochange step publish-packages --dry-run --all --format json
+```
 
 ### Publishing with monochange
 
-Use a dry run before any real publish:
-
-```bash
-monochange step publish-readiness --from HEAD --format json
-monochange run publish --dry-run
-```
+Package publishing is handled by `.github/workflows/publish.yml` after the release PR merges. The `release-pr` workflow detects the merged MonoChange release commit, creates the direct `v*` tag, and dispatches the `publish` workflow with that tag.
 
 Important requirements before running publish workflows:
 
-- The git worktree must be clean. `pub publish --dry-run` returns a non-zero exit code when warnings are present, including "checked-in file is modified in git".
-- Each package `CHANGELOG.md` must contain the current package version heading (for this release: `0.1.0`).
+- The release commit must include a valid MonoChange release record.
+- The direct `v*` tag must point at a commit reachable from `origin/main`.
+- pub.dev Trusted Publishing must be configured for `.github/workflows/publish.yml` and the `pub.dev` GitHub environment.
+- Each package `CHANGELOG.md` must contain the current package version heading.
 
-For the first release, publish in staged workflows to handle pub.dev limits:
+For local verification from a release commit or checked-out release tag, run:
+
+```bash
+monochange step release-record --from HEAD --format json
+monochange step publish-readiness --from HEAD --format json
+monochange step publish-packages --dry-run --format json
+```
+
+For large publish sets, use MonoChange readiness output and registry rate-limit planning to decide whether the release needs operational monitoring:
 
 ```bash
 monochange step plan-publish-rate-limits --from HEAD --format md
-monochange run publish --dry-run
-monochange run publish
 ```
 
-For large publish sets, use monochange publish-readiness output and registry rate-limit planning to decide whether to publish in batches. The configured `monochange run publish` workflow delegates Dart package ordering to Melos and publishes the renderer package with pnpm.
+The CI publish workflow uses MonoChange's built-in package publishing so Dart packages are published via pub.dev Trusted Publishing and the NPM renderer package is published with provenance enabled.
 
-If limits are not a concern, publish everything in one pass:
-
-```bash
-monochange run publish
-```
-
-After any publish batch, verify published versions on pub.dev before continuing.
+After publishing completes, verify published versions on pub.dev before continuing.
 
 ## Publishing to pub.dev
 
@@ -273,44 +273,35 @@ Before publishing, verify each package meets these requirements:
 
 ### Dependency-Order Publishing
 
-Packages must be published in dependency order (leaf packages first). The configured `monochange run publish` workflow handles this automatically through `melos publish`, which computes package ordering from the workspace dependency graph.
+Packages must be published in dependency order (leaf packages first). `monochange step publish-packages` handles dependency ordering from the workspace package graph, so maintainers should not manually sequence packages except when intentionally following a registry rate-limit plan.
 
-The correct publishing order follows the layer table above:
+The expected publishing order follows the layer table above:
 
 1. Layer 0: `solana_kit_errors`
-2. Layer 1: `solana_kit_functional`, `solana_kit_fast_stable_stringify`
+2. Layer 1: `solana_kit_functional`, `solana_kit_fast_stable_stringify`, `solana_kit_fixed_points`
 3. Layer 2: Codec packages (`codecs_core` -> `codecs_numbers`, `codecs_strings` -> `codecs_data_structures` -> `options` -> `codecs`)
 4. Layer 3+: Address, keys, RPC types
 5. Continue upward through the dependency graph
-6. Layer 9: `solana_kit` umbrella package (published last)
+6. Layer 10: `solana_kit` umbrella package (published last)
 
 ### Running the Publish Workflow
 
-```bash
-monochange run publish
-```
+The normal path is the automated workflow dispatch from `.github/workflows/release-pr.yml`. If maintainers need to rerun publishing for an existing direct release tag, use the GitHub Actions `publish` workflow and provide the `v*` tag input.
 
-This workflow currently runs:
-
-1. `melos publish`
-2. `pnpm --filter codama-renderers-dart publish --access public --no-git-checks`
-
-### Dry Run
-
-To verify all packages are ready to publish without actually publishing:
+For a local dry run from the release commit or checked-out release tag:
 
 ```bash
 monochange step publish-readiness --from HEAD --format json
-monochange run publish --dry-run
+monochange step publish-packages --dry-run --format json
 ```
 
 ## Known Issues and Considerations
 
-### 40-Package Monorepo Concerns
+### Large Monorepo Concerns
 
 1. **Namespace reservation**: All packages use the `solana_kit_` prefix. Once the first package is published, the namespace is effectively reserved. Ensure the verified publisher account is set up before initial publish.
 
-2. **pub.dev rate limits**: Publishing many packages in quick succession may trigger limits. For the first release, use `monochange step plan-publish-rate-limits --from HEAD --format md` and verify results between any manual batches.
+2. **pub.dev rate limits**: Publishing many packages in quick succession may trigger limits. For large releases, use `monochange step plan-publish-rate-limits --from HEAD --format md` and monitor the publish workflow output.
 
 3. **Verified publisher**: Set up a [verified publisher](https://dart.dev/tools/pub/verified-publishers) on pub.dev before publishing. This displays a verified badge and prevents package name squatting. All packages should be published under the same verified publisher.
 
@@ -343,20 +334,21 @@ Before the very first publish of any package:
 
 1. Create a [pub.dev](https://pub.dev/) account
 2. Set up a [verified publisher](https://dart.dev/tools/pub/verified-publishers)
-3. Run `dart pub login` to authenticate
+3. Configure pub.dev Trusted Publishing for `.github/workflows/publish.yml` and the `pub.dev` GitHub environment
 4. Verify all packages pass `dart pub publish --dry-run`
-5. Publish packages in dependency order starting from `solana_kit_errors` (use monochange readiness and rate-limit planning for first release)
-6. Verify each package appears on pub.dev before running the next publish workflow
+5. Publish packages through the MonoChange release PR and direct-tag `publish` workflow
+6. Verify each package appears on pub.dev after the workflow completes
 7. After all packages are published, verify the umbrella `solana_kit` package correctly resolves all dependencies from pub.dev
 
 ### Release and Publishing Integration
 
-The current release flow is run locally by a maintainer and is intentionally review-first:
+The release flow is automated with MonoChange and GitHub Actions while staying review-first:
 
 1. **PR merged to main**: CI checks run (analyze, test, format, changeset enforcement, docs drift check)
-2. **Release preparation**: From a local checkout, prepare a release branch or PR that applies changesets, updates package versions, and refreshes changelogs
-3. **Publish readiness**: Run publish dry-runs from the release commit and verify package metadata before publishing
-4. **Publishing**: Publish changed packages from the maintainer machine in dependency order or in small batches when many packages changed
-5. **Verification**: Check pub.dev for all packages with correct versions and smoke test a clean consumer project
+2. **Release preparation**: `.github/workflows/release-pr.yml` prepares version bumps, changelogs, lockfiles, docs, and a MonoChange release commit on `monochange/release/main`
+3. **Release review**: Maintainers review and merge the generated `chore(release): prepare release` PR
+4. **Tag dispatch**: `.github/workflows/release-pr.yml` detects the merged release commit, creates MonoChange release tags, and dispatches `.github/workflows/publish.yml` with the direct `v*` tag
+5. **Publishing**: The publish workflow checks out the tag, verifies readiness, publishes changed packages with `monochange step publish-packages`, and publishes GitHub release objects
+6. **Verification**: Check pub.dev for all packages with correct versions and smoke test a clean consumer project
 
-Trusted Publishing is planned for a future iteration. Until then, registry credentials and release authority live with the maintainer running the local release. Keep public release notes focused on consumer-visible changes, minimum SDK constraints, and migration steps.
+Keep pub.dev Trusted Publishing entries aligned with `.github/workflows/publish.yml` and its `pub.dev` GitHub environment. Keep public release notes focused on consumer-visible changes, minimum SDK constraints, and migration steps.
