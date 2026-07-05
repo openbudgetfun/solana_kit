@@ -1,0 +1,131 @@
+name: publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Direct release tag to publish (for example v0.6.0)."
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.tag || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    if: github.repository == 'openbudgetfun/solana_kit'
+    environment: pub.dev
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: resolve release tag
+        id: release_tag
+        env:
+          RELEASE_TAG_INPUT: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          tag="$RELEASE_TAG_INPUT"
+          if [[ "$tag" != v* ]]; then
+            echo "::error::Tag '$tag' must be a direct v* release tag, for example v0.6.0." >&2
+            exit 1
+          fi
+          if ! git ls-remote --exit-code --tags "https://github.com/${GITHUB_REPOSITORY}.git" "refs/tags/$tag" >/dev/null 2>&1; then
+            echo "::error::Tag '$tag' does not exist on the remote." >&2
+            exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - name: checkout release tag
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          ref: ${{ steps.release_tag.outputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: verify tag checkout
+        env:
+          EXPECTED_TAG: ${{ steps.release_tag.outputs.tag }}
+        run: |
+          set -euo pipefail
+          expected_tag="$EXPECTED_TAG"
+          actual_commit="$(git rev-parse HEAD)"
+          tag_commit="$(git rev-list -n1 "$expected_tag")"
+          if [ "$actual_commit" != "$tag_commit" ]; then
+            echo "::error::Checked-out commit $actual_commit does not match tag $expected_tag ($tag_commit)." >&2
+            exit 1
+          fi
+          git fetch --force origin main:refs/remotes/origin/main --tags
+          if ! git merge-base --is-ancestor "$actual_commit" refs/remotes/origin/main; then
+            echo "::error::Tag $expected_tag ($actual_commit) is not on main." >&2
+            exit 1
+          fi
+        shell: bash
+
+      - uses: pnpm/action-setup@a8198c4bff370c8506180b035930dea56dbd5288 # v5
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: setup
+        uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: install NPM dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: build NPM renderer package
+        run: pnpm --filter codama-renderers-dart build
+
+      - name: check publish readiness
+        env:
+          NPM_CONFIG_PROVENANCE: "true"
+        run: |
+          monochange step publish-readiness \
+            --from HEAD \
+            --output "$RUNNER_TEMP/publish-readiness.json" \
+            --format json
+        shell: devenv shell -- bash -e {0}
+
+      - name: publish packages with MonoChange
+        env:
+          NPM_CONFIG_PROVENANCE: "true"
+        run: |
+          monochange step publish-packages \
+            --log-level info \
+            --output "$RUNNER_TEMP/publish-result.json" \
+            --format json
+        shell: devenv shell -- bash -e {0}
+
+      - name: publish GitHub releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          monochange step publish-release \
+            --from-ref HEAD \
+            --format json | tee "$RUNNER_TEMP/publish-release.json"
+        shell: devenv shell -- bash -e {0}
+
+      - name: upload MonoChange publish artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: monochange-publish-artifacts
+          path: |
+            ${{ runner.temp }}/publish-readiness.json
+            ${{ runner.temp }}/publish-result.json
+            ${{ runner.temp }}/publish-release.json
+          if-no-files-found: ignore
+          retention-days: 14

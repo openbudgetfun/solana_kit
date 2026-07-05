@@ -161,13 +161,11 @@ jobs:
       - uses: ./.github/actions/devenv
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Validate Dart package publish metadata
-        run: melos publish --dry-run --yes
-        shell: devenv shell -- bash -e {0}
       - name: Build NPM renderer package
         run: pnpm --filter codama-renderers-dart build
-      - name: Validate NPM renderer publish metadata
-        run: pnpm --filter codama-renderers-dart publish --dry-run --no-git-checks
+      - name: Validate package publish metadata
+        run: monochange step publish-packages --dry-run --all --format json
+        shell: devenv shell -- bash -e {0}
 
   coverage:
     runs-on: ubuntu-latest

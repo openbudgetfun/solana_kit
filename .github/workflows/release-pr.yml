@@ -1,0 +1,185 @@
+name: release-pr
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  create:
+    if: github.repository == 'openbudgetfun/solana_kit'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: setup
+        uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: configure release git credentials
+        env:
+          RELEASE_PR_TOKEN: ${{ secrets.RELEASE_PR_MERGE_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          export GH_TOKEN="$RELEASE_PR_TOKEN"
+          gh auth setup-git
+        shell: devenv shell -- bash -e {0}
+
+      - name: refresh tags from origin
+        run: git fetch --force --tags origin
+        shell: devenv shell -- bash -e {0}
+
+      - name: detect current release commit
+        id: release_record
+        run: |
+          set -euo pipefail
+
+          release_record_error="$(mktemp)"
+          if is_release_commit="$(monochange --log-level=debug step release-record --from HEAD --format json --jq '.resolved_commit == .record_commit' 2>"$release_record_error")"; then
+            echo "is_release_commit=${is_release_commit}" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          subject="$(git log -1 --pretty=%s)"
+          body="$(git log -1 --pretty=%B)"
+          if [[ "$subject" == chore\(release\):\ prepare\ release* ]] || grep -q '<!-- monochange:release-record:start -->' <<<"$body"; then
+            echo "::error::Release-looking commit could not be read as a release record; failing instead of silently skipping release automation."
+            cat "$release_record_error" >&2
+            exit 1
+          fi
+
+          echo "is_release_commit=false" >> "$GITHUB_OUTPUT"
+        shell: devenv shell -- bash -e {0}
+
+      - name: detect pending changesets
+        id: pending_changesets
+        if: steps.release_record.outputs.is_release_commit != 'true'
+        run: |
+          set -euo pipefail
+          has_changesets=false
+          if [ -d .changeset ] && find .changeset -type f -name '*.md' -print -quit | grep -q .; then
+            has_changesets=true
+          fi
+          echo "has_changesets=${has_changesets}" >> "$GITHUB_OUTPUT"
+        shell: devenv shell -- bash -e {0}
+
+      - name: refresh release pull request
+        if: steps.release_record.outputs.is_release_commit != 'true' && steps.pending_changesets.outputs.has_changesets == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PR_MERGE_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          monochange --log-level=debug step prepare-release --format json
+          monochange versions sync
+          flutter pub get
+          pnpm install --lockfile-only --no-frozen-lockfile --link-workspace-packages
+          fix:release
+          monochange --log-level=debug step commit-release --stage-all --no-verify
+          monochange --log-level=debug step open-release-request --stage-all --no-verify
+        shell: devenv shell -- bash -e {0}
+
+      - name: skip refresh without changesets
+        if: steps.release_record.outputs.is_release_commit != 'true' && steps.pending_changesets.outputs.has_changesets != 'true'
+        run: echo "No pending changesets found; skipping release PR refresh."
+
+      - name: skip refresh on merged release commit
+        if: steps.release_record.outputs.is_release_commit == 'true'
+        run: echo "HEAD is already a merged release commit; skipping release PR refresh."
+
+  tag:
+    if: github.repository == 'openbudgetfun/solana_kit'
+    needs: create
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
+
+      - name: setup
+        uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: configure release git credentials
+        env:
+          RELEASE_PR_TOKEN: ${{ secrets.RELEASE_PR_MERGE_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          export GH_TOKEN="$RELEASE_PR_TOKEN"
+          gh auth setup-git
+        shell: devenv shell -- bash -e {0}
+
+      - name: detect release commit and create tags
+        id: tag_release
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PR_MERGE_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag_report="$RUNNER_TEMP/tag-report.json"
+
+          if is_release_commit="$(monochange --log-level=debug step release-record --from HEAD --format json --jq '.resolved_commit == .record_commit')"; then
+            echo "is_release_commit=${is_release_commit}" >> "$GITHUB_OUTPUT"
+            if [ "${is_release_commit}" = "true" ]; then
+              monochange --log-level=debug step tag-release --from HEAD --push=true --format json | tee "$tag_report"
+            fi
+          else
+            subject="$(git log -1 --pretty=%s)"
+            body="$(git log -1 --pretty=%B)"
+            if [[ "$subject" == chore\(release\):\ prepare\ release* ]] || grep -q '<!-- monochange:release-record:start -->' <<<"$body"; then
+              echo "::error::Release-looking commit could not be read as a release record; failing instead of silently skipping release automation."
+              monochange --log-level=debug step release-record --from HEAD --format json
+              exit 1
+            fi
+            echo "is_release_commit=false" >> "$GITHUB_OUTPUT"
+          fi
+        shell: devenv shell -- bash -e {0}
+
+      - name: trigger publish workflow
+        if: steps.tag_release.outputs.is_release_commit == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PR_MERGE_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag_report="$RUNNER_TEMP/tag-report.json"
+          tag="$(jq -r '.tags.main // empty' "$tag_report")"
+          if [ -z "$tag" ]; then
+            echo "::error::No main release tag found in tag-report.json; expected a direct v* tag."
+            exit 1
+          fi
+          if [[ "$tag" != v* ]]; then
+            echo "::error::Tag '$tag' must be a direct v* release tag."
+            exit 1
+          fi
+          echo "Triggering publish workflow for tag $tag"
+          gh workflow run publish.yml \
+            --repo "${{ github.repository }}" \
+            -f "tag=$tag"
+        shell: devenv shell -- bash -e {0}

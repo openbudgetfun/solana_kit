@@ -5,7 +5,7 @@ description: End-to-end release guidance for preparing and publishing package re
 
 ## Release Goals
 
-The current release flow is run locally by a maintainer. It separates version preparation from package publication so version bumps, changelogs, and package metadata can be reviewed before anything is published to pub.dev.
+The release flow is automated with MonoChange and GitHub Actions. It separates version preparation from package publication so version bumps, changelogs, and package metadata can be reviewed in a release PR before anything is published to pub.dev or NPM.
 
 ## Step-by-Step Release Flow
 
@@ -23,15 +23,17 @@ Reason: release quality gates should fail fast before versions or changelogs cha
 
 ### Step 2: Prepare Release Changes
 
-From a local checkout, create a release branch or PR that applies the pending changesets, updates package versions, and refreshes changelogs. Review the generated package versions and release notes before merging.
+Every push to `main` runs the `release-pr` workflow. That workflow prepares the pending changesets with MonoChange, updates package versions, refreshes changelogs and lockfiles, and opens or updates the `chore(release): prepare release` PR.
+
+Review the generated package versions and release notes before merging the release PR.
 
 Reason: package consumers should see accurate version numbers and user-facing release notes.
 
 ### Step 3: Publish Package Artifacts
 
-After the release changes are merged and tagged, publish the changed packages from the release commit on the maintainer machine. Always run a publish dry run first, then publish in dependency order or in small batches when many packages changed.
+After the release PR merges to `main`, the `release-pr` workflow detects the merged MonoChange release commit, creates release tags, and dispatches the `publish` workflow with the direct `v*` tag. The publish workflow checks out that tag, verifies publish readiness, publishes changed packages with `monochange step publish-packages`, and then publishes GitHub release objects.
 
-Reason: phased publishing reduces blast radius and makes it easier to recover if registry limits or package metadata problems appear.
+Reason: CI-owned publishing keeps the reviewed release commit, direct release tag, package artifacts, and GitHub releases tied to the same MonoChange release record.
 
 ### Step 4: Validate Published Artifacts
 
@@ -47,4 +49,4 @@ Reason: publishing success alone does not guarantee downstream usability.
 - Batch breaking changes with migration notes.
 - Document user-visible changes and minimum SDK changes clearly.
 - Verify the umbrella package resolves after publishing dependent packages.
-- Move publication to Trusted Publishing once registry setup is ready.
+- Keep pub.dev Trusted Publishing configuration aligned with `.github/workflows/publish.yml`.
