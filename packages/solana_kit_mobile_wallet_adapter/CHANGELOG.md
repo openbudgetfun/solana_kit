@@ -68,13 +68,3 @@ _Owner:_ Ifiok Jr. · _Introduced in:_ [`17fb23f`](https://github.com/openbudget
 ### Changed
 
 - No package-specific changes were recorded; `solana_kit_mobile_wallet_adapter` was updated to 0.4.1.
-
-## solana_kit_mobile_wallet_adapter [0.4.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mobile_wallet_adapter/v0.4.2) (2026-06-29)
-
-### 📖 Documentation
-
-#### Point package README website badges at package docs
-
-Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
-
-_Owner:_ Ifiok Jr. · _Introduced in:_ [`a4c5169`](https://github.com/openbudgetfun/solana_kit/commit/a4c5169c0e891c211f39958219268ae9ad8b9934)

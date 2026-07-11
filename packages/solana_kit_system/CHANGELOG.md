@@ -99,27 +99,3 @@ solana_kit_memo: solana-program/memo js@v0.11.1
 `solana_kit_stake` includes the authority seed `u64` size-prefix fix and updated stake delegation layout.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #182](https://github.com/openbudgetfun/solana_kit/pull/182)
-
-## solana_kit_system [0.4.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_system/v0.4.2) (2026-06-29)
-
-### 📖 Documentation
-
-#### Centralize package version documentation
-
-Centralize package version metadata in `versions.json` and render package installation snippets from the shared MDT data source. Published package behavior is unchanged.
-
-_Owner:_ Ifiok Jr. · _Introduced in:_ [`914f224`](https://github.com/openbudgetfun/solana_kit/commit/914f224a81e16a40c21554cd6766845ead05a6e9)
-
-#### Point package README website badges at package docs
-
-Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
-
-_Owner:_ Ifiok Jr. · _Introduced in:_ [`a4c5169`](https://github.com/openbudgetfun/solana_kit/commit/a4c5169c0e891c211f39958219268ae9ad8b9934)
-
-### 🔖 None
-
-#### Format workflow lint follow-up files
-
-Apply formatting-only changes discovered while adding the GitHub Actions workflow lint gate.
-
-_Owner:_ Ifiok Jr. · _Introduced in:_ [`e611148`](https://github.com/openbudgetfun/solana_kit/commit/e611148d1af6884297196096ca5e03f784496ebe)

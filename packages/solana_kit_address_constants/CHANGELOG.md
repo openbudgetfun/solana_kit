@@ -4,68 +4,6 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
-## [0.6.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.6.0) (2026-06-29)
-
-### 🐛 Fixed
-
-#### Add Subscriptions program client
-
-Adds a generated Subscriptions program client pinned to `solana-foundation/subscriptions` `ts-client-v0.3.0`, including account, instruction, PDA, type, and error helpers.
-
-Also exposes the canonical Subscriptions program address from `solana_kit_address_constants`.
-
-```dart
-import 'package:solana_kit/solana_kit.dart';
-import 'package:solana_kit_subscriptions/solana_kit_subscriptions.dart';
-
-Future<void> main() async {
-  const user = Address('11111111111111111111111111111112');
-  const tokenMint = Address('So11111111111111111111111111111111111111112');
-
-  final (authority, bump) = await findSubscriptionAuthorityPda(
-    programAddress: subscriptionsProgramAddress,
-    seeds: SubscriptionAuthoritySeeds(user: user, tokenMint: tokenMint),
-  );
-
-  print('authority=$authority bump=$bump');
-}
-```
-
-Build typed instructions for fixed and recurring delegations.
-
-```dart
-final instruction = getCreateFixedDelegationInstruction(
-  programAddress: subscriptionsProgramAddress,
-  delegator: delegator,
-  subscriptionAuthority: subscriptionAuthority,
-  delegationAccount: delegationAccount,
-  delegatee: delegatee,
-  systemProgram: systemProgram,
-  fixedDelegation: CreateFixedDelegationData(
-    nonce: BigInt.from(1),
-    amount: BigInt.from(1_000_000),
-    expiryTs: BigInt.zero,
-    expectedSubscriptionAuthorityInitId: BigInt.zero,
-  ),
-);
-```
-
-_Owner:_ Ifiok Jr. · _Introduced in:_ [`89d62ee`](https://github.com/openbudgetfun/solana_kit/commit/89d62ee0f08f2b15d4126da79ef645726eec64f4)
-
-### 📖 Documentation
-
-#### Centralize package version documentation
-
-Centralize package version metadata in `versions.json` and render package installation snippets from the shared MDT data source. Published package behavior is unchanged.
-
-_Owner:_ Ifiok Jr. · _Introduced in:_ [`914f224`](https://github.com/openbudgetfun/solana_kit/commit/914f224a81e16a40c21554cd6766845ead05a6e9)
-
-#### Point package README website badges at package docs
-
-Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
-
-_Owner:_ Ifiok Jr. · _Introduced in:_ [`a4c5169`](https://github.com/openbudgetfun/solana_kit/commit/a4c5169c0e891c211f39958219268ae9ad8b9934)
-
 ## [0.5.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.5.0) (2026-06-01)
 
 ### 💥 Breaking Change

@@ -4,16 +4,6 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
-## [0.6.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.6.0) (2026-06-29)
-
-### 📖 Documentation
-
-#### Point package README website badges at package docs
-
-Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
-
-_Owner:_ Ifiok Jr. · _Introduced in:_ [`a4c5169`](https://github.com/openbudgetfun/solana_kit/commit/a4c5169c0e891c211f39958219268ae9ad8b9934)
-
 ## [0.5.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.5.0) (2026-06-01)
 
 ### Changed

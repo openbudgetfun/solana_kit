@@ -27,7 +27,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_spl_account_compression": ^0.3.1
+  "solana_kit_spl_account_compression": ^0.3.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

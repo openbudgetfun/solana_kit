@@ -109,19 +109,3 @@ _Owner:_ Ifiok Jr. · _Introduced in:_ [`3f596ef`](https://github.com/openbudget
 Replaced a fixed local airdrop delay with short balance polling so integration tests complete faster while preserving the same assertion.
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`ead9932`](https://github.com/openbudgetfun/solana_kit/commit/ead9932533e0ebd1dabf7e8fde813b1d6d372208)
-
-## solana_kit_mpl_bubblegum [0.3.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mpl_bubblegum/v0.3.1) (2026-06-29)
-
-### 📖 Documentation
-
-#### Centralize package version documentation
-
-Centralize package version metadata in `versions.json` and render package installation snippets from the shared MDT data source. Published package behavior is unchanged.
-
-_Owner:_ Ifiok Jr. · _Introduced in:_ [`914f224`](https://github.com/openbudgetfun/solana_kit/commit/914f224a81e16a40c21554cd6766845ead05a6e9)
-
-#### Point package README website badges at package docs
-
-Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
-
-_Owner:_ Ifiok Jr. · _Introduced in:_ [`a4c5169`](https://github.com/openbudgetfun/solana_kit/commit/a4c5169c0e891c211f39958219268ae9ad8b9934)
