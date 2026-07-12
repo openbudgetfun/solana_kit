@@ -210,13 +210,17 @@ in
     "lint:push" = {
       exec = ''
         set -euo pipefail
+        workspace_root="${currentDir}"
+        export DEVENV_ROOT="$workspace_root"
+        export PATH="$workspace_root/.devenv/profile/bin:$PATH"
+        cd "$workspace_root"
 
-        ${currentDir}/.devenv/profile/bin/docs:check
-        ${currentDir}/.devenv/profile/bin/lint:format
-        ${currentDir}/.devenv/profile/bin/lint:kotlin
-        ${currentDir}/.devenv/profile/bin/lint:analyze
-        ${currentDir}/.devenv/profile/bin/lint:workflows
-        ${extra.monochange}/bin/monochange check
+        docs:check
+        lint:format
+        lint:kotlin
+        lint:analyze
+        lint:workflows
+        monochange check
       '';
       description = "Run all lint checks before `git push`.";
       binary = "bash";
