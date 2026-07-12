@@ -35,6 +35,13 @@ jobs:
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
 
+      - name: capture action-managed Node path
+        id: action_node
+        run: |
+          set -euo pipefail
+          node_dir="$(dirname "$(command -v node)")"
+          echo "node_dir=$node_dir" >> "$GITHUB_OUTPUT"
+
       - name: setup
         uses: ./.github/actions/devenv
         with:
@@ -92,14 +99,20 @@ jobs:
       - name: refresh release pull request
         if: steps.release_record.outputs.is_release_commit != 'true' && steps.pending_changesets.outputs.has_changesets == 'true'
         env:
+          ACTION_NODE_DIR: ${{ steps.action_node.outputs.node_dir }}
           GH_TOKEN: ${{ secrets.RELEASE_PR_MERGE_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           # Keep PrepareRelease and CommitRelease in one MonoChange process, while
-          # forcing the GitHub action-managed pnpm ahead of the Nix profile pnpm.
+          # forcing GitHub action-managed pnpm and Node ahead of the Nix profile.
+          if [ -n "${ACTION_NODE_DIR:-}" ]; then
+            export PATH="$ACTION_NODE_DIR:$PATH"
+          fi
           if [ -n "${PNPM_HOME:-}" ]; then
             export PATH="$PNPM_HOME:$PATH"
           fi
+          node --version
+          pnpm --version
           monochange --log-level=debug run release --format json --commit --no-verify=true
           monochange --log-level=debug step open-release-request --stage-all --no-verify
         shell: devenv shell -- bash -e {0}
