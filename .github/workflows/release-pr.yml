@@ -89,27 +89,18 @@ jobs:
           echo "has_changesets=${has_changesets}" >> "$GITHUB_OUTPUT"
         shell: devenv shell -- bash -e {0}
 
-      - name: prepare release pull request updates
-        if: steps.release_record.outputs.is_release_commit != 'true' && steps.pending_changesets.outputs.has_changesets == 'true'
-        run: |
-          set -euo pipefail
-          monochange --log-level=debug step prepare-release --format json
-          monochange versions sync
-          flutter pub get
-        shell: devenv shell -- bash -e {0}
-
-      - name: refresh NPM lockfile
-        if: steps.release_record.outputs.is_release_commit != 'true' && steps.pending_changesets.outputs.has_changesets == 'true'
-        run: pnpm install --lockfile-only --no-frozen-lockfile --link-workspace-packages
-
-      - name: finalize release pull request
+      - name: refresh release pull request
         if: steps.release_record.outputs.is_release_commit != 'true' && steps.pending_changesets.outputs.has_changesets == 'true'
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PR_MERGE_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          fix:release
-          monochange --log-level=debug step commit-release --stage-all --no-verify
+          # Keep PrepareRelease and CommitRelease in one MonoChange process, while
+          # forcing the GitHub action-managed pnpm ahead of the Nix profile pnpm.
+          if [ -n "${PNPM_HOME:-}" ]; then
+            export PATH="$PNPM_HOME:$PATH"
+          fi
+          monochange --log-level=debug run release --format json --commit --no-verify=true
           monochange --log-level=debug step open-release-request --stage-all --no-verify
         shell: devenv shell -- bash -e {0}
 
