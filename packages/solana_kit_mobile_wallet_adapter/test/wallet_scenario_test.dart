@@ -98,7 +98,7 @@ class _MockBinaryMessenger implements BinaryMessenger {
   Future<void> handlePlatformMessage(
     String channel,
     ByteData? data,
-    PlatformMessageResponseCallback? callback,
+    Object? callback,
   ) async {}
 }
 
