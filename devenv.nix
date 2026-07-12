@@ -78,7 +78,7 @@ in
         name = "lint:push";
         description = "Run linting checks on every push.";
         entry = "${config.env.DEVENV_PROFILE}/bin/lint:push";
-        pass_filenames = true;
+        pass_filenames = false;
         always_run = true;
         stages = [ "pre-push" ];
       };
