@@ -35,12 +35,16 @@ jobs:
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
 
-      - name: capture action-managed Node path
-        id: action_node
+      - name: capture action-managed tool paths
+        id: action_tools
         run: |
           set -euo pipefail
           node_dir="$(dirname "$(command -v node)")"
+          pnpm_dir="$(dirname "$(command -v pnpm)")"
           echo "node_dir=$node_dir" >> "$GITHUB_OUTPUT"
+          echo "pnpm_dir=$pnpm_dir" >> "$GITHUB_OUTPUT"
+          echo "node: $node_dir/node"
+          echo "pnpm: $pnpm_dir/pnpm"
 
       - name: setup
         uses: ./.github/actions/devenv
@@ -99,7 +103,8 @@ jobs:
       - name: refresh release pull request
         if: steps.release_record.outputs.is_release_commit != 'true' && steps.pending_changesets.outputs.has_changesets == 'true'
         env:
-          ACTION_NODE_DIR: ${{ steps.action_node.outputs.node_dir }}
+          ACTION_NODE_DIR: ${{ steps.action_tools.outputs.node_dir }}
+          ACTION_PNPM_DIR: ${{ steps.action_tools.outputs.pnpm_dir }}
           GH_TOKEN: ${{ secrets.RELEASE_PR_MERGE_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
@@ -108,9 +113,12 @@ jobs:
           if [ -n "${ACTION_NODE_DIR:-}" ]; then
             export PATH="$ACTION_NODE_DIR:$PATH"
           fi
-          if [ -n "${PNPM_HOME:-}" ]; then
-            export PATH="$PNPM_HOME:$PATH"
+          if [ -n "${ACTION_PNPM_DIR:-}" ]; then
+            export PATH="$ACTION_PNPM_DIR:$PATH"
           fi
+          hash -r
+          command -v node
+          command -v pnpm
           node --version
           pnpm --version
           monochange --log-level=debug run release --format json --commit --no-verify=true
