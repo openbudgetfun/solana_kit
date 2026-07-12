@@ -22,11 +22,6 @@
       {
         "command": "shfmt --filename {{file_path}} -i 0",
         "exts": ["sh", "bash"]
-      },
-      {
-        "command": "dartfmt {{file_path}}",
-        "cacheKeyFiles": [".dartfmt.txt"],
-        "exts": ["dart"]
       }
     ]
   },

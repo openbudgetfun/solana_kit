@@ -38,7 +38,6 @@ in
   enterShell = ''
     set -euo pipefail
     eval "$(pnpm-activate-env)"
-    dartfmt:hash
   '';
 
   dotenv.disableHint = true;
@@ -136,35 +135,7 @@ in
       '';
       description = "Run the format_coverage command from the coverage package.";
     };
-    "dartfmt" = {
-      exec = ''
-        set -euo pipefail
-        file="$1"
-        shift || true
-        dir="$(dirname "$file")"
-        base="$(basename "$file")"
-        (
-          cd "$dir"
-          dart format -o show "$base" "$@" | sed '$d'
-        )
-      '';
-      description = "The dart format executable for formatting the workspace.";
-      binary = "bash";
-    };
-    "dartfmt:hash" = {
-      exec = ''
-        set -euo pipefail
-        cd "''${DEVENV_ROOT:-${currentDir}}"
 
-        find . \( -name pubspec.yaml -o -name analysis_options.yaml -o -name pubspec.lock \) \
-          | sort \
-          | ${pkgs.findutils}/bin/xargs ${pkgs.coreutils}/bin/sha256sum \
-          | ${pkgs.coreutils}/bin/sha256sum \
-          | cut -d' ' -f1 > .dartfmt.txt
-      '';
-      description = "Write .dartfmt.txt from pubspec, analysis options, and lockfile contents.";
-      binary = "bash";
-    };
     "install:all" = {
       exec = ''
         set -euo pipefail
@@ -207,7 +178,9 @@ in
     "fix:format" = {
       exec = ''
         set -euo pipefail
-        dprint fmt --config "$DEVENV_ROOT/dprint.json" -L debug
+        workspace_root="''${DEVENV_ROOT:-${currentDir}}"
+        dprint fmt --config "$workspace_root/dprint.json" -L debug
+        ${pkgs.fvm}/bin/fvm dart format -o write "$workspace_root"
       '';
       description = "Fix formatting for entire project.";
       binary = "bash";
@@ -251,7 +224,9 @@ in
     "lint:format" = {
       exec = ''
         set -euo pipefail
-        ${pkgs.dprint}/bin/dprint check
+        workspace_root="''${DEVENV_ROOT:-${currentDir}}"
+        ${pkgs.dprint}/bin/dprint check --config "$workspace_root/dprint.json"
+        ${pkgs.fvm}/bin/fvm dart format -o none --set-exit-if-changed "$workspace_root"
       '';
       description = "Check all formatting is correct.";
     };
