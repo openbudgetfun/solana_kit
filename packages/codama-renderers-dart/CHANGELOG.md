@@ -83,3 +83,36 @@ New exports:
 Also re-exports from `solana_kit_address` (Address type, codecs, comparator, PublicKey) and `solana_kit_address_constants` (well-known address constants).
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`3f596ef`](https://github.com/openbudgetfun/solana_kit/commit/3f596ef95c0d00714db97a4338ac9342f1fabfb7) · _Last updated in:_ [`4643648`](https://github.com/openbudgetfun/solana_kit/commit/46436481a28eab1c803175bee56e98e89fe8fac6)
+
+## codama-renderers-dart [0.4.2](https://github.com/openbudgetfun/solana_kit/releases/tag/codama-renderers-dart/v0.4.2) (2026-07-23)
+
+### 🐛 Fixed
+
+#### Harden cryptographic input handling
+
+Harden keypair file writes, validate malformed mobile wallet cryptographic inputs, and update vulnerable renderer test dependencies.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #181](https://github.com/openbudgetfun/solana_kit/pull/181)
+
+#### Subscriptions: regenerate from ts-client-v0.4.0-rc.2
+
+Regenerates the Subscriptions generated code from upstream IDL
+`ts-client-v0.4.0-rc.2` (was `ts-client-v0.3.0`). Adds 3 new instructions:
+
+- `revokeSubscriptionAuthority`
+- `revokeAbandonedDelegation`
+- `revokeAbandonedSubscription`
+
+Adds 4 new errors: `transferHookTooManyAccounts`, `invalidSelfProgram`,
+`planEndTsCannotExtend`,
+`recurringDelegationStartOnLandingRequiresExpiry`.
+
+Updates existing instructions with new required/optional accounts
+(`payer`, `receiver`, `subscriptionAuthority`, `eventAuthority`,
+`selfProgram`) and PDA-based `eventAuthority` defaults.
+
+Also fixes three latent renderer bugs in `codama-renderers-dart`:
+empty struct constructors, PDA seed import merging, and BigInt import
+attribution.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #195](https://github.com/openbudgetfun/solana_kit/pull/195)

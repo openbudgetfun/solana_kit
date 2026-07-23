@@ -4,6 +4,79 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.6.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.6.0) (2026-07-23)
+
+### 💥 Breaking Change
+
+#### Remove deprecated base58 account info types
+
+Removes the deprecated `AccountInfoWithBase58Bytes` and `AccountInfoWithBase58EncodedData` classes. The Solana RPC API now returns account data as base64 (or base64+zstd) instead of base58. Use `AccountInfoWithBase64EncodedData` instead.
+
+```dart
+// Before
+final account = AccountInfoWithBase58Bytes(data: Base58EncodedBytes('...'));
+
+// After
+final account = AccountInfoWithBase64EncodedData(
+  data: (Base64EncodedBytes('...'), 'base64'),
+);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #196](https://github.com/openbudgetfun/solana_kit/pull/196)
+
+#### Remove deprecated TokenAmount.uiAmount field
+
+Removes the deprecated `uiAmount` field from `TokenAmount`. The floating-point `uiAmount` field loses precision for large token balances. Use `uiAmountString` instead, which preserves the full string representation from the RPC.
+
+```dart
+// Before
+final amount = TokenAmount(
+  amount: StringifiedBigInt('1000000'),
+  decimals: 6,
+  uiAmountString: StringifiedNumber('1'),
+  uiAmount: 1.0,
+);
+
+// After
+final amount = TokenAmount(
+  amount: StringifiedBigInt('1000000'),
+  decimals: 6,
+  uiAmountString: StringifiedNumber('1'),
+);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #196](https://github.com/openbudgetfun/solana_kit/pull/196)
+
+#### Remove deprecated TransactionStatus types
+
+Removes the deprecated `TransactionStatus` sealed class and its `TransactionStatusOk` / `TransactionStatusErr` subclasses. The modern API uses a nullable `TransactionError` — `null` means success, non-null means the transaction failed with that error.
+
+```dart
+// Before
+final status = TransactionStatusOk();
+final error = TransactionStatusErr(TransactionErrorSimple('AccountInUse'));
+
+// After — use nullable TransactionError directly
+final error = null; // success
+final error = TransactionErrorSimple('AccountInUse'); // failure
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #196](https://github.com/openbudgetfun/solana_kit/pull/196)
+
+### 📖 Documentation
+
+#### Centralize package version documentation
+
+Centralize package version metadata in `versions.json` and render package installation snippets from the shared MDT data source. Published package behavior is unchanged.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #188](https://github.com/openbudgetfun/solana_kit/pull/188)
+
+#### Point package README website badges at package docs
+
+Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #192](https://github.com/openbudgetfun/solana_kit/pull/192)
+
 ## [0.5.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.5.0) (2026-06-01)
 
 ### 💥 Breaking Change

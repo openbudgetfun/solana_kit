@@ -52,6 +52,37 @@ Also re-exports from `solana_kit_address` (Address type, codecs, comparator, Pub
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`3f596ef`](https://github.com/openbudgetfun/solana_kit/commit/3f596ef95c0d00714db97a4338ac9342f1fabfb7) · _Last updated in:_ [`4643648`](https://github.com/openbudgetfun/solana_kit/commit/46436481a28eab1c803175bee56e98e89fe8fac6)
 
+## solana_kit_loader [0.1.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_loader/v0.1.1) (2026-07-23)
+
+### 🐛 Fixed
+
+#### Bump program reference pins to latest upstream tags
+
+Updates `config/reference-repos.json` and docs to track the latest
+upstream tags for program packages whose IDLs are unchanged or
+tooling-only:
+
+- Token: `js@v0.13.0` → `js@v0.14.0`
+- Address Lookup Table: `js@v0.11.0` → `js@v0.12.1`
+- Memo: `js@v0.11.1` → `js@v0.11.2`
+- Compute Budget: `js@v0.15.0` → `js@v0.16.0`
+- Stake: `js@v0.6.1` → `js@v0.7.2`
+- Loader v3: `js@v0.3.0` → `js@v0.4.0`
+
+No generated Dart API changes for these packages — IDL comparison
+confirmed semantic equivalence. Updates are reference pin and
+documentation only.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #195](https://github.com/openbudgetfun/solana_kit/pull/195)
+
+### 📖 Documentation
+
+#### Point package README website badges at package docs
+
+Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #192](https://github.com/openbudgetfun/solana_kit/pull/192)
+
 ## 0.0.0
 
 Placeholder publication.
