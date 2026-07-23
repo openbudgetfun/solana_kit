@@ -75,9 +75,18 @@ jobs:
       # MonoChange requires token-free npm OIDC trusted publishing.
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
+
+      - name: capture action-managed Node path
+        id: action_tools
+        run: |
+          set -euo pipefail
+          node_dir="$(dirname "$(command -v node)")"
+          echo "node_dir=$node_dir" >> "$GITHUB_OUTPUT"
+          echo "node: $node_dir/node"
+          echo "npm: $node_dir/npm"
 
       - name: setup
         uses: ./.github/actions/devenv
@@ -102,8 +111,18 @@ jobs:
 
       - name: publish packages with MonoChange
         env:
+          ACTION_NODE_DIR: ${{ steps.action_tools.outputs.node_dir }}
           NPM_CONFIG_PROVENANCE: "true"
         run: |
+          set -euo pipefail
+          # devenv can place its own Node.js ahead of setup-node. npm trusted
+          # publishing requires Node.js 22.14+ and npm 11.5.1+.
+          export PATH="$ACTION_NODE_DIR:$PATH"
+          hash -r
+          command -v node
+          command -v npm
+          node --version
+          npm --version
           monochange step publish-packages \
             --log-level info \
             --output "$RUNNER_TEMP/publish-result.json" \
