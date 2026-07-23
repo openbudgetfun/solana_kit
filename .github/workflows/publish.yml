@@ -71,10 +71,11 @@ jobs:
         shell: bash
 
       - uses: pnpm/action-setup@a8198c4bff370c8506180b035930dea56dbd5288 # v5
+      # Keep registry-url unset so setup-node does not inject NODE_AUTH_TOKEN;
+      # MonoChange requires token-free npm OIDC trusted publishing.
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: 22
-          registry-url: https://registry.npmjs.org
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
 
