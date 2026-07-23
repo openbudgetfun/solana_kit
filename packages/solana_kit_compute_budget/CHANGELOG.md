@@ -57,6 +57,43 @@ Add transaction-message helper APIs for Compute Budget instructions, including i
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #184](https://github.com/openbudgetfun/solana_kit/pull/184)
 
+## solana_kit_compute_budget [0.5.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_compute_budget/v0.5.2) (2026-07-23)
+
+### 🐛 Fixed
+
+#### Bump program reference pins to latest upstream tags
+
+Updates `config/reference-repos.json` and docs to track the latest
+upstream tags for program packages whose IDLs are unchanged or
+tooling-only:
+
+- Token: `js@v0.13.0` → `js@v0.14.0`
+- Address Lookup Table: `js@v0.11.0` → `js@v0.12.1`
+- Memo: `js@v0.11.1` → `js@v0.11.2`
+- Compute Budget: `js@v0.15.0` → `js@v0.16.0`
+- Stake: `js@v0.6.1` → `js@v0.7.2`
+- Loader v3: `js@v0.3.0` → `js@v0.4.0`
+
+No generated Dart API changes for these packages — IDL comparison
+confirmed semantic equivalence. Updates are reference pin and
+documentation only.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #195](https://github.com/openbudgetfun/solana_kit/pull/195)
+
+### 📖 Documentation
+
+#### Centralize package version documentation
+
+Centralize package version metadata in `versions.json` and render package installation snippets from the shared MDT data source. Published package behavior is unchanged.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #188](https://github.com/openbudgetfun/solana_kit/pull/188)
+
+#### Point package README website badges at package docs
+
+Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #192](https://github.com/openbudgetfun/solana_kit/pull/192)
+
 ## [0.4.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.4.0) (2026-05-30)
 
 ### 💥 Breaking Change
