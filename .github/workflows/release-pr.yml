@@ -139,7 +139,6 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     permissions:
-      actions: write
       contents: write
     steps:
       - name: checkout repository
@@ -188,26 +187,4 @@ jobs:
             fi
             echo "is_release_commit=false" >> "$GITHUB_OUTPUT"
           fi
-        shell: devenv shell -- bash -e {0}
-
-      - name: trigger publish workflow
-        if: steps.tag_release.outputs.is_release_commit == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_PR_MERGE_TOKEN || secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          tag_report="$RUNNER_TEMP/tag-report.json"
-          tag="$(jq -r '.tags.main // empty' "$tag_report")"
-          if [ -z "$tag" ]; then
-            echo "::error::No main release tag found in tag-report.json; expected a direct v* tag."
-            exit 1
-          fi
-          if [[ "$tag" != v* ]]; then
-            echo "::error::Tag '$tag' must be a direct v* release tag."
-            exit 1
-          fi
-          echo "Triggering publish workflow for tag $tag"
-          gh workflow run publish.yml \
-            --repo "${{ github.repository }}" \
-            -f "tag=$tag"
         shell: devenv shell -- bash -e {0}

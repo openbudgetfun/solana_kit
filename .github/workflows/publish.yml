@@ -1,18 +1,15 @@
 name: publish
 
 on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: "Direct release tag to publish (for example v0.6.0)."
-        required: true
-        type: string
+  push:
+    tags:
+      - "v*"
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ inputs.tag || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -26,34 +23,27 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
-      - name: resolve release tag
-        id: release_tag
+      - name: validate release tag
         env:
-          RELEASE_TAG_INPUT: ${{ inputs.tag }}
+          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-          tag="$RELEASE_TAG_INPUT"
-          if [[ "$tag" != v* ]]; then
-            echo "::error::Tag '$tag' must be a direct v* release tag, for example v0.6.0." >&2
+          if [[ "$RELEASE_TAG" != v* || "$RELEASE_TAG" == */* ]]; then
+            echo "::error::Tag '$RELEASE_TAG' must be a direct v* release tag, for example v0.6.0." >&2
             exit 1
           fi
-          if ! git ls-remote --exit-code --tags "https://github.com/${GITHUB_REPOSITORY}.git" "refs/tags/$tag" >/dev/null 2>&1; then
-            echo "::error::Tag '$tag' does not exist on the remote." >&2
-            exit 1
-          fi
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
         shell: bash
 
       - name: checkout release tag
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
-          ref: ${{ steps.release_tag.outputs.tag }}
+          ref: ${{ github.ref }}
           fetch-depth: 0
           persist-credentials: false
 
       - name: verify tag checkout
         env:
-          EXPECTED_TAG: ${{ steps.release_tag.outputs.tag }}
+          EXPECTED_TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
           expected_tag="$EXPECTED_TAG"
@@ -70,14 +60,16 @@ jobs:
           fi
         shell: bash
 
+      - name: setup Dart publishing authentication
+        uses: dart-lang/setup-dart@65eb853c7ba17dde3be364c3d2858773e7144260 # v1.7.2
+
       - uses: pnpm/action-setup@a8198c4bff370c8506180b035930dea56dbd5288 # v5
       # Keep registry-url unset so setup-node does not inject NODE_AUTH_TOKEN;
       # MonoChange requires token-free npm OIDC trusted publishing.
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: 24
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
+          package-manager-cache: false
 
       - name: capture action-managed Node path
         id: action_tools
@@ -121,8 +113,12 @@ jobs:
           hash -r
           command -v node
           command -v npm
+          command -v dart
+          command -v flutter
           node --version
           npm --version
+          dart --version
+          flutter --version
           monochange step publish-packages \
             --log-level info \
             --output "$RUNNER_TEMP/publish-result.json" \
