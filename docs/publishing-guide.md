@@ -203,7 +203,7 @@ Important requirements before running publish workflows:
 
 - The release commit must include a valid MonoChange release record.
 - The direct `v*` tag must point at a commit reachable from `origin/main`.
-- pub.dev Trusted Publishing must be configured for `.github/workflows/publish.yml` and the `pub.dev` GitHub environment.
+- pub.dev Trusted Publishing must be configured for `.github/workflows/publish.yml` and the `publisher` GitHub environment.
 - Each package `CHANGELOG.md` must contain the current package version heading.
 
 For local verification from a release commit or checked-out release tag, run:
@@ -334,7 +334,7 @@ Before the very first publish of any package:
 
 1. Create a [pub.dev](https://pub.dev/) account
 2. Set up a [verified publisher](https://dart.dev/tools/pub/verified-publishers)
-3. Configure pub.dev Trusted Publishing for `.github/workflows/publish.yml` and the `pub.dev` GitHub environment
+3. Configure pub.dev Trusted Publishing for `.github/workflows/publish.yml` and the `publisher` GitHub environment
 4. Verify all packages pass `dart pub publish --dry-run`
 5. Publish packages through the MonoChange release PR and direct-tag `publish` workflow
 6. Verify each package appears on pub.dev after the workflow completes
@@ -351,4 +351,4 @@ The release flow is automated with MonoChange and GitHub Actions while staying r
 5. **Publishing**: The publish workflow checks out the tag, verifies readiness, publishes changed packages with `monochange step publish-packages`, and publishes GitHub release objects
 6. **Verification**: Check pub.dev for all packages with correct versions and smoke test a clean consumer project
 
-Keep pub.dev Trusted Publishing entries aligned with `.github/workflows/publish.yml` and its `pub.dev` GitHub environment. Keep public release notes focused on consumer-visible changes, minimum SDK constraints, and migration steps.
+Keep pub.dev Trusted Publishing entries aligned with `.github/workflows/publish.yml` and its `publisher` GitHub environment. Keep public release notes focused on consumer-visible changes, minimum SDK constraints, and migration steps.
