@@ -31,7 +31,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_mobile_wallet_adapter_protocol": ^0.4.1
+  "solana_kit_mobile_wallet_adapter_protocol": ^0.4.2
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
