@@ -170,30 +170,14 @@ jobs:
           GH_TOKEN: ${{ secrets.RELEASE_PR_MERGE_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          tag_report="$RUNNER_TEMP/tag-report.json"
 
           if is_release_commit="$(monochange --log-level=debug step release-record --from HEAD --format json --jq '.resolved_commit == .record_commit')"; then
             echo "is_release_commit=${is_release_commit}" >> "$GITHUB_OUTPUT"
             if [ "${is_release_commit}" = "true" ]; then
-              monochange --log-level=debug step tag-release --from HEAD --push=false --format json | tee "$tag_report"
-
-              main_tag="$(jq -r '.tags.main // empty' "$tag_report")"
-              if [ -z "$main_tag" ]; then
-                echo "::error::The release record does not contain a direct tag for the main release group."
-                exit 1
-              fi
-
-              # GitHub suppresses tag push events when more than three tags are
-              # pushed at once. Push the direct release tag by itself so the
-              # publish workflow receives the trusted-publishing event.
-              git push origin "refs/tags/$main_tag:refs/tags/$main_tag"
-
-              jq -r --arg main_tag "$main_tag" \
-                '.tag_results[].tag_name | select(. != $main_tag)' \
-                "$tag_report" |
-                while IFS= read -r tag; do
-                  git push origin "refs/tags/$tag:refs/tags/$tag"
-                done
+              monochange --log-level=debug step tag-release \
+                --from HEAD \
+                --push=true \
+                --format json | tee "$RUNNER_TEMP/tag-report.json"
             fi
           else
             subject="$(git log -1 --pretty=%s)"
