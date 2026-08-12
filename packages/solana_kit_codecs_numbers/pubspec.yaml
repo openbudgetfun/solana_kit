@@ -1,14 +1,14 @@
 name: solana_kit_codecs_numbers
 description: Numeric codecs for the Solana Kit Dart SDK.
-version: 0.6.0
+version: 0.5.0
 repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_codecs_numbers
 homepage: https://openbudgetfun.github.io/solana_kit/
 environment:
   sdk: ^3.12.0
 resolution: workspace
 dependencies:
-  solana_kit_codecs_core: ^0.6.0
-  solana_kit_errors: ^0.6.0
+  solana_kit_codecs_core: ^0.5.0
+  solana_kit_errors: ^0.5.0
 dev_dependencies:
-  solana_kit_lints: ^0.6.0
+  solana_kit_lints: ^0.5.0
   test: ^1.25.0
