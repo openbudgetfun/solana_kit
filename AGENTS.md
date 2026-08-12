@@ -25,6 +25,7 @@ Solana Kit is a multi-package Dart workspace that ports `@solana/kit` and relate
 - Keep affected public docs in sync when public APIs or behavior change.
 - Every package under `packages/*` must have a `LICENSE` (MIT) and `README.md` file. New packages must include both before their first publish. The README must describe the package purpose, show usage examples, and list key APIs. Use badges for pub.dev, CI, and coverage. See `packages/solana_kit_compute_budget/README.md` for the canonical structure.
 - New packages must start at `version: 0.0.0` in their `pubspec.yaml` with a `major` changeset. This ensures the first release lands at `0.1.0` (the minimum viable publishable version). Never set an unpublished package to a higher version.
+- Never push commits, edit files, or rebase generated release pull requests (branches matching `monochange/release/**`, e.g. `monochange/release/step-open-release-request`). These PRs are produced by the release tooling and must stay untouched. If a generated release PR fails CI, fix the root cause on `main` (or the appropriate feature branch) and let the release PR pick up the change on its next regeneration. Re-running failed checks (`gh run rerun`) and merging are allowed; modifying the PR content is not.
 
 ## Task-specific guides
 
