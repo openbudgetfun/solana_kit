@@ -4,10 +4,15 @@
 import 'package:solana_kit/solana_kit.dart';
 
 void main() {
-  final rentExemption = getMinimumBalanceForRentExemption(165);
+  // The local `getMinimumBalanceForRentExemption` helper was removed in
+  // @solana/kit v7.0.0 because rent exemption is becoming dynamic (see
+  // SIMD-0437/0194/0389). Fetch the value from an RPC node instead:
+  //
+  //   final rpc = createSolanaRpc('https://api.mainnet-beta.solana.com');
+  //   final rent = await rpc.getMinimumBalanceForRentExemption(165).send();
+  //   print('Rent exemption for 165 bytes: ${rent.value} lamports');
 
   final transformed = 2.pipe((value) => value + 3).pipe((value) => value * 10);
 
-  print('Rent exemption for 165 bytes: ${rentExemption.value} lamports');
   print('Pipe result: $transformed');
 }

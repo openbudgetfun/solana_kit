@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
+import 'package:solana_kit_instruction_plans/src/max_instructions.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
@@ -127,7 +128,18 @@ class MessagePacker {
   /// [SolanaErrorCode.instructionPlansMessagePackerAlreadyComplete]
   /// if the message packer is already done and no more instructions can
   /// be packed.
-  final TransactionMessage Function(TransactionMessage) packMessageToCapacity;
+  ///
+  /// Throws a [SolanaError] with code
+  /// [SolanaErrorCode.instructionPlansMaxInstructionsPerTransactionExceeded]
+  /// if packing would exceed `maxInstructions` (defaulting to
+  /// `defaultMaxInstructionsPerTransaction`).
+  ///
+  /// Added the `maxInstructions` option in @solana/kit v7.0.0.
+  final TransactionMessage Function(
+    TransactionMessage message, {
+    int? maxInstructions,
+  })
+  packMessageToCapacity;
 }
 
 // ---------------------------------------------------------------------------
@@ -389,12 +401,23 @@ MessagePackerInstructionPlan getLinearMessagePackerInstructionPlan({
     var offset = 0;
     return MessagePacker(
       done: () => offset >= totalLength,
-      packMessageToCapacity: (message) {
+      packMessageToCapacity: (message, {maxInstructions}) {
         if (offset >= totalLength) {
           throw SolanaError(
             SolanaErrorCode.instructionPlansMessagePackerAlreadyComplete,
           );
         }
+
+        // Added in @solana/kit v7.0.0: enforce the configurable instruction
+        // count limit so packed messages never exceed it. The base
+        // instruction is always added, so the limit is checked against
+        // `instructions.length + 1`.
+        assertValidMaxInstructionsPerTransaction(maxInstructions);
+        final resolvedMax = resolveMaxInstructions(maxInstructions);
+        assertMaxInstructionsPerTransaction(
+          message.instructions.length + 1,
+          resolvedMax,
+        );
 
         final messageSizeWithBaseInstruction = getTransactionMessageSize(
           appendTransactionMessageInstruction(
@@ -442,12 +465,22 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
     var instructionIndex = 0;
     return MessagePacker(
       done: () => instructionIndex >= instructions.length,
-      packMessageToCapacity: (message) {
+      packMessageToCapacity: (message, {maxInstructions}) {
         if (instructionIndex >= instructions.length) {
           throw SolanaError(
             SolanaErrorCode.instructionPlansMessagePackerAlreadyComplete,
           );
         }
+
+        // Added in @solana/kit v7.0.0: enforce the configurable instruction
+        // count limit. The next instruction is always added, so the limit is
+        // checked against `instructions.length + 1` before appending.
+        assertValidMaxInstructionsPerTransaction(maxInstructions);
+        final resolvedMax = resolveMaxInstructions(maxInstructions);
+        assertMaxInstructionsPerTransaction(
+          message.instructions.length + 1,
+          resolvedMax,
+        );
 
         final originalMessageSize = getTransactionMessageSize(message);
         var currentMessage = message;
@@ -457,6 +490,12 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
           index < instructions.length;
           index++
         ) {
+          // Stop packing once the next instruction would exceed the
+          // configured maximum number of instructions per transaction.
+          if (currentMessage.instructions.length >= resolvedMax) {
+            instructionIndex = index;
+            return currentMessage;
+          }
           currentMessage = appendTransactionMessageInstruction(
             instructions[index],
             currentMessage,

@@ -42,6 +42,13 @@ enum SolanaErrorDomain {
   /// Transaction execution errors.
   transactionError,
 
+  /// Transaction introspection and decompilation errors.
+  //
+  // Added in @solana/kit v7.0.0 for the new transaction-introspection package
+  // that bridges `getTransaction` responses and the auto-generated program
+  // clients.
+  transactionIntrospection,
+
   /// Transaction planning and execution pipeline errors.
   instructionPlans,
 
@@ -116,6 +123,11 @@ SolanaErrorDomain getSolanaErrorDomain(SolanaErrorCode code) {
   }
   if (v >= 5663000 && v <= 5663999) {
     return SolanaErrorDomain.transaction;
+  }
+  // Added in @solana/kit v7.0.0: reserved [5664000-5664999] for the new
+  // transaction-introspection domain.
+  if (v >= 5664000 && v <= 5664999) {
+    return SolanaErrorDomain.transactionIntrospection;
   }
   if (v >= 7050000 && v <= 7050999) {
     return SolanaErrorDomain.transactionError;

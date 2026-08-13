@@ -1,5 +1,6 @@
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instruction_plans/src/instruction_plan.dart';
+import 'package:solana_kit_instruction_plans/src/max_instructions.dart';
 import 'package:solana_kit_instruction_plans/src/transaction_plan.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
@@ -24,6 +25,7 @@ class TransactionPlannerConfig {
   const TransactionPlannerConfig({
     required this.createTransactionMessage,
     this.onTransactionMessageUpdated,
+    this.maxInstructionsPerTransaction,
   });
 
   /// Called whenever a new transaction message is needed.
@@ -33,13 +35,44 @@ class TransactionPlannerConfig {
 
   /// Called whenever a transaction message is updated.
   final OnTransactionMessageUpdated? onTransactionMessageUpdated;
+
+  /// The default maximum number of instructions allowed in each planned
+  /// transaction message.
+  ///
+  /// This includes any instructions already present in messages returned by
+  /// [createTransactionMessage] and any instructions added by
+  /// [onTransactionMessageUpdated]. Must be a positive integer no greater than
+  /// 64 — the number of top-level instructions the transaction format can
+  /// encode. Larger values throw a [SolanaError] with code
+  /// with code
+  /// `SolanaErrorCode.instructionPlansInvalidMaxInstructionsPerTransaction`.
+  /// Defaults to `defaultMaxInstructionsPerTransaction` (16).
+  ///
+  /// Added in @solana/kit v7.0.0.
+  final int? maxInstructionsPerTransaction;
 }
 
 /// Creates a new transaction planner based on the provided configuration.
 ///
 /// At the very least, the [TransactionPlannerConfig.createTransactionMessage]
 /// function must be provided.
+///
+/// You may also provide `TransactionPlannerConfig.maxInstructionsPerTransaction`
+/// to limit the number of instructions in each planned transaction message.
+/// This limit includes any instructions already present in messages returned
+/// by `createTransactionMessage` and any instructions added by
+/// `onTransactionMessageUpdated`. It must be a positive integer no greater
+/// than the hard limit of 64 instructions per transaction; larger values
+/// throw. Defaults to 16.
+///
+/// Added the `maxInstructionsPerTransaction` option in @solana/kit v7.0.0.
 TransactionPlanner createTransactionPlanner(TransactionPlannerConfig config) {
+  // Reject up front any configured maximum the transaction format could never
+  // satisfy, rather than discovering it mid-plan when a message fails to
+  // compile. Added in @solana/kit v7.0.0.
+  assertValidMaxInstructionsPerTransaction(
+    config.maxInstructionsPerTransaction,
+  );
   return (InstructionPlan instructionPlan) async {
     final plan = await _traverse(
       instructionPlan,
@@ -47,6 +80,7 @@ TransactionPlanner createTransactionPlanner(TransactionPlannerConfig config) {
         createTransactionMessage: config.createTransactionMessage,
         onTransactionMessageUpdated:
             config.onTransactionMessageUpdated ?? (msg) async => msg,
+        maxInstructionsPerTransaction: config.maxInstructionsPerTransaction,
         parent: null,
         parentCandidates: [],
       ),
@@ -69,12 +103,16 @@ class _TraverseContext {
   _TraverseContext({
     required this.createTransactionMessage,
     required this.onTransactionMessageUpdated,
+    required this.maxInstructionsPerTransaction,
     required this.parent,
     required this.parentCandidates,
   });
 
   final CreateTransactionMessage createTransactionMessage;
   final OnTransactionMessageUpdated onTransactionMessageUpdated;
+  // Added in @solana/kit v7.0.0: the resolved per-transaction instruction
+  // limit threaded through the plan traversal.
+  final int? maxInstructionsPerTransaction;
   final InstructionPlan? parent;
   final List<_MutableSingleTransactionPlan> parentCandidates;
 }
@@ -130,7 +168,11 @@ Future<_MutableTransactionPlan?> _traverseSequential(
     final selectedCandidate = await _selectAndMutateCandidate(
       context,
       context.parentCandidates,
-      (message) => _fitEntirePlanInsideMessage(instructionPlan, message),
+      (message) => _fitEntirePlanInsideMessage(
+        instructionPlan,
+        message,
+        maxInstructions: context.maxInstructionsPerTransaction,
+      ),
     );
     if (selectedCandidate != null) {
       return null;
@@ -148,6 +190,7 @@ Future<_MutableTransactionPlan?> _traverseSequential(
       _TraverseContext(
         createTransactionMessage: context.createTransactionMessage,
         onTransactionMessageUpdated: context.onTransactionMessageUpdated,
+        maxInstructionsPerTransaction: context.maxInstructionsPerTransaction,
         parent: instructionPlan,
         parentCandidates: candidate != null ? [candidate] : [],
       ),
@@ -200,6 +243,7 @@ Future<_MutableTransactionPlan?> _traverseParallel(
       _TraverseContext(
         createTransactionMessage: context.createTransactionMessage,
         onTransactionMessageUpdated: context.onTransactionMessageUpdated,
+        maxInstructionsPerTransaction: context.maxInstructionsPerTransaction,
         parent: instructionPlan,
         parentCandidates: candidates,
       ),
@@ -256,16 +300,24 @@ Future<_MutableTransactionPlan?> _traverseMessagePacker(
     ...context.parentCandidates,
   ];
 
+  // Wrap the message packer so the planner's configured instruction limit is
+  // applied to every packed message. Added in @solana/kit v7.0.0.
+  TransactionMessage packToCapacity(TransactionMessage message) =>
+      messagePacker.packMessageToCapacity(
+        message,
+        maxInstructions: context.maxInstructionsPerTransaction,
+      );
+
   while (!messagePacker.done()) {
     final candidate = await _selectAndMutateCandidate(
       context,
       candidates,
-      messagePacker.packMessageToCapacity,
+      packToCapacity,
     );
     if (candidate == null) {
       final message = await _createNewMessage(
         context,
-        messagePacker.packMessageToCapacity,
+        packToCapacity,
       );
       final newCandidate = _MutableSingleTransactionPlan(message: message);
       final newPlan = _MutableSingle(candidate: newCandidate);
@@ -328,6 +380,12 @@ Future<_MutableSingleTransactionPlan?> _selectAndMutateCandidate(
     try {
       final updatedMessage = predicate(candidate.message);
       final message = await context.onTransactionMessageUpdated(updatedMessage);
+      // Added in @solana/kit v7.0.0: the configured instruction limit also
+      // covers instructions injected by `onTransactionMessageUpdated`.
+      assertMaxInstructionsPerTransaction(
+        message.instructions.length,
+        resolveMaxInstructions(context.maxInstructionsPerTransaction),
+      );
       if (getTransactionMessageSize(message) <=
           getTransactionMessageSizeLimit(message)) {
         candidate.message = message;
@@ -352,6 +410,12 @@ Future<TransactionMessage> _createNewMessage(
   final updatedMessage = await context.onTransactionMessageUpdated(
     predicate(newMessage),
   );
+  // Added in @solana/kit v7.0.0: the configured instruction limit also
+  // covers instructions injected by `onTransactionMessageUpdated`.
+  assertMaxInstructionsPerTransaction(
+    updatedMessage.instructions.length,
+    resolveMaxInstructions(context.maxInstructionsPerTransaction),
+  );
   final updatedMessageSize = getTransactionMessageSize(updatedMessage);
   if (updatedMessageSize > getTransactionMessageSizeLimit(updatedMessage)) {
     final newMessageSize = getTransactionMessageSize(newMessage);
@@ -369,6 +433,9 @@ Future<TransactionMessage> _createNewMessage(
 
 const Set<SolanaErrorCode> _candidateOverflowErrorCodes = {
   SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
+  // Added in @solana/kit v7.0.0: exceeding the configured instruction limit
+  // means this candidate can't hold the next instruction; try the next one.
+  SolanaErrorCode.instructionPlansMaxInstructionsPerTransactionExceeded,
   SolanaErrorCode.transactionTooManyAccountAddresses,
   SolanaErrorCode.transactionTooManyAccountsInInstruction,
   SolanaErrorCode.transactionTooManyInstructions,
@@ -396,14 +463,19 @@ TransactionPlan _freezeTransactionPlan(_MutableTransactionPlan plan) {
 
 TransactionMessage _fitEntirePlanInsideMessage(
   InstructionPlan instructionPlan,
-  TransactionMessage message,
-) {
+  TransactionMessage message, {
+  int? maxInstructions,
+}) {
   switch (instructionPlan) {
     case SequentialInstructionPlan(:final plans):
     case ParallelInstructionPlan(:final plans):
       var newMessage = message;
       for (final plan in plans) {
-        newMessage = _fitEntirePlanInsideMessage(plan, newMessage);
+        newMessage = _fitEntirePlanInsideMessage(
+          plan,
+          newMessage,
+          maxInstructions: maxInstructions,
+        );
       }
       return newMessage;
     case SingleInstructionPlan(:final instruction):
@@ -427,7 +499,10 @@ TransactionMessage _fitEntirePlanInsideMessage(
       final packer = getMessagePacker();
       var newMessage = message;
       while (!packer.done()) {
-        newMessage = packer.packMessageToCapacity(newMessage);
+        newMessage = packer.packMessageToCapacity(
+          newMessage,
+          maxInstructions: maxInstructions,
+        );
       }
       return newMessage;
   }

@@ -24,7 +24,7 @@ void main() {
       final packer = MessagePackerInstructionPlan(
         getMessagePacker: () => MessagePacker(
           done: () => packerDone,
-          packMessageToCapacity: (msg) {
+          packMessageToCapacity: (msg, {maxInstructions}) {
             packerDone = true;
             return appendTransactionMessageInstructions([
               createInstruction('PACKER'),

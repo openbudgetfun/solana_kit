@@ -654,6 +654,28 @@ enum SolanaErrorCode {
   /// Simulation failed while estimating the resource limits.
   transactionFailedWhenSimulatingToEstimateResourceLimits(5663037),
 
+  /// Could not find an account address at a given index while decompiling an
+  /// instruction.
+  //
+  // Added in @solana/kit v7.0.0 for the new transaction-introspection package.
+  transactionFailedToDecompileInstructionAccountIndexOutOfRange(5663038),
+
+  // ---------------------------------------------------------------------------
+  // Transaction Introspection (5664000 - 5664999)
+  // ---------------------------------------------------------------------------
+
+  /// A `getTransaction` response fetched with `encoding: 'jsonParsed'` cannot
+  /// be decoded. Re-fetch with `encoding: 'base64'`, `'base58'`, or `'json'`.
+  //
+  // Added in @solana/kit v7.0.0 for the new transaction-introspection package.
+  transactionIntrospectionCannotDecodeJsonParsedTransaction(5664000),
+
+  /// The shape of a `getTransaction` response was not recognized. Expected a
+  /// response fetched with `encoding: 'base64'`, `'base58'`, or `'json'`.
+  //
+  // Added in @solana/kit v7.0.0 for the new transaction-introspection package.
+  transactionIntrospectionUnrecognizedGetTransactionResponse(5664001),
+
   // ---------------------------------------------------------------------------
   // Transaction Errors (7050000 - 7050999)
   // ---------------------------------------------------------------------------
@@ -802,6 +824,22 @@ enum SolanaErrorCode {
 
   /// A successful transaction plan result was expected.
   instructionPlansExpectedSuccessfulTransactionPlanResult(7618009),
+
+  /// Planning this transaction message would require more instructions than
+  /// the configured maximum number of instructions per transaction.
+  //
+  // Added in @solana/kit v7.0.0: transaction planners and message packers now
+  // default to 16 instructions per transaction to leave headroom for inner
+  // instructions. The limit is configurable via `maxInstructionsPerTransaction`
+  // on the planner or `maxInstructions` on the message packer.
+  instructionPlansMaxInstructionsPerTransactionExceeded(7618010),
+
+  /// The configured maximum number of instructions per transaction is invalid.
+  //
+  // Added in @solana/kit v7.0.0 alongside the configurable instruction-count
+  // limit. The value must be a positive integer no greater than the
+  // transaction format limit of 64 instructions per transaction.
+  instructionPlansInvalidMaxInstructionsPerTransaction(7618011),
 
   // ---------------------------------------------------------------------------
   // Codecs (8078000 - 8078999)

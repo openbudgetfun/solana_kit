@@ -151,6 +151,5 @@ export 'package:solana_kit_transactions/solana_kit_transactions.dart';
 // Umbrella-specific helpers.
 export 'src/client.dart';
 export 'src/client_interfaces.dart';
-export 'src/get_minimum_balance_for_rent_exemption.dart';
 export 'src/slot_tracking_reactive_store.dart';
 export 'src/slot_tracking_stream.dart';
