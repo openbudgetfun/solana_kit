@@ -22,7 +22,7 @@ void main() {
           blockRevenueCollector: const Address(
             'Vote111111111111111111111111111111111111111',
           ),
-          blockRevenueCommissionBps: BigInt.from(125),
+          blockRevenueCommissionBps: 125,
           blsPubkeyCompressed: 'bls-compressed-key',
           commission: 50,
           epochCredits: [
@@ -40,7 +40,7 @@ void main() {
           inflationRewardsCollector: const Address(
             'Vote111111111111111111111111111111111111111',
           ),
-          inflationRewardsCommissionBps: BigInt.from(250),
+          inflationRewardsCommissionBps: 250,
           lastTimestamp: JsonParsedLastTimestamp(
             slot: BigInt.from(228884530),
             timestamp: UnixTimestamp(BigInt.from(1689090220)),
@@ -54,7 +54,7 @@ void main() {
           votes: [
             JsonParsedVote(
               confirmationCount: 31,
-              latency: BigInt.from(2),
+              latency: 2,
               slot: BigInt.from(228884500),
             ),
             JsonParsedVote(confirmationCount: 30, slot: BigInt.from(228884501)),
@@ -76,7 +76,7 @@ void main() {
         account.info.blockRevenueCollector?.value,
         'Vote111111111111111111111111111111111111111',
       );
-      expect(account.info.blockRevenueCommissionBps, BigInt.from(125));
+      expect(account.info.blockRevenueCommissionBps, 125);
       expect(account.info.blsPubkeyCompressed, 'bls-compressed-key');
       expect(account.info.commission, 50);
       expect(account.info.epochCredits, hasLength(2));
@@ -94,13 +94,13 @@ void main() {
         account.info.inflationRewardsCollector?.value,
         'Vote111111111111111111111111111111111111111',
       );
-      expect(account.info.inflationRewardsCommissionBps, BigInt.from(250));
+      expect(account.info.inflationRewardsCommissionBps, 250);
       expect(account.info.pendingDelegatorRewards?.value, '123456789');
       expect(account.info.priorVoters, isEmpty);
       expect(account.info.rootSlot, BigInt.from(228884499));
       expect(account.info.votes, hasLength(2));
       expect(account.info.votes[0].confirmationCount, 31);
-      expect(account.info.votes[0].latency, BigInt.from(2));
+      expect(account.info.votes[0].latency, 2);
       expect(account.info.votes[0].slot, BigInt.from(228884500));
     });
 
@@ -113,23 +113,23 @@ void main() {
       );
       final vote = JsonParsedVote(
         confirmationCount: 1,
-        latency: BigInt.from(3),
+        latency: 3,
         slot: BigInt.from(4),
       );
       final sameVote = JsonParsedVote(
         confirmationCount: 1,
-        latency: BigInt.from(3),
+        latency: 3,
         slot: BigInt.from(4),
       );
       final info = JsonParsedVoteInfo(
         authorizedVoters: const [],
         authorizedWithdrawer: withdrawer,
         blockRevenueCollector: collector,
-        blockRevenueCommissionBps: BigInt.from(500),
+        blockRevenueCommissionBps: 500,
         commission: 10,
         epochCredits: const [],
         inflationRewardsCollector: collector,
-        inflationRewardsCommissionBps: BigInt.from(600),
+        inflationRewardsCommissionBps: 600,
         lastTimestamp: timestamp,
         nodePubkey: withdrawer,
         pendingDelegatorRewards: const StringifiedBigInt('42'),
@@ -140,11 +140,11 @@ void main() {
         authorizedVoters: const [],
         authorizedWithdrawer: withdrawer,
         blockRevenueCollector: collector,
-        blockRevenueCommissionBps: BigInt.from(500),
+        blockRevenueCommissionBps: 500,
         commission: 10,
         epochCredits: const [],
         inflationRewardsCollector: collector,
-        inflationRewardsCommissionBps: BigInt.from(600),
+        inflationRewardsCommissionBps: 600,
         lastTimestamp: timestamp,
         nodePubkey: withdrawer,
         pendingDelegatorRewards: const StringifiedBigInt('42'),
@@ -286,17 +286,17 @@ void main() {
     test('JsonParsedVote equality, hashCode, and toString', () {
       final vote1 = JsonParsedVote(
         confirmationCount: 31,
-        latency: BigInt.from(2),
+        latency: 2,
         slot: BigInt.from(228884500),
       );
       final vote2 = JsonParsedVote(
         confirmationCount: 31,
-        latency: BigInt.from(2),
+        latency: 2,
         slot: BigInt.from(228884500),
       );
       final vote3 = JsonParsedVote(
         confirmationCount: 10,
-        latency: BigInt.from(2),
+        latency: 2,
         slot: BigInt.from(228884500),
       );
 

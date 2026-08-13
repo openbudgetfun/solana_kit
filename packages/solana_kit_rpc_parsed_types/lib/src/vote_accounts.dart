@@ -39,7 +39,10 @@ class JsonParsedVoteInfo {
   final Address? blockRevenueCollector;
 
   /// Block revenue commission in basis points, if reported.
-  final BigInt? blockRevenueCommissionBps;
+  //
+  // Changed from `BigInt?` to `int?` in @solana/kit v7.0.0 to match Agave
+  // 4.1.0, which returns this as a small bounded `u16` integer.
+  final int? blockRevenueCommissionBps;
 
   /// The compressed BLS public key, or `null` if absent or not reported.
   final String? blsPubkeyCompressed;
@@ -54,7 +57,10 @@ class JsonParsedVoteInfo {
   final Address? inflationRewardsCollector;
 
   /// Inflation rewards commission in basis points, if reported.
-  final BigInt? inflationRewardsCommissionBps;
+  //
+  // Changed from `BigInt?` to `int?` in @solana/kit v7.0.0 to match Agave
+  // 4.1.0, which returns this as a small bounded `u16` integer.
+  final int? inflationRewardsCommissionBps;
 
   /// The last timestamp recorded by this vote account.
   final JsonParsedLastTimestamp lastTimestamp;
@@ -280,7 +286,10 @@ class JsonParsedVote {
   final int confirmationCount;
 
   /// The latency of this vote, in slots, if reported.
-  final BigInt? latency;
+  //
+  // Changed from `BigInt?` to `int?` in @solana/kit v7.0.0 to match Agave
+  // 4.1.0, which returns this as a small bounded `u8` integer.
+  final int? latency;
 
   /// The slot that was voted on.
   final Slot slot;

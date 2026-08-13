@@ -98,8 +98,21 @@ void main() {
       expect(account.type, 'rent');
       expect(account.info.burnPercent, 50);
       expect(account.info.exemptionThreshold, 2.0);
-      expect(account.info.lamportsPerByteYear.value, '3480');
+      expect(account.info.lamportsPerByteYear!.value, '3480');
       expect(account, isA<JsonParsedSysvarAccount>());
+    });
+
+    test('can construct a 4.1.0+ rent sysvar with lamportsPerByte', () {
+      const account = JsonParsedRentSysvar(
+        info: JsonParsedRentInfo(
+          lamportsPerByte: StringifiedBigInt('3480'),
+        ),
+      );
+
+      expect(account.type, 'rent');
+      expect(account.info.lamportsPerByte!.value, '3480');
+      expect(account.info.lamportsPerByteYear, isNull);
+      expect(account.info.burnPercent, isNull);
     });
 
     test('can construct a slotHashes sysvar', () {

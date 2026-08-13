@@ -197,7 +197,7 @@ class JsonParsedStakeDelegation {
     required this.deactivationEpoch,
     required this.stake,
     required this.voter,
-    required this.warmupCooldownRate,
+    this.warmupCooldownRate,
   });
 
   /// The epoch in which the stake was activated.
@@ -213,7 +213,10 @@ class JsonParsedStakeDelegation {
   final Address voter;
 
   /// The warmup/cooldown rate.
-  final double warmupCooldownRate;
+  ///
+  /// Agave 4.1.0 removed this from the parsed output, so it is only present
+  /// on accounts fetched from validators running earlier versions.
+  final double? warmupCooldownRate;
 
   @override
   bool operator ==(Object other) =>

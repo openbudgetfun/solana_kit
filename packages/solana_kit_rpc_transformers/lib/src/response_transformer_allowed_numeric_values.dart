@@ -74,6 +74,11 @@ final List<KeyPath> jsonParsedAccountsConfigs = [
   // parsed Vote account
   ['data', 'parsed', 'info', 'commission'],
   ['data', 'parsed', 'info', 'votes', KEYPATH_WILDCARD, 'confirmationCount'],
+  // Added in @solana/kit v7.0.0 (Agave 4.1.0): vote commissions and vote
+  // latency are small bounded integers (u16/u8) and should stay as `int`.
+  ['data', 'parsed', 'info', 'blockRevenueCommissionBps'],
+  ['data', 'parsed', 'info', 'inflationRewardsCommissionBps'],
+  ['data', 'parsed', 'info', 'votes', KEYPATH_WILDCARD, 'latency'],
 ];
 
 /// Numeric values in inner instructions.
