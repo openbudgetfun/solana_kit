@@ -16,11 +16,8 @@ typedef ReactiveAction<TArgs, TResult> =
 /// A source that creates a fresh reactive action store on demand.
 ///
 /// Implemented by lazy one-shot operations such as pending RPC requests.
-// ignore: one_member_abstracts
-abstract interface class ReactiveActionSource<TResult> {
-  /// Creates a reactive store for this source.
-  ReactiveActionStore<List<Object?>, TResult> reactiveStore();
-}
+typedef ReactiveActionSource<TResult> =
+    ReactiveActionStore<List<Object?>, TResult> Function();
 
 /// The lifecycle state of a [ReactiveActionStore].
 enum ReactiveActionState { idle, running, success, error }

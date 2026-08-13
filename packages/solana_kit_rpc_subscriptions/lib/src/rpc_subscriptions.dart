@@ -17,8 +17,7 @@ class RpcSubscribeOptions {
 ///
 /// Calling [subscribe] will trigger the subscription and return a [Stream]
 /// that emits notifications.
-class PendingRpcSubscriptionsRequest<TNotification>
-    implements ReactiveStreamSource<TNotification> {
+class PendingRpcSubscriptionsRequest<TNotification> {
   /// Creates a new [PendingRpcSubscriptionsRequest].
   const PendingRpcSubscriptionsRequest({
     required this._transport,
@@ -39,8 +38,7 @@ class PendingRpcSubscriptionsRequest<TNotification>
   /// Added in @solana/kit v7.0.0, replacing the former `reactive(options)`
   /// helper (which eagerly opened the subscription and returned an
   /// auto-connecting store).
-  @override
-  ReactiveStreamStore<TNotification> reactiveStore() {
+  ReactiveStreamStore<TNotification> call() {
     return createReactiveStreamStore<TNotification>(
       createDataPublisher: (signal) async {
         final streams = await getAbortableFuture(

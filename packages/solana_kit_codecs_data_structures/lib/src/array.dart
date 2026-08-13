@@ -72,13 +72,6 @@ Encoder<List<T>> getArrayEncoder<T>(
         offset = prefixObject.write(BigInt.from(array.length), bytes, offset);
       } else if (prefixObject is Encoder<num>) {
         offset = prefixObject.write(array.length, bytes, offset);
-      } else {
-        // Unreachable through the public API: the size-computation closure
-        // casts the prefix to `Encoder<num>` first, so this guard is defensive.
-        throw StateError(
-          // coverage:ignore-line
-          'Unsupported array prefix encoder: ${prefixObject.runtimeType}', // coverage:ignore-line
-        );
       }
     }
     for (final value in array) {

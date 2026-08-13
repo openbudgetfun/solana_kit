@@ -72,14 +72,11 @@ void main() {
       final events = <String>[];
       final errors = <Object>[];
       final done = Completer<void>();
-      final stream = createStreamFromDataAndErrorStreams<String>(
+      createStreamFromDataAndErrorStreams<String>(
         dataStream: dataController.stream,
         errorStream: errorController.stream,
         cancellationToken: source.token,
-      );
-
-      // ignore: cascade_invocations
-      stream.listen(
+      ).listen(
         events.add,
         onError: errors.add,
         onDone: done.complete,

@@ -14,25 +14,20 @@ Stream<TData> createStreamFromDataAndErrorStreams<TData>({
   Object? firstError;
   var hasError = false;
   var isStopped = cancellationToken?.isCancelled ?? false;
-  // Both subscriptions are cancelled in [cancelSourceSubscriptions] below.
-  // ignore: cancel_subscriptions
-  StreamSubscription<TData>? dataSubscription;
-  // ignore: cancel_subscriptions
-  StreamSubscription<Object?>? errorSubscription;
+  // The source subscriptions are tracked in a list so they can be cancelled
+  // together when the merged stream stops.
+  final sourceSubscriptions = <StreamSubscription<Object?>>[];
+  late final StreamController<TData> controller;
 
   Future<void> cancelSourceSubscriptions() async {
-    final data = dataSubscription;
-    final error = errorSubscription;
-    dataSubscription = null;
-    errorSubscription = null;
-
-    await Future.wait<void>([
-      if (data != null) data.cancel(),
-      if (error != null) error.cancel(),
-    ]);
+    final subscriptions = List<StreamSubscription<Object?>>.of(
+      sourceSubscriptions,
+    );
+    sourceSubscriptions.clear();
+    await Future.wait(
+      subscriptions.map((subscription) => subscription.cancel()),
+    );
   }
-
-  late final StreamController<TData> controller;
 
   Future<void> stop() async {
     if (isStopped && controller.isClosed) return;
@@ -45,11 +40,10 @@ Stream<TData> createStreamFromDataAndErrorStreams<TData>({
     }
   }
 
-  bool shouldIgnoreEvents() {
-    return isStopped ||
-        controller.isClosed ||
-        (cancellationToken?.isCancelled ?? false);
-  }
+  bool shouldIgnoreEvents() =>
+      isStopped ||
+      controller.isClosed ||
+      (cancellationToken?.isCancelled ?? false);
 
   controller = StreamController<TData>.broadcast(
     sync: true,
@@ -58,7 +52,7 @@ Stream<TData> createStreamFromDataAndErrorStreams<TData>({
         // A broadcast controller only re-runs `onListen` after the last
         // listener cancels, at which point `stop()` has already closed the
         // controller, so this replay branch is defensive dead code.
-        controller.addError(firstError!); // coverage:ignore-line
+        controller.addError(firstError!);
         return;
       }
 
@@ -67,19 +61,23 @@ Stream<TData> createStreamFromDataAndErrorStreams<TData>({
         return;
       }
 
-      errorSubscription ??= errorStream.listen((error) {
-        if (hasError || shouldIgnoreEvents()) return;
+      sourceSubscriptions
+        ..add(
+          errorStream.listen((error) {
+            if (hasError || shouldIgnoreEvents()) return;
 
-        final effectiveError = error ?? StateError('Unknown error');
-        hasError = true;
-        firstError = effectiveError;
-        controller.addError(effectiveError);
-        unawaited(cancelSourceSubscriptions());
-      });
-
-      dataSubscription ??= dataStream.listen((data) {
-        if (!shouldIgnoreEvents()) controller.add(data);
-      });
+            final effectiveError = error ?? StateError('Unknown error');
+            hasError = true;
+            firstError = effectiveError;
+            controller.addError(effectiveError);
+            unawaited(cancelSourceSubscriptions());
+          }),
+        )
+        ..add(
+          dataStream.listen((data) {
+            if (!shouldIgnoreEvents()) controller.add(data);
+          }),
+        );
     },
     onCancel: stop,
   );

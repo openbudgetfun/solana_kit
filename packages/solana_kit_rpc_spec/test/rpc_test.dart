@@ -174,7 +174,7 @@ void main() {
         transport: transport,
       );
 
-      final store = request.reactiveStore();
+      final store = request();
 
       expect(store, isA<ReactiveActionStore<List<Object?>, int>>());
       expect(store.getState().status, ReactiveActionState.idle);
@@ -201,7 +201,7 @@ void main() {
           transport: transport,
         );
 
-        final store = request.reactiveStore();
+        final store = request();
         final result = await store.dispatchAsync([]);
 
         expect(result, 42);
@@ -232,7 +232,7 @@ void main() {
         ),
         transport: transport,
       );
-      final store = request.reactiveStore()..dispatch([]);
+      final store = request()..dispatch([]);
 
       await started.future;
       store.reset();
@@ -256,7 +256,7 @@ void main() {
         transport: transport,
       );
 
-      final store = request.reactiveStore();
+      final store = request();
 
       await expectLater(store.dispatchAsync([]), throwsA(error));
 

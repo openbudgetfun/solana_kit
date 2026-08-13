@@ -130,11 +130,11 @@ void main() {
             return result.future;
           },
         );
-        store.subscribe(() => notifications++); // ignore: cascade_invocations
-
+        final unsubscribe = store.subscribe(() => notifications++);
         final dispatched = store.dispatchAsync([]);
         expect(notifications, 1);
         store.dispose();
+        unsubscribe();
 
         expect(signal.isCancelled, isTrue);
         await expectLater(

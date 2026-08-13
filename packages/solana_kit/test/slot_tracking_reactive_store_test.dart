@@ -296,18 +296,18 @@ void main() {
       final initial = _InitialValueSource();
       final stream = _StreamSource();
       final store = createReactiveStoreWithInitialValueAndSlotTracking(
-        initialValueSource: initial,
-        streamSource: stream,
+        initialValueSource: initial.call,
+        streamSource: stream.call,
         initialValueMapper: (value) => throw StateError('mapper boom'),
         streamValueMapper: (value) => 'stream:$value',
-      );
-      store.connect(); // ignore: cascade_invocations
+      )..connect();
 
       initial.instances.single.complete(_response(10, 'value'));
       await _flushEvents();
 
-      expect(store.getState().status, ReactiveStreamState.error);
-      expect(store.getState().error, isA<StateError>());
+      final state = store.getState();
+      expect(state.status, ReactiveStreamState.error);
+      expect(state.error, isA<StateError>());
       store.dispose();
     });
   });
@@ -316,8 +316,8 @@ void main() {
 class _Fixture {
   _Fixture() : initial = _InitialValueSource(), stream = _StreamSource() {
     store = createReactiveStoreWithInitialValueAndSlotTracking(
-      initialValueSource: initial,
-      streamSource: stream,
+      initialValueSource: initial.call,
+      streamSource: stream.call,
       initialValueMapper: (value) => 'initial:$value',
       streamValueMapper: (value) => 'stream:$value',
     );
@@ -328,14 +328,11 @@ class _Fixture {
   late final ReactiveStreamStore<SolanaRpcResponse<String>> store;
 }
 
-class _InitialValueSource
-    implements ReactiveActionSource<SolanaRpcResponse<String>> {
+class _InitialValueSource {
   final List<_InitialValueInstance> instances = [];
   int storesCreated = 0;
 
-  @override
-  ReactiveActionStore<List<Object?>, SolanaRpcResponse<String>>
-  reactiveStore() {
+  ReactiveActionStore<List<Object?>, SolanaRpcResponse<String>> call() {
     storesCreated++;
     return createReactiveActionStore((signal, _) {
       final instance = _InitialValueInstance(signal);
@@ -362,12 +359,11 @@ class _InitialValueInstance {
   }
 }
 
-class _StreamSource implements ReactiveStreamSource<SolanaRpcResponse<int>> {
+class _StreamSource {
   final List<_StreamInstance> instances = [];
   int storesCreated = 0;
 
-  @override
-  ReactiveStreamStore<SolanaRpcResponse<int>> reactiveStore() {
+  ReactiveStreamStore<SolanaRpcResponse<int>> call() {
     storesCreated++;
     return createReactiveStreamStore(
       createDataPublisher: (signal) async {

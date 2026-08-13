@@ -59,7 +59,7 @@ void main() {
 
         // v7: reactiveStore() is synchronous and starts idle; connect() opens
         // the subscription via the per-connection factory.
-        final store = pending.reactiveStore();
+        final store = pending();
         expect(store.getState().status, ReactiveStreamState.idle);
         store.connect();
         expect(store.getState().status, ReactiveStreamState.loading);
@@ -213,7 +213,7 @@ void main() {
       final pending = _pendingRequestForTransport(transport.transport);
       final source = CancellationTokenSource();
 
-      final store = pending.reactiveStore();
+      final store = pending();
       final killableConnect = store.withSignal(source.token);
       killableConnect();
       await Future<void>.delayed(Duration.zero);

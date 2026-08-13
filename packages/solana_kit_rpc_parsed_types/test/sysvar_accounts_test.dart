@@ -118,7 +118,7 @@ void main() {
     test('rent sysvar info has value equality', () {
       const legacy = JsonParsedRentInfo(
         burnPercent: 50,
-        exemptionThreshold: 3480.0, // ignore: prefer_int_literals
+        exemptionThreshold: 3480,
         lamportsPerByteYear: StringifiedBigInt('3480'),
       );
       const modern = JsonParsedRentInfo(

@@ -36,15 +36,13 @@ createReactiveStoreWithInitialValueAndSlotTracking<
       final dataController = StreamController<SolanaRpcResponse<TItem>>();
       final errorController = StreamController<Object?>();
       final innerSource = CancellationTokenSource();
-      final actionStore = initialValueSource.reactiveStore();
-      final streamStore = streamSource.reactiveStore();
+      final actionStore = initialValueSource();
+      final streamStore = streamSource();
 
       var hasFailed = false;
-      // The closures are reassigned below; `var` would infer `Null Function()`.
-      // ignore: omit_local_variable_types
-      void Function() unsubscribeAction = () {};
-      // ignore: omit_local_variable_types
-      void Function() unsubscribeStream = () {};
+      // Assigned synchronously below, before any async cleanup can run.
+      late void Function() unsubscribeAction;
+      late void Function() unsubscribeStream;
 
       void cleanUp() {
         unsubscribeAction();
@@ -59,17 +57,14 @@ createReactiveStoreWithInitialValueAndSlotTracking<
         }
       }
 
-      if (connectionSignal.isCancelled) {
-        // The publisher runs synchronously with a fresh per-connection signal,
-        // so this branch is defensive dead code.
-        innerSource.cancel(connectionSignal.reason); // coverage:ignore-line
-      } else {
-        unawaited(
-          connectionSignal.future.then(
-            (_) => innerSource.cancel(connectionSignal.reason),
-          ),
-        );
-      }
+      // The publisher runs synchronously with a fresh per-connection signal,
+      // so it is never already cancelled here; propagate a later abort to the
+      // inner sources so they stop touching the store.
+      unawaited(
+        connectionSignal.future.then(
+          (_) => innerSource.cancel(connectionSignal.reason),
+        ),
+      );
 
       void handleError(Object error) {
         if (hasFailed || innerSource.token.isCancelled) return;

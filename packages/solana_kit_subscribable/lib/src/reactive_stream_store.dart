@@ -39,11 +39,7 @@ typedef ReactiveStreamDataPublisherFactory<T> =
 /// A source that creates a fresh reactive stream store on demand.
 ///
 /// Implemented by lazy streaming operations such as pending RPC subscriptions.
-// ignore: one_member_abstracts
-abstract interface class ReactiveStreamSource<T> {
-  /// Creates a reactive store for this source.
-  ReactiveStreamStore<T> reactiveStore();
-}
+typedef ReactiveStreamSource<T> = ReactiveStreamStore<T> Function();
 
 /// The lifecycle state of a [ReactiveStreamStore].
 ///
