@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_constructors_first
+// ignore_for_file: prefer_const_constructors, unnecessary_const
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -60,9 +60,9 @@ void main() {
         expect(decoded.compiledMessage.version, TransactionVersion.legacy);
         expect(decoded.transaction, isNotNull);
         expect(decoded.loadedAddresses.writable, [
-          const Address(systemProgram),
+          Address(systemProgram),
         ]);
-        expect(decoded.loadedAddresses.readonly, [const Address(tokenProgram)]);
+        expect(decoded.loadedAddresses.readonly, [Address(tokenProgram)]);
       },
     );
 
@@ -111,7 +111,7 @@ void main() {
       expect(decoded.compiledMessage.version, TransactionVersion.legacy);
       expect(
         decoded.compiledMessage.staticAccounts,
-        [const Address(feePayer), const Address(systemProgram)],
+        [Address(feePayer), Address(systemProgram)],
       );
       expect(decoded.compiledMessage.lifetimeToken, blockhash);
       expect(decoded.compiledMessage.instructions, hasLength(1));
@@ -147,7 +147,7 @@ void main() {
       expect(decoded.compiledMessage.addressTableLookups, hasLength(1));
       expect(
         decoded.compiledMessage.addressTableLookups!.first.lookupTableAddress,
-        const Address(systemProgram),
+        Address(systemProgram),
       );
     });
 
