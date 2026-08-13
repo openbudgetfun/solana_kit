@@ -116,26 +116,26 @@ void main() {
     });
 
     test('rent sysvar info has value equality', () {
-      // Non-const instances so `==` runs the full field comparison instead of
-      // short-circuiting on `identical` (const values are canonicalized).
-      final legacyA = JsonParsedRentInfo(
+      // Const instances that differ on `lamportsPerByte` so `==` runs the
+      // full field comparison (identical const values would short-circuit).
+      const legacyA = JsonParsedRentInfo(
         burnPercent: 50,
         exemptionThreshold: 3480,
         lamportsPerByteYear: StringifiedBigInt('3480'),
       );
-      final legacyB = JsonParsedRentInfo(
+      const legacyB = JsonParsedRentInfo(
         burnPercent: 50,
         exemptionThreshold: 3480,
-        lamportsPerByteYear: StringifiedBigInt('3480'),
+        lamportsPerByteYear: StringifiedBigInt('1'),
       );
-      final modern = JsonParsedRentInfo(
+      const modern = JsonParsedRentInfo(
         lamportsPerByte: StringifiedBigInt('3480'),
       );
 
-      expect(legacyA, equals(legacyB));
+      expect(legacyA, isNot(equals(legacyB)));
       expect(modern, equals(modern));
       expect(legacyA, isNot(equals(modern)));
-      expect(legacyA.hashCode, equals(legacyB.hashCode));
+      expect(legacyA.hashCode, isNot(equals(legacyB.hashCode)));
     });
 
     test('can construct a slotHashes sysvar', () {
