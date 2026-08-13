@@ -147,6 +147,7 @@ export 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confi
 export 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart'
     hide recentBlockhashesSysvarAddress;
 export 'package:solana_kit_transactions/solana_kit_transactions.dart';
+export 'package:solana_kit_transaction_introspection/solana_kit_transaction_introspection.dart';
 
 // Umbrella-specific helpers.
 export 'src/client.dart';
