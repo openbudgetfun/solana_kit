@@ -133,16 +133,24 @@ export 'package:solana_kit_programs/solana_kit_programs.dart';
 export 'package:solana_kit_rpc/solana_kit_rpc.dart';
 export 'package:solana_kit_rpc_parsed_types/solana_kit_rpc_parsed_types.dart';
 export 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
+// Hide names that conflict with solana_kit_rpc.
 export 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart'
+    hide createSolanaJsonRpcIntegerOverflowError;
 export 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
+// Hide names that conflict with solana_kit_transaction_messages.
 export 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart'
+    hide AddressTableLookup, TransactionVersion;
 export 'package:solana_kit_signers/solana_kit_signers.dart';
 export 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 export 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
-export 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
+export 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart'
 export 'package:solana_kit_transaction_introspection/solana_kit_transaction_introspection.dart';
 export 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart'
+    hide recentBlockhashesSysvarAddress;
 export 'package:solana_kit_transactions/solana_kit_transactions.dart';
+export 'package:solana_kit_transaction_introspection/solana_kit_transaction_introspection.dart';
+
+// Umbrella-specific helpers.
 export 'src/client.dart';
 export 'src/client_interfaces.dart';
 export 'src/slot_tracking_reactive_store.dart';
