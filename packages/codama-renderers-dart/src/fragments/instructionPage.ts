@@ -165,7 +165,8 @@ export function getInstructionPageFragment(
         return ""; // Use default
       }
       // Use 'arg_<name>' prefix to reference builder params without shadowing.
-      return `      ${fieldName}: ${fieldName}${arg.defaultValue != null ? ` ?? ${getDefaultValue(arg)}` : ""},`;
+      const typeStr2 = argManifestMap.get(arg)?.type.content;
+      return `      ${fieldName}: ${fieldName}${arg.defaultValue != null ? ` ?? ${getDefaultValue(arg, typeStr2)}` : ""},`;
     })
     .filter(Boolean)
     .join("\n");
@@ -329,12 +330,17 @@ function isConstDefaultValue(defaultValue: InstructionArgumentNode["defaultValue
   }
 }
 
-function getDefaultValue(arg: InstructionArgumentNode): string {
+function getDefaultValue(
+  arg: InstructionArgumentNode,
+  typeStr?: string,
+): string {
   if (!arg.defaultValue) return "null";
+  const isBigInt = typeStr === "BigInt";
   const dv = arg.defaultValue;
   switch (dv.kind) {
     case "numberValueNode":
-      return String(dv.number);
+      // Dart's `BigInt` requires a constructor; `0` is not assignable to `BigInt`.
+      return isBigInt ? `BigInt.from(${dv.number})` : String(dv.number);
     case "booleanValueNode":
       return String(dv.boolean);
     case "stringValueNode":

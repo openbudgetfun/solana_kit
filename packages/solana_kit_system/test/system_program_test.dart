@@ -21,20 +21,21 @@ void main() {
         newAccount: _newAccount,
         lamports: BigInt.from(1461600),
         space: BigInt.from(82),
-        programOwner: _tokenProgram,
+        programAddress: _tokenProgram,
+        instructionProgramAddress: systemProgramAddress,
       );
       expect(ix.programAddress, systemProgramAddress);
     });
 
-    test('uses custom programAddress when provided', () {
+    test('uses custom instructionProgramAddress when provided', () {
       const custom = Address('11111111111111111111111111111112');
       final ix = getCreateAccountInstruction(
         payer: _payer,
         newAccount: _newAccount,
         lamports: BigInt.from(1000),
         space: BigInt.from(0),
-        programOwner: _tokenProgram,
-        programAddress: custom,
+        programAddress: _tokenProgram,
+        instructionProgramAddress: custom,
       );
       expect(ix.programAddress, custom);
     });
@@ -45,7 +46,8 @@ void main() {
         newAccount: _newAccount,
         lamports: BigInt.from(1461600),
         space: BigInt.from(82),
-        programOwner: _tokenProgram,
+        programAddress: _tokenProgram,
+        instructionProgramAddress: systemProgramAddress,
       );
       expect(ix.accounts, hasLength(2));
     });
@@ -56,7 +58,8 @@ void main() {
         newAccount: _newAccount,
         lamports: BigInt.from(1461600),
         space: BigInt.from(82),
-        programOwner: _tokenProgram,
+        programAddress: _tokenProgram,
+        instructionProgramAddress: systemProgramAddress,
       );
       expect(ix.accounts![0].address, _payer);
       expect(ix.accounts![0].role, AccountRole.writableSigner);
@@ -68,7 +71,8 @@ void main() {
         newAccount: _newAccount,
         lamports: BigInt.from(1461600),
         space: BigInt.from(82),
-        programOwner: _tokenProgram,
+        programAddress: _tokenProgram,
+        instructionProgramAddress: systemProgramAddress,
       );
       expect(ix.accounts![1].address, _newAccount);
       expect(ix.accounts![1].role, AccountRole.writableSigner);
@@ -80,7 +84,8 @@ void main() {
         newAccount: _newAccount,
         lamports: BigInt.from(1461600),
         space: BigInt.from(82),
-        programOwner: _tokenProgram,
+        programAddress: _tokenProgram,
+        instructionProgramAddress: systemProgramAddress,
       );
       expect(ix.data, isNotNull);
       expect(ix.data!.isNotEmpty, isTrue);
@@ -92,7 +97,8 @@ void main() {
         newAccount: _newAccount,
         lamports: BigInt.from(1461600),
         space: BigInt.from(82),
-        programOwner: _tokenProgram,
+        programAddress: _tokenProgram,
+        instructionProgramAddress: systemProgramAddress,
       );
       // Discriminator is u32 little-endian at offset 0
       final disc = ByteData.view(ix.data!.buffer).getUint32(0, Endian.little);
@@ -108,7 +114,7 @@ void main() {
         final data = CreateAccountInstructionData(
           lamports: BigInt.from(1461600),
           space: BigInt.from(82),
-          programOwner: _tokenProgram,
+          programAddress: _tokenProgram,
         );
         final encoded = getCreateAccountInstructionDataEncoder().encode(data);
         expect(encoded.length, 52);
@@ -119,7 +125,7 @@ void main() {
       final data = CreateAccountInstructionData(
         lamports: BigInt.zero,
         space: BigInt.zero,
-        programOwner: systemProgramAddress,
+        programAddress: systemProgramAddress,
       );
       final encoded = getCreateAccountInstructionDataEncoder().encode(data);
       final disc = ByteData.view(encoded.buffer).getUint32(0, Endian.little);
@@ -131,7 +137,7 @@ void main() {
       final data = CreateAccountInstructionData(
         lamports: lamports,
         space: BigInt.from(165),
-        programOwner: _tokenProgram,
+        programAddress: _tokenProgram,
       );
       final encoded = getCreateAccountInstructionDataEncoder().encode(data);
       final decoded = getCreateAccountInstructionDataDecoder().decode(encoded);
@@ -143,35 +149,35 @@ void main() {
       final data = CreateAccountInstructionData(
         lamports: BigInt.from(1000000),
         space: space,
-        programOwner: _tokenProgram,
+        programAddress: _tokenProgram,
       );
       final encoded = getCreateAccountInstructionDataEncoder().encode(data);
       final decoded = getCreateAccountInstructionDataDecoder().decode(encoded);
       expect(decoded.space, space);
     });
 
-    test('round-trip preserves programOwner', () {
+    test('round-trip preserves programAddress (owner)', () {
       final data = CreateAccountInstructionData(
         lamports: BigInt.from(1461600),
         space: BigInt.from(82),
-        programOwner: _tokenProgram,
+        programAddress: _tokenProgram,
       );
       final encoded = getCreateAccountInstructionDataEncoder().encode(data);
       final decoded = getCreateAccountInstructionDataDecoder().decode(encoded);
-      expect(decoded.programOwner, _tokenProgram);
+      expect(decoded.programAddress, _tokenProgram);
     });
 
     test('round-trip with getCreateAccountInstructionDataCodec', () {
       final data = CreateAccountInstructionData(
         lamports: BigInt.from(890880),
         space: BigInt.zero,
-        programOwner: systemProgramAddress,
+        programAddress: systemProgramAddress,
       );
       final codec = getCreateAccountInstructionDataCodec();
       final decoded = codec.decode(codec.encode(data));
       expect(decoded.lamports, BigInt.from(890880));
       expect(decoded.space, BigInt.zero);
-      expect(decoded.programOwner, systemProgramAddress);
+      expect(decoded.programAddress, systemProgramAddress);
     });
 
     test('round-trip with max u64 lamports', () {
@@ -179,7 +185,7 @@ void main() {
       final data = CreateAccountInstructionData(
         lamports: maxU64,
         space: BigInt.from(10240),
-        programOwner: _tokenProgram,
+        programAddress: _tokenProgram,
       );
       final encoded = getCreateAccountInstructionDataEncoder().encode(data);
       final decoded = getCreateAccountInstructionDataDecoder().decode(encoded);
@@ -191,7 +197,7 @@ void main() {
       final data = CreateAccountInstructionData(
         lamports: BigInt.from(1000),
         space: maxSpace,
-        programOwner: _tokenProgram,
+        programAddress: _tokenProgram,
       );
       final encoded = getCreateAccountInstructionDataEncoder().encode(data);
       final decoded = getCreateAccountInstructionDataDecoder().decode(encoded);
@@ -202,12 +208,12 @@ void main() {
       final data1 = CreateAccountInstructionData(
         lamports: BigInt.from(1000),
         space: BigInt.zero,
-        programOwner: systemProgramAddress,
+        programAddress: systemProgramAddress,
       );
       final data2 = CreateAccountInstructionData(
         lamports: BigInt.from(2000),
         space: BigInt.zero,
-        programOwner: systemProgramAddress,
+        programAddress: systemProgramAddress,
       );
       final encoded1 = getCreateAccountInstructionDataEncoder().encode(data1);
       final encoded2 = getCreateAccountInstructionDataEncoder().encode(data2);
@@ -226,13 +232,14 @@ void main() {
         newAccount: _newAccount,
         lamports: lamports,
         space: space,
-        programOwner: _tokenProgram,
+        programAddress: _tokenProgram,
+        instructionProgramAddress: systemProgramAddress,
       );
 
       final parsed = parseCreateAccountInstruction(ix);
       expect(parsed.lamports, lamports);
       expect(parsed.space, space);
-      expect(parsed.programOwner, _tokenProgram);
+      expect(parsed.programAddress, _tokenProgram);
     });
 
     test('parsed discriminator matches default value', () {
@@ -241,7 +248,8 @@ void main() {
         newAccount: _newAccount,
         lamports: BigInt.from(1000),
         space: BigInt.from(10),
-        programOwner: systemProgramAddress,
+        programAddress: systemProgramAddress,
+        instructionProgramAddress: systemProgramAddress,
       );
       final parsed = parseCreateAccountInstruction(ix);
       expect(parsed.discriminator, 0);
@@ -256,7 +264,8 @@ void main() {
         newAccount: _newAccount,
         lamports: lamports,
         space: space,
-        programOwner: _tokenProgram,
+        programAddress: _tokenProgram,
+        instructionProgramAddress: systemProgramAddress,
       );
       final parsed = parseCreateAccountInstruction(original);
       final rebuilt = getCreateAccountInstruction(
@@ -264,7 +273,8 @@ void main() {
         newAccount: _newAccount,
         lamports: parsed.lamports,
         space: parsed.space,
-        programOwner: parsed.programOwner,
+        programAddress: parsed.programAddress,
+        instructionProgramAddress: systemProgramAddress,
       );
 
       expect(original.data, equals(rebuilt.data));

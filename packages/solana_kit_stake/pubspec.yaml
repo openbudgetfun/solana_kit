@@ -16,7 +16,7 @@ dependencies:
   solana_kit_codecs_strings: ^0.6.0
   solana_kit_instruction_plans: ^0.6.0
   solana_kit_instructions: ^0.6.0
-  solana_kit_system: ^0.4.2
+  solana_kit_system: ^0.5.0
   solana_kit_sysvars: ^0.4.1
 dev_dependencies:
   solana_kit_lints: ^0.6.0

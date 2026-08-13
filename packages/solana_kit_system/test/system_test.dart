@@ -28,7 +28,8 @@ void main() {
         payer: payer,
         lamports: BigInt.from(10),
         space: BigInt.from(82),
-        ownerProgramAddress: owner,
+        programAddress: owner,
+        instructionProgramAddress: system_program.systemProgramAddress,
       );
 
       expect(ix.programAddress, system_program.systemProgramAddress);
@@ -40,7 +41,7 @@ void main() {
       expect(accounts[1].role, AccountRole.writableSigner);
 
       final parsed = parseCreateAccountAllowPrefundInstruction(ix);
-      expect(parsed.discriminator, createAccountAllowPrefundDiscriminator);
+      expect(parsed.discriminator, 13);
       expect(parsed.lamports, BigInt.from(10));
       expect(parsed.space, BigInt.from(82));
       expect(parsed.programAddress, owner);
@@ -56,7 +57,8 @@ void main() {
         newAccount: newAccount,
         lamports: BigInt.from(1461600),
         space: BigInt.from(82),
-        programOwner: owner,
+        programAddress: owner,
+        instructionProgramAddress: system_program.systemProgramAddress,
       );
 
       expect(ix.programAddress, system_program.systemProgramAddress);
@@ -68,7 +70,7 @@ void main() {
       final parsed = parseCreateAccountInstruction(ix);
       expect(parsed.lamports, BigInt.from(1461600));
       expect(parsed.space, BigInt.from(82));
-      expect(parsed.programOwner, owner);
+      expect(parsed.programAddress, owner);
     });
   });
 
@@ -359,13 +361,13 @@ void main() {
                 CreateAccountInstructionData(
                   lamports: BigInt.one,
                   space: BigInt.from(80),
-                  programOwner: const Address(
+                  programAddress: const Address(
                     'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
                   ),
                 ),
               ),
             )
-            .programOwner,
+            .programAddress,
         const Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'),
       );
       expect(

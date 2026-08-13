@@ -81,7 +81,7 @@ Instruction getCreateAccountAllowPrefundInstruction({
   required Address programAddress,
 }) {
   final instructionData = CreateAccountAllowPrefundInstructionData(
-      lamports: lamports ?? 0,
+      lamports: lamports ?? BigInt.from(0),
       space: space,
       programAddress: programAddress,
   );

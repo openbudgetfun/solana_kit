@@ -20,7 +20,7 @@ dependencies:
   solana_kit_instructions: ^0.6.0
   solana_kit_options: ^0.6.0
   solana_kit_signers: ^0.6.0
-  solana_kit_system: ^0.4.2
+  solana_kit_system: ^0.5.0
 dev_dependencies:
   solana_kit_lints: ^0.6.0
   solana_kit_test_matchers: ^0.6.0
