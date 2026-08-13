@@ -112,6 +112,30 @@ void main() {
       },
     );
 
+    test(
+      'sequential plan with a message packer plan nested in a parallel plan '
+      'fits the packer inside the parent candidate',
+      () async {
+        final planner = makePlanner();
+        final packerPlan = getMessagePackerInstructionPlanFromInstructions([
+          createInstruction('A'),
+          createInstruction('B'),
+        ]);
+        // A sequential plan containing a packer, nested in a parallel plan
+        // after a child that already produced a candidate, exercises the
+        // `MessagePackerInstructionPlan` branch of
+        // `_fitEntirePlanInsideMessage` (the packer must fit entirely in the
+        // parent candidate).
+        final plan = parallelInstructionPlan([
+          singleInstructionPlan(createInstruction('X')),
+          sequentialInstructionPlan([packerPlan]),
+        ]);
+
+        final result = await planner(plan);
+        expect(result, isA<TransactionPlan>());
+      },
+    );
+
     test('sequential plan with two separate non-divisible blocks produces a '
         'sequential result', () async {
       final planner = makePlanner();

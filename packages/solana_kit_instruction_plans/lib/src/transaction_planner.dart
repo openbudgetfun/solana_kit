@@ -80,12 +80,10 @@ TransactionPlanner createTransactionPlanner(TransactionPlannerConfig config) {
     InstructionPlan instructionPlan, {
     int? maxInstructionsPerTransaction,
   }) async {
-    final resolvedMaxInstructionsPerTransaction =
-        maxInstructionsPerTransaction ?? config.maxInstructionsPerTransaction;
     // Validate the resolved limit for every invocation so per-call overrides
     // are checked without mutating or bypassing the planner configuration.
     assertValidMaxInstructionsPerTransaction(
-      resolvedMaxInstructionsPerTransaction,
+      maxInstructionsPerTransaction ?? config.maxInstructionsPerTransaction,
     );
 
     final plan = await _traverse(
@@ -94,7 +92,9 @@ TransactionPlanner createTransactionPlanner(TransactionPlannerConfig config) {
         createTransactionMessage: config.createTransactionMessage,
         onTransactionMessageUpdated:
             config.onTransactionMessageUpdated ?? (msg) async => msg,
-        maxInstructionsPerTransaction: resolvedMaxInstructionsPerTransaction,
+        maxInstructionsPerTransaction:
+            maxInstructionsPerTransaction ??
+            config.maxInstructionsPerTransaction,
         parent: null,
         parentCandidates: [],
       ),
