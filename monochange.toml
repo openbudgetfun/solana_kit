@@ -361,6 +361,7 @@ inputs = [
   { name = "publish_release", help_text = "Whether to publish the GitHub release object for the release tag", type = "boolean", default = false },
 ]
 steps = [
+  { type = "Command", name = "check GitHub token", command = "{ [ -n \"${GH_TOKEN:-}\" ] || [ -n \"${GITHUB_TOKEN:-}\" ] || { command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; }; } || { echo 'No GitHub token found. Set GH_TOKEN or GITHUB_TOKEN, or run: gh auth login. Aborting release to avoid a partial state.' >&2; exit 1; }" },
   { type = "PrepareRelease", name = "plan release", allow_empty_changesets = true },
   { type = "Command", name = "sync dependency versions", when = "{{ number_of_changesets > 0 }}", command = "monochange versions sync" },
   { type = "Command", name = "update flutter lockfiles", when = "{{ number_of_changesets > 0 }}", command = "flutter pub get" },
