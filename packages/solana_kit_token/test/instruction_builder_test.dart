@@ -136,7 +136,7 @@ void main() {
         final parsedCreate = parseCreateAccountInstruction(createIx);
         expect(createIx.programAddress, customSystemProgram);
         expect(parsedCreate.lamports, BigInt.from(99));
-        expect(parsedCreate.programOwner, customTokenProgram);
+        expect(parsedCreate.programAddress, customTokenProgram);
 
         final initIx = (plan.plans[1] as SingleInstructionPlan).instruction;
         final parsedInit = parseInitializeMint2Instruction(initIx);
@@ -283,7 +283,7 @@ void main() {
     test('associatedTokenProgramAddress is correct', () {
       expect(
         associatedTokenProgramAddress,
-        Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25ef7s3c8BnQKu'),
+        Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'),
       );
     });
 
