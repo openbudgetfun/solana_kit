@@ -43,7 +43,7 @@ Encoder<ExtendLookupTableInstructionData> getExtendLookupTableInstructionDataEnc
 Decoder<ExtendLookupTableInstructionData> getExtendLookupTableInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
-    ('addresses', getArrayDecoder(getAddressDecoder(), size: PrefixedArraySize(getU64Encoder()))),
+    ('addresses', getArrayDecoder(getAddressDecoder(), size: PrefixedArraySize(getU64Decoder()))),
   ]);
 
   return transformDecoder(

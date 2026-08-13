@@ -30,6 +30,19 @@ void main() {
       expect(codec.decode(b('00000000')), isEmpty);
     });
 
+    test('uses a BigInt prefix codec', () {
+      final codec = getMapCodec(
+        getU8Codec(),
+        getU8Codec(),
+        size: PrefixedArraySize(getU64Codec()),
+      );
+      const encoded = '0200000000000000010a0214';
+      final original = {1: 10, 2: 20};
+
+      expect(hex(codec.encode(original)), equals(encoded));
+      expect(codec.decode(b(encoded)), equals(original));
+    });
+
     test('uses fixed size', () {
       final codec = getMapCodec(
         getU8Codec(),

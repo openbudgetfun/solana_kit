@@ -1,4 +1,5 @@
 import {
+  accountBumpValueNode,
   fieldDiscriminatorNode,
   instructionAccountNode,
   instructionArgumentNode,
@@ -242,6 +243,25 @@ describe("getInstructionPageFragment", () => {
     // The builder function should not require discriminator as a param
     // (it uses the default)
     expect(frag.content).toContain("required BigInt amount,");
+  });
+
+  it("requires account bump arguments instead of rendering async defaults", () => {
+    const node = instructionNode({
+      name: "createLookupTable",
+      accounts: [],
+      arguments: [
+        instructionArgumentNode({
+          name: "bump",
+          type: numberTypeNode("u8"),
+          defaultValue: accountBumpValueNode("lookupTable"),
+        }),
+      ],
+    });
+    const frag = getInstructionPageFragment(node, createScope());
+
+    expect(frag.content).toContain("required int bump,");
+    expect(frag.content).toContain("bump: bump,");
+    expect(frag.content).not.toContain("bump ??");
   });
 
   it("includes auto-generated header", () => {

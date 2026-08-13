@@ -73,11 +73,11 @@ Instruction getCreateLookupTableInstruction({
   required Address payer,
   required Address systemProgram,
   required BigInt recentSlot,
-  int? bump,
+  required int bump,
 }) {
   final instructionData = CreateLookupTableInstructionData(
       recentSlot: recentSlot,
-      bump: bump ?? null,
+      bump: bump,
   );
 
   return Instruction(

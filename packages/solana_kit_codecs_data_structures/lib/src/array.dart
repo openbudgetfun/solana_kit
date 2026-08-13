@@ -64,8 +64,19 @@ Encoder<List<T>> getArrayEncoder<T>(
       );
     }
     if (effectiveSize case final PrefixedArraySize prefixedSize) {
-      final prefix = prefixedSize.prefix as Encoder<num>;
-      offset = prefix.write(array.length, bytes, offset);
+      final prefixObject = prefixedSize.prefix;
+      if (prefixObject is Encoder<BigInt>) {
+        // Sized prefixes wider than 32 bits (e.g. u64) are
+        // generated as `BigInt` encoders, so the item count
+        // must be widened to `BigInt` before writing.
+        offset = prefixObject.write(BigInt.from(array.length), bytes, offset);
+      } else if (prefixObject is Encoder<num>) {
+        offset = prefixObject.write(array.length, bytes, offset);
+      } else {
+        throw StateError(
+          'Unsupported array prefix encoder: ${prefixObject.runtimeType}',
+        );
+      }
     }
     for (final value in array) {
       offset = item.write(value, bytes, offset);
@@ -87,10 +98,10 @@ Encoder<List<T>> getArrayEncoder<T>(
     getSizeFromValue: (array) {
       var prefixSize = 0;
       if (effectiveSize case final PrefixedArraySize prefixedSize) {
-        prefixSize = getEncodedSize(
-          array.length,
-          prefixedSize.prefix as Encoder<num>,
-        );
+        final prefixObject = prefixedSize.prefix;
+        prefixSize = prefixObject is Encoder<BigInt>
+            ? getEncodedSize(BigInt.from(array.length), prefixObject)
+            : getEncodedSize(array.length, prefixObject as Encoder<num>);
       }
       var itemsSize = 0;
       for (final value in array) {
@@ -145,10 +156,19 @@ Decoder<List<T>> getArrayDecoder<T>(
       resolvedSize = fixedSize.size;
     } else {
       final prefixedSize = effectiveSize as PrefixedArraySize;
-      final prefix = prefixedSize.prefix as Decoder<num>;
-      final (prefixValue, newOffset) = prefix.read(bytes, offset);
-      resolvedSize = prefixValue.toInt();
-      offset = newOffset;
+      final prefixObject = prefixedSize.prefix;
+      int resolvedSizeLocal;
+      if (prefixObject is Decoder<BigInt>) {
+        final (prefixValue, newOffset) = prefixObject.read(bytes, offset);
+        resolvedSizeLocal = prefixValue.toInt();
+        offset = newOffset;
+      } else {
+        final prefix = prefixObject as Decoder<num>;
+        final (prefixValue, newOffset) = prefix.read(bytes, offset);
+        resolvedSizeLocal = prefixValue.toInt();
+        offset = newOffset;
+      }
+      resolvedSize = resolvedSizeLocal;
     }
 
     if (resolvedSize < 0) {
@@ -188,7 +208,12 @@ Codec<List<T>, List<T>> getArrayCodec<T>(
   final ArrayLikeCodecSize? decoderSize;
   if (size case final PrefixedArraySize prefixedSize) {
     final prefix = prefixedSize.prefix;
-    if (prefix is Codec<num, num>) {
+    if (prefix is Codec<BigInt, BigInt>) {
+      // `BigInt` is not a `num`, so wide integer codecs need a separate
+      // branch before the standard numeric codec path.
+      encoderSize = PrefixedArraySize(encoderFromCodec(prefix));
+      decoderSize = PrefixedArraySize(decoderFromCodec(prefix));
+    } else if (prefix is Codec<num, num>) {
       encoderSize = PrefixedArraySize(encoderFromCodec(prefix));
       decoderSize = PrefixedArraySize(decoderFromCodec(prefix));
     } else {

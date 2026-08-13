@@ -134,7 +134,11 @@ export function getInstructionPageFragment(
       const manifest = argManifestMap.get(arg)!;
       const fieldName = camelCase(arg.name as string);
       const typeStr = manifest.type.content;
-      const hasDefault = arg.defaultValue != null;
+      // Account bumps require asynchronous PDA derivation, so callers must
+      // provide them instead of relying on a synchronous generated default.
+      const hasDefault =
+        arg.defaultValue != null &&
+        arg.defaultValue.kind !== "accountBumpValueNode";
       if (hasDefault) {
         // Don't add `?` if the type is already nullable.
         const nullableType = typeStr.endsWith("?") ? typeStr : `${typeStr}?`;
@@ -166,7 +170,8 @@ export function getInstructionPageFragment(
       }
       // Use 'arg_<name>' prefix to reference builder params without shadowing.
       const typeStr2 = argManifestMap.get(arg)?.type.content;
-      return `      ${fieldName}: ${fieldName}${arg.defaultValue != null ? ` ?? ${getDefaultValue(arg, typeStr2)}` : ""},`;
+      const skipDefault = arg.defaultValue?.kind === "accountBumpValueNode";
+      return `      ${fieldName}: ${fieldName}${arg.defaultValue != null && !skipDefault ? ` ?? ${getDefaultValue(arg, typeStr2)}` : ""},`;
     })
     .filter(Boolean)
     .join("\n");

@@ -38,7 +38,11 @@ Codec<Set<T>, Set<T>> getSetCodec<T>(
   final ArrayLikeCodecSize? decoderSize;
   if (size is PrefixedArraySize) {
     final prefix = size.prefix;
-    if (prefix is Codec<num, num>) {
+    if (prefix is Codec<BigInt, BigInt>) {
+      // Wide integer prefixes use `BigInt`, which is not a `num` in Dart.
+      encoderSize = PrefixedArraySize(encoderFromCodec(prefix));
+      decoderSize = PrefixedArraySize(decoderFromCodec(prefix));
+    } else if (prefix is Codec<num, num>) {
       encoderSize = PrefixedArraySize(encoderFromCodec(prefix));
       decoderSize = PrefixedArraySize(decoderFromCodec(prefix));
     } else {

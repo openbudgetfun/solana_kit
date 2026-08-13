@@ -226,18 +226,19 @@ export function getTypeManifestVisitor(input: {
 
     visitArrayType(node: ArrayTypeNode, { self }) {
       const itemManifest = visit(node.item, self);
-      const sizeExpr = getArraySizeExpression(node);
+      const encoderSizeExpr = getArraySizeExpression(node, "Encoder");
+      const decoderSizeExpr = getArraySizeExpression(node, "Decoder");
 
       return {
         type: fragment`List<${itemManifest.type}>`,
         encoder: fragment`${use(
           "getArrayEncoder",
           "solanaCodecsDataStructures",
-        )}(${itemManifest.encoder}${sizeExpr})`,
+        )}(${itemManifest.encoder}${encoderSizeExpr})`,
         decoder: fragment`${use(
           "getArrayDecoder",
           "solanaCodecsDataStructures",
-        )}(${itemManifest.decoder}${sizeExpr})`,
+        )}(${itemManifest.decoder}${decoderSizeExpr})`,
         value: emptyTypeManifest().value,
         isEnum: false,
       };
@@ -246,18 +247,19 @@ export function getTypeManifestVisitor(input: {
     visitMapType(node: MapTypeNode, { self }) {
       const keyManifest = visit(node.key, self);
       const valueManifest = visit(node.value, self);
-      const sizeExpr = getMapSizeExpression(node);
+      const encoderSizeExpr = getMapSizeExpression(node, "Encoder");
+      const decoderSizeExpr = getMapSizeExpression(node, "Decoder");
 
       return {
         type: fragment`Map<${keyManifest.type}, ${valueManifest.type}>`,
         encoder: fragment`${use(
           "getMapEncoder",
           "solanaCodecsDataStructures",
-        )}(${keyManifest.encoder}, ${valueManifest.encoder}${sizeExpr})`,
+        )}(${keyManifest.encoder}, ${valueManifest.encoder}${encoderSizeExpr})`,
         decoder: fragment`${use(
           "getMapDecoder",
           "solanaCodecsDataStructures",
-        )}(${keyManifest.decoder}, ${valueManifest.decoder}${sizeExpr})`,
+        )}(${keyManifest.decoder}, ${valueManifest.decoder}${decoderSizeExpr})`,
         value: emptyTypeManifest().value,
         isEnum: false,
       };
@@ -265,18 +267,19 @@ export function getTypeManifestVisitor(input: {
 
     visitSetType(node: SetTypeNode, { self }) {
       const itemManifest = visit(node.item, self);
-      const sizeExpr = getSetSizeExpression(node);
+      const encoderSizeExpr = getSetSizeExpression(node, "Encoder");
+      const decoderSizeExpr = getSetSizeExpression(node, "Decoder");
 
       return {
         type: fragment`Set<${itemManifest.type}>`,
         encoder: fragment`${use(
           "getSetEncoder",
           "solanaCodecsDataStructures",
-        )}(${itemManifest.encoder}${sizeExpr})`,
+        )}(${itemManifest.encoder}${encoderSizeExpr})`,
         decoder: fragment`${use(
           "getSetDecoder",
           "solanaCodecsDataStructures",
-        )}(${itemManifest.decoder}${sizeExpr})`,
+        )}(${itemManifest.decoder}${decoderSizeExpr})`,
         value: emptyTypeManifest().value,
         isEnum: false,
       };
@@ -757,7 +760,10 @@ function getNumberCodecExpression(
   return `get${name}${codecType}()`;
 }
 
-function getArraySizeExpression(node: ArrayTypeNode): string {
+function getArraySizeExpression(
+  node: ArrayTypeNode,
+  codecType: "Encoder" | "Decoder",
+): string {
   if (!("count" in node) || !node.count) return "";
   const count = node.count;
   switch (count.kind) {
@@ -770,14 +776,17 @@ function getArraySizeExpression(node: ArrayTypeNode): string {
       if (resolvedPrefix.format === "u32" && (!resolvedPrefix.endian || resolvedPrefix.endian === "le")) {
         return ""; // Default
       }
-      return `, size: PrefixedArraySize(get${getNumberCodecName(resolvedPrefix.format)}Encoder())`;
+      return `, size: PrefixedArraySize(${getNumberCodecExpression(resolvedPrefix.format, codecType)})`;
     }
     default:
       return "";
   }
 }
 
-function getMapSizeExpression(node: MapTypeNode): string {
+function getMapSizeExpression(
+  node: MapTypeNode,
+  codecType: "Encoder" | "Decoder",
+): string {
   if (!("count" in node) || !node.count) return "";
   const count = node.count;
   switch (count.kind) {
@@ -790,14 +799,17 @@ function getMapSizeExpression(node: MapTypeNode): string {
       if (resolvedPrefix.format === "u32" && (!resolvedPrefix.endian || resolvedPrefix.endian === "le")) {
         return "";
       }
-      return `, size: PrefixedArraySize(get${getNumberCodecName(resolvedPrefix.format)}Encoder())`;
+      return `, size: PrefixedArraySize(${getNumberCodecExpression(resolvedPrefix.format, codecType)})`;
     }
     default:
       return "";
   }
 }
 
-function getSetSizeExpression(node: SetTypeNode): string {
+function getSetSizeExpression(
+  node: SetTypeNode,
+  codecType: "Encoder" | "Decoder",
+): string {
   if (!("count" in node) || !node.count) return "";
   const count = node.count;
   switch (count.kind) {
@@ -810,7 +822,7 @@ function getSetSizeExpression(node: SetTypeNode): string {
       if (resolvedPrefix.format === "u32" && (!resolvedPrefix.endian || resolvedPrefix.endian === "le")) {
         return "";
       }
-      return `, size: PrefixedArraySize(get${getNumberCodecName(resolvedPrefix.format)}Encoder())`;
+      return `, size: PrefixedArraySize(${getNumberCodecExpression(resolvedPrefix.format, codecType)})`;
     }
     default:
       return "";
