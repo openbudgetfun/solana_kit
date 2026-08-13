@@ -372,3 +372,11 @@ steps = [
   { type = "TagRelease", name = "create and push release tags", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.tag }}", inputs = { from = "HEAD", push = true, format = "json" } },
   { type = "PublishRelease", name = "publish GitHub release", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.tag && inputs.publish_release }}", inputs = { from-ref = "HEAD", draft = false, format = "json" } },
 ]
+
+[cli.publish]
+help_text = "Publish Dart packages with melos and the npm renderer with pnpm"
+steps = [
+  { type = "Command", name = "publish dart packages", command = "melos publish --no-dry-run --yes", dry_run_command = "melos publish --yes" },
+  { type = "Command", name = "build npm renderer", command = "pnpm --filter codama-renderers-dart build", dry_run_command = "pnpm --filter codama-renderers-dart build" },
+  { type = "Command", name = "publish npm renderer", command = "pnpm --filter codama-renderers-dart publish --no-git-checks", dry_run_command = "pnpm --filter codama-renderers-dart publish --no-git-checks --dry-run" },
+]
