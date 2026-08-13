@@ -40,7 +40,7 @@
       "url": "https://github.com/solana-mobile/mobile-wallet-adapter",
       "ref": {
         "type": "branch",
-        "value": "main"
+        "value": "8642fa3e"
       },
       "notes": "Solana Mobile Wallet Adapter reference for the adapter and protocol packages from solana-mobile/mobile-wallet-adapter",
       "package": "solana_kit_mobile_wallet_adapter",
@@ -176,7 +176,7 @@
       "url": "https://github.com/solana-program/loader-v4",
       "ref": {
         "type": "commit",
-        "value": "5df834d"
+        "value": "1d6335be"
       },
       "package": "solana_kit_loader",
       "issue": 138,
@@ -202,7 +202,7 @@
       "url": "https://github.com/metaplex-foundation/mpl-bubblegum",
       "ref": {
         "type": "branch",
-        "value": "main"
+        "value": "68e4bc20"
       },
       "package": "solana_kit_mpl_bubblegum",
       "issue": 131,
