@@ -94,6 +94,43 @@ void main() {
         },
       );
 
+      // Added in @solana/kit v7.0.0: the last error is preserved through a
+      // subsequent `running` state (stale-while-revalidate for errors).
+      test(
+        'preserves the previous error when transitioning to running',
+        () async {
+          final completer = Completer<int>();
+          final store = createReactiveActionStore<List<Object?>, int>(
+            (args) async {
+              if (args.isEmpty) {
+                throw Exception('first fails');
+              }
+              return completer.future;
+            },
+          );
+
+          await expectLater(
+            store.dispatchAsync([]),
+            throwsA(isA<Exception>()),
+          );
+          expect(store.getState().status, ReactiveActionState.error);
+          final firstError = store.getState().error;
+
+          // Kick off a second dispatch; while it is running the prior error
+          // must remain visible.
+          unawaited(store.dispatchAsync([1]));
+          expect(store.getState().status, ReactiveActionState.running);
+          expect(store.getState().error, firstError);
+
+          // Resolve the second dispatch; success clears the error.
+          completer.complete(7);
+          await pumpEventQueue();
+          expect(store.getState().status, ReactiveActionState.success);
+          expect(store.getState().result, 7);
+          expect(store.getState().error, isNull);
+        },
+      );
+
       test('throws StateError after dispose', () async {
         final store = createReactiveActionStore<List<Object?>, int>(
           (args) async => 42,

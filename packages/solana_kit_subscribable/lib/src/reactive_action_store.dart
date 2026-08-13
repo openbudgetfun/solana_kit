@@ -100,6 +100,10 @@ class ReactiveActionStore<TArgs extends List<Object?>, TResult> {
     _snapshot = ReactiveActionStateSnapshot<TResult>(
       status: ReactiveActionState.running,
       result: _snapshot.result,
+      // Added in @solana/kit v7.0.0: preserve the last error through a
+      // subsequent `running` state, mirroring the existing
+      // stale-while-revalidate behaviour for `result`.
+      error: _snapshot.error,
     );
     _notifySubscribers();
     try {
