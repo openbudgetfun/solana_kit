@@ -309,6 +309,74 @@ describe("getProgramPageFragment", () => {
     expect(frag.content).not.toContain("parseMyProgramInstruction");
   });
 
+  it("skips field discriminators when the instruction has no arguments", () => {
+    // Construct the instruction without the `instructionNode` factory so
+    // `arguments` stays undefined, exercising the `?? []` fallback.
+    const rawInstruction = {
+      kind: "instructionNode",
+      name: "byField",
+      accounts: [],
+      discriminators: [fieldDiscriminatorNode("missing", 0)],
+    };
+    const node = programNode({
+      name: "myProgram",
+      publicKey: "MyProgram1111111111111111111111111111111111",
+      instructions: [rawInstruction],
+    });
+    const frag = getProgramPageFragment(node, createScope());
+
+    expect(frag.content).not.toContain("identifyMyProgramInstruction");
+    expect(frag.content).not.toContain("parseMyProgramInstruction");
+  });
+
+  it("skips field discriminators with unsupported default values", () => {
+    const node = programNode({
+      name: "myProgram",
+      publicKey: "MyProgram1111111111111111111111111111111111",
+      instructions: [
+        instructionNode({
+          name: "byField",
+          accounts: [],
+          arguments: [
+            instructionArgumentNode({
+              name: "discriminator",
+              type: mapTypeNode(numberTypeNode("u8"), numberTypeNode("u8")),
+              defaultValue: mapValueNode([]),
+            }),
+          ],
+          discriminators: [fieldDiscriminatorNode("discriminator", 0)],
+        }),
+      ],
+    });
+    const frag = getProgramPageFragment(node, createScope());
+
+    expect(frag.content).not.toContain("identifyMyProgramInstruction");
+    expect(frag.content).not.toContain("parseMyProgramInstruction");
+  });
+
+  it("renders an empty bytes list when the hex data has no pairs", () => {
+    const node = programNode({
+      name: "myProgram",
+      publicKey: "MyProgram1111111111111111111111111111111111",
+      instructions: [
+        instructionNode({
+          name: "byEmptyBytes",
+          accounts: [],
+          arguments: [],
+          discriminators: [
+            constantDiscriminatorNode(
+              constantValueNode(bytesTypeNode(), bytesValueNode("base16", "")),
+              0,
+            ),
+          ],
+        }),
+      ],
+    });
+    const frag = getProgramPageFragment(node, createScope());
+
+    expect(frag.content).toContain("Uint8List.fromList([])");
+  });
+
   it("renders an int number value fragment", () => {
     const node = programNode({
       name: "myProgram",

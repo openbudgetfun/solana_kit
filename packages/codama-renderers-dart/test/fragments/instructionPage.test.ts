@@ -382,4 +382,21 @@ describe("getInstructionPageFragment", () => {
 
     expect(frag.content).toContain("amount: amount ?? BigInt.from(3),");
   });
+
+  it("renders plain number defaults for narrow numeric arguments", () => {
+    const node = instructionNode({
+      name: "transfer",
+      accounts: [],
+      arguments: [
+        instructionArgumentNode({
+          name: "amount",
+          type: numberTypeNode("u8"),
+          defaultValue: numberValueNode(3),
+        }),
+      ],
+    });
+    const frag = getInstructionPageFragment(node, createScope());
+
+    expect(frag.content).toContain("amount: amount ?? 3,");
+  });
 });
