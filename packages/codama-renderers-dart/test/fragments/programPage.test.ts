@@ -1,7 +1,10 @@
 import {
   accountNode,
+  fieldDiscriminatorNode,
+  instructionArgumentNode,
   instructionNode,
   numberTypeNode,
+  numberValueNode,
   programNode,
   structFieldTypeNode,
   structTypeNode,
@@ -98,6 +101,115 @@ describe("getProgramPageFragment", () => {
     expect(frag.content).toContain("enum MyProgramInstruction {");
     expect(frag.content).toContain("transfer,");
     expect(frag.content).toContain("initialize,");
+  });
+
+  it("generates instruction identify and parse helpers", () => {
+    const node = programNode({
+      name: "myProgram",
+      publicKey: "MyProgram1111111111111111111111111111111111",
+      instructions: [
+        instructionNode({
+          name: "transfer",
+          accounts: [],
+          arguments: [
+            instructionArgumentNode({
+              name: "discriminator",
+              type: numberTypeNode("u8"),
+              defaultValue: numberValueNode(3),
+            }),
+          ],
+          discriminators: [fieldDiscriminatorNode("discriminator", 0)],
+        }),
+        instructionNode({
+          name: "initialize",
+          accounts: [],
+          arguments: [],
+        }),
+      ],
+    });
+    const frag = getProgramPageFragment(node, createScope());
+
+    expect(frag.content).toContain(
+      "MyProgramInstruction identifyMyProgramInstruction(",
+    );
+    expect(frag.content).toContain(
+      "containsBytes(data, getU8Encoder().encode(3), 0)",
+    );
+    expect(frag.content).toContain(
+      "sealed class ParsedMyProgramInstruction",
+    );
+    expect(frag.content).toContain(
+      "final class ParsedTransfer extends ParsedMyProgramInstruction",
+    );
+    expect(frag.content).toContain(
+      "final TransferInstructionData data;",
+    );
+    expect(frag.content).toContain(
+      "ParsedMyProgramInstruction parseMyProgramInstruction(",
+    );
+    expect(frag.content).toContain(
+      "instruction.data ?? Uint8List(0)",
+    );
+    expect(frag.content).toContain(
+      "MyProgramInstruction.transfer => ParsedTransfer(",
+    );
+    expect(frag.content).toContain(
+      "data: parseTransferInstruction(instruction)",
+    );
+    expect(frag.content).toContain(
+      "MyProgramInstruction.initialize => ParsedInitialize(",
+    );
+    expect(frag.imports.modules.has("dartTypedData")).toBe(true);
+    expect(frag.imports.modules.has("solanaCodecsCore")).toBe(true);
+    expect(frag.imports.modules.has("solanaErrors")).toBe(true);
+    expect(frag.imports.modules.has("solanaInstructions")).toBe(true);
+    expect(
+      frag.imports.modules.has("../instructions/instructions.dart"),
+    ).toBe(true);
+  });
+
+  it("uses BigInt values for wide numeric discriminators", () => {
+    const node = programNode({
+      name: "myProgram",
+      publicKey: "MyProgram1111111111111111111111111111111111",
+      instructions: [
+        instructionNode({
+          name: "transfer",
+          accounts: [],
+          arguments: [
+            instructionArgumentNode({
+              name: "discriminator",
+              type: numberTypeNode("u64"),
+              defaultValue: numberValueNode(3),
+            }),
+          ],
+          discriminators: [fieldDiscriminatorNode("discriminator", 0)],
+        }),
+      ],
+    });
+    const frag = getProgramPageFragment(node, createScope());
+
+    expect(frag.content).toContain(
+      "getU64Encoder().encode(BigInt.from(3))",
+    );
+  });
+
+  it("does not generate instruction helpers without discriminators", () => {
+    const node = programNode({
+      name: "myProgram",
+      publicKey: "MyProgram1111111111111111111111111111111111",
+      instructions: [
+        instructionNode({
+          name: "initialize",
+          accounts: [],
+          arguments: [],
+        }),
+      ],
+    });
+    const frag = getProgramPageFragment(node, createScope());
+
+    expect(frag.content).not.toContain("identifyMyProgramInstruction");
+    expect(frag.content).not.toContain("parseMyProgramInstruction");
   });
 
   it("does not generate account enum when no accounts", () => {

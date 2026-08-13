@@ -12,10 +12,22 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/types/enums.dart';
 
 /// UpdateMetadataV2 instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `update_metadata_v2` instruction.
+const UpdateMetadataV2InstructionDiscriminator = <int>[
+  43,
+  103,
+  89,
+  42,
+  121,
+  242,
+  62,
+  72,
+];
+
 @immutable
 class UpdateMetadataV2InstructionData {
   const UpdateMetadataV2InstructionData({
-    this.discriminator = 32,
+    this.discriminator = UpdateMetadataV2InstructionDiscriminator,
     required this.root,
     this.assetDataHash,
     this.flags,
@@ -25,7 +37,7 @@ class UpdateMetadataV2InstructionData {
     required this.updateArgs,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final List<int> root;
   final List<int>? assetDataHash;
   final int? flags;
@@ -38,6 +50,10 @@ class UpdateMetadataV2InstructionData {
 Encoder<UpdateMetadataV2InstructionData>
 getUpdateMetadataV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    (
+      'discriminator',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
     (
       'assetDataHash',
@@ -70,7 +86,10 @@ getUpdateMetadataV2InstructionDataEncoder() {
 Decoder<UpdateMetadataV2InstructionData>
 getUpdateMetadataV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
     (
       'assetDataHash',
@@ -89,7 +108,7 @@ getUpdateMetadataV2InstructionDataDecoder() {
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         UpdateMetadataV2InstructionData(
-          discriminator: map['discriminator']! as int,
+          discriminator: map['discriminator']! as List<int>,
           root: map['root']! as List<int>,
           assetDataHash: map['assetDataHash']! as List<int>?,
           flags: map['flags']! as int?,

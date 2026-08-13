@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -12,7 +11,6 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 
 import './stake_authorize.dart';
-
 
 @immutable
 class AuthorizeWithSeedParams {
@@ -39,10 +37,16 @@ class AuthorizeWithSeedParams {
           authorityOwner == other.authorityOwner;
 
   @override
-  int get hashCode => Object.hash(newAuthorizedPubkey, stakeAuthorize, authoritySeed, authorityOwner);
+  int get hashCode => Object.hash(
+    newAuthorizedPubkey,
+    stakeAuthorize,
+    authoritySeed,
+    authorityOwner,
+  );
 
   @override
-  String toString() => 'AuthorizeWithSeedParams(newAuthorizedPubkey: $newAuthorizedPubkey, stakeAuthorize: $stakeAuthorize, authoritySeed: $authoritySeed, authorityOwner: $authorityOwner)';
+  String toString() =>
+      'AuthorizeWithSeedParams(newAuthorizedPubkey: $newAuthorizedPubkey, stakeAuthorize: $stakeAuthorize, authoritySeed: $authoritySeed, authorityOwner: $authorityOwner)';
 }
 
 Encoder<AuthorizeWithSeedParams> getAuthorizeWithSeedParamsEncoder() {
@@ -74,15 +78,20 @@ Decoder<AuthorizeWithSeedParams> getAuthorizeWithSeedParamsDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => AuthorizeWithSeedParams(
-      newAuthorizedPubkey: map['newAuthorizedPubkey']! as Address,
-      stakeAuthorize: map['stakeAuthorize']! as StakeAuthorize,
-      authoritySeed: map['authoritySeed']! as String,
-      authorityOwner: map['authorityOwner']! as Address,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        AuthorizeWithSeedParams(
+          newAuthorizedPubkey: map['newAuthorizedPubkey']! as Address,
+          stakeAuthorize: map['stakeAuthorize']! as StakeAuthorize,
+          authoritySeed: map['authoritySeed']! as String,
+          authorityOwner: map['authorityOwner']! as Address,
+        ),
   );
 }
 
-Codec<AuthorizeWithSeedParams, AuthorizeWithSeedParams> getAuthorizeWithSeedParamsCodec() {
-  return combineCodec(getAuthorizeWithSeedParamsEncoder(), getAuthorizeWithSeedParamsDecoder());
+Codec<AuthorizeWithSeedParams, AuthorizeWithSeedParams>
+getAuthorizeWithSeedParamsCodec() {
+  return combineCodec(
+    getAuthorizeWithSeedParamsEncoder(),
+    getAuthorizeWithSeedParamsDecoder(),
+  );
 }

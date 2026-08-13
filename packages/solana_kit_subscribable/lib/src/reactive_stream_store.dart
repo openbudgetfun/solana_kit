@@ -36,6 +36,15 @@ class ReactiveStreamConnection<T> {
 typedef ReactiveStreamDataPublisherFactory<T> =
     Future<ReactiveStreamConnection<T>> Function(CancellationToken signal);
 
+/// A source that creates a fresh reactive stream store on demand.
+///
+/// Implemented by lazy streaming operations such as pending RPC subscriptions.
+// ignore: one_member_abstracts
+abstract interface class ReactiveStreamSource<T> {
+  /// Creates a reactive store for this source.
+  ReactiveStreamStore<T> reactiveStore();
+}
+
 /// The lifecycle state of a [ReactiveStreamStore].
 ///
 /// Added the `idle` status in @solana/kit v7.0.0 and removed the former
@@ -144,6 +153,17 @@ class ReactiveStreamStore<T> {
     // Abort any currently active connection without resetting to idle.
     _abortActiveConnection();
 
+    if (callerSignal?.isCancelled ?? false) {
+      _state = ReactiveStreamStateSnapshot<T>(
+        status: ReactiveStreamState.error,
+        data: _state.data,
+        error:
+            callerSignal!.reason ?? StateError('ReactiveStreamStore aborted'),
+      );
+      _notifySubscribers();
+      return;
+    }
+
     // Transition to loading, preserving the last known data and error for
     // stale-while-revalidate. (v7.0.0 collapsed the former `retrying` status
     // into `loading`.)
@@ -215,7 +235,10 @@ class ReactiveStreamStore<T> {
   }
 
   void _handleError(Object error, CancellationToken signal) {
-    if (_isDisposed || signal.isCancelled || _activeSource?.token != signal) {
+    if (_isDisposed ||
+        signal.isCancelled ||
+        _activeSource?.token != signal ||
+        _state.status == ReactiveStreamState.error) {
       return;
     }
     _state = ReactiveStreamStateSnapshot<T>(

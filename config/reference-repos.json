@@ -39,8 +39,8 @@
       "path": ".repos/mobile-wallet-adapter",
       "url": "https://github.com/solana-mobile/mobile-wallet-adapter",
       "ref": {
-        "type": "branch",
-        "value": "8642fa3e"
+        "type": "commit",
+        "value": "8642fa3e1edbacaff6666745e33bf1d2199fd51a"
       },
       "notes": "Solana Mobile Wallet Adapter reference for the adapter and protocol packages from solana-mobile/mobile-wallet-adapter",
       "package": "solana_kit_mobile_wallet_adapter",
@@ -48,7 +48,7 @@
         "solana_kit_mobile_wallet_adapter",
         "solana_kit_mobile_wallet_adapter_protocol"
       ],
-      "checkedCommit": "bed51fa2f177"
+      "checkedCommit": "8642fa3e1edbacaff6666745e33bf1d2199fd51a"
     },
     {
       "name": "system",
@@ -180,8 +180,8 @@
       },
       "package": "solana_kit_loader",
       "issue": 138,
-      "notes": "Pinned to commit 5df834d (2026-03-08) because no versioned release exists yet",
-      "checkedCommit": "5df834d03975"
+      "notes": "Pinned to commit 1d6335be (2026-07-15) because no versioned release exists yet",
+      "checkedCommit": "1d6335be5694"
     },
     {
       "name": "account-compression",
@@ -201,13 +201,13 @@
       "path": ".repos/metaplex-foundation/mpl-bubblegum",
       "url": "https://github.com/metaplex-foundation/mpl-bubblegum",
       "ref": {
-        "type": "branch",
-        "value": "68e4bc20"
+        "type": "commit",
+        "value": "68e4bc204099718f318d5fe258f60be09737416d"
       },
       "package": "solana_kit_mpl_bubblegum",
       "issue": 131,
-      "notes": "Metaplex Bubblegum IDL for Codama Dart code generation (currently Solita format \u2014 needs Codama conversion)",
-      "checkedCommit": "02c16414e4e0"
+      "notes": "Metaplex Bubblegum Anchor IDL at idls/bubblegum.json; convert with @codama/nodes-from-anchor before rendering",
+      "checkedCommit": "68e4bc204099718f318d5fe258f60be09737416d"
     }
   ]
 }

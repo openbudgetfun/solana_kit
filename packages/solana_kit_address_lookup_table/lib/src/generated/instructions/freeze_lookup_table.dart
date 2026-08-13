@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,7 +22,8 @@ class FreezeLookupTableInstructionData {
   final int discriminator;
 }
 
-Encoder<FreezeLookupTableInstructionData> getFreezeLookupTableInstructionDataEncoder() {
+Encoder<FreezeLookupTableInstructionData>
+getFreezeLookupTableInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
   ]);
@@ -36,21 +36,27 @@ Encoder<FreezeLookupTableInstructionData> getFreezeLookupTableInstructionDataEnc
   );
 }
 
-Decoder<FreezeLookupTableInstructionData> getFreezeLookupTableInstructionDataDecoder() {
+Decoder<FreezeLookupTableInstructionData>
+getFreezeLookupTableInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => FreezeLookupTableInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        FreezeLookupTableInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<FreezeLookupTableInstructionData, FreezeLookupTableInstructionData> getFreezeLookupTableInstructionDataCodec() {
-  return combineCodec(getFreezeLookupTableInstructionDataEncoder(), getFreezeLookupTableInstructionDataDecoder());
+Codec<FreezeLookupTableInstructionData, FreezeLookupTableInstructionData>
+getFreezeLookupTableInstructionDataCodec() {
+  return combineCodec(
+    getFreezeLookupTableInstructionDataEncoder(),
+    getFreezeLookupTableInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [FreezeLookupTable] instruction.
@@ -58,23 +64,22 @@ Instruction getFreezeLookupTableInstruction({
   required Address programAddress,
   required Address address,
   required Address authority,
-
 }) {
-  final instructionData = FreezeLookupTableInstructionData(
-
-  );
+  final instructionData = FreezeLookupTableInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: address, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: address, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getFreezeLookupTableInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [FreezeLookupTable] instruction from raw instruction data.
-FreezeLookupTableInstructionData parseFreezeLookupTableInstruction(Instruction instruction) {
+FreezeLookupTableInstructionData parseFreezeLookupTableInstruction(
+  Instruction instruction,
+) {
   return getFreezeLookupTableInstructionDataDecoder().decode(instruction.data!);
 }

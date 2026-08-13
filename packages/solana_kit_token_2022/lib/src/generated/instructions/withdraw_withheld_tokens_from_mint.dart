@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -28,7 +27,8 @@ class WithdrawWithheldTokensFromMintInstructionData {
   final int transferFeeDiscriminator;
 }
 
-Encoder<WithdrawWithheldTokensFromMintInstructionData> getWithdrawWithheldTokensFromMintInstructionDataEncoder() {
+Encoder<WithdrawWithheldTokensFromMintInstructionData>
+getWithdrawWithheldTokensFromMintInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('transferFeeDiscriminator', getU8Encoder()),
@@ -43,7 +43,8 @@ Encoder<WithdrawWithheldTokensFromMintInstructionData> getWithdrawWithheldTokens
   );
 }
 
-Decoder<WithdrawWithheldTokensFromMintInstructionData> getWithdrawWithheldTokensFromMintInstructionDataDecoder() {
+Decoder<WithdrawWithheldTokensFromMintInstructionData>
+getWithdrawWithheldTokensFromMintInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('transferFeeDiscriminator', getU8Decoder()),
@@ -51,15 +52,23 @@ Decoder<WithdrawWithheldTokensFromMintInstructionData> getWithdrawWithheldTokens
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => WithdrawWithheldTokensFromMintInstructionData(
-      discriminator: map['discriminator']! as int,
-      transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        WithdrawWithheldTokensFromMintInstructionData(
+          discriminator: map['discriminator']! as int,
+          transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
+        ),
   );
 }
 
-Codec<WithdrawWithheldTokensFromMintInstructionData, WithdrawWithheldTokensFromMintInstructionData> getWithdrawWithheldTokensFromMintInstructionDataCodec() {
-  return combineCodec(getWithdrawWithheldTokensFromMintInstructionDataEncoder(), getWithdrawWithheldTokensFromMintInstructionDataDecoder());
+Codec<
+  WithdrawWithheldTokensFromMintInstructionData,
+  WithdrawWithheldTokensFromMintInstructionData
+>
+getWithdrawWithheldTokensFromMintInstructionDataCodec() {
+  return combineCodec(
+    getWithdrawWithheldTokensFromMintInstructionDataEncoder(),
+    getWithdrawWithheldTokensFromMintInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [WithdrawWithheldTokensFromMint] instruction.
@@ -68,24 +77,29 @@ Instruction getWithdrawWithheldTokensFromMintInstruction({
   required Address mint,
   required Address feeReceiver,
   required Address withdrawWithheldAuthority,
-
 }) {
-  final instructionData = WithdrawWithheldTokensFromMintInstructionData(
-
-  );
+  final instructionData = WithdrawWithheldTokensFromMintInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    AccountMeta(address: feeReceiver, role: AccountRole.writable),
-    AccountMeta(address: withdrawWithheldAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: mint, role: AccountRole.writable),
+      AccountMeta(address: feeReceiver, role: AccountRole.writable),
+      AccountMeta(
+        address: withdrawWithheldAuthority,
+        role: AccountRole.readonlySigner,
+      ),
     ],
-    data: getWithdrawWithheldTokensFromMintInstructionDataEncoder().encode(instructionData),
+    data: getWithdrawWithheldTokensFromMintInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [WithdrawWithheldTokensFromMint] instruction from raw instruction data.
-WithdrawWithheldTokensFromMintInstructionData parseWithdrawWithheldTokensFromMintInstruction(Instruction instruction) {
-  return getWithdrawWithheldTokensFromMintInstructionDataDecoder().decode(instruction.data!);
+WithdrawWithheldTokensFromMintInstructionData
+parseWithdrawWithheldTokensFromMintInstruction(Instruction instruction) {
+  return getWithdrawWithheldTokensFromMintInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

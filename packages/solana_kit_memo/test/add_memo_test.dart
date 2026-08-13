@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:solana_kit_address_constants/solana_kit_address_constants.dart'
-    show memoProgramAddress, memoLegacyProgramAddress;
-import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+    show memoLegacyProgramAddress, memoProgramAddress;
 import 'package:solana_kit_memo/solana_kit_memo.dart';
 import 'package:test/test.dart';
 

@@ -5,6 +5,9 @@
 export 'accounts/tree_config.dart';
 export 'accounts/voucher.dart';
 
+// Errors
+export 'errors/mpl_bubblegum.dart';
+
 // Instructions
 export 'instructions/burn.dart';
 export 'instructions/burn_v2.dart';

@@ -19,7 +19,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_compute_budget": ^0.5.2
+  "solana_kit_compute_budget": ^0.6.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -38,18 +38,26 @@ Inside this monorepo, Dart workspace resolution uses the local package automatic
 import 'package:solana_kit_compute_budget/solana_kit_compute_budget.dart';
 
 // Set compute unit limit for a transaction
-final limitIx = getSetComputeUnitLimitInstruction(units: 200000);
+final limitIx = getSetComputeUnitLimitInstruction(
+  programAddress: computeBudgetProgramAddress,
+  units: 200000,
+);
 
 // Set priority fee (micro-lamports per compute unit)
 final priceIx = getSetComputeUnitPriceInstruction(
+  programAddress: computeBudgetProgramAddress,
   microLamports: BigInt.from(50000),
 );
 
 // Request a larger heap frame (must be a multiple of 1024)
-final heapIx = getRequestHeapFrameInstruction(bytes: 256 * 1024);
+final heapIx = getRequestHeapFrameInstruction(
+  programAddress: computeBudgetProgramAddress,
+  bytes: 256 * 1024,
+);
 
 // Limit loaded accounts data size
 final dataLimitIx = getSetLoadedAccountsDataSizeLimitInstruction(
+  programAddress: computeBudgetProgramAddress,
   accountDataSizeLimit: 64 * 1024,
 );
 ```

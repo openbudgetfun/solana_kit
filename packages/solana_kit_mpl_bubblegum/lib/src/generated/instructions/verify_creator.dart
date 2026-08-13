@@ -9,14 +9,26 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart';
 
 /// verifyCreator instruction data.
+/// The Anchor discriminator for the `verify_creator` instruction.
+const verifyCreatorInstructionDiscriminator = <int>[
+  52,
+  17,
+  96,
+  132,
+  71,
+  4,
+  85,
+  194,
+];
+
 @immutable
 class verifyCreatorInstructionData {
   const verifyCreatorInstructionData({
-    this.discriminator = 34,
+    this.discriminator = verifyCreatorInstructionDiscriminator,
     required this.metadataArgs,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final MetadataArgs metadataArgs;
 }
 

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -43,14 +42,19 @@ Decoder<CloseAccountInstructionData> getCloseAccountInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CloseAccountInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CloseAccountInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<CloseAccountInstructionData, CloseAccountInstructionData> getCloseAccountInstructionDataCodec() {
-  return combineCodec(getCloseAccountInstructionDataEncoder(), getCloseAccountInstructionDataDecoder());
+Codec<CloseAccountInstructionData, CloseAccountInstructionData>
+getCloseAccountInstructionDataCodec() {
+  return combineCodec(
+    getCloseAccountInstructionDataEncoder(),
+    getCloseAccountInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [CloseAccount] instruction.
@@ -59,24 +63,23 @@ Instruction getCloseAccountInstruction({
   required Address account,
   required Address destination,
   required Address owner,
-
 }) {
-  final instructionData = CloseAccountInstructionData(
-
-  );
+  final instructionData = CloseAccountInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: account, role: AccountRole.writable),
-    AccountMeta(address: destination, role: AccountRole.writable),
-    AccountMeta(address: owner, role: AccountRole.readonlySigner),
+      AccountMeta(address: account, role: AccountRole.writable),
+      AccountMeta(address: destination, role: AccountRole.writable),
+      AccountMeta(address: owner, role: AccountRole.readonlySigner),
     ],
     data: getCloseAccountInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [CloseAccount] instruction from raw instruction data.
-CloseAccountInstructionData parseCloseAccountInstruction(Instruction instruction) {
+CloseAccountInstructionData parseCloseAccountInstruction(
+  Instruction instruction,
+) {
   return getCloseAccountInstructionDataDecoder().decode(instruction.data!);
 }

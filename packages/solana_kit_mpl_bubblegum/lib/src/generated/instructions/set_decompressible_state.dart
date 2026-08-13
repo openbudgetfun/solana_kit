@@ -12,20 +12,36 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/types/enums.dart';
 
 /// SetDecompressibleState instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `set_decompressible_state` instruction.
+const SetDecompressibleStateInstructionDiscriminator = <int>[
+  82,
+  104,
+  152,
+  6,
+  149,
+  111,
+  100,
+  13,
+];
+
 @immutable
 class SetDecompressibleStateInstructionData {
   const SetDecompressibleStateInstructionData({
-    this.discriminator = 20,
+    this.discriminator = SetDecompressibleStateInstructionDiscriminator,
     required this.decompressableState,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final DecompressibleState decompressableState;
 }
 
 Encoder<SetDecompressibleStateInstructionData>
 getSetDecompressibleStateInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    (
+      'discriminator',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
     ('decompressableState', getU8Encoder()),
   ]);
 
@@ -41,7 +57,10 @@ getSetDecompressibleStateInstructionDataEncoder() {
 Decoder<SetDecompressibleStateInstructionData>
 getSetDecompressibleStateInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
     ('decompressableState', getU8Decoder()),
   ]);
 
@@ -49,7 +68,7 @@ getSetDecompressibleStateInstructionDataDecoder() {
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         SetDecompressibleStateInstructionData(
-          discriminator: map['discriminator']! as int,
+          discriminator: map['discriminator']! as List<int>,
           decompressableState:
               map['decompressableState']! as DecompressibleState,
         ),

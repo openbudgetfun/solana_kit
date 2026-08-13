@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -31,7 +30,13 @@ Encoder<WriteInstructionData> getWriteInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('offset', getU32Encoder()),
-    ('bytes', addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())),
+    (
+      'bytes',
+      addEncoderSizePrefix(
+        getBytesEncoder(),
+        transformEncoder(getU64Encoder(), BigInt.from),
+      ),
+    ),
   ]);
 
   return transformEncoder(
@@ -48,21 +53,32 @@ Decoder<WriteInstructionData> getWriteInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('offset', getU32Decoder()),
-    ('bytes', addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())),
+    (
+      'bytes',
+      addDecoderSizePrefix(
+        getBytesDecoder(),
+        transformDecoder(getU64Decoder(), (value, _, _) => value.toInt()),
+      ),
+    ),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => WriteInstructionData(
-      discriminator: map['discriminator']! as int,
-      offset: map['offset']! as int,
-      bytes: map['bytes']! as Uint8List,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        WriteInstructionData(
+          discriminator: map['discriminator']! as int,
+          offset: map['offset']! as int,
+          bytes: map['bytes']! as Uint8List,
+        ),
   );
 }
 
-Codec<WriteInstructionData, WriteInstructionData> getWriteInstructionDataCodec() {
-  return combineCodec(getWriteInstructionDataEncoder(), getWriteInstructionDataDecoder());
+Codec<WriteInstructionData, WriteInstructionData>
+getWriteInstructionDataCodec() {
+  return combineCodec(
+    getWriteInstructionDataEncoder(),
+    getWriteInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Write] instruction.
@@ -74,15 +90,15 @@ Instruction getWriteInstruction({
   required Uint8List bytes,
 }) {
   final instructionData = WriteInstructionData(
-      offset: offset,
-      bytes: bytes,
+    offset: offset,
+    bytes: bytes,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: bufferAccount, role: AccountRole.writable),
-    AccountMeta(address: bufferAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: bufferAccount, role: AccountRole.writable),
+      AccountMeta(address: bufferAuthority, role: AccountRole.readonlySigner),
     ],
     data: getWriteInstructionDataEncoder().encode(instructionData),
   );

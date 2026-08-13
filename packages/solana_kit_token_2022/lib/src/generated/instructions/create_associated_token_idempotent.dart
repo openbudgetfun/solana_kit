@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,7 +22,8 @@ class CreateAssociatedTokenIdempotentInstructionData {
   final int discriminator;
 }
 
-Encoder<CreateAssociatedTokenIdempotentInstructionData> getCreateAssociatedTokenIdempotentInstructionDataEncoder() {
+Encoder<CreateAssociatedTokenIdempotentInstructionData>
+getCreateAssociatedTokenIdempotentInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,21 +36,30 @@ Encoder<CreateAssociatedTokenIdempotentInstructionData> getCreateAssociatedToken
   );
 }
 
-Decoder<CreateAssociatedTokenIdempotentInstructionData> getCreateAssociatedTokenIdempotentInstructionDataDecoder() {
+Decoder<CreateAssociatedTokenIdempotentInstructionData>
+getCreateAssociatedTokenIdempotentInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateAssociatedTokenIdempotentInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CreateAssociatedTokenIdempotentInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<CreateAssociatedTokenIdempotentInstructionData, CreateAssociatedTokenIdempotentInstructionData> getCreateAssociatedTokenIdempotentInstructionDataCodec() {
-  return combineCodec(getCreateAssociatedTokenIdempotentInstructionDataEncoder(), getCreateAssociatedTokenIdempotentInstructionDataDecoder());
+Codec<
+  CreateAssociatedTokenIdempotentInstructionData,
+  CreateAssociatedTokenIdempotentInstructionData
+>
+getCreateAssociatedTokenIdempotentInstructionDataCodec() {
+  return combineCodec(
+    getCreateAssociatedTokenIdempotentInstructionDataEncoder(),
+    getCreateAssociatedTokenIdempotentInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [CreateAssociatedTokenIdempotent] instruction.
@@ -62,27 +71,29 @@ Instruction getCreateAssociatedTokenIdempotentInstruction({
   required Address mint,
   required Address systemProgram,
   required Address tokenProgram,
-
 }) {
-  final instructionData = CreateAssociatedTokenIdempotentInstructionData(
-
-  );
+  final instructionData = CreateAssociatedTokenIdempotentInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: payer, role: AccountRole.writableSigner),
-    AccountMeta(address: ata, role: AccountRole.writable),
-    AccountMeta(address: owner, role: AccountRole.readonly),
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    AccountMeta(address: systemProgram, role: AccountRole.readonly),
-    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+      AccountMeta(address: payer, role: AccountRole.writableSigner),
+      AccountMeta(address: ata, role: AccountRole.writable),
+      AccountMeta(address: owner, role: AccountRole.readonly),
+      AccountMeta(address: mint, role: AccountRole.readonly),
+      AccountMeta(address: systemProgram, role: AccountRole.readonly),
+      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
-    data: getCreateAssociatedTokenIdempotentInstructionDataEncoder().encode(instructionData),
+    data: getCreateAssociatedTokenIdempotentInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [CreateAssociatedTokenIdempotent] instruction from raw instruction data.
-CreateAssociatedTokenIdempotentInstructionData parseCreateAssociatedTokenIdempotentInstruction(Instruction instruction) {
-  return getCreateAssociatedTokenIdempotentInstructionDataDecoder().decode(instruction.data!);
+CreateAssociatedTokenIdempotentInstructionData
+parseCreateAssociatedTokenIdempotentInstruction(Instruction instruction) {
+  return getCreateAssociatedTokenIdempotentInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

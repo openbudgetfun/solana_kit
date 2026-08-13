@@ -2,4 +2,3 @@
 // ignore_for_file: type=lint
 
 export 'address_lookup_table.dart';
-

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,7 +22,8 @@ class InitializeBufferInstructionData {
   final int discriminator;
 }
 
-Encoder<InitializeBufferInstructionData> getInitializeBufferInstructionDataEncoder() {
+Encoder<InitializeBufferInstructionData>
+getInitializeBufferInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
   ]);
@@ -36,21 +36,27 @@ Encoder<InitializeBufferInstructionData> getInitializeBufferInstructionDataEncod
   );
 }
 
-Decoder<InitializeBufferInstructionData> getInitializeBufferInstructionDataDecoder() {
+Decoder<InitializeBufferInstructionData>
+getInitializeBufferInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeBufferInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializeBufferInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<InitializeBufferInstructionData, InitializeBufferInstructionData> getInitializeBufferInstructionDataCodec() {
-  return combineCodec(getInitializeBufferInstructionDataEncoder(), getInitializeBufferInstructionDataDecoder());
+Codec<InitializeBufferInstructionData, InitializeBufferInstructionData>
+getInitializeBufferInstructionDataCodec() {
+  return combineCodec(
+    getInitializeBufferInstructionDataEncoder(),
+    getInitializeBufferInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializeBuffer] instruction.
@@ -58,23 +64,22 @@ Instruction getInitializeBufferInstruction({
   required Address programAddress,
   required Address sourceAccount,
   required Address bufferAuthority,
-
 }) {
-  final instructionData = InitializeBufferInstructionData(
-
-  );
+  final instructionData = InitializeBufferInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: sourceAccount, role: AccountRole.writable),
-    AccountMeta(address: bufferAuthority, role: AccountRole.readonly),
+      AccountMeta(address: sourceAccount, role: AccountRole.writable),
+      AccountMeta(address: bufferAuthority, role: AccountRole.readonly),
     ],
     data: getInitializeBufferInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [InitializeBuffer] instruction from raw instruction data.
-InitializeBufferInstructionData parseInitializeBufferInstruction(Instruction instruction) {
+InitializeBufferInstructionData parseInitializeBufferInstruction(
+  Instruction instruction,
+) {
   return getInitializeBufferInstructionDataDecoder().decode(instruction.data!);
 }

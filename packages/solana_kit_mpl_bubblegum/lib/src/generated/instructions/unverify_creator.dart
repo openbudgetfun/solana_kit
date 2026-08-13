@@ -9,14 +9,26 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart';
 
 /// unverifyCreator instruction data.
+/// The Anchor discriminator for the `unverify_creator` instruction.
+const unverifyCreatorInstructionDiscriminator = <int>[
+  107,
+  178,
+  57,
+  39,
+  105,
+  115,
+  112,
+  152,
+];
+
 @immutable
 class unverifyCreatorInstructionData {
   const unverifyCreatorInstructionData({
-    this.discriminator = 28,
+    this.discriminator = unverifyCreatorInstructionDiscriminator,
     required this.metadataArgs,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final MetadataArgs metadataArgs;
 }
 

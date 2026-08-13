@@ -211,6 +211,36 @@ void main() {
       },
     );
 
+    test('passes store cancellation to send()', () async {
+      final started = Completer<void>();
+      final aborted = Completer<void>();
+      Future<Object?> transport(RpcTransportConfig config) async {
+        started.complete();
+        await config.signal!;
+        aborted.complete();
+        return 42;
+      }
+
+      final request = PendingRpcRequest<int>(
+        plan: RpcPlan<int>(
+          execute: (config) async {
+            final response = await config.transport(
+              RpcTransportConfig(payload: null, signal: config.signal),
+            );
+            return response! as int;
+          },
+        ),
+        transport: transport,
+      );
+      final store = request.reactiveStore()..dispatch([]);
+
+      await started.future;
+      store.reset();
+
+      await aborted.future;
+      expect(store.getState().status, ReactiveActionState.idle);
+    });
+
     test('propagates errors from send() to the store', () async {
       final error = Exception('boom');
       Future<Object?> transport(RpcTransportConfig config) async => throw error;

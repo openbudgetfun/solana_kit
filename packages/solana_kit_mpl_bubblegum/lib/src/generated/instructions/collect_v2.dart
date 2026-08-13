@@ -11,15 +11,34 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// CollectV2 instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `collect_v2` instruction.
+const CollectV2InstructionDiscriminator = <int>[
+  21,
+  11,
+  159,
+  47,
+  4,
+  195,
+  106,
+  56,
+];
+
 @immutable
 class CollectV2InstructionData {
-  const CollectV2InstructionData({this.discriminator = 4});
+  const CollectV2InstructionData({
+    this.discriminator = CollectV2InstructionDiscriminator,
+  });
 
-  final int discriminator;
+  final List<int> discriminator;
 }
 
 Encoder<CollectV2InstructionData> getCollectV2InstructionDataEncoder() {
-  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[]);
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    (
+      'discriminator',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
+  ]);
 
   return transformEncoder(
     structEncoder,
@@ -31,13 +50,18 @@ Encoder<CollectV2InstructionData> getCollectV2InstructionDataEncoder() {
 
 Decoder<CollectV2InstructionData> getCollectV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
   ]);
 
   return transformDecoder(
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        CollectV2InstructionData(discriminator: map['discriminator']! as int),
+        CollectV2InstructionData(
+          discriminator: map['discriminator']! as List<int>,
+        ),
   );
 }
 

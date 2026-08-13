@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -27,7 +26,8 @@ class TransferCheckedInstructionData {
   final int decimals;
 }
 
-Encoder<TransferCheckedInstructionData> getTransferCheckedInstructionDataEncoder() {
+Encoder<TransferCheckedInstructionData>
+getTransferCheckedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('amount', getU64Encoder()),
@@ -44,7 +44,8 @@ Encoder<TransferCheckedInstructionData> getTransferCheckedInstructionDataEncoder
   );
 }
 
-Decoder<TransferCheckedInstructionData> getTransferCheckedInstructionDataDecoder() {
+Decoder<TransferCheckedInstructionData>
+getTransferCheckedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('amount', getU64Decoder()),
@@ -53,16 +54,21 @@ Decoder<TransferCheckedInstructionData> getTransferCheckedInstructionDataDecoder
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => TransferCheckedInstructionData(
-      discriminator: map['discriminator']! as int,
-      amount: map['amount']! as BigInt,
-      decimals: map['decimals']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        TransferCheckedInstructionData(
+          discriminator: map['discriminator']! as int,
+          amount: map['amount']! as BigInt,
+          decimals: map['decimals']! as int,
+        ),
   );
 }
 
-Codec<TransferCheckedInstructionData, TransferCheckedInstructionData> getTransferCheckedInstructionDataCodec() {
-  return combineCodec(getTransferCheckedInstructionDataEncoder(), getTransferCheckedInstructionDataDecoder());
+Codec<TransferCheckedInstructionData, TransferCheckedInstructionData>
+getTransferCheckedInstructionDataCodec() {
+  return combineCodec(
+    getTransferCheckedInstructionDataEncoder(),
+    getTransferCheckedInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [TransferChecked] instruction.
@@ -76,23 +82,25 @@ Instruction getTransferCheckedInstruction({
   required int decimals,
 }) {
   final instructionData = TransferCheckedInstructionData(
-      amount: amount,
-      decimals: decimals,
+    amount: amount,
+    decimals: decimals,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: source, role: AccountRole.writable),
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    AccountMeta(address: destination, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: source, role: AccountRole.writable),
+      AccountMeta(address: mint, role: AccountRole.readonly),
+      AccountMeta(address: destination, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getTransferCheckedInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [TransferChecked] instruction from raw instruction data.
-TransferCheckedInstructionData parseTransferCheckedInstruction(Instruction instruction) {
+TransferCheckedInstructionData parseTransferCheckedInstruction(
+  Instruction instruction,
+) {
   return getTransferCheckedInstructionDataDecoder().decode(instruction.data!);
 }

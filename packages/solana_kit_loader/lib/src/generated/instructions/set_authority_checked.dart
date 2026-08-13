@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,7 +22,8 @@ class SetAuthorityCheckedInstructionData {
   final int discriminator;
 }
 
-Encoder<SetAuthorityCheckedInstructionData> getSetAuthorityCheckedInstructionDataEncoder() {
+Encoder<SetAuthorityCheckedInstructionData>
+getSetAuthorityCheckedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
   ]);
@@ -36,21 +36,27 @@ Encoder<SetAuthorityCheckedInstructionData> getSetAuthorityCheckedInstructionDat
   );
 }
 
-Decoder<SetAuthorityCheckedInstructionData> getSetAuthorityCheckedInstructionDataDecoder() {
+Decoder<SetAuthorityCheckedInstructionData>
+getSetAuthorityCheckedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => SetAuthorityCheckedInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SetAuthorityCheckedInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<SetAuthorityCheckedInstructionData, SetAuthorityCheckedInstructionData> getSetAuthorityCheckedInstructionDataCodec() {
-  return combineCodec(getSetAuthorityCheckedInstructionDataEncoder(), getSetAuthorityCheckedInstructionDataDecoder());
+Codec<SetAuthorityCheckedInstructionData, SetAuthorityCheckedInstructionData>
+getSetAuthorityCheckedInstructionDataCodec() {
+  return combineCodec(
+    getSetAuthorityCheckedInstructionDataEncoder(),
+    getSetAuthorityCheckedInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [SetAuthorityChecked] instruction.
@@ -59,24 +65,30 @@ Instruction getSetAuthorityCheckedInstruction({
   required Address bufferOrProgramDataAccount,
   required Address currentAuthority,
   required Address newAuthority,
-
 }) {
-  final instructionData = SetAuthorityCheckedInstructionData(
-
-  );
+  final instructionData = SetAuthorityCheckedInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: bufferOrProgramDataAccount, role: AccountRole.writable),
-    AccountMeta(address: currentAuthority, role: AccountRole.readonlySigner),
-    AccountMeta(address: newAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: bufferOrProgramDataAccount,
+        role: AccountRole.writable,
+      ),
+      AccountMeta(address: currentAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: newAuthority, role: AccountRole.readonlySigner),
     ],
-    data: getSetAuthorityCheckedInstructionDataEncoder().encode(instructionData),
+    data: getSetAuthorityCheckedInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [SetAuthorityChecked] instruction from raw instruction data.
-SetAuthorityCheckedInstructionData parseSetAuthorityCheckedInstruction(Instruction instruction) {
-  return getSetAuthorityCheckedInstructionDataDecoder().decode(instruction.data!);
+SetAuthorityCheckedInstructionData parseSetAuthorityCheckedInstruction(
+  Instruction instruction,
+) {
+  return getSetAuthorityCheckedInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

@@ -115,6 +115,84 @@ void main() {
       },
     );
 
+    test('subscribe closes and detaches source streams after abort', () async {
+      var notificationCancelCount = 0;
+      var errorCancelCount = 0;
+      final notifications = StreamController<Object?>.broadcast(
+        onCancel: () => notificationCancelCount++,
+        sync: true,
+      );
+      final errors = StreamController<Object?>.broadcast(
+        onCancel: () => errorCancelCount++,
+        sync: true,
+      );
+      final pending = _pendingRequestForTransport(
+        (_) async => NotificationStreams(
+          notifications: notifications.stream,
+          errors: errors.stream,
+        ),
+      );
+      final source = CancellationTokenSource();
+      final received = <Object?>[];
+      final receivedErrors = <Object>[];
+      final done = Completer<void>();
+      final stream = await pending.subscribe(
+        RpcSubscribeOptions(abortSignal: source.token),
+      );
+
+      stream.listen(
+        received.add,
+        onError: receivedErrors.add,
+        onDone: done.complete,
+      );
+      notifications.add('before');
+      source.cancel();
+      notifications.add('late');
+      errors.add(StateError('late'));
+      await done.future;
+
+      expect(received, ['before']);
+      expect(receivedErrors, isEmpty);
+      expect(notificationCancelCount, 1);
+      expect(errorCancelCount, 1);
+      await notifications.close();
+      await errors.close();
+    });
+
+    test(
+      'subscribe closes before listening when aborted after acquisition',
+      () async {
+        var notificationListenCount = 0;
+        var errorListenCount = 0;
+        final notifications = StreamController<Object?>.broadcast(
+          onListen: () => notificationListenCount++,
+          sync: true,
+        );
+        final errors = StreamController<Object?>.broadcast(
+          onListen: () => errorListenCount++,
+          sync: true,
+        );
+        final pending = _pendingRequestForTransport(
+          (_) async => NotificationStreams(
+            notifications: notifications.stream,
+            errors: errors.stream,
+          ),
+        );
+        final source = CancellationTokenSource();
+        final stream = await pending.subscribe(
+          RpcSubscribeOptions(abortSignal: source.token),
+        );
+
+        source.cancel();
+        await stream.drain<void>();
+
+        expect(notificationListenCount, 0);
+        expect(errorListenCount, 0);
+        await notifications.close();
+        await errors.close();
+      },
+    );
+
     test('subscribe rejects if aborted while transport is pending', () async {
       final transport = _DeferredSubscriptionsTransport();
       final pending = _pendingRequestForTransport(transport.transport);

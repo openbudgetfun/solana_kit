@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -43,14 +42,19 @@ Decoder<SetAuthorityInstructionData> getSetAuthorityInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => SetAuthorityInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SetAuthorityInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<SetAuthorityInstructionData, SetAuthorityInstructionData> getSetAuthorityInstructionDataCodec() {
-  return combineCodec(getSetAuthorityInstructionDataEncoder(), getSetAuthorityInstructionDataDecoder());
+Codec<SetAuthorityInstructionData, SetAuthorityInstructionData>
+getSetAuthorityInstructionDataCodec() {
+  return combineCodec(
+    getSetAuthorityInstructionDataEncoder(),
+    getSetAuthorityInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [SetAuthority] instruction.
@@ -59,24 +63,27 @@ Instruction getSetAuthorityInstruction({
   required Address bufferOrProgramDataAccount,
   required Address currentAuthority,
   Address? newAuthority,
-
 }) {
-  final instructionData = SetAuthorityInstructionData(
-
-  );
+  final instructionData = SetAuthorityInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: bufferOrProgramDataAccount, role: AccountRole.writable),
-    AccountMeta(address: currentAuthority, role: AccountRole.readonlySigner),
-    if (newAuthority != null) AccountMeta(address: newAuthority, role: AccountRole.readonly),
+      AccountMeta(
+        address: bufferOrProgramDataAccount,
+        role: AccountRole.writable,
+      ),
+      AccountMeta(address: currentAuthority, role: AccountRole.readonlySigner),
+      if (newAuthority != null)
+        AccountMeta(address: newAuthority, role: AccountRole.readonly),
     ],
     data: getSetAuthorityInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [SetAuthority] instruction from raw instruction data.
-SetAuthorityInstructionData parseSetAuthorityInstruction(Instruction instruction) {
+SetAuthorityInstructionData parseSetAuthorityInstruction(
+  Instruction instruction,
+) {
   return getSetAuthorityInstructionDataDecoder().decode(instruction.data!);
 }

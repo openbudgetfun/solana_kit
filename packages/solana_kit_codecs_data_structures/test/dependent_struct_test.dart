@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_dynamic_calls, cascade_invocations
+// ignore_for_file: cascade_invocations
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
@@ -24,7 +24,7 @@ void main() {
           .field('count', getU8Decoder())
           .field(
             'items',
-            (fields) => getArrayDecoder(
+            (Map<String, Object?> fields) => getArrayDecoder(
               getU32Decoder(),
               size: FixedArraySize(fields['count']! as int),
             ),
@@ -47,7 +47,7 @@ void main() {
           .field('second', getU8Decoder())
           .field(
             'third',
-            (fields) {
+            (Map<String, Object?> fields) {
               seenByFactory.add({...fields});
               return getU8Decoder();
             },
@@ -67,7 +67,7 @@ void main() {
           .field('version', getU8Decoder())
           .field(
             'payload',
-            (fields) => (fields['version']! as int) == 0
+            (Map<String, Object?> fields) => (fields['version']! as int) == 0
                 ? getU16Decoder()
                 : getU32Decoder(),
           )
@@ -83,7 +83,7 @@ void main() {
           .field('version', getU8Decoder())
           .field(
             'payload',
-            (fields) => (fields['version']! as int) == 0
+            (Map<String, Object?> fields) => (fields['version']! as int) == 0
                 ? getU16Decoder()
                 : getU32Decoder(),
           )
@@ -101,7 +101,7 @@ void main() {
             .field('n', getU8Decoder())
             .field(
               'xs',
-              (fields) => getArrayDecoder(
+              (Map<String, Object?> fields) => getArrayDecoder(
                 getU8Decoder(),
                 size: FixedArraySize(fields['n']! as int),
               ),
@@ -182,7 +182,7 @@ void main() {
           .field('count', getU8Decoder())
           .field(
             'items',
-            (fields) => getArrayDecoder(
+            (Map<String, Object?> fields) => getArrayDecoder(
               getU8Decoder(),
               size: FixedArraySize(fields['count']! as int),
             ),

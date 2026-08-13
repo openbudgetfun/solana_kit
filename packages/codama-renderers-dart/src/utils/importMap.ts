@@ -77,15 +77,20 @@ export class DartImportMap {
     for (const module of this._imports) {
       // Check internal map first (generated cross-references)
       if (module in internalMap) {
-        uris.add(internalMap[module]);
+        const uri = internalMap[module];
+        if (uri) {
+          uris.add(uri);
+        }
       }
       // Then external package map
       else if (module in DART_EXTERNAL_PACKAGE_MAP) {
         uris.add(DART_EXTERNAL_PACKAGE_MAP[module]);
       }
-      // Assume it's already a raw URI (e.g., "package:..." or relative path)
-      else {
+      // Finally, accept explicit Dart URIs and relative Dart paths.
+      else if (isRawDartImportUri(module)) {
         uris.add(module);
+      } else {
+        throw new Error(`Unresolved Dart import module "${module}"`);
       }
     }
 
@@ -126,4 +131,12 @@ export class DartImportMap {
 
     return lines.join("\n");
   }
+}
+
+function isRawDartImportUri(module: string): boolean {
+  return (
+    module.startsWith("dart:") ||
+    module.startsWith("package:") ||
+    (module.endsWith(".dart") && !module.includes(":"))
+  );
 }

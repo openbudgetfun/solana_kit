@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -12,7 +11,6 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 
 import './stake_authorize.dart';
-
 
 @immutable
 class AuthorizeCheckedWithSeedParams {
@@ -36,13 +34,16 @@ class AuthorizeCheckedWithSeedParams {
           authorityOwner == other.authorityOwner;
 
   @override
-  int get hashCode => Object.hash(stakeAuthorize, authoritySeed, authorityOwner);
+  int get hashCode =>
+      Object.hash(stakeAuthorize, authoritySeed, authorityOwner);
 
   @override
-  String toString() => 'AuthorizeCheckedWithSeedParams(stakeAuthorize: $stakeAuthorize, authoritySeed: $authoritySeed, authorityOwner: $authorityOwner)';
+  String toString() =>
+      'AuthorizeCheckedWithSeedParams(stakeAuthorize: $stakeAuthorize, authoritySeed: $authoritySeed, authorityOwner: $authorityOwner)';
 }
 
-Encoder<AuthorizeCheckedWithSeedParams> getAuthorizeCheckedWithSeedParamsEncoder() {
+Encoder<AuthorizeCheckedWithSeedParams>
+getAuthorizeCheckedWithSeedParamsEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('stakeAuthorize', getStakeAuthorizeEncoder()),
     ('authoritySeed', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
@@ -59,7 +60,8 @@ Encoder<AuthorizeCheckedWithSeedParams> getAuthorizeCheckedWithSeedParamsEncoder
   );
 }
 
-Decoder<AuthorizeCheckedWithSeedParams> getAuthorizeCheckedWithSeedParamsDecoder() {
+Decoder<AuthorizeCheckedWithSeedParams>
+getAuthorizeCheckedWithSeedParamsDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('stakeAuthorize', getStakeAuthorizeDecoder()),
     ('authoritySeed', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
@@ -68,14 +70,19 @@ Decoder<AuthorizeCheckedWithSeedParams> getAuthorizeCheckedWithSeedParamsDecoder
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => AuthorizeCheckedWithSeedParams(
-      stakeAuthorize: map['stakeAuthorize']! as StakeAuthorize,
-      authoritySeed: map['authoritySeed']! as String,
-      authorityOwner: map['authorityOwner']! as Address,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        AuthorizeCheckedWithSeedParams(
+          stakeAuthorize: map['stakeAuthorize']! as StakeAuthorize,
+          authoritySeed: map['authoritySeed']! as String,
+          authorityOwner: map['authorityOwner']! as Address,
+        ),
   );
 }
 
-Codec<AuthorizeCheckedWithSeedParams, AuthorizeCheckedWithSeedParams> getAuthorizeCheckedWithSeedParamsCodec() {
-  return combineCodec(getAuthorizeCheckedWithSeedParamsEncoder(), getAuthorizeCheckedWithSeedParamsDecoder());
+Codec<AuthorizeCheckedWithSeedParams, AuthorizeCheckedWithSeedParams>
+getAuthorizeCheckedWithSeedParamsCodec() {
+  return combineCodec(
+    getAuthorizeCheckedWithSeedParamsEncoder(),
+    getAuthorizeCheckedWithSeedParamsDecoder(),
+  );
 }

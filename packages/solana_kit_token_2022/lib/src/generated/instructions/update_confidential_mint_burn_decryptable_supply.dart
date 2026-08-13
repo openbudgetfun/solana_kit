@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -32,7 +31,8 @@ class UpdateConfidentialMintBurnDecryptableSupplyInstructionData {
   final DecryptableBalance newDecryptableSupply;
 }
 
-Encoder<UpdateConfidentialMintBurnDecryptableSupplyInstructionData> getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataEncoder() {
+Encoder<UpdateConfidentialMintBurnDecryptableSupplyInstructionData>
+getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialMintBurnDiscriminator', getU8Encoder()),
@@ -41,15 +41,18 @@ Encoder<UpdateConfidentialMintBurnDecryptableSupplyInstructionData> getUpdateCon
 
   return transformEncoder(
     structEncoder,
-    (UpdateConfidentialMintBurnDecryptableSupplyInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'confidentialMintBurnDiscriminator': value.confidentialMintBurnDiscriminator,
-      'newDecryptableSupply': value.newDecryptableSupply,
-    },
+    (UpdateConfidentialMintBurnDecryptableSupplyInstructionData value) =>
+        <String, Object?>{
+          'discriminator': value.discriminator,
+          'confidentialMintBurnDiscriminator':
+              value.confidentialMintBurnDiscriminator,
+          'newDecryptableSupply': value.newDecryptableSupply,
+        },
   );
 }
 
-Decoder<UpdateConfidentialMintBurnDecryptableSupplyInstructionData> getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataDecoder() {
+Decoder<UpdateConfidentialMintBurnDecryptableSupplyInstructionData>
+getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialMintBurnDiscriminator', getU8Decoder()),
@@ -58,16 +61,26 @@ Decoder<UpdateConfidentialMintBurnDecryptableSupplyInstructionData> getUpdateCon
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateConfidentialMintBurnDecryptableSupplyInstructionData(
-      discriminator: map['discriminator']! as int,
-      confidentialMintBurnDiscriminator: map['confidentialMintBurnDiscriminator']! as int,
-      newDecryptableSupply: map['newDecryptableSupply']! as DecryptableBalance,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UpdateConfidentialMintBurnDecryptableSupplyInstructionData(
+          discriminator: map['discriminator']! as int,
+          confidentialMintBurnDiscriminator:
+              map['confidentialMintBurnDiscriminator']! as int,
+          newDecryptableSupply:
+              map['newDecryptableSupply']! as DecryptableBalance,
+        ),
   );
 }
 
-Codec<UpdateConfidentialMintBurnDecryptableSupplyInstructionData, UpdateConfidentialMintBurnDecryptableSupplyInstructionData> getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataCodec() {
-  return combineCodec(getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataEncoder(), getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataDecoder());
+Codec<
+  UpdateConfidentialMintBurnDecryptableSupplyInstructionData,
+  UpdateConfidentialMintBurnDecryptableSupplyInstructionData
+>
+getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataCodec() {
+  return combineCodec(
+    getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataEncoder(),
+    getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [UpdateConfidentialMintBurnDecryptableSupply] instruction.
@@ -77,21 +90,27 @@ Instruction getUpdateConfidentialMintBurnDecryptableSupplyInstruction({
   required Address authority,
   required DecryptableBalance newDecryptableSupply,
 }) {
-  final instructionData = UpdateConfidentialMintBurnDecryptableSupplyInstructionData(
-      newDecryptableSupply: newDecryptableSupply,
-  );
+  final instructionData =
+      UpdateConfidentialMintBurnDecryptableSupplyInstructionData(
+        newDecryptableSupply: newDecryptableSupply,
+      );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: mint, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataEncoder().encode(instructionData),
+    data: getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataEncoder()
+        .encode(instructionData),
   );
 }
 
 /// Parses a [UpdateConfidentialMintBurnDecryptableSupply] instruction from raw instruction data.
-UpdateConfidentialMintBurnDecryptableSupplyInstructionData parseUpdateConfidentialMintBurnDecryptableSupplyInstruction(Instruction instruction) {
-  return getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataDecoder().decode(instruction.data!);
+UpdateConfidentialMintBurnDecryptableSupplyInstructionData
+parseUpdateConfidentialMintBurnDecryptableSupplyInstruction(
+  Instruction instruction,
+) {
+  return getUpdateConfidentialMintBurnDecryptableSupplyInstructionDataDecoder()
+      .decode(instruction.data!);
 }

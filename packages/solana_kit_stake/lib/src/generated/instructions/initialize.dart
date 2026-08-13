@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -32,7 +31,7 @@ class InitializeInstructionData {
 
 Encoder<InitializeInstructionData> getInitializeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
     ('arg0', getAuthorizedEncoder()),
     ('arg1', getLockupEncoder()),
   ]);
@@ -49,23 +48,28 @@ Encoder<InitializeInstructionData> getInitializeInstructionDataEncoder() {
 
 Decoder<InitializeInstructionData> getInitializeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
     ('arg0', getAuthorizedDecoder()),
     ('arg1', getLockupDecoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeInstructionData(
-      discriminator: map['discriminator']! as int,
-      arg0: map['arg0']! as Authorized,
-      arg1: map['arg1']! as Lockup,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializeInstructionData(
+          discriminator: map['discriminator']! as int,
+          arg0: map['arg0']! as Authorized,
+          arg1: map['arg1']! as Lockup,
+        ),
   );
 }
 
-Codec<InitializeInstructionData, InitializeInstructionData> getInitializeInstructionDataCodec() {
-  return combineCodec(getInitializeInstructionDataEncoder(), getInitializeInstructionDataDecoder());
+Codec<InitializeInstructionData, InitializeInstructionData>
+getInitializeInstructionDataCodec() {
+  return combineCodec(
+    getInitializeInstructionDataEncoder(),
+    getInitializeInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Initialize] instruction.
@@ -77,15 +81,15 @@ Instruction getInitializeInstruction({
   required Lockup arg1,
 }) {
   final instructionData = InitializeInstructionData(
-      arg0: arg0,
-      arg1: arg1,
+    arg0: arg0,
+    arg1: arg1,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: stake, role: AccountRole.writable),
-    AccountMeta(address: rentSysvar, role: AccountRole.readonly),
+      AccountMeta(address: stake, role: AccountRole.writable),
+      AccountMeta(address: rentSysvar, role: AccountRole.readonly),
     ],
     data: getInitializeInstructionDataEncoder().encode(instructionData),
   );

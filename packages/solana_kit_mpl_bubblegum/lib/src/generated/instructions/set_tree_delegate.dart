@@ -11,16 +11,35 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// SetTreeDelegate instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `set_tree_delegate` instruction.
+const SetTreeDelegateInstructionDiscriminator = <int>[
+  253,
+  118,
+  66,
+  37,
+  190,
+  49,
+  154,
+  102,
+];
+
 @immutable
 class SetTreeDelegateInstructionData {
-  const SetTreeDelegateInstructionData({this.discriminator = 22});
+  const SetTreeDelegateInstructionData({
+    this.discriminator = SetTreeDelegateInstructionDiscriminator,
+  });
 
-  final int discriminator;
+  final List<int> discriminator;
 }
 
 Encoder<SetTreeDelegateInstructionData>
 getSetTreeDelegateInstructionDataEncoder() {
-  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[]);
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    (
+      'discriminator',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
+  ]);
 
   return transformEncoder(
     structEncoder,
@@ -33,14 +52,17 @@ getSetTreeDelegateInstructionDataEncoder() {
 Decoder<SetTreeDelegateInstructionData>
 getSetTreeDelegateInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
   ]);
 
   return transformDecoder(
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         SetTreeDelegateInstructionData(
-          discriminator: map['discriminator']! as int,
+          discriminator: map['discriminator']! as List<int>,
         ),
   );
 }

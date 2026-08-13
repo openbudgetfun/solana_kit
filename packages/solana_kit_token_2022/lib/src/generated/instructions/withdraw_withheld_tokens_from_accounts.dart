@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -30,7 +29,8 @@ class WithdrawWithheldTokensFromAccountsInstructionData {
   final int numTokenAccounts;
 }
 
-Encoder<WithdrawWithheldTokensFromAccountsInstructionData> getWithdrawWithheldTokensFromAccountsInstructionDataEncoder() {
+Encoder<WithdrawWithheldTokensFromAccountsInstructionData>
+getWithdrawWithheldTokensFromAccountsInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('transferFeeDiscriminator', getU8Encoder()),
@@ -39,15 +39,17 @@ Encoder<WithdrawWithheldTokensFromAccountsInstructionData> getWithdrawWithheldTo
 
   return transformEncoder(
     structEncoder,
-    (WithdrawWithheldTokensFromAccountsInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'transferFeeDiscriminator': value.transferFeeDiscriminator,
-      'numTokenAccounts': value.numTokenAccounts,
-    },
+    (WithdrawWithheldTokensFromAccountsInstructionData value) =>
+        <String, Object?>{
+          'discriminator': value.discriminator,
+          'transferFeeDiscriminator': value.transferFeeDiscriminator,
+          'numTokenAccounts': value.numTokenAccounts,
+        },
   );
 }
 
-Decoder<WithdrawWithheldTokensFromAccountsInstructionData> getWithdrawWithheldTokensFromAccountsInstructionDataDecoder() {
+Decoder<WithdrawWithheldTokensFromAccountsInstructionData>
+getWithdrawWithheldTokensFromAccountsInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('transferFeeDiscriminator', getU8Decoder()),
@@ -56,16 +58,24 @@ Decoder<WithdrawWithheldTokensFromAccountsInstructionData> getWithdrawWithheldTo
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => WithdrawWithheldTokensFromAccountsInstructionData(
-      discriminator: map['discriminator']! as int,
-      transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
-      numTokenAccounts: map['numTokenAccounts']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        WithdrawWithheldTokensFromAccountsInstructionData(
+          discriminator: map['discriminator']! as int,
+          transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
+          numTokenAccounts: map['numTokenAccounts']! as int,
+        ),
   );
 }
 
-Codec<WithdrawWithheldTokensFromAccountsInstructionData, WithdrawWithheldTokensFromAccountsInstructionData> getWithdrawWithheldTokensFromAccountsInstructionDataCodec() {
-  return combineCodec(getWithdrawWithheldTokensFromAccountsInstructionDataEncoder(), getWithdrawWithheldTokensFromAccountsInstructionDataDecoder());
+Codec<
+  WithdrawWithheldTokensFromAccountsInstructionData,
+  WithdrawWithheldTokensFromAccountsInstructionData
+>
+getWithdrawWithheldTokensFromAccountsInstructionDataCodec() {
+  return combineCodec(
+    getWithdrawWithheldTokensFromAccountsInstructionDataEncoder(),
+    getWithdrawWithheldTokensFromAccountsInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [WithdrawWithheldTokensFromAccounts] instruction.
@@ -77,21 +87,29 @@ Instruction getWithdrawWithheldTokensFromAccountsInstruction({
   required int numTokenAccounts,
 }) {
   final instructionData = WithdrawWithheldTokensFromAccountsInstructionData(
-      numTokenAccounts: numTokenAccounts,
+    numTokenAccounts: numTokenAccounts,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    AccountMeta(address: feeReceiver, role: AccountRole.writable),
-    AccountMeta(address: withdrawWithheldAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: mint, role: AccountRole.readonly),
+      AccountMeta(address: feeReceiver, role: AccountRole.writable),
+      AccountMeta(
+        address: withdrawWithheldAuthority,
+        role: AccountRole.readonlySigner,
+      ),
     ],
-    data: getWithdrawWithheldTokensFromAccountsInstructionDataEncoder().encode(instructionData),
+    data: getWithdrawWithheldTokensFromAccountsInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [WithdrawWithheldTokensFromAccounts] instruction from raw instruction data.
-WithdrawWithheldTokensFromAccountsInstructionData parseWithdrawWithheldTokensFromAccountsInstruction(Instruction instruction) {
-  return getWithdrawWithheldTokensFromAccountsInstructionDataDecoder().decode(instruction.data!);
+WithdrawWithheldTokensFromAccountsInstructionData
+parseWithdrawWithheldTokensFromAccountsInstruction(Instruction instruction) {
+  return getWithdrawWithheldTokensFromAccountsInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

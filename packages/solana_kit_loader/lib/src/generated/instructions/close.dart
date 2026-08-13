@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -43,14 +42,19 @@ Decoder<CloseInstructionData> getCloseInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CloseInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CloseInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<CloseInstructionData, CloseInstructionData> getCloseInstructionDataCodec() {
-  return combineCodec(getCloseInstructionDataEncoder(), getCloseInstructionDataDecoder());
+Codec<CloseInstructionData, CloseInstructionData>
+getCloseInstructionDataCodec() {
+  return combineCodec(
+    getCloseInstructionDataEncoder(),
+    getCloseInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Close] instruction.
@@ -60,19 +64,21 @@ Instruction getCloseInstruction({
   required Address destinationAccount,
   Address? authority,
   Address? programAccount,
-
 }) {
-  final instructionData = CloseInstructionData(
-
-  );
+  final instructionData = CloseInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: bufferOrProgramDataAccount, role: AccountRole.writable),
-    AccountMeta(address: destinationAccount, role: AccountRole.writable),
-    if (authority != null) AccountMeta(address: authority, role: AccountRole.readonlySigner),
-    if (programAccount != null) AccountMeta(address: programAccount, role: AccountRole.readonly),
+      AccountMeta(
+        address: bufferOrProgramDataAccount,
+        role: AccountRole.writable,
+      ),
+      AccountMeta(address: destinationAccount, role: AccountRole.writable),
+      if (authority != null)
+        AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      if (programAccount != null)
+        AccountMeta(address: programAccount, role: AccountRole.readonly),
     ],
     data: getCloseInstructionDataEncoder().encode(instructionData),
   );

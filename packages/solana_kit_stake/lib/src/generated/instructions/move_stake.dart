@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -27,7 +26,7 @@ class MoveStakeInstructionData {
 
 Encoder<MoveStakeInstructionData> getMoveStakeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
     ('args', getU64Encoder()),
   ]);
 
@@ -42,21 +41,26 @@ Encoder<MoveStakeInstructionData> getMoveStakeInstructionDataEncoder() {
 
 Decoder<MoveStakeInstructionData> getMoveStakeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
     ('args', getU64Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => MoveStakeInstructionData(
-      discriminator: map['discriminator']! as int,
-      args: map['args']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        MoveStakeInstructionData(
+          discriminator: map['discriminator']! as int,
+          args: map['args']! as BigInt,
+        ),
   );
 }
 
-Codec<MoveStakeInstructionData, MoveStakeInstructionData> getMoveStakeInstructionDataCodec() {
-  return combineCodec(getMoveStakeInstructionDataEncoder(), getMoveStakeInstructionDataDecoder());
+Codec<MoveStakeInstructionData, MoveStakeInstructionData>
+getMoveStakeInstructionDataCodec() {
+  return combineCodec(
+    getMoveStakeInstructionDataEncoder(),
+    getMoveStakeInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [MoveStake] instruction.
@@ -68,15 +72,15 @@ Instruction getMoveStakeInstruction({
   required BigInt args,
 }) {
   final instructionData = MoveStakeInstructionData(
-      args: args,
+    args: args,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: sourceStake, role: AccountRole.writable),
-    AccountMeta(address: destinationStake, role: AccountRole.writable),
-    AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: sourceStake, role: AccountRole.writable),
+      AccountMeta(address: destinationStake, role: AccountRole.writable),
+      AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
     ],
     data: getMoveStakeInstructionDataEncoder().encode(instructionData),
   );

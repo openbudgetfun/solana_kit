@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -10,7 +9,6 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
-
 
 @immutable
 class AddMemoInstructionData {
@@ -41,14 +39,19 @@ Decoder<AddMemoInstructionData> getAddMemoInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => AddMemoInstructionData(
-      memo: map['memo']! as String,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        AddMemoInstructionData(
+          memo: map['memo']! as String,
+        ),
   );
 }
 
-Codec<AddMemoInstructionData, AddMemoInstructionData> getAddMemoInstructionDataCodec() {
-  return combineCodec(getAddMemoInstructionDataEncoder(), getAddMemoInstructionDataDecoder());
+Codec<AddMemoInstructionData, AddMemoInstructionData>
+getAddMemoInstructionDataCodec() {
+  return combineCodec(
+    getAddMemoInstructionDataEncoder(),
+    getAddMemoInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [AddMemo] instruction.
@@ -58,14 +61,12 @@ Instruction getAddMemoInstruction({
   required String memo,
 }) {
   final instructionData = AddMemoInstructionData(
-      memo: memo,
+    memo: memo,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-
-    ],
+    accounts: [],
     data: getAddMemoInstructionDataEncoder().encode(instructionData),
   );
 }

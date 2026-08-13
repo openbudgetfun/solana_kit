@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -48,15 +47,20 @@ Decoder<TransferInstructionData> getTransferInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => TransferInstructionData(
-      discriminator: map['discriminator']! as int,
-      amount: map['amount']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        TransferInstructionData(
+          discriminator: map['discriminator']! as int,
+          amount: map['amount']! as BigInt,
+        ),
   );
 }
 
-Codec<TransferInstructionData, TransferInstructionData> getTransferInstructionDataCodec() {
-  return combineCodec(getTransferInstructionDataEncoder(), getTransferInstructionDataDecoder());
+Codec<TransferInstructionData, TransferInstructionData>
+getTransferInstructionDataCodec() {
+  return combineCodec(
+    getTransferInstructionDataEncoder(),
+    getTransferInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Transfer] instruction.
@@ -68,15 +72,15 @@ Instruction getTransferInstruction({
   required BigInt amount,
 }) {
   final instructionData = TransferInstructionData(
-      amount: amount,
+    amount: amount,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: source, role: AccountRole.writable),
-    AccountMeta(address: destination, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: source, role: AccountRole.writable),
+      AccountMeta(address: destination, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getTransferInstructionDataEncoder().encode(instructionData),
   );

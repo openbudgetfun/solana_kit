@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,7 +22,8 @@ class RecoverNestedAssociatedTokenInstructionData {
   final int discriminator;
 }
 
-Encoder<RecoverNestedAssociatedTokenInstructionData> getRecoverNestedAssociatedTokenInstructionDataEncoder() {
+Encoder<RecoverNestedAssociatedTokenInstructionData>
+getRecoverNestedAssociatedTokenInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,21 +36,30 @@ Encoder<RecoverNestedAssociatedTokenInstructionData> getRecoverNestedAssociatedT
   );
 }
 
-Decoder<RecoverNestedAssociatedTokenInstructionData> getRecoverNestedAssociatedTokenInstructionDataDecoder() {
+Decoder<RecoverNestedAssociatedTokenInstructionData>
+getRecoverNestedAssociatedTokenInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => RecoverNestedAssociatedTokenInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        RecoverNestedAssociatedTokenInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<RecoverNestedAssociatedTokenInstructionData, RecoverNestedAssociatedTokenInstructionData> getRecoverNestedAssociatedTokenInstructionDataCodec() {
-  return combineCodec(getRecoverNestedAssociatedTokenInstructionDataEncoder(), getRecoverNestedAssociatedTokenInstructionDataDecoder());
+Codec<
+  RecoverNestedAssociatedTokenInstructionData,
+  RecoverNestedAssociatedTokenInstructionData
+>
+getRecoverNestedAssociatedTokenInstructionDataCodec() {
+  return combineCodec(
+    getRecoverNestedAssociatedTokenInstructionDataEncoder(),
+    getRecoverNestedAssociatedTokenInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [RecoverNestedAssociatedToken] instruction.
@@ -63,28 +72,39 @@ Instruction getRecoverNestedAssociatedTokenInstruction({
   required Address ownerTokenMintAddress,
   required Address walletAddress,
   required Address tokenProgram,
-
 }) {
-  final instructionData = RecoverNestedAssociatedTokenInstructionData(
-
-  );
+  final instructionData = RecoverNestedAssociatedTokenInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: nestedAssociatedAccountAddress, role: AccountRole.writable),
-    AccountMeta(address: nestedTokenMintAddress, role: AccountRole.readonly),
-    AccountMeta(address: destinationAssociatedAccountAddress, role: AccountRole.writable),
-    AccountMeta(address: ownerAssociatedAccountAddress, role: AccountRole.readonly),
-    AccountMeta(address: ownerTokenMintAddress, role: AccountRole.readonly),
-    AccountMeta(address: walletAddress, role: AccountRole.writableSigner),
-    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+      AccountMeta(
+        address: nestedAssociatedAccountAddress,
+        role: AccountRole.writable,
+      ),
+      AccountMeta(address: nestedTokenMintAddress, role: AccountRole.readonly),
+      AccountMeta(
+        address: destinationAssociatedAccountAddress,
+        role: AccountRole.writable,
+      ),
+      AccountMeta(
+        address: ownerAssociatedAccountAddress,
+        role: AccountRole.readonly,
+      ),
+      AccountMeta(address: ownerTokenMintAddress, role: AccountRole.readonly),
+      AccountMeta(address: walletAddress, role: AccountRole.writableSigner),
+      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
-    data: getRecoverNestedAssociatedTokenInstructionDataEncoder().encode(instructionData),
+    data: getRecoverNestedAssociatedTokenInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [RecoverNestedAssociatedToken] instruction from raw instruction data.
-RecoverNestedAssociatedTokenInstructionData parseRecoverNestedAssociatedTokenInstruction(Instruction instruction) {
-  return getRecoverNestedAssociatedTokenInstructionDataDecoder().decode(instruction.data!);
+RecoverNestedAssociatedTokenInstructionData
+parseRecoverNestedAssociatedTokenInstruction(Instruction instruction) {
+  return getRecoverNestedAssociatedTokenInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

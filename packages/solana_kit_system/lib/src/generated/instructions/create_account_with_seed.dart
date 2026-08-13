@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -34,7 +33,8 @@ class CreateAccountWithSeedInstructionData {
   final Address programAddress;
 }
 
-Encoder<CreateAccountWithSeedInstructionData> getCreateAccountWithSeedInstructionDataEncoder() {
+Encoder<CreateAccountWithSeedInstructionData>
+getCreateAccountWithSeedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('base', getAddressEncoder()),
@@ -57,7 +57,8 @@ Encoder<CreateAccountWithSeedInstructionData> getCreateAccountWithSeedInstructio
   );
 }
 
-Decoder<CreateAccountWithSeedInstructionData> getCreateAccountWithSeedInstructionDataDecoder() {
+Decoder<CreateAccountWithSeedInstructionData>
+getCreateAccountWithSeedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('base', getAddressDecoder()),
@@ -69,19 +70,27 @@ Decoder<CreateAccountWithSeedInstructionData> getCreateAccountWithSeedInstructio
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateAccountWithSeedInstructionData(
-      discriminator: map['discriminator']! as int,
-      base: map['base']! as Address,
-      seed: map['seed']! as String,
-      amount: map['amount']! as BigInt,
-      space: map['space']! as BigInt,
-      programAddress: map['programAddress']! as Address,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CreateAccountWithSeedInstructionData(
+          discriminator: map['discriminator']! as int,
+          base: map['base']! as Address,
+          seed: map['seed']! as String,
+          amount: map['amount']! as BigInt,
+          space: map['space']! as BigInt,
+          programAddress: map['programAddress']! as Address,
+        ),
   );
 }
 
-Codec<CreateAccountWithSeedInstructionData, CreateAccountWithSeedInstructionData> getCreateAccountWithSeedInstructionDataCodec() {
-  return combineCodec(getCreateAccountWithSeedInstructionDataEncoder(), getCreateAccountWithSeedInstructionDataDecoder());
+Codec<
+  CreateAccountWithSeedInstructionData,
+  CreateAccountWithSeedInstructionData
+>
+getCreateAccountWithSeedInstructionDataCodec() {
+  return combineCodec(
+    getCreateAccountWithSeedInstructionDataEncoder(),
+    getCreateAccountWithSeedInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [CreateAccountWithSeed] instruction.
@@ -97,25 +106,32 @@ Instruction getCreateAccountWithSeedInstruction({
   required Address programAddress,
 }) {
   final instructionData = CreateAccountWithSeedInstructionData(
-      base: base,
-      seed: seed,
-      amount: amount,
-      space: space,
-      programAddress: programAddress,
+    base: base,
+    seed: seed,
+    amount: amount,
+    space: space,
+    programAddress: programAddress,
   );
 
   return Instruction(
     programAddress: instructionProgramAddress,
     accounts: [
-    AccountMeta(address: payer, role: AccountRole.writableSigner),
-    AccountMeta(address: newAccount, role: AccountRole.writable),
-    if (baseAccount != null) AccountMeta(address: baseAccount, role: AccountRole.readonlySigner),
+      AccountMeta(address: payer, role: AccountRole.writableSigner),
+      AccountMeta(address: newAccount, role: AccountRole.writable),
+      if (baseAccount != null)
+        AccountMeta(address: baseAccount, role: AccountRole.readonlySigner),
     ],
-    data: getCreateAccountWithSeedInstructionDataEncoder().encode(instructionData),
+    data: getCreateAccountWithSeedInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [CreateAccountWithSeed] instruction from raw instruction data.
-CreateAccountWithSeedInstructionData parseCreateAccountWithSeedInstruction(Instruction instruction) {
-  return getCreateAccountWithSeedInstructionDataDecoder().decode(instruction.data!);
+CreateAccountWithSeedInstructionData parseCreateAccountWithSeedInstruction(
+  Instruction instruction,
+) {
+  return getCreateAccountWithSeedInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

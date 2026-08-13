@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -27,7 +26,8 @@ class CreateLookupTableInstructionData {
   final int bump;
 }
 
-Encoder<CreateLookupTableInstructionData> getCreateLookupTableInstructionDataEncoder() {
+Encoder<CreateLookupTableInstructionData>
+getCreateLookupTableInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('recentSlot', getU64Encoder()),
@@ -44,7 +44,8 @@ Encoder<CreateLookupTableInstructionData> getCreateLookupTableInstructionDataEnc
   );
 }
 
-Decoder<CreateLookupTableInstructionData> getCreateLookupTableInstructionDataDecoder() {
+Decoder<CreateLookupTableInstructionData>
+getCreateLookupTableInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('recentSlot', getU64Decoder()),
@@ -53,16 +54,21 @@ Decoder<CreateLookupTableInstructionData> getCreateLookupTableInstructionDataDec
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateLookupTableInstructionData(
-      discriminator: map['discriminator']! as int,
-      recentSlot: map['recentSlot']! as BigInt,
-      bump: map['bump']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CreateLookupTableInstructionData(
+          discriminator: map['discriminator']! as int,
+          recentSlot: map['recentSlot']! as BigInt,
+          bump: map['bump']! as int,
+        ),
   );
 }
 
-Codec<CreateLookupTableInstructionData, CreateLookupTableInstructionData> getCreateLookupTableInstructionDataCodec() {
-  return combineCodec(getCreateLookupTableInstructionDataEncoder(), getCreateLookupTableInstructionDataDecoder());
+Codec<CreateLookupTableInstructionData, CreateLookupTableInstructionData>
+getCreateLookupTableInstructionDataCodec() {
+  return combineCodec(
+    getCreateLookupTableInstructionDataEncoder(),
+    getCreateLookupTableInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [CreateLookupTable] instruction.
@@ -76,23 +82,25 @@ Instruction getCreateLookupTableInstruction({
   required int bump,
 }) {
   final instructionData = CreateLookupTableInstructionData(
-      recentSlot: recentSlot,
-      bump: bump,
+    recentSlot: recentSlot,
+    bump: bump,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: address, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonly),
-    AccountMeta(address: payer, role: AccountRole.writableSigner),
-    AccountMeta(address: systemProgram, role: AccountRole.readonly),
+      AccountMeta(address: address, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonly),
+      AccountMeta(address: payer, role: AccountRole.writableSigner),
+      AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
     data: getCreateLookupTableInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [CreateLookupTable] instruction from raw instruction data.
-CreateLookupTableInstructionData parseCreateLookupTableInstruction(Instruction instruction) {
+CreateLookupTableInstructionData parseCreateLookupTableInstruction(
+  Instruction instruction,
+) {
   return getCreateLookupTableInstructionDataDecoder().decode(instruction.data!);
 }

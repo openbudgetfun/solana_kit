@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -48,15 +47,20 @@ Decoder<AllocateInstructionData> getAllocateInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => AllocateInstructionData(
-      discriminator: map['discriminator']! as int,
-      space: map['space']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        AllocateInstructionData(
+          discriminator: map['discriminator']! as int,
+          space: map['space']! as BigInt,
+        ),
   );
 }
 
-Codec<AllocateInstructionData, AllocateInstructionData> getAllocateInstructionDataCodec() {
-  return combineCodec(getAllocateInstructionDataEncoder(), getAllocateInstructionDataDecoder());
+Codec<AllocateInstructionData, AllocateInstructionData>
+getAllocateInstructionDataCodec() {
+  return combineCodec(
+    getAllocateInstructionDataEncoder(),
+    getAllocateInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Allocate] instruction.
@@ -66,13 +70,13 @@ Instruction getAllocateInstruction({
   required BigInt space,
 }) {
   final instructionData = AllocateInstructionData(
-      space: space,
+    space: space,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: newAccount, role: AccountRole.writableSigner),
+      AccountMeta(address: newAccount, role: AccountRole.writableSigner),
     ],
     data: getAllocateInstructionDataEncoder().encode(instructionData),
   );

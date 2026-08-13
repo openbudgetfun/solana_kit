@@ -2,7 +2,8 @@
 // ignore_for_file: type=lint
 
 /// The address of the System program.
-export 'package:solana_kit_addresses/solana_kit_addresses.dart' show systemProgramAddress;
+export 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    show systemProgramAddress;
 
 /// Known accounts for the System program.
 enum SystemAccount {

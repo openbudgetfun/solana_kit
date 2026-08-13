@@ -2,4 +2,3 @@
 // ignore_for_file: type=lint
 
 export 'solana_stake_interface.dart';
-

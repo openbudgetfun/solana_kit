@@ -11,15 +11,34 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// Compress instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `compress` instruction.
+const CompressInstructionDiscriminator = <int>[
+  82,
+  193,
+  176,
+  117,
+  176,
+  21,
+  115,
+  253,
+];
+
 @immutable
 class CompressInstructionData {
-  const CompressInstructionData({this.discriminator = 5});
+  const CompressInstructionData({
+    this.discriminator = CompressInstructionDiscriminator,
+  });
 
-  final int discriminator;
+  final List<int> discriminator;
 }
 
 Encoder<CompressInstructionData> getCompressInstructionDataEncoder() {
-  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[]);
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    (
+      'discriminator',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
+  ]);
 
   return transformEncoder(
     structEncoder,
@@ -31,13 +50,18 @@ Encoder<CompressInstructionData> getCompressInstructionDataEncoder() {
 
 Decoder<CompressInstructionData> getCompressInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
   ]);
 
   return transformDecoder(
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        CompressInstructionData(discriminator: map['discriminator']! as int),
+        CompressInstructionData(
+          discriminator: map['discriminator']! as List<int>,
+        ),
   );
 }
 

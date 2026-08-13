@@ -10,7 +10,7 @@ void main() {
     group('initial state', () {
       test('is idle', () {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         expect(store.getState().status, ReactiveActionState.idle);
@@ -28,7 +28,7 @@ void main() {
         'transitions through running to success and returns the result',
         () async {
           final store = createReactiveActionStore<List<Object?>, int>(
-            (args) async => 42,
+            (_, args) async => 42,
           );
 
           final result = await store.dispatchAsync([]);
@@ -44,7 +44,7 @@ void main() {
       test('transitions to running while the action is in flight', () async {
         final completer = Completer<int>();
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) => completer.future,
+          (_, args) => completer.future,
         );
 
         final dispatchFuture = store.dispatchAsync([]);
@@ -62,7 +62,7 @@ void main() {
         () async {
           final error = Exception('boom');
           final store = createReactiveActionStore<List<Object?>, int>(
-            (args) async => throw error,
+            (_, args) async => throw error,
           );
 
           await expectLater(store.dispatchAsync([]), throwsA(error));
@@ -77,7 +77,7 @@ void main() {
         'preserves the previous result when transitioning to error',
         () async {
           final store = createReactiveActionStore<List<Object?>, int>(
-            (args) async => args.isEmpty ? 42 : throw Exception('nope'),
+            (_, args) async => args.isEmpty ? 42 : throw Exception('nope'),
           );
 
           await store.dispatchAsync([]);
@@ -101,7 +101,7 @@ void main() {
         () async {
           final completer = Completer<int>();
           final store = createReactiveActionStore<List<Object?>, int>(
-            (args) async {
+            (_, args) async {
               if (args.isEmpty) {
                 throw Exception('first fails');
               }
@@ -133,7 +133,7 @@ void main() {
 
       test('throws StateError after dispose', () async {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         store.dispose();
@@ -151,7 +151,7 @@ void main() {
         () async {
           final completer = Completer<int>();
           final store = createReactiveActionStore<List<Object?>, int>(
-            (args) => completer.future,
+            (_, args) => completer.future,
           );
 
           store.dispatch([]);
@@ -170,7 +170,7 @@ void main() {
     group('reset', () {
       test('returns the store to the idle state', () async {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         await store.dispatchAsync([]);
@@ -188,7 +188,7 @@ void main() {
     group('subscribe', () {
       test('notifies subscribers on state changes', () async {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         var notifications = 0;
@@ -206,7 +206,7 @@ void main() {
 
       test('stops notifying after unsubscribe', () async {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         var notifications = 0;
@@ -224,7 +224,7 @@ void main() {
 
       test('returns a no-op unsubscribe after dispose', () {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         store.dispose();
@@ -242,7 +242,7 @@ void main() {
     group('dispose', () {
       test('clears subscribers and is idempotent', () async {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         var notifications = 0;
@@ -263,7 +263,7 @@ void main() {
   group('createReactiveActionStore', () {
     test('creates a working store', () async {
       final store = createReactiveActionStore<List<Object?>, String>(
-        (args) async => 'hello',
+        (_, args) async => 'hello',
       );
 
       expect(store.getState().status, ReactiveActionState.idle);

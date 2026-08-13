@@ -12,18 +12,26 @@ void main() {
     });
 
     test('instruction builders are callable', () {
-      final limitIx = getSetComputeUnitLimitInstruction(units: 100000);
+      final limitIx = getSetComputeUnitLimitInstruction(
+        programAddress: computeBudgetProgramAddress,
+        units: 100000,
+      );
       expect(limitIx.programAddress, equals(computeBudgetProgramAddress));
 
       final priceIx = getSetComputeUnitPriceInstruction(
+        programAddress: computeBudgetProgramAddress,
         microLamports: BigInt.from(1000),
       );
       expect(priceIx.programAddress, equals(computeBudgetProgramAddress));
 
-      final heapIx = getRequestHeapFrameInstruction(bytes: 32768);
+      final heapIx = getRequestHeapFrameInstruction(
+        programAddress: computeBudgetProgramAddress,
+        bytes: 32768,
+      );
       expect(heapIx.programAddress, equals(computeBudgetProgramAddress));
 
       final dataLimitIx = getSetLoadedAccountsDataSizeLimitInstruction(
+        programAddress: computeBudgetProgramAddress,
         accountDataSizeLimit: 65536,
       );
       expect(dataLimitIx.programAddress, equals(computeBudgetProgramAddress));

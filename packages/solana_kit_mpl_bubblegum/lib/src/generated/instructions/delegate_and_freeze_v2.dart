@@ -11,10 +11,22 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// DelegateAndFreezeV2 instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `delegate_and_freeze_v2` instruction.
+const DelegateAndFreezeV2InstructionDiscriminator = <int>[
+  17,
+  229,
+  35,
+  218,
+  190,
+  241,
+  250,
+  123,
+];
+
 @immutable
 class DelegateAndFreezeV2InstructionData {
   const DelegateAndFreezeV2InstructionData({
-    this.discriminator = 10,
+    this.discriminator = DelegateAndFreezeV2InstructionDiscriminator,
     required this.root,
     required this.dataHash,
     required this.creatorHash,
@@ -25,7 +37,7 @@ class DelegateAndFreezeV2InstructionData {
     required this.index,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final List<int> root;
   final List<int> dataHash;
   final List<int> creatorHash;
@@ -39,6 +51,10 @@ class DelegateAndFreezeV2InstructionData {
 Encoder<DelegateAndFreezeV2InstructionData>
 getDelegateAndFreezeV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    (
+      'discriminator',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
     (
       'dataHash',
@@ -84,7 +100,10 @@ getDelegateAndFreezeV2InstructionDataEncoder() {
 Decoder<DelegateAndFreezeV2InstructionData>
 getDelegateAndFreezeV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
     (
       'dataHash',
@@ -115,7 +134,7 @@ getDelegateAndFreezeV2InstructionDataDecoder() {
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         DelegateAndFreezeV2InstructionData(
-          discriminator: map['discriminator']! as int,
+          discriminator: map['discriminator']! as List<int>,
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
           creatorHash: map['creatorHash']! as List<int>,

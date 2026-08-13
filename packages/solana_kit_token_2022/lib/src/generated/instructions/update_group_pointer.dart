@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -30,11 +29,19 @@ class UpdateGroupPointerInstructionData {
   final Address? groupAddress;
 }
 
-Encoder<UpdateGroupPointerInstructionData> getUpdateGroupPointerInstructionDataEncoder() {
+Encoder<UpdateGroupPointerInstructionData>
+getUpdateGroupPointerInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('groupPointerDiscriminator', getU8Encoder()),
-    ('groupAddress', getNullableEncoder<Address>(getAddressEncoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'groupAddress',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformEncoder(
@@ -47,25 +54,38 @@ Encoder<UpdateGroupPointerInstructionData> getUpdateGroupPointerInstructionDataE
   );
 }
 
-Decoder<UpdateGroupPointerInstructionData> getUpdateGroupPointerInstructionDataDecoder() {
+Decoder<UpdateGroupPointerInstructionData>
+getUpdateGroupPointerInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('groupPointerDiscriminator', getU8Decoder()),
-    ('groupAddress', getNullableDecoder<Address>(getAddressDecoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'groupAddress',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateGroupPointerInstructionData(
-      discriminator: map['discriminator']! as int,
-      groupPointerDiscriminator: map['groupPointerDiscriminator']! as int,
-      groupAddress: map['groupAddress'] as Address?,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UpdateGroupPointerInstructionData(
+          discriminator: map['discriminator']! as int,
+          groupPointerDiscriminator: map['groupPointerDiscriminator']! as int,
+          groupAddress: map['groupAddress'] as Address?,
+        ),
   );
 }
 
-Codec<UpdateGroupPointerInstructionData, UpdateGroupPointerInstructionData> getUpdateGroupPointerInstructionDataCodec() {
-  return combineCodec(getUpdateGroupPointerInstructionDataEncoder(), getUpdateGroupPointerInstructionDataDecoder());
+Codec<UpdateGroupPointerInstructionData, UpdateGroupPointerInstructionData>
+getUpdateGroupPointerInstructionDataCodec() {
+  return combineCodec(
+    getUpdateGroupPointerInstructionDataEncoder(),
+    getUpdateGroupPointerInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [UpdateGroupPointer] instruction.
@@ -76,20 +96,27 @@ Instruction getUpdateGroupPointerInstruction({
   required Address? groupAddress,
 }) {
   final instructionData = UpdateGroupPointerInstructionData(
-      groupAddress: groupAddress,
+    groupAddress: groupAddress,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    AccountMeta(address: groupPointerAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: mint, role: AccountRole.writable),
+      AccountMeta(
+        address: groupPointerAuthority,
+        role: AccountRole.readonlySigner,
+      ),
     ],
     data: getUpdateGroupPointerInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [UpdateGroupPointer] instruction from raw instruction data.
-UpdateGroupPointerInstructionData parseUpdateGroupPointerInstruction(Instruction instruction) {
-  return getUpdateGroupPointerInstructionDataDecoder().decode(instruction.data!);
+UpdateGroupPointerInstructionData parseUpdateGroupPointerInstruction(
+  Instruction instruction,
+) {
+  return getUpdateGroupPointerInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

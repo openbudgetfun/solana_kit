@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -30,11 +29,19 @@ class UpdateMetadataPointerInstructionData {
   final Address? metadataAddress;
 }
 
-Encoder<UpdateMetadataPointerInstructionData> getUpdateMetadataPointerInstructionDataEncoder() {
+Encoder<UpdateMetadataPointerInstructionData>
+getUpdateMetadataPointerInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('metadataPointerDiscriminator', getU8Encoder()),
-    ('metadataAddress', getNullableEncoder<Address>(getAddressEncoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'metadataAddress',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformEncoder(
@@ -47,25 +54,42 @@ Encoder<UpdateMetadataPointerInstructionData> getUpdateMetadataPointerInstructio
   );
 }
 
-Decoder<UpdateMetadataPointerInstructionData> getUpdateMetadataPointerInstructionDataDecoder() {
+Decoder<UpdateMetadataPointerInstructionData>
+getUpdateMetadataPointerInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('metadataPointerDiscriminator', getU8Decoder()),
-    ('metadataAddress', getNullableDecoder<Address>(getAddressDecoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
+    (
+      'metadataAddress',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        hasPrefix: false,
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateMetadataPointerInstructionData(
-      discriminator: map['discriminator']! as int,
-      metadataPointerDiscriminator: map['metadataPointerDiscriminator']! as int,
-      metadataAddress: map['metadataAddress'] as Address?,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UpdateMetadataPointerInstructionData(
+          discriminator: map['discriminator']! as int,
+          metadataPointerDiscriminator:
+              map['metadataPointerDiscriminator']! as int,
+          metadataAddress: map['metadataAddress'] as Address?,
+        ),
   );
 }
 
-Codec<UpdateMetadataPointerInstructionData, UpdateMetadataPointerInstructionData> getUpdateMetadataPointerInstructionDataCodec() {
-  return combineCodec(getUpdateMetadataPointerInstructionDataEncoder(), getUpdateMetadataPointerInstructionDataDecoder());
+Codec<
+  UpdateMetadataPointerInstructionData,
+  UpdateMetadataPointerInstructionData
+>
+getUpdateMetadataPointerInstructionDataCodec() {
+  return combineCodec(
+    getUpdateMetadataPointerInstructionDataEncoder(),
+    getUpdateMetadataPointerInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [UpdateMetadataPointer] instruction.
@@ -76,20 +100,29 @@ Instruction getUpdateMetadataPointerInstruction({
   required Address? metadataAddress,
 }) {
   final instructionData = UpdateMetadataPointerInstructionData(
-      metadataAddress: metadataAddress,
+    metadataAddress: metadataAddress,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    AccountMeta(address: metadataPointerAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: mint, role: AccountRole.writable),
+      AccountMeta(
+        address: metadataPointerAuthority,
+        role: AccountRole.readonlySigner,
+      ),
     ],
-    data: getUpdateMetadataPointerInstructionDataEncoder().encode(instructionData),
+    data: getUpdateMetadataPointerInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [UpdateMetadataPointer] instruction from raw instruction data.
-UpdateMetadataPointerInstructionData parseUpdateMetadataPointerInstruction(Instruction instruction) {
-  return getUpdateMetadataPointerInstructionDataDecoder().decode(instruction.data!);
+UpdateMetadataPointerInstructionData parseUpdateMetadataPointerInstruction(
+  Instruction instruction,
+) {
+  return getUpdateMetadataPointerInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

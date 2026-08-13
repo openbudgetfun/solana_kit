@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -10,8 +9,7 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
-import 'definedType:epoch';
-
+import './epoch.dart';
 
 @immutable
 class Delegation {
@@ -41,10 +39,17 @@ class Delegation {
           reserved == other.reserved;
 
   @override
-  int get hashCode => Object.hash(voterPubkey, stake, activationEpoch, deactivationEpoch, reserved);
+  int get hashCode => Object.hash(
+    voterPubkey,
+    stake,
+    activationEpoch,
+    deactivationEpoch,
+    reserved,
+  );
 
   @override
-  String toString() => 'Delegation(voterPubkey: $voterPubkey, stake: $stake, activationEpoch: $activationEpoch, deactivationEpoch: $deactivationEpoch, reserved: $reserved)';
+  String toString() =>
+      'Delegation(voterPubkey: $voterPubkey, stake: $stake, activationEpoch: $activationEpoch, deactivationEpoch: $deactivationEpoch, reserved: $reserved)';
 }
 
 Encoder<Delegation> getDelegationEncoder() {

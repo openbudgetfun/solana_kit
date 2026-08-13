@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,7 +22,8 @@ class DeactivateLookupTableInstructionData {
   final int discriminator;
 }
 
-Encoder<DeactivateLookupTableInstructionData> getDeactivateLookupTableInstructionDataEncoder() {
+Encoder<DeactivateLookupTableInstructionData>
+getDeactivateLookupTableInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
   ]);
@@ -36,21 +36,30 @@ Encoder<DeactivateLookupTableInstructionData> getDeactivateLookupTableInstructio
   );
 }
 
-Decoder<DeactivateLookupTableInstructionData> getDeactivateLookupTableInstructionDataDecoder() {
+Decoder<DeactivateLookupTableInstructionData>
+getDeactivateLookupTableInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => DeactivateLookupTableInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        DeactivateLookupTableInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<DeactivateLookupTableInstructionData, DeactivateLookupTableInstructionData> getDeactivateLookupTableInstructionDataCodec() {
-  return combineCodec(getDeactivateLookupTableInstructionDataEncoder(), getDeactivateLookupTableInstructionDataDecoder());
+Codec<
+  DeactivateLookupTableInstructionData,
+  DeactivateLookupTableInstructionData
+>
+getDeactivateLookupTableInstructionDataCodec() {
+  return combineCodec(
+    getDeactivateLookupTableInstructionDataEncoder(),
+    getDeactivateLookupTableInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [DeactivateLookupTable] instruction.
@@ -58,23 +67,26 @@ Instruction getDeactivateLookupTableInstruction({
   required Address programAddress,
   required Address address,
   required Address authority,
-
 }) {
-  final instructionData = DeactivateLookupTableInstructionData(
-
-  );
+  final instructionData = DeactivateLookupTableInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: address, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: address, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getDeactivateLookupTableInstructionDataEncoder().encode(instructionData),
+    data: getDeactivateLookupTableInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [DeactivateLookupTable] instruction from raw instruction data.
-DeactivateLookupTableInstructionData parseDeactivateLookupTableInstruction(Instruction instruction) {
-  return getDeactivateLookupTableInstructionDataDecoder().decode(instruction.data!);
+DeactivateLookupTableInstructionData parseDeactivateLookupTableInstruction(
+  Instruction instruction,
+) {
+  return getDeactivateLookupTableInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

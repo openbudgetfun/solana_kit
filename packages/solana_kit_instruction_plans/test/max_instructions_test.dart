@@ -199,13 +199,89 @@ void main() {
         );
       }
 
-      test('rejects an invalid configured maximum up front', () {
-        expect(
-          () => createTransactionPlanner(
-            TransactionPlannerConfig(
-              createTransactionMessage: () async => createMessage(),
-              maxInstructionsPerTransaction: 0,
+      test('validates the configured maximum on each invocation', () async {
+        final planner = createTransactionPlanner(
+          TransactionPlannerConfig(
+            createTransactionMessage: () async => createMessage(),
+            maxInstructionsPerTransaction: 0,
+          ),
+        );
+
+        await expectLater(
+          planner(singleInstructionPlan(createInstruction())),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              SolanaErrorCode
+                  .instructionPlansInvalidMaxInstructionsPerTransaction,
             ),
+          ),
+        );
+      });
+
+      test('per-invocation maximum takes precedence over config', () async {
+        final planner = createTransactionPlanner(
+          TransactionPlannerConfig(
+            createTransactionMessage: () async => createMessage(),
+            maxInstructionsPerTransaction: 2,
+          ),
+        );
+        final instructionPlan = sequentialInstructionPlan([
+          for (var i = 0; i < 3; i++) createInstruction(),
+        ]);
+
+        final transactionPlan = await planner(
+          instructionPlan,
+          maxInstructionsPerTransaction: 3,
+        );
+
+        expect(transactionPlan, isA<SingleTransactionPlan>());
+        expect(
+          (transactionPlan as SingleTransactionPlan).message.instructions,
+          hasLength(3),
+        );
+      });
+
+      test('per-invocation maximum does not leak to later calls', () async {
+        final planner = createTransactionPlanner(
+          TransactionPlannerConfig(
+            createTransactionMessage: () async => createMessage(),
+            maxInstructionsPerTransaction: 2,
+          ),
+        );
+        final instructionPlan = sequentialInstructionPlan([
+          for (var i = 0; i < 3; i++) createInstruction(),
+        ]);
+
+        await planner(instructionPlan, maxInstructionsPerTransaction: 3);
+        final transactionPlan = await planner(instructionPlan);
+
+        expect(transactionPlan, isA<SequentialTransactionPlan>());
+        final plans = (transactionPlan as SequentialTransactionPlan).plans;
+        expect(plans, hasLength(2));
+        expect(
+          (plans[0] as SingleTransactionPlan).message.instructions,
+          hasLength(2),
+        );
+        expect(
+          (plans[1] as SingleTransactionPlan).message.instructions,
+          hasLength(1),
+        );
+      });
+
+      test('rejects an invalid per-invocation maximum', () async {
+        final planner = createTransactionPlanner(
+          TransactionPlannerConfig(
+            createTransactionMessage: () async => createMessage(),
+            maxInstructionsPerTransaction: 2,
+          ),
+        );
+
+        await expectLater(
+          planner(
+            singleInstructionPlan(createInstruction()),
+            maxInstructionsPerTransaction: transactionInstructionLimit + 1,
           ),
           throwsA(
             isA<SolanaError>().having(

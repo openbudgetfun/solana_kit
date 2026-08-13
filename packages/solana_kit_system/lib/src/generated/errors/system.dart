@@ -41,15 +41,22 @@ const int systemErrorNonceUnexpectedBlockhashValue = 0x8; // 8
 
 /// Map of error codes to human-readable messages.
 const Map<int, String> _systemErrorMessages = {
-    systemErrorAccountAlreadyInUse: 'an account with the same address already exists',
-    systemErrorResultWithNegativeLamports: 'account does not have enough SOL to perform the operation',
-    systemErrorInvalidProgramId: 'cannot assign account to this program id',
-    systemErrorInvalidAccountDataLength: 'cannot allocate account data of this length',
-    systemErrorMaxSeedLengthExceeded: 'length of requested seed is too long',
-    systemErrorAddressWithSeedMismatch: 'provided address does not match addressed derived from seed',
-    systemErrorNonceNoRecentBlockhashes: 'advancing stored nonce requires a populated RecentBlockhashes sysvar',
-    systemErrorNonceBlockhashNotExpired: 'stored nonce is still in recent_blockhashes',
-    systemErrorNonceUnexpectedBlockhashValue: 'specified nonce does not match stored nonce',
+  systemErrorAccountAlreadyInUse:
+      'an account with the same address already exists',
+  systemErrorResultWithNegativeLamports:
+      'account does not have enough SOL to perform the operation',
+  systemErrorInvalidProgramId: 'cannot assign account to this program id',
+  systemErrorInvalidAccountDataLength:
+      'cannot allocate account data of this length',
+  systemErrorMaxSeedLengthExceeded: 'length of requested seed is too long',
+  systemErrorAddressWithSeedMismatch:
+      'provided address does not match addressed derived from seed',
+  systemErrorNonceNoRecentBlockhashes:
+      'advancing stored nonce requires a populated RecentBlockhashes sysvar',
+  systemErrorNonceBlockhashNotExpired:
+      'stored nonce is still in recent_blockhashes',
+  systemErrorNonceUnexpectedBlockhashValue:
+      'specified nonce does not match stored nonce',
 };
 
 /// Get the error message for a System program error code.

@@ -6,4 +6,3 @@ export 'create_lookup_table.dart';
 export 'deactivate_lookup_table.dart';
 export 'extend_lookup_table.dart';
 export 'freeze_lookup_table.dart';
-

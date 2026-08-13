@@ -2,7 +2,8 @@
 // ignore_for_file: type=lint
 
 /// The address of the Token2022 program.
-export 'package:solana_kit_addresses/solana_kit_addresses.dart' show token2022ProgramAddress;
+export 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    show token2022ProgramAddress;
 
 /// Known accounts for the Token2022 program.
 enum Token2022Account {

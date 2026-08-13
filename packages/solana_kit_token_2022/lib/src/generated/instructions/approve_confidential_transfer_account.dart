@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -28,7 +27,8 @@ class ApproveConfidentialTransferAccountInstructionData {
   final int confidentialTransferDiscriminator;
 }
 
-Encoder<ApproveConfidentialTransferAccountInstructionData> getApproveConfidentialTransferAccountInstructionDataEncoder() {
+Encoder<ApproveConfidentialTransferAccountInstructionData>
+getApproveConfidentialTransferAccountInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferDiscriminator', getU8Encoder()),
@@ -36,14 +36,17 @@ Encoder<ApproveConfidentialTransferAccountInstructionData> getApproveConfidentia
 
   return transformEncoder(
     structEncoder,
-    (ApproveConfidentialTransferAccountInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'confidentialTransferDiscriminator': value.confidentialTransferDiscriminator,
-    },
+    (ApproveConfidentialTransferAccountInstructionData value) =>
+        <String, Object?>{
+          'discriminator': value.discriminator,
+          'confidentialTransferDiscriminator':
+              value.confidentialTransferDiscriminator,
+        },
   );
 }
 
-Decoder<ApproveConfidentialTransferAccountInstructionData> getApproveConfidentialTransferAccountInstructionDataDecoder() {
+Decoder<ApproveConfidentialTransferAccountInstructionData>
+getApproveConfidentialTransferAccountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferDiscriminator', getU8Decoder()),
@@ -51,15 +54,24 @@ Decoder<ApproveConfidentialTransferAccountInstructionData> getApproveConfidentia
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ApproveConfidentialTransferAccountInstructionData(
-      discriminator: map['discriminator']! as int,
-      confidentialTransferDiscriminator: map['confidentialTransferDiscriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        ApproveConfidentialTransferAccountInstructionData(
+          discriminator: map['discriminator']! as int,
+          confidentialTransferDiscriminator:
+              map['confidentialTransferDiscriminator']! as int,
+        ),
   );
 }
 
-Codec<ApproveConfidentialTransferAccountInstructionData, ApproveConfidentialTransferAccountInstructionData> getApproveConfidentialTransferAccountInstructionDataCodec() {
-  return combineCodec(getApproveConfidentialTransferAccountInstructionDataEncoder(), getApproveConfidentialTransferAccountInstructionDataDecoder());
+Codec<
+  ApproveConfidentialTransferAccountInstructionData,
+  ApproveConfidentialTransferAccountInstructionData
+>
+getApproveConfidentialTransferAccountInstructionDataCodec() {
+  return combineCodec(
+    getApproveConfidentialTransferAccountInstructionDataEncoder(),
+    getApproveConfidentialTransferAccountInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [ApproveConfidentialTransferAccount] instruction.
@@ -68,24 +80,26 @@ Instruction getApproveConfidentialTransferAccountInstruction({
   required Address token,
   required Address mint,
   required Address authority,
-
 }) {
-  final instructionData = ApproveConfidentialTransferAccountInstructionData(
-
-  );
+  final instructionData = ApproveConfidentialTransferAccountInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: token, role: AccountRole.writable),
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: token, role: AccountRole.writable),
+      AccountMeta(address: mint, role: AccountRole.readonly),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getApproveConfidentialTransferAccountInstructionDataEncoder().encode(instructionData),
+    data: getApproveConfidentialTransferAccountInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [ApproveConfidentialTransferAccount] instruction from raw instruction data.
-ApproveConfidentialTransferAccountInstructionData parseApproveConfidentialTransferAccountInstruction(Instruction instruction) {
-  return getApproveConfidentialTransferAccountInstructionDataDecoder().decode(instruction.data!);
+ApproveConfidentialTransferAccountInstructionData
+parseApproveConfidentialTransferAccountInstruction(Instruction instruction) {
+  return getApproveConfidentialTransferAccountInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

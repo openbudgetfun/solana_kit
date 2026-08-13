@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -28,7 +27,8 @@ class DisableCpiGuardInstructionData {
   final int cpiGuardDiscriminator;
 }
 
-Encoder<DisableCpiGuardInstructionData> getDisableCpiGuardInstructionDataEncoder() {
+Encoder<DisableCpiGuardInstructionData>
+getDisableCpiGuardInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('cpiGuardDiscriminator', getU8Encoder()),
@@ -43,7 +43,8 @@ Encoder<DisableCpiGuardInstructionData> getDisableCpiGuardInstructionDataEncoder
   );
 }
 
-Decoder<DisableCpiGuardInstructionData> getDisableCpiGuardInstructionDataDecoder() {
+Decoder<DisableCpiGuardInstructionData>
+getDisableCpiGuardInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('cpiGuardDiscriminator', getU8Decoder()),
@@ -51,15 +52,20 @@ Decoder<DisableCpiGuardInstructionData> getDisableCpiGuardInstructionDataDecoder
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => DisableCpiGuardInstructionData(
-      discriminator: map['discriminator']! as int,
-      cpiGuardDiscriminator: map['cpiGuardDiscriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        DisableCpiGuardInstructionData(
+          discriminator: map['discriminator']! as int,
+          cpiGuardDiscriminator: map['cpiGuardDiscriminator']! as int,
+        ),
   );
 }
 
-Codec<DisableCpiGuardInstructionData, DisableCpiGuardInstructionData> getDisableCpiGuardInstructionDataCodec() {
-  return combineCodec(getDisableCpiGuardInstructionDataEncoder(), getDisableCpiGuardInstructionDataDecoder());
+Codec<DisableCpiGuardInstructionData, DisableCpiGuardInstructionData>
+getDisableCpiGuardInstructionDataCodec() {
+  return combineCodec(
+    getDisableCpiGuardInstructionDataEncoder(),
+    getDisableCpiGuardInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [DisableCpiGuard] instruction.
@@ -67,23 +73,22 @@ Instruction getDisableCpiGuardInstruction({
   required Address programAddress,
   required Address token,
   required Address owner,
-
 }) {
-  final instructionData = DisableCpiGuardInstructionData(
-
-  );
+  final instructionData = DisableCpiGuardInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: token, role: AccountRole.writable),
-    AccountMeta(address: owner, role: AccountRole.readonlySigner),
+      AccountMeta(address: token, role: AccountRole.writable),
+      AccountMeta(address: owner, role: AccountRole.readonlySigner),
     ],
     data: getDisableCpiGuardInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [DisableCpiGuard] instruction from raw instruction data.
-DisableCpiGuardInstructionData parseDisableCpiGuardInstruction(Instruction instruction) {
+DisableCpiGuardInstructionData parseDisableCpiGuardInstruction(
+  Instruction instruction,
+) {
   return getDisableCpiGuardInstructionDataDecoder().decode(instruction.data!);
 }

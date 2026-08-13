@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -31,7 +30,7 @@ class AuthorizeInstructionData {
 
 Encoder<AuthorizeInstructionData> getAuthorizeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
     ('arg0', getAddressEncoder()),
     ('arg1', getStakeAuthorizeEncoder()),
   ]);
@@ -48,23 +47,28 @@ Encoder<AuthorizeInstructionData> getAuthorizeInstructionDataEncoder() {
 
 Decoder<AuthorizeInstructionData> getAuthorizeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
     ('arg0', getAddressDecoder()),
     ('arg1', getStakeAuthorizeDecoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => AuthorizeInstructionData(
-      discriminator: map['discriminator']! as int,
-      arg0: map['arg0']! as Address,
-      arg1: map['arg1']! as StakeAuthorize,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        AuthorizeInstructionData(
+          discriminator: map['discriminator']! as int,
+          arg0: map['arg0']! as Address,
+          arg1: map['arg1']! as StakeAuthorize,
+        ),
   );
 }
 
-Codec<AuthorizeInstructionData, AuthorizeInstructionData> getAuthorizeInstructionDataCodec() {
-  return combineCodec(getAuthorizeInstructionDataEncoder(), getAuthorizeInstructionDataDecoder());
+Codec<AuthorizeInstructionData, AuthorizeInstructionData>
+getAuthorizeInstructionDataCodec() {
+  return combineCodec(
+    getAuthorizeInstructionDataEncoder(),
+    getAuthorizeInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Authorize] instruction.
@@ -78,17 +82,18 @@ Instruction getAuthorizeInstruction({
   required StakeAuthorize arg1,
 }) {
   final instructionData = AuthorizeInstructionData(
-      arg0: arg0,
-      arg1: arg1,
+    arg0: arg0,
+    arg1: arg1,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: stake, role: AccountRole.writable),
-    AccountMeta(address: clockSysvar, role: AccountRole.readonly),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
-    if (lockupAuthority != null) AccountMeta(address: lockupAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: stake, role: AccountRole.writable),
+      AccountMeta(address: clockSysvar, role: AccountRole.readonly),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      if (lockupAuthority != null)
+        AccountMeta(address: lockupAuthority, role: AccountRole.readonlySigner),
     ],
     data: getAuthorizeInstructionDataEncoder().encode(instructionData),
   );

@@ -10,10 +10,14 @@
 /// import 'package:solana_kit_compute_budget/solana_kit_compute_budget.dart';
 ///
 /// // Set compute unit limit
-/// final limitIx = getSetComputeUnitLimitInstruction(units: 200000);
+/// final limitIx = getSetComputeUnitLimitInstruction(
+///   programAddress: computeBudgetProgramAddress,
+///   units: 200000,
+/// );
 ///
 /// // Set priority fee
 /// final priceIx = getSetComputeUnitPriceInstruction(
+///   programAddress: computeBudgetProgramAddress,
 ///   microLamports: BigInt.from(50000),
 /// );
 /// ```

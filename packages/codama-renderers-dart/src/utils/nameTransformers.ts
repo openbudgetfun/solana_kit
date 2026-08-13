@@ -66,7 +66,7 @@ export interface DartNameApi {
   errorMessageFunction(name: string): string;
   /** Enum variant: `camelCase` */
   enumVariant(name: string): string;
-  /** Sealed class variant (data enum): `PascalCase` */
+  /** Sealed class variant (data enum): `{ParentName}{PascalCase}` */
   sealedClassVariant(parentName: string, variantName: string): string;
   /** File name: `snake_case.dart` */
   fileName(name: string): string;
@@ -97,7 +97,8 @@ export function createDartNameApi(): DartNameApi {
       `${camelCase(programName)}Error${pascalCase(errorName)}`,
     errorMessageFunction: (name) => `get${pascalCase(name)}ErrorMessage`,
     enumVariant: (name) => camelCase(name),
-    sealedClassVariant: (_parentName, variantName) => pascalCase(variantName),
+    sealedClassVariant: (parentName, variantName) =>
+      `${pascalCase(parentName)}${pascalCase(variantName)}`,
     isTypeFunction: (name) => `is${pascalCase(name)}`,
     fileName: (name) => snakeCase(name),
     discriminatorConstant: (name) => `${camelCase(name)}Discriminator`,

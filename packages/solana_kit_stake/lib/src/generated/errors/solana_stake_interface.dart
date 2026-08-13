@@ -37,42 +37,60 @@ const int solanaStakeInterfaceErrorInsufficientReferenceVotes = 0x9; // 9
 const int solanaStakeInterfaceErrorVoteAddressMismatch = 0xa; // 10
 
 /// Message: "Stake account has not been delinquent for the minimum epochs required for deactivation"
-const int solanaStakeInterfaceErrorMinimumDelinquentEpochsForDeactivationNotMet = 0xb; // 11
+const int
+solanaStakeInterfaceErrorMinimumDelinquentEpochsForDeactivationNotMet =
+    0xb; // 11
 
 /// Message: "Delegation amount is less than the minimum"
 const int solanaStakeInterfaceErrorInsufficientDelegation = 0xc; // 12
 
 /// Message: "Stake account with transient or inactive stake cannot be redelegated"
-const int solanaStakeInterfaceErrorRedelegateTransientOrInactiveStake = 0xd; // 13
+const int solanaStakeInterfaceErrorRedelegateTransientOrInactiveStake =
+    0xd; // 13
 
 /// Message: "Stake redelegation to the same vote account is not permitted"
 const int solanaStakeInterfaceErrorRedelegateToSameVoteAccount = 0xe; // 14
 
 /// Message: "Redelegated stake must be fully activated before deactivation"
-const int solanaStakeInterfaceErrorRedelegatedStakeMustFullyActivateBeforeDeactivationIsPermitted = 0xf; // 15
+const int
+solanaStakeInterfaceErrorRedelegatedStakeMustFullyActivateBeforeDeactivationIsPermitted =
+    0xf; // 15
 
 /// Message: "Stake action is not permitted while the epoch rewards period is active"
 const int solanaStakeInterfaceErrorEpochRewardsActive = 0x10; // 16
 
 /// Map of error codes to human-readable messages.
 const Map<int, String> _solanaStakeInterfaceErrorMessages = {
-    solanaStakeInterfaceErrorNoCreditsToRedeem: 'Not enough credits to redeem',
-    solanaStakeInterfaceErrorLockupInForce: 'Lockup has not yet expired',
-    solanaStakeInterfaceErrorAlreadyDeactivated: 'Stake already deactivated',
-    solanaStakeInterfaceErrorTooSoonToRedelegate: 'One re-delegation permitted per epoch',
-    solanaStakeInterfaceErrorInsufficientStake: 'Split amount is more than is staked',
-    solanaStakeInterfaceErrorMergeTransientStake: 'Stake account with transient stake cannot be merged',
-    solanaStakeInterfaceErrorMergeMismatch: 'Stake account merge failed due to different authority, lockups or state',
-    solanaStakeInterfaceErrorCustodianMissing: 'Custodian address not present',
-    solanaStakeInterfaceErrorCustodianSignatureMissing: 'Custodian signature not present',
-    solanaStakeInterfaceErrorInsufficientReferenceVotes: 'Insufficient voting activity in the reference vote account',
-    solanaStakeInterfaceErrorVoteAddressMismatch: 'Stake account is not delegated to the provided vote account',
-    solanaStakeInterfaceErrorMinimumDelinquentEpochsForDeactivationNotMet: 'Stake account has not been delinquent for the minimum epochs required for deactivation',
-    solanaStakeInterfaceErrorInsufficientDelegation: 'Delegation amount is less than the minimum',
-    solanaStakeInterfaceErrorRedelegateTransientOrInactiveStake: 'Stake account with transient or inactive stake cannot be redelegated',
-    solanaStakeInterfaceErrorRedelegateToSameVoteAccount: 'Stake redelegation to the same vote account is not permitted',
-    solanaStakeInterfaceErrorRedelegatedStakeMustFullyActivateBeforeDeactivationIsPermitted: 'Redelegated stake must be fully activated before deactivation',
-    solanaStakeInterfaceErrorEpochRewardsActive: 'Stake action is not permitted while the epoch rewards period is active',
+  solanaStakeInterfaceErrorNoCreditsToRedeem: 'Not enough credits to redeem',
+  solanaStakeInterfaceErrorLockupInForce: 'Lockup has not yet expired',
+  solanaStakeInterfaceErrorAlreadyDeactivated: 'Stake already deactivated',
+  solanaStakeInterfaceErrorTooSoonToRedelegate:
+      'One re-delegation permitted per epoch',
+  solanaStakeInterfaceErrorInsufficientStake:
+      'Split amount is more than is staked',
+  solanaStakeInterfaceErrorMergeTransientStake:
+      'Stake account with transient stake cannot be merged',
+  solanaStakeInterfaceErrorMergeMismatch:
+      'Stake account merge failed due to different authority, lockups or state',
+  solanaStakeInterfaceErrorCustodianMissing: 'Custodian address not present',
+  solanaStakeInterfaceErrorCustodianSignatureMissing:
+      'Custodian signature not present',
+  solanaStakeInterfaceErrorInsufficientReferenceVotes:
+      'Insufficient voting activity in the reference vote account',
+  solanaStakeInterfaceErrorVoteAddressMismatch:
+      'Stake account is not delegated to the provided vote account',
+  solanaStakeInterfaceErrorMinimumDelinquentEpochsForDeactivationNotMet:
+      'Stake account has not been delinquent for the minimum epochs required for deactivation',
+  solanaStakeInterfaceErrorInsufficientDelegation:
+      'Delegation amount is less than the minimum',
+  solanaStakeInterfaceErrorRedelegateTransientOrInactiveStake:
+      'Stake account with transient or inactive stake cannot be redelegated',
+  solanaStakeInterfaceErrorRedelegateToSameVoteAccount:
+      'Stake redelegation to the same vote account is not permitted',
+  solanaStakeInterfaceErrorRedelegatedStakeMustFullyActivateBeforeDeactivationIsPermitted:
+      'Redelegated stake must be fully activated before deactivation',
+  solanaStakeInterfaceErrorEpochRewardsActive:
+      'Stake action is not permitted while the epoch rewards period is active',
 };
 
 /// Get the error message for a SolanaStakeInterface program error code.

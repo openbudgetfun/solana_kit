@@ -11,10 +11,13 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// Burn instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `burn` instruction.
+const BurnInstructionDiscriminator = <int>[116, 110, 29, 56, 107, 219, 42, 93];
+
 @immutable
 class BurnInstructionData {
   const BurnInstructionData({
-    this.discriminator = 0,
+    this.discriminator = BurnInstructionDiscriminator,
     required this.root,
     required this.dataHash,
     required this.creatorHash,
@@ -22,7 +25,7 @@ class BurnInstructionData {
     required this.index,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final List<int> root;
   final List<int> dataHash;
   final List<int> creatorHash;
@@ -32,6 +35,10 @@ class BurnInstructionData {
 
 Encoder<BurnInstructionData> getBurnInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    (
+      'discriminator',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
     (
       'dataHash',
@@ -60,7 +67,10 @@ Encoder<BurnInstructionData> getBurnInstructionDataEncoder() {
 
 Decoder<BurnInstructionData> getBurnInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
     (
       'dataHash',
@@ -78,7 +88,7 @@ Decoder<BurnInstructionData> getBurnInstructionDataDecoder() {
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         BurnInstructionData(
-          discriminator: map['discriminator']! as int,
+          discriminator: map['discriminator']! as List<int>,
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
           creatorHash: map['creatorHash']! as List<int>,

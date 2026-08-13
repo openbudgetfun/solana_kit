@@ -6,8 +6,14 @@ import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 
 /// Plans one or more transactions according to the provided instruction plan.
+///
+/// [maxInstructionsPerTransaction] overrides the planner configuration for this
+/// invocation only.
 typedef TransactionPlanner =
-    Future<TransactionPlan> Function(InstructionPlan instructionPlan);
+    Future<TransactionPlan> Function(
+      InstructionPlan instructionPlan, {
+      int? maxInstructionsPerTransaction,
+    });
 
 /// A function that creates a new transaction message.
 ///
@@ -48,6 +54,9 @@ class TransactionPlannerConfig {
   /// `SolanaErrorCode.instructionPlansInvalidMaxInstructionsPerTransaction`.
   /// Defaults to `defaultMaxInstructionsPerTransaction` (16).
   ///
+  /// A per-invocation [TransactionPlanner] override takes precedence over this
+  /// value.
+  ///
   /// Added in @solana/kit v7.0.0.
   final int? maxInstructionsPerTransaction;
 }
@@ -67,20 +76,25 @@ class TransactionPlannerConfig {
 ///
 /// Added the `maxInstructionsPerTransaction` option in @solana/kit v7.0.0.
 TransactionPlanner createTransactionPlanner(TransactionPlannerConfig config) {
-  // Reject up front any configured maximum the transaction format could never
-  // satisfy, rather than discovering it mid-plan when a message fails to
-  // compile. Added in @solana/kit v7.0.0.
-  assertValidMaxInstructionsPerTransaction(
-    config.maxInstructionsPerTransaction,
-  );
-  return (InstructionPlan instructionPlan) async {
+  return (
+    InstructionPlan instructionPlan, {
+    int? maxInstructionsPerTransaction,
+  }) async {
+    final resolvedMaxInstructionsPerTransaction =
+        maxInstructionsPerTransaction ?? config.maxInstructionsPerTransaction;
+    // Validate the resolved limit for every invocation so per-call overrides
+    // are checked without mutating or bypassing the planner configuration.
+    assertValidMaxInstructionsPerTransaction(
+      resolvedMaxInstructionsPerTransaction,
+    );
+
     final plan = await _traverse(
       instructionPlan,
       _TraverseContext(
         createTransactionMessage: config.createTransactionMessage,
         onTransactionMessageUpdated:
             config.onTransactionMessageUpdated ?? (msg) async => msg,
-        maxInstructionsPerTransaction: config.maxInstructionsPerTransaction,
+        maxInstructionsPerTransaction: resolvedMaxInstructionsPerTransaction,
         parent: null,
         parentCandidates: [],
       ),

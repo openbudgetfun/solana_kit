@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -25,7 +24,8 @@ class RequestHeapFrameInstructionData {
   final int bytes;
 }
 
-Encoder<RequestHeapFrameInstructionData> getRequestHeapFrameInstructionDataEncoder() {
+Encoder<RequestHeapFrameInstructionData>
+getRequestHeapFrameInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('bytes', getU32Encoder()),
@@ -40,7 +40,8 @@ Encoder<RequestHeapFrameInstructionData> getRequestHeapFrameInstructionDataEncod
   );
 }
 
-Decoder<RequestHeapFrameInstructionData> getRequestHeapFrameInstructionDataDecoder() {
+Decoder<RequestHeapFrameInstructionData>
+getRequestHeapFrameInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('bytes', getU32Decoder()),
@@ -48,15 +49,20 @@ Decoder<RequestHeapFrameInstructionData> getRequestHeapFrameInstructionDataDecod
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => RequestHeapFrameInstructionData(
-      discriminator: map['discriminator']! as int,
-      bytes: map['bytes']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        RequestHeapFrameInstructionData(
+          discriminator: map['discriminator']! as int,
+          bytes: map['bytes']! as int,
+        ),
   );
 }
 
-Codec<RequestHeapFrameInstructionData, RequestHeapFrameInstructionData> getRequestHeapFrameInstructionDataCodec() {
-  return combineCodec(getRequestHeapFrameInstructionDataEncoder(), getRequestHeapFrameInstructionDataDecoder());
+Codec<RequestHeapFrameInstructionData, RequestHeapFrameInstructionData>
+getRequestHeapFrameInstructionDataCodec() {
+  return combineCodec(
+    getRequestHeapFrameInstructionDataEncoder(),
+    getRequestHeapFrameInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [RequestHeapFrame] instruction.
@@ -66,19 +72,19 @@ Instruction getRequestHeapFrameInstruction({
   required int bytes,
 }) {
   final instructionData = RequestHeapFrameInstructionData(
-      bytes: bytes,
+    bytes: bytes,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-
-    ],
+    accounts: [],
     data: getRequestHeapFrameInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [RequestHeapFrame] instruction from raw instruction data.
-RequestHeapFrameInstructionData parseRequestHeapFrameInstruction(Instruction instruction) {
+RequestHeapFrameInstructionData parseRequestHeapFrameInstruction(
+  Instruction instruction,
+) {
   return getRequestHeapFrameInstructionDataDecoder().decode(instruction.data!);
 }

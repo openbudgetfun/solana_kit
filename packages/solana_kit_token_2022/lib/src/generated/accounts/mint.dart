@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -12,7 +11,6 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 import '../types/extension.dart';
-
 
 @immutable
 class Mint {
@@ -45,23 +43,53 @@ class Mint {
           extensions == other.extensions;
 
   @override
-  int get hashCode => Object.hash(mintAuthority, supply, decimals, isInitialized, freezeAuthority, extensions);
+  int get hashCode => Object.hash(
+    mintAuthority,
+    supply,
+    decimals,
+    isInitialized,
+    freezeAuthority,
+    extensions,
+  );
 
   @override
-  String toString() => 'Mint(mintAuthority: $mintAuthority, supply: $supply, decimals: $decimals, isInitialized: $isInitialized, freezeAuthority: $freezeAuthority, extensions: $extensions)';
+  String toString() =>
+      'Mint(mintAuthority: $mintAuthority, supply: $supply, decimals: $decimals, isInitialized: $isInitialized, freezeAuthority: $freezeAuthority, extensions: $extensions)';
 }
 
 /// This account has a size discriminator of 82 bytes.
 
-
 Encoder<Mint> getMintEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('mintAuthority', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder(), noneValue: const ZeroesNoneValue())),
+    (
+      'mintAuthority',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        prefix: getU32Encoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
     ('supply', getU64Encoder()),
     ('decimals', getU8Encoder()),
     ('isInitialized', getBooleanEncoder()),
-    ('freezeAuthority', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder(), noneValue: const ZeroesNoneValue())),
-    ('extensions', getNullableEncoder<List<Extension>>(getHiddenPrefixEncoder(getArrayEncoder(getExtensionEncoder(), size: RemainderArraySize()), [getConstantEncoder(padLeftEncoder(getU8Encoder(), 83).encode(1))]), hasPrefix: false)),
+    (
+      'freezeAuthority',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        prefix: getU32Encoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
+    (
+      'extensions',
+      getNullableEncoder<List<Extension>>(
+        getHiddenPrefixEncoder(
+          getArrayEncoder(getExtensionEncoder(), size: RemainderArraySize()),
+          [getConstantEncoder(padLeftEncoder(getU8Encoder(), 83).encode(1))],
+        ),
+        hasPrefix: false,
+      ),
+    ),
   ]);
 
   return transformEncoder(
@@ -79,12 +107,35 @@ Encoder<Mint> getMintEncoder() {
 
 Decoder<Mint> getMintDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('mintAuthority', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder(), noneValue: const ZeroesNoneValue())),
+    (
+      'mintAuthority',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        prefix: getU32Decoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
     ('supply', getU64Decoder()),
     ('decimals', getU8Decoder()),
     ('isInitialized', getBooleanDecoder()),
-    ('freezeAuthority', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder(), noneValue: const ZeroesNoneValue())),
-    ('extensions', getNullableDecoder<List<Extension>>(getHiddenPrefixDecoder(getArrayDecoder(getExtensionDecoder(), size: RemainderArraySize()), [getConstantDecoder(padLeftEncoder(getU8Encoder(), 83).encode(1))]), hasPrefix: false)),
+    (
+      'freezeAuthority',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        prefix: getU32Decoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
+    (
+      'extensions',
+      getNullableDecoder<List<Extension>>(
+        getHiddenPrefixDecoder(
+          getArrayDecoder(getExtensionDecoder(), size: RemainderArraySize()),
+          [getConstantDecoder(padLeftEncoder(getU8Encoder(), 83).encode(1))],
+        ),
+        hasPrefix: false,
+      ),
+    ),
   ]);
 
   return transformDecoder(

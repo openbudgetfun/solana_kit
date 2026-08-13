@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -48,15 +47,20 @@ Decoder<ExtendProgramInstructionData> getExtendProgramInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ExtendProgramInstructionData(
-      discriminator: map['discriminator']! as int,
-      additionalBytes: map['additionalBytes']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        ExtendProgramInstructionData(
+          discriminator: map['discriminator']! as int,
+          additionalBytes: map['additionalBytes']! as int,
+        ),
   );
 }
 
-Codec<ExtendProgramInstructionData, ExtendProgramInstructionData> getExtendProgramInstructionDataCodec() {
-  return combineCodec(getExtendProgramInstructionDataEncoder(), getExtendProgramInstructionDataDecoder());
+Codec<ExtendProgramInstructionData, ExtendProgramInstructionData>
+getExtendProgramInstructionDataCodec() {
+  return combineCodec(
+    getExtendProgramInstructionDataEncoder(),
+    getExtendProgramInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [ExtendProgram] instruction.
@@ -69,22 +73,26 @@ Instruction getExtendProgramInstruction({
   required int additionalBytes,
 }) {
   final instructionData = ExtendProgramInstructionData(
-      additionalBytes: additionalBytes,
+    additionalBytes: additionalBytes,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: programDataAccount, role: AccountRole.writable),
-    AccountMeta(address: programAccount, role: AccountRole.writable),
-    if (systemProgram != null) AccountMeta(address: systemProgram, role: AccountRole.readonly),
-    if (payer != null) AccountMeta(address: payer, role: AccountRole.writableSigner),
+      AccountMeta(address: programDataAccount, role: AccountRole.writable),
+      AccountMeta(address: programAccount, role: AccountRole.writable),
+      if (systemProgram != null)
+        AccountMeta(address: systemProgram, role: AccountRole.readonly),
+      if (payer != null)
+        AccountMeta(address: payer, role: AccountRole.writableSigner),
     ],
     data: getExtendProgramInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [ExtendProgram] instruction from raw instruction data.
-ExtendProgramInstructionData parseExtendProgramInstruction(Instruction instruction) {
+ExtendProgramInstructionData parseExtendProgramInstruction(
+  Instruction instruction,
+) {
   return getExtendProgramInstructionDataDecoder().decode(instruction.data!);
 }

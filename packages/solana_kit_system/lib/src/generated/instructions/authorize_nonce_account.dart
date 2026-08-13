@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -25,7 +24,8 @@ class AuthorizeNonceAccountInstructionData {
   final Address newNonceAuthority;
 }
 
-Encoder<AuthorizeNonceAccountInstructionData> getAuthorizeNonceAccountInstructionDataEncoder() {
+Encoder<AuthorizeNonceAccountInstructionData>
+getAuthorizeNonceAccountInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('newNonceAuthority', getAddressEncoder()),
@@ -40,7 +40,8 @@ Encoder<AuthorizeNonceAccountInstructionData> getAuthorizeNonceAccountInstructio
   );
 }
 
-Decoder<AuthorizeNonceAccountInstructionData> getAuthorizeNonceAccountInstructionDataDecoder() {
+Decoder<AuthorizeNonceAccountInstructionData>
+getAuthorizeNonceAccountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('newNonceAuthority', getAddressDecoder()),
@@ -48,15 +49,23 @@ Decoder<AuthorizeNonceAccountInstructionData> getAuthorizeNonceAccountInstructio
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => AuthorizeNonceAccountInstructionData(
-      discriminator: map['discriminator']! as int,
-      newNonceAuthority: map['newNonceAuthority']! as Address,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        AuthorizeNonceAccountInstructionData(
+          discriminator: map['discriminator']! as int,
+          newNonceAuthority: map['newNonceAuthority']! as Address,
+        ),
   );
 }
 
-Codec<AuthorizeNonceAccountInstructionData, AuthorizeNonceAccountInstructionData> getAuthorizeNonceAccountInstructionDataCodec() {
-  return combineCodec(getAuthorizeNonceAccountInstructionDataEncoder(), getAuthorizeNonceAccountInstructionDataDecoder());
+Codec<
+  AuthorizeNonceAccountInstructionData,
+  AuthorizeNonceAccountInstructionData
+>
+getAuthorizeNonceAccountInstructionDataCodec() {
+  return combineCodec(
+    getAuthorizeNonceAccountInstructionDataEncoder(),
+    getAuthorizeNonceAccountInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [AuthorizeNonceAccount] instruction.
@@ -67,20 +76,26 @@ Instruction getAuthorizeNonceAccountInstruction({
   required Address newNonceAuthority,
 }) {
   final instructionData = AuthorizeNonceAccountInstructionData(
-      newNonceAuthority: newNonceAuthority,
+    newNonceAuthority: newNonceAuthority,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: nonceAccount, role: AccountRole.writable),
-    AccountMeta(address: nonceAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: nonceAccount, role: AccountRole.writable),
+      AccountMeta(address: nonceAuthority, role: AccountRole.readonlySigner),
     ],
-    data: getAuthorizeNonceAccountInstructionDataEncoder().encode(instructionData),
+    data: getAuthorizeNonceAccountInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [AuthorizeNonceAccount] instruction from raw instruction data.
-AuthorizeNonceAccountInstructionData parseAuthorizeNonceAccountInstruction(Instruction instruction) {
-  return getAuthorizeNonceAccountInstructionDataDecoder().decode(instruction.data!);
+AuthorizeNonceAccountInstructionData parseAuthorizeNonceAccountInstruction(
+  Instruction instruction,
+) {
+  return getAuthorizeNonceAccountInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

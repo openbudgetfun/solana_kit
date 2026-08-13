@@ -15,7 +15,8 @@ import 'dart:typed_data';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_loader/solana_kit_loader.dart';
 
-final instruction = getLoaderV3WriteInstruction(
+final instruction = getWriteInstruction(
+  programAddress: solanaLoaderV3ProgramProgramAddress,
   bufferAccount: const Address('11111111111111111111111111111111'),
   bufferAuthority: const Address('11111111111111111111111111111112'),
   offset: 0,
@@ -25,13 +26,16 @@ final instruction = getLoaderV3WriteInstruction(
 
 ## Key APIs
 
-- Program constants: `bpfLoaderUpgradeableProgramAddress`, `loaderV4ProgramAddress`.
-- Loader v3 instructions: initialize buffer, write, deploy with max data length,
-  upgrade, set authority, close, extend program, and checked authority update.
-- Loader v3 account codecs: `BufferAccount`, `ProgramDataAccount`.
+- Program constants: `solanaLoaderV3ProgramProgramAddress`,
+  `bpfLoaderUpgradeableProgramAddress`, and `loaderV4ProgramAddress`.
+- Generated Loader v3 instructions: initialize buffer, write, deploy with max
+  data length, upgrade, set authority, close, extend program, and checked
+  authority update.
+- Handwritten Loader v3 account-header codecs: `BufferAccount` and
+  `ProgramDataAccount`.
 - Loader v4 instructions: write, truncate, deploy, retract, transfer authority,
   and finalize.
-- Loader v4 account codec: `ProgramStateAccount`.
+- Handwritten Loader v4 account-header codec: `ProgramStateAccount`.
 - Planning helpers: `getDeployProgramInstructionPlan` and
   `getUpgradeProgramInstructionPlan` chunk program bytes into loader writes before
   the deploy or upgrade instruction.

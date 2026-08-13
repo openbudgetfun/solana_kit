@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -29,7 +28,8 @@ class CreateAccountAllowPrefundInstructionData {
   final Address programAddress;
 }
 
-Encoder<CreateAccountAllowPrefundInstructionData> getCreateAccountAllowPrefundInstructionDataEncoder() {
+Encoder<CreateAccountAllowPrefundInstructionData>
+getCreateAccountAllowPrefundInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('lamports', getU64Encoder()),
@@ -48,7 +48,8 @@ Encoder<CreateAccountAllowPrefundInstructionData> getCreateAccountAllowPrefundIn
   );
 }
 
-Decoder<CreateAccountAllowPrefundInstructionData> getCreateAccountAllowPrefundInstructionDataDecoder() {
+Decoder<CreateAccountAllowPrefundInstructionData>
+getCreateAccountAllowPrefundInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('lamports', getU64Decoder()),
@@ -58,17 +59,25 @@ Decoder<CreateAccountAllowPrefundInstructionData> getCreateAccountAllowPrefundIn
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateAccountAllowPrefundInstructionData(
-      discriminator: map['discriminator']! as int,
-      lamports: map['lamports']! as BigInt,
-      space: map['space']! as BigInt,
-      programAddress: map['programAddress']! as Address,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CreateAccountAllowPrefundInstructionData(
+          discriminator: map['discriminator']! as int,
+          lamports: map['lamports']! as BigInt,
+          space: map['space']! as BigInt,
+          programAddress: map['programAddress']! as Address,
+        ),
   );
 }
 
-Codec<CreateAccountAllowPrefundInstructionData, CreateAccountAllowPrefundInstructionData> getCreateAccountAllowPrefundInstructionDataCodec() {
-  return combineCodec(getCreateAccountAllowPrefundInstructionDataEncoder(), getCreateAccountAllowPrefundInstructionDataDecoder());
+Codec<
+  CreateAccountAllowPrefundInstructionData,
+  CreateAccountAllowPrefundInstructionData
+>
+getCreateAccountAllowPrefundInstructionDataCodec() {
+  return combineCodec(
+    getCreateAccountAllowPrefundInstructionDataEncoder(),
+    getCreateAccountAllowPrefundInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [CreateAccountAllowPrefund] instruction.
@@ -81,22 +90,28 @@ Instruction getCreateAccountAllowPrefundInstruction({
   required Address programAddress,
 }) {
   final instructionData = CreateAccountAllowPrefundInstructionData(
-      lamports: lamports ?? BigInt.from(0),
-      space: space,
-      programAddress: programAddress,
+    lamports: lamports ?? BigInt.from(0),
+    space: space,
+    programAddress: programAddress,
   );
 
   return Instruction(
     programAddress: instructionProgramAddress,
     accounts: [
-    AccountMeta(address: newAccount, role: AccountRole.writableSigner),
-    if (payer != null) AccountMeta(address: payer, role: AccountRole.writableSigner),
+      AccountMeta(address: newAccount, role: AccountRole.writableSigner),
+      if (payer != null)
+        AccountMeta(address: payer, role: AccountRole.writableSigner),
     ],
-    data: getCreateAccountAllowPrefundInstructionDataEncoder().encode(instructionData),
+    data: getCreateAccountAllowPrefundInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [CreateAccountAllowPrefund] instruction from raw instruction data.
-CreateAccountAllowPrefundInstructionData parseCreateAccountAllowPrefundInstruction(Instruction instruction) {
-  return getCreateAccountAllowPrefundInstructionDataDecoder().decode(instruction.data!);
+CreateAccountAllowPrefundInstructionData
+parseCreateAccountAllowPrefundInstruction(Instruction instruction) {
+  return getCreateAccountAllowPrefundInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

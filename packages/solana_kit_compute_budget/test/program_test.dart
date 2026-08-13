@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_compute_budget/solana_kit_compute_budget.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:test/test.dart';
 
@@ -50,19 +51,25 @@ void main() {
     test('throws on empty data', () {
       expect(
         () => identifyComputeBudgetInstruction(Uint8List(0)),
-        throwsArgumentError,
+        throwsA(_failedToIdentifyInstructionError),
       );
     });
 
     test('throws on unknown discriminator', () {
       final data = Uint8List.fromList([255]);
-      expect(() => identifyComputeBudgetInstruction(data), throwsArgumentError);
+      expect(
+        () => identifyComputeBudgetInstruction(data),
+        throwsA(_failedToIdentifyInstructionError),
+      );
     });
   });
 
   group('parseComputeBudgetInstruction', () {
     test('parses SetComputeUnitLimit instruction', () {
-      final ix = getSetComputeUnitLimitInstruction(units: 300000);
+      final ix = getSetComputeUnitLimitInstruction(
+        programAddress: computeBudgetProgramAddress,
+        units: 300000,
+      );
       final parsed = parseComputeBudgetInstruction(ix);
       expect(parsed, isA<ParsedSetComputeUnitLimit>());
       final typed = parsed as ParsedSetComputeUnitLimit;
@@ -75,6 +82,7 @@ void main() {
 
     test('parses SetComputeUnitPrice instruction', () {
       final ix = getSetComputeUnitPriceInstruction(
+        programAddress: computeBudgetProgramAddress,
         microLamports: BigInt.from(99999),
       );
       final parsed = parseComputeBudgetInstruction(ix);
@@ -88,7 +96,10 @@ void main() {
     });
 
     test('parses RequestHeapFrame instruction', () {
-      final ix = getRequestHeapFrameInstruction(bytes: 65536);
+      final ix = getRequestHeapFrameInstruction(
+        programAddress: computeBudgetProgramAddress,
+        bytes: 65536,
+      );
       final parsed = parseComputeBudgetInstruction(ix);
       expect(parsed, isA<ParsedRequestHeapFrame>());
       final typed = parsed as ParsedRequestHeapFrame;
@@ -101,6 +112,7 @@ void main() {
 
     test('parses SetLoadedAccountsDataSizeLimit instruction', () {
       final ix = getSetLoadedAccountsDataSizeLimitInstruction(
+        programAddress: computeBudgetProgramAddress,
         accountDataSizeLimit: 32000,
       );
       final parsed = parseComputeBudgetInstruction(ix);
@@ -118,7 +130,10 @@ void main() {
         programAddress: computeBudgetProgramAddress,
         accounts: [],
       );
-      expect(() => parseComputeBudgetInstruction(ix), throwsArgumentError);
+      expect(
+        () => parseComputeBudgetInstruction(ix),
+        throwsA(_failedToIdentifyInstructionError),
+      );
     });
 
     test('throws on instruction with unknown discriminator', () {
@@ -127,7 +142,10 @@ void main() {
         accounts: const [],
         data: Uint8List.fromList([99, 0, 0, 0]),
       );
-      expect(() => parseComputeBudgetInstruction(ix), throwsArgumentError);
+      expect(
+        () => parseComputeBudgetInstruction(ix),
+        throwsA(_failedToIdentifyInstructionError),
+      );
     });
   });
 
@@ -151,3 +169,9 @@ void main() {
     });
   });
 }
+
+final Matcher _failedToIdentifyInstructionError = isA<SolanaError>().having(
+  (error) => error.code,
+  'code',
+  SolanaErrorCode.programClientsFailedToIdentifyInstruction,
+);

@@ -15,6 +15,8 @@
 /// - **PDA derivation** for tree authority, leaf asset ID (V2), and
 ///   bubblegum signer
 /// - **Flag utilities** for leaf schema and asset metadata parsing
+/// - **Generated error helpers** ([MplBubblegumError],
+///   [getMplBubblegumErrorMessage], [isMplBubblegumError])
 /// - **Composite helpers** ([getCreateTreeInstructionPlan],
 ///   [getMintV1InstructionPlan], [getBurnInstructionPlan],
 ///   [getTransferInstructionPlan], [getDelegateInstructionPlan])

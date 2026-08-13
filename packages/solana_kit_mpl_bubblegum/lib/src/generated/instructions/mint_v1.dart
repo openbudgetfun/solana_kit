@@ -9,11 +9,26 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart';
 
 /// MintV1 instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `mint_v1` instruction.
+const MintV1InstructionDiscriminator = <int>[
+  145,
+  98,
+  192,
+  118,
+  184,
+  147,
+  118,
+  104,
+];
+
 @immutable
 class MintV1InstructionData {
-  const MintV1InstructionData({this.discriminator = 14, required this.message});
+  const MintV1InstructionData({
+    this.discriminator = MintV1InstructionDiscriminator,
+    required this.message,
+  });
 
-  final int discriminator;
+  final List<int> discriminator;
   final MetadataArgs message;
 }
 

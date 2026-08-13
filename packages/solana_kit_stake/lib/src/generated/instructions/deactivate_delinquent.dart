@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,9 +22,10 @@ class DeactivateDelinquentInstructionData {
   final int discriminator;
 }
 
-Encoder<DeactivateDelinquentInstructionData> getDeactivateDelinquentInstructionDataEncoder() {
+Encoder<DeactivateDelinquentInstructionData>
+getDeactivateDelinquentInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -36,21 +36,27 @@ Encoder<DeactivateDelinquentInstructionData> getDeactivateDelinquentInstructionD
   );
 }
 
-Decoder<DeactivateDelinquentInstructionData> getDeactivateDelinquentInstructionDataDecoder() {
+Decoder<DeactivateDelinquentInstructionData>
+getDeactivateDelinquentInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => DeactivateDelinquentInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        DeactivateDelinquentInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<DeactivateDelinquentInstructionData, DeactivateDelinquentInstructionData> getDeactivateDelinquentInstructionDataCodec() {
-  return combineCodec(getDeactivateDelinquentInstructionDataEncoder(), getDeactivateDelinquentInstructionDataDecoder());
+Codec<DeactivateDelinquentInstructionData, DeactivateDelinquentInstructionData>
+getDeactivateDelinquentInstructionDataCodec() {
+  return combineCodec(
+    getDeactivateDelinquentInstructionDataEncoder(),
+    getDeactivateDelinquentInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [DeactivateDelinquent] instruction.
@@ -59,24 +65,27 @@ Instruction getDeactivateDelinquentInstruction({
   required Address stake,
   required Address delinquentVote,
   required Address referenceVote,
-
 }) {
-  final instructionData = DeactivateDelinquentInstructionData(
-
-  );
+  final instructionData = DeactivateDelinquentInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: stake, role: AccountRole.writable),
-    AccountMeta(address: delinquentVote, role: AccountRole.readonly),
-    AccountMeta(address: referenceVote, role: AccountRole.readonly),
+      AccountMeta(address: stake, role: AccountRole.writable),
+      AccountMeta(address: delinquentVote, role: AccountRole.readonly),
+      AccountMeta(address: referenceVote, role: AccountRole.readonly),
     ],
-    data: getDeactivateDelinquentInstructionDataEncoder().encode(instructionData),
+    data: getDeactivateDelinquentInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [DeactivateDelinquent] instruction from raw instruction data.
-DeactivateDelinquentInstructionData parseDeactivateDelinquentInstruction(Instruction instruction) {
-  return getDeactivateDelinquentInstructionDataDecoder().decode(instruction.data!);
+DeactivateDelinquentInstructionData parseDeactivateDelinquentInstruction(
+  Instruction instruction,
+) {
+  return getDeactivateDelinquentInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

@@ -25,11 +25,12 @@ const int tokenVaultErrorInvalidAmount = 0x1774; // 6004
 
 /// Map of error codes to human-readable messages.
 const Map<int, String> _tokenVaultErrorMessages = {
-    tokenVaultErrorInvalidAuthority: 'The provided authority does not match the vault authority.',
-    tokenVaultErrorVaultFull: 'The vault has reached its maximum capacity.',
-    tokenVaultErrorInsufficientFunds: 'Insufficient funds for this withdrawal.',
-    tokenVaultErrorVaultNotActive: 'The vault is not in active status.',
-    tokenVaultErrorInvalidAmount: 'The specified amount is invalid.',
+  tokenVaultErrorInvalidAuthority:
+      'The provided authority does not match the vault authority.',
+  tokenVaultErrorVaultFull: 'The vault has reached its maximum capacity.',
+  tokenVaultErrorInsufficientFunds: 'Insufficient funds for this withdrawal.',
+  tokenVaultErrorVaultNotActive: 'The vault is not in active status.',
+  tokenVaultErrorInvalidAmount: 'The specified amount is invalid.',
 };
 
 /// Get the error message for a TokenVault program error code.

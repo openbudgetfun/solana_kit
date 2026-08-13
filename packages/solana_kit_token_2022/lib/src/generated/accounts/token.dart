@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -13,7 +12,6 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 import '../types/account_state.dart';
 import '../types/extension.dart';
-
 
 @immutable
 class Token {
@@ -55,26 +53,66 @@ class Token {
           extensions == other.extensions;
 
   @override
-  int get hashCode => Object.hash(mint, owner, amount, delegate, state, isNative, delegatedAmount, closeAuthority, extensions);
+  int get hashCode => Object.hash(
+    mint,
+    owner,
+    amount,
+    delegate,
+    state,
+    isNative,
+    delegatedAmount,
+    closeAuthority,
+    extensions,
+  );
 
   @override
-  String toString() => 'Token(mint: $mint, owner: $owner, amount: $amount, delegate: $delegate, state: $state, isNative: $isNative, delegatedAmount: $delegatedAmount, closeAuthority: $closeAuthority, extensions: $extensions)';
+  String toString() =>
+      'Token(mint: $mint, owner: $owner, amount: $amount, delegate: $delegate, state: $state, isNative: $isNative, delegatedAmount: $delegatedAmount, closeAuthority: $closeAuthority, extensions: $extensions)';
 }
 
 /// This account has a size discriminator of 165 bytes.
-
 
 Encoder<Token> getTokenEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('mint', getAddressEncoder()),
     ('owner', getAddressEncoder()),
     ('amount', getU64Encoder()),
-    ('delegate', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder(), noneValue: const ZeroesNoneValue())),
+    (
+      'delegate',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        prefix: getU32Encoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
     ('state', getAccountStateEncoder()),
-    ('isNative', getNullableEncoder<BigInt>(getU64Encoder(), prefix: getU32Encoder(), noneValue: const ZeroesNoneValue())),
+    (
+      'isNative',
+      getNullableEncoder<BigInt>(
+        getU64Encoder(),
+        prefix: getU32Encoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
     ('delegatedAmount', getU64Encoder()),
-    ('closeAuthority', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder(), noneValue: const ZeroesNoneValue())),
-    ('extensions', getNullableEncoder<List<Extension>>(getHiddenPrefixEncoder(getArrayEncoder(getExtensionEncoder(), size: RemainderArraySize()), [getConstantEncoder(getU8Encoder().encode(2))]), hasPrefix: false)),
+    (
+      'closeAuthority',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        prefix: getU32Encoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
+    (
+      'extensions',
+      getNullableEncoder<List<Extension>>(
+        getHiddenPrefixEncoder(
+          getArrayEncoder(getExtensionEncoder(), size: RemainderArraySize()),
+          [getConstantEncoder(getU8Encoder().encode(2))],
+        ),
+        hasPrefix: false,
+      ),
+    ),
   ]);
 
   return transformEncoder(
@@ -98,12 +136,42 @@ Decoder<Token> getTokenDecoder() {
     ('mint', getAddressDecoder()),
     ('owner', getAddressDecoder()),
     ('amount', getU64Decoder()),
-    ('delegate', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder(), noneValue: const ZeroesNoneValue())),
+    (
+      'delegate',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        prefix: getU32Decoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
     ('state', getAccountStateDecoder()),
-    ('isNative', getNullableDecoder<BigInt>(getU64Decoder(), prefix: getU32Decoder(), noneValue: const ZeroesNoneValue())),
+    (
+      'isNative',
+      getNullableDecoder<BigInt>(
+        getU64Decoder(),
+        prefix: getU32Decoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
     ('delegatedAmount', getU64Decoder()),
-    ('closeAuthority', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder(), noneValue: const ZeroesNoneValue())),
-    ('extensions', getNullableDecoder<List<Extension>>(getHiddenPrefixDecoder(getArrayDecoder(getExtensionDecoder(), size: RemainderArraySize()), [getConstantDecoder(getU8Encoder().encode(2))]), hasPrefix: false)),
+    (
+      'closeAuthority',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        prefix: getU32Decoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
+    (
+      'extensions',
+      getNullableDecoder<List<Extension>>(
+        getHiddenPrefixDecoder(
+          getArrayDecoder(getExtensionDecoder(), size: RemainderArraySize()),
+          [getConstantDecoder(getU8Encoder().encode(2))],
+        ),
+        hasPrefix: false,
+      ),
+    ),
   ]);
 
   return transformDecoder(

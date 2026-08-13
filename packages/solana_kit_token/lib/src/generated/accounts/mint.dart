@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -10,7 +9,6 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
-
 
 @immutable
 class Mint {
@@ -40,26 +38,45 @@ class Mint {
           freezeAuthority == other.freezeAuthority;
 
   @override
-  int get hashCode => Object.hash(mintAuthority, supply, decimals, isInitialized, freezeAuthority);
+  int get hashCode => Object.hash(
+    mintAuthority,
+    supply,
+    decimals,
+    isInitialized,
+    freezeAuthority,
+  );
 
   @override
-  String toString() => 'Mint(mintAuthority: $mintAuthority, supply: $supply, decimals: $decimals, isInitialized: $isInitialized, freezeAuthority: $freezeAuthority)';
+  String toString() =>
+      'Mint(mintAuthority: $mintAuthority, supply: $supply, decimals: $decimals, isInitialized: $isInitialized, freezeAuthority: $freezeAuthority)';
 }
-
 
 /// The size of the [Mint] account data in bytes.
 const int mintSize = 82;
 
 /// This account has a size discriminator of 82 bytes.
 
-
 Encoder<Mint> getMintEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('mintAuthority', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder(), noneValue: const ZeroesNoneValue())),
+    (
+      'mintAuthority',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        prefix: getU32Encoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
     ('supply', getU64Encoder()),
     ('decimals', getU8Encoder()),
     ('isInitialized', getBooleanEncoder()),
-    ('freezeAuthority', getNullableEncoder<Address>(getAddressEncoder(), prefix: getU32Encoder(), noneValue: const ZeroesNoneValue())),
+    (
+      'freezeAuthority',
+      getNullableEncoder<Address>(
+        getAddressEncoder(),
+        prefix: getU32Encoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformEncoder(
@@ -76,11 +93,25 @@ Encoder<Mint> getMintEncoder() {
 
 Decoder<Mint> getMintDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('mintAuthority', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder(), noneValue: const ZeroesNoneValue())),
+    (
+      'mintAuthority',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        prefix: getU32Decoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
     ('supply', getU64Decoder()),
     ('decimals', getU8Decoder()),
     ('isInitialized', getBooleanDecoder()),
-    ('freezeAuthority', getNullableDecoder<Address>(getAddressDecoder(), prefix: getU32Decoder(), noneValue: const ZeroesNoneValue())),
+    (
+      'freezeAuthority',
+      getNullableDecoder<Address>(
+        getAddressDecoder(),
+        prefix: getU32Decoder(),
+        noneValue: const ZeroesNoneValue(),
+      ),
+    ),
   ]);
 
   return transformDecoder(

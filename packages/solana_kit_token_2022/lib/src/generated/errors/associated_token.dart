@@ -9,7 +9,8 @@ const int associatedTokenErrorInvalidOwner = 0x0; // 0
 
 /// Map of error codes to human-readable messages.
 const Map<int, String> _associatedTokenErrorMessages = {
-    associatedTokenErrorInvalidOwner: 'Associated token account owner does not match address derivation',
+  associatedTokenErrorInvalidOwner:
+      'Associated token account owner does not match address derivation',
 };
 
 /// Get the error message for a AssociatedToken program error code.

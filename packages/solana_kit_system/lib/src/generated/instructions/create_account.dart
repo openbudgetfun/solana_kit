@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -58,17 +57,22 @@ Decoder<CreateAccountInstructionData> getCreateAccountInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateAccountInstructionData(
-      discriminator: map['discriminator']! as int,
-      lamports: map['lamports']! as BigInt,
-      space: map['space']! as BigInt,
-      programAddress: map['programAddress']! as Address,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CreateAccountInstructionData(
+          discriminator: map['discriminator']! as int,
+          lamports: map['lamports']! as BigInt,
+          space: map['space']! as BigInt,
+          programAddress: map['programAddress']! as Address,
+        ),
   );
 }
 
-Codec<CreateAccountInstructionData, CreateAccountInstructionData> getCreateAccountInstructionDataCodec() {
-  return combineCodec(getCreateAccountInstructionDataEncoder(), getCreateAccountInstructionDataDecoder());
+Codec<CreateAccountInstructionData, CreateAccountInstructionData>
+getCreateAccountInstructionDataCodec() {
+  return combineCodec(
+    getCreateAccountInstructionDataEncoder(),
+    getCreateAccountInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [CreateAccount] instruction.
@@ -81,22 +85,24 @@ Instruction getCreateAccountInstruction({
   required Address programAddress,
 }) {
   final instructionData = CreateAccountInstructionData(
-      lamports: lamports,
-      space: space,
-      programAddress: programAddress,
+    lamports: lamports,
+    space: space,
+    programAddress: programAddress,
   );
 
   return Instruction(
     programAddress: instructionProgramAddress,
     accounts: [
-    AccountMeta(address: payer, role: AccountRole.writableSigner),
-    AccountMeta(address: newAccount, role: AccountRole.writableSigner),
+      AccountMeta(address: payer, role: AccountRole.writableSigner),
+      AccountMeta(address: newAccount, role: AccountRole.writableSigner),
     ],
     data: getCreateAccountInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [CreateAccount] instruction from raw instruction data.
-CreateAccountInstructionData parseCreateAccountInstruction(Instruction instruction) {
+CreateAccountInstructionData parseCreateAccountInstruction(
+  Instruction instruction,
+) {
   return getCreateAccountInstructionDataDecoder().decode(instruction.data!);
 }

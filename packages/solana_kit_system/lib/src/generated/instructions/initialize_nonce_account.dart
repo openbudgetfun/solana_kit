@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -25,7 +24,8 @@ class InitializeNonceAccountInstructionData {
   final Address nonceAuthority;
 }
 
-Encoder<InitializeNonceAccountInstructionData> getInitializeNonceAccountInstructionDataEncoder() {
+Encoder<InitializeNonceAccountInstructionData>
+getInitializeNonceAccountInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('nonceAuthority', getAddressEncoder()),
@@ -40,7 +40,8 @@ Encoder<InitializeNonceAccountInstructionData> getInitializeNonceAccountInstruct
   );
 }
 
-Decoder<InitializeNonceAccountInstructionData> getInitializeNonceAccountInstructionDataDecoder() {
+Decoder<InitializeNonceAccountInstructionData>
+getInitializeNonceAccountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('nonceAuthority', getAddressDecoder()),
@@ -48,15 +49,23 @@ Decoder<InitializeNonceAccountInstructionData> getInitializeNonceAccountInstruct
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeNonceAccountInstructionData(
-      discriminator: map['discriminator']! as int,
-      nonceAuthority: map['nonceAuthority']! as Address,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        InitializeNonceAccountInstructionData(
+          discriminator: map['discriminator']! as int,
+          nonceAuthority: map['nonceAuthority']! as Address,
+        ),
   );
 }
 
-Codec<InitializeNonceAccountInstructionData, InitializeNonceAccountInstructionData> getInitializeNonceAccountInstructionDataCodec() {
-  return combineCodec(getInitializeNonceAccountInstructionDataEncoder(), getInitializeNonceAccountInstructionDataDecoder());
+Codec<
+  InitializeNonceAccountInstructionData,
+  InitializeNonceAccountInstructionData
+>
+getInitializeNonceAccountInstructionDataCodec() {
+  return combineCodec(
+    getInitializeNonceAccountInstructionDataEncoder(),
+    getInitializeNonceAccountInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [InitializeNonceAccount] instruction.
@@ -68,21 +77,27 @@ Instruction getInitializeNonceAccountInstruction({
   required Address nonceAuthority,
 }) {
   final instructionData = InitializeNonceAccountInstructionData(
-      nonceAuthority: nonceAuthority,
+    nonceAuthority: nonceAuthority,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: nonceAccount, role: AccountRole.writable),
-    AccountMeta(address: recentBlockhashesSysvar, role: AccountRole.readonly),
-    AccountMeta(address: rentSysvar, role: AccountRole.readonly),
+      AccountMeta(address: nonceAccount, role: AccountRole.writable),
+      AccountMeta(address: recentBlockhashesSysvar, role: AccountRole.readonly),
+      AccountMeta(address: rentSysvar, role: AccountRole.readonly),
     ],
-    data: getInitializeNonceAccountInstructionDataEncoder().encode(instructionData),
+    data: getInitializeNonceAccountInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [InitializeNonceAccount] instruction from raw instruction data.
-InitializeNonceAccountInstructionData parseInitializeNonceAccountInstruction(Instruction instruction) {
-  return getInitializeNonceAccountInstructionDataDecoder().decode(instruction.data!);
+InitializeNonceAccountInstructionData parseInitializeNonceAccountInstruction(
+  Instruction instruction,
+) {
+  return getInitializeNonceAccountInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

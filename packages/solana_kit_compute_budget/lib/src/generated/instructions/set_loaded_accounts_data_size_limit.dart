@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -25,7 +24,8 @@ class SetLoadedAccountsDataSizeLimitInstructionData {
   final int accountDataSizeLimit;
 }
 
-Encoder<SetLoadedAccountsDataSizeLimitInstructionData> getSetLoadedAccountsDataSizeLimitInstructionDataEncoder() {
+Encoder<SetLoadedAccountsDataSizeLimitInstructionData>
+getSetLoadedAccountsDataSizeLimitInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('accountDataSizeLimit', getU32Encoder()),
@@ -40,7 +40,8 @@ Encoder<SetLoadedAccountsDataSizeLimitInstructionData> getSetLoadedAccountsDataS
   );
 }
 
-Decoder<SetLoadedAccountsDataSizeLimitInstructionData> getSetLoadedAccountsDataSizeLimitInstructionDataDecoder() {
+Decoder<SetLoadedAccountsDataSizeLimitInstructionData>
+getSetLoadedAccountsDataSizeLimitInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('accountDataSizeLimit', getU32Decoder()),
@@ -48,15 +49,23 @@ Decoder<SetLoadedAccountsDataSizeLimitInstructionData> getSetLoadedAccountsDataS
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => SetLoadedAccountsDataSizeLimitInstructionData(
-      discriminator: map['discriminator']! as int,
-      accountDataSizeLimit: map['accountDataSizeLimit']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SetLoadedAccountsDataSizeLimitInstructionData(
+          discriminator: map['discriminator']! as int,
+          accountDataSizeLimit: map['accountDataSizeLimit']! as int,
+        ),
   );
 }
 
-Codec<SetLoadedAccountsDataSizeLimitInstructionData, SetLoadedAccountsDataSizeLimitInstructionData> getSetLoadedAccountsDataSizeLimitInstructionDataCodec() {
-  return combineCodec(getSetLoadedAccountsDataSizeLimitInstructionDataEncoder(), getSetLoadedAccountsDataSizeLimitInstructionDataDecoder());
+Codec<
+  SetLoadedAccountsDataSizeLimitInstructionData,
+  SetLoadedAccountsDataSizeLimitInstructionData
+>
+getSetLoadedAccountsDataSizeLimitInstructionDataCodec() {
+  return combineCodec(
+    getSetLoadedAccountsDataSizeLimitInstructionDataEncoder(),
+    getSetLoadedAccountsDataSizeLimitInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [SetLoadedAccountsDataSizeLimit] instruction.
@@ -66,19 +75,22 @@ Instruction getSetLoadedAccountsDataSizeLimitInstruction({
   required int accountDataSizeLimit,
 }) {
   final instructionData = SetLoadedAccountsDataSizeLimitInstructionData(
-      accountDataSizeLimit: accountDataSizeLimit,
+    accountDataSizeLimit: accountDataSizeLimit,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-
-    ],
-    data: getSetLoadedAccountsDataSizeLimitInstructionDataEncoder().encode(instructionData),
+    accounts: [],
+    data: getSetLoadedAccountsDataSizeLimitInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [SetLoadedAccountsDataSizeLimit] instruction from raw instruction data.
-SetLoadedAccountsDataSizeLimitInstructionData parseSetLoadedAccountsDataSizeLimitInstruction(Instruction instruction) {
-  return getSetLoadedAccountsDataSizeLimitInstructionDataDecoder().decode(instruction.data!);
+SetLoadedAccountsDataSizeLimitInstructionData
+parseSetLoadedAccountsDataSizeLimitInstruction(Instruction instruction) {
+  return getSetLoadedAccountsDataSizeLimitInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

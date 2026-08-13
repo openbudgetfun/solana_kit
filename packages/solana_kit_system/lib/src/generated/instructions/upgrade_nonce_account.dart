@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,7 +22,8 @@ class UpgradeNonceAccountInstructionData {
   final int discriminator;
 }
 
-Encoder<UpgradeNonceAccountInstructionData> getUpgradeNonceAccountInstructionDataEncoder() {
+Encoder<UpgradeNonceAccountInstructionData>
+getUpgradeNonceAccountInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
   ]);
@@ -36,43 +36,52 @@ Encoder<UpgradeNonceAccountInstructionData> getUpgradeNonceAccountInstructionDat
   );
 }
 
-Decoder<UpgradeNonceAccountInstructionData> getUpgradeNonceAccountInstructionDataDecoder() {
+Decoder<UpgradeNonceAccountInstructionData>
+getUpgradeNonceAccountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => UpgradeNonceAccountInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        UpgradeNonceAccountInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<UpgradeNonceAccountInstructionData, UpgradeNonceAccountInstructionData> getUpgradeNonceAccountInstructionDataCodec() {
-  return combineCodec(getUpgradeNonceAccountInstructionDataEncoder(), getUpgradeNonceAccountInstructionDataDecoder());
+Codec<UpgradeNonceAccountInstructionData, UpgradeNonceAccountInstructionData>
+getUpgradeNonceAccountInstructionDataCodec() {
+  return combineCodec(
+    getUpgradeNonceAccountInstructionDataEncoder(),
+    getUpgradeNonceAccountInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [UpgradeNonceAccount] instruction.
 Instruction getUpgradeNonceAccountInstruction({
   required Address programAddress,
   required Address nonceAccount,
-
 }) {
-  final instructionData = UpgradeNonceAccountInstructionData(
-
-  );
+  final instructionData = UpgradeNonceAccountInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: nonceAccount, role: AccountRole.writable),
+      AccountMeta(address: nonceAccount, role: AccountRole.writable),
     ],
-    data: getUpgradeNonceAccountInstructionDataEncoder().encode(instructionData),
+    data: getUpgradeNonceAccountInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [UpgradeNonceAccount] instruction from raw instruction data.
-UpgradeNonceAccountInstructionData parseUpgradeNonceAccountInstruction(Instruction instruction) {
-  return getUpgradeNonceAccountInstructionDataDecoder().decode(instruction.data!);
+UpgradeNonceAccountInstructionData parseUpgradeNonceAccountInstruction(
+  Instruction instruction,
+) {
+  return getUpgradeNonceAccountInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

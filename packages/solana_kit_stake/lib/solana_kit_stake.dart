@@ -3,5 +3,5 @@ library;
 
 export 'package:solana_kit_addresses/solana_kit_addresses.dart'
     show stakeConfigAddress;
-export 'src/generated/solana_stake_interface.dart';
+export 'src/generated/solana_stake_interface.dart' hide Epoch, UnixTimestamp;
 export 'src/helpers.dart';

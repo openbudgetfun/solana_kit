@@ -33,7 +33,7 @@ void main() {
             Instruction(
               programAddress: computeBudgetProgramAddress,
               accounts: const [],
-              data: Uint8List.fromList([setComputeUnitLimitDiscriminator]),
+              data: Uint8List.fromList([2]),
             ),
           );
 

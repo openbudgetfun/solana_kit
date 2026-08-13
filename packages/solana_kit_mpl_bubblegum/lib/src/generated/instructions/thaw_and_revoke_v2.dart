@@ -11,10 +11,22 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// ThawAndRevokeV2 instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `thaw_and_revoke_v2` instruction.
+const ThawAndRevokeV2InstructionDiscriminator = <int>[
+  86,
+  214,
+  190,
+  37,
+  167,
+  4,
+  28,
+  116,
+];
+
 @immutable
 class ThawAndRevokeV2InstructionData {
   const ThawAndRevokeV2InstructionData({
-    this.discriminator = 23,
+    this.discriminator = ThawAndRevokeV2InstructionDiscriminator,
     required this.root,
     required this.dataHash,
     required this.creatorHash,
@@ -25,7 +37,7 @@ class ThawAndRevokeV2InstructionData {
     required this.index,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final List<int> root;
   final List<int> dataHash;
   final List<int> creatorHash;
@@ -39,6 +51,10 @@ class ThawAndRevokeV2InstructionData {
 Encoder<ThawAndRevokeV2InstructionData>
 getThawAndRevokeV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    (
+      'discriminator',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
     (
       'dataHash',
@@ -84,7 +100,10 @@ getThawAndRevokeV2InstructionDataEncoder() {
 Decoder<ThawAndRevokeV2InstructionData>
 getThawAndRevokeV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
     (
       'dataHash',
@@ -115,7 +134,7 @@ getThawAndRevokeV2InstructionDataDecoder() {
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         ThawAndRevokeV2InstructionData(
-          discriminator: map['discriminator']! as int,
+          discriminator: map['discriminator']! as List<int>,
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
           creatorHash: map['creatorHash']! as List<int>,

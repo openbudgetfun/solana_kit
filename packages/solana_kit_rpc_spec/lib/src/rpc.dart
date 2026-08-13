@@ -18,7 +18,7 @@ class RpcSendOptions {
 ///
 /// Calling [send] will trigger the request and return a [Future] for the
 /// response.
-class PendingRpcRequest<TResponse> {
+class PendingRpcRequest<TResponse> implements ReactiveActionSource<TResponse> {
   /// Creates a new [PendingRpcRequest].
   const PendingRpcRequest({required this.plan, required this.transport});
 
@@ -38,11 +38,11 @@ class PendingRpcRequest<TResponse> {
   /// Returns a [ReactiveActionStore] that can be used to dispatch this request
   /// reactively, tracking idle/running/success/error states.
   ///
-  /// Mirrors the upstream `PendingRpcRequest.reactiveStore()` API added in
-  /// `@solana/rpc-spec` v6.10.
+  /// Mirrors the upstream `PendingRpcRequest.reactiveStore()` API.
+  @override
   ReactiveActionStore<List<Object?>, TResponse> reactiveStore() {
     return createReactiveActionStore<List<Object?>, TResponse>(
-      (args) => send(),
+      (signal, args) => send(RpcSendOptions(abortSignal: signal.future)),
     );
   }
 }

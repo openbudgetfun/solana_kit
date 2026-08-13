@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -25,7 +24,8 @@ class DeployWithMaxDataLenInstructionData {
   final BigInt maxDataLen;
 }
 
-Encoder<DeployWithMaxDataLenInstructionData> getDeployWithMaxDataLenInstructionDataEncoder() {
+Encoder<DeployWithMaxDataLenInstructionData>
+getDeployWithMaxDataLenInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('maxDataLen', getU64Encoder()),
@@ -40,7 +40,8 @@ Encoder<DeployWithMaxDataLenInstructionData> getDeployWithMaxDataLenInstructionD
   );
 }
 
-Decoder<DeployWithMaxDataLenInstructionData> getDeployWithMaxDataLenInstructionDataDecoder() {
+Decoder<DeployWithMaxDataLenInstructionData>
+getDeployWithMaxDataLenInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('maxDataLen', getU64Decoder()),
@@ -48,15 +49,20 @@ Decoder<DeployWithMaxDataLenInstructionData> getDeployWithMaxDataLenInstructionD
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => DeployWithMaxDataLenInstructionData(
-      discriminator: map['discriminator']! as int,
-      maxDataLen: map['maxDataLen']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        DeployWithMaxDataLenInstructionData(
+          discriminator: map['discriminator']! as int,
+          maxDataLen: map['maxDataLen']! as BigInt,
+        ),
   );
 }
 
-Codec<DeployWithMaxDataLenInstructionData, DeployWithMaxDataLenInstructionData> getDeployWithMaxDataLenInstructionDataCodec() {
-  return combineCodec(getDeployWithMaxDataLenInstructionDataEncoder(), getDeployWithMaxDataLenInstructionDataDecoder());
+Codec<DeployWithMaxDataLenInstructionData, DeployWithMaxDataLenInstructionData>
+getDeployWithMaxDataLenInstructionDataCodec() {
+  return combineCodec(
+    getDeployWithMaxDataLenInstructionDataEncoder(),
+    getDeployWithMaxDataLenInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [DeployWithMaxDataLen] instruction.
@@ -73,26 +79,32 @@ Instruction getDeployWithMaxDataLenInstruction({
   required BigInt maxDataLen,
 }) {
   final instructionData = DeployWithMaxDataLenInstructionData(
-      maxDataLen: maxDataLen,
+    maxDataLen: maxDataLen,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: payerAccount, role: AccountRole.writableSigner),
-    AccountMeta(address: programDataAccount, role: AccountRole.writable),
-    AccountMeta(address: programAccount, role: AccountRole.writable),
-    AccountMeta(address: bufferAccount, role: AccountRole.writable),
-    AccountMeta(address: rentSysvar, role: AccountRole.readonly),
-    AccountMeta(address: clockSysvar, role: AccountRole.readonly),
-    AccountMeta(address: systemProgram, role: AccountRole.readonly),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: payerAccount, role: AccountRole.writableSigner),
+      AccountMeta(address: programDataAccount, role: AccountRole.writable),
+      AccountMeta(address: programAccount, role: AccountRole.writable),
+      AccountMeta(address: bufferAccount, role: AccountRole.writable),
+      AccountMeta(address: rentSysvar, role: AccountRole.readonly),
+      AccountMeta(address: clockSysvar, role: AccountRole.readonly),
+      AccountMeta(address: systemProgram, role: AccountRole.readonly),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getDeployWithMaxDataLenInstructionDataEncoder().encode(instructionData),
+    data: getDeployWithMaxDataLenInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [DeployWithMaxDataLen] instruction from raw instruction data.
-DeployWithMaxDataLenInstructionData parseDeployWithMaxDataLenInstruction(Instruction instruction) {
-  return getDeployWithMaxDataLenInstructionDataDecoder().decode(instruction.data!);
+DeployWithMaxDataLenInstructionData parseDeployWithMaxDataLenInstruction(
+  Instruction instruction,
+) {
+  return getDeployWithMaxDataLenInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

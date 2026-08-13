@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -28,7 +27,8 @@ class ApplyConfidentialPendingBurnInstructionData {
   final int confidentialMintBurnDiscriminator;
 }
 
-Encoder<ApplyConfidentialPendingBurnInstructionData> getApplyConfidentialPendingBurnInstructionDataEncoder() {
+Encoder<ApplyConfidentialPendingBurnInstructionData>
+getApplyConfidentialPendingBurnInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialMintBurnDiscriminator', getU8Encoder()),
@@ -38,12 +38,14 @@ Encoder<ApplyConfidentialPendingBurnInstructionData> getApplyConfidentialPending
     structEncoder,
     (ApplyConfidentialPendingBurnInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialMintBurnDiscriminator': value.confidentialMintBurnDiscriminator,
+      'confidentialMintBurnDiscriminator':
+          value.confidentialMintBurnDiscriminator,
     },
   );
 }
 
-Decoder<ApplyConfidentialPendingBurnInstructionData> getApplyConfidentialPendingBurnInstructionDataDecoder() {
+Decoder<ApplyConfidentialPendingBurnInstructionData>
+getApplyConfidentialPendingBurnInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialMintBurnDiscriminator', getU8Decoder()),
@@ -51,15 +53,24 @@ Decoder<ApplyConfidentialPendingBurnInstructionData> getApplyConfidentialPending
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ApplyConfidentialPendingBurnInstructionData(
-      discriminator: map['discriminator']! as int,
-      confidentialMintBurnDiscriminator: map['confidentialMintBurnDiscriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        ApplyConfidentialPendingBurnInstructionData(
+          discriminator: map['discriminator']! as int,
+          confidentialMintBurnDiscriminator:
+              map['confidentialMintBurnDiscriminator']! as int,
+        ),
   );
 }
 
-Codec<ApplyConfidentialPendingBurnInstructionData, ApplyConfidentialPendingBurnInstructionData> getApplyConfidentialPendingBurnInstructionDataCodec() {
-  return combineCodec(getApplyConfidentialPendingBurnInstructionDataEncoder(), getApplyConfidentialPendingBurnInstructionDataDecoder());
+Codec<
+  ApplyConfidentialPendingBurnInstructionData,
+  ApplyConfidentialPendingBurnInstructionData
+>
+getApplyConfidentialPendingBurnInstructionDataCodec() {
+  return combineCodec(
+    getApplyConfidentialPendingBurnInstructionDataEncoder(),
+    getApplyConfidentialPendingBurnInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [ApplyConfidentialPendingBurn] instruction.
@@ -67,23 +78,25 @@ Instruction getApplyConfidentialPendingBurnInstruction({
   required Address programAddress,
   required Address mint,
   required Address authority,
-
 }) {
-  final instructionData = ApplyConfidentialPendingBurnInstructionData(
-
-  );
+  final instructionData = ApplyConfidentialPendingBurnInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: mint, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: mint, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getApplyConfidentialPendingBurnInstructionDataEncoder().encode(instructionData),
+    data: getApplyConfidentialPendingBurnInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [ApplyConfidentialPendingBurn] instruction from raw instruction data.
-ApplyConfidentialPendingBurnInstructionData parseApplyConfidentialPendingBurnInstruction(Instruction instruction) {
-  return getApplyConfidentialPendingBurnInstructionDataDecoder().decode(instruction.data!);
+ApplyConfidentialPendingBurnInstructionData
+parseApplyConfidentialPendingBurnInstruction(Instruction instruction) {
+  return getApplyConfidentialPendingBurnInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

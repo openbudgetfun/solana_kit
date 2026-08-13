@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -11,7 +10,6 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 import './authorized.dart';
 import './lockup.dart';
-
 
 @immutable
 class Meta {
@@ -38,7 +36,8 @@ class Meta {
   int get hashCode => Object.hash(rentExemptReserve, authorized, lockup);
 
   @override
-  String toString() => 'Meta(rentExemptReserve: $rentExemptReserve, authorized: $authorized, lockup: $lockup)';
+  String toString() =>
+      'Meta(rentExemptReserve: $rentExemptReserve, authorized: $authorized, lockup: $lockup)';
 }
 
 Encoder<Meta> getMetaEncoder() {

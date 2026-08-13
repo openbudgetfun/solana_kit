@@ -348,9 +348,9 @@ describe("getTypePageFragment", () => {
       const frag = getTypePageFragment(node, createScope());
 
       expect(frag.content).toContain(
-        "final class None extends MyEnum",
+        "final class MyEnumNone extends MyEnum",
       );
-      expect(frag.content).toContain("const None()");
+      expect(frag.content).toContain("const MyEnumNone()");
     });
 
     it("generates struct variant subclass with fields", () => {
@@ -376,7 +376,7 @@ describe("getTypePageFragment", () => {
       const frag = getTypePageFragment(node, createScope());
 
       expect(frag.content).toContain(
-        "final class Data extends Payload",
+        "final class PayloadData extends Payload",
       );
       expect(frag.content).toContain("final BigInt amount;");
       expect(frag.content).toContain("final Address owner;");
@@ -396,7 +396,7 @@ describe("getTypePageFragment", () => {
       const frag = getTypePageFragment(node, createScope());
 
       expect(frag.content).toContain(
-        "final class Single extends MyEnum",
+        "final class MyEnumSingle extends MyEnum",
       );
       expect(frag.content).toContain("final int value;");
     });

@@ -12,16 +12,28 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/types/enums.dart';
 
 /// MintV2 instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `mint_v2` instruction.
+const MintV2InstructionDiscriminator = <int>[
+  120,
+  121,
+  23,
+  146,
+  173,
+  110,
+  199,
+  205,
+];
+
 @immutable
 class MintV2InstructionData {
   const MintV2InstructionData({
-    this.discriminator = 15,
+    this.discriminator = MintV2InstructionDiscriminator,
     required this.metadataArgs,
     this.assetData,
     this.assetDataSchema,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final MetadataArgsV2 metadataArgs;
   final List<int>? assetData;
   final AssetDataSchema? assetDataSchema;
@@ -29,6 +41,10 @@ class MintV2InstructionData {
 
 Encoder<MintV2InstructionData> getMintV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    (
+      'discriminator',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
     ('metadataArgs', getU8Encoder()),
     ('assetData', getNullableEncoder(getBytesEncoder())),
     ('assetDataSchema', getNullableEncoder(getU8Encoder())),
@@ -47,7 +63,10 @@ Encoder<MintV2InstructionData> getMintV2InstructionDataEncoder() {
 
 Decoder<MintV2InstructionData> getMintV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
     ('metadataArgs', getU8Decoder()),
     ('assetData', getNullableDecoder(getBytesDecoder())),
     ('assetDataSchema', getNullableDecoder(getU8Decoder())),
@@ -57,7 +76,7 @@ Decoder<MintV2InstructionData> getMintV2InstructionDataDecoder() {
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         MintV2InstructionData(
-          discriminator: map['discriminator']! as int,
+          discriminator: map['discriminator']! as List<int>,
           metadataArgs: map['metadataArgs']! as MetadataArgsV2,
           assetData: map['assetData']! as List<int>?,
           assetDataSchema: map['assetDataSchema']! as AssetDataSchema?,

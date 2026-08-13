@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -53,16 +52,21 @@ Decoder<RequestUnitsInstructionData> getRequestUnitsInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => RequestUnitsInstructionData(
-      discriminator: map['discriminator']! as int,
-      units: map['units']! as int,
-      additionalFee: map['additionalFee']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        RequestUnitsInstructionData(
+          discriminator: map['discriminator']! as int,
+          units: map['units']! as int,
+          additionalFee: map['additionalFee']! as int,
+        ),
   );
 }
 
-Codec<RequestUnitsInstructionData, RequestUnitsInstructionData> getRequestUnitsInstructionDataCodec() {
-  return combineCodec(getRequestUnitsInstructionDataEncoder(), getRequestUnitsInstructionDataDecoder());
+Codec<RequestUnitsInstructionData, RequestUnitsInstructionData>
+getRequestUnitsInstructionDataCodec() {
+  return combineCodec(
+    getRequestUnitsInstructionDataEncoder(),
+    getRequestUnitsInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [RequestUnits] instruction.
@@ -73,20 +77,20 @@ Instruction getRequestUnitsInstruction({
   required int additionalFee,
 }) {
   final instructionData = RequestUnitsInstructionData(
-      units: units,
-      additionalFee: additionalFee,
+    units: units,
+    additionalFee: additionalFee,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-
-    ],
+    accounts: [],
     data: getRequestUnitsInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [RequestUnits] instruction from raw instruction data.
-RequestUnitsInstructionData parseRequestUnitsInstruction(Instruction instruction) {
+RequestUnitsInstructionData parseRequestUnitsInstruction(
+  Instruction instruction,
+) {
   return getRequestUnitsInstructionDataDecoder().decode(instruction.data!);
 }

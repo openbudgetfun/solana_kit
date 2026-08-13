@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,9 +22,10 @@ class GetMinimumDelegationInstructionData {
   final int discriminator;
 }
 
-Encoder<GetMinimumDelegationInstructionData> getGetMinimumDelegationInstructionDataEncoder() {
+Encoder<GetMinimumDelegationInstructionData>
+getGetMinimumDelegationInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -36,43 +36,49 @@ Encoder<GetMinimumDelegationInstructionData> getGetMinimumDelegationInstructionD
   );
 }
 
-Decoder<GetMinimumDelegationInstructionData> getGetMinimumDelegationInstructionDataDecoder() {
+Decoder<GetMinimumDelegationInstructionData>
+getGetMinimumDelegationInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => GetMinimumDelegationInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        GetMinimumDelegationInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<GetMinimumDelegationInstructionData, GetMinimumDelegationInstructionData> getGetMinimumDelegationInstructionDataCodec() {
-  return combineCodec(getGetMinimumDelegationInstructionDataEncoder(), getGetMinimumDelegationInstructionDataDecoder());
+Codec<GetMinimumDelegationInstructionData, GetMinimumDelegationInstructionData>
+getGetMinimumDelegationInstructionDataCodec() {
+  return combineCodec(
+    getGetMinimumDelegationInstructionDataEncoder(),
+    getGetMinimumDelegationInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [GetMinimumDelegation] instruction.
 Instruction getGetMinimumDelegationInstruction({
   required Address programAddress,
-
-
 }) {
-  final instructionData = GetMinimumDelegationInstructionData(
-
-  );
+  final instructionData = GetMinimumDelegationInstructionData();
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-
-    ],
-    data: getGetMinimumDelegationInstructionDataEncoder().encode(instructionData),
+    accounts: [],
+    data: getGetMinimumDelegationInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [GetMinimumDelegation] instruction from raw instruction data.
-GetMinimumDelegationInstructionData parseGetMinimumDelegationInstruction(Instruction instruction) {
-  return getGetMinimumDelegationInstructionDataDecoder().decode(instruction.data!);
+GetMinimumDelegationInstructionData parseGetMinimumDelegationInstruction(
+  Instruction instruction,
+) {
+  return getGetMinimumDelegationInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

@@ -23,7 +23,10 @@ void main() {
 }
 
 void buildMemoInstruction() {
-  final instruction = getAddMemoInstruction(memo: 'hello from solana_kit');
+  final instruction = getAddMemoInstruction(
+    programAddress: memoProgramAddress,
+    memo: 'hello from solana_kit',
+  );
 
   print('memo program: ${instruction.programAddress}');
   print('memo bytes: ${utf8.decode(instruction.data ?? Uint8List(0))}');
@@ -42,16 +45,20 @@ void buildConfigInstruction() {
 
 void buildAddressLookupTableInstructions() {
   final create = getCreateLookupTableInstruction(
+    programAddress: addressLookupTableProgramAddress,
     address: account,
     authority: authority,
     payer: payer,
+    systemProgram: systemProgramAddress,
     recentSlot: BigInt.from(42),
     bump: 255,
   );
   final extend = getExtendLookupTableInstruction(
+    programAddress: addressLookupTableProgramAddress,
     address: account,
     authority: authority,
     payer: payer,
+    systemProgram: systemProgramAddress,
     addresses: const [secondAccount, thirdAccount],
   );
 
@@ -60,7 +67,8 @@ void buildAddressLookupTableInstructions() {
 }
 
 void buildLoaderInstructions() {
-  final write = getLoaderV3WriteInstruction(
+  final write = getWriteInstruction(
+    programAddress: solanaLoaderV3ProgramProgramAddress,
     bufferAccount: account,
     bufferAuthority: authority,
     offset: 0,

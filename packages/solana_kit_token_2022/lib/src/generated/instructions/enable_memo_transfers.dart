@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -28,7 +27,8 @@ class EnableMemoTransfersInstructionData {
   final int memoTransfersDiscriminator;
 }
 
-Encoder<EnableMemoTransfersInstructionData> getEnableMemoTransfersInstructionDataEncoder() {
+Encoder<EnableMemoTransfersInstructionData>
+getEnableMemoTransfersInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('memoTransfersDiscriminator', getU8Encoder()),
@@ -43,7 +43,8 @@ Encoder<EnableMemoTransfersInstructionData> getEnableMemoTransfersInstructionDat
   );
 }
 
-Decoder<EnableMemoTransfersInstructionData> getEnableMemoTransfersInstructionDataDecoder() {
+Decoder<EnableMemoTransfersInstructionData>
+getEnableMemoTransfersInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('memoTransfersDiscriminator', getU8Decoder()),
@@ -51,15 +52,20 @@ Decoder<EnableMemoTransfersInstructionData> getEnableMemoTransfersInstructionDat
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => EnableMemoTransfersInstructionData(
-      discriminator: map['discriminator']! as int,
-      memoTransfersDiscriminator: map['memoTransfersDiscriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        EnableMemoTransfersInstructionData(
+          discriminator: map['discriminator']! as int,
+          memoTransfersDiscriminator: map['memoTransfersDiscriminator']! as int,
+        ),
   );
 }
 
-Codec<EnableMemoTransfersInstructionData, EnableMemoTransfersInstructionData> getEnableMemoTransfersInstructionDataCodec() {
-  return combineCodec(getEnableMemoTransfersInstructionDataEncoder(), getEnableMemoTransfersInstructionDataDecoder());
+Codec<EnableMemoTransfersInstructionData, EnableMemoTransfersInstructionData>
+getEnableMemoTransfersInstructionDataCodec() {
+  return combineCodec(
+    getEnableMemoTransfersInstructionDataEncoder(),
+    getEnableMemoTransfersInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [EnableMemoTransfers] instruction.
@@ -67,23 +73,26 @@ Instruction getEnableMemoTransfersInstruction({
   required Address programAddress,
   required Address token,
   required Address owner,
-
 }) {
-  final instructionData = EnableMemoTransfersInstructionData(
-
-  );
+  final instructionData = EnableMemoTransfersInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: token, role: AccountRole.writable),
-    AccountMeta(address: owner, role: AccountRole.readonlySigner),
+      AccountMeta(address: token, role: AccountRole.writable),
+      AccountMeta(address: owner, role: AccountRole.readonlySigner),
     ],
-    data: getEnableMemoTransfersInstructionDataEncoder().encode(instructionData),
+    data: getEnableMemoTransfersInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [EnableMemoTransfers] instruction from raw instruction data.
-EnableMemoTransfersInstructionData parseEnableMemoTransfersInstruction(Instruction instruction) {
-  return getEnableMemoTransfersInstructionDataDecoder().decode(instruction.data!);
+EnableMemoTransfersInstructionData parseEnableMemoTransfersInstruction(
+  Instruction instruction,
+) {
+  return getEnableMemoTransfersInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

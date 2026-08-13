@@ -9,14 +9,26 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart';
 
 /// setAndVerifyCollection instruction data.
+/// The Anchor discriminator for the `set_and_verify_collection` instruction.
+const setAndVerifyCollectionInstructionDiscriminator = <int>[
+  235,
+  242,
+  121,
+  216,
+  158,
+  234,
+  180,
+  234,
+];
+
 @immutable
 class setAndVerifyCollectionInstructionData {
   const setAndVerifyCollectionInstructionData({
-    this.discriminator = 17,
+    this.discriminator = setAndVerifyCollectionInstructionDiscriminator,
     required this.metadataArgs,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final MetadataArgs metadataArgs;
 }
 

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -25,7 +24,7 @@ class DeactivateInstructionData {
 
 Encoder<DeactivateInstructionData> getDeactivateInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -38,19 +37,24 @@ Encoder<DeactivateInstructionData> getDeactivateInstructionDataEncoder() {
 
 Decoder<DeactivateInstructionData> getDeactivateInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => DeactivateInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        DeactivateInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<DeactivateInstructionData, DeactivateInstructionData> getDeactivateInstructionDataCodec() {
-  return combineCodec(getDeactivateInstructionDataEncoder(), getDeactivateInstructionDataDecoder());
+Codec<DeactivateInstructionData, DeactivateInstructionData>
+getDeactivateInstructionDataCodec() {
+  return combineCodec(
+    getDeactivateInstructionDataEncoder(),
+    getDeactivateInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [Deactivate] instruction.
@@ -59,18 +63,15 @@ Instruction getDeactivateInstruction({
   required Address stake,
   required Address clockSysvar,
   required Address stakeAuthority,
-
 }) {
-  final instructionData = DeactivateInstructionData(
-
-  );
+  final instructionData = DeactivateInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: stake, role: AccountRole.writable),
-    AccountMeta(address: clockSysvar, role: AccountRole.readonly),
-    AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(address: stake, role: AccountRole.writable),
+      AccountMeta(address: clockSysvar, role: AccountRole.readonly),
+      AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
     ],
     data: getDeactivateInstructionDataEncoder().encode(instructionData),
   );

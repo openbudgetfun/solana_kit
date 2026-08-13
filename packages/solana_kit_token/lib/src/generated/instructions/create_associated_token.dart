@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -23,7 +22,8 @@ class CreateAssociatedTokenInstructionData {
   final int discriminator;
 }
 
-Encoder<CreateAssociatedTokenInstructionData> getCreateAssociatedTokenInstructionDataEncoder() {
+Encoder<CreateAssociatedTokenInstructionData>
+getCreateAssociatedTokenInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,21 +36,30 @@ Encoder<CreateAssociatedTokenInstructionData> getCreateAssociatedTokenInstructio
   );
 }
 
-Decoder<CreateAssociatedTokenInstructionData> getCreateAssociatedTokenInstructionDataDecoder() {
+Decoder<CreateAssociatedTokenInstructionData>
+getCreateAssociatedTokenInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateAssociatedTokenInstructionData(
-      discriminator: map['discriminator']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        CreateAssociatedTokenInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 
-Codec<CreateAssociatedTokenInstructionData, CreateAssociatedTokenInstructionData> getCreateAssociatedTokenInstructionDataCodec() {
-  return combineCodec(getCreateAssociatedTokenInstructionDataEncoder(), getCreateAssociatedTokenInstructionDataDecoder());
+Codec<
+  CreateAssociatedTokenInstructionData,
+  CreateAssociatedTokenInstructionData
+>
+getCreateAssociatedTokenInstructionDataCodec() {
+  return combineCodec(
+    getCreateAssociatedTokenInstructionDataEncoder(),
+    getCreateAssociatedTokenInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [CreateAssociatedToken] instruction.
@@ -62,27 +71,30 @@ Instruction getCreateAssociatedTokenInstruction({
   required Address mint,
   required Address systemProgram,
   required Address tokenProgram,
-
 }) {
-  final instructionData = CreateAssociatedTokenInstructionData(
-
-  );
+  final instructionData = CreateAssociatedTokenInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: payer, role: AccountRole.writableSigner),
-    AccountMeta(address: ata, role: AccountRole.writable),
-    AccountMeta(address: owner, role: AccountRole.readonly),
-    AccountMeta(address: mint, role: AccountRole.readonly),
-    AccountMeta(address: systemProgram, role: AccountRole.readonly),
-    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+      AccountMeta(address: payer, role: AccountRole.writableSigner),
+      AccountMeta(address: ata, role: AccountRole.writable),
+      AccountMeta(address: owner, role: AccountRole.readonly),
+      AccountMeta(address: mint, role: AccountRole.readonly),
+      AccountMeta(address: systemProgram, role: AccountRole.readonly),
+      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
-    data: getCreateAssociatedTokenInstructionDataEncoder().encode(instructionData),
+    data: getCreateAssociatedTokenInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [CreateAssociatedToken] instruction from raw instruction data.
-CreateAssociatedTokenInstructionData parseCreateAssociatedTokenInstruction(Instruction instruction) {
-  return getCreateAssociatedTokenInstructionDataDecoder().decode(instruction.data!);
+CreateAssociatedTokenInstructionData parseCreateAssociatedTokenInstruction(
+  Instruction instruction,
+) {
+  return getCreateAssociatedTokenInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

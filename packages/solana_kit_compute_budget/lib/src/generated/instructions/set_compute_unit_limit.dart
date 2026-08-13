@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -25,7 +24,8 @@ class SetComputeUnitLimitInstructionData {
   final int units;
 }
 
-Encoder<SetComputeUnitLimitInstructionData> getSetComputeUnitLimitInstructionDataEncoder() {
+Encoder<SetComputeUnitLimitInstructionData>
+getSetComputeUnitLimitInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('units', getU32Encoder()),
@@ -40,7 +40,8 @@ Encoder<SetComputeUnitLimitInstructionData> getSetComputeUnitLimitInstructionDat
   );
 }
 
-Decoder<SetComputeUnitLimitInstructionData> getSetComputeUnitLimitInstructionDataDecoder() {
+Decoder<SetComputeUnitLimitInstructionData>
+getSetComputeUnitLimitInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('units', getU32Decoder()),
@@ -48,15 +49,20 @@ Decoder<SetComputeUnitLimitInstructionData> getSetComputeUnitLimitInstructionDat
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => SetComputeUnitLimitInstructionData(
-      discriminator: map['discriminator']! as int,
-      units: map['units']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SetComputeUnitLimitInstructionData(
+          discriminator: map['discriminator']! as int,
+          units: map['units']! as int,
+        ),
   );
 }
 
-Codec<SetComputeUnitLimitInstructionData, SetComputeUnitLimitInstructionData> getSetComputeUnitLimitInstructionDataCodec() {
-  return combineCodec(getSetComputeUnitLimitInstructionDataEncoder(), getSetComputeUnitLimitInstructionDataDecoder());
+Codec<SetComputeUnitLimitInstructionData, SetComputeUnitLimitInstructionData>
+getSetComputeUnitLimitInstructionDataCodec() {
+  return combineCodec(
+    getSetComputeUnitLimitInstructionDataEncoder(),
+    getSetComputeUnitLimitInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [SetComputeUnitLimit] instruction.
@@ -66,19 +72,23 @@ Instruction getSetComputeUnitLimitInstruction({
   required int units,
 }) {
   final instructionData = SetComputeUnitLimitInstructionData(
-      units: units,
+    units: units,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-
-    ],
-    data: getSetComputeUnitLimitInstructionDataEncoder().encode(instructionData),
+    accounts: [],
+    data: getSetComputeUnitLimitInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [SetComputeUnitLimit] instruction from raw instruction data.
-SetComputeUnitLimitInstructionData parseSetComputeUnitLimitInstruction(Instruction instruction) {
-  return getSetComputeUnitLimitInstructionDataDecoder().decode(instruction.data!);
+SetComputeUnitLimitInstructionData parseSetComputeUnitLimitInstruction(
+  Instruction instruction,
+) {
+  return getSetComputeUnitLimitInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }

@@ -14,7 +14,8 @@ void main() {
     test('returns planning failures as structured outcomes', () async {
       final boundary = createTransactionExecutionBoundary(
         TransactionExecutionBoundaryConfig(
-          planTransactions: (_) async => throw StateError('planning failed'),
+          planTransactions: (_, {maxInstructionsPerTransaction}) async =>
+              throw StateError('planning failed'),
           signTransactionMessage: (_) async => throw UnimplementedError(),
           sendSignedTransaction: (_) async => throw UnimplementedError(),
         ),
@@ -40,7 +41,8 @@ void main() {
       final message = _createMessage();
       final boundary = createTransactionExecutionBoundary(
         TransactionExecutionBoundaryConfig(
-          planTransactions: (_) async => singleTransactionPlan(message),
+          planTransactions: (_, {maxInstructionsPerTransaction}) async =>
+              singleTransactionPlan(message),
           signTransactionMessage: (_) async =>
               throw StateError('signing failed'),
           sendSignedTransaction: (_) async => throw UnimplementedError(),
@@ -65,7 +67,8 @@ void main() {
       final message = _createMessage(feePayer: feePayer.address);
       final boundary = createTransactionExecutionBoundary(
         TransactionExecutionBoundaryConfig(
-          planTransactions: (_) async => singleTransactionPlan(message),
+          planTransactions: (_, {maxInstructionsPerTransaction}) async =>
+              singleTransactionPlan(message),
           signTransactionMessage: (_) async => signTransactionWithSigners(
             <Object>[feePayer],
             compileTransaction(message),
@@ -124,7 +127,8 @@ void main() {
 
       final boundary = createTransactionExecutionBoundary(
         TransactionExecutionBoundaryConfig(
-          planTransactions: (_) async => singleTransactionPlan(message),
+          planTransactions: (_, {maxInstructionsPerTransaction}) async =>
+              singleTransactionPlan(message),
           signTransactionMessage: (_) async {
             throw SolanaError(
               SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan,

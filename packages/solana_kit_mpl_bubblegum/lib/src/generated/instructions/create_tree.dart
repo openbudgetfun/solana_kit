@@ -11,16 +11,28 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// CreateTree instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `create_tree` instruction.
+const CreateTreeInstructionDiscriminator = <int>[
+  165,
+  83,
+  136,
+  142,
+  89,
+  202,
+  47,
+  220,
+];
+
 @immutable
 class CreateTreeInstructionData {
   const CreateTreeInstructionData({
-    this.discriminator = 6,
+    this.discriminator = CreateTreeInstructionDiscriminator,
     required this.maxDepth,
     required this.maxBufferSize,
     this.public,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final int maxDepth;
   final int maxBufferSize;
   final bool? public;
@@ -28,6 +40,10 @@ class CreateTreeInstructionData {
 
 Encoder<CreateTreeInstructionData> getCreateTreeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    (
+      'discriminator',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
     ('maxDepth', getU32Encoder()),
     ('maxBufferSize', getU32Encoder()),
     ('public', getNullableEncoder(getBooleanEncoder())),
@@ -46,7 +62,10 @@ Encoder<CreateTreeInstructionData> getCreateTreeInstructionDataEncoder() {
 
 Decoder<CreateTreeInstructionData> getCreateTreeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
     ('maxDepth', getU32Decoder()),
     ('maxBufferSize', getU32Decoder()),
     ('public', getNullableDecoder(getBooleanDecoder())),
@@ -56,7 +75,7 @@ Decoder<CreateTreeInstructionData> getCreateTreeInstructionDataDecoder() {
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         CreateTreeInstructionData(
-          discriminator: map['discriminator']! as int,
+          discriminator: map['discriminator']! as List<int>,
           maxDepth: map['maxDepth']! as int,
           maxBufferSize: map['maxBufferSize']! as int,
           public: map['public']! as bool?,

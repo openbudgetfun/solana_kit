@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -25,10 +24,17 @@ class ExtendLookupTableInstructionData {
   final List<Address> addresses;
 }
 
-Encoder<ExtendLookupTableInstructionData> getExtendLookupTableInstructionDataEncoder() {
+Encoder<ExtendLookupTableInstructionData>
+getExtendLookupTableInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
-    ('addresses', getArrayEncoder(getAddressEncoder(), size: PrefixedArraySize(getU64Encoder()))),
+    (
+      'addresses',
+      getArrayEncoder(
+        getAddressEncoder(),
+        size: PrefixedArraySize(getU64Encoder()),
+      ),
+    ),
   ]);
 
   return transformEncoder(
@@ -40,23 +46,35 @@ Encoder<ExtendLookupTableInstructionData> getExtendLookupTableInstructionDataEnc
   );
 }
 
-Decoder<ExtendLookupTableInstructionData> getExtendLookupTableInstructionDataDecoder() {
+Decoder<ExtendLookupTableInstructionData>
+getExtendLookupTableInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
-    ('addresses', getArrayDecoder(getAddressDecoder(), size: PrefixedArraySize(getU64Decoder()))),
+    (
+      'addresses',
+      getArrayDecoder(
+        getAddressDecoder(),
+        size: PrefixedArraySize(getU64Decoder()),
+      ),
+    ),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ExtendLookupTableInstructionData(
-      discriminator: map['discriminator']! as int,
-      addresses: map['addresses']! as List<Address>,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        ExtendLookupTableInstructionData(
+          discriminator: map['discriminator']! as int,
+          addresses: map['addresses']! as List<Address>,
+        ),
   );
 }
 
-Codec<ExtendLookupTableInstructionData, ExtendLookupTableInstructionData> getExtendLookupTableInstructionDataCodec() {
-  return combineCodec(getExtendLookupTableInstructionDataEncoder(), getExtendLookupTableInstructionDataDecoder());
+Codec<ExtendLookupTableInstructionData, ExtendLookupTableInstructionData>
+getExtendLookupTableInstructionDataCodec() {
+  return combineCodec(
+    getExtendLookupTableInstructionDataEncoder(),
+    getExtendLookupTableInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [ExtendLookupTable] instruction.
@@ -69,22 +87,24 @@ Instruction getExtendLookupTableInstruction({
   required List<Address> addresses,
 }) {
   final instructionData = ExtendLookupTableInstructionData(
-      addresses: addresses,
+    addresses: addresses,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: address, role: AccountRole.writable),
-    AccountMeta(address: authority, role: AccountRole.readonlySigner),
-    AccountMeta(address: payer, role: AccountRole.writableSigner),
-    AccountMeta(address: systemProgram, role: AccountRole.readonly),
+      AccountMeta(address: address, role: AccountRole.writable),
+      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(address: payer, role: AccountRole.writableSigner),
+      AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
     data: getExtendLookupTableInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [ExtendLookupTable] instruction from raw instruction data.
-ExtendLookupTableInstructionData parseExtendLookupTableInstruction(Instruction instruction) {
+ExtendLookupTableInstructionData parseExtendLookupTableInstruction(
+  Instruction instruction,
+) {
   return getExtendLookupTableInstructionDataDecoder().decode(instruction.data!);
 }
