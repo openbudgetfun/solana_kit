@@ -73,8 +73,11 @@ Encoder<List<T>> getArrayEncoder<T>(
       } else if (prefixObject is Encoder<num>) {
         offset = prefixObject.write(array.length, bytes, offset);
       } else {
+        // Unreachable through the public API: the size-computation closure
+        // casts the prefix to `Encoder<num>` first, so this guard is defensive.
         throw StateError(
-          'Unsupported array prefix encoder: ${prefixObject.runtimeType}',
+          // coverage:ignore-line
+          'Unsupported array prefix encoder: ${prefixObject.runtimeType}', // coverage:ignore-line
         );
       }
     }

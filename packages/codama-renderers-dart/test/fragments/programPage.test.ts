@@ -1,11 +1,20 @@
 import {
   accountNode,
+  booleanTypeNode,
+  booleanValueNode,
+  bytesTypeNode,
+  bytesValueNode,
+  constantDiscriminatorNode,
+  constantValueNode,
   fieldDiscriminatorNode,
   instructionArgumentNode,
   instructionNode,
   numberTypeNode,
   numberValueNode,
   programNode,
+  sizeDiscriminatorNode,
+  stringTypeNode,
+  stringValueNode,
   structFieldTypeNode,
   structTypeNode,
 } from "@codama/nodes";
@@ -192,6 +201,107 @@ describe("getProgramPageFragment", () => {
     expect(frag.content).toContain(
       "getU64Encoder().encode(BigInt.from(3))",
     );
+  });
+
+  it("renders size and constant discriminator conditions", () => {
+    const node = programNode({
+      name: "myProgram",
+      publicKey: "MyProgram1111111111111111111111111111111111",
+      instructions: [
+        instructionNode({
+          name: "bySize",
+          accounts: [],
+          arguments: [],
+          discriminators: [sizeDiscriminatorNode(8)],
+        }),
+        instructionNode({
+          name: "byConstant",
+          accounts: [],
+          arguments: [],
+          discriminators: [
+            constantDiscriminatorNode(
+              constantValueNode(numberTypeNode("u32"), numberValueNode(42)),
+              0,
+            ),
+          ],
+        }),
+      ],
+    });
+    const frag = getProgramPageFragment(node, createScope());
+
+    expect(frag.content).toContain("data.length == 8");
+    expect(frag.content).toContain("containsBytes(data, getU32Encoder().encode(42), 0)");
+  });
+
+  it("renders boolean, string, and bytes value fragments", () => {
+    const node = programNode({
+      name: "myProgram",
+      publicKey: "MyProgram1111111111111111111111111111111111",
+      instructions: [
+        instructionNode({
+          name: "byBool",
+          accounts: [],
+          arguments: [],
+          discriminators: [
+            constantDiscriminatorNode(
+              constantValueNode(booleanTypeNode(), booleanValueNode(true)),
+              0,
+            ),
+          ],
+        }),
+        instructionNode({
+          name: "byString",
+          accounts: [],
+          arguments: [],
+          discriminators: [
+            constantDiscriminatorNode(
+              constantValueNode(stringTypeNode("utf8"), stringValueNode("hi")),
+              0,
+            ),
+          ],
+        }),
+        instructionNode({
+          name: "byBytes",
+          accounts: [],
+          arguments: [],
+          discriminators: [
+            constantDiscriminatorNode(
+              constantValueNode(bytesTypeNode(), bytesValueNode("base16", "0x0102")),
+              0,
+            ),
+          ],
+        }),
+      ],
+    });
+    const frag = getProgramPageFragment(node, createScope());
+
+    expect(frag.content).toContain("encode(true)");
+    expect(frag.content).toContain("encode('hi')");
+    expect(frag.content).toContain("Uint8List.fromList([1, 2])");
+  });
+
+  it("renders an int number value fragment", () => {
+    const node = programNode({
+      name: "myProgram",
+      publicKey: "MyProgram1111111111111111111111111111111111",
+      instructions: [
+        instructionNode({
+          name: "byInt",
+          accounts: [],
+          arguments: [
+            instructionArgumentNode({
+              name: "discriminator",
+              type: numberTypeNode("u8"),
+              defaultValue: numberValueNode(7),
+            }),
+          ],
+          discriminators: [fieldDiscriminatorNode("discriminator", 0)],
+        }),
+      ],
+    });
+    const frag = getProgramPageFragment(node, createScope());
+
+    expect(frag.content).toContain("getU8Encoder().encode(7)");
   });
 
   it("does not generate instruction helpers without discriminators", () => {

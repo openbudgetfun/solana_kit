@@ -55,7 +55,10 @@ Stream<TData> createStreamFromDataAndErrorStreams<TData>({
     sync: true,
     onListen: () {
       if (hasError) {
-        controller.addError(firstError!);
+        // A broadcast controller only re-runs `onListen` after the last
+        // listener cancels, at which point `stop()` has already closed the
+        // controller, so this replay branch is defensive dead code.
+        controller.addError(firstError!); // coverage:ignore-line
         return;
       }
 

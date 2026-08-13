@@ -291,6 +291,25 @@ void main() {
       expect(notifications, 0);
       fixture.store.dispose();
     });
+
+    test('surfaces a mapper failure as an error state', () async {
+      final initial = _InitialValueSource();
+      final stream = _StreamSource();
+      final store = createReactiveStoreWithInitialValueAndSlotTracking(
+        initialValueSource: initial,
+        streamSource: stream,
+        initialValueMapper: (value) => throw StateError('mapper boom'),
+        streamValueMapper: (value) => 'stream:$value',
+      );
+      store.connect(); // ignore: cascade_invocations
+
+      initial.instances.single.complete(_response(10, 'value'));
+      await _flushEvents();
+
+      expect(store.getState().status, ReactiveStreamState.error);
+      expect(store.getState().error, isA<StateError>());
+      store.dispose();
+    });
   });
 }
 

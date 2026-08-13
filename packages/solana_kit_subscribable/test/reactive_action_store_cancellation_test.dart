@@ -286,5 +286,104 @@ void main() {
         ..dispatch([]);
       expect(notifications, 1);
     });
+
+    test('formats the cancellation exception message', () {
+      const exception = ReactiveActionCancellationException('cancelled');
+      expect(
+        exception.toString(),
+        'ReactiveActionCancellationException: cancelled',
+      );
+    });
+
+    test(
+      'withSignal view fire-and-forget dispatch consumes failures',
+      () async {
+        final uncaught = <Object>[];
+        late ReactiveActionStore<List<Object?>, String> store;
+
+        await runZonedGuarded(() async {
+          final source = CancellationTokenSource();
+          store = createReactiveActionStore<List<Object?>, String>(
+            (signal, args) async => throw StateError('boom'),
+          )..withSignal(source.token).dispatch([]);
+          await pumpEventQueue();
+        }, (error, _) => uncaught.add(error));
+
+        expect(uncaught, isEmpty);
+        expect(store.getState().status, ReactiveActionState.error);
+        expect(store.getState().error, isA<StateError>());
+      },
+    );
+
+    test(
+      'an internally cancelled dispatch that completes late throws its reason',
+      () async {
+        // The action resolves immediately, so its completion microtask is
+        // scheduled before the supersession signal fires; the superseded
+        // dispatch must surface the internal cancellation reason.
+        final store = createReactiveActionStore<List<Object?>, String>(
+          (signal, args) => Future.value('stale'),
+        );
+
+        final first = store.dispatchAsync([]);
+        final firstExpectation = expectLater(
+          first,
+          throwsA(isA<ReactiveActionCancellationException>()),
+        );
+        final second = store.dispatchAsync([]);
+        expect(await second, 'stale');
+
+        await firstExpectation;
+        expect(store.getState().result, 'stale');
+      },
+    );
+
+    test(
+      'caller cancellation without a reason surfaces a default exception',
+      () async {
+        final source = CancellationTokenSource();
+        final pending = Completer<String>();
+        final store = createReactiveActionStore<List<Object?>, String>(
+          (signal, args) => pending.future,
+        );
+
+        final dispatched = store.withSignal(source.token).dispatchAsync([]);
+        // Cancel without a reason, then let the action win the race so the
+        // dispatch observes the cancelled signal with a null reason.
+        source.cancel();
+        pending.complete('late');
+
+        await expectLater(
+          dispatched,
+          throwsA(
+            isA<ReactiveActionCancellationException>().having(
+              (e) => e.message,
+              'message',
+              'cancelled by the caller',
+            ),
+          ),
+        );
+        expect(store.getState().status, ReactiveActionState.error);
+      },
+    );
+
+    test(
+      'caller cancellation with a reason is surfaced when the action wins',
+      () async {
+        final source = CancellationTokenSource();
+        final reason = StateError('caller stopped');
+        final pending = Completer<String>();
+        final store = createReactiveActionStore<List<Object?>, String>(
+          (signal, args) => pending.future,
+        );
+
+        final dispatched = store.withSignal(source.token).dispatchAsync([]);
+        source.cancel(reason);
+        pending.complete('late');
+
+        await expectLater(dispatched, throwsA(same(reason)));
+        expect(store.getState().error, same(reason));
+      },
+    );
   });
 }

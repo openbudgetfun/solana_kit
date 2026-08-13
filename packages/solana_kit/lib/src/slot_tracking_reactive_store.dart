@@ -60,7 +60,9 @@ createReactiveStoreWithInitialValueAndSlotTracking<
       }
 
       if (connectionSignal.isCancelled) {
-        innerSource.cancel(connectionSignal.reason);
+        // The publisher runs synchronously with a fresh per-connection signal,
+        // so this branch is defensive dead code.
+        innerSource.cancel(connectionSignal.reason); // coverage:ignore-line
       } else {
         unawaited(
           connectionSignal.future.then(

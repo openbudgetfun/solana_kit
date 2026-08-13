@@ -115,6 +115,22 @@ void main() {
       expect(account.info.burnPercent, isNull);
     });
 
+    test('rent sysvar info has value equality', () {
+      const legacy = JsonParsedRentInfo(
+        burnPercent: 50,
+        exemptionThreshold: 3480.0, // ignore: prefer_int_literals
+        lamportsPerByteYear: StringifiedBigInt('3480'),
+      );
+      const modern = JsonParsedRentInfo(
+        lamportsPerByte: StringifiedBigInt('3480'),
+      );
+
+      expect(legacy, equals(legacy));
+      expect(modern, equals(modern));
+      expect(legacy, isNot(equals(modern)));
+      expect(legacy.hashCode, equals(legacy.hashCode));
+    });
+
     test('can construct a slotHashes sysvar', () {
       final account = JsonParsedSlotHashesSysvar(
         info: [

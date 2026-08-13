@@ -225,21 +225,16 @@ class ReactiveActionStore<TArgs extends List<Object?>, TResult> {
   ) {
     final completer = Completer<TResult>();
     unawaited(
-      action
-          .then<void>(
-            (result) {
-              if (!completer.isCompleted) completer.complete(result);
-            },
-            onError: (Object error, StackTrace stackTrace) {
-              if (!completer.isCompleted) {
-                completer.completeError(error, stackTrace);
-              }
-            },
-          )
-          .then<void>(
-            (_) {},
-            onError: (Object _, StackTrace _) {},
-          ),
+      action.then<void>(
+        (result) {
+          if (!completer.isCompleted) completer.complete(result);
+        },
+        onError: (Object error, StackTrace stackTrace) {
+          if (!completer.isCompleted) {
+            completer.completeError(error, stackTrace);
+          }
+        },
+      ),
     );
     dispatch.signal.future.then((_) {
       if (!completer.isCompleted) {

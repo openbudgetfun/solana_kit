@@ -214,5 +214,120 @@ void main() {
       store.dispose();
       expect(store.connect, throwsStateError);
     });
+
+    test(
+      'exposes the isLoading getter while a connection is opening',
+      () async {
+        final dataController = StreamController<int>.broadcast(sync: true);
+        final store = createReactiveStreamStore<int>(
+          createDataPublisher: (_) async => ReactiveStreamConnection<int>(
+            dataStream: dataController.stream,
+            errorStream: const Stream<Object?>.empty(),
+          ),
+        );
+        store.connect();
+        expect(store.getState().isLoading, isTrue);
+        await pump();
+        dataController.add(1);
+        await pump();
+        expect(store.getState().isLoading, isFalse);
+        expect(store.getState().isLoaded, isTrue);
+        await dataController.close();
+        store.dispose();
+      },
+    );
+
+    test(
+      'withSignal short-circuits to error when the caller token is cancelled',
+      () async {
+        final source = CancellationTokenSource()..cancel(StateError('stopped'));
+        final store = createReactiveStreamStore<int>(
+          createDataPublisher: (_) async => const ReactiveStreamConnection<int>(
+            dataStream: Stream<int>.empty(),
+            errorStream: Stream<Object?>.empty(),
+          ),
+        );
+
+        store.withSignal(source.token)();
+        expect(store.getState().status, ReactiveStreamState.error);
+        expect(store.getState().error, isA<StateError>());
+        expect(store.getState().isError, isTrue);
+        store.dispose();
+      },
+    );
+
+    test(
+      'ignores null error events from the connection error stream',
+      () async {
+        final dataController = StreamController<int>.broadcast(sync: true);
+        final errorController = StreamController<Object?>.broadcast(sync: true);
+        final store = createReactiveStreamStore<int>(
+          createDataPublisher: (_) async => ReactiveStreamConnection<int>(
+            dataStream: dataController.stream,
+            errorStream: errorController.stream,
+          ),
+        );
+        store.connect();
+        await pump(3);
+
+        errorController.add(null);
+        await pump();
+        expect(store.getState().status, ReactiveStreamState.loading);
+        expect(store.getState().error, isNull);
+
+        dataController.add(7);
+        await pump();
+        expect(store.getState().data, 7);
+        await dataController.close();
+        await errorController.close();
+        store.dispose();
+      },
+    );
+
+    test(
+      'surfaces a synchronous publisher failure as an error state',
+      () async {
+        final store = createReactiveStreamStore<int>(
+          createDataPublisher: (_) async => throw StateError('publisher boom'),
+        );
+        store.connect();
+        await pump();
+
+        expect(store.getState().status, ReactiveStreamState.error);
+        expect(store.getState().error, isA<StateError>());
+        store.dispose();
+      },
+    );
+
+    test('surfaces a data stream error as an error state', () async {
+      final dataController = StreamController<int>.broadcast(sync: true);
+      final store = createReactiveStreamStore<int>(
+        createDataPublisher: (_) async => ReactiveStreamConnection<int>(
+          dataStream: dataController.stream,
+          errorStream: const Stream<Object?>.empty(),
+        ),
+      );
+      store.connect();
+      await pump(3);
+
+      dataController.addError(StateError('stream boom'));
+      await pump();
+      expect(store.getState().status, ReactiveStreamState.error);
+      expect(store.getState().error, isA<StateError>());
+      await dataController.close();
+      store.dispose();
+    });
+
+    test('subscribe after dispose returns a no-op unsubscribe', () {
+      final store = createReactiveStreamStore<int>(
+        createDataPublisher: (_) async => const ReactiveStreamConnection<int>(
+          dataStream: Stream<int>.empty(),
+          errorStream: Stream<Object?>.empty(),
+        ),
+      );
+      store.dispose();
+      final unsubscribe = store.subscribe(() {});
+      expect(unsubscribe, returnsNormally);
+    });
   });
 }
