@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_constructors_first
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
