@@ -11,7 +11,30 @@ library;
 
 export 'package:solana_kit_associated_token_account/solana_kit_associated_token_account.dart';
 
-export 'src/generated/token_2022.dart';
+export 'src/generated/token_2022.dart'
+    hide
+        AssociatedTokenInstruction,
+        CreateAssociatedTokenIdempotentInstructionData,
+        CreateAssociatedTokenInstructionData,
+        RecoverNestedAssociatedTokenInstructionData,
+        associatedTokenErrorInvalidOwner,
+        getAssociatedTokenErrorMessage,
+        getCreateAssociatedTokenIdempotentInstruction,
+        getCreateAssociatedTokenIdempotentInstructionDataCodec,
+        getCreateAssociatedTokenIdempotentInstructionDataDecoder,
+        getCreateAssociatedTokenIdempotentInstructionDataEncoder,
+        getCreateAssociatedTokenInstruction,
+        getCreateAssociatedTokenInstructionDataCodec,
+        getCreateAssociatedTokenInstructionDataDecoder,
+        getCreateAssociatedTokenInstructionDataEncoder,
+        getRecoverNestedAssociatedTokenInstruction,
+        getRecoverNestedAssociatedTokenInstructionDataCodec,
+        getRecoverNestedAssociatedTokenInstructionDataDecoder,
+        getRecoverNestedAssociatedTokenInstructionDataEncoder,
+        isAssociatedTokenError,
+        parseCreateAssociatedTokenIdempotentInstruction,
+        parseCreateAssociatedTokenInstruction,
+        parseRecoverNestedAssociatedTokenInstruction;
 export 'src/get_initialize_instructions_for_extensions.dart';
 export 'src/get_mint_size.dart';
 export 'src/get_token_size.dart';

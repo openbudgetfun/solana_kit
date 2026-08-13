@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -42,19 +43,14 @@ Decoder<UnstakeInstructionData> getUnstakeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        UnstakeInstructionData(
-          discriminator: map['discriminator']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => UnstakeInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
   );
 }
 
-Codec<UnstakeInstructionData, UnstakeInstructionData>
-getUnstakeInstructionDataCodec() {
-  return combineCodec(
-    getUnstakeInstructionDataEncoder(),
-    getUnstakeInstructionDataDecoder(),
-  );
+Codec<UnstakeInstructionData, UnstakeInstructionData> getUnstakeInstructionDataCodec() {
+  return combineCodec(getUnstakeInstructionDataEncoder(), getUnstakeInstructionDataDecoder());
 }
 
 /// Creates a [Unstake] instruction.
@@ -66,18 +62,21 @@ Instruction getUnstakeInstruction({
   required Address poolTokenAccount,
   required Address stakerTokenAccount,
   required Address tokenProgram,
+
 }) {
-  final instructionData = UnstakeInstructionData();
+  final instructionData = UnstakeInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: pool, role: AccountRole.writable),
-      AccountMeta(address: stakeAccount, role: AccountRole.writable),
-      AccountMeta(address: staker, role: AccountRole.writableSigner),
-      AccountMeta(address: poolTokenAccount, role: AccountRole.writable),
-      AccountMeta(address: stakerTokenAccount, role: AccountRole.writable),
-      AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+    AccountMeta(address: pool, role: AccountRole.writable),
+    AccountMeta(address: stakeAccount, role: AccountRole.writable),
+    AccountMeta(address: staker, role: AccountRole.writableSigner),
+    AccountMeta(address: poolTokenAccount, role: AccountRole.writable),
+    AccountMeta(address: stakerTokenAccount, role: AccountRole.writable),
+    AccountMeta(address: tokenProgram, role: AccountRole.readonly),
     ],
     data: getUnstakeInstructionDataEncoder().encode(instructionData),
   );
