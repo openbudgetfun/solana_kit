@@ -361,7 +361,7 @@ inputs = [
   { name = "publish_release", help_text = "Whether to publish the GitHub release object for the release tag", type = "boolean", default = false },
 ]
 steps = [
-  { type = "Command", name = "check GitHub token", command = "{ [ -n \"${GH_TOKEN:-}\" ] || [ -n \"${GITHUB_TOKEN:-}\" ] || { command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; }; } || { echo 'No GitHub token found. Set GH_TOKEN or GITHUB_TOKEN, or run: gh auth login. Aborting release to avoid a partial state.' >&2; exit 1; }" },
+  { type = "Command", name = "check GitHub token", command = "bash -c 'if [ -n \"${GH_TOKEN:-}\" ] || [ -n \"${GITHUB_TOKEN:-}\" ]; then exit 0; fi; if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then exit 0; fi; echo \"No GitHub token found. Set GH_TOKEN or GITHUB_TOKEN, or run: gh auth login. Aborting release to avoid a partial state.\" >&2; exit 1'", dry_run_command = "echo 'GitHub token check skipped in dry-run'" },
   { type = "PrepareRelease", name = "plan release", allow_empty_changesets = true },
   { type = "Command", name = "sync dependency versions", when = "{{ number_of_changesets > 0 }}", command = "monochange versions sync" },
   { type = "Command", name = "update flutter lockfiles", when = "{{ number_of_changesets > 0 }}", command = "flutter pub get" },
@@ -371,4 +371,12 @@ steps = [
   { type = "Command", name = "push release commit", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.push}}", command = "git push" },
   { type = "TagRelease", name = "create and push release tags", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.tag }}", inputs = { from = "HEAD", push = true, format = "json" } },
   { type = "PublishRelease", name = "publish GitHub release", when = "{{ number_of_changesets > 0 && inputs.commit && inputs.tag && inputs.publish_release }}", inputs = { from-ref = "HEAD", draft = false, format = "json" } },
+]
+
+[cli.publish]
+help_text = "Publish Dart packages with melos and the npm renderer with pnpm"
+steps = [
+  { type = "Command", name = "publish dart packages", command = "melos publish --no-dry-run --yes", dry_run_command = "melos publish --yes" },
+  { type = "Command", name = "build npm renderer", command = "pnpm --filter codama-renderers-dart build", dry_run_command = "pnpm --filter codama-renderers-dart build" },
+  { type = "Command", name = "publish npm renderer", command = "pnpm --filter codama-renderers-dart publish --no-git-checks", dry_run_command = "pnpm --filter codama-renderers-dart publish --no-git-checks --dry-run" },
 ]
