@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -15,7 +16,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class RevokeInstructionData {
-  const RevokeInstructionData({this.discriminator = 5});
+  const RevokeInstructionData({
+    this.discriminator = 5,
+  });
 
   final int discriminator;
 }
@@ -40,17 +43,14 @@ Decoder<RevokeInstructionData> getRevokeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        RevokeInstructionData(discriminator: map['discriminator']! as int),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => RevokeInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
   );
 }
 
-Codec<RevokeInstructionData, RevokeInstructionData>
-getRevokeInstructionDataCodec() {
-  return combineCodec(
-    getRevokeInstructionDataEncoder(),
-    getRevokeInstructionDataDecoder(),
-  );
+Codec<RevokeInstructionData, RevokeInstructionData> getRevokeInstructionDataCodec() {
+  return combineCodec(getRevokeInstructionDataEncoder(), getRevokeInstructionDataDecoder());
 }
 
 /// Creates a [Revoke] instruction.
@@ -58,14 +58,17 @@ Instruction getRevokeInstruction({
   required Address programAddress,
   required Address source,
   required Address owner,
+
 }) {
-  final instructionData = RevokeInstructionData();
+  final instructionData = RevokeInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: source, role: AccountRole.writable),
-      AccountMeta(address: owner, role: AccountRole.readonlySigner),
+    AccountMeta(address: source, role: AccountRole.writable),
+    AccountMeta(address: owner, role: AccountRole.readonlySigner),
     ],
     data: getRevokeInstructionDataEncoder().encode(instructionData),
   );

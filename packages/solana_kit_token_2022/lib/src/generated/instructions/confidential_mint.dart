@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -42,8 +43,7 @@ class ConfidentialMintInstructionData {
   final int rangeProofInstructionOffset;
 }
 
-Encoder<ConfidentialMintInstructionData>
-getConfidentialMintInstructionDataEncoder() {
+Encoder<ConfidentialMintInstructionData> getConfidentialMintInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialMintBurnDiscriminator', getU8Encoder()),
@@ -59,21 +59,18 @@ getConfidentialMintInstructionDataEncoder() {
     structEncoder,
     (ConfidentialMintInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialMintBurnDiscriminator':
-          value.confidentialMintBurnDiscriminator,
+      'confidentialMintBurnDiscriminator': value.confidentialMintBurnDiscriminator,
       'newDecryptableSupply': value.newDecryptableSupply,
       'mintAmountAuditorCiphertextLo': value.mintAmountAuditorCiphertextLo,
       'mintAmountAuditorCiphertextHi': value.mintAmountAuditorCiphertextHi,
       'equalityProofInstructionOffset': value.equalityProofInstructionOffset,
-      'ciphertextValidityProofInstructionOffset':
-          value.ciphertextValidityProofInstructionOffset,
+      'ciphertextValidityProofInstructionOffset': value.ciphertextValidityProofInstructionOffset,
       'rangeProofInstructionOffset': value.rangeProofInstructionOffset,
     },
   );
 }
 
-Decoder<ConfidentialMintInstructionData>
-getConfidentialMintInstructionDataDecoder() {
+Decoder<ConfidentialMintInstructionData> getConfidentialMintInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialMintBurnDiscriminator', getU8Decoder()),
@@ -87,34 +84,21 @@ getConfidentialMintInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (
-      Map<String, Object?> map,
-      Uint8List bytes,
-      int offset,
-    ) => ConfidentialMintInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) => ConfidentialMintInstructionData(
       discriminator: map['discriminator']! as int,
-      confidentialMintBurnDiscriminator:
-          map['confidentialMintBurnDiscriminator']! as int,
+      confidentialMintBurnDiscriminator: map['confidentialMintBurnDiscriminator']! as int,
       newDecryptableSupply: map['newDecryptableSupply']! as DecryptableBalance,
-      mintAmountAuditorCiphertextLo:
-          map['mintAmountAuditorCiphertextLo']! as EncryptedBalance,
-      mintAmountAuditorCiphertextHi:
-          map['mintAmountAuditorCiphertextHi']! as EncryptedBalance,
-      equalityProofInstructionOffset:
-          map['equalityProofInstructionOffset']! as int,
-      ciphertextValidityProofInstructionOffset:
-          map['ciphertextValidityProofInstructionOffset']! as int,
+      mintAmountAuditorCiphertextLo: map['mintAmountAuditorCiphertextLo']! as EncryptedBalance,
+      mintAmountAuditorCiphertextHi: map['mintAmountAuditorCiphertextHi']! as EncryptedBalance,
+      equalityProofInstructionOffset: map['equalityProofInstructionOffset']! as int,
+      ciphertextValidityProofInstructionOffset: map['ciphertextValidityProofInstructionOffset']! as int,
       rangeProofInstructionOffset: map['rangeProofInstructionOffset']! as int,
     ),
   );
 }
 
-Codec<ConfidentialMintInstructionData, ConfidentialMintInstructionData>
-getConfidentialMintInstructionDataCodec() {
-  return combineCodec(
-    getConfidentialMintInstructionDataEncoder(),
-    getConfidentialMintInstructionDataDecoder(),
-  );
+Codec<ConfidentialMintInstructionData, ConfidentialMintInstructionData> getConfidentialMintInstructionDataCodec() {
+  return combineCodec(getConfidentialMintInstructionDataEncoder(), getConfidentialMintInstructionDataDecoder());
 }
 
 /// Creates a [ConfidentialMint] instruction.
@@ -135,40 +119,30 @@ Instruction getConfidentialMintInstruction({
   required int rangeProofInstructionOffset,
 }) {
   final instructionData = ConfidentialMintInstructionData(
-    newDecryptableSupply: newDecryptableSupply,
-    mintAmountAuditorCiphertextLo: mintAmountAuditorCiphertextLo,
-    mintAmountAuditorCiphertextHi: mintAmountAuditorCiphertextHi,
-    equalityProofInstructionOffset: equalityProofInstructionOffset,
-    ciphertextValidityProofInstructionOffset:
-        ciphertextValidityProofInstructionOffset,
-    rangeProofInstructionOffset: rangeProofInstructionOffset,
+      newDecryptableSupply: newDecryptableSupply,
+      mintAmountAuditorCiphertextLo: mintAmountAuditorCiphertextLo,
+      mintAmountAuditorCiphertextHi: mintAmountAuditorCiphertextHi,
+      equalityProofInstructionOffset: equalityProofInstructionOffset,
+      ciphertextValidityProofInstructionOffset: ciphertextValidityProofInstructionOffset,
+      rangeProofInstructionOffset: rangeProofInstructionOffset,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: token, role: AccountRole.writable),
-      AccountMeta(address: mint, role: AccountRole.writable),
-      if (instructionsSysvar != null)
-        AccountMeta(address: instructionsSysvar, role: AccountRole.readonly),
-      if (equalityRecord != null)
-        AccountMeta(address: equalityRecord, role: AccountRole.readonly),
-      if (ciphertextValidityRecord != null)
-        AccountMeta(
-          address: ciphertextValidityRecord,
-          role: AccountRole.readonly,
-        ),
-      if (rangeRecord != null)
-        AccountMeta(address: rangeRecord, role: AccountRole.readonly),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: token, role: AccountRole.writable),
+    AccountMeta(address: mint, role: AccountRole.writable),
+    if (instructionsSysvar != null) AccountMeta(address: instructionsSysvar, role: AccountRole.readonly),
+    if (equalityRecord != null) AccountMeta(address: equalityRecord, role: AccountRole.readonly),
+    if (ciphertextValidityRecord != null) AccountMeta(address: ciphertextValidityRecord, role: AccountRole.readonly),
+    if (rangeRecord != null) AccountMeta(address: rangeRecord, role: AccountRole.readonly),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getConfidentialMintInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [ConfidentialMint] instruction from raw instruction data.
-ConfidentialMintInstructionData parseConfidentialMintInstruction(
-  Instruction instruction,
-) {
+ConfidentialMintInstructionData parseConfidentialMintInstruction(Instruction instruction) {
   return getConfidentialMintInstructionDataDecoder().decode(instruction.data!);
 }

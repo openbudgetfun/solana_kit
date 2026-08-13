@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -47,20 +48,15 @@ Decoder<MoveLamportsInstructionData> getMoveLamportsInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        MoveLamportsInstructionData(
-          discriminator: map['discriminator']! as int,
-          args: map['args']! as BigInt,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => MoveLamportsInstructionData(
+      discriminator: map['discriminator']! as int,
+      args: map['args']! as BigInt,
+    ),
   );
 }
 
-Codec<MoveLamportsInstructionData, MoveLamportsInstructionData>
-getMoveLamportsInstructionDataCodec() {
-  return combineCodec(
-    getMoveLamportsInstructionDataEncoder(),
-    getMoveLamportsInstructionDataDecoder(),
-  );
+Codec<MoveLamportsInstructionData, MoveLamportsInstructionData> getMoveLamportsInstructionDataCodec() {
+  return combineCodec(getMoveLamportsInstructionDataEncoder(), getMoveLamportsInstructionDataDecoder());
 }
 
 /// Creates a [MoveLamports] instruction.
@@ -71,22 +67,22 @@ Instruction getMoveLamportsInstruction({
   required Address stakeAuthority,
   required BigInt args,
 }) {
-  final instructionData = MoveLamportsInstructionData(args: args);
+  final instructionData = MoveLamportsInstructionData(
+      args: args,
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: sourceStake, role: AccountRole.writable),
-      AccountMeta(address: destinationStake, role: AccountRole.writable),
-      AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: sourceStake, role: AccountRole.writable),
+    AccountMeta(address: destinationStake, role: AccountRole.writable),
+    AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
     ],
     data: getMoveLamportsInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [MoveLamports] instruction from raw instruction data.
-MoveLamportsInstructionData parseMoveLamportsInstruction(
-  Instruction instruction,
-) {
+MoveLamportsInstructionData parseMoveLamportsInstruction(Instruction instruction) {
   return getMoveLamportsInstructionDataDecoder().decode(instruction.data!);
 }

@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -27,8 +28,7 @@ class DisableMemoTransfersInstructionData {
   final int memoTransfersDiscriminator;
 }
 
-Encoder<DisableMemoTransfersInstructionData>
-getDisableMemoTransfersInstructionDataEncoder() {
+Encoder<DisableMemoTransfersInstructionData> getDisableMemoTransfersInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('memoTransfersDiscriminator', getU8Encoder()),
@@ -43,8 +43,7 @@ getDisableMemoTransfersInstructionDataEncoder() {
   );
 }
 
-Decoder<DisableMemoTransfersInstructionData>
-getDisableMemoTransfersInstructionDataDecoder() {
+Decoder<DisableMemoTransfersInstructionData> getDisableMemoTransfersInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('memoTransfersDiscriminator', getU8Decoder()),
@@ -52,20 +51,15 @@ getDisableMemoTransfersInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        DisableMemoTransfersInstructionData(
-          discriminator: map['discriminator']! as int,
-          memoTransfersDiscriminator: map['memoTransfersDiscriminator']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => DisableMemoTransfersInstructionData(
+      discriminator: map['discriminator']! as int,
+      memoTransfersDiscriminator: map['memoTransfersDiscriminator']! as int,
+    ),
   );
 }
 
-Codec<DisableMemoTransfersInstructionData, DisableMemoTransfersInstructionData>
-getDisableMemoTransfersInstructionDataCodec() {
-  return combineCodec(
-    getDisableMemoTransfersInstructionDataEncoder(),
-    getDisableMemoTransfersInstructionDataDecoder(),
-  );
+Codec<DisableMemoTransfersInstructionData, DisableMemoTransfersInstructionData> getDisableMemoTransfersInstructionDataCodec() {
+  return combineCodec(getDisableMemoTransfersInstructionDataEncoder(), getDisableMemoTransfersInstructionDataDecoder());
 }
 
 /// Creates a [DisableMemoTransfers] instruction.
@@ -73,26 +67,23 @@ Instruction getDisableMemoTransfersInstruction({
   required Address programAddress,
   required Address token,
   required Address owner,
+
 }) {
-  final instructionData = DisableMemoTransfersInstructionData();
+  final instructionData = DisableMemoTransfersInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: token, role: AccountRole.writable),
-      AccountMeta(address: owner, role: AccountRole.readonlySigner),
+    AccountMeta(address: token, role: AccountRole.writable),
+    AccountMeta(address: owner, role: AccountRole.readonlySigner),
     ],
-    data: getDisableMemoTransfersInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getDisableMemoTransfersInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [DisableMemoTransfers] instruction from raw instruction data.
-DisableMemoTransfersInstructionData parseDisableMemoTransfersInstruction(
-  Instruction instruction,
-) {
-  return getDisableMemoTransfersInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+DisableMemoTransfersInstructionData parseDisableMemoTransfersInstruction(Instruction instruction) {
+  return getDisableMemoTransfersInstructionDataDecoder().decode(instruction.data!);
 }

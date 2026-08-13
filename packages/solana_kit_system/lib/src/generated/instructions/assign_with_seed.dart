@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -29,8 +30,7 @@ class AssignWithSeedInstructionData {
   final Address programAddress;
 }
 
-Encoder<AssignWithSeedInstructionData>
-getAssignWithSeedInstructionDataEncoder() {
+Encoder<AssignWithSeedInstructionData> getAssignWithSeedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('base', getAddressEncoder()),
@@ -49,8 +49,7 @@ getAssignWithSeedInstructionDataEncoder() {
   );
 }
 
-Decoder<AssignWithSeedInstructionData>
-getAssignWithSeedInstructionDataDecoder() {
+Decoder<AssignWithSeedInstructionData> getAssignWithSeedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('base', getAddressDecoder()),
@@ -60,22 +59,17 @@ getAssignWithSeedInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        AssignWithSeedInstructionData(
-          discriminator: map['discriminator']! as int,
-          base: map['base']! as Address,
-          seed: map['seed']! as String,
-          programAddress: map['programAddress']! as Address,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => AssignWithSeedInstructionData(
+      discriminator: map['discriminator']! as int,
+      base: map['base']! as Address,
+      seed: map['seed']! as String,
+      programAddress: map['programAddress']! as Address,
+    ),
   );
 }
 
-Codec<AssignWithSeedInstructionData, AssignWithSeedInstructionData>
-getAssignWithSeedInstructionDataCodec() {
-  return combineCodec(
-    getAssignWithSeedInstructionDataEncoder(),
-    getAssignWithSeedInstructionDataDecoder(),
-  );
+Codec<AssignWithSeedInstructionData, AssignWithSeedInstructionData> getAssignWithSeedInstructionDataCodec() {
+  return combineCodec(getAssignWithSeedInstructionDataEncoder(), getAssignWithSeedInstructionDataDecoder());
 }
 
 /// Creates a [AssignWithSeed] instruction.
@@ -88,24 +82,22 @@ Instruction getAssignWithSeedInstruction({
   required Address programAddress,
 }) {
   final instructionData = AssignWithSeedInstructionData(
-    base: base,
-    seed: seed,
-    programAddress: programAddress,
+      base: base,
+      seed: seed,
+      programAddress: programAddress,
   );
 
   return Instruction(
     programAddress: instructionProgramAddress,
     accounts: [
-      AccountMeta(address: account, role: AccountRole.writable),
-      AccountMeta(address: baseAccount, role: AccountRole.readonlySigner),
+    AccountMeta(address: account, role: AccountRole.writable),
+    AccountMeta(address: baseAccount, role: AccountRole.readonlySigner),
     ],
     data: getAssignWithSeedInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [AssignWithSeed] instruction from raw instruction data.
-AssignWithSeedInstructionData parseAssignWithSeedInstruction(
-  Instruction instruction,
-) {
+AssignWithSeedInstructionData parseAssignWithSeedInstruction(Instruction instruction) {
   return getAssignWithSeedInstructionDataDecoder().decode(instruction.data!);
 }

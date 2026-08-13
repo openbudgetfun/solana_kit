@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -42,8 +43,7 @@ class PermissionedConfidentialBurnInstructionData {
   final int rangeProofInstructionOffset;
 }
 
-Encoder<PermissionedConfidentialBurnInstructionData>
-getPermissionedConfidentialBurnInstructionDataEncoder() {
+Encoder<PermissionedConfidentialBurnInstructionData> getPermissionedConfidentialBurnInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('permissionedBurnDiscriminator', getU8Encoder()),
@@ -64,15 +64,13 @@ getPermissionedConfidentialBurnInstructionDataEncoder() {
       'burnAmountAuditorCiphertextLo': value.burnAmountAuditorCiphertextLo,
       'burnAmountAuditorCiphertextHi': value.burnAmountAuditorCiphertextHi,
       'equalityProofInstructionOffset': value.equalityProofInstructionOffset,
-      'ciphertextValidityProofInstructionOffset':
-          value.ciphertextValidityProofInstructionOffset,
+      'ciphertextValidityProofInstructionOffset': value.ciphertextValidityProofInstructionOffset,
       'rangeProofInstructionOffset': value.rangeProofInstructionOffset,
     },
   );
 }
 
-Decoder<PermissionedConfidentialBurnInstructionData>
-getPermissionedConfidentialBurnInstructionDataDecoder() {
+Decoder<PermissionedConfidentialBurnInstructionData> getPermissionedConfidentialBurnInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('permissionedBurnDiscriminator', getU8Decoder()),
@@ -86,36 +84,21 @@ getPermissionedConfidentialBurnInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        PermissionedConfidentialBurnInstructionData(
-          discriminator: map['discriminator']! as int,
-          permissionedBurnDiscriminator:
-              map['permissionedBurnDiscriminator']! as int,
-          newDecryptableAvailableBalance:
-              map['newDecryptableAvailableBalance']! as DecryptableBalance,
-          burnAmountAuditorCiphertextLo:
-              map['burnAmountAuditorCiphertextLo']! as EncryptedBalance,
-          burnAmountAuditorCiphertextHi:
-              map['burnAmountAuditorCiphertextHi']! as EncryptedBalance,
-          equalityProofInstructionOffset:
-              map['equalityProofInstructionOffset']! as int,
-          ciphertextValidityProofInstructionOffset:
-              map['ciphertextValidityProofInstructionOffset']! as int,
-          rangeProofInstructionOffset:
-              map['rangeProofInstructionOffset']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => PermissionedConfidentialBurnInstructionData(
+      discriminator: map['discriminator']! as int,
+      permissionedBurnDiscriminator: map['permissionedBurnDiscriminator']! as int,
+      newDecryptableAvailableBalance: map['newDecryptableAvailableBalance']! as DecryptableBalance,
+      burnAmountAuditorCiphertextLo: map['burnAmountAuditorCiphertextLo']! as EncryptedBalance,
+      burnAmountAuditorCiphertextHi: map['burnAmountAuditorCiphertextHi']! as EncryptedBalance,
+      equalityProofInstructionOffset: map['equalityProofInstructionOffset']! as int,
+      ciphertextValidityProofInstructionOffset: map['ciphertextValidityProofInstructionOffset']! as int,
+      rangeProofInstructionOffset: map['rangeProofInstructionOffset']! as int,
+    ),
   );
 }
 
-Codec<
-  PermissionedConfidentialBurnInstructionData,
-  PermissionedConfidentialBurnInstructionData
->
-getPermissionedConfidentialBurnInstructionDataCodec() {
-  return combineCodec(
-    getPermissionedConfidentialBurnInstructionDataEncoder(),
-    getPermissionedConfidentialBurnInstructionDataDecoder(),
-  );
+Codec<PermissionedConfidentialBurnInstructionData, PermissionedConfidentialBurnInstructionData> getPermissionedConfidentialBurnInstructionDataCodec() {
+  return combineCodec(getPermissionedConfidentialBurnInstructionDataEncoder(), getPermissionedConfidentialBurnInstructionDataDecoder());
 }
 
 /// Creates a [PermissionedConfidentialBurn] instruction.
@@ -137,47 +120,31 @@ Instruction getPermissionedConfidentialBurnInstruction({
   required int rangeProofInstructionOffset,
 }) {
   final instructionData = PermissionedConfidentialBurnInstructionData(
-    newDecryptableAvailableBalance: newDecryptableAvailableBalance,
-    burnAmountAuditorCiphertextLo: burnAmountAuditorCiphertextLo,
-    burnAmountAuditorCiphertextHi: burnAmountAuditorCiphertextHi,
-    equalityProofInstructionOffset: equalityProofInstructionOffset,
-    ciphertextValidityProofInstructionOffset:
-        ciphertextValidityProofInstructionOffset,
-    rangeProofInstructionOffset: rangeProofInstructionOffset,
+      newDecryptableAvailableBalance: newDecryptableAvailableBalance,
+      burnAmountAuditorCiphertextLo: burnAmountAuditorCiphertextLo,
+      burnAmountAuditorCiphertextHi: burnAmountAuditorCiphertextHi,
+      equalityProofInstructionOffset: equalityProofInstructionOffset,
+      ciphertextValidityProofInstructionOffset: ciphertextValidityProofInstructionOffset,
+      rangeProofInstructionOffset: rangeProofInstructionOffset,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: token, role: AccountRole.writable),
-      AccountMeta(address: mint, role: AccountRole.writable),
-      if (instructionsSysvar != null)
-        AccountMeta(address: instructionsSysvar, role: AccountRole.readonly),
-      if (equalityRecord != null)
-        AccountMeta(address: equalityRecord, role: AccountRole.readonly),
-      if (ciphertextValidityRecord != null)
-        AccountMeta(
-          address: ciphertextValidityRecord,
-          role: AccountRole.readonly,
-        ),
-      if (rangeRecord != null)
-        AccountMeta(address: rangeRecord, role: AccountRole.readonly),
-      AccountMeta(
-        address: permissionedBurnAuthority,
-        role: AccountRole.readonlySigner,
-      ),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: token, role: AccountRole.writable),
+    AccountMeta(address: mint, role: AccountRole.writable),
+    if (instructionsSysvar != null) AccountMeta(address: instructionsSysvar, role: AccountRole.readonly),
+    if (equalityRecord != null) AccountMeta(address: equalityRecord, role: AccountRole.readonly),
+    if (ciphertextValidityRecord != null) AccountMeta(address: ciphertextValidityRecord, role: AccountRole.readonly),
+    if (rangeRecord != null) AccountMeta(address: rangeRecord, role: AccountRole.readonly),
+    AccountMeta(address: permissionedBurnAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getPermissionedConfidentialBurnInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getPermissionedConfidentialBurnInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [PermissionedConfidentialBurn] instruction from raw instruction data.
-PermissionedConfidentialBurnInstructionData
-parsePermissionedConfidentialBurnInstruction(Instruction instruction) {
-  return getPermissionedConfidentialBurnInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+PermissionedConfidentialBurnInstructionData parsePermissionedConfidentialBurnInstruction(Instruction instruction) {
+  return getPermissionedConfidentialBurnInstructionDataDecoder().decode(instruction.data!);
 }

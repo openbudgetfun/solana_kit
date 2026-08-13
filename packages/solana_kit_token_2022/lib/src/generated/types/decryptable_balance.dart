@@ -1,10 +1,12 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+
 
 typedef DecryptableBalance = Uint8List;
 
@@ -17,8 +19,5 @@ Decoder<DecryptableBalance> getDecryptableBalanceDecoder() {
 }
 
 Codec<DecryptableBalance, DecryptableBalance> getDecryptableBalanceCodec() {
-  return combineCodec(
-    getDecryptableBalanceEncoder(),
-    getDecryptableBalanceDecoder(),
-  );
+  return combineCodec(getDecryptableBalanceEncoder(), getDecryptableBalanceDecoder());
 }

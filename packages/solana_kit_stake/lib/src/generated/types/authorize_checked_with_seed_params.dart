@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -12,13 +13,6 @@ import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 
 import './stake_authorize.dart';
 
-Encoder<num> _getU64SizePrefixEncoder() =>
-    transformEncoder<BigInt, num>(getU64Encoder(), BigInt.from);
-
-Decoder<num> _getU64SizePrefixDecoder() => transformDecoder<BigInt, num>(
-  getU64Decoder(),
-  (value, _, _) => value.toInt(),
-);
 
 @immutable
 class AuthorizeCheckedWithSeedParams {
@@ -42,22 +36,16 @@ class AuthorizeCheckedWithSeedParams {
           authorityOwner == other.authorityOwner;
 
   @override
-  int get hashCode =>
-      Object.hash(stakeAuthorize, authoritySeed, authorityOwner);
+  int get hashCode => Object.hash(stakeAuthorize, authoritySeed, authorityOwner);
 
   @override
-  String toString() =>
-      'AuthorizeCheckedWithSeedParams(stakeAuthorize: $stakeAuthorize, authoritySeed: $authoritySeed, authorityOwner: $authorityOwner)';
+  String toString() => 'AuthorizeCheckedWithSeedParams(stakeAuthorize: $stakeAuthorize, authoritySeed: $authoritySeed, authorityOwner: $authorityOwner)';
 }
 
-Encoder<AuthorizeCheckedWithSeedParams>
-getAuthorizeCheckedWithSeedParamsEncoder() {
+Encoder<AuthorizeCheckedWithSeedParams> getAuthorizeCheckedWithSeedParamsEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('stakeAuthorize', getStakeAuthorizeEncoder()),
-    (
-      'authoritySeed',
-      addEncoderSizePrefix(getUtf8Encoder(), _getU64SizePrefixEncoder()),
-    ),
+    ('authoritySeed', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
     ('authorityOwner', getAddressEncoder()),
   ]);
 
@@ -71,32 +59,23 @@ getAuthorizeCheckedWithSeedParamsEncoder() {
   );
 }
 
-Decoder<AuthorizeCheckedWithSeedParams>
-getAuthorizeCheckedWithSeedParamsDecoder() {
+Decoder<AuthorizeCheckedWithSeedParams> getAuthorizeCheckedWithSeedParamsDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('stakeAuthorize', getStakeAuthorizeDecoder()),
-    (
-      'authoritySeed',
-      addDecoderSizePrefix(getUtf8Decoder(), _getU64SizePrefixDecoder()),
-    ),
+    ('authoritySeed', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
     ('authorityOwner', getAddressDecoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        AuthorizeCheckedWithSeedParams(
-          stakeAuthorize: map['stakeAuthorize']! as StakeAuthorize,
-          authoritySeed: map['authoritySeed']! as String,
-          authorityOwner: map['authorityOwner']! as Address,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => AuthorizeCheckedWithSeedParams(
+      stakeAuthorize: map['stakeAuthorize']! as StakeAuthorize,
+      authoritySeed: map['authoritySeed']! as String,
+      authorityOwner: map['authorityOwner']! as Address,
+    ),
   );
 }
 
-Codec<AuthorizeCheckedWithSeedParams, AuthorizeCheckedWithSeedParams>
-getAuthorizeCheckedWithSeedParamsCodec() {
-  return combineCodec(
-    getAuthorizeCheckedWithSeedParamsEncoder(),
-    getAuthorizeCheckedWithSeedParamsDecoder(),
-  );
+Codec<AuthorizeCheckedWithSeedParams, AuthorizeCheckedWithSeedParams> getAuthorizeCheckedWithSeedParamsCodec() {
+  return combineCodec(getAuthorizeCheckedWithSeedParamsEncoder(), getAuthorizeCheckedWithSeedParamsDecoder());
 }

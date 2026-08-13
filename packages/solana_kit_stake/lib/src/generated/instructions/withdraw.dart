@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -15,7 +16,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class WithdrawInstructionData {
-  const WithdrawInstructionData({this.discriminator = 4, required this.args});
+  const WithdrawInstructionData({
+    this.discriminator = 4,
+    required this.args,
+  });
 
   final int discriminator;
   final BigInt args;
@@ -44,20 +48,15 @@ Decoder<WithdrawInstructionData> getWithdrawInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        WithdrawInstructionData(
-          discriminator: map['discriminator']! as int,
-          args: map['args']! as BigInt,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => WithdrawInstructionData(
+      discriminator: map['discriminator']! as int,
+      args: map['args']! as BigInt,
+    ),
   );
 }
 
-Codec<WithdrawInstructionData, WithdrawInstructionData>
-getWithdrawInstructionDataCodec() {
-  return combineCodec(
-    getWithdrawInstructionDataEncoder(),
-    getWithdrawInstructionDataDecoder(),
-  );
+Codec<WithdrawInstructionData, WithdrawInstructionData> getWithdrawInstructionDataCodec() {
+  return combineCodec(getWithdrawInstructionDataEncoder(), getWithdrawInstructionDataDecoder());
 }
 
 /// Creates a [Withdraw] instruction.
@@ -71,18 +70,19 @@ Instruction getWithdrawInstruction({
   Address? lockupAuthority,
   required BigInt args,
 }) {
-  final instructionData = WithdrawInstructionData(args: args);
+  final instructionData = WithdrawInstructionData(
+      args: args,
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: stake, role: AccountRole.writable),
-      AccountMeta(address: recipient, role: AccountRole.writable),
-      AccountMeta(address: clockSysvar, role: AccountRole.readonly),
-      AccountMeta(address: stakeHistory, role: AccountRole.readonly),
-      AccountMeta(address: withdrawAuthority, role: AccountRole.readonlySigner),
-      if (lockupAuthority != null)
-        AccountMeta(address: lockupAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: stake, role: AccountRole.writable),
+    AccountMeta(address: recipient, role: AccountRole.writable),
+    AccountMeta(address: clockSysvar, role: AccountRole.readonly),
+    AccountMeta(address: stakeHistory, role: AccountRole.readonly),
+    AccountMeta(address: withdrawAuthority, role: AccountRole.readonlySigner),
+    if (lockupAuthority != null) AccountMeta(address: lockupAuthority, role: AccountRole.readonlySigner),
     ],
     data: getWithdrawInstructionDataEncoder().encode(instructionData),
   );

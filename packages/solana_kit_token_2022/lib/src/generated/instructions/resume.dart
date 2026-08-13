@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -50,20 +51,15 @@ Decoder<ResumeInstructionData> getResumeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ResumeInstructionData(
-          discriminator: map['discriminator']! as int,
-          pausableDiscriminator: map['pausableDiscriminator']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => ResumeInstructionData(
+      discriminator: map['discriminator']! as int,
+      pausableDiscriminator: map['pausableDiscriminator']! as int,
+    ),
   );
 }
 
-Codec<ResumeInstructionData, ResumeInstructionData>
-getResumeInstructionDataCodec() {
-  return combineCodec(
-    getResumeInstructionDataEncoder(),
-    getResumeInstructionDataDecoder(),
-  );
+Codec<ResumeInstructionData, ResumeInstructionData> getResumeInstructionDataCodec() {
+  return combineCodec(getResumeInstructionDataEncoder(), getResumeInstructionDataDecoder());
 }
 
 /// Creates a [Resume] instruction.
@@ -71,14 +67,17 @@ Instruction getResumeInstruction({
   required Address programAddress,
   required Address mint,
   required Address authority,
+
 }) {
-  final instructionData = ResumeInstructionData();
+  final instructionData = ResumeInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: mint, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: mint, role: AccountRole.writable),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getResumeInstructionDataEncoder().encode(instructionData),
   );

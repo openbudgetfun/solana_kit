@@ -1,3 +1,9 @@
+// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -5,17 +11,16 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-/// System Program instruction discriminator for `CreateAccountAllowPrefund`.
-const createAccountAllowPrefundDiscriminator = 13;
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
 
-/// Data payload for the System Program `CreateAccountAllowPrefund` instruction.
 @immutable
 class CreateAccountAllowPrefundInstructionData {
   const CreateAccountAllowPrefundInstructionData({
+    this.discriminator = 13,
     required this.lamports,
     required this.space,
     required this.programAddress,
-    this.discriminator = createAccountAllowPrefundDiscriminator,
   });
 
   final int discriminator;
@@ -24,8 +29,7 @@ class CreateAccountAllowPrefundInstructionData {
   final Address programAddress;
 }
 
-Encoder<CreateAccountAllowPrefundInstructionData>
-getCreateAccountAllowPrefundInstructionDataEncoder() {
+Encoder<CreateAccountAllowPrefundInstructionData> getCreateAccountAllowPrefundInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('lamports', getU64Encoder()),
@@ -35,7 +39,7 @@ getCreateAccountAllowPrefundInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (value) => <String, Object?>{
+    (CreateAccountAllowPrefundInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
       'lamports': value.lamports,
       'space': value.space,
@@ -44,8 +48,7 @@ getCreateAccountAllowPrefundInstructionDataEncoder() {
   );
 }
 
-Decoder<CreateAccountAllowPrefundInstructionData>
-getCreateAccountAllowPrefundInstructionDataDecoder() {
+Decoder<CreateAccountAllowPrefundInstructionData> getCreateAccountAllowPrefundInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('lamports', getU64Decoder()),
@@ -55,7 +58,7 @@ getCreateAccountAllowPrefundInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (map, bytes, offset) => CreateAccountAllowPrefundInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateAccountAllowPrefundInstructionData(
       discriminator: map['discriminator']! as int,
       lamports: map['lamports']! as BigInt,
       space: map['space']! as BigInt,
@@ -64,49 +67,36 @@ getCreateAccountAllowPrefundInstructionDataDecoder() {
   );
 }
 
-Codec<
-  CreateAccountAllowPrefundInstructionData,
-  CreateAccountAllowPrefundInstructionData
->
-getCreateAccountAllowPrefundInstructionDataCodec() {
-  return combineCodec(
-    getCreateAccountAllowPrefundInstructionDataEncoder(),
-    getCreateAccountAllowPrefundInstructionDataDecoder(),
-  );
+Codec<CreateAccountAllowPrefundInstructionData, CreateAccountAllowPrefundInstructionData> getCreateAccountAllowPrefundInstructionDataCodec() {
+  return combineCodec(getCreateAccountAllowPrefundInstructionDataEncoder(), getCreateAccountAllowPrefundInstructionDataDecoder());
 }
 
-/// Builds a System Program `CreateAccountAllowPrefund` instruction.
+/// Creates a [CreateAccountAllowPrefund] instruction.
 Instruction getCreateAccountAllowPrefundInstruction({
+  required Address instructionProgramAddress,
   required Address newAccount,
-  required BigInt space,
-  required Address ownerProgramAddress,
-  BigInt? lamports,
   Address? payer,
-  Address programAddress = systemProgramAddress,
+  BigInt? lamports,
+  required BigInt space,
+  required Address programAddress,
 }) {
   final instructionData = CreateAccountAllowPrefundInstructionData(
-    lamports: lamports ?? BigInt.zero,
-    space: space,
-    programAddress: ownerProgramAddress,
+      lamports: lamports ?? 0,
+      space: space,
+      programAddress: programAddress,
   );
 
   return Instruction(
-    programAddress: programAddress,
+    programAddress: instructionProgramAddress,
     accounts: [
-      AccountMeta(address: newAccount, role: AccountRole.writableSigner),
-      if (payer != null)
-        AccountMeta(address: payer, role: AccountRole.writableSigner),
+    AccountMeta(address: newAccount, role: AccountRole.writableSigner),
+    if (payer != null) AccountMeta(address: payer, role: AccountRole.writableSigner),
     ],
-    data: getCreateAccountAllowPrefundInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getCreateAccountAllowPrefundInstructionDataEncoder().encode(instructionData),
   );
 }
 
-/// Parses a System Program `CreateAccountAllowPrefund` instruction.
-CreateAccountAllowPrefundInstructionData
-parseCreateAccountAllowPrefundInstruction(Instruction instruction) {
-  return getCreateAccountAllowPrefundInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+/// Parses a [CreateAccountAllowPrefund] instruction from raw instruction data.
+CreateAccountAllowPrefundInstructionData parseCreateAccountAllowPrefundInstruction(Instruction instruction) {
+  return getCreateAccountAllowPrefundInstructionDataDecoder().decode(instruction.data!);
 }

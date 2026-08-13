@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -31,8 +32,7 @@ class SetTransferFeeInstructionData {
   final BigInt maximumFee;
 }
 
-Encoder<SetTransferFeeInstructionData>
-getSetTransferFeeInstructionDataEncoder() {
+Encoder<SetTransferFeeInstructionData> getSetTransferFeeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('transferFeeDiscriminator', getU8Encoder()),
@@ -51,8 +51,7 @@ getSetTransferFeeInstructionDataEncoder() {
   );
 }
 
-Decoder<SetTransferFeeInstructionData>
-getSetTransferFeeInstructionDataDecoder() {
+Decoder<SetTransferFeeInstructionData> getSetTransferFeeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('transferFeeDiscriminator', getU8Decoder()),
@@ -62,22 +61,17 @@ getSetTransferFeeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        SetTransferFeeInstructionData(
-          discriminator: map['discriminator']! as int,
-          transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
-          transferFeeBasisPoints: map['transferFeeBasisPoints']! as int,
-          maximumFee: map['maximumFee']! as BigInt,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => SetTransferFeeInstructionData(
+      discriminator: map['discriminator']! as int,
+      transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
+      transferFeeBasisPoints: map['transferFeeBasisPoints']! as int,
+      maximumFee: map['maximumFee']! as BigInt,
+    ),
   );
 }
 
-Codec<SetTransferFeeInstructionData, SetTransferFeeInstructionData>
-getSetTransferFeeInstructionDataCodec() {
-  return combineCodec(
-    getSetTransferFeeInstructionDataEncoder(),
-    getSetTransferFeeInstructionDataDecoder(),
-  );
+Codec<SetTransferFeeInstructionData, SetTransferFeeInstructionData> getSetTransferFeeInstructionDataCodec() {
+  return combineCodec(getSetTransferFeeInstructionDataEncoder(), getSetTransferFeeInstructionDataDecoder());
 }
 
 /// Creates a [SetTransferFee] instruction.
@@ -89,26 +83,21 @@ Instruction getSetTransferFeeInstruction({
   required BigInt maximumFee,
 }) {
   final instructionData = SetTransferFeeInstructionData(
-    transferFeeBasisPoints: transferFeeBasisPoints,
-    maximumFee: maximumFee,
+      transferFeeBasisPoints: transferFeeBasisPoints,
+      maximumFee: maximumFee,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: mint, role: AccountRole.writable),
-      AccountMeta(
-        address: transferFeeConfigAuthority,
-        role: AccountRole.readonlySigner,
-      ),
+    AccountMeta(address: mint, role: AccountRole.writable),
+    AccountMeta(address: transferFeeConfigAuthority, role: AccountRole.readonlySigner),
     ],
     data: getSetTransferFeeInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [SetTransferFee] instruction from raw instruction data.
-SetTransferFeeInstructionData parseSetTransferFeeInstruction(
-  Instruction instruction,
-) {
+SetTransferFeeInstructionData parseSetTransferFeeInstruction(Instruction instruction) {
   return getSetTransferFeeInstructionDataDecoder().decode(instruction.data!);
 }

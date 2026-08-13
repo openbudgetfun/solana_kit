@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -15,7 +16,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class MoveStakeInstructionData {
-  const MoveStakeInstructionData({this.discriminator = 16, required this.args});
+  const MoveStakeInstructionData({
+    this.discriminator = 16,
+    required this.args,
+  });
 
   final int discriminator;
   final BigInt args;
@@ -44,20 +48,15 @@ Decoder<MoveStakeInstructionData> getMoveStakeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        MoveStakeInstructionData(
-          discriminator: map['discriminator']! as int,
-          args: map['args']! as BigInt,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => MoveStakeInstructionData(
+      discriminator: map['discriminator']! as int,
+      args: map['args']! as BigInt,
+    ),
   );
 }
 
-Codec<MoveStakeInstructionData, MoveStakeInstructionData>
-getMoveStakeInstructionDataCodec() {
-  return combineCodec(
-    getMoveStakeInstructionDataEncoder(),
-    getMoveStakeInstructionDataDecoder(),
-  );
+Codec<MoveStakeInstructionData, MoveStakeInstructionData> getMoveStakeInstructionDataCodec() {
+  return combineCodec(getMoveStakeInstructionDataEncoder(), getMoveStakeInstructionDataDecoder());
 }
 
 /// Creates a [MoveStake] instruction.
@@ -68,14 +67,16 @@ Instruction getMoveStakeInstruction({
   required Address stakeAuthority,
   required BigInt args,
 }) {
-  final instructionData = MoveStakeInstructionData(args: args);
+  final instructionData = MoveStakeInstructionData(
+      args: args,
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: sourceStake, role: AccountRole.writable),
-      AccountMeta(address: destinationStake, role: AccountRole.writable),
-      AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: sourceStake, role: AccountRole.writable),
+    AccountMeta(address: destinationStake, role: AccountRole.writable),
+    AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
     ],
     data: getMoveStakeInstructionDataEncoder().encode(instructionData),
   );

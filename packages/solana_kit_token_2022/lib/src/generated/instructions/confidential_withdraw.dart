@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -39,8 +40,7 @@ class ConfidentialWithdrawInstructionData {
   final int rangeProofInstructionOffset;
 }
 
-Encoder<ConfidentialWithdrawInstructionData>
-getConfidentialWithdrawInstructionDataEncoder() {
+Encoder<ConfidentialWithdrawInstructionData> getConfidentialWithdrawInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferDiscriminator', getU8Encoder()),
@@ -55,8 +55,7 @@ getConfidentialWithdrawInstructionDataEncoder() {
     structEncoder,
     (ConfidentialWithdrawInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialTransferDiscriminator':
-          value.confidentialTransferDiscriminator,
+      'confidentialTransferDiscriminator': value.confidentialTransferDiscriminator,
       'amount': value.amount,
       'decimals': value.decimals,
       'newDecryptableAvailableBalance': value.newDecryptableAvailableBalance,
@@ -66,8 +65,7 @@ getConfidentialWithdrawInstructionDataEncoder() {
   );
 }
 
-Decoder<ConfidentialWithdrawInstructionData>
-getConfidentialWithdrawInstructionDataDecoder() {
+Decoder<ConfidentialWithdrawInstructionData> getConfidentialWithdrawInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferDiscriminator', getU8Decoder()),
@@ -80,29 +78,20 @@ getConfidentialWithdrawInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ConfidentialWithdrawInstructionData(
-          discriminator: map['discriminator']! as int,
-          confidentialTransferDiscriminator:
-              map['confidentialTransferDiscriminator']! as int,
-          amount: map['amount']! as BigInt,
-          decimals: map['decimals']! as int,
-          newDecryptableAvailableBalance:
-              map['newDecryptableAvailableBalance']! as DecryptableBalance,
-          equalityProofInstructionOffset:
-              map['equalityProofInstructionOffset']! as int,
-          rangeProofInstructionOffset:
-              map['rangeProofInstructionOffset']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => ConfidentialWithdrawInstructionData(
+      discriminator: map['discriminator']! as int,
+      confidentialTransferDiscriminator: map['confidentialTransferDiscriminator']! as int,
+      amount: map['amount']! as BigInt,
+      decimals: map['decimals']! as int,
+      newDecryptableAvailableBalance: map['newDecryptableAvailableBalance']! as DecryptableBalance,
+      equalityProofInstructionOffset: map['equalityProofInstructionOffset']! as int,
+      rangeProofInstructionOffset: map['rangeProofInstructionOffset']! as int,
+    ),
   );
 }
 
-Codec<ConfidentialWithdrawInstructionData, ConfidentialWithdrawInstructionData>
-getConfidentialWithdrawInstructionDataCodec() {
-  return combineCodec(
-    getConfidentialWithdrawInstructionDataEncoder(),
-    getConfidentialWithdrawInstructionDataDecoder(),
-  );
+Codec<ConfidentialWithdrawInstructionData, ConfidentialWithdrawInstructionData> getConfidentialWithdrawInstructionDataCodec() {
+  return combineCodec(getConfidentialWithdrawInstructionDataEncoder(), getConfidentialWithdrawInstructionDataDecoder());
 }
 
 /// Creates a [ConfidentialWithdraw] instruction.
@@ -121,37 +110,28 @@ Instruction getConfidentialWithdrawInstruction({
   required int rangeProofInstructionOffset,
 }) {
   final instructionData = ConfidentialWithdrawInstructionData(
-    amount: amount,
-    decimals: decimals,
-    newDecryptableAvailableBalance: newDecryptableAvailableBalance,
-    equalityProofInstructionOffset: equalityProofInstructionOffset,
-    rangeProofInstructionOffset: rangeProofInstructionOffset,
+      amount: amount,
+      decimals: decimals,
+      newDecryptableAvailableBalance: newDecryptableAvailableBalance,
+      equalityProofInstructionOffset: equalityProofInstructionOffset,
+      rangeProofInstructionOffset: rangeProofInstructionOffset,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: token, role: AccountRole.writable),
-      AccountMeta(address: mint, role: AccountRole.readonly),
-      if (instructionsSysvar != null)
-        AccountMeta(address: instructionsSysvar, role: AccountRole.readonly),
-      if (equalityRecord != null)
-        AccountMeta(address: equalityRecord, role: AccountRole.readonly),
-      if (rangeRecord != null)
-        AccountMeta(address: rangeRecord, role: AccountRole.readonly),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: token, role: AccountRole.writable),
+    AccountMeta(address: mint, role: AccountRole.readonly),
+    if (instructionsSysvar != null) AccountMeta(address: instructionsSysvar, role: AccountRole.readonly),
+    if (equalityRecord != null) AccountMeta(address: equalityRecord, role: AccountRole.readonly),
+    if (rangeRecord != null) AccountMeta(address: rangeRecord, role: AccountRole.readonly),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getConfidentialWithdrawInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getConfidentialWithdrawInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [ConfidentialWithdraw] instruction from raw instruction data.
-ConfidentialWithdrawInstructionData parseConfidentialWithdrawInstruction(
-  Instruction instruction,
-) {
-  return getConfidentialWithdrawInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+ConfidentialWithdrawInstructionData parseConfidentialWithdrawInstruction(Instruction instruction) {
+  return getConfidentialWithdrawInstructionDataDecoder().decode(instruction.data!);
 }

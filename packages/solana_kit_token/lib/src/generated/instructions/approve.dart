@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -15,7 +16,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class ApproveInstructionData {
-  const ApproveInstructionData({this.discriminator = 4, required this.amount});
+  const ApproveInstructionData({
+    this.discriminator = 4,
+    required this.amount,
+  });
 
   final int discriminator;
   final BigInt amount;
@@ -44,20 +48,15 @@ Decoder<ApproveInstructionData> getApproveInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ApproveInstructionData(
-          discriminator: map['discriminator']! as int,
-          amount: map['amount']! as BigInt,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => ApproveInstructionData(
+      discriminator: map['discriminator']! as int,
+      amount: map['amount']! as BigInt,
+    ),
   );
 }
 
-Codec<ApproveInstructionData, ApproveInstructionData>
-getApproveInstructionDataCodec() {
-  return combineCodec(
-    getApproveInstructionDataEncoder(),
-    getApproveInstructionDataDecoder(),
-  );
+Codec<ApproveInstructionData, ApproveInstructionData> getApproveInstructionDataCodec() {
+  return combineCodec(getApproveInstructionDataEncoder(), getApproveInstructionDataDecoder());
 }
 
 /// Creates a [Approve] instruction.
@@ -68,14 +67,16 @@ Instruction getApproveInstruction({
   required Address owner,
   required BigInt amount,
 }) {
-  final instructionData = ApproveInstructionData(amount: amount);
+  final instructionData = ApproveInstructionData(
+      amount: amount,
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: source, role: AccountRole.writable),
-      AccountMeta(address: delegate, role: AccountRole.readonly),
-      AccountMeta(address: owner, role: AccountRole.readonlySigner),
+    AccountMeta(address: source, role: AccountRole.writable),
+    AccountMeta(address: delegate, role: AccountRole.readonly),
+    AccountMeta(address: owner, role: AccountRole.readonlySigner),
     ],
     data: getApproveInstructionDataEncoder().encode(instructionData),
   );

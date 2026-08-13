@@ -1,3 +1,9 @@
+// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -5,45 +11,21 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-/// Discriminator byte for the RequestHeapFrame instruction.
-const requestHeapFrameDiscriminator = 1;
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
 
-/// Data for the RequestHeapFrame instruction.
 @immutable
 class RequestHeapFrameInstructionData {
-  /// Creates [RequestHeapFrameInstructionData].
   const RequestHeapFrameInstructionData({
+    this.discriminator = 1,
     required this.bytes,
-    this.discriminator = requestHeapFrameDiscriminator,
   });
 
-  /// The instruction discriminator byte.
   final int discriminator;
-
-  /// Requested transaction-wide program heap size in bytes.
-  ///
-  /// Must be a multiple of 1024. Applies to each program, including CPIs.
   final int bytes;
-
-  @override
-  String toString() =>
-      'RequestHeapFrameInstructionData('
-      'discriminator: $discriminator, '
-      'bytes: $bytes)';
-
-  @override
-  bool operator ==(Object other) =>
-      other is RequestHeapFrameInstructionData &&
-      other.discriminator == discriminator &&
-      other.bytes == bytes;
-
-  @override
-  int get hashCode => Object.hash(discriminator, bytes);
 }
 
-/// Returns the encoder for [RequestHeapFrameInstructionData].
-Encoder<RequestHeapFrameInstructionData>
-getRequestHeapFrameInstructionDataEncoder() {
+Encoder<RequestHeapFrameInstructionData> getRequestHeapFrameInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('bytes', getU32Encoder()),
@@ -51,16 +33,14 @@ getRequestHeapFrameInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (value) => <String, Object?>{
+    (RequestHeapFrameInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
       'bytes': value.bytes,
     },
   );
 }
 
-/// Returns the decoder for [RequestHeapFrameInstructionData].
-Decoder<RequestHeapFrameInstructionData>
-getRequestHeapFrameInstructionDataDecoder() {
+Decoder<RequestHeapFrameInstructionData> getRequestHeapFrameInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('bytes', getU32Decoder()),
@@ -68,41 +48,37 @@ getRequestHeapFrameInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (map, bytes, offset) => RequestHeapFrameInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) => RequestHeapFrameInstructionData(
       discriminator: map['discriminator']! as int,
       bytes: map['bytes']! as int,
     ),
   );
 }
 
-/// Returns the codec for [RequestHeapFrameInstructionData].
-Codec<RequestHeapFrameInstructionData, RequestHeapFrameInstructionData>
-getRequestHeapFrameInstructionDataCodec() {
-  return combineCodec(
-    getRequestHeapFrameInstructionDataEncoder(),
-    getRequestHeapFrameInstructionDataDecoder(),
-  );
+Codec<RequestHeapFrameInstructionData, RequestHeapFrameInstructionData> getRequestHeapFrameInstructionDataCodec() {
+  return combineCodec(getRequestHeapFrameInstructionDataEncoder(), getRequestHeapFrameInstructionDataDecoder());
 }
 
-/// Creates a RequestHeapFrame instruction.
-///
-/// Requests a specific heap frame size (in [bytes]) for the transaction.
-/// Must be a multiple of 1024.
+/// Creates a [RequestHeapFrame] instruction.
 Instruction getRequestHeapFrameInstruction({
+  required Address programAddress,
+
   required int bytes,
-  Address programAddress = computeBudgetProgramAddress,
 }) {
-  final data = RequestHeapFrameInstructionData(bytes: bytes);
+  final instructionData = RequestHeapFrameInstructionData(
+      bytes: bytes,
+  );
+
   return Instruction(
     programAddress: programAddress,
-    accounts: const [],
-    data: getRequestHeapFrameInstructionDataEncoder().encode(data),
+    accounts: [
+
+    ],
+    data: getRequestHeapFrameInstructionDataEncoder().encode(instructionData),
   );
 }
 
-/// Parses a RequestHeapFrame instruction from [instruction].
-RequestHeapFrameInstructionData parseRequestHeapFrameInstruction(
-  Instruction instruction,
-) {
+/// Parses a [RequestHeapFrame] instruction from raw instruction data.
+RequestHeapFrameInstructionData parseRequestHeapFrameInstruction(Instruction instruction) {
   return getRequestHeapFrameInstructionDataDecoder().decode(instruction.data!);
 }

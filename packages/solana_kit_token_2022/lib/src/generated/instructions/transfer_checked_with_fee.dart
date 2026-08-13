@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -33,8 +34,7 @@ class TransferCheckedWithFeeInstructionData {
   final BigInt fee;
 }
 
-Encoder<TransferCheckedWithFeeInstructionData>
-getTransferCheckedWithFeeInstructionDataEncoder() {
+Encoder<TransferCheckedWithFeeInstructionData> getTransferCheckedWithFeeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('transferFeeDiscriminator', getU8Encoder()),
@@ -55,8 +55,7 @@ getTransferCheckedWithFeeInstructionDataEncoder() {
   );
 }
 
-Decoder<TransferCheckedWithFeeInstructionData>
-getTransferCheckedWithFeeInstructionDataDecoder() {
+Decoder<TransferCheckedWithFeeInstructionData> getTransferCheckedWithFeeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('transferFeeDiscriminator', getU8Decoder()),
@@ -67,26 +66,18 @@ getTransferCheckedWithFeeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        TransferCheckedWithFeeInstructionData(
-          discriminator: map['discriminator']! as int,
-          transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
-          amount: map['amount']! as BigInt,
-          decimals: map['decimals']! as int,
-          fee: map['fee']! as BigInt,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => TransferCheckedWithFeeInstructionData(
+      discriminator: map['discriminator']! as int,
+      transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
+      amount: map['amount']! as BigInt,
+      decimals: map['decimals']! as int,
+      fee: map['fee']! as BigInt,
+    ),
   );
 }
 
-Codec<
-  TransferCheckedWithFeeInstructionData,
-  TransferCheckedWithFeeInstructionData
->
-getTransferCheckedWithFeeInstructionDataCodec() {
-  return combineCodec(
-    getTransferCheckedWithFeeInstructionDataEncoder(),
-    getTransferCheckedWithFeeInstructionDataDecoder(),
-  );
+Codec<TransferCheckedWithFeeInstructionData, TransferCheckedWithFeeInstructionData> getTransferCheckedWithFeeInstructionDataCodec() {
+  return combineCodec(getTransferCheckedWithFeeInstructionDataEncoder(), getTransferCheckedWithFeeInstructionDataDecoder());
 }
 
 /// Creates a [TransferCheckedWithFee] instruction.
@@ -101,30 +92,24 @@ Instruction getTransferCheckedWithFeeInstruction({
   required BigInt fee,
 }) {
   final instructionData = TransferCheckedWithFeeInstructionData(
-    amount: amount,
-    decimals: decimals,
-    fee: fee,
+      amount: amount,
+      decimals: decimals,
+      fee: fee,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: source, role: AccountRole.writable),
-      AccountMeta(address: mint, role: AccountRole.readonly),
-      AccountMeta(address: destination, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: source, role: AccountRole.writable),
+    AccountMeta(address: mint, role: AccountRole.readonly),
+    AccountMeta(address: destination, role: AccountRole.writable),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getTransferCheckedWithFeeInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getTransferCheckedWithFeeInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [TransferCheckedWithFee] instruction from raw instruction data.
-TransferCheckedWithFeeInstructionData parseTransferCheckedWithFeeInstruction(
-  Instruction instruction,
-) {
-  return getTransferCheckedWithFeeInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+TransferCheckedWithFeeInstructionData parseTransferCheckedWithFeeInstruction(Instruction instruction) {
+  return getTransferCheckedWithFeeInstructionDataDecoder().decode(instruction.data!);
 }

@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -15,7 +16,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class MergeInstructionData {
-  const MergeInstructionData({this.discriminator = 7});
+  const MergeInstructionData({
+    this.discriminator = 7,
+  });
 
   final int discriminator;
 }
@@ -40,17 +43,14 @@ Decoder<MergeInstructionData> getMergeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        MergeInstructionData(discriminator: map['discriminator']! as int),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => MergeInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
   );
 }
 
-Codec<MergeInstructionData, MergeInstructionData>
-getMergeInstructionDataCodec() {
-  return combineCodec(
-    getMergeInstructionDataEncoder(),
-    getMergeInstructionDataDecoder(),
-  );
+Codec<MergeInstructionData, MergeInstructionData> getMergeInstructionDataCodec() {
+  return combineCodec(getMergeInstructionDataEncoder(), getMergeInstructionDataDecoder());
 }
 
 /// Creates a [Merge] instruction.
@@ -61,17 +61,20 @@ Instruction getMergeInstruction({
   required Address clockSysvar,
   required Address stakeHistory,
   required Address stakeAuthority,
+
 }) {
-  final instructionData = MergeInstructionData();
+  final instructionData = MergeInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: destinationStake, role: AccountRole.writable),
-      AccountMeta(address: sourceStake, role: AccountRole.writable),
-      AccountMeta(address: clockSysvar, role: AccountRole.readonly),
-      AccountMeta(address: stakeHistory, role: AccountRole.readonly),
-      AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: destinationStake, role: AccountRole.writable),
+    AccountMeta(address: sourceStake, role: AccountRole.writable),
+    AccountMeta(address: clockSysvar, role: AccountRole.readonly),
+    AccountMeta(address: stakeHistory, role: AccountRole.readonly),
+    AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
     ],
     data: getMergeInstructionDataEncoder().encode(instructionData),
   );

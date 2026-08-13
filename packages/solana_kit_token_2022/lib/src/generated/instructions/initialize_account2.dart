@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -24,8 +25,7 @@ class InitializeAccount2InstructionData {
   final Address owner;
 }
 
-Encoder<InitializeAccount2InstructionData>
-getInitializeAccount2InstructionDataEncoder() {
+Encoder<InitializeAccount2InstructionData> getInitializeAccount2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('owner', getAddressEncoder()),
@@ -40,8 +40,7 @@ getInitializeAccount2InstructionDataEncoder() {
   );
 }
 
-Decoder<InitializeAccount2InstructionData>
-getInitializeAccount2InstructionDataDecoder() {
+Decoder<InitializeAccount2InstructionData> getInitializeAccount2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('owner', getAddressDecoder()),
@@ -49,20 +48,15 @@ getInitializeAccount2InstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializeAccount2InstructionData(
-          discriminator: map['discriminator']! as int,
-          owner: map['owner']! as Address,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeAccount2InstructionData(
+      discriminator: map['discriminator']! as int,
+      owner: map['owner']! as Address,
+    ),
   );
 }
 
-Codec<InitializeAccount2InstructionData, InitializeAccount2InstructionData>
-getInitializeAccount2InstructionDataCodec() {
-  return combineCodec(
-    getInitializeAccount2InstructionDataEncoder(),
-    getInitializeAccount2InstructionDataDecoder(),
-  );
+Codec<InitializeAccount2InstructionData, InitializeAccount2InstructionData> getInitializeAccount2InstructionDataCodec() {
+  return combineCodec(getInitializeAccount2InstructionDataEncoder(), getInitializeAccount2InstructionDataDecoder());
 }
 
 /// Creates a [InitializeAccount2] instruction.
@@ -74,25 +68,21 @@ Instruction getInitializeAccount2Instruction({
   required Address owner,
 }) {
   final instructionData = InitializeAccount2InstructionData(
-    owner: owner,
+      owner: owner,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: account, role: AccountRole.writable),
-      AccountMeta(address: mint, role: AccountRole.readonly),
-      AccountMeta(address: rent, role: AccountRole.readonly),
+    AccountMeta(address: account, role: AccountRole.writable),
+    AccountMeta(address: mint, role: AccountRole.readonly),
+    AccountMeta(address: rent, role: AccountRole.readonly),
     ],
     data: getInitializeAccount2InstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [InitializeAccount2] instruction from raw instruction data.
-InitializeAccount2InstructionData parseInitializeAccount2Instruction(
-  Instruction instruction,
-) {
-  return getInitializeAccount2InstructionDataDecoder().decode(
-    instruction.data!,
-  );
+InitializeAccount2InstructionData parseInitializeAccount2Instruction(Instruction instruction) {
+  return getInitializeAccount2InstructionDataDecoder().decode(instruction.data!);
 }

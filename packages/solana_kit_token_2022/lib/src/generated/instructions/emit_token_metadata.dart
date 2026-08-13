@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -19,19 +20,17 @@ class EmitTokenMetadataInstructionData {
     Uint8List? discriminator,
     required this.start,
     required this.end,
-  }) : discriminator =
-           discriminator ??
-           Uint8List.fromList([250, 166, 180, 250, 13, 12, 184, 70]);
+  }) :
+      discriminator = discriminator ?? Uint8List.fromList([250, 166, 180, 250, 13, 12, 184, 70]);
 
   final Uint8List discriminator;
   final BigInt? start;
   final BigInt? end;
 }
 
-Encoder<EmitTokenMetadataInstructionData>
-getEmitTokenMetadataInstructionDataEncoder() {
+Encoder<EmitTokenMetadataInstructionData> getEmitTokenMetadataInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getBytesEncoder()),
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
     ('start', getNullableEncoder<BigInt>(getU64Encoder())),
     ('end', getNullableEncoder<BigInt>(getU64Encoder())),
   ]);
@@ -46,31 +45,25 @@ getEmitTokenMetadataInstructionDataEncoder() {
   );
 }
 
-Decoder<EmitTokenMetadataInstructionData>
-getEmitTokenMetadataInstructionDataDecoder() {
+Decoder<EmitTokenMetadataInstructionData> getEmitTokenMetadataInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getBytesDecoder()),
+    ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
     ('start', getNullableDecoder<BigInt>(getU64Decoder())),
     ('end', getNullableDecoder<BigInt>(getU64Decoder())),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        EmitTokenMetadataInstructionData(
-          discriminator: map['discriminator']! as Uint8List,
-          start: map['start'] as BigInt?,
-          end: map['end'] as BigInt?,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => EmitTokenMetadataInstructionData(
+      discriminator: map['discriminator']! as Uint8List,
+      start: map['start'] as BigInt?,
+      end: map['end'] as BigInt?,
+    ),
   );
 }
 
-Codec<EmitTokenMetadataInstructionData, EmitTokenMetadataInstructionData>
-getEmitTokenMetadataInstructionDataCodec() {
-  return combineCodec(
-    getEmitTokenMetadataInstructionDataEncoder(),
-    getEmitTokenMetadataInstructionDataDecoder(),
-  );
+Codec<EmitTokenMetadataInstructionData, EmitTokenMetadataInstructionData> getEmitTokenMetadataInstructionDataCodec() {
+  return combineCodec(getEmitTokenMetadataInstructionDataEncoder(), getEmitTokenMetadataInstructionDataDecoder());
 }
 
 /// Creates a [EmitTokenMetadata] instruction.
@@ -81,22 +74,20 @@ Instruction getEmitTokenMetadataInstruction({
   BigInt? end,
 }) {
   final instructionData = EmitTokenMetadataInstructionData(
-    start: start ?? null,
-    end: end ?? null,
+      start: start ?? null,
+      end: end ?? null,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: metadata, role: AccountRole.readonly),
+    AccountMeta(address: metadata, role: AccountRole.readonly),
     ],
     data: getEmitTokenMetadataInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [EmitTokenMetadata] instruction from raw instruction data.
-EmitTokenMetadataInstructionData parseEmitTokenMetadataInstruction(
-  Instruction instruction,
-) {
+EmitTokenMetadataInstructionData parseEmitTokenMetadataInstruction(Instruction instruction) {
   return getEmitTokenMetadataInstructionDataDecoder().decode(instruction.data!);
 }

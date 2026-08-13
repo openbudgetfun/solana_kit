@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -29,10 +30,7 @@ class ReallocateInstructionData {
 Encoder<ReallocateInstructionData> getReallocateInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
-    (
-      'newExtensionTypes',
-      getArrayEncoder(getExtensionTypeEncoder(), size: RemainderArraySize()),
-    ),
+    ('newExtensionTypes', getArrayEncoder(getExtensionTypeEncoder(), size: RemainderArraySize())),
   ]);
 
   return transformEncoder(
@@ -47,28 +45,20 @@ Encoder<ReallocateInstructionData> getReallocateInstructionDataEncoder() {
 Decoder<ReallocateInstructionData> getReallocateInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-    (
-      'newExtensionTypes',
-      getArrayDecoder(getExtensionTypeDecoder(), size: RemainderArraySize()),
-    ),
+    ('newExtensionTypes', getArrayDecoder(getExtensionTypeDecoder(), size: RemainderArraySize())),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ReallocateInstructionData(
-          discriminator: map['discriminator']! as int,
-          newExtensionTypes: map['newExtensionTypes']! as List<ExtensionType>,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => ReallocateInstructionData(
+      discriminator: map['discriminator']! as int,
+      newExtensionTypes: map['newExtensionTypes']! as List<ExtensionType>,
+    ),
   );
 }
 
-Codec<ReallocateInstructionData, ReallocateInstructionData>
-getReallocateInstructionDataCodec() {
-  return combineCodec(
-    getReallocateInstructionDataEncoder(),
-    getReallocateInstructionDataDecoder(),
-  );
+Codec<ReallocateInstructionData, ReallocateInstructionData> getReallocateInstructionDataCodec() {
+  return combineCodec(getReallocateInstructionDataEncoder(), getReallocateInstructionDataDecoder());
 }
 
 /// Creates a [Reallocate] instruction.
@@ -81,16 +71,16 @@ Instruction getReallocateInstruction({
   required List<ExtensionType> newExtensionTypes,
 }) {
   final instructionData = ReallocateInstructionData(
-    newExtensionTypes: newExtensionTypes,
+      newExtensionTypes: newExtensionTypes,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: token, role: AccountRole.writable),
-      AccountMeta(address: payer, role: AccountRole.writableSigner),
-      AccountMeta(address: systemProgram, role: AccountRole.readonly),
-      AccountMeta(address: owner, role: AccountRole.readonlySigner),
+    AccountMeta(address: token, role: AccountRole.writable),
+    AccountMeta(address: payer, role: AccountRole.writableSigner),
+    AccountMeta(address: systemProgram, role: AccountRole.readonly),
+    AccountMeta(address: owner, role: AccountRole.readonlySigner),
     ],
     data: getReallocateInstructionDataEncoder().encode(instructionData),
   );

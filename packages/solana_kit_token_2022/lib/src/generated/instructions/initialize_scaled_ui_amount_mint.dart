@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -31,19 +32,11 @@ class InitializeScaledUiAmountMintInstructionData {
   final double multiplier;
 }
 
-Encoder<InitializeScaledUiAmountMintInstructionData>
-getInitializeScaledUiAmountMintInstructionDataEncoder() {
+Encoder<InitializeScaledUiAmountMintInstructionData> getInitializeScaledUiAmountMintInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('scaledUiAmountMintDiscriminator', getU8Encoder()),
-    (
-      'authority',
-      getNullableEncoder<Address>(
-        getAddressEncoder(),
-        hasPrefix: false,
-        noneValue: const ZeroesNoneValue(),
-      ),
-    ),
+    ('authority', getNullableEncoder<Address>(getAddressEncoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
     ('multiplier', getF64Encoder()),
   ]);
 
@@ -58,44 +51,27 @@ getInitializeScaledUiAmountMintInstructionDataEncoder() {
   );
 }
 
-Decoder<InitializeScaledUiAmountMintInstructionData>
-getInitializeScaledUiAmountMintInstructionDataDecoder() {
+Decoder<InitializeScaledUiAmountMintInstructionData> getInitializeScaledUiAmountMintInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('scaledUiAmountMintDiscriminator', getU8Decoder()),
-    (
-      'authority',
-      getNullableDecoder<Address>(
-        getAddressDecoder(),
-        hasPrefix: false,
-        noneValue: const ZeroesNoneValue(),
-      ),
-    ),
+    ('authority', getNullableDecoder<Address>(getAddressDecoder(), hasPrefix: false, noneValue: const ZeroesNoneValue())),
     ('multiplier', getF64Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializeScaledUiAmountMintInstructionData(
-          discriminator: map['discriminator']! as int,
-          scaledUiAmountMintDiscriminator:
-              map['scaledUiAmountMintDiscriminator']! as int,
-          authority: map['authority'] as Address?,
-          multiplier: map['multiplier']! as double,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeScaledUiAmountMintInstructionData(
+      discriminator: map['discriminator']! as int,
+      scaledUiAmountMintDiscriminator: map['scaledUiAmountMintDiscriminator']! as int,
+      authority: map['authority'] as Address?,
+      multiplier: map['multiplier']! as double,
+    ),
   );
 }
 
-Codec<
-  InitializeScaledUiAmountMintInstructionData,
-  InitializeScaledUiAmountMintInstructionData
->
-getInitializeScaledUiAmountMintInstructionDataCodec() {
-  return combineCodec(
-    getInitializeScaledUiAmountMintInstructionDataEncoder(),
-    getInitializeScaledUiAmountMintInstructionDataDecoder(),
-  );
+Codec<InitializeScaledUiAmountMintInstructionData, InitializeScaledUiAmountMintInstructionData> getInitializeScaledUiAmountMintInstructionDataCodec() {
+  return combineCodec(getInitializeScaledUiAmountMintInstructionDataEncoder(), getInitializeScaledUiAmountMintInstructionDataDecoder());
 }
 
 /// Creates a [InitializeScaledUiAmountMint] instruction.
@@ -106,25 +82,20 @@ Instruction getInitializeScaledUiAmountMintInstruction({
   required double multiplier,
 }) {
   final instructionData = InitializeScaledUiAmountMintInstructionData(
-    authority: authority,
-    multiplier: multiplier,
+      authority: authority,
+      multiplier: multiplier,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: mint, role: AccountRole.writable),
+    AccountMeta(address: mint, role: AccountRole.writable),
     ],
-    data: getInitializeScaledUiAmountMintInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getInitializeScaledUiAmountMintInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [InitializeScaledUiAmountMint] instruction from raw instruction data.
-InitializeScaledUiAmountMintInstructionData
-parseInitializeScaledUiAmountMintInstruction(Instruction instruction) {
-  return getInitializeScaledUiAmountMintInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+InitializeScaledUiAmountMintInstructionData parseInitializeScaledUiAmountMintInstruction(Instruction instruction) {
+  return getInitializeScaledUiAmountMintInstructionDataDecoder().decode(instruction.data!);
 }

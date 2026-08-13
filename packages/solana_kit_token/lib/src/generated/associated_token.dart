@@ -1,3 +1,8 @@
-// Handwritten compatibility shim.
+// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
 
-export 'package:solana_kit_associated_token_account/solana_kit_associated_token_account.dart';
+export 'errors/errors.dart';
+export 'instructions/instructions.dart';
+export 'pdas/pdas.dart';
+export 'programs/programs.dart';
+

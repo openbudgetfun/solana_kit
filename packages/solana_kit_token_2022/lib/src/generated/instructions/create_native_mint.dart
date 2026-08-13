@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -22,8 +23,7 @@ class CreateNativeMintInstructionData {
   final int discriminator;
 }
 
-Encoder<CreateNativeMintInstructionData>
-getCreateNativeMintInstructionDataEncoder() {
+Encoder<CreateNativeMintInstructionData> getCreateNativeMintInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,27 +36,21 @@ getCreateNativeMintInstructionDataEncoder() {
   );
 }
 
-Decoder<CreateNativeMintInstructionData>
-getCreateNativeMintInstructionDataDecoder() {
+Decoder<CreateNativeMintInstructionData> getCreateNativeMintInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        CreateNativeMintInstructionData(
-          discriminator: map['discriminator']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateNativeMintInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
   );
 }
 
-Codec<CreateNativeMintInstructionData, CreateNativeMintInstructionData>
-getCreateNativeMintInstructionDataCodec() {
-  return combineCodec(
-    getCreateNativeMintInstructionDataEncoder(),
-    getCreateNativeMintInstructionDataDecoder(),
-  );
+Codec<CreateNativeMintInstructionData, CreateNativeMintInstructionData> getCreateNativeMintInstructionDataCodec() {
+  return combineCodec(getCreateNativeMintInstructionDataEncoder(), getCreateNativeMintInstructionDataDecoder());
 }
 
 /// Creates a [CreateNativeMint] instruction.
@@ -65,23 +59,24 @@ Instruction getCreateNativeMintInstruction({
   required Address payer,
   required Address nativeMint,
   required Address systemProgram,
+
 }) {
-  final instructionData = CreateNativeMintInstructionData();
+  final instructionData = CreateNativeMintInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: payer, role: AccountRole.writableSigner),
-      AccountMeta(address: nativeMint, role: AccountRole.writable),
-      AccountMeta(address: systemProgram, role: AccountRole.readonly),
+    AccountMeta(address: payer, role: AccountRole.writableSigner),
+    AccountMeta(address: nativeMint, role: AccountRole.writable),
+    AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
     data: getCreateNativeMintInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [CreateNativeMint] instruction from raw instruction data.
-CreateNativeMintInstructionData parseCreateNativeMintInstruction(
-  Instruction instruction,
-) {
+CreateNativeMintInstructionData parseCreateNativeMintInstruction(Instruction instruction) {
   return getCreateNativeMintInstructionDataDecoder().decode(instruction.data!);
 }

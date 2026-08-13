@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -47,19 +48,15 @@ Decoder<BurnInstructionData> getBurnInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        BurnInstructionData(
-          discriminator: map['discriminator']! as int,
-          amount: map['amount']! as BigInt,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => BurnInstructionData(
+      discriminator: map['discriminator']! as int,
+      amount: map['amount']! as BigInt,
+    ),
   );
 }
 
 Codec<BurnInstructionData, BurnInstructionData> getBurnInstructionDataCodec() {
-  return combineCodec(
-    getBurnInstructionDataEncoder(),
-    getBurnInstructionDataDecoder(),
-  );
+  return combineCodec(getBurnInstructionDataEncoder(), getBurnInstructionDataDecoder());
 }
 
 /// Creates a [Burn] instruction.
@@ -71,15 +68,15 @@ Instruction getBurnInstruction({
   required BigInt amount,
 }) {
   final instructionData = BurnInstructionData(
-    amount: amount,
+      amount: amount,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: account, role: AccountRole.writable),
-      AccountMeta(address: mint, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: account, role: AccountRole.writable),
+    AccountMeta(address: mint, role: AccountRole.writable),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
     data: getBurnInstructionDataEncoder().encode(instructionData),
   );

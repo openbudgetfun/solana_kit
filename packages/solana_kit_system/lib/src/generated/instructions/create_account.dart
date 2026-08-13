@@ -1,3 +1,9 @@
+// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -5,23 +11,22 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-/// System Program instruction discriminators.
-enum SystemInstruction { createAccount }
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
 
-/// Data payload for the System Program `CreateAccount` instruction.
 @immutable
 class CreateAccountInstructionData {
   const CreateAccountInstructionData({
+    this.discriminator = 0,
     required this.lamports,
     required this.space,
-    required this.programOwner,
-    this.discriminator = 0,
+    required this.programAddress,
   });
 
   final int discriminator;
   final BigInt lamports;
   final BigInt space;
-  final Address programOwner;
+  final Address programAddress;
 }
 
 Encoder<CreateAccountInstructionData> getCreateAccountInstructionDataEncoder() {
@@ -29,16 +34,16 @@ Encoder<CreateAccountInstructionData> getCreateAccountInstructionDataEncoder() {
     ('discriminator', getU32Encoder()),
     ('lamports', getU64Encoder()),
     ('space', getU64Encoder()),
-    ('programOwner', getAddressEncoder()),
+    ('programAddress', getAddressEncoder()),
   ]);
 
   return transformEncoder(
     structEncoder,
-    (value) => <String, Object?>{
+    (CreateAccountInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
       'lamports': value.lamports,
       'space': value.space,
-      'programOwner': value.programOwner,
+      'programAddress': value.programAddress,
     },
   );
 }
@@ -48,56 +53,50 @@ Decoder<CreateAccountInstructionData> getCreateAccountInstructionDataDecoder() {
     ('discriminator', getU32Decoder()),
     ('lamports', getU64Decoder()),
     ('space', getU64Decoder()),
-    ('programOwner', getAddressDecoder()),
+    ('programAddress', getAddressDecoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (map, bytes, offset) => CreateAccountInstructionData(
+    (Map<String, Object?> map, Uint8List bytes, int offset) => CreateAccountInstructionData(
       discriminator: map['discriminator']! as int,
       lamports: map['lamports']! as BigInt,
       space: map['space']! as BigInt,
-      programOwner: map['programOwner']! as Address,
+      programAddress: map['programAddress']! as Address,
     ),
   );
 }
 
-Codec<CreateAccountInstructionData, CreateAccountInstructionData>
-getCreateAccountInstructionDataCodec() {
-  return combineCodec(
-    getCreateAccountInstructionDataEncoder(),
-    getCreateAccountInstructionDataDecoder(),
-  );
+Codec<CreateAccountInstructionData, CreateAccountInstructionData> getCreateAccountInstructionDataCodec() {
+  return combineCodec(getCreateAccountInstructionDataEncoder(), getCreateAccountInstructionDataDecoder());
 }
 
-/// Builds a System Program `CreateAccount` instruction.
+/// Creates a [CreateAccount] instruction.
 Instruction getCreateAccountInstruction({
+  required Address instructionProgramAddress,
   required Address payer,
   required Address newAccount,
   required BigInt lamports,
   required BigInt space,
-  required Address programOwner,
-  Address programAddress = systemProgramAddress,
+  required Address programAddress,
 }) {
   final instructionData = CreateAccountInstructionData(
-    lamports: lamports,
-    space: space,
-    programOwner: programOwner,
+      lamports: lamports,
+      space: space,
+      programAddress: programAddress,
   );
 
   return Instruction(
-    programAddress: programAddress,
+    programAddress: instructionProgramAddress,
     accounts: [
-      AccountMeta(address: payer, role: AccountRole.writableSigner),
-      AccountMeta(address: newAccount, role: AccountRole.writableSigner),
+    AccountMeta(address: payer, role: AccountRole.writableSigner),
+    AccountMeta(address: newAccount, role: AccountRole.writableSigner),
     ],
     data: getCreateAccountInstructionDataEncoder().encode(instructionData),
   );
 }
 
-/// Parses a System Program `CreateAccount` instruction.
-CreateAccountInstructionData parseCreateAccountInstruction(
-  Instruction instruction,
-) {
+/// Parses a [CreateAccount] instruction from raw instruction data.
+CreateAccountInstructionData parseCreateAccountInstruction(Instruction instruction) {
   return getCreateAccountInstructionDataDecoder().decode(instruction.data!);
 }

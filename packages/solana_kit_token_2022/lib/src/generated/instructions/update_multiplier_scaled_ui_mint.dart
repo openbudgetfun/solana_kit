@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -31,8 +32,7 @@ class UpdateMultiplierScaledUiMintInstructionData {
   final BigInt effectiveTimestamp;
 }
 
-Encoder<UpdateMultiplierScaledUiMintInstructionData>
-getUpdateMultiplierScaledUiMintInstructionDataEncoder() {
+Encoder<UpdateMultiplierScaledUiMintInstructionData> getUpdateMultiplierScaledUiMintInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('scaledUiAmountMintDiscriminator', getU8Encoder()),
@@ -51,8 +51,7 @@ getUpdateMultiplierScaledUiMintInstructionDataEncoder() {
   );
 }
 
-Decoder<UpdateMultiplierScaledUiMintInstructionData>
-getUpdateMultiplierScaledUiMintInstructionDataDecoder() {
+Decoder<UpdateMultiplierScaledUiMintInstructionData> getUpdateMultiplierScaledUiMintInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('scaledUiAmountMintDiscriminator', getU8Decoder()),
@@ -62,26 +61,17 @@ getUpdateMultiplierScaledUiMintInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        UpdateMultiplierScaledUiMintInstructionData(
-          discriminator: map['discriminator']! as int,
-          scaledUiAmountMintDiscriminator:
-              map['scaledUiAmountMintDiscriminator']! as int,
-          multiplier: map['multiplier']! as double,
-          effectiveTimestamp: map['effectiveTimestamp']! as BigInt,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateMultiplierScaledUiMintInstructionData(
+      discriminator: map['discriminator']! as int,
+      scaledUiAmountMintDiscriminator: map['scaledUiAmountMintDiscriminator']! as int,
+      multiplier: map['multiplier']! as double,
+      effectiveTimestamp: map['effectiveTimestamp']! as BigInt,
+    ),
   );
 }
 
-Codec<
-  UpdateMultiplierScaledUiMintInstructionData,
-  UpdateMultiplierScaledUiMintInstructionData
->
-getUpdateMultiplierScaledUiMintInstructionDataCodec() {
-  return combineCodec(
-    getUpdateMultiplierScaledUiMintInstructionDataEncoder(),
-    getUpdateMultiplierScaledUiMintInstructionDataDecoder(),
-  );
+Codec<UpdateMultiplierScaledUiMintInstructionData, UpdateMultiplierScaledUiMintInstructionData> getUpdateMultiplierScaledUiMintInstructionDataCodec() {
+  return combineCodec(getUpdateMultiplierScaledUiMintInstructionDataEncoder(), getUpdateMultiplierScaledUiMintInstructionDataDecoder());
 }
 
 /// Creates a [UpdateMultiplierScaledUiMint] instruction.
@@ -93,26 +83,21 @@ Instruction getUpdateMultiplierScaledUiMintInstruction({
   required BigInt effectiveTimestamp,
 }) {
   final instructionData = UpdateMultiplierScaledUiMintInstructionData(
-    multiplier: multiplier,
-    effectiveTimestamp: effectiveTimestamp,
+      multiplier: multiplier,
+      effectiveTimestamp: effectiveTimestamp,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: mint, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.writableSigner),
+    AccountMeta(address: mint, role: AccountRole.writable),
+    AccountMeta(address: authority, role: AccountRole.writableSigner),
     ],
-    data: getUpdateMultiplierScaledUiMintInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getUpdateMultiplierScaledUiMintInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [UpdateMultiplierScaledUiMint] instruction from raw instruction data.
-UpdateMultiplierScaledUiMintInstructionData
-parseUpdateMultiplierScaledUiMintInstruction(Instruction instruction) {
-  return getUpdateMultiplierScaledUiMintInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+UpdateMultiplierScaledUiMintInstructionData parseUpdateMultiplierScaledUiMintInstruction(Instruction instruction) {
+  return getUpdateMultiplierScaledUiMintInstructionDataDecoder().decode(instruction.data!);
 }

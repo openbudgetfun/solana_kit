@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -27,8 +28,7 @@ class ConfigureConfidentialTransferAccountWithRegistryInstructionData {
   final int confidentialTransferDiscriminator;
 }
 
-Encoder<ConfigureConfidentialTransferAccountWithRegistryInstructionData>
-getConfigureConfidentialTransferAccountWithRegistryInstructionDataEncoder() {
+Encoder<ConfigureConfidentialTransferAccountWithRegistryInstructionData> getConfigureConfidentialTransferAccountWithRegistryInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferDiscriminator', getU8Encoder()),
@@ -36,17 +36,14 @@ getConfigureConfidentialTransferAccountWithRegistryInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (ConfigureConfidentialTransferAccountWithRegistryInstructionData value) =>
-        <String, Object?>{
-          'discriminator': value.discriminator,
-          'confidentialTransferDiscriminator':
-              value.confidentialTransferDiscriminator,
-        },
+    (ConfigureConfidentialTransferAccountWithRegistryInstructionData value) => <String, Object?>{
+      'discriminator': value.discriminator,
+      'confidentialTransferDiscriminator': value.confidentialTransferDiscriminator,
+    },
   );
 }
 
-Decoder<ConfigureConfidentialTransferAccountWithRegistryInstructionData>
-getConfigureConfidentialTransferAccountWithRegistryInstructionDataDecoder() {
+Decoder<ConfigureConfidentialTransferAccountWithRegistryInstructionData> getConfigureConfidentialTransferAccountWithRegistryInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferDiscriminator', getU8Decoder()),
@@ -54,24 +51,15 @@ getConfigureConfidentialTransferAccountWithRegistryInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ConfigureConfidentialTransferAccountWithRegistryInstructionData(
-          discriminator: map['discriminator']! as int,
-          confidentialTransferDiscriminator:
-              map['confidentialTransferDiscriminator']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => ConfigureConfidentialTransferAccountWithRegistryInstructionData(
+      discriminator: map['discriminator']! as int,
+      confidentialTransferDiscriminator: map['confidentialTransferDiscriminator']! as int,
+    ),
   );
 }
 
-Codec<
-  ConfigureConfidentialTransferAccountWithRegistryInstructionData,
-  ConfigureConfidentialTransferAccountWithRegistryInstructionData
->
-getConfigureConfidentialTransferAccountWithRegistryInstructionDataCodec() {
-  return combineCodec(
-    getConfigureConfidentialTransferAccountWithRegistryInstructionDataEncoder(),
-    getConfigureConfidentialTransferAccountWithRegistryInstructionDataDecoder(),
-  );
+Codec<ConfigureConfidentialTransferAccountWithRegistryInstructionData, ConfigureConfidentialTransferAccountWithRegistryInstructionData> getConfigureConfidentialTransferAccountWithRegistryInstructionDataCodec() {
+  return combineCodec(getConfigureConfidentialTransferAccountWithRegistryInstructionDataEncoder(), getConfigureConfidentialTransferAccountWithRegistryInstructionDataDecoder());
 }
 
 /// Creates a [ConfigureConfidentialTransferAccountWithRegistry] instruction.
@@ -82,32 +70,26 @@ Instruction getConfigureConfidentialTransferAccountWithRegistryInstruction({
   required Address elgamalRegistry,
   Address? payer,
   Address? systemProgram,
+
 }) {
-  final instructionData =
-      ConfigureConfidentialTransferAccountWithRegistryInstructionData();
+  final instructionData = ConfigureConfidentialTransferAccountWithRegistryInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: token, role: AccountRole.writable),
-      AccountMeta(address: mint, role: AccountRole.readonly),
-      AccountMeta(address: elgamalRegistry, role: AccountRole.readonly),
-      if (payer != null)
-        AccountMeta(address: payer, role: AccountRole.writableSigner),
-      if (systemProgram != null)
-        AccountMeta(address: systemProgram, role: AccountRole.readonly),
+    AccountMeta(address: token, role: AccountRole.writable),
+    AccountMeta(address: mint, role: AccountRole.readonly),
+    AccountMeta(address: elgamalRegistry, role: AccountRole.readonly),
+    if (payer != null) AccountMeta(address: payer, role: AccountRole.writableSigner),
+    if (systemProgram != null) AccountMeta(address: systemProgram, role: AccountRole.readonly),
     ],
-    data:
-        getConfigureConfidentialTransferAccountWithRegistryInstructionDataEncoder()
-            .encode(instructionData),
+    data: getConfigureConfidentialTransferAccountWithRegistryInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [ConfigureConfidentialTransferAccountWithRegistry] instruction from raw instruction data.
-ConfigureConfidentialTransferAccountWithRegistryInstructionData
-parseConfigureConfidentialTransferAccountWithRegistryInstruction(
-  Instruction instruction,
-) {
-  return getConfigureConfidentialTransferAccountWithRegistryInstructionDataDecoder()
-      .decode(instruction.data!);
+ConfigureConfidentialTransferAccountWithRegistryInstructionData parseConfigureConfidentialTransferAccountWithRegistryInstruction(Instruction instruction) {
+  return getConfigureConfidentialTransferAccountWithRegistryInstructionDataDecoder().decode(instruction.data!);
 }

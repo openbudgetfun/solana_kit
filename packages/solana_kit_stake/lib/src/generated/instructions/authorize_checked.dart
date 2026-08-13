@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -26,8 +27,7 @@ class AuthorizeCheckedInstructionData {
   final StakeAuthorize stakeAuthorize;
 }
 
-Encoder<AuthorizeCheckedInstructionData>
-getAuthorizeCheckedInstructionDataEncoder() {
+Encoder<AuthorizeCheckedInstructionData> getAuthorizeCheckedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('stakeAuthorize', getStakeAuthorizeEncoder()),
@@ -42,8 +42,7 @@ getAuthorizeCheckedInstructionDataEncoder() {
   );
 }
 
-Decoder<AuthorizeCheckedInstructionData>
-getAuthorizeCheckedInstructionDataDecoder() {
+Decoder<AuthorizeCheckedInstructionData> getAuthorizeCheckedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('stakeAuthorize', getStakeAuthorizeDecoder()),
@@ -51,20 +50,15 @@ getAuthorizeCheckedInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        AuthorizeCheckedInstructionData(
-          discriminator: map['discriminator']! as int,
-          stakeAuthorize: map['stakeAuthorize']! as StakeAuthorize,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => AuthorizeCheckedInstructionData(
+      discriminator: map['discriminator']! as int,
+      stakeAuthorize: map['stakeAuthorize']! as StakeAuthorize,
+    ),
   );
 }
 
-Codec<AuthorizeCheckedInstructionData, AuthorizeCheckedInstructionData>
-getAuthorizeCheckedInstructionDataCodec() {
-  return combineCodec(
-    getAuthorizeCheckedInstructionDataEncoder(),
-    getAuthorizeCheckedInstructionDataDecoder(),
-  );
+Codec<AuthorizeCheckedInstructionData, AuthorizeCheckedInstructionData> getAuthorizeCheckedInstructionDataCodec() {
+  return combineCodec(getAuthorizeCheckedInstructionDataEncoder(), getAuthorizeCheckedInstructionDataDecoder());
 }
 
 /// Creates a [AuthorizeChecked] instruction.
@@ -78,26 +72,23 @@ Instruction getAuthorizeCheckedInstruction({
   required StakeAuthorize stakeAuthorize,
 }) {
   final instructionData = AuthorizeCheckedInstructionData(
-    stakeAuthorize: stakeAuthorize,
+      stakeAuthorize: stakeAuthorize,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: stake, role: AccountRole.writable),
-      AccountMeta(address: clockSysvar, role: AccountRole.readonly),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
-      AccountMeta(address: newAuthority, role: AccountRole.readonlySigner),
-      if (lockupAuthority != null)
-        AccountMeta(address: lockupAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: stake, role: AccountRole.writable),
+    AccountMeta(address: clockSysvar, role: AccountRole.readonly),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: newAuthority, role: AccountRole.readonlySigner),
+    if (lockupAuthority != null) AccountMeta(address: lockupAuthority, role: AccountRole.readonlySigner),
     ],
     data: getAuthorizeCheckedInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [AuthorizeChecked] instruction from raw instruction data.
-AuthorizeCheckedInstructionData parseAuthorizeCheckedInstruction(
-  Instruction instruction,
-) {
+AuthorizeCheckedInstructionData parseAuthorizeCheckedInstruction(Instruction instruction) {
   return getAuthorizeCheckedInstructionDataDecoder().decode(instruction.data!);
 }

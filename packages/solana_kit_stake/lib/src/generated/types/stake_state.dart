@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -8,6 +9,7 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 import './meta.dart';
+
 
 sealed class StakeState {
   const StakeState();
@@ -34,7 +36,8 @@ final class Initialized extends StakeState {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Initialized && value == other.value;
+      identical(this, other) ||
+      other is Initialized && value == other.value;
 
   @override
   int get hashCode => value.hashCode;
@@ -61,21 +64,12 @@ Encoder<StakeState> getStakeStateEncoder() {
   return transformEncoder<Map<String, Object?>, StakeState>(
     getDiscriminatedUnionEncoder([
       (0, getStructEncoder(<(String, Encoder<Object?>)>[])),
-      (
-        1,
-        transformEncoder<Meta, Map<String, Object?>>(
-          getMetaEncoder(),
-          (Map<String, Object?> map) => map['value']! as Meta,
-        ),
-      ),
+      (1, transformEncoder<Meta, Map<String, Object?>>(getMetaEncoder(), (Map<String, Object?> map) => map['value']! as Meta)),
       (3, getStructEncoder(<(String, Encoder<Object?>)>[])),
-    ], size: getU8Encoder()),
+    ], size: getU32Encoder()),
     (StakeState value) => switch (value) {
       Uninitialized() => <String, Object?>{'__kind': 0},
-      Initialized(value: final value) => <String, Object?>{
-        '__kind': 1,
-        'value': value,
-      },
+      Initialized(value: final value) => <String, Object?>{'__kind': 1, 'value': value},
       RewardsPool() => <String, Object?>{'__kind': 3},
     },
   );
@@ -84,44 +78,17 @@ Encoder<StakeState> getStakeStateEncoder() {
 Decoder<StakeState> getStakeStateDecoder() {
   return transformDecoder<Map<String, Object?>, StakeState>(
     getDiscriminatedUnionDecoder([
-      (
-        0,
-        transformDecoder<Map<String, Object?>, Map<String, Object?>>(
-          getStructDecoder(<(String, Decoder<Object?>)>[]),
-          (Map<String, Object?> map, Uint8List bytes, int offset) =>
-              <String, Object?>{},
-        ),
-      ),
-      (
-        1,
-        transformDecoder<Meta, Map<String, Object?>>(
-          getMetaDecoder(),
-          (Meta value, Uint8List bytes, int offset) => <String, Object?>{
-            'value': value,
-          },
-        ),
-      ),
-      (
-        3,
-        transformDecoder<Map<String, Object?>, Map<String, Object?>>(
-          getStructDecoder(<(String, Decoder<Object?>)>[]),
-          (Map<String, Object?> map, Uint8List bytes, int offset) =>
-              <String, Object?>{},
-        ),
-      ),
-    ], size: getU8Decoder()),
+      (0, transformDecoder<Map<String, Object?>, Map<String, Object?>>(getStructDecoder(<(String, Decoder<Object?>)>[]), (Map<String, Object?> map, Uint8List bytes, int offset) => <String, Object?>{})),
+      (1, transformDecoder<Meta, Map<String, Object?>>(getMetaDecoder(), (Meta value, Uint8List bytes, int offset) => <String, Object?>{'value': value})),
+      (3, transformDecoder<Map<String, Object?>, Map<String, Object?>>(getStructDecoder(<(String, Decoder<Object?>)>[]), (Map<String, Object?> map, Uint8List bytes, int offset) => <String, Object?>{})),
+    ], size: getU32Decoder()),
     (Map<String, Object?> map, Uint8List bytes, int offset) {
       switch (map['__kind']) {
-        case 0:
-          return const Uninitialized();
-        case 1:
-          return Initialized(map['value']! as Meta);
-        case 3:
-          return const RewardsPool();
+        case 0: return const Uninitialized();
+        case 1: return Initialized(map['value']! as Meta);
+        case 3: return const RewardsPool();
       }
-      throw StateError(
-        'Unsupported StakeState discriminator: ${map['__kind']}',
-      );
+      throw StateError('Unsupported StakeState discriminator: ${map['__kind']}');
     },
   );
 }

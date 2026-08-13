@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -33,8 +34,7 @@ class InitializeConfidentialMintBurnInstructionData {
   final DecryptableBalance decryptableSupply;
 }
 
-Encoder<InitializeConfidentialMintBurnInstructionData>
-getInitializeConfidentialMintBurnInstructionDataEncoder() {
+Encoder<InitializeConfidentialMintBurnInstructionData> getInitializeConfidentialMintBurnInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialMintBurnDiscriminator', getU8Encoder()),
@@ -46,16 +46,14 @@ getInitializeConfidentialMintBurnInstructionDataEncoder() {
     structEncoder,
     (InitializeConfidentialMintBurnInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialMintBurnDiscriminator':
-          value.confidentialMintBurnDiscriminator,
+      'confidentialMintBurnDiscriminator': value.confidentialMintBurnDiscriminator,
       'supplyElgamalPubkey': value.supplyElgamalPubkey,
       'decryptableSupply': value.decryptableSupply,
     },
   );
 }
 
-Decoder<InitializeConfidentialMintBurnInstructionData>
-getInitializeConfidentialMintBurnInstructionDataDecoder() {
+Decoder<InitializeConfidentialMintBurnInstructionData> getInitializeConfidentialMintBurnInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialMintBurnDiscriminator', getU8Decoder()),
@@ -65,26 +63,17 @@ getInitializeConfidentialMintBurnInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializeConfidentialMintBurnInstructionData(
-          discriminator: map['discriminator']! as int,
-          confidentialMintBurnDiscriminator:
-              map['confidentialMintBurnDiscriminator']! as int,
-          supplyElgamalPubkey: map['supplyElgamalPubkey']! as Address,
-          decryptableSupply: map['decryptableSupply']! as DecryptableBalance,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeConfidentialMintBurnInstructionData(
+      discriminator: map['discriminator']! as int,
+      confidentialMintBurnDiscriminator: map['confidentialMintBurnDiscriminator']! as int,
+      supplyElgamalPubkey: map['supplyElgamalPubkey']! as Address,
+      decryptableSupply: map['decryptableSupply']! as DecryptableBalance,
+    ),
   );
 }
 
-Codec<
-  InitializeConfidentialMintBurnInstructionData,
-  InitializeConfidentialMintBurnInstructionData
->
-getInitializeConfidentialMintBurnInstructionDataCodec() {
-  return combineCodec(
-    getInitializeConfidentialMintBurnInstructionDataEncoder(),
-    getInitializeConfidentialMintBurnInstructionDataDecoder(),
-  );
+Codec<InitializeConfidentialMintBurnInstructionData, InitializeConfidentialMintBurnInstructionData> getInitializeConfidentialMintBurnInstructionDataCodec() {
+  return combineCodec(getInitializeConfidentialMintBurnInstructionDataEncoder(), getInitializeConfidentialMintBurnInstructionDataDecoder());
 }
 
 /// Creates a [InitializeConfidentialMintBurn] instruction.
@@ -95,25 +84,20 @@ Instruction getInitializeConfidentialMintBurnInstruction({
   required DecryptableBalance decryptableSupply,
 }) {
   final instructionData = InitializeConfidentialMintBurnInstructionData(
-    supplyElgamalPubkey: supplyElgamalPubkey,
-    decryptableSupply: decryptableSupply,
+      supplyElgamalPubkey: supplyElgamalPubkey,
+      decryptableSupply: decryptableSupply,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: mint, role: AccountRole.writable),
+    AccountMeta(address: mint, role: AccountRole.writable),
     ],
-    data: getInitializeConfidentialMintBurnInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getInitializeConfidentialMintBurnInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [InitializeConfidentialMintBurn] instruction from raw instruction data.
-InitializeConfidentialMintBurnInstructionData
-parseInitializeConfidentialMintBurnInstruction(Instruction instruction) {
-  return getInitializeConfidentialMintBurnInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+InitializeConfidentialMintBurnInstructionData parseInitializeConfidentialMintBurnInstruction(Instruction instruction) {
+  return getInitializeConfidentialMintBurnInstructionDataDecoder().decode(instruction.data!);
 }

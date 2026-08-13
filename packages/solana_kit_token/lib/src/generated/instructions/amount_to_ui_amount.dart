@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -24,8 +25,7 @@ class AmountToUiAmountInstructionData {
   final BigInt amount;
 }
 
-Encoder<AmountToUiAmountInstructionData>
-getAmountToUiAmountInstructionDataEncoder() {
+Encoder<AmountToUiAmountInstructionData> getAmountToUiAmountInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('amount', getU64Encoder()),
@@ -40,8 +40,7 @@ getAmountToUiAmountInstructionDataEncoder() {
   );
 }
 
-Decoder<AmountToUiAmountInstructionData>
-getAmountToUiAmountInstructionDataDecoder() {
+Decoder<AmountToUiAmountInstructionData> getAmountToUiAmountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('amount', getU64Decoder()),
@@ -49,20 +48,15 @@ getAmountToUiAmountInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        AmountToUiAmountInstructionData(
-          discriminator: map['discriminator']! as int,
-          amount: map['amount']! as BigInt,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => AmountToUiAmountInstructionData(
+      discriminator: map['discriminator']! as int,
+      amount: map['amount']! as BigInt,
+    ),
   );
 }
 
-Codec<AmountToUiAmountInstructionData, AmountToUiAmountInstructionData>
-getAmountToUiAmountInstructionDataCodec() {
-  return combineCodec(
-    getAmountToUiAmountInstructionDataEncoder(),
-    getAmountToUiAmountInstructionDataDecoder(),
-  );
+Codec<AmountToUiAmountInstructionData, AmountToUiAmountInstructionData> getAmountToUiAmountInstructionDataCodec() {
+  return combineCodec(getAmountToUiAmountInstructionDataEncoder(), getAmountToUiAmountInstructionDataDecoder());
 }
 
 /// Creates a [AmountToUiAmount] instruction.
@@ -71,18 +65,20 @@ Instruction getAmountToUiAmountInstruction({
   required Address mint,
   required BigInt amount,
 }) {
-  final instructionData = AmountToUiAmountInstructionData(amount: amount);
+  final instructionData = AmountToUiAmountInstructionData(
+      amount: amount,
+  );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [AccountMeta(address: mint, role: AccountRole.readonly)],
+    accounts: [
+    AccountMeta(address: mint, role: AccountRole.readonly),
+    ],
     data: getAmountToUiAmountInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [AmountToUiAmount] instruction from raw instruction data.
-AmountToUiAmountInstructionData parseAmountToUiAmountInstruction(
-  Instruction instruction,
-) {
+AmountToUiAmountInstructionData parseAmountToUiAmountInstruction(Instruction instruction) {
   return getAmountToUiAmountInstructionDataDecoder().decode(instruction.data!);
 }

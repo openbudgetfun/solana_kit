@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -27,8 +28,7 @@ class DisableConfidentialCreditsInstructionData {
   final int confidentialTransferDiscriminator;
 }
 
-Encoder<DisableConfidentialCreditsInstructionData>
-getDisableConfidentialCreditsInstructionDataEncoder() {
+Encoder<DisableConfidentialCreditsInstructionData> getDisableConfidentialCreditsInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferDiscriminator', getU8Encoder()),
@@ -38,14 +38,12 @@ getDisableConfidentialCreditsInstructionDataEncoder() {
     structEncoder,
     (DisableConfidentialCreditsInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialTransferDiscriminator':
-          value.confidentialTransferDiscriminator,
+      'confidentialTransferDiscriminator': value.confidentialTransferDiscriminator,
     },
   );
 }
 
-Decoder<DisableConfidentialCreditsInstructionData>
-getDisableConfidentialCreditsInstructionDataDecoder() {
+Decoder<DisableConfidentialCreditsInstructionData> getDisableConfidentialCreditsInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferDiscriminator', getU8Decoder()),
@@ -53,24 +51,15 @@ getDisableConfidentialCreditsInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        DisableConfidentialCreditsInstructionData(
-          discriminator: map['discriminator']! as int,
-          confidentialTransferDiscriminator:
-              map['confidentialTransferDiscriminator']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => DisableConfidentialCreditsInstructionData(
+      discriminator: map['discriminator']! as int,
+      confidentialTransferDiscriminator: map['confidentialTransferDiscriminator']! as int,
+    ),
   );
 }
 
-Codec<
-  DisableConfidentialCreditsInstructionData,
-  DisableConfidentialCreditsInstructionData
->
-getDisableConfidentialCreditsInstructionDataCodec() {
-  return combineCodec(
-    getDisableConfidentialCreditsInstructionDataEncoder(),
-    getDisableConfidentialCreditsInstructionDataDecoder(),
-  );
+Codec<DisableConfidentialCreditsInstructionData, DisableConfidentialCreditsInstructionData> getDisableConfidentialCreditsInstructionDataCodec() {
+  return combineCodec(getDisableConfidentialCreditsInstructionDataEncoder(), getDisableConfidentialCreditsInstructionDataDecoder());
 }
 
 /// Creates a [DisableConfidentialCredits] instruction.
@@ -78,25 +67,23 @@ Instruction getDisableConfidentialCreditsInstruction({
   required Address programAddress,
   required Address token,
   required Address authority,
+
 }) {
-  final instructionData = DisableConfidentialCreditsInstructionData();
+  final instructionData = DisableConfidentialCreditsInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: token, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: token, role: AccountRole.writable),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getDisableConfidentialCreditsInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getDisableConfidentialCreditsInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [DisableConfidentialCredits] instruction from raw instruction data.
-DisableConfidentialCreditsInstructionData
-parseDisableConfidentialCreditsInstruction(Instruction instruction) {
-  return getDisableConfidentialCreditsInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+DisableConfidentialCreditsInstructionData parseDisableConfidentialCreditsInstruction(Instruction instruction) {
+  return getDisableConfidentialCreditsInstructionDataDecoder().decode(instruction.data!);
 }

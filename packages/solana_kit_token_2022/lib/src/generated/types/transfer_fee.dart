@@ -1,12 +1,14 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
 
 @immutable
 class TransferFee {
@@ -33,8 +35,7 @@ class TransferFee {
   int get hashCode => Object.hash(epoch, maximumFee, transferFeeBasisPoints);
 
   @override
-  String toString() =>
-      'TransferFee(epoch: $epoch, maximumFee: $maximumFee, transferFeeBasisPoints: $transferFeeBasisPoints)';
+  String toString() => 'TransferFee(epoch: $epoch, maximumFee: $maximumFee, transferFeeBasisPoints: $transferFeeBasisPoints)';
 }
 
 Encoder<TransferFee> getTransferFeeEncoder() {

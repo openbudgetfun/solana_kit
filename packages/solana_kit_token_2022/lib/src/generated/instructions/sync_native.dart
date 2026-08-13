@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -42,19 +43,14 @@ Decoder<SyncNativeInstructionData> getSyncNativeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        SyncNativeInstructionData(
-          discriminator: map['discriminator']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => SyncNativeInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
   );
 }
 
-Codec<SyncNativeInstructionData, SyncNativeInstructionData>
-getSyncNativeInstructionDataCodec() {
-  return combineCodec(
-    getSyncNativeInstructionDataEncoder(),
-    getSyncNativeInstructionDataDecoder(),
-  );
+Codec<SyncNativeInstructionData, SyncNativeInstructionData> getSyncNativeInstructionDataCodec() {
+  return combineCodec(getSyncNativeInstructionDataEncoder(), getSyncNativeInstructionDataDecoder());
 }
 
 /// Creates a [SyncNative] instruction.
@@ -62,14 +58,17 @@ Instruction getSyncNativeInstruction({
   required Address programAddress,
   required Address account,
   Address? rent,
+
 }) {
-  final instructionData = SyncNativeInstructionData();
+  final instructionData = SyncNativeInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: account, role: AccountRole.writable),
-      if (rent != null) AccountMeta(address: rent, role: AccountRole.readonly),
+    AccountMeta(address: account, role: AccountRole.writable),
+    if (rent != null) AccountMeta(address: rent, role: AccountRole.readonly),
     ],
     data: getSyncNativeInstructionDataEncoder().encode(instructionData),
   );

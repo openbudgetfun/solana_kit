@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -31,8 +32,7 @@ class UpdateDefaultAccountStateInstructionData {
   final AccountState state;
 }
 
-Encoder<UpdateDefaultAccountStateInstructionData>
-getUpdateDefaultAccountStateInstructionDataEncoder() {
+Encoder<UpdateDefaultAccountStateInstructionData> getUpdateDefaultAccountStateInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('defaultAccountStateDiscriminator', getU8Encoder()),
@@ -43,15 +43,13 @@ getUpdateDefaultAccountStateInstructionDataEncoder() {
     structEncoder,
     (UpdateDefaultAccountStateInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'defaultAccountStateDiscriminator':
-          value.defaultAccountStateDiscriminator,
+      'defaultAccountStateDiscriminator': value.defaultAccountStateDiscriminator,
       'state': value.state,
     },
   );
 }
 
-Decoder<UpdateDefaultAccountStateInstructionData>
-getUpdateDefaultAccountStateInstructionDataDecoder() {
+Decoder<UpdateDefaultAccountStateInstructionData> getUpdateDefaultAccountStateInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('defaultAccountStateDiscriminator', getU8Decoder()),
@@ -60,25 +58,16 @@ getUpdateDefaultAccountStateInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        UpdateDefaultAccountStateInstructionData(
-          discriminator: map['discriminator']! as int,
-          defaultAccountStateDiscriminator:
-              map['defaultAccountStateDiscriminator']! as int,
-          state: map['state']! as AccountState,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateDefaultAccountStateInstructionData(
+      discriminator: map['discriminator']! as int,
+      defaultAccountStateDiscriminator: map['defaultAccountStateDiscriminator']! as int,
+      state: map['state']! as AccountState,
+    ),
   );
 }
 
-Codec<
-  UpdateDefaultAccountStateInstructionData,
-  UpdateDefaultAccountStateInstructionData
->
-getUpdateDefaultAccountStateInstructionDataCodec() {
-  return combineCodec(
-    getUpdateDefaultAccountStateInstructionDataEncoder(),
-    getUpdateDefaultAccountStateInstructionDataDecoder(),
-  );
+Codec<UpdateDefaultAccountStateInstructionData, UpdateDefaultAccountStateInstructionData> getUpdateDefaultAccountStateInstructionDataCodec() {
+  return combineCodec(getUpdateDefaultAccountStateInstructionDataEncoder(), getUpdateDefaultAccountStateInstructionDataDecoder());
 }
 
 /// Creates a [UpdateDefaultAccountState] instruction.
@@ -89,25 +78,20 @@ Instruction getUpdateDefaultAccountStateInstruction({
   required AccountState state,
 }) {
   final instructionData = UpdateDefaultAccountStateInstructionData(
-    state: state,
+      state: state,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: mint, role: AccountRole.writable),
-      AccountMeta(address: freezeAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: mint, role: AccountRole.writable),
+    AccountMeta(address: freezeAuthority, role: AccountRole.readonlySigner),
     ],
-    data: getUpdateDefaultAccountStateInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getUpdateDefaultAccountStateInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [UpdateDefaultAccountState] instruction from raw instruction data.
-UpdateDefaultAccountStateInstructionData
-parseUpdateDefaultAccountStateInstruction(Instruction instruction) {
-  return getUpdateDefaultAccountStateInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+UpdateDefaultAccountStateInstructionData parseUpdateDefaultAccountStateInstruction(Instruction instruction) {
+  return getUpdateDefaultAccountStateInstructionDataDecoder().decode(instruction.data!);
 }

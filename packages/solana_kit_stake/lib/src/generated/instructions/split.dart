@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -15,7 +16,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class SplitInstructionData {
-  const SplitInstructionData({this.discriminator = 3, required this.args});
+  const SplitInstructionData({
+    this.discriminator = 3,
+    required this.args,
+  });
 
   final int discriminator;
   final BigInt args;
@@ -44,20 +48,15 @@ Decoder<SplitInstructionData> getSplitInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        SplitInstructionData(
-          discriminator: map['discriminator']! as int,
-          args: map['args']! as BigInt,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => SplitInstructionData(
+      discriminator: map['discriminator']! as int,
+      args: map['args']! as BigInt,
+    ),
   );
 }
 
-Codec<SplitInstructionData, SplitInstructionData>
-getSplitInstructionDataCodec() {
-  return combineCodec(
-    getSplitInstructionDataEncoder(),
-    getSplitInstructionDataDecoder(),
-  );
+Codec<SplitInstructionData, SplitInstructionData> getSplitInstructionDataCodec() {
+  return combineCodec(getSplitInstructionDataEncoder(), getSplitInstructionDataDecoder());
 }
 
 /// Creates a [Split] instruction.
@@ -68,14 +67,16 @@ Instruction getSplitInstruction({
   required Address stakeAuthority,
   required BigInt args,
 }) {
-  final instructionData = SplitInstructionData(args: args);
+  final instructionData = SplitInstructionData(
+      args: args,
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: stake, role: AccountRole.writable),
-      AccountMeta(address: splitStake, role: AccountRole.writable),
-      AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: stake, role: AccountRole.writable),
+    AccountMeta(address: splitStake, role: AccountRole.writable),
+    AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
     ],
     data: getSplitInstructionDataEncoder().encode(instructionData),
   );

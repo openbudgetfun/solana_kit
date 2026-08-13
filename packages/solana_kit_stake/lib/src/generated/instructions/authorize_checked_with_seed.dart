@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -10,7 +11,7 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-import '../types/authorize_checked_with_seed_params.dart';
+import 'definedType:authorize_checked_with_seed_args';
 
 /// The discriminator field name: 'discriminator'.
 /// Offset: 0.
@@ -23,14 +24,13 @@ class AuthorizeCheckedWithSeedInstructionData {
   });
 
   final int discriminator;
-  final AuthorizeCheckedWithSeedParams arg0;
+  final AuthorizeCheckedWithSeedArgs arg0;
 }
 
-Encoder<AuthorizeCheckedWithSeedInstructionData>
-getAuthorizeCheckedWithSeedInstructionDataEncoder() {
+Encoder<AuthorizeCheckedWithSeedInstructionData> getAuthorizeCheckedWithSeedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
-    ('arg0', getAuthorizeCheckedWithSeedParamsEncoder()),
+    ('arg0', getAuthorizeCheckedWithSeedArgsEncoder()),
   ]);
 
   return transformEncoder(
@@ -42,32 +42,23 @@ getAuthorizeCheckedWithSeedInstructionDataEncoder() {
   );
 }
 
-Decoder<AuthorizeCheckedWithSeedInstructionData>
-getAuthorizeCheckedWithSeedInstructionDataDecoder() {
+Decoder<AuthorizeCheckedWithSeedInstructionData> getAuthorizeCheckedWithSeedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-    ('arg0', getAuthorizeCheckedWithSeedParamsDecoder()),
+    ('arg0', getAuthorizeCheckedWithSeedArgsDecoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        AuthorizeCheckedWithSeedInstructionData(
-          discriminator: map['discriminator']! as int,
-          arg0: map['arg0']! as AuthorizeCheckedWithSeedParams,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => AuthorizeCheckedWithSeedInstructionData(
+      discriminator: map['discriminator']! as int,
+      arg0: map['arg0']! as AuthorizeCheckedWithSeedArgs,
+    ),
   );
 }
 
-Codec<
-  AuthorizeCheckedWithSeedInstructionData,
-  AuthorizeCheckedWithSeedInstructionData
->
-getAuthorizeCheckedWithSeedInstructionDataCodec() {
-  return combineCodec(
-    getAuthorizeCheckedWithSeedInstructionDataEncoder(),
-    getAuthorizeCheckedWithSeedInstructionDataDecoder(),
-  );
+Codec<AuthorizeCheckedWithSeedInstructionData, AuthorizeCheckedWithSeedInstructionData> getAuthorizeCheckedWithSeedInstructionDataCodec() {
+  return combineCodec(getAuthorizeCheckedWithSeedInstructionDataEncoder(), getAuthorizeCheckedWithSeedInstructionDataDecoder());
 }
 
 /// Creates a [AuthorizeCheckedWithSeed] instruction.
@@ -78,30 +69,26 @@ Instruction getAuthorizeCheckedWithSeedInstruction({
   required Address clockSysvar,
   required Address newAuthority,
   Address? lockupAuthority,
-  required AuthorizeCheckedWithSeedParams arg0,
+  required AuthorizeCheckedWithSeedArgs arg0,
 }) {
-  final instructionData = AuthorizeCheckedWithSeedInstructionData(arg0: arg0);
+  final instructionData = AuthorizeCheckedWithSeedInstructionData(
+      arg0: arg0,
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: stake, role: AccountRole.writable),
-      AccountMeta(address: base, role: AccountRole.readonlySigner),
-      AccountMeta(address: clockSysvar, role: AccountRole.readonly),
-      AccountMeta(address: newAuthority, role: AccountRole.readonlySigner),
-      if (lockupAuthority != null)
-        AccountMeta(address: lockupAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: stake, role: AccountRole.writable),
+    AccountMeta(address: base, role: AccountRole.readonlySigner),
+    AccountMeta(address: clockSysvar, role: AccountRole.readonly),
+    AccountMeta(address: newAuthority, role: AccountRole.readonlySigner),
+    if (lockupAuthority != null) AccountMeta(address: lockupAuthority, role: AccountRole.readonlySigner),
     ],
-    data: getAuthorizeCheckedWithSeedInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getAuthorizeCheckedWithSeedInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [AuthorizeCheckedWithSeed] instruction from raw instruction data.
-AuthorizeCheckedWithSeedInstructionData
-parseAuthorizeCheckedWithSeedInstruction(Instruction instruction) {
-  return getAuthorizeCheckedWithSeedInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+AuthorizeCheckedWithSeedInstructionData parseAuthorizeCheckedWithSeedInstruction(Instruction instruction) {
+  return getAuthorizeCheckedWithSeedInstructionDataDecoder().decode(instruction.data!);
 }

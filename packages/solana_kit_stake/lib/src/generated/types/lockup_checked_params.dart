@@ -1,18 +1,23 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 
-import './epoch.dart';
-import './unix_timestamp.dart';
+import 'definedType:epoch';
+import 'definedType:unix_timestamp';
+
 
 @immutable
 class LockupCheckedParams {
-  const LockupCheckedParams({required this.unixTimestamp, required this.epoch});
+  const LockupCheckedParams({
+    required this.unixTimestamp,
+    required this.epoch,
+  });
 
   final UnixTimestamp? unixTimestamp;
   final Epoch? epoch;
@@ -29,16 +34,12 @@ class LockupCheckedParams {
   int get hashCode => Object.hash(unixTimestamp, epoch);
 
   @override
-  String toString() =>
-      'LockupCheckedParams(unixTimestamp: $unixTimestamp, epoch: $epoch)';
+  String toString() => 'LockupCheckedParams(unixTimestamp: $unixTimestamp, epoch: $epoch)';
 }
 
 Encoder<LockupCheckedParams> getLockupCheckedParamsEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    (
-      'unixTimestamp',
-      getNullableEncoder<UnixTimestamp>(getUnixTimestampEncoder()),
-    ),
+    ('unixTimestamp', getNullableEncoder<UnixTimestamp>(getUnixTimestampEncoder())),
     ('epoch', getNullableEncoder<Epoch>(getEpochEncoder())),
   ]);
 
@@ -53,26 +54,19 @@ Encoder<LockupCheckedParams> getLockupCheckedParamsEncoder() {
 
 Decoder<LockupCheckedParams> getLockupCheckedParamsDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    (
-      'unixTimestamp',
-      getNullableDecoder<UnixTimestamp>(getUnixTimestampDecoder()),
-    ),
+    ('unixTimestamp', getNullableDecoder<UnixTimestamp>(getUnixTimestampDecoder())),
     ('epoch', getNullableDecoder<Epoch>(getEpochDecoder())),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        LockupCheckedParams(
-          unixTimestamp: map['unixTimestamp'] as UnixTimestamp?,
-          epoch: map['epoch'] as Epoch?,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => LockupCheckedParams(
+      unixTimestamp: map['unixTimestamp'] as UnixTimestamp?,
+      epoch: map['epoch'] as Epoch?,
+    ),
   );
 }
 
 Codec<LockupCheckedParams, LockupCheckedParams> getLockupCheckedParamsCodec() {
-  return combineCodec(
-    getLockupCheckedParamsEncoder(),
-    getLockupCheckedParamsDecoder(),
-  );
+  return combineCodec(getLockupCheckedParamsEncoder(), getLockupCheckedParamsDecoder());
 }

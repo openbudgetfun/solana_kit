@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -31,8 +32,7 @@ class PermissionedBurnCheckedInstructionData {
   final int decimals;
 }
 
-Encoder<PermissionedBurnCheckedInstructionData>
-getPermissionedBurnCheckedInstructionDataEncoder() {
+Encoder<PermissionedBurnCheckedInstructionData> getPermissionedBurnCheckedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('permissionedBurnDiscriminator', getU8Encoder()),
@@ -51,8 +51,7 @@ getPermissionedBurnCheckedInstructionDataEncoder() {
   );
 }
 
-Decoder<PermissionedBurnCheckedInstructionData>
-getPermissionedBurnCheckedInstructionDataDecoder() {
+Decoder<PermissionedBurnCheckedInstructionData> getPermissionedBurnCheckedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('permissionedBurnDiscriminator', getU8Decoder()),
@@ -62,26 +61,17 @@ getPermissionedBurnCheckedInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        PermissionedBurnCheckedInstructionData(
-          discriminator: map['discriminator']! as int,
-          permissionedBurnDiscriminator:
-              map['permissionedBurnDiscriminator']! as int,
-          amount: map['amount']! as BigInt,
-          decimals: map['decimals']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => PermissionedBurnCheckedInstructionData(
+      discriminator: map['discriminator']! as int,
+      permissionedBurnDiscriminator: map['permissionedBurnDiscriminator']! as int,
+      amount: map['amount']! as BigInt,
+      decimals: map['decimals']! as int,
+    ),
   );
 }
 
-Codec<
-  PermissionedBurnCheckedInstructionData,
-  PermissionedBurnCheckedInstructionData
->
-getPermissionedBurnCheckedInstructionDataCodec() {
-  return combineCodec(
-    getPermissionedBurnCheckedInstructionDataEncoder(),
-    getPermissionedBurnCheckedInstructionDataDecoder(),
-  );
+Codec<PermissionedBurnCheckedInstructionData, PermissionedBurnCheckedInstructionData> getPermissionedBurnCheckedInstructionDataCodec() {
+  return combineCodec(getPermissionedBurnCheckedInstructionDataEncoder(), getPermissionedBurnCheckedInstructionDataDecoder());
 }
 
 /// Creates a [PermissionedBurnChecked] instruction.
@@ -95,32 +85,23 @@ Instruction getPermissionedBurnCheckedInstruction({
   required int decimals,
 }) {
   final instructionData = PermissionedBurnCheckedInstructionData(
-    amount: amount,
-    decimals: decimals,
+      amount: amount,
+      decimals: decimals,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: account, role: AccountRole.writable),
-      AccountMeta(address: mint, role: AccountRole.writable),
-      AccountMeta(
-        address: permissionedBurnAuthority,
-        role: AccountRole.readonlySigner,
-      ),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: account, role: AccountRole.writable),
+    AccountMeta(address: mint, role: AccountRole.writable),
+    AccountMeta(address: permissionedBurnAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getPermissionedBurnCheckedInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getPermissionedBurnCheckedInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [PermissionedBurnChecked] instruction from raw instruction data.
-PermissionedBurnCheckedInstructionData parsePermissionedBurnCheckedInstruction(
-  Instruction instruction,
-) {
-  return getPermissionedBurnCheckedInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+PermissionedBurnCheckedInstructionData parsePermissionedBurnCheckedInstruction(Instruction instruction) {
+  return getPermissionedBurnCheckedInstructionDataDecoder().decode(instruction.data!);
 }

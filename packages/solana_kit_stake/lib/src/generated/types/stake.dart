@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -10,9 +11,13 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 import './delegation.dart';
 
+
 @immutable
 class Stake {
-  const Stake({required this.delegation, required this.creditsObserved});
+  const Stake({
+    required this.delegation,
+    required this.creditsObserved,
+  });
 
   final Delegation delegation;
   final BigInt creditsObserved;
@@ -29,8 +34,7 @@ class Stake {
   int get hashCode => Object.hash(delegation, creditsObserved);
 
   @override
-  String toString() =>
-      'Stake(delegation: $delegation, creditsObserved: $creditsObserved)';
+  String toString() => 'Stake(delegation: $delegation, creditsObserved: $creditsObserved)';
 }
 
 Encoder<Stake> getStakeEncoder() {

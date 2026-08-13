@@ -1,12 +1,12 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
+
 /// The address of the Token2022 program.
-const token2022ProgramAddress = Address(
-  'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb',
-);
+const token2022ProgramAddress = Address('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
 
 /// Known accounts for the Token2022 program.
 enum Token2022Account {

@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -22,8 +23,7 @@ class WithdrawExcessLamportsInstructionData {
   final int discriminator;
 }
 
-Encoder<WithdrawExcessLamportsInstructionData>
-getWithdrawExcessLamportsInstructionDataEncoder() {
+Encoder<WithdrawExcessLamportsInstructionData> getWithdrawExcessLamportsInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
   ]);
@@ -36,30 +36,21 @@ getWithdrawExcessLamportsInstructionDataEncoder() {
   );
 }
 
-Decoder<WithdrawExcessLamportsInstructionData>
-getWithdrawExcessLamportsInstructionDataDecoder() {
+Decoder<WithdrawExcessLamportsInstructionData> getWithdrawExcessLamportsInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        WithdrawExcessLamportsInstructionData(
-          discriminator: map['discriminator']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => WithdrawExcessLamportsInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
   );
 }
 
-Codec<
-  WithdrawExcessLamportsInstructionData,
-  WithdrawExcessLamportsInstructionData
->
-getWithdrawExcessLamportsInstructionDataCodec() {
-  return combineCodec(
-    getWithdrawExcessLamportsInstructionDataEncoder(),
-    getWithdrawExcessLamportsInstructionDataDecoder(),
-  );
+Codec<WithdrawExcessLamportsInstructionData, WithdrawExcessLamportsInstructionData> getWithdrawExcessLamportsInstructionDataCodec() {
+  return combineCodec(getWithdrawExcessLamportsInstructionDataEncoder(), getWithdrawExcessLamportsInstructionDataDecoder());
 }
 
 /// Creates a [WithdrawExcessLamports] instruction.
@@ -68,27 +59,24 @@ Instruction getWithdrawExcessLamportsInstruction({
   required Address source,
   required Address destination,
   required Address authority,
+
 }) {
-  final instructionData = WithdrawExcessLamportsInstructionData();
+  final instructionData = WithdrawExcessLamportsInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: source, role: AccountRole.writable),
-      AccountMeta(address: destination, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: source, role: AccountRole.writable),
+    AccountMeta(address: destination, role: AccountRole.writable),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getWithdrawExcessLamportsInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getWithdrawExcessLamportsInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [WithdrawExcessLamports] instruction from raw instruction data.
-WithdrawExcessLamportsInstructionData parseWithdrawExcessLamportsInstruction(
-  Instruction instruction,
-) {
-  return getWithdrawExcessLamportsInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+WithdrawExcessLamportsInstructionData parseWithdrawExcessLamportsInstruction(Instruction instruction) {
+  return getWithdrawExcessLamportsInstructionDataDecoder().decode(instruction.data!);
 }

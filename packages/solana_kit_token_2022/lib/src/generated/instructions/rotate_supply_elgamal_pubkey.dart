@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -31,8 +32,7 @@ class RotateSupplyElgamalPubkeyInstructionData {
   final int proofInstructionOffset;
 }
 
-Encoder<RotateSupplyElgamalPubkeyInstructionData>
-getRotateSupplyElgamalPubkeyInstructionDataEncoder() {
+Encoder<RotateSupplyElgamalPubkeyInstructionData> getRotateSupplyElgamalPubkeyInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialMintBurnDiscriminator', getU8Encoder()),
@@ -44,16 +44,14 @@ getRotateSupplyElgamalPubkeyInstructionDataEncoder() {
     structEncoder,
     (RotateSupplyElgamalPubkeyInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialMintBurnDiscriminator':
-          value.confidentialMintBurnDiscriminator,
+      'confidentialMintBurnDiscriminator': value.confidentialMintBurnDiscriminator,
       'newSupplyElgamalPubkey': value.newSupplyElgamalPubkey,
       'proofInstructionOffset': value.proofInstructionOffset,
     },
   );
 }
 
-Decoder<RotateSupplyElgamalPubkeyInstructionData>
-getRotateSupplyElgamalPubkeyInstructionDataDecoder() {
+Decoder<RotateSupplyElgamalPubkeyInstructionData> getRotateSupplyElgamalPubkeyInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialMintBurnDiscriminator', getU8Decoder()),
@@ -63,26 +61,17 @@ getRotateSupplyElgamalPubkeyInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        RotateSupplyElgamalPubkeyInstructionData(
-          discriminator: map['discriminator']! as int,
-          confidentialMintBurnDiscriminator:
-              map['confidentialMintBurnDiscriminator']! as int,
-          newSupplyElgamalPubkey: map['newSupplyElgamalPubkey']! as Address,
-          proofInstructionOffset: map['proofInstructionOffset']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => RotateSupplyElgamalPubkeyInstructionData(
+      discriminator: map['discriminator']! as int,
+      confidentialMintBurnDiscriminator: map['confidentialMintBurnDiscriminator']! as int,
+      newSupplyElgamalPubkey: map['newSupplyElgamalPubkey']! as Address,
+      proofInstructionOffset: map['proofInstructionOffset']! as int,
+    ),
   );
 }
 
-Codec<
-  RotateSupplyElgamalPubkeyInstructionData,
-  RotateSupplyElgamalPubkeyInstructionData
->
-getRotateSupplyElgamalPubkeyInstructionDataCodec() {
-  return combineCodec(
-    getRotateSupplyElgamalPubkeyInstructionDataEncoder(),
-    getRotateSupplyElgamalPubkeyInstructionDataDecoder(),
-  );
+Codec<RotateSupplyElgamalPubkeyInstructionData, RotateSupplyElgamalPubkeyInstructionData> getRotateSupplyElgamalPubkeyInstructionDataCodec() {
+  return combineCodec(getRotateSupplyElgamalPubkeyInstructionDataEncoder(), getRotateSupplyElgamalPubkeyInstructionDataDecoder());
 }
 
 /// Creates a [RotateSupplyElgamalPubkey] instruction.
@@ -95,30 +84,22 @@ Instruction getRotateSupplyElgamalPubkeyInstruction({
   required int proofInstructionOffset,
 }) {
   final instructionData = RotateSupplyElgamalPubkeyInstructionData(
-    newSupplyElgamalPubkey: newSupplyElgamalPubkey,
-    proofInstructionOffset: proofInstructionOffset,
+      newSupplyElgamalPubkey: newSupplyElgamalPubkey,
+      proofInstructionOffset: proofInstructionOffset,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: mint, role: AccountRole.writable),
-      AccountMeta(
-        address: instructionsSysvarOrContextState,
-        role: AccountRole.readonly,
-      ),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: mint, role: AccountRole.writable),
+    AccountMeta(address: instructionsSysvarOrContextState, role: AccountRole.readonly),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getRotateSupplyElgamalPubkeyInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getRotateSupplyElgamalPubkeyInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [RotateSupplyElgamalPubkey] instruction from raw instruction data.
-RotateSupplyElgamalPubkeyInstructionData
-parseRotateSupplyElgamalPubkeyInstruction(Instruction instruction) {
-  return getRotateSupplyElgamalPubkeyInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+RotateSupplyElgamalPubkeyInstructionData parseRotateSupplyElgamalPubkeyInstruction(Instruction instruction) {
+  return getRotateSupplyElgamalPubkeyInstructionDataDecoder().decode(instruction.data!);
 }

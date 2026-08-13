@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -22,19 +23,17 @@ class UpdateTokenMetadataFieldInstructionData {
     Uint8List? discriminator,
     required this.field,
     required this.value,
-  }) : discriminator =
-           discriminator ??
-           Uint8List.fromList([221, 233, 49, 45, 181, 202, 220, 200]);
+  }) :
+      discriminator = discriminator ?? Uint8List.fromList([221, 233, 49, 45, 181, 202, 220, 200]);
 
   final Uint8List discriminator;
   final TokenMetadataField field;
   final String value;
 }
 
-Encoder<UpdateTokenMetadataFieldInstructionData>
-getUpdateTokenMetadataFieldInstructionDataEncoder() {
+Encoder<UpdateTokenMetadataFieldInstructionData> getUpdateTokenMetadataFieldInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getBytesEncoder()),
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
     ('field', getTokenMetadataFieldEncoder()),
     ('value', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
   ]);
@@ -49,34 +48,25 @@ getUpdateTokenMetadataFieldInstructionDataEncoder() {
   );
 }
 
-Decoder<UpdateTokenMetadataFieldInstructionData>
-getUpdateTokenMetadataFieldInstructionDataDecoder() {
+Decoder<UpdateTokenMetadataFieldInstructionData> getUpdateTokenMetadataFieldInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getBytesDecoder()),
+    ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
     ('field', getTokenMetadataFieldDecoder()),
     ('value', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
   ]);
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        UpdateTokenMetadataFieldInstructionData(
-          discriminator: map['discriminator']! as Uint8List,
-          field: map['field']! as TokenMetadataField,
-          value: map['value']! as String,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => UpdateTokenMetadataFieldInstructionData(
+      discriminator: map['discriminator']! as Uint8List,
+      field: map['field']! as TokenMetadataField,
+      value: map['value']! as String,
+    ),
   );
 }
 
-Codec<
-  UpdateTokenMetadataFieldInstructionData,
-  UpdateTokenMetadataFieldInstructionData
->
-getUpdateTokenMetadataFieldInstructionDataCodec() {
-  return combineCodec(
-    getUpdateTokenMetadataFieldInstructionDataEncoder(),
-    getUpdateTokenMetadataFieldInstructionDataDecoder(),
-  );
+Codec<UpdateTokenMetadataFieldInstructionData, UpdateTokenMetadataFieldInstructionData> getUpdateTokenMetadataFieldInstructionDataCodec() {
+  return combineCodec(getUpdateTokenMetadataFieldInstructionDataEncoder(), getUpdateTokenMetadataFieldInstructionDataDecoder());
 }
 
 /// Creates a [UpdateTokenMetadataField] instruction.
@@ -88,26 +78,21 @@ Instruction getUpdateTokenMetadataFieldInstruction({
   required String value,
 }) {
   final instructionData = UpdateTokenMetadataFieldInstructionData(
-    field: field,
-    value: value,
+      field: field,
+      value: value,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: metadata, role: AccountRole.writable),
-      AccountMeta(address: updateAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: metadata, role: AccountRole.writable),
+    AccountMeta(address: updateAuthority, role: AccountRole.readonlySigner),
     ],
-    data: getUpdateTokenMetadataFieldInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getUpdateTokenMetadataFieldInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [UpdateTokenMetadataField] instruction from raw instruction data.
-UpdateTokenMetadataFieldInstructionData
-parseUpdateTokenMetadataFieldInstruction(Instruction instruction) {
-  return getUpdateTokenMetadataFieldInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+UpdateTokenMetadataFieldInstructionData parseUpdateTokenMetadataFieldInstruction(Instruction instruction) {
+  return getUpdateTokenMetadataFieldInstructionDataDecoder().decode(instruction.data!);
 }

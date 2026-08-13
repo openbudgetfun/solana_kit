@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -55,21 +56,16 @@ Decoder<InitializeInstructionData> getInitializeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializeInstructionData(
-          discriminator: map['discriminator']! as int,
-          arg0: map['arg0']! as Authorized,
-          arg1: map['arg1']! as Lockup,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => InitializeInstructionData(
+      discriminator: map['discriminator']! as int,
+      arg0: map['arg0']! as Authorized,
+      arg1: map['arg1']! as Lockup,
+    ),
   );
 }
 
-Codec<InitializeInstructionData, InitializeInstructionData>
-getInitializeInstructionDataCodec() {
-  return combineCodec(
-    getInitializeInstructionDataEncoder(),
-    getInitializeInstructionDataDecoder(),
-  );
+Codec<InitializeInstructionData, InitializeInstructionData> getInitializeInstructionDataCodec() {
+  return combineCodec(getInitializeInstructionDataEncoder(), getInitializeInstructionDataDecoder());
 }
 
 /// Creates a [Initialize] instruction.
@@ -80,13 +76,16 @@ Instruction getInitializeInstruction({
   required Authorized arg0,
   required Lockup arg1,
 }) {
-  final instructionData = InitializeInstructionData(arg0: arg0, arg1: arg1);
+  final instructionData = InitializeInstructionData(
+      arg0: arg0,
+      arg1: arg1,
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: stake, role: AccountRole.writable),
-      AccountMeta(address: rentSysvar, role: AccountRole.readonly),
+    AccountMeta(address: stake, role: AccountRole.writable),
+    AccountMeta(address: rentSysvar, role: AccountRole.readonly),
     ],
     data: getInitializeInstructionDataEncoder().encode(instructionData),
   );

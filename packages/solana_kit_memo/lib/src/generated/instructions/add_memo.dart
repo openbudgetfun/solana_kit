@@ -1,3 +1,9 @@
+// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+
+import 'dart:typed_data';
+
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -5,27 +11,16 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-/// Data for the AddMemo instruction.
+
 @immutable
 class AddMemoInstructionData {
-  /// Creates [AddMemoInstructionData].
-  const AddMemoInstructionData({required this.memo});
+  const AddMemoInstructionData({
+    required this.memo,
+  });
 
-  /// Memo text encoded as raw UTF-8 instruction data.
   final String memo;
-
-  @override
-  String toString() => 'AddMemoInstructionData(memo: $memo)';
-
-  @override
-  bool operator ==(Object other) =>
-      other is AddMemoInstructionData && other.memo == memo;
-
-  @override
-  int get hashCode => memo.hashCode;
 }
 
-/// Returns the encoder for [AddMemoInstructionData].
 Encoder<AddMemoInstructionData> getAddMemoInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('memo', getUtf8Encoder()),
@@ -33,11 +28,12 @@ Encoder<AddMemoInstructionData> getAddMemoInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (value) => <String, Object?>{'memo': value.memo},
+    (AddMemoInstructionData value) => <String, Object?>{
+      'memo': value.memo,
+    },
   );
 }
 
-/// Returns the decoder for [AddMemoInstructionData].
 Decoder<AddMemoInstructionData> getAddMemoInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('memo', getUtf8Decoder()),
@@ -45,34 +41,36 @@ Decoder<AddMemoInstructionData> getAddMemoInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (map, bytes, offset) =>
-        AddMemoInstructionData(memo: map['memo']! as String),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => AddMemoInstructionData(
+      memo: map['memo']! as String,
+    ),
   );
 }
 
-/// Returns the codec for [AddMemoInstructionData].
-Codec<AddMemoInstructionData, AddMemoInstructionData>
-getAddMemoInstructionDataCodec() {
-  return combineCodec(
-    getAddMemoInstructionDataEncoder(),
-    getAddMemoInstructionDataDecoder(),
-  );
+Codec<AddMemoInstructionData, AddMemoInstructionData> getAddMemoInstructionDataCodec() {
+  return combineCodec(getAddMemoInstructionDataEncoder(), getAddMemoInstructionDataDecoder());
 }
 
-/// Creates an AddMemo instruction from generated instruction data.
-Instruction getAddMemoInstructionFromData({
-  required AddMemoInstructionData data,
-  List<AccountMeta> accounts = const [],
-  Address programAddress = memoProgramAddress,
+/// Creates a [AddMemo] instruction.
+Instruction getAddMemoInstruction({
+  required Address programAddress,
+
+  required String memo,
 }) {
+  final instructionData = AddMemoInstructionData(
+      memo: memo,
+  );
+
   return Instruction(
     programAddress: programAddress,
-    accounts: accounts,
-    data: getAddMemoInstructionDataEncoder().encode(data),
+    accounts: [
+
+    ],
+    data: getAddMemoInstructionDataEncoder().encode(instructionData),
   );
 }
 
-/// Parses an AddMemo instruction from [instruction].
+/// Parses a [AddMemo] instruction from raw instruction data.
 AddMemoInstructionData parseAddMemoInstruction(Instruction instruction) {
   return getAddMemoInstructionDataDecoder().decode(instruction.data!);
 }

@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -9,7 +10,8 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
-import './epoch.dart';
+import 'definedType:epoch';
+
 
 @immutable
 class Delegation {
@@ -36,20 +38,13 @@ class Delegation {
           stake == other.stake &&
           activationEpoch == other.activationEpoch &&
           deactivationEpoch == other.deactivationEpoch &&
-          _listEquals(reserved, other.reserved);
+          reserved == other.reserved;
 
   @override
-  int get hashCode => Object.hash(
-    voterPubkey,
-    stake,
-    activationEpoch,
-    deactivationEpoch,
-    Object.hashAll(reserved),
-  );
+  int get hashCode => Object.hash(voterPubkey, stake, activationEpoch, deactivationEpoch, reserved);
 
   @override
-  String toString() =>
-      'Delegation(voterPubkey: $voterPubkey, stake: $stake, activationEpoch: $activationEpoch, deactivationEpoch: $deactivationEpoch, reserved: $reserved)';
+  String toString() => 'Delegation(voterPubkey: $voterPubkey, stake: $stake, activationEpoch: $activationEpoch, deactivationEpoch: $deactivationEpoch, reserved: $reserved)';
 }
 
 Encoder<Delegation> getDelegationEncoder() {
@@ -58,10 +53,7 @@ Encoder<Delegation> getDelegationEncoder() {
     ('stake', getU64Encoder()),
     ('activationEpoch', getEpochEncoder()),
     ('deactivationEpoch', getEpochEncoder()),
-    (
-      'reserved',
-      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
-    ),
+    ('reserved', getArrayEncoder(getU8Encoder(), size: FixedArraySize(8))),
   ]);
 
   return transformEncoder(
@@ -82,10 +74,7 @@ Decoder<Delegation> getDelegationDecoder() {
     ('stake', getU64Decoder()),
     ('activationEpoch', getEpochDecoder()),
     ('deactivationEpoch', getEpochDecoder()),
-    (
-      'reserved',
-      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
-    ),
+    ('reserved', getArrayDecoder(getU8Decoder(), size: FixedArraySize(8))),
   ]);
 
   return transformDecoder(
@@ -95,20 +84,11 @@ Decoder<Delegation> getDelegationDecoder() {
       stake: map['stake']! as BigInt,
       activationEpoch: map['activationEpoch']! as Epoch,
       deactivationEpoch: map['deactivationEpoch']! as Epoch,
-      reserved: (map['reserved']! as List).cast<int>(),
+      reserved: map['reserved']! as List<int>,
     ),
   );
 }
 
 Codec<Delegation, Delegation> getDelegationCodec() {
   return combineCodec(getDelegationEncoder(), getDelegationDecoder());
-}
-
-bool _listEquals<T>(List<T> a, List<T> b) {
-  if (identical(a, b)) return true;
-  if (a.length != b.length) return false;
-  for (var i = 0; i < a.length; i++) {
-    if (a[i] != b[i]) return false;
-  }
-  return true;
 }

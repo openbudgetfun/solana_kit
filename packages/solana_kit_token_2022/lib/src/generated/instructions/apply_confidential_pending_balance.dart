@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -33,8 +34,7 @@ class ApplyConfidentialPendingBalanceInstructionData {
   final DecryptableBalance newDecryptableAvailableBalance;
 }
 
-Encoder<ApplyConfidentialPendingBalanceInstructionData>
-getApplyConfidentialPendingBalanceInstructionDataEncoder() {
+Encoder<ApplyConfidentialPendingBalanceInstructionData> getApplyConfidentialPendingBalanceInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('confidentialTransferDiscriminator', getU8Encoder()),
@@ -46,17 +46,14 @@ getApplyConfidentialPendingBalanceInstructionDataEncoder() {
     structEncoder,
     (ApplyConfidentialPendingBalanceInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'confidentialTransferDiscriminator':
-          value.confidentialTransferDiscriminator,
-      'expectedPendingBalanceCreditCounter':
-          value.expectedPendingBalanceCreditCounter,
+      'confidentialTransferDiscriminator': value.confidentialTransferDiscriminator,
+      'expectedPendingBalanceCreditCounter': value.expectedPendingBalanceCreditCounter,
       'newDecryptableAvailableBalance': value.newDecryptableAvailableBalance,
     },
   );
 }
 
-Decoder<ApplyConfidentialPendingBalanceInstructionData>
-getApplyConfidentialPendingBalanceInstructionDataDecoder() {
+Decoder<ApplyConfidentialPendingBalanceInstructionData> getApplyConfidentialPendingBalanceInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
     ('confidentialTransferDiscriminator', getU8Decoder()),
@@ -66,28 +63,17 @@ getApplyConfidentialPendingBalanceInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ApplyConfidentialPendingBalanceInstructionData(
-          discriminator: map['discriminator']! as int,
-          confidentialTransferDiscriminator:
-              map['confidentialTransferDiscriminator']! as int,
-          expectedPendingBalanceCreditCounter:
-              map['expectedPendingBalanceCreditCounter']! as BigInt,
-          newDecryptableAvailableBalance:
-              map['newDecryptableAvailableBalance']! as DecryptableBalance,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => ApplyConfidentialPendingBalanceInstructionData(
+      discriminator: map['discriminator']! as int,
+      confidentialTransferDiscriminator: map['confidentialTransferDiscriminator']! as int,
+      expectedPendingBalanceCreditCounter: map['expectedPendingBalanceCreditCounter']! as BigInt,
+      newDecryptableAvailableBalance: map['newDecryptableAvailableBalance']! as DecryptableBalance,
+    ),
   );
 }
 
-Codec<
-  ApplyConfidentialPendingBalanceInstructionData,
-  ApplyConfidentialPendingBalanceInstructionData
->
-getApplyConfidentialPendingBalanceInstructionDataCodec() {
-  return combineCodec(
-    getApplyConfidentialPendingBalanceInstructionDataEncoder(),
-    getApplyConfidentialPendingBalanceInstructionDataDecoder(),
-  );
+Codec<ApplyConfidentialPendingBalanceInstructionData, ApplyConfidentialPendingBalanceInstructionData> getApplyConfidentialPendingBalanceInstructionDataCodec() {
+  return combineCodec(getApplyConfidentialPendingBalanceInstructionDataEncoder(), getApplyConfidentialPendingBalanceInstructionDataDecoder());
 }
 
 /// Creates a [ApplyConfidentialPendingBalance] instruction.
@@ -99,26 +85,21 @@ Instruction getApplyConfidentialPendingBalanceInstruction({
   required DecryptableBalance newDecryptableAvailableBalance,
 }) {
   final instructionData = ApplyConfidentialPendingBalanceInstructionData(
-    expectedPendingBalanceCreditCounter: expectedPendingBalanceCreditCounter,
-    newDecryptableAvailableBalance: newDecryptableAvailableBalance,
+      expectedPendingBalanceCreditCounter: expectedPendingBalanceCreditCounter,
+      newDecryptableAvailableBalance: newDecryptableAvailableBalance,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: token, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    AccountMeta(address: token, role: AccountRole.writable),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
     ],
-    data: getApplyConfidentialPendingBalanceInstructionDataEncoder().encode(
-      instructionData,
-    ),
+    data: getApplyConfidentialPendingBalanceInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [ApplyConfidentialPendingBalance] instruction from raw instruction data.
-ApplyConfidentialPendingBalanceInstructionData
-parseApplyConfidentialPendingBalanceInstruction(Instruction instruction) {
-  return getApplyConfidentialPendingBalanceInstructionDataDecoder().decode(
-    instruction.data!,
-  );
+ApplyConfidentialPendingBalanceInstructionData parseApplyConfidentialPendingBalanceInstruction(Instruction instruction) {
+  return getApplyConfidentialPendingBalanceInstructionDataDecoder().decode(instruction.data!);
 }

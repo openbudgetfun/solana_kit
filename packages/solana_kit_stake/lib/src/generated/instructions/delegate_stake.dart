@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -15,7 +16,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class DelegateStakeInstructionData {
-  const DelegateStakeInstructionData({this.discriminator = 2});
+  const DelegateStakeInstructionData({
+    this.discriminator = 2,
+  });
 
   final int discriminator;
 }
@@ -40,19 +43,14 @@ Decoder<DelegateStakeInstructionData> getDelegateStakeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        DelegateStakeInstructionData(
-          discriminator: map['discriminator']! as int,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => DelegateStakeInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
   );
 }
 
-Codec<DelegateStakeInstructionData, DelegateStakeInstructionData>
-getDelegateStakeInstructionDataCodec() {
-  return combineCodec(
-    getDelegateStakeInstructionDataEncoder(),
-    getDelegateStakeInstructionDataDecoder(),
-  );
+Codec<DelegateStakeInstructionData, DelegateStakeInstructionData> getDelegateStakeInstructionDataCodec() {
+  return combineCodec(getDelegateStakeInstructionDataEncoder(), getDelegateStakeInstructionDataDecoder());
 }
 
 /// Creates a [DelegateStake] instruction.
@@ -64,26 +62,27 @@ Instruction getDelegateStakeInstruction({
   required Address stakeHistory,
   required Address unused,
   required Address stakeAuthority,
+
 }) {
-  final instructionData = DelegateStakeInstructionData();
+  final instructionData = DelegateStakeInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: stake, role: AccountRole.writable),
-      AccountMeta(address: vote, role: AccountRole.readonly),
-      AccountMeta(address: clockSysvar, role: AccountRole.readonly),
-      AccountMeta(address: stakeHistory, role: AccountRole.readonly),
-      AccountMeta(address: unused, role: AccountRole.readonly),
-      AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: stake, role: AccountRole.writable),
+    AccountMeta(address: vote, role: AccountRole.readonly),
+    AccountMeta(address: clockSysvar, role: AccountRole.readonly),
+    AccountMeta(address: stakeHistory, role: AccountRole.readonly),
+    AccountMeta(address: unused, role: AccountRole.readonly),
+    AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
     ],
     data: getDelegateStakeInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [DelegateStake] instruction from raw instruction data.
-DelegateStakeInstructionData parseDelegateStakeInstruction(
-  Instruction instruction,
-) {
+DelegateStakeInstructionData parseDelegateStakeInstruction(Instruction instruction) {
   return getDelegateStakeInstructionDataDecoder().decode(instruction.data!);
 }

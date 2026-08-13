@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -15,7 +16,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class DeactivateInstructionData {
-  const DeactivateInstructionData({this.discriminator = 5});
+  const DeactivateInstructionData({
+    this.discriminator = 5,
+  });
 
   final int discriminator;
 }
@@ -40,17 +43,14 @@ Decoder<DeactivateInstructionData> getDeactivateInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        DeactivateInstructionData(discriminator: map['discriminator']! as int),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => DeactivateInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
   );
 }
 
-Codec<DeactivateInstructionData, DeactivateInstructionData>
-getDeactivateInstructionDataCodec() {
-  return combineCodec(
-    getDeactivateInstructionDataEncoder(),
-    getDeactivateInstructionDataDecoder(),
-  );
+Codec<DeactivateInstructionData, DeactivateInstructionData> getDeactivateInstructionDataCodec() {
+  return combineCodec(getDeactivateInstructionDataEncoder(), getDeactivateInstructionDataDecoder());
 }
 
 /// Creates a [Deactivate] instruction.
@@ -59,15 +59,18 @@ Instruction getDeactivateInstruction({
   required Address stake,
   required Address clockSysvar,
   required Address stakeAuthority,
+
 }) {
-  final instructionData = DeactivateInstructionData();
+  final instructionData = DeactivateInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: stake, role: AccountRole.writable),
-      AccountMeta(address: clockSysvar, role: AccountRole.readonly),
-      AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: stake, role: AccountRole.writable),
+    AccountMeta(address: clockSysvar, role: AccountRole.readonly),
+    AccountMeta(address: stakeAuthority, role: AccountRole.readonlySigner),
     ],
     data: getDeactivateInstructionDataEncoder().encode(instructionData),
   );

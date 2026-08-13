@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -8,8 +9,9 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 
-import './epoch.dart';
-import './unix_timestamp.dart';
+import 'definedType:epoch';
+import 'definedType:unix_timestamp';
+
 
 @immutable
 class Lockup {
@@ -36,8 +38,7 @@ class Lockup {
   int get hashCode => Object.hash(unixTimestamp, epoch, custodian);
 
   @override
-  String toString() =>
-      'Lockup(unixTimestamp: $unixTimestamp, epoch: $epoch, custodian: $custodian)';
+  String toString() => 'Lockup(unixTimestamp: $unixTimestamp, epoch: $epoch, custodian: $custodian)';
 }
 
 Encoder<Lockup> getLockupEncoder() {

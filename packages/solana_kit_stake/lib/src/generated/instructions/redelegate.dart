@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -15,7 +16,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class RedelegateInstructionData {
-  const RedelegateInstructionData({this.discriminator = 15});
+  const RedelegateInstructionData({
+    this.discriminator = 15,
+  });
 
   final int discriminator;
 }
@@ -40,26 +43,31 @@ Decoder<RedelegateInstructionData> getRedelegateInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        RedelegateInstructionData(discriminator: map['discriminator']! as int),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => RedelegateInstructionData(
+      discriminator: map['discriminator']! as int,
+    ),
   );
 }
 
-Codec<RedelegateInstructionData, RedelegateInstructionData>
-getRedelegateInstructionDataCodec() {
-  return combineCodec(
-    getRedelegateInstructionDataEncoder(),
-    getRedelegateInstructionDataDecoder(),
-  );
+Codec<RedelegateInstructionData, RedelegateInstructionData> getRedelegateInstructionDataCodec() {
+  return combineCodec(getRedelegateInstructionDataEncoder(), getRedelegateInstructionDataDecoder());
 }
 
 /// Creates a [Redelegate] instruction.
-Instruction getRedelegateInstruction({required Address programAddress}) {
-  final instructionData = RedelegateInstructionData();
+Instruction getRedelegateInstruction({
+  required Address programAddress,
+
+
+}) {
+  final instructionData = RedelegateInstructionData(
+
+  );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [],
+    accounts: [
+
+    ],
     data: getRedelegateInstructionDataEncoder().encode(instructionData),
   );
 }

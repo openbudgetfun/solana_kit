@@ -1,7 +1,6 @@
-/// Generated Memo program layer.
-///
-/// Mirrors the upstream Codama-generated TypeScript at `js@v0.11.0`.
-library;
+// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
 
 export 'instructions/instructions.dart';
 export 'programs/programs.dart';
+

@@ -1,6 +1,7 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -54,21 +55,16 @@ Decoder<AuthorizeInstructionData> getAuthorizeInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        AuthorizeInstructionData(
-          discriminator: map['discriminator']! as int,
-          arg0: map['arg0']! as Address,
-          arg1: map['arg1']! as StakeAuthorize,
-        ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => AuthorizeInstructionData(
+      discriminator: map['discriminator']! as int,
+      arg0: map['arg0']! as Address,
+      arg1: map['arg1']! as StakeAuthorize,
+    ),
   );
 }
 
-Codec<AuthorizeInstructionData, AuthorizeInstructionData>
-getAuthorizeInstructionDataCodec() {
-  return combineCodec(
-    getAuthorizeInstructionDataEncoder(),
-    getAuthorizeInstructionDataDecoder(),
-  );
+Codec<AuthorizeInstructionData, AuthorizeInstructionData> getAuthorizeInstructionDataCodec() {
+  return combineCodec(getAuthorizeInstructionDataEncoder(), getAuthorizeInstructionDataDecoder());
 }
 
 /// Creates a [Authorize] instruction.
@@ -81,16 +77,18 @@ Instruction getAuthorizeInstruction({
   required Address arg0,
   required StakeAuthorize arg1,
 }) {
-  final instructionData = AuthorizeInstructionData(arg0: arg0, arg1: arg1);
+  final instructionData = AuthorizeInstructionData(
+      arg0: arg0,
+      arg1: arg1,
+  );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-      AccountMeta(address: stake, role: AccountRole.writable),
-      AccountMeta(address: clockSysvar, role: AccountRole.readonly),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
-      if (lockupAuthority != null)
-        AccountMeta(address: lockupAuthority, role: AccountRole.readonlySigner),
+    AccountMeta(address: stake, role: AccountRole.writable),
+    AccountMeta(address: clockSysvar, role: AccountRole.readonly),
+    AccountMeta(address: authority, role: AccountRole.readonlySigner),
+    if (lockupAuthority != null) AccountMeta(address: lockupAuthority, role: AccountRole.readonlySigner),
     ],
     data: getAuthorizeInstructionDataEncoder().encode(instructionData),
   );
