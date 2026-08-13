@@ -116,7 +116,12 @@ void main() {
     });
 
     test('rent sysvar info has value equality', () {
-      const legacy = JsonParsedRentInfo(
+      const legacyA = JsonParsedRentInfo(
+        burnPercent: 50,
+        exemptionThreshold: 3480,
+        lamportsPerByteYear: StringifiedBigInt('3480'),
+      );
+      const legacyB = JsonParsedRentInfo(
         burnPercent: 50,
         exemptionThreshold: 3480,
         lamportsPerByteYear: StringifiedBigInt('3480'),
@@ -125,10 +130,10 @@ void main() {
         lamportsPerByte: StringifiedBigInt('3480'),
       );
 
-      expect(legacy, equals(legacy));
+      expect(legacyA, equals(legacyB));
       expect(modern, equals(modern));
-      expect(legacy, isNot(equals(modern)));
-      expect(legacy.hashCode, equals(legacy.hashCode));
+      expect(legacyA, isNot(equals(modern)));
+      expect(legacyA.hashCode, equals(legacyB.hashCode));
     });
 
     test('can construct a slotHashes sysvar', () {

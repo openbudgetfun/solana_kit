@@ -9,6 +9,8 @@ import {
   fieldDiscriminatorNode,
   instructionArgumentNode,
   instructionNode,
+  mapTypeNode,
+  mapValueNode,
   numberTypeNode,
   numberValueNode,
   programNode,
@@ -278,6 +280,33 @@ describe("getProgramPageFragment", () => {
     expect(frag.content).toContain("encode(true)");
     expect(frag.content).toContain("encode('hi')");
     expect(frag.content).toContain("Uint8List.fromList([1, 2])");
+  });
+
+  it("skips helpers when a discriminator value is unsupported", () => {
+    const node = programNode({
+      name: "myProgram",
+      publicKey: "MyProgram1111111111111111111111111111111111",
+      instructions: [
+        instructionNode({
+          name: "byMap",
+          accounts: [],
+          arguments: [],
+          discriminators: [
+            constantDiscriminatorNode(
+              constantValueNode(
+                mapTypeNode(numberTypeNode("u8"), numberTypeNode("u8")),
+                mapValueNode([]),
+              ),
+              0,
+            ),
+          ],
+        }),
+      ],
+    });
+    const frag = getProgramPageFragment(node, createScope());
+
+    expect(frag.content).not.toContain("identifyMyProgramInstruction");
+    expect(frag.content).not.toContain("parseMyProgramInstruction");
   });
 
   it("renders an int number value fragment", () => {

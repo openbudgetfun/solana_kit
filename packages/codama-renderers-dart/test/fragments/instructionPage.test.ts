@@ -365,4 +365,21 @@ describe("getInstructionPageFragment", () => {
       "Address('UnknownProgram1111111111111111111111')",
     );
   });
+
+  it("renders BigInt defaults for wide numeric arguments", () => {
+    const node = instructionNode({
+      name: "transfer",
+      accounts: [],
+      arguments: [
+        instructionArgumentNode({
+          name: "amount",
+          type: numberTypeNode("u64"),
+          defaultValue: numberValueNode(3),
+        }),
+      ],
+    });
+    const frag = getInstructionPageFragment(node, createScope());
+
+    expect(frag.content).toContain("amount: amount ?? BigInt.from(3),");
+  });
 });
