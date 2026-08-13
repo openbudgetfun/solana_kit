@@ -116,17 +116,19 @@ void main() {
     });
 
     test('rent sysvar info has value equality', () {
-      const legacyA = JsonParsedRentInfo(
+      // Non-const instances so `==` runs the full field comparison instead of
+      // short-circuiting on `identical` (const values are canonicalized).
+      final legacyA = JsonParsedRentInfo(
         burnPercent: 50,
         exemptionThreshold: 3480,
         lamportsPerByteYear: StringifiedBigInt('3480'),
       );
-      const legacyB = JsonParsedRentInfo(
+      final legacyB = JsonParsedRentInfo(
         burnPercent: 50,
         exemptionThreshold: 3480,
         lamportsPerByteYear: StringifiedBigInt('3480'),
       );
-      const modern = JsonParsedRentInfo(
+      final modern = JsonParsedRentInfo(
         lamportsPerByte: StringifiedBigInt('3480'),
       );
 
