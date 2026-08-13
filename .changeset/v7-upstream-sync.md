@@ -11,6 +11,7 @@
 "solana_kit_rpc_api": patch
 "solana_kit_address_constants": patch
 "solana_kit_rpc_subscriptions": patch
+"solana_kit_associated_token_account": patch
 "solana_kit_transaction_introspection": minor
 ---
 
