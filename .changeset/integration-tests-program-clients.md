@@ -3,6 +3,7 @@
 "solana_kit_errors": patch
 "solana_kit_address_constants": patch
 "solana_kit_spl_account_compression": patch
+"solana_kit_mpl_bubblegum": patch
 "solana_kit_integration_tests": minor
 ---
 
