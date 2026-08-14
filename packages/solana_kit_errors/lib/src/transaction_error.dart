@@ -56,7 +56,11 @@ SolanaError getSolanaErrorFromTransactionError(Object transactionError) {
   if (transactionError is Map<String, Object?> &&
       transactionError.containsKey('InstructionError')) {
     final args = transactionError['InstructionError']! as List<Object?>;
-    return getSolanaErrorFromInstructionError(args[0]! as num, args[1]!);
+    final index = args[0]!;
+    return getSolanaErrorFromInstructionError(
+      index is BigInt ? index.toInt() : (index as num),
+      args[1]!,
+    );
   }
   return getSolanaErrorFromRpcError(
     RpcEnumErrorConfig(

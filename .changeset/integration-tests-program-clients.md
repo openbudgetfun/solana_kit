@@ -1,5 +1,6 @@
 ---
 "solana_kit_transaction_confirmation": patch
+"solana_kit_errors": patch
 "solana_kit_integration_tests": minor
 ---
 
@@ -13,6 +14,13 @@ Fix `sendAndConfirmTransaction` so the `sendTransaction` RPC call declares
 unset, so real RPC nodes (including SurfPool) defaulted to base58 and rejected
 the payload with `invalid base58 encoding`. This path had only been exercised
 against a mocked transport, so the bug was latent.
+
+## `solana_kit_errors` (patch)
+
+Fix `getSolanaErrorFromTransactionError` to handle instruction-error indices
+returned as `BigInt` (as SurfPool does). The instruction index was cast
+`as num`, which threw `_BigIntImpl is not a subtype of num` and masked the
+real on-chain instruction error. It now converts `BigInt` indices to `int`.
 
 ## `solana_kit_integration_tests` (new, internal)
 
