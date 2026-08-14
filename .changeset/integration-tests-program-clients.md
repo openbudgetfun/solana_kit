@@ -70,4 +70,5 @@ The compiled `.so` artifacts are committed (not rebuilt per run) and pinned to
 `config/reference-repos.json`; see `config/programs/README.md` for how they
 were obtained and when they must be regenerated. Artifact names follow
 `<package-name-minus-solana_kit>-<program-version>.so` (e.g.
-`subscriptions-v0.5.0.so`, `mpl_bubblegum-v0.12.0.so`).
+`subscriptions-v0.5.0.so`, `mpl_bubblegum-v0.12.0.so`,
+`spl_account_compression-v0.3.3.so`, `noop-v0.2.0.so`).

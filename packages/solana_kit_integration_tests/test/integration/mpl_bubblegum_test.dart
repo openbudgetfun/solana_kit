@@ -44,9 +44,9 @@ void main() {
     );
     await env.deployProgram(
       compressionProgram,
-      'config/programs/spl_account_compression-ac-mainnet-tag.so',
+      'config/programs/spl_account_compression-v0.3.3.so',
     );
-    await env.deployProgram(noopProgram, 'config/programs/noop.so');
+    await env.deployProgram(noopProgram, 'config/programs/noop-v0.2.0.so');
   });
 
   tearDownAll(() => env.dispose());
