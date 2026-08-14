@@ -34,7 +34,7 @@ class UpdateTokenMetadataFieldInstructionData {
 Encoder<UpdateTokenMetadataFieldInstructionData>
 getUpdateTokenMetadataFieldInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getBytesEncoder()),
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
     ('field', getTokenMetadataFieldEncoder()),
     ('value', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
   ]);
@@ -52,7 +52,7 @@ getUpdateTokenMetadataFieldInstructionDataEncoder() {
 Decoder<UpdateTokenMetadataFieldInstructionData>
 getUpdateTokenMetadataFieldInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getBytesDecoder()),
+    ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
     ('field', getTokenMetadataFieldDecoder()),
     ('value', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
   ]);

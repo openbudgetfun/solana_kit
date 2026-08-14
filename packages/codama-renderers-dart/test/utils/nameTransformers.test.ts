@@ -224,9 +224,9 @@ describe("createDartNameApi", () => {
   });
 
   describe("sealedClassVariant", () => {
-    it("converts variant name to PascalCase", () => {
+    it("prefixes the PascalCase variant with its parent name", () => {
       expect(nameApi.sealedClassVariant("MyEnum", "someVariant")).toBe(
-        "SomeVariant",
+        "MyEnumSomeVariant",
       );
     });
   });

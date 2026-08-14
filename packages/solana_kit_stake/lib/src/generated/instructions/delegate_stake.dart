@@ -15,14 +15,16 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class DelegateStakeInstructionData {
-  const DelegateStakeInstructionData({this.discriminator = 2});
+  const DelegateStakeInstructionData({
+    this.discriminator = 2,
+  });
 
   final int discriminator;
 }
 
 Encoder<DelegateStakeInstructionData> getDelegateStakeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -35,7 +37,7 @@ Encoder<DelegateStakeInstructionData> getDelegateStakeInstructionDataEncoder() {
 
 Decoder<DelegateStakeInstructionData> getDelegateStakeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(

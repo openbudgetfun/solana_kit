@@ -10,6 +10,8 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
+import '../types/resume_data.dart';
+
 /// The discriminator field name: 'discriminator'.
 /// Offset: 0.
 
@@ -17,21 +19,25 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 class ResumeSubscriptionInstructionData {
   const ResumeSubscriptionInstructionData({
     this.discriminator = 13,
+    required this.resumeData,
   });
 
   final int discriminator;
+  final ResumeData resumeData;
 }
 
 Encoder<ResumeSubscriptionInstructionData>
 getResumeSubscriptionInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
+    ('resumeData', getResumeDataEncoder()),
   ]);
 
   return transformEncoder(
     structEncoder,
     (ResumeSubscriptionInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
+      'resumeData': value.resumeData,
     },
   );
 }
@@ -40,6 +46,7 @@ Decoder<ResumeSubscriptionInstructionData>
 getResumeSubscriptionInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
+    ('resumeData', getResumeDataDecoder()),
   ]);
 
   return transformDecoder(
@@ -47,6 +54,7 @@ getResumeSubscriptionInstructionDataDecoder() {
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         ResumeSubscriptionInstructionData(
           discriminator: map['discriminator']! as int,
+          resumeData: map['resumeData']! as ResumeData,
         ),
   );
 }
@@ -68,8 +76,11 @@ Instruction getResumeSubscriptionInstruction({
   required Address subscriptionAuthority,
   required Address eventAuthority,
   required Address selfProgram,
+  required ResumeData resumeData,
 }) {
-  final instructionData = ResumeSubscriptionInstructionData();
+  final instructionData = ResumeSubscriptionInstructionData(
+    resumeData: resumeData,
+  );
 
   return Instruction(
     programAddress: programAddress,

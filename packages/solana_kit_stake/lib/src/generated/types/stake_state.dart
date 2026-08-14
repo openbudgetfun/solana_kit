@@ -13,12 +13,12 @@ sealed class StakeState {
   const StakeState();
 }
 
-final class Uninitialized extends StakeState {
-  const Uninitialized();
+final class StakeStateUninitialized extends StakeState {
+  const StakeStateUninitialized();
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Uninitialized;
+      identical(this, other) || other is StakeStateUninitialized;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -27,14 +27,15 @@ final class Uninitialized extends StakeState {
   String toString() => 'StakeState.Uninitialized()';
 }
 
-final class Initialized extends StakeState {
-  const Initialized(this.value);
+final class StakeStateInitialized extends StakeState {
+  const StakeStateInitialized(this.value);
 
   final Meta value;
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Initialized && value == other.value;
+      identical(this, other) ||
+      other is StakeStateInitialized && value == other.value;
 
   @override
   int get hashCode => value.hashCode;
@@ -43,12 +44,12 @@ final class Initialized extends StakeState {
   String toString() => 'StakeState.Initialized($value)';
 }
 
-final class RewardsPool extends StakeState {
-  const RewardsPool();
+final class StakeStateRewardsPool extends StakeState {
+  const StakeStateRewardsPool();
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is RewardsPool;
+      identical(this, other) || other is StakeStateRewardsPool;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -69,14 +70,14 @@ Encoder<StakeState> getStakeStateEncoder() {
         ),
       ),
       (3, getStructEncoder(<(String, Encoder<Object?>)>[])),
-    ], size: getU8Encoder()),
+    ], size: getU32Encoder()),
     (StakeState value) => switch (value) {
-      Uninitialized() => <String, Object?>{'__kind': 0},
-      Initialized(value: final value) => <String, Object?>{
+      StakeStateUninitialized() => <String, Object?>{'__kind': 0},
+      StakeStateInitialized(value: final value) => <String, Object?>{
         '__kind': 1,
         'value': value,
       },
-      RewardsPool() => <String, Object?>{'__kind': 3},
+      StakeStateRewardsPool() => <String, Object?>{'__kind': 3},
     },
   );
 }
@@ -109,15 +110,15 @@ Decoder<StakeState> getStakeStateDecoder() {
               <String, Object?>{},
         ),
       ),
-    ], size: getU8Decoder()),
+    ], size: getU32Decoder()),
     (Map<String, Object?> map, Uint8List bytes, int offset) {
       switch (map['__kind']) {
         case 0:
-          return const Uninitialized();
+          return const StakeStateUninitialized();
         case 1:
-          return Initialized(map['value']! as Meta);
+          return StakeStateInitialized(map['value']! as Meta);
         case 3:
-          return const RewardsPool();
+          return const StakeStateRewardsPool();
       }
       throw StateError(
         'Unsupported StakeState discriminator: ${map['__kind']}',

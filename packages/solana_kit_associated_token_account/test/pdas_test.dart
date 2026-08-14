@@ -17,7 +17,7 @@ void main() {
         ),
       );
 
-      expect(address.value, 'CDtqUDmnwzpbTwDj8PHvs76nzpxsNj5EVVSkXCbbhue8');
+      expect(address.value, '9KaA7vEBUdRCcBWxfuMjxYwKfvu8Us3Cg5gkhVFt2LNk');
       expect(bump, inInclusiveRange(0, 255));
     });
 
@@ -41,7 +41,7 @@ void main() {
         mint: mint,
       );
 
-      expect(address.value, 'CDtqUDmnwzpbTwDj8PHvs76nzpxsNj5EVVSkXCbbhue8');
+      expect(address.value, '9KaA7vEBUdRCcBWxfuMjxYwKfvu8Us3Cg5gkhVFt2LNk');
     });
 
     test('different token programs derive different ATAs', () {

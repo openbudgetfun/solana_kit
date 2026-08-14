@@ -30,7 +30,7 @@ class AuthorizeInstructionData {
 
 Encoder<AuthorizeInstructionData> getAuthorizeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
     ('arg0', getAddressEncoder()),
     ('arg1', getStakeAuthorizeEncoder()),
   ]);
@@ -47,7 +47,7 @@ Encoder<AuthorizeInstructionData> getAuthorizeInstructionDataEncoder() {
 
 Decoder<AuthorizeInstructionData> getAuthorizeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
     ('arg0', getAddressDecoder()),
     ('arg1', getStakeAuthorizeDecoder()),
   ]);
@@ -81,7 +81,10 @@ Instruction getAuthorizeInstruction({
   required Address arg0,
   required StakeAuthorize arg1,
 }) {
-  final instructionData = AuthorizeInstructionData(arg0: arg0, arg1: arg1);
+  final instructionData = AuthorizeInstructionData(
+    arg0: arg0,
+    arg1: arg1,
+  );
 
   return Instruction(
     programAddress: programAddress,

@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class InitializeAccountInstructionData {
-  const InitializeAccountInstructionData({this.discriminator = 1});
+  const InitializeAccountInstructionData({
+    this.discriminator = 1,
+  });
 
   final int discriminator;
 }

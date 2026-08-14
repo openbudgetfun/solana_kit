@@ -1,397 +1,333 @@
 // ignore_for_file: cascade_invocations
-
 import 'dart:async';
 
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:test/test.dart';
 
+/// Pumps the microtask/timer queue so the store's async `connect()` factory
+/// resolves and the store subscribes to its streams before we emit events.
+Future<void> pump([int times = 1]) async {
+  for (var i = 0; i < times; i++) {
+    await Future<void>.delayed(Duration.zero);
+  }
+}
+
 void main() {
-  group('ReactiveStreamStore', () {
-    group('initial state', () {
-      test('is loading', () {
-        final dataController = StreamController<int>.broadcast(sync: true);
-        final errorController = StreamController<Object?>.broadcast(sync: true);
-        final store = createReactiveStreamStore<int>(
-          dataStream: dataController.stream,
-          errorStream: errorController.stream,
-        );
-
-        final state = store.getUnifiedState();
-
-        expect(state.status, ReactiveStreamState.loading);
-        expect(state.isLoading, isTrue);
-        expect(state.isLoaded, isFalse);
-        expect(state.isError, isFalse);
-        expect(state.isRetrying, isFalse);
-        expect(state.data, isNull);
-        expect(state.error, isNull);
-        expect(store.getState(), isNull);
-        expect(store.getError(), isNull);
-
-        store.dispose();
-        dataController.close().ignore();
-        errorController.close().ignore();
-      });
-    });
-
-    group('data received', () {
-      test('transitions to loaded and exposes the data', () async {
-        final dataController = StreamController<int>.broadcast(sync: true);
-        final errorController = StreamController<Object?>.broadcast(sync: true);
-        final store = createReactiveStreamStore<int>(
-          dataStream: dataController.stream,
-          errorStream: errorController.stream,
-        );
-
-        dataController.add(42);
-        await Future<void>.delayed(Duration.zero);
-
-        expect(store.getUnifiedState().status, ReactiveStreamState.loaded);
-        expect(store.getUnifiedState().isLoaded, isTrue);
-        expect(store.getUnifiedState().data, 42);
-        expect(store.getState(), 42);
-
-        store.dispose();
-        await dataController.close();
-        await errorController.close();
-      });
-    });
-
-    group('error received', () {
-      test('transitions to error when the error stream emits', () async {
-        final dataController = StreamController<int>.broadcast(sync: true);
-        final errorController = StreamController<Object?>.broadcast(sync: true);
-        final store = createReactiveStreamStore<int>(
-          dataStream: dataController.stream,
-          errorStream: errorController.stream,
-        );
-
-        errorController.add(StateError('boom'));
-        await Future<void>.delayed(Duration.zero);
-
-        expect(store.getUnifiedState().status, ReactiveStreamState.error);
-        expect(store.getUnifiedState().isError, isTrue);
-        expect(store.getError(), isA<StateError>());
-
-        store.dispose();
-        await dataController.close();
-        await errorController.close();
-      });
-
-      test('preserves the last data when transitioning to error', () async {
-        final dataController = StreamController<int>.broadcast(sync: true);
-        final errorController = StreamController<Object?>.broadcast(sync: true);
-        final store = createReactiveStreamStore<int>(
-          dataStream: dataController.stream,
-          errorStream: errorController.stream,
-        );
-
-        dataController.add(7);
-        errorController.add(StateError('boom'));
-        await Future<void>.delayed(Duration.zero);
-
-        expect(store.getUnifiedState().status, ReactiveStreamState.error);
-        expect(store.getUnifiedState().data, 7);
-        expect(store.getState(), 7);
-        expect(store.getError(), isA<StateError>());
-
-        store.dispose();
-        await dataController.close();
-        await errorController.close();
-      });
-
-      test('ignores null values emitted on the error stream', () async {
-        final dataController = StreamController<int>.broadcast(sync: true);
-        final errorController = StreamController<Object?>.broadcast(sync: true);
-        final store = createReactiveStreamStore<int>(
-          dataStream: dataController.stream,
-          errorStream: errorController.stream,
-        );
-
-        errorController.add(null);
-        await Future<void>.delayed(Duration.zero);
-
-        expect(store.getUnifiedState().status, ReactiveStreamState.loading);
-        expect(store.getError(), isNull);
-
-        store.dispose();
-        await dataController.close();
-        await errorController.close();
-      });
-
-      test(
-        'transitions to error when the data stream emits an error',
-        () async {
-          final dataController = StreamController<int>.broadcast(sync: true);
-          final errorController = StreamController<Object?>.broadcast(
-            sync: true,
-          );
-          final store = createReactiveStreamStore<int>(
-            dataStream: dataController.stream,
-            errorStream: errorController.stream,
-          );
-
-          dataController.addError(StateError('data boom'));
-          await Future<void>.delayed(Duration.zero);
-
-          expect(store.getUnifiedState().status, ReactiveStreamState.error);
-          expect(store.getError(), isA<StateError>());
-
-          store.dispose();
-          await dataController.close();
-          await errorController.close();
-        },
+  group('ReactiveStreamStore (v7)', () {
+    test('starts in the idle state', () {
+      final store = createReactiveStreamStore<int>(
+        createDataPublisher: (_) async => const ReactiveStreamConnection<int>(
+          dataStream: Stream<int>.empty(),
+          errorStream: Stream<Object?>.empty(),
+        ),
       );
-
-      test('ignores data-stream errors while retrying', () async {
-        var retryCalled = false;
-        final retryCompleter = Completer<void>();
-        final dataController = StreamController<int>.broadcast(sync: true);
-        final errorController = StreamController<Object?>.broadcast(sync: true);
-        final store = createReactiveStreamStore<int>(
-          dataStream: dataController.stream,
-          errorStream: errorController.stream,
-          retry: () async {
-            retryCalled = true;
-            await retryCompleter.future;
-          },
-        );
-
-        final retryFuture = store.retry();
-        expect(store.getUnifiedState().status, ReactiveStreamState.retrying);
-
-        // An error on the data stream while retrying should be ignored.
-        dataController.addError(StateError('ignored'));
-        await Future<void>.delayed(Duration.zero);
-
-        expect(store.getUnifiedState().status, ReactiveStreamState.retrying);
-        expect(store.getError(), isNull);
-
-        retryCompleter.complete();
-        await retryFuture;
-        expect(retryCalled, isTrue);
-
-        store.dispose();
-        await dataController.close();
-        await errorController.close();
-      });
+      expect(store.getState().status, ReactiveStreamState.idle);
+      expect(store.getState().isIdle, isTrue);
+      expect(store.getState().data, isNull);
+      expect(store.getState().error, isNull);
     });
 
-    group('retry', () {
-      test('transitions to retrying and awaits the retry function', () async {
-        final retryCompleter = Completer<void>();
-        final dataController = StreamController<int>.broadcast(sync: true);
-        final errorController = StreamController<Object?>.broadcast(sync: true);
-        final store = createReactiveStreamStore<int>(
+    test('transitions through loading to loaded on connect', () async {
+      final dataController = StreamController<int>.broadcast(sync: true);
+      final store = createReactiveStreamStore<int>(
+        createDataPublisher: (_) async => ReactiveStreamConnection<int>(
           dataStream: dataController.stream,
-          errorStream: errorController.stream,
-          retry: () async {
-            await retryCompleter.future;
-          },
-        );
-
-        final retryFuture = store.retry();
-        expect(store.getUnifiedState().status, ReactiveStreamState.retrying);
-        expect(store.getUnifiedState().isRetrying, isTrue);
-
-        retryCompleter.complete();
-        await retryFuture;
-
-        // The retry function does not itself change state; data must arrive.
-        expect(store.getUnifiedState().status, ReactiveStreamState.retrying);
-
-        store.dispose();
-        await dataController.close();
-        await errorController.close();
-      });
-
-      test('throws StateError when no retry function is provided', () {
-        final dataController = StreamController<int>.broadcast(sync: true);
-        final errorController = StreamController<Object?>.broadcast(sync: true);
-        final store = createReactiveStreamStore<int>(
-          dataStream: dataController.stream,
-          errorStream: errorController.stream,
-        );
-
-        expect(store.retry(), throwsA(isA<StateError>()));
-
-        store.dispose();
-        dataController.close().ignore();
-        errorController.close().ignore();
-      });
-
-      test('throws StateError after dispose', () {
-        final dataController = StreamController<int>.broadcast(sync: true);
-        final errorController = StreamController<Object?>.broadcast(sync: true);
-        final store = createReactiveStreamStore<int>(
-          dataStream: dataController.stream,
-          errorStream: errorController.stream,
-          retry: () async {},
-        );
-
-        store.dispose();
-
-        expect(store.retry(), throwsA(isA<StateError>()));
-
-        dataController.close().ignore();
-        errorController.close().ignore();
-      });
+          errorStream: const Stream<Object?>.empty(),
+        ),
+      );
+      store.connect();
+      expect(store.getState().status, ReactiveStreamState.loading);
+      await pump(); // let the factory resolve and the store subscribe
+      dataController.add(42);
+      await pump();
+      expect(store.getState().status, ReactiveStreamState.loaded);
+      expect(store.getState().isLoaded, isTrue);
+      expect(store.getState().data, 42);
+      expect(store.getState().error, isNull);
+      await dataController.close();
+      store.dispose();
     });
 
-    group('subscribe', () {
-      test('notifies subscribers when data arrives', () async {
-        final dataController = StreamController<int>.broadcast(sync: true);
-        final errorController = StreamController<Object?>.broadcast(sync: true);
-        final store = createReactiveStreamStore<int>(
-          dataStream: dataController.stream,
-          errorStream: errorController.stream,
-        );
-
-        var notifications = 0;
-        final unsubscribe = store.subscribe(() {
-          notifications++;
-        });
-
-        dataController.add(1);
-        await Future<void>.delayed(Duration.zero);
-
-        expect(notifications, 1);
-
-        unsubscribe();
-        dataController.add(2);
-        await Future<void>.delayed(Duration.zero);
-
-        expect(notifications, 1);
-
-        store.dispose();
-        await dataController.close();
-        await errorController.close();
-      });
-
-      test('returns a no-op unsubscribe after dispose', () {
-        final dataController = StreamController<int>.broadcast(sync: true);
-        final errorController = StreamController<Object?>.broadcast(sync: true);
-        final store = createReactiveStreamStore<int>(
-          dataStream: dataController.stream,
-          errorStream: errorController.stream,
-        );
-
-        store.dispose();
-
-        var notifications = 0;
-        final unsubscribe = store.subscribe(() {
-          notifications++;
-        });
-
-        dataController.add(1);
-        unsubscribe();
-        expect(notifications, 0);
-
-        dataController.close().ignore();
-        errorController.close().ignore();
-      });
-
-      test('unsubscribe is idempotent', () {
-        final dataController = StreamController<int>.broadcast(sync: true);
-        final errorController = StreamController<Object?>.broadcast(sync: true);
-        final store = createReactiveStreamStore<int>(
-          dataStream: dataController.stream,
-          errorStream: errorController.stream,
-        );
-
-        final unsubscribe = store.subscribe(() {});
-        unsubscribe();
-        unsubscribe();
-
-        store.dispose();
-        dataController.close().ignore();
-        errorController.close().ignore();
-      });
-    });
-
-    group('dispose', () {
-      test('cancels stream subscriptions and clears subscribers', () async {
-        var dataCancelCount = 0;
-        var errorCancelCount = 0;
-        final dataController = StreamController<int>.broadcast(
-          onCancel: () => dataCancelCount++,
-          sync: true,
-        );
-        final errorController = StreamController<Object?>.broadcast(
-          onCancel: () => errorCancelCount++,
-          sync: true,
-        );
-        final store = createReactiveStreamStore<int>(
-          dataStream: dataController.stream,
-          errorStream: errorController.stream,
-        );
-
-        var notifications = 0;
-        store.subscribe(() {
-          notifications++;
-        });
-
-        store.dispose();
-        store.dispose();
-        await Future<void>.delayed(Duration.zero);
-
-        expect(dataCancelCount, 1);
-        expect(errorCancelCount, 1);
-
-        // After dispose, emitting data should not notify subscribers.
-        dataController.add(1);
-        await Future<void>.delayed(Duration.zero);
-        expect(notifications, 0);
-
-        await dataController.close();
-        await errorController.close();
-      });
-    });
-
-    group('getUnifiedState', () {
-      test('returns a snapshot with correct status, data, and error', () async {
-        final dataController = StreamController<int>.broadcast(sync: true);
-        final errorController = StreamController<Object?>.broadcast(sync: true);
-        final store = createReactiveStreamStore<int>(
-          dataStream: dataController.stream,
-          errorStream: errorController.stream,
-        );
-
-        dataController.add(99);
-        await Future<void>.delayed(Duration.zero);
-
-        final state = store.getUnifiedState();
-        expect(state.status, ReactiveStreamState.loaded);
-        expect(state.data, 99);
-        expect(state.error, isNull);
-
-        store.dispose();
-        await dataController.close();
-        await errorController.close();
-      });
-    });
-  });
-
-  group('createReactiveStreamStore', () {
-    test('creates a working store backed by streams', () async {
+    test('transitions to error and preserves the last known data', () async {
       final dataController = StreamController<int>.broadcast(sync: true);
       final errorController = StreamController<Object?>.broadcast(sync: true);
       final store = createReactiveStreamStore<int>(
-        dataStream: dataController.stream,
-        errorStream: errorController.stream,
+        createDataPublisher: (_) async => ReactiveStreamConnection<int>(
+          dataStream: dataController.stream,
+          errorStream: errorController.stream,
+        ),
       );
-
-      expect(store.getUnifiedState().status, ReactiveStreamState.loading);
-
-      dataController.add(42);
-      await Future<void>.delayed(Duration.zero);
-
-      expect(store.getUnifiedState().status, ReactiveStreamState.loaded);
-      expect(store.getState(), 42);
-
-      store.dispose();
+      store.connect();
+      await pump();
+      dataController.add(7);
+      await pump();
+      errorController.add(StateError('boom'));
+      await pump();
+      expect(store.getState().status, ReactiveStreamState.error);
+      expect(store.getState().isError, isTrue);
+      expect(store.getState().data, 7);
+      expect(store.getState().error, isA<StateError>());
       await dataController.close();
       await errorController.close();
+      store.dispose();
+    });
+
+    test('a subsequent connect preserves data through loading (SWR)', () async {
+      final dataController = StreamController<int>.broadcast(sync: true);
+      final store = createReactiveStreamStore<int>(
+        createDataPublisher: (_) async => ReactiveStreamConnection<int>(
+          dataStream: dataController.stream,
+          errorStream: const Stream<Object?>.empty(),
+        ),
+      );
+      store.connect();
+      await pump();
+      dataController.add(5);
+      await pump();
+      expect(store.getState().data, 5);
+      // Reconnect: the new connection is loading but the prior data survives.
+      store.connect();
+      expect(store.getState().status, ReactiveStreamState.loading);
+      expect(store.getState().data, 5);
+      await pump();
+      dataController.add(9);
+      await pump();
+      expect(store.getState().status, ReactiveStreamState.loaded);
+      expect(store.getState().data, 9);
+      expect(store.getState().error, isNull);
+      await dataController.close();
+      store.dispose();
+    });
+
+    test(
+      'reset returns the store to idle and aborts the active connection',
+      () async {
+        final dataController = StreamController<int>.broadcast(sync: true);
+        final store = createReactiveStreamStore<int>(
+          createDataPublisher: (_) async => ReactiveStreamConnection<int>(
+            dataStream: dataController.stream,
+            errorStream: const Stream<Object?>.empty(),
+          ),
+        );
+        store.connect();
+        await pump();
+        dataController.add(1);
+        await pump();
+        expect(store.getState().status, ReactiveStreamState.loaded);
+        store.reset();
+        expect(store.getState().status, ReactiveStreamState.idle);
+        // A late emission from the aborted connection must not update state.
+        dataController.add(99);
+        await pump();
+        expect(store.getState().status, ReactiveStreamState.idle);
+        expect(store.getState().data, isNull);
+        await dataController.close();
+        store.dispose();
+      },
+    );
+
+    test('withSignal composes a caller-owned cancellation token', () async {
+      final dataController = StreamController<int>.broadcast(sync: true);
+      final errorController = StreamController<Object?>.broadcast(sync: true);
+      final store = createReactiveStreamStore<int>(
+        createDataPublisher: (_) async => ReactiveStreamConnection<int>(
+          dataStream: dataController.stream,
+          errorStream: errorController.stream,
+        ),
+      );
+      final killSource = CancellationTokenSource();
+      final killableConnect = store.withSignal(killSource.token);
+      killableConnect();
+      expect(store.getState().status, ReactiveStreamState.loading);
+      // Aborting the caller's signal surfaces the abort reason as error.
+      killSource.cancel('killed');
+      await pump();
+      expect(store.getState().status, ReactiveStreamState.error);
+      expect(store.getState().error, 'killed');
+      await dataController.close();
+      await errorController.close();
+      store.dispose();
+    });
+
+    test('withSignal supersession stays silent on a newer connect', () async {
+      final dataController = StreamController<int>.broadcast(sync: true);
+      final store = createReactiveStreamStore<int>(
+        createDataPublisher: (_) async => ReactiveStreamConnection<int>(
+          dataStream: dataController.stream,
+          errorStream: const Stream<Object?>.empty(),
+        ),
+      );
+      final killSource = CancellationTokenSource();
+      final killableConnect = store.withSignal(killSource.token);
+      killableConnect();
+      await pump();
+      // A bare connect() supersedes the signalled connection; the caller
+      // signal firing afterwards must NOT overwrite the newer connection's
+      // state.
+      store.connect();
+      await pump();
+      dataController.add(3);
+      await pump();
+      killSource.cancel('killed');
+      await pump();
+      expect(store.getState().status, ReactiveStreamState.loaded);
+      expect(store.getState().data, 3);
+      await dataController.close();
+      store.dispose();
+    });
+
+    test('subscribe notifies on state changes and is idempotent', () async {
+      final dataController = StreamController<int>.broadcast(sync: true);
+      final store = createReactiveStreamStore<int>(
+        createDataPublisher: (_) async => ReactiveStreamConnection<int>(
+          dataStream: dataController.stream,
+          errorStream: const Stream<Object?>.empty(),
+        ),
+      );
+      var calls = 0;
+      final unsubscribe = store.subscribe(() {
+        calls++;
+      });
+      store.connect(); // loading notification
+      await pump(); // subscribe
+      final callsAfterConnect = calls;
+      dataController.add(1); // loaded notification
+      await pump();
+      expect(calls, greaterThan(callsAfterConnect));
+      unsubscribe();
+      unsubscribe(); // idempotent
+      final callsAfterUnsubscribe = calls;
+      dataController.add(3);
+      await pump();
+      expect(calls, callsAfterUnsubscribe);
+      await dataController.close();
+      store.dispose();
+    });
+
+    test('connect after dispose throws', () {
+      final store = createReactiveStreamStore<int>(
+        createDataPublisher: (_) async => const ReactiveStreamConnection<int>(
+          dataStream: Stream<int>.empty(),
+          errorStream: Stream<Object?>.empty(),
+        ),
+      );
+      store.dispose();
+      expect(store.connect, throwsStateError);
+    });
+
+    test(
+      'exposes the isLoading getter while a connection is opening',
+      () async {
+        final dataController = StreamController<int>.broadcast(sync: true);
+        final store = createReactiveStreamStore<int>(
+          createDataPublisher: (_) async => ReactiveStreamConnection<int>(
+            dataStream: dataController.stream,
+            errorStream: const Stream<Object?>.empty(),
+          ),
+        );
+        store.connect();
+        expect(store.getState().isLoading, isTrue);
+        await pump();
+        dataController.add(1);
+        await pump();
+        expect(store.getState().isLoading, isFalse);
+        expect(store.getState().isLoaded, isTrue);
+        await dataController.close();
+        store.dispose();
+      },
+    );
+
+    test(
+      'withSignal short-circuits to error when the caller token is cancelled',
+      () async {
+        final source = CancellationTokenSource()..cancel(StateError('stopped'));
+        final store = createReactiveStreamStore<int>(
+          createDataPublisher: (_) async => const ReactiveStreamConnection<int>(
+            dataStream: Stream<int>.empty(),
+            errorStream: Stream<Object?>.empty(),
+          ),
+        );
+
+        store.withSignal(source.token)();
+        expect(store.getState().status, ReactiveStreamState.error);
+        expect(store.getState().error, isA<StateError>());
+        expect(store.getState().isError, isTrue);
+        store.dispose();
+      },
+    );
+
+    test(
+      'ignores null error events from the connection error stream',
+      () async {
+        final dataController = StreamController<int>.broadcast(sync: true);
+        final errorController = StreamController<Object?>.broadcast(sync: true);
+        final store = createReactiveStreamStore<int>(
+          createDataPublisher: (_) async => ReactiveStreamConnection<int>(
+            dataStream: dataController.stream,
+            errorStream: errorController.stream,
+          ),
+        );
+        store.connect();
+        await pump(3);
+
+        errorController.add(null);
+        await pump();
+        expect(store.getState().status, ReactiveStreamState.loading);
+        expect(store.getState().error, isNull);
+
+        dataController.add(7);
+        await pump();
+        expect(store.getState().data, 7);
+        await dataController.close();
+        await errorController.close();
+        store.dispose();
+      },
+    );
+
+    test(
+      'surfaces a synchronous publisher failure as an error state',
+      () async {
+        final store = createReactiveStreamStore<int>(
+          createDataPublisher: (_) async => throw StateError('publisher boom'),
+        );
+        store.connect();
+        await pump();
+
+        expect(store.getState().status, ReactiveStreamState.error);
+        expect(store.getState().error, isA<StateError>());
+        store.dispose();
+      },
+    );
+
+    test('surfaces a data stream error as an error state', () async {
+      final dataController = StreamController<int>.broadcast(sync: true);
+      final store = createReactiveStreamStore<int>(
+        createDataPublisher: (_) async => ReactiveStreamConnection<int>(
+          dataStream: dataController.stream,
+          errorStream: const Stream<Object?>.empty(),
+        ),
+      );
+      store.connect();
+      await pump(3);
+
+      dataController.addError(StateError('stream boom'));
+      await pump();
+      expect(store.getState().status, ReactiveStreamState.error);
+      expect(store.getState().error, isA<StateError>());
+      await dataController.close();
+      store.dispose();
+    });
+
+    test('subscribe after dispose returns a no-op unsubscribe', () {
+      final store = createReactiveStreamStore<int>(
+        createDataPublisher: (_) async => const ReactiveStreamConnection<int>(
+          dataStream: Stream<int>.empty(),
+          errorStream: Stream<Object?>.empty(),
+        ),
+      );
+      store.dispose();
+      final unsubscribe = store.subscribe(() {});
+      expect(unsubscribe, returnsNormally);
     });
   });
 }

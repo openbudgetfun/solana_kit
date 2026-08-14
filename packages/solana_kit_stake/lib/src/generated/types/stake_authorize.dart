@@ -6,7 +6,10 @@ import 'dart:typed_data';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
-enum StakeAuthorize { staker, withdrawer }
+enum StakeAuthorize {
+  staker,
+  withdrawer,
+}
 
 Encoder<StakeAuthorize> getStakeAuthorizeEncoder() {
   return transformEncoder(

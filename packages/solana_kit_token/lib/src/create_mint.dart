@@ -84,8 +84,8 @@ InstructionPlan getCreateMintInstructionPlan(
       newAccount: input.newMint,
       lamports: lamports,
       space: BigInt.from(mintSize),
-      programOwner: tokenProgram,
-      programAddress: systemProgram,
+      programAddress: tokenProgram,
+      instructionProgramAddress: systemProgram,
     ),
     getInitializeMint2Instruction(
       programAddress: tokenProgram,

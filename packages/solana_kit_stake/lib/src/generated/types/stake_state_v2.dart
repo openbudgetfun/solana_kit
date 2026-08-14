@@ -24,7 +24,7 @@ final class StakeStateV2Uninitialized extends StakeStateV2 {
   int get hashCode => runtimeType.hashCode;
 
   @override
-  String toString() => 'StakeStateV2.StakeStateV2Uninitialized()';
+  String toString() => 'StakeStateV2.Uninitialized()';
 }
 
 final class StakeStateV2Initialized extends StakeStateV2 {
@@ -41,7 +41,7 @@ final class StakeStateV2Initialized extends StakeStateV2 {
   int get hashCode => value.hashCode;
 
   @override
-  String toString() => 'StakeStateV2.StakeStateV2Initialized($value)';
+  String toString() => 'StakeStateV2.Initialized($value)';
 }
 
 final class StakeStateV2RewardsPool extends StakeStateV2 {
@@ -55,7 +55,7 @@ final class StakeStateV2RewardsPool extends StakeStateV2 {
   int get hashCode => runtimeType.hashCode;
 
   @override
-  String toString() => 'StakeStateV2.StakeStateV2RewardsPool()';
+  String toString() => 'StakeStateV2.RewardsPool()';
 }
 
 Encoder<StakeStateV2> getStakeStateV2Encoder() {
@@ -70,7 +70,7 @@ Encoder<StakeStateV2> getStakeStateV2Encoder() {
         ),
       ),
       (3, getStructEncoder(<(String, Encoder<Object?>)>[])),
-    ], size: getU8Encoder()),
+    ], size: getU32Encoder()),
     (StakeStateV2 value) => switch (value) {
       StakeStateV2Uninitialized() => <String, Object?>{'__kind': 0},
       StakeStateV2Initialized(value: final value) => <String, Object?>{
@@ -110,7 +110,7 @@ Decoder<StakeStateV2> getStakeStateV2Decoder() {
               <String, Object?>{},
         ),
       ),
-    ], size: getU8Decoder()),
+    ], size: getU32Decoder()),
     (Map<String, Object?> map, Uint8List bytes, int offset) {
       switch (map['__kind']) {
         case 0:

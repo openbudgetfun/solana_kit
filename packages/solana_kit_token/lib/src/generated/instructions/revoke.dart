@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class RevokeInstructionData {
-  const RevokeInstructionData({this.discriminator = 5});
+  const RevokeInstructionData({
+    this.discriminator = 5,
+  });
 
   final int discriminator;
 }
@@ -41,7 +43,9 @@ Decoder<RevokeInstructionData> getRevokeInstructionDataDecoder() {
   return transformDecoder(
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        RevokeInstructionData(discriminator: map['discriminator']! as int),
+        RevokeInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 

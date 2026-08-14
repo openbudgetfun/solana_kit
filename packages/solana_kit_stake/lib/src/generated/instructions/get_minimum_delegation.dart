@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class GetMinimumDelegationInstructionData {
-  const GetMinimumDelegationInstructionData({this.discriminator = 13});
+  const GetMinimumDelegationInstructionData({
+    this.discriminator = 13,
+  });
 
   final int discriminator;
 }
@@ -23,7 +25,7 @@ class GetMinimumDelegationInstructionData {
 Encoder<GetMinimumDelegationInstructionData>
 getGetMinimumDelegationInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -37,7 +39,7 @@ getGetMinimumDelegationInstructionDataEncoder() {
 Decoder<GetMinimumDelegationInstructionData>
 getGetMinimumDelegationInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(

@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
-import 'package:solana_kit_loader/src/generated/instructions/loader_v3.dart';
+import 'package:solana_kit_loader/src/generated/solana_loader_v3_program.dart';
 
 /// Default number of program bytes included in each loader write instruction.
 const defaultLoaderWriteChunkSize = 900;
@@ -18,8 +18,8 @@ InstructionPlan getDeployProgramInstructionPlan({
   required Uint8List programBytes,
   BigInt? maxDataLen,
   int chunkSize = defaultLoaderWriteChunkSize,
-  Address rentSysvar = rentSysvarAddress,
-  Address clockSysvar = clockSysvarAddress,
+  Address rentSysvar = sysvarRentAddress,
+  Address clockSysvar = sysvarClockAddress,
   Address systemProgram = systemProgramAddress,
 }) {
   final writes = _getWriteInstructions(
@@ -31,7 +31,8 @@ InstructionPlan getDeployProgramInstructionPlan({
 
   return nonDivisibleSequentialInstructionPlan([
     ...writes,
-    getDeployWithMaxProgramLenInstruction(
+    getDeployWithMaxDataLenInstruction(
+      programAddress: solanaLoaderV3ProgramProgramAddress,
       payerAccount: payerAccount,
       programDataAccount: programDataAccount,
       programAccount: programAccount,
@@ -55,8 +56,8 @@ InstructionPlan getUpgradeProgramInstructionPlan({
   required Address authority,
   required Uint8List programBytes,
   int chunkSize = defaultLoaderWriteChunkSize,
-  Address rentSysvar = rentSysvarAddress,
-  Address clockSysvar = clockSysvarAddress,
+  Address rentSysvar = sysvarRentAddress,
+  Address clockSysvar = sysvarClockAddress,
 }) {
   final writes = _getWriteInstructions(
     bufferAccount: bufferAccount,
@@ -68,6 +69,7 @@ InstructionPlan getUpgradeProgramInstructionPlan({
   return nonDivisibleSequentialInstructionPlan([
     ...writes,
     getUpgradeInstruction(
+      programAddress: solanaLoaderV3ProgramProgramAddress,
       programDataAccount: programDataAccount,
       programAccount: programAccount,
       bufferAccount: bufferAccount,
@@ -93,7 +95,8 @@ List<Object> _getWriteInstructions({
   for (var offset = 0; offset < programBytes.length; offset += chunkSize) {
     final end = (offset + chunkSize).clamp(0, programBytes.length);
     instructions.add(
-      getLoaderV3WriteInstruction(
+      getWriteInstruction(
+        programAddress: solanaLoaderV3ProgramProgramAddress,
         bufferAccount: bufferAccount,
         bufferAuthority: bufferAuthority,
         offset: offset,

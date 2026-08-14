@@ -14,7 +14,6 @@ export 'initialize_checked.dart';
 export 'merge.dart';
 export 'move_lamports.dart';
 export 'move_stake.dart';
-export 'redelegate.dart';
 export 'set_lockup.dart';
 export 'set_lockup_checked.dart';
 export 'split.dart';

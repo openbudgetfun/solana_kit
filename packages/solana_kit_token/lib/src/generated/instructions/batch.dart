@@ -15,7 +15,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class BatchInstructionData {
-  const BatchInstructionData({this.discriminator = 255, required this.data});
+  const BatchInstructionData({
+    this.discriminator = 255,
+    required this.data,
+  });
 
   final int discriminator;
   final List<Map<String, Object?>> data;
@@ -90,7 +93,9 @@ Instruction getBatchInstruction({
 
   required List<Map<String, Object?>> data,
 }) {
-  final instructionData = BatchInstructionData(data: data);
+  final instructionData = BatchInstructionData(
+    data: data,
+  );
 
   return Instruction(
     programAddress: programAddress,

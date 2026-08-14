@@ -1,159 +1,128 @@
+// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+/// The address of the ComputeBudget program.
+
 import 'dart:typed_data';
 
-import 'package:solana_kit_compute_budget/src/generated/instructions/request_heap_frame.dart';
-import 'package:solana_kit_compute_budget/src/generated/instructions/request_units.dart';
-import 'package:solana_kit_compute_budget/src/generated/instructions/set_compute_unit_limit.dart';
-import 'package:solana_kit_compute_budget/src/generated/instructions/set_compute_unit_price.dart';
-import 'package:solana_kit_compute_budget/src/generated/instructions/set_loaded_accounts_data_size_limit.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+
+import '../instructions/instructions.dart';
 
 export 'package:solana_kit_addresses/solana_kit_addresses.dart'
     show computeBudgetProgramAddress;
 
-/// Known instruction types for the Compute Budget program.
+/// Known instructions for the ComputeBudget program.
 enum ComputeBudgetInstruction {
-  /// Deprecated request-units instruction (discriminator 0).
   requestUnits,
-
-  /// Request a specific heap frame size (discriminator 1).
   requestHeapFrame,
-
-  /// Set a transaction-wide compute unit limit (discriminator 2).
   setComputeUnitLimit,
-
-  /// Set a compute unit price for priority fees (discriminator 3).
   setComputeUnitPrice,
-
-  /// Set a limit on loaded accounts data size (discriminator 4).
   setLoadedAccountsDataSizeLimit,
 }
 
-/// Identifies the instruction type from raw instruction [data].
-///
-/// Returns the matching [ComputeBudgetInstruction] variant based on the
-/// single-byte discriminator at offset 0.
-///
-/// Throws [ArgumentError] if the discriminator is unrecognized.
-ComputeBudgetInstruction identifyComputeBudgetInstruction(Uint8List data) {
-  if (data.isEmpty) {
-    throw ArgumentError('Empty instruction data');
+/// Identifies the type of a ComputeBudget instruction.
+ComputeBudgetInstruction identifyComputeBudgetInstruction(
+  Uint8List data,
+) {
+  if (containsBytes(data, getU8Encoder().encode(0), 0)) {
+    return ComputeBudgetInstruction.requestUnits;
   }
-  final discriminator = data[0];
-  return switch (discriminator) {
-    0 => ComputeBudgetInstruction.requestUnits,
-    1 => ComputeBudgetInstruction.requestHeapFrame,
-    2 => ComputeBudgetInstruction.setComputeUnitLimit,
-    3 => ComputeBudgetInstruction.setComputeUnitPrice,
-    4 => ComputeBudgetInstruction.setLoadedAccountsDataSizeLimit,
-    _ => throw ArgumentError(
-      'Unrecognized Compute Budget instruction discriminator: $discriminator',
-    ),
-  };
+  if (containsBytes(data, getU8Encoder().encode(1), 0)) {
+    return ComputeBudgetInstruction.requestHeapFrame;
+  }
+  if (containsBytes(data, getU8Encoder().encode(2), 0)) {
+    return ComputeBudgetInstruction.setComputeUnitLimit;
+  }
+  if (containsBytes(data, getU8Encoder().encode(3), 0)) {
+    return ComputeBudgetInstruction.setComputeUnitPrice;
+  }
+  if (containsBytes(data, getU8Encoder().encode(4), 0)) {
+    return ComputeBudgetInstruction.setLoadedAccountsDataSizeLimit;
+  }
+
+  throw SolanaError(
+    SolanaErrorCode.programClientsFailedToIdentifyInstruction,
+    {
+      'instructionData': data,
+      'programName': 'computeBudget',
+    },
+  );
 }
 
-/// A parsed Compute Budget instruction with its identified type and data.
+/// A parsed instruction from the ComputeBudget program.
 sealed class ParsedComputeBudgetInstruction {
-  /// The instruction type.
-  ComputeBudgetInstruction get instructionType;
+  const ParsedComputeBudgetInstruction(this.instructionType);
+
+  final ComputeBudgetInstruction instructionType;
 }
 
-/// A parsed [ComputeBudgetInstruction.requestUnits] instruction.
-class ParsedRequestUnits implements ParsedComputeBudgetInstruction {
-  /// Creates a [ParsedRequestUnits].
-  const ParsedRequestUnits(this.data);
+/// A parsed RequestUnits instruction.
+final class ParsedRequestUnits extends ParsedComputeBudgetInstruction {
+  const ParsedRequestUnits({required this.data})
+    : super(ComputeBudgetInstruction.requestUnits);
 
-  @override
-  ComputeBudgetInstruction get instructionType =>
-      ComputeBudgetInstruction.requestUnits;
-
-  /// The decoded instruction data.
   final RequestUnitsInstructionData data;
 }
 
-/// A parsed [ComputeBudgetInstruction.requestHeapFrame] instruction.
-class ParsedRequestHeapFrame implements ParsedComputeBudgetInstruction {
-  /// Creates a [ParsedRequestHeapFrame].
-  const ParsedRequestHeapFrame(this.data);
+/// A parsed RequestHeapFrame instruction.
+final class ParsedRequestHeapFrame extends ParsedComputeBudgetInstruction {
+  const ParsedRequestHeapFrame({required this.data})
+    : super(ComputeBudgetInstruction.requestHeapFrame);
 
-  @override
-  ComputeBudgetInstruction get instructionType =>
-      ComputeBudgetInstruction.requestHeapFrame;
-
-  /// The decoded instruction data.
   final RequestHeapFrameInstructionData data;
 }
 
-/// A parsed [ComputeBudgetInstruction.setComputeUnitLimit] instruction.
-class ParsedSetComputeUnitLimit implements ParsedComputeBudgetInstruction {
-  /// Creates a [ParsedSetComputeUnitLimit].
-  const ParsedSetComputeUnitLimit(this.data);
+/// A parsed SetComputeUnitLimit instruction.
+final class ParsedSetComputeUnitLimit extends ParsedComputeBudgetInstruction {
+  const ParsedSetComputeUnitLimit({required this.data})
+    : super(ComputeBudgetInstruction.setComputeUnitLimit);
 
-  @override
-  ComputeBudgetInstruction get instructionType =>
-      ComputeBudgetInstruction.setComputeUnitLimit;
-
-  /// The decoded instruction data.
   final SetComputeUnitLimitInstructionData data;
 }
 
-/// A parsed [ComputeBudgetInstruction.setComputeUnitPrice] instruction.
-class ParsedSetComputeUnitPrice implements ParsedComputeBudgetInstruction {
-  /// Creates a [ParsedSetComputeUnitPrice].
-  const ParsedSetComputeUnitPrice(this.data);
+/// A parsed SetComputeUnitPrice instruction.
+final class ParsedSetComputeUnitPrice extends ParsedComputeBudgetInstruction {
+  const ParsedSetComputeUnitPrice({required this.data})
+    : super(ComputeBudgetInstruction.setComputeUnitPrice);
 
-  @override
-  ComputeBudgetInstruction get instructionType =>
-      ComputeBudgetInstruction.setComputeUnitPrice;
-
-  /// The decoded instruction data.
   final SetComputeUnitPriceInstructionData data;
 }
 
-/// A parsed [ComputeBudgetInstruction.setLoadedAccountsDataSizeLimit]
-/// instruction.
-class ParsedSetLoadedAccountsDataSizeLimit
-    implements ParsedComputeBudgetInstruction {
-  /// Creates a [ParsedSetLoadedAccountsDataSizeLimit].
-  const ParsedSetLoadedAccountsDataSizeLimit(this.data);
+/// A parsed SetLoadedAccountsDataSizeLimit instruction.
+final class ParsedSetLoadedAccountsDataSizeLimit
+    extends ParsedComputeBudgetInstruction {
+  const ParsedSetLoadedAccountsDataSizeLimit({required this.data})
+    : super(ComputeBudgetInstruction.setLoadedAccountsDataSizeLimit);
 
-  @override
-  ComputeBudgetInstruction get instructionType =>
-      ComputeBudgetInstruction.setLoadedAccountsDataSizeLimit;
-
-  /// The decoded instruction data.
   final SetLoadedAccountsDataSizeLimitInstructionData data;
 }
 
-/// Parses a Compute Budget [instruction] into a typed
-/// [ParsedComputeBudgetInstruction].
-///
-/// Throws [ArgumentError] if the instruction cannot be identified.
+/// Parses a ComputeBudget instruction.
 ParsedComputeBudgetInstruction parseComputeBudgetInstruction(
   Instruction instruction,
 ) {
-  final data = instruction.data;
-  if (data == null || data.isEmpty) {
-    throw ArgumentError('Instruction has no data');
-  }
-
-  final type = identifyComputeBudgetInstruction(data);
-
-  return switch (type) {
+  return switch (identifyComputeBudgetInstruction(
+    instruction.data ?? Uint8List(0),
+  )) {
     ComputeBudgetInstruction.requestUnits => ParsedRequestUnits(
-      getRequestUnitsInstructionDataDecoder().decode(data),
+      data: parseRequestUnitsInstruction(instruction),
     ),
     ComputeBudgetInstruction.requestHeapFrame => ParsedRequestHeapFrame(
-      getRequestHeapFrameInstructionDataDecoder().decode(data),
+      data: parseRequestHeapFrameInstruction(instruction),
     ),
     ComputeBudgetInstruction.setComputeUnitLimit => ParsedSetComputeUnitLimit(
-      getSetComputeUnitLimitInstructionDataDecoder().decode(data),
+      data: parseSetComputeUnitLimitInstruction(instruction),
     ),
     ComputeBudgetInstruction.setComputeUnitPrice => ParsedSetComputeUnitPrice(
-      getSetComputeUnitPriceInstructionDataDecoder().decode(data),
+      data: parseSetComputeUnitPriceInstruction(instruction),
     ),
     ComputeBudgetInstruction.setLoadedAccountsDataSizeLimit =>
       ParsedSetLoadedAccountsDataSizeLimit(
-        getSetLoadedAccountsDataSizeLimitInstructionDataDecoder().decode(data),
+        data: parseSetLoadedAccountsDataSizeLimitInstruction(instruction),
       ),
   };
 }

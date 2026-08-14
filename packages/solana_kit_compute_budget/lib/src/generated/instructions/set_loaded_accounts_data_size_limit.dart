@@ -1,3 +1,8 @@
+// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+import 'dart:typed_data';
+
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -5,41 +10,20 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-/// Discriminator byte for the SetLoadedAccountsDataSizeLimit instruction.
-const setLoadedAccountsDataSizeLimitDiscriminator = 4;
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
 
-/// Data for the SetLoadedAccountsDataSizeLimit instruction.
 @immutable
 class SetLoadedAccountsDataSizeLimitInstructionData {
-  /// Creates [SetLoadedAccountsDataSizeLimitInstructionData].
   const SetLoadedAccountsDataSizeLimitInstructionData({
+    this.discriminator = 4,
     required this.accountDataSizeLimit,
-    this.discriminator = setLoadedAccountsDataSizeLimitDiscriminator,
   });
 
-  /// The instruction discriminator byte.
   final int discriminator;
-
-  /// Maximum total bytes of account data that can be loaded.
   final int accountDataSizeLimit;
-
-  @override
-  String toString() =>
-      'SetLoadedAccountsDataSizeLimitInstructionData('
-      'discriminator: $discriminator, '
-      'accountDataSizeLimit: $accountDataSizeLimit)';
-
-  @override
-  bool operator ==(Object other) =>
-      other is SetLoadedAccountsDataSizeLimitInstructionData &&
-      other.discriminator == discriminator &&
-      other.accountDataSizeLimit == accountDataSizeLimit;
-
-  @override
-  int get hashCode => Object.hash(discriminator, accountDataSizeLimit);
 }
 
-/// Returns the encoder for [SetLoadedAccountsDataSizeLimitInstructionData].
 Encoder<SetLoadedAccountsDataSizeLimitInstructionData>
 getSetLoadedAccountsDataSizeLimitInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
@@ -49,14 +33,13 @@ getSetLoadedAccountsDataSizeLimitInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (value) => <String, Object?>{
+    (SetLoadedAccountsDataSizeLimitInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
       'accountDataSizeLimit': value.accountDataSizeLimit,
     },
   );
 }
 
-/// Returns the decoder for [SetLoadedAccountsDataSizeLimitInstructionData].
 Decoder<SetLoadedAccountsDataSizeLimitInstructionData>
 getSetLoadedAccountsDataSizeLimitInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
@@ -66,14 +49,14 @@ getSetLoadedAccountsDataSizeLimitInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (map, bytes, offset) => SetLoadedAccountsDataSizeLimitInstructionData(
-      discriminator: map['discriminator']! as int,
-      accountDataSizeLimit: map['accountDataSizeLimit']! as int,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SetLoadedAccountsDataSizeLimitInstructionData(
+          discriminator: map['discriminator']! as int,
+          accountDataSizeLimit: map['accountDataSizeLimit']! as int,
+        ),
   );
 }
 
-/// Returns the codec for [SetLoadedAccountsDataSizeLimitInstructionData].
 Codec<
   SetLoadedAccountsDataSizeLimitInstructionData,
   SetLoadedAccountsDataSizeLimitInstructionData
@@ -85,27 +68,26 @@ getSetLoadedAccountsDataSizeLimitInstructionDataCodec() {
   );
 }
 
-/// Creates a SetLoadedAccountsDataSizeLimit instruction.
-///
-/// Limits the total bytes of account data loaded by the transaction to
-/// [accountDataSizeLimit].
+/// Creates a [SetLoadedAccountsDataSizeLimit] instruction.
 Instruction getSetLoadedAccountsDataSizeLimitInstruction({
+  required Address programAddress,
+
   required int accountDataSizeLimit,
-  Address programAddress = computeBudgetProgramAddress,
 }) {
-  final data = SetLoadedAccountsDataSizeLimitInstructionData(
+  final instructionData = SetLoadedAccountsDataSizeLimitInstructionData(
     accountDataSizeLimit: accountDataSizeLimit,
   );
+
   return Instruction(
     programAddress: programAddress,
-    accounts: const [],
+    accounts: [],
     data: getSetLoadedAccountsDataSizeLimitInstructionDataEncoder().encode(
-      data,
+      instructionData,
     ),
   );
 }
 
-/// Parses a SetLoadedAccountsDataSizeLimit instruction from [instruction].
+/// Parses a [SetLoadedAccountsDataSizeLimit] instruction from raw instruction data.
 SetLoadedAccountsDataSizeLimitInstructionData
 parseSetLoadedAccountsDataSizeLimitInstruction(Instruction instruction) {
   return getSetLoadedAccountsDataSizeLimitInstructionDataDecoder().decode(

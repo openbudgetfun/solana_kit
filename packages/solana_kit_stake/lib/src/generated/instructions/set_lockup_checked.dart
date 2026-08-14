@@ -10,7 +10,8 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-import '../types/lockup_checked_params.dart';
+import '../types/epoch.dart';
+import '../types/unix_timestamp.dart';
 
 /// The discriminator field name: 'discriminator'.
 /// Offset: 0.
@@ -19,25 +20,32 @@ import '../types/lockup_checked_params.dart';
 class SetLockupCheckedInstructionData {
   const SetLockupCheckedInstructionData({
     this.discriminator = 12,
-    required this.arg0,
+    required this.unixTimestamp,
+    required this.epoch,
   });
 
   final int discriminator;
-  final LockupCheckedParams arg0;
+  final UnixTimestamp? unixTimestamp;
+  final Epoch? epoch;
 }
 
 Encoder<SetLockupCheckedInstructionData>
 getSetLockupCheckedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
-    ('arg0', getLockupCheckedParamsEncoder()),
+    ('discriminator', getU32Encoder()),
+    (
+      'unixTimestamp',
+      getNullableEncoder<UnixTimestamp>(getUnixTimestampEncoder()),
+    ),
+    ('epoch', getNullableEncoder<Epoch>(getEpochEncoder())),
   ]);
 
   return transformEncoder(
     structEncoder,
     (SetLockupCheckedInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'arg0': value.arg0,
+      'unixTimestamp': value.unixTimestamp,
+      'epoch': value.epoch,
     },
   );
 }
@@ -45,8 +53,12 @@ getSetLockupCheckedInstructionDataEncoder() {
 Decoder<SetLockupCheckedInstructionData>
 getSetLockupCheckedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
-    ('arg0', getLockupCheckedParamsDecoder()),
+    ('discriminator', getU32Decoder()),
+    (
+      'unixTimestamp',
+      getNullableDecoder<UnixTimestamp>(getUnixTimestampDecoder()),
+    ),
+    ('epoch', getNullableDecoder<Epoch>(getEpochDecoder())),
   ]);
 
   return transformDecoder(
@@ -54,7 +66,8 @@ getSetLockupCheckedInstructionDataDecoder() {
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         SetLockupCheckedInstructionData(
           discriminator: map['discriminator']! as int,
-          arg0: map['arg0']! as LockupCheckedParams,
+          unixTimestamp: map['unixTimestamp'] as UnixTimestamp?,
+          epoch: map['epoch'] as Epoch?,
         ),
   );
 }
@@ -73,9 +86,13 @@ Instruction getSetLockupCheckedInstruction({
   required Address stake,
   required Address authority,
   Address? newAuthority,
-  required LockupCheckedParams arg0,
+  required UnixTimestamp? unixTimestamp,
+  required Epoch? epoch,
 }) {
-  final instructionData = SetLockupCheckedInstructionData(arg0: arg0);
+  final instructionData = SetLockupCheckedInstructionData(
+    unixTimestamp: unixTimestamp,
+    epoch: epoch,
+  );
 
   return Instruction(
     programAddress: programAddress,

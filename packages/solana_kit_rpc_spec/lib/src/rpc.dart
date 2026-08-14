@@ -38,11 +38,10 @@ class PendingRpcRequest<TResponse> {
   /// Returns a [ReactiveActionStore] that can be used to dispatch this request
   /// reactively, tracking idle/running/success/error states.
   ///
-  /// Mirrors the upstream `PendingRpcRequest.reactiveStore()` API added in
-  /// `@solana/rpc-spec` v6.10.
-  ReactiveActionStore<List<Object?>, TResponse> reactiveStore() {
+  /// Mirrors the upstream `PendingRpcRequest.reactiveStore()` API.
+  ReactiveActionStore<List<Object?>, TResponse> call() {
     return createReactiveActionStore<List<Object?>, TResponse>(
-      (args) => send(),
+      (signal, args) => send(RpcSendOptions(abortSignal: signal.future)),
     );
   }
 }

@@ -26,7 +26,7 @@ class MoveLamportsInstructionData {
 
 Encoder<MoveLamportsInstructionData> getMoveLamportsInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
     ('args', getU64Encoder()),
   ]);
 
@@ -41,7 +41,7 @@ Encoder<MoveLamportsInstructionData> getMoveLamportsInstructionDataEncoder() {
 
 Decoder<MoveLamportsInstructionData> getMoveLamportsInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
     ('args', getU64Decoder()),
   ]);
 
@@ -71,7 +71,9 @@ Instruction getMoveLamportsInstruction({
   required Address stakeAuthority,
   required BigInt args,
 }) {
-  final instructionData = MoveLamportsInstructionData(args: args);
+  final instructionData = MoveLamportsInstructionData(
+    args: args,
+  );
 
   return Instruction(
     programAddress: programAddress,

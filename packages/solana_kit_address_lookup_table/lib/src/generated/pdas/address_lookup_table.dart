@@ -1,26 +1,33 @@
-import 'dart:typed_data';
+// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
 
+import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
-/// Finds the Address Lookup Table PDA for [authority] and [recentSlot].
-///
-/// The PDA seeds match the upstream program client: the authority public key
-/// bytes followed by the recent slot encoded as little-endian `u64`.
-Future<ProgramDerivedAddress> findAddressLookupTablePda({
-  required Address authority,
-  required BigInt recentSlot,
-  Address programAddress = addressLookupTableProgramAddress,
-}) {
-  return getProgramDerivedAddress(
-    programAddress: programAddress,
-    seeds: [
-      getPublicKeyFromAddress(authority),
-      _encodeRecentSlotSeed(recentSlot),
-    ],
-  );
+@immutable
+class AddressLookupTableSeeds {
+  const AddressLookupTableSeeds({
+    required this.authority,
+    required this.recentSlot,
+  });
+
+  final Address authority;
+  final BigInt recentSlot;
 }
 
-Uint8List _encodeRecentSlotSeed(BigInt recentSlot) {
-  return getU64Encoder().encode(recentSlot);
+/// Finds the program derived address for [AddressLookupTable].
+Future<(Address, int)> findAddressLookupTablePda({
+  required AddressLookupTableSeeds seeds,
+  required Address programAddress,
+}) async {
+  final seedValues = <Object>[
+    getAddressEncoder().encode(seeds.authority),
+    getU64Encoder().encode(seeds.recentSlot),
+  ];
+
+  return getProgramDerivedAddress(
+    programAddress: programAddress,
+    seeds: seedValues,
+  );
 }

@@ -1,3 +1,8 @@
+// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
+import 'dart:typed_data';
+
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -5,41 +10,20 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-/// Discriminator byte for the SetComputeUnitPrice instruction.
-const setComputeUnitPriceDiscriminator = 3;
+/// The discriminator field name: 'discriminator'.
+/// Offset: 0.
 
-/// Data for the SetComputeUnitPrice instruction.
 @immutable
 class SetComputeUnitPriceInstructionData {
-  /// Creates [SetComputeUnitPriceInstructionData].
   const SetComputeUnitPriceInstructionData({
+    this.discriminator = 3,
     required this.microLamports,
-    this.discriminator = setComputeUnitPriceDiscriminator,
   });
 
-  /// The instruction discriminator byte.
   final int discriminator;
-
-  /// Transaction compute unit price used for prioritization fees.
   final BigInt microLamports;
-
-  @override
-  String toString() =>
-      'SetComputeUnitPriceInstructionData('
-      'discriminator: $discriminator, '
-      'microLamports: $microLamports)';
-
-  @override
-  bool operator ==(Object other) =>
-      other is SetComputeUnitPriceInstructionData &&
-      other.discriminator == discriminator &&
-      other.microLamports == microLamports;
-
-  @override
-  int get hashCode => Object.hash(discriminator, microLamports);
 }
 
-/// Returns the encoder for [SetComputeUnitPriceInstructionData].
 Encoder<SetComputeUnitPriceInstructionData>
 getSetComputeUnitPriceInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
@@ -49,14 +33,13 @@ getSetComputeUnitPriceInstructionDataEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (value) => <String, Object?>{
+    (SetComputeUnitPriceInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
       'microLamports': value.microLamports,
     },
   );
 }
 
-/// Returns the decoder for [SetComputeUnitPriceInstructionData].
 Decoder<SetComputeUnitPriceInstructionData>
 getSetComputeUnitPriceInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
@@ -66,14 +49,14 @@ getSetComputeUnitPriceInstructionDataDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (map, bytes, offset) => SetComputeUnitPriceInstructionData(
-      discriminator: map['discriminator']! as int,
-      microLamports: map['microLamports']! as BigInt,
-    ),
+    (Map<String, Object?> map, Uint8List bytes, int offset) =>
+        SetComputeUnitPriceInstructionData(
+          discriminator: map['discriminator']! as int,
+          microLamports: map['microLamports']! as BigInt,
+        ),
   );
 }
 
-/// Returns the codec for [SetComputeUnitPriceInstructionData].
 Codec<SetComputeUnitPriceInstructionData, SetComputeUnitPriceInstructionData>
 getSetComputeUnitPriceInstructionDataCodec() {
   return combineCodec(
@@ -82,23 +65,26 @@ getSetComputeUnitPriceInstructionDataCodec() {
   );
 }
 
-/// Creates a SetComputeUnitPrice instruction.
-///
-/// Sets the compute unit price to [microLamports] for priority fee
-/// calculation.
+/// Creates a [SetComputeUnitPrice] instruction.
 Instruction getSetComputeUnitPriceInstruction({
+  required Address programAddress,
+
   required BigInt microLamports,
-  Address programAddress = computeBudgetProgramAddress,
 }) {
-  final data = SetComputeUnitPriceInstructionData(microLamports: microLamports);
+  final instructionData = SetComputeUnitPriceInstructionData(
+    microLamports: microLamports,
+  );
+
   return Instruction(
     programAddress: programAddress,
-    accounts: const [],
-    data: getSetComputeUnitPriceInstructionDataEncoder().encode(data),
+    accounts: [],
+    data: getSetComputeUnitPriceInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
-/// Parses a SetComputeUnitPrice instruction from [instruction].
+/// Parses a [SetComputeUnitPrice] instruction from raw instruction data.
 SetComputeUnitPriceInstructionData parseSetComputeUnitPriceInstruction(
   Instruction instruction,
 ) {

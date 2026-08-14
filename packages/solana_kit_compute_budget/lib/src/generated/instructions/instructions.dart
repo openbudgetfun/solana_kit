@@ -1,3 +1,6 @@
+// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
+
 export 'request_heap_frame.dart';
 export 'request_units.dart';
 export 'set_compute_unit_limit.dart';

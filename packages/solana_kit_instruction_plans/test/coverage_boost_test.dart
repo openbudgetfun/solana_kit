@@ -24,7 +24,7 @@ void main() {
       final packer = MessagePackerInstructionPlan(
         getMessagePacker: () => MessagePacker(
           done: () => packerDone,
-          packMessageToCapacity: (msg) {
+          packMessageToCapacity: (msg, {maxInstructions}) {
             packerDone = true;
             return appendTransactionMessageInstructions([
               createInstruction('PACKER'),
@@ -178,7 +178,8 @@ void main() {
         final message = createMessage();
         final boundary = createTransactionExecutionBoundary(
           TransactionExecutionBoundaryConfig(
-            planTransactions: (_) async => singleTransactionPlan(message),
+            planTransactions: (_, {maxInstructionsPerTransaction}) async =>
+                singleTransactionPlan(message),
             signTransactionMessage: (_) async => throw StateError('sign error'),
             sendSignedTransaction: (_) async =>
                 throw UnimplementedError('should not reach'),
@@ -202,10 +203,11 @@ void main() {
         final message = createMessage();
         final boundary = createTransactionExecutionBoundary(
           TransactionExecutionBoundaryConfig(
-            planTransactions: (_) async => sequentialTransactionPlan([
-              singleTransactionPlan(message),
-              singleTransactionPlan(createMessage()),
-            ]),
+            planTransactions: (_, {maxInstructionsPerTransaction}) async =>
+                sequentialTransactionPlan([
+                  singleTransactionPlan(message),
+                  singleTransactionPlan(createMessage()),
+                ]),
             signTransactionMessage: (_) async {
               throw StateError('sign failed');
             },
@@ -236,7 +238,8 @@ void main() {
       final message = createMessage();
       final boundary = createTransactionExecutionBoundary(
         TransactionExecutionBoundaryConfig(
-          planTransactions: (_) async => singleTransactionPlan(message),
+          planTransactions: (_, {maxInstructionsPerTransaction}) async =>
+              singleTransactionPlan(message),
           signTransactionMessage: (_) async {
             throw SolanaError(
               SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan,
@@ -271,7 +274,8 @@ void main() {
       final message = createMessage();
       final boundary = createTransactionExecutionBoundary(
         TransactionExecutionBoundaryConfig(
-          planTransactions: (_) async => singleTransactionPlan(message),
+          planTransactions: (_, {maxInstructionsPerTransaction}) async =>
+              singleTransactionPlan(message),
           signTransactionMessage: (_) async => createTransaction(),
           sendSignedTransaction: (_) async {
             throw StateError('generic execution error');

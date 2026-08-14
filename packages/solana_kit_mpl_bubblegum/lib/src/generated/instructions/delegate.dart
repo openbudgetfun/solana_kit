@@ -11,10 +11,22 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// Delegate instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `delegate` instruction.
+const DelegateInstructionDiscriminator = <int>[
+  90,
+  147,
+  75,
+  178,
+  85,
+  88,
+  4,
+  137,
+];
+
 @immutable
 class DelegateInstructionData {
   const DelegateInstructionData({
-    this.discriminator = 9,
+    this.discriminator = DelegateInstructionDiscriminator,
     required this.root,
     required this.dataHash,
     required this.creatorHash,
@@ -22,7 +34,7 @@ class DelegateInstructionData {
     required this.index,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final List<int> root;
   final List<int> dataHash;
   final List<int> creatorHash;
@@ -32,6 +44,10 @@ class DelegateInstructionData {
 
 Encoder<DelegateInstructionData> getDelegateInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    (
+      'discriminator',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
     (
       'dataHash',
@@ -60,7 +76,10 @@ Encoder<DelegateInstructionData> getDelegateInstructionDataEncoder() {
 
 Decoder<DelegateInstructionData> getDelegateInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
     (
       'dataHash',
@@ -78,7 +97,7 @@ Decoder<DelegateInstructionData> getDelegateInstructionDataDecoder() {
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         DelegateInstructionData(
-          discriminator: map['discriminator']! as int,
+          discriminator: map['discriminator']! as List<int>,
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
           creatorHash: map['creatorHash']! as List<int>,

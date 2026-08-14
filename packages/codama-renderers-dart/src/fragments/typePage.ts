@@ -132,6 +132,7 @@ function getDataEnumPageFragment(
 
   for (let i = 0; i < enumNode.variants.length; i++) {
     const variant = enumNode.variants[i];
+    const variantName = pascalCase(variant.name as string);
     const variantClassName = scope.nameApi.sealedClassVariant(
       name,
       variant.name as string,
@@ -149,7 +150,7 @@ function getDataEnumPageFragment(
   int get hashCode => runtimeType.hashCode;
 
   @override
-  String toString() => '${typeName}.${variantClassName}()';
+  String toString() => '${typeName}.${variantName}()';
 }`);
 
       encoderVariants.push(
@@ -217,7 +218,7 @@ ${fieldDecls}
   int get hashCode => ${hashExpression};
 
   @override
-  String toString() => '${typeName}.${variantClassName}(${toStringFields})';
+  String toString() => '${typeName}.${variantName}(${toStringFields})';
 }`);
 
       const encFields = fieldManifests
@@ -288,7 +289,7 @@ ${fieldDecls}
   int get hashCode => value.hashCode;
 
   @override
-  String toString() => '${typeName}.${variantClassName}(\$value)';
+  String toString() => '${typeName}.${variantName}(\$value)';
 }`);
         encoderVariants.push(
           `(${i}, transformEncoder<${manifest.type.content}, Map<String, Object?>>(${manifest.encoder.content}, (Map<String, Object?> map) => map['value']! as ${manifest.type.content}))`,

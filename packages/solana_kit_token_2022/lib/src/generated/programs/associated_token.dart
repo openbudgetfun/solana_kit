@@ -1,3 +1,13 @@
-// Handwritten compatibility shim.
+// Auto-generated. Do not edit.
+// ignore_for_file: type=lint
 
-export 'package:solana_kit_associated_token_account/solana_kit_associated_token_account.dart';
+/// The address of the AssociatedToken program.
+export 'package:solana_kit_addresses/solana_kit_addresses.dart'
+    show associatedTokenProgramAddress;
+
+/// Known instructions for the AssociatedToken program.
+enum AssociatedTokenInstruction {
+  createAssociatedToken,
+  createAssociatedTokenIdempotent,
+  recoverNestedAssociatedToken,
+}

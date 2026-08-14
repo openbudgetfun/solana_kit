@@ -9,14 +9,26 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart';
 
 /// updateMetadata instruction data.
+/// The Anchor discriminator for the `update_metadata` instruction.
+const updateMetadataInstructionDiscriminator = <int>[
+  170,
+  182,
+  43,
+  239,
+  97,
+  78,
+  225,
+  186,
+];
+
 @immutable
 class updateMetadataInstructionData {
   const updateMetadataInstructionData({
-    this.discriminator = 31,
+    this.discriminator = updateMetadataInstructionDiscriminator,
     required this.metadataArgs,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final MetadataArgs metadataArgs;
 }
 

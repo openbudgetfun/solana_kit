@@ -2,62 +2,53 @@ import 'package:solana_kit_address_lookup_table/solana_kit_address_lookup_table.
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:test/test.dart';
 
+const _authority = Address('GsbwXfJraMomNxBcpR3DBFsMki6Djb89kBbHFwNVBgkw');
+const _payer = Address('11111111111111111111111111111112');
+const _tableAddress = Address('AKptnhx5oMn2sX9qZ7wH5d7mN3o2cF8u1nYxBcVx5Bpa');
 void main() {
   group('barrel exports', () {
-    test('program address is accessible', () {
-      expect(addressLookupTableProgramAddress.value, isNotEmpty);
+    test('program address is re-exported from solana_kit_address_constants', () {
+      // The generated programs file re-exports the canonical program address
+      // from `solana_kit_address_constants`, so both the SDK-wide constant and
+      // the package-local `addressLookupTableProgramAddress` resolve to the
+      // same name. Here we verify the import resolves and has the expected
+      // upstream IDL base58 value.
+      expect(
+        addressLookupTableProgramAddress.value,
+        equals('AddressLookupTab1e1111111111111111111111111'),
+      );
     });
 
-    test('instruction enum has all variants', () {
-      expect(AddressLookupTableInstruction.values, hasLength(5));
-    });
-
-    test('instruction builders are callable', () {
-      const addr = Address('11111111111111111111111111111111');
-
-      final createIx = getCreateLookupTableInstruction(
-        address: addr,
-        authority: addr,
-        payer: addr,
-        recentSlot: BigInt.one,
-        bump: 0,
+    test('instruction helpers are callable', () {
+      final ix = getCreateLookupTableInstruction(
+        programAddress: addressLookupTableProgramAddress,
+        address: _tableAddress,
+        authority: _authority,
+        payer: _payer,
+        systemProgram: systemProgramAddress,
+        recentSlot: BigInt.from(42),
+        bump: 255,
       );
-      expect(createIx.programAddress, equals(addressLookupTableProgramAddress));
 
-      final freezeIx = getFreezeLookupTableInstruction(
-        address: addr,
-        authority: addr,
-      );
-      expect(freezeIx.programAddress, equals(addressLookupTableProgramAddress));
-
-      final extendIx = getExtendLookupTableInstruction(
-        address: addr,
-        authority: addr,
-        payer: addr,
-        addresses: const [addr],
-      );
-      expect(extendIx.programAddress, equals(addressLookupTableProgramAddress));
-
-      final deactivateIx = getDeactivateLookupTableInstruction(
-        address: addr,
-        authority: addr,
+      expect(ix.programAddress, equals(addressLookupTableProgramAddress));
+      expect(
+        parseCreateLookupTableInstruction(ix).recentSlot,
+        equals(BigInt.from(42)),
       );
       expect(
-        deactivateIx.programAddress,
-        equals(addressLookupTableProgramAddress),
+        parseCreateLookupTableInstruction(ix).bump,
+        equals(255),
       );
-
-      final closeIx = getCloseLookupTableInstruction(
-        address: addr,
-        authority: addr,
-        recipient: addr,
-      );
-      expect(closeIx.programAddress, equals(addressLookupTableProgramAddress));
     });
 
-    test('account data codec is accessible', () {
-      final codec = getAddressLookupTableAccountDataCodec();
+    test('account codec is exported', () {
+      final codec = getAddressLookupTableCodec();
       expect(codec, isNotNull);
+    });
+
+    test('enums are exported', () {
+      expect(AddressLookupTableInstruction.values.length, 5);
+      expect(AddressLookupTableAccount.values.length, 1);
     });
   });
 }

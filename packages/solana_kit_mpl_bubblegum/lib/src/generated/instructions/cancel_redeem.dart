@@ -11,19 +11,35 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// CancelRedeem instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `cancel_redeem` instruction.
+const CancelRedeemInstructionDiscriminator = <int>[
+  111,
+  76,
+  232,
+  50,
+  39,
+  175,
+  48,
+  242,
+];
+
 @immutable
 class CancelRedeemInstructionData {
   const CancelRedeemInstructionData({
-    this.discriminator = 2,
+    this.discriminator = CancelRedeemInstructionDiscriminator,
     required this.root,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final List<int> root;
 }
 
 Encoder<CancelRedeemInstructionData> getCancelRedeemInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    (
+      'discriminator',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
   ]);
 
@@ -38,7 +54,10 @@ Encoder<CancelRedeemInstructionData> getCancelRedeemInstructionDataEncoder() {
 
 Decoder<CancelRedeemInstructionData> getCancelRedeemInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
   ]);
 
@@ -46,7 +65,7 @@ Decoder<CancelRedeemInstructionData> getCancelRedeemInstructionDataDecoder() {
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         CancelRedeemInstructionData(
-          discriminator: map['discriminator']! as int,
+          discriminator: map['discriminator']! as List<int>,
           root: map['root']! as List<int>,
         ),
   );

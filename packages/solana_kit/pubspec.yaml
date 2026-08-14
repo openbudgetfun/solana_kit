@@ -15,6 +15,7 @@ dependencies:
   solana_kit_instruction_plans: ^0.6.0
   solana_kit_instructions: ^0.6.0
   solana_kit_keys: ^0.6.0
+  solana_kit_lints: ^0.6.0
   solana_kit_offchain_messages: ^0.4.1
   solana_kit_options: ^0.6.0
   solana_kit_program_client_core: ^0.6.0
@@ -27,11 +28,11 @@ dependencies:
   solana_kit_rpc_types: ^0.6.0
   solana_kit_signers: ^0.6.0
   solana_kit_subscribable: ^0.6.0
+  solana_kit_surfpool: ^0.1.0
   solana_kit_sysvars: ^0.4.1
   solana_kit_transaction_confirmation: ^0.6.0
+  solana_kit_transaction_introspection: ^0.0.0
   solana_kit_transaction_messages: ^0.6.0
   solana_kit_transactions: ^0.6.0
 dev_dependencies:
-  solana_kit_lints: ^0.6.0
-  solana_kit_surfpool: ^0.1.0
   test: ^1.25.0

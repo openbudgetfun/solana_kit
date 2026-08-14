@@ -27,28 +27,35 @@ class PendingRpcSubscriptionsRequest<TNotification> {
   final RpcSubscriptionsTransport _transport;
   final RpcSubscriptionsPlan<TNotification> _plan;
 
-  /// Subscribes to the notification stream and returns a reactive store.
+  /// Returns a reactive store backed by the notification stream.
   ///
-  /// The store tracks the latest notification, exposes the first error via
-  /// [ReactiveStore.getError], and can be observed with
-  /// [ReactiveStore.subscribe].
-  Future<ReactiveStore<TNotification>> reactive(
-    RpcSubscribeOptions options,
-  ) async {
-    final streams = await getAbortableFuture(
-      _transport(
-        RpcSubscriptionsTransportConfig(
-          execute: _plan.execute,
-          request: _plan.request,
-          signal: options.abortSignal,
-        ),
-      ),
-      options.abortSignal,
-    );
-
-    return createReactiveStoreFromStreams<TNotification>(
-      dataStream: streams.notifications.cast<TNotification>(),
-      errorStream: streams.errors,
+  /// The store starts in `idle`; call `ReactiveStreamStore.connect` to open
+  /// the underlying subscription. The store transitions through `loading` →
+  /// `loaded` (or `error`) and can be observed with
+  /// `ReactiveStreamStore.subscribe`. Use `ReactiveStreamStore.withSignal` to
+  /// attach a per-connection cancellation token.
+  ///
+  /// Added in @solana/kit v7.0.0, replacing the former `reactive(options)`
+  /// helper (which eagerly opened the subscription and returned an
+  /// auto-connecting store).
+  ReactiveStreamStore<TNotification> call() {
+    return createReactiveStreamStore<TNotification>(
+      createDataPublisher: (signal) async {
+        final streams = await getAbortableFuture(
+          _transport(
+            RpcSubscriptionsTransportConfig(
+              execute: _plan.execute,
+              request: _plan.request,
+              signal: signal,
+            ),
+          ),
+          signal,
+        );
+        return ReactiveStreamConnection<TNotification>(
+          dataStream: streams.notifications.cast<TNotification>(),
+          errorStream: streams.errors,
+        );
+      },
     );
   }
 
@@ -71,6 +78,7 @@ class PendingRpcSubscriptionsRequest<TNotification> {
     return createStreamFromDataAndErrorStreams<TNotification>(
       dataStream: streams.notifications.cast<TNotification>(),
       errorStream: streams.errors,
+      cancellationToken: options.abortSignal,
     );
   }
 }

@@ -73,6 +73,7 @@ Instruction getCreatePlanInstruction({
   required Address tokenMint,
   required Address systemProgram,
   required Address tokenProgram,
+  Address? payer,
   required PlanData planData,
 }) {
   final instructionData = CreatePlanInstructionData(
@@ -87,6 +88,8 @@ Instruction getCreatePlanInstruction({
       AccountMeta(address: tokenMint, role: AccountRole.readonly),
       AccountMeta(address: systemProgram, role: AccountRole.readonly),
       AccountMeta(address: tokenProgram, role: AccountRole.readonly),
+      if (payer != null)
+        AccountMeta(address: payer, role: AccountRole.writableSigner),
     ],
     data: getCreatePlanInstructionDataEncoder().encode(instructionData),
   );

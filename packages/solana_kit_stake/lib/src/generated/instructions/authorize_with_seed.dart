@@ -8,9 +8,10 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-import '../types/authorize_with_seed_params.dart';
+import '../types/stake_authorize.dart';
 
 /// The discriminator field name: 'discriminator'.
 /// Offset: 0.
@@ -19,25 +20,37 @@ import '../types/authorize_with_seed_params.dart';
 class AuthorizeWithSeedInstructionData {
   const AuthorizeWithSeedInstructionData({
     this.discriminator = 8,
-    required this.arg0,
+    required this.newAuthorizedPubkey,
+    required this.stakeAuthorize,
+    required this.authoritySeed,
+    required this.authorityOwner,
   });
 
   final int discriminator;
-  final AuthorizeWithSeedParams arg0;
+  final Address newAuthorizedPubkey;
+  final StakeAuthorize stakeAuthorize;
+  final String authoritySeed;
+  final Address authorityOwner;
 }
 
 Encoder<AuthorizeWithSeedInstructionData>
 getAuthorizeWithSeedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
-    ('arg0', getAuthorizeWithSeedParamsEncoder()),
+    ('discriminator', getU32Encoder()),
+    ('newAuthorizedPubkey', getAddressEncoder()),
+    ('stakeAuthorize', getStakeAuthorizeEncoder()),
+    ('authoritySeed', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
+    ('authorityOwner', getAddressEncoder()),
   ]);
 
   return transformEncoder(
     structEncoder,
     (AuthorizeWithSeedInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'arg0': value.arg0,
+      'newAuthorizedPubkey': value.newAuthorizedPubkey,
+      'stakeAuthorize': value.stakeAuthorize,
+      'authoritySeed': value.authoritySeed,
+      'authorityOwner': value.authorityOwner,
     },
   );
 }
@@ -45,8 +58,11 @@ getAuthorizeWithSeedInstructionDataEncoder() {
 Decoder<AuthorizeWithSeedInstructionData>
 getAuthorizeWithSeedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
-    ('arg0', getAuthorizeWithSeedParamsDecoder()),
+    ('discriminator', getU32Decoder()),
+    ('newAuthorizedPubkey', getAddressDecoder()),
+    ('stakeAuthorize', getStakeAuthorizeDecoder()),
+    ('authoritySeed', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
+    ('authorityOwner', getAddressDecoder()),
   ]);
 
   return transformDecoder(
@@ -54,7 +70,10 @@ getAuthorizeWithSeedInstructionDataDecoder() {
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         AuthorizeWithSeedInstructionData(
           discriminator: map['discriminator']! as int,
-          arg0: map['arg0']! as AuthorizeWithSeedParams,
+          newAuthorizedPubkey: map['newAuthorizedPubkey']! as Address,
+          stakeAuthorize: map['stakeAuthorize']! as StakeAuthorize,
+          authoritySeed: map['authoritySeed']! as String,
+          authorityOwner: map['authorityOwner']! as Address,
         ),
   );
 }
@@ -74,9 +93,17 @@ Instruction getAuthorizeWithSeedInstruction({
   required Address base,
   required Address clockSysvar,
   Address? lockupAuthority,
-  required AuthorizeWithSeedParams arg0,
+  required Address newAuthorizedPubkey,
+  required StakeAuthorize stakeAuthorize,
+  required String authoritySeed,
+  required Address authorityOwner,
 }) {
-  final instructionData = AuthorizeWithSeedInstructionData(arg0: arg0);
+  final instructionData = AuthorizeWithSeedInstructionData(
+    newAuthorizedPubkey: newAuthorizedPubkey,
+    stakeAuthorize: stakeAuthorize,
+    authoritySeed: authoritySeed,
+    authorityOwner: authorityOwner,
+  );
 
   return Instruction(
     programAddress: programAddress,

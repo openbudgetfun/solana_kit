@@ -48,3 +48,30 @@ class SolanaRpcResponse<TValue> {
   @override
   String toString() => 'SolanaRpcResponse(context: $context, value: $value)';
 }
+
+/// Type-guards [notification] as a [SolanaRpcResponse] envelope.
+///
+/// Returns `true` when [notification] is a [SolanaRpcResponse] envelope, so
+/// callers can surface `context.slot` and `value` without a cast.
+///
+/// This mirrors the upstream `@solana/rpc-types` `isSolanaRpcResponse` helper
+/// added in @solana/kit v7.0.0. The upstream version duck-types `context.slot`
+/// as a `bigint`; in Dart the `SolanaRpcResponse` class already carries a typed
+/// [RpcResponseContext.slot] (`Slot` = [BigInt]), so a reified type test is
+/// sufficient and idiomatic.
+///
+/// ```dart
+/// import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
+///
+/// Object? lift<T>(T notification) {
+///   if (notification is SolanaRpcResponse<Object?>) {
+///     return (notification.context.slot, notification.value);
+///   }
+///   return notification;
+/// }
+/// ```
+///
+/// Added in @solana/kit v7.0.0.
+bool isSolanaRpcResponse(Object? notification) {
+  return notification is SolanaRpcResponse<Object?>;
+}

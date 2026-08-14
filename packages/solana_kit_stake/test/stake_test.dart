@@ -59,10 +59,12 @@ void main() {
     });
 
     test('round-trips uninitialized stake accounts', () {
-      const account = StakeAccount(state: StakeStateV2Uninitialized());
+      const account = StakeStateAccount(
+        state: StakeStateV2Uninitialized(),
+      );
 
-      final encoded = getStakeAccountEncoder().encode(account);
-      final decoded = getStakeAccountDecoder().decode(encoded);
+      final encoded = getStakeStateAccountEncoder().encode(account);
+      final decoded = getStakeStateAccountDecoder().decode(encoded);
 
       expect(decoded.state, isA<StakeStateV2Uninitialized>());
     });

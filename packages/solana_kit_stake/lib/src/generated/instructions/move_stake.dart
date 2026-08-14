@@ -15,7 +15,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class MoveStakeInstructionData {
-  const MoveStakeInstructionData({this.discriminator = 16, required this.args});
+  const MoveStakeInstructionData({
+    this.discriminator = 16,
+    required this.args,
+  });
 
   final int discriminator;
   final BigInt args;
@@ -23,7 +26,7 @@ class MoveStakeInstructionData {
 
 Encoder<MoveStakeInstructionData> getMoveStakeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
     ('args', getU64Encoder()),
   ]);
 
@@ -38,7 +41,7 @@ Encoder<MoveStakeInstructionData> getMoveStakeInstructionDataEncoder() {
 
 Decoder<MoveStakeInstructionData> getMoveStakeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
     ('args', getU64Decoder()),
   ]);
 
@@ -68,7 +71,9 @@ Instruction getMoveStakeInstruction({
   required Address stakeAuthority,
   required BigInt args,
 }) {
-  final instructionData = MoveStakeInstructionData(args: args);
+  final instructionData = MoveStakeInstructionData(
+    args: args,
+  );
 
   return Instruction(
     programAddress: programAddress,

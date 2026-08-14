@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class UpgradeNonceAccountInstructionData {
-  const UpgradeNonceAccountInstructionData({this.discriminator = 12});
+  const UpgradeNonceAccountInstructionData({
+    this.discriminator = 12,
+  });
 
   final int discriminator;
 }
@@ -66,7 +68,9 @@ Instruction getUpgradeNonceAccountInstruction({
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [AccountMeta(address: nonceAccount, role: AccountRole.writable)],
+    accounts: [
+      AccountMeta(address: nonceAccount, role: AccountRole.writable),
+    ],
     data: getUpgradeNonceAccountInstructionDataEncoder().encode(
       instructionData,
     ),

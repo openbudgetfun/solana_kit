@@ -286,14 +286,18 @@ describe("getTypeManifestVisitor", () => {
       expect(manifest.encoder.content).not.toContain("size:");
     });
 
-    it("includes PrefixedArraySize for non-default prefixed count", () => {
+    it("uses matching codecs for a non-default BigInt prefix", () => {
       const node = arrayTypeNode(
         numberTypeNode("u8"),
-        prefixedCountNode(numberTypeNode("u16")),
+        prefixedCountNode(numberTypeNode("u64")),
       );
       const manifest = visit(node, createVisitor());
-      expect(manifest.encoder.content).toContain("PrefixedArraySize");
-      expect(manifest.encoder.content).toContain("getU16Encoder");
+      expect(manifest.encoder.content).toContain(
+        "PrefixedArraySize(getU64Encoder())",
+      );
+      expect(manifest.decoder.content).toContain(
+        "PrefixedArraySize(getU64Decoder())",
+      );
     });
 
     it("handles nested array types", () => {
@@ -500,15 +504,19 @@ describe("getTypeManifestVisitor", () => {
       expect(manifest.type.content).toBe("Map<String, int>");
     });
 
-    it("uses getMapEncoder/Decoder", () => {
+    it("uses matching encoders and decoders for the size prefix", () => {
       const node = mapTypeNode(
         stringTypeNode("utf8"),
         numberTypeNode("u32"),
-        prefixedCountNode(numberTypeNode("u32")),
+        prefixedCountNode(numberTypeNode("u64")),
       );
       const manifest = visit(node, createVisitor());
-      expect(manifest.encoder.content).toContain("getMapEncoder");
-      expect(manifest.decoder.content).toContain("getMapDecoder");
+      expect(manifest.encoder.content).toContain(
+        "PrefixedArraySize(getU64Encoder())",
+      );
+      expect(manifest.decoder.content).toContain(
+        "PrefixedArraySize(getU64Decoder())",
+      );
     });
   });
 
@@ -522,14 +530,18 @@ describe("getTypeManifestVisitor", () => {
       expect(manifest.type.content).toBe("Set<int>");
     });
 
-    it("uses getSetEncoder/Decoder", () => {
+    it("uses matching encoders and decoders for the size prefix", () => {
       const node = setTypeNode(
         numberTypeNode("u8"),
-        prefixedCountNode(numberTypeNode("u32")),
+        prefixedCountNode(numberTypeNode("u64")),
       );
       const manifest = visit(node, createVisitor());
-      expect(manifest.encoder.content).toContain("getSetEncoder");
-      expect(manifest.decoder.content).toContain("getSetDecoder");
+      expect(manifest.encoder.content).toContain(
+        "PrefixedArraySize(getU64Encoder())",
+      );
+      expect(manifest.decoder.content).toContain(
+        "PrefixedArraySize(getU64Decoder())",
+      );
     });
   });
 

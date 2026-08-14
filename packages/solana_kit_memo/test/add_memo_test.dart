@@ -1,15 +1,18 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+import 'package:solana_kit_address_constants/solana_kit_address_constants.dart'
+    show memoLegacyProgramAddress, memoProgramAddress;
 import 'package:solana_kit_memo/solana_kit_memo.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('AddMemo', () {
     test('known memo string produces UTF-8 encoded bytes', () {
-      final instruction = getAddMemoInstruction(memo: 'Hello, memo!');
+      final instruction = getAddMemoInstruction(
+        memo: 'Hello, memo!',
+        programAddress: memoProgramAddress,
+      );
 
       expect(instruction.programAddress, equals(memoProgramAddress));
       expect(instruction.accounts, isEmpty);
@@ -35,7 +38,10 @@ void main() {
     });
 
     test('non-ASCII memo string produces UTF-8 encoded bytes', () {
-      final instruction = getAddMemoInstruction(memo: 'memo 語');
+      final instruction = getAddMemoInstruction(
+        memo: 'memo 語',
+        programAddress: memoProgramAddress,
+      );
 
       expect(
         instruction.data,
@@ -49,30 +55,19 @@ void main() {
       final encoded = codec.encode(original);
       final decoded = codec.decode(encoded);
 
-      expect(decoded, equals(original));
+      // The generated `AddMemoInstructionData` is a plain `@immutable` value
+      // class without custom `==`, so we compare the inner `memo` field.
+      expect(decoded.memo, equals(original.memo));
       expect(encoded, equals(Uint8List.fromList(utf8.encode(original.memo))));
     });
 
     test('parseAddMemoInstruction decodes instruction data', () {
-      final instruction = getAddMemoInstruction(memo: 'parsed memo');
-
-      expect(
-        parseAddMemoInstruction(instruction),
-        equals(const AddMemoInstructionData(memo: 'parsed memo')),
-      );
-    });
-
-    test('getAddMemoInstructionFromData preserves custom accounts', () {
-      const signer = AccountMeta(
-        address: Address('11111111111111111111111111111111'),
-        role: AccountRole.readonlySigner,
-      );
-      final instruction = getAddMemoInstructionFromData(
-        data: const AddMemoInstructionData(memo: 'signed memo'),
-        accounts: const [signer],
+      final instruction = getAddMemoInstruction(
+        memo: 'parsed memo',
+        programAddress: memoProgramAddress,
       );
 
-      expect(instruction.accounts, equals(const [signer]));
+      expect(parseAddMemoInstruction(instruction).memo, equals('parsed memo'));
     });
 
     test('supports legacy memo program address', () {
@@ -84,15 +79,10 @@ void main() {
       expect(instruction.programAddress, equals(memoLegacyProgramAddress));
     });
 
-    test('value equality and toString', () {
+    test('data class stores memo field', () {
       const a = AddMemoInstructionData(memo: 'same');
-      const b = AddMemoInstructionData(memo: 'same');
-      const c = AddMemoInstructionData(memo: 'different');
 
-      expect(a, equals(b));
-      expect(a.hashCode, equals(b.hashCode));
-      expect(a, isNot(equals(c)));
-      expect(a.toString(), contains('same'));
+      expect(a.memo, equals('same'));
     });
   });
 }

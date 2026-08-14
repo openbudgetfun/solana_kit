@@ -151,6 +151,26 @@ AllowedNumericKeypaths getAllowedNumericKeypaths() {
     'getVoteAccounts': [
       ['current', KEYPATH_WILDCARD, 'commission'],
       ['delinquent', KEYPATH_WILDCARD, 'commission'],
+      // Added in @solana/kit v7.0.0 (Agave 4.1.0): keep vote commissions and
+      // latency as `int` rather than upcasting to `BigInt`.
+      ['current', KEYPATH_WILDCARD, 'blockRevenueCommissionBps'],
+      ['current', KEYPATH_WILDCARD, 'inflationRewardsCommissionBps'],
+      [
+        'current',
+        KEYPATH_WILDCARD,
+        'votes',
+        KEYPATH_WILDCARD,
+        'latency',
+      ],
+      ['delinquent', KEYPATH_WILDCARD, 'blockRevenueCommissionBps'],
+      ['delinquent', KEYPATH_WILDCARD, 'inflationRewardsCommissionBps'],
+      [
+        'delinquent',
+        KEYPATH_WILDCARD,
+        'votes',
+        KEYPATH_WILDCARD,
+        'latency',
+      ],
     ],
     'simulateTransaction': [
       ['value', 'loadedAccountsDataSize'],

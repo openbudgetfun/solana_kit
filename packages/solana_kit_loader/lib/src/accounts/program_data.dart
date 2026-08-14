@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -5,7 +7,7 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 const programDataAccountDiscriminator = 3;
-const programDataAccountSize = 48;
+const programDataAccountSize = 45;
 
 @immutable
 class ProgramDataAccount {
@@ -37,7 +39,7 @@ Encoder<ProgramDataAccount> getProgramDataAccountEncoder() {
       'upgradeAuthorityAddress',
       getNullableEncoder<Address>(
         getAddressEncoder(),
-        prefix: getU32Encoder(),
+        prefix: getU8Encoder(),
         noneValue: const ZeroesNoneValue(),
       ),
     ),
@@ -61,7 +63,7 @@ Decoder<ProgramDataAccount> getProgramDataAccountDecoder() {
       'upgradeAuthorityAddress',
       getNullableDecoder<Address>(
         getAddressDecoder(),
-        prefix: getU32Decoder(),
+        prefix: getU8Decoder(),
         noneValue: const ZeroesNoneValue(),
       ),
     ),

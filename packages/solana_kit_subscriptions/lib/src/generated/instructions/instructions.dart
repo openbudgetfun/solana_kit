@@ -2,6 +2,7 @@
 // ignore_for_file: type=lint
 
 export 'cancel_subscription.dart';
+export 'cancel_subscription_now.dart';
 export 'close_subscription_authority.dart';
 export 'create_fixed_delegation.dart';
 export 'create_plan.dart';

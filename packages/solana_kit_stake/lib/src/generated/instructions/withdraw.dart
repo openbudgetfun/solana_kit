@@ -15,7 +15,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class WithdrawInstructionData {
-  const WithdrawInstructionData({this.discriminator = 4, required this.args});
+  const WithdrawInstructionData({
+    this.discriminator = 4,
+    required this.args,
+  });
 
   final int discriminator;
   final BigInt args;
@@ -23,7 +26,7 @@ class WithdrawInstructionData {
 
 Encoder<WithdrawInstructionData> getWithdrawInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
     ('args', getU64Encoder()),
   ]);
 
@@ -38,7 +41,7 @@ Encoder<WithdrawInstructionData> getWithdrawInstructionDataEncoder() {
 
 Decoder<WithdrawInstructionData> getWithdrawInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
     ('args', getU64Decoder()),
   ]);
 
@@ -71,7 +74,9 @@ Instruction getWithdrawInstruction({
   Address? lockupAuthority,
   required BigInt args,
 }) {
-  final instructionData = WithdrawInstructionData(args: args);
+  final instructionData = WithdrawInstructionData(
+    args: args,
+  );
 
   return Instruction(
     programAddress: programAddress,

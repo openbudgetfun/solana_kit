@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class ThawAccountInstructionData {
-  const ThawAccountInstructionData({this.discriminator = 11});
+  const ThawAccountInstructionData({
+    this.discriminator = 11,
+  });
 
   final int discriminator;
 }
@@ -41,7 +43,9 @@ Decoder<ThawAccountInstructionData> getThawAccountInstructionDataDecoder() {
   return transformDecoder(
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ThawAccountInstructionData(discriminator: map['discriminator']! as int),
+        ThawAccountInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 

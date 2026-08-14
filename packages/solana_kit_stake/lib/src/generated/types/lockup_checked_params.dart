@@ -12,7 +12,10 @@ import './unix_timestamp.dart';
 
 @immutable
 class LockupCheckedParams {
-  const LockupCheckedParams({required this.unixTimestamp, required this.epoch});
+  const LockupCheckedParams({
+    required this.unixTimestamp,
+    required this.epoch,
+  });
 
   final UnixTimestamp? unixTimestamp;
   final Epoch? epoch;

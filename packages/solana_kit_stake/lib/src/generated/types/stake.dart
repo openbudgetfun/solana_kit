@@ -12,7 +12,10 @@ import './delegation.dart';
 
 @immutable
 class Stake {
-  const Stake({required this.delegation, required this.creditsObserved});
+  const Stake({
+    required this.delegation,
+    required this.creditsObserved,
+  });
 
   final Delegation delegation;
   final BigInt creditsObserved;

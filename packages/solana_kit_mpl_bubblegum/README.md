@@ -202,10 +202,22 @@ final v2Hash = hashLeafV2(
 
 ```dart
 // MPL Bubblegum program
-const mplBubblegumProgramAddress = 'BGUMAp9Gph7G9Jn2tU58R5L2qPG1Mj9HP7G3G7VYV2Ma';
+const mplBubblegumProgramAddress = 'BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY';
 
 // Token Metadata program
 const tokenMetadataProgramAddress = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
+```
+
+## Program Errors
+
+```dart
+final message = getMplBubblegumErrorMessage(
+  MplBubblegumError.collectionMustHaveRoyaltiesPlugin,
+);
+
+if (isMplBubblegumError(0x17a9)) {
+  print(message);
+}
 ```
 
 ## License

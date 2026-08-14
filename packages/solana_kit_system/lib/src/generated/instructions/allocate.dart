@@ -15,7 +15,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class AllocateInstructionData {
-  const AllocateInstructionData({this.discriminator = 8, required this.space});
+  const AllocateInstructionData({
+    this.discriminator = 8,
+    required this.space,
+  });
 
   final int discriminator;
   final BigInt space;
@@ -66,7 +69,9 @@ Instruction getAllocateInstruction({
   required Address newAccount,
   required BigInt space,
 }) {
-  final instructionData = AllocateInstructionData(space: space);
+  final instructionData = AllocateInstructionData(
+    space: space,
+  );
 
   return Instruction(
     programAddress: programAddress,

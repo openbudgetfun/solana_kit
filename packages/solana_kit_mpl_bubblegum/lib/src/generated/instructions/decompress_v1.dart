@@ -9,14 +9,26 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart';
 
 /// decompressV1 instruction data.
+/// The Anchor discriminator for the `decompress_v1` instruction.
+const decompressV1InstructionDiscriminator = <int>[
+  54,
+  85,
+  76,
+  70,
+  228,
+  250,
+  164,
+  81,
+];
+
 @immutable
 class decompressV1InstructionData {
   const decompressV1InstructionData({
-    this.discriminator = 8,
+    this.discriminator = decompressV1InstructionDiscriminator,
     required this.metadataArgs,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final MetadataArgs metadataArgs;
 }
 

@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class InitializeCheckedInstructionData {
-  const InitializeCheckedInstructionData({this.discriminator = 9});
+  const InitializeCheckedInstructionData({
+    this.discriminator = 9,
+  });
 
   final int discriminator;
 }
@@ -23,7 +25,7 @@ class InitializeCheckedInstructionData {
 Encoder<InitializeCheckedInstructionData>
 getInitializeCheckedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -37,7 +39,7 @@ getInitializeCheckedInstructionDataEncoder() {
 Decoder<InitializeCheckedInstructionData>
 getInitializeCheckedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(

@@ -269,7 +269,7 @@ void main() {
       var isDone = false;
       final packer = MessagePacker(
         done: () => isDone,
-        packMessageToCapacity: (message) {
+        packMessageToCapacity: (message, {maxInstructions}) {
           isDone = true;
           return message.copyWith(
             instructions: [

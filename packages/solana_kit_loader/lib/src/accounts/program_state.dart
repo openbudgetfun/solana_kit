@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+// ignore_for_file: public_member_api_docs
 
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -39,11 +39,11 @@ class ProgramStateAccount {
 }
 
 Encoder<LoaderV4Status> getLoaderV4StatusEncoder() =>
-    transformEncoder(getU8Encoder(), (value) => value.index);
+    transformEncoder(getU64Encoder(), (value) => BigInt.from(value.index));
 
 Decoder<LoaderV4Status> getLoaderV4StatusDecoder() => transformDecoder(
-  getU8Decoder(),
-  (value, _, _) => LoaderV4Status.values[value],
+  getU64Decoder(),
+  (value, _, _) => LoaderV4Status.values[value.toInt()],
 );
 
 Codec<LoaderV4Status, LoaderV4Status> getLoaderV4StatusCodec() =>
@@ -60,9 +60,7 @@ Encoder<ProgramStateAccount> getProgramStateAccountEncoder() =>
           bytes,
           cursor,
         );
-        cursor = getLoaderV4StatusEncoder().write(value.status, bytes, cursor);
-        bytes.setRange(cursor, cursor + 7, Uint8List(7));
-        return cursor + 7;
+        return getLoaderV4StatusEncoder().write(value.status, bytes, cursor);
       },
     );
 
@@ -76,7 +74,7 @@ Decoder<ProgramStateAccount> getProgramStateAccountDecoder() =>
         final authority = getAddressDecoder().read(bytes, cursor);
         cursor = authority.$2;
         final status = getLoaderV4StatusDecoder().read(bytes, cursor);
-        cursor = status.$2 + 7;
+        cursor = status.$2;
         return (
           ProgramStateAccount(
             slot: slot.$1,

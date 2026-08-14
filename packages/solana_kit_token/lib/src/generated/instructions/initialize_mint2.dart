@@ -93,7 +93,9 @@ Instruction getInitializeMint2Instruction({
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [AccountMeta(address: mint, role: AccountRole.writable)],
+    accounts: [
+      AccountMeta(address: mint, role: AccountRole.writable),
+    ],
     data: getInitializeMint2InstructionDataEncoder().encode(instructionData),
   );
 }

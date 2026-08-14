@@ -70,7 +70,9 @@ Instruction getTransferSolInstruction({
   required Address destination,
   required BigInt amount,
 }) {
-  final instructionData = TransferSolInstructionData(amount: amount);
+  final instructionData = TransferSolInstructionData(
+    amount: amount,
+  );
 
   return Instruction(
     programAddress: programAddress,

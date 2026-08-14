@@ -15,14 +15,16 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class MergeInstructionData {
-  const MergeInstructionData({this.discriminator = 7});
+  const MergeInstructionData({
+    this.discriminator = 7,
+  });
 
   final int discriminator;
 }
 
 Encoder<MergeInstructionData> getMergeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -35,13 +37,15 @@ Encoder<MergeInstructionData> getMergeInstructionDataEncoder() {
 
 Decoder<MergeInstructionData> getMergeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        MergeInstructionData(discriminator: map['discriminator']! as int),
+        MergeInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 

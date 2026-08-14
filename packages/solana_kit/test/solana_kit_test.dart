@@ -42,30 +42,9 @@ void main() {
     });
   });
 
-  group('getMinimumBalanceForRentExemption', () {
-    test('calculates rent exemption for 0 bytes', () {
-      final lamports = getMinimumBalanceForRentExemption(0);
-      // (128 + 0) * 3480 * 2 = 890880
-      expect(lamports.value, BigInt.from(890880));
-    });
-
-    test('calculates rent exemption for 165 bytes (token account)', () {
-      final lamports = getMinimumBalanceForRentExemption(165);
-      // (128 + 165) * 3480 * 2 = 2039280
-      expect(lamports.value, BigInt.from(2039280));
-    });
-
-    test('calculates rent exemption for 200 bytes', () {
-      final lamports = getMinimumBalanceForRentExemption(200);
-      // (128 + 200) * 3480 * 2 = 2282880
-      expect(lamports.value, BigInt.from(2282880));
-    });
-
-    test('matches known Solana token account rent exemption', () {
-      // The well-known rent exemption for a token account (165 bytes) is
-      // 2039280 lamports.
-      final lamports = getMinimumBalanceForRentExemption(165);
-      expect(lamports.value, BigInt.from(2039280));
-    });
-  });
+  // The local `getMinimumBalanceForRentExemption` helper was removed in
+  // @solana/kit v7.0.0 because rent exemption is becoming dynamic (see
+  // SIMD-0437/0194/0389). Use the `getMinimumBalanceForRentExemption` RPC
+  // method (via `solana_kit_rpc_api`) or a `ClientWithGetMinimumBalance`
+  // plugin instead.
 }

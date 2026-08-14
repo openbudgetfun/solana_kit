@@ -27,11 +27,12 @@ InstructionPlan getCreateStakeAccountInstructionPlan({
     plans: [
       SingleInstructionPlan(
         instruction: system.getCreateAccountInstruction(
+          instructionProgramAddress: system.systemProgramAddress,
           payer: payer,
           newAccount: stake,
           lamports: lamports,
-          space: BigInt.from(stakeAccountSize),
-          programOwner: solanaStakeInterfaceProgramAddress,
+          space: BigInt.from(stakeStateAccountSize),
+          programAddress: solanaStakeInterfaceProgramAddress,
         ),
       ),
       SingleInstructionPlan(

@@ -31,7 +31,7 @@ class InitializeTokenGroupInstructionData {
 Encoder<InitializeTokenGroupInstructionData>
 getInitializeTokenGroupInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getBytesEncoder()),
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
     (
       'updateAuthority',
       getNullableEncoder<Address>(
@@ -56,7 +56,7 @@ getInitializeTokenGroupInstructionDataEncoder() {
 Decoder<InitializeTokenGroupInstructionData>
 getInitializeTokenGroupInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getBytesDecoder()),
+    ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
     (
       'updateAuthority',
       getNullableDecoder<Address>(

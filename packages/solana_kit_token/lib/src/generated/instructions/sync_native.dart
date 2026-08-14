@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class SyncNativeInstructionData {
-  const SyncNativeInstructionData({this.discriminator = 17});
+  const SyncNativeInstructionData({
+    this.discriminator = 17,
+  });
 
   final int discriminator;
 }
@@ -41,7 +43,9 @@ Decoder<SyncNativeInstructionData> getSyncNativeInstructionDataDecoder() {
   return transformDecoder(
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        SyncNativeInstructionData(discriminator: map['discriminator']! as int),
+        SyncNativeInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 

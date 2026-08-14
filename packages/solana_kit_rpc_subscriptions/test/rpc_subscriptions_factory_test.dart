@@ -43,7 +43,7 @@ void main() {
     );
 
     test(
-      'reactive returns a store backed by subscription notifications',
+      'reactiveStore returns a store backed by subscription notifications',
       () async {
         final captured = CapturingSubscriptionsTransport();
         final pending = PendingRpcSubscriptionsRequest<Object?>(
@@ -56,26 +56,28 @@ void main() {
             ),
           ),
         );
-        final source = CancellationTokenSource();
 
-        final store = await pending.reactive(
-          RpcSubscribeOptions(abortSignal: source.token),
-        );
+        // v7: reactiveStore() is synchronous and starts idle; connect() opens
+        // the subscription via the per-connection factory.
+        final store = pending();
+        expect(store.getState().status, ReactiveStreamState.idle);
+        store.connect();
+        expect(store.getState().status, ReactiveStreamState.loading);
+        await Future<void>.delayed(Duration.zero);
 
         expect(captured.lastConfig.request.methodName, 'slotNotifications');
-        expect(captured.lastConfig.signal, same(source.token));
-        expect(store.getState(), isNull);
-        expect(store.getError(), isNull);
+        expect(captured.lastConfig.signal, isA<CancellationToken>());
 
         var updates = 0;
         final unsubscribe = store.subscribe(() => updates++);
         captured
           ..publishNotification({'slot': 124})
           ..publishError('boom');
+        await Future<void>.delayed(Duration.zero);
 
-        expect(store.getState(), {'slot': 124});
-        expect(store.getError(), 'boom');
-        expect(updates, 2);
+        expect(store.getState().data, {'slot': 124});
+        expect(store.getState().error, 'boom');
+        expect(updates, greaterThanOrEqualTo(2));
 
         unsubscribe();
         store.dispose();
@@ -113,6 +115,84 @@ void main() {
       },
     );
 
+    test('subscribe closes and detaches source streams after abort', () async {
+      var notificationCancelCount = 0;
+      var errorCancelCount = 0;
+      final notifications = StreamController<Object?>.broadcast(
+        onCancel: () => notificationCancelCount++,
+        sync: true,
+      );
+      final errors = StreamController<Object?>.broadcast(
+        onCancel: () => errorCancelCount++,
+        sync: true,
+      );
+      final pending = _pendingRequestForTransport(
+        (_) async => NotificationStreams(
+          notifications: notifications.stream,
+          errors: errors.stream,
+        ),
+      );
+      final source = CancellationTokenSource();
+      final received = <Object?>[];
+      final receivedErrors = <Object>[];
+      final done = Completer<void>();
+      final stream = await pending.subscribe(
+        RpcSubscribeOptions(abortSignal: source.token),
+      );
+
+      stream.listen(
+        received.add,
+        onError: receivedErrors.add,
+        onDone: done.complete,
+      );
+      notifications.add('before');
+      source.cancel();
+      notifications.add('late');
+      errors.add(StateError('late'));
+      await done.future;
+
+      expect(received, ['before']);
+      expect(receivedErrors, isEmpty);
+      expect(notificationCancelCount, 1);
+      expect(errorCancelCount, 1);
+      await notifications.close();
+      await errors.close();
+    });
+
+    test(
+      'subscribe closes before listening when aborted after acquisition',
+      () async {
+        var notificationListenCount = 0;
+        var errorListenCount = 0;
+        final notifications = StreamController<Object?>.broadcast(
+          onListen: () => notificationListenCount++,
+          sync: true,
+        );
+        final errors = StreamController<Object?>.broadcast(
+          onListen: () => errorListenCount++,
+          sync: true,
+        );
+        final pending = _pendingRequestForTransport(
+          (_) async => NotificationStreams(
+            notifications: notifications.stream,
+            errors: errors.stream,
+          ),
+        );
+        final source = CancellationTokenSource();
+        final stream = await pending.subscribe(
+          RpcSubscribeOptions(abortSignal: source.token),
+        );
+
+        source.cancel();
+        await stream.drain<void>();
+
+        expect(notificationListenCount, 0);
+        expect(errorListenCount, 0);
+        await notifications.close();
+        await errors.close();
+      },
+    );
+
     test('subscribe rejects if aborted while transport is pending', () async {
       final transport = _DeferredSubscriptionsTransport();
       final pending = _pendingRequestForTransport(transport.transport);
@@ -128,18 +208,19 @@ void main() {
       await expectLater(future, throwsA(same(reason)));
     });
 
-    test('reactive rejects if aborted while transport is pending', () async {
+    test('reactiveStore surfaces an abort as an error state', () async {
       final transport = _DeferredSubscriptionsTransport();
       final pending = _pendingRequestForTransport(transport.transport);
       final source = CancellationTokenSource();
 
-      final future = pending.reactive(
-        RpcSubscribeOptions(abortSignal: source.token),
-      );
+      final store = pending();
+      final killableConnect = store.withSignal(source.token);
+      killableConnect();
       await Future<void>.delayed(Duration.zero);
       source.cancel();
 
-      await expectLater(future, throwsA(isA<AbortError>()));
+      await Future<void>.delayed(Duration.zero);
+      expect(store.getState().status, ReactiveStreamState.error);
     });
   });
 

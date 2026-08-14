@@ -9,14 +9,26 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart';
 
 /// mintToCollectionV1 instruction data.
+/// The Anchor discriminator for the `mint_to_collection_v1` instruction.
+const mintToCollectionV1InstructionDiscriminator = <int>[
+  153,
+  18,
+  178,
+  47,
+  197,
+  158,
+  86,
+  15,
+];
+
 @immutable
 class mintToCollectionV1InstructionData {
   const mintToCollectionV1InstructionData({
-    this.discriminator = 13,
+    this.discriminator = mintToCollectionV1InstructionDiscriminator,
     required this.metadataArgs,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final MetadataArgs metadataArgs;
 }
 

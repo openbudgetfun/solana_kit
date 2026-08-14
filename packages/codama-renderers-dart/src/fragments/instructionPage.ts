@@ -134,7 +134,11 @@ export function getInstructionPageFragment(
       const manifest = argManifestMap.get(arg)!;
       const fieldName = camelCase(arg.name as string);
       const typeStr = manifest.type.content;
-      const hasDefault = arg.defaultValue != null;
+      // Account bumps require asynchronous PDA derivation, so callers must
+      // provide them instead of relying on a synchronous generated default.
+      const hasDefault =
+        arg.defaultValue != null &&
+        arg.defaultValue.kind !== "accountBumpValueNode";
       if (hasDefault) {
         // Don't add `?` if the type is already nullable.
         const nullableType = typeStr.endsWith("?") ? typeStr : `${typeStr}?`;
@@ -165,7 +169,9 @@ export function getInstructionPageFragment(
         return ""; // Use default
       }
       // Use 'arg_<name>' prefix to reference builder params without shadowing.
-      return `      ${fieldName}: ${fieldName}${arg.defaultValue != null ? ` ?? ${getDefaultValue(arg)}` : ""},`;
+      const typeStr2 = argManifestMap.get(arg)?.type.content;
+      const skipDefault = arg.defaultValue?.kind === "accountBumpValueNode";
+      return `      ${fieldName}: ${fieldName}${arg.defaultValue != null && !skipDefault ? ` ?? ${getDefaultValue(arg, typeStr2)}` : ""},`;
     })
     .filter(Boolean)
     .join("\n");
@@ -329,12 +335,17 @@ function isConstDefaultValue(defaultValue: InstructionArgumentNode["defaultValue
   }
 }
 
-function getDefaultValue(arg: InstructionArgumentNode): string {
+function getDefaultValue(
+  arg: InstructionArgumentNode,
+  typeStr?: string,
+): string {
   if (!arg.defaultValue) return "null";
+  const isBigInt = typeStr === "BigInt";
   const dv = arg.defaultValue;
   switch (dv.kind) {
     case "numberValueNode":
-      return String(dv.number);
+      // Dart's `BigInt` requires a constructor; `0` is not assignable to `BigInt`.
+      return isBigInt ? `BigInt.from(${dv.number})` : String(dv.number);
     case "booleanValueNode":
       return String(dv.boolean);
     case "stringValueNode":

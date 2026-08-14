@@ -50,7 +50,16 @@ describe("WELL_KNOWN_ADDRESSES", () => {
       WELL_KNOWN_ADDRESSES.get("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
     ).toBe("tokenProgramAddress");
     expect(
-      WELL_KNOWN_ADDRESSES.get("TokenzQdBNb4qyze1S1U9AHB8MGXmNK1REkTPT5Z3Y"),
+      WELL_KNOWN_ADDRESSES.get("TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"),
     ).toBe("token2022ProgramAddress");
+    expect(
+      WELL_KNOWN_ADDRESSES.get("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"),
+    ).toBe("associatedTokenProgramAddress");
+    expect(
+      WELL_KNOWN_ADDRESSES.get("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+    ).toBe("memoProgramAddress");
+    expect(
+      WELL_KNOWN_ADDRESSES.get("Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo"),
+    ).toBe("memoLegacyProgramAddress");
   });
 });

@@ -29,7 +29,7 @@ class AuthorizeCheckedInstructionData {
 Encoder<AuthorizeCheckedInstructionData>
 getAuthorizeCheckedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
     ('stakeAuthorize', getStakeAuthorizeEncoder()),
   ]);
 
@@ -45,7 +45,7 @@ getAuthorizeCheckedInstructionDataEncoder() {
 Decoder<AuthorizeCheckedInstructionData>
 getAuthorizeCheckedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
     ('stakeAuthorize', getStakeAuthorizeDecoder()),
   ]);
 

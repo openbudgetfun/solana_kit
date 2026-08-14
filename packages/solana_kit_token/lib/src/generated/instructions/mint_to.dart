@@ -15,7 +15,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class MintToInstructionData {
-  const MintToInstructionData({this.discriminator = 7, required this.amount});
+  const MintToInstructionData({
+    this.discriminator = 7,
+    required this.amount,
+  });
 
   final int discriminator;
   final BigInt amount;
@@ -68,7 +71,9 @@ Instruction getMintToInstruction({
   required Address mintAuthority,
   required BigInt amount,
 }) {
-  final instructionData = MintToInstructionData(amount: amount);
+  final instructionData = MintToInstructionData(
+    amount: amount,
+  );
 
   return Instruction(
     programAddress: programAddress,

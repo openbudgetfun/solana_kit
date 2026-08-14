@@ -15,7 +15,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class TransferInstructionData {
-  const TransferInstructionData({this.discriminator = 3, required this.amount});
+  const TransferInstructionData({
+    this.discriminator = 3,
+    required this.amount,
+  });
 
   final int discriminator;
   final BigInt amount;
@@ -68,7 +71,9 @@ Instruction getTransferInstruction({
   required Address authority,
   required BigInt amount,
 }) {
-  final instructionData = TransferInstructionData(amount: amount);
+  final instructionData = TransferInstructionData(
+    amount: amount,
+  );
 
   return Instruction(
     programAddress: programAddress,

@@ -34,7 +34,7 @@ class InitializeTokenMetadataInstructionData {
 Encoder<InitializeTokenMetadataInstructionData>
 getInitializeTokenMetadataInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getBytesEncoder()),
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
     ('name', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
     ('symbol', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
     ('uri', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
@@ -54,7 +54,7 @@ getInitializeTokenMetadataInstructionDataEncoder() {
 Decoder<InitializeTokenMetadataInstructionData>
 getInitializeTokenMetadataInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getBytesDecoder()),
+    ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
     ('name', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
     ('symbol', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
     ('uri', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),

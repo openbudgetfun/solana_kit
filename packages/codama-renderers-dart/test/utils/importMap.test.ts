@@ -113,6 +113,15 @@ describe("DartImportMap", () => {
       expect(resolved).toContain("package:custom_lib/custom_lib.dart");
     });
 
+    it("rejects unresolved logical module keys", () => {
+      const map = new DartImportMap();
+      map.add("definedType:missing_type");
+
+      expect(() => map.resolve()).toThrowError(
+        'Unresolved Dart import module "definedType:missing_type"',
+      );
+    });
+
     it("uses internal map for cross-references", () => {
       const map = new DartImportMap();
       map.add("myLocalType");
@@ -120,6 +129,15 @@ describe("DartImportMap", () => {
         myLocalType: "types/my_local_type.dart",
       });
       expect(resolved).toContain("types/my_local_type.dart");
+    });
+
+    it("skips resolved self-imports", () => {
+      const map = new DartImportMap();
+      map.add("definedType:recursive_type");
+
+      expect(
+        map.resolve({ "definedType:recursive_type": "" }),
+      ).toStrictEqual([]);
     });
 
     it("internal map takes precedence over external map", () => {

@@ -10,7 +10,7 @@ void main() {
     group('initial state', () {
       test('is idle', () {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         expect(store.getState().status, ReactiveActionState.idle);
@@ -28,7 +28,7 @@ void main() {
         'transitions through running to success and returns the result',
         () async {
           final store = createReactiveActionStore<List<Object?>, int>(
-            (args) async => 42,
+            (_, args) async => 42,
           );
 
           final result = await store.dispatchAsync([]);
@@ -44,7 +44,7 @@ void main() {
       test('transitions to running while the action is in flight', () async {
         final completer = Completer<int>();
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) => completer.future,
+          (_, args) => completer.future,
         );
 
         final dispatchFuture = store.dispatchAsync([]);
@@ -62,7 +62,7 @@ void main() {
         () async {
           final error = Exception('boom');
           final store = createReactiveActionStore<List<Object?>, int>(
-            (args) async => throw error,
+            (_, args) async => throw error,
           );
 
           await expectLater(store.dispatchAsync([]), throwsA(error));
@@ -77,7 +77,7 @@ void main() {
         'preserves the previous result when transitioning to error',
         () async {
           final store = createReactiveActionStore<List<Object?>, int>(
-            (args) async => args.isEmpty ? 42 : throw Exception('nope'),
+            (_, args) async => args.isEmpty ? 42 : throw Exception('nope'),
           );
 
           await store.dispatchAsync([]);
@@ -94,9 +94,46 @@ void main() {
         },
       );
 
+      // Added in @solana/kit v7.0.0: the last error is preserved through a
+      // subsequent `running` state (stale-while-revalidate for errors).
+      test(
+        'preserves the previous error when transitioning to running',
+        () async {
+          final completer = Completer<int>();
+          final store = createReactiveActionStore<List<Object?>, int>(
+            (_, args) async {
+              if (args.isEmpty) {
+                throw Exception('first fails');
+              }
+              return completer.future;
+            },
+          );
+
+          await expectLater(
+            store.dispatchAsync([]),
+            throwsA(isA<Exception>()),
+          );
+          expect(store.getState().status, ReactiveActionState.error);
+          final firstError = store.getState().error;
+
+          // Kick off a second dispatch; while it is running the prior error
+          // must remain visible.
+          unawaited(store.dispatchAsync([1]));
+          expect(store.getState().status, ReactiveActionState.running);
+          expect(store.getState().error, firstError);
+
+          // Resolve the second dispatch; success clears the error.
+          completer.complete(7);
+          await pumpEventQueue();
+          expect(store.getState().status, ReactiveActionState.success);
+          expect(store.getState().result, 7);
+          expect(store.getState().error, isNull);
+        },
+      );
+
       test('throws StateError after dispose', () async {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         store.dispose();
@@ -114,7 +151,7 @@ void main() {
         () async {
           final completer = Completer<int>();
           final store = createReactiveActionStore<List<Object?>, int>(
-            (args) => completer.future,
+            (_, args) => completer.future,
           );
 
           store.dispatch([]);
@@ -133,7 +170,7 @@ void main() {
     group('reset', () {
       test('returns the store to the idle state', () async {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         await store.dispatchAsync([]);
@@ -151,7 +188,7 @@ void main() {
     group('subscribe', () {
       test('notifies subscribers on state changes', () async {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         var notifications = 0;
@@ -169,7 +206,7 @@ void main() {
 
       test('stops notifying after unsubscribe', () async {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         var notifications = 0;
@@ -187,7 +224,7 @@ void main() {
 
       test('returns a no-op unsubscribe after dispose', () {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         store.dispose();
@@ -205,7 +242,7 @@ void main() {
     group('dispose', () {
       test('clears subscribers and is idempotent', () async {
         final store = createReactiveActionStore<List<Object?>, int>(
-          (args) async => 42,
+          (_, args) async => 42,
         );
 
         var notifications = 0;
@@ -226,7 +263,7 @@ void main() {
   group('createReactiveActionStore', () {
     test('creates a working store', () async {
       final store = createReactiveActionStore<List<Object?>, String>(
-        (args) async => 'hello',
+        (_, args) async => 'hello',
       );
 
       expect(store.getState().status, ReactiveActionState.idle);

@@ -28,7 +28,7 @@ class UpdateTokenMetadataUpdateAuthorityInstructionData {
 Encoder<UpdateTokenMetadataUpdateAuthorityInstructionData>
 getUpdateTokenMetadataUpdateAuthorityInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getBytesEncoder()),
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
     (
       'newUpdateAuthority',
       getNullableEncoder<Address>(
@@ -52,7 +52,7 @@ getUpdateTokenMetadataUpdateAuthorityInstructionDataEncoder() {
 Decoder<UpdateTokenMetadataUpdateAuthorityInstructionData>
 getUpdateTokenMetadataUpdateAuthorityInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getBytesDecoder()),
+    ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
     (
       'newUpdateAuthority',
       getNullableDecoder<Address>(

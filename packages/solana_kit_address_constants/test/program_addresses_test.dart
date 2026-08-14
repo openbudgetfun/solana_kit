@@ -222,21 +222,21 @@ void main() {
     test('associatedTokenProgramAddress has the correct value', () {
       expect(
         associatedTokenProgramAddress.value,
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25ef7s3c8BnQKu',
+        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
       );
     });
 
     test('memoProgramAddress has the correct value', () {
       expect(
         memoProgramAddress.value,
-        'Memo1UhkJ4AsZNBm8hWoQeYfRDfaK9K7a8Kj9vOUdhM7Q',
+        'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr',
       );
     });
 
     test('memoLegacyProgramAddress has the correct value', () {
       expect(
         memoLegacyProgramAddress.value,
-        'MemoSq4gqABb5KBAsS3tQ9UJMKg7hXe3LF7tu4RssKE3',
+        'Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo',
       );
     });
 

@@ -1,4 +1,5 @@
 import {
+  accountBumpValueNode,
   fieldDiscriminatorNode,
   instructionAccountNode,
   instructionArgumentNode,
@@ -244,6 +245,25 @@ describe("getInstructionPageFragment", () => {
     expect(frag.content).toContain("required BigInt amount,");
   });
 
+  it("requires account bump arguments instead of rendering async defaults", () => {
+    const node = instructionNode({
+      name: "createLookupTable",
+      accounts: [],
+      arguments: [
+        instructionArgumentNode({
+          name: "bump",
+          type: numberTypeNode("u8"),
+          defaultValue: accountBumpValueNode("lookupTable"),
+        }),
+      ],
+    });
+    const frag = getInstructionPageFragment(node, createScope());
+
+    expect(frag.content).toContain("required int bump,");
+    expect(frag.content).toContain("bump: bump,");
+    expect(frag.content).not.toContain("bump ??");
+  });
+
   it("includes auto-generated header", () => {
     const node = instructionNode({
       name: "transfer",
@@ -344,5 +364,39 @@ describe("getInstructionPageFragment", () => {
     expect(frag.content).toContain(
       "Address('UnknownProgram1111111111111111111111')",
     );
+  });
+
+  it("renders BigInt defaults for wide numeric arguments", () => {
+    const node = instructionNode({
+      name: "transfer",
+      accounts: [],
+      arguments: [
+        instructionArgumentNode({
+          name: "amount",
+          type: numberTypeNode("u64"),
+          defaultValue: numberValueNode(3),
+        }),
+      ],
+    });
+    const frag = getInstructionPageFragment(node, createScope());
+
+    expect(frag.content).toContain("amount: amount ?? BigInt.from(3),");
+  });
+
+  it("renders plain number defaults for narrow numeric arguments", () => {
+    const node = instructionNode({
+      name: "transfer",
+      accounts: [],
+      arguments: [
+        instructionArgumentNode({
+          name: "amount",
+          type: numberTypeNode("u8"),
+          defaultValue: numberValueNode(3),
+        }),
+      ],
+    });
+    const frag = getInstructionPageFragment(node, createScope());
+
+    expect(frag.content).toContain("amount: amount ?? 3,");
   });
 });

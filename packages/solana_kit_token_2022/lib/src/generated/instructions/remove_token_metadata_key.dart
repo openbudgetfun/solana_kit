@@ -32,7 +32,7 @@ class RemoveTokenMetadataKeyInstructionData {
 Encoder<RemoveTokenMetadataKeyInstructionData>
 getRemoveTokenMetadataKeyInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getBytesEncoder()),
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
     ('idempotent', getBooleanEncoder()),
     ('key', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
   ]);
@@ -50,7 +50,7 @@ getRemoveTokenMetadataKeyInstructionDataEncoder() {
 Decoder<RemoveTokenMetadataKeyInstructionData>
 getRemoveTokenMetadataKeyInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getBytesDecoder()),
+    ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
     ('idempotent', getBooleanDecoder()),
     ('key', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
   ]);

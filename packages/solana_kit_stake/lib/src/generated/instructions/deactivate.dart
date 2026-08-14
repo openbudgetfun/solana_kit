@@ -15,14 +15,16 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class DeactivateInstructionData {
-  const DeactivateInstructionData({this.discriminator = 5});
+  const DeactivateInstructionData({
+    this.discriminator = 5,
+  });
 
   final int discriminator;
 }
 
 Encoder<DeactivateInstructionData> getDeactivateInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
   ]);
 
   return transformEncoder(
@@ -35,13 +37,15 @@ Encoder<DeactivateInstructionData> getDeactivateInstructionDataEncoder() {
 
 Decoder<DeactivateInstructionData> getDeactivateInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        DeactivateInstructionData(discriminator: map['discriminator']! as int),
+        DeactivateInstructionData(
+          discriminator: map['discriminator']! as int,
+        ),
   );
 }
 

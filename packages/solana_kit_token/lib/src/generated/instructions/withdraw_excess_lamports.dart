@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class WithdrawExcessLamportsInstructionData {
-  const WithdrawExcessLamportsInstructionData({this.discriminator = 38});
+  const WithdrawExcessLamportsInstructionData({
+    this.discriminator = 38,
+  });
 
   final int discriminator;
 }

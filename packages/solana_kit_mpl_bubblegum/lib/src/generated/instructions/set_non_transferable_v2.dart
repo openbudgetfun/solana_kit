@@ -11,10 +11,22 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// SetNonTransferableV2 instruction data for mpl-bubblegum compressed NFTs.
+/// The Anchor discriminator for the `set_non_transferable_v2` instruction.
+const SetNonTransferableV2InstructionDiscriminator = <int>[
+  181,
+  141,
+  206,
+  58,
+  242,
+  199,
+  152,
+  168,
+];
+
 @immutable
 class SetNonTransferableV2InstructionData {
   const SetNonTransferableV2InstructionData({
-    this.discriminator = 21,
+    this.discriminator = SetNonTransferableV2InstructionDiscriminator,
     required this.root,
     required this.dataHash,
     required this.creatorHash,
@@ -24,7 +36,7 @@ class SetNonTransferableV2InstructionData {
     required this.index,
   });
 
-  final int discriminator;
+  final List<int> discriminator;
   final List<int> root;
   final List<int> dataHash;
   final List<int> creatorHash;
@@ -37,6 +49,10 @@ class SetNonTransferableV2InstructionData {
 Encoder<SetNonTransferableV2InstructionData>
 getSetNonTransferableV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+    (
+      'discriminator',
+      getArrayEncoder(getU8Encoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayEncoder(getU8Encoder(), size: const FixedArraySize(32))),
     (
       'dataHash',
@@ -75,7 +91,10 @@ getSetNonTransferableV2InstructionDataEncoder() {
 Decoder<SetNonTransferableV2InstructionData>
 getSetNonTransferableV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+    ),
     ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
     (
       'dataHash',
@@ -100,7 +119,7 @@ getSetNonTransferableV2InstructionDataDecoder() {
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         SetNonTransferableV2InstructionData(
-          discriminator: map['discriminator']! as int,
+          discriminator: map['discriminator']! as List<int>,
           root: map['root']! as List<int>,
           dataHash: map['dataHash']! as List<int>,
           creatorHash: map['creatorHash']! as List<int>,

@@ -44,10 +44,10 @@ export const WELL_KNOWN_ADDRESSES: ReadonlyMap<string, string> = new Map([
 
   // SPL programs
   ['TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', 'tokenProgramAddress'],
-  ['TokenzQdBNb4qyze1S1U9AHB8MGXmNK1REkTPT5Z3Y', 'token2022ProgramAddress'],
-  ['ATokenGPvbdGVxr1b2hvZbsiqW5xWH25ef7s3c8BnQKu', 'associatedTokenProgramAddress'],
-  ['Memo1UhkJRfRhVq1sR7Y7Nto1s3J2mXTT3L6Wk4K2m6', 'memoProgramAddress'],
-  ['MemoSq4gqABXKKYWVqKkV3m3kb1cTR7F2UMy9r6kFNK', 'memoLegacyProgramAddress'],
+  ['TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb', 'token2022ProgramAddress'],
+  ['ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL', 'associatedTokenProgramAddress'],
+  ['MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr', 'memoProgramAddress'],
+  ['Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo', 'memoLegacyProgramAddress'],
 
   // Metaplex programs
   ['metaqbxxU9qX8rZXkmUJ7haCrXXz2W1PSUq1Rn3E1od', 'tokenMetadataProgramAddress'],

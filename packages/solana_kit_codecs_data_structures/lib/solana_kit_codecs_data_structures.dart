@@ -73,6 +73,7 @@ export 'src/bit_array.dart';
 export 'src/boolean.dart';
 export 'src/bytes.dart';
 export 'src/constant.dart';
+export 'src/dependent_struct.dart';
 export 'src/discriminated_union.dart';
 export 'src/hidden_prefix.dart';
 export 'src/hidden_suffix.dart';

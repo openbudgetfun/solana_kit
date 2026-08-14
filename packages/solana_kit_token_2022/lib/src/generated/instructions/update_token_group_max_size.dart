@@ -29,7 +29,7 @@ class UpdateTokenGroupMaxSizeInstructionData {
 Encoder<UpdateTokenGroupMaxSizeInstructionData>
 getUpdateTokenGroupMaxSizeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getBytesEncoder()),
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
     ('maxSize', getU64Encoder()),
   ]);
 
@@ -45,7 +45,7 @@ getUpdateTokenGroupMaxSizeInstructionDataEncoder() {
 Decoder<UpdateTokenGroupMaxSizeInstructionData>
 getUpdateTokenGroupMaxSizeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getBytesDecoder()),
+    ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
     ('maxSize', getU64Decoder()),
   ]);
 

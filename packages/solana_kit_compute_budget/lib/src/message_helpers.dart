@@ -80,7 +80,10 @@ TransactionMessage setTransactionMessageComputeUnitPrice(
   TransactionMessage transactionMessage,
 ) {
   return appendTransactionMessageInstruction(
-    getSetComputeUnitPriceInstruction(microLamports: microLamports),
+    getSetComputeUnitPriceInstruction(
+      programAddress: computeBudgetProgramAddress,
+      microLamports: microLamports,
+    ),
     transactionMessage,
   );
 }
@@ -100,7 +103,10 @@ TransactionMessage updateOrAppendSetComputeUnitLimitInstruction(
 
   if (details == null) {
     return appendTransactionMessageInstruction(
-      getSetComputeUnitLimitInstruction(units: newUnits),
+      getSetComputeUnitLimitInstruction(
+        programAddress: computeBudgetProgramAddress,
+        units: newUnits,
+      ),
       transactionMessage,
     );
   }
@@ -110,7 +116,10 @@ TransactionMessage updateOrAppendSetComputeUnitLimitInstruction(
     instructions: _replaceInstructionAt(
       transactionMessage.instructions,
       details.index,
-      getSetComputeUnitLimitInstruction(units: newUnits),
+      getSetComputeUnitLimitInstruction(
+        programAddress: computeBudgetProgramAddress,
+        units: newUnits,
+      ),
     ),
   );
 }
@@ -130,7 +139,10 @@ TransactionMessage updateOrAppendSetComputeUnitPriceInstruction(
 
   if (details == null) {
     return appendTransactionMessageInstruction(
-      getSetComputeUnitPriceInstruction(microLamports: newMicroLamports),
+      getSetComputeUnitPriceInstruction(
+        programAddress: computeBudgetProgramAddress,
+        microLamports: newMicroLamports,
+      ),
       transactionMessage,
     );
   }
@@ -140,7 +152,10 @@ TransactionMessage updateOrAppendSetComputeUnitPriceInstruction(
     instructions: _replaceInstructionAt(
       transactionMessage.instructions,
       details.index,
-      getSetComputeUnitPriceInstruction(microLamports: newMicroLamports),
+      getSetComputeUnitPriceInstruction(
+        programAddress: computeBudgetProgramAddress,
+        microLamports: newMicroLamports,
+      ),
     ),
   );
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -141,15 +143,15 @@ LoaderV4WriteInstructionData parseLoaderV4WriteInstruction(Instruction ix) =>
 Instruction getLoaderV4TruncateInstruction({
   required Address program,
   required Address authority,
-  required Address destination,
   required int newSize,
+  Address? destination,
   Address programAddress = loaderV4ProgramAddress,
 }) => Instruction(
   programAddress: programAddress,
   accounts: [
     _account(program, writable: true, signer: true),
     _account(authority, writable: false, signer: true),
-    _account(destination, writable: true),
+    if (destination != null) _account(destination, writable: true),
   ],
   data: getTruncateInstructionDataEncoder().encode(
     TruncateInstructionData(newSize: newSize),
@@ -162,14 +164,14 @@ TruncateInstructionData parseLoaderV4TruncateInstruction(Instruction ix) =>
 Instruction getLoaderV4DeployInstruction({
   required Address program,
   required Address authority,
-  required Address source,
+  Address? source,
   Address programAddress = loaderV4ProgramAddress,
 }) => Instruction(
   programAddress: programAddress,
   accounts: [
     _account(program, writable: true),
     _account(authority, writable: false, signer: true),
-    _account(source, writable: true),
+    if (source != null) _account(source, writable: true),
   ],
   data: _discriminatorData(deployDiscriminator),
 );
@@ -189,12 +191,14 @@ Instruction getLoaderV4RetractInstruction({
 
 Instruction getLoaderV4TransferAuthorityInstruction({
   required Address program,
+  required Address currentAuthority,
   required Address newAuthority,
   Address programAddress = loaderV4ProgramAddress,
 }) => Instruction(
   programAddress: programAddress,
   accounts: [
     _account(program, writable: true),
+    _account(currentAuthority, writable: false, signer: true),
     _account(newAuthority, writable: false, signer: true),
   ],
   data: _discriminatorData(transferAuthorityDiscriminator),

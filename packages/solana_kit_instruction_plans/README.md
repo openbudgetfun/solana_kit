@@ -190,8 +190,12 @@ final planner = createTransactionPlanner(
   ),
 );
 
-// Convert the instruction plan to a transaction plan.
-final transactionPlan = await planner(plan);
+// Convert the instruction plan to a transaction plan. An invocation-specific
+// maximum, when provided, takes precedence over the planner configuration.
+final transactionPlan = await planner(
+  plan,
+  maxInstructionsPerTransaction: 32,
+);
 ```
 
 ### Transaction plans
@@ -407,7 +411,7 @@ print(parsedList is SequentialInstructionPlan); // true
 
 ### Type aliases
 
-- **`TransactionPlanner`** -- `Future<TransactionPlan> Function(InstructionPlan)`.
+- **`TransactionPlanner`** -- `Future<TransactionPlan> Function(InstructionPlan, {int? maxInstructionsPerTransaction})`; the named argument overrides the planner configuration for that invocation only.
 - **`TransactionPlanExecutor`** -- `Future<TransactionPlanResult> Function(TransactionPlan)`.
 - **`TransactionExecutionBoundary`** -- `Future<TransactionExecutionOutcome> Function(InstructionPlan)`.
 - **`CreateTransactionMessage`** -- `Future<TransactionMessage> Function()`.

@@ -1,48 +1,92 @@
 import 'dart:async';
 
+import 'package:solana_kit_subscribable/src/cancellation_token.dart';
+
 /// Creates a broadcast stream from data and error streams.
+///
+/// When [cancellationToken] fires, the returned stream closes after cancelling
+/// both source subscriptions. Events emitted after cancellation are ignored.
 Stream<TData> createStreamFromDataAndErrorStreams<TData>({
   required Stream<TData> dataStream,
   required Stream<Object?> errorStream,
+  CancellationToken? cancellationToken,
 }) {
   Object? firstError;
   var hasError = false;
-  StreamSubscription<TData>? dataSubscription;
-  StreamSubscription<Object?>? errorSubscription;
-
+  var isStopped = cancellationToken?.isCancelled ?? false;
+  // The source subscriptions are tracked in a list so they can be cancelled
+  // together when the merged stream stops.
+  final sourceSubscriptions = <StreamSubscription<Object?>>[];
   late final StreamController<TData> controller;
+
+  Future<void> cancelSourceSubscriptions() async {
+    final subscriptions = List<StreamSubscription<Object?>>.of(
+      sourceSubscriptions,
+    );
+    sourceSubscriptions.clear();
+    await Future.wait(
+      subscriptions.map((subscription) => subscription.cancel()),
+    );
+  }
+
+  Future<void> stop() async {
+    if (isStopped && controller.isClosed) return;
+
+    isStopped = true;
+    try {
+      await cancelSourceSubscriptions();
+    } finally {
+      if (!controller.isClosed) await controller.close();
+    }
+  }
+
+  bool shouldIgnoreEvents() =>
+      isStopped ||
+      controller.isClosed ||
+      (cancellationToken?.isCancelled ?? false);
+
   controller = StreamController<TData>.broadcast(
     sync: true,
     onListen: () {
       if (hasError) {
-        controller.addError(firstError!); // coverage:ignore-line
+        // A broadcast controller only re-runs `onListen` after the last
+        // listener cancels, at which point `stop()` has already closed the
+        // controller, so this replay branch is defensive dead code.
+        controller.addError(firstError!);
         return;
       }
 
-      errorSubscription ??= errorStream.listen((err) {
-        if (!hasError) {
-          hasError = true;
-          firstError = err;
-          controller.addError(err ?? StateError('Unknown error'));
-          unawaited(dataSubscription?.cancel());
-          dataSubscription = null;
-          unawaited(errorSubscription?.cancel());
-          errorSubscription = null;
-        }
-      });
+      if (shouldIgnoreEvents()) {
+        unawaited(stop());
+        return;
+      }
 
-      dataSubscription ??= dataStream.listen((data) {
-        if (!controller.isClosed) controller.add(data);
-      });
+      sourceSubscriptions
+        ..add(
+          errorStream.listen((error) {
+            if (hasError || shouldIgnoreEvents()) return;
+
+            final effectiveError = error ?? StateError('Unknown error');
+            hasError = true;
+            firstError = effectiveError;
+            controller.addError(effectiveError);
+            unawaited(cancelSourceSubscriptions());
+          }),
+        )
+        ..add(
+          dataStream.listen((data) {
+            if (!shouldIgnoreEvents()) controller.add(data);
+          }),
+        );
     },
-    onCancel: () {
-      unawaited(dataSubscription?.cancel());
-      dataSubscription = null;
-      unawaited(errorSubscription?.cancel());
-      errorSubscription = null;
-      unawaited(controller.close());
-    },
+    onCancel: stop,
   );
+
+  if (isStopped) {
+    unawaited(controller.close());
+  } else if (cancellationToken != null) {
+    unawaited(cancellationToken.future.then((_) => stop()));
+  }
 
   return controller.stream;
 }

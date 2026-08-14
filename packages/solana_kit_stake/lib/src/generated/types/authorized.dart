@@ -10,7 +10,10 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 
 @immutable
 class Authorized {
-  const Authorized({required this.staker, required this.withdrawer});
+  const Authorized({
+    required this.staker,
+    required this.withdrawer,
+  });
 
   final Address staker;
   final Address withdrawer;

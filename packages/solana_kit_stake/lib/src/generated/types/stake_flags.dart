@@ -10,7 +10,9 @@ import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 @immutable
 class StakeFlags {
-  const StakeFlags({required this.bits});
+  const StakeFlags({
+    required this.bits,
+  });
 
   final int bits;
 
@@ -35,7 +37,9 @@ Encoder<StakeFlags> getStakeFlagsEncoder() {
 
   return transformEncoder(
     structEncoder,
-    (StakeFlags value) => <String, Object?>{'bits': value.bits},
+    (StakeFlags value) => <String, Object?>{
+      'bits': value.bits,
+    },
   );
 }
 
@@ -46,8 +50,9 @@ Decoder<StakeFlags> getStakeFlagsDecoder() {
 
   return transformDecoder(
     structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        StakeFlags(bits: map['bits']! as int),
+    (Map<String, Object?> map, Uint8List bytes, int offset) => StakeFlags(
+      bits: map['bits']! as int,
+    ),
   );
 }
 

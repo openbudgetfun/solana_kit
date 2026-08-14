@@ -179,6 +179,15 @@ class MplBubblegumError {
 
   /// Asset is not frozen.
   static const int assetNotFrozen = 0x17a8;
+
+  /// Core collections must have the Royalties plugin to inherit seller fee basis points.
+  static const int collectionMustHaveRoyaltiesPlugin = 0x17a9;
+
+  /// Inherited seller fee basis points cannot be used with leaf-level creators.
+  static const int inheritedSellerFeeCannotHaveLeafCreators = 0x17aa;
+
+  /// Cannot remove from collection while seller fee basis points are inherited.
+  static const int cannotRemoveFromCollectionWithInheritedSellerFee = 0x17ab;
 }
 
 const Map<int, String> _mplBubblegumErrorMessages = {
@@ -265,6 +274,12 @@ const Map<int, String> _mplBubblegumErrorMessages = {
   MplBubblegumError.missingMplCoreCpiSigner:
       'Missing mpl-core CPI signer account',
   MplBubblegumError.assetNotFrozen: 'Asset is not frozen',
+  MplBubblegumError.collectionMustHaveRoyaltiesPlugin:
+      'Core collections must have the Royalties plugin to inherit seller fee basis points',
+  MplBubblegumError.inheritedSellerFeeCannotHaveLeafCreators:
+      'Inherited seller fee basis points cannot be used with leaf-level creators',
+  MplBubblegumError.cannotRemoveFromCollectionWithInheritedSellerFee:
+      'Cannot remove from collection while seller fee basis points are inherited',
 };
 
 /// Gets the error message for a given MPL Bubblegum error code.
@@ -276,4 +291,5 @@ String? getMplBubblegumErrorMessage(int errorCode) =>
 /// Returns `true` if the given error code is an MPL Bubblegum error.
 bool isMplBubblegumError(int errorCode) =>
     errorCode >= MplBubblegumError.assetOwnerMismatch &&
-    errorCode <= MplBubblegumError.assetNotFrozen;
+    errorCode <=
+        MplBubblegumError.cannotRemoveFromCollectionWithInheritedSellerFee;

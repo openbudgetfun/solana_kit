@@ -223,6 +223,9 @@ release = false
 [package.solana_kit_transaction_confirmation]
 path = "packages/solana_kit_transaction_confirmation"
 
+[package.solana_kit_transaction_introspection]
+path = "packages/solana_kit_transaction_introspection"
+
 [package.solana_kit_transaction_messages]
 path = "packages/solana_kit_transaction_messages"
 
@@ -277,6 +280,7 @@ packages = [
   "solana_kit_subscribable",
   "solana_kit_test_matchers",
   "solana_kit_transaction_confirmation",
+  "solana_kit_transaction_introspection",
   "solana_kit_transaction_messages",
   "solana_kit_transactions",
 ]

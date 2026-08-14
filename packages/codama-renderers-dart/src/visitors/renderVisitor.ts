@@ -43,7 +43,7 @@ export function renderVisitor(
     // 3. Build a map of definedType module keys to their render map paths
     const typePathMap: Record<string, string> = {};
     for (const renderPath of renderMap.keys()) {
-      const match = renderPath.match(/^(?:.*\/)?types\/([a-z_]+)\.dart$/);
+      const match = renderPath.match(/^(?:.*\/)?types\/([a-z0-9_]+)\.dart$/);
       if (match) {
         typePathMap[`definedType:${match[1]}`] = renderPath;
       }
@@ -63,8 +63,12 @@ export function renderVisitor(
       const fileDir = dirname(filePath);
       const internalMap: Record<string, string> = {};
       for (const [key, typePath] of Object.entries(typePathMap)) {
-        // Don't import yourself
-        if (typePath === filePath) continue;
+        // Keep the key resolved without generating a self-import.
+        if (typePath === filePath) {
+          internalMap[key] = "";
+          continue;
+        }
+
         let rel = posix.relative(fileDir, typePath);
         if (!rel.startsWith(".")) {
           rel = `./${rel}`;

@@ -18,15 +18,21 @@ const token2022ProgramAddress = Address(
 
 /// The address of the SPL Associated Token Account program.
 const associatedTokenProgramAddress = Address(
-  'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25ef7s3c8BnQKu',
+  'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
 );
 
-/// The address of the Memo program (v2, on-chain memo).
+/// The address of the Memo program (v3, on-chain memo).
+///
+/// Matches the upstream `solana-program/memo` Codama IDL `publicKey`.
 const memoProgramAddress = Address(
-  'Memo1UhkJ4AsZNBm8hWoQeYfRDfaK9K7a8Kj9vOUdhM7Q',
+  'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr',
 );
 
 /// The address of the legacy Memo program (v1).
+///
+/// The original Memo program (shank/spl-memo v1) was deployed at
+/// `Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo`; later versions moved to
+/// the v3 `memoProgramAddress` above.
 const memoLegacyProgramAddress = Address(
-  'MemoSq4gqABb5KBAsS3tQ9UJMKg7hXe3LF7tu4RssKE3',
+  'Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo',
 );

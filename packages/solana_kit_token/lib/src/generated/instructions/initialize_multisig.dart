@@ -72,7 +72,9 @@ Instruction getInitializeMultisigInstruction({
   required Address rent,
   required int m,
 }) {
-  final instructionData = InitializeMultisigInstructionData(m: m);
+  final instructionData = InitializeMultisigInstructionData(
+    m: m,
+  );
 
   return Instruction(
     programAddress: programAddress,

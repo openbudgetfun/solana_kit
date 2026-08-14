@@ -15,7 +15,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class BurnInstructionData {
-  const BurnInstructionData({this.discriminator = 8, required this.amount});
+  const BurnInstructionData({
+    this.discriminator = 8,
+    required this.amount,
+  });
 
   final int discriminator;
   final BigInt amount;
@@ -67,7 +70,9 @@ Instruction getBurnInstruction({
   required Address authority,
   required BigInt amount,
 }) {
-  final instructionData = BurnInstructionData(amount: amount);
+  final instructionData = BurnInstructionData(
+    amount: amount,
+  );
 
   return Instruction(
     programAddress: programAddress,

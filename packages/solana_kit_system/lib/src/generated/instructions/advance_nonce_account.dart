@@ -15,7 +15,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class AdvanceNonceAccountInstructionData {
-  const AdvanceNonceAccountInstructionData({this.discriminator = 4});
+  const AdvanceNonceAccountInstructionData({
+    this.discriminator = 4,
+  });
 
   final int discriminator;
 }

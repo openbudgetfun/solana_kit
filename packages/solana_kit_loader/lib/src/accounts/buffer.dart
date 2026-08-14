@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -5,7 +7,7 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
 const bufferAccountDiscriminator = 1;
-const bufferAccountSize = 40;
+const bufferAccountSize = 37;
 
 @immutable
 class BufferAccount {
@@ -31,7 +33,7 @@ Encoder<BufferAccount> getBufferAccountEncoder() {
       'authorityAddress',
       getNullableEncoder<Address>(
         getAddressEncoder(),
-        prefix: getU32Encoder(),
+        prefix: getU8Encoder(),
         noneValue: const ZeroesNoneValue(),
       ),
     ),
@@ -53,7 +55,7 @@ Decoder<BufferAccount> getBufferAccountDecoder() {
       'authorityAddress',
       getNullableDecoder<Address>(
         getAddressDecoder(),
-        prefix: getU32Decoder(),
+        prefix: getU8Decoder(),
         noneValue: const ZeroesNoneValue(),
       ),
     ),

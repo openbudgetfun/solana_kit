@@ -244,6 +244,10 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'The provided instruction plan is empty.',
   SolanaErrorCode.instructionPlansExpectedSuccessfulTransactionPlanResult:
       'Expected a successful transaction plan result. I.e. there is at least one failed or cancelled transaction in the plan.',
+  SolanaErrorCode.instructionPlansInvalidMaxInstructionsPerTransaction:
+      r'The configured maximum of $maxInstructions instructions per transaction is invalid. It must be a positive integer no greater than the transaction format limit of $transactionInstructionLimit instructions per transaction. Provide a `maxInstructionsPerTransaction` (on the transaction planner) or `maxInstructions` (on the message packer) value between 1 and $transactionInstructionLimit.',
+  SolanaErrorCode.instructionPlansMaxInstructionsPerTransactionExceeded:
+      r'Planning this transaction message would require $numInstructions instructions, which exceeds the configured maximum of $maxInstructions instructions per transaction. This limit is configurable, and intended to leave headroom for inner instructions which are included in the maximum instruction limit for transactions. Increase `maxInstructionsPerTransaction` on the transaction planner (or `maxInstructions` on the message packer) to allow more instructions per transaction.',
   SolanaErrorCode.instructionPlansFailedSingleTransactionPlanResultNotFound:
       'No failed transaction plan result was found in the provided transaction plan result.',
   SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan:
@@ -560,6 +564,12 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'Failed to estimate the loaded accounts data size limit for this transaction message.',
   SolanaErrorCode.transactionFailedWhenSimulatingToEstimateResourceLimits:
       'Transaction failed when it was simulated in order to estimate resource limits.',
+  SolanaErrorCode.transactionFailedToDecompileInstructionAccountIndexOutOfRange:
+      r'Could not find an account address at index $index while decompiling an instruction',
+  SolanaErrorCode.transactionIntrospectionCannotDecodeJsonParsedTransaction:
+      "`getTransaction` responses fetched with `encoding: 'jsonParsed'` cannot be decoded. Re-fetch the transaction with `encoding: 'base64'`, `'base58'`, or `'json'`",
+  SolanaErrorCode.transactionIntrospectionUnrecognizedGetTransactionResponse:
+      "Could not recognize the shape of this `getTransaction` response. Expected a response fetched with `encoding: 'base64'`, `'base58'`, or `'json'`",
   SolanaErrorCode.transactionFeePayerMissing:
       'Transaction is missing a fee payer.',
   SolanaErrorCode.transactionFeePayerSignatureMissing:

@@ -8,8 +8,7 @@ void main() {
       final codec = getSetComputeUnitLimitInstructionDataCodec();
       final encoded = codec.encode(original);
       final decoded = codec.decode(encoded);
-      expect(decoded, equals(original));
-      expect(decoded.discriminator, equals(setComputeUnitLimitDiscriminator));
+      expect(decoded.discriminator, equals(2));
       expect(decoded.units, equals(400000));
     });
 
@@ -35,29 +34,16 @@ void main() {
     });
 
     test('instruction builder produces correct data', () {
-      final ix = getSetComputeUnitLimitInstruction(units: 200000);
+      final ix = getSetComputeUnitLimitInstruction(
+        programAddress: computeBudgetProgramAddress,
+        units: 200000,
+      );
       expect(ix.programAddress, equals(computeBudgetProgramAddress));
       expect(ix.accounts, isEmpty);
 
       final parsed = parseSetComputeUnitLimitInstruction(ix);
       expect(parsed.units, equals(200000));
       expect(parsed.discriminator, equals(2));
-    });
-
-    test('value equality', () {
-      const a = SetComputeUnitLimitInstructionData(units: 100);
-      const b = SetComputeUnitLimitInstructionData(units: 100);
-      const c = SetComputeUnitLimitInstructionData(units: 200);
-      expect(a, equals(b));
-      expect(a.hashCode, equals(b.hashCode));
-      expect(a, isNot(equals(c)));
-    });
-
-    test('toString includes field values', () {
-      const data = SetComputeUnitLimitInstructionData(units: 42);
-      final str = data.toString();
-      expect(str, contains('units: 42'));
-      expect(str, contains('discriminator: 2'));
     });
   });
 
@@ -69,8 +55,7 @@ void main() {
       final codec = getSetComputeUnitPriceInstructionDataCodec();
       final encoded = codec.encode(original);
       final decoded = codec.decode(encoded);
-      expect(decoded, equals(original));
-      expect(decoded.discriminator, equals(setComputeUnitPriceDiscriminator));
+      expect(decoded.discriminator, equals(3));
       expect(decoded.microLamports, equals(BigInt.from(50000)));
     });
 
@@ -106,6 +91,7 @@ void main() {
 
     test('instruction builder produces correct data', () {
       final ix = getSetComputeUnitPriceInstruction(
+        programAddress: computeBudgetProgramAddress,
         microLamports: BigInt.from(1000),
       );
       expect(ix.programAddress, equals(computeBudgetProgramAddress));
@@ -115,30 +101,6 @@ void main() {
       expect(parsed.microLamports, equals(BigInt.from(1000)));
       expect(parsed.discriminator, equals(3));
     });
-
-    test('toString includes field values', () {
-      final data = SetComputeUnitPriceInstructionData(
-        microLamports: BigInt.from(999),
-      );
-      final str = data.toString();
-      expect(str, contains('SetComputeUnitPriceInstructionData'));
-      expect(str, contains('999'));
-    });
-
-    test('value equality', () {
-      final a = SetComputeUnitPriceInstructionData(
-        microLamports: BigInt.from(100),
-      );
-      final b = SetComputeUnitPriceInstructionData(
-        microLamports: BigInt.from(100),
-      );
-      final c = SetComputeUnitPriceInstructionData(
-        microLamports: BigInt.from(200),
-      );
-      expect(a, equals(b));
-      expect(a.hashCode, equals(b.hashCode));
-      expect(a, isNot(equals(c)));
-    });
   });
 
   group('RequestHeapFrame', () {
@@ -147,8 +109,7 @@ void main() {
       final codec = getRequestHeapFrameInstructionDataCodec();
       final encoded = codec.encode(original);
       final decoded = codec.decode(encoded);
-      expect(decoded, equals(original));
-      expect(decoded.discriminator, equals(requestHeapFrameDiscriminator));
+      expect(decoded.discriminator, equals(1));
       expect(decoded.bytes, equals(262144));
     });
 
@@ -161,28 +122,15 @@ void main() {
     });
 
     test('instruction builder produces correct data', () {
-      final ix = getRequestHeapFrameInstruction(bytes: 32768);
+      final ix = getRequestHeapFrameInstruction(
+        programAddress: computeBudgetProgramAddress,
+        bytes: 32768,
+      );
       expect(ix.programAddress, equals(computeBudgetProgramAddress));
       expect(ix.accounts, isEmpty);
 
       final parsed = parseRequestHeapFrameInstruction(ix);
       expect(parsed.bytes, equals(32768));
-    });
-
-    test('toString includes field values', () {
-      const data = RequestHeapFrameInstructionData(bytes: 4096);
-      final str = data.toString();
-      expect(str, contains('RequestHeapFrameInstructionData'));
-      expect(str, contains('4096'));
-    });
-
-    test('value equality', () {
-      const a = RequestHeapFrameInstructionData(bytes: 1024);
-      const b = RequestHeapFrameInstructionData(bytes: 1024);
-      const c = RequestHeapFrameInstructionData(bytes: 2048);
-      expect(a, equals(b));
-      expect(a.hashCode, equals(b.hashCode));
-      expect(a, isNot(equals(c)));
     });
   });
 
@@ -195,8 +143,7 @@ void main() {
       final codec = getRequestUnitsInstructionDataCodec();
       final encoded = codec.encode(original);
       final decoded = codec.decode(encoded);
-      expect(decoded, equals(original));
-      expect(decoded.discriminator, equals(requestUnitsDiscriminator));
+      expect(decoded.discriminator, equals(0));
       expect(decoded.units, equals(1400000));
       expect(decoded.additionalFee, equals(5000));
     });
@@ -218,30 +165,17 @@ void main() {
       expect(bytes.length, equals(9));
     });
 
-    test('toString includes field values', () {
-      const data = RequestUnitsInstructionData(units: 500, additionalFee: 100);
-      final str = data.toString();
-      expect(str, contains('RequestUnitsInstructionData'));
-      expect(str, contains('500'));
-      expect(str, contains('100'));
-    });
-
     test('deprecated instruction builder', () {
-      final ix = getRequestUnitsInstruction(units: 1000, additionalFee: 500);
+      final ix = getRequestUnitsInstruction(
+        programAddress: computeBudgetProgramAddress,
+        units: 1000,
+        additionalFee: 500,
+      );
       expect(ix.programAddress, equals(computeBudgetProgramAddress));
       expect(ix.accounts, isEmpty);
       final parsed = parseRequestUnitsInstruction(ix);
       expect(parsed.units, equals(1000));
       expect(parsed.additionalFee, equals(500));
-    });
-
-    test('value equality', () {
-      const a = RequestUnitsInstructionData(units: 100, additionalFee: 50);
-      const b = RequestUnitsInstructionData(units: 100, additionalFee: 50);
-      const c = RequestUnitsInstructionData(units: 100, additionalFee: 99);
-      expect(a, equals(b));
-      expect(a.hashCode, equals(b.hashCode));
-      expect(a, isNot(equals(c)));
     });
   });
 
@@ -253,10 +187,9 @@ void main() {
       final codec = getSetLoadedAccountsDataSizeLimitInstructionDataCodec();
       final encoded = codec.encode(original);
       final decoded = codec.decode(encoded);
-      expect(decoded, equals(original));
       expect(
         decoded.discriminator,
-        equals(setLoadedAccountsDataSizeLimitDiscriminator),
+        equals(4),
       );
       expect(decoded.accountDataSizeLimit, equals(65536));
     });
@@ -273,6 +206,7 @@ void main() {
 
     test('instruction builder produces correct data', () {
       final ix = getSetLoadedAccountsDataSizeLimitInstruction(
+        programAddress: computeBudgetProgramAddress,
         accountDataSizeLimit: 128000,
       );
       expect(ix.programAddress, equals(computeBudgetProgramAddress));
@@ -280,30 +214,6 @@ void main() {
 
       final parsed = parseSetLoadedAccountsDataSizeLimitInstruction(ix);
       expect(parsed.accountDataSizeLimit, equals(128000));
-    });
-
-    test('toString includes field values', () {
-      const data = SetLoadedAccountsDataSizeLimitInstructionData(
-        accountDataSizeLimit: 512,
-      );
-      final str = data.toString();
-      expect(str, contains('SetLoadedAccountsDataSizeLimitInstructionData'));
-      expect(str, contains('512'));
-    });
-
-    test('value equality', () {
-      const a = SetLoadedAccountsDataSizeLimitInstructionData(
-        accountDataSizeLimit: 100,
-      );
-      const b = SetLoadedAccountsDataSizeLimitInstructionData(
-        accountDataSizeLimit: 100,
-      );
-      const c = SetLoadedAccountsDataSizeLimitInstructionData(
-        accountDataSizeLimit: 200,
-      );
-      expect(a, equals(b));
-      expect(a.hashCode, equals(b.hashCode));
-      expect(a, isNot(equals(c)));
     });
   });
 }

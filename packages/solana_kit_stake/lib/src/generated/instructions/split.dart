@@ -15,7 +15,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class SplitInstructionData {
-  const SplitInstructionData({this.discriminator = 3, required this.args});
+  const SplitInstructionData({
+    this.discriminator = 3,
+    required this.args,
+  });
 
   final int discriminator;
   final BigInt args;
@@ -23,7 +26,7 @@ class SplitInstructionData {
 
 Encoder<SplitInstructionData> getSplitInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
     ('args', getU64Encoder()),
   ]);
 
@@ -38,7 +41,7 @@ Encoder<SplitInstructionData> getSplitInstructionDataEncoder() {
 
 Decoder<SplitInstructionData> getSplitInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
     ('args', getU64Decoder()),
   ]);
 
@@ -68,7 +71,9 @@ Instruction getSplitInstruction({
   required Address stakeAuthority,
   required BigInt args,
 }) {
-  final instructionData = SplitInstructionData(args: args);
+  final instructionData = SplitInstructionData(
+    args: args,
+  );
 
   return Instruction(
     programAddress: programAddress,

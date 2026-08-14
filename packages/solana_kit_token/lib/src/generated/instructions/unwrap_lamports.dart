@@ -73,7 +73,9 @@ Instruction getUnwrapLamportsInstruction({
   required Address authority,
   BigInt? amount,
 }) {
-  final instructionData = UnwrapLamportsInstructionData(amount: amount ?? null);
+  final instructionData = UnwrapLamportsInstructionData(
+    amount: amount ?? null,
+  );
 
   return Instruction(
     programAddress: programAddress,

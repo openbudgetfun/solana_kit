@@ -31,7 +31,7 @@ class InitializeInstructionData {
 
 Encoder<InitializeInstructionData> getInitializeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
+    ('discriminator', getU32Encoder()),
     ('arg0', getAuthorizedEncoder()),
     ('arg1', getLockupEncoder()),
   ]);
@@ -48,7 +48,7 @@ Encoder<InitializeInstructionData> getInitializeInstructionDataEncoder() {
 
 Decoder<InitializeInstructionData> getInitializeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    ('discriminator', getU32Decoder()),
     ('arg0', getAuthorizedDecoder()),
     ('arg1', getLockupDecoder()),
   ]);
@@ -80,7 +80,10 @@ Instruction getInitializeInstruction({
   required Authorized arg0,
   required Lockup arg1,
 }) {
-  final instructionData = InitializeInstructionData(arg0: arg0, arg1: arg1);
+  final instructionData = InitializeInstructionData(
+    arg0: arg0,
+    arg1: arg1,
+  );
 
   return Instruction(
     programAddress: programAddress,

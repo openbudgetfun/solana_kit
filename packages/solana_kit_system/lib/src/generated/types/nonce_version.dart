@@ -6,10 +6,16 @@ import 'dart:typed_data';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 
-enum NonceVersion { legacy, current }
+enum NonceVersion {
+  legacy,
+  current,
+}
 
 Encoder<NonceVersion> getNonceVersionEncoder() {
-  return transformEncoder(getU32Encoder(), (NonceVersion value) => value.index);
+  return transformEncoder(
+    getU32Encoder(),
+    (NonceVersion value) => value.index,
+  );
 }
 
 Decoder<NonceVersion> getNonceVersionDecoder() {

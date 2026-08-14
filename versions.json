@@ -1,5 +1,5 @@
 {
-  "@solana/kit": "6.10.0",
+  "@solana/kit": "7.0.0",
   "codama-renderers-dart": "0.4.3",
   "solana_kit": "0.6.0",
   "solana_kit_accounts": "0.6.0",

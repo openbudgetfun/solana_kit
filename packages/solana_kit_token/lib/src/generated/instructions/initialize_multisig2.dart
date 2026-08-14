@@ -71,11 +71,15 @@ Instruction getInitializeMultisig2Instruction({
   required Address multisig,
   required int m,
 }) {
-  final instructionData = InitializeMultisig2InstructionData(m: m);
+  final instructionData = InitializeMultisig2InstructionData(
+    m: m,
+  );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [AccountMeta(address: multisig, role: AccountRole.writable)],
+    accounts: [
+      AccountMeta(address: multisig, role: AccountRole.writable),
+    ],
     data: getInitializeMultisig2InstructionDataEncoder().encode(
       instructionData,
     ),

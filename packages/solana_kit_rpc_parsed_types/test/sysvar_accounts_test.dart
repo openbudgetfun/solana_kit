@@ -98,8 +98,44 @@ void main() {
       expect(account.type, 'rent');
       expect(account.info.burnPercent, 50);
       expect(account.info.exemptionThreshold, 2.0);
-      expect(account.info.lamportsPerByteYear.value, '3480');
+      expect(account.info.lamportsPerByteYear!.value, '3480');
       expect(account, isA<JsonParsedSysvarAccount>());
+    });
+
+    test('can construct a 4.1.0+ rent sysvar with lamportsPerByte', () {
+      const account = JsonParsedRentSysvar(
+        info: JsonParsedRentInfo(
+          lamportsPerByte: StringifiedBigInt('3480'),
+        ),
+      );
+
+      expect(account.type, 'rent');
+      expect(account.info.lamportsPerByte!.value, '3480');
+      expect(account.info.lamportsPerByteYear, isNull);
+      expect(account.info.burnPercent, isNull);
+    });
+
+    test('rent sysvar info has value equality', () {
+      // Const instances that differ on `lamportsPerByte` so `==` runs the
+      // full field comparison (identical const values would short-circuit).
+      const legacyA = JsonParsedRentInfo(
+        burnPercent: 50,
+        exemptionThreshold: 3480,
+        lamportsPerByteYear: StringifiedBigInt('3480'),
+      );
+      const legacyB = JsonParsedRentInfo(
+        burnPercent: 50,
+        exemptionThreshold: 3480,
+        lamportsPerByteYear: StringifiedBigInt('1'),
+      );
+      const modern = JsonParsedRentInfo(
+        lamportsPerByte: StringifiedBigInt('3480'),
+      );
+
+      expect(legacyA, isNot(equals(legacyB)));
+      expect(modern, equals(modern));
+      expect(legacyA, isNot(equals(modern)));
+      expect(legacyA.hashCode, isNot(equals(legacyB.hashCode)));
     });
 
     test('can construct a slotHashes sysvar', () {

@@ -57,6 +57,51 @@ void main() {
       );
     });
 
+    // Added in @solana/kit v7.0.0: the configurable instruction-count limit on
+    // transaction planners and message packers.
+    test('classifies new instruction-plans max-instructions codes', () {
+      expect(
+        getSolanaErrorDomain(
+          SolanaErrorCode.instructionPlansMaxInstructionsPerTransactionExceeded,
+        ),
+        SolanaErrorDomain.instructionPlans,
+      );
+      expect(
+        getSolanaErrorDomain(
+          SolanaErrorCode.instructionPlansInvalidMaxInstructionsPerTransaction,
+        ),
+        SolanaErrorDomain.instructionPlans,
+      );
+    });
+
+    // Added in @solana/kit v7.0.0 for the new transaction-introspection package.
+    test('classifies new transaction-introspection codes', () {
+      expect(
+        getSolanaErrorDomain(
+          SolanaErrorCode
+              .transactionIntrospectionCannotDecodeJsonParsedTransaction,
+        ),
+        SolanaErrorDomain.transactionIntrospection,
+      );
+      expect(
+        getSolanaErrorDomain(
+          SolanaErrorCode
+              .transactionIntrospectionUnrecognizedGetTransactionResponse,
+        ),
+        SolanaErrorDomain.transactionIntrospection,
+      );
+    });
+
+    test('classifies new transaction decompile account index code', () {
+      expect(
+        getSolanaErrorDomain(
+          SolanaErrorCode
+              .transactionFailedToDecompileInstructionAccountIndexOutOfRange,
+        ),
+        SolanaErrorDomain.transaction,
+      );
+    });
+
     // Note: SolanaErrorDomain.unknown is only reachable via getSolanaErrorDomain
     // for enum values whose numeric value falls outside all known ranges.
     // All current enum members map to a known domain.

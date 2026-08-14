@@ -23,6 +23,18 @@ void main() {
       expect(hex(codec.encode(<int>{})), equals('00000000'));
     });
 
+    test('uses a BigInt prefix codec', () {
+      final codec = getSetCodec(
+        getU8Codec(),
+        size: PrefixedArraySize(getU64Codec()),
+      );
+      const encoded = '0300000000000000010203';
+      final original = {1, 2, 3};
+
+      expect(hex(codec.encode(original)), equals(encoded));
+      expect(codec.decode(b(encoded)), equals(original));
+    });
+
     test('uses fixed size', () {
       final codec = getSetCodec(getU8Codec(), size: const FixedArraySize(3));
       expect(hex(codec.encode({1, 2, 3})), equals('010203'));

@@ -19,7 +19,8 @@ export 'confidential_transfer_with_fee.dart';
 export 'confidential_withdraw.dart';
 export 'configure_confidential_transfer_account.dart';
 export 'configure_confidential_transfer_account_with_registry.dart';
-
+export 'create_associated_token.dart';
+export 'create_associated_token_idempotent.dart';
 export 'create_native_mint.dart';
 export 'disable_confidential_credits.dart';
 export 'disable_cpi_guard.dart';
@@ -71,7 +72,7 @@ export 'permissioned_burn.dart';
 export 'permissioned_burn_checked.dart';
 export 'permissioned_confidential_burn.dart';
 export 'reallocate.dart';
-
+export 'recover_nested_associated_token.dart';
 export 'remove_token_metadata_key.dart';
 export 'resume.dart';
 export 'revoke.dart';

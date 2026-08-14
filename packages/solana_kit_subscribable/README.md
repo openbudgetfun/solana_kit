@@ -103,6 +103,35 @@ void main() {
 }
 ```
 
+### Reactive action stores
+
+`createReactiveActionStore` wraps an asynchronous action in an
+idle/running/success/error state machine. The action receives a fresh
+`CancellationToken` and the dispatch arguments. A newer dispatch, `reset()`,
+or `dispose()` cancels the active token and suppresses late results.
+
+```dart
+final store = createReactiveActionStore<List<Object?>, String>(
+  (signal, args) async {
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    if (signal.isCancelled) throw signal.reason!;
+    return args.single! as String;
+  },
+);
+
+final timeout = CancellationTokenSource();
+final result = await store
+    .withSignal(timeout.token)
+    .dispatchAsync(['account']);
+print(result);
+```
+
+Use `dispatch()` for fire-and-forget UI handlers; it consumes asynchronous
+errors after recording them in store state. Use `dispatchAsync()` when the
+caller needs the result or propagated errors. Caller cancellation is exposed
+as an error state, while cancellation caused by supersession, reset, or
+disposal does not overwrite the newer state.
+
 ### Notification streams
 
 `NotificationStreams` bundles a pair of broadcast streams -- `notifications`

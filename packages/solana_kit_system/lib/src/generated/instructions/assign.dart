@@ -69,11 +69,15 @@ Instruction getAssignInstruction({
   required Address account,
   required Address programAddress,
 }) {
-  final instructionData = AssignInstructionData(programAddress: programAddress);
+  final instructionData = AssignInstructionData(
+    programAddress: programAddress,
+  );
 
   return Instruction(
     programAddress: instructionProgramAddress,
-    accounts: [AccountMeta(address: account, role: AccountRole.writableSigner)],
+    accounts: [
+      AccountMeta(address: account, role: AccountRole.writableSigner),
+    ],
     data: getAssignInstructionDataEncoder().encode(instructionData),
   );
 }

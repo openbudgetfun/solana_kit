@@ -8,9 +8,10 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-import '../types/authorize_checked_with_seed_params.dart';
+import '../types/stake_authorize.dart';
 
 /// The discriminator field name: 'discriminator'.
 /// Offset: 0.
@@ -19,25 +20,33 @@ import '../types/authorize_checked_with_seed_params.dart';
 class AuthorizeCheckedWithSeedInstructionData {
   const AuthorizeCheckedWithSeedInstructionData({
     this.discriminator = 11,
-    required this.arg0,
+    required this.stakeAuthorize,
+    required this.authoritySeed,
+    required this.authorityOwner,
   });
 
   final int discriminator;
-  final AuthorizeCheckedWithSeedParams arg0;
+  final StakeAuthorize stakeAuthorize;
+  final String authoritySeed;
+  final Address authorityOwner;
 }
 
 Encoder<AuthorizeCheckedWithSeedInstructionData>
 getAuthorizeCheckedWithSeedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getU8Encoder()),
-    ('arg0', getAuthorizeCheckedWithSeedParamsEncoder()),
+    ('discriminator', getU32Encoder()),
+    ('stakeAuthorize', getStakeAuthorizeEncoder()),
+    ('authoritySeed', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
+    ('authorityOwner', getAddressEncoder()),
   ]);
 
   return transformEncoder(
     structEncoder,
     (AuthorizeCheckedWithSeedInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'arg0': value.arg0,
+      'stakeAuthorize': value.stakeAuthorize,
+      'authoritySeed': value.authoritySeed,
+      'authorityOwner': value.authorityOwner,
     },
   );
 }
@@ -45,8 +54,10 @@ getAuthorizeCheckedWithSeedInstructionDataEncoder() {
 Decoder<AuthorizeCheckedWithSeedInstructionData>
 getAuthorizeCheckedWithSeedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
-    ('arg0', getAuthorizeCheckedWithSeedParamsDecoder()),
+    ('discriminator', getU32Decoder()),
+    ('stakeAuthorize', getStakeAuthorizeDecoder()),
+    ('authoritySeed', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
+    ('authorityOwner', getAddressDecoder()),
   ]);
 
   return transformDecoder(
@@ -54,7 +65,9 @@ getAuthorizeCheckedWithSeedInstructionDataDecoder() {
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         AuthorizeCheckedWithSeedInstructionData(
           discriminator: map['discriminator']! as int,
-          arg0: map['arg0']! as AuthorizeCheckedWithSeedParams,
+          stakeAuthorize: map['stakeAuthorize']! as StakeAuthorize,
+          authoritySeed: map['authoritySeed']! as String,
+          authorityOwner: map['authorityOwner']! as Address,
         ),
   );
 }
@@ -78,9 +91,15 @@ Instruction getAuthorizeCheckedWithSeedInstruction({
   required Address clockSysvar,
   required Address newAuthority,
   Address? lockupAuthority,
-  required AuthorizeCheckedWithSeedParams arg0,
+  required StakeAuthorize stakeAuthorize,
+  required String authoritySeed,
+  required Address authorityOwner,
 }) {
-  final instructionData = AuthorizeCheckedWithSeedInstructionData(arg0: arg0);
+  final instructionData = AuthorizeCheckedWithSeedInstructionData(
+    stakeAuthorize: stakeAuthorize,
+    authoritySeed: authoritySeed,
+    authorityOwner: authorityOwner,
+  );
 
   return Instruction(
     programAddress: programAddress,

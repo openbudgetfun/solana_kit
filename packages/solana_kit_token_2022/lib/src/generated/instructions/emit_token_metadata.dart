@@ -31,7 +31,7 @@ class EmitTokenMetadataInstructionData {
 Encoder<EmitTokenMetadataInstructionData>
 getEmitTokenMetadataInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', getBytesEncoder()),
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
     ('start', getNullableEncoder<BigInt>(getU64Encoder())),
     ('end', getNullableEncoder<BigInt>(getU64Encoder())),
   ]);
@@ -49,7 +49,7 @@ getEmitTokenMetadataInstructionDataEncoder() {
 Decoder<EmitTokenMetadataInstructionData>
 getEmitTokenMetadataInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getBytesDecoder()),
+    ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
     ('start', getNullableDecoder<BigInt>(getU64Decoder())),
     ('end', getNullableDecoder<BigInt>(getU64Decoder())),
   ]);

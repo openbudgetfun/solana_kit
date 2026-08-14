@@ -1,23 +1,26 @@
 // ignore_for_file: public_member_api_docs
 import 'dart:async';
 
+import 'package:solana_kit_subscribable/src/cancellation_token.dart';
+
 /// A callback that can be invoked to unsubscribe from a store.
 typedef UnsubscribeCallback = void Function();
 
+/// An action wrapped by a [ReactiveActionStore].
+///
+/// The action receives the cancellation token for this dispatch followed by
+/// the dispatch arguments.
+typedef ReactiveAction<TArgs, TResult> =
+    Future<TResult> Function(CancellationToken signal, TArgs args);
+
+/// A source that creates a fresh reactive action store on demand.
+///
+/// Implemented by lazy one-shot operations such as pending RPC requests.
+typedef ReactiveActionSource<TResult> =
+    ReactiveActionStore<List<Object?>, TResult> Function();
+
 /// The lifecycle state of a [ReactiveActionStore].
-enum ReactiveActionState {
-  /// No action has been dispatched yet.
-  idle,
-
-  /// An action is currently being dispatched.
-  running,
-
-  /// The last dispatch completed successfully.
-  success,
-
-  /// The last dispatch failed with an error.
-  error,
-}
+enum ReactiveActionState { idle, running, success, error }
 
 /// A unified snapshot of a [ReactiveActionStore]'s current state.
 class ReactiveActionStateSnapshot<T> {
@@ -27,55 +30,70 @@ class ReactiveActionStateSnapshot<T> {
     this.error,
   });
 
-  /// The current lifecycle state.
   final ReactiveActionState status;
-
-  /// The result of the last successful dispatch, or `null`.
   final T? result;
-
-  /// The error from the last failed dispatch, or `null`.
   final Object? error;
 
-  /// Returns `true` when [status] is [ReactiveActionState.idle].
   bool get isIdle => status == ReactiveActionState.idle;
-
-  /// Returns `true` when [status] is [ReactiveActionState.running].
   bool get isRunning => status == ReactiveActionState.running;
-
-  /// Returns `true` when [status] is [ReactiveActionState.success].
   bool get isSuccess => status == ReactiveActionState.success;
-
-  /// Returns `true` when [status] is [ReactiveActionState.error].
   bool get isError => status == ReactiveActionState.error;
+}
+
+/// Thrown when an action dispatch is cancelled internally by its store.
+class ReactiveActionCancellationException implements Exception {
+  const ReactiveActionCancellationException(this.message);
+
+  final String message;
+
+  @override
+  String toString() => 'ReactiveActionCancellationException: $message';
 }
 
 /// A callback invoked when a [ReactiveActionStore] changes.
 typedef ReactiveActionSubscriber = void Function();
 
-/// A reactive store that wraps a dispatchable action (e.g. an RPC request).
+/// A dispatch-only view bound to a caller-provided cancellation token.
+class ReactiveActionDispatchView<TArgs extends List<Object?>, TResult> {
+  const ReactiveActionDispatchView._(this._store, this._signal);
+
+  final ReactiveActionStore<TArgs, TResult> _store;
+  final CancellationToken _signal;
+
+  /// Fire-and-forget dispatch whose asynchronous errors are consumed.
+  void dispatch(TArgs args) => _store._dispatch(args, _signal);
+
+  /// Dispatches and returns the action result or propagated error.
+  Future<TResult> dispatchAsync(TArgs args) =>
+      _store._dispatchAsync(args, _signal);
+}
+
+/// A reactive store that wraps a cancellable asynchronous action.
 ///
-/// Mirrors the upstream `ReactiveActionStore<TArgs, TResult>` from
-/// `@solana/subscribable` v6.10. The store transitions through
-/// [ReactiveActionState] values as [dispatch] / [dispatchAsync] are called.
+/// Every dispatch cancels the previous dispatch. Superseded, reset, and
+/// disposed dispatches cannot update state even if their action completes
+/// later. Use [withSignal] to add caller-owned cancellation to one or more
+/// dispatches.
 class ReactiveActionStore<TArgs extends List<Object?>, TResult> {
-  ReactiveActionStore._(this._action) {
-    _snapshot = ReactiveActionStateSnapshot<TResult>(
-      status: ReactiveActionState.idle,
-    );
-  }
+  ReactiveActionStore._(this._action);
 
-  final Future<TResult> Function(TArgs args) _action;
+  static const _disposedMessage = 'ReactiveActionStore has been disposed';
+  static const _idleSnapshot = ReactiveActionStateSnapshot<Never>(
+    status: ReactiveActionState.idle,
+  );
 
+  final ReactiveAction<TArgs, TResult> _action;
   final Set<ReactiveActionSubscriber> _subscribers = {};
-  late ReactiveActionStateSnapshot<TResult> _snapshot;
+
+  ReactiveActionStateSnapshot<TResult> _snapshot =
+      _idleSnapshot as ReactiveActionStateSnapshot<TResult>;
+  _ReactiveActionDispatch? _activeDispatch;
   bool _isDisposed = false;
 
   /// Returns the current state snapshot.
   ReactiveActionStateSnapshot<TResult> getState() => _snapshot;
 
   /// Registers [callback] for state updates.
-  ///
-  /// Returns an idempotent unsubscribe callback.
   UnsubscribeCallback subscribe(ReactiveActionSubscriber callback) {
     if (_isDisposed) return () {};
     _subscribers.add(callback);
@@ -89,70 +107,216 @@ class ReactiveActionStore<TArgs extends List<Object?>, TResult> {
   }
 
   /// Asynchronously dispatches the action with [args].
-  ///
-  /// While the action is running the state transitions to
-  /// [ReactiveActionState.running]. On completion it transitions to either
-  /// [ReactiveActionState.success] or [ReactiveActionState.error].
-  Future<TResult> dispatchAsync(TArgs args) async {
-    if (_isDisposed) {
-      throw StateError('ReactiveActionStore has been disposed');
-    }
-    _snapshot = ReactiveActionStateSnapshot<TResult>(
-      status: ReactiveActionState.running,
-      result: _snapshot.result,
+  Future<TResult> dispatchAsync(TArgs args) => _dispatchAsync(args, null);
+
+  /// Fire-and-forget dispatch whose asynchronous errors are consumed.
+  void dispatch(TArgs args) => _dispatch(args, null);
+
+  void _dispatch(TArgs args, CancellationToken? callerSignal) {
+    unawaited(
+      _dispatchAsync(args, callerSignal).then<void>(
+        (_) {},
+        onError: (Object _, StackTrace _) {},
+      ),
     );
-    _notifySubscribers();
+  }
+
+  Future<TResult> _dispatchAsync(
+    TArgs args,
+    CancellationToken? callerSignal,
+  ) async {
+    if (_isDisposed) throw StateError(_disposedMessage);
+
+    _cancelActive('superseded by a newer dispatch');
+
+    if (callerSignal?.isCancelled ?? false) {
+      final error = _cancellationReason(callerSignal!);
+      _setState(
+        ReactiveActionStateSnapshot<TResult>(
+          status: ReactiveActionState.error,
+          result: _snapshot.result,
+          error: error,
+        ),
+      );
+      Error.throwWithStackTrace(error, StackTrace.current);
+    }
+
+    final dispatch = _ReactiveActionDispatch(callerSignal);
+    _activeDispatch = dispatch;
+    final previousResult = _snapshot.result;
+    final previousError = _snapshot.error;
+
+    if (callerSignal != null) {
+      unawaited(
+        callerSignal.future.then((_) {
+          dispatch.cancelFromCaller(_cancellationReason(callerSignal));
+        }),
+      );
+    }
+
+    _setState(
+      ReactiveActionStateSnapshot<TResult>(
+        status: ReactiveActionState.running,
+        result: previousResult,
+        error: previousError,
+      ),
+    );
+
     try {
-      final result = await _action(args);
-      _snapshot = ReactiveActionStateSnapshot<TResult>(
-        status: ReactiveActionState.success,
-        result: result,
+      final actionFuture = Future<TResult>.sync(
+        () => _action(dispatch.signal, args),
       );
-      _notifySubscribers();
+      final result = await _raceWithCancellation(actionFuture, dispatch);
+
+      if (dispatch.isInternallyCancelled) {
+        Error.throwWithStackTrace(dispatch.internalReason!, StackTrace.current);
+      }
+      if (dispatch.signal.isCancelled) {
+        final error =
+            dispatch.signal.reason ??
+            const ReactiveActionCancellationException(
+              'cancelled by the caller',
+            );
+        Error.throwWithStackTrace(error, StackTrace.current);
+      }
+      if (!_isCurrent(dispatch)) {
+        throw const ReactiveActionCancellationException(
+          'superseded before completion',
+        );
+      }
+
+      _setState(
+        ReactiveActionStateSnapshot<TResult>(
+          status: ReactiveActionState.success,
+          result: result,
+        ),
+      );
       return result;
-    } catch (e) {
-      _snapshot = ReactiveActionStateSnapshot<TResult>(
-        status: ReactiveActionState.error,
-        error: e,
-        result: _snapshot.result,
+    } on Object catch (error, stackTrace) {
+      if (dispatch.isInternallyCancelled || !_isCurrent(dispatch)) {
+        final cancellation =
+            dispatch.internalReason ??
+            const ReactiveActionCancellationException(
+              'superseded before completion',
+            );
+        Error.throwWithStackTrace(cancellation, stackTrace);
+      }
+
+      final surfacedError = dispatch.signal.isCancelled
+          ? dispatch.signal.reason ?? error
+          : error;
+      _setState(
+        ReactiveActionStateSnapshot<TResult>(
+          status: ReactiveActionState.error,
+          result: previousResult,
+          error: surfacedError,
+        ),
       );
-      _notifySubscribers();
-      rethrow;
+      Error.throwWithStackTrace(surfacedError, stackTrace);
     }
   }
 
-  /// Synchronously triggers [dispatchAsync] without awaiting the result.
-  void dispatch(TArgs args) {
-    // ignore: discarded_futures
-    dispatchAsync(args);
-  }
-
-  /// Resets the store to the [ReactiveActionState.idle] state.
-  void reset() {
-    _snapshot = ReactiveActionStateSnapshot<TResult>(
-      status: ReactiveActionState.idle,
+  Future<TResult> _raceWithCancellation(
+    Future<TResult> action,
+    _ReactiveActionDispatch dispatch,
+  ) {
+    final completer = Completer<TResult>();
+    unawaited(
+      action.then<void>(
+        (result) {
+          if (!completer.isCompleted) completer.complete(result);
+        },
+        onError: (Object error, StackTrace stackTrace) {
+          if (!completer.isCompleted) {
+            completer.completeError(error, stackTrace);
+          }
+        },
+      ),
     );
-    _notifySubscribers();
+    dispatch.signal.future.then((_) {
+      if (!completer.isCompleted) {
+        completer.completeError(
+          dispatch.signal.reason ??
+              const ReactiveActionCancellationException('dispatch cancelled'),
+          StackTrace.current,
+        );
+      }
+    });
+    return completer.future;
   }
 
-  /// Disposes the store and clears all subscribers.
+  /// Aborts any in-flight dispatch and resets the store to idle.
+  void reset() {
+    if (_isDisposed) return;
+    _cancelActive('cancelled by reset');
+    _activeDispatch = null;
+    _setState(_idleSnapshot as ReactiveActionStateSnapshot<TResult>);
+  }
+
+  /// Returns a dispatch-only view bound to [signal].
+  ReactiveActionDispatchView<TArgs, TResult> withSignal(
+    CancellationToken signal,
+  ) => ReactiveActionDispatchView<TArgs, TResult>._(this, signal);
+
+  /// Cancels the active dispatch, clears subscribers, and disposes the store.
   void dispose() {
     if (_isDisposed) return;
     _isDisposed = true;
+    _cancelActive('cancelled by dispose');
+    _activeDispatch = null;
     _subscribers.clear();
   }
 
-  void _notifySubscribers() {
+  void _cancelActive(String message) {
+    _activeDispatch?.cancelInternally(
+      ReactiveActionCancellationException(message),
+    );
+  }
+
+  bool _isCurrent(_ReactiveActionDispatch dispatch) =>
+      !_isDisposed && identical(_activeDispatch, dispatch);
+
+  Object _cancellationReason(CancellationToken signal) =>
+      signal.reason ??
+      const ReactiveActionCancellationException('cancelled by the caller');
+
+  void _setState(ReactiveActionStateSnapshot<TResult> next) {
+    final current = _snapshot;
+    if (current.status == next.status &&
+        identical(current.result, next.result) &&
+        identical(current.error, next.error)) {
+      return;
+    }
+    _snapshot = next;
     for (final subscriber in List<ReactiveActionSubscriber>.of(_subscribers)) {
       subscriber();
     }
   }
 }
 
+class _ReactiveActionDispatch {
+  _ReactiveActionDispatch(this.callerSignal)
+    : _combinedSource = CancellationTokenSource(),
+      _internalSource = CancellationTokenSource();
+
+  final CancellationToken? callerSignal;
+  final CancellationTokenSource _combinedSource;
+  final CancellationTokenSource _internalSource;
+
+  CancellationToken get signal => _combinedSource.token;
+  bool get isInternallyCancelled => _internalSource.token.isCancelled;
+  Object? get internalReason => _internalSource.token.reason;
+
+  void cancelInternally(Object reason) {
+    _internalSource.cancel(reason);
+    _combinedSource.cancel(reason);
+  }
+
+  void cancelFromCaller(Object reason) => _combinedSource.cancel(reason);
+}
+
 /// Creates a [ReactiveActionStore] backed by [action].
 ReactiveActionStore<TArgs, TResult>
 createReactiveActionStore<TArgs extends List<Object?>, TResult>(
-  Future<TResult> Function(TArgs args) action,
-) {
-  return ReactiveActionStore<TArgs, TResult>._(action);
-}
+  ReactiveAction<TArgs, TResult> action,
+) => ReactiveActionStore<TArgs, TResult>._(action);

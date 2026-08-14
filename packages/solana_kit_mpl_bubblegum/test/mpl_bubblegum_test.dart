@@ -299,7 +299,7 @@ void main() {
     test('mplBubblegumProgramAddress is correct', () {
       expect(
         mplBubblegumProgramAddress,
-        'BGUMAp9Gph7G9Jn2tU58R5L2qPG1Mj9HP7G3G7VYV2Ma',
+        'BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY',
       );
     });
 

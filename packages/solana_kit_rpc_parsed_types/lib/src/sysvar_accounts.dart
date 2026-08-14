@@ -1,3 +1,4 @@
+// ignore_for_file: deprecated_consistency, remove_deprecations_in_breaking_versions
 import 'package:solana_kit_rpc_parsed_types/src/rpc_parsed_type.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 
@@ -267,22 +268,46 @@ class JsonParsedRentSysvar extends RpcParsedType<String, JsonParsedRentInfo>
 }
 
 /// The info payload for the rent sysvar.
+///
+/// Agave 4.1.0 reshaped the rent sysvar from `{ burnPercent, exemptionThreshold,
+/// lamportsPerByteYear }` to `{ lamportsPerByte }`. This type is a union of both
+/// shapes: narrow on `lamportsPerByte != null` (Agave 4.1.0+) versus
+/// `lamportsPerByteYear != null` (deprecated, pre-4.1.0) before accessing the
+/// fields. The legacy fields are `@Deprecated`.
+///
+/// Changed in @solana/kit v7.0.0 to match Agave 4.1.0.
 class JsonParsedRentInfo {
   /// Creates a new [JsonParsedRentInfo].
   const JsonParsedRentInfo({
-    required this.burnPercent,
-    required this.exemptionThreshold,
-    required this.lamportsPerByteYear,
+    this.burnPercent,
+    this.exemptionThreshold,
+    this.lamportsPerByte,
+    this.lamportsPerByteYear,
   });
 
   /// The percentage of collected rent to burn.
-  final int burnPercent;
+  ///
+  /// Deprecated in Agave 4.1.0; present only on validators running earlier
+  /// versions. Use [lamportsPerByte] on Agave 4.1.0+.
+  @Deprecated('Use `lamportsPerByte` on Agave 4.1.0+ validators')
+  final int? burnPercent;
 
   /// The exemption threshold multiplier.
-  final double exemptionThreshold;
+  ///
+  /// Deprecated in Agave 4.1.0; present only on validators running earlier
+  /// versions.
+  @Deprecated('Use `lamportsPerByte` on Agave 4.1.0+ validators')
+  final double? exemptionThreshold;
+
+  /// The lamports charged per byte (Agave 4.1.0+).
+  final StringifiedBigInt? lamportsPerByte;
 
   /// The lamports charged per byte-year.
-  final StringifiedBigInt lamportsPerByteYear;
+  ///
+  /// Deprecated in Agave 4.1.0; present only on validators running earlier
+  /// versions. Use [lamportsPerByte] on Agave 4.1.0+.
+  @Deprecated('Use `lamportsPerByte` on Agave 4.1.0+ validators')
+  final StringifiedBigInt? lamportsPerByteYear;
 
   @override
   bool operator ==(Object other) =>
@@ -291,6 +316,7 @@ class JsonParsedRentInfo {
           runtimeType == other.runtimeType &&
           burnPercent == other.burnPercent &&
           exemptionThreshold == other.exemptionThreshold &&
+          lamportsPerByte == other.lamportsPerByte &&
           lamportsPerByteYear == other.lamportsPerByteYear;
 
   @override
@@ -298,6 +324,7 @@ class JsonParsedRentInfo {
     runtimeType,
     burnPercent,
     exemptionThreshold,
+    lamportsPerByte,
     lamportsPerByteYear,
   );
 
@@ -305,6 +332,7 @@ class JsonParsedRentInfo {
   String toString() =>
       'JsonParsedRentInfo(burnPercent: $burnPercent, '
       'exemptionThreshold: $exemptionThreshold, '
+      'lamportsPerByte: $lamportsPerByte, '
       'lamportsPerByteYear: $lamportsPerByteYear)';
 }
 
