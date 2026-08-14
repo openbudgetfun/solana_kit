@@ -40,7 +40,7 @@ void main() {
     env = await IntegrationTestEnv.create();
     await env.deployProgram(
       bubblegumProgram,
-      'config/programs/mpl_bubblegum-68e4bc204099718f318d5fe258f60be09737416d.so',
+      'config/programs/mpl_bubblegum-v0.12.0.so',
     );
     await env.deployProgram(
       compressionProgram,

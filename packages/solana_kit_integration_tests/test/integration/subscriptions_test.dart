@@ -29,7 +29,7 @@ void main() {
     env = await IntegrationTestEnv.create();
     await env.deployProgram(
       subscriptionsProgram,
-      'config/programs/subscriptions-ts-client-v0.5.0.so',
+      'config/programs/subscriptions-v0.5.0.so',
     );
   });
 

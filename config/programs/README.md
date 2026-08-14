@@ -7,12 +7,18 @@ on every run.
 
 ## Programs
 
-| Artifact                                                    | Program                                                                                     | Pin / version                                                                         |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `subscriptions-ts-client-v0.5.0.so`                         | [solana-foundation/subscriptions](https://github.com/solana-foundation/subscriptions)       | `ts-client-v0.5.0` (see `config/reference-repos.json`)                                |
-| `mpl_bubblegum-68e4bc204099718f318d5fe258f60be09737416d.so` | [metaplex-foundation/mpl-bubblegum](https://github.com/metaplex-foundation/mpl-bubblegum)   | commit `68e4bc204099718f318d5fe258f60be09737416d` (see `config/reference-repos.json`) |
-| `spl_account_compression-ac-mainnet-tag.so`                 | [solana-program/account-compression](https://github.com/solana-program/account-compression) | `ac-mainnet-tag` (see `config/reference-repos.json`)                                  |
-| `noop.so`                                                   | [solana-program-library/noop](https://github.com/solana-labs/solana-program-library)        | deployed mainnet binary (no pinned reference)                                         |
+Artifact names follow `<package-name-minus-solana_kit>-<program-version>.so`
+(e.g. `solana_kit_subscriptions` -> `subscriptions-v0.5.0.so`,
+`solana_kit_mpl_bubblegum` -> `mpl_bubblegum-v0.12.0.so`). The version is the
+program crate version at the pinned reference; when the pin moves to a version
+that changes the program version, the artifact filename must be updated too.
+
+| Artifact                                    | Program                                                                                     | Pin / version                                                                         |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `subscriptions-v0.5.0.so`                   | [solana-foundation/subscriptions](https://github.com/solana-foundation/subscriptions)       | `ts-client-v0.5.0` (see `config/reference-repos.json`)                                |
+| `mpl_bubblegum-v0.12.0.so`                  | [metaplex-foundation/mpl-bubblegum](https://github.com/metaplex-foundation/mpl-bubblegum)   | commit `68e4bc204099718f318d5fe258f60be09737416d` (see `config/reference-repos.json`) |
+| `spl_account_compression-ac-mainnet-tag.so` | [solana-program/account-compression](https://github.com/solana-program/account-compression) | `ac-mainnet-tag` (see `config/reference-repos.json`)                                  |
+| `noop.so`                                   | [solana-program-library/noop](https://github.com/solana-labs/solana-program-library)        | deployed mainnet binary (no pinned reference)                                         |
 
 ## How these were obtained
 
