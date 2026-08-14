@@ -11,37 +11,37 @@ import 'package:test/test.dart';
 
 void main() {
   late IntegrationTestEnv env;
-  var surfPoolRunning = false;
 
   setUpAll(() async {
-    if (!await isSurfPoolRunning()) return;
-    surfPoolRunning = true;
-    env = await IntegrationTestEnv.connect();
+    env = await IntegrationTestEnv.create();
   });
 
-  test('transferSol moves lamports between accounts', () async {
-    if (!surfPoolRunning) return;
+  tearDownAll(() => env.dispose());
+
+  test('transferSol moves lamports to the recipient on-chain', () async {
     final recipient = generateKeyPairSigner();
     await env.surfnet.fundSol(env.payer.address, 5_000_000_000);
+    const amount = 1_000_000;
 
     final before = await env.rpc.getBalanceValue(env.payer.address).send();
-    final beforeBalance = before.value.value;
 
     await env.sendInstructions([
       getTransferSolInstruction(
         programAddress: systemProgramAddress,
         source: env.payer.address,
         destination: recipient.address,
-        amount: BigInt.from(1_000_000),
+        amount: BigInt.from(amount),
       ),
     ]);
 
+    // Assert the recipient holds exactly the transferred amount and the
+    // payer's balance decreased by at least the transfer plus fees.
     final recipientBalance = await env.rpc
         .getBalanceValue(recipient.address)
         .send();
-    expect(recipientBalance.value.value, equals(BigInt.from(1_000_000)));
+    expect(recipientBalance.value.value, equals(BigInt.from(amount)));
 
     final after = await env.rpc.getBalanceValue(env.payer.address).send();
-    expect(after.value.value, lessThan(beforeBalance));
+    expect(after.value.value, lessThan(before.value.value));
   });
 }

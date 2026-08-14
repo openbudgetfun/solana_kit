@@ -1,7 +1,10 @@
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
+import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart';
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
+import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart'
+    hide TransactionVersion;
 import 'package:solana_kit_signers/solana_kit_signers.dart';
 import 'package:solana_kit_surfpool/solana_kit_surfpool.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
@@ -11,19 +14,24 @@ import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 /// Default SurfPool RPC URL used by the `test:integration` workspace script.
 const defaultSurfPoolRpcUrl = 'http://localhost:8899';
 
+/// Default WebSocket URL for a local SurfPool instance.
+const defaultSurfPoolWsUrl = 'ws://localhost:8900';
+
 /// Default lamports funded to the integration test payer (10 SOL).
 const defaultPayerLamports = 10_000_000_000;
 
 /// A shared environment for on-chain integration tests against SurfPool.
 ///
-/// Connects to an already-running SurfPool instance (the `test:integration`
-/// script starts one), mints a funded [payer], and provides helpers to send
-/// transactions built from any program-client instruction.
+/// Use [IntegrationTestEnv.create] to attach to an already-running SurfPool
+/// instance (e.g. the one started by the `test:integration` workspace script)
+/// or to start a fresh one when none is reachable. Tests fail loudly when
+/// SurfPool cannot be reached or started — they never silently skip.
 class IntegrationTestEnv {
   IntegrationTestEnv._({
     required this.rpc,
     required this.surfnet,
     required this.payer,
+    required this.startedSurfnet,
   });
 
   /// The Solana RPC client bound to the local SurfPool instance.
@@ -35,21 +43,56 @@ class IntegrationTestEnv {
   /// A funded [KeyPairSigner] used as the default fee payer for tests.
   final KeyPairSigner payer;
 
-  /// Connects to a running SurfPool instance at [rpcUrl] and funds [payer]
-  /// with [payerLamports] lamports.
+  /// Whether this environment started the SurfPool process itself (and is
+  /// therefore responsible for stopping it in [dispose]).
+  final bool startedSurfnet;
+
+  /// Attaches to a running SurfPool instance at [rpcUrl], or starts a fresh
+  /// one on that URL when none is reachable.
   ///
-  /// SurfPool must already be running (the `test:integration` script starts
-  /// it). Use `isSurfPoolRunning()` to detect whether it is reachable.
-  static Future<IntegrationTestEnv> connect({
+  /// Throws when SurfPool is neither reachable nor startable, so integration
+  /// tests fail loudly instead of silently skipping. The [payer] is funded
+  /// with [payerLamports] lamports.
+  static Future<IntegrationTestEnv> create({
     String rpcUrl = defaultSurfPoolRpcUrl,
+    String wsUrl = defaultSurfPoolWsUrl,
     int payerLamports = defaultPayerLamports,
   }) async {
+    final (surfnet, started) = await _connectOrStart(
+      rpcUrl: rpcUrl,
+      wsUrl: wsUrl,
+    );
     final rpc = createSolanaRpc(url: rpcUrl, allowInsecureHttp: true);
-    final surfnet = Surfnet.connect(rpcUrl: Uri.parse(rpcUrl));
     final payer = generateKeyPairSigner();
     await surfnet.fundSol(payer.address, payerLamports);
-    return IntegrationTestEnv._(rpc: rpc, surfnet: surfnet, payer: payer);
+    return IntegrationTestEnv._(
+      rpc: rpc,
+      surfnet: surfnet,
+      payer: payer,
+      startedSurfnet: started,
+    );
   }
+
+  static Future<(Surfnet, bool)> _connectOrStart({
+    required String rpcUrl,
+    required String wsUrl,
+  }) async {
+    if (await isSurfPoolRunning(rpcUrl: rpcUrl)) {
+      return (Surfnet.connect(rpcUrl: Uri.parse(rpcUrl)), false);
+    }
+    // No existing instance — start one on the requested ports so the RPC
+    // client (which targets `rpcUrl`) can reach it.
+    final rpcPort = Uri.parse(rpcUrl).port;
+    final wsPort = Uri.parse(wsUrl).port;
+    final surfnet = await Surfnet.start(
+      config: SurfnetConfig(rpcPort: rpcPort, wsPort: wsPort),
+    );
+    return (surfnet, true);
+  }
+
+  /// Releases the resources held by this environment, stopping the SurfPool
+  /// process when this environment started it.
+  Future<void> dispose() => surfnet.stop();
 
   /// Returns a blockhash-based lifetime constraint using the latest blockhash.
   Future<BlockhashLifetimeConstraint> recentBlockhashLifetime() async {
@@ -88,6 +131,33 @@ class IntegrationTestEnv {
       lifetimeConstraint: compiled.lifetimeConstraint,
     );
     return sendAndConfirmTransaction(rpc: rpc, transaction: signedWithLifetime);
+  }
+
+  /// Fetches the confirmed transaction for [signature] as raw JSON, or `null`
+  /// when it cannot be found.
+  Future<Map<String, Object?>?> fetchTransaction(Signature signature) async {
+    return rpc
+        .getTransaction(
+          signature,
+          const GetTransactionConfig(
+            commitment: Commitment.confirmed,
+            // Integration transactions are version 0; request up to that.
+            maxSupportedTransactionVersion: 0,
+          ),
+        )
+        .send();
+  }
+
+  /// Returns the log messages emitted by the confirmed transaction at
+  /// [signature], or an empty list when unavailable.
+  Future<List<String>> transactionLogMessages(Signature signature) async {
+    final transaction = await fetchTransaction(signature);
+    if (transaction == null) return const [];
+    final meta = transaction['meta'];
+    if (meta is! Map<String, Object?>) return const [];
+    final logs = meta['logMessages'];
+    if (logs is! List) return const [];
+    return logs.whereType<String>().toList();
   }
 }
 

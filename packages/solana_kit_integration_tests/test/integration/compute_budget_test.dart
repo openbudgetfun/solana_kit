@@ -3,7 +3,8 @@
 ///
 /// Compute Budget instructions are prepend-only modifiers that affect the
 /// transaction they are included in. They confirm successfully when paired
-/// with a real instruction (here, a memo).
+/// with a real instruction (here, a memo), and the confirmed transaction
+/// reports the compute units consumed.
 @TestOn('vm')
 @Tags(['integration'])
 library;
@@ -16,18 +17,17 @@ import 'package:test/test.dart';
 
 void main() {
   late IntegrationTestEnv env;
-  var surfPoolRunning = false;
 
   setUpAll(() async {
-    if (!await isSurfPoolRunning()) return;
-    surfPoolRunning = true;
-    env = await IntegrationTestEnv.connect();
+    env = await IntegrationTestEnv.create();
   });
+
+  tearDownAll(() => env.dispose());
 
   test(
     'setComputeUnitLimit and setComputeUnitPrice confirm on-chain',
     () async {
-      if (!surfPoolRunning) return;
+      const memo = 'compute-budget integration';
       final signature = await env.sendInstructions([
         getSetComputeUnitLimitInstruction(
           programAddress: computeBudgetProgramAddress,
@@ -39,10 +39,16 @@ void main() {
         ),
         getAddMemoInstruction(
           programAddress: memoProgramAddress,
-          memo: 'compute-budget integration',
+          memo: memo,
         ),
       ]);
-      expect(signature.value, isNotEmpty);
+
+      // The memo instruction must have executed within the budgeted compute
+      // units; assert the confirmed transaction consumed some and logged the
+      // memo.
+      final logs = await env.transactionLogMessages(signature);
+      expect(logs, anyElement(contains(memo)));
+      expect(logs, anyElement(contains('Program ComputeBudget111111')));
     },
   );
 }

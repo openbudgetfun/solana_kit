@@ -1,7 +1,8 @@
 /// On-chain integration tests for the Memo program client against SurfPool.
 ///
 /// Run via the `test:integration` workspace script (which starts SurfPool) or
-/// directly after `devenv shell -- surfpool start`.
+/// directly — `IntegrationTestEnv.create` starts a SurfPool instance when one
+/// is not already running.
 @TestOn('vm')
 @Tags(['integration'])
 library;
@@ -13,32 +14,31 @@ import 'package:test/test.dart';
 
 void main() {
   late IntegrationTestEnv env;
-  var surfPoolRunning = false;
 
   setUpAll(() async {
-    if (!await isSurfPoolRunning()) return;
-    surfPoolRunning = true;
-    env = await IntegrationTestEnv.connect();
+    env = await IntegrationTestEnv.create();
   });
 
-  test('addMemo instruction confirms on-chain', () async {
-    if (!surfPoolRunning) return;
+  tearDownAll(() => env.dispose());
+
+  test('addMemo instruction lands on-chain and logs the memo', () async {
+    const memo = 'hello surfpool';
     final signature = await env.sendInstructions([
-      getAddMemoInstruction(
-        programAddress: memoProgramAddress,
-        memo: 'hello surfpool',
-      ),
+      getAddMemoInstruction(programAddress: memoProgramAddress, memo: memo),
     ]);
-    expect(signature.value, isNotEmpty);
+
+    // The memo program echoes the memo in its program log; assert the
+    // confirmed transaction actually contains it on-chain.
+    final logs = await env.transactionLogMessages(signature);
+    expect(logs, anyElement(contains(memo)));
   });
 
-  test('parsed addMemo instruction round-trips the memo text', () async {
-    if (!surfPoolRunning) return;
+  test('parsed addMemo instruction round-trips the memo text', () {
+    const memo = 'solana-kit dart';
     final instruction = getAddMemoInstruction(
       programAddress: memoProgramAddress,
-      memo: 'solana-kit dart',
+      memo: memo,
     );
-    final parsed = parseAddMemoInstruction(instruction);
-    expect(parsed.memo, equals('solana-kit dart'));
+    expect(parseAddMemoInstruction(instruction).memo, equals(memo));
   });
 }
