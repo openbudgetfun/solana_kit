@@ -30,6 +30,7 @@ in
       extra.monochange
       extra.pnpm
       extra.surfpool
+      extra.agave
     ]
     ++ lib.optionals stdenv.isDarwin [
       coreutils

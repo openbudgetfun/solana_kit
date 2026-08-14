@@ -24,11 +24,24 @@ real on-chain instruction error. It now converts `BigInt` indices to `int`.
 
 ## `solana_kit_integration_tests` (new, internal)
 
-A non-published workspace package that runs the generated program clients
+A non-published workspace package that runs every generated program client
 end-to-end against a local SurfPool Surfnet. It ships a shared
-`IntegrationTestEnv` harness (funds a payer, builds/signs/sends/confirms
-transactions) and initial on-chain suites for the Memo, System, and
-Compute Budget program clients. The remaining builtin program clients
-(token, token-2022, associated-token-account, address-lookup-table, stake,
-loader) and the deployable clients (subscriptions, mpl-bubblegum) follow the
-same pattern and will be added incrementally.
+`IntegrationTestEnv` harness (connects-or-starts SurfPool, funds a payer,
+builds/signs/sends/confirms transactions, deploys programs) and on-chain suites
+that assert the real on-chain outcome of each instruction:
+
+- Builtin programs: Memo, System (transfer), Compute Budget, Token
+  (createMint -> mintTo), Token-2022, Associated Token Account, Address Lookup
+  Table, Stake (initialize), and BPF Loader (initializeBuffer).
+- Subscriptions: the compiled program (`.so`) is committed under
+  `config/programs/` and deployed on-chain; `initSubscriptionAuthority` runs
+  and its PDA is verified on-chain.
+- MPL Bubblegum: Bubblegum + SPL Account Compression + Noop are deployed
+  on-chain (verified executable + owned by the BPF loader). A full
+  `createTree` currently panics inside the deployed Bubblegum binary on
+  SurfPool (`create_tree.rs:20`) — a program-internal issue tracked for
+  upstream; the client's instruction builders are covered by encoding tests.
+
+The compiled `.so` artifacts are committed (not rebuilt per run) and pinned to
+`config/reference-repos.json`; see `config/programs/README.md` for how they
+were obtained and when they must be regenerated.

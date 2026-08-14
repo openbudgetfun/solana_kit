@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
@@ -133,6 +136,22 @@ class IntegrationTestEnv {
     return sendAndConfirmTransaction(rpc: rpc, transaction: signedWithLifetime);
   }
 
+  /// Deploys the compiled program at [soPath] to [programId] and waits for
+  /// it to be executable.
+  ///
+  /// Programs bake their canonical program ID into the binary (`crate::ID`),
+  /// so they must be deployed at that same address for PDA derivation and
+  /// program-id checks to work. [soPath] is resolved relative to the workspace
+  /// root (see [resolveWorkspaceArtifactPath]).
+  Future<void> deployProgram(Address programId, String soPath) async {
+    await surfnet.deploy(
+      DeployOptions(
+        programId: programId,
+        soPath: resolveWorkspaceArtifactPath(soPath),
+      ),
+    );
+  }
+
   /// Fetches the confirmed transaction for [signature] as raw JSON, or `null`
   /// when it cannot be found.
   Future<Map<String, Object?>?> fetchTransaction(Signature signature) async {
@@ -172,4 +191,16 @@ Future<bool> isSurfPoolRunning({
   } on Object {
     return false;
   }
+}
+
+/// Resolves a workspace-relative artifact path (e.g. `config/programs/x.so`)
+/// from wherever the test process is running.
+///
+/// The `test:integration` script runs from the workspace root, but running a
+/// suite directly from the package directory needs two levels of `..`.
+String resolveWorkspaceArtifactPath(String relativePath) {
+  if (File(relativePath).existsSync()) return relativePath;
+  final fromPackage = '../../$relativePath';
+  if (File(fromPackage).existsSync()) return fromPackage;
+  return relativePath;
 }
