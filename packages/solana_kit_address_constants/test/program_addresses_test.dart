@@ -39,7 +39,7 @@ void main() {
     test('stakeConfigAddress has the correct value', () {
       expect(
         stakeConfigAddress.value,
-        'StakeConfig1111111111111111111111111111',
+        'StakeConfig11111111111111111111111111111111',
       );
     });
 

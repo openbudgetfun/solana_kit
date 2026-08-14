@@ -13,7 +13,7 @@ const tokenMetadataProgramAddress = Address(
 
 /// The address of the Metaplex Bubblegum (v1) program.
 const mplBubblegumProgramAddress = Address(
-  'BGUMAp9Gph7G9Jn2tU58R5L2qPG1Mj9HP7G3G7VYV2Ma',
+  'BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY',
 );
 
 /// The address of the Metaplex Token Auth Rules program.
