@@ -74,6 +74,7 @@ class SendAndConfirmTransactionConfig extends RpcTransactionConfirmationConfig {
   /// Builds the RPC send-transaction config from this confirmation config.
   SendTransactionConfig toSendTransactionConfig() {
     return SendTransactionConfig(
+      encoding: WireTransactionEncoding.base64,
       maxRetries: maxRetries,
       minContextSlot: minContextSlot,
       preflightCommitment: preflightCommitment ?? commitment,

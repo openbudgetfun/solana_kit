@@ -384,7 +384,11 @@ void main() {
       final sendPayload = transport.singlePayloadFor('sendTransaction');
       expect(sendPayload['params'], [
         expectedWire,
-        {'skipPreflight': true, 'preflightCommitment': 'processed'},
+        {
+          'encoding': 'base64',
+          'skipPreflight': true,
+          'preflightCommitment': 'processed',
+        },
       ]);
     });
 
