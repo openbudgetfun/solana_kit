@@ -25,5 +25,5 @@ Codama IDLs:
   helpers to the generated v0.5 API and retained the handwritten Loader v3
   account codecs and Loader v4 client surface
 
-Generated using `node scripts/generate_program_packages.cjs` — a new
+Generated using `node scripts/generate_program_packages.mjs` — a new
 generator script that runs the Codama renderer against upstream IDLs.
