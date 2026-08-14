@@ -25,7 +25,7 @@ void main() {
         const Address('De1egAFMkMWZSN5rYXRj9CAdheBamobVNubTsi9avR44'),
       );
       expect(SubscriptionsAccount.values, hasLength(6));
-      expect(SubscriptionsInstruction.values, hasLength(17));
+      expect(SubscriptionsInstruction.values, hasLength(18));
     });
   });
 
@@ -221,7 +221,13 @@ void main() {
       );
       _roundTrip(
         getResumeSubscriptionInstructionDataCodec(),
-        const ResumeSubscriptionInstructionData(),
+        ResumeSubscriptionInstructionData(resumeData: _resumeData),
+      );
+      _roundTrip(
+        getCancelSubscriptionNowInstructionDataCodec(),
+        CancelSubscriptionNowInstructionData(
+          cancelSubscriptionNowData: _cancelSubscriptionNowData,
+        ),
       );
     });
 
@@ -396,8 +402,24 @@ void main() {
             subscriptionAuthority: a4,
             eventAuthority: a4,
             selfProgram: subscriptionsProgramAddress,
+            resumeData: _resumeData,
           ),
-          const ResumeSubscriptionInstructionData(),
+          ResumeSubscriptionInstructionData(resumeData: _resumeData),
+        ),
+        (
+          getCancelSubscriptionNowInstruction(
+            programAddress: subscriptionsProgramAddress,
+            subscriber: a1,
+            merchant: a2,
+            planPda: a3,
+            subscriptionPda: a4,
+            eventAuthority: a5,
+            selfProgram: subscriptionsProgramAddress,
+            cancelSubscriptionNowData: _cancelSubscriptionNowData,
+          ),
+          CancelSubscriptionNowInstructionData(
+            cancelSubscriptionNowData: _cancelSubscriptionNowData,
+          ),
         ),
       ];
 
@@ -471,6 +493,12 @@ void main() {
       expect(
         parseResumeSubscriptionInstruction(instructions[13].$1).discriminator,
         13,
+      );
+      expect(
+        parseCancelSubscriptionNowInstruction(
+          instructions[14].$1,
+        ).discriminator,
+        17,
       );
     });
   });
@@ -684,23 +712,39 @@ final _transferDataAlt = TransferData(
   delegator: a1,
   mint: a2,
 );
+final _resumeData = ResumeData(expectedExpiresAtTs: BigInt.from(5000));
+final _cancelSubscriptionNowData = CancelSubscriptionNowData(
+  expectedCurrentPeriodStartTs: BigInt.from(1000),
+);
 final _updatePlanData = UpdatePlanData(
   status: 0,
   endTs: BigInt.from(3000),
   pullers: const [a1, a2, a3, a4],
   metadataUri: 'https://example.com/updated',
+  expectedCreatedAt: BigInt.from(1000),
+  expectedEndTs: BigInt.from(4000),
+  expectedPullers: const [a5, a6, a7, a8],
+  expectedMetadataUri: 'https://example.com/expected',
 );
 final _updatePlanDataClone = UpdatePlanData(
   status: 0,
   endTs: BigInt.from(3000),
   pullers: const [a1, a2, a3, a4],
   metadataUri: 'https://example.com/updated',
+  expectedCreatedAt: BigInt.from(1000),
+  expectedEndTs: BigInt.from(4000),
+  expectedPullers: const [a5, a6, a7, a8],
+  expectedMetadataUri: 'https://example.com/expected',
 );
 final _updatePlanDataAlt = UpdatePlanData(
   status: 1,
   endTs: BigInt.from(3000),
   pullers: const [a1, a2, a3, a4],
   metadataUri: 'https://example.com/updated',
+  expectedCreatedAt: BigInt.from(1000),
+  expectedEndTs: BigInt.from(4000),
+  expectedPullers: const [a5, a6, a7, a8],
+  expectedMetadataUri: 'https://example.com/expected',
 );
 
 final _fixedDelegation = FixedDelegation(

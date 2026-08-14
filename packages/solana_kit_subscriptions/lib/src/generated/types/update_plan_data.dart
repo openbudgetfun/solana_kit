@@ -17,12 +17,20 @@ class UpdatePlanData {
     required this.endTs,
     required this.pullers,
     required this.metadataUri,
+    required this.expectedCreatedAt,
+    required this.expectedEndTs,
+    required this.expectedPullers,
+    required this.expectedMetadataUri,
   });
 
   final int status;
   final BigInt endTs;
   final List<Address> pullers;
   final String metadataUri;
+  final BigInt expectedCreatedAt;
+  final BigInt expectedEndTs;
+  final List<Address> expectedPullers;
+  final String expectedMetadataUri;
 
   @override
   bool operator ==(Object other) =>
@@ -32,14 +40,27 @@ class UpdatePlanData {
           status == other.status &&
           endTs == other.endTs &&
           pullers == other.pullers &&
-          metadataUri == other.metadataUri;
+          metadataUri == other.metadataUri &&
+          expectedCreatedAt == other.expectedCreatedAt &&
+          expectedEndTs == other.expectedEndTs &&
+          expectedPullers == other.expectedPullers &&
+          expectedMetadataUri == other.expectedMetadataUri;
 
   @override
-  int get hashCode => Object.hash(status, endTs, pullers, metadataUri);
+  int get hashCode => Object.hash(
+    status,
+    endTs,
+    pullers,
+    metadataUri,
+    expectedCreatedAt,
+    expectedEndTs,
+    expectedPullers,
+    expectedMetadataUri,
+  );
 
   @override
   String toString() =>
-      'UpdatePlanData(status: $status, endTs: $endTs, pullers: $pullers, metadataUri: $metadataUri)';
+      'UpdatePlanData(status: $status, endTs: $endTs, pullers: $pullers, metadataUri: $metadataUri, expectedCreatedAt: $expectedCreatedAt, expectedEndTs: $expectedEndTs, expectedPullers: $expectedPullers, expectedMetadataUri: $expectedMetadataUri)';
 }
 
 Encoder<UpdatePlanData> getUpdatePlanDataEncoder() {
@@ -48,6 +69,13 @@ Encoder<UpdatePlanData> getUpdatePlanDataEncoder() {
     ('endTs', getI64Encoder()),
     ('pullers', getArrayEncoder(getAddressEncoder(), size: FixedArraySize(4))),
     ('metadataUri', fixEncoderSize(getUtf8Encoder(), 128)),
+    ('expectedCreatedAt', getI64Encoder()),
+    ('expectedEndTs', getI64Encoder()),
+    (
+      'expectedPullers',
+      getArrayEncoder(getAddressEncoder(), size: FixedArraySize(4)),
+    ),
+    ('expectedMetadataUri', fixEncoderSize(getUtf8Encoder(), 128)),
   ]);
 
   return transformEncoder(
@@ -57,6 +85,10 @@ Encoder<UpdatePlanData> getUpdatePlanDataEncoder() {
       'endTs': value.endTs,
       'pullers': value.pullers,
       'metadataUri': value.metadataUri,
+      'expectedCreatedAt': value.expectedCreatedAt,
+      'expectedEndTs': value.expectedEndTs,
+      'expectedPullers': value.expectedPullers,
+      'expectedMetadataUri': value.expectedMetadataUri,
     },
   );
 }
@@ -67,6 +99,13 @@ Decoder<UpdatePlanData> getUpdatePlanDataDecoder() {
     ('endTs', getI64Decoder()),
     ('pullers', getArrayDecoder(getAddressDecoder(), size: FixedArraySize(4))),
     ('metadataUri', fixDecoderSize(getUtf8Decoder(), 128)),
+    ('expectedCreatedAt', getI64Decoder()),
+    ('expectedEndTs', getI64Decoder()),
+    (
+      'expectedPullers',
+      getArrayDecoder(getAddressDecoder(), size: FixedArraySize(4)),
+    ),
+    ('expectedMetadataUri', fixDecoderSize(getUtf8Decoder(), 128)),
   ]);
 
   return transformDecoder(
@@ -76,6 +115,10 @@ Decoder<UpdatePlanData> getUpdatePlanDataDecoder() {
       endTs: map['endTs']! as BigInt,
       pullers: map['pullers']! as List<Address>,
       metadataUri: map['metadataUri']! as String,
+      expectedCreatedAt: map['expectedCreatedAt']! as BigInt,
+      expectedEndTs: map['expectedEndTs']! as BigInt,
+      expectedPullers: map['expectedPullers']! as List<Address>,
+      expectedMetadataUri: map['expectedMetadataUri']! as String,
     ),
   );
 }

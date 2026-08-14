@@ -10,97 +10,103 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-import '../types/resume_data.dart';
+import '../types/cancel_subscription_now_data.dart';
 
 /// The discriminator field name: 'discriminator'.
 /// Offset: 0.
 
 @immutable
-class ResumeSubscriptionInstructionData {
-  const ResumeSubscriptionInstructionData({
-    this.discriminator = 13,
-    required this.resumeData,
+class CancelSubscriptionNowInstructionData {
+  const CancelSubscriptionNowInstructionData({
+    this.discriminator = 17,
+    required this.cancelSubscriptionNowData,
   });
 
   final int discriminator;
-  final ResumeData resumeData;
+  final CancelSubscriptionNowData cancelSubscriptionNowData;
 }
 
-Encoder<ResumeSubscriptionInstructionData>
-getResumeSubscriptionInstructionDataEncoder() {
+Encoder<CancelSubscriptionNowInstructionData>
+getCancelSubscriptionNowInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
-    ('resumeData', getResumeDataEncoder()),
+    ('cancelSubscriptionNowData', getCancelSubscriptionNowDataEncoder()),
   ]);
 
   return transformEncoder(
     structEncoder,
-    (ResumeSubscriptionInstructionData value) => <String, Object?>{
+    (CancelSubscriptionNowInstructionData value) => <String, Object?>{
       'discriminator': value.discriminator,
-      'resumeData': value.resumeData,
+      'cancelSubscriptionNowData': value.cancelSubscriptionNowData,
     },
   );
 }
 
-Decoder<ResumeSubscriptionInstructionData>
-getResumeSubscriptionInstructionDataDecoder() {
+Decoder<CancelSubscriptionNowInstructionData>
+getCancelSubscriptionNowInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU8Decoder()),
-    ('resumeData', getResumeDataDecoder()),
+    ('cancelSubscriptionNowData', getCancelSubscriptionNowDataDecoder()),
   ]);
 
   return transformDecoder(
     structDecoder,
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ResumeSubscriptionInstructionData(
+        CancelSubscriptionNowInstructionData(
           discriminator: map['discriminator']! as int,
-          resumeData: map['resumeData']! as ResumeData,
+          cancelSubscriptionNowData:
+              map['cancelSubscriptionNowData']! as CancelSubscriptionNowData,
         ),
   );
 }
 
-Codec<ResumeSubscriptionInstructionData, ResumeSubscriptionInstructionData>
-getResumeSubscriptionInstructionDataCodec() {
+Codec<
+  CancelSubscriptionNowInstructionData,
+  CancelSubscriptionNowInstructionData
+>
+getCancelSubscriptionNowInstructionDataCodec() {
   return combineCodec(
-    getResumeSubscriptionInstructionDataEncoder(),
-    getResumeSubscriptionInstructionDataDecoder(),
+    getCancelSubscriptionNowInstructionDataEncoder(),
+    getCancelSubscriptionNowInstructionDataDecoder(),
   );
 }
 
-/// Creates a [ResumeSubscription] instruction.
-Instruction getResumeSubscriptionInstruction({
+/// Creates a [CancelSubscriptionNow] instruction.
+Instruction getCancelSubscriptionNowInstruction({
   required Address programAddress,
   required Address subscriber,
+  required Address merchant,
   required Address planPda,
   required Address subscriptionPda,
-  required Address subscriptionAuthority,
   required Address eventAuthority,
   required Address selfProgram,
-  required ResumeData resumeData,
+  required CancelSubscriptionNowData cancelSubscriptionNowData,
 }) {
-  final instructionData = ResumeSubscriptionInstructionData(
-    resumeData: resumeData,
+  final instructionData = CancelSubscriptionNowInstructionData(
+    cancelSubscriptionNowData: cancelSubscriptionNowData,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
       AccountMeta(address: subscriber, role: AccountRole.readonlySigner),
+      AccountMeta(address: merchant, role: AccountRole.readonlySigner),
       AccountMeta(address: planPda, role: AccountRole.readonly),
       AccountMeta(address: subscriptionPda, role: AccountRole.writable),
-      AccountMeta(address: subscriptionAuthority, role: AccountRole.readonly),
       AccountMeta(address: eventAuthority, role: AccountRole.readonly),
       AccountMeta(address: selfProgram, role: AccountRole.readonly),
     ],
-    data: getResumeSubscriptionInstructionDataEncoder().encode(instructionData),
+    data: getCancelSubscriptionNowInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
-/// Parses a [ResumeSubscription] instruction from raw instruction data.
-ResumeSubscriptionInstructionData parseResumeSubscriptionInstruction(
+/// Parses a [CancelSubscriptionNow] instruction from raw instruction data.
+CancelSubscriptionNowInstructionData parseCancelSubscriptionNowInstruction(
   Instruction instruction,
 ) {
-  return getResumeSubscriptionInstructionDataDecoder().decode(
+  return getCancelSubscriptionNowInstructionDataDecoder().decode(
     instruction.data!,
   );
 }

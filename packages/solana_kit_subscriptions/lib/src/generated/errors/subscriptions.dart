@@ -219,6 +219,12 @@ const int subscriptionsErrorPlanTermsMismatch = 0x207; // 519
 /// Message: "A finite plan end timestamp can only be shortened, not removed or extended"
 const int subscriptionsErrorPlanEndTsCannotExtend = 0x208; // 520
 
+/// Message: "Subscription approval does not match the current subscription"
+const int subscriptionsErrorStaleSubscriptionApproval = 0x209; // 521
+
+/// Message: "Plan update approval does not match the current plan state"
+const int subscriptionsErrorStalePlanApproval = 0x20a; // 522
+
 /// Message: "Invalid event authority PDA"
 const int subscriptionsErrorInvalidEventAuthority = 0x258; // 600
 
@@ -341,6 +347,10 @@ const Map<int, String> _subscriptionsErrorMessages = {
       'Subscription plan terms do not match the current plan',
   subscriptionsErrorPlanEndTsCannotExtend:
       'A finite plan end timestamp can only be shortened, not removed or extended',
+  subscriptionsErrorStaleSubscriptionApproval:
+      'Subscription approval does not match the current subscription',
+  subscriptionsErrorStalePlanApproval:
+      'Plan update approval does not match the current plan state',
   subscriptionsErrorInvalidEventAuthority: 'Invalid event authority PDA',
   subscriptionsErrorInvalidEventData: 'Invalid event data',
   subscriptionsErrorInvalidEventTag: 'Invalid event tag prefix',
