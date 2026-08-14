@@ -61,6 +61,4 @@ when deployed at the baked-in address):
 - SPL Account Compression: `cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK`
 - Noop: `noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV`
 
-> **Note:** `solana_kit_address_constants` currently ships stale addresses for
-> the account-compression and noop programs. The correct mainnet IDs above
-> should be ported into that package (see the integration tests for usage).
+The `solana_kit_address_constants` package ships these canonical IDs.

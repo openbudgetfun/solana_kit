@@ -28,10 +28,10 @@ void main() {
           payer: const Address('11111111111111111111111111111112'),
           treeCreator: const Address('11111111111111111111111111111112'),
           logWrapper: const Address(
-            'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
+            'noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV',
           ),
           compressionProgram: const Address(
-            'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+            'cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK',
           ),
           systemProgram: const Address('11111111111111111111111111111112'),
           maxDepth: 14,
@@ -56,10 +56,10 @@ void main() {
           leafDelegate: const Address('11111111111111111111111111111112'),
           merkleTree: const Address('11111111111111111111111111111112'),
           logWrapper: const Address(
-            'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
+            'noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV',
           ),
           compressionProgram: const Address(
-            'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+            'cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK',
           ),
           systemProgram: const Address('11111111111111111111111111111112'),
           root: List.filled(32, 0),
@@ -85,10 +85,10 @@ void main() {
           newLeafOwner: const Address('11111111111111111111111111111112'),
           merkleTree: const Address('11111111111111111111111111111112'),
           logWrapper: const Address(
-            'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
+            'noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV',
           ),
           compressionProgram: const Address(
-            'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+            'cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK',
           ),
           systemProgram: const Address('11111111111111111111111111111112'),
           root: List.filled(32, 0),
@@ -116,10 +116,10 @@ void main() {
           newLeafDelegate: const Address('11111111111111111111111111111112'),
           merkleTree: const Address('11111111111111111111111111111112'),
           logWrapper: const Address(
-            'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
+            'noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV',
           ),
           compressionProgram: const Address(
-            'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+            'cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK',
           ),
           systemProgram: const Address('11111111111111111111111111111112'),
           root: List.filled(32, 0),
@@ -146,10 +146,10 @@ void main() {
           payer: const Address('11111111111111111111111111111112'),
           treeDelegate: const Address('11111111111111111111111111111112'),
           logWrapper: const Address(
-            'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
+            'noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV',
           ),
           compressionProgram: const Address(
-            'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+            'cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK',
           ),
           systemProgram: const Address('11111111111111111111111111111112'),
           message: const MetadataArgs(

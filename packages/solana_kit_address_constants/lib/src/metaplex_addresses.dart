@@ -28,12 +28,12 @@ const mplCoreProgramAddress = Address(
 
 /// The address of the SPL Account Compression program.
 const splAccountCompressionProgramAddress = Address(
-  'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+  'cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK',
 );
 
 /// The address of the Noop (Log Wrapper) program.
 ///
 /// Used alongside the SPL Account Compression program for proof verification.
 const noopProgramAddress = Address(
-  'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
+  'noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV',
 );

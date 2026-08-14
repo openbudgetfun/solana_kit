@@ -270,7 +270,7 @@ void main() {
     test('noopProgramAddress has the correct value', () {
       expect(
         noopProgramAddress.value,
-        'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK',
+        'noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV',
       );
     });
 

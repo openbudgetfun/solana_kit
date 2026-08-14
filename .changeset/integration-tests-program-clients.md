@@ -1,6 +1,8 @@
 ---
 "solana_kit_transaction_confirmation": patch
 "solana_kit_errors": patch
+"solana_kit_address_constants": patch
+"solana_kit_spl_account_compression": patch
 "solana_kit_integration_tests": minor
 ---
 
@@ -21,6 +23,16 @@ Fix `getSolanaErrorFromTransactionError` to handle instruction-error indices
 returned as `BigInt` (as SurfPool does). The instruction index was cast
 `as num`, which threw `_BigIntImpl is not a subtype of num` and masked the
 real on-chain instruction error. It now converts `BigInt` indices to `int`.
+
+## `solana_kit_address_constants` / `solana_kit_spl_account_compression` (patch)
+
+Fix the SPL Account Compression and Noop program addresses to the live
+mainnet IDs. The previous constants (`cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi`
+and `noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK`) point to accounts that do
+not exist on mainnet; the corrected addresses are
+`cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK` and
+`noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV`. SurfPool integration tests
+for MPL Bubblegum confirmed the corrected IDs resolve to deployed programs.
 
 ## `solana_kit_integration_tests` (new, internal)
 

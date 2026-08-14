@@ -24,9 +24,8 @@ import 'package:test/test.dart';
 void main() {
   late IntegrationTestEnv env;
 
-  // Canonical program IDs baked into the deployed binaries. Note: the
-  // `solana_kit_address_constants` package currently has stale addresses for
-  // the compression/noop programs; the values below are the live mainnet IDs.
+  // Canonical program IDs baked into the deployed binaries (also shipped by
+  // `solana_kit_address_constants`).
   const bubblegumProgram = Address(
     'BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY',
   );
