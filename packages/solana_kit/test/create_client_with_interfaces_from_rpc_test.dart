@@ -1,8 +1,4 @@
-import 'dart:typed_data';
-
 import 'package:solana_kit/solana_kit.dart';
-import 'package:solana_kit_accounts/solana_kit_accounts.dart';
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 import 'package:test/test.dart';
 
@@ -69,7 +65,7 @@ void main() {
       });
       final client = createClientWithFetchAccountsFromRpc(rpc);
       final accounts = await client.fetchAccounts([
-        Address('11111111111111111111111111111111'),
+        const Address('11111111111111111111111111111111'),
       ]);
       expect(accounts, hasLength(1));
     });

@@ -1,6 +1,6 @@
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_offchain_messages/solana_kit_offchain_messages.dart';
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:test/test.dart';
 
 OffchainMessageSignatory _signatory(String address) =>

@@ -3,13 +3,12 @@ import 'dart:async';
 import 'package:solana_kit/solana_kit.dart';
 import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart'
     hide isAbortError;
-import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('promises', () {
     test('isAbortError recognizes AbortError', () {
-      expect(isAbortError(AbortError()), isTrue);
+      expect(isAbortError(const AbortError()), isTrue);
       expect(isAbortError(StateError('nope')), isFalse);
       expect(isAbortError(null), isFalse);
     });
