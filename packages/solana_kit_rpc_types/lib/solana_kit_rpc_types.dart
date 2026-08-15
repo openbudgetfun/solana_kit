@@ -11,6 +11,7 @@ export 'src/cluster_url.dart';
 export 'src/commitment.dart';
 export 'src/encoded_bytes.dart';
 export 'src/encoding.dart';
+export 'src/get_transactions_for_address_types.dart';
 export 'src/lamports.dart';
 export 'src/latest_blockhash_value.dart';
 export 'src/rpc_response.dart';
