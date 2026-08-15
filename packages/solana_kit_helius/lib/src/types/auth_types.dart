@@ -4,49 +4,252 @@ import 'dart:typed_data';
 import 'package:solana_kit_helius/src/internal/json_reader.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart' show KeyPair;
 
-/// Request for agentic signup with a wallet address.
-class AgenticSignupRequest {
-  /// Creates an agentic signup request.
-  const AgenticSignupRequest({required this.walletAddress});
+// ── Signup types (v3.0.0) ──────────────────────────────────────────────────
 
-  /// Creates an [AgenticSignupRequest] from a JSON map.
-  factory AgenticSignupRequest.fromJson(Map<String, Object?> json) {
-    final r = JsonReader(json);
-    return AgenticSignupRequest(
-      walletAddress: r.requireString('walletAddress'),
-    );
-  }
+/// Request for unified signup (v3.0.0). Replaces the legacy agentic signup.
+///
+/// Either provide [secretKey] for SDK-authenticated signup, or provide
+/// [jwt]/[refId]/[walletAddress] for pre-authenticated signup.
+class SignupRequest {
+  /// Creates a signup request with a secret key (SDK-authenticated).
+  const SignupRequest.secretKey({
+    required this.secretKey,
+    required this.plan,
+    this.period = 'monthly',
+    this.email,
+    this.firstName,
+    this.lastName,
+    this.couponCode,
+    this.paymentHost,
+  })  : jwt = null,
+        refId = null,
+        walletAddress = null;
 
-  /// Wallet address signing up for the agentic plan.
+  /// Creates a signup request from pre-existing authentication.
+  const SignupRequest.preauthenticated({
+    required this.jwt,
+    required this.refId,
+    required this.walletAddress,
+    required this.plan,
+    this.period = 'monthly',
+    this.email,
+    this.firstName,
+    this.lastName,
+    this.couponCode,
+    this.paymentHost,
+  }) : secretKey = null;
+
+  /// Base64-encoded 64-byte Solana CLI-format secret key.
+  final String? secretKey;
+
+  /// Pre-existing JWT from wallet signup.
+  final String? jwt;
+
+  /// Pre-existing refId from wallet signup.
+  final String? refId;
+
+  /// Pre-existing wallet address.
+  final String? walletAddress;
+
+  /// Plan to subscribe to: 'agent', 'developer', 'business', or 'professional'.
+  final String plan;
+
+  /// Billing period. Ignored for agent plan. Defaults to 'monthly'.
+  final String period;
+
+  /// Contact email — required when creating a fresh payment intent.
+  final String? email;
+
+  /// First name — required when creating a fresh payment intent.
+  final String? firstName;
+
+  /// Last name — required when creating a fresh payment intent.
+  final String? lastName;
+
+  /// Optional coupon code.
+  final String? couponCode;
+
+  /// Override the payment host URL.
+  final String? paymentHost;
+}
+
+/// RPC endpoint URLs for a provisioned project.
+class SignupEndpoints {
+  /// Creates endpoint URLs.
+  const SignupEndpoints({required this.mainnet, required this.devnet});
+
+  /// Mainnet RPC endpoint URL.
+  final String mainnet;
+
+  /// Devnet RPC endpoint URL.
+  final String devnet;
+}
+
+/// Discriminated union result from the unified signup (v3.0.0).
+sealed class SignupResult {
+  const SignupResult._();
+}
+
+/// User is already subscribed to the requested plan.
+class AlreadySubscribedResult extends SignupResult {
+  /// Creates an already-subscribed result.
+  const AlreadySubscribedResult({
+    required this.jwt,
+    required this.refId,
+    required this.walletAddress,
+    required this.projectId,
+    required this.apiKey,
+    required this.endpoints,
+  }) : super._();
+
+  /// Authentication token.
+  final String jwt;
+
+  /// Reference identifier.
+  final String refId;
+
+  /// Wallet address.
   final String walletAddress;
 
-  /// Serializes this request to a JSON map.
-  Map<String, Object?> toJson() => {'walletAddress': walletAddress};
+  /// Project identifier.
+  final String projectId;
+
+  /// API key for the project.
+  final String apiKey;
+
+  /// RPC endpoints for the project.
+  final SignupEndpoints endpoints;
 }
 
-/// Response from an agentic signup.
-class AgenticSignupResponse {
-  /// Creates an agentic signup response.
-  const AgenticSignupResponse({required this.apiKey, required this.projectId});
+/// User has an existing project on a different plan — upgrade required.
+class UpgradeRequiredResult extends SignupResult {
+  /// Creates an upgrade-required result.
+  const UpgradeRequiredResult({
+    required this.jwt,
+    required this.refId,
+    required this.walletAddress,
+    required this.currentPlan,
+    required this.requestedPlan,
+  }) : super._();
 
-  /// Creates an [AgenticSignupResponse] from a JSON map.
-  factory AgenticSignupResponse.fromJson(Map<String, Object?> json) {
+  /// Authentication token.
+  final String jwt;
+
+  /// Reference identifier.
+  final String refId;
+
+  /// Wallet address.
+  final String walletAddress;
+
+  /// Current subscription plan.
+  final String currentPlan;
+
+  /// Requested subscription plan.
+  final String requestedPlan;
+}
+
+/// Payment is required to complete signup.
+class PaymentRequiredResult extends SignupResult {
+  /// Creates a payment-required result.
+  const PaymentRequiredResult({
+    required this.jwt,
+    required this.refId,
+    required this.walletAddress,
+    required this.paymentLink,
+  }) : super._();
+
+  /// Authentication token.
+  final String jwt;
+
+  /// Reference identifier.
+  final String refId;
+
+  /// Wallet address.
+  final String walletAddress;
+
+  /// Hosted-checkout payment link.
+  final PaymentLink paymentLink;
+}
+
+// ── PaymentLink type (shared between auth and checkout) ─────────────────────
+
+/// Hosted-checkout link returned to the caller.
+///
+/// The user clicks [paymentUrl] in a browser, OR an agent sends
+/// [amountCents] (× 10_000) USDC raw to [destinationWallet] with
+/// [memo] = [paymentIntentId].
+class PaymentLink {
+  /// Creates a payment link.
+  const PaymentLink({
+    required this.kind,
+    required this.paymentIntentId,
+    required this.amountCents,
+    required this.destinationWallet,
+    required this.memo,
+    required this.expiresAt,
+    required this.paymentUrl,
+    required this.solanaPayUrl,
+    required this.planName,
+  });
+
+  /// Creates a [PaymentLink] from a JSON map.
+  factory PaymentLink.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-    return AgenticSignupResponse(
-      apiKey: r.requireString('apiKey'),
-      projectId: r.requireString('projectId'),
+    return PaymentLink(
+      kind: r.requireString('kind'),
+      paymentIntentId: r.requireString('paymentIntentId'),
+      amountCents: r.requireInt('amountCents'),
+      destinationWallet: r.requireString('destinationWallet'),
+      memo: r.requireString('memo'),
+      expiresAt: r.requireString('expiresAt'),
+      paymentUrl: r.requireString('paymentUrl'),
+      solanaPayUrl: r.requireString('solanaPayUrl'),
+      planName: r.requireString('planName'),
     );
   }
 
-  /// API key issued for the new project.
-  final String apiKey;
+  /// Always 'payment_required'.
+  final String kind;
 
-  /// Identifier of the created project.
-  final String projectId;
+  /// Payment intent identifier (also used as memo).
+  final String paymentIntentId;
 
-  /// Serializes this response to a JSON map.
-  Map<String, Object?> toJson() => {'apiKey': apiKey, 'projectId': projectId};
+  /// Amount in cents.
+  final int amountCents;
+
+  /// Merchant USDC wallet address.
+  final String destinationWallet;
+
+  /// Memo for the payment (always equals [paymentIntentId]).
+  final String memo;
+
+  /// Expiry timestamp.
+  final String expiresAt;
+
+  /// Public payment URL (e.g. `https://dashboard.helius.dev/pay/<id>`).
+  final String paymentUrl;
+
+  /// Raw `solana:` URI for wallet apps.
+  final String solanaPayUrl;
+
+  /// Display name resolved from plan/period.
+  final String planName;
+
+  /// Serializes this payment link to a JSON map.
+  Map<String, Object?> toJson() => {
+        'kind': kind,
+        'paymentIntentId': paymentIntentId,
+        'amountCents': amountCents,
+        'destinationWallet': destinationWallet,
+        'memo': memo,
+        'expiresAt': expiresAt,
+        'paymentUrl': paymentUrl,
+        'solanaPayUrl': solanaPayUrl,
+        'planName': planName,
+      };
 }
+
+// ── Legacy wallet signup types ──────────────────────────────────────────────
 
 /// Request for wallet signup with signature verification.
 class WalletSignupRequest {
@@ -78,10 +281,10 @@ class WalletSignupRequest {
 
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
-    'walletAddress': walletAddress,
-    'signature': signature,
-    'message': message,
-  };
+        'walletAddress': walletAddress,
+        'signature': signature,
+        'message': message,
+      };
 }
 
 /// Response from a wallet signup.
@@ -107,6 +310,8 @@ class WalletSignupResponse {
   /// Serializes this response to a JSON map.
   Map<String, Object?> toJson() => {'apiKey': apiKey, 'projectId': projectId};
 }
+
+// ── Project and API key types ───────────────────────────────────────────────
 
 /// Request to create a new project.
 class CreateProjectRequest {
@@ -161,11 +366,11 @@ class HeliusProject {
 
   /// Serializes this project to a JSON map.
   Map<String, Object?> toJson() => {
-    'id': id,
-    'name': name,
-    'apiKey': apiKey,
-    'createdAt': createdAt,
-  };
+        'id': id,
+        'name': name,
+        'apiKey': apiKey,
+        'createdAt': createdAt,
+      };
 }
 
 /// Request to create a new API key.
@@ -227,11 +432,11 @@ class HeliusApiKey {
 
   /// Serializes this API key to a JSON map.
   Map<String, Object?> toJson() => {
-    'id': id,
-    'key': key,
-    'name': name,
-    'createdAt': createdAt,
-  };
+        'id': id,
+        'key': key,
+        'name': name,
+        'createdAt': createdAt,
+      };
 }
 
 /// Response containing credit balance information.
@@ -259,9 +464,9 @@ class CheckBalancesResponse {
 
   /// Serializes this response to a JSON map.
   Map<String, Object?> toJson() => {
-    'credits': credits,
-    'creditsUsed': creditsUsed,
-  };
+        'credits': credits,
+        'creditsUsed': creditsUsed,
+      };
 }
 
 /// A keypair result containing public and secret keys.
@@ -286,17 +491,17 @@ class KeypairResult {
 
   /// Serializes this keypair result to a JSON map.
   Map<String, Object?> toJson() => {
-    'publicKey': publicKey,
-    'secretKey': secretKey,
-  };
+        'publicKey': publicKey,
+        'secretKey': secretKey,
+      };
 }
 
 /// Request to sign an auth message.
 class SignAuthMessageRequest {
   /// Creates a sign-auth-message request.
   const SignAuthMessageRequest({
-    required this.secretKey,
     this.message,
+    required this.secretKey,
     this.timestamp,
   });
 
@@ -361,10 +566,10 @@ class SignAuthMessageRequest {
 
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
-    if (message != null) 'message': message,
-    'secretKey': secretKey,
-    if (timestamp != null) 'timestamp': timestamp,
-  };
+        if (message != null) 'message': message,
+        'secretKey': secretKey,
+        if (timestamp != null) 'timestamp': timestamp,
+      };
 }
 
 /// Response containing a signed auth message.
@@ -389,7 +594,7 @@ class SignAuthMessageResponse {
 
   /// Serializes this response to a JSON map.
   Map<String, Object?> toJson() => {
-    if (message != null) 'message': message,
-    'signature': signature,
-  };
+        if (message != null) 'message': message,
+        'signature': signature,
+      };
 }
