@@ -62,4 +62,7 @@ config, run `clone:repos`, regenerate the affected package with
 3. Run `clone:repos` to fetch the new revision.
 4. Run `clone:repos:status` to confirm your local clones match the config.
 5. Re-run the Codama generator or handwritten implementation work for the affected package.
-6. Review the diff, bump the package version, and add a changeset.
+6. If the program has a committed `.so` artifact (see `config/programs/README.md`),
+   rebuild it with `build:program-artifacts` and update the artifact version in
+   `config/programs/artifacts.json` if the program crate version changed.
+7. Review the diff, bump the package version, and add a changeset.

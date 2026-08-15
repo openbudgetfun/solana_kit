@@ -1,0 +1,46 @@
+{
+  "artifacts": [
+    {
+      "name": "subscriptions",
+      "version": "0.5.0",
+      "repo": "subscriptions",
+      "programDir": "program",
+      "crateName": "subscriptions_program",
+      "programId": "De1egAFMkMWZSN5rYXRj9CAdheBamobVNubTsi9avR44",
+      "needsAhashPatch": false,
+      "notes": "solana-program 2.x; builds cleanly with the current platform-tools"
+    },
+    {
+      "name": "mpl_bubblegum",
+      "version": "0.12.0",
+      "repo": "mpl-bubblegum",
+      "programDir": "programs/bubblegum/program",
+      "workspaceToml": "programs/bubblegum/Cargo.toml",
+      "crateName": "bubblegum",
+      "programId": "BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY",
+      "needsAhashPatch": true,
+      "notes": "solana-program 1.18.x; requires the ahash 0.7.6 stdsimd patch (see README)"
+    },
+    {
+      "name": "spl_account_compression",
+      "version": "0.3.3",
+      "repo": "account-compression",
+      "programDir": "account-compression/programs/account-compression",
+      "crateName": "spl_account_compression",
+      "programId": "cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK",
+      "needsAhashPatch": true,
+      "notes": "solana-program 1.18.x; requires the ahash 0.7.6 stdsimd patch (see README)"
+    },
+    {
+      "name": "noop",
+      "version": "0.2.0",
+      "repo": "account-compression",
+      "programDir": "account-compression/programs/noop",
+      "crateName": "spl_noop",
+      "programId": "noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV",
+      "needsAhashPatch": true,
+      "verifyProgramId": false,
+      "notes": "tiny program; its declared ID is dead-code-eliminated (entrypoint never references it), so the program ID is not embedded — the test deploys it at the canonical address"
+    }
+  ]
+}
