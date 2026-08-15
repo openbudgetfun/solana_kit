@@ -88,6 +88,32 @@ void main() {
       expect(SolanaErrorCode.subscribableRetryNotSupported.value, 8195000);
     });
 
+    test('subscribableStreamClosedWithoutError has value 8195001', () {
+      expect(
+        SolanaErrorCode.subscribableStreamClosedWithoutError.value,
+        8195001,
+      );
+    });
+
+    test('offchainMessageContentDoesNotMatchExpected has value 5607018', () {
+      expect(
+        SolanaErrorCode.offchainMessageContentDoesNotMatchExpected.value,
+        5607018,
+      );
+    });
+
+    test(
+      'offchainMessageRequiredSignatoriesDoNotMatchExpected has value 5607019',
+      () {
+        expect(
+          SolanaErrorCode
+              .offchainMessageRequiredSignatoriesDoNotMatchExpected
+              .value,
+          5607019,
+        );
+      },
+    );
+
     test('walletAccountNotAvailable has value 8900003', () {
       expect(SolanaErrorCode.walletAccountNotAvailable.value, 8900003);
     });

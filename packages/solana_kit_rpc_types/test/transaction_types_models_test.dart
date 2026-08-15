@@ -88,6 +88,17 @@ void main() {
       expect(meta.preTokenBalances?.first, tokenBalance);
       expect(meta.postTokenBalances?.first, tokenBalance);
     });
+
+    test('TransactionForAccountsMetaBase carries costUnits', () {
+      final meta = TransactionForAccountsMetaBase(
+        err: null,
+        fee: lamports(BigInt.from(5000)),
+        preBalances: [lamports(BigInt.from(10_000))],
+        postBalances: [lamports(BigInt.from(5_000))],
+        costUnits: 12345,
+      );
+      expect(meta.costUnits, 12345);
+    });
   });
 
   group('Return and parsed account models', () {
