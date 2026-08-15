@@ -59,6 +59,7 @@ workspace:
   - packages/solana_kit_system
   - packages/solana_kit_stake
   - packages/solana_kit_sysvars
+  - packages/solana_kit_integration_tests
   - packages/solana_kit_test_matchers
   - packages/solana_kit_token
   - packages/solana_kit_token_2022

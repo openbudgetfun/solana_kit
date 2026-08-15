@@ -112,12 +112,12 @@ void main() {
     test('splAccountCompressionProgramAddress is correct', () {
       expect(
         splAccountCompressionProgramAddress,
-        'cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi',
+        'cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK',
       );
     });
 
     test('noopProgramAddress is correct', () {
-      expect(noopProgramAddress, 'noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK');
+      expect(noopProgramAddress, 'noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV');
     });
   });
 

@@ -30,6 +30,7 @@ in
       extra.monochange
       extra.pnpm
       extra.surfpool
+      extra.agave
     ]
     ++ lib.optionals stdenv.isDarwin [
       coreutils
@@ -582,6 +583,14 @@ in
                 exit "$status"
       '';
       description = "Report whether cloned reference repos match config/reference-repos.json.";
+      binary = "bash";
+    };
+    "build:program-artifacts" = {
+      exec = ''
+        set -euo pipefail
+        node "$DEVENV_ROOT/scripts/build_program_artifacts.mjs" "$@"
+      '';
+      description = "Build the committed .so program artifacts with cargo build-sbf from the pinned reference repos (see config/programs/README.md).";
       binary = "bash";
     };
     "update:deps" = {

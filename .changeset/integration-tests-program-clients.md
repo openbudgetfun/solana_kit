@@ -1,0 +1,79 @@
+---
+"solana_kit_transaction_confirmation": patch
+"solana_kit_errors": patch
+"solana_kit_address_constants": patch
+"solana_kit_spl_account_compression": patch
+"solana_kit_mpl_bubblegum": patch
+"solana_kit_integration_tests": minor
+---
+
+# On-chain integration tests for program clients + sendTransaction encoding fix
+
+## `solana_kit_transaction_confirmation` (patch)
+
+Fix `sendAndConfirmTransaction` so the `sendTransaction` RPC call declares
+`encoding: base64`. The helper encodes the transaction as base64 via
+`getBase64EncodedWireTransaction` but previously left the `encoding` field
+unset, so real RPC nodes (including SurfPool) defaulted to base58 and rejected
+the payload with `invalid base58 encoding`. This path had only been exercised
+against a mocked transport, so the bug was latent.
+
+## `solana_kit_errors` (patch)
+
+Fix `getSolanaErrorFromTransactionError` to handle instruction-error indices
+returned as `BigInt` (as SurfPool does). The instruction index was cast
+`as num`, which threw `_BigIntImpl is not a subtype of num` and masked the
+real on-chain instruction error. It now converts `BigInt` indices to `int`.
+
+## `solana_kit_address_constants` / `solana_kit_spl_account_compression` (patch)
+
+Fix the SPL Account Compression, Noop, and MPL Bubblegum program addresses to
+the live mainnet IDs:
+
+- `splAccountCompressionProgramAddress`: `cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi`
+  -> `cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK`
+- `noopProgramAddress`: `noopb9bkMVz3tFhZ5L7bJGby9DreGG5J2P4V4Wxe8tK`
+  -> `noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV`
+- `mplBubblegumProgramAddress`: `BGUMAp9Gph7G9Jn2tU58R5L2qPG1Mj9HP7G3G7VYV2Ma`
+  -> `BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY`
+- `stakeConfigAddress`: `StakeConfig1111111111111111111111111111` (truncated,
+  invalid length) -> `StakeConfig11111111111111111111111111111111`
+
+The previous values point to accounts that do not exist on mainnet. An audit of
+every constant in the package against mainnet confirmed all other addresses are
+correct (native/runtime programs and sysvars are canonical per `solana-sdk-ids`;
+some native programs and lazily-created sysvars legitimately have no
+materialized account). SurfPool integration tests for MPL Bubblegum confirmed
+the corrected IDs resolve to deployed programs.
+
+## `solana_kit_integration_tests` (new, internal)
+
+A non-published workspace package that runs every generated program client
+end-to-end against a local SurfPool Surfnet. It ships a shared
+`IntegrationTestEnv` harness (connects-or-starts SurfPool, funds a payer,
+builds/signs/sends/confirms transactions, deploys programs) and on-chain suites
+that assert the real on-chain outcome of each instruction:
+
+- Builtin programs: Memo, System (transfer), Compute Budget, Token
+  (createMint -> mintTo), Token-2022, Associated Token Account, Address Lookup
+  Table, Stake (initialize), and BPF Loader (initializeBuffer).
+- Subscriptions: the compiled program (`.so`) is committed under
+  `config/programs/` and deployed on-chain; `initSubscriptionAuthority` runs
+  and its PDA is verified on-chain.
+- MPL Bubblegum: Bubblegum + SPL Account Compression + Noop are deployed
+  on-chain (verified executable + owned by the BPF loader). A full
+  `createTree` currently panics inside the deployed Bubblegum binary on
+  SurfPool (`create_tree.rs:20`) — a program-internal issue tracked for
+  upstream; the client's instruction builders are covered by encoding tests.
+
+The compiled `.so` artifacts are committed (not rebuilt per run) and pinned to
+`config/reference-repos.json`; see `config/programs/README.md` for how they
+are built and when they must be regenerated. Artifact names follow
+`<package-name-minus-solana_kit>-<program-version>.so` (e.g.
+`subscriptions-v0.5.0.so`, `mpl_bubblegum-v0.12.0.so`,
+`spl_account_compression-v0.3.3.so`, `noop-v0.2.0.so`). All four are compiled
+from the pinned source with `cargo build-sbf` (agave 4.2.0 / platform-tools
+v1.54) via `scripts/build_program_artifacts.mjs` (devenv task
+`build:program-artifacts`), which also applies the ahash 0.7.6 `stdsimd` patch
+needed by the solana-program 1.18.x programs and verifies the baked-in program
+IDs.

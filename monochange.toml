@@ -190,6 +190,12 @@ release = false
 [package.solana_kit_test_matchers]
 path = "packages/solana_kit_test_matchers"
 
+[package.solana_kit_integration_tests]
+path = "packages/solana_kit_integration_tests"
+tag = false
+release = false
+publish = { enabled = false }
+
 [package.solana_kit_spl_account_compression]
 path = "packages/solana_kit_spl_account_compression"
 tag = true
