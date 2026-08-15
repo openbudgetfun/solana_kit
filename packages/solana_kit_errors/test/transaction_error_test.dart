@@ -32,6 +32,19 @@ void main() {
       expect(error.context['accountIndex'], 5);
     });
 
+    test('converts InsufficientFundsForRent with a BigInt account index', () {
+      // Some RPC nodes (e.g. SurfPool) return JSON integers as BigInt after
+      // the default response transformer upcasts them.
+      final error = getSolanaErrorFromTransactionError({
+        'InsufficientFundsForRent': {'account_index': BigInt.from(5)},
+      });
+      expect(
+        error.code,
+        SolanaErrorCode.transactionErrorInsufficientFundsForRent,
+      );
+      expect(error.context['accountIndex'], 5);
+    });
+
     test('delegates InstructionError to instruction error handler', () {
       final error = getSolanaErrorFromTransactionError({
         'InstructionError': [0, 'InsufficientFunds'],
