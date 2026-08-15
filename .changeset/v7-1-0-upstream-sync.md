@@ -3,6 +3,7 @@
 "solana_kit_subscribable": minor
 "solana_kit_offchain_messages": minor
 "solana_kit_instruction_plans": minor
+"solana_kit": minor
 "solana_kit_rpc_transformers": patch
 "solana_kit_rpc_api": patch
 ---
@@ -59,22 +60,41 @@ is merged with the mutable context, taking precedence. Returning a
   `uiTokenAmount.decimals`.
 - `getTransaction` and `getBlock` now allow-list the transaction `version`
   (previously arrived as `0n` while typechecking as `0`).
+- `getTransactionsForAddress` allowed-numeric keypaths.
+
+## solana_kit
+
+Adds the v7.1.0 client-interface helpers:
+
+- `ClientWithGetMinimumBalance` and `ClientWithFetchAccounts` interfaces.
+- `createClientWithGetMinimumBalanceFromRpc` — computes the rent-exempt
+  minimum balance via `getMinimumBalanceForRentExemption` (with the
+  `withoutHeader` rate-recovery trick).
+- `createClientWithFetchAccountsFromRpc` — dispatches on address count
+  (`getAccountInfo` / `getMultipleAccounts` / empty short-circuit).
+- `createClientWithInterfacesFromRpc` — returns both interfaces.
+
+## solana_kit_rpc_api
+
+Adds the `getTransactionsForAddress` RPC method request side: config
+(commitment, filters, limit, minContextSlot, paginationToken, sortOrder,
+encoding, maxSupportedTransactionVersion, transactionDetails), filters
+(blockTime/signature/slot comparisons, status, tokenAccounts), and the params
+builder. Response types (signatures/full modes) and the shared `meta.costUnits`
+field are still in progress.
 
 ## Remaining (in progress)
 
 The following v7.1.0 changes still need to be ported and will be appended to
 this changeset as they land:
 
-- `solana_kit`: `createClientWithGetMinimumBalanceFromRpc`,
-  `createClientWithFetchAccountsFromRpc`, `createClientWithInterfacesFromRpc`;
-  re-export `@solana/promises` (`isAbortError`, `getAbortablePromise`,
-  `safeRace`).
-- `solana_kit_rpc_api` / `solana_kit_rpc_types`: `getTransactionsForAddress`
-  RPC method and shared `meta.costUnits` field.
-- `solana_kit_transaction_introspection`:
-  `decodeTransactionFromRpcResponse` accepts confirmed transactions from any
-  RPC method (not just `getTransaction`).
-- `@solana/plugin-interfaces` `ClientWithFetchAccounts` interface.
+- `solana_kit_rpc_types`: the `getTransactionsForAddress` response types
+  (signatures/full modes) and the shared `meta.costUnits` field.
+- `solana_kit`: re-export `@solana/promises` (`isAbortError`,
+  `getAbortablePromise`, `safeRace` — needs a Dart cancellation-model
+  adaptation; `AbortError` currently lives in the websocket package).
+- `@solana/plugin-interfaces` `ClientWithFetchAccounts` interface (ported as
+  a Dart interface in `solana_kit`).
 
 Already present in the Dart port (no change needed):
 
