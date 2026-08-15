@@ -7,13 +7,16 @@ library;
 
 export 'src/admin/admin_client.dart';
 export 'src/auth/auth_client.dart';
+export 'src/auth/build_token_transfer.dart';
 export 'src/auth/checkout.dart';
 export 'src/auth/constants.dart';
 export 'src/auth/dev_portal_configs.dart';
 export 'src/auth/keypair_helpers.dart';
 export 'src/auth/oauth_token_exchange.dart';
 export 'src/auth/payment_url.dart';
+export 'src/auth/payments.dart';
 export 'src/auth/plan_catalog.dart';
+export 'src/auth/plan_management.dart';
 export 'src/auth/retry.dart';
 export 'src/auth/signup.dart';
 export 'src/auth/signup_helpers.dart';

@@ -598,3 +598,202 @@ class SignAuthMessageResponse {
     'signature': signature,
   };
 }
+
+// ── Plan management result types (v3.0.0) ────────────────────────────────────
+
+/// Result of upgrading a project to a new plan.
+class UpgradePlanResult {
+  /// Creates an upgrade-plan result.
+  const UpgradePlanResult({required this.paymentLink});
+
+  /// The hosted-checkout payment link for the upgrade.
+  final PaymentLink paymentLink;
+}
+
+/// Result of paying a subscription renewal.
+class PayRenewalResult {
+  /// Creates a pay-renewal result.
+  const PayRenewalResult({required this.paymentLink});
+
+  /// The hosted-checkout payment link for the renewal.
+  final PaymentLink paymentLink;
+}
+
+/// The result of a signup-and-pay flow.
+sealed class SignupAndPayResult {
+  const SignupAndPayResult._();
+}
+
+/// Signup and payment completed; the project is provisioned.
+class SignupAndPayCompletedResult extends SignupAndPayResult {
+  /// Creates a completed result.
+  const SignupAndPayCompletedResult({
+    required this.jwt,
+    required this.refId,
+    required this.walletAddress,
+    required this.projectId,
+    required this.apiKey,
+    required this.endpoints,
+    required this.txSignature,
+    required this.paymentIntentId,
+  }) : super._();
+
+  /// Authentication token.
+  final String jwt;
+
+  /// Reference identifier.
+  final String refId;
+
+  /// Wallet address.
+  final String walletAddress;
+
+  /// Provisioned project identifier.
+  final String projectId;
+
+  /// Provisioned API key.
+  final String apiKey;
+
+  /// RPC endpoints for the project.
+  final SignupEndpoints endpoints;
+
+  /// The payment transaction signature.
+  final String txSignature;
+
+  /// The payment intent identifier.
+  final String paymentIntentId;
+}
+
+/// The payment expired before completion.
+class SignupAndPayExpiredResult extends SignupAndPayResult {
+  /// Creates an expired result.
+  const SignupAndPayExpiredResult({
+    required this.jwt,
+    required this.refId,
+    required this.walletAddress,
+    required this.paymentIntentId,
+  }) : super._();
+
+  /// Authentication token.
+  final String jwt;
+
+  /// Reference identifier.
+  final String refId;
+
+  /// Wallet address.
+  final String walletAddress;
+
+  /// The payment intent identifier.
+  final String paymentIntentId;
+}
+
+/// The payment failed.
+class SignupAndPayFailedResult extends SignupAndPayResult {
+  /// Creates a failed result.
+  const SignupAndPayFailedResult({
+    required this.jwt,
+    required this.refId,
+    required this.walletAddress,
+    required this.paymentIntentId,
+    required this.reason,
+  }) : super._();
+
+  /// Authentication token.
+  final String jwt;
+
+  /// Reference identifier.
+  final String refId;
+
+  /// Wallet address.
+  final String walletAddress;
+
+  /// The payment intent identifier.
+  final String paymentIntentId;
+
+  /// The failure reason.
+  final String reason;
+}
+
+/// The payment is still pending.
+class SignupAndPayPendingResult extends SignupAndPayResult {
+  /// Creates a pending result.
+  const SignupAndPayPendingResult({
+    required this.jwt,
+    required this.refId,
+    required this.walletAddress,
+    required this.paymentLink,
+    required this.txSignature,
+  }) : super._();
+
+  /// Authentication token.
+  final String jwt;
+
+  /// Reference identifier.
+  final String refId;
+
+  /// Wallet address.
+  final String walletAddress;
+
+  /// The hosted-checkout payment link.
+  final PaymentLink paymentLink;
+
+  /// The payment transaction signature.
+  final String txSignature;
+}
+
+/// The user was already subscribed to the requested plan.
+class SignupAndPayAlreadySubscribedResult extends SignupAndPayResult {
+  /// Creates an already-subscribed result.
+  const SignupAndPayAlreadySubscribedResult({
+    required this.jwt,
+    required this.refId,
+    required this.walletAddress,
+    required this.projectId,
+    required this.apiKey,
+    required this.endpoints,
+  }) : super._();
+
+  /// Authentication token.
+  final String jwt;
+
+  /// Reference identifier.
+  final String refId;
+
+  /// Wallet address.
+  final String walletAddress;
+
+  /// Project identifier.
+  final String projectId;
+
+  /// API key for the project.
+  final String apiKey;
+
+  /// RPC endpoints for the project.
+  final SignupEndpoints endpoints;
+}
+
+/// The user has an existing project on a different plan — upgrade required.
+class SignupAndPayUpgradeRequiredResult extends SignupAndPayResult {
+  /// Creates an upgrade-required result.
+  const SignupAndPayUpgradeRequiredResult({
+    required this.jwt,
+    required this.refId,
+    required this.walletAddress,
+    required this.currentPlan,
+    required this.requestedPlan,
+  }) : super._();
+
+  /// Authentication token.
+  final String jwt;
+
+  /// Reference identifier.
+  final String refId;
+
+  /// Wallet address.
+  final String walletAddress;
+
+  /// Current subscription plan.
+  final String currentPlan;
+
+  /// Requested subscription plan.
+  final String requestedPlan;
+}
