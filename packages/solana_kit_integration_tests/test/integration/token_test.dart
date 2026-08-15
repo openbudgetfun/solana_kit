@@ -301,4 +301,76 @@ void main() {
     final mintInfo = info['info']! as Map<String, Object?>;
     expect(mintInfo['mintAuthority'], equals(newAuthority.address.value));
   });
+
+  test(
+    'closeAccount closes the token account and returns lamports on-chain',
+    () async {
+      final mint = generateKeyPairSigner();
+      const mintRent = 1461600;
+      final ata = getAssociatedTokenAddressSync(
+        owner: env.payer.address,
+        tokenProgram: tokenProgramAddress,
+        mint: mint.address,
+      );
+
+      await env.sendInstructions(
+        [
+          getCreateAccountInstruction(
+            instructionProgramAddress: systemProgramAddress,
+            payer: env.payer.address,
+            newAccount: mint.address,
+            lamports: BigInt.from(mintRent),
+            space: BigInt.from(82),
+            programAddress: tokenProgramAddress,
+          ),
+          getInitializeMint2Instruction(
+            programAddress: tokenProgramAddress,
+            mint: mint.address,
+            decimals: 9,
+            mintAuthority: env.payer.address,
+          ),
+          getCreateAssociatedTokenIdempotentInstruction(
+            programAddress: associatedTokenProgramAddress,
+            payer: env.payer.address,
+            ata: ata,
+            owner: env.payer.address,
+            mint: mint.address,
+            systemProgram: systemProgramAddress,
+            tokenProgram: tokenProgramAddress,
+          ),
+        ],
+        extraSigners: [mint],
+      );
+
+      // The ATA holds rent-exempt lamports that closeAccount returns to the
+      // owner (the destination account). The account must hold zero tokens to
+      // be closable, so no tokens are minted.
+      final before = await env.rpc.getAccountInfoValue(ata).send();
+      final ataLamports = before.value!['lamports']! as BigInt;
+      final ownerBefore = await env.rpc
+          .getBalanceValue(env.payer.address)
+          .send();
+
+      await env.sendInstructions([
+        getCloseAccountInstruction(
+          programAddress: tokenProgramAddress,
+          account: ata,
+          destination: env.payer.address,
+          owner: env.payer.address,
+        ),
+      ]);
+
+      // The account is gone and the owner received the ATA's lamports.
+      final after = await env.rpc.getAccountInfoValue(ata).send();
+      expect(after.value, isNull);
+      final ownerAfter = await env.rpc
+          .getBalanceValue(env.payer.address)
+          .send();
+      // The owner receives the ATA's lamports minus the transaction fee.
+      expect(
+        ownerAfter.value.value - ownerBefore.value.value,
+        greaterThanOrEqualTo(ataLamports - BigInt.from(10_000)),
+      );
+    },
+  );
 }
