@@ -2,6 +2,8 @@
 "solana_kit_helius": minor
 ---
 
+# Helius SDK v3.0.0 auth/payment port
+
 Port Helius SDK v3.0.0 auth/payment API surface
 
 - **Added** `signup()` — unified Phase 1 signup replacing the legacy `agenticSignup`. Supports both secret-key-authenticated and pre-authenticated flows. Returns discriminated `SignupResult` (`already_subscribed`, `upgrade_required`, or `payment_required`).
