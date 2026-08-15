@@ -281,8 +281,14 @@ DecodedRpcTransaction _decodeFromJson(
   );
 }
 
-/// Decodes a `getTransaction` response (any of `encoding: 'base64'`,
+/// Decodes a confirmed transaction RPC response (any of `encoding: 'base64'`,
 /// `'base58'`, or `'json'`) into a [DecodedRpcTransaction].
+///
+/// Only the shared `transaction` / `meta` / `version` envelope is modeled, so
+/// the response may come from any RPC method that returns confirmed
+/// transactions — `getTransaction`, `getBlock` (with
+/// `transactionDetails: 'full'`), or `getTransactionsForAddress` (map over
+/// its `data` array) — regardless of which method produced it.
 ///
 /// `'jsonParsed'` is **not** supported — its instructions arrive pre-parsed by
 /// the server and lack raw bytes, so they cannot be round-tripped through the
