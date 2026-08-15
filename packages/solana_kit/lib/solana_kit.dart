@@ -152,5 +152,6 @@ export 'package:solana_kit_transactions/solana_kit_transactions.dart';
 // Umbrella-specific helpers.
 export 'src/client.dart';
 export 'src/client_interfaces.dart';
+export 'src/create_client_with_interfaces_from_rpc.dart';
 export 'src/slot_tracking_reactive_store.dart';
 export 'src/slot_tracking_stream.dart';
