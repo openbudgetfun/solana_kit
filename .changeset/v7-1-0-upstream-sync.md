@@ -6,6 +6,8 @@
 "solana_kit": minor
 "solana_kit_rpc_transformers": patch
 "solana_kit_rpc_api": patch
+"solana_kit_rpc_types": patch
+"solana_kit_transaction_introspection": patch
 ---
 
 # @solana/kit v7.1.0 upstream sync
