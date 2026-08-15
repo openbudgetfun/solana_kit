@@ -64,11 +64,17 @@ Reference pin bumped in `config/reference-repos.json`:
 
 ### Remaining (not yet ported)
 
-- `solana_kit_rpc_types`: the `getTransactionsForAddress` response types
-  (signatures/full modes).
-- `solana_kit`: the `@solana/promises` re-export (`isAbortError`,
-  `getAbortablePromise`, `safeRace` — needs a Dart cancellation-model
-  adaptation; `AbortError` currently lives in the websocket package).
+None — all v7.1.0 items are ported. (`@solana/react` changes are not ported,
+React-only.)
+
+### Test coverage status
+
+Tests added for: promises, client helpers, getTransactionsForAddress params +
+response types, assertOffchainMessageV1Equal, executor context-return,
+tokenBalancesConfigs, new error codes, costUnits. The
+`bridgeStoreToAsyncIterable` test was attempted but the async generator's
+parking behavior proved flaky under `dart test`; the bridge needs a follow-up
+test (its implementation mirrors upstream).
 
 ## Helius SDK (separate audit)
 
