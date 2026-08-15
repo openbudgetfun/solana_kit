@@ -108,6 +108,47 @@ AllowedNumericKeypaths getAllowedNumericKeypaths() {
       ['value', 'decimals'],
       ['value', 'uiAmount'],
     ],
+    'getTransactionsForAddress': [
+      ['data', KEYPATH_WILDCARD, 'transactionIndex'],
+      for (final c in tokenBalancesConfigs) ...[
+        [
+          'data',
+          KEYPATH_WILDCARD,
+          'meta',
+          'preTokenBalances',
+          KEYPATH_WILDCARD,
+          ...c,
+        ],
+        [
+          'data',
+          KEYPATH_WILDCARD,
+          'meta',
+          'postTokenBalances',
+          KEYPATH_WILDCARD,
+          ...c,
+        ],
+      ],
+      [
+        'data',
+        KEYPATH_WILDCARD,
+        'meta',
+        'rewards',
+        KEYPATH_WILDCARD,
+        'commission',
+      ],
+      for (final c in innerInstructionsConfigs)
+        [
+          'data',
+          KEYPATH_WILDCARD,
+          'meta',
+          'innerInstructions',
+          KEYPATH_WILDCARD,
+          ...c,
+        ],
+      for (final c in messageConfig)
+        ['data', KEYPATH_WILDCARD, 'transaction', 'message', ...c],
+      ['data', KEYPATH_WILDCARD, 'version'],
+    ],
     'getTransaction': [
       for (final c in tokenBalancesConfigs) ...[
         ['meta', 'preTokenBalances', KEYPATH_WILDCARD, ...c],

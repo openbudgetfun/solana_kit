@@ -44,7 +44,27 @@ Reference pin bumped in `config/reference-repos.json`:
 
 - `solana_kit_errors`: added the three new error codes and messages
   (`5607018`, `5607019`, `8195001`). `dart analyze` clean.
+- `solana_kit_subscribable`: `bridgeStoreToAsyncIterable` (Stream-based port).
+- `solana_kit_offchain_messages`: `assertOffchainMessageV1Equal`.
+- `solana_kit_instruction_plans`: `createTransactionPlanExecutor` callback may
+  return the successful result context.
+- `solana_kit_rpc_transformers`: `tokenBalancesConfigs` export.
+- `solana_kit_rpc_api`: allow-list `uiTokenAmount.uiAmount`, simulate
+  `accountIndex`/`decimals`, transaction `version`, and
+  `getTransactionsForAddress` keypaths.
+- `solana_kit_transaction_introspection`: `decodeTransactionFromRpcResponse`
+  documented for any RPC method (envelope already generic).
 - `@solana/kit` pin + `versions.json` bumped to `7.1.0`.
+
+### Remaining (not yet ported)
+
+- `solana_kit`: `createClientWithGetMinimumBalanceFromRpc` /
+  `createClientWithFetchAccountsFromRpc` / `createClientWithInterfacesFromRpc`
+  and the `@solana/promises` re-export (`isAbortError`, `getAbortablePromise`,
+  `safeRace` — needs a Dart cancellation-model adaptation).
+- `solana_kit_rpc_api` / `solana_kit_rpc_types`: the `getTransactionsForAddress`
+  RPC method itself and the shared `meta.costUnits` field (keypaths are done).
+- `@solana/plugin-interfaces` `ClientWithFetchAccounts` interface.
 
 ## Helius SDK (separate audit)
 
