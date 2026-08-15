@@ -83,7 +83,7 @@ Future<PayRenewalResult> payRenewal(
 /// Provisions a project after a confirmed payment, returning the project id,
 /// api key, and endpoints.
 Future<({String projectId, String apiKey, SignupEndpoints endpoints})>
-    _provisionApiKey(
+_provisionApiKey(
   RestClient restClient,
   String apiKey,
   String walletAddress,
@@ -114,8 +114,7 @@ Future<({String projectId, String apiKey, SignupEndpoints endpoints})>
       restClient,
       apiKey,
       CreateApiKeyRequest(projectId: projectId, name: walletAddress),
-    ))
-        .key;
+    )).key;
   }
   return (
     projectId: projectId,

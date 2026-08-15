@@ -89,7 +89,8 @@ Future<String> buildAndSendTokenTransfer(
   }
   final blockhashResult = await effectiveRpc.call('getLatestBlockhash');
   final blockhashValue =
-      (blockhashResult! as Map<String, Object?>)['value']! as Map<String, Object?>;
+      (blockhashResult! as Map<String, Object?>)['value']!
+          as Map<String, Object?>;
   final blockhash = blockhashValue['blockhash']! as String;
 
   var message = createTransactionMessage(version: TransactionVersion.v0);
