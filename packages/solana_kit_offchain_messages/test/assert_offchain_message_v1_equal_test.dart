@@ -16,7 +16,10 @@ void main() {
           _signatory('22222222222222222222222222222222'),
         ],
       );
-      expect(() => assertOffchainMessageV1Equal(message, message), returnsNormally);
+      expect(
+        () => assertOffchainMessageV1Equal(message, message),
+        returnsNormally,
+      );
     });
 
     test('passes when signatories are in a different order', () {
@@ -84,7 +87,8 @@ void main() {
           isA<SolanaError>().having(
             (e) => e.code,
             'code',
-            SolanaErrorCode.offchainMessageRequiredSignatoriesDoNotMatchExpected,
+            SolanaErrorCode
+                .offchainMessageRequiredSignatoriesDoNotMatchExpected,
           ),
         ),
       );

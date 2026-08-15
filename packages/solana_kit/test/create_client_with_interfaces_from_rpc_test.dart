@@ -83,7 +83,10 @@ void main() {
         };
       });
       final client = createClientWithInterfacesFromRpc(rpc);
-      expect(await client.getMinimumBalance.getMinimumBalance(10), BigInt.from(1000));
+      expect(
+        await client.getMinimumBalance.getMinimumBalance(10),
+        BigInt.from(1000),
+      );
       expect(await client.fetchAccounts.fetchAccounts([]), isEmpty);
     });
   });
