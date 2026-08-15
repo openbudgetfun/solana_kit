@@ -65,6 +65,7 @@ const List<String> solanaRpcMethodsForAllClusters = [
   'getTokenSupply',
   'getTransaction',
   'getTransactionCount',
+  'getTransactionsForAddress',
   'getVersion',
   'getVoteAccounts',
   'isBlockhashValid',
