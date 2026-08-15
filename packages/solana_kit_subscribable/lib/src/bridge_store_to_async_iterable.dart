@@ -67,7 +67,8 @@ Stream<T> bridgeStoreToAsyncIterable<T>(
     } else if (state.status == ReactiveStreamState.error) {
       // A nullish error would otherwise surface as a value-less success;
       // substitute a sentinel so the failure propagates.
-      failure = state.error ??
+      failure =
+          state.error ??
           SolanaError(
             SolanaErrorCode.subscribableStreamClosedWithoutError,
           );

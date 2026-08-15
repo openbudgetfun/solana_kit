@@ -46,8 +46,11 @@ ClientWithFetchAccounts createClientWithFetchAccountsFromRpc(Rpc rpc) {
 ///
 /// Note that this does not create a fully-fledged Kit client — it only wraps
 /// the RPC in the account interfaces above.
-({ClientWithGetMinimumBalance getMinimumBalance, ClientWithFetchAccounts fetchAccounts})
-    createClientWithInterfacesFromRpc(Rpc rpc) {
+({
+  ClientWithGetMinimumBalance getMinimumBalance,
+  ClientWithFetchAccounts fetchAccounts,
+})
+createClientWithInterfacesFromRpc(Rpc rpc) {
   return (
     getMinimumBalance: _GetMinimumBalanceClient(rpc),
     fetchAccounts: _FetchAccountsClient(rpc),

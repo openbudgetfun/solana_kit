@@ -155,10 +155,11 @@ void assertOffchainMessageV1Equal(
 }
 
 List<String> _getSortedSignatoryAddresses(OffchainMessageV1 message) {
-  final addresses = message.requiredSignatories
-      .map((signatory) => signatory.address.value)
-      .toList()
-    ..sort();
+  final addresses =
+      message.requiredSignatories
+          .map((signatory) => signatory.address.value)
+          .toList()
+        ..sort();
   return addresses;
 }
 

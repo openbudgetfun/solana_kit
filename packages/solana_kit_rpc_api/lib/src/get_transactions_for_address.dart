@@ -148,8 +148,7 @@ class GetTransactionsForAddressConfig {
     if (sortOrder != null) json['sortOrder'] = sortOrder;
     if (encoding != null) json['encoding'] = encoding!.toJson();
     if (maxSupportedTransactionVersion != null) {
-      json['maxSupportedTransactionVersion'] =
-          maxSupportedTransactionVersion;
+      json['maxSupportedTransactionVersion'] = maxSupportedTransactionVersion;
     }
     if (transactionDetails != null) {
       json['transactionDetails'] = transactionDetails;
