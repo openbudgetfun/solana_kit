@@ -46,6 +46,31 @@ void main() {
       },
     );
 
+    test(
+      'executes a single transaction plan returning a result context',
+      () async {
+        final message = createMessage();
+        final plan = singleTransactionPlan(message);
+        final sig = Signature('test-signature'.padRight(64, '0'));
+
+        final executor = createTransactionPlanExecutor(
+          TransactionPlanExecutorConfig(
+            executeTransactionMessage: (context, msg) async => {
+              'signature': sig,
+              'custom': 'value',
+            },
+          ),
+        );
+
+        final result = await executor(plan);
+
+        expect(result, isA<SuccessfulSingleTransactionPlanResult>());
+        final successResult = result as SuccessfulSingleTransactionPlanResult;
+        expect(successResult.signature, sig);
+        expect(successResult.context['custom'], 'value');
+      },
+    );
+
     test('executes a sequential transaction plan', () async {
       final messageA = createMessage();
       final messageB = createMessage();
