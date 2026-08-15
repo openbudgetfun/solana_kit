@@ -1,6 +1,16 @@
 {
   "artifacts": [
     {
+      "name": "config",
+      "version": "3.0.0",
+      "repo": "config",
+      "programDir": "program",
+      "crateName": "solana_config_program",
+      "programId": "Config1111111111111111111111111111111111111",
+      "needsAhashPatch": false,
+      "notes": "Core BPF program (not a builtin); builds cleanly with the current platform-tools"
+    },
+    {
       "name": "subscriptions",
       "version": "0.5.0",
       "repo": "subscriptions",

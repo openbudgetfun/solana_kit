@@ -7,7 +7,9 @@
 library;
 
 export 'src/builders.dart';
+export 'src/cheatcodes.dart';
 export 'src/config.dart';
 export 'src/errors.dart';
+export 'src/kit_client.dart';
 export 'src/surfnet.dart';
 export 'src/types.dart';

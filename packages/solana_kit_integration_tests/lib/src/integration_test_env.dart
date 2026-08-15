@@ -14,21 +14,23 @@ import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confi
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 
-/// Default SurfPool RPC URL used by the `test:integration` workspace script.
-const defaultSurfPoolRpcUrl = 'http://localhost:8899';
-
-/// Default WebSocket URL for a local SurfPool instance.
-const defaultSurfPoolWsUrl = 'ws://localhost:8900';
-
 /// Default lamports funded to the integration test payer (10 SOL).
 const defaultPayerLamports = 10_000_000_000;
 
+/// The `disable_sbpf_v0_v1_v2_deployment` feature gate.
+///
+/// The committed program artifacts are SBPF v0 ELFs; agave 4.2+ rejects
+/// v0-v2 loader deploys unless this gate is disabled at SurfPool startup.
+const disableSbpfV0V1V2DeploymentFeatureGate = Address(
+  'B8JJXCy5amZyWG9r7EnUYLwzXSXTxG7GZ1qZ1qggo83g',
+);
+
 /// A shared environment for on-chain integration tests against SurfPool.
 ///
-/// Use [IntegrationTestEnv.create] to attach to an already-running SurfPool
-/// instance (e.g. the one started by the `test:integration` workspace script)
-/// or to start a fresh one when none is reachable. Tests fail loudly when
-/// SurfPool cannot be reached or started — they never silently skip.
+/// Use [IntegrationTestEnv.create] to start a fresh Surfpool instance for
+/// the test file. Each instance binds auto-allocated ports, so parallel test
+/// files each get an isolated chain. Tests fail loudly when Surfpool cannot
+/// be started — they never silently skip.
 class IntegrationTestEnv {
   IntegrationTestEnv._({
     required this.rpc,
@@ -50,47 +52,39 @@ class IntegrationTestEnv {
   /// therefore responsible for stopping it in [dispose]).
   final bool startedSurfnet;
 
-  /// Attaches to a running SurfPool instance at [rpcUrl], or starts a fresh
-  /// one on that URL when none is reachable.
+  /// Starts a fresh Surfnet for this test file and returns an environment
+  /// bound to it.
   ///
-  /// Throws when SurfPool is neither reachable nor startable, so integration
-  /// tests fail loudly instead of silently skipping. The [payer] is funded
-  /// with [payerLamports] lamports.
+  /// Each call starts its own Surfpool instance on auto-allocated ports, so
+  /// parallel test files each get an isolated chain with no port conflicts.
+  /// The [payer] is funded with [payerLamports] lamports.
   static Future<IntegrationTestEnv> create({
-    String rpcUrl = defaultSurfPoolRpcUrl,
-    String wsUrl = defaultSurfPoolWsUrl,
     int payerLamports = defaultPayerLamports,
   }) async {
-    final (surfnet, started) = await _connectOrStart(
-      rpcUrl: rpcUrl,
-      wsUrl: wsUrl,
+    final surfnet = await Surfnet.start(
+      config: SurfnetConfig(
+        // Clock-mode block production with 10ms slots: fast enough for the
+        // address-lookup-table close test to age the SlotHashes sysvar (512
+        // entries) in ~6s, while keeping the blockhash validity window (150
+        // blocks = 1.5s) wide enough for parallel test execution.
+        blockProductionMode: BlockProductionMode.clock,
+        slotTimeMs: 10,
+        // Allow loader-based deploys of the committed SBPF v0 artifacts.
+        disableFeatures: const [disableSbpfV0V1V2DeploymentFeatureGate],
+      ),
     );
-    final rpc = createSolanaRpc(url: rpcUrl, allowInsecureHttp: true);
+    final rpc = createSolanaRpc(
+      url: surfnet.rpcUrl,
+      allowInsecureHttp: true,
+    );
     final payer = generateKeyPairSigner();
     await surfnet.fundSol(payer.address, payerLamports);
     return IntegrationTestEnv._(
       rpc: rpc,
       surfnet: surfnet,
       payer: payer,
-      startedSurfnet: started,
+      startedSurfnet: true,
     );
-  }
-
-  static Future<(Surfnet, bool)> _connectOrStart({
-    required String rpcUrl,
-    required String wsUrl,
-  }) async {
-    if (await isSurfPoolRunning(rpcUrl: rpcUrl)) {
-      return (Surfnet.connect(rpcUrl: Uri.parse(rpcUrl)), false);
-    }
-    // No existing instance — start one on the requested ports so the RPC
-    // client (which targets `rpcUrl`) can reach it.
-    final rpcPort = Uri.parse(rpcUrl).port;
-    final wsPort = Uri.parse(wsUrl).port;
-    final surfnet = await Surfnet.start(
-      config: SurfnetConfig(rpcPort: rpcPort, wsPort: wsPort),
-    );
-    return (surfnet, true);
   }
 
   /// Releases the resources held by this environment, stopping the SurfPool
@@ -177,19 +171,6 @@ class IntegrationTestEnv {
     final logs = meta['logMessages'];
     if (logs is! List) return const [];
     return logs.whereType<String>().toList();
-  }
-}
-
-/// Returns `true` when a SurfPool instance is reachable at [rpcUrl].
-Future<bool> isSurfPoolRunning({
-  String rpcUrl = defaultSurfPoolRpcUrl,
-}) async {
-  final rpc = createSolanaRpc(url: rpcUrl, allowInsecureHttp: true);
-  try {
-    await rpc.getSlot().send();
-    return true;
-  } on Object {
-    return false;
   }
 }
 

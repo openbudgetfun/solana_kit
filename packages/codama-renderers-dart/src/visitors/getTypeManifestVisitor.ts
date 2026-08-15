@@ -512,20 +512,21 @@ export function getTypeManifestVisitor(input: {
       const innerManifest = visit(node.type, self);
 
       // The Dart addEncoderSizePrefix / addDecoderSizePrefix APIs require
-      // Encoder<num> / Decoder<num> for the prefix. BigInt-width number types
-      // (u64, u128, i64, i128) return Encoder<BigInt> which is incompatible.
-      // When the IDL specifies such a prefix, substitute u32 which is wide
-      // enough for any realistic size prefix and satisfies the num constraint.
+      // Encoder<num> / Decoder<num> for the prefix, but BigInt-width number
+      // types (u64, u128, i64, i128) return Encoder<BigInt> which is
+      // incompatible. Transform the BigInt codec to int so it satisfies the
+      // num constraint while preserving the on-chain byte width (e.g. the
+      // system program's bincode u64 string-length prefix).
       const bigIntFormats = new Set(["u64", "u128", "i64", "i128"]);
       let prefixManifest;
       if (
         node.prefix.kind === "numberTypeNode" &&
         bigIntFormats.has((node.prefix as any).format)
       ) {
-        // Use u32 encoder/decoder instead of the oversized type.
+        const codecName = getNumberCodecName((node.prefix as any).format);
         prefixManifest = {
-          encoder: fragment`${use("getU32Encoder", "solanaCodecsNumbers")}()`,
-          decoder: fragment`${use("getU32Decoder", "solanaCodecsNumbers")}()`,
+          encoder: fragment`transformEncoder(${use(`get${codecName}Encoder`, "solanaCodecsNumbers")}(), (size) => BigInt.from(size))`,
+          decoder: fragment`transformDecoder(${use(`get${codecName}Decoder`, "solanaCodecsNumbers")}(), (size, _, __) => size.toInt())`,
         };
       } else {
         prefixManifest = visit(node.prefix, self);

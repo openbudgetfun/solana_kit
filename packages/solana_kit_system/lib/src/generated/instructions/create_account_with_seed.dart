@@ -38,7 +38,13 @@ getCreateAccountWithSeedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('base', getAddressEncoder()),
-    ('seed', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
+    (
+      'seed',
+      addEncoderSizePrefix(
+        getUtf8Encoder(),
+        transformEncoder(getU64Encoder(), (size) => BigInt.from(size)),
+      ),
+    ),
     ('amount', getU64Encoder()),
     ('space', getU64Encoder()),
     ('programAddress', getAddressEncoder()),
@@ -62,7 +68,13 @@ getCreateAccountWithSeedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('base', getAddressDecoder()),
-    ('seed', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
+    (
+      'seed',
+      addDecoderSizePrefix(
+        getUtf8Decoder(),
+        transformDecoder(getU64Decoder(), (size, _, __) => size.toInt()),
+      ),
+    ),
     ('amount', getU64Decoder()),
     ('space', getU64Decoder()),
     ('programAddress', getAddressDecoder()),
