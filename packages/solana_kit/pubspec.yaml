@@ -26,6 +26,7 @@ dependencies:
   solana_kit_rpc_spec: ^0.6.0
   solana_kit_rpc_spec_types: ^0.6.0
   solana_kit_rpc_subscriptions: ^0.6.0
+  solana_kit_rpc_subscriptions_channel_websocket: ^0.6.0
   solana_kit_rpc_transport_http: ^0.6.0
   solana_kit_rpc_types: ^0.6.0
   solana_kit_signers: ^0.6.0
