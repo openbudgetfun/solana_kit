@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:http/http.dart' as http;
 import 'package:solana_kit_helius/src/auth/checkout.dart';
 import 'package:solana_kit_helius/src/auth/constants.dart';
 import 'package:solana_kit_helius/src/auth/create_api_key.dart';
@@ -25,6 +26,7 @@ Future<UpgradePlanResult> upgradePlan(
   String? lastName,
   String? couponCode,
   String? paymentHost,
+  http.Client? client,
 }) async {
   final paymentLink = await createPayment(
     CreatePaymentRequest(
@@ -38,6 +40,7 @@ Future<UpgradePlanResult> upgradePlan(
       couponCode: couponCode,
       paymentHost: paymentHost,
     ),
+    client: client,
   );
   return UpgradePlanResult(paymentLink: paymentLink);
 }
@@ -49,8 +52,13 @@ Future<PayRenewalResult> payRenewal(
   String jwt,
   String paymentIntentId, {
   String? paymentHost,
+  http.Client? client,
 }) async {
-  final intent = await getPaymentIntent(jwt, paymentIntentId);
+  final intent = await getPaymentIntent(
+    jwt,
+    paymentIntentId,
+    client: client,
+  );
   if (intent.status != 'pending') {
     throw StateError(
       'Payment intent $paymentIntentId is ${intent.status}; '

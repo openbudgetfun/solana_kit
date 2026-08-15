@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:http/http.dart' as http;
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_helius/src/auth/build_token_transfer.dart';
@@ -15,6 +16,7 @@ import 'package:solana_kit_keys/solana_kit_keys.dart';
 Future<String> payUSDC(
   Uint8List secretKey, {
   JsonRpcClient? rpcClient,
+  http.Client? client,
 }) {
   return buildAndSendTokenTransfer(
     TokenTransferParams(
@@ -24,6 +26,7 @@ Future<String> payUSDC(
       amount: paymentAmount,
     ),
     rpcClient: rpcClient,
+    client: client,
   );
 }
 
@@ -35,6 +38,7 @@ Future<String> payWithMemo(
   BigInt amount,
   String memo, {
   JsonRpcClient? rpcClient,
+  http.Client? client,
 }) {
   final signerAddress = Address(
     getBase58Decoder().decode(createKeyPairFromBytes(secretKey).publicKey),
@@ -55,6 +59,7 @@ Future<String> payWithMemo(
       additionalInstructions: [memoInstruction],
     ),
     rpcClient: rpcClient,
+    client: client,
   );
 }
 
@@ -65,6 +70,7 @@ Future<String> payPaymentLink(
   Uint8List secretKey,
   PaymentLink paymentLink, {
   JsonRpcClient? rpcClient,
+  http.Client? client,
 }) {
   final rawAmount = BigInt.from(paymentLink.amountCents) * _centsToUsdcRaw;
   return payWithMemo(
@@ -73,5 +79,6 @@ Future<String> payPaymentLink(
     rawAmount,
     paymentLink.paymentIntentId,
     rpcClient: rpcClient,
+    client: client,
   );
 }

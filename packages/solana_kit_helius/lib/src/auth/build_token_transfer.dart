@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:http/http.dart' as http;
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
@@ -49,6 +50,7 @@ class TokenTransferParams {
 Future<String> buildAndSendTokenTransfer(
   TokenTransferParams params, {
   JsonRpcClient? rpcClient,
+  http.Client? client,
 }) async {
   final keyPair = createKeyPairFromBytes(params.secretKey);
   final signerAddress = Address(
@@ -111,5 +113,5 @@ Future<String> buildAndSendTokenTransfer(
   final encoded = getTransactionEncoder().encode(signed);
   final base64Tx = base64Encode(encoded);
 
-  return sendViaSender(base64Tx);
+  return sendViaSender(base64Tx, client: client);
 }
