@@ -10,6 +10,8 @@ library;
 import 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
 import 'package:solana_kit_integration_tests/solana_kit_integration_tests.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
+import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart';
+import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_signers/solana_kit_signers.dart';
 import 'package:solana_kit_stake/solana_kit_stake.dart';
 import 'package:solana_kit_system/solana_kit_system.dart';
@@ -62,5 +64,64 @@ void main() {
         .send();
     expect(account.value, isNotNull);
     expect(account.value!['owner'], equals(stakeProgramAddress.value));
+  });
+
+  test('authorize changes the withdrawer on-chain', () async {
+    final stakeAccount = generateKeyPairSigner();
+    final newWithdrawer = generateKeyPairSigner();
+    const stakeRent = 2_282_880;
+
+    await env.sendInstructions(
+      [
+        getCreateAccountInstruction(
+          instructionProgramAddress: systemProgramAddress,
+          payer: env.payer.address,
+          newAccount: stakeAccount.address,
+          lamports: BigInt.from(stakeRent),
+          space: BigInt.from(200),
+          programAddress: stakeProgramAddress,
+        ),
+        getInitializeInstruction(
+          programAddress: stakeProgramAddress,
+          stake: stakeAccount.address,
+          rentSysvar: sysvarRentAddress,
+          arg0: Authorized(
+            staker: env.payer.address,
+            withdrawer: env.payer.address,
+          ),
+          arg1: Lockup(
+            unixTimestamp: BigInt.zero,
+            epoch: BigInt.zero,
+            custodian: systemProgramAddress,
+          ),
+        ),
+      ],
+      extraSigners: [stakeAccount],
+    );
+
+    await env.sendInstructions([
+      getAuthorizeInstruction(
+        programAddress: stakeProgramAddress,
+        stake: stakeAccount.address,
+        clockSysvar: sysvarClockAddress,
+        authority: env.payer.address,
+        arg0: newWithdrawer.address,
+        arg1: StakeAuthorize.withdrawer,
+      ),
+    ]);
+
+    // The parsed stake account now reports the new withdrawer.
+    final account = await env.rpc
+        .getAccountInfoValue(
+          stakeAccount.address,
+          const GetAccountInfoConfig(encoding: AccountEncoding.jsonParsed),
+        )
+        .send();
+    final parsed = account.value!['data']! as Map<String, Object?>;
+    final info = parsed['parsed']! as Map<String, Object?>;
+    final stakeInfo = info['info']! as Map<String, Object?>;
+    final meta = stakeInfo['meta']! as Map<String, Object?>;
+    final authorized = meta['authorized']! as Map<String, Object?>;
+    expect(authorized['withdrawer'], equals(newWithdrawer.address.value));
   });
 }

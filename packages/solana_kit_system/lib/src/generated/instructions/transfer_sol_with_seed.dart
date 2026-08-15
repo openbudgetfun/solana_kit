@@ -34,7 +34,13 @@ getTransferSolWithSeedInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU32Encoder()),
     ('amount', getU64Encoder()),
-    ('fromSeed', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
+    (
+      'fromSeed',
+      addEncoderSizePrefix(
+        getUtf8Encoder(),
+        transformEncoder(getU64Encoder(), (size) => BigInt.from(size)),
+      ),
+    ),
     ('fromOwner', getAddressEncoder()),
   ]);
 
@@ -54,7 +60,13 @@ getTransferSolWithSeedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     ('discriminator', getU32Decoder()),
     ('amount', getU64Decoder()),
-    ('fromSeed', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
+    (
+      'fromSeed',
+      addDecoderSizePrefix(
+        getUtf8Decoder(),
+        transformDecoder(getU64Decoder(), (size, _, __) => size.toInt()),
+      ),
+    ),
     ('fromOwner', getAddressDecoder()),
   ]);
 

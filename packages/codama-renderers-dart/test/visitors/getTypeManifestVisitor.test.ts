@@ -16,6 +16,7 @@ import {
   publicKeyTypeNode,
   remainderCountNode,
   setTypeNode,
+  sizePrefixTypeNode,
   stringTypeNode,
   structFieldTypeNode,
   structTypeNode,
@@ -199,6 +200,20 @@ describe("getTypeManifestVisitor", () => {
       expect(
         manifest.encoder.imports.modules.has("solanaCodecsStrings"),
       ).toBe(true);
+    });
+
+    it("transforms a BigInt-width size prefix to int for the num constraint", () => {
+      const node = sizePrefixTypeNode(
+        stringTypeNode("utf8"),
+        numberTypeNode("u64"),
+      );
+      const manifest = visit(node, createVisitor());
+      expect(manifest.encoder.content).toContain(
+        "addEncoderSizePrefix(getUtf8Encoder(), transformEncoder(getU64Encoder(), (size) => BigInt.from(size)))",
+      );
+      expect(manifest.decoder.content).toContain(
+        "addDecoderSizePrefix(getUtf8Decoder(), transformDecoder(getU64Decoder(), (size, _, __) => size.toInt()))",
+      );
     });
   });
 

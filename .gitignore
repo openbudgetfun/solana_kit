@@ -35,3 +35,6 @@ node_modules/
 .repos/
 
 coverage_tmp/
+
+# Surfpool runtime state
+.surfpool/

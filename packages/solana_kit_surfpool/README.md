@@ -73,6 +73,51 @@ final surfnet = Surfnet.connect(
 );
 ```
 
+## Solana Kit client (kit plugin)
+
+`createSurfpoolClient()` mirrors the `@solana/surfpool/kit` plugin for
+TypeScript: it starts a fresh Surfnet and returns a `SurfpoolClient` with a
+Solana Kit RPC client, an RPC subscriptions client, the Surfnet's pre-funded
+payer signer, and a typed cheatcode RPC — so tests can build, sign, send, and
+confirm transactions without managing a validator or RPC plumbing by hand.
+
+```dart
+import 'package:solana_kit/solana_kit.dart';
+import 'package:solana_kit_surfpool/solana_kit_surfpool.dart';
+
+Future<void> main() async {
+  final client = await createSurfpoolClient();
+  try {
+    // Pre-funded payer installed by the plugin.
+    final payer = client.payer;
+
+    // Standard Solana RPC and subscriptions clients.
+    final slot = await client.rpc.getSlot().send();
+    print('Slot: $slot');
+
+    // Surfpool cheatcodes with the `surfnet_` prefix stripped.
+    await client.cheatcodes.pauseClock();
+
+    // Helpers.
+    await client.airdrop(payer.address, BigInt.from(1_000_000_000));
+    final rent = await client.getMinimumBalance(BigInt.zero);
+    print('Rent-exempt minimum: $rent');
+  } finally {
+    await client.stop();
+  }
+}
+```
+
+Attach to an already-running Surfpool with `connectSurfpoolClient`; the
+[`payer`] must be a funded signer you provide:
+
+```dart
+final client = connectSurfpoolClient(
+  rpcUrl: Uri.parse('http://127.0.0.1:8899'),
+  payer: myFundedSigner,
+);
+```
+
 ## Cheatcodes
 
 ```dart
@@ -131,11 +176,14 @@ process. Use RPC assertions for deterministic tests.
 
 ## Key APIs
 
-| API                                                              | Purpose                                                    |
-| ---------------------------------------------------------------- | ---------------------------------------------------------- |
-| `Surfnet.start()` / `Surfnet.startWithConfig()`                  | Start a CLI-backed local Surfnet.                          |
-| `Surfnet.connect()`                                              | Attach to an existing Surfpool RPC endpoint.               |
-| `fundSol`, `fundToken`, `setAccount`, `setTokenAccount`          | Mutate local account state through Surfpool cheatcodes.    |
-| `resetAccount`, `streamAccount`                                  | Re-fetch or stream accounts from an upstream RPC.          |
-| `timeTravelToSlot`, `timeTravelToEpoch`, `timeTravelToTimestamp` | Move the local Surfnet clock forward.                      |
-| `deployProgram`, `deploy`                                        | Write program bytes and optionally register an Anchor IDL. |
+| API                                                                | Purpose                                                            |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| `createSurfpoolClient()` / `connectSurfpoolClient()`               | Kit-plugin style client: RPC + subscriptions + payer + cheatcodes. |
+| `SurfpoolClient.rpc` / `rpcSubscriptions` / `payer` / `cheatcodes` | Wired Solana Kit clients and the pre-funded payer.                 |
+| `SurfpoolClient.airdrop` / `getMinimumBalance`                     | Funding and rent-exemption helpers.                                |
+| `Surfnet.start()` / `Surfnet.startWithConfig()`                    | Start a CLI-backed local Surfnet.                                  |
+| `Surfnet.connect()`                                                | Attach to an existing Surfpool RPC endpoint.                       |
+| `fundSol`, `fundToken`, `setAccount`, `setTokenAccount`            | Mutate local account state through Surfpool cheatcodes.            |
+| `resetAccount`, `streamAccount`                                    | Re-fetch or stream accounts from an upstream RPC.                  |
+| `timeTravelToSlot`, `timeTravelToEpoch`, `timeTravelToTimestamp`   | Move the local Surfnet clock forward.                              |
+| `deployProgram`, `deploy`                                          | Write program bytes and optionally register an Anchor IDL.         |

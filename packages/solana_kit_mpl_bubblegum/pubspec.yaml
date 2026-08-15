@@ -25,6 +25,7 @@ dev_dependencies:
   solana_kit_rpc: ^0.6.0
   solana_kit_rpc_types: ^0.6.0
   solana_kit_signers: ^0.6.0
+  solana_kit_surfpool: ^0.1.0
   solana_kit_transaction_confirmation: ^0.6.0
   solana_kit_transaction_messages: ^0.6.0
   solana_kit_transactions: ^0.6.0

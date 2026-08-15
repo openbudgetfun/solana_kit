@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 Future<void> main(List<String> args) async {
@@ -11,53 +10,29 @@ Future<void> main(List<String> args) async {
     return;
   }
 
-  Process? surfpool;
-  var startedSurfpool = false;
   final stopwatch = Stopwatch()..start();
 
-  try {
-    if (!await _isSurfpoolReady()) {
-      stdout.writeln('Starting SurfPool...');
-      surfpool = await _startSurfpool();
-      startedSurfpool = true;
-      await _waitForSurfpool();
-    } else {
-      stdout.writeln('Using existing SurfPool on localhost:8899.');
-    }
+  // Each test file starts its own Surfpool instance via the Surfpool SDK
+  // (auto-allocated ports), so no shared instance needs to be launched here.
+  final testArgs = _withDefaultTestArgs(args);
+  stdout.writeln(
+    'Running ${testDirectories.length} integration test directories.',
+  );
+  final result = await Process.start('fvm', [
+    'dart',
+    'test',
+    '--tags',
+    'integration',
+    ...testArgs,
+    ...testDirectories,
+  ], mode: ProcessStartMode.inheritStdio);
 
-    final testArgs = _withDefaultTestArgs(args);
-    stdout.writeln(
-      'Running ${testDirectories.length} integration test directories.',
-    );
-    final result = await Process.start('fvm', [
-      'dart',
-      'test',
-      '--tags',
-      'integration',
-      ...testArgs,
-      ...testDirectories,
-    ], mode: ProcessStartMode.inheritStdio);
+  exitCode = await result.exitCode;
 
-    exitCode = await result.exitCode;
-  } finally {
-    if (startedSurfpool) {
-      stdout.writeln('Stopping SurfPool...');
-      surfpool?.kill();
-      await surfpool?.exitCode.timeout(
-        const Duration(seconds: 5),
-        onTimeout: () {
-          surfpool?.kill(ProcessSignal.sigkill);
-          return -1;
-        },
-      );
-      await Process.run('surfpool', ['stop']);
-    }
-
-    stopwatch.stop();
-    stdout.writeln(
-      'Integration tests finished in ${_formatDuration(stopwatch.elapsed)}.',
-    );
-  }
+  stopwatch.stop();
+  stdout.writeln(
+    'Integration tests finished in ${_formatDuration(stopwatch.elapsed)}.',
+  );
 }
 
 List<String> _discoverIntegrationTestDirectories() {
@@ -117,49 +92,6 @@ bool _hasDartTests(Directory directory) {
       .listSync(recursive: true, followLinks: false)
       .whereType<File>()
       .any((file) => file.path.endsWith('_test.dart'));
-}
-
-Future<Process> _startSurfpool() async {
-  final args = Platform.isLinux
-      ? ['start', '--daemon', '--ci']
-      : ['start', '--ci', '--no-tui'];
-
-  final process = await Process.start('surfpool', args);
-  if (!Platform.isLinux) {
-    process.stdout.listen(stdout.add);
-    process.stderr.listen(stderr.add);
-  } else {
-    unawaited(process.stdout.drain<void>());
-    unawaited(process.stderr.drain<void>());
-  }
-  return process;
-}
-
-Future<void> _waitForSurfpool() async {
-  for (var attempt = 1; attempt <= 30; attempt += 1) {
-    if (await _isSurfpoolReady()) {
-      stdout.writeln('SurfPool is ready.');
-      return;
-    }
-    await Future<void>.delayed(const Duration(seconds: 1));
-  }
-  throw StateError('SurfPool failed to start within 30 seconds.');
-}
-
-Future<bool> _isSurfpoolReady() async {
-  final client = HttpClient()..connectionTimeout = const Duration(seconds: 1);
-  try {
-    final request = await client.postUrl(Uri.parse('http://localhost:8899'));
-    request.headers.contentType = ContentType.json;
-    request.write('{"jsonrpc":"2.0","id":1,"method":"getHealth"}');
-    final response = await request.close().timeout(const Duration(seconds: 1));
-    await response.drain<void>();
-    return response.statusCode >= 200 && response.statusCode < 500;
-  } on Object {
-    return false;
-  } finally {
-    client.close(force: true);
-  }
 }
 
 Future<void> _ensurePackageConfig() async {

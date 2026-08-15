@@ -86,10 +86,11 @@ SolanaError getSolanaErrorFromTransactionError(Object transactionError) {
                 SolanaErrorCode
                     .transactionErrorProgramExecutionTemporarilyRestricted) {
           final ctx = rpcErrorContext as Map<String, Object?>?;
+          final accountIndex = ctx?['account_index'];
           return {
-            'accountIndex': ctx != null
-                ? (ctx['account_index']! as num).toInt()
-                : null,
+            'accountIndex': accountIndex is BigInt
+                ? accountIndex.toInt()
+                : (accountIndex as num?)?.toInt(),
           };
         }
         return null;

@@ -75,4 +75,112 @@ void main() {
       expect(after.value!['owner'], equals(tokenProgramAddress.value));
     },
   );
+
+  test('idempotent create succeeds when the ATA already exists', () async {
+    final mint = generateKeyPairSigner();
+    const mintRent = 1461600;
+    final ata = getAssociatedTokenAddressSync(
+      owner: env.payer.address,
+      tokenProgram: tokenProgramAddress,
+      mint: mint.address,
+    );
+
+    // Set up the mint + ATA once.
+    await env.sendInstructions(
+      [
+        getCreateAccountInstruction(
+          instructionProgramAddress: systemProgramAddress,
+          payer: env.payer.address,
+          newAccount: mint.address,
+          lamports: BigInt.from(mintRent),
+          space: BigInt.from(82),
+          programAddress: tokenProgramAddress,
+        ),
+        getInitializeMint2Instruction(
+          programAddress: tokenProgramAddress,
+          mint: mint.address,
+          decimals: 9,
+          mintAuthority: env.payer.address,
+        ),
+        getCreateAssociatedTokenIdempotentInstruction(
+          programAddress: associatedTokenProgramAddress,
+          payer: env.payer.address,
+          ata: ata,
+          owner: env.payer.address,
+          mint: mint.address,
+          systemProgram: systemProgramAddress,
+          tokenProgram: tokenProgramAddress,
+        ),
+      ],
+      extraSigners: [mint],
+    );
+
+    // Calling it again must succeed (that is the point of idempotent).
+    await env.sendInstructions([
+      getCreateAssociatedTokenIdempotentInstruction(
+        programAddress: associatedTokenProgramAddress,
+        payer: env.payer.address,
+        ata: ata,
+        owner: env.payer.address,
+        mint: mint.address,
+        systemProgram: systemProgramAddress,
+        tokenProgram: tokenProgramAddress,
+      ),
+    ]);
+  });
+
+  test('non-idempotent create fails when the ATA already exists', () async {
+    final mint = generateKeyPairSigner();
+    const mintRent = 1461600;
+    final ata = getAssociatedTokenAddressSync(
+      owner: env.payer.address,
+      tokenProgram: tokenProgramAddress,
+      mint: mint.address,
+    );
+
+    await env.sendInstructions(
+      [
+        getCreateAccountInstruction(
+          instructionProgramAddress: systemProgramAddress,
+          payer: env.payer.address,
+          newAccount: mint.address,
+          lamports: BigInt.from(mintRent),
+          space: BigInt.from(82),
+          programAddress: tokenProgramAddress,
+        ),
+        getInitializeMint2Instruction(
+          programAddress: tokenProgramAddress,
+          mint: mint.address,
+          decimals: 9,
+          mintAuthority: env.payer.address,
+        ),
+        getCreateAssociatedTokenIdempotentInstruction(
+          programAddress: associatedTokenProgramAddress,
+          payer: env.payer.address,
+          ata: ata,
+          owner: env.payer.address,
+          mint: mint.address,
+          systemProgram: systemProgramAddress,
+          tokenProgram: tokenProgramAddress,
+        ),
+      ],
+      extraSigners: [mint],
+    );
+
+    // The non-idempotent variant must fail because the ATA exists.
+    await expectLater(
+      env.sendInstructions([
+        getCreateAssociatedTokenInstruction(
+          programAddress: associatedTokenProgramAddress,
+          payer: env.payer.address,
+          ata: ata,
+          owner: env.payer.address,
+          mint: mint.address,
+          systemProgram: systemProgramAddress,
+          tokenProgram: tokenProgramAddress,
+        ),
+      ]),
+      throwsA(isA<Object>()),
+    );
+  });
 }
