@@ -1,11 +1,15 @@
 ---
 "solana_kit_errors": minor
+"solana_kit_subscribable": minor
+"solana_kit_offchain_messages": minor
+"solana_kit_instruction_plans": minor
+"solana_kit_rpc_transformers": patch
+"solana_kit_rpc_api": patch
 ---
 
 # @solana/kit v7.1.0 upstream sync
 
-Ports the `@solana/kit` `v7.1.0` changes into the Dart SDK. This changeset
-grows as each affected package is ported.
+Ports the `@solana/kit` `v7.1.0` changes into the Dart SDK.
 
 ## solana_kit_errors
 
@@ -17,35 +21,68 @@ Adds the three new error codes introduced in `@solana/kit` v7.1.0:
 - `subscribableStreamClosedWithoutError` (`8195001`) — from
   `@solana/subscribable`'s new `bridgeStoreToAsyncIterable` helper.
 
+## solana_kit_subscribable
+
+Adds `bridgeStoreToAsyncIterable`, which adapts a `ReactiveStreamStore` into
+a pull-based `Stream` (the Dart equivalent of the upstream `AsyncIterable`).
+It seeds from the store's current snapshot, yields loaded values
+(latest-wins), throws on error (substituting
+`subscribableStreamClosedWithoutError` when the error payload is nullish),
+and ends cleanly when the `CancellationToken` fires. The caller owns the
+store's lifecycle (`connect()`/`reset()`).
+
+## solana_kit_offchain_messages
+
+Adds `assertOffchainMessageV1Equal`, which asserts that a version 1 offchain
+message received from an untrusted signer is the message you expected it to
+sign. Compares content (reporting UTF-8 byte lengths) and required
+signatories (order-insensitive, sorted for comparison), throwing
+`offchainMessageContentDoesNotMatchExpected` /
+`offchainMessageRequiredSignatoriesDoNotMatchExpected` on mismatch.
+
+## solana_kit_instruction_plans
+
+`createTransactionPlanExecutor`'s `executeTransactionMessage` callback may now
+return the context of a successful result (a map that must include a
+`signature`) instead of a `Signature` or `Transaction`. The returned context
+is merged with the mutable context, taking precedence. Returning a
+`Signature` or `Transaction` still behaves as before (stored as
+`context['signature']` / `context['transaction']` with the signature derived).
+
+## solana_kit_rpc_transformers / solana_kit_rpc_api
+
+- New `tokenBalancesConfigs` export (`accountIndex`, `uiTokenAmount.decimals`,
+  `uiTokenAmount.uiAmount`).
+- `getTransaction`, `getBlock`, and `simulateTransaction` now allow-list
+  `uiTokenAmount.uiAmount` (previously upcast to `BigInt` when whole).
+- `simulateTransaction` now allow-lists token-balance `accountIndex` and
+  `uiTokenAmount.decimals`.
+- `getTransaction` and `getBlock` now allow-list the transaction `version`
+  (previously arrived as `0n` while typechecking as `0`).
+
 ## Remaining (in progress)
 
 The following v7.1.0 changes still need to be ported and will be appended to
 this changeset as they land:
 
-- `solana_kit_subscribable`: `bridgeStoreToAsyncIterable`.
-- `solana_kit_offchain_messages`: `assertOffchainMessageV1Equal`.
-- `solana_kit_instruction_plans`: `createTransactionPlanExecutor` callback may
-  return the successful result context (returning a `Signature`/`Transaction`
-  is deprecated).
 - `solana_kit`: `createClientWithGetMinimumBalanceFromRpc`,
   `createClientWithFetchAccountsFromRpc`, `createClientWithInterfacesFromRpc`;
   re-export `@solana/promises` (`isAbortError`, `getAbortablePromise`,
   `safeRace`).
 - `solana_kit_rpc_api` / `solana_kit_rpc_types`: `getTransactionsForAddress`
   RPC method and shared `meta.costUnits` field.
-- `solana_kit_rpc_transformers`: stop upcasting token-balance `uiAmount`,
-  `decimals`, `accountIndex`, and transaction `version` to `bigint`; export
-  `tokenBalancesConfigs`.
 - `solana_kit_transaction_introspection`:
   `decodeTransactionFromRpcResponse` accepts confirmed transactions from any
   RPC method (not just `getTransaction`).
-- `solana_kit_transaction_messages`:
-  `compressTransactionMessageUsingAddressLookupTables` rejects v1 transactions.
 - `@solana/plugin-interfaces` `ClientWithFetchAccounts` interface.
 
 Already present in the Dart port (no change needed):
 
 - `@solana/codecs-data-structures` `getBitArrayEncoder` next-offset fix
   (`offset + size`) — the Dart encoder already returns `offset + size`.
+- `@solana/transaction-messages`
+  `compressTransactionMessageUsingAddressLookupTables` rejecting v1
+  transactions — a compile-time-only type narrowing upstream; not expressible
+  in Dart's single-class `TransactionMessage` model, so no runtime change.
 
 `@solana/react` changes are not ported (React-only).

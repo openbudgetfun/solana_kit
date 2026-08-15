@@ -25,6 +25,7 @@
 library;
 
 export 'src/async_iterable.dart';
+export 'src/bridge_store_to_async_iterable.dart';
 export 'src/cancellation_token.dart';
 export 'src/data_publisher.dart';
 export 'src/demultiplex.dart';
