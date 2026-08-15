@@ -54,17 +54,21 @@ Reference pin bumped in `config/reference-repos.json`:
   `getTransactionsForAddress` keypaths.
 - `solana_kit_transaction_introspection`: `decodeTransactionFromRpcResponse`
   documented for any RPC method (envelope already generic).
+- `solana_kit`: `ClientWithGetMinimumBalance` / `ClientWithFetchAccounts`
+  interfaces + `createClientWithGetMinimumBalanceFromRpc` /
+  `createClientWithFetchAccountsFromRpc` / `createClientWithInterfacesFromRpc`.
+- `solana_kit_rpc_api`: `getTransactionsForAddress` request side (config,
+  filters, params builder) + method registration.
+- `solana_kit_rpc_types`: `meta.costUnits` on the shared transaction metadata.
 - `@solana/kit` pin + `versions.json` bumped to `7.1.0`.
 
 ### Remaining (not yet ported)
 
-- `solana_kit`: `createClientWithGetMinimumBalanceFromRpc` /
-  `createClientWithFetchAccountsFromRpc` / `createClientWithInterfacesFromRpc`
-  and the `@solana/promises` re-export (`isAbortError`, `getAbortablePromise`,
-  `safeRace` — needs a Dart cancellation-model adaptation).
-- `solana_kit_rpc_api` / `solana_kit_rpc_types`: the `getTransactionsForAddress`
-  RPC method itself and the shared `meta.costUnits` field (keypaths are done).
-- `@solana/plugin-interfaces` `ClientWithFetchAccounts` interface.
+- `solana_kit_rpc_types`: the `getTransactionsForAddress` response types
+  (signatures/full modes).
+- `solana_kit`: the `@solana/promises` re-export (`isAbortError`,
+  `getAbortablePromise`, `safeRace` — needs a Dart cancellation-model
+  adaptation; `AbortError` currently lives in the websocket package).
 
 ## Helius SDK (separate audit)
 
