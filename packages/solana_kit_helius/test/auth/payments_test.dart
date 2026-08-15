@@ -156,7 +156,7 @@ void main() {
     test('payPaymentLink converts cents to raw USDC', () async {
       final client = _rpcAndSenderClient();
       final rpc = JsonRpcClient(url: 'https://rpc', client: client);
-      final link = const PaymentLink(
+      const link = PaymentLink(
         kind: 'payment_required',
         paymentIntentId: 'pi-1',
         amountCents: 100,
