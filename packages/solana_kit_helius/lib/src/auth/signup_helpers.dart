@@ -6,6 +6,6 @@ import 'package:solana_kit_helius/src/types/auth_types.dart';
 ///
 /// Returns a [SignupEndpoints] with mainnet and devnet URLs.
 SignupEndpoints buildEndpoints(String apiKey) => SignupEndpoints(
-      mainnet: 'https://mainnet.helius-rpc.com/?api-key=$apiKey',
-      devnet: 'https://devnet.helius-rpc.com/?api-key=$apiKey',
-    );
+  mainnet: 'https://mainnet.helius-rpc.com/?api-key=$apiKey',
+  devnet: 'https://devnet.helius-rpc.com/?api-key=$apiKey',
+);

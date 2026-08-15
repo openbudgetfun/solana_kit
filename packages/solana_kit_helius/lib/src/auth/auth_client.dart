@@ -25,10 +25,10 @@ class AuthClient {
   /// short-circuits (already subscribed / upgrade required) or returns a
   /// hosted-checkout [PaymentLink] for new signups.
   Future<SignupResult> signup(SignupRequest request) => authSignup(
-        _restClient,
-        _apiKey,
-        request,
-      );
+    _restClient,
+    _apiKey,
+    request,
+  );
 
   /// Performs a wallet signup with signature verification.
   Future<WalletSignupResponse> walletSignup(WalletSignupRequest request) =>

@@ -7,12 +7,10 @@ const String paymentHost = 'https://dashboard.helius.dev';
 const String treasury = 'CEs84tEowsXpH8u4VBf8rJSVgSRypFMfXw9CpGRtQgb6';
 
 /// USDC mint address on Solana mainnet.
-const String usdcMintMainnet =
-    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+const String usdcMintMainnet = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 
 /// USDC mint address on Solana devnet.
-const String usdcMintDevnet =
-    '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU';
+const String usdcMintDevnet = '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU';
 
 /// USDC mint address to use (mainnet by default).
 const String usdcMint = usdcMintMainnet;

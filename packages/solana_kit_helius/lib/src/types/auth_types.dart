@@ -21,9 +21,9 @@ class SignupRequest {
     this.lastName,
     this.couponCode,
     this.paymentHost,
-  })  : jwt = null,
-        refId = null,
-        walletAddress = null;
+  }) : jwt = null,
+       refId = null,
+       walletAddress = null;
 
   /// Creates a signup request from pre-existing authentication.
   const SignupRequest.preauthenticated({
@@ -237,16 +237,16 @@ class PaymentLink {
 
   /// Serializes this payment link to a JSON map.
   Map<String, Object?> toJson() => {
-        'kind': kind,
-        'paymentIntentId': paymentIntentId,
-        'amountCents': amountCents,
-        'destinationWallet': destinationWallet,
-        'memo': memo,
-        'expiresAt': expiresAt,
-        'paymentUrl': paymentUrl,
-        'solanaPayUrl': solanaPayUrl,
-        'planName': planName,
-      };
+    'kind': kind,
+    'paymentIntentId': paymentIntentId,
+    'amountCents': amountCents,
+    'destinationWallet': destinationWallet,
+    'memo': memo,
+    'expiresAt': expiresAt,
+    'paymentUrl': paymentUrl,
+    'solanaPayUrl': solanaPayUrl,
+    'planName': planName,
+  };
 }
 
 // ── Legacy wallet signup types ──────────────────────────────────────────────
@@ -281,10 +281,10 @@ class WalletSignupRequest {
 
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
-        'walletAddress': walletAddress,
-        'signature': signature,
-        'message': message,
-      };
+    'walletAddress': walletAddress,
+    'signature': signature,
+    'message': message,
+  };
 }
 
 /// Response from a wallet signup.
@@ -366,11 +366,11 @@ class HeliusProject {
 
   /// Serializes this project to a JSON map.
   Map<String, Object?> toJson() => {
-        'id': id,
-        'name': name,
-        'apiKey': apiKey,
-        'createdAt': createdAt,
-      };
+    'id': id,
+    'name': name,
+    'apiKey': apiKey,
+    'createdAt': createdAt,
+  };
 }
 
 /// Request to create a new API key.
@@ -432,11 +432,11 @@ class HeliusApiKey {
 
   /// Serializes this API key to a JSON map.
   Map<String, Object?> toJson() => {
-        'id': id,
-        'key': key,
-        'name': name,
-        'createdAt': createdAt,
-      };
+    'id': id,
+    'key': key,
+    'name': name,
+    'createdAt': createdAt,
+  };
 }
 
 /// Response containing credit balance information.
@@ -464,9 +464,9 @@ class CheckBalancesResponse {
 
   /// Serializes this response to a JSON map.
   Map<String, Object?> toJson() => {
-        'credits': credits,
-        'creditsUsed': creditsUsed,
-      };
+    'credits': credits,
+    'creditsUsed': creditsUsed,
+  };
 }
 
 /// A keypair result containing public and secret keys.
@@ -491,9 +491,9 @@ class KeypairResult {
 
   /// Serializes this keypair result to a JSON map.
   Map<String, Object?> toJson() => {
-        'publicKey': publicKey,
-        'secretKey': secretKey,
-      };
+    'publicKey': publicKey,
+    'secretKey': secretKey,
+  };
 }
 
 /// Request to sign an auth message.
@@ -566,10 +566,10 @@ class SignAuthMessageRequest {
 
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
-        if (message != null) 'message': message,
-        'secretKey': secretKey,
-        if (timestamp != null) 'timestamp': timestamp,
-      };
+    if (message != null) 'message': message,
+    'secretKey': secretKey,
+    if (timestamp != null) 'timestamp': timestamp,
+  };
 }
 
 /// Response containing a signed auth message.
@@ -594,7 +594,7 @@ class SignAuthMessageResponse {
 
   /// Serializes this response to a JSON map.
   Map<String, Object?> toJson() => {
-        if (message != null) 'message': message,
-        'signature': signature,
-      };
+    if (message != null) 'message': message,
+    'signature': signature,
+  };
 }
