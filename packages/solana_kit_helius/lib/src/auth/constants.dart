@@ -1,6 +1,4 @@
-// ignore_for_file: public_member_api_docs
-
-/// Constants matching upstream helius-sdk v3.0.0.
+// Constants matching upstream helius-sdk v3.0.0.
 
 /// Host that serves the public hosted-checkout page.
 const String paymentHost = 'https://dashboard.helius.dev';

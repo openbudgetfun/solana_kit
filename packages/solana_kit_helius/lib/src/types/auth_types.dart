@@ -500,8 +500,8 @@ class KeypairResult {
 class SignAuthMessageRequest {
   /// Creates a sign-auth-message request.
   const SignAuthMessageRequest({
-    this.message,
     required this.secretKey,
+    this.message,
     this.timestamp,
   });
 

@@ -1,4 +1,4 @@
-/// Helper utilities for signup flows, matching upstream v3.0.0.
+// Helper utilities for signup flows, matching upstream v3.0.0.
 
 import 'package:solana_kit_helius/src/types/auth_types.dart';
 

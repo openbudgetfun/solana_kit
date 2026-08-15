@@ -1,14 +1,10 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_helius/src/auth/checkout.dart';
-import 'package:solana_kit_helius/src/auth/create_api_key.dart';
-import 'package:solana_kit_helius/src/auth/dev_portal_configs.dart';
-import 'package:solana_kit_helius/src/auth/get_project.dart';
 import 'package:solana_kit_helius/src/auth/keypair_helpers.dart';
 import 'package:solana_kit_helius/src/auth/list_projects.dart';
-import 'package:solana_kit_helius/src/auth/plan_catalog.dart';
+import 'package:solana_kit_helius/src/auth/oauth_token_exchange.dart';
 import 'package:solana_kit_helius/src/auth/sign_auth_message.dart';
 import 'package:solana_kit_helius/src/auth/signup_helpers.dart';
 import 'package:solana_kit_helius/src/auth/wallet_signup.dart';

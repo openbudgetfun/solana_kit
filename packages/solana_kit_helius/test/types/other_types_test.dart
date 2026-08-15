@@ -83,18 +83,6 @@ void main() {
 
   group('auth_types', () {
     expectJsonRoundTrip(
-      'AgenticSignupRequest roundtrips',
-      {'walletAddress': 'wallet-1'},
-      AgenticSignupRequest.fromJson,
-      (value) => value.toJson(),
-    );
-    expectJsonRoundTrip(
-      'AgenticSignupResponse roundtrips',
-      {'apiKey': 'key-1', 'projectId': 'project-1'},
-      AgenticSignupResponse.fromJson,
-      (value) => value.toJson(),
-    );
-    expectJsonRoundTrip(
       'WalletSignupRequest roundtrips',
       {'walletAddress': 'wallet-1', 'signature': 'sig-1', 'message': 'hello'},
       WalletSignupRequest.fromJson,
@@ -489,30 +477,6 @@ void main() {
   });
 
   group('error cases — auth_types', () {
-    test(
-      'AgenticSignupRequest throws when walletAddress is absent',
-      () => expect(
-        () => AgenticSignupRequest.fromJson({}),
-        _missingField('walletAddress'),
-      ),
-    );
-
-    test(
-      'AgenticSignupResponse throws when apiKey is absent',
-      () => expect(
-        () => AgenticSignupResponse.fromJson({'projectId': 'p-1'}),
-        _missingField('apiKey'),
-      ),
-    );
-
-    test(
-      'AgenticSignupResponse throws when projectId is absent',
-      () => expect(
-        () => AgenticSignupResponse.fromJson({'apiKey': 'k-1'}),
-        _missingField('projectId'),
-      ),
-    );
-
     test(
       'HeliusProject throws when id is absent',
       () => expect(

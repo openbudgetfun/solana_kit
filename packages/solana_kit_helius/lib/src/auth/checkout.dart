@@ -9,6 +9,7 @@ import 'package:solana_kit_helius/src/auth/oauth_token_exchange.dart';
 import 'package:solana_kit_helius/src/auth/payment_url.dart';
 import 'package:solana_kit_helius/src/auth/plan_catalog.dart';
 import 'package:solana_kit_helius/src/auth/retry.dart';
+import 'package:solana_kit_helius/src/types/auth_types.dart';
 
 const checkoutPollInterval = Duration(seconds: 1);
 const checkoutPollTimeout = Duration(seconds: 60);
@@ -182,30 +183,6 @@ class PollOutcome {
   const PollOutcome(this.kind, {this.status});
   final String kind;
   final CheckoutStatusResponse? status;
-}
-
-class PaymentLink {
-  const PaymentLink({
-    required this.kind,
-    required this.paymentIntentId,
-    required this.amountCents,
-    required this.destinationWallet,
-    required this.memo,
-    required this.expiresAt,
-    required this.paymentUrl,
-    required this.solanaPayUrl,
-    required this.planName,
-  });
-
-  final String kind;
-  final String paymentIntentId;
-  final int amountCents;
-  final String destinationWallet;
-  final String memo;
-  final String expiresAt;
-  final String paymentUrl;
-  final String solanaPayUrl;
-  final String planName;
 }
 
 class CreatePaymentRequest {

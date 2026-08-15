@@ -1,5 +1,4 @@
 import 'package:solana_kit_helius/src/auth/check_balances.dart';
-import 'package:solana_kit_helius/src/auth/checkout.dart';
 import 'package:solana_kit_helius/src/auth/create_api_key.dart';
 import 'package:solana_kit_helius/src/auth/create_project.dart';
 import 'package:solana_kit_helius/src/auth/generate_keypair.dart';
