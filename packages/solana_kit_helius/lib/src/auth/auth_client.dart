@@ -1,4 +1,3 @@
-import 'package:solana_kit_helius/src/auth/agentic_signup.dart';
 import 'package:solana_kit_helius/src/auth/check_balances.dart';
 import 'package:solana_kit_helius/src/auth/create_api_key.dart';
 import 'package:solana_kit_helius/src/auth/create_project.dart';
@@ -7,6 +6,7 @@ import 'package:solana_kit_helius/src/auth/get_project.dart';
 import 'package:solana_kit_helius/src/auth/list_projects.dart';
 import 'package:solana_kit_helius/src/auth/sign_auth_message.dart'
     as sign_auth_message;
+import 'package:solana_kit_helius/src/auth/signup.dart';
 import 'package:solana_kit_helius/src/auth/wallet_signup.dart';
 import 'package:solana_kit_helius/src/internal/rest_client.dart';
 import 'package:solana_kit_helius/src/types/auth_types.dart';
@@ -19,9 +19,16 @@ class AuthClient {
   final RestClient _restClient;
   final String _apiKey;
 
-  /// Performs an agentic signup with a wallet address.
-  Future<AgenticSignupResponse> agenticSignup(AgenticSignupRequest request) =>
-      authAgenticSignup(_restClient, _apiKey, request);
+  /// Performs a unified signup (v3.0.0). Replaces the legacy agenticSignup.
+  ///
+  /// Authenticates the wallet, detects existing projects, and either
+  /// short-circuits (already subscribed / upgrade required) or returns a
+  /// hosted-checkout [PaymentLink] for new signups.
+  Future<SignupResult> signup(SignupRequest request) => authSignup(
+    _restClient,
+    _apiKey,
+    request,
+  );
 
   /// Performs a wallet signup with signature verification.
   Future<WalletSignupResponse> walletSignup(WalletSignupRequest request) =>
