@@ -141,6 +141,31 @@ void main() {
       );
     });
 
+    test('reports the abort reason for a failed parallel plan', () async {
+      final messageA = createMessage();
+      final messageB = createMessage();
+      final plan = parallelTransactionPlan([messageA, messageB]);
+
+      final executor = createTransactionPlanExecutor(
+        TransactionPlanExecutorConfig(
+          executeTransactionMessage: (context, msg) async {
+            throw Exception('parallel transaction failed');
+          },
+        ),
+      );
+
+      expect(
+        () => executor(plan),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan,
+          ),
+        ),
+      );
+    });
+
     test('throws for non-divisible sequential transaction plans', () async {
       final messageA = createMessage();
       final messageB = createMessage();

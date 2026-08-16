@@ -65,13 +65,9 @@ Stream<T> bridgeStoreToAsyncIterable<T>(
       latest = (value: state.data as T);
       wake();
     } else if (state.status == ReactiveStreamState.error) {
-      // A nullish error would otherwise surface as a value-less success;
-      // substitute a sentinel so the failure propagates.
-      failure =
-          state.error ??
-          SolanaError(
-            SolanaErrorCode.subscribableStreamClosedWithoutError,
-          );
+      // The store filters nullish errors at the source, so the error state
+      // always carries a non-null error.
+      failure = state.error;
       wake();
     }
     // `idle` / `loading` carry no value and no error — nothing to yield.

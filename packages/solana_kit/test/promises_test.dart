@@ -36,6 +36,27 @@ void main() {
       await expectLater(future, throwsA(isA<StateError>()));
     });
 
+    test('getAbortablePromise rethrows an Exception reason', () async {
+      final source = CancellationTokenSource();
+      final future = getAbortablePromise(
+        Completer<int>().future,
+        cancellationToken: source.token,
+      );
+      source.cancel(Exception('aborted'));
+      await expectLater(future, throwsA(isA<Exception>()));
+    });
+
+    test('getAbortablePromise throws StateError for a non-error reason',
+        () async {
+      final source = CancellationTokenSource();
+      final future = getAbortablePromise(
+        Completer<int>().future,
+        cancellationToken: source.token,
+      );
+      source.cancel('aborted');
+      await expectLater(future, throwsA(isA<StateError>()));
+    });
+
     test('safeRace completes with the first result', () async {
       final slow = Completer<int>();
       final fast = Future.value(1);

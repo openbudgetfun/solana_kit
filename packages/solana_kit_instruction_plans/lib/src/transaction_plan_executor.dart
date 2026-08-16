@@ -118,12 +118,6 @@ Future<TransactionPlanResult> _traverseSequential(
   bool Function() isCanceled,
   void Function() setCanceled,
 ) async {
-  if (!transactionPlan.divisible) {
-    throw SolanaError(
-      SolanaErrorCode.instructionPlansNonDivisibleTransactionPlansNotSupported,
-    );
-  }
-
   final results = <TransactionPlanResult>[];
 
   for (final subPlan in transactionPlan.plans) {

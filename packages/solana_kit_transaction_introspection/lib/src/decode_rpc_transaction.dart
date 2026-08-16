@@ -165,14 +165,7 @@ DecodedRpcTransaction _decodeFromJson(
   Map<String, Object?>? meta,
   Object? version,
 ) {
-  final headerRaw = _asMap(message['header']);
-  if (headerRaw == null) {
-    throw SolanaError(
-      SolanaErrorCode
-          .transactionIntrospectionUnrecognizedGetTransactionResponse,
-    );
-  }
-  final header = _readJsonHeader(headerRaw);
+  final header = _readJsonHeader(_asMap(message['header'])!);
   final staticAccounts = _addressList(message['accountKeys']);
   final instructionsRaw = _asList(message['instructions']);
   if (instructionsRaw.isEmpty && message['instructions'] is! List) {

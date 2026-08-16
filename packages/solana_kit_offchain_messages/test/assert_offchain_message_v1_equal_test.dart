@@ -94,4 +94,184 @@ void main() {
       );
     });
   });
+
+  group('OffchainMessageV1 equality', () {
+    test('is equal for identical messages', () {
+      final a = OffchainMessageV1(
+        content: 'hello',
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      final b = OffchainMessageV1(
+        content: 'hello',
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      expect(a, equals(b));
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('is not equal when content differs', () {
+      final a = OffchainMessageV1(
+        content: 'hello',
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      final b = OffchainMessageV1(
+        content: 'world',
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('is not equal when signatory count differs', () {
+      final a = OffchainMessageV1(
+        content: 'hello',
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      final b = OffchainMessageV1(
+        content: 'hello',
+        requiredSignatories: [
+          _signatory('11111111111111111111111111111111'),
+          _signatory('22222222222222222222222222222222'),
+        ],
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('is not equal when a signatory differs', () {
+      final a = OffchainMessageV1(
+        content: 'hello',
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      final b = OffchainMessageV1(
+        content: 'hello',
+        requiredSignatories: [_signatory('22222222222222222222222222222222')],
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('is not equal to a non-message', () {
+      final a = OffchainMessageV1(
+        content: 'hello',
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      expect(a, isNot(equals('hello')));
+    });
+  });
+
+  group('OffchainMessageV0 equality', () {
+    test('is equal for identical messages', () {
+      final a = OffchainMessageV0(
+        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
+        content: OffchainMessageContent(
+          format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
+          text: 'hello',
+        ),
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      final b = OffchainMessageV0(
+        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
+        content: OffchainMessageContent(
+          format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
+          text: 'hello',
+        ),
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      expect(a, equals(b));
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('is not equal when the application domain differs', () {
+      final a = OffchainMessageV0(
+        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
+        content: OffchainMessageContent(
+          format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
+          text: 'hello',
+        ),
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      final b = OffchainMessageV0(
+        applicationDomain: OffchainMessageApplicationDomain('other.com'),
+        content: OffchainMessageContent(
+          format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
+          text: 'hello',
+        ),
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('is not equal when content differs', () {
+      final a = OffchainMessageV0(
+        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
+        content: OffchainMessageContent(
+          format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
+          text: 'hello',
+        ),
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      final b = OffchainMessageV0(
+        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
+        content: OffchainMessageContent(
+          format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
+          text: 'world',
+        ),
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('is not equal when signatory count differs', () {
+      final a = OffchainMessageV0(
+        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
+        content: OffchainMessageContent(
+          format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
+          text: 'hello',
+        ),
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      final b = OffchainMessageV0(
+        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
+        content: OffchainMessageContent(
+          format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
+          text: 'hello',
+        ),
+        requiredSignatories: [
+          _signatory('11111111111111111111111111111111'),
+          _signatory('22222222222222222222222222222222'),
+        ],
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('is not equal when a signatory differs', () {
+      final a = OffchainMessageV0(
+        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
+        content: OffchainMessageContent(
+          format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
+          text: 'hello',
+        ),
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      final b = OffchainMessageV0(
+        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
+        content: OffchainMessageContent(
+          format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
+          text: 'hello',
+        ),
+        requiredSignatories: [_signatory('22222222222222222222222222222222')],
+      );
+      expect(a, isNot(equals(b)));
+    });
+
+    test('is not equal to a non-message', () {
+      final a = OffchainMessageV0(
+        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
+        content: OffchainMessageContent(
+          format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
+          text: 'hello',
+        ),
+        requiredSignatories: [_signatory('11111111111111111111111111111111')],
+      );
+      expect(a, isNot(equals('hello')));
+    });
+  });
 }

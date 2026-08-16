@@ -69,6 +69,22 @@ void main() {
       ]);
       expect(accounts, hasLength(1));
     });
+
+    test('fetches multiple accounts in one call', () async {
+      final rpc = _mockRpc((method, params) {
+        expect(method, 'getMultipleAccounts');
+        return {
+          'context': {'slot': BigInt.one},
+          'value': [null, null],
+        };
+      });
+      final client = createClientWithFetchAccountsFromRpc(rpc);
+      final accounts = await client.fetchAccounts([
+        const Address('11111111111111111111111111111111'),
+        const Address('22222222222222222222222222222222'),
+      ]);
+      expect(accounts, hasLength(2));
+    });
   });
 
   group('createClientWithInterfacesFromRpc', () {
