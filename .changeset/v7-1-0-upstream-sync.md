@@ -76,27 +76,25 @@ Adds the v7.1.0 client-interface helpers:
   (`getAccountInfo` / `getMultipleAccounts` / empty short-circuit).
 - `createClientWithInterfacesFromRpc` — returns both interfaces.
 
+Also re-exports the `@solana/promises` helpers as Dart counterparts:
+`isAbortError`, `getAbortablePromise`, and `safeRace` (adapted to Dart's
+cancellation model via `CancellationToken`; `AbortError` lives in
+`solana_kit_subscribable`).
+
 ## solana_kit_rpc_api
 
 Adds the `getTransactionsForAddress` RPC method request side: config
 (commitment, filters, limit, minContextSlot, paginationToken, sortOrder,
 encoding, maxSupportedTransactionVersion, transactionDetails), filters
 (blockTime/signature/slot comparisons, status, tokenAccounts), and the params
-builder. Response types (signatures/full modes) and the shared `meta.costUnits`
-field are still in progress.
+builder.
 
-## Remaining (in progress)
+## solana_kit_rpc_types
 
-The following v7.1.0 changes still need to be ported and will be appended to
-this changeset as they land:
-
-- `solana_kit_rpc_types`: the `getTransactionsForAddress` response types
-  (signatures/full modes) and the shared `meta.costUnits` field.
-- `solana_kit`: re-export `@solana/promises` (`isAbortError`,
-  `getAbortablePromise`, `safeRace` — needs a Dart cancellation-model
-  adaptation; `AbortError` currently lives in the websocket package).
-- `@solana/plugin-interfaces` `ClientWithFetchAccounts` interface (ported as
-  a Dart interface in `solana_kit`).
+- Adds the `getTransactionsForAddress` response types: `signatures` and
+  `full` modes (with per-entry base fields, transaction/status variants, and
+  the `TransactionDetails` enum).
+- Adds the shared `meta.costUnits` field to the transaction meta types.
 
 Already present in the Dart port (no change needed):
 
