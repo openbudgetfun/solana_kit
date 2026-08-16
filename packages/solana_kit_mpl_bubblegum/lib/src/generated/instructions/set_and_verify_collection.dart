@@ -54,9 +54,19 @@ Instruction getsetAndVerifyCollectionInstruction({
   required MetadataArgs metadataArgs,
 }) {
   final messageBytes = encodeMetadataArgs(metadataArgs);
-  final data = Uint8List(1 + messageBytes.length);
-  data[0] = 17;
-  data.setRange(1, data.length, messageBytes);
+  final data = Uint8List(
+    setAndVerifyCollectionInstructionDiscriminator.length + messageBytes.length,
+  );
+  data.setRange(
+    0,
+    setAndVerifyCollectionInstructionDiscriminator.length,
+    setAndVerifyCollectionInstructionDiscriminator,
+  );
+  data.setRange(
+    setAndVerifyCollectionInstructionDiscriminator.length,
+    data.length,
+    messageBytes,
+  );
 
   return Instruction(
     programAddress: programAddress,

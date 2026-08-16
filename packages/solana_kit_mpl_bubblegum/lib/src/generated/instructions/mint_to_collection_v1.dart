@@ -54,9 +54,19 @@ Instruction getmintToCollectionV1Instruction({
   required MetadataArgs metadataArgs,
 }) {
   final messageBytes = encodeMetadataArgs(metadataArgs);
-  final data = Uint8List(1 + messageBytes.length);
-  data[0] = 13;
-  data.setRange(1, data.length, messageBytes);
+  final data = Uint8List(
+    mintToCollectionV1InstructionDiscriminator.length + messageBytes.length,
+  );
+  data.setRange(
+    0,
+    mintToCollectionV1InstructionDiscriminator.length,
+    mintToCollectionV1InstructionDiscriminator,
+  );
+  data.setRange(
+    mintToCollectionV1InstructionDiscriminator.length,
+    data.length,
+    messageBytes,
+  );
 
   return Instruction(
     programAddress: programAddress,

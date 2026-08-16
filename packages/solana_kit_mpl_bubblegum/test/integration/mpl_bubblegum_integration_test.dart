@@ -167,8 +167,12 @@ void main() {
         expect(instruction.accounts!.length, equals(9));
         expect(instruction.data, isNotNull);
         expect(instruction.data!.length, greaterThan(1));
-        // First byte should be discriminator (14)
-        expect(instruction.data![0], equals(14));
+        // First 8 bytes should be the Anchor discriminator for `mint_v1`
+        // (sha256("global:mint_v1")[0..8]).
+        expect(
+          instruction.data!.sublist(0, 8),
+          equals([145, 98, 192, 118, 184, 147, 118, 104]),
+        );
       });
     });
 

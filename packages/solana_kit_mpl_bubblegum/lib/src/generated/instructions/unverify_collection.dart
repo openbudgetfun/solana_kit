@@ -54,9 +54,19 @@ Instruction getunverifyCollectionInstruction({
   required MetadataArgs metadataArgs,
 }) {
   final messageBytes = encodeMetadataArgs(metadataArgs);
-  final data = Uint8List(1 + messageBytes.length);
-  data[0] = 27;
-  data.setRange(1, data.length, messageBytes);
+  final data = Uint8List(
+    unverifyCollectionInstructionDiscriminator.length + messageBytes.length,
+  );
+  data.setRange(
+    0,
+    unverifyCollectionInstructionDiscriminator.length,
+    unverifyCollectionInstructionDiscriminator,
+  );
+  data.setRange(
+    unverifyCollectionInstructionDiscriminator.length,
+    data.length,
+    messageBytes,
+  );
 
   return Instruction(
     programAddress: programAddress,
