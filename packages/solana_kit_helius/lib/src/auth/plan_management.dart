@@ -10,6 +10,7 @@ import 'package:solana_kit_helius/src/auth/payment_url.dart';
 import 'package:solana_kit_helius/src/auth/payments.dart';
 import 'package:solana_kit_helius/src/auth/signup.dart';
 import 'package:solana_kit_helius/src/auth/signup_helpers.dart';
+import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/internal/rest_client.dart';
 import 'package:solana_kit_helius/src/types/auth_types.dart';
 
@@ -86,11 +87,11 @@ Future<({String projectId, String apiKey, SignupEndpoints endpoints})>
 _provisionApiKey(
   RestClient restClient,
   String apiKey,
-  String walletAddress,
-) async {
-  final deadline = DateTime.now().add(
-    const Duration(milliseconds: projectPollTimeoutMs),
-  );
+  String walletAddress, {
+  Duration timeout = const Duration(milliseconds: projectPollTimeoutMs),
+  Duration interval = const Duration(milliseconds: projectPollIntervalMs),
+}) async {
+  final deadline = DateTime.now().add(timeout);
   String? projectId;
   while (DateTime.now().isBefore(deadline)) {
     final projects = await authListProjects(restClient, apiKey);
@@ -98,9 +99,8 @@ _provisionApiKey(
       projectId = projects.first.id;
       break;
     }
-    await Future<void>.delayed(
-      const Duration(milliseconds: projectPollIntervalMs),
-    );
+    final pollDelay = interval;
+    await Future<void>.delayed(pollDelay);
   }
   if (projectId == null) {
     throw StateError(
@@ -131,12 +131,23 @@ Future<SignupAndPayResult> signupAndPay(
   required Uint8List secretKey,
   String? userAgent,
   String? baseUrl,
+  JsonRpcClient? rpcClient,
+  http.Client? client,
+  Duration pollTimeout = checkoutPollTimeout,
+  Duration pollInterval = checkoutPollInterval,
+  Duration provisionTimeout = const Duration(
+    milliseconds: projectPollTimeoutMs,
+  ),
+  Duration provisionInterval = const Duration(
+    milliseconds: projectPollIntervalMs,
+  ),
 }) async {
   final result = await authSignup(
     restClient,
     apiKey,
     options,
     userAgent: userAgent,
+    httpClient: client,
     baseUrl: baseUrl,
   );
   if (result is AlreadySubscribedResult) {
@@ -162,18 +173,25 @@ Future<SignupAndPayResult> signupAndPay(
   final txSignature = await payPaymentLink(
     secretKey,
     paymentRequired.paymentLink,
+    rpcClient: rpcClient,
+    client: client,
   );
   final paymentIntentId = paymentRequired.paymentLink.paymentIntentId;
   final outcome = await pollUntilTerminal(
     paymentRequired.jwt,
     paymentIntentId,
     userAgent: userAgent,
+    client: client,
+    timeout: pollTimeout,
+    interval: pollInterval,
   );
   if (outcome.kind == 'completed') {
     final provisioned = await _provisionApiKey(
       restClient,
       apiKey,
       paymentRequired.walletAddress,
+      timeout: provisionTimeout,
+      interval: provisionInterval,
     );
     return SignupAndPayCompletedResult(
       jwt: paymentRequired.jwt,
