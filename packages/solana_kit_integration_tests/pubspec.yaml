@@ -13,6 +13,7 @@ dependencies:
   solana_kit_address_lookup_table: ^0.2.0
   solana_kit_addresses: ^0.6.0
   solana_kit_associated_token_account: ^0.5.1
+  solana_kit_codecs_core: ^0.6.0
   solana_kit_compute_budget: ^0.6.0
   solana_kit_config: ^0.1.1
   solana_kit_errors: ^0.6.0

@@ -89,32 +89,37 @@ void main() {
       );
     });
 
-    test('ignores account metas that do not have a signer role', () {
-      final instruction = Instruction(
-        programAddress: const Address(
-          '9999999999999999999999999999999999999999999',
-        ),
-        accounts: [
-          const AccountMeta(
-            address: Address('11111111111111111111111111111111'),
-            role: AccountRole.writable,
+    test(
+      'promotes account metas that do not have a signer role when a signer matches',
+      () {
+        final instruction = Instruction(
+          programAddress: const Address(
+            '9999999999999999999999999999999999999999999',
           ),
-        ],
-        data: Uint8List(0),
-      );
+          accounts: [
+            const AccountMeta(
+              address: Address('11111111111111111111111111111111'),
+              role: AccountRole.writable,
+            ),
+          ],
+          data: Uint8List(0),
+        );
 
-      final signer = MockTransactionPartialSigner(
-        const Address('11111111111111111111111111111111'),
-      );
-      final instructionWithSigners = addSignersToInstruction([
-        signer,
-      ], instruction);
+        final signer = MockTransactionPartialSigner(
+          const Address('11111111111111111111111111111111'),
+        );
+        final instructionWithSigners = addSignersToInstruction([
+          signer,
+        ], instruction);
 
-      expect(
-        instructionWithSigners.accounts![0],
-        isNot(isA<AccountSignerMeta>()),
-      );
-    });
+        // The account meta is promoted to a signer role and the signer is
+        // attached, mirroring the JavaScript SDK behavior.
+        final updated = instructionWithSigners.accounts![0];
+        expect(updated, isA<AccountSignerMeta>());
+        expect(updated.role, AccountRole.writableSigner);
+        expect((updated as AccountSignerMeta).signer, equals(signer));
+      },
+    );
 
     test('can add the same signer to multiple account metas', () {
       final instruction = Instruction(

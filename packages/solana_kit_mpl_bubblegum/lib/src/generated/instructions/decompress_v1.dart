@@ -51,9 +51,19 @@ Instruction getdecompressV1Instruction({
   required MetadataArgs metadataArgs,
 }) {
   final messageBytes = encodeMetadataArgs(metadataArgs);
-  final data = Uint8List(1 + messageBytes.length);
-  data[0] = 8;
-  data.setRange(1, data.length, messageBytes);
+  final data = Uint8List(
+    decompressV1InstructionDiscriminator.length + messageBytes.length,
+  );
+  data.setRange(
+    0,
+    decompressV1InstructionDiscriminator.length,
+    decompressV1InstructionDiscriminator,
+  );
+  data.setRange(
+    decompressV1InstructionDiscriminator.length,
+    data.length,
+    messageBytes,
+  );
 
   return Instruction(
     programAddress: programAddress,

@@ -47,9 +47,19 @@ Instruction getunverifyCreatorInstruction({
   required MetadataArgs metadataArgs,
 }) {
   final messageBytes = encodeMetadataArgs(metadataArgs);
-  final data = Uint8List(1 + messageBytes.length);
-  data[0] = 28;
-  data.setRange(1, data.length, messageBytes);
+  final data = Uint8List(
+    unverifyCreatorInstructionDiscriminator.length + messageBytes.length,
+  );
+  data.setRange(
+    0,
+    unverifyCreatorInstructionDiscriminator.length,
+    unverifyCreatorInstructionDiscriminator,
+  );
+  data.setRange(
+    unverifyCreatorInstructionDiscriminator.length,
+    data.length,
+    messageBytes,
+  );
 
   return Instruction(
     programAddress: programAddress,

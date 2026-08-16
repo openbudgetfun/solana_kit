@@ -9,10 +9,14 @@ import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.
 /// instruction when applicable.
 ///
 /// For an account meta to match a provided signer it:
-/// - Must have a signer role ([AccountRole.readonlySigner] or
-///   [AccountRole.writableSigner]).
 /// - Must have the same address as the provided signer.
 /// - Must not have an attached signer already.
+///
+/// When a signer matches an account meta, the account meta is promoted to a
+/// signer role (e.g. [AccountRole.readonly] becomes
+/// [AccountRole.readonlySigner]) and the signer is attached to it. This
+/// mirrors the behavior of the JavaScript SDK where passing a signer for any
+/// account of an instruction marks that account as a signer.
 Instruction addSignersToInstruction(
   List<Object> signers,
   Instruction instruction,
@@ -29,14 +33,12 @@ Instruction addSignersToInstruction(
 
   final updatedAccounts = instruction.accounts!.map((account) {
     final signer = signerByAddress[account.address];
-    if (!isSignerRole(account.role) ||
-        account is AccountSignerMeta ||
-        signer == null) {
+    if (account is AccountSignerMeta || signer == null) {
       return account;
     }
     return AccountSignerMeta(
       address: account.address,
-      role: account.role,
+      role: upgradeRoleToSigner(account.role),
       signer: signer,
     );
   }).toList();
@@ -53,10 +55,14 @@ Instruction addSignersToInstruction(
 /// message fee payer, when applicable.
 ///
 /// For an account meta to match a provided signer it:
-/// - Must have a signer role ([AccountRole.readonlySigner] or
-///   [AccountRole.writableSigner]).
 /// - Must have the same address as the provided signer.
 /// - Must not have an attached signer already.
+///
+/// When a signer matches an account meta, the account meta is promoted to a
+/// signer role (e.g. [AccountRole.readonly] becomes
+/// [AccountRole.readonlySigner]) and the signer is attached to it. This
+/// mirrors the behavior of the JavaScript SDK where passing a signer for any
+/// account of an instruction marks that account as a signer.
 TransactionMessage addSignersToTransactionMessage(
   List<Object> signers,
   TransactionMessage transactionMessage,

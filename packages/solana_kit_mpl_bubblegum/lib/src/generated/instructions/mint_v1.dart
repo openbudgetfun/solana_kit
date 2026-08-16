@@ -47,9 +47,19 @@ Instruction getMintV1Instruction({
   required MetadataArgs message,
 }) {
   final messageBytes = encodeMetadataArgs(message);
-  final data = Uint8List(1 + messageBytes.length);
-  data[0] = 14;
-  data.setRange(1, data.length, messageBytes);
+  final data = Uint8List(
+    MintV1InstructionDiscriminator.length + messageBytes.length,
+  );
+  data.setRange(
+    0,
+    MintV1InstructionDiscriminator.length,
+    MintV1InstructionDiscriminator,
+  );
+  data.setRange(
+    MintV1InstructionDiscriminator.length,
+    data.length,
+    messageBytes,
+  );
 
   return Instruction(
     programAddress: programAddress,

@@ -61,10 +61,13 @@ that assert the real on-chain outcome of each instruction:
   `config/programs/` and deployed on-chain; `initSubscriptionAuthority` runs
   and its PDA is verified on-chain.
 - MPL Bubblegum: Bubblegum + SPL Account Compression + Noop are deployed
-  on-chain (verified executable + owned by the BPF loader). A full
-  `createTree` currently panics inside the deployed Bubblegum binary on
-  SurfPool (`create_tree.rs:20`) — a program-internal issue tracked for
-  upstream; the client's instruction builders are covered by encoding tests.
+  on-chain (verified executable + owned by the BPF loader) and the full
+  compressed-NFT lifecycle runs end-to-end: `createTree` (with the merkle-tree
+  account sized per the account-compression layout formulas, 31800 bytes for
+  (maxDepth=14, maxBufferSize=64, canopyDepth=0)) -> `mintV1` -> `transfer`
+  (leaf owner signs) -> `burn` (new owner signs). The tree state (root, proof,
+  index) is parsed from the on-chain ConcurrentMerkleTree account and the
+  data/creator hashes are recomputed client-side to drive transfer and burn.
 
 The compiled `.so` artifacts are committed (not rebuilt per run) and pinned to
 `config/reference-repos.json`; see `config/programs/README.md` for how they
