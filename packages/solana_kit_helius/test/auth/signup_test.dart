@@ -4,11 +4,6 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:solana_kit_helius/solana_kit_helius.dart';
-import 'package:solana_kit_helius/src/auth/auth_client.dart';
-import 'package:solana_kit_helius/src/auth/build_token_transfer.dart';
-import 'package:solana_kit_helius/src/auth/constants.dart';
-import 'package:solana_kit_helius/src/auth/signup.dart';
-import 'package:solana_kit_helius/src/auth/signup_helpers.dart';
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/internal/rest_client.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
@@ -130,7 +125,7 @@ http.Client _checkoutClient({
         jsonEncode({
           'phase': phase,
           'readyToRedirect': readyToRedirect,
-          if (message != null) 'message': message,
+          'message': ?message,
         }),
         200,
         headers: {'content-type': 'application/json'},
@@ -251,7 +246,7 @@ void main() {
 
     test('throws when contact info is missing for a new signup', () async {
       final rest = _restClient(() => []);
-      final request = SignupRequest.preauthenticated(
+      const request = SignupRequest.preauthenticated(
         jwt: 'jwt',
         refId: 'ref-1',
         walletAddress: '11111111111111111111111111111111',
