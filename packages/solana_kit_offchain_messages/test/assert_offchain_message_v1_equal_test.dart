@@ -160,16 +160,16 @@ void main() {
   group('OffchainMessageV0 equality', () {
     test('is equal for identical messages', () {
       final a = OffchainMessageV0(
-        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
-        content: OffchainMessageContent(
+        applicationDomain: const OffchainMessageApplicationDomain('solana.com'),
+        content: const OffchainMessageContent(
           format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
           text: 'hello',
         ),
         requiredSignatories: [_signatory('11111111111111111111111111111111')],
       );
       final b = OffchainMessageV0(
-        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
-        content: OffchainMessageContent(
+        applicationDomain: const OffchainMessageApplicationDomain('solana.com'),
+        content: const OffchainMessageContent(
           format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
           text: 'hello',
         ),
@@ -181,16 +181,16 @@ void main() {
 
     test('is not equal when the application domain differs', () {
       final a = OffchainMessageV0(
-        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
-        content: OffchainMessageContent(
+        applicationDomain: const OffchainMessageApplicationDomain('solana.com'),
+        content: const OffchainMessageContent(
           format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
           text: 'hello',
         ),
         requiredSignatories: [_signatory('11111111111111111111111111111111')],
       );
       final b = OffchainMessageV0(
-        applicationDomain: OffchainMessageApplicationDomain('other.com'),
-        content: OffchainMessageContent(
+        applicationDomain: const OffchainMessageApplicationDomain('other.com'),
+        content: const OffchainMessageContent(
           format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
           text: 'hello',
         ),
@@ -201,16 +201,16 @@ void main() {
 
     test('is not equal when content differs', () {
       final a = OffchainMessageV0(
-        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
-        content: OffchainMessageContent(
+        applicationDomain: const OffchainMessageApplicationDomain('solana.com'),
+        content: const OffchainMessageContent(
           format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
           text: 'hello',
         ),
         requiredSignatories: [_signatory('11111111111111111111111111111111')],
       );
       final b = OffchainMessageV0(
-        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
-        content: OffchainMessageContent(
+        applicationDomain: const OffchainMessageApplicationDomain('solana.com'),
+        content: const OffchainMessageContent(
           format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
           text: 'world',
         ),
@@ -221,16 +221,16 @@ void main() {
 
     test('is not equal when signatory count differs', () {
       final a = OffchainMessageV0(
-        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
-        content: OffchainMessageContent(
+        applicationDomain: const OffchainMessageApplicationDomain('solana.com'),
+        content: const OffchainMessageContent(
           format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
           text: 'hello',
         ),
         requiredSignatories: [_signatory('11111111111111111111111111111111')],
       );
       final b = OffchainMessageV0(
-        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
-        content: OffchainMessageContent(
+        applicationDomain: const OffchainMessageApplicationDomain('solana.com'),
+        content: const OffchainMessageContent(
           format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
           text: 'hello',
         ),
@@ -244,16 +244,16 @@ void main() {
 
     test('is not equal when a signatory differs', () {
       final a = OffchainMessageV0(
-        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
-        content: OffchainMessageContent(
+        applicationDomain: const OffchainMessageApplicationDomain('solana.com'),
+        content: const OffchainMessageContent(
           format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
           text: 'hello',
         ),
         requiredSignatories: [_signatory('11111111111111111111111111111111')],
       );
       final b = OffchainMessageV0(
-        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
-        content: OffchainMessageContent(
+        applicationDomain: const OffchainMessageApplicationDomain('solana.com'),
+        content: const OffchainMessageContent(
           format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
           text: 'hello',
         ),
@@ -264,8 +264,8 @@ void main() {
 
     test('is not equal to a non-message', () {
       final a = OffchainMessageV0(
-        applicationDomain: OffchainMessageApplicationDomain('solana.com'),
-        content: OffchainMessageContent(
+        applicationDomain: const OffchainMessageApplicationDomain('solana.com'),
+        content: const OffchainMessageContent(
           format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
           text: 'hello',
         ),
