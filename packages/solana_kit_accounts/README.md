@@ -1,10 +1,6 @@
 # solana_kit_accounts
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_accounts.svg)](https://pub.dev/packages/solana_kit_accounts)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_accounts/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_accounts)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_accounts)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_accounts)
+[![pub package](https://img.shields.io/pub/v/solana_kit_accounts.svg)](https://pub.dev/packages/solana_kit_accounts) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_accounts/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_accounts) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_accounts)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_accounts)
 
 Account fetching, decoding, and assertion utilities for the Solana Kit Dart SDK.
 
@@ -51,8 +47,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Fetch an account
 
-Use `fetchEncodedAccount` when you want the raw account bytes plus its Solana
-metadata. Decode it later with the codec or parser that matches your program.
+Use `fetchEncodedAccount` when you want the raw account bytes plus its Solana metadata. Decode it later with the codec or parser that matches your program.
 
 ```dart
 import 'dart:typed_data';
@@ -75,10 +70,7 @@ Future<void> main() async {
 }
 ```
 
-Use `fetchJsonParsedAccount` when the RPC can return a structured
-`jsonParsed` representation for a well-known program. Use encoded reads when
-you need byte-perfect custom decoding or when the RPC does not expose a parsed
-view for your program.
+Use `fetchJsonParsedAccount` when the RPC can return a structured `jsonParsed` representation for a well-known program. Use encoded reads when you need byte-perfect custom decoding or when the RPC does not expose a parsed view for your program.
 
 <!-- {/docsFetchAccountSection} -->
 
@@ -96,8 +88,7 @@ view for your program.
 
 ## Decode a fetched account
 
-Keep transport and binary-layout logic separate: fetch the encoded account
-first, then decode it with the codec or decoder that matches your program.
+Keep transport and binary-layout logic separate: fetch the encoded account first, then decode it with the codec or decoder that matches your program.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -120,8 +111,7 @@ Future<void> loadDecodedAccount(
 }
 ```
 
-This boundary keeps RPC concerns, existence handling, and binary decoding easy
-to test independently.
+This boundary keeps RPC concerns, existence handling, and binary decoding easy to test independently.
 
 <!-- {/docsDecodeAccountSection} -->
 

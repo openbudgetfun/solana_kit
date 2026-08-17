@@ -1,17 +1,10 @@
 # solana_kit_token
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_token.svg)](https://pub.dev/packages/solana_kit_token)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_token)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_token)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_token)
+[![pub package](https://img.shields.io/pub/v/solana_kit_token.svg)](https://pub.dev/packages/solana_kit_token) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_token) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_token)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_token)
 
 SPL Token client for the [Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart SDK.
 
-Provides a generated low-level client from the upstream Codama IDL plus
-handwritten ergonomic helpers for common token workflows. Associated Token
-Account (ATA) APIs are shared from
-[`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account)
-and re-exported for convenience.
+Provides a generated low-level client from the upstream Codama IDL plus handwritten ergonomic helpers for common token workflows. Associated Token Account (ATA) APIs are shared from [`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account) and re-exported for convenience.
 
 ## Installation
 
@@ -89,8 +82,7 @@ final ix = getTransferInstruction(
 
 ## Generated layer
 
-The generated code under `src/generated/` is produced from the upstream
-Codama IDL at `solana-program/token`. It includes:
+The generated code under `src/generated/` is produced from the upstream Codama IDL at `solana-program/token`. It includes:
 
 - **Instruction builders** — typed functions for all SPL Token instructions
 - **Account decoders** — parse on-chain account data into typed structs
@@ -109,18 +101,12 @@ Higher-level functions compose generated instructions into common workflows:
 | `getMintToAtaInstructionPlan`     | Mint tokens to an ATA, creating it if needed.    |
 | `getTransferToAtaInstructionPlan` | Transfer tokens to a recipient's ATA.            |
 
-Each helper handles ATA derivation, account existence checks, and
-instruction composition automatically.
+Each helper handles ATA derivation, account existence checks, and instruction composition automatically.
 
 ## Re-exports
 
-This package re-exports the full
-[`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account)
-API surface so callers can access ATA PDA helpers and instruction builders
-without adding a separate dependency.
+This package re-exports the full [`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account) API surface so callers can access ATA PDA helpers and instruction builders without adding a separate dependency.
 
 ## Upstream reference
 
-Generated layer mirrors
-[solana-program/token](https://github.com/solana-program/token)
-at `js@v0.14.0`.
+Generated layer mirrors [solana-program/token](https://github.com/solana-program/token) at `js@v0.14.0`.

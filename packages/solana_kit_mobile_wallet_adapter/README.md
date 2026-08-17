@@ -1,10 +1,6 @@
 # solana_kit_mobile_wallet_adapter
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_mobile_wallet_adapter.svg)](https://pub.dev/packages/solana_kit_mobile_wallet_adapter)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_mobile_wallet_adapter/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_mobile_wallet_adapter)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_mobile_wallet_adapter)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_mobile_wallet_adapter)
+[![pub package](https://img.shields.io/pub/v/solana_kit_mobile_wallet_adapter.svg)](https://pub.dev/packages/solana_kit_mobile_wallet_adapter) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_mobile_wallet_adapter/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_mobile_wallet_adapter) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_mobile_wallet_adapter)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_mobile_wallet_adapter)
 
 Flutter plugin for the [Solana Mobile Wallet Adapter](https://github.com/solana-mobile/mobile-wallet-adapter) (MWA) protocol.
 
@@ -29,9 +25,7 @@ Use `isMwaSupported()` / `assertMwaSupported()` before invoking MWA APIs.
 >
 > Real wallet handoff is available only on Android today.
 >
-> On iOS, `solana_kit_mobile_wallet_adapter` remains a safe stub/no-op because
-> the current Solana MWA ecosystem does not expose an equivalent iOS
-> integration target.
+> On iOS, `solana_kit_mobile_wallet_adapter` remains a safe stub/no-op because the current Solana MWA ecosystem does not expose an equivalent iOS integration target.
 >
 > Gate wallet-handoff flows with `isMwaSupported()` / `assertMwaSupported()` and present a clear fallback such as browser-wallet instructions, a manual deep link path, or an explicit unsupported-platform message on iOS.
 

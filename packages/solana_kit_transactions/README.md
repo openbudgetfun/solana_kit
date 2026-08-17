@@ -1,10 +1,6 @@
 # solana_kit_transactions
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_transactions.svg)](https://pub.dev/packages/solana_kit_transactions)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_transactions/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_transactions)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_transactions)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_transactions)
+[![pub package](https://img.shields.io/pub/v/solana_kit_transactions.svg)](https://pub.dev/packages/solana_kit_transactions) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_transactions/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_transactions) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_transactions)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_transactions)
 
 Compile, sign, encode, and decode Solana transactions.
 
@@ -49,8 +45,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Compile a transaction for signing
 
-Once a transaction message has a fee payer, lifetime, and instructions, compile
-it into the wire-ready transaction shape that signers and senders consume.
+Once a transaction message has a fee payer, lifetime, and instructions, compile it into the wire-ready transaction shape that signers and senders consume.
 
 ```dart
 import 'dart:typed_data';
@@ -88,8 +83,7 @@ void main() {
 }
 ```
 
-Compilation is the boundary where account ordering, signer sets, and lifetime
-constraints are frozen into the bytes that will actually be signed.
+Compilation is the boundary where account ordering, signer sets, and lifetime constraints are frozen into the bytes that will actually be signed.
 
 <!-- {/docsCompileTransactionSection} -->
 

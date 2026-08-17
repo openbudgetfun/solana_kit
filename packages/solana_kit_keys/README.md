@@ -1,10 +1,6 @@
 # solana_kit_keys
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_keys.svg)](https://pub.dev/packages/solana_kit_keys)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_keys/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_keys)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_keys)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_keys)
+[![pub package](https://img.shields.io/pub/v/solana_kit_keys.svg)](https://pub.dev/packages/solana_kit_keys) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_keys/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_keys) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_keys)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_keys)
 
 Ed25519 key pair generation, signing, and signature verification for the Solana Kit Dart SDK -- a Dart port of [`@solana/keys`](https://github.com/anza-xyz/kit/tree/main/packages/keys).
 
@@ -47,8 +43,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Generate keys and verify signatures
 
-Use the key primitives when you need raw Ed25519 key material or signature
-verification outside the higher-level signer abstractions.
+Use the key primitives when you need raw Ed25519 key material or signature verification outside the higher-level signer abstractions.
 
 ```dart
 import 'dart:typed_data';
@@ -66,15 +61,11 @@ void main() {
 }
 ```
 
-This package is the right layer when you need direct access to key bytes,
-public-key derivation, or low-level signature helpers.
+This package is the right layer when you need direct access to key bytes, public-key derivation, or low-level signature helpers.
 
 <!-- {/docsKeyPairSection} -->
 
-`KeyPair` owns sensitive memory. Call `dispose()` in a `finally` block when the
-key is no longer needed; the GC finalizer is only a fallback. `writeKeyPair`
-creates new files atomically, applies mode `0600` before writing on POSIX, and
-refuses symbolic-link overwrite targets.
+`KeyPair` owns sensitive memory. Call `dispose()` in a `finally` block when the key is no longer needed; the GC finalizer is only a fallback. `writeKeyPair` creates new files atomically, applies mode `0600` before writing on POSIX, and refuses symbolic-link overwrite targets.
 
 ## Usage
 

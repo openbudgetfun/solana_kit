@@ -1,10 +1,6 @@
 # solana_kit_codecs_strings
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_codecs_strings.svg)](https://pub.dev/packages/solana_kit_codecs_strings)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_codecs_strings/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_codecs_strings)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_codecs_strings)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_codecs_strings)
+[![pub package](https://img.shields.io/pub/v/solana_kit_codecs_strings.svg)](https://pub.dev/packages/solana_kit_codecs_strings) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_codecs_strings/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_codecs_strings) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_codecs_strings)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_codecs_strings)
 
 String codecs for encoding and decoding string data in various bases (base-10, base-16, base-58, base-64, UTF-8) for Solana data structures.
 
@@ -49,8 +45,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Encode base58 and UTF-8 strings
 
-Use the string codecs for base58/base64/base16 conversions plus UTF-8 handling
-when a Solana API crosses between bytes and text.
+Use the string codecs for base58/base64/base16 conversions plus UTF-8 handling when a Solana API crosses between bytes and text.
 
 ```dart
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
@@ -65,14 +60,9 @@ void main() {
 }
 ```
 
-These codecs are especially useful for addresses, signatures, blockhashes, and
-other values that appear as base-encoded strings at API boundaries.
+These codecs are especially useful for addresses, signatures, blockhashes, and other values that appear as base-encoded strings at API boundaries.
 
-For UTF-8 specifically, `getUtf8Codec()` preserves `@solana/kit`
-compatibility by stripping decoded null characters. Prefer
-`getStrictUtf8Codec()` or
-`getUtf8Codec(nullCharacterMode: Utf8NullCharacterMode.reject)` when silent
-null-byte stripping would be risky.
+For UTF-8 specifically, `getUtf8Codec()` preserves `@solana/kit` compatibility by stripping decoded null characters. Prefer `getStrictUtf8Codec()` or `getUtf8Codec(nullCharacterMode: Utf8NullCharacterMode.reject)` when silent null-byte stripping would be risky.
 
 <!-- {/docsStringCodecSection} -->
 

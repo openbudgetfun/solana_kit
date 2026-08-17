@@ -1,20 +1,12 @@
 # solana_kit_rpc_subscriptions_channel_websocket
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_rpc_subscriptions_channel_websocket.svg)](https://pub.dev/packages/solana_kit_rpc_subscriptions_channel_websocket)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_rpc_subscriptions_channel_websocket/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_rpc_subscriptions_channel_websocket)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_rpc_subscriptions_channel_websocket)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_rpc_subscriptions_channel_websocket)
+[![pub package](https://img.shields.io/pub/v/solana_kit_rpc_subscriptions_channel_websocket.svg)](https://pub.dev/packages/solana_kit_rpc_subscriptions_channel_websocket) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_rpc_subscriptions_channel_websocket/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_rpc_subscriptions_channel_websocket) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_rpc_subscriptions_channel_websocket)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_rpc_subscriptions_channel_websocket)
 
 WebSocket channel transport for Solana RPC subscriptions in the Solana Kit Dart SDK.
 
 This is the Dart port of [`@solana/rpc-subscriptions-channel-websocket`](https://github.com/anza-xyz/kit/tree/main/packages/rpc-subscriptions-channel-websocket) from the Solana TypeScript SDK.
 
-By default, channel URLs must use `wss://` and may not target localhost or
-non-public IP literals. Alternate numeric IPv4 forms and IPv4-mapped private
-IPv6 literals are also rejected. This check does not resolve DNS names; do not
-accept arbitrary endpoint URLs from untrusted input. Controlled local tests
-must explicitly enable `allowPrivateHosts` (and `allowInsecureWs` for `ws://`).
+By default, channel URLs must use `wss://` and may not target localhost or non-public IP literals. Alternate numeric IPv4 forms and IPv4-mapped private IPv6 literals are also rejected. This check does not resolve DNS names; do not accept arbitrary endpoint URLs from untrusted input. Controlled local tests must explicitly enable `allowPrivateHosts` (and `allowInsecureWs` for `ws://`).
 
 <!-- {=packageInstallSection:"solana_kit_rpc_subscriptions_channel_websocket"} -->
 

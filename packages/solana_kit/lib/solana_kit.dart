@@ -12,9 +12,7 @@
 ///
 /// ## Create an RPC client
 ///
-/// Start with a typed RPC client. It gives you method-specific helpers instead of
-/// building raw JSON-RPC requests by hand, while still letting you swap transports
-/// or request middleware later.
+/// Start with a typed RPC client. It gives you method-specific helpers instead of building raw JSON-RPC requests by hand, while still letting you swap transports or request middleware later.
 ///
 /// ```dart
 /// import 'package:solana_kit/solana_kit.dart';
@@ -30,12 +28,9 @@
 /// }
 /// ```
 ///
-/// A call like `rpc.getSlot()` builds a typed request first and only hits the
-/// network when you call `.send()`. That separation makes it easier to compose,
-/// cache, batch, or decorate RPC interactions.
+/// A call like `rpc.getSlot()` builds a typed request first and only hits the network when you call `.send()`. That separation makes it easier to compose, cache, batch, or decorate RPC interactions.
 ///
-/// Use `solana_kit_rpc_subscriptions` alongside `solana_kit_rpc` when you also
-/// need websocket notifications for accounts, signatures, logs, or slots.
+/// Use `solana_kit_rpc_subscriptions` alongside `solana_kit_rpc` when you also need websocket notifications for accounts, signatures, logs, or slots.
 ///
 /// <!-- {/docsCreateRpcClientSection} -->
 ///
@@ -43,9 +38,7 @@
 ///
 /// ## Generate a signer
 ///
-/// Most app flows need a signer for fee payment, message signing, or transaction
-/// submission. `generateKeyPairSigner()` creates a new Ed25519 key-pair-backed
-/// `KeyPairSigner`.
+/// Most app flows need a signer for fee payment, message signing, or transaction submission. `generateKeyPairSigner()` creates a new Ed25519 key-pair-backed `KeyPairSigner`.
 ///
 /// ```dart
 /// import 'package:solana_kit/solana_kit.dart';
@@ -57,9 +50,7 @@
 /// }
 /// ```
 ///
-/// Use key-pair signers for local development, tests, automation, and server-side
-/// flows. For wallet-driven applications, you can also model fee-payer, partial,
-/// and sending signers explicitly with `solana_kit_signers`.
+/// Use key-pair signers for local development, tests, automation, and server-side flows. For wallet-driven applications, you can also model fee-payer, partial, and sending signers explicitly with `solana_kit_signers`.
 ///
 /// <!-- {/docsGenerateSignerSection} -->
 ///
@@ -109,10 +100,7 @@
 /// }
 /// ```
 ///
-/// This separation keeps transaction construction explicit and makes it easier to
-/// reason about fee payment, expiry, and instruction ordering. If you prefer a
-/// more fluent style, the transaction-message extension methods build on the same
-/// underlying model.
+/// This separation keeps transaction construction explicit and makes it easier to reason about fee payment, expiry, and instruction ordering. If you prefer a more fluent style, the transaction-message extension methods build on the same underlying model.
 ///
 /// <!-- {/docsBuildTransactionSection} -->
 library;

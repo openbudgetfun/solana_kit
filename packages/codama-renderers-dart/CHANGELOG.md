@@ -96,24 +96,17 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #181](https://g
 
 #### Subscriptions: regenerate from ts-client-v0.4.0-rc.2
 
-Regenerates the Subscriptions generated code from upstream IDL
-`ts-client-v0.4.0-rc.2` (was `ts-client-v0.3.0`). Adds 3 new instructions:
+Regenerates the Subscriptions generated code from upstream IDL `ts-client-v0.4.0-rc.2` (was `ts-client-v0.3.0`). Adds 3 new instructions:
 
 - `revokeSubscriptionAuthority`
 - `revokeAbandonedDelegation`
 - `revokeAbandonedSubscription`
 
-Adds 4 new errors: `transferHookTooManyAccounts`, `invalidSelfProgram`,
-`planEndTsCannotExtend`,
-`recurringDelegationStartOnLandingRequiresExpiry`.
+Adds 4 new errors: `transferHookTooManyAccounts`, `invalidSelfProgram`, `planEndTsCannotExtend`, `recurringDelegationStartOnLandingRequiresExpiry`.
 
-Updates existing instructions with new required/optional accounts
-(`payer`, `receiver`, `subscriptionAuthority`, `eventAuthority`,
-`selfProgram`) and PDA-based `eventAuthority` defaults.
+Updates existing instructions with new required/optional accounts (`payer`, `receiver`, `subscriptionAuthority`, `eventAuthority`, `selfProgram`) and PDA-based `eventAuthority` defaults.
 
-Also fixes three latent renderer bugs in `codama-renderers-dart`:
-empty struct constructors, PDA seed import merging, and BigInt import
-attribution.
+Also fixes three latent renderer bugs in `codama-renderers-dart`: empty struct constructors, PDA seed import merging, and BigInt import attribution.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #195](https://github.com/openbudgetfun/solana_kit/pull/195)
 
@@ -121,9 +114,6 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #195](https://g
 
 #### Advance past the aborted npm release
 
-Publish the replacement renderer release as `0.4.3` because `0.4.2` was
-published to npm before the previous multi-package release was aborted. The
-`0.4.2` npm version is immutable; no additional renderer behavior changes are
-introduced by this recovery changeset.
+Publish the replacement renderer release as `0.4.3` because `0.4.2` was published to npm before the previous multi-package release was aborted. The `0.4.2` npm version is immutable; no additional renderer behavior changes are introduced by this recovery changeset.
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`e3148f0`](https://github.com/openbudgetfun/solana_kit/commit/e3148f01352fb39d6982317c4725b2eb36af714d)

@@ -1,10 +1,6 @@
 # solana_kit_transaction_messages
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_transaction_messages.svg)](https://pub.dev/packages/solana_kit_transaction_messages)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_transaction_messages/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_transaction_messages)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_transaction_messages)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_transaction_messages)
+[![pub package](https://img.shields.io/pub/v/solana_kit_transaction_messages.svg)](https://pub.dev/packages/solana_kit_transaction_messages) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_transaction_messages/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_transaction_messages) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_transaction_messages)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_transaction_messages)
 
 Build, compile, and decompile Solana transaction messages.
 
@@ -126,9 +122,7 @@ final messageWithPrepended = prependTransactionMessageInstruction(
 
 ### Building a full transaction message using the pipeline pattern
 
-The `pipe` extension allows chaining transforms together in a readable
-pipeline. It is exported directly from `solana_kit_transaction_messages`, so
-new code does not need `solana_kit_functional`:
+The `pipe` extension allows chaining transforms together in a readable pipeline. It is exported directly from `solana_kit_transaction_messages`, so new code does not need `solana_kit_functional`:
 
 ```dart
 import 'dart:typed_data';

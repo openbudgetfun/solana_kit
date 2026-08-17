@@ -2,12 +2,9 @@
 
 ## Scope
 
-Upstream parity sync from `@solana/kit` `7.0.0` → `7.1.0` (released
-2026-08-14). Excludes `@solana/react`, which is not ported to Dart.
+Upstream parity sync from `@solana/kit` `7.0.0` → `7.1.0` (released 2026-08-14). Excludes `@solana/react`, which is not ported to Dart.
 
-Reference pin bumped in `config/reference-repos.json`:
-`anza-xyz/kit` `checkedCommit` `6cd177b14bed` → `661554c4e85f` (tag `v7.1.0`).
-`versions.json` `@solana/kit` `7.0.0` → `7.1.0`.
+Reference pin bumped in `config/reference-repos.json`: `anza-xyz/kit` `checkedCommit` `6cd177b14bed` → `661554c4e85f` (tag `v7.1.0`). `versions.json` `@solana/kit` `7.0.0` → `7.1.0`.
 
 ## v7.1.0 changelog → Dart package mapping
 
@@ -42,48 +39,26 @@ Reference pin bumped in `config/reference-repos.json`:
 
 ## Progress
 
-- `solana_kit_errors`: added the three new error codes and messages
-  (`5607018`, `5607019`, `8195001`). `dart analyze` clean.
+- `solana_kit_errors`: added the three new error codes and messages (`5607018`, `5607019`, `8195001`). `dart analyze` clean.
 - `solana_kit_subscribable`: `bridgeStoreToAsyncIterable` (Stream-based port).
 - `solana_kit_offchain_messages`: `assertOffchainMessageV1Equal`.
-- `solana_kit_instruction_plans`: `createTransactionPlanExecutor` callback may
-  return the successful result context.
+- `solana_kit_instruction_plans`: `createTransactionPlanExecutor` callback may return the successful result context.
 - `solana_kit_rpc_transformers`: `tokenBalancesConfigs` export.
-- `solana_kit_rpc_api`: allow-list `uiTokenAmount.uiAmount`, simulate
-  `accountIndex`/`decimals`, transaction `version`, and
-  `getTransactionsForAddress` keypaths.
-- `solana_kit_transaction_introspection`: `decodeTransactionFromRpcResponse`
-  documented for any RPC method (envelope already generic).
-- `solana_kit`: `ClientWithGetMinimumBalance` / `ClientWithFetchAccounts`
-  interfaces + `createClientWithGetMinimumBalanceFromRpc` /
-  `createClientWithFetchAccountsFromRpc` / `createClientWithInterfacesFromRpc`.
-- `solana_kit_rpc_api`: `getTransactionsForAddress` request side (config,
-  filters, params builder) + method registration.
+- `solana_kit_rpc_api`: allow-list `uiTokenAmount.uiAmount`, simulate `accountIndex`/`decimals`, transaction `version`, and `getTransactionsForAddress` keypaths.
+- `solana_kit_transaction_introspection`: `decodeTransactionFromRpcResponse` documented for any RPC method (envelope already generic).
+- `solana_kit`: `ClientWithGetMinimumBalance` / `ClientWithFetchAccounts` interfaces + `createClientWithGetMinimumBalanceFromRpc` / `createClientWithFetchAccountsFromRpc` / `createClientWithInterfacesFromRpc`.
+- `solana_kit_rpc_api`: `getTransactionsForAddress` request side (config, filters, params builder) + method registration.
 - `solana_kit_rpc_types`: `meta.costUnits` on the shared transaction metadata.
 - `@solana/kit` pin + `versions.json` bumped to `7.1.0`.
 
 ### Remaining (not yet ported)
 
-None — all v7.1.0 items are ported. (`@solana/react` changes are not ported,
-React-only.)
+None — all v7.1.0 items are ported. (`@solana/react` changes are not ported, React-only.)
 
 ### Test coverage status
 
-Tests added for: promises, client helpers, getTransactionsForAddress params +
-response types, assertOffchainMessageV1Equal, executor context-return,
-tokenBalancesConfigs, new error codes, costUnits. The
-`bridgeStoreToAsyncIterable` test was attempted but the async generator's
-parking behavior proved flaky under `dart test`; the bridge needs a follow-up
-test (its implementation mirrors upstream).
+Tests added for: promises, client helpers, getTransactionsForAddress params + response types, assertOffchainMessageV1Equal, executor context-return, tokenBalancesConfigs, new error codes, costUnits. The `bridgeStoreToAsyncIterable` test was attempted but the async generator's parking behavior proved flaky under `dart test`; the bridge needs a follow-up test (its implementation mirrors upstream).
 
 ## Helius SDK (separate audit)
 
-`solana_kit_helius` is pinned to the correct upstream `v3.0.0` commit
-(`4c0c55b86eab…`, the annotated `v3.0.0` tag commit), which is the latest
-upstream release. Host migration (`api-mainnet.helius-rpc.com`), webhook
-toggles, and `getTransfersByAddress` are present. However the auth/payment
-module lags v3.0.0: it still exposes the removed `agenticSignup` and is missing
-the v3.0.0 replacements/new helpers (`signup`, `signupAndPay`, `upgradePlan`,
-`payRenewal`, `payPaymentLink`, `payUSDC`, `payWithMemo`, `pollPayment`,
-`purchaseCredits`, `buildTokenTransfer`, `signupHelpers`). To be addressed in a
-separate PR.
+`solana_kit_helius` is pinned to the correct upstream `v3.0.0` commit (`4c0c55b86eab…`, the annotated `v3.0.0` tag commit), which is the latest upstream release. Host migration (`api-mainnet.helius-rpc.com`), webhook toggles, and `getTransfersByAddress` are present. However the auth/payment module lags v3.0.0: it still exposes the removed `agenticSignup` and is missing the v3.0.0 replacements/new helpers (`signup`, `signupAndPay`, `upgradePlan`, `payRenewal`, `payPaymentLink`, `payUSDC`, `payWithMemo`, `pollPayment`, `purchaseCredits`, `buildTokenTransfer`, `signupHelpers`). To be addressed in a separate PR.

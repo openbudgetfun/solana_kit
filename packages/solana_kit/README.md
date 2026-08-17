@@ -1,10 +1,6 @@
 # solana_kit
 
-[![pub package](https://img.shields.io/pub/v/solana_kit.svg)](https://pub.dev/packages/solana_kit)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit)
+[![pub package](https://img.shields.io/pub/v/solana_kit.svg)](https://pub.dev/packages/solana_kit) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit)
 
 The Solana Kit Dart SDK -- a comprehensive, modular Dart port of the [Solana TypeScript SDK (`@solana/kit`)](https://github.com/anza-xyz/kit).
 
@@ -111,10 +107,7 @@ Make JSON-RPC calls to a Solana node.
 
 ### Typed RPC methods
 
-When you already have an `Rpc`, prefer typed convenience helpers over raw
-method-name strings. They keep parameter builders and response models attached
-to the method itself, which makes refactors and autocomplete significantly
-safer.
+When you already have an `Rpc`, prefer typed convenience helpers over raw method-name strings. They keep parameter builders and response models attached to the method itself, which makes refactors and autocomplete significantly safer.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -132,9 +125,7 @@ Future<void> main() async {
 }
 ```
 
-These helpers forward to canonical request builders in `solana_kit_rpc_api`,
-return lazy `PendingRpcRequest<T>` values, and make it clear which Solana RPC
-shape each call expects.
+These helpers forward to canonical request builders in `solana_kit_rpc_api`, return lazy `PendingRpcRequest<T>` values, and make it clear which Solana RPC shape each call expects.
 
 <!-- {/typedRpcMethodsSection} -->
 
@@ -310,9 +301,7 @@ void main() {
 
 ## Re-exported packages
 
-This umbrella package re-exports the core SDK packages below.
-Program packages such as `solana_kit_system` and `solana_kit_token` must be
-imported explicitly.
+This umbrella package re-exports the core SDK packages below. Program packages such as `solana_kit_system` and `solana_kit_token` must be imported explicitly.
 
 | Package                               | Description                                              |
 | ------------------------------------- | -------------------------------------------------------- |

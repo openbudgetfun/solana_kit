@@ -19,9 +19,7 @@ instead of brittle substring matching against user-facing messages.
 
 ### Typed Error Domains
 
-`solana_kit_errors` includes domain helpers layered over numeric error codes.
-Use them to route error handling without hardcoding code ranges throughout your
-application.
+`solana_kit_errors` includes domain helpers layered over numeric error codes. Use them to route error handling without hardcoding code ranges throughout your application.
 
 ```dart
 import 'package:solana_kit_errors/solana_kit_errors.dart';
@@ -41,8 +39,7 @@ void handleSolanaFailure(SolanaError error) {
 }
 ```
 
-This keeps your error-routing logic readable while still preserving the exact
-numeric code and context payload when you need lower-level diagnostics.
+This keeps your error-routing logic readable while still preserving the exact numeric code and context payload when you need lower-level diagnostics.
 
 <!-- {/errorDomainHelpersSection} -->
 

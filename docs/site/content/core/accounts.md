@@ -69,8 +69,7 @@ Helpers:
 
 ## Decode a fetched account
 
-Keep transport and binary-layout logic separate: fetch the encoded account
-first, then decode it with the codec or decoder that matches your program.
+Keep transport and binary-layout logic separate: fetch the encoded account first, then decode it with the codec or decoder that matches your program.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -93,8 +92,7 @@ Future<void> loadDecodedAccount(
 }
 ```
 
-This boundary keeps RPC concerns, existence handling, and binary decoding easy
-to test independently.
+This boundary keeps RPC concerns, existence handling, and binary decoding easy to test independently.
 
 <!-- {/docsDecodeAccountSection} -->
 

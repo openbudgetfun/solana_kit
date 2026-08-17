@@ -12,34 +12,15 @@ This changelog is managed by [monochange](https://github.com/monochange/monochan
 
 Updates core packages to match upstream `@solana/kit` `6.10.0`:
 
-- **solana_kit_errors**: Adds 6 new error codes from `@solana/errors` 6.10:
-  `JSON_RPC__SERVER_ERROR_NO_SLOT_HISTORY` (-32021),
-  `JSON_RPC__SERVER_ERROR_FILTER_TRANSACTION_NOT_FOUND` (-32020),
-  `TRANSACTION__FAILED_TO_ESTIMATE_LOADED_ACCOUNTS_DATA_SIZE_LIMIT` (5663036),
-  `TRANSACTION__FAILED_WHEN_SIMULATING_TO_ESTIMATE_RESOURCE_LIMITS` (5663037),
-  `SUBSCRIBABLE__RETRY_NOT_SUPPORTED` (8195000),
-  `WALLET__ACCOUNT_NOT_AVAILABLE` (8900003).
-  Adds `subscribable` and `wallet` error domains. Updates
-  `unwrapSimulationError` to treat resource-limit simulation failures as
-  simulation errors.
+- **solana_kit_errors**: Adds 6 new error codes from `@solana/errors` 6.10: `JSON_RPC__SERVER_ERROR_NO_SLOT_HISTORY` (-32021), `JSON_RPC__SERVER_ERROR_FILTER_TRANSACTION_NOT_FOUND` (-32020), `TRANSACTION__FAILED_TO_ESTIMATE_LOADED_ACCOUNTS_DATA_SIZE_LIMIT` (5663036), `TRANSACTION__FAILED_WHEN_SIMULATING_TO_ESTIMATE_RESOURCE_LIMITS` (5663037), `SUBSCRIBABLE__RETRY_NOT_SUPPORTED` (8195000), `WALLET__ACCOUNT_NOT_AVAILABLE` (8900003). Adds `subscribable` and `wallet` error domains. Updates `unwrapSimulationError` to treat resource-limit simulation failures as simulation errors.
 
-- **solana_kit_subscribable**: Adds `ReactiveActionStore<TArgs, TResult>` with
-  idle/running/success/error states, `dispatch`/`dispatchAsync`/`reset`.
-  Adds `ReactiveStreamStore<T>` with loading/loaded/error/retrying states,
-  `getUnifiedState` and `retry`. Mirrors upstream `@solana/subscribable` 6.10.
+- **solana_kit_subscribable**: Adds `ReactiveActionStore<TArgs, TResult>` with idle/running/success/error states, `dispatch`/`dispatchAsync`/`reset`. Adds `ReactiveStreamStore<T>` with loading/loaded/error/retrying states, `getUnifiedState` and `retry`. Mirrors upstream `@solana/subscribable` 6.10.
 
-- **solana_kit_rpc_spec**: Adds `PendingRpcRequest.reactiveStore()` returning a
-  `ReactiveActionStore` for reactive request dispatch.
+- **solana_kit_rpc_spec**: Adds `PendingRpcRequest.reactiveStore()` returning a `ReactiveActionStore` for reactive request dispatch.
 
-- **solana_kit_rpc_api**: Adds `clientId` to `ClusterNode`. Documents `tpu` and
-  `tpuForwards` as deprecated in favor of QUIC fields.
+- **solana_kit_rpc_api**: Adds `clientId` to `ClusterNode`. Documents `tpu` and `tpuForwards` as deprecated in favor of QUIC fields.
 
-- **solana_kit_transaction_messages**: Adds resource-limit estimation helpers:
-  `ResourceLimitsEstimate`, `estimateResourceLimitsFactory`,
-  `estimateAndSetResourceLimitsFactory`,
-  `fillTransactionMessageProvisoryResourceLimits`,
-  `getTransactionMessageLoadedAccountsDataSizeLimit`,
-  `setTransactionMessageLoadedAccountsDataSizeLimit`.
+- **solana_kit_transaction_messages**: Adds resource-limit estimation helpers: `ResourceLimitsEstimate`, `estimateResourceLimitsFactory`, `estimateAndSetResourceLimitsFactory`, `fillTransactionMessageProvisoryResourceLimits`, `getTransactionMessageLoadedAccountsDataSizeLimit`, `setTransactionMessageLoadedAccountsDataSizeLimit`.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #195](https://github.com/openbudgetfun/solana_kit/pull/195)
 
@@ -122,13 +103,7 @@ Introduce internal JsonReader helper that replaces unsafe…
 
 Introduce internal `JsonReader` helper that replaces unsafe `.cast<T>()` list
 
-casts and bare `as` casts in all `fromJson` factories with explicit typed
-accessors. Parse errors now surface at construction time via a descriptive
-`FormatException` that includes the field name, rather than deferring until
-element access. All ten type files (`das_types`, `enhanced_types`, `zk_types`,
-`wallet_types`, `webhook_types`, `rpc_v2_types`, `auth_types`, `staking_types`,
-`priority_fee_types`, `smart_transaction_types`) have been migrated. The public
-API is unchanged.
+casts and bare `as` casts in all `fromJson` factories with explicit typed accessors. Parse errors now surface at construction time via a descriptive `FormatException` that includes the field name, rather than deferring until element access. All ten type files (`das_types`, `enhanced_types`, `zk_types`, `wallet_types`, `webhook_types`, `rpc_v2_types`, `auth_types`, `staking_types`, `priority_fee_types`, `smart_transaction_types`) have been migrated. The public API is unchanged.
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`0ee3d60`](https://github.com/openbudgetfun/solana_kit/commit/0ee3d604028aa8a0fcbcf7e7da9840db39755ccf)
 

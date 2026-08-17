@@ -34,19 +34,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -109,19 +103,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -179,18 +167,14 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 ---
@@ -226,18 +210,14 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 ##### Implement options package and codecs umbrella re-export.
@@ -245,8 +225,7 @@ Package groups scaffolded:
 **solana_kit_options** (90 tests):
 
 - Rust-like `Option<T>` sealed class with `Some<T>` and `None<T>` subclasses
-- Option codec with 6 encoding modes: prefix-based, zeroes, custom none value,
-  combined prefix+zeroes, combined prefix+custom, and absence-based detection
+- Option codec with 6 encoding modes: prefix-based, zeroes, custom none value, combined prefix+zeroes, combined prefix+custom, and absence-based detection
 - `unwrapOption()` and `unwrapOptionOr()` for extracting values with fallback
 - `wrapNullable()` for converting `T?` to `Option<T>`
 - `unwrapOptionRecursively()` for deep unwrapping of nested Options in Maps/Lists
@@ -294,11 +273,8 @@ from `@solana/codecs-core` and `@solana/codecs-numbers` in the TypeScript SDK.
 
 **solana_kit_codecs_core** provides the foundational codec interfaces and utilities:
 
-- Sealed class hierarchy: `Encoder<T>`, `Decoder<T>`, `Codec<TFrom, TTo>` with
-  fixed-size and variable-size variants
-- Composition utilities: `combineCodec`, `transformCodec`, `fixCodecSize`,
-  `reverseCodec`, `addCodecSentinel`, `addCodecSizePrefix`, `offsetCodec`,
-  `padCodec`, `resizeCodec`
+- Sealed class hierarchy: `Encoder<T>`, `Decoder<T>`, `Codec<TFrom, TTo>` with fixed-size and variable-size variants
+- Composition utilities: `combineCodec`, `transformCodec`, `fixCodecSize`, `reverseCodec`, `addCodecSentinel`, `addCodecSizePrefix`, `offsetCodec`, `padCodec`, `resizeCodec`
 - Byte utilities: `mergeBytes`, `padBytes`, `fixBytes`, `containsBytes`
 - Assertion helpers for byte array validation
 - 135 tests covering all codec operations
@@ -314,18 +290,14 @@ from `@solana/codecs-core` and `@solana/codecs-numbers` in the TypeScript SDK.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 #### Fixes
@@ -400,18 +372,14 @@ TypeScript `@solana/codecs-strings` and `@solana/codecs-data-structures`.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 #### Fixes
@@ -463,11 +431,8 @@ from `@solana/codecs-core` and `@solana/codecs-numbers` in the TypeScript SDK.
 
 **solana_kit_codecs_core** provides the foundational codec interfaces and utilities:
 
-- Sealed class hierarchy: `Encoder<T>`, `Decoder<T>`, `Codec<TFrom, TTo>` with
-  fixed-size and variable-size variants
-- Composition utilities: `combineCodec`, `transformCodec`, `fixCodecSize`,
-  `reverseCodec`, `addCodecSentinel`, `addCodecSizePrefix`, `offsetCodec`,
-  `padCodec`, `resizeCodec`
+- Sealed class hierarchy: `Encoder<T>`, `Decoder<T>`, `Codec<TFrom, TTo>` with fixed-size and variable-size variants
+- Composition utilities: `combineCodec`, `transformCodec`, `fixCodecSize`, `reverseCodec`, `addCodecSentinel`, `addCodecSizePrefix`, `offsetCodec`, `padCodec`, `resizeCodec`
 - Byte utilities: `mergeBytes`, `padBytes`, `fixBytes`, `containsBytes`
 - Assertion helpers for byte array validation
 - 135 tests covering all codec operations
@@ -483,18 +448,14 @@ from `@solana/codecs-core` and `@solana/codecs-numbers` in the TypeScript SDK.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 #### Fixes
@@ -569,18 +530,14 @@ TypeScript `@solana/codecs-strings` and `@solana/codecs-data-structures`.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 #### Fixes
@@ -632,9 +589,7 @@ The initial release of all libraries.
 Solana error system ported from `@solana/errors` in the TypeScript SDK:
 
 - `SolanaError` class with numeric error codes and typed context maps
-- `SolanaErrorCode` with 200+ categorized error constants covering addresses,
-  accounts, codecs, crypto, instructions, keys, RPC, signers, transactions,
-  and invariant violations
+- `SolanaErrorCode` with 200+ categorized error constants covering addresses, accounts, codecs, crypto, instructions, keys, RPC, signers, transactions, and invariant violations
 - Error message templates with `$variable` interpolation for all error codes
 - JSON-RPC error conversion with preflight failure unwrapping
 - Instruction error mapping for all 54 Solana runtime instruction errors
@@ -692,35 +647,23 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 ##### Implement foundation utility packages ported from the `@solana/functional` and
 
 `@solana/fast-stable-stringify` TypeScript packages.
 
-**solana_kit_functional**: Adds the `Pipe` extension which provides a `.pipe()`
-method on any value for composable functional pipelines. This is the idiomatic
-Dart equivalent of the TS `pipe()` function, used extensively for building
-transaction messages. Includes 28 tests covering single/multiple transforms,
-type changes, object mutation, combining, nested pipes, and error propagation.
+**solana_kit_functional**: Adds the `Pipe` extension which provides a `.pipe()` method on any value for composable functional pipelines. This is the idiomatic Dart equivalent of the TS `pipe()` function, used extensively for building transaction messages. Includes 28 tests covering single/multiple transforms, type changes, object mutation, combining, nested pipes, and error propagation.
 
-**solana_kit_fast_stable_stringify**: Adds `fastStableStringify()` for
-deterministic JSON serialization with sorted object keys. Handles all Dart
-primitives, BigInt (serialized as `<value>n`), nested maps, lists, and objects
-implementing `ToJsonable`. Includes 15 tests matching the upstream SDK's
-`json-stable-stringify` reference output.
+**solana_kit_fast_stable_stringify**: Adds `fastStableStringify()` for deterministic JSON serialization with sorted object keys. Handles all Dart primitives, BigInt (serialized as `<value>n`), nested maps, lists, and objects implementing `ToJsonable`. Includes 15 tests matching the upstream SDK's `json-stable-stringify` reference output.
 
 ---
 
@@ -755,35 +698,23 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 ##### Implement foundation utility packages ported from the `@solana/functional` and
 
 `@solana/fast-stable-stringify` TypeScript packages.
 
-**solana_kit_functional**: Adds the `Pipe` extension which provides a `.pipe()`
-method on any value for composable functional pipelines. This is the idiomatic
-Dart equivalent of the TS `pipe()` function, used extensively for building
-transaction messages. Includes 28 tests covering single/multiple transforms,
-type changes, object mutation, combining, nested pipes, and error propagation.
+**solana_kit_functional**: Adds the `Pipe` extension which provides a `.pipe()` method on any value for composable functional pipelines. This is the idiomatic Dart equivalent of the TS `pipe()` function, used extensively for building transaction messages. Includes 28 tests covering single/multiple transforms, type changes, object mutation, combining, nested pipes, and error propagation.
 
-**solana_kit_fast_stable_stringify**: Adds `fastStableStringify()` for
-deterministic JSON serialization with sorted object keys. Handles all Dart
-primitives, BigInt (serialized as `<value>n`), nested maps, lists, and objects
-implementing `ToJsonable`. Includes 15 tests matching the upstream SDK's
-`json-stable-stringify` reference output.
+**solana_kit_fast_stable_stringify**: Adds `fastStableStringify()` for deterministic JSON serialization with sorted object keys. Handles all Dart primitives, BigInt (serialized as `<value>n`), nested maps, lists, and objects implementing `ToJsonable`. Includes 15 tests matching the upstream SDK's `json-stable-stringify` reference output.
 
 ---
 
@@ -858,18 +789,14 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 ##### Implement instruction plans package ported from `@solana/instruction-plans`.
@@ -921,18 +848,14 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 ##### Implement instructions and programs packages ported from `@solana/instructions` and `@solana/programs`.
@@ -1026,18 +949,14 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 #### Fixes
@@ -1074,8 +993,7 @@ The initial release of all libraries.
 
 ##### Add a `solana_kit_lints` workspace dependency checker and run it as part of
 
-`lint:all` to ensure internal package dependencies use `workspace: true` in
-`pubspec.yaml` files.
+`lint:all` to ensure internal package dependencies use `workspace: true` in `pubspec.yaml` files.
 
 ### 0.1.0 (2026-02-21)
 
@@ -1089,10 +1007,7 @@ The initial release of all libraries.
 
 ##### Initial release of shared lint configuration package. Extends `very_good_analysis`
 
-with project-specific overrides: disables `public_member_api_docs` (docs will be
-added incrementally) and `lines_longer_than_80_chars` (allows longer lines for
-readability in codec/RPC code). All 37 packages in the workspace depend on this
-package via `dev_dependencies` for consistent static analysis.
+with project-specific overrides: disables `public_member_api_docs` (docs will be added incrementally) and `lines_longer_than_80_chars` (allows longer lines for readability in codec/RPC code). All 37 packages in the workspace depend on this package via `dev_dependencies` for consistent static analysis.
 
 #### Fixes
 
@@ -1214,18 +1129,14 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 ##### Implement offchain messages package ported from `@solana/offchain-message`.
@@ -1277,18 +1188,14 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 ##### Implement options package and codecs umbrella re-export.
@@ -1296,8 +1203,7 @@ Package groups scaffolded:
 **solana_kit_options** (90 tests):
 
 - Rust-like `Option<T>` sealed class with `Some<T>` and `None<T>` subclasses
-- Option codec with 6 encoding modes: prefix-based, zeroes, custom none value,
-  combined prefix+zeroes, combined prefix+custom, and absence-based detection
+- Option codec with 6 encoding modes: prefix-based, zeroes, custom none value, combined prefix+zeroes, combined prefix+custom, and absence-based detection
 - `unwrapOption()` and `unwrapOptionOr()` for extracting values with fallback
 - `wrapNullable()` for converting `T?` to `Option<T>`
 - `unwrapOptionRecursively()` for deep unwrapping of nested Options in Maps/Lists
@@ -1355,19 +1261,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -1420,19 +1320,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -1482,19 +1376,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -1533,19 +1421,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -1592,19 +1474,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -1653,19 +1529,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -1715,19 +1585,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -1779,19 +1643,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -1842,19 +1700,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -1905,19 +1757,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -1980,19 +1826,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -2051,19 +1891,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -2114,19 +1948,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -2183,18 +2011,14 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 ##### Implement signers package ported from `@solana/signers`.
@@ -2244,18 +2068,14 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 ##### Implement subscribable package ported from `@solana/subscribable`.
@@ -2303,19 +2123,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -2368,18 +2182,14 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 ##### Implement test matchers package with Solana-specific test assertions.
@@ -2429,19 +2239,13 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 17 higher-level packages including the full RPC stack,
 
-program interaction layers, and the umbrella package. Each package has its
-pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml,
-and an empty barrel export file ready for implementation.
+program interaction layers, and the umbrella package. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
-- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification),
-  rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response
-  processing), rpc_transport_http (HTTP transport), rpc (primary client)
-- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket,
-  rpc_subscriptions (WebSocket subscription client)
-- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities),
-  program_client_core (base client), sysvars (system variables)
+- **RPC Stack**: rpc_types (base types), rpc_spec_types, rpc_spec (specification), rpc_api (method definitions), rpc_parsed_types, rpc_transformers (response processing), rpc_transport_http (HTTP transport), rpc (primary client)
+- **RPC Subscriptions**: rpc_subscriptions_api, rpc_subscriptions_channel_websocket, rpc_subscriptions (WebSocket subscription client)
+- **Programs & Accounts**: accounts (fetching/decoding), programs (utilities), program_client_core (base client), sysvars (system variables)
 - **Transaction Lifecycle**: transaction_confirmation (polling/confirmation)
 - **Umbrella**: solana_kit (re-exports all packages for convenience)
 
@@ -2492,18 +2296,14 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 ##### Implement transaction messages package ported from `@solana/transaction-messages`.
@@ -2559,18 +2359,14 @@ The initial release of all libraries.
 
 ##### Initial scaffold for 18 core packages forming the foundation and middle layers of
 
-the Solana Kit dependency graph. Each package has its pubspec.yaml with correct
-workspace dependencies, shared analysis_options.yaml, and an empty barrel export
-file ready for implementation.
+the Solana Kit dependency graph. Each package has its pubspec.yaml with correct workspace dependencies, shared analysis_options.yaml, and an empty barrel export file ready for implementation.
 
 Package groups scaffolded:
 
 - **Crypto & Identity**: addresses (base58), keys (Ed25519), signers (interfaces)
 - **Codecs**: core interfaces, numbers, strings, data structures, umbrella re-export
-- **Utilities**: functional (pipe/compose), options (Rust-like Option codec),
-  fast_stable_stringify, subscribable (reactive patterns)
-- **Transaction Building**: instructions, instruction_plans, transaction_messages,
-  transactions (compilation & signing)
+- **Utilities**: functional (pipe/compose), options (Rust-like Option codec), fast_stable_stringify, subscribable (reactive patterns)
+- **Transaction Building**: instructions, instruction_plans, transaction_messages, transactions (compilation & signing)
 - **Other**: offchain_messages, test_matchers
 
 ##### Implement transactions package ported from `@solana/transactions`.
@@ -2638,10 +2434,7 @@ Grouped release for `main`.
 
 _Packages:_ _solana_kit_, _solana_kit_fixed_points_, _solana_kit_functional_, _solana_kit_rpc_subscriptions_, _solana_kit_rpc_subscriptions_channel_websocket_, _solana_kit_subscribable_, _solana_kit_test_matchers_, _solana_kit_transaction_confirmation_
 
-**Breaking change.** Clears every `remove_deprecations_in_breaking_versions`
-lint warning by deleting deprecated members and migrating call sites to their
-documented replacements. No deprecations are suppressed; each deprecated
-declaration is removed.
+**Breaking change.** Clears every `remove_deprecations_in_breaking_versions` lint warning by deleting deprecated members and migrating call sites to their documented replacements. No deprecations are suppressed; each deprecated declaration is removed.
 
 ##### `createEmptyClient` (solana_kit)
 
@@ -2656,19 +2449,15 @@ final client = createClient({'ready': true});
 
 ##### Deprecated fixed-point rounding modes (solana_kit_fixed_points)
 
-Removed the deprecated `FixedPointRoundingMode` values `down`, `up`, and
-`halfUp`. The surviving modes are `strict`, `floor`, `ceil`, `trunc`, `round`.
+Removed the deprecated `FixedPointRoundingMode` values `down`, `up`, and `halfUp`. The surviving modes are `strict`, `floor`, `ceil`, `trunc`, `round`.
 
 - `down` was a duplicate of `trunc` — use `FixedPointRoundingMode.trunc`.
 - `halfUp` was a duplicate of `round` — use `FixedPointRoundingMode.round`.
-- `up` ("round away from zero") has no single replacement. Use `floor` or
-  `ceil` depending on the sign of the value, or `round` for nearest.
+- `up` ("round away from zero") has no single replacement. Use `floor` or `ceil` depending on the sign of the value, or `round` for nearest.
 
 ##### Deprecated `Pipe` extension (solana_kit_functional)
 
-Removed the deprecated `Pipe` extension from `solana_kit_functional`. `Pipe` is
-re-exported from `solana_kit_transaction_messages` and the `solana_kit` umbrella.
-Switch imports accordingly:
+Removed the deprecated `Pipe` extension from `solana_kit_functional`. `Pipe` is re-exported from `solana_kit_transaction_messages` and the `solana_kit` umbrella. Switch imports accordingly:
 
 ```dart
 // Before
@@ -2677,17 +2466,11 @@ import 'package:solana_kit_functional/solana_kit_functional.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 ```
 
-`solana_kit` no longer depends on `solana_kit_functional`. The
-`solana_kit_functional` package is now an empty placeholder pending full
-retirement.
+`solana_kit` no longer depends on `solana_kit_functional`. The `solana_kit_functional` package is now an empty placeholder pending full retirement.
 
 ##### Deprecated subscriptions compatibility APIs
 
-The deprecated `AbortSignal`/`AbortController` and
-`DataPublisher`/`WritableDataPublisher`/`createDataPublisher` compatibility
-APIs were the core transport substrate of the subscriptions stack, not a thin
-compatibility layer. They are replaced by stream-native and cancellation-token
-equivalents.
+The deprecated `AbortSignal`/`AbortController` and `DataPublisher`/`WritableDataPublisher`/`createDataPublisher` compatibility APIs were the core transport substrate of the subscriptions stack, not a thin compatibility layer. They are replaced by stream-native and cancellation-token equivalents.
 
 ###### Cancellation
 
@@ -2699,40 +2482,21 @@ equivalents.
 - `signal.reason` → `token.reason`
 - `signal.future` → `token.future`
 
-Public field/parameter names that held an `AbortSignal` (e.g. `abortSignal`,
-`signal`) are kept; only their type changed to `CancellationToken`.
-`CancellationToken` and `CancellationTokenSource` are re-exported from
-`solana_kit_rpc_subscriptions` and `solana_kit_rpc_subscriptions_channel_websocket`
-so consumers do not need a direct `solana_kit_subscribable` dependency.
+Public field/parameter names that held an `AbortSignal` (e.g. `abortSignal`, `signal`) are kept; only their type changed to `CancellationToken`. `CancellationToken` and `CancellationTokenSource` are re-exported from `solana_kit_rpc_subscriptions` and `solana_kit_rpc_subscriptions_channel_websocket` so consumers do not need a direct `solana_kit_subscribable` dependency.
 
-`AbortError`, `isAbortError`, `getAbortableFuture`, and `normalClosureCode`
-remain in `solana_kit_rpc_subscriptions_channel_websocket` (behavior unchanged;
-their `AbortSignal?` params are now `CancellationToken?`).
+`AbortError`, `isAbortError`, `getAbortableFuture`, and `normalClosureCode` remain in `solana_kit_rpc_subscriptions_channel_websocket` (behavior unchanged; their `AbortSignal?` params are now `CancellationToken?`).
 
 ###### DataPublisher → NotificationStreams
 
-- The transport contract changed from `Future<DataPublisher>` to
-  `Future<NotificationStreams>`.
-- `RpcSubscriptionsChannel` now exposes `NotificationStreams get streams`
-  instead of the `on(channelName, subscriber)` method.
-- `createDataPublisher()`, `WritableDataPublisher`, `DataPublisher`, and the
-  `DataPublisherStreams` extension are removed.
-- The `*FromDataPublisher` helpers are removed:
-  `createStreamFromDataPublisher`, `StreamFromDataPublisherConfig`,
-  `createAsyncIterableFromDataPublisher`, `demultiplexDataPublisher`,
-  `createReactiveStoreFromDataPublisher`,
-  `createReactiveStreamStoreFromDataPublisher`.
-- The stream-native helpers are kept: `ChannelStreamController`,
-  `createStreamFromDataAndErrorStreams`, `demultiplexStream`,
-  `createReactiveStoreFromStreams`, `ReactiveStore`, `ReactiveStreamStore`,
-  `createReactiveStreamStore`.
+- The transport contract changed from `Future<DataPublisher>` to `Future<NotificationStreams>`.
+- `RpcSubscriptionsChannel` now exposes `NotificationStreams get streams` instead of the `on(channelName, subscriber)` method.
+- `createDataPublisher()`, `WritableDataPublisher`, `DataPublisher`, and the `DataPublisherStreams` extension are removed.
+- The `*FromDataPublisher` helpers are removed: `createStreamFromDataPublisher`, `StreamFromDataPublisherConfig`, `createAsyncIterableFromDataPublisher`, `demultiplexDataPublisher`, `createReactiveStoreFromDataPublisher`, `createReactiveStreamStoreFromDataPublisher`.
+- The stream-native helpers are kept: `ChannelStreamController`, `createStreamFromDataAndErrorStreams`, `demultiplexStream`, `createReactiveStoreFromStreams`, `ReactiveStore`, `ReactiveStreamStore`, `createReactiveStreamStore`.
 
 ###### Public subscription APIs
 
-`PendingRpcSubscriptionsRequest.subscribe()` and `.reactive()` still return
-`Future<Stream<T>>` and `Future<ReactiveStore<T>>` respectively. Internally they
-now consume `NotificationStreams.notifications` / `.errors` instead of
-`DataPublisher` channels.
+`PendingRpcSubscriptionsRequest.subscribe()` and `.reactive()` still return `Future<Stream<T>>` and `Future<ReactiveStore<T>>` respectively. Internally they now consume `NotificationStreams.notifications` / `.errors` instead of `DataPublisher` channels.
 
 ###### Migration
 
@@ -2823,34 +2587,15 @@ _Packages:_ _solana_kit_errors_, _solana_kit_rpc_api_, _solana_kit_rpc_spec_, _s
 
 Updates core packages to match upstream `@solana/kit` `6.10.0`:
 
-- **solana_kit_errors**: Adds 6 new error codes from `@solana/errors` 6.10:
-  `JSON_RPC__SERVER_ERROR_NO_SLOT_HISTORY` (-32021),
-  `JSON_RPC__SERVER_ERROR_FILTER_TRANSACTION_NOT_FOUND` (-32020),
-  `TRANSACTION__FAILED_TO_ESTIMATE_LOADED_ACCOUNTS_DATA_SIZE_LIMIT` (5663036),
-  `TRANSACTION__FAILED_WHEN_SIMULATING_TO_ESTIMATE_RESOURCE_LIMITS` (5663037),
-  `SUBSCRIBABLE__RETRY_NOT_SUPPORTED` (8195000),
-  `WALLET__ACCOUNT_NOT_AVAILABLE` (8900003).
-  Adds `subscribable` and `wallet` error domains. Updates
-  `unwrapSimulationError` to treat resource-limit simulation failures as
-  simulation errors.
+- **solana_kit_errors**: Adds 6 new error codes from `@solana/errors` 6.10: `JSON_RPC__SERVER_ERROR_NO_SLOT_HISTORY` (-32021), `JSON_RPC__SERVER_ERROR_FILTER_TRANSACTION_NOT_FOUND` (-32020), `TRANSACTION__FAILED_TO_ESTIMATE_LOADED_ACCOUNTS_DATA_SIZE_LIMIT` (5663036), `TRANSACTION__FAILED_WHEN_SIMULATING_TO_ESTIMATE_RESOURCE_LIMITS` (5663037), `SUBSCRIBABLE__RETRY_NOT_SUPPORTED` (8195000), `WALLET__ACCOUNT_NOT_AVAILABLE` (8900003). Adds `subscribable` and `wallet` error domains. Updates `unwrapSimulationError` to treat resource-limit simulation failures as simulation errors.
 
-- **solana_kit_subscribable**: Adds `ReactiveActionStore<TArgs, TResult>` with
-  idle/running/success/error states, `dispatch`/`dispatchAsync`/`reset`.
-  Adds `ReactiveStreamStore<T>` with loading/loaded/error/retrying states,
-  `getUnifiedState` and `retry`. Mirrors upstream `@solana/subscribable` 6.10.
+- **solana_kit_subscribable**: Adds `ReactiveActionStore<TArgs, TResult>` with idle/running/success/error states, `dispatch`/`dispatchAsync`/`reset`. Adds `ReactiveStreamStore<T>` with loading/loaded/error/retrying states, `getUnifiedState` and `retry`. Mirrors upstream `@solana/subscribable` 6.10.
 
-- **solana_kit_rpc_spec**: Adds `PendingRpcRequest.reactiveStore()` returning a
-  `ReactiveActionStore` for reactive request dispatch.
+- **solana_kit_rpc_spec**: Adds `PendingRpcRequest.reactiveStore()` returning a `ReactiveActionStore` for reactive request dispatch.
 
-- **solana_kit_rpc_api**: Adds `clientId` to `ClusterNode`. Documents `tpu` and
-  `tpuForwards` as deprecated in favor of QUIC fields.
+- **solana_kit_rpc_api**: Adds `clientId` to `ClusterNode`. Documents `tpu` and `tpuForwards` as deprecated in favor of QUIC fields.
 
-- **solana_kit_transaction_messages**: Adds resource-limit estimation helpers:
-  `ResourceLimitsEstimate`, `estimateResourceLimitsFactory`,
-  `estimateAndSetResourceLimitsFactory`,
-  `fillTransactionMessageProvisoryResourceLimits`,
-  `getTransactionMessageLoadedAccountsDataSizeLimit`,
-  `setTransactionMessageLoadedAccountsDataSizeLimit`.
+- **solana_kit_transaction_messages**: Adds resource-limit estimation helpers: `ResourceLimitsEstimate`, `estimateResourceLimitsFactory`, `estimateAndSetResourceLimitsFactory`, `fillTransactionMessageProvisoryResourceLimits`, `getTransactionMessageLoadedAccountsDataSizeLimit`, `setTransactionMessageLoadedAccountsDataSizeLimit`.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #195](https://github.com/openbudgetfun/solana_kit/pull/195)
 
@@ -2862,34 +2607,15 @@ _Packages:_ _solana_kit_
 
 Updates core packages to match upstream `@solana/kit` `6.10.0`:
 
-- **solana_kit_errors**: Adds 6 new error codes from `@solana/errors` 6.10:
-  `JSON_RPC__SERVER_ERROR_NO_SLOT_HISTORY` (-32021),
-  `JSON_RPC__SERVER_ERROR_FILTER_TRANSACTION_NOT_FOUND` (-32020),
-  `TRANSACTION__FAILED_TO_ESTIMATE_LOADED_ACCOUNTS_DATA_SIZE_LIMIT` (5663036),
-  `TRANSACTION__FAILED_WHEN_SIMULATING_TO_ESTIMATE_RESOURCE_LIMITS` (5663037),
-  `SUBSCRIBABLE__RETRY_NOT_SUPPORTED` (8195000),
-  `WALLET__ACCOUNT_NOT_AVAILABLE` (8900003).
-  Adds `subscribable` and `wallet` error domains. Updates
-  `unwrapSimulationError` to treat resource-limit simulation failures as
-  simulation errors.
+- **solana_kit_errors**: Adds 6 new error codes from `@solana/errors` 6.10: `JSON_RPC__SERVER_ERROR_NO_SLOT_HISTORY` (-32021), `JSON_RPC__SERVER_ERROR_FILTER_TRANSACTION_NOT_FOUND` (-32020), `TRANSACTION__FAILED_TO_ESTIMATE_LOADED_ACCOUNTS_DATA_SIZE_LIMIT` (5663036), `TRANSACTION__FAILED_WHEN_SIMULATING_TO_ESTIMATE_RESOURCE_LIMITS` (5663037), `SUBSCRIBABLE__RETRY_NOT_SUPPORTED` (8195000), `WALLET__ACCOUNT_NOT_AVAILABLE` (8900003). Adds `subscribable` and `wallet` error domains. Updates `unwrapSimulationError` to treat resource-limit simulation failures as simulation errors.
 
-- **solana_kit_subscribable**: Adds `ReactiveActionStore<TArgs, TResult>` with
-  idle/running/success/error states, `dispatch`/`dispatchAsync`/`reset`.
-  Adds `ReactiveStreamStore<T>` with loading/loaded/error/retrying states,
-  `getUnifiedState` and `retry`. Mirrors upstream `@solana/subscribable` 6.10.
+- **solana_kit_subscribable**: Adds `ReactiveActionStore<TArgs, TResult>` with idle/running/success/error states, `dispatch`/`dispatchAsync`/`reset`. Adds `ReactiveStreamStore<T>` with loading/loaded/error/retrying states, `getUnifiedState` and `retry`. Mirrors upstream `@solana/subscribable` 6.10.
 
-- **solana_kit_rpc_spec**: Adds `PendingRpcRequest.reactiveStore()` returning a
-  `ReactiveActionStore` for reactive request dispatch.
+- **solana_kit_rpc_spec**: Adds `PendingRpcRequest.reactiveStore()` returning a `ReactiveActionStore` for reactive request dispatch.
 
-- **solana_kit_rpc_api**: Adds `clientId` to `ClusterNode`. Documents `tpu` and
-  `tpuForwards` as deprecated in favor of QUIC fields.
+- **solana_kit_rpc_api**: Adds `clientId` to `ClusterNode`. Documents `tpu` and `tpuForwards` as deprecated in favor of QUIC fields.
 
-- **solana_kit_transaction_messages**: Adds resource-limit estimation helpers:
-  `ResourceLimitsEstimate`, `estimateResourceLimitsFactory`,
-  `estimateAndSetResourceLimitsFactory`,
-  `fillTransactionMessageProvisoryResourceLimits`,
-  `getTransactionMessageLoadedAccountsDataSizeLimit`,
-  `setTransactionMessageLoadedAccountsDataSizeLimit`.
+- **solana_kit_transaction_messages**: Adds resource-limit estimation helpers: `ResourceLimitsEstimate`, `estimateResourceLimitsFactory`, `estimateAndSetResourceLimitsFactory`, `fillTransactionMessageProvisoryResourceLimits`, `getTransactionMessageLoadedAccountsDataSizeLimit`, `setTransactionMessageLoadedAccountsDataSizeLimit`.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #195](https://github.com/openbudgetfun/solana_kit/pull/195)
 
@@ -3588,13 +3314,7 @@ Introduce internal JsonReader helper that replaces unsafe…
 
 Introduce internal `JsonReader` helper that replaces unsafe `.cast<T>()` list
 
-casts and bare `as` casts in all `fromJson` factories with explicit typed
-accessors. Parse errors now surface at construction time via a descriptive
-`FormatException` that includes the field name, rather than deferring until
-element access. All ten type files (`das_types`, `enhanced_types`, `zk_types`,
-`wallet_types`, `webhook_types`, `rpc_v2_types`, `auth_types`, `staking_types`,
-`priority_fee_types`, `smart_transaction_types`) have been migrated. The public
-API is unchanged.
+casts and bare `as` casts in all `fromJson` factories with explicit typed accessors. Parse errors now surface at construction time via a descriptive `FormatException` that includes the field name, rather than deferring until element access. All ten type files (`das_types`, `enhanced_types`, `zk_types`, `wallet_types`, `webhook_types`, `rpc_v2_types`, `auth_types`, `staking_types`, `priority_fee_types`, `smart_transaction_types`) have been migrated. The public API is unchanged.
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`0ee3d60`](https://github.com/openbudgetfun/solana_kit/commit/0ee3d604028aa8a0fcbcf7e7da9840db39755ccf)
 
@@ -3748,18 +3468,11 @@ _Packages:_ _solana_kit_transaction_messages_
 
 Add `==` and `hashCode` to public value-type, config, and response classes.
 
-Implements issue #114. All config, request, and response classes in the RPC
-layer, as well as core instruction and transaction-message value types, now
-support structural equality. This enables correct use in `Set`s, as `Map` keys,
-and in test assertions.
+Implements issue #114. All config, request, and response classes in the RPC layer, as well as core instruction and transaction-message value types, now support structural equality. This enables correct use in `Set`s, as `Map` keys, and in test assertions.
 
-All affected classes are also annotated with `@immutable` to satisfy the
-`avoid_equals_and_hash_code_on_mutable_classes` lint rule, since every field
-is already `final`.
+All affected classes are also annotated with `@immutable` to satisfy the `avoid_equals_and_hash_code_on_mutable_classes` lint rule, since every field is already `final`.
 
-Packages that did not previously depend on `meta` now declare `meta: any`
-explicitly (`solana_kit_rpc_api`, `solana_kit_transaction_confirmation`,
-`solana_kit_rpc_spec_types`, `solana_kit_rpc_parsed_types`).
+Packages that did not previously depend on `meta` now declare `meta: any` explicitly (`solana_kit_rpc_api`, `solana_kit_transaction_confirmation`, `solana_kit_rpc_spec_types`, `solana_kit_rpc_parsed_types`).
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`5bccc42`](https://github.com/openbudgetfun/solana_kit/commit/5bccc42120e7bc038fc507719727500364a43bd9)
 
@@ -3847,17 +3560,14 @@ _Owner:_ Ifiok Jr. · _Introduced in:_ [`9ee2e44`](https://github.com/openbudget
 
 - Replace `TransactionLifetimeConstraint` `Object` alias with a sealed hierarchy.
 - Remove the internal `_NoLifetime` fallback from `compileTransaction`.
-- Enforce lifetime presence during compile and throw explicit `SolanaErrorCode`
-  values for invalid lifetime states.
+- Enforce lifetime presence during compile and throw explicit `SolanaErrorCode` values for invalid lifetime states.
 - Expand transaction compile tests for missing and invalid lifetime paths.
 
 #### Add Phase 4 advanced ergonomics and performance improvements.
 
 - Add typed union helpers (`Union2`/`Union3`) with strongly-typed codec helpers.
-- Add optional isolate-backed BigInt JSON decoding via
-  `parseJsonWithBigIntsAsync` and Solana HTTP transport flags.
-- Add typed error-domain helpers layered over numeric `SolanaErrorCode`
-  values (`SolanaErrorDomain`, domain classifiers, and extensions).
+- Add optional isolate-backed BigInt JSON decoding via `parseJsonWithBigIntsAsync` and Solana HTTP transport flags.
+- Add typed error-domain helpers layered over numeric `SolanaErrorCode` values (`SolanaErrorDomain`, domain classifiers, and extensions).
 - Expand README/API docs and shared mdt templates for these features.
 
 ### Fixes

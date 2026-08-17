@@ -1,10 +1,6 @@
 # solana_kit_rpc_transport_http
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_rpc_transport_http.svg)](https://pub.dev/packages/solana_kit_rpc_transport_http)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_rpc_transport_http/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_rpc_transport_http)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_rpc_transport_http)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_rpc_transport_http)
+[![pub package](https://img.shields.io/pub/v/solana_kit_rpc_transport_http.svg)](https://pub.dev/packages/solana_kit_rpc_transport_http) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_rpc_transport_http/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_rpc_transport_http) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_rpc_transport_http)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_rpc_transport_http)
 
 HTTP transport for the Solana Kit Dart SDK.
 
@@ -239,8 +235,7 @@ print(response); // {jsonrpc: 2.0, result: 42, id: 1}
 
 ### Optional Isolate JSON Decoding
 
-For large Solana RPC payloads, you can offload BigInt-aware JSON parsing to a
-background isolate so the main isolate stays responsive.
+For large Solana RPC payloads, you can offload BigInt-aware JSON parsing to a background isolate so the main isolate stays responsive.
 
 ```dart
 import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
@@ -256,9 +251,7 @@ void main() {
 }
 ```
 
-For direct parsing, use `parseJsonWithBigIntsAsync(...)` with
-`runInIsolate: true`. Reserve isolate parsing for larger payloads where the
-extra hop is worth the reduced UI or server-request blocking.
+For direct parsing, use `parseJsonWithBigIntsAsync(...)` with `runInIsolate: true`. Reserve isolate parsing for larger payloads where the extra hop is worth the reduced UI or server-request blocking.
 
 <!-- {/isolateJsonDecodeSection} -->
 

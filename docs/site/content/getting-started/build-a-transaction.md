@@ -51,10 +51,7 @@ Future<void> main() async {
 }
 ```
 
-This separation keeps transaction construction explicit and makes it easier to
-reason about fee payment, expiry, and instruction ordering. If you prefer a
-more fluent style, the transaction-message extension methods build on the same
-underlying model.
+This separation keeps transaction construction explicit and makes it easier to reason about fee payment, expiry, and instruction ordering. If you prefer a more fluent style, the transaction-message extension methods build on the same underlying model.
 
 <!-- {/docsBuildTransactionSection} -->
 

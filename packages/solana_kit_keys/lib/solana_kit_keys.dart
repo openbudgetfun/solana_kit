@@ -7,8 +7,7 @@
 ///
 /// ## Generate keys and verify signatures
 ///
-/// Use the key primitives when you need raw Ed25519 key material or signature
-/// verification outside the higher-level signer abstractions.
+/// Use the key primitives when you need raw Ed25519 key material or signature verification outside the higher-level signer abstractions.
 ///
 /// ```dart
 /// import 'dart:typed_data';
@@ -26,8 +25,7 @@
 /// }
 /// ```
 ///
-/// This package is the right layer when you need direct access to key bytes,
-/// public-key derivation, or low-level signature helpers.
+/// This package is the right layer when you need direct access to key bytes, public-key derivation, or low-level signature helpers.
 ///
 /// <!-- {/docsKeyPairSection} -->
 library;

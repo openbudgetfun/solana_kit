@@ -24,8 +24,7 @@ In Solana Kit, both paths return explicit result models so you can distinguish a
 
 ## Fetch an account
 
-Use `fetchEncodedAccount` when you want the raw account bytes plus its Solana
-metadata. Decode it later with the codec or parser that matches your program.
+Use `fetchEncodedAccount` when you want the raw account bytes plus its Solana metadata. Decode it later with the codec or parser that matches your program.
 
 ```dart
 import 'dart:typed_data';
@@ -48,10 +47,7 @@ Future<void> main() async {
 }
 ```
 
-Use `fetchJsonParsedAccount` when the RPC can return a structured
-`jsonParsed` representation for a well-known program. Use encoded reads when
-you need byte-perfect custom decoding or when the RPC does not expose a parsed
-view for your program.
+Use `fetchJsonParsedAccount` when the RPC can return a structured `jsonParsed` representation for a well-known program. Use encoded reads when you need byte-perfect custom decoding or when the RPC does not expose a parsed view for your program.
 
 <!-- {/docsFetchAccountSection} -->
 
@@ -77,8 +73,7 @@ Batch reads are especially useful when building dashboards, indexer workers, and
 
 ## Decode a fetched account
 
-Keep transport and binary-layout logic separate: fetch the encoded account
-first, then decode it with the codec or decoder that matches your program.
+Keep transport and binary-layout logic separate: fetch the encoded account first, then decode it with the codec or decoder that matches your program.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -101,8 +96,7 @@ Future<void> loadDecodedAccount(
 }
 ```
 
-This boundary keeps RPC concerns, existence handling, and binary decoding easy
-to test independently.
+This boundary keeps RPC concerns, existence handling, and binary decoding easy to test independently.
 
 <!-- {/docsDecodeAccountSection} -->
 
@@ -118,8 +112,7 @@ Use encoded reads when you need full control over the layout or you are interact
 
 ## Reuse a higher-level account client
 
-If your app reads accounts from several places, create a `SolanaAccountClient`
-once and reuse it as the account boundary for your service or repository layer.
+If your app reads accounts from several places, create a `SolanaAccountClient` once and reuse it as the account boundary for your service or repository layer.
 
 ```dart
 final accountClient = createSolanaAccountClient(rpc);
@@ -130,8 +123,7 @@ final maybeAccount = await accountClient.fetchEncodedAccount(
 print(maybeAccount.exists);
 ```
 
-This keeps RPC request wiring in one place while preserving the same
-`MaybeAccount`-based result models.
+This keeps RPC request wiring in one place while preserving the same `MaybeAccount`-based result models.
 
 ## Next steps
 

@@ -1,10 +1,6 @@
 # solana_kit_codecs_numbers
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_codecs_numbers.svg)](https://pub.dev/packages/solana_kit_codecs_numbers)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_codecs_numbers/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_codecs_numbers)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_codecs_numbers)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_codecs_numbers)
+[![pub package](https://img.shields.io/pub/v/solana_kit_codecs_numbers.svg)](https://pub.dev/packages/solana_kit_codecs_numbers) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_codecs_numbers/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_codecs_numbers) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_codecs_numbers)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_codecs_numbers)
 
 Numeric codecs for encoding and decoding integers and floats in Solana data structures.
 
@@ -49,8 +45,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Encode fixed-width numbers
 
-Use the number codecs when your binary format needs explicit integer widths and
-endianness.
+Use the number codecs when your binary format needs explicit integer widths and endianness.
 
 ```dart
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
@@ -65,8 +60,7 @@ void main() {
 }
 ```
 
-Reach for these codecs in instruction layouts, account state structs, and any
-wire format that needs exact byte-for-byte compatibility.
+Reach for these codecs in instruction layouts, account state structs, and any wire format that needs exact byte-for-byte compatibility.
 
 <!-- {/docsNumberCodecSection} -->
 

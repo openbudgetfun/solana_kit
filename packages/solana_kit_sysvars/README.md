@@ -1,10 +1,6 @@
 # solana_kit_sysvars
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_sysvars.svg)](https://pub.dev/packages/solana_kit_sysvars)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_sysvars/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_sysvars)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_sysvars)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_sysvars)
+[![pub package](https://img.shields.io/pub/v/solana_kit_sysvars.svg)](https://pub.dev/packages/solana_kit_sysvars) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_sysvars/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_sysvars) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_sysvars)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_sysvars)
 
 System variable (sysvar) account access for the Solana Kit Dart SDK -- provides typed access to Solana runtime sysvar accounts like Clock, Rent, EpochSchedule, and more.
 
@@ -49,8 +45,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Work with sysvar codecs and addresses
 
-Use `solana_kit_sysvars` when you need typed access to built-in cluster state
-accounts such as `Clock`, `Rent`, or `EpochSchedule`.
+Use `solana_kit_sysvars` when you need typed access to built-in cluster state accounts such as `Clock`, `Rent`, or `EpochSchedule`.
 
 ```dart
 import 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
@@ -72,8 +67,7 @@ void main() {
 }
 ```
 
-These helpers keep sysvar access strongly typed and let you test sysvar layouts
-without depending on live RPC responses.
+These helpers keep sysvar access strongly typed and let you test sysvar layouts without depending on live RPC responses.
 
 <!-- {/docsSysvarSection} -->
 

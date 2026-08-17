@@ -1,10 +1,6 @@
 # solana_kit_errors
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_errors.svg)](https://pub.dev/packages/solana_kit_errors)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_errors/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_errors)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_errors)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_errors)
+[![pub package](https://img.shields.io/pub/v/solana_kit_errors.svg)](https://pub.dev/packages/solana_kit_errors) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_errors/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_errors) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_errors)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_errors)
 
 Error codes, structured error class, and error conversion utilities for the Solana Kit Dart SDK.
 
@@ -330,9 +326,7 @@ print(decoded['address']); // 11111111111111111111111111111111
 
 ### Typed Error Domains
 
-`solana_kit_errors` includes domain helpers layered over numeric error codes.
-Use them to route error handling without hardcoding code ranges throughout your
-application.
+`solana_kit_errors` includes domain helpers layered over numeric error codes. Use them to route error handling without hardcoding code ranges throughout your application.
 
 ```dart
 import 'package:solana_kit_errors/solana_kit_errors.dart';
@@ -352,15 +346,13 @@ void handleSolanaFailure(SolanaError error) {
 }
 ```
 
-This keeps your error-routing logic readable while still preserving the exact
-numeric code and context payload when you need lower-level diagnostics.
+This keeps your error-routing logic readable while still preserving the exact numeric code and context payload when you need lower-level diagnostics.
 
 <!-- {/errorDomainHelpersSection} -->
 
 ### Preferred construction helpers
 
-Use `createSolanaError(...)` and `wrapSolanaError(...)` when you want
-consistent null stripping, shared context keys, and nested-cause preservation.
+Use `createSolanaError(...)` and `wrapSolanaError(...)` when you want consistent null stripping, shared context keys, and nested-cause preservation.
 
 ```dart
 import 'package:solana_kit_errors/solana_kit_errors.dart';
@@ -377,8 +369,7 @@ final error = wrapSolanaError(
 print(error.context[SolanaErrorContextKeys.causeType]); // StateError
 ```
 
-Prefer shared keys such as `address`, `operation`, `methodName`, `path`,
-`statusCode`, and `url` so diagnostics stay predictable across packages.
+Prefer shared keys such as `address`, `operation`, `methodName`, `path`, `statusCode`, and `url` so diagnostics stay predictable across packages.
 
 ## API Reference
 

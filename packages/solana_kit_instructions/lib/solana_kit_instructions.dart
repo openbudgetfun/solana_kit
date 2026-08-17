@@ -7,8 +7,7 @@
 ///
 /// ## Model an instruction
 ///
-/// Use `Instruction` plus `AccountMeta` when you need to describe a program call
-/// before building a full transaction message around it.
+/// Use `Instruction` plus `AccountMeta` when you need to describe a program call before building a full transaction message around it.
 ///
 /// ```dart
 /// import 'dart:typed_data';
@@ -35,8 +34,7 @@
 /// }
 /// ```
 ///
-/// Keeping instruction construction explicit makes it easier to reason about
-/// required signer privileges, writable accounts, and serialized program data.
+/// Keeping instruction construction explicit makes it easier to reason about required signer privileges, writable accounts, and serialized program data.
 ///
 /// <!-- {/docsInstructionPrimitivesSection} -->
 library;

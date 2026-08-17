@@ -1,10 +1,6 @@
 # solana_kit_addresses
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_addresses.svg)](https://pub.dev/packages/solana_kit_addresses)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_addresses/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_addresses)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_addresses)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_addresses)
+[![pub package](https://img.shields.io/pub/v/solana_kit_addresses.svg)](https://pub.dev/packages/solana_kit_addresses) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_addresses/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_addresses) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_addresses)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_addresses)
 
 Base58-encoded Solana address utilities for the Solana Kit Dart SDK -- a Dart port of [`@solana/addresses`](https://github.com/anza-xyz/kit/tree/main/packages/addresses).
 
@@ -47,8 +43,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Derive and validate addresses
 
-Use the address helpers when you need strongly typed account identifiers,
-validation, or program-derived address derivation.
+Use the address helpers when you need strongly typed account identifiers, validation, or program-derived address derivation.
 
 ```dart
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -66,8 +61,7 @@ Future<void> main() async {
 }
 ```
 
-Keep raw strings at the edges. Once a value is known to be a Solana address,
-prefer carrying it as `Address` rather than repeatedly re-validating strings.
+Keep raw strings at the edges. Once a value is known to be a Solana address, prefer carrying it as `Address` rather than repeatedly re-validating strings.
 
 <!-- {/docsAddressPrimitivesSection} -->
 

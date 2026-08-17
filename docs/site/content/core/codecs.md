@@ -55,9 +55,7 @@ print(decoded['amount']);
 
 ### Typed Union Helpers
 
-Prefer typed union helpers when a codec has a fixed, small number of variants.
-They improve IDE type inference, make exhaustive matching easier, and reduce
-unstructured casting in downstream code.
+Prefer typed union helpers when a codec has a fixed, small number of variants. They improve IDE type inference, make exhaustive matching easier, and reduce unstructured casting in downstream code.
 
 ```dart
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
@@ -78,8 +76,7 @@ void main() {
 }
 ```
 
-Use these helpers when your wire format has “one of a few known cases” and you
-want the Dart type system to preserve that fact.
+Use these helpers when your wire format has “one of a few known cases” and you want the Dart type system to preserve that fact.
 
 <!-- {/typedUnionHelpersSection} -->
 
@@ -89,8 +86,7 @@ want the Dart type system to preserve that fact.
 
 ### Pattern-match codecs
 
-Use pattern-match codecs when you need to choose a codec based on either the
-incoming bytes or the value being encoded.
+Use pattern-match codecs when you need to choose a codec based on either the incoming bytes or the value being encoded.
 
 ```dart
 import 'dart:typed_data';
@@ -111,8 +107,7 @@ void main() {
 }
 ```
 
-Reach for this when a layout cannot be described as a single fixed struct or
-union discriminator alone.
+Reach for this when a layout cannot be described as a single fixed struct or union discriminator alone.
 
 <!-- {/docsPatternMatchCodecSection} -->
 
@@ -128,8 +123,7 @@ union discriminator alone.
 
 <!-- {/compatibilityNoteCalloutSection} -->
 
-`getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null
-characters.
+`getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters.
 
 Prefer a stricter Dart-first path when silent data loss would be risky:
 
@@ -148,10 +142,8 @@ void main() {
 ```
 
 - use `getStrictUtf8Codec()` to reject decoded null characters.
-- use `Utf8NullCharacterMode.preserve` when you need to surface null bytes
-  explicitly without compatibility stripping.
-- keep the default `getUtf8Codec()` only when you intentionally need upstream
-  compatibility behavior.
+- use `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly without compatibility stripping.
+- keep the default `getUtf8Codec()` only when you intentionally need upstream compatibility behavior.
 
 ## When to use codecs
 

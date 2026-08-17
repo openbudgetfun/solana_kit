@@ -1,10 +1,6 @@
 # solana_kit_helius
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_helius.svg)](https://pub.dev/packages/solana_kit_helius)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_helius/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_helius)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_helius)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_helius)
+[![pub package](https://img.shields.io/pub/v/solana_kit_helius.svg)](https://pub.dev/packages/solana_kit_helius) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_helius/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_helius) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_helius)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_helius)
 
 Helius client package for Solana Kit Dart. A Dart port of the [Helius TypeScript SDK](https://github.com/helius-labs/helius-sdk), providing DAS API, enhanced transactions, webhooks, smart transactions, ZK compression, staking, wallet API, WebSocket subscriptions, and auth.
 
@@ -94,10 +90,7 @@ final txns = await helius.enhanced.getTransactions(
 
 ### Authenticated signup
 
-`signup` uses the developer API's wallet-signup response as a bearer JWT, then
-uses that JWT for project and checkout calls. Project API keys are only
-returned after subscription provisioning and are never reused as bearer
-tokens.
+`signup` uses the developer API's wallet-signup response as a bearer JWT, then uses that JWT for project and checkout calls. Project API keys are only returned after subscription provisioning and are never reused as bearer tokens.
 
 ```dart
 final result = await helius.auth.signup(
@@ -111,9 +104,7 @@ final result = await helius.auth.signup(
 );
 ```
 
-Only pay `PaymentLink` values received from a trusted Helius developer API.
-The payment helper rejects non-positive amounts, mismatched memo/intent IDs,
-and non-payment link kinds before constructing a transfer.
+Only pay `PaymentLink` values received from a trusted Helius developer API. The payment helper rejects non-positive amounts, mismatched memo/intent IDs, and non-payment link kinds before constructing a transfer.
 
 ## Configuration
 
@@ -142,25 +133,17 @@ final helius = createHelius(
 
 ## WebSocket security defaults
 
-`HeliusWebSocket` enforces `wss://` URLs and rejects localhost plus non-public
-IP literals by default. Use `allowInsecureWs: true` and
-`allowPrivateHosts: true` only for local development and controlled tests.
-The private-host check does not resolve DNS names, so do not accept arbitrary
-WebSocket URLs from untrusted input.
+`HeliusWebSocket` enforces `wss://` URLs and rejects localhost plus non-public IP literals by default. Use `allowInsecureWs: true` and `allowPrivateHosts: true` only for local development and controlled tests. The private-host check does not resolve DNS names, so do not accept arbitrary WebSocket URLs from untrusted input.
 
 ## Testing strategy
 
-The Helius package keeps DTO smoke coverage, but long-term confidence should
-come from higher-level contracts:
+The Helius package keeps DTO smoke coverage, but long-term confidence should come from higher-level contracts:
 
-- shared REST and JSON-RPC client contract tests cover request shaping, headers,
-  query merging, and error mapping
+- shared REST and JSON-RPC client contract tests cover request shaping, headers, query merging, and error mapping
 - endpoint tests focus on user-facing request/response behavior
-- websocket session tests cover subscribe, notification routing, unsubscribe,
-  and close boundaries across concurrent subscriptions
+- websocket session tests cover subscribe, notification routing, unsubscribe, and close boundaries across concurrent subscriptions
 
-When adding a new Helius surface, prefer extending one of these boundaries
-before adding large amounts of DTO-only roundtrip coverage.
+When adding a new Helius surface, prefer extending one of these boundaries before adding large amounts of DTO-only roundtrip coverage.
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_helius"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_helius/solana_kit_helius.dart"} -->
 

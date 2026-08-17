@@ -1,15 +1,12 @@
 # Solana Kit – Dart Examples
 
-Standalone Dart scripts that demonstrate the Solana Kit SDK.
-Each file is self-contained and runnable with:
+Standalone Dart scripts that demonstrate the Solana Kit SDK. Each file is self-contained and runnable with:
 
 ```sh
 dart examples/<file>.dart
 ```
 
-> **Devnet-safe by default.** Examples that contact the network target
-> `api.devnet.solana.com`. Helius examples require a real API key – see the
-> comments in each file.
+> **Devnet-safe by default.** Examples that contact the network target `api.devnet.solana.com`. Helius examples require a real API key – see the comments in each file.
 
 ---
 
@@ -68,8 +65,7 @@ dart examples/23_transaction_send_and_confirm.dart
 
 ### Helius examples
 
-Helius examples guard all network calls behind an early return when the
-placeholder key is detected:
+Helius examples guard all network calls behind an early return when the placeholder key is detected:
 
 ```dart
 const apiKey = 'YOUR_API_KEY'; // ← fill in

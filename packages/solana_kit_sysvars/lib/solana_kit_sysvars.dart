@@ -7,8 +7,7 @@
 ///
 /// ## Work with sysvar codecs and addresses
 ///
-/// Use `solana_kit_sysvars` when you need typed access to built-in cluster state
-/// accounts such as `Clock`, `Rent`, or `EpochSchedule`.
+/// Use `solana_kit_sysvars` when you need typed access to built-in cluster state accounts such as `Clock`, `Rent`, or `EpochSchedule`.
 ///
 /// ```dart
 /// import 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
@@ -30,8 +29,7 @@
 /// }
 /// ```
 ///
-/// These helpers keep sysvar access strongly typed and let you test sysvar layouts
-/// without depending on live RPC responses.
+/// These helpers keep sysvar access strongly typed and let you test sysvar layouts without depending on live RPC responses.
 ///
 /// <!-- {/docsSysvarSection} -->
 library;

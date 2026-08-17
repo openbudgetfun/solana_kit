@@ -1,10 +1,6 @@
 # solana_kit_codecs_data_structures
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_codecs_data_structures.svg)](https://pub.dev/packages/solana_kit_codecs_data_structures)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_codecs_data_structures/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_codecs_data_structures)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_codecs_data_structures)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_codecs_data_structures)
+[![pub package](https://img.shields.io/pub/v/solana_kit_codecs_data_structures.svg)](https://pub.dev/packages/solana_kit_codecs_data_structures) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_codecs_data_structures/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_codecs_data_structures) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_codecs_data_structures)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_codecs_data_structures)
 
 Codecs for encoding and decoding composite data structures -- structs, arrays, tuples, maps, sets, enums, booleans, and more -- for Solana on-chain data.
 
@@ -51,9 +47,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ### Typed Union Helpers
 
-Prefer typed union helpers when a codec has a fixed, small number of variants.
-They improve IDE type inference, make exhaustive matching easier, and reduce
-unstructured casting in downstream code.
+Prefer typed union helpers when a codec has a fixed, small number of variants. They improve IDE type inference, make exhaustive matching easier, and reduce unstructured casting in downstream code.
 
 ```dart
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
@@ -74,8 +68,7 @@ void main() {
 }
 ```
 
-Use these helpers when your wire format has “one of a few known cases” and you
-want the Dart type system to preserve that fact.
+Use these helpers when your wire format has “one of a few known cases” and you want the Dart type system to preserve that fact.
 
 <!-- {/typedUnionHelpersSection} -->
 
@@ -83,8 +76,7 @@ want the Dart type system to preserve that fact.
 
 ### Pattern-match codecs
 
-Use pattern-match codecs when you need to choose a codec based on either the
-incoming bytes or the value being encoded.
+Use pattern-match codecs when you need to choose a codec based on either the incoming bytes or the value being encoded.
 
 ```dart
 import 'dart:typed_data';
@@ -105,8 +97,7 @@ void main() {
 }
 ```
 
-Reach for this when a layout cannot be described as a single fixed struct or
-union discriminator alone.
+Reach for this when a layout cannot be described as a single fixed struct or union discriminator alone.
 
 <!-- {/docsPatternMatchCodecSection} -->
 
@@ -633,9 +624,7 @@ final decoded = codec.decode(bytes);
 
 ### Typed Union Helpers
 
-Prefer typed union helpers when a codec has a fixed, small number of variants.
-They improve IDE type inference, make exhaustive matching easier, and reduce
-unstructured casting in downstream code.
+Prefer typed union helpers when a codec has a fixed, small number of variants. They improve IDE type inference, make exhaustive matching easier, and reduce unstructured casting in downstream code.
 
 ```dart
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
@@ -656,8 +645,7 @@ void main() {
 }
 ```
 
-Use these helpers when your wire format has “one of a few known cases” and you
-want the Dart type system to preserve that fact.
+Use these helpers when your wire format has “one of a few known cases” and you want the Dart type system to preserve that fact.
 
 <!-- {/typedUnionHelpersSection} -->
 

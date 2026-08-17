@@ -12,9 +12,7 @@
 ///
 /// ## Create an RPC client
 ///
-/// Start with a typed RPC client. It gives you method-specific helpers instead of
-/// building raw JSON-RPC requests by hand, while still letting you swap transports
-/// or request middleware later.
+/// Start with a typed RPC client. It gives you method-specific helpers instead of building raw JSON-RPC requests by hand, while still letting you swap transports or request middleware later.
 ///
 /// ```dart
 /// import 'package:solana_kit/solana_kit.dart';
@@ -30,12 +28,9 @@
 /// }
 /// ```
 ///
-/// A call like `rpc.getSlot()` builds a typed request first and only hits the
-/// network when you call `.send()`. That separation makes it easier to compose,
-/// cache, batch, or decorate RPC interactions.
+/// A call like `rpc.getSlot()` builds a typed request first and only hits the network when you call `.send()`. That separation makes it easier to compose, cache, batch, or decorate RPC interactions.
 ///
-/// Use `solana_kit_rpc_subscriptions` alongside `solana_kit_rpc` when you also
-/// need websocket notifications for accounts, signatures, logs, or slots.
+/// Use `solana_kit_rpc_subscriptions` alongside `solana_kit_rpc` when you also need websocket notifications for accounts, signatures, logs, or slots.
 ///
 /// <!-- {/docsCreateRpcClientSection} -->
 ///
@@ -43,10 +38,7 @@
 ///
 /// ### Typed RPC methods
 ///
-/// When you already have an `Rpc`, prefer typed convenience helpers over raw
-/// method-name strings. They keep parameter builders and response models attached
-/// to the method itself, which makes refactors and autocomplete significantly
-/// safer.
+/// When you already have an `Rpc`, prefer typed convenience helpers over raw method-name strings. They keep parameter builders and response models attached to the method itself, which makes refactors and autocomplete significantly safer.
 ///
 /// ```dart
 /// import 'package:solana_kit_rpc/solana_kit_rpc.dart';
@@ -64,9 +56,7 @@
 /// }
 /// ```
 ///
-/// These helpers forward to canonical request builders in `solana_kit_rpc_api`,
-/// return lazy `PendingRpcRequest<T>` values, and make it clear which Solana RPC
-/// shape each call expects.
+/// These helpers forward to canonical request builders in `solana_kit_rpc_api`, return lazy `PendingRpcRequest<T>` values, and make it clear which Solana RPC shape each call expects.
 ///
 /// <!-- {/typedRpcMethodsSection} -->
 ///

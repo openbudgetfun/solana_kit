@@ -7,9 +7,7 @@
 ///
 /// ### Typed Union Helpers
 ///
-/// Prefer typed union helpers when a codec has a fixed, small number of variants.
-/// They improve IDE type inference, make exhaustive matching easier, and reduce
-/// unstructured casting in downstream code.
+/// Prefer typed union helpers when a codec has a fixed, small number of variants. They improve IDE type inference, make exhaustive matching easier, and reduce unstructured casting in downstream code.
 ///
 /// ```dart
 /// import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
@@ -30,8 +28,7 @@
 /// }
 /// ```
 ///
-/// Use these helpers when your wire format has “one of a few known cases” and you
-/// want the Dart type system to preserve that fact.
+/// Use these helpers when your wire format has “one of a few known cases” and you want the Dart type system to preserve that fact.
 ///
 /// <!-- {/typedUnionHelpersSection} -->
 ///
@@ -39,8 +36,7 @@
 ///
 /// ### Pattern-match codecs
 ///
-/// Use pattern-match codecs when you need to choose a codec based on either the
-/// incoming bytes or the value being encoded.
+/// Use pattern-match codecs when you need to choose a codec based on either the incoming bytes or the value being encoded.
 ///
 /// ```dart
 /// import 'dart:typed_data';
@@ -61,8 +57,7 @@
 /// }
 /// ```
 ///
-/// Reach for this when a layout cannot be described as a single fixed struct or
-/// union discriminator alone.
+/// Reach for this when a layout cannot be described as a single fixed struct or union discriminator alone.
 ///
 /// <!-- {/docsPatternMatchCodecSection} -->
 library;

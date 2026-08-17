@@ -70,8 +70,7 @@ This high-level helper resolves the signers attached to the message, compiles th
 
 ## Send and confirm a signed transaction
 
-Once you have a signed `Transaction`, use the additive confirmation helper for
-an end-to-end “send then wait for confirmation” flow.
+Once you have a signed `Transaction`, use the additive confirmation helper for an end-to-end “send then wait for confirmation” flow.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -90,9 +89,7 @@ Future<void> sendAndWait(
 }
 ```
 
-For lower-level control, `solana_kit_transaction_confirmation` also exposes
-strategy factories for block-height expiry, durable nonce invalidation,
-signature notifications, and timeout racing.
+For lower-level control, `solana_kit_transaction_confirmation` also exposes strategy factories for block-height expiry, durable nonce invalidation, signature notifications, and timeout racing.
 
 <!-- {/docsSendAndConfirmSection} -->
 

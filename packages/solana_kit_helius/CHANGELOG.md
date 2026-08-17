@@ -113,15 +113,13 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #181](https://g
 
 #### Add Helius transaction parity helpers
 
-Add helpers for sender regions, sendViaSender, and createTxMessage.
-Expand sender and broadcast coverage.
+Add helpers for sender regions, sendViaSender, and createTxMessage. Expand sender and broadcast coverage.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #183](https://github.com/openbudgetfun/solana_kit/pull/183)
 
 #### Add Helius auth signing helpers
 
-Implement upstream-compatible Helius auth message signing with Ed25519 signatures.
-Also add request factories for secret key bytes and key pairs.
+Implement upstream-compatible Helius auth message signing with Ed25519 signatures. Also add request factories for secret key bytes and key pairs.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #183](https://github.com/openbudgetfun/solana_kit/pull/183)
 

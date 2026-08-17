@@ -1,8 +1,6 @@
 # solana_kit_transaction_introspection
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_transaction_introspection.svg)](https://pub.dev/packages/solana_kit_transaction_introspection)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_transaction_introspection)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_transaction_introspection)
+[![pub package](https://img.shields.io/pub/v/solana_kit_transaction_introspection.svg)](https://pub.dev/packages/solana_kit_transaction_introspection) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_transaction_introspection)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_transaction_introspection)
 
 Decode confirmed Solana transactions and walk their outer and inner instructions in a form that the auto-generated `@solana-program/*` clients can `identify` and `parse` directly.
 
@@ -35,8 +33,4 @@ void main() {
 
 `'jsonParsed'` responses are not supported: their instructions arrive pre-parsed by the server and lack raw bytes, so they cannot be round-tripped through the auto-generated `parseXInstruction` clients. Prefer `'base64'` when bandwidth allows — it is the most compact and the returned `transaction` is re-encodable.
 
-RPC input is validated fail-closed. Mixed-type account/index arrays,
-unsupported transaction versions, incomplete compiled instructions, invalid
-header counts, malformed loaded addresses, and inner-instruction groups that
-do not match an outer instruction throw a `SolanaError` instead of being
-silently dropped or misattributed.
+RPC input is validated fail-closed. Mixed-type account/index arrays, unsupported transaction versions, incomplete compiled instructions, invalid header counts, malformed loaded addresses, and inner-instruction groups that do not match an outer instruction throw a `SolanaError` instead of being silently dropped or misattributed.

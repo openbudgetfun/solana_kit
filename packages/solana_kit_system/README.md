@@ -1,18 +1,10 @@
 # solana_kit_system
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_system.svg)](https://pub.dev/packages/solana_kit_system)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_system)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_system)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_system)
+[![pub package](https://img.shields.io/pub/v/solana_kit_system.svg)](https://pub.dev/packages/solana_kit_system) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_system) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_system)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_system)
 
-Generated Dart client for the Solana System Program, part of the
-[Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart SDK.
+Generated Dart client for the Solana System Program, part of the [Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart SDK.
 
-Provides typed instruction builders, account decoders, error definitions,
-PDA helpers, and program address constants for all 13 System Program
-instructions. Generated from the upstream Codama IDL at
-[solana-program/system](https://github.com/solana-program/system)
-(`js@v0.12.0`).
+Provides typed instruction builders, account decoders, error definitions, PDA helpers, and program address constants for all 13 System Program instructions. Generated from the upstream Codama IDL at [solana-program/system](https://github.com/solana-program/system) (`js@v0.12.0`).
 
 ## Installation
 
@@ -97,11 +89,8 @@ final pda = findCreateAccountWithSeedPda(
 
 ## Errors
 
-Nine typed error codes covering invalid nonce state, missing accounts,
-insufficient funds, and other System Program failure modes.
+Nine typed error codes covering invalid nonce state, missing accounts, insufficient funds, and other System Program failure modes.
 
 ## Upstream reference
 
-Generated layer mirrors
-[solana-program/system](https://github.com/solana-program/system) at
-`js@v0.12.0` (commit `95897f3`).
+Generated layer mirrors [solana-program/system](https://github.com/solana-program/system) at `js@v0.12.0` (commit `95897f3`).
