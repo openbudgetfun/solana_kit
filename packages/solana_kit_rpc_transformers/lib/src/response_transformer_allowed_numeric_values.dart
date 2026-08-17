@@ -89,6 +89,16 @@ final List<KeyPath> innerInstructionsConfigs = [
   ['instructions', KEYPATH_WILDCARD, 'stackHeight'],
 ];
 
+/// Numeric values in token balance entries.
+///
+/// `accountIndex` and `decimals` are small bounded integers, and `uiAmount`
+/// is an `f64`, so none of them should be upcast to a `BigInt`.
+final List<KeyPath> tokenBalancesConfigs = [
+  ['accountIndex'],
+  ['uiTokenAmount', 'decimals'],
+  ['uiTokenAmount', 'uiAmount'],
+];
+
 /// Numeric values in transaction messages.
 final List<KeyPath> messageConfig = [
   [

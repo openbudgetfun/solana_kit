@@ -16,39 +16,23 @@ AllowedNumericKeypaths getAllowedNumericKeypaths() {
       for (final c in jsonParsedAccountsConfigs) ['value', ...c],
     ],
     'getBlock': [
-      [
-        'transactions',
-        KEYPATH_WILDCARD,
-        'meta',
-        'preTokenBalances',
-        KEYPATH_WILDCARD,
-        'accountIndex',
-      ],
-      [
-        'transactions',
-        KEYPATH_WILDCARD,
-        'meta',
-        'preTokenBalances',
-        KEYPATH_WILDCARD,
-        'uiTokenAmount',
-        'decimals',
-      ],
-      [
-        'transactions',
-        KEYPATH_WILDCARD,
-        'meta',
-        'postTokenBalances',
-        KEYPATH_WILDCARD,
-        'accountIndex',
-      ],
-      [
-        'transactions',
-        KEYPATH_WILDCARD,
-        'meta',
-        'postTokenBalances',
-        KEYPATH_WILDCARD,
-        'uiTokenAmount',
-        'decimals',
+      for (final c in tokenBalancesConfigs) ...[
+        [
+          'transactions',
+          KEYPATH_WILDCARD,
+          'meta',
+          'preTokenBalances',
+          KEYPATH_WILDCARD,
+          ...c,
+        ],
+        [
+          'transactions',
+          KEYPATH_WILDCARD,
+          'meta',
+          'postTokenBalances',
+          KEYPATH_WILDCARD,
+          ...c,
+        ],
       ],
       [
         'transactions',
@@ -69,6 +53,7 @@ AllowedNumericKeypaths getAllowedNumericKeypaths() {
         ],
       for (final c in messageConfig)
         ['transactions', KEYPATH_WILDCARD, 'transaction', 'message', ...c],
+      ['transactions', KEYPATH_WILDCARD, 'version'],
       ['rewards', KEYPATH_WILDCARD, 'commission'],
     ],
     'getClusterNodes': [
@@ -123,27 +108,57 @@ AllowedNumericKeypaths getAllowedNumericKeypaths() {
       ['value', 'decimals'],
       ['value', 'uiAmount'],
     ],
-    'getTransaction': [
-      ['meta', 'preTokenBalances', KEYPATH_WILDCARD, 'accountIndex'],
-      [
-        'meta',
-        'preTokenBalances',
-        KEYPATH_WILDCARD,
-        'uiTokenAmount',
-        'decimals',
+    'getTransactionsForAddress': [
+      ['data', KEYPATH_WILDCARD, 'transactionIndex'],
+      for (final c in tokenBalancesConfigs) ...[
+        [
+          'data',
+          KEYPATH_WILDCARD,
+          'meta',
+          'preTokenBalances',
+          KEYPATH_WILDCARD,
+          ...c,
+        ],
+        [
+          'data',
+          KEYPATH_WILDCARD,
+          'meta',
+          'postTokenBalances',
+          KEYPATH_WILDCARD,
+          ...c,
+        ],
       ],
-      ['meta', 'postTokenBalances', KEYPATH_WILDCARD, 'accountIndex'],
       [
-        'meta',
-        'postTokenBalances',
+        'data',
         KEYPATH_WILDCARD,
-        'uiTokenAmount',
-        'decimals',
+        'meta',
+        'rewards',
+        KEYPATH_WILDCARD,
+        'commission',
+      ],
+      for (final c in innerInstructionsConfigs)
+        [
+          'data',
+          KEYPATH_WILDCARD,
+          'meta',
+          'innerInstructions',
+          KEYPATH_WILDCARD,
+          ...c,
+        ],
+      for (final c in messageConfig)
+        ['data', KEYPATH_WILDCARD, 'transaction', 'message', ...c],
+      ['data', KEYPATH_WILDCARD, 'version'],
+    ],
+    'getTransaction': [
+      for (final c in tokenBalancesConfigs) ...[
+        ['meta', 'preTokenBalances', KEYPATH_WILDCARD, ...c],
+        ['meta', 'postTokenBalances', KEYPATH_WILDCARD, ...c],
       ],
       ['meta', 'rewards', KEYPATH_WILDCARD, 'commission'],
       for (final c in innerInstructionsConfigs)
         ['meta', 'innerInstructions', KEYPATH_WILDCARD, ...c],
       for (final c in messageConfig) ['transaction', 'message', ...c],
+      ['version'],
     ],
     'getVersion': [
       ['feature-set'],
@@ -178,6 +193,10 @@ AllowedNumericKeypaths getAllowedNumericKeypaths() {
         ['value', 'accounts', KEYPATH_WILDCARD, ...c],
       for (final c in innerInstructionsConfigs)
         ['value', 'innerInstructions', KEYPATH_WILDCARD, ...c],
+      for (final c in tokenBalancesConfigs) ...[
+        ['value', 'preTokenBalances', KEYPATH_WILDCARD, ...c],
+        ['value', 'postTokenBalances', KEYPATH_WILDCARD, ...c],
+      ],
     ],
   };
 

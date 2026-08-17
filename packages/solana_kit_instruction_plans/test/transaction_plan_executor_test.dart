@@ -46,6 +46,31 @@ void main() {
       },
     );
 
+    test(
+      'executes a single transaction plan returning a result context',
+      () async {
+        final message = createMessage();
+        final plan = singleTransactionPlan(message);
+        final sig = Signature('test-signature'.padRight(64, '0'));
+
+        final executor = createTransactionPlanExecutor(
+          TransactionPlanExecutorConfig(
+            executeTransactionMessage: (context, msg) async => {
+              'signature': sig,
+              'custom': 'value',
+            },
+          ),
+        );
+
+        final result = await executor(plan);
+
+        expect(result, isA<SuccessfulSingleTransactionPlanResult>());
+        final successResult = result as SuccessfulSingleTransactionPlanResult;
+        expect(successResult.signature, sig);
+        expect(successResult.context['custom'], 'value');
+      },
+    );
+
     test('executes a sequential transaction plan', () async {
       final messageA = createMessage();
       final messageB = createMessage();
@@ -100,6 +125,31 @@ void main() {
               throw Exception('first transaction failed');
             }
             return Signature('sig'.padRight(64, '0')).toString();
+          },
+        ),
+      );
+
+      expect(
+        () => executor(plan),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan,
+          ),
+        ),
+      );
+    });
+
+    test('reports the abort reason for a failed parallel plan', () async {
+      final messageA = createMessage();
+      final messageB = createMessage();
+      final plan = parallelTransactionPlan([messageA, messageB]);
+
+      final executor = createTransactionPlanExecutor(
+        TransactionPlanExecutorConfig(
+          executeTransactionMessage: (context, msg) async {
+            throw Exception('parallel transaction failed');
           },
         ),
       );

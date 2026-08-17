@@ -13,8 +13,15 @@ typedef TransactionPlanExecutor =
 /// blockchain.
 ///
 /// The [context] is a mutable map that can be used to incrementally store
-/// useful data as execution progresses. The callback must return either a
-/// [Signature] or a full [Transaction] object.
+/// useful data as execution progresses. The callback may return either:
+/// - a [Map] — the context that the successful result must carry (it must
+///   include a `signature`); it is merged with [context], taking precedence;
+/// - a [Signature] — stored as `context['signature']` (deprecated);
+/// - a [Transaction] — stored as `context['transaction']` with its signature
+///   derived from it (deprecated).
+///
+/// Prefer returning a context map, since deriving a signature from a
+/// transaction throws when the fee payer slot is empty.
 typedef ExecuteTransactionMessage =
     Future<Object> Function(
       Map<String, Object?> context,
@@ -111,12 +118,6 @@ Future<TransactionPlanResult> _traverseSequential(
   bool Function() isCanceled,
   void Function() setCanceled,
 ) async {
-  if (!transactionPlan.divisible) {
-    throw SolanaError(
-      SolanaErrorCode.instructionPlansNonDivisibleTransactionPlansNotSupported,
-    );
-  }
-
   final results = <TransactionPlanResult>[];
 
   for (final subPlan in transactionPlan.plans) {
@@ -160,6 +161,15 @@ Future<TransactionPlanResult> _traverseSingle(
       context,
       transactionPlan.message,
     );
+    if (result is Map<String, Object?>) {
+      // The callback returned the context of a successful result; use it
+      // as-is, merged with the mutable context (the returned context takes
+      // precedence). Nothing is derived from it.
+      return successfulSingleTransactionPlanResult(transactionPlan.message, {
+        ...context,
+        ...result,
+      });
+    }
     if (result is String) {
       return successfulSingleTransactionPlanResult(transactionPlan.message, {
         ...context,

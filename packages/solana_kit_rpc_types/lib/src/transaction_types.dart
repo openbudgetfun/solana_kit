@@ -225,6 +225,7 @@ class TransactionForAccountsMetaBase {
     required this.preBalances,
     this.postTokenBalances,
     this.preTokenBalances,
+    this.costUnits,
   });
 
   /// Error if transaction failed, `null` if transaction succeeded.
@@ -245,6 +246,9 @@ class TransactionForAccountsMetaBase {
   /// List of token balances from before the transaction was processed.
   final List<TokenBalance>? preTokenBalances;
 
+  /// The number of compute units consumed by the transaction, if reported.
+  final int? costUnits;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -255,7 +259,8 @@ class TransactionForAccountsMetaBase {
           _listEquals(postBalances, other.postBalances) &&
           _nullableListEquals(postTokenBalances, other.postTokenBalances) &&
           _listEquals(preBalances, other.preBalances) &&
-          _nullableListEquals(preTokenBalances, other.preTokenBalances);
+          _nullableListEquals(preTokenBalances, other.preTokenBalances) &&
+          costUnits == other.costUnits;
 
   @override
   int get hashCode => Object.hash(
@@ -266,13 +271,15 @@ class TransactionForAccountsMetaBase {
     postTokenBalances == null ? null : Object.hashAll(postTokenBalances!),
     Object.hashAll(preBalances),
     preTokenBalances == null ? null : Object.hashAll(preTokenBalances!),
+    costUnits,
   );
 
   @override
   String toString() =>
       'TransactionForAccountsMetaBase(err: $err, fee: $fee, '
       'postBalances: $postBalances, postTokenBalances: $postTokenBalances, '
-      'preBalances: $preBalances, preTokenBalances: $preTokenBalances)';
+      'preBalances: $preBalances, preTokenBalances: $preTokenBalances, '
+      'costUnits: $costUnits)';
 }
 
 // ---------------------------------------------------------------------------

@@ -53,6 +53,7 @@ void main() {
             'getTokenSupply',
             'getTransaction',
             'getTransactionCount',
+            'getTransactionsForAddress',
             'getVersion',
             'getVoteAccounts',
             'isBlockhashValid',
@@ -70,8 +71,8 @@ void main() {
         );
       });
 
-      test('has 51 methods', () {
-        expect(solanaRpcMethodsForAllClusters, hasLength(51));
+      test('has 52 methods', () {
+        expect(solanaRpcMethodsForAllClusters, hasLength(52));
       });
     });
 
@@ -90,8 +91,8 @@ void main() {
         }
       });
 
-      test('has 52 methods', () {
-        expect(solanaRpcMethodsForTestClusters, hasLength(52));
+      test('has 53 methods', () {
+        expect(solanaRpcMethodsForTestClusters, hasLength(53));
       });
     });
 

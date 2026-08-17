@@ -8,8 +8,8 @@
         "type": "branch",
         "value": "main"
       },
-      "notes": "upstream TypeScript source from anza-xyz/kit",
-      "checkedCommit": "6cd177b14bed"
+      "notes": "upstream TypeScript source from anza-xyz/kit (v7.1.0)",
+      "checkedCommit": "661554c4e85f"
     },
     {
       "name": "espresso-cash-public",

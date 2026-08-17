@@ -22,6 +22,7 @@ Solana Kit is a multi-package Dart workspace that ports `@solana/kit` and relate
 - Prefer additive, non-breaking changes unless the task explicitly requires a breaking change.
 - Never delete files in `.changeset/`.
 - Changes under `packages/*` require a `.changeset/*.md` file before PR or merge.
+- Changesets describe **completed** changes only — they are release inputs that ship to users. Never use them as planning documents for in-progress work (no "remaining", "in progress", or TODO sections). The rare exception is documenting deprecations or future work that belongs to a _future release_; if a PR lands partially, split the work so each changeset only describes what actually shipped.
 - Keep affected public docs in sync when public APIs or behavior change.
 - Every package under `packages/*` must have a `LICENSE` (MIT) and `README.md` file. New packages must include both before their first publish. The README must describe the package purpose, show usage examples, and list key APIs. Use badges for pub.dev, CI, and coverage. See `packages/solana_kit_compute_budget/README.md` for the canonical structure.
 - New packages must start at `version: 0.0.0` in their `pubspec.yaml` with a `major` changeset. This ensures the first release lands at `0.1.0` (the minimum viable publishable version). Never set an unpublished package to a higher version.

@@ -536,6 +536,12 @@ enum SolanaErrorCode {
   /// Verification of an offchain message signature failed.
   offchainMessageSignatureVerificationFailure(5607017),
 
+  /// The content of an offchain message does not match the expected content.
+  offchainMessageContentDoesNotMatchExpected(5607018),
+
+  /// The offchain message lists different required signatories than expected.
+  offchainMessageRequiredSignatoriesDoNotMatchExpected(5607019),
+
   // ---------------------------------------------------------------------------
   // Transaction (5663000 - 5663999)
   // ---------------------------------------------------------------------------
@@ -1010,6 +1016,9 @@ enum SolanaErrorCode {
 
   /// Retry is not supported by this subscribable.
   subscribableRetryNotSupported(8195000),
+
+  /// A stream store closed in an error state but did not report an error.
+  subscribableStreamClosedWithoutError(8195001),
 
   // ---------------------------------------------------------------------------
   // Program Clients (8500000 - 8500999)

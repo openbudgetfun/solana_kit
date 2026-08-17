@@ -7,8 +7,8 @@ description: How this workspace tracks @solana/kit compatibility.
 
 ## Upstream Compatibility
 
-- Latest supported `@solana/kit` version: `7.0.0`
-- This Dart port tracks upstream APIs and behavior through `v7.0.0`.
+- Latest supported `@solana/kit` version: `7.1.0`
+- This Dart port tracks upstream APIs and behavior through `v7.1.0`.
 
 <!-- {/docsUpstreamCompatibilitySection} -->
 

@@ -380,6 +380,15 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'An address must be listed no more than once among the signatories of an offchain message',
   SolanaErrorCode.offchainMessageSignatureVerificationFailure:
       'Offchain message signature verification failed.',
+  SolanaErrorCode.offchainMessageContentDoesNotMatchExpected:
+      'The content of the offchain message does not match the content that was expected. '
+      r'Expected content with a byte-length of $expectedBytes; got content with a byte-length of '
+      r'$actualBytes. The signer may have signed different data than was requested; do not trust '
+      'its signature.',
+  SolanaErrorCode.offchainMessageRequiredSignatoriesDoNotMatchExpected:
+      'The offchain message lists different required signatories than was expected. '
+      r'Expected [$expectedAddresses]. Got [$actualAddresses]. The signer may have signed '
+      'different data than was requested; do not trust its signature.',
   SolanaErrorCode.offchainMessageSignaturesMissing:
       r'Offchain message is missing signatures for addresses: $addresses.',
   SolanaErrorCode.offchainMessageUnexpectedVersion:
@@ -416,6 +425,8 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'Failed to obtain a subscription id from the server',
   SolanaErrorCode.subscribableRetryNotSupported:
       'This data publisher does not support retrying.',
+  SolanaErrorCode.subscribableStreamClosedWithoutError:
+      'The stream store closed in an error state but did not report an error.',
   SolanaErrorCode.rpcTransportHttpError: r'HTTP error ($statusCode): $message',
   SolanaErrorCode.rpcTransportHttpHeaderForbidden:
       r'HTTP header(s) forbidden: $headers.',

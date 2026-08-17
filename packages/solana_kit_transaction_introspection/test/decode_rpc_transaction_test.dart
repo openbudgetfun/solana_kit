@@ -225,5 +225,165 @@ void main() {
         throwsA(isA<SolanaError>()),
       );
     });
+
+    test('throws for a base64 array with a non-string payload', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': [42, 'base64'],
+          'meta': null,
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('throws for a base58 array with a non-string payload', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': [42, 'base58'],
+          'meta': null,
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('throws for a json message with a non-map header', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': {
+            'message': {
+              'header': 42,
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[],
+              'recentBlockhash': blockhash,
+            },
+          },
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('throws for a json header missing readonly counts', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': {
+            'message': {
+              'header': {'numRequiredSignatures': 1},
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[],
+              'recentBlockhash': blockhash,
+            },
+          },
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('throws for a json message with non-list instructions', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 1,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': 42,
+              'recentBlockhash': blockhash,
+            },
+          },
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('throws for a json instruction that is not a map', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 1,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[42],
+              'recentBlockhash': blockhash,
+            },
+          },
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('throws for a json instruction with a non-int programIdIndex', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 1,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[
+                {'programIdIndex': 'zero'},
+              ],
+              'recentBlockhash': blockhash,
+            },
+          },
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('throws for a json message with a non-string recentBlockhash', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 1,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[],
+              'recentBlockhash': 42,
+            },
+          },
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('decodes a json instruction without data as empty payload', () {
+      final rpcTx = <String, Object?>{
+        'version': 1,
+        'transaction': {
+          'message': {
+            'header': {
+              'numRequiredSignatures': 1,
+              'numReadonlySignedAccounts': 0,
+              'numReadonlyUnsignedAccounts': 0,
+            },
+            'accountKeys': const <String>[feePayer],
+            'instructions': const <Object?>[
+              {'programIdIndex': 0},
+            ],
+            'recentBlockhash': blockhash,
+          },
+        },
+      };
+      final decoded = decodeTransactionFromRpcResponse(rpcTx);
+      expect(decoded.compiledMessage.instructionHeaders, hasLength(1));
+      expect(
+        decoded.compiledMessage.instructionPayloads!.first.instructionData,
+        isEmpty,
+      );
+    });
   });
 }

@@ -1,3 +1,6 @@
+import 'package:solana_kit_accounts/solana_kit_accounts.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+
 // ignore_for_file: one_member_abstracts
 
 /// Represents a client that provides a default identity signer.
@@ -34,4 +37,28 @@ abstract interface class ClientWithSubscribeToPayer {
 abstract interface class ClientWithSubscribeToIdentity {
   /// Registers [listener] to run when the identity may have changed.
   void Function() subscribeToIdentity(void Function() listener);
+}
+
+/// Represents a client that can compute the minimum balance for rent
+/// exemption.
+abstract interface class ClientWithGetMinimumBalance {
+  /// Computes the minimum balance for rent exemption for the given [space].
+  ///
+  /// By default the 128-byte account header is included on top of [space];
+  /// pass [withoutHeader] to compute the minimum balance for the data portion
+  /// only.
+  Future<BigInt> getMinimumBalance(int space, {bool withoutHeader = false});
+}
+
+/// Represents a client that can fetch the encoded content of accounts from
+/// their addresses.
+abstract interface class ClientWithFetchAccounts {
+  /// Fetches the encoded content of accounts from their addresses.
+  ///
+  /// The returned list matches the provided addresses in length and order,
+  /// using [MaybeEncodedAccount] to represent accounts that may not exist.
+  Future<List<MaybeEncodedAccount>> fetchAccounts(
+    List<Address> addresses, {
+    FetchAccountConfig? config,
+  });
 }

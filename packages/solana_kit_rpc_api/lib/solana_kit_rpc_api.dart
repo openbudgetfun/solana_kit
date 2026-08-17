@@ -52,6 +52,7 @@ export 'src/get_token_largest_accounts.dart';
 export 'src/get_token_supply.dart';
 export 'src/get_transaction.dart';
 export 'src/get_transaction_count.dart';
+export 'src/get_transactions_for_address.dart';
 export 'src/get_version.dart';
 export 'src/get_vote_accounts.dart';
 export 'src/is_blockhash_valid.dart';
