@@ -1,17 +1,11 @@
 # solana_kit_subscribable
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_subscribable.svg)](https://pub.dev/packages/solana_kit_subscribable)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_subscribable/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_subscribable)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_subscribable)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_subscribable)
+[![pub package](https://img.shields.io/pub/v/solana_kit_subscribable.svg)](https://pub.dev/packages/solana_kit_subscribable) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_subscribable/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_subscribable) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_subscribable)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_subscribable)
 
 Subscribable and observable patterns for the Solana Kit Dart SDK -- a publish/subscribe event system with named channels, Dart `Stream` bridging, cancellation tokens, and event demultiplexing.
 
 > [!NOTE]
-> New Dart-facing APIs should prefer exposing `Stream`s directly. Use
-> `CancellationToken` / `CancellationTokenSource` for cancellation, and
-> `ChannelStreamController` for named-channel compatibility adapters.
+> New Dart-facing APIs should prefer exposing `Stream`s directly. Use `CancellationToken` / `CancellationTokenSource` for cancellation, and `ChannelStreamController` for named-channel compatibility adapters.
 
 This is the Dart port of [`@solana/subscribable`](https://github.com/anza-xyz/kit/tree/main/packages/subscribable) from the Solana TypeScript SDK.
 
@@ -54,9 +48,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ### Preferred: expose Dart Streams
 
-If you are designing a new Dart API, prefer returning `Stream<T>` directly.
-Use the `ChannelStreamController` primitive in this package when you need
-named channels internally while still exposing Dart `Stream`s to callers.
+If you are designing a new Dart API, prefer returning `Stream<T>` directly. Use the `ChannelStreamController` primitive in this package when you need named channels internally while still exposing Dart `Stream`s to callers.
 
 ### Stream-native channel controllers
 
@@ -82,9 +74,7 @@ Future<void> main() async {
 
 ### Cancellation tokens
 
-Use `CancellationTokenSource` and `CancellationToken` to coordinate
-cancellation across long-running operations. Multiple listeners can react to
-the same cancellation via `CancellationToken.future`.
+Use `CancellationTokenSource` and `CancellationToken` to coordinate cancellation across long-running operations. Multiple listeners can react to the same cancellation via `CancellationToken.future`.
 
 ```dart
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
@@ -105,10 +95,7 @@ void main() {
 
 ### Reactive action stores
 
-`createReactiveActionStore` wraps an asynchronous action in an
-idle/running/success/error state machine. The action receives a fresh
-`CancellationToken` and the dispatch arguments. A newer dispatch, `reset()`,
-or `dispose()` cancels the active token and suppresses late results.
+`createReactiveActionStore` wraps an asynchronous action in an idle/running/success/error state machine. The action receives a fresh `CancellationToken` and the dispatch arguments. A newer dispatch, `reset()`, or `dispose()` cancels the active token and suppresses late results.
 
 ```dart
 final store = createReactiveActionStore<List<Object?>, String>(
@@ -126,17 +113,11 @@ final result = await store
 print(result);
 ```
 
-Use `dispatch()` for fire-and-forget UI handlers; it consumes asynchronous
-errors after recording them in store state. Use `dispatchAsync()` when the
-caller needs the result or propagated errors. Caller cancellation is exposed
-as an error state, while cancellation caused by supersession, reset, or
-disposal does not overwrite the newer state.
+Use `dispatch()` for fire-and-forget UI handlers; it consumes asynchronous errors after recording them in store state. Use `dispatchAsync()` when the caller needs the result or propagated errors. Caller cancellation is exposed as an error state, while cancellation caused by supersession, reset, or disposal does not overwrite the newer state.
 
 ### Notification streams
 
-`NotificationStreams` bundles a pair of broadcast streams -- `notifications`
-and `errors` -- and is the standard transport contract for subscription
-notification channels.
+`NotificationStreams` bundles a pair of broadcast streams -- `notifications` and `errors` -- and is the standard transport contract for subscription notification channels.
 
 ```dart
 import 'dart:async';
@@ -164,8 +145,7 @@ void main() {
 
 ### Combining data and error streams
 
-The `createStreamFromDataAndErrorStreams` function creates a broadcast stream
-that forwards values from a data stream and errors from an error stream.
+The `createStreamFromDataAndErrorStreams` function creates a broadcast stream that forwards values from a data stream and errors from an error stream.
 
 ```dart
 import 'dart:async';
@@ -196,10 +176,7 @@ void main() {
 
 ### Demultiplexing streams
 
-The `demultiplexStream` function splits a source stream into per-channel
-broadcast streams. The source subscription is lazy -- it only starts when the
-first destination listener subscribes and stops when the last listener
-cancels.
+The `demultiplexStream` function splits a source stream into per-channel broadcast streams. The source subscription is lazy -- it only starts when the first destination listener subscribes and stops when the last listener cancels.
 
 ```dart
 import 'dart:async';
@@ -229,9 +206,7 @@ void main() {
 
 ### Reactive stores
 
-`ReactiveStore` tracks the latest data value and first error from a pair of
-streams. `ReactiveStreamStore` adds lifecycle states (loading, loaded, error,
-retrying) with optional retry support.
+`ReactiveStore` tracks the latest data value and first error from a pair of streams. `ReactiveStreamStore` adds lifecycle states (loading, loaded, error, retrying) with optional retry support.
 
 ```dart
 import 'dart:async';

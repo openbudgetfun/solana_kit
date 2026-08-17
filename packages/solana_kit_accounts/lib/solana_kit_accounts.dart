@@ -8,8 +8,7 @@
 ///
 /// ## Fetch an account
 ///
-/// Use `fetchEncodedAccount` when you want the raw account bytes plus its Solana
-/// metadata. Decode it later with the codec or parser that matches your program.
+/// Use `fetchEncodedAccount` when you want the raw account bytes plus its Solana metadata. Decode it later with the codec or parser that matches your program.
 ///
 /// ```dart
 /// import 'dart:typed_data';
@@ -32,10 +31,7 @@
 /// }
 /// ```
 ///
-/// Use `fetchJsonParsedAccount` when the RPC can return a structured
-/// `jsonParsed` representation for a well-known program. Use encoded reads when
-/// you need byte-perfect custom decoding or when the RPC does not expose a parsed
-/// view for your program.
+/// Use `fetchJsonParsedAccount` when the RPC can return a structured `jsonParsed` representation for a well-known program. Use encoded reads when you need byte-perfect custom decoding or when the RPC does not expose a parsed view for your program.
 ///
 /// <!-- {/docsFetchAccountSection} -->
 ///
@@ -43,8 +39,7 @@
 ///
 /// ## Decode a fetched account
 ///
-/// Keep transport and binary-layout logic separate: fetch the encoded account
-/// first, then decode it with the codec or decoder that matches your program.
+/// Keep transport and binary-layout logic separate: fetch the encoded account first, then decode it with the codec or decoder that matches your program.
 ///
 /// ```dart
 /// import 'package:solana_kit/solana_kit.dart';
@@ -67,8 +62,7 @@
 /// }
 /// ```
 ///
-/// This boundary keeps RPC concerns, existence handling, and binary decoding easy
-/// to test independently.
+/// This boundary keeps RPC concerns, existence handling, and binary decoding easy to test independently.
 ///
 /// <!-- {/docsDecodeAccountSection} -->
 ///

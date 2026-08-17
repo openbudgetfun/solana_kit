@@ -1,8 +1,6 @@
 # solana_kit_transaction_introspection
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_transaction_introspection.svg)](https://pub.dev/packages/solana_kit_transaction_introspection)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_transaction_introspection)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_transaction_introspection)
+[![pub package](https://img.shields.io/pub/v/solana_kit_transaction_introspection.svg)](https://pub.dev/packages/solana_kit_transaction_introspection) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_transaction_introspection)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_transaction_introspection)
 
 Decode confirmed Solana transactions and walk their outer and inner instructions in a form that the auto-generated `@solana-program/*` clients can `identify` and `parse` directly.
 

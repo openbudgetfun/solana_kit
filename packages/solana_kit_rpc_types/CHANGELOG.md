@@ -156,13 +156,7 @@ Introduce internal JsonReader helper that replaces unsafe…
 
 Introduce internal `JsonReader` helper that replaces unsafe `.cast<T>()` list
 
-casts and bare `as` casts in all `fromJson` factories with explicit typed
-accessors. Parse errors now surface at construction time via a descriptive
-`FormatException` that includes the field name, rather than deferring until
-element access. All ten type files (`das_types`, `enhanced_types`, `zk_types`,
-`wallet_types`, `webhook_types`, `rpc_v2_types`, `auth_types`, `staking_types`,
-`priority_fee_types`, `smart_transaction_types`) have been migrated. The public
-API is unchanged.
+casts and bare `as` casts in all `fromJson` factories with explicit typed accessors. Parse errors now surface at construction time via a descriptive `FormatException` that includes the field name, rather than deferring until element access. All ten type files (`das_types`, `enhanced_types`, `zk_types`, `wallet_types`, `webhook_types`, `rpc_v2_types`, `auth_types`, `staking_types`, `priority_fee_types`, `smart_transaction_types`) have been migrated. The public API is unchanged.
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`29e8823`](https://github.com/openbudgetfun/solana_kit/commit/29e882327cb854212c39f920bb2ec0eee768a7fd) · _Last updated in:_ [`0ee3d60`](https://github.com/openbudgetfun/solana_kit/commit/0ee3d604028aa8a0fcbcf7e7da9840db39755ccf)
 

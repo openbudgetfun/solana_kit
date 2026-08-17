@@ -1,10 +1,6 @@
 # solana_kit_mobile_wallet_adapter_protocol
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_mobile_wallet_adapter_protocol.svg)](https://pub.dev/packages/solana_kit_mobile_wallet_adapter_protocol)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_mobile_wallet_adapter_protocol/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_mobile_wallet_adapter_protocol)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_mobile_wallet_adapter_protocol)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_mobile_wallet_adapter_protocol)
+[![pub package](https://img.shields.io/pub/v/solana_kit_mobile_wallet_adapter_protocol.svg)](https://pub.dev/packages/solana_kit_mobile_wallet_adapter_protocol) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_mobile_wallet_adapter_protocol/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_mobile_wallet_adapter_protocol) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_mobile_wallet_adapter_protocol)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_mobile_wallet_adapter_protocol)
 
 Pure Dart implementation of the [Solana Mobile Wallet Adapter](https://github.com/solana-mobile/mobile-wallet-adapter) v2.0 protocol. Handles P-256 cryptography, session handshakes, encrypted message framing, JSON-RPC request/response encoding, association URI building/parsing, and protocol version negotiation.
 

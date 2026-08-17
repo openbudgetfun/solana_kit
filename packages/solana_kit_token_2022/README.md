@@ -1,17 +1,10 @@
 # solana_kit_token_2022
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_token_2022.svg)](https://pub.dev/packages/solana_kit_token_2022)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_token_2022)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_token_2022)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_token_2022)
+[![pub package](https://img.shields.io/pub/v/solana_kit_token_2022.svg)](https://pub.dev/packages/solana_kit_token_2022) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_token_2022) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_token_2022)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_token_2022)
 
 SPL Token 2022 client for the [Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart SDK.
 
-Provides a generated low-level client from the upstream Codama IDL plus
-focused handwritten helpers for extension-aware token workflows. Associated
-Token Account (ATA) APIs are shared from
-[`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account)
-and re-exported for convenience.
+Provides a generated low-level client from the upstream Codama IDL plus focused handwritten helpers for extension-aware token workflows. Associated Token Account (ATA) APIs are shared from [`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account) and re-exported for convenience.
 
 ## Installation
 
@@ -81,8 +74,7 @@ final ix = getMintToInstruction(
 
 ## Generated layer
 
-The generated code under `src/generated/` is produced from the upstream
-Codama IDL at `solana-program/token-2022`. It includes:
+The generated code under `src/generated/` is produced from the upstream Codama IDL at `solana-program/token-2022`. It includes:
 
 - **Instruction builders** — typed functions for all Token 2022 instructions
 - **Account decoders** — parse on-chain account data into typed structs
@@ -101,13 +93,8 @@ Codama IDL at `solana-program/token-2022`. It includes:
 
 ## Re-exports
 
-This package re-exports the full
-[`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account)
-API surface so callers can access ATA PDA helpers and instruction builders
-without adding a separate dependency.
+This package re-exports the full [`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account) API surface so callers can access ATA PDA helpers and instruction builders without adding a separate dependency.
 
 ## Upstream reference
 
-Generated layer mirrors
-[solana-program/token-2022](https://github.com/solana-program/token-2022)
-at `js@v0.12.0`.
+Generated layer mirrors [solana-program/token-2022](https://github.com/solana-program/token-2022) at `js@v0.12.0`.

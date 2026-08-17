@@ -1,10 +1,6 @@
 # solana_kit_instruction_plans
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_instruction_plans.svg)](https://pub.dev/packages/solana_kit_instruction_plans)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_instruction_plans/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_instruction_plans)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_instruction_plans)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_instruction_plans)
+[![pub package](https://img.shields.io/pub/v/solana_kit_instruction_plans.svg)](https://pub.dev/packages/solana_kit_instruction_plans) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_instruction_plans/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_instruction_plans) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_instruction_plans)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_instruction_plans)
 
 Plan, organize, and execute complex multi-instruction and multi-transaction operations on Solana.
 
@@ -272,9 +268,7 @@ final result = await executor(transactionPlan);
 
 ### Higher-level execution boundary
 
-For app-facing flows, you can collapse planning, signing, and sending into one
-boundary that returns a structured outcome instead of forcing every caller to
-orchestrate those seams manually.
+For app-facing flows, you can collapse planning, signing, and sending into one boundary that returns a structured outcome instead of forcing every caller to orchestrate those seams manually.
 
 ```dart
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
@@ -305,10 +299,7 @@ final outcome = await boundary(plan);
 print(outcome);
 ```
 
-`SuccessfulTransactionExecution` returns both the planned transaction tree and
-its execution result tree. `FailedTransactionExecution` preserves the stage
-(`planning`, `signing`, `sending`, or `execution`) so callers can react without
-reconstructing that context manually.
+`SuccessfulTransactionExecution` returns both the planned transaction tree and its execution result tree. `FailedTransactionExecution` preserves the stage (`planning`, `signing`, `sending`, or `execution`) so callers can react without reconstructing that context manually.
 
 ### Inspecting execution results
 

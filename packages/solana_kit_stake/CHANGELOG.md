@@ -68,8 +68,7 @@ solana_kit_stake: solana-program/stake js@v0.6.1
 solana_kit_memo: solana-program/memo js@v0.11.1
 ```
 
-`solana_kit_system` adds the `CreateAccountAllowPrefund` instruction helpers.
-`solana_kit_stake` includes the authority seed `u64` size-prefix fix and updated stake delegation layout.
+`solana_kit_system` adds the `CreateAccountAllowPrefund` instruction helpers. `solana_kit_stake` includes the authority seed `u64` size-prefix fix and updated stake delegation layout.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #182](https://github.com/openbudgetfun/solana_kit/pull/182)
 
@@ -79,9 +78,7 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #182](https://g
 
 #### Bump program reference pins to latest upstream tags
 
-Updates `config/reference-repos.json` and docs to track the latest
-upstream tags for program packages whose IDLs are unchanged or
-tooling-only:
+Updates `config/reference-repos.json` and docs to track the latest upstream tags for program packages whose IDLs are unchanged or tooling-only:
 
 - Token: `js@v0.13.0` → `js@v0.14.0`
 - Address Lookup Table: `js@v0.11.0` → `js@v0.12.1`
@@ -90,9 +87,7 @@ tooling-only:
 - Stake: `js@v0.6.1` → `js@v0.7.2`
 - Loader v3: `js@v0.3.0` → `js@v0.4.0`
 
-No generated Dart API changes for these packages — IDL comparison
-confirmed semantic equivalence. Updates are reference pin and
-documentation only.
+No generated Dart API changes for these packages — IDL comparison confirmed semantic equivalence. Updates are reference pin and documentation only.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #195](https://github.com/openbudgetfun/solana_kit/pull/195)
 

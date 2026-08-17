@@ -13,9 +13,7 @@ This page gives you a fast tour of the three building blocks most apps start wit
 
 ## Create an RPC client
 
-Start with a typed RPC client. It gives you method-specific helpers instead of
-building raw JSON-RPC requests by hand, while still letting you swap transports
-or request middleware later.
+Start with a typed RPC client. It gives you method-specific helpers instead of building raw JSON-RPC requests by hand, while still letting you swap transports or request middleware later.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -31,12 +29,9 @@ Future<void> main() async {
 }
 ```
 
-A call like `rpc.getSlot()` builds a typed request first and only hits the
-network when you call `.send()`. That separation makes it easier to compose,
-cache, batch, or decorate RPC interactions.
+A call like `rpc.getSlot()` builds a typed request first and only hits the network when you call `.send()`. That separation makes it easier to compose, cache, batch, or decorate RPC interactions.
 
-Use `solana_kit_rpc_subscriptions` alongside `solana_kit_rpc` when you also
-need websocket notifications for accounts, signatures, logs, or slots.
+Use `solana_kit_rpc_subscriptions` alongside `solana_kit_rpc` when you also need websocket notifications for accounts, signatures, logs, or slots.
 
 <!-- {/docsCreateRpcClientSection} -->
 
@@ -44,9 +39,7 @@ need websocket notifications for accounts, signatures, logs, or slots.
 
 ## Generate a signer
 
-Most app flows need a signer for fee payment, message signing, or transaction
-submission. `generateKeyPairSigner()` creates a new Ed25519 key-pair-backed
-`KeyPairSigner`.
+Most app flows need a signer for fee payment, message signing, or transaction submission. `generateKeyPairSigner()` creates a new Ed25519 key-pair-backed `KeyPairSigner`.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -58,9 +51,7 @@ Future<void> main() async {
 }
 ```
 
-Use key-pair signers for local development, tests, automation, and server-side
-flows. For wallet-driven applications, you can also model fee-payer, partial,
-and sending signers explicitly with `solana_kit_signers`.
+Use key-pair signers for local development, tests, automation, and server-side flows. For wallet-driven applications, you can also model fee-payer, partial, and sending signers explicitly with `solana_kit_signers`.
 
 <!-- {/docsGenerateSignerSection} -->
 
@@ -68,8 +59,7 @@ and sending signers explicitly with `solana_kit_signers`.
 
 ## Fetch an account
 
-Use `fetchEncodedAccount` when you want the raw account bytes plus its Solana
-metadata. Decode it later with the codec or parser that matches your program.
+Use `fetchEncodedAccount` when you want the raw account bytes plus its Solana metadata. Decode it later with the codec or parser that matches your program.
 
 ```dart
 import 'dart:typed_data';
@@ -92,10 +82,7 @@ Future<void> main() async {
 }
 ```
 
-Use `fetchJsonParsedAccount` when the RPC can return a structured
-`jsonParsed` representation for a well-known program. Use encoded reads when
-you need byte-perfect custom decoding or when the RPC does not expose a parsed
-view for your program.
+Use `fetchJsonParsedAccount` when the RPC can return a structured `jsonParsed` representation for a well-known program. Use encoded reads when you need byte-perfect custom decoding or when the RPC does not expose a parsed view for your program.
 
 <!-- {/docsFetchAccountSection} -->
 

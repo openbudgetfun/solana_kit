@@ -2,8 +2,7 @@
 
 ## Scope
 
-Full upstream parity audit across all packages in the workspace compared with
-their upstream TypeScript equivalents.
+Full upstream parity audit across all packages in the workspace compared with their upstream TypeScript equivalents.
 
 ## Core `@solana/kit` drift: 6.9.0 → 6.10.0
 

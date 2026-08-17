@@ -7,8 +7,7 @@
 ///
 /// ## Compose core codecs
 ///
-/// Use `solana_kit_codecs_core` when you need to adapt, wrap, or combine lower-
-/// level encoders and decoders.
+/// Use `solana_kit_codecs_core` when you need to adapt, wrap, or combine lower- level encoders and decoders.
 ///
 /// ```dart
 /// import 'dart:typed_data';
@@ -27,8 +26,7 @@
 /// }
 /// ```
 ///
-/// These helpers are the glue layer between simple primitive codecs and the more
-/// specialized Solana-facing structures built on top of them.
+/// These helpers are the glue layer between simple primitive codecs and the more specialized Solana-facing structures built on top of them.
 ///
 /// <!-- {/docsCoreCodecSection} -->
 library;

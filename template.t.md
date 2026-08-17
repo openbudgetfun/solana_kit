@@ -63,10 +63,7 @@ Use [`__EXAMPLE_PATH__`](./__EXAMPLE_PATH__) as a runnable starting point for `_
 
 ### Typed RPC methods
 
-When you already have an `Rpc`, prefer typed convenience helpers over raw
-method-name strings. They keep parameter builders and response models attached
-to the method itself, which makes refactors and autocomplete significantly
-safer.
+When you already have an `Rpc`, prefer typed convenience helpers over raw method-name strings. They keep parameter builders and response models attached to the method itself, which makes refactors and autocomplete significantly safer.
 
 ```dart
 import '__RPC_IMPORT_PATH__';
@@ -84,9 +81,7 @@ Future<void> main() async {
 }
 ```
 
-These helpers forward to canonical request builders in `solana_kit_rpc_api`,
-return lazy `PendingRpcRequest<T>` values, and make it clear which Solana RPC
-shape each call expects.
+These helpers forward to canonical request builders in `solana_kit_rpc_api`, return lazy `PendingRpcRequest<T>` values, and make it clear which Solana RPC shape each call expects.
 
 <!-- {/typedRpcMethodsSection} -->
 
@@ -94,9 +89,7 @@ shape each call expects.
 
 ### Typed Union Helpers
 
-Prefer typed union helpers when a codec has a fixed, small number of variants.
-They improve IDE type inference, make exhaustive matching easier, and reduce
-unstructured casting in downstream code.
+Prefer typed union helpers when a codec has a fixed, small number of variants. They improve IDE type inference, make exhaustive matching easier, and reduce unstructured casting in downstream code.
 
 ```dart
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
@@ -117,8 +110,7 @@ void main() {
 }
 ```
 
-Use these helpers when your wire format has “one of a few known cases” and you
-want the Dart type system to preserve that fact.
+Use these helpers when your wire format has “one of a few known cases” and you want the Dart type system to preserve that fact.
 
 <!-- {/typedUnionHelpersSection} -->
 
@@ -126,8 +118,7 @@ want the Dart type system to preserve that fact.
 
 ### Optional Isolate JSON Decoding
 
-For large Solana RPC payloads, you can offload BigInt-aware JSON parsing to a
-background isolate so the main isolate stays responsive.
+For large Solana RPC payloads, you can offload BigInt-aware JSON parsing to a background isolate so the main isolate stays responsive.
 
 ```dart
 import '__RPC_TRANSPORT_IMPORT_PATH__';
@@ -143,9 +134,7 @@ void main() {
 }
 ```
 
-For direct parsing, use `parseJsonWithBigIntsAsync(...)` with
-`runInIsolate: true`. Reserve isolate parsing for larger payloads where the
-extra hop is worth the reduced UI or server-request blocking.
+For direct parsing, use `parseJsonWithBigIntsAsync(...)` with `runInIsolate: true`. Reserve isolate parsing for larger payloads where the extra hop is worth the reduced UI or server-request blocking.
 
 <!-- {/isolateJsonDecodeSection} -->
 
@@ -153,9 +142,7 @@ extra hop is worth the reduced UI or server-request blocking.
 
 ### Typed Error Domains
 
-`solana_kit_errors` includes domain helpers layered over numeric error codes.
-Use them to route error handling without hardcoding code ranges throughout your
-application.
+`solana_kit_errors` includes domain helpers layered over numeric error codes. Use them to route error handling without hardcoding code ranges throughout your application.
 
 ```dart
 import 'package:solana_kit_errors/solana_kit_errors.dart';
@@ -175,8 +162,7 @@ void handleSolanaFailure(SolanaError error) {
 }
 ```
 
-This keeps your error-routing logic readable while still preserving the exact
-numeric code and context payload when you need lower-level diagnostics.
+This keeps your error-routing logic readable while still preserving the exact numeric code and context payload when you need lower-level diagnostics.
 
 <!-- {/errorDomainHelpersSection} -->
 
@@ -309,9 +295,7 @@ docs:site:smoke
 >
 > Real wallet handoff is available only on Android today.
 >
-> On iOS, `solana_kit_mobile_wallet_adapter` remains a safe stub/no-op because
-> the current Solana MWA ecosystem does not expose an equivalent iOS
-> integration target.
+> On iOS, `solana_kit_mobile_wallet_adapter` remains a safe stub/no-op because the current Solana MWA ecosystem does not expose an equivalent iOS integration target.
 >
 > MWA_FALLBACK_GUIDANCE_TOKEN
 
@@ -331,10 +315,7 @@ docs:site:smoke
 
 ### Typed RPC methods
 
-When you already have an `Rpc`, prefer typed convenience helpers over raw
-method-name strings. They keep parameter builders and response models attached
-to the method itself, which makes refactors and autocomplete significantly
-safer.
+When you already have an `Rpc`, prefer typed convenience helpers over raw method-name strings. They keep parameter builders and response models attached to the method itself, which makes refactors and autocomplete significantly safer.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -352,9 +333,7 @@ Future<void> main() async {
 }
 ```
 
-These helpers forward to canonical request builders in `solana_kit_rpc_api`,
-return lazy `PendingRpcRequest<T>` values, and make it clear which Solana RPC
-shape each call expects.
+These helpers forward to canonical request builders in `solana_kit_rpc_api`, return lazy `PendingRpcRequest<T>` values, and make it clear which Solana RPC shape each call expects.
 
 <!-- {/docsTypedRpcSolanaKitSection} -->
 
@@ -362,8 +341,7 @@ shape each call expects.
 
 ### Optional Isolate JSON Decoding
 
-For large Solana RPC payloads, you can offload BigInt-aware JSON parsing to a
-background isolate so the main isolate stays responsive.
+For large Solana RPC payloads, you can offload BigInt-aware JSON parsing to a background isolate so the main isolate stays responsive.
 
 ```dart
 import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
@@ -379,9 +357,7 @@ void main() {
 }
 ```
 
-For direct parsing, use `parseJsonWithBigIntsAsync(...)` with
-`runInIsolate: true`. Reserve isolate parsing for larger payloads where the
-extra hop is worth the reduced UI or server-request blocking.
+For direct parsing, use `parseJsonWithBigIntsAsync(...)` with `runInIsolate: true`. Reserve isolate parsing for larger payloads where the extra hop is worth the reduced UI or server-request blocking.
 
 <!-- {/docsIsolateJsonDecodeHttpSection} -->
 
@@ -389,9 +365,7 @@ extra hop is worth the reduced UI or server-request blocking.
 
 ## Create an RPC client
 
-Start with a typed RPC client. It gives you method-specific helpers instead of
-building raw JSON-RPC requests by hand, while still letting you swap transports
-or request middleware later.
+Start with a typed RPC client. It gives you method-specific helpers instead of building raw JSON-RPC requests by hand, while still letting you swap transports or request middleware later.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -407,12 +381,9 @@ Future<void> main() async {
 }
 ```
 
-A call like `rpc.getSlot()` builds a typed request first and only hits the
-network when you call `.send()`. That separation makes it easier to compose,
-cache, batch, or decorate RPC interactions.
+A call like `rpc.getSlot()` builds a typed request first and only hits the network when you call `.send()`. That separation makes it easier to compose, cache, batch, or decorate RPC interactions.
 
-Use `solana_kit_rpc_subscriptions` alongside `solana_kit_rpc` when you also
-need websocket notifications for accounts, signatures, logs, or slots.
+Use `solana_kit_rpc_subscriptions` alongside `solana_kit_rpc` when you also need websocket notifications for accounts, signatures, logs, or slots.
 
 <!-- {/docsCreateRpcClientSection} -->
 
@@ -420,9 +391,7 @@ need websocket notifications for accounts, signatures, logs, or slots.
 
 ## Generate a signer
 
-Most app flows need a signer for fee payment, message signing, or transaction
-submission. `generateKeyPairSigner()` creates a new Ed25519 key-pair-backed
-`KeyPairSigner`.
+Most app flows need a signer for fee payment, message signing, or transaction submission. `generateKeyPairSigner()` creates a new Ed25519 key-pair-backed `KeyPairSigner`.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -434,9 +403,7 @@ Future<void> main() async {
 }
 ```
 
-Use key-pair signers for local development, tests, automation, and server-side
-flows. For wallet-driven applications, you can also model fee-payer, partial,
-and sending signers explicitly with `solana_kit_signers`.
+Use key-pair signers for local development, tests, automation, and server-side flows. For wallet-driven applications, you can also model fee-payer, partial, and sending signers explicitly with `solana_kit_signers`.
 
 <!-- {/docsGenerateSignerSection} -->
 
@@ -486,10 +453,7 @@ Future<void> main() async {
 }
 ```
 
-This separation keeps transaction construction explicit and makes it easier to
-reason about fee payment, expiry, and instruction ordering. If you prefer a
-more fluent style, the transaction-message extension methods build on the same
-underlying model.
+This separation keeps transaction construction explicit and makes it easier to reason about fee payment, expiry, and instruction ordering. If you prefer a more fluent style, the transaction-message extension methods build on the same underlying model.
 
 <!-- {/docsBuildTransactionSection} -->
 
@@ -497,8 +461,7 @@ underlying model.
 
 ## Fetch an account
 
-Use `fetchEncodedAccount` when you want the raw account bytes plus its Solana
-metadata. Decode it later with the codec or parser that matches your program.
+Use `fetchEncodedAccount` when you want the raw account bytes plus its Solana metadata. Decode it later with the codec or parser that matches your program.
 
 ```dart
 import 'dart:typed_data';
@@ -521,10 +484,7 @@ Future<void> main() async {
 }
 ```
 
-Use `fetchJsonParsedAccount` when the RPC can return a structured
-`jsonParsed` representation for a well-known program. Use encoded reads when
-you need byte-perfect custom decoding or when the RPC does not expose a parsed
-view for your program.
+Use `fetchJsonParsedAccount` when the RPC can return a structured `jsonParsed` representation for a well-known program. Use encoded reads when you need byte-perfect custom decoding or when the RPC does not expose a parsed view for your program.
 
 <!-- {/docsFetchAccountSection} -->
 
@@ -532,8 +492,7 @@ view for your program.
 
 ## Send and confirm a signed transaction
 
-Once you have a signed `Transaction`, use the additive confirmation helper for
-an end-to-end “send then wait for confirmation” flow.
+Once you have a signed `Transaction`, use the additive confirmation helper for an end-to-end “send then wait for confirmation” flow.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -552,9 +511,7 @@ Future<void> sendAndWait(
 }
 ```
 
-For lower-level control, `solana_kit_transaction_confirmation` also exposes
-strategy factories for block-height expiry, durable nonce invalidation,
-signature notifications, and timeout racing.
+For lower-level control, `solana_kit_transaction_confirmation` also exposes strategy factories for block-height expiry, durable nonce invalidation, signature notifications, and timeout racing.
 
 <!-- {/docsSendAndConfirmSection} -->
 
@@ -562,8 +519,7 @@ signature notifications, and timeout racing.
 
 ## Decode a fetched account
 
-Keep transport and binary-layout logic separate: fetch the encoded account
-first, then decode it with the codec or decoder that matches your program.
+Keep transport and binary-layout logic separate: fetch the encoded account first, then decode it with the codec or decoder that matches your program.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -586,8 +542,7 @@ Future<void> loadDecodedAccount(
 }
 ```
 
-This boundary keeps RPC concerns, existence handling, and binary decoding easy
-to test independently.
+This boundary keeps RPC concerns, existence handling, and binary decoding easy to test independently.
 
 <!-- {/docsDecodeAccountSection} -->
 
@@ -595,9 +550,7 @@ to test independently.
 
 ## Sign a compiled transaction with explicit signers
 
-Use the transaction-level signer helpers when your signers are resolved outside
-of the message itself or when you need to work with a compiled `Transaction`
-directly.
+Use the transaction-level signer helpers when your signers are resolved outside of the message itself or when you need to work with a compiled `Transaction` directly.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -615,8 +568,7 @@ Future<void> partiallySign(
 }
 ```
 
-This is especially useful for wallet adapters, remote signers, or orchestration
-layers that gather signatures in more than one step.
+This is especially useful for wallet adapters, remote signers, or orchestration layers that gather signatures in more than one step.
 
 <!-- {/docsTransactionSignerHelpersSection} -->
 
@@ -624,8 +576,7 @@ layers that gather signatures in more than one step.
 
 ### Pattern-match codecs
 
-Use pattern-match codecs when you need to choose a codec based on either the
-incoming bytes or the value being encoded.
+Use pattern-match codecs when you need to choose a codec based on either the incoming bytes or the value being encoded.
 
 ```dart
 import 'dart:typed_data';
@@ -646,8 +597,7 @@ void main() {
 }
 ```
 
-Reach for this when a layout cannot be described as a single fixed struct or
-union discriminator alone.
+Reach for this when a layout cannot be described as a single fixed struct or union discriminator alone.
 
 <!-- {/docsPatternMatchCodecSection} -->
 
@@ -655,8 +605,7 @@ union discriminator alone.
 
 ## Derive and validate addresses
 
-Use the address helpers when you need strongly typed account identifiers,
-validation, or program-derived address derivation.
+Use the address helpers when you need strongly typed account identifiers, validation, or program-derived address derivation.
 
 ```dart
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -674,8 +623,7 @@ Future<void> main() async {
 }
 ```
 
-Keep raw strings at the edges. Once a value is known to be a Solana address,
-prefer carrying it as `Address` rather than repeatedly re-validating strings.
+Keep raw strings at the edges. Once a value is known to be a Solana address, prefer carrying it as `Address` rather than repeatedly re-validating strings.
 
 <!-- {/docsAddressPrimitivesSection} -->
 
@@ -683,8 +631,7 @@ prefer carrying it as `Address` rather than repeatedly re-validating strings.
 
 ## Compose core codecs
 
-Use `solana_kit_codecs_core` when you need to adapt, wrap, or combine lower-
-level encoders and decoders.
+Use `solana_kit_codecs_core` when you need to adapt, wrap, or combine lower- level encoders and decoders.
 
 ```dart
 import 'dart:typed_data';
@@ -703,8 +650,7 @@ void main() {
 }
 ```
 
-These helpers are the glue layer between simple primitive codecs and the more
-specialized Solana-facing structures built on top of them.
+These helpers are the glue layer between simple primitive codecs and the more specialized Solana-facing structures built on top of them.
 
 <!-- {/docsCoreCodecSection} -->
 
@@ -712,8 +658,7 @@ specialized Solana-facing structures built on top of them.
 
 ## Encode fixed-width numbers
 
-Use the number codecs when your binary format needs explicit integer widths and
-endianness.
+Use the number codecs when your binary format needs explicit integer widths and endianness.
 
 ```dart
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
@@ -728,8 +673,7 @@ void main() {
 }
 ```
 
-Reach for these codecs in instruction layouts, account state structs, and any
-wire format that needs exact byte-for-byte compatibility.
+Reach for these codecs in instruction layouts, account state structs, and any wire format that needs exact byte-for-byte compatibility.
 
 <!-- {/docsNumberCodecSection} -->
 
@@ -737,8 +681,7 @@ wire format that needs exact byte-for-byte compatibility.
 
 ## Encode base58 and UTF-8 strings
 
-Use the string codecs for base58/base64/base16 conversions plus UTF-8 handling
-when a Solana API crosses between bytes and text.
+Use the string codecs for base58/base64/base16 conversions plus UTF-8 handling when a Solana API crosses between bytes and text.
 
 ```dart
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
@@ -753,14 +696,9 @@ void main() {
 }
 ```
 
-These codecs are especially useful for addresses, signatures, blockhashes, and
-other values that appear as base-encoded strings at API boundaries.
+These codecs are especially useful for addresses, signatures, blockhashes, and other values that appear as base-encoded strings at API boundaries.
 
-For UTF-8 specifically, `getUtf8Codec()` preserves `@solana/kit`
-compatibility by stripping decoded null characters. Prefer
-`getStrictUtf8Codec()` or
-`getUtf8Codec(nullCharacterMode: Utf8NullCharacterMode.reject)` when silent
-null-byte stripping would be risky.
+For UTF-8 specifically, `getUtf8Codec()` preserves `@solana/kit` compatibility by stripping decoded null characters. Prefer `getStrictUtf8Codec()` or `getUtf8Codec(nullCharacterMode: Utf8NullCharacterMode.reject)` when silent null-byte stripping would be risky.
 
 <!-- {/docsStringCodecSection} -->
 
@@ -768,8 +706,7 @@ null-byte stripping would be risky.
 
 ## Model an instruction
 
-Use `Instruction` plus `AccountMeta` when you need to describe a program call
-before building a full transaction message around it.
+Use `Instruction` plus `AccountMeta` when you need to describe a program call before building a full transaction message around it.
 
 ```dart
 import 'dart:typed_data';
@@ -796,8 +733,7 @@ void main() {
 }
 ```
 
-Keeping instruction construction explicit makes it easier to reason about
-required signer privileges, writable accounts, and serialized program data.
+Keeping instruction construction explicit makes it easier to reason about required signer privileges, writable accounts, and serialized program data.
 
 <!-- {/docsInstructionPrimitivesSection} -->
 
@@ -805,8 +741,7 @@ required signer privileges, writable accounts, and serialized program data.
 
 ## Generate keys and verify signatures
 
-Use the key primitives when you need raw Ed25519 key material or signature
-verification outside the higher-level signer abstractions.
+Use the key primitives when you need raw Ed25519 key material or signature verification outside the higher-level signer abstractions.
 
 ```dart
 import 'dart:typed_data';
@@ -824,8 +759,7 @@ void main() {
 }
 ```
 
-This package is the right layer when you need direct access to key bytes,
-public-key derivation, or low-level signature helpers.
+This package is the right layer when you need direct access to key bytes, public-key derivation, or low-level signature helpers.
 
 <!-- {/docsKeyPairSection} -->
 
@@ -833,8 +767,7 @@ public-key derivation, or low-level signature helpers.
 
 ## Compile a transaction for signing
 
-Once a transaction message has a fee payer, lifetime, and instructions, compile
-it into the wire-ready transaction shape that signers and senders consume.
+Once a transaction message has a fee payer, lifetime, and instructions, compile it into the wire-ready transaction shape that signers and senders consume.
 
 ```dart
 import 'dart:typed_data';
@@ -872,8 +805,7 @@ void main() {
 }
 ```
 
-Compilation is the boundary where account ordering, signer sets, and lifetime
-constraints are frozen into the bytes that will actually be signed.
+Compilation is the boundary where account ordering, signer sets, and lifetime constraints are frozen into the bytes that will actually be signed.
 
 <!-- {/docsCompileTransactionSection} -->
 
@@ -881,8 +813,7 @@ constraints are frozen into the bytes that will actually be signed.
 
 ## Work with sysvar codecs and addresses
 
-Use `solana_kit_sysvars` when you need typed access to built-in cluster state
-accounts such as `Clock`, `Rent`, or `EpochSchedule`.
+Use `solana_kit_sysvars` when you need typed access to built-in cluster state accounts such as `Clock`, `Rent`, or `EpochSchedule`.
 
 ```dart
 import 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
@@ -904,8 +835,7 @@ void main() {
 }
 ```
 
-These helpers keep sysvar access strongly typed and let you test sysvar layouts
-without depending on live RPC responses.
+These helpers keep sysvar access strongly typed and let you test sysvar layouts without depending on live RPC responses.
 
 <!-- {/docsSysvarSection} -->
 

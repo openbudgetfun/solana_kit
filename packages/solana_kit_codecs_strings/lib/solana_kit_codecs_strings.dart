@@ -7,8 +7,7 @@
 ///
 /// ## Encode base58 and UTF-8 strings
 ///
-/// Use the string codecs for base58/base64/base16 conversions plus UTF-8 handling
-/// when a Solana API crosses between bytes and text.
+/// Use the string codecs for base58/base64/base16 conversions plus UTF-8 handling when a Solana API crosses between bytes and text.
 ///
 /// ```dart
 /// import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
@@ -23,14 +22,9 @@
 /// }
 /// ```
 ///
-/// These codecs are especially useful for addresses, signatures, blockhashes, and
-/// other values that appear as base-encoded strings at API boundaries.
+/// These codecs are especially useful for addresses, signatures, blockhashes, and other values that appear as base-encoded strings at API boundaries.
 ///
-/// For UTF-8 specifically, `getUtf8Codec()` preserves `@solana/kit`
-/// compatibility by stripping decoded null characters. Prefer
-/// `getStrictUtf8Codec()` or
-/// `getUtf8Codec(nullCharacterMode: Utf8NullCharacterMode.reject)` when silent
-/// null-byte stripping would be risky.
+/// For UTF-8 specifically, `getUtf8Codec()` preserves `@solana/kit` compatibility by stripping decoded null characters. Prefer `getStrictUtf8Codec()` or `getUtf8Codec(nullCharacterMode: Utf8NullCharacterMode.reject)` when silent null-byte stripping would be risky.
 ///
 /// <!-- {/docsStringCodecSection} -->
 ///

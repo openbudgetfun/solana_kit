@@ -5,7 +5,9 @@
     "indentWidth": 2,
     "useTabs": false
   },
-  "markdown": {},
+  "markdown": {
+    "textWrap": "never"
+  },
   "yaml": {
     "indentWidth": 2
   },
@@ -13,15 +15,22 @@
     "commands": [
       {
         "command": "nixfmt",
-        "exts": ["nix"]
+        "exts": [
+          "nix"
+        ]
       },
       {
         "command": "taplo format --config .taplo.toml --stdin-filepath {{file_path}} -",
-        "exts": ["toml"]
+        "exts": [
+          "toml"
+        ]
       },
       {
         "command": "shfmt --filename {{file_path}} -i 0",
-        "exts": ["sh", "bash"]
+        "exts": [
+          "sh",
+          "bash"
+        ]
       }
     ]
   },

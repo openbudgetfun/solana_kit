@@ -1,10 +1,6 @@
 # solana_kit_signers
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_signers.svg)](https://pub.dev/packages/solana_kit_signers)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_signers/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_signers)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_signers)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_signers)
+[![pub package](https://img.shields.io/pub/v/solana_kit_signers.svg)](https://pub.dev/packages/solana_kit_signers) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_signers/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_signers) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_signers)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_signers)
 
 Signer interfaces and utilities for signing Solana messages and transactions -- a Dart port of [`@solana/signers`](https://github.com/anza-xyz/kit/tree/main/packages/signers).
 
@@ -49,9 +45,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Sign a compiled transaction with explicit signers
 
-Use the transaction-level signer helpers when your signers are resolved outside
-of the message itself or when you need to work with a compiled `Transaction`
-directly.
+Use the transaction-level signer helpers when your signers are resolved outside of the message itself or when you need to work with a compiled `Transaction` directly.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -69,8 +63,7 @@ Future<void> partiallySign(
 }
 ```
 
-This is especially useful for wallet adapters, remote signers, or orchestration
-layers that gather signatures in more than one step.
+This is especially useful for wallet adapters, remote signers, or orchestration layers that gather signatures in more than one step.
 
 <!-- {/docsTransactionSignerHelpersSection} -->
 

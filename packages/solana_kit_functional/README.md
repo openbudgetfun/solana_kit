@@ -1,21 +1,13 @@
 # solana_kit_functional
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_functional.svg)](https://pub.dev/packages/solana_kit_functional)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_functional/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_functional)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_functional)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_functional)
+[![pub package](https://img.shields.io/pub/v/solana_kit_functional.svg)](https://pub.dev/packages/solana_kit_functional) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_functional/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_functional) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_functional)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_functional)
 
 Pipe and compose utilities for the Solana Kit Dart SDK, enabling functional pipeline composition on any value.
 
 > [!WARNING]
-> This package is deprecated and kept only as a compatibility shim.
-> New code should import the `Pipe` extension from
-> `package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart`
-> or the umbrella `package:solana_kit/solana_kit.dart` instead.
+> This package is deprecated and kept only as a compatibility shim. New code should import the `Pipe` extension from `package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart` or the umbrella `package:solana_kit/solana_kit.dart` instead.
 >
-> The standalone `solana_kit_functional` package may be removed in a future
-> release once downstream migration is complete.
+> The standalone `solana_kit_functional` package may be removed in a future release once downstream migration is complete.
 
 This is the Dart port of [`@solana/functional`](https://github.com/anza-xyz/kit/tree/main/packages/functional) from the Solana TypeScript SDK.
 

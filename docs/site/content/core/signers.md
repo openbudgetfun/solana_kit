@@ -28,8 +28,7 @@ You may need to represent:
 
 ## Build a transaction around signers
 
-When your signers live on the transaction message itself, the message-level
-helpers are still the most ergonomic path.
+When your signers live on the transaction message itself, the message-level helpers are still the most ergonomic path.
 
 ```dart
 final signer = await generateKeyPair();
@@ -38,16 +37,13 @@ final message = createTransactionMessage()
     .pipe(setTransactionMessageFeePayerSigner(signer));
 ```
 
-When signer resolution happens outside the message, drop to the explicit
-transaction-level helpers:
+When signer resolution happens outside the message, drop to the explicit transaction-level helpers:
 
 <!-- {=docsTransactionSignerHelpersSection} -->
 
 ## Sign a compiled transaction with explicit signers
 
-Use the transaction-level signer helpers when your signers are resolved outside
-of the message itself or when you need to work with a compiled `Transaction`
-directly.
+Use the transaction-level signer helpers when your signers are resolved outside of the message itself or when you need to work with a compiled `Transaction` directly.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -65,8 +61,7 @@ Future<void> partiallySign(
 }
 ```
 
-This is especially useful for wallet adapters, remote signers, or orchestration
-layers that gather signatures in more than one step.
+This is especially useful for wallet adapters, remote signers, or orchestration layers that gather signatures in more than one step.
 
 <!-- {/docsTransactionSignerHelpersSection} -->
 

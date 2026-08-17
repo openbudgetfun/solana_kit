@@ -1,10 +1,6 @@
 # solana_kit_instructions
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_instructions.svg)](https://pub.dev/packages/solana_kit_instructions)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_instructions/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_instructions)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_instructions)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_instructions)
+[![pub package](https://img.shields.io/pub/v/solana_kit_instructions.svg)](https://pub.dev/packages/solana_kit_instructions) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_instructions/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_instructions) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_instructions)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_instructions)
 
 Types and helpers for creating Solana transaction instructions.
 
@@ -49,8 +45,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Model an instruction
 
-Use `Instruction` plus `AccountMeta` when you need to describe a program call
-before building a full transaction message around it.
+Use `Instruction` plus `AccountMeta` when you need to describe a program call before building a full transaction message around it.
 
 ```dart
 import 'dart:typed_data';
@@ -77,8 +72,7 @@ void main() {
 }
 ```
 
-Keeping instruction construction explicit makes it easier to reason about
-required signer privileges, writable accounts, and serialized program data.
+Keeping instruction construction explicit makes it easier to reason about required signer privileges, writable accounts, and serialized program data.
 
 <!-- {/docsInstructionPrimitivesSection} -->
 

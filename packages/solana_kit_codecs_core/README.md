@@ -1,10 +1,6 @@
 # solana_kit_codecs_core
 
-[![pub package](https://img.shields.io/pub/v/solana_kit_codecs_core.svg)](https://pub.dev/packages/solana_kit_codecs_core)
-[![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_codecs_core/latest/)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_codecs_core)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_codecs_core)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_codecs_core)
+[![pub package](https://img.shields.io/pub/v/solana_kit_codecs_core.svg)](https://pub.dev/packages/solana_kit_codecs_core) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_codecs_core/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_codecs_core) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_codecs_core)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_codecs_core)
 
 Core codec interfaces and composition utilities for encoding and decoding Solana data structures in Dart.
 
@@ -49,8 +45,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Compose core codecs
 
-Use `solana_kit_codecs_core` when you need to adapt, wrap, or combine lower-
-level encoders and decoders.
+Use `solana_kit_codecs_core` when you need to adapt, wrap, or combine lower- level encoders and decoders.
 
 ```dart
 import 'dart:typed_data';
@@ -69,8 +64,7 @@ void main() {
 }
 ```
 
-These helpers are the glue layer between simple primitive codecs and the more
-specialized Solana-facing structures built on top of them.
+These helpers are the glue layer between simple primitive codecs and the more specialized Solana-facing structures built on top of them.
 
 <!-- {/docsCoreCodecSection} -->
 

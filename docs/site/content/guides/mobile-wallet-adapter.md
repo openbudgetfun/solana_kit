@@ -36,9 +36,7 @@ Use `isMwaSupported()` / `assertMwaSupported()` to gate platform behavior explic
 >
 > Real wallet handoff is available only on Android today.
 >
-> On iOS, `solana_kit_mobile_wallet_adapter` remains a safe stub/no-op because
-> the current Solana MWA ecosystem does not expose an equivalent iOS
-> integration target.
+> On iOS, `solana_kit_mobile_wallet_adapter` remains a safe stub/no-op because the current Solana MWA ecosystem does not expose an equivalent iOS integration target.
 >
 > Gate wallet-handoff flows with `isMwaSupported()` / `assertMwaSupported()` and present a clear fallback such as browser-wallet instructions, a manual deep link path, or an explicit unsupported-platform message on iOS.
 

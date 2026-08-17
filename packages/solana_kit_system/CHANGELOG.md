@@ -95,8 +95,7 @@ solana_kit_stake: solana-program/stake js@v0.6.1
 solana_kit_memo: solana-program/memo js@v0.11.1
 ```
 
-`solana_kit_system` adds the `CreateAccountAllowPrefund` instruction helpers.
-`solana_kit_stake` includes the authority seed `u64` size-prefix fix and updated stake delegation layout.
+`solana_kit_system` adds the `CreateAccountAllowPrefund` instruction helpers. `solana_kit_stake` includes the authority seed `u64` size-prefix fix and updated stake delegation layout.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #182](https://github.com/openbudgetfun/solana_kit/pull/182)
 

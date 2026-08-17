@@ -81,8 +81,7 @@ _Owner:_ Ifiok Jr. · _Introduced in:_ [`3f596ef`](https://github.com/openbudget
 
 #### Token-2022: regenerate from js@v0.12.0
 
-Regenerates the Token-2022 generated code from upstream IDL `js@v0.12.0`
-(was `js@v0.9.0`). Adds 9 new instructions:
+Regenerates the Token-2022 generated code from upstream IDL `js@v0.12.0` (was `js@v0.9.0`). Adds 9 new instructions:
 
 - `configureConfidentialTransferAccountWithRegistry`
 - `initializeConfidentialMintBurn`
@@ -94,13 +93,9 @@ Regenerates the Token-2022 generated code from upstream IDL `js@v0.12.0`
 - `permissionedConfidentialBurn`
 - `batch`
 
-Updates existing instructions with changed account lists and arguments
-(auditor ciphertext args on confidential transfers, removed `record`
-accounts, `syncNative` rent account, `withdrawExcessLamports` account
-renames, `initializeConfidentialTransferFee` pubkey type change).
+Updates existing instructions with changed account lists and arguments (auditor ciphertext args on confidential transfers, removed `record` accounts, `syncNative` rent account, `withdrawExcessLamports` account renames, `initializeConfidentialTransferFee` pubkey type change).
 
-Adds `confidentialMintBurn` and `permissionedBurn` to the `ExtensionType`
-enum.
+Adds `confidentialMintBurn` and `permissionedBurn` to the `ExtensionType` enum.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #195](https://github.com/openbudgetfun/solana_kit/pull/195)
 

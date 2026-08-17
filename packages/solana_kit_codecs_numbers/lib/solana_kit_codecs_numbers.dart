@@ -7,8 +7,7 @@
 ///
 /// ## Encode fixed-width numbers
 ///
-/// Use the number codecs when your binary format needs explicit integer widths and
-/// endianness.
+/// Use the number codecs when your binary format needs explicit integer widths and endianness.
 ///
 /// ```dart
 /// import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
@@ -23,8 +22,7 @@
 /// }
 /// ```
 ///
-/// Reach for these codecs in instruction layouts, account state structs, and any
-/// wire format that needs exact byte-for-byte compatibility.
+/// Reach for these codecs in instruction layouts, account state structs, and any wire format that needs exact byte-for-byte compatibility.
 ///
 /// <!-- {/docsNumberCodecSection} -->
 library;

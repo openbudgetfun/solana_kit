@@ -16,10 +16,7 @@ Use them together when you need both:
 
 ### Typed RPC methods
 
-When you already have an `Rpc`, prefer typed convenience helpers over raw
-method-name strings. They keep parameter builders and response models attached
-to the method itself, which makes refactors and autocomplete significantly
-safer.
+When you already have an `Rpc`, prefer typed convenience helpers over raw method-name strings. They keep parameter builders and response models attached to the method itself, which makes refactors and autocomplete significantly safer.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -37,9 +34,7 @@ Future<void> main() async {
 }
 ```
 
-These helpers forward to canonical request builders in `solana_kit_rpc_api`,
-return lazy `PendingRpcRequest<T>` values, and make it clear which Solana RPC
-shape each call expects.
+These helpers forward to canonical request builders in `solana_kit_rpc_api`, return lazy `PendingRpcRequest<T>` values, and make it clear which Solana RPC shape each call expects.
 
 <!-- {/docsTypedRpcSolanaKitSection} -->
 
@@ -85,8 +80,7 @@ Packages involved:
 
 ### Optional Isolate JSON Decoding
 
-For large Solana RPC payloads, you can offload BigInt-aware JSON parsing to a
-background isolate so the main isolate stays responsive.
+For large Solana RPC payloads, you can offload BigInt-aware JSON parsing to a background isolate so the main isolate stays responsive.
 
 ```dart
 import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
@@ -102,9 +96,7 @@ void main() {
 }
 ```
 
-For direct parsing, use `parseJsonWithBigIntsAsync(...)` with
-`runInIsolate: true`. Reserve isolate parsing for larger payloads where the
-extra hop is worth the reduced UI or server-request blocking.
+For direct parsing, use `parseJsonWithBigIntsAsync(...)` with `runInIsolate: true`. Reserve isolate parsing for larger payloads where the extra hop is worth the reduced UI or server-request blocking.
 
 <!-- {/docsIsolateJsonDecodeHttpSection} -->
 

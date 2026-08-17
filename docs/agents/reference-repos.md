@@ -12,8 +12,7 @@ Check whether your local clones still match the configured refs with:
 clone:repos:status
 ```
 
-Reference repo definitions live in [`config/reference-repos.json`](../../config/reference-repos.json).
-They are cloned under `.repos/`.
+Reference repo definitions live in [`config/reference-repos.json`](../../config/reference-repos.json). They are cloned under `.repos/`.
 
 ## Config-driven workflow
 
@@ -23,8 +22,7 @@ They are cloned under `.repos/`.
 - `tag` — clones or checks out a pinned tag
 - `commit` — clones or checks out a pinned commit hash
 
-When you need to update an upstream pin, change the JSON config first instead of
-editing `devenv.nix` directly.
+When you need to update an upstream pin, change the JSON config first instead of editing `devenv.nix` directly.
 
 ## Core SDK references
 
@@ -34,10 +32,7 @@ editing `devenv.nix` directly.
 
 ## solana-program/* references
 
-Each program repo is pinned to a specific tag or commit in
-`config/reference-repos.json`. When a new version ships upstream, update the
-config, run `clone:repos`, regenerate the affected package with
-`codama-renderers-dart`, bump the package version, and add a changeset.
+Each program repo is pinned to a specific tag or commit in `config/reference-repos.json`. When a new version ships upstream, update the config, run `clone:repos`, regenerate the affected package with `codama-renderers-dart`, bump the package version, and add a changeset.
 
 | Path                                             | Repo                                                                                                  | Pinned version                             | Used by                                                                                |
 | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------- |
@@ -62,7 +57,5 @@ config, run `clone:repos`, regenerate the affected package with
 3. Run `clone:repos` to fetch the new revision.
 4. Run `clone:repos:status` to confirm your local clones match the config.
 5. Re-run the Codama generator or handwritten implementation work for the affected package.
-6. If the program has a committed `.so` artifact (see `config/programs/README.md`),
-   rebuild it with `build:program-artifacts` and update the artifact version in
-   `config/programs/artifacts.json` if the program crate version changed.
+6. If the program has a committed `.so` artifact (see `config/programs/README.md`), rebuild it with `build:program-artifacts` and update the artifact version in `config/programs/artifacts.json` if the program crate version changed.
 7. Review the diff, bump the package version, and add a changeset.

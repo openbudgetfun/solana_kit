@@ -4,8 +4,7 @@ End-to-end integration tests that run against a local Solana validator.
 
 ## Prerequisites
 
-These tests require [SurfPool](https://github.com/nicfol/surfpool) as the
-local validator. Install it according to the SurfPool documentation.
+These tests require [SurfPool](https://github.com/nicfol/surfpool) as the local validator. Install it according to the SurfPool documentation.
 
 ## Running
 
@@ -29,5 +28,4 @@ dart test integration_test/
 
 ## CI
 
-Integration tests are **not** run automatically in CI. They require a running
-validator and are intended for local development and manual CI triggers.
+Integration tests are **not** run automatically in CI. They require a running validator and are intended for local development and manual CI triggers.

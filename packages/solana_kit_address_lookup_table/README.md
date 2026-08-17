@@ -2,12 +2,9 @@
 
 [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_address_lookup_table)
 
-Address Lookup Table program client for the
-[Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart SDK.
+Address Lookup Table program client for the [Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart SDK.
 
-Provides instruction builders, codecs, account decoders, and parsers for the
-Address Lookup Table program, which manages lookup tables used in versioned
-(v0) transactions.
+Provides instruction builders, codecs, account decoders, and parsers for the Address Lookup Table program, which manages lookup tables used in versioned (v0) transactions.
 
 ## Installation
 
@@ -80,12 +77,8 @@ final closeIx = getCloseLookupTableInstruction(
 
 ## Account
 
-The `AddressLookupTableAccountData` decoder can decode on-chain account data
-for lookup tables, including the authority, deactivation slot, and stored
-addresses.
+The `AddressLookupTableAccountData` decoder can decode on-chain account data for lookup tables, including the authority, deactivation slot, and stored addresses.
 
 ## Upstream reference
 
-Generated layer mirrors
-[solana-program/address-lookup-table](https://github.com/solana-program/address-lookup-table)
-at `js@v0.12.1`.
+Generated layer mirrors [solana-program/address-lookup-table](https://github.com/solana-program/address-lookup-table) at `js@v0.12.1`.

@@ -8,8 +8,7 @@
 ///
 /// ## Compile a transaction for signing
 ///
-/// Once a transaction message has a fee payer, lifetime, and instructions, compile
-/// it into the wire-ready transaction shape that signers and senders consume.
+/// Once a transaction message has a fee payer, lifetime, and instructions, compile it into the wire-ready transaction shape that signers and senders consume.
 ///
 /// ```dart
 /// import 'dart:typed_data';
@@ -47,8 +46,7 @@
 /// }
 /// ```
 ///
-/// Compilation is the boundary where account ordering, signer sets, and lifetime
-/// constraints are frozen into the bytes that will actually be signed.
+/// Compilation is the boundary where account ordering, signer sets, and lifetime constraints are frozen into the bytes that will actually be signed.
 ///
 /// <!-- {/docsCompileTransactionSection} -->
 library;
