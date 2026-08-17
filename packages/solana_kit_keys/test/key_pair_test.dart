@@ -45,6 +45,18 @@ void main() {
       expect(keyPairs, isEmpty);
     });
 
+    test('continues after disposing a rejected candidate', () async {
+      var attempts = 0;
+      final keyPairs = await grindKeyPairs(
+        matches: (String _) => ++attempts > 1,
+        concurrency: 1,
+      );
+      addTearDown(keyPairs.single.dispose);
+
+      expect(attempts, 2);
+      expect(keyPairs, hasLength(1));
+    });
+
     test('throws when regex contains impossible base58 characters', () {
       expect(
         () => grindKeyPairs(matches: RegExp('^ab0'), amount: 0),

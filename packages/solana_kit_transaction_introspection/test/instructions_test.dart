@@ -359,6 +359,25 @@ void main() {
             },
           ],
         },
+        {
+          'innerInstructions': [
+            {'index': 'zero', 'instructions': const <Object?>[]},
+          ],
+        },
+        {
+          'innerInstructions': [
+            {
+              'index': 0,
+              'instructions': [
+                {
+                  'accounts': const <int>[],
+                  'data': '2',
+                  'programIdIndex': -1,
+                },
+              ],
+            },
+          ],
+        },
       ];
 
       for (final meta in malformed) {

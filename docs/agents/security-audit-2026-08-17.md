@@ -37,7 +37,7 @@ changes.
   20 known vulnerabilities (13 high, 4 medium, 3 low); the remediated scan
   reports zero.
 - Ran analyzer/lint, dependency, upstream, package regression, and workspace
-  benchmark checks. The full workspace run passed 6,730 tests with one
+  benchmark checks. The full workspace run passed 6,746 tests with one
   intentionally skipped test.
 - Manually searched security-sensitive boundaries: key generation/storage,
   signing, auth headers, URL construction, HTTP/WebSocket transport, process

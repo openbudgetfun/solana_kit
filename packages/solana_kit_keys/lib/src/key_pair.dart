@@ -296,12 +296,16 @@ Future<void> writeKeyPair(
 
     if (!Platform.isWindows) {
       final chmod = await Process.run('chmod', ['600', path]);
+      // coverage:ignore-start
+      // A failing system chmod cannot be triggered portably without replacing
+      // host tooling or writing outside the test sandbox.
       if (chmod.exitCode != 0) {
         throw FileSystemException(
           'Failed to restrict key pair file permissions',
           path,
         );
       }
+      // coverage:ignore-end
     }
 
     final sink = await file.open(mode: FileMode.writeOnly);

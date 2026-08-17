@@ -21,12 +21,14 @@ Uint8List _secretKey() {
 Map<String, Object?> _project(
   String id, {
   String plan = 'agent_v4',
+  String billingPeriodStart = '2026-01-01',
+  String billingPeriodEnd = '2026-02-01',
 }) => {
   'id': id,
   'subscription': {
     'plan': plan,
-    'billingPeriodStart': '2026-01-01',
-    'billingPeriodEnd': '2026-02-01',
+    'billingPeriodStart': billingPeriodStart,
+    'billingPeriodEnd': billingPeriodEnd,
   },
 };
 
@@ -258,6 +260,81 @@ void main() {
         expect(upgrade.requestedPlan, 'business');
       },
     );
+
+    test('matches monthly and yearly existing subscriptions', () async {
+      final rest = _restClient();
+      final cases = <({String period, String start, String end})>[
+        (period: 'monthly', start: '2026-01-01', end: '2026-02-01'),
+        (period: 'yearly', start: '2026-01-01', end: '2027-01-01'),
+      ];
+
+      for (final entry in cases) {
+        final request = SignupRequest.preauthenticated(
+          jwt: 'jwt',
+          refId: 'ref-1',
+          walletAddress: '11111111111111111111111111111111',
+          plan: 'developer',
+          period: entry.period,
+        );
+        final result = await authSignup(
+          rest,
+          'api-key',
+          request,
+          httpClient: _checkoutClient(
+            projects: () => [
+              _project(
+                'p-1',
+                plan: 'developer_v4',
+                billingPeriodStart: entry.start,
+                billingPeriodEnd: entry.end,
+              ),
+            ],
+          ),
+        );
+        expect(result, isA<AlreadySubscribedResult>());
+      }
+    });
+
+    test('creates an API key when an existing project has none', () async {
+      final result = await authSignup(
+        _restClient(),
+        'api-key',
+        _preauthenticatedRequest(plan: 'agent'),
+        httpClient: _checkoutClient(
+          projects: () => [_project('p-1')],
+          projectApiKey: '',
+        ),
+      );
+
+      expect(result, isA<AlreadySubscribedResult>());
+      expect((result as AlreadySubscribedResult).apiKey, 'new-key');
+    });
+
+    test('rejects empty preauthenticated credentials', () async {
+      const request = SignupRequest.preauthenticated(
+        jwt: '',
+        refId: '',
+        walletAddress: '11111111111111111111111111111111',
+        plan: 'developer',
+      );
+
+      await expectLater(
+        authSignup(_restClient(), 'api-key', request),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('rejects secret keys that do not decode to 64 bytes', () async {
+      final request = SignupRequest.secretKey(
+        secretKey: base64Encode(Uint8List(63)),
+        plan: 'developer',
+      );
+
+      await expectLater(
+        authSignup(_restClient(), 'api-key', request),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
 
     test('throws when contact info is missing for a new signup', () async {
       final rest = _restClient();

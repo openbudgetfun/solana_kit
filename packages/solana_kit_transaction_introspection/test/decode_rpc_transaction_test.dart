@@ -446,5 +446,95 @@ void main() {
         throwsA(isA<SolanaError>()),
       );
     });
+
+    test('rejects malformed loaded addresses', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 1,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[],
+              'recentBlockhash': blockhash,
+            },
+          },
+          'meta': {'loadedAddresses': 42},
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('rejects an instruction with missing data', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 1,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[
+                {'accounts': <int>[], 'programIdIndex': 0},
+              ],
+              'recentBlockhash': blockhash,
+            },
+          },
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('rejects header counts that exceed static accounts', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 2,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[],
+              'recentBlockhash': blockhash,
+            },
+          },
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('rejects a v0 lookup with no account key', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'version': 0,
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 1,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[],
+              'recentBlockhash': blockhash,
+              'addressTableLookups': const <Object?>[
+                {
+                  'writableIndexes': <int>[],
+                  'readonlyIndexes': <int>[],
+                },
+              ],
+            },
+          },
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
   });
 }

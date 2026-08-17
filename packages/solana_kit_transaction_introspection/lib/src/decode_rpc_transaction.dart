@@ -248,25 +248,14 @@ DecodedRpcTransaction _decodeFromJson(
       );
     }(),
     TransactionVersion.v1 => () {
-      final base58 = getBase58Encoder();
       final instructionHeaders = <V1InstructionHeader>[];
       final instructionPayloads = <V1InstructionPayload>[];
-      for (final raw in instructionsRaw) {
-        final ix = _asMap(raw);
-        if (ix == null) _throwUnrecognized();
-        final programAccountIndex = _asInt(ix['programIdIndex']);
-        if (programAccountIndex == null ||
-            programAccountIndex < 0 ||
-            programAccountIndex > 255) {
-          _throwUnrecognized();
-        }
-        final accounts = _intList(ix['accounts']);
-        final dataString = _asString(ix['data']);
-        if (dataString == null) _throwUnrecognized();
-        final data = base58.encode(dataString);
+      for (final instruction in instructions) {
+        final accounts = instruction.accountIndices ?? const <int>[];
+        final data = instruction.data ?? Uint8List(0);
         instructionHeaders.add(
           V1InstructionHeader(
-            programAccountIndex: programAccountIndex,
+            programAccountIndex: instruction.programAddressIndex,
             numInstructionAccounts: accounts.length,
             numInstructionDataBytes: data.length,
           ),
