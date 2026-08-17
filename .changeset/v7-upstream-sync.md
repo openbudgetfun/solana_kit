@@ -1,18 +1,18 @@
 ---
-"solana_kit_errors": minor
-"solana_kit_codecs_data_structures": minor
-"solana_kit_instruction_plans": minor
-"solana_kit_rpc_types": minor
-"solana_kit": minor
-"solana_kit_subscribable": minor
-"solana_kit_rpc_spec": minor
-"solana_kit_rpc_parsed_types": minor
-"solana_kit_rpc_transformers": patch
-"solana_kit_rpc_api": patch
-"solana_kit_address_constants": patch
-"solana_kit_rpc_subscriptions": patch
-"solana_kit_associated_token_account": patch
-"solana_kit_transaction_introspection": minor
+"solana_kit_errors": major
+"solana_kit_codecs_data_structures": major
+"solana_kit_instruction_plans": major
+"solana_kit_rpc_types": major
+"solana_kit": major
+"solana_kit_subscribable": major
+"solana_kit_rpc_spec": major
+"solana_kit_rpc_parsed_types": major
+"solana_kit_rpc_transformers": major
+"solana_kit_rpc_api": major
+"solana_kit_address_constants": major
+"solana_kit_rpc_subscriptions": major
+"solana_kit_associated_token_account": major
+"solana_kit_transaction_introspection": major
 ---
 
 # @solana/kit v7.0.0 upstream sync (foundational breaking changes)
@@ -29,3 +29,15 @@ Ports the foundational breaking changes from `@solana/kit` v7.0.0:
 - **solana_kit_rpc_parsed_types** / **solana_kit_rpc_transformers** / **solana_kit_rpc_api**: Agave 4.1.0 parsed-account types — vote commissions/latency as `int` (not `BigInt`); rent sysvar union (`lamportsPerByte` vs deprecated `burnPercent`/`exemptionThreshold`/ `lamportsPerByteYear`); stake `warmupCooldownRate` optional; config `slashPenalty`/`warmupCooldownRate` deprecated; keep vote commissions and latency as `int` in the numeric-keypath allow-lists.
 
 Migration: `getMinimumBalanceForRentExemption(space)` → `rpc.getMinimumBalanceForRentExemption(space).send()`; `store.retry()` → `store.connect()`; `store.getUnifiedState()` → `store.getState()`; the deprecated `ReactiveStore`/`createReactiveStoreFromStreams` → `createReactiveStreamStore`; reactive actions must migrate from `(args) async => result` to `(signal, args) async => result`.
+
+```dart
+// Before
+final lamports = getMinimumBalanceForRentExemption(space);
+store.retry();
+final state = store.getUnifiedState();
+
+// After
+final lamports = await rpc.getMinimumBalanceForRentExemption(space).send();
+store.connect();
+final state = store.getState();
+```

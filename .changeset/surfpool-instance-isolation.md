@@ -1,5 +1,5 @@
 ---
-"solana_kit_surfpool": patch
+"solana_kit_surfpool": minor
 ---
 
 # Isolate each Surfnet's runtime state in its own working directory

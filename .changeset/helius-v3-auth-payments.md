@@ -1,5 +1,5 @@
 ---
-"solana_kit_helius": minor
+"solana_kit_helius": major
 ---
 
 # Helius SDK v3.0.0 auth/payment port
@@ -15,3 +15,13 @@ Port Helius SDK v3.0.0 auth/payment API surface
 - **Verified** existing checkout functions (`createPayment`, `getPaymentStatus`, `pollCheckoutCompletion`) match upstream v3.0.0 semantics.
 - **Verified** `getAddress`, `loadKeypair`, `getHttpStatus` match upstream v3.0.0.
 - **Removed** legacy `agenticSignup` method and `agentic_signup.dart` (upstream v3.0.0 removed it; `signup` is the replacement).
+
+```dart
+// Before
+final result = await auth.agenticSignup(secretKey: keypair);
+
+// After
+final result = await auth.signup(
+  SignupRequest.secretKey(secretKey: keypair, plan: 'agent'),
+);
+```

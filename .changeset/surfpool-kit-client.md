@@ -1,5 +1,5 @@
 ---
-"solana_kit_surfpool": minor
+"solana_kit_surfpool": major
 "codama-renderers-dart": patch
 "solana_kit": patch
 "solana_kit_errors": patch
@@ -46,3 +46,16 @@ Convert the compressed-NFT integration test to start its own Surfpool via the SD
 ## `solana_kit_integration_tests` (minor)
 
 Integration tests now start their own Surfpool per test file via the SDK (auto-allocated ports, parallel-safe) instead of requiring an externally launched instance. Adds the gap-coverage tests: loader full deploy, system seed-based instructions, config store (committed `config-v3.0.0.so` artifact), subscriptions on-chain lifecycle, ALT extend/deactivate/close, error paths, token/2022 transfer+burn+setAuthority+closeAccount, stake authorize, and ATA idempotency.
+
+```dart
+// Before: manual Surfnet wiring
+final surfnet = await Surfnet.start();
+final rpc = createSolanaRpc(surfnet.rpcUrl);
+
+// After: kit-plugin style client
+final client = await createSurfpoolClient();
+final rpc = client.rpc;
+final payer = client.payer;
+await client.cheatcodes.timeTravel(...);
+await client.stop();
+```

@@ -1,12 +1,12 @@
 ---
-"solana_kit_system": minor
-"solana_kit_token": minor
-"solana_kit_token_2022": minor
-"solana_kit_address_lookup_table": minor
-"solana_kit_memo": minor
-"solana_kit_compute_budget": minor
-"solana_kit_stake": minor
-"solana_kit_loader": minor
+"solana_kit_system": major
+"solana_kit_token": major
+"solana_kit_token_2022": major
+"solana_kit_address_lookup_table": major
+"solana_kit_memo": major
+"solana_kit_compute_budget": major
+"solana_kit_stake": major
+"solana_kit_loader": major
 ---
 
 # Regenerated program packages from upstream v7 IDLs
@@ -23,3 +23,14 @@ Regenerated all 8 generated program packages from their latest upstream Codama I
 - solana_kit_loader: loader-v3 js@v0.4.0 → v0.5.0; migrated planning helpers to the generated v0.5 API and retained the handwritten Loader v3 account codecs and Loader v4 client surface
 
 Generated using `node scripts/generate_program_packages.mjs` — a new generator script that runs the Codama renderer against upstream IDLs.
+
+```dart
+// Generated clients now match newer upstream IDLs, e.g. the system program:
+final instruction = getCreateAccountInstruction(
+  payer: payer.address,
+  newAccount: newAccount.address,
+  lamports: lamports,
+  space: space,
+  owner: owner,
+);
+```
