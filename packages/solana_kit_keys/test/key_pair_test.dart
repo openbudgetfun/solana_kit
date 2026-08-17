@@ -175,6 +175,60 @@ void main() {
               .cast<int>();
       expect(bytes, mockKeyBytes);
     });
+
+    test(
+      'creates a new key file exclusively under concurrent writes',
+      () async {
+        final directory = await Directory.systemTemp.createTemp(
+          'solana-keypair-',
+        );
+        addTearDown(() => directory.delete(recursive: true));
+        final path = '${directory.path}/keypair.json';
+        final first = createKeyPairFromBytes(mockKeyBytes);
+        final second = generateKeyPair();
+        addTearDown(first.dispose);
+        addTearDown(second.dispose);
+
+        final outcomes = await Future.wait<Object?>([
+          writeKeyPair(
+            first,
+            path,
+          ).then<Object?>(
+            (_) => null,
+            onError: (Object error, StackTrace _) => error,
+          ),
+          writeKeyPair(
+            second,
+            path,
+          ).then<Object?>(
+            (_) => null,
+            onError: (Object error, StackTrace _) => error,
+          ),
+        ]);
+
+        expect(outcomes.where((outcome) => outcome == null), hasLength(1));
+        expect(outcomes.whereType<FileSystemException>(), hasLength(1));
+      },
+    );
+
+    test('refuses to overwrite a symbolic link', () async {
+      if (Platform.isWindows) return;
+      final directory = await Directory.systemTemp.createTemp(
+        'solana-keypair-',
+      );
+      addTearDown(() => directory.delete(recursive: true));
+      final target = File('${directory.path}/target.json');
+      await target.writeAsString('keep-me');
+      final path = '${directory.path}/keypair.json';
+      await Link(path).create(target.path);
+      final keyPair = createKeyPairFromBytes(mockKeyBytes);
+
+      await expectLater(
+        writeKeyPair(keyPair, path, unsafelyOverwriteExistingKeyPair: true),
+        throwsA(isA<FileSystemException>()),
+      );
+      expect(await target.readAsString(), 'keep-me');
+    });
   });
 
   group('constantTimeEqual', () {

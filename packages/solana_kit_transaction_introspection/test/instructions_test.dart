@@ -331,6 +331,43 @@ void main() {
         ),
       );
     });
+
+    test('rejects malformed inner-instruction entries', () {
+      final malformed = <Map<String, Object?>>[
+        {
+          'innerInstructions': [42],
+        },
+        {
+          'innerInstructions': [
+            {
+              'index': 0,
+              'instructions': [42],
+            },
+          ],
+        },
+        {
+          'innerInstructions': [
+            {
+              'index': 0,
+              'instructions': [
+                {
+                  'accounts': const <Object?>[0, '1'],
+                  'data': '2',
+                  'programIdIndex': 0,
+                },
+              ],
+            },
+          ],
+        },
+      ];
+
+      for (final meta in malformed) {
+        expect(
+          () => getInnerInstructionsFromMeta(meta, metas),
+          throwsA(isA<SolanaError>()),
+        );
+      }
+    });
   });
 
   group('walkInstructions', () {
@@ -388,7 +425,7 @@ void main() {
       expect(traced.first.trace, isA<OuterInstructionTrace>());
     });
 
-    test('appends inner groups whose index matches no outer instruction', () {
+    test('rejects inner groups whose index matches no outer instruction', () {
       final message = CompiledTransactionMessage(
         version: TransactionVersion.legacy,
         header: MessageHeader(
@@ -414,10 +451,10 @@ void main() {
           },
         ],
       };
-      final traced = walkInstructions(compiledMessage: message, meta: meta);
-      // outer[0], then the orphaned inner group[9].
-      expect(traced, hasLength(2));
-      expect(traced.last.trace, isA<InnerInstructionTrace>());
+      expect(
+        () => walkInstructions(compiledMessage: message, meta: meta),
+        throwsA(isA<SolanaError>()),
+      );
     });
   });
 }

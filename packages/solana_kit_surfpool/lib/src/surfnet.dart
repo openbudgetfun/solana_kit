@@ -241,38 +241,45 @@ class Surfnet {
     if (_stopped) return;
     _stopped = true;
 
-    final process = _process;
-    final exitCodeFuture = _exitCodeFuture;
-    if (process != null && exitCodeFuture != null) {
-      process.kill(ProcessSignal.sigint);
-      try {
-        await exitCodeFuture.timeout(timeout);
-      } on TimeoutException {
-        process.kill();
-        await exitCodeFuture.timeout(
-          const Duration(seconds: 1),
-          // Processes that ignore termination can outlive this wrapper; callers
-          // should still get resource cleanup without waiting indefinitely.
-          onTimeout: () => -1, // coverage:ignore-line
-        );
+    try {
+      final process = _process;
+      final exitCodeFuture = _exitCodeFuture;
+      if (process != null && exitCodeFuture != null) {
+        process.kill(ProcessSignal.sigint);
+        try {
+          await exitCodeFuture.timeout(timeout);
+        } on TimeoutException {
+          process.kill();
+          await exitCodeFuture.timeout(
+            const Duration(seconds: 1),
+            // Processes that ignore termination can outlive this wrapper;
+            // callers should still get resource cleanup without waiting
+            // indefinitely.
+            onTimeout: () => -1, // coverage:ignore-line
+          );
+        }
       }
-    }
 
-    await _stdoutSubscription?.cancel();
-    await _stderrSubscription?.cancel();
+      await _stdoutSubscription?.cancel();
+      await _stderrSubscription?.cancel();
 
-    final workingDirectory = _processWorkingDirectory;
-    if (workingDirectory != null) {
-      try {
-        await workingDirectory.delete(recursive: true);
-      } on Object {
-        // Best-effort cleanup of the Surfnet runtime state; the OS will
-        // eventually reap the temp directory if deletion fails here.
+      final workingDirectory = _processWorkingDirectory;
+      if (workingDirectory != null) {
+        try {
+          await workingDirectory.delete(recursive: true);
+        } on Object {
+          // Best-effort cleanup of the Surfnet runtime state; the OS will
+          // eventually reap the temp directory if deletion fails here.
+        }
       }
-    }
-
-    if (_closeClientOnStop) {
-      _client.close();
+    } finally {
+      // The Surfnet owns this copy even when the caller supplied the original
+      // payer. Clear it deterministically once the process can no longer use
+      // it, including when shutdown or cleanup raises an error.
+      _payerSecretKey.fillRange(0, _payerSecretKey.length, 0);
+      if (_closeClientOnStop) {
+        _client.close();
+      }
     }
   }
 

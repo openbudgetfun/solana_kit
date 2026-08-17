@@ -108,6 +108,10 @@ Future<void> main() async {
 }
 ```
 
+Stopping a freshly created client clears Surfnet's in-memory payer bytes and
+disposes the client-owned payer signer. A signer supplied to
+`connectSurfpoolClient` remains caller-owned and is not disposed.
+
 Attach to an already-running Surfpool with `connectSurfpoolClient`; the
 [`payer`] must be a funded signer you provide:
 

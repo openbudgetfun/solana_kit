@@ -11,7 +11,11 @@ import 'package:test/test.dart';
 
 Uint8List _secretKey() {
   final keyPair = generateKeyPair();
-  return Uint8List.fromList([...keyPair.privateKey, ...keyPair.publicKey]);
+  try {
+    return Uint8List.fromList([...keyPair.privateKey, ...keyPair.publicKey]);
+  } finally {
+    keyPair.dispose();
+  }
 }
 
 http.Client _rpcAndSenderClient() {
@@ -174,6 +178,49 @@ void main() {
         client: client,
       );
       expect(signature, 'sig123');
+    });
+
+    test('payWithMemo rejects non-positive and overflowing amounts', () {
+      for (final amount in [BigInt.zero, -BigInt.one, BigInt.one << 64]) {
+        expect(
+          () => payWithMemo(
+            _secretKey(),
+            '11111111111111111111111111111111',
+            amount,
+            'memo-1',
+          ),
+          throwsA(isA<ArgumentError>()),
+        );
+      }
+    });
+
+    test('payPaymentLink rejects tampered checkout data', () {
+      const base = PaymentLink(
+        kind: 'payment_required',
+        paymentIntentId: 'pi-1',
+        amountCents: 100,
+        destinationWallet: '11111111111111111111111111111111',
+        memo: 'wrong-intent',
+        expiresAt: '2026-01-01',
+        paymentUrl: 'https://dashboard.helius.dev/pay/pi-1',
+        solanaPayUrl: 'solana:pi-1',
+        planName: 'developer',
+      );
+      expect(
+        () => payPaymentLink(_secretKey(), base),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => payPaymentLink(
+          _secretKey(),
+          PaymentLink.fromJson({
+            ...base.toJson(),
+            'memo': 'pi-1',
+            'amountCents': 0,
+          }),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
     });
   });
 

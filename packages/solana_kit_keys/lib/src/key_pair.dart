@@ -135,8 +135,18 @@ Future<List<KeyPair>> grindKeyPairs({
   while (found.length < amount) {
     for (var i = 0; i < batchSize && found.length < amount; i++) {
       final keyPair = generateKeyPair();
-      final addr = getAddressFromPublicKey(keyPair.publicKey).value;
-      if (matcher(addr)) found.add(keyPair);
+      var retained = false;
+      try {
+        final addr = getAddressFromPublicKey(keyPair.publicKey).value;
+        if (matcher(addr)) {
+          found.add(keyPair);
+          retained = true;
+        }
+      } finally {
+        // A grind can reject millions of candidates. Dispose rejected keys
+        // immediately instead of waiting for a best-effort GC finalizer.
+        if (!retained) keyPair.dispose();
+      }
     }
     await Future<void>.delayed(Duration.zero);
   }
@@ -226,8 +236,8 @@ KeyPair createKeyPairFromBytes(Uint8List bytes) {
   }
 
   return KeyPair(
-    privateKey: Uint8List.fromList(privateKeyBytes),
-    publicKey: Uint8List.fromList(publicKeyBytes),
+    privateKey: privateKeyBytes,
+    publicKey: publicKeyBytes,
   );
 }
 
@@ -240,10 +250,7 @@ KeyPair createKeyPairFromBytes(Uint8List bytes) {
 KeyPair createKeyPairFromPrivateKeyBytes(Uint8List bytes) {
   assertIsPrivateKey(bytes);
   final publicKeyBytes = getPublicKeyFromPrivateKey(bytes);
-  return KeyPair(
-    privateKey: Uint8List.fromList(bytes),
-    publicKey: publicKeyBytes,
-  );
+  return KeyPair(privateKey: bytes, publicKey: publicKeyBytes);
 }
 
 /// Writes a [KeyPair] to disk using the JSON byte-array format produced by
@@ -264,28 +271,49 @@ Future<void> writeKeyPair(
   final bytes = Uint8List(64)
     ..setRange(0, 32, privateKey)
     ..setRange(32, 64, publicKey);
-  final file = File(path);
-  final parent = file.parent;
-  if (parent.path.isNotEmpty) {
-    await parent.create(recursive: true);
-  }
-
-  if (!unsafelyOverwriteExistingKeyPair && file.existsSync()) {
-    throw FileSystemException('Key pair file already exists', path);
-  }
-
-  if (!Platform.isWindows && file.existsSync()) {
-    await Process.run('chmod', ['600', path]);
-  }
-
-  final sink = await file.open(mode: FileMode.writeOnly);
   try {
-    if (!Platform.isWindows) {
-      await Process.run('chmod', ['600', path]);
+    final file = File(path);
+    final parent = file.parent;
+    if (parent.path.isNotEmpty) {
+      await parent.create(recursive: true);
     }
-    await sink.writeString(jsonEncode(bytes.toList()));
+
+    if (unsafelyOverwriteExistingKeyPair) {
+      final type = FileSystemEntity.typeSync(path, followLinks: false);
+      if (type == FileSystemEntityType.link) {
+        throw FileSystemException(
+          'Refusing to overwrite a symbolic link',
+          path,
+        );
+      }
+      await file.create();
+    } else {
+      // `exclusive` makes the existence check and creation one atomic
+      // operation. A separate exists/open sequence could be raced into
+      // truncating another file or following an attacker-created symlink.
+      await file.create(exclusive: true);
+    }
+
+    if (!Platform.isWindows) {
+      final chmod = await Process.run('chmod', ['600', path]);
+      if (chmod.exitCode != 0) {
+        throw FileSystemException(
+          'Failed to restrict key pair file permissions',
+          path,
+        );
+      }
+    }
+
+    final sink = await file.open(mode: FileMode.writeOnly);
+    try {
+      await sink.writeString(jsonEncode(bytes.toList()));
+    } finally {
+      await sink.close();
+    }
   } finally {
-    await sink.close();
+    _zeroBytes(privateKey);
+    _zeroBytes(publicKey);
+    _zeroBytes(bytes);
   }
 }
 

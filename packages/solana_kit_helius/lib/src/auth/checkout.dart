@@ -383,7 +383,7 @@ Future<CheckoutInitializeResponse> getPaymentIntent(
   http.Client? client,
   String baseUrl = heliusDeveloperApiUrl,
 }) => _authRequest(
-  '/checkout/$paymentIntentId',
+  '/checkout/${Uri.encodeComponent(paymentIntentId)}',
   CheckoutInitializeResponse.fromJson,
   jwt: jwt,
   method: 'GET',
@@ -399,7 +399,7 @@ Future<CheckoutStatusResponse> getPaymentStatus(
   http.Client? client,
   String baseUrl = heliusDeveloperApiUrl,
 }) => _authRequest(
-  '/checkout/$paymentIntentId/status',
+  '/checkout/${Uri.encodeComponent(paymentIntentId)}/status',
   CheckoutStatusResponse.fromJson,
   jwt: jwt,
   method: 'GET',
@@ -494,6 +494,7 @@ String _planNameFor(String? plan, String period, String? fallback) {
 
 Future<PaymentLink> createPayment(
   CreatePaymentRequest req, {
+  String? userAgent,
   http.Client? client,
   String baseUrl = heliusDeveloperApiUrl,
 }) async {
@@ -507,6 +508,7 @@ Future<PaymentLink> createPayment(
         req.jwt,
         req.plan!,
         req.period,
+        userAgent: userAgent,
         client: client,
         baseUrl: baseUrl,
       );
@@ -518,6 +520,7 @@ Future<PaymentLink> createPayment(
             req.period,
             req.refId,
             couponCode: req.couponCode,
+            userAgent: userAgent,
             client: client,
             baseUrl: baseUrl,
           )
@@ -527,6 +530,7 @@ Future<PaymentLink> createPayment(
             req.refId,
             couponCode: req.couponCode,
             qty: req.qty,
+            userAgent: userAgent,
             client: client,
             baseUrl: baseUrl,
           );
@@ -551,6 +555,7 @@ Future<PaymentLink> createPayment(
       couponCode: req.couponCode,
       qty: req.qty,
     ),
+    userAgent: userAgent,
     client: client,
     baseUrl: baseUrl,
   );

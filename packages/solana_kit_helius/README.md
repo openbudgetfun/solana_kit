@@ -26,9 +26,9 @@ Helius client package for Solana Kit Dart. A Dart port of the [Helius TypeScript
 
 This package was audited against `helius-labs/helius-sdk` v3.0.0 at commit [`4c0c55b86eab0e3abde7896c0aa23c4b6515e9b0`](https://github.com/helius-labs/helius-sdk/commit/4c0c55b86eab0e3abde7896c0aa23c4b6515e9b0) (`chore(release): Update CHANGELOG (#330)`, 2026-05-30). Helius has not published a Git tag for that release, so this commit is the comparison baseline.
 
-The package covers the broad v3 surface: DAS, priority fees, RPC v2 including `getTransfersByAddress`, enhanced transactions, webhook CRUD/toggle, ZK compression, staking, wallet operations, Sender/smart transactions, auth/project basics, Admin project usage, and WebSocket subscriptions. The mainnet REST default follows v3's `https://api-mainnet.helius-rpc.com/v0` host, while devnet enhanced REST continues to use `https://api-devnet.helius.xyz/v0`.
+The package covers the broad v3 surface: DAS, priority fees, RPC v2 including `getTransfersByAddress`, enhanced transactions, webhook CRUD/toggle, ZK compression, staking, wallet operations, Sender, the v3 JWT-based signup/checkout/payment flow, Admin project usage, and WebSocket subscriptions. The mainnet REST default follows v3's `https://api-mainnet.helius-rpc.com/v0` host, while devnet enhanced REST continues to use `https://api-devnet.helius.xyz/v0`.
 
-Known v3 gaps to port next are the newer auth/checkout/payment primitives including `oauthTokenExchange`, smart-transaction tip helpers, and enhanced WebSocket account/transaction subscriptions.
+The legacy smart-transaction façade does not yet implement the v3 transaction-building contract: `createSmartTransaction` only fetches a blockhash and `sendSmartTransaction` does not compile or sign instructions. Do not use those two helpers to authorize value transfers. Prefer Solana Kit's transaction-message, signer, and Sender APIs until that surface is replaced. Remaining v3 gaps also include smart-transaction tip helpers and enhanced WebSocket account/transaction subscriptions.
 
 <!-- {=packageInstallSection:"solana_kit_helius"} -->
 
@@ -92,6 +92,29 @@ final txns = await helius.enhanced.getTransactions(
 );
 ```
 
+### Authenticated signup
+
+`signup` uses the developer API's wallet-signup response as a bearer JWT, then
+uses that JWT for project and checkout calls. Project API keys are only
+returned after subscription provisioning and are never reused as bearer
+tokens.
+
+```dart
+final result = await helius.auth.signup(
+  SignupRequest.secretKey(
+    secretKey: base64EncodedSolanaCliKeypair,
+    plan: 'developer',
+    email: 'ada@example.com',
+    firstName: 'Ada',
+    lastName: 'Lovelace',
+  ),
+);
+```
+
+Only pay `PaymentLink` values received from a trusted Helius developer API.
+The payment helper rejects non-positive amounts, mismatched memo/intent IDs,
+and non-payment link kinds before constructing a transfer.
+
 ## Configuration
 
 ```dart
@@ -119,8 +142,11 @@ final helius = createHelius(
 
 ## WebSocket security defaults
 
-`HeliusWebSocket` enforces `wss://` URLs by default. Use `allowInsecureWs: true`
-only for local development and controlled tests.
+`HeliusWebSocket` enforces `wss://` URLs and rejects localhost plus non-public
+IP literals by default. Use `allowInsecureWs: true` and
+`allowPrivateHosts: true` only for local development and controlled tests.
+The private-host check does not resolve DNS names, so do not accept arbitrary
+WebSocket URLs from untrusted input.
 
 ## Testing strategy
 

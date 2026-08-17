@@ -27,6 +27,7 @@ class SurfpoolClient {
     required this.rpcSubscriptions,
     required this.payer,
     required this.cheatcodes,
+    required this._disposePayerOnStop,
   });
 
   /// The underlying Surfnet handle (`fundSol`, `deploy`, time travel, …).
@@ -43,6 +44,8 @@ class SurfpoolClient {
 
   /// Typed cheatcode RPC (method names have the `surfnet_` prefix stripped).
   final SurfnetCheatcodes cheatcodes;
+
+  final bool _disposePayerOnStop;
 
   /// HTTP RPC URL for the Surfnet.
   String get rpcUrl => surfnet.rpcUrl;
@@ -72,7 +75,13 @@ class SurfpoolClient {
   /// Stops the Surfnet and releases its resources.
   ///
   /// Idempotent; safe to call from test teardown.
-  Future<void> stop() => surfnet.stop();
+  Future<void> stop() async {
+    try {
+      await surfnet.stop();
+    } finally {
+      if (_disposePayerOnStop) payer.keyPair.dispose();
+    }
+  }
 
   /// Creates a client bound to an existing [surfnet] for testing.
   @visibleForTesting
@@ -134,7 +143,14 @@ SurfpoolClient connectSurfpoolClient({
 
 SurfpoolClient _wireClient(Surfnet surfnet, {KeyPairSigner? payer}) {
   final rpc = createSolanaRpc(url: surfnet.rpcUrl, allowInsecureHttp: true);
-  final rpcSubscriptions = createSolanaRpcSubscriptions(surfnet.wsUrl);
+  final rpcSubscriptions = createSolanaRpcSubscriptions(
+    surfnet.wsUrl,
+    DefaultRpcSubscriptionsChannelConfig(
+      url: surfnet.wsUrl,
+      allowInsecureWs: true,
+      allowPrivateHosts: true,
+    ),
+  );
   final effectivePayer =
       payer ?? createKeyPairSignerFromBytes(surfnet.payerSecretKey);
   return SurfpoolClient._(
@@ -143,6 +159,7 @@ SurfpoolClient _wireClient(Surfnet surfnet, {KeyPairSigner? payer}) {
     rpcSubscriptions: rpcSubscriptions,
     payer: effectivePayer,
     cheatcodes: SurfnetCheatcodes(surfnet),
+    disposePayerOnStop: payer == null,
   );
 }
 

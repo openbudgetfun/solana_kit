@@ -27,6 +27,8 @@ void main() {
       expect(client.rpcSubscriptions, isNotNull);
 
       await client.stop();
+      expect(payer.keyPair.isDisposed, isFalse);
+      payer.keyPair.dispose();
     });
 
     test('connectSurfpoolClient derives the ws URL from the rpc URL', () async {
@@ -38,6 +40,8 @@ void main() {
 
       expect(client.wsUrl, 'ws://localhost:8899');
       await client.stop();
+      expect(payer.keyPair.isDisposed, isFalse);
+      payer.keyPair.dispose();
     });
 
     test('airdrop funds an address via the Surfnet', () async {
@@ -88,6 +92,7 @@ void main() {
       'createSurfpoolClient wires a fresh Surfnet with a funded payer',
       () async {
         final client = await createSurfpoolClient();
+        final clientOwnedKeyPair = client.payer.keyPair;
         try {
           expect(client.rpcUrl, startsWith('http://'));
           expect(client.wsUrl, startsWith('ws://'));
@@ -109,6 +114,7 @@ void main() {
         } finally {
           await client.stop();
         }
+        expect(clientOwnedKeyPair.isDisposed, isTrue);
       },
     );
   });

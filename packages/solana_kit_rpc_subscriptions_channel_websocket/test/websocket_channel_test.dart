@@ -638,6 +638,32 @@ void main() {
         throwsA(isA<ArgumentError>()),
       );
     });
+
+    for (final host in <String>[
+      '127.0.0.2',
+      '127.1',
+      '2130706433',
+      '0177.0.0.1',
+      '0x7f000001',
+      '0.1.2.3',
+      '100.64.0.1',
+      '198.18.0.1',
+      '224.0.0.1',
+      '[::]',
+      '[::1]',
+      '[::ffff:127.0.0.1]',
+      '[fe80::1]',
+      '[ff02::1]',
+    ]) {
+      test('blocks non-public IP literal $host by default', () async {
+        await expectLater(
+          () => createWebSocketChannel(
+            WebSocketChannelConfig(url: Uri.parse('wss://$host:8080')),
+          ),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
+    }
   });
 }
 

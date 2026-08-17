@@ -92,8 +92,10 @@ class WebSocketChannelConfig {
 
   /// Whether to allow connections to private/internal hosts.
   ///
-  /// Defaults to `false`, which blocks connections to localhost, loopback,
-  /// and private IP ranges (10.x, 172.16-31.x, 192.168.x, 169.254.x, fc/fd::).
+  /// Defaults to `false`, which blocks localhost plus loopback, private,
+  /// link-local, non-canonical, and reserved IP literals. Hostnames are not
+  /// DNS-resolved, so callers must not treat this as a complete SSRF boundary
+  /// when the URL itself comes from an untrusted source.
   ///
   /// Set to `true` for local development and testing against local validators.
   final bool allowPrivateHosts;
@@ -177,7 +179,7 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
     throw SolanaError(SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed);
   }
 
-  _validateWebSocketUrl(
+  validateWebSocketUrl(
     config.url,
     allowInsecureWs: config.allowInsecureWs,
     allowPrivateHosts: config.allowPrivateHosts,
@@ -263,6 +265,25 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
   );
 }
 
+/// Validates a WebSocket endpoint using the channel's transport and private
+/// IP-literal security policy, and returns [url] unchanged.
+///
+/// This is useful for WebSocket clients that need the same URL policy but
+/// manage their own protocol session. The private-host check is best effort:
+/// it does not resolve DNS names.
+Uri validateWebSocketUrl(
+  Uri url, {
+  bool allowInsecureWs = false,
+  bool allowPrivateHosts = false,
+}) {
+  _validateWebSocketUrl(
+    url,
+    allowInsecureWs: allowInsecureWs,
+    allowPrivateHosts: allowPrivateHosts,
+  );
+  return url;
+}
+
 void _validateWebSocketUrl(
   Uri url, {
   required bool allowInsecureWs,
@@ -327,14 +348,14 @@ const _blockedHostnames = {
   '0.0.0.0',
   '::',
   '::1',
+  '0:0:0:0:0:0:0:0',
   '0:0:0:0:0:0:0:1',
 };
 
 /// Throws [ArgumentError] if [url] targets a private/internal host.
 ///
 /// This is a best-effort SSRF mitigation. It blocks known private hostnames
-/// and IP-literal ranges (10.x, 172.16-31.x, 192.168.x, 169.254.x, fc-fd::).
-/// It does NOT perform DNS resolution.
+/// and non-public IP-literal ranges. It does NOT perform DNS resolution.
 void _assertHostIsNotPrivate(Uri url) {
   final host = url.host.toLowerCase();
 
@@ -347,7 +368,7 @@ void _assertHostIsNotPrivate(Uri url) {
   }
 
   // IPv4 private ranges: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16
-  if (_isPrivateIpv4(host)) {
+  if (_isPrivateIpv4(host) || _looksLikeNonCanonicalIpv4(host)) {
     throw ArgumentError.value(
       url.toString(),
       'url',
@@ -376,7 +397,26 @@ bool _isPrivateIpv4(String host) {
 
   final first = int.tryParse(parts[0]);
   final second = int.tryParse(parts[1]);
-  if (first == null || second == null) return false;
+  final third = int.tryParse(parts[2]);
+  final fourth = int.tryParse(parts[3]);
+  if (first == null ||
+      second == null ||
+      third == null ||
+      fourth == null ||
+      first < 0 ||
+      first > 255 ||
+      second < 0 ||
+      second > 255 ||
+      third < 0 ||
+      third > 255 ||
+      fourth < 0 ||
+      fourth > 255) {
+    return false;
+  }
+
+  // Unspecified, loopback, and carrier-grade NAT.
+  if (first == 0 || first == 127) return true;
+  if (first == 100 && second >= 64 && second <= 127) return true;
 
   // 10.0.0.0/8
   if (first == 10) return true;
@@ -390,7 +430,34 @@ bool _isPrivateIpv4(String host) {
   // 169.254.0.0/16 (link-local)
   if (first == 169 && second == 254) return true;
 
+  // IETF protocol assignments and TEST-NET ranges are not globally routable.
+  if (first == 192 && second == 0 && third == 0) return true;
+  if (first == 192 && second == 0 && third == 2) return true;
+  if (first == 198 && (second == 18 || second == 19)) return true;
+  if (first == 198 && second == 51 && third == 100) return true;
+  if (first == 203 && second == 0 && third == 113) return true;
+
+  // Multicast, reserved, and limited broadcast ranges.
+  if (first >= 224) return true;
+
   return false;
+}
+
+bool _looksLikeNonCanonicalIpv4(String host) {
+  // Reject alternate numeric forms such as 127.1, 2130706433, octal, and
+  // hexadecimal. Different socket stacks normalize these differently, which
+  // makes literal-only SSRF filters easy to bypass.
+  if (RegExp(r'^\d+(?:\.\d+){0,3}$').hasMatch(host)) {
+    final parts = host.split('.');
+    if (parts.length != 4) return true;
+    return parts.any(
+      (part) => part.length > 1 && part.startsWith('0'),
+    );
+  }
+  return RegExp(
+    r'^(?:0x[0-9a-f]+)(?:\.(?:0x[0-9a-f]+))*$',
+    caseSensitive: false,
+  ).hasMatch(host);
 }
 
 bool _isPrivateIpv6(String host) {
@@ -398,8 +465,31 @@ bool _isPrivateIpv6(String host) {
   var h = host.replaceAll('[', '').replaceAll(']', '');
   if (h.contains('%')) h = h.substring(0, h.indexOf('%'));
 
-  // fc00::/7 covers fc00:: through fdff:...
-  return h.startsWith('fc') || h.startsWith('fd');
+  h = h.toLowerCase();
+
+  if (h == '::' || h == '::1') return true;
+
+  // IPv4-compatible and IPv4-mapped literals inherit the IPv4 address's
+  // routability (for example ::ffff:127.0.0.1).
+  final lastColon = h.lastIndexOf(':');
+  if (lastColon >= 0 && h.substring(lastColon + 1).contains('.')) {
+    final ipv4 = h.substring(lastColon + 1);
+    if (_isPrivateIpv4(ipv4) || _looksLikeNonCanonicalIpv4(ipv4)) return true;
+  }
+
+  // fc00::/7 unique-local; fe80::/10 link-local; ff00::/8 multicast.
+  if (h.startsWith('fc') || h.startsWith('fd') || h.startsWith('ff')) {
+    return true;
+  }
+  if (h.startsWith('fe8') ||
+      h.startsWith('fe9') ||
+      h.startsWith('fea') ||
+      h.startsWith('feb')) {
+    return true;
+  }
+
+  // Documentation range; never a legitimate public endpoint.
+  return h.startsWith('2001:db8');
 }
 
 class _WebSocketRpcChannel implements RpcSubscriptionsChannel {

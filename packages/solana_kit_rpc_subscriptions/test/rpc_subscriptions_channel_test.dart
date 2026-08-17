@@ -62,6 +62,7 @@ void main() {
 
       expect(config.url, 'ws://localhost:8900');
       expect(config.allowInsecureWs, isFalse);
+      expect(config.allowPrivateHosts, isFalse);
       expect(config.intervalMs, 5000);
       expect(config.maxSubscriptionsPerChannel, 100);
       expect(config.minChannels, 1);
@@ -72,8 +73,10 @@ void main() {
       const config = DefaultRpcSubscriptionsChannelConfig(
         url: 'ws://localhost:8900',
         allowInsecureWs: true,
+        allowPrivateHosts: true,
       );
       expect(config.allowInsecureWs, isTrue);
+      expect(config.allowPrivateHosts, isTrue);
     });
   });
 
@@ -137,6 +140,7 @@ void main() {
         DefaultRpcSubscriptionsChannelConfig(
           url: 'ws://${server.address.address}:${server.port}',
           allowInsecureWs: true,
+          allowPrivateHosts: true,
           intervalMs: 60000,
         ),
       );

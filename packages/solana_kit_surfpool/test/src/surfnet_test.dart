@@ -449,7 +449,7 @@ void main() {
           expect(surfnet.rpcUri, Uri.parse('http://127.0.0.1:$rpcPort'));
           expect(surfnet.wsUri, Uri.parse('ws://127.0.0.1:$wsPort'));
           expect(surfnet.payer, payer.publicKey);
-          expect(surfnet.payerSecretKey, payer.secretKey);
+          expect(surfnet.payerSecretKey, everyElement(0));
           expect(surfnet.instanceId, startsWith('surfnet-'));
           expect(events.length, lessThanOrEqualTo(500));
           expect(events.map((event) => event.kind), contains('stdoutLog'));
