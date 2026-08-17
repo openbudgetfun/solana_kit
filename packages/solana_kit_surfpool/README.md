@@ -1,16 +1,10 @@
 # solana_kit_surfpool
 
-[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_surfpool)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_surfpool)
-[![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_surfpool)
+[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_surfpool)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_surfpool) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_surfpool)
 
-Surfpool SDK helpers for [Solana Kit](https://github.com/openbudgetfun/solana_kit)
-Dart tests.
+Surfpool SDK helpers for [Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart tests.
 
-This package ports Surfpool's TypeScript/Rust SDK surface to idiomatic Dart by
-using Surfpool's JSON-RPC cheatcodes. `Surfnet.start()` is CLI-backed: it starts
-`surfpool start` on random ports and then talks to that process over HTTP. This
-keeps the package pure Dart and avoids native napi or `flutter_rust_bridge`
-bindings.
+This package ports Surfpool's TypeScript/Rust SDK surface to idiomatic Dart by using Surfpool's JSON-RPC cheatcodes. `Surfnet.start()` is CLI-backed: it starts `surfpool start` on random ports and then talks to that process over HTTP. This keeps the package pure Dart and avoids native napi or `flutter_rust_bridge` bindings.
 
 ## Installation
 
@@ -35,11 +29,9 @@ Inside this monorepo, Dart workspace resolution uses the local package automatic
 
 <!-- {/packageInstallSection} -->
 
-`solana_kit_surfpool` is not re-exported by the umbrella `solana_kit` package;
-add and import this package directly when you need Surfpool helpers.
+`solana_kit_surfpool` is not re-exported by the umbrella `solana_kit` package; add and import this package directly when you need Surfpool helpers.
 
-The CLI-backed runtime requires the `surfpool` executable to be available on
-`PATH`. In this repository, use the configured `devenv` shell.
+The CLI-backed runtime requires the `surfpool` executable to be available on `PATH`. In this repository, use the configured `devenv` shell.
 
 ## Usage
 
@@ -63,8 +55,7 @@ Future<void> main() async {
 }
 ```
 
-Connect to an existing Surfpool process when you manage `surfpool start`
-yourself:
+Connect to an existing Surfpool process when you manage `surfpool start` yourself:
 
 ```dart
 final surfnet = Surfnet.connect(
@@ -75,11 +66,7 @@ final surfnet = Surfnet.connect(
 
 ## Solana Kit client (kit plugin)
 
-`createSurfpoolClient()` mirrors the `@solana/surfpool/kit` plugin for
-TypeScript: it starts a fresh Surfnet and returns a `SurfpoolClient` with a
-Solana Kit RPC client, an RPC subscriptions client, the Surfnet's pre-funded
-payer signer, and a typed cheatcode RPC — so tests can build, sign, send, and
-confirm transactions without managing a validator or RPC plumbing by hand.
+`createSurfpoolClient()` mirrors the `@solana/surfpool/kit` plugin for TypeScript: it starts a fresh Surfnet and returns a `SurfpoolClient` with a Solana Kit RPC client, an RPC subscriptions client, the Surfnet's pre-funded payer signer, and a typed cheatcode RPC — so tests can build, sign, send, and confirm transactions without managing a validator or RPC plumbing by hand.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -108,12 +95,9 @@ Future<void> main() async {
 }
 ```
 
-Stopping a freshly created client clears Surfnet's in-memory payer bytes and
-disposes the client-owned payer signer. A signer supplied to
-`connectSurfpoolClient` remains caller-owned and is not disposed.
+Stopping a freshly created client clears Surfnet's in-memory payer bytes and disposes the client-owned payer signer. A signer supplied to `connectSurfpoolClient` remains caller-owned and is not disposed.
 
-Attach to an already-running Surfpool with `connectSurfpoolClient`; the
-[`payer`] must be a funded signer you provide:
+Attach to an already-running Surfpool with `connectSurfpoolClient`; the [`payer`] must be a funded signer you provide:
 
 ```dart
 final client = connectSurfpoolClient(
@@ -167,16 +151,11 @@ final programId = await surfnet.deployProgram('my_program');
 print('deployed at ${programId.value}');
 ```
 
-`deployProgram` discovers conventional Anchor/Agave artifacts under
-`target/deploy` and `target/idl`. Use `deploy` with `DeployOptions` when bytes
-or paths live elsewhere.
+`deployProgram` discovers conventional Anchor/Agave artifacts under `target/deploy` and `target/idl`. Use `deploy` with `DeployOptions` when bytes or paths live elsewhere.
 
 ## Runtime events
 
-The upstream Rust and JS SDKs expose an in-process event channel. This Dart
-package does not embed the Rust runtime, so `drainEvents()` currently returns
-best-effort `stdoutLog` and `stderrLog` events captured from the CLI-backed
-process. Use RPC assertions for deterministic tests.
+The upstream Rust and JS SDKs expose an in-process event channel. This Dart package does not embed the Rust runtime, so `drainEvents()` currently returns best-effort `stdoutLog` and `stderrLog` events captured from the CLI-backed process. Use RPC assertions for deterministic tests.
 
 ## Key APIs
 

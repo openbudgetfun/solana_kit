@@ -6,11 +6,7 @@ WebSocket channel transport for Solana RPC subscriptions in the Solana Kit Dart 
 
 This is the Dart port of [`@solana/rpc-subscriptions-channel-websocket`](https://github.com/anza-xyz/kit/tree/main/packages/rpc-subscriptions-channel-websocket) from the Solana TypeScript SDK.
 
-By default, channel URLs must use `wss://` and may not target localhost or
-non-public IP literals. Alternate numeric IPv4 forms and IPv4-mapped private
-IPv6 literals are also rejected. This check does not resolve DNS names; do not
-accept arbitrary endpoint URLs from untrusted input. Controlled local tests
-must explicitly enable `allowPrivateHosts` (and `allowInsecureWs` for `ws://`).
+By default, channel URLs must use `wss://` and may not target localhost or non-public IP literals. Alternate numeric IPv4 forms and IPv4-mapped private IPv6 literals are also rejected. This check does not resolve DNS names; do not accept arbitrary endpoint URLs from untrusted input. Controlled local tests must explicitly enable `allowPrivateHosts` (and `allowInsecureWs` for `ws://`).
 
 <!-- {=packageInstallSection:"solana_kit_rpc_subscriptions_channel_websocket"} -->
 
