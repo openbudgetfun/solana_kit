@@ -39,26 +39,38 @@ List<_RpcInnerInstructionsGroup> _parseInnerInstructions(
 ) {
   if (meta == null) return const [];
   final rawInner = meta['innerInstructions'];
-  if (rawInner is! List) return const [];
+  if (rawInner == null) return const [];
+  if (rawInner is! List) _throwUnrecognized();
   final groups = <_RpcInnerInstructionsGroup>[];
   for (final rawGroup in rawInner) {
-    if (rawGroup is! Map) continue;
+    if (rawGroup is! Map) _throwUnrecognized();
     final index = rawGroup['index'];
     final rawInstructions = rawGroup['instructions'];
-    if (index is! int || rawInstructions is! List) continue;
+    if (index is! int || index < 0 || rawInstructions is! List) {
+      _throwUnrecognized();
+    }
     final instructions = <_RpcInnerInstruction>[];
     for (final rawIx in rawInstructions) {
-      if (rawIx is! Map) continue;
+      if (rawIx is! Map) _throwUnrecognized();
       final programIdIndex = rawIx['programIdIndex'];
       final accountsRaw = rawIx['accounts'];
       final data = rawIx['data'];
       final stackHeight = rawIx['stackHeight'];
-      if (programIdIndex is! int || data is! String) continue;
+      if (programIdIndex is! int ||
+          programIdIndex < 0 ||
+          data is! String ||
+          accountsRaw is! List ||
+          (stackHeight != null && stackHeight is! int)) {
+        _throwUnrecognized();
+      }
+      final accounts = <int>[];
+      for (final account in accountsRaw) {
+        if (account is! int || account < 0) _throwUnrecognized();
+        accounts.add(account);
+      }
       instructions.add(
         _RpcInnerInstruction(
-          accounts: accountsRaw is List
-              ? accountsRaw.whereType<int>().toList()
-              : const [],
+          accounts: accounts,
           data: data,
           programIdIndex: programIdIndex,
           stackHeight: stackHeight is int ? stackHeight : null,
@@ -70,6 +82,12 @@ List<_RpcInnerInstructionsGroup> _parseInnerInstructions(
     );
   }
   return groups;
+}
+
+Never _throwUnrecognized() {
+  throw SolanaError(
+    SolanaErrorCode.transactionIntrospectionUnrecognizedGetTransactionResponse,
+  );
 }
 
 /// Returns the inner instructions in a `getTransaction` response as

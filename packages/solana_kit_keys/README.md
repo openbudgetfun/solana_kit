@@ -71,6 +71,11 @@ public-key derivation, or low-level signature helpers.
 
 <!-- {/docsKeyPairSection} -->
 
+`KeyPair` owns sensitive memory. Call `dispose()` in a `finally` block when the
+key is no longer needed; the GC finalizer is only a fallback. `writeKeyPair`
+creates new files atomically, applies mode `0600` before writing on POSIX, and
+refuses symbolic-link overwrite targets.
+
 ## Usage
 
 ### Generating a key pair

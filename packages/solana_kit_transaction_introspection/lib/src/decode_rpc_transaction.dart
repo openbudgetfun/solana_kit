@@ -40,20 +40,46 @@ const _emptyLoadedAddresses = LoadedAddresses();
 Map<String, Object?>? _asMap(Object? v) =>
     v is Map ? Map<String, Object?>.from(v) : null;
 
-List<Object?> _asList(Object? v) => v is List ? v : const [];
-
 int? _asInt(Object? v) => v is int ? v : null;
 
 String? _asString(Object? v) => v is String ? v : null;
 
-List<Address> _addressList(Object? v) =>
-    _asList(v).whereType<String>().map(Address.new).toList();
+Never _throwUnrecognized() {
+  throw SolanaError(
+    SolanaErrorCode.transactionIntrospectionUnrecognizedGetTransactionResponse,
+  );
+}
 
-List<int> _intList(Object? v) => _asList(v).whereType<int>().toList();
+List<Object?> _requireList(Object? value) {
+  if (value is! List) _throwUnrecognized();
+  return List<Object?>.from(value);
+}
+
+List<Address> _addressList(Object? value) {
+  final raw = _requireList(value);
+  final addresses = <Address>[];
+  for (final item in raw) {
+    if (item is! String) _throwUnrecognized();
+    addresses.add(Address(item));
+  }
+  return addresses;
+}
+
+List<int> _intList(Object? value) {
+  final raw = _requireList(value);
+  final integers = <int>[];
+  for (final item in raw) {
+    if (item is! int || item < 0 || item > 255) _throwUnrecognized();
+    integers.add(item);
+  }
+  return integers;
+}
 
 LoadedAddresses _getLoadedAddresses(Map<String, Object?>? meta) {
-  final loaded = _asMap(meta?['loadedAddresses']);
-  if (loaded == null) return _emptyLoadedAddresses;
+  final rawLoaded = meta?['loadedAddresses'];
+  if (rawLoaded == null) return _emptyLoadedAddresses;
+  final loaded = _asMap(rawLoaded);
+  if (loaded == null) _throwUnrecognized();
   return LoadedAddresses(
     readonly: _addressList(loaded['readonly']),
     writable: _addressList(loaded['writable']),
@@ -117,11 +143,12 @@ MessageHeader _readJsonHeader(Map<String, Object?> header) {
   );
   if (numSignerAccounts == null ||
       numReadonlySignerAccounts == null ||
-      numReadonlyNonSignerAccounts == null) {
-    throw SolanaError(
-      SolanaErrorCode
-          .transactionIntrospectionUnrecognizedGetTransactionResponse,
-    );
+      numReadonlyNonSignerAccounts == null ||
+      numSignerAccounts < 0 ||
+      numReadonlySignerAccounts < 0 ||
+      numReadonlyNonSignerAccounts < 0 ||
+      numReadonlySignerAccounts > numSignerAccounts) {
+    _throwUnrecognized();
   }
   return MessageHeader(
     numSignerAccounts: numSignerAccounts,
@@ -143,15 +170,15 @@ List<CompiledInstruction> _readJsonInstructions(
       );
     }
     final programAddressIndex = _asInt(ix['programIdIndex']);
-    if (programAddressIndex == null) {
-      throw SolanaError(
-        SolanaErrorCode
-            .transactionIntrospectionUnrecognizedGetTransactionResponse,
-      );
+    if (programAddressIndex == null ||
+        programAddressIndex < 0 ||
+        programAddressIndex > 255) {
+      _throwUnrecognized();
     }
     final accounts = _intList(ix['accounts']);
     final dataString = _asString(ix['data']);
-    final data = dataString == null ? Uint8List(0) : base58.encode(dataString);
+    if (dataString == null) _throwUnrecognized();
+    final data = base58.encode(dataString);
     return CompiledInstruction(
       programAddressIndex: programAddressIndex,
       accountIndices: accounts.isEmpty ? null : accounts,
@@ -167,13 +194,12 @@ DecodedRpcTransaction _decodeFromJson(
 ) {
   final header = _readJsonHeader(_asMap(message['header'])!);
   final staticAccounts = _addressList(message['accountKeys']);
-  final instructionsRaw = _asList(message['instructions']);
-  if (instructionsRaw.isEmpty && message['instructions'] is! List) {
-    throw SolanaError(
-      SolanaErrorCode
-          .transactionIntrospectionUnrecognizedGetTransactionResponse,
-    );
+  if (header.numSignerAccounts > staticAccounts.length ||
+      header.numReadonlyNonSignerAccounts >
+          staticAccounts.length - header.numSignerAccounts) {
+    _throwUnrecognized();
   }
+  final instructionsRaw = _requireList(message['instructions']);
   final instructions = _readJsonInstructions(instructionsRaw);
   final lifetimeToken = _asString(message['recentBlockhash']);
   if (lifetimeToken == null) {
@@ -183,14 +209,12 @@ DecodedRpcTransaction _decodeFromJson(
     );
   }
 
-  TransactionVersion resolvedVersion;
-  if (version == 0) {
-    resolvedVersion = TransactionVersion.v0;
-  } else if (version == 1) {
-    resolvedVersion = TransactionVersion.v1;
-  } else {
-    resolvedVersion = TransactionVersion.legacy;
-  }
+  final resolvedVersion = switch (version) {
+    null || 'legacy' => TransactionVersion.legacy,
+    0 => TransactionVersion.v0,
+    1 => TransactionVersion.v1,
+    _ => _throwUnrecognized(),
+  };
 
   final compiledMessage = switch (resolvedVersion) {
     TransactionVersion.legacy => CompiledTransactionMessage(
@@ -202,10 +226,10 @@ DecodedRpcTransaction _decodeFromJson(
     ),
     TransactionVersion.v0 => () {
       final lookups = <AddressTableLookup>[];
-      for (final lookup in _asList(message['addressTableLookups'])) {
+      for (final lookup in _requireList(message['addressTableLookups'])) {
         final l = _asMap(lookup);
         final accountKey = l == null ? null : _asString(l['accountKey']);
-        if (accountKey == null) continue;
+        if (accountKey == null) _throwUnrecognized();
         lookups.add(
           AddressTableLookup(
             lookupTableAddress: Address(accountKey),
@@ -224,23 +248,14 @@ DecodedRpcTransaction _decodeFromJson(
       );
     }(),
     TransactionVersion.v1 => () {
-      final base58 = getBase58Encoder();
       final instructionHeaders = <V1InstructionHeader>[];
       final instructionPayloads = <V1InstructionPayload>[];
-      for (final raw in instructionsRaw) {
-        final ix = _asMap(raw);
-        final programAccountIndex = ix == null
-            ? null
-            : _asInt(ix['programIdIndex']);
-        if (programAccountIndex == null) continue;
-        final accounts = _intList(ix!['accounts']);
-        final dataString = _asString(ix['data']);
-        final data = dataString == null
-            ? Uint8List(0)
-            : base58.encode(dataString);
+      for (final instruction in instructions) {
+        final accounts = instruction.accountIndices ?? const <int>[];
+        final data = instruction.data ?? Uint8List(0);
         instructionHeaders.add(
           V1InstructionHeader(
-            programAccountIndex: programAccountIndex,
+            programAccountIndex: instruction.programAddressIndex,
             numInstructionAccounts: accounts.length,
             numInstructionDataBytes: data.length,
           ),
@@ -309,6 +324,7 @@ DecodedRpcTransaction decodeTransactionFromRpcResponse(
   }
   final tx = rpcTx['transaction'];
   final metaRaw = rpcTx['meta'];
+  if (metaRaw != null && metaRaw is! Map) _throwUnrecognized();
   final meta = metaRaw is Map<String, Object?> ? metaRaw : _asMap(metaRaw);
 
   // base64 / base58: `transaction` is a `[data, encoding]` array.

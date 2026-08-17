@@ -43,6 +43,7 @@ void main() {
         final ws = HeliusWebSocket(
           url: 'ws://${server.address.address}:${server.port}',
           allowInsecureWs: true,
+          allowPrivateHosts: true,
         );
         await ws.connect();
         addTearDown(ws.close);
@@ -87,6 +88,7 @@ void main() {
       final ws = HeliusWebSocket(
         url: 'ws://${server.address.address}:${server.port}',
         allowInsecureWs: true,
+        allowPrivateHosts: true,
       );
       await ws.connect();
       addTearDown(ws.close);

@@ -60,6 +60,7 @@ void main() {
       final ws = HeliusWebSocket(
         url: 'ws://${server.address.address}:${server.port}',
         allowInsecureWs: true,
+        allowPrivateHosts: true,
       );
       await ws.connect();
       addTearDown(ws.close);
@@ -99,6 +100,7 @@ void main() {
       final ws = HeliusWebSocket(
         url: 'ws://${server.address.address}:${server.port}',
         allowInsecureWs: true,
+        allowPrivateHosts: true,
       );
       await ws.connect();
       addTearDown(ws.close);
@@ -128,6 +130,7 @@ void main() {
       final ws = HeliusWebSocket(
         url: 'ws://${server.address.address}:${server.port}',
         allowInsecureWs: true,
+        allowPrivateHosts: true,
       );
       await ws.connect();
       addTearDown(ws.close);
@@ -157,6 +160,7 @@ void main() {
       final ws = HeliusWebSocket(
         url: 'ws://${server.address.address}:${server.port}',
         allowInsecureWs: true,
+        allowPrivateHosts: true,
       );
       await ws.connect();
       addTearDown(ws.close);
@@ -184,20 +188,25 @@ void main() {
       expect(requests, isNotEmpty);
     });
 
-    test('connection failures surface as SolanaError', () async {
+    test('connection failures redact API keys from SolanaError', () async {
       final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
-      final url = 'ws://${server.address.address}:${server.port}';
+      final url =
+          'ws://${server.address.address}:${server.port}?api-key=secret-key';
       await server.close(force: true);
 
-      final ws = HeliusWebSocket(url: url, allowInsecureWs: true);
+      final ws = HeliusWebSocket(
+        url: url,
+        allowInsecureWs: true,
+        allowPrivateHosts: true,
+      );
 
       await expectLater(
         ws.connect(),
         throwsA(
           isA<SolanaError>().having(
-            (error) => error.code,
-            'code',
-            SolanaErrorCode.heliusWebSocketError,
+            (error) => error.context['message'],
+            'message',
+            allOf(contains('%5BREDACTED%5D'), isNot(contains('secret-key'))),
           ),
         ),
       );
@@ -214,6 +223,7 @@ void main() {
       final ws = HeliusWebSocket(
         url: 'ws://${server.address.address}:${server.port}',
         allowInsecureWs: true,
+        allowPrivateHosts: true,
       );
       await ws.connect();
       addTearDown(ws.close);
@@ -250,6 +260,7 @@ void main() {
       final ws = HeliusWebSocket(
         url: 'ws://${server.address.address}:${server.port}',
         allowInsecureWs: true,
+        allowPrivateHosts: true,
       );
       await ws.connect();
 
@@ -288,6 +299,7 @@ void main() {
         final ws = HeliusWebSocket(
           url: 'ws://${server.address.address}:${server.port}',
           allowInsecureWs: true,
+          allowPrivateHosts: true,
         );
         await ws.connect();
         addTearDown(ws.close);
@@ -327,6 +339,7 @@ void main() {
       final ws = HeliusWebSocket(
         url: 'ws://${server.address.address}:${server.port}',
         allowInsecureWs: true,
+        allowPrivateHosts: true,
       );
       await ws.connect();
       final stream = ws.subscribe('signatureSubscribe', ['sig-1']);

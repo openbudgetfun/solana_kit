@@ -40,9 +40,14 @@ Future<String> payWithMemo(
   JsonRpcClient? rpcClient,
   http.Client? client,
 }) {
-  final signerAddress = Address(
-    getBase58Decoder().decode(createKeyPairFromBytes(secretKey).publicKey),
-  );
+  _assertValidTransferAmount(amount);
+  final keyPair = createKeyPairFromBytes(secretKey);
+  late final Address signerAddress;
+  try {
+    signerAddress = Address(getBase58Decoder().decode(keyPair.publicKey));
+  } finally {
+    keyPair.dispose();
+  }
   final memoInstruction = Instruction(
     programAddress: const Address(memoProgramId),
     accounts: [
@@ -72,6 +77,25 @@ Future<String> payPaymentLink(
   JsonRpcClient? rpcClient,
   http.Client? client,
 }) {
+  if (paymentLink.kind != 'payment_required') {
+    throw ArgumentError.value(
+      paymentLink.kind,
+      'paymentLink.kind',
+      'must be payment_required',
+    );
+  }
+  if (paymentLink.memo != paymentLink.paymentIntentId) {
+    throw ArgumentError(
+      'paymentLink.memo must match paymentLink.paymentIntentId',
+    );
+  }
+  if (paymentLink.amountCents <= 0) {
+    throw ArgumentError.value(
+      paymentLink.amountCents,
+      'paymentLink.amountCents',
+      'must be positive',
+    );
+  }
   final rawAmount = BigInt.from(paymentLink.amountCents) * _centsToUsdcRaw;
   return payWithMemo(
     secretKey,
@@ -81,4 +105,14 @@ Future<String> payPaymentLink(
     rpcClient: rpcClient,
     client: client,
   );
+}
+
+void _assertValidTransferAmount(BigInt amount) {
+  if (amount <= BigInt.zero || amount.bitLength > 64) {
+    throw ArgumentError.value(
+      amount,
+      'amount',
+      'must be a positive unsigned 64-bit integer',
+    );
+  }
 }

@@ -114,7 +114,10 @@ void main() async {
 
 ### Customizing channel configuration
 
-The `DefaultRpcSubscriptionsChannelConfig` class lets you tune connection pooling, autopinging intervals, and send buffer sizes.
+The `DefaultRpcSubscriptionsChannelConfig` class lets you tune connection
+pooling, autopinging intervals, send buffer sizes, and endpoint security.
+Private IP literals are rejected by default; controlled local validators must
+set `allowPrivateHosts: true` and, for `ws://`, `allowInsecureWs: true`.
 
 ```dart
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';

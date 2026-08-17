@@ -360,7 +360,7 @@ void main() {
       );
     });
 
-    test('decodes a json instruction without data as empty payload', () {
+    test('rejects an incomplete json instruction', () {
       final rpcTx = <String, Object?>{
         'version': 1,
         'transaction': {
@@ -378,11 +378,162 @@ void main() {
           },
         },
       };
-      final decoded = decodeTransactionFromRpcResponse(rpcTx);
-      expect(decoded.compiledMessage.instructionHeaders, hasLength(1));
       expect(
-        decoded.compiledMessage.instructionPayloads!.first.instructionData,
-        isEmpty,
+        () => decodeTransactionFromRpcResponse(rpcTx),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('rejects mixed-type account and instruction-index arrays', () {
+      Map<String, Object?> response({
+        required Object accountKeys,
+        Object? accounts,
+      }) => {
+        'transaction': {
+          'message': {
+            'header': {
+              'numRequiredSignatures': 1,
+              'numReadonlySignedAccounts': 0,
+              'numReadonlyUnsignedAccounts': 0,
+            },
+            'accountKeys': accountKeys,
+            'instructions': [
+              {
+                'programIdIndex': 0,
+                'accounts': accounts ?? const <int>[0],
+                'data': '',
+              },
+            ],
+            'recentBlockhash': blockhash,
+          },
+        },
+      };
+
+      expect(
+        () => decodeTransactionFromRpcResponse(
+          response(accountKeys: const <Object?>[feePayer, 42]),
+        ),
+        throwsA(isA<SolanaError>()),
+      );
+      expect(
+        () => decodeTransactionFromRpcResponse(
+          response(
+            accountKeys: const <String>[feePayer],
+            accounts: const <Object?>[0, '1'],
+          ),
+        ),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('rejects unsupported transaction versions', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'version': 2,
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 1,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[],
+              'recentBlockhash': blockhash,
+            },
+          },
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('rejects malformed loaded addresses', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 1,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[],
+              'recentBlockhash': blockhash,
+            },
+          },
+          'meta': {'loadedAddresses': 42},
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('rejects an instruction with missing data', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 1,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[
+                {'accounts': <int>[], 'programIdIndex': 0},
+              ],
+              'recentBlockhash': blockhash,
+            },
+          },
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('rejects header counts that exceed static accounts', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 2,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[],
+              'recentBlockhash': blockhash,
+            },
+          },
+        }),
+        throwsA(isA<SolanaError>()),
+      );
+    });
+
+    test('rejects a v0 lookup with no account key', () {
+      expect(
+        () => decodeTransactionFromRpcResponse({
+          'version': 0,
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 1,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[],
+              'recentBlockhash': blockhash,
+              'addressTableLookups': const <Object?>[
+                {
+                  'writableIndexes': <int>[],
+                  'readonlyIndexes': <int>[],
+                },
+              ],
+            },
+          },
+        }),
+        throwsA(isA<SolanaError>()),
       );
     });
   });

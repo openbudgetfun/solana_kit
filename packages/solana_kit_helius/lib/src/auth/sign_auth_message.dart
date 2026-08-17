@@ -17,15 +17,24 @@ Future<SignAuthMessageResponse> signAuthMessage(
   SignAuthMessageRequest request,
 ) async {
   final secretKey = base64Decode(request.secretKey);
-  final keyPair = createKeyPairFromBytes(Uint8List.fromList(secretKey));
-  final message = request.message ?? _createAuthMessage(request.timestamp);
-  final messageBytes = Uint8List.fromList(utf8.encode(message));
-  final signatureBytes = signBytes(keyPair.privateKey, messageBytes);
+  KeyPair? keyPair;
+  Uint8List? privateKey;
+  try {
+    keyPair = createKeyPairFromBytes(Uint8List.fromList(secretKey));
+    final message = request.message ?? _createAuthMessage(request.timestamp);
+    final messageBytes = Uint8List.fromList(utf8.encode(message));
+    privateKey = keyPair.privateKey;
+    final signatureBytes = signBytes(privateKey, messageBytes);
 
-  return SignAuthMessageResponse(
-    message: message,
-    signature: _encodeBase58(signatureBytes.value),
-  );
+    return SignAuthMessageResponse(
+      message: message,
+      signature: _encodeBase58(signatureBytes.value),
+    );
+  } finally {
+    secretKey.fillRange(0, secretKey.length, 0);
+    privateKey?.fillRange(0, privateKey.length, 0);
+    keyPair?.dispose();
+  }
 }
 
 String _encodeBase58(Uint8List bytes) => getBase58Decoder().decode(bytes);

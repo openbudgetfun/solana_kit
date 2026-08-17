@@ -13,7 +13,11 @@ SecureRandom createSecureRandom() {
   for (var i = 0; i < 32; i++) {
     seed[i] = random.nextInt(256);
   }
-  return FortunaRandom()..seed(KeyParameter(seed));
+  try {
+    return FortunaRandom()..seed(KeyParameter(seed));
+  } finally {
+    seed.fillRange(0, seed.length, 0);
+  }
 }
 
 /// Generates a new P-256 EC keypair.
@@ -158,13 +162,21 @@ Uint8List aesGcmDecrypt({
     0,
   );
   offset += cipher.doFinal(output, offset);
-  return output.sublist(0, offset);
+  final plaintext = Uint8List.fromList(
+    Uint8List.sublistView(output, 0, offset),
+  );
+  output.fillRange(0, output.length, 0);
+  return plaintext;
 }
 
 /// Generates [length] cryptographically secure random bytes.
 Uint8List randomBytes(int length) {
   final random = Random.secure();
-  return Uint8List.fromList(List.generate(length, (_) => random.nextInt(256)));
+  final bytes = Uint8List(length);
+  for (var i = 0; i < bytes.length; i++) {
+    bytes[i] = random.nextInt(256);
+  }
+  return bytes;
 }
 
 /// Converts a [BigInt] to a fixed-length unsigned big-endian byte array.

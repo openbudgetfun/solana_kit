@@ -1,3 +1,4 @@
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_transaction_introspection/src/get_inner_instructions.dart';
 import 'package:solana_kit_transaction_introspection/src/get_instructions.dart';
 import 'package:solana_kit_transaction_introspection/src/loaded_addresses.dart';
@@ -65,11 +66,14 @@ List<TracedInstruction> walkInstructions({
       result.addAll(group);
     }
   }
-  // Inner groups whose index matches no outer instruction can only come from
-  // malformed input (e.g. `meta` paired with the wrong message). Append them
-  // rather than dropping them so no instruction is ever lost.
-  for (final group in innerByOuterIndex.values) {
-    result.addAll(group);
+  // An unmatched group means `meta` is malformed or belongs to another
+  // transaction. Fail closed instead of presenting those CPIs as if they were
+  // associated with this message.
+  if (innerByOuterIndex.isNotEmpty) {
+    throw SolanaError(
+      SolanaErrorCode
+          .transactionIntrospectionUnrecognizedGetTransactionResponse,
+    );
   }
   return result;
 }

@@ -11,62 +11,33 @@ import 'package:test/test.dart';
 
 Uint8List _secretKey() {
   final keyPair = generateKeyPair();
-  return Uint8List.fromList([...keyPair.privateKey, ...keyPair.publicKey]);
+  try {
+    return Uint8List.fromList([...keyPair.privateKey, ...keyPair.publicKey]);
+  } finally {
+    keyPair.dispose();
+  }
 }
 
-Map<String, Object?> _project(String id, {String apiKey = 'proj-key'}) => {
+Map<String, Object?> _project(
+  String id, {
+  String plan = 'agent_v4',
+  String billingPeriodStart = '2026-01-01',
+  String billingPeriodEnd = '2026-02-01',
+}) => {
   'id': id,
-  'name': 'My Project',
-  'apiKey': apiKey,
-  'createdAt': 1700000000,
+  'subscription': {
+    'plan': plan,
+    'billingPeriodStart': billingPeriodStart,
+    'billingPeriodEnd': billingPeriodEnd,
+  },
 };
 
-/// REST mock for `/v0/auth/*` endpoints. [projects] is re-evaluated on every
-/// call so tests can model the project appearing after payment.
-RestClient _restClient(List<Map<String, Object?>> Function() projects) {
+RestClient _restClient() {
   return RestClient(
     baseUrl: 'https://dev-api.helius.xyz/v0',
-    client: MockClient((request) async {
-      final path = request.url.path;
-      if (path.endsWith('/v0/auth/projects') && request.method == 'GET') {
-        return http.Response(
-          jsonEncode(projects()),
-          200,
-          headers: {'content-type': 'application/json'},
-        );
-      }
-      if (path.contains('/v0/auth/projects/') && request.method == 'GET') {
-        final id = path.split('/').last;
-        return http.Response(
-          jsonEncode(_project(id, apiKey: '')),
-          200,
-          headers: {'content-type': 'application/json'},
-        );
-      }
-      if (path.endsWith('/v0/auth/wallet-signup') && request.method == 'POST') {
-        return http.Response(
-          jsonEncode({
-            'apiKey': 'jwt-from-signup',
-            'projectId': 'ref-from-signup',
-          }),
-          200,
-          headers: {'content-type': 'application/json'},
-        );
-      }
-      if (path.endsWith('/v0/auth/api-keys') && request.method == 'POST') {
-        return http.Response(
-          jsonEncode({
-            'id': 'k-1',
-            'key': 'new-key',
-            'name': 'wallet',
-            'createdAt': 1700000000,
-          }),
-          200,
-          headers: {'content-type': 'application/json'},
-        );
-      }
-      return http.Response('{"error":"not found"}', 404);
-    }),
+    client: MockClient(
+      (request) async => http.Response('legacy API used', 500),
+    ),
   );
 }
 
@@ -76,9 +47,51 @@ http.Client _checkoutClient({
   String phase = '',
   bool readyToRedirect = false,
   String? message,
+  List<Map<String, Object?>> Function()? projects,
+  String projectApiKey = 'proj-key',
+  void Function(http.Request request)? onRequest,
 }) {
   return MockClient((request) async {
+    onRequest?.call(request);
     final path = request.url.path;
+    if (path.endsWith('/v0/wallet-signup') && request.method == 'POST') {
+      return http.Response(
+        jsonEncode({
+          'token': 'jwt-from-signup',
+          'refId': 'ref-from-signup',
+          'newUser': true,
+        }),
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+    }
+    if (path.endsWith('/v0/projects') && request.method == 'GET') {
+      return http.Response(
+        jsonEncode(projects?.call() ?? const <Object?>[]),
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+    }
+    if (path.endsWith('/add-key') && request.method == 'POST') {
+      return http.Response(
+        jsonEncode({'keyId': 'new-key'}),
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+    }
+    if (path.contains('/v0/projects/') && request.method == 'GET') {
+      return http.Response(
+        jsonEncode({
+          'apiKeys': projectApiKey.isEmpty
+              ? const <Object?>[]
+              : [
+                  {'keyId': projectApiKey},
+                ],
+        }),
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+    }
     if (request.url.host == 'sender.helius-rpc.com') {
       return http.Response(
         jsonEncode('sig123'),
@@ -192,7 +205,7 @@ SignupRequest _preauthenticatedRequest({String plan = 'developer'}) =>
 void main() {
   group('authSignup', () {
     test('returns a payment link for a new signup', () async {
-      final rest = _restClient(() => []);
+      final rest = _restClient();
       final result = await authSignup(
         rest,
         'api-key',
@@ -211,11 +224,12 @@ void main() {
     test(
       'short-circuits with AlreadySubscribedResult for the agent plan',
       () async {
-        final rest = _restClient(() => [_project('p-1')]);
+        final rest = _restClient();
         final result = await authSignup(
           rest,
           'api-key',
           _preauthenticatedRequest(plan: 'agent'),
+          httpClient: _checkoutClient(projects: () => [_project('p-1')]),
         );
         expect(result, isA<AlreadySubscribedResult>());
         final subscribed = result as AlreadySubscribedResult;
@@ -231,21 +245,99 @@ void main() {
     test(
       'short-circuits with UpgradeRequiredResult for another plan',
       () async {
-        final rest = _restClient(() => [_project('p-1')]);
+        final rest = _restClient();
         final result = await authSignup(
           rest,
           'api-key',
           _preauthenticatedRequest(plan: 'business'),
+          httpClient: _checkoutClient(
+            projects: () => [_project('p-1', plan: 'developer_v4')],
+          ),
         );
         expect(result, isA<UpgradeRequiredResult>());
         final upgrade = result as UpgradeRequiredResult;
-        expect(upgrade.currentPlan, 'unknown');
+        expect(upgrade.currentPlan, 'developer_v4');
         expect(upgrade.requestedPlan, 'business');
       },
     );
 
+    test('matches monthly and yearly existing subscriptions', () async {
+      final rest = _restClient();
+      final cases = <({String period, String start, String end})>[
+        (period: 'monthly', start: '2026-01-01', end: '2026-02-01'),
+        (period: 'yearly', start: '2026-01-01', end: '2027-01-01'),
+      ];
+
+      for (final entry in cases) {
+        final request = SignupRequest.preauthenticated(
+          jwt: 'jwt',
+          refId: 'ref-1',
+          walletAddress: '11111111111111111111111111111111',
+          plan: 'developer',
+          period: entry.period,
+        );
+        final result = await authSignup(
+          rest,
+          'api-key',
+          request,
+          httpClient: _checkoutClient(
+            projects: () => [
+              _project(
+                'p-1',
+                plan: 'developer_v4',
+                billingPeriodStart: entry.start,
+                billingPeriodEnd: entry.end,
+              ),
+            ],
+          ),
+        );
+        expect(result, isA<AlreadySubscribedResult>());
+      }
+    });
+
+    test('creates an API key when an existing project has none', () async {
+      final result = await authSignup(
+        _restClient(),
+        'api-key',
+        _preauthenticatedRequest(plan: 'agent'),
+        httpClient: _checkoutClient(
+          projects: () => [_project('p-1')],
+          projectApiKey: '',
+        ),
+      );
+
+      expect(result, isA<AlreadySubscribedResult>());
+      expect((result as AlreadySubscribedResult).apiKey, 'new-key');
+    });
+
+    test('rejects empty preauthenticated credentials', () async {
+      const request = SignupRequest.preauthenticated(
+        jwt: '',
+        refId: '',
+        walletAddress: '11111111111111111111111111111111',
+        plan: 'developer',
+      );
+
+      await expectLater(
+        authSignup(_restClient(), 'api-key', request),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('rejects secret keys that do not decode to 64 bytes', () async {
+      final request = SignupRequest.secretKey(
+        secretKey: base64Encode(Uint8List(63)),
+        plan: 'developer',
+      );
+
+      await expectLater(
+        authSignup(_restClient(), 'api-key', request),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
     test('throws when contact info is missing for a new signup', () async {
-      final rest = _restClient(() => []);
+      final rest = _restClient();
       const request = SignupRequest.preauthenticated(
         jwt: 'jwt',
         refId: 'ref-1',
@@ -253,13 +345,18 @@ void main() {
         plan: 'developer',
       );
       expect(
-        () => authSignup(rest, 'api-key', request),
+        () => authSignup(
+          rest,
+          'api-key',
+          request,
+          httpClient: _checkoutClient(),
+        ),
         throwsA(isA<StateError>()),
       );
     });
 
     test('throws for an unknown plan', () async {
-      final rest = _restClient(() => []);
+      final rest = _restClient();
       expect(
         () => authSignup(
           rest,
@@ -270,8 +367,45 @@ void main() {
       );
     });
 
+    test('throws for an unknown billing period', () async {
+      final rest = _restClient();
+      const request = SignupRequest.preauthenticated(
+        jwt: 'jwt',
+        refId: 'ref-1',
+        walletAddress: '11111111111111111111111111111111',
+        plan: 'developer',
+        period: 'weekly',
+      );
+      expect(
+        () => authSignup(rest, 'api-key', request),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('rejects empty contact fields for a new signup', () async {
+      final rest = _restClient();
+      const request = SignupRequest.preauthenticated(
+        jwt: 'jwt',
+        refId: 'ref-1',
+        walletAddress: '11111111111111111111111111111111',
+        plan: 'developer',
+        email: ' ',
+        firstName: 'Ada',
+        lastName: 'Lovelace',
+      );
+      expect(
+        () => authSignup(
+          rest,
+          'api-key',
+          request,
+          httpClient: _checkoutClient(),
+        ),
+        throwsA(isA<StateError>()),
+      );
+    });
+
     test('authenticates with a secret key when no JWT is provided', () async {
-      final rest = _restClient(() => []);
+      final rest = _restClient();
       final request = SignupRequest.secretKey(
         secretKey: base64Encode(_secretKey()),
         plan: 'developer',
@@ -279,27 +413,40 @@ void main() {
         firstName: 'Ada',
         lastName: 'Lovelace',
       );
+      http.Request? signupRequest;
       final result = await authSignup(
         rest,
         'api-key',
         request,
-        httpClient: _checkoutClient(),
+        httpClient: _checkoutClient(
+          onRequest: (request) {
+            if (request.url.path.endsWith('/v0/wallet-signup')) {
+              signupRequest = request;
+            }
+          },
+        ),
       );
       expect(result, isA<PaymentRequiredResult>());
       final payment = result as PaymentRequiredResult;
       expect(payment.jwt, 'jwt-from-signup');
       expect(payment.refId, 'ref-from-signup');
+      expect(signupRequest?.url.queryParameters, isEmpty);
+      expect(signupRequest?.headers['Authorization'], isNull);
+      final signupBody =
+          jsonDecode(signupRequest!.body) as Map<String, Object?>;
+      expect(signupBody.keys, containsAll(['message', 'signature', 'userID']));
     });
   });
 
   group('signupAndPay', () {
     test('returns AlreadySubscribedResult for the agent plan', () async {
-      final rest = _restClient(() => [_project('p-1')]);
+      final rest = _restClient();
       final result = await signupAndPay(
         rest,
         'api-key',
         _preauthenticatedRequest(plan: 'agent'),
         secretKey: _secretKey(),
+        client: _checkoutClient(projects: () => [_project('p-1')]),
       );
       expect(result, isA<SignupAndPayAlreadySubscribedResult>());
       final subscribed = result as SignupAndPayAlreadySubscribedResult;
@@ -308,12 +455,15 @@ void main() {
     });
 
     test('returns UpgradeRequiredResult for another plan', () async {
-      final rest = _restClient(() => [_project('p-1')]);
+      final rest = _restClient();
       final result = await signupAndPay(
         rest,
         'api-key',
         _preauthenticatedRequest(plan: 'business'),
         secretKey: _secretKey(),
+        client: _checkoutClient(
+          projects: () => [_project('p-1', plan: 'developer_v4')],
+        ),
       );
       expect(result, isA<SignupAndPayUpgradeRequiredResult>());
       final upgrade = result as SignupAndPayUpgradeRequiredResult;
@@ -322,17 +472,23 @@ void main() {
 
     test('provisions a project after a completed payment', () async {
       var projectCalls = 0;
-      final rest = _restClient(() {
+      final rest = _restClient();
+      List<Map<String, Object?>> projects() {
         projectCalls++;
-        return projectCalls <= 2 ? [] : [_project('p-1', apiKey: '')];
-      });
+        return projectCalls <= 2 ? [] : [_project('p-1')];
+      }
+
       final result = await signupAndPay(
         rest,
         'api-key',
         _preauthenticatedRequest(),
         secretKey: _secretKey(),
         rpcClient: _rpcClient(),
-        client: _checkoutClient(readyToRedirect: true),
+        client: _checkoutClient(
+          readyToRedirect: true,
+          projects: projects,
+          projectApiKey: '',
+        ),
       );
       expect(result, isA<SignupAndPayCompletedResult>());
       final completed = result as SignupAndPayCompletedResult;
@@ -347,7 +503,7 @@ void main() {
     });
 
     test('throws when no project is provisioned before the timeout', () async {
-      final rest = _restClient(() => []);
+      final rest = _restClient();
       await expectLater(
         signupAndPay(
           rest,
@@ -370,7 +526,7 @@ void main() {
     });
 
     test('returns ExpiredResult when the payment expires', () async {
-      final rest = _restClient(() => []);
+      final rest = _restClient();
       final result = await signupAndPay(
         rest,
         'api-key',
@@ -384,7 +540,7 @@ void main() {
     });
 
     test('returns FailedResult when the payment fails', () async {
-      final rest = _restClient(() => []);
+      final rest = _restClient();
       final result = await signupAndPay(
         rest,
         'api-key',
@@ -398,7 +554,7 @@ void main() {
     });
 
     test('returns PendingResult when the poll times out', () async {
-      final rest = _restClient(() => []);
+      final rest = _restClient();
       final result = await signupAndPay(
         rest,
         'api-key',
@@ -419,8 +575,9 @@ void main() {
   group('AuthClient', () {
     test('signup delegates to authSignup', () async {
       final client = AuthClient(
-        restClient: _restClient(() => [_project('p-1')]),
+        restClient: _restClient(),
         apiKey: 'api-key',
+        client: _checkoutClient(projects: () => [_project('p-1')]),
       );
       final result = await client.signup(
         _preauthenticatedRequest(plan: 'agent'),

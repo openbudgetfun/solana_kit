@@ -3,9 +3,8 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:solana_kit_helius/src/auth/checkout.dart';
 import 'package:solana_kit_helius/src/auth/constants.dart';
-import 'package:solana_kit_helius/src/auth/create_api_key.dart';
-import 'package:solana_kit_helius/src/auth/get_project.dart';
-import 'package:solana_kit_helius/src/auth/list_projects.dart';
+import 'package:solana_kit_helius/src/auth/developer_api.dart';
+import 'package:solana_kit_helius/src/auth/oauth_token_exchange.dart';
 import 'package:solana_kit_helius/src/auth/payment_url.dart';
 import 'package:solana_kit_helius/src/auth/payments.dart';
 import 'package:solana_kit_helius/src/auth/signup.dart';
@@ -27,6 +26,8 @@ Future<UpgradePlanResult> upgradePlan(
   String? lastName,
   String? couponCode,
   String? paymentHost,
+  String? userAgent,
+  String baseUrl = heliusDeveloperApiUrl,
   http.Client? client,
 }) async {
   final paymentLink = await createPayment(
@@ -41,7 +42,9 @@ Future<UpgradePlanResult> upgradePlan(
       couponCode: couponCode,
       paymentHost: paymentHost,
     ),
+    userAgent: userAgent,
     client: client,
+    baseUrl: baseUrl,
   );
   return UpgradePlanResult(paymentLink: paymentLink);
 }
@@ -53,12 +56,16 @@ Future<PayRenewalResult> payRenewal(
   String jwt,
   String paymentIntentId, {
   String? paymentHost,
+  String? userAgent,
+  String baseUrl = heliusDeveloperApiUrl,
   http.Client? client,
 }) async {
   final intent = await getPaymentIntent(
     jwt,
     paymentIntentId,
+    userAgent: userAgent,
     client: client,
+    baseUrl: baseUrl,
   );
   if (intent.status != 'pending') {
     throw StateError(
@@ -85,16 +92,23 @@ Future<PayRenewalResult> payRenewal(
 /// api key, and endpoints.
 Future<({String projectId, String apiKey, SignupEndpoints endpoints})>
 _provisionApiKey(
-  RestClient restClient,
-  String apiKey,
+  String jwt,
   String walletAddress, {
+  String? userAgent,
+  http.Client? client,
+  String baseUrl = heliusDeveloperApiUrl,
   Duration timeout = const Duration(milliseconds: projectPollTimeoutMs),
   Duration interval = const Duration(milliseconds: projectPollIntervalMs),
 }) async {
   final deadline = DateTime.now().add(timeout);
   String? projectId;
   while (DateTime.now().isBefore(deadline)) {
-    final projects = await authListProjects(restClient, apiKey);
+    final projects = await developerListProjects(
+      jwt,
+      userAgent: userAgent,
+      client: client,
+      baseUrl: baseUrl,
+    );
     if (projects.isNotEmpty) {
       projectId = projects.first.id;
       break;
@@ -107,15 +121,22 @@ _provisionApiKey(
       'Payment confirmed but no project was provisioned within timeout.',
     );
   }
-  final details = await authGetProject(restClient, apiKey, projectId);
-  var provisionedApiKey = details.apiKey;
-  if (provisionedApiKey.isEmpty) {
-    provisionedApiKey = (await authCreateApiKey(
-      restClient,
-      apiKey,
-      CreateApiKeyRequest(projectId: projectId, name: walletAddress),
-    )).key;
-  }
+  final details = await developerGetProject(
+    jwt,
+    projectId,
+    userAgent: userAgent,
+    client: client,
+    baseUrl: baseUrl,
+  );
+  var provisionedApiKey = details.apiKeys.firstOrNull?.keyId;
+  provisionedApiKey ??= (await developerCreateApiKey(
+    jwt,
+    projectId,
+    walletAddress,
+    userAgent: userAgent,
+    client: client,
+    baseUrl: baseUrl,
+  )).keyId;
   return (
     projectId: projectId,
     apiKey: provisionedApiKey,
@@ -142,13 +163,14 @@ Future<SignupAndPayResult> signupAndPay(
     milliseconds: projectPollIntervalMs,
   ),
 }) async {
+  final effectiveBaseUrl = baseUrl ?? heliusDeveloperApiUrl;
   final result = await authSignup(
     restClient,
     apiKey,
     options,
     userAgent: userAgent,
     httpClient: client,
-    baseUrl: baseUrl,
+    baseUrl: effectiveBaseUrl,
   );
   if (result is AlreadySubscribedResult) {
     return SignupAndPayAlreadySubscribedResult(
@@ -182,14 +204,17 @@ Future<SignupAndPayResult> signupAndPay(
     paymentIntentId,
     userAgent: userAgent,
     client: client,
+    baseUrl: effectiveBaseUrl,
     timeout: pollTimeout,
     interval: pollInterval,
   );
   if (outcome.kind == 'completed') {
     final provisioned = await _provisionApiKey(
-      restClient,
-      apiKey,
+      paymentRequired.jwt,
       paymentRequired.walletAddress,
+      userAgent: userAgent,
+      client: client,
+      baseUrl: effectiveBaseUrl,
       timeout: provisionTimeout,
       interval: provisionInterval,
     );

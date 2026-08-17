@@ -52,67 +52,86 @@ Future<String> buildAndSendTokenTransfer(
   JsonRpcClient? rpcClient,
   http.Client? client,
 }) async {
-  final keyPair = createKeyPairFromBytes(params.secretKey);
-  final signerAddress = Address(
-    getBase58Decoder().decode(keyPair.publicKey),
-  );
-  final recipient = Address(params.recipientAddress);
-  final mint = Address(params.mintAddress);
-
-  final (senderAta, _) = await findAssociatedTokenPda(
-    seeds: AssociatedTokenSeeds(
-      owner: signerAddress,
-      tokenProgram: tokenProgramAddress,
-      mint: mint,
-    ),
-  );
-  final (receiverAta, _) = await findAssociatedTokenPda(
-    seeds: AssociatedTokenSeeds(
-      owner: recipient,
-      tokenProgram: tokenProgramAddress,
-      mint: mint,
-    ),
-  );
-
-  final transferInstruction = getTransferInstruction(
-    programAddress: tokenProgramAddress,
-    source: senderAta,
-    destination: receiverAta,
-    authority: signerAddress,
-    amount: params.amount,
-  );
-
-  // Fetch a recent blockhash for the transaction lifetime.
-  final effectiveRpc = rpcClient;
-  if (effectiveRpc == null) {
-    throw StateError('An RPC client is required to fetch a recent blockhash.');
+  if (params.amount <= BigInt.zero || params.amount.bitLength > 64) {
+    throw ArgumentError.value(
+      params.amount,
+      'params.amount',
+      'must be a positive unsigned 64-bit integer',
+    );
   }
-  final blockhashResult = await effectiveRpc.call('getLatestBlockhash');
-  final blockhashValue =
-      (blockhashResult! as Map<String, Object?>)['value']!
-          as Map<String, Object?>;
-  final blockhash = blockhashValue['blockhash']! as String;
+  final keyPair = createKeyPairFromBytes(params.secretKey);
+  try {
+    final signerAddress = Address(
+      getBase58Decoder().decode(keyPair.publicKey),
+    );
+    final recipient = Address(params.recipientAddress);
+    final mint = Address(params.mintAddress);
 
-  var message = createTransactionMessage(version: TransactionVersion.v0);
-  message = setTransactionMessageFeePayer(signerAddress, message);
-  message = setTransactionMessageLifetimeUsingBlockhash(
-    BlockhashLifetimeConstraint(
-      blockhash: blockhash,
-      lastValidBlockHeight: BigInt.from(
-        blockhashValue['lastValidBlockHeight']! as int,
+    final (senderAta, _) = await findAssociatedTokenPda(
+      seeds: AssociatedTokenSeeds(
+        owner: signerAddress,
+        tokenProgram: tokenProgramAddress,
+        mint: mint,
       ),
-    ),
-    message,
-  );
-  message = appendTransactionMessageInstructions(
-    [transferInstruction, ...params.additionalInstructions],
-    message,
-  );
+    );
+    final (receiverAta, _) = await findAssociatedTokenPda(
+      seeds: AssociatedTokenSeeds(
+        owner: recipient,
+        tokenProgram: tokenProgramAddress,
+        mint: mint,
+      ),
+    );
 
-  final transaction = compileTransaction(message);
-  final signed = await signTransaction([keyPair], transaction);
-  final encoded = getTransactionEncoder().encode(signed);
-  final base64Tx = base64Encode(encoded);
+    final transferInstruction = getTransferInstruction(
+      programAddress: tokenProgramAddress,
+      source: senderAta,
+      destination: receiverAta,
+      authority: signerAddress,
+      amount: params.amount,
+    );
 
-  return sendViaSender(base64Tx, client: client);
+    // Fetch a recent blockhash for the transaction lifetime.
+    final effectiveRpc = rpcClient;
+    if (effectiveRpc == null) {
+      throw StateError(
+        'An RPC client is required to fetch a recent blockhash.',
+      );
+    }
+    final blockhashResult = await effectiveRpc.call('getLatestBlockhash');
+    final blockhashValue =
+        (blockhashResult! as Map<String, Object?>)['value']!
+            as Map<String, Object?>;
+    final blockhash = blockhashValue['blockhash']! as String;
+    final lastValidBlockHeight =
+        switch (blockhashValue['lastValidBlockHeight']) {
+          final BigInt value => value,
+          final int value => BigInt.from(value),
+          final Object? value => throw FormatException(
+            'Invalid lastValidBlockHeight: $value',
+          ),
+        };
+
+    var message = createTransactionMessage(version: TransactionVersion.v0);
+    message = setTransactionMessageFeePayer(signerAddress, message);
+    message = setTransactionMessageLifetimeUsingBlockhash(
+      BlockhashLifetimeConstraint(
+        blockhash: blockhash,
+        lastValidBlockHeight: lastValidBlockHeight,
+      ),
+      message,
+    );
+    message = appendTransactionMessageInstructions(
+      [transferInstruction, ...params.additionalInstructions],
+      message,
+    );
+
+    final transaction = compileTransaction(message);
+    final signed = await signTransaction([keyPair], transaction);
+    final encoded = getTransactionEncoder().encode(signed);
+    final base64Tx = base64Encode(encoded);
+
+    return sendViaSender(base64Tx, client: client);
+  } finally {
+    keyPair.dispose();
+  }
 }

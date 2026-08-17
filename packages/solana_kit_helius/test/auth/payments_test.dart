@@ -11,7 +11,11 @@ import 'package:test/test.dart';
 
 Uint8List _secretKey() {
   final keyPair = generateKeyPair();
-  return Uint8List.fromList([...keyPair.privateKey, ...keyPair.publicKey]);
+  try {
+    return Uint8List.fromList([...keyPair.privateKey, ...keyPair.publicKey]);
+  } finally {
+    keyPair.dispose();
+  }
 }
 
 http.Client _rpcAndSenderClient() {
@@ -174,6 +178,113 @@ void main() {
         client: client,
       );
       expect(signature, 'sig123');
+    });
+
+    test('payWithMemo rejects non-positive and overflowing amounts', () {
+      for (final amount in [BigInt.zero, -BigInt.one, BigInt.one << 64]) {
+        expect(
+          () => payWithMemo(
+            _secretKey(),
+            '11111111111111111111111111111111',
+            amount,
+            'memo-1',
+          ),
+          throwsA(isA<ArgumentError>()),
+        );
+      }
+    });
+
+    test(
+      'token transfer rejects invalid amounts at its public boundary',
+      () async {
+        for (final amount in [BigInt.zero, BigInt.one << 64]) {
+          await expectLater(
+            buildAndSendTokenTransfer(
+              TokenTransferParams(
+                secretKey: _secretKey(),
+                recipientAddress: 'unused',
+                mintAddress: 'unused',
+                amount: amount,
+              ),
+            ),
+            throwsA(isA<ArgumentError>()),
+          );
+        }
+      },
+    );
+
+    test('token transfer rejects a malformed lastValidBlockHeight', () async {
+      final client = MockClient(
+        (_) async => http.Response(
+          jsonEncode({
+            'jsonrpc': '2.0',
+            'id': 1,
+            'result': {
+              'value': {
+                'blockhash': '11111111111111111111111111111111',
+                'lastValidBlockHeight': 'invalid',
+              },
+            },
+          }),
+          200,
+          headers: {'content-type': 'application/json'},
+        ),
+      );
+      final rpc = JsonRpcClient(url: 'https://rpc', client: client);
+
+      await expectLater(
+        buildAndSendTokenTransfer(
+          TokenTransferParams(
+            secretKey: _secretKey(),
+            recipientAddress: '11111111111111111111111111111111',
+            mintAddress: '11111111111111111111111111111111',
+            amount: BigInt.one,
+          ),
+          rpcClient: rpc,
+          client: client,
+        ),
+        throwsFormatException,
+      );
+    });
+
+    test('payPaymentLink rejects tampered checkout data', () {
+      const base = PaymentLink(
+        kind: 'payment_required',
+        paymentIntentId: 'pi-1',
+        amountCents: 100,
+        destinationWallet: '11111111111111111111111111111111',
+        memo: 'wrong-intent',
+        expiresAt: '2026-01-01',
+        paymentUrl: 'https://dashboard.helius.dev/pay/pi-1',
+        solanaPayUrl: 'solana:pi-1',
+        planName: 'developer',
+      );
+      expect(
+        () => payPaymentLink(_secretKey(), base),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => payPaymentLink(
+          _secretKey(),
+          PaymentLink.fromJson({
+            ...base.toJson(),
+            'kind': 'already_paid',
+            'memo': 'pi-1',
+          }),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => payPaymentLink(
+          _secretKey(),
+          PaymentLink.fromJson({
+            ...base.toJson(),
+            'memo': 'pi-1',
+            'amountCents': 0,
+          }),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
     });
   });
 

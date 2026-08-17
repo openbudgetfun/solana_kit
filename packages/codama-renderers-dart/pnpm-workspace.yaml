@@ -1,8 +1,5 @@
 packages:
-  - packages/*
-
-useNodeVersion: 24.14.0
-nodeVersion: 24.14.0
+  - .
 
 overrides:
   brace-expansion: 5.0.9

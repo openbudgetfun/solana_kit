@@ -15,6 +15,7 @@ dependencies:
   solana_kit_instructions: ^0.6.0
   solana_kit_keys: ^0.6.0
   solana_kit_rpc: ^0.6.0
+  solana_kit_rpc_subscriptions_channel_websocket: ^0.6.0
   solana_kit_signers: ^0.6.0
   solana_kit_token: ^0.6.0
   solana_kit_transaction_messages: ^0.6.0

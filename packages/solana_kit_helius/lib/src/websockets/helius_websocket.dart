@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
+import 'package:solana_kit_helius/src/internal/redact_url.dart';
+import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart'
+    show validateWebSocketUrl;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 /// WebSocket client for Helius real-time subscriptions.
@@ -11,7 +14,11 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// [Stream] of notification payloads.
 class HeliusWebSocket {
   /// Creates a new [HeliusWebSocket] with the given WebSocket [url].
-  HeliusWebSocket({required this.url, this.allowInsecureWs = false});
+  HeliusWebSocket({
+    required this.url,
+    this.allowInsecureWs = false,
+    this.allowPrivateHosts = false,
+  });
 
   /// The Helius WebSocket endpoint URL.
   final String url;
@@ -21,6 +28,12 @@ class HeliusWebSocket {
   /// Defaults to `false`, which enforces `wss://` URLs. Set to `true` only
   /// for local development and controlled tests.
   final bool allowInsecureWs;
+
+  /// Whether to allow localhost and private or non-public IP literals.
+  ///
+  /// Defaults to `false`. Enable this only for controlled local development.
+  /// Hostnames are not DNS-resolved by this best-effort SSRF protection.
+  final bool allowPrivateHosts;
 
   WebSocketChannel? _channel;
   // The WebSocket stream subscription is cancelled by close() and _onDone().
@@ -44,6 +57,7 @@ class HeliusWebSocket {
     final uri = _validateAndNormalizeWebSocketUrl(
       url,
       allowInsecureWs: allowInsecureWs,
+      allowPrivateHosts: allowPrivateHosts,
     );
 
     try {
@@ -56,12 +70,12 @@ class HeliusWebSocket {
         onError: _onError,
         onDone: _onDone,
       );
-    } on Object catch (error) {
+    } on Object {
       _channel = null;
       _subscription = null;
       _isConnected = false;
       throw SolanaError(SolanaErrorCode.heliusWebSocketError, {
-        'message': 'Failed to connect to $uri: $error',
+        'message': 'Failed to connect to ${redactUrl(uri.toString())}.',
       });
     }
   }
@@ -259,38 +273,12 @@ String _unsubscribeMethodFor(String? subscribeMethod) {
 Uri _validateAndNormalizeWebSocketUrl(
   String url, {
   required bool allowInsecureWs,
+  required bool allowPrivateHosts,
 }) {
   final parsedUrl = Uri.parse(url);
-  final scheme = parsedUrl.scheme.toLowerCase();
-
-  if (!parsedUrl.isAbsolute || parsedUrl.host.isEmpty) {
-    throw ArgumentError.value(
-      url,
-      'url',
-      'Helius WebSocket URL must be an absolute URL.',
-    );
-  }
-
-  if (scheme == 'wss') {
-    return parsedUrl;
-  }
-
-  if (scheme == 'ws' && allowInsecureWs) {
-    return parsedUrl;
-  }
-
-  if (scheme == 'ws') {
-    throw ArgumentError.value(
-      url,
-      'url',
-      'Insecure WebSocket endpoints are disabled by default. '
-          'Use a wss:// URL or set allowInsecureWs: true for development.',
-    );
-  }
-
-  throw ArgumentError.value(
-    url,
-    'url',
-    "Helius WebSocket URL must use either 'wss' or 'ws'.",
+  return validateWebSocketUrl(
+    parsedUrl,
+    allowInsecureWs: allowInsecureWs,
+    allowPrivateHosts: allowPrivateHosts,
   );
 }

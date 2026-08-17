@@ -58,6 +58,7 @@ HeliusClient createHelius(HeliusConfig config, {http.Client? client}) {
         client: effectiveClient,
       ),
       apiKey: config.apiKey,
+      client: effectiveClient,
     ),
     admin: AdminClient(
       baseUrl: config.adminBaseUrl,

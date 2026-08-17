@@ -53,7 +53,7 @@ void main() {
     });
 
     test('connect rejects insecure ws URLs by default', () async {
-      final ws = HeliusWebSocket(url: 'ws://localhost:1234');
+      final ws = HeliusWebSocket(url: 'ws://example.com:1234');
 
       await expectLater(
         ws.connect(),
@@ -64,6 +64,15 @@ void main() {
             contains('Insecure WebSocket endpoints are disabled by default'),
           ),
         ),
+      );
+    });
+
+    test('connect rejects private IP literals by default', () async {
+      final ws = HeliusWebSocket(url: 'wss://127.0.0.2:1234');
+
+      await expectLater(
+        ws.connect(),
+        throwsA(isA<ArgumentError>()),
       );
     });
 

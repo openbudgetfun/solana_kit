@@ -53,9 +53,24 @@ void main() {
     test('buildPaymentUrl composes host and payment intent id', () {
       expect(buildPaymentUrl('pi_abc'), '$heliusPaymentHost/pay/pi_abc');
       expect(
-        buildPaymentUrl('pi_xyz', hostOverride: 'https://staging.example.com'),
-        'https://staging.example.com/pay/pi_xyz',
+        buildPaymentUrl('pi/a b', hostOverride: 'https://staging.example.com'),
+        'https://staging.example.com/pay/pi%2Fa%20b',
       );
+    });
+
+    test('rejects payment hosts that are not HTTP origins', () {
+      for (final host in [
+        '/relative',
+        'ftp://example.com',
+        'https://user@example.com',
+        'https://example.com?token=secret',
+        'https://example.com#fragment',
+      ]) {
+        expect(
+          () => resolvePaymentHost(override: host),
+          throwsA(isA<ArgumentError>()),
+        );
+      }
     });
   });
 }

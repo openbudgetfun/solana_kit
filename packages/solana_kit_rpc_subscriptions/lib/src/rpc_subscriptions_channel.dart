@@ -11,6 +11,7 @@ class DefaultRpcSubscriptionsChannelConfig {
   const DefaultRpcSubscriptionsChannelConfig({
     required this.url,
     this.allowInsecureWs = false,
+    this.allowPrivateHosts = false,
     this.intervalMs = 5000,
     this.maxSubscriptionsPerChannel = 100,
     this.minChannels = 1,
@@ -24,6 +25,11 @@ class DefaultRpcSubscriptionsChannelConfig {
   ///
   /// Defaults to `false`, which enforces `wss://` URLs.
   final bool allowInsecureWs;
+
+  /// Whether to allow localhost and private or non-public IP literals.
+  ///
+  /// Defaults to `false`. Enable only for controlled local development.
+  final bool allowPrivateHosts;
 
   /// The number of milliseconds to wait since the last message sent or
   /// received over the channel before sending a ping message to keep the
@@ -110,6 +116,7 @@ RpcSubscriptionsChannelCreator _createDefaultRpcSubscriptionsChannelCreatorImpl(
       WebSocketChannelConfig(
         url: Uri.parse(config.url),
         allowInsecureWs: config.allowInsecureWs,
+        allowPrivateHosts: config.allowPrivateHosts,
         sendBufferHighWatermark: config.sendBufferHighWatermark,
         signal: abortSignal,
       ),

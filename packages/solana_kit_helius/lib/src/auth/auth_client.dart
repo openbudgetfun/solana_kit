@@ -1,3 +1,4 @@
+import 'package:http/http.dart' as http;
 import 'package:solana_kit_helius/src/auth/check_balances.dart';
 import 'package:solana_kit_helius/src/auth/create_api_key.dart';
 import 'package:solana_kit_helius/src/auth/create_project.dart';
@@ -14,10 +15,15 @@ import 'package:solana_kit_helius/src/types/auth_types.dart';
 /// Client for Helius Auth API methods.
 class AuthClient {
   /// Creates an AuthClient backed by the given REST client and API key.
-  const AuthClient({required this._restClient, required this._apiKey});
+  const AuthClient({
+    required this._restClient,
+    required this._apiKey,
+    this._client,
+  });
 
   final RestClient _restClient;
   final String _apiKey;
+  final http.Client? _client;
 
   /// Performs a unified signup (v3.0.0). Replaces the legacy agenticSignup.
   ///
@@ -28,6 +34,7 @@ class AuthClient {
     _restClient,
     _apiKey,
     request,
+    httpClient: _client,
   );
 
   /// Performs a wallet signup with signature verification.
