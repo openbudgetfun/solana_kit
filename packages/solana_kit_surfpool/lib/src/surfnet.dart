@@ -41,11 +41,14 @@ class Surfnet {
     required http.Client client,
     required bool closeClientOnStop,
     Process? process,
+    Directory? processWorkingDirectory,
   }) : _payerSecretKey = Uint8List.fromList(payerSecretKey),
        _client = client,
        // ignore: prefer_initializing_formals
        _closeClientOnStop = closeClientOnStop,
        _process = process,
+       // ignore: prefer_initializing_formals
+       _processWorkingDirectory = processWorkingDirectory,
        _exitCodeFuture = process?.exitCode,
        _rpcClient = SurfpoolJsonRpcClient(url: rpcUri, client: client) {
     final exitCodeFuture = _exitCodeFuture;
@@ -100,7 +103,10 @@ class Surfnet {
   /// Starts a CLI-backed Surfnet with [config].
   ///
   /// This mirrors the upstream JS `Surfnet.startWithConfig` shape but uses a
-  /// separate `surfpool start` process instead of native napi bindings.
+  /// separate `surfpool start` process instead of native napi bindings. The
+  /// process runs in a dedicated temporary working directory per instance, so
+  /// multiple Surfnets can run concurrently without racing on the `.surfpool`
+  /// runtime state the CLI creates next to its working directory.
   static Future<Surfnet> startWithConfig(
     SurfnetConfig config, {
     String command = 'surfpool',
@@ -125,10 +131,26 @@ class Surfnet {
       payer: payerInfo.publicKey,
     );
 
+    Directory? processWorkingDirectory;
     final Process process;
     try {
-      process = await Process.start(command, args);
+      // Run each Surfnet in its own working directory so concurrent instances
+      // never race on the shared `.surfpool` runtime state the CLI creates in
+      // its working directory (log files, validator keypairs, ledger, ...).
+      processWorkingDirectory = await Directory.systemTemp.createTemp(
+        'surfpool-instance-',
+      );
+      process = await Process.start(
+        command,
+        args,
+        workingDirectory: processWorkingDirectory.path,
+      );
     } on Object catch (error) {
+      try {
+        await processWorkingDirectory?.delete(recursive: true);
+      } on Object {
+        // Best-effort cleanup of the abandoned temp directory.
+      }
       throw SurfnetProcessException(
         'Failed to start `$command start`',
         cause: error,
@@ -145,6 +167,7 @@ class Surfnet {
       client: effectiveClient,
       closeClientOnStop: client == null,
       process: process,
+      processWorkingDirectory: processWorkingDirectory,
     ).._captureProcessOutput(process);
 
     try {
@@ -191,6 +214,14 @@ class Surfnet {
   final http.Client _client;
   final bool _closeClientOnStop;
   final Process? _process;
+
+  /// Working directory the CLI-backed process runs in, when one was spawned.
+  ///
+  /// Each instance gets its own directory so that concurrent Surfnets never
+  /// race on the shared `.surfpool` runtime state the CLI writes next to its
+  /// working directory. Removed when this instance is stopped.
+  final Directory? _processWorkingDirectory;
+
   final Future<int>? _exitCodeFuture;
   final SurfpoolJsonRpcClient _rpcClient;
   int? _exitCode;
@@ -229,6 +260,16 @@ class Surfnet {
 
     await _stdoutSubscription?.cancel();
     await _stderrSubscription?.cancel();
+
+    final workingDirectory = _processWorkingDirectory;
+    if (workingDirectory != null) {
+      try {
+        await workingDirectory.delete(recursive: true);
+      } on Object {
+        // Best-effort cleanup of the Surfnet runtime state; the OS will
+        // eventually reap the temp directory if deletion fails here.
+      }
+    }
 
     if (_closeClientOnStop) {
       _client.close();
