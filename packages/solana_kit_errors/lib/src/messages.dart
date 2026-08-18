@@ -66,6 +66,8 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'Invalid pattern match bytes. The provided byte array does not match any of the specified patterns.',
   SolanaErrorCode.codecsStringContainsNullCharacters:
       r'Decoded $encoding string contains null characters. Use compatibility stripping or preserve mode explicitly if this payload is expected.',
+  SolanaErrorCode.codecsInvalidBoolean:
+      r'Invalid boolean value. Expected 0 or 1, got $value.',
   SolanaErrorCode.fixedPointsArithmeticOverflow:
       r'Fixed-point operation `$operation` of kind `$kind` overflowed. Expected a raw bigint in [$min, $max], got $result.',
   SolanaErrorCode.fixedPointsDivisionByZero:

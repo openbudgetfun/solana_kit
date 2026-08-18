@@ -1,5 +1,6 @@
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 /// Configuration options for boolean codecs.
 ///
@@ -29,11 +30,17 @@ Encoder<bool> getBooleanEncoder({Encoder<num>? size}) {
 /// Returns a decoder for boolean values.
 ///
 /// This decoder reads a number and interprets `1` as `true` and `0` as
-/// `false`.
+/// `false`. Any other value is invalid and throws a [SolanaError] with code
+/// [SolanaErrorCode.codecsInvalidBoolean].
 Decoder<bool> getBooleanDecoder({Decoder<num>? size}) {
   final numberDecoder = size ?? getU8Decoder();
   return transformDecoder<num, bool>(numberDecoder, (value, _, _) {
-    return value.toInt() == 1;
+    if (value == 0) return false;
+    if (value == 1) return true;
+
+    throw SolanaError(SolanaErrorCode.codecsInvalidBoolean, {
+      'value': value,
+    });
   });
 }
 

@@ -219,6 +219,8 @@ boolCodec.decode(Uint8List.fromList([1])); // true
 boolCodec.decode(Uint8List.fromList([0])); // false
 ```
 
+Decoding rejects every other numeric value with a typed `SolanaError`; this keeps optional-value prefixes and boolean fields canonical when reading untrusted account data.
+
 You can customize the underlying number codec:
 
 ```dart
