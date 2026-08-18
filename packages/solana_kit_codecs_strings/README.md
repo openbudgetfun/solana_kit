@@ -62,7 +62,7 @@ void main() {
 
 These codecs are especially useful for addresses, signatures, blockhashes, and other values that appear as base-encoded strings at API boundaries.
 
-For UTF-8 specifically, `getUtf8Codec()` preserves `@solana/kit` compatibility by stripping decoded null characters. Prefer `getStrictUtf8Codec()` or `getUtf8Codec(nullCharacterMode: Utf8NullCharacterMode.reject)` when silent null-byte stripping would be risky.
+For UTF-8 specifically, `getUtf8Codec()` preserves embedded null characters and rejects malformed byte sequences, so decoded values retain their exact text semantics.
 
 <!-- {/docsStringCodecSection} -->
 
@@ -167,43 +167,24 @@ final emoji = codec.encode('\u{1F680}'); // Rocket emoji
 // emoji.length == 4 (UTF-8 encoding of a 4-byte character)
 ```
 
-#### Compatibility vs strict UTF-8 decoding
+#### UTF-8 decoding semantics
 
-<!-- {=compatibilityNoteCalloutSection|replace:"COMPATIBILITY_BEHAVIOR_TOKEN":"`getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters after UTF-8 decode."|replace:"PREFERRED_BEHAVIOR_TOKEN":"Prefer `getStrictUtf8Codec()` or `Utf8NullCharacterMode.reject` in new Dart code when silent data loss would be unsafe, and use `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly."} -->
-
-> **Compatibility note**
->
-> `getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters after UTF-8 decode.
->
-> Prefer `getStrictUtf8Codec()` or `Utf8NullCharacterMode.reject` in new Dart code when silent data loss would be unsafe, and use `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly.
-
-<!-- {/compatibilityNoteCalloutSection} -->
-
-`getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters.
-
-Prefer stricter Dart-first behavior when silent data loss would be risky:
+`getUtf8Codec()` preserves embedded null characters and rejects malformed UTF-8:
 
 ```dart
 import 'dart:typed_data';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 
-final strictUtf8 = getStrictUtf8Codec();
-final preservedUtf8 = getUtf8Codec(
-  nullCharacterMode: Utf8NullCharacterMode.preserve,
-);
+final utf8 = getUtf8Codec();
 
-final value = preservedUtf8.decode(Uint8List.fromList([65, 0, 66]));
+final value = utf8.decode(Uint8List.fromList([65, 0, 66]));
 // value == 'A\u0000B'
 
-strictUtf8.decode(Uint8List.fromList([65, 0, 66]));
-// throws SolanaErrorCode.codecsStringContainsNullCharacters
+utf8.decode(Uint8List.fromList([0xc3, 0x28]));
+// throws FormatException
 ```
 
-Use:
-
-- `getUtf8Codec()` for compatibility-preserving null stripping.
-- `getStrictUtf8Codec()` to reject decoded null characters.
-- `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly.
+Use `removeNullCharacters()` only when a caller explicitly wants to discard null padding after decoding.
 
 ### Custom base-X encoding
 
@@ -284,11 +265,9 @@ final fixedUtf8 = fixCodecSize(getUtf8Codec(), 32);
 
 ### UTF-8
 
-| Function                                                   | Description                                              |
-| ---------------------------------------------------------- | -------------------------------------------------------- |
-| `getUtf8Encoder()` / `getUtf8Decoder()` / `getUtf8Codec()` | UTF-8 string encoding with compatibility mode            |
-| `getStrictUtf8Decoder()` / `getStrictUtf8Codec()`          | UTF-8 decoding that rejects null characters              |
-| `Utf8NullCharacterMode`                                    | Select compatibility strip, preserve, or reject behavior |
+| Function                                                   | Description                                                    |
+| ---------------------------------------------------------- | -------------------------------------------------------------- |
+| `getUtf8Encoder()` / `getUtf8Decoder()` / `getUtf8Codec()` | UTF-8 encoding that preserves nulls and rejects malformed data |
 
 ### Generic base-X
 

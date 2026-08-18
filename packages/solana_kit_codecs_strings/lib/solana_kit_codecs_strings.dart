@@ -24,17 +24,17 @@
 ///
 /// These codecs are especially useful for addresses, signatures, blockhashes, and other values that appear as base-encoded strings at API boundaries.
 ///
-/// For UTF-8 specifically, `getUtf8Codec()` preserves `@solana/kit` compatibility by stripping decoded null characters. Prefer `getStrictUtf8Codec()` or `getUtf8Codec(nullCharacterMode: Utf8NullCharacterMode.reject)` when silent null-byte stripping would be risky.
+/// For UTF-8 specifically, `getUtf8Codec()` preserves embedded null characters and rejects malformed byte sequences, so decoded values retain their exact text semantics.
 ///
 /// <!-- {/docsStringCodecSection} -->
 ///
-/// <!-- {=compatibilityNoteCalloutSection|replace:"COMPATIBILITY_BEHAVIOR_TOKEN":"`getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters after UTF-8 decode."|replace:"PREFERRED_BEHAVIOR_TOKEN":"Prefer `getStrictUtf8Codec()` or `Utf8NullCharacterMode.reject` in new Dart code when silent data loss would be unsafe, and use `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly."} -->
+/// <!-- {=compatibilityNoteCalloutSection|replace:"COMPATIBILITY_BEHAVIOR_TOKEN":"`getUtf8Codec()` preserves embedded null characters after UTF-8 decode."|replace:"PREFERRED_BEHAVIOR_TOKEN":"Malformed UTF-8 is rejected rather than repaired or replaced, so callers can distinguish invalid bytes from valid text."} -->
 ///
-/// > **Compatibility note**
+/// > **UTF-8 data integrity**
 /// >
-/// > `getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters after UTF-8 decode.
+/// > `getUtf8Codec()` preserves embedded null characters after UTF-8 decode.
 /// >
-/// > Prefer `getStrictUtf8Codec()` or `Utf8NullCharacterMode.reject` in new Dart code when silent data loss would be unsafe, and use `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly.
+/// > Malformed UTF-8 is rejected rather than repaired or replaced, so callers can distinguish invalid bytes from valid text.
 ///
 /// <!-- {/compatibilityNoteCalloutSection} -->
 library;

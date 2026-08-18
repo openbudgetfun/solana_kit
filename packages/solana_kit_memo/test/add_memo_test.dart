@@ -61,6 +61,22 @@ void main() {
       expect(encoded, equals(Uint8List.fromList(utf8.encode(original.memo))));
     });
 
+    test('generated runtime preserves embedded null characters', () {
+      const original = AddMemoInstructionData(memo: 'memo\u0000text');
+      final codec = getAddMemoInstructionDataCodec();
+
+      expect(codec.decode(codec.encode(original)).memo, equals(original.memo));
+    });
+
+    test('generated runtime rejects malformed UTF-8', () {
+      expect(
+        () => getAddMemoInstructionDataDecoder().decode(
+          Uint8List.fromList([0xc3, 0x28]),
+        ),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
     test('parseAddMemoInstruction decodes instruction data', () {
       final instruction = getAddMemoInstruction(
         memo: 'parsed memo',
