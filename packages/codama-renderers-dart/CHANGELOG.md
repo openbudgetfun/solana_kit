@@ -117,3 +117,106 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #195](https://g
 Publish the replacement renderer release as `0.4.3` because `0.4.2` was published to npm before the previous multi-package release was aborted. The `0.4.2` npm version is immutable; no additional renderer behavior changes are introduced by this recovery changeset.
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [`e3148f0`](https://github.com/openbudgetfun/solana_kit/commit/e3148f01352fb39d6982317c4725b2eb36af714d)
+
+## codama-renderers-dart [0.5.0](https://github.com/openbudgetfun/solana_kit/releases/tag/codama-renderers-dart/v0.5.0) (2026-08-18)
+
+### 💥 Breaking Change
+
+#### Generate program-level instruction identification and parsing helpers
+
+Generate typed program instruction identifiers and parsers from instruction discriminators, and expose the generated helpers in the Compute Budget program client.
+
+```dart
+// Before: hand-rolled discriminator matching
+if (data[0] == 0x02) {
+  // setComputeUnitLimit
+}
+
+// After: generated identification and parsing helpers
+final instruction = identifyComputeBudgetInstruction(data);
+final parsed = parseComputeBudgetInstruction(data);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #204](https://github.com/openbudgetfun/solana_kit/pull/204)
+
+#### Render matching collection size-prefix codecs
+
+Generate collection size prefixes with direction-specific number codecs: encoder manifests now use the matching number encoder and decoder manifests use the matching decoder. This fixes generated arrays, maps, and sets that use wide `BigInt` prefixes such as `u64`.
+
+Reject unresolved logical import keys instead of rendering invalid Dart URIs, support self-referential and digit-containing defined types, and prefix data-enum variants with their parent type to avoid ambiguous exports.
+
+```dart
+// Before: wide size prefixes were substituted with u32
+final encoder = getArrayEncoder(getU8Encoder(), getU32Encoder());
+
+// After: direction-specific number codecs
+final encoder = getArrayEncoder(getU8Encoder(), getU64Encoder());
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #204](https://github.com/openbudgetfun/solana_kit/pull/204)
+
+### 🐛 Fixed
+
+#### Harden credentials, keys, transports, and untrusted RPC decoding
+
+Align Helius signup and project provisioning with the v3 bearer-JWT API, generate valid Ed25519 authentication keypairs, validate payment inputs, and redact WebSocket credentials.
+
+Dispose or clear SDK-owned key material deterministically, create key files exclusively with safe POSIX permissions, and preserve caller ownership of Surfpool signers.
+
+Reject malformed RPC transaction and inner-instruction data instead of silently dropping it, expand private WebSocket literal filtering, and update JavaScript dependency overrides to releases without the audited advisories. Make the standalone Codama renderer workspace declare its own build tools and explicitly allow only esbuild's required install script.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #213](https://github.com/openbudgetfun/solana_kit/pull/213) · _Related issues:_ [#159](https://github.com/openbudgetfun/solana_kit/issues/159), [#163](https://github.com/openbudgetfun/solana_kit/issues/163), [#186](https://github.com/openbudgetfun/solana_kit/issues/186), [#198](https://github.com/openbudgetfun/solana_kit/issues/198), [#203](https://github.com/openbudgetfun/solana_kit/issues/203), [#204](https://github.com/openbudgetfun/solana_kit/issues/204), [#205](https://github.com/openbudgetfun/solana_kit/issues/205), [#206](https://github.com/openbudgetfun/solana_kit/issues/206), [#207](https://github.com/openbudgetfun/solana_kit/issues/207), [#208](https://github.com/openbudgetfun/solana_kit/issues/208), [#210](https://github.com/openbudgetfun/solana_kit/issues/210), [#211](https://github.com/openbudgetfun/solana_kit/issues/211), [#34](https://github.com/openbudgetfun/solana_kit/issues/34), [#37](https://github.com/openbudgetfun/solana_kit/issues/37)
+
+#### Kit-plugin style Surfpool client + SDK-based integration tests
+
+##### `solana_kit_surfpool` (minor)
+
+Add `createSurfpoolClient()` / `connectSurfpoolClient()` returning a `SurfpoolClient` wired up like the `@solana/surfpool/kit` plugin for TypeScript:
+
+- `rpc` / `rpcSubscriptions` — Solana Kit RPC and subscriptions clients pointed at the Surfnet.
+- `payer` — the Surfnet's pre-funded `KeyPairSigner` (embedded mode) or a caller-provided funded signer (attach mode).
+- `cheatcodes` — a typed `SurfnetCheatcodes` RPC covering every `surfnet_*` cheatcode with the prefix stripped (`timeTravel`, `pauseClock`, `setAccount`, `writeProgram`, …).
+- `rpcUrl` / `wsUrl` — the Surfnet's HTTP and WebSocket URLs.
+- `airdrop` / `getMinimumBalance` — funding and rent-exemption helpers.
+- `stop()` — idempotent teardown that stops the Surfnet when this client started it.
+
+`createSurfpoolClient` stops the Surfnet if wiring fails, so no orphaned process or ports are left behind. The new API is fully unit-tested with 100% patch coverage.
+
+##### `codama-renderers-dart` (patch)
+
+Fix `visitSizePrefixType` so BigInt-width size prefixes (u64/u128/i64/i128) generate `transformEncoder`/`transformDecoder` wrappers instead of substituting u32. The system program's bincode String length is u64, so the u32 substitution broke on-chain encoding of seed fields.
+
+##### `solana_kit_system` (patch)
+
+Regenerate the system program client with the size-prefix renderer fix; `createAccountWithSeed`, `allocateWithSeed`, `assignWithSeed`, and `transferSolWithSeed` now encode their u64 String-length prefixes correctly.
+
+##### `solana_kit_errors` (patch)
+
+Fix `getSolanaErrorFromTransactionError` to handle `account_index` values returned as `BigInt` by some RPC nodes (e.g. SurfPool), matching the earlier instruction-error-index fix.
+
+##### `solana_kit` (patch)
+
+Convert `test/integration/rpc_basic_test.dart` to start its own Surfpool via the SDK instead of requiring an externally launched validator.
+
+##### `solana_kit_mpl_bubblegum` (patch)
+
+Convert the compressed-NFT integration test to start its own Surfpool via the SDK; add `solana_kit_surfpool` as a dev dependency.
+
+##### `solana_kit_integration_tests` (minor)
+
+Integration tests now start their own Surfpool per test file via the SDK (auto-allocated ports, parallel-safe) instead of requiring an externally launched instance. Adds the gap-coverage tests: loader full deploy, system seed-based instructions, config store (committed `config-v3.0.0.so` artifact), subscriptions on-chain lifecycle, ALT extend/deactivate/close, error paths, token/2022 transfer+burn+setAuthority+closeAccount, stake authorize, and ATA idempotency.
+
+```dart
+// Before: manual Surfnet wiring
+final surfnet = await Surfnet.start();
+final rpc = createSolanaRpc(surfnet.rpcUrl);
+
+// After: kit-plugin style client
+final client = await createSurfpoolClient();
+final rpc = client.rpc;
+final payer = client.payer;
+await client.cheatcodes.timeTravel(...);
+await client.stop();
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #208](https://github.com/openbudgetfun/solana_kit/pull/208)

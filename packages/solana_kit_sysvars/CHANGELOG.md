@@ -84,3 +84,13 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #188](https://g
 Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #192](https://github.com/openbudgetfun/solana_kit/pull/192)
+
+## solana_kit_sysvars [0.4.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_sysvars/v0.4.2) (2026-08-18)
+
+### 📖 Documentation
+
+#### Reformat package docs
+
+Docs have been reformatted to remove line wrapping.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #212](https://github.com/openbudgetfun/solana_kit/pull/212)

@@ -138,3 +138,53 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #188](https://g
 Updated package README website badges to link directly to each package's docs catalog entry and added missing package entries to the documentation website catalog/index.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #192](https://github.com/openbudgetfun/solana_kit/pull/192)
+
+## solana_kit_helius [0.5.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_helius/v0.5.0) (2026-08-18)
+
+### 💥 Breaking Change
+
+#### Helius SDK v3.0.0 auth/payment port
+
+Port Helius SDK v3.0.0 auth/payment API surface
+
+- **Added** `signup()` — unified Phase 1 signup replacing the legacy `agenticSignup`. Supports both secret-key-authenticated and pre-authenticated flows. Returns discriminated `SignupResult` (`already_subscribed`, `upgrade_required`, or `payment_required`).
+- **Added** `SignupRequest` type with `secretKey()` and `preauthenticated()` constructors, replacing `AgenticSignupRequest`/`AgenticSignupResponse`.
+- **Added** `SignupResult` sealed class with `AlreadySubscribedResult`, `UpgradeRequiredResult`, and `PaymentRequiredResult` variants.
+- **Added** `SignupEndpoints` type for mainnet/devnet RPC URLs.
+- **Added** `constants.dart` — v3.0.0 constants: `paymentHost`, `treasury`, `usdcMint`, `memoProgramId`, polling timeouts, `agentPlanId`, etc.
+- **Added** `signup_helpers.dart` — `buildEndpoints()` helper.
+- **Verified** existing checkout functions (`createPayment`, `getPaymentStatus`, `pollCheckoutCompletion`) match upstream v3.0.0 semantics.
+- **Verified** `getAddress`, `loadKeypair`, `getHttpStatus` match upstream v3.0.0.
+- **Removed** legacy `agenticSignup` method and `agentic_signup.dart` (upstream v3.0.0 removed it; `signup` is the replacement).
+
+```dart
+// Before
+final result = await auth.agenticSignup(secretKey: keypair);
+
+// After
+final result = await auth.signup(
+  SignupRequest.secretKey(secretKey: keypair, plan: 'agent'),
+);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #207](https://github.com/openbudgetfun/solana_kit/pull/207)
+
+### 🐛 Fixed
+
+#### Harden credentials, keys, transports, and untrusted RPC decoding
+
+Align Helius signup and project provisioning with the v3 bearer-JWT API, generate valid Ed25519 authentication keypairs, validate payment inputs, and redact WebSocket credentials.
+
+Dispose or clear SDK-owned key material deterministically, create key files exclusively with safe POSIX permissions, and preserve caller ownership of Surfpool signers.
+
+Reject malformed RPC transaction and inner-instruction data instead of silently dropping it, expand private WebSocket literal filtering, and update JavaScript dependency overrides to releases without the audited advisories. Make the standalone Codama renderer workspace declare its own build tools and explicitly allow only esbuild's required install script.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #213](https://github.com/openbudgetfun/solana_kit/pull/213) · _Related issues:_ [#159](https://github.com/openbudgetfun/solana_kit/issues/159), [#163](https://github.com/openbudgetfun/solana_kit/issues/163), [#186](https://github.com/openbudgetfun/solana_kit/issues/186), [#198](https://github.com/openbudgetfun/solana_kit/issues/198), [#203](https://github.com/openbudgetfun/solana_kit/issues/203), [#204](https://github.com/openbudgetfun/solana_kit/issues/204), [#205](https://github.com/openbudgetfun/solana_kit/issues/205), [#206](https://github.com/openbudgetfun/solana_kit/issues/206), [#207](https://github.com/openbudgetfun/solana_kit/issues/207), [#208](https://github.com/openbudgetfun/solana_kit/issues/208), [#210](https://github.com/openbudgetfun/solana_kit/issues/210), [#211](https://github.com/openbudgetfun/solana_kit/issues/211), [#34](https://github.com/openbudgetfun/solana_kit/issues/34), [#37](https://github.com/openbudgetfun/solana_kit/issues/37)
+
+### 📖 Documentation
+
+#### Reformat package docs
+
+Docs have been reformatted to remove line wrapping.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #212](https://github.com/openbudgetfun/solana_kit/pull/212)

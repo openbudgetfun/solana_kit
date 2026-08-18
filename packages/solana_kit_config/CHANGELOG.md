@@ -65,6 +65,16 @@ Updated package README website badges to link directly to each package's docs ca
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #192](https://github.com/openbudgetfun/solana_kit/pull/192)
 
+## solana_kit_config [0.1.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_config/v0.1.2) (2026-08-18)
+
+### 📖 Documentation
+
+#### Reformat package docs
+
+Docs have been reformatted to remove line wrapping.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #212](https://github.com/openbudgetfun/solana_kit/pull/212)
+
 ## 0.0.0
 
 Placeholder publication.

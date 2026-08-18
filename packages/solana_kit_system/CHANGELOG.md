@@ -122,3 +122,91 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #192](https://g
 Apply formatting-only changes discovered while adding the GitHub Actions workflow lint gate.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #185](https://github.com/openbudgetfun/solana_kit/pull/185)
+
+## solana_kit_system [0.6.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_system/v0.6.0) (2026-08-18)
+
+### 💥 Breaking Change
+
+#### Regenerated program packages from upstream v7 IDLs
+
+Regenerated all 8 generated program packages from their latest upstream Codama IDLs:
+
+- solana_kit_system: js@v0.12.2 → v0.13.0
+- solana_kit_token: js@v0.14.0 → v0.15.0
+- solana_kit_token_2022: js@v0.12.0 → v0.14.1
+- solana_kit_address_lookup_table: js@v0.12.1 → v0.13.0
+- solana_kit_memo: js@v0.11.2 → v0.12.0
+- solana_kit_compute_budget: js@v0.16.0 → v0.17.0
+- solana_kit_stake: js@v0.7.2 → v0.8.0; applied the upstream Stake Codama preprocessing before rendering so generated defined-type imports resolve to Dart files
+- solana_kit_loader: loader-v3 js@v0.4.0 → v0.5.0; migrated planning helpers to the generated v0.5 API and retained the handwritten Loader v3 account codecs and Loader v4 client surface
+
+Generated using `node scripts/generate_program_packages.mjs` — a new generator script that runs the Codama renderer against upstream IDLs.
+
+```dart
+// Generated clients now match newer upstream IDLs, e.g. the system program:
+final instruction = getCreateAccountInstruction(
+  payer: payer.address,
+  newAccount: newAccount.address,
+  lamports: lamports,
+  space: space,
+  owner: owner,
+);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #204](https://github.com/openbudgetfun/solana_kit/pull/204)
+
+### 🐛 Fixed
+
+#### Kit-plugin style Surfpool client + SDK-based integration tests
+
+##### `solana_kit_surfpool` (minor)
+
+Add `createSurfpoolClient()` / `connectSurfpoolClient()` returning a `SurfpoolClient` wired up like the `@solana/surfpool/kit` plugin for TypeScript:
+
+- `rpc` / `rpcSubscriptions` — Solana Kit RPC and subscriptions clients pointed at the Surfnet.
+- `payer` — the Surfnet's pre-funded `KeyPairSigner` (embedded mode) or a caller-provided funded signer (attach mode).
+- `cheatcodes` — a typed `SurfnetCheatcodes` RPC covering every `surfnet_*` cheatcode with the prefix stripped (`timeTravel`, `pauseClock`, `setAccount`, `writeProgram`, …).
+- `rpcUrl` / `wsUrl` — the Surfnet's HTTP and WebSocket URLs.
+- `airdrop` / `getMinimumBalance` — funding and rent-exemption helpers.
+- `stop()` — idempotent teardown that stops the Surfnet when this client started it.
+
+`createSurfpoolClient` stops the Surfnet if wiring fails, so no orphaned process or ports are left behind. The new API is fully unit-tested with 100% patch coverage.
+
+##### `codama-renderers-dart` (patch)
+
+Fix `visitSizePrefixType` so BigInt-width size prefixes (u64/u128/i64/i128) generate `transformEncoder`/`transformDecoder` wrappers instead of substituting u32. The system program's bincode String length is u64, so the u32 substitution broke on-chain encoding of seed fields.
+
+##### `solana_kit_system` (patch)
+
+Regenerate the system program client with the size-prefix renderer fix; `createAccountWithSeed`, `allocateWithSeed`, `assignWithSeed`, and `transferSolWithSeed` now encode their u64 String-length prefixes correctly.
+
+##### `solana_kit_errors` (patch)
+
+Fix `getSolanaErrorFromTransactionError` to handle `account_index` values returned as `BigInt` by some RPC nodes (e.g. SurfPool), matching the earlier instruction-error-index fix.
+
+##### `solana_kit` (patch)
+
+Convert `test/integration/rpc_basic_test.dart` to start its own Surfpool via the SDK instead of requiring an externally launched validator.
+
+##### `solana_kit_mpl_bubblegum` (patch)
+
+Convert the compressed-NFT integration test to start its own Surfpool via the SDK; add `solana_kit_surfpool` as a dev dependency.
+
+##### `solana_kit_integration_tests` (minor)
+
+Integration tests now start their own Surfpool per test file via the SDK (auto-allocated ports, parallel-safe) instead of requiring an externally launched instance. Adds the gap-coverage tests: loader full deploy, system seed-based instructions, config store (committed `config-v3.0.0.so` artifact), subscriptions on-chain lifecycle, ALT extend/deactivate/close, error paths, token/2022 transfer+burn+setAuthority+closeAccount, stake authorize, and ATA idempotency.
+
+```dart
+// Before: manual Surfnet wiring
+final surfnet = await Surfnet.start();
+final rpc = createSolanaRpc(surfnet.rpcUrl);
+
+// After: kit-plugin style client
+final client = await createSurfpoolClient();
+final rpc = client.rpc;
+final payer = client.payer;
+await client.cheatcodes.timeTravel(...);
+await client.stop();
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #208](https://github.com/openbudgetfun/solana_kit/pull/208)

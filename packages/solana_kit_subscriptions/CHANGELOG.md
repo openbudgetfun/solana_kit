@@ -78,6 +78,24 @@ Updated package README website badges to link directly to each package's docs ca
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #192](https://github.com/openbudgetfun/solana_kit/pull/192)
 
+## solana_kit_subscriptions [0.1.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_subscriptions/v0.1.1) (2026-08-18)
+
+### 🚀 Feature
+
+#### Regenerate solana_kit_subscriptions from the v0.5.0 IDL
+
+Regenerated `solana_kit_subscriptions` from the `solana-foundation/subscriptions` `ts-client-v0.5.0` Codama IDL, bringing the generated Dart surface in sync with the pinned reference (`ts-client-v0.4.0-rc.2` → `ts-client-v0.5.0`).
+
+Notable additions and changes:
+
+- New `cancelSubscriptionNow` instruction (discriminator 17) with `CancelSubscriptionNowData` (`expectedCurrentPeriodStartTs`).
+- `resumeSubscription` now takes a required `resumeData: ResumeData` struct (`expectedExpiresAtTs`).
+- `UpdatePlanData` gained four required fields: `expectedCreatedAt`, `expectedEndTs`, `expectedPullers`, and `expectedMetadataUri`.
+- `getCreatePlanInstruction` accepts an optional `payer` account.
+- Generated program-level instruction identification and parsing helpers (`SubscriptionsInstruction` enum, `identifySubscriptionsInstruction`, `parseSubscriptionsInstruction`) and new error codes.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #204](https://github.com/openbudgetfun/solana_kit/pull/204)
+
 ## 0.0.0
 
 Placeholder publication.
