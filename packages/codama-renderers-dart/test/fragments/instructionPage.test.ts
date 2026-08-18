@@ -126,18 +126,23 @@ describe("getInstructionPageFragment", () => {
   });
 
   it("uses program address placeholders for optional accounts by default", () => {
-    const node = instructionNode({
-      name: "myInstruction",
-      accounts: [
-        instructionAccountNode({
-          name: "optionalAccount",
-          isSigner: false,
-          isWritable: false,
-          isOptional: true,
-        }),
-      ],
-      arguments: [],
-    });
+    const node = {
+      ...instructionNode({
+        name: "myInstruction",
+        accounts: [
+          instructionAccountNode({
+            name: "optionalAccount",
+            isSigner: false,
+            isWritable: false,
+            isOptional: true,
+          }),
+        ],
+        arguments: [],
+      }),
+      // The node helper inserts `programId`, so explicitly model serialized
+      // nodes from schemas that omit the optional account strategy.
+      optionalAccountStrategy: undefined,
+    };
     const frag = getInstructionPageFragment(node, createScope());
 
     expect(frag.content).toContain(
