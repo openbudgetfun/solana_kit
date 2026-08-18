@@ -1,5 +1,7 @@
 import {
   accountNode,
+  bytesTypeNode,
+  bytesValueNode,
   constantDiscriminatorNode,
   constantValueNode,
   fieldDiscriminatorNode,
@@ -409,6 +411,26 @@ describe("getAccountPageFragment", () => {
     const frag = getAccountPageFragment(node, createScope());
 
     expect(frag.content).toContain("const MarkerState() : discriminator = 7;");
+  });
+
+  it("omits const for an account with a runtime-only default", () => {
+    const node = accountNode({
+      name: "byteState",
+      data: structTypeNode([
+        structFieldTypeNode({
+          name: "prefix",
+          type: bytesTypeNode(),
+          defaultValue: bytesValueNode("base16", "aabb"),
+          defaultValueStrategy: "omitted",
+        }),
+      ]),
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain(
+      "ByteState() : prefix = Uint8List.fromList([0xaa, 0xbb]);",
+    );
+    expect(frag.content).not.toContain("const ByteState()");
   });
 
   it("decodes nullable account fields without a non-null assertion", () => {
