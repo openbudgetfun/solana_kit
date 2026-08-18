@@ -5,22 +5,37 @@ import 'package:solana_kit_codecs_core/src/bytes.dart';
 import 'package:solana_kit_codecs_core/src/codec.dart';
 import 'package:solana_kit_codecs_core/src/codec_utils.dart';
 import 'package:solana_kit_codecs_core/src/combine_codec.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 /// Creates a fixed-size encoder from a given [encoder].
 ///
 /// The resulting encoder always produces exactly [fixedBytes] bytes.
-/// If the original encoded value is larger, it is truncated.
 /// If smaller, it is padded with trailing zeroes.
+///
+/// By default, values larger than [fixedBytes] are truncated for compatibility
+/// with `@solana/codecs-core`. Set [allowTruncation] to `false` for
+/// fixed-capacity fields where an oversized value must be rejected instead.
+/// The error is thrown before any bytes are written to the destination buffer.
 FixedSizeEncoder<TFrom> fixEncoderSize<TFrom>(
   Encoder<TFrom> encoder,
-  int fixedBytes,
-) {
+  int fixedBytes, {
+  bool allowTruncation = true,
+}) {
   return FixedSizeEncoder<TFrom>(
     fixedSize: fixedBytes,
     write: (value, bytes, offset) {
       // Use encode() to contain the encoder within its own bounds.
       final variableByteArray = encoder.encode(value);
       final Uint8List fixedByteArray;
+
+      if (variableByteArray.length > fixedBytes && !allowTruncation) {
+        throw SolanaError(SolanaErrorCode.codecsInvalidByteLength, {
+          'codecDescription': 'fixEncoderSize',
+          'expected': fixedBytes,
+          'bytesLength': variableByteArray.length,
+        });
+      }
+
       if (variableByteArray.length > fixedBytes) {
         fixedByteArray = variableByteArray.sublist(0, fixedBytes);
       } else {
@@ -70,12 +85,19 @@ FixedSizeDecoder<TTo> fixDecoderSize<TTo>(
 /// Creates a fixed-size codec from a given [codec].
 ///
 /// Both encoding and decoding operate on exactly [fixedBytes] bytes.
+/// Set [allowTruncation] to `false` to reject encoded values larger than the
+/// fixed capacity instead of silently truncating them.
 FixedSizeCodec<TFrom, TTo> fixCodecSize<TFrom, TTo>(
   Codec<TFrom, TTo> codec,
-  int fixedBytes,
-) {
+  int fixedBytes, {
+  bool allowTruncation = true,
+}) {
   return combineCodec(
-        fixEncoderSize(encoderFromCodec(codec), fixedBytes),
+        fixEncoderSize(
+          encoderFromCodec(codec),
+          fixedBytes,
+          allowTruncation: allowTruncation,
+        ),
         fixDecoderSize(decoderFromCodec(codec), fixedBytes),
       )
       as FixedSizeCodec<TFrom, TTo>;

@@ -83,7 +83,10 @@ const int stakePoolSize = 138;
 
 Encoder<StakePool> getStakePoolEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    (
+      'discriminator',
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false),
+    ),
     ('admin', getAddressEncoder()),
     ('rewardMint', getAddressEncoder()),
     ('stakeMint', getAddressEncoder()),

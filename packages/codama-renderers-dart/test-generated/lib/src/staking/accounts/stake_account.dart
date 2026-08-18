@@ -67,7 +67,10 @@ const int stakeAccountSize = 97;
 
 Encoder<StakeAccount> getStakeAccountEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    (
+      'discriminator',
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false),
+    ),
     ('owner', getAddressEncoder()),
     ('pool', getAddressEncoder()),
     ('stakedAmount', getU64Encoder()),

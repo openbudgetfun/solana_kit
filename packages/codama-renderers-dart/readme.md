@@ -6,6 +6,8 @@ A [Codama](https://github.com/codama-idl/codama) renderer that generates Dart co
 
 Given a Codama IDL (Interface Description Language) describing a Solana program, this renderer produces a complete Dart package with typed account classes, instruction builders, codec functions, error definitions, PDA helpers, and barrel exports.
 
+Fixed-size Codama types generate non-truncating encoders. Values within the declared byte capacity are zero-padded, while over-capacity values throw before any malformed bytes can be emitted. For UTF-8 strings, capacity is measured in encoded bytes rather than Dart code units.
+
 ## Installation
 
 ```bash

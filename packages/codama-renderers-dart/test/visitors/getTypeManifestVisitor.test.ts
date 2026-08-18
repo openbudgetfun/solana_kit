@@ -281,6 +281,19 @@ describe("getTypeManifestVisitor", () => {
       expect(manifest.decoder.content).toContain("getArrayDecoder");
     });
 
+    it("narrows numeric item encoders to the generated Dart item type", () => {
+      const node = arrayTypeNode(
+        numberTypeNode("u8"),
+        remainderCountNode(),
+      );
+      const manifest = visit(node, createVisitor());
+
+      expect(manifest.encoder.content).toContain("getArrayEncoder<int>");
+      expect(manifest.encoder.content).toContain(
+        "transformEncoder(getU8Encoder(), (int value) => value)",
+      );
+    });
+
     it("includes FixedArraySize for fixed count", () => {
       const node = arrayTypeNode(numberTypeNode("u8"), fixedCountNode(5));
       const manifest = visit(node, createVisitor());
@@ -438,11 +451,12 @@ describe("getTypeManifestVisitor", () => {
   });
 
   describe("fixedSizeTypeNode", () => {
-    it("wraps encoder with fixEncoderSize", () => {
+    it("wraps encoder with a non-truncating fixed size", () => {
       const node = fixedSizeTypeNode(stringTypeNode("utf8"), 32);
       const manifest = visit(node, createVisitor());
       expect(manifest.encoder.content).toContain("fixEncoderSize");
       expect(manifest.encoder.content).toContain("32");
+      expect(manifest.encoder.content).toContain("allowTruncation: false");
     });
 
     it("wraps decoder with fixDecoderSize", () => {
@@ -471,6 +485,7 @@ describe("getTypeManifestVisitor", () => {
       const manifest = visit(node, createVisitor());
       expect(manifest.type.content).toBe("Uint8List");
       expect(manifest.encoder.content).toContain("fixEncoderSize");
+      expect(manifest.encoder.content).toContain("allowTruncation: false");
       expect(manifest.encoder.content).toContain("64");
     });
   });

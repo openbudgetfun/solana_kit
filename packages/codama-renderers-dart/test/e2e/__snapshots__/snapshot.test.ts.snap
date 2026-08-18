@@ -75,7 +75,7 @@ const int stakeAccountSize = 97;
 
 Encoder<StakeAccount> getStakeAccountEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false)),
     ('owner', getAddressEncoder()),
     ('pool', getAddressEncoder()),
     ('stakedAmount', getU64Encoder()),
@@ -210,7 +210,7 @@ const int stakePoolSize = 138;
 
 Encoder<StakePool> getStakePoolEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false)),
     ('admin', getAddressEncoder()),
     ('rewardMint', getAddressEncoder()),
     ('stakeMint', getAddressEncoder()),
@@ -1123,7 +1123,7 @@ const int depositRecordSize = 88;
 
 Encoder<DepositRecord> getDepositRecordEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false)),
     ('depositor', getAddressEncoder()),
     ('vault', getAddressEncoder()),
     ('amount', getU64Encoder()),
@@ -1243,7 +1243,7 @@ const int vaultSize = 98;
 
 Encoder<Vault> getVaultEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    ('discriminator', fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false)),
     ('authority', getAddressEncoder()),
     ('tokenMint', getAddressEncoder()),
     ('totalDeposited', getU64Encoder()),
