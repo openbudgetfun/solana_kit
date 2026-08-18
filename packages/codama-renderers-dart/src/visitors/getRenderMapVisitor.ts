@@ -86,7 +86,7 @@ export function getRenderMapVisitor(
         visitRoot(node: RootNode, { self }) {
           const programMaps = [
             visit(node.program, self),
-            ...node.additionalPrograms.map((p) => visit(p, self)),
+            ...(node.additionalPrograms ?? []).map((p) => visit(p, self)),
           ];
 
           const mergedProgramMap = mergeRenderMaps(programMaps);

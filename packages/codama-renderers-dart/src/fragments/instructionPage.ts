@@ -40,7 +40,7 @@ export function getInstructionPageFragment(
   const dataClassName = `${typeName}InstructionData`;
 
   // Visit each arg type once and collect manifests for reuse
-  const allArgManifests = allArgs.map((arg) => ({
+  const allArgManifests = (node.arguments ?? []).map((arg) => ({
     arg,
     manifest: visit(arg.type, scope.typeManifestVisitor),
   }));

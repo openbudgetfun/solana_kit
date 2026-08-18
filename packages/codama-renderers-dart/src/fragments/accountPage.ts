@@ -23,10 +23,8 @@ export function getAccountPageFragment(
 ): Fragment {
   const name = node.name as string;
   const typeName = scope.nameApi.dataType(name);
-  const dataNode = resolveNestedTypeNode(node.data);
-
   // Fields from the struct data
-  const fields = dataNode.fields;
+  const fields = resolveNestedTypeNode(node.data).fields ?? [];
 
   // Visit each field type once and collect manifests for reuse
   const fieldManifests = fields.map((f: StructFieldTypeNode) => ({

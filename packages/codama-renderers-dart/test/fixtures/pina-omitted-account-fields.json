@@ -1,0 +1,25 @@
+{
+  "kind": "rootNode",
+  "standard": "codama",
+  "version": "1.8.0",
+  "additionalPrograms": [],
+  "program": {
+    "kind": "programNode",
+    "name": "pinaOmittedAccountFields",
+    "publicKey": "11111111111111111111111111111111",
+    "version": "0.0.0",
+    "accounts": [
+      {
+        "kind": "accountNode",
+        "name": "state",
+        "data": {
+          "kind": "structTypeNode"
+        }
+      }
+    ],
+    "instructions": [],
+    "definedTypes": [],
+    "errors": [],
+    "pdas": []
+  }
+}

@@ -30,7 +30,7 @@ export function getTypePageFragment(
 
   // Check what kind of type this is
   if (typeNode.kind === "enumTypeNode") {
-    const isScalar = typeNode.variants.every(
+    const isScalar = (typeNode.variants ?? []).every(
       (v) => v.kind === "enumEmptyVariantTypeNode",
     );
     if (isScalar) {
@@ -59,7 +59,7 @@ function getScalarEnumPageFragment(
   const enumNode = node.type;
   if (enumNode.kind !== "enumTypeNode") return emptyFragment();
 
-  const variants = enumNode.variants.map((v) => {
+  const variants = (enumNode.variants ?? []).map((v) => {
     const variantName = scope.nameApi.enumVariant(v.name as string);
     return variantName;
   });
@@ -130,8 +130,9 @@ function getDataEnumPageFragment(
   // Collect all field type manifests from variants so we can merge their imports
   const allVariantManifests: { encoder: Fragment; decoder: Fragment; type: Fragment }[] = [];
 
-  for (let i = 0; i < enumNode.variants.length; i++) {
-    const variant = enumNode.variants[i];
+  const variants = enumNode.variants ?? [];
+  for (let i = 0; i < variants.length; i++) {
+    const variant = variants[i];
     const variantName = pascalCase(variant.name as string);
     const variantClassName = scope.nameApi.sealedClassVariant(
       name,
@@ -163,7 +164,7 @@ function getDataEnumPageFragment(
       decodeCases.push(`case ${i}: return const ${variantClassName}();`);
     } else if (variant.kind === "enumStructVariantTypeNode") {
       const resolvedStruct = resolveNestedTypeNode(variant.struct);
-      const fields = resolvedStruct.fields;
+      const fields = resolvedStruct.fields ?? [];
 
       // Visit each field type once and collect manifests
       const fieldManifests = fields.map((f: StructFieldTypeNode) => ({
@@ -271,7 +272,7 @@ ${fieldDecls}
       decodeCases.push(`case ${i}: return ${variantClassName}(${fromMapFields.replace(/\n/g, ' ').replace(/,$/, '')});`);
     } else if (variant.kind === "enumTupleVariantTypeNode") {
       const resolvedTuple = resolveNestedTypeNode(variant.tuple);
-      const items = resolvedTuple.items;
+      const items = resolvedTuple.items ?? [];
       if (items.length === 1) {
         const manifest = visit(items[0], scope.typeManifestVisitor);
         allVariantManifests.push(manifest);
@@ -384,7 +385,7 @@ function getStructPageFragment(
   const structNode = node.type;
   if (structNode.kind !== "structTypeNode") return emptyFragment();
 
-  const fields = structNode.fields;
+  const fields = structNode.fields ?? [];
 
   // Visit each field type once and collect manifests for reuse
   const fieldManifests = fields.map((f: StructFieldTypeNode) => ({

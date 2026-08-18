@@ -286,7 +286,7 @@ export function getTypeManifestVisitor(input: {
     },
 
     visitTupleType(node: TupleTypeNode, { self }) {
-      const itemManifests = node.items.map((item) => visit(item, self));
+      const itemManifests = (node.items ?? []).map((item) => visit(item, self));
       const typeList = itemManifests
         .map((m) => m.type.content)
         .join(", ");
@@ -327,8 +327,8 @@ export function getTypeManifestVisitor(input: {
     },
 
     visitStructType(node: StructTypeNode, { self }) {
-      const fields = node.fields.map((f) => visit(f, self));
-      const fieldNames = node.fields.map((f) => f.name as string);
+      const fields = (node.fields ?? []).map((f) => visit(f, self));
+      const fieldNames = (node.fields ?? []).map((f) => f.name as string);
 
       // Type: Map<String, Object?> (for inline structs without a name)
       const typeStr = "Map<String, Object?>";
@@ -371,7 +371,7 @@ export function getTypeManifestVisitor(input: {
 
     visitEnumType(node: EnumTypeNode, { self }) {
       // Check if this is a scalar enum (all empty variants)
-      const isScalar = node.variants.every(
+      const isScalar = (node.variants ?? []).every(
         (v) => v.kind === "enumEmptyVariantTypeNode",
       );
 
@@ -549,7 +549,7 @@ export function getTypeManifestVisitor(input: {
 
     visitHiddenPrefixType(node: HiddenPrefixTypeNode, { self }) {
       const innerManifest = visit(node.type, self);
-      const prefixes = node.prefix.map((p) => getHiddenAffixManifest(p, self));
+      const prefixes = (node.prefix ?? []).map((p) => getHiddenAffixManifest(p, self));
       const prefixEncoders = prefixes
         .map((p) => p.encoder.content)
         .join(", ");
@@ -584,7 +584,7 @@ export function getTypeManifestVisitor(input: {
 
     visitHiddenSuffixType(node: HiddenSuffixTypeNode, { self }) {
       const innerManifest = visit(node.type, self);
-      const suffixes = node.suffix.map((s) => getHiddenAffixManifest(s, self));
+      const suffixes = (node.suffix ?? []).map((s) => getHiddenAffixManifest(s, self));
       const suffixEncoders = suffixes
         .map((s) => s.encoder.content)
         .join(", ");
