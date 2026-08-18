@@ -171,6 +171,8 @@ Encoder<AccountStatus> getAccountStatusEncoder() { ... }
 Decoder<AccountStatus> getAccountStatusDecoder() { ... }
 ```
 
+The generated enum API is the same for `u8`, `u16`, `u32`, and `u64` discriminators. The renderer converts `u64` indices to and from `BigInt` at the codec boundary and rejects out-of-range discriminators before converting them to Dart enum indices.
+
 ### Data Enums (Discriminated Unions)
 
 Data enums generate Dart 3 `sealed class` hierarchies:

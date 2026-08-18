@@ -3,10 +3,11 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync } fr
 import { join, resolve } from "node:path";
 import { describe, it, expect, beforeAll } from "vitest";
 import { visit } from "@codama/visitors-core";
-import { rootNodeFromAnchor } from "@codama/nodes-from-anchor";
 import {
   arrayTypeNode,
   definedTypeNode,
+  enumEmptyVariantTypeNode,
+  enumTypeNode,
   fixedSizeTypeNode,
   numberTypeNode,
   programNode,
@@ -14,6 +15,7 @@ import {
   rootNode,
   stringTypeNode,
 } from "@codama/nodes";
+import { rootNodeFromAnchor } from "@codama/nodes-from-anchor";
 
 import { renderVisitor } from "../../src/visitors/renderVisitor.js";
 
@@ -27,6 +29,32 @@ const FIXED_CAPACITY_DIR = join(
   TEST_GENERATED_DIR,
   "lib/src/fixed_capacity",
 );
+const WIDE_ENUMS_DIR = join(TEST_GENERATED_DIR, "lib/src/wide_enums");
+
+function buildWideEnumsIdl() {
+  const definedTypes = (["u8", "u16", "u32", "u64"] as const).map(
+    (format) =>
+      definedTypeNode({
+        name: `status${format.toUpperCase()}`,
+        type: enumTypeNode(
+          [
+            enumEmptyVariantTypeNode("inactive"),
+            enumEmptyVariantTypeNode("active"),
+          ],
+          { size: numberTypeNode(format) },
+        ),
+      }),
+  );
+
+  return rootNode(
+    programNode({
+      name: "wideEnums",
+      publicKey: "11111111111111111111111111111111",
+      definedTypes,
+    }),
+  );
+}
+
 
 /**
  * Recursively collect all file paths under a directory.
@@ -95,6 +123,14 @@ describe("Generate Dart code and validate", () => {
       }),
     );
 
+    visit(
+      buildWideEnumsIdl(),
+      renderVisitor(WIDE_ENUMS_DIR, {
+        formatCode: false,
+        deleteFolderBeforeRendering: true,
+      }),
+    );
+
     // The workspace includes Flutter examples, so its shared resolution must
     // use Flutter's pub wrapper even though this generated package is pure Dart.
     execFileSync("flutter", ["pub", "get"], {
@@ -148,6 +184,15 @@ describe("Generate Dart code and validate", () => {
 
     expect(fixedName).toContain("allowTruncation: false");
     expect(fixedValues).toContain("allowTruncation: false");
+  });
+
+  it("should generate scalar enums for every supported unsigned width", () => {
+    const files = collectFiles(WIDE_ENUMS_DIR);
+
+    expect(files).toContain("types/status_u8.dart");
+    expect(files).toContain("types/status_u16.dart");
+    expect(files).toContain("types/status_u32.dart");
+    expect(files).toContain("types/status_u64.dart");
   });
 
   it("should generate valid Dart syntax in error page files", () => {

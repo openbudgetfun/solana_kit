@@ -80,6 +80,18 @@ function getScalarEnumPageFragment(
   const resolvedSize = resolveNestedTypeNode(enumNode.size);
   const sizeType = resolvedSize.format ?? "u8";
   const sizeCodecName = getNumberCodecName(sizeType);
+  const isU64 = sizeType === "u64";
+  const encodedVariantIndex = isU64
+    ? "BigInt.from(value.index)"
+    : "value.index";
+  const decodedVariant = isU64
+    ? `(BigInt value, Uint8List bytes, int offset) {
+      if (value.isNegative || value >= BigInt.from(${typeName}.values.length)) {
+        throw RangeError('Invalid ${typeName} discriminator: ' + value.toString());
+      }
+      return ${typeName}.values[value.toInt()];
+    }`
+    : `(int value, Uint8List bytes, int offset) => ${typeName}.values[value]`;
 
   return fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint
@@ -101,14 +113,14 @@ ${fragmentFromString(variantLines)}
 Encoder<${fragmentFromString(typeName)}> ${fragmentFromString(encoderName)}() {
   return transformEncoder(
     get${fragmentFromString(sizeCodecName)}Encoder(),
-    (${fragmentFromString(typeName)} value) => value.index,
+    (${fragmentFromString(typeName)} value) => ${fragmentFromString(encodedVariantIndex)},
   );
 }
 
 Decoder<${fragmentFromString(typeName)}> ${fragmentFromString(decoderName)}() {
   return transformDecoder(
     get${fragmentFromString(sizeCodecName)}Decoder(),
-    (int value, Uint8List bytes, int offset) => ${fragmentFromString(typeName)}.values[value],
+    ${fragmentFromString(decodedVariant)},
   );
 }
 
