@@ -137,6 +137,7 @@ jobs:
           node-version: 22
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
+      - uses: dart-lang/setup-dart@65eb853c7ba17dde3be364c3d2858773e7144260 # v1.7.2
       - name: install
         run: pnpm install --frozen-lockfile
       - name: typecheck
