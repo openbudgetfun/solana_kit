@@ -198,7 +198,12 @@ jobs:
         run: test:coverage
         shell: devenv shell -- bash -e {0}
       - name: NPM renderer coverage
-        run: pnpm --filter codama-renderers-dart test:coverage
+        run: |
+          dart_bin_dir="$RUNNER_TEMP/devenv-dart-bin"
+          mkdir -p "$dart_bin_dir"
+          ln -s "$GITHUB_WORKSPACE/.devenv/profile/bin/dart" "$dart_bin_dir/dart"
+          ln -s "$GITHUB_WORKSPACE/.devenv/profile/bin/flutter" "$dart_bin_dir/flutter"
+          PATH="$dart_bin_dir:$PATH" pnpm --filter codama-renderers-dart test:coverage
       - name: prepare Codecov flag reports
         id: prepare-codecov-flags
         run: dart run scripts/prepare_codecov_flags.dart --lcov coverage/lcov.info --out-dir coverage/flags --github-output "$GITHUB_OUTPUT"
