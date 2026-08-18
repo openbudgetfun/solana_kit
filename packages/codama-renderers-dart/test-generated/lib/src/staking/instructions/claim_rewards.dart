@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -15,9 +16,7 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class ClaimRewardsInstructionData {
-  const ClaimRewardsInstructionData({
-    this.discriminator = 3,
-  });
+  const ClaimRewardsInstructionData() : discriminator = 3;
 
   final int discriminator;
 }
@@ -30,7 +29,7 @@ Encoder<ClaimRewardsInstructionData> getClaimRewardsInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (ClaimRewardsInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': 3,
     },
   );
 }
@@ -40,13 +39,49 @@ Decoder<ClaimRewardsInstructionData> getClaimRewardsInstructionDataDecoder() {
     ('discriminator', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ClaimRewardsInstructionData(
-          discriminator: map['discriminator']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'claimRewards instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (ClaimRewardsInstructionData, int) readExact(Uint8List bytes, int offset) {
+    getConstantDecoder(
+      getU8Encoder().encode(3),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+    return (
+      ClaimRewardsInstructionData(),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<ClaimRewardsInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readExact(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<ClaimRewardsInstructionData>(
+        read: readExact,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<ClaimRewardsInstructionData, ClaimRewardsInstructionData>

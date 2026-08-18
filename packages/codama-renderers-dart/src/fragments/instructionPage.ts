@@ -7,16 +7,20 @@ import { visit } from "@codama/visitors-core";
 
 import type { Fragment } from "../utils/fragment.js";
 import {
-  emptyFragment,
   fragment,
   fragmentFromString,
   mergeFragments,
   use,
 } from "../utils/fragment.js";
 import type { RenderScope } from "../utils/options.js";
-import { camelCase, pascalCase } from "../utils/nameTransformers.js";
+import { camelCase } from "../utils/nameTransformers.js";
+import { getDiscriminatorValidationFragment } from "../utils/discriminators.js";
+import { getExactDecoderFragment } from "../utils/exactDecoder.js";
+import {
+  getDartValueFragment,
+  isConstDartValueNode,
+} from "../utils/valueNodes.js";
 import { getDiscriminatorConstantsFragment } from "./discriminatorConstants.js";
-import { WELL_KNOWN_ADDRESSES } from "../utils/wellKnownAddresses.js";
 
 /**
  * Generate a full Dart file for an instruction.
@@ -31,10 +35,21 @@ export function getInstructionPageFragment(
   const parseFnName = scope.nameApi.instructionParseFunction(name);
 
   const accounts = node.accounts ?? [];
-  const args = (node.arguments ?? []).filter(
-    (arg) => !isDiscriminatorArg(arg, node),
-  );
   const allArgs = node.arguments ?? [];
+  const optionalAccountStrategy: string =
+    node.optionalAccountStrategy ?? "programId";
+  if (
+    optionalAccountStrategy !== "programId" &&
+    optionalAccountStrategy !== "omitted"
+  ) {
+    throw new Error(
+      `Unsupported optional account strategy on instruction "${node.name}": ${optionalAccountStrategy}`,
+    );
+  }
+  const args = allArgs.filter(
+    (arg) =>
+      !isDiscriminatorArg(arg, node) && !isOmittedDefaultArgument(arg),
+  );
 
   // Build the instruction data class
   const dataClassName = `${typeName}InstructionData`;
@@ -44,6 +59,31 @@ export function getInstructionPageFragment(
     arg,
     manifest: visit(arg.type, scope.typeManifestVisitor),
   }));
+  const argDefaultValues = new Map(
+    allArgManifests.flatMap(({ arg, manifest }) => {
+      if (arg.defaultValue == null) return [];
+      const needsRenderedDefault =
+        isOmittedDefaultArgument(arg) ||
+        isDiscriminatorArg(arg, node) ||
+        arg.defaultValue.kind !== "accountBumpValueNode";
+      if (!needsRenderedDefault) return [];
+      return [
+        [
+          arg,
+          getDartValueFragment(arg.defaultValue, manifest.type.content),
+        ] as const,
+      ];
+    }),
+  );
+  for (const arg of allArgs.filter((candidate) =>
+    isDiscriminatorArg(candidate, node),
+  )) {
+    if (!argDefaultValues.has(arg)) {
+      throw new Error(
+        `Field discriminator "${arg.name}" on instruction "${node.name}" must reference a field with a default value.`,
+      );
+    }
+  }
 
   // Data fields (non-discriminator arguments)
   const dataFieldDecls = allArgManifests
@@ -56,20 +96,25 @@ export function getInstructionPageFragment(
   const dataCtorParams = allArgManifests
     .map(({ arg, manifest }) => {
       const fieldName = camelCase(arg.name as string);
+      if (isOmittedDefaultArgument(arg)) return "";
       if (isDiscriminatorArg(arg, node)) {
         return isConstDefaultValue(arg.defaultValue)
-          ? `    this.${fieldName} = ${getDiscriminatorDefault(arg, node)},`
+          ? `    this.${fieldName} = ${argDefaultValues.get(arg)!.content},`
           : `    ${manifest.type.content}? ${fieldName},`;
       }
       return `    required this.${fieldName},`;
     })
+    .filter(Boolean)
     .join("\n");
 
   const dataCtorInitializers = allArgManifests
     .map(({ arg }) => {
       const fieldName = camelCase(arg.name as string);
+      if (isOmittedDefaultArgument(arg)) {
+        return `      ${fieldName} = ${argDefaultValues.get(arg)!.content}`;
+      }
       if (isDiscriminatorArg(arg, node) && !isConstDefaultValue(arg.defaultValue)) {
-        return `      ${fieldName} = ${fieldName} ?? ${getDiscriminatorDefault(arg, node)}`;
+        return `      ${fieldName} = ${fieldName} ?? ${argDefaultValues.get(arg)!.content}`;
       }
       return null;
     })
@@ -90,13 +135,17 @@ export function getInstructionPageFragment(
     .join("\n");
 
   const toMapFields = allArgs
-    .map(
-      (arg) =>
-        `      '${arg.name as string}': value.${camelCase(arg.name as string)},`,
-    )
+    .map((arg) => {
+      const value =
+        isOmittedDefaultArgument(arg) || isDiscriminatorArg(arg, node)
+          ? argDefaultValues.get(arg)!.content
+          : `value.${camelCase(arg.name as string)}`;
+      return `      '${arg.name as string}': ${value},`;
+    })
     .join("\n");
 
   const fromMapFields = allArgManifests
+    .filter(({ arg }) => !isOmittedDefaultArgument(arg))
     .map(({ arg, manifest }) => {
       const typeStr = manifest.type.content;
       const isNullable = typeStr.endsWith("?");
@@ -105,7 +154,20 @@ export function getInstructionPageFragment(
     })
     .join("\n");
 
-  const dataCtorKeyword = dataCtorInitializers ? "" : "const ";
+  const dataCtorKeyword = allArgs.every(
+    (arg) =>
+      !isOmittedDefaultArgument(arg) ||
+      isConstDartValueNode(arg.defaultValue!),
+  ) && allArgs.every(
+    (arg) =>
+      !isDiscriminatorArg(arg, node) ||
+      isConstDefaultValue(arg.defaultValue),
+  )
+    ? "const "
+    : "";
+  const dataCtorSignature = dataCtorParams
+    ? `${dataCtorKeyword}${dataClassName}({\n${dataCtorParams}\n  })${dataCtorInitializers ? ` :\n${dataCtorInitializers}` : ""};`
+    : `${dataCtorKeyword}${dataClassName}()${dataCtorInitializers ? ` :\n${dataCtorInitializers}` : ""};`;
   const dataEncoderName = `get${typeName}InstructionDataEncoder`;
   const dataDecoderName = `get${typeName}InstructionDataDecoder`;
   const dataCodecName = `get${typeName}InstructionDataCodec`;
@@ -155,7 +217,10 @@ export function getInstructionPageFragment(
       const role = getAccountRole(acc);
       const isOptional = acc.isOptional ?? false;
       if (isOptional) {
-        return `    if (${fieldName} != null) AccountMeta(address: ${fieldName}, role: ${role}),`;
+        if (optionalAccountStrategy === "omitted") {
+          return `    if (${fieldName} != null) AccountMeta(address: ${fieldName}, role: ${role}),`;
+        }
+        return `    if (${fieldName} != null) AccountMeta(address: ${fieldName}, role: ${role}) else AccountMeta(address: ${instrProgramParam}, role: AccountRole.readonly),`;
       }
       return `    AccountMeta(address: ${fieldName}, role: ${role}),`;
     })
@@ -165,19 +230,30 @@ export function getInstructionPageFragment(
   const dataConstruction = allArgs
     .map((arg) => {
       const fieldName = camelCase(arg.name as string);
-      if (isDiscriminatorArg(arg, node)) {
+      if (
+        isOmittedDefaultArgument(arg) ||
+        isDiscriminatorArg(arg, node)
+      ) {
         return ""; // Use default
       }
-      // Use 'arg_<name>' prefix to reference builder params without shadowing.
-      const typeStr2 = argManifestMap.get(arg)?.type.content;
       const skipDefault = arg.defaultValue?.kind === "accountBumpValueNode";
-      return `      ${fieldName}: ${fieldName}${arg.defaultValue != null && !skipDefault ? ` ?? ${getDefaultValue(arg, typeStr2)}` : ""},`;
+      return `      ${fieldName}: ${fieldName}${arg.defaultValue != null && !skipDefault ? ` ?? ${argDefaultValues.get(arg)!.content}` : ""},`;
     })
     .filter(Boolean)
     .join("\n");
 
   // Discriminator
   const discFragment = getDiscriminatorConstantsFragment(node, scope);
+  const discriminatorValidation = getDiscriminatorValidationFragment(
+    node,
+    scope,
+  );
+  const exactDecoder = getExactDecoderFragment({
+    typeName: dataClassName,
+    description: `${name} instruction decoder`,
+    discriminatorValidation,
+    fromMapFields,
+  });
 
   const parts: Fragment[] = [
     fragment`// Auto-generated. Do not edit.
@@ -205,9 +281,7 @@ ${use("AccountRole", "solanaInstructions")}`,
   parts.push(fragment`
 @immutable
 class ${fragmentFromString(dataClassName)} {
-  ${fragmentFromString(dataCtorKeyword)}${fragmentFromString(dataClassName)}({
-${fragmentFromString(dataCtorParams)}
-  })${fragmentFromString(dataCtorInitializers ? ` :\n${dataCtorInitializers}` : "")};
+  ${fragmentFromString(dataCtorSignature)}
 
 ${fragmentFromString(dataFieldDecls)}
 }`);
@@ -232,12 +306,7 @@ Decoder<${fragmentFromString(dataClassName)}> ${fragmentFromString(dataDecoderNa
 ${fragmentFromString(decFields)}
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ${fragmentFromString(dataClassName)}(
-${fragmentFromString(fromMapFields)}
-    ),
-  );
+${exactDecoder}
 }
 
 Codec<${fragmentFromString(dataClassName)}, ${fragmentFromString(dataClassName)}> ${fragmentFromString(dataCodecName)}() {
@@ -280,6 +349,9 @@ ${fragmentFromString(dataClassName)} ${fragmentFromString(parseFnName)}(Instruct
     result.imports.mergeWith(manifest.decoder.imports);
     result.imports.mergeWith(manifest.type.imports);
   }
+  for (const defaultValue of argDefaultValues.values()) {
+    result.imports.mergeWith(defaultValue.imports);
+  }
 
   return result;
 }
@@ -305,23 +377,6 @@ function isDiscriminatorArg(
   );
 }
 
-function getDiscriminatorDefault(
-  arg: InstructionArgumentNode,
-  _node: InstructionNode,
-): string {
-  if (arg.defaultValue) {
-    if (arg.defaultValue.kind === "numberValueNode") {
-      return String(arg.defaultValue.number);
-    }
-    if (arg.defaultValue.kind === "bytesValueNode") {
-      const data = arg.defaultValue.data as string;
-      const bytes = data.match(/.{1,2}/g)?.map((b) => parseInt(b, 16)) ?? [];
-      return `Uint8List.fromList([${bytes.join(", ")}])`;
-    }
-  }
-  return "0";
-}
-
 function isConstDefaultValue(defaultValue: InstructionArgumentNode["defaultValue"]): boolean {
   if (!defaultValue) return false;
   switch (defaultValue.kind) {
@@ -335,36 +390,6 @@ function isConstDefaultValue(defaultValue: InstructionArgumentNode["defaultValue
   }
 }
 
-function getDefaultValue(
-  arg: InstructionArgumentNode,
-  typeStr?: string,
-): string {
-  if (!arg.defaultValue) return "null";
-  const isBigInt = typeStr === "BigInt";
-  const dv = arg.defaultValue;
-  switch (dv.kind) {
-    case "numberValueNode":
-      // Dart's `BigInt` requires a constructor; `0` is not assignable to `BigInt`.
-      return isBigInt ? `BigInt.from(${dv.number})` : String(dv.number);
-    case "booleanValueNode":
-      return String(dv.boolean);
-    case "stringValueNode":
-      return `'${dv.string}'`;
-    case "publicKeyValueNode": {
-      const wellKnownName = WELL_KNOWN_ADDRESSES.get(dv.publicKey);
-      if (wellKnownName) {
-        use(wellKnownName, "solanaAddresses");
-        return wellKnownName;
-      }
-      return `Address('${dv.publicKey}')`;
-    }
-    case "noneValueNode":
-      return "null";
-    case "bytesValueNode": {
-      const bytes = dv.data.match(/.{1,2}/g)?.map((b) => parseInt(b, 16)) ?? [];
-      return `Uint8List.fromList([${bytes.join(", ")}])`;
-    }
-    default:
-      return "null";
-  }
+function isOmittedDefaultArgument(arg: InstructionArgumentNode): boolean {
+  return arg.defaultValue != null && arg.defaultValueStrategy === "omitted";
 }

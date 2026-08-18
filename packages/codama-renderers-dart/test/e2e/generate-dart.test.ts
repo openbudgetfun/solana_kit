@@ -4,16 +4,27 @@ import { join, resolve } from "node:path";
 import { describe, it, expect, beforeAll } from "vitest";
 import { visit } from "@codama/visitors-core";
 import {
+  accountNode,
   arrayTypeNode,
+  constantDiscriminatorNode,
+  constantValueNode,
   definedTypeNode,
   enumEmptyVariantTypeNode,
   enumTypeNode,
+  fieldDiscriminatorNode,
   fixedSizeTypeNode,
+  instructionAccountNode,
+  instructionArgumentNode,
+  instructionNode,
   numberTypeNode,
+  numberValueNode,
   programNode,
   remainderCountNode,
   rootNode,
+  sizeDiscriminatorNode,
   stringTypeNode,
+  structFieldTypeNode,
+  structTypeNode,
 } from "@codama/nodes";
 import { rootNodeFromAnchor } from "@codama/nodes-from-anchor";
 
@@ -30,6 +41,119 @@ const FIXED_CAPACITY_DIR = join(
   "lib/src/fixed_capacity",
 );
 const WIDE_ENUMS_DIR = join(TEST_GENERATED_DIR, "lib/src/wide_enums");
+const SECURITY_DIR = join(TEST_GENERATED_DIR, "lib/src/security_fixture");
+
+function buildSecurityFixture() {
+  const u8 = numberTypeNode("u8");
+  const u16 = numberTypeNode("u16");
+
+  return rootNode(
+    programNode({
+      name: "securityFixture",
+      publicKey: "11111111111111111111111111111111",
+      accounts: [
+        accountNode({
+          name: "secureState",
+          size: 3,
+          data: structTypeNode([
+            structFieldTypeNode({
+              name: "discriminator",
+              type: u8,
+              defaultValue: numberValueNode(7),
+              defaultValueStrategy: "omitted",
+            }),
+            structFieldTypeNode({ name: "value", type: u16 }),
+          ]),
+          discriminators: [
+            fieldDiscriminatorNode("discriminator", 0),
+            constantDiscriminatorNode(
+              constantValueNode(u8, numberValueNode(7)),
+              0,
+            ),
+            sizeDiscriminatorNode(3),
+          ],
+        }),
+        accountNode({
+          name: "exactState",
+          data: structTypeNode([
+            structFieldTypeNode({ name: "value", type: u16 }),
+          ]),
+        }),
+      ],
+      instructions: [
+        instructionNode({
+          name: "secureAction",
+          optionalAccountStrategy: "programId",
+          accounts: [
+            instructionAccountNode({
+              name: "before",
+              isSigner: false,
+              isWritable: false,
+            }),
+            instructionAccountNode({
+              name: "optionalMiddle",
+              isSigner: false,
+              isWritable: true,
+              isOptional: true,
+            }),
+            instructionAccountNode({
+              name: "after",
+              isSigner: true,
+              isWritable: false,
+            }),
+          ],
+          arguments: [
+            instructionArgumentNode({
+              name: "discriminator",
+              type: u8,
+              defaultValue: numberValueNode(9),
+              defaultValueStrategy: "omitted",
+            }),
+            instructionArgumentNode({ name: "amount", type: u16 }),
+          ],
+          discriminators: [
+            fieldDiscriminatorNode("discriminator", 0),
+            constantDiscriminatorNode(
+              constantValueNode(u8, numberValueNode(9)),
+              0,
+            ),
+            sizeDiscriminatorNode(3),
+          ],
+        }),
+        instructionNode({
+          name: "legacyOptionalAction",
+          optionalAccountStrategy: "omitted",
+          accounts: [
+            instructionAccountNode({
+              name: "before",
+              isSigner: false,
+              isWritable: false,
+            }),
+            instructionAccountNode({
+              name: "optionalMiddle",
+              isSigner: false,
+              isWritable: true,
+              isOptional: true,
+            }),
+            instructionAccountNode({
+              name: "after",
+              isSigner: true,
+              isWritable: false,
+            }),
+          ],
+          arguments: [],
+        }),
+        instructionNode({
+          name: "exactAction",
+          accounts: [],
+          arguments: [
+            instructionArgumentNode({ name: "amount", type: u16 }),
+          ],
+        }),
+      ],
+    }),
+  );
+}
 
 function buildWideEnumsIdl() {
   const definedTypes = (["u8", "u16", "u32", "u64"] as const).map(
@@ -131,6 +255,14 @@ describe("Generate Dart code and validate", () => {
       }),
     );
 
+    visit(
+      buildSecurityFixture(),
+      renderVisitor(SECURITY_DIR, {
+        formatCode: false,
+        deleteFolderBeforeRendering: true,
+      }),
+    );
+
     // The workspace includes Flutter examples, so its shared resolution must
     // use Flutter's pub wrapper even though this generated package is pure Dart.
     execFileSync("flutter", ["pub", "get"], {
@@ -193,6 +325,15 @@ describe("Generate Dart code and validate", () => {
     expect(files).toContain("types/status_u16.dart");
     expect(files).toContain("types/status_u32.dart");
     expect(files).toContain("types/status_u64.dart");
+  });
+
+  it("should generate discriminator and optional-account fixtures", () => {
+    const files = collectFiles(SECURITY_DIR);
+    expect(files).toContain("accounts/secure_state.dart");
+    expect(files).toContain("accounts/exact_state.dart");
+    expect(files).toContain("instructions/secure_action.dart");
+    expect(files).toContain("instructions/legacy_optional_action.dart");
+    expect(files).toContain("instructions/exact_action.dart");
   });
 
   it("should generate valid Dart syntax in error page files", () => {

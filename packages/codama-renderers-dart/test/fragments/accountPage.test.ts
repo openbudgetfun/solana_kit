@@ -1,6 +1,10 @@
 import {
   accountNode,
+  constantDiscriminatorNode,
+  constantValueNode,
+  fieldDiscriminatorNode,
   numberTypeNode,
+  numberValueNode,
   publicKeyTypeNode,
   structFieldTypeNode,
   structTypeNode,
@@ -117,7 +121,13 @@ describe("getAccountPageFragment", () => {
       "Decoder<TokenAccount> getTokenAccountDecoder()",
     );
     expect(frag.content).toContain("getStructDecoder");
-    expect(frag.content).toContain("transformDecoder");
+    expect(frag.content).toContain("newOffset != bytes.length");
+    expect(frag.content).toContain(
+      "FixedSizeDecoder<Map<String, Object?>>()",
+    );
+    expect(frag.content).toContain(
+      "VariableSizeDecoder<Map<String, Object?>>()",
+    );
   });
 
   it("generates codec function", () => {
@@ -343,5 +353,53 @@ describe("getAccountPageFragment", () => {
     const frag = getAccountPageFragment(node, createScope());
 
     expect(frag.content).toContain("int get hashCode => value.hashCode;");
+  });
+
+  it("owns omitted defaults and validates account discriminators", () => {
+    const discriminatorType = numberTypeNode("u8");
+    const node = accountNode({
+      name: "secureState",
+      data: structTypeNode([
+        structFieldTypeNode({
+          name: "discriminator",
+          type: discriminatorType,
+          defaultValue: numberValueNode(7),
+          defaultValueStrategy: "omitted",
+        }),
+        structFieldTypeNode({
+          name: "value",
+          type: numberTypeNode("u16"),
+        }),
+      ]),
+      discriminators: [
+        constantDiscriminatorNode(
+          constantValueNode(discriminatorType, numberValueNode(7)),
+          0,
+        ),
+      ],
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain("discriminator = 7");
+    expect(frag.content).not.toContain("required this.discriminator");
+    expect(frag.content).toContain("'discriminator': 7,");
+    expect(frag.content).toContain("getConstantDecoder(");
+  });
+
+  it("rejects field discriminators without deterministic defaults", () => {
+    const node = accountNode({
+      name: "invalidState",
+      data: structTypeNode([
+        structFieldTypeNode({
+          name: "discriminator",
+          type: numberTypeNode("u8"),
+        }),
+      ]),
+      discriminators: [fieldDiscriminatorNode("discriminator", 0)],
+    });
+
+    expect(() => getAccountPageFragment(node, createScope())).toThrow(
+      /must have a deterministic default value|must reference a field with a default value/,
+    );
   });
 });

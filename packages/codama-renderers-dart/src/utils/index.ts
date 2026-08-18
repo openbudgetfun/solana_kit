@@ -1,4 +1,6 @@
 export * from "./codecs.js";
+export * from "./discriminators.js";
+export * from "./exactDecoder.js";
 export * from "./formatCode.js";
 export * from "./fragment.js";
 export * from "./importMap.js";
@@ -6,4 +8,5 @@ export * from "./nameTransformers.js";
 export * from "./normalizeRootNode.js";
 export * from "./options.js";
 export * from "./typeManifest.js";
+export * from "./valueNodes.js";
 export * from "./wellKnownAddresses.js";

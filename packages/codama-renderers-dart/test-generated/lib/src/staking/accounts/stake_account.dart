@@ -9,18 +9,27 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 @immutable
 class StakeAccount {
-  const StakeAccount({
-    required this.discriminator,
+  StakeAccount({
     required this.owner,
     required this.pool,
     required this.stakedAmount,
     required this.rewardDebt,
     required this.stakedAt,
     required this.bump,
-  });
+  }) : discriminator = Uint8List.fromList([
+         0x50,
+         0x9e,
+         0x43,
+         0x7c,
+         0x32,
+         0xbd,
+         0xc0,
+         0xff,
+       ]);
 
   final Uint8List discriminator;
   final Address owner;
@@ -82,7 +91,16 @@ Encoder<StakeAccount> getStakeAccountEncoder() {
   return transformEncoder(
     structEncoder,
     (StakeAccount value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': Uint8List.fromList([
+        0x50,
+        0x9e,
+        0x43,
+        0x7c,
+        0x32,
+        0xbd,
+        0xc0,
+        0xff,
+      ]),
       'owner': value.owner,
       'pool': value.pool,
       'stakedAmount': value.stakedAmount,
@@ -104,18 +122,57 @@ Decoder<StakeAccount> getStakeAccountDecoder() {
     ('bump', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => StakeAccount(
-      discriminator: map['discriminator']! as Uint8List,
-      owner: map['owner']! as Address,
-      pool: map['pool']! as Address,
-      stakedAmount: map['stakedAmount']! as BigInt,
-      rewardDebt: map['rewardDebt']! as BigInt,
-      stakedAt: map['stakedAt']! as BigInt,
-      bump: map['bump']! as int,
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'stakeAccount account decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (StakeAccount, int) readExact(Uint8List bytes, int offset) {
+    getConstantDecoder(
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        Uint8List.fromList([0x50, 0x9e, 0x43, 0x7c, 0x32, 0xbd, 0xc0, 0xff]),
+      ),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+    return (
+      StakeAccount(
+        owner: map['owner']! as Address,
+        pool: map['pool']! as Address,
+        stakedAmount: map['stakedAmount']! as BigInt,
+        rewardDebt: map['rewardDebt']! as BigInt,
+        stakedAt: map['stakedAt']! as BigInt,
+        bump: map['bump']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() => FixedSizeDecoder<StakeAccount>(
+      fixedSize: structDecoder.fixedSize,
+      read: (bytes, offset) {
+        final bytesLength = bytes.length - offset;
+        if (bytesLength != structDecoder.fixedSize) {
+          throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+        }
+        return readExact(bytes, offset);
+      },
     ),
-  );
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<StakeAccount>(
+        read: readExact,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<StakeAccount, StakeAccount> getStakeAccountCodec() {

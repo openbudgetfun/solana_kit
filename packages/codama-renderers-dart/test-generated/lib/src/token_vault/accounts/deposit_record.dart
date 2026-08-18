@@ -9,16 +9,25 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 @immutable
 class DepositRecord {
-  const DepositRecord({
-    required this.discriminator,
+  DepositRecord({
     required this.depositor,
     required this.vault,
     required this.amount,
     required this.timestamp,
-  });
+  }) : discriminator = Uint8List.fromList([
+         0x53,
+         0xe8,
+         0x0a,
+         0x1f,
+         0xfb,
+         0x31,
+         0xbd,
+         0xa7,
+       ]);
 
   final Uint8List discriminator;
   final Address depositor;
@@ -67,7 +76,16 @@ Encoder<DepositRecord> getDepositRecordEncoder() {
   return transformEncoder(
     structEncoder,
     (DepositRecord value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': Uint8List.fromList([
+        0x53,
+        0xe8,
+        0x0a,
+        0x1f,
+        0xfb,
+        0x31,
+        0xbd,
+        0xa7,
+      ]),
       'depositor': value.depositor,
       'vault': value.vault,
       'amount': value.amount,
@@ -85,16 +103,55 @@ Decoder<DepositRecord> getDepositRecordDecoder() {
     ('timestamp', getI64Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => DepositRecord(
-      discriminator: map['discriminator']! as Uint8List,
-      depositor: map['depositor']! as Address,
-      vault: map['vault']! as Address,
-      amount: map['amount']! as BigInt,
-      timestamp: map['timestamp']! as BigInt,
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'depositRecord account decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (DepositRecord, int) readExact(Uint8List bytes, int offset) {
+    getConstantDecoder(
+      fixEncoderSize(getBytesEncoder(), 8).encode(
+        Uint8List.fromList([0x53, 0xe8, 0x0a, 0x1f, 0xfb, 0x31, 0xbd, 0xa7]),
+      ),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+    return (
+      DepositRecord(
+        depositor: map['depositor']! as Address,
+        vault: map['vault']! as Address,
+        amount: map['amount']! as BigInt,
+        timestamp: map['timestamp']! as BigInt,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() => FixedSizeDecoder<DepositRecord>(
+      fixedSize: structDecoder.fixedSize,
+      read: (bytes, offset) {
+        final bytesLength = bytes.length - offset;
+        if (bytesLength != structDecoder.fixedSize) {
+          throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+        }
+        return readExact(bytes, offset);
+      },
     ),
-  );
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<DepositRecord>(
+        read: readExact,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<DepositRecord, DepositRecord> getDepositRecordCodec() {

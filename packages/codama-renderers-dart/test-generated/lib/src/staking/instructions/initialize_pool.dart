@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -16,11 +17,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class InitializePoolInstructionData {
   const InitializePoolInstructionData({
-    this.discriminator = 0,
     required this.rewardRate,
     required this.minStakeDuration,
     required this.maxStakers,
-  });
+  }) : discriminator = 0;
 
   final int discriminator;
   final BigInt rewardRate;
@@ -40,7 +40,7 @@ getInitializePoolInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (InitializePoolInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': 0,
       'rewardRate': value.rewardRate,
       'minStakeDuration': value.minStakeDuration,
       'maxStakers': value.maxStakers,
@@ -57,16 +57,53 @@ getInitializePoolInstructionDataDecoder() {
     ('maxStakers', getU32Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializePoolInstructionData(
-          discriminator: map['discriminator']! as int,
-          rewardRate: map['rewardRate']! as BigInt,
-          minStakeDuration: map['minStakeDuration']! as BigInt,
-          maxStakers: map['maxStakers']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'initializePool instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (InitializePoolInstructionData, int) readExact(Uint8List bytes, int offset) {
+    getConstantDecoder(
+      getU8Encoder().encode(0),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+    return (
+      InitializePoolInstructionData(
+        rewardRate: map['rewardRate']! as BigInt,
+        minStakeDuration: map['minStakeDuration']! as BigInt,
+        maxStakers: map['maxStakers']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<InitializePoolInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readExact(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<InitializePoolInstructionData>(
+        read: readExact,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<InitializePoolInstructionData, InitializePoolInstructionData>

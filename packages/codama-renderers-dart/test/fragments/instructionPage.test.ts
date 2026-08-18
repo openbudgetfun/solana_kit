@@ -1,5 +1,9 @@
 import {
   accountBumpValueNode,
+  bytesTypeNode,
+  bytesValueNode,
+  constantDiscriminatorNode,
+  constantValueNode,
   fieldDiscriminatorNode,
   instructionAccountNode,
   instructionArgumentNode,
@@ -8,6 +12,7 @@ import {
   numberValueNode,
   publicKeyTypeNode,
   publicKeyValueNode,
+  sizeDiscriminatorNode,
 } from "@codama/nodes";
 import { LinkableDictionary, NodeStack } from "@codama/visitors-core";
 import { describe, expect, it } from "vitest";
@@ -119,7 +124,7 @@ describe("getInstructionPageFragment", () => {
     expect(frag.content).toContain("AccountRole.readonly");
   });
 
-  it("handles optional accounts", () => {
+  it("uses program address placeholders for optional accounts by default", () => {
     const node = instructionNode({
       name: "myInstruction",
       accounts: [
@@ -134,10 +139,43 @@ describe("getInstructionPageFragment", () => {
     });
     const frag = getInstructionPageFragment(node, createScope());
 
-    // The account meta uses conditional inclusion for optional accounts
-    expect(frag.content).toContain("if (optionalAccount != null)");
     expect(frag.content).toContain(
-      "AccountMeta(address: optionalAccount, role: AccountRole.readonly)",
+      "if (optionalAccount != null) AccountMeta(address: optionalAccount, role: AccountRole.readonly) else AccountMeta(address: programAddress, role: AccountRole.readonly)",
+    );
+  });
+
+  it("only removes optional account slots for the omitted strategy", () => {
+    const node = instructionNode({
+      name: "myInstruction",
+      optionalAccountStrategy: "omitted",
+      accounts: [
+        instructionAccountNode({
+          name: "optionalAccount",
+          isSigner: false,
+          isWritable: true,
+          isOptional: true,
+        }),
+      ],
+      arguments: [],
+    });
+    const frag = getInstructionPageFragment(node, createScope());
+
+    expect(frag.content).toContain(
+      "if (optionalAccount != null) AccountMeta(address: optionalAccount, role: AccountRole.writable)",
+    );
+    expect(frag.content).not.toContain("else AccountMeta");
+  });
+
+  it("rejects unsupported optional account strategies", () => {
+    const node = instructionNode({
+      name: "myInstruction",
+      optionalAccountStrategy: "unknown" as never,
+      accounts: [],
+      arguments: [],
+    });
+
+    expect(() => getInstructionPageFragment(node, createScope())).toThrow(
+      /Unsupported optional account strategy.*unknown/,
     );
   });
 
@@ -178,7 +216,13 @@ describe("getInstructionPageFragment", () => {
       "Decoder<TransferInstructionData> getTransferInstructionDataDecoder()",
     );
     expect(frag.content).toContain("getStructDecoder");
-    expect(frag.content).toContain("transformDecoder");
+    expect(frag.content).toContain("newOffset != bytes.length");
+    expect(frag.content).toContain(
+      "FixedSizeDecoder<Map<String, Object?>>()",
+    );
+    expect(frag.content).toContain(
+      "VariableSizeDecoder<Map<String, Object?>>()",
+    );
   });
 
   it("generates data codec function", () => {
@@ -243,6 +287,28 @@ describe("getInstructionPageFragment", () => {
     // The builder function should not require discriminator as a param
     // (it uses the default)
     expect(frag.content).toContain("required BigInt amount,");
+  });
+
+  it("initializes non-const discriminator defaults inside the constructor", () => {
+    const node = instructionNode({
+      name: "verifyBytes",
+      accounts: [],
+      arguments: [
+        instructionArgumentNode({
+          name: "discriminator",
+          type: bytesTypeNode(),
+          defaultValue: bytesValueNode("base16", "aabb"),
+        }),
+      ],
+      discriminators: [fieldDiscriminatorNode("discriminator")],
+    });
+    const frag = getInstructionPageFragment(node, createScope());
+
+    expect(frag.content).toContain("Uint8List? discriminator,");
+    expect(frag.content).toContain(
+      "discriminator = discriminator ?? Uint8List.fromList([0xaa, 0xbb])",
+    );
+    expect(frag.content).not.toContain("const VerifyBytesInstructionData");
   });
 
   it("requires account bump arguments instead of rendering async defaults", () => {
@@ -398,5 +464,57 @@ describe("getInstructionPageFragment", () => {
     const frag = getInstructionPageFragment(node, createScope());
 
     expect(frag.content).toContain("amount: amount ?? 3,");
+  });
+
+  it("owns omitted defaults and validates all discriminator kinds", () => {
+    const discriminatorType = numberTypeNode("u8");
+    const node = instructionNode({
+      name: "verify",
+      accounts: [],
+      arguments: [
+        instructionArgumentNode({
+          name: "discriminator",
+          type: discriminatorType,
+          defaultValue: numberValueNode(9),
+          defaultValueStrategy: "omitted",
+        }),
+        instructionArgumentNode({
+          name: "amount",
+          type: numberTypeNode("u16"),
+        }),
+      ],
+      discriminators: [
+        constantDiscriminatorNode(
+          constantValueNode(discriminatorType, numberValueNode(9)),
+          0,
+        ),
+        sizeDiscriminatorNode(3),
+      ],
+    });
+    const frag = getInstructionPageFragment(node, createScope());
+
+    expect(frag.content).toContain("discriminator = 9");
+    expect(frag.content).not.toContain("Address? discriminator");
+    expect(frag.content).toContain("'discriminator': 9,");
+    expect(frag.content).toContain("getConstantDecoder(");
+    expect(frag.content).toContain("bytes.length - offset != 3");
+  });
+
+  it("rejects field discriminators without deterministic defaults", () => {
+    const node = instructionNode({
+      name: "invalid",
+      accounts: [],
+      arguments: [
+        instructionArgumentNode({
+          name: "discriminator",
+          type: numberTypeNode("u8"),
+        }),
+      ],
+      discriminators: [fieldDiscriminatorNode("discriminator", 0)],
+    });
+
+    expect(() => getInstructionPageFragment(node, createScope())).toThrow(
+      /must reference a field with a default value/,
+    );
   });
 });

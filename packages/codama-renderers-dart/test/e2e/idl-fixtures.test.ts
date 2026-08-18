@@ -79,7 +79,8 @@ describe("E2E: Token Vault IDL fixture", () => {
     // Class
     expect(content).toContain("@immutable");
     expect(content).toContain("class Vault {");
-    expect(content).toContain("const Vault({");
+    expect(content).toContain("Vault({");
+    expect(content).not.toContain("required this.discriminator");
 
     // Fields
     expect(content).toContain("final Address authority;");
