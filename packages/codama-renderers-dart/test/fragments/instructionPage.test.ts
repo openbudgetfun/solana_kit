@@ -10,6 +10,7 @@ import {
   instructionNode,
   numberTypeNode,
   numberValueNode,
+  optionTypeNode,
   publicKeyTypeNode,
   publicKeyValueNode,
   sizeDiscriminatorNode,
@@ -222,6 +223,27 @@ describe("getInstructionPageFragment", () => {
     );
     expect(frag.content).toContain(
       "VariableSizeDecoder<Map<String, Object?>>()",
+    );
+  });
+
+  it("decodes nullable instruction arguments without a non-null assertion", () => {
+    const node = instructionNode({
+      name: "transferMaybe",
+      accounts: [],
+      arguments: [
+        instructionArgumentNode({
+          name: "amount",
+          type: optionTypeNode(numberTypeNode("u64")),
+        }),
+      ],
+    });
+    const frag = getInstructionPageFragment(node, createScope());
+
+    expect(frag.content).toContain(
+      "amount: map['amount'] as BigInt?,",
+    );
+    expect(frag.content).not.toContain(
+      "amount: map['amount']! as BigInt?,",
     );
   });
 
