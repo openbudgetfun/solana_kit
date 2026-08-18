@@ -203,6 +203,7 @@ jobs:
           mkdir -p "$dart_bin_dir"
           ln -s "$GITHUB_WORKSPACE/.devenv/profile/bin/dart" "$dart_bin_dir/dart"
           ln -s "$GITHUB_WORKSPACE/.devenv/profile/bin/flutter" "$dart_bin_dir/flutter"
+          ln -s "$GITHUB_WORKSPACE/.devenv/profile/bin/fvm" "$dart_bin_dir/fvm"
           PATH="$dart_bin_dir:$PATH" pnpm --filter codama-renderers-dart test:coverage
       - name: prepare Codecov flag reports
         id: prepare-codecov-flags
