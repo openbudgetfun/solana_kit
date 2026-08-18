@@ -98,6 +98,8 @@ path = "packages/solana_kit_keys"
 
 [package.solana_kit_lints]
 path = "packages/solana_kit_lints"
+tag = false
+release = false
 
 [package.solana_kit_loader]
 path = "packages/solana_kit_loader"
@@ -311,7 +313,6 @@ enabled = true
 publish.enabled = true
 publish.mode = "builtin"
 publish.registry = "pub_dev"
-publish.trusted_publishing = true
 versioned_files = [
   { path = "**/pubspec.yaml", type = "dart", fields = ["dependencies", "dev_dependencies"] },
 ]
@@ -322,7 +323,6 @@ roots = ["packages/codama-renderers-dart"]
 publish.enabled = true
 publish.mode = "builtin"
 publish.registry = "npm"
-publish.trusted_publishing = true
 
 [source]
 provider = "github"
