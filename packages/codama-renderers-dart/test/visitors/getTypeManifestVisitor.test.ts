@@ -2,6 +2,7 @@ import {
   arrayTypeNode,
   booleanTypeNode,
   bytesTypeNode,
+  constantValueNode,
   definedTypeLinkNode,
   enumEmptyVariantTypeNode,
   enumStructVariantTypeNode,
@@ -9,8 +10,11 @@ import {
   enumTypeNode,
   fixedCountNode,
   fixedSizeTypeNode,
+  hiddenPrefixTypeNode,
+  hiddenSuffixTypeNode,
   mapTypeNode,
   numberTypeNode,
+  numberValueNode,
   optionTypeNode,
   prefixedCountNode,
   publicKeyTypeNode,
@@ -21,6 +25,7 @@ import {
   structFieldTypeNode,
   structTypeNode,
   tupleTypeNode,
+  type TypeNode,
 } from "@codama/nodes";
 import {
   LinkableDictionary,
@@ -578,6 +583,48 @@ describe("getTypeManifestVisitor", () => {
       const manifest = visit(node, createVisitor());
       expect(manifest.encoder.content).toContain("getTupleEncoder");
       expect(manifest.decoder.content).toContain("getTupleDecoder");
+    });
+  });
+
+  describe("serialized nodes with omitted empty collections", () => {
+    const constantU8 = constantValueNode(
+      numberTypeNode("u8"),
+      numberValueNode(1),
+    );
+    const { items: _tupleItems, ...tupleWithoutItems } = tupleTypeNode([
+      numberTypeNode("u8"),
+    ]);
+    const { fields: _structFields, ...structWithoutFields } = structTypeNode([
+      structFieldTypeNode({ name: "value", type: numberTypeNode("u8") }),
+    ]);
+    const { variants: _enumVariants, ...enumWithoutVariants } = enumTypeNode([
+      enumEmptyVariantTypeNode("empty"),
+    ]);
+    const { prefix: _prefix, ...hiddenPrefixWithoutPrefix } = hiddenPrefixTypeNode(
+      numberTypeNode("u8"),
+      [constantU8],
+    );
+    const { suffix: _suffix, ...hiddenSuffixWithoutSuffix } = hiddenSuffixTypeNode(
+      numberTypeNode("u8"),
+      [constantU8],
+    );
+
+    const serializedNodes = [
+      ["tuple items", tupleWithoutItems],
+      ["struct fields", structWithoutFields],
+      ["enum variants", enumWithoutVariants],
+      ["hidden prefix values", hiddenPrefixWithoutPrefix],
+      ["hidden suffix values", hiddenSuffixWithoutSuffix],
+    ] as const;
+
+    it.each(serializedNodes)("returns a manifest without %s", (_name, node) => {
+      const manifest = visit(node as unknown as TypeNode, createVisitor());
+
+      expect(manifest).toMatchObject({
+        type: expect.any(Object),
+        encoder: expect.any(Object),
+        decoder: expect.any(Object),
+      });
     });
   });
 });

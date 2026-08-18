@@ -327,8 +327,9 @@ export function getTypeManifestVisitor(input: {
     },
 
     visitStructType(node: StructTypeNode, { self }) {
-      const fields = (node.fields ?? []).map((f) => visit(f, self));
-      const fieldNames = (node.fields ?? []).map((f) => f.name as string);
+      const nodeFields = node.fields ?? [];
+      const fields = nodeFields.map((f) => visit(f, self));
+      const fieldNames = nodeFields.map((f) => f.name as string);
 
       // Type: Map<String, Object?> (for inline structs without a name)
       const typeStr = "Map<String, Object?>";

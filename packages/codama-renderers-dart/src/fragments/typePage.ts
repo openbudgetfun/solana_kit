@@ -1,4 +1,9 @@
-import type { DefinedTypeNode, StructFieldTypeNode, TypeNode } from "@codama/nodes";
+import type {
+  DefinedTypeNode,
+  EnumVariantTypeNode,
+  StructFieldTypeNode,
+  TypeNode,
+} from "@codama/nodes";
 import { resolveNestedTypeNode } from "@codama/nodes";
 import { visit } from "@codama/visitors-core";
 
@@ -30,13 +35,14 @@ export function getTypePageFragment(
 
   // Check what kind of type this is
   if (typeNode.kind === "enumTypeNode") {
-    const isScalar = (typeNode.variants ?? []).every(
+    const variants = typeNode.variants ?? [];
+    const isScalar = variants.every(
       (v) => v.kind === "enumEmptyVariantTypeNode",
     );
     if (isScalar) {
-      return getScalarEnumPageFragment(node, scope);
+      return getScalarEnumPageFragment(node, variants, scope);
     }
-    return getDataEnumPageFragment(node, scope);
+    return getDataEnumPageFragment(node, variants, scope);
   }
 
   if (typeNode.kind === "structTypeNode") {
@@ -52,6 +58,7 @@ export function getTypePageFragment(
  */
 function getScalarEnumPageFragment(
   node: DefinedTypeNode,
+  enumVariants: EnumVariantTypeNode[],
   scope: RenderScope,
 ): Fragment {
   const name = node.name as string;
@@ -59,7 +66,7 @@ function getScalarEnumPageFragment(
   const enumNode = node.type;
   if (enumNode.kind !== "enumTypeNode") return emptyFragment();
 
-  const variants = (enumNode.variants ?? []).map((v) => {
+  const variants = enumVariants.map((v) => {
     const variantName = scope.nameApi.enumVariant(v.name as string);
     return variantName;
   });
@@ -115,6 +122,7 @@ Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragme
  */
 function getDataEnumPageFragment(
   node: DefinedTypeNode,
+  variants: EnumVariantTypeNode[],
   scope: RenderScope,
 ): Fragment {
   const name = node.name as string;
@@ -130,7 +138,6 @@ function getDataEnumPageFragment(
   // Collect all field type manifests from variants so we can merge their imports
   const allVariantManifests: { encoder: Fragment; decoder: Fragment; type: Fragment }[] = [];
 
-  const variants = enumNode.variants ?? [];
   for (let i = 0; i < variants.length; i++) {
     const variant = variants[i];
     const variantName = pascalCase(variant.name as string);
