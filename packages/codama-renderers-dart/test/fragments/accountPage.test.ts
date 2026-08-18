@@ -5,6 +5,7 @@ import {
   fieldDiscriminatorNode,
   numberTypeNode,
   numberValueNode,
+  optionTypeNode,
   publicKeyTypeNode,
   structFieldTypeNode,
   structTypeNode,
@@ -384,6 +385,45 @@ describe("getAccountPageFragment", () => {
     expect(frag.content).not.toContain("required this.discriminator");
     expect(frag.content).toContain("'discriminator': 7,");
     expect(frag.content).toContain("getConstantDecoder(");
+  });
+
+  it("generates an initializer-only constructor for an omitted-only account", () => {
+    const discriminatorType = numberTypeNode("u8");
+    const node = accountNode({
+      name: "markerState",
+      data: structTypeNode([
+        structFieldTypeNode({
+          name: "discriminator",
+          type: discriminatorType,
+          defaultValue: numberValueNode(7),
+          defaultValueStrategy: "omitted",
+        }),
+      ]),
+      discriminators: [
+        constantDiscriminatorNode(
+          constantValueNode(discriminatorType, numberValueNode(7)),
+          0,
+        ),
+      ],
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain("const MarkerState() : discriminator = 7;");
+  });
+
+  it("decodes nullable account fields without a non-null assertion", () => {
+    const node = accountNode({
+      name: "optionalState",
+      data: structTypeNode([
+        structFieldTypeNode({
+          name: "value",
+          type: optionTypeNode(numberTypeNode("u8")),
+        }),
+      ]),
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain("value: map['value'] as int?");
   });
 
   it("rejects field discriminators without deterministic defaults", () => {
