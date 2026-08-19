@@ -1,4 +1,5 @@
 import {
+  accountNode,
   constantDiscriminatorNode,
   constantValueNode,
   fieldDiscriminatorNode,
@@ -7,7 +8,9 @@ import {
   numberTypeNode,
   numberValueNode,
   sizeDiscriminatorNode,
+  structTypeNode,
 } from "@codama/nodes";
+import type { AccountNode, InstructionNode } from "@codama/nodes";
 import { LinkableDictionary, NodeStack } from "@codama/visitors-core";
 import { describe, expect, it } from "vitest";
 
@@ -45,6 +48,36 @@ describe("getDiscriminatorValidationFragment", () => {
       ],
       discriminators: [fieldDiscriminatorNode("discriminator", 0)],
     });
+
+    expect(() =>
+      getDiscriminatorValidationFragment(node, createScope())
+    ).toThrow(/must reference a field with a default value/);
+  });
+
+  it("treats omitted account fields as empty", () => {
+    const account = accountNode({
+      name: "empty",
+      data: structTypeNode([]),
+      discriminators: [fieldDiscriminatorNode("discriminator", 0)],
+    });
+    const node = {
+      ...account,
+      data: { ...account.data, fields: undefined },
+    } as unknown as AccountNode;
+
+    expect(() =>
+      getDiscriminatorValidationFragment(node, createScope())
+    ).toThrow(/must reference a field with a default value/);
+  });
+
+  it("treats omitted instruction arguments as empty", () => {
+    const node = {
+      ...instructionNode({
+        name: "empty",
+        discriminators: [fieldDiscriminatorNode("discriminator", 0)],
+      }),
+      arguments: undefined,
+    } as unknown as InstructionNode;
 
     expect(() =>
       getDiscriminatorValidationFragment(node, createScope())

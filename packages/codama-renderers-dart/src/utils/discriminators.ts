@@ -109,9 +109,9 @@ function getDiscriminatorFields(
   node: DiscriminatedNode,
 ): readonly StructFieldTypeNode[] {
   if (node.kind === "accountNode") {
-    return resolveNestedTypeNode(node.data).fields;
+    return resolveNestedTypeNode(node.data).fields ?? [];
   }
-  return node.arguments.map(
+  return (node.arguments ?? []).map(
     (argument) =>
       ({
         ...argument,
