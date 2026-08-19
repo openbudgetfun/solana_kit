@@ -9,11 +9,11 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 @immutable
 class StakePool {
-  const StakePool({
-    required this.discriminator,
+  StakePool({
     required this.admin,
     required this.rewardMint,
     required this.stakeMint,
@@ -24,7 +24,16 @@ class StakePool {
     required this.currentStakers,
     required this.isActive,
     required this.bump,
-  });
+  }) : discriminator = Uint8List.fromList([
+         0x79,
+         0x22,
+         0xce,
+         0x15,
+         0x4f,
+         0x7f,
+         0xff,
+         0x1c,
+       ]);
 
   final Uint8List discriminator;
   final Address admin;
@@ -102,7 +111,16 @@ Encoder<StakePool> getStakePoolEncoder() {
   return transformEncoder(
     structEncoder,
     (StakePool value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': Uint8List.fromList([
+        0x79,
+        0x22,
+        0xce,
+        0x15,
+        0x4f,
+        0x7f,
+        0xff,
+        0x1c,
+      ]),
       'admin': value.admin,
       'rewardMint': value.rewardMint,
       'stakeMint': value.stakeMint,
@@ -132,22 +150,59 @@ Decoder<StakePool> getStakePoolDecoder() {
     ('bump', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => StakePool(
-      discriminator: map['discriminator']! as Uint8List,
-      admin: map['admin']! as Address,
-      rewardMint: map['rewardMint']! as Address,
-      stakeMint: map['stakeMint']! as Address,
-      totalStaked: map['totalStaked']! as BigInt,
-      rewardRate: map['rewardRate']! as BigInt,
-      minStakeDuration: map['minStakeDuration']! as BigInt,
-      maxStakers: map['maxStakers']! as int,
-      currentStakers: map['currentStakers']! as int,
-      isActive: map['isActive']! as bool,
-      bump: map['bump']! as int,
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'stakePool account decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (StakePool, int) readTopLevel(Uint8List bytes, int offset) {
+    getConstantDecoder(
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false).encode(
+        Uint8List.fromList([0x79, 0x22, 0xce, 0x15, 0x4f, 0x7f, 0xff, 0x1c]),
+      ),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+
+    return (
+      StakePool(
+        admin: map['admin']! as Address,
+        rewardMint: map['rewardMint']! as Address,
+        stakeMint: map['stakeMint']! as Address,
+        totalStaked: map['totalStaked']! as BigInt,
+        rewardRate: map['rewardRate']! as BigInt,
+        minStakeDuration: map['minStakeDuration']! as BigInt,
+        maxStakers: map['maxStakers']! as int,
+        currentStakers: map['currentStakers']! as int,
+        isActive: map['isActive']! as bool,
+        bump: map['bump']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() => FixedSizeDecoder<StakePool>(
+      fixedSize: structDecoder.fixedSize,
+      read: (bytes, offset) {
+        final bytesLength = bytes.length - offset;
+        if (bytesLength < structDecoder.fixedSize) {
+          throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+        }
+        return readTopLevel(bytes, offset);
+      },
     ),
-  );
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<StakePool>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<StakePool, StakePool> getStakePoolCodec() {

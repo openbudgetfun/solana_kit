@@ -1,7 +1,15 @@
 import {
   accountNode,
+  bytesTypeNode,
+  bytesValueNode,
+  constantDiscriminatorNode,
+  constantValueNode,
+  fieldDiscriminatorNode,
   numberTypeNode,
+  numberValueNode,
+  optionTypeNode,
   publicKeyTypeNode,
+  sizeDiscriminatorNode,
   structFieldTypeNode,
   structTypeNode,
 } from "@codama/nodes";
@@ -117,7 +125,31 @@ describe("getAccountPageFragment", () => {
       "Decoder<TokenAccount> getTokenAccountDecoder()",
     );
     expect(frag.content).toContain("getStructDecoder");
-    expect(frag.content).toContain("transformDecoder");
+    expect(frag.content).not.toContain("newOffset != bytes.length");
+    expect(frag.content).toContain("bytesLength < structDecoder.fixedSize");
+    expect(frag.content).toContain(
+      "FixedSizeDecoder<Map<String, Object?>>()",
+    );
+    expect(frag.content).toContain(
+      "VariableSizeDecoder<Map<String, Object?>>()",
+    );
+  });
+
+  it("requires exact consumption for size-discriminated accounts", () => {
+    const node = accountNode({
+      name: "tokenAccount",
+      data: structTypeNode([
+        structFieldTypeNode({
+          name: "amount",
+          type: numberTypeNode("u64"),
+        }),
+      ]),
+      discriminators: [sizeDiscriminatorNode(8)],
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain("newOffset != bytes.length");
+    expect(frag.content).toContain("bytesLength != structDecoder.fixedSize");
   });
 
   it("generates codec function", () => {
@@ -343,5 +375,112 @@ describe("getAccountPageFragment", () => {
     const frag = getAccountPageFragment(node, createScope());
 
     expect(frag.content).toContain("int get hashCode => value.hashCode;");
+  });
+
+  it("owns omitted defaults and validates account discriminators", () => {
+    const discriminatorType = numberTypeNode("u8");
+    const node = accountNode({
+      name: "secureState",
+      data: structTypeNode([
+        structFieldTypeNode({
+          name: "discriminator",
+          type: discriminatorType,
+          defaultValue: numberValueNode(7),
+          defaultValueStrategy: "omitted",
+        }),
+        structFieldTypeNode({
+          name: "value",
+          type: numberTypeNode("u16"),
+        }),
+      ]),
+      discriminators: [
+        constantDiscriminatorNode(
+          constantValueNode(discriminatorType, numberValueNode(7)),
+          0,
+        ),
+      ],
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain("discriminator = 7");
+    expect(frag.content).not.toContain("required this.discriminator");
+    expect(frag.content).toContain("'discriminator': 7,");
+    expect(frag.content).toContain("getConstantDecoder(");
+  });
+
+  it("generates an initializer-only constructor for an omitted-only account", () => {
+    const discriminatorType = numberTypeNode("u8");
+    const node = accountNode({
+      name: "markerState",
+      data: structTypeNode([
+        structFieldTypeNode({
+          name: "discriminator",
+          type: discriminatorType,
+          defaultValue: numberValueNode(7),
+          defaultValueStrategy: "omitted",
+        }),
+      ]),
+      discriminators: [
+        constantDiscriminatorNode(
+          constantValueNode(discriminatorType, numberValueNode(7)),
+          0,
+        ),
+      ],
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain("const MarkerState() : discriminator = 7;");
+  });
+
+  it("omits const for an account with a runtime-only default", () => {
+    const node = accountNode({
+      name: "byteState",
+      data: structTypeNode([
+        structFieldTypeNode({
+          name: "prefix",
+          type: bytesTypeNode(),
+          defaultValue: bytesValueNode("base16", "aabb"),
+          defaultValueStrategy: "omitted",
+        }),
+      ]),
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain(
+      "ByteState() : prefix = Uint8List.fromList([0xaa, 0xbb]);",
+    );
+    expect(frag.content).not.toContain("const ByteState()");
+  });
+
+  it("decodes nullable account fields without a non-null assertion", () => {
+    const node = accountNode({
+      name: "optionalState",
+      data: structTypeNode([
+        structFieldTypeNode({
+          name: "value",
+          type: optionTypeNode(numberTypeNode("u8")),
+        }),
+      ]),
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain("value: map['value'] as int?");
+  });
+
+  it("rejects field discriminators without deterministic defaults", () => {
+    const node = accountNode({
+      name: "invalidState",
+      data: structTypeNode([
+        structFieldTypeNode({
+          name: "discriminator",
+          type: numberTypeNode("u8"),
+        }),
+      ]),
+      discriminators: [fieldDiscriminatorNode("discriminator", 0)],
+    });
+
+    expect(() => getAccountPageFragment(node, createScope())).toThrow(
+      /must have a deterministic default value|must reference a field with a default value/,
+    );
   });
 });

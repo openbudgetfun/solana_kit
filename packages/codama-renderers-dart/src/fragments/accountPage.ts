@@ -12,6 +12,12 @@ import {
 } from "../utils/fragment.js";
 import type { RenderScope } from "../utils/options.js";
 import { camelCase } from "../utils/nameTransformers.js";
+import { getDiscriminatorValidationFragment } from "../utils/discriminators.js";
+import { getTopLevelDecoderFragment } from "../utils/exactDecoder.js";
+import {
+  getDartValueFragment,
+  isConstDartValueNode,
+} from "../utils/valueNodes.js";
 import { getDiscriminatorConstantsFragment } from "./discriminatorConstants.js";
 
 /**
@@ -32,20 +38,60 @@ export function getAccountPageFragment(
     manifest: visit(f.type, scope.typeManifestVisitor),
   }));
 
+  const omittedFields = fields.filter(isOmittedDefaultField);
+  const constructorFields = fields.filter(
+    (field) => !isOmittedDefaultField(field),
+  );
+  const forcedFields = new Set([
+    ...omittedFields,
+    ...fields.filter((field) => isFieldDiscriminator(field, node)),
+  ]);
+  const fieldDefaults = new Map(
+    fieldManifests.flatMap(({ field, manifest }) => {
+      if (!forcedFields.has(field) || field.defaultValue == null) return [];
+      return [
+        [
+          field,
+          getDartValueFragment(field.defaultValue, manifest.type.content),
+        ] as const,
+      ];
+    }),
+  );
+
+  for (const field of forcedFields) {
+    if (!fieldDefaults.has(field)) {
+      throw new Error(
+        `Forced field "${field.name}" on account "${node.name}" must have a deterministic default value.`,
+      );
+    }
+  }
+
   const fieldDecls = fieldManifests
     .map(({ field: f, manifest }) => {
       return `  final ${manifest.type.content} ${camelCase(f.name as string)};`;
     })
     .join("\n");
 
-  const ctorParams = fields
+  const ctorParams = constructorFields
     .map((f: StructFieldTypeNode) => `    required this.${camelCase(f.name as string)},`)
     .join("\n");
 
+  const ctorInitializers = omittedFields
+    .map((field) => {
+      const fieldName = camelCase(field.name as string);
+      return `${fieldName} = ${fieldDefaults.get(field)!.content}`;
+    })
+    .join(",\n      ");
+
   // Empty structs use a no-arg constructor; `const Foo({})` is invalid Dart.
-  const ctorSignature = fields.length === 0
-    ? `const ${typeName}();`
-    : `const ${typeName}({\n${ctorParams}\n  });`;
+  const ctorKeyword = omittedFields.every((field) =>
+    isConstDartValueNode(field.defaultValue!),
+  )
+    ? "const "
+    : "";
+  const ctorSignature = constructorFields.length === 0
+    ? `${ctorKeyword}${typeName}()${ctorInitializers ? ` : ${ctorInitializers}` : ""};`
+    : `${ctorKeyword}${typeName}({\n${ctorParams}\n  })${ctorInitializers ? ` :\n      ${ctorInitializers}` : ""};`;
 
   const eqChecks =
     fields.length === 0
@@ -87,13 +133,16 @@ export function getAccountPageFragment(
     .join("\n");
 
   const toMapFields = fields
-    .map(
-      (f: StructFieldTypeNode) =>
-        `      '${f.name as string}': value.${camelCase(f.name as string)},`,
-    )
+    .map((f: StructFieldTypeNode) => {
+      const value = forcedFields.has(f)
+        ? fieldDefaults.get(f)!.content
+        : `value.${camelCase(f.name as string)}`;
+      return `      '${f.name as string}': ${value},`;
+    })
     .join("\n");
 
   const fromMapFields = fieldManifests
+    .filter(({ field }) => !isOmittedDefaultField(field))
     .map(({ field: f, manifest }) => {
       const typeStr = manifest.type.content;
       const isNullable = typeStr.endsWith("?");
@@ -116,6 +165,19 @@ const int ${fragmentFromString(scope.nameApi.accountSizeConstant(name))} = ${fra
 
   // Discriminator
   const discFragment = getDiscriminatorConstantsFragment(node, scope);
+  const discriminatorValidation = getDiscriminatorValidationFragment(
+    node,
+    scope,
+  );
+  const topLevelDecoder = getTopLevelDecoderFragment({
+    typeName,
+    description: `${name} account decoder`,
+    discriminatorValidation,
+    fromMapFields,
+    requireExactConsumption: (node.discriminators ?? []).some(
+      (discriminator) => discriminator.kind === "sizeDiscriminatorNode",
+    ),
+  });
 
   const parts: Fragment[] = [
     fragment`// Auto-generated. Do not edit.
@@ -178,12 +240,7 @@ Decoder<${fragmentFromString(typeName)}> ${fragmentFromString(decoderName)}() {
 ${fragmentFromString(decFields)}
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ${fragmentFromString(typeName)}(
-${fragmentFromString(fromMapFields)}
-    ),
-  );
+${topLevelDecoder}
 }
 
 Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragmentFromString(codecName)}() {
@@ -202,6 +259,24 @@ Account<${fragmentFromString(typeName)}> ${fragmentFromString(decodeFnName)}(Enc
     result.imports.mergeWith(manifest.decoder.imports);
     result.imports.mergeWith(manifest.type.imports);
   }
+  for (const defaultValue of fieldDefaults.values()) {
+    result.imports.mergeWith(defaultValue.imports);
+  }
 
   return result;
+}
+
+function isOmittedDefaultField(field: StructFieldTypeNode): boolean {
+  return field.defaultValue != null && field.defaultValueStrategy === "omitted";
+}
+
+function isFieldDiscriminator(
+  field: StructFieldTypeNode,
+  node: AccountNode,
+): boolean {
+  return (node.discriminators ?? []).some(
+    (discriminator) =>
+      discriminator.kind === "fieldDiscriminatorNode" &&
+      discriminator.name === field.name,
+  );
 }

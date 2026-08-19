@@ -9,13 +9,13 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 import '../types/vault_status.dart';
 
 @immutable
 class Vault {
-  const Vault({
-    required this.discriminator,
+  Vault({
     required this.authority,
     required this.tokenMint,
     required this.totalDeposited,
@@ -23,7 +23,16 @@ class Vault {
     required this.status,
     required this.createdAt,
     required this.bumpSeed,
-  });
+  }) : discriminator = Uint8List.fromList([
+         0xd3,
+         0x08,
+         0xe8,
+         0x2b,
+         0x02,
+         0x98,
+         0x75,
+         0x77,
+       ]);
 
   final Uint8List discriminator;
   final Address authority;
@@ -89,7 +98,16 @@ Encoder<Vault> getVaultEncoder() {
   return transformEncoder(
     structEncoder,
     (Vault value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': Uint8List.fromList([
+        0xd3,
+        0x08,
+        0xe8,
+        0x2b,
+        0x02,
+        0x98,
+        0x75,
+        0x77,
+      ]),
       'authority': value.authority,
       'tokenMint': value.tokenMint,
       'totalDeposited': value.totalDeposited,
@@ -113,19 +131,55 @@ Decoder<Vault> getVaultDecoder() {
     ('bumpSeed', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => Vault(
-      discriminator: map['discriminator']! as Uint8List,
-      authority: map['authority']! as Address,
-      tokenMint: map['tokenMint']! as Address,
-      totalDeposited: map['totalDeposited']! as BigInt,
-      maxCapacity: map['maxCapacity']! as BigInt,
-      status: map['status']! as VaultStatus,
-      createdAt: map['createdAt']! as BigInt,
-      bumpSeed: map['bumpSeed']! as int,
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'vault account decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (Vault, int) readTopLevel(Uint8List bytes, int offset) {
+    getConstantDecoder(
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false).encode(
+        Uint8List.fromList([0xd3, 0x08, 0xe8, 0x2b, 0x02, 0x98, 0x75, 0x77]),
+      ),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+
+    return (
+      Vault(
+        authority: map['authority']! as Address,
+        tokenMint: map['tokenMint']! as Address,
+        totalDeposited: map['totalDeposited']! as BigInt,
+        maxCapacity: map['maxCapacity']! as BigInt,
+        status: map['status']! as VaultStatus,
+        createdAt: map['createdAt']! as BigInt,
+        bumpSeed: map['bumpSeed']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() => FixedSizeDecoder<Vault>(
+      fixedSize: structDecoder.fixedSize,
+      read: (bytes, offset) {
+        final bytesLength = bytes.length - offset;
+        if (bytesLength < structDecoder.fixedSize) {
+          throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+        }
+        return readTopLevel(bytes, offset);
+      },
     ),
-  );
+    VariableSizeDecoder<Map<String, Object?>>() => VariableSizeDecoder<Vault>(
+      read: readTopLevel,
+      maxSize: structDecoder.maxSize,
+    ),
+  };
 }
 
 Codec<Vault, Vault> getVaultCodec() {
