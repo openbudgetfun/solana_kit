@@ -49,11 +49,12 @@ Decoder<ExactActionInstructionData> getExactActionInstructionDataDecoder() {
     );
   }
 
-  (ExactActionInstructionData, int) readExact(Uint8List bytes, int offset) {
+  (ExactActionInstructionData, int) readTopLevel(Uint8List bytes, int offset) {
     final (map, newOffset) = structDecoder.read(bytes, offset);
     if (newOffset != bytes.length) {
       throwInvalidByteLength(newOffset - offset, bytes.length - offset);
     }
+
     return (
       ExactActionInstructionData(
         amount: map['amount']! as int,
@@ -71,12 +72,12 @@ Decoder<ExactActionInstructionData> getExactActionInstructionDataDecoder() {
           if (bytesLength != structDecoder.fixedSize) {
             throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
           }
-          return readExact(bytes, offset);
+          return readTopLevel(bytes, offset);
         },
       ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<ExactActionInstructionData>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };

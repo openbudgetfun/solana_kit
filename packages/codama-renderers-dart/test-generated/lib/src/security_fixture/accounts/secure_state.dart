@@ -75,7 +75,7 @@ Decoder<SecureState> getSecureStateDecoder() {
     );
   }
 
-  (SecureState, int) readExact(Uint8List bytes, int offset) {
+  (SecureState, int) readTopLevel(Uint8List bytes, int offset) {
     getConstantDecoder(
       getU8Encoder().encode(7),
     ).read(bytes, offset + 0);
@@ -96,6 +96,7 @@ Decoder<SecureState> getSecureStateDecoder() {
     if (newOffset != bytes.length) {
       throwInvalidByteLength(newOffset - offset, bytes.length - offset);
     }
+
     return (
       SecureState(
         value: map['value']! as int,
@@ -112,12 +113,12 @@ Decoder<SecureState> getSecureStateDecoder() {
         if (bytesLength != structDecoder.fixedSize) {
           throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
         }
-        return readExact(bytes, offset);
+        return readTopLevel(bytes, offset);
       },
     ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<SecureState>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };

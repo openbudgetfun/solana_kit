@@ -61,11 +61,9 @@ Decoder<ExactState> getExactStateDecoder() {
     );
   }
 
-  (ExactState, int) readExact(Uint8List bytes, int offset) {
+  (ExactState, int) readTopLevel(Uint8List bytes, int offset) {
     final (map, newOffset) = structDecoder.read(bytes, offset);
-    if (newOffset != bytes.length) {
-      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
-    }
+
     return (
       ExactState(
         value: map['value']! as int,
@@ -79,15 +77,15 @@ Decoder<ExactState> getExactStateDecoder() {
       fixedSize: structDecoder.fixedSize,
       read: (bytes, offset) {
         final bytesLength = bytes.length - offset;
-        if (bytesLength != structDecoder.fixedSize) {
+        if (bytesLength < structDecoder.fixedSize) {
           throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
         }
-        return readExact(bytes, offset);
+        return readTopLevel(bytes, offset);
       },
     ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<ExactState>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };

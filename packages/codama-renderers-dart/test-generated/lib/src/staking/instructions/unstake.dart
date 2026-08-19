@@ -50,7 +50,7 @@ Decoder<UnstakeInstructionData> getUnstakeInstructionDataDecoder() {
     );
   }
 
-  (UnstakeInstructionData, int) readExact(Uint8List bytes, int offset) {
+  (UnstakeInstructionData, int) readTopLevel(Uint8List bytes, int offset) {
     getConstantDecoder(
       getU8Encoder().encode(2),
     ).read(bytes, offset + 0);
@@ -58,6 +58,7 @@ Decoder<UnstakeInstructionData> getUnstakeInstructionDataDecoder() {
     if (newOffset != bytes.length) {
       throwInvalidByteLength(newOffset - offset, bytes.length - offset);
     }
+
     return (
       UnstakeInstructionData(),
       newOffset,
@@ -73,12 +74,12 @@ Decoder<UnstakeInstructionData> getUnstakeInstructionDataDecoder() {
           if (bytesLength != structDecoder.fixedSize) {
             throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
           }
-          return readExact(bytes, offset);
+          return readTopLevel(bytes, offset);
         },
       ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<UnstakeInstructionData>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };

@@ -161,16 +161,14 @@ Decoder<StakePool> getStakePoolDecoder() {
     );
   }
 
-  (StakePool, int) readExact(Uint8List bytes, int offset) {
+  (StakePool, int) readTopLevel(Uint8List bytes, int offset) {
     getConstantDecoder(
       fixEncoderSize(getBytesEncoder(), 8).encode(
         Uint8List.fromList([0x79, 0x22, 0xce, 0x15, 0x4f, 0x7f, 0xff, 0x1c]),
       ),
     ).read(bytes, offset + 0);
     final (map, newOffset) = structDecoder.read(bytes, offset);
-    if (newOffset != bytes.length) {
-      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
-    }
+
     return (
       StakePool(
         admin: map['admin']! as Address,
@@ -193,15 +191,15 @@ Decoder<StakePool> getStakePoolDecoder() {
       fixedSize: structDecoder.fixedSize,
       read: (bytes, offset) {
         final bytesLength = bytes.length - offset;
-        if (bytesLength != structDecoder.fixedSize) {
+        if (bytesLength < structDecoder.fixedSize) {
           throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
         }
-        return readExact(bytes, offset);
+        return readTopLevel(bytes, offset);
       },
     ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<StakePool>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };

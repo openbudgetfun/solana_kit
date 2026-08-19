@@ -58,7 +58,7 @@ Decoder<SecureActionInstructionData> getSecureActionInstructionDataDecoder() {
     );
   }
 
-  (SecureActionInstructionData, int) readExact(Uint8List bytes, int offset) {
+  (SecureActionInstructionData, int) readTopLevel(Uint8List bytes, int offset) {
     getConstantDecoder(
       getU8Encoder().encode(9),
     ).read(bytes, offset + 0);
@@ -79,6 +79,7 @@ Decoder<SecureActionInstructionData> getSecureActionInstructionDataDecoder() {
     if (newOffset != bytes.length) {
       throwInvalidByteLength(newOffset - offset, bytes.length - offset);
     }
+
     return (
       SecureActionInstructionData(
         amount: map['amount']! as int,
@@ -96,12 +97,12 @@ Decoder<SecureActionInstructionData> getSecureActionInstructionDataDecoder() {
           if (bytesLength != structDecoder.fixedSize) {
             throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
           }
-          return readExact(bytes, offset);
+          return readTopLevel(bytes, offset);
         },
       ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<SecureActionInstructionData>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };

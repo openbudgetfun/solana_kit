@@ -114,16 +114,14 @@ Decoder<DepositRecord> getDepositRecordDecoder() {
     );
   }
 
-  (DepositRecord, int) readExact(Uint8List bytes, int offset) {
+  (DepositRecord, int) readTopLevel(Uint8List bytes, int offset) {
     getConstantDecoder(
       fixEncoderSize(getBytesEncoder(), 8).encode(
         Uint8List.fromList([0x53, 0xe8, 0x0a, 0x1f, 0xfb, 0x31, 0xbd, 0xa7]),
       ),
     ).read(bytes, offset + 0);
     final (map, newOffset) = structDecoder.read(bytes, offset);
-    if (newOffset != bytes.length) {
-      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
-    }
+
     return (
       DepositRecord(
         depositor: map['depositor']! as Address,
@@ -140,15 +138,15 @@ Decoder<DepositRecord> getDepositRecordDecoder() {
       fixedSize: structDecoder.fixedSize,
       read: (bytes, offset) {
         final bytesLength = bytes.length - offset;
-        if (bytesLength != structDecoder.fixedSize) {
+        if (bytesLength < structDecoder.fixedSize) {
           throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
         }
-        return readExact(bytes, offset);
+        return readTopLevel(bytes, offset);
       },
     ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<DepositRecord>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };

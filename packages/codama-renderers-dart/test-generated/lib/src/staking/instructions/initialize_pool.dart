@@ -68,7 +68,10 @@ getInitializePoolInstructionDataDecoder() {
     );
   }
 
-  (InitializePoolInstructionData, int) readExact(Uint8List bytes, int offset) {
+  (InitializePoolInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
     getConstantDecoder(
       getU8Encoder().encode(0),
     ).read(bytes, offset + 0);
@@ -76,6 +79,7 @@ getInitializePoolInstructionDataDecoder() {
     if (newOffset != bytes.length) {
       throwInvalidByteLength(newOffset - offset, bytes.length - offset);
     }
+
     return (
       InitializePoolInstructionData(
         rewardRate: map['rewardRate']! as BigInt,
@@ -95,12 +99,12 @@ getInitializePoolInstructionDataDecoder() {
           if (bytesLength != structDecoder.fixedSize) {
             throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
           }
-          return readExact(bytes, offset);
+          return readTopLevel(bytes, offset);
         },
       ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<InitializePoolInstructionData>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };

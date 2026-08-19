@@ -1,28 +1,41 @@
 import type { Fragment } from "./fragment.js";
 import { fragment, fragmentFromString, use } from "./fragment.js";
 
-export interface ExactDecoderFragmentOptions {
+export interface TopLevelDecoderFragmentOptions {
   readonly typeName: string;
   readonly description: string;
   readonly discriminatorValidation: Fragment;
   readonly fromMapFields: string;
+  readonly requireExactConsumption: boolean;
 }
 
 /**
- * Wrap a generated top-level struct decoder so it must consume all input.
+ * Wrap a generated top-level struct decoder with discriminator and length
+ * validation.
  *
  * The wrapper preserves fixed/variable decoder metadata so it remains
  * compatible with the matching generated encoder when combined into a codec.
  */
-export function getExactDecoderFragment({
+export function getTopLevelDecoderFragment({
   typeName,
   description,
   discriminatorValidation,
   fromMapFields,
-}: ExactDecoderFragmentOptions): Fragment {
+  requireExactConsumption,
+}: TopLevelDecoderFragmentOptions): Fragment {
   const validation = discriminatorValidation.content
     ? `    ${discriminatorValidation.content.replaceAll("\n", "\n    ")}\n`
     : "";
+
+  const consumptionCheck = requireExactConsumption
+    ? `    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+`
+    : "";
+  const fixedSizeCheck = requireExactConsumption
+    ? "bytesLength != structDecoder.fixedSize"
+    : "bytesLength < structDecoder.fixedSize";
 
   const result = fragment`  Never throwInvalidByteLength(int expected, int bytesLength) {
     throw ${use("SolanaError", "solanaErrors")}(
@@ -35,11 +48,9 @@ export function getExactDecoderFragment({
     );
   }
 
-  (${fragmentFromString(typeName)}, int) readExact(Uint8List bytes, int offset) {
+  (${fragmentFromString(typeName)}, int) readTopLevel(Uint8List bytes, int offset) {
 ${fragmentFromString(validation)}    final (map, newOffset) = structDecoder.read(bytes, offset);
-    if (newOffset != bytes.length) {
-      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
-    }
+${fragmentFromString(consumptionCheck)}
     return (
       ${fragmentFromString(typeName)}(
 ${fragmentFromString(fromMapFields)}
@@ -54,15 +65,15 @@ ${fragmentFromString(fromMapFields)}
         fixedSize: structDecoder.fixedSize,
         read: (bytes, offset) {
           final bytesLength = bytes.length - offset;
-          if (bytesLength != structDecoder.fixedSize) {
+          if (${fragmentFromString(fixedSizeCheck)}) {
             throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
           }
-          return readExact(bytes, offset);
+          return readTopLevel(bytes, offset);
         },
       ),
     ${use("VariableSizeDecoder", "solanaCodecsCore")}<Map<String, Object?>>() =>
       ${use("VariableSizeDecoder", "solanaCodecsCore")}<${fragmentFromString(typeName)}>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };`;

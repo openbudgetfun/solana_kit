@@ -13,7 +13,7 @@ import {
 import type { RenderScope } from "../utils/options.js";
 import { camelCase } from "../utils/nameTransformers.js";
 import { getDiscriminatorValidationFragment } from "../utils/discriminators.js";
-import { getExactDecoderFragment } from "../utils/exactDecoder.js";
+import { getTopLevelDecoderFragment } from "../utils/exactDecoder.js";
 import {
   getDartValueFragment,
   isConstDartValueNode,
@@ -169,11 +169,14 @@ const int ${fragmentFromString(scope.nameApi.accountSizeConstant(name))} = ${fra
     node,
     scope,
   );
-  const exactDecoder = getExactDecoderFragment({
+  const topLevelDecoder = getTopLevelDecoderFragment({
     typeName,
     description: `${name} account decoder`,
     discriminatorValidation,
     fromMapFields,
+    requireExactConsumption: (node.discriminators ?? []).some(
+      (discriminator) => discriminator.kind === "sizeDiscriminatorNode",
+    ),
   });
 
   const parts: Fragment[] = [
@@ -237,7 +240,7 @@ Decoder<${fragmentFromString(typeName)}> ${fragmentFromString(decoderName)}() {
 ${fragmentFromString(decFields)}
   ]);
 
-${exactDecoder}
+${topLevelDecoder}
 }
 
 Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragmentFromString(codecName)}() {

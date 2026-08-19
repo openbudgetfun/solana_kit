@@ -75,11 +75,12 @@ void main() {
   });
 
   group('exact top-level decoding', () {
-    test('account decoder rejects trailing bytes', () {
-      expect(
-        () => getExactStateDecoder().decode(Uint8List.fromList([42, 0, 99])),
-        throwsA(isA<SolanaError>()),
+    test('extensible account decoder accepts trailing bytes', () {
+      final state = getExactStateDecoder().decode(
+        Uint8List.fromList([42, 0, 99]),
       );
+
+      expect(state.value, 42);
     });
 
     test('account decoder rejects truncated bytes', () {

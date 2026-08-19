@@ -15,7 +15,7 @@ import {
 import type { RenderScope } from "../utils/options.js";
 import { camelCase } from "../utils/nameTransformers.js";
 import { getDiscriminatorValidationFragment } from "../utils/discriminators.js";
-import { getExactDecoderFragment } from "../utils/exactDecoder.js";
+import { getTopLevelDecoderFragment } from "../utils/exactDecoder.js";
 import {
   getDartValueFragment,
   isConstDartValueNode,
@@ -248,11 +248,12 @@ export function getInstructionPageFragment(
     node,
     scope,
   );
-  const exactDecoder = getExactDecoderFragment({
+  const topLevelDecoder = getTopLevelDecoderFragment({
     typeName: dataClassName,
     description: `${name} instruction decoder`,
     discriminatorValidation,
     fromMapFields,
+    requireExactConsumption: true,
   });
 
   const parts: Fragment[] = [
@@ -306,7 +307,7 @@ Decoder<${fragmentFromString(dataClassName)}> ${fragmentFromString(dataDecoderNa
 ${fragmentFromString(decFields)}
   ]);
 
-${exactDecoder}
+${topLevelDecoder}
 }
 
 Codec<${fragmentFromString(dataClassName)}, ${fragmentFromString(dataClassName)}> ${fragmentFromString(dataCodecName)}() {

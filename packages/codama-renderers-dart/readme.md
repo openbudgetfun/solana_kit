@@ -162,7 +162,7 @@ Generated codecs treat Codama discriminators as wire invariants rather than call
 
 Account and instruction decoders validate every declared constant, field, and size discriminator before returning typed data. Invalid discriminator bytes and unexpected discriminator sizes throw a `SolanaError` instead of decoding as the wrong account or instruction type. Generation fails when a field discriminator has no deterministic default or uses a value form the renderer cannot encode safely.
 
-Top-level account and instruction decoders also require exact input consumption. Truncated data and otherwise-valid data with an unread suffix are rejected, preventing a payload for one schema from being accepted merely because it starts with the bytes of another.
+Top-level instruction decoders require exact input consumption. Account decoders always reject truncated data, but accept unread trailing capacity unless the account declares a `sizeDiscriminatorNode`; size-discriminated accounts reject both truncation and suffix bytes.
 
 Optional instruction accounts use Codama's `programId` strategy by default. When an optional account is absent, the builder emits a readonly program-address placeholder so every later account keeps its declared index. The account slot is removed only when the instruction explicitly selects the legacy `omitted` strategy.
 

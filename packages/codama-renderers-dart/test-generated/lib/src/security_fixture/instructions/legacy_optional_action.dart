@@ -40,7 +40,7 @@ getLegacyOptionalActionInstructionDataDecoder() {
     );
   }
 
-  (LegacyOptionalActionInstructionData, int) readExact(
+  (LegacyOptionalActionInstructionData, int) readTopLevel(
     Uint8List bytes,
     int offset,
   ) {
@@ -48,6 +48,7 @@ getLegacyOptionalActionInstructionDataDecoder() {
     if (newOffset != bytes.length) {
       throwInvalidByteLength(newOffset - offset, bytes.length - offset);
     }
+
     return (
       LegacyOptionalActionInstructionData(),
       newOffset,
@@ -63,12 +64,12 @@ getLegacyOptionalActionInstructionDataDecoder() {
           if (bytesLength != structDecoder.fixedSize) {
             throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
           }
-          return readExact(bytes, offset);
+          return readTopLevel(bytes, offset);
         },
       ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<LegacyOptionalActionInstructionData>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };

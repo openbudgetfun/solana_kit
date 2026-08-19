@@ -133,16 +133,14 @@ Decoder<StakeAccount> getStakeAccountDecoder() {
     );
   }
 
-  (StakeAccount, int) readExact(Uint8List bytes, int offset) {
+  (StakeAccount, int) readTopLevel(Uint8List bytes, int offset) {
     getConstantDecoder(
       fixEncoderSize(getBytesEncoder(), 8).encode(
         Uint8List.fromList([0x50, 0x9e, 0x43, 0x7c, 0x32, 0xbd, 0xc0, 0xff]),
       ),
     ).read(bytes, offset + 0);
     final (map, newOffset) = structDecoder.read(bytes, offset);
-    if (newOffset != bytes.length) {
-      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
-    }
+
     return (
       StakeAccount(
         owner: map['owner']! as Address,
@@ -161,15 +159,15 @@ Decoder<StakeAccount> getStakeAccountDecoder() {
       fixedSize: structDecoder.fixedSize,
       read: (bytes, offset) {
         final bytesLength = bytes.length - offset;
-        if (bytesLength != structDecoder.fixedSize) {
+        if (bytesLength < structDecoder.fixedSize) {
           throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
         }
-        return readExact(bytes, offset);
+        return readTopLevel(bytes, offset);
       },
     ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<StakeAccount>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };

@@ -60,7 +60,7 @@ getUpdateVaultStatusInstructionDataDecoder() {
     );
   }
 
-  (UpdateVaultStatusInstructionData, int) readExact(
+  (UpdateVaultStatusInstructionData, int) readTopLevel(
     Uint8List bytes,
     int offset,
   ) {
@@ -71,6 +71,7 @@ getUpdateVaultStatusInstructionDataDecoder() {
     if (newOffset != bytes.length) {
       throwInvalidByteLength(newOffset - offset, bytes.length - offset);
     }
+
     return (
       UpdateVaultStatusInstructionData(
         newStatus: map['newStatus']! as VaultStatus,
@@ -88,12 +89,12 @@ getUpdateVaultStatusInstructionDataDecoder() {
           if (bytesLength != structDecoder.fixedSize) {
             throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
           }
-          return readExact(bytes, offset);
+          return readTopLevel(bytes, offset);
         },
       ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<UpdateVaultStatusInstructionData>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };

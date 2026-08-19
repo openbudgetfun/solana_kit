@@ -56,7 +56,7 @@ Decoder<StakeInstructionData> getStakeInstructionDataDecoder() {
     );
   }
 
-  (StakeInstructionData, int) readExact(Uint8List bytes, int offset) {
+  (StakeInstructionData, int) readTopLevel(Uint8List bytes, int offset) {
     getConstantDecoder(
       getU8Encoder().encode(1),
     ).read(bytes, offset + 0);
@@ -64,6 +64,7 @@ Decoder<StakeInstructionData> getStakeInstructionDataDecoder() {
     if (newOffset != bytes.length) {
       throwInvalidByteLength(newOffset - offset, bytes.length - offset);
     }
+
     return (
       StakeInstructionData(
         amount: map['amount']! as BigInt,
@@ -81,12 +82,12 @@ Decoder<StakeInstructionData> getStakeInstructionDataDecoder() {
           if (bytesLength != structDecoder.fixedSize) {
             throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
           }
-          return readExact(bytes, offset);
+          return readTopLevel(bytes, offset);
         },
       ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<StakeInstructionData>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };

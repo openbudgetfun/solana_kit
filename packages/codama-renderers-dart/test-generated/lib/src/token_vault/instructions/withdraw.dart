@@ -56,7 +56,7 @@ Decoder<WithdrawInstructionData> getWithdrawInstructionDataDecoder() {
     );
   }
 
-  (WithdrawInstructionData, int) readExact(Uint8List bytes, int offset) {
+  (WithdrawInstructionData, int) readTopLevel(Uint8List bytes, int offset) {
     getConstantDecoder(
       getU8Encoder().encode(2),
     ).read(bytes, offset + 0);
@@ -64,6 +64,7 @@ Decoder<WithdrawInstructionData> getWithdrawInstructionDataDecoder() {
     if (newOffset != bytes.length) {
       throwInvalidByteLength(newOffset - offset, bytes.length - offset);
     }
+
     return (
       WithdrawInstructionData(
         amount: map['amount']! as BigInt,
@@ -81,12 +82,12 @@ Decoder<WithdrawInstructionData> getWithdrawInstructionDataDecoder() {
           if (bytesLength != structDecoder.fixedSize) {
             throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
           }
-          return readExact(bytes, offset);
+          return readTopLevel(bytes, offset);
         },
       ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<WithdrawInstructionData>(
-        read: readExact,
+        read: readTopLevel,
         maxSize: structDecoder.maxSize,
       ),
   };

@@ -9,6 +9,7 @@ import {
   numberValueNode,
   optionTypeNode,
   publicKeyTypeNode,
+  sizeDiscriminatorNode,
   structFieldTypeNode,
   structTypeNode,
 } from "@codama/nodes";
@@ -124,13 +125,31 @@ describe("getAccountPageFragment", () => {
       "Decoder<TokenAccount> getTokenAccountDecoder()",
     );
     expect(frag.content).toContain("getStructDecoder");
-    expect(frag.content).toContain("newOffset != bytes.length");
+    expect(frag.content).not.toContain("newOffset != bytes.length");
+    expect(frag.content).toContain("bytesLength < structDecoder.fixedSize");
     expect(frag.content).toContain(
       "FixedSizeDecoder<Map<String, Object?>>()",
     );
     expect(frag.content).toContain(
       "VariableSizeDecoder<Map<String, Object?>>()",
     );
+  });
+
+  it("requires exact consumption for size-discriminated accounts", () => {
+    const node = accountNode({
+      name: "tokenAccount",
+      data: structTypeNode([
+        structFieldTypeNode({
+          name: "amount",
+          type: numberTypeNode("u64"),
+        }),
+      ]),
+      discriminators: [sizeDiscriminatorNode(8)],
+    });
+    const frag = getAccountPageFragment(node, createScope());
+
+    expect(frag.content).toContain("newOffset != bytes.length");
+    expect(frag.content).toContain("bytesLength != structDecoder.fixedSize");
   });
 
   it("generates codec function", () => {

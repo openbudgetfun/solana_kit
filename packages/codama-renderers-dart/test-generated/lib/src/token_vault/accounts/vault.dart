@@ -142,16 +142,14 @@ Decoder<Vault> getVaultDecoder() {
     );
   }
 
-  (Vault, int) readExact(Uint8List bytes, int offset) {
+  (Vault, int) readTopLevel(Uint8List bytes, int offset) {
     getConstantDecoder(
       fixEncoderSize(getBytesEncoder(), 8).encode(
         Uint8List.fromList([0xd3, 0x08, 0xe8, 0x2b, 0x02, 0x98, 0x75, 0x77]),
       ),
     ).read(bytes, offset + 0);
     final (map, newOffset) = structDecoder.read(bytes, offset);
-    if (newOffset != bytes.length) {
-      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
-    }
+
     return (
       Vault(
         authority: map['authority']! as Address,
@@ -171,14 +169,14 @@ Decoder<Vault> getVaultDecoder() {
       fixedSize: structDecoder.fixedSize,
       read: (bytes, offset) {
         final bytesLength = bytes.length - offset;
-        if (bytesLength != structDecoder.fixedSize) {
+        if (bytesLength < structDecoder.fixedSize) {
           throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
         }
-        return readExact(bytes, offset);
+        return readTopLevel(bytes, offset);
       },
     ),
     VariableSizeDecoder<Map<String, Object?>>() => VariableSizeDecoder<Vault>(
-      read: readExact,
+      read: readTopLevel,
       maxSize: structDecoder.maxSize,
     ),
   };
