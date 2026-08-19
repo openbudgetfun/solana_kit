@@ -932,6 +932,9 @@ enum SolanaErrorCode {
   /// The string contains null characters.
   codecsStringContainsNullCharacters(8078026),
 
+  /// The boolean value is not encoded as zero or one.
+  codecsInvalidBoolean(8078027),
+
   // ---------------------------------------------------------------------------
   // Fixed Points (8090000 - 8090999)
   // ---------------------------------------------------------------------------

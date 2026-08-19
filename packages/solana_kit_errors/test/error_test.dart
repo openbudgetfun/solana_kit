@@ -79,6 +79,15 @@ void main() {
       final error = SolanaError(SolanaErrorCode.blockHeightExceeded);
       expect(error.context, isEmpty);
     });
+
+    test('formats invalid boolean codec errors', () {
+      final error = SolanaError(SolanaErrorCode.codecsInvalidBoolean, {
+        'value': 2,
+      });
+
+      expect(error.code.value, 8078027);
+      expect(error.toString(), contains('Expected 0 or 1, got 2'));
+    });
   });
 
   group('SolanaErrorCode enum', () {
