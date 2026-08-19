@@ -48,6 +48,20 @@ RpcResponseTransformer<Object?> getDefaultResponseTransformerForSolanaRpc([
   };
 }
 
+/// Maps a subscribe request name (`blockSubscribe`) or a wire notification
+/// name (`blockNotification`) onto the API key used by the numeric allow-list
+/// (`blockNotifications`). Custom plan executors may still pass either form.
+String toAllowedNumericMethodName(String methodName) {
+  if (methodName.endsWith('Subscribe')) {
+    return '${methodName.substring(0, methodName.length - 'Subscribe'.length)}Notifications';
+  }
+  if (methodName.endsWith('Notification') &&
+      !methodName.endsWith('Notifications')) {
+    return '${methodName}s';
+  }
+  return methodName;
+}
+
 /// Returns the default response transformer for the Solana RPC Subscriptions
 /// API.
 ///
@@ -57,7 +71,7 @@ getDefaultResponseTransformerForSolanaRpcSubscriptions([
   ResponseTransformerConfig? config,
 ]) {
   return (Object? response, RpcRequest<Object?> request) {
-    final methodName = request.methodName;
+    final methodName = toAllowedNumericMethodName(request.methodName);
     final keyPaths =
         config?.allowedNumericKeyPaths != null && methodName.isNotEmpty
         ? config!.allowedNumericKeyPaths![methodName]
