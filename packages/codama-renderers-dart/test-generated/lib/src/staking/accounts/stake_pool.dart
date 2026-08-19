@@ -163,7 +163,7 @@ Decoder<StakePool> getStakePoolDecoder() {
 
   (StakePool, int) readTopLevel(Uint8List bytes, int offset) {
     getConstantDecoder(
-      fixEncoderSize(getBytesEncoder(), 8).encode(
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false).encode(
         Uint8List.fromList([0x79, 0x22, 0xce, 0x15, 0x4f, 0x7f, 0xff, 0x1c]),
       ),
     ).read(bytes, offset + 0);

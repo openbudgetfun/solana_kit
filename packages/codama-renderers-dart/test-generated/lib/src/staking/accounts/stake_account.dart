@@ -135,7 +135,7 @@ Decoder<StakeAccount> getStakeAccountDecoder() {
 
   (StakeAccount, int) readTopLevel(Uint8List bytes, int offset) {
     getConstantDecoder(
-      fixEncoderSize(getBytesEncoder(), 8).encode(
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false).encode(
         Uint8List.fromList([0x50, 0x9e, 0x43, 0x7c, 0x32, 0xbd, 0xc0, 0xff]),
       ),
     ).read(bytes, offset + 0);

@@ -116,7 +116,7 @@ Decoder<DepositRecord> getDepositRecordDecoder() {
 
   (DepositRecord, int) readTopLevel(Uint8List bytes, int offset) {
     getConstantDecoder(
-      fixEncoderSize(getBytesEncoder(), 8).encode(
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false).encode(
         Uint8List.fromList([0x53, 0xe8, 0x0a, 0x1f, 0xfb, 0x31, 0xbd, 0xa7]),
       ),
     ).read(bytes, offset + 0);

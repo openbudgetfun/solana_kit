@@ -144,7 +144,7 @@ Decoder<Vault> getVaultDecoder() {
 
   (Vault, int) readTopLevel(Uint8List bytes, int offset) {
     getConstantDecoder(
-      fixEncoderSize(getBytesEncoder(), 8).encode(
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false).encode(
         Uint8List.fromList([0xd3, 0x08, 0xe8, 0x2b, 0x02, 0x98, 0x75, 0x77]),
       ),
     ).read(bytes, offset + 0);
