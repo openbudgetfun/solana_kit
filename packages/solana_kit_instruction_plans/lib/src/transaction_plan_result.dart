@@ -1,3 +1,5 @@
+// ignore_for_file: remove_deprecations_in_breaking_versions
+
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
@@ -150,6 +152,18 @@ ParallelTransactionPlanResult parallelTransactionPlanResult(
 
 /// Creates a successful [SingleTransactionPlanResult] from a transaction
 /// message and a [Transaction].
+///
+/// Deprecated: call [successfulSingleTransactionPlanResult] instead, passing
+/// the context explicitly. This helper derives the `signature` for you by
+/// calling [getSignatureFromTransaction], which throws when the transaction's
+/// fee payer has not signed it — the explicit spelling makes that step
+/// visible and avoidable.
+@Deprecated(
+  'Call successfulSingleTransactionPlanResult instead, passing the context '
+  'explicitly. This helper derives the signature for you by calling '
+  "getSignatureFromTransaction, which throws when the transaction's fee "
+  'payer has not signed it.',
+)
 SuccessfulSingleTransactionPlanResult
 successfulSingleTransactionPlanResultFromTransaction(
   TransactionMessage plannedMessage,
