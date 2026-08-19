@@ -1,3 +1,5 @@
+import 'package:solana_kit_helius/src/transactions/validate_tx_message.dart';
+
 /// Blockhash lifetime metadata for a transaction message.
 class TxMessageLifetime {
   /// Creates blockhash lifetime metadata.
@@ -70,7 +72,15 @@ class CreateTxMessageInput {
 
 /// Creates a minimal transaction message, normalizing signer fee payers to their
 /// address and preserving instruction order.
+///
+/// Same guard `createSmartTransaction` applies: without it, `@solana/kit`
+/// would silently compile a lookup account into a static address on version 1
+/// transactions.
 TxMessage createTxMessage(CreateTxMessageInput input) {
+  // Same guard createSmartTransaction applies. Without it kit would silently
+  // compile a lookup account into a static address on v1.
+  assertNoAddressLookupsOnV1(input.version, input.instructions);
+
   final feePayer = switch (input.feePayer) {
     final String address => address,
     final TxMessageSigner signer => signer.address,
