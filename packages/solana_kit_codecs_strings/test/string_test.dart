@@ -63,11 +63,17 @@ void main() {
 
       // Empty string (padded).
       expect(string5.encode(''), equals(b('0000000000')));
-      expect(string5.read(b('0000000000'), 0), equals(('', 5)));
+      expect(
+        string5.read(b('0000000000'), 0),
+        equals(('\u0000\u0000\u0000\u0000\u0000', 5)),
+      );
 
       // Characters with different byte lengths (padded).
       expect(string5.encode('\u8a9e'), equals(b('e8aa9e0000')));
-      expect(string5.read(b('e8aa9e0000'), 0), equals(('\u8a9e', 5)));
+      expect(
+        string5.read(b('e8aa9e0000'), 0),
+        equals(('\u8a9e\u0000\u0000', 5)),
+      );
 
       // Hello World! (truncated).
       expect(string5.encode('Hello World!'), equals(b('48656c6c6f')));

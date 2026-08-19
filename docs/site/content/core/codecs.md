@@ -111,39 +111,32 @@ Reach for this when a layout cannot be described as a single fixed struct or uni
 
 <!-- {/docsPatternMatchCodecSection} -->
 
-## Preferred UTF-8 decoding behavior
+## UTF-8 decoding behavior
 
-<!-- {=compatibilityNoteCalloutSection|replace:"COMPATIBILITY_BEHAVIOR_TOKEN":"`getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters after UTF-8 decode."|replace:"PREFERRED_BEHAVIOR_TOKEN":"Prefer `getStrictUtf8Codec()` or `Utf8NullCharacterMode.reject` in new Dart code when silent data loss would be unsafe, and use `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly."} -->
+<!-- {=compatibilityNoteCalloutSection|replace:"COMPATIBILITY_BEHAVIOR_TOKEN":"`getUtf8Codec()` preserves embedded null characters after UTF-8 decode."|replace:"PREFERRED_BEHAVIOR_TOKEN":"Malformed UTF-8 is rejected rather than repaired or replaced, so callers can distinguish invalid bytes from valid text."} -->
 
-> **Compatibility note**
+> **UTF-8 data integrity**
 >
-> `getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters after UTF-8 decode.
+> `getUtf8Codec()` preserves embedded null characters after UTF-8 decode.
 >
-> Prefer `getStrictUtf8Codec()` or `Utf8NullCharacterMode.reject` in new Dart code when silent data loss would be unsafe, and use `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly.
+> Malformed UTF-8 is rejected rather than repaired or replaced, so callers can distinguish invalid bytes from valid text.
 
 <!-- {/compatibilityNoteCalloutSection} -->
 
-`getUtf8Codec()` keeps `@solana/kit` compatibility by stripping decoded null characters.
-
-Prefer a stricter Dart-first path when silent data loss would be risky:
+`getUtf8Codec()` preserves embedded null characters and rejects malformed UTF-8.
 
 ```dart
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 
 void main() {
-  final strictUtf8 = getStrictUtf8Codec();
-  final preservedUtf8 = getUtf8Codec(
-    nullCharacterMode: Utf8NullCharacterMode.preserve,
-  );
+  final utf8 = getUtf8Codec();
 
-  print(strictUtf8);
-  print(preservedUtf8);
+  print(utf8);
 }
 ```
 
-- use `getStrictUtf8Codec()` to reject decoded null characters.
-- use `Utf8NullCharacterMode.preserve` when you need to surface null bytes explicitly without compatibility stripping.
-- keep the default `getUtf8Codec()` only when you intentionally need upstream compatibility behavior.
+- use `getUtf8Codec()` when you need a faithful UTF-8 decoding boundary.
+- use `removeNullCharacters()` only when null padding must be discarded explicitly.
 
 ## When to use codecs
 

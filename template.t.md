@@ -271,7 +271,7 @@ docs:site:smoke
 
 <!-- {@compatibilityNoteCalloutSection} -->
 
-> **Compatibility note**
+> **UTF-8 data integrity**
 >
 > COMPATIBILITY_BEHAVIOR_TOKEN
 >
@@ -698,7 +698,7 @@ void main() {
 
 These codecs are especially useful for addresses, signatures, blockhashes, and other values that appear as base-encoded strings at API boundaries.
 
-For UTF-8 specifically, `getUtf8Codec()` preserves `@solana/kit` compatibility by stripping decoded null characters. Prefer `getStrictUtf8Codec()` or `getUtf8Codec(nullCharacterMode: Utf8NullCharacterMode.reject)` when silent null-byte stripping would be risky.
+For UTF-8 specifically, `getUtf8Codec()` preserves embedded null characters and rejects malformed byte sequences, so decoded values retain their exact text semantics.
 
 <!-- {/docsStringCodecSection} -->
 
