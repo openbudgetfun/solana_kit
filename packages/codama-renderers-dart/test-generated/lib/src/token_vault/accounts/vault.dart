@@ -73,7 +73,10 @@ const int vaultSize = 98;
 
 Encoder<Vault> getVaultEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    (
+      'discriminator',
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false),
+    ),
     ('authority', getAddressEncoder()),
     ('tokenMint', getAddressEncoder()),
     ('totalDeposited', getU64Encoder()),

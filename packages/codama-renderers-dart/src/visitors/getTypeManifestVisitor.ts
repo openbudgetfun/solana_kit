@@ -228,13 +228,18 @@ export function getTypeManifestVisitor(input: {
       const itemManifest = visit(node.item, self);
       const encoderSizeExpr = getArraySizeExpression(node, "Encoder");
       const decoderSizeExpr = getArraySizeExpression(node, "Decoder");
+      const itemType = fragmentFromString(itemManifest.type.content);
+      const itemEncoder = fragment`${use(
+        "transformEncoder",
+        "solanaCodecsCore",
+      )}(${itemManifest.encoder}, (${itemType} value) => value)`;
 
       return {
         type: fragment`List<${itemManifest.type}>`,
         encoder: fragment`${use(
           "getArrayEncoder",
           "solanaCodecsDataStructures",
-        )}(${itemManifest.encoder}${encoderSizeExpr})`,
+        )}<${itemType}>(${itemEncoder}${encoderSizeExpr})`,
         decoder: fragment`${use(
           "getArrayDecoder",
           "solanaCodecsDataStructures",
@@ -499,7 +504,7 @@ export function getTypeManifestVisitor(input: {
         encoder: fragment`${use(
           "fixEncoderSize",
           "solanaCodecsCore",
-        )}(${innerManifest.encoder}, ${fragmentFromString(String(node.size))})`,
+        )}(${innerManifest.encoder}, ${fragmentFromString(String(node.size))}, allowTruncation: false)`,
         decoder: fragment`${use(
           "fixDecoderSize",
           "solanaCodecsCore",

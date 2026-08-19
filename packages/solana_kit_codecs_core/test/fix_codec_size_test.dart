@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
@@ -158,6 +159,24 @@ void main() {
       expect(value, equals(42));
       expect(offset, equals(3));
     });
+
+    test('can reject over-capacity encoded values', () {
+      final codec = VariableSizeCodec<List<int>, List<int>>(
+        getSizeFromValue: (value) => value.length,
+        write: _writeIntList,
+        read: (bytes, offset) => (bytes.sublist(offset), bytes.length),
+      );
+      final strictCodec = fixCodecSize(
+        codec,
+        4,
+        allowTruncation: false,
+      );
+
+      expect(
+        () => strictCodec.encode([1, 2, 3, 4, 5]),
+        throwsA(_isOverCapacityError(expected: 4, actual: 5)),
+      );
+    });
   });
 
   group('fixEncoderSize', () {
@@ -193,6 +212,71 @@ void main() {
         fixEncoderSize(encoder5, 10).encode('hello'),
         equals(b('08050c0c0f0000000000')),
       );
+    });
+
+    group('without truncation', () {
+      test('pads and preserves UTF-8 values within byte capacity', () {
+        final encoder = VariableSizeEncoder<String>(
+          getSizeFromValue: (value) => utf8.encode(value).length,
+          write: (value, bytes, offset) {
+            final encoded = utf8.encode(value);
+            bytes.setAll(offset, encoded);
+
+            return offset + encoded.length;
+          },
+        );
+        final strictEncoder = fixEncoderSize(
+          encoder,
+          4,
+          allowTruncation: false,
+        );
+
+        expect(strictEncoder.encode('é'), equals(b('c3a90000')));
+        expect(strictEncoder.encode('éé'), equals(b('c3a9c3a9')));
+      });
+
+      test('rejects UTF-8 values over byte capacity without writing', () {
+        final encoder = VariableSizeEncoder<String>(
+          getSizeFromValue: (value) => utf8.encode(value).length,
+          write: (value, bytes, offset) {
+            final encoded = utf8.encode(value);
+            bytes.setAll(offset, encoded);
+
+            return offset + encoded.length;
+          },
+        );
+        final strictEncoder = fixEncoderSize(
+          encoder,
+          4,
+          allowTruncation: false,
+        );
+        final destination = Uint8List.fromList([9, 9, 9, 9, 9, 9]);
+
+        expect(
+          () => strictEncoder.write('ééa', destination, 1),
+          throwsA(_isOverCapacityError(expected: 4, actual: 5)),
+        );
+        expect(destination, equals(Uint8List.fromList([9, 9, 9, 9, 9, 9])));
+      });
+
+      test('pads, preserves, and rejects arrays by encoded byte length', () {
+        final encoder = VariableSizeEncoder<List<int>>(
+          getSizeFromValue: (value) => value.length,
+          write: _writeIntList,
+        );
+        final strictEncoder = fixEncoderSize(
+          encoder,
+          4,
+          allowTruncation: false,
+        );
+
+        expect(strictEncoder.encode([1, 2]), equals(b('01020000')));
+        expect(strictEncoder.encode([1, 2, 3, 4]), equals(b('01020304')));
+        expect(
+          () => strictEncoder.encode([1, 2, 3, 4, 5]),
+          throwsA(_isOverCapacityError(expected: 4, actual: 5)),
+        );
+      });
     });
   });
 
@@ -238,4 +322,29 @@ void main() {
       );
     });
   });
+}
+
+int _writeIntList(List<int> value, Uint8List bytes, int offset) {
+  bytes.setAll(offset, value);
+
+  return offset + value.length;
+}
+
+Matcher _isOverCapacityError({required int expected, required int actual}) {
+  return isA<SolanaError>()
+      .having(
+        (error) => error.code,
+        'code',
+        SolanaErrorCode.codecsInvalidByteLength,
+      )
+      .having(
+        (error) => error.context['expected'],
+        'expected',
+        expected,
+      )
+      .having(
+        (error) => error.context['bytesLength'],
+        'bytesLength',
+        actual,
+      );
 }

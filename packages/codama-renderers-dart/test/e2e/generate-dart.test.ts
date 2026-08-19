@@ -4,6 +4,16 @@ import { join, resolve } from "node:path";
 import { describe, it, expect, beforeAll } from "vitest";
 import { visit } from "@codama/visitors-core";
 import { rootNodeFromAnchor } from "@codama/nodes-from-anchor";
+import {
+  arrayTypeNode,
+  definedTypeNode,
+  fixedSizeTypeNode,
+  numberTypeNode,
+  programNode,
+  remainderCountNode,
+  rootNode,
+  stringTypeNode,
+} from "@codama/nodes";
 
 import { renderVisitor } from "../../src/visitors/renderVisitor.js";
 
@@ -13,6 +23,10 @@ import stakingIdl from "../fixtures/staking.json";
 const TEST_GENERATED_DIR = resolve(__dirname, "../../test-generated");
 const TOKEN_VAULT_DIR = join(TEST_GENERATED_DIR, "lib/src/token_vault");
 const STAKING_DIR = join(TEST_GENERATED_DIR, "lib/src/staking");
+const FIXED_CAPACITY_DIR = join(
+  TEST_GENERATED_DIR,
+  "lib/src/fixed_capacity",
+);
 
 /**
  * Recursively collect all file paths under a directory.
@@ -54,6 +68,33 @@ describe("Generate Dart code and validate", () => {
       }),
     );
 
+    const fixedCapacityRoot = rootNode(
+      programNode({
+        name: "fixedCapacity",
+        publicKey: "11111111111111111111111111111111",
+        definedTypes: [
+          definedTypeNode({
+            name: "fixedName",
+            type: fixedSizeTypeNode(stringTypeNode("utf8"), 4),
+          }),
+          definedTypeNode({
+            name: "fixedValues",
+            type: fixedSizeTypeNode(
+              arrayTypeNode(numberTypeNode("u8"), remainderCountNode()),
+              4,
+            ),
+          }),
+        ],
+      }),
+    );
+    visit(
+      fixedCapacityRoot,
+      renderVisitor(FIXED_CAPACITY_DIR, {
+        formatCode: false,
+        deleteFolderBeforeRendering: true,
+      }),
+    );
+
     // The workspace includes Flutter examples, so its shared resolution must
     // use Flutter's pub wrapper even though this generated package is pure Dart.
     execFileSync("flutter", ["pub", "get"], {
@@ -61,7 +102,6 @@ describe("Generate Dart code and validate", () => {
       stdio: "pipe",
       timeout: 120_000,
     });
-
   }, 180_000);
 
   it("should generate token_vault files", () => {
@@ -94,6 +134,20 @@ describe("Generate Dart code and validate", () => {
     expect(files).toContain("types/stake_info.dart");
     expect(files).toContain("errors/staking.dart");
     expect(files).toContain("programs/staking.dart");
+  });
+
+  it("should generate non-truncating fixed-capacity codecs", () => {
+    const fixedName = readFileSync(
+      join(FIXED_CAPACITY_DIR, "types/fixed_name.dart"),
+      "utf-8",
+    );
+    const fixedValues = readFileSync(
+      join(FIXED_CAPACITY_DIR, "types/fixed_values.dart"),
+      "utf-8",
+    );
+
+    expect(fixedName).toContain("allowTruncation: false");
+    expect(fixedValues).toContain("allowTruncation: false");
   });
 
   it("should generate valid Dart syntax in error page files", () => {

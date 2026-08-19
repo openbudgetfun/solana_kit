@@ -191,6 +191,13 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 final fixed = fixEncoderSize(myVariableEncoder, 32);
 // fixed.fixedSize == 32
 // Shorter values are zero-padded, longer values are truncated.
+
+// Reject over-capacity values before they can be truncated.
+final strictFixed = fixEncoderSize(
+  myVariableEncoder,
+  32,
+  allowTruncation: false,
+);
 ```
 
 ### Adding size prefixes

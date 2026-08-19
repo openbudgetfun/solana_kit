@@ -54,7 +54,10 @@ const int depositRecordSize = 88;
 
 Encoder<DepositRecord> getDepositRecordEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    (
+      'discriminator',
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false),
+    ),
     ('depositor', getAddressEncoder()),
     ('vault', getAddressEncoder()),
     ('amount', getU64Encoder()),
