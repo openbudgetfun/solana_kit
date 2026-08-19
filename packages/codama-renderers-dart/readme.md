@@ -37,6 +37,21 @@ visit(root, renderVisitor("lib/src/generated", {
 }));
 ```
 
+### Serialized Pina IDLs
+
+`renderVisitor` accepts parsed Codama JSON as well as roots made with Codama constructors. Pina omits empty collections from its serialized IDLs; the renderer restores those structural defaults on an internal copy before traversal, leaving the parsed object unchanged.
+
+```typescript
+import { readFile } from "node:fs/promises";
+import { visit } from "@codama/visitors-core";
+import { renderVisitor } from "codama-renderers-dart";
+
+const idl = JSON.parse(await readFile("target/codama/my_program.json", "utf8"));
+visit(idl, renderVisitor("lib/src/generated"));
+```
+
+Use `normalizeRootNode(idl)` when calling lower-level visitors such as `getRenderMapVisitor` directly.
+
 ### Codama CLI
 
 Create a `codama.json` configuration file:

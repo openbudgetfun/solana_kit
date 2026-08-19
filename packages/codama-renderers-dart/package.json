@@ -1,14 +1,14 @@
 {
   "dependencies": {
-    "@codama/errors": "^1.4.4",
-    "@codama/nodes": "^1.4.4",
-    "@codama/renderers-core": "^1.3.3",
-    "@codama/visitors-core": "^1.4.4"
+    "@codama/errors": "^1.10.0",
+    "@codama/nodes": "^1.10.0",
+    "@codama/renderers-core": "^1.3.12",
+    "@codama/visitors-core": "^1.10.0"
   },
   "description": "Codama renderer for generating Dart code targeting the solana_kit SDK",
   "devDependencies": {
-    "@codama/nodes-from-anchor": "^1.3.9",
-    "@codama/renderers-js": "^2.0.2",
+    "@codama/nodes-from-anchor": "^1.5.4",
+    "@codama/renderers-js": "^2.3.1",
     "@types/node": "25.3.0",
     "@vitest/coverage-v8": "4.1.0",
     "rimraf": "6.1.3",
@@ -20,16 +20,19 @@
     "node": ">=18"
   },
   "exports": {
-    "browser": {
-      "import": "./dist/index.browser.mjs",
-      "require": "./dist/index.browser.cjs"
-    },
-    "node": {
-      "import": "./dist/index.node.mjs",
-      "require": "./dist/index.node.cjs"
-    },
-    "react-native": "./dist/index.react-native.mjs",
-    "types": "./dist/types/index.d.ts"
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "react-native": "./dist/index.react-native.js",
+      "browser": {
+        "import": "./dist/index.browser.js",
+        "require": "./dist/index.browser.cjs"
+      },
+      "node": {
+        "import": "./dist/index.node.js",
+        "require": "./dist/index.node.cjs"
+      },
+      "default": "./dist/index.node.js"
+    }
   },
   "files": [
     "dist",
@@ -44,7 +47,7 @@
   ],
   "license": "MIT",
   "main": "./dist/index.node.cjs",
-  "module": "./dist/index.node.mjs",
+  "module": "./dist/index.node.js",
   "name": "codama-renderers-dart",
   "publishConfig": {
     "access": "public"

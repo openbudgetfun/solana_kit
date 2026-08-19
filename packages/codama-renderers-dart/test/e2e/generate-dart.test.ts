@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { describe, it, expect, beforeAll } from "vitest";
@@ -13,22 +13,6 @@ import stakingIdl from "../fixtures/staking.json";
 const TEST_GENERATED_DIR = resolve(__dirname, "../../test-generated");
 const TOKEN_VAULT_DIR = join(TEST_GENERATED_DIR, "lib/src/token_vault");
 const STAKING_DIR = join(TEST_GENERATED_DIR, "lib/src/staking");
-
-/**
- * Check if dart is available in the system.
- */
-function isDartAvailable(): boolean {
-  try {
-    execSync("dart --version", {
-      encoding: "utf-8",
-      stdio: ["pipe", "pipe", "pipe"],
-      timeout: 10_000,
-    });
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 /**
  * Recursively collect all file paths under a directory.
@@ -49,15 +33,13 @@ function collectFiles(dir: string, prefix = ""): string[] {
 }
 
 describe("Generate Dart code and validate", () => {
-  const dartAvailable = isDartAvailable();
-
   beforeAll(() => {
     // Generate token_vault code
     const tvRoot = rootNodeFromAnchor(tokenVaultIdl);
     visit(
       tvRoot,
       renderVisitor(TOKEN_VAULT_DIR, {
-        formatCode: false,
+        formatCode: true,
         deleteFolderBeforeRendering: true,
       }),
     );
@@ -67,11 +49,20 @@ describe("Generate Dart code and validate", () => {
     visit(
       stakingRoot,
       renderVisitor(STAKING_DIR, {
-        formatCode: false,
+        formatCode: true,
         deleteFolderBeforeRendering: true,
       }),
     );
-  });
+
+    // The workspace includes Flutter examples, so its shared resolution must
+    // use Flutter's pub wrapper even though this generated package is pure Dart.
+    execFileSync("flutter", ["pub", "get"], {
+      cwd: TEST_GENERATED_DIR,
+      stdio: "pipe",
+      timeout: 120_000,
+    });
+
+  }, 180_000);
 
   it("should generate token_vault files", () => {
     const files = collectFiles(TOKEN_VAULT_DIR);
@@ -205,84 +196,23 @@ describe("Generate Dart code and validate", () => {
     expect(stakeInfo).toContain("final bool isLocked;");
   });
 
-  it("should resolve dart pub get in test-generated package", { timeout: 180_000 }, () => {
-    if (!dartAvailable) {
-      console.log("Skipping: dart not available");
-      return;
-    }
+  it("formats, analyzes, and tests the complete generated Dart package", { timeout: 180_000 }, () => {
+    execFileSync("dart", ["format", "--output=none", "."], {
+      cwd: TEST_GENERATED_DIR,
+      stdio: "pipe",
+      timeout: 120_000,
+    });
 
-    try {
-      execSync("dart pub get", {
-        cwd: TEST_GENERATED_DIR,
-        encoding: "utf-8",
-        timeout: 120_000,
-        stdio: ["pipe", "pipe", "pipe"],
-      });
-    } catch (error: any) {
-      // pub get may fail due to workspace setup — report but don't fail the test
-      console.log(
-        "dart pub get had issues (may be expected in CI):",
-        error.stderr?.substring(0, 500) || error.message,
-      );
-    }
-  });
+    execFileSync("dart", ["analyze", "--fatal-infos"], {
+      cwd: TEST_GENERATED_DIR,
+      stdio: "pipe",
+      timeout: 120_000,
+    });
 
-  it("should pass dart analyze on error and program pages (cleanest generated code)", { timeout: 120_000 }, () => {
-    if (!dartAvailable) {
-      console.log("Skipping: dart not available");
-      return;
-    }
-
-    // Only analyze the cleanest generated files: errors and programs
-    // These files don't have the use() artifact issue
-    const filesToCheck = [
-      join(TOKEN_VAULT_DIR, "errors/token_vault.dart"),
-      join(TOKEN_VAULT_DIR, "programs/token_vault.dart"),
-      join(STAKING_DIR, "errors/staking.dart"),
-      join(STAKING_DIR, "programs/staking.dart"),
-    ];
-
-    for (const file of filesToCheck) {
-      expect(existsSync(file), `File should exist: ${file}`).toBe(true);
-      const content = readFileSync(file, "utf-8");
-      // These files should be clean of artifacts
-      expect(content).not.toContain("[object Object]");
-    }
-  });
-
-  it("should run dart test in test-generated/ (if dart is available and dependencies resolved)", { timeout: 180_000 }, () => {
-    if (!dartAvailable) {
-      console.log("Skipping: dart not available");
-      return;
-    }
-
-    // Check if pub get succeeded (look for .dart_tool)
-    const pubGetSucceeded = existsSync(
-      join(TEST_GENERATED_DIR, ".dart_tool"),
-    );
-    if (!pubGetSucceeded) {
-      console.log(
-        "Skipping dart test: pub get did not succeed (dependencies not resolved)",
-      );
-      return;
-    }
-
-    try {
-      const result = execSync("dart test", {
-        cwd: TEST_GENERATED_DIR,
-        encoding: "utf-8",
-        timeout: 120_000,
-        stdio: ["pipe", "pipe", "pipe"],
-      });
-      console.log("dart test output:", result.substring(0, 1000));
-    } catch (error: any) {
-      // The generated code has known issues (use() artifacts, [object Object])
-      // so dart test may fail. Report the error but don't fail the vitest test,
-      // since this is testing the generation pipeline, not the generated code quality.
-      console.log(
-        "dart test had issues (may be expected due to known generated code artifacts):",
-        error.stderr?.substring(0, 1000) || error.message,
-      );
-    }
+    execFileSync("dart", ["test"], {
+      cwd: TEST_GENERATED_DIR,
+      stdio: "pipe",
+      timeout: 120_000,
+    });
   });
 });

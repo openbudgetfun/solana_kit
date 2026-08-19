@@ -9,6 +9,7 @@ import type { Fragment } from "../utils/fragment.js";
 import type { RenderOptions } from "../utils/options.js";
 import { DartImportMap, DART_EXTERNAL_PACKAGE_MAP } from "../utils/importMap.js";
 import { formatDartDirectory } from "../utils/formatCode.js";
+import { normalizeRootNode } from "../utils/normalizeRootNode.js";
 import { getRenderMapVisitor } from "./getRenderMapVisitor.js";
 
 /**
@@ -29,6 +30,8 @@ export function renderVisitor(
   } = options;
 
   return rootNodeVisitor((root: RootNode) => {
+    const normalizedRoot = normalizeRootNode(root);
+
     // 1. Optionally delete the output directory
     if (deleteFolderBeforeRendering && existsSync(outputDir)) {
       deleteDirectory(outputDir);
@@ -36,7 +39,7 @@ export function renderVisitor(
 
     // 2. Build the render map
     const renderMap = visit(
-      root,
+      normalizedRoot,
       getRenderMapVisitor({ nameApi, dependencyMap }),
     );
 

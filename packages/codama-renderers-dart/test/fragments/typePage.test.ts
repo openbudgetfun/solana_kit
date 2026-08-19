@@ -1,4 +1,5 @@
 import {
+  type DefinedTypeNode,
   definedTypeNode,
   enumEmptyVariantTypeNode,
   enumStructVariantTypeNode,
@@ -421,6 +422,72 @@ describe("getTypePageFragment", () => {
 
       expect(frag.content).toContain("getDiscriminatedUnionEncoder");
       expect(frag.content).toContain("getDiscriminatedUnionDecoder");
+    });
+  });
+
+  describe("serialized nodes with omitted empty collections", () => {
+    const serializedNodes = [
+      [
+        "enum variants",
+        {
+          kind: "definedTypeNode",
+          name: "emptyEnum",
+          type: { kind: "enumTypeNode", size: numberTypeNode("u8") },
+        },
+      ],
+      [
+        "enum struct fields",
+        {
+          kind: "definedTypeNode",
+          name: "emptyStructVariant",
+          type: {
+            kind: "enumTypeNode",
+            size: numberTypeNode("u8"),
+            variants: [
+              {
+                kind: "enumStructVariantTypeNode",
+                name: "empty",
+                struct: { kind: "structTypeNode" },
+              },
+            ],
+          },
+        },
+      ],
+      [
+        "enum tuple items",
+        {
+          kind: "definedTypeNode",
+          name: "emptyTupleVariant",
+          type: {
+            kind: "enumTypeNode",
+            size: numberTypeNode("u8"),
+            variants: [
+              {
+                kind: "enumTupleVariantTypeNode",
+                name: "empty",
+                tuple: { kind: "tupleTypeNode" },
+              },
+            ],
+          },
+        },
+      ],
+      [
+        "struct fields",
+        {
+          kind: "definedTypeNode",
+          name: "emptyStruct",
+          type: { kind: "structTypeNode" },
+        },
+      ],
+    ] as const;
+
+    it.each(serializedNodes)("renders without %s", (_name, node) => {
+      const fragment = getTypePageFragment(
+        node as unknown as DefinedTypeNode,
+        createScope(),
+      );
+
+      expect(fragment.content).toContain("Auto-generated. Do not edit.");
     });
   });
 

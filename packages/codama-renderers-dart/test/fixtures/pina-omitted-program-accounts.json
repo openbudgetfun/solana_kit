@@ -1,0 +1,16 @@
+{
+  "kind": "rootNode",
+  "standard": "codama",
+  "version": "1.8.0",
+  "additionalPrograms": [],
+  "program": {
+    "kind": "programNode",
+    "name": "pinaOmittedProgramAccounts",
+    "publicKey": "11111111111111111111111111111111",
+    "version": "0.0.0",
+    "instructions": [],
+    "definedTypes": [],
+    "errors": [],
+    "pdas": []
+  }
+}
