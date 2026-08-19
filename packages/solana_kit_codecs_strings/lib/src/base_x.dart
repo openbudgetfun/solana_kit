@@ -74,7 +74,7 @@ VariableSizeDecoder<String> getBaseXDecoder(String alphabet) {
       final bytes = offset == 0 || offset <= -rawBytes.length
           ? rawBytes
           : rawBytes.sublist(offset);
-      if (bytes.isEmpty) return ('', offset);
+      if (bytes.isEmpty) return ('', rawBytes.length);
 
       // Handle leading zeroes.
       var trailIndex = bytes.indexWhere((n) => n != 0);
