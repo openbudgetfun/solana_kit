@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)
+
+### 🚀 Feature
+
+#### Publish this package
+
+This makes publishing with melos simpler for the whole repo.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`c61ccb2`](https://github.com/openbudgetfun/solana_kit/commit/c61ccb2dbc7dc9c7abe23e765e15b5da9b5ff81a)
+
 ## [0.7.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.7.0) (2026-08-18)
 
 ### 📖 Documentation

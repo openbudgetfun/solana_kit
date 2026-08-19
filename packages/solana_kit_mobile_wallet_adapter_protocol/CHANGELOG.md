@@ -94,3 +94,9 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #213](https://g
 Docs have been reformatted to remove line wrapping.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #212](https://github.com/openbudgetfun/solana_kit/pull/212)
+
+## solana_kit_mobile_wallet_adapter_protocol [0.4.4](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mobile_wallet_adapter_protocol/v0.4.4) (2026-08-19)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_mobile_wallet_adapter_protocol` was updated to 0.4.4.

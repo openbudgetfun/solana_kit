@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)
+
+### 🐛 Fixed
+
+#### Reject over-capacity generated values
+
+Adds an opt-in non-truncating mode to fixed-size encoders and codecs. Codama fixed-size types now use that mode so generated string, byte, and collection encoders pad values within capacity but reject oversized encoded values.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #216](https://github.com/openbudgetfun/solana_kit/pull/216)
+
 ## [0.7.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.7.0) (2026-08-18)
 
 ### 📖 Documentation

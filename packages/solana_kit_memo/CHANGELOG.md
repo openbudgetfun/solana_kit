@@ -134,6 +134,21 @@ final instruction = getCreateAccountInstruction(
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #204](https://github.com/openbudgetfun/solana_kit/pull/204)
 
+## solana_kit_memo [0.3.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_memo/v0.3.1) (2026-08-19)
+
+### 🧪 Testing
+
+#### Preserve UTF-8 data exactly during decoding
+
+UTF-8 codecs now preserve embedded null characters and reject malformed byte sequences. Lossy compatibility modes and null-character rejection modes have been removed; callers can opt into null removal explicitly with `removeNullCharacters` after decoding.
+
+```dart
+final value = getUtf8Codec().decode(bytes);
+final withoutPadding = removeNullCharacters(value);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #218](https://github.com/openbudgetfun/solana_kit/pull/218)
+
 ## 0.0.0
 
 Placeholder publication.

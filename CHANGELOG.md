@@ -2424,6 +2424,53 @@ Package groups scaffolded:
 - Fragment-based code generation with automatic import tracking
 - Comprehensive test suite with 261 tests
 
+## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)
+
+Grouped release for `main`.
+
+### 💥 Breaking Change
+
+#### Preserve UTF-8 data exactly during decoding
+
+_Packages:_ _solana_kit_codecs_strings_
+
+UTF-8 codecs now preserve embedded null characters and reject malformed byte sequences. Lossy compatibility modes and null-character rejection modes have been removed; callers can opt into null removal explicitly with `removeNullCharacters` after decoding.
+
+```dart
+final value = getUtf8Codec().decode(bytes);
+final withoutPadding = removeNullCharacters(value);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #218](https://github.com/openbudgetfun/solana_kit/pull/218)
+
+### 🚀 Feature
+
+#### Publish this package
+
+_Packages:_ _solana_kit_lints_
+
+This makes publishing with melos simpler for the whole repo.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`c61ccb2`](https://github.com/openbudgetfun/solana_kit/commit/c61ccb2dbc7dc9c7abe23e765e15b5da9b5ff81a)
+
+### 🐛 Fixed
+
+#### Reject over-capacity generated values
+
+_Packages:_ _solana_kit_codecs_core_
+
+Adds an opt-in non-truncating mode to fixed-size encoders and codecs. Codama fixed-size types now use that mode so generated string, byte, and collection encoders pad values within capacity but reject oversized encoded values.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #216](https://github.com/openbudgetfun/solana_kit/pull/216)
+
+#### Reject non-canonical boolean decoder values
+
+_Packages:_ _solana_kit_codecs_data_structures_, _solana_kit_errors_
+
+Boolean codecs now reject values other than zero and one with a typed error, including nullable prefixes that use boolean tags.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #217](https://github.com/openbudgetfun/solana_kit/pull/217)
+
 ## [0.7.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.7.0) (2026-08-18)
 
 Grouped release for `main`.

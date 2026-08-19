@@ -233,3 +233,9 @@ await client.stop();
 ```
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #208](https://github.com/openbudgetfun/solana_kit/pull/208)
+
+## solana_kit_mpl_bubblegum [0.4.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mpl_bubblegum/v0.4.1) (2026-08-19)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_mpl_bubblegum` was updated to 0.4.1.

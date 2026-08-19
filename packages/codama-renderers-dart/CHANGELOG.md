@@ -220,3 +220,31 @@ await client.stop();
 ```
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #208](https://github.com/openbudgetfun/solana_kit/pull/208)
+
+## codama-renderers-dart [0.5.1](https://github.com/openbudgetfun/solana_kit/releases/tag/codama-renderers-dart/v0.5.1) (2026-08-19)
+
+### 🐛 Fixed
+
+#### Fix Wide Scalar Enum Codecs
+
+Generate type-correct Dart codecs for scalar enums with `u64` discriminators. The encoder now converts enum indices to `BigInt`, while the decoder validates the decoded discriminator before converting it to a Dart enum index.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #219](https://github.com/openbudgetfun/solana_kit/pull/219)
+
+#### Support Current Codama and Serialized Pina IDLs
+
+Align the Dart renderer with Codama 1.10, normalize omitted serialized child collections from Pina IDLs, and publish valid module entry points for Node, browser, and React Native consumers.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #214](https://github.com/openbudgetfun/solana_kit/pull/214)
+
+#### Reject over-capacity generated values
+
+Adds an opt-in non-truncating mode to fixed-size encoders and codecs. Codama fixed-size types now use that mode so generated string, byte, and collection encoders pad values within capacity but reject oversized encoded values.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #216](https://github.com/openbudgetfun/solana_kit/pull/216)
+
+#### Enforce Dart discriminator and optional-account invariants
+
+Hide omitted defaults from generated builder inputs, force their declared wire values during encoding, validate account and instruction discriminators during decoding, require exact instruction input consumption, reject truncated account data while preserving legitimate trailing account capacity unless a size discriminator requires an exact length, and preserve optional account positions with readonly program-address placeholders.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #215](https://github.com/openbudgetfun/solana_kit/pull/215)

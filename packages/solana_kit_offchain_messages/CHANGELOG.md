@@ -119,3 +119,9 @@ Already present in the Dart port (no change needed):
 `@solana/react` changes are not ported (React-only).
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #206](https://github.com/openbudgetfun/solana_kit/pull/206)
+
+## solana_kit_offchain_messages [0.4.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_offchain_messages/v0.4.3) (2026-08-19)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_offchain_messages` was updated to 0.4.3.

@@ -141,6 +141,12 @@ final parsed = parseComputeBudgetInstruction(data);
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #204](https://github.com/openbudgetfun/solana_kit/pull/204)
 
+## solana_kit_compute_budget [0.7.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_compute_budget/v0.7.1) (2026-08-19)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_compute_budget` was updated to 0.7.1.
+
 ## [0.4.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.4.0) (2026-05-30)
 
 ### 💥 Breaking Change

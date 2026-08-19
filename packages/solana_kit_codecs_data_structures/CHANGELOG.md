@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)
+
+### 🐛 Fixed
+
+#### Reject non-canonical boolean decoder values
+
+Boolean codecs now reject values other than zero and one with a typed error, including nullable prefixes that use boolean tags.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #217](https://github.com/openbudgetfun/solana_kit/pull/217)
+
 ## [0.7.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.7.0) (2026-08-18)
 
 ### 💥 Breaking Change

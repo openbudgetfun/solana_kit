@@ -210,3 +210,9 @@ await client.stop();
 ```
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #208](https://github.com/openbudgetfun/solana_kit/pull/208)
+
+## solana_kit_system [0.6.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_system/v0.6.1) (2026-08-19)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_system` was updated to 0.6.1.

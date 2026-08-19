@@ -111,6 +111,12 @@ final instruction = getCreateAccountInstruction(
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #204](https://github.com/openbudgetfun/solana_kit/pull/204)
 
+## solana_kit_loader [0.3.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_loader/v0.3.1) (2026-08-19)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_loader` was updated to 0.3.1.
+
 ## 0.0.0
 
 Placeholder publication.

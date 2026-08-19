@@ -120,3 +120,9 @@ A non-published workspace package that runs every generated program client end-t
 The compiled `.so` artifacts are committed (not rebuilt per run) and pinned to `config/reference-repos.json`; see `config/programs/README.md` for how they are built and when they must be regenerated. Artifact names follow `<package-name-minus-solana_kit>-<program-version>.so` (e.g. `subscriptions-v0.5.0.so`, `mpl_bubblegum-v0.12.0.so`, `spl_account_compression-v0.3.3.so`, `noop-v0.2.0.so`). All four are compiled from the pinned source with `cargo build-sbf` (agave 4.2.0 / platform-tools v1.54) via `scripts/build_program_artifacts.mjs` (devenv task `build:program-artifacts`), which also applies the ahash 0.7.6 `stdsimd` patch needed by the solana-program 1.18.x programs and verifies the baked-in program IDs.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #205](https://github.com/openbudgetfun/solana_kit/pull/205)
+
+## solana_kit_spl_account_compression [0.3.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_spl_account_compression/v0.3.3) (2026-08-19)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_spl_account_compression` was updated to 0.3.3.

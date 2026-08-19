@@ -1,0 +1,3332 @@
+{
+  "schema_version": "0.4",
+  "kind": "monochange.releaseRecord",
+  "created_at": "2026-08-19T11:11:25Z",
+  "command": "release",
+  "version": null,
+  "versions": {
+    "codama-renderers-dart": "0.5.1",
+    "main": "0.8.0",
+    "solana_kit_address_lookup_table": "0.3.1",
+    "solana_kit_associated_token_account": "0.6.1",
+    "solana_kit_compute_budget": "0.7.1",
+    "solana_kit_config": "0.1.3",
+    "solana_kit_helius": "0.5.1",
+    "solana_kit_integration_tests": "0.0.2",
+    "solana_kit_loader": "0.3.1",
+    "solana_kit_memo": "0.3.1",
+    "solana_kit_mobile_wallet_adapter": "0.4.4",
+    "solana_kit_mobile_wallet_adapter_protocol": "0.4.4",
+    "solana_kit_mpl_bubblegum": "0.4.1",
+    "solana_kit_offchain_messages": "0.4.3",
+    "solana_kit_spl_account_compression": "0.3.3",
+    "solana_kit_stake": "0.4.1",
+    "solana_kit_subscriptions": "0.1.2",
+    "solana_kit_surfpool": "0.2.1",
+    "solana_kit_system": "0.6.1",
+    "solana_kit_sysvars": "0.4.3",
+    "solana_kit_token": "0.7.1",
+    "solana_kit_token_2022": "0.7.1"
+  },
+  "release_targets": [
+    {
+      "id": "codama-renderers-dart",
+      "kind": "package",
+      "version": "0.5.1",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": true,
+      "tag_name": "codama-renderers-dart/v0.5.1",
+      "members": [
+        "codama-renderers-dart"
+      ]
+    },
+    {
+      "id": "main",
+      "kind": "group",
+      "version": "0.8.0",
+      "version_format": "primary",
+      "tag": true,
+      "release": true,
+      "tag_name": "v0.8.0",
+      "members": [
+        "solana_kit",
+        "solana_kit_accounts",
+        "solana_kit_address",
+        "solana_kit_address_constants",
+        "solana_kit_addresses",
+        "solana_kit_codecs",
+        "solana_kit_codecs_core",
+        "solana_kit_codecs_data_structures",
+        "solana_kit_codecs_numbers",
+        "solana_kit_codecs_strings",
+        "solana_kit_fixed_points",
+        "solana_kit_errors",
+        "solana_kit_fast_stable_stringify",
+        "solana_kit_functional",
+        "solana_kit_instruction_plans",
+        "solana_kit_instructions",
+        "solana_kit_keys",
+        "solana_kit_lints",
+        "solana_kit_options",
+        "solana_kit_program_client_core",
+        "solana_kit_programs",
+        "solana_kit_rpc",
+        "solana_kit_rpc_api",
+        "solana_kit_rpc_parsed_types",
+        "solana_kit_rpc_spec",
+        "solana_kit_rpc_spec_types",
+        "solana_kit_rpc_subscriptions",
+        "solana_kit_rpc_subscriptions_api",
+        "solana_kit_rpc_subscriptions_channel_websocket",
+        "solana_kit_rpc_transformers",
+        "solana_kit_rpc_transport_http",
+        "solana_kit_rpc_types",
+        "solana_kit_signers",
+        "solana_kit_subscribable",
+        "solana_kit_test_matchers",
+        "solana_kit_transaction_confirmation",
+        "solana_kit_transaction_introspection",
+        "solana_kit_transaction_messages",
+        "solana_kit_transactions"
+      ]
+    },
+    {
+      "id": "solana_kit_address_lookup_table",
+      "kind": "package",
+      "version": "0.3.1",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_address_lookup_table/v0.3.1",
+      "members": [
+        "solana_kit_address_lookup_table"
+      ]
+    },
+    {
+      "id": "solana_kit_associated_token_account",
+      "kind": "package",
+      "version": "0.6.1",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_associated_token_account/v0.6.1",
+      "members": [
+        "solana_kit_associated_token_account"
+      ]
+    },
+    {
+      "id": "solana_kit_compute_budget",
+      "kind": "package",
+      "version": "0.7.1",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_compute_budget/v0.7.1",
+      "members": [
+        "solana_kit_compute_budget"
+      ]
+    },
+    {
+      "id": "solana_kit_config",
+      "kind": "package",
+      "version": "0.1.3",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_config/v0.1.3",
+      "members": [
+        "solana_kit_config"
+      ]
+    },
+    {
+      "id": "solana_kit_helius",
+      "kind": "package",
+      "version": "0.5.1",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_helius/v0.5.1",
+      "members": [
+        "solana_kit_helius"
+      ]
+    },
+    {
+      "id": "solana_kit_integration_tests",
+      "kind": "package",
+      "version": "0.0.2",
+      "version_format": "namespaced",
+      "tag": false,
+      "release": false,
+      "tag_name": "solana_kit_integration_tests/v0.0.2",
+      "members": [
+        "solana_kit_integration_tests"
+      ]
+    },
+    {
+      "id": "solana_kit_loader",
+      "kind": "package",
+      "version": "0.3.1",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_loader/v0.3.1",
+      "members": [
+        "solana_kit_loader"
+      ]
+    },
+    {
+      "id": "solana_kit_memo",
+      "kind": "package",
+      "version": "0.3.1",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_memo/v0.3.1",
+      "members": [
+        "solana_kit_memo"
+      ]
+    },
+    {
+      "id": "solana_kit_mobile_wallet_adapter",
+      "kind": "package",
+      "version": "0.4.4",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_mobile_wallet_adapter/v0.4.4",
+      "members": [
+        "solana_kit_mobile_wallet_adapter"
+      ]
+    },
+    {
+      "id": "solana_kit_mobile_wallet_adapter_protocol",
+      "kind": "package",
+      "version": "0.4.4",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_mobile_wallet_adapter_protocol/v0.4.4",
+      "members": [
+        "solana_kit_mobile_wallet_adapter_protocol"
+      ]
+    },
+    {
+      "id": "solana_kit_mpl_bubblegum",
+      "kind": "package",
+      "version": "0.4.1",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_mpl_bubblegum/v0.4.1",
+      "members": [
+        "solana_kit_mpl_bubblegum"
+      ]
+    },
+    {
+      "id": "solana_kit_offchain_messages",
+      "kind": "package",
+      "version": "0.4.3",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_offchain_messages/v0.4.3",
+      "members": [
+        "solana_kit_offchain_messages"
+      ]
+    },
+    {
+      "id": "solana_kit_spl_account_compression",
+      "kind": "package",
+      "version": "0.3.3",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_spl_account_compression/v0.3.3",
+      "members": [
+        "solana_kit_spl_account_compression"
+      ]
+    },
+    {
+      "id": "solana_kit_stake",
+      "kind": "package",
+      "version": "0.4.1",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_stake/v0.4.1",
+      "members": [
+        "solana_kit_stake"
+      ]
+    },
+    {
+      "id": "solana_kit_subscriptions",
+      "kind": "package",
+      "version": "0.1.2",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_subscriptions/v0.1.2",
+      "members": [
+        "solana_kit_subscriptions"
+      ]
+    },
+    {
+      "id": "solana_kit_surfpool",
+      "kind": "package",
+      "version": "0.2.1",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_surfpool/v0.2.1",
+      "members": [
+        "solana_kit_surfpool"
+      ]
+    },
+    {
+      "id": "solana_kit_system",
+      "kind": "package",
+      "version": "0.6.1",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_system/v0.6.1",
+      "members": [
+        "solana_kit_system"
+      ]
+    },
+    {
+      "id": "solana_kit_sysvars",
+      "kind": "package",
+      "version": "0.4.3",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_sysvars/v0.4.3",
+      "members": [
+        "solana_kit_sysvars"
+      ]
+    },
+    {
+      "id": "solana_kit_token",
+      "kind": "package",
+      "version": "0.7.1",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_token/v0.7.1",
+      "members": [
+        "solana_kit_token"
+      ]
+    },
+    {
+      "id": "solana_kit_token_2022",
+      "kind": "package",
+      "version": "0.7.1",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": false,
+      "tag_name": "solana_kit_token_2022/v0.7.1",
+      "members": [
+        "solana_kit_token_2022"
+      ]
+    }
+  ],
+  "released_packages": [
+    "codama-renderers-dart",
+    "solana_kit",
+    "solana_kit_accounts",
+    "solana_kit_address",
+    "solana_kit_address_constants",
+    "solana_kit_address_lookup_table",
+    "solana_kit_addresses",
+    "solana_kit_associated_token_account",
+    "solana_kit_codecs",
+    "solana_kit_codecs_core",
+    "solana_kit_codecs_data_structures",
+    "solana_kit_codecs_numbers",
+    "solana_kit_codecs_strings",
+    "solana_kit_compute_budget",
+    "solana_kit_config",
+    "solana_kit_errors",
+    "solana_kit_fast_stable_stringify",
+    "solana_kit_fixed_points",
+    "solana_kit_functional",
+    "solana_kit_helius",
+    "solana_kit_instruction_plans",
+    "solana_kit_instructions",
+    "solana_kit_integration_tests",
+    "solana_kit_keys",
+    "solana_kit_lints",
+    "solana_kit_loader",
+    "solana_kit_memo",
+    "solana_kit_mobile_wallet_adapter",
+    "solana_kit_mobile_wallet_adapter_protocol",
+    "solana_kit_mpl_bubblegum",
+    "solana_kit_offchain_messages",
+    "solana_kit_options",
+    "solana_kit_program_client_core",
+    "solana_kit_programs",
+    "solana_kit_rpc",
+    "solana_kit_rpc_api",
+    "solana_kit_rpc_parsed_types",
+    "solana_kit_rpc_spec",
+    "solana_kit_rpc_spec_types",
+    "solana_kit_rpc_subscriptions",
+    "solana_kit_rpc_subscriptions_api",
+    "solana_kit_rpc_subscriptions_channel_websocket",
+    "solana_kit_rpc_transformers",
+    "solana_kit_rpc_transport_http",
+    "solana_kit_rpc_types",
+    "solana_kit_signers",
+    "solana_kit_spl_account_compression",
+    "solana_kit_stake",
+    "solana_kit_subscribable",
+    "solana_kit_subscriptions",
+    "solana_kit_surfpool",
+    "solana_kit_system",
+    "solana_kit_sysvars",
+    "solana_kit_test_matchers",
+    "solana_kit_token",
+    "solana_kit_token_2022",
+    "solana_kit_transaction_confirmation",
+    "solana_kit_transaction_introspection",
+    "solana_kit_transaction_messages",
+    "solana_kit_transactions"
+  ],
+  "changed_files": [
+    "CHANGELOG.md",
+    "docs/site/pubspec.yaml",
+    "examples/pubspec.yaml",
+    "packages/codama-renderers-dart/CHANGELOG.md",
+    "packages/codama-renderers-dart/package.json",
+    "packages/codama-renderers-dart/pnpm-lock.yaml",
+    "packages/codama-renderers-dart/test-generated/pubspec.yaml",
+    "packages/solana_kit/CHANGELOG.md",
+    "packages/solana_kit/pubspec.yaml",
+    "packages/solana_kit_accounts/CHANGELOG.md",
+    "packages/solana_kit_accounts/pubspec.yaml",
+    "packages/solana_kit_address/CHANGELOG.md",
+    "packages/solana_kit_address/pubspec.yaml",
+    "packages/solana_kit_address_constants/CHANGELOG.md",
+    "packages/solana_kit_address_constants/pubspec.yaml",
+    "packages/solana_kit_address_lookup_table/CHANGELOG.md",
+    "packages/solana_kit_address_lookup_table/pubspec.yaml",
+    "packages/solana_kit_addresses/CHANGELOG.md",
+    "packages/solana_kit_addresses/pubspec.yaml",
+    "packages/solana_kit_associated_token_account/CHANGELOG.md",
+    "packages/solana_kit_associated_token_account/pubspec.yaml",
+    "packages/solana_kit_codecs/CHANGELOG.md",
+    "packages/solana_kit_codecs/pubspec.yaml",
+    "packages/solana_kit_codecs_core/CHANGELOG.md",
+    "packages/solana_kit_codecs_core/pubspec.yaml",
+    "packages/solana_kit_codecs_data_structures/CHANGELOG.md",
+    "packages/solana_kit_codecs_data_structures/pubspec.yaml",
+    "packages/solana_kit_codecs_numbers/CHANGELOG.md",
+    "packages/solana_kit_codecs_numbers/pubspec.yaml",
+    "packages/solana_kit_codecs_strings/CHANGELOG.md",
+    "packages/solana_kit_codecs_strings/pubspec.yaml",
+    "packages/solana_kit_compute_budget/CHANGELOG.md",
+    "packages/solana_kit_compute_budget/pubspec.yaml",
+    "packages/solana_kit_config/CHANGELOG.md",
+    "packages/solana_kit_config/pubspec.yaml",
+    "packages/solana_kit_errors/CHANGELOG.md",
+    "packages/solana_kit_errors/pubspec.yaml",
+    "packages/solana_kit_fast_stable_stringify/CHANGELOG.md",
+    "packages/solana_kit_fast_stable_stringify/pubspec.yaml",
+    "packages/solana_kit_fixed_points/CHANGELOG.md",
+    "packages/solana_kit_fixed_points/pubspec.yaml",
+    "packages/solana_kit_functional/CHANGELOG.md",
+    "packages/solana_kit_functional/pubspec.yaml",
+    "packages/solana_kit_helius/CHANGELOG.md",
+    "packages/solana_kit_helius/pubspec.yaml",
+    "packages/solana_kit_instruction_plans/CHANGELOG.md",
+    "packages/solana_kit_instruction_plans/pubspec.yaml",
+    "packages/solana_kit_instructions/CHANGELOG.md",
+    "packages/solana_kit_instructions/pubspec.yaml",
+    "packages/solana_kit_integration_tests/CHANGELOG.md",
+    "packages/solana_kit_integration_tests/pubspec.yaml",
+    "packages/solana_kit_keys/CHANGELOG.md",
+    "packages/solana_kit_keys/pubspec.yaml",
+    "packages/solana_kit_lints/CHANGELOG.md",
+    "packages/solana_kit_lints/pubspec.yaml",
+    "packages/solana_kit_loader/CHANGELOG.md",
+    "packages/solana_kit_loader/pubspec.yaml",
+    "packages/solana_kit_memo/CHANGELOG.md",
+    "packages/solana_kit_memo/pubspec.yaml",
+    "packages/solana_kit_mobile_wallet_adapter/CHANGELOG.md",
+    "packages/solana_kit_mobile_wallet_adapter/example/pubspec.yaml",
+    "packages/solana_kit_mobile_wallet_adapter/pubspec.yaml",
+    "packages/solana_kit_mobile_wallet_adapter_protocol/CHANGELOG.md",
+    "packages/solana_kit_mobile_wallet_adapter_protocol/pubspec.yaml",
+    "packages/solana_kit_mpl_bubblegum/CHANGELOG.md",
+    "packages/solana_kit_mpl_bubblegum/pubspec.yaml",
+    "packages/solana_kit_offchain_messages/CHANGELOG.md",
+    "packages/solana_kit_offchain_messages/pubspec.yaml",
+    "packages/solana_kit_options/CHANGELOG.md",
+    "packages/solana_kit_options/pubspec.yaml",
+    "packages/solana_kit_program_client_core/CHANGELOG.md",
+    "packages/solana_kit_program_client_core/pubspec.yaml",
+    "packages/solana_kit_programs/CHANGELOG.md",
+    "packages/solana_kit_programs/pubspec.yaml",
+    "packages/solana_kit_rpc/CHANGELOG.md",
+    "packages/solana_kit_rpc/pubspec.yaml",
+    "packages/solana_kit_rpc_api/CHANGELOG.md",
+    "packages/solana_kit_rpc_api/pubspec.yaml",
+    "packages/solana_kit_rpc_parsed_types/CHANGELOG.md",
+    "packages/solana_kit_rpc_parsed_types/pubspec.yaml",
+    "packages/solana_kit_rpc_spec/CHANGELOG.md",
+    "packages/solana_kit_rpc_spec/pubspec.yaml",
+    "packages/solana_kit_rpc_spec_types/CHANGELOG.md",
+    "packages/solana_kit_rpc_spec_types/pubspec.yaml",
+    "packages/solana_kit_rpc_subscriptions/CHANGELOG.md",
+    "packages/solana_kit_rpc_subscriptions/pubspec.yaml",
+    "packages/solana_kit_rpc_subscriptions_api/CHANGELOG.md",
+    "packages/solana_kit_rpc_subscriptions_api/pubspec.yaml",
+    "packages/solana_kit_rpc_subscriptions_channel_websocket/CHANGELOG.md",
+    "packages/solana_kit_rpc_subscriptions_channel_websocket/pubspec.yaml",
+    "packages/solana_kit_rpc_transformers/CHANGELOG.md",
+    "packages/solana_kit_rpc_transformers/pubspec.yaml",
+    "packages/solana_kit_rpc_transport_http/CHANGELOG.md",
+    "packages/solana_kit_rpc_transport_http/pubspec.yaml",
+    "packages/solana_kit_rpc_types/CHANGELOG.md",
+    "packages/solana_kit_rpc_types/pubspec.yaml",
+    "packages/solana_kit_signers/CHANGELOG.md",
+    "packages/solana_kit_signers/pubspec.yaml",
+    "packages/solana_kit_spl_account_compression/CHANGELOG.md",
+    "packages/solana_kit_spl_account_compression/pubspec.yaml",
+    "packages/solana_kit_stake/CHANGELOG.md",
+    "packages/solana_kit_stake/pubspec.yaml",
+    "packages/solana_kit_subscribable/CHANGELOG.md",
+    "packages/solana_kit_subscribable/pubspec.yaml",
+    "packages/solana_kit_subscriptions/CHANGELOG.md",
+    "packages/solana_kit_subscriptions/pubspec.yaml",
+    "packages/solana_kit_surfpool/CHANGELOG.md",
+    "packages/solana_kit_surfpool/pubspec.yaml",
+    "packages/solana_kit_system/CHANGELOG.md",
+    "packages/solana_kit_system/pubspec.yaml",
+    "packages/solana_kit_sysvars/CHANGELOG.md",
+    "packages/solana_kit_sysvars/pubspec.yaml",
+    "packages/solana_kit_test_matchers/CHANGELOG.md",
+    "packages/solana_kit_test_matchers/pubspec.yaml",
+    "packages/solana_kit_token/CHANGELOG.md",
+    "packages/solana_kit_token/pubspec.yaml",
+    "packages/solana_kit_token_2022/CHANGELOG.md",
+    "packages/solana_kit_token_2022/pubspec.yaml",
+    "packages/solana_kit_transaction_confirmation/CHANGELOG.md",
+    "packages/solana_kit_transaction_confirmation/pubspec.yaml",
+    "packages/solana_kit_transaction_introspection/CHANGELOG.md",
+    "packages/solana_kit_transaction_introspection/pubspec.yaml",
+    "packages/solana_kit_transaction_messages/CHANGELOG.md",
+    "packages/solana_kit_transaction_messages/pubspec.yaml",
+    "packages/solana_kit_transactions/CHANGELOG.md",
+    "packages/solana_kit_transactions/pubspec.yaml",
+    "pubspec.yaml",
+    "versions.json"
+  ],
+  "package_publications": [
+    {
+      "package": "codama-renderers-dart",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.5.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_accounts",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_address",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_address_constants",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_address_lookup_table",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.3.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_addresses",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_associated_token_account",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_codecs",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_codecs_core",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_codecs_data_structures",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_codecs_numbers",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_codecs_strings",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_compute_budget",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.7.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_config",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.1.3",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_errors",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_fast_stable_stringify",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_fixed_points",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_functional",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_helius",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.5.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_instruction_plans",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_instructions",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_keys",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_lints",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_loader",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.3.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_memo",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.3.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_mobile_wallet_adapter",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.4.4",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_mobile_wallet_adapter_protocol",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.4.4",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_mpl_bubblegum",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.4.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_offchain_messages",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.4.3",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_options",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_program_client_core",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_programs",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_rpc",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_rpc_api",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_rpc_parsed_types",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_rpc_spec",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_rpc_spec_types",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_rpc_subscriptions",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_rpc_subscriptions_api",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_rpc_subscriptions_channel_websocket",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_rpc_transformers",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_rpc_transport_http",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_rpc_types",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_signers",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_spl_account_compression",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.3.3",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_stake",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.4.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_subscribable",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_subscriptions",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.1.2",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_surfpool",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.2.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_system",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.6.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_sysvars",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.4.3",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_token",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.7.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_token_2022",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.7.1",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_transaction_confirmation",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_transaction_introspection",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_transaction_messages",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    },
+    {
+      "package": "solana_kit_transactions",
+      "ecosystem": "dart",
+      "registry": "pub_dev",
+      "version": "0.8.0",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    }
+  ],
+  "updated_changelogs": [
+    "CHANGELOG.md",
+    "packages/codama-renderers-dart/CHANGELOG.md",
+    "packages/solana_kit/CHANGELOG.md",
+    "packages/solana_kit_accounts/CHANGELOG.md",
+    "packages/solana_kit_address/CHANGELOG.md",
+    "packages/solana_kit_address_constants/CHANGELOG.md",
+    "packages/solana_kit_address_lookup_table/CHANGELOG.md",
+    "packages/solana_kit_addresses/CHANGELOG.md",
+    "packages/solana_kit_associated_token_account/CHANGELOG.md",
+    "packages/solana_kit_codecs/CHANGELOG.md",
+    "packages/solana_kit_codecs_core/CHANGELOG.md",
+    "packages/solana_kit_codecs_data_structures/CHANGELOG.md",
+    "packages/solana_kit_codecs_numbers/CHANGELOG.md",
+    "packages/solana_kit_codecs_strings/CHANGELOG.md",
+    "packages/solana_kit_compute_budget/CHANGELOG.md",
+    "packages/solana_kit_config/CHANGELOG.md",
+    "packages/solana_kit_errors/CHANGELOG.md",
+    "packages/solana_kit_fast_stable_stringify/CHANGELOG.md",
+    "packages/solana_kit_fixed_points/CHANGELOG.md",
+    "packages/solana_kit_functional/CHANGELOG.md",
+    "packages/solana_kit_helius/CHANGELOG.md",
+    "packages/solana_kit_instruction_plans/CHANGELOG.md",
+    "packages/solana_kit_instructions/CHANGELOG.md",
+    "packages/solana_kit_integration_tests/CHANGELOG.md",
+    "packages/solana_kit_keys/CHANGELOG.md",
+    "packages/solana_kit_lints/CHANGELOG.md",
+    "packages/solana_kit_loader/CHANGELOG.md",
+    "packages/solana_kit_memo/CHANGELOG.md",
+    "packages/solana_kit_mobile_wallet_adapter/CHANGELOG.md",
+    "packages/solana_kit_mobile_wallet_adapter_protocol/CHANGELOG.md",
+    "packages/solana_kit_mpl_bubblegum/CHANGELOG.md",
+    "packages/solana_kit_offchain_messages/CHANGELOG.md",
+    "packages/solana_kit_options/CHANGELOG.md",
+    "packages/solana_kit_program_client_core/CHANGELOG.md",
+    "packages/solana_kit_programs/CHANGELOG.md",
+    "packages/solana_kit_rpc/CHANGELOG.md",
+    "packages/solana_kit_rpc_api/CHANGELOG.md",
+    "packages/solana_kit_rpc_parsed_types/CHANGELOG.md",
+    "packages/solana_kit_rpc_spec/CHANGELOG.md",
+    "packages/solana_kit_rpc_spec_types/CHANGELOG.md",
+    "packages/solana_kit_rpc_subscriptions/CHANGELOG.md",
+    "packages/solana_kit_rpc_subscriptions_api/CHANGELOG.md",
+    "packages/solana_kit_rpc_subscriptions_channel_websocket/CHANGELOG.md",
+    "packages/solana_kit_rpc_transformers/CHANGELOG.md",
+    "packages/solana_kit_rpc_transport_http/CHANGELOG.md",
+    "packages/solana_kit_rpc_types/CHANGELOG.md",
+    "packages/solana_kit_signers/CHANGELOG.md",
+    "packages/solana_kit_spl_account_compression/CHANGELOG.md",
+    "packages/solana_kit_stake/CHANGELOG.md",
+    "packages/solana_kit_subscribable/CHANGELOG.md",
+    "packages/solana_kit_subscriptions/CHANGELOG.md",
+    "packages/solana_kit_surfpool/CHANGELOG.md",
+    "packages/solana_kit_system/CHANGELOG.md",
+    "packages/solana_kit_sysvars/CHANGELOG.md",
+    "packages/solana_kit_test_matchers/CHANGELOG.md",
+    "packages/solana_kit_token/CHANGELOG.md",
+    "packages/solana_kit_token_2022/CHANGELOG.md",
+    "packages/solana_kit_transaction_confirmation/CHANGELOG.md",
+    "packages/solana_kit_transaction_introspection/CHANGELOG.md",
+    "packages/solana_kit_transaction_messages/CHANGELOG.md",
+    "packages/solana_kit_transactions/CHANGELOG.md"
+  ],
+  "deleted_changesets": [
+    ".changeset/1787046793-solana-kit-lints.md",
+    ".changeset/canonical-boolean-codecs.md",
+    ".changeset/canonical-utf8-codecs.md",
+    ".changeset/codama-dart-wide-enums.md",
+    ".changeset/fix-codama-dart-pina-schema.md",
+    ".changeset/fixed-capacity-codecs.md",
+    ".changeset/secure-dart-discriminators.md"
+  ],
+  "changesets": [
+    {
+      "path": ".changeset/1787046793-solana-kit-lints.md",
+      "summary": "Publish this package",
+      "details": "This makes publishing with melos simpler for the whole repo.",
+      "targets": [
+        {
+          "id": "solana_kit_lints",
+          "kind": "package",
+          "bump": "minor",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "minor"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "c61ccb2dbc7dc9c7abe23e765e15b5da9b5ff81a",
+            "short_sha": "c61ccb2",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/c61ccb2dbc7dc9c7abe23e765e15b5da9b5ff81a",
+            "authored_at": "2026-08-18T09:41:14+01:00",
+            "committed_at": "2026-08-19T09:51:11+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "ifiokotung@gmail.com"
+          },
+          "review_request": null
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "c61ccb2dbc7dc9c7abe23e765e15b5da9b5ff81a",
+            "short_sha": "c61ccb2",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/c61ccb2dbc7dc9c7abe23e765e15b5da9b5ff81a",
+            "authored_at": "2026-08-18T09:41:14+01:00",
+            "committed_at": "2026-08-19T09:51:11+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "ifiokotung@gmail.com"
+          },
+          "review_request": null
+        },
+        "related_issues": []
+      }
+    },
+    {
+      "path": ".changeset/canonical-boolean-codecs.md",
+      "summary": "Reject non-canonical boolean decoder values",
+      "details": "Boolean codecs now reject values other than zero and one with a typed error, including nullable prefixes that use boolean tags.",
+      "targets": [
+        {
+          "id": "solana_kit_codecs_data_structures",
+          "kind": "package",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        },
+        {
+          "id": "solana_kit_errors",
+          "kind": "package",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": "ifiokjr",
+            "display_name": "ifiokjr",
+            "url": "https://github.com/ifiokjr",
+            "source": "review_request_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "7739c405551e5c5c9b7a2bb51a55a850cdfdb7f3",
+            "short_sha": "7739c40",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/7739c405551e5c5c9b7a2bb51a55a850cdfdb7f3",
+            "authored_at": "2026-08-19T07:53:26+01:00",
+            "committed_at": "2026-08-19T07:53:26+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": {
+            "provider": "github",
+            "host": "github.com",
+            "kind": "pull_request",
+            "id": "#217",
+            "title": "🐛 fix(codecs): enforce canonical boolean bytes",
+            "url": "https://github.com/openbudgetfun/solana_kit/pull/217",
+            "author": {
+              "provider": "github",
+              "host": "github.com",
+              "id": null,
+              "login": "ifiokjr",
+              "display_name": "ifiokjr",
+              "url": "https://github.com/ifiokjr",
+              "source": "review_request_author"
+            }
+          }
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": "ifiokjr",
+            "display_name": "ifiokjr",
+            "url": "https://github.com/ifiokjr",
+            "source": "review_request_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "7739c405551e5c5c9b7a2bb51a55a850cdfdb7f3",
+            "short_sha": "7739c40",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/7739c405551e5c5c9b7a2bb51a55a850cdfdb7f3",
+            "authored_at": "2026-08-19T07:53:26+01:00",
+            "committed_at": "2026-08-19T07:53:26+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": {
+            "provider": "github",
+            "host": "github.com",
+            "kind": "pull_request",
+            "id": "#217",
+            "title": "🐛 fix(codecs): enforce canonical boolean bytes",
+            "url": "https://github.com/openbudgetfun/solana_kit/pull/217",
+            "author": {
+              "provider": "github",
+              "host": "github.com",
+              "id": null,
+              "login": "ifiokjr",
+              "display_name": "ifiokjr",
+              "url": "https://github.com/ifiokjr",
+              "source": "review_request_author"
+            }
+          }
+        },
+        "related_issues": []
+      }
+    },
+    {
+      "path": ".changeset/canonical-utf8-codecs.md",
+      "summary": "Preserve UTF-8 data exactly during decoding",
+      "details": "UTF-8 codecs now preserve embedded null characters and reject malformed byte sequences. Lossy compatibility modes and null-character rejection modes have been removed; callers can opt into null removal explicitly with `removeNullCharacters` after decoding.\n\n```dart\nfinal value = getUtf8Codec().decode(bytes);\nfinal withoutPadding = removeNullCharacters(value);\n```",
+      "targets": [
+        {
+          "id": "solana_kit_codecs_strings",
+          "kind": "package",
+          "bump": "major",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "major"
+        },
+        {
+          "id": "solana_kit_memo",
+          "kind": "package",
+          "bump": "none",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "test"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": "ifiokjr",
+            "display_name": "ifiokjr",
+            "url": "https://github.com/ifiokjr",
+            "source": "review_request_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "5d479128e05ddf8d23bf0b4459569debacc554ff",
+            "short_sha": "5d47912",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/5d479128e05ddf8d23bf0b4459569debacc554ff",
+            "authored_at": "2026-08-19T08:02:12+01:00",
+            "committed_at": "2026-08-19T08:02:12+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": {
+            "provider": "github",
+            "host": "github.com",
+            "kind": "pull_request",
+            "id": "#218",
+            "title": "🐛 fix(codecs): preserve canonical UTF-8 data",
+            "url": "https://github.com/openbudgetfun/solana_kit/pull/218",
+            "author": {
+              "provider": "github",
+              "host": "github.com",
+              "id": null,
+              "login": "ifiokjr",
+              "display_name": "ifiokjr",
+              "url": "https://github.com/ifiokjr",
+              "source": "review_request_author"
+            }
+          }
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": "ifiokjr",
+            "display_name": "ifiokjr",
+            "url": "https://github.com/ifiokjr",
+            "source": "review_request_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "5d479128e05ddf8d23bf0b4459569debacc554ff",
+            "short_sha": "5d47912",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/5d479128e05ddf8d23bf0b4459569debacc554ff",
+            "authored_at": "2026-08-19T08:02:12+01:00",
+            "committed_at": "2026-08-19T08:02:12+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": {
+            "provider": "github",
+            "host": "github.com",
+            "kind": "pull_request",
+            "id": "#218",
+            "title": "🐛 fix(codecs): preserve canonical UTF-8 data",
+            "url": "https://github.com/openbudgetfun/solana_kit/pull/218",
+            "author": {
+              "provider": "github",
+              "host": "github.com",
+              "id": null,
+              "login": "ifiokjr",
+              "display_name": "ifiokjr",
+              "url": "https://github.com/ifiokjr",
+              "source": "review_request_author"
+            }
+          }
+        },
+        "related_issues": []
+      }
+    },
+    {
+      "path": ".changeset/codama-dart-wide-enums.md",
+      "summary": "Fix Wide Scalar Enum Codecs",
+      "details": "Generate type-correct Dart codecs for scalar enums with `u64` discriminators. The encoder now converts enum indices to `BigInt`, while the decoder validates the decoded discriminator before converting it to a Dart enum index.",
+      "targets": [
+        {
+          "id": "codama-renderers-dart",
+          "kind": "package",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": "ifiokjr",
+            "display_name": "ifiokjr",
+            "url": "https://github.com/ifiokjr",
+            "source": "review_request_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "fe5cca41a1928d43cf7b62cc51db46d10b834ceb",
+            "short_sha": "fe5cca4",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/fe5cca41a1928d43cf7b62cc51db46d10b834ceb",
+            "authored_at": "2026-08-19T08:20:36+01:00",
+            "committed_at": "2026-08-19T08:20:36+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": {
+            "provider": "github",
+            "host": "github.com",
+            "kind": "pull_request",
+            "id": "#219",
+            "title": "🐛 fix(codama-renderers-dart): support wide scalar enums",
+            "url": "https://github.com/openbudgetfun/solana_kit/pull/219",
+            "author": {
+              "provider": "github",
+              "host": "github.com",
+              "id": null,
+              "login": "ifiokjr",
+              "display_name": "ifiokjr",
+              "url": "https://github.com/ifiokjr",
+              "source": "review_request_author"
+            }
+          }
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": "ifiokjr",
+            "display_name": "ifiokjr",
+            "url": "https://github.com/ifiokjr",
+            "source": "review_request_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "fe5cca41a1928d43cf7b62cc51db46d10b834ceb",
+            "short_sha": "fe5cca4",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/fe5cca41a1928d43cf7b62cc51db46d10b834ceb",
+            "authored_at": "2026-08-19T08:20:36+01:00",
+            "committed_at": "2026-08-19T08:20:36+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": {
+            "provider": "github",
+            "host": "github.com",
+            "kind": "pull_request",
+            "id": "#219",
+            "title": "🐛 fix(codama-renderers-dart): support wide scalar enums",
+            "url": "https://github.com/openbudgetfun/solana_kit/pull/219",
+            "author": {
+              "provider": "github",
+              "host": "github.com",
+              "id": null,
+              "login": "ifiokjr",
+              "display_name": "ifiokjr",
+              "url": "https://github.com/ifiokjr",
+              "source": "review_request_author"
+            }
+          }
+        },
+        "related_issues": []
+      }
+    },
+    {
+      "path": ".changeset/fix-codama-dart-pina-schema.md",
+      "summary": "Support Current Codama and Serialized Pina IDLs",
+      "details": "Align the Dart renderer with Codama 1.10, normalize omitted serialized child collections from Pina IDLs, and publish valid module entry points for Node, browser, and React Native consumers.",
+      "targets": [
+        {
+          "id": "codama-renderers-dart",
+          "kind": "package",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": "ifiokjr",
+            "display_name": "ifiokjr",
+            "url": "https://github.com/ifiokjr",
+            "source": "review_request_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "8b0d1e6990772d6d8c09bcd7874f80ed553fda4a",
+            "short_sha": "8b0d1e6",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/8b0d1e6990772d6d8c09bcd7874f80ed553fda4a",
+            "authored_at": "2026-08-19T07:40:07+01:00",
+            "committed_at": "2026-08-19T07:40:07+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": {
+            "provider": "github",
+            "host": "github.com",
+            "kind": "pull_request",
+            "id": "#214",
+            "title": "🐛 fix(codama-renderers-dart): support serialized Codama schemas",
+            "url": "https://github.com/openbudgetfun/solana_kit/pull/214",
+            "author": {
+              "provider": "github",
+              "host": "github.com",
+              "id": null,
+              "login": "ifiokjr",
+              "display_name": "ifiokjr",
+              "url": "https://github.com/ifiokjr",
+              "source": "review_request_author"
+            }
+          }
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": "ifiokjr",
+            "display_name": "ifiokjr",
+            "url": "https://github.com/ifiokjr",
+            "source": "review_request_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "8b0d1e6990772d6d8c09bcd7874f80ed553fda4a",
+            "short_sha": "8b0d1e6",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/8b0d1e6990772d6d8c09bcd7874f80ed553fda4a",
+            "authored_at": "2026-08-19T07:40:07+01:00",
+            "committed_at": "2026-08-19T07:40:07+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": {
+            "provider": "github",
+            "host": "github.com",
+            "kind": "pull_request",
+            "id": "#214",
+            "title": "🐛 fix(codama-renderers-dart): support serialized Codama schemas",
+            "url": "https://github.com/openbudgetfun/solana_kit/pull/214",
+            "author": {
+              "provider": "github",
+              "host": "github.com",
+              "id": null,
+              "login": "ifiokjr",
+              "display_name": "ifiokjr",
+              "url": "https://github.com/ifiokjr",
+              "source": "review_request_author"
+            }
+          }
+        },
+        "related_issues": []
+      }
+    },
+    {
+      "path": ".changeset/fixed-capacity-codecs.md",
+      "summary": "Reject over-capacity generated values",
+      "details": "Adds an opt-in non-truncating mode to fixed-size encoders and codecs. Codama fixed-size types now use that mode so generated string, byte, and collection encoders pad values within capacity but reject oversized encoded values.",
+      "targets": [
+        {
+          "id": "solana_kit_codecs_core",
+          "kind": "package",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        },
+        {
+          "id": "codama-renderers-dart",
+          "kind": "package",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": "ifiokjr",
+            "display_name": "ifiokjr",
+            "url": "https://github.com/ifiokjr",
+            "source": "review_request_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "0ad7eab506b857c04d12a6afb05ebd8e551c8808",
+            "short_sha": "0ad7eab",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/0ad7eab506b857c04d12a6afb05ebd8e551c8808",
+            "authored_at": "2026-08-19T08:10:39+01:00",
+            "committed_at": "2026-08-19T08:10:39+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": {
+            "provider": "github",
+            "host": "github.com",
+            "kind": "pull_request",
+            "id": "#216",
+            "title": "🐛 fix(codecs): reject generated fixed-capacity overflow",
+            "url": "https://github.com/openbudgetfun/solana_kit/pull/216",
+            "author": {
+              "provider": "github",
+              "host": "github.com",
+              "id": null,
+              "login": "ifiokjr",
+              "display_name": "ifiokjr",
+              "url": "https://github.com/ifiokjr",
+              "source": "review_request_author"
+            }
+          }
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": "ifiokjr",
+            "display_name": "ifiokjr",
+            "url": "https://github.com/ifiokjr",
+            "source": "review_request_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "0ad7eab506b857c04d12a6afb05ebd8e551c8808",
+            "short_sha": "0ad7eab",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/0ad7eab506b857c04d12a6afb05ebd8e551c8808",
+            "authored_at": "2026-08-19T08:10:39+01:00",
+            "committed_at": "2026-08-19T08:10:39+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": {
+            "provider": "github",
+            "host": "github.com",
+            "kind": "pull_request",
+            "id": "#216",
+            "title": "🐛 fix(codecs): reject generated fixed-capacity overflow",
+            "url": "https://github.com/openbudgetfun/solana_kit/pull/216",
+            "author": {
+              "provider": "github",
+              "host": "github.com",
+              "id": null,
+              "login": "ifiokjr",
+              "display_name": "ifiokjr",
+              "url": "https://github.com/ifiokjr",
+              "source": "review_request_author"
+            }
+          }
+        },
+        "related_issues": []
+      }
+    },
+    {
+      "path": ".changeset/secure-dart-discriminators.md",
+      "summary": "Enforce Dart discriminator and optional-account invariants",
+      "details": "Hide omitted defaults from generated builder inputs, force their declared wire values during encoding, validate account and instruction discriminators during decoding, require exact instruction input consumption, reject truncated account data while preserving legitimate trailing account capacity unless a size discriminator requires an exact length, and preserve optional account positions with readonly program-address placeholders.",
+      "targets": [
+        {
+          "id": "codama-renderers-dart",
+          "kind": "package",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": "ifiokjr",
+            "display_name": "ifiokjr",
+            "url": "https://github.com/ifiokjr",
+            "source": "review_request_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "53efa0869bd63efdc40b87e9ccc997ec500fe315",
+            "short_sha": "53efa08",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/53efa0869bd63efdc40b87e9ccc997ec500fe315",
+            "authored_at": "2026-08-19T08:42:43+01:00",
+            "committed_at": "2026-08-19T08:42:43+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": {
+            "provider": "github",
+            "host": "github.com",
+            "kind": "pull_request",
+            "id": "#215",
+            "title": "🐛 fix(codama-renderers-dart): enforce wire invariants",
+            "url": "https://github.com/openbudgetfun/solana_kit/pull/215",
+            "author": {
+              "provider": "github",
+              "host": "github.com",
+              "id": null,
+              "login": "ifiokjr",
+              "display_name": "ifiokjr",
+              "url": "https://github.com/ifiokjr",
+              "source": "review_request_author"
+            }
+          }
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": "ifiokjr",
+            "display_name": "ifiokjr",
+            "url": "https://github.com/ifiokjr",
+            "source": "review_request_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "53efa0869bd63efdc40b87e9ccc997ec500fe315",
+            "short_sha": "53efa08",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/53efa0869bd63efdc40b87e9ccc997ec500fe315",
+            "authored_at": "2026-08-19T08:42:43+01:00",
+            "committed_at": "2026-08-19T08:42:43+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": {
+            "provider": "github",
+            "host": "github.com",
+            "kind": "pull_request",
+            "id": "#215",
+            "title": "🐛 fix(codama-renderers-dart): enforce wire invariants",
+            "url": "https://github.com/openbudgetfun/solana_kit/pull/215",
+            "author": {
+              "provider": "github",
+              "host": "github.com",
+              "id": null,
+              "login": "ifiokjr",
+              "display_name": "ifiokjr",
+              "url": "https://github.com/ifiokjr",
+              "source": "review_request_author"
+            }
+          }
+        },
+        "related_issues": []
+      }
+    }
+  ],
+  "changelogs": [
+    {
+      "owner_id": "main",
+      "owner_kind": "group",
+      "path": "CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [
+          "Grouped release for `main`."
+        ],
+        "sections": [
+          {
+            "title": "💥 Breaking Change",
+            "collapsed": false,
+            "entries": [
+              "#### Preserve UTF-8 data exactly during decoding\n_Packages:_ _solana_kit_codecs_strings_\n\nUTF-8 codecs now preserve embedded null characters and reject malformed byte sequences. Lossy compatibility modes and null-character rejection modes have been removed; callers can opt into null removal explicitly with `removeNullCharacters` after decoding.\n\n```dart\nfinal value = getUtf8Codec().decode(bytes);\nfinal withoutPadding = removeNullCharacters(value);\n```\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #218](https://github.com/openbudgetfun/solana_kit/pull/218)"
+            ]
+          },
+          {
+            "title": "🚀 Feature",
+            "collapsed": false,
+            "entries": [
+              "#### Publish this package\n_Packages:_ _solana_kit_lints_\n\nThis makes publishing with melos simpler for the whole repo.\n\n_Owner:_ Ifiok Jr. · _Introduced in:_ [`c61ccb2`](https://github.com/openbudgetfun/solana_kit/commit/c61ccb2dbc7dc9c7abe23e765e15b5da9b5ff81a)"
+            ]
+          },
+          {
+            "title": "🐛 Fixed",
+            "collapsed": false,
+            "entries": [
+              "#### Reject over-capacity generated values\n_Packages:_ _solana_kit_codecs_core_\n\nAdds an opt-in non-truncating mode to fixed-size encoders and codecs. Codama fixed-size types now use that mode so generated string, byte, and collection encoders pad values within capacity but reject oversized encoded values.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #216](https://github.com/openbudgetfun/solana_kit/pull/216)",
+              "#### Reject non-canonical boolean decoder values\n_Packages:_ _solana_kit_codecs_data_structures_, _solana_kit_errors_\n\nBoolean codecs now reject values other than zero and one with a typed error, including nullable prefixes that use boolean tags.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #217](https://github.com/openbudgetfun/solana_kit/pull/217)"
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\nGrouped release for `main`.\n### 💥 Breaking Change\n\n#### Preserve UTF-8 data exactly during decoding\n_Packages:_ _solana_kit_codecs_strings_\n\nUTF-8 codecs now preserve embedded null characters and reject malformed byte sequences. Lossy compatibility modes and null-character rejection modes have been removed; callers can opt into null removal explicitly with `removeNullCharacters` after decoding.\n\n```dart\nfinal value = getUtf8Codec().decode(bytes);\nfinal withoutPadding = removeNullCharacters(value);\n```\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #218](https://github.com/openbudgetfun/solana_kit/pull/218)\n\n### 🚀 Feature\n\n#### Publish this package\n_Packages:_ _solana_kit_lints_\n\nThis makes publishing with melos simpler for the whole repo.\n\n_Owner:_ Ifiok Jr. · _Introduced in:_ [`c61ccb2`](https://github.com/openbudgetfun/solana_kit/commit/c61ccb2dbc7dc9c7abe23e765e15b5da9b5ff81a)\n\n### 🐛 Fixed\n\n#### Reject over-capacity generated values\n_Packages:_ _solana_kit_codecs_core_\n\nAdds an opt-in non-truncating mode to fixed-size encoders and codecs. Codama fixed-size types now use that mode so generated string, byte, and collection encoders pad values within capacity but reject oversized encoded values.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #216](https://github.com/openbudgetfun/solana_kit/pull/216)\n\n#### Reject non-canonical boolean decoder values\n_Packages:_ _solana_kit_codecs_data_structures_, _solana_kit_errors_\n\nBoolean codecs now reject values other than zero and one with a typed error, including nullable prefixes that use boolean tags.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #217](https://github.com/openbudgetfun/solana_kit/pull/217)"
+    },
+    {
+      "owner_id": "codama-renderers-dart",
+      "owner_kind": "package",
+      "path": "packages/codama-renderers-dart/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "codama-renderers-dart [0.5.1](https://github.com/openbudgetfun/solana_kit/releases/tag/codama-renderers-dart/v0.5.1) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "🐛 Fixed",
+            "collapsed": false,
+            "entries": [
+              "#### Fix Wide Scalar Enum Codecs\n\nGenerate type-correct Dart codecs for scalar enums with `u64` discriminators. The encoder now converts enum indices to `BigInt`, while the decoder validates the decoded discriminator before converting it to a Dart enum index.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #219](https://github.com/openbudgetfun/solana_kit/pull/219)",
+              "#### Support Current Codama and Serialized Pina IDLs\n\nAlign the Dart renderer with Codama 1.10, normalize omitted serialized child collections from Pina IDLs, and publish valid module entry points for Node, browser, and React Native consumers.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #214](https://github.com/openbudgetfun/solana_kit/pull/214)",
+              "#### Reject over-capacity generated values\n\nAdds an opt-in non-truncating mode to fixed-size encoders and codecs. Codama fixed-size types now use that mode so generated string, byte, and collection encoders pad values within capacity but reject oversized encoded values.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #216](https://github.com/openbudgetfun/solana_kit/pull/216)",
+              "#### Enforce Dart discriminator and optional-account invariants\n\nHide omitted defaults from generated builder inputs, force their declared wire values during encoding, validate account and instruction discriminators during decoding, require exact instruction input consumption, reject truncated account data while preserving legitimate trailing account capacity unless a size discriminator requires an exact length, and preserve optional account positions with readonly program-address placeholders.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #215](https://github.com/openbudgetfun/solana_kit/pull/215)"
+            ]
+          }
+        ]
+      },
+      "rendered": "## codama-renderers-dart [0.5.1](https://github.com/openbudgetfun/solana_kit/releases/tag/codama-renderers-dart/v0.5.1) (2026-08-19)\n\n### 🐛 Fixed\n\n#### Fix Wide Scalar Enum Codecs\n\nGenerate type-correct Dart codecs for scalar enums with `u64` discriminators. The encoder now converts enum indices to `BigInt`, while the decoder validates the decoded discriminator before converting it to a Dart enum index.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #219](https://github.com/openbudgetfun/solana_kit/pull/219)\n\n#### Support Current Codama and Serialized Pina IDLs\n\nAlign the Dart renderer with Codama 1.10, normalize omitted serialized child collections from Pina IDLs, and publish valid module entry points for Node, browser, and React Native consumers.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #214](https://github.com/openbudgetfun/solana_kit/pull/214)\n\n#### Reject over-capacity generated values\n\nAdds an opt-in non-truncating mode to fixed-size encoders and codecs. Codama fixed-size types now use that mode so generated string, byte, and collection encoders pad values within capacity but reject oversized encoded values.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #216](https://github.com/openbudgetfun/solana_kit/pull/216)\n\n#### Enforce Dart discriminator and optional-account invariants\n\nHide omitted defaults from generated builder inputs, force their declared wire values during encoding, validate account and instruction discriminators during decoding, require exact instruction input consumption, reject truncated account data while preserving legitimate trailing account capacity unless a size discriminator requires an exact length, and preserve optional account positions with readonly program-address placeholders.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #215](https://github.com/openbudgetfun/solana_kit/pull/215)"
+    },
+    {
+      "owner_id": "solana_kit",
+      "owner_kind": "package",
+      "path": "packages/solana_kit/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_accounts",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_accounts/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_accounts` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_accounts` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_address",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_address/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_address` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_address` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_address_constants",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_address_constants/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_address_constants` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_address_constants` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_address_lookup_table",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_address_lookup_table/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_address_lookup_table [0.3.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_address_lookup_table/v0.3.1) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_address_lookup_table` was updated to 0.3.1."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_address_lookup_table [0.3.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_address_lookup_table/v0.3.1) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_address_lookup_table` was updated to 0.3.1."
+    },
+    {
+      "owner_id": "solana_kit_addresses",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_addresses/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_addresses` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_addresses` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_associated_token_account",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_associated_token_account/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_associated_token_account [0.6.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_associated_token_account/v0.6.1) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_associated_token_account` was updated to 0.6.1."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_associated_token_account [0.6.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_associated_token_account/v0.6.1) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_associated_token_account` was updated to 0.6.1."
+    },
+    {
+      "owner_id": "solana_kit_codecs",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_codecs/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_codecs` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_codecs` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_codecs_core",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_codecs_core/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "🐛 Fixed",
+            "collapsed": false,
+            "entries": [
+              "#### Reject over-capacity generated values\n\nAdds an opt-in non-truncating mode to fixed-size encoders and codecs. Codama fixed-size types now use that mode so generated string, byte, and collection encoders pad values within capacity but reject oversized encoded values.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #216](https://github.com/openbudgetfun/solana_kit/pull/216)"
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### 🐛 Fixed\n\n#### Reject over-capacity generated values\n\nAdds an opt-in non-truncating mode to fixed-size encoders and codecs. Codama fixed-size types now use that mode so generated string, byte, and collection encoders pad values within capacity but reject oversized encoded values.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #216](https://github.com/openbudgetfun/solana_kit/pull/216)"
+    },
+    {
+      "owner_id": "solana_kit_codecs_data_structures",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_codecs_data_structures/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "🐛 Fixed",
+            "collapsed": false,
+            "entries": [
+              "#### Reject non-canonical boolean decoder values\n\nBoolean codecs now reject values other than zero and one with a typed error, including nullable prefixes that use boolean tags.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #217](https://github.com/openbudgetfun/solana_kit/pull/217)"
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### 🐛 Fixed\n\n#### Reject non-canonical boolean decoder values\n\nBoolean codecs now reject values other than zero and one with a typed error, including nullable prefixes that use boolean tags.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #217](https://github.com/openbudgetfun/solana_kit/pull/217)"
+    },
+    {
+      "owner_id": "solana_kit_codecs_numbers",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_codecs_numbers/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_codecs_numbers` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_codecs_numbers` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_codecs_strings",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_codecs_strings/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "💥 Breaking Change",
+            "collapsed": false,
+            "entries": [
+              "#### Preserve UTF-8 data exactly during decoding\n\nUTF-8 codecs now preserve embedded null characters and reject malformed byte sequences. Lossy compatibility modes and null-character rejection modes have been removed; callers can opt into null removal explicitly with `removeNullCharacters` after decoding.\n\n```dart\nfinal value = getUtf8Codec().decode(bytes);\nfinal withoutPadding = removeNullCharacters(value);\n```\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #218](https://github.com/openbudgetfun/solana_kit/pull/218)"
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### 💥 Breaking Change\n\n#### Preserve UTF-8 data exactly during decoding\n\nUTF-8 codecs now preserve embedded null characters and reject malformed byte sequences. Lossy compatibility modes and null-character rejection modes have been removed; callers can opt into null removal explicitly with `removeNullCharacters` after decoding.\n\n```dart\nfinal value = getUtf8Codec().decode(bytes);\nfinal withoutPadding = removeNullCharacters(value);\n```\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #218](https://github.com/openbudgetfun/solana_kit/pull/218)"
+    },
+    {
+      "owner_id": "solana_kit_compute_budget",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_compute_budget/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_compute_budget [0.7.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_compute_budget/v0.7.1) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_compute_budget` was updated to 0.7.1."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_compute_budget [0.7.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_compute_budget/v0.7.1) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_compute_budget` was updated to 0.7.1."
+    },
+    {
+      "owner_id": "solana_kit_config",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_config/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_config [0.1.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_config/v0.1.3) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_config` was updated to 0.1.3."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_config [0.1.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_config/v0.1.3) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_config` was updated to 0.1.3."
+    },
+    {
+      "owner_id": "solana_kit_errors",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_errors/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "🐛 Fixed",
+            "collapsed": false,
+            "entries": [
+              "#### Reject non-canonical boolean decoder values\n\nBoolean codecs now reject values other than zero and one with a typed error, including nullable prefixes that use boolean tags.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #217](https://github.com/openbudgetfun/solana_kit/pull/217)"
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### 🐛 Fixed\n\n#### Reject non-canonical boolean decoder values\n\nBoolean codecs now reject values other than zero and one with a typed error, including nullable prefixes that use boolean tags.\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #217](https://github.com/openbudgetfun/solana_kit/pull/217)"
+    },
+    {
+      "owner_id": "solana_kit_fast_stable_stringify",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_fast_stable_stringify/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_fast_stable_stringify` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_fast_stable_stringify` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_fixed_points",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_fixed_points/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_fixed_points` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_fixed_points` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_functional",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_functional/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_functional` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_functional` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_helius",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_helius/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_helius [0.5.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_helius/v0.5.1) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_helius` was updated to 0.5.1."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_helius [0.5.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_helius/v0.5.1) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_helius` was updated to 0.5.1."
+    },
+    {
+      "owner_id": "solana_kit_instruction_plans",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_instruction_plans/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_instruction_plans` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_instruction_plans` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_instructions",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_instructions/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_instructions` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_instructions` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_integration_tests",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_integration_tests/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_integration_tests [0.0.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_integration_tests/v0.0.2) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_integration_tests` was updated to 0.0.2."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_integration_tests [0.0.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_integration_tests/v0.0.2) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_integration_tests` was updated to 0.0.2."
+    },
+    {
+      "owner_id": "solana_kit_keys",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_keys/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_keys` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_keys` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_lints",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_lints/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "🚀 Feature",
+            "collapsed": false,
+            "entries": [
+              "#### Publish this package\n\nThis makes publishing with melos simpler for the whole repo.\n\n_Owner:_ Ifiok Jr. · _Introduced in:_ [`c61ccb2`](https://github.com/openbudgetfun/solana_kit/commit/c61ccb2dbc7dc9c7abe23e765e15b5da9b5ff81a)"
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### 🚀 Feature\n\n#### Publish this package\n\nThis makes publishing with melos simpler for the whole repo.\n\n_Owner:_ Ifiok Jr. · _Introduced in:_ [`c61ccb2`](https://github.com/openbudgetfun/solana_kit/commit/c61ccb2dbc7dc9c7abe23e765e15b5da9b5ff81a)"
+    },
+    {
+      "owner_id": "solana_kit_loader",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_loader/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_loader [0.3.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_loader/v0.3.1) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_loader` was updated to 0.3.1."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_loader [0.3.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_loader/v0.3.1) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_loader` was updated to 0.3.1."
+    },
+    {
+      "owner_id": "solana_kit_memo",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_memo/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_memo [0.3.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_memo/v0.3.1) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "🧪 Testing",
+            "collapsed": false,
+            "entries": [
+              "#### Preserve UTF-8 data exactly during decoding\n\nUTF-8 codecs now preserve embedded null characters and reject malformed byte sequences. Lossy compatibility modes and null-character rejection modes have been removed; callers can opt into null removal explicitly with `removeNullCharacters` after decoding.\n\n```dart\nfinal value = getUtf8Codec().decode(bytes);\nfinal withoutPadding = removeNullCharacters(value);\n```\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #218](https://github.com/openbudgetfun/solana_kit/pull/218)"
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_memo [0.3.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_memo/v0.3.1) (2026-08-19)\n\n### 🧪 Testing\n\n#### Preserve UTF-8 data exactly during decoding\n\nUTF-8 codecs now preserve embedded null characters and reject malformed byte sequences. Lossy compatibility modes and null-character rejection modes have been removed; callers can opt into null removal explicitly with `removeNullCharacters` after decoding.\n\n```dart\nfinal value = getUtf8Codec().decode(bytes);\nfinal withoutPadding = removeNullCharacters(value);\n```\n\n_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #218](https://github.com/openbudgetfun/solana_kit/pull/218)"
+    },
+    {
+      "owner_id": "solana_kit_mobile_wallet_adapter",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_mobile_wallet_adapter/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_mobile_wallet_adapter [0.4.4](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mobile_wallet_adapter/v0.4.4) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_mobile_wallet_adapter` was updated to 0.4.4."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_mobile_wallet_adapter [0.4.4](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mobile_wallet_adapter/v0.4.4) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_mobile_wallet_adapter` was updated to 0.4.4."
+    },
+    {
+      "owner_id": "solana_kit_mobile_wallet_adapter_protocol",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_mobile_wallet_adapter_protocol/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_mobile_wallet_adapter_protocol [0.4.4](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mobile_wallet_adapter_protocol/v0.4.4) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_mobile_wallet_adapter_protocol` was updated to 0.4.4."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_mobile_wallet_adapter_protocol [0.4.4](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mobile_wallet_adapter_protocol/v0.4.4) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_mobile_wallet_adapter_protocol` was updated to 0.4.4."
+    },
+    {
+      "owner_id": "solana_kit_mpl_bubblegum",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_mpl_bubblegum/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_mpl_bubblegum [0.4.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mpl_bubblegum/v0.4.1) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_mpl_bubblegum` was updated to 0.4.1."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_mpl_bubblegum [0.4.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mpl_bubblegum/v0.4.1) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_mpl_bubblegum` was updated to 0.4.1."
+    },
+    {
+      "owner_id": "solana_kit_offchain_messages",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_offchain_messages/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_offchain_messages [0.4.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_offchain_messages/v0.4.3) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_offchain_messages` was updated to 0.4.3."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_offchain_messages [0.4.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_offchain_messages/v0.4.3) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_offchain_messages` was updated to 0.4.3."
+    },
+    {
+      "owner_id": "solana_kit_options",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_options/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_options` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_options` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_program_client_core",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_program_client_core/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_program_client_core` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_program_client_core` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_programs",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_programs/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_programs` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_programs` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_rpc",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_rpc/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_rpc` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_rpc` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_rpc_api",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_rpc_api/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_rpc_api` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_rpc_api` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_rpc_parsed_types",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_rpc_parsed_types/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_rpc_parsed_types` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_rpc_parsed_types` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_rpc_spec",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_rpc_spec/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_rpc_spec` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_rpc_spec` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_rpc_spec_types",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_rpc_spec_types/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_rpc_spec_types` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_rpc_spec_types` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_rpc_subscriptions",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_rpc_subscriptions/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_rpc_subscriptions` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_rpc_subscriptions` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_rpc_subscriptions_api",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_rpc_subscriptions_api/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_rpc_subscriptions_api` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_rpc_subscriptions_api` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_rpc_subscriptions_channel_websocket",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_rpc_subscriptions_channel_websocket/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_rpc_subscriptions_channel_websocket` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_rpc_subscriptions_channel_websocket` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_rpc_transformers",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_rpc_transformers/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_rpc_transformers` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_rpc_transformers` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_rpc_transport_http",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_rpc_transport_http/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_rpc_transport_http` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_rpc_transport_http` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_rpc_types",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_rpc_types/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_rpc_types` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_rpc_types` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_signers",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_signers/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_signers` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_signers` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_spl_account_compression",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_spl_account_compression/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_spl_account_compression [0.3.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_spl_account_compression/v0.3.3) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_spl_account_compression` was updated to 0.3.3."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_spl_account_compression [0.3.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_spl_account_compression/v0.3.3) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_spl_account_compression` was updated to 0.3.3."
+    },
+    {
+      "owner_id": "solana_kit_stake",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_stake/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_stake [0.4.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_stake/v0.4.1) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_stake` was updated to 0.4.1."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_stake [0.4.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_stake/v0.4.1) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_stake` was updated to 0.4.1."
+    },
+    {
+      "owner_id": "solana_kit_subscribable",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_subscribable/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_subscribable` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_subscribable` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_subscriptions",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_subscriptions/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_subscriptions [0.1.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_subscriptions/v0.1.2) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_subscriptions` was updated to 0.1.2."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_subscriptions [0.1.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_subscriptions/v0.1.2) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_subscriptions` was updated to 0.1.2."
+    },
+    {
+      "owner_id": "solana_kit_surfpool",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_surfpool/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_surfpool [0.2.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_surfpool/v0.2.1) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_surfpool` was updated to 0.2.1."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_surfpool [0.2.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_surfpool/v0.2.1) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_surfpool` was updated to 0.2.1."
+    },
+    {
+      "owner_id": "solana_kit_system",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_system/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_system [0.6.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_system/v0.6.1) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_system` was updated to 0.6.1."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_system [0.6.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_system/v0.6.1) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_system` was updated to 0.6.1."
+    },
+    {
+      "owner_id": "solana_kit_sysvars",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_sysvars/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_sysvars [0.4.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_sysvars/v0.4.3) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_sysvars` was updated to 0.4.3."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_sysvars [0.4.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_sysvars/v0.4.3) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_sysvars` was updated to 0.4.3."
+    },
+    {
+      "owner_id": "solana_kit_test_matchers",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_test_matchers/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_test_matchers` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_test_matchers` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_token",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_token/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_token [0.7.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_token/v0.7.1) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_token` was updated to 0.7.1."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_token [0.7.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_token/v0.7.1) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_token` was updated to 0.7.1."
+    },
+    {
+      "owner_id": "solana_kit_token_2022",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_token_2022/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "solana_kit_token_2022 [0.7.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_token_2022/v0.7.1) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_token_2022` was updated to 0.7.1."
+            ]
+          }
+        ]
+      },
+      "rendered": "## solana_kit_token_2022 [0.7.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_token_2022/v0.7.1) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_token_2022` was updated to 0.7.1."
+    },
+    {
+      "owner_id": "solana_kit_transaction_confirmation",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_transaction_confirmation/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_transaction_confirmation` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_transaction_confirmation` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_transaction_introspection",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_transaction_introspection/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_transaction_introspection` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_transaction_introspection` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_transaction_messages",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_transaction_messages/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_transaction_messages` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_transaction_messages` was updated to 0.8.0 as part of group `main`."
+    },
+    {
+      "owner_id": "solana_kit_transactions",
+      "owner_kind": "package",
+      "path": "packages/solana_kit_transactions/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "[0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "Changed",
+            "collapsed": false,
+            "entries": [
+              "- No package-specific changes were recorded; `solana_kit_transactions` was updated to 0.8.0 as part of group `main`."
+            ]
+          }
+        ]
+      },
+      "rendered": "## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)\n\n### Changed\n\n- No package-specific changes were recorded; `solana_kit_transactions` was updated to 0.8.0 as part of group `main`."
+    }
+  ],
+  "provider": {
+    "kind": "github",
+    "owner": "openbudgetfun",
+    "repo": "solana_kit",
+    "host": null
+  }
+}
