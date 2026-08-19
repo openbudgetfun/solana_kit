@@ -1,6 +1,7 @@
 import 'package:solana_kit_helius/src/internal/rest_client.dart';
 import 'package:solana_kit_helius/src/types/enhanced_types.dart';
 import 'package:solana_kit_helius/src/types/wallet_types.dart';
+import 'package:solana_kit_helius/src/wallet/get_balance_at.dart';
 import 'package:solana_kit_helius/src/wallet/get_balances.dart';
 import 'package:solana_kit_helius/src/wallet/get_batch_identity.dart';
 import 'package:solana_kit_helius/src/wallet/get_funded_by.dart';
@@ -28,6 +29,11 @@ class WalletClient {
   /// Returns native SOL and token balances for the given wallet address.
   Future<WalletBalances> getBalances(GetBalancesRequest request) =>
       walletGetBalances(_restClient, _apiKey, request);
+
+  /// Returns a wallet's balance of a token (or native SOL) at a point in the
+  /// past.
+  Future<GetBalanceAtResponse> getBalanceAt(GetBalanceAtRequest request) =>
+      walletGetBalanceAt(_restClient, _apiKey, request);
 
   /// Returns enhanced transaction history for the given wallet address.
   Future<List<EnhancedTransaction>> getHistory(GetHistoryRequest request) =>

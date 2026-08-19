@@ -5,11 +5,14 @@ import 'package:solana_kit_helius/src/transactions/sender.dart';
 
 /// Sends a base64 transaction to a regional Helius Sender `/fast` endpoint.
 ///
-/// Sender mandates `skipPreflight: true` and `maxRetries: 0`.
+/// `skipPreflight` is a caller-controlled passthrough (Sender no longer
+/// requires it to be `true`); it defaults to `true` for backward
+/// compatibility. `maxRetries` is fixed at 0.
 Future<String> sendViaSender(
   String transaction, {
   SenderRegion region = SenderRegion.defaultRegion,
   bool swqosOnly = false,
+  bool skipPreflight = true,
   http.Client? client,
 }) async {
   final endpoint = swqosOnly
@@ -28,7 +31,11 @@ Future<String> sendViaSender(
         'method': 'sendTransaction',
         'params': [
           transaction,
-          {'encoding': 'base64', 'skipPreflight': true, 'maxRetries': 0},
+          {
+            'encoding': 'base64',
+            'skipPreflight': skipPreflight,
+            'maxRetries': 0,
+          },
         ],
       }),
     );

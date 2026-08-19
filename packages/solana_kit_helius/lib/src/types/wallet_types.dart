@@ -165,6 +165,220 @@ class GetFundedByRequest {
   Map<String, Object?> toJson() => {'address': address};
 }
 
+/// Request to get a wallet's balance of a token (or native SOL) at a point in
+/// the past.
+///
+/// The point in the past is specified as **exactly one** of [time] (Unix
+/// seconds), [datetime] (string, interpreted as UTC unless an explicit timezone
+/// is given), or [slot]. For exact, deterministic results prefer [slot], since
+/// block times reported by validators can drift by a few seconds.
+///
+/// For native SOL, pass the pseudo-mint
+/// `So11111111111111111111111111111111111111111` as [mint].
+class GetBalanceAtRequest {
+  /// Creates a get-balance-at request.
+  const GetBalanceAtRequest({
+    required this.wallet,
+    required this.mint,
+    this.time,
+    this.datetime,
+    this.slot,
+  });
+
+  /// Creates a [GetBalanceAtRequest] from a JSON map.
+  factory GetBalanceAtRequest.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    return GetBalanceAtRequest(
+      wallet: r.requireString('wallet'),
+      mint: r.requireString('mint'),
+      time: r.optInt('time'),
+      datetime: r.optString('datetime'),
+      slot: r.optInt('slot'),
+    );
+  }
+
+  /// Solana wallet address (base58 encoded).
+  final String wallet;
+
+  /// Token mint address. For native SOL, use the pseudo-mint
+  /// `So11111111111111111111111111111111111111111`.
+  final String mint;
+
+  /// Unix timestamp in **seconds**. Returns the balance as of this time.
+  /// Provide exactly one of [time], [datetime], or [slot].
+  final int? time;
+
+  /// Datetime string. Accepted formats: `2025-01-10` (UTC midnight),
+  /// `2025-01-10 19:20:00`, `2025-01-10T19:20:00` (seconds optional), or with
+  /// an explicit timezone (`2025-01-10T19:20:00Z`, `...+02:00`). Interpreted
+  /// as UTC unless an explicit timezone is included.
+  /// Provide exactly one of [time], [datetime], or [slot].
+  final String? datetime;
+
+  /// Slot number. Returns the balance as of this slot. Exact and deterministic.
+  /// Provide exactly one of [time], [datetime], or [slot].
+  final int? slot;
+
+  /// Serializes this request to a JSON map.
+  Map<String, Object?> toJson() => {
+    'wallet': wallet,
+    'mint': mint,
+    if (time != null) 'time': time,
+    if (datetime != null) 'datetime': datetime,
+    if (slot != null) 'slot': slot,
+  };
+}
+
+/// The transaction a historical balance was read from.
+class BalanceAtSource {
+  /// Creates a balance-at source.
+  const BalanceAtSource({
+    required this.slot,
+    required this.signature,
+    this.blockTime,
+  });
+
+  /// Creates a [BalanceAtSource] from a JSON map.
+  factory BalanceAtSource.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    return BalanceAtSource(
+      slot: r.requireInt('slot'),
+      blockTime: r.optInt('blockTime'),
+      signature: r.requireString('signature'),
+    );
+  }
+
+  /// Slot of the transaction.
+  final int slot;
+
+  /// Block time of the transaction in Unix seconds (may be null).
+  final int? blockTime;
+
+  /// Transaction signature.
+  final String signature;
+
+  /// Serializes this source to a JSON map.
+  Map<String, Object?> toJson() => {
+    'slot': slot,
+    if (blockTime != null) 'blockTime': blockTime,
+    'signature': signature,
+  };
+}
+
+/// Response from the getBalanceAt endpoint.
+///
+/// [balance] and [balanceRaw] are returned as **strings** to avoid precision
+/// loss on large values.
+class GetBalanceAtResponse {
+  /// Creates a get-balance-at response.
+  const GetBalanceAtResponse({
+    required this.wallet,
+    required this.mint,
+    required this.isNative,
+    required this.balance,
+    required this.balanceRaw,
+    required this.decimals,
+    required this.requested,
+    required this.asOf,
+  });
+
+  /// Creates a [GetBalanceAtResponse] from a JSON map.
+  factory GetBalanceAtResponse.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    return GetBalanceAtResponse(
+      wallet: r.requireString('wallet'),
+      mint: r.requireString('mint'),
+      isNative: r.requireBool('isNative'),
+      balance: r.requireString('balance'),
+      balanceRaw: r.requireString('balanceRaw'),
+      decimals: r.requireInt('decimals'),
+      requested: GetBalanceAtRequested.fromJson(
+        r.requireMap('requested'),
+      ),
+      asOf: r.optMap('asOf') == null
+          ? null
+          : BalanceAtSource.fromJson(r.requireMap('asOf')),
+    );
+  }
+
+  /// Echo of the queried wallet address.
+  final String wallet;
+
+  /// Echo of the queried mint (the SOL pseudo-mint when native).
+  final String mint;
+
+  /// Whether the result is native SOL.
+  final bool isNative;
+
+  /// Human-readable amount as a decimal string (not a number, so large
+  /// balances don't lose precision). Trailing zeros are trimmed.
+  final String balance;
+
+  /// Exact amount in the smallest unit (lamports for SOL), as a string.
+  final String balanceRaw;
+
+  /// Token decimals (9 for SOL).
+  final int decimals;
+
+  /// Echo of the query. When the request used `datetime`, the `time` field is
+  /// also populated with the resolved epoch seconds so the UTC interpretation
+  /// is visible.
+  final GetBalanceAtRequested requested;
+
+  /// The transaction the balance was read from. `null` when the wallet had no
+  /// matching transaction at or before the requested point — meaning the
+  /// balance is genuinely `0`, not an error.
+  final BalanceAtSource? asOf;
+
+  /// Serializes this response to a JSON map.
+  Map<String, Object?> toJson() => {
+    'wallet': wallet,
+    'mint': mint,
+    'isNative': isNative,
+    'balance': balance,
+    'balanceRaw': balanceRaw,
+    'decimals': decimals,
+    'requested': requested.toJson(),
+    if (asOf != null) 'asOf': asOf!.toJson(),
+  };
+}
+
+/// Echo of the query in a [GetBalanceAtResponse].
+class GetBalanceAtRequested {
+  /// Creates a requested echo.
+  const GetBalanceAtRequested({
+    required this.time,
+    required this.slot,
+    required this.datetime,
+  });
+
+  /// Creates a [GetBalanceAtRequested] from a JSON map.
+  factory GetBalanceAtRequested.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    return GetBalanceAtRequested(
+      time: r.optInt('time'),
+      slot: r.optInt('slot'),
+      datetime: r.optString('datetime'),
+    );
+  }
+
+  /// Requested time as epoch seconds (also set when `datetime` was used).
+  final int? time;
+
+  /// Requested slot, when `slot` was used.
+  final int? slot;
+
+  /// The original datetime string, when `datetime` was used.
+  final String? datetime;
+
+  /// Serializes this echo to a JSON map.
+  Map<String, Object?> toJson() => {
+    if (time != null) 'time': time,
+    if (slot != null) 'slot': slot,
+    if (datetime != null) 'datetime': datetime,
+  };
+}
+
 /// Identity information for a wallet address.
 class Identity {
   /// Creates an identity.

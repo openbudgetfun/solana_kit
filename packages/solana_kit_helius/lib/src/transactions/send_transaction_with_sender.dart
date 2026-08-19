@@ -3,11 +3,16 @@ import 'package:solana_kit_helius/src/types/smart_transaction_types.dart';
 
 /// Sends a transaction via the Helius sender (SWQOS) by posting a
 /// `sendTransaction` JSON-RPC request with base64 encoding.
+///
+/// `skipPreflight` is a caller-controlled passthrough (Sender no longer
+/// requires it to be `true`); it defaults to `true` for backward
+/// compatibility.
 Future<String> txSendTransactionWithSender(
   RestClient restClient,
   String senderUrl,
-  BroadcastTransactionRequest request,
-) async {
+  BroadcastTransactionRequest request, {
+  bool skipPreflight = true,
+}) async {
   final result = await restClient.post(
     '',
     body: {
@@ -16,7 +21,7 @@ Future<String> txSendTransactionWithSender(
       'method': 'sendTransaction',
       'params': [
         request.transaction,
-        {'encoding': 'base64', 'skipPreflight': true, 'maxRetries': 0},
+        {'encoding': 'base64', 'skipPreflight': skipPreflight, 'maxRetries': 0},
       ],
     },
   );

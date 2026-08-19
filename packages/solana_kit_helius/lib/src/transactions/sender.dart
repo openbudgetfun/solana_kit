@@ -56,11 +56,21 @@ const senderTipAccounts = <String>[
   '4TQLFNWK8AovT1gFvda5jfw2oJeRMKEmw7aH6MGBJ3or',
 ];
 
-/// Minimum tip for dual (SWQOS + Jito) submission: 0.001 SOL.
-const minTipLamportsDual = 1000000;
+/// Minimum tip for Sender Max (dual SWQOS + Jito) submission: 0.001 SOL.
+const int minTipLamportsMax = 1000000;
 
-/// Minimum tip for SWQOS-only submission: 0.0005 SOL.
-const minTipLamportsSwqos = 500000;
+/// Minimum tip for dual (SWQOS + Jito) submission: 0.001 SOL.
+///
+/// Deprecated in favor of [minTipLamportsMax] (Sender Max) upstream in
+/// v3.1.0; kept as an alias for backward compatibility.
+@Deprecated('Use minTipLamportsMax instead.')
+const int minTipLamportsDual = minTipLamportsMax;
+
+/// Minimum tip for SWQOS-only submission: 0.000005 SOL.
+///
+/// Upstream Sender Max lowered this floor from 0.0005 SOL (500,000 lamports)
+/// to 0.000005 SOL (5,000 lamports) in v3.1.0.
+const minTipLamportsSwqos = 5000;
 
 /// Builds the `/fast` endpoint URL for a sender [region].
 String senderFastUrl(SenderRegion region) => '${senderEndpoints[region]!}/fast';

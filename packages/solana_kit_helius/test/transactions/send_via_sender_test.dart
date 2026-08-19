@@ -109,8 +109,9 @@ void main() {
       expect(senderFastUrl(SenderRegion.usEast), endsWith('/fast'));
       expect(senderPingUrl(SenderRegion.usEast), endsWith('/ping'));
       expect(senderTipAccounts, hasLength(10));
+      expect(minTipLamportsMax, 1000000);
       expect(minTipLamportsDual, 1000000);
-      expect(minTipLamportsSwqos, 500000);
+      expect(minTipLamportsSwqos, 5000);
     });
   });
 }
