@@ -306,6 +306,55 @@ describe("getTypePageFragment", () => {
       expect(frag.content).toContain("getU8Encoder()");
       expect(frag.content).toContain("getU8Decoder()");
     });
+
+    for (const format of ["u8", "u16", "u32"] as const) {
+      it(`uses int variant indices for ${format} scalar enums`, () => {
+        const node = definedTypeNode({
+          name: `status_${format}`,
+          type: enumTypeNode(
+            [
+              enumEmptyVariantTypeNode("active"),
+              enumEmptyVariantTypeNode("inactive"),
+            ],
+            { size: numberTypeNode(format) },
+          ),
+        });
+        const frag = getTypePageFragment(node, createScope());
+        const codecName = format.toUpperCase();
+
+        expect(frag.content).toContain(`get${codecName}Encoder()`);
+        expect(frag.content).toContain(`get${codecName}Decoder()`);
+        expect(frag.content).toContain("=> value.index");
+        expect(frag.content).toContain(
+          `(int value, Uint8List bytes, int offset) => Status${codecName}.values[value]`,
+        );
+      });
+    }
+
+    it("uses BigInt variant indices for u64 scalar enums", () => {
+      const node = definedTypeNode({
+        name: "status_u64",
+        type: enumTypeNode(
+          [
+            enumEmptyVariantTypeNode("active"),
+            enumEmptyVariantTypeNode("inactive"),
+          ],
+          { size: numberTypeNode("u64") },
+        ),
+      });
+      const frag = getTypePageFragment(node, createScope());
+
+      expect(frag.content).toContain("getU64Encoder()");
+      expect(frag.content).toContain("getU64Decoder()");
+      expect(frag.content).toContain("=> BigInt.from(value.index)");
+      expect(frag.content).toContain(
+        "(BigInt value, Uint8List bytes, int offset)",
+      );
+      expect(frag.content).toContain(
+        "value >= BigInt.from(StatusU64.values.length)",
+      );
+      expect(frag.content).toContain("StatusU64.values[value.toInt()]");
+    });
   });
 
   describe("data enum types (sealed classes)", () => {
