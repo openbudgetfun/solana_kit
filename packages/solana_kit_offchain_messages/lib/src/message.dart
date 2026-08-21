@@ -125,8 +125,8 @@ class OffchainMessageV1 implements OffchainMessage {
 ///
 /// Message content is not included in the error context, because it can carry
 /// data you would rather not have written to logs or forwarded to an error
-/// reporting service. Its length in UTF-8 bytes — the encoding in which
-/// version 1 content is serialized — is reported instead.
+/// reporting service. Its length in UTF-8 bytes, the encoding in which
+/// version 1 content is serialized, is reported instead.
 void assertOffchainMessageV1Equal(
   OffchainMessageV1 receivedMessage,
   OffchainMessageV1 expectedMessage,

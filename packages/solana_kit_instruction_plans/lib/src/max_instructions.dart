@@ -14,7 +14,7 @@ const int defaultMaxInstructionsPerTransaction = 16;
 /// can encode.
 ///
 /// Every current transaction version shares this limit. It is intentionally
-/// duplicated here — rather than derived from `solana_kit_transactions` — so a
+/// duplicated here, rather than derived from `solana_kit_transactions`, so a
 /// configured maximum can be validated without compiling a transaction
 /// message. If a future transaction version raises the limit, update this
 /// constant (and consider making it version-aware).

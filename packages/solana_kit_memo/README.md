@@ -30,18 +30,33 @@ Inside this monorepo, Dart workspace resolution uses the local package automatic
 ## Usage
 
 ```dart
+import 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
 import 'package:solana_kit_memo/solana_kit_memo.dart';
 
-final instruction = getAddMemoInstruction(memo: 'Hello from Solana Kit');
+void main() {
+  final instruction = getAddMemoInstruction(
+    programAddress: memoProgramAddress,
+    memo: 'Hello from Solana Kit',
+  );
+
+  print(instruction.programAddress);
+}
 ```
 
 Use `memoLegacyProgramAddress` when you need to target the legacy Memo program:
 
 ```dart
-final legacyInstruction = getAddMemoInstruction(
-  memo: 'legacy memo',
-  programAddress: memoLegacyProgramAddress,
-);
+import 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
+import 'package:solana_kit_memo/solana_kit_memo.dart';
+
+void main() {
+  final legacyInstruction = getAddMemoInstruction(
+    programAddress: memoLegacyProgramAddress,
+    memo: 'legacy memo',
+  );
+
+  print(legacyInstruction.programAddress);
+}
 ```
 
 ## Key APIs

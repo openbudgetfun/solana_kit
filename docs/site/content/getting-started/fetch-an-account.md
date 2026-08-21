@@ -5,8 +5,8 @@ description: Read encoded or jsonParsed account data and handle missing accounts
 
 Solana account reads usually fall into two categories:
 
-- **encoded reads** — get the raw bytes and decode them yourself
-- **jsonParsed reads** — let the RPC return a structured representation for known programs
+- **encoded reads**: get the raw bytes and decode them yourself
+- **jsonParsed reads**: let the RPC return a structured representation for known programs
 
 In Solana Kit, both paths return explicit result models so you can distinguish an account that is present from an account that does not exist.
 

@@ -48,7 +48,7 @@ class TransactionPlannerConfig {
   /// This includes any instructions already present in messages returned by
   /// [createTransactionMessage] and any instructions added by
   /// [onTransactionMessageUpdated]. Must be a positive integer no greater than
-  /// 64 — the number of top-level instructions the transaction format can
+  /// 64, the number of top-level instructions the transaction format can
   /// encode. Larger values throw a [SolanaError] with code
   /// with code
   /// `SolanaErrorCode.instructionPlansInvalidMaxInstructionsPerTransaction`.

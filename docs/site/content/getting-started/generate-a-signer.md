@@ -58,12 +58,12 @@ This is the most common starting point for building a signable transaction.
 
 `solana_kit_signers` separates roles so transaction pipelines stay explicit.
 
-- **`KeyPairSigner`** — local Ed25519 key pair plus signing methods
-- **`MessagePartialSigner`** — can sign signable off-chain messages
-- **`TransactionPartialSigner`** — can sign a compiled transaction
-- **`TransactionModifyingSigner`** — can mutate a transaction before signing
-- **`TransactionSendingSigner`** — can sign and immediately submit a transaction
-- **`FeePayerSigner`** — indicates the signer is also the transaction fee payer
+- **`KeyPairSigner`**: local Ed25519 key pair plus signing methods
+- **`MessagePartialSigner`**: can sign signable off-chain messages
+- **`TransactionPartialSigner`**: can sign a compiled transaction
+- **`TransactionModifyingSigner`**: can mutate a transaction before signing
+- **`TransactionSendingSigner`**: can sign and immediately submit a transaction
+- **`FeePayerSigner`**: indicates the signer is also the transaction fee payer
 
 This modeling matters when integrating wallets, mobile adapters, remote signers, or multi-party signing flows.
 

@@ -57,13 +57,13 @@ class SignupRequest {
   /// Billing period. Ignored for agent plan. Defaults to 'monthly'.
   final String period;
 
-  /// Contact email — required when creating a fresh payment intent.
+  /// Contact email, required when creating a fresh payment intent.
   final String? email;
 
-  /// First name — required when creating a fresh payment intent.
+  /// First name, required when creating a fresh payment intent.
   final String? firstName;
 
-  /// Last name — required when creating a fresh payment intent.
+  /// Last name, required when creating a fresh payment intent.
   final String? lastName;
 
   /// Optional coupon code.
@@ -121,7 +121,7 @@ class AlreadySubscribedResult extends SignupResult {
   final SignupEndpoints endpoints;
 }
 
-/// User has an existing project on a different plan — upgrade required.
+/// User has an existing project on a different plan; upgrade required.
 class UpgradeRequiredResult extends SignupResult {
   /// Creates an upgrade-required result.
   const UpgradeRequiredResult({
@@ -771,7 +771,7 @@ class SignupAndPayAlreadySubscribedResult extends SignupAndPayResult {
   final SignupEndpoints endpoints;
 }
 
-/// The user has an existing project on a different plan — upgrade required.
+/// The user has an existing project on a different plan; upgrade required.
 class SignupAndPayUpgradeRequiredResult extends SignupAndPayResult {
   /// Creates an upgrade-required result.
   const SignupAndPayUpgradeRequiredResult({

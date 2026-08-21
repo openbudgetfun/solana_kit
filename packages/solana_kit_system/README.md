@@ -32,32 +32,36 @@ Inside this monorepo, Dart workspace resolution uses the local package automatic
 ## Usage
 
 ```dart
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_system/solana_kit_system.dart';
 
-// Create a new account
-final ix = getCreateAccountInstruction(
-  programAddress: systemProgramAddress,
-  fromPubkey: payer,
-  newAccountPubkey: newAccount,
-  lamports: BigInt.from(10000000),
-  space: BigInt.from(165),
-  owner: tokenProgramAddress,
-);
+void main() {
+  const payer = Address('11111111111111111111111111111111');
+  const newAccount = Address('11111111111111111111111111111112');
+  const recipient = Address('11111111111111111111111111111113');
+  const tokenProgram = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
 
-// Transfer SOL
-final transferIx = getTransferSolInstruction(
-  programAddress: systemProgramAddress,
-  source: payer,
-  destination: recipient,
-  amount: BigInt.from(1000000),
-);
+  // Create a new account.
+  final createIx = getCreateAccountInstruction(
+    instructionProgramAddress: systemProgramAddress,
+    payer: payer,
+    newAccount: newAccount,
+    lamports: BigInt.from(10000000),
+    space: BigInt.from(165),
+    programAddress: tokenProgram,
+  );
 
-// Derive a system account PDA
-final pda = findCreateAccountWithSeedPda(
-  base: baseAddress,
-  seed: 'my-seed',
-  owner: systemProgramAddress,
-);
+  // Transfer SOL.
+  final transferIx = getTransferSolInstruction(
+    programAddress: systemProgramAddress,
+    source: payer,
+    destination: recipient,
+    amount: BigInt.from(1000000),
+  );
+
+  print(createIx.programAddress);
+  print(transferIx.programAddress);
+}
 ```
 
 ## Instructions

@@ -10,8 +10,8 @@ import 'package:solana_kit_subscribable/src/reactive_stream_store.dart';
 /// `await for`-ing it.
 ///
 /// The bridge only *observes* the store; it does not open or tear down the
-/// connection. Just like every other consumer in this ecosystem — a store does
-/// nothing until you `connect()` it — the caller owns the store's lifecycle:
+/// connection. Like every other consumer in this ecosystem, a store does
+/// nothing until you `connect()` it, so the caller owns the store's lifecycle:
 /// `connect()` the store yourself (typically binding the same
 /// [cancellationToken] via `ReactiveStreamStore.withSignal`), and `reset()` it
 /// when you're done if you intend to reuse it. The bridge subscribes, yields
@@ -36,7 +36,7 @@ import 'package:solana_kit_subscribable/src/reactive_stream_store.dart';
 ///   (`store.withSignal(token).connect()`) so the cancellation tears the
 ///   underlying stream down too.
 ///
-/// However iteration ends — value exhaustion, error, or cancellation — the
+/// However iteration ends, whether by value exhaustion, error, or cancellation, the
 /// bridge unsubscribes from the store. It does not `reset()` the store; that
 /// is the caller's decision.
 Stream<T> bridgeStoreToAsyncIterable<T>(
@@ -70,7 +70,7 @@ Stream<T> bridgeStoreToAsyncIterable<T>(
       failure = state.error;
       wake();
     }
-    // `idle` / `loading` carry no value and no error — nothing to yield.
+    // `idle` / `loading` carry no value and no error, so nothing to yield.
   }
 
   void onCancel() => wake();

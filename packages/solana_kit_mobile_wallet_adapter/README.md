@@ -4,10 +4,10 @@
 
 Flutter plugin for the [Solana Mobile Wallet Adapter](https://github.com/solana-mobile/mobile-wallet-adapter) (MWA) protocol.
 
-This package provides both:
+The plugin covers both sides of the protocol:
 
-- dApp-side client flows (launch wallet, establish session, request signatures)
-- wallet-side server flows (receive authorize/sign requests from dApps)
+- dApp-side client flows: launch a wallet, establish a session, request signatures
+- wallet-side server flows: receive authorize/sign requests from dApps
 
 ## Platform support
 
@@ -61,40 +61,54 @@ Inside this monorepo, workspace dependency resolution is automatic.
 
 ```dart
 import 'package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart';
+import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
 
-final auth = await transact((wallet) async {
-  final authorizeResult = await wallet.authorize(
-    identity: const AppIdentity(name: 'My dApp'),
-    chain: 'solana:mainnet',
-  );
+Future<void> main() async {
+  const base64EncodedTransaction = 'base64-encoded-transaction';
+  final auth = await transact((wallet) async {
+    final authorizeResult = await wallet.authorize(
+      identity: const AppIdentity(name: 'My dApp'),
+      chain: 'solana:mainnet',
+    );
 
-  await wallet.signTransactions(
-    payloads: [base64EncodedTransaction],
-  );
+    await wallet.signTransactions(
+      payloads: [base64EncodedTransaction],
+    );
 
-  return authorizeResult;
-});
+    return authorizeResult;
+  });
+
+  print(auth);
+}
 ```
 
 ### Manual local association
 
 ```dart
-final scenario = LocalAssociationScenario();
+import 'package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart';
+import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
 
-try {
-  final rawWallet = await scenario.start();
-  final wallet = wrapWithKitApi(rawWallet);
+Future<void> main() async {
+  final scenario = LocalAssociationScenario();
 
-  final auth = await wallet.authorize(
-    identity: const AppIdentity(name: 'My dApp'),
-    chain: 'solana:devnet',
-  );
+  try {
+    final rawWallet = await scenario.start();
+    final wallet = wrapWithKitApi(rawWallet);
 
-  final signed = await wallet.signTransactions(
-    payloads: ['base64tx1', 'base64tx2'],
-  );
-} finally {
-  await scenario.close();
+    final auth = await wallet.authorize(
+      identity: const AppIdentity(name: 'My dApp'),
+      chain: 'solana:devnet',
+    );
+
+    final signed = await wallet.signTransactions(
+      payloads: ['base64tx1', 'base64tx2'],
+    );
+
+    print(auth);
+    print(signed);
+  } finally {
+    await scenario.close();
+  }
 }
 ```
 
@@ -103,20 +117,27 @@ try {
 `startRemoteScenario` resolves once a real reflector ID has been negotiated and a valid association URI is available.
 
 ```dart
-final remote = await startRemoteScenario(
-  const RemoteWalletAssociationConfig(
-    reflectorHost: 'reflector.example.com',
-  ),
-);
+import 'package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart';
+import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
 
-// Display this as QR for wallet scan.
-final uriForQr = remote.associationUri;
+Future<void> main() async {
+  final remote = await startRemoteScenario(
+    const RemoteWalletAssociationConfig(
+      reflectorHost: 'reflector.example.com',
+    ),
+  );
 
-try {
-  final wallet = await remote.wallet;
-  await wallet.getCapabilities();
-} finally {
-  remote.close();
+  // Display this as QR for wallet scan.
+  final uriForQr = remote.associationUri;
+
+  try {
+    final wallet = await remote.wallet;
+    await wallet.getCapabilities();
+  } finally {
+    remote.close();
+  }
+
+  print(uriForQr);
 }
 ```
 
@@ -125,7 +146,14 @@ try {
 ### Start a wallet scenario
 
 ```dart
+import 'package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart';
+
 class MyWalletCallbacks implements WalletScenarioCallbacks {
+  static const base64PublicKey =
+      '11111111111111111111111111111111';
+
+  List<String> signPayloads(List<String> payloads) => payloads;
+
   @override
   void onAuthorizeRequest(AuthorizeDappRequest request) {
     request.completeWithAuthorize(
@@ -181,27 +209,36 @@ class MyWalletCallbacks implements WalletScenarioCallbacks {
   void onDeauthorizedEvent(DeauthorizedEvent event) {}
 }
 
-final scenario = WalletScenario(
-  walletName: 'My Wallet',
-  config: const MobileWalletAdapterConfig(
-    maxTransactionsPerSigningRequest: 10,
-    optionalFeatures: ['solana:signTransactions'],
-  ),
-  callbacks: MyWalletCallbacks(),
-);
+Future<void> main() async {
+  final scenario = WalletScenario(
+    walletName: 'My Wallet',
+    config: const MobileWalletAdapterConfig(
+      maxTransactionsPerSigningRequest: 10,
+      optionalFeatures: ['solana:signTransactions'],
+    ),
+    callbacks: MyWalletCallbacks(),
+  );
 
-await scenario.start();
+  await scenario.start();
+}
 ```
 
 ### Digital Asset Links verification (wallet-side)
 
 ```dart
-final dal = MwaDigitalAssetLinksHostApi();
+import 'package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart';
 
-final callingPackage = await dal.getCallingPackage();
-final isVerified = await dal.verifyCallingPackage(
-  clientIdentityUri: 'https://example.com',
-);
+Future<void> main() async {
+  final dal = MwaDigitalAssetLinksHostApi();
+
+  final callingPackage = await dal.getCallingPackage();
+  final isVerified = await dal.verifyCallingPackage(
+    clientIdentityUri: 'https://example.com',
+  );
+
+  print(callingPackage);
+  print(isVerified);
+}
 ```
 
 This is useful when wallet policy requires Android app-origin verification before honoring sensitive requests.

@@ -2,9 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_programs.svg)](https://pub.dev/packages/solana_kit_programs) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_programs/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_programs) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_programs)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_programs)
 
-Program error identification utilities for the Solana Kit Dart SDK.
-
-This is the Dart port of [`@solana/programs`](https://github.com/anza-xyz/kit/tree/main/packages/programs) from the Solana TypeScript SDK.
+Check whether a transaction error came from a specific Solana program, with optional error code matching.
 
 <!-- {=packageInstallSection:"solana_kit_programs"} -->
 
@@ -45,7 +43,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ### Identifying program errors
 
-The `isProgramError` function determines whether an error is a custom program error from a specific program address. Since the Solana RPC only reports the index of the failed instruction, you must provide the transaction message so the function can look up which program was invoked.
+`isProgramError` determines whether an error is a custom program error from a specific program address. Since the Solana RPC only reports the index of the failed instruction, you must provide the transaction message so the function can look up which program was invoked.
 
 ```dart
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -94,7 +92,7 @@ void main() {
 
 ### Catching program errors in transactions
 
-A typical usage pattern is to catch errors after sending a transaction and determine which program raised the error.
+A typical pattern is to catch errors after sending a transaction and determine which program raised the error.
 
 ```dart
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -161,21 +159,6 @@ void main() {
   // false
 }
 ```
-
-## API Reference
-
-### Functions
-
-| Function                                                                                              | Description                                                                                                              |
-| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `isProgramError(Object? error, TransactionMessageInput message, Address programAddress, [int? code])` | Returns `true` if the error is a custom program error from the given program, optionally matching a specific error code. |
-
-### Classes
-
-| Class                     | Description                                                                                                                        |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `TransactionMessageInput` | A minimal transaction message representation with a `Map<int, InstructionInput> instructions` map indexed by instruction position. |
-| `InstructionInput`        | A minimal instruction representation containing only a `programAddress`.                                                           |
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_programs"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_programs/solana_kit_programs.dart"} -->
 

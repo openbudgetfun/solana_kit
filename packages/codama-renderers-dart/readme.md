@@ -13,18 +13,14 @@ Fixed-size Codama types generate non-truncating encoders. Values within the decl
 ```bash
 pnpm add codama-renderers-dart
 # or
-
-[![pub package](https://img.shields.io/pub/v/codama-renderers-dart.svg)](https://pub.dev/packages/codama-renderers-dart)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=codama-renderers-dart)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=codama-renderers-dart)
 npm install codama-renderers-dart
 ```
 
-## Quick Start
+## Quick start
 
 ### Programmatic API
 
-```typescript
+```ts
 import { renderVisitor } from "codama-renderers-dart";
 import { visit } from "@codama/visitors-core";
 import { rootNode, programNode /* ... */ } from "@codama/nodes";
@@ -43,7 +39,7 @@ visit(root, renderVisitor("lib/src/generated", {
 
 `renderVisitor` accepts parsed Codama JSON as well as roots made with Codama constructors. Pina omits empty collections from its serialized IDLs; the renderer restores those structural defaults on an internal copy before traversal, leaving the parsed object unchanged.
 
-```typescript
+```ts
 import { readFile } from "node:fs/promises";
 import { visit } from "@codama/visitors-core";
 import { renderVisitor } from "codama-renderers-dart";
@@ -76,7 +72,7 @@ Then run:
 codama run dart
 ```
 
-## Generated Output Structure
+## Generated output structure
 
 For a program called `myProgram`, the renderer generates:
 
@@ -104,7 +100,7 @@ lib/src/generated/
     my_pda.dart                      # PDA seeds class + finder function
 ```
 
-## Generated Code Patterns
+## Generated code patterns
 
 ### Accounts
 
@@ -166,7 +162,7 @@ Top-level instruction decoders require exact input consumption. Account decoders
 
 Optional instruction accounts use Codama's `programId` strategy by default. When an optional account is absent, the builder emits a readonly program-address placeholder so every later account keeps its declared index. The account slot is removed only when the instruction explicitly selects the legacy `omitted` strategy.
 
-### Scalar Enums
+### Scalar enums
 
 Scalar enums (all-empty variants) generate a Dart `enum` with index-based encoder/decoder:
 
@@ -183,7 +179,7 @@ Decoder<AccountStatus> getAccountStatusDecoder() { ... }
 
 The generated enum API is the same for `u8`, `u16`, `u32`, and `u64` discriminators. The renderer converts `u64` indices to and from `BigInt` at the codec boundary and rejects out-of-range discriminators before converting them to Dart enum indices.
 
-### Data Enums (Discriminated Unions)
+### Data enums (discriminated unions)
 
 Data enums generate Dart 3 `sealed class` hierarchies:
 
@@ -231,7 +227,7 @@ Future<(Address, int)> findMyPdaPda({
 }) async { ... }
 ```
 
-## Type Mapping
+## Type mapping
 
 | Codama Type                         | Dart Type       | Codec                            |
 | ----------------------------------- | --------------- | -------------------------------- |
@@ -266,7 +262,7 @@ Future<(Address, int)> findMyPdaPda({
 
 All naming conventions are customizable:
 
-```typescript
+```ts
 import { renderVisitor, createDartNameApi } from "codama-renderers-dart";
 
 const nameApi = {
@@ -277,7 +273,7 @@ const nameApi = {
 visit(root, renderVisitor("output", { nameApi }));
 ```
 
-## Target Packages
+## Target packages
 
 Generated Dart code depends on these solana_kit packages:
 
@@ -311,39 +307,10 @@ Key source files:
 ## Development
 
 ```bash
-# Install dependencies
-
-[![pub package](https://img.shields.io/pub/v/codama-renderers-dart.svg)](https://pub.dev/packages/codama-renderers-dart)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=codama-renderers-dart)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=codama-renderers-dart)
 pnpm install
-
-# Type check
-
-[![pub package](https://img.shields.io/pub/v/codama-renderers-dart.svg)](https://pub.dev/packages/codama-renderers-dart)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=codama-renderers-dart)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=codama-renderers-dart)
 npx tsc --noEmit
-
-# Run tests
-
-[![pub package](https://img.shields.io/pub/v/codama-renderers-dart.svg)](https://pub.dev/packages/codama-renderers-dart)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=codama-renderers-dart)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=codama-renderers-dart)
 pnpm test
-
-# Watch mode
-
-[![pub package](https://img.shields.io/pub/v/codama-renderers-dart.svg)](https://pub.dev/packages/codama-renderers-dart)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=codama-renderers-dart)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=codama-renderers-dart)
 pnpm test:watch
-
-# Build
-
-[![pub package](https://img.shields.io/pub/v/codama-renderers-dart.svg)](https://pub.dev/packages/codama-renderers-dart)
-[![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=codama-renderers-dart)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=codama-renderers-dart)
 pnpm build
 ```
 

@@ -15,7 +15,7 @@
 ///
 /// ## References
 ///
-/// - FIPS 202 (SHA-3 standard) — defines the sponge construction
+/// - FIPS 202 (SHA-3 standard): defines the sponge construction
 /// - [Wikipedia: SHA-3](https://en.wikipedia.org/wiki/SHA-3)
 /// - [Keccak team](https://keccak.team/)
 library;

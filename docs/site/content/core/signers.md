@@ -3,7 +3,7 @@ title: Signers
 description: Model fee payers, partial signers, modifying signers, and sending signers explicitly.
 ---
 
-Solana Kit treats signers as capabilities, not just as key material. That gives you a better fit for real-world flows involving wallets, mobile adapters, remote signers, and multi-party signing.
+Solana Kit treats signers as capabilities, not only as key material. That gives you a better fit for real-world flows involving wallets, mobile adapters, remote signers, and multi-party signing.
 
 ## Why the signer model matters
 
@@ -19,12 +19,12 @@ You may need to represent:
 
 ## Common signer interfaces
 
-- **`KeyPairSigner`** — local Ed25519 key pair plus signing methods
-- **`FeePayerSigner`** — signer designated as the fee payer
-- **`TransactionPartialSigner`** — can contribute one or more transaction signatures
-- **`TransactionModifyingSigner`** — can edit a transaction before signature application
-- **`TransactionSendingSigner`** — can sign and submit a transaction
-- **`MessagePartialSigner`** — signs off-chain messages instead of transactions
+- **`KeyPairSigner`**: local Ed25519 key pair plus signing methods
+- **`FeePayerSigner`**: signer designated as the fee payer
+- **`TransactionPartialSigner`**: can contribute one or more transaction signatures
+- **`TransactionModifyingSigner`**: can edit a transaction before signature application
+- **`TransactionSendingSigner`**: can sign and submit a transaction
+- **`MessagePartialSigner`**: signs off-chain messages instead of transactions
 
 ## Build a transaction around signers
 

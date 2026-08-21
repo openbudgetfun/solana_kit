@@ -2,9 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_rpc_transport_http.svg)](https://pub.dev/packages/solana_kit_rpc_transport_http) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_rpc_transport_http/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_rpc_transport_http) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_rpc_transport_http)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_rpc_transport_http)
 
-HTTP transport for the Solana Kit Dart SDK.
-
-This is the Dart port of [`@solana/rpc-transport-http`](https://github.com/anza-xyz/kit/tree/main/packages/rpc-transport-http) from the Solana TypeScript SDK.
+HTTP transport for sending JSON-RPC requests to Solana nodes. Ships two factory functions: `createHttpTransport` for generic JSON-RPC over HTTP, and `createHttpTransportForSolanaRpc` for Solana-specific BigInt-aware JSON handling. Most apps use `createSolanaRpc` from `solana_kit_rpc` instead of calling these directly.
 
 <!-- {=packageInstallSection:"solana_kit_rpc_transport_http"} -->
 
@@ -43,103 +41,102 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Usage
 
-This package provides HTTP transport implementations for sending JSON-RPC requests. It uses the `http` Dart package under the hood.
-
 ### Generic HTTP transport
 
-The `createHttpTransport` function creates a generic JSON-RPC transport that sends POST requests with JSON payloads.
+`createHttpTransport` creates a generic JSON-RPC transport that sends POST requests with JSON payloads.
 
 ```dart
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
 
-final transport = createHttpTransport(
-  HttpTransportConfig(url: 'https://api.mainnet-beta.solana.com'),
-);
+Future<void> main() async {
+  final transport = createHttpTransport(
+    HttpTransportConfig(url: 'https://api.mainnet-beta.solana.com'),
+  );
 
-final response = await transport(
-  RpcTransportConfig(
-    payload: {
-      'id': '1',
-      'jsonrpc': '2.0',
-      'method': 'getSlot',
-      'params': [],
-    },
-  ),
-);
-
-print(response);
-// {'jsonrpc': '2.0', 'result': 250000000, 'id': '1'}
+  final response = await transport(
+    RpcTransportConfig(
+      payload: {
+        'id': '1',
+        'jsonrpc': '2.0',
+        'method': 'getSlot',
+        'params': <Object?>[],
+      },
+    ),
+  );
+  print(response);
+}
 ```
 
 ### Custom headers
 
-Pass custom headers through the `HttpTransportConfig`. Note that `accept`, `content-length`, and `content-type` are set automatically and cannot be overridden. Forbidden headers (per the MDN specification) are also rejected.
+Pass custom headers through `HttpTransportConfig`. The `accept`, `content-length`, and `content-type` headers are set automatically and cannot be overridden. Forbidden headers (per the MDN specification) are rejected.
 
 ```dart
 import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
 
-final transport = createHttpTransport(
-  HttpTransportConfig(
-    url: 'https://api.mainnet-beta.solana.com',
-    headers: {
-      'x-api-key': 'my-secret-key',
-      'authorization': 'Bearer my-token',
-    },
-  ),
-);
+void main() {
+  final transport = createHttpTransport(
+    HttpTransportConfig(
+      url: 'https://api.mainnet-beta.solana.com',
+      headers: {
+        'x-api-key': 'my-secret-key',
+        'authorization': 'Bearer my-token',
+      },
+    ),
+  );
+  print(transport);
+}
 ```
 
 ### Custom JSON serialization
 
-You can provide custom `toJson` and `fromJson` functions to control how request payloads are serialized and response bodies are deserialized.
+Provide `toJson` and `fromJson` functions to control how payloads are serialized and responses are deserialized.
 
 ```dart
 import 'dart:convert';
 import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
 
-final transport = createHttpTransport(
-  HttpTransportConfig(
-    url: 'https://api.mainnet-beta.solana.com',
-    toJson: (payload) {
-      // Custom serialization.
-      return jsonEncode(payload);
-    },
-    fromJson: (rawResponse, payload) {
-      // Custom deserialization.
-      return jsonDecode(rawResponse);
-    },
-  ),
-);
+void main() {
+  final transport = createHttpTransport(
+    HttpTransportConfig(
+      url: 'https://api.mainnet-beta.solana.com',
+      toJson: (payload) => jsonEncode(payload),
+      fromJson: (rawResponse, payload) => jsonDecode(rawResponse),
+    ),
+  );
+  print(transport);
+}
 ```
 
 ### Solana-specific HTTP transport
 
-The `createHttpTransportForSolanaRpc` function creates a transport with BigInt-aware JSON handling. It uses `parseJsonWithBigInts` and `stringifyJsonWithBigInts` for Solana RPC requests, and standard `jsonEncode`/`jsonDecode` for other requests.
+`createHttpTransportForSolanaRpc` creates a transport with BigInt-aware JSON handling. It uses `parseJsonWithBigInts` and `stringifyJsonWithBigInts` for Solana RPC requests and standard `jsonEncode`/`jsonDecode` for other requests.
 
 ```dart
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
 
-final transport = createHttpTransportForSolanaRpc(
-  url: 'https://api.mainnet-beta.solana.com',
-);
+Future<void> main() async {
+  final transport = createHttpTransportForSolanaRpc(
+    url: 'https://api.mainnet-beta.solana.com',
+  );
 
-final response = await transport(
-  RpcTransportConfig(
-    payload: {
-      'id': '1',
-      'jsonrpc': '2.0',
-      'method': 'getBalance',
-      'params': ['83astBRguLMdt2h5U1Tbd4hU5SkfAWRkzG2HPM88BREAK'],
-    },
-  ),
-);
-
-// The response will have BigInt values for large integers.
-final result = response as Map<String, Object?>;
-final value = result['result'] as Map<String, Object?>;
-print(value['value'] is BigInt); // true
+  final response = await transport(
+    RpcTransportConfig(
+      payload: {
+        'id': '1',
+        'jsonrpc': '2.0',
+        'method': 'getBalance',
+        'params': ['83astBRguLMdt2h5U1Tbd4hU5SkfAWRkzG2HPM88BREAK'],
+      },
+    ),
+  );
+  // Response has BigInt values for large integers.
+  final result = response as Map<String, Object?>;
+  final value = result['result'] as Map<String, Object?>;
+  print(value['value'] is BigInt); // true
+}
 ```
 
 Pass custom headers and an `http.Client` for testing:
@@ -148,87 +145,60 @@ Pass custom headers and an `http.Client` for testing:
 import 'package:http/http.dart' as http;
 import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
 
-final transport = createHttpTransportForSolanaRpc(
-  url: 'https://api.devnet.solana.com',
-  headers: {'x-api-key': 'my-key'},
-  client: http.Client(), // or a mock client for testing
-);
+void main() {
+  final transport = createHttpTransportForSolanaRpc(
+    url: 'https://api.devnet.solana.com',
+    headers: {'x-api-key': 'my-key'},
+    client: http.Client(),
+  );
+  print(transport);
+}
 ```
 
 ### Checking for Solana requests
 
-The `isSolanaRequest` function checks whether a payload is a JSON-RPC 2.0 request for a known Solana RPC method. This is used internally to decide whether to apply BigInt-aware JSON handling.
+`isSolanaRequest` checks whether a payload is a JSON-RPC 2.0 request for a known Solana RPC method. The transport uses this internally to decide whether to apply BigInt-aware JSON handling.
 
 ```dart
 import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
 
-final payload = {
-  'jsonrpc': '2.0',
-  'method': 'getBalance',
-  'params': ['address123'],
-  'id': '1',
-};
+void main() {
+  final payload = {
+    'jsonrpc': '2.0',
+    'method': 'getBalance',
+    'params': ['address123'],
+    'id': '1',
+  };
+  print(isSolanaRequest(payload)); // true
 
-print(isSolanaRequest(payload)); // true
-
-final nonSolanaPayload = {
-  'jsonrpc': '2.0',
-  'method': 'custom_method',
-  'params': [],
-  'id': '1',
-};
-
-print(isSolanaRequest(nonSolanaPayload)); // false
+  final nonSolana = {
+    'jsonrpc': '2.0',
+    'method': 'custom_method',
+    'params': <Object?>[],
+    'id': '1',
+  };
+  print(isSolanaRequest(nonSolana)); // false
+}
 ```
 
 ### Header validation
 
-The `assertIsAllowedHttpRequestHeaders` function validates that no forbidden or protocol-reserved headers are included. It is called automatically in debug mode by `createHttpTransport`.
+`assertIsAllowedHttpRequestHeaders` validates that no forbidden or protocol-reserved headers are included. It is called automatically in debug mode by `createHttpTransport`.
 
 ```dart
 import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
 
-// These are fine.
-assertIsAllowedHttpRequestHeaders({
-  'x-api-key': 'my-key',
-  'authorization': 'Bearer token',
-});
+void main() {
+  // These are fine.
+  assertIsAllowedHttpRequestHeaders({
+    'x-api-key': 'my-key',
+    'authorization': 'Bearer token',
+  });
 
-// These will throw (forbidden/disallowed headers).
-// assertIsAllowedHttpRequestHeaders({'content-type': 'text/plain'}); // throws
-// assertIsAllowedHttpRequestHeaders({'host': 'example.com'}); // throws
-// assertIsAllowedHttpRequestHeaders({'sec-fetch-mode': 'cors'}); // throws
-```
-
-### Using a mock client for testing
-
-Both `createHttpTransport` and `createHttpTransportForSolanaRpc` accept an optional `http.Client` parameter, making it straightforward to inject a mock for testing.
-
-```dart
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
-import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
-import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
-
-final mockClient = MockClient((request) async {
-  return http.Response(
-    '{"jsonrpc":"2.0","result":42,"id":"1"}',
-    200,
-    headers: {'content-type': 'application/json'},
-  );
-});
-
-final transport = createHttpTransport(
-  HttpTransportConfig(url: 'https://api.mainnet-beta.solana.com'),
-  client: mockClient,
-);
-
-final response = await transport(
-  RpcTransportConfig(
-    payload: {'id': '1', 'jsonrpc': '2.0', 'method': 'getSlot', 'params': []},
-  ),
-);
-print(response); // {jsonrpc: 2.0, result: 42, id: 1}
+  // These throw (forbidden/disallowed headers).
+  // assertIsAllowedHttpRequestHeaders({'content-type': 'text/plain'}); // throws
+  // assertIsAllowedHttpRequestHeaders({'host': 'example.com'}); // throws
+}
 ```
 
 <!-- {=isolateJsonDecodeSection|replace:"__RPC_TRANSPORT_IMPORT_PATH__":"package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart"|replace:"__RPC_URL__":"https://api.mainnet-beta.solana.com"} -->
@@ -255,23 +225,14 @@ For direct parsing, use `parseJsonWithBigIntsAsync(...)` with `runInIsolate: tru
 
 <!-- {/isolateJsonDecodeSection} -->
 
-## API Reference
+## Key APIs
 
-### Functions
-
-- **`createHttpTransport(HttpTransportConfig config, {http.Client? client})`** -- Creates a generic `RpcTransport` that sends JSON-RPC requests over HTTP POST. Returns a function matching the `RpcTransport` typedef.
-- **`createHttpTransportForSolanaRpc({required String url, bool allowInsecureHttp = false, Map<String, String>? headers, bool decodeSolanaJsonInIsolate = false, int solanaJsonIsolateThreshold = 262144, http.Client? client})`** -- Creates an `RpcTransport` with BigInt-aware JSON serialization for Solana RPC requests, with optional isolate-backed response decoding.
-- **`isSolanaRequest(Object? payload)`** -- Returns `true` if the payload is a JSON-RPC 2.0 request for a known Solana RPC method.
-- **`assertIsAllowedHttpRequestHeaders(Map<String, String> headers)`** -- Throws a `SolanaError` if any headers are forbidden or protocol-reserved.
-- **`normalizeHeaders(Map<String, String> headers)`** -- Returns a new map with all header names lowercased.
-
-### Classes
-
-- **`HttpTransportConfig`** -- Configuration for `createHttpTransport`:
-  - `url` (`String`, required) -- The target endpoint URL.
-  - `headers` (`Map<String, String>?`) -- Optional custom headers.
-  - `toJson` (`String Function(Object?)?`) -- Optional custom JSON serializer.
-  - `fromJson` (`FutureOr<Object?> Function(String, Object?)?`) -- Optional custom JSON deserializer (receives raw response and request payload).
+- `createHttpTransport(HttpTransportConfig, {http.Client?})`: creates a generic `RpcTransport` that sends JSON-RPC requests over HTTP POST.
+- `createHttpTransportForSolanaRpc({required String url, ...})`: creates an `RpcTransport` with BigInt-aware JSON serialization for Solana RPC.
+- `isSolanaRequest(Object?)`: returns `true` if the payload is a JSON-RPC 2.0 request for a known Solana method.
+- `assertIsAllowedHttpRequestHeaders(Map<String, String>)`: throws if any forbidden or protocol-reserved headers are present.
+- `normalizeHeaders(Map<String, String>)`: lowercases all header names.
+- `HttpTransportConfig`: `url`, `headers`, `toJson`, `fromJson`.
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_rpc_transport_http"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart"} -->
 

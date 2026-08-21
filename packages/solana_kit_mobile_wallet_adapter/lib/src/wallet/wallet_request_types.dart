@@ -277,7 +277,7 @@ class ReauthorizeDappRequest extends WalletRequest {
   }
 }
 
-/// A dApp has deauthorized — an event, not a request.
+/// A dApp has deauthorized; this is an event, not a request.
 class DeauthorizedEvent extends WalletRequest {
   /// Creates a deauthorized event with the dApp identity and the
   /// [authorizationScope] that was revoked.

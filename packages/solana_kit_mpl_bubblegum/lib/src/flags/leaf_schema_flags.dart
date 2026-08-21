@@ -14,7 +14,7 @@ class LeafSchemaV2Flags {
   /// The raw flag value.
   final int value;
 
-  /// No flags set — this is a standard V2 leaf.
+  /// No flags set; this is a standard V2 leaf.
   static const none = LeafSchemaV2Flags._(0);
 
   /// The leaf has an associated collection.

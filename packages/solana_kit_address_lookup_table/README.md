@@ -33,36 +33,57 @@ Inside this monorepo, Dart workspace resolution uses the local package automatic
 
 ```dart
 import 'package:solana_kit_address_lookup_table/solana_kit_address_lookup_table.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
-// Create a new address lookup table
-final createIx = getCreateLookupTableInstruction(
-  address: tableAddress,
-  authority: authorityAddress,
-  payer: payerAddress,
-  recentSlot: BigInt.from(slot),
-  bump: bump,
-);
+void main() {
+  const tableAddress = Address('11111111111111111111111111111111');
+  const authority = Address('11111111111111111111111111111112');
+  const payer = Address('11111111111111111111111111111113');
+  const recipient = Address('11111111111111111111111111111114');
+  const addr1 = Address('11111111111111111111111111111115');
+  const addr2 = Address('11111111111111111111111111111116');
 
-// Extend a lookup table with new addresses
-final extendIx = getExtendLookupTableInstruction(
-  address: tableAddress,
-  authority: authorityAddress,
-  payer: payerAddress,
-  addresses: [addr1, addr2],
-);
+  // Create a new address lookup table.
+  final createIx = getCreateLookupTableInstruction(
+    programAddress: addressLookupTableProgramAddress,
+    address: tableAddress,
+    authority: authority,
+    payer: payer,
+    systemProgram: systemProgramAddress,
+    recentSlot: BigInt.from(1000),
+    bump: 255,
+  );
 
-// Deactivate a lookup table
-final deactivateIx = getDeactivateLookupTableInstruction(
-  address: tableAddress,
-  authority: authorityAddress,
-);
+  // Extend a lookup table with new addresses.
+  final extendIx = getExtendLookupTableInstruction(
+    programAddress: addressLookupTableProgramAddress,
+    address: tableAddress,
+    authority: authority,
+    payer: payer,
+    systemProgram: systemProgramAddress,
+    addresses: [addr1, addr2],
+  );
 
-// Close a deactivated lookup table
-final closeIx = getCloseLookupTableInstruction(
-  address: tableAddress,
-  authority: authorityAddress,
-  recipient: recipientAddress,
-);
+  // Deactivate a lookup table.
+  final deactivateIx = getDeactivateLookupTableInstruction(
+    programAddress: addressLookupTableProgramAddress,
+    address: tableAddress,
+    authority: authority,
+  );
+
+  // Close a deactivated lookup table.
+  final closeIx = getCloseLookupTableInstruction(
+    programAddress: addressLookupTableProgramAddress,
+    address: tableAddress,
+    authority: authority,
+    recipient: recipient,
+  );
+
+  print(createIx.programAddress);
+  print(extendIx.programAddress);
+  print(deactivateIx.programAddress);
+  print(closeIx.programAddress);
+}
 ```
 
 ## Instructions

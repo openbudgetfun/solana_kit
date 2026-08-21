@@ -2,12 +2,10 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_subscribable.svg)](https://pub.dev/packages/solana_kit_subscribable) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_subscribable/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_subscribable) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_subscribable)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_subscribable)
 
-Subscribable and observable patterns for the Solana Kit Dart SDK -- a publish/subscribe event system with named channels, Dart `Stream` bridging, cancellation tokens, and event demultiplexing.
+Pub/sub event primitives with named channels, Dart `Stream` bridging, cancellation tokens, and reactive stores.
 
 > [!NOTE]
 > New Dart-facing APIs should prefer exposing `Stream`s directly. Use `CancellationToken` / `CancellationTokenSource` for cancellation, and `ChannelStreamController` for named-channel compatibility adapters.
-
-This is the Dart port of [`@solana/subscribable`](https://github.com/anza-xyz/kit/tree/main/packages/subscribable) from the Solana TypeScript SDK.
 
 <!-- {=packageInstallSection:"solana_kit_subscribable"} -->
 
@@ -45,10 +43,6 @@ For architecture notes, getting-started guides, and cross-package examples, star
 <!-- {/packageDocumentationSection} -->
 
 ## Usage
-
-### Preferred: expose Dart Streams
-
-If you are designing a new Dart API, prefer returning `Stream<T>` directly. Use the `ChannelStreamController` primitive in this package when you need named channels internally while still exposing Dart `Stream`s to callers.
 
 ### Stream-native channel controllers
 
@@ -98,26 +92,30 @@ void main() {
 `createReactiveActionStore` wraps an asynchronous action in an idle/running/success/error state machine. The action receives a fresh `CancellationToken` and the dispatch arguments. A newer dispatch, `reset()`, or `dispose()` cancels the active token and suppresses late results.
 
 ```dart
-final store = createReactiveActionStore<List<Object?>, String>(
-  (signal, args) async {
-    await Future<void>.delayed(const Duration(milliseconds: 10));
-    if (signal.isCancelled) throw signal.reason!;
-    return args.single! as String;
-  },
-);
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
-final timeout = CancellationTokenSource();
-final result = await store
-    .withSignal(timeout.token)
-    .dispatchAsync(['account']);
-print(result);
+Future<void> main() async {
+  final store = createReactiveActionStore<List<Object?>, String>(
+    (signal, args) async {
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+      if (signal.isCancelled) throw signal.reason!;
+      return args.single! as String;
+    },
+  );
+
+  final timeout = CancellationTokenSource();
+  final result = await store
+      .withSignal(timeout.token)
+      .dispatchAsync(['account']);
+  print(result);
+}
 ```
 
 Use `dispatch()` for fire-and-forget UI handlers; it consumes asynchronous errors after recording them in store state. Use `dispatchAsync()` when the caller needs the result or propagated errors. Caller cancellation is exposed as an error state, while cancellation caused by supersession, reset, or disposal does not overwrite the newer state.
 
 ### Notification streams
 
-`NotificationStreams` bundles a pair of broadcast streams -- `notifications` and `errors` -- and is the standard transport contract for subscription notification channels.
+`NotificationStreams` bundles a pair of broadcast streams (notifications and errors) as the standard transport contract for subscription notification channels.
 
 ```dart
 import 'dart:async';
@@ -145,7 +143,7 @@ void main() {
 
 ### Combining data and error streams
 
-The `createStreamFromDataAndErrorStreams` function creates a broadcast stream that forwards values from a data stream and errors from an error stream.
+`createStreamFromDataAndErrorStreams` creates a broadcast stream that forwards values from a data stream and errors from an error stream.
 
 ```dart
 import 'dart:async';
@@ -176,7 +174,7 @@ void main() {
 
 ### Demultiplexing streams
 
-The `demultiplexStream` function splits a source stream into per-channel broadcast streams. The source subscription is lazy -- it only starts when the first destination listener subscribes and stops when the last listener cancels.
+`demultiplexStream` splits a source stream into per-channel broadcast streams. The source subscription is lazy: it only starts when the first destination listener subscribes and stops when the last listener cancels.
 
 ```dart
 import 'dart:async';
@@ -206,7 +204,7 @@ void main() {
 
 ### Reactive stores
 
-`ReactiveStore` tracks the latest data value and first error from a pair of streams. `ReactiveStreamStore` adds lifecycle states (loading, loaded, error, retrying) with optional retry support.
+`ReactiveStreamStore` tracks the lifecycle of an async data source with loading, loaded, error, and retrying states. Create one by providing a `createDataPublisher` factory function that returns a `ReactiveStreamConnection` for each subscription.
 
 ```dart
 import 'dart:async';
@@ -214,26 +212,23 @@ import 'dart:async';
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 void main() {
-  final dataController = StreamController<int>.broadcast(sync: true);
-  final errorController = StreamController<Object?>.broadcast(sync: true);
-
-  final store = createReactiveStoreFromStreams<int>(
-    dataStream: dataController.stream,
-    errorStream: errorController.stream,
+  final store = createReactiveStreamStore<int>(
+    createDataPublisher: (signal) async => ReactiveStreamConnection(
+      dataStream: Stream.value(42),
+      errorStream: Stream.empty(),
+    ),
   );
 
   store.subscribe(() {
-    print('State: ${store.getState()}, Error: ${store.getError()}');
+    final snapshot = store.getState();
+    print('State: ${snapshot.data}');
   });
-
-  dataController.add(42);
-  // Prints: State: 42, Error: null
 
   store.dispose();
 }
 ```
 
-## API Reference
+## API reference
 
 ### Interfaces
 
@@ -246,20 +241,19 @@ void main() {
 
 ### Factory functions
 
-| Function                                                            | Description                                                                     |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `createStreamFromDataAndErrorStreams<T>({dataStream, errorStream})` | Creates a broadcast `Stream<T>` from separate data and error streams.           |
-| `demultiplexStream<TSource, TDestination>({...})`                   | Splits a source stream into one derived channel stream with lazy subscription.  |
-| `createReactiveStoreFromStreams<T>({dataStream, errorStream})`      | Creates a `ReactiveStore<T>` backed by data and error streams.                  |
-| `createReactiveStreamStore<T>({dataStream, errorStream, retry})`    | Creates a `ReactiveStreamStore<T>` backed by data and error streams with retry. |
+| Function                                                            | Description                                                                    |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `createStreamFromDataAndErrorStreams<T>({dataStream, errorStream})` | Creates a broadcast `Stream<T>` from separate data and error streams.          |
+| `demultiplexStream<TSource, TDestination>({...})`                   | Splits a source stream into one derived channel stream with lazy subscription. |
+| `createReactiveStreamStore<T>({createDataPublisher})`               | Creates a `ReactiveStreamStore<T>` from a data publisher factory function.     |
 
 ### Type aliases
 
-| Type                    | Description                                                                                                     |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `UnsubscribeFn`         | `void Function()` -- returned by `subscribe()` to unsubscribe a listener.                                       |
-| `Subscriber<T>`         | `void Function(T data)` -- a function that receives published data.                                             |
-| `MessageTransformer<T>` | `(String, Object?)? Function(T)` -- transforms a source message into a channel/message pair, or `null` to drop. |
+| Type                    | Description                                                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `UnsubscribeFn`         | `void Function()` returned by `subscribe()` to unsubscribe a listener.                                       |
+| `Subscriber<T>`         | `void Function(T data)` receives published data.                                                             |
+| `MessageTransformer<T>` | `(String, Object?)? Function(T)` transforms a source message into a channel/message pair, or `null` to drop. |
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_subscribable"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_subscribable/solana_kit_subscribable.dart"} -->
 

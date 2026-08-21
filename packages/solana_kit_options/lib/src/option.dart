@@ -3,8 +3,8 @@ import 'package:meta/meta.dart';
 /// A Rust-like `Option<T>` type for representing optional values.
 ///
 /// In Rust, optional values use `Option<T>`, which is either:
-/// - `Some(T)` — a present value.
-/// - `None` — the absence of a value.
+/// - `Some(T)`: a present value.
+/// - `None`: the absence of a value.
 ///
 /// Dart already has nullable types (`T?`), but they fail with nested options.
 /// For example, `Option<Option<T>>` cannot be represented as `T??` because

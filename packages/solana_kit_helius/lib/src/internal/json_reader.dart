@@ -7,7 +7,7 @@
 /// unexpectedly null.
 ///
 /// This file is intentionally **not** exported from
-/// `lib/solana_kit_helius.dart` — it is an implementation detail.
+/// `lib/solana_kit_helius.dart`; it is an implementation detail.
 class JsonReader {
   /// Creates a JsonReader wrapping the given JSON map.
   const JsonReader(this._json);
@@ -15,7 +15,7 @@ class JsonReader {
   final Map<String, Object?> _json;
 
   // -------------------------------------------------------------------------
-  // Required (non-nullable) accessors — throw StateError when key is absent
+  // Required (non-nullable) accessors throw StateError when key is absent
   // or the value is null.
   // -------------------------------------------------------------------------
 
@@ -47,7 +47,7 @@ class JsonReader {
 
   /// Returns a required [List] and maps each element to [T] via [mapper].
   ///
-  /// The [mapper] receives the raw `Object?` — callers should cast as needed.
+  /// The [mapper] receives the raw `Object?`; callers should cast as needed.
   List<T> requireMappedList<T>(String key, T Function(Object?) mapper) =>
       _require<List<Object?>>(key).map(mapper).toList();
 
@@ -63,7 +63,7 @@ class JsonReader {
   ).map((e) => decoder(e! as Map<String, Object?>)).toList();
 
   // -------------------------------------------------------------------------
-  // Optional (nullable) accessors — return null when key is absent or null.
+  // Optional (nullable) accessors return null when key is absent or null.
   // -------------------------------------------------------------------------
 
   /// Returns the [String] value for [key], or null if absent / null.

@@ -58,10 +58,15 @@ Future<void> main() async {
 Connect to an existing Surfpool process when you manage `surfpool start` yourself:
 
 ```dart
-final surfnet = Surfnet.connect(
-  rpcUrl: Uri.parse('http://127.0.0.1:8899'),
-  wsUrl: Uri.parse('ws://127.0.0.1:8900'),
-);
+import 'package:solana_kit_surfpool/solana_kit_surfpool.dart';
+
+void main() {
+  final surfnet = Surfnet.connect(
+    rpcUrl: Uri.parse('http://127.0.0.1:8899'),
+    wsUrl: Uri.parse('ws://127.0.0.1:8900'),
+  );
+  print(surfnet.rpcUrl);
+}
 ```
 
 ## Solana Kit client (kit plugin)
@@ -100,33 +105,48 @@ Stopping a freshly created client clears Surfnet's in-memory payer bytes and dis
 Attach to an already-running Surfpool with `connectSurfpoolClient`; the [`payer`] must be a funded signer you provide:
 
 ```dart
-final client = connectSurfpoolClient(
-  rpcUrl: Uri.parse('http://127.0.0.1:8899'),
-  payer: myFundedSigner,
-);
+import 'package:solana_kit_signers/solana_kit_signers.dart';
+import 'package:solana_kit_surfpool/solana_kit_surfpool.dart';
+
+void main() {
+  final myFundedSigner = generateKeyPairSigner();
+  final client = connectSurfpoolClient(
+    rpcUrl: Uri.parse('http://127.0.0.1:8899'),
+    payer: myFundedSigner,
+  );
+  print(client.payer.address);
+}
 ```
 
 ## Cheatcodes
 
 ```dart
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_surfpool/solana_kit_surfpool.dart';
 
-final owner = Surfnet.newKeypair().address;
-final mint = address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
+Future<void> main() async {
+  final surfnet = await Surfnet.start();
+  try {
+    final owner = Surfnet.newKeypair().address;
+    final mint = address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
 
-await surfnet.fundToken(owner, mint, 5_000_000);
+    await surfnet.fundToken(owner, mint, 5_000_000);
 
-final ata = surfnet.getAta(owner, mint);
-print('ATA: ${ata.value}');
+    final ata = surfnet.getAta(owner, mint);
+    print('ATA: ${ata.value}');
 
-await surfnet.setTokenAccount(
-  owner,
-  mint,
-  const SetTokenAccountUpdate(
-    state: 'initialized',
-    delegatedAmount: 500_000,
-  ),
-);
+    await surfnet.setTokenAccount(
+      owner,
+      mint,
+      const SetTokenAccountUpdate(
+        state: 'initialized',
+        delegatedAmount: 500_000,
+      ),
+    );
+  } finally {
+    await surfnet.stop();
+  }
+}
 ```
 
 For advanced account fields, use the builder API:
@@ -134,21 +154,39 @@ For advanced account fields, use the builder API:
 ```dart
 import 'dart:typed_data';
 
-await surfnet.execute(
-  SetAccount(Surfnet.newKeypair().address)
-      .withLamports(500_000)
-      .withData(Uint8List.fromList([1, 2, 3]))
-      .withOwner(surfnet.payer)
-      .withRentEpoch(0)
-      .withExecutable(executable: false),
-);
+import 'package:solana_kit_surfpool/solana_kit_surfpool.dart';
+
+Future<void> main() async {
+  final surfnet = await Surfnet.start();
+  try {
+    await surfnet.execute(
+      SetAccount(Surfnet.newKeypair().address)
+          .withLamports(500_000)
+          .withData(Uint8List.fromList([1, 2, 3]))
+          .withOwner(surfnet.payer)
+          .withRentEpoch(0)
+          .withExecutable(executable: false),
+    );
+  } finally {
+    await surfnet.stop();
+  }
+}
 ```
 
 ## Deploy programs
 
 ```dart
-final programId = await surfnet.deployProgram('my_program');
-print('deployed at ${programId.value}');
+import 'package:solana_kit_surfpool/solana_kit_surfpool.dart';
+
+Future<void> main() async {
+  final surfnet = await Surfnet.start();
+  try {
+    final programId = await surfnet.deployProgram('my_program');
+    print('deployed at ${programId.value}');
+  } finally {
+    await surfnet.stop();
+  }
+}
 ```
 
 `deployProgram` discovers conventional Anchor/Agave artifacts under `target/deploy` and `target/idl`. Use `deploy` with `DeployOptions` when bytes or paths live elsewhere.

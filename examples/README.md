@@ -21,7 +21,7 @@ dart examples/<file>.dart
 | 05 | [05_number_codecs.dart](05_number_codecs.dart)                               | Encode/decode u8, u16, u32, u64, i8, i64, and f64 with little-endian codecs                        |
 | 06 | [06_string_codecs.dart](06_string_codecs.dart)                               | Base58, base64, base16/hex, and UTF-8 codecs; fixed-size base58 for address encoding               |
 | 07 | [07_struct_codec.dart](07_struct_codec.dart)                                 | Build a `getStructCodec` to model a token-account layout; round-trip encode/decode                 |
-| 08 | [08_option_type.dart](08_option_type.dart)                                   | Rust-style `Option<T>` — `Some`, `None`, `unwrapOption`, `unwrapOptionOr`, and `getOptionCodec`    |
+| 08 | [08_option_type.dart](08_option_type.dart)                                   | Rust-style `Option<T>`: `Some`, `None`, `unwrapOption`, `unwrapOptionOr`, and `getOptionCodec`     |
 | 09 | [09_error_handling.dart](09_error_handling.dart)                             | `SolanaError`, `SolanaErrorCode`, `SolanaErrorDomain` routing, and `isSolanaError`                 |
 | 10 | [10_keypair_signer.dart](10_keypair_signer.dart)                             | Create a `KeyPairSigner`, sign messages, reconstruct from private key, deduplicate signers         |
 | 11 | [11_build_transaction.dart](11_build_transaction.dart)                       | Full offline pipeline: build message → set fee payer → blockhash → instruction → compile → sign    |

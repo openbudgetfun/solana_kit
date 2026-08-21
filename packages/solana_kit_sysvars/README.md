@@ -122,7 +122,7 @@ import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
 
 Future<void> main() async {
-  final rpc = createSolanaRpc('https://api.devnet.solana.com');
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   final clock = await fetchSysvarClock(rpc);
   print('Current slot: ${clock.slot}');
@@ -162,7 +162,7 @@ import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
 
 Future<void> main() async {
-  final rpc = createSolanaRpc('https://api.devnet.solana.com');
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   final rent = await fetchSysvarRent(rpc);
   print('Lamports per byte-year: ${rent.lamportsPerByteYear}');
@@ -180,7 +180,7 @@ import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
 
 Future<void> main() async {
-  final rpc = createSolanaRpc('https://api.devnet.solana.com');
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   final schedule = await fetchSysvarEpochSchedule(rpc);
   print('Slots per epoch: ${schedule.slotsPerEpoch}');
@@ -203,7 +203,7 @@ import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
 
 Future<void> main() async {
-  final rpc = createSolanaRpc('https://api.devnet.solana.com');
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   // Fetch the raw encoded data for any sysvar.
   final maybeAccount = await fetchEncodedSysvarAccount(
@@ -225,8 +225,6 @@ Future<void> main() async {
 Each sysvar type has encoder, decoder, and codec factory functions for binary serialization.
 
 ```dart
-import 'dart:typed_data';
-
 import 'package:solana_kit_sysvars/solana_kit_sysvars.dart';
 
 void main() {

@@ -902,7 +902,7 @@ Future<void> main() async {
     tokenProgram: tokenProgram,
   );
 
-  print(instruction.accounts.length);
+  print(instruction.accounts!.length);
 }
 ```
 
@@ -915,30 +915,41 @@ Fetch and decode `SubscriptionAuthority` before creating it when your app may ha
 A fixed delegation lets a delegatee pull up to a fixed token amount. Each successful transfer reduces the remaining allowance. Use `expiryTs: BigInt.zero` for no expiry.
 
 ```dart
-final (delegationAccount, _) = await findFixedDelegationPda(
-  programAddress: subscriptionsProgramAddress,
-  seeds: FixedDelegationSeeds(
-    subscriptionAuthority: subscriptionAuthority,
-    delegator: delegator,
-    delegatee: delegatee,
-    nonce: BigInt.from(1),
-  ),
-);
+import 'package:solana_kit/solana_kit.dart';
+import 'package:solana_kit_subscriptions/solana_kit_subscriptions.dart';
 
-final instruction = getCreateFixedDelegationInstruction(
-  programAddress: subscriptionsProgramAddress,
-  delegator: delegator,
-  subscriptionAuthority: subscriptionAuthority,
-  delegationAccount: delegationAccount,
-  delegatee: delegatee,
-  systemProgram: systemProgramAddress,
-  fixedDelegation: CreateFixedDelegationData(
-    nonce: BigInt.from(1),
-    amount: BigInt.from(1_000_000),
-    expiryTs: BigInt.zero,
-    expectedSubscriptionAuthorityInitId: BigInt.zero,
-  ),
-);
+Future<void> main() async {
+  const subscriptionAuthority = Address('11111111111111111111111111111112');
+  const delegator = Address('11111111111111111111111111111113');
+  const delegatee = Address('11111111111111111111111111111114');
+
+  final (delegationAccount, _) = await findFixedDelegationPda(
+    programAddress: subscriptionsProgramAddress,
+    seeds: FixedDelegationSeeds(
+      subscriptionAuthority: subscriptionAuthority,
+      delegator: delegator,
+      delegatee: delegatee,
+      nonce: BigInt.from(1),
+    ),
+  );
+
+  final instruction = getCreateFixedDelegationInstruction(
+    programAddress: subscriptionsProgramAddress,
+    delegator: delegator,
+    subscriptionAuthority: subscriptionAuthority,
+    delegationAccount: delegationAccount,
+    delegatee: delegatee,
+    systemProgram: systemProgramAddress,
+    fixedDelegation: CreateFixedDelegationData(
+      nonce: BigInt.from(1),
+      amount: BigInt.from(1_000_000),
+      expiryTs: BigInt.zero,
+      expectedSubscriptionAuthorityInitId: BigInt.zero,
+    ),
+  );
+
+  print(instruction.accounts!.length);
+}
 ```
 
 The delegator signs setup and revoke transactions. The delegatee signs transfer transactions built with `getTransferFixedInstruction`.
@@ -950,22 +961,34 @@ The delegator signs setup and revoke transactions. The delegatee signs transfer 
 A recurring delegation lets a delegatee pull up to a token limit that resets every period. The program rejects transfers that exceed the current period's remaining allowance.
 
 ```dart
-final instruction = getCreateRecurringDelegationInstruction(
-  programAddress: subscriptionsProgramAddress,
-  delegator: delegator,
-  subscriptionAuthority: subscriptionAuthority,
-  delegationAccount: delegationAccount,
-  delegatee: delegatee,
-  systemProgram: systemProgramAddress,
-  recurringDelegation: CreateRecurringDelegationData(
-    nonce: BigInt.from(7),
-    amountPerPeriod: BigInt.from(5_000_000),
-    periodLengthS: BigInt.from(30 * 24 * 60 * 60),
-    startTs: BigInt.from(DateTime.now().millisecondsSinceEpoch ~/ 1000),
-    expiryTs: BigInt.zero,
-    expectedSubscriptionAuthorityInitId: BigInt.zero,
-  ),
-);
+import 'package:solana_kit/solana_kit.dart';
+import 'package:solana_kit_subscriptions/solana_kit_subscriptions.dart';
+
+Future<void> main() async {
+  const subscriptionAuthority = Address('11111111111111111111111111111112');
+  const delegator = Address('11111111111111111111111111111113');
+  const delegatee = Address('11111111111111111111111111111114');
+  const delegationAccount = Address('11111111111111111111111111111115');
+
+  final instruction = getCreateRecurringDelegationInstruction(
+    programAddress: subscriptionsProgramAddress,
+    delegator: delegator,
+    subscriptionAuthority: subscriptionAuthority,
+    delegationAccount: delegationAccount,
+    delegatee: delegatee,
+    systemProgram: systemProgramAddress,
+    recurringDelegation: CreateRecurringDelegationData(
+      nonce: BigInt.from(7),
+      amountPerPeriod: BigInt.from(5_000_000),
+      periodLengthS: BigInt.from(30 * 24 * 60 * 60),
+      startTs: BigInt.from(DateTime.now().millisecondsSinceEpoch ~/ 1000),
+      expiryTs: BigInt.zero,
+      expectedSubscriptionAuthorityInitId: BigInt.zero,
+    ),
+  );
+
+  print(instruction.accounts!.length);
+}
 ```
 
 Use `getTransferRecurringInstruction` for collection. It updates the recurring delegation account so the remaining allowance and billing window stay consistent on-chain.
@@ -977,29 +1000,39 @@ Use `getTransferRecurringInstruction` for collection. It updates the recurring d
 Subscription plans let a merchant publish reusable terms. A subscriber accepts a plan with `getSubscribeInstruction`, which creates a subscription delegation account tied to the accepted terms.
 
 ```dart
-const emptyAddress = Address('11111111111111111111111111111111');
+import 'package:solana_kit/solana_kit.dart';
+import 'package:solana_kit_subscriptions/solana_kit_subscriptions.dart';
 
-final createPlanInstruction = getCreatePlanInstruction(
-  programAddress: subscriptionsProgramAddress,
-  merchant: merchant,
-  planPda: planPda,
-  tokenMint: tokenMint,
-  systemProgram: systemProgramAddress,
-  tokenProgram: tokenProgramAddress,
-  planData: PlanData(
-    planId: BigInt.from(1),
-    mint: tokenMint,
-    terms: PlanTerms(
-      amount: BigInt.from(5_000_000),
-      periodHours: BigInt.from(24 * 30),
-      createdAt: BigInt.from(DateTime.now().millisecondsSinceEpoch ~/ 1000),
+Future<void> main() async {
+  const emptyAddress = Address('11111111111111111111111111111111');
+  const merchant = Address('11111111111111111111111111111112');
+  const planPda = Address('11111111111111111111111111111113');
+  const tokenMint = Address('So11111111111111111111111111111111111111112');
+
+  final createPlanInstruction = getCreatePlanInstruction(
+    programAddress: subscriptionsProgramAddress,
+    merchant: merchant,
+    planPda: planPda,
+    tokenMint: tokenMint,
+    systemProgram: systemProgramAddress,
+    tokenProgram: tokenProgramAddress,
+    planData: PlanData(
+      planId: BigInt.from(1),
+      mint: tokenMint,
+      terms: PlanTerms(
+        amount: BigInt.from(5_000_000),
+        periodHours: BigInt.from(24 * 30),
+        createdAt: BigInt.from(DateTime.now().millisecondsSinceEpoch ~/ 1000),
+      ),
+      endTs: BigInt.zero,
+      destinations: const [emptyAddress, emptyAddress, emptyAddress, emptyAddress],
+      pullers: const [emptyAddress, emptyAddress, emptyAddress, emptyAddress],
+      metadataUri: 'https://example.com/subscription-plan.json',
     ),
-    endTs: BigInt.zero,
-    destinations: const [emptyAddress, emptyAddress, emptyAddress, emptyAddress],
-    pullers: const [emptyAddress, emptyAddress, emptyAddress, emptyAddress],
-    metadataUri: 'https://example.com/subscription-plan.json',
-  ),
-);
+  );
+
+  print(createPlanInstruction.accounts!.length);
+}
 ```
 
 After the plan exists, derive the subscription delegation PDA and call `getSubscribeInstruction`. Use `getTransferSubscriptionInstruction` for billing, `getCancelSubscriptionInstruction` for subscriber cancellation, and `getResumeSubscriptionInstruction` to resume a paused subscription.
@@ -1011,11 +1044,21 @@ After the plan exists, derive the subscription delegation PDA and call `getSubsc
 Close the Subscription Authority after all fixed, recurring, and subscription delegations that depend on it have been closed or revoked. Closing returns the authority account rent and removes the program authority for that `(user, token mint)` pair.
 
 ```dart
-final instruction = getCloseSubscriptionAuthorityInstruction(
-  programAddress: subscriptionsProgramAddress,
-  user: user,
-  subscriptionAuthority: subscriptionAuthority,
-);
+import 'package:solana_kit/solana_kit.dart';
+import 'package:solana_kit_subscriptions/solana_kit_subscriptions.dart';
+
+void main() {
+  const user = Address('11111111111111111111111111111112');
+  const subscriptionAuthority = Address('11111111111111111111111111111113');
+
+  final instruction = getCloseSubscriptionAuthorityInstruction(
+    programAddress: subscriptionsProgramAddress,
+    user: user,
+    subscriptionAuthority: subscriptionAuthority,
+  );
+
+  print(instruction.accounts!.length);
+}
 ```
 
 The user signs the transaction. If your app stores derived addresses, recompute the PDA before closing so the instruction targets the canonical authority for the user and mint.

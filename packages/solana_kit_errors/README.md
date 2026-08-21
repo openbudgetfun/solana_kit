@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_errors.svg)](https://pub.dev/packages/solana_kit_errors) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_errors/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_errors) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_errors)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_errors)
 
-Error codes, structured error class, and error conversion utilities for the Solana Kit Dart SDK.
+Structured errors for the Solana Kit SDK. Every failure in the SDK is a `SolanaError` carrying a numeric code from `SolanaErrorCode` and an optional context map, so callers can route on codes instead of parsing message strings.
 
 This is the Dart port of [`@solana/errors`](https://github.com/anza-xyz/kit/tree/main/packages/errors) from the Solana TypeScript SDK.
 
@@ -45,43 +45,36 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ### Creating errors
 
-Every error in the Solana Kit SDK is a `SolanaError` carrying a numeric code from `SolanaErrorCode` and an optional context map. The context map provides structured data that is interpolated into the human-readable error message.
+`SolanaError` implements `Exception`, so it can be thrown and caught like any Dart exception. The context map is made unmodifiable at construction time.
 
 ```dart
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
-// Simple error with no context.
-final error = SolanaError(SolanaErrorCode.blockHeightExceeded);
-print(error);
-// SolanaError#1: The network has progressed past the last block for which
-// this transaction could have been committed.
+void main() {
+  // Simple error with no context.
+  final error = SolanaError(SolanaErrorCode.blockHeightExceeded);
+  print(error);
 
-// Error with context variables interpolated into the message.
-final notFoundError = SolanaError(
-  SolanaErrorCode.accountsAccountNotFound,
-  {'address': '11111111111111111111111111111111'},
-);
-print(notFoundError);
-// SolanaError#3230000: Account not found at address: 11111111111111111111111111111111
-```
+  // Error with context variables interpolated into the message.
+  final notFoundError = SolanaError(
+    SolanaErrorCode.accountsAccountNotFound,
+    {'address': '11111111111111111111111111111111'},
+  );
+  print(notFoundError);
 
-`SolanaError` implements `Exception`, so it can be thrown and caught like any Dart exception:
-
-```dart
-try {
-  throw SolanaError(SolanaErrorCode.transactionFeePayerMissing);
-} on SolanaError catch (e) {
-  print('Code: ${e.code}');
-  print('Context: ${e.context}');
-  print('Message: $e');
+  try {
+    throw SolanaError(SolanaErrorCode.transactionFeePayerMissing);
+  } on SolanaError catch (e) {
+    print('Code: ${e.code}');
+    print('Context: ${e.context}');
+    print('Message: $e');
+  }
 }
 ```
 
-The context map is made unmodifiable at construction time, so it cannot be accidentally mutated after creation.
-
 ### Checking errors with `isSolanaError`
 
-The `isSolanaError` function acts as a type guard. It checks whether a value is a `SolanaError` and optionally whether it matches a specific error code.
+`isSolanaError` is a type guard. It checks whether a value is a `SolanaError` and optionally whether it matches a specific error code.
 
 ```dart
 import 'package:solana_kit_errors/solana_kit_errors.dart';
@@ -98,228 +91,167 @@ void handleError(Object? error) {
   }
 
   // Returns false for non-SolanaError values.
-  print(isSolanaError('not an error'));  // false
-  print(isSolanaError(null));            // false
+  print(isSolanaError('not an error')); // false
+  print(isSolanaError(null)); // false
 }
-```
 
-### Error codes (`SolanaErrorCode`)
-
-`SolanaErrorCode` is an abstract final class containing 100+ `static const int` codes organized by category. The numeric values are kept in sync with the upstream TypeScript package for cross-implementation interoperability.
-
-```dart
-import 'package:solana_kit_errors/solana_kit_errors.dart';
-
-// General errors (1 - 10)
-SolanaErrorCode.blockHeightExceeded;          // 1
-SolanaErrorCode.invalidNonce;                  // 2
-SolanaErrorCode.lamportsOutOfRange;            // 6
-
-// JSON-RPC errors (-32768 to -32000)
-SolanaErrorCode.jsonRpcParseError;             // -32700
-SolanaErrorCode.jsonRpcInternalError;          // -32603
-SolanaErrorCode.jsonRpcServerErrorNodeUnhealthy; // -32005
-
-// Address errors (2800000 - 2800999)
-SolanaErrorCode.addressesInvalidByteLength;    // 2800000
-SolanaErrorCode.addressesInvalidBase58EncodedAddress; // 2800002
-
-// Account errors (3230000 - 3230999)
-SolanaErrorCode.accountsAccountNotFound;       // 3230000
-SolanaErrorCode.accountsFailedToDecodeAccount; // 3230002
-
-// Key errors (3704000 - 3704999)
-SolanaErrorCode.keysInvalidKeyPairByteLength;  // 3704000
-SolanaErrorCode.keysInvalidSignatureByteLength; // 3704002
-
-// Instruction errors (4128000 - 4128999)
-SolanaErrorCode.instructionExpectedToHaveAccounts; // 4128000
-
-// Instruction runtime errors (4615000 - 4615999)
-SolanaErrorCode.instructionErrorInsufficientFunds; // 4615006
-SolanaErrorCode.instructionErrorCustom;        // 4615026
-
-// Signer errors (5508000 - 5508999)
-SolanaErrorCode.signerExpectedKeyPairSigner;   // 5508001
-
-// Transaction errors (5663000 - 5663999)
-SolanaErrorCode.transactionFeePayerMissing;    // 5663011
-SolanaErrorCode.transactionSignaturesMissing;  // 5663009
-
-// Transaction runtime errors (7050000 - 7050999)
-SolanaErrorCode.transactionErrorBlockhashNotFound; // 7050008
-
-// Codec errors (8078000 - 8078999)
-SolanaErrorCode.codecsCannotDecodeEmptyByteArray; // 8078000
-SolanaErrorCode.codecsNumberOutOfRange;        // 8078011
-
-// RPC errors (8100000 - 8100999)
-SolanaErrorCode.rpcIntegerOverflow;            // 8100000
-SolanaErrorCode.rpcTransportHttpError;         // 8100002
+void main() {
+  handleError(SolanaError(SolanaErrorCode.transactionFeePayerMissing));
+}
 ```
 
 ### Error message interpolation
 
-Error messages are templates with `$variable` placeholders that are filled from the context map. The `getErrorMessage` function performs this interpolation.
+Error messages are templates with `$variable` placeholders filled from the context map. `getErrorMessage` performs the interpolation.
 
 ```dart
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
-// Get an interpolated message directly.
-final message = getErrorMessage(
-  SolanaErrorCode.addressesInvalidByteLength,
-  {'actualLength': 28},
-);
-print(message);
-// Expected base58 encoded address to decode to a byte array of length 32.
-// Actual length: 28.
+void main() {
+  // Get an interpolated message directly.
+  final message = getErrorMessage(
+    SolanaErrorCode.addressesInvalidByteLength,
+    {'actualLength': 28},
+  );
+  print(message);
 
-// Missing context values leave the placeholder as-is.
-final partial = getErrorMessage(SolanaErrorCode.addressesInvalidByteLength);
-print(partial);
-// Expected base58 encoded address to decode to a byte array of length 32.
-// Actual length: $actualLength.
+  // Missing context values leave the placeholder as-is.
+  final partial = getErrorMessage(SolanaErrorCode.addressesInvalidByteLength);
+  print(partial);
 
-// Unknown error codes produce a fallback message.
-final unknown = getErrorMessage(999999);
-print(unknown);
-// Solana error #999999
+  // Codes without a message template produce a fallback message.
+  final unknown = getErrorMessage(SolanaErrorCode.blockHeightExceeded);
+  print(unknown);
+}
 ```
 
 ### Converting JSON-RPC errors
 
-When you receive an error response from a Solana JSON-RPC endpoint, use `getSolanaErrorFromJsonRpcError` to convert it into a `SolanaError`.
+`getSolanaErrorFromJsonRpcError` converts a JSON-RPC error response into a `SolanaError`. Preflight failures automatically extract the nested transaction error.
 
 ```dart
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
-// Typical JSON-RPC error response from a Solana node.
-final rpcError = {
-  'code': -32005,
-  'message': 'Node is unhealthy',
-  'data': <String, Object?>{},
-};
+void main() {
+  // Typical JSON-RPC error response from a Solana node.
+  final rpcError = <String, Object?>{
+    'code': -32005,
+    'message': 'Node is unhealthy',
+    'data': <String, Object?>{},
+  };
 
-final solanaError = getSolanaErrorFromJsonRpcError(rpcError);
-print(solanaError.code == SolanaErrorCode.jsonRpcServerErrorNodeUnhealthy);
-// true
+  final solanaError = getSolanaErrorFromJsonRpcError(rpcError);
+  print(solanaError.code == SolanaErrorCode.jsonRpcServerErrorNodeUnhealthy);
 
-// Preflight failure errors automatically extract the nested transaction error.
-final preflightError = {
-  'code': -32002,
-  'message': 'Transaction simulation failed',
-  'data': {
-    'err': 'BlockhashNotFound',
-    'logs': <String>[],
-  },
-};
+  // Preflight failure errors automatically extract the nested transaction error.
+  final preflightError = <String, Object?>{
+    'code': -32002,
+    'message': 'Transaction simulation failed',
+    'data': <String, Object?>{
+      'err': 'BlockhashNotFound',
+      'logs': <String>[],
+    },
+  };
 
-final preflightSolanaError = getSolanaErrorFromJsonRpcError(preflightError);
-print(preflightSolanaError.code ==
-    SolanaErrorCode.jsonRpcServerErrorSendTransactionPreflightFailure);
-// true
+  final preflightSolanaError = getSolanaErrorFromJsonRpcError(preflightError);
+  print(
+    preflightSolanaError.code ==
+        SolanaErrorCode.jsonRpcServerErrorSendTransactionPreflightFailure,
+  );
 
-// The nested cause is available in the context.
-final cause = preflightSolanaError.context['cause'] as SolanaError;
-print(cause.code == SolanaErrorCode.transactionErrorBlockhashNotFound);
-// true
+  // The nested cause is available in the context.
+  final cause = preflightSolanaError.context['cause'] as SolanaError;
+  print(cause.code == SolanaErrorCode.transactionErrorBlockhashNotFound);
 
-// Malformed responses (missing required fields) produce a malformedJsonRpcError.
-final malformed = getSolanaErrorFromJsonRpcError({'unexpected': 'data'});
-print(malformed.code == SolanaErrorCode.malformedJsonRpcError);
-// true
+  // Malformed responses produce a malformedJsonRpcError.
+  final malformed = getSolanaErrorFromJsonRpcError({'unexpected': 'data'});
+  print(malformed.code == SolanaErrorCode.malformedJsonRpcError);
+}
 ```
 
-### Converting transaction errors
+### Converting transaction and instruction errors
 
-Transaction errors from RPC responses use a Rust enum-like format. The `getSolanaErrorFromTransactionError` function handles both string and map forms.
-
-```dart
-import 'package:solana_kit_errors/solana_kit_errors.dart';
-
-// Simple string error.
-final error = getSolanaErrorFromTransactionError('BlockhashNotFound');
-print(error.code == SolanaErrorCode.transactionErrorBlockhashNotFound);
-// true
-
-// Error with nested context.
-final rentError = getSolanaErrorFromTransactionError({
-  'InsufficientFundsForRent': {'account_index': 2},
-});
-print(rentError.code == SolanaErrorCode.transactionErrorInsufficientFundsForRent);
-// true
-print(rentError.context['accountIndex']); // 2
-```
-
-### Converting instruction errors
-
-Instruction errors come nested within transaction errors, typically as `{'InstructionError': [index, error]}`. Use `getSolanaErrorFromInstructionError` to convert them directly.
+Transaction errors from RPC responses use a Rust enum-like format. `getSolanaErrorFromTransactionError` handles both string and map forms, and delegates `InstructionError` entries to `getSolanaErrorFromInstructionError`.
 
 ```dart
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
-// Simple instruction error.
-final error = getSolanaErrorFromInstructionError(0, 'InsufficientFunds');
-print(error.code == SolanaErrorCode.instructionErrorInsufficientFunds);
-// true
-print(error.context['index']); // 0
+void main() {
+  // Simple string error.
+  final error = getSolanaErrorFromTransactionError('BlockhashNotFound');
+  print(error.code == SolanaErrorCode.transactionErrorBlockhashNotFound);
 
-// Custom program error with an error code.
-final customError = getSolanaErrorFromInstructionError(1, {'Custom': 42});
-print(customError.code == SolanaErrorCode.instructionErrorCustom);
-// true
-print(customError.context['code']);  // 42
-print(customError.context['index']); // 1
+  // Error with nested context.
+  final rentError = getSolanaErrorFromTransactionError({
+    'InsufficientFundsForRent': {'account_index': 2},
+  });
+  print(rentError.code == SolanaErrorCode.transactionErrorInsufficientFundsForRent);
+  print(rentError.context['accountIndex']); // 2
 
-// Transaction errors containing InstructionError are automatically delegated.
-final txError = getSolanaErrorFromTransactionError({
-  'InstructionError': [0, 'InvalidAccountData'],
-});
-print(txError.code == SolanaErrorCode.instructionErrorInvalidAccountData);
-// true
+  // Instruction errors nested in transaction errors are delegated.
+  final txError = getSolanaErrorFromTransactionError({
+    'InstructionError': [0, 'InvalidAccountData'],
+  });
+  print(txError.code == SolanaErrorCode.instructionErrorInvalidAccountData);
+
+  // Custom program error with an error code.
+  final customError = getSolanaErrorFromInstructionError(1, {'Custom': 42});
+  print(customError.code == SolanaErrorCode.instructionErrorCustom);
+  print(customError.context['code']); // 42
+  print(customError.context['index']); // 1
+}
 ```
 
 ### Unwrapping simulation errors
 
-When a transaction simulation fails, the actual error is wrapped in a simulation error. Use `unwrapSimulationError` to get at the underlying cause.
+When a transaction simulation fails, the actual error is wrapped in a simulation error. `unwrapSimulationError` gets at the underlying cause.
 
 ```dart
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
-final simulationError = SolanaError(
-  SolanaErrorCode.jsonRpcServerErrorSendTransactionPreflightFailure,
-  {
-    'cause': SolanaError(SolanaErrorCode.transactionErrorBlockhashNotFound),
-    'logs': <String>[],
-  },
-);
+void main() {
+  final simulationError = SolanaError(
+    SolanaErrorCode.jsonRpcServerErrorSendTransactionPreflightFailure,
+    {
+      'cause': SolanaError(SolanaErrorCode.transactionErrorBlockhashNotFound),
+      'logs': <String>[],
+    },
+  );
 
-final underlying = unwrapSimulationError(simulationError);
-print(underlying is SolanaError); // true
-print((underlying! as SolanaError).code ==
-    SolanaErrorCode.transactionErrorBlockhashNotFound); // true
+  final underlying = unwrapSimulationError(simulationError);
+  print(underlying is SolanaError);
+  print(
+    (underlying! as SolanaError).code ==
+        SolanaErrorCode.transactionErrorBlockhashNotFound,
+  );
 
-// Non-simulation errors are returned as-is.
-final regularError = SolanaError(SolanaErrorCode.blockHeightExceeded);
-print(identical(unwrapSimulationError(regularError), regularError)); // true
+  // Non-simulation errors are returned as-is.
+  final regularError = SolanaError(SolanaErrorCode.blockHeightExceeded);
+  print(identical(unwrapSimulationError(regularError), regularError));
+}
 ```
 
 ### Context encoding and decoding
 
-The `encodeContextObject` and `decodeEncodedContext` functions serialize error context maps to and from compact base64 strings, useful for transmitting error details.
+`encodeContextObject` and `decodeEncodedContext` serialize error context maps to and from compact base64 strings, useful for transmitting error details.
 
 ```dart
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
-final context = {'address': '11111111111111111111111111111111', 'index': 0};
+void main() {
+  final context = {
+    'address': '11111111111111111111111111111111',
+    'index': 0,
+  };
 
-// Encode to a compact base64 string.
-final encoded = encodeContextObject(context);
-print(encoded); // base64 string
+  // Encode to a compact base64 string.
+  final encoded = encodeContextObject(context);
+  print(encoded);
 
-// Decode back to the original map.
-final decoded = decodeEncodedContext(encoded);
-print(decoded['address']); // 11111111111111111111111111111111
+  // Decode back to the original map.
+  final decoded = decodeEncodedContext(encoded);
+  print(decoded['address']);
+}
 ```
 
 <!-- {=errorDomainHelpersSection} -->
@@ -357,16 +289,18 @@ Use `createSolanaError(...)` and `wrapSolanaError(...)` when you want consistent
 ```dart
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
-final error = wrapSolanaError(
-  SolanaErrorCode.accountsFailedToDecodeAccount,
-  StateError('decoder failed'),
-  context: {
-    SolanaErrorContextKeys.address: '11111111111111111111111111111111',
-    SolanaErrorContextKeys.operation: 'decodeAccount',
-  },
-);
+void main() {
+  final error = wrapSolanaError(
+    SolanaErrorCode.accountsFailedToDecodeAccount,
+    StateError('decoder failed'),
+    context: {
+      SolanaErrorContextKeys.address: '11111111111111111111111111111111',
+      SolanaErrorContextKeys.operation: 'decodeAccount',
+    },
+  );
 
-print(error.context[SolanaErrorContextKeys.causeType]); // StateError
+  print(error.context[SolanaErrorContextKeys.causeType]); // StateError
+}
 ```
 
 Prefer shared keys such as `address`, `operation`, `methodName`, `path`, `statusCode`, and `url` so diagnostics stay predictable across packages.
@@ -375,33 +309,33 @@ Prefer shared keys such as `address`, `operation`, `methodName`, `path`, `status
 
 ### Classes
 
-- **`SolanaError`** -- Core error class implementing `Exception`. Carries an `int code` and an unmodifiable `Map<String, Object?> context`.
-- **`SolanaErrorCode`** -- Abstract final class with 100+ `static const int` error codes grouped by category (general, JSON-RPC, addresses, accounts, keys, instructions, instruction errors, signers, transactions, transaction errors, codecs, RPC, RPC subscriptions, program clients, invariant violations).
-- **`RpcEnumErrorConfig`** -- Configuration class for mapping Solana RPC enum-style errors to `SolanaError` instances.
-- **`SolanaErrorContextKeys`** -- Shared key names for structured diagnostics such as `address`, `operation`, `methodName`, `path`, `statusCode`, and nested cause fields.
-- **`SolanaErrorDomain`** -- Enum describing high-level error domains (for example `rpc`, `transaction`, `codecs`, `mobileWalletAdapter`).
+- `SolanaError`: core error class implementing `Exception`. Carries an `int code` and an unmodifiable `Map<String, Object?> context`.
+- `SolanaErrorCode`: abstract final class with 100+ `static const int` error codes grouped by category (general, JSON-RPC, addresses, accounts, keys, instructions, instruction errors, signers, transactions, transaction errors, codecs, RPC, RPC subscriptions, program clients, invariant violations).
+- `RpcEnumErrorConfig`: configuration class for mapping Solana RPC enum-style errors to `SolanaError` instances.
+- `SolanaErrorContextKeys`: shared key names for structured diagnostics such as `address`, `operation`, `methodName`, `path`, `statusCode`, and nested cause fields.
+- `SolanaErrorDomain`: enum describing high-level error domains (for example `rpc`, `transaction`, `codecs`, `mobileWalletAdapter`).
 
 ### Functions
 
-- **`isSolanaError(Object? e, [int? code])`** -- Type guard that checks whether a value is a `SolanaError`, optionally matching a specific code.
-- **`getSolanaErrorDomain(int code)`** -- Classifies numeric error codes into typed [SolanaErrorDomain] values.
-- **`isSolanaErrorCodeInDomain(int code, SolanaErrorDomain domain)`** -- Checks if a numeric code belongs to a domain.
-- **`isSolanaErrorInDomain(Object? error, SolanaErrorDomain domain)`** -- Checks if an `Object?` is a `SolanaError` in a domain.
-- **`getErrorMessage(int code, [Map<String, Object?> context])`** -- Returns the interpolated error message for a given error code and context.
-- **`createSolanaError(int, {Map<String, Object?> context, Object? cause})`** -- Creates a `SolanaError` with normalized context and optional nested cause details.
-- **`wrapSolanaError(int, Object, {Map<String, Object?> context})`** -- Wraps an existing exception or `SolanaError` while preserving structured cause information.
-- **`createSolanaErrorContext(Map<String, Object?>, {Object? cause})`** -- Normalizes context maps by dropping nulls and attaching consistent nested-cause metadata.
-- **`getSolanaErrorFromJsonRpcError(Object?)`** -- Converts a JSON-RPC error response map into a `SolanaError`.
-- **`getSolanaErrorFromTransactionError(Object)`** -- Converts a Solana RPC transaction error into a `SolanaError`.
-- **`getSolanaErrorFromInstructionError(num index, Object)`** -- Converts a Solana RPC instruction error into a `SolanaError`.
-- **`getSolanaErrorFromRpcError(RpcEnumErrorConfig, Object)`** -- Low-level converter for RPC enum-style errors.
-- **`unwrapSimulationError(Object?)`** -- Extracts the underlying cause from simulation-related errors.
-- **`encodeContextObject(Map<String, Object?>)`** -- Encodes a context map to a compact base64 string.
-- **`decodeEncodedContext(String)`** -- Decodes a base64-encoded context string back into a map.
+- `isSolanaError(Object? e, [int? code])`: type guard that checks whether a value is a `SolanaError`, optionally matching a specific code.
+- `getSolanaErrorDomain(int code)`: classifies numeric error codes into typed `SolanaErrorDomain` values.
+- `isSolanaErrorCodeInDomain(int code, SolanaErrorDomain domain)`: checks if a numeric code belongs to a domain.
+- `isSolanaErrorInDomain(Object? error, SolanaErrorDomain domain)`: checks if an `Object?` is a `SolanaError` in a domain.
+- `getErrorMessage(int code, [Map<String, Object?> context])`: returns the interpolated error message for a given error code and context.
+- `createSolanaError(int, {Map<String, Object?> context, Object? cause})`: creates a `SolanaError` with normalized context and optional nested cause details.
+- `wrapSolanaError(int, Object, {Map<String, Object?> context})`: wraps an existing exception or `SolanaError` while preserving structured cause information.
+- `createSolanaErrorContext(Map<String, Object?>, {Object? cause})`: normalizes context maps by dropping nulls and attaching consistent nested-cause metadata.
+- `getSolanaErrorFromJsonRpcError(Object?)`: converts a JSON-RPC error response map into a `SolanaError`.
+- `getSolanaErrorFromTransactionError(Object)`: converts a Solana RPC transaction error into a `SolanaError`.
+- `getSolanaErrorFromInstructionError(num index, Object)`: converts a Solana RPC instruction error into a `SolanaError`.
+- `getSolanaErrorFromRpcError(RpcEnumErrorConfig, Object)`: low-level converter for RPC enum-style errors.
+- `unwrapSimulationError(Object?)`: extracts the underlying cause from simulation-related errors.
+- `encodeContextObject(Map<String, Object?>)`: encodes a context map to a compact base64 string.
+- `decodeEncodedContext(String)`: decodes a base64-encoded context string back into a map.
 
 ### Constants
 
-- **`solanaErrorMessages`** -- `Map<int, String>` mapping every `SolanaErrorCode` to its human-readable message template.
+- `solanaErrorMessages`: `Map<int, String>` mapping every `SolanaErrorCode` to its human-readable message template.
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_errors"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_errors/solana_kit_errors.dart"} -->
 

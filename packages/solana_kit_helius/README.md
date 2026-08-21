@@ -2,21 +2,21 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_helius.svg)](https://pub.dev/packages/solana_kit_helius) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_helius/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_helius) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_helius)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_helius)
 
-Helius client package for Solana Kit Dart. A Dart port of the [Helius TypeScript SDK](https://github.com/helius-labs/helius-sdk), providing DAS API, enhanced transactions, webhooks, smart transactions, ZK compression, staking, wallet API, WebSocket subscriptions, and auth.
+A Dart client for the [Helius API](https://github.com/helius-labs/helius-sdk), covering the DAS API, enhanced transactions, webhooks, smart transactions, ZK compression, staking, the wallet API, WebSocket subscriptions, and auth.
 
-## Features
+## What you get
 
-- **DAS API** - Digital Asset Standard methods for querying assets, proofs, and metadata
-- **Enhanced Transactions** - Parsed transaction history with human-readable types
-- **Webhooks** - Create, manage, and delete webhook subscriptions
-- **Smart Transactions** - Optimized transaction building with compute unit estimation and priority fees
-- **ZK Compression** - Compressed account and token operations via Light Protocol
-- **Staking** - Create stake, unstake, and withdraw transactions via Helius validators
-- **Wallet API** - Identity resolution, balances, history, and transfers
-- **WebSockets** - Real-time subscription support
-- **Auth** - Project and API key management
-- **Priority Fees** - Estimate priority fees for transactions
-- **RPC V2** - Enhanced RPC methods with pagination
+- **DAS API**: query assets, proofs, and metadata
+- **Enhanced transactions**: parsed transaction history with human-readable types
+- **Webhooks**: create, manage, and delete webhook subscriptions
+- **Smart transactions**: transaction building with compute unit estimation and priority fees
+- **ZK compression**: compressed account and token operations via Light Protocol
+- **Staking**: create stake, unstake, and withdraw transactions via Helius validators
+- **Wallet API**: identity resolution, balances, history, and transfers
+- **WebSockets**: real-time subscription support
+- **Auth**: project and API key management
+- **Priority fees**: estimate priority fees for transactions
+- **RPC V2**: enhanced RPC methods with pagination
 
 ## Upstream compatibility
 
@@ -24,7 +24,7 @@ This package was audited against `helius-labs/helius-sdk` v3.0.0 at commit [`4c0
 
 The package covers the broad v3 surface: DAS, priority fees, RPC v2 including `getTransfersByAddress`, enhanced transactions, webhook CRUD/toggle, ZK compression, staking, wallet operations, Sender, the v3 JWT-based signup/checkout/payment flow, Admin project usage, and WebSocket subscriptions. The mainnet REST default follows v3's `https://api-mainnet.helius-rpc.com/v0` host, while devnet enhanced REST continues to use `https://api-devnet.helius.xyz/v0`.
 
-The legacy smart-transaction façade does not yet implement the v3 transaction-building contract: `createSmartTransaction` only fetches a blockhash and `sendSmartTransaction` does not compile or sign instructions. Do not use those two helpers to authorize value transfers. Prefer Solana Kit's transaction-message, signer, and Sender APIs until that surface is replaced. Remaining v3 gaps also include smart-transaction tip helpers and enhanced WebSocket account/transaction subscriptions.
+The legacy smart-transaction facade does not yet implement the v3 transaction-building contract: `createSmartTransaction` only fetches a blockhash and `sendSmartTransaction` does not compile or sign instructions. Do not use those two helpers to authorize value transfers. Prefer Solana Kit's transaction-message, signer, and Sender APIs until that surface is replaced. Remaining v3 gaps also include smart-transaction tip helpers and enhanced WebSocket account/transaction subscriptions.
 
 <!-- {=packageInstallSection:"solana_kit_helius"} -->
 
@@ -63,29 +63,35 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Usage
 
+Create a client with your API key, then call the sub-clients:
+
 ```dart
 import 'package:solana_kit_helius/solana_kit_helius.dart';
 
-final helius = createHelius(
-  HeliusConfig(apiKey: 'your-api-key'),
-);
+Future<void> main() async {
+  final helius = createHelius(HeliusConfig(apiKey: 'your-api-key'));
 
-// DAS API
-final asset = await helius.das.getAsset(
-  GetAssetRequest(id: 'asset-id'),
-);
+  // DAS API
+  final asset = await helius.das.getAsset(
+    GetAssetRequest(id: 'asset-id'),
+  );
 
-// Priority fees
-final fees = await helius.priorityFee.getPriorityFeeEstimate(
-  GetPriorityFeeEstimateRequest(
-    accountKeys: ['account-key'],
-  ),
-);
+  // Priority fees
+  final fees = await helius.priorityFee.getPriorityFeeEstimate(
+    GetPriorityFeeEstimateRequest(
+      accountKeys: ['account-key'],
+    ),
+  );
 
-// Enhanced transactions
-final txns = await helius.enhanced.getTransactions(
-  GetTransactionsRequest(transactions: ['tx-sig']),
-);
+  // Enhanced transactions
+  final txns = await helius.enhanced.getTransactions(
+    GetTransactionsRequest(transactions: ['tx-sig']),
+  );
+
+  print(asset);
+  print(fees);
+  print(txns);
+}
 ```
 
 ### Authenticated signup
@@ -93,15 +99,24 @@ final txns = await helius.enhanced.getTransactions(
 `signup` uses the developer API's wallet-signup response as a bearer JWT, then uses that JWT for project and checkout calls. Project API keys are only returned after subscription provisioning and are never reused as bearer tokens.
 
 ```dart
-final result = await helius.auth.signup(
-  SignupRequest.secretKey(
-    secretKey: base64EncodedSolanaCliKeypair,
-    plan: 'developer',
-    email: 'ada@example.com',
-    firstName: 'Ada',
-    lastName: 'Lovelace',
-  ),
-);
+import 'package:solana_kit_helius/solana_kit_helius.dart';
+
+Future<void> main() async {
+  final helius = createHelius(HeliusConfig(apiKey: 'your-api-key'));
+
+  final base64EncodedSolanaCliKeypair = 'base64-encoded-keypair';
+  final result = await helius.auth.signup(
+    SignupRequest.secretKey(
+      secretKey: base64EncodedSolanaCliKeypair,
+      plan: 'developer',
+      email: 'ada@example.com',
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+    ),
+  );
+
+  print(result);
+}
 ```
 
 Only pay `PaymentLink` values received from a trusted Helius developer API. The payment helper rejects non-positive amounts, mismatched memo/intent IDs, and non-payment link kinds before constructing a transfer.
@@ -109,26 +124,31 @@ Only pay `PaymentLink` values received from a trusted Helius developer API. The 
 ## Configuration
 
 ```dart
-// Mainnet (default)
-final helius = createHelius(
-  HeliusConfig(apiKey: 'your-api-key'),
-);
-
-// Devnet
-final helius = createHelius(
-  HeliusConfig(
-    apiKey: 'your-api-key',
-    cluster: HeliusCluster.devnet,
-  ),
-);
-
-// Custom HTTP client (useful for testing)
 import 'package:http/http.dart' as http;
+import 'package:solana_kit_helius/solana_kit_helius.dart';
 
-final helius = createHelius(
-  HeliusConfig(apiKey: 'your-api-key'),
-  client: http.Client(),
-);
+void main() {
+  // Mainnet (default)
+  final mainnet = createHelius(HeliusConfig(apiKey: 'your-api-key'));
+
+  // Devnet
+  final devnet = createHelius(
+    HeliusConfig(
+      apiKey: 'your-api-key',
+      cluster: HeliusCluster.devnet,
+    ),
+  );
+
+  // Custom HTTP client (useful for testing)
+  final withClient = createHelius(
+    HeliusConfig(apiKey: 'your-api-key'),
+    client: http.Client(),
+  );
+
+  print(mainnet);
+  print(devnet);
+  print(withClient);
+}
 ```
 
 ## WebSocket security defaults

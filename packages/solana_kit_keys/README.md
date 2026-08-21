@@ -2,7 +2,9 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_keys.svg)](https://pub.dev/packages/solana_kit_keys) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_keys/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_keys) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_keys)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_keys)
 
-Ed25519 key pair generation, signing, and signature verification for the Solana Kit Dart SDK -- a Dart port of [`@solana/keys`](https://github.com/anza-xyz/kit/tree/main/packages/keys).
+Ed25519 key pair generation, signing, and signature verification for the Solana Kit Dart SDK.
+
+Use this package when you need raw key material: generating key pairs, restoring them from bytes, signing arbitrary data, and verifying signatures. For transaction-level signing, use `solana_kit_signers` on top of these primitives.
 
 <!-- {=packageInstallSection:"solana_kit_keys"} -->
 
@@ -71,8 +73,6 @@ This package is the right layer when you need direct access to key bytes, public
 
 ### Generating a key pair
 
-Generate a random Ed25519 key pair containing a 32-byte private key (seed) and its corresponding 32-byte public key.
-
 ```dart
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 
@@ -128,8 +128,6 @@ void main() {
 
 ### Deriving a public key from a private key
 
-If you need just the public key bytes without constructing a full `KeyPair`:
-
 ```dart
 import 'dart:typed_data';
 
@@ -165,8 +163,6 @@ void main() {
 ```
 
 ### Verifying signatures
-
-Verify that a signature was produced by the holder of a given public key.
 
 ```dart
 import 'dart:convert';
@@ -211,6 +207,8 @@ void main() {
   // Check without throwing.
   final valid = isSignature(rawSigString); // true
   final invalid = isSignature('too-short'); // false
+  print(valid);
+  print(invalid);
 }
 ```
 
@@ -233,6 +231,8 @@ void main() {
   // Check without throwing.
   final valid = isSignatureBytes(rawBytes); // true
   final invalid = isSignatureBytes(Uint8List(32)); // false
+  print(valid);
+  print(invalid);
 }
 ```
 
@@ -245,13 +245,12 @@ import 'package:solana_kit_keys/solana_kit_keys.dart';
 
 void main() {
   final validKey = Uint8List(32);
-  final invalidKey = Uint8List(16);
 
   // Assert that bytes represent a valid 32-byte Ed25519 private key.
   assertIsPrivateKey(validKey); // OK
 
   // Throws SolanaError with keysInvalidPrivateKeyByteLength.
-  // assertIsPrivateKey(invalidKey);
+  // assertIsPrivateKey(Uint8List(16));
 }
 ```
 
@@ -280,11 +279,11 @@ void main() {
 
 ### Types
 
-| Export           | Description                                                                                                       |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `KeyPair`        | Class holding a 32-byte `privateKey` and a 32-byte `publicKey` (`Uint8List` fields).                              |
-| `Signature`      | Extension type wrapping `String` -- a validated base58-encoded 64-byte Ed25519 signature. Zero runtime overhead.  |
-| `SignatureBytes` | Extension type wrapping `Uint8List` -- a validated 64-byte Ed25519 signature in raw bytes. Zero runtime overhead. |
+| Export           | Description                                                                                                     |
+| ---------------- | --------------------------------------------------------------------------------------------------------------- |
+| `KeyPair`        | Class holding a 32-byte `privateKey` and a 32-byte `publicKey` (`Uint8List` fields).                            |
+| `Signature`      | Extension type wrapping `String`: a validated base58-encoded 64-byte Ed25519 signature. Zero runtime overhead.  |
+| `SignatureBytes` | Extension type wrapping `Uint8List`: a validated 64-byte Ed25519 signature in raw bytes. Zero runtime overhead. |
 
 ### Key pair generation
 

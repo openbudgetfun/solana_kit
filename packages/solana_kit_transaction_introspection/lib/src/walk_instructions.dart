@@ -19,7 +19,7 @@ import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.
 ///
 /// If [meta] is `null`, only outer instructions are returned. If
 /// [loadedAddresses] is `null`, only static accounts are used to resolve
-/// indices — pass `meta['loadedAddresses']` for v0 transactions that load
+/// indices; pass `meta['loadedAddresses']` for v0 transactions that load
 /// accounts from address lookup tables.
 List<TracedInstruction> walkInstructions({
   required CompiledTransactionMessage compiledMessage,
