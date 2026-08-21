@@ -12,18 +12,18 @@ void main() {
       expect(tip, BigInt.from(2000000));
     });
 
-    test('floors to 0.0005 SOL for SWQoS routes', () async {
+    test('floors to 0.000005 SOL for SWQoS routes', () async {
       double? converted;
       final tip = await determineTipSol(
         swqosOnly: true,
-        fetchTipFloor: () async => 0.0001,
+        fetchTipFloor: () async => 0.0000001,
         toLamports: (sol) {
           converted = sol;
-          return BigInt.from(500000);
+          return BigInt.from(5000);
         },
       );
 
-      expect(tip, BigInt.from(500000));
+      expect(tip, BigInt.from(5000));
       expect(converted, swqosMinimumTipSol);
     });
 
