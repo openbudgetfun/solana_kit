@@ -45,7 +45,7 @@ class HttpTransportConfig {
   /// An optional map of headers to set on the request.
   ///
   /// Avoid [forbidden headers](https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name).
-  /// Additionally, the headers `Accept`, `Content-Length`, and `Content-Type`
+  /// The headers `Accept`, `Content-Length`, and `Content-Type`
   /// are disallowed.
   final Map<String, String>? headers;
 

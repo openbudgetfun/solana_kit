@@ -5,8 +5,8 @@ description: Install Solana Kit in an application or set up the full workspace f
 
 Solana Kit supports two common setups:
 
-1. **Application usage** — install `solana_kit` or a smaller sub-package in your Dart or Flutter app.
-2. **Workspace contribution** — clone the monorepo and use `devenv` to get the full toolchain, docs tooling, and reference repos.
+1. **Application usage**: install `solana_kit` or a smaller sub-package in your Dart or Flutter app.
+2. **Workspace contribution**: clone the monorepo and use `devenv` to get the full toolchain, docs tooling, and reference repos.
 
 ## Install in an app
 

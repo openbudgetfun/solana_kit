@@ -21,8 +21,8 @@ void main() {
     stake: stake,
     vote: vote,
     clockSysvar: sysvarClockAddress,
-    stakeHistorySysvar: sysvarStakeHistoryAddress,
-    stakeConfigAccount: stakeConfigAddress,
+    stakeHistory: sysvarStakeHistoryAddress,
+    unused: stakeConfigAddress,
     stakeAuthority: authority,
   );
 

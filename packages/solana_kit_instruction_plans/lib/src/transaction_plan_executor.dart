@@ -14,10 +14,10 @@ typedef TransactionPlanExecutor =
 ///
 /// The [context] is a mutable map that can be used to incrementally store
 /// useful data as execution progresses. The callback may return either:
-/// - a [Map] — the context that the successful result must carry (it must
+/// - a [Map]: the context that the successful result must carry (it must
 ///   include a `signature`); it is merged with [context], taking precedence;
-/// - a [Signature] — stored as `context['signature']` (deprecated);
-/// - a [Transaction] — stored as `context['transaction']` with its signature
+/// - a [Signature]: stored as `context['signature']` (deprecated);
+/// - a [Transaction]: stored as `context['transaction']` with its signature
 ///   derived from it (deprecated).
 ///
 /// Prefer returning a context map, since deriving a signature from a

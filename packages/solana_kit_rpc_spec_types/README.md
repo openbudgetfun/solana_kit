@@ -2,9 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_rpc_spec_types.svg)](https://pub.dev/packages/solana_kit_rpc_spec_types) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_rpc_spec_types/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_rpc_spec_types) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_rpc_spec_types)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_rpc_spec_types)
 
-RPC spec type definitions for the Solana Kit Dart SDK.
-
-This is the Dart port of [`@solana/rpc-spec-types`](https://github.com/anza-xyz/kit/tree/main/packages/rpc-spec-types) from the Solana TypeScript SDK.
+Low-level JSON-RPC message and transform types for the Solana Kit Dart SDK. Defines `RpcRequest`, `RpcResponseData` (result or error), request/response transformer typedefs, and BigInt-aware JSON parsing. Other packages in the RPC stack depend on these types rather than reinventing them.
 
 <!-- {=packageInstallSection:"solana_kit_rpc_spec_types"} -->
 
@@ -45,135 +43,108 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ### RpcRequest
 
-The `RpcRequest` class describes an RPC request with a method name and parameters.
+`RpcRequest` pairs a method name with parameters for a single JSON-RPC call.
 
 ```dart
 import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
 
-final request = RpcRequest<List<Object?>>(
-  methodName: 'getBalance',
-  params: ['83astBRguLMdt2h5U1Tbd4hU5SkfAWRkzG2HPM88BREAK'],
-);
-
-print(request.methodName); // 'getBalance'
-print(request.params); // ['83astBRguLMdt2h5U1Tbd4hU5SkfAWRkzG2HPM88BREAK']
-```
-
-### Request transformers
-
-An `RpcRequestTransformer` is a function that transforms an `RpcRequest` before it is sent. This enables patterns like applying defaults, renaming methods, or serializing values.
-
-```dart
-import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
-
-// A transformer that prefixes all method names.
-RpcRequestTransformer prefixTransformer = (request) {
-  return RpcRequest(
-    methodName: 'custom_${request.methodName}',
-    params: request.params,
+void main() {
+  const request = RpcRequest<List<Object?>>(
+    methodName: 'getBalance',
+    params: ['11111111111111111111111111111111'],
   );
-};
 
-final original = RpcRequest<Object?>(
-  methodName: 'getSlot',
-  params: [],
-);
-final transformed = prefixTransformer(original);
-print(transformed.methodName); // 'custom_getSlot'
-```
-
-### RPC response types
-
-The `RpcResponseData` sealed class represents the data in an RPC response, which is either a successful result or an error.
-
-```dart
-import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
-
-// A successful response.
-const success = RpcResponseResult<int>(id: '1', result: 42);
-print(success.result); // 42
-
-// An error response.
-const error = RpcResponseError<int>(
-  id: '1',
-  error: RpcErrorResponsePayload(
-    code: -32601,
-    message: 'Method not found',
-  ),
-);
-print(error.error.code); // -32601
-print(error.error.message); // 'Method not found'
-
-// Pattern matching on sealed types.
-void handleResponse(RpcResponseData<int> data) {
-  switch (data) {
-    case RpcResponseResult<int>(:final result):
-      print('Got result: $result');
-    case RpcResponseError<int>(:final error):
-      print('Got error: ${error.message}');
-  }
+  print(request.methodName); // getBalance
+  print(request.params); // [11111111111111111111111111111]
 }
 ```
 
-### Response transformers
+### RpcResponseData
 
-An `RpcResponseTransformer` transforms a raw response before returning it to the caller. It receives both the response and the original request for context.
+The `RpcResponseData` sealed class wraps a JSON-RPC response as either a result or an error.
 
 ```dart
 import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
 
-// A transformer that doubles numeric results.
-RpcResponseTransformer<Object?> doubleTransformer = (response, request) {
-  if (response is int) {
-    return response * 2;
-  }
-  return response;
-};
+void main() {
+  const success = RpcResponseResult<int>(id: '1', result: 42);
+  print(success.result); // 42
+
+  const error = RpcResponseError<int>(
+    id: '1',
+    error: RpcErrorResponsePayload(
+      code: -32601,
+      message: 'Method not found',
+    ),
+  );
+  print(error.error.code); // -32601
+  print(error.error.message); // 'Method not found'
+}
 ```
 
-### Creating JSON-RPC messages
+### Request and response transformers
 
-The `createRpcMessage` function builds a spec-compliant JSON-RPC 2.0 message with an auto-incrementing string ID.
+`RpcRequestTransformer` and `RpcResponseTransformer` are function types that the RPC spec layer uses to modify payloads before sending and after receiving.
 
 ```dart
 import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
 
-final message = createRpcMessage(RpcRequest(
-  methodName: 'getSlot',
-  params: [],
-));
-print(message);
-// {id: '0', jsonrpc: '2.0', method: 'getSlot', params: []}
+void main() {
+  // Prefix all method names with a namespace.
+  RpcRequestTransformer prefixTransformer = (request) {
+    return RpcRequest(
+      methodName: 'custom_${request.methodName}',
+      params: request.params,
+    );
+  };
 
-// Each call gets a new ID.
-final message2 = createRpcMessage(RpcRequest(
-  methodName: 'getBalance',
-  params: ['address123'],
-));
-print(message2['id']); // '1'
+  final original = RpcRequest<Object?>(
+    methodName: 'getSlot',
+    params: [],
+  );
+  final transformed = prefixTransformer(original);
+  print(transformed.methodName); // custom_getSlot
+}
+```
+
+### JSON-RPC message creation
+
+`createRpcMessage` builds a spec-compliant JSON-RPC 2.0 message with an auto-incrementing string ID.
+
+```dart
+import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
+
+void main() {
+  final message = createRpcMessage(RpcRequest(
+    methodName: 'getSlot',
+    params: <Object?>[],
+  ));
+  print(message['id']); // '0'
+  print(message['jsonrpc']); // '2.0'
+}
 ```
 
 ### BigInt-aware JSON parsing
 
-The `parseJsonWithBigInts` and `stringifyJsonWithBigInts` functions handle the fact that Solana RPC responses can contain integers larger than what IEEE 754 doubles can represent. All non-floating-point numbers are parsed as `BigInt`.
+`parseJsonWithBigInts` parses JSON so that integer values become `BigInt` instead of `double`, which avoids precision loss on large Solana values like slot numbers and lamports. `stringifyJsonWithBigInts` does the reverse.
 
 ```dart
 import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
 
-// Parse JSON with BigInt support.
-final parsed = parseJsonWithBigInts('{"balance": 9007199254740993, "rate": 1.5}');
-final map = parsed as Map<String, Object?>;
-print(map['balance'] is BigInt); // true
-print(map['balance']); // 9007199254740993 (as BigInt, no precision loss)
-print(map['rate'] is double); // true (floating-point preserved as double)
+void main() {
+  final parsed = parseJsonWithBigInts(
+    '{"balance": 9007199254740993, "rate": 1.5}',
+  );
+  final map = parsed as Map<String, Object?>;
+  print(map['balance'] is BigInt); // true
+  print(map['rate'] is double); // true
 
-// Stringify with BigInt support.
-final json = stringifyJsonWithBigInts({
-  'balance': BigInt.parse('9007199254740993'),
-  'rate': 1.5,
-});
-print(json); // {"balance":9007199254740993,"rate":1.5}
-// Note: BigInt values are rendered as raw integers, not quoted strings.
+  final json = stringifyJsonWithBigInts({
+    'balance': BigInt.parse('9007199254740993'),
+    'rate': 1.5,
+  });
+  print(json); // {"balance":9007199254740993,"rate":1.5}
+}
 ```
 
 <!-- {=isolateJsonDecodeSection|replace:"__RPC_TRANSPORT_IMPORT_PATH__":"package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart"|replace:"__RPC_URL__":"https://api.mainnet-beta.solana.com"} -->
@@ -200,27 +171,15 @@ For direct parsing, use `parseJsonWithBigIntsAsync(...)` with `runInIsolate: tru
 
 <!-- {/isolateJsonDecodeSection} -->
 
-## API Reference
+## Key APIs
 
-### Classes
-
-- **`RpcRequest<TParams>`** -- Describes an RPC request with `methodName` (`String`) and `params` (`TParams`).
-- **`RpcResponseData<T>`** -- Sealed class representing an RPC response: either `RpcResponseResult<T>` or `RpcResponseError<T>`.
-- **`RpcResponseResult<T>`** -- A successful RPC response with `id` and `result`.
-- **`RpcResponseError<T>`** -- An error RPC response with `id` and `error`.
-- **`RpcErrorResponsePayload`** -- Error payload with `code` (`int`), `message` (`String`), and optional `data`.
-
-### Functions
-
-- **`createRpcMessage<TParams>(RpcRequest<TParams> request)`** -- Creates a JSON-RPC 2.0 message map with auto-incrementing ID.
-- **`parseJsonWithBigInts(String json)`** -- Parses JSON, converting all integer values to `BigInt` while preserving floating-point numbers as `double`.
-- **`parseJsonWithBigIntsAsync(String json, {bool runInIsolate = false, int isolateThreshold = 262144})`** -- Async variant that can offload large payload parsing to a background isolate.
-- **`stringifyJsonWithBigInts(Object? value)`** -- Converts a value to JSON, rendering `BigInt` values as unquoted large integers.
-
-### Typedefs
-
-- **`RpcRequestTransformer`** -- `RpcRequest<Object?> Function(RpcRequest<Object?> request)` -- Transforms an RPC request before sending.
-- **`RpcResponseTransformer<T>`** -- `T Function(Object? response, RpcRequest<Object?> request)` -- Transforms an RPC response before returning.
+- `RpcRequest<TParams>`: method name + params.
+- `RpcResponseData<T>`: sealed class, `RpcResponseResult<T>` or `RpcResponseError<T>`.
+- `RpcErrorResponsePayload`: error code, message, optional data.
+- `createRpcMessage<TParams>(RpcRequest<TParams>)`: builds a JSON-RPC 2.0 message map.
+- `parseJsonWithBigInts(String)` / `stringifyJsonWithBigInts(Object?)` / `parseJsonWithBigIntsAsync(String, ...)`: BigInt-safe JSON codec.
+- `RpcRequestTransformer`: `RpcRequest<Object?> Function(RpcRequest<Object?>)`.
+- `RpcResponseTransformer<T>`: `T Function(Object? response, RpcRequest<Object?> request)`.
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_rpc_spec_types"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart"} -->
 

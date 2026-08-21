@@ -46,9 +46,9 @@ Use `isMwaSupported()` / `assertMwaSupported()` to gate platform behavior explic
 
 For Flutter apps, keep three boundaries explicit:
 
-- **platform support gate** — use `isMwaSupported()` / `assertMwaSupported()` plus endpoint checks before launching wallet handoff.
-- **wallet session state** — keep authorize, reauthorize, capabilities, and deauthorize flows inside a dedicated controller/service boundary.
-- **transaction submission boundary** — prepare or fetch base64 transaction payloads outside the widget tree, then hand them to the wallet layer for sign-and-send.
+- **platform support gate**: use `isMwaSupported()` / `assertMwaSupported()` plus endpoint checks before launching wallet handoff.
+- **wallet session state**: keep authorize, reauthorize, capabilities, and deauthorize flows inside a dedicated controller/service boundary.
+- **transaction submission boundary**: prepare or fetch base64 transaction payloads outside the widget tree, then hand them to the wallet layer for sign-and-send.
 
 The package example app demonstrates this Android-first structure and keeps a clear unsupported-platform UX on iOS.
 

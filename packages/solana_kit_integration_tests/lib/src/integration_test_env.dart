@@ -30,7 +30,7 @@ const disableSbpfV0V1V2DeploymentFeatureGate = Address(
 /// Use [IntegrationTestEnv.create] to start a fresh Surfpool instance for
 /// the test file. Each instance binds auto-allocated ports, so parallel test
 /// files each get an isolated chain. Tests fail loudly when Surfpool cannot
-/// be started — they never silently skip.
+/// be started; they never silently skip.
 class IntegrationTestEnv {
   IntegrationTestEnv._({
     required this.rpc,

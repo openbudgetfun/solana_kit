@@ -15,10 +15,10 @@ Solana Kit intentionally splits the transaction stack into a few focused layers.
 
 Think in four phases:
 
-1. **Describe intent** — create instructions.
-2. **Build message state** — set fee payer, lifetime, and instruction order.
-3. **Authorize** — attach signers and produce signatures.
-4. **Submit and confirm** — send the signed transaction and wait for a final outcome.
+1. **Describe intent**: create instructions.
+2. **Build message state**: set fee payer, lifetime, and instruction order.
+3. **Authorize**: attach signers and produce signatures.
+4. **Submit and confirm**: send the signed transaction and wait for a final outcome.
 
 ## Message construction
 

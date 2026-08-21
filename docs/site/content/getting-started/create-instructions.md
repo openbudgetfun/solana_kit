@@ -49,10 +49,10 @@ final instruction = Instruction(
 
 Use account roles to express exactly how the runtime should treat each account.
 
-- **`readonly`** — read-only, not a signer
-- **`writable`** — mutable, not a signer
-- **`readonlySigner`** — signer, but not writable
-- **`writableSigner`** — signer and writable
+- **`readonly`**: read-only, not a signer
+- **`writable`**: mutable, not a signer
+- **`readonlySigner`**: signer, but not writable
+- **`writableSigner`**: signer and writable
 
 A wrong role can cause transaction failures even when the program address and data payload are correct.
 

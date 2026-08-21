@@ -6,7 +6,7 @@ import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.
 /// An extension of the [AccountMeta] type that allows us to store
 /// transaction signers inside it.
 ///
-/// Note that, because this type represents a signer, it must use one of
+/// Because this type represents a signer, it must use one of
 /// the following two roles:
 /// - [AccountRole.readonlySigner]
 /// - [AccountRole.writableSigner]

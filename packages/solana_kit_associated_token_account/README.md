@@ -9,6 +9,7 @@ This package exposes the canonical ATA program address, PDA derivation helpers, 
 ## Usage
 
 ```dart
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_associated_token_account/solana_kit_associated_token_account.dart';
 
 Future<void> main() async {

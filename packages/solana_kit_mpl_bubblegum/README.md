@@ -2,18 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_mpl_bubblegum.svg)](https://pub.dev/packages/solana_kit_mpl_bubblegum) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_mpl_bubblegum/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_mpl_bubblegum) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_mpl_bubblegum)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_mpl_bubblegum)
 
-mpl-bubblegum (compressed NFT) instruction builders and helpers for the Solana Kit Dart SDK.
-
-## Features
-
-- **V1 & V2 instruction builders** for minting, transferring, burning, and managing compressed NFTs
-- **Composite helpers** for common operations (create tree, mint, transfer, burn, delegate)
-- **DAS API abstraction** with Helius implementation
-- **Hashing utilities** (Keccak-256) matching the on-chain program's hashing logic
-- **Merkle tree** construction and proof verification
-- **PDA derivation** for tree authority, leaf asset ID, and bubblegum signer
-
-## Installation
+Compressed NFT instruction builders, DAS API helpers, hashing, Merkle tree utilities, and PDA derivation for the Solana Kit Dart SDK.
 
 <!-- {=packageInstallSection:"solana_kit_mpl_bubblegum"} -->
 
@@ -38,41 +27,41 @@ Inside this monorepo, Dart workspace resolution uses the local package automatic
 
 ## Usage
 
-### Creating a Tree
+Create a V1 tree for compressed NFTs:
 
 ```dart
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_mpl_bubblegum/solana_kit_mpl_bubblegum.dart';
 
-// Create a V1 tree
-final plan = getCreateTreeInstructionPlan(
-  CreateTreeInput(
-    merkleTree: merkleTreeAddress,
-    payer: payerAddress,
-    treeCreator: payerAddress,
-    maxDepth: 14,
-    maxBufferSize: 64,
-  ),
-);
+void main() {
+  const merkleTree = Address('11111111111111111111111111111111');
+  const payer = Address('11111111111111111111111111111112');
 
-// Create a V2 tree
-final v2Plan = getCreateTreeV2InstructionPlan(
-  CreateTreeV2Input(
-    merkleTree: merkleTreeAddress,
-    payer: payerAddress,
-    treeCreator: payerAddress,
+  final input = CreateTreeInput(
+    merkleTree: merkleTree,
+    payer: payer,
+    treeCreator: payer,
     maxDepth: 14,
     maxBufferSize: 64,
-    isPublic: true,
-  ),
-);
+  );
+  final plan = getCreateTreeInstructionPlan(input);
+  print(plan.kind);
+}
 ```
 
-### Minting a Compressed NFT
+Mint a compressed NFT with the V1 instruction plan:
 
 ```dart
-// Mint a V1 NFT
-final plan = getMintV1InstructionPlan(
-  MintV1Input(
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_mpl_bubblegum/solana_kit_mpl_bubblegum.dart';
+
+void main() {
+  const treeAddress = Address('11111111111111111111111111111111');
+  const ownerAddress = Address('11111111111111111111111111111112');
+  const payerAddress = Address('11111111111111111111111111111113');
+  const treeDelegateAddress = Address('11111111111111111111111111111114');
+
+  final input = MintV1Input(
     merkleTree: treeAddress,
     leafOwner: ownerAddress,
     leafDelegate: ownerAddress,
@@ -80,141 +69,49 @@ final plan = getMintV1InstructionPlan(
     treeDelegate: treeDelegateAddress,
     name: 'My NFT',
     uri: 'https://example.com/metadata.json',
-    creators: [
-      Creator(address: creatorAddress, verified: false, share: 100),
-    ],
-  ),
-);
-
-// Mint a V2 NFT
-final v2Plan = getMintV2InstructionPlan(
-  MintV2Input(
-    merkleTree: treeAddress,
-    leafOwner: ownerAddress,
-    leafDelegate: ownerAddress,
-    payer: payerAddress,
-    treeDelegate: treeDelegateAddress,
-    collectionAuthority: collectionAuthorityAddress,
-    name: 'My V2 NFT',
-    uri: 'https://example.com/metadata.json',
-    collection: collectionAddress,
-  ),
-);
-
-// Mint into a collection
-final collectionPlan = getMintToCollectionV1InstructionPlan(
-  MintToCollectionV1Input(
-    merkleTree: treeAddress,
-    leafOwner: ownerAddress,
-    leafDelegate: ownerAddress,
-    payer: payerAddress,
-    treeDelegate: treeDelegateAddress,
-    collectionAuthority: collectionAuthorityAddress,
-    collectionAuthorityRecordPda: recordPda,
-    collectionMint: collectionMintAddress,
-    collectionMetadata: metadataAddress,
-    editionAccount: editionAddress,
-    name: 'Collection NFT',
-    uri: 'https://example.com/metadata.json',
-  ),
-);
-```
-
-### Transferring and Burning
-
-```dart
-// Transfer
-final transferPlan = getTransferInstructionPlan(
-  TransferInput(
-    root: proof.root,
-    dataHash: proof.dataHash,
-    creatorHash: proof.creatorHash,
-    nonce: proof.nonce,
-    index: proof.index,
-    leafOwner: ownerAddress,
-    leafDelegate: ownerAddress,
-    newLeafOwner: newOwnerAddress,
-    merkleTree: treeAddress,
-  ),
-);
-
-// Burn
-final burnPlan = getBurnInstructionPlan(
-  BurnInput(
-    root: proof.root,
-    dataHash: proof.dataHash,
-    creatorHash: proof.creatorHash,
-    nonce: proof.nonce,
-    index: proof.index,
-    leafOwner: ownerAddress,
-    leafDelegate: ownerAddress,
-    merkleTree: treeAddress,
-  ),
-);
-```
-
-### DAS API
-
-```dart
-// Using the Helius DAS client
-final client = HeliusDasClient(
-  rpcUrl: 'https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY',
-);
-
-final asset = await client.getAsset(assetId);
-final proof = await client.getAssetProof(assetId);
-
-// Get complete asset with proof
-final assetWithProof = await getAssetWithProof(
-  dasClient: client,
-  assetId: assetId,
-);
-```
-
-### Hashing Utilities
-
-```dart
-// Hash a V1 leaf
-final v1Hash = hashLeafV1(
-  leafAssetId: leafAssetId,
-  owner: ownerAddress,
-  delegate: delegateAddress,
-  leafIndex: 0,
-  metadataHash: metadataHash,
-);
-
-// Hash a V2 leaf
-final v2Hash = hashLeafV2(
-  leafAssetId: leafAssetId,
-  owner: ownerAddress,
-  leafIndex: 0,
-  metadataHashV2: metadataHash,
-  flags: LeafSchemaV2Flags.hasCollection,
-  collection: collectionAddress,
-);
-```
-
-## Program Addresses
-
-```dart
-// MPL Bubblegum program
-const mplBubblegumProgramAddress = 'BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY';
-
-// Token Metadata program
-const tokenMetadataProgramAddress = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
-```
-
-## Program Errors
-
-```dart
-final message = getMplBubblegumErrorMessage(
-  MplBubblegumError.collectionMustHaveRoyaltiesPlugin,
-);
-
-if (isMplBubblegumError(0x17a9)) {
-  print(message);
+    creators: [Creator(address: payerAddress, verified: false, share: 100)],
+  );
+  final plan = getMintV1InstructionPlan(input);
+  print(plan.kind);
 }
 ```
+
+Derive PDA addresses for tree authority and the bubblegum signer:
+
+```dart
+import 'package:solana_kit_mpl_bubblegum/solana_kit_mpl_bubblegum.dart';
+
+void main() {
+  print(mplBubblegumProgramAddress);
+  print(tokenMetadataProgramAddress);
+}
+```
+
+Look up a compressed NFT error by enum or code:
+
+```dart
+import 'package:solana_kit_mpl_bubblegum/solana_kit_mpl_bubblegum.dart';
+
+void main() {
+  final message = getMplBubblegumErrorMessage(
+    MplBubblegumError.collectionMustHaveRoyaltiesPlugin,
+  );
+  print(message);
+
+  if (isMplBubblegumError(0x17a9)) {
+    print('matched bubblegum error');
+  }
+}
+```
+
+## Key APIs
+
+- `getCreateTreeInstructionPlan`, `getCreateTreeV2InstructionPlan`, `getMintV1InstructionPlan`, `getMintV2InstructionPlan`, `getMintToCollectionV1InstructionPlan`, `getTransferInstructionPlan`, `getBurnInstructionPlan`, `getDelegateInstructionPlan`
+- `hashLeafV1`, `hashLeafV2`, `bubblegumHash` for Keccak-256 hashing
+- `findTreeAuthorityPda`, `findLeafAssetIdV2Pda`, `findBubblegumSignerPda` for PDA derivation
+- `HeliusDasClient`, `getAssetWithProof` for DAS API access
+- `mplBubblegumProgramAddress`, `tokenMetadataProgramAddress` constants
+- `isMplBubblegumError`, `getMplBubblegumErrorMessage` for error handling
 
 ## License
 

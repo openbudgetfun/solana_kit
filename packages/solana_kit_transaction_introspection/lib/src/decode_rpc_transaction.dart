@@ -9,8 +9,8 @@ import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 
 /// The result of decoding a `getTransaction` response: the
 /// [CompiledTransactionMessage] (always carrying a `lifetimeToken`), the loaded
-/// ALT addresses pulled from `meta` (if any), and — for `'base64'` and
-/// `'base58'` responses — the wire-format [Transaction].
+/// ALT addresses pulled from `meta` (if any), and, for `'base64'` and
+/// `'base58'` responses, the wire-format [Transaction].
 ///
 /// `transaction` is `null` for `encoding: 'json'` responses: the server has
 /// already decompiled the wire format, so there are no message bytes to
@@ -294,11 +294,11 @@ DecodedRpcTransaction _decodeFromJson(
 ///
 /// Only the shared `transaction` / `meta` / `version` envelope is modeled, so
 /// the response may come from any RPC method that returns confirmed
-/// transactions — `getTransaction`, `getBlock` (with
+/// transactions, `getTransaction`, `getBlock` (with
 /// `transactionDetails: 'full'`), or `getTransactionsForAddress` (map over
-/// its `data` array) — regardless of which method produced it.
+/// its `data` array), regardless of which method produced it.
 ///
-/// `'jsonParsed'` is **not** supported — its instructions arrive pre-parsed by
+/// `'jsonParsed'` is **not** supported: its instructions arrive pre-parsed by
 /// the server and lack raw bytes, so they cannot be round-tripped through the
 /// auto-generated `parseXInstruction` clients. Passing a `'jsonParsed'`
 /// response throws a [SolanaError] with code
@@ -310,7 +310,7 @@ DecodedRpcTransaction _decodeFromJson(
 /// `walkInstructions`) to inspect a confirmed transaction's instructions in a
 /// form the auto-generated `@solana-program/*` clients can `parse` directly.
 ///
-/// Prefer `encoding: 'base64'` when bandwidth allows — it is the most
+/// Prefer `encoding: 'base64'` when bandwidth allows; it is the most
 /// compact, the wire bytes round-trip cleanly through the kit codecs, and the
 /// returned `transaction` is re-encodable.
 DecodedRpcTransaction decodeTransactionFromRpcResponse(
@@ -346,7 +346,7 @@ DecodedRpcTransaction decodeTransactionFromRpcResponse(
           .transactionIntrospectionUnrecognizedGetTransactionResponse,
     );
   }
-  // jsonParsed responses have no `header` — the server has already resolved
+  // jsonParsed responses have no `header`; the server has already resolved
   // roles onto each `accountKey` and pre-parsed the instructions, so they
   // cannot be round-tripped through the kit codecs.
   if (_asMap(messageMap['header']) == null) {

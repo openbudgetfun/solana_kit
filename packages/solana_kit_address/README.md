@@ -2,11 +2,9 @@
 
 [![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_address)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_address) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_address)
 
-Core Address extension type, codecs, comparator, and PublicKey utilities for the [Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart SDK.
+The `Address` extension type, its codecs, a base58 collation comparator, and public key conversion helpers for the [Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart SDK.
 
-Provides the `Address` extension type for validated base58-encoded Solana addresses, codecs for serializing and deserializing addresses, a comparator for sorting addresses by base58 collation rules, and helpers for converting between public key bytes and addresses.
-
-## Installation
+Use this package when you need a validated base58-encoded Solana address as a typed value, or when you need to serialize addresses into on-chain data. Most apps reach this through the `solana_kit` umbrella or `solana_kit_addresses`.
 
 <!-- {=packageInstallSection:"solana_kit_address"} -->
 
@@ -34,26 +32,34 @@ Inside this monorepo, Dart workspace resolution uses the local package automatic
 ```dart
 import 'package:solana_kit_address/solana_kit_address.dart';
 
-// Create a validated address
-final addr = address('11111111111111111111111111111111');
+void main() {
+  // Create a validated address.
+  final addr = address('11111111111111111111111111111111');
 
-// Check if a string is a valid address
-if (isAddress(someString)) {
-  // it's valid
+  // Check if a string is a valid address without throwing.
+  final valid = isAddress('11111111111111111111111111111111');
+  print('Valid: $valid');
+
+  // Encode and decode addresses as fixed-size 32-byte values.
+  final codec = getAddressCodec();
+  final bytes = codec.encode(addr);
+  final decoded = codec.decode(bytes);
+  print('Round trip: ${decoded.value}');
+
+  // Compare addresses using base58 collation order.
+  final comparator = getAddressComparator();
+  final addresses = [
+    address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'),
+    address('11111111111111111111111111111111'),
+  ];
+  addresses.sort(comparator);
+  print(addresses.map((a) => a.value).toList());
+
+  // Convert between public key bytes and addresses.
+  final publicKeyBytes = getPublicKeyFromAddress(addr);
+  final addrFromKey = getAddressFromPublicKey(publicKeyBytes);
+  print('From key: ${addrFromKey.value}');
 }
-
-// Encode/decode addresses
-final codec = getAddressCodec();
-final bytes = codec.encode(addr);
-final decoded = codec.decode(bytes);
-
-// Compare addresses using base58 collation order
-final comparator = getAddressComparator();
-addresses.sort(comparator);
-
-// Convert between public key bytes and addresses
-final publicKeyBytes = getPublicKeyFromAddress(addr);
-final addrFromKey = getAddressFromPublicKey(publicKeyBytes);
 ```
 
 ## Key APIs

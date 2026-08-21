@@ -14,8 +14,8 @@ const int transactionPacketHeader = 40 + 8;
 
 /// The maximum size of a legacy or version 0 transaction in bytes.
 ///
-/// Note that this excludes the transaction packet header.
-/// In other words, this is how much content we can fit in a transaction packet.
+/// This excludes the transaction packet header.
+/// This is how much content we can fit in a transaction packet.
 const int transactionSizeLimit =
     transactionPacketSize - transactionPacketHeader;
 

@@ -63,10 +63,10 @@ Use websocket subscriptions for account changes, signature updates, program logs
 
 Packages involved:
 
-- `solana_kit_rpc_subscriptions` — high-level orchestration
-- `solana_kit_rpc_subscriptions_api` — typed subscription method builders
-- `solana_kit_rpc_subscriptions_channel_websocket` — websocket transport/channel implementation
-- `solana_kit_subscribable` — stream-friendly subscription primitives
+- `solana_kit_rpc_subscriptions`: high-level orchestration
+- `solana_kit_rpc_subscriptions_api`: typed subscription method builders
+- `solana_kit_rpc_subscriptions_channel_websocket`: websocket transport/channel implementation
+- `solana_kit_subscribable`: stream-friendly subscription primitives
 
 ## Typical split of responsibilities
 

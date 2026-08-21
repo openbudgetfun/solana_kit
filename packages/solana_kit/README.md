@@ -2,9 +2,9 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit.svg)](https://pub.dev/packages/solana_kit) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit)
 
-The Solana Kit Dart SDK -- a comprehensive, modular Dart port of the [Solana TypeScript SDK (`@solana/kit`)](https://github.com/anza-xyz/kit).
+The Solana Kit Dart SDK, a modular Dart port of the [Solana TypeScript SDK (`@solana/kit`)](https://github.com/anza-xyz/kit).
 
-This is the umbrella package for the core SDK surface. It gives you a single import for the most common address, RPC, transaction, signer, sysvar, and codec workflows.
+This is the umbrella package. One import gives you the core SDK surface: addresses, RPC, transactions, signers, sysvars, and codecs.
 
 Program-specific packages are intentionally **not** re-exported here. Import packages like `solana_kit_system`, `solana_kit_token`, and future program clients explicitly so your dependency graph reflects the programs your app actually uses.
 
@@ -64,6 +64,7 @@ import 'package:solana_kit/solana_kit.dart';
 Future<void> main() async {
   // Validate an address.
   final addr = address('11111111111111111111111111111112');
+  print(addr.value);
   print(isAddress('11111111111111111111111111111112')); // true
 
   // Derive a program-derived address (PDA).
@@ -85,15 +86,15 @@ import 'package:solana_kit/solana_kit.dart';
 
 Future<void> main() async {
   // Generate a new key pair.
-  final keyPair = await generateKeyPair();
+  final keyPair = generateKeyPair();
 
   // Create a signer from the key pair.
-  final signer = await createKeyPairSignerFromKeyPair(keyPair);
+  final signer = createSignerFromKeyPair(keyPair);
   print('Signer address: ${signer.address}');
 
   // Sign a message.
   final signature = await signer.signMessages([
-    Uint8List.fromList('Hello Solana'.codeUnits),
+    createSignableMessage('Hello Solana'),
   ]);
   print('Signed: ${signature.length} signature(s)');
 }
@@ -103,12 +104,6 @@ Future<void> main() async {
 
 Make JSON-RPC calls to a Solana node.
 
-<!-- {=typedRpcMethodsSection|replace:"__RPC_IMPORT_PATH__":"package:solana_kit/solana_kit.dart"|replace:"__RPC_URL__":"https://api.devnet.solana.com"} -->
-
-### Typed RPC methods
-
-When you already have an `Rpc`, prefer typed convenience helpers over raw method-name strings. They keep parameter builders and response models attached to the method itself, which makes refactors and autocomplete significantly safer.
-
 ```dart
 import 'package:solana_kit/solana_kit.dart';
 
@@ -116,36 +111,14 @@ Future<void> main() async {
   final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   final slot = await rpc.getSlot().send();
-  final epochInfo = await rpc.getEpochInfo().send();
   final latestBlockhash = await rpc.getLatestBlockhashValue().send();
 
   print('Slot: $slot');
-  print('Epoch: ${epochInfo['epoch']}');
   print('Latest blockhash: ${latestBlockhash.value.blockhash}');
 }
 ```
 
-These helpers forward to canonical request builders in `solana_kit_rpc_api`, return lazy `PendingRpcRequest<T>` values, and make it clear which Solana RPC shape each call expects.
-
-<!-- {/typedRpcMethodsSection} -->
-
-```dart
-import 'package:solana_kit/solana_kit.dart';
-
-Future<void> main() async {
-  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
-
-  // Get the latest blockhash.
-  final blockhashResponse = await rpc.getLatestBlockhash(
-    const GetLatestBlockhashConfig(commitment: Commitment.confirmed),
-  ).send();
-  print('Blockhash: $blockhashResponse');
-
-  // Get the minimum balance for rent exemption.
-  final rentExemption = getMinimumBalanceForRentExemption(165);
-  print('Rent exemption for 165 bytes: ${rentExemption.value} lamports');
-}
-```
+`rpc.getSlot()` builds a typed request. The network call only happens when you call `.send()`, which keeps requests easy to inspect, compose, cache, batch, or wrap with middleware.
 
 ### Accounts
 
@@ -155,7 +128,7 @@ Fetch and decode on-chain accounts.
 import 'package:solana_kit/solana_kit.dart';
 
 Future<void> main() async {
-  final rpc = createSolanaRpc('https://api.devnet.solana.com');
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   // Fetch a single account.
   final maybeAccount = await fetchEncodedAccount(
@@ -189,13 +162,6 @@ Encode and decode binary data for on-chain structures.
 import 'package:solana_kit/solana_kit.dart';
 
 void main() {
-  // Encode and decode addresses.
-  final addr = address('11111111111111111111111111111111');
-  final encoder = getAddressEncoder();
-  final bytes = encoder.encode(addr);
-  print('Address encoded to ${bytes.length} bytes'); // 32
-
-  // Encode and decode numbers.
   final u64Encoder = getU64Encoder();
   final numBytes = u64Encoder.encode(BigInt.from(1000000));
   print('U64 encoded to ${numBytes.length} bytes'); // 8
@@ -210,7 +176,7 @@ Access Solana system variables.
 import 'package:solana_kit/solana_kit.dart';
 
 Future<void> main() async {
-  final rpc = createSolanaRpc('https://api.devnet.solana.com');
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   // Fetch the Clock sysvar.
   final clock = await fetchSysvarClock(rpc);
@@ -329,12 +295,6 @@ This umbrella package re-exports the core SDK packages below. Program packages s
 | `solana_kit_transaction_confirmation` | Transaction confirmation strategies                      |
 | `solana_kit_transaction_messages`     | Transaction message building                             |
 | `solana_kit_transactions`             | Transaction types and serialization                      |
-
-### Umbrella-specific helpers
-
-| Function                                       | Description                                                                                                                    |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `getMinimumBalanceForRentExemption(int space)` | Calculates the minimum lamports for rent exemption without an RPC call. Uses on-chain rent parameters from the Solana runtime. |
 
 ## API Reference
 

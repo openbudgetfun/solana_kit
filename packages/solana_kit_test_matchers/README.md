@@ -134,19 +134,17 @@ void main() {
 Verify transaction signature state.
 
 ```dart
-import 'package:solana_kit_test_matchers/solana_kit_test_matchers.dart';
 import 'package:test/test.dart';
 
 void main() {
-  // Verify a transaction is fully signed (all signatures populated and non-zero).
-  // test('transaction is fully signed', () {
-  //   expect(signedTransaction, isFullySignedTransactionMatcher);
-  // });
+  test('transaction is fully signed', () {
+    // Build a fully signed transaction, then:
+    // expect(signedTransaction, isFullySignedTransactionMatcher);
+  });
 
-  // Verify a transaction has the expected number of signatures.
-  // test('transaction has 2 signatures', () {
-  //   expect(transaction, hasSignatureCount(2));
-  // });
+  test('transaction has 2 signatures', () {
+    // expect(transaction, hasSignatureCount(2));
+  });
 }
 ```
 

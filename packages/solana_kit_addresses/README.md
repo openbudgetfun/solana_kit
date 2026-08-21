@@ -88,6 +88,11 @@ void main() {
 
   // Assert validity -- throws SolanaError on failure.
   assertIsAddress('11111111111111111111111111111112');
+
+  print(myAddress.value);
+  print(systemProgram.value);
+  print(valid);
+  print(invalid);
 }
 ```
 
@@ -119,8 +124,6 @@ void main() {
 The address codec encodes and decodes `Address` values as fixed-size 32-byte binary representations. This is useful for serializing addresses in on-chain data structures.
 
 ```dart
-import 'dart:typed_data';
-
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
 void main() {

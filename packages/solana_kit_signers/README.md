@@ -132,7 +132,7 @@ Future<void> main() async {
   );
 
   // Sign the message. Returns a list of signature dictionaries (one per message).
-  final signaturesList = await signer.signMessages([message]);
+  final signaturesList = await signer.signMessages([message, messageFromBytes]);
   final signatures = signaturesList[0];
 
   print('Signed by: ${signatures.keys.first.value}');

@@ -2,9 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_rpc_subscriptions.svg)](https://pub.dev/packages/solana_kit_rpc_subscriptions) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_rpc_subscriptions/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_rpc_subscriptions) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_rpc_subscriptions)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_rpc_subscriptions)
 
-Subscription client for the Solana Kit Dart SDK -- the composition layer that ties together WebSocket channels, the subscriptions API, JSON serialization, and error handling.
-
-This is the Dart port of [`@solana/rpc-subscriptions`](https://github.com/anza-xyz/kit/tree/main/packages/rpc-subscriptions) from the Solana TypeScript SDK.
+Subscription client for the Solana Kit Dart SDK. `createSolanaRpcSubscriptions` wires a WebSocket channel, the subscriptions API, JSON serialization, and error handling into a client that streams account, signature, log, slot, and program notifications.
 
 <!-- {=packageInstallSection:"solana_kit_rpc_subscriptions"} -->
 
@@ -43,189 +41,68 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Usage
 
-### Creating a subscription client
+### Subscribing to notifications
 
-The primary entry point is `createSolanaRpcSubscriptions`, which composes a fully-featured subscription client with BigInt-safe JSON serialization, autopinging, channel pooling, and subscription coalescing.
-
-```dart
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
-import 'package:solana_kit_rpc_subscriptions_api/solana_kit_rpc_subscriptions_api.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
-
-void main() async {
-  // Create a subscription client for devnet.
-  final subscriptions = createSolanaRpcSubscriptions(
-    'wss://api.devnet.solana.com',
-  );
-
-  // Subscribe to account notifications.
-  final controller = AbortController();
-  final pending = subscriptions.accountNotifications(
-    const Address('11111111111111111111111111111111'),
-    const AccountNotificationsConfig(
-      encoding: 'base64',
-      commitment: Commitment.confirmed,
-    ),
-  );
-
-  final stream = await pending.subscribe(
-    RpcSubscribeOptions(abortSignal: controller.signal),
-  );
-
-  await for (final notification in stream) {
-    print('Account changed: $notification');
-    // Unsubscribe after the first notification.
-    controller.abort();
-  }
-}
-```
-
-### Including unstable subscription methods
-
-To access unstable subscription methods like `blockNotifications`, `slotsUpdatesNotifications`, and `voteNotifications`, use `createSolanaRpcSubscriptionsUnstable`:
+`createSolanaRpcSubscriptions` returns a client whose `request` method returns a `PendingRpcSubscriptionsRequest`. Call `.subscribe(...)` to get a `Stream` of notifications, and cancel with a `CancellationTokenSource`.
 
 ```dart
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
-void main() async {
-  final subscriptions = createSolanaRpcSubscriptionsUnstable(
-    'wss://api.devnet.solana.com',
-  );
-
-  final controller = AbortController();
-  final pending = subscriptions.slotsUpdatesNotifications();
-
-  final stream = await pending.subscribe(
-    RpcSubscribeOptions(abortSignal: controller.signal),
-  );
-
-  await for (final notification in stream) {
-    print('Slot update: $notification');
-    controller.abort();
-  }
-}
-```
-
-### Customizing channel configuration
-
-The `DefaultRpcSubscriptionsChannelConfig` class lets you tune connection pooling, autopinging intervals, send buffer sizes, and endpoint security. Private IP literals are rejected by default; controlled local validators must set `allowPrivateHosts: true` and, for `ws://`, `allowInsecureWs: true`.
-
-```dart
-import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
-
-void main() {
+Future<void> main() async {
   final subscriptions = createSolanaRpcSubscriptions(
     'wss://api.mainnet-beta.solana.com',
-    DefaultRpcSubscriptionsChannelConfig(
-      url: 'wss://api.mainnet-beta.solana.com',
-      intervalMs: 10000, // Ping every 10 seconds.
-      maxSubscriptionsPerChannel: 200, // More subs per channel.
-      minChannels: 2, // Start with 2 channels.
-      sendBufferHighWatermark: 256 * 1024, // 256KB send buffer.
-    ),
   );
+
+  final controller = CancellationTokenSource();
+
+  final pending = subscriptions.request('slotNotifications');
+  final stream = await pending.subscribe(
+    RpcSubscribeOptions(abortSignal: controller.token),
+  );
+
+  var count = 0;
+  await for (final notification in stream) {
+    print('Slot: $notification');
+    count++;
+    if (count >= 3) {
+      controller.cancel();
+    }
+  }
 }
 ```
 
-### Building from a custom transport
+### Typed subscription methods
 
-When you need full control over the transport layer, use `createSolanaRpcSubscriptionsFromTransport`:
-
-```dart
-import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
-
-void main() {
-  // Create a custom transport with subscription coalescing.
-  final transport = createDefaultRpcSubscriptionsTransport(
-    DefaultRpcSubscriptionsTransportConfig(
-      createChannel: createDefaultSolanaRpcSubscriptionsChannelCreator(
-        DefaultRpcSubscriptionsChannelConfig(
-          url: 'wss://api.devnet.solana.com',
-        ),
-      ),
-    ),
-  );
-
-  final subscriptions = createSolanaRpcSubscriptionsFromTransport(transport);
-}
-```
-
-### Subscription coalescing
-
-When multiple callers subscribe to the same notification with the same parameters, the coalescer deduplicates them into a single server-side subscription. This happens automatically with `createSolanaRpcSubscriptions`.
+The client exposes typed helpers for each subscription method, with parameter builders from `solana_kit_rpc_subscriptions_api`.
 
 ```dart
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
+import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
-void main() async {
+Future<void> main() async {
   final subscriptions = createSolanaRpcSubscriptions(
-    'wss://api.devnet.solana.com',
+    'wss://api.mainnet-beta.solana.com',
   );
 
-  // Both subscriptions share a single server-side subscription
-  // because they have the same method and params.
-  final controller1 = AbortController();
-  final pending1 = subscriptions.slotNotifications();
-  final stream1 = await pending1.subscribe(
-    RpcSubscribeOptions(abortSignal: controller1.signal),
-  );
+  final controller = CancellationTokenSource();
+  final stream = await subscriptions
+      .request('slotNotifications')
+      .subscribe(RpcSubscribeOptions(abortSignal: controller.token));
 
-  final controller2 = AbortController();
-  final pending2 = subscriptions.slotNotifications();
-  final stream2 = await pending2.subscribe(
-    RpcSubscribeOptions(abortSignal: controller2.signal),
-  );
-
-  // Both streams receive the same notifications.
-  stream1.listen((n) => print('Listener 1: $n'));
-  stream2.listen((n) => print('Listener 2: $n'));
+  await for (final notification in stream) {
+    print(notification);
+    controller.cancel();
+  }
 }
 ```
 
-## API Reference
+## Key APIs
 
-### Factory functions
-
-| Function                                                                                                  | Description                                                                                          |
-| --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `createSolanaRpcSubscriptions(String clusterUrl, [DefaultRpcSubscriptionsChannelConfig? config])`         | Creates a fully-featured subscription client with BigInt JSON, autopinging, pooling, and coalescing. |
-| `createSolanaRpcSubscriptionsUnstable(String clusterUrl, [DefaultRpcSubscriptionsChannelConfig? config])` | Same as above, but includes unstable subscription methods.                                           |
-| `createSolanaRpcSubscriptionsFromTransport(RpcSubscriptionsTransport transport)`                          | Creates a subscription client from a custom transport.                                               |
-| `createSubscriptionRpc(RpcSubscriptionsConfig config)`                                                    | Low-level factory from an API and transport pair.                                                    |
-| `createDefaultRpcSubscriptionsTransport(DefaultRpcSubscriptionsTransportConfig config)`                   | Creates a transport with subscription coalescing from a channel creator.                             |
-| `createRpcSubscriptionsTransportFromChannelCreator(RpcSubscriptionsChannelCreator creator)`               | Creates a transport from a raw channel creator.                                                      |
-
-### Channel creators
-
-| Function                                                                              | Description                                                                           |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `createDefaultSolanaRpcSubscriptionsChannelCreator(config)`                           | Creates a channel creator with BigInt JSON serialization, autopinging, and pooling.   |
-| `createDefaultRpcSubscriptionsChannelCreator(config)`                                 | Creates a channel creator with standard JSON serialization, autopinging, and pooling. |
-| `getChannelPoolingChannelCreator(creator, {maxSubscriptionsPerChannel, minChannels})` | Wraps a channel creator with connection pooling.                                      |
-| `getRpcSubscriptionsChannelWithAutoping({abortSignal, channel, intervalMs})`          | Wraps a channel to send periodic ping messages.                                       |
-| `getRpcSubscriptionsTransportWithSubscriptionCoalescing(transport)`                   | Wraps a transport to deduplicate identical subscriptions.                             |
-
-### Classes
-
-| Class                                  | Description                                                                                                                                                                        |
-| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `RpcSubscriptions`                     | The subscription client. Prefer typed helpers like `slotNotifications()` and `accountNotifications(...)`; use `request(notificationName, [params])` as the low-level escape hatch. |
-| `PendingRpcSubscriptionsRequest<T>`    | A pending request. Call `subscribe(options)` to start receiving notifications as a `Stream<T>`.                                                                                    |
-| `RpcSubscribeOptions`                  | Options for subscribing, including an `AbortSignal`.                                                                                                                               |
-| `RpcSubscriptionsPlan<T>`              | Describes a subscription plan with request details and execution logic.                                                                                                            |
-| `DefaultRpcSubscriptionsChannelConfig` | Configuration for channel creation: URL, ping interval, pool size, buffer size.                                                                                                    |
-| `RpcSubscriptionsRequest`              | A subscription request with a method name and parameters.                                                                                                                          |
-| `RpcSubscriptionsTransportConfig`      | Configuration passed to a transport function.                                                                                                                                      |
-
-### Type aliases
-
-| Type                             | Description                                                                                         |
-| -------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `RpcSubscriptionsTransport`      | `Future<DataPublisher> Function(RpcSubscriptionsTransportConfig)` -- the transport function type.   |
-| `RpcSubscriptionsChannelCreator` | `Future<RpcSubscriptionsChannel> Function({required AbortSignal abortSignal})` -- creates channels. |
+- `createSolanaRpcSubscriptions(url, {config})`: the standard client factory.
+- `RpcSubscriptions` interface with `request(methodName, params)`.
+- `PendingRpcSubscriptionsRequest.subscribe(options)` returning a `Stream`.
+- `RpcSubscriptionsRequestOptions` with `abortSignal` for cancellation.
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_rpc_subscriptions"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart"} -->
 

@@ -17,7 +17,7 @@ import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.
 typedef ResolvedInstruction = Instruction;
 
 /// The normalized shape of an instruction inside a compiled transaction
-/// message — `legacy`, `0`, and `1` are all reduced to this form before
+/// message; `legacy`, `0`, and `1` are all reduced to this form before
 /// resolution.
 class _NormalizedCompiledInstruction {
   const _NormalizedCompiledInstruction({
@@ -97,7 +97,7 @@ List<AccountMeta> getAccountMetasFromCompiledTransactionMessage(
 ///
 /// Each returned instruction has its account indices resolved to
 /// [AccountMeta]s (with the proper signer/writable bits) and its data exposed
-/// as a [Uint8List] — the form the auto-generated `@solana-program/*`
+/// as a [Uint8List], the form the auto-generated `@solana-program/*`
 /// `parseXInstruction` functions expect. `accounts` and `data` are `null` when
 /// empty.
 ///

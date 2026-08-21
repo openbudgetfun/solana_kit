@@ -26,7 +26,7 @@ class ReactiveStreamConnection<T> {
 /// [ReactiveStreamStore] is (re)connected.
 ///
 /// Receives a [CancellationToken] that fires when this specific connection
-/// window should tear down — composed from the per-connection inner
+/// window should tear down, composed from the per-connection inner
 /// controller and (if attached via [ReactiveStreamStore.withSignal]) the
 /// caller-provided token. Thread it into the underlying transport's own
 /// cancellation so the connection itself stops on per-connection abort, not
@@ -44,7 +44,7 @@ typedef ReactiveStreamSource<T> = ReactiveStreamStore<T> Function();
 /// The lifecycle state of a [ReactiveStreamStore].
 ///
 /// Added the `idle` status in @solana/kit v7.0.0 and removed the former
-/// `retrying` status — a subsequent `connect()` from any non-idle status now
+/// `retrying` status. A subsequent `connect()` from any non-idle status now
 /// transitions through `loading` while preserving the last known `data` and
 /// `error` (stale-while-revalidate).
 enum ReactiveStreamState {
@@ -54,7 +54,7 @@ enum ReactiveStreamState {
   idle,
 
   /// A connection is in progress. `data` and `error` are preserved from the
-  /// previous connection (if any) — stale-while-revalidate UX. A subsequent
+  /// previous connection (if any), giving stale-while-revalidate UX. A subsequent
   /// `loaded` clears `error`; a subsequent `error` replaces it.
   loading,
 
@@ -246,7 +246,7 @@ class ReactiveStreamStore<T> {
   }
 
   /// Aborts the current connection and returns the store to `idle` without
-  /// permanently killing it — natural for effect cleanup.
+  /// permanently killing it, which is natural for effect cleanup.
   ///
   /// Added in @solana/kit v7.0.0.
   void reset() {

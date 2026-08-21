@@ -1,8 +1,8 @@
 # solana_kit_integration_tests
 
-On-chain integration tests for Solana Kit program clients against a local [SurfPool](https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_surfpool) validator.
-
 [![pub package](https://img.shields.io/pub/v/solana_kit_integration_tests.svg)](https://pub.dev/packages/solana_kit_integration_tests)
+
+On-chain integration tests for Solana Kit program clients against a local [SurfPool](https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_surfpool) validator.
 
 This is an internal, non-published workspace package. It depends on every generated program client (system, token, token-2022, memo, compute-budget, stake, loader, address-lookup-table, associated-token-account, subscriptions, mpl-bubblegum) and exercises their instruction builders end-to-end against a real SurfPool Surfnet instance.
 
@@ -26,10 +26,14 @@ dart test packages/solana_kit_integration_tests/test/integration/memo_test.dart 
 [`IntegrationTestEnv`](lib/src/integration_test_env.dart) connects to a running SurfPool, funds a payer, and exposes `sendInstructions(...)` which builds, signs, sends, and confirms a transaction from any program-client instruction.
 
 ```dart
+import 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
 import 'package:solana_kit_integration_tests/solana_kit_integration_tests.dart';
+import 'package:solana_kit_memo/solana_kit_memo.dart';
 
-final env = await IntegrationTestEnv.connect();
-await env.sendInstructions([
-  getAddMemoInstruction(programAddress: memoProgramAddress, memo: 'hi'),
-]);
+Future<void> main() async {
+  final env = await IntegrationTestEnv.create();
+  await env.sendInstructions([
+    getAddMemoInstruction(programAddress: memoProgramAddress, memo: 'hi'),
+  ]);
+}
 ```

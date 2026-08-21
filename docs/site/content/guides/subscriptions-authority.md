@@ -30,7 +30,7 @@ Future<void> main() async {
     tokenProgram: tokenProgram,
   );
 
-  print(instruction.accounts.length);
+  print(instruction.accounts!.length);
 }
 ```
 

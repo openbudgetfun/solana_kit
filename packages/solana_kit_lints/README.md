@@ -56,21 +56,13 @@ linter:
 
 ## Configuration
 
-The shared `analysis_options.yaml` provided by this package includes [`very_good_analysis`](https://pub.dev/packages/very_good_analysis) as its base and applies the following customizations:
-
-### Base
-
-```yaml
-include: package:very_good_analysis/analysis_options.yaml
-```
-
-Flutter packages use a separate preset because Dart analysis options only allow one top-level `include`:
+The shared `analysis_options.yaml` includes [`very_good_analysis`](https://pub.dev/packages/very_good_analysis) as its base and applies the following customizations. Flutter packages use a separate preset because Dart analysis options only allow one top-level `include`:
 
 ```yaml
 include: package:flutter_lints/flutter.yaml
 ```
 
-That Flutter preset then layers the Solana Kit rules back on top.
+That Flutter preset layers the Solana Kit rules back on top.
 
 ### Analyzer error severity
 
@@ -89,45 +81,20 @@ The following diagnostics are promoted to errors to catch problems early:
 
 The following rules from the base presets are customized for this project:
 
-| Rule                                            | Value   | Reason                                                                                                               |
-| ----------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
-| `public_member_api_docs`                        | `true`  | Published packages should document public API.                                                                       |
-| `lines_longer_than_80_chars`                    | `false` | Disabled because many error messages, type signatures, and constant names in the SDK naturally exceed 80 characters. |
-| `cancel_subscriptions`                          | `true`  | Catch leaked stream subscriptions.                                                                                   |
-| `close_sinks`                                   | `true`  | Catch leaked sinks and controllers.                                                                                  |
-| `avoid_equals_and_hash_code_on_mutable_classes` | `false` | Value-like mutable classes are allowed where package APIs require them.                                              |
-
-### Full configuration
-
-For reference, the complete shared analysis options file:
-
-```yaml
-include: package:very_good_analysis/analysis_options.yaml
-
-analyzer:
-  errors:
-    missing_return: error
-    dead_code: error
-    unused_element: error
-    unused_import: error
-    unused_local_variable: error
-    todo: ignore
-
-linter:
-  rules:
-    public_member_api_docs: true
-    lines_longer_than_80_chars: false
-    cancel_subscriptions: true
-    close_sinks: true
-    avoid_equals_and_hash_code_on_mutable_classes: false
-```
+| Rule                                            | Value   | Reason                                                                                              |
+| ----------------------------------------------- | ------- | --------------------------------------------------------------------------------------------------- |
+| `public_member_api_docs`                        | `true`  | Published packages should document public API.                                                      |
+| `lines_longer_than_80_chars`                    | `false` | Many error messages, type signatures, and constant names in the SDK naturally exceed 80 characters. |
+| `cancel_subscriptions`                          | `true`  | Catch leaked stream subscriptions.                                                                  |
+| `close_sinks`                                   | `true`  | Catch leaked sinks and controllers.                                                                 |
+| `avoid_equals_and_hash_code_on_mutable_classes` | `false` | Value-like mutable classes are allowed where package APIs require them.                             |
 
 ## API Reference
 
 ### Provided files
 
-- **`lib/analysis_options.yaml`** -- The shared analysis options file that all Dart packages include. Built on top of `very_good_analysis` with project-specific customizations.
-- **`lib/flutter_analysis_options.yaml`** -- The shared analysis options file for Flutter packages. Built on top of `flutter_lints` with the Solana Kit analyzer severities and project-specific customizations layered back in.
+- `lib/analysis_options.yaml`: the shared analysis options file that all Dart packages include. Built on top of `very_good_analysis` with project-specific customizations.
+- `lib/flutter_analysis_options.yaml`: the shared analysis options file for Flutter packages. Built on top of `flutter_lints` with the Solana Kit analyzer severities and project-specific customizations layered back in.
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_lints"|replace:"__EXAMPLE_PATH__":"example/README.md"|replace:"__IMPORT_PATH__":"N/A (lint package)"} -->
 

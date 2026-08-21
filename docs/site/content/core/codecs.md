@@ -23,11 +23,11 @@ Combines both directions.
 
 ## Package map
 
-- `solana_kit_codecs_core` — base abstractions and composition helpers
-- `solana_kit_codecs_numbers` — little-endian integers and floats
-- `solana_kit_codecs_strings` — base16/base58/base64/utf8/baseX encoders
-- `solana_kit_codecs_data_structures` — structs, tuples, arrays, maps, unions, nullable values, and more
-- `solana_kit_options` — Rust-style `Option<T>` modeling and codec support
+- `solana_kit_codecs_core`: base abstractions and composition helpers
+- `solana_kit_codecs_numbers`: little-endian integers and floats
+- `solana_kit_codecs_strings`: base16/base58/base64/utf8/baseX encoders
+- `solana_kit_codecs_data_structures`: structs, tuples, arrays, maps, unions, nullable values, and more
+- `solana_kit_options`: Rust-style `Option<T>` modeling and codec support
 
 ## Example: build a simple struct codec
 

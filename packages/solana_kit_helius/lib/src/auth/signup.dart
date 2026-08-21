@@ -74,7 +74,7 @@ Future<Map<String, String>> _authenticate(
     };
   }
 
-  // Secret key path — sign and do wallet signup
+  // Secret key path: sign and do wallet signup
   final secretKeyBytes = base64Decode(options.secretKey!);
   try {
     if (secretKeyBytes.length != 64) {
@@ -161,7 +161,7 @@ Future<SignupResult> authSignup(
     baseUrl: effectiveBaseUrl,
   );
   if (projects.isNotEmpty) {
-    // User has an existing project — check if already on requested plan
+    // User has an existing project: check if already on requested plan
     final project = projects.first;
 
     if (_matchesExistingPlan(project, plan, period)) {
@@ -191,7 +191,7 @@ Future<SignupResult> authSignup(
       );
     }
 
-    // Different plan — upgrade required
+    // Different plan: upgrade required
     return UpgradeRequiredResult(
       jwt: jwt,
       refId: refId,
@@ -201,7 +201,7 @@ Future<SignupResult> authSignup(
     );
   }
 
-  // No existing project — must create a fresh payment intent.
+  // No existing project: must create a fresh payment intent.
   // Contact info is required by the backend at /checkout/initialize for
   // any new subscription, so we validate up front.
   if (_isBlank(options.email) ||

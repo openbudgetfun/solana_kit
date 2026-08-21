@@ -33,9 +33,9 @@
 /// Higher-level functions compose generated instructions into common
 /// workflows:
 ///
-/// - `getCreateMintInstructionPlan` — create a new token mint
-/// - `getMintToAtaInstructionPlan` — mint tokens to an ATA (created if needed)
-/// - `getTransferToAtaInstructionPlan` — transfer to a recipient's ATA
+/// - `getCreateMintInstructionPlan`: create a new token mint
+/// - `getMintToAtaInstructionPlan`: mint tokens to an ATA (created if needed)
+/// - `getTransferToAtaInstructionPlan`: transfer to a recipient's ATA
 library;
 
 export 'package:solana_kit_associated_token_account/solana_kit_associated_token_account.dart';

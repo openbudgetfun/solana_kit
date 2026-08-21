@@ -109,11 +109,11 @@ These helpers are useful when you want domain-specific errors instead of open-en
 
 ## Related packages
 
-- `solana_kit_accounts` — fetch, parse, and decode helpers
-- `solana_kit_rpc_types` — shared account response models
-- `solana_kit_rpc_parsed_types` — typed parsed-account models for known programs
-- `solana_kit_codecs_*` — custom binary layouts
-- `solana_kit_program_client_core` — higher-level patterns for typed program clients
+- `solana_kit_accounts`: fetch, parse, and decode helpers
+- `solana_kit_rpc_types`: shared account response models
+- `solana_kit_rpc_parsed_types`: typed parsed-account models for known programs
+- `solana_kit_codecs_*`: custom binary layouts
+- `solana_kit_program_client_core`: higher-level patterns for typed program clients
 
 ## Read next
 

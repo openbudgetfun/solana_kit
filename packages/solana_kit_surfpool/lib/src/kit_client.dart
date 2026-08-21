@@ -17,7 +17,7 @@ import 'package:solana_kit_surfpool/src/types.dart';
 /// `@solana/surfpool/kit` plugin for TypeScript.
 ///
 /// Bundles the Surfnet handle, a Solana RPC client, an RPC subscriptions
-/// client, a pre-funded payer signer, and a typed cheatcode RPC — so tests
+/// client, a pre-funded payer signer, and a typed cheatcode RPC, so tests
 /// can build, sign, send, and confirm transactions without managing a
 /// validator or RPC plumbing by hand.
 class SurfpoolClient {

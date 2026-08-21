@@ -44,7 +44,7 @@ ClientWithFetchAccounts createClientWithFetchAccountsFromRpc(Rpc rpc) {
 /// methods; invoking one the RPC does not actually support will fail when
 /// the underlying RPC method is called.
 ///
-/// Note that this does not create a fully-fledged Kit client — it only wraps
+/// This does not create a fully-fledged Kit client; it only wraps
 /// the RPC in the account interfaces above.
 ({
   ClientWithGetMinimumBalance getMinimumBalance,

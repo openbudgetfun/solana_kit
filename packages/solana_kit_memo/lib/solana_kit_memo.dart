@@ -12,6 +12,6 @@
 /// ```
 library;
 
-// Hide memoProgramAddress — it's already provided by
+// Hide memoProgramAddress; it's already provided by
 // solana_kit_address_constants to avoid duplication across the SDK.
 export 'src/generated/memo.dart' hide memoProgramAddress;

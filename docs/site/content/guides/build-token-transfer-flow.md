@@ -78,9 +78,9 @@ final signature = await sendAndConfirmTransaction(
 
 Useful high-level buckets:
 
-- **RPC failures** — provider downtime, transport errors, malformed responses
-- **transaction failures** — missing signers, expired blockhash, signature issues
-- **program/instruction failures** — insufficient funds, invalid accounts, program-specific rules
+- **RPC failures**: provider downtime, transport errors, malformed responses
+- **transaction failures**: missing signers, expired blockhash, signature issues
+- **program/instruction failures**: insufficient funds, invalid accounts, program-specific rules
 
 `SolanaError` domains make it easier to route these to the right product behavior.
 

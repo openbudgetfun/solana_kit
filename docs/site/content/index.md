@@ -36,11 +36,11 @@ A Dart-first Solana SDK workspace modeled after `@solana/kit`, with strongly typ
 
 ## What makes Solana Kit different?
 
-- **Typed end to end** — addresses, RPC requests, subscriptions, transactions, and account models are all expressed with explicit Dart types.
-- **Modular by default** — import the umbrella package for convenience, or pull in only the packages you need.
-- **Composable primitives** — build transaction messages, codecs, program clients, and confirmation strategies from smaller reusable pieces.
-- **Dart-native ergonomics** — modern Dart 3 features like records, patterns, extension types, and sealed classes are used throughout the workspace.
-- **Upstream-aware** — the repo tracks `@solana/kit` compatibility and documents sync status explicitly.
+- **Typed end to end**: addresses, RPC requests, subscriptions, transactions, and account models are all expressed with explicit Dart types.
+- **Modular by default**: import the umbrella package for convenience, or pull in only the packages you need.
+- **Composable primitives**: build transaction messages, codecs, program clients, and confirmation strategies from smaller reusable pieces.
+- **Dart-native ergonomics**: modern Dart 3 features like records, patterns, extension types, and sealed classes are used throughout the workspace.
+- **Upstream-aware**: the repo tracks `@solana/kit` compatibility and documents sync status explicitly.
 
 ## Start here
 

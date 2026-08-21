@@ -67,7 +67,7 @@ class CreateTreeConfig {
 /// Creates an instruction plan that initializes a new compressed NFT tree.
 ///
 /// This plan contains a single instruction:
-/// 1. Bubblegum `CreateTree` — initializes the Merkle tree on-chain.
+/// 1. Bubblegum `CreateTree`: initializes the Merkle tree on-chain.
 ///
 /// ```dart
 /// final plan = getCreateTreeInstructionPlan(

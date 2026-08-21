@@ -297,7 +297,7 @@ Future<String> resolvePriceId(
   if (priceId == null || priceId.isEmpty) {
     final available = periodMap.keys.toList();
     throw StateError(
-      'No priceId found for plan "$plan" ($period). ${available.isEmpty ? 'The pricing configuration is empty — the backend may not be fully deployed yet.' : 'Expected key "$usagePlan" but available keys are: [${available.join(', ')}]'}',
+      'No priceId found for plan "$plan" ($period). ${available.isEmpty ? 'The pricing configuration is empty; the backend may not be fully deployed yet.' : 'Expected key "$usagePlan" but available keys are: [${available.join(', ')}]'}',
     );
   }
   return priceId;

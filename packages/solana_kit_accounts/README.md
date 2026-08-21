@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_accounts.svg)](https://pub.dev/packages/solana_kit_accounts) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_accounts/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_accounts) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_accounts)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_accounts)
 
-Account fetching, decoding, and assertion utilities for the Solana Kit Dart SDK.
+Fetch, decode, and assert on Solana accounts. The package models an account as `Account<TData>` (address, data, and on-chain metadata), handles the not-found case with a sealed `MaybeAccount<TData>`, and provides RPC fetch helpers for both raw bytes and `jsonParsed` views.
 
 This is the Dart port of [`@solana/accounts`](https://github.com/anza-xyz/kit/tree/main/packages/accounts) from the Solana TypeScript SDK.
 
@@ -117,7 +117,7 @@ This boundary keeps RPC concerns, existence handling, and binary decoding easy t
 
 ### The Account type
 
-The `Account<TData>` class contains all the information relevant to a Solana account: its address, data, and on-chain metadata.
+`Account<TData>` holds everything relevant to a Solana account: its address, data, and on-chain metadata.
 
 ```dart
 import 'dart:typed_data';
@@ -137,26 +137,21 @@ void main() {
     space: BigInt.from(4),
   );
 
-  print(encodedAccount.address); // Address('11111111111111111111111111111111')
-  print(encodedAccount.lamports); // Lamports(1000000000)
-  print(encodedAccount.executable); // false
+  print(encodedAccount.address);
+  print(encodedAccount.lamports);
+  print(encodedAccount.executable);
   print(encodedAccount.data.length); // 4
-
-  // The EncodedAccount type alias is Account<Uint8List>.
-  final EncodedAccount sameType = encodedAccount;
 }
 ```
 
-### MaybeAccount -- handling accounts that may not exist
+### MaybeAccount: handling accounts that may not exist
 
-`MaybeAccount<TData>` is a sealed class hierarchy that represents an account that may or may not exist on-chain. Pattern matching is the idiomatic way to handle both cases.
+`MaybeAccount<TData>` is a sealed class hierarchy. Pattern matching is the idiomatic way to handle both cases.
 
 ```dart
 import 'dart:typed_data';
 
 import 'package:solana_kit_accounts/solana_kit_accounts.dart';
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 
 void handleAccount(MaybeAccount<Uint8List> maybeAccount) {
   switch (maybeAccount) {
@@ -176,9 +171,7 @@ void handleAccount(MaybeAccount<Uint8List> maybeAccount) {
 
 ### Fetching accounts from the RPC
 
-Use `fetchEncodedAccount` and `fetchEncodedAccounts` to retrieve accounts from a Solana RPC node. These functions use the `getAccountInfo` and `getMultipleAccounts` RPC methods with base64 encoding.
-
-If you prefer a reusable higher-level boundary for account reads, create a `SolanaAccountClient` from your `Rpc` and call the same workflows through that client.
+`fetchEncodedAccount` and `fetchEncodedAccounts` use the `getAccountInfo` and `getMultipleAccounts` RPC methods with base64 encoding. For a reusable higher-level boundary, create a `SolanaAccountClient` from your `Rpc` and call the same workflows through that client.
 
 ```dart
 import 'package:solana_kit_accounts/solana_kit_accounts.dart';
@@ -187,7 +180,7 @@ import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 
 Future<void> main() async {
-  final rpc = createSolanaRpc('https://api.devnet.solana.com');
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   // Fetch a single account.
   final maybeAccount = await fetchEncodedAccount(
@@ -206,7 +199,7 @@ Future<void> main() async {
   print('Client fetch agrees: ${sameAccount.exists}');
 
   // Fetch with a specific commitment level.
-  final confirmedAccount = await fetchEncodedAccount(
+  await fetchEncodedAccount(
     rpc,
     const Address('11111111111111111111111111111111'),
     config: FetchAccountConfig(commitment: Commitment.confirmed),
@@ -226,7 +219,7 @@ Future<void> main() async {
 
 ### Fetching JSON-parsed accounts
 
-The `fetchJsonParsedAccount` and `fetchJsonParsedAccounts` functions use the `jsonParsed` encoding, which returns human-readable data for well-known program accounts (e.g. SPL Token accounts).
+`fetchJsonParsedAccount` and `fetchJsonParsedAccounts` use the `jsonParsed` encoding, which returns human-readable data for well-known program accounts (for example SPL Token accounts).
 
 ```dart
 import 'package:solana_kit_accounts/solana_kit_accounts.dart';
@@ -234,7 +227,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 
 Future<void> main() async {
-  final rpc = createSolanaRpc('https://api.devnet.solana.com');
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
   const tokenAccountAddress = Address(
     'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
   );
@@ -242,7 +235,11 @@ Future<void> main() async {
   // Fetch a single JSON-parsed account.
   final account = await fetchJsonParsedAccount(rpc, tokenAccountAddress);
   if (account case ExistingAccount<Object>(:final account)) {
-    if (account.data case JsonParsedAccountData<Map<String, Object?>>(:final parsedAccountMeta, :final data)) {
+    if (account.data
+        case JsonParsedAccountData<Map<String, Object?>>(
+          :final parsedAccountMeta,
+          :final data,
+        )) {
       print('Program: ${parsedAccountMeta?.program}');
       print('Type: ${parsedAccountMeta?.type}');
       print('Parsed data: $data');
@@ -253,7 +250,7 @@ Future<void> main() async {
 
 ### Decoding accounts
 
-Transform an `EncodedAccount` into an `Account<TData>` using a `Decoder`.
+Transform an `EncodedAccount` into an `Account<TData>` using a `Decoder`. Build decoders with `FixedSizeDecoder` or `VariableSizeDecoder` from `solana_kit_codecs_core`.
 
 ```dart
 import 'dart:typed_data';
@@ -261,7 +258,6 @@ import 'dart:typed_data';
 import 'package:solana_kit_accounts/solana_kit_accounts.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
-import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 
 // A simple data type for demonstration.
@@ -271,25 +267,14 @@ class MyData {
 }
 
 // A decoder that reads a little-endian u32 from the account data.
-class MyDataDecoder implements Decoder<MyData> {
-  const MyDataDecoder();
-
-  @override
-  MyData decode(Uint8List bytes, [int offset = 0]) => read(bytes, offset).$1;
-
-  @override
-  (MyData, int) read(Uint8List bytes, int offset) {
+final decoder = FixedSizeDecoder<MyData>(
+  fixedSize: 4,
+  read: (bytes, offset) {
     final byteData = ByteData.sublistView(bytes);
     final value = byteData.getUint32(offset, Endian.little);
     return (MyData(value), offset + 4);
-  }
-
-  @override
-  int get fixedSize => 4;
-
-  @override
-  int? get maxSize => 4;
-}
+  },
+);
 
 void main() {
   // Create an encoded account.
@@ -302,8 +287,7 @@ void main() {
     space: BigInt.from(4),
   );
 
-  // Decode the account using a custom decoder.
-  const decoder = MyDataDecoder();
+  // Decode the account using the decoder.
   final decodedAccount = decodeAccount<MyData>(encodedAccount, decoder);
   print(decodedAccount.data.value); // 42
 }
@@ -312,9 +296,29 @@ void main() {
 For `MaybeAccount`, use `decodeMaybeAccount`:
 
 ```dart
+import 'dart:typed_data';
+
+import 'package:solana_kit_accounts/solana_kit_accounts.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
+import 'package:solana_kit_rpc/solana_kit_rpc.dart';
+
+class MyData {
+  const MyData(this.value);
+  final int value;
+}
+
+final decoder = FixedSizeDecoder<MyData>(
+  fixedSize: 4,
+  read: (bytes, offset) {
+    final byteData = ByteData.sublistView(bytes);
+    final value = byteData.getUint32(offset, Endian.little);
+    return (MyData(value), offset + 4);
+  },
+);
+
 Future<void> fetchAndDecode() async {
-  final rpc = createSolanaRpc('https://api.devnet.solana.com');
-  const decoder = MyDataDecoder();
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   final maybeFetched = await fetchEncodedAccount(
     rpc,
@@ -336,16 +340,12 @@ Future<void> fetchAndDecode() async {
 Use assertion functions to validate account existence and decoding state.
 
 ```dart
-import 'dart:typed_data';
-
 import 'package:solana_kit_accounts/solana_kit_accounts.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
-import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 
 Future<void> main() async {
-  final rpc = createSolanaRpc('https://api.devnet.solana.com');
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   // Assert that a MaybeAccount exists.
   // Throws SolanaError with code accountsAccountNotFound if it does not.
@@ -362,15 +362,6 @@ Future<void> main() async {
     const Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'),
   ]);
   assertAccountsExist(accounts);
-
-  // Assert that an account stores decoded data (not Uint8List).
-  // Throws SolanaError with code accountsExpectedDecodedAccount
-  // if the data field is still a Uint8List (i.e. not yet decoded).
-  // assertAccountDecoded(decodedAccount);
-
-  // Assert all accounts in a list are decoded.
-  // Throws SolanaError with code accountsExpectedAllAccountsToBeDecoded.
-  // assertAccountsDecoded(decodedAccounts);
 }
 ```
 
@@ -417,6 +408,7 @@ void main() {
     'owner': '11111111111111111111111111111111',
     'space': 4,
   });
+  print(jsonParsed.exists);
 }
 ```
 
@@ -437,10 +429,10 @@ void main() {
 
 ### Type aliases
 
-| Type                  | Description                                                      |
-| --------------------- | ---------------------------------------------------------------- |
-| `EncodedAccount`      | `Account<Uint8List>` -- an account with raw byte data.           |
-| `MaybeEncodedAccount` | `MaybeAccount<Uint8List>` -- a maybe-account with raw byte data. |
+| Type                  | Description                                                    |
+| --------------------- | -------------------------------------------------------------- |
+| `EncodedAccount`      | `Account<Uint8List>`: an account with raw byte data.           |
+| `MaybeEncodedAccount` | `MaybeAccount<Uint8List>`: a maybe-account with raw byte data. |
 
 ### Fetch functions
 
@@ -480,9 +472,9 @@ void main() {
 
 ### Constants
 
-| Constant          | Description                                                         |
-| ----------------- | ------------------------------------------------------------------- |
-| `baseAccountSize` | `128` -- the number of bytes for account metadata (excluding data). |
+| Constant          | Description                                                       |
+| ----------------- | ----------------------------------------------------------------- |
+| `baseAccountSize` | `128`: the number of bytes for account metadata (excluding data). |
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_accounts"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_accounts/solana_kit_accounts.dart"} -->
 

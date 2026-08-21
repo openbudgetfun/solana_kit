@@ -2,11 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_token_2022.svg)](https://pub.dev/packages/solana_kit_token_2022) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_token_2022) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![Coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_token_2022)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_token_2022)
 
-SPL Token 2022 client for the [Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart SDK.
-
-Provides a generated low-level client from the upstream Codama IDL plus focused handwritten helpers for extension-aware token workflows. Associated Token Account (ATA) APIs are shared from [`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account) and re-exported for convenience.
-
-## Installation
+Token-2022 extension-aware instruction builders, account decoders, codecs, and helpers for the Solana Kit Dart SDK. ATA APIs from `solana_kit_associated_token_account` are re-exported for convenience.
 
 <!-- {=packageInstallSection:"solana_kit_token_2022"} -->
 
@@ -31,69 +27,115 @@ Inside this monorepo, Dart workspace resolution uses the local package automatic
 
 ## Usage
 
-### Compute mint size with extensions
+Compute the on-chain byte size for a mint with extensions before creating the account:
 
 ```dart
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_token_2022/solana_kit_token_2022.dart';
 
-// Calculate on-chain account size for a mint with extensions
-final size = getMintSize([
-  ExtensionType.transferFeeConfig,
-  ExtensionType.defaultAccountState,
-]);
+void main() {
+  final size = getMintSize([
+    TransferFeeConfig(
+      transferFeeConfigAuthority: Address(
+        'TkQKURgZR8bWbYq7bH6KcXQ3Pnt3D3qWbh4StE5jQ2Sf',
+      ),
+      withdrawWithheldAuthority: Address(
+        '9xqYQKFSR3m3kqgT5sYRH7gH3j7Ab8F2PWasmY3dGkDm',
+      ),
+      withheldAmount: BigInt.zero,
+      olderTransferFee: TransferFee(
+        epoch: BigInt.from(0),
+        maximumFee: BigInt.from(50000),
+        transferFeeBasisPoints: 100,
+      ),
+      newerTransferFee: TransferFee(
+        epoch: BigInt.from(0),
+        maximumFee: BigInt.from(50000),
+        transferFeeBasisPoints: 100,
+      ),
+    ),
+  ]);
+  print(size);
+
+  final tokenSize = getTokenSize([
+    TransferFeeAmount(withheldAmount: BigInt.from(50000)),
+  ]);
+  print(tokenSize);
+}
 ```
 
-### Get pre-initialize instructions for extensions
+Get the pre-initialize instructions that some extensions require before the mint itself:
 
 ```dart
-// Some extensions require initialization before the mint itself
-final preIx = getInitializeInstructionsForExtensions(
-  extensions: [ExtensionType.transferFeeConfig],
-  mint: mintAddress,
-  payer: payer,
-);
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_token_2022/solana_kit_token_2022.dart';
+
+void main() {
+  const mint = Address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
+  const payer = Address('11111111111111111111111111111111');
+  const authority = Address(
+    '5z3Y2Y6sxR28F9FJ6YqnbLBoz2tQqNqKVBwShck8KJ5W',
+  );
+
+  final preIx = getPreInitializeInstructionsForMintExtensions(
+    mint: mint,
+    extensions: [
+      TransferFeeConfig(
+        transferFeeConfigAuthority: authority,
+        withdrawWithheldAuthority: authority,
+        withheldAmount: BigInt.zero,
+        olderTransferFee: TransferFee(
+          epoch: BigInt.from(0),
+          maximumFee: BigInt.from(50000),
+          transferFeeBasisPoints: 100,
+        ),
+        newerTransferFee: TransferFee(
+          epoch: BigInt.from(0),
+          maximumFee: BigInt.from(50000),
+          transferFeeBasisPoints: 100,
+        ),
+      ),
+    ],
+  );
+  print(preIx.length);
+  print(payer);
+}
 ```
 
-### Compute token account size
+Use the generated instruction builders directly. The `programAddress` parameter targets Token-2022 instead of classic Token:
 
 ```dart
-final size = getTokenSize([ExtensionType.transferFeeAmount]);
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_token_2022/solana_kit_token_2022.dart';
+
+void main() {
+  const mint = Address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
+  const token = Address('11111111111111111111111111111112');
+  const mintAuthority = Address(
+    '5z3Y2Y6sxR28F9FJ6YqnbLBoz2tQqNqKVBwShck8KJ5W',
+  );
+
+  final ix = getMintToInstruction(
+    programAddress: token2022ProgramAddress,
+    mint: mint,
+    token: token,
+    mintAuthority: mintAuthority,
+    amount: BigInt.from(1000000000),
+  );
+  print(ix.programAddress);
+}
 ```
 
-### Use generated builders directly
+## Key APIs
 
-```dart
-final ix = getMintToInstruction(
-  programAddress: token2022ProgramAddress,
-  mint: mintAddress,
-  destination: tokenAccount,
-  authority: mintAuthority,
-  amount: BigInt.from(1000000000),
-);
-```
-
-## Generated layer
-
-The generated code under `src/generated/` is produced from the upstream Codama IDL at `solana-program/token-2022`. It includes:
-
-- **Instruction builders** — typed functions for all Token 2022 instructions
-- **Account decoders** — parse on-chain account data into typed structs
-- **Codecs** — binary encoders/decoders for all token types
-- **Error definitions** — typed error codes and messages
-- **PDA helpers** — derive associated token account addresses
-- **Program address** — `token2022ProgramAddress` constant
-
-## Handwritten helpers
-
-| Helper                                   | Description                                                  |
-| ---------------------------------------- | ------------------------------------------------------------ |
-| `getMintSize(List<ExtensionType>)`       | Compute on-chain byte size for a mint with given extensions. |
-| `getTokenSize(List<ExtensionType>)`      | Compute on-chain byte size for a token account.              |
-| `getInitializeInstructionsForExtensions` | Get pre-initialize instructions for mint extensions.         |
+- `getMintSize`, `getTokenSize` for account sizing with `Extension` instances
+- `getPreInitializeInstructionsForMintExtensions` for pre-mint setup
+- `getMintToInstruction`, `getTransferInstruction`, and other generated builders (pass `token2022ProgramAddress`)
+- `token2022ProgramAddress` and `token2022ProgramAddressObject` constants
 
 ## Re-exports
 
-This package re-exports the full [`solana_kit_associated_token_account`](https://pub.dev/packages/solana_kit_associated_token_account) API surface so callers can access ATA PDA helpers and instruction builders without adding a separate dependency.
+The full `solana_kit_associated_token_account` API surface is re-exported so callers can access ATA PDA helpers and instruction builders without adding a separate dependency.
 
 ## Upstream reference
 

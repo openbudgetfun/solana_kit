@@ -57,7 +57,7 @@ MaybeAccount<TData> decodeMaybeAccount<TData>(
 
 /// Asserts that an account stores decoded data, i.e. not a [Uint8List].
 ///
-/// Note that it does not check the shape of the data matches the decoded
+/// It does not check the shape of the data matches the decoded
 /// type, only that it is not a [Uint8List].
 ///
 /// Throws a [SolanaError] with code

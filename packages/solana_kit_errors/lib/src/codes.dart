@@ -174,7 +174,7 @@ enum SolanaErrorCode {
   /// The account could not be found.
   accountsAccountNotFound(3230000),
 
-  /// Note: upstream typo — value is 8 digits (32300001) vs 7 for siblings.
+  /// Note: upstream typo; the value is 8 digits (32300001) vs 7 for siblings.
   accountsOneOrMoreAccountsNotFound(32300001),
 
   /// Failed to decode the account data.

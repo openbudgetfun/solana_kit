@@ -2,9 +2,9 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_codecs.svg)](https://pub.dev/packages/solana_kit_codecs) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_codecs/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_codecs) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_codecs)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_codecs)
 
-Umbrella package that re-exports all Solana Kit codec sub-packages through a single import.
+The codec umbrella for the Solana Kit SDK. One import gives you the core codec interfaces plus the number, string, data-structure, fixed-point, and option codecs used to serialize Solana on-chain data.
 
-This is a Dart port of [`@solana/codecs`](https://github.com/anza-xyz/kit/tree/main/packages/codecs) from the Solana TypeScript SDK.
+Import this package when you need to encode or decode binary data and do not want to track which codec sub-package each function lives in.
 
 <!-- {=packageInstallSection:"solana_kit_codecs"} -->
 
@@ -43,114 +43,36 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ## Usage
 
-Instead of importing each codec sub-package individually, import `solana_kit_codecs` to get everything at once:
-
-```dart
-import 'package:solana_kit_codecs/solana_kit_codecs.dart';
-```
-
-This single import gives you access to all codec functionality from:
-
-- **solana_kit_codecs_core** -- Core interfaces (`Encoder`, `Decoder`, `Codec`) and composition utilities (`combineCodec`, `transformCodec`, `fixCodecSize`, `addCodecSizePrefix`, `addCodecSentinel`, `offsetCodec`, `padLeftCodec`, `padRightCodec`, `reverseCodec`, etc.)
-- **solana_kit_codecs_numbers** -- Numeric codecs for integers and floats (`getU8Codec`, `getU16Codec`, `getU32Codec`, `getU64Codec`, `getU128Codec`, `getI8Codec`, ..., `getF32Codec`, `getF64Codec`, `getShortU16Codec`)
-- **solana_kit_codecs_strings** -- String codecs (`getUtf8Codec`, `getBase58Codec`, `getBase16Codec`, `getBase64Codec`, `getBase10Codec`, `getBaseXCodec`, `getBaseXResliceCodec`)
-- **solana_kit_codecs_data_structures** -- Composite data structure codecs (`getStructCodec`, `getArrayCodec`, `getTupleCodec`, `getBooleanCodec`, `getNullableCodec`, `getMapCodec`, `getSetCodec`, `getDiscriminatedUnionCodec`, `getLiteralUnionCodec`, `getBitArrayCodec`, `getBytesCodec`, `getConstantCodec`, `getUnitCodec`, `getHiddenPrefixCodec`, `getHiddenSuffixCodec`)
-- **solana_kit_options** -- Rust-like `Option<T>` type and codec (`some`, `none`, `getOptionCodec`, `unwrapOption`, `unwrapOptionRecursively`)
-
-### Example: encoding a Solana account layout
-
-```dart
-import 'dart:typed_data';
-import 'package:solana_kit_codecs/solana_kit_codecs.dart';
-
-// Define an account data layout (similar to a Borsh schema).
-final accountCodec = getStructCodec([
-  ('isInitialized', getBooleanCodec()),
-  ('authority', fixCodecSize(getBase58Codec(), 32)),
-  ('balance', getU64Codec()),
-  ('label', addCodecSizePrefix(getUtf8Codec(), getU32Codec())),
-  ('tags', getArrayCodec(
-    addCodecSizePrefix(getUtf8Codec(), getU32Codec()),
-    size: PrefixedArraySize(getU16Codec()),
-  )),
-]);
-
-// Encode account data.
-final encoded = accountCodec.encode({
-  'isInitialized': true,
-  'authority': '11111111111111111111111111111111',
-  'balance': BigInt.from(1000000000),
-  'label': 'My Account',
-  'tags': ['defi', 'staking'],
-});
-
-// Decode account data.
-final decoded = accountCodec.decode(encoded);
-// decoded['isInitialized'] == true
-// decoded['balance'] == BigInt.from(1000000000)
-// decoded['label'] == 'My Account'
-// decoded['tags'] == ['defi', 'staking']
-```
-
-### Example: encoding a Rust-like enum
-
 ```dart
 import 'package:solana_kit_codecs/solana_kit_codecs.dart';
 
-// Define an instruction enum.
-final instructionCodec = getDiscriminatedUnionCodec([
-  ('initialize', getStructCodec([
-    ('authority', fixCodecSize(getBase58Codec(), 32)),
-    ('amount', getU64Codec()),
-  ])),
-  ('transfer', getStructCodec([
-    ('amount', getU64Codec()),
-  ])),
-  ('close', getUnitCodec()),
-]);
+void main() {
+  // Encode a u64 as 8 little-endian bytes.
+  final u64Codec = getU64Codec();
+  final bytes = u64Codec.encode(BigInt.from(1000000));
+  print('Encoded: ${bytes.length} bytes'); // 8
 
-// Encode a 'transfer' instruction.
-final bytes = instructionCodec.encode({
-  '__kind': 'transfer',
-  'amount': BigInt.from(500),
-});
+  // Decode it back.
+  final value = u64Codec.decode(bytes);
+  print('Decoded: $value'); // 1000000
 
-// Decode.
-final decoded = instructionCodec.decode(bytes);
-// decoded['__kind'] == 'transfer'
-// decoded['amount'] == BigInt.from(500)
-```
-
-### Example: working with Option types
-
-```dart
-import 'package:solana_kit_codecs/solana_kit_codecs.dart';
-
-// Encode an optional u64 field.
-final optionalBalance = getOptionCodec(getU64Codec());
-
-optionalBalance.encode(some(BigInt.from(42)));  // [0x01, ...8 bytes...]
-optionalBalance.encode(none<BigInt>());          // [0x00]
-
-// Decode and pattern match.
-final result = optionalBalance.decode(bytes);
-switch (result) {
-  case Some(:final value):
-    print('Balance: $value');
-  case None():
-    print('No balance set');
+  // Encode a UTF-8 string with a u16 length prefix.
+  final stringCodec = getUtf8Codec();
+  final text = stringCodec.encode('Hello, Solana!');
+  print('String bytes: ${text.length}');
 }
 ```
 
 ## Re-exported packages
 
-| Package                                                                      | Description                                     |
-| ---------------------------------------------------------------------------- | ----------------------------------------------- |
-| [`solana_kit_codecs_core`](../solana_kit_codecs_core/)                       | Core interfaces and composition utilities       |
-| [`solana_kit_codecs_numbers`](../solana_kit_codecs_numbers/)                 | Integer and float codecs                        |
-| [`solana_kit_codecs_strings`](../solana_kit_codecs_strings/)                 | String and base encoding codecs                 |
-| [`solana_kit_codecs_data_structures`](../solana_kit_codecs_data_structures/) | Struct, array, enum, and other composite codecs |
-| [`solana_kit_options`](../solana_kit_options/)                               | Rust-like `Option<T>` type and codec            |
+| Package                             | Contents                                                           |
+| ----------------------------------- | ------------------------------------------------------------------ |
+| `solana_kit_codecs_core`            | `Encoder`, `Decoder`, `Codec` interfaces and composition helpers   |
+| `solana_kit_codecs_numbers`         | Integer and float codecs (u8-u128, i8-i128, f32, f64)              |
+| `solana_kit_codecs_strings`         | String codecs (utf8, base58, base64, base16)                       |
+| `solana_kit_codecs_data_structures` | Struct, array, tuple, map, set, enum, boolean, and nullable codecs |
+| `solana_kit_fixed_points`           | Fixed-point arithmetic and codecs                                  |
+| `solana_kit_options`                | Rust-like `Option<T>` type and codec                               |
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_codecs"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_codecs/solana_kit_codecs.dart"} -->
 

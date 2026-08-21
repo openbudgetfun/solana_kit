@@ -2,22 +2,22 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_mobile_wallet_adapter_protocol.svg)](https://pub.dev/packages/solana_kit_mobile_wallet_adapter_protocol) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_mobile_wallet_adapter_protocol/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_mobile_wallet_adapter_protocol) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_mobile_wallet_adapter_protocol)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_mobile_wallet_adapter_protocol)
 
-Pure Dart implementation of the [Solana Mobile Wallet Adapter](https://github.com/solana-mobile/mobile-wallet-adapter) v2.0 protocol. Handles P-256 cryptography, session handshakes, encrypted message framing, JSON-RPC request/response encoding, association URI building/parsing, and protocol version negotiation.
+Pure Dart implementation of the [Solana Mobile Wallet Adapter](https://github.com/solana-mobile/mobile-wallet-adapter) v2.0 protocol. It handles P-256 cryptography, session handshakes, encrypted message framing, JSON-RPC request/response encoding, association URI building/parsing, and protocol version negotiation.
 
-This package has **zero Flutter dependency** and can be used in server-side Dart, CLI tools, or any Dart environment.
+The package has zero Flutter dependency and runs in server-side Dart, CLI tools, or any Dart environment.
 
-## Features
+## What it covers
 
-- **P-256 ECDSA/ECDH cryptography** via `pointycastle` (pure Dart, cross-platform)
-- **AES-128-GCM encryption** with sequence number AAD for replay attack prevention
-- **HKDF-SHA256** key derivation with association public key as salt
-- **HELLO_REQ / HELLO_RSP** handshake for session establishment
-- **JSON-RPC 2.0** message encryption/decryption
-- **Association URI** building and parsing (local + remote)
-- **Wallet proxy** with v1/legacy backwards compatibility
-- **Sign In With Solana (SIWS)** message builder following EIP-4361
-- **JWS ES256** compact serialization for attestation
-- **Central error codes** integrated with `solana_kit_errors`
+- P-256 ECDSA/ECDH cryptography via `pointycastle` (pure Dart, cross-platform)
+- AES-128-GCM encryption with sequence number AAD for replay attack prevention
+- HKDF-SHA256 key derivation with association public key as salt
+- HELLO_REQ / HELLO_RSP handshake for session establishment
+- JSON-RPC 2.0 message encryption/decryption
+- Association URI building and parsing (local + remote)
+- Wallet proxy with v1/legacy backwards compatibility
+- Sign In With Solana (SIWS) message builder following EIP-4361
+- JWS ES256 compact serialization for attestation
+- Central error codes integrated with `solana_kit_errors`
 
 <!-- {=packageInstallSection:"solana_kit_mobile_wallet_adapter_protocol"} -->
 
@@ -61,68 +61,122 @@ For architecture notes, getting-started guides, and cross-package examples, star
 ```dart
 import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
 
-// Generate keypairs for a new session.
-final associationKeypair = generateAssociationKeypair();
-final ecdhKeypair = generateEcdhKeypair();
+void main() {
+  // Generate keypairs for a new session.
+  final associationKeypair = generateAssociationKeypair();
+  final ecdhKeypair = generateEcdhKeypair();
 
-// Get the association token (base64url-encoded public key).
-final token = getAssociationToken(associationKeypair);
+  // Get the association token (base64url-encoded public key).
+  final token = getAssociationToken(associationKeypair.publicKey);
+
+  print(token);
+  print(ecdhKeypair.publicKey);
+}
 ```
 
 ### Building association URIs
 
 ```dart
-// Local association (same-device).
-final uri = buildLocalAssociationUri(
-  associationKeypair.publicKey,
-  55123,
-);
-// -> solana-wallet:/v1/associate/local?association=...&port=55123
+import 'dart:typed_data';
 
-// Remote association (via reflector).
-final remoteUri = buildRemoteAssociationUri(
-  associationKeypair.publicKey,
-  'reflect.example.com',
-  reflectorId,
-);
+import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
+
+void main() {
+  final associationKeypair = generateAssociationKeypair();
+
+  // Local association (same-device).
+  final uri = buildLocalAssociationUri(
+    associationKeypair.publicKey,
+    55123,
+  );
+  // -> solana-wallet:/v1/associate/local?association=...&port=55123
+
+  // Remote association (via reflector).
+  final reflectorId = Uint8List.fromList([1, 2, 3]);
+  final remoteUri = buildRemoteAssociationUri(
+    associationKeypair.publicKey,
+    'reflect.example.com',
+    reflectorId,
+  );
+
+  print(uri);
+  print(remoteUri);
+}
 ```
 
 ### HELLO handshake
 
 ```dart
-// Create HELLO_REQ (129 bytes: 65B ECDH pubkey + 64B ECDSA signature).
-final helloReq = createHelloReq(ecdhKeypair, associationKeypair);
+import 'dart:typed_data';
 
-// Parse HELLO_RSP from the wallet.
-final result = parseHelloRsp(helloRspBytes, associationKeypair, ecdhKeypair);
-final sharedSecret = result.sharedSecret; // 16-byte AES key
+import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
+
+void main() {
+  final associationKeypair = generateAssociationKeypair();
+  final ecdhKeypair = generateEcdhKeypair();
+
+  // Create HELLO_REQ (129 bytes: 65B ECDH pubkey + 64B ECDSA signature).
+  final helloReq = createHelloReq(ecdhKeypair, associationKeypair);
+
+  // Parse HELLO_RSP from the wallet.
+  final helloRspBytes = Uint8List(129);
+  final result = parseHelloRsp(helloRspBytes, associationKeypair, ecdhKeypair);
+  final sharedSecret = result.sharedSecret; // 16-byte AES key
+
+  print(helloReq.length);
+  print(sharedSecret);
+}
 ```
 
 ### Encrypted messaging
 
 ```dart
-// Encrypt a JSON-RPC request.
-final encrypted = encryptJsonRpcRequest(
-  1, // sequence number
-  'authorize',
-  {'chain': 'solana:mainnet'},
-  sharedSecret,
-);
+import 'dart:typed_data';
 
-// Decrypt a JSON-RPC response.
-final response = decryptJsonRpcResponse(encryptedBytes, sharedSecret);
+import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
+
+void main() {
+  final sharedSecret = Uint8List(16);
+
+  // Encrypt a JSON-RPC request.
+  final encrypted = encryptJsonRpcRequest(
+    1, // sequence number
+    'authorize',
+    {'chain': 'solana:mainnet'},
+    sharedSecret,
+  );
+
+  // Decrypt a JSON-RPC response.
+  final encryptedBytes = Uint8List(0);
+  final response = decryptJsonRpcResponse(encryptedBytes, sharedSecret);
+
+  print(encrypted);
+  print(response);
+}
 ```
 
 ### Wallet proxy
 
 ```dart
-// Create a wallet proxy that handles v1/legacy compatibility.
-final wallet = createMobileWalletProxy(sendRequest, sessionProps);
+import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
 
-final authResult = await wallet.authorize({
-  'identity': {'name': 'My dApp'},
-  'chain': 'solana:mainnet',
-});
+Future<void> main() async {
+  // Create a wallet proxy that handles v1/legacy compatibility.
+  final sendRequest = (String method, Map<String, Object?> params) async {
+    return <String, Object?>{};
+  };
+  final sessionProps = const SessionProperties(
+    protocolVersion: ProtocolVersion.v1,
+  );
+  final wallet = createMobileWalletProxy(sendRequest, sessionProps);
+
+  final authResult = await wallet.authorize({
+    'identity': {'name': 'My dApp'},
+    'chain': 'solana:mainnet',
+  });
+
+  print(authResult);
+}
 ```
 
 ## Protocol details

@@ -55,8 +55,8 @@ class CreateMintConfig {
 /// mint.
 ///
 /// The plan contains two sequential instructions:
-/// 1. System Program `CreateAccount` — allocates the mint account.
-/// 2. Token Program `InitializeMint2` — initialises the mint data.
+/// 1. System Program `CreateAccount`: allocates the mint account.
+/// 2. Token Program `InitializeMint2`: initialises the mint data.
 ///
 /// ```dart
 /// final plan = getCreateMintInstructionPlan(
