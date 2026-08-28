@@ -1,5 +1,4 @@
 import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
-import 'package:solana_kit_rpc_transformers/src/request_transformer_bigint_downcast.dart';
 import 'package:solana_kit_rpc_transformers/src/request_transformer_default_commitment.dart';
 import 'package:solana_kit_rpc_transformers/src/request_transformer_integer_overflow.dart';
 import 'package:solana_kit_rpc_transformers/src/request_transformer_options_object_position_config.dart';
@@ -28,8 +27,8 @@ class RequestTransformerConfig {
 /// Returns the default request transformer for the Solana RPC API.
 ///
 /// Under the hood, this function composes multiple
-/// [RpcRequestTransformer]s together: the integer overflow checker,
-/// the BigInt downcast transformer, and the default commitment transformer.
+/// [RpcRequestTransformer]s together: the integer overflow checker
+/// and the default commitment transformer.
 RpcRequestTransformer getDefaultRequestTransformerForSolanaRpc([
   RequestTransformerConfig? config,
 ]) {
@@ -44,15 +43,10 @@ RpcRequestTransformer getDefaultRequestTransformerForSolanaRpc([
       );
     }
 
-    // Step 2: Downcast BigInt values to int.
-    result = getBigIntDowncastRequestTransformer()(result);
-
-    // Step 3: Apply default commitment.
-    result = getDefaultCommitmentRequestTransformer(
+    // Step 2: Apply default commitment.
+    return getDefaultCommitmentRequestTransformer(
       optionsObjectPositionByMethod: OPTIONS_OBJECT_POSITION_BY_METHOD,
       defaultCommitment: config?.defaultCommitment,
     )(result);
-
-    return result;
   };
 }

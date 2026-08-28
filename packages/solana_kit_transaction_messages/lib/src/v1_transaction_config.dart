@@ -1,5 +1,6 @@
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_transaction_messages/src/compiled_transaction_message.dart';
+import 'package:solana_kit_transaction_messages/src/resource_limit_validation.dart';
 import 'package:solana_kit_transaction_messages/src/transaction_message.dart';
 
 /// Priority fee lamports occupies the lowest two config-mask bits.
@@ -15,10 +16,24 @@ const transactionConfigLoadedAccountsDataSizeLimitBitMask = 8;
 const transactionConfigHeapSizeBitMask = 16;
 
 /// Returns [transactionMessage] with [config] merged into its v1 config.
+///
+/// Throws a [SolanaError] with code
+/// [SolanaErrorCode.transactionComputeUnitLimitOutOfRange] when the config's
+/// compute unit limit is outside [0, maxComputeUnitLimit], and with code
+/// [SolanaErrorCode.transactionInvalidHeapSize] when its heap size is not a
+/// multiple of [heapSizeMultipleOf] bytes in [minHeapSize, maxHeapSize].
+/// Added in @solana/kit v8.1.0 (#1972).
 TransactionMessage setTransactionMessageConfig(
   V1TransactionConfig config,
   TransactionMessage transactionMessage,
 ) {
+  if (config.computeUnitLimit != null) {
+    assertIsValidComputeUnitLimit(config.computeUnitLimit!);
+  }
+  if (config.heapSize != null) {
+    assertIsValidHeapSize(config.heapSize!);
+  }
+
   final current = transactionMessage.config;
   final merged = V1TransactionConfig(
     computeUnitLimit: config.computeUnitLimit ?? current?.computeUnitLimit,

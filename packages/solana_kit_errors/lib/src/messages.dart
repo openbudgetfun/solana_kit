@@ -134,6 +134,10 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       r'Failed to send transaction$causeMessage',
   SolanaErrorCode.failedToSendTransactions:
       r'Failed to send transactions$causeMessages',
+  SolanaErrorCode.failedToSignTransaction:
+      r'Failed to sign transaction$causeMessage',
+  SolanaErrorCode.failedToSignTransactions:
+      r'Failed to sign transactions$causeMessages',
   SolanaErrorCode.instructionErrorAccountAlreadyInitialized:
       'Instruction requires an uninitialized account',
   SolanaErrorCode.instructionErrorAccountBorrowFailed:
@@ -579,6 +583,10 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'Transaction failed when it was simulated in order to estimate resource limits.',
   SolanaErrorCode.transactionFailedToDecompileInstructionAccountIndexOutOfRange:
       r'Could not find an account address at index $index while decompiling an instruction',
+  SolanaErrorCode.transactionComputeUnitLimitOutOfRange:
+      r'Transaction compute unit limit must be an integer in the range [0, $maxComputeUnitLimit]. `$computeUnitLimit` given',
+  SolanaErrorCode.transactionInvalidHeapSize:
+      r'Transaction heap size must be an integer multiple of $multipleOf bytes in the range [$minHeapSize, $maxHeapSize]. `$heapSize` given',
   SolanaErrorCode.transactionIntrospectionCannotDecodeJsonParsedTransaction:
       "`getTransaction` responses fetched with `encoding: 'jsonParsed'` cannot be decoded. Re-fetch the transaction with `encoding: 'base64'`, `'base58'`, or `'json'`",
   SolanaErrorCode.transactionIntrospectionUnrecognizedGetTransactionResponse:

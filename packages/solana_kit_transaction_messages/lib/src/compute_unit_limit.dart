@@ -1,8 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
+import 'package:solana_kit_transaction_messages/src/resource_limit_validation.dart';
 import 'package:solana_kit_transaction_messages/src/transaction_message.dart';
 import 'package:solana_kit_transaction_messages/src/v1_transaction_config.dart';
 
@@ -13,10 +15,6 @@ const provisoryComputeUnitLimit = 0;
 const maxComputeUnitLimit = 1400000;
 
 const _setComputeUnitLimitDiscriminator = 2;
-
-/// A function that estimates the compute unit limit for [transactionMessage].
-typedef EstimateComputeUnitLimit =
-    Future<int> Function(TransactionMessage transactionMessage);
 
 /// Returns the compute unit limit set on [transactionMessage], if any.
 int? getTransactionMessageComputeUnitLimit(
@@ -38,10 +36,21 @@ int? getTransactionMessageComputeUnitLimit(
 /// For legacy and v0 messages this appends a Compute Budget
 /// `SetComputeUnitLimit` instruction, replaces the first existing one, or
 /// removes the first existing one when [computeUnitLimit] is `null`.
+///
+/// Throws a [SolanaError] with code
+/// `SolanaErrorCode.transactionComputeUnitLimitOutOfRange` when
+/// [computeUnitLimit] is not an integer in `[0, maxComputeUnitLimit]`,
+/// mirroring upstream `@solana/transaction-messages` #1972. A limit above the
+/// maximum is silently clamped by the runtime, so the transaction would run
+/// with a budget other than the one requested.
 TransactionMessage setTransactionMessageComputeUnitLimit(
   int? computeUnitLimit,
   TransactionMessage transactionMessage,
 ) {
+  if (computeUnitLimit != null) {
+    assertIsValidComputeUnitLimit(computeUnitLimit);
+  }
+
   if (transactionMessage.version == TransactionVersion.v1) {
     return _setTransactionMessageComputeUnitLimitUsingConfig(
       computeUnitLimit,
@@ -86,45 +95,14 @@ TransactionMessage setTransactionMessageComputeUnitLimit(
   );
 }
 
-/// Returns [transactionMessage] with a provisional compute unit limit if none
-/// is already present.
-TransactionMessage fillTransactionMessageProvisoryComputeUnitLimit(
-  TransactionMessage transactionMessage,
-) {
-  if (getTransactionMessageComputeUnitLimit(transactionMessage) != null) {
-    return transactionMessage;
-  }
-  return setTransactionMessageComputeUnitLimit(
-    provisoryComputeUnitLimit,
-    transactionMessage,
-  );
-}
-
-/// Returns a function that estimates and sets the compute unit limit.
-///
-/// Existing non-provisional, non-maximum limits are preserved. A provisional
-/// limit (`0`) or maximum limit (`1400000`) is replaced with the estimate.
-Future<TransactionMessage> Function(TransactionMessage transactionMessage)
-estimateAndSetComputeUnitLimitFactory(
-  EstimateComputeUnitLimit estimateComputeUnitLimit,
-) {
-  return (transactionMessage) async {
-    final existingLimit = getTransactionMessageComputeUnitLimit(
-      transactionMessage,
-    );
-    if (existingLimit != null &&
-        existingLimit != provisoryComputeUnitLimit &&
-        existingLimit != maxComputeUnitLimit) {
-      return transactionMessage;
-    }
-
-    final estimatedUnits = await estimateComputeUnitLimit(transactionMessage);
-    return setTransactionMessageComputeUnitLimit(
-      estimatedUnits,
-      transactionMessage,
-    );
-  };
-}
+// ---------------------------------------------------------------------------
+// Provisory filling and estimation live in `resource_limit_estimation.dart`,
+// mirroring upstream `@solana/kit`'s `resource-limit-estimation.ts`. The
+// pre-v8 helpers `fillTransactionMessageProvisoryComputeUnitLimit` and
+// `estimateAndSetComputeUnitLimitFactory` were removed in @solana/kit v8.0.0
+// (#1948); use `fillTransactionMessageProvisoryResourceLimits` and
+// `estimateAndSetResourceLimitsFactory` instead.
+// ---------------------------------------------------------------------------
 
 TransactionMessage _setTransactionMessageComputeUnitLimitUsingConfig(
   int? computeUnitLimit,

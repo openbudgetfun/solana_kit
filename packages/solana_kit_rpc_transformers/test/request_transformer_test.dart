@@ -18,7 +18,7 @@ void main() {
           RpcRequest(methodName: 'getFoo', params: params);
 
       group('given an array as input', () {
-        test('casts the bigints in the array to int, recursively', () {
+        test('preserves bigints in the array, recursively', () {
           final input = [
             BigInt.from(10),
             10,
@@ -31,20 +31,20 @@ void main() {
           ];
           final request = createRequest(input);
           expect(requestTransformer(request).params, [
-            10,
+            BigInt.from(10),
             10,
             '10',
             [
               '10',
-              [10, 10],
-              10,
+              [10, BigInt.from(10)],
+              BigInt.from(10),
             ],
           ]);
         });
       });
 
       group('given an object as input', () {
-        test('casts the bigints in the object to int, recursively', () {
+        test('preserves bigints in the object, recursively', () {
           final input = {
             'a': BigInt.from(10),
             'b': 10,
@@ -52,9 +52,9 @@ void main() {
           };
           final request = createRequest(input);
           expect(requestTransformer(request).params, {
-            'a': 10,
+            'a': BigInt.from(10),
             'b': 10,
-            'c': {'c1': '10', 'c2': 10},
+            'c': {'c1': '10', 'c2': BigInt.from(10)},
           });
         });
       });

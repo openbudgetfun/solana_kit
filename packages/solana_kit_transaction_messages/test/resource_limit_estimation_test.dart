@@ -143,7 +143,7 @@ void main() {
 
       test('merges the limit into an existing config', () {
         final message = setTransactionMessageConfig(
-          const V1TransactionConfig(computeUnitLimit: 1, heapSize: 32),
+          const V1TransactionConfig(computeUnitLimit: 1, heapSize: 32768),
           createTransactionMessage(version: TransactionVersion.v1),
         );
         final updated = setTransactionMessageLoadedAccountsDataSizeLimit(
@@ -153,7 +153,7 @@ void main() {
 
         expect(updated.config?.loadedAccountsDataSizeLimit, 2048);
         expect(updated.config?.computeUnitLimit, 1);
-        expect(updated.config?.heapSize, 32);
+        expect(updated.config?.heapSize, 32768);
       });
 
       test('returns the same message when setting the existing limit', () {
@@ -173,7 +173,7 @@ void main() {
           const V1TransactionConfig(
             computeUnitLimit: 1,
             loadedAccountsDataSizeLimit: 2048,
-            heapSize: 32,
+            heapSize: 32768,
           ),
           createTransactionMessage(version: TransactionVersion.v1),
         );
@@ -184,7 +184,7 @@ void main() {
 
         expect(updated.config?.loadedAccountsDataSizeLimit, isNull);
         expect(updated.config?.computeUnitLimit, 1);
-        expect(updated.config?.heapSize, 32);
+        expect(updated.config?.heapSize, 32768);
       });
 
       test('clears config when removing its only field', () {

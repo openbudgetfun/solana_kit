@@ -119,20 +119,32 @@ TransactionMessage setTransactionMessageLoadedAccountsDataSizeLimit(
   );
 }
 
-/// Returns [transactionMessage] with provisional compute unit and loaded
-/// accounts data size limits if none are already present.
+/// Returns [transactionMessage] with provisional resource limits (a value of
+/// 0) set where none are currently set.
+///
+/// For all versions, this fills the compute unit limit. For version 1
+/// messages, it also fills the loaded accounts data size limit, reserving
+/// space in the compiled config for the value that estimation will later
+/// provide. If a limit is already set (any value, including the provisory
+/// value), that limit is left unchanged.
+///
+/// This mirrors upstream `@solana/kit`'s `fillTransactionMessageProvisoryResourceLimits`.
+/// It replaces the pre-v8 `fillTransactionMessageProvisoryComputeUnitLimit`,
+/// which was removed in @solana/kit v8.0.0 (#1948).
 TransactionMessage fillTransactionMessageProvisoryResourceLimits(
   TransactionMessage transactionMessage,
 ) {
-  var message = fillTransactionMessageProvisoryComputeUnitLimit(
-    transactionMessage,
-  );
+  var message = transactionMessage;
 
-  if (getTransactionMessageLoadedAccountsDataSizeLimit(message) != null) {
-    return message;
+  if (getTransactionMessageComputeUnitLimit(message) == null) {
+    message = setTransactionMessageComputeUnitLimit(
+      provisoryComputeUnitLimit,
+      message,
+    );
   }
 
-  if (message.version == TransactionVersion.v1) {
+  if (message.version == TransactionVersion.v1 &&
+      getTransactionMessageLoadedAccountsDataSizeLimit(message) == null) {
     message = setTransactionMessageLoadedAccountsDataSizeLimit(
       provisoryLoadedAccountsDataSizeLimit,
       message,

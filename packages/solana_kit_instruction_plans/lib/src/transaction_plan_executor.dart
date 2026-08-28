@@ -1,5 +1,6 @@
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instruction_plans/src/transaction_plan.dart';
+import 'package:solana_kit_instruction_plans/src/transaction_plan_errors.dart';
 import 'package:solana_kit_instruction_plans/src/transaction_plan_result.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
@@ -73,12 +74,9 @@ TransactionPlanExecutor createTransactionPlanExecutor(
       final abortReason = _findErrorFromTransactionPlanResult(
         transactionPlanResult,
       );
-      throw SolanaError(
-        SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan,
-        {
-          'abortReason': abortReason,
-          'transactionPlanResult': transactionPlanResult,
-        },
+      throw createFailedToExecuteTransactionPlanError(
+        transactionPlanResult,
+        abortReason,
       );
     }
 

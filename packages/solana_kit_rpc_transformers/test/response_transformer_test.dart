@@ -318,6 +318,20 @@ void main() {
         messageConfig,
         contains(containsAll(['header', 'numRequiredSignatures'])),
       );
+      expect(
+        messageConfig,
+        contains(containsAll(['transactionConfig', 'computeUnitLimit'])),
+      );
+      expect(
+        messageConfig,
+        contains(containsAll(['transactionConfig', 'heapSize'])),
+      );
+      expect(
+        messageConfig,
+        contains(
+          containsAll(['transactionConfig', 'loadedAccountsDataSizeLimit']),
+        ),
+      );
     });
   });
 }
