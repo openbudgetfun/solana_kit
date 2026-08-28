@@ -5,6 +5,7 @@ Future<void> main(List<String> args) async {
 
   final root = Directory.current;
   final testDirectories = <String>[];
+  final flutterPackages = <Directory>[];
 
   final packagesDirectory = Directory('packages');
   if (packagesDirectory.existsSync()) {
@@ -28,7 +29,13 @@ Future<void> main(List<String> args) async {
       final pubspec = File(
         '${packageDirectory.path}/pubspec.yaml',
       ).readAsStringSync();
-      if (pubspec.contains(RegExp(r'^flutter:\s*$', multiLine: true))) {
+      final isFlutter = pubspec.contains(
+        RegExp(r'^  flutter:\s*$', multiLine: true),
+      );
+      if (isFlutter) {
+        if (!pubspec.contains(RegExp(r'^  plugin:\s*$', multiLine: true))) {
+          flutterPackages.add(packageDirectory);
+        }
         continue;
       }
 
@@ -50,8 +57,8 @@ Future<void> main(List<String> args) async {
     testDirectories.add(rootTestDirectory.path);
   }
 
-  if (testDirectories.isEmpty) {
-    stderr.writeln('No Dart test directories were found.');
+  if (testDirectories.isEmpty && flutterPackages.isEmpty) {
+    stderr.writeln('No test directories were found.');
     exitCode = 1;
     return;
   }
@@ -61,26 +68,47 @@ Future<void> main(List<String> args) async {
       'Running ${testDirectories.length} test directories in one Dart test process.',
     )
     ..writeln(
-      'Skipping Flutter plugin packages; they are covered by dedicated checks.',
+      'Running ${flutterPackages.length} Flutter packages separately; '
+      'native plugins remain covered by dedicated checks.',
     );
 
   final testArgs = _withDefaultTestArgs(args);
   final stopwatch = Stopwatch()..start();
-  final result = await Process.start(
-    'fvm',
-    [
-      'dart',
-      'test',
-      '--exclude-tags',
-      'integration',
-      ...testArgs,
-      ...testDirectories,
-    ],
-    workingDirectory: root.path,
-    mode: ProcessStartMode.inheritStdio,
-  );
-
-  final code = await result.exitCode;
+  var code = 0;
+  if (testDirectories.isNotEmpty) {
+    final result = await Process.start(
+      'fvm',
+      [
+        'dart',
+        'test',
+        '--exclude-tags',
+        'integration',
+        ...testArgs,
+        ...testDirectories,
+      ],
+      workingDirectory: root.path,
+      mode: ProcessStartMode.inheritStdio,
+    );
+    code = await result.exitCode;
+  }
+  for (final package in flutterPackages) {
+    if (code != 0) break;
+    stdout.writeln('Running Flutter tests for ${package.path}.');
+    final result = await Process.start(
+      'fvm',
+      [
+        'flutter',
+        'test',
+        '--exclude-tags',
+        'integration',
+        ...testArgs,
+        'test',
+      ],
+      workingDirectory: package.path,
+      mode: ProcessStartMode.inheritStdio,
+    );
+    code = await result.exitCode;
+  }
   stopwatch.stop();
   stdout.writeln(
     'Workspace tests finished in ${_formatDuration(stopwatch.elapsed)}.',

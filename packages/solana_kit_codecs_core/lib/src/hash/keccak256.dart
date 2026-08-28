@@ -1,4 +1,3 @@
-// ignore_for_file: avoid_js_rounded_ints
 /// Keccak-256 (not SHA3-256) hash function.
 ///
 /// This implements the Keccak-256 hash as used by the Solana Account Compression
@@ -37,32 +36,32 @@ const int _rateLanes = _rateBytes ~/ 8; // = 17
 /// The Keccak-f[1600] round constants.
 ///
 /// These 24 constants are used in the iota (ι) step of each round.
-const _roundConstants = <int>[
-  0x0000000000000001,
-  0x0000000000008082,
-  0x800000000000808A,
-  0x8000000080008000,
-  0x000000000000808B,
-  0x0000000080000001,
-  0x8000000080008081,
-  0x8000000000008009,
-  0x000000000000008A,
-  0x0000000000000088,
-  0x0000000080008009,
-  0x000000008000000A,
-  0x000000008000808B,
-  0x800000000000008B,
-  0x8000000000008089,
-  0x8000000000008003,
-  0x8000000000008002,
-  0x8000000000000080,
-  0x000000000000800A,
-  0x800000008000000A,
-  0x8000000080008081,
-  0x8000000000008080,
-  0x0000000080000001,
-  0x8000000080008008,
-];
+final List<BigInt> _roundConstants = [
+  '0000000000000001',
+  '0000000000008082',
+  '800000000000808A',
+  '8000000080008000',
+  '000000000000808B',
+  '0000000080000001',
+  '8000000080008081',
+  '8000000000008009',
+  '000000000000008A',
+  '0000000000000088',
+  '0000000080008009',
+  '000000008000000A',
+  '000000008000808B',
+  '800000000000008B',
+  '8000000000008089',
+  '8000000000008003',
+  '8000000000008002',
+  '8000000000000080',
+  '000000000000800A',
+  '800000008000000A',
+  '8000000080008081',
+  '8000000000008080',
+  '0000000080000001',
+  '8000000080008008',
+].map((value) => BigInt.parse(value, radix: 16)).toList(growable: false);
 
 /// Rotations for the rho (ρ) step.
 const _rhoOffsets = <int>[
@@ -74,22 +73,22 @@ const _rhoOffsets = <int>[
 ];
 
 /// Mask for 64-bit integers.
-const _mask64 = 0xFFFFFFFFFFFFFFFF;
+final BigInt _mask64 = (BigInt.one << 64) - BigInt.one;
 
 /// Rotates a 64-bit integer left by [n] bits.
-int _rotl64(int x, int n) {
+BigInt _rotl64(BigInt x, int n) {
   final nMod = n % 64;
   if (nMod == 0) return x;
-  return ((x << nMod) | (x >>> (64 - nMod))) & _mask64;
+  return ((x << nMod) | (x >> (64 - nMod))) & _mask64;
 }
 
 /// The Keccak-f[1600] permutation.
 ///
 /// Applies all 24 rounds to the state in place.
-void _keccakF1600(List<int> state) {
+void _keccakF1600(List<BigInt> state) {
   for (final roundConstant in _roundConstants) {
     // θ (theta) step
-    final c = List<int>.filled(5, 0);
+    final c = List<BigInt>.filled(5, BigInt.zero);
     for (var x = 0; x < 5; x++) {
       c[x] =
           state[x] ^
@@ -106,7 +105,7 @@ void _keccakF1600(List<int> state) {
     }
 
     // ρ (rho) and π (pi) steps combined
-    final b = List<int>.filled(25, 0);
+    final b = List<BigInt>.filled(25, BigInt.zero);
     for (var x = 0; x < 5; x++) {
       for (var y = 0; y < 5; y++) {
         b[5 * ((2 * x + 3 * y) % 5) + y] = _rotl64(
@@ -130,18 +129,18 @@ void _keccakF1600(List<int> state) {
 }
 
 /// Reads 8 bytes from [input] at [offset] as a little-endian 64-bit integer.
-int _bytesToLane(Uint8List input, int offset) {
-  var result = 0;
+BigInt _bytesToLane(Uint8List input, int offset) {
+  var result = BigInt.zero;
   for (var i = 0; i < 8; i++) {
-    result |= (input[offset + i] & 0xFF) << (8 * i);
+    result |= BigInt.from(input[offset + i] & 0xFF) << (8 * i);
   }
   return result & _mask64;
 }
 
 /// Writes a 64-bit integer [lane] to [output] at [offset] in little-endian.
-void _laneToBytes(Uint8List output, int offset, int lane) {
+void _laneToBytes(Uint8List output, int offset, BigInt lane) {
   for (var i = 0; i < 8; i++) {
-    output[offset + i] = (lane >> (8 * i)) & 0xFF;
+    output[offset + i] = ((lane >> (8 * i)) & BigInt.from(0xff)).toInt();
   }
 }
 
@@ -165,7 +164,7 @@ void _laneToBytes(Uint8List output, int offset, int lane) {
 /// ```
 Uint8List keccak256(Uint8List input) {
   // Initialize state to all zeros
-  final state = List<int>.filled(_stateSize, 0);
+  final state = List<BigInt>.filled(_stateSize, BigInt.zero);
 
   // Absorb: process full rate blocks
   final fullBlockCount = input.length ~/ _rateBytes;
