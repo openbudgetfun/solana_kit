@@ -14,6 +14,31 @@ const _surfpoolUrl = String.fromEnvironment(
   defaultValue: 'http://10.0.2.2:8899',
 );
 
+const _walletColorScheme = ColorScheme.dark(
+  primary: Color(0xff8b5cf6),
+  onPrimary: Color(0xffffffff),
+  primaryContainer: Color(0xff35205f),
+  onPrimaryContainer: Color(0xfff0e7ff),
+  secondary: Color(0xff22d3ee),
+  onSecondary: Color(0xff041519),
+  secondaryContainer: Color(0xff123844),
+  onSecondaryContainer: Color(0xffcffafe),
+  tertiary: Color(0xfff472b6),
+  onTertiary: Color(0xff2f071f),
+  error: Color(0xfffb7185),
+  onError: Color(0xff30070e),
+  surface: Color(0xff111629),
+  onSurface: Color(0xfff8fafc),
+  onSurfaceVariant: Color(0xffb6bfd6),
+  outline: Color(0xff687391),
+  outlineVariant: Color(0xff303a57),
+  shadow: Color(0xff03040a),
+  scrim: Color(0xff03040a),
+);
+
+const _canvas = Color(0xff070a14);
+const _canvasHighlight = Color(0xff11132d);
+
 /// Runs the wallet UI example.
 void main() => runApp(const WalletExampleApp());
 
@@ -57,57 +82,80 @@ class _WalletExampleAppState extends State<WalletExampleApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xff3ddc97),
-          brightness: Brightness.dark,
-          surface: const Color(0xff111712),
-        ),
-        scaffoldBackgroundColor: const Color(0xff09100b),
+        colorScheme: _walletColorScheme,
+        scaffoldBackgroundColor: _canvas,
         textTheme: Typography.whiteCupertino,
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            minimumSize: const Size.fromHeight(52),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size.fromHeight(52),
+            side: const BorderSide(color: Color(0xff465171)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
       ),
       home: Scaffold(
-        body: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final wide = constraints.maxWidth >= 820;
-              return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1120),
-                  child: Padding(
-                    padding: EdgeInsets.all(wide ? 40 : 20),
-                    child: wide
-                        ? Row(
-                            children: [
-                              const Expanded(child: _Introduction()),
-                              const SizedBox(width: 48),
-                              Expanded(
-                                child: _Actions(
+        body: DecoratedBox(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [_canvas, _canvasHighlight, _canvas],
+              stops: [0, 0.5, 1],
+            ),
+          ),
+          child: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final wide = constraints.maxWidth >= 820;
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1120),
+                    child: Padding(
+                      padding: EdgeInsets.all(wide ? 40 : 20),
+                      child: wide
+                          ? Row(
+                              children: [
+                                const Expanded(child: _Introduction()),
+                                const SizedBox(width: 48),
+                                Expanded(
+                                  child: _Actions(
+                                    controller: _controller,
+                                    onSign: _signMessage,
+                                    onSurfpool: _checkSurfpool,
+                                    signatureStatus: _signatureStatus,
+                                    surfpoolStatus: _surfpoolStatus,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : ListView(
+                              children: [
+                                const _Introduction(),
+                                const SizedBox(height: 28),
+                                _Actions(
                                   controller: _controller,
                                   onSign: _signMessage,
                                   onSurfpool: _checkSurfpool,
                                   signatureStatus: _signatureStatus,
                                   surfpoolStatus: _surfpoolStatus,
                                 ),
-                              ),
-                            ],
-                          )
-                        : ListView(
-                            children: [
-                              const _Introduction(),
-                              const SizedBox(height: 28),
-                              _Actions(
-                                controller: _controller,
-                                onSign: _signMessage,
-                                onSurfpool: _checkSurfpool,
-                                signatureStatus: _signatureStatus,
-                                surfpoolStatus: _surfpoolStatus,
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -167,7 +215,7 @@ class _Introduction extends StatelessWidget {
         Text(
           'SOLANA KIT',
           style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).colorScheme.secondary,
             fontWeight: FontWeight.w700,
             letterSpacing: 2,
           ),
@@ -214,9 +262,17 @@ class _Actions extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerLow,
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.16),
+            blurRadius: 44,
+            offset: const Offset(0, 20),
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -334,4 +390,4 @@ class _DemoSignMessage implements SolanaSignMessageFeature {
 }
 
 const _demoIcon =
-    'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTYiIGZpbGw9IiMzZGRjOTciLz48cGF0aCBkPSJNMTYgMjBoMzJsLTEwIDEwSDZ6bTMyIDI0SDE2bDEwLTEwaDMyeiIgZmlsbD0iIzA5MTAwYiIvPjwvc3ZnPg==';
+    'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTYiIGZpbGw9IiM4YjVjZjYiLz48cGF0aCBkPSJNMTYgMjBoMzJsLTEwIDEwSDZ6bTMyIDI0SDE2bDEwLTEwaDMyeiIgZmlsbD0iIzIyZDNlZSIvPjwvc3ZnPg==';
