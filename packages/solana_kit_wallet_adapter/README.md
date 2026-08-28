@@ -17,16 +17,18 @@ dependencies:
 import 'package:solana_kit_wallet_adapter/solana_kit_wallet_adapter.dart';
 import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
 
-final registry = createDefaultWalletRegistry(
-  appIdentity: const WalletAppIdentity(name: 'My app'),
-  chain: SolanaChainId.devnet,
-);
-final wallets = WalletController(registry, chain: SolanaChainId.devnet);
+Future<WalletAccountSigner> connectFirstWallet() async {
+  final registry = createDefaultWalletRegistry(
+    appIdentity: const WalletAppIdentity(name: 'My app'),
+    chain: SolanaChainId.devnet,
+  );
+  final wallets = WalletController(registry, chain: SolanaChainId.devnet);
 
-await wallets.initialize();
-await wallets.connect(wallets.state.wallets.first);
+  await wallets.initialize();
+  await wallets.connect(wallets.state.wallets.first);
 
-final signer = wallets.createSigner();
+  return wallets.createSigner();
+}
 ```
 
 `WalletController` is a `ChangeNotifier`, so it works with Flutter's built-in `ListenableBuilder` and any state-management package. The adapter has no dependency on the optional widget package.

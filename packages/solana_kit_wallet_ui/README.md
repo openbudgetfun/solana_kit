@@ -14,9 +14,12 @@ dependencies:
 ## Adaptive defaults
 
 ```dart
+import 'package:flutter/widgets.dart';
+import 'package:solana_kit_wallet_adapter/solana_kit_wallet_adapter.dart';
 import 'package:solana_kit_wallet_ui/adaptive.dart';
 
-AdaptiveWalletButton(controller: walletController)
+Widget buildWalletButton(WalletController walletController) =>
+    AdaptiveWalletButton(controller: walletController);
 ```
 
 The adaptive entrypoint uses Cupertino presentation on iOS and macOS, and Material presentation elsewhere. Pass `style` when an application deliberately uses one design language on every platform.
@@ -24,15 +27,21 @@ The adaptive entrypoint uses Cupertino presentation on iOS and macOS, and Materi
 ## Material and Cupertino entrypoints
 
 ```dart
+import 'package:flutter/widgets.dart';
+import 'package:solana_kit_wallet_adapter/solana_kit_wallet_adapter.dart';
 import 'package:solana_kit_wallet_ui/material.dart';
 
-MaterialWalletButton(controller: walletController)
+Widget buildWalletButton(WalletController walletController) =>
+    MaterialWalletButton(controller: walletController);
 ```
 
 ```dart
+import 'package:flutter/widgets.dart';
+import 'package:solana_kit_wallet_adapter/solana_kit_wallet_adapter.dart';
 import 'package:solana_kit_wallet_ui/cupertino.dart';
 
-CupertinoWalletButton(controller: walletController)
+Widget buildWalletButton(WalletController walletController) =>
+    CupertinoWalletButton(controller: walletController);
 ```
 
 Compact viewports use a bottom sheet or Cupertino popup. Large viewports use a constrained dialog and a two-column wallet grid. All interactive defaults have at least a 44 logical-pixel target.
