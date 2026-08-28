@@ -305,19 +305,35 @@ export function getTypeManifestVisitor(input: {
       }
 
       const encoderListStr = encoderList.map((e) => e.content).join(", ");
+      const decoderListStr = decoderList.map((d) => d.content).join(", ");
+      // Two-element tuples render through the typed getTuple2 helpers so the
+      // generated value type is the Dart record `(T1, T2)` rather than a
+      // heterogeneous List<Object?>. Arity-2 is the only shape that currently
+      // appears in supported IDLs; wider tuples stay on the untyped helpers.
+      const tupleEncoderFn = itemManifests.length === 2
+        ? "getTuple2Encoder"
+        : "getTupleEncoder";
+      const tupleDecoderFn = itemManifests.length === 2
+        ? "getTuple2Decoder"
+        : "getTupleDecoder";
+      const tupleEncoderArgs = itemManifests.length === 2
+        ? encoderListStr
+        : `[${encoderListStr}]`;
+      const tupleDecoderArgs = itemManifests.length === 2
+        ? decoderListStr
+        : `[${decoderListStr}]`;
       const encoderFrag = fragment`${use(
-        "getTupleEncoder",
+        tupleEncoderFn,
         "solanaCodecsDataStructures",
-      )}([${fragmentFromString(encoderListStr)}])`;
+      )}(${tupleEncoderArgs})`;
       for (const e of encoderList) {
         encoderFrag.imports.mergeWith(e.imports);
       }
 
-      const decoderListStr = decoderList.map((d) => d.content).join(", ");
       const decoderFrag = fragment`${use(
-        "getTupleDecoder",
+        tupleDecoderFn,
         "solanaCodecsDataStructures",
-      )}([${fragmentFromString(decoderListStr)}])`;
+      )}(${tupleDecoderArgs})`;
       for (const d of decoderList) {
         decoderFrag.imports.mergeWith(d.imports);
       }

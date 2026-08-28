@@ -178,6 +178,13 @@ export function getInstructionPageFragment(
   const hasProgramAddressCollision = argNames.has('programAddress') || accountNames.has('programAddress');
   const instrProgramParam = hasProgramAddressCollision ? 'instructionProgramAddress' : 'programAddress';
 
+  // The generated local holding the constructed instruction data must not
+  // collide with an account or argument parameter name.
+  let instructionDataLocal = 'instructionData';
+  while (argNames.has(instructionDataLocal) || accountNames.has(instructionDataLocal)) {
+    instructionDataLocal = `${instructionDataLocal}_`;
+  }
+
   // Build the instruction builder function
   const accountParams = accounts
     .map((acc) => {
@@ -322,7 +329,7 @@ Instruction ${fragmentFromString(instrFnName)}({
 ${fragmentFromString(accountParams)}
 ${fragmentFromString(argParams)}
 }) {
-  final instructionData = ${fragmentFromString(dataClassName)}(
+  final ${instructionDataLocal} = ${fragmentFromString(dataClassName)}(
 ${fragmentFromString(dataConstruction)}
   );
 
@@ -331,7 +338,7 @@ ${fragmentFromString(dataConstruction)}
     accounts: [
 ${fragmentFromString(accountMetas)}
     ],
-    data: ${fragmentFromString(dataEncoderName)}().encode(instructionData),
+    data: ${fragmentFromString(dataEncoderName)}().encode(${instructionDataLocal}),
   );
 }`);
 

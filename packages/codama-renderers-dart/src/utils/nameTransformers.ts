@@ -11,10 +11,32 @@ export function pascalCase(str: string): string {
     .replace(/^(.)/, (c) => c.toUpperCase());
 }
 
+/**
+ * Dart reserved words (plus `async`/`await`/`yield` where they cannot be
+ * plain identifiers). A lowercase declaration named with one of these must
+ * be escaped, e.g. an account named `null` becomes a `null_` parameter.
+ */
+const DART_RESERVED_WORDS = new Set([
+  "assert", "break", "case", "catch", "class", "const", "continue",
+  "default", "do", "else", "enum", "extends", "false", "final",
+  "finally", "for", "if", "in", "is", "new", "null", "rethrow",
+  "return", "super", "switch", "this", "throw", "true", "try", "var",
+  "void", "while", "with", "async", "await", "yield",
+]);
+
+/**
+ * Escape a lowercase identifier if it collides with a Dart reserved word
+ * by appending `_` (e.g. an account named `null` renders as `null_`).
+ */
+export function escapeDartIdentifier(name: string): string {
+  return DART_RESERVED_WORDS.has(name) ? `${name}_` : name;
+}
+
 /** Convert a string to camelCase */
 export function camelCase(str: string): string {
   const pascal = pascalCase(str);
-  return pascal.charAt(0).toLowerCase() + pascal.slice(1);
+  const cased = pascal.charAt(0).toLowerCase() + pascal.slice(1);
+  return escapeDartIdentifier(cased);
 }
 
 /** Convert a string to snake_case */

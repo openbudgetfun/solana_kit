@@ -4,12 +4,12 @@ import 'package:solana_kit_codecs_numbers/src/utils.dart';
 
 /// Creates a [FixedSizeEncoder] for unsigned 8-bit integers (u8).
 ///
-/// Encodes a [num] value as a single byte. The value must be in the range
+/// Encodes an [int] value as a single byte. The value must be in the range
 /// [0, 255].
-FixedSizeEncoder<num> getU8Encoder() => numberEncoderFactory(
+FixedSizeEncoder<int> getU8Encoder() => numberEncoderFactory<int>(
   name: 'u8',
   size: 1,
-  set: (data, offset, value, _) => data.setUint8(offset, value.toInt()),
+  set: (data, offset, value, _) => data.setUint8(offset, value),
   range: (0, 255),
 );
 
@@ -25,5 +25,5 @@ FixedSizeDecoder<int> getU8Decoder() => numberDecoderFactory(
 /// Creates a [FixedSizeCodec] for unsigned 8-bit integers (u8).
 ///
 /// Combines [getU8Encoder] and [getU8Decoder].
-FixedSizeCodec<num, int> getU8Codec() =>
-    combineCodec(getU8Encoder(), getU8Decoder()) as FixedSizeCodec<num, int>;
+FixedSizeCodec<int, int> getU8Codec() =>
+    combineCodec(getU8Encoder(), getU8Decoder()) as FixedSizeCodec<int, int>;

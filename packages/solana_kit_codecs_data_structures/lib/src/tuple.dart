@@ -95,3 +95,41 @@ Codec<List<Object?>, List<Object?>> getTupleCodec(
     getTupleDecoder(items.map(decoderFromCodec).toList()),
   );
 }
+
+/// Returns a typed encoder for two-element tuples.
+///
+/// Encodes each element sequentially; values are accepted as a Dart record
+/// `(T1, T2)` and encoded positionally.
+Encoder<(T1, T2)> getTuple2Encoder<T1, T2>(
+  Encoder<T1> first,
+  Encoder<T2> second, {
+  String? description,
+}) {
+  return transformEncoder<List<Object?>, (T1, T2)>(
+    getTupleEncoder([
+      first as Encoder<Object?>,
+      second,
+    ], description: description),
+    (value) => [value.$1, value.$2],
+  );
+}
+
+/// Returns a typed decoder for two-element tuples.
+///
+/// Decodes each element sequentially and exposes the result as a Dart record
+/// `(T1, T2)` instead of a heterogeneous [List].
+Decoder<(T1, T2)> getTuple2Decoder<T1, T2>(
+  Decoder<T1> first,
+  Decoder<T2> second,
+) {
+  return transformDecoder<List<Object?>, (T1, T2)>(
+    getTupleDecoder([
+      first as Decoder<Object?>,
+      second,
+    ]),
+    (values, _, __) {
+      assert(values.length == 2, 'Expected a tuple of 2 elements');
+      return (values[0] as T1, values[1] as T2);
+    },
+  );
+}

@@ -12,16 +12,19 @@ import 'package:solana_kit_codecs_numbers/src/common.dart';
 /// The [set] callback writes a numeric value into a [ByteData] view.
 /// The optional [range] constrains accepted values.
 /// The optional [config] controls endianness (defaults to little-endian).
-FixedSizeEncoder<num> numberEncoderFactory({
+///
+/// The type parameter [T] narrows the accepted value type: integer codecs
+/// should specialize to [int], floating-point codecs to [num].
+FixedSizeEncoder<T> numberEncoderFactory<T extends num>({
   required String name,
   required int size,
-  required void Function(ByteData data, int offset, num value, Endian endian)
+  required void Function(ByteData data, int offset, T value, Endian endian)
   set,
   NumberCodecConfig? config,
-  (num min, num max)? range,
+  (num, num)? range,
 }) {
   final endian = config?.endian ?? Endian.little;
-  return FixedSizeEncoder<num>(
+  return FixedSizeEncoder<T>(
     fixedSize: size,
     write: (value, bytes, offset) {
       if (range != null) {
