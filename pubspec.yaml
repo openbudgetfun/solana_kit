@@ -67,6 +67,10 @@ workspace:
   - packages/solana_kit_transaction_introspection
   - packages/solana_kit_transaction_messages
   - packages/solana_kit_transactions
+  - packages/solana_kit_wallet_adapter
+  - packages/solana_kit_wallet_standard
+  - packages/solana_kit_wallet_ui
+  - packages/solana_kit_wallet_ui/example
   - packages/codama-renderers-dart/test-generated
 
 dev_dependencies:

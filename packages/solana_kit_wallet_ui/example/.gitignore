@@ -1,0 +1,9 @@
+.dart_tool/
+.flutter-plugins-dependencies
+.patrol.env
+/android/local.properties
+/android/.gradle/
+/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+/build/
+/coverage/
+/test_bundle.dart

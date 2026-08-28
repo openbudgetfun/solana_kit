@@ -17,8 +17,11 @@ devenv.local.yaml
 build/
 coverage/
 .packages
+**/.flutter-plugins-dependencies
 .pub/
 pubspec.lock
+**/test_bundle.dart
+.patrol.env
 
 # IDE
 *.iml

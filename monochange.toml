@@ -240,6 +240,15 @@ path = "packages/solana_kit_transaction_messages"
 [package.solana_kit_transactions]
 path = "packages/solana_kit_transactions"
 
+[package.solana_kit_wallet_adapter]
+path = "packages/solana_kit_wallet_adapter"
+
+[package.solana_kit_wallet_standard]
+path = "packages/solana_kit_wallet_standard"
+
+[package.solana_kit_wallet_ui]
+path = "packages/solana_kit_wallet_ui"
+
 [package.codama-renderers-dart]
 path = "packages/codama-renderers-dart"
 type = "npm"
@@ -291,6 +300,9 @@ packages = [
   "solana_kit_transaction_introspection",
   "solana_kit_transaction_messages",
   "solana_kit_transactions",
+  "solana_kit_wallet_adapter",
+  "solana_kit_wallet_standard",
+  "solana_kit_wallet_ui",
 ]
 tag = true
 release = true

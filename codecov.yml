@@ -176,6 +176,15 @@ flags:
   solana_kit_surfpool:
     paths:
       - packages/solana_kit_surfpool
+  solana_kit_wallet_adapter:
+    paths:
+      - packages/solana_kit_wallet_adapter
+  solana_kit_wallet_standard:
+    paths:
+      - packages/solana_kit_wallet_standard
+  solana_kit_wallet_ui:
+    paths:
+      - packages/solana_kit_wallet_ui
 
 coverage:
   precision: 2

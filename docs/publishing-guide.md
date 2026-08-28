@@ -6,7 +6,7 @@ This guide covers how to version, release, and publish the `solana_kit` Dart SDK
 
 <!-- workspace-summary:start -->
 
-This monorepo contains **59 packages** under `packages/`: **57 publishable** and **2 internal** (`solana_kit_integration_tests`, `solana_kit_test_matchers`).
+This monorepo contains **62 packages** under `packages/`: **60 publishable** and **2 internal** (`solana_kit_integration_tests`, `solana_kit_test_matchers`).
 
 <!-- workspace-summary:end -->
 
@@ -143,6 +143,9 @@ solana_kit_transaction_confirmation -> solana_kit_addresses, solana_kit_errors, 
 solana_kit_transaction_introspection -> solana_kit_addresses, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instructions, solana_kit_transaction_messages, solana_kit_transactions
 solana_kit_transaction_messages -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instructions
 solana_kit_transactions -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_codecs_strings, solana_kit_errors, solana_kit_instructions, solana_kit_keys, solana_kit_transaction_messages
+solana_kit_wallet_adapter -> solana_kit_addresses, solana_kit_codecs_strings, solana_kit_keys, solana_kit_mobile_wallet_adapter, solana_kit_mobile_wallet_adapter_protocol, solana_kit_signers, solana_kit_transactions, solana_kit_wallet_standard
+solana_kit_wallet_standard -> (none)
+solana_kit_wallet_ui -> solana_kit_wallet_adapter, solana_kit_wallet_standard
 ```
 
 <!-- workspace-dependency-graph:end -->

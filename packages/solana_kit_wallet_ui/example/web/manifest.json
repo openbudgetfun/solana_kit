@@ -1,0 +1,9 @@
+{
+  "name": "Solana Kit Wallet UI",
+  "short_name": "Wallet UI",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#09100b",
+  "theme_color": "#3ddc97",
+  "description": "Solana Kit wallet UI example"
+}
