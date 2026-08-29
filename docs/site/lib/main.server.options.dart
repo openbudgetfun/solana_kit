@@ -13,6 +13,8 @@ import 'package:jaspr_content/components/image.dart' as _image;
 import 'package:jaspr_content/components/sidebar_toggle_button.dart'
     as _sidebar_toggle_button;
 import 'package:jaspr_content/components/theme_toggle.dart' as _theme_toggle;
+import 'package:solana_kit_docs_site/components/wallet_demo_frame.dart'
+    as _wallet_demo_frame;
 
 /// Default [ServerOptions] for use with your Jaspr project.
 ///
@@ -55,6 +57,7 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._image.Image.styles,
     ..._theme_toggle.ThemeToggleState.styles,
     ..._zoomable_image.ZoomableImage.styles,
+    ..._wallet_demo_frame.WalletDemoFrame.styles,
   ],
 );
 

@@ -102,6 +102,10 @@ class SiteSidebar extends StatelessComponent {
               href: link('/guides/mobile-wallet-adapter'),
             ),
             SidebarLink(
+              text: 'Wallet UI',
+              href: link('/guides/wallet-ui'),
+            ),
+            SidebarLink(
               text: 'Benchmarking',
               href: link('/guides/benchmarking'),
             ),
