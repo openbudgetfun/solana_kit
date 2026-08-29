@@ -32,17 +32,36 @@ class LifecycleHook {
       other is LifecycleHook &&
           runtimeType == other.runtimeType &&
           hookedProgram == other.hookedProgram &&
-          extraAccounts == other.extraAccounts &&
+          _listEquals(extraAccounts, other.extraAccounts) &&
           dataAuthority == other.dataAuthority &&
           schema == other.schema;
 
   @override
-  int get hashCode =>
-      Object.hash(hookedProgram, extraAccounts, dataAuthority, schema);
+  int get hashCode => Object.hash(
+    hookedProgram,
+    _listHashCode(extraAccounts),
+    dataAuthority,
+    schema,
+  );
 
   @override
   String toString() =>
       'LifecycleHook(hookedProgram: $hookedProgram, extraAccounts: $extraAccounts, dataAuthority: $dataAuthority, schema: $schema)';
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
 }
 
 Encoder<LifecycleHook> getLifecycleHookEncoder() {

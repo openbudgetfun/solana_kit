@@ -28,14 +28,29 @@ class AgentIdentityUpdateInfo {
       other is AgentIdentityUpdateInfo &&
           runtimeType == other.runtimeType &&
           uri == other.uri &&
-          lifecycleChecks == other.lifecycleChecks;
+          _listEquals(lifecycleChecks, other.lifecycleChecks);
 
   @override
-  int get hashCode => Object.hash(uri, lifecycleChecks);
+  int get hashCode => Object.hash(uri, _listHashCode(lifecycleChecks));
 
   @override
   String toString() =>
       'AgentIdentityUpdateInfo(uri: $uri, lifecycleChecks: $lifecycleChecks)';
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
 }
 
 Encoder<AgentIdentityUpdateInfo> getAgentIdentityUpdateInfoEncoder() {

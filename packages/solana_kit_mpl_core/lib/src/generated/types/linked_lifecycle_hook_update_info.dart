@@ -29,16 +29,35 @@ class LinkedLifecycleHookUpdateInfo {
       identical(this, other) ||
       other is LinkedLifecycleHookUpdateInfo &&
           runtimeType == other.runtimeType &&
-          lifecycleChecks == other.lifecycleChecks &&
-          extraAccounts == other.extraAccounts &&
+          _listEquals(lifecycleChecks, other.lifecycleChecks) &&
+          _listEquals(extraAccounts, other.extraAccounts) &&
           schema == other.schema;
 
   @override
-  int get hashCode => Object.hash(lifecycleChecks, extraAccounts, schema);
+  int get hashCode => Object.hash(
+    _listHashCode(lifecycleChecks),
+    _listHashCode(extraAccounts),
+    schema,
+  );
 
   @override
   String toString() =>
       'LinkedLifecycleHookUpdateInfo(lifecycleChecks: $lifecycleChecks, extraAccounts: $extraAccounts, schema: $schema)';
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
 }
 
 Encoder<LinkedLifecycleHookUpdateInfo>

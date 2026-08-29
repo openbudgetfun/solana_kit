@@ -39,8 +39,8 @@ class LifecycleHookInitInfo {
           runtimeType == other.runtimeType &&
           hookedProgram == other.hookedProgram &&
           initPluginAuthority == other.initPluginAuthority &&
-          lifecycleChecks == other.lifecycleChecks &&
-          extraAccounts == other.extraAccounts &&
+          _listEquals(lifecycleChecks, other.lifecycleChecks) &&
+          _listEquals(extraAccounts, other.extraAccounts) &&
           dataAuthority == other.dataAuthority &&
           schema == other.schema;
 
@@ -48,8 +48,8 @@ class LifecycleHookInitInfo {
   int get hashCode => Object.hash(
     hookedProgram,
     initPluginAuthority,
-    lifecycleChecks,
-    extraAccounts,
+    _listHashCode(lifecycleChecks),
+    _listHashCode(extraAccounts),
     dataAuthority,
     schema,
   );
@@ -57,6 +57,21 @@ class LifecycleHookInitInfo {
   @override
   String toString() =>
       'LifecycleHookInitInfo(hookedProgram: $hookedProgram, initPluginAuthority: $initPluginAuthority, lifecycleChecks: $lifecycleChecks, extraAccounts: $extraAccounts, dataAuthority: $dataAuthority, schema: $schema)';
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
 }
 
 Encoder<LifecycleHookInitInfo> getLifecycleHookInitInfoEncoder() {

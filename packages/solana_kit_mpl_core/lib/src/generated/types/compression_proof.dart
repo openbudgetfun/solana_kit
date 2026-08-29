@@ -41,15 +41,36 @@ class CompressionProof {
           name == other.name &&
           uri == other.uri &&
           seq == other.seq &&
-          plugins == other.plugins;
+          _listEquals(plugins, other.plugins);
 
   @override
-  int get hashCode =>
-      Object.hash(owner, updateAuthority, name, uri, seq, plugins);
+  int get hashCode => Object.hash(
+    owner,
+    updateAuthority,
+    name,
+    uri,
+    seq,
+    _listHashCode(plugins),
+  );
 
   @override
   String toString() =>
       'CompressionProof(owner: $owner, updateAuthority: $updateAuthority, name: $name, uri: $uri, seq: $seq, plugins: $plugins)';
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
 }
 
 Encoder<CompressionProof> getCompressionProofEncoder() {

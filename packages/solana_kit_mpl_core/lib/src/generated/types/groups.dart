@@ -21,13 +21,28 @@ class Groups {
       identical(this, other) ||
       other is Groups &&
           runtimeType == other.runtimeType &&
-          groups == other.groups;
+          _listEquals(groups, other.groups);
 
   @override
-  int get hashCode => groups.hashCode;
+  int get hashCode => _listHashCode(groups);
 
   @override
   String toString() => 'Groups(groups: $groups)';
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
 }
 
 Encoder<Groups> getGroupsEncoder() {

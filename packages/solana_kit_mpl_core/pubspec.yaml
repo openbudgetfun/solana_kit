@@ -7,6 +7,8 @@ environment:
   sdk: ^3.12.0
 resolution: workspace
 dependencies:
+  meta: any
+  solana_kit_accounts: any
   solana_kit_addresses: ^0.8.0
   solana_kit_codecs: ^0.8.0
   solana_kit_codecs_core: ^0.8.0

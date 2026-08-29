@@ -151,13 +151,14 @@ final class ExtraAccountCustomPda extends ExtraAccount {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ExtraAccountCustomPda &&
-          seeds == other.seeds &&
+          _listEquals(seeds, other.seeds) &&
           customProgramId == other.customProgramId &&
           isSigner == other.isSigner &&
           isWritable == other.isWritable;
 
   @override
-  int get hashCode => Object.hash(seeds, customProgramId, isSigner, isWritable);
+  int get hashCode =>
+      Object.hash(_listHashCode(seeds), customProgramId, isSigner, isWritable);
 
   @override
   String toString() =>
@@ -189,6 +190,21 @@ final class ExtraAccountAddress extends ExtraAccount {
   @override
   String toString() =>
       'ExtraAccount.Address(address: $address, isSigner: $isSigner, isWritable: $isWritable)';
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
 }
 
 Encoder<ExtraAccount> getExtraAccountEncoder() {
