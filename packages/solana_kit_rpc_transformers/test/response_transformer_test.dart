@@ -242,6 +242,64 @@ void main() {
       expect(result['value'], 42); // stays as int
       expect(result['slot'], BigInt.from(100)); // upcasted to BigInt
     });
+
+    test(
+      'looks up the allow-list using the Notifications API name when given a '
+      'Subscribe request',
+      () {
+        final transformer =
+            getDefaultResponseTransformerForSolanaRpcSubscriptions(
+              const ResponseTransformerConfig(
+                allowedNumericKeyPaths: {
+                  'blockNotifications': [
+                    ['version'],
+                  ],
+                },
+              ),
+            );
+        const request = RpcRequest<Object?>(
+          methodName: 'blockSubscribe',
+          params: null,
+        );
+        final result =
+            transformer(
+                  {'slot': 1, 'version': 0},
+                  request,
+                )!
+                as Map<String, Object?>;
+        expect(result['slot'], BigInt.from(1));
+        expect(result['version'], 0); // stays as int
+      },
+    );
+
+    test(
+      'looks up the allow-list using the Notifications API name when given a '
+      'wire Notification method',
+      () {
+        final transformer =
+            getDefaultResponseTransformerForSolanaRpcSubscriptions(
+              const ResponseTransformerConfig(
+                allowedNumericKeyPaths: {
+                  'blockNotifications': [
+                    ['version'],
+                  ],
+                },
+              ),
+            );
+        const request = RpcRequest<Object?>(
+          methodName: 'blockNotification',
+          params: null,
+        );
+        final result =
+            transformer(
+                  {'slot': 1, 'version': 0},
+                  request,
+                )!
+                as Map<String, Object?>;
+        expect(result['slot'], BigInt.from(1));
+        expect(result['version'], 0); // stays as int
+      },
+    );
   });
 
   group('allowed numeric value configs', () {
