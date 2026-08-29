@@ -13,6 +13,7 @@ import 'package:solana_kit_docs_site/components/site_header.dart';
 import 'package:solana_kit_docs_site/components/site_paths.dart';
 import 'package:solana_kit_docs_site/components/site_search.dart';
 import 'package:solana_kit_docs_site/components/site_sidebar.dart';
+import 'package:solana_kit_docs_site/components/wallet_demo_frame.dart';
 // This file is generated automatically by Jaspr, do not remove or edit.
 import 'package:solana_kit_docs_site/main.server.options.dart';
 
@@ -31,7 +32,7 @@ void main() {
       templateEngine: const MustacheTemplateEngine(),
       parsers: const [MarkdownParser()],
       extensions: [HeadingAnchorsExtension(), const TableOfContentsExtension()],
-      components: [Callout(), const Image(zoom: true)],
+      components: [Callout(), const Image(zoom: true), WalletDemoFrame()],
       layouts: [
         SiteDocsLayout(
           basePath: docsBasePath,

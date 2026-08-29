@@ -29,6 +29,16 @@ Future<void> main(List<String> args) async {
     return;
   }
 
+  code = await _inherit('dart', [
+    'run',
+    'scripts/build_wallet_demo.dart',
+    '--base-path=$basePath',
+  ], workingDirectory: repoRoot.path);
+  if (code != 0) {
+    exitCode = code;
+    return;
+  }
+
   code = await _inherit(
     'fvm',
     [
@@ -56,6 +66,7 @@ Future<void> main(List<String> args) async {
     await _waitForServer(port);
     final home = await _fetch(port, '/');
     final quickStart = await _fetch(port, '/getting-started/quick-start/');
+    final walletDemo = await _fetch(port, _demoPath(basePath));
 
     if (!home.contains('Solana Kit')) {
       stderr.writeln(
@@ -68,6 +79,12 @@ Future<void> main(List<String> args) async {
       stderr.writeln(
         'Smoke check failed: quick-start page did not contain expected text.',
       );
+      exitCode = 1;
+      return;
+    }
+
+    if (!walletDemo.contains('flutter_bootstrap.js')) {
+      stderr.writeln('Smoke check failed: wallet demo page did not load.');
       exitCode = 1;
       return;
     }
@@ -104,6 +121,11 @@ Future<void> _serveStatic(HttpServer server, Directory root) async {
       }
     }
   }
+}
+
+String _demoPath(String basePath) {
+  final normalized = basePath.endsWith('/') ? basePath : '$basePath/';
+  return '${normalized}wallet-demo/index.html';
 }
 
 ContentType _contentType(String path) {

@@ -41,3 +41,9 @@ coverage_tmp/
 
 # Surfpool runtime state
 .surfpool/
+
+# Generated wallet UI demo for the docs site (built by build_wallet_demo.dart)
+docs/site/web/wallet-demo/
+
+# Playwright CLI artifacts
+.playwright-cli/

@@ -440,6 +440,20 @@
     "content": "Recurring delegation A recurring delegation lets a delegatee pull up to a token limit that resets every period. The program rejects transfers that exceed the current period's remaining allowance. Use getTransferRecurringInstruction for collection. It updates the recurring delegation account so the remaining allowance and billing window stay consistent on-chain."
   },
   {
+    "title": "Wallet UI",
+    "description": "A wallet connect surface that feels at home in any Flutter app — Material, Cupertino, or adaptive — with a live demo.",
+    "route": "/guides/wallet-ui",
+    "headings": [
+      "What Wallet UI Does",
+      "Live Demo",
+      "Quickstart",
+      "One Button, Three Platforms",
+      "Make It Yours",
+      "Test Like a Product"
+    ],
+    "content": "What Wallet UI Does solanakitwalletui is the connect surface of the Solana Kit wallet stack. Discovery, authorization, and message signing live in solanakitwalletadapter and solanakitwalletstandard; the UI package turns that state into Flutter widgets: one adaptive connect button that picks Material or Cupertino per platform, a framework-neutral picker (WalletPickerContent) you can embed in any surface you already own, an SVG/data-URI avatar (WalletAvatar) for any Wallet Standard icon format, a small token vocabulary (WalletUiTheme, WalletUiPalette) instead of a foreign design system. Nothing here assumes it owns the screen. Every widget takes builders you can replace to bend the flow to your app. Live Demo The frame below runs the real package — the example app built for web in deterministic demo mode. Every wallet interaction is local: no keys, no network, no setup. What to try: 1. Press the connect button. The picker lists a Wallet Standard wallet with the full discovery → authorize → account flow. 2. After connecting, use Sign message to exercise the solanasignMessage feature end to end. 3. Check Surfpool pings a local surfpool node — in the hosted demo it reports unavailable unless you run one on localhost:8899. [!TIP] The demo source lives in packages/solanakitwalletui/example. Run it locally with fvm flutter run -d chrome --dart-define=DEMOWALLET=true. Quickstart That is the whole connect experience: the controller watches the registry, the button renders connect / progress / connected states, and the picker appears on tap. One Button, Three Platforms AdaptiveWalletButton resolves per platform at runtime. Pin a style explicitly whenever you need it: WalletUiStyle.material and WalletUiStyle.cupertino are pure Flutter surfaces — they do not pull platform channels — so both render identically in tests and on web. Make It Yours Two extension points go deeper than colors: WalletUiThemeData carries the shared copy and geometry; WalletUiPalette colors the picker tiles when you render WalletPickerContent inside your own dialogs. For total control, every widget accepts builder overrides — builder, tileBuilder, headerBuilder, emptyBuilder — so the flow can be restyled without forking the wiring: Test Like a Product WalletUiKeys exposes stable keys for every interactive element, and the example app ships Patrol end-to-end tests that drive connect → sign → disconnect against the deterministic demo wallet. The hosted demo above is the same app those tests exercise."
+  },
+  {
     "title": "Complete Package Catalog",
     "description": "Every Solana Kit package, why it exists, what it does, and when to use it.",
     "route": "/reference/package-catalog",
