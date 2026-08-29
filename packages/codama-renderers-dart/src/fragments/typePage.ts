@@ -221,21 +221,7 @@ function getDataEnumPageFragment(
               })
               .join(" &&\n          ");
 
-      const hashExpression = fieldManifests.some(({ manifest }) =>
-        isListManifest(manifest),
-      )
-        ? (fields.length === 1
-          ? `_listHashCode(${camelCase(fields[0].name as string)})`
-          : `Object.hash(${fields
-              .map((f: StructFieldTypeNode, index) =>
-                isListManifest(fieldManifests[index].manifest)
-                  ? `_listHashCode(${camelCase(f.name as string)})`
-                  : camelCase(f.name as string),
-              )
-              .join(", ")})`)
-        : getHashExpression(
-            fields.map((f: StructFieldTypeNode) => camelCase(f.name as string)),
-          );
+      const hashExpression = getValueHashExpression(fields, fieldManifests);
       if (fieldManifests.some(({ manifest }) => isListManifest(manifest))) {
         pageHasListEnums = true;
       }
@@ -532,19 +518,7 @@ ${fragmentFromString(fieldDecls)}
 
   @override
   int get hashCode => ${fragmentFromString(
-    fieldManifests.some(({ manifest }) => isListManifest(manifest))
-      ? (fields.length === 1
-        ? `_listHashCode(${camelCase(fields[0].name as string)})`
-        : `Object.hash(${fields
-            .map((f: StructFieldTypeNode, index) =>
-              isListManifest(fieldManifests[index].manifest)
-                ? `_listHashCode(${camelCase(f.name as string)})`
-                : camelCase(f.name as string),
-            )
-            .join(", ")})`)
-      : getHashExpression(
-          fields.map((f: StructFieldTypeNode) => camelCase(f.name as string)),
-        ),
+    getValueHashExpression(fields, fieldManifests),
   )};
 
   @override
@@ -659,6 +633,35 @@ int _listHashCode<T>(List<T>? a) {
   return Object.hashAll(a);
 }
 `;
+
+/**
+ * Builds the `hashCode` expression for a class whose fields render as the
+ * given lowercase names. List-typed fields compare structurally through the
+ * private `_listHashCode` helper emitted alongside the class.
+ */
+function getValueHashExpression(
+  fields: StructFieldTypeNode[],
+  fieldManifests: { field: StructFieldTypeNode; manifest: { type: Fragment } }[],
+): string {
+  const fieldNames = fields.map((f: StructFieldTypeNode) =>
+    camelCase(f.name as string),
+  );
+  const hasListFields = fieldManifests.some(({ manifest }) =>
+    isListManifest(manifest),
+  );
+  if (!hasListFields) {
+    return getHashExpression(fieldNames);
+  }
+  if (fieldNames.length === 1) {
+    return `_listHashCode(${fieldNames[0]})`;
+  }
+  const hashArgs = fields.map((f: StructFieldTypeNode, index) =>
+    isListManifest(fieldManifests[index].manifest)
+      ? `_listHashCode(${camelCase(f.name as string)})`
+      : camelCase(f.name as string),
+  );
+  return `Object.hash(${hashArgs.join(", ")})`;
+}
 
 function getHashExpression(fields: string[]): string {
   if (fields.length === 0) return "runtimeType.hashCode";

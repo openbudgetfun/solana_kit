@@ -2,6 +2,7 @@ import {
   arrayTypeNode,
   enumStructVariantTypeNode,
   enumTypeNode,
+  instructionAccountNode,
   instructionArgumentNode,
   instructionNode,
   numberTypeNode,
@@ -93,6 +94,22 @@ describe("list-field deep equality and hashing", () => {
   });
 
 
+  it("emits a single _listHashCode for one-list-field classes", () => {
+    const node = {
+      kind: "definedTypeNode",
+      name: "oneList",
+      type: structTypeNode([
+        structFieldTypeNode({
+          name: "entries",
+          type: arrayTypeNode(numberTypeNode("u32")),
+        }),
+      ]),
+    } as const;
+    const frag = getTypePageFragment(node, createScope());
+
+    expect(frag.content).toContain("int get hashCode => _listHashCode(entries);");
+  });
+
   it("keeps plain comparisons for structs without list fields", () => {
     const node = {
       kind: "definedTypeNode",
@@ -109,6 +126,24 @@ describe("list-field deep equality and hashing", () => {
 });
 
 describe("instruction data local collision handling", () => {
+  it("renames the generated local when an account collides", () => {
+    const node = instructionNode({
+      name: "burn",
+      accounts: [
+        instructionAccountNode({
+          name: "instructionData",
+          isSigner: false,
+          isWritable: true,
+        }),
+      ],
+      arguments: [],
+    });
+    const frag = getInstructionPageFragment(node, createScope());
+
+    expect(frag.content).toContain("required Address instructionData,");
+    expect(frag.content).toContain("final instructionData_ = ");
+  });
+
   it("renames the generated local when an argument collides", () => {
     const node = instructionNode({
       name: "execute",
