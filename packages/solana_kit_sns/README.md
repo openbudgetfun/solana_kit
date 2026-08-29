@@ -17,11 +17,13 @@ Solana Name Service (`.sol` domains) client for the [Solana Kit](https://github.
 
 <!-- {=packageInstallSection:"solana_kit_sns"} -->
 
+## Installation
+
 Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_sns": ^0.8.0
+  "solana_kit_sns": ^
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
