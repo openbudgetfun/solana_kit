@@ -36,14 +36,21 @@ jobs:
         env:
           INPUT_BASE_PATH: ${{ inputs.base_path }}
         run: |
+      - name: Resolve docs base path
+        id: base
+        env:
+          INPUT_BASE_PATH: ${{ inputs.base_path }}
+        run: |
           input_base="$INPUT_BASE_PATH"
+          repo_name="${GITHUB_REPOSITORY#*/}"
+          repo_owner="${GITHUB_REPOSITORY%%/*}"
 
           if [[ -n "$input_base" ]]; then
             base_path="$input_base"
-          elif [[ "${GITHUB_REPOSITORY#*/}" == "${GITHUB_REPOSITORY_OWNER}.github.io" ]]; then
+          elif [[ "$repo_name" == "$repo_owner.github.io" ]]; then
             base_path='/'
           else
-            base_path='/${GITHUB_REPOSITORY#*/}/'
+            base_path="/$repo_name/"
           fi
 
           if [[ "$base_path" != "/" ]]; then

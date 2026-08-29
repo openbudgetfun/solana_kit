@@ -71,11 +71,19 @@ Future<int> _run(List<String> arguments, String workingDirectory) async {
   return process.exitCode;
 }
 
-/// Resolves the [flag] occurrence followed by its value, if present.
+/// Resolves the [flag] occurrence followed by its value, if present. Supports
+/// both `--flag value` and `--flag=value` spellings.
 String? _option(List<String> arguments, String flag) {
   final index = arguments.indexOf(flag);
-  if (index < 0 || index + 1 >= arguments.length) return null;
-  return arguments[index + 1];
+  if (index >= 0 && index + 1 < arguments.length) {
+    return arguments[index + 1];
+  }
+  for (final argument in arguments) {
+    if (argument.startsWith('$flag=')) {
+      return argument.substring(flag.length + 1);
+    }
+  }
+  return null;
 }
 
 void _copyDirectory(Directory source, Directory target) {
