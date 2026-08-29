@@ -36,15 +36,35 @@ class Data {
           symbol == other.symbol &&
           uri == other.uri &&
           sellerFeeBasisPoints == other.sellerFeeBasisPoints &&
-          creators == other.creators;
+          _listEquals(creators, other.creators);
 
   @override
-  int get hashCode =>
-      Object.hash(name, symbol, uri, sellerFeeBasisPoints, creators);
+  int get hashCode => Object.hash(
+    name,
+    symbol,
+    uri,
+    sellerFeeBasisPoints,
+    _listHashCode(creators),
+  );
 
   @override
   String toString() =>
       'Data(name: $name, symbol: $symbol, uri: $uri, sellerFeeBasisPoints: $sellerFeeBasisPoints, creators: $creators)';
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
 }
 
 Encoder<Data> getDataEncoder() {

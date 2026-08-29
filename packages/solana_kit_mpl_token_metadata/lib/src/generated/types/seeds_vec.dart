@@ -21,13 +21,28 @@ class SeedsVec {
       identical(this, other) ||
       other is SeedsVec &&
           runtimeType == other.runtimeType &&
-          seeds == other.seeds;
+          _listEquals(seeds, other.seeds);
 
   @override
-  int get hashCode => seeds.hashCode;
+  int get hashCode => _listHashCode(seeds);
 
   @override
   String toString() => 'SeedsVec(seeds: $seeds)';
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
 }
 
 Encoder<SeedsVec> getSeedsVecEncoder() {

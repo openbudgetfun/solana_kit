@@ -55,7 +55,7 @@ class AssetData {
           symbol == other.symbol &&
           uri == other.uri &&
           sellerFeeBasisPoints == other.sellerFeeBasisPoints &&
-          creators == other.creators &&
+          _listEquals(creators, other.creators) &&
           primarySaleHappened == other.primarySaleHappened &&
           isMutable == other.isMutable &&
           tokenStandard == other.tokenStandard &&
@@ -70,7 +70,7 @@ class AssetData {
     symbol,
     uri,
     sellerFeeBasisPoints,
-    creators,
+    _listHashCode(creators),
     primarySaleHappened,
     isMutable,
     tokenStandard,
@@ -83,6 +83,21 @@ class AssetData {
   @override
   String toString() =>
       'AssetData(name: $name, symbol: $symbol, uri: $uri, sellerFeeBasisPoints: $sellerFeeBasisPoints, creators: $creators, primarySaleHappened: $primarySaleHappened, isMutable: $isMutable, tokenStandard: $tokenStandard, collection: $collection, uses: $uses, collectionDetails: $collectionDetails, ruleSet: $ruleSet)';
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
 }
 
 Encoder<AssetData> getAssetDataEncoder() {

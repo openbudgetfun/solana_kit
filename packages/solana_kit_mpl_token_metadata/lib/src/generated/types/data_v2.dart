@@ -42,7 +42,7 @@ class DataV2 {
           symbol == other.symbol &&
           uri == other.uri &&
           sellerFeeBasisPoints == other.sellerFeeBasisPoints &&
-          creators == other.creators &&
+          _listEquals(creators, other.creators) &&
           collection == other.collection &&
           uses == other.uses;
 
@@ -52,7 +52,7 @@ class DataV2 {
     symbol,
     uri,
     sellerFeeBasisPoints,
-    creators,
+    _listHashCode(creators),
     collection,
     uses,
   );
@@ -60,6 +60,21 @@ class DataV2 {
   @override
   String toString() =>
       'DataV2(name: $name, symbol: $symbol, uri: $uri, sellerFeeBasisPoints: $sellerFeeBasisPoints, creators: $creators, collection: $collection, uses: $uses)';
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
 }
 
 Encoder<DataV2> getDataV2Encoder() {
