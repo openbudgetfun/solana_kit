@@ -306,7 +306,7 @@ release = true
 version_format = "primary"
 changelog = { path = "CHANGELOG.md" }
 
-[group.wallet_adapter]
+[group.wallet]
 packages = [
   "solana_kit_wallet_adapter",
   "solana_kit_wallet_standard",
