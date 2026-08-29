@@ -288,7 +288,7 @@ describe("getTypeManifestVisitor", () => {
       );
       const manifest = visit(node, createVisitor());
 
-      expect(manifest.encoder.content).toContain("getArrayEncoder<int>");
+      expect(manifest.encoder.content).toContain("getArrayEncoder(transformEncoder(getU8Encoder(), (int value) => value)");
       expect(manifest.encoder.content).toContain(
         "transformEncoder(getU8Encoder(), (int value) => value)",
       );
@@ -590,14 +590,33 @@ describe("getTypeManifestVisitor", () => {
       expect(manifest.type.content).toBe("(int, String)");
     });
 
-    it("uses getTupleEncoder/Decoder", () => {
+    it("uses getTuple2Encoder/Decoder for two-element tuples", () => {
       const node = tupleTypeNode([
         numberTypeNode("u8"),
         numberTypeNode("u32"),
       ]);
       const manifest = visit(node, createVisitor());
-      expect(manifest.encoder.content).toContain("getTupleEncoder");
-      expect(manifest.decoder.content).toContain("getTupleDecoder");
+      expect(manifest.encoder.content).toContain(
+        "getTuple2Encoder(getU8Encoder(), getU32Encoder())",
+      );
+      expect(manifest.decoder.content).toContain(
+        "getTuple2Decoder(getU8Decoder(), getU32Decoder())",
+      );
+    });
+
+    it("uses the untyped getTupleEncoder/Decoder for wider tuples", () => {
+      const node = tupleTypeNode([
+        numberTypeNode("u8"),
+        numberTypeNode("u32"),
+        stringTypeNode("utf8"),
+      ]);
+      const manifest = visit(node, createVisitor());
+      expect(manifest.encoder.content).toContain(
+        "getTupleEncoder([getU8Encoder(), getU32Encoder(), getUtf8Encoder()])",
+      );
+      expect(manifest.decoder.content).toContain(
+        "getTupleDecoder([getU8Decoder(), getU32Decoder(), getUtf8Decoder()])",
+      );
     });
   });
 

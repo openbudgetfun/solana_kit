@@ -6,7 +6,7 @@ import 'package:solana_kit_codecs_numbers/src/utils.dart';
 ///
 /// Encodes a [num] value as a single byte. The value must be in the range
 /// [0, 255].
-FixedSizeEncoder<num> getU8Encoder() => numberEncoderFactory(
+FixedSizeEncoder<num> getU8Encoder() => numberEncoderFactory<num>(
   name: 'u8',
   size: 1,
   set: (data, offset, value, _) => data.setUint8(offset, value.toInt()),

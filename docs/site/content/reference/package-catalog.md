@@ -408,6 +408,55 @@ Each subsection below maps one package to its role in the Solana ecosystem and t
 - What it does: starts a CLI-backed Surfnet, wraps Surfpool JSON-RPC cheatcodes, time travel, token/account mutation, and program deployment helpers.
 - Use it when: writing Dart tests that need an isolated local Surfpool network or mainnet-forked account state.
 
+### solana_kit_anchor
+
+- Pub.dev: [solana_kit_anchor](https://pub.dev/packages/solana_kit_anchor)
+- Why it exists: Anchor-program integrations need discriminators, IDL parsing, and runtime codecs without porting the Anchor framework.
+- What it does: provides Anchor sighash discriminators, Anchor IDL 0.30 parsing, dynamic account/instruction/event codecs, pure-Dart SHA-256, and Anchor error resolution.
+- Use it when: building clients for Anchor programs from their IDLs at runtime.
+
+### solana_kit_jupiter
+
+- Pub.dev: [solana_kit_jupiter](https://pub.dev/packages/solana_kit_jupiter)
+- Why it exists: Flutter wallets and apps need swap flows without a web widget.
+- What it does: wraps Jupiter Swap API v2 (order/execute/build), Price API v3, and Token API v2 with Kit transaction decoding.
+- Use it when: quoting and executing token swaps or reading token metadata and prices.
+
+### solana_kit_sns
+
+- Pub.dev: [solana_kit_sns](https://pub.dev/packages/solana_kit_sns)
+- Why it exists: `.sol` domain resolution belongs in wallet UX everywhere.
+- What it does: derives domain keys (records, subdomains, sub-records), decodes name registries and record contents, and resolves reverse records.
+- Use it when: resolving or displaying Solana Name Service names and records.
+
+### solana_kit_pyth
+
+- Pub.dev: [solana_kit_pyth](https://pub.dev/packages/solana_kit_pyth)
+- Why it exists: pull-oracle UX needs Hermes data plus on-chain update writing.
+- What it does: provides the Hermes price-feed client, Wormhole VAA and accumulator parsing, price-account decoders, and receiver update instruction builders.
+- Use it when: showing Pyth prices or pushing oracle updates on Solana.
+
+### solana_kit_squads
+
+- Pub.dev: [solana_kit_squads](https://pub.dev/packages/solana_kit_squads)
+- Why it exists: multisig UX is a core wallet feature with no maintained Dart client.
+- What it does: covers Squads V4 multisig instructions, accounts, errors, and PDA derivation.
+- Use it when: creating multisigs, proposing or executing vault transactions, and managing spending limits.
+
+### solana_kit_mpl_token_metadata
+
+- Pub.dev: [solana_kit_mpl_token_metadata](https://pub.dev/packages/solana_kit_mpl_token_metadata)
+- Why it exists: token metadata is the standard surface for SPL token presentation on Solana.
+- What it does: provides Token Metadata instruction builders, account codecs, PDA derivations, error helpers, and program-level parsing.
+- Use it when: creating or managing metadata, editions, collections, and delegates for SPL tokens.
+
+### solana_kit_mpl_core
+
+- Pub.dev: [solana_kit_mpl_core](https://pub.dev/packages/solana_kit_mpl_core)
+- Why it exists: Metaplex Core is the single-program standard for pluggable NFT assets.
+- What it does: provides Core instructions, account codecs, plugin PDA helpers, error helpers, and program-level parsing.
+- Use it when: building asset or collection flows on Metaplex Core.
+
 ## Internal and Workspace Support Packages
 
 ### solana_kit_lints

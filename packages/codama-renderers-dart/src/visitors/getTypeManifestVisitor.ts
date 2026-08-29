@@ -239,7 +239,7 @@ export function getTypeManifestVisitor(input: {
         encoder: fragment`${use(
           "getArrayEncoder",
           "solanaCodecsDataStructures",
-        )}<${itemType}>(${itemEncoder}${encoderSizeExpr})`,
+        )}(${itemEncoder}${encoderSizeExpr})`,
         decoder: fragment`${use(
           "getArrayDecoder",
           "solanaCodecsDataStructures",
@@ -305,19 +305,33 @@ export function getTypeManifestVisitor(input: {
       }
 
       const encoderListStr = encoderList.map((e) => e.content).join(", ");
+      const decoderListStr = decoderList.map((d) => d.content).join(", ");
+      // Two-element tuples render through the typed getTuple2 helpers so the
+      // generated value type is the Dart record `(T1, T2)` rather than a
+      // heterogeneous List<Object?>. Arity-2 is the only shape that currently
+      // appears in supported IDLs; wider tuples stay on the untyped helpers.
+      let tupleEncoderFn = "getTupleEncoder";
+      let tupleDecoderFn = "getTupleDecoder";
+      let tupleEncoderArgs = `[${encoderListStr}]`;
+      let tupleDecoderArgs = `[${decoderListStr}]`;
+      if (itemManifests.length === 2) {
+        tupleEncoderFn = "getTuple2Encoder";
+        tupleDecoderFn = "getTuple2Decoder";
+        tupleEncoderArgs = encoderListStr;
+        tupleDecoderArgs = decoderListStr;
+      }
       const encoderFrag = fragment`${use(
-        "getTupleEncoder",
+        tupleEncoderFn,
         "solanaCodecsDataStructures",
-      )}([${fragmentFromString(encoderListStr)}])`;
+      )}(${tupleEncoderArgs})`;
       for (const e of encoderList) {
         encoderFrag.imports.mergeWith(e.imports);
       }
 
-      const decoderListStr = decoderList.map((d) => d.content).join(", ");
       const decoderFrag = fragment`${use(
-        "getTupleDecoder",
+        tupleDecoderFn,
         "solanaCodecsDataStructures",
-      )}([${fragmentFromString(decoderListStr)}])`;
+      )}(${tupleDecoderArgs})`;
       for (const d of decoderList) {
         decoderFrag.imports.mergeWith(d.imports);
       }
@@ -442,7 +456,10 @@ export function getTypeManifestVisitor(input: {
         encoder: fragment`${use(
           "getNullableEncoder",
           "solanaCodecsDataStructures",
-        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.encoder}${fragmentFromString(prefixExpr)}${fragmentFromString(noneValueExpr)})`,
+        )}<${fragmentFromString(itemTypeStr)}>(${use(
+          "transformEncoder",
+          "solanaCodecsCore",
+        )}(${itemManifest.encoder}, (${fragmentFromString(itemTypeStr)} value) => value)${fragmentFromString(prefixExpr)}${fragmentFromString(noneValueExpr)})`,
         decoder: fragment`${use(
           "getNullableDecoder",
           "solanaCodecsDataStructures",

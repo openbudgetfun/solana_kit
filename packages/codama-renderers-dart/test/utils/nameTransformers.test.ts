@@ -6,6 +6,7 @@ import {
   pascalCase,
   screamingSnakeCase,
   snakeCase,
+  escapeDartIdentifier,
 } from "../../src/utils/nameTransformers.js";
 
 describe("pascalCase", () => {
@@ -105,6 +106,22 @@ describe("screamingSnakeCase", () => {
 
   it("handles single word", () => {
     expect(screamingSnakeCase("hello")).toBe("HELLO");
+  });
+});
+
+describe("escapeDartIdentifier", () => {
+  it("appends an underscore to Dart reserved words", () => {
+    expect(escapeDartIdentifier("null")).toBe("null_");
+  });
+
+  it("escapes Dart contextual and built-in keywords", () => {
+    for (const keyword of ["base", "extension", "import", "interface", "sealed"]) {
+      expect(escapeDartIdentifier(keyword)).toBe(`${keyword}_`);
+    }
+  });
+
+  it("leaves non-reserved names untouched", () => {
+    expect(escapeDartIdentifier("count")).toBe("count");
   });
 });
 

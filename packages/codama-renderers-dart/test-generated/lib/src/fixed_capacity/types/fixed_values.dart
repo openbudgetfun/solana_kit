@@ -9,7 +9,7 @@ typedef FixedValues = List<int>;
 
 Encoder<FixedValues> getFixedValuesEncoder() {
   return fixEncoderSize(
-    getArrayEncoder<int>(
+    getArrayEncoder(
       transformEncoder(getU8Encoder(), (int value) => value),
       size: RemainderArraySize(),
     ),

@@ -49,6 +49,9 @@ Each program repo is pinned to a specific tag or commit in `config/reference-rep
 | `.repos/solana-program/loader-v3`                | [solana-program/loader-v3](https://github.com/solana-program/loader-v3)                               | `js@v0.6.0`                                | `solana_kit_loader` (#138)                                                             |
 | `.repos/solana-program/loader-v4`                | [solana-program/loader-v4](https://github.com/solana-program/loader-v4)                               | commit `4f62fb2e` (2026-08-21, no tag yet) | `solana_kit_loader` (#138)                                                             |
 | `.repos/metaplex-foundation/mpl-bubblegum`       | [metaplex-foundation/mpl-bubblegum](https://github.com/metaplex-foundation/mpl-bubblegum)             | commit `6a6a77e3`                          | `solana_kit_mpl_bubblegum` (#131); Anchor IDL at `idls/bubblegum.json`                 |
+| `.repos/metaplex-foundation/mpl-token-metadata`  | [metaplex-foundation/mpl-token-metadata](https://github.com/metaplex-foundation/mpl-token-metadata)   | commit `349e0610`                          | `solana_kit_mpl_token_metadata`; Shank IDL at `idls/token_metadata.json`               |
+| `.repos/metaplex-foundation/mpl-core`            | [metaplex-foundation/mpl-core](https://github.com/metaplex-foundation/mpl-core)                       | commit `2181404f`                          | `solana_kit_mpl_core`; Shank IDL at `idls/mpl_core.json`                               |
+| `.repos/Squads-Protocol/v4`                      | [Squads-Protocol/v4](https://github.com/Squads-Protocol/v4)                                           | commit `af94153f`                          | `solana_kit_squads`; multisig Shank IDL                                                |
 
 ## Updating a pinned version
 

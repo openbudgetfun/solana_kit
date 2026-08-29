@@ -72,6 +72,13 @@ workspace:
   - packages/solana_kit_wallet_ui
   - packages/solana_kit_wallet_ui/example
   - packages/codama-renderers-dart/test-generated
+  - packages/solana_kit_pyth
+  - packages/solana_kit_sns
+  - packages/solana_kit_squads
+  - packages/solana_kit_mpl_core
+  - packages/solana_kit_mpl_token_metadata
+  - packages/solana_kit_jupiter
+  - packages/solana_kit_anchor
 
 dev_dependencies:
   coverage: ^1.14.0

@@ -8,7 +8,7 @@ import 'package:solana_kit_codecs_numbers/src/utils.dart';
 /// Encodes a [num] value as 4 bytes. The value must be in the range
 /// [0, 4294967295]. Defaults to little-endian byte order.
 FixedSizeEncoder<num> getU32Encoder([NumberCodecConfig? config]) =>
-    numberEncoderFactory(
+    numberEncoderFactory<num>(
       name: 'u32',
       size: 4,
       set: (data, offset, value, endian) =>

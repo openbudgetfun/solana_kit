@@ -208,6 +208,42 @@
       "issue": 131,
       "notes": "Metaplex Bubblegum Anchor IDL at idls/bubblegum.json; convert with @codama/nodes-from-anchor before rendering",
       "checkedCommit": "6a6a77e341a3ee32f3d4a5c233d18370e1da07bf"
+    },
+    {
+      "name": "mpl-token-metadata",
+      "path": ".repos/metaplex-foundation/mpl-token-metadata",
+      "url": "https://github.com/metaplex-foundation/mpl-token-metadata",
+      "ref": {
+        "type": "commit",
+        "value": "349e061053c6fc5b6b815e03e896e4db57012893"
+      },
+      "package": "solana_kit_mpl_token_metadata",
+      "notes": "Metaplex Token Metadata Shank IDL at idls/token_metadata.json for Codama Dart generation",
+      "checkedCommit": "349e061053c6fc5b6b815e03e896e4db57012893"
+    },
+    {
+      "name": "mpl-core",
+      "path": ".repos/metaplex-foundation/mpl-core",
+      "url": "https://github.com/metaplex-foundation/mpl-core",
+      "ref": {
+        "type": "commit",
+        "value": "2181404f90c7dd27ab95fcb2472483c4a347ae8c"
+      },
+      "package": "solana_kit_mpl_core",
+      "notes": "Metaplex Core Shank IDL at idls/mpl_core.json for Codama Dart generation",
+      "checkedCommit": "2181404f90c7dd27ab95fcb2472483c4a347ae8c"
+    },
+    {
+      "name": "squads-v4",
+      "path": ".repos/Squads-Protocol/v4",
+      "url": "https://github.com/Squads-Protocol/v4",
+      "ref": {
+        "type": "commit",
+        "value": "af94153ff77a28b6effe46b9c94baaa93742b48c"
+      },
+      "package": "solana_kit_squads",
+      "notes": "Squads V4 multisig Shank IDL at sdk/multisig/idl/squads_multisig_program.json for Codama Dart generation",
+      "checkedCommit": "af94153ff77a28b6effe46b9c94baaa93742b48c"
     }
   ]
 }

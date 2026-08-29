@@ -1064,3 +1064,242 @@ void main() {
 The user signs the transaction. If your app stores derived addresses, recompute the PDA before closing so the instruction targets the canonical authority for the user and mint.
 
 <!-- {/docsSubscriptionsCloseAuthoritySection} -->
+<!-- {@docsAnchorRuntimeSection} -->
+
+### Parse an Anchor IDL and code accounts dynamically
+
+Use the runtime coder when a program ships an Anchor IDL: encode instruction arguments, decode account data, and pull typed events out of program logs without writing codecs by hand.
+
+```dart
+import 'dart:io';
+
+import 'package:solana_kit_anchor/solana_kit_anchor.dart';
+
+void main() {
+  final idl = AnchorIdlProgram.parse(
+    File('idls/counter.json').readAsStringSync(),
+  );
+  final coder = AnchorCoder(idl);
+
+  final data = coder.encodeInstructionData('increment', {
+    'delta': BigInt.one,
+  });
+  // 8-byte discriminator + encoded arguments, ready for an Instruction.
+  print(data.length);
+
+  // Account data as fetched from RPC, starting with the 8-byte
+  // account discriminator.
+  final fetchedAccountBytes = <int>[];
+  final counter = coder.decodeAccount('Counter', fetchedAccountBytes);
+  print(counter.data['count']); // BigInt
+
+  // Program logs from a transaction, e.g. lines like
+  // "Program data: dW5rbm93bkRlY29kZXI=".
+  final logs = <String>[];
+  final events = coder.decodeEventLogs(logs);
+  for (final event in events) {
+    print('${event.name}: ${event.data}');
+  }
+}
+```
+
+Discriminator helpers and error resolution round out the runtime: `instructionDiscriminator`, `accountDiscriminator`, `eventDiscriminator`, and `anchorProgramError` resolve against the standard Anchor table plus program-defined IDL errors.
+
+<!-- {/docsAnchorRuntimeSection} -->
+
+<!-- {@docsJupiterSwapSection} -->
+
+### Swap through Jupiter's managed order flow
+
+`/order` returns a quote plus an assembled v0 transaction; sign it with Solana Kit signers and submit it through `/execute`.
+
+```dart
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_jupiter/solana_kit_jupiter.dart';
+
+Future<void> main() async {
+  const solAddress = Address('So11111111111111111111111111111111111111112');
+  const usdcAddress = Address(
+    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  );
+
+  final jupiter = createJupiterClient(JupiterConfig(apiKey: 'your-api-key'));
+
+  final order = await jupiter.swap.getOrder(
+    JupiterOrderRequest(
+      inputMint: solAddress,
+      outputMint: usdcAddress,
+      amount: BigInt.from(10000000), // 0.01 SOL
+      slippageBps: 50,
+    ),
+  );
+
+  final transaction = decodeBase64SwapTransaction(order.encodedTransaction!);
+  // Inspect, sign the transaction with solana_kit_signers, then submit it.
+  print(transaction);
+}
+```
+
+For self-landing swaps, use `jupiter.swap.buildSwap(...)` to fetch the raw instruction set instead of the assembled transaction.
+
+<!-- {/docsJupiterSwapSection} -->
+
+<!-- {@docsMplTokenMetadataSection} -->
+
+### Derive the metadata PDA
+
+Token metadata lives in a PDA derived from the mint. Hero derivation helpers mirror the on-chain seed structure exactly.
+
+```dart
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_mpl_token_metadata/solana_kit_mpl_token_metadata.dart';
+
+Future<void> main() async {
+  final mint = Address('So11111111111111111111111111111111111111111');
+  final (metadata, bump) = await findMetadataPda(mint: mint);
+
+  print(metadata);
+  print(bump);
+}
+```
+
+Instruction builders such as `getCreateMetadataAccountV3Instruction`, `getUpdateMetadataAccountV2Instruction`, and `getVerifyCollectionInstruction` take explicit program and account addresses, keeping fee payment, signing, and account ordering visible in your transaction messages.
+
+<!-- {/docsMplTokenMetadataSection} -->
+
+<!-- {@docsMplCoreSection} -->
+
+### Derive the asset signer PDA
+
+External plugin execution routes through the asset signer, a PDA derived from the asset address.
+
+```dart
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_mpl_core/solana_kit_mpl_core.dart';
+
+Future<void> main() async {
+  final assetSigner = await findAssetSignerPda(
+    asset: Address('Asset1111111111111111111111111111111111111'),
+  );
+
+  print(assetSigner);
+}
+```
+
+Instruction builders such as `getCreateV1Instruction`, `getCreateCollectionV1Instruction`, and `getTransferV1Instruction` give you explicit account ordering while pattern helpers like `deriveExtraAccountAddress` cover the external plugin adapter surface.
+
+<!-- {/docsMplCoreSection} -->
+
+<!-- {@docsSquadsSection} -->
+
+### Derive the multisig and vault PDAs
+
+Squads V4 PDA derivations match the upstream TypeScript SDK byte-for-byte, including vault indices and little-endian transaction indices.
+
+```dart
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_squads/solana_kit_squads.dart';
+
+Future<void> main() async {
+  final (multisig, bump) = await findMultisigPda(
+    createKey: Address('CreateKey11111111111111111111111111111111111'),
+  );
+  final (vault, vaultBump) = await findVaultPda(multisig: multisig, index: 0);
+
+  print(multisig);
+  print(vault);
+}
+```
+
+Instruction builders cover multisig creation, config transactions, vault transactions, batches, proposals, and spending limits.
+
+<!-- {/docsSquadsSection} -->
+
+<!-- {@docsSnsSection} -->
+
+### Resolve a .sol domain key
+
+Domain keys handle top-level domains, subdomains, and V1/V2 records with the same derivation the official SDK uses.
+
+```dart
+import 'package:solana_kit_sns/solana_kit_sns.dart';
+
+Future<void> main() async {
+  // Domain-key derivation expects the TLD-trimmed name; `.sol` is implied.
+  final domainKey = await findDomainKey('mysite');
+  print(domainKey);
+}
+```
+
+Feed the derived keys to `getNameRegistryStateCodec` or the record codecs when you need parsed owner, class, and content data.
+
+<!-- {/docsSnsSection} -->
+
+<!-- {@docsPythSection} -->
+
+### Fetch a price from Hermes
+
+```dart
+import 'package:solana_kit_pyth/solana_kit_pyth.dart';
+
+Future<void> main() async {
+  final hermes = HermesClient(HermesConfig());
+
+  // Discover feeds by symbol.
+  final feeds = await hermes.getPriceFeeds(query: 'bitcoin');
+  print(feeds.single.id); // hex price feed id
+
+  // Latest update, with the parsed price included.
+  final update = await hermes.getLatestPriceUpdates(
+    [feeds.single.id],
+    encoding: HermesEncoding.hex,
+    parsed: true,
+  );
+  final feed = update.parsed!.single;
+  final price = feed.price;
+  print('${price.price} ± ${price.conf} * 10^${price.expo}');
+}
+```
+
+Decode a binary update and post it on chain
+
+The `binary` payload of a Hermes update is an accumulator update blob containing one Wormhole VAA plus merkle-committed price messages. Parse it, trim guardian signatures so the update fits in a single transaction, and submit it with the Pyth Solana Receiver's `postUpdateAtomic` instruction:
+
+```dart
+import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_pyth/solana_kit_pyth.dart';
+
+Future<void> publish(
+  HermesPriceUpdate update,
+  Address payer,
+  Address priceUpdateAccount,
+) async {
+  // Decode binary.data[0] (hex or base64 per the response encoding).
+  // In Solana Kit, "encoders" turn encoded strings into raw bytes.
+  final bytes = switch (update.binaryEncoding) {
+    HermesEncoding.hex => getBase16Encoder().encode(update.binaryData.single),
+    HermesEncoding.base64 => getBase64Encoder().encode(update.binaryData.single),
+  };
+
+  final accumulator = parseAccumulatorUpdateData(bytes);
+  for (final message in accumulator.updates) {
+    final priceFeed = parsePythPriceFeedMessage(message.message);
+    print('feed 0x${priceFeed.feedIdHex}: '
+        '${priceFeed.price} ± ${priceFeed.confidence} * 10^${priceFeed.exponent}');
+
+    final instruction = await getPostUpdateAtomicInstruction(
+      payer: payer,
+      vaa: trimVaaSignatures(accumulator.vaa), // 5 signatures by default
+      update: message,
+      priceUpdateAccount: priceUpdateAccount,
+    );
+    // Add the instruction to a transaction message and send it.
+    print('post $instruction');
+  }
+}
+```
+
+The receiver program also supports `post_update`, which consumes an encoded-VAA account that was already verified by the Wormhole program. On-chain price accounts decode with `decodePythPriceAccount` (classic layout) and `decodePriceUpdateV2Account` (push oracle `PriceUpdateV2`).
+
+<!-- {/docsPythSection} -->

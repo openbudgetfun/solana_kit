@@ -44,7 +44,12 @@ Encoder<StakeInfo> getStakeInfoEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('amount', getU64Encoder()),
     ('startTime', getI64Encoder()),
-    ('endTime', getNullableEncoder<BigInt>(getI64Encoder())),
+    (
+      'endTime',
+      getNullableEncoder<BigInt>(
+        transformEncoder(getI64Encoder(), (BigInt value) => value),
+      ),
+    ),
     ('isLocked', getBooleanEncoder()),
   ]);
 

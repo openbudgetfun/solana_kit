@@ -45,6 +45,105 @@ const STAKE_ARGUMENT_TYPES = new Map([
   ["authorizeCheckedWithSeedParams", "authorizeCheckedWithSeedParams"],
 ]);
 
+// Shank emits `Vec<crate::state::RelationshipEntry>` in the mpl-core IDL with
+// the defined-type name collapsed to `"crate"`. The real type is the
+// `RelationshipEntry` defined type, so rewrite the reference before rendering.
+function prepareMplCoreRoot(root) {
+  let rewritten = 0;
+  const visit = (node) => {
+    if (Array.isArray(node)) {
+      node.forEach(visit);
+      return;
+    }
+    if (node == null || typeof node !== "object") return;
+    if (
+      node.name === "relationships" &&
+      JSON.stringify(node.type) === JSON.stringify({ vec: { defined: "crate" } })
+    ) {
+      node.type.vec.defined = "relationshipEntry";
+      rewritten += 1;
+      return;
+    }
+    Object.values(node).forEach(visit);
+  };
+  visit(root);
+  if (rewritten !== 1) {
+    throw new Error(
+      `prepareMplCoreRoot: expected 1 relationships field, rewrote ${rewritten}`,
+    );
+  }
+  return root;
+}
+
+// UpdateMetadataAccountV2 has both an `updateAuthority` account and an
+// `UpdateMetadataAccountArgsV2.updateAuthority` argument. The upstream TS SDK
+// renames the argument to `newUpdateAuthority`; mirror that so the generated
+// Dart instruction signature does not collide.
+function prepareMplTokenMetadataRoot(root) {
+  let renamed = 0;
+  const visit = (node) => {
+    if (Array.isArray(node)) {
+      node.forEach(visit);
+      return;
+    }
+    if (node == null || typeof node !== "object") return;
+    if (
+      node.name === "updateAuthority" &&
+      JSON.stringify(node.type) === JSON.stringify({ option: "publicKey" })
+    ) {
+      node.name = "newUpdateAuthority";
+      renamed += 1;
+      return;
+    }
+    Object.values(node).forEach(visit);
+  };
+  visit(root);
+  // Exactly two fields match: UpdateMetadataAccountArgsV2 and the deprecated
+  // UpdateMetadataAccountV1 args struct. Renaming both mirrors the upstream
+  // TS SDK, which exposes `newUpdateAuthority` for both.
+  if (renamed !== 2) {
+    throw new Error(
+      `prepareMplTokenMetadataRoot: expected 2 updateAuthority fields, renamed ${renamed}`,
+    );
+  }
+  return root;
+}
+
+// Squads v4's MultisigSetConfigAuthorityArgs uses a `configAuthority` field
+// while the instruction also has a `configAuthority` account. The upstream TS
+// SDK renames the argument to `newConfigAuthority`; mirror that so the
+// generated Dart instruction signature does not collide.
+function prepareSquadsMultisigRoot(root) {
+  let renamed = 0;
+  const visit = (node, parentTypeName) => {
+    if (Array.isArray(node)) {
+      node.forEach((child) => visit(child, parentTypeName));
+      return;
+    }
+    if (node == null || typeof node !== "object") return;
+    if (
+      node.name === "configAuthority" &&
+      parentTypeName === "MultisigSetConfigAuthorityArgs"
+    ) {
+      node.name = "newConfigAuthority";
+      renamed += 1;
+      return;
+    }
+    const childParentTypeName =
+      typeof node.name === "string" && node.type != null
+        ? node.name
+        : parentTypeName;
+    Object.values(node).forEach((child) => visit(child, childParentTypeName));
+  };
+  visit(root, undefined);
+  if (renamed !== 1) {
+    throw new Error(
+      `prepareSquadsMultisigRoot: expected 1 configAuthority field, renamed ${renamed}`,
+    );
+  }
+  return root;
+}
+
 function prepareStakeRoot(root) {
   // Upstream renamed the IDL program node from "solanaStakeInterface" to
   // "stake" when it moved to the Codama v1.8.0 format (js@v0.9.0). The
@@ -124,6 +223,12 @@ function prepareStakeRoot(root) {
 }
 
 // Map: repo-name → { idlPath, outputDir, packageDir }
+//
+// Entries without `idlPath` read `.repos/solana-program/<repo>/idl.json`,
+// which is a Codama-native root node. Entries with `idlPath` point at an
+// Anchor/shank-format IDL that is converted with @codama/nodes-from-anchor
+// first; `programName` pins the renderer-facing program name so generated
+// identifiers and barrel files stay stable across upstream regeneration.
 const PROGRAMS = [
   { repo: "system",              pkg: "solana_kit_system" },
   { repo: "token",               pkg: "solana_kit_token" },
@@ -133,14 +238,32 @@ const PROGRAMS = [
   { repo: "compute-budget",       pkg: "solana_kit_compute_budget" },
   { repo: "stake",               pkg: "solana_kit_stake" },
   { repo: "loader-v3",           pkg: "solana_kit_loader" },
+  {
+    repo: "mpl-token-metadata",
+    pkg: "solana_kit_mpl_token_metadata",
+    idlPath: ".repos/metaplex-foundation/mpl-token-metadata/idls/token_metadata.json",
+    programName: "mpl_token_metadata",
+  },
+  {
+    repo: "mpl-core",
+    pkg: "solana_kit_mpl_core",
+    idlPath: ".repos/metaplex-foundation/mpl-core/idls/mpl_core.json",
+    programName: "mpl_core",
+  },
+  {
+    repo: "squads-multisig",
+    pkg: "solana_kit_squads",
+    idlPath: ".repos/Squads-Protocol/v4/sdk/multisig/idl/squads_multisig_program.json",
+    programName: "squads_multisig",
+  },
 ];
 
-for (const { repo, pkg } of PROGRAMS) {
+for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
   if (PROGRAM_FILTER != null && repo !== PROGRAM_FILTER) {
     continue;
   }
 
-  const idlPath = join(ROOT, `.repos/solana-program/${repo}/idl.json`);
+  const idlPath = join(ROOT, idlPathOverride ?? `.repos/solana-program/${repo}/idl.json`);
   const pkgDir = join(ROOT, "packages", pkg);
   const outDir = join(pkgDir, "lib/src/generated");
 
@@ -155,7 +278,31 @@ for (const { repo, pkg } of PROGRAMS) {
 
   console.log(`Generating ${pkg} from ${repo}...`);
   const idlJson = JSON.parse(readFileSync(idlPath, "utf-8"));
-  const root = repo === "stake" ? prepareStakeRoot(idlJson) : idlJson;
+  let root;
+  if (idlJson.kind === "rootNode") {
+    root = repo === "stake" ? prepareStakeRoot(idlJson) : idlJson;
+  } else {
+    // Anchor/shank-format IDL: pin the renderer-facing program name, then
+    // convert with @codama/nodes-from-anchor.
+    const { rootNodeFromAnchor } = await import(
+      join(RENDERER_DIR, "node_modules/@codama/nodes-from-anchor/dist/index.node.mjs")
+    );
+    if (programName != null) {
+      idlJson.name = programName;
+    }
+    if (repo === "mpl-core") {
+      const fixed = prepareMplCoreRoot(idlJson);
+      root = rootNodeFromAnchor(fixed);
+    } else if (repo === "mpl-token-metadata") {
+      const fixed = prepareMplTokenMetadataRoot(idlJson);
+      root = rootNodeFromAnchor(fixed);
+    } else if (repo === "squads-multisig") {
+      const fixed = prepareSquadsMultisigRoot(idlJson);
+      root = rootNodeFromAnchor(fixed);
+    } else {
+      root = rootNodeFromAnchor(idlJson);
+    }
+  }
 
   if (CHECK_ONLY) {
     console.log(`  (check-only) Would render to ${outDir}`);
