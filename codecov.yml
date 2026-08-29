@@ -170,6 +170,27 @@ flags:
   solana_kit_mpl_bubblegum:
     paths:
       - packages/solana_kit_mpl_bubblegum
+  solana_kit_anchor:
+    paths:
+      - packages/solana_kit_anchor
+  solana_kit_jupiter:
+    paths:
+      - packages/solana_kit_jupiter
+  solana_kit_mpl_token_metadata:
+    paths:
+      - packages/solana_kit_mpl_token_metadata
+  solana_kit_mpl_core:
+    paths:
+      - packages/solana_kit_mpl_core
+  solana_kit_squads:
+    paths:
+      - packages/solana_kit_squads
+  solana_kit_sns:
+    paths:
+      - packages/solana_kit_sns
+  solana_kit_pyth:
+    paths:
+      - packages/solana_kit_pyth
   solana_kit_spl_account_compression:
     paths:
       - packages/solana_kit_spl_account_compression
