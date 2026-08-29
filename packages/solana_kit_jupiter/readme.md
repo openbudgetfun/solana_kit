@@ -23,44 +23,89 @@ All endpoints accept an optional `x-api-key` header. Without a key, Jupiter serv
 ### Request a quote and assembled transaction
 
 ```dart
-final jupiter = createJupiterClient(
-  JupiterConfig(apiKey: 'your-api-key'),
-);
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_jupiter/solana_kit_jupiter.dart';
 
-final order = await jupiter.swap.getOrder(
-  JupiterOrderRequest(
-    inputMint: Address(solAddress),
-    outputMint: Address(usdcAddress),
-    amount: BigInt.from(10000000), // 0.01 SOL
-    slippageBps: 50,
-  ),
-);
+Future<void> main() async {
+  const solAddress = Address('So11111111111111111111111111111111111111112');
+  const usdcAddress = Address(
+    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  );
 
-final transaction = decodeBase64SwapTransaction(order.encodedTransaction!);
-// Inspect, sign the transaction with solana_kit_signers, then submit it.
+  final jupiter = createJupiterClient(JupiterConfig(apiKey: 'your-api-key'));
+
+  final order = await jupiter.swap.getOrder(
+    JupiterOrderRequest(
+      inputMint: solAddress,
+      outputMint: usdcAddress,
+      amount: BigInt.from(10000000), // 0.01 SOL
+      slippageBps: 50,
+    ),
+  );
+
+  final transaction = decodeBase64SwapTransaction(order.encodedTransaction!);
+  // Inspect, sign the transaction with solana_kit_signers, then submit it.
+  print(transaction);
+}
 ```
 
 ### Execute a signed order
 
 ```dart
-final execution = await jupiter.swap.executeOrder(
-  userPublicKey: walletAddress,
-  order: order,
-  signedTransaction: base64EncodedSignedTransaction,
-);
-print(execution.signature);
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_jupiter/solana_kit_jupiter.dart';
+
+Future<void> main() async {
+  const solAddress = Address('So11111111111111111111111111111111111111112');
+  const usdcAddress = Address(
+    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  );
+  const walletAddress = Address(
+    'Fgae9ichv1MpfL3tnr9jRCjpUy1E3J6matR6EBy4MasF',
+  );
+  const base64EncodedSignedTransaction =
+      'QXNzZW1ibGVkIGFuZCBzaWduZWQgc3dhcCB0cmFuc2FjdGlvbg==';
+
+  final jupiter = createJupiterClient(JupiterConfig(apiKey: 'your-api-key'));
+
+  final order = await jupiter.swap.getOrder(
+    JupiterOrderRequest(
+      inputMint: solAddress,
+      outputMint: usdcAddress,
+      amount: BigInt.from(10000000), // 0.01 SOL
+      slippageBps: 50,
+    ),
+  );
+
+  final execution = await jupiter.swap.executeOrder(
+    userPublicKey: walletAddress,
+    order: order,
+    signedTransaction: base64EncodedSignedTransaction,
+  );
+  print(execution.signature);
+}
 ```
 
 ### Prices and tokens
 
 ```dart
-final prices = await jupiter.price.getPrices([
-  Address(solAddress),
-  Address(usdcAddress),
-]);
-print(prices[Address(solAddress)]!.usdPrice);
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_jupiter/solana_kit_jupiter.dart';
 
-final tokens = await jupiter.tokens.search('Jupiter');
+Future<void> main() async {
+  const solAddress = Address('So11111111111111111111111111111111111111112');
+  const usdcAddress = Address(
+    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  );
+
+  final jupiter = createJupiterClient(JupiterConfig(apiKey: 'your-api-key'));
+
+  final prices = await jupiter.price.getPrices([solAddress, usdcAddress]);
+  print(prices[solAddress]!.usdPrice);
+
+  final tokens = await jupiter.tokens.search('Jupiter');
+  print(tokens.length);
+}
 ```
 
 ## Key APIs

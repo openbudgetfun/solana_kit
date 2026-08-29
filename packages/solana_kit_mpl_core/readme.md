@@ -17,27 +17,59 @@ Metaplex Core program client for the Solana Kit Dart SDK: instruction builders, 
 ### Derive the asset signer PDA
 
 ```dart
-final (assetSigner, bump) = await findAssetSignerPda(asset: assetAddress);
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_mpl_core/solana_kit_mpl_core.dart';
+
+Future<void> main() async {
+  const assetAddress = Address(
+    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  );
+
+  final (assetSigner, bump) = await findAssetSignerPda(asset: assetAddress);
+  print('asset signer PDA $assetSigner derived with bump $bump');
+}
 ```
 
 ### Create an asset
 
 ```dart
-final instruction = getCreateV1Instruction(
-  programAddress: mplCoreProgramAddressObject,
-  asset: assetAddress,
-  collection: await findCollectionPda(collection: collectionAddress),
-  authority: authorityAddress,
-  payer: payerAddress,
-  owner: ownerAddress,
-  updateAuthority: ownerAddress,
-  systemProgram: systemProgramAddressObject,
-  data: AssetDataV1(
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_mpl_core/solana_kit_mpl_core.dart';
+
+Future<void> main() async {
+  const assetAddress = Address(
+    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  );
+  const collectionAddress = Address(
+    'BCwHRRbWToKMcDPWnnW4n4YimYw9qVo7jVXNiZQopC3B',
+  );
+  const authorityAddress = Address(
+    'Fgae9ichv1MpfL3tnr9jRCjpUy1E3J6matR6EBy4MasF',
+  );
+  const payerAddress = Address(
+    'Fgae9ichv1MpfL3tnr9jRCjpUy1E3J6matR6EBy4MasF',
+  );
+  const ownerAddress = Address(
+    'Fgae9ichv1MpfL3tnr9jRCjpUy1E3J6matR6EBy4MasF',
+  );
+  const systemProgram = Address('11111111111111111111111111111111');
+
+  final instruction = getCreateV1Instruction(
+    programAddress: mplCoreProgramAddressObject,
+    asset: assetAddress,
+    collection: collectionAddress,
+    authority: authorityAddress,
+    payer: payerAddress,
+    owner: ownerAddress,
+    updateAuthority: ownerAddress,
+    systemProgram: systemProgram,
+    dataState: DataState.accountState,
     name: 'My Asset',
     uri: 'https://example.com/asset.json',
     plugins: null,
-  ),
-);
+  );
+  print('instruction with ${instruction.accounts!.length} accounts');
+}
 ```
 
 ## Key APIs

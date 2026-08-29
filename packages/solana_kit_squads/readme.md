@@ -17,22 +17,65 @@ Squads V4 multisig program client for the Solana Kit Dart SDK: instruction build
 ### Derive the multisig and vault PDAs
 
 ```dart
-final (multisig, bump) = await findMultisigPda(createKey: createKeyAddress);
-final (vault, vaultBump) = await findVaultPda(
-  multisig: multisig,
-  index: 0,
-);
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_squads/solana_kit_squads.dart';
+
+Future<void> main() async {
+  const createKeyAddress = Address(
+    '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM',
+  );
+
+  final (multisig, bump) = await findMultisigPda(createKey: createKeyAddress);
+  final (vault, vaultBump) = await findVaultPda(multisig: multisig, index: 0);
+  print('multisig $multisig (bump $bump), vault $vault (bump $vaultBump)');
+}
 ```
 
 ### Create a multisig
 
 ```dart
-final instruction = getMultisigCreateInstruction(
-  programAddress: squadsMultisigProgramAddressObject,
-  createKey: createKeyAddress,
-  creator: creatorAddress,
-  memo: null,
-);
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_squads/solana_kit_squads.dart';
+
+Future<void> main() async {
+  const createKeyAddress = Address(
+    '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM',
+  );
+  const creatorAddress = Address(
+    '4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7ua4s6guT976W',
+  );
+  const systemProgram = Address('11111111111111111111111111111111');
+
+  final (multisigPda, _) = await findMultisigPda(createKey: createKeyAddress);
+  final (programConfigPda, _) = await findProgramConfigPda();
+  // The fee treasury is vault #255 of the new multisig.
+  final (treasuryPda, _) = await findVaultPda(
+    multisig: multisigPda,
+    index: 255,
+  );
+
+  final instruction = getMultisigCreateV2Instruction(
+    programAddress: squadsMultisigProgramAddressObject,
+    programConfig: programConfigPda,
+    treasury: treasuryPda,
+    multisig: multisigPda,
+    createKey: createKeyAddress,
+    creator: creatorAddress,
+    systemProgram: systemProgram,
+    configAuthority: creatorAddress,
+    threshold: 1,
+    members: [
+      Member(
+        key: creatorAddress,
+        permissions: const Permissions(mask: 7), // initiate + vote + execute
+      ),
+    ],
+    timeLock: 0,
+    rentCollector: null,
+    memo: null,
+  );
+  print('instruction with ${instruction.accounts!.length} accounts');
+}
 ```
 
 ## Key APIs

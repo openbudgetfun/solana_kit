@@ -17,32 +17,56 @@ Token Metadata program client for the Solana Kit Dart SDK: instruction builders,
 ### Derive the metadata PDA
 
 ```dart
-final (metadata, bump) = await findMetadataPda(mint: mint);
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_mpl_token_metadata/solana_kit_mpl_token_metadata.dart';
+
+Future<void> main() async {
+  const mint = Address(
+    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  );
+
+  final (metadata, bump) = await findMetadataPda(mint: mint);
+  print('metadata PDA $metadata derived with bump $bump');
+}
 ```
 
 ### Create metadata for a mint
 
 ```dart
-final instruction = getCreateMetadataAccountV3Instruction(
-  programAddress: mplTokenMetadataProgramAddressObject,
-  metadata: await findMetadataPda(mint: mint),
-  masterEdition: await findMasterEditionPda(mint: mint),
-  mint: mint,
-  mintAuthority: payerAddress,
-  payer: payerAddress,
-  updateAuthority: payerAddress,
-  data: DataV2(
-    name: 'My NFT',
-    symbol: 'NFT',
-    uri: 'https://example.com/nft.json',
-    sellerFeeBasisPoints: 500,
-    creators: null,
-    collection: null,
-    uses: null,
-  ),
-  isMutable: true,
-  collectionDetails: null,
-);
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_mpl_token_metadata/solana_kit_mpl_token_metadata.dart';
+
+Future<void> main() async {
+  const mint = Address(
+    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  );
+  const payerAddress = Address(
+    'Fgae9ichv1MpfL3tnr9jRCjpUy1E3J6matR6EBy4MasF',
+  );
+  final (metadataPda, _) = await findMetadataPda(mint: mint);
+
+  final instruction = getCreateMetadataAccountV3Instruction(
+    programAddress: mplTokenMetadataProgramAddressObject,
+    metadata: metadataPda,
+    mint: mint,
+    mintAuthority: payerAddress,
+    payer: payerAddress,
+    updateAuthority: payerAddress,
+    systemProgram: Address('11111111111111111111111111111111'),
+    data: const DataV2(
+      name: 'My NFT',
+      symbol: 'NFT',
+      uri: 'https://example.com/nft.json',
+      sellerFeeBasisPoints: 500,
+      creators: null,
+      collection: null,
+      uses: null,
+    ),
+    isMutable: true,
+    collectionDetails: null,
+  );
+  print('instruction with ${instruction.accounts!.length} accounts');
+}
 ```
 
 ## Key APIs

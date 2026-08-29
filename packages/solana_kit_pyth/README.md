@@ -41,21 +41,25 @@ Inside this monorepo, Dart workspace resolution uses the local package automatic
 ```dart
 import 'package:solana_kit_pyth/solana_kit_pyth.dart';
 
-final client = HermesClient(HermesConfig()); // defaults to https://hermes.pyth.network
+Future<void> main() async {
+  final client = HermesClient(
+    HermesConfig(),
+  ); // defaults to https://hermes.pyth.network
 
-// Discover feeds by symbol.
-final feeds = await client.getPriceFeeds(query: 'bitcoin');
-print(feeds.single.id); // hex price feed id
+  // Discover feeds by symbol.
+  final feeds = await client.getPriceFeeds(query: 'bitcoin');
+  print(feeds.single.id); // hex price feed id
 
-// Latest update, with the parsed price included.
-final update = await client.getLatestPriceUpdates(
-  [feeds.single.id],
-  encoding: HermesEncoding.hex,
-  parsed: true,
-);
-final feed = update.parsed!.single;
-final price = feed.price;
-print('${price.price} ± ${price.conf} * 10^${price.expo}');
+  // Latest update, with the parsed price included.
+  final update = await client.getLatestPriceUpdates(
+    [feeds.single.id],
+    encoding: HermesEncoding.hex,
+    parsed: true,
+  );
+  final feed = update.parsed!.single;
+  final price = feed.price;
+  print('${price.price} ± ${price.conf} * 10^${price.expo}');
+}
 ```
 
 Hermes self-hosting and authenticated providers are supported via `HermesConfig(baseUrl: ..., accessToken: ...)`.
@@ -65,6 +69,7 @@ Hermes self-hosting and authenticated providers are supported via `HermesConfig(
 The `binary` payload of a Hermes update is an accumulator update blob containing one Wormhole VAA plus merkle-committed price messages. Parse it, trim guardian signatures so the update fits in a single transaction, and submit it with the Pyth Solana Receiver's `post_update_atomic` instruction:
 
 ```dart
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_pyth/solana_kit_pyth.dart';
 
@@ -103,17 +108,27 @@ The receiver program also supports `post_update`, which consumes an encoded-VAA 
 ### Decode on-chain price accounts
 
 ```dart
+import 'dart:typed_data';
+
 import 'package:solana_kit_pyth/solana_kit_pyth.dart';
 
-// Classic Pyth oracle price accounts (magic 0xa1b2c3d4).
-final pyth1 = decodePythPriceAccount(accountData, currentSlot: slot);
-print('${pyth1.aggregate.priceComponent} * 10^${pyth1.exponent}');
-print(pyth1.status); // stale aggregates are demoted to unknown
+void main() {
+  // Raw bytes of a price account, e.g. fetched via solana_kit_rpc.
+  final accountData = Uint8List(96);
+  const slot = 123456789;
 
-// Push oracle price feed accounts (PriceUpdateV2).
-final pyth2 = decodePriceUpdateV2Account(accountData);
-print('0x${pyth2.feedIdHex} @ ${pyth2.publishTime}');
-print(pyth2.verificationLevel); // full or partial(number of signatures)
+  // Classic Pyth oracle price accounts (magic 0xa1b2c3d4).
+  final pyth1 = decodePythPriceAccount(accountData, currentSlot: slot);
+  print(
+    '${pyth1.aggregate.priceComponent} * 10^${pyth1.exponent}',
+  );
+  print(pyth1.status); // stale aggregates are demoted to unknown
+
+  // Push oracle price feed accounts (PriceUpdateV2).
+  final pyth2 = decodePriceUpdateV2Account(accountData);
+  print('0x${pyth2.feedIdHex} @ ${pyth2.publishTime}');
+  print(pyth2.verificationLevel); // full or partial(number of signatures)
+}
 ```
 
 ## API overview

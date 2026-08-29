@@ -19,34 +19,60 @@ The package does **not** port the Anchor on-chain framework, the CLI, or client 
 ### Compute an Anchor discriminator
 
 ```dart
-final discriminator = instructionDiscriminator('initialize');
-// sha256("global:initialize")[0..8]
+import 'package:solana_kit_anchor/solana_kit_anchor.dart';
+
+void main() {
+  final discriminator = instructionDiscriminator('initialize');
+  // sha256("global:initialize")[0..8].
+  print(discriminator);
+}
 ```
 
 ### Parse an IDL and use the dynamic coder
 
 ```dart
-final idl = AnchorIdlProgram.parse(File('idls/counter.json').readAsStringSync());
-final coder = AnchorCoder(idl);
+import 'dart:io';
 
-final data = coder.encodeInstructionData('increment', {'delta': BigInt.one});
-final account = coder.decodeAccount(
-  'Counter',
-  fetchedAccountBytes,
-);
-print(account.data['count']); // BigInt
+import 'package:solana_kit_anchor/solana_kit_anchor.dart';
 
-final events = coder.decodeEventLogs(logs);
-for (final event in events) {
-  print('${event.name}: ${event.data}');
+void main() {
+  final idl = AnchorIdlProgram.parse(
+    File('idls/counter.json').readAsStringSync(),
+  );
+  final coder = AnchorCoder(idl);
+
+  final data = coder.encodeInstructionData('increment', {
+    'delta': BigInt.one,
+  });
+  // 8-byte discriminator + encoded arguments, ready for an Instruction.
+  print(data.length);
+
+  // Account data as fetched from RPC, starting with the 8-byte
+  // account discriminator.
+  final fetchedAccountBytes = <int>[];
+  final counter = coder.decodeAccount('Counter', fetchedAccountBytes);
+  print(counter.data['count']); // BigInt
+
+  // Program logs from a transaction, e.g. lines like
+  // "Program data: dW5rbm93bkRlY29kZXI=".
+  final logs = <String>[];
+  final events = coder.decodeEventLogs(logs);
+  for (final event in events) {
+    print('${event.name}: ${event.data}');
+  }
 }
 ```
 
 ### Resolve an Anchor error
 
 ```dart
-final error = anchorProgramError(code, idl: idl);
-print('${error.name}: ${error.message}');
+import 'package:solana_kit_anchor/solana_kit_anchor.dart';
+
+void main() {
+  const code = 141; // AccountNotInitialized.
+  final error = anchorProgramError(code);
+  print('${error.name}: ${error.message}');
+}
 ```
 
 ## Key APIs

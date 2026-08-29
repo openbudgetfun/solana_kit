@@ -47,21 +47,25 @@ Future<void> main() async {
   // bonfida.sol → Crf8hzfthWGbGbLTVCiqRqV5MVnbpHB1L9KQMd6gsinb.
   // The TLD is trimmed: pass "bonfida", not "bonfida.sol".
   final domainKey = await findDomainKey('bonfida');
+  print(domainKey.address);
 
   // dex.bonfida.sol → subdomain derived under its parent domain.
   final subKey = await findDomainKey('dex.bonfida');
+  print(subKey.address);
 
   // V2 SOL record (SNS-IP 1) of bonfida.sol.
   final solRecord = await findRecordV2Address(
     domain: 'bonfida',
     record: SnsRecord.sol,
   );
+  print(solRecord);
 
   // V1 url record of bonfida.sol.
   final urlRecordV1 = await findRecordV1Address(
     domain: 'bonfida',
     record: SnsRecord.url,
   );
+  print(urlRecordV1);
 }
 ```
 
@@ -70,6 +74,8 @@ Future<void> main() async {
 Record V2 accounts are name registries whose data section begins after the 96-byte registry header. Decode header, validation identifiers, and content:
 
 ```dart
+import 'dart:typed_data';
+
 import 'package:solana_kit_sns/solana_kit_sns.dart';
 
 void example(Uint8List accountData) {
@@ -89,9 +95,12 @@ void example(Uint8List accountData) {
 ### Reverse lookups
 
 ```dart
+import 'package:solana_kit_sns/solana_kit_sns.dart';
+
 Future<void> example() async {
   // Reverse account that stores the name for a domain account.
   final reverseAddress = await findReverseAddressForDomain('bonfida');
+  print(reverseAddress);
 
   // Decode the stored name (subdomain values carry a NUL marker).
   // final name = decodeReverseValue(accountData, trimLeadingNullByte: true);
@@ -101,10 +110,19 @@ Future<void> example() async {
 ### Parsing name registries
 
 ```dart
-final registry = getNameRegistryStateCodec().decode(accountData);
-print(registry.owner);        // current domain owner
-print(registry.parentName);   // parent domain (zero address for TLDs)
-print(registry.registryClass);// class key (zero when unset)
+import 'dart:typed_data';
+
+import 'package:solana_kit_sns/solana_kit_sns.dart';
+
+void main() {
+  // Raw data of a name-registry account, e.g. fetched via solana_kit_rpc.
+  final accountData = Uint8List(96);
+
+  final registry = getNameRegistryStateCodec().decode(accountData);
+  print(registry.owner); // current domain owner
+  print(registry.parentName); // parent domain (zero address for TLDs)
+  print(registry.registryClass); // class key (zero when unset)
+}
 ```
 
 ## Key APIs
