@@ -89,19 +89,19 @@ Encoder<Proposal> getProposalEncoder() {
     ('bump', getU8Encoder()),
     (
       'approved',
-      getArrayEncoder<Address>(
+      getArrayEncoder(
         transformEncoder(getAddressEncoder(), (Address value) => value),
       ),
     ),
     (
       'rejected',
-      getArrayEncoder<Address>(
+      getArrayEncoder(
         transformEncoder(getAddressEncoder(), (Address value) => value),
       ),
     ),
     (
       'cancelled',
-      getArrayEncoder<Address>(
+      getArrayEncoder(
         transformEncoder(getAddressEncoder(), (Address value) => value),
       ),
     ),

@@ -50,7 +50,7 @@ Encoder<Attributes> getAttributesEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     (
       'attributeList',
-      getArrayEncoder<Attribute>(
+      getArrayEncoder(
         transformEncoder(getAttributeEncoder(), (Attribute value) => value),
       ),
     ),

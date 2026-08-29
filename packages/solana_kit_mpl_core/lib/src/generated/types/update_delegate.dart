@@ -50,7 +50,7 @@ Encoder<UpdateDelegate> getUpdateDelegateEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     (
       'additionalDelegates',
-      getArrayEncoder<Address>(
+      getArrayEncoder(
         transformEncoder(getAddressEncoder(), (Address value) => value),
       ),
     ),

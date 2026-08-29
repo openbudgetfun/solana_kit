@@ -39,7 +39,12 @@ class PluginAuthorityPair {
 Encoder<PluginAuthorityPair> getPluginAuthorityPairEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('plugin', getPluginEncoder()),
-    ('authority', getNullableEncoder<Authority>(getAuthorityEncoder())),
+    (
+      'authority',
+      getNullableEncoder<Authority>(
+        transformEncoder(getAuthorityEncoder(), (Authority value) => value),
+      ),
+    ),
   ]);
 
   return transformEncoder(

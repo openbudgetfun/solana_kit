@@ -63,11 +63,13 @@ Encoder<AgentIdentityInitInfo> getAgentIdentityInitInfoEncoder() {
     ('uri', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
     (
       'initPluginAuthority',
-      getNullableEncoder<Authority>(getAuthorityEncoder()),
+      getNullableEncoder<Authority>(
+        transformEncoder(getAuthorityEncoder(), (Authority value) => value),
+      ),
     ),
     (
       'lifecycleChecks',
-      getArrayEncoder<(HookableLifecycleEvent, ExternalCheckResult)>(
+      getArrayEncoder(
         transformEncoder(
           getTuple2Encoder(
             getHookableLifecycleEventEncoder(),

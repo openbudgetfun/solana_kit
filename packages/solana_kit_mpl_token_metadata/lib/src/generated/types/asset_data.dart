@@ -109,21 +109,44 @@ Encoder<AssetData> getAssetDataEncoder() {
     (
       'creators',
       getNullableEncoder<List<Creator>>(
-        getArrayEncoder<Creator>(
-          transformEncoder(getCreatorEncoder(), (Creator value) => value),
+        transformEncoder(
+          getArrayEncoder(
+            transformEncoder(getCreatorEncoder(), (Creator value) => value),
+          ),
+          (List<Creator> value) => value,
         ),
       ),
     ),
     ('primarySaleHappened', getBooleanEncoder()),
     ('isMutable', getBooleanEncoder()),
     ('tokenStandard', getTokenStandardEncoder()),
-    ('collection', getNullableEncoder<Collection>(getCollectionEncoder())),
-    ('uses', getNullableEncoder<Uses>(getUsesEncoder())),
+    (
+      'collection',
+      getNullableEncoder<Collection>(
+        transformEncoder(getCollectionEncoder(), (Collection value) => value),
+      ),
+    ),
+    (
+      'uses',
+      getNullableEncoder<Uses>(
+        transformEncoder(getUsesEncoder(), (Uses value) => value),
+      ),
+    ),
     (
       'collectionDetails',
-      getNullableEncoder<CollectionDetails>(getCollectionDetailsEncoder()),
+      getNullableEncoder<CollectionDetails>(
+        transformEncoder(
+          getCollectionDetailsEncoder(),
+          (CollectionDetails value) => value,
+        ),
+      ),
     ),
-    ('ruleSet', getNullableEncoder<Address>(getAddressEncoder())),
+    (
+      'ruleSet',
+      getNullableEncoder<Address>(
+        transformEncoder(getAddressEncoder(), (Address value) => value),
+      ),
+    ),
   ]);
 
   return transformEncoder(

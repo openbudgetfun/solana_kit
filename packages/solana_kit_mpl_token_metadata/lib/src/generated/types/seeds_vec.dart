@@ -49,7 +49,7 @@ Encoder<SeedsVec> getSeedsVecEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     (
       'seeds',
-      getArrayEncoder<Uint8List>(
+      getArrayEncoder(
         transformEncoder(
           addEncoderSizePrefix(getBytesEncoder(), getU32Encoder()),
           (Uint8List value) => value,

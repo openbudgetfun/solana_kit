@@ -30,7 +30,7 @@ getRemoveGroupsFromGroupV1InstructionDataEncoder() {
     ('discriminator', getU8Encoder()),
     (
       'groups',
-      getArrayEncoder<Address>(
+      getArrayEncoder(
         transformEncoder(getAddressEncoder(), (Address value) => value),
       ),
     ),

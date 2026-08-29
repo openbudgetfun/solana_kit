@@ -38,7 +38,7 @@ Encoder<CreateGroupV1InstructionData> getCreateGroupV1InstructionDataEncoder() {
     ('uri', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
     (
       'relationships',
-      getArrayEncoder<RelationshipEntry>(
+      getArrayEncoder(
         transformEncoder(
           getRelationshipEntryEncoder(),
           (RelationshipEntry value) => value,

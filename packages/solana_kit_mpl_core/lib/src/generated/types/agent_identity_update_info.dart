@@ -58,20 +58,26 @@ Encoder<AgentIdentityUpdateInfo> getAgentIdentityUpdateInfoEncoder() {
     (
       'uri',
       getNullableEncoder<String>(
-        addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+        transformEncoder(
+          addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+          (String value) => value,
+        ),
       ),
     ),
     (
       'lifecycleChecks',
       getNullableEncoder<List<(HookableLifecycleEvent, ExternalCheckResult)>>(
-        getArrayEncoder<(HookableLifecycleEvent, ExternalCheckResult)>(
-          transformEncoder(
-            getTuple2Encoder(
-              getHookableLifecycleEventEncoder(),
-              getExternalCheckResultEncoder(),
+        transformEncoder(
+          getArrayEncoder(
+            transformEncoder(
+              getTuple2Encoder(
+                getHookableLifecycleEventEncoder(),
+                getExternalCheckResultEncoder(),
+              ),
+              ((HookableLifecycleEvent, ExternalCheckResult) value) => value,
             ),
-            ((HookableLifecycleEvent, ExternalCheckResult) value) => value,
           ),
+          (List<(HookableLifecycleEvent, ExternalCheckResult)> value) => value,
         ),
       ),
     ),

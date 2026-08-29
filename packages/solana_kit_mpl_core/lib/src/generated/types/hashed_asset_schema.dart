@@ -56,7 +56,7 @@ Encoder<HashedAssetSchema> getHashedAssetSchemaEncoder() {
     ),
     (
       'pluginHashes',
-      getArrayEncoder<Uint8List>(
+      getArrayEncoder(
         transformEncoder(
           fixEncoderSize(getBytesEncoder(), 32, allowTruncation: false),
           (Uint8List value) => value,

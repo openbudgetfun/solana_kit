@@ -46,22 +46,28 @@ Encoder<CreateV2InstructionData> getCreateV2InstructionDataEncoder() {
     (
       'plugins',
       getNullableEncoder<List<PluginAuthorityPair>>(
-        getArrayEncoder<PluginAuthorityPair>(
-          transformEncoder(
-            getPluginAuthorityPairEncoder(),
-            (PluginAuthorityPair value) => value,
+        transformEncoder(
+          getArrayEncoder(
+            transformEncoder(
+              getPluginAuthorityPairEncoder(),
+              (PluginAuthorityPair value) => value,
+            ),
           ),
+          (List<PluginAuthorityPair> value) => value,
         ),
       ),
     ),
     (
       'externalPluginAdapters',
       getNullableEncoder<List<ExternalPluginAdapterInitInfo>>(
-        getArrayEncoder<ExternalPluginAdapterInitInfo>(
-          transformEncoder(
-            getExternalPluginAdapterInitInfoEncoder(),
-            (ExternalPluginAdapterInitInfo value) => value,
+        transformEncoder(
+          getArrayEncoder(
+            transformEncoder(
+              getExternalPluginAdapterInitInfoEncoder(),
+              (ExternalPluginAdapterInitInfo value) => value,
+            ),
           ),
+          (List<ExternalPluginAdapterInitInfo> value) => value,
         ),
       ),
     ),

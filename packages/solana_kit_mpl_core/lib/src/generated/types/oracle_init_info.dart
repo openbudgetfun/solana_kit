@@ -75,11 +75,13 @@ Encoder<OracleInitInfo> getOracleInitInfoEncoder() {
     ('baseAddress', getAddressEncoder()),
     (
       'initPluginAuthority',
-      getNullableEncoder<Authority>(getAuthorityEncoder()),
+      getNullableEncoder<Authority>(
+        transformEncoder(getAuthorityEncoder(), (Authority value) => value),
+      ),
     ),
     (
       'lifecycleChecks',
-      getArrayEncoder<(HookableLifecycleEvent, ExternalCheckResult)>(
+      getArrayEncoder(
         transformEncoder(
           getTuple2Encoder(
             getHookableLifecycleEventEncoder(),
@@ -91,12 +93,20 @@ Encoder<OracleInitInfo> getOracleInitInfoEncoder() {
     ),
     (
       'baseAddressConfig',
-      getNullableEncoder<ExtraAccount>(getExtraAccountEncoder()),
+      getNullableEncoder<ExtraAccount>(
+        transformEncoder(
+          getExtraAccountEncoder(),
+          (ExtraAccount value) => value,
+        ),
+      ),
     ),
     (
       'resultsOffset',
       getNullableEncoder<ValidationResultsOffset>(
-        getValidationResultsOffsetEncoder(),
+        transformEncoder(
+          getValidationResultsOffsetEncoder(),
+          (ValidationResultsOffset value) => value,
+        ),
       ),
     ),
   ]);

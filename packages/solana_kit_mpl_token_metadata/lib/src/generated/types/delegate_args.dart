@@ -333,7 +333,10 @@ Encoder<DelegateArgs> getDelegateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -345,7 +348,10 @@ Encoder<DelegateArgs> getDelegateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -357,7 +363,10 @@ Encoder<DelegateArgs> getDelegateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -368,7 +377,10 @@ Encoder<DelegateArgs> getDelegateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -380,7 +392,10 @@ Encoder<DelegateArgs> getDelegateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -392,7 +407,10 @@ Encoder<DelegateArgs> getDelegateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -406,7 +424,10 @@ Encoder<DelegateArgs> getDelegateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -417,7 +438,10 @@ Encoder<DelegateArgs> getDelegateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -428,7 +452,10 @@ Encoder<DelegateArgs> getDelegateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -439,7 +466,10 @@ Encoder<DelegateArgs> getDelegateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -450,7 +480,10 @@ Encoder<DelegateArgs> getDelegateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -461,7 +494,10 @@ Encoder<DelegateArgs> getDelegateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -472,7 +508,10 @@ Encoder<DelegateArgs> getDelegateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),

@@ -76,8 +76,11 @@ Encoder<Data> getDataEncoder() {
     (
       'creators',
       getNullableEncoder<List<Creator>>(
-        getArrayEncoder<Creator>(
-          transformEncoder(getCreatorEncoder(), (Creator value) => value),
+        transformEncoder(
+          getArrayEncoder(
+            transformEncoder(getCreatorEncoder(), (Creator value) => value),
+          ),
+          (List<Creator> value) => value,
         ),
       ),
     ),

@@ -60,7 +60,12 @@ Encoder<AssetV1> getAssetV1Encoder() {
     ('updateAuthority', getUpdateAuthorityEncoder()),
     ('name', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
     ('uri', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
-    ('seq', getNullableEncoder<BigInt>(getU64Encoder())),
+    (
+      'seq',
+      getNullableEncoder<BigInt>(
+        transformEncoder(getU64Encoder(), (BigInt value) => value),
+      ),
+    ),
   ]);
 
   return transformEncoder(

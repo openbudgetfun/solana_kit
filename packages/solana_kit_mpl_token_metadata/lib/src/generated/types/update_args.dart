@@ -325,14 +325,28 @@ Encoder<UpdateArgs> getUpdateArgsEncoder() {
         getStructEncoder([
           (
             'newUpdateAuthority',
-            getNullableEncoder<Address>(getAddressEncoder()),
+            getNullableEncoder<Address>(
+              transformEncoder(getAddressEncoder(), (Address value) => value),
+            ),
           ),
-          ('data', getNullableEncoder<Data>(getDataEncoder())),
+          (
+            'data',
+            getNullableEncoder<Data>(
+              transformEncoder(getDataEncoder(), (Data value) => value),
+            ),
+          ),
           (
             'primarySaleHappened',
-            getNullableEncoder<bool>(getBooleanEncoder()),
+            getNullableEncoder<bool>(
+              transformEncoder(getBooleanEncoder(), (bool value) => value),
+            ),
           ),
-          ('isMutable', getNullableEncoder<bool>(getBooleanEncoder())),
+          (
+            'isMutable',
+            getNullableEncoder<bool>(
+              transformEncoder(getBooleanEncoder(), (bool value) => value),
+            ),
+          ),
           ('collection', getCollectionToggleEncoder()),
           ('collectionDetails', getCollectionDetailsToggleEncoder()),
           ('uses', getUsesToggleEncoder()),
@@ -340,7 +354,10 @@ Encoder<UpdateArgs> getUpdateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -350,26 +367,48 @@ Encoder<UpdateArgs> getUpdateArgsEncoder() {
         getStructEncoder([
           (
             'newUpdateAuthority',
-            getNullableEncoder<Address>(getAddressEncoder()),
+            getNullableEncoder<Address>(
+              transformEncoder(getAddressEncoder(), (Address value) => value),
+            ),
           ),
-          ('data', getNullableEncoder<Data>(getDataEncoder())),
+          (
+            'data',
+            getNullableEncoder<Data>(
+              transformEncoder(getDataEncoder(), (Data value) => value),
+            ),
+          ),
           (
             'primarySaleHappened',
-            getNullableEncoder<bool>(getBooleanEncoder()),
+            getNullableEncoder<bool>(
+              transformEncoder(getBooleanEncoder(), (bool value) => value),
+            ),
           ),
-          ('isMutable', getNullableEncoder<bool>(getBooleanEncoder())),
+          (
+            'isMutable',
+            getNullableEncoder<bool>(
+              transformEncoder(getBooleanEncoder(), (bool value) => value),
+            ),
+          ),
           ('collection', getCollectionToggleEncoder()),
           ('collectionDetails', getCollectionDetailsToggleEncoder()),
           ('uses', getUsesToggleEncoder()),
           ('ruleSet', getRuleSetToggleEncoder()),
           (
             'tokenStandard',
-            getNullableEncoder<TokenStandard>(getTokenStandardEncoder()),
+            getNullableEncoder<TokenStandard>(
+              transformEncoder(
+                getTokenStandardEncoder(),
+                (TokenStandard value) => value,
+              ),
+            ),
           ),
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -379,21 +418,38 @@ Encoder<UpdateArgs> getUpdateArgsEncoder() {
         getStructEncoder([
           (
             'newUpdateAuthority',
-            getNullableEncoder<Address>(getAddressEncoder()),
+            getNullableEncoder<Address>(
+              transformEncoder(getAddressEncoder(), (Address value) => value),
+            ),
           ),
           (
             'primarySaleHappened',
-            getNullableEncoder<bool>(getBooleanEncoder()),
+            getNullableEncoder<bool>(
+              transformEncoder(getBooleanEncoder(), (bool value) => value),
+            ),
           ),
-          ('isMutable', getNullableEncoder<bool>(getBooleanEncoder())),
+          (
+            'isMutable',
+            getNullableEncoder<bool>(
+              transformEncoder(getBooleanEncoder(), (bool value) => value),
+            ),
+          ),
           (
             'tokenStandard',
-            getNullableEncoder<TokenStandard>(getTokenStandardEncoder()),
+            getNullableEncoder<TokenStandard>(
+              transformEncoder(
+                getTokenStandardEncoder(),
+                (TokenStandard value) => value,
+              ),
+            ),
           ),
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -405,7 +461,10 @@ Encoder<UpdateArgs> getUpdateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -413,11 +472,19 @@ Encoder<UpdateArgs> getUpdateArgsEncoder() {
       (
         4,
         getStructEncoder([
-          ('data', getNullableEncoder<Data>(getDataEncoder())),
+          (
+            'data',
+            getNullableEncoder<Data>(
+              transformEncoder(getDataEncoder(), (Data value) => value),
+            ),
+          ),
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -429,7 +496,10 @@ Encoder<UpdateArgs> getUpdateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -437,11 +507,19 @@ Encoder<UpdateArgs> getUpdateArgsEncoder() {
       (
         6,
         getStructEncoder([
-          ('data', getNullableEncoder<Data>(getDataEncoder())),
+          (
+            'data',
+            getNullableEncoder<Data>(
+              transformEncoder(getDataEncoder(), (Data value) => value),
+            ),
+          ),
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -453,7 +531,10 @@ Encoder<UpdateArgs> getUpdateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),
@@ -465,7 +546,10 @@ Encoder<UpdateArgs> getUpdateArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),

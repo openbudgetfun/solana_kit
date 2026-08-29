@@ -49,7 +49,7 @@ Encoder<Groups> getGroupsEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     (
       'groups',
-      getArrayEncoder<Address>(
+      getArrayEncoder(
         transformEncoder(getAddressEncoder(), (Address value) => value),
       ),
     ),

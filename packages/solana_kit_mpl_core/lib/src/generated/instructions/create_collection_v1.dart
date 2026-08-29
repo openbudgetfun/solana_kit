@@ -40,11 +40,14 @@ getCreateCollectionV1InstructionDataEncoder() {
     (
       'plugins',
       getNullableEncoder<List<PluginAuthorityPair>>(
-        getArrayEncoder<PluginAuthorityPair>(
-          transformEncoder(
-            getPluginAuthorityPairEncoder(),
-            (PluginAuthorityPair value) => value,
+        transformEncoder(
+          getArrayEncoder(
+            transformEncoder(
+              getPluginAuthorityPairEncoder(),
+              (PluginAuthorityPair value) => value,
+            ),
           ),
+          (List<PluginAuthorityPair> value) => value,
         ),
       ),
     ),

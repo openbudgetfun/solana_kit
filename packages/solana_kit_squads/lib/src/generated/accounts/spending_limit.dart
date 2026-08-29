@@ -110,13 +110,13 @@ Encoder<SpendingLimit> getSpendingLimitEncoder() {
     ('bump', getU8Encoder()),
     (
       'members',
-      getArrayEncoder<Address>(
+      getArrayEncoder(
         transformEncoder(getAddressEncoder(), (Address value) => value),
       ),
     ),
     (
       'destinations',
-      getArrayEncoder<Address>(
+      getArrayEncoder(
         transformEncoder(getAddressEncoder(), (Address value) => value),
       ),
     ),

@@ -46,7 +46,12 @@ Encoder<Oracle> getOracleEncoder() {
     ('baseAddress', getAddressEncoder()),
     (
       'baseAddressConfig',
-      getNullableEncoder<ExtraAccount>(getExtraAccountEncoder()),
+      getNullableEncoder<ExtraAccount>(
+        transformEncoder(
+          getExtraAccountEncoder(),
+          (ExtraAccount value) => value,
+        ),
+      ),
     ),
     ('resultsOffset', getValidationResultsOffsetEncoder()),
   ]);

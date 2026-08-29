@@ -50,7 +50,7 @@ Encoder<Autograph> getAutographEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     (
       'signatures',
-      getArrayEncoder<AutographSignature>(
+      getArrayEncoder(
         transformEncoder(
           getAutographSignatureEncoder(),
           (AutographSignature value) => value,

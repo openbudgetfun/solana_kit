@@ -288,7 +288,7 @@ describe("getTypeManifestVisitor", () => {
       );
       const manifest = visit(node, createVisitor());
 
-      expect(manifest.encoder.content).toContain("getArrayEncoder<int>");
+      expect(manifest.encoder.content).toContain("getArrayEncoder(transformEncoder(getU8Encoder(), (int value) => value)");
       expect(manifest.encoder.content).toContain(
         "transformEncoder(getU8Encoder(), (int value) => value)",
       );

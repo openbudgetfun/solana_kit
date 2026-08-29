@@ -33,13 +33,19 @@ Encoder<UpdateGroupV1InstructionData> getUpdateGroupV1InstructionDataEncoder() {
     (
       'newName',
       getNullableEncoder<String>(
-        addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+        transformEncoder(
+          addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+          (String value) => value,
+        ),
       ),
     ),
     (
       'newUri',
       getNullableEncoder<String>(
-        addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+        transformEncoder(
+          addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+          (String value) => value,
+        ),
       ),
     ),
   ]);

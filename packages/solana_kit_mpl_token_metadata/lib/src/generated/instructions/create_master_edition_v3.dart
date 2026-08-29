@@ -28,7 +28,12 @@ Encoder<CreateMasterEditionV3InstructionData>
 getCreateMasterEditionV3InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
-    ('maxSupply', getNullableEncoder<BigInt>(getU64Encoder())),
+    (
+      'maxSupply',
+      getNullableEncoder<BigInt>(
+        transformEncoder(getU64Encoder(), (BigInt value) => value),
+      ),
+    ),
   ]);
 
   return transformEncoder(

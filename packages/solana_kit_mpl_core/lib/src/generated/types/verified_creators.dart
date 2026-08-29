@@ -50,7 +50,7 @@ Encoder<VerifiedCreators> getVerifiedCreatorsEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     (
       'signatures',
-      getArrayEncoder<VerifiedCreatorsSignature>(
+      getArrayEncoder(
         transformEncoder(
           getVerifiedCreatorsSignatureEncoder(),
           (VerifiedCreatorsSignature value) => value,

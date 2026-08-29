@@ -79,11 +79,13 @@ Encoder<LinkedLifecycleHookInitInfo> getLinkedLifecycleHookInitInfoEncoder() {
     ('hookedProgram', getAddressEncoder()),
     (
       'initPluginAuthority',
-      getNullableEncoder<Authority>(getAuthorityEncoder()),
+      getNullableEncoder<Authority>(
+        transformEncoder(getAuthorityEncoder(), (Authority value) => value),
+      ),
     ),
     (
       'lifecycleChecks',
-      getArrayEncoder<(HookableLifecycleEvent, ExternalCheckResult)>(
+      getArrayEncoder(
         transformEncoder(
           getTuple2Encoder(
             getHookableLifecycleEventEncoder(),
@@ -96,19 +98,30 @@ Encoder<LinkedLifecycleHookInitInfo> getLinkedLifecycleHookInitInfoEncoder() {
     (
       'extraAccounts',
       getNullableEncoder<List<ExtraAccount>>(
-        getArrayEncoder<ExtraAccount>(
-          transformEncoder(
-            getExtraAccountEncoder(),
-            (ExtraAccount value) => value,
+        transformEncoder(
+          getArrayEncoder(
+            transformEncoder(
+              getExtraAccountEncoder(),
+              (ExtraAccount value) => value,
+            ),
           ),
+          (List<ExtraAccount> value) => value,
         ),
       ),
     ),
-    ('dataAuthority', getNullableEncoder<Authority>(getAuthorityEncoder())),
+    (
+      'dataAuthority',
+      getNullableEncoder<Authority>(
+        transformEncoder(getAuthorityEncoder(), (Authority value) => value),
+      ),
+    ),
     (
       'schema',
       getNullableEncoder<ExternalPluginAdapterSchema>(
-        getExternalPluginAdapterSchemaEncoder(),
+        transformEncoder(
+          getExternalPluginAdapterSchemaEncoder(),
+          (ExternalPluginAdapterSchema value) => value,
+        ),
       ),
     ),
   ]);

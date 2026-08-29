@@ -31,7 +31,12 @@ Encoder<BurnV1InstructionData> getBurnV1InstructionDataEncoder() {
     ('discriminator', getU8Encoder()),
     (
       'compressionProof',
-      getNullableEncoder<CompressionProof>(getCompressionProofEncoder()),
+      getNullableEncoder<CompressionProof>(
+        transformEncoder(
+          getCompressionProofEncoder(),
+          (CompressionProof value) => value,
+        ),
+      ),
     ),
   ]);
 

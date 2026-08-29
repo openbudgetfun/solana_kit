@@ -214,13 +214,13 @@ Encoder<ConfigAction> getConfigActionEncoder() {
           ('period', getPeriodEncoder()),
           (
             'members',
-            getArrayEncoder<Address>(
+            getArrayEncoder(
               transformEncoder(getAddressEncoder(), (Address value) => value),
             ),
           ),
           (
             'destinations',
-            getArrayEncoder<Address>(
+            getArrayEncoder(
               transformEncoder(getAddressEncoder(), (Address value) => value),
             ),
           ),
@@ -232,7 +232,9 @@ Encoder<ConfigAction> getConfigActionEncoder() {
         getStructEncoder([
           (
             'newRentCollector',
-            getNullableEncoder<Address>(getAddressEncoder()),
+            getNullableEncoder<Address>(
+              transformEncoder(getAddressEncoder(), (Address value) => value),
+            ),
           ),
         ]),
       ),

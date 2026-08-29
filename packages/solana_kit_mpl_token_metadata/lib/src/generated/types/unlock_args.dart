@@ -41,7 +41,10 @@ Encoder<UnlockArgs> getUnlockArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),

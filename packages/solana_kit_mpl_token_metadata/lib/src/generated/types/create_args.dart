@@ -48,10 +48,20 @@ Encoder<CreateArgs> getCreateArgsEncoder() {
         0,
         getStructEncoder([
           ('assetData', getAssetDataEncoder()),
-          ('decimals', getNullableEncoder<int>(getU8Encoder())),
+          (
+            'decimals',
+            getNullableEncoder<int>(
+              transformEncoder(getU8Encoder(), (int value) => value),
+            ),
+          ),
           (
             'printSupply',
-            getNullableEncoder<PrintSupply>(getPrintSupplyEncoder()),
+            getNullableEncoder<PrintSupply>(
+              transformEncoder(
+                getPrintSupplyEncoder(),
+                (PrintSupply value) => value,
+              ),
+            ),
           ),
         ]),
       ),

@@ -67,7 +67,7 @@ Encoder<RuleSet> getRuleSetEncoder() {
       (
         1,
         transformEncoder<List<Address>, Map<String, Object?>>(
-          getArrayEncoder<Address>(
+          getArrayEncoder(
             transformEncoder(getAddressEncoder(), (Address value) => value),
           ),
           (Map<String, Object?> map) => map['value']! as List<Address>,
@@ -76,7 +76,7 @@ Encoder<RuleSet> getRuleSetEncoder() {
       (
         2,
         transformEncoder<List<Address>, Map<String, Object?>>(
-          getArrayEncoder<Address>(
+          getArrayEncoder(
             transformEncoder(getAddressEncoder(), (Address value) => value),
           ),
           (Map<String, Object?> map) => map['value']! as List<Address>,

@@ -47,7 +47,10 @@ Encoder<MintArgs> getMintArgsEncoder() {
           (
             'authorizationData',
             getNullableEncoder<AuthorizationData>(
-              getAuthorizationDataEncoder(),
+              transformEncoder(
+                getAuthorizationDataEncoder(),
+                (AuthorizationData value) => value,
+              ),
             ),
           ),
         ]),

@@ -65,25 +65,36 @@ Encoder<OracleUpdateInfo> getOracleUpdateInfoEncoder() {
     (
       'lifecycleChecks',
       getNullableEncoder<List<(HookableLifecycleEvent, ExternalCheckResult)>>(
-        getArrayEncoder<(HookableLifecycleEvent, ExternalCheckResult)>(
-          transformEncoder(
-            getTuple2Encoder(
-              getHookableLifecycleEventEncoder(),
-              getExternalCheckResultEncoder(),
+        transformEncoder(
+          getArrayEncoder(
+            transformEncoder(
+              getTuple2Encoder(
+                getHookableLifecycleEventEncoder(),
+                getExternalCheckResultEncoder(),
+              ),
+              ((HookableLifecycleEvent, ExternalCheckResult) value) => value,
             ),
-            ((HookableLifecycleEvent, ExternalCheckResult) value) => value,
           ),
+          (List<(HookableLifecycleEvent, ExternalCheckResult)> value) => value,
         ),
       ),
     ),
     (
       'baseAddressConfig',
-      getNullableEncoder<ExtraAccount>(getExtraAccountEncoder()),
+      getNullableEncoder<ExtraAccount>(
+        transformEncoder(
+          getExtraAccountEncoder(),
+          (ExtraAccount value) => value,
+        ),
+      ),
     ),
     (
       'resultsOffset',
       getNullableEncoder<ValidationResultsOffset>(
-        getValidationResultsOffsetEncoder(),
+        transformEncoder(
+          getValidationResultsOffsetEncoder(),
+          (ValidationResultsOffset value) => value,
+        ),
       ),
     ),
   ]);

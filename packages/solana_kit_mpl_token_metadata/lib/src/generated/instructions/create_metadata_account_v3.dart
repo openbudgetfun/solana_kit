@@ -39,7 +39,12 @@ getCreateMetadataAccountV3InstructionDataEncoder() {
     ('isMutable', getBooleanEncoder()),
     (
       'collectionDetails',
-      getNullableEncoder<CollectionDetails>(getCollectionDetailsEncoder()),
+      getNullableEncoder<CollectionDetails>(
+        transformEncoder(
+          getCollectionDetailsEncoder(),
+          (CollectionDetails value) => value,
+        ),
+      ),
     ),
   ]);
 

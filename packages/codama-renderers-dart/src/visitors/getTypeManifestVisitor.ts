@@ -239,7 +239,7 @@ export function getTypeManifestVisitor(input: {
         encoder: fragment`${use(
           "getArrayEncoder",
           "solanaCodecsDataStructures",
-        )}<${itemType}>(${itemEncoder}${encoderSizeExpr})`,
+        )}(${itemEncoder}${encoderSizeExpr})`,
         decoder: fragment`${use(
           "getArrayDecoder",
           "solanaCodecsDataStructures",
@@ -458,7 +458,10 @@ export function getTypeManifestVisitor(input: {
         encoder: fragment`${use(
           "getNullableEncoder",
           "solanaCodecsDataStructures",
-        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.encoder}${fragmentFromString(prefixExpr)}${fragmentFromString(noneValueExpr)})`,
+        )}<${fragmentFromString(itemTypeStr)}>(${use(
+          "transformEncoder",
+          "solanaCodecsCore",
+        )}(${itemManifest.encoder}, (${fragmentFromString(itemTypeStr)} value) => value)${fragmentFromString(prefixExpr)}${fragmentFromString(noneValueExpr)})`,
         decoder: fragment`${use(
           "getNullableDecoder",
           "solanaCodecsDataStructures",

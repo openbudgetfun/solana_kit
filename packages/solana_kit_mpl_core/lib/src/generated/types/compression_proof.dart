@@ -82,7 +82,7 @@ Encoder<CompressionProof> getCompressionProofEncoder() {
     ('seq', getU64Encoder()),
     (
       'plugins',
-      getArrayEncoder<HashablePluginSchema>(
+      getArrayEncoder(
         transformEncoder(
           getHashablePluginSchemaEncoder(),
           (HashablePluginSchema value) => value,

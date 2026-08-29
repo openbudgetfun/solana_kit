@@ -36,10 +36,30 @@ Encoder<UpdateMetadataAccountV2InstructionData>
 getUpdateMetadataAccountV2InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
-    ('data', getNullableEncoder<DataV2>(getDataV2Encoder())),
-    ('newUpdateAuthority', getNullableEncoder<Address>(getAddressEncoder())),
-    ('primarySaleHappened', getNullableEncoder<bool>(getBooleanEncoder())),
-    ('isMutable', getNullableEncoder<bool>(getBooleanEncoder())),
+    (
+      'data',
+      getNullableEncoder<DataV2>(
+        transformEncoder(getDataV2Encoder(), (DataV2 value) => value),
+      ),
+    ),
+    (
+      'newUpdateAuthority',
+      getNullableEncoder<Address>(
+        transformEncoder(getAddressEncoder(), (Address value) => value),
+      ),
+    ),
+    (
+      'primarySaleHappened',
+      getNullableEncoder<bool>(
+        transformEncoder(getBooleanEncoder(), (bool value) => value),
+      ),
+    ),
+    (
+      'isMutable',
+      getNullableEncoder<bool>(
+        transformEncoder(getBooleanEncoder(), (bool value) => value),
+      ),
+    ),
   ]);
 
   return transformEncoder(

@@ -69,13 +69,33 @@ Encoder<TokenRecord> getTokenRecordEncoder() {
     ('key', getKeyEncoder()),
     ('bump', getU8Encoder()),
     ('state', getTokenStateEncoder()),
-    ('ruleSetRevision', getNullableEncoder<BigInt>(getU64Encoder())),
-    ('delegate', getNullableEncoder<Address>(getAddressEncoder())),
+    (
+      'ruleSetRevision',
+      getNullableEncoder<BigInt>(
+        transformEncoder(getU64Encoder(), (BigInt value) => value),
+      ),
+    ),
+    (
+      'delegate',
+      getNullableEncoder<Address>(
+        transformEncoder(getAddressEncoder(), (Address value) => value),
+      ),
+    ),
     (
       'delegateRole',
-      getNullableEncoder<TokenDelegateRole>(getTokenDelegateRoleEncoder()),
+      getNullableEncoder<TokenDelegateRole>(
+        transformEncoder(
+          getTokenDelegateRoleEncoder(),
+          (TokenDelegateRole value) => value,
+        ),
+      ),
     ),
-    ('lockedTransfer', getNullableEncoder<Address>(getAddressEncoder())),
+    (
+      'lockedTransfer',
+      getNullableEncoder<Address>(
+        transformEncoder(getAddressEncoder(), (Address value) => value),
+      ),
+    ),
   ]);
 
   return transformEncoder(

@@ -47,7 +47,7 @@ Encoder<PluginRegistryV1> getPluginRegistryV1Encoder() {
     ('key', getKeyEncoder()),
     (
       'registry',
-      getArrayEncoder<RegistryRecord>(
+      getArrayEncoder(
         transformEncoder(
           getRegistryRecordEncoder(),
           (RegistryRecord value) => value,
@@ -56,7 +56,7 @@ Encoder<PluginRegistryV1> getPluginRegistryV1Encoder() {
     ),
     (
       'externalRegistry',
-      getArrayEncoder<ExternalRegistryRecord>(
+      getArrayEncoder(
         transformEncoder(
           getExternalRegistryRecordEncoder(),
           (ExternalRegistryRecord value) => value,

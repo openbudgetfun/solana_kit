@@ -96,20 +96,50 @@ Encoder<Metadata> getMetadataEncoder() {
     ('data', getDataEncoder()),
     ('primarySaleHappened', getBooleanEncoder()),
     ('isMutable', getBooleanEncoder()),
-    ('editionNonce', getNullableEncoder<int>(getU8Encoder())),
+    (
+      'editionNonce',
+      getNullableEncoder<int>(
+        transformEncoder(getU8Encoder(), (int value) => value),
+      ),
+    ),
     (
       'tokenStandard',
-      getNullableEncoder<TokenStandard>(getTokenStandardEncoder()),
+      getNullableEncoder<TokenStandard>(
+        transformEncoder(
+          getTokenStandardEncoder(),
+          (TokenStandard value) => value,
+        ),
+      ),
     ),
-    ('collection', getNullableEncoder<Collection>(getCollectionEncoder())),
-    ('uses', getNullableEncoder<Uses>(getUsesEncoder())),
+    (
+      'collection',
+      getNullableEncoder<Collection>(
+        transformEncoder(getCollectionEncoder(), (Collection value) => value),
+      ),
+    ),
+    (
+      'uses',
+      getNullableEncoder<Uses>(
+        transformEncoder(getUsesEncoder(), (Uses value) => value),
+      ),
+    ),
     (
       'collectionDetails',
-      getNullableEncoder<CollectionDetails>(getCollectionDetailsEncoder()),
+      getNullableEncoder<CollectionDetails>(
+        transformEncoder(
+          getCollectionDetailsEncoder(),
+          (CollectionDetails value) => value,
+        ),
+      ),
     ),
     (
       'programmableConfig',
-      getNullableEncoder<ProgrammableConfig>(getProgrammableConfigEncoder()),
+      getNullableEncoder<ProgrammableConfig>(
+        transformEncoder(
+          getProgrammableConfigEncoder(),
+          (ProgrammableConfig value) => value,
+        ),
+      ),
     ),
   ]);
 

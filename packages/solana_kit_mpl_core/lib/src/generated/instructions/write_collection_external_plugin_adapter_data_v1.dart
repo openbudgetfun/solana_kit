@@ -36,7 +36,10 @@ getWriteCollectionExternalPluginAdapterDataV1InstructionDataEncoder() {
     (
       'data',
       getNullableEncoder<Uint8List>(
-        addEncoderSizePrefix(getBytesEncoder(), getU32Encoder()),
+        transformEncoder(
+          addEncoderSizePrefix(getBytesEncoder(), getU32Encoder()),
+          (Uint8List value) => value,
+        ),
       ),
     ),
   ]);

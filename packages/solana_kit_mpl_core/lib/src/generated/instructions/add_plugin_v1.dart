@@ -33,7 +33,12 @@ Encoder<AddPluginV1InstructionData> getAddPluginV1InstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('discriminator', getU8Encoder()),
     ('plugin', getPluginEncoder()),
-    ('initAuthority', getNullableEncoder<Authority>(getAuthorityEncoder())),
+    (
+      'initAuthority',
+      getNullableEncoder<Authority>(
+        transformEncoder(getAuthorityEncoder(), (Authority value) => value),
+      ),
+    ),
   ]);
 
   return transformEncoder(

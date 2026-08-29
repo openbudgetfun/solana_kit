@@ -66,32 +66,41 @@ getLinkedLifecycleHookUpdateInfoEncoder() {
     (
       'lifecycleChecks',
       getNullableEncoder<List<(HookableLifecycleEvent, ExternalCheckResult)>>(
-        getArrayEncoder<(HookableLifecycleEvent, ExternalCheckResult)>(
-          transformEncoder(
-            getTuple2Encoder(
-              getHookableLifecycleEventEncoder(),
-              getExternalCheckResultEncoder(),
+        transformEncoder(
+          getArrayEncoder(
+            transformEncoder(
+              getTuple2Encoder(
+                getHookableLifecycleEventEncoder(),
+                getExternalCheckResultEncoder(),
+              ),
+              ((HookableLifecycleEvent, ExternalCheckResult) value) => value,
             ),
-            ((HookableLifecycleEvent, ExternalCheckResult) value) => value,
           ),
+          (List<(HookableLifecycleEvent, ExternalCheckResult)> value) => value,
         ),
       ),
     ),
     (
       'extraAccounts',
       getNullableEncoder<List<ExtraAccount>>(
-        getArrayEncoder<ExtraAccount>(
-          transformEncoder(
-            getExtraAccountEncoder(),
-            (ExtraAccount value) => value,
+        transformEncoder(
+          getArrayEncoder(
+            transformEncoder(
+              getExtraAccountEncoder(),
+              (ExtraAccount value) => value,
+            ),
           ),
+          (List<ExtraAccount> value) => value,
         ),
       ),
     ),
     (
       'schema',
       getNullableEncoder<ExternalPluginAdapterSchema>(
-        getExternalPluginAdapterSchemaEncoder(),
+        transformEncoder(
+          getExternalPluginAdapterSchemaEncoder(),
+          (ExternalPluginAdapterSchema value) => value,
+        ),
       ),
     ),
   ]);

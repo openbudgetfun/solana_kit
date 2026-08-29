@@ -63,10 +63,15 @@ Encoder<ReservationListV2> getReservationListV2Encoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('key', getKeyEncoder()),
     ('masterEdition', getAddressEncoder()),
-    ('supplySnapshot', getNullableEncoder<BigInt>(getU64Encoder())),
+    (
+      'supplySnapshot',
+      getNullableEncoder<BigInt>(
+        transformEncoder(getU64Encoder(), (BigInt value) => value),
+      ),
+    ),
     (
       'reservations',
-      getArrayEncoder<Reservation>(
+      getArrayEncoder(
         transformEncoder(getReservationEncoder(), (Reservation value) => value),
       ),
     ),

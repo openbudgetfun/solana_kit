@@ -97,11 +97,16 @@ Encoder<Multisig> getMultisigEncoder() {
     ('timeLock', getU32Encoder()),
     ('transactionIndex', getU64Encoder()),
     ('staleTransactionIndex', getU64Encoder()),
-    ('rentCollector', getNullableEncoder<Address>(getAddressEncoder())),
+    (
+      'rentCollector',
+      getNullableEncoder<Address>(
+        transformEncoder(getAddressEncoder(), (Address value) => value),
+      ),
+    ),
     ('bump', getU8Encoder()),
     (
       'members',
-      getArrayEncoder<Member>(
+      getArrayEncoder(
         transformEncoder(getMemberEncoder(), (Member value) => value),
       ),
     ),

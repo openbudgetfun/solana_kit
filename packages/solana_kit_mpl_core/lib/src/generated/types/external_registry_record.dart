@@ -80,20 +80,33 @@ Encoder<ExternalRegistryRecord> getExternalRegistryRecordEncoder() {
     (
       'lifecycleChecks',
       getNullableEncoder<List<(HookableLifecycleEvent, ExternalCheckResult)>>(
-        getArrayEncoder<(HookableLifecycleEvent, ExternalCheckResult)>(
-          transformEncoder(
-            getTuple2Encoder(
-              getHookableLifecycleEventEncoder(),
-              getExternalCheckResultEncoder(),
+        transformEncoder(
+          getArrayEncoder(
+            transformEncoder(
+              getTuple2Encoder(
+                getHookableLifecycleEventEncoder(),
+                getExternalCheckResultEncoder(),
+              ),
+              ((HookableLifecycleEvent, ExternalCheckResult) value) => value,
             ),
-            ((HookableLifecycleEvent, ExternalCheckResult) value) => value,
           ),
+          (List<(HookableLifecycleEvent, ExternalCheckResult)> value) => value,
         ),
       ),
     ),
     ('offset', getU64Encoder()),
-    ('dataOffset', getNullableEncoder<BigInt>(getU64Encoder())),
-    ('dataLen', getNullableEncoder<BigInt>(getU64Encoder())),
+    (
+      'dataOffset',
+      getNullableEncoder<BigInt>(
+        transformEncoder(getU64Encoder(), (BigInt value) => value),
+      ),
+    ),
+    (
+      'dataLen',
+      getNullableEncoder<BigInt>(
+        transformEncoder(getU64Encoder(), (BigInt value) => value),
+      ),
+    ),
   ]);
 
   return transformEncoder(

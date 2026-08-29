@@ -44,12 +44,17 @@ Encoder<LinkedAppDataInitInfo> getLinkedAppDataInitInfoEncoder() {
     ('dataAuthority', getAuthorityEncoder()),
     (
       'initPluginAuthority',
-      getNullableEncoder<Authority>(getAuthorityEncoder()),
+      getNullableEncoder<Authority>(
+        transformEncoder(getAuthorityEncoder(), (Authority value) => value),
+      ),
     ),
     (
       'schema',
       getNullableEncoder<ExternalPluginAdapterSchema>(
-        getExternalPluginAdapterSchemaEncoder(),
+        transformEncoder(
+          getExternalPluginAdapterSchemaEncoder(),
+          (ExternalPluginAdapterSchema value) => value,
+        ),
       ),
     ),
   ]);

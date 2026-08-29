@@ -64,20 +64,23 @@ getMultisigAddSpendingLimitInstructionDataEncoder() {
     ('period', getPeriodEncoder()),
     (
       'members',
-      getArrayEncoder<Address>(
+      getArrayEncoder(
         transformEncoder(getAddressEncoder(), (Address value) => value),
       ),
     ),
     (
       'destinations',
-      getArrayEncoder<Address>(
+      getArrayEncoder(
         transformEncoder(getAddressEncoder(), (Address value) => value),
       ),
     ),
     (
       'memo',
       getNullableEncoder<String>(
-        addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+        transformEncoder(
+          addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+          (String value) => value,
+        ),
       ),
     ),
   ]);

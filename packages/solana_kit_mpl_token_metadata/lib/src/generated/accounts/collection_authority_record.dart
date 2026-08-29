@@ -46,7 +46,12 @@ Encoder<CollectionAuthorityRecord> getCollectionAuthorityRecordEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('key', getKeyEncoder()),
     ('bump', getU8Encoder()),
-    ('newUpdateAuthority', getNullableEncoder<Address>(getAddressEncoder())),
+    (
+      'newUpdateAuthority',
+      getNullableEncoder<Address>(
+        transformEncoder(getAddressEncoder(), (Address value) => value),
+      ),
+    ),
   ]);
 
   return transformEncoder(

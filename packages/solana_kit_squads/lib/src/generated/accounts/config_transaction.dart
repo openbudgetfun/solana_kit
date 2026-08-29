@@ -75,7 +75,7 @@ Encoder<ConfigTransaction> getConfigTransactionEncoder() {
     ('bump', getU8Encoder()),
     (
       'actions',
-      getArrayEncoder<ConfigAction>(
+      getArrayEncoder(
         transformEncoder(
           getConfigActionEncoder(),
           (ConfigAction value) => value,

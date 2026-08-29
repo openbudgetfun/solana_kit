@@ -30,7 +30,7 @@ getRemoveCollectionsFromGroupV1InstructionDataEncoder() {
     ('discriminator', getU8Encoder()),
     (
       'collections',
-      getArrayEncoder<Address>(
+      getArrayEncoder(
         transformEncoder(getAddressEncoder(), (Address value) => value),
       ),
     ),

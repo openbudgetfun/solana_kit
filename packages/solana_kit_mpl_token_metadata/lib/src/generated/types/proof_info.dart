@@ -48,7 +48,7 @@ Encoder<ProofInfo> getProofInfoEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     (
       'proof',
-      getArrayEncoder<Uint8List>(
+      getArrayEncoder(
         transformEncoder(
           fixEncoderSize(getBytesEncoder(), 32, allowTruncation: false),
           (Uint8List value) => value,

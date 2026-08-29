@@ -70,15 +70,23 @@ Encoder<LifecycleHook> getLifecycleHookEncoder() {
     (
       'extraAccounts',
       getNullableEncoder<List<ExtraAccount>>(
-        getArrayEncoder<ExtraAccount>(
-          transformEncoder(
-            getExtraAccountEncoder(),
-            (ExtraAccount value) => value,
+        transformEncoder(
+          getArrayEncoder(
+            transformEncoder(
+              getExtraAccountEncoder(),
+              (ExtraAccount value) => value,
+            ),
           ),
+          (List<ExtraAccount> value) => value,
         ),
       ),
     ),
-    ('dataAuthority', getNullableEncoder<Authority>(getAuthorityEncoder())),
+    (
+      'dataAuthority',
+      getNullableEncoder<Authority>(
+        transformEncoder(getAuthorityEncoder(), (Authority value) => value),
+      ),
+    ),
     ('schema', getExternalPluginAdapterSchemaEncoder()),
   ]);
 

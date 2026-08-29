@@ -250,11 +250,16 @@ Encoder<ExtraAccount> getExtraAccountEncoder() {
         getStructEncoder([
           (
             'seeds',
-            getArrayEncoder<Seed>(
+            getArrayEncoder(
               transformEncoder(getSeedEncoder(), (Seed value) => value),
             ),
           ),
-          ('customProgramId', getNullableEncoder<Address>(getAddressEncoder())),
+          (
+            'customProgramId',
+            getNullableEncoder<Address>(
+              transformEncoder(getAddressEncoder(), (Address value) => value),
+            ),
+          ),
           ('isSigner', getBooleanEncoder()),
           ('isWritable', getBooleanEncoder()),
         ]),

@@ -61,7 +61,7 @@ Encoder<Royalties> getRoyaltiesEncoder() {
     ('basisPoints', getU16Encoder()),
     (
       'creators',
-      getArrayEncoder<Creator>(
+      getArrayEncoder(
         transformEncoder(getCreatorEncoder(), (Creator value) => value),
       ),
     ),

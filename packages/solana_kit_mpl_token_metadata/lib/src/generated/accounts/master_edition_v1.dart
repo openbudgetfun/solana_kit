@@ -59,7 +59,12 @@ Encoder<MasterEditionV1> getMasterEditionV1Encoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
     ('key', getKeyEncoder()),
     ('supply', getU64Encoder()),
-    ('maxSupply', getNullableEncoder<BigInt>(getU64Encoder())),
+    (
+      'maxSupply',
+      getNullableEncoder<BigInt>(
+        transformEncoder(getU64Encoder(), (BigInt value) => value),
+      ),
+    ),
     ('printingMint', getAddressEncoder()),
     ('oneTimePrintingAuthorizationMint', getAddressEncoder()),
   ]);

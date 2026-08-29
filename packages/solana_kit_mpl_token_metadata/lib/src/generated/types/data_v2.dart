@@ -86,13 +86,26 @@ Encoder<DataV2> getDataV2Encoder() {
     (
       'creators',
       getNullableEncoder<List<Creator>>(
-        getArrayEncoder<Creator>(
-          transformEncoder(getCreatorEncoder(), (Creator value) => value),
+        transformEncoder(
+          getArrayEncoder(
+            transformEncoder(getCreatorEncoder(), (Creator value) => value),
+          ),
+          (List<Creator> value) => value,
         ),
       ),
     ),
-    ('collection', getNullableEncoder<Collection>(getCollectionEncoder())),
-    ('uses', getNullableEncoder<Uses>(getUsesEncoder())),
+    (
+      'collection',
+      getNullableEncoder<Collection>(
+        transformEncoder(getCollectionEncoder(), (Collection value) => value),
+      ),
+    ),
+    (
+      'uses',
+      getNullableEncoder<Uses>(
+        transformEncoder(getUsesEncoder(), (Uses value) => value),
+      ),
+    ),
   ]);
 
   return transformEncoder(

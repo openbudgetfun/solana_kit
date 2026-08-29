@@ -36,7 +36,10 @@ Encoder<LinkedAppDataUpdateInfo> getLinkedAppDataUpdateInfoEncoder() {
     (
       'schema',
       getNullableEncoder<ExternalPluginAdapterSchema>(
-        getExternalPluginAdapterSchemaEncoder(),
+        transformEncoder(
+          getExternalPluginAdapterSchemaEncoder(),
+          (ExternalPluginAdapterSchema value) => value,
+        ),
       ),
     ),
   ]);

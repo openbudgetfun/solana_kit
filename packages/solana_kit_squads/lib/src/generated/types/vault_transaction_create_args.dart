@@ -53,7 +53,10 @@ Encoder<VaultTransactionCreateArgs> getVaultTransactionCreateArgsEncoder() {
     (
       'memo',
       getNullableEncoder<String>(
-        addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+        transformEncoder(
+          addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+          (String value) => value,
+        ),
       ),
     ),
   ]);

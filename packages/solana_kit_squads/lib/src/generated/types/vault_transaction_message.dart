@@ -79,13 +79,13 @@ Encoder<VaultTransactionMessage> getVaultTransactionMessageEncoder() {
     ('numWritableNonSigners', getU8Encoder()),
     (
       'accountKeys',
-      getArrayEncoder<Address>(
+      getArrayEncoder(
         transformEncoder(getAddressEncoder(), (Address value) => value),
       ),
     ),
     (
       'instructions',
-      getArrayEncoder<MultisigCompiledInstruction>(
+      getArrayEncoder(
         transformEncoder(
           getMultisigCompiledInstructionEncoder(),
           (MultisigCompiledInstruction value) => value,
@@ -94,7 +94,7 @@ Encoder<VaultTransactionMessage> getVaultTransactionMessageEncoder() {
     ),
     (
       'addressTableLookups',
-      getArrayEncoder<MultisigMessageAddressTableLookup>(
+      getArrayEncoder(
         transformEncoder(
           getMultisigMessageAddressTableLookupEncoder(),
           (MultisigMessageAddressTableLookup value) => value,

@@ -40,17 +40,28 @@ class MasterEdition {
 
 Encoder<MasterEdition> getMasterEditionEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('maxSupply', getNullableEncoder<int>(getU32Encoder())),
+    (
+      'maxSupply',
+      getNullableEncoder<int>(
+        transformEncoder(getU32Encoder(), (int value) => value),
+      ),
+    ),
     (
       'name',
       getNullableEncoder<String>(
-        addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+        transformEncoder(
+          addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+          (String value) => value,
+        ),
       ),
     ),
     (
       'uri',
       getNullableEncoder<String>(
-        addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+        transformEncoder(
+          addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder()),
+          (String value) => value,
+        ),
       ),
     ),
   ]);

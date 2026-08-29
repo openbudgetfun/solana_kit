@@ -5,14 +5,14 @@ import 'package:solana_kit_codecs_numbers/src/utils.dart';
 
 /// Creates a [FixedSizeEncoder] for signed 16-bit integers (i16).
 ///
-/// Encodes an [int] value as 2 bytes. The value must be in the range
+/// Encodes a [num] value as 2 bytes. The value must be in the range
 /// [-32768, 32767]. Defaults to little-endian byte order.
-FixedSizeEncoder<int> getI16Encoder([NumberCodecConfig? config]) =>
-    numberEncoderFactory<int>(
+FixedSizeEncoder<num> getI16Encoder([NumberCodecConfig? config]) =>
+    numberEncoderFactory<num>(
       name: 'i16',
       size: 2,
       set: (data, offset, value, endian) =>
-          data.setInt16(offset, value, endian),
+          data.setInt16(offset, value.toInt(), endian),
       config: config,
       range: (-32768, 32767),
     );
@@ -33,6 +33,6 @@ FixedSizeDecoder<int> getI16Decoder([NumberCodecConfig? config]) =>
 ///
 /// Combines [getI16Encoder] and [getI16Decoder]. Defaults to little-endian
 /// byte order.
-FixedSizeCodec<int, int> getI16Codec([NumberCodecConfig? config]) =>
+FixedSizeCodec<num, int> getI16Codec([NumberCodecConfig? config]) =>
     combineCodec(getI16Encoder(config), getI16Decoder(config))
-        as FixedSizeCodec<int, int>;
+        as FixedSizeCodec<num, int>;

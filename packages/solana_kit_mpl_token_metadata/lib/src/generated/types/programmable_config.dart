@@ -37,7 +37,12 @@ Encoder<ProgrammableConfig> getProgrammableConfigEncoder() {
       (
         0,
         getStructEncoder([
-          ('ruleSet', getNullableEncoder<Address>(getAddressEncoder())),
+          (
+            'ruleSet',
+            getNullableEncoder<Address>(
+              transformEncoder(getAddressEncoder(), (Address value) => value),
+            ),
+          ),
         ]),
       ),
     ], size: getU8Encoder()),
