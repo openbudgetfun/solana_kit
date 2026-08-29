@@ -3,8 +3,17 @@ import 'dart:io';
 import 'package:solana_kit_anchor/solana_kit_anchor.dart';
 import 'package:test/test.dart';
 
+/// Resolves [relative] against this package's root, whether the test runner
+/// starts in the package directory or in the workspace root.
+File _fixture(String relative) {
+  final current = Directory.current.path;
+  final inPackage = current.endsWith('solana_kit_anchor');
+  final base = inPackage ? current : '$current/packages/solana_kit_anchor';
+  return File('$base/$relative'.replaceAll('//', '/'));
+}
+
 void main() {
-  final fixtureJson = File('test/fixtures/idl.json').readAsStringSync();
+  final fixtureJson = _fixture('test/fixtures/idl.json').readAsStringSync();
 
   test('parses the Anchor test-suite IDL end to end', () {
     final idl = AnchorIdlProgram.parse(fixtureJson);

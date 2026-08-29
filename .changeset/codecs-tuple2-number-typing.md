@@ -1,6 +1,7 @@
 ---
 "solana_kit_codecs_data_structures": minor
 "solana_kit_codecs_numbers": minor
+"codama_renderers_dart": minor
 "solana_kit": docs
 ---
 
