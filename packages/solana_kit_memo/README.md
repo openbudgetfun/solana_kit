@@ -69,4 +69,4 @@ void main() {
 
 ## Upstream reference
 
-Generated layer mirrors [solana-program/memo](https://github.com/solana-program/memo) at `js@v0.11.2`.
+Generated layer mirrors [solana-program/memo](https://github.com/solana-program/memo) at `js@v0.13.0`.

@@ -76,4 +76,4 @@ void main() {
 
 ## Upstream reference
 
-Generated layer mirrors [solana-program/compute-budget](https://github.com/solana-program/compute-budget) at `js@v0.16.0`.
+Generated layer mirrors [solana-program/compute-budget](https://github.com/solana-program/compute-budget) at `js@v0.18.0`.

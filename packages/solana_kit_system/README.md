@@ -4,7 +4,7 @@
 
 Generated Dart client for the Solana System Program, part of the [Solana Kit](https://github.com/openbudgetfun/solana_kit) Dart SDK.
 
-Provides typed instruction builders, account decoders, error definitions, PDA helpers, and program address constants for all 13 System Program instructions. Generated from the upstream Codama IDL at [solana-program/system](https://github.com/solana-program/system) (`js@v0.12.0`).
+Provides typed instruction builders, account decoders, error definitions, PDA helpers, and program address constants for all 13 System Program instructions. Generated from the upstream Codama IDL at [solana-program/system](https://github.com/solana-program/system) (`js@v0.14.0`).
 
 ## Installation
 
@@ -97,4 +97,4 @@ Nine typed error codes covering invalid nonce state, missing accounts, insuffici
 
 ## Upstream reference
 
-Generated layer mirrors [solana-program/system](https://github.com/solana-program/system) at `js@v0.12.0` (commit `95897f3`).
+Generated layer mirrors [solana-program/system](https://github.com/solana-program/system) at `js@v0.14.0` (commit `83818c3`).

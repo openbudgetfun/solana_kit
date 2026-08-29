@@ -29,15 +29,29 @@ const {
   structTypeNode,
 } = await import(join(RENDERER_DIR, "node_modules/@codama/nodes/dist/index.node.mjs"));
 
+// Stake instruction arguments carry a discriminated struct payload. Older
+// IDL revisions linked these arguments under *Args names that shadowed the
+// shared params types; js@v0.9.0 (Codama v1.8.0 format) links the params
+// types directly. Both link names are mapped so the instruction arguments
+// stay flattened into their parameter fields for either IDL revision.
 const STAKE_ARGUMENT_TYPES = new Map([
   ["lockupArgs", "lockupParams"],
   ["lockupCheckedArgs", "lockupCheckedParams"],
   ["authorizeWithSeedArgs", "authorizeWithSeedParams"],
   ["authorizeCheckedWithSeedArgs", "authorizeCheckedWithSeedParams"],
+  ["lockupParams", "lockupParams"],
+  ["lockupCheckedParams", "lockupCheckedParams"],
+  ["authorizeWithSeedParams", "authorizeWithSeedParams"],
+  ["authorizeCheckedWithSeedParams", "authorizeCheckedWithSeedParams"],
 ]);
 
 function prepareStakeRoot(root) {
-  const program = root.program;
+  // Upstream renamed the IDL program node from "solanaStakeInterface" to
+  // "stake" when it moved to the Codama v1.8.0 format (js@v0.9.0). The
+  // program name drives every rendered identifier and barrel file name, so
+  // keep the previous name to avoid a wholesale generated-API rename with no
+  // wire-format change.
+  const program = { ...root.program, name: "solanaStakeInterface" };
   const originalTypes = program.definedTypes ?? [];
   const typesByName = new Map(originalTypes.map((node) => [node.name, node]));
   const discriminatorType = numberTypeNode("u32");

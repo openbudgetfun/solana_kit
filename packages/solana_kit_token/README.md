@@ -111,4 +111,4 @@ The full `solana_kit_associated_token_account` API surface is re-exported so cal
 
 ## Upstream reference
 
-Generated layer mirrors [solana-program/token](https://github.com/solana-program/token) at `js@v0.14.0`.
+Generated layer mirrors [solana-program/token](https://github.com/solana-program/token) at `js@v0.16.0`.
