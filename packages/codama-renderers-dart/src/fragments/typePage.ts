@@ -147,6 +147,7 @@ function getDataEnumPageFragment(
   const decoderVariants: string[] = [];
   const encodeCases: string[] = [];
   const decodeCases: string[] = [];
+  let pageHasListEnums = false;
   // Collect all field type manifests from variants so we can merge their imports
   const allVariantManifests: { encoder: Fragment; decoder: Fragment; type: Fragment }[] = [];
 
@@ -212,12 +213,32 @@ function getDataEnumPageFragment(
         fields.length === 0
           ? "true"
           : fields
-              .map((f: StructFieldTypeNode) => `${camelCase(f.name as string)} == other.${camelCase(f.name as string)}`)
+              .map((f: StructFieldTypeNode, index) => {
+                const fieldName = camelCase(f.name as string);
+                return isListManifest(fieldManifests[index].manifest)
+                  ? `_listEquals(${fieldName}, other.${fieldName})`
+                  : `${fieldName} == other.${fieldName}`;
+              })
               .join(" &&\n          ");
 
-      const hashExpression = getHashExpression(
-        fields.map((f: StructFieldTypeNode) => camelCase(f.name as string)),
-      );
+      const hashExpression = fieldManifests.some(({ manifest }) =>
+        isListManifest(manifest),
+      )
+        ? (fields.length === 1
+          ? `_listHashCode(${camelCase(fields[0].name as string)})`
+          : `Object.hash(${fields
+              .map((f: StructFieldTypeNode, index) =>
+                isListManifest(fieldManifests[index].manifest)
+                  ? `_listHashCode(${camelCase(f.name as string)})`
+                  : camelCase(f.name as string),
+              )
+              .join(", ")})`)
+        : getHashExpression(
+            fields.map((f: StructFieldTypeNode) => camelCase(f.name as string)),
+          );
+      if (fieldManifests.some(({ manifest }) => isListManifest(manifest))) {
+        pageHasListEnums = true;
+      }
 
       const toStringFields = fields
         .map((f: StructFieldTypeNode) => `${camelCase(f.name as string)}: $${camelCase(f.name as string)}`)
@@ -351,7 +372,7 @@ sealed class ${fragmentFromString(typeName)} {
   const ${fragmentFromString(typeName)}();
 }
 
-${fragmentFromString(variantClasses.join("\n\n"))}
+${fragmentFromString(variantClasses.join("\n\n"))}${pageHasListEnums ? LIST_VALUE_HELPERS : ""}
 
 Encoder<${fragmentFromString(typeName)}> ${fragmentFromString(encoderName)}() {
   return transformEncoder<Map<String, Object?>, ${fragmentFromString(typeName)}>(
@@ -405,6 +426,7 @@ function getStructPageFragment(
   if (structNode.kind !== "structTypeNode") return emptyFragment();
 
   const fields = structNode.fields ?? [];
+  let pageHasListStructs = false;
 
   // Visit each field type once and collect manifests for reuse
   const fieldManifests = fields.map((f: StructFieldTypeNode) => ({
@@ -429,19 +451,17 @@ function getStructPageFragment(
   const eqChecks =
     fields.length === 0
       ? "true"
-      : fields
-          .map(
-            (f: StructFieldTypeNode) =>
-              `${camelCase(f.name as string)} == other.${camelCase(f.name as string)}`,
-          )
+      : fieldManifests
+          .map(({ field: f, manifest }, index) => {
+            const fieldName = camelCase(f.name as string);
+            return isListManifest(manifest)
+              ? `_listEquals(${fieldName}, other.${fieldName})`
+              : `${fieldName} == other.${fieldName}`;
+          })
           .join(" &&\n          ");
-
-  const hashFields =
-    fields.length === 0
-      ? "runtimeType"
-      : fields
-          .map((f: StructFieldTypeNode) => camelCase(f.name as string))
-          .join(", ");
+  if (fieldManifests.some(({ manifest }) => isListManifest(manifest))) {
+    pageHasListStructs = true;
+  }
 
   const toStringFields = fields
     .map(
@@ -511,12 +531,26 @@ ${fragmentFromString(fieldDecls)}
           ${fragmentFromString(eqChecks)};
 
   @override
-  int get hashCode => ${fragmentFromString(getHashExpression(fields.map((f: StructFieldTypeNode) => camelCase(f.name as string))))};
+  int get hashCode => ${fragmentFromString(
+    fieldManifests.some(({ manifest }) => isListManifest(manifest))
+      ? (fields.length === 1
+        ? `_listHashCode(${camelCase(fields[0].name as string)})`
+        : `Object.hash(${fields
+            .map((f: StructFieldTypeNode, index) =>
+              isListManifest(fieldManifests[index].manifest)
+                ? `_listHashCode(${camelCase(f.name as string)})`
+                : camelCase(f.name as string),
+            )
+            .join(", ")})`)
+      : getHashExpression(
+          fields.map((f: StructFieldTypeNode) => camelCase(f.name as string)),
+        ),
+  )};
 
   @override
   String toString() => '${fragmentFromString(typeName)}(${fragmentFromString(toStringFields)})';
 }
-
+${pageHasListStructs ? LIST_VALUE_HELPERS : ""}
 Encoder<${fragmentFromString(typeName)}> ${fragmentFromString(encoderName)}() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
 ${fragmentFromString(encFields)}
@@ -594,6 +628,37 @@ Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragme
   return combineCodec(${fragmentFromString(encoderName)}(), ${fragmentFromString(decoderName)}());
 }`;
 }
+
+/**
+ * Returns true when the rendered field type is a Dart list, whose reference
+ * equality must be replaced with a deep comparison in generated value
+ * classes.
+ */
+function isListManifest(manifest: { type: Fragment }): boolean {
+  return manifest.type.content.startsWith("List<");
+}
+
+/**
+ * Private Dart helpers emitted into pages whose value classes contain
+ * list-typed fields, so `==` and `hashCode` match structural value equality
+ * instead of list reference identity.
+ */
+const LIST_VALUE_HELPERS = `
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
+}
+`;
 
 function getHashExpression(fields: string[]): string {
   if (fields.length === 0) return "runtimeType.hashCode";
