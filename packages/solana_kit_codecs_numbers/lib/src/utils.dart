@@ -18,8 +18,7 @@ import 'package:solana_kit_codecs_numbers/src/common.dart';
 FixedSizeEncoder<T> numberEncoderFactory<T extends num>({
   required String name,
   required int size,
-  required void Function(ByteData data, int offset, T value, Endian endian)
-  set,
+  required void Function(ByteData data, int offset, T value, Endian endian) set,
   NumberCodecConfig? config,
   (num, num)? range,
 }) {
