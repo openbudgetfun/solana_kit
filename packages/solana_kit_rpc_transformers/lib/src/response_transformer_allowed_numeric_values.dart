@@ -119,4 +119,9 @@ final List<KeyPath> messageConfig = [
   ['instructions', KEYPATH_WILDCARD, 'accounts', KEYPATH_WILDCARD],
   ['instructions', KEYPATH_WILDCARD, 'programIdIndex'],
   ['instructions', KEYPATH_WILDCARD, 'stackHeight'],
+  // v1 transaction messages carry their compute budget inline; keep these
+  // values as numbers, matching upstream #1951 / #1972.
+  ['transactionConfig', 'computeUnitLimit'],
+  ['transactionConfig', 'heapSize'],
+  ['transactionConfig', 'loadedAccountsDataSizeLimit'],
 ];

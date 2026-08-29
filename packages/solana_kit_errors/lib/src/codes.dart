@@ -45,6 +45,18 @@ enum SolanaErrorCode {
   /// Failed to send the batch of transactions.
   failedToSendTransactions(12),
 
+  /// Failed to sign the transaction.
+  ///
+  /// Added in @solana/kit v8.0.0 as the signing counterpart of
+  /// [failedToSendTransaction] (#1902).
+  failedToSignTransaction(13),
+
+  /// Failed to sign the batch of transactions.
+  ///
+  /// Added in @solana/kit v8.0.0 as the signing counterpart of
+  /// [failedToSendTransactions] (#1902).
+  failedToSignTransactions(14),
+
   // ---------------------------------------------------------------------------
   // JSON-RPC (-32768 to -32000)
   // ---------------------------------------------------------------------------
@@ -665,6 +677,20 @@ enum SolanaErrorCode {
   //
   // Added in @solana/kit v7.0.0 for the new transaction-introspection package.
   transactionFailedToDecompileInstructionAccountIndexOutOfRange(5663038),
+
+  /// The compute unit limit set on a transaction message is outside the range
+  /// the runtime will honor.
+  ///
+  /// Added in @solana/kit v8.1.0 for set-time validation of resource limits
+  /// (#1972).
+  transactionComputeUnitLimitOutOfRange(5663039),
+
+  /// The heap size set on a transaction message is one the runtime will not
+  /// accept.
+  ///
+  /// Added in @solana/kit v8.1.0 for set-time validation of resource limits
+  /// (#1972).
+  transactionInvalidHeapSize(5663040),
 
   // ---------------------------------------------------------------------------
   // Transaction Introspection (5664000 - 5664999)

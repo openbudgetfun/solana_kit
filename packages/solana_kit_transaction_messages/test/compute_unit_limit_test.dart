@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:test/test.dart';
@@ -90,13 +91,13 @@ void main() {
 
     test('removes a v1 compute unit limit and preserves other config', () {
       final message = setTransactionMessageConfig(
-        const V1TransactionConfig(computeUnitLimit: 1, heapSize: 32),
+        const V1TransactionConfig(computeUnitLimit: 1, heapSize: 32768),
         createTransactionMessage(version: TransactionVersion.v1),
       );
       final updated = setTransactionMessageComputeUnitLimit(null, message);
 
       expect(updated.config?.computeUnitLimit, isNull);
-      expect(updated.config?.heapSize, 32);
+      expect(updated.config?.heapSize, 32768);
     });
 
     test('clears v1 config when removing its only compute unit limit', () {
@@ -165,71 +166,89 @@ void main() {
     });
   });
 
-  group('fillTransactionMessageProvisoryComputeUnitLimit', () {
-    test('adds a provisory limit when no compute unit limit exists', () {
-      final message = createTransactionMessage(version: TransactionVersion.v0);
-      final updated = fillTransactionMessageProvisoryComputeUnitLimit(message);
-
-      expect(
-        getTransactionMessageComputeUnitLimit(updated),
-        provisoryComputeUnitLimit,
-      );
-    });
-
-    test('preserves an existing limit', () {
-      final message = setTransactionMessageComputeUnitLimit(
-        400000,
+  group('setTransactionMessageComputeUnitLimit validation', () {
+    test('accepts the boundary limits', () {
+      final zero = setTransactionMessageComputeUnitLimit(
+        0,
         createTransactionMessage(version: TransactionVersion.v0),
       );
-
-      expect(
-        fillTransactionMessageProvisoryComputeUnitLimit(message),
-        same(message),
-      );
-    });
-  });
-
-  group('estimateAndSetComputeUnitLimitFactory', () {
-    test('preserves existing non-provisory non-max limits', () async {
-      var called = false;
-      final message = setTransactionMessageComputeUnitLimit(
-        400000,
-        createTransactionMessage(version: TransactionVersion.v0),
-      );
-      final estimateAndSet = estimateAndSetComputeUnitLimitFactory((_) async {
-        called = true;
-        return 500000;
-      });
-
-      expect(await estimateAndSet(message), same(message));
-      expect(called, isFalse);
-    });
-
-    test('replaces a provisory limit with the estimate', () async {
-      final message = fillTransactionMessageProvisoryComputeUnitLimit(
-        createTransactionMessage(version: TransactionVersion.v0),
-      );
-      final estimateAndSet = estimateAndSetComputeUnitLimitFactory((_) async {
-        return 500000;
-      });
-
-      final updated = await estimateAndSet(message);
-
-      expect(getTransactionMessageComputeUnitLimit(updated), 500000);
-    });
-
-    test('replaces a max limit with the estimate', () async {
-      final message = setTransactionMessageComputeUnitLimit(
+      final max = setTransactionMessageComputeUnitLimit(
         maxComputeUnitLimit,
         createTransactionMessage(version: TransactionVersion.v0),
       );
-      final estimateAndSet = estimateAndSetComputeUnitLimitFactory((_) async {
-        return 600000;
-      });
 
-      final updated = await estimateAndSet(message);
+      expect(getTransactionMessageComputeUnitLimit(zero), 0);
+      expect(getTransactionMessageComputeUnitLimit(max), maxComputeUnitLimit);
+    });
 
-      expect(getTransactionMessageComputeUnitLimit(updated), 600000);
+    test('rejects a negative compute unit limit', () {
+      expect(
+        () => setTransactionMessageComputeUnitLimit(
+          -1,
+          createTransactionMessage(version: TransactionVersion.v0),
+        ),
+        throwsA(
+          isA<SolanaError>()
+              .having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.transactionComputeUnitLimitOutOfRange,
+              )
+              .having(
+                (e) => e.context['computeUnitLimit'],
+                'computeUnitLimit',
+                -1,
+              )
+              .having(
+                (e) => e.context['maxComputeUnitLimit'],
+                'maxComputeUnitLimit',
+                maxComputeUnitLimit,
+              ),
+        ),
+      );
+    });
+
+    test('rejects a compute unit limit above the maximum', () {
+      expect(
+        () => setTransactionMessageComputeUnitLimit(
+          maxComputeUnitLimit + 1,
+          createTransactionMessage(version: TransactionVersion.v0),
+        ),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionComputeUnitLimitOutOfRange,
+          ),
+        ),
+      );
+    });
+
+    test('rejects an out-of-range limit set via the v1 config', () {
+      expect(
+        () => setTransactionMessageComputeUnitLimit(
+          maxComputeUnitLimit + 1,
+          createTransactionMessage(version: TransactionVersion.v1),
+        ),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionComputeUnitLimitOutOfRange,
+          ),
+        ),
+      );
+    });
+
+    test('does not validate when removing the limit', () {
+      final message = setTransactionMessageComputeUnitLimit(
+        400000,
+        createTransactionMessage(version: TransactionVersion.v0),
+      );
+
+      final updated = setTransactionMessageComputeUnitLimit(null, message);
+
+      expect(getTransactionMessageComputeUnitLimit(updated), isNull);
     });
   });
 }

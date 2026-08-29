@@ -115,12 +115,12 @@ void main() {
         message,
       );
       final merged = setTransactionMessageConfig(
-        const V1TransactionConfig(heapSize: 2),
+        const V1TransactionConfig(heapSize: 32768),
         withConfig,
       );
 
       expect(merged.config?.computeUnitLimit, 1);
-      expect(merged.config?.heapSize, 2);
+      expect(merged.config?.heapSize, 32768);
       expect(merged.toString(), contains('config:'));
     });
 

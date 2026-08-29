@@ -24,7 +24,7 @@ void main() {
     return smallMessage().copyWith(
       instructions: [
         Instruction(
-          data: Uint8List(transactionSizeLimit + 1),
+          data: Uint8List(legacyTransactionSizeLimit + 1),
           programAddress: const Address(
             '33333333333333333333333333333333333333333333',
           ),
@@ -46,13 +46,13 @@ void main() {
       final size = getTransactionSize(transaction);
       // The size should be a reasonable small value.
       expect(size, greaterThan(0));
-      expect(size, lessThan(transactionSizeLimit));
+      expect(size, lessThan(legacyTransactionSizeLimit));
     });
 
     test('gets the size of an oversized transaction', () {
       final transaction = compileTransaction(oversizedMessage());
       final size = getTransactionSize(transaction);
-      expect(size, greaterThan(transactionSizeLimit));
+      expect(size, greaterThan(legacyTransactionSizeLimit));
     });
   });
 
@@ -63,7 +63,7 @@ void main() {
     });
 
     test('uses the v1 transaction size limit from message bytes', () {
-      final messageBytes = [0x81, ...Uint8List(transactionSizeLimit + 1)];
+      final messageBytes = [0x81, ...Uint8List(legacyTransactionSizeLimit + 1)];
       final transaction = rawTransaction(messageBytes);
 
       expect(getTransactionSize(transaction), lessThan(transactionV1SizeLimit));
@@ -115,7 +115,7 @@ void main() {
     test('gets the size of a transaction message', () {
       final size = getTransactionMessageSize(smallMessage());
       expect(size, greaterThan(0));
-      expect(size, lessThan(transactionSizeLimit));
+      expect(size, lessThan(legacyTransactionSizeLimit));
     });
   });
 
@@ -155,30 +155,30 @@ void main() {
     test('uses the transaction message version', () {
       expect(
         getTransactionMessageSizeLimit(smallMessage()),
-        transactionSizeLimit,
+        legacyTransactionSizeLimit,
       );
       expect(
         getTransactionMessageSizeLimit(
           const TransactionMessage(version: TransactionVersion.legacy),
         ),
-        transactionSizeLimit,
+        legacyTransactionSizeLimit,
       );
     });
   });
 
-  group('transactionSizeLimit', () {
+  group('legacyTransactionSizeLimit', () {
     test('equals 1232 (1280 - 48)', () {
-      expect(transactionSizeLimit, 1232);
+      expect(legacyTransactionSizeLimit, 1232);
     });
 
     test('uses the legacy packet limit for legacy and version 0 messages', () {
       expect(
         getTransactionSizeLimit(TransactionVersion.legacy),
-        transactionSizeLimit,
+        legacyTransactionSizeLimit,
       );
       expect(
         getTransactionSizeLimit(TransactionVersion.v0),
-        transactionSizeLimit,
+        legacyTransactionSizeLimit,
       );
       expect(
         getTransactionSizeLimit(TransactionVersion.v1),
@@ -189,7 +189,7 @@ void main() {
     test('detects the transaction limit from message bytes', () {
       expect(
         getTransactionSizeLimit(rawTransaction([0x80])),
-        transactionSizeLimit,
+        legacyTransactionSizeLimit,
       );
       expect(
         getTransactionSizeLimit(rawTransaction([0x81])),
@@ -197,9 +197,12 @@ void main() {
       );
       expect(
         getTransactionSizeLimit(rawTransaction([0x01])),
-        transactionSizeLimit,
+        legacyTransactionSizeLimit,
       );
-      expect(getTransactionSizeLimit(rawTransaction([])), transactionSizeLimit);
+      expect(
+        getTransactionSizeLimit(rawTransaction([])),
+        legacyTransactionSizeLimit,
+      );
     });
 
     test('rejects unsupported inputs', () {
@@ -207,7 +210,7 @@ void main() {
     });
 
     test('exposes upstream-compatible transaction size limit aliases', () {
-      expect(legacyTransactionSizeLimit, transactionSizeLimit);
+      expect(legacyTransactionSizeLimit, 1232);
       expect(transactionV1SizeLimit, 4096);
       expect(v1TransactionSizeLimit, transactionV1SizeLimit);
     });

@@ -5,22 +5,16 @@ import 'package:solana_kit_transactions/src/codecs/transaction_codec.dart';
 import 'package:solana_kit_transactions/src/compile_transaction.dart';
 import 'package:solana_kit_transactions/src/transaction.dart';
 
-/// The maximum size of a transaction packet in bytes.
-const transactionPacketSize = 1280;
-
-/// The size of the transaction packet header in bytes.
-/// This includes the IPv6 header (40 bytes) and the fragment header (8 bytes).
-const int transactionPacketHeader = 40 + 8;
-
 /// The maximum size of a legacy or version 0 transaction in bytes.
 ///
-/// This excludes the transaction packet header.
-/// This is how much content we can fit in a transaction packet.
-const int transactionSizeLimit =
-    transactionPacketSize - transactionPacketHeader;
-
-/// Alias for the legacy and version 0 transaction size limit.
-const int legacyTransactionSizeLimit = transactionSizeLimit;
+/// This is the legacy IPv6 packet payload limit of 1232 bytes. Upstream's
+/// fixed-size constants (`TRANSACTION_PACKET_SIZE`, `TRANSACTION_PACKET_HEADER`,
+/// and `TRANSACTION_SIZE_LIMIT`) were removed in @solana/kit v8.0.0 (#1948)
+/// because version 1 transactions have a larger size limit; use
+/// [getTransactionSizeLimit] to derive the limit for a specific transaction, or
+/// the per-version constants [legacyTransactionSizeLimit] and
+/// [v1TransactionSizeLimit].
+const int legacyTransactionSizeLimit = 1232;
 
 /// The maximum size of a version 1 transaction in bytes.
 const int transactionV1SizeLimit = 4096;
@@ -38,21 +32,25 @@ int getTransactionSizeLimit(Object versionOrTransaction) {
   if (versionOrTransaction is TransactionVersion) {
     return switch (versionOrTransaction) {
       TransactionVersion.legacy ||
-      TransactionVersion.v0 => transactionSizeLimit,
+      TransactionVersion.v0 => legacyTransactionSizeLimit,
       TransactionVersion.v1 => transactionV1SizeLimit,
     };
   }
 
   if (versionOrTransaction is Transaction) {
-    if (versionOrTransaction.messageBytes.isEmpty) return transactionSizeLimit;
+    if (versionOrTransaction.messageBytes.isEmpty) {
+      return legacyTransactionSizeLimit;
+    }
 
     const versionPrefixMask = 0x80;
     const versionFlagMask = 0x7f;
     final firstMessageByte = versionOrTransaction.messageBytes.first;
-    if (firstMessageByte & versionPrefixMask == 0) return transactionSizeLimit;
+    if (firstMessageByte & versionPrefixMask == 0) {
+      return legacyTransactionSizeLimit;
+    }
 
     final version = firstMessageByte & versionFlagMask;
-    return version == 1 ? transactionV1SizeLimit : transactionSizeLimit;
+    return version == 1 ? transactionV1SizeLimit : legacyTransactionSizeLimit;
   }
 
   throw ArgumentError.value(

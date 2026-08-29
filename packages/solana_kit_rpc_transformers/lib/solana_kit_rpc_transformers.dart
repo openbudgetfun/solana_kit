@@ -6,7 +6,6 @@
 library;
 
 export 'src/request_transformer.dart';
-export 'src/request_transformer_bigint_downcast.dart';
 export 'src/request_transformer_default_commitment.dart';
 export 'src/request_transformer_integer_overflow.dart';
 export 'src/request_transformer_options_object_position_config.dart';

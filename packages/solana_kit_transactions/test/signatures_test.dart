@@ -383,7 +383,7 @@ void main() {
             ),
             instructions: [
               Instruction(
-                data: Uint8List(transactionSizeLimit + 1),
+                data: Uint8List(legacyTransactionSizeLimit + 1),
                 programAddress: const Address(
                   '33333333333333333333333333333333333333333333',
                 ),

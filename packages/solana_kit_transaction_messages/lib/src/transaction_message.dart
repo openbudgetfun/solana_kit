@@ -37,12 +37,23 @@ class V1TransactionConfig {
   });
 
   /// Maximum number of compute units the transaction may consume.
+  ///
+  /// Unlike legacy and version 0 transactions, which fall back to 200,000
+  /// compute units per instruction when no `SetComputeUnitLimit` instruction
+  /// is present, a version 1 transaction that leaves this field unset is
+  /// budgeted **zero** compute units and will fail at execution. Set it
+  /// explicitly on every version 1 transaction. The maximum allowed value is
+  /// 1,400,000 CUs.
   final int? computeUnitLimit;
 
   /// Requested heap frame size in bytes.
   final int? heapSize;
 
   /// Maximum size in bytes for loaded account data.
+  ///
+  /// As with [computeUnitLimit], leaving this field unset budgets **zero**
+  /// bytes rather than applying a default, so any transaction that loads
+  /// account data must set it explicitly.
   final int? loadedAccountsDataSizeLimit;
 
   /// Total priority fee in lamports.
