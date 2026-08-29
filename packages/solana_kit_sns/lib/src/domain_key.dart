@@ -162,6 +162,20 @@ Future<SnsDomainKey> findDomainKey(
   SnsRecordVersion? record,
 }) async {
   final labels = domain.split('.');
+  if (domain.isEmpty || labels.any((label) => label.isEmpty)) {
+    throw ArgumentError.value(
+      domain,
+      'domain',
+      'Domain labels must not be empty',
+    );
+  }
+  if (labels.length > 1 && (labels.last == 'sol' || labels.last == 'sns')) {
+    throw ArgumentError.value(
+      domain,
+      'domain',
+      'Pass a TLD-trimmed name (for example "bonfida", not "bonfida.sol")',
+    );
+  }
 
   switch (labels.length) {
     case 1:

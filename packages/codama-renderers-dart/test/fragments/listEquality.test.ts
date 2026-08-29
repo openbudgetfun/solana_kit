@@ -1,5 +1,6 @@
 import {
   arrayTypeNode,
+  bytesTypeNode,
   enumStructVariantTypeNode,
   enumTypeNode,
   instructionAccountNode,
@@ -37,9 +38,6 @@ function createScope(): RenderScope {
   };
 }
 
-import { getInstructionPageFragment } from "../../src/fragments/instructionPage.js";
-import { getTypePageFragment } from "../../src/fragments/typePage.js";
-
 describe("list-field deep equality and hashing", () => {
   it("emits _listEquals/_listHashCode for struct list fields", () => {
     const node = {
@@ -63,6 +61,37 @@ describe("list-field deep equality and hashing", () => {
     // Non-list fields keep the plain comparisons.
     expect(frag.content).toContain("bool _listEquals<T>(List<T>? a, List<T>? b)");
     expect(frag.content).toContain("int _listHashCode<T>(List<T>? a)");
+  });
+
+  it("emits deep equality and hashing for Uint8List fields", () => {
+    const node = {
+      kind: "definedTypeNode",
+      name: "digest",
+      type: structTypeNode([
+        structFieldTypeNode({ name: "bytes", type: bytesTypeNode() }),
+      ]),
+    } as const;
+    const frag = getTypePageFragment(node, createScope());
+
+    expect(frag.content).toContain("_listEquals(bytes, other.bytes)");
+    expect(frag.content).toContain("int get hashCode => _listHashCode(bytes);");
+  });
+
+  it("recursively compares and hashes nested lists", () => {
+    const node = {
+      kind: "definedTypeNode",
+      name: "proof",
+      type: structTypeNode([
+        structFieldTypeNode({
+          name: "nodes",
+          type: arrayTypeNode(bytesTypeNode()),
+        }),
+      ]),
+    } as const;
+    const frag = getTypePageFragment(node, createScope());
+
+    expect(frag.content).toContain("_listEquals(left, right)");
+    expect(frag.content).toContain("Object.hashAll(value.map(_deepHash))");
   });
 
   it("emits _listEquals/_listHashCode inside enum struct variants", () => {
@@ -92,8 +121,6 @@ describe("list-field deep equality and hashing", () => {
     expect(frag.content).toContain("Object.hash(_listHashCode(points), label)");
     expect(frag.content).toContain("bool _listEquals<T>(List<T>? a, List<T>? b)");
   });
-
-
   it("emits a single _listHashCode for one-list-field classes", () => {
     const node = {
       kind: "definedTypeNode",

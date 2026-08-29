@@ -114,6 +114,12 @@ describe("escapeDartIdentifier", () => {
     expect(escapeDartIdentifier("null")).toBe("null_");
   });
 
+  it("escapes Dart contextual and built-in keywords", () => {
+    for (const keyword of ["base", "extension", "import", "interface", "sealed"]) {
+      expect(escapeDartIdentifier(keyword)).toBe(`${keyword}_`);
+    }
+  });
+
   it("leaves non-reserved names untouched", () => {
     expect(escapeDartIdentifier("count")).toBe("count");
   });

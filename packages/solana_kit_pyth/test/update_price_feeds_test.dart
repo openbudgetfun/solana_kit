@@ -137,7 +137,7 @@ void main() {
       expect(roles[1], AccountRole.readonly); // guardian set
       expect(roles[2], AccountRole.readonly); // config
       expect(roles[3], AccountRole.writable); // treasury
-      expect(roles[4], AccountRole.writable); // price update account
+      expect(roles[4], AccountRole.writableSigner); // price update account
       expect(roles[5], AccountRole.readonly); // system program
       expect(roles[6], AccountRole.readonlySigner); // write authority
       expect(instruction.accounts![0].address, payer);
@@ -204,6 +204,10 @@ void main() {
       expect(instruction.accounts![4].address, priceUpdateAddress);
       expect(instruction.accounts![5].address, systemProgramAddress);
       expect(instruction.accounts![6].address, payer);
+      expect(
+        instruction.accounts![4].role,
+        AccountRole.writableSigner,
+      );
       expect(instruction.data!.sublist(0, 8), postUpdateDiscriminator);
     });
   });
@@ -250,6 +254,39 @@ void main() {
       );
       expect(guardian1, derivedGuardian);
     });
+
+    test('rejects seed values outside their wire ranges', () async {
+      await expectLater(getPythTreasuryAddress(-1), throwsArgumentError);
+      await expectLater(getPythTreasuryAddress(256), throwsArgumentError);
+      expect(() => getGuardianSetAddress(-1), throwsArgumentError);
+      expect(
+        () => getGuardianSetAddress(0x100000000),
+        throwsArgumentError,
+      );
+    });
+  });
+
+  test('instruction builders reject treasury ids outside u8', () async {
+    await expectLater(
+      getPostUpdateAtomicInstruction(
+        payer: payer,
+        vaa: vaa,
+        update: update,
+        priceUpdateAccount: priceUpdateAddress,
+        treasuryId: 256,
+      ),
+      throwsArgumentError,
+    );
+    await expectLater(
+      getPostUpdateInstruction(
+        payer: payer,
+        encodedVaa: encodedVaaAddress,
+        update: update,
+        priceUpdateAccount: priceUpdateAddress,
+        treasuryId: -1,
+      ),
+      throwsArgumentError,
+    );
   });
 
   group('randomTreasuryId', () {

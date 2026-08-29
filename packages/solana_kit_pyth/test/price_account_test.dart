@@ -204,6 +204,22 @@ void main() {
         throwsA(isA<PythDecodeException>()),
       );
     });
+
+    test('rejects unsupported versions and non-price accounts', () {
+      final wrongVersion = buildPriceAccount();
+      ByteData.sublistView(wrongVersion).setUint32(4, 1, Endian.little);
+      expect(
+        () => decodePythPriceAccount(wrongVersion),
+        throwsA(isA<PythDecodeException>()),
+      );
+
+      final wrongType = buildPriceAccount();
+      ByteData.sublistView(wrongType).setUint32(8, 2, Endian.little);
+      expect(
+        () => decodePythPriceAccount(wrongType),
+        throwsA(isA<PythDecodeException>()),
+      );
+    });
   });
 
   group('decodePriceUpdateV2Account', () {
@@ -269,6 +285,14 @@ void main() {
 
     test('rejects unknown verification level variants', () {
       final bytes = buildAccount()..[40] = 2;
+      expect(
+        () => decodePriceUpdateV2Account(bytes),
+        throwsA(isA<PythDecodeException>()),
+      );
+    });
+
+    test('rejects the wrong Anchor account discriminator', () {
+      final bytes = buildAccount()..[0] ^= 0xff;
       expect(
         () => decodePriceUpdateV2Account(bytes),
         throwsA(isA<PythDecodeException>()),

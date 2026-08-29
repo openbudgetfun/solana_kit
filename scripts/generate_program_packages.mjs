@@ -49,10 +49,30 @@ const STAKE_ARGUMENT_TYPES = new Map([
 // the defined-type name collapsed to `"crate"`. The real type is the
 // `RelationshipEntry` defined type, so rewrite the reference before rendering.
 function prepareMplCoreRoot(root) {
-  const rewritten = JSON.parse(
-    JSON.stringify(root).replaceAll('"defined":"crate"', '"defined":"relationshipEntry"'),
-  );
-  return rewritten;
+  let rewritten = 0;
+  const visit = (node) => {
+    if (Array.isArray(node)) {
+      node.forEach(visit);
+      return;
+    }
+    if (node == null || typeof node !== "object") return;
+    if (
+      node.name === "relationships" &&
+      JSON.stringify(node.type) === JSON.stringify({ vec: { defined: "crate" } })
+    ) {
+      node.type.vec.defined = "relationshipEntry";
+      rewritten += 1;
+      return;
+    }
+    Object.values(node).forEach(visit);
+  };
+  visit(root);
+  if (rewritten !== 1) {
+    throw new Error(
+      `prepareMplCoreRoot: expected 1 relationships field, rewrote ${rewritten}`,
+    );
+  }
+  return root;
 }
 
 // UpdateMetadataAccountV2 has both an `updateAuthority` account and an
@@ -94,17 +114,6 @@ function prepareMplTokenMetadataRoot(root) {
 // SDK renames the argument to `newConfigAuthority`; mirror that so the
 // generated Dart instruction signature does not collide.
 function prepareSquadsMultisigRoot(root) {
-  const typeNames = new Set();
-  const collectTypeNames = (node) => {
-    if (Array.isArray(node)) {
-      node.forEach(collectTypeNames);
-    } else if (node != null && typeof node === "object") {
-      if (typeof node.name === "string") typeNames.add(node.name);
-      Object.values(node).forEach(collectTypeNames);
-    }
-  };
-  collectTypeNames(root.types ?? []);
-
   let renamed = 0;
   const visit = (node, parentTypeName) => {
     if (Array.isArray(node)) {

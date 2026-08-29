@@ -92,6 +92,7 @@ Future<Address> getPythTreasuryAddress(
   int treasuryId, {
   Address programAddress = pythSolanaReceiverProgramAddress,
 }) async {
+  _checkUint8(treasuryId, 'treasuryId');
   final (pda, _) = await getProgramDerivedAddress(
     programAddress: programAddress,
     seeds: [
@@ -110,6 +111,13 @@ Future<Address> getGuardianSetAddress(
   int guardianSetIndex, {
   Address wormholeProgramAddress = pythWormholeProgramAddress,
 }) {
+  if (guardianSetIndex < 0 || guardianSetIndex > 0xffffffff) {
+    throw ArgumentError.value(
+      guardianSetIndex,
+      'guardianSetIndex',
+      'must be between 0 and 4294967295',
+    );
+  }
   final indexBytes = Uint8List(4)
     ..buffer.asByteData().setUint32(0, guardianSetIndex);
   return getProgramDerivedAddress(
@@ -180,12 +188,22 @@ AccumulatorUpdateData parseAccumulatorUpdateData(Uint8List data) {
     );
   }
   var cursor = 6;
+  if (cursor >= data.length) {
+    throw const PythDecodeException(
+      'Accumulator update data is missing its trailing payload size',
+    );
+  }
   final trailingPayloadSize = data[cursor];
   cursor += 1 + trailingPayloadSize;
   if (cursor >= data.length) {
     throw const PythDecodeException('Accumulator update data is truncated');
   }
   cursor += 1; // proof type
+  if (cursor + 2 > data.length) {
+    throw const PythDecodeException(
+      'Accumulator update data is missing its VAA size',
+    );
+  }
   final vaaSize = (data[cursor] << 8) | data[cursor + 1];
   cursor += 2;
   if (cursor + vaaSize > data.length) {
@@ -366,7 +384,7 @@ Encoder<Map<String, Object?>> _postUpdateFieldsEncoder() {
 /// 2. guardianSet — readonly (PDA of the Wormhole program)
 /// 3. config — readonly (receiver config PDA)
 /// 4. treasury — writable (receiver treasury PDA)
-/// 5. priceUpdateAccount — writable
+/// 5. priceUpdateAccount — writable signer
 /// 6. systemProgram — readonly
 /// 7. writeAuthority — signer (defaults to the payer)
 Future<Instruction> getPostUpdateAtomicInstruction({
@@ -382,6 +400,7 @@ Future<Instruction> getPostUpdateAtomicInstruction({
   Address programAddress = pythSolanaReceiverProgramAddress,
   Address wormholeProgramAddress = pythWormholeProgramAddress,
 }) async {
+  _checkUint8(treasuryId, 'treasuryId');
   final effectiveGuardianSet =
       guardianSet ??
       await getGuardianSetAddress(
@@ -400,7 +419,10 @@ Future<Instruction> getPostUpdateAtomicInstruction({
       AccountMeta(address: effectiveGuardianSet, role: AccountRole.readonly),
       AccountMeta(address: effectiveConfig, role: AccountRole.readonly),
       AccountMeta(address: effectiveTreasury, role: AccountRole.writable),
-      AccountMeta(address: priceUpdateAccount, role: AccountRole.writable),
+      AccountMeta(
+        address: priceUpdateAccount,
+        role: AccountRole.writableSigner,
+      ),
       const AccountMeta(
         address: systemProgramAddress,
         role: AccountRole.readonly,
@@ -439,6 +461,7 @@ Future<Instruction> getPostUpdateInstruction({
   Address? treasury,
   Address programAddress = pythSolanaReceiverProgramAddress,
 }) async {
+  _checkUint8(treasuryId, 'treasuryId');
   final effectiveConfig =
       config ?? await getPythConfigAddress(programAddress: programAddress);
   final effectiveTreasury =
@@ -451,7 +474,10 @@ Future<Instruction> getPostUpdateInstruction({
       AccountMeta(address: encodedVaa, role: AccountRole.readonly),
       AccountMeta(address: effectiveConfig, role: AccountRole.readonly),
       AccountMeta(address: effectiveTreasury, role: AccountRole.writable),
-      AccountMeta(address: priceUpdateAccount, role: AccountRole.writable),
+      AccountMeta(
+        address: priceUpdateAccount,
+        role: AccountRole.writableSigner,
+      ),
       const AccountMeta(
         address: systemProgramAddress,
         role: AccountRole.readonly,
@@ -471,4 +497,10 @@ Future<Instruction> getPostUpdateInstruction({
       ),
     ]),
   );
+}
+
+void _checkUint8(int value, String name) {
+  if (value < 0 || value > 255) {
+    throw ArgumentError.value(value, name, 'must be between 0 and 255');
+  }
 }

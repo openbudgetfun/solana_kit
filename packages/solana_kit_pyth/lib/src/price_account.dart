@@ -7,6 +7,21 @@ import 'package:solana_kit_pyth/src/exceptions.dart';
 /// (`0xa1b2c3d4`); kept in sync with the on-chain program.
 const int pythMagic = 0xa1b2c3d4;
 
+/// The supported version of legacy Pyth price accounts.
+const int pythAccountVersion = 2;
+
+/// Anchor discriminator for the Pyth Receiver `PriceUpdateV2` account.
+const List<int> priceUpdateV2Discriminator = [
+  0x22,
+  0xf1,
+  0x23,
+  0x63,
+  0x9d,
+  0x7e,
+  0xf4,
+  0xcd,
+];
+
 /// Number of slots that can pass before a publisher's price is no longer
 /// included in the aggregate.
 const int pythMaxSlotDifference = 25;
@@ -456,7 +471,19 @@ PythPriceAccount decodePythPriceAccount(Uint8List data, {int? currentSlot}) {
     );
   }
   final version = _readUint32(data, 4);
-  final accountType = PythAccountType.fromValue(_readUint32(data, 8));
+  if (version != pythAccountVersion) {
+    throw PythDecodeException(
+      'Unsupported Pyth account version $version '
+      '(expected $pythAccountVersion)',
+    );
+  }
+  final accountTypeValue = _readUint32(data, 8);
+  final accountType = PythAccountType.fromValue(accountTypeValue);
+  if (accountType != PythAccountType.price) {
+    throw PythDecodeException(
+      'Unexpected Pyth account type $accountTypeValue (expected 3)',
+    );
+  }
   final size = _readUint32(data, 12);
   final priceType = PythPriceType.fromValue(_readUint32(data, 16));
   final exponent = ByteData.sublistView(
@@ -666,6 +693,13 @@ PriceUpdateV2Account decodePriceUpdateV2Account(Uint8List data) {
     throw PythDecodeException(
       'Data is too short (${data.length} bytes) to be a PriceUpdateV2 account',
     );
+  }
+  for (var i = 0; i < priceUpdateV2Discriminator.length; i++) {
+    if (data[i] != priceUpdateV2Discriminator[i]) {
+      throw const PythDecodeException(
+        'Unexpected PriceUpdateV2 account discriminator',
+      );
+    }
   }
   var cursor = discriminatorSize;
   final writeAuthority = getAddressCodec().decode(

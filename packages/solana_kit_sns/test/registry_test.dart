@@ -131,6 +131,17 @@ void main() {
       expect(encodeNameValue(''), Uint8List.fromList([0, 0, 0, 0]));
     });
 
+    test('decodes exactly the declared bytes and reports their end', () {
+      final bytes = Uint8List.fromList([
+        3, 0, 0, 0,
+        102, 111, 111, // foo
+        98, 97, 114, // trailing account data
+      ]);
+      final (value, end) = getNameValueCodec().read(bytes, 0);
+      expect(value, 'foo');
+      expect(end, 7);
+    });
+
     test('rejects a length that exceeds the available bytes', () {
       expect(
         () => decodeNameValue(Uint8List.fromList([9, 0, 0, 0, 97])),

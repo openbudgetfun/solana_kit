@@ -203,6 +203,16 @@ void main() {
       );
       expect(identical(trimVaaSignatures(vaa), vaa), isTrue);
     });
+
+    test('rejects signature counts outside u8', () {
+      final vaa = buildVaa(
+        guardianSetIndex: 0,
+        signatureCount: 1,
+        payload: Uint8List(0),
+      );
+      expect(() => trimVaaSignatures(vaa, count: -1), throwsArgumentError);
+      expect(() => trimVaaSignatures(vaa, count: 256), throwsArgumentError);
+    });
   });
 
   group('parsePythWormholeMessage', () {
@@ -226,6 +236,15 @@ void main() {
     test('rejects unknown kinds', () {
       expect(
         () => parsePythWormholeMessage(Uint8List.fromList([0x01, 0x09])),
+        throwsA(isA<PythDecodeException>()),
+      );
+    });
+
+    test('rejects unknown message versions', () {
+      expect(
+        () => parsePythWormholeMessage(
+          Uint8List.fromList([0x02, 0x01, ...List.filled(20, 0x10)]),
+        ),
         throwsA(isA<PythDecodeException>()),
       );
     });

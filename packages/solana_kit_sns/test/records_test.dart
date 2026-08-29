@@ -222,6 +222,13 @@ void main() {
         ),
         throwsArgumentError,
       );
+      expect(
+        () => decodeRecordContent(
+          content: Uint8List(19),
+          record: SnsRecord.eth,
+        ),
+        throwsArgumentError,
+      );
     });
 
     test('rejects unsupported record types', () {

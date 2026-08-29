@@ -416,6 +416,13 @@ String decodeRecordContent({
     return getAddressDecoder().decode(content).value;
   }
   if (_evmRecords.contains(record)) {
+    if (content.length != 20) {
+      throw ArgumentError.value(
+        content.length,
+        'content',
+        'EVM record content must be exactly 20 bytes',
+      );
+    }
     final hex = content.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
     return '0x$hex';
   }

@@ -224,6 +224,9 @@ Uint8List trimVaaSignatures(
   Uint8List vaa, {
   int count = defaultReducedGuardianSetSize,
 }) {
+  if (count < 0 || count > 255) {
+    throw ArgumentError.value(count, 'count', 'must be between 0 and 255');
+  }
   final currentCount = getVaaSignatureCount(vaa);
   if (count >= currentCount) return vaa;
 
@@ -301,6 +304,11 @@ class PythWormholeMessage {
 PythWormholeMessage parsePythWormholeMessage(Uint8List payload) {
   if (payload.length < 2) {
     throw const PythDecodeException('Pyth wormhole message is too short');
+  }
+  if (payload[0] != 1) {
+    throw PythDecodeException(
+      'Unsupported Pyth wormhole message version ${payload[0]}',
+    );
   }
   final kind = PythWormholeMessageKind.fromId(payload[1]);
   final merkleRoot = kind == PythWormholeMessageKind.merkleRoot

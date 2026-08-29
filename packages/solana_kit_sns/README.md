@@ -62,7 +62,8 @@ Domain keys handle top-level domains, subdomains, and V1/V2 records with the sam
 import 'package:solana_kit_sns/solana_kit_sns.dart';
 
 Future<void> main() async {
-  final domainKey = await findDomainKey('mysite.sol');
+  // Domain-key derivation expects the TLD-trimmed name; `.sol` is implied.
+  final domainKey = await findDomainKey('mysite');
   print(domainKey);
 }
 ```

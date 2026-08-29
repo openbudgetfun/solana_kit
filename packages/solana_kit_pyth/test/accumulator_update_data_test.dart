@@ -175,6 +175,19 @@ void main() {
         throwsA(isA<PythDecodeException>()),
       );
     });
+
+    test('rejects every truncated header with a Pyth decode error', () {
+      const header = [0x50, 0x4e, 0x41, 0x55, 0x01, 0x00, 0x00, 0x00];
+      for (var length = 6; length <= header.length; length++) {
+        expect(
+          () => parseAccumulatorUpdateData(
+            Uint8List.fromList(header.sublist(0, length)),
+          ),
+          throwsA(isA<PythDecodeException>()),
+          reason: 'length $length should not leak a RangeError',
+        );
+      }
+    });
   });
 
   group('parsePythPriceFeedMessage', () {

@@ -17,11 +17,16 @@ export function pascalCase(str: string): string {
  * be escaped, e.g. an account named `null` becomes a `null_` parameter.
  */
 const DART_RESERVED_WORDS = new Set([
-  "assert", "break", "case", "catch", "class", "const", "continue",
-  "default", "do", "else", "enum", "extends", "false", "final",
-  "finally", "for", "if", "in", "is", "new", "null", "rethrow",
-  "return", "super", "switch", "this", "throw", "true", "try", "var",
-  "void", "while", "with", "async", "await", "yield",
+  "abstract", "as", "assert", "async", "augment", "await", "base",
+  "break", "case", "catch", "class", "const", "continue", "covariant",
+  "default", "deferred", "do", "dynamic", "else", "enum", "export",
+  "extends", "extension", "external", "factory", "false", "final",
+  "finally", "for", "get", "hide", "if", "implements", "import", "in",
+  "interface", "is", "late", "library", "mixin", "native", "new", "null",
+  "of", "on", "operator", "part", "required", "rethrow", "return",
+  "sealed", "set", "show", "static", "super", "switch", "sync", "this",
+  "throw", "true", "try", "typedef", "var", "void", "when", "while",
+  "with", "yield",
 ]);
 
 /**

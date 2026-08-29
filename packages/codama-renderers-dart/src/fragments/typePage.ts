@@ -604,18 +604,20 @@ Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragme
 }
 
 /**
- * Returns true when the rendered field type is a Dart list, whose reference
- * equality must be replaced with a deep comparison in generated value
- * classes.
+ * Returns true when the rendered field type is a Dart list or byte sequence,
+ * whose reference equality must be replaced with a deep comparison in
+ * generated value classes.
  */
 function isListManifest(manifest: { type: Fragment }): boolean {
-  return manifest.type.content.startsWith("List<");
+  return manifest.type.content.startsWith("List<") ||
+    manifest.type.content === "Uint8List";
 }
 
 /**
  * Private Dart helpers emitted into pages whose value classes contain
- * list-typed fields, so `==` and `hashCode` match structural value equality
- * instead of list reference identity.
+ * list-typed fields, so `==` and `hashCode` match recursive structural value
+ * equality instead of list reference identity. The recursive branch matters
+ * for generated types such as `List<Uint8List>`.
  */
 const LIST_VALUE_HELPERS = `
 bool _listEquals<T>(List<T>? a, List<T>? b) {
@@ -623,14 +625,27 @@ bool _listEquals<T>(List<T>? a, List<T>? b) {
   if (a == null || b == null) return a == b;
   if (a.length != b.length) return false;
   for (var i = 0; i < a.length; i++) {
-    if (a[i] != b[i]) return false;
+    final left = a[i];
+    final right = b[i];
+    if (left is List<Object?> && right is List<Object?>) {
+      if (!_listEquals(left, right)) return false;
+    } else if (left != right) {
+      return false;
+    }
   }
   return true;
 }
 
+Object? _deepHash(Object? value) {
+  if (value is List<Object?>) {
+    return Object.hashAll(value.map(_deepHash));
+  }
+  return value;
+}
+
 int _listHashCode<T>(List<T>? a) {
   if (a == null) return 0;
-  return Object.hashAll(a);
+  return Object.hashAll(a.map(_deepHash));
 }
 `;
 
