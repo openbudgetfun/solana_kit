@@ -38,23 +38,38 @@ class VaultTransactionMessage {
           numSigners == other.numSigners &&
           numWritableSigners == other.numWritableSigners &&
           numWritableNonSigners == other.numWritableNonSigners &&
-          accountKeys == other.accountKeys &&
-          instructions == other.instructions &&
-          addressTableLookups == other.addressTableLookups;
+          _listEquals(accountKeys, other.accountKeys) &&
+          _listEquals(instructions, other.instructions) &&
+          _listEquals(addressTableLookups, other.addressTableLookups);
 
   @override
   int get hashCode => Object.hash(
     numSigners,
     numWritableSigners,
     numWritableNonSigners,
-    accountKeys,
-    instructions,
-    addressTableLookups,
+    _listHashCode(accountKeys),
+    _listHashCode(instructions),
+    _listHashCode(addressTableLookups),
   );
 
   @override
   String toString() =>
       'VaultTransactionMessage(numSigners: $numSigners, numWritableSigners: $numWritableSigners, numWritableNonSigners: $numWritableNonSigners, accountKeys: $accountKeys, instructions: $instructions, addressTableLookups: $addressTableLookups)';
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
 }
 
 Encoder<VaultTransactionMessage> getVaultTransactionMessageEncoder() {

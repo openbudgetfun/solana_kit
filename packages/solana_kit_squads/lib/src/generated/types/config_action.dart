@@ -121,8 +121,8 @@ final class ConfigActionAddSpendingLimit extends ConfigAction {
           mint == other.mint &&
           amount == other.amount &&
           period == other.period &&
-          members == other.members &&
-          destinations == other.destinations;
+          _listEquals(members, other.members) &&
+          _listEquals(destinations, other.destinations);
 
   @override
   int get hashCode => Object.hash(
@@ -131,8 +131,8 @@ final class ConfigActionAddSpendingLimit extends ConfigAction {
     mint,
     amount,
     period,
-    members,
-    destinations,
+    _listHashCode(members),
+    _listHashCode(destinations),
   );
 
   @override
@@ -180,6 +180,21 @@ final class ConfigActionSetRentCollector extends ConfigAction {
   @override
   String toString() =>
       'ConfigAction.SetRentCollector(newRentCollector: $newRentCollector)';
+}
+
+bool _listEquals<T>(List<T>? a, List<T>? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
+}
+
+int _listHashCode<T>(List<T>? a) {
+  if (a == null) return 0;
+  return Object.hashAll(a);
 }
 
 Encoder<ConfigAction> getConfigActionEncoder() {
