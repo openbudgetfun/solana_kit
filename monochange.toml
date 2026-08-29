@@ -300,14 +300,20 @@ packages = [
   "solana_kit_transaction_introspection",
   "solana_kit_transaction_messages",
   "solana_kit_transactions",
+]
+tag = true
+release = true
+version_format = "primary"
+changelog = { path = "CHANGELOG.md" }
+
+[group.wallet]
+packages = [
   "solana_kit_wallet_adapter",
   "solana_kit_wallet_standard",
   "solana_kit_wallet_ui",
 ]
 tag = true
 release = true
-version_format = "primary"
-changelog = { path = "CHANGELOG.md" }
 
 [lints.rules]
 "dart/internal-path-dependency-policy" = "off"
