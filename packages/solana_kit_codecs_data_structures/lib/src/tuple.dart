@@ -127,7 +127,7 @@ Decoder<(T1, T2)> getTuple2Decoder<T1, T2>(
       first as Decoder<Object?>,
       second,
     ]),
-    (values, _, __) {
+    (values, _, _) {
       assert(values.length == 2, 'Expected a tuple of 2 elements');
       return (values[0] as T1, values[1] as T2);
     },

@@ -12,7 +12,7 @@ FixedSizeEncoder<int> getI16Encoder([NumberCodecConfig? config]) =>
       name: 'i16',
       size: 2,
       set: (data, offset, value, endian) =>
-          data.setInt16(offset, value.toInt(), endian),
+          data.setInt16(offset, value, endian),
       config: config,
       range: (-32768, 32767),
     );

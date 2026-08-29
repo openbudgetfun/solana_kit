@@ -12,7 +12,7 @@ FixedSizeEncoder<int> getU32Encoder([NumberCodecConfig? config]) =>
       name: 'u32',
       size: 4,
       set: (data, offset, value, endian) =>
-          data.setUint32(offset, value.toInt(), endian),
+          data.setUint32(offset, value, endian),
       config: config,
       range: (0, 4294967295),
     );
