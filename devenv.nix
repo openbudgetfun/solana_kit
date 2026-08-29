@@ -328,6 +328,7 @@ in
       exec = ''
         set -euo pipefail
         dart run "$DEVENV_ROOT/scripts/generate_docs_search_index.dart"
+        dart run "$DEVENV_ROOT/scripts/build_wallet_demo.dart" --base-path="''${DOCS_BASE_PATH:-/}"
         cd "$DEVENV_ROOT/docs/site"
         flutter pub get
         fvm dart run build_runner clean
