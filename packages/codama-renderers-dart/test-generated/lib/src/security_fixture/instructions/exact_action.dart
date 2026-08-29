@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -11,7 +10,6 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
-
 
 @immutable
 class ExactActionInstructionData {
@@ -59,7 +57,7 @@ Decoder<ExactActionInstructionData> getExactActionInstructionDataDecoder() {
 
     return (
       ExactActionInstructionData(
-      amount: map['amount']! as int,
+        amount: map['amount']! as int,
       ),
       newOffset,
     );
@@ -85,8 +83,12 @@ Decoder<ExactActionInstructionData> getExactActionInstructionDataDecoder() {
   };
 }
 
-Codec<ExactActionInstructionData, ExactActionInstructionData> getExactActionInstructionDataCodec() {
-  return combineCodec(getExactActionInstructionDataEncoder(), getExactActionInstructionDataDecoder());
+Codec<ExactActionInstructionData, ExactActionInstructionData>
+getExactActionInstructionDataCodec() {
+  return combineCodec(
+    getExactActionInstructionDataEncoder(),
+    getExactActionInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [ExactAction] instruction.
@@ -96,19 +98,19 @@ Instruction getExactActionInstruction({
   required int amount,
 }) {
   final instructionData = ExactActionInstructionData(
-      amount: amount,
+    amount: amount,
   );
 
   return Instruction(
     programAddress: programAddress,
-    accounts: [
-
-    ],
+    accounts: [],
     data: getExactActionInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [ExactAction] instruction from raw instruction data.
-ExactActionInstructionData parseExactActionInstruction(Instruction instruction) {
+ExactActionInstructionData parseExactActionInstruction(
+  Instruction instruction,
+) {
   return getExactActionInstructionDataDecoder().decode(instruction.data!);
 }

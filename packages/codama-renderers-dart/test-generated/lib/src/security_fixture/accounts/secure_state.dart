@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -11,13 +10,11 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
-
 @immutable
 class SecureState {
   const SecureState({
     required this.value,
-  }) :
-      discriminator = 7;
+  }) : discriminator = 7;
 
   final int discriminator;
   final int value;
@@ -34,9 +31,9 @@ class SecureState {
   int get hashCode => Object.hash(discriminator, value);
 
   @override
-  String toString() => 'SecureState(discriminator: $discriminator, value: $value)';
+  String toString() =>
+      'SecureState(discriminator: $discriminator, value: $value)';
 }
-
 
 /// The size of the [SecureState] account data in bytes.
 const int secureStateSize = 3;
@@ -45,7 +42,6 @@ const int secureStateSize = 3;
 /// Offset: 0.
 
 /// This account has a size discriminator of 3 bytes.
-
 
 Encoder<SecureState> getSecureStateEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
@@ -103,24 +99,23 @@ Decoder<SecureState> getSecureStateDecoder() {
 
     return (
       SecureState(
-      value: map['value']! as int,
+        value: map['value']! as int,
       ),
       newOffset,
     );
   }
 
   return switch (structDecoder) {
-    FixedSizeDecoder<Map<String, Object?>>() =>
-      FixedSizeDecoder<SecureState>(
-        fixedSize: structDecoder.fixedSize,
-        read: (bytes, offset) {
-          final bytesLength = bytes.length - offset;
-          if (bytesLength != structDecoder.fixedSize) {
-            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
-          }
-          return readTopLevel(bytes, offset);
-        },
-      ),
+    FixedSizeDecoder<Map<String, Object?>>() => FixedSizeDecoder<SecureState>(
+      fixedSize: structDecoder.fixedSize,
+      read: (bytes, offset) {
+        final bytesLength = bytes.length - offset;
+        if (bytesLength != structDecoder.fixedSize) {
+          throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+        }
+        return readTopLevel(bytes, offset);
+      },
+    ),
     VariableSizeDecoder<Map<String, Object?>>() =>
       VariableSizeDecoder<SecureState>(
         read: readTopLevel,

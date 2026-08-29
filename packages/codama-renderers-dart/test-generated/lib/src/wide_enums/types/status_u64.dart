@@ -1,12 +1,10 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
-
 
 enum StatusU64 {
   inactive,
@@ -25,7 +23,9 @@ Decoder<StatusU64> getStatusU64Decoder() {
     getU64Decoder(),
     (BigInt value, Uint8List bytes, int offset) {
       if (value.isNegative || value >= BigInt.from(StatusU64.values.length)) {
-        throw RangeError('Invalid StatusU64 discriminator: ' + value.toString());
+        throw RangeError(
+          'Invalid StatusU64 discriminator: ' + value.toString(),
+        );
       }
       return StatusU64.values[value.toInt()];
     },

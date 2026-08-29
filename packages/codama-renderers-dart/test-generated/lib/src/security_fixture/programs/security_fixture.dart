@@ -1,5 +1,3 @@
-
-
 import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -9,7 +7,6 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 import '../instructions/instructions.dart';
-
 
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
@@ -34,7 +31,9 @@ enum SecurityFixtureInstruction {
 SecurityFixtureInstruction identifySecurityFixtureInstruction(
   Uint8List data,
 ) {
-  if (containsBytes(data, getU8Encoder().encode(9), 0) && containsBytes(data, getU8Encoder().encode(9), 0) && data.length == 3) {
+  if (containsBytes(data, getU8Encoder().encode(9), 0) &&
+      containsBytes(data, getU8Encoder().encode(9), 0) &&
+      data.length == 3) {
     return SecurityFixtureInstruction.secureAction;
   }
 
@@ -57,15 +56,16 @@ sealed class ParsedSecurityFixtureInstruction {
 /// A parsed SecureAction instruction.
 final class ParsedSecureAction extends ParsedSecurityFixtureInstruction {
   const ParsedSecureAction({required this.data})
-      : super(SecurityFixtureInstruction.secureAction);
+    : super(SecurityFixtureInstruction.secureAction);
 
   final SecureActionInstructionData data;
 }
 
 /// A parsed LegacyOptionalAction instruction.
-final class ParsedLegacyOptionalAction extends ParsedSecurityFixtureInstruction {
+final class ParsedLegacyOptionalAction
+    extends ParsedSecurityFixtureInstruction {
   const ParsedLegacyOptionalAction({required this.data})
-      : super(SecurityFixtureInstruction.legacyOptionalAction);
+    : super(SecurityFixtureInstruction.legacyOptionalAction);
 
   final LegacyOptionalActionInstructionData data;
 }
@@ -73,7 +73,7 @@ final class ParsedLegacyOptionalAction extends ParsedSecurityFixtureInstruction 
 /// A parsed ExactAction instruction.
 final class ParsedExactAction extends ParsedSecurityFixtureInstruction {
   const ParsedExactAction({required this.data})
-      : super(SecurityFixtureInstruction.exactAction);
+    : super(SecurityFixtureInstruction.exactAction);
 
   final ExactActionInstructionData data;
 }
@@ -88,9 +88,10 @@ ParsedSecurityFixtureInstruction parseSecurityFixtureInstruction(
     SecurityFixtureInstruction.secureAction => ParsedSecureAction(
       data: parseSecureActionInstruction(instruction),
     ),
-    SecurityFixtureInstruction.legacyOptionalAction => ParsedLegacyOptionalAction(
-      data: parseLegacyOptionalActionInstruction(instruction),
-    ),
+    SecurityFixtureInstruction.legacyOptionalAction =>
+      ParsedLegacyOptionalAction(
+        data: parseLegacyOptionalActionInstruction(instruction),
+      ),
     SecurityFixtureInstruction.exactAction => ParsedExactAction(
       data: parseExactActionInstruction(instruction),
     ),

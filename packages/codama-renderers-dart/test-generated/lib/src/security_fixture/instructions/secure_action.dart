@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -21,8 +20,7 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 class SecureActionInstructionData {
   const SecureActionInstructionData({
     required this.amount,
-  }) :
-      discriminator = 9;
+  }) : discriminator = 9;
 
   final int discriminator;
   final int amount;
@@ -84,7 +82,7 @@ Decoder<SecureActionInstructionData> getSecureActionInstructionDataDecoder() {
 
     return (
       SecureActionInstructionData(
-      amount: map['amount']! as int,
+        amount: map['amount']! as int,
       ),
       newOffset,
     );
@@ -110,8 +108,12 @@ Decoder<SecureActionInstructionData> getSecureActionInstructionDataDecoder() {
   };
 }
 
-Codec<SecureActionInstructionData, SecureActionInstructionData> getSecureActionInstructionDataCodec() {
-  return combineCodec(getSecureActionInstructionDataEncoder(), getSecureActionInstructionDataDecoder());
+Codec<SecureActionInstructionData, SecureActionInstructionData>
+getSecureActionInstructionDataCodec() {
+  return combineCodec(
+    getSecureActionInstructionDataEncoder(),
+    getSecureActionInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [SecureAction] instruction.
@@ -123,21 +125,26 @@ Instruction getSecureActionInstruction({
   required int amount,
 }) {
   final instructionData = SecureActionInstructionData(
-      amount: amount,
+    amount: amount,
   );
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: before, role: AccountRole.readonly),
-    if (optionalMiddle != null) AccountMeta(address: optionalMiddle, role: AccountRole.writable) else AccountMeta(address: programAddress, role: AccountRole.readonly),
-    AccountMeta(address: after, role: AccountRole.readonlySigner),
+      AccountMeta(address: before, role: AccountRole.readonly),
+      if (optionalMiddle != null)
+        AccountMeta(address: optionalMiddle, role: AccountRole.writable)
+      else
+        AccountMeta(address: programAddress, role: AccountRole.readonly),
+      AccountMeta(address: after, role: AccountRole.readonlySigner),
     ],
     data: getSecureActionInstructionDataEncoder().encode(instructionData),
   );
 }
 
 /// Parses a [SecureAction] instruction from raw instruction data.
-SecureActionInstructionData parseSecureActionInstruction(Instruction instruction) {
+SecureActionInstructionData parseSecureActionInstruction(
+  Instruction instruction,
+) {
   return getSecureActionInstructionDataDecoder().decode(instruction.data!);
 }

@@ -1,7 +1,6 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -11,31 +10,24 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
-
 @immutable
 class LegacyOptionalActionInstructionData {
   const LegacyOptionalActionInstructionData();
-
-
 }
 
-Encoder<LegacyOptionalActionInstructionData> getLegacyOptionalActionInstructionDataEncoder() {
-  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-
-  ]);
+Encoder<LegacyOptionalActionInstructionData>
+getLegacyOptionalActionInstructionDataEncoder() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[]);
 
   return transformEncoder(
     structEncoder,
-    (LegacyOptionalActionInstructionData value) => <String, Object?>{
-
-    },
+    (LegacyOptionalActionInstructionData value) => <String, Object?>{},
   );
 }
 
-Decoder<LegacyOptionalActionInstructionData> getLegacyOptionalActionInstructionDataDecoder() {
-  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-
-  ]);
+Decoder<LegacyOptionalActionInstructionData>
+getLegacyOptionalActionInstructionDataDecoder() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[]);
 
   Never throwInvalidByteLength(int expected, int bytesLength) {
     throw SolanaError(
@@ -48,16 +40,17 @@ Decoder<LegacyOptionalActionInstructionData> getLegacyOptionalActionInstructionD
     );
   }
 
-  (LegacyOptionalActionInstructionData, int) readTopLevel(Uint8List bytes, int offset) {
+  (LegacyOptionalActionInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
     final (map, newOffset) = structDecoder.read(bytes, offset);
     if (newOffset != bytes.length) {
       throwInvalidByteLength(newOffset - offset, bytes.length - offset);
     }
 
     return (
-      LegacyOptionalActionInstructionData(
-
-      ),
+      LegacyOptionalActionInstructionData(),
       newOffset,
     );
   }
@@ -82,8 +75,12 @@ Decoder<LegacyOptionalActionInstructionData> getLegacyOptionalActionInstructionD
   };
 }
 
-Codec<LegacyOptionalActionInstructionData, LegacyOptionalActionInstructionData> getLegacyOptionalActionInstructionDataCodec() {
-  return combineCodec(getLegacyOptionalActionInstructionDataEncoder(), getLegacyOptionalActionInstructionDataDecoder());
+Codec<LegacyOptionalActionInstructionData, LegacyOptionalActionInstructionData>
+getLegacyOptionalActionInstructionDataCodec() {
+  return combineCodec(
+    getLegacyOptionalActionInstructionDataEncoder(),
+    getLegacyOptionalActionInstructionDataDecoder(),
+  );
 }
 
 /// Creates a [LegacyOptionalAction] instruction.
@@ -92,24 +89,28 @@ Instruction getLegacyOptionalActionInstruction({
   required Address before,
   Address? optionalMiddle,
   required Address after,
-
 }) {
-  final instructionData = LegacyOptionalActionInstructionData(
-
-  );
+  final instructionData = LegacyOptionalActionInstructionData();
 
   return Instruction(
     programAddress: programAddress,
     accounts: [
-    AccountMeta(address: before, role: AccountRole.readonly),
-    if (optionalMiddle != null) AccountMeta(address: optionalMiddle, role: AccountRole.writable),
-    AccountMeta(address: after, role: AccountRole.readonlySigner),
+      AccountMeta(address: before, role: AccountRole.readonly),
+      if (optionalMiddle != null)
+        AccountMeta(address: optionalMiddle, role: AccountRole.writable),
+      AccountMeta(address: after, role: AccountRole.readonlySigner),
     ],
-    data: getLegacyOptionalActionInstructionDataEncoder().encode(instructionData),
+    data: getLegacyOptionalActionInstructionDataEncoder().encode(
+      instructionData,
+    ),
   );
 }
 
 /// Parses a [LegacyOptionalAction] instruction from raw instruction data.
-LegacyOptionalActionInstructionData parseLegacyOptionalActionInstruction(Instruction instruction) {
-  return getLegacyOptionalActionInstructionDataDecoder().decode(instruction.data!);
+LegacyOptionalActionInstructionData parseLegacyOptionalActionInstruction(
+  Instruction instruction,
+) {
+  return getLegacyOptionalActionInstructionDataDecoder().decode(
+    instruction.data!,
+  );
 }
