@@ -18,9 +18,65 @@ Out of v1 scope: the Trigger API (limit orders and DCA), the Referral on-chain p
 
 All endpoints accept an optional `x-api-key` header. Without a key, Jupiter serves keyless traffic on `https://api.jup.ag` at a reduced rate limit; keys from the Jupiter developer portal unlock higher tiers on the same base URL.
 
+<!-- {=packageInstallSection:"solana_kit_jupiter"} -->
+
+## Installation
+
+Install the package directly:
+
+```yaml
+dependencies:
+  "solana_kit_jupiter": ^
+```
+
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+<!-- {/packageInstallSection} -->
+
+:::
+
+## Installation
+
+Install the package directly:
+
+```yaml
+dependencies:
+  "solana_kit_jupiter": ^
+```
+
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_jupiter
+- API reference: https://pub.dev/documentation/solana_kit_jupiter/latest/
+- Workspace docs: https://openbudgetfun.github.io/solana_kit/
+- Package catalog entry: https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_jupiter
+- Source code: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_jupiter
+
+For architecture notes, getting-started guides, and cross-package examples, start with the workspace docs site and then drill down into the package README and API reference.
+
+<!-- {/packageDocumentationSection} -->
+
 ## Usage
 
-### Request a quote and assembled transaction
+<!-- {=docsJupiterSwapSection} -->
+
+### Swap through Jupiter's managed order flow
+
+`/order` returns a quote plus an assembled v0 transaction; sign it with Solana Kit signers and submit it through `/execute`.
 
 ```dart
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -49,64 +105,9 @@ Future<void> main() async {
 }
 ```
 
-### Execute a signed order
+For self-landing swaps, use `jupiter.swap.buildSwap(...)` to fetch the raw instruction set instead of the assembled transaction.
 
-```dart
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_jupiter/solana_kit_jupiter.dart';
-
-Future<void> main() async {
-  const solAddress = Address('So11111111111111111111111111111111111111112');
-  const usdcAddress = Address(
-    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-  );
-  const walletAddress = Address(
-    'Fgae9ichv1MpfL3tnr9jRCjpUy1E3J6matR6EBy4MasF',
-  );
-  const base64EncodedSignedTransaction =
-      'QXNzZW1ibGVkIGFuZCBzaWduZWQgc3dhcCB0cmFuc2FjdGlvbg==';
-
-  final jupiter = createJupiterClient(JupiterConfig(apiKey: 'your-api-key'));
-
-  final order = await jupiter.swap.getOrder(
-    JupiterOrderRequest(
-      inputMint: solAddress,
-      outputMint: usdcAddress,
-      amount: BigInt.from(10000000), // 0.01 SOL
-      slippageBps: 50,
-    ),
-  );
-
-  final execution = await jupiter.swap.executeOrder(
-    userPublicKey: walletAddress,
-    order: order,
-    signedTransaction: base64EncodedSignedTransaction,
-  );
-  print(execution.signature);
-}
-```
-
-### Prices and tokens
-
-```dart
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_jupiter/solana_kit_jupiter.dart';
-
-Future<void> main() async {
-  const solAddress = Address('So11111111111111111111111111111111111111112');
-  const usdcAddress = Address(
-    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-  );
-
-  final jupiter = createJupiterClient(JupiterConfig(apiKey: 'your-api-key'));
-
-  final prices = await jupiter.price.getPrices([solAddress, usdcAddress]);
-  print(prices[solAddress]!.usdPrice);
-
-  final tokens = await jupiter.tokens.search('Jupiter');
-  print(tokens.length);
-}
-```
+<!-- {/docsJupiterSwapSection} -->
 
 ## Key APIs
 

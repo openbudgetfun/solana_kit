@@ -14,21 +14,65 @@ Anchor program runtime for the Solana Kit Dart SDK: discriminators, Anchor IDL p
 
 The package does **not** port the Anchor on-chain framework, the CLI, or client code generation. Programs that rely on generics in their IDLs are better served by Codama-generated clients; the dynamic coder rejects generic type instantiations instead of silently mis-encoding them.
 
-## Usage
+<!-- {=packageInstallSection:"solana_kit_anchor"} -->
 
-### Compute an Anchor discriminator
+## Installation
 
-```dart
-import 'package:solana_kit_anchor/solana_kit_anchor.dart';
+Install the package directly:
 
-void main() {
-  final discriminator = instructionDiscriminator('initialize');
-  // sha256("global:initialize")[0..8].
-  print(discriminator);
-}
+```yaml
+dependencies:
+  "solana_kit_anchor": ^
 ```
 
-### Parse an IDL and use the dynamic coder
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+<!-- {/packageInstallSection} -->
+
+:::
+
+## Installation
+
+Install the package directly:
+
+```yaml
+dependencies:
+  "solana_kit_anchor": ^
+```
+
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_anchor
+- API reference: https://pub.dev/documentation/solana_kit_anchor/latest/
+- Workspace docs: https://openbudgetfun.github.io/solana_kit/
+- Package catalog entry: https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_anchor
+- Source code: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_anchor
+
+For architecture notes, getting-started guides, and cross-package examples, start with the workspace docs site and then drill down into the package README and API reference.
+
+<!-- {/packageDocumentationSection} -->
+
+## Usage
+
+<!-- {=docsAnchorRuntimeSection} -->
+
+### Parse an Anchor IDL and code accounts dynamically
+
+Use the runtime coder when a program ships an Anchor IDL: encode instruction arguments, decode account data, and pull typed events out of program logs without writing codecs by hand.
 
 ```dart
 import 'dart:io';
@@ -63,17 +107,9 @@ void main() {
 }
 ```
 
-### Resolve an Anchor error
+Discriminator helpers and error resolution round out the runtime: `instructionDiscriminator`, `accountDiscriminator`, `eventDiscriminator`, and `anchorProgramError` resolve against the standard Anchor table plus program-defined IDL errors.
 
-```dart
-import 'package:solana_kit_anchor/solana_kit_anchor.dart';
-
-void main() {
-  const code = 141; // AccountNotInitialized.
-  final error = anchorProgramError(code);
-  print('${error.name}: ${error.message}');
-}
-```
+<!-- {/docsAnchorRuntimeSection} -->
 
 ## Key APIs
 

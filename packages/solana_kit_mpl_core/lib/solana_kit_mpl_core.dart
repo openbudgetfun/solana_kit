@@ -20,14 +20,62 @@
 ///   [isMplCoreError]) plus typed error code constants
 /// - **Instruction parsing** via [parseMplCoreInstruction] and
 ///   [identifyMplCoreInstruction]
-library;
+/// <!-- {=docsMplCoreSection -->
+///
+/// ### Derive the asset signer PDA
+///
+/// External plugin execution routes through the asset signer, a PDA derived from the asset address.
+///
+/// ```dart
+/// import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+/// import 'package:solana_kit_mpl_core/solana_kit_mpl_core.dart';
+///
+/// Future<void> main() async {
+///   final assetSigner = await findAssetSignerPda(
+///     asset: Address('Asset1111111111111111111111111111111111111'),
+///   );
+///
+///   print(assetSigner);
+/// }
+/// ```
+///
+/// Instruction builders such as `getCreateV1Instruction`, `getCreateCollectionV1Instruction`, and `getTransferV1Instruction` give you explicit account ordering while pattern helpers like `deriveExtraAccountAddress` cover the external plugin adapter surface.
+///
+/// <!-- {/docsMplCoreSection -->
 
+library;
+///
 // Generated (Codama-style).
 // Program addresses are exported directly from src/program_address.dart.
 // The generated file re-exports them; hide to avoid ambiguity.
+///
+/// 
+/// <!-- {=docsMplCoreSection} -->
+///
+/// ### Derive the asset signer PDA
+///
+/// External plugin execution routes through the asset signer, a PDA derived from the asset address.
+///
+/// ```dart
+/// import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+/// import 'package:solana_kit_mpl_core/solana_kit_mpl_core.dart';
+///
+/// Future<void> main() async {
+///   final assetSigner = await findAssetSignerPda(
+///     asset: Address('Asset1111111111111111111111111111111111111'),
+///   );
+///
+///   print(assetSigner);
+/// }
+/// ```
+///
+/// Instruction builders such as `getCreateV1Instruction`, `getCreateCollectionV1Instruction`, and `getTransferV1Instruction` give you explicit account ordering while pattern helpers like `deriveExtraAccountAddress` cover the external plugin adapter surface.
+///
+/// <!-- {/docsMplCoreSection} -->
+///
 export 'package:solana_kit_mpl_core/src/generated/mpl_core.dart'
     hide mplCoreProgramAddress;
-
+///
 // PDA derivation.
 export 'src/pda/asset_signer.dart';
 export 'src/pda/extra_account.dart';

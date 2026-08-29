@@ -12,62 +12,82 @@ Token Metadata program client for the Solana Kit Dart SDK: instruction builders,
 - **Error helpers** with all 203 program error codes
 - **Instruction parsing** via `parseMplTokenMetadataInstruction` and `identifyMplTokenMetadataInstruction`
 
+<!-- {=packageInstallSection:"solana_kit_mpl_token_metadata"} -->
+
+## Installation
+
+Install the package directly:
+
+```yaml
+dependencies:
+  "solana_kit_mpl_token_metadata": ^
+```
+
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+<!-- {/packageInstallSection} -->
+
+:::
+
+## Installation
+
+Install the package directly:
+
+```yaml
+dependencies:
+  "solana_kit_mpl_token_metadata": ^
+```
+
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_mpl_token_metadata
+- API reference: https://pub.dev/documentation/solana_kit_mpl_token_metadata/latest/
+- Workspace docs: https://openbudgetfun.github.io/solana_kit/
+- Package catalog entry: https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_mpl_token_metadata
+- Source code: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_mpl_token_metadata
+
+For architecture notes, getting-started guides, and cross-package examples, start with the workspace docs site and then drill down into the package README and API reference.
+
+<!-- {/packageDocumentationSection} -->
+
 ## Usage
+
+<!-- {=docsMplTokenMetadataSection} -->
 
 ### Derive the metadata PDA
 
+Token metadata lives in a PDA derived from the mint. Hero derivation helpers mirror the on-chain seed structure exactly.
+
 ```dart
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_mpl_token_metadata/solana_kit_mpl_token_metadata.dart';
 
 Future<void> main() async {
-  const mint = Address(
-    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-  );
-
+  final mint = Address('So11111111111111111111111111111111111111111');
   final (metadata, bump) = await findMetadataPda(mint: mint);
-  print('metadata PDA $metadata derived with bump $bump');
+
+  print(metadata);
+  print(bump);
 }
 ```
 
-### Create metadata for a mint
+Instruction builders such as `getCreateMetadataAccountV3Instruction`, `getUpdateMetadataAccountV2Instruction`, and `getVerifyCollectionInstruction` take explicit program and account addresses, keeping fee payment, signing, and account ordering visible in your transaction messages.
 
-```dart
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_mpl_token_metadata/solana_kit_mpl_token_metadata.dart';
-
-Future<void> main() async {
-  const mint = Address(
-    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-  );
-  const payerAddress = Address(
-    'Fgae9ichv1MpfL3tnr9jRCjpUy1E3J6matR6EBy4MasF',
-  );
-  final (metadataPda, _) = await findMetadataPda(mint: mint);
-
-  final instruction = getCreateMetadataAccountV3Instruction(
-    programAddress: mplTokenMetadataProgramAddressObject,
-    metadata: metadataPda,
-    mint: mint,
-    mintAuthority: payerAddress,
-    payer: payerAddress,
-    updateAuthority: payerAddress,
-    systemProgram: Address('11111111111111111111111111111111'),
-    data: const DataV2(
-      name: 'My NFT',
-      symbol: 'NFT',
-      uri: 'https://example.com/nft.json',
-      sellerFeeBasisPoints: 500,
-      creators: null,
-      collection: null,
-      uses: null,
-    ),
-    isMutable: true,
-    collectionDetails: null,
-  );
-  print('instruction with ${instruction.accounts!.length} accounts');
-}
-```
+<!-- {/docsMplTokenMetadataSection} -->
 
 ## Key APIs
 

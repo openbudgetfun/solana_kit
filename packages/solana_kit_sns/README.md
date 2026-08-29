@@ -36,94 +36,40 @@ Inside this monorepo, Dart workspace resolution uses the local package automatic
 
 <!-- {/packageInstallSection} -->
 
+<!-- {=packageDocumentationSection:"solana_kit_sns"} -->
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_sns
+- API reference: https://pub.dev/documentation/solana_kit_sns/latest/
+- Workspace docs: https://openbudgetfun.github.io/solana_kit/
+- Package catalog entry: https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_sns
+- Source code: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_sns
+
+For architecture notes, getting-started guides, and cross-package examples, start with the workspace docs site and then drill down into the package README and API reference.
+
+<!-- {/packageDocumentationSection} -->
+
 ## Usage
 
-### Deriving domain and record addresses
+<!-- {=docsSnsSection} -->
+
+### Resolve a .sol domain key
+
+Domain keys handle top-level domains, subdomains, and V1/V2 records with the same derivation the official SDK uses.
 
 ```dart
 import 'package:solana_kit_sns/solana_kit_sns.dart';
 
 Future<void> main() async {
-  // bonfida.sol → Crf8hzfthWGbGbLTVCiqRqV5MVnbpHB1L9KQMd6gsinb.
-  // The TLD is trimmed: pass "bonfida", not "bonfida.sol".
-  final domainKey = await findDomainKey('bonfida');
-  print(domainKey.address);
-
-  // dex.bonfida.sol → subdomain derived under its parent domain.
-  final subKey = await findDomainKey('dex.bonfida');
-  print(subKey.address);
-
-  // V2 SOL record (SNS-IP 1) of bonfida.sol.
-  final solRecord = await findRecordV2Address(
-    domain: 'bonfida',
-    record: SnsRecord.sol,
-  );
-  print(solRecord);
-
-  // V1 url record of bonfida.sol.
-  final urlRecordV1 = await findRecordV1Address(
-    domain: 'bonfida',
-    record: SnsRecord.url,
-  );
-  print(urlRecordV1);
+  final domainKey = await findDomainKey('mysite.sol');
+  print(domainKey);
 }
 ```
 
-### Resolving a record payload
+Feed the derived keys to `getNameRegistryStateCodec` or the record codecs when you need parsed owner, class, and content data.
 
-Record V2 accounts are name registries whose data section begins after the 96-byte registry header. Decode header, validation identifiers, and content:
-
-```dart
-import 'dart:typed_data';
-
-import 'package:solana_kit_sns/solana_kit_sns.dart';
-
-void example(Uint8List accountData) {
-  final record = SnsRecordV2.deserialize(accountData);
-  print(record.header.stalenessValidation); // SnsValidation.solana, …
-  print(record.stalenessId.length);
-
-  // Decode the content to a human-readable value for the matching record
-  // type.
-  print(
-    decodeRecordContent(content: record.content, record: SnsRecord.sol),
-  ); // the wallet address stored in the SOL record
-  print(decodeRecordContent(content: record.content, record: SnsRecord.url));
-}
-```
-
-### Reverse lookups
-
-```dart
-import 'package:solana_kit_sns/solana_kit_sns.dart';
-
-Future<void> example() async {
-  // Reverse account that stores the name for a domain account.
-  final reverseAddress = await findReverseAddressForDomain('bonfida');
-  print(reverseAddress);
-
-  // Decode the stored name (subdomain values carry a NUL marker).
-  // final name = decodeReverseValue(accountData, trimLeadingNullByte: true);
-}
-```
-
-### Parsing name registries
-
-```dart
-import 'dart:typed_data';
-
-import 'package:solana_kit_sns/solana_kit_sns.dart';
-
-void main() {
-  // Raw data of a name-registry account, e.g. fetched via solana_kit_rpc.
-  final accountData = Uint8List(96);
-
-  final registry = getNameRegistryStateCodec().decode(accountData);
-  print(registry.owner); // current domain owner
-  print(registry.parentName); // parent domain (zero address for TLDs)
-  print(registry.registryClass); // class key (zero when unset)
-}
-```
+<!-- {/docsSnsSection} -->
 
 ## Key APIs
 

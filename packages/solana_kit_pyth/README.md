@@ -34,7 +34,23 @@ Inside this monorepo, Dart workspace resolution uses the local package automatic
 
 <!-- {/packageInstallSection} -->
 
+<!-- {=packageDocumentationSection:"solana_kit_pyth"} -->
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_pyth
+- API reference: https://pub.dev/documentation/solana_kit_pyth/latest/
+- Workspace docs: https://openbudgetfun.github.io/solana_kit/
+- Package catalog entry: https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_pyth
+- Source code: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_pyth
+
+For architecture notes, getting-started guides, and cross-package examples, start with the workspace docs site and then drill down into the package README and API reference.
+
+<!-- {/packageDocumentationSection} -->
+
 ## Usage
+
+<!-- {=docsPythSection} -->
 
 ### Fetch a price from Hermes
 
@@ -42,16 +58,14 @@ Inside this monorepo, Dart workspace resolution uses the local package automatic
 import 'package:solana_kit_pyth/solana_kit_pyth.dart';
 
 Future<void> main() async {
-  final client = HermesClient(
-    HermesConfig(),
-  ); // defaults to https://hermes.pyth.network
+  final hermes = HermesClient(HermesConfig());
 
   // Discover feeds by symbol.
-  final feeds = await client.getPriceFeeds(query: 'bitcoin');
+  final feeds = await hermes.getPriceFeeds(query: 'bitcoin');
   print(feeds.single.id); // hex price feed id
 
   // Latest update, with the parsed price included.
-  final update = await client.getLatestPriceUpdates(
+  final update = await hermes.getLatestPriceUpdates(
     [feeds.single.id],
     encoding: HermesEncoding.hex,
     parsed: true,
@@ -62,15 +76,13 @@ Future<void> main() async {
 }
 ```
 
-Hermes self-hosting and authenticated providers are supported via `HermesConfig(baseUrl: ..., accessToken: ...)`.
+Decode a binary update and post it on chain
 
-### Decode a binary update and post it on chain
-
-The `binary` payload of a Hermes update is an accumulator update blob containing one Wormhole VAA plus merkle-committed price messages. Parse it, trim guardian signatures so the update fits in a single transaction, and submit it with the Pyth Solana Receiver's `post_update_atomic` instruction:
+The `binary` payload of a Hermes update is an accumulator update blob containing one Wormhole VAA plus merkle-committed price messages. Parse it, trim guardian signatures so the update fits in a single transaction, and submit it with the Pyth Solana Receiver's `postUpdateAtomic` instruction:
 
 ```dart
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_pyth/solana_kit_pyth.dart';
 
 Future<void> publish(
@@ -103,33 +115,9 @@ Future<void> publish(
 }
 ```
 
-The receiver program also supports `post_update`, which consumes an encoded-VAA account that was already verified by the Wormhole program.
+The receiver program also supports `post_update`, which consumes an encoded-VAA account that was already verified by the Wormhole program. On-chain price accounts decode with `decodePythPriceAccount` (classic layout) and `decodePriceUpdateV2Account` (push oracle `PriceUpdateV2`).
 
-### Decode on-chain price accounts
-
-```dart
-import 'dart:typed_data';
-
-import 'package:solana_kit_pyth/solana_kit_pyth.dart';
-
-void main() {
-  // Raw bytes of a price account, e.g. fetched via solana_kit_rpc.
-  final accountData = Uint8List(96);
-  const slot = 123456789;
-
-  // Classic Pyth oracle price accounts (magic 0xa1b2c3d4).
-  final pyth1 = decodePythPriceAccount(accountData, currentSlot: slot);
-  print(
-    '${pyth1.aggregate.priceComponent} * 10^${pyth1.exponent}',
-  );
-  print(pyth1.status); // stale aggregates are demoted to unknown
-
-  // Push oracle price feed accounts (PriceUpdateV2).
-  final pyth2 = decodePriceUpdateV2Account(accountData);
-  print('0x${pyth2.feedIdHex} @ ${pyth2.publishTime}');
-  print(pyth2.verificationLevel); // full or partial(number of signatures)
-}
-```
+<!-- {/docsPythSection} -->
 
 ## API overview
 

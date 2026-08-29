@@ -83,12 +83,19 @@ Then move to smaller packages only when you want a narrower dependency surface o
 - [`solana_kit_stake`](https://pub.dev/packages/solana_kit_stake)
 - [`solana_kit_spl_account_compression`](https://pub.dev/packages/solana_kit_spl_account_compression)
 - [`solana_kit_mpl_bubblegum`](https://pub.dev/packages/solana_kit_mpl_bubblegum)
+- [`solana_kit_mpl_token_metadata`](https://pub.dev/packages/solana_kit_mpl_token_metadata)
+- [`solana_kit_mpl_core`](https://pub.dev/packages/solana_kit_mpl_core)
+- [`solana_kit_squads`](https://pub.dev/packages/solana_kit_squads)
 - [`solana_kit_subscriptions`](https://pub.dev/packages/solana_kit_subscriptions)
 
 ## Specialized integrations
 
 - [`solana_kit_mobile_wallet_adapter`](https://pub.dev/packages/solana_kit_mobile_wallet_adapter)
 - [`solana_kit_mobile_wallet_adapter_protocol`](https://pub.dev/packages/solana_kit_mobile_wallet_adapter_protocol)
+- [`solana_kit_anchor`](https://pub.dev/packages/solana_kit_anchor)
+- [`solana_kit_jupiter`](https://pub.dev/packages/solana_kit_jupiter)
+- [`solana_kit_pyth`](https://pub.dev/packages/solana_kit_pyth)
+- [`solana_kit_sns`](https://pub.dev/packages/solana_kit_sns)
 - [`solana_kit_helius`](https://pub.dev/packages/solana_kit_helius)
 - [`solana_kit_surfpool`](https://pub.dev/packages/solana_kit_surfpool)
 

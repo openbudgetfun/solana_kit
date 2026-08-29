@@ -46,11 +46,55 @@
 ///   final reverse = await findReverseAddress(
 ///     domainAddress: domainKey.address,
 ///   );
+///
+///   print('domain: $domainKey');
+///   print('SOL record: $solRecord');
+///   print('reverse: $reverse');
 /// }
 /// ```
-library;
+/// <!-- {=docsSnsSection -->
+///
+/// ### Resolve a .sol domain key
+///
+/// Domain keys handle top-level domains, subdomains, and V1/V2 records with the same derivation the official SDK uses.
+///
+/// ```dart
+/// import 'package:solana_kit_sns/solana_kit_sns.dart';
+///
+/// Future<void> main() async {
+///   final domainKey = await findDomainKey('mysite.sol');
+///   print(domainKey);
+/// }
+/// ```
+///
+/// Feed the derived keys to `getNameRegistryStateCodec` or the record codecs when you need parsed owner, class, and content data.
+///
+/// <!-- {/docsSnsSection -->
 
+library;
+///
 // Program and protocol addresses.
+///
+/// 
+/// <!-- {=docsSnsSection} -->
+///
+/// ### Resolve a .sol domain key
+///
+/// Domain keys handle top-level domains, subdomains, and V1/V2 records with the same derivation the official SDK uses.
+///
+/// ```dart
+/// import 'package:solana_kit_sns/solana_kit_sns.dart';
+///
+/// Future<void> main() async {
+///   final domainKey = await findDomainKey('mysite.sol');
+///   print(domainKey);
+/// }
+/// ```
+///
+/// Feed the derived keys to `getNameRegistryStateCodec` or the record codecs when you need parsed owner, class, and content data.
+///
+/// <!-- {/docsSnsSection} -->
+///
 export 'src/domain_key.dart';
 export 'src/hash.dart';
 export 'src/program_address.dart';

@@ -12,71 +12,84 @@ Squads V4 multisig program client for the Solana Kit Dart SDK: instruction build
 - **Error helpers** for all 45 program errors
 - **Program parsing** via `parseSquadsMultisigInstruction`
 
+<!-- {=packageInstallSection:"solana_kit_squads"} -->
+
+## Installation
+
+Install the package directly:
+
+```yaml
+dependencies:
+  "solana_kit_squads": ^
+```
+
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+<!-- {/packageInstallSection} -->
+
+:::
+
+## Installation
+
+Install the package directly:
+
+```yaml
+dependencies:
+  "solana_kit_squads": ^
+```
+
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_squads
+- API reference: https://pub.dev/documentation/solana_kit_squads/latest/
+- Workspace docs: https://openbudgetfun.github.io/solana_kit/
+- Package catalog entry: https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_squads
+- Source code: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_squads
+
+For architecture notes, getting-started guides, and cross-package examples, start with the workspace docs site and then drill down into the package README and API reference.
+
+<!-- {/packageDocumentationSection} -->
+
 ## Usage
+
+<!-- {=docsSquadsSection} -->
 
 ### Derive the multisig and vault PDAs
 
+Squads V4 PDA derivations match the upstream TypeScript SDK byte-for-byte, including vault indices and little-endian transaction indices.
+
 ```dart
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_squads/solana_kit_squads.dart';
 
 Future<void> main() async {
-  const createKeyAddress = Address(
-    '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM',
+  final (multisig, bump) = await findMultisigPda(
+    createKey: Address('CreateKey11111111111111111111111111111111111'),
   );
-
-  final (multisig, bump) = await findMultisigPda(createKey: createKeyAddress);
   final (vault, vaultBump) = await findVaultPda(multisig: multisig, index: 0);
-  print('multisig $multisig (bump $bump), vault $vault (bump $vaultBump)');
+
+  print(multisig);
+  print(vault);
 }
 ```
 
-### Create a multisig
+Instruction builders cover multisig creation, config transactions, vault transactions, batches, proposals, and spending limits.
 
-```dart
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_squads/solana_kit_squads.dart';
-
-Future<void> main() async {
-  const createKeyAddress = Address(
-    '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM',
-  );
-  const creatorAddress = Address(
-    '4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7ua4s6guT976W',
-  );
-  const systemProgram = Address('11111111111111111111111111111111');
-
-  final (multisigPda, _) = await findMultisigPda(createKey: createKeyAddress);
-  final (programConfigPda, _) = await findProgramConfigPda();
-  // The fee treasury is vault #255 of the new multisig.
-  final (treasuryPda, _) = await findVaultPda(
-    multisig: multisigPda,
-    index: 255,
-  );
-
-  final instruction = getMultisigCreateV2Instruction(
-    programAddress: squadsMultisigProgramAddressObject,
-    programConfig: programConfigPda,
-    treasury: treasuryPda,
-    multisig: multisigPda,
-    createKey: createKeyAddress,
-    creator: creatorAddress,
-    systemProgram: systemProgram,
-    configAuthority: creatorAddress,
-    threshold: 1,
-    members: [
-      Member(
-        key: creatorAddress,
-        permissions: const Permissions(mask: 7), // initiate + vote + execute
-      ),
-    ],
-    timeLock: 0,
-    rentCollector: null,
-    memo: null,
-  );
-  print('instruction with ${instruction.accounts!.length} accounts');
-}
-```
+<!-- {/docsSquadsSection} -->
 
 ## Key APIs
 

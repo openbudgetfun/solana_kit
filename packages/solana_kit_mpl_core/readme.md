@@ -12,65 +12,82 @@ Metaplex Core program client for the Solana Kit Dart SDK: instruction builders, 
 - **Error helpers** for all 57 program errors
 - **Program parsing** via the generated identification and parsing entry points
 
+<!-- {=packageInstallSection:"solana_kit_mpl_core"} -->
+
+## Installation
+
+Install the package directly:
+
+```yaml
+dependencies:
+  "solana_kit_mpl_core": ^
+```
+
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+<!-- {/packageInstallSection} -->
+
+:::
+
+## Installation
+
+Install the package directly:
+
+```yaml
+dependencies:
+  "solana_kit_mpl_core": ^
+```
+
+If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
+
+```bash
+dart pub add solana_kit
+```
+
+Inside this monorepo, Dart workspace resolution uses the local package automatically.
+
+## Documentation
+
+- Package page: https://pub.dev/packages/solana_kit_mpl_core
+- API reference: https://pub.dev/documentation/solana_kit_mpl_core/latest/
+- Workspace docs: https://openbudgetfun.github.io/solana_kit/
+- Package catalog entry: https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_mpl_core
+- Source code: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_mpl_core
+
+For architecture notes, getting-started guides, and cross-package examples, start with the workspace docs site and then drill down into the package README and API reference.
+
+<!-- {/packageDocumentationSection} -->
+
 ## Usage
+
+<!-- {=docsMplCoreSection} -->
 
 ### Derive the asset signer PDA
 
-```dart
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
-import 'package:solana_kit_mpl_core/solana_kit_mpl_core.dart';
-
-Future<void> main() async {
-  const assetAddress = Address(
-    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-  );
-
-  final (assetSigner, bump) = await findAssetSignerPda(asset: assetAddress);
-  print('asset signer PDA $assetSigner derived with bump $bump');
-}
-```
-
-### Create an asset
+External plugin execution routes through the asset signer, a PDA derived from the asset address.
 
 ```dart
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_mpl_core/solana_kit_mpl_core.dart';
 
 Future<void> main() async {
-  const assetAddress = Address(
-    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  final assetSigner = await findAssetSignerPda(
+    asset: Address('Asset1111111111111111111111111111111111111'),
   );
-  const collectionAddress = Address(
-    'BCwHRRbWToKMcDPWnnW4n4YimYw9qVo7jVXNiZQopC3B',
-  );
-  const authorityAddress = Address(
-    'Fgae9ichv1MpfL3tnr9jRCjpUy1E3J6matR6EBy4MasF',
-  );
-  const payerAddress = Address(
-    'Fgae9ichv1MpfL3tnr9jRCjpUy1E3J6matR6EBy4MasF',
-  );
-  const ownerAddress = Address(
-    'Fgae9ichv1MpfL3tnr9jRCjpUy1E3J6matR6EBy4MasF',
-  );
-  const systemProgram = Address('11111111111111111111111111111111');
 
-  final instruction = getCreateV1Instruction(
-    programAddress: mplCoreProgramAddressObject,
-    asset: assetAddress,
-    collection: collectionAddress,
-    authority: authorityAddress,
-    payer: payerAddress,
-    owner: ownerAddress,
-    updateAuthority: ownerAddress,
-    systemProgram: systemProgram,
-    dataState: DataState.accountState,
-    name: 'My Asset',
-    uri: 'https://example.com/asset.json',
-    plugins: null,
-  );
-  print('instruction with ${instruction.accounts!.length} accounts');
+  print(assetSigner);
 }
 ```
+
+Instruction builders such as `getCreateV1Instruction`, `getCreateCollectionV1Instruction`, and `getTransferV1Instruction` give you explicit account ordering while pattern helpers like `deriveExtraAccountAddress` cover the external plugin adapter surface.
+
+<!-- {/docsMplCoreSection} -->
 
 ## Key APIs
 

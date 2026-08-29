@@ -21,14 +21,66 @@
 ///   error code constants
 /// - **Instruction parsing** via [parseSquadsMultisigInstruction] and
 ///   [identifySquadsMultisigInstruction]
-library;
+/// <!-- {=docsSquadsSection -->
+///
+/// ### Derive the multisig and vault PDAs
+///
+/// Squads V4 PDA derivations match the upstream TypeScript SDK byte-for-byte, including vault indices and little-endian transaction indices.
+///
+/// ```dart
+/// import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+/// import 'package:solana_kit_squads/solana_kit_squads.dart';
+///
+/// Future<void> main() async {
+///   final (multisig, bump) = await findMultisigPda(
+///     createKey: Address('CreateKey11111111111111111111111111111111111'),
+///   );
+///   final (vault, vaultBump) = await findVaultPda(multisig: multisig, index: 0);
+///
+///   print(multisig);
+///   print(vault);
+/// }
+/// ```
+///
+/// Instruction builders cover multisig creation, config transactions, vault transactions, batches, proposals, and spending limits.
+///
+/// <!-- {/docsSquadsSection -->
 
+library;
+///
 // Generated (Codama-style).
 // Program addresses are exported directly from src/program_address.dart.
 // The generated file re-exports them; hide to avoid ambiguity.
+///
+/// 
+/// <!-- {=docsSquadsSection} -->
+///
+/// ### Derive the multisig and vault PDAs
+///
+/// Squads V4 PDA derivations match the upstream TypeScript SDK byte-for-byte, including vault indices and little-endian transaction indices.
+///
+/// ```dart
+/// import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+/// import 'package:solana_kit_squads/solana_kit_squads.dart';
+///
+/// Future<void> main() async {
+///   final (multisig, bump) = await findMultisigPda(
+///     createKey: Address('CreateKey11111111111111111111111111111111111'),
+///   );
+///   final (vault, vaultBump) = await findVaultPda(multisig: multisig, index: 0);
+///
+///   print(multisig);
+///   print(vault);
+/// }
+/// ```
+///
+/// Instruction builders cover multisig creation, config transactions, vault transactions, batches, proposals, and spending limits.
+///
+/// <!-- {/docsSquadsSection} -->
+///
 export 'package:solana_kit_squads/src/generated/squads_multisig.dart'
     hide squadsMultisigProgramAddress;
-
+///
 // PDA derivation.
 export 'src/pda/batch_transaction.dart';
 export 'src/pda/ephemeral_signer.dart';
