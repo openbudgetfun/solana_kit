@@ -334,6 +334,13 @@ release = true
 version_format = "primary"
 changelog = { path = "CHANGELOG.md" }
 
+# Dependents of main-group packages inherit the group's own release
+# severity, never exceeding a major bump. Without a declaration they only
+# received the legacy `parent_bump = "patch"` floor, so a major release of
+# `group.main` left dependents on stale dependency ranges behind a patch.
+bump_propagation = "inherit"
+bump_propagation_max = "major"
+
 [group.wallet]
 packages = [
   "solana_kit_wallet_adapter",
