@@ -6,6 +6,7 @@
 - Any PR that changes files under `packages/*` must include a `.changeset/*.md` file.
 - Use monochange package ids from `monochange.toml` in changeset frontmatter.
 - For changes that affect the lockstep Dart group, listing affected package ids is enough; monochange propagates the selected bump through `group.main`.
+- Dependents of `group.main` packages (packages outside the group that depend on a member) inherit the group's release severity through `bump_propagation`, clamped at `major` (pre-stable shifting applies for `0.x` versions). The legacy `parent_bump = "patch"` floor applies only where no declaration matches.
 - Changesets describe **completed** changes only. They are release inputs that ship to users, so never use them as planning documents for in-progress work (no "remaining", "in progress", or TODO sections). The rare exception is documenting deprecations or future work that belongs to a future release; if a PR lands partially, split the work so each changeset only describes what actually shipped.
 
 ```md
