@@ -110,7 +110,6 @@ void main() {
       expect(senderPingUrl(SenderRegion.usEast), endsWith('/ping'));
       expect(senderTipAccounts, hasLength(10));
       expect(minTipLamportsMax, 1000000);
-      expect(minTipLamportsDual, 1000000);
       expect(minTipLamportsSwqos, 5000);
     });
   });

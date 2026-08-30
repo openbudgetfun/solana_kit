@@ -59,13 +59,6 @@ const senderTipAccounts = <String>[
 /// Minimum tip for Sender Max (dual SWQOS + Jito) submission: 0.001 SOL.
 const int minTipLamportsMax = 1000000;
 
-/// Minimum tip for dual (SWQOS + Jito) submission: 0.001 SOL.
-///
-/// Deprecated in favor of [minTipLamportsMax] (Sender Max) upstream in
-/// v3.1.0; kept as an alias for backward compatibility.
-@Deprecated('Use minTipLamportsMax instead.')
-const int minTipLamportsDual = minTipLamportsMax;
-
 /// Minimum tip for SWQOS-only submission: 0.000005 SOL.
 ///
 /// Upstream Sender Max lowered this floor from 0.0005 SOL (500,000 lamports)
