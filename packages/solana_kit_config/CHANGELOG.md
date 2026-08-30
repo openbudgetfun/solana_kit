@@ -81,6 +81,12 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #212](https://g
 
 - No package-specific changes were recorded; `solana_kit_config` was updated to 0.1.3.
 
+## solana_kit_config [0.2.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_config/v0.2.0) (2026-08-30)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_config` was updated to 0.2.0.
+
 ## 0.0.0
 
 Placeholder publication.

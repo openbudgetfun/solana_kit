@@ -1,11 +1,11 @@
 name: solana_kit_wallet_standard
 description: Pure Dart Wallet Standard and Solana wallet feature contracts.
-version: 0.0.0
+version: 0.1.0
 repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_wallet_standard
 homepage: https://openbudgetfun.github.io/solana_kit/
 environment:
   sdk: ^3.12.0
 resolution: workspace
 dev_dependencies:
-  solana_kit_lints: ^0.8.0
+  solana_kit_lints: ^0.9.0
   test: ^1.25.0

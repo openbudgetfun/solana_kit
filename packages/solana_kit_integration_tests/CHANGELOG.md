@@ -100,3 +100,21 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #208](https://g
 ### Changed
 
 - No package-specific changes were recorded; `solana_kit_integration_tests` was updated to 0.0.2.
+
+## solana_kit_integration_tests [0.1.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_integration_tests/v0.1.0) (2026-08-30)
+
+### 🐛 Fixed
+
+#### Harden Pyth and SNS validation
+
+Require the Pyth price-update account signer declared by the receiver IDL, validate Pyth account headers and bounded integer inputs, normalize malformed update data to typed decode errors, and cover the signer requirement through the Surfpool transaction flow. Also enforce SNS record lengths, EVM address sizes, and TLD-trimmed domain-key inputs.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #227](https://github.com/openbudgetfun/solana_kit/pull/227)
+
+### 📖 Documentation
+
+#### Unslop package docs and code comments
+
+Rewrote every package README from a reader's perspective with verified, compilable examples, removed AI-tell phrasing from docs and code comments, and added a test that analyzes every Dart block in Markdown so examples cannot drift from the API.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://github.com/openbudgetfun/solana_kit/pull/223)

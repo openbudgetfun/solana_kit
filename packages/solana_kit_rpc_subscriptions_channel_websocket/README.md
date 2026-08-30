@@ -16,7 +16,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_rpc_subscriptions_channel_websocket": ^0.8.0
+  "solana_kit_rpc_subscriptions_channel_websocket": ^0.9.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

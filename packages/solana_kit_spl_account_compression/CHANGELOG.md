@@ -126,3 +126,13 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #205](https://g
 ### Changed
 
 - No package-specific changes were recorded; `solana_kit_spl_account_compression` was updated to 0.3.3.
+
+## solana_kit_spl_account_compression [0.4.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_spl_account_compression/v0.4.0) (2026-08-30)
+
+### 📖 Documentation
+
+#### Unslop package docs and code comments
+
+Rewrote every package README from a reader's perspective with verified, compilable examples, removed AI-tell phrasing from docs and code comments, and added a test that analyzes every Dart block in Markdown so examples cannot drift from the API.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://github.com/openbudgetfun/solana_kit/pull/223)

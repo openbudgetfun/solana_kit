@@ -4,6 +4,67 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.9.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.0) (2026-08-30)
+
+### 💥 Breaking Change
+
+#### Sync upstream `@solana/kit` v8.1.0
+
+Tracks upstream APIs and behavior through `v8.1.0`:
+
+- **`solana_kit_transaction_messages` (breaking)**: removed the deprecated compute-unit-limit helpers `fillTransactionMessageProvisoryComputeUnitLimit` and `estimateAndSetComputeUnitLimitFactory`, matching upstream `@solana/kit`'s removal of the deprecated `@solana/kit` estimation helpers (#1948). Use `fillTransactionMessageProvisoryResourceLimits` and `estimateAndSetResourceLimitsFactory` instead, which additionally reserve and set the loaded accounts data size limit for version 1 transactions. `setTransactionMessageComputeUnitLimit` and `setTransactionMessageConfig` now reject compute unit limits the runtime will not honor — an integer outside `[0, 1400000]` — throwing `SolanaErrorCode.transactionComputeUnitLimitOutOfRange`, and reject invalid heap sizes — not a multiple of 1024 bytes in `[32768, 262144]` — throwing `SolanaErrorCode.transactionInvalidHeapSize` (upstream #1972). Added the upstream `heap-size.ts` module as `getTransactionMessageHeapSize`/`setTransactionMessageHeapSize` with the same validation, and `resource_limit_validation.dart` with `assertIsValidComputeUnitLimit`/`assertIsValidHeapSize`, `minHeapSize`, `maxHeapSize`, and `heapSizeMultipleOf`. Decoding is unaffected: `decompileTransactionMessage` still returns messages carrying out-of-range values.
+
+  Migration:
+  - `fillTransactionMessageProvisoryComputeUnitLimit(m)` → `fillTransactionMessageProvisoryResourceLimits(m)`.
+  - `estimateAndSetComputeUnitLimitFactory(estimate)` → `estimateAndSetResourceLimitsFactory(estimateResourceLimitsFactory(estimate))`.
+- **`solana_kit_transactions` (breaking)**: removed the fixed-size constants `transactionPacketSize`, `transactionPacketHeader`, and `transactionSizeLimit`, matching upstream's removal of `TRANSACTION_PACKET_SIZE`, `TRANSACTION_PACKET_HEADER`, and `TRANSACTION_SIZE_LIMIT` (#1948). Use `getTransactionSizeLimit` to derive the limit for a specific transaction, or the per-version constants `legacyTransactionSizeLimit` (1232) and `v1TransactionSizeLimit` (4096).
+
+  Migration: `TRANSACTION_SIZE_LIMIT - getTransactionSize(t)` → `getTransactionSizeLimit(t) - getTransactionSize(t)`.
+- `solana_kit_errors`: added the `failedToSignTransaction` (13) and `failedToSignTransactions` (14) error codes with upstream messages, plus the transaction codes `transactionComputeUnitLimitOutOfRange` (5663039) and `transactionInvalidHeapSize` (5663040) (upstream #1902, #1972).
+- `solana_kit_instruction_plans`: added `createFailedToSendTransactionError`, `createFailedToSendTransactionsError`, `createFailedToSignTransactionError`, `createFailedToSignTransactionsError`, and `createFailedToExecuteTransactionPlanError`, mirroring upstream `@solana/instruction-plans`' `transaction-plan-errors.ts` (#1902, #1434). The signing factories carry the same non-enumerable `transactionPlanResult` and optional `logs`/`preflightData` context as their sending counterparts, but the message includes no submission-location indicator because signing never submits. The executor now throws through `createFailedToExecuteTransactionPlanError`.
+- `solana_kit`: added the `ClientWithTransactionSending` and `ClientWithTransactionSigning` client interfaces, mirroring upstream `@solana/plugin-interfaces` (#1899). `signTransaction`/`signTransactions` accept the same flexible inputs as their sending counterparts and return signed transactions without submitting them. Sending results guarantee a signature-bearing `context`; signing makes no default guarantee about the context, matching the upstream `TContext` parameterization (adapted to Dart's map-based result contexts).
+- **`solana_kit_rpc_transformers` (breaking)**: removed `getBigIntDowncastRequestTransformer`, matching upstream #1948. It was no longer used by the default Solana RPC request transformer: the Solana RPC transport serializes `BigInt` values losslessly as large integer literals via `stringifyJsonWithBigInts`, and Agave parses JSON integers across the full `u64` range without precision loss, so downcasting `BigInt`s to (potentially lossy) `int`s is unnecessary. `getDefaultRequestTransformerForSolanaRpc` no longer downcasts; if you still need this behavior, recreate it with `getTreeWalkerRequestTransformer` and a visitor that replaces `BigInt` nodes with `int` values.
+- `solana_kit_rpc_transformers`: the numeric allow-list keeps `transactionConfig.computeUnitLimit`, `transactionConfig.heapSize`, and `transactionConfig.loadedAccountsDataSizeLimit` from version 1 transaction responses as numbers instead of upcasting them to `BigInt` (upstream #1951).
+- Documentation now tracks `@solana/kit` `v8.1.0`, and the reference pin in `config/reference-repos.json` moved to `bb54243d8a57` (tag `v8.1.0`).
+
+Migration example:
+
+```dart
+// Before (removed):
+// final estimate = estimateComputeUnitLimitFactory(rpc);
+// var message = await estimateAndSetComputeUnitLimitFactory(estimate)(message);
+// final freeBytes = transactionSizeLimit - getTransactionSize(transaction);
+
+// After:
+final estimate = estimateResourceLimitsFactory(rpc);
+var message = await estimateAndSetResourceLimitsFactory(estimate)(message);
+final freeBytes =
+    getTransactionSizeLimit(transaction) - getTransactionSize(transaction);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #225](https://github.com/openbudgetfun/solana_kit/pull/225) · _Related issues:_ [#1899](https://github.com/openbudgetfun/solana_kit/issues/1899), [#1902](https://github.com/openbudgetfun/solana_kit/issues/1902), [#1910](https://github.com/openbudgetfun/solana_kit/issues/1910), [#1913](https://github.com/openbudgetfun/solana_kit/issues/1913), [#1948](https://github.com/openbudgetfun/solana_kit/issues/1948), [#1951](https://github.com/openbudgetfun/solana_kit/issues/1951), [#1957](https://github.com/openbudgetfun/solana_kit/issues/1957), [#1970](https://github.com/openbudgetfun/solana_kit/issues/1970), [#1971](https://github.com/openbudgetfun/solana_kit/issues/1971), [#1972](https://github.com/openbudgetfun/solana_kit/issues/1972), [#1979](https://github.com/openbudgetfun/solana_kit/issues/1979), [#220](https://github.com/openbudgetfun/solana_kit/issues/220)
+
+### 🐛 Fixed
+
+#### Sync upstream `@solana/kit` v7.1.1
+
+Tracks upstream APIs and behavior through `v7.1.1`:
+
+- `solana_kit`: README now documents `v7.1.1` as the latest supported upstream version.
+- `solana_kit_codecs_strings`: base-X decoders now report the end of the buffer as the next offset when no bytes remain to decode, matching upstream `@solana/codecs-strings` (#1926).
+- `solana_kit_rpc_transformers`: subscription responses for `blockSubscribe`/`blockNotification` now consult the `blockNotifications` numeric allow-list, matching upstream `@solana/rpc-transformers` (#1925).
+- `solana_kit_instruction_plans`: `successfulSingleTransactionPlanResultFromTransaction` is deprecated in favor of `successfulSingleTransactionPlanResult` with an explicit context, matching upstream `@solana/instruction-plans` (#1924).
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #220](https://github.com/openbudgetfun/solana_kit/pull/220) · _Related issues:_ [#1924](https://github.com/openbudgetfun/solana_kit/issues/1924), [#1925](https://github.com/openbudgetfun/solana_kit/issues/1925), [#1926](https://github.com/openbudgetfun/solana_kit/issues/1926)
+
+### 📖 Documentation
+
+#### Unslop package docs and code comments
+
+Rewrote every package README from a reader's perspective with verified, compilable examples, removed AI-tell phrasing from docs and code comments, and added a test that analyzes every Dart block in Markdown so examples cannot drift from the API.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://github.com/openbudgetfun/solana_kit/pull/223)
+
 ## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)
 
 ### Changed

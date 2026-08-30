@@ -113,6 +113,16 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #213](https://g
 
 - No package-specific changes were recorded; `solana_kit_surfpool` was updated to 0.2.1.
 
+## solana_kit_surfpool [0.3.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_surfpool/v0.3.0) (2026-08-30)
+
+### 📖 Documentation
+
+#### Unslop package docs and code comments
+
+Rewrote every package README from a reader's perspective with verified, compilable examples, removed AI-tell phrasing from docs and code comments, and added a test that analyzes every Dart block in Markdown so examples cannot drift from the API.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://github.com/openbudgetfun/solana_kit/pull/223)
+
 ## 0.0.0
 
 - Initial unpublished package version.

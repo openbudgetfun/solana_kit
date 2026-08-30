@@ -102,6 +102,16 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #204](https://g
 
 - No package-specific changes were recorded; `solana_kit_subscriptions` was updated to 0.1.2.
 
+## solana_kit_subscriptions [0.2.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_subscriptions/v0.2.0) (2026-08-30)
+
+### 📖 Documentation
+
+#### Unslop package docs and code comments
+
+Rewrote every package README from a reader's perspective with verified, compilable examples, removed AI-tell phrasing from docs and code comments, and added a test that analyzes every Dart block in Markdown so examples cannot drift from the API.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://github.com/openbudgetfun/solana_kit/pull/223)
+
 ## 0.0.0
 
 Placeholder publication.

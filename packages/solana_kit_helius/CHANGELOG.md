@@ -194,3 +194,26 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #212](https://g
 ### Changed
 
 - No package-specific changes were recorded; `solana_kit_helius` was updated to 0.5.1.
+
+## solana_kit_helius [0.6.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_helius/v0.6.0) (2026-08-30)
+
+### 🚀 Feature
+
+#### Sync upstream `helius-sdk` v3.1.0
+
+Tracks upstream Helius SDK APIs and behavior through `v3.1.0`:
+
+- Adds `getBalanceAt` / `walletGetBalanceAt` for querying a wallet's balance of a token (or native SOL) at a point in the past — by Unix `time`, `datetime` string, or exact `slot` — with `balance`/`balanceRaw` returned as strings to preserve precision. `asOf` is `null` when the wallet had no matching transaction, meaning the balance is genuinely zero (upstream #334).
+- Adds transaction-v1 validation: `validateTransactionV1Message` asserts the message holds no address lookups, since version 1 transactions cannot use address lookup tables (SIMD-0385), and `createTransactionMessage` refuses to build a v1 message with lookups. Adds `v1TransactionSizeLimit` (4096 bytes). `resolvePriorityFee` normalises a `lamportsCap` floor/ceiling into a whole number of lamports (upstream #341).
+- Adds `sendBundleWithSender` for submitting up to 5-transaction bundles to Sender Max via `sendBundle`, tracking landing per transaction signature. Sender pricing constants now match upstream: `minTipLamportsMax` is 1,000,000 and `minTipLamportsSwqos` is 5,000. `sendViaSender` / `sendTransactionWithSender` accept `skipPreflight`, defaulting to `true` (upstream #335).
+- Adds `PreconfWsClient` / `preconfSubscribe` for subscribing to preconfirmation websocket notifications with `preconfWebsocketUrl` and wire-format helpers `decodePreconfFrame`, `preconfWireVersion`, and `preconfHeadLength` (upstream #335).
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #221](https://github.com/openbudgetfun/solana_kit/pull/221) · _Related issues:_ [#334](https://github.com/openbudgetfun/solana_kit/issues/334), [#335](https://github.com/openbudgetfun/solana_kit/issues/335), [#336](https://github.com/openbudgetfun/solana_kit/issues/336), [#341](https://github.com/openbudgetfun/solana_kit/issues/341)
+
+### 📖 Documentation
+
+#### Unslop package docs and code comments
+
+Rewrote every package README from a reader's perspective with verified, compilable examples, removed AI-tell phrasing from docs and code comments, and added a test that analyzes every Dart block in Markdown so examples cannot drift from the API.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://github.com/openbudgetfun/solana_kit/pull/223)

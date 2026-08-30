@@ -14,7 +14,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_compute_budget": ^0.7.1
+  "solana_kit_compute_budget": ^0.8.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
