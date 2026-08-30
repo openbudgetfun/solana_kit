@@ -276,6 +276,16 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
       - name: install NPM dependencies
         run: pnpm install --frozen-lockfile
+      - name: shadow the nix-profile pnpm with the action-setup pnpm
+        run: |
+          # The nix-profile pnpm cannot run on Ubuntu runners (glibc
+          # mismatch); the action-setup pnpm can. The shim is prepended to
+          # PATH inside the devenv-shell steps below.
+          system_pnpm="$(command -v pnpm)"
+          test -n "$system_pnpm"
+          mkdir -p /tmp/pnpm-shim
+          printf '#!/bin/sh\nexec "%s" "$@"\n' "$system_pnpm" > /tmp/pnpm-shim/pnpm
+          chmod +x /tmp/pnpm-shim/pnpm
       - uses: ./.github/actions/devenv
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -286,8 +296,14 @@ jobs:
       - name: prepare the release locally (no push, no tags, no GitHub release)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: monochange run release --commit
+        run: |
+          export PATH="/tmp/pnpm-shim:$PATH"
+          pnpm -v
+          monochange run release --commit
         shell: devenv shell -- bash -e {0}
       - name: validate every package publishes (dry run)
-        run: monochange run publish --dry-run
+        run: |
+          export PATH="/tmp/pnpm-shim:$PATH"
+          pnpm -v
+          monochange run publish --dry-run
         shell: devenv shell -- bash -e {0}
