@@ -441,5 +441,5 @@ help_text = "Publish Dart packages with melos and the npm renderer with pnpm"
 steps = [
   { type = "Command", name = "publish dart packages", command = "melos publish --no-dry-run --yes", dry_run_command = "melos publish --yes" },
   { type = "Command", name = "build npm renderer", command = "pnpm --filter codama-renderers-dart build", dry_run_command = "pnpm --filter codama-renderers-dart build" },
-  { type = "Command", name = "publish npm renderer", command = "pnpm --filter codama-renderers-dart publish --no-git-checks", dry_run_command = "pnpm --filter codama-renderers-dart publish --no-git-checks --dry-run" },
+  { type = "Command", name = "publish npm renderer", inputs = { interactive = true }, command = "pnpm --filter codama-renderers-dart publish --no-git-checks", dry_run_command = "pnpm --filter codama-renderers-dart publish --no-git-checks --dry-run" },
 ]
