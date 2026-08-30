@@ -216,6 +216,7 @@ in
         export PATH="$workspace_root/.devenv/profile/bin:$PATH"
         cd "$workspace_root"
 
+        lint:pub-get
         docs:check
         lint:format
         lint:kotlin
@@ -235,9 +236,25 @@ in
       '';
       description = "Check all formatting is correct.";
     };
+    "lint:pub-get" = {
+      exec = ''
+        set -euo pipefail
+        workspace_root="''${DEVENV_ROOT:-${currentDir}}"
+        cd "$workspace_root"
+        # A stale .dart_tool package config (created before new workspace
+        # packages landed, e.g. after merging changes that add members)
+        # makes dart analyze report phantom `undefined name` errors for
+        # packages that exist on disk. Refresh workspace resolution
+        # before anything that needs it (analyze, dart run scripts).
+        flutter pub get
+      '';
+      description = "Refresh workspace package resolution before lint runs.";
+      binary = "bash";
+    };
     "lint:analyze" = {
       exec = ''
         set -euo pipefail
+        lint:pub-get
         dart analyze --fatal-infos .
       '';
       description = "Run dart analyze across all packages.";
