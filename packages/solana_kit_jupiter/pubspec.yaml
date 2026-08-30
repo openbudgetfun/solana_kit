@@ -1,6 +1,6 @@
 name: solana_kit_jupiter
 description: Jupiter Exchange client for Solana Kit Dart — Swap API v2 (order/execute and raw build), Price v3, and Token v2 APIs.
-version: 0.9.0
+version: 0.9.1
 repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_jupiter
 homepage: https://openbudgetfun.github.io/solana_kit/
 environment:
@@ -8,12 +8,12 @@ environment:
 resolution: workspace
 dependencies:
   http: ^1.4.0
-  solana_kit_addresses: ^0.9.0
-  solana_kit_codecs_strings: ^0.9.0
-  solana_kit_errors: ^0.9.0
-  solana_kit_signers: ^0.9.0
-  solana_kit_transaction_messages: ^0.9.0
-  solana_kit_transactions: ^0.9.0
+  solana_kit_addresses: ^0.9.1
+  solana_kit_codecs_strings: ^0.9.1
+  solana_kit_errors: ^0.9.1
+  solana_kit_signers: ^0.9.1
+  solana_kit_transaction_messages: ^0.9.1
+  solana_kit_transactions: ^0.9.1
 dev_dependencies:
-  solana_kit_lints: ^0.9.0
+  solana_kit_lints: ^0.9.1
   test: ^1.25.0

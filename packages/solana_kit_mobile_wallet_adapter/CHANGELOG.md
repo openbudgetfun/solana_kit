@@ -104,3 +104,9 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #212](https://g
 Rewrote every package README from a reader's perspective with verified, compilable examples, removed AI-tell phrasing from docs and code comments, and added a test that analyzes every Dart block in Markdown so examples cannot drift from the API.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://github.com/openbudgetfun/solana_kit/pull/223)
+
+## solana_kit_mobile_wallet_adapter [0.5.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mobile_wallet_adapter/v0.5.1) (2026-08-30)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_mobile_wallet_adapter` was updated to 0.5.1.

@@ -1,6 +1,6 @@
 name: solana_kit_wallet_ui
 description: Responsive Material, Cupertino, and adaptive wallet UI for Solana Kit.
-version: 0.1.0
+version: 0.1.1
 repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_wallet_ui
 homepage: https://openbudgetfun.github.io/solana_kit/
 
@@ -15,13 +15,13 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^2.2.1
-  solana_kit_wallet_adapter: ^0.1.0
-  solana_kit_wallet_standard: ^0.1.0
+  solana_kit_wallet_adapter: ^0.1.1
+  solana_kit_wallet_standard: ^0.1.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  solana_kit_lints: ^0.9.0
+  solana_kit_lints: ^0.9.1
 
 topics:
   - solana

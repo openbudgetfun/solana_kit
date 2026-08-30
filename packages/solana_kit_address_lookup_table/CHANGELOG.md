@@ -160,6 +160,12 @@ Rewrote every package README from a reader's perspective with verified, compilab
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://github.com/openbudgetfun/solana_kit/pull/223)
 
+## solana_kit_address_lookup_table [0.4.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_address_lookup_table/v0.4.1) (2026-08-30)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_address_lookup_table` was updated to 0.4.1.
+
 ## 0.0.0
 
 Placeholder publication.

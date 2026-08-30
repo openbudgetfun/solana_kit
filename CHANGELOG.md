@@ -2424,6 +2424,20 @@ Package groups scaffolded:
 - Fragment-based code generation with automatic import tracking
 - Comprehensive test suite with 261 tests
 
+## [0.9.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.1) (2026-08-30)
+
+Grouped release for `main`.
+
+### 🐛 Fixed
+
+#### Fix publish validation for ecosystem packages
+
+_Packages:_ _solana_kit_anchor_, _solana_kit_jupiter_, _solana_kit_mpl_core_, _solana_kit_mpl_token_metadata_, _solana_kit_squads_
+
+Declare the `meta` and `solana_kit_accounts` dependencies that the generated Squads and mpl-token-metadata clients import, so `dart pub publish` validation passes, and normalize `readme.md` to `README.md` across the ecosystem packages to satisfy the pub README requirement.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`a53391f`](https://github.com/openbudgetfun/solana_kit/commit/a53391f69a4668422096a31bcac46397770a5d33)
+
 ## [0.9.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.0) (2026-08-30)
 
 Grouped release for `main`.

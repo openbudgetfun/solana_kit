@@ -130,6 +130,12 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #204](https://g
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #226](https://github.com/openbudgetfun/solana_kit/pull/226) · _Related issues:_ [#222](https://github.com/openbudgetfun/solana_kit/issues/222), [#225](https://github.com/openbudgetfun/solana_kit/issues/225)
 
+## solana_kit_loader [0.4.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_loader/v0.4.1) (2026-08-30)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_loader` was updated to 0.4.1.
+
 ## 0.0.0
 
 Placeholder publication.

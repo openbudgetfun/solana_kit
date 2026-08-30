@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_fixed_points": ^0.9.0
+  "solana_kit_fixed_points": ^0.9.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

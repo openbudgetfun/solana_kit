@@ -266,3 +266,13 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #227](https://g
 Rewrote every package README from a reader's perspective with verified, compilable examples, removed AI-tell phrasing from docs and code comments, and added a test that analyzes every Dart block in Markdown so examples cannot drift from the API.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://github.com/openbudgetfun/solana_kit/pull/223)
+
+## codama-renderers-dart [0.5.3](https://github.com/openbudgetfun/solana_kit/releases/tag/codama-renderers-dart/v0.5.3) (2026-08-30)
+
+### 🐛 Fixed
+
+#### Fix publish validation for ecosystem packages
+
+Declare the `meta` and `solana_kit_accounts` dependencies that the generated Squads and mpl-token-metadata clients import, so `dart pub publish` validation passes, and normalize `readme.md` to `README.md` across the ecosystem packages to satisfy the pub README requirement.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`a53391f`](https://github.com/openbudgetfun/solana_kit/commit/a53391f69a4668422096a31bcac46397770a5d33)

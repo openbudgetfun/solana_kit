@@ -22,3 +22,9 @@ await controller.initialize();
 ```
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #224](https://github.com/openbudgetfun/solana_kit/pull/224)
+
+## wallet [0.1.1](https://github.com/openbudgetfun/solana_kit/releases/tag/wallet/v0.1.1) (2026-08-30)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_wallet_adapter` was updated to 0.1.1 as part of group `wallet`.

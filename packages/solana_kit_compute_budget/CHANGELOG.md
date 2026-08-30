@@ -168,6 +168,12 @@ Rewrote every package README from a reader's perspective with verified, compilab
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://github.com/openbudgetfun/solana_kit/pull/223)
 
+## solana_kit_compute_budget [0.8.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_compute_budget/v0.8.1) (2026-08-30)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_compute_budget` was updated to 0.8.1.
+
 ## [0.4.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.4.0) (2026-05-30)
 
 ### 💥 Breaking Change
