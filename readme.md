@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/solana-kit-icon.svg" alt="solana_kit logo" width="140" />
+  <img src="https://raw.githubusercontent.com/openbudgetfun/solana_kit/main/assets/solana-kit-icon.png" alt="solana_kit logo" width="140" />
 </p>
 
 <h1 align="center">solana_kit</h1>
