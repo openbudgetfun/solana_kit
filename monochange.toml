@@ -428,6 +428,7 @@ steps = [
   { type = "PrepareRelease", name = "plan release", allow_empty_changesets = true },
   { type = "Command", name = "sync dependency versions", when = "{{ number_of_changesets > 0 }}", command = "monochange versions sync" },
   { type = "Command", name = "update flutter lockfiles", when = "{{ number_of_changesets > 0 }}", command = "flutter pub get" },
+  { type = "Command", name = "apply dart lint fixes", when = "{{ number_of_changesets > 0 }}", command = "dart fix --apply" },
   { type = "Command", name = "generate pnpm lockfile", when = "{{ number_of_changesets > 0 }}", command = "pnpm install --lockfile-only --no-frozen-lockfile --link-workspace-packages" },
   { type = "Command", name = "update docs", when = "{{ number_of_changesets > 0 }}", command = "devenv shell fix:release" },
   { type = "CommitRelease", name = "create release commit", when = "{{ number_of_changesets > 0 && inputs.commit }}", inputs = { no_verify = "{{ inputs.no_verify }}", stage_all = true } },
