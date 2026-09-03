@@ -43,9 +43,17 @@ const _canvasHighlight = Color(0xff11132d);
 void main() => runApp(const WalletExampleApp());
 
 /// Interactive example used by browser, device, and Patrol verification.
+///
+/// [demoMode] swaps the default wallet registry for a deterministic demo
+/// wallet, which is how the docs site embeds the example (`DEMO_WALLET=true`).
 class WalletExampleApp extends StatefulWidget {
   /// Creates the example application.
-  const WalletExampleApp({super.key});
+  ///
+  /// Defaults to the compile-time `DEMO_WALLET` environment switch.
+  const WalletExampleApp({super.key, this.demoMode = _demoMode});
+
+  /// Whether the wallet registry uses the deterministic demo wallet.
+  final bool demoMode;
 
   @override
   State<WalletExampleApp> createState() => _WalletExampleAppState();
@@ -59,12 +67,10 @@ class _WalletExampleAppState extends State<WalletExampleApp> {
   @override
   void initState() {
     super.initState();
-    final registry = _demoMode
+    final registry = widget.demoMode
         ? DemoWalletRegistry()
         : createDefaultWalletRegistry(
-            appIdentity: const WalletAppIdentity(
-              name: 'Solana Kit wallet UI',
-            ),
+            appIdentity: const WalletAppIdentity(name: 'Solana Kit wallet UI'),
             chain: SolanaChainId.localnet,
           );
     _controller = WalletController(registry, chain: SolanaChainId.localnet);

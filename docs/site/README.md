@@ -34,3 +34,5 @@ Build output is written to `build/jaspr`.
 ```bash
 docs:site:smoke
 ```
+
+The smoke test builds the site and the embedded wallet demo for the base path in `DOCS_BASE_PATH` (default `/`), serves the build output locally, and verifies that every documented content page renders and that the wallet demo's base href and assets resolve under the deployment path. CI runs it with the GitHub Pages base path (`/solana_kit/` for this repository) so a demo built for the wrong base path fails before it can deploy.
