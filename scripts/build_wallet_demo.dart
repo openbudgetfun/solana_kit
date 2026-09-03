@@ -14,14 +14,11 @@ const String _exampleDirectory = 'packages/solana_kit_wallet_ui/example';
 const String _outputTarget = 'docs/site/web/wallet-demo';
 
 Future<void> main(List<String> args) async {
-  final basePath = _option(args, '--base-path') ?? '/';
+  final basePath = optionValue(args, '--base-path') ?? '/';
   final demoBaseHref = composeDemoBaseHref(basePath);
 
   stdout.writeln('[wallet-demo] building example app (DEMO_WALLET mode)…');
-  final pubGet = await _run([
-    'pub',
-    'get',
-  ], _exampleDirectory);
+  final pubGet = await _run(['pub', 'get'], _exampleDirectory);
   if (pubGet != 0) {
     exitCode = pubGet;
     return;
@@ -71,11 +68,20 @@ Future<int> _run(List<String> arguments, String workingDirectory) async {
   return process.exitCode;
 }
 
-/// Resolves the [flag] occurrence followed by its value, if present.
-String? _option(List<String> arguments, String flag) {
+/// Resolves the [flag] occurrence followed by its value, if present. Supports
+/// both `--flag value` and `--flag=value` spellings so callers can hand the
+/// value as a single shell-expanded word.
+String? optionValue(List<String> arguments, String flag) {
   final index = arguments.indexOf(flag);
-  if (index < 0 || index + 1 >= arguments.length) return null;
-  return arguments[index + 1];
+  if (index >= 0 && index + 1 < arguments.length) {
+    return arguments[index + 1];
+  }
+  for (final argument in arguments) {
+    if (argument.startsWith('$flag=')) {
+      return argument.substring(flag.length + 1);
+    }
+  }
+  return null;
 }
 
 void _copyDirectory(Directory source, Directory target) {
