@@ -64,6 +64,82 @@ void main() {
     expect(registry.wallets, isEmpty);
     await registry.dispose();
   });
+
+  test('registers wallets that listen for the app-ready event', () async {
+    final fixture = _WalletFixture();
+    // Injected extensions add this listener before the app boots; the app
+    // answers by dispatching app-ready with an api exposing `register`.
+    final listener = ((web.Event event) {
+      final detail = (event as web.CustomEvent).detail;
+      if (detail != null && detail.isA<JSObject>()) {
+        (detail as JSObject).callMethod<JSFunction>(
+          'register'.toJS,
+          fixture.wallet,
+        );
+      }
+    }).toJS;
+    web.window.addEventListener('wallet-standard:app-ready', listener);
+
+    final registry = createDefaultWalletRegistry(
+      appIdentity: const WalletAppIdentity(name: 'Browser test'),
+      chain: SolanaChainId.localnet,
+    );
+    await registry.initialize();
+
+    expect(
+      registry.wallets.map((wallet) => wallet.name),
+      contains('Browser test wallet'),
+    );
+    web.window.removeEventListener('wallet-standard:app-ready', listener);
+    await registry.dispose();
+  });
+
+  test(
+    'keeps additional wallets available alongside detected wallets',
+    () async {
+      final fixture = _WalletFixture();
+      final registry = createDefaultWalletRegistry(
+        appIdentity: const WalletAppIdentity(name: 'Browser test'),
+        chain: SolanaChainId.localnet,
+        additionalWallets: [_DemoWallet()],
+      );
+      await registry.initialize();
+
+      web.window.dispatchEvent(
+        web.CustomEvent(
+          'wallet-standard:register-wallet',
+          web.CustomEventInit(detail: fixture.register.toJS),
+        ),
+      );
+
+      expect(
+        registry.wallets.map((wallet) => wallet.name),
+        unorderedEquals(['Demo wallet', 'Browser test wallet']),
+      );
+      await registry.dispose();
+    },
+  );
+}
+
+/// Minimal deterministic wallet used to verify registry composition.
+class _DemoWallet implements Wallet {
+  @override
+  List<WalletAccount> get accounts => const [];
+
+  @override
+  List<String> get chains => const [SolanaChainId.localnet];
+
+  @override
+  Map<String, WalletFeature> get features => const {};
+
+  @override
+  WalletIcon get icon => WalletIcon(_icon);
+
+  @override
+  String get name => 'Demo wallet';
+
+  @override
+  String get version => walletStandardVersion;
 }
 
 class _WalletFixture {

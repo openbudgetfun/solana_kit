@@ -12,10 +12,17 @@ import 'package:web/web.dart' as web;
 WalletRegistry createPlatformWalletRegistry({
   required WalletAppIdentity appIdentity,
   required String chain,
-}) => BrowserWalletRegistry();
+  List<Wallet> additionalWallets = const [],
+}) => BrowserWalletRegistry(additionalWallets: additionalWallets);
 
 /// Discovers wallets registered on the browser `window`.
 class BrowserWalletRegistry extends WalletRegistryController {
+  /// Creates a browser registry that also keeps [additionalWallets] available.
+  BrowserWalletRegistry({this.additionalWallets = const []});
+
+  /// Wallets that are always available, regardless of detection.
+  final List<Wallet> additionalWallets;
+
   final List<({JSObject raw, _BrowserWallet wallet})> _entries = [];
   JSFunction? _listener;
   bool _initialized = false;
@@ -42,6 +49,9 @@ class BrowserWalletRegistry extends WalletRegistryController {
         web.CustomEventInit(detail: _api()),
       ),
     );
+    for (final wallet in additionalWallets) {
+      register(wallet);
+    }
   }
 
   JSObject _api() {

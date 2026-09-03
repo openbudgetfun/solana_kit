@@ -15,10 +15,12 @@ import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
 WalletRegistry createPlatformWalletRegistry({
   required WalletAppIdentity appIdentity,
   required String chain,
+  List<Wallet> additionalWallets = const [],
 }) => MobileWalletRegistry(
   backend: NativeMobileWalletBackend(),
   identity: appIdentity,
   chain: chain,
+  additionalWallets: additionalWallets,
 );
 
 /// Android Mobile Wallet Adapter backend.
