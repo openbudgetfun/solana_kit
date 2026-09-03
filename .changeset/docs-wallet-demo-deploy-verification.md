@@ -1,5 +1,5 @@
 ---
-default: patch
+"solana_kit_wallet_ui": patch
 ---
 
 # Verify deployed docs pages and the wallet demo
