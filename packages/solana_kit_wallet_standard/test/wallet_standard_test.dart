@@ -293,6 +293,34 @@ void main() {
     });
   });
 
+  test('registry deduplicates wallets that share a name', () async {
+    final registry = WalletRegistryController();
+    final events = <WalletRegistryEvent>[];
+    registry.events.listen(events.add);
+    await registry.initialize();
+    final off = registry.register(_Wallet());
+    final duplicateOff = registry.register(_Wallet());
+    final otherOff = registry.register(_Wallet('Other wallet'));
+    expect(
+      registry.wallets.map((wallet) => wallet.name),
+      ['Test wallet', 'Other wallet'],
+    );
+    expect(
+      events.whereType<WalletRegistered>().map((event) => event.wallet.name),
+      ['Test wallet', 'Other wallet'],
+    );
+    // Unregistering a skipped duplicate must not remove the original.
+    duplicateOff();
+    expect(
+      registry.wallets.map((wallet) => wallet.name),
+      ['Test wallet', 'Other wallet'],
+    );
+    otherOff();
+    off();
+    expect(registry.wallets, isEmpty);
+    await registry.dispose();
+  });
+
   test('registry emits deterministic mutations and disposes safely', () async {
     final registry = WalletRegistryController();
     final wallet = _Wallet();
@@ -331,6 +359,11 @@ WalletAccount _account() => WalletAccount(
 );
 
 class _Wallet implements Wallet {
+  _Wallet([this.name = 'Test wallet']);
+
+  @override
+  final String name;
+
   final WalletAccount _value = _account();
   @override
   List<WalletAccount> get accounts => [_value];
@@ -342,8 +375,6 @@ class _Wallet implements Wallet {
   };
   @override
   WalletIcon get icon => WalletIcon(_icon);
-  @override
-  String get name => 'Test wallet';
   @override
   String get version => walletStandardVersion;
 }

@@ -111,6 +111,32 @@ void main() {
       controller.dispose();
     });
 
+    testWidgets('picker content neutralizes the fallback text style', (
+      tester,
+    ) async {
+      final controller = await _controller(wallets: [_Wallet('Test wallet')]);
+      await tester.binding.setSurfaceSize(const Size(500, 700));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      // Deliberately without a Material ancestor, mirroring the Cupertino
+      // overlay where the ambient fallback style carries a yellow double
+      // underline.
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WalletPickerContent(
+            controller: controller,
+            onSelected: (_) {},
+            palette: palette,
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final context = tester.element(find.byKey(WalletUiKeys.picker));
+      final style = DefaultTextStyle.of(context).style;
+      expect(style.decoration, TextDecoration.none);
+      expect(style.color, palette.foreground);
+    });
+
     testWidgets('lays wallets out responsively and supports custom tiles', (
       tester,
     ) async {
