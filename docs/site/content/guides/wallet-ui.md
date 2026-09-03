@@ -16,13 +16,13 @@ Nothing here assumes it owns the screen. Every widget takes builders you can rep
 
 ## Live Demo
 
-The frame below runs the real package — the example app built for web in deterministic demo mode. Every wallet interaction is local: no keys, no network, no setup.
+The frame below runs the real package — the example app built for web. It detects the Wallet Standard wallets you have installed in the browser the same way the wallet adapter examples do, and always keeps a deterministic demo wallet available so the picker is never empty. Connecting to a detected wallet uses your real wallet; every demo-wallet interaction stays local: no keys, no network, no setup.
 
 <WalletDemo height="720"></WalletDemo>
 
 What to try:
 
-1. Press the connect button. The picker lists a Wallet Standard wallet with the full discovery → authorize → account flow.
+1. Press the connect button. The picker lists every Wallet Standard wallet detected in your browser — Phantom, Backpack, Solflare, and any other standard-compatible extension — plus the built-in demo wallet.
 2. After connecting, use **Sign message** to exercise the `solana_signMessage` feature end to end.
 3. **Check Surfpool** pings a local [surfpool](https://github.com/txtx/surfpool) node — in the hosted demo it reports unavailable unless you run one on `localhost:8899`.
 

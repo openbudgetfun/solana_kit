@@ -71,11 +71,12 @@ abstract interface class MobileWalletBackend {
 
 /// Registry exposing Mobile Wallet Adapter as one Wallet Standard wallet.
 class MobileWalletRegistry extends WalletRegistryController {
-  /// Creates a mobile registry.
+  /// Creates a mobile registry that also keeps [additionalWallets] available.
   MobileWalletRegistry({
     required this.backend,
     required this.identity,
     required this.chain,
+    this.additionalWallets = const [],
   });
 
   /// The transport used for wallet requests.
@@ -86,6 +87,10 @@ class MobileWalletRegistry extends WalletRegistryController {
 
   /// The chain used by wallet requests.
   final String chain;
+
+  /// Wallets that are always available, regardless of detection.
+  final List<Wallet> additionalWallets;
+
   bool _initialized = false;
 
   @override
@@ -100,6 +105,9 @@ class MobileWalletRegistry extends WalletRegistryController {
           chain: chain,
         ),
       );
+    }
+    for (final wallet in additionalWallets) {
+      register(wallet);
     }
   }
 }
