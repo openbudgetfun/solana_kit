@@ -66,7 +66,7 @@ function checkoutPin(repo) {
 
 // The platform-tools rustc (1.89+) removed the `stdsimd` feature gate, but
 // agave's `cargo build-sbf` still injects `--cfg feature="stdsimd"` for AES-NI
-// hashing. Programs pinned to solana-program 1.18.x pull in ahash 0.7.6, whose
+// hashing. Older Solana programs pull in ahash releases whose
 // `#![cfg_attr(feature = "stdsimd", feature(stdsimd))]` then fails with E0635.
 // The actual stdsimd code is ARM/AArch64-gated (inert on SBF), so removing the
 // gate line is safe. We vendor a patched ahash and wire it via [patch.crates-io].
@@ -75,18 +75,28 @@ function applyAhashPatch(repo, artifact, patchDir) {
   const toml = readFileSync(workspaceToml, "utf8");
   if (toml.includes("[patch.crates-io]")) return; // already patched
 
-  console.log("Preparing patched ahash 0.7.6 (removes the removed `stdsimd` feature gate)");
-  const crate = join(patchDir, "ahash-0.7.6.crate");
-  run("curl", ["-fsSL", "-A", "solana-kit-build-script", "https://static.crates.io/crates/ahash/ahash-0.7.6.crate", "-o", crate]);
-  run("tar", ["-xzf", crate, "-C", patchDir, "--strip-components=1"]);
-  const lib = join(patchDir, "src/lib.rs");
-  const source = readFileSync(lib, "utf8");
+  const ahashVersions = artifact.ahashVersions ?? [artifact.ahashVersion ?? "0.7.6"];
   const marker = '#![cfg_attr(feature = "stdsimd", feature(stdsimd))]\n';
+  const patches = [];
 
-  if (!source.includes(marker)) throw new Error("ahash 0.7.6 source changed; re-check the patch");
+  for (const ahashVersion of ahashVersions) {
+    console.log(`Preparing patched ahash ${ahashVersion} (removes the removed \`stdsimd\` feature gate)`);
+    const crate = join(patchDir, `ahash-${ahashVersion}.crate`);
+    const sourceDir = join(patchDir, `ahash-${ahashVersion}`);
+    mkdirSync(sourceDir, { recursive: true, mode: 0o700 });
+    run("curl", ["-fsSL", "-A", "solana-kit-build-script", `https://static.crates.io/crates/ahash/ahash-${ahashVersion}.crate`, "-o", crate]);
+    run("tar", ["-xzf", crate, "-C", sourceDir, "--strip-components=1"]);
+    const lib = join(sourceDir, "src/lib.rs");
+    const source = readFileSync(lib, "utf8");
 
-  writeFileSync(lib, source.replace(marker, ""));
-  writeFileSync(workspaceToml, `${toml}\n[patch.crates-io]\nahash = { path = "${patchDir}" }\n`);
+    if (!source.includes(marker)) throw new Error(`ahash ${ahashVersion} source changed; re-check the patch`);
+
+    writeFileSync(lib, source.replace(marker, ""));
+    const patchName = `ahash_${ahashVersion.replaceAll(".", "_")}`;
+    patches.push(`${patchName} = { package = "ahash", path = "${sourceDir}" }`);
+  }
+
+  writeFileSync(workspaceToml, `${toml}\n[patch.crates-io]\n${patches.join("\n")}\n`);
 
   return () => writeFileSync(workspaceToml, toml);
 }
@@ -96,8 +106,12 @@ function buildArtifact(artifact) {
   checkoutPin(repo);
   let patchDir;
   let restoreWorkspace;
+  let restoreLockfile;
 
   const programDir = join(ROOT, repo.path, artifact.programDir);
+  const workspaceToml = artifact.workspaceToml ?? "Cargo.toml";
+  const workspaceRoot = join(ROOT, repo.path, dirname(workspaceToml));
+  const lockfile = join(workspaceRoot, "Cargo.lock");
   console.log(`Building ${artifact.name} (${artifact.crateName}) with cargo build-sbf...`);
 
   try {
@@ -108,18 +122,36 @@ function buildArtifact(artifact) {
       restoreWorkspace = applyAhashPatch(repo, artifact, patchDir);
     }
 
-    execFileSync("cargo", ["build-sbf"], { stdio: "inherit", cwd: programDir });
+    if (artifact.cargoUpdates?.length) {
+      const originalLockfile = readFileSync(lockfile);
+      restoreLockfile = () => writeFileSync(lockfile, originalLockfile);
+      for (const update of artifact.cargoUpdates) {
+        run("cargo", ["update", "-p", update.package, "--precise", update.version], {
+          cwd: programDir,
+        });
+      }
+    }
+
+    execFileSync("cargo", ["build-sbf"], {
+      stdio: "inherit",
+      cwd: programDir,
+      env: artifact.blake3Pure
+        ? { ...process.env, CARGO_FEATURE_PURE: "1" }
+        : process.env,
+    });
   } finally {
     try {
-      restoreWorkspace?.();
+      restoreLockfile?.();
     } finally {
-      if (patchDir) rmSync(patchDir, { recursive: true, force: true });
+      try {
+        restoreWorkspace?.();
+      } finally {
+        if (patchDir) rmSync(patchDir, { recursive: true, force: true });
+      }
     }
   }
 
   // cargo build-sbf writes to <rust-workspace-root>/target/deploy/<crate>.so
-  const workspaceToml = artifact.workspaceToml ?? "Cargo.toml";
-  const workspaceRoot = join(ROOT, repo.path, dirname(workspaceToml));
   const built = join(workspaceRoot, "target/deploy", `${artifact.crateName}.so`);
   if (!existsSync(built)) throw new Error(`Expected built artifact at ${built}`);
 

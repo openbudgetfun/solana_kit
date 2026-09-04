@@ -6,13 +6,18 @@ Compiled Solana program binaries (`.so`) used by the on-chain integration tests 
 
 Artifact names follow `<package-name-minus-solana_kit>-<program-version>.so` (e.g. `solana_kit_subscriptions` -> `subscriptions-v0.5.0.so`, `solana_kit_mpl_bubblegum` -> `mpl_bubblegum-v0.12.0.so`). The version is the program crate version at the pinned reference; when the pin moves to a version that changes the program version, the artifact filename must be updated too.
 
-| Artifact                            | Program                                                                                     | Pin / version                                                                                              |
-| ----------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `config-v3.0.0.so`                  | [solana-program/config](https://github.com/solana-program/config)                           | `solana-config-program-client@v1.1.0` (see `config/reference-repos.json`); Core BPF program, not a builtin |
-| `subscriptions-v0.5.0.so`           | [solana-foundation/subscriptions](https://github.com/solana-foundation/subscriptions)       | `ts-client-v0.5.0` (see `config/reference-repos.json`)                                                     |
-| `mpl_bubblegum-v0.12.0.so`          | [metaplex-foundation/mpl-bubblegum](https://github.com/metaplex-foundation/mpl-bubblegum)   | commit `68e4bc204099718f318d5fe258f60be09737416d` (see `config/reference-repos.json`)                      |
-| `spl_account_compression-v0.3.3.so` | [solana-program/account-compression](https://github.com/solana-program/account-compression) | `ac-mainnet-tag` (see `config/reference-repos.json`)                                                       |
-| `noop-v0.2.0.so`                    | [solana-program/account-compression](https://github.com/solana-program/account-compression) | `ac-mainnet-tag` (see `config/reference-repos.json`); built from the repo's `spl-noop` 0.2.0               |
+| Artifact                            | Program                                                                                             | Pin / version                                                                                              |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `config-v3.0.0.so`                  | [solana-program/config](https://github.com/solana-program/config)                                   | `solana-config-program-client@v1.1.0` (see `config/reference-repos.json`); Core BPF program, not a builtin |
+| `subscriptions-v0.5.0.so`           | [solana-foundation/subscriptions](https://github.com/solana-foundation/subscriptions)               | `ts-client-v0.5.0` (see `config/reference-repos.json`)                                                     |
+| `mpl_bubblegum-v0.12.0.so`          | [metaplex-foundation/mpl-bubblegum](https://github.com/metaplex-foundation/mpl-bubblegum)           | commit `68e4bc204099718f318d5fe258f60be09737416d` (see `config/reference-repos.json`)                      |
+| `spl_account_compression-v0.3.3.so` | [solana-program/account-compression](https://github.com/solana-program/account-compression)         | `ac-mainnet-tag` (see `config/reference-repos.json`)                                                       |
+| `noop-v0.2.0.so`                    | [solana-program/account-compression](https://github.com/solana-program/account-compression)         | `ac-mainnet-tag` (see `config/reference-repos.json`); built from the repo's `spl-noop` 0.2.0               |
+| `mpl_core-v0.2.0.so`                | [metaplex-foundation/mpl-core](https://github.com/metaplex-foundation/mpl-core)                     | commit `2181404f90c7dd27ab95fcb2472483c4a347ae8c` (see `config/reference-repos.json`)                      |
+| `mpl_token_metadata-v1.14.0.so`     | [metaplex-foundation/mpl-token-metadata](https://github.com/metaplex-foundation/mpl-token-metadata) | commit `349e061053c6fc5b6b815e03e896e4db57012893` (see `config/reference-repos.json`)                      |
+| `squads_multisig-v2.1.0.so`         | [Squads-Protocol/v4](https://github.com/Squads-Protocol/v4)                                         | commit `af94153ff77a28b6effe46b9c94baaa93742b48c` (see `config/reference-repos.json`)                      |
+| `anchor_compatibility-v0.1.0.so`    | Local Anchor compatibility fixture                                                                  | `anchor-lang = 0.31.1`; source in `config/programs/fixtures/anchor-compatibility`                          |
+| `anchor_event_imposter-v0.1.0.so`   | Local Anchor event-provenance fixture                                                               | Emits identical event bytes from a foreign program ID                                                      |
 
 ## How these are built
 
@@ -44,9 +49,26 @@ The script clones/checks out each pinned repo under `.repos/`, applies the ahash
 6. Verify the program ID is baked in (see `verifyProgramId` in the script) so PDA derivation works when deployed at the canonical address.
 7. Update the integration tests that reference the artifact filename, then run the on-chain suite (`packages/solana_kit_integration_tests`).
 
-### The ahash patch (solana-program 1.18.x programs)
+### Legacy Rust compatibility patches
 
-Programs pinned to `solana-program 1.18.x` (bubblegum, account-compression, noop) pull in `ahash 0.7.6`. The platform-tools rustc (1.89+) removed the `stdsimd` feature gate, but agave's `cargo build-sbf` still injects `--cfg feature="stdsimd"` for AES-NI hashing, so ahash fails with `E0635`. The actual stdsimd code is ARM/AArch64-gated (inert on SBF), so the fix is to remove the single `#![cfg_attr(feature = "stdsimd", feature(stdsimd))]` line from a vendored copy of ahash 0.7.6 and wire it via `[patch.crates-io]` in the Rust workspace root `Cargo.toml`. The build script does this automatically (see `applyAhashPatch`). Programs on `solana-program 2.x` (subscriptions) build cleanly without it.
+Older programs pull in `ahash` releases whose removed `stdsimd` feature gate fails under current platform-tools. The build script downloads the exact configured `ahash` releases into private temporary directories, removes only that gate, and wires each version through `[patch.crates-io]` for the duration of the build. Token Metadata also selects blake3's portable implementation on Apple Silicon and temporarily updates `wasm-bindgen` to the first release accepted by the current Rust compiler. The source manifest and lockfile are restored even when a build fails; `scripts/build_program_artifacts.test.mjs` verifies those cleanup and isolation guarantees.
+
+### Anchor fixtures
+
+The Anchor programs are deliberately small and source-controlled. `anchor-compatibility` covers account initialization and mutation, events, signer and `has_one` constraints, and custom errors. `anchor-event-imposter` emits the same event discriminator and payload from a different program so event provenance can be tested on-chain.
+
+Rebuild and copy both fixtures with:
+
+```bash
+devenv shell -- bash -lc '
+  cd config/programs/fixtures/anchor-compatibility
+  anchor build
+  cp target/deploy/anchor_compatibility.so ../../anchor_compatibility-v0.1.0.so
+  cp target/deploy/anchor_event_imposter.so ../../anchor_event_imposter-v0.1.0.so
+  cp target/idl/anchor_compatibility.json ../../anchor_compatibility-v0.1.0.json
+  cp target/idl/anchor_event_imposter.json ../../anchor_event_imposter-v0.1.0.json
+'
+```
 
 ## Canonical program IDs
 
@@ -57,5 +79,10 @@ The on-chain tests deploy these programs at their canonical addresses (the progr
 - SPL Account Compression: `cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK`
 - Noop: `noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV`
 - Config: `Config1111111111111111111111111111111111111`
+- MPL Core: `CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d`
+- MPL Token Metadata: `metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s`
+- Squads V4: `SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf`
+- Anchor compatibility: `Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS`
+- Anchor event imposter: `8MyZkLi7NVstEPYwQoSS9VtKAcaRzGNLqxwQX4VtwW1e`
 
 The `solana_kit_address_constants` package ships these canonical IDs.

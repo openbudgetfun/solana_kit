@@ -1,0 +1,84 @@
+{
+  "address": "8MyZkLi7NVstEPYwQoSS9VtKAcaRzGNLqxwQX4VtwW1e",
+  "metadata": {
+    "name": "anchor_event_imposter",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Foreign Anchor event emitter used by compatibility tests"
+  },
+  "instructions": [
+    {
+      "name": "emit_counter_changed",
+      "discriminator": [
+        117,
+        198,
+        112,
+        70,
+        49,
+        153,
+        108,
+        235
+      ],
+      "accounts": [],
+      "args": [
+        {
+          "name": "authority",
+          "type": "pubkey"
+        },
+        {
+          "name": "previous_value",
+          "type": "u64"
+        },
+        {
+          "name": "value",
+          "type": "u64"
+        },
+        {
+          "name": "label",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "CounterChanged",
+      "discriminator": [
+        98,
+        53,
+        157,
+        176,
+        193,
+        167,
+        71,
+        242
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "CounterChanged",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "previous_value",
+            "type": "u64"
+          },
+          {
+            "name": "value",
+            "type": "u64"
+          },
+          {
+            "name": "label",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ]
+}
