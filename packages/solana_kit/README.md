@@ -12,8 +12,8 @@ Program-specific packages are intentionally **not** re-exported here. Import pac
 
 ## Upstream Compatibility
 
-- Latest supported `@solana/kit` version: `8.1.0`
-- This Dart port tracks upstream APIs and behavior through `v8.1.0`.
+- Latest supported `@solana/kit` version: `8.2.0`
+- This Dart port tracks upstream APIs and behavior through `v8.2.0`.
 
 <!-- {/upstreamSupportSection} -->
 
