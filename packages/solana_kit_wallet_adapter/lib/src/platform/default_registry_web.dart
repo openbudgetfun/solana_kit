@@ -101,7 +101,7 @@ class _BrowserWallet implements Wallet {
   _BrowserWallet(this.raw) {
     version = _string(raw, 'version');
     name = _string(raw, 'name');
-    icon = WalletIcon(_string(raw, 'icon'));
+    icon = _resolveIcon(raw, name);
     _refresh();
   }
 
@@ -114,6 +114,22 @@ class _BrowserWallet implements Wallet {
 
   @override
   late final WalletIcon icon;
+
+  /// Some wallets announce an icon that is missing or not a strict base64
+  /// data URI; substitute a bundled logo for popular wallets so the wallet
+  /// still registers and renders.
+  WalletIcon _resolveIcon(JSObject raw, String name) {
+    final value = _optionalString(raw, 'icon');
+    if (value != null) {
+      try {
+        return WalletIcon(value);
+      } on FormatException {
+        // Fall through to the bundled fallback logos.
+      }
+    }
+    return walletLogoFallback(name) ?? genericWalletLogo();
+  }
+
   List<String> _chains = const [];
   Map<String, WalletFeature> _features = const {};
   List<WalletAccount> _accounts = const [];

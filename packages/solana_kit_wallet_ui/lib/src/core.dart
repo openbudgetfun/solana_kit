@@ -182,16 +182,22 @@ class WalletAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget buildFallback() => SvgPicture.memory(
+      genericWalletLogo().bytes,
+      key: const Key('wallet_ui.fallback_logo'),
+    );
     final image = icon.mimeSubtype == 'svg+xml'
         ? SvgPicture.memory(
             icon.bytes,
             excludeFromSemantics: semanticLabel == null,
             semanticsLabel: semanticLabel,
+            errorBuilder: (context, error, stackTrace) => buildFallback(),
           )
         : Image.memory(
             Uint8List.fromList(icon.bytes),
             excludeFromSemantics: semanticLabel == null,
             semanticLabel: semanticLabel,
+            errorBuilder: (context, error, stackTrace) => buildFallback(),
           );
     return SizedBox.square(
       dimension: size,

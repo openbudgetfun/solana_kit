@@ -111,6 +111,57 @@ void main() {
       controller.dispose();
     });
 
+    testWidgets('renders the generic glyph when the icon fails to decode', (
+      tester,
+    ) async {
+      // Valid base64, but not a renderable SVG.
+      final brokenIcon = WalletIcon(
+        'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+PG5vdC1hLXN2Zz4=',
+      );
+      await tester.binding.setSurfaceSize(const Size(100, 100));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: WalletAvatar(icon: brokenIcon, semanticLabel: 'Broken'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('wallet_ui.fallback_logo')), findsOneWidget);
+    });
+
+    testWidgets(
+      'renders the generic glyph when a raster icon fails to decode',
+      (
+        tester,
+      ) async {
+        // Valid base64, but not a renderable raster image.
+        final brokenIcon = WalletIcon('data:image/png;base64,AAAA');
+        await tester.binding.setSurfaceSize(const Size(100, 100));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Center(
+              child: WalletAvatar(icon: brokenIcon, semanticLabel: 'Broken'),
+            ),
+          ),
+        );
+        // Raster decoding completes asynchronously on the engine, so let the
+        // pending codec work finish before flushing the frame.
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 100)),
+        );
+        await tester.pump();
+
+        expect(
+          find.byKey(const Key('wallet_ui.fallback_logo')),
+          findsOneWidget,
+        );
+      },
+    );
+
     testWidgets('picker content neutralizes the fallback text style', (
       tester,
     ) async {

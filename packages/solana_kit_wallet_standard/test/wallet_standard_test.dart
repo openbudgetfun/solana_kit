@@ -4,6 +4,28 @@ import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
 import 'package:test/test.dart';
 
 void main() {
+  group('fallback wallet logos', () {
+    test('resolves popular wallets case-insensitively', () {
+      expect(walletLogoFallback('Phantom')!.mimeSubtype, 'svg+xml');
+      expect(walletLogoFallback('SOLFLARE')!.mimeSubtype, 'svg+xml');
+      expect(walletLogoFallback('metamask')!.mimeSubtype, 'svg+xml');
+    });
+
+    test('ignores a trailing wallet suffix', () {
+      expect(walletLogoFallback('Trust Wallet')!.mimeSubtype, 'svg+xml');
+      expect(walletLogoFallback('XDEFI Wallet')!.mimeSubtype, 'svg+xml');
+    });
+
+    test('returns null for unknown wallets', () {
+      expect(walletLogoFallback('Unknown Wallet'), isNull);
+      expect(walletLogoFallback(''), isNull);
+    });
+
+    test('provides a parsing generic glyph', () {
+      expect(genericWalletLogo().mimeSubtype, 'svg+xml');
+    });
+  });
+
   group('identifiers and errors', () {
     test('exposes canonical identifiers', () {
       expect(walletStandardVersion, '1.0.0');
