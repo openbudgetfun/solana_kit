@@ -56,10 +56,19 @@ Future<void> raceStrategies(
   }
 
   final abortController = CancellationTokenSource();
+  final raceCompleter = Completer<void>();
 
   if (callerCancellationToken != null) {
     callerCancellationToken.future.then((_) {
+      if (abortController.token.isCancelled) return;
       abortController.cancel(callerCancellationToken.reason);
+      if (!raceCompleter.isCompleted) {
+        raceCompleter.completeError(
+          StateError(
+            'The operation was aborted: ${callerCancellationToken.reason}',
+          ),
+        );
+      }
     }).ignore();
   }
 
@@ -81,7 +90,6 @@ Future<void> raceStrategies(
     // `then<void>` with `onError` is used instead of `catchError` because
     // some futures may be `Future<Never>` at runtime, and `catchError`
     // requires the handler to return the same type as the future.
-    final raceCompleter = Completer<void>();
     for (final future in allFutures) {
       unawaited(
         future.then<void>(

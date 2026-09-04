@@ -54,9 +54,12 @@ class CreateMintConfig {
 /// Creates an instruction plan that creates and initialises a new SPL Token
 /// mint.
 ///
-/// The plan contains two sequential instructions:
+/// The plan contains two instructions that must execute atomically:
 /// 1. System Program `CreateAccount`: allocates the mint account.
 /// 2. Token Program `InitializeMint2`: initialises the mint data.
+///
+/// The non-divisible group prevents an uninitialized funded mint from being
+/// exposed between transactions. The standard executor rejects a split group.
 ///
 /// ```dart
 /// final plan = getCreateMintInstructionPlan(
@@ -78,7 +81,7 @@ InstructionPlan getCreateMintInstructionPlan(
   // Rent-exempt balance: (128 + 82) * 3480 * 2 = 1_461_600
   final lamports = input.mintAccountLamports ?? BigInt.from(1461600);
 
-  return sequentialInstructionPlan([
+  return nonDivisibleSequentialInstructionPlan([
     getCreateAccountInstruction(
       payer: input.payer,
       newAccount: input.newMint,

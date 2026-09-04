@@ -91,6 +91,8 @@ void main() {
 
 `combineCodec` pairs an encoder and a decoder into a single `Codec`. `fixCodecSize` and `addCodecSizePrefix` adjust how a codec's length is represented on the wire.
 
+Size-prefixed decoders require a finite, nonnegative integer byte count that fits within the remaining input. Negative, fractional, non-finite, and oversized prefixes throw a `SolanaError` before the content decoder runs.
+
 ```dart
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';

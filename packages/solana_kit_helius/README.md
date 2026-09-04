@@ -9,7 +9,7 @@ A Dart client for the [Helius API](https://github.com/helius-labs/helius-sdk), c
 - **DAS API**: query assets, proofs, and metadata
 - **Enhanced transactions**: parsed transaction history with human-readable types
 - **Webhooks**: create, manage, and delete webhook subscriptions
-- **Smart transactions**: transaction building with compute unit estimation and priority fees
+- **Transaction utilities**: priority fee policies, signed transaction broadcasting, and confirmation polling
 - **ZK compression**: compressed account and token operations via Light Protocol
 - **Staking**: create stake, unstake, and withdraw transactions via Helius validators
 - **Wallet API**: identity resolution, balances, history, and transfers
@@ -24,7 +24,13 @@ This package was audited against `helius-labs/helius-sdk` v3.0.0 at commit [`4c0
 
 The package covers the broad v3 surface: DAS, priority fees, RPC v2 including `getTransfersByAddress`, enhanced transactions, webhook CRUD/toggle, ZK compression, staking, wallet operations, Sender, the v3 JWT-based signup/checkout/payment flow, Admin project usage, and WebSocket subscriptions. The mainnet REST default follows v3's `https://api-mainnet.helius-rpc.com/v0` host, while devnet enhanced REST continues to use `https://api-devnet.helius.xyz/v0`.
 
-The legacy smart-transaction facade does not yet implement the v3 transaction-building contract: `createSmartTransaction` only fetches a blockhash and `sendSmartTransaction` does not compile or sign instructions. Do not use those two helpers to authorize value transfers. Prefer Solana Kit's transaction-message, signer, and Sender APIs until that surface is replaced. Remaining v3 gaps also include smart-transaction tip helpers and enhanced WebSocket account/transaction subscriptions.
+The legacy smart-transaction facade does not yet implement the v3 transaction-building contract: `createSmartTransaction` only fetches a blockhash, `sendSmartTransaction` does not compile or sign instructions, and `getComputeUnits` does not serialize a transaction for simulation. These three helpers cannot complete their advertised transaction flows. Prefer Solana Kit's transaction-message, signer, and Sender APIs until that surface is replaced. Remaining v3 gaps also include smart-transaction tip helpers and enhanced WebSocket account/transaction subscriptions.
+
+`pollTransactionConfirmation` and `sendBundleWithSender` check on-chain execution errors before accepting confirmation. A failed transaction throws its corresponding `SolanaError`, even when its signature is confirmed or finalized. A higher commitment satisfies a lower requested commitment; confirmation alone never establishes that the intended transfer executed successfully.
+
+The JSON-RPC and REST transports sanitize connection exceptions so API keys and URL user credentials are omitted from their messages. WebSocket connection errors also omit URL user credentials.
+
+Preconfirmation subscriptions wait for WebSocket readiness. Connection failure or closure rejects pending requests and closes notification streams without exposing endpoint credentials. `PreconfWsClient` accepts `channelFactory` for custom connectors; `close()` is safe to repeat, including before connection readiness.
 
 <!-- {=packageInstallSection:"solana_kit_helius"} -->
 

@@ -258,7 +258,9 @@ KeyPair createKeyPairFromPrivateKeyBytes(Uint8List bytes) {
 ///
 /// The first 32 bytes are the private key and the last 32 bytes are the public
 /// key. Parent directories are created automatically. Existing files are not
-/// overwritten unless [unsafelyOverwriteExistingKeyPair] is `true`.
+/// overwritten unless [unsafelyOverwriteExistingKeyPair] is `true`. Key bytes
+/// are written in a private staging directory and published with a rename, so
+/// replacing the destination with a symbolic link cannot redirect the write.
 Future<void> writeKeyPair(
   KeyPair keyPair,
   String path, {
@@ -278,41 +280,51 @@ Future<void> writeKeyPair(
       await parent.create(recursive: true);
     }
 
-    if (unsafelyOverwriteExistingKeyPair) {
-      final type = FileSystemEntity.typeSync(path, followLinks: false);
-      if (type == FileSystemEntityType.link) {
-        throw FileSystemException(
-          'Refusing to overwrite a symbolic link',
-          path,
-        );
-      }
-      await file.create();
-    } else {
-      // `exclusive` makes the existence check and creation one atomic
-      // operation. A separate exists/open sequence could be raced into
-      // truncating another file or following an attacker-created symlink.
-      await file.create(exclusive: true);
-    }
-
-    if (!Platform.isWindows) {
-      final chmod = await Process.run('chmod', ['600', path]);
-      // coverage:ignore-start
-      // A failing system chmod cannot be triggered portably without replacing
-      // host tooling or writing outside the test sandbox.
-      if (chmod.exitCode != 0) {
-        throw FileSystemException(
-          'Failed to restrict key pair file permissions',
-          path,
-        );
-      }
-      // coverage:ignore-end
-    }
-
-    final sink = await file.open(mode: FileMode.writeOnly);
+    // Keep key bytes out of the publicly visible reservation inode: another
+    // user could open it before permissions are tightened, or replace its
+    // path with a symbolic link before it is reopened.
+    final stagingDirectory = await parent.createTemp('.solana-keypair-');
     try {
-      await sink.writeString(jsonEncode(bytes.toList()));
+      final stagedFile = File('${stagingDirectory.path}/keypair.json');
+      await stagedFile.create(exclusive: true);
+
+      if (!Platform.isWindows) {
+        final chmod = await Process.run('chmod', ['600', stagedFile.path]);
+        if (chmod.exitCode != 0) {
+          throw FileSystemException(
+            'Failed to restrict key pair file permissions',
+            path,
+          );
+        }
+      }
+
+      final sink = await stagedFile.open(mode: FileMode.writeOnly);
+      try {
+        await sink.writeString(jsonEncode(bytes.toList()));
+      } finally {
+        await sink.close();
+      }
+
+      if (unsafelyOverwriteExistingKeyPair) {
+        final type = FileSystemEntity.typeSync(path, followLinks: false);
+        if (type == FileSystemEntityType.link) {
+          throw FileSystemException(
+            'Refusing to overwrite a symbolic link',
+            path,
+          );
+        }
+        await file.create();
+      } else {
+        // Reserve the destination atomically, preserving no-overwrite
+        // semantics when multiple writers try to create the same key file.
+        await file.create(exclusive: true);
+      }
+
+      // Rename replaces a destination link itself instead of following it.
+      // Readers of the empty reservation never gain access to the key bytes.
+      await stagedFile.rename(path);
     } finally {
-      await sink.close();
+      await stagingDirectory.delete(recursive: true);
     }
   } finally {
     _zeroBytes(privateKey);

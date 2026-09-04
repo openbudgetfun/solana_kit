@@ -143,7 +143,7 @@ void main() {
 
 ### Combining data and error streams
 
-`createStreamFromDataAndErrorStreams` creates a broadcast stream that forwards values from a data stream and errors from an error stream.
+`createStreamFromDataAndErrorStreams` creates a broadcast stream that forwards values from a data stream and errors from an error stream. Native Dart error events from either source, including notification type-conversion failures, are delivered to the returned stream’s `onError` handler. The first error cancels both source subscriptions.
 
 ```dart
 import 'dart:async';
@@ -174,7 +174,7 @@ void main() {
 
 ### Demultiplexing streams
 
-`demultiplexStream` splits a source stream into per-channel broadcast streams. The source subscription is lazy: it only starts when the first destination listener subscribes and stops when the last listener cancels.
+`demultiplexStream` splits a source stream into per-channel broadcast streams. The source subscription is lazy: it only starts when the first destination listener subscribes and stops when the last listener cancels. Transformer exceptions and invalid destination payload types are delivered as destination-stream errors, so consumers can handle malformed input with `onError`.
 
 ```dart
 import 'dart:async';
@@ -204,14 +204,14 @@ void main() {
 
 ### Reactive stores
 
-`ReactiveStreamStore` tracks the lifecycle of an async data source with loading, loaded, error, and retrying states. Create one by providing a `createDataPublisher` factory function that returns a `ReactiveStreamConnection` for each subscription.
+`ReactiveStreamStore` tracks the lifecycle of an async data source with idle, loading, loaded, and error states. Create one by providing a `createDataPublisher` factory function that returns a `ReactiveStreamConnection` for each subscription, then call `connect()`. Native errors from either connection stream are surfaced in the error state. Cancelling a token passed through `withSignal()` releases both stream listeners, even when the publisher does not observe the token. Resetting or disposing the store from a loading-state subscriber prevents the pending connection factory from running.
 
 ```dart
 import 'dart:async';
 
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
-void main() {
+Future<void> main() async {
   final store = createReactiveStreamStore<int>(
     createDataPublisher: (signal) async => ReactiveStreamConnection(
       dataStream: Stream.value(42),
@@ -219,14 +219,22 @@ void main() {
     ),
   );
 
+  final loaded = Completer<void>();
   store.subscribe(() {
     final snapshot = store.getState();
-    print('State: ${snapshot.data}');
+    if (snapshot.isLoaded) {
+      print('State: ${snapshot.data}');
+      loaded.complete();
+    }
   });
 
+  store.connect();
+  await loaded.future;
   store.dispose();
 }
 ```
+
+`bridgeStoreToAsyncIterable(store)` exposes a store as a stream with the latest pending value. Cancelling its subscription releases the store observer immediately, including while it is waiting for an update. Predicate failures are delivered as stream errors and release the observer. The bridge observes the store; callers still own `connect()`, `reset()`, and `dispose()`.
 
 ## API reference
 

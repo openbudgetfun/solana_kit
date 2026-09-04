@@ -75,9 +75,12 @@ RpcSubscriptionsChannel getRpcSubscriptionsChannelWithAutoping({
 
   // Stop pinging on channel errors.
   channelSubscriptions.add(
-    channel.streams.errors.listen((_) {
-      pingerAbortSource.cancel();
-    }),
+    channel.streams.errors.listen(
+      (_) => pingerAbortSource.cancel(),
+      onError: (Object error, StackTrace stackTrace) {
+        pingerAbortSource.cancel();
+      },
+    ),
   );
 
   // Restart the ping timer on every received message.

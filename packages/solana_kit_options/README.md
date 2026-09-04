@@ -89,6 +89,8 @@ void main() {
 
 `getOptionCodec` writes a one-byte presence flag followed by the value codec's bytes. `getOptionEncoder` and `getOptionDecoder` expose the two halves.
 
+Decoding accepts only presence flags `0` and `1`, including custom numeric prefixes. A `None` value with configured padding must include all of that padding; constant byte markers must match exactly. With a presence flag, `ZeroesOptionNoneValue` ignores the padding's contents to support COption layouts with stale payload bytes.
+
 ```dart
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_options/solana_kit_options.dart';

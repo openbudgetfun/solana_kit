@@ -109,6 +109,10 @@ void main() {
 
 The full `solana_kit_associated_token_account` API surface is re-exported so callers can access ATA PDA helpers and instruction builders without adding a separate dependency.
 
+## Mint creation safety
+
+`getCreateMintInstructionPlan` keeps account creation and mint initialization in one atomic group. Use the transaction planner to keep both instructions together. If transaction limits require splitting this group, the standard executor rejects it before submitting either transaction, protecting the uninitialized mint.
+
 ## Upstream reference
 
 Generated layer mirrors [solana-program/token](https://github.com/solana-program/token) at `js@v0.16.0`.

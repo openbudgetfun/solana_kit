@@ -53,7 +53,7 @@ final class DecimalFixedPoint implements Comparable<DecimalFixedPoint> {
     final unsignedInput = negative ? trimmed.substring(1) : trimmed;
     final parts = unsignedInput.split('.');
     final digits = RegExp(r'^\d+$');
-    if (trimmed.isEmpty ||
+    if (!RegExp(r'\d').hasMatch(unsignedInput) ||
         (negative && signedness == FixedPointSignedness.unsigned) ||
         parts.length > 2 ||
         !digits.hasMatch(parts[0].isEmpty ? '0' : parts[0]) ||
@@ -220,6 +220,7 @@ void assertIsDecimalFixedPoint(
       'Decimal fixed-point decimal scale mismatch.',
     );
   }
+  _assertValidShape(value.decimals, value.totalBits);
   _assertRawFits(value.raw, value.signedness, value.totalBits);
 }
 

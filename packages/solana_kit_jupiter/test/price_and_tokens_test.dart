@@ -61,14 +61,17 @@ void main() {
       );
     });
 
-    test('getPrices tolerates non-map bodies as empty maps', () async {
+    test('getPrices rejects non-map bodies', () async {
       final config = JupiterConfig(
         client: MockClient(
           (request) async => http.Response('[1, 2]', 200),
         ),
       );
       final client = createJupiterClient(config);
-      expect(await client.price.getPrices([const Address(_wsol)]), isEmpty);
+      await expectLater(
+        client.price.getPrices([const Address(_wsol)]),
+        throwsA(isA<JupiterException>()),
+      );
     });
 
     test('getPrices throws on malformed price entries', () async {
@@ -148,7 +151,7 @@ void main() {
       expect(await client.tokens.recent(), isEmpty);
       expect(paths, [
         '/tokens/v2/tag',
-        '/tokens/v2/category',
+        '/tokens/v2/toporganicscore/24h',
         '/tokens/v2/recent',
       ]);
     });

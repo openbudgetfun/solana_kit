@@ -49,7 +49,9 @@ class TransactionPlanExecutorConfig {
 ///
 /// Throws a [SolanaError] with code
 /// [SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan]
-/// if any transaction in the plan fails to execute.
+/// if any transaction in the plan fails to execute. The error retains the
+/// complete result tree and original failure even when the context contains
+/// a transaction whose fee payer has not signed it.
 ///
 /// Throws a [SolanaError] with code
 /// [SolanaErrorCode.instructionPlansNonDivisibleTransactionPlansNotSupported]
@@ -274,16 +276,16 @@ Future<TransactionPlanResult> _traverseSingle(
     );
   } on Object catch (error) {
     setCanceled();
-    // If the context contains a transaction but no signature, extract it.
+    // Signature enrichment must not erase the original failure or prior results
+    // when the transaction has not been signed by its fee payer.
+    final transaction = context['transaction'];
     final contextWithSignature =
-        context.containsKey('transaction') &&
-            context['transaction'] is Transaction &&
+        transaction is Transaction &&
+            transaction.signatures.values.firstOrNull != null &&
             !context.containsKey('signature')
         ? {
             ...context,
-            'signature': getSignatureFromTransaction(
-              context['transaction']! as Transaction,
-            ),
+            'signature': getSignatureFromTransaction(transaction),
           }
         : context;
     return failedSingleTransactionPlanResult(

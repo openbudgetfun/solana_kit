@@ -67,7 +67,7 @@ This package is the right layer when you need direct access to key bytes, public
 
 <!-- {/docsKeyPairSection} -->
 
-`KeyPair` owns sensitive memory. Call `dispose()` in a `finally` block when the key is no longer needed; the GC finalizer is only a fallback. `writeKeyPair` creates new files atomically, applies mode `0600` before writing on POSIX, and refuses symbolic-link overwrite targets.
+`KeyPair` owns sensitive memory. Call `dispose()` in a `finally` block when the key is no longer needed; the GC finalizer is only a fallback. `writeKeyPair` writes key bytes in a private staging directory, applies mode `0600` before writing on POSIX, and publishes the file with a rename. It refuses symbolic-link overwrite targets, and a link substituted during publication cannot redirect key bytes. Choose a trusted destination directory whose parent directories cannot be replaced by other users.
 
 ## Usage
 
@@ -187,6 +187,8 @@ void main() {
   print('Signature valid with wrong key: $isInvalid'); // false
 }
 ```
+
+`verifySignature` rejects small-order public keys and signature nonce points, including their non-canonical encodings. Such points can otherwise authenticate forged messages without knowledge of a private key. A 32-byte address or an on-curve point alone does not prove that a usable signing key exists.
 
 ### Working with base58-encoded signatures
 

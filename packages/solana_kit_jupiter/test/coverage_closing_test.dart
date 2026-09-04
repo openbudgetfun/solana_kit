@@ -64,8 +64,10 @@ void main() {
         ),
       ),
     );
-    // getPrices tolerates non-map bodies and yields an empty map.
-    expect(await client.price.getPrices([wsol]), isEmpty);
+    await expectLater(
+      client.price.getPrices([wsol]),
+      throwsA(isA<JupiterException>()),
+    );
     await expectLater(
       client.tokens.recent(),
       throwsA(isA<JupiterException>()),
@@ -78,6 +80,7 @@ void main() {
           inAmount: null,
           outAmount: null,
           encodedTransaction: null,
+          requestId: 'request-1',
         ),
         signedTransaction: 'c2lnbmVk',
       ),

@@ -10,6 +10,8 @@ const String _alphabet = '0123456789abcdef';
 /// This encoder serializes strings using a base-16 encoding scheme.
 /// The output consists of bytes representing the hexadecimal values of the
 /// input string.
+/// Inputs must contain complete byte pairs, except that a single hexadecimal
+/// character is accepted as a one-byte value. Other odd lengths are rejected.
 ///
 /// For more details, see [getBase16Codec].
 VariableSizeEncoder<String> getBase16Encoder() {
@@ -20,6 +22,14 @@ VariableSizeEncoder<String> getBase16Encoder() {
       final al = len ~/ 2;
 
       if (len == 0) return offset;
+
+      if (len > 1 && len.isOdd) {
+        throw SolanaError(SolanaErrorCode.codecsInvalidStringForBase, {
+          'alphabet': _alphabet,
+          'base': 16,
+          'value': value,
+        });
+      }
 
       if (len == 1) {
         final n = _charCodeToBase16(value.codeUnitAt(0));

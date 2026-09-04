@@ -134,6 +134,10 @@ Future<void> main() async {
 }
 ```
 
+### Cancelling requests
+
+Requests with a cancellation signal are sent independently rather than coalesced, so cancelling one request does not cancel another caller's request. Cancellation uses the HTTP client's abort support and cannot undo an already submitted transaction.
+
 ### Payload deduplication
 
 `getSolanaRpcPayloadDeduplicationKey` produces a stable key for a request payload, useful for caching or batching identical calls.

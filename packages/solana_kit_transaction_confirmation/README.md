@@ -43,7 +43,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ### Send and confirm
 
-The additive helper `sendAndConfirmTransaction` signs, sends, and polls for confirmation in one call. Pass an `Rpc` instance and a fully signed transaction.
+The additive helper `sendAndConfirmTransaction` sends and polls for confirmation in one call. Pass an `Rpc` instance and a fully signed transaction.
 
 ```dart
 import 'package:solana_kit/solana_kit.dart';
@@ -105,11 +105,13 @@ void main() {
 
 For custom confirmation logic, the package exposes strategy factories you can compose yourself:
 
-- `createBlockheightExceedencePromiseFactory` races the signature against block height.
-- `createNonceInvalidationPromiseFactory` races the signature against durable nonce invalidation.
-- `createRecentSignatureConfirmationPromise` polls `getSignatureStatuses`.
-- `createTimeoutPromise` adds a wall-clock deadline.
-- `raceStrategies` combines two or more strategies, resolving when the first succeeds and cancelling the rest.
+- `createBlockHeightExceedencePromiseFactory` detects block-height expiry.
+- `createNonceInvalidationPromiseFactory` detects durable nonce invalidation.
+- `createRecentSignatureConfirmationPromiseFactory` combines signature notifications with an initial status lookup.
+- `getTimeoutPromise` adds a wall-clock deadline.
+- `raceStrategies` combines strategies, settling on the first success or failure and cancelling the rest.
+
+Strategy factories reject cancelled operations with `StateError`, including when cancellation happens after the initial lookup. Subscription errors propagate to the caller, and a subscription that ends without a terminal notification rejects with `StateError`. Block-height monitoring preserves slot notifications received during its initial lookup.
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_transaction_confirmation"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart"} -->
 

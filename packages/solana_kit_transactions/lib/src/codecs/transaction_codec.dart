@@ -104,15 +104,33 @@ VariableSizeEncoder<Transaction> _getTransactionEncoderWithMessageFirst() {
 
 /// Returns a decoder that you can use to convert a byte array in the Solana
 /// transaction wire format to a [Transaction] object.
+///
+/// Supports signatures-first legacy/v0 envelopes and message-first v1
+/// envelopes, preserving the exact message bytes that the signers approved.
 VariableSizeDecoder<Transaction> getTransactionDecoder() {
   final shortU16Dec = getShortU16Decoder();
   final sigBytesDecoder = fixDecoderSize(getBytesDecoder(), 64);
 
   return VariableSizeDecoder<Transaction>(
     read: (bytes, offset) {
-      // Decode signatures array.
-      final (sigCount, sigCountEnd) = shortU16Dec.read(bytes, offset);
-      var pos = sigCountEnd;
+      Uint8List? messageBytes;
+      _SignerData? decoded;
+      final int sigCount;
+      var pos = offset;
+
+      if (offset < bytes.length && bytes[offset] == 0x81) {
+        final (message, messageEnd) = getCompiledTransactionMessageDecoder()
+            .read(bytes, offset);
+        sigCount = message.header.numSignerAccounts;
+        decoded = _getSignerData(sigCount, message.staticAccounts);
+        messageBytes = Uint8List.sublistView(bytes, offset, messageEnd);
+        pos = messageEnd;
+      } else {
+        final (count, countEnd) = shortU16Dec.read(bytes, offset);
+        sigCount = count;
+        pos = countEnd;
+      }
+
       final signatures = <Uint8List>[];
       for (var i = 0; i < sigCount; i++) {
         final (sigBytes, newPos) = sigBytesDecoder.read(bytes, pos);
@@ -120,11 +138,11 @@ VariableSizeDecoder<Transaction> getTransactionDecoder() {
         pos = newPos;
       }
 
-      // Remaining bytes are the message.
-      final messageBytes = Uint8List.sublistView(bytes, pos);
+      final endOffset = messageBytes == null ? bytes.length : pos;
+      messageBytes ??= Uint8List.sublistView(bytes, pos);
 
       // Decode signer addresses from message bytes.
-      final decoded = _decodeSignerAddresses(messageBytes);
+      decoded ??= _decodeSignerAddresses(messageBytes);
       final numRequiredSignatures = decoded.numRequiredSignatures;
       final signerAddresses = decoded.signerAddresses;
 
@@ -156,7 +174,7 @@ VariableSizeDecoder<Transaction> getTransactionDecoder() {
           messageBytes: Uint8List.fromList(messageBytes),
           signatures: signaturesMap,
         ),
-        bytes.length,
+        endOffset,
       );
     },
   );
@@ -215,6 +233,13 @@ _SignerData _decodeSignerAddresses(Uint8List messageBytes) {
     pos = addrEnd;
   }
 
+  return _getSignerData(numRequiredSignatures, staticAddresses);
+}
+
+_SignerData _getSignerData(
+  int numRequiredSignatures,
+  List<Address> staticAddresses,
+) {
   if (numRequiredSignatures > staticAddresses.length) {
     throw SolanaError(SolanaErrorCode.transactionMessageSignaturesMismatch, {
       'numRequiredSignatures': numRequiredSignatures,

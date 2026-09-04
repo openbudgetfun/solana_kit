@@ -6,6 +6,8 @@ import type { CamelCaseString } from "@codama/nodes";
 
 /** Convert a string to PascalCase */
 export function pascalCase(str: string): string {
+  assertSafeName(str);
+
   return str
     .replace(/[-_\s]+(.)?/g, (_, c) => (c ? c.toUpperCase() : ""))
     .replace(/^(.)/, (c) => c.toUpperCase());
@@ -46,6 +48,8 @@ export function camelCase(str: string): string {
 
 /** Convert a string to snake_case */
 export function snakeCase(str: string): string {
+  assertSafeName(str);
+
   return str
     .replace(/([A-Z])/g, "_$1")
     .replace(/[-\s]+/g, "_")
@@ -137,4 +141,11 @@ export function createDartNameApi(): DartNameApi {
  */
 export function fromCamelCaseString(str: CamelCaseString): string {
   return str as string;
+}
+
+/** Reject IDL names that could escape generated identifiers, strings, or paths. */
+function assertSafeName(name: string): void {
+  if (!/^[a-zA-Z0-9_ -]*$/.test(name)) {
+    throw new Error(`Invalid Dart node name: ${JSON.stringify(name)}`);
+  }
 }

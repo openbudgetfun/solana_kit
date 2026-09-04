@@ -10,10 +10,21 @@ import 'package:solana_kit_keys/solana_kit_keys.dart';
 /// Ed25519 signature, or `null` if the address has not yet signed.
 class Transaction {
   /// Creates a [Transaction] with the given [messageBytes] and [signatures].
+  ///
+  /// Copies and freezes the byte buffers so callers and parallel partial
+  /// signers cannot change the transaction after it has been reviewed.
   Transaction({
-    required this.messageBytes,
+    required Uint8List messageBytes,
     required Map<Address, SignatureBytes?> signatures,
-  }) : signatures = Map<Address, SignatureBytes?>.unmodifiable(signatures);
+  }) : messageBytes = Uint8List.fromList(messageBytes).asUnmodifiableView(),
+       signatures = Map<Address, SignatureBytes?>.unmodifiable({
+         for (final entry in signatures.entries)
+           entry.key: entry.value == null
+               ? null
+               : SignatureBytes(
+                   Uint8List.fromList(entry.value!.value).asUnmodifiableView(),
+                 ),
+       });
 
   /// The bytes of a compiled transaction message, encoded in wire format.
   final Uint8List messageBytes;

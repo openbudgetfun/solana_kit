@@ -104,35 +104,35 @@ in
         unset LD_LIBRARY_PATH LD_DYLD_PATH
         unset cmakeFlags
         set -euo pipefail
-        fvm flutter $@
+        fvm flutter "$@"
       '';
       description = "Run flutter commands.";
     };
     "dart" = {
       exec = ''
         set -euo pipefail
-        fvm dart $@
+        fvm dart "$@"
       '';
       description = "Run dart commands.";
     };
     "jaspr" = {
       exec = ''
         set -euo pipefail
-        dart run jaspr_cli:jaspr $@
+        dart run jaspr_cli:jaspr "$@"
       '';
       description = "Run the jaspr cli.";
     };
     "melos" = {
       exec = ''
         set -euo pipefail
-        dart run melos $@
+        dart run melos "$@"
       '';
       description = "Run the melos cli.";
     };
     "format_coverage" = {
       exec = ''
         set -euo pipefail
-        dart run coverage:format_coverage $@
+        dart run coverage:format_coverage "$@"
       '';
       description = "Run the format_coverage command from the coverage package.";
     };

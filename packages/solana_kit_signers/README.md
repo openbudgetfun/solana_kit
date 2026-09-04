@@ -456,6 +456,8 @@ The package defines five abstract signer interfaces. Implementations can mix and
 
 ### Configuration
 
+Attaching signers preserves v1 resource limits and priority fees. Replacing a fee payer address removes the previous fee payer signer, so signing cannot silently continue to charge the old payer.
+
 | Export                    | Description                                                              |
 | ------------------------- | ------------------------------------------------------------------------ |
 | `SignerConfig`            | Base configuration with an `aborted` flag for cancellation.              |

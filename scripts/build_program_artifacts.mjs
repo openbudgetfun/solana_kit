@@ -15,7 +15,8 @@
 //
 // Requires: `cargo build-sbf` on PATH (provided by the devenv `agave` package).
 import { execFileSync } from "child_process";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "fs";
+import { tmpdir } from "os";
 import { join, resolve } from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -23,7 +24,6 @@ import { dirname } from "path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
 const ARTIFACTS_DIR = join(ROOT, "config/programs");
-const PATCH_DIR = "/tmp/solana-kit-ahash-patch";
 
 const PROGRAM_FILTER = process.argv
   .find((argument) => argument.startsWith("--program="))
@@ -70,36 +70,52 @@ function checkoutPin(repo) {
 // `#![cfg_attr(feature = "stdsimd", feature(stdsimd))]` then fails with E0635.
 // The actual stdsimd code is ARM/AArch64-gated (inert on SBF), so removing the
 // gate line is safe. We vendor a patched ahash and wire it via [patch.crates-io].
-function applyAhashPatch(repo, artifact) {
+function applyAhashPatch(repo, artifact, patchDir) {
   const workspaceToml = join(ROOT, repo.path, artifact.workspaceToml ?? "Cargo.toml");
   const toml = readFileSync(workspaceToml, "utf8");
   if (toml.includes("[patch.crates-io]")) return; // already patched
 
-  if (!existsSync(join(PATCH_DIR, "Cargo.toml"))) {
-    console.log("Preparing patched ahash 0.7.6 (removes the removed `stdsimd` feature gate)");
-    rmSync(PATCH_DIR, { recursive: true, force: true });
-    mkdirSync(PATCH_DIR, { recursive: true });
-    const crate = "/tmp/ahash-0.7.6.crate";
-    run("curl", ["-fsSL", "-A", "solana-kit-build-script", "https://static.crates.io/crates/ahash/ahash-0.7.6.crate", "-o", crate]);
-    run("tar", ["-xzf", crate, "-C", PATCH_DIR, "--strip-components=1"]);
-    const lib = join(PATCH_DIR, "src/lib.rs");
-    const source = readFileSync(lib, "utf8");
-    const marker = '#![cfg_attr(feature = "stdsimd", feature(stdsimd))]\n';
-    if (!source.includes(marker)) throw new Error("ahash 0.7.6 source changed; re-check the patch");
-    writeFileSync(lib, source.replace(marker, ""));
-  }
+  console.log("Preparing patched ahash 0.7.6 (removes the removed `stdsimd` feature gate)");
+  const crate = join(patchDir, "ahash-0.7.6.crate");
+  run("curl", ["-fsSL", "-A", "solana-kit-build-script", "https://static.crates.io/crates/ahash/ahash-0.7.6.crate", "-o", crate]);
+  run("tar", ["-xzf", crate, "-C", patchDir, "--strip-components=1"]);
+  const lib = join(patchDir, "src/lib.rs");
+  const source = readFileSync(lib, "utf8");
+  const marker = '#![cfg_attr(feature = "stdsimd", feature(stdsimd))]\n';
 
-  writeFileSync(workspaceToml, `${toml}\n[patch.crates-io]\nahash = { path = "${PATCH_DIR}" }\n`);
+  if (!source.includes(marker)) throw new Error("ahash 0.7.6 source changed; re-check the patch");
+
+  writeFileSync(lib, source.replace(marker, ""));
+  writeFileSync(workspaceToml, `${toml}\n[patch.crates-io]\nahash = { path = "${patchDir}" }\n`);
+
+  return () => writeFileSync(workspaceToml, toml);
 }
 
 function buildArtifact(artifact) {
   const repo = repoFor(artifact.repo);
   checkoutPin(repo);
-  if (artifact.needsAhashPatch) applyAhashPatch(repo, artifact);
+  let patchDir;
+  let restoreWorkspace;
 
   const programDir = join(ROOT, repo.path, artifact.programDir);
   console.log(`Building ${artifact.name} (${artifact.crateName}) with cargo build-sbf...`);
-  execFileSync("cargo", ["build-sbf"], { stdio: "inherit", cwd: programDir });
+
+  try {
+    if (artifact.needsAhashPatch) {
+      // Private, unpredictable paths prevent another user from supplying a
+      // Cargo dependency or redirecting the archive download through a symlink.
+      patchDir = mkdtempSync(join(tmpdir(), "solana-kit-ahash-"));
+      restoreWorkspace = applyAhashPatch(repo, artifact, patchDir);
+    }
+
+    execFileSync("cargo", ["build-sbf"], { stdio: "inherit", cwd: programDir });
+  } finally {
+    try {
+      restoreWorkspace?.();
+    } finally {
+      if (patchDir) rmSync(patchDir, { recursive: true, force: true });
+    }
+  }
 
   // cargo build-sbf writes to <rust-workspace-root>/target/deploy/<crate>.so
   const workspaceToml = artifact.workspaceToml ?? "Cargo.toml";

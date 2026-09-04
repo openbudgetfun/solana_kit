@@ -89,10 +89,13 @@ export function getRenderMapVisitor(
             ...(node.additionalPrograms ?? []).map((p) => visit(p, self)),
           ];
 
-          const mergedProgramMap = mergeRenderMaps(programMaps);
+          const mergedProgramMap = mergeRenderMapsWithoutCollisions(programMaps);
           const categoryMaps = getSharedCategoryIndexMaps(mergedProgramMap);
 
-          return mergeRenderMaps([mergedProgramMap, ...categoryMaps]);
+          return mergeRenderMapsWithoutCollisions([
+            mergedProgramMap,
+            ...categoryMaps,
+          ]);
         },
 
         visitProgram(node: ProgramNode, { self }) {
@@ -173,7 +176,7 @@ export function getRenderMapVisitor(
             maps.push(rootMap);
           }
 
-          return mergeRenderMaps(maps);
+          return mergeRenderMapsWithoutCollisions(maps);
         },
 
         visitAccount(node: AccountNode, { self }) {
@@ -213,6 +216,30 @@ export function getRenderMapVisitor(
   );
 }
 
+/**
+ * Merges generated files while rejecting ambiguous output paths.
+ *
+ * Silent overwrites could replace signer checks or data layouts when an
+ * untrusted IDL contains duplicate names.
+ */
+function mergeRenderMapsWithoutCollisions(
+  maps: RenderMap<Fragment>[],
+): RenderMap<Fragment> {
+  const paths = new Set<string>();
+
+  for (const map of maps) {
+    for (const path of map.keys()) {
+      if (paths.has(path)) {
+        throw new Error(`Duplicate generated path "${path}"`);
+      }
+
+      paths.add(path);
+    }
+  }
+
+  return mergeRenderMaps(maps);
+}
+
 function getSharedCategoryIndexMaps(
   renderMap: RenderMap<Fragment>,
 ): RenderMap<Fragment>[] {
@@ -233,8 +260,6 @@ function getSharedCategoryIndexMaps(
     if (!match) continue;
 
     const [, category, fileName] = match;
-    if (fileName === categoryIndexNames[category]) continue;
-
     if (!categories.has(category)) {
       categories.set(category, new Set());
     }

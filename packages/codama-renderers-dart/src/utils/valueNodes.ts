@@ -23,12 +23,25 @@ export function getDartValueFragment(
 ): Fragment {
   switch (value.kind) {
     case "numberValueNode":
+      // Serialized IDLs bypass TypeScript types; never interpolate unvalidated data.
+      if (typeof value.number !== "number" || !Number.isFinite(value.number)) {
+        throw new Error("Invalid Dart number: expected a finite number");
+      }
+
+      if (dartType === "BigInt" && !Number.isSafeInteger(value.number)) {
+        throw new Error("Invalid Dart BigInt: expected a safe integer");
+      }
+
       return fragmentFromString(
         dartType === "BigInt"
           ? `BigInt.from(${value.number})`
           : String(value.number),
       );
     case "booleanValueNode":
+      if (typeof value.boolean !== "boolean") {
+        throw new Error("Invalid Dart boolean: expected a boolean");
+      }
+
       return fragmentFromString(String(value.boolean));
     case "stringValueNode":
       return fragmentFromString(toDartStringLiteral(value.string));
@@ -74,7 +87,8 @@ export function isConstDartValueNode(value: RenderableValueNode): boolean {
   }
 }
 
-function toDartStringLiteral(value: string): string {
+/** Escape IDL text so it remains data inside a Dart string literal. */
+export function toDartStringLiteral(value: string): string {
   return `'${value
     .replaceAll("\\", "\\\\")
     .replaceAll("\n", "\\n")
@@ -84,4 +98,13 @@ function toDartStringLiteral(value: string): string {
     .replaceAll("\f", "\\f")
     .replaceAll("$", "\\$")
     .replaceAll("'", "\\'")}'`;
+}
+
+/** Reject executable or lossy sizes from serialized IDLs before generating Dart. */
+export function getNonNegativeInteger(value: number): string {
+  if (!Number.isSafeInteger(value) || value < 0) {
+    throw new Error("Expected a non-negative safe integer value");
+  }
+
+  return String(value);
 }

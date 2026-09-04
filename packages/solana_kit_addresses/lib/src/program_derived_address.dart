@@ -85,7 +85,7 @@ Future<Address> _createProgramDerivedAddress({
 
 /// Finds a program-derived address by trying bump seeds from 255 down to 0.
 ///
-/// Given a program's [programAddress] and up to 16 [seeds], this returns the
+/// Given a program's [programAddress] and up to 15 [seeds], this returns the
 /// PDA and the bump seed used to derive it. The bump seed is appended as an
 /// additional single-byte seed.
 ///

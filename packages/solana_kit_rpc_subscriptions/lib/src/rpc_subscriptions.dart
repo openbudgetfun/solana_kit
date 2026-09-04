@@ -1,5 +1,6 @@
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_channel.dart';
+import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_execute.dart';
 import 'package:solana_kit_rpc_subscriptions/src/rpc_subscriptions_transport.dart';
 import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
@@ -239,27 +240,25 @@ RpcSubscriptions createSolanaRpcSubscriptionsFromTransport(
   RpcSubscriptionsTransport transport,
 ) {
   return RpcSubscriptions(
-    api: _PassthroughSubscriptionsApi(),
+    api: _SolanaSubscriptionsApi(),
     transport: transport,
   );
 }
 
-/// A passthrough subscriptions API that creates plans from any notification
-/// name and parameters without validation.
-///
-/// This is used by the default factory functions since the actual subscription
-/// plan execution is handled by the transport/channel composition.
-class _PassthroughSubscriptionsApi extends RpcSubscriptionsApi {
+/// Creates subscription plans that perform the JSON-RPC handshake and filter
+/// incoming messages by the acknowledged server subscription ID.
+class _SolanaSubscriptionsApi extends RpcSubscriptionsApi {
   @override
   RpcSubscriptionsPlan<Object?>? getPlan(
     String notificationName,
     List<Object?> params,
   ) {
     return RpcSubscriptionsPlan<Object?>(
-      execute: (config) async {
-        // The actual execution is delegated to the transport.
-        return config.channel.streams;
-      },
+      execute: (config) => executeRpcSubscription(
+        config,
+        notificationName,
+        params,
+      ),
       request: RpcSubscriptionsRequest(
         methodName: notificationName,
         params: params,

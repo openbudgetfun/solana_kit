@@ -546,6 +546,49 @@ void main() {
       }
     });
 
+    test('startup deadline includes stalled health-check requests', () async {
+      final tempDir = await Directory.systemTemp.createTemp(
+        'surfpool_stalled_health_',
+      );
+      final command = await _writeFakeSurfpoolCommand(
+        tempDir,
+        argsPath: '${tempDir.path}/args.json',
+        serveRpc: false,
+      );
+      Surfnet? startedSurfnet;
+
+      try {
+        await expectLater(
+          Surfnet.start(
+            command: command,
+            startupTimeout: const Duration(milliseconds: 100),
+            client: MockClient((request) async {
+              await Future<void>.delayed(const Duration(milliseconds: 500));
+              final body = jsonDecode(request.body) as Map<String, Object?>;
+              return http.Response(
+                jsonEncode({
+                  'jsonrpc': '2.0',
+                  'id': body['id'],
+                  'result': 'ok',
+                }),
+                200,
+              );
+            }),
+          ).then((surfnet) => startedSurfnet = surfnet),
+          throwsA(
+            isA<SurfnetProcessException>().having(
+              (error) => error.message,
+              'message',
+              contains('Timed out waiting for Surfpool RPC'),
+            ),
+          ),
+        );
+      } finally {
+        await startedSurfnet?.stop();
+        await tempDir.delete(recursive: true);
+      }
+    });
+
     test('stop escalates when a process ignores SIGINT', () async {
       final tempDir = await Directory.systemTemp.createTemp(
         'surfpool_cli_stop_',

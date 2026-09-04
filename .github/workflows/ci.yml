@@ -100,6 +100,13 @@ jobs:
         run: test:all
         shell: devenv shell -- bash -e {0}
 
+      - name: test program artifact scripts
+        run: >-
+          node --experimental-test-module-mocks --test
+          scripts/build_program_artifacts.test.mjs
+          scripts/generate_program_packages.test.mjs
+        shell: devenv shell -- bash -e {0}
+
   integration-tests:
     runs-on: ubuntu-latest
     steps:

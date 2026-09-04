@@ -10,6 +10,7 @@ import {
 } from "../utils/fragment.js";
 import type { RenderScope } from "../utils/options.js";
 import { camelCase, pascalCase } from "../utils/nameTransformers.js";
+import { getDartValueFragment, toDartStringLiteral } from "../utils/valueNodes.js";
 import type { TypeManifest } from "../utils/typeManifest.js";
 import { WELL_KNOWN_ADDRESSES } from "../utils/wellKnownAddresses.js";
 
@@ -66,9 +67,9 @@ export function getPdaPageFragment(
   for (const seed of seeds) {
     if (seed.kind === "constantPdaSeedNode") {
       if (seed.value.kind === "bytesValueNode") {
-        seedValues.push(`    Uint8List.fromList(${bytesValueToDart(seed.value.data)}),`);
+        seedValues.push(`    ${getDartValueFragment(seed.value).content},`);
       } else if (seed.value.kind === "stringValueNode") {
-        seedValues.push(`    '${seed.value.string}',`);
+        seedValues.push(`    ${toDartStringLiteral(seed.value.string)},`);
       } else if (seed.value.kind === "publicKeyValueNode") {
         const wellKnownSeedName = WELL_KNOWN_ADDRESSES.get(seed.value.publicKey);
         if (wellKnownSeedName) {
@@ -78,13 +79,14 @@ export function getPdaPageFragment(
           );
         } else {
           seedValues.push(
-            `    getAddressEncoder().encode(Address('${seed.value.publicKey}')),`,
+            `    getAddressEncoder().encode(Address(${toDartStringLiteral(seed.value.publicKey)})),`,
           );
         }
       } else if (seed.value.kind === "numberValueNode") {
         const manifest = visit(seed.type, scope.typeManifestVisitor);
         seedManifests.push(manifest);
-        seedValues.push(`    ${manifest.encoder.content}.encode(${seed.value.number}),`);
+        const value = getDartValueFragment(seed.value, manifest.type.content);
+        seedValues.push(`    ${manifest.encoder.content}.encode(${value.content}),`);
       }
     } else if (seed.kind === "variablePdaSeedNode") {
       const manifest = visit(seed.type, scope.typeManifestVisitor);
@@ -105,7 +107,7 @@ export function getPdaPageFragment(
   const programIdParam = node.programId
     ? wellKnownProgramName
       ? `Address programAddress = ${wellKnownProgramName}`
-      : `Address programAddress = const Address('${node.programId}')`
+      : `Address programAddress = const Address(${toDartStringLiteral(node.programId)})`
     : "required Address programAddress";
 
   const typedDataImport = hasByteSeeds
@@ -166,13 +168,4 @@ ${fragmentFromString(seedValues.join("\n"))}
   }
 
   return result;
-}
-
-function bytesValueToDart(hex: string): string {
-  const clean = hex.replace(/^0x/, "");
-  const pairs: string[] = [];
-  for (let i = 0; i < clean.length; i += 2) {
-    pairs.push(`0x${clean.slice(i, i + 2)}`);
-  }
-  return `[${pairs.join(", ")}]`;
 }

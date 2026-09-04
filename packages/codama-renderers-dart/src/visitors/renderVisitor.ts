@@ -32,11 +32,6 @@ export function renderVisitor(
   return rootNodeVisitor((root: RootNode) => {
     const normalizedRoot = normalizeRootNode(root);
 
-    // 1. Optionally delete the output directory
-    if (deleteFolderBeforeRendering && existsSync(outputDir)) {
-      deleteDirectory(outputDir);
-    }
-
     // 2. Build the render map
     const renderMap = visit(
       normalizedRoot,
@@ -52,16 +47,10 @@ export function renderVisitor(
       }
     }
 
-    // 4. Resolve imports and write files
+    // Resolve every file before deleting previous output, so invalid IDLs fail safely.
+    const files: [string, string][] = [];
     for (const [filePath, frag] of renderMap.entries()) {
       const fullPath = join(outputDir, filePath);
-      const dir = dirname(fullPath);
-
-      // Ensure directory exists
-      if (!existsSync(dir)) {
-        mkdirSync(dir, { recursive: true });
-      }
-
       // Compute per-file internal import map (relative paths to defined types)
       const fileDir = dirname(filePath);
       const internalMap: Record<string, string> = {};
@@ -81,6 +70,15 @@ export function renderVisitor(
 
       // Resolve fragment content with imports
       const content = resolveFragmentContent(frag, dependencyMap ?? {}, internalMap);
+      files.push([fullPath, content]);
+    }
+
+    if (deleteFolderBeforeRendering && existsSync(outputDir)) {
+      deleteDirectory(outputDir);
+    }
+
+    for (const [fullPath, content] of files) {
+      mkdirSync(dirname(fullPath), { recursive: true });
       writeFileSync(fullPath, content, "utf-8");
     }
 

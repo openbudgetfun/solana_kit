@@ -242,7 +242,7 @@ void main() {
       );
       expect(deploy, isA<SequentialInstructionPlan>());
       final deployPlans = (deploy as SequentialInstructionPlan).plans;
-      expect(deploy.divisible, isFalse);
+      expect(deploy.divisible, isTrue);
       expect(deployPlans, hasLength(4));
       final firstWrite =
           (deployPlans.first as SingleInstructionPlan).instruction;

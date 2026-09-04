@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_options/src/option.dart';
 
 /// Specifies how [None] values are represented in the encoded data.
@@ -149,11 +150,15 @@ Encoder<Object?> getOptionEncoder<TFrom>(
 /// This decoder deserializes an `Option<TTo>` value using a configurable
 /// approach:
 /// - By default, a `u8` prefix is used (`0 = None`, `1 = Some`).
-/// - If [noneValue] is [ZeroesOptionNoneValue], [None] values are identified
-///   by zeroes.
+/// - If [noneValue] is [ZeroesOptionNoneValue], [None] values require the
+///   item's full fixed-size padding. Without a prefix, the padding must be
+///   zeroes; with a prefix, its contents are ignored.
 /// - If [noneValue] is [ConstantOptionNoneValue], [None] values match the
 ///   provided constant.
 /// - If [hasPrefix] is `false`, no prefix is used.
+///
+/// Prefixes other than exactly `0` or `1`, truncated padding, and mismatched
+/// constant [None] values are rejected.
 Decoder<Option<TTo>> getOptionDecoder<TTo>(
   Decoder<TTo> item, {
   Decoder<num>? prefix,
@@ -193,6 +198,11 @@ Decoder<Option<TTo>> getOptionDecoder<TTo>(
   }
 
   (Option<TTo>, int) readImpl(Uint8List bytes, int currentOffset) {
+    assertByteArrayOffsetIsNotOutOfRange(
+      'option',
+      currentOffset,
+      bytes.length,
+    );
     var pos = currentOffset;
     final actualPrefix = prefix ?? getU8Decoder();
 
@@ -213,11 +223,34 @@ Decoder<Option<TTo>> getOptionDecoder<TTo>(
     } else {
       // Has prefix: read it.
       final (prefixValue, newOffset) = actualPrefix.read(bytes, pos);
-      isPresent = prefixValue.toInt() != 0;
+      if (prefixValue != 0 && prefixValue != 1) {
+        throw SolanaError(SolanaErrorCode.codecsInvalidBoolean, {
+          'value': prefixValue,
+        });
+      }
+      isPresent = prefixValue == 1;
       pos = newOffset;
     }
 
     if (!isPresent) {
+      assertByteArrayHasEnoughBytesForCodec(
+        'option',
+        noneValueFixedSize,
+        bytes,
+        pos,
+      );
+      if (noneValue is ConstantOptionNoneValue &&
+          !containsBytes(bytes, noneValue.bytes, pos)) {
+        throw SolanaError(SolanaErrorCode.codecsInvalidConstant, {
+          'hexConstant': noneValue.bytes
+              .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+              .join(),
+          'hexData': bytes
+              .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+              .join(),
+          'offset': pos,
+        });
+      }
       // Skip the none value bytes.
       pos += noneValueFixedSize;
       return (none<TTo>(), pos);

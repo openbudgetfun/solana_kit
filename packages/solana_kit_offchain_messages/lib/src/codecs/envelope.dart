@@ -6,11 +6,13 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
-import 'package:solana_kit_offchain_messages/src/codecs/preamble_common.dart';
+import 'package:solana_kit_offchain_messages/src/codecs/message.dart';
 import 'package:solana_kit_offchain_messages/src/codecs/signatures.dart';
 import 'package:solana_kit_offchain_messages/src/envelope.dart';
 
 /// Returns a variable-size encoder for [OffchainMessageEnvelope].
+///
+/// Validates the complete message before encoding its envelope.
 Encoder<OffchainMessageEnvelope> getOffchainMessageEnvelopeEncoder() {
   return transformEncoder<Map<String, Object?>, OffchainMessageEnvelope>(
     getStructEncoder([
@@ -69,6 +71,8 @@ Encoder<OffchainMessageEnvelope> getOffchainMessageEnvelopeEncoder() {
 }
 
 /// Returns a variable-size decoder for [OffchainMessageEnvelope].
+///
+/// Rejects malformed message bodies and invalid version-specific preambles.
 Decoder<OffchainMessageEnvelope> getOffchainMessageEnvelopeDecoder() {
   return transformDecoder<Map<String, Object?>, OffchainMessageEnvelope>(
     getStructDecoder([
@@ -137,11 +141,9 @@ getOffchainMessageEnvelopeCodec() {
 }
 
 List<Address> _decodeAndValidateRequiredSignatoryAddresses(Uint8List bytes) {
-  final signatoryAddresses = decodeRequiredSignatoryAddresses(bytes);
-  if (signatoryAddresses.isEmpty) {
-    throw SolanaError(
-      SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero,
-    );
-  }
-  return signatoryAddresses;
+  return getOffchainMessageDecoder()
+      .decode(bytes)
+      .requiredSignatories
+      .map((signatory) => signatory.address)
+      .toList();
 }

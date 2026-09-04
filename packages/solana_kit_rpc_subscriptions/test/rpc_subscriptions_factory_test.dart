@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
 import 'package:solana_kit_rpc_subscriptions_api/solana_kit_rpc_subscriptions_api.dart';
-import 'package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:solana_kit_test_matchers/solana_kit_test_matchers.dart';
@@ -425,7 +424,7 @@ void main() {
     });
 
     test(
-      'createSolanaRpcSubscriptionsFromTransport builds passthrough plans',
+      'createSolanaRpcSubscriptionsFromTransport builds subscription plans',
       () async {
         final captured = CapturingSubscriptionsTransport();
         final rpc = createSolanaRpcSubscriptionsFromTransport(
@@ -438,15 +437,6 @@ void main() {
 
         expect(captured.lastConfig.request.methodName, 'accountNotifications');
         expect(captured.lastConfig.request.params, ['pubkey', 'json']);
-
-        final channel = _MockChannel();
-        final executeResult = await captured.lastConfig.execute(
-          RpcSubscriptionsTransportExecuteConfig(
-            channel: channel,
-            signal: CancellationTokenSource().token,
-          ),
-        );
-        expect(executeResult, same(channel.streams));
       },
     );
 
@@ -526,22 +516,4 @@ class _TestApi extends RpcSubscriptionsApi {
   ) {
     return _plans[notificationName];
   }
-}
-
-class _MockChannel implements RpcSubscriptionsChannel {
-  _MockChannel()
-    : _messagesController = StreamController<Object?>.broadcast(sync: true),
-      _errorsController = StreamController<Object?>.broadcast(sync: true);
-
-  final StreamController<Object?> _messagesController;
-  final StreamController<Object?> _errorsController;
-
-  @override
-  late final NotificationStreams streams = NotificationStreams(
-    notifications: _messagesController.stream,
-    errors: _errorsController.stream,
-  );
-
-  @override
-  Future<void> send(Object message) async {}
 }
