@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:solana_kit_errors/solana_kit_errors.dart';
+import 'package:solana_kit_helius/src/internal/http_request.dart';
 import 'package:solana_kit_helius/src/internal/redact_url.dart';
 
 /// Internal JSON-RPC 2.0 caller for Helius RPC endpoints.
@@ -30,13 +31,17 @@ class JsonRpcClient {
       'params': ?params,
     });
 
-    final response = await _client.post(
-      Uri.parse(url),
-      headers: {
-        'accept': 'application/json',
-        'content-type': 'application/json; charset=utf-8',
-      },
-      body: body,
+    final uri = Uri.parse(url);
+    final response = await sendHeliusRequest(
+      uri,
+      () => _client.post(
+        uri,
+        headers: {
+          'accept': 'application/json',
+          'content-type': 'application/json; charset=utf-8',
+        },
+        body: body,
+      ),
     );
 
     if (response.statusCode != 200) {

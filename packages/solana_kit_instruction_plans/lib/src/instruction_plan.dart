@@ -119,6 +119,10 @@ class MessagePacker {
   /// Packs the provided transaction message with instructions or throws
   /// if not possible.
   ///
+  /// Implementations must only consume instructions included in the returned
+  /// message and leave their progress unchanged when throwing. Returned
+  /// messages must fit the transaction byte and instruction limits.
+  ///
   /// Throws a [SolanaError] with code
   /// [SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan]
   /// if the provided transaction message cannot be used to fill the next
@@ -455,6 +459,10 @@ MessagePackerInstructionPlan getLinearMessagePackerInstructionPlan({
 
 /// Creates a [MessagePackerInstructionPlan] from a list of instructions.
 ///
+/// Each returned message contains only the instructions that fit. The next
+/// instruction remains pending for a subsequent message when it would exceed
+/// the byte or instruction limit.
+///
 /// This can be useful to prepare a set of instructions that can be iterated
 /// over -- e.g. to pack a list of instructions that gradually reallocate
 /// the size of an account one `REALLOC_LIMIT` (10,240 bytes) at a time.
@@ -496,13 +504,13 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
             instructionIndex = index;
             return currentMessage;
           }
-          currentMessage = appendTransactionMessageInstruction(
+          final nextMessage = appendTransactionMessageInstruction(
             instructions[index],
             currentMessage,
           );
-          final messageSize = getTransactionMessageSize(currentMessage);
+          final messageSize = getTransactionMessageSize(nextMessage);
 
-          if (messageSize > getTransactionMessageSizeLimit(currentMessage)) {
+          if (messageSize > getTransactionMessageSizeLimit(nextMessage)) {
             if (index == instructionIndex) {
               throw SolanaError(
                 SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
@@ -517,6 +525,7 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
             instructionIndex = index;
             return currentMessage;
           }
+          currentMessage = nextMessage;
         }
 
         instructionIndex = instructions.length;

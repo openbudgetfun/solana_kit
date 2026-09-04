@@ -29,3 +29,7 @@ final instruction = getWriteInstruction(
 - Loader v4 instructions: write, truncate, deploy, retract, transfer authority, and finalize.
 - Handwritten Loader v4 account-header codec: `ProgramStateAccount`.
 - Planning helpers: `getDeployProgramInstructionPlan` and `getUpgradeProgramInstructionPlan` chunk program bytes into loader writes before the deploy or upgrade instruction.
+
+## Uploading programs
+
+Prepare the buffer and program accounts before running the planning helpers. Their sequential plans allow buffer writes to span transactions. The final deploy or upgrade executes after all writes succeed, so normal program binaries work with the standard transaction planner and executor. If a write fails, the existing program remains unchanged and the prepared buffer can be reused or closed.

@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_fixed_points": ^0.8.0
+  "solana_kit_fixed_points": ^0.9.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -103,9 +103,15 @@ void main() {
 }
 ```
 
+## Input validation
+
+Use the parsing and `rawBinaryFixedPoint` / `rawDecimalFixedPoint` factories to validate values when constructing them. The direct constructors store the supplied fields; `assertIsBinaryFixedPoint` and `assertIsDecimalFixedPoint` validate their scale, bit width, signedness, and raw range. Their `isBinaryFixedPoint` and `isDecimalFixedPoint` counterparts return `false` for invalid values.
+
+Parsing requires at least one decimal digit. Inputs such as `.`, `-`, and `-.` throw `FormatException`; `.5` and `1.` remain valid.
+
 ## Fixed-point codecs
 
-`getBinaryFixedPointCodec` encodes and decodes binary fixed-point values. `getDecimalFixedPointCodec` does the same for decimal fixed-point values. Both take the signedness, total bit width, and fractional bit/decimal count:
+`getBinaryFixedPointCodec` encodes and decodes binary fixed-point values. `getDecimalFixedPointCodec` does the same for decimal fixed-point values. Both take the signedness, total bit width, and fractional bit/decimal count. Encoders reject raw values outside that signed or unsigned range with `RangeError` before modifying the destination buffer, including values created with a direct constructor:
 
 ```dart
 import 'package:solana_kit_fixed_points/solana_kit_fixed_points.dart';

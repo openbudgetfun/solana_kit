@@ -1,6 +1,6 @@
 name: solana_kit_pyth
 description: Pyth Network Hermes client and price account codecs for Solana Kit Dart.
-version: 0.0.0
+version: 0.9.1
 repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_pyth
 homepage: https://openbudgetfun.github.io/solana_kit/
 environment:
@@ -8,16 +8,16 @@ environment:
 resolution: workspace
 dependencies:
   http: ^1.4.0
-  solana_kit_addresses: ^0.8.0
-  solana_kit_codecs: ^0.8.0
-  solana_kit_codecs_core: ^0.8.0
-  solana_kit_codecs_data_structures: ^0.8.0
-  solana_kit_codecs_numbers: ^0.8.0
-  solana_kit_codecs_strings: ^0.8.0
-  solana_kit_errors: ^0.8.0
-  solana_kit_instruction_plans: ^0.8.0
-  solana_kit_instructions: ^0.8.0
-  solana_kit_keys: ^0.8.0
+  solana_kit_addresses: ^0.9.1
+  solana_kit_codecs: ^0.9.1
+  solana_kit_codecs_core: ^0.9.1
+  solana_kit_codecs_data_structures: ^0.9.1
+  solana_kit_codecs_numbers: ^0.9.1
+  solana_kit_codecs_strings: ^0.9.1
+  solana_kit_errors: ^0.9.1
+  solana_kit_instruction_plans: ^0.9.1
+  solana_kit_instructions: ^0.9.1
+  solana_kit_keys: ^0.9.1
 dev_dependencies:
-  solana_kit_lints: ^0.8.0
+  solana_kit_lints: ^0.9.1
   test: ^1.25.0

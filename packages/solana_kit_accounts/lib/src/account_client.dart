@@ -30,22 +30,26 @@ class SolanaAccountClient {
 
   /// Fetches encoded accounts using `getMultipleAccounts` with base64
   /// encoding.
+  ///
+  /// Addresses are captured when called, so later changes to the input list
+  /// cannot associate the returned account data with a different address.
   Future<List<MaybeEncodedAccount>> fetchEncodedAccounts(
     List<Address> addresses, {
     FetchAccountConfig? config,
   }) async {
+    final requestedAddresses = List<Address>.of(addresses);
     final response = await _rpc
         .getMultipleAccountsValue(
-          addresses,
+          requestedAddresses,
           _getMultipleAccountsConfig(config, AccountEncoding.base64),
         )
         .send();
 
-    return List.generate(addresses.length, (index) {
+    return List.generate(requestedAddresses.length, (index) {
       final accountData = index < response.value.length
           ? response.value[index]
           : null;
-      return parseBase64RpcAccount(addresses[index], accountData);
+      return parseBase64RpcAccount(requestedAddresses[index], accountData);
     });
   }
 
@@ -77,32 +81,36 @@ class SolanaAccountClient {
 
   /// Fetches multiple `jsonParsed` accounts when available, with base64
   /// fallbacks when the RPC does not return parsed data.
+  ///
+  /// Addresses are captured when called, so later changes to the input list
+  /// cannot associate the returned account data with a different address.
   Future<List<MaybeAccount<Object>>> fetchJsonParsedAccounts(
     List<Address> addresses, {
     FetchAccountConfig? config,
   }) async {
+    final requestedAddresses = List<Address>.of(addresses);
     final response = await _rpc
         .getMultipleAccountsValue(
-          addresses,
+          requestedAddresses,
           _getMultipleAccountsConfig(config, AccountEncoding.jsonParsed),
         )
         .send();
 
-    return List.generate(addresses.length, (index) {
+    return List.generate(requestedAddresses.length, (index) {
       final accountData = index < response.value.length
           ? response.value[index]
           : null;
       if (accountData == null) {
-        return parseBase64RpcAccount(addresses[index], null)
+        return parseBase64RpcAccount(requestedAddresses[index], null)
             as MaybeAccount<Object>;
       }
 
       final data = accountData['data'];
       if (data is Map<String, Object?> && data.containsKey('parsed')) {
-        return parseJsonRpcAccount(addresses[index], accountData);
+        return parseJsonRpcAccount(requestedAddresses[index], accountData);
       }
 
-      return parseBase64RpcAccount(addresses[index], accountData);
+      return parseBase64RpcAccount(requestedAddresses[index], accountData);
     });
   }
 }

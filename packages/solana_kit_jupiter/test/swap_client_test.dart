@@ -152,16 +152,16 @@ void main() {
       );
 
       final body = jsonDecode(capturedBody!) as Map<String, Object?>;
-      expect(body['userPublicKey'], _wsol);
+      expect(body.containsKey('userPublicKey'), isFalse);
       expect(body['requestId'], 'req-9');
-      expect(body['transaction'], 'c2lnbmVk');
+      expect(body['signedTransaction'], 'c2lnbmVk');
       expect(execution.encodedSwapTransaction, 'c2lnbmVk');
       expect(execution.signature, isNull);
       expect(execution.error, isNull);
     });
 
     test(
-      'executeOrder omits the request id when absent and surfaces errors',
+      'executeOrder surfaces API execution errors',
       () async {
         String? capturedBody;
         final config = JupiterConfig(
@@ -177,6 +177,7 @@ void main() {
             inAmount: null,
             outAmount: null,
             encodedTransaction: null,
+            requestId: 'request-1',
           ),
           signedTransaction: 'c2lnbmVk',
         );
@@ -185,7 +186,7 @@ void main() {
           (jsonDecode(capturedBody!) as Map<String, Object?>).containsKey(
             'requestId',
           ),
-          isFalse,
+          isTrue,
         );
         expect(execution.error, 'Route expired');
       },

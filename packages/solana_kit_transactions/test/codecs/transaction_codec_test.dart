@@ -108,6 +108,50 @@ void main() {
   });
 
   group('getTransactionDecoder', () {
+    for (final withSignature in [false, true]) {
+      test('round-trips v1 message-first (signed: $withSignature)', () {
+        final message = const TransactionMessage(version: TransactionVersion.v1)
+            .copyWith(
+              feePayer: const Address('11111111111111111111111111111111'),
+              lifetimeConstraint: BlockhashLifetimeConstraint(
+                blockhash: '11111111111111111111111111111111',
+                lastValidBlockHeight: BigInt.one,
+              ),
+              instructions: [
+                Instruction(
+                  programAddress: const Address(
+                    'ComputeBudget111111111111111111111111111111',
+                  ),
+                  data: Uint8List.fromList([1, 2, 3]),
+                ),
+              ],
+            );
+        final compiled = compileTransaction(message);
+        final feePayer = compiled.signatures.keys.single;
+        final transaction = Transaction(
+          messageBytes: compiled.messageBytes,
+          signatures: {
+            feePayer: withSignature
+                ? SignatureBytes(Uint8List(64)..[0] = 1)
+                : null,
+          },
+        );
+        final wireBytes = getTransactionEncoder().encode(transaction);
+        final prefixedBytes = Uint8List.fromList([42, ...wireBytes]);
+
+        final (decoded, endOffset) = getTransactionDecoder().read(
+          prefixedBytes,
+          1,
+        );
+
+        expect(endOffset, prefixedBytes.length);
+        expect(decoded.messageBytes, transaction.messageBytes);
+        expect(decoded.signatures.keys, [feePayer]);
+        expect(decoded.signatures[feePayer], transaction.signatures[feePayer]);
+        expect(getTransactionEncoder().encode(decoded), wireBytes);
+      });
+    }
+
     test('decodes a round-tripped transaction', () {
       // Create and compile a transaction message.
       final message = const TransactionMessage(version: TransactionVersion.v0)

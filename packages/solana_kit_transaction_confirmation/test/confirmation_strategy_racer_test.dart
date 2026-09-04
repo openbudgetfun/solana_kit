@@ -65,6 +65,7 @@ void main() {
         expect(capturedSignal, isNotNull);
         expect(capturedSignal!.isCancelled, isFalse);
 
+        final assertion = expectLater(future, throwsA(isA<StateError>()));
         callerCancellationTokenSource.cancel('test');
 
         // Give microtask queue a chance to process.
@@ -72,10 +73,7 @@ void main() {
 
         expect(capturedSignal!.isCancelled, isTrue);
 
-        // The future should eventually settle.
-        // We don't await it since nothing resolves the inner completers,
-        // but that's fine - the test verifies the abort propagation.
-        unawaited(future.catchError((_) {}));
+        await assertion;
       },
     );
 
@@ -136,13 +134,14 @@ void main() {
       expect(capturedStrategySignal, isNotNull);
       expect(capturedStrategySignal!.isCancelled, isFalse);
 
+      final assertion = expectLater(future, throwsA(isA<StateError>()));
       callerCancellationTokenSource.cancel('test');
 
       await Future<void>.delayed(Duration.zero);
 
       expect(capturedStrategySignal!.isCancelled, isTrue);
 
-      unawaited(future.catchError((_) {}));
+      await assertion;
     });
 
     test('propagates strategy rejection', () async {

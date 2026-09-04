@@ -73,35 +73,63 @@ class JupiterBuildResponse {
     required this.swapInstruction,
     required this.cleanupInstruction,
     required this.addressLookupTableAddresses,
+    this.addressesByLookupTableAddress,
+    this.otherInstructions,
+    this.tipInstruction,
+    this.blockhashWithMetadata,
   });
 
   /// Builds a build response from the Swap API JSON body.
-  factory JupiterBuildResponse.fromJson(Map<String, Object?> json) =>
-      JupiterBuildResponse(
-        computeBudgetInstructions:
-            (json['computeBudgetInstructions'] as List<Object?>?)
-                ?.cast<Map<String, Object?>>()
-                .map(JupiterInstructionPayload.fromJson)
-                .toList(growable: false),
-        setupInstructions: (json['setupInstructions'] as List<Object?>?)
-            ?.cast<Map<String, Object?>>()
-            .map(JupiterInstructionPayload.fromJson)
-            .toList(growable: false),
-        swapInstruction: json['swapInstruction'] == null
-            ? null
-            : JupiterInstructionPayload.fromJson(
-                json['swapInstruction']! as Map<String, Object?>,
-              ),
-        cleanupInstruction: json['cleanupInstruction'] == null
-            ? null
-            : JupiterInstructionPayload.fromJson(
-                json['cleanupInstruction']! as Map<String, Object?>,
-              ),
-        addressLookupTableAddresses:
-            (json['addressLookupTableAddresses'] as List<Object?>?)
-                ?.cast<String>()
-                .toList(growable: false),
-      );
+  factory JupiterBuildResponse.fromJson(Map<String, Object?> json) {
+    final lookupTables =
+        (json['addressesByLookupTableAddress'] as Map<String, Object?>?)?.map(
+          (key, value) => MapEntry(
+            key,
+            (value! as List<Object?>).cast<String>().toList(growable: false),
+          ),
+        );
+    return JupiterBuildResponse(
+      computeBudgetInstructions:
+          (json['computeBudgetInstructions'] as List<Object?>?)
+              ?.cast<Map<String, Object?>>()
+              .map(JupiterInstructionPayload.fromJson)
+              .toList(growable: false),
+      setupInstructions: (json['setupInstructions'] as List<Object?>?)
+          ?.cast<Map<String, Object?>>()
+          .map(JupiterInstructionPayload.fromJson)
+          .toList(growable: false),
+      swapInstruction: json['swapInstruction'] == null
+          ? null
+          : JupiterInstructionPayload.fromJson(
+              json['swapInstruction']! as Map<String, Object?>,
+            ),
+      cleanupInstruction: json['cleanupInstruction'] == null
+          ? null
+          : JupiterInstructionPayload.fromJson(
+              json['cleanupInstruction']! as Map<String, Object?>,
+            ),
+      addressLookupTableAddresses:
+          (json['addressLookupTableAddresses'] as List<Object?>?)
+              ?.cast<String>()
+              .toList(growable: false) ??
+          lookupTables?.keys.toList(growable: false),
+      addressesByLookupTableAddress: lookupTables,
+      otherInstructions: (json['otherInstructions'] as List<Object?>?)
+          ?.cast<Map<String, Object?>>()
+          .map(JupiterInstructionPayload.fromJson)
+          .toList(growable: false),
+      tipInstruction: json['tipInstruction'] == null
+          ? null
+          : JupiterInstructionPayload.fromJson(
+              json['tipInstruction']! as Map<String, Object?>,
+            ),
+      blockhashWithMetadata: json['blockhashWithMetadata'] == null
+          ? null
+          : JupiterBlockhashWithMetadata.fromJson(
+              json['blockhashWithMetadata']! as Map<String, Object?>,
+            ),
+    );
+  }
 
   /// Compute budget instructions (limit and priority fee), in order.
   final List<JupiterInstructionPayload>? computeBudgetInstructions;
@@ -115,6 +143,44 @@ class JupiterBuildResponse {
   /// The optional cleanup instruction that closes temporary accounts.
   final JupiterInstructionPayload? cleanupInstruction;
 
+  /// Additional instructions required by the returned route.
+  final List<JupiterInstructionPayload>? otherInstructions;
+
+  /// The optional transaction tip instruction.
+  final JupiterInstructionPayload? tipInstruction;
+
+  /// Resolved lookup table accounts, in their on-chain index order.
+  final Map<String, List<String>>? addressesByLookupTableAddress;
+
+  /// The blockhash and expiry for assembling the transaction.
+  final JupiterBlockhashWithMetadata? blockhashWithMetadata;
+
   /// The address lookup tables referenced by the instructions.
+  ///
+  /// Includes the keys of [addressesByLookupTableAddress] for v2 responses.
   final List<String>? addressLookupTableAddresses;
+}
+
+/// The recent blockhash and expiry returned by the Swap API v2 build path.
+class JupiterBlockhashWithMetadata {
+  /// Creates blockhash metadata.
+  const JupiterBlockhashWithMetadata({
+    required this.blockhash,
+    required this.lastValidBlockHeight,
+  });
+
+  /// Builds metadata from the Swap API JSON body.
+  factory JupiterBlockhashWithMetadata.fromJson(Map<String, Object?> json) =>
+      JupiterBlockhashWithMetadata(
+        blockhash: (json['blockhash']! as List<Object?>).cast<int>().toList(
+          growable: false,
+        ),
+        lastValidBlockHeight: BigInt.parse('${json['lastValidBlockHeight']}'),
+      );
+
+  /// The recent blockhash bytes.
+  final List<int> blockhash;
+
+  /// The last block height at which this blockhash is valid.
+  final BigInt lastValidBlockHeight;
 }

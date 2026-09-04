@@ -14,7 +14,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_instruction_plans": ^0.8.0
+  "solana_kit_instruction_plans": ^0.9.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -74,6 +74,10 @@ void main() {
 
 `MessagePackerInstructionPlan` carries a `getMessagePacker` callback that builds a `MessagePacker`, which fills transaction messages up to a byte capacity. That is how large instruction sets get split across transactions.
 
+The built-in instruction-list packer preserves every instruction exactly once, leaving the next instruction pending when a message reaches its byte or instruction limit. Custom packers must only advance past instructions included in their returned message and leave their progress unchanged when throwing.
+
+Reserve fixed instructions, such as compute-budget instructions, in `createTransactionMessage`. If `onTransactionMessageUpdated` makes a packed message exceed its limits, planning fails rather than discarding already consumed instructions and returning an incomplete plan.
+
 ```dart
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 
@@ -88,6 +92,10 @@ void main() {
   print(plan.kind);
 }
 ```
+
+### Inspecting execution failures
+
+Execution errors preserve the complete result tree, including signatures for earlier successful transactions and the original failure. An unsigned transaction in a failed callback's context remains available for inspection without replacing the failure with a signature-extraction error. Use `passthroughFailedTransactionPlanExecution` to retrieve the result tree when handling partial execution.
 
 ## Key APIs
 

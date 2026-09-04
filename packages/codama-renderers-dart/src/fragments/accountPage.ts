@@ -16,6 +16,7 @@ import { getDiscriminatorValidationFragment } from "../utils/discriminators.js";
 import { getTopLevelDecoderFragment } from "../utils/exactDecoder.js";
 import {
   getDartValueFragment,
+  getNonNegativeInteger,
   isConstDartValueNode,
 } from "../utils/valueNodes.js";
 import { getDiscriminatorConstantsFragment } from "./discriminatorConstants.js";
@@ -160,7 +161,7 @@ export function getAccountPageFragment(
   const sizeFragment = node.size != null
     ? fragment`
 /// The size of the [${fragmentFromString(typeName)}] account data in bytes.
-const int ${fragmentFromString(scope.nameApi.accountSizeConstant(name))} = ${fragmentFromString(String(node.size))};`
+const int ${fragmentFromString(scope.nameApi.accountSizeConstant(name))} = ${fragmentFromString(getNonNegativeInteger(node.size))};`
     : emptyFragment();
 
   // Discriminator

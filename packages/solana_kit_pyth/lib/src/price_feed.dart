@@ -6,6 +6,8 @@
 /// (https://docs.pyth.network) when requested with `parsed=true`.
 library;
 
+import 'dart:math';
+
 import 'package:solana_kit_pyth/src/encoding.dart';
 
 /// A parsed price attached to a [HermesPriceFeed].
@@ -51,8 +53,10 @@ class HermesPrice {
   /// Converts this fixed-point price into a decimal number.
   ///
   /// Warning: this conversion is lossy for large components because Dart
-  /// doubles only carry 52 bits of integer precision.
-  double get asDouble => price.toDouble() * _pow10(expo) * 1.0;
+  /// doubles only carry 52 bits of integer precision. Exponents beyond the
+  /// double range overflow to infinity or underflow to zero without iterating
+  /// over the exponent supplied by the price service.
+  double get asDouble => price.toDouble() * pow(10.0, expo);
 
   @override
   String toString() =>
@@ -70,20 +74,6 @@ class HermesPrice {
 
   @override
   int get hashCode => Object.hash(price, conf, expo, publishTime);
-}
-
-double _pow10(int exponent) {
-  var result = 1.0;
-  if (exponent >= 0) {
-    for (var i = 0; i < exponent; i++) {
-      result *= 10;
-    }
-    return result;
-  }
-  for (var i = 0; i < -exponent; i++) {
-    result /= 10;
-  }
-  return result;
 }
 
 ParsedHermesPriceMetadata? _parseMetadata(Object? json) {

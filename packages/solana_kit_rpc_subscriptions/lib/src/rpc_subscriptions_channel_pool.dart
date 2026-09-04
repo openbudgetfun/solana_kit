@@ -76,9 +76,12 @@ RpcSubscriptionsChannelCreator getChannelPoolingChannelCreator(
 
       newChannelFuture
           .then((newChannel) {
-            final errorSubscription = newChannel.streams.errors.listen((_) {
-              destroyPoolEntry();
-            });
+            final errorSubscription = newChannel.streams.errors.listen(
+              (_) => destroyPoolEntry(),
+              onError: (Object error, StackTrace stackTrace) {
+                destroyPoolEntry();
+              },
+            );
             abortSource.token.future.then((_) {
               unawaited(errorSubscription.cancel());
             }).ignore();
@@ -107,7 +110,7 @@ RpcSubscriptionsChannelCreator getChannelPoolingChannelCreator(
       poolEntry.subscriptionCount--;
       if (poolEntry.subscriptionCount == 0) {
         destroyPoolEntry();
-      } else if (pool.freeChannelIndex != -1) {
+      } else {
         // Back the free channel index up one position, and recompute it.
         pool.freeChannelIndex--;
         recomputeFreeChannelIndex();

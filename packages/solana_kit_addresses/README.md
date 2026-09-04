@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_addresses": ^0.8.0
+  "solana_kit_addresses": ^0.9.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -212,7 +212,7 @@ Future<void> main() async {
 
   // Derive a PDA with string and byte seeds.
   // Seeds can be String values (UTF-8 encoded) or Uint8List byte arrays.
-  // Maximum 16 seeds, each at most 32 bytes.
+  // Maximum 15 caller seeds, each at most 32 bytes; the bump is seed 16.
   final (pda, bump) = await getProgramDerivedAddress(
     programAddress: programAddress,
     seeds: ['metadata', Uint8List.fromList([1, 2, 3])],

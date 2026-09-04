@@ -4,6 +4,35 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.9.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.1) (2026-08-30)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_codecs_strings` was updated to 0.9.1 as part of group `main`.
+
+## [0.9.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.0) (2026-08-30)
+
+### 🐛 Fixed
+
+#### Sync upstream `@solana/kit` v7.1.1
+
+Tracks upstream APIs and behavior through `v7.1.1`:
+
+- `solana_kit`: README now documents `v7.1.1` as the latest supported upstream version.
+- `solana_kit_codecs_strings`: base-X decoders now report the end of the buffer as the next offset when no bytes remain to decode, matching upstream `@solana/codecs-strings` (#1926).
+- `solana_kit_rpc_transformers`: subscription responses for `blockSubscribe`/`blockNotification` now consult the `blockNotifications` numeric allow-list, matching upstream `@solana/rpc-transformers` (#1925).
+- `solana_kit_instruction_plans`: `successfulSingleTransactionPlanResultFromTransaction` is deprecated in favor of `successfulSingleTransactionPlanResult` with an explicit context, matching upstream `@solana/instruction-plans` (#1924).
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #220](https://github.com/openbudgetfun/solana_kit/pull/220) · _Related issues:_ [#1924](https://github.com/openbudgetfun/solana_kit/issues/1924), [#1925](https://github.com/openbudgetfun/solana_kit/issues/1925), [#1926](https://github.com/openbudgetfun/solana_kit/issues/1926)
+
+### 📖 Documentation
+
+#### Unslop package docs and code comments
+
+Rewrote every package README from a reader's perspective with verified, compilable examples, removed AI-tell phrasing from docs and code comments, and added a test that analyzes every Dart block in Markdown so examples cannot drift from the API.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://github.com/openbudgetfun/solana_kit/pull/223)
+
 ## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)
 
 ### 💥 Breaking Change

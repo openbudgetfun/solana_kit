@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_rpc_subscriptions": ^0.8.0
+  "solana_kit_rpc_subscriptions": ^0.9.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -43,7 +43,7 @@ For architecture notes, getting-started guides, and cross-package examples, star
 
 ### Subscribing to notifications
 
-`createSolanaRpcSubscriptions` returns a client whose `request` method returns a `PendingRpcSubscriptionsRequest`. Call `.subscribe(...)` to get a `Stream` of notifications, and cancel with a `CancellationTokenSource`.
+`createSolanaRpcSubscriptions` returns a client whose `request` method returns a `PendingRpcSubscriptionsRequest`. Call `.subscribe(...)` to send the JSON-RPC subscription request and await its server subscription ID. The returned stream emits only the matching notification result payloads; other requests and subscriptions on a shared channel are filtered out. Cancel with a `CancellationTokenSource` to unsubscribe and release listeners. Notifications that arrive during acquisition are retained until the first listener attaches, up to 1024 events; exceeding this bound ends the subscription with a `StateError`. Listen promptly after acquisition. Cancellation before acknowledgement still releases a late server subscription when its ID arrives.
 
 ```dart
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
@@ -99,10 +99,10 @@ Future<void> main() async {
 
 ## Key APIs
 
-- `createSolanaRpcSubscriptions(url, {config})`: the standard client factory.
+- `createSolanaRpcSubscriptions(url, [config])`: the standard client factory.
 - `RpcSubscriptions` interface with `request(methodName, params)`.
 - `PendingRpcSubscriptionsRequest.subscribe(options)` returning a `Stream`.
-- `RpcSubscriptionsRequestOptions` with `abortSignal` for cancellation.
+- `RpcSubscribeOptions` with `abortSignal` for cancellation.
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_rpc_subscriptions"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart"} -->
 

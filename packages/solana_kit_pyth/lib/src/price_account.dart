@@ -146,10 +146,10 @@ class PythPriceInfo {
 
     return PythPriceInfo._(
       priceComponent: BigInt.from(priceComponent),
-      confidenceComponent: BigInt.from(confidenceComponent),
+      confidenceComponent: confidenceComponent,
       status: PythPriceStatus.fromValue(statusValue),
       corporateAction: corporateAction,
-      publishSlot: BigInt.from(publishSlot),
+      publishSlot: publishSlot,
     );
   }
 
@@ -493,8 +493,8 @@ PythPriceAccount decodePythPriceAccount(Uint8List data, {int? currentSlot}) {
   ).getInt32(0, Endian.little);
   final numComponentPrices = _readUint32(data, 24);
   final numQuoters = _readUint32(data, 28);
-  final lastSlot = BigInt.from(_readBigUint64(data, 32));
-  final validSlot = BigInt.from(_readBigUint64(data, 40));
+  final lastSlot = _readBigUint64(data, 32);
+  final validSlot = _readBigUint64(data, 40);
   final emaPrice = PythEma.fromBytes(data, 48);
   final emaConfidence = PythEma.fromBytes(data, 72);
   final timestamp = BigInt.from(_readBigInt64(data, 96));
@@ -514,9 +514,9 @@ PythPriceAccount decodePythPriceAccount(Uint8List data, {int? currentSlot}) {
   final nextPriceAccountKey = _readAddressOrNull(
     Uint8List.sublistView(data, 144, 176),
   );
-  final previousSlot = BigInt.from(_readBigUint64(data, 176));
+  final previousSlot = _readBigUint64(data, 176);
   final previousPriceComponent = BigInt.from(_readBigInt64(data, 184));
-  final previousConfidenceComponent = BigInt.from(_readBigUint64(data, 192));
+  final previousConfidenceComponent = _readBigUint64(data, 192);
   final previousTimestamp = BigInt.from(_readBigInt64(data, 200));
   final aggregate = PythPriceInfo.fromBytes(data, 208);
 
@@ -725,7 +725,7 @@ PriceUpdateV2Account decodePriceUpdateV2Account(Uint8List data) {
   cursor += 32;
   final price = BigInt.from(_readBigInt64(data, cursor));
   cursor += 8;
-  final conf = BigInt.from(_readBigUint64(data, cursor));
+  final conf = _readBigUint64(data, cursor);
   cursor += 8;
   final exponent = ByteData.sublistView(
     data,
@@ -739,9 +739,9 @@ PriceUpdateV2Account decodePriceUpdateV2Account(Uint8List data) {
   cursor += 8;
   final emaPrice = BigInt.from(_readBigInt64(data, cursor));
   cursor += 8;
-  final emaConf = BigInt.from(_readBigUint64(data, cursor));
+  final emaConf = _readBigUint64(data, cursor);
   cursor += 8;
-  final postedSlot = BigInt.from(_readBigUint64(data, cursor));
+  final postedSlot = _readBigUint64(data, cursor);
 
   return PriceUpdateV2Account._(
     writeAuthority: writeAuthority,
@@ -772,8 +772,13 @@ Address? _readAddressOrNull(Uint8List bytes) {
 int _readUint32(Uint8List bytes, int offset) =>
     ByteData.sublistView(bytes, offset, offset + 4).getUint32(0, Endian.little);
 
-int _readBigUint64(Uint8List bytes, int offset) =>
-    ByteData.sublistView(bytes, offset, offset + 8).getUint64(0, Endian.little);
+BigInt _readBigUint64(Uint8List bytes, int offset) {
+  final data = ByteData.sublistView(bytes, offset, offset + 8);
+
+  // Reading two halves avoids converting an unsigned u64 through a signed int.
+  return (BigInt.from(data.getUint32(4, Endian.little)) << 32) |
+      BigInt.from(data.getUint32(0, Endian.little));
+}
 
 int _readBigInt64(Uint8List bytes, int offset) =>
     ByteData.sublistView(bytes, offset, offset + 8).getInt64(0, Endian.little);

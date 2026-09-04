@@ -7,4 +7,11 @@ import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
 WalletRegistry createPlatformWalletRegistry({
   required WalletAppIdentity appIdentity,
   required String chain,
-}) => WalletRegistryController();
+  List<Wallet> additionalWallets = const [],
+}) {
+  final registry = WalletRegistryController();
+  for (final wallet in additionalWallets) {
+    registry.register(wallet);
+  }
+  return registry;
+}

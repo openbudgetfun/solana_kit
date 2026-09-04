@@ -158,6 +158,68 @@ void main() {
       expect(createChannel.lastAbortSignal?.isCancelled, isTrue);
     });
 
+    test('reuses capacity released while every channel was full', () async {
+      final poolingChannelCreator = getChannelPoolingChannelCreator(
+        createChannel.create,
+        maxSubscriptionsPerChannel: 2,
+        minChannels: 1,
+      );
+      final firstSource = CancellationTokenSource();
+      final channel = await poolingChannelCreator(
+        abortSignal: firstSource.token,
+      );
+      await poolingChannelCreator(
+        abortSignal: CancellationTokenSource().token,
+      );
+
+      firstSource.cancel();
+      await Future<void>.delayed(Duration.zero);
+
+      final replacement = await poolingChannelCreator(
+        abortSignal: CancellationTokenSource().token,
+      );
+
+      expect(replacement, same(channel));
+      expect(createChannel.callCount, equals(1));
+      expect(createChannel.lastAbortSignal!.isCancelled, isFalse);
+    });
+
+    test(
+      'disposes native stream errors without uncaught zone errors',
+      () async {
+        final uncaughtErrors = <Object>[];
+        final originalChannel = _MockChannel();
+        createChannel.nextChannels.add(originalChannel);
+        final poolingChannelCreator = getChannelPoolingChannelCreator(
+          createChannel.create,
+          maxSubscriptionsPerChannel: 2,
+          minChannels: 1,
+        );
+        late Future<RpcSubscriptionsChannel> original;
+        runZonedGuarded(
+          () {
+            original = poolingChannelCreator(
+              abortSignal: CancellationTokenSource().token,
+            );
+          },
+          (error, stackTrace) => uncaughtErrors.add(error),
+        );
+        await original;
+        final originalSignal = createChannel.lastAbortSignal!;
+
+        originalChannel.publishStreamError(StateError('Connection failed'));
+        await Future<void>.delayed(Duration.zero);
+        final replacement = await poolingChannelCreator(
+          abortSignal: CancellationTokenSource().token,
+        );
+
+        expect(uncaughtErrors, isEmpty);
+        expect(originalSignal.isCancelled, isTrue);
+        expect(replacement, isNot(same(originalChannel)));
+        expect(createChannel.callCount, equals(2));
+      },
+    );
+
     test('does not create a channel pool entry when the channel fails to '
         'construct', () async {
       createChannel.shouldFail = true;
@@ -227,6 +289,10 @@ class _MockChannel implements RpcSubscriptionsChannel {
           });
         },
       );
+
+  void publishStreamError(Object error) {
+    _errorsController.addError(error);
+  }
 
   @override
   NotificationStreams get streams => NotificationStreams(

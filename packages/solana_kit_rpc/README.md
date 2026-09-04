@@ -14,7 +14,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_rpc": ^0.8.0
+  "solana_kit_rpc": ^0.9.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -133,6 +133,10 @@ Future<void> main() async {
   print('Mock slot: $slot');
 }
 ```
+
+### Cancelling requests
+
+Requests with a cancellation signal are sent independently rather than coalesced, so cancelling one request does not cancel another caller's request. Cancellation uses the HTTP client's abort support and cannot undo an already submitted transaction.
 
 ### Payload deduplication
 

@@ -46,6 +46,8 @@ findSetComputeUnitLimitInstructionIndexAndUnits(
 }
 
 /// Finds the first `SetComputeUnitPrice` instruction and its micro-lamports.
+///
+/// Preserves the full unsigned 64-bit price for accurate fee comparisons.
 SetComputeUnitPriceInstructionDetails?
 findSetComputeUnitPriceInstructionIndexAndMicroLamports(
   TransactionMessage transactionMessage,
@@ -58,9 +60,9 @@ findSetComputeUnitPriceInstructionIndexAndMicroLamports(
   final data = transactionMessage.instructions[index].data!;
   return (
     index: index,
-    microLamports: BigInt.from(
-      ByteData.sublistView(data).getUint64(1, Endian.little),
-    ),
+    microLamports: getSetComputeUnitPriceInstructionDataDecoder()
+        .decode(data)
+        .microLamports,
   );
 }
 

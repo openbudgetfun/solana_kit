@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_codecs_strings": ^0.8.0
+  "solana_kit_codecs_strings": ^0.9.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -109,6 +109,8 @@ void main() {
 ```
 
 Base10 (decimal string amounts) and base16 (hex debugging) work the same way. For custom alphabets, use `getBaseXCodec` or `getBaseXResliceCodec`.
+
+Base16 input must use complete hexadecimal byte pairs, such as `abcd`. A single character such as `a` is accepted as the byte `0a`; longer odd-length input is rejected instead of silently dropping its trailing character.
 
 ## Key APIs
 

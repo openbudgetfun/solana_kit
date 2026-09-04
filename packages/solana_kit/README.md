@@ -25,7 +25,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit": ^0.8.0
+  "solana_kit": ^0.9.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

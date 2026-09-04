@@ -14,6 +14,63 @@ import 'package:test/test.dart';
 
 void main() {
   group('sendBundleWithSender', () {
+    for (final status in ['processed', 'confirmed', 'finalized']) {
+      test(
+        'rejects a failed bundle transaction at $status commitment',
+        () async {
+          final httpClient = MockClient(
+            (request) async => http.Response('{"result":"bundle-id"}', 200),
+          );
+          final rpcClient = JsonRpcClient(
+            url: 'https://api.helius-rpc.com',
+            client: MockClient((request) async {
+              final body = jsonDecode(request.body) as Map<String, Object?>;
+
+              return http.Response(
+                jsonEncode({
+                  'jsonrpc': '2.0',
+                  'id': body['id'],
+                  'result': {
+                    'value': [
+                      {
+                        'confirmationStatus': status,
+                        'err': {
+                          'InstructionError': [
+                            0,
+                            {'Custom': 6001},
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                }),
+                200,
+              );
+            }),
+          );
+
+          await expectLater(
+            sendBundleWithSender(
+              httpClient,
+              rpcClient,
+              [_signedTx(1)],
+              options: const SendBundleOptions(
+                pollTimeoutMs: 50,
+                pollIntervalMs: 1,
+              ),
+            ),
+            throwsA(
+              isA<SolanaError>().having(
+                (error) => error.code,
+                'code',
+                SolanaErrorCode.instructionErrorCustom,
+              ),
+            ),
+          );
+        },
+      );
+    }
+
     test(
       'posts a sendBundle request and returns signatures in order',
       () async {

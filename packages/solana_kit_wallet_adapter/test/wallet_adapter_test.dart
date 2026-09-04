@@ -306,6 +306,33 @@ void main() {
       expect(registry.wallets, isEmpty);
     });
 
+    test('registers additional wallets alongside detected ones', () async {
+      final registry = MobileWalletRegistry(
+        backend: _Backend(supported: false),
+        identity: const WalletAppIdentity(name: 'App'),
+        chain: SolanaChainId.localnet,
+        additionalWallets: [
+          _NamedWallet('Demo'),
+          _NamedWallet('Fallback'),
+        ],
+      );
+      await registry.initialize();
+      expect(registry.wallets.map((wallet) => wallet.name), [
+        'Demo',
+        'Fallback',
+      ]);
+    });
+
+    test('createDefaultWalletRegistry keeps additional wallets', () async {
+      final registry = createDefaultWalletRegistry(
+        appIdentity: const WalletAppIdentity(name: 'App'),
+        chain: SolanaChainId.localnet,
+        additionalWallets: [_NamedWallet('Demo')],
+      );
+      await registry.initialize();
+      expect(registry.wallets.map((wallet) => wallet.name), contains('Demo'));
+    });
+
     test('validates accounts, output counts, and sign-in proof', () async {
       final backend = _Backend();
       final wallet = MobileWallet(
@@ -478,6 +505,33 @@ WalletAccount _account({String address = '11111111111111111111111111111111'}) =>
       chains: const [SolanaChainId.localnet],
       features: const [SolanaFeatureId.signMessage],
     );
+
+/// Minimal wallet used to verify registry composition.
+class _NamedWallet implements Wallet {
+  _NamedWallet(this.name);
+
+  @override
+  final String name;
+
+  @override
+  List<WalletAccount> get accounts => const [];
+
+  @override
+  List<String> get chains => const [SolanaChainId.localnet];
+
+  @override
+  Map<String, WalletFeature> get features => const {};
+
+  @override
+  WalletIcon get icon => WalletIcon(
+    'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv'
+    'MjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9'
+    'IjEiLz48L3N2Zz4=',
+  );
+
+  @override
+  String get version => walletStandardVersion;
+}
 
 class _Backend implements MobileWalletBackend {
   _Backend({this.supported = true});

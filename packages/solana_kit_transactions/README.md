@@ -4,6 +4,8 @@
 
 Compile, sign, encode, and decode Solana transactions. Wrap a compiled message with signatures, verify completeness, and produce the base64 wire format that the RPC `sendTransaction` endpoint accepts.
 
+`Transaction` takes immutable snapshots of message and signature bytes. Retaining or mutating an input buffer cannot change the payload after review, and exposed buffers cannot be edited by partial signers. Create a new transaction to change its message. The wire codec supports legacy and v0 signatures-first envelopes and v1 message-first envelopes.
+
 <!-- {=packageInstallSection:"solana_kit_transactions"} -->
 
 ## Installation
@@ -12,7 +14,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_transactions": ^0.8.0
+  "solana_kit_transactions": ^0.9.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

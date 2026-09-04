@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_consistency, remove_deprecations_in_breaking_versions
+// ignore_for_file: deprecated_consistency
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_rpc_parsed_types/src/rpc_parsed_type.dart';
 

@@ -25,7 +25,10 @@ import 'package:solana_kit_rpc_transport_http/src/http_transport_headers.dart';
 /// ```
 ///
 /// Optionally pass an [http.Client] via [client] to control the HTTP client
-/// used for requests (useful for testing with a mock client).
+/// used for requests (useful for testing with a mock client). Completing
+/// [RpcTransportConfig.signal] aborts the request and response stream when the
+/// client supports [http.AbortableRequest], including the default client.
+/// Redirect responses are rejected to keep credentials at the configured URL.
 RpcTransport createHttpTransport(
   HttpTransportConfig config, {
   http.Client? client,
@@ -64,11 +67,26 @@ RpcTransport createHttpTransport(
       'content-type': 'application/json; charset=utf-8',
     };
 
-    final response = await effectiveClient.post(
-      endpointUrl,
-      headers: mergedHeaders,
-      body: body,
-    );
+    final request =
+        http.AbortableRequest(
+            'POST',
+            endpointUrl,
+            abortTrigger: transportConfig.signal,
+          )
+          ..followRedirects = false
+          ..headers.addAll(mergedHeaders)
+          ..bodyBytes = bodyBytes;
+    final http.Response response;
+    try {
+      response = await http.Response.fromStream(
+        await effectiveClient.send(request),
+      );
+    } on http.RequestAbortedException {
+      throw http.RequestAbortedException();
+    } on http.ClientException {
+      // Client messages and URIs can both contain endpoint credentials.
+      throw http.ClientException('HTTP transport request failed.');
+    }
 
     if (response.statusCode != 200) {
       throw SolanaError(SolanaErrorCode.rpcTransportHttpError, {

@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_token": ^0.7.1
+  "solana_kit_token": ^0.8.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -108,6 +108,10 @@ void main() {
 ## Re-exports
 
 The full `solana_kit_associated_token_account` API surface is re-exported so callers can access ATA PDA helpers and instruction builders without adding a separate dependency.
+
+## Mint creation safety
+
+`getCreateMintInstructionPlan` keeps account creation and mint initialization in one atomic group. Use the transaction planner to keep both instructions together. If transaction limits require splitting this group, the standard executor rejects it before submitting either transaction, protecting the uninitialized mint.
 
 ## Upstream reference
 

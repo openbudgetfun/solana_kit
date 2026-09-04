@@ -42,6 +42,7 @@ List<_RpcInnerInstructionsGroup> _parseInnerInstructions(
   if (rawInner == null) return const [];
   if (rawInner is! List) _throwUnrecognized();
   final groups = <_RpcInnerInstructionsGroup>[];
+  final outerIndices = <int>{};
   for (final rawGroup in rawInner) {
     if (rawGroup is! Map) _throwUnrecognized();
     final index = rawGroup['index'];
@@ -49,6 +50,10 @@ List<_RpcInnerInstructionsGroup> _parseInnerInstructions(
     if (index is! int || index < 0 || rawInstructions is! List) {
       _throwUnrecognized();
     }
+    // One group represents one outer execution. Duplicate groups would emit
+    // the same trace positions more than once and could double-count CPIs.
+    if (!outerIndices.add(index)) _throwUnrecognized();
+
     final instructions = <_RpcInnerInstruction>[];
     for (final rawIx in rawInstructions) {
       if (rawIx is! Map) _throwUnrecognized();
@@ -100,7 +105,7 @@ Never _throwUnrecognized() {
 /// tags each instruction with an `inner` trace.
 ///
 /// Throws a [SolanaError] if any `programIdIndex` or account index falls
-/// outside the supplied [accountMetas] list.
+/// outside the supplied [accountMetas] list, or if outer group indices repeat.
 List<TracedInstruction> getInnerInstructionsFromMeta(
   Map<String, Object?>? meta,
   List<AccountMeta> accountMetas,

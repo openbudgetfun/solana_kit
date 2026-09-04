@@ -14,7 +14,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_codecs_core": ^0.8.0
+  "solana_kit_codecs_core": ^0.9.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -90,6 +90,8 @@ void main() {
 ### Combining encoders and decoders
 
 `combineCodec` pairs an encoder and a decoder into a single `Codec`. `fixCodecSize` and `addCodecSizePrefix` adjust how a codec's length is represented on the wire.
+
+Size-prefixed decoders require a finite, nonnegative integer byte count that fits within the remaining input. Negative, fractional, non-finite, and oversized prefixes throw a `SolanaError` before the content decoder runs.
 
 ```dart
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';

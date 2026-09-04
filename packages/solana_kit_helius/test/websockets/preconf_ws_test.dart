@@ -167,16 +167,236 @@ void main() {
       await server.close(force: true);
     });
 
-    test('connects to the default preconf URL when no channel is given', () {
-      // Constructing without a channel builds the beta.helius-rpc.com URL; the
-      // underlying connection attempt is async and must not throw here.
-      final client = PreconfWsClient(apiKey: 'test-key');
-      try {
+    test('encodes reserved characters in API keys', () {
+      const apiKey = 'key&token=injected#fragment';
+      final uri = Uri.parse(preconfWebsocketUrl(apiKey));
+
+      expect(uri.queryParameters, {'api-key': apiKey});
+      expect(uri.fragment, isEmpty);
+    });
+
+    test('uses the default endpoint through an injected connector', () {
+      Uri? connectedUri;
+      final client = PreconfWsClient(
+        apiKey: 'test-key',
+        channelFactory: (uri) {
+          connectedUri = uri;
+          return _FakeChannel();
+        },
+      );
+
+      expect(connectedUri, Uri.parse(preconfWebsocketUrl('test-key')));
+      client
+        ..close()
+        ..close();
+    });
+
+    test('waits for readiness before sending subscribe requests', () async {
+      final channel = _FakeChannel(ready: false);
+      final client = PreconfWsClient(apiKey: 'test-key', channel: channel);
+      final pending = client.preconfSubscribe();
+      await Future<void>.delayed(Duration.zero);
+      expect(channel.sink.sent, isEmpty);
+
+      channel.readyCompleter.complete();
+      await Future<void>.delayed(Duration.zero);
+      channel.incoming.add(
+        jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 7}),
+      );
+
+      expect((await pending).subscriptionId, 7);
+      client.close();
+    });
+
+    test(
+      'failed readiness rejects calls and suppresses duplicate errors',
+      () async {
+        final channel = _FakeChannel(ready: false);
+        final client = PreconfWsClient(apiKey: 'private-key', channel: channel);
+        final pending = client.preconfSubscribe();
+        final failure = StateError(preconfWebsocketUrl('private-key'));
+        channel.readyCompleter.completeError(failure);
+        channel.incoming.addError(failure);
+
+        await expectLater(
+          pending,
+          throwsA(
+            isA<StateError>().having(
+              (error) => error.toString(),
+              'credential-free message',
+              isNot(contains('private-key')),
+            ),
+          ),
+        );
+        await expectLater(
+          client.preconfSubscribe(),
+          throwsA(isA<StateError>()),
+        );
         client.close();
-      } on Exception {
-        // The remote endpoint is not reachable in tests; closing may surface a
-        // connection error asynchronously. Swallow it.
-      }
+      },
+    );
+
+    test(
+      'close observes later readiness errors without leaking keys',
+      () async {
+        final unhandled = <Object>[];
+        await runZonedGuarded(() async {
+          final channel = _FakeChannel(ready: false);
+          PreconfWsClient(
+            apiKey: 'private-key',
+            channel: channel,
+          ).close();
+          channel.readyCompleter.completeError(
+            StateError(
+              'Connection failed: ${preconfWebsocketUrl('private-key')}',
+            ),
+          );
+          await Future<void>.delayed(Duration.zero);
+        }, (error, _) => unhandled.add(error));
+
+        expect(unhandled, isEmpty);
+      },
+    );
+
+    test('close rejects pending subscribe requests', () async {
+      final channel = _FakeChannel();
+      final client = PreconfWsClient(apiKey: 'private-key', channel: channel);
+      final pending = client.preconfSubscribe();
+      await Future<void>.delayed(Duration.zero);
+      client.close();
+
+      await expectLater(
+        pending.timeout(const Duration(seconds: 1)),
+        throwsA(isA<StateError>()),
+      );
+    });
+
+    test('close settles requests even before readiness completes', () async {
+      final channel = _FakeChannel(ready: false);
+      final client = PreconfWsClient(apiKey: 'test-key', channel: channel);
+      final pending = client.preconfSubscribe();
+      client.close();
+
+      await expectLater(pending, throwsA(isA<StateError>()));
+      channel.readyCompleter.complete();
+    });
+
+    test('peer closure rejects pending unsubscribe requests', () async {
+      final channel = _FakeChannel();
+      final client = PreconfWsClient(apiKey: 'test-key', channel: channel);
+      final pending = client.preconfUnsubscribe(7);
+      await Future<void>.delayed(Duration.zero);
+      unawaited(channel.incoming.close());
+
+      await expectLater(pending, throwsA(isA<StateError>()));
+      client.close();
+    });
+
+    test(
+      'transport failures notify and close active subscription streams',
+      () async {
+        final channel = _FakeChannel();
+        final client = PreconfWsClient(apiKey: 'private-key', channel: channel);
+        final pending = client.preconfSubscribe();
+        await Future<void>.delayed(Duration.zero);
+        channel.incoming.add(
+          jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 7}),
+        );
+        final subscription = await pending;
+        final errors = <Object>[];
+        final done = Completer<void>();
+        subscription.notifications.listen(
+          (_) {},
+          onError: errors.add,
+          onDone: done.complete,
+        );
+        channel.incoming.addError(
+          StateError(preconfWebsocketUrl('private-key')),
+        );
+
+        await done.future;
+        expect(errors.single, isA<StateError>());
+        expect(errors.single.toString(), isNot(contains('private-key')));
+        client.close();
+      },
+    );
+
+    for (final frame in <Object>[
+      'not json',
+      <int>[1],
+    ]) {
+      test('malformed frame $frame fails pending requests safely', () async {
+        final channel = _FakeChannel();
+        final client = PreconfWsClient(apiKey: 'test-key', channel: channel);
+        final pending = client.preconfSubscribe();
+        await Future<void>.delayed(Duration.zero);
+        channel.incoming.add(frame);
+
+        await expectLater(pending, throwsA(isA<StateError>()));
+        client.close();
+      });
+    }
+
+    test(
+      'send and asynchronous close failures do not leak endpoint keys',
+      () async {
+        final unhandled = <Object>[];
+        Object? operationError;
+        await runZonedGuarded(() async {
+          final channel = _FakeChannel();
+          final failure = StateError(preconfWebsocketUrl('private-key'));
+          channel.sink.sendFailure = failure;
+          channel.sink.closeFailure = failure;
+          final client = PreconfWsClient(
+            apiKey: 'private-key',
+            channel: channel,
+          );
+          try {
+            await client.preconfSubscribe();
+          } on Object catch (error) {
+            operationError = error;
+          }
+          client.close();
+          await Future<void>.delayed(Duration.zero);
+        }, (error, _) => unhandled.add(error));
+
+        expect(operationError, isA<StateError>());
+        expect(operationError.toString(), isNot(contains('private-key')));
+        expect(unhandled, isEmpty);
+      },
+    );
+
+    test('stream failures reject pending calls without leaking keys', () async {
+      final unhandled = <Object>[];
+      Object? operationError;
+      await runZonedGuarded(() async {
+        final channel = _FakeChannel();
+        final client = PreconfWsClient(apiKey: 'private-key', channel: channel);
+        final pending = client.preconfSubscribe();
+        await Future<void>.delayed(Duration.zero);
+        channel.incoming.addError(
+          StateError(
+            'Connection failed: ${preconfWebsocketUrl('private-key')}',
+          ),
+        );
+
+        try {
+          await pending.timeout(const Duration(seconds: 1));
+        } on Object catch (error) {
+          operationError = error;
+        }
+        client.close();
+      }, (error, _) => unhandled.add(error));
+
+      expect(unhandled, isEmpty);
+      expect(
+        operationError,
+        isA<StateError>().having(
+          (error) => error.toString(),
+          'credential-free message',
+          isNot(contains('private-key')),
+        ),
+      );
     });
 
     test('subscribe surfaces JSON-RPC errors', () async {
@@ -253,4 +473,52 @@ List<int> _u64le(int value) {
     bytes[i] = (value >> (8 * i)) & 0xff;
   }
   return bytes;
+}
+
+class _FakeChannel implements WebSocketChannel {
+  _FakeChannel({bool ready = true}) {
+    if (ready) readyCompleter.complete();
+  }
+
+  final incoming = StreamController<Object?>();
+  final readyCompleter = Completer<void>();
+
+  @override
+  final _FakeSink sink = _FakeSink();
+
+  @override
+  Stream<Object?> get stream => incoming.stream;
+
+  @override
+  Future<void> get ready => readyCompleter.future;
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _FakeSink implements WebSocketSink {
+  final sent = <Object?>[];
+  final _done = Completer<void>();
+  StateError? sendFailure;
+  StateError? closeFailure;
+
+  @override
+  void add(Object? event) {
+    final failure = sendFailure;
+    if (failure != null) throw failure;
+    sent.add(event);
+  }
+
+  @override
+  Future<void> close([int? closeCode, String? closeReason]) async {
+    final failure = closeFailure;
+    if (failure != null) throw failure;
+    if (!_done.isCompleted) _done.complete();
+  }
+
+  @override
+  Future<void> get done => _done.future;
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

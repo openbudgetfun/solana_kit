@@ -14,7 +14,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_compute_budget": ^0.7.1
+  "solana_kit_compute_budget": ^0.8.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -73,6 +73,10 @@ void main() {
 | `SetComputeUnitLimit`            | 2             | Set the transaction-wide compute unit limit.                               |
 | `SetComputeUnitPrice`            | 3             | Set the compute unit price for priority fees.                              |
 | `SetLoadedAccountsDataSizeLimit` | 4             | Set a limit on loaded accounts data size.                                  |
+
+## Inspecting priority fees
+
+`findSetComputeUnitPriceInstructionIndexAndMicroLamports` returns the full unsigned 64-bit price as a `BigInt`, including prices above `2^63 - 1`. Compare this value with your application's fee cap before signing externally supplied transactions. The update helper passes the same unsigned value to its updater callback.
 
 ## Upstream reference
 

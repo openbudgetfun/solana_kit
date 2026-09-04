@@ -11,6 +11,8 @@ typedef MessageTransformer<TSourceData> =
 ///
 /// The source stream is listened to lazily when the first destination listener
 /// subscribes and cancelled when the last destination listener cancels.
+/// Transformer failures and invalid destination payload types are emitted as
+/// errors on the destination stream.
 Stream<TDestination> demultiplexStream<TSourceData, TDestination>({
   required Stream<TSourceData> source,
   required String channelName,
@@ -23,12 +25,16 @@ Stream<TDestination> demultiplexStream<TSourceData, TDestination>({
     sync: true,
     onListen: () {
       sourceSubscription ??= source.listen((sourceMessage) {
-        final transformResult = messageTransformer(sourceMessage);
-        if (transformResult == null) return;
+        try {
+          final transformResult = messageTransformer(sourceMessage);
+          if (transformResult == null) return;
 
-        final (destinationChannelName, message) = transformResult;
-        if (destinationChannelName == channelName && !controller.isClosed) {
-          controller.add(message as TDestination);
+          final (destinationChannelName, message) = transformResult;
+          if (destinationChannelName == channelName && !controller.isClosed) {
+            controller.add(message as TDestination);
+          }
+        } on Object catch (error, stackTrace) {
+          controller.addError(error, stackTrace);
         }
       }, onError: controller.addError);
     },

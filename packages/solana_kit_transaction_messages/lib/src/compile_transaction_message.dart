@@ -28,6 +28,7 @@ CompiledTransactionMessage compileTransactionMessage(
   final orderedAccounts = getOrderedAccountsFromInstructions(
     transactionMessage.feePayer!,
     transactionMessage.instructions,
+    useLookupTables: transactionMessage.version == TransactionVersion.v0,
   );
   assertTransactionMessageIsWithinLimits(
     transactionMessage,

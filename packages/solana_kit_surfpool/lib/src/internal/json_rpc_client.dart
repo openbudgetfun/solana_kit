@@ -63,6 +63,16 @@ class SurfpoolJsonRpcClient {
     }
 
     final error = decoded['error'];
+    if (decoded['jsonrpc'] != '2.0' ||
+        decoded['id'] != id ||
+        decoded.containsKey('result') == decoded.containsKey('error') ||
+        (decoded.containsKey('error') && error == null)) {
+      throw SurfpoolRpcException(
+        'Invalid JSON-RPC response envelope',
+        method: method,
+      );
+    }
+
     if (error != null) {
       final (message, code) = switch (error) {
         {'message': final Object? message, 'code': final int code} => (

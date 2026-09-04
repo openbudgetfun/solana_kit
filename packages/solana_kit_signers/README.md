@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_signers": ^0.8.0
+  "solana_kit_signers": ^0.9.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -455,6 +455,8 @@ The package defines five abstract signer interfaces. Implementations can mix and
 | `assertIsTransactionSigner(Object?)`          | Asserts value is any transaction signer.                             |
 
 ### Configuration
+
+Attaching signers preserves v1 resource limits and priority fees. Replacing a fee payer address removes the previous fee payer signer, so signing cannot silently continue to charge the old payer.
 
 | Export                    | Description                                                              |
 | ------------------------- | ------------------------------------------------------------------------ |

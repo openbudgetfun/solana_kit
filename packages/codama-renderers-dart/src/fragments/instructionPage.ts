@@ -172,18 +172,35 @@ export function getInstructionPageFragment(
   const dataDecoderName = `get${typeName}InstructionDataDecoder`;
   const dataCodecName = `get${typeName}InstructionDataCodec`;
 
-  // Determine whether any arg or account name collides with 'programAddress'
-  const argNames = new Set(args.map((a) => camelCase(a.name as string)));
-  const accountNames = new Set(accounts.map((a) => camelCase(a.name as string)));
-  const hasProgramAddressCollision = argNames.has('programAddress') || accountNames.has('programAddress');
-  const instrProgramParam = hasProgramAddressCollision ? 'instructionProgramAddress' : 'programAddress';
+  // Generated parameters and locals must not shadow IDL account or argument names.
+  const usedNames = new Set([
+    ...args.map((arg) => camelCase(arg.name as string)),
+    ...accounts.map((account) => camelCase(account.name as string)),
+  ]);
+  const instrProgramParam = reserveName(
+    usedNames.has("programAddress") ? "instructionProgramAddress" : "programAddress",
+    usedNames,
+  );
+  const instructionDataLocal = reserveName("instructionData", usedNames);
+  const signerParams = new Map<InstructionAccountNode, string>();
 
-  // The generated local holding the constructed instruction data must not
-  // collide with an account or argument parameter name.
-  let instructionDataLocal = 'instructionData';
-  while (argNames.has(instructionDataLocal) || accountNames.has(instructionDataLocal)) {
-    instructionDataLocal = `${instructionDataLocal}_`;
+  for (const account of accounts) {
+    if (account.isSigner === "either") {
+      signerParams.set(
+        account,
+        reserveName(`${camelCase(account.name as string)}IsSigner`, usedNames),
+      );
+    }
   }
+
+  const signerParamDeclarations = [...signerParams.values()]
+    .map((parameter) => `  bool ${parameter} = true,`)
+    .join("\n");
+  const signerParamDocs = [...signerParams.entries()]
+    .map(([account, parameter]) =>
+      `/// Set [${parameter}] to false when [${camelCase(account.name as string)}] does not sign (for example, a multisig authority).`
+    )
+    .join("\n");
 
   // Build the instruction builder function
   const accountParams = accounts
@@ -221,7 +238,7 @@ export function getInstructionPageFragment(
   const accountMetas = accounts
     .map((acc) => {
       const fieldName = camelCase(acc.name as string);
-      const role = getAccountRole(acc);
+      const role = getAccountRole(acc, signerParams.get(acc));
       const isOptional = acc.isOptional ?? false;
       if (isOptional) {
         if (optionalAccountStrategy === "omitted") {
@@ -323,11 +340,11 @@ Codec<${fragmentFromString(dataClassName)}, ${fragmentFromString(dataClassName)}
 
   // Instruction builder
   parts.push(fragment`
-/// Creates a [${fragmentFromString(typeName)}] instruction.
+/// Creates a [${fragmentFromString(typeName)}] instruction.${fragmentFromString(signerParamDocs ? `\n${signerParamDocs}` : "")}
 Instruction ${fragmentFromString(instrFnName)}({
   required Address ${fragmentFromString(instrProgramParam)},
 ${fragmentFromString(accountParams)}
-${fragmentFromString(argParams)}
+${fragmentFromString(argParams)}${fragmentFromString(signerParamDeclarations ? `\n${signerParamDeclarations}` : "")}
 }) {
   final ${instructionDataLocal} = ${fragmentFromString(dataClassName)}(
 ${fragmentFromString(dataConstruction)}
@@ -364,14 +381,27 @@ ${fragmentFromString(dataClassName)} ${fragmentFromString(parseFnName)}(Instruct
   return result;
 }
 
-function getAccountRole(acc: InstructionAccountNode): string {
-  const isSigner = acc.isSigner === true || acc.isSigner === "either";
-  const isWritable = acc.isWritable ?? false;
+/** Reserves an identifier without shadowing existing builder parameters or locals. */
+function reserveName(preferredName: string, usedNames: Set<string>): string {
+  let name = preferredName;
 
-  if (isSigner && isWritable) return "AccountRole.writableSigner";
-  if (isSigner) return "AccountRole.readonlySigner";
-  if (isWritable) return "AccountRole.writable";
-  return "AccountRole.readonly";
+  while (usedNames.has(name)) {
+    name = `${name}_`;
+  }
+
+  usedNames.add(name);
+  return name;
+}
+
+/** Preserves fixed permissions and lets either-signer accounts choose their role. */
+function getAccountRole(acc: InstructionAccountNode, signerParameter?: string): string {
+  const role = acc.isWritable ? "AccountRole.writable" : "AccountRole.readonly";
+
+  if (signerParameter) {
+    return `${signerParameter} ? ${role}Signer : ${role}`;
+  }
+
+  return acc.isSigner === true ? `${role}Signer` : role;
 }
 
 function isDiscriminatorArg(

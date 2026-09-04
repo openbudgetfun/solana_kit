@@ -45,6 +45,13 @@ void main() {
         ),
         staticAccounts: const [Address(systemProgram), Address(feePayer)],
         instructions: const [],
+        addressTableLookups: const [
+          AddressTableLookup(
+            lookupTableAddress: Address(systemProgram),
+            writableIndexes: [0],
+            readonlyIndexes: [1],
+          ),
+        ],
         lifetimeToken: blockhash,
       );
       final metas = getAccountMetasFromCompiledTransactionMessage(

@@ -20,20 +20,28 @@ class JupiterConfig {
   /// The [apiKey] is optional: Jupiter serves keyless traffic at a reduced
   /// rate limit on the same base URL. The [baseUrl] defaults to
   /// `https://api.jup.ag`. Set [client] to inject a custom HTTP client
-  /// for testing.
+  /// for testing. HTTPS is required unless [allowInsecureHttp] is explicitly
+  /// enabled for a trusted development endpoint. Redirects are never followed.
   JupiterConfig({
     this.apiKey,
-    this.baseUrl = defaultJupiterBaseUrl,
+    String baseUrl = defaultJupiterBaseUrl,
+    this.allowInsecureHttp = false,
     Client? client,
-  }) : client = client ?? Client();
+  }) : baseUrl = _validateBaseUrl(baseUrl, allowInsecureHttp),
+       client = client ?? Client();
 
   /// The Jupiter API key, or `null` for keyless access.
   ///
   /// The key is sent as the `x-api-key` request header on every call.
   final String? apiKey;
 
-  /// The Jupiter API base URL.
+  /// The Jupiter API base URL, without credentials, a query, or a fragment.
   final String baseUrl;
+
+  /// Allows plaintext HTTP for explicitly trusted local development endpoints.
+  ///
+  /// Defaults to `false`, requiring HTTPS to protect API keys and swap data.
+  final bool allowInsecureHttp;
 
   /// The HTTP client used for all API calls.
   final Client client;
@@ -41,4 +49,21 @@ class JupiterConfig {
   @override
   String toString() =>
       'JupiterConfig(baseUrl: $baseUrl, apiKey: ${apiKey == null ? 'null' : '***'})';
+}
+
+String _validateBaseUrl(String baseUrl, bool allowInsecureHttp) {
+  final uri = Uri.tryParse(baseUrl);
+  if (uri == null ||
+      !uri.hasAuthority ||
+      uri.host.isEmpty ||
+      (uri.scheme != 'https' && !(allowInsecureHttp && uri.scheme == 'http')) ||
+      uri.userInfo.isNotEmpty ||
+      uri.hasQuery ||
+      uri.hasFragment) {
+    throw ArgumentError(
+      'baseUrl must be an absolute HTTPS URL without credentials, query, or '
+      'fragment. Set allowInsecureHttp only for trusted development endpoints.',
+    );
+  }
+  return baseUrl;
 }

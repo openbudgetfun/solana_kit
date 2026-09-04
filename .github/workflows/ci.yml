@@ -36,7 +36,24 @@ jobs:
       - uses: ./.github/actions/devenv
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Resolve docs base path
+        id: base
+        run: |
+          repo_name="${GITHUB_REPOSITORY#*/}"
+          repo_owner="${GITHUB_REPOSITORY%%/*}"
+
+          if [[ "$repo_name" == "$repo_owner.github.io" ]]; then
+            base_path='/'
+          else
+            base_path="/$repo_name/"
+          fi
+
+          echo "base_path=$base_path" >> "$GITHUB_OUTPUT"
+          echo "Using DOCS_BASE_PATH=$base_path"
+        shell: bash
       - name: Build and smoke test docs site
+        env:
+          DOCS_BASE_PATH: ${{ steps.base.outputs.base_path }}
         run: docs:site:smoke
         shell: devenv shell -- bash -e {0}
 
@@ -141,12 +158,23 @@ jobs:
         with:
           channel: stable
           cache: true
+      - name: install Dart dependencies
+        run: flutter pub get
+        working-directory: .
       - name: install
         run: pnpm install --frozen-lockfile
       - name: typecheck
         run: pnpm typecheck
+      - name: build
+        run: pnpm build
       - name: test
         run: pnpm test
+      - name: test program artifact scripts
+        run: >-
+          node --experimental-test-module-mocks --test
+          scripts/build_program_artifacts.test.mjs
+          scripts/generate_program_packages.test.mjs
+        working-directory: .
 
   publish-dry-run:
     runs-on: ubuntu-latest
@@ -260,3 +288,50 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           use_oidc: true
           verbose: true
+
+  release-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@a8198c4bff370c8506180b035930dea56dbd5288 # v5
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: install NPM dependencies
+        run: pnpm install --frozen-lockfile
+      - name: shadow the nix-profile pnpm with the action-setup pnpm
+        run: |
+          # The nix-profile pnpm cannot run on Ubuntu runners (glibc
+          # mismatch); the action-setup pnpm can. The shim is prepended to
+          # PATH inside the devenv-shell steps below.
+          system_pnpm="$(command -v pnpm)"
+          test -n "$system_pnpm"
+          mkdir -p /tmp/pnpm-shim
+          printf '#!/bin/sh\nexec "%s" "$@"\n' "$system_pnpm" > /tmp/pnpm-shim/pnpm
+          chmod +x /tmp/pnpm-shim/pnpm
+      - uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: configure git identity for the local release commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: prepare the release locally (no push, no tags, no GitHub release)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          export PATH="/tmp/pnpm-shim:$PATH"
+          pnpm -v
+          monochange run release --commit
+        shell: devenv shell -- bash -e {0}
+      - name: validate every package publishes (dry run)
+        run: |
+          export PATH="/tmp/pnpm-shim:$PATH"
+          pnpm -v
+          monochange run publish --dry-run
+        shell: devenv shell -- bash -e {0}

@@ -13,13 +13,13 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  solana_kit_mobile_wallet_adapter: ^0.4.4
-  solana_kit_mobile_wallet_adapter_protocol: ^0.4.4
+  solana_kit_mobile_wallet_adapter: ^0.5.1
+  solana_kit_mobile_wallet_adapter_protocol: ^0.5.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  solana_kit_lints: ^0.8.0
+  solana_kit_lints: ^0.9.1
 
 flutter:
   uses-material-design: true

@@ -139,15 +139,56 @@ class AnchorCoder {
   ///
   /// Anchor `emit!` logs arrive as `Program data: <base64>` lines whose
   /// payload is `eventDiscriminator + fields`. Lines are matched against the
-  /// IDL events; unrecognized data lines are skipped.
+  /// IDL events; unrecognized data lines are skipped. Only events emitted
+  /// while the IDL program is executing are returned, including calls to it
+  /// through CPI. Pass the complete transaction logs so invocation provenance
+  /// can be checked, and check the transaction result before acting on events.
   List<AnchorDecodedEvent> decodeEventLogs(List<String> logs) {
     final events = <AnchorDecodedEvent>[];
+    final programs = <String>[];
+    final invocationPattern = RegExp(
+      r'^Program ([1-9A-HJ-NP-Za-km-z]+) invoke \[(\d+)\]$',
+    );
+    final completionPattern = RegExp(
+      r'^Program ([1-9A-HJ-NP-Za-km-z]+) (?:success|failed: .*)$',
+    );
+
     for (final log in logs) {
-      final marker = log.indexOf('Program data: ');
-      if (marker < 0) continue;
-      final payload = base64Decode(
-        log.substring(marker + 'Program data: '.length),
-      );
+      final invocation = invocationPattern.firstMatch(log);
+
+      if (invocation != null) {
+        final depth = int.tryParse(invocation.group(2)!);
+
+        if (depth == 1) programs.clear();
+
+        // Incomplete or inconsistent logs cannot establish event provenance.
+        if (depth != programs.length + 1) {
+          programs.clear();
+          continue;
+        }
+
+        programs.add(invocation.group(1)!);
+        continue;
+      }
+
+      final completion = completionPattern.firstMatch(log);
+
+      if (completion != null) {
+        if (programs.isNotEmpty && programs.last == completion.group(1)) {
+          programs.removeLast();
+        } else {
+          programs.clear();
+        }
+        continue;
+      }
+
+      if (programs.isEmpty ||
+          programs.last != idl.address ||
+          !log.startsWith('Program data: ')) {
+        continue;
+      }
+
+      final payload = base64Decode(log.substring('Program data: '.length));
       for (final entry in idl.events.entries) {
         final discriminator = entry.value.discriminator;
         if (!startsWithDiscriminator(payload, discriminator)) {

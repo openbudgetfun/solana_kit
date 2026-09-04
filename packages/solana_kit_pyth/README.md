@@ -149,3 +149,7 @@ Audited against:
 - [`@pythnetwork/pyth-solana-receiver`](https://github.com/pyth-network/pyth-crosschain) v0.16.0 (receiver IDL, VAA helpers, PDA seeds)
 - [`@pythnetwork/client`](https://github.com/pyth-network/pyth-crosschain) v2.22.1 (price account layout, magic constant)
 - [`@pythnetwork/price-service-sdk`](https://github.com/pyth-network/pyth-crosschain) v1.9.0 (accumulator update parsing, wire message formats)
+
+`HermesPrice.asDouble` is a lossy floating-point conversion. Extreme exponents overflow to infinity or underflow to zero in bounded time; use the integer `price` and `expo` fields when exact decimal arithmetic is required.
+
+On-chain confidence and slot fields are decoded as unsigned `BigInt` values across the full 64-bit range.

@@ -31,8 +31,18 @@ class SurfnetCheatcodes {
 
   final Surfnet _surfnet;
 
-  Future<Object?> _call(String method, [List<Object?> params = const []]) =>
-      _surfnet.execute(_RawCheatcode(method, params));
+  Future<Object?> _call(
+    String method, [
+    List<Object?> params = const [],
+  ]) async {
+    final result = await _surfnet.execute(_RawCheatcode(method, params));
+    if (result is Map<String, Object?> &&
+        result['context'] is Map<String, Object?> &&
+        result.containsKey('value')) {
+      return result['value'];
+    }
+    return result;
+  }
 
   /// Moves the local clock to an absolute slot, epoch, or timestamp.
   ///
@@ -175,7 +185,7 @@ class SurfnetCheatcodes {
     Map<String, Object?>? config,
   }) => _call('surfnet_profileTransaction', [
     transactionData,
-    ?tag,
+    if (tag != null || config != null) tag,
     ?config,
   ]);
 

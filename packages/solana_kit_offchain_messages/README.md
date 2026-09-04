@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_offchain_messages": ^0.4.3
+  "solana_kit_offchain_messages": ^0.5.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -95,7 +95,9 @@ void main() {
 
 ### Signing and verifying
 
-`signOffchainMessageEnvelope` fills the envelope's signature map with key pairs, and `verifyOffchainMessageEnvelope` checks that all required signatories have valid signatures.
+`signOffchainMessageEnvelope` fills the envelope's signature map with key pairs, and `verifyOffchainMessageEnvelope` checks that all required signatories have valid signatures. Signing, verification, and envelope codecs validate the complete message, including its content and version-specific signer rules.
+
+`isFullySignedOffchainMessageEnvelope` and `assertIsFullySignedOffchainMessageEnvelope` check that every signer named in the encoded message has a non-null signature, even when a required address is absent from the map. These presence checks do not verify signatures cryptographically. When accepting a wallet response, compare the decoded message with the one you requested (using `assertOffchainMessageV1Equal` for v1), then call `verifyOffchainMessageEnvelope`.
 
 ```dart
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -113,8 +115,10 @@ void main() {
       format: OffchainMessageContentFormat.restrictedAscii1232BytesMax,
       text: 'Sign to verify your identity.',
     ),
-    requiredSignatories: const [
-      OffchainMessageSignatory(address: Address('11111111111111111111111111111111')),
+    requiredSignatories: [
+      OffchainMessageSignatory(
+        address: getAddressFromPublicKey(keyPair.publicKey),
+      ),
     ],
   );
   final envelope = compileOffchainMessageEnvelope(message);
@@ -175,7 +179,7 @@ void main() {
 
 - `OffchainMessageV0` / `OffchainMessageV1`: the two message versions.
 - `OffchainMessageContent`, `OffchainMessageSignatory`, `offchainMessageApplicationDomain`.
-- `compileOffchainMessageEnvelope`, `signOffchainMessage`, `verifyOffchainMessage`.
+- `compileOffchainMessageEnvelope`, `signOffchainMessageEnvelope`, `verifyOffchainMessageEnvelope`.
 - Codec factories: `getOffchainMessageV0Codec`, `getOffchainMessageV1Codec`, `getOffchainMessageCodec`, `getOffchainMessageEnvelopeCodec`.
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_offchain_messages"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_offchain_messages/solana_kit_offchain_messages.dart"} -->

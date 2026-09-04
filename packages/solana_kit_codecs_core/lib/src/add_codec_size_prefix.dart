@@ -4,6 +4,7 @@ import 'package:solana_kit_codecs_core/src/assertions.dart';
 import 'package:solana_kit_codecs_core/src/codec.dart';
 import 'package:solana_kit_codecs_core/src/codec_utils.dart';
 import 'package:solana_kit_codecs_core/src/combine_codec.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 /// Stores the size of the [encoder] in bytes as a prefix using
 /// the [prefix] encoder.
@@ -56,6 +57,9 @@ Encoder<TFrom> addEncoderSizePrefix<TFrom>(
 
 /// Bounds the size of the nested [decoder] by reading its encoded [prefix].
 ///
+/// The prefix must decode to a finite, nonnegative integer that does not
+/// exceed the available bytes. Invalid byte lengths throw a [SolanaError].
+///
 /// When both [decoder] and [prefix] are fixed-size, the result is a
 /// fixed-size decoder. Otherwise, the result is variable-size.
 Decoder<TTo> addDecoderSizePrefix<TTo>(
@@ -63,16 +67,24 @@ Decoder<TTo> addDecoderSizePrefix<TTo>(
   Decoder<num> prefix,
 ) {
   (TTo, int) readImpl(Uint8List bytes, int currentOffset) {
-    final (bigintSize, decoderOffset) = prefix.read(bytes, currentOffset);
-    final size = bigintSize.toInt();
-    final contentStart = decoderOffset;
-    // Validate that enough bytes remain before attempting to slice.
-    final remaining = bytes.length - contentStart;
-    assertByteArrayHasEnoughBytesForCodec(
+    final (decodedSize, contentStart) = prefix.read(bytes, currentOffset);
+    assertByteArrayOffsetIsNotOutOfRange(
       'addDecoderSizePrefix',
-      size,
-      bytes.sublist(contentStart),
+      contentStart,
+      bytes.length,
     );
+    final remaining = bytes.length - contentStart;
+    if (!decodedSize.isFinite ||
+        decodedSize < 0 ||
+        decodedSize > remaining ||
+        decodedSize != decodedSize.truncateToDouble()) {
+      throw SolanaError(SolanaErrorCode.codecsInvalidByteLength, {
+        'codecDescription': 'addDecoderSizePrefix',
+        'expected': decodedSize,
+        'bytesLength': remaining,
+      });
+    }
+    final size = decodedSize.toInt();
     // Slice the byte array to the contained size if necessary.
     Uint8List sliced;
     if (contentStart > 0 || remaining > size) {

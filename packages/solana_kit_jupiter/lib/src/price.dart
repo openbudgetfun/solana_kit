@@ -39,7 +39,11 @@ class JupiterPriceClient {
     );
     final json = switch (response) {
       final Map<String, Object?> json => json,
-      _ => <String, Object?>{},
+      _ => throw JupiterException(
+        statusCode: 200,
+        message: 'Expected a JSON object from /price/v3',
+        body: response,
+      ),
     };
     return json.map((key, value) {
       final price = switch (value) {

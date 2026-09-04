@@ -60,8 +60,16 @@ class WalletRegistryController implements WalletRegistry {
   Future<void> initialize() async {}
 
   /// Registers [wallet] once and returns an idempotent unregister callback.
+  ///
+  /// Wallets that share a name with an already-registered wallet are ignored:
+  /// extensions can announce themselves more than once through additional
+  /// content-script worlds or after a reload, and the picker should show each
+  /// wallet a single time. This mirrors wallet-adapter's name-based dedup.
   void Function() register(Wallet wallet) {
     if (_disposed) throw StateError('Wallet registry is disposed');
+    if (_wallets.any((existing) => existing.name == wallet.name)) {
+      return () {};
+    }
     if (_wallets.contains(wallet)) return () {};
     _wallets.add(wallet);
     _events.add(WalletRegistered(wallet));

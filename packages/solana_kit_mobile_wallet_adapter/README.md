@@ -248,6 +248,8 @@ This is useful when wallet policy requires Android app-origin verification befor
 - Android wallet-side implementation is backed by Solana Mobile `walletlib` request/scenario APIs.
 - Request lifecycle is explicit:
   - native request -> Dart callback -> `completeWith*` -> native resolve/cancel
+- Each `WalletScenario` can be started once. Close the current scenario before creating another scenario on the same native method channel. Closing during native scenario creation also cancels startup and closes the native scenario.
+- Wallet callbacks only receive native events with the active scenario's session ID. Events with missing or different session IDs and queued events received after closure are ignored before authorization or signing callbacks run.
 - Local/remote transport handling enforces inbound encrypted sequence ordering.
 - Remote association supports reflector protocol negotiation (`binary` and `base64`).
 

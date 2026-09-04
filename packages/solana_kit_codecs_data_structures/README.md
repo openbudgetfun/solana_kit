@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_codecs_data_structures": ^0.8.0
+  "solana_kit_codecs_data_structures": ^0.9.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -99,6 +99,8 @@ void main() {
 ## Array and tuple codecs
 
 `getArrayCodec` handles fixed-size and variable-length (prefixed) arrays. `getTupleCodec` encodes a fixed sequence of heterogeneous values without field names.
+
+Prefixed array decoders reject missing, fractional, negative, and excessive item counts. The default maximum is one million items; pass `maxItems` when a wire format needs a smaller application limit.
 
 ```dart
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';

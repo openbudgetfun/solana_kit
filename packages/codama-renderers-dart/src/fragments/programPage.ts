@@ -16,6 +16,7 @@ import {
 } from "../utils/fragment.js";
 import type { RenderScope } from "../utils/options.js";
 import { camelCase, pascalCase } from "../utils/nameTransformers.js";
+import { toDartStringLiteral } from "../utils/valueNodes.js";
 import { WELL_KNOWN_ADDRESSES } from "../utils/wellKnownAddresses.js";
 
 /**
@@ -55,7 +56,7 @@ const ${fragmentFromString(addressConstName)} = ${fragmentFromString(wellKnownNa
 ${use("Address", "solanaAddresses")}
 
 /// The address of the ${fragmentFromString(pascalCase(name))} program.
-const ${fragmentFromString(addressConstName)} = Address('${fragmentFromString(node.publicKey)}');`;
+const ${fragmentFromString(addressConstName)} = Address(${fragmentFromString(toDartStringLiteral(node.publicKey))});`;
 
   const parts: Fragment[] = [addressDeclaration];
 
@@ -232,7 +233,7 @@ function getValueFragment(
     case "booleanValueNode":
       return fragmentFromString(String(value.boolean));
     case "stringValueNode":
-      return fragmentFromString(`'${value.string.replaceAll("'", "\\'")}'`);
+      return fragmentFromString(toDartStringLiteral(value.string));
     case "bytesValueNode": {
       const clean = value.data.replace(/^0x/, "");
       const bytes = clean.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) ?? [];

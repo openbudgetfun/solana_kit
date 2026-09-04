@@ -1111,13 +1111,13 @@ Discriminator helpers and error resolution round out the runtime: `instructionDi
 
 ### Swap through Jupiter's managed order flow
 
-`/order` returns a quote plus an assembled v0 transaction; sign it with Solana Kit signers and submit it through `/execute`.
+Pass the swapping wallet as `taker` to receive an assembled v0 transaction from `/order`. Without a taker the endpoint returns only a quote. Inspect and sign the transaction with Solana Kit signers, then submit it through `executeOrder`; check that the returned `status` is `Success`, since failed executions can also include a signature.
 
 ```dart
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_jupiter/solana_kit_jupiter.dart';
 
-Future<void> main() async {
+Future<void> previewSwap(Address taker) async {
   const solAddress = Address('So11111111111111111111111111111111111111112');
   const usdcAddress = Address(
     'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
@@ -1131,16 +1131,21 @@ Future<void> main() async {
       outputMint: usdcAddress,
       amount: BigInt.from(10000000), // 0.01 SOL
       slippageBps: 50,
+      taker: taker,
     ),
   );
 
-  final transaction = decodeBase64SwapTransaction(order.encodedTransaction!);
+  final encodedTransaction = order.encodedTransaction;
+  if (encodedTransaction == null) {
+    throw StateError('Jupiter did not return a transaction for this order.');
+  }
+  final transaction = decodeBase64SwapTransaction(encodedTransaction);
   // Inspect, sign the transaction with solana_kit_signers, then submit it.
   print(transaction);
 }
 ```
 
-For self-landing swaps, use `jupiter.swap.buildSwap(...)` to fetch the raw instruction set instead of the assembled transaction.
+For self-landing swaps, use `jupiter.swap.buildSwap(...)` with a taker. Preserve the returned setup, swap, cleanup, other, and optional tip instructions, plus the lookup table mappings and blockhash metadata, when assembling the transaction.
 
 <!-- {/docsJupiterSwapSection} -->
 

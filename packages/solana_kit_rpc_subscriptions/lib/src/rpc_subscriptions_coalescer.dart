@@ -48,28 +48,39 @@ getRpcSubscriptionsTransportWithSubscriptionCoalescing(
           signal: abortSource.token,
         ),
       );
-
-      // Listen for errors on the streams to invalidate the cache.
-      streamsFuture
-          .then((streams) {
-            final errorSubscription = streams.errors.listen((_) {
-              cache.remove(subscriptionConfigurationHash);
-              abortSource.cancel();
-            });
-            abortSource.token.future.then((_) {
-              unawaited(errorSubscription.cancel());
-            }).ignore();
-          })
-          .catchError((_) {
-            // Ignore errors from the transport itself.
-          })
-          .ignore();
-
-      cachedEntry = _CacheEntry(
+      final newEntry = _CacheEntry(
         abortSource: abortSource,
         streamsFuture: streamsFuture,
       );
-      cache[subscriptionConfigurationHash] = cachedEntry;
+      cachedEntry = newEntry;
+      cache[subscriptionConfigurationHash] = newEntry;
+
+      void invalidateCache() {
+        if (cache[subscriptionConfigurationHash] == newEntry) {
+          cache.remove(subscriptionConfigurationHash);
+        }
+        abortSource.cancel();
+      }
+
+      // Listen for errors on the streams to invalidate the cache.
+      streamsFuture
+          .then<void>(
+            (streams) {
+              final errorSubscription = streams.errors.listen(
+                (_) => invalidateCache(),
+                onError: (Object error, StackTrace stackTrace) {
+                  invalidateCache();
+                },
+              );
+              abortSource.token.future.then((_) {
+                unawaited(errorSubscription.cancel());
+              }).ignore();
+            },
+            onError: (Object error, StackTrace stackTrace) {
+              invalidateCache();
+            },
+          )
+          .ignore();
     }
 
     cachedEntry.numSubscribers++;

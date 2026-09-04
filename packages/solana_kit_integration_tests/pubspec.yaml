@@ -1,6 +1,6 @@
 name: solana_kit_integration_tests
 description: On-chain integration tests for Solana Kit program clients against a local SurfPool validator.
-version: 0.0.2
+version: 0.1.1
 repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_integration_tests
 homepage: https://openbudgetfun.github.io/solana_kit/
 publish_to: none
@@ -8,35 +8,35 @@ environment:
   sdk: ^3.12.0
 resolution: workspace
 dependencies:
-  solana_kit_accounts: ^0.8.0
-  solana_kit_address_constants: ^0.8.0
-  solana_kit_address_lookup_table: ^0.3.1
-  solana_kit_addresses: ^0.8.0
-  solana_kit_associated_token_account: ^0.6.1
-  solana_kit_codecs_core: ^0.8.0
-  solana_kit_compute_budget: ^0.7.1
-  solana_kit_config: ^0.1.3
-  solana_kit_errors: ^0.8.0
-  solana_kit_instructions: ^0.8.0
-  solana_kit_keys: ^0.8.0
-  solana_kit_loader: ^0.3.1
-  solana_kit_memo: ^0.3.1
-  solana_kit_mpl_bubblegum: ^0.4.1
-  solana_kit_pyth: ^0.0.0
-  solana_kit_rpc: ^0.8.0
-  solana_kit_rpc_api: ^0.8.0
-  solana_kit_rpc_spec: ^0.8.0
-  solana_kit_rpc_types: ^0.8.0
-  solana_kit_signers: ^0.8.0
-  solana_kit_stake: ^0.4.1
-  solana_kit_subscriptions: ^0.1.2
-  solana_kit_surfpool: ^0.2.1
-  solana_kit_system: ^0.6.1
-  solana_kit_token: ^0.7.1
-  solana_kit_token_2022: ^0.7.1
-  solana_kit_transaction_confirmation: ^0.8.0
-  solana_kit_transaction_messages: ^0.8.0
-  solana_kit_transactions: ^0.8.0
+  solana_kit_accounts: ^0.9.1
+  solana_kit_address_constants: ^0.9.1
+  solana_kit_address_lookup_table: ^0.4.1
+  solana_kit_addresses: ^0.9.1
+  solana_kit_associated_token_account: ^0.7.1
+  solana_kit_codecs_core: ^0.9.1
+  solana_kit_compute_budget: ^0.8.1
+  solana_kit_config: ^0.2.1
+  solana_kit_errors: ^0.9.1
+  solana_kit_instructions: ^0.9.1
+  solana_kit_keys: ^0.9.1
+  solana_kit_loader: ^0.4.1
+  solana_kit_memo: ^0.4.1
+  solana_kit_mpl_bubblegum: ^0.5.1
+  solana_kit_pyth: ^0.9.1
+  solana_kit_rpc: ^0.9.1
+  solana_kit_rpc_api: ^0.9.1
+  solana_kit_rpc_spec: ^0.9.1
+  solana_kit_rpc_types: ^0.9.1
+  solana_kit_signers: ^0.9.1
+  solana_kit_stake: ^0.5.1
+  solana_kit_subscriptions: ^0.2.1
+  solana_kit_surfpool: ^0.3.1
+  solana_kit_system: ^0.7.1
+  solana_kit_token: ^0.8.1
+  solana_kit_token_2022: ^0.8.1
+  solana_kit_transaction_confirmation: ^0.9.1
+  solana_kit_transaction_messages: ^0.9.1
+  solana_kit_transactions: ^0.9.1
   test: ^1.25.0
 dev_dependencies:
-  solana_kit_lints: ^0.8.0
+  solana_kit_lints: ^0.9.1

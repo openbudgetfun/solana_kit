@@ -74,8 +74,15 @@ bool ecdsaVerify(
 
 /// Performs ECDH P-256 key agreement and returns the 32-byte shared secret
 /// (the x-coordinate of the shared point).
+///
+/// Throws [ArgumentError] for non-P-256 keys or an invalid public point.
 Uint8List ecdhSharedSecret(ECPrivateKey privateKey, ECPublicKey publicKey) {
-  final point = publicKey.Q! * privateKey.d;
+  if (privateKey.parameters?.curve != p256.curve) {
+    throw ArgumentError('Expected a P-256 private key');
+  }
+
+  final publicPoint = _validatedP256PublicPoint(publicKey);
+  final point = publicPoint * privateKey.d;
   if (point == null || point.isInfinity) {
     throw StateError('ECDH agreement produced point at infinity');
   }
@@ -90,6 +97,8 @@ Uint8List ecPublicKeyToBytes(ECPublicKey publicKey) {
 }
 
 /// Imports a 65-byte X9.62 uncompressed public key as an [ECPublicKey].
+///
+/// Throws [ArgumentError] if the encoding does not contain a valid P-256 point.
 ECPublicKey ecPublicKeyFromBytes(Uint8List bytes) {
   if (bytes.length != 65 || bytes.first != 0x04) {
     throw ArgumentError.value(
@@ -99,8 +108,33 @@ ECPublicKey ecPublicKeyFromBytes(Uint8List bytes) {
     );
   }
 
-  final point = p256.curve.decodePoint(bytes);
-  return ECPublicKey(point, p256);
+  final publicKey = ECPublicKey(p256.curve.decodePoint(bytes), p256);
+  _validatedP256PublicPoint(publicKey);
+  return publicKey;
+}
+
+ECPoint _validatedP256PublicPoint(ECPublicKey publicKey) {
+  final point = publicKey.Q;
+
+  if (publicKey.parameters?.curve != p256.curve ||
+      point == null ||
+      point.isInfinity ||
+      point.curve != p256.curve) {
+    throw ArgumentError('Expected a finite P-256 public key');
+  }
+
+  final x = point.x!;
+  final y = point.y!;
+
+  // Pointycastle decodes uncompressed points without checking the curve
+  // equation. Reject invalid points before multiplying by a private scalar.
+  if (x.toBigInteger()!.isNegative ||
+      y.toBigInteger()!.isNegative ||
+      y.square() != x.square() * x + p256.curve.a! * x + p256.curve.b!) {
+    throw ArgumentError('Public key is not a canonical point on P-256');
+  }
+
+  return point;
 }
 
 /// Derives a key using HKDF-SHA256.

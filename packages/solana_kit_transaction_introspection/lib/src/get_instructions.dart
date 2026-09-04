@@ -44,10 +44,36 @@ class _NormalizedCompiledInstruction {
 ///
 /// Inner-instruction account indices reference the same flat list, so this
 /// helper is also useful for resolving inner instructions.
+///
+/// Throws a [SolanaError] when the supplied loaded address counts do not match
+/// the message's address table lookups. Messages with lookups require complete
+/// loaded addresses before their accounts can be resolved.
 List<AccountMeta> getAccountMetasFromCompiledTransactionMessage(
   CompiledTransactionMessage compiledMessage, {
   LoadedAddresses? loadedAddresses,
 }) {
+  // The signed lookup counts define where readonly addresses begin. Accepting
+  // partial or extra RPC metadata would silently resolve different accounts.
+  final lookups = compiledMessage.version == TransactionVersion.v0
+      ? compiledMessage.addressTableLookups ?? const <AddressTableLookup>[]
+      : const <AddressTableLookup>[];
+  final numLoadedWritable = lookups.fold<int>(
+    0,
+    (count, lookup) => count + lookup.writableIndexes.length,
+  );
+  final numLoadedReadonly = lookups.fold<int>(
+    0,
+    (count, lookup) => count + lookup.readonlyIndexes.length,
+  );
+
+  if ((loadedAddresses?.writable.length ?? 0) != numLoadedWritable ||
+      (loadedAddresses?.readonly.length ?? 0) != numLoadedReadonly) {
+    throw SolanaError(
+      SolanaErrorCode
+          .transactionIntrospectionUnrecognizedGetTransactionResponse,
+    );
+  }
+
   final header = compiledMessage.header;
   final staticAccounts = compiledMessage.staticAccounts;
   final numWritableSignerAccounts =

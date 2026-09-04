@@ -2424,6 +2424,259 @@ Package groups scaffolded:
 - Fragment-based code generation with automatic import tracking
 - Comprehensive test suite with 261 tests
 
+## [0.9.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.1) (2026-08-30)
+
+Grouped release for `main`.
+
+### 🐛 Fixed
+
+#### Fix publish validation for ecosystem packages
+
+_Packages:_ _solana_kit_anchor_, _solana_kit_jupiter_, _solana_kit_mpl_core_, _solana_kit_mpl_token_metadata_, _solana_kit_squads_
+
+Declare the `meta` and `solana_kit_accounts` dependencies that the generated Squads and mpl-token-metadata clients import, so `dart pub publish` validation passes, and normalize `readme.md` to `README.md` across the ecosystem packages to satisfy the pub README requirement.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`a53391f`](https://github.com/openbudgetfun/solana_kit/commit/a53391f69a4668422096a31bcac46397770a5d33)
+
+## [0.9.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.0) (2026-08-30)
+
+Grouped release for `main`.
+
+### 💥 Breaking Change
+
+#### Support Anchor programs in Dart
+
+_Packages:_ _solana_kit_anchor_
+
+Add the Anchor runtime package: Anchor sighash discriminators (`sha256("namespace:name")[0..8]`), Anchor IDL 0.30 parsing, a dynamic coder that builds account, instruction, and event codecs from an IDL at runtime, a pure-Dart SHA-256, and Anchor error resolution against the standard table plus program-defined IDL errors. Generic IDL type instantiations are rejected at codec-build time.
+
+```dart
+import 'package:solana_kit_anchor/solana_kit_anchor.dart';
+
+final idl = AnchorIdlProgram.parse(idlJson);
+final coder = AnchorCoder(idl);
+final args = coder.encodeInstructionData('initialize', {
+  'authority': authorityAddress,
+});
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #227](https://github.com/openbudgetfun/solana_kit/pull/227)
+
+#### Add the Jupiter Exchange client
+
+_Packages:_ _solana_kit_jupiter_
+
+Add the Jupiter Exchange client package: Swap API v2 (`/order`, `/execute`, `/build`), Price API v3, Token API v2, base64 transaction decoding, an injectable HTTP transport, and keyless or `x-api-key` authentication on `https://api.jup.ag`.
+
+```dart
+final jupiter = createJupiterClient(JupiterConfig(apiKey: 'key'));
+final order = await jupiter.swap.getOrder(
+  JupiterOrderRequest(
+    inputMint: sol,
+    outputMint: usdc,
+    amount: BigInt.from(10000000),
+  ),
+);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #227](https://github.com/openbudgetfun/solana_kit/pull/227)
+
+#### Add the Metaplex Core program client
+
+_Packages:_ _solana_kit_mpl_core_
+
+Add the mpl-core (Metaplex Core) program client generated from the metaplex-foundation shank IDL: 42 instruction builders, 6 account codecs, 57 error helpers, program-level instruction identification and parsing, and PDA derivations for the asset signer, preconfigured plugin accounts, dynamic extra accounts, and oracle accounts.
+
+```dart
+final (assetSigner, bump) = await findAssetSignerPda(asset: asset);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #227](https://github.com/openbudgetfun/solana_kit/pull/227)
+
+#### Add the Token Metadata program client
+
+_Packages:_ _solana_kit_mpl_token_metadata_
+
+Add the mpl-token-metadata program client, generated with `codama-renderers-dart` from the metaplex-foundation shank IDL: 58 instruction builders, 14 account codecs, 203 error helpers, instruction identification and parsing, and PDA derivations for metadata, master editions, edition markers, collection and use authority records, token records, delegate records, and program-as-burner.
+
+```dart
+final (metadata, bump) = await findMetadataPda(mint: mint);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #227](https://github.com/openbudgetfun/solana_kit/pull/227)
+
+#### Add the Pyth Network client
+
+_Packages:_ _solana_kit_pyth_
+
+Add the Pyth Network client package: the Hermes HTTP client (price feeds, binary price updates), Wormhole VAA and accumulator update parsing, Solana price-account and price-update-v2 decoders, `postUpdateAtomic`/`postUpdate` instruction builders for the Pyth Solana receiver program, and typed price-feed models.
+
+```dart
+final hermes = HermesClient(HermesConfig());
+final feeds = await hermes.getLatestPriceFeeds([feedId]);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #227](https://github.com/openbudgetfun/solana_kit/pull/227)
+
+#### Sync upstream `@solana/kit` v8.1.0
+
+_Packages:_ _solana_kit_rpc_transformers_, _solana_kit_transaction_messages_, _solana_kit_transactions_
+
+Tracks upstream APIs and behavior through `v8.1.0`:
+
+- **`solana_kit_transaction_messages` (breaking)**: removed the deprecated compute-unit-limit helpers `fillTransactionMessageProvisoryComputeUnitLimit` and `estimateAndSetComputeUnitLimitFactory`, matching upstream `@solana/kit`'s removal of the deprecated `@solana/kit` estimation helpers (#1948). Use `fillTransactionMessageProvisoryResourceLimits` and `estimateAndSetResourceLimitsFactory` instead, which additionally reserve and set the loaded accounts data size limit for version 1 transactions. `setTransactionMessageComputeUnitLimit` and `setTransactionMessageConfig` now reject compute unit limits the runtime will not honor — an integer outside `[0, 1400000]` — throwing `SolanaErrorCode.transactionComputeUnitLimitOutOfRange`, and reject invalid heap sizes — not a multiple of 1024 bytes in `[32768, 262144]` — throwing `SolanaErrorCode.transactionInvalidHeapSize` (upstream #1972). Added the upstream `heap-size.ts` module as `getTransactionMessageHeapSize`/`setTransactionMessageHeapSize` with the same validation, and `resource_limit_validation.dart` with `assertIsValidComputeUnitLimit`/`assertIsValidHeapSize`, `minHeapSize`, `maxHeapSize`, and `heapSizeMultipleOf`. Decoding is unaffected: `decompileTransactionMessage` still returns messages carrying out-of-range values.
+
+  Migration:
+  - `fillTransactionMessageProvisoryComputeUnitLimit(m)` → `fillTransactionMessageProvisoryResourceLimits(m)`.
+  - `estimateAndSetComputeUnitLimitFactory(estimate)` → `estimateAndSetResourceLimitsFactory(estimateResourceLimitsFactory(estimate))`.
+- **`solana_kit_transactions` (breaking)**: removed the fixed-size constants `transactionPacketSize`, `transactionPacketHeader`, and `transactionSizeLimit`, matching upstream's removal of `TRANSACTION_PACKET_SIZE`, `TRANSACTION_PACKET_HEADER`, and `TRANSACTION_SIZE_LIMIT` (#1948). Use `getTransactionSizeLimit` to derive the limit for a specific transaction, or the per-version constants `legacyTransactionSizeLimit` (1232) and `v1TransactionSizeLimit` (4096).
+
+  Migration: `TRANSACTION_SIZE_LIMIT - getTransactionSize(t)` → `getTransactionSizeLimit(t) - getTransactionSize(t)`.
+- `solana_kit_errors`: added the `failedToSignTransaction` (13) and `failedToSignTransactions` (14) error codes with upstream messages, plus the transaction codes `transactionComputeUnitLimitOutOfRange` (5663039) and `transactionInvalidHeapSize` (5663040) (upstream #1902, #1972).
+- `solana_kit_instruction_plans`: added `createFailedToSendTransactionError`, `createFailedToSendTransactionsError`, `createFailedToSignTransactionError`, `createFailedToSignTransactionsError`, and `createFailedToExecuteTransactionPlanError`, mirroring upstream `@solana/instruction-plans`' `transaction-plan-errors.ts` (#1902, #1434). The signing factories carry the same non-enumerable `transactionPlanResult` and optional `logs`/`preflightData` context as their sending counterparts, but the message includes no submission-location indicator because signing never submits. The executor now throws through `createFailedToExecuteTransactionPlanError`.
+- `solana_kit`: added the `ClientWithTransactionSending` and `ClientWithTransactionSigning` client interfaces, mirroring upstream `@solana/plugin-interfaces` (#1899). `signTransaction`/`signTransactions` accept the same flexible inputs as their sending counterparts and return signed transactions without submitting them. Sending results guarantee a signature-bearing `context`; signing makes no default guarantee about the context, matching the upstream `TContext` parameterization (adapted to Dart's map-based result contexts).
+- **`solana_kit_rpc_transformers` (breaking)**: removed `getBigIntDowncastRequestTransformer`, matching upstream #1948. It was no longer used by the default Solana RPC request transformer: the Solana RPC transport serializes `BigInt` values losslessly as large integer literals via `stringifyJsonWithBigInts`, and Agave parses JSON integers across the full `u64` range without precision loss, so downcasting `BigInt`s to (potentially lossy) `int`s is unnecessary. `getDefaultRequestTransformerForSolanaRpc` no longer downcasts; if you still need this behavior, recreate it with `getTreeWalkerRequestTransformer` and a visitor that replaces `BigInt` nodes with `int` values.
+- `solana_kit_rpc_transformers`: the numeric allow-list keeps `transactionConfig.computeUnitLimit`, `transactionConfig.heapSize`, and `transactionConfig.loadedAccountsDataSizeLimit` from version 1 transaction responses as numbers instead of upcasting them to `BigInt` (upstream #1951).
+- Documentation now tracks `@solana/kit` `v8.1.0`, and the reference pin in `config/reference-repos.json` moved to `bb54243d8a57` (tag `v8.1.0`).
+
+Migration example:
+
+```dart
+// Before (removed):
+// final estimate = estimateComputeUnitLimitFactory(rpc);
+// var message = await estimateAndSetComputeUnitLimitFactory(estimate)(message);
+// final freeBytes = transactionSizeLimit - getTransactionSize(transaction);
+
+// After:
+final estimate = estimateResourceLimitsFactory(rpc);
+var message = await estimateAndSetResourceLimitsFactory(estimate)(message);
+final freeBytes =
+    getTransactionSizeLimit(transaction) - getTransactionSize(transaction);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #225](https://github.com/openbudgetfun/solana_kit/pull/225) · _Related issues:_ [#1899](https://github.com/openbudgetfun/solana_kit/issues/1899), [#1902](https://github.com/openbudgetfun/solana_kit/issues/1902), [#1910](https://github.com/openbudgetfun/solana_kit/issues/1910), [#1913](https://github.com/openbudgetfun/solana_kit/issues/1913), [#1948](https://github.com/openbudgetfun/solana_kit/issues/1948), [#1951](https://github.com/openbudgetfun/solana_kit/issues/1951), [#1957](https://github.com/openbudgetfun/solana_kit/issues/1957), [#1970](https://github.com/openbudgetfun/solana_kit/issues/1970), [#1971](https://github.com/openbudgetfun/solana_kit/issues/1971), [#1972](https://github.com/openbudgetfun/solana_kit/issues/1972), [#1979](https://github.com/openbudgetfun/solana_kit/issues/1979), [#220](https://github.com/openbudgetfun/solana_kit/issues/220)
+
+#### Add the Solana Name Service client
+
+_Packages:_ _solana_kit_sns_
+
+Add the Solana Name Service client package: `.sol` domain key derivation (V1/V2 records, subdomains, sub-records), name registry codecs, record V1/V2 address derivation and content codecs, reverse-record helpers, pure-Dart SHA-256, and all protocol program-address constants from the official sns-sdk.
+
+```dart
+final domainKey = await findDomainKey('mysite');
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #227](https://github.com/openbudgetfun/solana_kit/pull/227)
+
+#### Add the Squads V4 multisig client
+
+_Packages:_ _solana_kit_squads_
+
+Add the Squads V4 multisig program client, generated with `codama-renderers-dart` from the Squads-Protocol v4 Anchor IDL: 36 instruction builders, 9 account codecs, 45 error helpers, program-level parsing, and PDA derivations for multisigs, vaults, transactions, proposals, spending limits, and program config, with `newConfigAuthority` argument naming matching the upstream TS SDK.
+
+```dart
+final (multisig, bump) = await findMultisigPda(createKey: createKey);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #227](https://github.com/openbudgetfun/solana_kit/pull/227)
+
+### 🚀 Feature
+
+#### Sync upstream `@solana/kit` v8.1.0
+
+_Packages:_ _solana_kit_, _solana_kit_errors_, _solana_kit_instruction_plans_
+
+Tracks upstream APIs and behavior through `v8.1.0`:
+
+- **`solana_kit_transaction_messages` (breaking)**: removed the deprecated compute-unit-limit helpers `fillTransactionMessageProvisoryComputeUnitLimit` and `estimateAndSetComputeUnitLimitFactory`, matching upstream `@solana/kit`'s removal of the deprecated `@solana/kit` estimation helpers (#1948). Use `fillTransactionMessageProvisoryResourceLimits` and `estimateAndSetResourceLimitsFactory` instead, which additionally reserve and set the loaded accounts data size limit for version 1 transactions. `setTransactionMessageComputeUnitLimit` and `setTransactionMessageConfig` now reject compute unit limits the runtime will not honor — an integer outside `[0, 1400000]` — throwing `SolanaErrorCode.transactionComputeUnitLimitOutOfRange`, and reject invalid heap sizes — not a multiple of 1024 bytes in `[32768, 262144]` — throwing `SolanaErrorCode.transactionInvalidHeapSize` (upstream #1972). Added the upstream `heap-size.ts` module as `getTransactionMessageHeapSize`/`setTransactionMessageHeapSize` with the same validation, and `resource_limit_validation.dart` with `assertIsValidComputeUnitLimit`/`assertIsValidHeapSize`, `minHeapSize`, `maxHeapSize`, and `heapSizeMultipleOf`. Decoding is unaffected: `decompileTransactionMessage` still returns messages carrying out-of-range values.
+
+  Migration:
+  - `fillTransactionMessageProvisoryComputeUnitLimit(m)` → `fillTransactionMessageProvisoryResourceLimits(m)`.
+  - `estimateAndSetComputeUnitLimitFactory(estimate)` → `estimateAndSetResourceLimitsFactory(estimateResourceLimitsFactory(estimate))`.
+- **`solana_kit_transactions` (breaking)**: removed the fixed-size constants `transactionPacketSize`, `transactionPacketHeader`, and `transactionSizeLimit`, matching upstream's removal of `TRANSACTION_PACKET_SIZE`, `TRANSACTION_PACKET_HEADER`, and `TRANSACTION_SIZE_LIMIT` (#1948). Use `getTransactionSizeLimit` to derive the limit for a specific transaction, or the per-version constants `legacyTransactionSizeLimit` (1232) and `v1TransactionSizeLimit` (4096).
+
+  Migration: `TRANSACTION_SIZE_LIMIT - getTransactionSize(t)` → `getTransactionSizeLimit(t) - getTransactionSize(t)`.
+- `solana_kit_errors`: added the `failedToSignTransaction` (13) and `failedToSignTransactions` (14) error codes with upstream messages, plus the transaction codes `transactionComputeUnitLimitOutOfRange` (5663039) and `transactionInvalidHeapSize` (5663040) (upstream #1902, #1972).
+- `solana_kit_instruction_plans`: added `createFailedToSendTransactionError`, `createFailedToSendTransactionsError`, `createFailedToSignTransactionError`, `createFailedToSignTransactionsError`, and `createFailedToExecuteTransactionPlanError`, mirroring upstream `@solana/instruction-plans`' `transaction-plan-errors.ts` (#1902, #1434). The signing factories carry the same non-enumerable `transactionPlanResult` and optional `logs`/`preflightData` context as their sending counterparts, but the message includes no submission-location indicator because signing never submits. The executor now throws through `createFailedToExecuteTransactionPlanError`.
+- `solana_kit`: added the `ClientWithTransactionSending` and `ClientWithTransactionSigning` client interfaces, mirroring upstream `@solana/plugin-interfaces` (#1899). `signTransaction`/`signTransactions` accept the same flexible inputs as their sending counterparts and return signed transactions without submitting them. Sending results guarantee a signature-bearing `context`; signing makes no default guarantee about the context, matching the upstream `TContext` parameterization (adapted to Dart's map-based result contexts).
+- **`solana_kit_rpc_transformers` (breaking)**: removed `getBigIntDowncastRequestTransformer`, matching upstream #1948. It was no longer used by the default Solana RPC request transformer: the Solana RPC transport serializes `BigInt` values losslessly as large integer literals via `stringifyJsonWithBigInts`, and Agave parses JSON integers across the full `u64` range without precision loss, so downcasting `BigInt`s to (potentially lossy) `int`s is unnecessary. `getDefaultRequestTransformerForSolanaRpc` no longer downcasts; if you still need this behavior, recreate it with `getTreeWalkerRequestTransformer` and a visitor that replaces `BigInt` nodes with `int` values.
+- `solana_kit_rpc_transformers`: the numeric allow-list keeps `transactionConfig.computeUnitLimit`, `transactionConfig.heapSize`, and `transactionConfig.loadedAccountsDataSizeLimit` from version 1 transaction responses as numbers instead of upcasting them to `BigInt` (upstream #1951).
+- Documentation now tracks `@solana/kit` `v8.1.0`, and the reference pin in `config/reference-repos.json` moved to `bb54243d8a57` (tag `v8.1.0`).
+
+Migration example:
+
+```dart
+// Before (removed):
+// final estimate = estimateComputeUnitLimitFactory(rpc);
+// var message = await estimateAndSetComputeUnitLimitFactory(estimate)(message);
+// final freeBytes = transactionSizeLimit - getTransactionSize(transaction);
+
+// After:
+final estimate = estimateResourceLimitsFactory(rpc);
+var message = await estimateAndSetResourceLimitsFactory(estimate)(message);
+final freeBytes =
+    getTransactionSizeLimit(transaction) - getTransactionSize(transaction);
+```
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #225](https://github.com/openbudgetfun/solana_kit/pull/225) · _Related issues:_ [#1899](https://github.com/openbudgetfun/solana_kit/issues/1899), [#1902](https://github.com/openbudgetfun/solana_kit/issues/1902), [#1910](https://github.com/openbudgetfun/solana_kit/issues/1910), [#1913](https://github.com/openbudgetfun/solana_kit/issues/1913), [#1948](https://github.com/openbudgetfun/solana_kit/issues/1948), [#1951](https://github.com/openbudgetfun/solana_kit/issues/1951), [#1957](https://github.com/openbudgetfun/solana_kit/issues/1957), [#1970](https://github.com/openbudgetfun/solana_kit/issues/1970), [#1971](https://github.com/openbudgetfun/solana_kit/issues/1971), [#1972](https://github.com/openbudgetfun/solana_kit/issues/1972), [#1979](https://github.com/openbudgetfun/solana_kit/issues/1979), [#220](https://github.com/openbudgetfun/solana_kit/issues/220)
+
+#### Typed tuple codecs and explicit integer factories
+
+_Packages:_ _solana_kit_codecs_data_structures_, _solana_kit_codecs_numbers_
+
+Add typed `getTuple2Encoder`/`getTuple2Decoder` helpers to `solana_kit_codecs_data_structures`, exposing two-element tuples as Dart records. Give the integer codec factories in `solana_kit_codecs_numbers` explicit generic specializations while preserving their existing `FixedSizeEncoder<num>` public return types. `codama-renderers-dart` now emits `getTuple2*` for arity-2 tuple nodes, escapes Dart reserved-word identifiers, keeps generated `instructionData` locals collision-free, and gives generated byte/list fields recursive value equality and hashing.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #227](https://github.com/openbudgetfun/solana_kit/pull/227)
+
+### 🐛 Fixed
+
+#### Sync upstream `@solana/kit` v7.1.1
+
+_Packages:_ _solana_kit_, _solana_kit_codecs_strings_, _solana_kit_instruction_plans_, _solana_kit_rpc_transformers_
+
+Tracks upstream APIs and behavior through `v7.1.1`:
+
+- `solana_kit`: README now documents `v7.1.1` as the latest supported upstream version.
+- `solana_kit_codecs_strings`: base-X decoders now report the end of the buffer as the next offset when no bytes remain to decode, matching upstream `@solana/codecs-strings` (#1926).
+- `solana_kit_rpc_transformers`: subscription responses for `blockSubscribe`/`blockNotification` now consult the `blockNotifications` numeric allow-list, matching upstream `@solana/rpc-transformers` (#1925).
+- `solana_kit_instruction_plans`: `successfulSingleTransactionPlanResultFromTransaction` is deprecated in favor of `successfulSingleTransactionPlanResult` with an explicit context, matching upstream `@solana/instruction-plans` (#1924).
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #220](https://github.com/openbudgetfun/solana_kit/pull/220) · _Related issues:_ [#1924](https://github.com/openbudgetfun/solana_kit/issues/1924), [#1925](https://github.com/openbudgetfun/solana_kit/issues/1925), [#1926](https://github.com/openbudgetfun/solana_kit/issues/1926)
+
+#### Support Keccak-256 on Flutter web
+
+_Packages:_ _solana_kit_codecs_core_
+
+Preserve exact 64-bit Keccak state with `BigInt`, allowing JavaScript and WebAssembly Flutter builds to use the existing Keccak-256 API safely.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #224](https://github.com/openbudgetfun/solana_kit/pull/224)
+
+#### Harden Pyth and SNS validation
+
+_Packages:_ _solana_kit_pyth_, _solana_kit_sns_
+
+Require the Pyth price-update account signer declared by the receiver IDL, validate Pyth account headers and bounded integer inputs, normalize malformed update data to typed decode errors, and cover the signer requirement through the Surfpool transaction flow. Also enforce SNS record lengths, EVM address sizes, and TLD-trimmed domain-key inputs.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #227](https://github.com/openbudgetfun/solana_kit/pull/227)
+
+### 📖 Documentation
+
+#### Typed tuple codecs and explicit integer factories
+
+_Packages:_ _solana_kit_
+
+Add typed `getTuple2Encoder`/`getTuple2Decoder` helpers to `solana_kit_codecs_data_structures`, exposing two-element tuples as Dart records. Give the integer codec factories in `solana_kit_codecs_numbers` explicit generic specializations while preserving their existing `FixedSizeEncoder<num>` public return types. `codama-renderers-dart` now emits `getTuple2*` for arity-2 tuple nodes, escapes Dart reserved-word identifiers, keeps generated `instructionData` locals collision-free, and gives generated byte/list fields recursive value equality and hashing.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #227](https://github.com/openbudgetfun/solana_kit/pull/227)
+
+#### Unslop package docs and code comments
+
+_Packages:_ _solana_kit_, _solana_kit_accounts_, _solana_kit_address_, _solana_kit_addresses_, _solana_kit_codecs_, _solana_kit_codecs_core_, _solana_kit_codecs_data_structures_, _solana_kit_codecs_numbers_, _solana_kit_codecs_strings_, _solana_kit_fixed_points_, _solana_kit_errors_, _solana_kit_fast_stable_stringify_, _solana_kit_functional_, _solana_kit_instruction_plans_, _solana_kit_instructions_, _solana_kit_keys_, _solana_kit_lints_, _solana_kit_options_, _solana_kit_program_client_core_, _solana_kit_programs_, _solana_kit_rpc_, _solana_kit_rpc_api_, _solana_kit_rpc_parsed_types_, _solana_kit_rpc_spec_, _solana_kit_rpc_spec_types_, _solana_kit_rpc_subscriptions_, _solana_kit_rpc_subscriptions_api_, _solana_kit_rpc_subscriptions_channel_websocket_, _solana_kit_rpc_transformers_, _solana_kit_rpc_transport_http_, _solana_kit_rpc_types_, _solana_kit_signers_, _solana_kit_subscribable_, _solana_kit_test_matchers_, _solana_kit_transaction_confirmation_, _solana_kit_transaction_introspection_, _solana_kit_transaction_messages_, _solana_kit_transactions_
+
+Rewrote every package README from a reader's perspective with verified, compilable examples, removed AI-tell phrasing from docs and code comments, and added a test that analyzes every Dart block in Markdown so examples cannot drift from the API.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://github.com/openbudgetfun/solana_kit/pull/223)
+
 ## [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.8.0) (2026-08-19)
 
 Grouped release for `main`.
