@@ -444,6 +444,28 @@ void main() {
               as FailedSingleTransactionPlanResult;
       expect(result.context['custom'], 'recorded');
     });
+
+    test(
+      'executes a single transaction plan returning a Transaction',
+      () async {
+        final message = createMessage();
+        final plan = singleTransactionPlan(message);
+        final transaction = createTransaction();
+
+        final executor = createTransactionPlanExecutorWithConcurrentLeaves(
+          TransactionPlanExecutorConfig(
+            executeTransactionMessage: (context, msg) async => transaction,
+          ),
+        );
+
+        final result = await executor(plan);
+
+        expect(result, isA<SuccessfulSingleTransactionPlanResult>());
+        final successResult = result as SuccessfulSingleTransactionPlanResult;
+        expect(successResult.context.containsKey('transaction'), isTrue);
+        expect(successResult.context['signature'], isA<Signature>());
+      },
+    );
   });
 
   group('TransactionPlanExecutorConfig', () {
