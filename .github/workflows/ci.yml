@@ -100,17 +100,6 @@ jobs:
         run: test:all
         shell: devenv shell -- bash -e {0}
 
-      - name: build renderer for generation tests
-        run: pnpm --filter codama-renderers-dart build
-        shell: devenv shell -- bash -e {0}
-
-      - name: test program artifact scripts
-        run: >-
-          node --experimental-test-module-mocks --test
-          scripts/build_program_artifacts.test.mjs
-          scripts/generate_program_packages.test.mjs
-        shell: devenv shell -- bash -e {0}
-
   integration-tests:
     runs-on: ubuntu-latest
     steps:
@@ -176,8 +165,16 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: typecheck
         run: pnpm typecheck
+      - name: build
+        run: pnpm build
       - name: test
         run: pnpm test
+      - name: test program artifact scripts
+        run: >-
+          node --experimental-test-module-mocks --test
+          scripts/build_program_artifacts.test.mjs
+          scripts/generate_program_packages.test.mjs
+        working-directory: .
 
   publish-dry-run:
     runs-on: ubuntu-latest
