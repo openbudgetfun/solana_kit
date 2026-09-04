@@ -110,10 +110,12 @@
       "validationMode": "contract",
       "expectedOutcome": "Recorded request and response contract tests preserve the external provider's documented HTTP shapes, error handling, redirect policy, and confirmation semantics; these services cannot be routed through a local Solana validator.",
       "evidence": [
+        "packages/solana_kit_dapp_publisher_cli/test",
         "packages/solana_kit_helius/test",
         "packages/solana_kit_jupiter/test"
       ],
       "packages": [
+        "solana_kit_dapp_publisher_cli",
         "solana_kit_helius",
         "solana_kit_jupiter"
       ]
