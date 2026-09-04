@@ -168,5 +168,22 @@ void main() {
         contains(equals(['value', KEYPATH_WILDCARD, 'decimals'])),
       );
     });
+
+    test('contains getAgGenesisCert keypaths', () {
+      expect(keypaths, contains('getAgGenesisCert'));
+      final certKeypaths = keypaths['getAgGenesisCert']!;
+      expect(
+        certKeypaths,
+        contains(equals(['block', 'blockId', KEYPATH_WILDCARD])),
+      );
+      expect(
+        certKeypaths,
+        contains(equals(['signature', 'bitmap', KEYPATH_WILDCARD])),
+      );
+      expect(
+        certKeypaths,
+        contains(equals(['signature', 'signature', KEYPATH_WILDCARD])),
+      );
+    });
   });
 }

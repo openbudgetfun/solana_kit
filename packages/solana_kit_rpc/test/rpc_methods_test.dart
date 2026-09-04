@@ -416,6 +416,31 @@ void main() {
       ]);
       expect(response.result, 'send-signature');
     });
+
+    test(
+      'getAgGenesisCert sends no params and passes through the result',
+      () async {
+        final response = await _captureCall(
+          (rpc) => rpc.getAgGenesisCert().send(),
+          rpcResult: null,
+        );
+
+        expect(response.payload['method'], 'getAgGenesisCert');
+        expect(response.payload['params'], isEmpty);
+        expect(response.result, isNull);
+      },
+    );
+
+    test('getAgGenesisCert returns the certificate payload', () async {
+      final cert = {'version': BigInt.one, 'data': 'genesis-cert'};
+
+      final response = await _captureCall(
+        (rpc) => rpc.getAgGenesisCert().send(),
+        rpcResult: cert,
+      );
+
+      expect(response.result, cert);
+    });
   });
 }
 

@@ -15,6 +15,11 @@ AllowedNumericKeypaths getAllowedNumericKeypaths() {
     'getAccountInfo': [
       for (final c in jsonParsedAccountsConfigs) ['value', ...c],
     ],
+    'getAgGenesisCert': [
+      ['block', 'blockId', KEYPATH_WILDCARD],
+      ['signature', 'bitmap', KEYPATH_WILDCARD],
+      ['signature', 'signature', KEYPATH_WILDCARD],
+    ],
     'getBlock': [
       for (final c in tokenBalancesConfigs) ...[
         [

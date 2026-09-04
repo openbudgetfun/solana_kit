@@ -8,6 +8,7 @@ library;
 
 export 'src/allowed_numeric_keypaths.dart';
 export 'src/get_account_info.dart';
+export 'src/get_ag_genesis_cert.dart';
 export 'src/get_balance.dart';
 export 'src/get_block.dart';
 export 'src/get_block_commitment.dart';

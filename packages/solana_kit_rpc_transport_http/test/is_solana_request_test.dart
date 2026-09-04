@@ -5,6 +5,7 @@ void main() {
   group('isSolanaRequest', () {
     const allSolanaRpcMethods = [
       'getAccountInfo',
+      'getAgGenesisCert',
       'getBalance',
       'getBlock',
       'getBlockCommitment',
@@ -49,6 +50,7 @@ void main() {
       'getTokenSupply',
       'getTransaction',
       'getTransactionCount',
+      'getTransactionsForAddress',
       'getVersion',
       'getVoteAccounts',
       'index',
