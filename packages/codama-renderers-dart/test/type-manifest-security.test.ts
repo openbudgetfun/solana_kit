@@ -221,11 +221,10 @@ describe("generated prefix codecs compile and preserve wire bytes", () => {
     });
     const file = join(directory, "prefixes.dart");
     const packageConfig = resolve(__dirname, "../../../.dart_tool/package_config.json");
-    const dart = resolve(__dirname, "../../../.fvm/flutter_sdk/bin/dart");
 
     try {
       writeFileSync(file, `${[...imports].map((uri) => `import '${uri}';`).join("\n")}\nvoid main() {${checks.join("\n")}\n}\n`);
-      const result = spawnSync(dart, [`--packages=${packageConfig}`, file], {
+      const result = spawnSync("dart", [`--packages=${packageConfig}`, file], {
         encoding: "utf8",
         timeout: 30_000,
       });

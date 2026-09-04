@@ -165,6 +165,9 @@ jobs:
         with:
           channel: stable
           cache: true
+      - name: install Dart dependencies
+        run: flutter pub get
+        working-directory: .
       - name: install
         run: pnpm install --frozen-lockfile
       - name: typecheck
