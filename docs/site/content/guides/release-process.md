@@ -23,17 +23,17 @@ Reason: release quality gates should fail fast before versions or changelogs cha
 
 ### Step 2: Prepare Release Changes
 
-Every push to `main` runs the `release-pr` workflow. That workflow prepares the pending changesets with MonoChange, updates package versions, refreshes changelogs and lockfiles, and opens or updates the `chore(release): prepare release` PR.
+Releases are prepared locally. `monochange run release --commit --tag --push` prepares the pending changesets with MonoChange, updates package versions, refreshes changelogs and lockfiles, commits the release, and pushes the MonoChange release tags.
 
-Review the generated package versions and release notes before merging the release PR.
+Review the generated package versions and release notes with a dry run before pushing the release.
 
 Reason: package consumers should see accurate version numbers and user-facing release notes.
 
 ### Step 3: Publish Package Artifacts
 
-After the release PR merges to `main`, the `release-pr` workflow detects the merged MonoChange release commit, creates release tags, and dispatches the `publish` workflow with the direct `v*` tag. The publish workflow checks out that tag, verifies publish readiness, publishes changed packages with `monochange step publish-packages`, and then publishes GitHub release objects.
+After the release commit and tags are pushed (`monochange run release --commit --tag --push`), the primary `v*` tag triggers the `publish` workflow. The run verifies publish readiness, publishes the primary group's packages, dispatches an awaited child run per independently versioned release tag in dependency order, and then publishes GitHub release objects.
 
-Reason: CI-owned publishing keeps the reviewed release commit, direct release tag, package artifacts, and GitHub releases tied to the same MonoChange release record.
+Reason: CI-owned publishing keeps the reviewed release commit, direct release tags, package artifacts, and GitHub releases tied to the same MonoChange release record, while respecting pub.dev's requirement that each package publishes from a tag matching its own version.
 
 ### Step 4: Validate Published Artifacts
 
@@ -49,4 +49,4 @@ Reason: publishing success alone does not guarantee downstream usability.
 - Batch breaking changes with migration notes.
 - Document user-visible changes and minimum SDK changes clearly.
 - Verify the umbrella package resolves after publishing dependent packages.
-- Keep pub.dev Trusted Publishing configuration aligned with `.github/workflows/publish.yml`.
+- Keep pub.dev Trusted Publishing configuration aligned with `.github/workflows/publish.yml`: per-package tag patterns (`v{{version}}` for primary group packages, `<name>/v{{version}}` for independently versioned packages), the `publisher` environment, and `workflow_dispatch` events allowed.

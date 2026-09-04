@@ -1,5 +1,30 @@
 name: publish
 
+# Publishes MonoChange release tags directly to their trusted publishing
+# sources: pub.dev via GitHub Actions OIDC and the npm registry via provenance.
+# No long-lived tokens are involved.
+#
+# pub.dev only accepts a publish run whose triggering ref matches the
+# per-package tag pattern resolved with the published version, so each
+# version group publishes from its own release tag:
+#
+# - The primary release tag (`v*`, e.g. `v0.9.1`) triggers the orchestrator
+#   run. It publishes the primary group's packages and dispatches an awaited
+#   child run for every other tagged release target in dependency order.
+# - Namespaced targets (`<id>/v*`, e.g. `solana_kit_token/v0.8.1`) are
+#   published by child runs dispatched with `workflow_dispatch` on their tag.
+#   Pushing a namespaced tag alone does not trigger publishing.
+#
+# Manual usage:
+#   gh workflow run publish --ref v0.9.1        # re-run the release orchestrator
+#   gh workflow run publish --ref solana_kit_token/v0.8.1 -f tag=solana_kit_token/v0.8.1
+#
+# pub.dev admin setup per package (https://pub.dev/packages/<name>/admin):
+#   repository openbudgetfun/solana_kit, tag pattern `v{{version}}` for
+#   primary group packages or `<name>/v{{version}}` for namespaced targets,
+#   require the `publisher` environment, and allow `workflow_dispatch` events
+#   (child runs and manual retries are dispatched runs).
+
 on:
   push:
     tags:
@@ -16,18 +41,22 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ inputs.tag || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   publish:
     if: github.repository == 'openbudgetfun/solana_kit'
     environment: publisher
     permissions:
-      actions: read
-      contents: write
+      actions: write
+      contents: read
       id-token: write
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    env:
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+      PUBLISH_WAIT_TIMEOUT: "1800"
+      CHILD_RUN_TIMEOUT: "1800"
     steps:
       - name: validate release tag
         env:
@@ -69,69 +98,206 @@ jobs:
       - name: setup Dart publishing authentication
         uses: dart-lang/setup-dart@65eb853c7ba17dde3be364c3d2858773e7144260 # v1.7.2
 
-      - uses: pnpm/action-setup@a8198c4bff370c8506180b035930dea56dbd5288 # v5
+      - name: setup
+        uses: ./.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: resolve publish scope
+        id: scope
+        run: |
+          set -euo pipefail
+          monochange step release-record --from HEAD --format json \
+            > "$RUNNER_TEMP/release-record.json"
+          monochange step discover --format json \
+            > "$RUNNER_TEMP/discover.json"
+          python3 .github/scripts/publish_scope.py \
+            --record "$RUNNER_TEMP/release-record.json" \
+            --discover "$RUNNER_TEMP/discover.json" \
+            --tag "$RELEASE_TAG" \
+            --output "$RUNNER_TEMP/publish-scope.json"
+          {
+            echo "role=$(jq -r .role "$RUNNER_TEMP/publish-scope.json")"
+            echo "status=$(jq -r .status "$RUNNER_TEMP/publish-scope.json")"
+            echo "has_npm=$(jq -r .has_npm "$RUNNER_TEMP/publish-scope.json")"
+            echo "is_release_owner=$(jq -r .is_release_owner "$RUNNER_TEMP/publish-scope.json")"
+            echo "noop=$(jq -r 'if .role == "contributor" and .status == "skip" then "true" else "false" end' "$RUNNER_TEMP/publish-scope.json")"
+          } >> "$GITHUB_OUTPUT"
+        shell: devenv shell -- bash -e {0}
+
       # Keep registry-url unset so setup-node does not inject NODE_AUTH_TOKEN;
       # MonoChange requires token-free npm OIDC trusted publishing.
+      - uses: pnpm/action-setup@a8198c4bff370c8506180b035930dea56dbd5288 # v5
+        if: steps.scope.outputs.has_npm == 'true'
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        if: steps.scope.outputs.has_npm == 'true'
         with:
           node-version: 24
           package-manager-cache: false
 
       - name: capture action-managed Node path
         id: action_tools
+        if: steps.scope.outputs.has_npm == 'true'
         run: |
           set -euo pipefail
           node_dir="$(dirname "$(command -v node)")"
           echo "node_dir=$node_dir" >> "$GITHUB_OUTPUT"
           echo "node: $node_dir/node"
           echo "npm: $node_dir/npm"
-
-      - name: setup
-        uses: ./.github/actions/devenv
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
 
       - name: install NPM dependencies
+        if: steps.scope.outputs.has_npm == 'true'
         run: pnpm install --frozen-lockfile
 
       - name: build NPM renderer package
+        if: steps.scope.outputs.has_npm == 'true'
         run: pnpm --filter codama-renderers-dart build
 
       - name: check publish readiness
+        if: steps.scope.outputs.status == 'publish'
         env:
           NPM_CONFIG_PROVENANCE: "true"
         run: |
+          set -euo pipefail
+          scope="$RUNNER_TEMP/publish-scope.json"
+          args=()
+          while IFS= read -r package; do
+            args+=(--package "$package")
+          done < <(jq -r '.packages[].name' "$scope")
           monochange step publish-readiness \
             --from HEAD \
             --output "$RUNNER_TEMP/publish-readiness.json" \
-            --format json
+            --format json \
+            "${args[@]}"
         shell: devenv shell -- bash -e {0}
 
       - name: publish packages with MonoChange
+        if: steps.scope.outputs.noop != 'true'
         env:
           ACTION_NODE_DIR: ${{ steps.action_tools.outputs.node_dir }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: "true"
         run: |
           set -euo pipefail
           # devenv can place its own Node.js ahead of setup-node. npm trusted
           # publishing requires Node.js 22.14+ and npm 11.5.1+.
-          export PATH="$ACTION_NODE_DIR:$PATH"
-          hash -r
-          command -v node
-          command -v npm
+          if [ -n "${ACTION_NODE_DIR:-}" ]; then
+            export PATH="$ACTION_NODE_DIR:$PATH"
+            hash -r
+          fi
           command -v dart
           command -v flutter
-          node --version
-          npm --version
-          dart --version
-          flutter --version
-          monochange step publish-packages \
-            --log-level info \
-            --output "$RUNNER_TEMP/publish-result.json" \
-            --format json
+
+          scope="$RUNNER_TEMP/publish-scope.json"
+          commit="$(git rev-parse HEAD)"
+
+          wait_for_pub_dev_version() {
+            local package="$1" version="$2"
+            local deadline=$(( $(date +%s) + PUBLISH_WAIT_TIMEOUT ))
+            echo "Waiting for ${package} ${version} on pub.dev..."
+            while [ "$(date +%s)" -lt "$deadline" ]; do
+              if curl -fsSL "https://pub.dev/api/packages/${package}" 2>/dev/null \
+                | jq -e --arg v "$version" 'any(.versions[]; .version == $v)' >/dev/null 2>&1; then
+                echo "✓ ${package} ${version} is on pub.dev"
+                return 0
+              fi
+              sleep 15
+            done
+            echo "::error::Timed out after ${PUBLISH_WAIT_TIMEOUT}s waiting for ${package} ${version} on pub.dev. This run publishes packages that depend on it; check the publish run for the release tag that owns ${package} before retrying." >&2
+            return 1
+          }
+
+          await_child_run() {
+            local tag="$1" sha="$2"
+            local deadline=$(( $(date +%s) + CHILD_RUN_TIMEOUT ))
+            local run_id=""
+            while [ "$(date +%s)" -lt "$deadline" ]; do
+              run_id="$(gh run list \
+                --repo "$GITHUB_REPOSITORY" \
+                --workflow publish.yml \
+                --event workflow_dispatch \
+                --branch "$tag" \
+                --json databaseId,headSha \
+                --jq "[.[] | select(.headSha == \"$sha\")][0].databaseId // empty" 2>/dev/null || true)"
+              if [ -n "$run_id" ]; then
+                break
+              fi
+              sleep 10
+            done
+            if [ -z "$run_id" ]; then
+              echo "::error::Dispatched publish run for tag ${tag} did not appear within ${CHILD_RUN_TIMEOUT}s." >&2
+              return 1
+            fi
+            echo "Awaiting publish run https://github.com/${GITHUB_REPOSITORY}/actions/runs/${run_id} for ${tag}"
+            while [ "$(date +%s)" -lt "$deadline" ]; do
+              state="$(gh run view "$run_id" \
+                --repo "$GITHUB_REPOSITORY" \
+                --json status,conclusion \
+                --jq '.status + ":" + (.conclusion // "pending")')" || { sleep 20; continue; }
+              case "$state" in
+                "completed:success")
+                  echo "✓ child publish run for ${tag} succeeded"
+                  return 0
+                  ;;
+                completed:*)
+                  echo "::error::Child publish run for ${tag} finished with ${state#completed:}. See the run before retrying." >&2
+                  return 1
+                  ;;
+              esac
+              sleep 20
+            done
+            echo "::error::Timed out after ${CHILD_RUN_TIMEOUT}s waiting for the child publish run of ${tag}." >&2
+            return 1
+          }
+
+          batch_count="$(jq '.batches | length' "$scope")"
+          for i in $(seq 0 $((batch_count - 1))); do
+            batch=".batches[${i}]"
+            echo "== batch $((i + 1))/${batch_count} =="
+
+            while IFS= read -r dep; do
+              [ -z "$dep" ] && continue
+              package="$(jq -r '.package' <<<"$dep")"
+              version="$(jq -r '.version' <<<"$dep")"
+              wait_for_pub_dev_version "$package" "$version"
+            done < <(jq -c "${batch}.wait_for[]" "$scope")
+
+            dispatched_tags=()
+            while IFS= read -r dispatch; do
+              [ -z "$dispatch" ] && continue
+              tag="$(jq -r '.tag' <<<"$dispatch")"
+              echo "Dispatching publish run for ${tag}"
+              gh workflow run publish.yml \
+                --repo "$GITHUB_REPOSITORY" \
+                --ref "$tag" \
+                -f "tag=$tag"
+              dispatched_tags+=("$tag")
+            done < <(jq -c "${batch}.dispatch[]" "$scope")
+
+            mapfile -t packages < <(jq -r "${batch}.publish[]" "$scope")
+            if [ "${#packages[@]}" -gt 0 ]; then
+              args=()
+              for package in "${packages[@]}"; do
+                args+=(--package "$package")
+              done
+              echo "Publishing ${packages[*]}"
+              monochange step publish-packages \
+                --log-level info \
+                --output "$RUNNER_TEMP/publish-result-${i}.json" \
+                --format json \
+                "${args[@]}"
+            fi
+
+            for tag in "${dispatched_tags[@]:-}"; do
+              [ -z "$tag" ] && continue
+              await_child_run "$tag" "$commit"
+            done
+          done
         shell: devenv shell -- bash -e {0}
 
       - name: publish GitHub releases
+        if: steps.scope.outputs.is_release_owner == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -146,8 +312,11 @@ jobs:
         with:
           name: monochange-publish-artifacts
           path: |
+            ${{ runner.temp }}/release-record.json
+            ${{ runner.temp }}/discover.json
+            ${{ runner.temp }}/publish-scope.json
             ${{ runner.temp }}/publish-readiness.json
-            ${{ runner.temp }}/publish-result.json
+            ${{ runner.temp }}/publish-result-*.json
             ${{ runner.temp }}/publish-release.json
           if-no-files-found: ignore
           retention-days: 14
