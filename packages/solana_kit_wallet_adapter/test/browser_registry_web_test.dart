@@ -11,6 +11,39 @@ import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
 import 'package:web/web.dart' as web;
 
 void main() {
+  test('substitutes bundled logos for wallets without a usable icon', () async {
+    final registry = createDefaultWalletRegistry(
+      appIdentity: const WalletAppIdentity(name: 'Browser test'),
+      chain: SolanaChainId.localnet,
+    );
+    await registry.initialize();
+
+    // A wallet fixture whose announcement carries no icon key at all, the
+    // way some extension builds announce themselves.
+    final wallet = JSObject()
+      ..['version'] = walletStandardVersion.toJS
+      ..['name'] = 'Phantom'.toJS
+      ..['chains'] = [SolanaChainId.localnet.toJS].toJS
+      ..['features'] = <JSObject>[].toJS
+      ..['accounts'] = <JSObject>[].toJS;
+    web.window.dispatchEvent(
+      web.CustomEvent(
+        'wallet-standard:register-wallet',
+        web.CustomEventInit(
+          detail: ((JSObject api) {
+            api.callMethod<JSFunction>('register'.toJS, wallet);
+          }).toJS,
+        ),
+      ),
+    );
+
+    expect(registry.wallets, hasLength(1));
+    expect(registry.wallets.single.name, 'Phantom');
+    // The bundled Phantom logo substitutes for the missing icon.
+    expect(registry.wallets.single.icon.mimeSubtype, 'svg+xml');
+    await registry.dispose();
+  });
+
   test('discovers and operates a late Wallet Standard registration', () async {
     final fixture = _WalletFixture();
     final registry = createDefaultWalletRegistry(
