@@ -66,6 +66,8 @@ Reach for these codecs in instruction layouts, account state structs, and any wi
 
 All integer codecs default to little-endian byte order, matching Solana's on-chain data layout. Multi-byte codecs accept an optional `NumberCodecConfig` to override endianness.
 
+Fixed-size numeric codecs respect the bounds of the supplied `Uint8List`, including views into larger buffers. Reading or writing a value that extends beyond the view throws a `RangeError` without accessing adjacent bytes.
+
 ```dart
 import 'dart:typed_data';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
@@ -94,6 +96,8 @@ void main() {
 ### shortU16 compact encoding
 
 Solana's variable-length compact encoding for unsigned 16-bit values. Each byte stores 7 bits; bit 7 is a continuation flag.
+
+The decoder rejects non-canonical encodings that use extra bytes, third-byte values that overflow 16 bits, and encodings longer than three bytes with a `SolanaError`.
 
 ```dart
 import 'dart:typed_data';

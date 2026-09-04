@@ -8,41 +8,38 @@ Future<void> main(List<String> args) async {
   final flutterPackages = <Directory>[];
 
   final packagesDirectory = Directory('packages');
+  final packageDirectories = <Directory>[];
   if (packagesDirectory.existsSync()) {
-    final packageDirectories =
-        packagesDirectory
-            .listSync()
-            .whereType<Directory>()
-            .where(
-              (directory) =>
-                  File('${directory.path}/pubspec.yaml').existsSync(),
-            )
-            .toList()
-          ..sort((left, right) => left.path.compareTo(right.path));
-
-    for (final packageDirectory in packageDirectories) {
-      final testDirectory = Directory('${packageDirectory.path}/test');
-      if (!testDirectory.existsSync() || !_hasDartTests(testDirectory)) {
-        continue;
-      }
-
-      final pubspec = File(
-        '${packageDirectory.path}/pubspec.yaml',
-      ).readAsStringSync();
-      final isFlutter = pubspec.contains(
-        RegExp(r'^  flutter:\s*$', multiLine: true),
-      );
-      if (isFlutter) {
-        if (!pubspec.contains(RegExp(r'^  plugin:\s*$', multiLine: true))) {
-          flutterPackages.add(packageDirectory);
-        }
-        continue;
-      }
-
-      testDirectories.add(testDirectory.path);
-    }
+    packageDirectories
+      ..addAll(
+        packagesDirectory.listSync().whereType<Directory>().where(
+          (directory) => File('${directory.path}/pubspec.yaml').existsSync(),
+        ),
+      )
+      ..sort((left, right) => left.path.compareTo(right.path));
   }
 
+  for (final packageDirectory in packageDirectories) {
+    final testDirectory = Directory('${packageDirectory.path}/test');
+    if (!testDirectory.existsSync() || !_hasDartTests(testDirectory)) {
+      continue;
+    }
+
+    final pubspec = File(
+      '${packageDirectory.path}/pubspec.yaml',
+    ).readAsStringSync();
+    final isFlutter = pubspec.contains(
+      RegExp(r'^  flutter:\s*$', multiLine: true),
+    );
+    if (isFlutter) {
+      if (!pubspec.contains(RegExp(r'^  plugin:\s*$', multiLine: true))) {
+        flutterPackages.add(packageDirectory);
+      }
+      continue;
+    }
+
+    testDirectories.add(testDirectory.path);
+  }
   final generatedTestDirectory = Directory(
     'packages/codama-renderers-dart/test-generated/test',
   );
@@ -55,6 +52,25 @@ Future<void> main(List<String> args) async {
   final rootTestDirectory = Directory('test');
   if (rootTestDirectory.existsSync() && _hasDartTests(rootTestDirectory)) {
     testDirectories.add(rootTestDirectory.path);
+  }
+
+  // Example apps nest one level below their host package and run as Flutter
+  // packages so their widget tests execute alongside the package tests.
+  for (final packageDirectory in packageDirectories) {
+    final exampleDirectory = Directory('${packageDirectory.path}/example');
+    if (!File('${exampleDirectory.path}/pubspec.yaml').existsSync()) {
+      continue;
+    }
+    final exampleTestDirectory = Directory('${exampleDirectory.path}/test');
+    if (!exampleTestDirectory.existsSync() ||
+        !_hasDartTests(exampleTestDirectory)) {
+      continue;
+    }
+    if (!flutterPackages.any(
+      (package) => package.path == exampleDirectory.path,
+    )) {
+      flutterPackages.add(exampleDirectory);
+    }
   }
 
   if (testDirectories.isEmpty && flutterPackages.isEmpty) {

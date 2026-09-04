@@ -37,7 +37,7 @@ void main() {
     maxDepth: 14,
     maxBufferSize: 64,
   );
-  print(size); // 25896
+  print(size); // 31800 (no canopy by default)
 
   final sizeWithCanopy = getConcurrentMerkleTreeAccountSize(
     maxDepth: 14,

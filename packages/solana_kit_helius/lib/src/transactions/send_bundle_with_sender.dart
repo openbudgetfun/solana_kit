@@ -50,7 +50,8 @@ const _maxBundleSize = 5;
 /// (`getSignatureStatuses`), not bundle IDs / `getBundleStatuses`.
 ///
 /// Returns the signatures of every transaction in the bundle, in submission
-/// order.
+/// order. A failed on-chain transaction throws its transaction or instruction
+/// [SolanaError], including when its signature is confirmed or finalized.
 Future<List<String>> sendBundleWithSender(
   http.Client httpClient,
   JsonRpcClient rpcClient,
@@ -139,6 +140,9 @@ Future<void> _pollSignature(
       final value = response['value'] as List<Object?>?;
       if (value != null && value.isNotEmpty && value[0] != null) {
         final status = value[0]! as Map<String, Object?>;
+        final error = status['err'];
+        if (error != null) throw getSolanaErrorFromTransactionError(error);
+
         final confirmationStatus = status['confirmationStatus'] as String?;
         if (confirmationStatus == 'confirmed' ||
             confirmationStatus == 'finalized') {

@@ -71,8 +71,8 @@ void main() {
         );
       });
 
-      test('has 52 methods', () {
-        expect(solanaRpcMethodsForAllClusters, hasLength(52));
+      test('has 53 methods', () {
+        expect(solanaRpcMethodsForAllClusters, hasLength(53));
       });
     });
 
@@ -91,8 +91,8 @@ void main() {
         }
       });
 
-      test('has 53 methods', () {
-        expect(solanaRpcMethodsForTestClusters, hasLength(53));
+      test('has 54 methods', () {
+        expect(solanaRpcMethodsForTestClusters, hasLength(54));
       });
     });
 

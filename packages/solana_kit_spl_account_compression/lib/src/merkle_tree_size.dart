@@ -89,46 +89,27 @@ int _concurrentMerkleTreeSize({
   required int maxDepth,
   required int maxBufferSize,
 }) {
-  // ChangeLogEntry: (maxDepth + 1) PathNodes (each 33 bytes: 32 node + 1
-  // index as u8) + 1 u32 (index) + 1 u8 (_padding) + 1 u32 (crc)
-  const pathNodeSize = 32 + 1; // node (32 bytes) + index (1 byte)
-  final changeLogEntrySize = (maxDepth + 1) * pathNodeSize + 4 + 1 + 4;
+  // Change logs and the rightmost path both contain maxDepth proof nodes,
+  // one root/leaf, a u32 index, and a u32 padding field.
+  final pathSize = (maxDepth + 1) * 32 + 4 + 4;
 
-  // ConcurrentMerkleTree layout:
-  // - sequence_number: u64 (8 bytes)
-  // - active_index: u64 (8 bytes)
-  // - buffer_size: u64 (8 bytes)
-  // - change_logs: [ChangeLogEntry; maxBufferSize]
-  // - rightmost_proof: Path (variable size)
-  // Path layout: (maxDepth + 1) PathNodes + 1 u8 (proof_index_len as u8)
-  final rightmostProofSize = (maxDepth + 1) * pathNodeSize + 1;
-
-  return 8 + // sequence_number
-      8 + // active_index
-      8 + // buffer_size
-      maxBufferSize * changeLogEntrySize +
-      rightmostProofSize;
+  return 3 * 8 + (maxBufferSize + 1) * pathSize;
 }
 
 /// Returns the canopy size in bytes for the given [canopyDepth].
 ///
-/// The canopy stores cached proof nodes at each depth level from 0 to
-/// canopyDepth. At each level `i`, there are `2^i` node values of 32 bytes.
+/// The canopy caches the first [canopyDepth] levels below the root. The
+/// root is already stored in a change log and is excluded from the canopy.
 int _canopySize(int canopyDepth) {
-  if (canopyDepth <= 0) return 0;
-  var size = 0;
-  for (var i = 0; i < canopyDepth; i++) {
-    size += (1 << i) * 32;
-  }
-  return size;
+  return ((1 << (canopyDepth + 1)) - 2) * 32;
 }
 
 /// Returns the on-chain account size (in bytes) for a concurrent Merkle
 /// tree account with the given [maxDepth], [maxBufferSize], and optional
 /// [canopyDepth].
 ///
-/// If [canopyDepth] is not provided, the full canopy depth is assumed
-/// (i.e., [maxDepth] levels cached).
+/// If [canopyDepth] is not provided, no canopy is allocated, matching the
+/// upstream SPL Account Compression SDK.
 ///
 /// Throws [ArgumentError] if the (maxDepth, maxBufferSize) pair is not
 /// a valid configuration.
@@ -144,7 +125,7 @@ int _canopySize(int canopyDepth) {
 ///     maxDepth: 14,
 ///     maxBufferSize: 64,
 ///   );
-///   print(size); // 25896
+///   print(size); // 31800
 /// }
 /// ```
 int getConcurrentMerkleTreeAccountSize({
@@ -159,7 +140,7 @@ int getConcurrentMerkleTreeAccountSize({
     );
   }
 
-  final effectiveCanopyDepth = canopyDepth ?? maxDepth;
+  final effectiveCanopyDepth = canopyDepth ?? 0;
   if (effectiveCanopyDepth < 0 || effectiveCanopyDepth > maxDepth) {
     throw ArgumentError(
       'canopyDepth must be between 0 and maxDepth ($maxDepth), '

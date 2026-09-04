@@ -72,7 +72,15 @@ class DasAssetOwnership {
   const DasAssetOwnership({
     required this.frozen,
     required this.nonTransferable,
+    this.owner = '',
+    this.delegate,
   });
+
+  /// The current owner address reported by DAS.
+  final String owner;
+
+  /// The delegate address, or `null` if the owner has not delegated the asset.
+  final String? delegate;
 
   /// Whether the asset is frozen.
   final bool frozen;
@@ -269,27 +277,22 @@ Future<AssetWithProof> getAssetWithProof({
     dasClient.getAssetProof(assetId),
   ).wait;
 
-  // Parse the root and leaf from the proof
   final rootBytes = _base58ToBytes(proof.root);
-  final leafBytes = _base58ToBytes(proof.leaf);
 
   // Parse the proof nodes
   final proofNodes = proof.proof.map(_base58ToBytes).toList();
 
-  // Extract the nonce from the leaf (nonce is at bytes 64-72 in V1/V2 leaf schema)
-  final nonce = _extractNonce(leafBytes);
-
   return AssetWithProof(
     rpcAsset: asset,
     rpcAssetProof: proof,
-    leafOwner: asset.ownership.frozen ? '' : '', // extracted from asset
-    leafDelegate: '',
+    leafOwner: asset.ownership.owner,
+    leafDelegate: asset.ownership.delegate ?? asset.ownership.owner,
     merkleTree: proof.treeId,
     root: rootBytes,
     dataHash: _base58ToBytes(asset.compression.dataHash),
     creatorHash: _base58ToBytes(asset.compression.creatorHash),
-    nonce: BigInt.from(nonce),
-    index: proof.nodeIndex,
+    nonce: BigInt.from(asset.compression.leafId),
+    index: proof.nodeIndex - (1 << proof.proof.length),
     proof: proofNodes,
   );
 }
@@ -315,14 +318,4 @@ Uint8List _base58ToBytes(String encoded) {
     result.add(0);
   }
   return Uint8List.fromList(result.reversed.toList());
-}
-
-int _extractNonce(Uint8List leaf) {
-  // V1/V2 leaf schema nonce is at offset 64-72 (8 bytes LE after 64 bytes of addresses)
-  if (leaf.length < 72) return 0;
-  var nonce = 0;
-  for (var i = 0; i < 8; i++) {
-    nonce |= leaf[64 + i] << (8 * i);
-  }
-  return nonce;
 }

@@ -74,6 +74,10 @@ void main() {
 | `SetComputeUnitPrice`            | 3             | Set the compute unit price for priority fees.                              |
 | `SetLoadedAccountsDataSizeLimit` | 4             | Set a limit on loaded accounts data size.                                  |
 
+## Inspecting priority fees
+
+`findSetComputeUnitPriceInstructionIndexAndMicroLamports` returns the full unsigned 64-bit price as a `BigInt`, including prices above `2^63 - 1`. Compare this value with your application's fee cap before signing externally supplied transactions. The update helper passes the same unsigned value to its updater callback.
+
 ## Upstream reference
 
 Generated layer mirrors [solana-program/compute-budget](https://github.com/solana-program/compute-budget) at `js@v0.18.0`.

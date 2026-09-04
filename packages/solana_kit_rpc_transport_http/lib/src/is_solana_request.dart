@@ -3,6 +3,7 @@ import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 /// The set of all known Solana RPC method names.
 const _solanaRpcMethods = <String>{
   'getAccountInfo',
+  'getAgGenesisCert',
   'getBalance',
   'getBlock',
   'getBlockCommitment',
@@ -47,6 +48,7 @@ const _solanaRpcMethods = <String>{
   'getTokenSupply',
   'getTransaction',
   'getTransactionCount',
+  'getTransactionsForAddress',
   'getVersion',
   'getVoteAccounts',
   'index',

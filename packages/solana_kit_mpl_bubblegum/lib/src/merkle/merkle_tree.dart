@@ -59,13 +59,23 @@ class MerkleTree {
   /// Verifies a Merkle proof.
   ///
   /// Returns `true` if the [leaf] at [leafIndex] with the given [proof]
-  /// hashes up to the expected [root].
+  /// hashes up to the expected [root]. Returns `false` for non-32-byte
+  /// hashes or an index outside the range committed to by the proof depth.
   static bool verify({
     required Uint8List root,
     required Uint8List leaf,
     required int leafIndex,
     required List<Uint8List> proof,
   }) {
+    // Reject index aliases and ambiguous concatenations before hashing.
+    if (leafIndex < 0 ||
+        leafIndex.bitLength > proof.length ||
+        root.length != nodeSize ||
+        leaf.length != nodeSize ||
+        proof.any((node) => node.length != nodeSize)) {
+      return false;
+    }
+
     var computedHash = leaf;
     for (var i = 0; i < proof.length; i++) {
       if ((leafIndex >> i) & 1 == 0) {

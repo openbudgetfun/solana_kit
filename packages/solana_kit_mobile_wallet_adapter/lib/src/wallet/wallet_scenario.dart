@@ -94,6 +94,7 @@ class WalletScenario {
   final Set<String> _pendingRequestIds = <String>{};
 
   String? _sessionId;
+  bool _started = false;
   bool _closed = false;
 
   /// The active session identifier, or `null` if not started.
@@ -105,8 +106,14 @@ class WalletScenario {
   /// Starts the wallet scenario and begins accepting connections.
   ///
   /// This creates the native scenario, sets up the event bridge, and
-  /// starts the WebSocket server.
+  /// starts the WebSocket server. Each instance can be started only once;
+  /// create a new instance for a subsequent session.
   Future<void> start() async {
+    if (_closed || _started) {
+      throw StateError('Wallet scenario has already been started or closed');
+    }
+    _started = true;
+
     // Set up the native -> Dart callback bridge.
     _walletApi.setMethodCallHandler(_handleNativeCall);
 
@@ -115,6 +122,11 @@ class WalletScenario {
       walletName: walletName,
       configJson: jsonEncode(config.toJson()),
     );
+
+    if (_closed) {
+      await _walletApi.closeScenario(sessionId: _sessionId!);
+      return;
+    }
 
     // Start accepting connections.
     await _walletApi.startScenario(sessionId: _sessionId!);
@@ -145,6 +157,14 @@ class WalletScenario {
 
   /// Handles method calls from the native side (Kotlin -> Dart).
   Future<Object?> _handleNativeCall(MethodCall call) async {
+    final args = _decodeArgs(call);
+
+    // The native bridge is shared by sessions. Reject stale or foreign events
+    // before invoking callbacks that may sign or submit transactions.
+    if (_closed || _sessionId == null || args['sessionId'] != _sessionId) {
+      return null;
+    }
+
     switch (call.method) {
       case 'onScenarioReady':
         callbacks.onScenarioReady();

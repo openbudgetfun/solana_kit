@@ -2,7 +2,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
-import 'package:solana_kit_offchain_messages/src/codecs/preamble_common.dart';
+import 'package:solana_kit_offchain_messages/src/codecs/message.dart';
 import 'package:solana_kit_offchain_messages/src/envelope.dart';
 
 /// Partially signs an [OffchainMessageEnvelope] with the given [keyPairs].
@@ -20,8 +20,8 @@ OffchainMessageEnvelope partiallySignOffchainMessageEnvelope(
   final newSignatures = <Address, SignatureBytes>{};
   final unexpectedSigners = <Address>{};
 
-  final requiredSignatoryAddresses = decodeRequiredSignatoryAddresses(
-    offchainMessageEnvelope.content,
+  final requiredSignatoryAddresses = _getRequiredSignatoryAddresses(
+    offchainMessageEnvelope,
   );
 
   for (final keyPair in keyPairs) {
@@ -71,14 +71,10 @@ OffchainMessageEnvelope partiallySignOffchainMessageEnvelope(
     return offchainMessageEnvelope;
   }
 
-  final updatedSignatures = <Address, SignatureBytes?>{};
-  for (final entry in offchainMessageEnvelope.signatures.entries) {
-    final newSig = newSignatures.entries
-        .where((e) => e.key.value == entry.key.value)
-        .map((e) => e.value)
-        .firstOrNull;
-    updatedSignatures[entry.key] = newSig ?? entry.value;
-  }
+  final updatedSignatures = <Address, SignatureBytes?>{
+    ...offchainMessageEnvelope.signatures,
+    ...newSignatures,
+  };
 
   return OffchainMessageEnvelope(
     content: offchainMessageEnvelope.content,
@@ -104,24 +100,36 @@ OffchainMessageEnvelope signOffchainMessageEnvelope(
   return result;
 }
 
-/// Returns `true` if all signatures in the envelope are non-null.
+/// Returns `true` if the message is valid and every required signer has a
+/// non-null signature.
+///
+/// This checks signature presence. Use [verifyOffchainMessageEnvelope] to
+/// verify signatures cryptographically.
 bool isFullySignedOffchainMessageEnvelope(
   OffchainMessageEnvelope offchainMessage,
 ) {
-  return offchainMessage.signatures.values.every((sig) => sig != null);
+  try {
+    assertIsFullySignedOffchainMessageEnvelope(offchainMessage);
+    return true;
+  } on SolanaError {
+    return false;
+  } on FormatException {
+    return false;
+  }
 }
 
-/// Asserts that all signatures in the envelope are non-null.
+/// Asserts that the message is valid and every required signer has a non-null
+/// signature, including addresses omitted from the signature map.
 ///
-/// Throws a [SolanaError] with the missing addresses if any signatures are
-/// null.
+/// Throws a [SolanaError] with the missing addresses if signatures are absent.
+/// This does not verify signatures cryptographically.
 void assertIsFullySignedOffchainMessageEnvelope(
   OffchainMessageEnvelope offchainMessage,
 ) {
   final missingSigs = <Address>[];
-  for (final entry in offchainMessage.signatures.entries) {
-    if (entry.value == null) {
-      missingSigs.add(entry.key);
+  for (final address in _getRequiredSignatoryAddresses(offchainMessage)) {
+    if (offchainMessage.signatures[address] == null) {
+      missingSigs.add(address);
     }
   }
 
@@ -134,15 +142,16 @@ void assertIsFullySignedOffchainMessageEnvelope(
 
 /// Verifies that all required signatories have valid signatures.
 ///
-/// Throws a [SolanaError] if any signatures are missing or invalid.
+/// Rejects malformed messages, then throws a [SolanaError] if any required
+/// signatures are missing or invalid.
 void verifyOffchainMessageEnvelope(
   OffchainMessageEnvelope offchainMessageEnvelope,
 ) {
   final signatoriesWithMissingSignatures = <Address>[];
   final signatoriesWithInvalidSignatures = <Address>[];
 
-  final requiredSignatories = decodeRequiredSignatoryAddresses(
-    offchainMessageEnvelope.content,
+  final requiredSignatories = _getRequiredSignatoryAddresses(
+    offchainMessageEnvelope,
   );
 
   for (final addr in requiredSignatories) {
@@ -180,4 +189,14 @@ void verifyOffchainMessageEnvelope(
       },
     );
   }
+}
+
+List<Address> _getRequiredSignatoryAddresses(OffchainMessageEnvelope envelope) {
+  // Validate the body and version-specific signer rules before trusting the
+  // preamble for signing or authorization checks.
+  return getOffchainMessageDecoder()
+      .decode(envelope.content)
+      .requiredSignatories
+      .map((signatory) => signatory.address)
+      .toList();
 }

@@ -39,6 +39,8 @@ VariableSizeEncoder<num> getShortU16Encoder() {
 /// Creates a [VariableSizeDecoder] for Solana's shortU16 compact encoding.
 ///
 /// Decodes 1-3 bytes into an [int] in the range [0, 65535].
+/// Rejects overflowing values and non-canonical encodings that use more
+/// bytes than necessary.
 ///
 /// See [getShortU16Encoder] for encoding details.
 VariableSizeDecoder<int> getShortU16Decoder() {
@@ -57,7 +59,15 @@ VariableSizeDecoder<int> getShortU16Decoder() {
           });
         }
         final byte = bytes[currentOffset];
+        if (byte == 0 && shift > 0) {
+          throw SolanaError(SolanaErrorCode.codecsInvalidByteLength, {
+            'codecDescription': 'shortU16',
+            'expected': shift == 7 || result <= 0x7f ? 1 : 2,
+            'bytesLength': currentOffset - offset + 1,
+          });
+        }
         result |= (byte & 0x7f) << shift;
+        assertNumberIsBetweenForCodec('shortU16', 0, 65535, result);
         currentOffset++;
         if ((byte & 0x80) == 0) break;
         shift += 7;

@@ -29,7 +29,10 @@ FixedSizeEncoder<T> numberEncoderFactory<T extends num>({
       if (range != null) {
         assertNumberIsBetweenForCodec(name, range.$1, range.$2, value);
       }
-      final byteData = bytes.buffer.asByteData(bytes.offsetInBytes);
+      final byteData = bytes.buffer.asByteData(
+        bytes.offsetInBytes,
+        bytes.lengthInBytes,
+      );
       set(byteData, offset, value, endian);
       return offset + size;
     },
@@ -52,7 +55,10 @@ FixedSizeDecoder<int> numberDecoderFactory({
   return FixedSizeDecoder<int>(
     fixedSize: size,
     read: (bytes, offset) {
-      final byteData = bytes.buffer.asByteData(bytes.offsetInBytes);
+      final byteData = bytes.buffer.asByteData(
+        bytes.offsetInBytes,
+        bytes.lengthInBytes,
+      );
       return (get(byteData, offset, endian), offset + size);
     },
   );
@@ -75,7 +81,10 @@ FixedSizeDecoder<double> floatDecoderFactory({
   return FixedSizeDecoder<double>(
     fixedSize: size,
     read: (bytes, offset) {
-      final byteData = bytes.buffer.asByteData(bytes.offsetInBytes);
+      final byteData = bytes.buffer.asByteData(
+        bytes.offsetInBytes,
+        bytes.lengthInBytes,
+      );
       return (get(byteData, offset, endian), offset + size);
     },
   );

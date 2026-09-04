@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 
 /**
  * Format Dart code using `dart format`.
@@ -23,7 +23,7 @@ export function formatDartCode(code: string): string {
  * Format all Dart files in a directory using `dart format`.
  */
 export function formatDartDirectory(dir: string): void {
-  execSync(`dart format "${dir}"`, {
+  execFileSync("dart", ["format", "--", dir], {
     encoding: "utf-8",
     timeout: 60_000,
     stdio: ["pipe", "pipe", "pipe"],

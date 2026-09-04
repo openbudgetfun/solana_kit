@@ -182,16 +182,22 @@ class WalletAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget buildFallback() => SvgPicture.memory(
+      genericWalletLogo().bytes,
+      key: const Key('wallet_ui.fallback_logo'),
+    );
     final image = icon.mimeSubtype == 'svg+xml'
         ? SvgPicture.memory(
             icon.bytes,
             excludeFromSemantics: semanticLabel == null,
             semanticsLabel: semanticLabel,
+            errorBuilder: (context, error, stackTrace) => buildFallback(),
           )
         : Image.memory(
             Uint8List.fromList(icon.bytes),
             excludeFromSemantics: semanticLabel == null,
             semanticLabel: semanticLabel,
+            errorBuilder: (context, error, stackTrace) => buildFallback(),
           );
     return SizedBox.square(
       dimension: size,
@@ -241,70 +247,81 @@ class WalletPickerContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = WalletUiTheme.of(context);
-    return ColoredBox(
-      key: WalletUiKeys.picker,
-      color: palette.surface,
-      child: SafeArea(
-        top: false,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: tokens.maxPickerWidth),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
-            child: ListenableBuilder(
-              listenable: controller,
-              builder: (context, child) {
-                final state = controller.state;
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    (headerBuilder ?? _header)(
-                      context,
-                      tokens.pickerTitle,
-                      onClose,
-                    ),
-                    const SizedBox(height: 18),
-                    if (state.connectionStatus ==
-                        WalletConnectionStatus.discovering)
-                      Center(
-                        key: WalletUiKeys.progress,
-                        child: Padding(
-                          padding: const EdgeInsets.all(32),
-                          child: RepaintBoundary(
-                            child: CircularProgressIndicator.adaptive(
-                              valueColor: AlwaysStoppedAnimation(
-                                palette.accent,
+    // Cupertino pickers have no Material ancestor, so without an explicit
+    // default the ambient fallback style leaks its yellow double underline
+    // under every label.
+    return DefaultTextStyle(
+      style: TextStyle(
+        inherit: false,
+        color: palette.foreground,
+        fontSize: 16,
+        decoration: TextDecoration.none,
+      ),
+      child: ColoredBox(
+        key: WalletUiKeys.picker,
+        color: palette.surface,
+        child: SafeArea(
+          top: false,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: tokens.maxPickerWidth),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+              child: ListenableBuilder(
+                listenable: controller,
+                builder: (context, child) {
+                  final state = controller.state;
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      (headerBuilder ?? _header)(
+                        context,
+                        tokens.pickerTitle,
+                        onClose,
+                      ),
+                      const SizedBox(height: 18),
+                      if (state.connectionStatus ==
+                          WalletConnectionStatus.discovering)
+                        Center(
+                          key: WalletUiKeys.progress,
+                          child: Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: RepaintBoundary(
+                              child: CircularProgressIndicator.adaptive(
+                                valueColor: AlwaysStoppedAnimation(
+                                  palette.accent,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      )
-                    else if (state.wallets.isEmpty)
-                      (emptyBuilder ?? _empty)(context)
-                    else
-                      Flexible(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) =>
-                              _wallets(context, constraints, state.wallets),
-                        ),
-                      ),
-                    if (state.error != null) ...[
-                      const SizedBox(height: 12),
-                      Semantics(
-                        liveRegion: true,
-                        child: Text(
-                          state.error.toString(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: palette.mutedForeground,
-                            fontSize: 12,
+                        )
+                      else if (state.wallets.isEmpty)
+                        (emptyBuilder ?? _empty)(context)
+                      else
+                        Flexible(
+                          child: LayoutBuilder(
+                            builder: (context, constraints) =>
+                                _wallets(context, constraints, state.wallets),
                           ),
                         ),
-                      ),
+                      if (state.error != null) ...[
+                        const SizedBox(height: 12),
+                        Semantics(
+                          liveRegion: true,
+                          child: Text(
+                            state.error.toString(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: palette.mutedForeground,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ),

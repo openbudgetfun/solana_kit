@@ -73,14 +73,14 @@ AssociationParams parseAssociationUri(Uri uri) {
   final publicKeyBytes = _fromBase64Url(association);
 
   final path = uri.path;
-  if (path.contains('local')) {
+  if (path.endsWith('/v1/associate/local')) {
     final port = int.parse(uri.queryParameters['port']!);
     return LocalAssociationParams(
       associationPublicKey: publicKeyBytes,
       protocol: protocol,
       port: port,
     );
-  } else if (path.contains('remote')) {
+  } else if (path.endsWith('/v1/associate/remote')) {
     final reflectorHost = uri.queryParameters['reflector']!;
     final reflectorIdBytes = _fromBase64Url(uri.queryParameters['id']!);
     // Parse reflector ID from bytes (it's encoded as base64url).
@@ -107,7 +107,10 @@ Uri _getIntentUri(String methodPathname, String? intentUrlBase) {
         'url': intentUrlBase,
       });
     }
-    return baseUrl.resolve(methodPathname);
+    final prefix = baseUrl.path.endsWith('/')
+        ? baseUrl.path
+        : '${baseUrl.path}/';
+    return baseUrl.replace(path: '$prefix$methodPathname', fragment: '');
   }
   return Uri.parse('$mwaIntentScheme:/$methodPathname');
 }

@@ -178,6 +178,28 @@ void main() {
       });
     });
 
+    test('stops on native stream errors without uncaught zone errors', () {
+      FakeAsync().run((async) {
+        final uncaughtErrors = <Object>[];
+        runZonedGuarded(
+          () => getRpcSubscriptionsChannelWithAutoping(
+            abortSignal: CancellationTokenSource().token,
+            channel: mockChannel,
+            intervalMs: _mockIntervalMs,
+          ),
+          (error, stackTrace) => uncaughtErrors.add(error),
+        );
+
+        mockChannel.publishStreamError(StateError('Connection failed'));
+        async
+          ..flushMicrotasks()
+          ..elapse(const Duration(milliseconds: _mockIntervalMs));
+
+        expect(uncaughtErrors, isEmpty);
+        expect(mockChannel.sendCallCount, equals(0));
+      });
+    });
+
     test(
       'does not send a ping after send fataled with a connection closed error',
       () {
@@ -253,6 +275,10 @@ class _MockChannel implements RpcSubscriptionsChannel {
 
   void publishError(Object? error) {
     if (!_errorsController.isClosed) _errorsController.add(error);
+  }
+
+  void publishStreamError(Object error) {
+    _errorsController.addError(error);
   }
 
   @override

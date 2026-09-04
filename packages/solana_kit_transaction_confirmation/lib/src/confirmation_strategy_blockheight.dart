@@ -76,9 +76,16 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
     }
 
     final abortController = CancellationTokenSource();
+    final exceedenceCompleter = Completer<Never>();
 
     abortSignal.future.then((_) {
+      if (abortController.token.isCancelled) return;
       abortController.cancel(abortSignal.reason);
+      if (!exceedenceCompleter.isCompleted) {
+        exceedenceCompleter.completeError(
+          StateError('The operation was aborted: ${abortSignal.reason}'),
+        );
+      }
     }).ignore();
 
     Future<
@@ -105,8 +112,10 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
               BigInt differenceBetweenSlotHeightAndBlockHeight,
             })
           >();
-      final slotNotifications = <SlotNotification>[];
-      var slotNotificationCallback = (SlotNotification _) {};
+      SlotNotification? latestSlotNotification;
+      var slotNotificationCallback = (SlotNotification notification) {
+        latestSlotNotification = notification;
+      };
 
       unawaited(
         config
@@ -116,11 +125,24 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
                 slotNotificationCallback(notification);
               },
             )
-            .catchError((Object error) {
-              if (!initialInfoCompleter.isCompleted) {
-                initialInfoCompleter.completeError(error);
-              }
-            }),
+            .then<void>(
+              (_) {
+                if (abortController.token.isCancelled) return;
+                if (!exceedenceCompleter.isCompleted) {
+                  exceedenceCompleter.completeError(
+                    StateError(
+                      'The confirmation subscription ended unexpectedly.',
+                    ),
+                  );
+                }
+              },
+              onError: (Object error, StackTrace stackTrace) {
+                if (abortController.token.isCancelled) return;
+                if (!exceedenceCompleter.isCompleted) {
+                  exceedenceCompleter.completeError(error, stackTrace);
+                }
+              },
+            ),
       );
 
       unawaited(
@@ -137,7 +159,10 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
             }),
       );
 
-      final initialInfo = await initialInfoCompleter.future;
+      final initialInfo = await Future.any([
+        initialInfoCompleter.future,
+        exceedenceCompleter.future,
+      ]);
 
       if (abortSignal.isCancelled) {
         throw StateError('The operation was aborted: ${abortSignal.reason}');
@@ -150,8 +175,6 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
             initialInfo.differenceBetweenSlotHeightAndBlockHeight;
 
         // Process slot notifications.
-        final exceedenceCompleter = Completer<Never>();
-
         slotNotificationCallback = (notification) {
           if (exceedenceCompleter.isCompleted) return;
 
@@ -187,7 +210,9 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
 
         // Also process any notifications that arrived before we set up
         // the callback.
-        slotNotifications.forEach(slotNotificationCallback);
+        if (latestSlotNotification case final notification?) {
+          slotNotificationCallback(notification);
+        }
 
         return await exceedenceCompleter.future;
       }

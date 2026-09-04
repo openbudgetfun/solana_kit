@@ -33,6 +33,8 @@ Inside this monorepo, Dart workspace resolution uses the local package automatic
 
 The CLI-backed runtime requires the `surfpool` executable to be available on `PATH`. In this repository, use the configured `devenv` shell.
 
+`startupTimeout` bounds readiness health checks, including stalled HTTP requests. Failed startup stops the child process and cleans its temporary working directory. Cheatcode responses must contain a JSON-RPC 2.0 envelope with the matching request ID and exactly one result or error; malformed responses raise `SurfpoolRpcException` instead of confirming account mutations.
+
 ## Usage
 
 ```dart
@@ -119,6 +121,8 @@ void main() {
 ```
 
 ## Cheatcodes
+
+`SurfnetCheatcodes` unwraps RPC context envelopes and returns their `value`, including `null` when a profile is absent. `profileTransaction` accepts a `config` without a `tag` and preserves the optional argument positions on the wire.
 
 ```dart
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';

@@ -128,6 +128,8 @@ void main() {
 
 `parseJsonWithBigInts` parses JSON so that integer values become `BigInt` instead of `double`, which avoids precision loss on large Solana values like slot numbers and lamports. `stringifyJsonWithBigInts` does the reverse.
 
+Objects and strings are preserved, including objects with a `$n` field. Only JSON number tokens become `BigInt` values. Positive integer exponents above 10,000 throw `FormatException` before expansion, including when parsing asynchronously or in an isolate, to bound the work required by compact untrusted numbers. Numbers with decimal points or negative exponents remain `double` values.
+
 ```dart
 import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
 

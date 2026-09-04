@@ -33,11 +33,17 @@ Future<WalletAccountSigner> connectFirstWallet() async {
 
 `WalletController` is a `ChangeNotifier`, so it works with Flutter's built-in `ListenableBuilder` and any state-management package. The adapter has no dependency on the optional widget package.
 
+Pending authorization is invalidated when you disconnect, switch wallets, remove a wallet from the registry, or dispose the controller. A superseded `connect` future rejects with `WalletStandardErrorCode.disconnected`; its completion cannot restore an old selected account. Disconnect clears the selected account immediately, before the backend finishes. Create a fresh signer after each connection or account change.
+
 ## Platform behavior
 
 - **Web:** implements the Wallet Standard `wallet-standard:register-wallet` and `wallet-standard:app-ready` event handshake, including wallets registered after application startup.
 - **Android:** uses the Solana Mobile Wallet Adapter protocol to authorize, sign, send, disconnect, and complete Sign In With Solana.
 - **Other native platforms:** returns an empty registry. Applications can supply their own `WalletRegistry` implementation or use a browser-based flow.
+
+Mobile wallet signing batches must use one authorized account. Transaction chains must match the chain used to authorize the mobile wallet, and every sign-and-send input in a batch must use equivalent submission options. Submit requests with different accounts or policies separately; mismatched batches are rejected before any backend signing or submission. Disconnect immediately revokes local accounts even if backend cleanup fails. Pending or superseded connect/sign-in operations cannot restore authority.
+
+Native message signing validates the returned message envelope and exposes the extracted 64-byte signature; malformed envelopes and changed message bytes are rejected.
 
 ## Key APIs
 

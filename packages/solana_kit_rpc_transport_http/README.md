@@ -68,6 +68,14 @@ Future<void> main() async {
 }
 ```
 
+### Cancelling requests
+
+Pass a `Future<void>` as `RpcTransportConfig.signal` and complete it to abort an in-flight request, including a response body that has stopped streaming. The default HTTP client throws `http.RequestAbortedException`. Custom clients must support `http.AbortableRequest` for cancellation to work. Cancelling a request does not undo a transaction the RPC node has already received.
+
+### Redirect handling
+
+Redirect responses are returned as `rpcTransportHttpError` without contacting the redirect destination. This keeps custom authentication headers at the configured endpoint and prevents redirects from bypassing its HTTPS policy. Configure the final RPC URL directly. Connection, cancellation, and response-stream HTTP exceptions omit the endpoint URI and original message because both can contain API keys or other credentials. Cancellation retains its `http.RequestAbortedException` type.
+
 ### Custom headers
 
 Pass custom headers through `HttpTransportConfig`. The `accept`, `content-length`, and `content-type` headers are set automatically and cannot be overridden. Forbidden headers (per the MDN specification) are rejected.
@@ -183,7 +191,7 @@ void main() {
 
 ### Header validation
 
-`assertIsAllowedHttpRequestHeaders` validates that no forbidden or protocol-reserved headers are included. It is called automatically in debug mode by `createHttpTransport`.
+`assertIsAllowedHttpRequestHeaders` validates that no forbidden or protocol-reserved headers are included. It is called automatically in every build mode by `createHttpTransport`.
 
 ```dart
 import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';

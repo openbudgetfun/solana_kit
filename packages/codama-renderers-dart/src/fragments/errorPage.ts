@@ -8,6 +8,7 @@ import {
   mergeFragments,
   use,
 } from "../utils/fragment.js";
+import { getNonNegativeInteger, toDartStringLiteral } from "../utils/valueNodes.js";
 import type { RenderScope } from "../utils/options.js";
 import { camelCase, pascalCase, screamingSnakeCase } from "../utils/nameTransformers.js";
 
@@ -30,11 +31,12 @@ export function getErrorPageFragment(
         programName,
         err.name as string,
       );
+      getNonNegativeInteger(err.code);
       const hexCode = `0x${err.code.toString(16)}`;
       const docs = err.docs?.length
-        ? err.docs.map((d) => `/// ${d}`).join("\n") + "\n"
+        ? err.docs.map(toDartDocComment).join("\n") + "\n"
         : "";
-      const message = err.message ? `/// Message: "${err.message}"\n` : "";
+      const message = err.message ? `${toDartDocComment(`Message: "${err.message}"`)}\n` : "";
       return `${docs}${message}const int ${constName} = ${hexCode}; // ${err.code}`;
     })
     .join("\n\n");
@@ -47,7 +49,7 @@ export function getErrorPageFragment(
         err.name as string,
       );
       const message = err.message ?? err.name as string;
-      return `    ${constName}: '${escapeString(message)}',`;
+      return `    ${constName}: ${toDartStringLiteral(message)},`;
     })
     .join("\n");
 
@@ -77,6 +79,7 @@ bool ${fragmentFromString(isErrorFnName)}(int code) {
 }`;
 }
 
-function escapeString(str: string): string {
-  return str.replace(/'/g, "\\'").replace(/\n/g, "\\n");
+/** Prefix every physical line so IDL documentation cannot become Dart code. */
+function toDartDocComment(value: string): string {
+  return value.split(/\r\n?|\n/).map((line) => `/// ${line}`).join("\n");
 }

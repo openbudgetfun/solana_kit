@@ -3,6 +3,9 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/src/types.dart';
 /// Creates a Sign In With Solana (SIWS) message string following the
 /// EIP-4361/SIWS specification format.
 ///
+/// Throws [FormatException] if any field or resource contains CR or LF, which
+/// could inject additional fields into the message being signed.
+///
 /// The message format follows the template:
 /// ```text
 /// ${domain} wants you to sign in with your Solana account:
@@ -24,6 +27,25 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/src/types.dart';
 /// ...
 /// ```
 String createSiwsMessage(SignInPayload payload) {
+  for (final value in [
+    payload.domain,
+    payload.address,
+    payload.statement,
+    payload.uri,
+    payload.version,
+    payload.chainId,
+    payload.nonce,
+    payload.issuedAt,
+    payload.expirationTime,
+    payload.notBefore,
+    payload.requestId,
+    ...?payload.resources,
+  ]) {
+    if (value != null && (value.contains('\r') || value.contains('\n'))) {
+      throw const FormatException('SIWS fields must not contain line breaks');
+    }
+  }
+
   final buffer = StringBuffer()
     // Header
     ..writeln(

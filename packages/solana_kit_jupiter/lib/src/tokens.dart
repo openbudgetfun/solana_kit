@@ -31,18 +31,36 @@ class JupiterTokenClient {
     final response = await _restClient.get(
       '/tokens/v2/tag',
       queryParameters: {
-        'tag': tag,
+        'query': tag,
       },
     );
     return _parseTokenList(response);
   }
 
-  /// Lists tokens in a Token API category such as `toporganized`.
-  Future<List<JupiterTokenItem>> category(String category, {int? limit}) async {
+  /// Lists `toporganicscore`, `toptraded`, or `toptrending` tokens.
+  ///
+  /// [interval] must be `5m`, `1h`, `6h`, or `24h` (the default).
+  Future<List<JupiterTokenItem>> category(
+    String category, {
+    int? limit,
+    String interval = '24h',
+  }) async {
+    if (!const {
+      'toporganicscore',
+      'toptraded',
+      'toptrending',
+    }.contains(category)) {
+      throw ArgumentError.value(category, 'category', 'Unknown token category');
+    }
+    if (!const {'5m', '1h', '6h', '24h'}.contains(interval)) {
+      throw ArgumentError.value(interval, 'interval', 'Unknown token interval');
+    }
+    if (limit != null && (limit < 1 || limit > 100)) {
+      throw ArgumentError.value(limit, 'limit', 'Must be between 1 and 100');
+    }
     final response = await _restClient.get(
-      '/tokens/v2/category',
+      '/tokens/v2/$category/$interval',
       queryParameters: {
-        'category': category,
         if (limit != null) 'limit': '$limit',
       },
     );

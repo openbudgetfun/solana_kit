@@ -536,7 +536,11 @@ class Surfnet {
       }
 
       try {
-        await _rpcClient.call('getHealth');
+        await _rpcClient
+            .call('getHealth')
+            .timeout(
+              deadline.difference(DateTime.now()),
+            );
         return;
       } on Object catch (error) {
         lastError = error;

@@ -16,4 +16,5 @@ dependencies:
   solana_kit_instructions: ^0.9.1
 dev_dependencies:
   solana_kit_lints: ^0.9.1
+  solana_kit_transaction_messages: ^0.9.1
   test: ^1.25.0

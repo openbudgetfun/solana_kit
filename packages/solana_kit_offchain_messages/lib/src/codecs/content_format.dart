@@ -13,11 +13,20 @@ getOffchainMessageContentFormatEncoder() {
 }
 
 /// Returns a fixed-size decoder for [OffchainMessageContentFormat].
+///
+/// Throws [FormatException] for an unrecognized wire format.
 FixedSizeDecoder<OffchainMessageContentFormat>
 getOffchainMessageContentFormatDecoder() {
   return transformDecoder<int, OffchainMessageContentFormat>(
         getU8Decoder(),
-        (value, bytes, offset) => OffchainMessageContentFormat.fromValue(value),
+        (value, bytes, offset) {
+          if (value > OffchainMessageContentFormat.utf865535BytesMax.value) {
+            throw FormatException(
+              'Invalid offchain message content format: $value',
+            );
+          }
+          return OffchainMessageContentFormat.fromValue(value);
+        },
       )
       as FixedSizeDecoder<OffchainMessageContentFormat>;
 }

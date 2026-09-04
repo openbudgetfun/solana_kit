@@ -6,6 +6,8 @@ import 'package:solana_kit_subscribable/src/cancellation_token.dart';
 ///
 /// When [cancellationToken] fires, the returned stream closes after cancelling
 /// both source subscriptions. Events emitted after cancellation are ignored.
+/// Native error events from either source are forwarded to the returned stream,
+/// including type errors from transformed notification streams.
 Stream<TData> createStreamFromDataAndErrorStreams<TData>({
   required Stream<TData> dataStream,
   required Stream<Object?> errorStream,
@@ -45,6 +47,16 @@ Stream<TData> createStreamFromDataAndErrorStreams<TData>({
       controller.isClosed ||
       (cancellationToken?.isCancelled ?? false);
 
+  void handleError(Object? error, [StackTrace? stackTrace]) {
+    if (hasError || shouldIgnoreEvents()) return;
+
+    final effectiveError = error ?? StateError('Unknown error');
+    hasError = true;
+    firstError = effectiveError;
+    controller.addError(effectiveError, stackTrace);
+    unawaited(cancelSourceSubscriptions());
+  }
+
   controller = StreamController<TData>.broadcast(
     sync: true,
     onListen: () {
@@ -63,20 +75,12 @@ Stream<TData> createStreamFromDataAndErrorStreams<TData>({
 
       sourceSubscriptions
         ..add(
-          errorStream.listen((error) {
-            if (hasError || shouldIgnoreEvents()) return;
-
-            final effectiveError = error ?? StateError('Unknown error');
-            hasError = true;
-            firstError = effectiveError;
-            controller.addError(effectiveError);
-            unawaited(cancelSourceSubscriptions());
-          }),
+          errorStream.listen(handleError, onError: handleError),
         )
         ..add(
           dataStream.listen((data) {
             if (!shouldIgnoreEvents()) controller.add(data);
-          }),
+          }, onError: handleError),
         );
     },
     onCancel: stop,

@@ -143,7 +143,11 @@ void main() {
           url: Uri.parse('http://127.0.0.1:8899'),
           client: MockClient(
             (_) async => http.Response(
-              jsonEncode(<String, Object?>{'error': error}),
+              jsonEncode(<String, Object?>{
+                'jsonrpc': '2.0',
+                'id': 1,
+                'error': error,
+              }),
               200,
             ),
           ),

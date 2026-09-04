@@ -49,7 +49,9 @@ class TransactionPlanExecutorConfig {
 ///
 /// Throws a [SolanaError] with code
 /// [SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan]
-/// if any transaction in the plan fails to execute.
+/// if any transaction in the plan fails to execute. The error retains the
+/// complete result tree and original failure even when the context contains
+/// a transaction whose fee payer has not signed it.
 ///
 /// Throws a [SolanaError] with code
 /// [SolanaErrorCode.instructionPlansNonDivisibleTransactionPlansNotSupported]
@@ -107,6 +109,99 @@ Future<TransactionPlanResult> _traverse(
       );
     case SingleTransactionPlan():
       return _traverseSingle(transactionPlan, config, isCanceled, setCanceled);
+  }
+}
+
+/// Creates a new transaction plan executor that starts every leaf of the
+/// plan concurrently.
+///
+/// This mirrors the TypeScript SDK's
+/// `createTransactionPlanExecutorWithConcurrentLeaves`. It shares the
+/// [TransactionPlanExecutorConfig] callback contract with
+/// [createTransactionPlanExecutor] — the callback receives a mutable context
+/// map, returns the context the successful result must carry, and expresses
+/// failure by throwing — but differs only in traversal:
+///
+/// - every leaf is started concurrently, including across sequential plans;
+/// - a failed leaf does not cancel sibling leaves;
+/// - non-divisible sequential plans are supported.
+///
+/// Unlike the sequential-or-parallel executor, the result of each leaf is
+/// built by the executor itself: when the callback throws, the leaf's result
+/// is failed with the partial context recorded so far, and sibling leaves
+/// keep running to completion.
+///
+/// Throws a [SolanaError] with code
+/// [SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan] if any
+/// leaf fails to execute, carrying the merged
+/// [TransactionPlanResult].
+TransactionPlanExecutor createTransactionPlanExecutorWithConcurrentLeaves(
+  TransactionPlanExecutorConfig config,
+) {
+  return (TransactionPlan plan) async {
+    final transactionPlanResult = await _traverseLeavesConcurrently(
+      plan,
+      config,
+    );
+    if (!isSuccessfulTransactionPlanResult(transactionPlanResult)) {
+      throw createFailedToExecuteTransactionPlanError(transactionPlanResult);
+    }
+    return transactionPlanResult;
+  };
+}
+
+Future<TransactionPlanResult> _traverseLeavesConcurrently(
+  TransactionPlan transactionPlan,
+  TransactionPlanExecutorConfig config,
+) async {
+  switch (transactionPlan) {
+    case SingleTransactionPlan():
+      // A fresh context is created for every leaf, so nothing is populated
+      // yet. Filling it in is the callback's job. Anything the callback
+      // stores on the mutable context but leaves out of its return value is
+      // kept, since dropping it would lose data it deliberately recorded.
+      final context = <String, Object?>{};
+      try {
+        final result = await config.executeTransactionMessage(
+          context,
+          transactionPlan.message,
+        );
+        if (result is Map<String, Object?>) {
+          return successfulSingleTransactionPlanResult(
+            transactionPlan.message,
+            {...context, ...result},
+          );
+        }
+        if (result is String) {
+          return successfulSingleTransactionPlanResult(
+            transactionPlan.message,
+            {...context, 'signature': Signature(result)},
+          );
+        }
+        return successfulSingleTransactionPlanResultFromTransaction(
+          transactionPlan.message,
+          result as Transaction,
+          context,
+        );
+      } on Object catch (error) {
+        return failedSingleTransactionPlanResult(
+          transactionPlan.message,
+          error,
+          context,
+        );
+      }
+    case ParallelTransactionPlan(:final plans):
+      final results = await Future.wait(
+        plans.map((plan) => _traverseLeavesConcurrently(plan, config)),
+      );
+      return parallelTransactionPlanResult(results);
+    case SequentialTransactionPlan(:final divisible, :final plans):
+      final results = await Future.wait(
+        plans.map((plan) => _traverseLeavesConcurrently(plan, config)),
+      );
+      return divisible
+          ? sequentialTransactionPlanResult(results)
+          : nonDivisibleSequentialTransactionPlanResult(results);
   }
 }
 
@@ -181,16 +276,16 @@ Future<TransactionPlanResult> _traverseSingle(
     );
   } on Object catch (error) {
     setCanceled();
-    // If the context contains a transaction but no signature, extract it.
+    // Signature enrichment must not erase the original failure or prior results
+    // when the transaction has not been signed by its fee payer.
+    final transaction = context['transaction'];
     final contextWithSignature =
-        context.containsKey('transaction') &&
-            context['transaction'] is Transaction &&
+        transaction is Transaction &&
+            transaction.signatures.values.firstOrNull != null &&
             !context.containsKey('signature')
         ? {
             ...context,
-            'signature': getSignatureFromTransaction(
-              context['transaction']! as Transaction,
-            ),
+            'signature': getSignatureFromTransaction(transaction),
           }
         : context;
     return failedSingleTransactionPlanResult(

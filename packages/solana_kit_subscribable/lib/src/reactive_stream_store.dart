@@ -160,6 +160,9 @@ class ReactiveStreamStore<T> {
       return;
     }
 
+    final source = CancellationTokenSource();
+    _activeSource = source;
+
     // Transition to loading, preserving the last known data and error for
     // stale-while-revalidate. (v7.0.0 collapsed the former `retrying` status
     // into `loading`.)
@@ -169,9 +172,9 @@ class ReactiveStreamStore<T> {
       error: _state.error,
     );
     _notifySubscribers();
+    // A subscriber can synchronously reset, dispose, or reconnect the store.
+    if (_activeSource?.token != source.token) return;
 
-    final source = CancellationTokenSource();
-    _activeSource = source;
     // If the caller attached a per-connection signal, propagate its abort to
     // the inner per-connection controller and surface the abort reason on
     // state as an error (when this connection is still the active one).
@@ -185,6 +188,9 @@ class ReactiveStreamStore<T> {
           );
         }
         source.cancel(callerSignal.reason);
+        if (_activeSource?.token == source.token) {
+          _abortActiveConnection();
+        }
       });
     }
     _openConnection(source.token);
@@ -216,12 +222,17 @@ class ReactiveStreamStore<T> {
         },
         cancelOnError: false,
       );
-      _errorSubscription = connection.errorStream.listen((error) {
-        if (error == null) {
-          return;
-        }
-        _handleError(error, signal);
-      });
+      _errorSubscription = connection.errorStream.listen(
+        (error) {
+          if (error == null) {
+            return;
+          }
+          _handleError(error, signal);
+        },
+        onError: (Object error, StackTrace _) {
+          _handleError(error, signal);
+        },
+      );
     } on Object catch (error) {
       if (_isDisposed || signal.isCancelled || _activeSource?.token != signal) {
         return;

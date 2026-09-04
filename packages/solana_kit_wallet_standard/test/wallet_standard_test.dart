@@ -4,6 +4,28 @@ import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
 import 'package:test/test.dart';
 
 void main() {
+  group('fallback wallet logos', () {
+    test('resolves popular wallets case-insensitively', () {
+      expect(walletLogoFallback('Phantom')!.mimeSubtype, 'svg+xml');
+      expect(walletLogoFallback('SOLFLARE')!.mimeSubtype, 'svg+xml');
+      expect(walletLogoFallback('metamask')!.mimeSubtype, 'svg+xml');
+    });
+
+    test('ignores a trailing wallet suffix', () {
+      expect(walletLogoFallback('Trust Wallet')!.mimeSubtype, 'svg+xml');
+      expect(walletLogoFallback('XDEFI Wallet')!.mimeSubtype, 'svg+xml');
+    });
+
+    test('returns null for unknown wallets', () {
+      expect(walletLogoFallback('Unknown Wallet'), isNull);
+      expect(walletLogoFallback(''), isNull);
+    });
+
+    test('provides a parsing generic glyph', () {
+      expect(genericWalletLogo().mimeSubtype, 'svg+xml');
+    });
+  });
+
   group('identifiers and errors', () {
     test('exposes canonical identifiers', () {
       expect(walletStandardVersion, '1.0.0');
@@ -293,6 +315,34 @@ void main() {
     });
   });
 
+  test('registry deduplicates wallets that share a name', () async {
+    final registry = WalletRegistryController();
+    final events = <WalletRegistryEvent>[];
+    registry.events.listen(events.add);
+    await registry.initialize();
+    final off = registry.register(_Wallet());
+    final duplicateOff = registry.register(_Wallet());
+    final otherOff = registry.register(_Wallet('Other wallet'));
+    expect(
+      registry.wallets.map((wallet) => wallet.name),
+      ['Test wallet', 'Other wallet'],
+    );
+    expect(
+      events.whereType<WalletRegistered>().map((event) => event.wallet.name),
+      ['Test wallet', 'Other wallet'],
+    );
+    // Unregistering a skipped duplicate must not remove the original.
+    duplicateOff();
+    expect(
+      registry.wallets.map((wallet) => wallet.name),
+      ['Test wallet', 'Other wallet'],
+    );
+    otherOff();
+    off();
+    expect(registry.wallets, isEmpty);
+    await registry.dispose();
+  });
+
   test('registry emits deterministic mutations and disposes safely', () async {
     final registry = WalletRegistryController();
     final wallet = _Wallet();
@@ -331,6 +381,11 @@ WalletAccount _account() => WalletAccount(
 );
 
 class _Wallet implements Wallet {
+  _Wallet([this.name = 'Test wallet']);
+
+  @override
+  final String name;
+
   final WalletAccount _value = _account();
   @override
   List<WalletAccount> get accounts => [_value];
@@ -342,8 +397,6 @@ class _Wallet implements Wallet {
   };
   @override
   WalletIcon get icon => WalletIcon(_icon);
-  @override
-  String get name => 'Test wallet';
   @override
   String get version => walletStandardVersion;
 }

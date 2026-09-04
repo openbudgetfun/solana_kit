@@ -21,6 +21,7 @@ class SolanaRpcApiConfig {
 /// The set of all Solana JSON-RPC method names available on all clusters.
 const List<String> solanaRpcMethodsForAllClusters = [
   'getAccountInfo',
+  'getAgGenesisCert',
   'getBalance',
   'getBlock',
   'getBlockCommitment',

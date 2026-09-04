@@ -8,6 +8,53 @@ import 'package:test/test.dart';
 
 void main() {
   group('RestClient contract', () {
+    for (final method in ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']) {
+      test(
+        'does not disclose credentials from a $method connection exception',
+        () async {
+          final client = RestClient(
+            baseUrl:
+                'https://rest-user:rest-password@example.com/?api-key=secret-key',
+            client: MockClient((request) async {
+              throw http.ClientException(
+                'Failed to connect to ${request.url}',
+                request.url,
+              );
+            }),
+          );
+          final response = switch (method) {
+            'GET' => client.get('/test'),
+            'POST' => client.post('/test'),
+            'PUT' => client.put('/test'),
+            'PATCH' => client.patch('/test'),
+            _ => client.delete('/test'),
+          };
+
+          await expectLater(
+            response,
+            throwsA(
+              isA<http.ClientException>()
+                  .having(
+                    (error) => error.toString(),
+                    'message',
+                    isNot(contains('secret-key')),
+                  )
+                  .having(
+                    (error) => error.toString(),
+                    'message',
+                    isNot(contains('rest-password')),
+                  )
+                  .having(
+                    (error) => error.toString(),
+                    'message',
+                    isNot(contains('rest-user')),
+                  ),
+            ),
+          );
+        },
+      );
+    }
+
     test('GET merges query parameters with base URLs', () async {
       late http.Request capturedRequest;
       final client = RestClient(

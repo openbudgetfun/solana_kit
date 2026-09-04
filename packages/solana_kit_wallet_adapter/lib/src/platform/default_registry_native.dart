@@ -1,5 +1,3 @@
-// coverage:ignore-file
-
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -15,14 +13,20 @@ import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
 WalletRegistry createPlatformWalletRegistry({
   required WalletAppIdentity appIdentity,
   required String chain,
+  List<Wallet> additionalWallets = const [],
 }) => MobileWalletRegistry(
   backend: NativeMobileWalletBackend(),
   identity: appIdentity,
   chain: chain,
+  additionalWallets: additionalWallets,
 );
 
 /// Android Mobile Wallet Adapter backend.
 class NativeMobileWalletBackend implements MobileWalletBackend {
+  /// Creates a backend using the supplied native wallet session transport.
+  NativeMobileWalletBackend({this._transact = mwa.transact});
+
+  final NativeWalletTransact _transact;
   String? _authToken;
   String? _walletUriBase;
   final Map<String, String> _rawAddresses = {};
@@ -37,7 +41,7 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
     bool silent = false,
     SolanaSignInInput? signIn,
   }) async {
-    final result = await mwa.transact(
+    final result = await _transact(
       (wallet) => wallet.authorize(
         identity: protocol.AppIdentity(
           name: identity.name,
@@ -74,7 +78,7 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
   Future<void> disconnect() async {
     final authToken = _authToken;
     if (authToken != null) {
-      await mwa.transact(
+      await _transact(
         (wallet) => wallet.deauthorize(authToken: authToken),
         config: protocol.WalletAssociationConfig(baseUri: _walletUriBase),
       );
@@ -97,12 +101,27 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
   Future<List<Uint8List>> signMessages(
     List<Uint8List> messages,
     WalletAccount account,
-  ) => _authorized(
-    (wallet) async => (await wallet.signMessages(
-      addresses: List.filled(messages.length, _rawAddress(account)),
-      payloads: messages.map(base64.encode).toList(),
-    )).map((value) => Uint8List.fromList(base64.decode(value))).toList(),
-  );
+  ) {
+    final payloads = messages.map(base64.encode).toList();
+    return _authorized((wallet) async {
+      final signed = await wallet.signMessages(
+        addresses: [_rawAddress(account)],
+        payloads: payloads,
+      );
+
+      if (signed.length != payloads.length) {
+        throw const WalletStandardException(
+          WalletStandardErrorCode.invalidResponse,
+          'Mobile wallet signed message count does not match the input count',
+        );
+      }
+
+      return [
+        for (var index = 0; index < signed.length; index++)
+          _messageSignature(signed[index], base64.decode(payloads[index])),
+      ];
+    });
+  }
 
   @override
   Future<List<Uint8List>> signAndSendTransactions(
@@ -133,7 +152,7 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
         'Mobile wallet authorization is unavailable',
       );
     }
-    return mwa.transact(
+    return _transact(
       (wallet) async {
         final refreshed = await wallet.reauthorize(authToken: authToken);
         _authToken = refreshed.authToken;
@@ -173,6 +192,45 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
     }
     return value;
   }
+}
+
+/// Executes an operation within a native mobile wallet session.
+typedef NativeWalletTransact =
+    Future<T> Function<T>(
+      Future<T> Function(mwa.KitMobileWallet wallet) callback, {
+      protocol.WalletAssociationConfig? config,
+    });
+
+Uint8List _messageSignature(String encoded, Uint8List message) {
+  final Uint8List signed;
+  try {
+    signed = base64.decode(encoded);
+  } on FormatException catch (error) {
+    throw WalletStandardException(
+      WalletStandardErrorCode.invalidResponse,
+      'Mobile wallet returned an invalid signed message encoding',
+      cause: error,
+    );
+  }
+
+  // MWA appends one signature per requested address to the message bytes.
+  if (signed.length != message.length + 64) {
+    throw const WalletStandardException(
+      WalletStandardErrorCode.invalidResponse,
+      'Mobile wallet signed message must contain one 64-byte signature',
+    );
+  }
+
+  for (var index = 0; index < message.length; index++) {
+    if (signed[index] != message[index]) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Mobile wallet signed a different message',
+      );
+    }
+  }
+
+  return signed.sublist(message.length);
 }
 
 WalletIcon? _walletIcon(String? value) {

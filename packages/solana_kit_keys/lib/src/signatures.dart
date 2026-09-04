@@ -107,17 +107,54 @@ SignatureBytes signBytes(Uint8List privateKeyBytes, Uint8List data) {
 /// key corresponding to [publicKeyBytes].
 ///
 /// Returns `true` if the signature is valid, `false` otherwise.
-/// Returns `false` if [publicKeyBytes] is not exactly 32 bytes.
+/// Returns `false` for malformed lengths or small-order public key and nonce
+/// points. Rejecting these weak points prevents signatures forged without a
+/// private key from authenticating arbitrary messages.
 bool verifySignature(
   Uint8List publicKeyBytes,
   SignatureBytes signature,
   Uint8List data,
 ) {
-  if (publicKeyBytes.length != 32) return false;
+  if (publicKeyBytes.length != 32 || signature.value.length != 64) return false;
+  if (_isSmallOrderPoint(publicKeyBytes) ||
+      _isSmallOrderPoint(Uint8List.sublistView(signature.value, 0, 32))) {
+    return false;
+  }
+
   try {
     final publicKey = ed.PublicKey(publicKeyBytes);
     return ed.verify(publicKey, data, Uint8List.fromList(signature.value));
   } on Object {
     return false;
   }
+}
+
+/// The five y coordinates of the eight small-order Ed25519 points.
+///
+/// The sign bit selects the two x coordinates where x is nonzero. These are
+/// the same points rejected by libsodium's `ge25519_has_small_order` check.
+final Set<BigInt> _smallOrderPointYs = {
+  BigInt.zero,
+  BigInt.one,
+  BigInt.parse(
+    '2707385501144840649318225287225658788936804267575313519463743609750303402022',
+  ),
+  BigInt.parse(
+    '55188659117513257062467267217118295137698188065244968500265048394206261417927',
+  ),
+  _ed25519FieldPrime - BigInt.one,
+};
+
+final BigInt _ed25519FieldPrime = (BigInt.one << 255) - BigInt.from(19);
+
+/// Rejects weak points, including non-canonical encodings and either sign bit.
+bool _isSmallOrderPoint(Uint8List bytes) {
+  var y = BigInt.from(bytes[31] & 0x7f);
+  for (var index = 30; index >= 0; index--) {
+    y = (y << 8) | BigInt.from(bytes[index]);
+  }
+
+  // The underlying verifier reduces field elements modulo p, so aliases of
+  // weak points must be rejected along with their canonical encodings.
+  return _smallOrderPointYs.contains(y % _ed25519FieldPrime);
 }

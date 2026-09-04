@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_wallet_adapter/solana_kit_wallet_adapter.dart';
@@ -43,9 +43,19 @@ const _canvasHighlight = Color(0xff11132d);
 void main() => runApp(const WalletExampleApp());
 
 /// Interactive example used by browser, device, and Patrol verification.
+///
+/// [demoMode] guarantees the deterministic demo wallet, which is how the docs
+/// site embeds the example (`DEMO_WALLET=true`). On the web, demo mode also
+/// lists detected Wallet Standard wallets so the embedded demo surfaces the
+/// visitor's installed wallets, mirroring the wallet adapter examples.
 class WalletExampleApp extends StatefulWidget {
   /// Creates the example application.
-  const WalletExampleApp({super.key});
+  ///
+  /// Defaults to the compile-time `DEMO_WALLET` environment switch.
+  const WalletExampleApp({super.key, this.demoMode = _demoMode});
+
+  /// Whether the wallet registry uses the deterministic demo wallet.
+  final bool demoMode;
 
   @override
   State<WalletExampleApp> createState() => _WalletExampleAppState();
@@ -59,12 +69,10 @@ class _WalletExampleAppState extends State<WalletExampleApp> {
   @override
   void initState() {
     super.initState();
-    final registry = _demoMode
-        ? DemoWalletRegistry()
+    final registry = widget.demoMode
+        ? _demoRegistry()
         : createDefaultWalletRegistry(
-            appIdentity: const WalletAppIdentity(
-              name: 'Solana Kit wallet UI',
-            ),
+            appIdentity: const WalletAppIdentity(name: 'Solana Kit wallet UI'),
             chain: SolanaChainId.localnet,
           );
     _controller = WalletController(registry, chain: SolanaChainId.localnet);
@@ -307,13 +315,31 @@ class _Actions extends StatelessWidget {
   }
 }
 
+/// The registry used when the example is built for testing or embedding.
+///
+/// On the web the demo also lists detected Wallet Standard wallets so the
+/// embedded docs demo surfaces the visitor's installed wallets, mirroring the
+/// wallet adapter examples. On other platforms only the deterministic demo
+/// wallet is available, which keeps device and Patrol tests predictable.
+WalletRegistry _demoRegistry() {
+  if (kIsWeb) {
+    return createDefaultWalletRegistry(
+      appIdentity: const WalletAppIdentity(name: 'Solana Kit wallet UI'),
+      chain: SolanaChainId.localnet,
+      additionalWallets: [DemoWallet()],
+    );
+  }
+  return DemoWalletRegistry();
+}
+
 /// Deterministic registry used only when the example is built for testing.
 class DemoWalletRegistry extends WalletRegistryController {
   @override
   Future<void> initialize() async => register(DemoWallet());
 }
 
-/// Deterministic Wallet Standard wallet used by example integration tests.
+/// A deterministic Wallet Standard wallet used when the example is built for
+/// testing and by the embedded docs demo.
 class DemoWallet implements Wallet {
   /// Creates a deterministic demo wallet.
   DemoWallet() : icon = WalletIcon(_demoIcon) {

@@ -66,8 +66,9 @@ class OrderedAccount {
 /// object has lookup table properties (via [AccountLookupMeta]).
 Map<String, _AddressMapEntry> _buildAddressMap(
   Address feePayer,
-  List<Instruction> instructions,
-) {
+  List<Instruction> instructions, {
+  required bool useLookupTables,
+}) {
   final addressMap = <String, _AddressMapEntry>{
     feePayer.value: _AddressMapEntry(
       type: AddressMapEntryType.feePayer,
@@ -113,9 +114,14 @@ Map<String, _AddressMapEntry> _buildAddressMap(
 
     for (final account in instruction.accounts!) {
       final accountAddr = account.address.value;
-      // Check if this is a lookup table account. AccountLookupMeta extends
-      // AccountMeta, so the accounts list can contain both types.
-      final lookupMeta = account is AccountLookupMeta ? account : null;
+      // Signatures can only authorize static accounts. Never allow lookup
+      // metadata to silently remove a declared signer requirement.
+      final lookupMeta =
+          useLookupTables &&
+              account is AccountLookupMeta &&
+              !isSignerRole(account.role)
+          ? account
+          : null;
 
       _upsert(addressMap, accountAddr, (entry) {
         if (entry != null) {
@@ -207,11 +213,18 @@ void _upsert(
 
 /// Builds the address map from fee payer and instructions, then sorts the
 /// entries into the canonical account ordering.
+///
+/// Set [useLookupTables] to false for formats without address table lookups.
 List<OrderedAccount> getOrderedAccountsFromInstructions(
   Address feePayer,
-  List<Instruction> instructions,
-) {
-  final addressMap = _buildAddressMap(feePayer, instructions);
+  List<Instruction> instructions, {
+  bool useLookupTables = true,
+}) {
+  final addressMap = _buildAddressMap(
+    feePayer,
+    instructions,
+    useLookupTables: useLookupTables,
+  );
   return _getOrderedAccountsFromAddressMap(addressMap);
 }
 

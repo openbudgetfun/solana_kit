@@ -115,7 +115,7 @@ class JupiterTokenItem {
   /// Tags such as `verified`, `strict`, or `lfg`.
   final List<String>? tags;
 
-  /// The organic token score in the range [0, 1].
+  /// The organic token score in the range 0–100.
   final double? organicScore;
 
   /// A label describing the organic score (for example `low`).

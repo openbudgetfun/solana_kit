@@ -10,7 +10,8 @@ import 'package:solana_kit_helius/src/types/smart_transaction_types.dart';
 ///
 /// Throws a [SolanaError] with
 /// [SolanaErrorCode.heliusTransactionConfirmationTimeout] if the timeout
-/// is reached before confirmation.
+/// is reached before confirmation. Failed on-chain transactions throw their
+/// transaction or instruction [SolanaError] instead of returning success.
 Future<SmartTransactionResult> txPollTransactionConfirmation(
   JsonRpcClient rpcClient,
   PollTransactionConfirmationRequest request,
@@ -30,10 +31,15 @@ Future<SmartTransactionResult> txPollTransactionConfirmation(
       final value = response['value'] as List<Object?>?;
       if (value != null && value.isNotEmpty && value[0] != null) {
         final status = value[0]! as Map<String, Object?>;
+        final error = status['err'];
+        if (error != null) throw getSolanaErrorFromTransactionError(error);
+
         final confirmationStatus = status['confirmationStatus'] as String?;
         if (confirmationStatus != null) {
           if (confirmationStatus == commitment ||
-              confirmationStatus == 'finalized') {
+              confirmationStatus == 'finalized' ||
+              (commitment == 'processed' &&
+                  confirmationStatus == 'confirmed')) {
             return SmartTransactionResult(
               signature: request.signature,
               confirmationStatus: confirmationStatus,

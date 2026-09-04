@@ -80,10 +80,9 @@ void main() {
       expect(hex(codec.encode([1, 2])), equals('020000000100000002000000'));
     });
 
-    test('returns empty for prefix with no remaining bytes', () {
+    test('rejects a missing size prefix', () {
       final codec = getArrayCodec(getU8Codec());
-      // No bytes at all - the decoder should handle gracefully
-      expect(codec.decode(b('')), isEmpty);
+      expect(() => codec.decode(b('')), throwsA(anything));
     });
 
     test('throws on oversized prefix that would exhaust memory', () {

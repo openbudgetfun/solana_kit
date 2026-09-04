@@ -94,6 +94,7 @@ TransactionMessage addSignersToTransactionMessage(
       version: transactionMessage.version,
       instructions: updatedInstructions,
       lifetimeConstraint: transactionMessage.lifetimeConstraint,
+      config: transactionMessage.config,
     );
   }
 
@@ -103,6 +104,7 @@ TransactionMessage addSignersToTransactionMessage(
       version: transactionMessage.version,
       instructions: updatedInstructions,
       lifetimeConstraint: transactionMessage.lifetimeConstraint,
+      config: transactionMessage.config,
     );
   }
 

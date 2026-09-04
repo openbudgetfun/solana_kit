@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:solana_kit_fixed_points/src/binary_fixed_point.dart';
 import 'package:solana_kit_fixed_points/src/decimal_fixed_point.dart';
+import 'package:solana_kit_fixed_points/src/fixed_point_ranges.dart';
 
 /// Byte order used by fixed-point codecs.
 enum FixedPointEndian {
@@ -275,19 +276,17 @@ void _writeRawBigInt(
   FixedPointEndian endian,
 ) {
   _assertReadable(buffer, offset, byteSize);
-  var encoded = raw;
-  final modulus = BigInt.one << (byteSize * 8);
-  if (raw.isNegative) {
-    if (signedness == FixedPointSignedness.unsigned) {
-      throw RangeError('Cannot encode a negative unsigned fixed-point value.');
-    }
-    encoded = modulus + raw;
-  }
-  if (encoded < BigInt.zero || encoded >= modulus) {
+  final range = getRawRange(signedness, byteSize * 8);
+
+  // Validate the signed range before conversion to prevent sign-changing wraps.
+  if (raw < range.min || raw > range.max) {
     throw RangeError(
-      'Raw fixed-point value $raw does not fit in $byteSize bytes.',
+      'Raw fixed-point value $raw is outside the ${range.min}..${range.max} range.',
     );
   }
+
+  final modulus = BigInt.one << (byteSize * 8);
+  final encoded = raw.isNegative ? modulus + raw : raw;
 
   for (var i = 0; i < byteSize; i++) {
     final byte = (encoded >> (8 * i)).toUnsigned(8).toInt();
