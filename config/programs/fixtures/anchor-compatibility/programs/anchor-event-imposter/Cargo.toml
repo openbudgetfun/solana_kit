@@ -1,0 +1,21 @@
+[package]
+name = "anchor-event-imposter"
+version = "0.1.0"
+description = "Foreign Anchor event emitter used by compatibility tests"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "anchor_event_imposter"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build"]
+
+[dependencies]
+anchor-lang = "=0.31.1"

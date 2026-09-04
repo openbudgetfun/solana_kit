@@ -1,0 +1,181 @@
+{
+  "groups": [
+    {
+      "name": "live core transaction path",
+      "validationMode": "surfpool",
+      "expectedOutcome": "Real v0 transactions preserve addresses, account roles, instruction data, signatures, lifetime constraints, priority fees, lookup-table identities, RPC wire data, confirmation state, and decoded account ownership from construction through confirmed execution.",
+      "evidence": [
+        "packages/solana_kit_integration_tests/test/integration/core_sdk_compatibility_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/error_paths_test.dart"
+      ],
+      "packages": [
+        "solana_kit_accounts",
+        "solana_kit_address_constants",
+        "solana_kit_addresses",
+        "solana_kit_codecs",
+        "solana_kit_codecs_core",
+        "solana_kit_codecs_data_structures",
+        "solana_kit_codecs_numbers",
+        "solana_kit_codecs_strings",
+        "solana_kit_errors",
+        "solana_kit_instruction_plans",
+        "solana_kit_instructions",
+        "solana_kit_keys",
+        "solana_kit_program_client_core",
+        "solana_kit_programs",
+        "solana_kit_rpc",
+        "solana_kit_rpc_api",
+        "solana_kit_rpc_parsed_types",
+        "solana_kit_rpc_spec",
+        "solana_kit_rpc_spec_types",
+        "solana_kit_rpc_transformers",
+        "solana_kit_rpc_transport_http",
+        "solana_kit_rpc_types",
+        "solana_kit_signers",
+        "solana_kit_sysvars",
+        "solana_kit_transaction_confirmation",
+        "solana_kit_transaction_introspection",
+        "solana_kit_transaction_messages",
+        "solana_kit_transactions"
+      ]
+    },
+    {
+      "name": "live RPC subscriptions",
+      "validationMode": "surfpool",
+      "expectedOutcome": "Surfpool's WebSocket endpoint accepts standard accountSubscribe and signatureSubscribe handshakes, publishes confirmed account and signature notifications, and acknowledges cancellation by closing the consumer stream.",
+      "evidence": [
+        "packages/solana_kit_integration_tests/test/integration/rpc_subscriptions_compatibility_test.dart"
+      ],
+      "packages": [
+        "solana_kit_rpc_subscriptions",
+        "solana_kit_rpc_subscriptions_api",
+        "solana_kit_rpc_subscriptions_channel_websocket",
+        "solana_kit_subscribable",
+        "solana_kit_surfpool"
+      ]
+    },
+    {
+      "name": "live official Solana programs",
+      "validationMode": "surfpool",
+      "expectedOutcome": "Generated builders submit protocol-valid instructions to their builtin or pinned upstream programs; successful state transitions decode correctly and invalid authority, signer, funds, and compute-limit paths fail without partial state.",
+      "evidence": [
+        "packages/solana_kit_integration_tests/test/integration/address_lookup_table_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/associated_token_account_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/compute_budget_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/config_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/loader_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/memo_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/stake_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/subscriptions_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/system_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/token_2022_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/token_test.dart"
+      ],
+      "packages": [
+        "solana_kit_address_lookup_table",
+        "solana_kit_associated_token_account",
+        "solana_kit_compute_budget",
+        "solana_kit_config",
+        "solana_kit_loader",
+        "solana_kit_memo",
+        "solana_kit_spl_account_compression",
+        "solana_kit_stake",
+        "solana_kit_subscriptions",
+        "solana_kit_system",
+        "solana_kit_token",
+        "solana_kit_token_2022"
+      ]
+    },
+    {
+      "name": "live upstream ecosystem programs",
+      "validationMode": "surfpool",
+      "expectedOutcome": "Anchor 0.31, Metaplex Bubblegum/Core/Token Metadata, Squads V4, and Pyth-facing transaction builders remain wire-compatible with real pinned programs or runtime signature enforcement, including account decoding and program-error provenance.",
+      "evidence": [
+        "packages/solana_kit_integration_tests/test/integration/anchor_compatibility_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/mpl_bubblegum_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/pyth_test.dart",
+        "packages/solana_kit_integration_tests/test/integration/upstream_program_compatibility_test.dart"
+      ],
+      "packages": [
+        "solana_kit_anchor",
+        "solana_kit_mpl_bubblegum",
+        "solana_kit_mpl_core",
+        "solana_kit_mpl_token_metadata",
+        "solana_kit_pyth",
+        "solana_kit_squads"
+      ]
+    },
+    {
+      "name": "hosted API contracts",
+      "validationMode": "contract",
+      "expectedOutcome": "Recorded request and response contract tests preserve the external provider's documented HTTP shapes, error handling, redirect policy, and confirmation semantics; these services cannot be routed through a local Solana validator.",
+      "evidence": [
+        "packages/solana_kit_helius/test",
+        "packages/solana_kit_jupiter/test"
+      ],
+      "packages": [
+        "solana_kit_helius",
+        "solana_kit_jupiter"
+      ]
+    },
+    {
+      "name": "offline protocol and utility contracts",
+      "validationMode": "contract",
+      "expectedOutcome": "Canonical vectors and adversarial unit tests preserve offline message formats, PDA derivation, SNS record layouts, numeric bounds, stable serialization, options, and functional helpers for inputs that do not contact a validator.",
+      "evidence": [
+        "packages/solana_kit_address/test",
+        "packages/solana_kit_fast_stable_stringify/test",
+        "packages/solana_kit_fixed_points/test",
+        "packages/solana_kit_functional/test",
+        "packages/solana_kit_offchain_messages/test",
+        "packages/solana_kit_options/test",
+        "packages/solana_kit_sns/test"
+      ],
+      "packages": [
+        "solana_kit_address",
+        "solana_kit_fast_stable_stringify",
+        "solana_kit_fixed_points",
+        "solana_kit_functional",
+        "solana_kit_offchain_messages",
+        "solana_kit_options",
+        "solana_kit_sns"
+      ]
+    },
+    {
+      "name": "wallet and device boundaries",
+      "validationMode": "platform",
+      "expectedOutcome": "Protocol, controller, widget, browser, Android compile, and platform-channel tests preserve authorization session identity, per-request account and chain policy, native callback ownership, signature extraction, and disconnect behavior; Surfpool cannot emulate a wallet app, browser extension, or mobile OS.",
+      "evidence": [
+        "packages/solana_kit_mobile_wallet_adapter/test",
+        "packages/solana_kit_mobile_wallet_adapter_protocol/test",
+        "packages/solana_kit_wallet_adapter/test",
+        "packages/solana_kit_wallet_standard/test",
+        "packages/solana_kit_wallet_ui/test"
+      ],
+      "packages": [
+        "solana_kit_mobile_wallet_adapter",
+        "solana_kit_mobile_wallet_adapter_protocol",
+        "solana_kit_wallet_adapter",
+        "solana_kit_wallet_standard",
+        "solana_kit_wallet_ui"
+      ]
+    },
+    {
+      "name": "workspace and generation tooling",
+      "validationMode": "tooling",
+      "expectedOutcome": "Workspace tests, renderer snapshots, generation drift checks, artifact build tests, lint packages, and public umbrella exports keep generated SDKs reproducible and keep the integration harness in CI.",
+      "evidence": [
+        "packages/codama-renderers-dart/test",
+        "packages/solana_kit_integration_tests/test",
+        "scripts/build_program_artifacts.test.mjs",
+        "test"
+      ],
+      "packages": [
+        "solana_kit",
+        "solana_kit_integration_tests",
+        "solana_kit_lints",
+        "solana_kit_test_matchers"
+      ]
+    }
+  ]
+}

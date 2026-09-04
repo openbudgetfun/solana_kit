@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const originalToml = "[workspace]\nmembers = []\n";
+const originalLockfile = "# pinned lockfile\n";
 const sourceMarker = '#![cfg_attr(feature = "stdsimd", feature(stdsimd))]\n';
 let importId = 0;
 
@@ -17,11 +18,13 @@ async function runBuilder(t, options = {}) {
   const sharedTmp = join(fixture, "shared-tmp");
   const privateTmp = join(fixture, "private-tmp");
   const workspaceToml = join(fixtureRoot, ".repos/program/Cargo.toml");
+  const workspaceLockfile = join(fixtureRoot, ".repos/program/Cargo.lock");
   const victim = join(fixture, "victim.txt");
   const maliciousCrate = join(sharedTmp, "solana-kit-ahash-patch");
   const executions = [];
   const downloads = [];
   const builds = [];
+  const buildEnvironments = [];
 
   t.after(() => fs.rmSync(fixture, { recursive: true, force: true }));
 
@@ -36,6 +39,7 @@ async function runBuilder(t, options = {}) {
   }
 
   fs.writeFileSync(workspaceToml, options.toml ?? originalToml);
+  fs.writeFileSync(workspaceLockfile, originalLockfile);
   fs.writeFileSync(victim, "unrelated user file");
   fs.writeFileSync(join(fixtureRoot, "config/reference-repos.json"), JSON.stringify({
     repos: [{ name: "program", path: ".repos/program", ref: { value: "pinned" } }],
@@ -44,6 +48,10 @@ async function runBuilder(t, options = {}) {
     artifacts: [{
       name: "test", version: "0.0.0", repo: "program", programDir: ".",
       crateName: "test", needsAhashPatch: options.needsAhashPatch ?? true,
+      ahashVersion: options.ahashVersion,
+      ahashVersions: options.ahashVersions,
+      blake3Pure: options.blake3Pure,
+      cargoUpdates: options.cargoUpdates,
       verifyProgramId: false,
     }],
   }));
@@ -86,8 +94,14 @@ async function runBuilder(t, options = {}) {
   const osMock = mock.module("os", { namedExports: { tmpdir: () => privateTmp } });
   const processMock = mock.module("child_process", {
     namedExports: {
-      execFileSync(command, args) {
+      execFileSync(command, args, commandOptions) {
         if (command === "git") return;
+
+        if (command === "cargo" && args[0] === "update") {
+          executions.push(args.join(" "));
+          fs.writeFileSync(workspaceLockfile, "updated lockfile\n");
+          return;
+        }
 
         if (command === "curl") {
           const output = mapPath(args[args.indexOf("-o") + 1]);
@@ -106,10 +120,12 @@ async function runBuilder(t, options = {}) {
 
         assert.equal(command, "cargo");
         assert.deepEqual(args, ["build-sbf"]);
+        buildEnvironments.push(commandOptions.env);
         const manifest = fs.readFileSync(workspaceToml, "utf8");
-        const patchPath = manifest.match(/ahash = \{ path = "([^"]+)" \}/)?.[1];
+        const patchPaths = [...manifest.matchAll(/ahash[^=]*= \{ package = "ahash", path = "([^"]+)" \}/g)]
+          .map((match) => match[1]);
 
-        if (patchPath) {
+        for (const patchPath of patchPaths) {
           const directory = mapPath(patchPath);
           const buildScript = join(directory, "build.rs");
 
@@ -140,7 +156,7 @@ async function runBuilder(t, options = {}) {
     error = caught;
   }
 
-  return { builds, downloads, error, executions, fixtureRoot, maliciousCrate, privateTmp, victim, workspaceToml };
+  return { buildEnvironments, builds, downloads, error, executions, fixtureRoot, maliciousCrate, privateTmp, victim, workspaceToml };
 }
 
 test("a precreated shared ahash crate cannot supply Cargo build code", async (t) => {
@@ -170,6 +186,38 @@ test("a successful build restores its manifest and removes temporary sources", a
   assert.equal(fs.readFileSync(result.workspaceToml, "utf8"), originalToml);
   assert.deepEqual(fs.readdirSync(result.privateTmp), []);
   assert.equal(fs.readFileSync(join(result.fixtureRoot, "config/programs/test-v0.0.0.so"), "utf8"), "built artifact");
+});
+
+test("the configured ahash release is downloaded and patched", async (t) => {
+  const result = await runBuilder(t, { ahashVersion: "0.8.3" });
+
+  assert.ifError(result.error);
+  assert.match(result.downloads[0], /ahash-0\.8\.3\.crate$/);
+});
+
+test("multiple ahash releases are patched in one isolated build", async (t) => {
+  const result = await runBuilder(t, { ahashVersions: ["0.7.6", "0.8.3"] });
+
+  assert.ifError(result.error);
+  assert.equal(result.downloads.length, 2);
+  assert.equal(result.builds.length, 2);
+});
+
+test("legacy blake3 builds can select the portable implementation", async (t) => {
+  const result = await runBuilder(t, { blake3Pure: true });
+
+  assert.ifError(result.error);
+  assert.equal(result.buildEnvironments[0].CARGO_FEATURE_PURE, "1");
+});
+
+test("cargo compatibility updates are applied only for the build", async (t) => {
+  const result = await runBuilder(t, {
+    cargoUpdates: [{ package: "wasm-bindgen", version: "0.2.88" }],
+  });
+
+  assert.ifError(result.error);
+  assert.ok(result.executions.includes("update -p wasm-bindgen --precise 0.2.88"));
+  assert.equal(fs.readFileSync(join(result.fixtureRoot, ".repos/program/Cargo.lock"), "utf8"), originalLockfile);
 });
 
 test("a failed build restores its manifest and removes temporary sources", async (t) => {
