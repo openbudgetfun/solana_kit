@@ -12,22 +12,29 @@ dependencies:
   solana_kit_address_constants: ^0.9.1
   solana_kit_address_lookup_table: ^0.4.1
   solana_kit_addresses: ^0.9.1
+  solana_kit_anchor: ^0.9.1
   solana_kit_associated_token_account: ^0.7.1
   solana_kit_codecs_core: ^0.9.1
   solana_kit_compute_budget: ^0.8.1
   solana_kit_config: ^0.2.1
   solana_kit_errors: ^0.9.1
+  solana_kit_instruction_plans: ^0.9.1
   solana_kit_instructions: ^0.9.1
   solana_kit_keys: ^0.9.1
   solana_kit_loader: ^0.4.1
   solana_kit_memo: ^0.4.1
   solana_kit_mpl_bubblegum: ^0.5.1
+  solana_kit_mpl_core: ^0.9.1
+  solana_kit_mpl_token_metadata: ^0.9.1
   solana_kit_pyth: ^0.9.1
   solana_kit_rpc: ^0.9.1
   solana_kit_rpc_api: ^0.9.1
   solana_kit_rpc_spec: ^0.9.1
+  solana_kit_rpc_subscriptions: ^0.9.1
+  solana_kit_rpc_subscriptions_api: ^0.9.1
   solana_kit_rpc_types: ^0.9.1
   solana_kit_signers: ^0.9.1
+  solana_kit_squads: ^0.9.1
   solana_kit_stake: ^0.5.1
   solana_kit_subscriptions: ^0.2.1
   solana_kit_surfpool: ^0.3.1
@@ -35,6 +42,7 @@ dependencies:
   solana_kit_token: ^0.8.1
   solana_kit_token_2022: ^0.8.1
   solana_kit_transaction_confirmation: ^0.9.1
+  solana_kit_transaction_introspection: ^0.9.1
   solana_kit_transaction_messages: ^0.9.1
   solana_kit_transactions: ^0.9.1
   test: ^1.25.0

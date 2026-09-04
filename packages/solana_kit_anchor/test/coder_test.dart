@@ -274,7 +274,7 @@ void main() {
     expect(error.message, 'custom message');
 
     final standard = anchorProgramError(1001);
-    expect(standard.name, 'AccountDiscriminatorNotFound');
+    expect(standard.name, 'IdlInstructionInvalidProgram');
 
     final unknown = anchorProgramError(987654);
     expect(unknown.name, 'Unknown');
