@@ -329,6 +329,21 @@ jobs:
           pnpm -v
           monochange run release --commit
         shell: devenv shell -- bash -e {0}
+      - name: validate the trusted publishing schedule
+        run: |
+          set -euo pipefail
+          monochange step release-record --from HEAD --format json \
+            > "$RUNNER_TEMP/release-record.json"
+          monochange step discover --format json \
+            > "$RUNNER_TEMP/discover.json"
+          primary_tag="$(jq -r '[.record.release_targets[] | select(.kind == "group" and .version_format == "primary" and .tag_name)][0].tag_name' \
+            "$RUNNER_TEMP/release-record.json")"
+          python3 .github/scripts/publish_scope.py \
+            --record "$RUNNER_TEMP/release-record.json" \
+            --discover "$RUNNER_TEMP/discover.json" \
+            --tag "$primary_tag" \
+            --output "$RUNNER_TEMP/publish-scope.json"
+        shell: devenv shell -- bash -e {0}
       - name: validate every package publishes (dry run)
         run: |
           export PATH="/tmp/pnpm-shim:$PATH"
