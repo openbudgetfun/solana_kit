@@ -6,6 +6,8 @@ A [Codama](https://github.com/codama-idl/codama) renderer that generates Dart co
 
 Given a Codama IDL (Interface Description Language) describing a Solana program, this renderer produces a complete Dart package with typed account classes, instruction builders, codec functions, error definitions, PDA helpers, and barrel exports.
 
+Numeric prefix codecs retain the declared byte order, and pre/post offset types retain their cursor or padding strategy. Constant PDA integer seeds use the matching Dart integer type; malformed hexadecimal seeds and unsupported byte encodings are rejected.
+
 Fixed-size Codama types generate non-truncating encoders. Values within the declared byte capacity are zero-padded, while over-capacity values throw before any malformed bytes can be emitted. For UTF-8 strings, capacity is measured in encoded bytes rather than Dart code units.
 
 ## Installation
@@ -38,6 +40,8 @@ visit(root, renderVisitor("lib/src/generated", {
 ### Serialized Pina IDLs
 
 `renderVisitor` accepts parsed Codama JSON as well as roots made with Codama constructors. Pina omits empty collections from its serialized IDLs; the renderer restores those structural defaults on an internal copy before traversal, leaving the parsed object unchanged.
+
+IDL names may contain letters, digits, underscores, hyphens, and spaces; names containing path separators, quotes, or other source syntax are rejected. Documentation and string values are escaped before they enter generated Dart. Rendering resolves all output before clearing the previous generated directory, so invalid IDLs do not delete an existing client. Formatter paths are passed as literal process arguments. Numeric defaults, counts, sizes, and error codes are validated before they are written as source. Duplicate generated paths are rejected, including names reserved for category barrel files, so nodes cannot silently replace one another.
 
 ```ts
 import { readFile } from "node:fs/promises";
@@ -159,6 +163,8 @@ Generated codecs treat Codama discriminators as wire invariants rather than call
 Account and instruction decoders validate every declared constant, field, and size discriminator before returning typed data. Invalid discriminator bytes and unexpected discriminator sizes throw a `SolanaError` instead of decoding as the wrong account or instruction type. Generation fails when a field discriminator has no deterministic default or uses a value form the renderer cannot encode safely.
 
 Top-level instruction decoders require exact input consumption. Account decoders always reject truncated data, but accept unread trailing capacity unless the account declares a `sizeDiscriminatorNode`; size-discriminated accounts reject both truncation and suffix bytes.
+
+Accounts declared with `isSigner: "either"` expose an additional boolean such as `authorityIsSigner`, defaulting to `true`. Set it to `false` when the authority does not sign, including multisig authorities.
 
 Optional instruction accounts use Codama's `programId` strategy by default. When an optional account is absent, the builder emits a readonly program-address placeholder so every later account keeps its declared index. The account slot is removed only when the instruction explicitly selects the legacy `omitted` strategy.
 

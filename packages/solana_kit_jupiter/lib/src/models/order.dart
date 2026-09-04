@@ -43,6 +43,7 @@ class JupiterOrderRequest {
     this.platformFeeBps,
     this.excludeDirectRouterRoutes,
     this.payer,
+    this.taker,
     this.extraQueryParameters = const {},
   });
 
@@ -79,6 +80,12 @@ class JupiterOrderRequest {
   /// An alternative transaction payer for gasless flows.
   final Address? payer;
 
+  /// The wallet initiating the swap.
+  ///
+  /// Required to receive an assembled transaction from `/order`, and required
+  /// by `/build`. Omit only when requesting a quote without a transaction.
+  final Address? taker;
+
   /// Additional query parameters forwarded verbatim to the API.
   final Map<String, String> extraQueryParameters;
 
@@ -106,6 +113,7 @@ class JupiterOrderRequest {
     put('platformFeeBps', platformFeeBps);
     put('excludeDirectRouterRoutes', excludeDirectRouterRoutes);
     put('payer', payer);
+    put('taker', taker);
     params.addAll(extraQueryParameters);
     return params;
   }
@@ -206,6 +214,9 @@ class JupiterExecutionResponse {
     required this.encodedSwapTransaction,
     this.signature,
     this.error,
+    this.status,
+    this.code,
+    this.rawResponse = const {},
   });
 
   /// Builds an execution response from the Swap API JSON body.
@@ -214,9 +225,26 @@ class JupiterExecutionResponse {
         encodedSwapTransaction: json['swapTransaction'] as String?,
         signature: json['signature'] as String?,
         error: json['error'] is String ? json['error']! as String : null,
+        status: json['status'] as String?,
+        code: json['code'] as int?,
+        rawResponse: json,
       );
 
-  /// The fully signed base64 transaction submitted to the network.
+  /// The execution status reported by the API (`Success` or `Failed`).
+  ///
+  /// A signature alone does not establish success: failed executions can
+  /// also return a signature.
+  final String? status;
+
+  /// The execution result code (`0` indicates success).
+  final int? code;
+
+  /// The raw response, including execution amounts and swap events.
+  final Map<String, Object?> rawResponse;
+
+  /// The fully signed base64 transaction, when a legacy endpoint returns it.
+  ///
+  /// Swap API v2 execution responses normally omit this field.
   final String? encodedSwapTransaction;
 
   /// The transaction signature once the API reports one.

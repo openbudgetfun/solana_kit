@@ -78,7 +78,9 @@ class MockWalletHostApi extends MwaWalletHostApi {
     if (_handler == null) {
       throw StateError('No handler registered');
     }
-    return _handler!(MethodCall(method, arguments));
+    return _handler!(
+      MethodCall(method, {'sessionId': nextSessionId, ...?arguments}),
+    );
   }
 
   void _recordCall(String method, Map<String, Object?> args) {

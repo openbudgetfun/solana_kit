@@ -5,6 +5,7 @@ import {
   type BooleanTypeNode,
   type BytesTypeNode,
   type CamelCaseString,
+  type ConstantValueNode,
   type DateTimeTypeNode,
   type DefinedTypeLinkNode,
   type DefinedTypeNode,
@@ -31,6 +32,7 @@ import {
   type StructFieldTypeNode,
   type StructTypeNode,
   type TupleTypeNode,
+  type TypeNode,
   type ZeroableOptionTypeNode,
   isNode,
   resolveNestedTypeNode,
@@ -55,6 +57,7 @@ import {
   use,
 } from "../utils/index.js";
 import { type DartNameApi, snakeCase } from "../utils/nameTransformers.js";
+import { getDartValueFragment, getNonNegativeInteger, toDartStringLiteral } from "../utils/valueNodes.js";
 
 /**
  * Type alias for the type manifest visitor.
@@ -121,32 +124,12 @@ export function getTypeManifestVisitor(input: {
   );
 
   return extendVisitor(baseVisitor, {
-    visitNumberType(node: NumberTypeNode, { self }) {
-      const { format, endian } = node;
-      const endianSuffix =
-        endian === "be"
-          ? ", NumberCodecConfig(endian: Endian.big)"
-          : "";
-      const endianDecoderSuffix =
-        endian === "be"
-          ? ", NumberCodecConfig(endian: Endian.big)"
-          : "";
-
-      // Map format to Dart type and codec
-      const dartType = getNumberDartType(format);
-      const codecName = getNumberCodecName(format);
-
+    visitNumberType(node: NumberTypeNode) {
       return {
         // `BigInt` and other number types live in `dart:core` and need no import.
-        type: fragmentFromString(dartType),
-        encoder: fragment`${use(
-          `get${codecName}Encoder`,
-          "solanaCodecsNumbers",
-        )}(${endianSuffix ? fragmentFromString(endianSuffix.slice(2)) : fragmentFromString("")})`,
-        decoder: fragment`${use(
-          `get${codecName}Decoder`,
-          "solanaCodecsNumbers",
-        )}(${endianDecoderSuffix ? fragmentFromString(endianDecoderSuffix.slice(2)) : fragmentFromString("")})`,
+        type: fragmentFromString(getNumberDartType(node.format)),
+        encoder: getNumberCodecExpression(node, "Encoder"),
+        decoder: getNumberCodecExpression(node, "Decoder"),
         value: emptyTypeManifest().value,
         isEnum: false,
       };
@@ -355,7 +338,7 @@ export function getTypeManifestVisitor(input: {
 
       // Build encoder fields list
       const encoderFields = fields
-        .map((f, i) => `('${fieldNames[i]}', ${f.encoder.content})`)
+        .map((f, i) => `(${toDartStringLiteral(fieldNames[i])}, ${f.encoder.content})`)
         .join(", ");
       const encoderFrag = fragment`${use(
         "getStructEncoder",
@@ -366,7 +349,7 @@ export function getTypeManifestVisitor(input: {
       }
 
       const decoderFields = fields
-        .map((f, i) => `('${fieldNames[i]}', ${f.decoder.content})`)
+        .map((f, i) => `(${toDartStringLiteral(fieldNames[i])}, ${f.decoder.content})`)
         .join(", ");
       const decoderFrag = fragment`${use(
         "getStructDecoder",
@@ -442,10 +425,10 @@ export function getTypeManifestVisitor(input: {
       const itemTypeStr = itemManifest.type.content;
       const resolvedPrefix = resolveNestedTypeNode(node.prefix);
       const prefixExpr = resolvedPrefix.format !== "u8"
-        ? `, prefix: ${getNumberCodecExpression(resolvedPrefix.format, "Encoder")}`
+        ? fragment`, prefix: ${getNumberCodecExpression(resolvedPrefix, "Encoder")}`
         : "";
       const prefixDecoderExpr = resolvedPrefix.format !== "u8"
-        ? `, prefix: ${getNumberCodecExpression(resolvedPrefix.format, "Decoder")}`
+        ? fragment`, prefix: ${getNumberCodecExpression(resolvedPrefix, "Decoder")}`
         : "";
       const noneValueExpr = node.fixed
         ? ", noneValue: const ZeroesNoneValue()"
@@ -459,11 +442,11 @@ export function getTypeManifestVisitor(input: {
         )}<${fragmentFromString(itemTypeStr)}>(${use(
           "transformEncoder",
           "solanaCodecsCore",
-        )}(${itemManifest.encoder}, (${fragmentFromString(itemTypeStr)} value) => value)${fragmentFromString(prefixExpr)}${fragmentFromString(noneValueExpr)})`,
+        )}(${itemManifest.encoder}, (${fragmentFromString(itemTypeStr)} value) => value)${prefixExpr}${fragmentFromString(noneValueExpr)})`,
         decoder: fragment`${use(
           "getNullableDecoder",
           "solanaCodecsDataStructures",
-        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.decoder}${fragmentFromString(prefixDecoderExpr)}${fragmentFromString(noneValueExpr)})`,
+        )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.decoder}${prefixDecoderExpr}${fragmentFromString(noneValueExpr)})`,
         value: emptyTypeManifest().value,
         isEnum: false,
       };
@@ -521,11 +504,11 @@ export function getTypeManifestVisitor(input: {
         encoder: fragment`${use(
           "fixEncoderSize",
           "solanaCodecsCore",
-        )}(${innerManifest.encoder}, ${fragmentFromString(String(node.size))}, allowTruncation: false)`,
+        )}(${innerManifest.encoder}, ${fragmentFromString(getNonNegativeInteger(node.size))}, allowTruncation: false)`,
         decoder: fragment`${use(
           "fixDecoderSize",
           "solanaCodecsCore",
-        )}(${innerManifest.decoder}, ${fragmentFromString(String(node.size))})`,
+        )}(${innerManifest.decoder}, ${fragmentFromString(getNonNegativeInteger(node.size))})`,
         value: innerManifest.value,
         isEnum: innerManifest.isEnum,
       };
@@ -544,12 +527,12 @@ export function getTypeManifestVisitor(input: {
       let prefixManifest;
       if (
         node.prefix.kind === "numberTypeNode" &&
-        bigIntFormats.has((node.prefix as any).format)
+        bigIntFormats.has(node.prefix.format)
       ) {
-        const codecName = getNumberCodecName((node.prefix as any).format);
+        const numberManifest = visit(node.prefix, self);
         prefixManifest = {
-          encoder: fragment`transformEncoder(${use(`get${codecName}Encoder`, "solanaCodecsNumbers")}(), (size) => BigInt.from(size))`,
-          decoder: fragment`transformDecoder(${use(`get${codecName}Decoder`, "solanaCodecsNumbers")}(), (size, _, __) => size.toInt())`,
+          encoder: fragment`${use("transformEncoder", "solanaCodecsCore")}(${numberManifest.encoder}, (size) => BigInt.from(size))`,
+          decoder: fragment`${use("transformDecoder", "solanaCodecsCore")}(${numberManifest.decoder}, (size, _, __) => size.toInt())`,
         };
       } else {
         prefixManifest = visit(node.prefix, self);
@@ -660,13 +643,11 @@ export function getTypeManifestVisitor(input: {
     },
 
     visitPreOffsetType(node: PreOffsetTypeNode, { self }) {
-      // Pre-offset types pass through to inner type in Dart
-      return visit(node.type, self);
+      return getOffsetManifest(node, self);
     },
 
     visitPostOffsetType(node: PostOffsetTypeNode, { self }) {
-      // Post-offset types pass through to inner type in Dart
-      return visit(node.type, self);
+      return getOffsetManifest(node, self);
     },
 
     visitSolAmountType(node: SolAmountTypeNode, { self }) {
@@ -777,22 +758,26 @@ function getNumberCodecName(format: string): string {
 }
 
 function getNumberCodecExpression(
-  format: string,
+  node: NumberTypeNode,
   codecType: "Encoder" | "Decoder",
-): string {
-  const name = getNumberCodecName(format);
-  return `get${name}${codecType}()`;
+): Fragment {
+  const name = getNumberCodecName(node.format);
+  const config = node.endian === "be"
+    ? fragment`${use("NumberCodecConfig", "solanaCodecsNumbers")}(endian: ${use("Endian", "dartTypedData")}.big)`
+    : "";
+
+  return fragment`${use(`get${name}${codecType}`, "solanaCodecsNumbers")}(${config})`;
 }
 
 function getArraySizeExpression(
   node: ArrayTypeNode,
   codecType: "Encoder" | "Decoder",
-): string {
+): string | Fragment {
   if (!("count" in node) || !node.count) return "";
   const count = node.count;
   switch (count.kind) {
     case "fixedCountNode":
-      return `, size: FixedArraySize(${count.value})`;
+      return `, size: FixedArraySize(${getNonNegativeInteger(count.value)})`;
     case "remainderCountNode":
       return ", size: RemainderArraySize()";
     case "prefixedCountNode": {
@@ -800,7 +785,7 @@ function getArraySizeExpression(
       if (resolvedPrefix.format === "u32" && (!resolvedPrefix.endian || resolvedPrefix.endian === "le")) {
         return ""; // Default
       }
-      return `, size: PrefixedArraySize(${getNumberCodecExpression(resolvedPrefix.format, codecType)})`;
+      return fragment`, size: PrefixedArraySize(${getNumberCodecExpression(resolvedPrefix, codecType)})`;
     }
     default:
       return "";
@@ -810,12 +795,12 @@ function getArraySizeExpression(
 function getMapSizeExpression(
   node: MapTypeNode,
   codecType: "Encoder" | "Decoder",
-): string {
+): string | Fragment {
   if (!("count" in node) || !node.count) return "";
   const count = node.count;
   switch (count.kind) {
     case "fixedCountNode":
-      return `, size: FixedArraySize(${count.value})`;
+      return `, size: FixedArraySize(${getNonNegativeInteger(count.value)})`;
     case "remainderCountNode":
       return ", size: RemainderArraySize()";
     case "prefixedCountNode": {
@@ -823,7 +808,7 @@ function getMapSizeExpression(
       if (resolvedPrefix.format === "u32" && (!resolvedPrefix.endian || resolvedPrefix.endian === "le")) {
         return "";
       }
-      return `, size: PrefixedArraySize(${getNumberCodecExpression(resolvedPrefix.format, codecType)})`;
+      return fragment`, size: PrefixedArraySize(${getNumberCodecExpression(resolvedPrefix, codecType)})`;
     }
     default:
       return "";
@@ -833,12 +818,12 @@ function getMapSizeExpression(
 function getSetSizeExpression(
   node: SetTypeNode,
   codecType: "Encoder" | "Decoder",
-): string {
+): string | Fragment {
   if (!("count" in node) || !node.count) return "";
   const count = node.count;
   switch (count.kind) {
     case "fixedCountNode":
-      return `, size: FixedArraySize(${count.value})`;
+      return `, size: FixedArraySize(${getNonNegativeInteger(count.value)})`;
     case "remainderCountNode":
       return ", size: RemainderArraySize()";
     case "prefixedCountNode": {
@@ -846,7 +831,7 @@ function getSetSizeExpression(
       if (resolvedPrefix.format === "u32" && (!resolvedPrefix.endian || resolvedPrefix.endian === "le")) {
         return "";
       }
-      return `, size: PrefixedArraySize(${getNumberCodecExpression(resolvedPrefix.format, codecType)})`;
+      return fragment`, size: PrefixedArraySize(${getNumberCodecExpression(resolvedPrefix, codecType)})`;
     }
     default:
       return "";
@@ -859,7 +844,7 @@ type HiddenAffixManifest = {
 };
 
 function getHiddenAffixManifest(
-  node: any,
+  node: ConstantValueNode | TypeNode,
   self: Visitor<TypeManifest>,
 ): HiddenAffixManifest {
   if (node?.kind !== "constantValueNode") {
@@ -867,40 +852,80 @@ function getHiddenAffixManifest(
     return { encoder: manifest.encoder, decoder: manifest.decoder };
   }
 
-  const constantBytes = getConstantBytesExpression(node);
+  const constantBytes = getConstantBytesExpression(node, self);
   return {
     encoder: fragment`${use("getConstantEncoder", "solanaCodecsDataStructures")}(${constantBytes})`,
     decoder: fragment`${use("getConstantDecoder", "solanaCodecsDataStructures")}(${constantBytes})`,
   };
 }
 
-function getConstantBytesExpression(node: any): Fragment {
-  const valueNode = node.value;
-  const typeNode = node.type;
-
-  if (valueNode?.kind !== "numberValueNode") {
+/** Serialize affix constants using the same validated codec as ordinary fields. */
+function getConstantBytesExpression(
+  node: ConstantValueNode,
+  self: Visitor<TypeManifest>,
+): Fragment {
+  if (node.value.kind !== "numberValueNode") {
     throw new Error(
-      `Unsupported hidden affix constant value kind: ${valueNode?.kind}`,
+      `Unsupported hidden affix constant value kind: ${node.value.kind}`,
     );
   }
 
-  const value = Number(valueNode.number);
+  const manifest = visit(node.type, self);
 
-  if (typeNode?.kind === "numberTypeNode") {
-    return fragment`${use(`get${getNumberCodecName(typeNode.format)}Encoder`, "solanaCodecsNumbers")}().encode(${value})`;
+  if (!["int", "BigInt", "double"].includes(manifest.type.content)) {
+    throw new Error(`Unsupported hidden affix constant type kind: ${node.type.kind}`);
   }
 
-  if (typeNode?.kind === "preOffsetTypeNode") {
-    const inner = typeNode.type;
-    if (inner?.kind !== "numberTypeNode") {
-      throw new Error(
-        `Unsupported hidden affix pre-offset inner type kind: ${inner?.kind}`,
-      );
-    }
-    return fragment`${use("padLeftEncoder", "solanaCodecsCore")}(${use(`get${getNumberCodecName(inner.format)}Encoder`, "solanaCodecsNumbers")}(), ${typeNode.offset}).encode(${value})`;
+  const value = getDartValueFragment(node.value, manifest.type.content);
+
+  return fragment`${manifest.encoder}.encode(${value})`;
+}
+
+/** Preserve the IDL's cursor strategy instead of silently discarding offsets. */
+function getOffsetManifest(
+  node: PreOffsetTypeNode | PostOffsetTypeNode,
+  self: Visitor<TypeManifest>,
+): TypeManifest {
+  if (!Number.isSafeInteger(node.offset)) {
+    throw new Error("Expected a safe integer for a codec offset");
   }
 
-  throw new Error(
-    `Unsupported hidden affix constant type kind: ${typeNode?.kind}`,
-  );
+  const manifest = visit(node.type, self);
+  const pre = node.kind === "preOffsetTypeNode";
+  const key = pre ? "preOffset" : "postOffset";
+
+  if (node.strategy === "padded") {
+    const side = pre ? "Left" : "Right";
+    const offset = getNonNegativeInteger(node.offset);
+
+    return {
+      ...manifest,
+      encoder: fragment`${use(`pad${side}Encoder`, "solanaCodecsCore")}(${manifest.encoder}, ${offset})`,
+      decoder: fragment`${use(`pad${side}Decoder`, "solanaCodecsCore")}(${manifest.decoder}, ${offset})`,
+    };
+  }
+
+  let expression: string;
+
+  switch (node.strategy) {
+    case "absolute":
+      expression = node.offset < 0 ? `scope.wrapBytes(${node.offset})` : String(node.offset);
+      break;
+    case "relative":
+      expression = `scope.${key} + ${node.offset}`;
+      break;
+    case "preOffset":
+      expression = `scope.preOffset + ${node.offset}`;
+      break;
+    default:
+      throw new Error(`Unsupported offset strategy: ${node.strategy}`);
+  }
+
+  const config = fragment`${use("OffsetConfig", "solanaCodecsCore")}(${key}: (scope) => ${expression})`;
+
+  return {
+    ...manifest,
+    encoder: fragment`${use("offsetEncoder", "solanaCodecsCore")}(${manifest.encoder}, ${config})`,
+    decoder: fragment`${use("offsetDecoder", "solanaCodecsCore")}(${manifest.decoder}, ${config})`,
+  };
 }

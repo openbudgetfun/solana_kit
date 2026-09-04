@@ -359,6 +359,81 @@ void main() {
       },
     );
 
+    test('retries acquisition after a transport failure', () async {
+      final failure = StateError('Subscription acquisition failed');
+      mockInnerTransport.failure = failure;
+      final source = CancellationTokenSource();
+      final config = RpcSubscriptionsTransportConfig(
+        execute: (_) async => streamsForExecute(),
+        request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
+        signal: source.token,
+      );
+
+      await expectLater(coalescedTransport(config), throwsA(same(failure)));
+      final failedSignal = mockInnerTransport.lastConfig!.signal;
+      mockInnerTransport.failure = null;
+
+      final retry = coalescedTransport(config);
+      await expectLater(retry, completes);
+      expect(mockInnerTransport.callCount, equals(2));
+      expect(failedSignal.isCancelled, isTrue);
+      expect(source.token.isCancelled, isFalse);
+    });
+
+    test(
+      'invalidates native stream errors without uncaught zone errors',
+      () async {
+        final uncaughtErrors = <Object>[];
+        final config = RpcSubscriptionsTransportConfig(
+          execute: (_) async => streamsForExecute(),
+          request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
+          signal: CancellationTokenSource().token,
+        );
+        late Future<NotificationStreams> original;
+        runZonedGuarded(
+          () {
+            original = coalescedTransport(config);
+          },
+          (error, stackTrace) => uncaughtErrors.add(error),
+        );
+        final originalStreams = await original;
+        final originalSignal = mockInnerTransport.lastConfig!.signal;
+
+        mockInnerTransport.mockStreams.single.fireStreamError(
+          StateError('Connection failed'),
+        );
+        await Future<void>.delayed(Duration.zero);
+        final replacement = await coalescedTransport(config);
+
+        expect(uncaughtErrors, isEmpty);
+        expect(originalSignal.isCancelled, isTrue);
+        expect(replacement, isNot(same(originalStreams)));
+        expect(mockInnerTransport.callCount, equals(2));
+      },
+    );
+
+    test(
+      'repeated errors from an old transport preserve its replacement',
+      () async {
+        final config = RpcSubscriptionsTransportConfig(
+          execute: (_) async => streamsForExecute(),
+          request: const RpcSubscriptionsRequest(methodName: 'foo', params: []),
+          signal: CancellationTokenSource().token,
+        );
+        await coalescedTransport(config);
+        final oldStreams = mockInnerTransport.mockStreams.single
+          ..fireError('Connection lost');
+        final replacement = coalescedTransport(config);
+        final replacementSignal = mockInnerTransport.lastConfig!.signal;
+        oldStreams.fireError('Connection still lost');
+        final nextSubscriber = coalescedTransport(config);
+
+        expect(await nextSubscriber, same(await replacement));
+        expect(mockInnerTransport.callCount, equals(2));
+        expect(replacementSignal.isCancelled, isFalse);
+      },
+    );
+
     test(
       'does not cancel a newly-coalesced transport when an old errored one is '
       'aborted',
@@ -431,10 +506,15 @@ class _MockNotificationStreams {
   void fireError([Object? err]) {
     if (!_errorsController.isClosed) _errorsController.add(err);
   }
+
+  void fireStreamError(Object error) {
+    _errorsController.addError(error);
+  }
 }
 
 class _MockTransport {
   int callCount = 0;
+  Object? failure;
   RpcSubscriptionsTransportConfig? lastConfig;
   NotificationStreams? lastStreams;
   final List<_MockNotificationStreams> mockStreams = [];
@@ -448,6 +528,10 @@ class _MockTransport {
     return (RpcSubscriptionsTransportConfig config) {
       callCount++;
       lastConfig = config;
+
+      if (failure != null) {
+        return Future<NotificationStreams>.error(failure!);
+      }
 
       final mock = _MockNotificationStreams();
       mockStreams.add(mock);

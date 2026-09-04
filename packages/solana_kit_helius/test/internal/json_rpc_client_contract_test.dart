@@ -8,6 +8,40 @@ import 'package:test/test.dart';
 
 void main() {
   group('JsonRpcClient contract', () {
+    test('does not disclose credentials from a connection exception', () async {
+      final client = JsonRpcClient(
+        url: 'https://rpc-user:rpc-password@example.com/?api-key=secret-key',
+        client: MockClient((request) async {
+          throw http.ClientException(
+            'Failed to connect to ${request.url}',
+            request.url,
+          );
+        }),
+      );
+
+      await expectLater(
+        client.call('getHealth'),
+        throwsA(
+          isA<http.ClientException>()
+              .having(
+                (error) => error.toString(),
+                'message',
+                isNot(contains('secret-key')),
+              )
+              .having(
+                (error) => error.toString(),
+                'message',
+                isNot(contains('rpc-password')),
+              )
+              .having(
+                (error) => error.toString(),
+                'message',
+                isNot(contains('rpc-user')),
+              ),
+        ),
+      );
+    });
+
     test('sends canonical JSON-RPC envelopes and increments ids', () async {
       final requests = <http.Request>[];
       final client = JsonRpcClient(

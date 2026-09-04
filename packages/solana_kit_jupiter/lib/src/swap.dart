@@ -1,4 +1,3 @@
-// ignore_for_file: comment_references
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_jupiter/src/internal/rest_client.dart';
@@ -9,7 +8,7 @@ import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 
 /// Client for the Jupiter Swap API v2.
 ///
-/// The managed path is [getOrder] followed by [execute]: the API assembles a
+/// The managed path is [getOrder] followed by [executeOrder]: the API assembles a
 /// v0 transaction, the caller signs it, and the API lands it with managed
 /// slippage. The self-landing path is [buildSwap], which returns raw
 /// instructions for callers that assemble and submit transactions
@@ -46,20 +45,29 @@ class JupiterSwapClient {
 
   /// Submits a signed transaction from an accepted [order].
   ///
+  /// The order must have a nonempty request ID returned by `/order`.
+  /// [userPublicKey] is retained for source compatibility; the wallet identity
+  /// is already carried by the signed transaction.
+  ///
   /// The [signedTransaction] is the base64 wire representation of the
   /// transaction after the user signed
   /// [JupiterOrderResponse.encodedTransaction].
   Future<JupiterExecutionResponse> executeOrder({
-    required Address userPublicKey,
     required JupiterOrderResponse order,
     required String signedTransaction,
+    Address? userPublicKey,
   }) async {
+    final requestId = order.requestId;
+    if (requestId == null || requestId.trim().isEmpty) {
+      throw ArgumentError('The order must include a nonempty requestId.');
+    }
     final response = await _restClient.post(
       '/swap/v2/execute',
       body: {
-        'userPublicKey': userPublicKey.toString(),
-        if (order.requestId != null) 'requestId': order.requestId,
-        'transaction': signedTransaction,
+        'requestId': requestId,
+        'signedTransaction': signedTransaction,
+        if (order.lastValidBlockHeight != null)
+          'lastValidBlockHeight': order.lastValidBlockHeight.toString(),
       },
     );
     return switch (response) {

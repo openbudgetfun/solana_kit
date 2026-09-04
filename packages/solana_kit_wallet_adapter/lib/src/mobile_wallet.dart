@@ -144,6 +144,7 @@ class MobileWallet implements Wallet {
   late final _MobileEventsFeature _events;
   late final Map<String, WalletFeature> _features;
   List<WalletAccount> _accounts = const [];
+  int _authorizationGeneration = 0;
 
   @override
   String get version => walletStandardVersion;
@@ -164,24 +165,28 @@ class MobileWallet implements Wallet {
   List<WalletAccount> get accounts => List.unmodifiable(_accounts);
 
   Future<StandardConnectOutput> _connect(StandardConnectInput input) async {
+    final generation = ++_authorizationGeneration;
     final authorization = await backend.authorize(
       identity: identity,
       chain: chain,
       silent: input.silent,
     );
+    _assertCurrentAuthorization(generation);
     _setAccounts(authorization.accounts);
     return StandardConnectOutput(_accounts);
   }
 
   Future<void> _disconnect() async {
-    await backend.disconnect();
+    _authorizationGeneration++;
     _setAccounts(const []);
+    await backend.disconnect();
   }
 
   Future<List<SolanaSignTransactionOutput>> _signTransactions(
     List<SolanaSignTransactionInput> inputs,
   ) async {
     _assertAccounts(inputs.map((input) => input.account));
+    _assertTransactionChains(inputs);
     final signed = await backend.signTransactions(
       inputs.map((input) => input.transaction).toList(),
       inputs.first.account,
@@ -194,6 +199,23 @@ class MobileWallet implements Wallet {
     List<SolanaSignAndSendTransactionInput> inputs,
   ) async {
     _assertAccounts(inputs.map((input) => input.account));
+    _assertTransactionChains(inputs);
+    final policies = inputs.map((input) {
+      final options = input.options;
+      return (
+        options?.preflightCommitment,
+        options?.minContextSlot,
+        options?.commitment,
+        options?.skipPreflight,
+        options?.maxRetries,
+      );
+    }).toSet();
+    if (policies.length > 1) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidRequest,
+        'Mobile wallet batches must use the same submission options',
+      );
+    }
     final signatures = await backend.signAndSendTransactions(
       inputs.map((input) => input.transaction).toList(),
       inputs.first.account,
@@ -234,6 +256,7 @@ class MobileWallet implements Wallet {
   Future<List<SolanaSignInOutput>> _signIn(
     List<SolanaSignInInput> inputs,
   ) async {
+    final generation = ++_authorizationGeneration;
     final results = <SolanaSignInOutput>[];
     for (final input in inputs) {
       final authorization = await backend.authorize(
@@ -241,6 +264,7 @@ class MobileWallet implements Wallet {
         chain: chain,
         signIn: input,
       );
+      _assertCurrentAuthorization(generation);
       _setAccounts(authorization.accounts);
       final output = authorization.signInOutput;
       if (output == null) {
@@ -259,13 +283,33 @@ class MobileWallet implements Wallet {
     _events.emit(StandardWalletChange(accounts: _accounts));
   }
 
+  void _assertCurrentAuthorization(int generation) {
+    if (generation != _authorizationGeneration) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.disconnected,
+        'Mobile wallet authorization was superseded or disconnected',
+      );
+    }
+  }
+
   void _assertAccounts(Iterable<WalletAccount> accounts) {
     final values = accounts.toList();
     if (values.isEmpty ||
-        values.any((account) => !_accounts.contains(account))) {
+        values.any(
+          (account) => account != values.first || !_accounts.contains(account),
+        )) {
       throw const WalletStandardException(
         WalletStandardErrorCode.invalidRequest,
-        'Mobile wallet request contains an unauthorized account',
+        'Mobile wallet requests must use a single authorized account',
+      );
+    }
+  }
+
+  void _assertTransactionChains(List<SolanaSignTransactionInput> inputs) {
+    if (inputs.any((input) => input.chain != null && input.chain != chain)) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidRequest,
+        'Mobile wallet transaction chain does not match the authorized chain',
       );
     }
   }

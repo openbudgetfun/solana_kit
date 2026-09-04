@@ -9,54 +9,28 @@ import 'package:test/test.dart';
 import 'test_constants.dart';
 
 void main() {
-  group('isFullySignedOffchainMessageEnvelope()', () {
-    test('returns false when the envelope has missing signatures', () {
-      final envelope = OffchainMessageEnvelope(
-        content: Uint8List(0),
-        signatures: const <Address, SignatureBytes?>{
-          Address('A11111111111111111111111111111111'): null,
-        },
+  group('signature completeness', () {
+    late OffchainMessageEnvelope unsigned;
+
+    setUp(() {
+      unsigned = compileOffchainMessageEnvelope(
+        const OffchainMessageV1(
+          content: 'Hello world',
+          requiredSignatories: [
+            OffchainMessageSignatory(address: signerA),
+            OffchainMessageSignatory(address: signerB),
+          ],
+        ),
       );
-      expect(isFullySignedOffchainMessageEnvelope(envelope), isFalse);
     });
 
-    test('returns true when all signatures are non-null', () {
-      final envelope = OffchainMessageEnvelope(
-        content: Uint8List(0),
-        signatures: <Address, SignatureBytes?>{
-          const Address('A11111111111111111111111111111111'): SignatureBytes(
-            Uint8List(64),
-          ),
-          const Address('B11111111111111111111111111111111'): SignatureBytes(
-            Uint8List(64),
-          ),
-        },
-      );
-      expect(isFullySignedOffchainMessageEnvelope(envelope), isTrue);
-    });
-
-    test('returns true when the envelope has no signatures', () {
-      final envelope = OffchainMessageEnvelope(
-        content: Uint8List(0),
-        signatures: const <Address, SignatureBytes?>{},
-      );
-      expect(isFullySignedOffchainMessageEnvelope(envelope), isTrue);
-    });
-  });
-
-  group('assertIsFullySignedOffchainMessageEnvelope()', () {
-    test('throws when there are missing signatures', () {
-      const addrA = Address('A11111111111111111111111111111111');
-      const addrB = Address('B11111111111111111111111111111111');
-      final envelope = OffchainMessageEnvelope(
-        content: Uint8List(0),
-        signatures: const <Address, SignatureBytes?>{addrA: null, addrB: null},
-      );
+    test('reports missing signatures from the encoded message', () {
+      expect(isFullySignedOffchainMessageEnvelope(unsigned), isFalse);
       expect(
-        () => assertIsFullySignedOffchainMessageEnvelope(envelope),
+        () => assertIsFullySignedOffchainMessageEnvelope(unsigned),
         throwsA(
           isA<SolanaError>().having(
-            (e) => e.code,
+            (error) => error.code,
             'code',
             SolanaErrorCode.offchainMessageSignaturesMissing,
           ),
@@ -64,29 +38,30 @@ void main() {
       );
     });
 
-    test('does not throw when signed by all signers', () {
+    test('accepts present signatures without verifying them', () {
       final envelope = OffchainMessageEnvelope(
-        content: Uint8List(0),
-        signatures: <Address, SignatureBytes?>{
-          const Address('A11111111111111111111111111111111'): SignatureBytes(
-            Uint8List(64),
-          ),
+        content: unsigned.content,
+        signatures: {
+          signerA: SignatureBytes(Uint8List(64)),
+          signerB: SignatureBytes(Uint8List(64)),
         },
       );
+      expect(isFullySignedOffchainMessageEnvelope(envelope), isTrue);
       expect(
         () => assertIsFullySignedOffchainMessageEnvelope(envelope),
         returnsNormally,
       );
     });
 
-    test('does not throw when there are no signatures', () {
+    test('an empty signature map is missing every required signer', () {
       final envelope = OffchainMessageEnvelope(
-        content: Uint8List(0),
-        signatures: const <Address, SignatureBytes?>{},
+        content: unsigned.content,
+        signatures: const {},
       );
+      expect(isFullySignedOffchainMessageEnvelope(envelope), isFalse);
       expect(
         () => assertIsFullySignedOffchainMessageEnvelope(envelope),
-        returnsNormally,
+        throwsA(isA<SolanaError>()),
       );
     });
   });

@@ -54,18 +54,22 @@ class JupiterRestClient {
     if (queryParameters != null && queryParameters.isNotEmpty) {
       uri = uri.replace(queryParameters: queryParameters);
     }
-    final response = await _client.get(uri, headers: _headers());
+    final request = Request('GET', uri)
+      ..headers.addAll(_headers())
+      ..followRedirects = false;
+    final response = await Response.fromStream(await _client.send(request));
     return _handleResponse(response);
   }
 
   /// Sends a POST request to [path] with a JSON [body].
   Future<Object?> post(String path, {Object? body}) async {
     final uri = _baseUri.resolve(path);
-    final response = await _client.post(
-      uri,
-      headers: _headers()..['content-type'] = 'application/json; charset=utf-8',
-      body: body != null ? jsonEncode(body) : null,
-    );
+    final request = Request('POST', uri)
+      ..headers.addAll(_headers())
+      ..headers['content-type'] = 'application/json; charset=utf-8'
+      ..followRedirects = false;
+    if (body != null) request.body = jsonEncode(body);
+    final response = await Response.fromStream(await _client.send(request));
     return _handleResponse(response);
   }
 

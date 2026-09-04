@@ -30,4 +30,6 @@ void main() {
 
 `'jsonParsed'` responses are not supported: their instructions arrive pre-parsed by the server and lack raw bytes, so they cannot be round-tripped through the auto-generated `parseXInstruction` clients. Prefer `'base64'` when bandwidth allows. It is the most compact and the returned `transaction` is re-encodable.
 
-RPC input is validated fail-closed. Mixed-type account/index arrays, unsupported transaction versions, incomplete compiled instructions, invalid header counts, malformed loaded addresses, and inner-instruction groups that do not match an outer instruction throw a `SolanaError` instead of being silently dropped or misattributed.
+RPC input is validated fail-closed. Mixed-type account/index arrays, unsupported transaction versions, incomplete compiled instructions, invalid header counts, malformed loaded addresses, duplicate inner-instruction groups, and inner-instruction groups that do not match an outer instruction throw a `SolanaError` instead of being silently dropped or misattributed.
+
+Account resolution requires the writable and readonly loaded-address counts to match the v0 message's address table lookups exactly. Missing or extra addresses are rejected before instruction indices are resolved; legacy and v1 messages cannot accept loaded addresses. Decoding a response without loaded metadata remains possible, but lookup-dependent account resolution requires complete metadata. These structural checks do not authenticate an RPC provider's account addresses or execution metadata.

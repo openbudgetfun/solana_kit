@@ -126,6 +126,33 @@ void main() {
       });
     });
 
+    test(
+      'cancellable requests retain their own transport and signal',
+      () async {
+        final signals = <Future<void>?>[];
+        final abort = Completer<void>();
+        final transport = getRpcTransportWithRequestCoalescing((config) async {
+          signals.add(config.signal);
+          return signals.length;
+        }, (_) => 'samehash');
+
+        final cancellable = transport(
+          RpcTransportConfig(payload: null, signal: abort.future),
+        );
+        final independent = transport(const RpcTransportConfig(payload: null));
+        final duplicate = transport(const RpcTransportConfig(payload: null));
+        final secondCancellable = transport(
+          RpcTransportConfig(payload: null, signal: abort.future),
+        );
+
+        expect(await cancellable, 1);
+        expect(await independent, 2);
+        expect(await duplicate, 2);
+        expect(await secondCancellable, 3);
+        expect(signals, [abort.future, null, abort.future]);
+      },
+    );
+
     group('when requests produce different hashes', () {
       setUp(() {
         var counter = 0;

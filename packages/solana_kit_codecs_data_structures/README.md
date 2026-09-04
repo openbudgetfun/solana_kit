@@ -100,6 +100,8 @@ void main() {
 
 `getArrayCodec` handles fixed-size and variable-length (prefixed) arrays. `getTupleCodec` encodes a fixed sequence of heterogeneous values without field names.
 
+Prefixed array decoders reject missing, fractional, negative, and excessive item counts. The default maximum is one million items; pass `maxItems` when a wire format needs a smaller application limit.
+
 ```dart
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';

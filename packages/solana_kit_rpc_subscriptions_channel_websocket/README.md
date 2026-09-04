@@ -6,7 +6,7 @@ WebSocket channel transport for Solana RPC subscriptions in the Solana Kit Dart 
 
 Use this package when you need a raw WebSocket channel to feed `solana_kit_rpc_subscriptions`. Most applications call `createSolanaRpcSubscriptions` and never touch this layer directly.
 
-By default, channel URLs must use `wss://` and may not target localhost or non-public IP literals. Alternate numeric IPv4 forms and IPv4-mapped private IPv6 literals are also rejected. This check does not resolve DNS names; do not accept arbitrary endpoint URLs from untrusted input. Controlled local tests must explicitly enable `allowPrivateHosts` (and `allowInsecureWs` for `ws://`).
+By default, channel URLs must use `wss://` and may not target localhost or non-public IP literals. The check normalizes trailing DNS root dots and IPv6 address bytes before classification. Alternate numeric IPv4 forms and IPv4-mapped private IPv6 literals, including hexadecimal embedded IPv4 addresses, are also rejected. Public hostnames beginning with IPv6-like text such as `fc` remain valid. This check does not resolve DNS names; do not accept arbitrary endpoint URLs from untrusted input. Controlled local tests must explicitly enable `allowPrivateHosts` (and `allowInsecureWs` for `ws://`).
 
 <!-- {=packageInstallSection:"solana_kit_rpc_subscriptions_channel_websocket"} -->
 
@@ -95,10 +95,12 @@ Future<void> main() async {
 }
 ```
 
+Cancellation rejects a pending handshake promptly and closes any socket that completes afterward. Once cancelled, sends fail immediately, and both public streams close when the connection ends. The portable WebSocket API may finish an in-flight network handshake before it can close the underlying socket.
+
 ## Key APIs
 
-- `createWebSocketChannel(url, {allowInsecureWs, allowPrivateHosts})`.
-- `WebSocketChannel` with `send`, `streams.notifications`, and `close`.
+- `createWebSocketChannel(WebSocketChannelConfig(...))`.
+- `RpcSubscriptionsChannel` with `send` and notification/error streams; cancel its configured token to close it.
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_rpc_subscriptions_channel_websocket"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_rpc_subscriptions_channel_websocket/solana_kit_rpc_subscriptions_channel_websocket.dart"} -->
 

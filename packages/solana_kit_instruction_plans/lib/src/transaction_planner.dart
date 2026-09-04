@@ -40,6 +40,12 @@ class TransactionPlannerConfig {
   final CreateTransactionMessage createTransactionMessage;
 
   /// Called whenever a transaction message is updated.
+  ///
+  /// When a message packer has consumed instructions, an update that exceeds
+  /// the message size or instruction limit aborts planning. The consumed
+  /// instructions cannot safely be discarded and retried on another message.
+  /// Reserve required instructions in [createTransactionMessage] instead of
+  /// adding them to a message that a packer has already filled to capacity.
   final OnTransactionMessageUpdated? onTransactionMessageUpdated;
 
   /// The default maximum number of instructions allowed in each planned
@@ -327,6 +333,7 @@ Future<_MutableTransactionPlan?> _traverseMessagePacker(
       context,
       candidates,
       packToCapacity,
+      isStateful: true,
     );
     if (candidate == null) {
       final message = await _createNewMessage(
@@ -388,11 +395,15 @@ List<_MutableSingleTransactionPlan> _getParallelCandidates(
 Future<_MutableSingleTransactionPlan?> _selectAndMutateCandidate(
   _TraverseContext context,
   List<_MutableSingleTransactionPlan> candidates,
-  TransactionMessage Function(TransactionMessage) predicate,
-) async {
+  TransactionMessage Function(TransactionMessage) predicate, {
+  bool isStateful = false,
+}) async {
   for (final candidate in candidates) {
+    var canRetry = true;
     try {
       final updatedMessage = predicate(candidate.message);
+      // Once a packer advances, discarding its message would drop instructions.
+      canRetry = !isStateful;
       final message = await context.onTransactionMessageUpdated(updatedMessage);
       // Added in @solana/kit v7.0.0: the configured instruction limit also
       // covers instructions injected by `onTransactionMessageUpdated`.
@@ -400,13 +411,22 @@ Future<_MutableSingleTransactionPlan?> _selectAndMutateCandidate(
         message.instructions.length,
         resolveMaxInstructions(context.maxInstructionsPerTransaction),
       );
-      if (getTransactionMessageSize(message) <=
-          getTransactionMessageSizeLimit(message)) {
-        candidate.message = message;
-        return candidate;
+      final messageSize = getTransactionMessageSize(message);
+      if (messageSize > getTransactionMessageSizeLimit(message)) {
+        final baseSize = getTransactionMessageSize(candidate.message);
+        throw SolanaError(
+          SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
+          {
+            'numBytesRequired': messageSize - baseSize,
+            'numFreeBytes':
+                getTransactionMessageSizeLimit(candidate.message) - baseSize,
+          },
+        );
       }
+      candidate.message = message;
+      return candidate;
     } on Object catch (error) {
-      if (_isCandidateOverflowError(error)) {
+      if (canRetry && _isCandidateOverflowError(error)) {
         // Try the next candidate.
         continue;
       }

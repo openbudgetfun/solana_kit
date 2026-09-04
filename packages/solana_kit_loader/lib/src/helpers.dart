@@ -7,8 +7,11 @@ import 'package:solana_kit_loader/src/generated/solana_loader_v3_program.dart';
 /// Default number of program bytes included in each loader write instruction.
 const defaultLoaderWriteChunkSize = 900;
 
-/// Returns a non-divisible plan that writes [programBytes] to a buffer and then
+/// Returns a sequential plan that writes [programBytes] to a buffer and then
 /// deploys it through BPF Loader v3 (Upgradeable).
+///
+/// Prepare the buffer and program accounts first. Writes may span transactions;
+/// deployment runs only after every buffer write succeeds.
 InstructionPlan getDeployProgramInstructionPlan({
   required Address payerAccount,
   required Address programDataAccount,
@@ -29,7 +32,7 @@ InstructionPlan getDeployProgramInstructionPlan({
     chunkSize: chunkSize,
   );
 
-  return nonDivisibleSequentialInstructionPlan([
+  return sequentialInstructionPlan([
     ...writes,
     getDeployWithMaxDataLenInstruction(
       programAddress: solanaLoaderV3ProgramProgramAddress,
@@ -46,8 +49,11 @@ InstructionPlan getDeployProgramInstructionPlan({
   ]);
 }
 
-/// Returns a non-divisible plan that writes [programBytes] to a buffer and then
+/// Returns a sequential plan that writes [programBytes] to a buffer and then
 /// upgrades an existing BPF Loader v3 (Upgradeable) program.
+///
+/// Prepare the buffer account first. Writes may span transactions; the upgrade
+/// runs only after every buffer write succeeds.
 InstructionPlan getUpgradeProgramInstructionPlan({
   required Address programDataAccount,
   required Address programAccount,
@@ -66,7 +72,7 @@ InstructionPlan getUpgradeProgramInstructionPlan({
     chunkSize: chunkSize,
   );
 
-  return nonDivisibleSequentialInstructionPlan([
+  return sequentialInstructionPlan([
     ...writes,
     getUpgradeInstruction(
       programAddress: solanaLoaderV3ProgramProgramAddress,

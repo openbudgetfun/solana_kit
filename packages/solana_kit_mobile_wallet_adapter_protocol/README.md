@@ -6,6 +6,10 @@ Pure Dart implementation of the [Solana Mobile Wallet Adapter](https://github.co
 
 The package has zero Flutter dependency and runs in server-side Dart, CLI tools, or any Dart environment.
 
+Public-key import validates that uncompressed keys encode finite points on P-256. ECDH also checks the key domains and curve equation before multiplying by the private scalar. Malformed points, noncanonical coordinates, and mismatched curves throw `ArgumentError`.
+
+`createSiwsMessage` rejects carriage returns and line feeds in scalar fields and resource entries with `FormatException`, preventing fields from injecting additional signed lines. Valid single-line messages remain unchanged.
+
 ## What it covers
 
 - P-256 ECDSA/ECDH cryptography via `pointycastle` (pure Dart, cross-platform)
@@ -75,6 +79,8 @@ void main() {
 ```
 
 ### Building association URIs
+
+Wallet-specific `baseUri` paths are preserved with or without a trailing slash. Parsing identifies the final association endpoint, so wallet path prefixes containing `local` or `remote` do not change the association type.
 
 ```dart
 import 'dart:typed_data';

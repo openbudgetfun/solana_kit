@@ -254,10 +254,10 @@ void main() {
       0,
     ];
     final logs = [
-      'Program 11111111111111111111111111111111 invoke [1]',
+      'Program ${coder.idl.address} invoke [1]',
       'Program log: hello',
       'Program data: ${base64Encode(eventPayload)}',
-      'Program 11111111111111111111111111111111 success',
+      'Program ${coder.idl.address} success',
     ];
     final events = coder.decodeEventLogs(logs);
     expect(events, hasLength(1));

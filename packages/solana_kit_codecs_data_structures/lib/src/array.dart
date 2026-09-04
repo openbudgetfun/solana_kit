@@ -119,7 +119,12 @@ Decoder<List<T>> getArrayDecoder<T>(
   Decoder<T> item, {
   ArrayLikeCodecSize? size,
   String? description,
+  int maxItems = 1000000,
 }) {
+  if (maxItems < 0) {
+    throw ArgumentError.value(maxItems, 'maxItems', 'must not be negative');
+  }
+
   final effectiveSize = size ?? PrefixedArraySize(getU32Decoder());
   final itemFixedSize = getFixedSize(item);
   final computedFixed = _computeArrayLikeCodecSize(
@@ -133,14 +138,20 @@ Decoder<List<T>> getArrayDecoder<T>(
     var offset = currentOffset;
     final array = <T>[];
 
-    // If prefixed and no bytes remain, return empty.
-    if (effectiveSize is PrefixedArraySize && bytes.sublist(offset).isEmpty) {
-      return (array, offset);
+    if (effectiveSize is PrefixedArraySize && offset >= bytes.length) {
+      _throwInvalidArraySize(description, 'missing size prefix');
     }
 
     if (effectiveSize is RemainderArraySize) {
       while (offset < bytes.length) {
         final (value, newOffset) = item.read(bytes, offset);
+
+        // Security: a remainder decoder must consume input on every item.
+        // Otherwise malformed input can make this loop grow without bound.
+        if (newOffset <= offset) {
+          _throwInvalidArraySize(description, newOffset - offset);
+        }
+
         offset = newOffset;
         array.add(value);
       }
@@ -156,23 +167,24 @@ Decoder<List<T>> getArrayDecoder<T>(
       int resolvedSizeLocal;
       if (prefixObject is Decoder<BigInt>) {
         final (prefixValue, newOffset) = prefixObject.read(bytes, offset);
+        if (prefixValue < BigInt.zero || prefixValue > BigInt.from(maxItems)) {
+          _throwInvalidArraySize(description, prefixValue);
+        }
         resolvedSizeLocal = prefixValue.toInt();
         offset = newOffset;
       } else {
         final prefix = prefixObject as Decoder<num>;
         final (prefixValue, newOffset) = prefix.read(bytes, offset);
+        if (!prefixValue.isFinite ||
+            prefixValue != prefixValue.truncate() ||
+            prefixValue < 0 ||
+            prefixValue > maxItems) {
+          _throwInvalidArraySize(description, prefixValue);
+        }
         resolvedSizeLocal = prefixValue.toInt();
         offset = newOffset;
       }
       resolvedSize = resolvedSizeLocal;
-    }
-
-    if (resolvedSize < 0) {
-      throw SolanaError(SolanaErrorCode.codecsInvalidNumberOfItems, {
-        'codecDescription': description ?? 'array',
-        'expected': 0,
-        'actual': resolvedSize,
-      });
     }
 
     for (var i = 0; i < resolvedSize; i++) {
@@ -198,6 +210,7 @@ Codec<List<T>, List<T>> getArrayCodec<T>(
   Codec<T, T> item, {
   ArrayLikeCodecSize? size,
   String? description,
+  int maxItems = 1000000,
 }) {
   // Determine matching encoder/decoder size configs.
   final ArrayLikeCodecSize? encoderSize;
@@ -231,8 +244,17 @@ Codec<List<T>, List<T>> getArrayCodec<T>(
       decoderFromCodec(item),
       size: decoderSize,
       description: description,
+      maxItems: maxItems,
     ),
   );
+}
+
+Never _throwInvalidArraySize(String? description, Object actual) {
+  throw SolanaError(SolanaErrorCode.codecsInvalidNumberOfItems, {
+    'codecDescription': description ?? 'array',
+    'expected': 'an integer between 0 and the configured maximum',
+    'actual': actual,
+  });
 }
 
 int? _computeArrayLikeCodecSize(ArrayLikeCodecSize size, int? itemSize) {

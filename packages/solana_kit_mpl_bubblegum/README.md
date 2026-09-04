@@ -104,6 +104,12 @@ void main() {
 }
 ```
 
+## Proof data and validation
+
+`getAssetWithProof` preserves the DAS owner and delegate, defaults an absent delegate to the owner, uses `compression.leaf_id` as the nonce, and converts the DAS node index to a leaf index. Custom `DasApiClient` implementations should populate `DasAssetOwnership.owner` and `delegate`.
+
+`MerkleTree.verify` requires 32-byte roots, leaves, and proof nodes. It returns `false` for malformed nodes and leaf indices outside the range represented by the proof depth. The caller must obtain the expected root from a trusted source; checking a proof against a root supplied by the same untrusted party does not authenticate an asset.
+
 ## Key APIs
 
 - `getCreateTreeInstructionPlan`, `getCreateTreeV2InstructionPlan`, `getMintV1InstructionPlan`, `getMintV2InstructionPlan`, `getMintToCollectionV1InstructionPlan`, `getTransferInstructionPlan`, `getBurnInstructionPlan`, `getDelegateInstructionPlan`

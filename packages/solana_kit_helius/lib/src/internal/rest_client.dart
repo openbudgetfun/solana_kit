@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:solana_kit_errors/solana_kit_errors.dart';
+import 'package:solana_kit_helius/src/internal/http_request.dart';
 
 /// Internal REST caller for Helius REST API endpoints.
 ///
@@ -27,9 +28,9 @@ class RestClient {
     Map<String, String>? queryParameters,
   }) async {
     final uri = _buildUri(path, queryParameters);
-    final response = await _client.get(
+    final response = await sendHeliusRequest(
       uri,
-      headers: {'accept': 'application/json'},
+      () => _client.get(uri, headers: {'accept': 'application/json'}),
     );
     return _handleResponse(response);
   }
@@ -37,10 +38,13 @@ class RestClient {
   /// Sends a POST request to [path] with an optional JSON [body].
   Future<Object?> post(String path, {Object? body}) async {
     final uri = _buildUri(path);
-    final response = await _client.post(
+    final response = await sendHeliusRequest(
       uri,
-      headers: _jsonHeaders,
-      body: body != null ? jsonEncode(body) : null,
+      () => _client.post(
+        uri,
+        headers: _jsonHeaders,
+        body: body != null ? jsonEncode(body) : null,
+      ),
     );
     return _handleResponse(response);
   }
@@ -48,10 +52,13 @@ class RestClient {
   /// Sends a PUT request to [path] with an optional JSON [body].
   Future<Object?> put(String path, {Object? body}) async {
     final uri = _buildUri(path);
-    final response = await _client.put(
+    final response = await sendHeliusRequest(
       uri,
-      headers: _jsonHeaders,
-      body: body != null ? jsonEncode(body) : null,
+      () => _client.put(
+        uri,
+        headers: _jsonHeaders,
+        body: body != null ? jsonEncode(body) : null,
+      ),
     );
     return _handleResponse(response);
   }
@@ -59,10 +66,13 @@ class RestClient {
   /// Sends a PATCH request to [path] with an optional JSON [body].
   Future<Object?> patch(String path, {Object? body}) async {
     final uri = _buildUri(path);
-    final response = await _client.patch(
+    final response = await sendHeliusRequest(
       uri,
-      headers: _jsonHeaders,
-      body: body != null ? jsonEncode(body) : null,
+      () => _client.patch(
+        uri,
+        headers: _jsonHeaders,
+        body: body != null ? jsonEncode(body) : null,
+      ),
     );
     return _handleResponse(response);
   }
@@ -70,9 +80,9 @@ class RestClient {
   /// Sends a DELETE request to [path].
   Future<Object?> delete(String path) async {
     final uri = _buildUri(path);
-    final response = await _client.delete(
+    final response = await sendHeliusRequest(
       uri,
-      headers: {'accept': 'application/json'},
+      () => _client.delete(uri, headers: {'accept': 'application/json'}),
     );
     return _handleResponse(response);
   }

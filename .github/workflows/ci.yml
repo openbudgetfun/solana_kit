@@ -158,12 +158,23 @@ jobs:
         with:
           channel: stable
           cache: true
+      - name: install Dart dependencies
+        run: flutter pub get
+        working-directory: .
       - name: install
         run: pnpm install --frozen-lockfile
       - name: typecheck
         run: pnpm typecheck
+      - name: build
+        run: pnpm build
       - name: test
         run: pnpm test
+      - name: test program artifact scripts
+        run: >-
+          node --experimental-test-module-mocks --test
+          scripts/build_program_artifacts.test.mjs
+          scripts/generate_program_packages.test.mjs
+        working-directory: .
 
   publish-dry-run:
     runs-on: ubuntu-latest

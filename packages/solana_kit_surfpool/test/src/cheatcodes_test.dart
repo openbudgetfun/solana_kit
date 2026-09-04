@@ -291,6 +291,61 @@ void main() {
       },
     );
 
+    test('profileTransaction supports config without a tag', () async {
+      final surfnet = Surfnet.connect(
+        rpcUrl: Uri.parse('http://localhost:8899'),
+        client: MockClient((request) async {
+          final body = jsonDecode(request.body) as Map<String, Object?>;
+          final params = body['params']! as List<Object?>;
+          final validParams =
+              params.length == 3 && params[1] == null && params[2] is Map;
+          return http.Response(
+            jsonEncode({
+              'jsonrpc': '2.0',
+              'id': body['id'],
+              if (validParams)
+                'result': 'profile'
+              else
+                'error': {'code': -32602, 'message': 'Invalid tag parameter'},
+            }),
+            200,
+          );
+        }),
+      );
+      addTearDown(surfnet.stop);
+
+      expect(
+        await SurfnetCheatcodes(surfnet).profileTransaction(
+          'base64data',
+          config: {'depth': 'instruction'},
+        ),
+        'profile',
+      );
+    });
+
+    test('profileTransaction can omit both optional parameters', () async {
+      final requests = <Map<String, Object?>>[];
+      final cheatcodes = cheatcodesWith(requests, null);
+
+      await cheatcodes.profileTransaction('base64data');
+
+      expect(requests.single['params'], ['base64data']);
+    });
+
+    test('profile lookups unwrap context responses including null', () async {
+      for (final value in <Object?>[
+        {'computeUnitsConsumed': 123},
+        null,
+      ]) {
+        final cheatcodes = cheatcodesWith([], {
+          'context': {'slot': 123},
+          'value': value,
+        });
+
+        expect(await cheatcodes.getTransactionProfile('signature'), value);
+      }
+    });
+
     test('getProfileResultsByTag sends the tag', () async {
       final requests = <Map<String, Object?>>[];
       final cheatcodes = cheatcodesWith(requests, null);

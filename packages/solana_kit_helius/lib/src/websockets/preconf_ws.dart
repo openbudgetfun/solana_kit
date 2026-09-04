@@ -11,8 +11,12 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// (`wss://beta.helius-rpc.com`). Despite the `beta` host name this is **not** a
 /// beta product — it is where Pre Confirmations launch during the Gatekeeper
 /// migration. The API key is appended as a query parameter.
-String preconfWebsocketUrl(String apiKey) =>
-    'wss://beta.helius-rpc.com/?api-key=$apiKey';
+String preconfWebsocketUrl(String apiKey) => Uri(
+  scheme: 'wss',
+  host: 'beta.helius-rpc.com',
+  path: '/',
+  queryParameters: {'api-key': apiKey},
+).toString();
 
 /// The wire schema version this client understands. Frames carrying any other
 /// version in byte 0 are dropped rather than misparsed.
@@ -162,22 +166,73 @@ class PreconfSubscription {
 /// model as other Helius WebSocket subscriptions. It is **not** tip-based.
 class PreconfWsClient {
   /// Creates a Pre Confirmations client for the given API key.
-  PreconfWsClient({required String apiKey, WebSocketChannel? channel})
-    : _channel =
-          channel ??
-          WebSocketChannel.connect(Uri.parse(preconfWebsocketUrl(apiKey)));
+  ///
+  /// [channelFactory] optionally supplies the connector used when [channel]
+  /// is omitted. Connection failures reject pending calls without exposing
+  /// the credential-bearing endpoint.
+  PreconfWsClient({
+    required String apiKey,
+    WebSocketChannel? channel,
+    WebSocketChannel Function(Uri)? channelFactory,
+  }) : _channel =
+           channel ??
+           (channelFactory ?? WebSocketChannel.connect)(
+             Uri.parse(preconfWebsocketUrl(apiKey)),
+           ) {
+    _streamSubscription = _channel.stream.listen(
+      _onMessage,
+      onError: (Object _) => _terminate(
+        StateError('preconf WebSocket connection failed'),
+      ),
+      onDone: () =>
+          _terminate(StateError('preconf WebSocket connection closed')),
+    );
+    unawaited(
+      _channel.ready.then(
+        (_) {
+          if (!_ready.isCompleted) _ready.complete();
+        },
+        onError: (Object _) => _terminate(
+          StateError('preconf WebSocket connection failed'),
+        ),
+      ),
+    );
+  }
 
   final WebSocketChannel _channel;
+  final _ready = Completer<void>();
   final _pending = <int, Completer<Object?>>{};
   final _controllers = <int, StreamController<PreconfNotification>>{};
   int _nextId = 1;
+  StateError? _failure;
+  bool _closed = false;
   StreamSubscription<Object?>? _streamSubscription;
 
-  StreamSubscription<Object?> _ensureListener() {
-    return _streamSubscription ??= _channel.stream.listen(_onMessage);
+  void _terminate(StateError error, {bool notify = true}) {
+    if (_failure != null) return;
+    _failure = error;
+    if (!_ready.isCompleted) _ready.complete();
+    for (final completer in _pending.values) {
+      completer.completeError(error);
+    }
+    _pending.clear();
+    for (final controller in _controllers.values) {
+      if (notify) controller.addError(error);
+      unawaited(controller.close());
+    }
+    _controllers.clear();
+    close();
   }
 
   void _onMessage(Object? message) {
+    try {
+      _handleMessage(message);
+    } on Object {
+      _terminate(StateError('Invalid preconf WebSocket message'));
+    }
+  }
+
+  void _handleMessage(Object? message) {
     if (message is List<int>) {
       // Binary frames carry pre-confirmation notifications.
       final notification = decodePreconfFrame(Uint8List.fromList(message));
@@ -210,22 +265,7 @@ class PreconfWsClient {
   /// Returns a [PreconfSubscription] whose [PreconfSubscription.notifications]
   /// stream yields decoded [PreconfNotification]s.
   Future<PreconfSubscription> preconfSubscribe() async {
-    _ensureListener();
-
-    final id = _nextId++;
-    final completer = Completer<Object?>();
-    _pending[id] = completer;
-
-    _channel.sink.add(
-      jsonEncode({
-        'jsonrpc': '2.0',
-        'id': id,
-        'method': 'preconfSubscribe',
-        'params': const <Object?>[],
-      }),
-    );
-
-    final result = await completer.future;
+    final result = await _call('preconfSubscribe', const <Object?>[]);
     final subscriptionId = result! as int;
 
     final controller = StreamController<PreconfNotification>.broadcast();
@@ -240,33 +280,54 @@ class PreconfWsClient {
 
   /// Unsubscribes by server-assigned subscription ID.
   Future<bool> preconfUnsubscribe(int subscriptionId) async {
-    _ensureListener();
-
-    final id = _nextId++;
-    final completer = Completer<Object?>();
-    _pending[id] = completer;
-
-    _channel.sink.add(
-      jsonEncode({
-        'jsonrpc': '2.0',
-        'id': id,
-        'method': 'preconfUnsubscribe',
-        'params': [subscriptionId],
-      }),
-    );
-
-    final result = await completer.future;
+    final result = await _call('preconfUnsubscribe', [subscriptionId]);
     unawaited(_controllers.remove(subscriptionId)?.close());
     return result == true;
   }
 
-  /// Manually closes the underlying WebSocket.
-  void close() {
-    _streamSubscription?.cancel();
-    _channel.sink.close();
-    for (final controller in _controllers.values) {
-      controller.close();
+  Future<Object?> _call(String method, List<Object?> params) async {
+    await _ready.future;
+    final failure = _failure;
+    if (failure != null) throw failure;
+
+    final id = _nextId++;
+    final completer = Completer<Object?>();
+    _pending[id] = completer;
+    try {
+      _channel.sink.add(
+        jsonEncode({
+          'jsonrpc': '2.0',
+          'id': id,
+          'method': method,
+          'params': params,
+        }),
+      );
+    } on Object {
+      _pending.remove(id);
+      final error = StateError('preconf WebSocket send failed');
+      _terminate(error);
+      throw error;
     }
-    _controllers.clear();
+    return completer.future;
+  }
+
+  /// Manually closes the underlying WebSocket.
+  ///
+  /// Pending requests fail and notification streams close. Safe to repeat,
+  /// including before the connection is ready.
+  void close() {
+    if (_closed) return;
+    _closed = true;
+    _terminate(StateError('preconf WebSocket client is closed'), notify: false);
+    unawaited(_closeTransport());
+  }
+
+  Future<void> _closeTransport() async {
+    try {
+      await _streamSubscription?.cancel();
+      await _channel.sink.close();
+    } on Object {
+      // Pending calls already have a credential-free terminal error.
+    }
   }
 }

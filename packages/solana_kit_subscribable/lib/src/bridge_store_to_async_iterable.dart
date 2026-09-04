@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:solana_kit_errors/solana_kit_errors.dart';
-
 import 'package:solana_kit_subscribable/src/cancellation_token.dart';
 import 'package:solana_kit_subscribable/src/reactive_stream_store.dart';
 
@@ -24,32 +22,39 @@ import 'package:solana_kit_subscribable/src/reactive_stream_store.dart';
 ///   begins, then each subsequent update), unless an optional [shouldYield]
 ///   predicate rejects it. Latest-wins: if several notifications land between
 ///   pulls, only the most recent unconsumed value is yielded.
-/// - `error` → throws, so the consuming `await for` rejects. Substitutes a
-///   [SolanaErrorCode.subscribableStreamClosedWithoutError] sentinel when the
-///   store reports an error with a nullish payload. An error takes precedence
+/// - `error` → throws, so the consuming `await for` rejects. The store ignores
+///   null error notifications. An error takes precedence
 ///   over a buffered value: if a `loaded` value is still pending when an
 ///   `error` arrives, that value is dropped and the error propagates.
 /// - [cancellationToken] fires → ends the stream cleanly (no error). A
 ///   subscription never completes on its own, so cancellation is how the
 ///   stream terminates: cancelling it unblocks a parked `await for` and ends
 ///   the loop. Bind the same token to the store's connection
-///   (`store.withSignal(token).connect()`) so the cancellation tears the
+///   (`store.withSignal(token)()`) so the cancellation tears the
 ///   underlying stream down too.
 ///
-/// However iteration ends, whether by value exhaustion, error, or cancellation, the
-/// bridge unsubscribes from the store. It does not `reset()` the store; that
-/// is the caller's decision.
+/// Cancelling the [StreamSubscription] also releases the bridge's observer,
+/// even while the store is quiet. Exceptions thrown by [shouldYield] are
+/// delivered as stream errors and release the observer as well.
+///
+/// However iteration ends, the bridge unsubscribes from the store. It does
+/// not `reset()` the store; that is the caller's decision.
 Stream<T> bridgeStoreToAsyncIterable<T>(
   ReactiveStreamStore<T> store, {
   CancellationToken? cancellationToken,
   bool Function(T value)? shouldYield,
-}) async* {
+}) {
   // Latest-wins single-slot buffer plus a one-shot "something changed"
   // completer the loop parks on. `wake()` completes the current completer and
   // arms a fresh one for the next park.
   ({T value})? latest;
   Object? failure;
+  StackTrace? failureStackTrace;
   var deferred = Completer<void>();
+  var cancelled = false;
+  late StreamController<T> controller;
+  late Future<void> pumping;
+
   void wake() {
     final completer = deferred;
     deferred = Completer<void>();
@@ -57,50 +62,81 @@ Stream<T> bridgeStoreToAsyncIterable<T>(
   }
 
   void onChange() {
-    final state = store.getState();
-    if (state.status == ReactiveStreamState.loaded) {
-      // Drop a value the gate rejects. The stream parks again rather than
-      // yielding it.
-      if (shouldYield != null && !shouldYield(state.data as T)) return;
-      latest = (value: state.data as T);
-      wake();
-    } else if (state.status == ReactiveStreamState.error) {
-      // The store filters nullish errors at the source, so the error state
-      // always carries a non-null error.
-      failure = state.error;
+    try {
+      final state = store.getState();
+
+      if (state.status == ReactiveStreamState.loaded) {
+        // Rejected values leave the bridge parked until another update.
+        if (shouldYield != null && !shouldYield(state.data as T)) return;
+        latest = (value: state.data as T);
+        wake();
+      } else if (state.status == ReactiveStreamState.error) {
+        failure = state.error;
+        wake();
+      }
+    } on Object catch (error, stackTrace) {
+      // Predicates run inside store notifications. Their failures belong to
+      // the stream consumer and must release this observer.
+      failure = error;
+      failureStackTrace = stackTrace;
       wake();
     }
-    // `idle` / `loading` carry no value and no error, so nothing to yield.
   }
 
-  void onCancel() => wake();
-  unawaited(cancellationToken?.future.then((_) => onCancel()));
-  final unsubscribe = store.subscribe(onChange);
-  // Seed from the store's current snapshot: the caller may already have
-  // connected (and a value or error may already be present) before iteration
-  // began. The bridge never connects the store itself.
-  onChange();
-  try {
-    while (true) {
-      // Cancellation wins over everything: it is teardown, so end cleanly
-      // without surfacing the store's incidental cancellation-driven error
-      // state.
-      if (cancellationToken?.isCancelled ?? false) return;
-      if (failure != null) {
-        final error = failure!;
-        if (error is Error) throw error;
-        if (error is Exception) throw error;
-        throw StateError('$error');
+  Future<void> pump() async {
+    unawaited(cancellationToken?.future.then((_) => wake()));
+    final unsubscribe = store.subscribe(onChange);
+
+    try {
+      // Seed an already-connected store without taking over its lifecycle.
+      onChange();
+
+      while (true) {
+        if (cancelled || (cancellationToken?.isCancelled ?? false)) return;
+
+        if (controller.isPaused) {
+          await deferred.future;
+          continue;
+        }
+
+        if (failure != null) {
+          final error = failure!;
+          controller.addError(
+            error is Error || error is Exception ? error : StateError('$error'),
+            failureStackTrace,
+          );
+          return;
+        }
+
+        if (latest != null) {
+          final value = latest!.value;
+          latest = null;
+          controller.add(value);
+          // Let the consumer pause or cancel before delivering another value.
+          await Future<void>.value();
+          continue;
+        }
+
+        await deferred.future;
       }
-      if (latest != null) {
-        final value = latest!.value;
-        latest = null;
-        yield value;
-        continue;
-      }
-      await deferred.future;
+    } finally {
+      unsubscribe();
+      unawaited(controller.close());
     }
-  } finally {
-    unsubscribe();
   }
+
+  controller = StreamController<T>(
+    onListen: () {
+      pumping = Future<void>.microtask(pump);
+    },
+    onResume: wake,
+    onCancel: () {
+      // An async* subscription cannot interrupt an await on a quiet store.
+      // Explicit cancellation wakes the pump and waits for observer cleanup.
+      cancelled = true;
+      wake();
+      return pumping;
+    },
+  );
+  return controller.stream;
 }

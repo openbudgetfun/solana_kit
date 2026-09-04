@@ -3,7 +3,8 @@
 // Usage: node scripts/generate_program_packages.mjs [--check] [--program=<repo>]
 //   --check: only report which packages would change, don't write files
 //   --program: only generate the package for the selected repository
-import { readFileSync, existsSync, readdirSync } from "fs";
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "fs";
+import { tmpdir } from "os";
 import { join, resolve } from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -258,6 +259,28 @@ const PROGRAMS = [
   },
 ];
 
+function directoriesEqual(left, right) {
+  if (!existsSync(left) || !existsSync(right)) return false;
+
+  const leftEntries = readdirSync(left, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name));
+  const rightEntries = readdirSync(right, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name));
+
+  if (leftEntries.length !== rightEntries.length) return false;
+
+  return leftEntries.every((leftEntry, index) => {
+    const rightEntry = rightEntries[index];
+
+    if (leftEntry.name !== rightEntry.name || leftEntry.isDirectory() !== rightEntry.isDirectory()) return false;
+
+    const leftPath = join(left, leftEntry.name);
+    const rightPath = join(right, rightEntry.name);
+
+    if (leftEntry.isDirectory()) return directoriesEqual(leftPath, rightPath);
+
+    return readFileSync(leftPath).equals(readFileSync(rightPath));
+  });
+}
+
 for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
   if (PROGRAM_FILTER != null && repo !== PROGRAM_FILTER) {
     continue;
@@ -304,20 +327,31 @@ for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
     }
   }
 
-  if (CHECK_ONLY) {
-    console.log(`  (check-only) Would render to ${outDir}`);
-    continue;
-  }
+  const checkDirectory = CHECK_ONLY
+    ? mkdtempSync(join(tmpdir(), "solana-kit-program-generation-"))
+    : undefined;
+  const renderDir = checkDirectory == null ? outDir : join(checkDirectory, repo);
 
   try {
-    visit(root, renderVisitor(outDir, {
+    visit(root, renderVisitor(renderDir, {
       formatCode: true,
       deleteFolderBeforeRendering: true,
     }));
-    console.log(`  ✓ ${pkg} generated to ${outDir}`);
-  } catch (e) {
-    console.error(`  ✗ ${pkg} FAILED: ${e.message}`);
-    if (e.stack) console.error(e.stack.split("\n").slice(0, 5).join("\n"));
+
+    if (CHECK_ONLY && !directoriesEqual(renderDir, outDir)) {
+      console.error(`  ✗ ${pkg} generated output differs from ${outDir}`);
+      process.exitCode = 1;
+    } else if (CHECK_ONLY) {
+      console.log(`  ✓ ${pkg} generated output is current`);
+    } else {
+      console.log(`  ✓ ${pkg} generated to ${outDir}`);
+    }
+  } catch (error) {
+    console.error(`  ✗ ${pkg} FAILED: ${error.message}`);
+    if (error.stack) console.error(error.stack.split("\n").slice(0, 5).join("\n"));
+    process.exitCode = 1;
+  } finally {
+    if (checkDirectory) rmSync(checkDirectory, { recursive: true, force: true });
   }
 }
 console.log("Done.");

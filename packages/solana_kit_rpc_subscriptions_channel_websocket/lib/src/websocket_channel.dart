@@ -188,13 +188,18 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
   final messagesController = StreamController<Object?>.broadcast(sync: true);
   final errorsController = StreamController<Object?>.broadcast(sync: true);
 
-  WebSocketChannel webSocketChannel;
+  WebSocketChannel? connectingChannel;
+  final WebSocketChannel webSocketChannel;
 
   try {
-    webSocketChannel = WebSocketChannel.connect(config.url);
+    connectingChannel = WebSocketChannel.connect(config.url);
+    webSocketChannel = connectingChannel;
     // Wait for the connection to be established.
-    await webSocketChannel.ready;
+    await getAbortableFuture(webSocketChannel.ready, config.signal);
   } on Object {
+    connectingChannel?.sink.close(normalClosureCode).ignore();
+    unawaited(messagesController.close());
+    unawaited(errorsController.close());
     if (config.signal?.isCancelled ?? false) {
       final reason = config.signal!.reason;
       if (reason is Exception || reason is Error) {
@@ -212,12 +217,19 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
   var isClosed = false;
   final subscriptions = <StreamSubscription<void>>[];
 
+  void closeStreams() {
+    isClosed = true;
+    unawaited(messagesController.close());
+    unawaited(errorsController.close());
+  }
+
   // Handle cancellation token.
   if (config.signal != null) {
     config.signal!.future.then((_) {
       if (!isClosed) {
-        unawaited(webSocketChannel.sink.close(normalClosureCode));
+        webSocketChannel.sink.close(normalClosureCode).ignore();
       }
+      closeStreams();
       // Clean up subscriptions.
       for (final sub in subscriptions) {
         unawaited(sub.cancel());
@@ -236,11 +248,11 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
       if (!errorsController.isClosed) errorsController.addError(error);
     },
     onDone: () {
-      isClosed = true;
-      if (config.signal?.isCancelled ?? false) return;
       // Connection closed unexpectedly.
       final closeCode = webSocketChannel.closeCode;
-      if (closeCode != null && closeCode != normalClosureCode) {
+      if (!(config.signal?.isCancelled ?? false) &&
+          closeCode != null &&
+          closeCode != normalClosureCode) {
         if (!errorsController.isClosed) {
           errorsController.add(
             SolanaError(
@@ -253,6 +265,7 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
           );
         }
       }
+      closeStreams();
     },
   );
   subscriptions.add(messageSub);
@@ -261,7 +274,7 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
     messagesController: messagesController,
     errorsController: errorsController,
     webSocketChannel: webSocketChannel,
-    isClosed: () => isClosed,
+    isClosed: () => isClosed || (config.signal?.isCancelled ?? false),
   );
 }
 
@@ -357,7 +370,11 @@ const _blockedHostnames = {
 /// This is a best-effort SSRF mitigation. It blocks known private hostnames
 /// and non-public IP-literal ranges. It does NOT perform DNS resolution.
 void _assertHostIsNotPrivate(Uri url) {
-  final host = url.host.toLowerCase();
+  // DNS's trailing root label does not change a destination's identity.
+  final rawHost = url.host.toLowerCase();
+  final host = rawHost.endsWith('.')
+      ? rawHost.substring(0, rawHost.length - 1)
+      : rawHost;
 
   if (_blockedHostnames.contains(host)) {
     throw ArgumentError.value(
@@ -455,41 +472,42 @@ bool _looksLikeNonCanonicalIpv4(String host) {
     );
   }
   return RegExp(
-    r'^(?:0x[0-9a-f]+)(?:\.(?:0x[0-9a-f]+))*$',
+    r'^(?:0x[0-9a-f]+|\d+)(?:\.(?:0x[0-9a-f]+|\d+)){0,3}$',
     caseSensitive: false,
   ).hasMatch(host);
 }
 
 bool _isPrivateIpv6(String host) {
-  // Normalize: strip brackets and zone ID
-  var h = host.replaceAll('[', '').replaceAll(']', '');
-  if (h.contains('%')) h = h.substring(0, h.indexOf('%'));
+  if (!host.contains(':')) return false;
 
-  h = h.toLowerCase();
+  // Compare bytes so compressed/expanded zero groups and hexadecimal embedded
+  // IPv4 spellings cannot evade the private-address policy.
+  final address = Uri.parseIPv6Address(
+    host.replaceAll('[', '').replaceAll(']', '').split('%').first,
+  );
+  final hasIpv4Prefix = address.take(10).every((byte) => byte == 0);
+  final isCompatible = address[10] == 0 && address[11] == 0;
+  final isMapped = address[10] == 0xff && address[11] == 0xff;
 
-  if (h == '::' || h == '::1') return true;
-
-  // IPv4-compatible and IPv4-mapped literals inherit the IPv4 address's
-  // routability (for example ::ffff:127.0.0.1).
-  final lastColon = h.lastIndexOf(':');
-  if (lastColon >= 0 && h.substring(lastColon + 1).contains('.')) {
-    final ipv4 = h.substring(lastColon + 1);
-    if (_isPrivateIpv4(ipv4) || _looksLikeNonCanonicalIpv4(ipv4)) return true;
+  if (hasIpv4Prefix && (isCompatible || isMapped)) {
+    // Includes the unspecified and loopback IPv6 addresses (:: and ::1).
+    return _isPrivateIpv4(address.skip(12).join('.'));
   }
 
   // fc00::/7 unique-local; fe80::/10 link-local; ff00::/8 multicast.
-  if (h.startsWith('fc') || h.startsWith('fd') || h.startsWith('ff')) {
+  if ((address[0] & 0xfe) == 0xfc || address[0] == 0xff) {
     return true;
   }
-  if (h.startsWith('fe8') ||
-      h.startsWith('fe9') ||
-      h.startsWith('fea') ||
-      h.startsWith('feb')) {
+
+  if (address[0] == 0xfe && (address[1] & 0xc0) == 0x80) {
     return true;
   }
 
   // Documentation range; never a legitimate public endpoint.
-  return h.startsWith('2001:db8');
+  return address[0] == 0x20 &&
+      address[1] == 0x01 &&
+      address[2] == 0x0d &&
+      address[3] == 0xb8;
 }
 
 class _WebSocketRpcChannel implements RpcSubscriptionsChannel {

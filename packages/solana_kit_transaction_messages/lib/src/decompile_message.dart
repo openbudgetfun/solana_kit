@@ -16,6 +16,7 @@ import 'package:solana_kit_transaction_messages/src/instructions.dart'
 import 'package:solana_kit_transaction_messages/src/lifetime.dart';
 import 'package:solana_kit_transaction_messages/src/pipe.dart';
 import 'package:solana_kit_transaction_messages/src/transaction_message.dart';
+import 'package:solana_kit_transaction_messages/src/v1_transaction_config.dart';
 
 /// Configuration for decompiling a transaction message.
 class DecompileTransactionMessageConfig {
@@ -234,6 +235,84 @@ Instruction _convertInstruction(
   );
 }
 
+List<CompiledInstruction> _getCompiledInstructions(
+  CompiledTransactionMessage message,
+) {
+  if (message.version != TransactionVersion.v1) return message.instructions;
+
+  final headers = message.instructionHeaders ?? const <V1InstructionHeader>[];
+  final payloads =
+      message.instructionPayloads ?? const <V1InstructionPayload>[];
+  if (headers.length != payloads.length) {
+    throw SolanaError(
+      SolanaErrorCode.transactionInstructionHeadersPayloadsMismatch,
+      {
+        'numInstructionHeaders': headers.length,
+        'numInstructionPayloads': payloads.length,
+      },
+    );
+  }
+
+  return List<CompiledInstruction>.generate(headers.length, (index) {
+    final header = headers[index];
+    final payload = payloads[index];
+    if (header.numInstructionAccounts !=
+            payload.instructionAccountIndices.length ||
+        header.numInstructionDataBytes != payload.instructionData.length) {
+      throw const FormatException('V1 instruction payload length mismatch.');
+    }
+    return CompiledInstruction(
+      programAddressIndex: header.programAccountIndex,
+      accountIndices: payload.instructionAccountIndices,
+      data: payload.instructionData,
+    );
+  });
+}
+
+V1TransactionConfig? _getV1Config(CompiledTransactionMessage message) {
+  if (message.version != TransactionVersion.v1) return null;
+
+  final mask = message.configMask ?? 0;
+  final values =
+      message.configValues ?? const <CompiledTransactionConfigValue>[];
+  var index = 0;
+
+  T readValue<T extends Object>(String configName, String expectedKind) {
+    if (index >= values.length) {
+      throw const FormatException('Missing V1 transaction config value.');
+    }
+    final value = values[index++];
+    if (value.kind != expectedKind || value.value is! T) {
+      throw SolanaError(SolanaErrorCode.transactionInvalidConfigValueKind, {
+        'configName': configName,
+        'expectedKind': expectedKind,
+        'actualKind': value.kind,
+      });
+    }
+    return value.value as T;
+  }
+
+  final config = V1TransactionConfig(
+    priorityFeeLamports: transactionConfigMaskHasPriorityFee(mask)
+        ? readValue<BigInt>('priorityFeeLamports', 'u64')
+        : null,
+    computeUnitLimit: transactionConfigMaskHasComputeUnitLimit(mask)
+        ? readValue<int>('computeUnitLimit', 'u32')
+        : null,
+    loadedAccountsDataSizeLimit:
+        transactionConfigMaskHasLoadedAccountsDataSizeLimit(mask)
+        ? readValue<int>('loadedAccountsDataSizeLimit', 'u32')
+        : null,
+    heapSize: transactionConfigMaskHasHeapSize(mask)
+        ? readValue<int>('heapSize', 'u32')
+        : null,
+  );
+  if (index != values.length) {
+    throw const FormatException('Unexpected V1 transaction config value.');
+  }
+  return config.isEmpty ? null : config;
+}
+
 /// Decompiles a [CompiledTransactionMessage] back into a
 /// [TransactionMessage].
 ///
@@ -242,6 +321,9 @@ Instruction _convertInstruction(
 /// to faithfully reconstruct the original source message you will need to
 /// supply supporting details about the lifetime constraint and the concrete
 /// addresses of any accounts sourced from account lookup tables.
+///
+/// Preserves the transaction version, all instructions, and v1 resource and
+/// priority fee configuration so inspection reflects the compiled message.
 TransactionMessage decompileTransactionMessage(
   CompiledTransactionMessage compiledTransactionMessage, [
   DecompileTransactionMessageConfig? config,
@@ -266,7 +348,7 @@ TransactionMessage decompileTransactionMessage(
 
   final transactionMetas = [...accountMetas, ...accountLookupMetas];
 
-  final instructions = compiledTransactionMessage.instructions
+  final instructions = _getCompiledInstructions(compiledTransactionMessage)
       .map(
         (compiledInstruction) =>
             _convertInstruction(compiledInstruction, transactionMetas),
@@ -276,12 +358,8 @@ TransactionMessage decompileTransactionMessage(
   final firstInstruction = instructions.isNotEmpty ? instructions[0] : null;
   final lifetimeToken = compiledTransactionMessage.lifetimeToken;
 
-  final version =
-      compiledTransactionMessage.version == TransactionVersion.legacy
-      ? TransactionVersion.legacy
-      : TransactionVersion.v0;
-
-  return createTransactionMessage(version: version)
+  return createTransactionMessage(version: compiledTransactionMessage.version)
+      .copyWith(config: _getV1Config(compiledTransactionMessage))
       .pipe((m) => setTransactionMessageFeePayer(feePayer, m))
       .pipe(
         (m) => instructions.fold<TransactionMessage>(

@@ -104,6 +104,8 @@ class HeliusDasClient implements DasApiClient {
     return DasAsset(
       id: (data['id'] as String?) ?? '',
       ownership: DasAssetOwnership(
+        owner: (ownership['owner'] as String?) ?? '',
+        delegate: ownership['delegate'] as String?,
         frozen: (ownership['frozen'] as bool?) ?? false,
         nonTransferable: (ownership['non_transferable'] as bool?) ?? false,
       ),

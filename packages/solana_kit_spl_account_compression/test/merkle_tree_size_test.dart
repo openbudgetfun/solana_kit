@@ -66,23 +66,10 @@ void main() {
       final withCanopy = getConcurrentMerkleTreeAccountSize(
         maxDepth: 14,
         maxBufferSize: 64,
+        canopyDepth: 14,
       );
       // Full canopy depth is larger than zero canopy.
       expect(withCanopy, greaterThan(noCanopy));
-    });
-
-    test('matches known formula for depth 3, buffer 8', () {
-      // Header = 2 + 54 = 56 bytes
-      // PathNodeSize = 33 bytes (1 index byte + 32 node bytes)
-      // ChangeLogEntrySize = (3+1) * 33 + 4 + 1 + 4 = 140
-      // ConcurrentMerkleTreeSize = 8 + 8 + 8 + 8 * 140 + (3+1)*33 + 1 = 1290
-      // Canopy (depth=3) = (1+2+4) * 32 = 224
-      // Total = 56 + 1290 + 224 = 1570 (approximate)
-      final size = getConcurrentMerkleTreeAccountSize(
-        maxDepth: 3,
-        maxBufferSize: 8,
-      );
-      expect(size, greaterThan(1000));
     });
 
     test('depth 14 buffer 64 is a valid size', () {

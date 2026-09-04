@@ -11,7 +11,9 @@ typedef GetDeduplicationKeyFn = String? Function(Object? payload);
 ///
 /// When multiple identical requests (as determined by [getDeduplicationKey])
 /// are made within the same microtask, only a single request is sent to the
-/// underlying transport. All callers receive the same response.
+/// underlying transport. All callers receive the same response. Requests with
+/// a cancellation signal use separate transports so one caller cannot cancel
+/// another caller's request.
 ///
 /// The coalescing cache is cleared at the end of each microtask via
 /// [scheduleMicrotask].
@@ -22,6 +24,10 @@ RpcTransport getRpcTransportWithRequestCoalescing(
   Map<String, Future<Object?>>? coalescedRequestsByDeduplicationKey;
 
   return (RpcTransportConfig config) async {
+    if (config.signal != null) {
+      return transport(config);
+    }
+
     final deduplicationKey = getDeduplicationKey(config.payload);
     if (deduplicationKey == null) {
       return transport(config);

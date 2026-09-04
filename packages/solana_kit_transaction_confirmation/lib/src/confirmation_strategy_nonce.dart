@@ -69,34 +69,62 @@ createNonceInvalidationPromiseFactory(NonceInvalidationConfig config) {
     required String expectedNonceValue,
     required String nonceAccountAddress,
   }) async {
+    if (abortSignal.isCancelled) {
+      throw StateError('The operation was aborted: ${abortSignal.reason}');
+    }
+
     final abortController = CancellationTokenSource();
+    final nonceInvalidationCompleter = Completer<Never>();
 
     abortSignal.future.then((_) {
+      if (abortController.token.isCancelled) return;
       abortController.cancel(abortSignal.reason);
+      if (!nonceInvalidationCompleter.isCompleted) {
+        nonceInvalidationCompleter.completeError(
+          StateError('The operation was aborted: ${abortSignal.reason}'),
+        );
+      }
     }).ignore();
 
     try {
       // STEP 1: Set up a subscription for nonce account changes.
-      final nonceInvalidationCompleter = Completer<Never>();
-
-      // The subscription future is intentionally not awaited because it runs
-      // in parallel with the one-shot nonce account check.
-      // ignore: unawaited_futures
-      config.onAccountNotification(
-        nonceAccountAddress,
-        abortSignal: abortController.token,
-        commitment: commitment,
-        onNotification: ({required nonceValue}) {
-          if (nonceInvalidationCompleter.isCompleted) return;
-          if (nonceValue != expectedNonceValue) {
-            nonceInvalidationCompleter.completeError(
-              SolanaError(SolanaErrorCode.invalidNonce, {
-                'actualNonceValue': nonceValue,
-                'expectedNonceValue': expectedNonceValue,
-              }),
-            );
-          }
-        },
+      unawaited(
+        config
+            .onAccountNotification(
+              nonceAccountAddress,
+              abortSignal: abortController.token,
+              commitment: commitment,
+              onNotification: ({required nonceValue}) {
+                if (abortController.token.isCancelled) return;
+                if (nonceInvalidationCompleter.isCompleted) return;
+                if (nonceValue != expectedNonceValue) {
+                  nonceInvalidationCompleter.completeError(
+                    SolanaError(SolanaErrorCode.invalidNonce, {
+                      'actualNonceValue': nonceValue,
+                      'expectedNonceValue': expectedNonceValue,
+                    }),
+                  );
+                }
+              },
+            )
+            .then<void>(
+              (_) {
+                if (abortController.token.isCancelled) return;
+                if (!nonceInvalidationCompleter.isCompleted) {
+                  nonceInvalidationCompleter.completeError(
+                    StateError(
+                      'The confirmation subscription ended unexpectedly.',
+                    ),
+                  );
+                }
+              },
+              onError: (Object error, StackTrace stackTrace) {
+                if (abortController.token.isCancelled) return;
+                if (!nonceInvalidationCompleter.isCompleted) {
+                  nonceInvalidationCompleter.completeError(error, stackTrace);
+                }
+              },
+            ),
       );
 
       // STEP 2: Having subscribed for updates, make a one-shot request for

@@ -19,6 +19,7 @@ class WalletController extends ChangeNotifier {
   StreamSubscription<WalletRegistryEvent>? _registrySubscription;
   void Function()? _walletUnsubscribe;
   bool _disposed = false;
+  int _connectionRevision = 0;
 
   /// Current immutable state.
   WalletAdapterState get state => _state;
@@ -31,10 +32,14 @@ class WalletController extends ChangeNotifier {
       _state.copyWith(connectionStatus: WalletConnectionStatus.discovering),
     );
     await _registry.initialize();
+    if (_disposed) return;
     _registrySubscription = _registry.events.listen(_handleRegistryEvent);
     _emit(
       _state.copyWith(
-        connectionStatus: WalletConnectionStatus.disconnected,
+        connectionStatus:
+            _state.connectionStatus == WalletConnectionStatus.discovering
+            ? WalletConnectionStatus.disconnected
+            : null,
         wallets: _registry.wallets,
       ),
     );
@@ -49,13 +54,14 @@ class WalletController extends ChangeNotifier {
     if (feature == null) {
       throw _unsupported(StandardFeatureId.connect, wallet);
     }
-    _walletUnsubscribe?.call();
-    _walletUnsubscribe = null;
+    _invalidateConnection();
+    final revision = _connectionRevision;
     _emit(
       _state.copyWith(
         connectionStatus: WalletConnectionStatus.connecting,
         selectedWallet: wallet,
         selectedAccount: null,
+        operationStatus: WalletOperationStatus.idle,
         error: null,
       ),
     );
@@ -63,6 +69,12 @@ class WalletController extends ChangeNotifier {
       final output = await feature.connect(
         StandardConnectInput(silent: silent),
       );
+      if (!_isCurrentConnection(revision)) {
+        throw const WalletStandardException(
+          WalletStandardErrorCode.disconnected,
+          'Wallet connection was superseded or disconnected',
+        );
+      }
       if (output.accounts.isEmpty) {
         throw const WalletStandardException(
           WalletStandardErrorCode.invalidResponse,
@@ -84,14 +96,16 @@ class WalletController extends ChangeNotifier {
         ),
       );
     } on Object catch (error) {
-      _emit(
-        _state.copyWith(
-          connectionStatus: WalletConnectionStatus.disconnected,
-          selectedWallet: null,
-          selectedAccount: null,
-          error: error,
-        ),
-      );
+      if (_isCurrentConnection(revision)) {
+        _emit(
+          _state.copyWith(
+            connectionStatus: WalletConnectionStatus.disconnected,
+            selectedWallet: null,
+            selectedAccount: null,
+            error: error,
+          ),
+        );
+      }
       rethrow;
     }
   }
@@ -100,7 +114,9 @@ class WalletController extends ChangeNotifier {
   void selectAccount(WalletAccount account) {
     _ensureActive();
     final wallet = _state.selectedWallet;
-    if (wallet == null || !wallet.accounts.contains(account)) {
+    if (!_state.isConnected ||
+        wallet == null ||
+        !wallet.accounts.contains(account)) {
       throw const WalletStandardException(
         WalletStandardErrorCode.invalidRequest,
         'Account is not authorized by the selected wallet',
@@ -113,26 +129,32 @@ class WalletController extends ChangeNotifier {
   Future<void> disconnect() async {
     _ensureActive();
     final wallet = _state.selectedWallet;
+    _invalidateConnection();
+    final revision = _connectionRevision;
     if (wallet == null) return;
     _emit(
-      _state.copyWith(connectionStatus: WalletConnectionStatus.disconnecting),
+      _state.copyWith(
+        connectionStatus: WalletConnectionStatus.disconnecting,
+        selectedAccount: null,
+        operationStatus: WalletOperationStatus.idle,
+      ),
     );
     try {
       await wallet
           .feature<StandardDisconnectFeature>(StandardFeatureId.disconnect)
           ?.disconnect();
     } finally {
-      _walletUnsubscribe?.call();
-      _walletUnsubscribe = null;
-      _emit(
-        _state.copyWith(
-          connectionStatus: WalletConnectionStatus.disconnected,
-          operationStatus: WalletOperationStatus.idle,
-          selectedWallet: null,
-          selectedAccount: null,
-          error: null,
-        ),
-      );
+      if (_isCurrentConnection(revision)) {
+        _emit(
+          _state.copyWith(
+            connectionStatus: WalletConnectionStatus.disconnected,
+            operationStatus: WalletOperationStatus.idle,
+            selectedWallet: null,
+            selectedAccount: null,
+            error: null,
+          ),
+        );
+      }
     }
   }
 
@@ -162,7 +184,7 @@ class WalletController extends ChangeNotifier {
     _ensureActive();
     final wallet = _state.selectedWallet;
     final account = _state.selectedAccount;
-    if (wallet == null || account == null) {
+    if (!_state.isConnected || wallet == null || account == null) {
       throw const WalletStandardException(
         WalletStandardErrorCode.disconnected,
         'Connect a wallet before creating a signer',
@@ -184,20 +206,23 @@ class WalletController extends ChangeNotifier {
     _ensureActive();
     final wallet = _state.selectedWallet;
     final account = _state.selectedAccount;
-    if (wallet == null || account == null) {
+    if (!_state.isConnected || wallet == null || account == null) {
       throw const WalletStandardException(
         WalletStandardErrorCode.disconnected,
         'Connect a wallet before performing this operation',
       );
     }
+    final revision = _connectionRevision;
     _emit(_state.copyWith(operationStatus: operation, error: null));
     try {
       return await callback(wallet, account);
     } on Object catch (error) {
-      _emit(_state.copyWith(error: error));
+      if (_isCurrentConnection(revision)) {
+        _emit(_state.copyWith(error: error));
+      }
       rethrow;
     } finally {
-      if (!_disposed) {
+      if (_isCurrentConnection(revision)) {
         _emit(_state.copyWith(operationStatus: WalletOperationStatus.idle));
       }
     }
@@ -207,12 +232,14 @@ class WalletController extends ChangeNotifier {
     final selectedRemoved =
         event is WalletUnregistered &&
         identical(event.wallet, _state.selectedWallet);
+    if (selectedRemoved) _invalidateConnection();
     _emit(
       _state.copyWith(
         wallets: _registry.wallets,
         connectionStatus: selectedRemoved
             ? WalletConnectionStatus.disconnected
             : null,
+        operationStatus: selectedRemoved ? WalletOperationStatus.idle : null,
         selectedWallet: selectedRemoved ? null : _state.selectedWallet,
         selectedAccount: selectedRemoved ? null : _state.selectedAccount,
       ),
@@ -238,6 +265,15 @@ class WalletController extends ChangeNotifier {
     );
   }
 
+  bool _isCurrentConnection(int revision) =>
+      !_disposed && revision == _connectionRevision;
+
+  void _invalidateConnection() {
+    _connectionRevision++;
+    _walletUnsubscribe?.call();
+    _walletUnsubscribe = null;
+  }
+
   WalletStandardException _unsupported(String feature, Wallet wallet) {
     return WalletStandardException(
       WalletStandardErrorCode.unsupportedFeature,
@@ -258,7 +294,7 @@ class WalletController extends ChangeNotifier {
   void dispose() {
     if (_disposed) return;
     _disposed = true;
-    _walletUnsubscribe?.call();
+    _invalidateConnection();
     unawaited(_registrySubscription?.cancel());
     unawaited(_registry.dispose());
     super.dispose();

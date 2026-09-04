@@ -32,9 +32,10 @@ class TransactionMessageWithFeePayerSigner extends TransactionMessage {
     V1TransactionConfig? config,
     bool clearConfig = false,
   }) {
-    // If clearing the fee payer, fall back to the base TransactionMessage.
-    if (clearFeePayer) {
+    // A different fee payer must not retain the original payer's signer.
+    if (clearFeePayer || (feePayer != null && feePayer != this.feePayer)) {
       return TransactionMessage(
+        feePayer: clearFeePayer ? null : feePayer,
         version: version ?? this.version,
         instructions: instructions ?? this.instructions,
         lifetimeConstraint: clearLifetimeConstraint

@@ -86,7 +86,9 @@ void main() {
 }
 ```
 
-Compilation is lossy: you cannot fully reconstruct a source message from a compiled message without extra information.
+Compilation is lossy: you cannot fully reconstruct a source message from a compiled message without extra information. Decompilation preserves the transaction version, all instructions, account roles, and v1 resource and priority fee configuration. Supply lookup table contents and the last valid block height when needed.
+
+Signer accounts always remain static, even if an instruction supplies lookup metadata for them. Only v0 messages use address lookup tables; legacy and v1 messages materialize those accounts as static accounts while preserving their roles.
 
 ### Pipe extension
 
@@ -125,7 +127,7 @@ These wrap the standalone functions above for method-chaining style:
 ### Compilation and decompilation
 
 - `compileTransactionMessage(TransactionMessage)` compiles a message for signing.
-- `decompileMessage(CompiledTransactionMessage)` reverses compilation back to a `TransactionMessage`.
+- `decompileTransactionMessage(CompiledTransactionMessage)` reverses compilation back to a `TransactionMessage`.
 
 ### Pipe
 
