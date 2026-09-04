@@ -194,6 +194,23 @@ void main() {
           'ws://${server.address.address}:${server.port}?api-key=secret-key';
       await server.close(force: true);
 
+      // Under load the kernel can still complete handshakes queued before
+      // close(); wait until the port provably refuses connections so the
+      // websocket connect below is guaranteed to fail.
+      for (var attempt = 0; attempt < 100; attempt++) {
+        try {
+          final probe = await Socket.connect(
+            server.address.address,
+            server.port,
+            timeout: const Duration(milliseconds: 200),
+          );
+          probe.destroy();
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+        } on Object {
+          break;
+        }
+      }
+
       final ws = HeliusWebSocket(
         url: url,
         allowInsecureWs: true,

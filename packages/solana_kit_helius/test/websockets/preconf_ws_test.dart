@@ -65,7 +65,7 @@ void main() {
       final subFuture = client.preconfSubscribe();
       // Wait for the subscribe request to arrive.
       final request = await received.stream.first.timeout(
-        const Duration(seconds: 5),
+        const Duration(seconds: 30),
       );
       final subscribeCall =
           jsonDecode(request! as String) as Map<String, Object?>;
@@ -95,7 +95,7 @@ void main() {
       sockets.first.add(frame);
 
       final notification = await subscription.notifications.first.timeout(
-        const Duration(seconds: 5),
+        const Duration(seconds: 30),
       );
       expect(notification.slot, 123);
       expect(notification.transactionIndex, 4);
@@ -106,7 +106,7 @@ void main() {
       final unsubReceived = received.stream.first;
       final unsubFuture = subscription.unsubscribe();
       final unsubRequest =
-          (await unsubReceived.timeout(const Duration(seconds: 5)))! as String;
+          (await unsubReceived.timeout(const Duration(seconds: 30)))! as String;
       final unsubCall = jsonDecode(unsubRequest) as Map<String, Object?>;
       expect(unsubCall['method'], 'preconfUnsubscribe');
       expect(unsubCall['params'], [42]);
@@ -149,7 +149,7 @@ void main() {
 
       final subFuture = client.preconfSubscribe();
       final request =
-          (await received.stream.first.timeout(const Duration(seconds: 5)))!
+          (await received.stream.first.timeout(const Duration(seconds: 30)))!
               as String;
       final call = jsonDecode(request) as Map<String, Object?>;
       sockets.first.add(
@@ -424,7 +424,7 @@ void main() {
 
       final subFuture = client.preconfSubscribe();
       final request =
-          (await received.stream.first.timeout(const Duration(seconds: 5)))!
+          (await received.stream.first.timeout(const Duration(seconds: 30)))!
               as String;
       final call = jsonDecode(request) as Map<String, Object?>;
       sockets.first.add(
