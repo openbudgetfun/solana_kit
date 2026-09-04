@@ -285,6 +285,19 @@ Future<void> writeKeyPair(
     // path with a symbolic link before it is reopened.
     final stagingDirectory = await parent.createTemp('.solana-keypair-');
     try {
+      if (!Platform.isWindows) {
+        final chmod = await Process.run('chmod', [
+          '700',
+          stagingDirectory.path,
+        ]);
+        if (chmod.exitCode != 0) {
+          throw FileSystemException(
+            'Failed to restrict key pair staging directory permissions',
+            path,
+          );
+        }
+      }
+
       final stagedFile = File('${stagingDirectory.path}/keypair.json');
       await stagedFile.create(exclusive: true);
 

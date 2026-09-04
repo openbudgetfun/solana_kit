@@ -81,6 +81,54 @@ void main() {
     });
 
     test(
+      'restricts the staging directory before creating the key file',
+      () async {
+        if (Platform.isWindows) return;
+        final destination = File('${directory.path}/keypair.json');
+        final parent = _DirectoryWithTempMode(directory, '755');
+        final intercepted = _FileWithParent(destination, parent);
+        var inspectedStagingDirectory = false;
+
+        await IOOverrides.runZoned(
+          () => writeKeyPair(keyPair, destination.path),
+          createFile: (path) {
+            if (path == destination.path) return intercepted;
+            final file = realIO.createFile(path);
+            inspectedStagingDirectory = true;
+            expect(file.parent.statSync().mode & 0x1ff, 0x1c0);
+            return file;
+          },
+        );
+
+        expect(inspectedStagingDirectory, isTrue);
+      },
+    );
+
+    test('reports a staging directory permission failure', () async {
+      if (Platform.isWindows) return;
+      final destination = File('${directory.path}/keypair.json');
+      final parent = _DirectoryWithMissingTemp(directory);
+      final intercepted = _FileWithParent(destination, parent);
+
+      await expectLater(
+        IOOverrides.runZoned(
+          () => writeKeyPair(keyPair, destination.path),
+          createFile: (path) =>
+              path == destination.path ? intercepted : realIO.createFile(path),
+        ),
+        throwsA(
+          isA<FileSystemException>().having(
+            (error) => error.message,
+            'message',
+            'Failed to restrict key pair staging directory permissions',
+          ),
+        ),
+      );
+
+      expect(await directory.list().toList(), isEmpty);
+    });
+
+    test(
       'an early reader of the reservation cannot read the private key',
       () async {
         final destination = File('${directory.path}/keypair.json');
@@ -128,6 +176,88 @@ class _FileAfterCreate implements File {
   @override
   Future<RandomAccessFile> open({FileMode mode = FileMode.read}) =>
       file.open(mode: mode);
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+final class _FileWithParent implements File {
+  const _FileWithParent(this.file, this.parent);
+
+  final File file;
+
+  @override
+  final Directory parent;
+
+  @override
+  String get path => file.path;
+
+  @override
+  Future<File> create({bool recursive = false, bool exclusive = false}) =>
+      file.create(recursive: recursive, exclusive: exclusive);
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+final class _DirectoryWithTempMode implements Directory {
+  const _DirectoryWithTempMode(this.directory, this.mode);
+
+  final Directory directory;
+  final String mode;
+
+  @override
+  String get path => directory.path;
+
+  @override
+  Future<Directory> create({bool recursive = false}) =>
+      directory.create(recursive: recursive);
+
+  @override
+  Future<Directory> createTemp([String? prefix]) async {
+    final created = await directory.createTemp(prefix);
+    final chmod = await Process.run('chmod', [mode, created.path]);
+    if (chmod.exitCode != 0) {
+      throw FileSystemException(
+        'Failed to prepare test directory',
+        created.path,
+      );
+    }
+    return created;
+  }
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+final class _DirectoryWithMissingTemp implements Directory {
+  const _DirectoryWithMissingTemp(this.directory);
+
+  final Directory directory;
+
+  @override
+  String get path => directory.path;
+
+  @override
+  Future<Directory> create({bool recursive = false}) =>
+      directory.create(recursive: recursive);
+
+  @override
+  Future<Directory> createTemp([String? prefix]) async =>
+      _MissingDirectory('${directory.path}/missing');
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+final class _MissingDirectory implements Directory {
+  const _MissingDirectory(this.path);
+
+  @override
+  final String path;
+
+  @override
+  Future<FileSystemEntity> delete({bool recursive = false}) async => this;
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

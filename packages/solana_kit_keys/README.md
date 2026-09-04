@@ -67,7 +67,7 @@ This package is the right layer when you need direct access to key bytes, public
 
 <!-- {/docsKeyPairSection} -->
 
-`KeyPair` owns sensitive memory. Call `dispose()` in a `finally` block when the key is no longer needed; the GC finalizer is only a fallback. `writeKeyPair` writes key bytes in a private staging directory, applies mode `0600` before writing on POSIX, and publishes the file with a rename. It refuses symbolic-link overwrite targets, and a link substituted during publication cannot redirect key bytes. Choose a trusted destination directory whose parent directories cannot be replaced by other users.
+`KeyPair` owns sensitive memory. Call `dispose()` in a `finally` block when the key is no longer needed; the GC finalizer is only a fallback. `writeKeyPair` applies mode `0700` to its staging directory and mode `0600` to the key file before writing on POSIX, then publishes the file with a rename. It refuses symbolic-link overwrite targets, and a link substituted during publication cannot redirect key bytes. Choose a trusted destination directory whose parent directories cannot be replaced by other users.
 
 ## Usage
 
