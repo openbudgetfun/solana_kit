@@ -48,6 +48,20 @@ extension SolanaRpcMethods on Rpc {
     );
   }
 
+  /// Returns the Alpenglow genesis certificate, or `null` when the node does
+  /// not have one.
+  ///
+  /// This wraps the `getAgGenesisCert` RPC method.
+  ///
+  /// {@macro solanaKitRpcMethodPendingRequest}
+  /// {@macro solanaKitRpcMethodRawResponseShape}
+  PendingRpcRequest<Map<String, Object?>?> getAgGenesisCert() {
+    return request<Map<String, Object?>?>(
+      'getAgGenesisCert',
+      getAgGenesisCertParams(),
+    );
+  }
+
   /// Fetches account balance with context metadata.
   ///
   /// This wraps the `getBalance` RPC method.

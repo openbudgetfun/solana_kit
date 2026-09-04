@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
@@ -274,6 +276,174 @@ void main() {
         expect(callCount, 1);
       },
     );
+  });
+
+  group('createTransactionPlanExecutorWithConcurrentLeaves', () {
+    test('preserves plan nesting, order, and divisibility', () async {
+      final messageA = createMessage();
+      final messageB = createMessage();
+      final messageC = createMessage();
+      final messageD = createMessage();
+      final plan = parallelTransactionPlan([
+        nonDivisibleSequentialTransactionPlan([messageA, messageB]),
+        sequentialTransactionPlan([messageC, messageD]),
+      ]);
+      final executor = createTransactionPlanExecutorWithConcurrentLeaves(
+        TransactionPlanExecutorConfig(
+          executeTransactionMessage: (context, msg) async {
+            return {'signature': Signature('sig'.padRight(64, '0'))};
+          },
+        ),
+      );
+
+      final result = await executor(plan);
+
+      expect(result, isA<ParallelTransactionPlanResult>());
+      final parallelResult = result as ParallelTransactionPlanResult;
+      expect(parallelResult.plans, hasLength(2));
+      expect(
+        parallelResult.plans[0],
+        isA<SequentialTransactionPlanResult>(),
+      );
+      expect(
+        (parallelResult.plans[0] as SequentialTransactionPlanResult).divisible,
+        isFalse,
+      );
+      expect(parallelResult.plans[1], isA<SequentialTransactionPlanResult>());
+      expect(
+        (parallelResult.plans[0] as SequentialTransactionPlanResult).plans,
+        hasLength(2),
+      );
+      expect(
+        (parallelResult.plans[0] as SequentialTransactionPlanResult).plans[0],
+        isA<SuccessfulSingleTransactionPlanResult>(),
+      );
+    });
+
+    test('starts leaves in sequential plans concurrently', () async {
+      final messageA = createMessage();
+      final messageB = createMessage();
+      final plan = sequentialTransactionPlan([messageA, messageB]);
+      final completers = <Completer<Object>>[
+        Completer<Object>(),
+        Completer<Object>(),
+      ];
+      var calls = 0;
+
+      final executor = createTransactionPlanExecutorWithConcurrentLeaves(
+        TransactionPlanExecutorConfig(
+          executeTransactionMessage: (context, msg) =>
+              completers[calls++].future,
+        ),
+      );
+
+      // The executor future is intentionally left unawaited here; the
+      // assertion is that both leaves start before either completes.
+      unawaited(executor(plan));
+      await Future<void>.delayed(Duration.zero);
+      expect(calls, 2);
+
+      completers[0].complete('test-signature'.padRight(64, '0'));
+      completers[1].complete('test-signature'.padRight(64, '0'));
+    });
+
+    test(
+      'aggregates thrown leaf errors without canceling other leaves',
+      () async {
+        final messageA = createMessage();
+        final messageB = createMessage();
+        final messageC = createMessage();
+        final errorA = StateError('A failed');
+        final errorC = StateError('C failed');
+        final plan = nonDivisibleSequentialTransactionPlan([
+          messageA,
+          messageB,
+          messageC,
+        ]);
+        final executor = createTransactionPlanExecutorWithConcurrentLeaves(
+          TransactionPlanExecutorConfig(
+            executeTransactionMessage: (context, msg) async {
+              if (identical(msg, messageA)) throw errorA;
+              if (identical(msg, messageC)) throw errorC;
+              return {
+                'signature': Signature('sig-b'.padRight(64, '0')),
+              };
+            },
+          ),
+        );
+
+        Object? captured;
+        try {
+          await executor(plan);
+        } on Object catch (e) {
+          captured = e;
+        }
+        final error = captured!;
+
+        expect(
+          isSolanaError(
+            error,
+            SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan,
+          ),
+          isTrue,
+        );
+        final solanaError = error as SolanaError;
+        expect(solanaError.context['cause'], errorA);
+        final planResult = solanaError.context['transactionPlanResult'];
+        final result = planResult! as SequentialTransactionPlanResult;
+        expect(result.divisible, isFalse);
+        expect(result.plans, hasLength(3));
+        expect(result.plans[0], isA<FailedSingleTransactionPlanResult>());
+        expect(result.plans[1], isA<SuccessfulSingleTransactionPlanResult>());
+        expect(result.plans[2], isA<FailedSingleTransactionPlanResult>());
+      },
+    );
+
+    test('supports non-divisible sequential plans', () async {
+      final message = createMessage();
+      final plan = nonDivisibleSequentialTransactionPlan([message]);
+      final executor = createTransactionPlanExecutorWithConcurrentLeaves(
+        TransactionPlanExecutorConfig(
+          executeTransactionMessage: (context, msg) async =>
+              'test-signature'.padRight(64, '0'),
+        ),
+      );
+
+      final result = await executor(plan);
+
+      expect(result, isA<SequentialTransactionPlanResult>());
+      expect(
+        (result as SequentialTransactionPlanResult).divisible,
+        isFalse,
+      );
+    });
+
+    test('preserves partial context on failed leaves', () async {
+      final message = createMessage();
+      final plan = singleTransactionPlan(message);
+      final executor = createTransactionPlanExecutorWithConcurrentLeaves(
+        TransactionPlanExecutorConfig(
+          executeTransactionMessage: (context, msg) async {
+            context['custom'] = 'recorded';
+            throw StateError('boom');
+          },
+        ),
+      );
+
+      Object? captured;
+      try {
+        await executor(plan);
+      } on Object catch (e) {
+        captured = e;
+      }
+      final error = captured!;
+
+      expect(error, isA<SolanaError>());
+      final result =
+          (error as SolanaError).context['transactionPlanResult']!
+              as FailedSingleTransactionPlanResult;
+      expect(result.context['custom'], 'recorded');
+    });
   });
 
   group('TransactionPlanExecutorConfig', () {
