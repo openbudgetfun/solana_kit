@@ -11,5 +11,3 @@ Archived originals from the logo design exploration (Hugging Face Inference Prov
 
 - `07-flight-fin.jpg` — **winner**: Gen-2 "Flight Fin" dart, Solana gradient. Source of the current mark.
 - `02-taper-bars.jpg` — **designated backup**: Gen-2 "Taper Bars" (Solana bars with a dart point). Kept as the fallback if the mark is ever redesigned.
-
-Both are reproducible: see `tools/generate_logos_v2.py` (candidate generation via Hugging Face Inference Providers) and `tools/finalize_assets.py` (trace + favicon pipeline).
