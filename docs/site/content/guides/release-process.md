@@ -23,15 +23,15 @@ Reason: release quality gates should fail fast before versions or changelogs cha
 
 ### Step 2: Prepare Release Changes
 
-Releases are prepared locally. `monochange run release --commit --tag --push` prepares the pending changesets with MonoChange, updates package versions, refreshes changelogs and lockfiles, commits the release, and pushes the MonoChange release tags.
+Every push to `main` runs the `release-pr` workflow. That workflow prepares the pending changesets with MonoChange, updates package versions, refreshes changelogs and lockfiles, and opens or updates the `chore(release): prepare release` pull request.
 
-Review the generated package versions and release notes with a dry run before pushing the release.
+Review the generated package versions and release notes, then merge the release PR when a release is required.
 
 Reason: package consumers should see accurate version numbers and user-facing release notes.
 
 ### Step 3: Publish Package Artifacts
 
-After the release commit and tags are pushed (`monochange run release --commit --tag --push`), the primary `v*` tag triggers the `publish` workflow. The run verifies publish readiness, publishes the primary group's packages, dispatches an awaited child run per independently versioned release tag in dependency order, and then publishes GitHub release objects.
+When the release PR is merged, the `release-pr` tag job pushes the release tags and creates draft GitHub releases for them. The primary `v*` tag triggers the `publish` workflow, which verifies publish readiness, publishes the primary group's packages, dispatches an awaited child run per independently versioned release tag in dependency order, and finally flips the draft GitHub releases to published.
 
 Reason: CI-owned publishing keeps the reviewed release commit, direct release tags, package artifacts, and GitHub releases tied to the same MonoChange release record, while respecting pub.dev's requirement that each package publishes from a tag matching its own version.
 

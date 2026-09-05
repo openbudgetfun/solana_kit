@@ -37,9 +37,9 @@ monochange run release --dry-run --diff
 monochange step publish-packages --dry-run --all --format json
 ```
 
-Releases are driven locally: `monochange run release --commit --tag --push` prepares version bumps, changelogs, lockfiles, docs, and a MonoChange release commit, then pushes the MonoChange release tags (the primary `v*` tag for `group.main` and scoped `<id>/v*` tags for independently versioned targets).
+Every push to `main` runs `.github/workflows/release-pr.yml`, which prepares version bumps, changelogs, lockfiles, docs, and a MonoChange release commit, then opens or updates the `chore(release): prepare release` pull request.
 
-The primary `v*` tag push triggers `.github/workflows/publish.yml`. That run verifies readiness, publishes the primary group's packages, dispatches an awaited `workflow_dispatch` child run for every other tagged release target in dependency order, and then publishes GitHub release objects. pub.dev Trusted Publishing requires each package to publish from a tag matching its own version, which is why each version group publishes from its own release tag.
+When that release PR is merged, the same workflow creates and pushes the MonoChange tags (the primary `v*` tag for `group.main` and scoped `<id>/v*` tags for independently versioned targets), creates draft GitHub releases for the tags, and comments on the released issues. The primary `v*` tag then triggers `.github/workflows/publish.yml`, which verifies readiness, publishes the primary group's packages, dispatches an awaited `workflow_dispatch` child run for every other tagged release target in dependency order, and finally flips the draft GitHub releases to published. pub.dev Trusted Publishing requires each package to publish from a tag matching its own version, which is why each version group publishes from its own release tag.
 
 For local verification from a release commit, run:
 
