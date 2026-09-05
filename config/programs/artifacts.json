@@ -51,6 +51,41 @@
       "needsAhashPatch": true,
       "verifyProgramId": false,
       "notes": "tiny program; its declared ID is dead-code-eliminated (entrypoint never references it), so the program ID is not embedded — the test deploys it at the canonical address"
+    },
+    {
+      "name": "mpl_core",
+      "version": "0.2.0",
+      "repo": "mpl-core",
+      "programDir": "programs/mpl-core",
+      "crateName": "mpl_core_program",
+      "programId": "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d",
+      "needsAhashPatch": false,
+      "notes": "Metaplex Core program built from the same pin as the generated Dart client"
+    },
+    {
+      "name": "mpl_token_metadata",
+      "version": "1.14.0",
+      "repo": "mpl-token-metadata",
+      "programDir": "programs/token-metadata/program",
+      "workspaceToml": "programs/token-metadata/Cargo.toml",
+      "crateName": "token_metadata",
+      "programId": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
+      "needsAhashPatch": true,
+      "ahashVersions": ["0.7.6", "0.8.3"],
+      "blake3Pure": true,
+      "cargoUpdates": [{ "package": "wasm-bindgen", "version": "0.2.88" }],
+      "notes": "legacy Solana 1.16 program; requires ahash stdsimd patches, portable blake3 on Apple Silicon, and a wasm-bindgen compiler compatibility update"
+    },
+    {
+      "name": "squads_multisig",
+      "version": "2.1.0",
+      "repo": "squads-v4",
+      "programDir": "programs/squads_multisig_program",
+      "crateName": "squads_multisig_program",
+      "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+      "needsAhashPatch": false,
+      "verifyProgramId": false,
+      "notes": "Squads V4 multisig program built from the same pin as the generated Dart client; its optimized Anchor entrypoint does not retain the declared ID bytes"
     }
   ]
 }

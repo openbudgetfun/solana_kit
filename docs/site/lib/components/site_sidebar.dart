@@ -113,6 +113,10 @@ class SiteSidebar extends StatelessComponent {
               text: 'Release Process',
               href: link('/guides/release-process'),
             ),
+            SidebarLink(
+              text: 'Publish a dApp to the dApp Store',
+              href: link('/guides/publish-dapp-store'),
+            ),
           ],
         ),
         SidebarGroup(

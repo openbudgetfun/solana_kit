@@ -88,6 +88,11 @@ path = "packages/solana_kit_functional"
 [package.solana_kit_jupiter]
 path = "packages/solana_kit_jupiter"
 
+[package.solana_kit_dapp_publisher_cli]
+path = "packages/solana_kit_dapp_publisher_cli"
+tag = true
+release = false
+
 [package.solana_kit_helius]
 path = "packages/solana_kit_helius"
 tag = true
