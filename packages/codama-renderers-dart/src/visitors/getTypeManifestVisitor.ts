@@ -209,8 +209,8 @@ export function getTypeManifestVisitor(input: {
 
     visitArrayType(node: ArrayTypeNode, { self }) {
       const itemManifest = visit(node.item, self);
-      const encoderSizeExpr = getArraySizeExpression(node, "Encoder");
-      const decoderSizeExpr = getArraySizeExpression(node, "Decoder");
+      const encoderSizeExpr = getArraySizeExpression(node, "Encoder", self);
+      const decoderSizeExpr = getArraySizeExpression(node, "Decoder", self);
       const itemType = fragmentFromString(itemManifest.type.content);
       const itemEncoder = fragment`${use(
         "transformEncoder",
@@ -235,8 +235,8 @@ export function getTypeManifestVisitor(input: {
     visitMapType(node: MapTypeNode, { self }) {
       const keyManifest = visit(node.key, self);
       const valueManifest = visit(node.value, self);
-      const encoderSizeExpr = getMapSizeExpression(node, "Encoder");
-      const decoderSizeExpr = getMapSizeExpression(node, "Decoder");
+      const encoderSizeExpr = getMapSizeExpression(node, "Encoder", self);
+      const decoderSizeExpr = getMapSizeExpression(node, "Decoder", self);
 
       return {
         type: fragment`Map<${keyManifest.type}, ${valueManifest.type}>`,
@@ -255,8 +255,8 @@ export function getTypeManifestVisitor(input: {
 
     visitSetType(node: SetTypeNode, { self }) {
       const itemManifest = visit(node.item, self);
-      const encoderSizeExpr = getSetSizeExpression(node, "Encoder");
-      const decoderSizeExpr = getSetSizeExpression(node, "Decoder");
+      const encoderSizeExpr = getSetSizeExpression(node, "Encoder", self);
+      const decoderSizeExpr = getSetSizeExpression(node, "Decoder", self);
 
       return {
         type: fragment`Set<${itemManifest.type}>`,
@@ -772,6 +772,7 @@ function getNumberCodecExpression(
 function getArraySizeExpression(
   node: ArrayTypeNode,
   codecType: "Encoder" | "Decoder",
+  self: Visitor<TypeManifest>,
 ): string | Fragment {
   if (!("count" in node) || !node.count) return "";
   const count = node.count;
@@ -781,11 +782,15 @@ function getArraySizeExpression(
     case "remainderCountNode":
       return ", size: RemainderArraySize()";
     case "prefixedCountNode": {
-      const resolvedPrefix = resolveNestedTypeNode(count.prefix);
-      if (resolvedPrefix.format === "u32" && (!resolvedPrefix.endian || resolvedPrefix.endian === "le")) {
+      if (
+        count.prefix.kind === "numberTypeNode" &&
+        count.prefix.format === "u32" &&
+        (!count.prefix.endian || count.prefix.endian === "le")
+      ) {
         return ""; // Default
       }
-      return fragment`, size: PrefixedArraySize(${getNumberCodecExpression(resolvedPrefix, codecType)})`;
+      const prefix = visit(count.prefix, self);
+      return fragment`, size: PrefixedArraySize(${codecType === "Encoder" ? prefix.encoder : prefix.decoder})`;
     }
     default:
       return "";
@@ -795,6 +800,7 @@ function getArraySizeExpression(
 function getMapSizeExpression(
   node: MapTypeNode,
   codecType: "Encoder" | "Decoder",
+  self: Visitor<TypeManifest>,
 ): string | Fragment {
   if (!("count" in node) || !node.count) return "";
   const count = node.count;
@@ -804,11 +810,15 @@ function getMapSizeExpression(
     case "remainderCountNode":
       return ", size: RemainderArraySize()";
     case "prefixedCountNode": {
-      const resolvedPrefix = resolveNestedTypeNode(count.prefix);
-      if (resolvedPrefix.format === "u32" && (!resolvedPrefix.endian || resolvedPrefix.endian === "le")) {
+      if (
+        count.prefix.kind === "numberTypeNode" &&
+        count.prefix.format === "u32" &&
+        (!count.prefix.endian || count.prefix.endian === "le")
+      ) {
         return "";
       }
-      return fragment`, size: PrefixedArraySize(${getNumberCodecExpression(resolvedPrefix, codecType)})`;
+      const prefix = visit(count.prefix, self);
+      return fragment`, size: PrefixedArraySize(${codecType === "Encoder" ? prefix.encoder : prefix.decoder})`;
     }
     default:
       return "";
@@ -818,6 +828,7 @@ function getMapSizeExpression(
 function getSetSizeExpression(
   node: SetTypeNode,
   codecType: "Encoder" | "Decoder",
+  self: Visitor<TypeManifest>,
 ): string | Fragment {
   if (!("count" in node) || !node.count) return "";
   const count = node.count;
@@ -827,11 +838,15 @@ function getSetSizeExpression(
     case "remainderCountNode":
       return ", size: RemainderArraySize()";
     case "prefixedCountNode": {
-      const resolvedPrefix = resolveNestedTypeNode(count.prefix);
-      if (resolvedPrefix.format === "u32" && (!resolvedPrefix.endian || resolvedPrefix.endian === "le")) {
+      if (
+        count.prefix.kind === "numberTypeNode" &&
+        count.prefix.format === "u32" &&
+        (!count.prefix.endian || count.prefix.endian === "le")
+      ) {
         return "";
       }
-      return fragment`, size: PrefixedArraySize(${getNumberCodecExpression(resolvedPrefix, codecType)})`;
+      const prefix = visit(count.prefix, self);
+      return fragment`, size: PrefixedArraySize(${codecType === "Encoder" ? prefix.encoder : prefix.decoder})`;
     }
     default:
       return "";
