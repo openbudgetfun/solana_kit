@@ -15,9 +15,12 @@ import {
   numberTypeNode,
   numberValueNode,
   optionTypeNode,
+  postOffsetTypeNode,
+  preOffsetTypeNode,
   prefixedCountNode,
   setTypeNode,
   sizePrefixTypeNode,
+  structFieldTypeNode,
   structTypeNode,
   type TypeNode,
 } from "@codama/nodes";
@@ -34,6 +37,14 @@ function manifest(node: TypeNode) {
     linkables: new LinkableDictionary(),
     stack: new NodeStack(),
   }));
+}
+
+function compactCountPrefix(offset: number) {
+  return postOffsetTypeNode(
+    preOffsetTypeNode(numberTypeNode("u16", "be"), offset, "absolute"),
+    0,
+    "preOffset",
+  );
 }
 
 // JSON IDLs are runtime data: TypeScript types cannot constrain these values.
@@ -162,6 +173,25 @@ describe("offset wire layout fidelity", () => {
     expect(rendered.encoder.content).toContain("padLeftEncoder(getU64Encoder(NumberCodecConfig(endian: Endian.big)), 2).encode(BigInt.from(9))");
     expect(rendered.decoder.content).toContain(".encode(BigInt.from(9))");
   });
+
+  it.each(["array", "map", "set"])(
+    "preserves nested offset codecs for %s length prefixes",
+    (kind) => {
+      const prefix = prefixedCountNode(compactCountPrefix(4));
+      const item = numberTypeNode("u8");
+      const node = kind === "array" ? arrayTypeNode(item, prefix)
+        : kind === "map" ? mapTypeNode(item, item, prefix)
+        : setTypeNode(item, prefix);
+      const rendered = manifest(node);
+
+      expect(rendered.encoder.content).toContain(
+        "PrefixedArraySize(offsetEncoder(offsetEncoder(getU16Encoder(NumberCodecConfig(endian: Endian.big)), OffsetConfig(preOffset: (scope) => 4)), OffsetConfig(postOffset: (scope) => scope.preOffset + 0)))",
+      );
+      expect(rendered.decoder.content).toContain(
+        "PrefixedArraySize(offsetDecoder(offsetDecoder(getU16Decoder(NumberCodecConfig(endian: Endian.big)), OffsetConfig(preOffset: (scope) => 4)), OffsetConfig(postOffset: (scope) => scope.preOffset + 0)))",
+      );
+    },
+  );
 });
 
 describe("hidden affix constant validation", () => {
@@ -182,6 +212,23 @@ describe("hidden affix constant validation", () => {
 describe("generated prefix codecs compile and preserve wire bytes", () => {
   const prefix = numberTypeNode("u16", "be");
   const bool = booleanTypeNode();
+  const compactTails = structTypeNode([
+    structFieldTypeNode({
+      name: "flags",
+      type: preOffsetTypeNode(
+        arrayTypeNode(bool, prefixedCountNode(compactCountPrefix(0))),
+        4,
+        "relative",
+      ),
+    }),
+    structFieldTypeNode({
+      name: "values",
+      type: arrayTypeNode(
+        numberTypeNode("u8"),
+        prefixedCountNode(compactCountPrefix(2)),
+      ),
+    }),
+  ]);
   const cases = [
     { node: prefix, value: "258", bytes: [1, 2] },
     { node: arrayTypeNode(bool, prefixedCountNode(prefix)), value: "[true]", bytes: [0, 1, 1] },
@@ -190,6 +237,11 @@ describe("generated prefix codecs compile and preserve wire bytes", () => {
     { node: optionTypeNode(bool, { prefix }), value: "true", bytes: [0, 1, 1] },
     { node: sizePrefixTypeNode(bool, prefix), value: "true", bytes: [0, 1, 1] },
     { node: sizePrefixTypeNode(bool, numberTypeNode("u64", "be")), value: "true", bytes: [0, 0, 0, 0, 0, 0, 0, 1, 1] },
+    {
+      node: compactTails,
+      value: "{'flags': [true, false], 'values': [7, 8, 9]}",
+      bytes: [0, 2, 0, 3, 1, 0, 7, 8, 9],
+    },
   ];
 
   it.each(cases)("tracks imports for $node.kind", ({ node }) => {
