@@ -190,16 +190,15 @@ Bump types:
 
 ### Preparing a Release
 
-Release preparation is automated. Every push to `main` runs `.github/workflows/release-pr.yml`, which:
+Release preparation is automated by `.github/workflows/release-pr.yml`. Every push to `main`:
 
 1. Reads all changeset files in `.changeset/`
 2. Bumps versions in each package's `pubspec.yaml`
 3. Updates each package's `CHANGELOG.md`
 4. Refreshes lockfiles and generated release documentation
-5. Commits the release changes to `monochange/release/main`
-6. Opens or updates the `chore(release): prepare release` PR
+5. Commits the release changes and opens or updates the `chore(release): prepare release` pull request against `main`
 
-Review and merge that release PR when the generated versions and release notes are correct.
+Review and merge that release PR when the generated versions and release notes are correct — merging it is what releases the pending changesets. After the merge, the workflow creates and pushes the MonoChange release tags (the primary `v*` tag plus scoped `<id>/v*` tags for independently versioned targets) and starts publishing.
 
 For local previewing, use dry runs only:
 
@@ -210,13 +209,33 @@ monochange step publish-packages --dry-run --all --format json
 
 ### Publishing with monochange
 
-Package publishing is handled by `.github/workflows/publish.yml` after the release PR merges. The `release-pr` workflow detects the merged MonoChange release commit, creates the direct `v*` tag, and dispatches the `publish` workflow with that tag.
+Package publishing is handled by `.github/workflows/publish.yml`, triggered by the push of the primary release tag (made by the `release-pr` workflow after the release pull request merges) and by manual dispatches. pub.dev Trusted Publishing validates the triggering tag against the version being published, so each version group publishes from its own release tag:
+
+- Primary group packages (lockstep releases) tag as `v{{version}}` (for example `v0.9.1`). Their run is the release orchestrator.
+- Independently versioned packages tag as `<id>/v{{version}}` (for example `solana_kit_token/v0.8.1`) and are published by child runs that the orchestrator dispatches.
+
+The run triggered by the primary tag orchestrates the whole release:
+
+1. It resolves the MonoChange release record and the workspace dependency graph with `.github/scripts/publish_scope.py`.
+2. It publishes the primary group's packages in dependency order.
+3. Whenever a package depends on an independently versioned package in the same release, it dispatches an awaited `workflow_dispatch` child run for that package's release tag, so sibling versions are on pub.dev before their dependents publish.
+4. After the last batch, it flips the draft GitHub releases (created by the `release-pr` tag job) to published.
+
+Child runs publish only the packages owned by their own release tag. To rerun publishing for an existing release tag, dispatch the `publish` workflow with that tag:
+
+```bash
+gh workflow run publish --ref v0.9.1
+gh workflow run publish --ref solana_kit_token/v0.8.1 -f tag=solana_kit_token/v0.8.1
+```
+
+Pushing a namespaced tag alone does not trigger publishing; publishing is orchestrated from the primary tag.
 
 Important requirements before running publish workflows:
 
 - The release commit must include a valid MonoChange release record.
-- The direct `v*` tag must point at a commit reachable from `origin/main`.
-- pub.dev Trusted Publishing must be configured for `.github/workflows/publish.yml` and the `publisher` GitHub environment.
+- Every release tag must point at a commit reachable from `origin/main`.
+- pub.dev Trusted Publishing must be configured per package at `https://pub.dev/packages/<name>/admin`: repository `openbudgetfun/solana_kit`, tag pattern `v{{version}}` for primary group packages or `<name>/v{{version}}` for independently versioned packages, the `publisher` GitHub environment required, and `workflow_dispatch` events allowed (child runs and manual retries are dispatched runs).
+- npm Trusted Publishing must list `.github/workflows/publish.yml` for `codama-renderers-dart`.
 - Each package `CHANGELOG.md` must contain the current package version heading.
 
 For local verification from a release commit or checked-out release tag, run:
@@ -299,7 +318,7 @@ The expected publishing order follows the layer table above:
 
 ### Running the Publish Workflow
 
-The normal path is the automated workflow dispatch from `.github/workflows/release-pr.yml`. If maintainers need to rerun publishing for an existing direct release tag, use the GitHub Actions `publish` workflow and provide the `v*` tag input.
+The normal path is the release PR: when the `chore(release): prepare release` pull request is merged, the `release-pr` workflow pushes the release tags, creates draft GitHub releases for them, and the primary `v*` tag triggers the orchestrator run, which publishes every package in the release record. If maintainers need to rerun publishing for an existing release tag, dispatch the `publish` workflow with that tag (see the commands above).
 
 For a local dry run from the release commit or checked-out release tag:
 
@@ -347,9 +366,9 @@ Before the very first publish of any package:
 
 1. Create a [pub.dev](https://pub.dev/) account
 2. Set up a [verified publisher](https://dart.dev/tools/pub/verified-publishers)
-3. Configure pub.dev Trusted Publishing for `.github/workflows/publish.yml` and the `publisher` GitHub environment
+3. Configure pub.dev Trusted Publishing for each package at `https://pub.dev/packages/<name>/admin`: repository `openbudgetfun/solana_kit`, tag pattern `v{{version}}` for primary group packages or `<name>/v{{version}}` for independently versioned packages, the `publisher` environment, and `workflow_dispatch` events allowed
 4. Verify all packages pass `dart pub publish --dry-run`
-5. Publish packages through the MonoChange release PR and direct-tag `publish` workflow
+5. Publish packages through the release PR: merging `chore(release): prepare release` pushes the release tags and triggers the orchestrator run
 6. Verify each package appears on pub.dev after the workflow completes
 7. After all packages are published, verify the umbrella `solana_kit` package correctly resolves all dependencies from pub.dev
 
@@ -358,10 +377,11 @@ Before the very first publish of any package:
 The release flow is automated with MonoChange and GitHub Actions while staying review-first:
 
 1. **PR merged to main**: CI checks run (analyze, test, format, changeset enforcement, docs drift check)
-2. **Release preparation**: `.github/workflows/release-pr.yml` prepares version bumps, changelogs, lockfiles, docs, and a MonoChange release commit on `monochange/release/main`
-3. **Release review**: Maintainers review and merge the generated `chore(release): prepare release` PR
-4. **Tag dispatch**: `.github/workflows/release-pr.yml` detects the merged release commit, creates MonoChange release tags, and dispatches `.github/workflows/publish.yml` with the direct `v*` tag
-5. **Publishing**: The publish workflow checks out the tag, verifies readiness, publishes changed packages with `monochange step publish-packages`, and publishes GitHub release objects
-6. **Verification**: Check pub.dev for all packages with correct versions and smoke test a clean consumer project
+2. **Release preparation**: Every push to `main` runs `.github/workflows/release-pr.yml`, which prepares versions, changelogs, lockfiles, docs, and a MonoChange release commit, then opens or updates the `chore(release): prepare release` pull request
+3. **Release review**: Maintainers review and merge the release PR when a release is required
+4. **Tagging**: After the merge, the `release-pr` tag job creates and pushes the MonoChange release tags, creates draft GitHub releases for them, and comments on the released issues
+5. **Publish orchestration**: The primary `v*` tag push triggers `.github/workflows/publish.yml`. The run checks out the tag, verifies readiness, publishes the primary group's packages, and dispatches awaited child runs for each independently versioned release target in dependency order
+6. **GitHub releases**: The orchestrator flips the draft GitHub releases to published after the last publish batch
+7. **Verification**: Check pub.dev for all packages with correct versions and smoke test a clean consumer project
 
-Keep pub.dev Trusted Publishing entries aligned with `.github/workflows/publish.yml` and its `publisher` GitHub environment. Keep public release notes focused on consumer-visible changes, minimum SDK constraints, and migration steps.
+Keep pub.dev Trusted Publishing entries aligned with `.github/workflows/publish.yml` and its `publisher` GitHub environment: per-package tag patterns (`v{{version}}` for primary group packages, `<name>/v{{version}}` for independently versioned packages) and `workflow_dispatch` events allowed. Keep public release notes focused on consumer-visible changes, minimum SDK constraints, and migration steps.
