@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.9.2](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Validate codec boundaries and compact lengths
+
+Numeric codecs now keep reads and writes within the supplied byte view, preventing access to adjacent backing-buffer data. Short-u16 decoders reject overflowing values and overlong aliases so malformed compact lengths cannot be accepted as valid Solana wire data. Size-prefixed decoders reject negative, fractional, non-finite, and oversized lengths before decoding their contents.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
 ## [0.9.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.1) (2026-08-30)
 
 ### Changed

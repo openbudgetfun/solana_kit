@@ -4,6 +4,38 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.9.2](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.2) (2026-09-06)
+
+### 🚀 Feature
+
+#### Track @solana/kit v8.2.0
+
+The workspace now tracks upstream `@solana/kit` v8.2.0 and the parity harness passes against it.
+
+- New `getAgGenesisCert` RPC method returning the Alpenglow genesis certificate (or `null`), with allowed numeric keypaths that keep `blockId`, `bitmap`, and `signature` byte arrays as numbers while upcasting `slot` to `BigInt`.
+- `isSolanaRequest` recognizes `getAgGenesisCert` and the previously missed `getTransactionsForAddress`.
+- New `createTransactionPlanExecutorWithConcurrentLeaves` mirroring upstream: every leaf starts concurrently (including across sequential plans), a failed leaf does not cancel siblings, non-divisible sequential plans are supported, and the executor builds results from the shared callback contract — context stored on the mutable map is preserved on failures.
+
+Reference pins refreshed to the latest upstream tags (compute-budget v0.18.1, memo v0.13.1, token v0.16.1, token-2022 v0.16.1, stake v0.9.1, address-lookup-table v0.14.1, system v0.14.1, loader-v3 v0.6.1 — all packaging-only upstream changes), and the Codama renderer dependencies moved to codama 1.10.2 / renderers-core 1.4.0.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #239](https://github.com/openbudgetfun/solana_kit/pull/239)
+
+### 🐛 Fixed
+
+#### Preserve instructions across transaction packing
+
+Keep overflowing instructions pending for the next message instead of returning oversized messages that can lose already packed instructions. Abort planning if a message update overflows after a stateful packer has consumed instructions, preserving transaction-plan integrity.
+
+Preserve the original execution error and partial result tree when an executor callback fails with an unsigned transaction in its context, so callers can still identify earlier successful transactions.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Remove stale deprecation lint suppressions
+
+Drop ignore comments for `remove_deprecations_in_breaking_versions` that no longer suppress anything after the version transition to a non-breaking release.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`d6b4f6c`](https://github.com/openbudgetfun/solana_kit/commit/d6b4f6cbf0e3a22498ffb7593d3242eaff1e53b9)
+
 ## [0.9.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.1) (2026-08-30)
 
 ### Changed

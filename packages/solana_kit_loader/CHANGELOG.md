@@ -136,6 +136,16 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #226](https://g
 
 - No package-specific changes were recorded; `solana_kit_loader` was updated to 0.4.1.
 
+## solana_kit_loader [0.4.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_loader/v0.4.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Fix multi-transaction loader uploads
+
+Allow deploy and upgrade plans to upload program buffers across sequential transactions before finalizing, making normal program binaries executable with the standard transaction planner and executor.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
 ## 0.0.0
 
 Placeholder publication.

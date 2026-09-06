@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.9.2](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Remove stale deprecation lint suppressions
+
+Drop ignore comments for `remove_deprecations_in_breaking_versions` that no longer suppress anything after the version transition to a non-breaking release.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`d6b4f6c`](https://github.com/openbudgetfun/solana_kit/commit/d6b4f6cbf0e3a22498ffb7593d3242eaff1e53b9)
+
 ## [0.9.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.1) (2026-08-30)
 
 ### Changed

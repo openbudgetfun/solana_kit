@@ -141,3 +141,13 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://g
 ### Changed
 
 - No package-specific changes were recorded; `solana_kit_offchain_messages` was updated to 0.5.1.
+
+## solana_kit_offchain_messages [0.5.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_offchain_messages/v0.5.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Validate offchain message envelopes
+
+Validate complete offchain messages before signing, verifying, or encoding and decoding envelopes. Check signature completeness against the required signers encoded in the message, and preserve newly created signatures when their map entries were omitted. Correct the signing example to use the generated key pair's address.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)

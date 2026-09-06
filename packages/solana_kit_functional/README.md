@@ -17,7 +17,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_functional": ^0.9.1
+  "solana_kit_functional": ^0.9.2
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

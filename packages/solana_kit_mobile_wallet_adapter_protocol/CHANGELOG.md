@@ -116,3 +116,25 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://g
 ### Changed
 
 - No package-specific changes were recorded; `solana_kit_mobile_wallet_adapter_protocol` was updated to 0.5.1.
+
+## solana_kit_mobile_wallet_adapter_protocol [0.5.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mobile_wallet_adapter_protocol/v0.5.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Preserve wallet association endpoint paths
+
+Preserve wallet-specific base URI path prefixes regardless of trailing slash. Identify local and remote associations by their endpoint suffix rather than substrings in wallet path prefixes, and reject unrelated paths.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Validate P-256 points before wallet key agreement
+
+Reject malformed P-256 public points and mismatched curve parameters before wallet session key agreement. Validate imported public keys against the curve equation so invalid points cannot produce predictable shared secrets.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Reject SIWS field and resource line injection
+
+Reject carriage returns and newlines in every Sign In With Solana field and resource before constructing the message to sign. This prevents embedded line breaks from changing field boundaries or adding unintended signed resources.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)

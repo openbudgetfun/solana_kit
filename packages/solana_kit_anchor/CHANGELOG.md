@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.9.2](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Validate Anchor and Pyth event data
+
+Validate Anchor event provenance against the IDL program's runtime invocation stack, ignoring foreign-program and embedded-message event forgeries. Bound Hermes price conversion work for extreme untrusted exponents to prevent application stalls.
+
+Preserve all 64 bits of unsigned Pyth confidence and slot fields so large confidence intervals cannot become negative and bypass application upper-bound checks.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Restore Anchor runtime error compatibility
+
+Align the standard Anchor error table with `anchor-lang` 0.31.1 so errors returned by deployed Anchor programs resolve to the correct code, name, and message.
+
+Add live Surfpool compatibility coverage for Anchor, Metaplex Core, Metaplex Token Metadata, Squads V4, RPC subscriptions, transaction introspection, lookup tables, instruction plans, and transaction immutability.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #243](https://github.com/openbudgetfun/solana_kit/pull/243)
+
 ## [0.9.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.1) (2026-08-30)
 
 ### 🐛 Fixed

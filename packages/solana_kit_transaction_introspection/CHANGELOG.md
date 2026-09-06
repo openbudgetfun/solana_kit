@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.9.2](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Validate introspected account metadata
+
+Reject loaded-address counts that disagree with compiled lookup tables before resolving account indices, preventing malformed RPC metadata from shifting account identities and roles. Reject duplicate inner-instruction groups instead of emitting repeated execution traces.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
 ## [0.9.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.1) (2026-08-30)
 
 ### Changed

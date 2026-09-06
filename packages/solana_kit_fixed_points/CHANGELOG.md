@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.9.2](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Validate fixed-point ranges
+
+Reject signed fixed-point values outside their declared range before encoding, preventing positive and negative values from wrapping into the opposite sign on the wire. Validate fixed-point shapes in assertion helpers and reject digit-free decimal input instead of parsing it as zero. Add regression tests for both fixed-point representations, byte orders, and signed range boundaries.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
 ## [0.9.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.1) (2026-08-30)
 
 ### Changed

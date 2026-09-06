@@ -40,7 +40,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_helius": ^0.6.1
+  "solana_kit_helius": ^0.6.2
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

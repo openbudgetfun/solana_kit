@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.9.2](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Recover failed RPC subscription cache entries
+
+Recover subscription acquisition after transport failures, prevent repeated errors from evicting a replacement subscription, and reuse channel capacity released while the subscription pool was full.
+
+Handle native channel stream errors in subscription coalescing, channel pooling, and keepalive pinging so failed connections are cleaned up without uncaught asynchronous errors.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Fix subscription protocol and URL validation
+
+Execute the default Solana subscription JSON-RPC handshake, validate its server subscription ID, isolate notifications on pooled channels, and send unsubscribe requests during cancellation. Preserve notifications received during acquisition with a bounded initial buffer and route protocol, channel, and decoding failures to subscribers.
+
+Normalize WebSocket destination literals before applying private-host protection, covering expanded and hexadecimal IPv4-mapped IPv6 forms and trailing DNS root dots without rejecting public hostnames that resemble IPv6 prefixes.
+
+Reject cancelled WebSocket handshakes promptly, close late connections, reject sends after cancellation, and finish public streams when their channel ends.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
 ## [0.9.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.1) (2026-08-30)
 
 ### Changed

@@ -1,6 +1,6 @@
 name: solana_kit_system
 description: System Program instruction builders for the Solana Kit Dart SDK.
-version: 0.7.1
+version: 0.7.2
 repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_system
 homepage: https://openbudgetfun.github.io/solana_kit/
 environment:
@@ -8,14 +8,14 @@ environment:
 resolution: workspace
 dependencies:
   meta: ^1.16.0
-  solana_kit_accounts: ^0.9.1
-  solana_kit_addresses: ^0.9.1
-  solana_kit_codecs_core: ^0.9.1
-  solana_kit_codecs_data_structures: ^0.9.1
-  solana_kit_codecs_numbers: ^0.9.1
-  solana_kit_codecs_strings: ^0.9.1
-  solana_kit_errors: ^0.9.1
-  solana_kit_instructions: ^0.9.1
+  solana_kit_accounts: ^0.9.2
+  solana_kit_addresses: ^0.9.2
+  solana_kit_codecs_core: ^0.9.2
+  solana_kit_codecs_data_structures: ^0.9.2
+  solana_kit_codecs_numbers: ^0.9.2
+  solana_kit_codecs_strings: ^0.9.2
+  solana_kit_errors: ^0.9.2
+  solana_kit_instructions: ^0.9.2
 dev_dependencies:
-  solana_kit_lints: ^0.9.1
+  solana_kit_lints: ^0.9.2
   test: ^1.25.0

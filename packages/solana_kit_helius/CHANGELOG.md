@@ -223,3 +223,27 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://g
 ### Changed
 
 - No package-specific changes were recorded; `solana_kit_helius` was updated to 0.6.1.
+
+## solana_kit_helius [0.6.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_helius/v0.6.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Reject failed Helius transaction confirmations
+
+Reject failed on-chain transactions during transaction and bundle confirmation instead of returning successful results. Accept confirmed signatures when processed commitment is requested.
+
+Redact API keys and URL credentials from JSON-RPC and REST connection exceptions, and omit URL credentials from WebSocket connection errors.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Fix Helius preconfirmation lifecycle
+
+Handle preconfirmation WebSocket readiness, stream, send, and shutdown failures without exposing endpoint credentials or leaving pending requests unresolved. Wait for connection readiness before sending, close notification streams on terminal failures, encode API-key query values safely, and support an injectable channel connector.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Harden load-sensitive Helius websocket tests
+
+Two Helius websocket tests failed on a loaded CI runner while passing locally: the connection-failure test raced the kernel completing handshakes queued before `HttpServer.close(force: true)` (so `connect()` occasionally succeeded instead of refusing), and the preconf websocket tests enforced 5-second timeouts that expired under load. The port-close test now probes the port until it provably refuses connections before asserting the failure path, and the preconf stream timeouts — which exist only to prevent hangs — are widened to 30 seconds.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #241](https://github.com/openbudgetfun/solana_kit/pull/241) · _Related issues:_ [#240](https://github.com/openbudgetfun/solana_kit/issues/240)

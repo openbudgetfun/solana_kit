@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_token": ^0.8.1
+  "solana_kit_token": ^0.8.2
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

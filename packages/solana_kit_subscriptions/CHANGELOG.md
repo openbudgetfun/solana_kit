@@ -118,6 +118,12 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://g
 
 - No package-specific changes were recorded; `solana_kit_subscriptions` was updated to 0.2.1.
 
+## solana_kit_subscriptions [0.2.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_subscriptions/v0.2.2) (2026-09-06)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_subscriptions` was updated to 0.2.2.
+
 ## 0.0.0
 
 Placeholder publication.

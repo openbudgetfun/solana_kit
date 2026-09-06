@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.9.2](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Secure Jupiter transport and repair Swap v2 and Token v2 flows
+
+Require HTTPS by default, reject credentials embedded in base URLs, and disable HTTP redirects so API keys and signed transactions cannot be forwarded to another origin. Explicitly trusted development endpoints can opt into HTTP with `allowInsecureHttp`.
+
+Send the documented managed-execution payload, require an order request ID, expose execution status and result codes, and support the taker required to assemble swaps. Preserve Swap v2 lookup tables, additional and tip instructions, and blockhash metadata. Correct token-tag queries and category/interval paths, validate category inputs, and reject malformed price responses instead of treating them as empty markets.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
 ## [0.9.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.1) (2026-08-30)
 
 ### 🐛 Fixed

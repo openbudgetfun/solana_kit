@@ -2424,6 +2424,232 @@ Package groups scaffolded:
 - Fragment-based code generation with automatic import tracking
 - Comprehensive test suite with 261 tests
 
+## [0.9.2](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.2) (2026-09-06)
+
+Grouped release for `main`.
+
+### 🚀 Feature
+
+#### Track @solana/kit v8.2.0
+
+_Packages:_ _solana_kit_, _solana_kit_instruction_plans_, _solana_kit_rpc_api_
+
+The workspace now tracks upstream `@solana/kit` v8.2.0 and the parity harness passes against it.
+
+- New `getAgGenesisCert` RPC method returning the Alpenglow genesis certificate (or `null`), with allowed numeric keypaths that keep `blockId`, `bitmap`, and `signature` byte arrays as numbers while upcasting `slot` to `BigInt`.
+- `isSolanaRequest` recognizes `getAgGenesisCert` and the previously missed `getTransactionsForAddress`.
+- New `createTransactionPlanExecutorWithConcurrentLeaves` mirroring upstream: every leaf starts concurrently (including across sequential plans), a failed leaf does not cancel siblings, non-divisible sequential plans are supported, and the executor builds results from the shared callback contract — context stored on the mutable map is preserved on failures.
+
+Reference pins refreshed to the latest upstream tags (compute-budget v0.18.1, memo v0.13.1, token v0.16.1, token-2022 v0.16.1, stake v0.9.1, address-lookup-table v0.14.1, system v0.14.1, loader-v3 v0.6.1 — all packaging-only upstream changes), and the Codama renderer dependencies moved to codama 1.10.2 / renderers-core 1.4.0.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #239](https://github.com/openbudgetfun/solana_kit/pull/239)
+
+### 🐛 Fixed
+
+#### Update the README upstream compatibility claim
+
+_Packages:_ _solana_kit_
+
+The `solana_kit` README now states the latest supported `@solana/kit` version as `8.2.0` and that this Dart port tracks upstream APIs and behavior through `v8.2.0`, matching the claims already propagated across the root readme and the docs site.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #240](https://github.com/openbudgetfun/solana_kit/pull/240) · _Related issues:_ [#239](https://github.com/openbudgetfun/solana_kit/issues/239)
+
+#### Preserve account identities during batch fetches
+
+_Packages:_ _solana_kit_accounts_
+
+Snapshot requested addresses before sending batch account requests, so changing the input list while the request is pending cannot attach returned account data to a different address or discard requested results. This applies to both encoded and JSON-parsed account fetches.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Validate Anchor and Pyth event data
+
+_Packages:_ _solana_kit_anchor_, _solana_kit_pyth_
+
+Validate Anchor event provenance against the IDL program's runtime invocation stack, ignoring foreign-program and embedded-message event forgeries. Bound Hermes price conversion work for extreme untrusted exponents to prevent application stalls.
+
+Preserve all 64 bits of unsigned Pyth confidence and slot fields so large confidence intervals cannot become negative and bypass application upper-bound checks.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Restore Anchor runtime error compatibility
+
+_Packages:_ _solana_kit_anchor_
+
+Align the standard Anchor error table with `anchor-lang` 0.31.1 so errors returned by deployed Anchor programs resolve to the correct code, name, and message.
+
+Add live Surfpool compatibility coverage for Anchor, Metaplex Core, Metaplex Token Metadata, Squads V4, RPC subscriptions, transaction introspection, lookup tables, instruction plans, and transaction immutability.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #243](https://github.com/openbudgetfun/solana_kit/pull/243)
+
+#### Harden key verification and publication
+
+_Packages:_ _solana_kit_addresses_, _solana_kit_keys_
+
+Reject small-order Ed25519 public keys and signature nonce points, including non-canonical aliases, to prevent weak-key signature forgery. Publish key files from a mode-`0700` staging directory so destination replacement cannot redirect secret bytes and readers of a file reservation cannot retain access to the completed key file.
+
+Correct PDA documentation to state that callers may supply at most 15 seeds, reserving the sixteenth seed for the automatically appended bump.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Validate codec boundaries and compact lengths
+
+_Packages:_ _solana_kit_codecs_core_, _solana_kit_codecs_numbers_
+
+Numeric codecs now keep reads and writes within the supplied byte view, preventing access to adjacent backing-buffer data. Short-u16 decoders reject overflowing values and overlong aliases so malformed compact lengths cannot be accepted as valid Solana wire data. Size-prefixed decoders reject negative, fractional, non-finite, and oversized lengths before decoding their contents.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Bound array decoding from untrusted bytes
+
+_Packages:_ _solana_kit_codecs_data_structures_
+
+Reject missing, invalid, and excessive array counts, and stop remainder decoders that fail to consume input. Callers can set a smaller `maxItems` limit for application-specific formats.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Validate option and hexadecimal wire inputs
+
+_Packages:_ _solana_kit_codecs_strings_, _solana_kit_options_
+
+Reject invalid option presence flags, truncated None padding, and mismatched constant None markers. Reject incomplete hexadecimal byte pairs that previously lost their final character and returned incorrect write offsets.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Validate fixed-point ranges
+
+_Packages:_ _solana_kit_fixed_points_
+
+Reject signed fixed-point values outside their declared range before encoding, preventing positive and negative values from wrapping into the opposite sign on the wire. Validate fixed-point shapes in assertion helpers and reject digit-free decimal input instead of parsing it as zero. Add regression tests for both fixed-point representations, byte orders, and signed range boundaries.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Secure Jupiter transport and repair Swap v2 and Token v2 flows
+
+_Packages:_ _solana_kit_jupiter_
+
+Require HTTPS by default, reject credentials embedded in base URLs, and disable HTTP redirects so API keys and signed transactions cannot be forwarded to another origin. Explicitly trusted development endpoints can opt into HTTP with `allowInsecureHttp`.
+
+Send the documented managed-execution payload, require an order request ID, expose execution status and result codes, and support the taker required to assemble swaps. Preserve Swap v2 lookup tables, additional and tip instructions, and blockhash metadata. Correct token-tag queries and category/interval paths, validate category inputs, and reject malformed price responses instead of treating them as empty markets.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Preserve instructions across transaction packing
+
+_Packages:_ _solana_kit_instruction_plans_
+
+Keep overflowing instructions pending for the next message instead of returning oversized messages that can lose already packed instructions. Abort planning if a message update overflows after a stateful packer has consumed instructions, preserving transaction-plan integrity.
+
+Preserve the original execution error and partial result tree when an executor callback fails with an unsigned transaction in its context, so callers can still identify earlier successful transactions.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Remove stale deprecation lint suppressions
+
+_Packages:_ _solana_kit_instruction_plans_, _solana_kit_rpc_parsed_types_
+
+Drop ignore comments for `remove_deprecations_in_breaking_versions` that no longer suppress anything after the version transition to a non-breaking release.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`d6b4f6c`](https://github.com/openbudgetfun/solana_kit/commit/d6b4f6cbf0e3a22498ffb7593d3242eaff1e53b9)
+
+#### Honor RPC HTTP cancellation and protect credentials
+
+_Packages:_ _solana_kit_rpc_, _solana_kit_rpc_transport_http_
+
+Honor RPC cancellation signals while sending HTTP requests and streaming response bodies. Keep requests with cancellation signals independent so cancelling one caller cannot cancel another caller's request. Require `http` 1.5 or newer for native request abortion support.
+
+Reject HTTP redirects without forwarding custom authentication headers to the redirect destination.
+
+Prevent connection, cancellation, and response-stream HTTP exceptions from exposing credentials embedded in endpoint URLs or client error messages.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Track @solana/kit v8.2.0
+
+_Packages:_ _solana_kit_rpc_, _solana_kit_rpc_transport_http_
+
+The workspace now tracks upstream `@solana/kit` v8.2.0 and the parity harness passes against it.
+
+- New `getAgGenesisCert` RPC method returning the Alpenglow genesis certificate (or `null`), with allowed numeric keypaths that keep `blockId`, `bitmap`, and `signature` byte arrays as numbers while upcasting `slot` to `BigInt`.
+- `isSolanaRequest` recognizes `getAgGenesisCert` and the previously missed `getTransactionsForAddress`.
+- New `createTransactionPlanExecutorWithConcurrentLeaves` mirroring upstream: every leaf starts concurrently (including across sequential plans), a failed leaf does not cancel siblings, non-divisible sequential plans are supported, and the executor builds results from the shared callback contract — context stored on the mutable map is preserved on failures.
+
+Reference pins refreshed to the latest upstream tags (compute-budget v0.18.1, memo v0.13.1, token v0.16.1, token-2022 v0.16.1, stake v0.9.1, address-lookup-table v0.14.1, system v0.14.1, loader-v3 v0.6.1 — all packaging-only upstream changes), and the Codama renderer dependencies moved to codama 1.10.2 / renderers-core 1.4.0.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #239](https://github.com/openbudgetfun/solana_kit/pull/239)
+
+#### Harden RPC JSON integer boundaries
+
+_Packages:_ _solana_kit_rpc_spec_types_
+
+Preserve user JSON objects instead of interpreting `$n` fields as BigInt markers when parsing responses or serializing requests. Reject positive integer exponents above 10,000 before expansion to bound resource use from compact untrusted JSON, while preserving exact normal-range integers, strict JSON syntax, and cyclic-value errors.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Recover failed RPC subscription cache entries
+
+_Packages:_ _solana_kit_rpc_subscriptions_
+
+Recover subscription acquisition after transport failures, prevent repeated errors from evicting a replacement subscription, and reuse channel capacity released while the subscription pool was full.
+
+Handle native channel stream errors in subscription coalescing, channel pooling, and keepalive pinging so failed connections are cleaned up without uncaught asynchronous errors.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Fix subscription protocol and URL validation
+
+_Packages:_ _solana_kit_rpc_subscriptions_, _solana_kit_rpc_subscriptions_channel_websocket_
+
+Execute the default Solana subscription JSON-RPC handshake, validate its server subscription ID, isolate notifications on pooled channels, and send unsubscribe requests during cancellation. Preserve notifications received during acquisition with a bounded initial buffer and route protocol, channel, and decoding failures to subscribers.
+
+Normalize WebSocket destination literals before applying private-host protection, covering expanded and hexadecimal IPv4-mapped IPv6 forms and trailing DNS root dots without rejecting public hostnames that resemble IPv6 prefixes.
+
+Reject cancelled WebSocket handshakes promptly, close late connections, reject sends after cancellation, and finish public streams when their channel ends.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Protect transaction signing integrity
+
+_Packages:_ _solana_kit_signers_, _solana_kit_transactions_
+
+Freeze transaction message and signature buffers so retained references cannot change reviewed signing payloads. Decode v1 message-first transaction envelopes with the correct signature ordering. Preserve v1 configuration when attaching signers and honor fee payer address replacements without retaining the old fee payer signer.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Propagate stream errors and cancellation
+
+_Packages:_ _solana_kit_subscribable_
+
+Contain native source errors and malformed notification type/transformer failures within subscription streams, where consumer error handlers can receive them. Release reactive connection listeners when caller cancellation fires, and avoid opening a connection after a loading subscriber resets or disposes its store.
+
+Fix reactive stream bridge cancellation while awaiting a quiet store, unsubscribe after predicate failures, and preserve latest-value delivery and error precedence while consumers are paused.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Fix confirmation subscription lifecycle
+
+_Packages:_ _solana_kit_transaction_confirmation_
+
+Settle cancelled confirmation strategies, propagate subscription failures and unexpected closure, and preserve slot notifications received during the initial block-height lookup.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Validate introspected account metadata
+
+_Packages:_ _solana_kit_transaction_introspection_
+
+Reject loaded-address counts that disagree with compiled lookup tables before resolving account indices, preventing malformed RPC metadata from shifting account identities and roles. Reject duplicate inner-instruction groups instead of emitting repeated execution traces.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+#### Preserve inspected transaction message data
+
+_Packages:_ _solana_kit_transaction_messages_
+
+Preserve v1 instructions, transaction version, and resource and priority fee configuration during decompilation. Reject inconsistent v1 instruction payloads and configuration values. Keep declared signer accounts static and materialize lookup accounts correctly when compiling legacy and v1 messages, preventing signer privilege loss and invalid account layouts.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
 ## [0.9.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.1) (2026-08-30)
 
 Grouped release for `main`.

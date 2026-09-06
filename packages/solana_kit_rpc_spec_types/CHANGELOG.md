@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.9.2](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Harden RPC JSON integer boundaries
+
+Preserve user JSON objects instead of interpreting `$n` fields as BigInt markers when parsing responses or serializing requests. Reject positive integer exponents above 10,000 before expansion to bound resource use from compact untrusted JSON, while preserving exact normal-range integers, strict JSON syntax, and cyclic-value errors.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
 ## [0.9.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.1) (2026-08-30)
 
 ### Changed

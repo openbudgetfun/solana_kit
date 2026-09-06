@@ -174,6 +174,16 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://g
 
 - No package-specific changes were recorded; `solana_kit_compute_budget` was updated to 0.8.1.
 
+## solana_kit_compute_budget [0.8.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_compute_budget/v0.8.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Decode priority fees as unsigned integers
+
+Preserve unsigned 64-bit compute unit prices when inspecting transaction messages and applying fee-capping updates, preventing high prices from appearing negative.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
 ## [0.4.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.4.0) (2026-05-30)
 
 ### 💥 Breaking Change

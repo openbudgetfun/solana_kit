@@ -176,6 +176,12 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://g
 
 - No package-specific changes were recorded; `solana_kit_memo` was updated to 0.4.1.
 
+## solana_kit_memo [0.4.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_memo/v0.4.2) (2026-09-06)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_memo` was updated to 0.4.2.
+
 ## 0.0.0
 
 Placeholder publication.

@@ -129,6 +129,18 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://g
 
 - No package-specific changes were recorded; `solana_kit_surfpool` was updated to 0.3.1.
 
+## solana_kit_surfpool [0.3.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_surfpool/v0.3.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Validate Surfpool responses
+
+Reject malformed or mismatched JSON-RPC response envelopes instead of reporting cheatcode mutations as successful. Bound stalled startup health checks by the configured startup timeout so failed readiness triggers process cleanup.
+
+Preserve the optional tag position when profiling a transaction with configuration only, and unwrap cheatcode context envelopes to return their documented values.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
 ## 0.0.0
 
 - Initial unpublished package version.

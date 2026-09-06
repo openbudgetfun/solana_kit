@@ -116,3 +116,9 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://g
 ### Changed
 
 - No package-specific changes were recorded; `solana_kit_sysvars` was updated to 0.5.1.
+
+## solana_kit_sysvars [0.5.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_sysvars/v0.5.2) (2026-09-06)
+
+### Changed
+
+- No package-specific changes were recorded; `solana_kit_sysvars` was updated to 0.5.2.

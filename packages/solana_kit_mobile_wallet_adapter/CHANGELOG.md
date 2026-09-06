@@ -110,3 +110,13 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://g
 ### Changed
 
 - No package-specific changes were recorded; `solana_kit_mobile_wallet_adapter` was updated to 0.5.1.
+
+## solana_kit_mobile_wallet_adapter [0.5.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mobile_wallet_adapter/v0.5.2) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Isolate mobile wallet scenario callbacks
+
+Reject native wallet events from other sessions, events without session IDs, and queued events received after closure before they can invoke authorization or signing callbacks. Prevent an existing wallet scenario from starting a second native session, and close native scenarios whose creation finishes after the wallet scenario was closed.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
