@@ -302,3 +302,25 @@ The workspace now tracks upstream `@solana/kit` v8.2.0 and the parity harness pa
 Reference pins refreshed to the latest upstream tags (compute-budget v0.18.1, memo v0.13.1, token v0.16.1, token-2022 v0.16.1, stake v0.9.1, address-lookup-table v0.14.1, system v0.14.1, loader-v3 v0.6.1 — all packaging-only upstream changes), and the Codama renderer dependencies moved to codama 1.10.2 / renderers-core 1.4.0.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #239](https://github.com/openbudgetfun/solana_kit/pull/239)
+
+## codama-renderers-dart [0.5.5](https://github.com/openbudgetfun/solana_kit/releases/tag/codama-renderers-dart/v0.5.5) (2026-09-06)
+
+### 🐛 Fixed
+
+#### Preserve offset collection length codecs
+
+Keep pre-offset and post-offset wrappers around prefixed array, map, and set lengths. This lets generated Dart codecs represent compact layouts with multiple dynamic tails whose lengths live in a fixed header.
+
+For example, a length codec can write a `u8` count at header byte zero, then restore the cursor before encoding the tail:
+
+```ts
+prefixedCountNode(
+  postOffsetTypeNode(
+    preOffsetTypeNode(numberTypeNode("u8"), 0, "absolute"),
+    0,
+    "preOffset",
+  ),
+);
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [`0a17d25`](https://github.com/openbudgetfun/solana_kit/commit/0a17d25319aa28e0f46e308d9f582292529bef87)

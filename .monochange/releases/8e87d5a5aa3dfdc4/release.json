@@ -1,0 +1,157 @@
+{
+  "schema_version": "0.4",
+  "kind": "monochange.releaseRecord",
+  "created_at": "2026-09-06T15:20:40Z",
+  "command": "step prepare-release",
+  "version": "0.5.5",
+  "versions": {
+    "codama-renderers-dart": "0.5.5"
+  },
+  "release_targets": [
+    {
+      "id": "codama-renderers-dart",
+      "kind": "package",
+      "version": "0.5.5",
+      "version_format": "namespaced",
+      "tag": true,
+      "release": true,
+      "tag_name": "codama-renderers-dart/v0.5.5",
+      "members": [
+        "codama-renderers-dart"
+      ]
+    }
+  ],
+  "released_packages": [
+    "codama-renderers-dart"
+  ],
+  "changed_files": [
+    "packages/codama-renderers-dart/CHANGELOG.md",
+    "packages/codama-renderers-dart/package.json",
+    "packages/codama-renderers-dart/pnpm-lock.yaml",
+    "versions.json"
+  ],
+  "package_publications": [
+    {
+      "package": "codama-renderers-dart",
+      "ecosystem": "npm",
+      "registry": "npm",
+      "version": "0.5.5",
+      "mode": "builtin",
+      "trusted_publishing": {
+        "enabled": true,
+        "repository": null,
+        "workflow": null,
+        "environment": null
+      }
+    }
+  ],
+  "updated_changelogs": [
+    "packages/codama-renderers-dart/CHANGELOG.md"
+  ],
+  "deleted_changesets": [
+    ".changeset/preserve-offset-collection-counts.md"
+  ],
+  "changesets": [
+    {
+      "path": ".changeset/preserve-offset-collection-counts.md",
+      "summary": "Preserve offset collection length codecs",
+      "details": "Keep pre-offset and post-offset wrappers around prefixed array, map, and set lengths. This lets generated Dart codecs represent compact layouts with multiple dynamic tails whose lengths live in a fixed header.\n\nFor example, a length codec can write a `u8` count at header byte zero, then restore the cursor before encoding the tail:\n\n```ts\nprefixedCountNode(\n  postOffsetTypeNode(\n    preOffsetTypeNode(numberTypeNode(\"u8\"), 0, \"absolute\"),\n    0,\n    \"preOffset\",\n  ),\n);\n```",
+      "targets": [
+        {
+          "id": "codama-renderers-dart",
+          "kind": "package",
+          "bump": "patch",
+          "origin": "direct-change",
+          "evidence_refs": [],
+          "change_type": "patch"
+        }
+      ],
+      "context": {
+        "provider": "github",
+        "host": "github.com",
+        "capabilities": {
+          "commit_web_urls": true,
+          "actor_profiles": true,
+          "review_request_lookup": true,
+          "related_issues": true,
+          "issue_comments": true
+        },
+        "introduced": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "0a17d25319aa28e0f46e308d9f582292529bef87",
+            "short_sha": "0a17d25",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/0a17d25319aa28e0f46e308d9f582292529bef87",
+            "authored_at": "2026-09-06T14:59:36+01:00",
+            "committed_at": "2026-09-06T14:59:36+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": null
+        },
+        "last_updated": {
+          "actor": {
+            "provider": "github",
+            "host": "github.com",
+            "id": null,
+            "login": null,
+            "display_name": "Ifiok Jr.",
+            "url": null,
+            "source": "commit_author"
+          },
+          "commit": {
+            "provider": "github",
+            "host": "github.com",
+            "sha": "0a17d25319aa28e0f46e308d9f582292529bef87",
+            "short_sha": "0a17d25",
+            "url": "https://github.com/openbudgetfun/solana_kit/commit/0a17d25319aa28e0f46e308d9f582292529bef87",
+            "authored_at": "2026-09-06T14:59:36+01:00",
+            "committed_at": "2026-09-06T14:59:36+01:00",
+            "author_name": "Ifiok Jr.",
+            "author_email": "1160934+ifiokjr@users.noreply.github.com"
+          },
+          "review_request": null
+        },
+        "related_issues": []
+      }
+    }
+  ],
+  "changelogs": [
+    {
+      "owner_id": "codama-renderers-dart",
+      "owner_kind": "package",
+      "path": "packages/codama-renderers-dart/CHANGELOG.md",
+      "format": "keep_a_changelog",
+      "notes": {
+        "title": "codama-renderers-dart [0.5.5](https://github.com/openbudgetfun/solana_kit/releases/tag/codama-renderers-dart/v0.5.5) (2026-09-06)",
+        "summary": [],
+        "sections": [
+          {
+            "title": "🐛 Fixed",
+            "collapsed": false,
+            "entries": [
+              "#### Preserve offset collection length codecs\n\nKeep pre-offset and post-offset wrappers around prefixed array, map, and set lengths. This lets generated Dart codecs represent compact layouts with multiple dynamic tails whose lengths live in a fixed header.\n\nFor example, a length codec can write a `u8` count at header byte zero, then restore the cursor before encoding the tail:\n\n```ts\nprefixedCountNode(\n  postOffsetTypeNode(\n    preOffsetTypeNode(numberTypeNode(\"u8\"), 0, \"absolute\"),\n    0,\n    \"preOffset\",\n  ),\n);\n```\n\n_Owner:_ Ifiok Jr. · _Introduced in:_ [`0a17d25`](https://github.com/openbudgetfun/solana_kit/commit/0a17d25319aa28e0f46e308d9f582292529bef87)"
+            ]
+          }
+        ]
+      },
+      "rendered": "## codama-renderers-dart [0.5.5](https://github.com/openbudgetfun/solana_kit/releases/tag/codama-renderers-dart/v0.5.5) (2026-09-06)\n\n### 🐛 Fixed\n\n#### Preserve offset collection length codecs\n\nKeep pre-offset and post-offset wrappers around prefixed array, map, and set lengths. This lets generated Dart codecs represent compact layouts with multiple dynamic tails whose lengths live in a fixed header.\n\nFor example, a length codec can write a `u8` count at header byte zero, then restore the cursor before encoding the tail:\n\n```ts\nprefixedCountNode(\n  postOffsetTypeNode(\n    preOffsetTypeNode(numberTypeNode(\"u8\"), 0, \"absolute\"),\n    0,\n    \"preOffset\",\n  ),\n);\n```\n\n_Owner:_ Ifiok Jr. · _Introduced in:_ [`0a17d25`](https://github.com/openbudgetfun/solana_kit/commit/0a17d25319aa28e0f46e308d9f582292529bef87)"
+    }
+  ],
+  "provider": {
+    "kind": "github",
+    "owner": "openbudgetfun",
+    "repo": "solana_kit",
+    "host": null
+  }
+}
