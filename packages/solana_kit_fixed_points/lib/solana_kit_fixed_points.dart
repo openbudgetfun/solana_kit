@@ -1,4 +1,9 @@
 /// Fixed-point number helpers for the Solana Kit Dart SDK.
+///
+/// Provides arbitrary-precision binary arithmetic (addition, subtraction,
+/// multiplication, division, and modulus), comparisons, conversions between
+/// signed and unsigned representations, and base-10 decimal parsing and
+/// formatting helpers built on the same representation.
 library;
 
 export 'src/binary_arithmetic.dart';
