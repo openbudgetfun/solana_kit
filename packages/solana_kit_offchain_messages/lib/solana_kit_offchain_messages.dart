@@ -1,3 +1,10 @@
+/// Off-chain message signing for the Solana Kit Dart SDK.
+///
+/// Provides the application-domain and envelope types plus codecs for the
+/// Solana off-chain message signing spec (v0 and v1 messages), as used by
+/// wallets implementing Wallet Standard `signIn`.
+library;
+
 export 'src/application_domain.dart';
 export 'src/codecs/application_domain.dart';
 export 'src/codecs/envelope.dart';
