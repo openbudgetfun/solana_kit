@@ -1,7 +1,6 @@
 ---
 "solana_kit_mobile_wallet_adapter": minor
 "solana_kit_wallet_adapter": minor
-"solana_kit_mobile_wallet_adapter_example": patch
 ---
 
 # Use the Mobile Wallet Adapter from mobile browsers
