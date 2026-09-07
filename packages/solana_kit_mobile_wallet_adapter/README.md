@@ -301,3 +301,9 @@ Use [`example/main.dart`](./example/main.dart) as a runnable starting point for 
 - Keep examples focused on one workflow and reference package README sections for deeper API details.
 
 <!-- {/packageExampleSection} -->
+
+## Mobile browsers
+
+On web the Mobile Wallet Adapter associates through the localhost WebSocket transport, which requires a secure context (HTTPS or localhost). The pairing sheet can appear before the wallet app is foreground — the session establishes as soon as the wallet app resumes. `transact` accepts a `connectionTimeout` (default: 30s on native, 3 minutes on web) and a `launchIntent` override.
+
+To revoke a pairing, use the wallet app's linked-dApps settings or the example app's Deauthorize action.
