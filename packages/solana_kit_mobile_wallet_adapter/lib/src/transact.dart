@@ -28,12 +28,14 @@ Future<T> transact<T>(
   Future<T> Function(KitMobileWallet wallet) callback, {
   WalletAssociationConfig? config,
   Future<void> Function(Uri intentUri)? launchIntent,
+  Duration connectionTimeout = mwaConnectionDeadline,
 }) async {
   assertMwaSupported();
 
   final scenario = LocalAssociationScenario(
     launchIntent: launchIntent,
     baseUri: config?.baseUri,
+    connectionDeadline: connectionTimeout,
   );
 
   try {

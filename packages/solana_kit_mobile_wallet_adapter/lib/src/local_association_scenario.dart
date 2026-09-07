@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_mobile_wallet_adapter/src/intent_launcher.dart';
+import 'package:solana_kit_mobile_wallet_adapter/src/platform_check.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -22,13 +23,22 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 class LocalAssociationScenario {
   /// Creates a local association scenario with an optional [clientApi] and
   /// [_baseUri] for the association Intent.
+  /// Creates a local association scenario.
+  ///
+  /// [connectionDeadline] bounds how long the scenario keeps retrying the
+  /// wallet's WebSocket server. Defaults to 30s on native; on web it is
+  /// extended to 3 minutes because the pairing sheet can appear before the
+  /// wallet activity is foreground (the session establishes as soon as the
+  /// wallet app resumes).
   LocalAssociationScenario({
     Future<void> Function(Uri intentUri)? launchIntent,
     this._baseUri,
+    this._connectionDeadline = mwaConnectionDeadline,
   }) : _launchIntent = launchIntent ?? launchWalletIntent;
 
   final Future<void> Function(Uri intentUri) _launchIntent;
   final String? _baseUri;
+  final Duration _connectionDeadline;
 
   WebSocketChannel? _channel;
   StreamSubscription<Object?>? _subscription;
@@ -331,9 +341,7 @@ class LocalAssociationScenario {
   Future<WebSocketChannel> _connectWithRetry(int port) async {
     final uri = Uri.parse('ws://localhost:$port$mwaLocalWebSocketPath');
 
-    final deadline = DateTime.now().add(
-      const Duration(milliseconds: mwaConnectionTimeoutMs),
-    );
+    final deadline = DateTime.now().add(_connectionDeadline);
 
     var attempt = 0;
     while (DateTime.now().isBefore(deadline)) {
