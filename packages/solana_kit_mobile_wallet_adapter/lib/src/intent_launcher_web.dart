@@ -38,10 +38,9 @@ Future<void> launchWalletIntent(Uri intentUri) {
     // Custom scheme (eg. `solana-wallet:`): launch through a hidden iframe.
     // Browsers silently ignore unsupported custom schemes, which is why the
     // blur detector rejects the launch after 3 seconds.
-    final frame =
-        _associationFrame ??=
-            web.document.createElement('iframe') as web.HTMLIFrameElement
-              ..style.display = 'none';
+    final frame = _associationFrame ??=
+        web.document.createElement('iframe') as web.HTMLIFrameElement
+          ..style.display = 'none';
     web.document.body!.appendChild(frame);
     frame.contentWindow!.location.href = intentUri.toString();
   }
