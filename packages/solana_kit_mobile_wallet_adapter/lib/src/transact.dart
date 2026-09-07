@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:solana_kit_mobile_wallet_adapter/src/kit_mobile_wallet.dart';
 import 'package:solana_kit_mobile_wallet_adapter/src/local_association_scenario.dart';
-import 'package:solana_kit_mobile_wallet_adapter/src/pigeon/client_api.dart';
 import 'package:solana_kit_mobile_wallet_adapter/src/platform_check.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
 
@@ -28,12 +27,12 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wall
 Future<T> transact<T>(
   Future<T> Function(KitMobileWallet wallet) callback, {
   WalletAssociationConfig? config,
-  MwaClientHostApi? clientApi,
+  Future<void> Function(Uri intentUri)? launchIntent,
 }) async {
   assertMwaSupported();
 
   final scenario = LocalAssociationScenario(
-    clientApi: clientApi,
+    launchIntent: launchIntent,
     baseUri: config?.baseUri,
   );
 

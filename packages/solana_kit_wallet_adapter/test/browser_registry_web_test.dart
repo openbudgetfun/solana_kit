@@ -11,6 +11,22 @@ import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
 import 'package:web/web.dart' as web;
 
 void main() {
+  test(
+    'does not register the mobile wallet on non-Android user agents',
+    () async {
+      final registry = createDefaultWalletRegistry(
+        appIdentity: const WalletAppIdentity(name: 'Browser test'),
+        chain: SolanaChainId.localnet,
+      );
+      await registry.initialize();
+
+      // The test runner's UA is a desktop browser: the MWA intent association
+      // cannot launch a wallet app, so the synthetic mobile wallet stays out.
+      expect(registry.wallets.where((w) => w.name == 'Mobile wallet'), isEmpty);
+      await registry.dispose();
+    },
+  );
+
   test('substitutes bundled logos for wallets without a usable icon', () async {
     final registry = createDefaultWalletRegistry(
       appIdentity: const WalletAppIdentity(name: 'Browser test'),

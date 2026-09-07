@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
-import 'package:solana_kit_mobile_wallet_adapter/src/pigeon/client_api.dart';
+import 'package:solana_kit_mobile_wallet_adapter/src/intent_launcher.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -12,7 +12,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// Flow:
 /// 1. Generate association + ECDH keypairs
 /// 2. Pick random port, build Intent URI
-/// 3. Launch wallet via [MwaClientHostApi.launchIntent]
+/// 3. Launch the wallet app (native Intent, or browser association on web)
 /// 4. Connect WebSocket to `ws://localhost:<port>/solana-wallet`
 /// 5. Retry with backoff schedule, 30s total timeout
 /// 6. Send HELLO_REQ, receive HELLO_RSP
@@ -22,10 +22,12 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 class LocalAssociationScenario {
   /// Creates a local association scenario with an optional [clientApi] and
   /// [_baseUri] for the association Intent.
-  LocalAssociationScenario({MwaClientHostApi? clientApi, this._baseUri})
-    : _clientApi = clientApi ?? MwaClientHostApi();
+  LocalAssociationScenario({
+    Future<void> Function(Uri intentUri)? launchIntent,
+    this._baseUri,
+  }) : _launchIntent = launchIntent ?? launchWalletIntent;
 
-  final MwaClientHostApi _clientApi;
+  final Future<void> Function(Uri intentUri) _launchIntent;
   final String? _baseUri;
 
   WebSocketChannel? _channel;
@@ -61,8 +63,8 @@ class LocalAssociationScenario {
       baseUri: _baseUri,
     );
 
-    // Step 3: Launch wallet app via Intent.
-    await _clientApi.launchIntent(intentUri.toString());
+    // Step 3: Launch wallet app (native Intent or browser association).
+    await _launchIntent(intentUri);
 
     try {
       // Step 4: Connect WebSocket with retry.
