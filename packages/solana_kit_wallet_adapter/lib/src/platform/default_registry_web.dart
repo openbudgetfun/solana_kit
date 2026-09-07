@@ -5,6 +5,8 @@ import 'dart:js_interop_unsafe';
 import 'dart:typed_data';
 
 import 'package:solana_kit_wallet_adapter/src/mobile_wallet.dart';
+import 'package:solana_kit_wallet_adapter/src/platform/default_registry_native.dart'
+    show NativeMobileWalletBackend;
 import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
 import 'package:web/web.dart' as web;
 
@@ -13,7 +15,31 @@ WalletRegistry createPlatformWalletRegistry({
   required WalletAppIdentity appIdentity,
   required String chain,
   List<Wallet> additionalWallets = const [],
-}) => BrowserWalletRegistry(additionalWallets: additionalWallets);
+}) {
+  final wallets = [...additionalWallets];
+
+  // On Android mobile browsers, the Mobile Wallet Adapter can associate with
+  // an installed wallet app through the localhost WebSocket transport, so it
+  // surfaces alongside the browser-registered Wallet Standard wallets.
+  if (isAndroidMobileBrowser()) {
+    final backend = NativeMobileWalletBackend();
+    if (backend.isSupported) {
+      wallets.add(
+        MobileWallet(backend: backend, identity: appIdentity, chain: chain),
+      );
+    }
+  }
+
+  return BrowserWalletRegistry(additionalWallets: wallets);
+}
+
+/// Returns `true` when the page runs in Chrome (or a Chromium browser) on an
+/// Android phone or tablet, where the Mobile Wallet Adapter intent
+/// association can launch an installed wallet app.
+bool isAndroidMobileBrowser() {
+  final userAgent = web.window.navigator.userAgent.toLowerCase();
+  return userAgent.contains('android');
+}
 
 /// Discovers wallets registered on the browser `window`.
 class BrowserWalletRegistry extends WalletRegistryController {
