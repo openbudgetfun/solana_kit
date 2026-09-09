@@ -114,16 +114,25 @@ void main() {
       );
     });
 
-    test('parses only instructions of this program', () {
+    test('parses instruction data without checking the program address', () {
+      // The generated parser is data-only: it never inspects
+      // `instruction.programAddress`, so well-formed bytes parse the same
+      // way no matter which program sent them. Callers must check the
+      // program address themselves before trusting a parsed instruction.
+      final instruction = Instruction(
+        programAddress: otherProgram,
+        accounts: const [],
+        data: Uint8List.fromList([
+          0, 4, 0, 0, 0, 116, 101, 115, 116, 1, 0, 0, 0, //
+          ...getAddressEncoder().encode(otherProgram),
+        ]),
+      );
+
+      final parsed = parseSolanaAttestationServiceInstruction(instruction);
+      expect(parsed, isA<ParsedCreateCredential>());
       expect(
-        () => parseSolanaAttestationServiceInstruction(
-          Instruction(
-            programAddress: otherProgram,
-            accounts: const [],
-            data: Uint8List.fromList([0, 4, 0, 0, 0, 1, 1, 1, 1]),
-          ),
-        ),
-        throwsA(anything),
+        (parsed as ParsedCreateCredential).data.name,
+        'test',
       );
     });
   });

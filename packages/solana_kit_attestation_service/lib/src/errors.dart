@@ -53,10 +53,24 @@ enum AttestationServiceError {
 /// Service program.
 ///
 /// ```dart
-/// try {
-///   // Send and confirm your transaction.
-/// } catch (error) {
-///   if (isAttestationServiceError(error, message, AttestationServiceError.schemaPaused)) {
+/// import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+/// import 'package:solana_kit_attestation_service/solana_kit_attestation_service.dart';
+/// import 'package:solana_kit_programs/solana_kit_programs.dart';
+///
+/// Future<void> handleTransactionFailure(Object error) async {
+///   final transactionMessage = TransactionMessageInput(
+///     instructions: {
+///       0: InstructionInput(
+///         programAddress: solanaAttestationServiceProgramAddress,
+///       ),
+///     },
+///   );
+///
+///   if (isAttestationServiceError(
+///     error,
+///     transactionMessage,
+///     AttestationServiceError.schemaPaused,
+///   )) {
 ///     // The schema was paused.
 ///   }
 /// }

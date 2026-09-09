@@ -5,6 +5,11 @@ import 'package:test/test.dart';
 /// Program id the reference client is generated for.
 const Address program = solanaAttestationServiceProgramAddress;
 
+/// An unrelated program id used to exercise the `programAddress` overrides.
+const otherProgramAddress = Address(
+  'De1egAFMkMWZSN5rYXRj9CAdheBamobVNubTsi9avR44',
+);
+
 // Golden vectors validated against the Solana CLI
 // (`solana find-program-derived-address`) and mirrored from the upstream
 // TypeScript client tests at the pinned commit.
@@ -89,9 +94,12 @@ void main() {
       expect(bump, equals(254));
     });
 
-    test('derives under an alternate program id when overridden', () async {
-      final (address, _) = await findSasAuthorityPda();
-      expect(address, equals(const Address(sasAuthorityGolden)));
+    test('derives a different address under an alternate program id', () async {
+      final (address, bump) = await findSasAuthorityPda(
+        programAddress: otherProgramAddress,
+      );
+      expect(address, isNot(equals(const Address(sasAuthorityGolden))));
+      expect(bump, inInclusiveRange(0, 255));
     });
   });
 }

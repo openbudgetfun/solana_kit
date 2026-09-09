@@ -14,10 +14,11 @@ typedef AttestationData = Map<String, Object>;
 
 /// Decodes a Schema's `name` or `description` blob as UTF-8 text.
 ///
-/// The on-chain program stores these blobs as plain UTF-8 bytes; bytes that
-/// are not valid UTF-8 surface as replacement characters, mirroring the
-/// upstream TypeScript client. The generated account codec removes the
-/// blobs' u32 length prefix, so [bytes] holds the raw content.
+/// The on-chain program stores these blobs as plain UTF-8 bytes. Malformed
+/// bytes surface as replacement characters rather than throwing, mirroring
+/// the upstream TypeScript client: these fields are display text, and the
+/// program does not validate their encoding. The generated account codec
+/// removes the blobs' u32 length prefix, so [bytes] holds the raw content.
 String decodeSchemaText(Uint8List bytes) {
   return utf8.decode(bytes, allowMalformed: true);
 }
@@ -27,6 +28,12 @@ String decodeSchemaText(Uint8List bytes) {
 /// The blob holds a run of u32-length-prefixed UTF-8 strings. The generated
 /// account codec removes the blob's outer u32 length prefix, so [bytes]
 /// holds the raw content.
+///
+/// Unlike [decodeSchemaText], decoding is strict and throws a
+/// [FormatException] on malformed UTF-8: field names become the keys of
+/// attestation data maps, and a silently corrupted key would strand the
+/// values stored under it. The house `getUtf8Decoder` rejects malformed
+/// bytes for the same reason.
 List<String> decodeSchemaFieldNames(Uint8List bytes) {
   final stringDecoder = addDecoderSizePrefix(
     getUtf8Decoder(),
@@ -67,6 +74,10 @@ List<SchemaDataType> decodeSchemaLayout(Uint8List bytes) {
 /// validates against: numbers are little-endian, a `char` is a 4-byte
 /// Unicode code point, strings are u32-length-prefixed UTF-8, and every vec
 /// carries a u32 element count.
+///
+/// Encoding rejects maps whose keys do not exactly match the schema: a
+/// missing field would silently produce an attestation the program rejects,
+/// and an unknown field would be dropped from the blob without a trace.
 Codec<AttestationData, AttestationData> getAttestationDataCodec(
   Schema schema,
 ) {
@@ -82,11 +93,16 @@ Codec<AttestationData, AttestationData> getAttestationDataCodec(
     fields.add((fieldNames[i], fieldEncoder, fieldDecoder));
   }
 
+  AttestationData alignWithSchema(Map<String, Object?> data) {
+    _requireSameKeys(data.keys, fieldNames);
+    return AttestationData.from(data);
+  }
+
   final encoder = transformEncoder<Map<String, Object?>, AttestationData>(
     getStructEncoder(<(String, Encoder<Object?>)>[
       for (final (name, fieldEncoder, _) in fields) (name, fieldEncoder),
     ]),
-    AttestationData.from,
+    alignWithSchema,
   );
   final decoder = transformDecoder<Map<String, Object?>, AttestationData>(
     getStructDecoder(<(String, Decoder<Object?>)>[
@@ -96,6 +112,32 @@ Codec<AttestationData, AttestationData> getAttestationDataCodec(
   );
 
   return combineCodec(encoder, decoder);
+}
+
+/// Throws unless the data map's keys exactly match the schema's field
+/// names.
+void _requireSameKeys(
+  Iterable<String> keys,
+  List<String> fieldNames,
+) {
+  final declared = Set<String>.of(fieldNames);
+  final provided = Set<String>.of(keys);
+  for (final name in fieldNames) {
+    if (!provided.contains(name)) {
+      throw ArgumentError(
+        "Schema field '$name' is missing from the attestation data; "
+        'expected fields: ${fieldNames.join(', ')}',
+      );
+    }
+  }
+  for (final key in provided) {
+    if (!declared.contains(key)) {
+      throw ArgumentError(
+        "Unknown attestation data field '$key'; "
+        'the schema declares: ${fieldNames.join(', ')}',
+      );
+    }
+  }
 }
 
 /// Serializes [data] to the byte blob stored on an Attestation account.

@@ -71,17 +71,31 @@ Future<void> handleTransactionFailure(Object error) async {
 
 <!-- {/programErrorHandlingSection} -->
 
-## Usage
+## Concepts and usage
+
+<!-- {=docsAttestationServiceOverviewSection} -->
+
+The Solana Attestation Service is an open, permissionless protocol for verifiable on-chain credentials. In Dart, use `solana_kit_attestation_service` for generated instruction builders, account codecs, PDAs, and a schema-driven attestation data codec.
+
+An issuer registers a **Credential** with its authorized signers, declares a **Schema** that names and types its fields, and issues **Attestations** whose payloads are encoded exactly as the schema declares. Verifiers fetch an attestation, decode its payload with the schema, and check the signer and expiry.
+
+| Model       | Use                                                                           |
+| ----------- | ----------------------------------------------------------------------------- |
+| Credential  | Register an issuer and rotate its authorized signers.                         |
+| Schema      | Declare a versioned, pausable field layout under a credential.                |
+| Attestation | Store a schema-conformant payload (optionally tokenized as a Token-2022 NFT). |
+
+The canonical flow is create-credential, create-schema, create-attestation, then verify:
 
 ```dart
-import 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
+import 'dart:typed_data';
+
+import 'package:solana_kit/solana_kit.dart';
 import 'package:solana_kit_attestation_service/solana_kit_attestation_service.dart';
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
 Future<void> main() async {
-  const authority = Address('11111111111111111111111111111111');
+  const authority = Address('tbFevHibEdBNFJfZ7xKC8k1th8pt2YPEXTk4sGMxCGa');
 
-  // Derive the issuer's credential and its schema addresses.
   final (credential, _) = await findCredentialPda(
     seeds: const CredentialSeeds(authority: authority, name: 'my-credential'),
   );
@@ -89,35 +103,23 @@ Future<void> main() async {
     seeds: SchemaSeeds(credential: credential, name: 'person', version: 1),
   );
 
-  // Build the create-credential instruction.
-  final createCredentialIx = getCreateCredentialInstruction(
-    programAddress: solanaAttestationServiceProgramAddress,
-    payer: authority,
-    credential: credential,
-    authority: authority,
-    systemProgram: systemProgramAddress,
-    name: 'my-credential',
-    signers: [authority],
-  );
-
-  // Declare a schema whose layout is a run of SchemaDataType discriminants.
-  final createSchemaIx = getCreateSchemaInstruction(
+  final instruction = getCreateAttestationInstruction(
     programAddress: solanaAttestationServiceProgramAddress,
     payer: authority,
     authority: authority,
     credential: credential,
     schema: schema,
+    attestation: authority,
     systemProgram: systemProgramAddress,
-    name: 'person',
-    description: 'A person',
-    layout: [SchemaDataType.string, SchemaDataType.u8],
-    fieldNames: ['name', 'age'],
+    nonce: authority,
+    data: Uint8List.fromList([0]),
+    expiry: BigInt.zero,
   );
-
-  print(createCredentialIx.programAddress);
-  print(createSchemaIx.programAddress);
+  print(instruction.programAddress);
 }
 ```
+
+<!-- {/docsAttestationServiceOverviewSection} -->
 
 ## Encoding attestation data
 
@@ -134,7 +136,24 @@ Future<void> encodeData(Schema schema) async {
 }
 ```
 
+Encoding requires the data map's keys to match the schema exactly: a missing field, or one the schema does not declare, throws an `ArgumentError` naming the field instead of silently producing an incomplete attestation.
+
 Fields declared as strings decode strictly: bytes that are not valid UTF-8 (raw hashes, ciphertext) are surfaced losslessly as `0x`-prefixed hex strings instead of replacement characters. A `char` field holds exactly one Unicode character and is encoded as its 4-byte little-endian code point, matching the Rust program.
+
+## Reading schema accounts
+
+The generated `Schema` account keeps its `name`, `description`, `layout`, and `fieldNames` as raw length-prefixed byte blobs, exactly as stored on-chain. Decode them with the typed helpers:
+
+```dart
+import 'package:solana_kit_attestation_service/solana_kit_attestation_service.dart';
+
+Future<void> readSchema(Schema schema) async {
+  final name = decodeSchemaText(schema.name);
+  final fieldNames = decodeSchemaFieldNames(schema.fieldNames);
+  final layout = decodeSchemaLayout(schema.layout);
+  print('$name declares $fieldNames as $layout');
+}
+```
 
 ## Instructions
 
@@ -154,21 +173,6 @@ Fields declared as strings decode strictly: bytes that are not valid UTF-8 (raw 
 | `EmitEvent`                  | 228           | Emit an event through the program's event authority.        |
 
 Discriminant 8 is unused. The program's entrypoint assigns `EmitEvent` the first byte of its event instruction tag (228), and `TokenizeSchema` starts at 9.
-
-## Reading schema accounts
-
-The generated `Schema` account keeps its `name`, `description`, `layout`, and `fieldNames` as raw length-prefixed byte blobs, exactly as stored on-chain. Decode them with the typed helpers:
-
-```dart
-import 'package:solana_kit_attestation_service/solana_kit_attestation_service.dart';
-
-Future<void> readSchema(Schema schema) async {
-  final name = decodeSchemaText(schema.name);
-  final fieldNames = decodeSchemaFieldNames(schema.fieldNames);
-  final layout = decodeSchemaLayout(schema.layout);
-  print('$name declares $fieldNames as $layout');
-}
-```
 
 ## Upstream reference
 

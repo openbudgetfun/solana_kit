@@ -83,6 +83,14 @@ void main() {
     test('decodes an empty run', () {
       expect(decodeSchemaFieldNames(Uint8List(0)), isEmpty);
     });
+
+    test('rejects malformed utf-8 bytes in field names', () {
+      // A u32 prefix promising one byte, holding an invalid continuation.
+      expect(
+        () => decodeSchemaFieldNames(content([1, 0, 0, 0, 0xff])),
+        throwsFormatException,
+      );
+    });
   });
 
   group('decodeSchemaLayout', () {
@@ -281,6 +289,45 @@ void main() {
       );
 
       expect(decoded['id'], equals('héllo'));
+    });
+
+    test('names the missing field when encoding incomplete data', () {
+      final schema = makeSchema(
+        [SchemaDataType.u8, SchemaDataType.string],
+        [
+          'count',
+          'label',
+        ],
+      );
+
+      expect(
+        () => serializeAttestationData(schema, {'count': 1}),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains("Schema field 'label' is missing"),
+          ),
+        ),
+      );
+    });
+
+    test('rejects fields the schema does not declare', () {
+      final schema = makeSchema([SchemaDataType.u8], ['count']);
+
+      expect(
+        () => serializeAttestationData(schema, {
+          'count': 1,
+          'extra': 'dropped silently if unchecked',
+        }),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains("Unknown attestation data field 'extra'"),
+          ),
+        ),
+      );
     });
 
     test('throws when field names and layout lengths disagree', () {
