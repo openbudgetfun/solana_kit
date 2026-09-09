@@ -8,12 +8,11 @@
 /// ## Quick start
 ///
 /// ```dart
-/// import 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
-/// import 'package:solana_kit_attestation_service/solana_kit_attestation_service.dart';
 /// import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+/// import 'package:solana_kit_attestation_service/solana_kit_attestation_service.dart';
 ///
 /// Future<void> main() async {
-///   const authority = Address('11111111111111111111111111111111');
+///   const authority = Address('tbFevHibEdBNFJfZ7xKC8k1th8pt2YPEXTk4sGMxCGa');
 ///
 ///   // Derive the credential address of an issuer.
 ///   final (credential, _) = await findCredentialPda(
@@ -30,6 +29,7 @@
 ///     name: 'my-credential',
 ///     signers: [authority],
 ///   );
+///   print(instruction.programAddress);
 /// }
 /// ```
 ///
