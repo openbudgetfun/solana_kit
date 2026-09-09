@@ -82,6 +82,11 @@ const stakeProgramAddress = Address(
   'Stake11111111111111111111111111111111111111',
 );
 
+/// The address of the Solana Attestation Service program.
+const solanaAttestationServiceProgramAddress = Address(
+  '22zoJMtdu4tQc2PzL74ZUT7FrwgB1Udec8DdW4yw4BdG',
+);
+
 /// The address of the Solana Foundation Subscriptions program.
 const subscriptionsProgramAddress = Address(
   'De1egAFMkMWZSN5rYXRj9CAdheBamobVNubTsi9avR44',

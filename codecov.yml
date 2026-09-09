@@ -26,6 +26,9 @@ flags:
   solana_kit_associated_token_account:
     paths:
       - packages/solana_kit_associated_token_account
+  solana_kit_attestation_service:
+    paths:
+      - packages/solana_kit_attestation_service
   solana_kit_codecs:
     paths:
       - packages/solana_kit_codecs

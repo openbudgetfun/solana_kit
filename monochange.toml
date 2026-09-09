@@ -48,6 +48,11 @@ path = "packages/solana_kit_associated_token_account"
 tag = true
 release = false
 
+[package.solana_kit_attestation_service]
+path = "packages/solana_kit_attestation_service"
+tag = true
+release = false
+
 [package.solana_kit_codecs]
 path = "packages/solana_kit_codecs"
 

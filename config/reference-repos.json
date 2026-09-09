@@ -262,6 +262,18 @@
       "package": "solana_kit_squads",
       "notes": "Squads V4 multisig Shank IDL at sdk/multisig/idl/squads_multisig_program.json for Codama Dart generation",
       "checkedCommit": "af94153ff77a28b6effe46b9c94baaa93742b48c"
+    },
+    {
+      "name": "solana-attestation-service",
+      "path": ".repos/solana-foundation/solana-attestation-service",
+      "url": "https://github.com/solana-foundation/solana-attestation-service",
+      "ref": {
+        "type": "commit",
+        "value": "5b64cf09843d62ca800f7d73f8438ad3505de70e"
+      },
+      "package": "solana_kit_attestation_service",
+      "notes": "Solana Attestation Service Shank IDL at idl/solana_attestation_service.json for Codama Dart generation",
+      "checkedCommit": "5b64cf09843d62ca800f7d73f8438ad3505de70e"
     }
   ]
 }
