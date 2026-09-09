@@ -53,6 +53,12 @@ path = "packages/solana_kit_attestation_service"
 tag = true
 release = false
 
+[package.solana_kit_attestation_service.publish.trusted_publishing]
+enabled = true
+repository = "openbudgetfun/solana_kit"
+workflow = "publish.yml"
+environment = "publisher"
+
 [package.solana_kit_codecs]
 path = "packages/solana_kit_codecs"
 
