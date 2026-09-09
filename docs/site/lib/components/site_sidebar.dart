@@ -74,6 +74,10 @@ class SiteSidebar extends StatelessComponent {
               href: link('/guides/build-realtime-observer'),
             ),
             SidebarLink(
+              text: 'Attestation Service Overview',
+              href: link('/guides/attestation-service-overview'),
+            ),
+            SidebarLink(
               text: 'Subscriptions Overview',
               href: link('/guides/subscriptions-overview'),
             ),

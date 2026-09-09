@@ -315,6 +315,13 @@ Each subsection below maps one package to its role in the Solana ecosystem and t
 - What it does: provides the canonical ATA program address, PDA derivation helpers, and handwritten ATA instruction builders.
 - Use it when: deriving ATA addresses or building create/idempotent/recover ATA instructions directly.
 
+### solana_kit_attestation_service
+
+- Pub.dev: [solana_kit_attestation_service](https://pub.dev/packages/solana_kit_attestation_service)
+- Why it exists: the Solana Attestation Service issues verifiable on-chain credentials and had no Dart client.
+- What it does: provides generated instruction builders, account codecs, PDA helpers, and a schema-driven attestation data codec.
+- Use it when: registering credentials, declaring schemas, issuing attestations, or verifying attestation payloads in Dart.
+
 ### solana_kit_address_lookup_table
 
 - Pub.dev: [solana_kit_address_lookup_table](https://pub.dev/packages/solana_kit_address_lookup_table)

@@ -125,6 +125,7 @@
       "validationMode": "contract",
       "expectedOutcome": "Canonical vectors and adversarial unit tests preserve offline message formats, PDA derivation, SNS record layouts, numeric bounds, stable serialization, options, and functional helpers for inputs that do not contact a validator.",
       "evidence": [
+        "packages/solana_kit_attestation_service/test",
         "packages/solana_kit_address/test",
         "packages/solana_kit_fast_stable_stringify/test",
         "packages/solana_kit_fixed_points/test",
@@ -134,6 +135,7 @@
         "packages/solana_kit_sns/test"
       ],
       "packages": [
+        "solana_kit_attestation_service",
         "solana_kit_address",
         "solana_kit_fast_stable_stringify",
         "solana_kit_fixed_points",

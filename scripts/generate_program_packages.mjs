@@ -145,6 +145,85 @@ function prepareSquadsMultisigRoot(root) {
   return root;
 }
 
+// The Attestation Service is a pinocchio/shank program whose accounts are
+// tagged with a 1-byte type discriminator that the shank IDL does not model.
+// Prepend a `discriminator` u8 field to every account struct so the generated
+// codecs read and write it, mirroring the upstream TS client's codama
+// transformer in scripts/generate-clients.js. The `layout` arguments of
+// createSchema and changeSchemaVersion are retyped from a byte blob to a
+// u32-prefixed array of the `schemaDataType` enum — identical wire format,
+// and the same typed API the upstream client renders.
+const SCHEMA_DATA_TYPE_VARIANTS = [
+  "U8", "U16", "U32", "U64", "U128",
+  "I8", "I16", "I32", "I64", "I128",
+  "Bool", "Char", "String",
+  "VecU8", "VecU16", "VecU32", "VecU64", "VecU128",
+  "VecI8", "VecI16", "VecI32", "VecI64", "VecI128",
+  "VecBool", "VecChar", "VecString",
+];
+
+function prepareSolanaAttestationServiceRoot(root) {
+  const accounts = root.accounts ?? [];
+  if (accounts.length !== 3) {
+    throw new Error(
+      `prepareSolanaAttestationServiceRoot: expected 3 accounts, found ${accounts.length}`,
+    );
+  }
+  for (const account of accounts) {
+    if (account.type?.kind !== "struct") {
+      throw new Error(
+        `prepareSolanaAttestationServiceRoot: account ${account.name} has no struct type`,
+      );
+    }
+    if (account.type.fields.some((field) => field.name === "discriminator")) {
+      throw new Error(
+        `prepareSolanaAttestationServiceRoot: account ${account.name} already has a discriminator field`,
+      );
+    }
+    account.type.fields.unshift({ name: "discriminator", type: "u8" });
+  }
+
+  if (root.types?.some((node) => node.name === "schemaDataType")) {
+    throw new Error(
+      "prepareSolanaAttestationServiceRoot: schemaDataType already defined",
+    );
+  }
+  root.types = [
+    ...(root.types ?? []),
+    {
+      name: "schemaDataType",
+      type: {
+        kind: "enum",
+        variants: SCHEMA_DATA_TYPE_VARIANTS.map((name) => ({ name })),
+      },
+    },
+  ];
+
+  let retyped = 0;
+  for (const instruction of root.instructions ?? []) {
+    if (!["CreateSchema", "ChangeSchemaVersion"].includes(instruction.name)) {
+      continue;
+    }
+    for (const argument of instruction.args ?? []) {
+      if (argument.name === "layout") {
+        if (argument.type !== "bytes") {
+          throw new Error(
+            `prepareSolanaAttestationServiceRoot: ${instruction.name}.layout is not bytes`,
+          );
+        }
+        argument.type = { vec: { defined: "schemaDataType" } };
+        retyped += 1;
+      }
+    }
+  }
+  if (retyped !== 2) {
+    throw new Error(
+      `prepareSolanaAttestationServiceRoot: expected 2 layout arguments, retyped ${retyped}`,
+    );
+  }
+  return root;
+}
+
 function prepareStakeRoot(root) {
   // Upstream renamed the IDL program node from "solanaStakeInterface" to
   // "stake" when it moved to the Codama v1.8.0 format (js@v0.9.0). The
@@ -257,6 +336,13 @@ const PROGRAMS = [
     idlPath: ".repos/Squads-Protocol/v4/sdk/multisig/idl/squads_multisig_program.json",
     programName: "squads_multisig",
   },
+  {
+    repo: "solana-attestation-service",
+    pkg: "solana_kit_attestation_service",
+    idlPath:
+      ".repos/solana-foundation/solana-attestation-service/idl/solana_attestation_service.json",
+    programName: "solana_attestation_service",
+  },
 ];
 
 function directoriesEqual(left, right) {
@@ -321,6 +407,9 @@ for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
       root = rootNodeFromAnchor(fixed);
     } else if (repo === "squads-multisig") {
       const fixed = prepareSquadsMultisigRoot(idlJson);
+      root = rootNodeFromAnchor(fixed);
+    } else if (repo === "solana-attestation-service") {
+      const fixed = prepareSolanaAttestationServiceRoot(idlJson);
       root = rootNodeFromAnchor(fixed);
     } else {
       root = rootNodeFromAnchor(idlJson);

@@ -1064,6 +1064,54 @@ void main() {
 The user signs the transaction. If your app stores derived addresses, recompute the PDA before closing so the instruction targets the canonical authority for the user and mint.
 
 <!-- {/docsSubscriptionsCloseAuthoritySection} -->
+
+<!-- {@docsAttestationServiceOverviewSection} -->
+
+The Solana Attestation Service is an open, permissionless protocol for verifiable on-chain credentials. In Dart, use `solana_kit_attestation_service` for generated instruction builders, account codecs, PDAs, and a schema-driven attestation data codec.
+
+An issuer registers a **Credential** with its authorized signers, declares a **Schema** that names and types its fields, and issues **Attestations** whose payloads are encoded exactly as the schema declares. Verifiers fetch an attestation, decode its payload with the schema, and check the signer and expiry.
+
+| Model       | Use                                                                           |
+| ----------- | ----------------------------------------------------------------------------- |
+| Credential  | Register an issuer and rotate its authorized signers.                         |
+| Schema      | Declare a versioned, pausable field layout under a credential.                |
+| Attestation | Store a schema-conformant payload (optionally tokenized as a Token-2022 NFT). |
+
+The canonical flow is create-credential, create-schema, create-attestation, then verify:
+
+```dart
+import 'dart:typed_data';
+
+import 'package:solana_kit/solana_kit.dart';
+import 'package:solana_kit_attestation_service/solana_kit_attestation_service.dart';
+
+Future<void> main() async {
+  const authority = Address('tbFevHibEdBNFJfZ7xKC8k1th8pt2YPEXTk4sGMxCGa');
+
+  final (credential, _) = await findCredentialPda(
+    seeds: const CredentialSeeds(authority: authority, name: 'my-credential'),
+  );
+  final (schema, _) = await findSchemaPda(
+    seeds: SchemaSeeds(credential: credential, name: 'person', version: 1),
+  );
+
+  final instruction = getCreateAttestationInstruction(
+    programAddress: solanaAttestationServiceProgramAddress,
+    payer: authority,
+    authority: authority,
+    credential: credential,
+    schema: schema,
+    attestation: authority,
+    systemProgram: systemProgramAddress,
+    nonce: authority,
+    data: Uint8List.fromList([0]),
+    expiry: BigInt.zero,
+  );
+  print(instruction.programAddress);
+}
+```
+
+<!-- {/docsAttestationServiceOverviewSection} -->
 <!-- {@docsAnchorRuntimeSection} -->
 
 ### Parse an Anchor IDL and code accounts dynamically
