@@ -47,3 +47,8 @@ docs/site/web/wallet-demo/
 
 # Playwright CLI artifacts
 .playwright-cli/
+
+# Local agent tooling and brand exploration scratch space
+.video_agent/
+.zcode/
+brand-preview/
