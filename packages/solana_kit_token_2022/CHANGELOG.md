@@ -191,3 +191,9 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://g
 ### Changed
 
 - No package-specific changes were recorded; `solana_kit_token_2022` was updated to 0.8.2.
+
+## solana_kit_token_2022 [0.8.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_token_2022/v0.8.3) (2026-09-12)
+
+### Changed
+
+- **No package-specific changes were recorded; `solana_kit_token_2022` was updated to 0.8.3.**

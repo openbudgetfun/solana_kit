@@ -120,3 +120,20 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://g
 Reject native wallet events from other sessions, events without session IDs, and queued events received after closure before they can invoke authorization or signing callbacks. Prevent an existing wallet scenario from starting a second native session, and close native scenarios whose creation finishes after the wallet scenario was closed.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+## solana_kit_mobile_wallet_adapter [0.5.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mobile_wallet_adapter/v0.5.3) (2026-09-12)
+
+### Features
+
+- **Keep the mobile-browser association retry alive while the pairing sheet is up.** On web, the Mobile Wallet Adapter pairing sheet can appear before the wallet app is foreground — Chrome keeps the page alive in the background while the user switches to the wallet, and the session establishes as soon as the wallet activity resumes. The association retry window on web is extended to 3 minutes (native stays at 30 seconds), so the first-time pairing no longer fails with a faded, uninteractive sheet while the wallet app waits for the dApp session. `transact` accepts a `connectionTimeout` override, and the example README documents pairing revocation. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #250](https://github.com/openbudgetfun/solana_kit/pull/250)
+
+#### Use the Mobile Wallet Adapter from mobile browsers
+
+The Mobile Wallet Adapter now works from Chrome (and other Chromium browsers) on Android devices, not just from native apps:
+
+- `isMwaSupported()` returns `true` on web pages in a secure context (HTTPS or localhost), and the association intent is launched through a hidden iframe with page-blur detection mirroring the reference JS implementation; app-link URLs navigate directly.
+- `transact` accepts an optional `launchIntent` override replacing the removed `clientApi` parameter.
+- The wallet adapter's default web registry registers the Mobile Wallet Adapter wallet alongside browser-registered Wallet Standard wallets when the page runs in a mobile browser on Android, so mobile users keep wallet-app access from the picker.
+- The example app gains the web platform so the flow can be tried in Chrome on a device.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #249](https://github.com/openbudgetfun/solana_kit/pull/249)

@@ -278,3 +278,9 @@ Reject Merkle proof index aliases and hash nodes that are not 32 bytes. Preserve
 Calculate concurrent Merkle tree account sizes using the on-chain change-log, path, and canopy layouts. An omitted canopy depth now allocates no canopy, matching the upstream SDK.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+## solana_kit_mpl_bubblegum [0.5.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mpl_bubblegum/v0.5.3) (2026-09-12)
+
+### Changed
+
+- **No package-specific changes were recorded; `solana_kit_mpl_bubblegum` was updated to 0.5.3.**

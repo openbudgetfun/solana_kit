@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_offchain_messages": ^0.5.2
+  "solana_kit_offchain_messages": ^0.5.3
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

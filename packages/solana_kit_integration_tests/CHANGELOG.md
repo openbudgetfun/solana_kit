@@ -136,3 +136,9 @@ Align the standard Anchor error table with `anchor-lang` 0.31.1 so errors return
 Add live Surfpool compatibility coverage for Anchor, Metaplex Core, Metaplex Token Metadata, Squads V4, RPC subscriptions, transaction introspection, lookup tables, instruction plans, and transaction immutability.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #243](https://github.com/openbudgetfun/solana_kit/pull/243)
+
+## solana_kit_integration_tests [0.1.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_integration_tests/v0.1.3) (2026-09-12)
+
+### Changed
+
+- **No package-specific changes were recorded; `solana_kit_integration_tests` was updated to 0.1.3.**

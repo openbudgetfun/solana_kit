@@ -247,3 +247,9 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://g
 Two Helius websocket tests failed on a loaded CI runner while passing locally: the connection-failure test raced the kernel completing handshakes queued before `HttpServer.close(force: true)` (so `connect()` occasionally succeeded instead of refusing), and the preconf websocket tests enforced 5-second timeouts that expired under load. The port-close test now probes the port until it provably refuses connections before asserting the failure path, and the preconf stream timeouts — which exist only to prevent hangs — are widened to 30 seconds.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #241](https://github.com/openbudgetfun/solana_kit/pull/241) · _Related issues:_ [#240](https://github.com/openbudgetfun/solana_kit/issues/240)
+
+## solana_kit_helius [0.6.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_helius/v0.6.3) (2026-09-12)
+
+### Changed
+
+- **No package-specific changes were recorded; `solana_kit_helius` was updated to 0.6.3.**

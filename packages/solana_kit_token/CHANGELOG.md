@@ -186,3 +186,9 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://g
 Keep mint account creation and initialization atomic so constrained transaction plans cannot expose a funded, uninitialized mint between separate transactions.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
+
+## solana_kit_token [0.8.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_token/v0.8.3) (2026-09-12)
+
+### Changed
+
+- **No package-specific changes were recorded; `solana_kit_token` was updated to 0.8.3.**

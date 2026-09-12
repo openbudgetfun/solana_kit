@@ -46,3 +46,9 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #237](https://g
 The registry now ignores wallets whose name is already registered, so extensions that announce themselves more than once (additional content-script worlds, reloads) no longer produce duplicate picker tiles. Wallet picker content carries an explicit default text style, which removes the framework fallback's yellow double underline that leaked under every label in Cupertino presentations.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #236](https://github.com/openbudgetfun/solana_kit/pull/236)
+
+## wallet [0.1.3](https://github.com/openbudgetfun/solana_kit/releases/tag/wallet/v0.1.3) (2026-09-12)
+
+### Changed
+
+- **No package-specific changes were recorded; `solana_kit_wallet_standard` was updated to 0.1.3 as part of group `wallet`.**

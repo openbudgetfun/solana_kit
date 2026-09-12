@@ -141,6 +141,12 @@ Preserve the optional tag position when profiling a transaction with configurati
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://github.com/openbudgetfun/solana_kit/pull/238)
 
+## solana_kit_surfpool [0.3.3](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_surfpool/v0.3.3) (2026-09-12)
+
+### Changed
+
+- **No package-specific changes were recorded; `solana_kit_surfpool` was updated to 0.3.3.**
+
 ## 0.0.0
 
 - Initial unpublished package version.

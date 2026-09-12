@@ -66,3 +66,18 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #238](https://g
 Wallets that announce no icon — or an icon that is not a strict base64 data URI — used to be dropped by browser discovery entirely, and icons that failed to render left an empty slot. Browser discovery now substitutes a bundled logo keyed by wallet name (official logos for 36 popular wallets including Phantom, Solflare, MetaMask, and Backpack, sourced from the wallets' own adapter and extension repositories), `WalletAvatar` renders a neutral generic glyph when an icon fails to decode, and `walletLogoFallback` plus `genericWalletLogo` are exported for custom UIs.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #237](https://github.com/openbudgetfun/solana_kit/pull/237)
+
+## wallet [0.1.3](https://github.com/openbudgetfun/solana_kit/releases/tag/wallet/v0.1.3) (2026-09-12)
+
+### Features
+
+#### Use the Mobile Wallet Adapter from mobile browsers
+
+The Mobile Wallet Adapter now works from Chrome (and other Chromium browsers) on Android devices, not just from native apps:
+
+- `isMwaSupported()` returns `true` on web pages in a secure context (HTTPS or localhost), and the association intent is launched through a hidden iframe with page-blur detection mirroring the reference JS implementation; app-link URLs navigate directly.
+- `transact` accepts an optional `launchIntent` override replacing the removed `clientApi` parameter.
+- The wallet adapter's default web registry registers the Mobile Wallet Adapter wallet alongside browser-registered Wallet Standard wallets when the page runs in a mobile browser on Android, so mobile users keep wallet-app access from the picker.
+- The example app gains the web platform so the flow can be tried in Chrome on a device.
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #249](https://github.com/openbudgetfun/solana_kit/pull/249)

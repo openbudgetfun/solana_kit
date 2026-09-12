@@ -26,3 +26,9 @@ dapp-store \
 Key APIs include `runDappStoreCli` for the CLI entry point, `PublicationWorkflow` for programmatic use, `PortalWorkflowClient` for the portal-backed client, and `signPreparedTransaction` for security-critical local transaction validation before signing.
 
 _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #242](https://github.com/openbudgetfun/solana_kit/pull/242)
+
+## solana_kit_dapp_publisher_cli [0.1.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_dapp_publisher_cli/v0.1.1) (2026-09-12)
+
+### Changed
+
+- **No package-specific changes were recorded; `solana_kit_dapp_publisher_cli` was updated to 0.1.1.**
