@@ -1,5 +1,18 @@
 name: publish
 
+# Publishes every configured package and creates the GitHub releases.
+#
+# Trusted publishing (OIDC) pins the run identity, and pub.dev rejects any
+# token whose run ref is not `refs/tags/<tag-pattern>` — for push and
+# workflow_dispatch events alike (the "Enable publishing from
+# workflow_dispatch events" option on pub.dev only relaxes the event name).
+# Push the v* tag to publish, or dispatch the workflow ON the tag ref:
+#
+#   gh workflow run publish.yml --ref v0.1.0
+#
+# Dispatching on the tag requires "Enable publishing from `workflow_dispatch`
+# events" on each dart package's pub.dev admin page. A dispatch from a branch
+# ref publishes npm only; dart is skipped because pub.dev would reject it.
 on:
   push:
     tags:
@@ -7,8 +20,11 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Release tag to publish
-        required: true
+        description:
+          "Release tag to publish (for example v0.1.0). Prefer leaving this
+          empty and dispatching on the tag ref (`gh workflow run publish.yml
+          --ref <tag>`) so pub.dev trusted publishing accepts the run."
+        required: false
         type: string
 
 permissions:
@@ -125,8 +141,20 @@ jobs:
           npm --version
           dart --version
           flutter --version
+          # pub.dev validates the run ref inside the OIDC token and rejects
+          # every token whose ref is not `refs/tags/<tag-pattern>`, for push
+          # and workflow_dispatch events alike. Skip dart on non-tag runs
+          # instead of failing late with an opaque registry authorization
+          # error; dispatch on the release tag to publish dart.
+          if [ "${GITHUB_REF_TYPE:-}" = "tag" ]; then
+            ecosystems=(--ecosystem npm --ecosystem dart)
+          else
+            ecosystems=(--ecosystem npm)
+            echo "::warning::skipping dart/pub.dev publishing: this run ref is ${GITHUB_REF}, not a tag, and pub.dev trusted publishing only accepts tag refs. Dispatch on the release tag instead: gh workflow run publish.yml --ref <tag>"
+          fi
           monochange step publish-packages \
             --log-level info \
+            "${ecosystems[@]}" \
             --output "$RUNNER_TEMP/publish-result.json" \
             --format json
         shell: devenv shell -- bash -e {0}
