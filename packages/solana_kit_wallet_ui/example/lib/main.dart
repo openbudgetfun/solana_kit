@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:skribble/skribble.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_wallet_adapter/solana_kit_wallet_adapter.dart';
 import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
@@ -252,7 +253,19 @@ class _Introduction extends StatelessWidget {
   }
 }
 
-class _Actions extends StatelessWidget {
+/// Which wallet UI presentation the example renders.
+enum _Presentation {
+  adaptive('Adaptive'),
+  material('Material'),
+  cupertino('Cupertino'),
+  skribble('Skribble');
+
+  const _Presentation(this.label);
+
+  final String label;
+}
+
+class _Actions extends StatefulWidget {
   const _Actions({
     required this.controller,
     required this.onSign,
@@ -267,7 +280,15 @@ class _Actions extends StatelessWidget {
   final String surfpoolStatus;
 
   @override
+  State<_Actions> createState() => _ActionsState();
+}
+
+class _ActionsState extends State<_Actions> {
+  _Presentation _presentation = _Presentation.adaptive;
+
+  @override
   Widget build(BuildContext context) {
+    final controller = widget.controller;
     return DecoratedBox(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -288,11 +309,39 @@ class _Actions extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AdaptiveWalletButton(controller: controller),
+            SegmentedButton<_Presentation>(
+              segments: [
+                for (final presentation in _Presentation.values)
+                  ButtonSegment(
+                    value: presentation,
+                    label: Text(presentation.label),
+                  ),
+              ],
+              selected: {_presentation},
+              showSelectedIcon: false,
+              onSelectionChanged: (selection) =>
+                  setState(() => _presentation = selection.single),
+            ),
+            const SizedBox(height: 18),
+            switch (_presentation) {
+              _Presentation.adaptive => AdaptiveWalletButton(
+                controller: controller,
+              ),
+              _Presentation.material => MaterialWalletButton(
+                controller: controller,
+              ),
+              _Presentation.cupertino => CupertinoWalletButton(
+                controller: controller,
+              ),
+              _Presentation.skribble => SkribbleWalletButton(
+                controller: controller,
+                theme: WiredThemeData.cuddly(brightness: Brightness.dark),
+              ),
+            },
             const SizedBox(height: 14),
             FilledButton.tonal(
               key: AppKeys.checkSurfpool,
-              onPressed: onSurfpool,
+              onPressed: widget.onSurfpool,
               child: const Text('Check Surfpool'),
             ),
             const SizedBox(height: 14),
@@ -300,14 +349,14 @@ class _Actions extends StatelessWidget {
               listenable: controller,
               builder: (context, child) => OutlinedButton(
                 key: AppKeys.signMessage,
-                onPressed: controller.state.isConnected ? onSign : null,
+                onPressed: controller.state.isConnected ? widget.onSign : null,
                 child: const Text('Sign message'),
               ),
             ),
             const SizedBox(height: 20),
-            Text(surfpoolStatus, key: AppKeys.surfpoolStatus),
+            Text(widget.surfpoolStatus, key: AppKeys.surfpoolStatus),
             const SizedBox(height: 8),
-            Text(signatureStatus, key: AppKeys.signedMessageStatus),
+            Text(widget.signatureStatus, key: AppKeys.signedMessageStatus),
           ],
         ),
       ),

@@ -6,7 +6,7 @@ homepage: https://openbudgetfun.github.io/solana_kit/
 
 environment:
   sdk: ^3.12.0
-  flutter: ">=3.44.0"
+  flutter: ">=3.47.0"
 
 resolution: workspace
 
@@ -15,6 +15,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^2.2.1
+  skribble: ^0.1.1
   solana_kit_wallet_adapter: ^0.1.3
   solana_kit_wallet_standard: ^0.1.3
 
@@ -28,3 +29,6 @@ topics:
   - wallet
   - flutter
   - web3
+
+flutter:
+  uses-material-design: true
