@@ -45,4 +45,5 @@ export 'src/offset_codec.dart';
 export 'src/pad_codec.dart';
 export 'src/resize_codec.dart';
 export 'src/reverse_codec.dart';
+export 'src/tap_codec.dart';
 export 'src/transform_codec.dart';
