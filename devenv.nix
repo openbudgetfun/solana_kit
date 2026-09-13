@@ -314,6 +314,7 @@ in
         mdt info >/dev/null
         mdt doctor --format text
         dart run scripts/workspace_doc_drift.dart --check
+        dart run scripts/check_reference_repo_docs.dart
       '';
       description = "Check documentation consistency with mdt, synchronized Dart doc comments, and workspace metadata.";
       binary = "bash";
