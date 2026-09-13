@@ -130,7 +130,9 @@ Future<String> buildAndSendTokenTransfer(
     final encoded = getTransactionEncoder().encode(signed);
     final base64Tx = base64Encode(encoded);
 
-    return sendViaSender(base64Tx, client: client);
+    // Await inside the try so the keypair outlives the sender service call
+    // instead of being disposed as soon as the Future is returned.
+    return await sendViaSender(base64Tx, client: client);
   } finally {
     keyPair.dispose();
   }

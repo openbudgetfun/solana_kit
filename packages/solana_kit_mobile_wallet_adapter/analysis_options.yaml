@@ -1,1 +1,6 @@
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
 include: package:solana_kit_lints/flutter_analysis_options.yaml

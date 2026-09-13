@@ -1,10 +1,1 @@
 include: package:solana_kit_lints/analysis_options.yaml
-
-analyzer:
-  plugins:
-    jaspr_lints:
-      version: ^0.6.0
-      diagnostics:
-        prefer_html_components: true
-        sort_children_last: true
-        styles_ordering: true

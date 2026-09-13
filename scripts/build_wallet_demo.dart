@@ -31,6 +31,9 @@ Future<void> main(List<String> args) async {
     '--pwa-strategy=none',
     '--dart-define=DEMO_WALLET=true',
     '--base-href=$demoBaseHref',
+    // Skribble's generated rough-icon font map builds IconData instances at
+    // runtime, which the constant-icon tree sharker rejects outright.
+    '--no-tree-shake-icons',
   ], _exampleDirectory);
   if (buildWeb != 0) {
     exitCode = buildWeb;
