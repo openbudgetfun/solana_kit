@@ -52,6 +52,38 @@ VariableSizeEncoder<Uint8List> _bytesEncoder() =>
       },
     );
 
+/// The matching variable-size decoder for [_bytesEncoder].
+VariableSizeDecoder<Uint8List> _bytesDecoder() =>
+    VariableSizeDecoder<Uint8List>(
+      maxSize: 256,
+      read: (bytes, offset) {
+        final length = bytes[offset];
+        return (
+          Uint8List.sublistView(bytes, offset + 1, offset + 1 + length),
+          offset + 1 + length,
+        );
+      },
+    );
+
+/// A variable-size codec combining [_bytesEncoder] and [_bytesDecoder].
+VariableSizeCodec<Uint8List, Uint8List> _bytesCodec() =>
+    VariableSizeCodec<Uint8List, Uint8List>(
+      getSizeFromValue: (value) => value.length + 1,
+      maxSize: 256,
+      write: (value, bytes, offset) {
+        bytes[offset] = value.length;
+        bytes.setRange(offset + 1, offset + 1 + value.length, value);
+        return offset + 1 + value.length;
+      },
+      read: (bytes, offset) {
+        final length = bytes[offset];
+        return (
+          Uint8List.sublistView(bytes, offset + 1, offset + 1 + length),
+          offset + 1 + length,
+        );
+      },
+    );
+
 void main() {
   group('tapEncoder', () {
     test('observes the value before it is written', () {
@@ -72,9 +104,15 @@ void main() {
     });
 
     test('preserves variable-size characteristics', () {
-      final encoder = tapEncoder<Uint8List>(_bytesEncoder(), (_) {});
+      final seen = <Uint8List>[];
+      final encoder = tapEncoder<Uint8List>(_bytesEncoder(), seen.add);
+
       expect(encoder, isA<VariableSizeEncoder<Uint8List>>());
       expect(getEncodedSize(_b('0102'), encoder), equals(3));
+
+      final bytes = encoder.encode(_b('0102'));
+      expect(seen, hasLength(1));
+      expect(bytes, equals(_b('020102')));
     });
 
     test('propagates a thrown error and aborts the write', () {
@@ -99,6 +137,17 @@ void main() {
       final decoder = tapDecoder<int>(_u8Decoder(), (_) {});
       expect(decoder, isA<FixedSizeDecoder<int>>());
       expect((decoder as FixedSizeDecoder<int>).fixedSize, equals(1));
+    });
+
+    test('preserves variable-size characteristics', () {
+      final seen = <Uint8List>[];
+      final decoder = tapDecoder<Uint8List>(_bytesDecoder(), seen.add);
+
+      expect(decoder, isA<VariableSizeDecoder<Uint8List>>());
+      expect((decoder as VariableSizeDecoder<Uint8List>).maxSize, equals(256));
+
+      expect(decoder.decode(_b('020102')), equals(_b('0102')));
+      expect(seen, hasLength(1));
     });
 
     test('propagates a thrown error and aborts the read', () {
@@ -127,6 +176,30 @@ void main() {
       final codec = tapCodec<num, int>(_u8Codec(), (_) {});
       expect(codec.decode(_b('05')), equals(5));
     });
+
+    test('preserves variable-size characteristics', () {
+      final encoded = <Uint8List>[];
+      final decoded = <Uint8List>[];
+      final codec = tapCodec<Uint8List, Uint8List>(
+        _bytesCodec(),
+        encoded.add,
+        decoded.add,
+      );
+
+      final variableCodec = codec as VariableSizeCodec<Uint8List, Uint8List>;
+      expect(variableCodec.maxSize, equals(256));
+      expect(variableCodec.getSizeFromValue(_b('0102')), equals(3));
+
+      final bytes = codec.encode(_b('0102'));
+      expect(encoded, hasLength(1));
+      expect(codec.decode(bytes), equals(_b('0102')));
+      expect(decoded, hasLength(1));
+    });
+
+    test('skips the decode tap for a variable-size codec when omitted', () {
+      final codec = tapCodec<Uint8List, Uint8List>(_bytesCodec(), (_) {});
+      expect(codec.decode(_b('020102')), equals(_b('0102')));
+    });
   });
 
   group('tapEncoderBytes', () {
@@ -141,9 +214,17 @@ void main() {
     });
 
     test('preserves variable-size characteristics', () {
-      final encoder = tapEncoderBytes<Uint8List>(_bytesEncoder(), (_, _, _) {});
+      final spans = <(int, int)>[];
+      final encoder = tapEncoderBytes<Uint8List>(
+        _bytesEncoder(),
+        (_, pre, post) => spans.add((pre, post)),
+      );
+
       expect(encoder, isA<VariableSizeEncoder<Uint8List>>());
       expect((encoder as VariableSizeEncoder<Uint8List>).maxSize, equals(256));
+
+      expect(encoder.encode(_b('0102')), equals(_b('020102')));
+      expect(spans, equals(<(int, int)>[(0, 3)]));
     });
   });
 
@@ -156,6 +237,20 @@ void main() {
       );
 
       expect(decoder.decode(_b('2a')), equals(42));
+      expect(offsets, equals(<int>[0]));
+    });
+
+    test('preserves variable-size characteristics', () {
+      final offsets = <int>[];
+      final decoder = tapDecoderBytes<Uint8List>(
+        _bytesDecoder(),
+        (_, offset) => offsets.add(offset),
+      );
+
+      expect(decoder, isA<VariableSizeDecoder<Uint8List>>());
+      expect((decoder as VariableSizeDecoder<Uint8List>).maxSize, equals(256));
+
+      expect(decoder.decode(_b('020102')), equals(_b('0102')));
       expect(offsets, equals(<int>[0]));
     });
   });
@@ -180,6 +275,32 @@ void main() {
     test('leaves reading untouched when no decode tap is given', () {
       final codec = tapCodecBytes<num, int>(_u8Codec(), (_, _, _) {});
       expect(codec.decode(_b('06')), equals(6));
+    });
+
+    test('preserves variable-size characteristics', () {
+      final spans = <(int, int)>[];
+      final offsets = <int>[];
+      final codec = tapCodecBytes<Uint8List, Uint8List>(
+        _bytesCodec(),
+        (_, pre, post) => spans.add((pre, post)),
+        (_, offset) => offsets.add(offset),
+      );
+
+      final variableCodec = codec as VariableSizeCodec<Uint8List, Uint8List>;
+      expect(variableCodec.maxSize, equals(256));
+
+      final bytes = codec.encode(_b('0102'));
+      expect(spans, equals(<(int, int)>[(0, 3)]));
+      expect(codec.decode(bytes), equals(_b('0102')));
+      expect(offsets, equals(<int>[0]));
+    });
+
+    test('skips the decode tap for a variable-size codec when omitted', () {
+      final codec = tapCodecBytes<Uint8List, Uint8List>(
+        _bytesCodec(),
+        (_, _, _) {},
+      );
+      expect(codec.decode(_b('020102')), equals(_b('0102')));
     });
   });
 }
