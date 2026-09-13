@@ -69,6 +69,74 @@ The upstream clients and IDLs the current release was generated and verified aga
 
 <!-- upstream-pins:end -->
 
+## Upstream refs by release
+
+Which upstream ref each `solana_kit` release was generated and verified against. Cell values are the ref recorded in `config/reference-repos.json` at that release; `—` means the repository was not tracked yet. Branch pins include the short revision that was last checked, so they can be compared across releases even though the branch itself moves.
+
+<!-- upstream-repo-pins:start -->
+
+#### Solana program clients
+
+<!-- dprint-ignore -->
+| `solana_kit` | system       | token        | token-2022   | address-lookup-table | memo         | compute-budget | stake       | config                                | loader-v3   | loader-v4      | associated-token-account | account-compression             |
+| ------------ | ------------ | ------------ | ------------ | -------------------- | ------------ | -------------- | ----------- | ------------------------------------- | ----------- | -------------- | ------------------------ | ------------------------------- |
+| `0.9.3`      | `js@v0.14.1` | `js@v0.16.1` | `js@v0.16.1` | `js@v0.14.1`         | `js@v0.13.1` | `js@v0.18.1`   | `js@v0.9.1` | `solana-config-program-client@v1.1.0` | `js@v0.6.1` | `4f62fb2e25c8` | `program@v8.0.0`         | `ac-mainnet-tag @ b229799e395c` |
+| `0.9.2`      | `js@v0.14.1` | `js@v0.16.1` | `js@v0.16.1` | `js@v0.14.1`         | `js@v0.13.1` | `js@v0.18.1`   | `js@v0.9.1` | `solana-config-program-client@v1.1.0` | `js@v0.6.1` | `4f62fb2e25c8` | `program@v8.0.0`         | `ac-mainnet-tag @ b229799e395c` |
+| `0.9.1`      | `js@v0.14.0` | `js@v0.16.0` | `js@v0.16.0` | `js@v0.14.0`         | `js@v0.13.0` | `js@v0.18.0`   | `js@v0.9.0` | `solana-config-program-client@v1.1.0` | `js@v0.6.0` | `4f62fb2e25c8` | `program@v8.0.0`         | `ac-mainnet-tag @ b229799e395`  |
+| `0.9.0`      | `js@v0.14.0` | `js@v0.16.0` | `js@v0.16.0` | `js@v0.14.0`         | `js@v0.13.0` | `js@v0.18.0`   | `js@v0.9.0` | `solana-config-program-client@v1.1.0` | `js@v0.6.0` | `4f62fb2e25c8` | `program@v8.0.0`         | `ac-mainnet-tag @ b229799e395`  |
+| `0.8.0`      | `js@v0.13.0` | `js@v0.15.0` | `js@v0.14.1` | `js@v0.13.0`         | `js@v0.12.0` | `js@v0.17.0`   | `js@v0.8.0` | `solana-config-program-client@v1.1.0` | `js@v0.5.0` | `1d6335be`     | `program@v8.0.0`         | `ac-mainnet-tag @ b229799e395`  |
+| `0.7.0`      | `js@v0.13.0` | `js@v0.15.0` | `js@v0.14.1` | `js@v0.13.0`         | `js@v0.12.0` | `js@v0.17.0`   | `js@v0.8.0` | `solana-config-program-client@v1.1.0` | `js@v0.5.0` | `1d6335be`     | `program@v8.0.0`         | `ac-mainnet-tag @ b229799e395`  |
+| `0.6.0`      | `js@v0.12.2` | `js@v0.14.0` | `js@v0.12.0` | `js@v0.12.1`         | `js@v0.11.2` | `js@v0.16.0`   | `js@v0.7.2` | `solana-config-program-client@v1.1.0` | `js@v0.4.0` | `5df834d`      | `program@v8.0.0`         | `ac-mainnet-tag @ b229799e395`  |
+| `0.5.0`      | `js@v0.12.0` | `js@v0.13.0` | `js@v0.9.0`  | `js@v0.11.0`         | `js@v0.11.0` | `js@v0.15.0`   | `js@v0.6.0` | `solana-config-program-client@v1.1.0` | `js@v0.3.0` | `5df834d`      | `program@v8.0.0`         | `main`                          |
+| `0.4.0`      | `js@v0.12.0` | `js@v0.13.0` | `js@v0.9.0`  | `js@v0.11.0`         | `js@v0.11.0` | `js@v0.15.0`   | `js@v0.6.0` | `solana-config-program-client@v1.1.0` | `js@v0.3.0` | `5df834d`      | `program@v8.0.0`         | `main`                          |
+
+#### Solana Foundation programs
+
+<!-- dprint-ignore -->
+| `solana_kit` | subscriptions           | solana-attestation-service |
+| ------------ | ----------------------- | -------------------------- |
+| `0.9.3`      | `ts-client-v0.5.0`      | `5b64cf09843d`             |
+| `0.9.2`      | `ts-client-v0.5.0`      | —                          |
+| `0.9.1`      | `ts-client-v0.5.0`      | —                          |
+| `0.9.0`      | `ts-client-v0.5.0`      | —                          |
+| `0.8.0`      | `ts-client-v0.5.0`      | —                          |
+| `0.7.0`      | `ts-client-v0.5.0`      | —                          |
+| `0.6.0`      | `ts-client-v0.4.0-rc.2` | —                          |
+| `0.5.0`      | —                       | —                          |
+| `0.4.0`      | —                       | —                          |
+
+#### Metaplex programs
+
+<!-- dprint-ignore -->
+| `solana_kit` | mpl-bubblegum         | mpl-token-metadata | mpl-core       |
+| ------------ | --------------------- | ------------------ | -------------- |
+| `0.9.3`      | `6a6a77e341a3`        | `349e061053c6`     | `2181404f90c7` |
+| `0.9.2`      | `6a6a77e341a3`        | `349e061053c6`     | `2181404f90c7` |
+| `0.9.1`      | `6a6a77e341a3`        | `349e061053c6`     | `2181404f90c7` |
+| `0.9.0`      | `6a6a77e341a3`        | `349e061053c6`     | `2181404f90c7` |
+| `0.8.0`      | `68e4bc204099`        | —                  | —              |
+| `0.7.0`      | `68e4bc204099`        | —                  | —              |
+| `0.6.0`      | `main @ 02c16414e4e0` | —                  | —              |
+| `0.5.0`      | `main`                | —                  | —              |
+| `0.4.0`      | `main`                | —                  | —              |
+
+#### Wallet and SDK references
+
+<!-- dprint-ignore -->
+| `solana_kit` | mobile-wallet-adapter | helius-sdk     | squads-v4      | kit                   | espresso-cash-public    |
+| ------------ | --------------------- | -------------- | -------------- | --------------------- | ----------------------- |
+| `0.9.3`      | `8642fa3e1edb`        | `ad8f796d81be` | `af94153ff77a` | `main @ 6c1bc6e6aa96` | `master @ 77150680d6bf` |
+| `0.9.2`      | `8642fa3e1edb`        | `ad8f796d81be` | `af94153ff77a` | `main @ 6c1bc6e6aa96` | `master @ 77150680d6bf` |
+| `0.9.1`      | `8642fa3e1edb`        | `ad8f796d81be` | `af94153ff77a` | `main @ bb54243d8a57` | `master @ 77150680d6bf` |
+| `0.9.0`      | `8642fa3e1edb`        | `ad8f796d81be` | `af94153ff77a` | `main @ bb54243d8a57` | `master @ 77150680d6bf` |
+| `0.8.0`      | `8642fa3e1edb`        | `4c0c55b86eab` | —              | `main @ 661554c4e85f` | `master @ 77150680d6bf` |
+| `0.7.0`      | `8642fa3e1edb`        | `4c0c55b86eab` | —              | `main @ 661554c4e85f` | `master @ 77150680d6bf` |
+| `0.6.0`      | `main @ bed51fa2f177` | `4c0c55b86eab` | —              | `main @ 6cd177b14bed` | `master @ 77150680d6bf` |
+| `0.5.0`      | `main`                | `4c0c55b86eab` | —              | `main`                | `main`                  |
+| `0.4.0`      | `main`                | —              | —              | `main`                | `main`                  |
+
+<!-- upstream-repo-pins:end -->
+
 <!-- {=parityStatusCalloutSection|replace:"PARITY_STATUS_TOKEN":"Executable parity currently covers stable, CI-cheap surfaces: address/signature validation, derivation, transaction message compilation, wire serialization, and selected invalid-input error codes."|replace:"PARITY_NEXT_TOKEN":"Live RPC timing, subscription transport behavior, mobile platform adapters, and other intentionally documented divergences remain tracked separately rather than being implied by the current harness."} -->
 
 > **Parity status**

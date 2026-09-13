@@ -23,9 +23,9 @@ void main(List<String> args) {
     return;
   }
 
-  final parityTable = _renderParityTable(
-    _readJsonObject('config/upstream-versions.json'),
-  );
+  final parityData = _readJsonObject('config/upstream-versions.json');
+  final parityTable = _renderParityTable(parityData);
+  final repoPinTables = _renderRepoPinTables(parityData);
   final pinsTable = _renderPinsTable(
     _readJsonObject('config/reference-repos.json'),
   );
@@ -34,6 +34,7 @@ void main(List<String> args) {
     _Target('readme.md', {'upstream-parity': parityTable}),
     _Target('docs/site/content/reference/upstream-compatibility.md', {
       'upstream-parity': parityTable,
+      'upstream-repo-pins': repoPinTables,
       'upstream-pins': pinsTable,
     }),
   ];
@@ -186,6 +187,77 @@ int _compareVersions(String a, String b) {
     if (comparison != 0) return comparison;
   }
   return 0;
+}
+
+/// Renders one table per upstream family, showing the ref each `solana_kit`
+/// release was generated and verified against.
+String _renderRepoPinTables(Map<String, Object?> parityData) {
+  final families = (parityData['families'] as List<Object?>? ?? const [])
+      .cast<Map<String, Object?>>();
+  final rows = (parityData['repoPins'] as List<Object?>? ?? const [])
+      .cast<Map<String, Object?>>();
+  if (families.isEmpty || rows.isEmpty) {
+    stderr.writeln(
+      'config/upstream-versions.json declares no families or repoPins rows.',
+    );
+    exit(2);
+  }
+
+  final releases = rows.map((row) => '${row['solanaKit']}').toList();
+  // A blank line separates the block marker from the first heading.
+  final buffer = StringBuffer()..write('\n\n');
+  for (final family in families) {
+    final repos = (family['repos'] as List<Object?>? ?? const [])
+        .cast<String>();
+    final missing = repos.where(
+      (repo) => !rows.any(
+        (row) => (row['pins'] as Map<String, Object?>? ?? const {}).containsKey(
+          repo,
+        ),
+      ),
+    );
+    if (missing.isNotEmpty) {
+      stderr.writeln(
+        'Family "${family['title']}" references repos with no pins: '
+        '${missing.join(', ')}.',
+      );
+      exit(2);
+    }
+
+    buffer
+      ..writeln('#### ${family['title']}')
+      ..writeln(
+        _table(
+          header: ['`solana_kit`', ...repos],
+          rows: [
+            for (final row in rows)
+              <String>[
+                '`${row['solanaKit']}`',
+                for (final repo in repos)
+                  switch ((row['pins'] as Map<String, Object?>? ??
+                      const {})[repo]) {
+                    final String pin => '`$pin`',
+                    _ => '—',
+                  },
+              ],
+          ],
+        ).trimRight(),
+      )
+      ..writeln();
+  }
+
+  // Validate that releases run newest first so the matrices stay readable.
+  for (var index = 1; index < releases.length; index++) {
+    if (_compareVersions(releases[index], releases[index - 1]) >= 0) {
+      stderr.writeln(
+        'repoPins rows must be ordered newest first: ${releases[index]} '
+        'follows ${releases[index - 1]}.',
+      );
+      exit(2);
+    }
+  }
+
+  return buffer.toString();
 }
 
 String _renderPinsTable(Map<String, Object?> referenceRepos) {

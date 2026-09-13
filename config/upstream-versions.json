@@ -1,5 +1,5 @@
 {
-  "comment": "Historical parity between this workspace's Dart packages and the upstream libraries they port. `kitParity` is keyed by the published `solana_kit` version, which is the workspace's compatibility marker; the other packages version independently. Add a row when an upstream sync is released. `jsKit` is null for releases made before the workspace began tracking upstream.",
+  "comment": "Historical parity between this workspace Dart packages and the upstream libraries they port. `kitParity` is keyed by the published `solana_kit` version, which is the workspace compatibility marker; the other packages version independently. `repoPins` records the upstream ref each release was generated and verified against, keyed by the same `solana_kit` version. Add rows when an upstream sync is released.",
   "kitParity": [
     {
       "solanaKit": "0.9.3",
@@ -65,6 +65,269 @@
       "solanaKit": "0.1.0",
       "jsKit": null,
       "released": "2026-02-25"
+    }
+  ],
+  "families": [
+    {
+      "title": "Solana program clients",
+      "repos": [
+        "system",
+        "token",
+        "token-2022",
+        "address-lookup-table",
+        "memo",
+        "compute-budget",
+        "stake",
+        "config",
+        "loader-v3",
+        "loader-v4",
+        "associated-token-account",
+        "account-compression"
+      ]
+    },
+    {
+      "title": "Solana Foundation programs",
+      "repos": [
+        "subscriptions",
+        "solana-attestation-service"
+      ]
+    },
+    {
+      "title": "Metaplex programs",
+      "repos": [
+        "mpl-bubblegum",
+        "mpl-token-metadata",
+        "mpl-core"
+      ]
+    },
+    {
+      "title": "Wallet and SDK references",
+      "repos": [
+        "mobile-wallet-adapter",
+        "helius-sdk",
+        "squads-v4",
+        "kit",
+        "espresso-cash-public"
+      ]
+    }
+  ],
+  "repoPins": [
+    {
+      "solanaKit": "0.9.3",
+      "pins": {
+        "kit": "main @ 6c1bc6e6aa96",
+        "espresso-cash-public": "master @ 77150680d6bf",
+        "helius-sdk": "ad8f796d81be",
+        "mobile-wallet-adapter": "8642fa3e1edb",
+        "system": "js@v0.14.1",
+        "token": "js@v0.16.1",
+        "token-2022": "js@v0.16.1",
+        "subscriptions": "ts-client-v0.5.0",
+        "associated-token-account": "program@v8.0.0",
+        "address-lookup-table": "js@v0.14.1",
+        "memo": "js@v0.13.1",
+        "compute-budget": "js@v0.18.1",
+        "stake": "js@v0.9.1",
+        "config": "solana-config-program-client@v1.1.0",
+        "loader-v3": "js@v0.6.1",
+        "loader-v4": "4f62fb2e25c8",
+        "account-compression": "ac-mainnet-tag @ b229799e395c",
+        "mpl-bubblegum": "6a6a77e341a3",
+        "mpl-token-metadata": "349e061053c6",
+        "mpl-core": "2181404f90c7",
+        "squads-v4": "af94153ff77a",
+        "solana-attestation-service": "5b64cf09843d"
+      }
+    },
+    {
+      "solanaKit": "0.9.2",
+      "pins": {
+        "kit": "main @ 6c1bc6e6aa96",
+        "espresso-cash-public": "master @ 77150680d6bf",
+        "helius-sdk": "ad8f796d81be",
+        "mobile-wallet-adapter": "8642fa3e1edb",
+        "system": "js@v0.14.1",
+        "token": "js@v0.16.1",
+        "token-2022": "js@v0.16.1",
+        "subscriptions": "ts-client-v0.5.0",
+        "associated-token-account": "program@v8.0.0",
+        "address-lookup-table": "js@v0.14.1",
+        "memo": "js@v0.13.1",
+        "compute-budget": "js@v0.18.1",
+        "stake": "js@v0.9.1",
+        "config": "solana-config-program-client@v1.1.0",
+        "loader-v3": "js@v0.6.1",
+        "loader-v4": "4f62fb2e25c8",
+        "account-compression": "ac-mainnet-tag @ b229799e395c",
+        "mpl-bubblegum": "6a6a77e341a3",
+        "mpl-token-metadata": "349e061053c6",
+        "mpl-core": "2181404f90c7",
+        "squads-v4": "af94153ff77a"
+      }
+    },
+    {
+      "solanaKit": "0.9.1",
+      "pins": {
+        "kit": "main @ bb54243d8a57",
+        "espresso-cash-public": "master @ 77150680d6bf",
+        "helius-sdk": "ad8f796d81be",
+        "mobile-wallet-adapter": "8642fa3e1edb",
+        "system": "js@v0.14.0",
+        "token": "js@v0.16.0",
+        "token-2022": "js@v0.16.0",
+        "subscriptions": "ts-client-v0.5.0",
+        "associated-token-account": "program@v8.0.0",
+        "address-lookup-table": "js@v0.14.0",
+        "memo": "js@v0.13.0",
+        "compute-budget": "js@v0.18.0",
+        "stake": "js@v0.9.0",
+        "config": "solana-config-program-client@v1.1.0",
+        "loader-v3": "js@v0.6.0",
+        "loader-v4": "4f62fb2e25c8",
+        "account-compression": "ac-mainnet-tag @ b229799e395",
+        "mpl-bubblegum": "6a6a77e341a3",
+        "mpl-token-metadata": "349e061053c6",
+        "mpl-core": "2181404f90c7",
+        "squads-v4": "af94153ff77a"
+      }
+    },
+    {
+      "solanaKit": "0.9.0",
+      "pins": {
+        "kit": "main @ bb54243d8a57",
+        "espresso-cash-public": "master @ 77150680d6bf",
+        "helius-sdk": "ad8f796d81be",
+        "mobile-wallet-adapter": "8642fa3e1edb",
+        "system": "js@v0.14.0",
+        "token": "js@v0.16.0",
+        "token-2022": "js@v0.16.0",
+        "subscriptions": "ts-client-v0.5.0",
+        "associated-token-account": "program@v8.0.0",
+        "address-lookup-table": "js@v0.14.0",
+        "memo": "js@v0.13.0",
+        "compute-budget": "js@v0.18.0",
+        "stake": "js@v0.9.0",
+        "config": "solana-config-program-client@v1.1.0",
+        "loader-v3": "js@v0.6.0",
+        "loader-v4": "4f62fb2e25c8",
+        "account-compression": "ac-mainnet-tag @ b229799e395",
+        "mpl-bubblegum": "6a6a77e341a3",
+        "mpl-token-metadata": "349e061053c6",
+        "mpl-core": "2181404f90c7",
+        "squads-v4": "af94153ff77a"
+      }
+    },
+    {
+      "solanaKit": "0.8.0",
+      "pins": {
+        "kit": "main @ 661554c4e85f",
+        "espresso-cash-public": "master @ 77150680d6bf",
+        "helius-sdk": "4c0c55b86eab",
+        "mobile-wallet-adapter": "8642fa3e1edb",
+        "system": "js@v0.13.0",
+        "token": "js@v0.15.0",
+        "token-2022": "js@v0.14.1",
+        "subscriptions": "ts-client-v0.5.0",
+        "associated-token-account": "program@v8.0.0",
+        "address-lookup-table": "js@v0.13.0",
+        "memo": "js@v0.12.0",
+        "compute-budget": "js@v0.17.0",
+        "stake": "js@v0.8.0",
+        "config": "solana-config-program-client@v1.1.0",
+        "loader-v3": "js@v0.5.0",
+        "loader-v4": "1d6335be",
+        "account-compression": "ac-mainnet-tag @ b229799e395",
+        "mpl-bubblegum": "68e4bc204099"
+      }
+    },
+    {
+      "solanaKit": "0.7.0",
+      "pins": {
+        "kit": "main @ 661554c4e85f",
+        "espresso-cash-public": "master @ 77150680d6bf",
+        "helius-sdk": "4c0c55b86eab",
+        "mobile-wallet-adapter": "8642fa3e1edb",
+        "system": "js@v0.13.0",
+        "token": "js@v0.15.0",
+        "token-2022": "js@v0.14.1",
+        "subscriptions": "ts-client-v0.5.0",
+        "associated-token-account": "program@v8.0.0",
+        "address-lookup-table": "js@v0.13.0",
+        "memo": "js@v0.12.0",
+        "compute-budget": "js@v0.17.0",
+        "stake": "js@v0.8.0",
+        "config": "solana-config-program-client@v1.1.0",
+        "loader-v3": "js@v0.5.0",
+        "loader-v4": "1d6335be",
+        "account-compression": "ac-mainnet-tag @ b229799e395",
+        "mpl-bubblegum": "68e4bc204099"
+      }
+    },
+    {
+      "solanaKit": "0.6.0",
+      "pins": {
+        "kit": "main @ 6cd177b14bed",
+        "espresso-cash-public": "master @ 77150680d6bf",
+        "helius-sdk": "4c0c55b86eab",
+        "mobile-wallet-adapter": "main @ bed51fa2f177",
+        "system": "js@v0.12.2",
+        "token": "js@v0.14.0",
+        "token-2022": "js@v0.12.0",
+        "subscriptions": "ts-client-v0.4.0-rc.2",
+        "associated-token-account": "program@v8.0.0",
+        "address-lookup-table": "js@v0.12.1",
+        "memo": "js@v0.11.2",
+        "compute-budget": "js@v0.16.0",
+        "stake": "js@v0.7.2",
+        "config": "solana-config-program-client@v1.1.0",
+        "loader-v3": "js@v0.4.0",
+        "loader-v4": "5df834d",
+        "account-compression": "ac-mainnet-tag @ b229799e395",
+        "mpl-bubblegum": "main @ 02c16414e4e0"
+      }
+    },
+    {
+      "solanaKit": "0.5.0",
+      "pins": {
+        "kit": "main",
+        "espresso-cash-public": "main",
+        "helius-sdk": "4c0c55b86eab",
+        "mobile-wallet-adapter": "main",
+        "system": "js@v0.12.0",
+        "token": "js@v0.13.0",
+        "token-2022": "js@v0.9.0",
+        "associated-token-account": "program@v8.0.0",
+        "address-lookup-table": "js@v0.11.0",
+        "memo": "js@v0.11.0",
+        "compute-budget": "js@v0.15.0",
+        "stake": "js@v0.6.0",
+        "config": "solana-config-program-client@v1.1.0",
+        "loader-v3": "js@v0.3.0",
+        "loader-v4": "5df834d",
+        "account-compression": "main",
+        "mpl-bubblegum": "main"
+      }
+    },
+    {
+      "solanaKit": "0.4.0",
+      "pins": {
+        "kit": "main",
+        "espresso-cash-public": "main",
+        "mobile-wallet-adapter": "main",
+        "system": "js@v0.12.0",
+        "token": "js@v0.13.0",
+        "token-2022": "js@v0.9.0",
+        "associated-token-account": "program@v8.0.0",
+        "address-lookup-table": "js@v0.11.0",
+        "memo": "js@v0.11.0",
+        "compute-budget": "js@v0.15.0",
+        "stake": "js@v0.6.0",
+        "config": "solana-config-program-client@v1.1.0",
+        "loader-v3": "js@v0.3.0",
+        "loader-v4": "5df834d",
+        "account-compression": "main",
+        "mpl-bubblegum": "main"
+      }
     }
   ]
 }
