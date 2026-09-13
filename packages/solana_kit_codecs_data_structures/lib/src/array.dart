@@ -120,6 +120,7 @@ Decoder<List<T>> getArrayDecoder<T>(
   ArrayLikeCodecSize? size,
   String? description,
   int maxItems = 1000000,
+  bool requireSizePrefix = true,
 }) {
   if (maxItems < 0) {
     throw ArgumentError.value(maxItems, 'maxItems', 'must not be negative');
@@ -139,7 +140,14 @@ Decoder<List<T>> getArrayDecoder<T>(
     final array = <T>[];
 
     if (effectiveSize is PrefixedArraySize && offset >= bytes.length) {
-      _throwInvalidArraySize(description, 'missing size prefix');
+      // Upstream `@solana/kit` decodes an exhausted byte array as an empty
+      // collection so arrays can be appended to existing layouts. This port
+      // throws unless the caller opts out, because a silently empty
+      // collection hides truncated input.
+      if (requireSizePrefix) {
+        _throwInvalidArraySize(description, 'missing size prefix');
+      }
+      return (array, offset);
     }
 
     if (effectiveSize is RemainderArraySize) {
@@ -211,6 +219,7 @@ Codec<List<T>, List<T>> getArrayCodec<T>(
   ArrayLikeCodecSize? size,
   String? description,
   int maxItems = 1000000,
+  bool requireSizePrefix = true,
 }) {
   // Determine matching encoder/decoder size configs.
   final ArrayLikeCodecSize? encoderSize;
@@ -245,6 +254,7 @@ Codec<List<T>, List<T>> getArrayCodec<T>(
       size: decoderSize,
       description: description,
       maxItems: maxItems,
+      requireSizePrefix: requireSizePrefix,
     ),
   );
 }
