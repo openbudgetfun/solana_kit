@@ -121,11 +121,13 @@ void main() {
 | `getU32Codec`      | 4 bytes   | `int`     |
 | `getU64Codec`      | 8 bytes   | `BigInt`  |
 | `getU128Codec`     | 16 bytes  | `BigInt`  |
+| `getU256Codec`     | 32 bytes  | `BigInt`  |
 | `getI8Codec`       | 1 byte    | `int`     |
 | `getI16Codec`      | 2 bytes   | `int`     |
 | `getI32Codec`      | 4 bytes   | `int`     |
 | `getI64Codec`      | 8 bytes   | `BigInt`  |
 | `getI128Codec`     | 16 bytes  | `BigInt`  |
+| `getI256Codec`     | 32 bytes  | `BigInt`  |
 | `getF32Codec`      | 4 bytes   | `double`  |
 | `getF64Codec`      | 8 bytes   | `double`  |
 | `getShortU16Codec` | 1-3 bytes | `int`     |
