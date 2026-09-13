@@ -279,10 +279,17 @@ jobs:
           path: coverage/flags
       - name: upload package coverage flag to Codecov
         uses: codecov/codecov-action@a99c28d3f0da835de33ff2feb2e15691c7b9641f # v7
+        # Flag posts are informational metadata, but Codecov's OIDC token
+        # endpoint and upload API intermittently time out, and the action's
+        # internal OIDC step fails the job regardless of fail_ci_if_error
+        # (2026-09-13 main: "Failed to get ID Token" on codecs_strings).
+        # Report generation and the primary upload stay gated by the
+        # coverage job, so a flaky flag post must not red CI.
+        continue-on-error: true
         with:
           files: ./coverage/flags/${{ matrix.flag }}.lcov
           disable_search: true
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           flags: ${{ matrix.flag }}
           name: ${{ matrix.flag }}
           token: ${{ secrets.CODECOV_TOKEN }}
