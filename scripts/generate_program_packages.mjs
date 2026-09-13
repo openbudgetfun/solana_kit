@@ -235,9 +235,18 @@ function prepareStakeRoot(root) {
   const typesByName = new Map(originalTypes.map((node) => [node.name, node]));
   const discriminatorType = numberTypeNode("u32");
 
+  // `epoch` and `unixTimestamp` are aliases the renderer needs, but the
+  // Codama v1.8.0 IDL already declares them. Only synthesize the ones the IDL
+  // is missing so older revisions keep working without producing a second
+  // render map for the same generated path.
+  const syntheticTypes = [
+    ["epoch", numberTypeNode("u64")],
+    ["unixTimestamp", numberTypeNode("i64")],
+  ]
+    .filter(([name]) => !typesByName.has(name))
+    .map(([name, type]) => definedTypeNode({ name, type }));
+
   const definedTypes = [
-    definedTypeNode({ name: "epoch", type: numberTypeNode("u64") }),
-    definedTypeNode({ name: "unixTimestamp", type: numberTypeNode("i64") }),
     ...originalTypes.map((node) => {
       if (!["stakeState", "stakeStateV2"].includes(node.name)) {
         return node;
@@ -245,6 +254,7 @@ function prepareStakeRoot(root) {
 
       return { ...node, type: { ...node.type, size: discriminatorType } };
     }),
+    ...syntheticTypes,
   ];
 
   const instructions = (program.instructions ?? [])
@@ -280,6 +290,10 @@ function prepareStakeRoot(root) {
       }),
     }));
 
+  // The IDL declares `stakeStateAccount` without a size, but the generated
+  // output exposes `stakeStateAccountSize`, so the synthesized node is kept
+  // and the IDL's own node replaced. Appending instead of replacing produced
+  // two render maps for `accounts/stake_state_account.dart`.
   const stakeAccount = accountNode({
     name: "stakeStateAccount",
     size: 200,
@@ -291,11 +305,18 @@ function prepareStakeRoot(root) {
     ]),
   });
 
+  const accounts = [
+    ...(program.accounts ?? []).filter(
+      (node) => node.name !== "stakeStateAccount",
+    ),
+    stakeAccount,
+  ];
+
   return {
     ...root,
     program: {
       ...program,
-      accounts: [...(program.accounts ?? []), stakeAccount],
+      accounts,
       definedTypes,
       instructions,
     },
