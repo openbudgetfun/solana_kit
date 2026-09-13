@@ -8,8 +8,7 @@ import 'package:solana_kit_errors/src/codes.dart';
 const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode.accountsAccountNotFound:
       r'Account not found at address: $address',
-  SolanaErrorCode.accountsExpectedAllAccountsToBeDecoded:
-      r'Not all accounts were decoded. Encoded accounts found at addresses: $addresses.',
+  SolanaErrorCode.accountsExpectedAllAccountsToBeDecoded: r'Not all accounts were decoded. Encoded accounts found at addresses: $addresses.',
   SolanaErrorCode.accountsExpectedDecodedAccount:
       r'Expected decoded account at address: $address',
   SolanaErrorCode.accountsFailedToDecodeAccount:
@@ -20,114 +19,75 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'Unable to find a viable program address bump seed.',
   SolanaErrorCode.addressesInvalidBase58EncodedAddress:
       r'$putativeAddress is not a base58-encoded address.',
-  SolanaErrorCode.addressesInvalidByteLength:
-      r'Expected base58 encoded address to decode to a byte array of length 32. Actual length: $actualLength.',
+  SolanaErrorCode.addressesInvalidByteLength: r'Expected base58 encoded address to decode to a byte array of length 32. Actual length: $actualLength.',
   SolanaErrorCode.addressesInvalidEd25519PublicKey:
       'The CryptoKey must be an Ed25519 public key.',
   SolanaErrorCode.addressesInvalidOffCurveAddress:
       r'$putativeOffCurveAddress is not a base58-encoded off-curve address.',
   SolanaErrorCode.addressesInvalidSeedsPointOnCurve:
       'Invalid seeds; point must fall off the Ed25519 curve.',
-  SolanaErrorCode.addressesMalformedPda:
-      'Expected given program derived address to have the following format: [Address, ProgramDerivedAddressBump].',
-  SolanaErrorCode.addressesMaxNumberOfPdaSeedsExceeded:
-      r'A maximum of $maxSeeds seeds, including the bump seed, may be supplied when creating an address. Received: $actual.',
-  SolanaErrorCode.addressesMaxPdaSeedLengthExceeded:
-      r'The seed at index $index with length $actual exceeds the maximum length of $maxSeedLength bytes.',
-  SolanaErrorCode.addressesPdaBumpSeedOutOfRange:
-      r'Expected program derived address bump to be in the range [0, 255], got: $bump.',
+  SolanaErrorCode.addressesMalformedPda: 'Expected given program derived address to have the following format: [Address, ProgramDerivedAddressBump].',
+  SolanaErrorCode.addressesMaxNumberOfPdaSeedsExceeded: r'A maximum of $maxSeeds seeds, including the bump seed, may be supplied when creating an address. Received: $actual.',
+  SolanaErrorCode.addressesMaxPdaSeedLengthExceeded: r'The seed at index $index with length $actual exceeds the maximum length of $maxSeedLength bytes.',
+  SolanaErrorCode.addressesPdaBumpSeedOutOfRange: r'Expected program derived address bump to be in the range [0, 255], got: $bump.',
   SolanaErrorCode.addressesPdaEndsWithPdaMarker:
       'Program address cannot end with PDA marker.',
-  SolanaErrorCode.addressesStringLengthOutOfRange:
-      r'Expected base58-encoded address string of length in the range [32, 44]. Actual length: $actualLength.',
-  SolanaErrorCode.blockhashStringLengthOutOfRange:
-      r'Expected base58-encoded blockhash string of length in the range [32, 44]. Actual length: $actualLength.',
-  SolanaErrorCode.blockHeightExceeded:
-      'The network has progressed past the last block for which this transaction could have been committed.',
+  SolanaErrorCode.addressesStringLengthOutOfRange: r'Expected base58-encoded address string of length in the range [32, 44]. Actual length: $actualLength.',
+  SolanaErrorCode.blockhashStringLengthOutOfRange: r'Expected base58-encoded blockhash string of length in the range [32, 44]. Actual length: $actualLength.',
+  SolanaErrorCode.blockHeightExceeded: 'The network has progressed past the last block for which this transaction could have been committed.',
   SolanaErrorCode.codecsCannotDecodeEmptyByteArray:
       r'Codec [$codecDescription] cannot decode empty byte arrays.',
-  SolanaErrorCode.codecsCannotUseLexicalValuesAsEnumDiscriminators:
-      r'Enum codec cannot use lexical values [$stringValues] as discriminators. Either remove all lexical values or set useValuesAsDiscriminators to false.',
-  SolanaErrorCode.codecsEncodedBytesMustNotIncludeSentinel:
-      r'Sentinel [$hexSentinel] must not be present in encoded bytes [$hexEncodedBytes].',
-  SolanaErrorCode.codecsEncoderDecoderFixedSizeMismatch:
-      r'Encoder and decoder must have the same fixed size, got [$encoderFixedSize] and [$decoderFixedSize].',
-  SolanaErrorCode.codecsEncoderDecoderMaxSizeMismatch:
-      r'Encoder and decoder must have the same max size, got [$encoderMaxSize] and [$decoderMaxSize].',
+  SolanaErrorCode.codecsCannotUseLexicalValuesAsEnumDiscriminators: r'Enum codec cannot use lexical values [$stringValues] as discriminators. Either remove all lexical values or set useValuesAsDiscriminators to false.',
+  SolanaErrorCode.codecsEncodedBytesMustNotIncludeSentinel: r'Sentinel [$hexSentinel] must not be present in encoded bytes [$hexEncodedBytes].',
+  SolanaErrorCode.codecsEncoderDecoderFixedSizeMismatch: r'Encoder and decoder must have the same fixed size, got [$encoderFixedSize] and [$decoderFixedSize].',
+  SolanaErrorCode.codecsEncoderDecoderMaxSizeMismatch: r'Encoder and decoder must have the same max size, got [$encoderMaxSize] and [$decoderMaxSize].',
   SolanaErrorCode.codecsEncoderDecoderSizeCompatibilityMismatch:
       'Encoder and decoder must either both be fixed-size or variable-size.',
-  SolanaErrorCode.codecsEnumDiscriminatorOutOfRange:
-      r'Enum discriminator out of range. Expected a number in [$formattedValidDiscriminators], got $discriminator.',
-  SolanaErrorCode.codecsExpectedDecoderToConsumeEntireByteArray:
-      r'This decoder expected a byte array of exactly $expectedLength bytes, but $numExcessBytes unexpected excess bytes remained after decoding. Are you sure that you have chosen the correct decoder for this data?',
-  SolanaErrorCode.codecsInvalidPatternMatchValue:
-      'Invalid pattern match value. The provided value does not match any of the specified patterns.',
-  SolanaErrorCode.codecsInvalidPatternMatchBytes:
-      'Invalid pattern match bytes. The provided byte array does not match any of the specified patterns.',
-  SolanaErrorCode.codecsStringContainsNullCharacters:
-      r'Decoded $encoding string contains null characters. Use compatibility stripping or preserve mode explicitly if this payload is expected.',
+  SolanaErrorCode.codecsEnumDiscriminatorOutOfRange: r'Enum discriminator out of range. Expected a number in [$formattedValidDiscriminators], got $discriminator.',
+  SolanaErrorCode.codecsExpectedDecoderToConsumeEntireByteArray: r'This decoder expected a byte array of exactly $expectedLength bytes, but $numExcessBytes unexpected excess bytes remained after decoding. Are you sure that you have chosen the correct decoder for this data?',
+  SolanaErrorCode.codecsInvalidPatternMatchValue: 'Invalid pattern match value. The provided value does not match any of the specified patterns.',
+  SolanaErrorCode.codecsInvalidPatternMatchBytes: 'Invalid pattern match bytes. The provided byte array does not match any of the specified patterns.',
+  SolanaErrorCode.codecsStringContainsNullCharacters: r'Decoded $encoding string contains null characters. Use compatibility stripping or preserve mode explicitly if this payload is expected.',
   SolanaErrorCode.codecsInvalidBoolean:
       r'Invalid boolean value. Expected 0 or 1, got $value.',
-  SolanaErrorCode.fixedPointsArithmeticOverflow:
-      r'Fixed-point operation `$operation` of kind `$kind` overflowed. Expected a raw bigint in [$min, $max], got $result.',
-  SolanaErrorCode.fixedPointsDivisionByZero:
-      r'Fixed-point division by zero for value of kind `$kind` ($signedness, $totalBits bits).',
-  SolanaErrorCode.fixedPointsFractionalBitsExceedTotalBits:
-      r'`fractionalBits` ($fractionalBits) must not exceed `totalBits` ($totalBits).',
+  SolanaErrorCode.fixedPointsArithmeticOverflow: r'Fixed-point operation `$operation` of kind `$kind` overflowed. Expected a raw bigint in [$min, $max], got $result.',
+  SolanaErrorCode.fixedPointsDivisionByZero: r'Fixed-point division by zero for value of kind `$kind` ($signedness, $totalBits bits).',
+  SolanaErrorCode.fixedPointsFractionalBitsExceedTotalBits: r'`fractionalBits` ($fractionalBits) must not exceed `totalBits` ($totalBits).',
   SolanaErrorCode.fixedPointsInvalidDecimals:
       r'Invalid `decimals`. Expected a non-negative integer, got $decimals.',
-  SolanaErrorCode.fixedPointsInvalidFractionalBits:
-      r'Invalid `fractionalBits`. Expected a non-negative integer, got $fractionalBits.',
+  SolanaErrorCode.fixedPointsInvalidFractionalBits: r'Invalid `fractionalBits`. Expected a non-negative integer, got $fractionalBits.',
   SolanaErrorCode.fixedPointsInvalidString:
       r'Invalid string `$input` for fixed-point value of kind `$kind`.',
   SolanaErrorCode.fixedPointsInvalidTotalBits:
       r'Invalid `totalBits`. Expected a positive integer, got $totalBits.',
-  SolanaErrorCode.fixedPointsInvalidZeroDenominatorRatio:
-      r'Invalid ratio $numerator/$denominator for fixed-point value of kind `$kind`. Denominator must be non-zero.',
-  SolanaErrorCode.fixedPointsMalformedRawValue:
-      r'Fixed-point value of kind `$kind` has a malformed `raw` field. Expected a bigint, got `$raw`.',
-  SolanaErrorCode.fixedPointsShapeMismatch:
-      r'Fixed-point `$operation` operation expected $expectedKind ($expectedSignedness, $expectedTotalBits bits, $expectedScale $expectedScaleLabel); got $actualKind ($actualSignedness, $actualTotalBits bits, $actualScale $actualScaleLabel).',
-  SolanaErrorCode.fixedPointsStrictModePrecisionLoss:
-      r'Fixed-point operation `$operation` of kind `$kind` cannot be performed exactly; pass a rounding mode other than `strict` to allow a rounded result.',
-  SolanaErrorCode.fixedPointsTotalBitsNotByteAligned:
-      r'Fixed-point codec of kind `$kind` requires `totalBits` to be a multiple of 8; got $totalBits.',
-  SolanaErrorCode.fixedPointsValueOutOfRange:
-      r'Fixed-point value of kind `$kind` is out of range for $signedness $totalBits-bit storage. Expected a raw bigint in [$min, $max], got $raw.',
-  SolanaErrorCode.fsUnsupportedEnvironment:
-      r'Filesystem operation `$operation` is not supported in this environment.',
+  SolanaErrorCode.fixedPointsInvalidZeroDenominatorRatio: r'Invalid ratio $numerator/$denominator for fixed-point value of kind `$kind`. Denominator must be non-zero.',
+  SolanaErrorCode.fixedPointsMalformedRawValue: r'Fixed-point value of kind `$kind` has a malformed `raw` field. Expected a bigint, got `$raw`.',
+  SolanaErrorCode.fixedPointsShapeMismatch: r'Fixed-point `$operation` operation expected $expectedKind ($expectedSignedness, $expectedTotalBits bits, $expectedScale $expectedScaleLabel); got $actualKind ($actualSignedness, $actualTotalBits bits, $actualScale $actualScaleLabel).',
+  SolanaErrorCode.fixedPointsStrictModePrecisionLoss: r'Fixed-point operation `$operation` of kind `$kind` cannot be performed exactly; pass a rounding mode other than `strict` to allow a rounded result.',
+  SolanaErrorCode.fixedPointsTotalBitsNotByteAligned: r'Fixed-point codec of kind `$kind` requires `totalBits` to be a multiple of 8; got $totalBits.',
+  SolanaErrorCode.fixedPointsValueOutOfRange: r'Fixed-point value of kind `$kind` is out of range for $signedness $totalBits-bit storage. Expected a raw bigint in [$min, $max], got $raw.',
+  SolanaErrorCode.fsUnsupportedEnvironment: r'Filesystem operation `$operation` is not supported in this environment.',
   SolanaErrorCode.codecsExpectedFixedLength:
       'Expected a fixed-size codec, got a variable-size one.',
-  SolanaErrorCode.codecsExpectedPositiveByteLength:
-      r'Codec [$codecDescription] expected a positive byte length, got $bytesLength.',
+  SolanaErrorCode.codecsExpectedPositiveByteLength: r'Codec [$codecDescription] expected a positive byte length, got $bytesLength.',
   SolanaErrorCode.codecsExpectedVariableLength:
       'Expected a variable-size codec, got a fixed-size one.',
-  SolanaErrorCode.codecsExpectedZeroValueToMatchItemFixedSize:
-      r'Codec [$codecDescription] expected zero-value [$hexZeroValue] to have the same size as the provided fixed-size item [$expectedSize bytes].',
+  SolanaErrorCode.codecsExpectedZeroValueToMatchItemFixedSize: r'Codec [$codecDescription] expected zero-value [$hexZeroValue] to have the same size as the provided fixed-size item [$expectedSize bytes].',
   SolanaErrorCode.codecsInvalidByteLength:
       r'Codec [$codecDescription] expected $expected bytes, got $bytesLength.',
-  SolanaErrorCode.codecsInvalidConstant:
-      r'Expected byte array constant [$hexConstant] to be present in data [$hexData] at offset [$offset].',
-  SolanaErrorCode.codecsInvalidDiscriminatedUnionVariant:
-      r'Invalid discriminated union variant. Expected one of [$variants], got $value.',
-  SolanaErrorCode.codecsInvalidEnumVariant:
-      r'Invalid enum variant. Expected one of [$stringValues] or a number in [$formattedNumericalValues], got $variant.',
-  SolanaErrorCode.codecsInvalidLiteralUnionVariant:
-      r'Invalid literal union variant. Expected one of [$variants], got $value.',
+  SolanaErrorCode.codecsInvalidConstant: r'Expected byte array constant [$hexConstant] to be present in data [$hexData] at offset [$offset].',
+  SolanaErrorCode.codecsInvalidDiscriminatedUnionVariant: r'Invalid discriminated union variant. Expected one of [$variants], got $value.',
+  SolanaErrorCode.codecsInvalidEnumVariant: r'Invalid enum variant. Expected one of [$stringValues] or a number in [$formattedNumericalValues], got $variant.',
+  SolanaErrorCode.codecsInvalidLiteralUnionVariant: r'Invalid literal union variant. Expected one of [$variants], got $value.',
   SolanaErrorCode.codecsInvalidNumberOfItems:
       r'Expected [$codecDescription] to have $expected items, got $actual.',
   SolanaErrorCode.codecsInvalidStringForBase:
       r'Invalid value $value for base $base with alphabet $alphabet.',
-  SolanaErrorCode.codecsLiteralUnionDiscriminatorOutOfRange:
-      r'Literal union discriminator out of range. Expected a number between $minRange and $maxRange, got $discriminator.',
-  SolanaErrorCode.codecsNumberOutOfRange:
-      r'Codec [$codecDescription] expected number to be in the range [$min, $max], got $value.',
-  SolanaErrorCode.codecsOffsetOutOfRange:
-      r'Codec [$codecDescription] expected offset to be in the range [0, $bytesLength], got $offset.',
-  SolanaErrorCode.codecsSentinelMissingInDecodedBytes:
-      r'Expected sentinel [$hexSentinel] to be present in decoded bytes [$hexDecodedBytes].',
-  SolanaErrorCode.codecsUnionVariantOutOfRange:
-      r'Union variant out of range. Expected an index between $minRange and $maxRange, got $variant.',
+  SolanaErrorCode.codecsLiteralUnionDiscriminatorOutOfRange: r'Literal union discriminator out of range. Expected a number between $minRange and $maxRange, got $discriminator.',
+  SolanaErrorCode.codecsNumberOutOfRange: r'Codec [$codecDescription] expected number to be in the range [$min, $max], got $value.',
+  SolanaErrorCode.codecsOffsetOutOfRange: r'Codec [$codecDescription] expected offset to be in the range [0, $bytesLength], got $offset.',
+  SolanaErrorCode.codecsSentinelMissingInDecodedBytes: r'Expected sentinel [$hexSentinel] to be present in decoded bytes [$hexDecodedBytes].',
+  SolanaErrorCode.codecsUnionVariantOutOfRange: r'Union variant out of range. Expected an index between $minRange and $maxRange, got $variant.',
   SolanaErrorCode.cryptoRandomValuesFunctionUnimplemented:
       'No random values implementation could be found.',
   SolanaErrorCode.failedToSendTransaction:
@@ -140,12 +100,10 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       r'Failed to sign transactions$causeMessages',
   SolanaErrorCode.instructionErrorAccountAlreadyInitialized:
       'Instruction requires an uninitialized account',
-  SolanaErrorCode.instructionErrorAccountBorrowFailed:
-      'Instruction tries to borrow reference for an account which is already borrowed',
+  SolanaErrorCode.instructionErrorAccountBorrowFailed: 'Instruction tries to borrow reference for an account which is already borrowed',
   SolanaErrorCode.instructionErrorAccountBorrowOutstanding:
       'Instruction left account with an outstanding borrowed reference',
-  SolanaErrorCode.instructionErrorAccountDataSizeChanged:
-      "Program other than the account's owner changed the size of the account data",
+  SolanaErrorCode.instructionErrorAccountDataSizeChanged: "Program other than the account's owner changed the size of the account data",
   SolanaErrorCode.instructionErrorAccountDataTooSmall:
       'Account data too small for instruction',
   SolanaErrorCode.instructionErrorAccountNotExecutable:
@@ -244,40 +202,24 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'The instruction does not have any accounts.',
   SolanaErrorCode.instructionExpectedToHaveData:
       'The instruction does not have any data.',
-  SolanaErrorCode.instructionProgramIdMismatch:
-      r'Expected instruction to have program address $expectedProgramAddress, got $actualProgramAddress.',
+  SolanaErrorCode.instructionProgramIdMismatch: r'Expected instruction to have program address $expectedProgramAddress, got $actualProgramAddress.',
   SolanaErrorCode.instructionPlansEmptyInstructionPlan:
       'The provided instruction plan is empty.',
-  SolanaErrorCode.instructionPlansExpectedSuccessfulTransactionPlanResult:
-      'Expected a successful transaction plan result. I.e. there is at least one failed or cancelled transaction in the plan.',
-  SolanaErrorCode.instructionPlansInvalidMaxInstructionsPerTransaction:
-      r'The configured maximum of $maxInstructions instructions per transaction is invalid. It must be a positive integer no greater than the transaction format limit of $transactionInstructionLimit instructions per transaction. Provide a `maxInstructionsPerTransaction` (on the transaction planner) or `maxInstructions` (on the message packer) value between 1 and $transactionInstructionLimit.',
-  SolanaErrorCode.instructionPlansMaxInstructionsPerTransactionExceeded:
-      r'Planning this transaction message would require $numInstructions instructions, which exceeds the configured maximum of $maxInstructions instructions per transaction. This limit is configurable, and intended to leave headroom for inner instructions which are included in the maximum instruction limit for transactions. Increase `maxInstructionsPerTransaction` on the transaction planner (or `maxInstructions` on the message packer) to allow more instructions per transaction.',
-  SolanaErrorCode.instructionPlansFailedSingleTransactionPlanResultNotFound:
-      'No failed transaction plan result was found in the provided transaction plan result.',
-  SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan:
-      'The provided transaction plan failed to execute. See the transactionPlanResult attribute for more details.',
-  SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan:
-      r'The provided message has insufficient capacity to accommodate the next instruction(s) in this plan. Expected at least $numBytesRequired free byte(s), got $numFreeBytes byte(s).',
-  SolanaErrorCode.instructionPlansMessagePackerAlreadyComplete:
-      'No more instructions to pack; the message packer has completed the instruction plan.',
-  SolanaErrorCode.instructionPlansNonDivisibleTransactionPlansNotSupported:
-      'This transaction plan executor does not support non-divisible sequential plans.',
-  SolanaErrorCode.instructionPlansUnexpectedInstructionPlan:
-      r'Unexpected instruction plan. Expected $expectedKind plan, got $actualKind plan.',
-  SolanaErrorCode.instructionPlansUnexpectedTransactionPlan:
-      r'Unexpected transaction plan. Expected $expectedKind plan, got $actualKind plan.',
-  SolanaErrorCode.instructionPlansUnexpectedTransactionPlanResult:
-      r'Unexpected transaction plan result. Expected $expectedKind plan, got $actualKind plan.',
-  SolanaErrorCode.invalidBlockhashByteLength:
-      r'Expected base58 encoded blockhash to decode to a byte array of length 32. Actual length: $actualLength.',
-  SolanaErrorCode.invalidNonce:
-      r'The nonce $expectedNonceValue is no longer valid. It has advanced to $actualNonceValue',
-  SolanaErrorCode.invariantViolationCachedAbortableIterableCacheEntryMissing:
-      r'Invariant violation: Found no abortable iterable cache entry for key $cacheKey. Please file an issue at https://sola.na/web3invariant',
-  SolanaErrorCode.invariantViolationDataPublisherChannelUnimplemented:
-      r'Invariant violation: This data publisher does not publish to the channel named $channelName. Supported channels include $supportedChannelNames.',
+  SolanaErrorCode.instructionPlansExpectedSuccessfulTransactionPlanResult: 'Expected a successful transaction plan result. I.e. there is at least one failed or cancelled transaction in the plan.',
+  SolanaErrorCode.instructionPlansInvalidMaxInstructionsPerTransaction: r'The configured maximum of $maxInstructions instructions per transaction is invalid. It must be a positive integer no greater than the transaction format limit of $transactionInstructionLimit instructions per transaction. Provide a `maxInstructionsPerTransaction` (on the transaction planner) or `maxInstructions` (on the message packer) value between 1 and $transactionInstructionLimit.',
+  SolanaErrorCode.instructionPlansMaxInstructionsPerTransactionExceeded: r'Planning this transaction message would require $numInstructions instructions, which exceeds the configured maximum of $maxInstructions instructions per transaction. This limit is configurable, and intended to leave headroom for inner instructions which are included in the maximum instruction limit for transactions. Increase `maxInstructionsPerTransaction` on the transaction planner (or `maxInstructions` on the message packer) to allow more instructions per transaction.',
+  SolanaErrorCode.instructionPlansFailedSingleTransactionPlanResultNotFound: 'No failed transaction plan result was found in the provided transaction plan result.',
+  SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan: 'The provided transaction plan failed to execute. See the transactionPlanResult attribute for more details.',
+  SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan: r'The provided message has insufficient capacity to accommodate the next instruction(s) in this plan. Expected at least $numBytesRequired free byte(s), got $numFreeBytes byte(s).',
+  SolanaErrorCode.instructionPlansMessagePackerAlreadyComplete: 'No more instructions to pack; the message packer has completed the instruction plan.',
+  SolanaErrorCode.instructionPlansNonDivisibleTransactionPlansNotSupported: 'This transaction plan executor does not support non-divisible sequential plans.',
+  SolanaErrorCode.instructionPlansUnexpectedInstructionPlan: r'Unexpected instruction plan. Expected $expectedKind plan, got $actualKind plan.',
+  SolanaErrorCode.instructionPlansUnexpectedTransactionPlan: r'Unexpected transaction plan. Expected $expectedKind plan, got $actualKind plan.',
+  SolanaErrorCode.instructionPlansUnexpectedTransactionPlanResult: r'Unexpected transaction plan result. Expected $expectedKind plan, got $actualKind plan.',
+  SolanaErrorCode.invalidBlockhashByteLength: r'Expected base58 encoded blockhash to decode to a byte array of length 32. Actual length: $actualLength.',
+  SolanaErrorCode.invalidNonce: r'The nonce $expectedNonceValue is no longer valid. It has advanced to $actualNonceValue',
+  SolanaErrorCode.invariantViolationCachedAbortableIterableCacheEntryMissing: r'Invariant violation: Found no abortable iterable cache entry for key $cacheKey. Please file an issue at https://sola.na/web3invariant',
+  SolanaErrorCode.invariantViolationDataPublisherChannelUnimplemented: r'Invariant violation: This data publisher does not publish to the channel named $channelName. Supported channels include $supportedChannelNames.',
   SolanaErrorCode.invariantViolationInvalidInstructionPlanKind:
       r'Invalid instruction plan kind: $kind.',
   SolanaErrorCode.invariantViolationInvalidTransactionPlanKind:
@@ -285,20 +227,15 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode
           .invariantViolationSubscriptionIteratorMustNotPollBeforeResolvingExistingMessagePromise:
       'Invariant violation: WebSocket message iterator state is corrupt; iterated without first resolving existing message promise. Please file an issue at https://sola.na/web3invariant',
-  SolanaErrorCode.invariantViolationSubscriptionIteratorStateMissing:
-      'Invariant violation: WebSocket message iterator is missing state storage. Please file an issue at https://sola.na/web3invariant',
-  SolanaErrorCode.invariantViolationSwitchMustBeExhaustive:
-      r'Invariant violation: Switch statement non-exhaustive. Received unexpected value $unexpectedValue. Please file an issue at https://sola.na/web3invariant',
+  SolanaErrorCode.invariantViolationSubscriptionIteratorStateMissing: 'Invariant violation: WebSocket message iterator is missing state storage. Please file an issue at https://sola.na/web3invariant',
+  SolanaErrorCode.invariantViolationSwitchMustBeExhaustive: r'Invariant violation: Switch statement non-exhaustive. Received unexpected value $unexpectedValue. Please file an issue at https://sola.na/web3invariant',
   SolanaErrorCode.jsonRpcInternalError:
       r'JSON-RPC error: Internal JSON-RPC error ($__serverMessage)',
   SolanaErrorCode.jsonRpcInvalidParams:
       r'JSON-RPC error: Invalid method parameter(s) ($__serverMessage)',
-  SolanaErrorCode.jsonRpcInvalidRequest:
-      r'JSON-RPC error: The JSON sent is not a valid Request object ($__serverMessage)',
-  SolanaErrorCode.jsonRpcMethodNotFound:
-      r'JSON-RPC error: The method does not exist / is not available ($__serverMessage)',
-  SolanaErrorCode.jsonRpcParseError:
-      r'JSON-RPC error: An error occurred on the server while parsing the JSON text ($__serverMessage)',
+  SolanaErrorCode.jsonRpcInvalidRequest: r'JSON-RPC error: The JSON sent is not a valid Request object ($__serverMessage)',
+  SolanaErrorCode.jsonRpcMethodNotFound: r'JSON-RPC error: The method does not exist / is not available ($__serverMessage)',
+  SolanaErrorCode.jsonRpcParseError: r'JSON-RPC error: An error occurred on the server while parsing the JSON text ($__serverMessage)',
   SolanaErrorCode.jsonRpcScanError: r'$__serverMessage',
   SolanaErrorCode.jsonRpcServerErrorBlockCleanedUp: r'$__serverMessage',
   SolanaErrorCode.jsonRpcServerErrorBlockNotAvailable: r'$__serverMessage',
@@ -337,16 +274,12 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       r'$__serverMessage',
   SolanaErrorCode.keysInvalidKeyPairByteLength:
       r'Key pair bytes must be of length 64, got $byteLength.',
-  SolanaErrorCode.keysInvalidPrivateKeyByteLength:
-      r'Expected private key bytes with length 32. Actual length: $actualLength.',
-  SolanaErrorCode.keysInvalidSignatureByteLength:
-      r'Expected base58-encoded signature to decode to a byte array of length 64. Actual length: $actualLength.',
+  SolanaErrorCode.keysInvalidPrivateKeyByteLength: r'Expected private key bytes with length 32. Actual length: $actualLength.',
+  SolanaErrorCode.keysInvalidSignatureByteLength: r'Expected base58-encoded signature to decode to a byte array of length 64. Actual length: $actualLength.',
   SolanaErrorCode.keysPublicKeyMustMatchPrivateKey:
       'The provided private key does not match the provided public key.',
-  SolanaErrorCode.keysSignatureStringLengthOutOfRange:
-      r'Expected base58-encoded signature string of length in the range [64, 88]. Actual length: $actualLength.',
-  SolanaErrorCode.keysInvalidBase58InGrindRegex:
-      r'The grind regex `/$source/` contains the character `$character`, which is not in the base58 alphabet and can never match a Solana address.',
+  SolanaErrorCode.keysSignatureStringLengthOutOfRange: r'Expected base58-encoded signature string of length in the range [64, 88]. Actual length: $actualLength.',
+  SolanaErrorCode.keysInvalidBase58InGrindRegex: r'The grind regex `/$source/` contains the character `$character`, which is not in the base58 alphabet and can never match a Solana address.',
   SolanaErrorCode.keysWriteKeyPairUnsupportedEnvironment:
       'Writing a key pair to disk is not supported in this environment.',
   SolanaErrorCode.lamportsOutOfRange:
@@ -356,34 +289,22 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode.malformedNumberString: r'$value cannot be parsed as a Number',
   SolanaErrorCode.nonceAccountNotFound:
       r'No nonce account could be found at address $nonceAccountAddress',
-  SolanaErrorCode.offchainMessageAddressesCannotSignOffchainMessage:
-      'Attempted to sign an offchain message with an address that is not a signer for it',
-  SolanaErrorCode.offchainMessageApplicationDomainStringLengthOutOfRange:
-      r'Expected base58-encoded application domain string of length in the range [32, 44]. Actual length: $actualLength.',
-  SolanaErrorCode.offchainMessageEnvelopeSignersMismatch:
-      'The signer addresses in this offchain message envelope do not match the list of required signers in the message preamble.',
-  SolanaErrorCode.offchainMessageInvalidApplicationDomainByteLength:
-      r'Expected base58 encoded application domain to decode to a byte array of length 32. Actual length: $actualLength.',
-  SolanaErrorCode.offchainMessageMaximumLengthExceeded:
-      r'The message body provided has a byte-length of $actualBytes. The maximum allowable byte-length is $maxBytes',
-  SolanaErrorCode.offchainMessageMessageFormatMismatch:
-      r'Expected message format $expectedMessageFormat, got $actualMessageFormat',
-  SolanaErrorCode.offchainMessageMessageLengthMismatch:
-      r'The message length specified in the message preamble is $specifiedLength bytes. The actual length of the message is $actualLength bytes.',
+  SolanaErrorCode.offchainMessageAddressesCannotSignOffchainMessage: 'Attempted to sign an offchain message with an address that is not a signer for it',
+  SolanaErrorCode.offchainMessageApplicationDomainStringLengthOutOfRange: r'Expected base58-encoded application domain string of length in the range [32, 44]. Actual length: $actualLength.',
+  SolanaErrorCode.offchainMessageEnvelopeSignersMismatch: 'The signer addresses in this offchain message envelope do not match the list of required signers in the message preamble.',
+  SolanaErrorCode.offchainMessageInvalidApplicationDomainByteLength: r'Expected base58 encoded application domain to decode to a byte array of length 32. Actual length: $actualLength.',
+  SolanaErrorCode.offchainMessageMaximumLengthExceeded: r'The message body provided has a byte-length of $actualBytes. The maximum allowable byte-length is $maxBytes',
+  SolanaErrorCode.offchainMessageMessageFormatMismatch: r'Expected message format $expectedMessageFormat, got $actualMessageFormat',
+  SolanaErrorCode.offchainMessageMessageLengthMismatch: r'The message length specified in the message preamble is $specifiedLength bytes. The actual length of the message is $actualLength bytes.',
   SolanaErrorCode.offchainMessageMessageMustBeNonEmpty:
       'Offchain message content must be non-empty',
   SolanaErrorCode.offchainMessageNumEnvelopeSignaturesCannotBeZero:
       'Offchain message envelope must reserve space for at least one signature',
-  SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero:
-      'Offchain message must specify the address of at least one required signer',
-  SolanaErrorCode.offchainMessageNumSignaturesMismatch:
-      r'The offchain message preamble specifies $numRequiredSignatures required signature(s), got $signaturesLength.',
-  SolanaErrorCode.offchainMessageRestrictedAsciiBodyCharacterOutOfRange:
-      'The message body provided contains characters whose codes fall outside the allowed range.',
-  SolanaErrorCode.offchainMessageSignatoriesMustBeSorted:
-      'The signatories of this offchain message must be listed in lexicographical order',
-  SolanaErrorCode.offchainMessageSignatoriesMustBeUnique:
-      'An address must be listed no more than once among the signatories of an offchain message',
+  SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero: 'Offchain message must specify the address of at least one required signer',
+  SolanaErrorCode.offchainMessageNumSignaturesMismatch: r'The offchain message preamble specifies $numRequiredSignatures required signature(s), got $signaturesLength.',
+  SolanaErrorCode.offchainMessageRestrictedAsciiBodyCharacterOutOfRange: 'The message body provided contains characters whose codes fall outside the allowed range.',
+  SolanaErrorCode.offchainMessageSignatoriesMustBeSorted: 'The signatories of this offchain message must be listed in lexicographical order',
+  SolanaErrorCode.offchainMessageSignatoriesMustBeUnique: 'An address must be listed no more than once among the signatories of an offchain message',
   SolanaErrorCode.offchainMessageSignatureVerificationFailure:
       'Offchain message signature verification failed.',
   SolanaErrorCode.offchainMessageContentDoesNotMatchExpected:
@@ -397,30 +318,21 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'different data than was requested; do not trust its signature.',
   SolanaErrorCode.offchainMessageSignaturesMissing:
       r'Offchain message is missing signatures for addresses: $addresses.',
-  SolanaErrorCode.offchainMessageUnexpectedVersion:
-      r'Expected offchain message version $expectedVersion. Got $actualVersion.',
-  SolanaErrorCode.offchainMessageVersionNumberNotSupported:
-      r'This version of Kit does not support decoding offchain messages with version $unsupportedVersion.',
-  SolanaErrorCode.programClientsFailedToIdentifyAccount:
-      r'The provided account could not be identified as an account from the $programName program.',
-  SolanaErrorCode.programClientsFailedToIdentifyInstruction:
-      r'The provided instruction could not be identified as an instruction from the $programName program.',
-  SolanaErrorCode.programClientsInsufficientAccountMetas:
-      r'The provided instruction is missing some accounts. Expected at least $expectedAccountMetas account(s), got $actualAccountMetas.',
+  SolanaErrorCode.offchainMessageUnexpectedVersion: r'Expected offchain message version $expectedVersion. Got $actualVersion.',
+  SolanaErrorCode.offchainMessageVersionNumberNotSupported: r'This version of Kit does not support decoding offchain messages with version $unsupportedVersion.',
+  SolanaErrorCode.programClientsFailedToIdentifyAccount: r'The provided account could not be identified as an account from the $programName program.',
+  SolanaErrorCode.programClientsFailedToIdentifyInstruction: r'The provided instruction could not be identified as an instruction from the $programName program.',
+  SolanaErrorCode.programClientsInsufficientAccountMetas: r'The provided instruction is missing some accounts. Expected at least $expectedAccountMetas account(s), got $actualAccountMetas.',
   SolanaErrorCode.programClientsResolvedInstructionInputMustBeNonNull:
       r"Expected resolved instruction input '$inputName' to be non-null.",
-  SolanaErrorCode.programClientsUnexpectedResolvedInstructionInputType:
-      r"Expected resolved instruction input '$inputName' to be of type $expectedType.",
+  SolanaErrorCode.programClientsUnexpectedResolvedInstructionInputType: r"Expected resolved instruction input '$inputName' to be of type $expectedType.",
   SolanaErrorCode.programClientsUnrecognizedAccountType:
       r"Unrecognized account type '$accountType' for the $programName program.",
-  SolanaErrorCode.programClientsUnrecognizedInstructionType:
-      r"Unrecognized instruction type '$instructionType' for the $programName program.",
+  SolanaErrorCode.programClientsUnrecognizedInstructionType: r"Unrecognized instruction type '$instructionType' for the $programName program.",
   SolanaErrorCode.rpcApiPlanMissingForRpcMethod:
       r'Could not find an API plan for RPC method: $method',
-  SolanaErrorCode.rpcIntegerOverflow:
-      r'The $argumentLabel argument to the $methodName RPC method was $value. This number is unsafe because it exceeds the maximum safe integer.',
-  SolanaErrorCode.rpcSubscriptionsCannotCreateSubscriptionPlan:
-      r"The notification name must end in 'Notifications' and the API must supply a subscription plan creator function for the notification '$notificationName'.",
+  SolanaErrorCode.rpcIntegerOverflow: r'The $argumentLabel argument to the $methodName RPC method was $value. This number is unsafe because it exceeds the maximum safe integer.',
+  SolanaErrorCode.rpcSubscriptionsCannotCreateSubscriptionPlan: r"The notification name must end in 'Notifications' and the API must supply a subscription plan creator function for the notification '$notificationName'.",
   SolanaErrorCode.rpcSubscriptionsChannelClosedBeforeMessageBuffered:
       'WebSocket was closed before payload could be added to the send buffer',
   SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed:
@@ -436,24 +348,16 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode.rpcTransportHttpError: r'HTTP error ($statusCode): $message',
   SolanaErrorCode.rpcTransportHttpHeaderForbidden:
       r'HTTP header(s) forbidden: $headers.',
-  SolanaErrorCode.signerAddressCannotHaveMultipleSigners:
-      r'Multiple distinct signers were identified for address $address. Please ensure that you are using the same signer instance for each address.',
+  SolanaErrorCode.signerAddressCannotHaveMultipleSigners: r'Multiple distinct signers were identified for address $address. Please ensure that you are using the same signer instance for each address.',
   SolanaErrorCode.signerExpectedKeyPairSigner:
       'The provided value does not implement the KeyPairSigner interface',
-  SolanaErrorCode.signerExpectedMessageModifyingSigner:
-      'The provided value does not implement the MessageModifyingSigner interface',
-  SolanaErrorCode.signerExpectedMessagePartialSigner:
-      'The provided value does not implement the MessagePartialSigner interface',
-  SolanaErrorCode.signerExpectedMessageSigner:
-      'The provided value does not implement any of the MessageSigner interfaces',
-  SolanaErrorCode.signerExpectedTransactionModifyingSigner:
-      'The provided value does not implement the TransactionModifyingSigner interface',
-  SolanaErrorCode.signerExpectedTransactionPartialSigner:
-      'The provided value does not implement the TransactionPartialSigner interface',
-  SolanaErrorCode.signerExpectedTransactionSendingSigner:
-      'The provided value does not implement the TransactionSendingSigner interface',
-  SolanaErrorCode.signerExpectedTransactionSigner:
-      'The provided value does not implement any of the TransactionSigner interfaces',
+  SolanaErrorCode.signerExpectedMessageModifyingSigner: 'The provided value does not implement the MessageModifyingSigner interface',
+  SolanaErrorCode.signerExpectedMessagePartialSigner: 'The provided value does not implement the MessagePartialSigner interface',
+  SolanaErrorCode.signerExpectedMessageSigner: 'The provided value does not implement any of the MessageSigner interfaces',
+  SolanaErrorCode.signerExpectedTransactionModifyingSigner: 'The provided value does not implement the TransactionModifyingSigner interface',
+  SolanaErrorCode.signerExpectedTransactionPartialSigner: 'The provided value does not implement the TransactionPartialSigner interface',
+  SolanaErrorCode.signerExpectedTransactionSendingSigner: 'The provided value does not implement the TransactionSendingSigner interface',
+  SolanaErrorCode.signerExpectedTransactionSigner: 'The provided value does not implement any of the TransactionSigner interfaces',
   SolanaErrorCode.signerTransactionCannotHaveMultipleSendingSigners:
       'More than one TransactionSendingSigner was identified.',
   SolanaErrorCode.signerTransactionSendingSignerMissing:
@@ -463,8 +367,7 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'implement either the `solana:signTransaction` or `solana:signAndSendTransaction` feature. '
       'At least one of these features is required. '
       r'The account supports the following features: $supportedFeatures.',
-  SolanaErrorCode.signerWalletMultisignUnimplemented:
-      'Wallet account signers do not support signing multiple messages/transactions in a single operation',
+  SolanaErrorCode.signerWalletMultisignUnimplemented: 'Wallet account signers do not support signing multiple messages/transactions in a single operation',
   SolanaErrorCode.subtleCryptoCannotExportNonExtractableKey:
       'Cannot export a non-extractable key.',
   SolanaErrorCode.subtleCryptoDigestUnimplemented:
@@ -481,16 +384,13 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'No signing implementation could be found.',
   SolanaErrorCode.subtleCryptoVerifyFunctionUnimplemented:
       'No key export implementation could be found.',
-  SolanaErrorCode.timestampOutOfRange:
-      r'Timestamp value must be in the range [-(2^63), (2^63) - 1]. $value given',
-  SolanaErrorCode.transactionAddressesCannotSignTransaction:
-      'Attempted to sign a transaction with an address that is not a signer for it',
+  SolanaErrorCode.timestampOutOfRange: r'Timestamp value must be in the range [-(2^63), (2^63) - 1]. $value given',
+  SolanaErrorCode.transactionAddressesCannotSignTransaction: 'Attempted to sign a transaction with an address that is not a signer for it',
   SolanaErrorCode.transactionAddressMissing:
       r'Transaction is missing an address at index: $index.',
   SolanaErrorCode.transactionCannotEncodeWithEmptySignatures:
       'Transaction has no expected signers therefore it cannot be encoded',
-  SolanaErrorCode.transactionErrorAccountBorrowOutstanding:
-      'Transaction processing left an account with an outstanding borrowed reference',
+  SolanaErrorCode.transactionErrorAccountBorrowOutstanding: 'Transaction processing left an account with an outstanding borrowed reference',
   SolanaErrorCode.transactionErrorAccountInUse: 'Account in use',
   SolanaErrorCode.transactionErrorAccountLoadedTwice: 'Account loaded twice',
   SolanaErrorCode.transactionErrorAccountNotFound:
@@ -504,12 +404,10 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'Loader call chain is too deep',
   SolanaErrorCode.transactionErrorClusterMaintenance:
       'Transactions are currently disabled due to cluster maintenance',
-  SolanaErrorCode.transactionErrorDuplicateInstruction:
-      r'Transaction contains a duplicate instruction ($index) that is not allowed',
+  SolanaErrorCode.transactionErrorDuplicateInstruction: r'Transaction contains a duplicate instruction ($index) that is not allowed',
   SolanaErrorCode.transactionErrorInsufficientFundsForFee:
       'Insufficient funds for fee',
-  SolanaErrorCode.transactionErrorInsufficientFundsForRent:
-      r'Transaction results in an account ($accountIndex) with insufficient funds for rent',
+  SolanaErrorCode.transactionErrorInsufficientFundsForRent: r'Transaction results in an account ($accountIndex) with insufficient funds for rent',
   SolanaErrorCode.transactionErrorInvalidAccountForFee:
       'This account may not be used to pay transaction fees',
   SolanaErrorCode.transactionErrorInvalidAccountIndex:
@@ -524,8 +422,7 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'LoadedAccountsDataSizeLimit set for transaction must be greater than 0.',
   SolanaErrorCode.transactionErrorInvalidProgramForExecution:
       'This program may not be used for executing instructions',
-  SolanaErrorCode.transactionErrorInvalidRentPayingAccount:
-      'Transaction leaves an account with a lower balance than rent-exempt minimum',
+  SolanaErrorCode.transactionErrorInvalidRentPayingAccount: 'Transaction leaves an account with a lower balance than rent-exempt minimum',
   SolanaErrorCode.transactionErrorInvalidWritableAccount:
       'Transaction loads a writable account that cannot be written',
   SolanaErrorCode.transactionErrorMaxLoadedAccountsDataSizeExceeded:
@@ -534,8 +431,7 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'Transaction requires a fee but has no signature present',
   SolanaErrorCode.transactionErrorProgramAccountNotFound:
       'Attempt to load a program that does not exist',
-  SolanaErrorCode.transactionErrorProgramExecutionTemporarilyRestricted:
-      r'Execution of the program referenced by account at index $accountIndex is temporarily restricted.',
+  SolanaErrorCode.transactionErrorProgramExecutionTemporarilyRestricted: r'Execution of the program referenced by account at index $accountIndex is temporarily restricted.',
   SolanaErrorCode.transactionErrorResanitizationNeeded: 'ResanitizationNeeded',
   SolanaErrorCode.transactionErrorSanitizeFailure:
       'Transaction failed to sanitize accounts offsets correctly',
@@ -559,87 +455,58 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'Transaction would exceed max Block Cost Limit',
   SolanaErrorCode.transactionErrorWouldExceedMaxVoteCostLimit:
       'Transaction would exceed max Vote Cost Limit',
-  SolanaErrorCode.transactionExceedsSizeLimit:
-      r'Transaction size $transactionSize exceeds limit of $transactionSizeLimit bytes',
+  SolanaErrorCode.transactionExceedsSizeLimit: r'Transaction size $transactionSize exceeds limit of $transactionSizeLimit bytes',
   SolanaErrorCode.transactionExpectedBlockhashLifetime:
       'Transaction does not have a blockhash lifetime',
   SolanaErrorCode.transactionExpectedNonceLifetime:
       'Transaction is not a durable nonce transaction',
   SolanaErrorCode.transactionFailedToDecompileAddressLookupTableContentsMissing:
       r'Contents of these address lookup tables unknown: $lookupTableAddresses',
-  SolanaErrorCode.transactionFailedToDecompileAddressLookupTableIndexOutOfRange:
-      r'Lookup of address at index $highestRequestedIndex failed for lookup table $lookupTableAddress. Highest known index is $highestKnownIndex.',
+  SolanaErrorCode.transactionFailedToDecompileAddressLookupTableIndexOutOfRange: r'Lookup of address at index $highestRequestedIndex failed for lookup table $lookupTableAddress. Highest known index is $highestKnownIndex.',
   SolanaErrorCode.transactionFailedToDecompileFeePayerMissing:
       'No fee payer set in CompiledTransaction',
   SolanaErrorCode.transactionFailedToDecompileInstructionProgramAddressNotFound:
       r'Could not find program address at index $index',
-  SolanaErrorCode.transactionFailedToEstimateComputeLimit:
-      'Failed to estimate the compute unit consumption for this transaction message.',
-  SolanaErrorCode.transactionFailedWhenSimulatingToEstimateComputeLimit:
-      'Transaction failed when it was simulated in order to estimate the compute unit consumption.',
-  SolanaErrorCode.transactionFailedToEstimateLoadedAccountsDataSizeLimit:
-      'Failed to estimate the loaded accounts data size limit for this transaction message.',
-  SolanaErrorCode.transactionFailedWhenSimulatingToEstimateResourceLimits:
-      'Transaction failed when it was simulated in order to estimate resource limits.',
-  SolanaErrorCode.transactionFailedToDecompileInstructionAccountIndexOutOfRange:
-      r'Could not find an account address at index $index while decompiling an instruction',
-  SolanaErrorCode.transactionComputeUnitLimitOutOfRange:
-      r'Transaction compute unit limit must be an integer in the range [0, $maxComputeUnitLimit]. `$computeUnitLimit` given',
-  SolanaErrorCode.transactionInvalidHeapSize:
-      r'Transaction heap size must be an integer multiple of $multipleOf bytes in the range [$minHeapSize, $maxHeapSize]. `$heapSize` given',
-  SolanaErrorCode.transactionIntrospectionCannotDecodeJsonParsedTransaction:
-      "`getTransaction` responses fetched with `encoding: 'jsonParsed'` cannot be decoded. Re-fetch the transaction with `encoding: 'base64'`, `'base58'`, or `'json'`",
-  SolanaErrorCode.transactionIntrospectionUnrecognizedGetTransactionResponse:
-      "Could not recognize the shape of this `getTransaction` response. Expected a response fetched with `encoding: 'base64'`, `'base58'`, or `'json'`",
+  SolanaErrorCode.transactionFailedToEstimateComputeLimit: 'Failed to estimate the compute unit consumption for this transaction message.',
+  SolanaErrorCode.transactionFailedWhenSimulatingToEstimateComputeLimit: 'Transaction failed when it was simulated in order to estimate the compute unit consumption.',
+  SolanaErrorCode.transactionFailedToEstimateLoadedAccountsDataSizeLimit: 'Failed to estimate the loaded accounts data size limit for this transaction message.',
+  SolanaErrorCode.transactionFailedWhenSimulatingToEstimateResourceLimits: 'Transaction failed when it was simulated in order to estimate resource limits.',
+  SolanaErrorCode.transactionFailedToDecompileInstructionAccountIndexOutOfRange: r'Could not find an account address at index $index while decompiling an instruction',
+  SolanaErrorCode.transactionComputeUnitLimitOutOfRange: r'Transaction compute unit limit must be an integer in the range [0, $maxComputeUnitLimit]. `$computeUnitLimit` given',
+  SolanaErrorCode.transactionInvalidHeapSize: r'Transaction heap size must be an integer multiple of $multipleOf bytes in the range [$minHeapSize, $maxHeapSize]. `$heapSize` given',
+  SolanaErrorCode.transactionIntrospectionCannotDecodeJsonParsedTransaction: "`getTransaction` responses fetched with `encoding: 'jsonParsed'` cannot be decoded. Re-fetch the transaction with `encoding: 'base64'`, `'base58'`, or `'json'`",
+  SolanaErrorCode.transactionIntrospectionUnrecognizedGetTransactionResponse: "Could not recognize the shape of this `getTransaction` response. Expected a response fetched with `encoding: 'base64'`, `'base58'`, or `'json'`",
   SolanaErrorCode.transactionFeePayerMissing:
       'Transaction is missing a fee payer.',
-  SolanaErrorCode.transactionFeePayerSignatureMissing:
-      "Could not determine this transaction's signature. Make sure that the transaction has been signed by its fee payer.",
+  SolanaErrorCode.transactionFeePayerSignatureMissing: "Could not determine this transaction's signature. Make sure that the transaction has been signed by its fee payer.",
   SolanaErrorCode
           .transactionInvalidNonceTransactionFirstInstructionMustBeAdvanceNonce:
       'Transaction first instruction is not advance nonce account instruction.',
   SolanaErrorCode.transactionInvalidNonceTransactionInstructionsMissing:
       'Transaction with no instructions cannot be durable nonce transaction.',
-  SolanaErrorCode.transactionInvokedProgramsCannotPayFees:
-      r'This transaction includes an address ($programAddress) which is both invoked and set as the fee payer. Program addresses may not pay fees',
-  SolanaErrorCode.transactionInvokedProgramsMustNotBeWritable:
-      r'This transaction includes an address ($programAddress) which is both invoked and marked writable. Program addresses may not be writable',
-  SolanaErrorCode.transactionMessageSignaturesMismatch:
-      r'The transaction message expected the transaction to have $numRequiredSignatures signatures, got $signaturesLength.',
-  SolanaErrorCode.transactionNonceAccountCannotBeInLookupTable:
-      'The transaction has a durable nonce lifetime, but the nonce account address is in a lookup table.',
+  SolanaErrorCode.transactionInvokedProgramsCannotPayFees: r'This transaction includes an address ($programAddress) which is both invoked and set as the fee payer. Program addresses may not pay fees',
+  SolanaErrorCode.transactionInvokedProgramsMustNotBeWritable: r'This transaction includes an address ($programAddress) which is both invoked and marked writable. Program addresses may not be writable',
+  SolanaErrorCode.transactionMessageSignaturesMismatch: r'The transaction message expected the transaction to have $numRequiredSignatures signatures, got $signaturesLength.',
+  SolanaErrorCode.transactionNonceAccountCannotBeInLookupTable: 'The transaction has a durable nonce lifetime, but the nonce account address is in a lookup table.',
   SolanaErrorCode.transactionSignaturesMissing:
       r'Transaction is missing signatures for addresses: $addresses.',
-  SolanaErrorCode.transactionVersionNumberNotSupported:
-      r'This version of Kit does not support decoding transactions with version $unsupportedVersion. The current max supported version is 1.',
-  SolanaErrorCode.transactionVersionNumberOutOfRange:
-      r'Transaction version must be in the range [0, 127]. $actualVersion given',
+  SolanaErrorCode.transactionVersionNumberNotSupported: r'This version of Kit does not support decoding transactions with version $unsupportedVersion. The current max supported version is 1.',
+  SolanaErrorCode.transactionVersionNumberOutOfRange: r'Transaction version must be in the range [0, 127]. $actualVersion given',
   SolanaErrorCode.transactionMalformedMessageBytes:
       r'Transaction message bytes are malformed: $messageBytes',
-  SolanaErrorCode.transactionCannotEncodeWithEmptyMessageBytes:
-      'Transaction message bytes are empty, so the transaction cannot be encoded',
+  SolanaErrorCode.transactionCannotEncodeWithEmptyMessageBytes: 'Transaction message bytes are empty, so the transaction cannot be encoded',
   SolanaErrorCode.transactionCannotDecodeEmptyTransactionBytes:
       'Transaction bytes are empty, so no transaction can be decoded',
-  SolanaErrorCode.transactionVersionZeroMustBeEncodedWithSignaturesFirst:
-      r'Transaction version 0 must be encoded with signatures first. This transaction was encoded with first byte $firstByte, which is expected to be a signature count for v0 transactions.',
-  SolanaErrorCode.transactionSignatureCountTooHighForTransactionBytes:
-      r'The provided transaction bytes expect that there should be $numExpectedSignatures signatures, but the bytes are not long enough to contain a transaction message with this many signatures. The provided bytes are $transactionBytesLength bytes long.',
-  SolanaErrorCode.transactionInvalidConfigMaskPriorityFeeBits:
-      r'Invalid transaction config mask: $mask. Bits 0 and 1 must match (both set or both unset)',
-  SolanaErrorCode.transactionInvalidNonceAccountIndex:
-      r'The transaction has a durable nonce lifetime, but the nonce account index is invalid. Expected a nonce account index less than $numberOfStaticAccounts, got $nonceAccountIndex.',
-  SolanaErrorCode.transactionInvalidConfigValueKind:
-      r'The transaction config value for $configName has the incorrect kind. Expected $expectedKind, got $actualKind.',
-  SolanaErrorCode.transactionInstructionHeadersPayloadsMismatch:
-      r'The transaction does not have the same number of instruction headers and instruction payloads. Got $numInstructionHeaders instruction headers, and $numInstructionPayloads instruction payloads.',
-  SolanaErrorCode.transactionTooManySignerAddresses:
-      r'Transaction has $actualCount unique signer addresses but the maximum allowed is $maxAllowed',
-  SolanaErrorCode.transactionTooManyAccountAddresses:
-      r'Transaction has $actualCount unique account addresses but the maximum allowed is $maxAllowed',
-  SolanaErrorCode.transactionTooManyInstructions:
-      r'Transaction has $actualCount instructions but the maximum allowed is $maxAllowed',
-  SolanaErrorCode.transactionTooManyAccountsInInstruction:
-      r'The instruction at index $instructionIndex has $actualCount account references but the maximum allowed is $maxAllowed',
+  SolanaErrorCode.transactionVersionZeroMustBeEncodedWithSignaturesFirst: r'Transaction version 0 must be encoded with signatures first. This transaction was encoded with first byte $firstByte, which is expected to be a signature count for v0 transactions.',
+  SolanaErrorCode.transactionSignatureCountTooHighForTransactionBytes: r'The provided transaction bytes expect that there should be $numExpectedSignatures signatures, but the bytes are not long enough to contain a transaction message with this many signatures. The provided bytes are $transactionBytesLength bytes long.',
+  SolanaErrorCode.transactionInvalidConfigMaskPriorityFeeBits: r'Invalid transaction config mask: $mask. Bits 0 and 1 must match (both set or both unset)',
+  SolanaErrorCode.transactionInvalidNonceAccountIndex: r'The transaction has a durable nonce lifetime, but the nonce account index is invalid. Expected a nonce account index less than $numberOfStaticAccounts, got $nonceAccountIndex.',
+  SolanaErrorCode.transactionInvalidConfigValueKind: r'The transaction config value for $configName has the incorrect kind. Expected $expectedKind, got $actualKind.',
+  SolanaErrorCode.transactionInstructionHeadersPayloadsMismatch: r'The transaction does not have the same number of instruction headers and instruction payloads. Got $numInstructionHeaders instruction headers, and $numInstructionPayloads instruction payloads.',
+  SolanaErrorCode.transactionTooManySignerAddresses: r'Transaction has $actualCount unique signer addresses but the maximum allowed is $maxAllowed',
+  SolanaErrorCode.transactionTooManyAccountAddresses: r'Transaction has $actualCount unique account addresses but the maximum allowed is $maxAllowed',
+  SolanaErrorCode.transactionTooManyInstructions: r'Transaction has $actualCount instructions but the maximum allowed is $maxAllowed',
+  SolanaErrorCode.transactionTooManyAccountsInInstruction: r'The instruction at index $instructionIndex has $actualCount account references but the maximum allowed is $maxAllowed',
   SolanaErrorCode.walletNotConnected: 'Wallet not connected',
   SolanaErrorCode.walletNoSignerConnected:
       r'No signing wallet connected (status: $status)',
@@ -695,8 +562,7 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode.heliusApiKeyRequired:
       'A Helius API key is required for this operation.',
   SolanaErrorCode.heliusWebSocketError: r'Helius WebSocket error: $message',
-  SolanaErrorCode.heliusTransactionConfirmationTimeout:
-      r'Transaction confirmation timed out after $timeoutMs ms for signature: $signature.',
+  SolanaErrorCode.heliusTransactionConfirmationTimeout: r'Transaction confirmation timed out after $timeoutMs ms for signature: $signature.',
   SolanaErrorCode.heliusTransactionSimulationFailed:
       r'Transaction simulation failed: $message',
 };

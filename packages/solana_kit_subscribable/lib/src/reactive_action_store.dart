@@ -10,8 +10,10 @@ typedef UnsubscribeCallback = void Function();
 ///
 /// The action receives the cancellation token for this dispatch followed by
 /// the dispatch arguments.
-typedef ReactiveAction<TArgs, TResult> =
-    Future<TResult> Function(CancellationToken signal, TArgs args);
+typedef ReactiveAction<TArgs, TResult> = Future<TResult> Function(
+  CancellationToken signal,
+  TArgs args,
+);
 
 /// A source that creates a fresh reactive action store on demand.
 ///

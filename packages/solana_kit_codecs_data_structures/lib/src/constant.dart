@@ -48,10 +48,9 @@ FixedSizeDecoder<void> getConstantDecoder(Uint8List constant) {
 ///   an error if they do not.
 FixedSizeCodec<void, void> getConstantCodec(Uint8List constant) {
   return combineCodec(
-        getConstantEncoder(constant),
-        getConstantDecoder(constant),
-      )
-      as FixedSizeCodec<void, void>;
+    getConstantEncoder(constant),
+    getConstantDecoder(constant),
+  ) as FixedSizeCodec<void, void>;
 }
 
 String _toHex(Uint8List bytes) {

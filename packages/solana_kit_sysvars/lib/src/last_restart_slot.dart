@@ -42,9 +42,9 @@ class SysvarLastRestartSlot {
 
 /// Returns a fixed-size encoder for the [SysvarLastRestartSlot] sysvar.
 FixedSizeEncoder<SysvarLastRestartSlot> getSysvarLastRestartSlotEncoder() {
-  final structEncoder =
-      getStructEncoder([('lastRestartSlot', getU64Encoder())])
-          as FixedSizeEncoder<Map<String, Object?>>;
+  final structEncoder = getStructEncoder([
+    ('lastRestartSlot', getU64Encoder()),
+  ]) as FixedSizeEncoder<Map<String, Object?>>;
 
   return FixedSizeEncoder<SysvarLastRestartSlot>(
     fixedSize: sysvarLastRestartSlotSize,
@@ -60,9 +60,9 @@ FixedSizeEncoder<SysvarLastRestartSlot> getSysvarLastRestartSlotEncoder() {
 
 /// Returns a fixed-size decoder for the [SysvarLastRestartSlot] sysvar.
 FixedSizeDecoder<SysvarLastRestartSlot> getSysvarLastRestartSlotDecoder() {
-  final structDecoder =
-      getStructDecoder([('lastRestartSlot', getU64Decoder())])
-          as FixedSizeDecoder<Map<String, Object?>>;
+  final structDecoder = getStructDecoder([
+    ('lastRestartSlot', getU64Decoder()),
+  ]) as FixedSizeDecoder<Map<String, Object?>>;
 
   return FixedSizeDecoder<SysvarLastRestartSlot>(
     fixedSize: sysvarLastRestartSlotSize,
@@ -82,10 +82,9 @@ FixedSizeDecoder<SysvarLastRestartSlot> getSysvarLastRestartSlotDecoder() {
 FixedSizeCodec<SysvarLastRestartSlot, SysvarLastRestartSlot>
 getSysvarLastRestartSlotCodec() {
   return combineCodec(
-        getSysvarLastRestartSlotEncoder(),
-        getSysvarLastRestartSlotDecoder(),
-      )
-      as FixedSizeCodec<SysvarLastRestartSlot, SysvarLastRestartSlot>;
+    getSysvarLastRestartSlotEncoder(),
+    getSysvarLastRestartSlotDecoder(),
+  ) as FixedSizeCodec<SysvarLastRestartSlot, SysvarLastRestartSlot>;
 }
 
 /// Fetches the `LastRestartSlot` sysvar account using the provided RPC

@@ -132,10 +132,9 @@ getSysvarRecentBlockhashesDecoder() {
 VariableSizeCodec<SysvarRecentBlockhashes, SysvarRecentBlockhashes>
 getSysvarRecentBlockhashesCodec() {
   return combineCodec(
-        getSysvarRecentBlockhashesEncoder(),
-        getSysvarRecentBlockhashesDecoder(),
-      )
-      as VariableSizeCodec<SysvarRecentBlockhashes, SysvarRecentBlockhashes>;
+    getSysvarRecentBlockhashesEncoder(),
+    getSysvarRecentBlockhashesDecoder(),
+  ) as VariableSizeCodec<SysvarRecentBlockhashes, SysvarRecentBlockhashes>;
 }
 
 /// Fetches the `RecentBlockhashes` sysvar account using the provided RPC

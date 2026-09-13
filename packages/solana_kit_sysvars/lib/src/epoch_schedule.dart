@@ -74,15 +74,13 @@ class SysvarEpochSchedule {
 
 /// Returns a fixed-size encoder for the [SysvarEpochSchedule] sysvar.
 FixedSizeEncoder<SysvarEpochSchedule> getSysvarEpochScheduleEncoder() {
-  final structEncoder =
-      getStructEncoder([
-            ('slotsPerEpoch', getU64Encoder()),
-            ('leaderScheduleSlotOffset', getU64Encoder()),
-            ('warmup', getBooleanEncoder()),
-            ('firstNormalEpoch', getU64Encoder()),
-            ('firstNormalSlot', getU64Encoder()),
-          ])
-          as FixedSizeEncoder<Map<String, Object?>>;
+  final structEncoder = getStructEncoder([
+    ('slotsPerEpoch', getU64Encoder()),
+    ('leaderScheduleSlotOffset', getU64Encoder()),
+    ('warmup', getBooleanEncoder()),
+    ('firstNormalEpoch', getU64Encoder()),
+    ('firstNormalSlot', getU64Encoder()),
+  ]) as FixedSizeEncoder<Map<String, Object?>>;
 
   return mapFixedSizeStructEncoder(
     fixedSize: sysvarEpochScheduleSize,
@@ -99,15 +97,13 @@ FixedSizeEncoder<SysvarEpochSchedule> getSysvarEpochScheduleEncoder() {
 
 /// Returns a fixed-size decoder for the [SysvarEpochSchedule] sysvar.
 FixedSizeDecoder<SysvarEpochSchedule> getSysvarEpochScheduleDecoder() {
-  final structDecoder =
-      getStructDecoder([
-            ('slotsPerEpoch', getU64Decoder()),
-            ('leaderScheduleSlotOffset', getU64Decoder()),
-            ('warmup', getBooleanDecoder()),
-            ('firstNormalEpoch', getU64Decoder()),
-            ('firstNormalSlot', getU64Decoder()),
-          ])
-          as FixedSizeDecoder<Map<String, Object?>>;
+  final structDecoder = getStructDecoder([
+    ('slotsPerEpoch', getU64Decoder()),
+    ('leaderScheduleSlotOffset', getU64Decoder()),
+    ('warmup', getBooleanDecoder()),
+    ('firstNormalEpoch', getU64Decoder()),
+    ('firstNormalSlot', getU64Decoder()),
+  ]) as FixedSizeDecoder<Map<String, Object?>>;
 
   return mapFixedSizeStructDecoder(
     fixedSize: sysvarEpochScheduleSize,
@@ -125,24 +121,20 @@ FixedSizeDecoder<SysvarEpochSchedule> getSysvarEpochScheduleDecoder() {
 /// Returns a fixed-size codec for the [SysvarEpochSchedule] sysvar.
 FixedSizeCodec<SysvarEpochSchedule, SysvarEpochSchedule>
 getSysvarEpochScheduleCodec() {
-  final structEncoder =
-      getStructEncoder([
-            ('slotsPerEpoch', getU64Encoder()),
-            ('leaderScheduleSlotOffset', getU64Encoder()),
-            ('warmup', getBooleanEncoder()),
-            ('firstNormalEpoch', getU64Encoder()),
-            ('firstNormalSlot', getU64Encoder()),
-          ])
-          as FixedSizeEncoder<Map<String, Object?>>;
-  final structDecoder =
-      getStructDecoder([
-            ('slotsPerEpoch', getU64Decoder()),
-            ('leaderScheduleSlotOffset', getU64Decoder()),
-            ('warmup', getBooleanDecoder()),
-            ('firstNormalEpoch', getU64Decoder()),
-            ('firstNormalSlot', getU64Decoder()),
-          ])
-          as FixedSizeDecoder<Map<String, Object?>>;
+  final structEncoder = getStructEncoder([
+    ('slotsPerEpoch', getU64Encoder()),
+    ('leaderScheduleSlotOffset', getU64Encoder()),
+    ('warmup', getBooleanEncoder()),
+    ('firstNormalEpoch', getU64Encoder()),
+    ('firstNormalSlot', getU64Encoder()),
+  ]) as FixedSizeEncoder<Map<String, Object?>>;
+  final structDecoder = getStructDecoder([
+    ('slotsPerEpoch', getU64Decoder()),
+    ('leaderScheduleSlotOffset', getU64Decoder()),
+    ('warmup', getBooleanDecoder()),
+    ('firstNormalEpoch', getU64Decoder()),
+    ('firstNormalSlot', getU64Decoder()),
+  ]) as FixedSizeDecoder<Map<String, Object?>>;
 
   return mapFixedSizeStructCodec(
     fixedSize: sysvarEpochScheduleSize,

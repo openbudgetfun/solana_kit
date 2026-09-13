@@ -115,22 +115,20 @@ void main() {
         const customSystemProgram = Address('11111111111111111111111111111114');
         const customTokenProgram = Address('11111111111111111111111111111115');
 
-        final plan =
-            getCreateMintInstructionPlan(
-                  CreateMintInput(
-                    payer: owner,
-                    newMint: mint,
-                    decimals: 9,
-                    mintAuthority: authority,
-                    freezeAuthority: destination,
-                    mintAccountLamports: BigInt.from(99),
-                  ),
-                  const CreateMintConfig(
-                    tokenProgram: customTokenProgram,
-                    systemProgram: customSystemProgram,
-                  ),
-                )
-                as SequentialInstructionPlan;
+        final plan = getCreateMintInstructionPlan(
+          CreateMintInput(
+            payer: owner,
+            newMint: mint,
+            decimals: 9,
+            mintAuthority: authority,
+            freezeAuthority: destination,
+            mintAccountLamports: BigInt.from(99),
+          ),
+          const CreateMintConfig(
+            tokenProgram: customTokenProgram,
+            systemProgram: customSystemProgram,
+          ),
+        ) as SequentialInstructionPlan;
 
         final createIx = (plan.plans[0] as SingleInstructionPlan).instruction;
         final parsedCreate = parseCreateAccountInstruction(createIx);
@@ -179,21 +177,19 @@ void main() {
         const customAtaProgram = Address('11111111111111111111111111111115');
         const customSystemProgram = Address('11111111111111111111111111111116');
 
-        final plan =
-            await getMintToAtaInstructionPlanAsync(
-                  payer: owner,
-                  owner: authority,
-                  mint: mint,
-                  mintAuthority: authority,
-                  amount: BigInt.from(500),
-                  decimals: 6,
-                  config: const MintToAtaConfig(
-                    tokenProgram: customTokenProgram,
-                    associatedTokenProgram: customAtaProgram,
-                    systemProgram: customSystemProgram,
-                  ),
-                )
-                as SequentialInstructionPlan;
+        final plan = await getMintToAtaInstructionPlanAsync(
+          payer: owner,
+          owner: authority,
+          mint: mint,
+          mintAuthority: authority,
+          amount: BigInt.from(500),
+          decimals: 6,
+          config: const MintToAtaConfig(
+            tokenProgram: customTokenProgram,
+            associatedTokenProgram: customAtaProgram,
+            systemProgram: customSystemProgram,
+          ),
+        ) as SequentialInstructionPlan;
 
         final createAtaIx =
             (plan.plans[0] as SingleInstructionPlan).instruction;
@@ -239,20 +235,18 @@ void main() {
       const customTokenProgram = Address('11111111111111111111111111111114');
       const customAtaProgram = Address('11111111111111111111111111111115');
 
-      final plan =
-          await getTransferToAtaInstructionPlanAsync(
-                payer: owner,
-                mint: mint,
-                authority: authority,
-                recipient: destination,
-                amount: BigInt.from(100),
-                decimals: 6,
-                config: const TransferToAtaConfig(
-                  tokenProgram: customTokenProgram,
-                  associatedTokenProgram: customAtaProgram,
-                ),
-              )
-              as SequentialInstructionPlan;
+      final plan = await getTransferToAtaInstructionPlanAsync(
+        payer: owner,
+        mint: mint,
+        authority: authority,
+        recipient: destination,
+        amount: BigInt.from(100),
+        decimals: 6,
+        config: const TransferToAtaConfig(
+          tokenProgram: customTokenProgram,
+          associatedTokenProgram: customAtaProgram,
+        ),
+      ) as SequentialInstructionPlan;
 
       final createAtaIx = (plan.plans[0] as SingleInstructionPlan).instruction;
       expect(createAtaIx.programAddress, customAtaProgram);

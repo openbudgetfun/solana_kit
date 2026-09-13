@@ -52,9 +52,8 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(failureMessage)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(failureMessage)));
     }
   }
 
@@ -114,8 +113,7 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
                               ? null
                               : () => _runWithFeedback(
                                   _controller.refreshWalletEndpointStatus,
-                                  failureMessage:
-                                      'Could not refresh wallet endpoint status.',
+                                  failureMessage: 'Could not refresh wallet endpoint status.',
                                 ),
                           icon: const Icon(Icons.refresh),
                           label: const Text('Refresh Wallet Status'),
@@ -150,8 +148,7 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
                                     ? null
                                     : () => _runWithFeedback(
                                         _controller.authorize,
-                                        failureMessage:
-                                            'Authorize failed. Check the operation log.',
+                                        failureMessage: 'Authorize failed. Check the operation log.',
                                       ),
                                 child: const Text('Authorize'),
                               ),
@@ -162,8 +159,7 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
                                     ? null
                                     : () => _runWithFeedback(
                                         _controller.loadCapabilities,
-                                        failureMessage:
-                                            'Get capabilities failed. Check the operation log.',
+                                        failureMessage: 'Get capabilities failed. Check the operation log.',
                                       ),
                                 child: const Text('Get Capabilities'),
                               ),
@@ -174,8 +170,7 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
                                     ? null
                                     : () => _runWithFeedback(
                                         _controller.deauthorize,
-                                        failureMessage:
-                                            'Deauthorize failed. Check the operation log.',
+                                        failureMessage: 'Deauthorize failed. Check the operation log.',
                                       ),
                                 child: const Text('Deauthorize'),
                               ),
@@ -240,8 +235,7 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
                                 ? null
                                 : () => _runWithFeedback(
                                     _controller.signMessage,
-                                    failureMessage:
-                                        'Sign message failed. Check the operation log.',
+                                    failureMessage: 'Sign message failed. Check the operation log.',
                                   ),
                             icon: const Icon(Icons.edit_outlined),
                             label: const Text('Sign Message'),
@@ -276,8 +270,7 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: 'Base64 transaction payload',
-                              hintText:
-                                  'Paste a serialized transaction from your app service',
+                              hintText: 'Paste a serialized transaction from your app service',
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -288,8 +281,7 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
                                 ? null
                                 : () => _runWithFeedback(
                                     _controller.signAndSendTransaction,
-                                    failureMessage:
-                                        'Sign & send failed. Check the operation log.',
+                                    failureMessage: 'Sign & send failed. Check the operation log.',
                                   ),
                             icon: const Icon(Icons.send),
                             label: const Text('Sign & Send Transaction'),

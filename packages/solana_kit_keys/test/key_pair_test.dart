@@ -182,9 +182,9 @@ void main() {
 
       await writeKeyPair(keyPair, path, unsafelyOverwriteExistingKeyPair: true);
 
-      final bytes =
-          (jsonDecode(await File(path).readAsString()) as List<dynamic>)
-              .cast<int>();
+      final bytes = (jsonDecode(
+        await File(path).readAsString(),
+      ) as List<dynamic>).cast<int>();
       expect(bytes, mockKeyBytes);
     });
 

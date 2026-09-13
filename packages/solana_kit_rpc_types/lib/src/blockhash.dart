@@ -61,10 +61,9 @@ Blockhash blockhash(String putativeBlockhash) {
 FixedSizeEncoder<Blockhash> getBlockhashEncoder() {
   final addressEncoder = getAddressEncoder();
   return transformEncoder<Address, Blockhash>(addressEncoder, (bh) {
-        assertIsBlockhash(bh.value);
-        return Address(bh.value);
-      })
-      as FixedSizeEncoder<Blockhash>;
+    assertIsBlockhash(bh.value);
+    return Address(bh.value);
+  }) as FixedSizeEncoder<Blockhash>;
 }
 
 /// Returns a fixed-size decoder that decodes exactly 32 bytes into a
@@ -72,10 +71,9 @@ FixedSizeEncoder<Blockhash> getBlockhashEncoder() {
 FixedSizeDecoder<Blockhash> getBlockhashDecoder() {
   final addressDecoder = getAddressDecoder();
   return transformDecoder<Address, Blockhash>(
-        addressDecoder,
-        (value, bytes, offset) => Blockhash(value.value),
-      )
-      as FixedSizeDecoder<Blockhash>;
+    addressDecoder,
+    (value, bytes, offset) => Blockhash(value.value),
+  ) as FixedSizeDecoder<Blockhash>;
 }
 
 /// Returns a fixed-size codec that encodes and decodes [Blockhash] values

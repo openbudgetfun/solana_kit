@@ -7,18 +7,14 @@ import 'package:test/test.dart';
 void main() {
   group('sysvar layout helpers', () {
     test('mapFixedSizeStructCodec bridges typed fixed-layout models', () {
-      final structEncoder =
-          getStructEncoder([
-                ('slot', getU64Encoder()),
-                ('warmup', getBooleanEncoder()),
-              ])
-              as FixedSizeEncoder<Map<String, Object?>>;
-      final structDecoder =
-          getStructDecoder([
-                ('slot', getU64Decoder()),
-                ('warmup', getBooleanDecoder()),
-              ])
-              as FixedSizeDecoder<Map<String, Object?>>;
+      final structEncoder = getStructEncoder([
+        ('slot', getU64Encoder()),
+        ('warmup', getBooleanEncoder()),
+      ]) as FixedSizeEncoder<Map<String, Object?>>;
+      final structDecoder = getStructDecoder([
+        ('slot', getU64Decoder()),
+        ('warmup', getBooleanDecoder()),
+      ]) as FixedSizeDecoder<Map<String, Object?>>;
 
       final codec = mapFixedSizeStructCodec<_ExampleLayout>(
         fixedSize: structEncoder.fixedSize,

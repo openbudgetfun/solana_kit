@@ -231,9 +231,9 @@ void main() {
 
       await writeKeyPairSigner(signer, path);
 
-      final actualBytes =
-          (jsonDecode(await File(path).readAsString()) as List<dynamic>)
-              .cast<int>();
+      final actualBytes = (jsonDecode(
+        await File(path).readAsString(),
+      ) as List<dynamic>).cast<int>();
       expect(actualBytes, expectedBytes);
     });
   });

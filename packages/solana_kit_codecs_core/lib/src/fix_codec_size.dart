@@ -93,12 +93,11 @@ FixedSizeCodec<TFrom, TTo> fixCodecSize<TFrom, TTo>(
   bool allowTruncation = true,
 }) {
   return combineCodec(
-        fixEncoderSize(
-          encoderFromCodec(codec),
-          fixedBytes,
-          allowTruncation: allowTruncation,
-        ),
-        fixDecoderSize(decoderFromCodec(codec), fixedBytes),
-      )
-      as FixedSizeCodec<TFrom, TTo>;
+    fixEncoderSize(
+      encoderFromCodec(codec),
+      fixedBytes,
+      allowTruncation: allowTruncation,
+    ),
+    fixDecoderSize(decoderFromCodec(codec), fixedBytes),
+  ) as FixedSizeCodec<TFrom, TTo>;
 }

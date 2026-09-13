@@ -286,9 +286,9 @@ void main() {
       expect(mockApi.calls['resolveRequest'], hasLength(1));
       final resolveCall = mockApi.calls['resolveRequest']!.first;
       expect(resolveCall['requestId'], 'req-1');
-      final resultJson =
-          jsonDecode(resolveCall['resultJson']! as String)
-              as Map<String, Object?>;
+      final resultJson = jsonDecode(
+        resolveCall['resultJson']! as String,
+      ) as Map<String, Object?>;
       expect(resultJson['auth_token'], 'new-token');
     });
 
@@ -307,11 +307,9 @@ void main() {
       await nativeFuture;
 
       expect(mockApi.calls['resolveRequest'], hasLength(1));
-      final resultJson =
-          jsonDecode(
-                mockApi.calls['resolveRequest']!.first['resultJson']! as String,
-              )
-              as Map<String, Object?>;
+      final resultJson = jsonDecode(
+        mockApi.calls['resolveRequest']!.first['resultJson']! as String,
+      ) as Map<String, Object?>;
       expect(resultJson.containsKey('error'), isTrue);
     });
 
@@ -341,11 +339,9 @@ void main() {
 
       await nativeFuture;
 
-      final resultJson =
-          jsonDecode(
-                mockApi.calls['resolveRequest']!.first['resultJson']! as String,
-              )
-              as Map<String, Object?>;
+      final resultJson = jsonDecode(
+        mockApi.calls['resolveRequest']!.first['resultJson']! as String,
+      ) as Map<String, Object?>;
       expect(resultJson['signed_payloads'], ['c2lnMQ==', 'c2lnMg==']);
     });
 

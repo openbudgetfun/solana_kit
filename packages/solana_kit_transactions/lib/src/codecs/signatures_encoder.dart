@@ -37,13 +37,12 @@ List<Uint8List> _getSignaturesToEncode(
 VariableSizeEncoder<Map<Address, SignatureBytes?>>
 getSignaturesEncoderWithSizePrefix() {
   return transformEncoder<List<Uint8List>, Map<Address, SignatureBytes?>>(
-        getArrayEncoder(
-          fixEncoderSize(getBytesEncoder(), 64) as Encoder<Uint8List>,
-          size: PrefixedArraySize(getShortU16Encoder()),
-        ),
-        _getSignaturesToEncode,
-      )
-      as VariableSizeEncoder<Map<Address, SignatureBytes?>>;
+    getArrayEncoder(
+      fixEncoderSize(getBytesEncoder(), 64) as Encoder<Uint8List>,
+      size: PrefixedArraySize(getShortU16Encoder()),
+    ),
+    _getSignaturesToEncode,
+  ) as VariableSizeEncoder<Map<Address, SignatureBytes?>>;
 }
 
 /// Signatures encoder for v1 transactions, which encode signatures as a
@@ -52,12 +51,11 @@ FixedSizeEncoder<Map<Address, SignatureBytes?>> getSignaturesEncoderWithLength(
   int size,
 ) {
   return transformEncoder<List<Uint8List>, Map<Address, SignatureBytes?>>(
-        getArrayEncoder(
-          fixEncoderSize(getBytesEncoder(), 64) as Encoder<Uint8List>,
-          size: FixedArraySize(size),
-          description: 'signatures',
-        ),
-        _getSignaturesToEncode,
-      )
-      as FixedSizeEncoder<Map<Address, SignatureBytes?>>;
+    getArrayEncoder(
+      fixEncoderSize(getBytesEncoder(), 64) as Encoder<Uint8List>,
+      size: FixedArraySize(size),
+      description: 'signatures',
+    ),
+    _getSignaturesToEncode,
+  ) as FixedSizeEncoder<Map<Address, SignatureBytes?>>;
 }

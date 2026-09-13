@@ -35,9 +35,9 @@ Future<void> main(List<String> args) async {
 
   var installedVersion = '';
   if (installedPackageJson.existsSync()) {
-    final json =
-        jsonDecode(installedPackageJson.readAsStringSync())
-            as Map<String, Object?>;
+    final json = jsonDecode(
+      installedPackageJson.readAsStringSync(),
+    ) as Map<String, Object?>;
     installedVersion = json['version'] as String? ?? '';
   }
 

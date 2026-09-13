@@ -81,6 +81,7 @@ library;
 
 export 'package:solana_kit_address_constants/solana_kit_address_constants.dart'
     show solanaAttestationServiceProgramAddress;
+
 export 'src/errors.dart';
 export 'src/generated/solana_attestation_service.dart'
     hide solanaAttestationServiceProgramAddress;

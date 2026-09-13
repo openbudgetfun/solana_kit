@@ -345,8 +345,7 @@ const Map<int, String> _subscriptionsErrorMessages = {
   subscriptionsErrorPlanAlreadyExists: 'Plan account already exists',
   subscriptionsErrorPlanTermsMismatch:
       'Subscription plan terms do not match the current plan',
-  subscriptionsErrorPlanEndTsCannotExtend:
-      'A finite plan end timestamp can only be shortened, not removed or extended',
+  subscriptionsErrorPlanEndTsCannotExtend: 'A finite plan end timestamp can only be shortened, not removed or extended',
   subscriptionsErrorStaleSubscriptionApproval:
       'Subscription approval does not match the current subscription',
   subscriptionsErrorStalePlanApproval:

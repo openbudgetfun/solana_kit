@@ -22,8 +22,7 @@ FixedSizeEncoder<void> getOffchainMessageSigningDomainEncoder() {
 /// Returns a codec for the 16-byte signing domain.
 FixedSizeCodec<void, void> getOffchainMessageSigningDomainCodec() {
   return combineCodec(
-        getOffchainMessageSigningDomainEncoder(),
-        getOffchainMessageSigningDomainDecoder(),
-      )
-      as FixedSizeCodec<void, void>;
+    getOffchainMessageSigningDomainEncoder(),
+    getOffchainMessageSigningDomainDecoder(),
+  ) as FixedSizeCodec<void, void>;
 }

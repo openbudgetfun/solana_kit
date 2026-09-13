@@ -4,7 +4,7 @@ version: 0.8.3
 repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_token_2022
 homepage: https://openbudgetfun.github.io/solana_kit/
 environment:
-  sdk: ^3.12.0
+  sdk: ^3.13.0
 resolution: workspace
 dependencies:
   meta: ^1.16.0

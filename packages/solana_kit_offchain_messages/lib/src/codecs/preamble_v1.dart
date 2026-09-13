@@ -14,43 +14,42 @@ Decoder<Map<String, Object?>> getOffchainMessageV1PreambleDecoder() {
     (
       'requiredSignatories',
       transformDecoder<List<Object?>, List<OffchainMessageSignatory>>(
-            getArrayDecoder(
-              fixDecoderSize(getBytesDecoder(), 32) as Decoder<Object?>,
-              size: PrefixedArraySize(getU8Decoder()),
-            ),
-            (signatoryAddressesBytes, bytes, offset) {
-              final addressBytes = signatoryAddressesBytes.cast<Uint8List>();
-              if (addressBytes.isEmpty) {
-                throw SolanaError(
-                  SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero,
-                );
-              }
-              // Verify signatories are sorted and unique.
-              final comparator = getSignatoriesComparator();
-              for (var i = 0; i < addressBytes.length - 1; i++) {
-                final cmp = comparator(addressBytes[i], addressBytes[i + 1]);
-                if (cmp == 0) {
-                  throw SolanaError(
-                    SolanaErrorCode.offchainMessageSignatoriesMustBeUnique,
-                  );
-                }
-                if (cmp > 0) {
-                  throw SolanaError(
-                    SolanaErrorCode.offchainMessageSignatoriesMustBeSorted,
-                  );
-                }
-              }
-              final addressDecoder = getAddressDecoder();
-              return addressBytes
-                  .map(
-                    (addrBytes) => OffchainMessageSignatory(
-                      address: addressDecoder.decode(addrBytes),
-                    ),
-                  )
-                  .toList();
-            },
-          )
-          as Decoder<Object?>,
+        getArrayDecoder(
+          fixDecoderSize(getBytesDecoder(), 32) as Decoder<Object?>,
+          size: PrefixedArraySize(getU8Decoder()),
+        ),
+        (signatoryAddressesBytes, bytes, offset) {
+          final addressBytes = signatoryAddressesBytes.cast<Uint8List>();
+          if (addressBytes.isEmpty) {
+            throw SolanaError(
+              SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero,
+            );
+          }
+          // Verify signatories are sorted and unique.
+          final comparator = getSignatoriesComparator();
+          for (var i = 0; i < addressBytes.length - 1; i++) {
+            final cmp = comparator(addressBytes[i], addressBytes[i + 1]);
+            if (cmp == 0) {
+              throw SolanaError(
+                SolanaErrorCode.offchainMessageSignatoriesMustBeUnique,
+              );
+            }
+            if (cmp > 0) {
+              throw SolanaError(
+                SolanaErrorCode.offchainMessageSignatoriesMustBeSorted,
+              );
+            }
+          }
+          final addressDecoder = getAddressDecoder();
+          return addressBytes
+              .map(
+                (addrBytes) => OffchainMessageSignatory(
+                  address: addressDecoder.decode(addrBytes),
+                ),
+              )
+              .toList();
+        },
+      ) as Decoder<Object?>,
     ),
   ]);
 }
@@ -61,38 +60,37 @@ Encoder<Map<String, Object?>> getOffchainMessageV1PreambleEncoder() {
     (
       'requiredSignatories',
       transformEncoder<List<Uint8List>, List<OffchainMessageSignatory>>(
-            transformEncoder<List<Uint8List>, List<Uint8List>>(
-              getArrayEncoder(
-                getBytesEncoder() as Encoder<Uint8List>,
-                size: PrefixedArraySize(getU8Encoder()),
-              ),
-              (signatoryAddressesBytes) {
-                final sorted = List<Uint8List>.from(signatoryAddressesBytes)
-                  ..sort(getSignatoriesComparator());
-                return sorted;
-              },
-            ),
-            (signatories) {
-              if (signatories.isEmpty) {
-                throw SolanaError(
-                  SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero,
-                );
-              }
-              final seenSignatories = <String>{};
-              for (final signatory in signatories) {
-                if (!seenSignatories.add(signatory.address.value)) {
-                  throw SolanaError(
-                    SolanaErrorCode.offchainMessageSignatoriesMustBeUnique,
-                  );
-                }
-              }
-              final addressEncoder = getAddressEncoder();
-              return signatories
-                  .map((s) => addressEncoder.encode(s.address))
-                  .toList();
-            },
-          )
-          as Encoder<Object?>,
+        transformEncoder<List<Uint8List>, List<Uint8List>>(
+          getArrayEncoder(
+            getBytesEncoder() as Encoder<Uint8List>,
+            size: PrefixedArraySize(getU8Encoder()),
+          ),
+          (signatoryAddressesBytes) {
+            final sorted = List<Uint8List>.from(signatoryAddressesBytes)
+              ..sort(getSignatoriesComparator());
+            return sorted;
+          },
+        ),
+        (signatories) {
+          if (signatories.isEmpty) {
+            throw SolanaError(
+              SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero,
+            );
+          }
+          final seenSignatories = <String>{};
+          for (final signatory in signatories) {
+            if (!seenSignatories.add(signatory.address.value)) {
+              throw SolanaError(
+                SolanaErrorCode.offchainMessageSignatoriesMustBeUnique,
+              );
+            }
+          }
+          final addressEncoder = getAddressEncoder();
+          return signatories
+              .map((s) => addressEncoder.encode(s.address))
+              .toList();
+        },
+      ) as Encoder<Object?>,
     ),
   ]);
 }

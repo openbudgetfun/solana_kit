@@ -114,10 +114,9 @@ VariableSizeDecoder<NameRegistryState> getNameRegistryStateDecoder() {
 VariableSizeCodec<NameRegistryState, NameRegistryState>
 getNameRegistryStateCodec() {
   return combineCodec(
-        getNameRegistryStateEncoder(),
-        getNameRegistryStateDecoder(),
-      )
-      as VariableSizeCodec<NameRegistryState, NameRegistryState>;
+    getNameRegistryStateEncoder(),
+    getNameRegistryStateDecoder(),
+  ) as VariableSizeCodec<NameRegistryState, NameRegistryState>;
 }
 
 /// Returns a codec for a length-prefixed UTF-8 string.

@@ -83,9 +83,9 @@ Future<void> main(List<String> args) async {
   }
 
   if (upstreamPackageJson.existsSync()) {
-    final json =
-        jsonDecode(upstreamPackageJson.readAsStringSync())
-            as Map<String, Object?>;
+    final json = jsonDecode(
+      upstreamPackageJson.readAsStringSync(),
+    ) as Map<String, Object?>;
     final upstreamVersion = json['version'] as String?;
     if (upstreamVersion != null && upstreamVersion != trackedVersion) {
       stderr.writeln(

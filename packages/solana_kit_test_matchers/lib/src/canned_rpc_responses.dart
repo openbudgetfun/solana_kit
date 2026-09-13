@@ -50,14 +50,12 @@ Map<String, Object?> getSignatureStatusesRpcResult({
 
 /// Returns a canned `sendTransaction` result payload.
 String sendTransactionRpcResult({
-  String signature =
-      '3bwsNoq6EP89sShUAKBeB26aCC3KLGNajRm5wqwr6zRPP3gErZH7erSg3332SVY7Ru6cME43qT35Z7JKpZqCoPaL',
+  String signature = '3bwsNoq6EP89sShUAKBeB26aCC3KLGNajRm5wqwr6zRPP3gErZH7erSg3332SVY7Ru6cME43qT35Z7JKpZqCoPaL',
 }) => signature;
 
 /// Returns a canned `requestAirdrop` result payload.
 String requestAirdropRpcResult({
-  String signature =
-      '3bwsNoq6EP89sShUAKBeB26aCC3KLGNajRm5wqwr6zRPP3gErZH7erSg3332SVY7Ru6cME43qT35Z7JKpZqCoPaL',
+  String signature = '3bwsNoq6EP89sShUAKBeB26aCC3KLGNajRm5wqwr6zRPP3gErZH7erSg3332SVY7Ru6cME43qT35Z7JKpZqCoPaL',
 }) => signature;
 
 /// Returns a canned `getEpochInfo` result payload.

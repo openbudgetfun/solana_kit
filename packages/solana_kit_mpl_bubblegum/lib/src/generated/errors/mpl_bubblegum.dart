@@ -201,8 +201,7 @@ const Map<int, String> _mplBubblegumErrorMessages = {
   MplBubblegumError.creatorNotVerified: 'Creator did not verify the metadata',
   MplBubblegumError.creatorNotFound: 'Creator not found in creator Vec',
   MplBubblegumError.noCreators: 'No creators in creator Vec',
-  MplBubblegumError.creatorHashMismatch:
-      'User-provided creator Vec must result in same user-provided creator hash',
+  MplBubblegumError.creatorHashMismatch: 'User-provided creator Vec must result in same user-provided creator hash',
   MplBubblegumError.dataHashMismatch:
       'User-provided metadata must result in same user-provided data hash',
   MplBubblegumError.creatorsTooLong: 'Creators list too long',
@@ -226,8 +225,7 @@ const Map<int, String> _mplBubblegumErrorMessages = {
       'Collection item is already unverified',
   MplBubblegumError.incorrectMetadataUpdateAuthority:
       'Incorrect leaf metadata update authority',
-  MplBubblegumError.ownerOrDelegateMismatch:
-      'This transaction must be signed by either the leaf owner or leaf delegate',
+  MplBubblegumError.ownerOrDelegateMismatch: 'This transaction must be signed by either the leaf owner or leaf delegate',
   MplBubblegumError.collectionMustBeSized:
       'Collection must be a sized collection',
   MplBubblegumError.metadataMintMismatch:
@@ -274,12 +272,9 @@ const Map<int, String> _mplBubblegumErrorMessages = {
   MplBubblegumError.missingMplCoreCpiSigner:
       'Missing mpl-core CPI signer account',
   MplBubblegumError.assetNotFrozen: 'Asset is not frozen',
-  MplBubblegumError.collectionMustHaveRoyaltiesPlugin:
-      'Core collections must have the Royalties plugin to inherit seller fee basis points',
-  MplBubblegumError.inheritedSellerFeeCannotHaveLeafCreators:
-      'Inherited seller fee basis points cannot be used with leaf-level creators',
-  MplBubblegumError.cannotRemoveFromCollectionWithInheritedSellerFee:
-      'Cannot remove from collection while seller fee basis points are inherited',
+  MplBubblegumError.collectionMustHaveRoyaltiesPlugin: 'Core collections must have the Royalties plugin to inherit seller fee basis points',
+  MplBubblegumError.inheritedSellerFeeCannotHaveLeafCreators: 'Inherited seller fee basis points cannot be used with leaf-level creators',
+  MplBubblegumError.cannotRemoveFromCollectionWithInheritedSellerFee: 'Cannot remove from collection while seller fee basis points are inherited',
 };
 
 /// Gets the error message for a given MPL Bubblegum error code.

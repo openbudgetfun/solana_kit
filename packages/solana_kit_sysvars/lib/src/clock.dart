@@ -77,15 +77,13 @@ class SysvarClock {
 
 /// Returns a fixed-size encoder for the [SysvarClock] sysvar.
 FixedSizeEncoder<SysvarClock> getSysvarClockEncoder() {
-  final structEncoder =
-      getStructEncoder([
-            ('slot', getU64Encoder()),
-            ('epochStartTimestamp', getI64Encoder()),
-            ('epoch', getU64Encoder()),
-            ('leaderScheduleEpoch', getU64Encoder()),
-            ('unixTimestamp', getI64Encoder()),
-          ])
-          as FixedSizeEncoder<Map<String, Object?>>;
+  final structEncoder = getStructEncoder([
+    ('slot', getU64Encoder()),
+    ('epochStartTimestamp', getI64Encoder()),
+    ('epoch', getU64Encoder()),
+    ('leaderScheduleEpoch', getU64Encoder()),
+    ('unixTimestamp', getI64Encoder()),
+  ]) as FixedSizeEncoder<Map<String, Object?>>;
 
   return mapFixedSizeStructEncoder(
     fixedSize: sysvarClockSize,
@@ -102,15 +100,13 @@ FixedSizeEncoder<SysvarClock> getSysvarClockEncoder() {
 
 /// Returns a fixed-size decoder for the [SysvarClock] sysvar.
 FixedSizeDecoder<SysvarClock> getSysvarClockDecoder() {
-  final structDecoder =
-      getStructDecoder([
-            ('slot', getU64Decoder()),
-            ('epochStartTimestamp', getI64Decoder()),
-            ('epoch', getU64Decoder()),
-            ('leaderScheduleEpoch', getU64Decoder()),
-            ('unixTimestamp', getI64Decoder()),
-          ])
-          as FixedSizeDecoder<Map<String, Object?>>;
+  final structDecoder = getStructDecoder([
+    ('slot', getU64Decoder()),
+    ('epochStartTimestamp', getI64Decoder()),
+    ('epoch', getU64Decoder()),
+    ('leaderScheduleEpoch', getU64Decoder()),
+    ('unixTimestamp', getI64Decoder()),
+  ]) as FixedSizeDecoder<Map<String, Object?>>;
 
   return mapFixedSizeStructDecoder(
     fixedSize: sysvarClockSize,
@@ -127,24 +123,20 @@ FixedSizeDecoder<SysvarClock> getSysvarClockDecoder() {
 
 /// Returns a fixed-size codec for the [SysvarClock] sysvar.
 FixedSizeCodec<SysvarClock, SysvarClock> getSysvarClockCodec() {
-  final structEncoder =
-      getStructEncoder([
-            ('slot', getU64Encoder()),
-            ('epochStartTimestamp', getI64Encoder()),
-            ('epoch', getU64Encoder()),
-            ('leaderScheduleEpoch', getU64Encoder()),
-            ('unixTimestamp', getI64Encoder()),
-          ])
-          as FixedSizeEncoder<Map<String, Object?>>;
-  final structDecoder =
-      getStructDecoder([
-            ('slot', getU64Decoder()),
-            ('epochStartTimestamp', getI64Decoder()),
-            ('epoch', getU64Decoder()),
-            ('leaderScheduleEpoch', getU64Decoder()),
-            ('unixTimestamp', getI64Decoder()),
-          ])
-          as FixedSizeDecoder<Map<String, Object?>>;
+  final structEncoder = getStructEncoder([
+    ('slot', getU64Encoder()),
+    ('epochStartTimestamp', getI64Encoder()),
+    ('epoch', getU64Encoder()),
+    ('leaderScheduleEpoch', getU64Encoder()),
+    ('unixTimestamp', getI64Encoder()),
+  ]) as FixedSizeEncoder<Map<String, Object?>>;
+  final structDecoder = getStructDecoder([
+    ('slot', getU64Decoder()),
+    ('epochStartTimestamp', getI64Decoder()),
+    ('epoch', getU64Decoder()),
+    ('leaderScheduleEpoch', getU64Decoder()),
+    ('unixTimestamp', getI64Decoder()),
+  ]) as FixedSizeDecoder<Map<String, Object?>>;
 
   return mapFixedSizeStructCodec(
     fixedSize: sysvarClockSize,

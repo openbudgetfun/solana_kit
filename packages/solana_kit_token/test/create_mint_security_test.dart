@@ -55,8 +55,7 @@ void main() {
         expect(
           sequence.divisible,
           isFalse,
-          reason:
-              'An uninitialized mint accepts any caller as its first authority.',
+          reason: 'An uninitialized mint accepts any caller as its first authority.',
         );
       },
     );

@@ -34,5 +34,6 @@ library;
 
 export 'package:solana_kit_address/solana_kit_address.dart';
 export 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
+
 export 'src/curve.dart';
 export 'src/program_derived_address.dart';

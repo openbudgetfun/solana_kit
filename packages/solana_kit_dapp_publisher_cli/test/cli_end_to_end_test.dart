@@ -310,9 +310,9 @@ class MockPortalServer {
           );
           return;
         case 'publication.submitSignedTransaction':
-          final body =
-              jsonDecode(utf8.decode(await _body(request)))
-                  as Map<String, Object?>;
+          final body = jsonDecode(
+            utf8.decode(await _body(request)),
+          ) as Map<String, Object?>;
           signedTransactions.add(body);
           await _json(
             request,
@@ -348,9 +348,9 @@ class MockPortalServer {
           );
           return;
         case 'publication.submitToStore':
-          final body =
-              jsonDecode(utf8.decode(await _body(request)))
-                  as Map<String, Object?>;
+          final body = jsonDecode(
+            utf8.decode(await _body(request)),
+          ) as Map<String, Object?>;
           submittedToStore.add(body);
           await _json(
             request,

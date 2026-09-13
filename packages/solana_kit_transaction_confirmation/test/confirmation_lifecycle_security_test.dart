@@ -114,12 +114,11 @@ void main() {
           BaseTransactionConfirmationStrategyConfig(
             abortSignal: source.token,
             commitment: Commitment.confirmed,
-            getRecentSignatureConfirmationPromise:
-                ({
-                  required abortSignal,
-                  required commitment,
-                  required signature,
-                }) => Completer<void>().future,
+            getRecentSignatureConfirmationPromise: ({
+              required abortSignal,
+              required commitment,
+              required signature,
+            }) => Completer<void>().future,
           ),
           ({required abortSignal}) => throw error,
         ),
@@ -189,12 +188,11 @@ void main() {
         BaseTransactionConfirmationStrategyConfig(
           abortSignal: source.token,
           commitment: Commitment.confirmed,
-          getRecentSignatureConfirmationPromise:
-              ({
-                required abortSignal,
-                required commitment,
-                required signature,
-              }) => Completer<void>().future,
+          getRecentSignatureConfirmationPromise: ({
+            required abortSignal,
+            required commitment,
+            required signature,
+          }) => Completer<void>().future,
         ),
         ({required abortSignal}) => [Completer<void>().future],
       );

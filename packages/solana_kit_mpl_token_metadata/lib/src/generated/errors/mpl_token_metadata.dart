@@ -802,10 +802,8 @@ const Map<int, String> _mplTokenMetadataErrorMessages = {
       'Lamport balance below rent-exempt threshold',
   mplTokenMetadataErrorAlreadyInitialized: 'Already initialized',
   mplTokenMetadataErrorUninitialized: 'Uninitialized',
-  mplTokenMetadataErrorInvalidMetadataKey:
-      ' Metadata\'s key must match seed of [\'metadata\', program id, mint] provided',
-  mplTokenMetadataErrorInvalidEditionKey:
-      'Edition\'s key must match seed of [\'metadata\', program id, name, \'edition\'] provided',
+  mplTokenMetadataErrorInvalidMetadataKey: ' Metadata\'s key must match seed of [\'metadata\', program id, mint] provided',
+  mplTokenMetadataErrorInvalidEditionKey: 'Edition\'s key must match seed of [\'metadata\', program id, name, \'edition\'] provided',
   mplTokenMetadataErrorUpdateAuthorityIncorrect:
       'Update Authority given does not match',
   mplTokenMetadataErrorUpdateAuthorityIsNotSigner:
@@ -837,8 +835,7 @@ const Map<int, String> _mplTokenMetadataErrorMessages = {
   mplTokenMetadataErrorDerivedKeyInvalid: 'Derived key invalid',
   mplTokenMetadataErrorPrintingMintMismatch:
       'The Printing mint does not match that on the master edition!',
-  mplTokenMetadataErrorOneTimePrintingAuthMintMismatch:
-      'The One Time Printing Auth mint does not match that on the master edition!',
+  mplTokenMetadataErrorOneTimePrintingAuthMintMismatch: 'The One Time Printing Auth mint does not match that on the master edition!',
   mplTokenMetadataErrorTokenAccountMintMismatch:
       'The mint of the token account does not match the Printing mint!',
   mplTokenMetadataErrorTokenAccountMintMismatchV2:
@@ -903,8 +900,7 @@ const Map<int, String> _mplTokenMetadataErrorMessages = {
       'Is Mutable can only be flipped to false',
   mplTokenMetadataErrorCollectionCannotBeVerifiedInThisInstruction:
       'Collection cannot be verified in this instruction',
-  mplTokenMetadataErrorRemoved:
-      'This instruction was deprecated in a previous release and is now removed',
+  mplTokenMetadataErrorRemoved: 'This instruction was deprecated in a previous release and is now removed',
   mplTokenMetadataErrorMustBeBurned: '',
   mplTokenMetadataErrorInvalidUseMethod: 'This use method is invalid',
   mplTokenMetadataErrorCannotChangeUseMethodAfterFirstUse:
@@ -916,8 +912,7 @@ const Map<int, String> _mplTokenMetadataErrorMessages = {
       'Collection Update Authority is invalid',
   mplTokenMetadataErrorCollectionMustBeAUniqueMasterEdition:
       'Collection Must Be a Unique Master Edition v2',
-  mplTokenMetadataErrorUseAuthorityRecordAlreadyExists:
-      'The Use Authority Record Already Exists, to modify it Revoke, then Approve',
+  mplTokenMetadataErrorUseAuthorityRecordAlreadyExists: 'The Use Authority Record Already Exists, to modify it Revoke, then Approve',
   mplTokenMetadataErrorUseAuthorityRecordAlreadyRevoked:
       'The Use Authority Record is empty or already revoked',
   mplTokenMetadataErrorUnusable: 'This token has no uses',

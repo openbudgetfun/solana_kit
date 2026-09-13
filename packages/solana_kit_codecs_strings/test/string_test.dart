@@ -128,15 +128,17 @@ void main() {
 
     test('has the right sizes', () {
       expect(
-        (addCodecSizePrefix(getUtf8Codec(), getU8Codec())
-                as VariableSizeCodec<String, String>)
-            .getSizeFromValue('ABC'),
+        (addCodecSizePrefix(
+          getUtf8Codec(),
+          getU8Codec(),
+        ) as VariableSizeCodec<String, String>).getSizeFromValue('ABC'),
         equals(1 + 3),
       );
       expect(
-        (addCodecSizePrefix(getUtf8Codec(), getU8Codec())
-                as VariableSizeCodec<String, String>)
-            .maxSize,
+        (addCodecSizePrefix(
+          getUtf8Codec(),
+          getU8Codec(),
+        ) as VariableSizeCodec<String, String>).maxSize,
         isNull,
       );
       expect(getUtf8Codec().getSizeFromValue('ABC'), equals(3));

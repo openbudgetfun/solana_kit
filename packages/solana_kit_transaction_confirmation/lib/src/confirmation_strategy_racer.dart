@@ -4,12 +4,11 @@ import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 /// The type of a function that creates a recent signature confirmation promise.
-typedef GetRecentSignatureConfirmationPromise =
-    Future<void> Function({
-      required CancellationToken abortSignal,
-      required Commitment commitment,
-      required String signature,
-    });
+typedef GetRecentSignatureConfirmationPromise = Future<void> Function({
+  required CancellationToken abortSignal,
+  required Commitment commitment,
+  required String signature,
+});
 
 /// Configuration for a confirmation strategy race.
 class BaseTransactionConfirmationStrategyConfig {

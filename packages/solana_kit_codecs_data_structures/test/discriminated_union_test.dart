@@ -14,10 +14,9 @@ void main() {
         (
           'Move',
           getStructCodec([
-                ('x', getU8Codec() as Codec<Object?, Object?>),
-                ('y', getU8Codec() as Codec<Object?, Object?>),
-              ])
-              as Codec<Object?, Object?>,
+            ('x', getU8Codec() as Codec<Object?, Object?>),
+            ('y', getU8Codec() as Codec<Object?, Object?>),
+          ]) as Codec<Object?, Object?>,
         ),
       ]);
 
@@ -37,10 +36,9 @@ void main() {
         (
           'Move',
           getStructCodec([
-                ('x', getU8Codec() as Codec<Object?, Object?>),
-                ('y', getU8Codec() as Codec<Object?, Object?>),
-              ])
-              as Codec<Object?, Object?>,
+            ('x', getU8Codec() as Codec<Object?, Object?>),
+            ('y', getU8Codec() as Codec<Object?, Object?>),
+          ]) as Codec<Object?, Object?>,
         ),
       ]);
 

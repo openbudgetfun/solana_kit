@@ -53,8 +53,7 @@ getDeprecatedMintNewEditionFromMasterEditionViaPrintingTokenInstructionDataDecod
     throw SolanaError(
       SolanaErrorCode.codecsInvalidByteLength,
       {
-        'codecDescription':
-            'deprecatedMintNewEditionFromMasterEditionViaPrintingToken instruction decoder',
+        'codecDescription': 'deprecatedMintNewEditionFromMasterEditionViaPrintingToken instruction decoder',
         'expected': expected,
         'bytesLength': bytesLength,
       },

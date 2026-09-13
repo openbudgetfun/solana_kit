@@ -81,10 +81,9 @@ VariableSizeDecoder<SysvarSlotHashes> getSysvarSlotHashesDecoder() {
 VariableSizeCodec<SysvarSlotHashes, SysvarSlotHashes>
 getSysvarSlotHashesCodec() {
   return combineCodec(
-        getSysvarSlotHashesEncoder(),
-        getSysvarSlotHashesDecoder(),
-      )
-      as VariableSizeCodec<SysvarSlotHashes, SysvarSlotHashes>;
+    getSysvarSlotHashesEncoder(),
+    getSysvarSlotHashesDecoder(),
+  ) as VariableSizeCodec<SysvarSlotHashes, SysvarSlotHashes>;
 }
 
 /// Fetches the `SlotHashes` sysvar account using the provided RPC client.

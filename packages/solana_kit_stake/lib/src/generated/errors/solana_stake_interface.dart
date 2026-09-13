@@ -79,8 +79,7 @@ const Map<int, String> _solanaStakeInterfaceErrorMessages = {
       'Insufficient voting activity in the reference vote account',
   solanaStakeInterfaceErrorVoteAddressMismatch:
       'Stake account is not delegated to the provided vote account',
-  solanaStakeInterfaceErrorMinimumDelinquentEpochsForDeactivationNotMet:
-      'Stake account has not been delinquent for the minimum epochs required for deactivation',
+  solanaStakeInterfaceErrorMinimumDelinquentEpochsForDeactivationNotMet: 'Stake account has not been delinquent for the minimum epochs required for deactivation',
   solanaStakeInterfaceErrorInsufficientDelegation:
       'Delegation amount is less than the minimum',
   solanaStakeInterfaceErrorRedelegateTransientOrInactiveStake:

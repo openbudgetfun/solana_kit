@@ -319,12 +319,11 @@ final class PublicationWorkflowResult {
 }
 
 /// A logger that receives workflow progress events.
-typedef WorkflowLogger =
-    void Function(
-      String message, {
-      required String step,
-      required String status,
-    });
+typedef WorkflowLogger = void Function(
+  String message, {
+  required String step,
+  required String status,
+});
 
 /// Options for the publication workflow.
 final class PublicationWorkflowOptions {

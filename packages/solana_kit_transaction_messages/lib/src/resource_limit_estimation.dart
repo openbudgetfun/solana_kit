@@ -32,10 +32,9 @@ class ResourceLimitsEstimate {
 }
 
 /// A function that estimates the resource limits for [transactionMessage].
-typedef EstimateResourceLimits =
-    Future<ResourceLimitsEstimate> Function(
-      TransactionMessage transactionMessage,
-    );
+typedef EstimateResourceLimits = Future<ResourceLimitsEstimate> Function(
+  TransactionMessage transactionMessage,
+);
 
 /// Returns the loaded accounts data size limit set on [transactionMessage], if
 /// any.

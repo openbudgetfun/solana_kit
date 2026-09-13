@@ -138,9 +138,9 @@ void main() {
 
     test('encodes a lamports value using a variable-size shortU16 encoder', () {
       final lamportsValue = lamports(BigInt.from(300));
-      final encoder =
-          getLamportsEncoder(getShortU16Encoder())
-              as VariableSizeEncoder<Lamports>;
+      final encoder = getLamportsEncoder(
+        getShortU16Encoder(),
+      ) as VariableSizeEncoder<Lamports>;
       final buffer = encoder.encode(lamportsValue);
       expect(buffer, equals(Uint8List.fromList([172, 2])));
       expect(encoder.getSizeFromValue(lamportsValue), 2);
@@ -199,9 +199,9 @@ void main() {
 
     test('decodes a variable-size shortU16 buffer into a lamports value', () {
       final buffer = Uint8List.fromList([172, 2]);
-      final decoder =
-          getLamportsDecoder(getShortU16Decoder())
-              as VariableSizeDecoder<Lamports>;
+      final decoder = getLamportsDecoder(
+        getShortU16Decoder(),
+      ) as VariableSizeDecoder<Lamports>;
       final lamportsValue = decoder.decode(buffer);
       expect(lamportsValue, equals(lamports(BigInt.from(300))));
       expect(decoder.maxSize, 3);
@@ -279,9 +279,9 @@ void main() {
       'encodes and decodes lamports using a variable-size shortU16 codec',
       () {
         final lamportsValue = lamports(BigInt.from(300));
-        final codec =
-            getLamportsCodec(getShortU16Codec())
-                as VariableSizeCodec<Lamports, Lamports>;
+        final codec = getLamportsCodec(
+          getShortU16Codec(),
+        ) as VariableSizeCodec<Lamports, Lamports>;
         final buffer = codec.encode(lamportsValue);
         expect(buffer, equals(Uint8List.fromList([172, 2])));
         expect(codec.decode(buffer), equals(lamportsValue));

@@ -4,7 +4,7 @@ version: 0.4.3
 repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_address_lookup_table
 homepage: https://openbudgetfun.github.io/solana_kit/
 environment:
-  sdk: ^3.12.0
+  sdk: ^3.13.0
 resolution: workspace
 dependencies:
   meta: ^1.16.0

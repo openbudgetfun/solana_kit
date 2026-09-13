@@ -155,10 +155,9 @@ VariableSizeDecoder<SysvarStakeHistory> getSysvarStakeHistoryDecoder() {
 VariableSizeCodec<SysvarStakeHistory, SysvarStakeHistory>
 getSysvarStakeHistoryCodec() {
   return combineCodec(
-        getSysvarStakeHistoryEncoder(),
-        getSysvarStakeHistoryDecoder(),
-      )
-      as VariableSizeCodec<SysvarStakeHistory, SysvarStakeHistory>;
+    getSysvarStakeHistoryEncoder(),
+    getSysvarStakeHistoryDecoder(),
+  ) as VariableSizeCodec<SysvarStakeHistory, SysvarStakeHistory>;
 }
 
 /// Fetches the `StakeHistory` sysvar account using the provided RPC client.

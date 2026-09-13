@@ -28,5 +28,6 @@ class RpcRequest<TParams> {
 ///
 /// This allows the RPC API to transform the request before it is sent to the
 /// RPC server.
-typedef RpcRequestTransformer =
-    RpcRequest<Object?> Function(RpcRequest<Object?> request);
+typedef RpcRequestTransformer = RpcRequest<Object?> Function(
+  RpcRequest<Object?> request,
+);
