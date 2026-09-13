@@ -32,12 +32,17 @@ Decoder<Map<K, V>> getMapDecoder<K, V>(
   Decoder<K> key,
   Decoder<V> value, {
   ArrayLikeCodecSize? size,
+  bool requireSizePrefix = true,
 }) {
   final tupleDecoder = getTupleDecoder([
     key as Decoder<Object?>,
     value as Decoder<Object?>,
   ]);
-  final arrayDecoder = getArrayDecoder<List<Object?>>(tupleDecoder, size: size);
+  final arrayDecoder = getArrayDecoder<List<Object?>>(
+    tupleDecoder,
+    size: size,
+    requireSizePrefix: requireSizePrefix,
+  );
   return transformDecoder<List<List<Object?>>, Map<K, V>>(arrayDecoder, (
     entries,
     bytes,
@@ -60,6 +65,7 @@ Codec<Map<K, V>, Map<K, V>> getMapCodec<K, V>(
   Codec<K, K> key,
   Codec<V, V> value, {
   ArrayLikeCodecSize? size,
+  bool requireSizePrefix = true,
 }) {
   // Split size config for encoder/decoder.
   final ArrayLikeCodecSize? encoderSize;
@@ -92,6 +98,7 @@ Codec<Map<K, V>, Map<K, V>> getMapCodec<K, V>(
       decoderFromCodec(key),
       decoderFromCodec(value),
       size: decoderSize,
+      requireSizePrefix: requireSizePrefix,
     ),
   );
 }

@@ -16,8 +16,16 @@ Encoder<Set<T>> getSetEncoder<T>(Encoder<T> item, {ArrayLikeCodecSize? size}) {
 /// This decoder deserializes a [Set<T>] from a byte array by decoding
 /// each item using the provided [item] decoder. The number of items is
 /// determined by a `u32` size prefix by default.
-Decoder<Set<T>> getSetDecoder<T>(Decoder<T> item, {ArrayLikeCodecSize? size}) {
-  final arrayDecoder = getArrayDecoder<T>(item, size: size);
+Decoder<Set<T>> getSetDecoder<T>(
+  Decoder<T> item, {
+  ArrayLikeCodecSize? size,
+  bool requireSizePrefix = true,
+}) {
+  final arrayDecoder = getArrayDecoder<T>(
+    item,
+    size: size,
+    requireSizePrefix: requireSizePrefix,
+  );
   return transformDecoder<List<T>, Set<T>>(
     arrayDecoder,
     (entries, bytes, offset) => entries.toSet(),
@@ -32,6 +40,7 @@ Decoder<Set<T>> getSetDecoder<T>(Decoder<T> item, {ArrayLikeCodecSize? size}) {
 Codec<Set<T>, Set<T>> getSetCodec<T>(
   Codec<T, T> item, {
   ArrayLikeCodecSize? size,
+  bool requireSizePrefix = true,
 }) {
   // Split size config for encoder/decoder.
   final ArrayLikeCodecSize? encoderSize;
@@ -56,6 +65,10 @@ Codec<Set<T>, Set<T>> getSetCodec<T>(
 
   return combineCodec(
     getSetEncoder<T>(encoderFromCodec(item), size: encoderSize),
-    getSetDecoder<T>(decoderFromCodec(item), size: decoderSize),
+    getSetDecoder<T>(
+      decoderFromCodec(item),
+      size: decoderSize,
+      requireSizePrefix: requireSizePrefix,
+    ),
   );
 }
