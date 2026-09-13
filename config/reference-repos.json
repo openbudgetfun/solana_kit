@@ -5,12 +5,12 @@
       "path": ".repos/kit",
       "url": "https://github.com/anza-xyz/kit",
       "ref": {
-        "type": "branch",
-        "value": "main"
+        "type": "tag",
+        "value": "v8.3.0"
       },
-      "notes": "upstream TypeScript source from anza-xyz/kit (v8.2.0)",
+      "notes": "upstream TypeScript source from anza-xyz/kit (v8.3.0)",
       "package": "solana_kit",
-      "checkedCommit": "6c1bc6e6aa964898aaa899c1ed911481031ec983"
+      "checkedCommit": "7dfaf8827c217105d47aa1940893d301ad9f63c0"
     },
     {
       "name": "espresso-cash-public",
@@ -28,28 +28,28 @@
       "path": ".repos/helius-labs/helius-sdk",
       "url": "https://github.com/helius-labs/helius-sdk",
       "ref": {
-        "type": "commit",
-        "value": "ad8f796d81be"
+        "type": "tag",
+        "value": "v3.2.0"
       },
       "package": "solana_kit_helius",
-      "notes": "Pinned to the v3.1.0 release commit",
-      "checkedCommit": "ad8f796d81bec93c7948feed3f72d2fe9b31fe0d"
+      "notes": "Helius SDK reference; release tag has no GitHub Release object, so the tag itself is the pin",
+      "checkedCommit": "b76a792979dc4581c8fd1e98121137a6530673d6"
     },
     {
       "name": "mobile-wallet-adapter",
       "path": ".repos/mobile-wallet-adapter",
       "url": "https://github.com/solana-mobile/mobile-wallet-adapter",
       "ref": {
-        "type": "commit",
-        "value": "8642fa3e1edbacaff6666745e33bf1d2199fd51a"
+        "type": "tag",
+        "value": "@solana-mobile/mobile-wallet-adapter-protocol-kit@0.4.0"
       },
-      "notes": "Solana Mobile Wallet Adapter reference for the adapter and protocol packages from solana-mobile/mobile-wallet-adapter",
+      "notes": "Solana Mobile Wallet Adapter reference. The same commit carries @solana-mobile/wallet-standard-mobile@0.6.0, so one tag pins both the protocol kit and the wallet standard",
       "package": "solana_kit_mobile_wallet_adapter",
       "packages": [
         "solana_kit_mobile_wallet_adapter",
         "solana_kit_mobile_wallet_adapter_protocol"
       ],
-      "checkedCommit": "8642fa3e1edbacaff6666745e33bf1d2199fd51a"
+      "checkedCommit": "22d8da508cce3dadbeb6e2542a85f000a2629519"
     },
     {
       "name": "system",
@@ -85,7 +85,7 @@
         "value": "js@v0.16.1"
       },
       "package": "solana_kit_token_2022",
-      "notes": "SPL Token-2022 JS client (patch: dev dependency bump only)",
+      "notes": "SPL Token-2022 JS client. Held at v0.16.1: js@v0.17.0 renames the program node to camelCase and changes how token and mint extensions decode, which requires a migration of this package's handwritten layer before the pin can move",
       "checkedCommit": "341de223489b62fa482c552789a241d5e260b619"
     },
     {
@@ -195,12 +195,12 @@
       "url": "https://github.com/solana-program/loader-v4",
       "ref": {
         "type": "commit",
-        "value": "4f62fb2e25c8f957a675ab05c3df5920ab4c250b"
+        "value": "5bb854dbd2b680ea377c29fe8bc1847a694f7f45"
       },
       "package": "solana_kit_loader",
       "issue": 138,
-      "notes": "Pinned to commit 4f62fb2e (2026-08-21, JS client bumped to @solana/kit v8) because no versioned release exists yet",
-      "checkedCommit": "4f62fb2e25c8f957a675ab05c3df5920ab4c250b"
+      "notes": "Pinned to a commit because upstream still publishes no versioned release for this program",
+      "checkedCommit": "5bb854dbd2b680ea377c29fe8bc1847a694f7f45"
     },
     {
       "name": "account-compression",
@@ -221,12 +221,12 @@
       "url": "https://github.com/metaplex-foundation/mpl-bubblegum",
       "ref": {
         "type": "commit",
-        "value": "6a6a77e341a3ee32f3d4a5c233d18370e1da07bf"
+        "value": "07180c737ebd00151a2e18ccef9929d19d26823e"
       },
       "package": "solana_kit_mpl_bubblegum",
       "issue": 131,
-      "notes": "Metaplex Bubblegum Anchor IDL at idls/bubblegum.json; convert with @codama/nodes-from-anchor before rendering",
-      "checkedCommit": "6a6a77e341a3ee32f3d4a5c233d18370e1da07bf"
+      "notes": "Metaplex Bubblegum Anchor IDL at idls/bubblegum.json; convert with @codama/nodes-from-anchor before rendering. JS client release commits are untagged, so the default-branch commit is the pin",
+      "checkedCommit": "07180c737ebd00151a2e18ccef9929d19d26823e"
     },
     {
       "name": "mpl-token-metadata",
@@ -245,12 +245,12 @@
       "path": ".repos/metaplex-foundation/mpl-core",
       "url": "https://github.com/metaplex-foundation/mpl-core",
       "ref": {
-        "type": "commit",
-        "value": "2181404f90c7dd27ab95fcb2472483c4a347ae8c"
+        "type": "tag",
+        "value": "release/core@0.15.2"
       },
       "package": "solana_kit_mpl_core",
       "notes": "Metaplex Core Shank IDL at idls/mpl_core.json for Codama Dart generation",
-      "checkedCommit": "2181404f90c7dd27ab95fcb2472483c4a347ae8c"
+      "checkedCommit": "e72d63e4118a0a95ac9b40221e81b19d49e1e102"
     },
     {
       "name": "squads-v4",

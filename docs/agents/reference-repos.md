@@ -26,10 +26,10 @@ When you need to update an upstream pin, change the JSON config first instead of
 
 ## Core SDK references
 
-- `.repos/kit` — upstream TypeScript source from `anza-xyz/kit` (last checked `6c1bc6e6aa96`)
+- `.repos/kit` — upstream TypeScript source from `anza-xyz/kit`, pinned to tag `v8.3.0` (last checked `7dfaf8827c21`)
 - `.repos/espresso-cash-public` — Dart Solana reference from `brij-digital/espresso-cash-public` on `master` (last checked `77150680d6bf`)
-- `.repos/mobile-wallet-adapter` — Solana Mobile Wallet Adapter reference from `solana-mobile/mobile-wallet-adapter` (last checked `8642fa3e1ed`)
-- `.repos/helius-labs/helius-sdk` — Helius SDK reference from `helius-labs/helius-sdk`, pinned to the v3.1.0 release commit (last checked `ad8f796d81be`)
+- `.repos/mobile-wallet-adapter` — Solana Mobile Wallet Adapter reference from `solana-mobile/mobile-wallet-adapter`, pinned to tag `@solana-mobile/mobile-wallet-adapter-protocol-kit@0.4.0` (last checked `22d8da508cce`)
+- `.repos/helius-labs/helius-sdk` — Helius SDK reference from `helius-labs/helius-sdk`, pinned to the v3.2.0 release tag (last checked `b76a792979dc`)
 
 ## solana-program/* references
 
@@ -49,10 +49,10 @@ Each program repo is pinned to a specific tag or commit in `config/reference-rep
 | `.repos/solana-program/config`                        | [solana-program/config](https://github.com/solana-program/config)                                               | `solana-config-program-client@v1.1.0`      | `solana_kit_config` (#137)                                                             |
 | `.repos/solana-program/account-compression`           | [solana-program/account-compression](https://github.com/solana-program/account-compression)                     | branch `ac-mainnet-tag`                    | `solana_kit_spl_account_compression` (#131)                                            |
 | `.repos/solana-program/loader-v3`                     | [solana-program/loader-v3](https://github.com/solana-program/loader-v3)                                         | `js@v0.6.1`                                | `solana_kit_loader` (#138)                                                             |
-| `.repos/solana-program/loader-v4`                     | [solana-program/loader-v4](https://github.com/solana-program/loader-v4)                                         | commit `4f62fb2e` (2026-08-21, no tag yet) | `solana_kit_loader` (#138)                                                             |
-| `.repos/metaplex-foundation/mpl-bubblegum`            | [metaplex-foundation/mpl-bubblegum](https://github.com/metaplex-foundation/mpl-bubblegum)                       | commit `6a6a77e3`                          | `solana_kit_mpl_bubblegum` (#131); Anchor IDL at `idls/bubblegum.json`                 |
+| `.repos/solana-program/loader-v4`                     | [solana-program/loader-v4](https://github.com/solana-program/loader-v4)                                         | commit `5bb854db` (2026-09-01, no tag yet) | `solana_kit_loader` (#138)                                                             |
+| `.repos/metaplex-foundation/mpl-bubblegum`            | [metaplex-foundation/mpl-bubblegum](https://github.com/metaplex-foundation/mpl-bubblegum)                       | commit `07180c73`                          | `solana_kit_mpl_bubblegum` (#131); Anchor IDL at `idls/bubblegum.json`                 |
 | `.repos/metaplex-foundation/mpl-token-metadata`       | [metaplex-foundation/mpl-token-metadata](https://github.com/metaplex-foundation/mpl-token-metadata)             | commit `349e0610`                          | `solana_kit_mpl_token_metadata`; Shank IDL at `idls/token_metadata.json`               |
-| `.repos/metaplex-foundation/mpl-core`                 | [metaplex-foundation/mpl-core](https://github.com/metaplex-foundation/mpl-core)                                 | commit `2181404f`                          | `solana_kit_mpl_core`; Shank IDL at `idls/mpl_core.json`                               |
+| `.repos/metaplex-foundation/mpl-core`                 | [metaplex-foundation/mpl-core](https://github.com/metaplex-foundation/mpl-core)                                 | tag `release/core@0.15.2`                  | `solana_kit_mpl_core`; Shank IDL at `idls/mpl_core.json`                               |
 | `.repos/Squads-Protocol/v4`                           | [Squads-Protocol/v4](https://github.com/Squads-Protocol/v4)                                                     | commit `af94153f`                          | `solana_kit_squads`; multisig Shank IDL                                                |
 | `.repos/solana-foundation/solana-attestation-service` | [solana-foundation/solana-attestation-service](https://github.com/solana-foundation/solana-attestation-service) | commit `5b64cf09` (2026-09-01, no tag yet) | `solana_kit_attestation_service`; Shank IDL at `idl/solana_attestation_service.json`   |
 
