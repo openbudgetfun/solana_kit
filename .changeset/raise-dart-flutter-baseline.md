@@ -1,4 +1,5 @@
 ---
+"codama-renderers-dart": patch
 "solana_kit": major
 "solana_kit_accounts": major
 "solana_kit_address": major
@@ -23,8 +24,10 @@
 "solana_kit_helius": major
 "solana_kit_instruction_plans": major
 "solana_kit_instructions": major
+"solana_kit_integration_tests": patch
 "solana_kit_jupiter": major
 "solana_kit_keys": major
+"solana_kit_lints": major
 "solana_kit_loader": major
 "solana_kit_memo": major
 "solana_kit_mobile_wallet_adapter": major
@@ -58,6 +61,7 @@
 "solana_kit_surfpool": major
 "solana_kit_system": major
 "solana_kit_sysvars": major
+"solana_kit_test_matchers": patch
 "solana_kit_token": major
 "solana_kit_token_2022": major
 "solana_kit_transaction_confirmation": major
@@ -73,7 +77,9 @@
 
 The workspace now builds against Dart 3.13.3 and Flutter 3.47.4, and every package declares that floor instead of the previous Dart 3.12 range. Consumers on older SDKs can no longer resolve these packages, so this release is breaking even though no Dart API changed.
 
-The Flutter floor rises from 3.44 to 3.47 for `solana_kit_mobile_wallet_adapter`, `solana_kit_mobile_wallet_adapter_protocol`, and `solana_kit_wallet_adapter`, matching the floor `solana_kit_wallet_ui` already required. Every other package raises only the Dart SDK floor.
+The Flutter floor rises from 3.44 to 3.47 for `solana_kit_mobile_wallet_adapter`, `solana_kit_mobile_wallet_adapter_protocol`, and `solana_kit_wallet_adapter`, matching the floor `solana_kit_wallet_ui` already required. `solana_kit_lints` ships the raised floor to consumers, so it carries the same breaking bump. Every other package raises only the Dart SDK floor.
+
+Raising the language version also switches `dart format` to the tall style, so 83 files across library, test, script, and Codama-generated trees are reflowed. The renderer pipes generated output through `dart format`, so regenerating stays consistent.
 
 Align your own SDK constraint with the workspace:
 
