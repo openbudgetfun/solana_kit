@@ -193,7 +193,10 @@ bool _updateFile(
 List<String> _renderDocComment(String content) {
   final lines = content.split('\n');
   if (lines.length == 1 && lines.single.isEmpty) return ['///'];
-  return [for (final line in lines) line.isEmpty ? '///' : '/// $line'];
+  return [
+    for (final line in lines)
+      if (line.isEmpty) '///' else '/// $line',
+  ];
 }
 
 String _applyTransforms(String content, List<_Transform> transforms) {

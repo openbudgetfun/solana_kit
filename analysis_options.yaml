@@ -1,5 +1,13 @@
 include: package:solana_kit_lints/analysis_options.yaml
 
+plugins:
+  jaspr_lints:
+    version: ^0.6.0
+    diagnostics:
+      prefer_html_components: true
+      sort_children_last: true
+      styles_ordering: true
+
 analyzer:
   errors:
     deprecated_member_use_from_same_package: ignore
