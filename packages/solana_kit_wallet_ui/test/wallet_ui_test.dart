@@ -521,6 +521,66 @@ void main() {
       controller.dispose();
     });
 
+    testWidgets('shows the doodle empty state when no wallets are found', (
+      tester,
+    ) async {
+      final controller = await _controller();
+      await _pumpSkribble(tester, controller, width: 390);
+      await tester.tap(find.byKey(WalletUiKeys.connectButton));
+      await tester.pumpAndSettle();
+      expect(find.byKey(WalletUiKeys.emptyState), findsOneWidget);
+      expect(find.byType(WiredDoodle), findsOneWidget);
+      expect(find.text('No wallets found'), findsOneWidget);
+      expect(
+        find.text('Install a compatible wallet, then try again.'),
+        findsOneWidget,
+      );
+      controller.dispose();
+    });
+
+    testWidgets('connects through an explicit light hand-drawn theme', (
+      tester,
+    ) async {
+      final wallet = _Wallet('Paper');
+      final controller = await _controller(wallets: [wallet]);
+      await _pumpSkribble(
+        tester,
+        controller,
+        width: 390,
+        // A light border flips the filled button's contrast ink to black.
+        theme: WiredThemeData(borderColor: const Color(0xffdddddd)),
+      );
+      await tester.tap(find.byKey(WalletUiKeys.connectButton));
+      await tester.pumpAndSettle();
+      expect(find.byKey(WalletUiKeys.picker), findsOneWidget);
+      await tester.tap(find.byKey(WalletUiKeys.walletTile(0)));
+      await tester.pumpAndSettle();
+      expect(controller.state.isConnected, isTrue);
+      expect(find.text('Primary'), findsOneWidget);
+      controller.dispose();
+    });
+
+    testWidgets('shows a hand-drawn progress indicator while connecting', (
+      tester,
+    ) async {
+      final wallet = _Wallet('Gated', gated: true);
+      final controller = await _controller(wallets: [wallet]);
+      await _pumpSkribble(tester, controller, width: 390);
+      await tester.tap(find.byKey(WalletUiKeys.connectButton));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(WalletUiKeys.walletTile(0)));
+      await tester.pump();
+      expect(find.byType(WiredLoadingIndicator), findsOneWidget);
+      expect(
+        controller.state.connectionStatus,
+        WalletConnectionStatus.connecting,
+      );
+      wallet.approveConnect();
+      await tester.pumpAndSettle();
+      expect(controller.state.isConnected, isTrue);
+      controller.dispose();
+    });
+
     testWidgets('resolves the hand-drawn theme and palette', (tester) async {
       final explicit = WiredThemeData(
         borderColor: const Color(0xffff0000),
@@ -711,7 +771,7 @@ class _PendingRegistry extends WalletRegistryController {
 }
 
 class _Wallet implements Wallet {
-  _Wallet(this.name, {this.reject = false})
+  _Wallet(this.name, {this.reject = false, bool gated = false})
     : icon = WalletIcon(_svgIcon),
       account = WalletAccount(
         address: '11111111111111111111111111111111',
@@ -720,6 +780,7 @@ class _Wallet implements Wallet {
         features: const [SolanaFeatureId.signMessage],
         label: 'Primary',
       ) {
+    _gate = gated ? Completer<void>() : null;
     features = {
       StandardFeatureId.connect: _Connect(this),
       StandardFeatureId.disconnect: _Disconnect(this),
@@ -728,6 +789,7 @@ class _Wallet implements Wallet {
   final WalletAccount account;
   bool disconnected = false;
   final bool reject;
+  Completer<void>? _gate;
   @override
   List<WalletAccount> get accounts => [account];
   @override
@@ -740,6 +802,11 @@ class _Wallet implements Wallet {
   final String name;
   @override
   String get version => walletStandardVersion;
+
+  /// Resolves a gated connection, as if the user approved in the wallet.
+  void approveConnect() {
+    if (_gate != null && !_gate!.isCompleted) _gate!.complete();
+  }
 }
 
 class _Connect implements StandardConnectFeature {
@@ -750,6 +817,8 @@ class _Connect implements StandardConnectFeature {
     StandardConnectInput input = const StandardConnectInput(),
   ]) async {
     if (wallet.reject) throw StateError('rejected');
+    final gate = wallet._gate;
+    if (gate != null) await gate.future;
     return StandardConnectOutput([wallet.account]);
   }
 
