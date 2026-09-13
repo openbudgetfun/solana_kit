@@ -38,6 +38,30 @@ It is designed for apps, CLIs, servers, Flutter projects, tests, and tooling tha
 
 <!-- {/docsUpstreamCompatibilitySection} -->
 
+### `solana_kit` ↔ `@solana/kit` parity
+
+Each row pairs a published `solana_kit` release with the upstream `@solana/kit` version it tracks. Use the row that matches your Dart dependency to know which upstream release its APIs and behavior correspond to. The `solana_kit` version is the workspace compatibility marker; the other packages release independently.
+
+<!-- upstream-parity:start -->
+<!-- dprint-ignore -->
+| `solana_kit` | `@solana/kit` | Released   |
+| ------------ | ------------- | ---------- |
+| `0.9.3`      | `8.2.0`       | 2026-09-12 |
+| `0.9.2`      | `8.2.0`       | 2026-09-06 |
+| `0.9.1`      | `8.1.0`       | 2026-08-30 |
+| `0.8.0`      | `7.1.0`       | 2026-08-19 |
+| `0.7.0`      | `7.1.0`       | 2026-08-18 |
+| `0.6.0`      | `6.10.0`      | 2026-08-13 |
+| `0.5.0`      | `6.9.0`       | 2026-06-01 |
+| `0.4.0`      | `6.9.0`       | 2026-05-30 |
+| `0.3.1`      | `6.5.0`       | 2026-03-30 |
+| `0.3.0`      | `6.5.0`       | 2026-03-29 |
+| `0.2.1`      | `6.1.0`       | 2026-02-28 |
+| `0.2.0`      | —             | 2026-02-28 |
+| `0.1.0`      | —             | 2026-02-25 |
+
+<!-- upstream-parity:end -->
+
 > **Parity with intent**
 >
 > The project follows `@solana/kit` closely where parity matters: addresses, signatures, transaction compilation, serialization, RPC behavior, and selected error semantics.

@@ -315,8 +315,9 @@ in
         mdt doctor --format text
         dart run scripts/workspace_doc_drift.dart --check
         dart run scripts/check_reference_repo_docs.dart
+        dart run scripts/generate_upstream_docs.dart --check
       '';
-      description = "Check documentation consistency with mdt, synchronized Dart doc comments, and workspace metadata.";
+      description = "Check documentation consistency with mdt, synchronized Dart doc comments, workspace metadata, reference-repo pins, and upstream version tables.";
       binary = "bash";
     };
     "docs:update" = {
@@ -326,6 +327,7 @@ in
         mdt update --verbose
         dart run "$DEVENV_ROOT/scripts/sync_dart_doc_comments.dart" --write
         dart run scripts/workspace_doc_drift.dart --write
+        dart run scripts/generate_upstream_docs.dart --write
         mdt info
       '';
       description = "Update generated documentation blocks across Markdown and Dart doc comments, then print mdt diagnostics.";

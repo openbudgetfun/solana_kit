@@ -9,6 +9,7 @@
         "value": "main"
       },
       "notes": "upstream TypeScript source from anza-xyz/kit (v8.2.0)",
+      "package": "solana_kit",
       "checkedCommit": "6c1bc6e6aa964898aaa899c1ed911481031ec983"
     },
     {
