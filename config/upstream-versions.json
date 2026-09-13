@@ -1,0 +1,70 @@
+{
+  "comment": "Historical parity between this workspace's Dart packages and the upstream libraries they port. `kitParity` is keyed by the published `solana_kit` version, which is the workspace's compatibility marker; the other packages version independently. Add a row when an upstream sync is released. `jsKit` is null for releases made before the workspace began tracking upstream.",
+  "kitParity": [
+    {
+      "solanaKit": "0.9.3",
+      "jsKit": "8.2.0",
+      "released": "2026-09-12"
+    },
+    {
+      "solanaKit": "0.9.2",
+      "jsKit": "8.2.0",
+      "released": "2026-09-06"
+    },
+    {
+      "solanaKit": "0.9.1",
+      "jsKit": "8.1.0",
+      "released": "2026-08-30"
+    },
+    {
+      "solanaKit": "0.8.0",
+      "jsKit": "7.1.0",
+      "released": "2026-08-19"
+    },
+    {
+      "solanaKit": "0.7.0",
+      "jsKit": "7.1.0",
+      "released": "2026-08-18"
+    },
+    {
+      "solanaKit": "0.6.0",
+      "jsKit": "6.10.0",
+      "released": "2026-08-13"
+    },
+    {
+      "solanaKit": "0.5.0",
+      "jsKit": "6.9.0",
+      "released": "2026-06-01"
+    },
+    {
+      "solanaKit": "0.4.0",
+      "jsKit": "6.9.0",
+      "released": "2026-05-30"
+    },
+    {
+      "solanaKit": "0.3.1",
+      "jsKit": "6.5.0",
+      "released": "2026-03-30"
+    },
+    {
+      "solanaKit": "0.3.0",
+      "jsKit": "6.5.0",
+      "released": "2026-03-29"
+    },
+    {
+      "solanaKit": "0.2.1",
+      "jsKit": "6.1.0",
+      "released": "2026-02-28"
+    },
+    {
+      "solanaKit": "0.2.0",
+      "jsKit": null,
+      "released": "2026-02-28"
+    },
+    {
+      "solanaKit": "0.1.0",
+      "jsKit": null,
+      "released": "2026-02-25"
+    }
+  ]
+}
