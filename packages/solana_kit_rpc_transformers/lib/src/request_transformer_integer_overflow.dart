@@ -9,8 +9,11 @@ import 'package:solana_kit_rpc_transformers/src/tree_traversal.dart';
 /// The [request] is the original RPC request, [keyPath] indicates the
 /// location of the overflowing value in the parameter tree, and [value]
 /// is the [BigInt] value that exceeded the safe integer range.
-typedef IntegerOverflowHandler =
-    void Function(RpcRequest<Object?> request, KeyPath keyPath, BigInt value);
+typedef IntegerOverflowHandler = void Function(
+  RpcRequest<Object?> request,
+  KeyPath keyPath,
+  BigInt value,
+);
 
 /// Creates a transformer that traverses the request parameters and executes
 /// the provided handler when an integer overflow is detected.

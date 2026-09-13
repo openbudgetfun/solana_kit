@@ -262,8 +262,7 @@ const Map<int, String> _mplCoreErrorMessages = {
   mplCoreErrorMissingCollection: 'Missing collection',
   mplCoreErrorNoApprovals:
       'Neither the asset or any plugins have approved this operation',
-  mplCoreErrorCannotRedelegate:
-      'Plugin Manager cannot redelegate a delegated plugin without revoking first',
+  mplCoreErrorCannotRedelegate: 'Plugin Manager cannot redelegate a delegated plugin without revoking first',
   mplCoreErrorInvalidPluginSetting: 'Invalid setting for plugin',
   mplCoreErrorConflictingAuthority:
       'Cannot specify both an update authority and collection on an asset',

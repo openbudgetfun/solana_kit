@@ -4,7 +4,7 @@ version: 0.9.3
 repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_keys
 homepage: https://openbudgetfun.github.io/solana_kit/
 environment:
-  sdk: ^3.12.0
+  sdk: ^3.13.0
 resolution: workspace
 dependencies:
   ed25519_edwards: ^0.3.1

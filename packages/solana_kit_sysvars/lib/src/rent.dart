@@ -63,13 +63,11 @@ class SysvarRent {
 
 /// Returns a fixed-size encoder for the [SysvarRent] sysvar.
 FixedSizeEncoder<SysvarRent> getSysvarRentEncoder() {
-  final structEncoder =
-      getStructEncoder([
-            ('lamportsPerByteYear', getDefaultLamportsEncoder()),
-            ('exemptionThreshold', getF64Encoder()),
-            ('burnPercent', getU8Encoder()),
-          ])
-          as FixedSizeEncoder<Map<String, Object?>>;
+  final structEncoder = getStructEncoder([
+    ('lamportsPerByteYear', getDefaultLamportsEncoder()),
+    ('exemptionThreshold', getF64Encoder()),
+    ('burnPercent', getU8Encoder()),
+  ]) as FixedSizeEncoder<Map<String, Object?>>;
 
   return mapFixedSizeStructEncoder(
     fixedSize: sysvarRentSize,
@@ -84,13 +82,11 @@ FixedSizeEncoder<SysvarRent> getSysvarRentEncoder() {
 
 /// Returns a fixed-size decoder for the [SysvarRent] sysvar.
 FixedSizeDecoder<SysvarRent> getSysvarRentDecoder() {
-  final structDecoder =
-      getStructDecoder([
-            ('lamportsPerByteYear', getDefaultLamportsDecoder()),
-            ('exemptionThreshold', getF64Decoder()),
-            ('burnPercent', getU8Decoder()),
-          ])
-          as FixedSizeDecoder<Map<String, Object?>>;
+  final structDecoder = getStructDecoder([
+    ('lamportsPerByteYear', getDefaultLamportsDecoder()),
+    ('exemptionThreshold', getF64Decoder()),
+    ('burnPercent', getU8Decoder()),
+  ]) as FixedSizeDecoder<Map<String, Object?>>;
 
   return mapFixedSizeStructDecoder(
     fixedSize: sysvarRentSize,
@@ -105,20 +101,16 @@ FixedSizeDecoder<SysvarRent> getSysvarRentDecoder() {
 
 /// Returns a fixed-size codec for the [SysvarRent] sysvar.
 FixedSizeCodec<SysvarRent, SysvarRent> getSysvarRentCodec() {
-  final structEncoder =
-      getStructEncoder([
-            ('lamportsPerByteYear', getDefaultLamportsEncoder()),
-            ('exemptionThreshold', getF64Encoder()),
-            ('burnPercent', getU8Encoder()),
-          ])
-          as FixedSizeEncoder<Map<String, Object?>>;
-  final structDecoder =
-      getStructDecoder([
-            ('lamportsPerByteYear', getDefaultLamportsDecoder()),
-            ('exemptionThreshold', getF64Decoder()),
-            ('burnPercent', getU8Decoder()),
-          ])
-          as FixedSizeDecoder<Map<String, Object?>>;
+  final structEncoder = getStructEncoder([
+    ('lamportsPerByteYear', getDefaultLamportsEncoder()),
+    ('exemptionThreshold', getF64Encoder()),
+    ('burnPercent', getU8Encoder()),
+  ]) as FixedSizeEncoder<Map<String, Object?>>;
+  final structDecoder = getStructDecoder([
+    ('lamportsPerByteYear', getDefaultLamportsDecoder()),
+    ('exemptionThreshold', getF64Decoder()),
+    ('burnPercent', getU8Decoder()),
+  ]) as FixedSizeDecoder<Map<String, Object?>>;
 
   return mapFixedSizeStructCodec(
     fixedSize: sysvarRentSize,

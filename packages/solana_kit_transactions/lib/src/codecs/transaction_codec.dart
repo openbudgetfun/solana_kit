@@ -42,13 +42,12 @@ _EnvelopeShape _getEncodeShapeForMessageBytes(Uint8List messageBytes) {
 /// execution.
 VariableSizeEncoder<Transaction> getTransactionEncoder() {
   return getPredicateEncoder<Transaction>(
-        (transaction) =>
-            _getEncodeShapeForMessageBytes(transaction.messageBytes) ==
-            _EnvelopeShape.signaturesFirst,
-        _getTransactionEncoderWithSignaturesFirst(),
-        _getTransactionEncoderWithMessageFirst(),
-      )
-      as VariableSizeEncoder<Transaction>;
+    (transaction) =>
+        _getEncodeShapeForMessageBytes(transaction.messageBytes) ==
+        _EnvelopeShape.signaturesFirst,
+    _getTransactionEncoderWithSignaturesFirst(),
+    _getTransactionEncoderWithMessageFirst(),
+  ) as VariableSizeEncoder<Transaction>;
 }
 
 VariableSizeEncoder<Transaction> _getTransactionEncoderWithSignaturesFirst() {

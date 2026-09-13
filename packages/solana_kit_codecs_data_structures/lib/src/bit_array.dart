@@ -92,8 +92,7 @@ FixedSizeCodec<List<bool>, List<bool>> getBitArrayCodec(
   bool backward = false,
 }) {
   return combineCodec(
-        getBitArrayEncoder(size, backward: backward),
-        getBitArrayDecoder(size, backward: backward),
-      )
-      as FixedSizeCodec<List<bool>, List<bool>>;
+    getBitArrayEncoder(size, backward: backward),
+    getBitArrayDecoder(size, backward: backward),
+  ) as FixedSizeCodec<List<bool>, List<bool>>;
 }

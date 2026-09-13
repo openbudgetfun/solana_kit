@@ -1040,9 +1040,9 @@ void main() {
     test('encodes using variable-size num encoder', () {
       // getShortU16Encoder returns VariableSizeEncoder<num>
       // This exercises the VariableSizeEncoder<num> branch
-      final encoder =
-          getLamportsEncoder(getShortU16Encoder())
-              as VariableSizeEncoder<Lamports>;
+      final encoder = getLamportsEncoder(
+        getShortU16Encoder(),
+      ) as VariableSizeEncoder<Lamports>;
       final lamportsValue = lamports(BigInt.from(300));
       final buffer = encoder.encode(lamportsValue);
       expect(buffer, isNotEmpty);
@@ -1054,9 +1054,9 @@ void main() {
     test('decodes using variable-size int decoder', () {
       // getShortU16Decoder returns VariableSizeDecoder<int>
       // This exercises the VariableSizeDecoder<int> branch
-      final decoder =
-          getLamportsDecoder(getShortU16Decoder())
-              as VariableSizeDecoder<Lamports>;
+      final decoder = getLamportsDecoder(
+        getShortU16Decoder(),
+      ) as VariableSizeDecoder<Lamports>;
       // Encode 300 using shortU16: [172, 2]
       final buffer = Uint8List.fromList([172, 2]);
       final (value, _) = decoder.read(buffer, 0);

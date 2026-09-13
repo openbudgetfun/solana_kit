@@ -67,11 +67,9 @@ void main() {
           ),
         );
 
-        final outcome =
-            await boundary(
-                  singleInstructionPlan(createInstruction()),
-                )
-                as FailedTransactionExecution;
+        final outcome = await boundary(
+          singleInstructionPlan(createInstruction()),
+        ) as FailedTransactionExecution;
 
         expect(outcome.stage, TransactionExecutionFailureStage.sending);
         expect(outcome.error, same(failure));

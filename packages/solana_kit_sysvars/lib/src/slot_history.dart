@@ -209,10 +209,9 @@ FixedSizeDecoder<SysvarSlotHistory> getSysvarSlotHistoryDecoder() {
 FixedSizeCodec<SysvarSlotHistory, SysvarSlotHistory>
 getSysvarSlotHistoryCodec() {
   return combineCodec(
-        getSysvarSlotHistoryEncoder(),
-        getSysvarSlotHistoryDecoder(),
-      )
-      as FixedSizeCodec<SysvarSlotHistory, SysvarSlotHistory>;
+    getSysvarSlotHistoryEncoder(),
+    getSysvarSlotHistoryDecoder(),
+  ) as FixedSizeCodec<SysvarSlotHistory, SysvarSlotHistory>;
 }
 
 /// Fetches the `SlotHistory` sysvar account using the provided RPC client.

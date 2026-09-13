@@ -52,17 +52,16 @@ FixedSizeCodec<TFrom, TTo> reverseCodec<TFrom, TTo>(
   FixedSizeCodec<TFrom, TTo> codec,
 ) {
   return combineCodec(
-        reverseEncoder(
-          FixedSizeEncoder<TFrom>(
-            fixedSize: codec.fixedSize,
-            write: codec.write,
-          ),
-        ),
-        reverseDecoder(
-          FixedSizeDecoder<TTo>(fixedSize: codec.fixedSize, read: codec.read),
-        ),
-      )
-      as FixedSizeCodec<TFrom, TTo>;
+    reverseEncoder(
+      FixedSizeEncoder<TFrom>(
+        fixedSize: codec.fixedSize,
+        write: codec.write,
+      ),
+    ),
+    reverseDecoder(
+      FixedSizeDecoder<TTo>(fixedSize: codec.fixedSize, read: codec.read),
+    ),
+  ) as FixedSizeCodec<TFrom, TTo>;
 }
 
 /// Reverses bytes between [sourceStart] (inclusive) and [sourceEnd]

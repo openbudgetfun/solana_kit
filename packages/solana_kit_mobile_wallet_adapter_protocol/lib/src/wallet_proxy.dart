@@ -4,11 +4,10 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/src/constants.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/src/types.dart';
 
 /// Callback type for sending JSON-RPC requests to the wallet.
-typedef SendRequest =
-    Future<Map<String, Object?>> Function(
-      String method,
-      Map<String, Object?> params,
-    );
+typedef SendRequest = Future<Map<String, Object?>> Function(
+  String method,
+  Map<String, Object?> params,
+);
 
 /// Abstract interface for interacting with a mobile wallet via MWA.
 ///

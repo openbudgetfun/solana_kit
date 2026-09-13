@@ -5,8 +5,7 @@ publish_to: none
 repository: https://github.com/openbudgetfun/solana_kit
 
 environment:
-  sdk: ^3.10.0
-
+  sdk: ^3.13.0
 dependencies:
   jaspr: ^0.23.1
   jaspr_content: ^0.5.0

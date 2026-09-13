@@ -43,8 +43,7 @@ VariableSizeDecoder<String> getUtf8Decoder() {
 /// null (`\u0000`) characters and rejects malformed UTF-8.
 VariableSizeCodec<String, String> getUtf8Codec() {
   return combineCodec(
-        getUtf8Encoder(),
-        getUtf8Decoder(),
-      )
-      as VariableSizeCodec<String, String>;
+    getUtf8Encoder(),
+    getUtf8Decoder(),
+  ) as VariableSizeCodec<String, String>;
 }

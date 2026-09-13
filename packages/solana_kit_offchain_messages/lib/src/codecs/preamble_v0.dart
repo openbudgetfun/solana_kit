@@ -22,23 +22,22 @@ Decoder<Map<String, Object?>> getOffchainMessageV0PreambleDecoder() {
     (
       'requiredSignatories',
       transformDecoder<List<Object?>, List<OffchainMessageSignatory>>(
-            getArrayDecoder(
-              getAddressDecoder() as Decoder<Object?>,
-              size: PrefixedArraySize(getU8Decoder()),
-            ),
-            (signatoryAddresses, bytes, offset) {
-              final addresses = signatoryAddresses.cast<Address>();
-              if (addresses.isEmpty) {
-                throw SolanaError(
-                  SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero,
-                );
-              }
-              return addresses
-                  .map((address) => OffchainMessageSignatory(address: address))
-                  .toList();
-            },
-          )
-          as Decoder<Object?>,
+        getArrayDecoder(
+          getAddressDecoder() as Decoder<Object?>,
+          size: PrefixedArraySize(getU8Decoder()),
+        ),
+        (signatoryAddresses, bytes, offset) {
+          final addresses = signatoryAddresses.cast<Address>();
+          if (addresses.isEmpty) {
+            throw SolanaError(
+              SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero,
+            );
+          }
+          return addresses
+              .map((address) => OffchainMessageSignatory(address: address))
+              .toList();
+        },
+      ) as Decoder<Object?>,
     ),
     ('messageLength', getU16Decoder() as Decoder<Object?>),
   ]);
@@ -58,20 +57,19 @@ Encoder<Map<String, Object?>> getOffchainMessageV0PreambleEncoder() {
     (
       'requiredSignatories',
       transformEncoder<List<Address>, List<OffchainMessageSignatory>>(
-            getArrayEncoder(
-              getAddressEncoder() as Encoder<Address>,
-              size: PrefixedArraySize(getU8Encoder()),
-            ),
-            (signatories) {
-              if (signatories.isEmpty) {
-                throw SolanaError(
-                  SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero,
-                );
-              }
-              return signatories.map((s) => s.address).toList();
-            },
-          )
-          as Encoder<Object?>,
+        getArrayEncoder(
+          getAddressEncoder() as Encoder<Address>,
+          size: PrefixedArraySize(getU8Encoder()),
+        ),
+        (signatories) {
+          if (signatories.isEmpty) {
+            throw SolanaError(
+              SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero,
+            );
+          }
+          return signatories.map((s) => s.address).toList();
+        },
+      ) as Encoder<Object?>,
     ),
     ('messageLength', getU16Encoder() as Encoder<Object?>),
   ]);

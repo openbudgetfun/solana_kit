@@ -96,17 +96,15 @@ class SysvarEpochRewards {
 
 /// Returns a fixed-size encoder for the [SysvarEpochRewards] sysvar.
 FixedSizeEncoder<SysvarEpochRewards> getSysvarEpochRewardsEncoder() {
-  final structEncoder =
-      getStructEncoder([
-            ('distributionStartingBlockHeight', getU64Encoder()),
-            ('numPartitions', getU64Encoder()),
-            ('parentBlockhash', getBlockhashEncoder()),
-            ('totalPoints', getU128Encoder()),
-            ('totalRewards', getDefaultLamportsEncoder()),
-            ('distributedRewards', getDefaultLamportsEncoder()),
-            ('active', getBooleanEncoder()),
-          ])
-          as FixedSizeEncoder<Map<String, Object?>>;
+  final structEncoder = getStructEncoder([
+    ('distributionStartingBlockHeight', getU64Encoder()),
+    ('numPartitions', getU64Encoder()),
+    ('parentBlockhash', getBlockhashEncoder()),
+    ('totalPoints', getU128Encoder()),
+    ('totalRewards', getDefaultLamportsEncoder()),
+    ('distributedRewards', getDefaultLamportsEncoder()),
+    ('active', getBooleanEncoder()),
+  ]) as FixedSizeEncoder<Map<String, Object?>>;
 
   return FixedSizeEncoder<SysvarEpochRewards>(
     fixedSize: sysvarEpochRewardsSize,
@@ -131,17 +129,15 @@ FixedSizeEncoder<SysvarEpochRewards> getSysvarEpochRewardsEncoder() {
 
 /// Returns a fixed-size decoder for the [SysvarEpochRewards] sysvar.
 FixedSizeDecoder<SysvarEpochRewards> getSysvarEpochRewardsDecoder() {
-  final structDecoder =
-      getStructDecoder([
-            ('distributionStartingBlockHeight', getU64Decoder()),
-            ('numPartitions', getU64Decoder()),
-            ('parentBlockhash', getBlockhashDecoder()),
-            ('totalPoints', getU128Decoder()),
-            ('totalRewards', getDefaultLamportsDecoder()),
-            ('distributedRewards', getDefaultLamportsDecoder()),
-            ('active', getBooleanDecoder()),
-          ])
-          as FixedSizeDecoder<Map<String, Object?>>;
+  final structDecoder = getStructDecoder([
+    ('distributionStartingBlockHeight', getU64Decoder()),
+    ('numPartitions', getU64Decoder()),
+    ('parentBlockhash', getBlockhashDecoder()),
+    ('totalPoints', getU128Decoder()),
+    ('totalRewards', getDefaultLamportsDecoder()),
+    ('distributedRewards', getDefaultLamportsDecoder()),
+    ('active', getBooleanDecoder()),
+  ]) as FixedSizeDecoder<Map<String, Object?>>;
 
   return FixedSizeDecoder<SysvarEpochRewards>(
     fixedSize: sysvarEpochRewardsSize,
@@ -168,10 +164,9 @@ FixedSizeDecoder<SysvarEpochRewards> getSysvarEpochRewardsDecoder() {
 FixedSizeCodec<SysvarEpochRewards, SysvarEpochRewards>
 getSysvarEpochRewardsCodec() {
   return combineCodec(
-        getSysvarEpochRewardsEncoder(),
-        getSysvarEpochRewardsDecoder(),
-      )
-      as FixedSizeCodec<SysvarEpochRewards, SysvarEpochRewards>;
+    getSysvarEpochRewardsEncoder(),
+    getSysvarEpochRewardsDecoder(),
+  ) as FixedSizeCodec<SysvarEpochRewards, SysvarEpochRewards>;
 }
 
 /// Fetches the `EpochRewards` sysvar account using the provided RPC client.

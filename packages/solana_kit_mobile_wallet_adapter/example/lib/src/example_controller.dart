@@ -92,9 +92,7 @@ class MwaExampleController extends ChangeNotifier {
       final isAvailable = await _platformService.isWalletEndpointAvailable();
       _walletEndpointAvailable = isAvailable;
       _appendLog(
-        isAvailable
-            ? 'Wallet endpoint detected on device.'
-            : 'No wallet endpoint detected. Install a mock or compatible wallet.',
+        isAvailable ? 'Wallet endpoint detected on device.' : 'No wallet endpoint detected. Install a mock or compatible wallet.',
       );
       notifyListeners();
     });

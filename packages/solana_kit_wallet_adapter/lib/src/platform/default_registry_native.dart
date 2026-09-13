@@ -195,11 +195,10 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
 }
 
 /// Executes an operation within a native mobile wallet session.
-typedef NativeWalletTransact =
-    Future<T> Function<T>(
-      Future<T> Function(mwa.KitMobileWallet wallet) callback, {
-      protocol.WalletAssociationConfig? config,
-    });
+typedef NativeWalletTransact = Future<T> Function<T>(
+  Future<T> Function(mwa.KitMobileWallet wallet) callback, {
+  protocol.WalletAssociationConfig? config,
+});
 
 Uint8List _messageSignature(String encoded, Uint8List message) {
   final Uint8List signed;

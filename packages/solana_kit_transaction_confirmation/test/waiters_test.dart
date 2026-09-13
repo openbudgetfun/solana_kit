@@ -587,12 +587,11 @@ void main() {
         getTimeoutPromise: ({required abortSignal, required commitment}) {
           return timeoutCompleter.future;
         },
-        getRecentSignatureConfirmationPromise:
-            ({
-              required abortSignal,
-              required commitment,
-              required signature,
-            }) async {},
+        getRecentSignatureConfirmationPromise: ({
+          required abortSignal,
+          required commitment,
+          required signature,
+        }) async {},
         signature: 'test_signature',
       );
     });

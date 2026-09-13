@@ -7,8 +7,9 @@ import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 
 /// Executes a transaction plan and returns the execution results.
-typedef TransactionPlanExecutor =
-    Future<TransactionPlanResult> Function(TransactionPlan transactionPlan);
+typedef TransactionPlanExecutor = Future<TransactionPlanResult> Function(
+  TransactionPlan transactionPlan,
+);
 
 /// A function called whenever a transaction message must be sent to the
 /// blockchain.
@@ -23,11 +24,10 @@ typedef TransactionPlanExecutor =
 ///
 /// Prefer returning a context map, since deriving a signature from a
 /// transaction throws when the fee payer slot is empty.
-typedef ExecuteTransactionMessage =
-    Future<Object> Function(
-      Map<String, Object?> context,
-      TransactionMessage message,
-    );
+typedef ExecuteTransactionMessage = Future<Object> Function(
+  Map<String, Object?> context,
+  TransactionMessage message,
+);
 
 /// Configuration object for creating a new transaction plan executor.
 class TransactionPlanExecutorConfig {

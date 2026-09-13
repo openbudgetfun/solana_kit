@@ -9,11 +9,10 @@ import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 ///
 /// [maxInstructionsPerTransaction] overrides the planner configuration for this
 /// invocation only.
-typedef TransactionPlanner =
-    Future<TransactionPlan> Function(
-      InstructionPlan instructionPlan, {
-      int? maxInstructionsPerTransaction,
-    });
+typedef TransactionPlanner = Future<TransactionPlan> Function(
+  InstructionPlan instructionPlan, {
+  int? maxInstructionsPerTransaction,
+});
 
 /// A function that creates a new transaction message.
 ///
@@ -22,8 +21,9 @@ typedef TransactionPlanner =
 typedef CreateTransactionMessage = Future<TransactionMessage> Function();
 
 /// A function called whenever a transaction message is updated.
-typedef OnTransactionMessageUpdated =
-    Future<TransactionMessage> Function(TransactionMessage message);
+typedef OnTransactionMessageUpdated = Future<TransactionMessage> Function(
+  TransactionMessage message,
+);
 
 /// Configuration object for creating a new transaction planner.
 class TransactionPlannerConfig {

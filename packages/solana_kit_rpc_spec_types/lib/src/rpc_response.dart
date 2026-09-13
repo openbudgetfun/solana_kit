@@ -4,8 +4,10 @@ import 'package:solana_kit_rpc_spec_types/src/rpc_request.dart';
 ///
 /// This allows the RPC API to transform the response before it is returned to
 /// the caller.
-typedef RpcResponseTransformer<TResponse> =
-    TResponse Function(Object? response, RpcRequest<Object?> request);
+typedef RpcResponseTransformer<TResponse> = TResponse Function(
+  Object? response,
+  RpcRequest<Object?> request,
+);
 
 /// Represents the error payload of an RPC error response.
 class RpcErrorResponsePayload {

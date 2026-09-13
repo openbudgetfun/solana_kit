@@ -65,10 +65,9 @@ class RpcSubscriptionsTransportConfig {
 /// Given a configuration containing a request, an execute function, and a
 /// cancellation token, it returns a [Future] that resolves to a
 /// [NotificationStreams] which publishes subscription notifications.
-typedef RpcSubscriptionsTransport =
-    Future<NotificationStreams> Function(
-      RpcSubscriptionsTransportConfig config,
-    );
+typedef RpcSubscriptionsTransport = Future<NotificationStreams> Function(
+  RpcSubscriptionsTransportConfig config,
+);
 
 /// Creates an [RpcSubscriptionsTransport] from a channel creator.
 ///

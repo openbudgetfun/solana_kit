@@ -57,8 +57,10 @@ class RpcPlan<TResponse> {
 /// This is the Dart equivalent of the TypeScript `RpcApi` proxy. Since Dart
 /// does not have JavaScript-style proxies, methods are called through this
 /// functional interface.
-typedef RpcApiMethod =
-    RpcPlan<Object?> Function(String methodName, List<Object?> params);
+typedef RpcApiMethod = RpcPlan<Object?> Function(
+  String methodName,
+  List<Object?> params,
+);
 
 /// A JSON RPC API that converts method calls into [RpcPlan] instances.
 ///

@@ -6,10 +6,9 @@ import 'package:solana_kit_offchain_messages/src/content.dart';
 FixedSizeEncoder<OffchainMessageContentFormat>
 getOffchainMessageContentFormatEncoder() {
   return transformEncoder<num, OffchainMessageContentFormat>(
-        getU8Encoder(),
-        (format) => format.value,
-      )
-      as FixedSizeEncoder<OffchainMessageContentFormat>;
+    getU8Encoder(),
+    (format) => format.value,
+  ) as FixedSizeEncoder<OffchainMessageContentFormat>;
 }
 
 /// Returns a fixed-size decoder for [OffchainMessageContentFormat].
@@ -18,28 +17,26 @@ getOffchainMessageContentFormatEncoder() {
 FixedSizeDecoder<OffchainMessageContentFormat>
 getOffchainMessageContentFormatDecoder() {
   return transformDecoder<int, OffchainMessageContentFormat>(
-        getU8Decoder(),
-        (value, bytes, offset) {
-          if (value > OffchainMessageContentFormat.utf865535BytesMax.value) {
-            throw FormatException(
-              'Invalid offchain message content format: $value',
-            );
-          }
-          return OffchainMessageContentFormat.fromValue(value);
-        },
-      )
-      as FixedSizeDecoder<OffchainMessageContentFormat>;
+    getU8Decoder(),
+    (value, bytes, offset) {
+      if (value > OffchainMessageContentFormat.utf865535BytesMax.value) {
+        throw FormatException(
+          'Invalid offchain message content format: $value',
+        );
+      }
+      return OffchainMessageContentFormat.fromValue(value);
+    },
+  ) as FixedSizeDecoder<OffchainMessageContentFormat>;
 }
 
 /// Returns a codec for [OffchainMessageContentFormat].
 FixedSizeCodec<OffchainMessageContentFormat, OffchainMessageContentFormat>
 getOffchainMessageContentFormatCodec() {
   return combineCodec(
-        getOffchainMessageContentFormatEncoder(),
-        getOffchainMessageContentFormatDecoder(),
-      )
-      as FixedSizeCodec<
-        OffchainMessageContentFormat,
-        OffchainMessageContentFormat
-      >;
+    getOffchainMessageContentFormatEncoder(),
+    getOffchainMessageContentFormatDecoder(),
+  ) as FixedSizeCodec<
+    OffchainMessageContentFormat,
+    OffchainMessageContentFormat
+  >;
 }

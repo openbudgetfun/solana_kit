@@ -13,12 +13,12 @@ FixedSizeDecoder<Address>? _memoizedAddressDecoder;
 FixedSizeEncoder<Address> getAddressEncoder() {
   if (_memoizedAddressEncoder != null) return _memoizedAddressEncoder!;
   final base58Encoder = fixEncoderSize(getBase58Encoder(), 32);
-  _memoizedAddressEncoder =
-      transformEncoder<String, Address>(base58Encoder, (addr) {
-            assertIsAddress(addr.value);
-            return addr.value;
-          })
-          as FixedSizeEncoder<Address>;
+  _memoizedAddressEncoder = transformEncoder<String, Address>(base58Encoder, (
+    addr,
+  ) {
+    assertIsAddress(addr.value);
+    return addr.value;
+  }) as FixedSizeEncoder<Address>;
   return _memoizedAddressEncoder!;
 }
 
@@ -27,12 +27,10 @@ FixedSizeEncoder<Address> getAddressEncoder() {
 FixedSizeDecoder<Address> getAddressDecoder() {
   if (_memoizedAddressDecoder != null) return _memoizedAddressDecoder!;
   final base58Decoder = fixDecoderSize(getBase58Decoder(), 32);
-  _memoizedAddressDecoder =
-      transformDecoder<String, Address>(
-            base58Decoder,
-            (value, bytes, offset) => Address(value),
-          )
-          as FixedSizeDecoder<Address>;
+  _memoizedAddressDecoder = transformDecoder<String, Address>(
+    base58Decoder,
+    (value, bytes, offset) => Address(value),
+  ) as FixedSizeDecoder<Address>;
   return _memoizedAddressDecoder!;
 }
 

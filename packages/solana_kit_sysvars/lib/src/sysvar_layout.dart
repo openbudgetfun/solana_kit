@@ -44,18 +44,17 @@ FixedSizeCodec<T, T> mapFixedSizeStructCodec<T>({
   required T Function(StructuredFields fields) fromFields,
 }) {
   return combineCodec(
-        mapFixedSizeStructEncoder(
-          fixedSize: fixedSize,
-          structEncoder: structEncoder,
-          toFields: toFields,
-        ),
-        mapFixedSizeStructDecoder(
-          fixedSize: fixedSize,
-          structDecoder: structDecoder,
-          fromFields: fromFields,
-        ),
-      )
-      as FixedSizeCodec<T, T>;
+    mapFixedSizeStructEncoder(
+      fixedSize: fixedSize,
+      structEncoder: structEncoder,
+      toFields: toFields,
+    ),
+    mapFixedSizeStructDecoder(
+      fixedSize: fixedSize,
+      structDecoder: structDecoder,
+      fromFields: fromFields,
+    ),
+  ) as FixedSizeCodec<T, T>;
 }
 
 /// Computes a stable hash for the given structured fields.

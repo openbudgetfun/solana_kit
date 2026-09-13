@@ -202,8 +202,7 @@ const Map<int, StandardAnchorError> standardAnchorErrorMessages = {
   ),
   2029: (
     name: 'ConstraintMintGroupMemberPointerExtensionMemberAddress',
-    message:
-        'A group member pointer extension group address constraint was violated',
+    message: 'A group member pointer extension group address constraint was violated',
   ),
   2030: (
     name: 'ConstraintMintMetadataPointerExtension',
@@ -244,8 +243,7 @@ const Map<int, StandardAnchorError> standardAnchorErrorMessages = {
   ),
   2039: (
     name: 'ConstraintMintTransferHookExtensionProgramId',
-    message:
-        'A transfer hook extension transfer hook program id constraint was violated',
+    message: 'A transfer hook extension transfer hook program id constraint was violated',
   ),
   2500: (
     name: 'RequireViolated',
@@ -341,8 +339,7 @@ const Map<int, StandardAnchorError> standardAnchorErrorMessages = {
   ),
   3016: (
     name: 'AccountReallocExceedsLimit',
-    message:
-        'The account reallocation exceeds the MAX_PERMITTED_DATA_INCREASE limit',
+    message: 'The account reallocation exceeds the MAX_PERMITTED_DATA_INCREASE limit',
   ),
   3017: (
     name: 'AccountDuplicateReallocs',
@@ -354,8 +351,7 @@ const Map<int, StandardAnchorError> standardAnchorErrorMessages = {
   ),
   4101: (
     name: 'TryingToInitPayerAsProgramAccount',
-    message:
-        'You cannot/should not initialize the payer account as a program account',
+    message: 'You cannot/should not initialize the payer account as a program account',
   ),
   4102: (
     name: 'InvalidNumericConversion',

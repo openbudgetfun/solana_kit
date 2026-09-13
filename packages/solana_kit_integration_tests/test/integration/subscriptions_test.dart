@@ -278,9 +278,10 @@ void main() {
       // The program set `created_at` to the current timestamp; read it back so
       // the subscribe instruction can echo the live plan terms.
       final plan = decodePlan(
-        (await fetchEncodedAccount(env.rpc, planPda)
-                as ExistingAccount<Uint8List>)
-            .account,
+        (await fetchEncodedAccount(
+          env.rpc,
+          planPda,
+        ) as ExistingAccount<Uint8List>).account,
       );
       final planCreatedAt = plan.data.data.terms.createdAt;
 
@@ -332,9 +333,10 @@ void main() {
       // resumeSubscription confirms on-chain; it requires the expires_at_ts
       // the cancel instruction just wrote.
       final cancelled = decodeSubscriptionDelegation(
-        (await fetchEncodedAccount(env.rpc, subscriptionPda)
-                as ExistingAccount<Uint8List>)
-            .account,
+        (await fetchEncodedAccount(
+          env.rpc,
+          subscriptionPda,
+        ) as ExistingAccount<Uint8List>).account,
       );
       final expiresAtTs = cancelled.data.expiresAtTs;
       await env.sendInstructions([

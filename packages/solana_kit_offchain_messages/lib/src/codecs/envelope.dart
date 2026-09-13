@@ -79,10 +79,9 @@ Decoder<OffchainMessageEnvelope> getOffchainMessageEnvelopeDecoder() {
       (
         'signatures',
         getArrayDecoder(
-              fixDecoderSize(getBytesDecoder(), 64) as Decoder<Object?>,
-              size: PrefixedArraySize(getU8Decoder()),
-            )
-            as Decoder<Object?>,
+          fixDecoderSize(getBytesDecoder(), 64) as Decoder<Object?>,
+          size: PrefixedArraySize(getU8Decoder()),
+        ) as Decoder<Object?>,
       ),
       ('content', getBytesDecoder() as Decoder<Object?>),
     ]),

@@ -25,8 +25,9 @@ typedef SetComputeUnitPriceInstructionDetails = ({
 typedef ComputeUnitLimitUpdater = int Function(int? previousUnits);
 
 /// A function that updates a compute unit price from its previous value.
-typedef ComputeUnitPriceUpdater =
-    BigInt Function(BigInt? previousMicroLamports);
+typedef ComputeUnitPriceUpdater = BigInt Function(
+  BigInt? previousMicroLamports,
+);
 
 /// Finds the first `SetComputeUnitLimit` instruction and its units.
 SetComputeUnitLimitInstructionDetails?

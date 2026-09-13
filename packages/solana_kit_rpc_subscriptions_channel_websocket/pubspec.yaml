@@ -4,7 +4,7 @@ version: 0.9.3
 repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_rpc_subscriptions_channel_websocket
 homepage: https://openbudgetfun.github.io/solana_kit/
 environment:
-  sdk: ^3.12.0
+  sdk: ^3.13.0
 resolution: workspace
 dependencies:
   solana_kit_errors: ^0.9.3
@@ -12,4 +12,4 @@ dependencies:
   web_socket_channel: ^3.0.2
 dev_dependencies:
   solana_kit_lints: ^0.9.3
-  test: ^1.25.8
+  test: ^1.25.0

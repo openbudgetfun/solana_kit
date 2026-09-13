@@ -96,17 +96,15 @@ void main() {
         AnchorIdlType.parse(<String, Object?>{'vec': 'u32'}) as AnchorIdlVec;
     expect(vec.element, AnchorIdlPrimitive.u32);
 
-    final option =
-        AnchorIdlType.parse(<String, Object?>{'option': 'u64'})
-            as AnchorIdlOption;
+    final option = AnchorIdlType.parse(<String, Object?>{
+      'option': 'u64',
+    }) as AnchorIdlOption;
     expect(option.prefix, 1);
     expect(option.inner, AnchorIdlPrimitive.u64);
 
-    final array =
-        AnchorIdlType.parse(<String, Object?>{
-              'array': ['u8', '4'],
-            })
-            as AnchorIdlArray;
+    final array = AnchorIdlType.parse(<String, Object?>{
+      'array': ['u8', '4'],
+    }) as AnchorIdlArray;
     expect(array.length, 4);
   });
 

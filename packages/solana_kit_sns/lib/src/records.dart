@@ -245,10 +245,9 @@ FixedSizeDecoder<SnsRecordHeader> getSnsRecordHeaderDecoder() {
 /// Returns the codec for an SNS V2 record header.
 FixedSizeCodec<SnsRecordHeader, SnsRecordHeader> getSnsRecordHeaderCodec() {
   return combineCodec(
-        getSnsRecordHeaderEncoder(),
-        getSnsRecordHeaderDecoder(),
-      )
-      as FixedSizeCodec<SnsRecordHeader, SnsRecordHeader>;
+    getSnsRecordHeaderEncoder(),
+    getSnsRecordHeaderDecoder(),
+  ) as FixedSizeCodec<SnsRecordHeader, SnsRecordHeader>;
 }
 
 /// The decoded payload of an SNS V2 record account.

@@ -138,28 +138,29 @@ class WalletUiTheme extends InheritedTheme {
 }
 
 /// Builds an application-specific wallet row.
-typedef WalletTileBuilder =
-    Widget Function(
-      BuildContext context,
-      Wallet wallet,
-      int index,
-      VoidCallback onTap,
-    );
+typedef WalletTileBuilder = Widget Function(
+  BuildContext context,
+  Wallet wallet,
+  int index,
+  VoidCallback onTap,
+);
 
 /// Builds application-specific picker header content.
-typedef WalletPickerHeaderBuilder =
-    Widget Function(BuildContext context, String title, VoidCallback? onClose);
+typedef WalletPickerHeaderBuilder = Widget Function(
+  BuildContext context,
+  String title,
+  VoidCallback? onClose,
+);
 
 /// Builds an application-specific empty state.
 typedef WalletEmptyBuilder = Widget Function(BuildContext context);
 
 /// Builds a complete connect or account button.
-typedef WalletButtonBuilder =
-    Widget Function(
-      BuildContext context,
-      WalletAdapterState state,
-      VoidCallback? onPressed,
-    );
+typedef WalletButtonBuilder = Widget Function(
+  BuildContext context,
+  WalletAdapterState state,
+  VoidCallback? onPressed,
+);
 
 /// Renders Wallet Standard SVG and raster data URI icons.
 class WalletAvatar extends StatelessWidget {

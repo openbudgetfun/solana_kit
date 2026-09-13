@@ -11,8 +11,9 @@ import 'package:solana_kit_codecs_data_structures/src/utils.dart';
 /// used to read the current field from the byte stream.
 ///
 /// See [createDependentStructDecoder].
-typedef DependentStructDecoderFieldFactory =
-    Decoder<Object?> Function(Map<String, Object?> fields);
+typedef DependentStructDecoderFieldFactory = Decoder<Object?> Function(
+  Map<String, Object?> fields,
+);
 
 class _InternalEntry {
   _InternalEntry({

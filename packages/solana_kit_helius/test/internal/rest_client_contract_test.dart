@@ -13,8 +13,7 @@ void main() {
         'does not disclose credentials from a $method connection exception',
         () async {
           final client = RestClient(
-            baseUrl:
-                'https://rest-user:rest-password@example.com/?api-key=secret-key',
+            baseUrl: 'https://rest-user:rest-password@example.com/?api-key=secret-key',
             client: MockClient((request) async {
               throw http.ClientException(
                 'Failed to connect to ${request.url}',

@@ -189,8 +189,7 @@ const Map<int, String> _squadsMultisigErrorMessages = {
       'Found multiple members with the same pubkey',
   squadsMultisigErrorEmptyMembers: 'Members array is empty',
   squadsMultisigErrorTooManyMembers: 'Too many members, can be up to 65535',
-  squadsMultisigErrorInvalidThreshold:
-      'Invalid threshold, must be between 1 and number of members with Vote permission',
+  squadsMultisigErrorInvalidThreshold: 'Invalid threshold, must be between 1 and number of members with Vote permission',
   squadsMultisigErrorUnauthorized:
       'Attempted to perform an unauthorized action',
   squadsMultisigErrorNotAMember: 'Provided pubkey is not a member of multisig',

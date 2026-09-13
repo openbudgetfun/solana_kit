@@ -8,13 +8,12 @@ import 'package:solana_kit_offchain_messages/src/application_domain.dart';
 FixedSizeEncoder<OffchainMessageApplicationDomain>
 getOffchainMessageApplicationDomainEncoder() {
   return transformEncoder<Address, OffchainMessageApplicationDomain>(
-        getAddressEncoder(),
-        (putativeApplicationDomain) {
-          offchainMessageApplicationDomain(putativeApplicationDomain.value);
-          return putativeApplicationDomain;
-        },
-      )
-      as FixedSizeEncoder<OffchainMessageApplicationDomain>;
+    getAddressEncoder(),
+    (putativeApplicationDomain) {
+      offchainMessageApplicationDomain(putativeApplicationDomain.value);
+      return putativeApplicationDomain;
+    },
+  ) as FixedSizeEncoder<OffchainMessageApplicationDomain>;
 }
 
 /// Returns a fixed-size decoder for an offchain message application domain.
@@ -32,11 +31,10 @@ FixedSizeCodec<
 >
 getOffchainMessageApplicationDomainCodec() {
   return combineCodec(
-        getOffchainMessageApplicationDomainEncoder(),
-        getOffchainMessageApplicationDomainDecoder(),
-      )
-      as FixedSizeCodec<
-        OffchainMessageApplicationDomain,
-        OffchainMessageApplicationDomain
-      >;
+    getOffchainMessageApplicationDomainEncoder(),
+    getOffchainMessageApplicationDomainDecoder(),
+  ) as FixedSizeCodec<
+    OffchainMessageApplicationDomain,
+    OffchainMessageApplicationDomain
+  >;
 }

@@ -13,8 +13,7 @@ void main() {
       test(
         'requires generated upstream fixtures',
         () {},
-        skip:
-            'Run upstream:parity to generate fixtures before executing this harness.',
+        skip: 'Run upstream:parity to generate fixtures before executing this harness.',
       );
       return;
     }

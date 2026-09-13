@@ -10,12 +10,14 @@ import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 
 /// Signs a compiled transaction message before submission.
-typedef SignTransactionMessage =
-    Future<Transaction> Function(TransactionMessage message);
+typedef SignTransactionMessage = Future<Transaction> Function(
+  TransactionMessage message,
+);
 
 /// Sends a signed transaction and returns its signature.
-typedef SendSignedTransaction =
-    Future<Signature> Function(Transaction transaction);
+typedef SendSignedTransaction = Future<Signature> Function(
+  Transaction transaction,
+);
 
 /// Creates a transaction execution boundary that accepts an instruction plan
 /// and returns a structured execution outcome.

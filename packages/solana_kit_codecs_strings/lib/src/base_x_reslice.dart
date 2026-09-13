@@ -58,10 +58,9 @@ VariableSizeCodec<String, String> getBaseXResliceCodec(
   int bits,
 ) {
   return combineCodec(
-        getBaseXResliceEncoder(alphabet, bits),
-        getBaseXResliceDecoder(alphabet, bits),
-      )
-      as VariableSizeCodec<String, String>;
+    getBaseXResliceEncoder(alphabet, bits),
+    getBaseXResliceDecoder(alphabet, bits),
+  ) as VariableSizeCodec<String, String>;
 }
 
 /// Helper function to reslice the bits inside bytes.
