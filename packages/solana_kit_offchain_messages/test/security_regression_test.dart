@@ -116,7 +116,13 @@ void main() {
     expect(isFullySignedOffchainMessageEnvelope(envelope), isFalse);
     expect(
       () => assertIsFullySignedOffchainMessageEnvelope(envelope),
-      throwsFormatException,
+      throwsA(
+        isA<SolanaError>().having(
+          (error) => error.code,
+          'code',
+          equals(SolanaErrorCode.codecsInvalidUtf8Bytes),
+        ),
+      ),
     );
   });
 

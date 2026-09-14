@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:test/test.dart';
 
 /// The default [Utf8CodecConfig] values, named so the assertions below read as
@@ -37,7 +38,13 @@ void main() {
       final decoder = getUtf8Decoder();
       expect(
         () => decoder.decode(Uint8List.fromList([0xc3, 0x28])),
-        throwsA(isA<FormatException>()),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            equals(SolanaErrorCode.codecsInvalidUtf8Bytes),
+          ),
+        ),
       );
     });
 
@@ -53,11 +60,23 @@ void main() {
       final encoder = getUtf8Encoder();
       expect(
         () => encoder.encode('\ud800'),
-        throwsA(isA<FormatException>()),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            equals(SolanaErrorCode.codecsInvalidUtf8String),
+          ),
+        ),
       );
       expect(
         () => encoder.encode('a\udc00b'),
-        throwsA(isA<FormatException>()),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            equals(SolanaErrorCode.codecsInvalidUtf8String),
+          ),
+        ),
       );
     });
 

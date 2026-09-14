@@ -301,6 +301,14 @@ in
       description = "Run mdt health checks with actionable remediation hints.";
       binary = "bash";
     };
+    "upstream:error-codes" = {
+      exec = ''
+        set -euo pipefail
+        dart run scripts/check_error_code_parity.dart "$@"
+      '';
+      description = "Check that SolanaErrorCode numbers match the upstream @solana/kit error codes.";
+      binary = "bash";
+    };
     "docs:check" = {
       exec = ''
         set -euo pipefail
@@ -315,9 +323,10 @@ in
         mdt doctor --format text
         dart run scripts/workspace_doc_drift.dart --check
         dart run scripts/check_reference_repo_docs.dart
+        dart run scripts/check_error_code_parity.dart
         dart run scripts/generate_upstream_docs.dart --check
       '';
-      description = "Check documentation consistency with mdt, synchronized Dart doc comments, workspace metadata, reference-repo pins, and upstream version tables.";
+      description = "Check documentation consistency with mdt, synchronized Dart doc comments, workspace metadata, reference-repo pins, upstream error-code parity, and upstream version tables.";
       binary = "bash";
     };
     "docs:update" = {

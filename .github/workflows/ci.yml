@@ -70,6 +70,12 @@ jobs:
         run: upstream:parity --clone-if-missing
         shell: devenv shell -- bash -e {0}
 
+      # Runs after the clone above so the upstream codes file exists. The
+      # local `docs:check` skips this when .repos/ is absent.
+      - name: Check error-code number parity with upstream
+        run: dart run scripts/check_error_code_parity.dart
+        shell: devenv shell -- bash -e {0}
+
   lint:
     runs-on: ubuntu-latest
     steps:
