@@ -1,6 +1,8 @@
 ---
 "solana_kit_errors": major
 "solana_kit_codecs_strings": minor
+"solana_kit_memo": patch
+"solana_kit_attestation_service": patch
 ---
 
 # Align error code numbers with upstream and report malformed UTF-8 as a code
@@ -26,5 +28,7 @@ try {
   }
 }
 ```
+
+`solana_kit_memo` and `solana_kit_attestation_service` only had tests asserting the old `FormatException` for malformed UTF-8; those assertions now check the error code, and `solana_kit_memo` declares the `solana_kit_errors` dev dependency that needs.
 
 `upstream:error-codes`, which also runs as part of `docs:check`, compares this enum against `.repos/kit/packages/errors/src/codes.ts` and fails on a number mismatch or an occupied number, so this cannot drift again without CI saying so.
