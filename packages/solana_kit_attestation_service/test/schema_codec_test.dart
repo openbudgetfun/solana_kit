@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_attestation_service/solana_kit_attestation_service.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:test/test.dart';
 
 /// The bytes the Schema account stores for a text blob (its content only;
@@ -88,7 +89,13 @@ void main() {
       // A u32 prefix promising one byte, holding an invalid continuation.
       expect(
         () => decodeSchemaFieldNames(content([1, 0, 0, 0, 0xff])),
-        throwsFormatException,
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            equals(SolanaErrorCode.codecsInvalidUtf8Bytes),
+          ),
+        ),
       );
     });
   });

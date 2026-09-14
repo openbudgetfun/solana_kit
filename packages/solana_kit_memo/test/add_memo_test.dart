@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:solana_kit_address_constants/solana_kit_address_constants.dart'
     show memoLegacyProgramAddress, memoProgramAddress;
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_memo/solana_kit_memo.dart';
 import 'package:test/test.dart';
 
@@ -73,7 +74,13 @@ void main() {
         () => getAddMemoInstructionDataDecoder().decode(
           Uint8List.fromList([0xc3, 0x28]),
         ),
-        throwsA(isA<FormatException>()),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            equals(SolanaErrorCode.codecsInvalidUtf8Bytes),
+          ),
+        ),
       );
     });
 

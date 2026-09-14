@@ -14,7 +14,9 @@
 upstream:error-codes      # or: dart run scripts/check_error_code_parity.dart
 ```
 
-The checker compares `SolanaErrorCode` against `.repos/kit/packages/errors/src/codes.ts` and fails on a number mismatch or an occupied number. It also runs as part of `docs:check`. Run `clone:repos` first so the upstream file exists; without it the checker exits with a setup error rather than passing.
+The checker compares `SolanaErrorCode` against `.repos/kit/packages/errors/src/codes.ts` and fails on a number mismatch or an occupied number. It also runs as part of `docs:check`.
+
+When the upstream clone is absent it prints a notice and passes, so `docs:check` works without `.repos/`. CI enforces it in the `upstream-compatibility` job, which clones the reference repo first, so a number mismatch cannot merge. Locally, run `clone:repos` if you want the check to actually run.
 
 Codes upstream has that this port does not are reported as a count, not a failure, because some cover JavaScript-only surfaces such as `@solana/react`.
 

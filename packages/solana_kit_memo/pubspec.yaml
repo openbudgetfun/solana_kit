@@ -15,5 +15,6 @@ dependencies:
   solana_kit_instructions: ^0.9.3
 dev_dependencies:
   solana_kit_address_constants: ^0.9.3
+  solana_kit_errors: ^0.9.3
   solana_kit_lints: ^0.9.3
   test: ^1.25.0
