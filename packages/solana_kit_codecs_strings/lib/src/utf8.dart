@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 
 import 'package:solana_kit_codecs_strings/src/null_characters.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 /// Options controlling UTF-8 encoding and decoding.
 ///
@@ -35,9 +36,11 @@ class Utf8CodecConfig {
   /// Whether malformed input is rejected instead of replaced.
   ///
   /// When `true`, decoding bytes that are not well-formed UTF-8 throws a
-  /// [FormatException], and encoding a string containing lone surrogates
-  /// throws one too. When `false`, decoding replaces malformed byte sequences
-  /// with `U+FFFD` and encoding replaces lone surrogates the same way.
+  /// [SolanaError] with [SolanaErrorCode.codecsInvalidUtf8Bytes], and encoding
+  /// a string containing lone surrogates throws one with
+  /// [SolanaErrorCode.codecsInvalidUtf8String]. When `false`, decoding
+  /// replaces malformed byte sequences with `U+FFFD` and encoding replaces
+  /// lone surrogates the same way.
   ///
   /// Upstream defaults this to `false`; this port defaults to `true`.
   final bool fatal;
@@ -65,7 +68,8 @@ class Utf8CodecConfig {
 /// contains as many bytes as needed to represent the string.
 ///
 /// With the default [Utf8CodecConfig.fatal], a string containing lone
-/// surrogates throws a [FormatException] instead of being encoded with
+/// surrogates throws a [SolanaError] with
+/// [SolanaErrorCode.codecsInvalidUtf8String] instead of being encoded with
 /// `U+FFFD` replacements.
 ///
 /// For more details, see [getUtf8Codec].
@@ -101,20 +105,28 @@ VariableSizeDecoder<String> getUtf8Decoder([
   return VariableSizeDecoder<String>(
     read: (bytes, offset) {
       final slice = bytes.sublist(offset);
-      var value = convert.utf8.decode(slice, allowMalformed: !config.fatal);
+      final String value;
+      try {
+        value = convert.utf8.decode(slice, allowMalformed: !config.fatal);
+      } on FormatException catch (error) {
+        throw SolanaError(SolanaErrorCode.codecsInvalidUtf8Bytes, {
+          'offset': offset + (error.offset ?? 0),
+        });
+      }
 
+      var result = value;
       // Dart's `Utf8Decoder` strips a leading byte order mark, which is the
       // default for both this port and upstream. Put it back when the caller
       // asked to keep it.
       if (config.ignoreBOM &&
           _startsWithByteOrderMark(slice) &&
-          (value.isEmpty || value.codeUnitAt(0) != 0xfeff)) {
-        value = '\ufeff$value';
+          (result.isEmpty || result.codeUnitAt(0) != 0xfeff)) {
+        result = '\ufeff$result';
       }
       if (config.removeNullCharacters) {
-        value = removeNullCharacters(value);
+        result = removeNullCharacters(result);
       }
-      return (value, bytes.length);
+      return (result, bytes.length);
     },
   );
 }
@@ -141,7 +153,7 @@ bool _startsWithByteOrderMark(Uint8List bytes) =>
     bytes[1] == 0xbb &&
     bytes[2] == 0xbf;
 
-/// Throws a [FormatException] if [value] contains an unpaired surrogate.
+/// Throws a [SolanaError] if [value] contains an unpaired surrogate.
 ///
 /// Dart's `utf8.encode` substitutes `U+FFFD` for lone surrogates rather than
 /// reporting them, so the check has to happen before encoding.
@@ -151,19 +163,15 @@ void _assertIsWellFormedUtf8String(String value) {
     if (unit >= 0xd800 && unit <= 0xdbff) {
       final next = index + 1 < value.length ? value.codeUnitAt(index + 1) : 0;
       if (next < 0xdc00 || next > 0xdfff) {
-        throw FormatException(
-          'Malformed UTF-8 string: unpaired high surrogate at index $index',
-          value,
-          index,
-        );
+        throw SolanaError(SolanaErrorCode.codecsInvalidUtf8String, {
+          'index': index,
+        });
       }
       index++;
     } else if (unit >= 0xdc00 && unit <= 0xdfff) {
-      throw FormatException(
-        'Malformed UTF-8 string: unpaired low surrogate at index $index',
-        value,
-        index,
-      );
+      throw SolanaError(SolanaErrorCode.codecsInvalidUtf8String, {
+        'index': index,
+      });
     }
   }
 }

@@ -955,11 +955,18 @@ enum SolanaErrorCode {
   /// The pattern match bytes are invalid.
   codecsInvalidPatternMatchBytes(8078025),
 
-  /// The string contains null characters.
-  codecsStringContainsNullCharacters(8078026),
+  /// A byte sequence is not valid UTF-8.
+  codecsInvalidUtf8Bytes(8078026),
+
+  /// A string contains a lone surrogate.
+  codecsInvalidUtf8String(8078027),
 
   /// The boolean value is not encoded as zero or one.
-  codecsInvalidBoolean(8078027),
+  ///
+  /// This port validates booleans and upstream `@solana/kit` does not, so the
+  /// code has no upstream counterpart. Its number sits at the end of the codec
+  /// block so it cannot collide with an upstream codec code.
+  codecsInvalidBoolean(8078999),
 
   // ---------------------------------------------------------------------------
   // Fixed Points (8090000 - 8090999)

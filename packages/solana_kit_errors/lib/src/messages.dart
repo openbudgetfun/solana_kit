@@ -47,7 +47,10 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode.codecsExpectedDecoderToConsumeEntireByteArray: r'This decoder expected a byte array of exactly $expectedLength bytes, but $numExcessBytes unexpected excess bytes remained after decoding. Are you sure that you have chosen the correct decoder for this data?',
   SolanaErrorCode.codecsInvalidPatternMatchValue: 'Invalid pattern match value. The provided value does not match any of the specified patterns.',
   SolanaErrorCode.codecsInvalidPatternMatchBytes: 'Invalid pattern match bytes. The provided byte array does not match any of the specified patterns.',
-  SolanaErrorCode.codecsStringContainsNullCharacters: r'Decoded $encoding string contains null characters. Use compatibility stripping or preserve mode explicitly if this payload is expected.',
+  SolanaErrorCode.codecsInvalidUtf8Bytes:
+      r'Invalid UTF-8 byte sequence at offset $offset.',
+  SolanaErrorCode.codecsInvalidUtf8String:
+      r'Invalid UTF-8 string. Found a lone surrogate at index $index.',
   SolanaErrorCode.codecsInvalidBoolean:
       r'Invalid boolean value. Expected 0 or 1, got $value.',
   SolanaErrorCode.fixedPointsArithmeticOverflow: r'Fixed-point operation `$operation` of kind `$kind` overflowed. Expected a raw bigint in [$min, $max], got $result.',

@@ -24,6 +24,7 @@ Solana Kit is a multi-package Dart workspace that ports `@solana/kit` and relate
 - Changes under `packages/*` require a `.changeset/*.md` file before PR or merge.
 - Changesets describe **completed** changes only — they are release inputs that ship to users. Never use them as planning documents for in-progress work (no "remaining", "in progress", or TODO sections). The rare exception is documenting deprecations or future work that belongs to a _future release_; if a PR lands partially, split the work so each changeset only describes what actually shipped.
 - Keep affected public docs in sync when public APIs or behavior change.
+- `SolanaErrorCode` numbers must match the upstream `@solana/kit` error codes: a code that exists upstream uses the upstream number, and a port-only code must not occupy a number upstream uses. `upstream:error-codes` (part of `docs:check`) enforces this. See `docs/agents/error-codes.md`.
 - Every package under `packages/*` must have a `LICENSE` (MIT) and `README.md` file. New packages must include both before their first publish. The README must describe the package purpose, show usage examples, and list key APIs. Use badges for pub.dev, CI, and coverage. See `packages/solana_kit_compute_budget/README.md` for the canonical structure.
 - New packages must start at `version: 0.0.0` in their `pubspec.yaml` with a `major` changeset. This ensures the first release lands at `0.1.0` (the minimum viable publishable version). Never set an unpublished package to a higher version.
 - Never push commits, edit files, or rebase generated release pull requests (branches matching `monochange/release/**`, e.g. `monochange/release/step-open-release-request`). These PRs are produced by the release tooling and must stay untouched. If a generated release PR fails CI, fix the root cause on `main` (or the appropriate feature branch) and let the release PR pick up the change on its next regeneration. Re-running failed checks (`gh run rerun`) and merging are allowed; modifying the PR content is not.
@@ -35,6 +36,7 @@ Solana Kit is a multi-package Dart workspace that ports `@solana/kit` and relate
 - [Workspace commands and tooling](docs/agents/workspace-commands.md)
 - [Architecture and package boundaries](docs/agents/architecture.md)
 - [Dart conventions and API style](docs/agents/dart-conventions.md)
+- [Error codes](docs/agents/error-codes.md)
 - [Documentation updates](docs/agents/documentation.md)
 - [Changesets and releases](docs/agents/changesets-and-releases.md)
 - [Git and PR workflow](docs/agents/git-and-prs.md)

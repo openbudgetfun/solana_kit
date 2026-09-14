@@ -85,7 +85,9 @@ void main() {
         'value': 2,
       });
 
-      expect(error.code.value, 8078027);
+      // 8078999 sits at the end of the codec block: this port validates
+      // booleans and upstream does not, so there is no upstream number.
+      expect(error.code.value, 8078999);
       expect(error.toString(), contains('Expected 0 or 1, got 2'));
     });
   });
