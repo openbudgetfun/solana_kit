@@ -134,10 +134,14 @@ jobs:
           channel: stable
           cache: true
       - name: Setup Android SDK
-        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4
+        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
         with:
-          sdk-version: 34
-          ndk-version: "26.0.10792818"
+          # The action defaults to `packages: tools platform-tools`, but Google
+          # has removed `tools` from its SDK repository, so the default request
+          # fails with "Failed to find package 'tools'". The step below installs
+          # every component the compile check needs, so only platform-tools is
+          # requested here.
+          packages: platform-tools
       - name: Accept Android SDK licenses
         run: yes | sdkmanager --licenses >/dev/null || true
       - name: Install Android SDK components
