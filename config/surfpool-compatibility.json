@@ -123,13 +123,12 @@
     {
       "name": "offline protocol and utility contracts",
       "validationMode": "contract",
-      "expectedOutcome": "Canonical vectors and adversarial unit tests preserve offline message formats, PDA derivation, SNS record layouts, numeric bounds, stable serialization, options, and functional helpers for inputs that do not contact a validator.",
+      "expectedOutcome": "Canonical vectors and adversarial unit tests preserve offline message formats, PDA derivation, SNS record layouts, numeric bounds, stable serialization, and options for inputs that do not contact a validator.",
       "evidence": [
         "packages/solana_kit_attestation_service/test",
         "packages/solana_kit_address/test",
         "packages/solana_kit_fast_stable_stringify/test",
         "packages/solana_kit_fixed_points/test",
-        "packages/solana_kit_functional/test",
         "packages/solana_kit_offchain_messages/test",
         "packages/solana_kit_options/test",
         "packages/solana_kit_sns/test"
@@ -139,7 +138,6 @@
         "solana_kit_address",
         "solana_kit_fast_stable_stringify",
         "solana_kit_fixed_points",
-        "solana_kit_functional",
         "solana_kit_offchain_messages",
         "solana_kit_options",
         "solana_kit_sns"

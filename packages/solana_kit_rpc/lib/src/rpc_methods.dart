@@ -259,6 +259,28 @@ extension SolanaRpcMethods on Rpc {
       sendTransactionParams(base64EncodedWireTransaction, config),
     );
   }
+
+  /// Simulates sending a transaction.
+  ///
+  /// This wraps the `simulateTransaction` RPC method.
+  ///
+  /// A transaction that fails during simulation is reported through the
+  /// `err` field of the `result.value` map rather than as a JSON-RPC error, so
+  /// callers can inspect the failure instead of catching it. Only transport and
+  /// preflight failures (`sendTransaction` error code `-32002`) surface as
+  /// thrown `SolanaError`s.
+  ///
+  /// {@macro solanaKitRpcMethodPendingRequest}
+  /// {@macro solanaKitRpcMethodRawResponseShape}
+  PendingRpcRequest<Map<String, Object?>> simulateTransaction(
+    String base64EncodedWireTransaction, [
+    SimulateTransactionConfig? config,
+  ]) {
+    return request<Map<String, Object?>>(
+      'simulateTransaction',
+      simulateTransactionParams(base64EncodedWireTransaction, config),
+    );
+  }
 }
 
 PendingRpcRequest<TOutput> _mapPendingRpcRequest<TInput, TOutput>(

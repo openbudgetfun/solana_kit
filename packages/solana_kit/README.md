@@ -244,6 +244,32 @@ Future<void> submitSignedTransaction(Transaction signedTransaction) async {
 }
 ```
 
+### Estimating resource limits
+
+Version 1 transactions (SIMD-0296 / SIMD-0385) budget **zero** compute units and zero loaded account bytes unless the message states them explicitly, so a version 1 transaction that skips this step fails at execution. `estimateResourceLimitsFactory` simulates the transaction with both limits maxed and returns the values it actually needs.
+
+```dart
+import 'package:solana_kit/solana_kit.dart';
+
+Future<TransactionMessage> prepareVersion1Message(
+  TransactionMessage message,
+) async {
+  final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
+
+  // Estimates against a live node: raises the limits to their ceilings,
+  // simulates, then reports the compute units consumed and the account data
+  // the transaction loaded.
+  final estimate = estimateResourceLimitsFactory(
+    EstimateResourceLimitsFactoryConfig(rpc: rpc),
+  );
+
+  // Applies the estimate, replacing any provisory limits.
+  return estimateAndSetResourceLimitsFactory(estimate)(message);
+}
+```
+
+A simulation that fails for transaction reasons throws `SolanaErrorCode.transactionFailedWhenSimulatingToEstimateResourceLimits`, carrying the decoded transaction error in `context['cause']`. A node that reports no compute units throws `transactionFailedToEstimateComputeLimit`.
+
 ### Error handling
 
 All errors in the SDK are structured `SolanaError` instances.

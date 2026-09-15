@@ -632,7 +632,7 @@ void main() {
   });
 
   group('funding preflight', () {
-    test('parses int, num, string, and fallback balances', () {
+    test('parses int, num, and string balances', () {
       expect(
         parseLamportsValue(<String, Object?>{'value': 42}),
         42,
@@ -645,15 +645,22 @@ void main() {
         parseLamportsValue(<String, Object?>{'value': '43'}),
         43,
       );
-      expect(parseLamportsValue(const <String, Object?>{}), 0);
-      expect(
-        parseLamportsValue(<String, Object?>{'value': null}),
-        0,
-      );
-      expect(
-        parseLamportsValue(<String, Object?>{'value': <String, Object?>{}}),
-        0,
-      );
+    });
+
+    test('throws when the balance is absent or not a number', () {
+      // Reporting zero here would look like an empty wallet and send the
+      // caller hunting for a funding problem that does not exist.
+      for (final response in <Map<String, Object?>>[
+        const <String, Object?>{},
+        <String, Object?>{'value': null},
+        <String, Object?>{'value': <String, Object?>{}},
+      ]) {
+        expect(
+          () => parseLamportsValue(response),
+          throwsA(isA<FormatException>()),
+          reason: 'expected a FormatException for $response',
+        );
+      }
     });
 
     test('throws for an unreachable RPC', () async {

@@ -9,7 +9,6 @@ import 'package:solana_kit_helius/src/types/smart_transaction_types.dart';
 /// compatibility.
 Future<String> txSendTransactionWithSender(
   RestClient restClient,
-  String senderUrl,
   BroadcastTransactionRequest request, {
   bool skipPreflight = true,
 }) async {

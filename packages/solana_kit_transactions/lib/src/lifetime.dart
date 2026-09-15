@@ -155,6 +155,24 @@ bool _compiledInstructionIsAdvanceNonceInstruction(
       instruction.accountIndices!.length == 3;
 }
 
+/// Checks if a version 1 instruction header and payload describe an
+/// AdvanceNonceAccount instruction.
+///
+/// Version 1 messages split an instruction across a header (program index,
+/// account count, data length) and a payload (account indices, data), so the
+/// legacy inspector above cannot read them.
+bool _compiledV1InstructionIsAdvanceNonceInstruction(
+  V1InstructionHeader header,
+  V1InstructionPayload payload,
+  List<Address> staticAddresses,
+) {
+  final programAccountIndex = header.programAccountIndex;
+  if (programAccountIndex >= staticAddresses.length) return false;
+  return staticAddresses[programAccountIndex] == systemProgramAddress &&
+      _isAdvanceNonceAccountInstructionData(payload.instructionData) &&
+      header.numInstructionAccounts == 3;
+}
+
 /// Checks if instruction data represents the AdvanceNonceAccount instruction.
 /// AdvanceNonceAccount is the fifth instruction in the System Program
 /// (index 4).
@@ -186,14 +204,64 @@ bool _isBlockhash(String value) {
 /// If the first instruction is an AdvanceNonceAccount instruction, returns
 /// a [TransactionDurableNonceLifetime]. Otherwise, returns a
 /// [TransactionBlockhashLifetime] with lastValidBlockHeight set to max u64.
+///
+/// Version 1 messages store their instructions as separate headers and
+/// payloads rather than as [CompiledInstruction] values, so they are inspected
+/// through [_compiledV1InstructionIsAdvanceNonceInstruction]. Reading only the
+/// legacy field would report every version 1 nonce transaction as a blockhash
+/// transaction.
 Future<TransactionLifetimeConstraint>
 getTransactionLifetimeConstraintFromCompiledTransactionMessage(
   CompiledTransactionMessage compiledTransactionMessage,
 ) async {
-  final instructions = compiledTransactionMessage.instructions;
   final staticAccounts = compiledTransactionMessage.staticAccounts;
   final lifetimeToken = compiledTransactionMessage.lifetimeToken;
 
+  // Not known from the compiled message, so set to the maximum possible.
+  final maxU64 = BigInt.parse('18446744073709551615');
+
+  if (compiledTransactionMessage.version == TransactionVersion.v1) {
+    final headers = compiledTransactionMessage.instructionHeaders ?? const [];
+    final payloads = compiledTransactionMessage.instructionPayloads ?? const [];
+    if (headers.isEmpty || payloads.isEmpty) {
+      return TransactionBlockhashLifetime(
+        blockhash: lifetimeToken ?? '',
+        lastValidBlockHeight: maxU64,
+      );
+    }
+
+    final header = headers.first;
+    final payload = payloads.first;
+    if (!_compiledV1InstructionIsAdvanceNonceInstruction(
+      header,
+      payload,
+      staticAccounts,
+    )) {
+      return TransactionBlockhashLifetime(
+        blockhash: lifetimeToken ?? '',
+        lastValidBlockHeight: maxU64,
+      );
+    }
+
+    final nonceAccountIndex = payload.instructionAccountIndices.first;
+    if (nonceAccountIndex >= staticAccounts.length) {
+      throw SolanaError(
+        SolanaErrorCode.transactionInvalidNonceAccountIndex,
+        {
+          'nonce': lifetimeToken,
+          'nonceAccountIndex': nonceAccountIndex,
+          'numberOfStaticAccounts': staticAccounts.length,
+        },
+      );
+    }
+
+    return TransactionDurableNonceLifetime(
+      nonce: lifetimeToken ?? '',
+      nonceAccountAddress: staticAccounts[nonceAccountIndex],
+    );
+  }
+
+  final instructions = compiledTransactionMessage.instructions;
   if (instructions.isNotEmpty &&
       _compiledInstructionIsAdvanceNonceInstruction(
         instructions[0],
@@ -211,12 +279,10 @@ getTransactionLifetimeConstraintFromCompiledTransactionMessage(
       nonce: lifetimeToken ?? '',
       nonceAccountAddress: nonceAccountAddress,
     );
-  } else {
-    // Not known from the compiled message, so set to the maximum possible.
-    final maxU64 = BigInt.parse('18446744073709551615');
-    return TransactionBlockhashLifetime(
-      blockhash: lifetimeToken ?? '',
-      lastValidBlockHeight: maxU64,
-    );
   }
+
+  return TransactionBlockhashLifetime(
+    blockhash: lifetimeToken ?? '',
+    lastValidBlockHeight: maxU64,
+  );
 }

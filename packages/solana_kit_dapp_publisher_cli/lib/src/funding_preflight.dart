@@ -98,13 +98,21 @@ Future<int> defaultBalanceFetcher(
 }
 
 /// Parses the `value` field of a `getBalance` RPC response into lamports.
+///
+/// A response whose `value` is absent or not a number is an error rather than
+/// zero: silently reporting zero would surface as "insufficient funds" and send
+/// the caller looking for a funding problem that does not exist.
 int parseLamportsValue(Map<String, Object?> response) {
   final value = response['value'];
   return switch (value) {
     final int lamports => lamports,
     final num lamports => lamports.toInt(),
     final String lamports => BigInt.parse(lamports).toInt(),
-    _ => 0,
+    _ => throw FormatException(
+      'Expected a lamports value in the getBalance response, got '
+      '${value.runtimeType}.',
+      response.toString(),
+    ),
   };
 }
 

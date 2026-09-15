@@ -229,7 +229,7 @@ void main() {
         SolanaSignAndSendTransactionOutput(Uint8List.fromList([5])).signature,
         [5],
       );
-      expect(SolanaTransactionVersion.values, hasLength(2));
+      expect(SolanaTransactionVersion.values, hasLength(3));
       expect(SolanaTransactionCommitment.values, hasLength(3));
     });
 
@@ -370,6 +370,58 @@ void main() {
       ..unregister(wallet)
       ..changed(wallet);
     expect(() => registry.register(wallet), throwsStateError);
+  });
+
+  group('SolanaTransactionVersion', () {
+    test('maps each version to the value a wallet advertises', () {
+      expect(SolanaTransactionVersion.legacy.wireValue, equals('legacy'));
+      expect(SolanaTransactionVersion.version0.wireValue, equals('0'));
+      expect(SolanaTransactionVersion.version1.wireValue, equals('1'));
+    });
+
+    test('parses every advertised value back to its version', () {
+      expect(
+        SolanaTransactionVersion.fromWireValue('legacy'),
+        equals(SolanaTransactionVersion.legacy),
+      );
+      expect(
+        SolanaTransactionVersion.fromWireValue('0'),
+        equals(SolanaTransactionVersion.version0),
+      );
+      expect(
+        SolanaTransactionVersion.fromWireValue('1'),
+        equals(SolanaTransactionVersion.version1),
+      );
+    });
+
+    test('returns null for an unrecognized value', () {
+      expect(SolanaTransactionVersion.fromWireValue('2'), isNull);
+      expect(SolanaTransactionVersion.fromWireValue(0), isNull);
+      expect(SolanaTransactionVersion.fromWireValue(null), isNull);
+    });
+
+    test('reports version 1 support from an advertised list', () {
+      const v1Ready = <SolanaTransactionVersion>[
+        SolanaTransactionVersion.legacy,
+        SolanaTransactionVersion.version0,
+        SolanaTransactionVersion.version1,
+      ];
+      const v0Only = <SolanaTransactionVersion>[
+        SolanaTransactionVersion.legacy,
+        SolanaTransactionVersion.version0,
+      ];
+
+      expect(v1Ready.supportsVersion1, isTrue);
+      expect(
+        v1Ready.supportsTransactionVersion(SolanaTransactionVersion.version0),
+        isTrue,
+      );
+      expect(v0Only.supportsVersion1, isFalse);
+      expect(
+        v0Only.supportsTransactionVersion(SolanaTransactionVersion.legacy),
+        isTrue,
+      );
+    });
   });
 }
 

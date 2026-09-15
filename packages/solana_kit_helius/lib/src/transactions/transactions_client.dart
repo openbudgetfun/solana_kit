@@ -13,17 +13,16 @@ import 'package:solana_kit_helius/src/types/smart_transaction_types.dart';
 /// Provides methods for creating, sending, broadcasting, and polling
 /// smart transactions through Helius infrastructure.
 class TransactionsClient {
-  /// Creates a [TransactionsClient] with the given [_rpcClient], [_restClient],
-  /// and [_senderUrl] for SWQOS-based transaction sending.
+  /// Creates a [TransactionsClient] with the given [_rpcClient] for standard
+  /// RPC calls and [_restClient], which is bound to the Helius Sender base URL
+  /// for SWQOS-based transaction submission.
   const TransactionsClient({
     required this._rpcClient,
     required this._restClient,
-    required this._senderUrl,
   });
 
   final JsonRpcClient _rpcClient;
   final RestClient _restClient;
-  final String _senderUrl;
 
   /// Simulates the transaction to estimate compute units consumed.
   Future<ComputeUnitsEstimate> getComputeUnits(
@@ -38,20 +37,21 @@ class TransactionsClient {
 
   /// Broadcasts a base64-encoded transaction to the sender URL.
   Future<String> broadcastTransaction(BroadcastTransactionRequest request) =>
-      txBroadcastTransaction(_restClient, _senderUrl, request);
+      txBroadcastTransaction(_restClient, request);
 
-  /// Builds a smart transaction by fetching a recent blockhash and preparing
-  /// the transaction for signing.
-  Future<String> createSmartTransaction(CreateSmartTransactionInput input) =>
-      txCreateSmartTransaction(_rpcClient, input);
+  /// Builds a smart transaction by estimating its compute units and priority
+  /// fee, then refreshing the blockhash it should be built against.
+  Future<SmartTransaction> createSmartTransaction(
+    CreateSmartTransactionInput input,
+  ) => txCreateSmartTransaction(_rpcClient, input);
 
   /// Orchestrates creating, broadcasting, and polling a smart transaction.
   Future<SmartTransactionResult> sendSmartTransaction(
     SendSmartTransactionInput input,
-  ) => txSendSmartTransaction(_rpcClient, _restClient, _senderUrl, input);
+  ) => txSendSmartTransaction(_rpcClient, input);
 
   /// Sends a transaction via the Helius sender (SWQOS).
   Future<String> sendTransactionWithSender(
     BroadcastTransactionRequest request,
-  ) => txSendTransactionWithSender(_restClient, _senderUrl, request);
+  ) => txSendTransactionWithSender(_restClient, request);
 }

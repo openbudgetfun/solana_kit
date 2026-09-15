@@ -1,7 +1,32 @@
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_helius/solana_kit_helius.dart';
 import 'package:test/test.dart';
 
 void main() {
+  group('HeliusConfig', () {
+    test('rejects a blank API key', () {
+      for (final key in <String>['', '   ']) {
+        expect(
+          () => HeliusConfig(apiKey: key),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              SolanaErrorCode.heliusApiKeyRequired,
+            ),
+          ),
+          reason: 'a blank key of ${key.length} chars must be rejected',
+        );
+      }
+    });
+
+    test('accepts a non-blank API key and redacts it in toString', () {
+      final config = HeliusConfig(apiKey: 'secret-key');
+      expect(config.apiKey, equals('secret-key'));
+      expect(config.toString(), isNot(contains('secret-key')));
+    });
+  });
+
   group('createHelius', () {
     test('creates a HeliusClient with default config', () {
       final helius = createHelius(HeliusConfig(apiKey: 'test-key'));

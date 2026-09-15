@@ -37,6 +37,13 @@ abstract interface class WalletRegistry {
   Stream<WalletRegistryEvent> get events;
 
   /// Starts discovery.
+  ///
+  /// This base implementation has nothing to discover: a
+  /// [WalletRegistryController] only ever holds the wallets handed to
+  /// `register`, so there is no discovery source to start. Platform
+  /// implementations override this to begin listening — the web
+  /// implementation, for example, subscribes to Wallet Standard registration
+  /// events here.
   Future<void> initialize();
 
   /// Releases discovery listeners and resources.
@@ -56,6 +63,8 @@ class WalletRegistryController implements WalletRegistry {
   @override
   Stream<WalletRegistryEvent> get events => _events.stream;
 
+  /// Does nothing, and deliberately so: this controller is a passive holder
+  /// for wallets pushed in through [register]. See [WalletRegistry.initialize].
   @override
   Future<void> initialize() async {}
 

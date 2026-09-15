@@ -224,6 +224,232 @@ void main() {
         );
       },
     );
+    test('returns a durable nonce lifetime for a version 1 message whose '
+        'first instruction is AdvanceNonceAccount', () async {
+      final compiledMessage = CompiledTransactionMessage(
+        version: TransactionVersion.v1,
+        header: const MessageHeader(
+          numSignerAccounts: 1,
+          numReadonlySignerAccounts: 0,
+          numReadonlyNonSignerAccounts: 0,
+        ),
+        staticAccounts: const [
+          Address('11111111111111111111111111111111'),
+          Address('nonceAccountAddress33333333333333'),
+          Address('recentBlockhashesSysvarAddress333'),
+          Address('nonceAuthorityAddress33333333333'),
+        ],
+        instructionHeaders: const [
+          V1InstructionHeader(
+            programAccountIndex: 0,
+            numInstructionAccounts: 3,
+            numInstructionDataBytes: 4,
+          ),
+        ],
+        instructionPayloads: [
+          V1InstructionPayload(
+            instructionAccountIndices: const [1, 2, 3],
+            instructionData: Uint8List.fromList([4, 0, 0, 0]),
+          ),
+        ],
+        instructions: const [],
+        lifetimeToken: 'abc',
+      );
+
+      final result =
+          await getTransactionLifetimeConstraintFromCompiledTransactionMessage(
+            compiledMessage,
+          );
+
+      expect(result, isA<TransactionDurableNonceLifetime>());
+      final nonce = result as TransactionDurableNonceLifetime;
+      expect(nonce.nonce, 'abc');
+      expect(
+        nonce.nonceAccountAddress,
+        const Address('nonceAccountAddress33333333333333'),
+      );
+    });
+
+    test('returns a blockhash lifetime for a version 1 message whose first '
+        'instruction is not AdvanceNonceAccount', () async {
+      final compiledMessage = CompiledTransactionMessage(
+        version: TransactionVersion.v1,
+        header: const MessageHeader(
+          numSignerAccounts: 1,
+          numReadonlySignerAccounts: 0,
+          numReadonlyNonSignerAccounts: 0,
+        ),
+        staticAccounts: const [
+          Address('11111111111111111111111111111111'),
+        ],
+        instructionHeaders: const [
+          V1InstructionHeader(
+            programAccountIndex: 0,
+            numInstructionAccounts: 0,
+            numInstructionDataBytes: 4,
+          ),
+        ],
+        instructionPayloads: [
+          // A transfer, not a nonce advance.
+          V1InstructionPayload(
+            instructionAccountIndices: const [],
+            instructionData: Uint8List.fromList([2, 0, 0, 0]),
+          ),
+        ],
+        instructions: const [],
+        lifetimeToken: 'abc',
+      );
+
+      final result =
+          await getTransactionLifetimeConstraintFromCompiledTransactionMessage(
+            compiledMessage,
+          );
+
+      expect(result, isA<TransactionBlockhashLifetime>());
+      expect((result as TransactionBlockhashLifetime).blockhash, 'abc');
+    });
+
+    test('returns a blockhash lifetime for a version 1 message with no '
+        'instructions', () async {
+      const compiledMessage = CompiledTransactionMessage(
+        version: TransactionVersion.v1,
+        header: MessageHeader(
+          numSignerAccounts: 1,
+          numReadonlySignerAccounts: 0,
+          numReadonlyNonSignerAccounts: 0,
+        ),
+        staticAccounts: [Address('11111111111111111111111111111111')],
+        instructions: [],
+        lifetimeToken: 'abc',
+      );
+
+      final result =
+          await getTransactionLifetimeConstraintFromCompiledTransactionMessage(
+            compiledMessage,
+          );
+
+      expect(result, isA<TransactionBlockhashLifetime>());
+    });
+
+    test('returns a blockhash lifetime for a version 1 message whose program '
+        'index is out of range', () async {
+      final compiledMessage = CompiledTransactionMessage(
+        version: TransactionVersion.v1,
+        header: const MessageHeader(
+          numSignerAccounts: 1,
+          numReadonlySignerAccounts: 0,
+          numReadonlyNonSignerAccounts: 0,
+        ),
+        staticAccounts: const [Address('11111111111111111111111111111111')],
+        instructionHeaders: const [
+          V1InstructionHeader(
+            programAccountIndex: 7,
+            numInstructionAccounts: 3,
+            numInstructionDataBytes: 4,
+          ),
+        ],
+        instructionPayloads: [
+          V1InstructionPayload(
+            instructionAccountIndices: const [1, 2, 3],
+            instructionData: Uint8List.fromList([4, 0, 0, 0]),
+          ),
+        ],
+        instructions: const [],
+        lifetimeToken: 'abc',
+      );
+
+      final result =
+          await getTransactionLifetimeConstraintFromCompiledTransactionMessage(
+            compiledMessage,
+          );
+
+      expect(result, isA<TransactionBlockhashLifetime>());
+    });
+
+    test('fatals with the v1 nonce index code when the nonce account index is '
+        'out of range', () async {
+      final compiledMessage = CompiledTransactionMessage(
+        version: TransactionVersion.v1,
+        header: const MessageHeader(
+          numSignerAccounts: 1,
+          numReadonlySignerAccounts: 0,
+          numReadonlyNonSignerAccounts: 0,
+        ),
+        staticAccounts: const [Address('11111111111111111111111111111111')],
+        instructionHeaders: const [
+          V1InstructionHeader(
+            programAccountIndex: 0,
+            numInstructionAccounts: 3,
+            numInstructionDataBytes: 4,
+          ),
+        ],
+        instructionPayloads: [
+          V1InstructionPayload(
+            instructionAccountIndices: const [5, 2, 3],
+            instructionData: Uint8List.fromList([4, 0, 0, 0]),
+          ),
+        ],
+        instructions: const [],
+        lifetimeToken: 'abc',
+      );
+
+      await expectLater(
+        getTransactionLifetimeConstraintFromCompiledTransactionMessage(
+          compiledMessage,
+        ),
+        throwsA(
+          isA<SolanaError>()
+              .having(
+                (e) => e.code,
+                'code',
+                SolanaErrorCode.transactionInvalidNonceAccountIndex,
+              )
+              .having(
+                (e) => e.context['nonceAccountIndex'],
+                'nonceAccountIndex',
+                5,
+              ),
+        ),
+      );
+    });
+
+    test('returns a blockhash lifetime for a version 1 message whose first '
+        'instruction has the wrong account count', () async {
+      final compiledMessage = CompiledTransactionMessage(
+        version: TransactionVersion.v1,
+        header: const MessageHeader(
+          numSignerAccounts: 1,
+          numReadonlySignerAccounts: 0,
+          numReadonlyNonSignerAccounts: 0,
+        ),
+        staticAccounts: const [
+          Address('11111111111111111111111111111111'),
+          Address('nonceAccountAddress33333333333333'),
+        ],
+        instructionHeaders: const [
+          V1InstructionHeader(
+            programAccountIndex: 0,
+            numInstructionAccounts: 2,
+            numInstructionDataBytes: 4,
+          ),
+        ],
+        instructionPayloads: [
+          V1InstructionPayload(
+            instructionAccountIndices: const [1, 2],
+            instructionData: Uint8List.fromList([4, 0, 0, 0]),
+          ),
+        ],
+        instructions: const [],
+        lifetimeToken: 'abc',
+      );
+
+      final result =
+          await getTransactionLifetimeConstraintFromCompiledTransactionMessage(
+            compiledMessage,
+          );
+
+      expect(result, isA<TransactionBlockhashLifetime>());
+    });
   });
 
   group('assertIsTransactionWithBlockhashLifetime', () {

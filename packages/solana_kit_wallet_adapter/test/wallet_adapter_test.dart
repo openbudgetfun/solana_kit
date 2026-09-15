@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_signers/solana_kit_signers.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
@@ -232,10 +233,13 @@ void main() {
         SolanaFeatureId.signTransaction,
       )!;
       expect(signTransactions.version, '1.0.0');
-      expect(
-        signTransactions.supportedTransactionVersions,
-        SolanaTransactionVersion.values,
-      );
+      // The mobile wallet advertises legacy and version 0, matching upstream's
+      // `wallet-standard-mobile` — not `SolanaTransactionVersion.values`,
+      // which would start claiming version 1 support the moment the enum grew.
+      expect(signTransactions.supportedTransactionVersions, const [
+        SolanaTransactionVersion.legacy,
+        SolanaTransactionVersion.version0,
+      ]);
       expect(
         (await signTransactions.signTransaction([
           SolanaSignTransactionInput(
@@ -249,10 +253,10 @@ void main() {
         SolanaFeatureId.signAndSendTransaction,
       )!;
       expect(send.version, '1.0.0');
-      expect(
-        send.supportedTransactionVersions,
-        SolanaTransactionVersion.values,
-      );
+      expect(send.supportedTransactionVersions, const [
+        SolanaTransactionVersion.legacy,
+        SolanaTransactionVersion.version0,
+      ]);
       expect(
         (await send.signAndSendTransaction([
           SolanaSignAndSendTransactionInput(
@@ -440,6 +444,30 @@ void main() {
       expect(signatures.single.value, hasLength(64));
     });
 
+    test('rejects an account that advertises no transaction feature', () {
+      // Upstream refuses to build the signer at all: a signer that can never
+      // sign only surfaces the problem at the first call.
+      expect(
+        () => WalletAccountSigner(
+          wallet: _UnsupportedWallet(),
+          account: WalletAccount(
+            address: '11111111111111111111111111111111',
+            publicKey: Uint8List(32),
+            chains: const [SolanaChainId.localnet],
+            features: const [SolanaFeatureId.signMessage],
+          ),
+          chain: SolanaChainId.localnet,
+        ),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.signerWalletAccountCannotSignTransaction,
+          ),
+        ),
+      );
+    });
+
     test('rejects unsupported features and output count mismatches', () async {
       final unsupported = WalletAccountSigner(
         wallet: _UnsupportedWallet(),
@@ -447,15 +475,15 @@ void main() {
         chain: SolanaChainId.localnet,
       );
       await expectLater(
-        unsupported.modifyAndSignMessages([createSignableMessage('x')]),
-        throwsA(isA<WalletStandardException>()),
-      );
-      await expectLater(
         unsupported.modifyAndSignTransactions(const []),
         throwsA(isA<WalletStandardException>()),
       );
       await expectLater(
         unsupported.signAndSendTransactions(const []),
+        throwsA(isA<WalletStandardException>()),
+      );
+      await expectLater(
+        unsupported.modifyAndSignMessages([createSignableMessage('x')]),
         throwsA(isA<WalletStandardException>()),
       );
       final wallet = _TestWallet(wrongOutputCount: true);
@@ -498,12 +526,18 @@ void main() {
   });
 }
 
+/// The default account fixture advertises every Solana feature, because most
+/// tests connect to a wallet and then create a signer from its account.
 WalletAccount _account({String address = '11111111111111111111111111111111'}) =>
     WalletAccount(
       address: address,
       publicKey: Uint8List(32),
       chains: const [SolanaChainId.localnet],
-      features: const [SolanaFeatureId.signMessage],
+      features: const [
+        SolanaFeatureId.signMessage,
+        SolanaFeatureId.signTransaction,
+        SolanaFeatureId.signAndSendTransaction,
+      ],
     );
 
 /// Minimal wallet used to verify registry composition.

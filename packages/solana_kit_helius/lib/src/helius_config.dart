@@ -1,3 +1,4 @@
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_helius/src/sensitive_string.dart';
 import 'package:solana_kit_helius/src/types/enums.dart';
 
@@ -12,7 +13,14 @@ class HeliusConfig {
   /// An [apiKey] is required for all Helius operations.
   /// The [cluster] defaults to [HeliusCluster.mainnet].
   HeliusConfig({required String apiKey, this.cluster = HeliusCluster.mainnet})
-    : _apiKey = SensitiveString(apiKey);
+    : _apiKey = SensitiveString(apiKey) {
+    // Every Helius endpoint embeds the key in its URL, so an empty key is not
+    // a degenerate case but a request that cannot succeed. Catching it here
+    // reports the missing key instead of a 401 from the far end.
+    if (apiKey.trim().isEmpty) {
+      throw SolanaError(SolanaErrorCode.heliusApiKeyRequired);
+    }
+  }
 
   final SensitiveString _apiKey;
 

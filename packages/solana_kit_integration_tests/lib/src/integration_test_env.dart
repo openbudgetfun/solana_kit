@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
@@ -130,6 +131,79 @@ class IntegrationTestEnv {
     return sendAndConfirmTransaction(rpc: rpc, transaction: signedWithLifetime);
   }
 
+  /// Builds, signs, sends, and confirms a version 1 transaction.
+  ///
+  /// Version 1 transactions (SIMD-0296 / SIMD-0385) allow up to 4096 bytes
+  /// instead of the legacy 1232-byte ceiling. Unlike legacy and version 0
+  /// transactions, v1 defaults both the compute unit limit and the loaded
+  /// accounts data size limit to **zero**, so both must be set explicitly or
+  /// the transaction fails at execution. [computeUnitLimit] and
+  /// [loadedAccountsDataSizeLimit] default to values that are generous enough
+  /// for the small instruction sets these tests use.
+  Future<Signature> sendV1Instructions(
+    List<Instruction> instructions, {
+    List<Object> extraSigners = const [],
+    int computeUnitLimit = 200000,
+    int loadedAccountsDataSizeLimit = 262144,
+    int? heapSize,
+    BigInt? priorityFeeLamports,
+  }) async {
+    final allSigners = <Object>[payer, ...extraSigners];
+    final instructionsWithSigners = instructions
+        .map((instruction) => addSignersToInstruction(allSigners, instruction))
+        .toList();
+    final message = TransactionMessageWithFeePayerSigner(
+      feePayerSigner: payer,
+      version: TransactionVersion.v1,
+      instructions: instructionsWithSigners,
+      lifetimeConstraint: await recentBlockhashLifetime(),
+      config: V1TransactionConfig(
+        computeUnitLimit: computeUnitLimit,
+        loadedAccountsDataSizeLimit: loadedAccountsDataSizeLimit,
+        heapSize: heapSize,
+        priorityFeeLamports: priorityFeeLamports,
+      ),
+    );
+    final compiled = compileTransaction(message);
+    final signed = await signTransactionMessageWithSigners(message);
+    final signedWithLifetime = TransactionWithLifetime(
+      messageBytes: signed.messageBytes,
+      signatures: signed.signatures,
+      lifetimeConstraint: compiled.lifetimeConstraint,
+    );
+    return sendAndConfirmTransaction(rpc: rpc, transaction: signedWithLifetime);
+  }
+
+  /// Signs and compiles a v1 transaction without sending it, returning the
+  /// base64 wire form and its byte length.
+  ///
+  /// Useful for asserting on transaction size before submission.
+  Future<({String wire, int byteLength})> buildV1WireTransaction(
+    List<Instruction> instructions, {
+    List<Object> extraSigners = const [],
+    int computeUnitLimit = 200000,
+    int loadedAccountsDataSizeLimit = 262144,
+  }) async {
+    final allSigners = <Object>[payer, ...extraSigners];
+    final message = TransactionMessageWithFeePayerSigner(
+      feePayerSigner: payer,
+      version: TransactionVersion.v1,
+      instructions: instructions
+          .map(
+            (instruction) => addSignersToInstruction(allSigners, instruction),
+          )
+          .toList(),
+      lifetimeConstraint: await recentBlockhashLifetime(),
+      config: V1TransactionConfig(
+        computeUnitLimit: computeUnitLimit,
+        loadedAccountsDataSizeLimit: loadedAccountsDataSizeLimit,
+      ),
+    );
+    final signed = await signTransactionMessageWithSigners(message);
+    final wire = getBase64EncodedWireTransaction(signed);
+    return (wire: wire, byteLength: base64Decode(wire).length);
+  }
+
   /// Deploys the compiled program at [soPath] to [programId] and waits for
   /// it to be executable.
   ///
@@ -148,14 +222,17 @@ class IntegrationTestEnv {
 
   /// Fetches the confirmed transaction for [signature] as raw JSON, or `null`
   /// when it cannot be found.
+  ///
+  /// Requests up to transaction version 1 so both v0 and v1 transactions can be
+  /// read back. Reading a v1 transaction without `maxSupportedTransactionVersion:
+  /// 1` fails with RPC error `-32015`.
   Future<Map<String, Object?>?> fetchTransaction(Signature signature) async {
     return rpc
         .getTransaction(
           signature,
           const GetTransactionConfig(
             commitment: Commitment.confirmed,
-            // Integration transactions are version 0; request up to that.
-            maxSupportedTransactionVersion: 0,
+            maxSupportedTransactionVersion: 1,
           ),
         )
         .send();

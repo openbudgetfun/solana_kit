@@ -1,11 +1,12 @@
 import 'package:solana_kit_helius/src/internal/rest_client.dart';
 import 'package:solana_kit_helius/src/types/smart_transaction_types.dart';
 
-/// Broadcasts a base64-encoded transaction via a POST request to the
-/// sender URL using the `sendTransaction` JSON-RPC method.
+/// Broadcasts a base64-encoded transaction to the Helius sender.
+///
+/// The [restClient] is already bound to the sender base URL, so the request
+/// posts to its root with `sendTransaction` as the JSON-RPC method.
 Future<String> txBroadcastTransaction(
   RestClient restClient,
-  String senderUrl,
   BroadcastTransactionRequest request,
 ) async {
   final result = await restClient.post(

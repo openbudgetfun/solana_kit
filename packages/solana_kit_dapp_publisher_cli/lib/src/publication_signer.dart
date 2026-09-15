@@ -189,7 +189,7 @@ Future<void> validatePublicationTransaction(
     );
   }
 
-  assertExistingSignaturesValid(signer, transaction);
+  assertExistingSignaturesValid(transaction);
 
   final requiredSignerAddresses = accountAddresses
       .take(compiledMessage.header.numSignerAccounts)
@@ -332,10 +332,11 @@ void assertAccountsPresent(
 }
 
 /// Asserts that existing transaction signatures verify against the message.
-void assertExistingSignaturesValid(
-  PublicationSigner signer,
-  Transaction transaction,
-) {
+///
+/// Takes no signer: the caller has already established which identity is
+/// signing, and which signatures a transaction may carry is a property of the
+/// message itself, not of the local signer.
+void assertExistingSignaturesValid(Transaction transaction) {
   final signedEntries = transaction.signatures.entries
       .where((entry) => entry.value != null)
       .toList();

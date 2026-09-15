@@ -31,6 +31,28 @@ Solana Kit is a multi-package Dart workspace that ports `@solana/kit` and relate
 - When release preparation makes a package version breaking, resolve the `remove_deprecations_in_breaking_versions` lint by removing the `@Deprecated` members it names (and their tests) — never by adding ignore comments. See `docs/agents/dart-conventions.md`.
 - `versions.json` is auto-generated/updated by the release tooling (`monochange versions sync`). Do not edit or commit changes to it outside of a release — its versions are only bumped when a release is prepared.
 
+## No stubs
+
+There are no stubs in this codebase, and adding one is never an acceptable way to make an API exist. A stub is worse than a missing function: it compiles, it type-checks, and it silently returns something wrong, so the failure surfaces later as a bad transaction or a wrong balance rather than as an unimplemented call. When you port a function, port its behavior.
+
+A stub is any function that promises behavior it does not deliver:
+
+- A pass-through or identity function presented as real logic — especially a `*Factory` that returns its parameter unchanged, or an `estimate*`/`simulate*`/`resolve*` that computes nothing.
+- A doc comment describing real work over a body that does none of it.
+- `throw UnimplementedError` / `throw UnsupportedError` on a path the public API implies works.
+- A "placeholder", "for now", "in a full implementation this would…", or "not yet implemented" comment.
+- A parameter that is accepted and silently ignored.
+- A silent fallback that swallows a malformed or unexpected value into a plausible default (`?? 0`, `?? 200000`, `_ => null`, empty `catch`). Throw instead: a wrong number that looks real is the most expensive failure mode in this repo.
+
+When a function cannot be implemented where it lives, that is an architecture signal, not a reason to stub. Check where upstream defines it, then move it to the package whose dependency graph can express it. `estimateResourceLimitsFactory` is the cautionary example: upstream defines it in the umbrella `@solana/kit` package because it needs both an RPC client and the transaction compiler, so the port's copy in `solana_kit_transaction_messages` could never work and became a pass-through. The fix was relocation, not a bigger stub.
+
+Before you finish work on any function:
+
+- If it takes a value, returns a value, and has no observable effect, justify it in a comment or delete it.
+- If you cannot implement it now, do not add it to the public API. Leave it unported and say so.
+- Grep for the error codes your function should throw. A code that is defined but never thrown anywhere in `packages/*/lib` usually marks a missing validation or failure path. `scripts/check_error_code_parity.dart` covers numbering, not reachability.
+- When a behavioral test asserts current-but-wrong behavior (a pass-through factory, a silent default), the test is the bug. Fix the implementation and the test together.
+
 ## Task-specific guides
 
 - [Workspace commands and tooling](docs/agents/workspace-commands.md)

@@ -120,6 +120,7 @@ export 'package:solana_kit_program_client_core/solana_kit_program_client_core.da
 export 'package:solana_kit_programs/solana_kit_programs.dart';
 export 'package:solana_kit_rpc/solana_kit_rpc.dart';
 export 'package:solana_kit_rpc_parsed_types/solana_kit_rpc_parsed_types.dart';
+export 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 export 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
 // Hide names that conflict with solana_kit_rpc.
 export 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart'
@@ -142,5 +143,6 @@ export 'src/client.dart';
 export 'src/client_interfaces.dart';
 export 'src/create_client_with_interfaces_from_rpc.dart';
 export 'src/promises.dart';
+export 'src/resource_limit_estimation.dart';
 export 'src/slot_tracking_reactive_store.dart';
 export 'src/slot_tracking_stream.dart';

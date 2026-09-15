@@ -1,5 +1,4 @@
 import 'package:solana_kit/solana_kit.dart';
-import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 import 'package:test/test.dart';
 
 class _MockRpcApi extends RpcApi {

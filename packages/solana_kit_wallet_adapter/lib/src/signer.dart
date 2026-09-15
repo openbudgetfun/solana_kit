@@ -1,4 +1,5 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart' as addresses;
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_signers/solana_kit_signers.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
@@ -11,11 +12,33 @@ class WalletAccountSigner
         TransactionModifyingSigner,
         TransactionSendingSigner {
   /// Creates a signer for [account] on [chain].
+  ///
+  /// Throws a [SolanaError] with code
+  /// [SolanaErrorCode.signerWalletAccountCannotSignTransaction] when the
+  /// account advertises neither transaction feature, mirroring upstream's
+  /// `createSignerFromWalletAccount`. Building a signer that can never sign
+  /// would only surface later, as a failure at the first call.
   WalletAccountSigner({
     required this.wallet,
     required this.account,
     required this.chain,
-  }) : address = addresses.address(account.address);
+  }) : address = addresses.address(account.address) {
+    final hasSignTransaction = account.features.contains(
+      SolanaFeatureId.signTransaction,
+    );
+    final hasSignAndSendTransaction = account.features.contains(
+      SolanaFeatureId.signAndSendTransaction,
+    );
+    if (!hasSignTransaction && !hasSignAndSendTransaction) {
+      throw SolanaError(
+        SolanaErrorCode.signerWalletAccountCannotSignTransaction,
+        {
+          'address': account.address,
+          'supportedFeatures': List<String>.unmodifiable(account.features),
+        },
+      );
+    }
+  }
 
   /// The owning Wallet Standard wallet.
   final Wallet wallet;

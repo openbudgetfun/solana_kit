@@ -60,6 +60,70 @@ void main() {
     await registry.dispose();
   });
 
+  test('reports each advertised transaction version it recognizes', () async {
+    final registry = createDefaultWalletRegistry(
+      appIdentity: const WalletAppIdentity(name: 'Browser test'),
+      chain: SolanaChainId.localnet,
+    );
+    await registry.initialize();
+
+    final fixture = _WalletFixture(
+      supportedTransactionVersions: const ['legacy', '0', '1'],
+    );
+    web.window.dispatchEvent(
+      web.CustomEvent(
+        'wallet-standard:register-wallet',
+        web.CustomEventInit(detail: fixture.register.toJS),
+      ),
+    );
+
+    final feature = registry.wallets.single
+        .feature<SolanaSignTransactionFeature>(
+          SolanaFeatureId.signTransaction,
+        )!;
+
+    expect(feature.supportedTransactionVersions, [
+      SolanaTransactionVersion.legacy,
+      SolanaTransactionVersion.version0,
+      SolanaTransactionVersion.version1,
+    ]);
+    expect(feature.supportedTransactionVersions.supportsVersion1, isTrue);
+    await registry.dispose();
+  });
+
+  test('skips an unrecognized version instead of mislabelling it', () async {
+    // The parser used to map any non-`legacy` entry onto version 0, so a
+    // wallet advertising `1` was reported as version 0 and a caller could
+    // build a transaction the wallet cannot handle. An unknown entry is now
+    // dropped.
+    final registry = createDefaultWalletRegistry(
+      appIdentity: const WalletAppIdentity(name: 'Browser test'),
+      chain: SolanaChainId.localnet,
+    );
+    await registry.initialize();
+
+    final fixture = _WalletFixture(
+      supportedTransactionVersions: const ['legacy', '9'],
+    );
+    web.window.dispatchEvent(
+      web.CustomEvent(
+        'wallet-standard:register-wallet',
+        web.CustomEventInit(detail: fixture.register.toJS),
+      ),
+    );
+
+    final feature = registry.wallets.single
+        .feature<SolanaSignTransactionFeature>(
+          SolanaFeatureId.signTransaction,
+        )!;
+
+    expect(feature.supportedTransactionVersions, [
+      SolanaTransactionVersion.legacy,
+    ]);
+    expect(feature.supportedTransactionVersions.supportsVersion1, isFalse);
+    await registry.dispose();
+  });
+
   test('discovers and operates a late Wallet Standard registration', () async {
     final fixture = _WalletFixture();
     final registry = createDefaultWalletRegistry(
@@ -192,7 +256,8 @@ class _DemoWallet implements Wallet {
 }
 
 class _WalletFixture {
-  _WalletFixture() {
+  _WalletFixture({List<String> supportedTransactionVersions = const []}) {
+    this.supportedTransactionVersions = supportedTransactionVersions;
     account
       ..['address'] = address.toJS
       ..['publicKey'] = Uint8List(32).toJS
@@ -225,10 +290,29 @@ class _WalletFixture {
         return Future<JSArray<JSObject>>.value([output].toJS).toJS;
       }).toJS;
 
+    final signTransaction = JSObject()
+      ..['version'] = '1.0.0'.toJS
+      ..['supportedTransactionVersions'] = [
+        for (final version in supportedTransactionVersions) version.toJS,
+      ].toJS
+      ..['signTransaction'] = ((JSObject input) {
+        // Echo the first transaction back with a stub signature. Only the
+        // advertised version list is under test here, so the handler does the
+        // minimum needed to answer a call.
+        final outputs = JSArray<JSObject>()
+          ..add(
+            JSObject()
+              ..['signedTransaction'] = input['inputs']
+              ..['signature'] = Uint8List(64).toJS,
+          );
+        return Future<JSArray<JSObject>>.value(outputs).toJS;
+      }).toJS;
+
     final features = JSObject()
       ..[StandardFeatureId.connect] = connect
       ..[StandardFeatureId.events] = events
-      ..[SolanaFeatureId.signMessage] = signMessage;
+      ..[SolanaFeatureId.signMessage] = signMessage
+      ..[SolanaFeatureId.signTransaction] = signTransaction;
     wallet
       ..['version'] = walletStandardVersion.toJS
       ..['name'] = 'Browser test wallet'.toJS
@@ -239,6 +323,7 @@ class _WalletFixture {
   }
 
   final JSObject account = JSObject();
+  List<String> supportedTransactionVersions = const [];
   final String address = '11111111111111111111111111111111';
   JSFunction? changeListener;
   bool silent = false;

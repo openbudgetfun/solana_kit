@@ -358,8 +358,10 @@ class _MobileSignTransactionFeature implements SolanaSignTransactionFeature {
   @override
   String get version => '1.0.0';
   @override
-  List<SolanaTransactionVersion> get supportedTransactionVersions =>
-      SolanaTransactionVersion.values;
+  List<SolanaTransactionVersion> get supportedTransactionVersions => const [
+    SolanaTransactionVersion.legacy,
+    SolanaTransactionVersion.version0,
+  ];
   @override
   Future<List<SolanaSignTransactionOutput>> signTransaction(
     List<SolanaSignTransactionInput> inputs,
@@ -373,8 +375,10 @@ class _MobileSignAndSendTransactionFeature
   @override
   String get version => '1.0.0';
   @override
-  List<SolanaTransactionVersion> get supportedTransactionVersions =>
-      SolanaTransactionVersion.values;
+  List<SolanaTransactionVersion> get supportedTransactionVersions => const [
+    SolanaTransactionVersion.legacy,
+    SolanaTransactionVersion.version0,
+  ];
   @override
   Future<List<SolanaSignAndSendTransactionOutput>> signAndSendTransaction(
     List<SolanaSignAndSendTransactionInput> inputs,

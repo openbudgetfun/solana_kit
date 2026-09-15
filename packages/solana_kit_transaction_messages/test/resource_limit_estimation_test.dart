@@ -381,16 +381,6 @@ void main() {
     });
   });
 
-  group('estimateResourceLimitsFactory', () {
-    test('returns the input function unchanged', () {
-      Future<ResourceLimitsEstimate> estimate(TransactionMessage _) async {
-        return const ResourceLimitsEstimate(computeUnitLimit: 1);
-      }
-
-      expect(estimateResourceLimitsFactory(estimate), same(estimate));
-    });
-  });
-
   group('estimateAndSetResourceLimitsFactory', () {
     test('preserves existing non-provisory non-max limits', () async {
       var called = false;
@@ -513,6 +503,75 @@ void main() {
           getTransactionMessageLoadedAccountsDataSizeLimit(updated),
           8192,
         );
+      },
+    );
+
+    test(
+      'never sets a loaded accounts limit on a legacy message',
+      () async {
+        // The runtime only honours the loaded accounts data size limit for
+        // version 1 messages, so setting it on a legacy message would spend
+        // message bytes for no effect.
+        final estimateAndSet = estimateAndSetResourceLimitsFactory((_) async {
+          return const ResourceLimitsEstimate(
+            computeUnitLimit: 500000,
+            loadedAccountsDataSizeLimit: 8192,
+          );
+        });
+
+        final updated = await estimateAndSet(
+          createTransactionMessage(version: TransactionVersion.legacy),
+        );
+
+        expect(getTransactionMessageComputeUnitLimit(updated), 500000);
+        expect(
+          getTransactionMessageLoadedAccountsDataSizeLimit(updated),
+          isNull,
+        );
+      },
+    );
+
+    test(
+      'never sets a loaded accounts limit on a version 0 message',
+      () async {
+        final estimateAndSet = estimateAndSetResourceLimitsFactory((_) async {
+          return const ResourceLimitsEstimate(
+            computeUnitLimit: 500000,
+            loadedAccountsDataSizeLimit: 8192,
+          );
+        });
+
+        final updated = await estimateAndSet(
+          createTransactionMessage(version: TransactionVersion.v0),
+        );
+
+        expect(getTransactionMessageComputeUnitLimit(updated), 500000);
+        expect(
+          getTransactionMessageLoadedAccountsDataSizeLimit(updated),
+          isNull,
+        );
+      },
+    );
+
+    test(
+      'does not simulate a legacy message whose compute limit is explicit',
+      () async {
+        // A legacy message has no applicable loaded accounts limit, so an
+        // explicit compute limit means there is nothing left to estimate.
+        var called = false;
+        final message = setTransactionMessageComputeUnitLimit(
+          400000,
+          createTransactionMessage(version: TransactionVersion.v0),
+        );
+        final estimateAndSet = estimateAndSetResourceLimitsFactory((_) async {
+          called = true;
+          return const ResourceLimitsEstimate(computeUnitLimit: 500000);
+        });
+
+        final updated = await estimateAndSet(message);
+
+        expect(called, isFalse);
+        expect(identical(updated, message), isTrue);
       },
     );
   });

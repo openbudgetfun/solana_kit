@@ -316,4 +316,86 @@ void main() {
       },
     );
   });
+
+  group('isProgramDerivedAddress()', () {
+    test('accepts a well-formed pair', () {
+      expect(
+        isProgramDerivedAddress((
+          const Address('FN2R9R724eb4WaxeDmDYrUtmJgoSzkBiQMEHELV3ocyg'),
+          255,
+        )),
+        isTrue,
+      );
+      expect(
+        isProgramDerivedAddress((
+          const Address('FN2R9R724eb4WaxeDmDYrUtmJgoSzkBiQMEHELV3ocyg'),
+          0,
+        )),
+        isTrue,
+      );
+    });
+
+    test('rejects a value that is not a pair', () {
+      expect(isProgramDerivedAddress(null), isFalse);
+      expect(isProgramDerivedAddress('not a pair'), isFalse);
+      expect(
+        isProgramDerivedAddress([
+          const Address('FN2R9R724eb4WaxeDmDYrUtmJgoSzkBiQMEHELV3ocyg'),
+          1,
+        ]),
+        isFalse,
+      );
+    });
+
+    test('rejects a bump seed outside the byte range', () {
+      expect(
+        isProgramDerivedAddress((
+          const Address('FN2R9R724eb4WaxeDmDYrUtmJgoSzkBiQMEHELV3ocyg'),
+          256,
+        )),
+        isFalse,
+      );
+    });
+  });
+
+  group('assertIsProgramDerivedAddress()', () {
+    test('returns normally for a well-formed pair', () {
+      expect(
+        () => assertIsProgramDerivedAddress((
+          const Address('FN2R9R724eb4WaxeDmDYrUtmJgoSzkBiQMEHELV3ocyg'),
+          254,
+        )),
+        returnsNormally,
+      );
+    });
+
+    test('throws a malformed-PDA error for a non-pair', () {
+      expect(
+        () => assertIsProgramDerivedAddress('not a pair'),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.addressesMalformedPda,
+          ),
+        ),
+      );
+    });
+
+    test('throws a bump-out-of-range error for an oversized bump', () {
+      expect(
+        () => assertIsProgramDerivedAddress((
+          const Address('FN2R9R724eb4WaxeDmDYrUtmJgoSzkBiQMEHELV3ocyg'),
+          300,
+        )),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.addressesPdaBumpSeedOutOfRange,
+          ),
+        ),
+      );
+    });
+  });
 }
