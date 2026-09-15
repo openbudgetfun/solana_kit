@@ -28,6 +28,7 @@ export 'src/priority_fee/priority_fee_client.dart';
 export 'src/rpc_v2/rpc_v2_client.dart';
 export 'src/sensitive_string.dart';
 export 'src/staking/staking_client.dart';
+export 'src/transactions/create_smart_transaction.dart';
 export 'src/transactions/create_tx_message.dart';
 export 'src/transactions/determine_tip.dart';
 export 'src/transactions/fetch_tip_floor.dart';

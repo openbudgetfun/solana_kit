@@ -185,3 +185,39 @@ Future<Address> createAddressWithSeed({
 
   return codec.decode(addressBytes);
 }
+
+/// Returns `true` when [value] is a well-formed program-derived address pair.
+///
+/// A valid value is a `(Address, int)` record whose bump seed is an integer in
+/// `[0, 255]`. Use this to validate a tuple that came from an untrusted source
+/// before relying on it.
+bool isProgramDerivedAddress(Object? value) {
+  if (value is! (Address, int)) return false;
+  final (address, bump) = value;
+  return bump >= 0 && bump <= 255 && isAddress(address.value);
+}
+
+/// Asserts that [value] is a well-formed program-derived address pair.
+///
+/// Throws a [SolanaError] with code [SolanaErrorCode.addressesMalformedPda]
+/// when [value] is not an `(Address, int)` record, and with code
+/// [SolanaErrorCode.addressesPdaBumpSeedOutOfRange] when the bump seed falls
+/// outside `[0, 255]`. A malformed address is reported by the underlying
+/// [assertIsAddress] check.
+void assertIsProgramDerivedAddress(Object? value) {
+  if (value is! (Address, int)) {
+    throw SolanaError(SolanaErrorCode.addressesMalformedPda, {
+      'value': value,
+    });
+  }
+
+  final (address, bump) = value;
+  if (bump < 0 || bump > 255) {
+    throw SolanaError(
+      SolanaErrorCode.addressesPdaBumpSeedOutOfRange,
+      {'bump': bump},
+    );
+  }
+
+  assertIsAddress(address.value);
+}

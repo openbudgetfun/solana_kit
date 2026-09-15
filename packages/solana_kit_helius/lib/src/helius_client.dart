@@ -41,7 +41,6 @@ HeliusClient createHelius(HeliusConfig config, {http.Client? client}) {
     transactions: TransactionsClient(
       rpcClient: rpcClient,
       restClient: senderClient,
-      senderUrl: config.senderBaseUrl,
     ),
     staking: StakingClient(
       restClient: RestClient(

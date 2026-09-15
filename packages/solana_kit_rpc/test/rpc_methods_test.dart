@@ -441,6 +441,85 @@ void main() {
 
       expect(response.result, cert);
     });
+
+    test(
+      'simulateTransaction sends base64 params and returns the value map',
+      () async {
+        final simulation = {
+          'context': {'slot': 1},
+          'value': {'err': null, 'unitsConsumed': 5000},
+        };
+
+        final response = await _captureCall(
+          (rpc) => rpc
+              .simulateTransaction(
+                'AQIDBA==',
+                const SimulateTransactionConfig(
+                  encoding: WireTransactionEncoding.base64,
+                  replaceRecentBlockhash: true,
+                  sigVerify: false,
+                ),
+              )
+              .send(),
+          rpcResult: simulation,
+        );
+
+        expect(response.payload['method'], 'simulateTransaction');
+        // The default commitment transformer fills in `commitment`.
+        expect(response.payload['params'], [
+          'AQIDBA==',
+          {
+            'encoding': 'base64',
+            'replaceRecentBlockhash': true,
+            'sigVerify': false,
+            'commitment': 'confirmed',
+          },
+        ]);
+        // The default transformer upcasts numeric values to BigInt.
+        expect(response.result, {
+          'context': {'slot': BigInt.one},
+          'value': {'err': null, 'unitsConsumed': BigInt.from(5000)},
+        });
+      },
+    );
+
+    test('simulateTransaction sends no config when omitted', () async {
+      final response = await _captureCall(
+        (rpc) => rpc.simulateTransaction('AQIDBA==').send(),
+        rpcResult: {
+          'context': {'slot': 1},
+          'value': {'err': null},
+        },
+      );
+
+      expect(response.payload['method'], 'simulateTransaction');
+      expect(response.payload['params'], [
+        'AQIDBA==',
+        {'commitment': 'confirmed'},
+      ]);
+    });
+
+    test('simulateTransaction surfaces a simulation failure in err', () async {
+      // A transaction that fails during simulation is reported through
+      // `result.value.err` rather than thrown, so callers can inspect it.
+      final response = await _captureCall(
+        (rpc) => rpc.simulateTransaction('AQIDBA==').send(),
+        rpcResult: {
+          'context': {'slot': 7},
+          'value': {
+            'err': {
+              'InsufficientFundsForRent': {'account_index': 1},
+            },
+            'unitsConsumed': 150,
+          },
+        },
+      );
+
+      final value = (response.result as Map)['value']! as Map;
+      expect(value['err'], isNotNull);
+      // The default transformer upcasts numeric counters to BigInt.
+      expect(value['unitsConsumed'], equals(BigInt.from(150)));
+    });
   });
 }
 

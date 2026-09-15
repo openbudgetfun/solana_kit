@@ -343,15 +343,16 @@ class _BrowserEvents extends _BrowserFeature implements StandardEventsFeature {
 }
 
 mixin _TransactionVersions on _BrowserFeature {
+  /// The versions this wallet advertised, in the order it listed them.
+  ///
+  /// An entry the SDK does not recognize is skipped rather than mapped onto a
+  /// different version: reporting a version-1-capable wallet as version 0
+  /// would let the caller build a transaction the wallet cannot sign.
   List<SolanaTransactionVersion> get supportedTransactionVersions =>
-      _array<JSAny?>(raw, 'supportedTransactionVersions').map((value) {
-        if (value != null &&
-            value.isA<JSString>() &&
-            (value as JSString).toDart == 'legacy') {
-          return SolanaTransactionVersion.legacy;
-        }
-        return SolanaTransactionVersion.version0;
-      }).toList();
+      _array<JSAny?>(raw, 'supportedTransactionVersions')
+          .map(SolanaTransactionVersion.fromWireValue)
+          .whereType<SolanaTransactionVersion>()
+          .toList();
 }
 
 class _BrowserSignTransaction extends _BrowserFeature

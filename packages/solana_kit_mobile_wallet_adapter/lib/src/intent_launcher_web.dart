@@ -19,7 +19,11 @@ web.HTMLIFrameElement? _associationFrame;
 /// association timeout behavior.
 Future<void> launchWalletIntent(Uri intentUri) {
   final completer = Completer<void>();
-  final timeoutId = 0;
+
+  // The id of the pending rejection timer, captured so the blur handler can
+  // cancel it. Without this the timer always fires, and cancelling it in the
+  // blur path silently did nothing.
+  var timeoutId = 0;
 
   late final web.EventListener handleBlur;
   handleBlur = ((web.Event event) {
@@ -46,7 +50,7 @@ Future<void> launchWalletIntent(Uri intentUri) {
   }
 
   web.window.addEventListener('blur', handleBlur);
-  web.window.setTimeout(
+  timeoutId = web.window.setTimeout(
     ((web.Event event) {
       web.window.removeEventListener('blur', handleBlur);
       if (!completer.isCompleted) {

@@ -31,7 +31,11 @@ class ResourceLimitsEstimate {
   final int? loadedAccountsDataSizeLimit;
 }
 
-/// A function that estimates the resource limits for [transactionMessage].
+/// A function that estimates the resource limits for a transaction message.
+///
+/// Implementations that simulate against a node are created by
+/// `estimateResourceLimitsFactory` in `package:solana_kit`, which supplies the
+/// RPC client and transaction compiler this package cannot depend on.
 typedef EstimateResourceLimits = Future<ResourceLimitsEstimate> Function(
   TransactionMessage transactionMessage,
 );
@@ -153,23 +157,24 @@ TransactionMessage fillTransactionMessageProvisoryResourceLimits(
   return message;
 }
 
-/// Returns a function that estimates the resource limits for a transaction
-/// message by simulating it via [estimateResourceLimits].
-///
-/// This factory wraps an [EstimateResourceLimits] function and returns a new
-/// function that produces a [ResourceLimitsEstimate] for any given
-/// [TransactionMessage].
-EstimateResourceLimits estimateResourceLimitsFactory(
-  EstimateResourceLimits estimateResourceLimits,
-) {
-  return estimateResourceLimits;
-}
-
 /// Returns a function that estimates and sets the resource limits on a
 /// transaction message.
 ///
-/// Existing non-provisional limits are preserved. Provisional limits (`0`) are
-/// replaced with estimates.
+/// For every version the compute unit limit is replaced when it is unset, set
+/// to the provisory value (`0`), or set to the maximum (`1400000`), since a
+/// message prepared for simulation carries the maximum and must be re-estimated
+/// before sending.
+///
+/// Version 1 messages additionally replace the loaded accounts data size limit
+/// when it is unset or provisory. Legacy and version 0 messages never touch
+/// that limit, because the runtime only honours it for version 1 messages;
+/// setting it there would cost message bytes for no effect.
+///
+/// This mirrors upstream `@solana/kit`'s `estimateAndSetResourceLimitsFactory`.
+/// The estimator itself is supplied by the caller: obtaining one requires both
+/// an RPC client and the transaction compiler, which live in
+/// `package:solana_kit`, so the simulate-based estimator is exported from there
+/// as `estimateResourceLimitsFactory`.
 Future<TransactionMessage> Function(TransactionMessage transactionMessage)
 estimateAndSetResourceLimitsFactory(
   EstimateResourceLimits estimateResourceLimits,
@@ -178,32 +183,38 @@ estimateAndSetResourceLimitsFactory(
     final existingComputeLimit = getTransactionMessageComputeUnitLimit(
       transactionMessage,
     );
-    final existingLoadedAccountsLimit =
-        getTransactionMessageLoadedAccountsDataSizeLimit(transactionMessage);
+    final computeUnitLimitIsExplicit =
+        existingComputeLimit != null &&
+        existingComputeLimit != provisoryComputeUnitLimit &&
+        existingComputeLimit != maxComputeUnitLimit;
 
-    final needsComputeEstimate =
-        existingComputeLimit == null ||
-        existingComputeLimit == provisoryComputeUnitLimit ||
-        existingComputeLimit == maxComputeUnitLimit;
-    final needsLoadedAccountsEstimate =
-        existingLoadedAccountsLimit == null ||
-        existingLoadedAccountsLimit == provisoryLoadedAccountsDataSizeLimit;
+    final isV1 = transactionMessage.version == TransactionVersion.v1;
+    var loadedAccountsDataSizeLimitIsExplicit = true;
+    if (isV1) {
+      final existingLoadedLimit =
+          getTransactionMessageLoadedAccountsDataSizeLimit(transactionMessage);
+      loadedAccountsDataSizeLimitIsExplicit =
+          existingLoadedLimit != null &&
+          existingLoadedLimit != provisoryLoadedAccountsDataSizeLimit;
+    }
 
-    if (!needsComputeEstimate && !needsLoadedAccountsEstimate) {
+    // Every applicable limit is already explicit; do not spend a simulation.
+    if (computeUnitLimitIsExplicit && loadedAccountsDataSizeLimitIsExplicit) {
       return transactionMessage;
     }
 
     final estimate = await estimateResourceLimits(transactionMessage);
 
     var message = transactionMessage;
-    if (needsComputeEstimate) {
+    if (!computeUnitLimitIsExplicit) {
       message = setTransactionMessageComputeUnitLimit(
         estimate.computeUnitLimit,
         message,
       );
     }
 
-    if (needsLoadedAccountsEstimate &&
+    if (isV1 &&
+        !loadedAccountsDataSizeLimitIsExplicit &&
         estimate.loadedAccountsDataSizeLimit != null) {
       message = setTransactionMessageLoadedAccountsDataSizeLimit(
         estimate.loadedAccountsDataSizeLimit,

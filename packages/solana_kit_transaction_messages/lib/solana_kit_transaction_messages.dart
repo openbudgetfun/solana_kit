@@ -80,6 +80,7 @@ export 'src/heap_size.dart';
 export 'src/instructions.dart';
 export 'src/lifetime.dart';
 export 'src/pipe.dart';
+export 'src/priority_fee_lamports.dart';
 export 'src/resource_limit_estimation.dart';
 export 'src/resource_limit_validation.dart';
 export 'src/transaction_message.dart';

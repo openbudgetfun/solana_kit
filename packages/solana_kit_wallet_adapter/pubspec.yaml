@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   solana_kit_addresses: ^0.9.3
   solana_kit_codecs_strings: ^0.9.3
+  solana_kit_errors: ^0.9.3
   solana_kit_keys: ^0.9.3
   solana_kit_mobile_wallet_adapter: ^0.5.3
   solana_kit_mobile_wallet_adapter_protocol: ^0.5.3

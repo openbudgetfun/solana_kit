@@ -3,12 +3,41 @@ import 'dart:typed_data';
 import 'package:solana_kit_wallet_standard/src/wallet.dart';
 
 /// Transaction versions understood by Solana wallets.
+///
+/// The values a wallet advertises on the wire are the strings `legacy`, `0`,
+/// and `1`, so [wireValue] and [fromWireValue] translate between the two
+/// forms. A wallet that does not list a version must not be sent a transaction
+/// of that version: check a feature's `supportedTransactionVersions` before
+/// building one.
 enum SolanaTransactionVersion {
-  /// Legacy Solana transactions.
-  legacy,
+  /// Legacy Solana transactions. Advertised on the wire as `legacy`.
+  legacy('legacy'),
 
-  /// Version-zero transactions.
-  version0,
+  /// Version-zero transactions. Advertised on the wire as `0`.
+  version0('0'),
+
+  /// Version-one transactions (SIMD-0296 / SIMD-0385), which raise the
+  /// transaction size ceiling to 4096 bytes and carry their compute budget in
+  /// the message config. Advertised on the wire as `1`.
+  version1('1');
+
+  const SolanaTransactionVersion(this.wireValue);
+
+  /// The value a wallet advertises for this version.
+  final String wireValue;
+
+  /// Parses a value from a wallet's `supportedTransactionVersions` list.
+  ///
+  /// Returns `null` for an unrecognized value rather than guessing, so a
+  /// wallet advertising a version this SDK does not know about is reported as
+  /// unsupported instead of silently mapped onto a different version.
+  static SolanaTransactionVersion? fromWireValue(Object? value) =>
+      switch (value) {
+        'legacy' => legacy,
+        '0' => version0,
+        '1' => version1,
+        _ => null,
+      };
 }
 
 /// Commitment levels accepted by signing features.
@@ -353,5 +382,22 @@ abstract interface class SolanaSignOffchainMessageFeature
   /// Signs canonical offchain messages.
   Future<List<SolanaSignOffchainMessageOutput>> signOffchainMessage(
     List<SolanaSignOffchainMessageInput> inputs,
+  );
+}
+
+/// Version checks for the wallet-standard Solana signing features.
+extension SolanaTransactionVersionSupport on List<SolanaTransactionVersion> {
+  /// Returns `true` when this list advertises support for [version].
+  ///
+  /// Always check before building a transaction: a wallet that does not list a
+  /// version will reject or fail to sign a transaction of that version, and
+  /// there is no downgrade path once one is built.
+  bool supportsTransactionVersion(SolanaTransactionVersion version) =>
+      contains(version);
+
+  /// Returns `true` when this list advertises support for version 1
+  /// transactions (SIMD-0296 / SIMD-0385).
+  bool get supportsVersion1 => supportsTransactionVersion(
+    SolanaTransactionVersion.version1,
   );
 }
