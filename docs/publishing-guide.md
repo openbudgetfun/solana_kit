@@ -366,3 +366,5 @@ The release flow is automated with MonoChange and GitHub Actions while staying r
 6. **Verification**: Check pub.dev for all packages with correct versions and smoke test a clean consumer project
 
 Keep pub.dev Trusted Publishing entries aligned with `.github/workflows/publish.yml` and its `publisher` GitHub environment. Keep public release notes focused on consumer-visible changes, minimum SDK constraints, and migration steps.
+
+The `solana_kit_attestation_service` package sets `publish.trusted_publishing` with `mode = "preferred"`. A publish backed by a verifiable GitHub Actions identity still uses trusted publishing and still verifies the configured repository, workflow, and environment, so the automated path is unchanged. A publish without that identity — a local run, for example — falls back to standard credentials instead of failing before the first registry call. The default mode, `required`, rejects any publish not backed by a CI identity, which makes trusted publishing mandatory in every environment.

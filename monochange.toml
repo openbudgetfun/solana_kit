@@ -55,6 +55,7 @@ release = false
 
 [package.solana_kit_attestation_service.publish.trusted_publishing]
 enabled = true
+mode = "preferred"
 repository = "openbudgetfun/solana_kit"
 workflow = "publish.yml"
 environment = "publisher"
