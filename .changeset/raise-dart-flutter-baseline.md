@@ -20,7 +20,6 @@
 "solana_kit_errors": major
 "solana_kit_fast_stable_stringify": major
 "solana_kit_fixed_points": major
-"solana_kit_functional": major
 "solana_kit_helius": major
 "solana_kit_instruction_plans": major
 "solana_kit_instructions": major

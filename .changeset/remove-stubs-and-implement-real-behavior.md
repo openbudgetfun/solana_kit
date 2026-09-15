@@ -3,7 +3,6 @@
 "solana_kit_transaction_messages": minor
 "solana_kit_rpc": minor
 "solana_kit_addresses": minor
-"solana_kit_functional": minor
 "solana_kit_helius": minor
 "solana_kit_dapp_publisher_cli": patch
 ---
@@ -36,9 +35,9 @@ final estimate = estimateResourceLimitsFactory(
 final withLimits = await estimateAndSetResourceLimitsFactory(estimate)(message);
 ```
 
-## `solana_kit_functional` exports the standalone `pipe`
+## `solana_kit_functional` removed
 
-The package was an empty placeholder that exported nothing, despite describing itself as providing pipe utilities. It now exports `pipe(initial, [transforms])`, the standalone form matching upstream's `pipe(init, ...fns)`. The method-chaining extension remains in `solana_kit_transaction_messages`. Dart has no variadic parameters, so the transforms are passed as an iterable.
+The package is gone. Its only utility, the `pipe` extension, has lived in `solana_kit_transaction_messages` since the previous breaking release and is re-exported by `solana_kit`, so the package duplicated what the SDK already provided and existed only as an empty placeholder pending retirement. Anyone still importing it should switch to `solana_kit_transaction_messages` (or the `solana_kit` umbrella), which is a one-line import change.
 
 ## `solana_kit_addresses` gains the PDA guards
 
