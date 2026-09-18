@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -19,12 +20,11 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class InitializeConfidentialTransferMintInstructionData {
   const InitializeConfidentialTransferMintInstructionData({
-    this.discriminator = 27,
-    this.confidentialTransferDiscriminator = 0,
     required this.authority,
     required this.autoApproveNewAccounts,
     required this.auditorElgamalPubkey,
-  });
+  }) : discriminator = 27,
+       confidentialTransferDiscriminator = 0;
 
   final int discriminator;
   final int confidentialTransferDiscriminator;
@@ -61,9 +61,8 @@ getInitializeConfidentialTransferMintInstructionDataEncoder() {
     structEncoder,
     (InitializeConfidentialTransferMintInstructionData value) =>
         <String, Object?>{
-          'discriminator': value.discriminator,
-          'confidentialTransferDiscriminator':
-              value.confidentialTransferDiscriminator,
+          'discriminator': 27,
+          'confidentialTransferDiscriminator': 0,
           'authority': value.authority,
           'autoApproveNewAccounts': value.autoApproveNewAccounts,
           'auditorElgamalPubkey': value.auditorElgamalPubkey,
@@ -95,18 +94,61 @@ getInitializeConfidentialTransferMintInstructionDataDecoder() {
     ),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializeConfidentialTransferMintInstructionData(
-          discriminator: map['discriminator']! as int,
-          confidentialTransferDiscriminator:
-              map['confidentialTransferDiscriminator']! as int,
-          authority: map['authority'] as Address?,
-          autoApproveNewAccounts: map['autoApproveNewAccounts']! as bool,
-          auditorElgamalPubkey: map['auditorElgamalPubkey'] as Address?,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription':
+            'initializeConfidentialTransferMint instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (InitializeConfidentialTransferMintInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(27),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(0),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      InitializeConfidentialTransferMintInstructionData(
+        authority: map['authority'] as Address?,
+        autoApproveNewAccounts: map['autoApproveNewAccounts']! as bool,
+        auditorElgamalPubkey: map['auditorElgamalPubkey'] as Address?,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<InitializeConfidentialTransferMintInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<InitializeConfidentialTransferMintInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<

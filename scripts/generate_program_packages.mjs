@@ -388,6 +388,63 @@ function directoriesEqual(left, right) {
   });
 }
 
+// The Token-2022 program walks the TLV extension region until it meets an
+// `Uninitialized` header or runs out of bytes. A Codama `remainder` array
+// consumes every trailing byte instead, so accounts allocated with unused space
+// (including the two-byte multisig padding) either throw or report that padding
+// as a spurious `Uninitialized` extension. Codama has no node for "stop at a
+// discriminator", so the IDL's inner extension array is retargeted to a link
+// and that link is backed by a hand-written codec in the package. The
+// surrounding `remainderOption` and `hiddenPrefix` wrappers still come from the
+// IDL, so the wire format is unchanged.
+const TOKEN_2022_EXTENSIONS_LINK = "token2022Extensions";
+
+const LINK_OVERRIDES = {
+  "token-2022": {
+    [TOKEN_2022_EXTENSIONS_LINK]: {
+      path: "src/extensions.dart",
+      type: "List<Extension>",
+      encoder: "getExtensionsEncoder()",
+      decoder: "getExtensionsDecoder()",
+    },
+  },
+};
+
+// Retarget each account's TLV extension region at the hand-written link.
+//
+// The region is `remainderOption(hiddenPrefix(array(extension, remainder)))`;
+// only the innermost array is replaced, so the option and hidden-prefix
+// wrappers keep coming from the IDL and the wire format is unchanged.
+function prepareToken2022Root(root) {
+  let rewritten = 0;
+  const visit = (node) => {
+    if (Array.isArray(node)) {
+      node.forEach(visit);
+      return;
+    }
+    if (node == null || typeof node !== "object") return;
+    if (
+      node.kind === "hiddenPrefixTypeNode" &&
+      node.type?.kind === "arrayTypeNode" &&
+      node.type.count?.kind === "remainderCountNode" &&
+      node.type.item?.kind === "definedTypeLinkNode" &&
+      node.type.item.name === "extension"
+    ) {
+      node.type = { kind: "definedTypeLinkNode", name: TOKEN_2022_EXTENSIONS_LINK };
+      rewritten += 1;
+      return;
+    }
+    Object.values(node).forEach(visit);
+  };
+  visit(root);
+  if (rewritten !== 2) {
+    throw new Error(
+      `prepareToken2022Root: expected 2 extension regions, rewrote ${rewritten}`,
+    );
+  }
+  return root;
+}
+
 for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
   if (PROGRAM_FILTER != null && repo !== PROGRAM_FILTER) {
     continue;
@@ -410,7 +467,11 @@ for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
   const idlJson = JSON.parse(readFileSync(idlPath, "utf-8"));
   let root;
   if (idlJson.kind === "rootNode") {
-    root = repo === "stake" ? prepareStakeRoot(idlJson) : idlJson;
+    root = repo === "stake"
+      ? prepareStakeRoot(idlJson)
+      : repo === "token-2022"
+        ? prepareToken2022Root(idlJson)
+        : idlJson;
   } else {
     // Anchor/shank-format IDL: pin the renderer-facing program name, then
     // convert with @codama/nodes-from-anchor.
@@ -446,6 +507,7 @@ for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
     visit(root, renderVisitor(renderDir, {
       formatCode: true,
       deleteFolderBeforeRendering: true,
+      linkOverrides: LINK_OVERRIDES[repo],
     }));
 
     if (CHECK_ONLY && !directoriesEqual(renderDir, outDir)) {

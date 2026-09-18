@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -16,12 +17,18 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class EmitTokenMetadataInstructionData {
   EmitTokenMetadataInstructionData({
-    Uint8List? discriminator,
     required this.start,
     required this.end,
-  }) : discriminator =
-           discriminator ??
-           Uint8List.fromList([250, 166, 180, 250, 13, 12, 184, 70]);
+  }) : discriminator = Uint8List.fromList([
+         0xfa,
+         0xa6,
+         0xb4,
+         0xfa,
+         0x0d,
+         0x0c,
+         0xb8,
+         0x46,
+       ]);
 
   final Uint8List discriminator;
   final BigInt? start;
@@ -31,15 +38,37 @@ class EmitTokenMetadataInstructionData {
 Encoder<EmitTokenMetadataInstructionData>
 getEmitTokenMetadataInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
-    ('start', getNullableEncoder<BigInt>(getU64Encoder())),
-    ('end', getNullableEncoder<BigInt>(getU64Encoder())),
+    (
+      'discriminator',
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false),
+    ),
+    (
+      'start',
+      getNullableEncoder<BigInt>(
+        transformEncoder(getU64Encoder(), (BigInt value) => value),
+      ),
+    ),
+    (
+      'end',
+      getNullableEncoder<BigInt>(
+        transformEncoder(getU64Encoder(), (BigInt value) => value),
+      ),
+    ),
   ]);
 
   return transformEncoder(
     structEncoder,
     (EmitTokenMetadataInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': Uint8List.fromList([
+        0xfa,
+        0xa6,
+        0xb4,
+        0xfa,
+        0x0d,
+        0x0c,
+        0xb8,
+        0x46,
+      ]),
       'start': value.start,
       'end': value.end,
     },
@@ -54,15 +83,58 @@ getEmitTokenMetadataInstructionDataDecoder() {
     ('end', getNullableDecoder<BigInt>(getU64Decoder())),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        EmitTokenMetadataInstructionData(
-          discriminator: map['discriminator']! as Uint8List,
-          start: map['start'] as BigInt?,
-          end: map['end'] as BigInt?,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'emitTokenMetadata instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (EmitTokenMetadataInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false).encode(
+        Uint8List.fromList([0xfa, 0xa6, 0xb4, 0xfa, 0x0d, 0x0c, 0xb8, 0x46]),
+      ),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      EmitTokenMetadataInstructionData(
+        start: map['start'] as BigInt?,
+        end: map['end'] as BigInt?,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<EmitTokenMetadataInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<EmitTokenMetadataInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<EmitTokenMetadataInstructionData, EmitTokenMetadataInstructionData>

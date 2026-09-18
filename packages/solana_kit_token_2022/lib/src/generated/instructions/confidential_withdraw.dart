@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 import '../types/decryptable_balance.dart';
@@ -21,14 +22,13 @@ import '../types/decryptable_balance.dart';
 @immutable
 class ConfidentialWithdrawInstructionData {
   const ConfidentialWithdrawInstructionData({
-    this.discriminator = 27,
-    this.confidentialTransferDiscriminator = 6,
     required this.amount,
     required this.decimals,
     required this.newDecryptableAvailableBalance,
     required this.equalityProofInstructionOffset,
     required this.rangeProofInstructionOffset,
-  });
+  }) : discriminator = 27,
+       confidentialTransferDiscriminator = 6;
 
   final int discriminator;
   final int confidentialTransferDiscriminator;
@@ -54,9 +54,8 @@ getConfidentialWithdrawInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (ConfidentialWithdrawInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'confidentialTransferDiscriminator':
-          value.confidentialTransferDiscriminator,
+      'discriminator': 27,
+      'confidentialTransferDiscriminator': 6,
       'amount': value.amount,
       'decimals': value.decimals,
       'newDecryptableAvailableBalance': value.newDecryptableAvailableBalance,
@@ -78,23 +77,64 @@ getConfidentialWithdrawInstructionDataDecoder() {
     ('rangeProofInstructionOffset', getI8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ConfidentialWithdrawInstructionData(
-          discriminator: map['discriminator']! as int,
-          confidentialTransferDiscriminator:
-              map['confidentialTransferDiscriminator']! as int,
-          amount: map['amount']! as BigInt,
-          decimals: map['decimals']! as int,
-          newDecryptableAvailableBalance:
-              map['newDecryptableAvailableBalance']! as DecryptableBalance,
-          equalityProofInstructionOffset:
-              map['equalityProofInstructionOffset']! as int,
-          rangeProofInstructionOffset:
-              map['rangeProofInstructionOffset']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'confidentialWithdraw instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (ConfidentialWithdrawInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(27),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(6),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      ConfidentialWithdrawInstructionData(
+        amount: map['amount']! as BigInt,
+        decimals: map['decimals']! as int,
+        newDecryptableAvailableBalance:
+            map['newDecryptableAvailableBalance']! as DecryptableBalance,
+        equalityProofInstructionOffset:
+            map['equalityProofInstructionOffset']! as int,
+        rangeProofInstructionOffset: map['rangeProofInstructionOffset']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<ConfidentialWithdrawInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<ConfidentialWithdrawInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<ConfidentialWithdrawInstructionData, ConfidentialWithdrawInstructionData>
@@ -106,6 +146,7 @@ getConfidentialWithdrawInstructionDataCodec() {
 }
 
 /// Creates a [ConfidentialWithdraw] instruction.
+/// Set [authorityIsSigner] to false when [authority] does not sign (for example, a multisig authority).
 Instruction getConfidentialWithdrawInstruction({
   required Address programAddress,
   required Address token,
@@ -119,6 +160,7 @@ Instruction getConfidentialWithdrawInstruction({
   required DecryptableBalance newDecryptableAvailableBalance,
   required int equalityProofInstructionOffset,
   required int rangeProofInstructionOffset,
+  bool authorityIsSigner = true,
 }) {
   final instructionData = ConfidentialWithdrawInstructionData(
     amount: amount,
@@ -139,7 +181,12 @@ Instruction getConfidentialWithdrawInstruction({
         AccountMeta(address: equalityRecord, role: AccountRole.readonly),
       if (rangeRecord != null)
         AccountMeta(address: rangeRecord, role: AccountRole.readonly),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: authority,
+        role: authorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data: getConfidentialWithdrawInstructionDataEncoder().encode(
       instructionData,

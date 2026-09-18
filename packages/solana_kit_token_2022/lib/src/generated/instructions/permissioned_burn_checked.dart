@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -19,11 +20,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class PermissionedBurnCheckedInstructionData {
   const PermissionedBurnCheckedInstructionData({
-    this.discriminator = 46,
-    this.permissionedBurnDiscriminator = 2,
     required this.amount,
     required this.decimals,
-  });
+  }) : discriminator = 46,
+       permissionedBurnDiscriminator = 2;
 
   final int discriminator;
   final int permissionedBurnDiscriminator;
@@ -43,8 +43,8 @@ getPermissionedBurnCheckedInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (PermissionedBurnCheckedInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'permissionedBurnDiscriminator': value.permissionedBurnDiscriminator,
+      'discriminator': 46,
+      'permissionedBurnDiscriminator': 2,
       'amount': value.amount,
       'decimals': value.decimals,
     },
@@ -60,17 +60,59 @@ getPermissionedBurnCheckedInstructionDataDecoder() {
     ('decimals', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        PermissionedBurnCheckedInstructionData(
-          discriminator: map['discriminator']! as int,
-          permissionedBurnDiscriminator:
-              map['permissionedBurnDiscriminator']! as int,
-          amount: map['amount']! as BigInt,
-          decimals: map['decimals']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'permissionedBurnChecked instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (PermissionedBurnCheckedInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(46),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(2),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      PermissionedBurnCheckedInstructionData(
+        amount: map['amount']! as BigInt,
+        decimals: map['decimals']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<PermissionedBurnCheckedInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<PermissionedBurnCheckedInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<
@@ -85,6 +127,7 @@ getPermissionedBurnCheckedInstructionDataCodec() {
 }
 
 /// Creates a [PermissionedBurnChecked] instruction.
+/// Set [authorityIsSigner] to false when [authority] does not sign (for example, a multisig authority).
 Instruction getPermissionedBurnCheckedInstruction({
   required Address programAddress,
   required Address account,
@@ -93,6 +136,7 @@ Instruction getPermissionedBurnCheckedInstruction({
   required Address authority,
   required BigInt amount,
   required int decimals,
+  bool authorityIsSigner = true,
 }) {
   final instructionData = PermissionedBurnCheckedInstructionData(
     amount: amount,
@@ -108,7 +152,12 @@ Instruction getPermissionedBurnCheckedInstruction({
         address: permissionedBurnAuthority,
         role: AccountRole.readonlySigner,
       ),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: authority,
+        role: authorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data: getPermissionedBurnCheckedInstructionDataEncoder().encode(
       instructionData,

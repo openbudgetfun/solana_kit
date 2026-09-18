@@ -82,11 +82,11 @@
       "url": "https://github.com/solana-program/token-2022",
       "ref": {
         "type": "tag",
-        "value": "js@v0.16.1"
+        "value": "js@v0.18.0"
       },
       "package": "solana_kit_token_2022",
-      "notes": "SPL Token-2022 JS client. Held at v0.16.1: js@v0.17.0 (and the newer js@v0.18.0) renames the program node to camelCase and changes how token and mint extensions decode, which requires a migration of this package's handwritten layer before the pin can move",
-      "checkedCommit": "341de223489b62fa482c552789a241d5e260b619"
+      "notes": "SPL Token-2022 JS client. js@v0.17.0 renamed the program node to its canonical camelCase name and swapped the generated extension array for a hand-written TLV codec that stops at the first Uninitialized header, so accounts with unused extension space (including two-byte multisig padding) decode instead of throwing",
+      "checkedCommit": "18a80055ed7aa2d0dff4df4f613e28efee11cc1a"
     },
     {
       "name": "subscriptions",

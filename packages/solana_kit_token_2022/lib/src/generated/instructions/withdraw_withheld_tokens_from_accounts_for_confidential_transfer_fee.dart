@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 import '../types/decryptable_balance.dart';
@@ -21,12 +22,11 @@ import '../types/decryptable_balance.dart';
 @immutable
 class WithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstructionData {
   const WithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstructionData({
-    this.discriminator = 37,
-    this.confidentialTransferFeeDiscriminator = 2,
     required this.numTokenAccounts,
     required this.proofInstructionOffset,
     required this.newDecryptableAvailableBalance,
-  });
+  }) : discriminator = 37,
+       confidentialTransferFeeDiscriminator = 2;
 
   final int discriminator;
   final int confidentialTransferFeeDiscriminator;
@@ -53,9 +53,8 @@ getWithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstructionDataEn
       WithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstructionData
       value,
     ) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'confidentialTransferFeeDiscriminator':
-          value.confidentialTransferFeeDiscriminator,
+      'discriminator': 37,
+      'confidentialTransferFeeDiscriminator': 2,
       'numTokenAccounts': value.numTokenAccounts,
       'proofInstructionOffset': value.proofInstructionOffset,
       'newDecryptableAvailableBalance': value.newDecryptableAvailableBalance,
@@ -75,19 +74,66 @@ getWithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstructionDataDe
     ('newDecryptableAvailableBalance', getDecryptableBalanceDecoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        WithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstructionData(
-          discriminator: map['discriminator']! as int,
-          confidentialTransferFeeDiscriminator:
-              map['confidentialTransferFeeDiscriminator']! as int,
-          numTokenAccounts: map['numTokenAccounts']! as int,
-          proofInstructionOffset: map['proofInstructionOffset']! as int,
-          newDecryptableAvailableBalance:
-              map['newDecryptableAvailableBalance']! as DecryptableBalance,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'withdrawWithheldTokensFromAccountsForConfidentialTransferFee instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (
+    WithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstructionData,
+    int,
+  )
+  readTopLevel(Uint8List bytes, int offset) {
+    getConstantDecoder(
+      getU8Encoder().encode(37),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(2),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      WithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstructionData(
+        numTokenAccounts: map['numTokenAccounts']! as int,
+        proofInstructionOffset: map['proofInstructionOffset']! as int,
+        newDecryptableAvailableBalance:
+            map['newDecryptableAvailableBalance']! as DecryptableBalance,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<
+        WithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstructionData
+      >(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<
+        WithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstructionData
+      >(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<
@@ -102,6 +148,7 @@ getWithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstructionDataCo
 }
 
 /// Creates a [WithdrawWithheldTokensFromAccountsForConfidentialTransferFee] instruction.
+/// Set [authorityIsSigner] to false when [authority] does not sign (for example, a multisig authority).
 Instruction
 getWithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstruction({
   required Address programAddress,
@@ -112,6 +159,7 @@ getWithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstruction({
   required int numTokenAccounts,
   required int proofInstructionOffset,
   required DecryptableBalance newDecryptableAvailableBalance,
+  bool authorityIsSigner = true,
 }) {
   final instructionData =
       WithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstructionData(
@@ -129,7 +177,12 @@ getWithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstruction({
         address: instructionsSysvarOrContextState,
         role: AccountRole.readonly,
       ),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: authority,
+        role: authorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data:
         getWithdrawWithheldTokensFromAccountsForConfidentialTransferFeeInstructionDataEncoder()

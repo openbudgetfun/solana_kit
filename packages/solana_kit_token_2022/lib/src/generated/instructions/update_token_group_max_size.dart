@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -16,11 +17,17 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class UpdateTokenGroupMaxSizeInstructionData {
   UpdateTokenGroupMaxSizeInstructionData({
-    Uint8List? discriminator,
     required this.maxSize,
-  }) : discriminator =
-           discriminator ??
-           Uint8List.fromList([108, 37, 171, 143, 248, 30, 18, 110]);
+  }) : discriminator = Uint8List.fromList([
+         0x6c,
+         0x25,
+         0xab,
+         0x8f,
+         0xf8,
+         0x1e,
+         0x12,
+         0x6e,
+       ]);
 
   final Uint8List discriminator;
   final BigInt maxSize;
@@ -29,14 +36,26 @@ class UpdateTokenGroupMaxSizeInstructionData {
 Encoder<UpdateTokenGroupMaxSizeInstructionData>
 getUpdateTokenGroupMaxSizeInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    (
+      'discriminator',
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false),
+    ),
     ('maxSize', getU64Encoder()),
   ]);
 
   return transformEncoder(
     structEncoder,
     (UpdateTokenGroupMaxSizeInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': Uint8List.fromList([
+        0x6c,
+        0x25,
+        0xab,
+        0x8f,
+        0xf8,
+        0x1e,
+        0x12,
+        0x6e,
+      ]),
       'maxSize': value.maxSize,
     },
   );
@@ -49,14 +68,57 @@ getUpdateTokenGroupMaxSizeInstructionDataDecoder() {
     ('maxSize', getU64Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        UpdateTokenGroupMaxSizeInstructionData(
-          discriminator: map['discriminator']! as Uint8List,
-          maxSize: map['maxSize']! as BigInt,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'updateTokenGroupMaxSize instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (UpdateTokenGroupMaxSizeInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false).encode(
+        Uint8List.fromList([0x6c, 0x25, 0xab, 0x8f, 0xf8, 0x1e, 0x12, 0x6e]),
+      ),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      UpdateTokenGroupMaxSizeInstructionData(
+        maxSize: map['maxSize']! as BigInt,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<UpdateTokenGroupMaxSizeInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<UpdateTokenGroupMaxSizeInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<

@@ -6,7 +6,7 @@ import { rootNodeVisitor, visit } from "@codama/visitors-core";
 import { deleteDirectory, writeRenderMap } from "@codama/renderers-core";
 
 import type { Fragment } from "../utils/fragment.js";
-import type { RenderOptions } from "../utils/options.js";
+import type { RenderOptions, LinkOverride } from "../utils/options.js";
 import { DartImportMap, DART_EXTERNAL_PACKAGE_MAP } from "../utils/importMap.js";
 import { formatDartDirectory } from "../utils/formatCode.js";
 import { normalizeRootNode } from "../utils/normalizeRootNode.js";
@@ -27,6 +27,7 @@ export function renderVisitor(
     formatCode = false,
     nameApi,
     dependencyMap,
+    linkOverrides,
   } = options;
 
   return rootNodeVisitor((root: RootNode) => {
@@ -35,7 +36,7 @@ export function renderVisitor(
     // 2. Build the render map
     const renderMap = visit(
       normalizedRoot,
-      getRenderMapVisitor({ nameApi, dependencyMap }),
+      getRenderMapVisitor({ nameApi, dependencyMap, linkOverrides }),
     );
 
     // 3. Build a map of definedType module keys to their render map paths
@@ -69,7 +70,14 @@ export function renderVisitor(
       }
 
       // Resolve fragment content with imports
-      const content = resolveFragmentContent(frag, dependencyMap ?? {}, internalMap);
+      const content = resolveFragmentContent(
+        frag,
+        {
+          ...(dependencyMap ?? {}),
+          ...linkOverrideImports(outputDir, filePath, options.linkOverrides ?? {}),
+        },
+        internalMap,
+      );
       files.push([fullPath, content]);
     }
 
@@ -87,6 +95,54 @@ export function renderVisitor(
       formatDartDirectory(outputDir);
     }
   });
+}
+
+/**
+ * Resolve `linkOverride:` logical import keys into relative Dart imports.
+ *
+ * Override paths are relative to the package's `lib/` directory, while
+ * generated files live under `lib/src/generated/...`, so each consuming file
+ * needs its own relative path. Both sides are resolved against the package's
+ * `lib/` root, which is located by walking up from the output directory.
+ */
+function linkOverrideImports(
+  outputDir: string,
+  generatedFilePath: string,
+  overrides: Record<string, LinkOverride>,
+): Record<string, string> {
+  const resolved: Record<string, string> = {};
+  if (Object.keys(overrides).length === 0) return resolved;
+
+  const libRoot = findLibRoot(outputDir);
+  if (libRoot == null) return resolved;
+
+  const generatedAbsolute = posix.join(
+    posix.resolve(outputDir),
+    generatedFilePath,
+  );
+
+  for (const override of Object.values(overrides)) {
+    const overrideAbsolute = posix.join(libRoot, override.path);
+    let rel = posix.relative(posix.dirname(generatedAbsolute), overrideAbsolute);
+    if (!rel.startsWith(".")) {
+      rel = `./${rel}`;
+    }
+    resolved[`linkOverride:${override.path}`] = rel;
+  }
+
+  return resolved;
+}
+
+/**
+ * Find the package `lib/` directory containing the render output, so relative
+ * imports can point outside the generated tree. Returns null when the output
+ * directory has no `lib` ancestor, in which case overrides cannot be linked.
+ */
+function findLibRoot(outputDir: string): string | null {
+  const segments = posix.resolve(outputDir).split("/");
+  const libIndex = segments.lastIndexOf("lib");
+  if (libIndex < 0) return null;
+  return segments.slice(0, libIndex + 1).join("/");
 }
 
 /**

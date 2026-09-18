@@ -7,6 +7,7 @@ import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -14,11 +15,17 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class InitializeTokenGroupMemberInstructionData {
-  InitializeTokenGroupMemberInstructionData({
-    Uint8List? discriminator,
-  }) : discriminator =
-           discriminator ??
-           Uint8List.fromList([152, 32, 222, 176, 223, 237, 116, 134]);
+  InitializeTokenGroupMemberInstructionData()
+    : discriminator = Uint8List.fromList([
+        0x98,
+        0x20,
+        0xde,
+        0xb0,
+        0xdf,
+        0xed,
+        0x74,
+        0x86,
+      ]);
 
   final Uint8List discriminator;
 }
@@ -26,13 +33,25 @@ class InitializeTokenGroupMemberInstructionData {
 Encoder<InitializeTokenGroupMemberInstructionData>
 getInitializeTokenGroupMemberInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    (
+      'discriminator',
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false),
+    ),
   ]);
 
   return transformEncoder(
     structEncoder,
     (InitializeTokenGroupMemberInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': Uint8List.fromList([
+        0x98,
+        0x20,
+        0xde,
+        0xb0,
+        0xdf,
+        0xed,
+        0x74,
+        0x86,
+      ]),
     },
   );
 }
@@ -43,13 +62,55 @@ getInitializeTokenGroupMemberInstructionDataDecoder() {
     ('discriminator', fixDecoderSize(getBytesDecoder(), 8)),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializeTokenGroupMemberInstructionData(
-          discriminator: map['discriminator']! as Uint8List,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'initializeTokenGroupMember instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (InitializeTokenGroupMemberInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false).encode(
+        Uint8List.fromList([0x98, 0x20, 0xde, 0xb0, 0xdf, 0xed, 0x74, 0x86]),
+      ),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      InitializeTokenGroupMemberInstructionData(),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<InitializeTokenGroupMemberInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<InitializeTokenGroupMemberInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<

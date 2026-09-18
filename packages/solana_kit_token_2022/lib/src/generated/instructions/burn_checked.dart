@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -16,10 +17,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class BurnCheckedInstructionData {
   const BurnCheckedInstructionData({
-    this.discriminator = 15,
     required this.amount,
     required this.decimals,
-  });
+  }) : discriminator = 15;
 
   final int discriminator;
   final BigInt amount;
@@ -36,7 +36,7 @@ Encoder<BurnCheckedInstructionData> getBurnCheckedInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (BurnCheckedInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': 15,
       'amount': value.amount,
       'decimals': value.decimals,
     },
@@ -50,15 +50,53 @@ Decoder<BurnCheckedInstructionData> getBurnCheckedInstructionDataDecoder() {
     ('decimals', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        BurnCheckedInstructionData(
-          discriminator: map['discriminator']! as int,
-          amount: map['amount']! as BigInt,
-          decimals: map['decimals']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'burnChecked instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (BurnCheckedInstructionData, int) readTopLevel(Uint8List bytes, int offset) {
+    getConstantDecoder(
+      getU8Encoder().encode(15),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      BurnCheckedInstructionData(
+        amount: map['amount']! as BigInt,
+        decimals: map['decimals']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<BurnCheckedInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<BurnCheckedInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<BurnCheckedInstructionData, BurnCheckedInstructionData>
@@ -70,6 +108,7 @@ getBurnCheckedInstructionDataCodec() {
 }
 
 /// Creates a [BurnChecked] instruction.
+/// Set [authorityIsSigner] to false when [authority] does not sign (for example, a multisig authority).
 Instruction getBurnCheckedInstruction({
   required Address programAddress,
   required Address account,
@@ -77,6 +116,7 @@ Instruction getBurnCheckedInstruction({
   required Address authority,
   required BigInt amount,
   required int decimals,
+  bool authorityIsSigner = true,
 }) {
   final instructionData = BurnCheckedInstructionData(
     amount: amount,
@@ -88,7 +128,12 @@ Instruction getBurnCheckedInstruction({
     accounts: [
       AccountMeta(address: account, role: AccountRole.writable),
       AccountMeta(address: mint, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: authority,
+        role: authorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data: getBurnCheckedInstructionDataEncoder().encode(instructionData),
   );

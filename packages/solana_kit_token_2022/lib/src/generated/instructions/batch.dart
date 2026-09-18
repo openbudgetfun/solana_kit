@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -16,9 +17,8 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class BatchInstructionData {
   const BatchInstructionData({
-    this.discriminator = 255,
     required this.data,
-  });
+  }) : discriminator = 255;
 
   final int discriminator;
   final List<Map<String, Object?>> data;
@@ -30,13 +30,16 @@ Encoder<BatchInstructionData> getBatchInstructionDataEncoder() {
     (
       'data',
       getArrayEncoder(
-        getStructEncoder([
-          ('numberOfAccounts', getU8Encoder()),
-          (
-            'instructionData',
-            addEncoderSizePrefix(getBytesEncoder(), getU8Encoder()),
-          ),
-        ]),
+        transformEncoder(
+          getStructEncoder([
+            ('numberOfAccounts', getU8Encoder()),
+            (
+              'instructionData',
+              addEncoderSizePrefix(getBytesEncoder(), getU8Encoder()),
+            ),
+          ]),
+          (Map<String, Object?> value) => value,
+        ),
         size: RemainderArraySize(),
       ),
     ),
@@ -45,7 +48,7 @@ Encoder<BatchInstructionData> getBatchInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (BatchInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': 255,
       'data': value.data,
     },
   );
@@ -69,14 +72,52 @@ Decoder<BatchInstructionData> getBatchInstructionDataDecoder() {
     ),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        BatchInstructionData(
-          discriminator: map['discriminator']! as int,
-          data: map['data']! as List<Map<String, Object?>>,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'batch instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (BatchInstructionData, int) readTopLevel(Uint8List bytes, int offset) {
+    getConstantDecoder(
+      getU8Encoder().encode(255),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      BatchInstructionData(
+        data: map['data']! as List<Map<String, Object?>>,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<BatchInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<BatchInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<BatchInstructionData, BatchInstructionData>

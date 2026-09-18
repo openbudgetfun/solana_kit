@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -19,10 +20,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class InitializePermissionedBurnInstructionData {
   const InitializePermissionedBurnInstructionData({
-    this.discriminator = 46,
-    this.permissionedBurnDiscriminator = 0,
     required this.authority,
-  });
+  }) : discriminator = 46,
+       permissionedBurnDiscriminator = 0;
 
   final int discriminator;
   final int permissionedBurnDiscriminator;
@@ -40,8 +40,8 @@ getInitializePermissionedBurnInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (InitializePermissionedBurnInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'permissionedBurnDiscriminator': value.permissionedBurnDiscriminator,
+      'discriminator': 46,
+      'permissionedBurnDiscriminator': 0,
       'authority': value.authority,
     },
   );
@@ -55,16 +55,58 @@ getInitializePermissionedBurnInstructionDataDecoder() {
     ('authority', getAddressDecoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializePermissionedBurnInstructionData(
-          discriminator: map['discriminator']! as int,
-          permissionedBurnDiscriminator:
-              map['permissionedBurnDiscriminator']! as int,
-          authority: map['authority']! as Address,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'initializePermissionedBurn instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (InitializePermissionedBurnInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(46),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(0),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      InitializePermissionedBurnInstructionData(
+        authority: map['authority']! as Address,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<InitializePermissionedBurnInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<InitializePermissionedBurnInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<

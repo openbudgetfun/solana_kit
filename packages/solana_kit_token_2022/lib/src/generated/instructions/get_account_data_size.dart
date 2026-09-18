@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -15,9 +16,7 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class GetAccountDataSizeInstructionData {
-  const GetAccountDataSizeInstructionData({
-    this.discriminator = 21,
-  });
+  const GetAccountDataSizeInstructionData() : discriminator = 21;
 
   final int discriminator;
 }
@@ -31,7 +30,7 @@ getGetAccountDataSizeInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (GetAccountDataSizeInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': 21,
     },
   );
 }
@@ -42,13 +41,53 @@ getGetAccountDataSizeInstructionDataDecoder() {
     ('discriminator', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        GetAccountDataSizeInstructionData(
-          discriminator: map['discriminator']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'getAccountDataSize instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (GetAccountDataSizeInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(21),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      GetAccountDataSizeInstructionData(),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<GetAccountDataSizeInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<GetAccountDataSizeInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<GetAccountDataSizeInstructionData, GetAccountDataSizeInstructionData>

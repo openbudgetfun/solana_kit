@@ -112,4 +112,33 @@ describe("getDiscriminatorValidationFragment", () => {
       getDiscriminatorValidationFragment(node, createScope())
     ).toThrow(/offset must be a non-negative safe integer/);
   });
+
+  it("requires an exact instruction size but only a minimum account size", () => {
+    // An instruction's discriminated size is the whole payload. An account's is
+    // its fixed prefix: accounts with variable trailing fields (a TLV extension
+    // region, for example) are legitimately longer.
+    const instruction = instructionNode({
+      name: "verify",
+      arguments: [],
+      discriminators: [sizeDiscriminatorNode(3)],
+    });
+    const account = accountNode({
+      name: "tokenAccount",
+      data: structTypeNode([
+        {
+          kind: "structFieldTypeNode",
+          name: "amount",
+          type: numberTypeNode("u64"),
+        },
+      ]),
+      discriminators: [sizeDiscriminatorNode(165)],
+    });
+
+    expect(
+      getDiscriminatorValidationFragment(instruction, createScope()).content
+    ).toContain("bytes.length - offset != 3");
+    expect(
+      getDiscriminatorValidationFragment(account, createScope()).content
+    ).toContain("bytes.length - offset < 165");
+  });
 });

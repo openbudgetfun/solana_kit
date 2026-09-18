@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -19,13 +20,12 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class InitializeTransferFeeConfigInstructionData {
   const InitializeTransferFeeConfigInstructionData({
-    this.discriminator = 26,
-    this.transferFeeDiscriminator = 0,
     required this.transferFeeConfigAuthority,
     required this.withdrawWithheldAuthority,
     required this.transferFeeBasisPoints,
     required this.maximumFee,
-  });
+  }) : discriminator = 26,
+       transferFeeDiscriminator = 0;
 
   final int discriminator;
   final int transferFeeDiscriminator;
@@ -42,11 +42,15 @@ getInitializeTransferFeeConfigInstructionDataEncoder() {
     ('transferFeeDiscriminator', getU8Encoder()),
     (
       'transferFeeConfigAuthority',
-      getNullableEncoder<Address>(getAddressEncoder()),
+      getNullableEncoder<Address>(
+        transformEncoder(getAddressEncoder(), (Address value) => value),
+      ),
     ),
     (
       'withdrawWithheldAuthority',
-      getNullableEncoder<Address>(getAddressEncoder()),
+      getNullableEncoder<Address>(
+        transformEncoder(getAddressEncoder(), (Address value) => value),
+      ),
     ),
     ('transferFeeBasisPoints', getU16Encoder()),
     ('maximumFee', getU64Encoder()),
@@ -55,8 +59,8 @@ getInitializeTransferFeeConfigInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (InitializeTransferFeeConfigInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'transferFeeDiscriminator': value.transferFeeDiscriminator,
+      'discriminator': 26,
+      'transferFeeDiscriminator': 0,
       'transferFeeConfigAuthority': value.transferFeeConfigAuthority,
       'withdrawWithheldAuthority': value.withdrawWithheldAuthority,
       'transferFeeBasisPoints': value.transferFeeBasisPoints,
@@ -82,21 +86,62 @@ getInitializeTransferFeeConfigInstructionDataDecoder() {
     ('maximumFee', getU64Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (
-      Map<String, Object?> map,
-      Uint8List bytes,
-      int offset,
-    ) => InitializeTransferFeeConfigInstructionData(
-      discriminator: map['discriminator']! as int,
-      transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
-      transferFeeConfigAuthority: map['transferFeeConfigAuthority'] as Address?,
-      withdrawWithheldAuthority: map['withdrawWithheldAuthority'] as Address?,
-      transferFeeBasisPoints: map['transferFeeBasisPoints']! as int,
-      maximumFee: map['maximumFee']! as BigInt,
-    ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'initializeTransferFeeConfig instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (InitializeTransferFeeConfigInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(26),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(0),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      InitializeTransferFeeConfigInstructionData(
+        transferFeeConfigAuthority:
+            map['transferFeeConfigAuthority'] as Address?,
+        withdrawWithheldAuthority: map['withdrawWithheldAuthority'] as Address?,
+        transferFeeBasisPoints: map['transferFeeBasisPoints']! as int,
+        maximumFee: map['maximumFee']! as BigInt,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<InitializeTransferFeeConfigInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<InitializeTransferFeeConfigInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<

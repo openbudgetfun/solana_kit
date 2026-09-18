@@ -9,8 +9,9 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
-import '../types/extension.dart';
+import '../../extensions.dart';
 
 @immutable
 class Mint {
@@ -64,7 +65,7 @@ Encoder<Mint> getMintEncoder() {
     (
       'mintAuthority',
       getNullableEncoder<Address>(
-        getAddressEncoder(),
+        transformEncoder(getAddressEncoder(), (Address value) => value),
         prefix: getU32Encoder(),
         noneValue: const ZeroesNoneValue(),
       ),
@@ -75,7 +76,7 @@ Encoder<Mint> getMintEncoder() {
     (
       'freezeAuthority',
       getNullableEncoder<Address>(
-        getAddressEncoder(),
+        transformEncoder(getAddressEncoder(), (Address value) => value),
         prefix: getU32Encoder(),
         noneValue: const ZeroesNoneValue(),
       ),
@@ -83,10 +84,9 @@ Encoder<Mint> getMintEncoder() {
     (
       'extensions',
       getNullableEncoder<List<Extension>>(
-        getHiddenPrefixEncoder(
-          getArrayEncoder(getExtensionEncoder(), size: RemainderArraySize()),
-          [getConstantEncoder(padLeftEncoder(getU8Encoder(), 83).encode(1))],
-        ),
+        getHiddenPrefixEncoder(getExtensionsEncoder(), [
+          getConstantEncoder(padLeftEncoder(getU8Encoder(), 83).encode(1)),
+        ]),
         hasPrefix: false,
       ),
     ),
@@ -129,26 +129,70 @@ Decoder<Mint> getMintDecoder() {
     (
       'extensions',
       getNullableDecoder<List<Extension>>(
-        getHiddenPrefixDecoder(
-          getArrayDecoder(getExtensionDecoder(), size: RemainderArraySize()),
-          [getConstantDecoder(padLeftEncoder(getU8Encoder(), 83).encode(1))],
-        ),
+        getHiddenPrefixDecoder(getExtensionsDecoder(), [
+          getConstantDecoder(padLeftEncoder(getU8Encoder(), 83).encode(1)),
+        ]),
         hasPrefix: false,
       ),
     ),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => Mint(
-      mintAuthority: map['mintAuthority'] as Address?,
-      supply: map['supply']! as BigInt,
-      decimals: map['decimals']! as int,
-      isInitialized: map['isInitialized']! as bool,
-      freezeAuthority: map['freezeAuthority'] as Address?,
-      extensions: map['extensions'] as List<Extension>?,
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'mint account decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (Mint, int) readTopLevel(Uint8List bytes, int offset) {
+    if (bytes.length - offset < 82) {
+      throw SolanaError(
+        SolanaErrorCode.codecsInvalidByteLength,
+        {
+          'codecDescription': 'mint discriminator',
+          'expected': 82,
+          'bytesLength': bytes.length - offset,
+        },
+      );
+    }
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      Mint(
+        mintAuthority: map['mintAuthority'] as Address?,
+        supply: map['supply']! as BigInt,
+        decimals: map['decimals']! as int,
+        isInitialized: map['isInitialized']! as bool,
+        freezeAuthority: map['freezeAuthority'] as Address?,
+        extensions: map['extensions'] as List<Extension>?,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() => FixedSizeDecoder<Mint>(
+      fixedSize: structDecoder.fixedSize,
+      read: (bytes, offset) {
+        final bytesLength = bytes.length - offset;
+        if (bytesLength != structDecoder.fixedSize) {
+          throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+        }
+        return readTopLevel(bytes, offset);
+      },
     ),
-  );
+    VariableSizeDecoder<Map<String, Object?>>() => VariableSizeDecoder<Mint>(
+      read: readTopLevel,
+      maxSize: structDecoder.maxSize,
+    ),
+  };
 }
 
 Codec<Mint, Mint> getMintCodec() {

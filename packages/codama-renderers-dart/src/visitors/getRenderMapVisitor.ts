@@ -57,6 +57,7 @@ export function getRenderMapVisitor(
     nameApi,
     linkables,
     stack,
+    linkOverrides: options.linkOverrides,
   });
 
   const scope: RenderScope = {

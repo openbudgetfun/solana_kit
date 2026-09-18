@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -16,11 +17,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class InitializeMint2InstructionData {
   const InitializeMint2InstructionData({
-    this.discriminator = 20,
     required this.decimals,
     required this.mintAuthority,
     required this.freezeAuthority,
-  });
+  }) : discriminator = 20;
 
   final int discriminator;
   final int decimals;
@@ -34,13 +34,18 @@ getInitializeMint2InstructionDataEncoder() {
     ('discriminator', getU8Encoder()),
     ('decimals', getU8Encoder()),
     ('mintAuthority', getAddressEncoder()),
-    ('freezeAuthority', getNullableEncoder<Address>(getAddressEncoder())),
+    (
+      'freezeAuthority',
+      getNullableEncoder<Address>(
+        transformEncoder(getAddressEncoder(), (Address value) => value),
+      ),
+    ),
   ]);
 
   return transformEncoder(
     structEncoder,
     (InitializeMint2InstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': 20,
       'decimals': value.decimals,
       'mintAuthority': value.mintAuthority,
       'freezeAuthority': value.freezeAuthority,
@@ -57,16 +62,57 @@ getInitializeMint2InstructionDataDecoder() {
     ('freezeAuthority', getNullableDecoder<Address>(getAddressDecoder())),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializeMint2InstructionData(
-          discriminator: map['discriminator']! as int,
-          decimals: map['decimals']! as int,
-          mintAuthority: map['mintAuthority']! as Address,
-          freezeAuthority: map['freezeAuthority'] as Address?,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'initializeMint2 instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (InitializeMint2InstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(20),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      InitializeMint2InstructionData(
+        decimals: map['decimals']! as int,
+        mintAuthority: map['mintAuthority']! as Address,
+        freezeAuthority: map['freezeAuthority'] as Address?,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<InitializeMint2InstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<InitializeMint2InstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<InitializeMint2InstructionData, InitializeMint2InstructionData>

@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -19,11 +20,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class SetTransferFeeInstructionData {
   const SetTransferFeeInstructionData({
-    this.discriminator = 26,
-    this.transferFeeDiscriminator = 5,
     required this.transferFeeBasisPoints,
     required this.maximumFee,
-  });
+  }) : discriminator = 26,
+       transferFeeDiscriminator = 5;
 
   final int discriminator;
   final int transferFeeDiscriminator;
@@ -43,8 +43,8 @@ getSetTransferFeeInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (SetTransferFeeInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'transferFeeDiscriminator': value.transferFeeDiscriminator,
+      'discriminator': 26,
+      'transferFeeDiscriminator': 5,
       'transferFeeBasisPoints': value.transferFeeBasisPoints,
       'maximumFee': value.maximumFee,
     },
@@ -60,16 +60,59 @@ getSetTransferFeeInstructionDataDecoder() {
     ('maximumFee', getU64Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        SetTransferFeeInstructionData(
-          discriminator: map['discriminator']! as int,
-          transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
-          transferFeeBasisPoints: map['transferFeeBasisPoints']! as int,
-          maximumFee: map['maximumFee']! as BigInt,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'setTransferFee instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (SetTransferFeeInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(26),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(5),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      SetTransferFeeInstructionData(
+        transferFeeBasisPoints: map['transferFeeBasisPoints']! as int,
+        maximumFee: map['maximumFee']! as BigInt,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<SetTransferFeeInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<SetTransferFeeInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<SetTransferFeeInstructionData, SetTransferFeeInstructionData>
@@ -81,12 +124,14 @@ getSetTransferFeeInstructionDataCodec() {
 }
 
 /// Creates a [SetTransferFee] instruction.
+/// Set [transferFeeConfigAuthorityIsSigner] to false when [transferFeeConfigAuthority] does not sign (for example, a multisig authority).
 Instruction getSetTransferFeeInstruction({
   required Address programAddress,
   required Address mint,
   required Address transferFeeConfigAuthority,
   required int transferFeeBasisPoints,
   required BigInt maximumFee,
+  bool transferFeeConfigAuthorityIsSigner = true,
 }) {
   final instructionData = SetTransferFeeInstructionData(
     transferFeeBasisPoints: transferFeeBasisPoints,
@@ -99,7 +144,9 @@ Instruction getSetTransferFeeInstruction({
       AccountMeta(address: mint, role: AccountRole.writable),
       AccountMeta(
         address: transferFeeConfigAuthority,
-        role: AccountRole.readonlySigner,
+        role: transferFeeConfigAuthorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
       ),
     ],
     data: getSetTransferFeeInstructionDataEncoder().encode(instructionData),

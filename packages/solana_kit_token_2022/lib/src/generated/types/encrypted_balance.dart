@@ -9,7 +9,7 @@ import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structu
 typedef EncryptedBalance = Uint8List;
 
 Encoder<EncryptedBalance> getEncryptedBalanceEncoder() {
-  return fixEncoderSize(getBytesEncoder(), 64);
+  return fixEncoderSize(getBytesEncoder(), 64, allowTruncation: false);
 }
 
 Decoder<EncryptedBalance> getEncryptedBalanceDecoder() {

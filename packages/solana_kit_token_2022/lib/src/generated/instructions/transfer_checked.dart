@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -16,10 +17,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class TransferCheckedInstructionData {
   const TransferCheckedInstructionData({
-    this.discriminator = 12,
     required this.amount,
     required this.decimals,
-  });
+  }) : discriminator = 12;
 
   final int discriminator;
   final BigInt amount;
@@ -37,7 +37,7 @@ getTransferCheckedInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (TransferCheckedInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': 12,
       'amount': value.amount,
       'decimals': value.decimals,
     },
@@ -52,15 +52,56 @@ getTransferCheckedInstructionDataDecoder() {
     ('decimals', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        TransferCheckedInstructionData(
-          discriminator: map['discriminator']! as int,
-          amount: map['amount']! as BigInt,
-          decimals: map['decimals']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'transferChecked instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (TransferCheckedInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(12),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      TransferCheckedInstructionData(
+        amount: map['amount']! as BigInt,
+        decimals: map['decimals']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<TransferCheckedInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<TransferCheckedInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<TransferCheckedInstructionData, TransferCheckedInstructionData>
@@ -72,6 +113,7 @@ getTransferCheckedInstructionDataCodec() {
 }
 
 /// Creates a [TransferChecked] instruction.
+/// Set [authorityIsSigner] to false when [authority] does not sign (for example, a multisig authority).
 Instruction getTransferCheckedInstruction({
   required Address programAddress,
   required Address source,
@@ -80,6 +122,7 @@ Instruction getTransferCheckedInstruction({
   required Address authority,
   required BigInt amount,
   required int decimals,
+  bool authorityIsSigner = true,
 }) {
   final instructionData = TransferCheckedInstructionData(
     amount: amount,
@@ -92,7 +135,12 @@ Instruction getTransferCheckedInstruction({
       AccountMeta(address: source, role: AccountRole.writable),
       AccountMeta(address: mint, role: AccountRole.readonly),
       AccountMeta(address: destination, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: authority,
+        role: authorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data: getTransferCheckedInstructionDataEncoder().encode(instructionData),
   );

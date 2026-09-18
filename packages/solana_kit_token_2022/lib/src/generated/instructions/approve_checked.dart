@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -16,10 +17,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class ApproveCheckedInstructionData {
   const ApproveCheckedInstructionData({
-    this.discriminator = 13,
     required this.amount,
     required this.decimals,
-  });
+  }) : discriminator = 13;
 
   final int discriminator;
   final BigInt amount;
@@ -37,7 +37,7 @@ getApproveCheckedInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (ApproveCheckedInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': 13,
       'amount': value.amount,
       'decimals': value.decimals,
     },
@@ -52,15 +52,56 @@ getApproveCheckedInstructionDataDecoder() {
     ('decimals', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ApproveCheckedInstructionData(
-          discriminator: map['discriminator']! as int,
-          amount: map['amount']! as BigInt,
-          decimals: map['decimals']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'approveChecked instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (ApproveCheckedInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(13),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      ApproveCheckedInstructionData(
+        amount: map['amount']! as BigInt,
+        decimals: map['decimals']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<ApproveCheckedInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<ApproveCheckedInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<ApproveCheckedInstructionData, ApproveCheckedInstructionData>
@@ -72,6 +113,7 @@ getApproveCheckedInstructionDataCodec() {
 }
 
 /// Creates a [ApproveChecked] instruction.
+/// Set [ownerIsSigner] to false when [owner] does not sign (for example, a multisig authority).
 Instruction getApproveCheckedInstruction({
   required Address programAddress,
   required Address source,
@@ -80,6 +122,7 @@ Instruction getApproveCheckedInstruction({
   required Address owner,
   required BigInt amount,
   required int decimals,
+  bool ownerIsSigner = true,
 }) {
   final instructionData = ApproveCheckedInstructionData(
     amount: amount,
@@ -92,7 +135,10 @@ Instruction getApproveCheckedInstruction({
       AccountMeta(address: source, role: AccountRole.writable),
       AccountMeta(address: mint, role: AccountRole.readonly),
       AccountMeta(address: delegate, role: AccountRole.readonly),
-      AccountMeta(address: owner, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: owner,
+        role: ownerIsSigner ? AccountRole.readonlySigner : AccountRole.readonly,
+      ),
     ],
     data: getApproveCheckedInstructionDataEncoder().encode(instructionData),
   );

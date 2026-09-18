@@ -57,6 +57,7 @@ import {
   use,
 } from "../utils/index.js";
 import { type DartNameApi, snakeCase } from "../utils/nameTransformers.js";
+import type { LinkOverride } from "../utils/options.js";
 import { getDartValueFragment, getNonNegativeInteger, toDartStringLiteral } from "../utils/valueNodes.js";
 
 /**
@@ -73,8 +74,14 @@ export function getTypeManifestVisitor(input: {
   linkables: LinkableDictionary;
   stack: NodeStack;
   nonScalarEnums?: CamelCaseString[];
+  linkOverrides?: Record<string, LinkOverride>;
 }) {
-  const { nameApi, linkables, nonScalarEnums = [] } = input;
+  const {
+    nameApi,
+    linkables,
+    nonScalarEnums = [],
+    linkOverrides = {},
+  } = input;
 
   const baseVisitor = staticVisitor<TypeManifest>(
     (node): TypeManifest => {
@@ -670,6 +677,23 @@ export function getTypeManifestVisitor(input: {
       { self }: { self: Visitor<TypeManifest> },
     ) {
       const name = node.name as string;
+
+      // A link may be backed by a hand-written codec. This keeps whatever
+      // wrappers the IDL puts around the link (`Option`, `HiddenPrefix`, …)
+      // while replacing the inner type and codecs, which is what a type that
+      // Codama cannot express needs.
+      const override = linkOverrides[name];
+      if (override != null) {
+        const moduleKey = `linkOverride:${override.path}`;
+        return {
+          type: use(override.type, moduleKey),
+          encoder: use(override.encoder, moduleKey),
+          decoder: use(override.decoder, moduleKey),
+          value: emptyTypeManifest().value,
+          isEnum: false,
+        };
+      }
+
       const typeName = nameApi.dataType(name);
       const isNonScalar = nonScalarEnums.includes(node.name);
       const moduleKey = `definedType:${snakeCase(name)}`;

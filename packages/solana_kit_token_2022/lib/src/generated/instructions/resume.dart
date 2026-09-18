@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -18,10 +19,7 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class ResumeInstructionData {
-  const ResumeInstructionData({
-    this.discriminator = 44,
-    this.pausableDiscriminator = 2,
-  });
+  const ResumeInstructionData() : discriminator = 44, pausableDiscriminator = 2;
 
   final int discriminator;
   final int pausableDiscriminator;
@@ -36,8 +34,8 @@ Encoder<ResumeInstructionData> getResumeInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (ResumeInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'pausableDiscriminator': value.pausableDiscriminator,
+      'discriminator': 44,
+      'pausableDiscriminator': 2,
     },
   );
 }
@@ -48,14 +46,53 @@ Decoder<ResumeInstructionData> getResumeInstructionDataDecoder() {
     ('pausableDiscriminator', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ResumeInstructionData(
-          discriminator: map['discriminator']! as int,
-          pausableDiscriminator: map['pausableDiscriminator']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'resume instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (ResumeInstructionData, int) readTopLevel(Uint8List bytes, int offset) {
+    getConstantDecoder(
+      getU8Encoder().encode(44),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(2),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      ResumeInstructionData(),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<ResumeInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<ResumeInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<ResumeInstructionData, ResumeInstructionData>
@@ -67,10 +104,13 @@ getResumeInstructionDataCodec() {
 }
 
 /// Creates a [Resume] instruction.
+/// Set [authorityIsSigner] to false when [authority] does not sign (for example, a multisig authority).
 Instruction getResumeInstruction({
   required Address programAddress,
   required Address mint,
   required Address authority,
+
+  bool authorityIsSigner = true,
 }) {
   final instructionData = ResumeInstructionData();
 
@@ -78,7 +118,12 @@ Instruction getResumeInstruction({
     programAddress: programAddress,
     accounts: [
       AccountMeta(address: mint, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: authority,
+        role: authorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data: getResumeInstructionDataEncoder().encode(instructionData),
   );

@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -19,11 +20,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class RotateSupplyElgamalPubkeyInstructionData {
   const RotateSupplyElgamalPubkeyInstructionData({
-    this.discriminator = 42,
-    this.confidentialMintBurnDiscriminator = 1,
     required this.newSupplyElgamalPubkey,
     required this.proofInstructionOffset,
-  });
+  }) : discriminator = 42,
+       confidentialMintBurnDiscriminator = 1;
 
   final int discriminator;
   final int confidentialMintBurnDiscriminator;
@@ -43,9 +43,8 @@ getRotateSupplyElgamalPubkeyInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (RotateSupplyElgamalPubkeyInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'confidentialMintBurnDiscriminator':
-          value.confidentialMintBurnDiscriminator,
+      'discriminator': 42,
+      'confidentialMintBurnDiscriminator': 1,
       'newSupplyElgamalPubkey': value.newSupplyElgamalPubkey,
       'proofInstructionOffset': value.proofInstructionOffset,
     },
@@ -61,17 +60,59 @@ getRotateSupplyElgamalPubkeyInstructionDataDecoder() {
     ('proofInstructionOffset', getI8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        RotateSupplyElgamalPubkeyInstructionData(
-          discriminator: map['discriminator']! as int,
-          confidentialMintBurnDiscriminator:
-              map['confidentialMintBurnDiscriminator']! as int,
-          newSupplyElgamalPubkey: map['newSupplyElgamalPubkey']! as Address,
-          proofInstructionOffset: map['proofInstructionOffset']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'rotateSupplyElgamalPubkey instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (RotateSupplyElgamalPubkeyInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(42),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(1),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      RotateSupplyElgamalPubkeyInstructionData(
+        newSupplyElgamalPubkey: map['newSupplyElgamalPubkey']! as Address,
+        proofInstructionOffset: map['proofInstructionOffset']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<RotateSupplyElgamalPubkeyInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<RotateSupplyElgamalPubkeyInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<
@@ -86,6 +127,7 @@ getRotateSupplyElgamalPubkeyInstructionDataCodec() {
 }
 
 /// Creates a [RotateSupplyElgamalPubkey] instruction.
+/// Set [authorityIsSigner] to false when [authority] does not sign (for example, a multisig authority).
 Instruction getRotateSupplyElgamalPubkeyInstruction({
   required Address programAddress,
   required Address mint,
@@ -93,6 +135,7 @@ Instruction getRotateSupplyElgamalPubkeyInstruction({
   required Address authority,
   required Address newSupplyElgamalPubkey,
   required int proofInstructionOffset,
+  bool authorityIsSigner = true,
 }) {
   final instructionData = RotateSupplyElgamalPubkeyInstructionData(
     newSupplyElgamalPubkey: newSupplyElgamalPubkey,
@@ -107,7 +150,12 @@ Instruction getRotateSupplyElgamalPubkeyInstruction({
         address: instructionsSysvarOrContextState,
         role: AccountRole.readonly,
       ),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: authority,
+        role: authorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data: getRotateSupplyElgamalPubkeyInstructionDataEncoder().encode(
       instructionData,

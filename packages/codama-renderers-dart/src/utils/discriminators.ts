@@ -67,7 +67,14 @@ export function getDiscriminatorValidationFragment(
             `Discriminator size must be a non-negative safe integer, got ${discriminator.size}.`,
           );
         }
-        return fragment`if (bytes.length - offset != ${fragmentFromString(String(discriminator.size))}) {
+        // For an instruction, the discriminated size is the whole payload and
+        // identification depends on an exact match. For an account, the size
+        // describes the fixed prefix: accounts whose trailing fields are
+        // variable — a Token-2022 account with a TLV extension region, for
+        // example — are legitimately longer, so the check is a minimum.
+        const comparison =
+          node.kind === "accountNode" ? "<" : "!=";
+        return fragment`if (bytes.length - offset ${fragmentFromString(comparison)} ${fragmentFromString(String(discriminator.size))}) {
   throw ${use("SolanaError", "solanaErrors")}(
     ${use("SolanaErrorCode", "solanaErrors")}.codecsInvalidByteLength,
     {

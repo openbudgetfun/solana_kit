@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 import '../types/account_state.dart';
@@ -21,10 +22,9 @@ import '../types/account_state.dart';
 @immutable
 class UpdateDefaultAccountStateInstructionData {
   const UpdateDefaultAccountStateInstructionData({
-    this.discriminator = 28,
-    this.defaultAccountStateDiscriminator = 1,
     required this.state,
-  });
+  }) : discriminator = 28,
+       defaultAccountStateDiscriminator = 1;
 
   final int discriminator;
   final int defaultAccountStateDiscriminator;
@@ -42,9 +42,8 @@ getUpdateDefaultAccountStateInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (UpdateDefaultAccountStateInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'defaultAccountStateDiscriminator':
-          value.defaultAccountStateDiscriminator,
+      'discriminator': 28,
+      'defaultAccountStateDiscriminator': 1,
       'state': value.state,
     },
   );
@@ -58,16 +57,58 @@ getUpdateDefaultAccountStateInstructionDataDecoder() {
     ('state', getAccountStateDecoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        UpdateDefaultAccountStateInstructionData(
-          discriminator: map['discriminator']! as int,
-          defaultAccountStateDiscriminator:
-              map['defaultAccountStateDiscriminator']! as int,
-          state: map['state']! as AccountState,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'updateDefaultAccountState instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (UpdateDefaultAccountStateInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(28),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(1),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      UpdateDefaultAccountStateInstructionData(
+        state: map['state']! as AccountState,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<UpdateDefaultAccountStateInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<UpdateDefaultAccountStateInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<
@@ -82,11 +123,13 @@ getUpdateDefaultAccountStateInstructionDataCodec() {
 }
 
 /// Creates a [UpdateDefaultAccountState] instruction.
+/// Set [freezeAuthorityIsSigner] to false when [freezeAuthority] does not sign (for example, a multisig authority).
 Instruction getUpdateDefaultAccountStateInstruction({
   required Address programAddress,
   required Address mint,
   required Address freezeAuthority,
   required AccountState state,
+  bool freezeAuthorityIsSigner = true,
 }) {
   final instructionData = UpdateDefaultAccountStateInstructionData(
     state: state,
@@ -96,7 +139,12 @@ Instruction getUpdateDefaultAccountStateInstruction({
     programAddress: programAddress,
     accounts: [
       AccountMeta(address: mint, role: AccountRole.writable),
-      AccountMeta(address: freezeAuthority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: freezeAuthority,
+        role: freezeAuthorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data: getUpdateDefaultAccountStateInstructionDataEncoder().encode(
       instructionData,
