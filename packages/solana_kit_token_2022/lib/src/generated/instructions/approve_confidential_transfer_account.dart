@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -18,10 +19,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class ApproveConfidentialTransferAccountInstructionData {
-  const ApproveConfidentialTransferAccountInstructionData({
-    this.discriminator = 27,
-    this.confidentialTransferDiscriminator = 3,
-  });
+  const ApproveConfidentialTransferAccountInstructionData()
+    : discriminator = 27,
+      confidentialTransferDiscriminator = 3;
 
   final int discriminator;
   final int confidentialTransferDiscriminator;
@@ -38,9 +38,8 @@ getApproveConfidentialTransferAccountInstructionDataEncoder() {
     structEncoder,
     (ApproveConfidentialTransferAccountInstructionData value) =>
         <String, Object?>{
-          'discriminator': value.discriminator,
-          'confidentialTransferDiscriminator':
-              value.confidentialTransferDiscriminator,
+          'discriminator': 27,
+          'confidentialTransferDiscriminator': 3,
         },
   );
 }
@@ -52,15 +51,57 @@ getApproveConfidentialTransferAccountInstructionDataDecoder() {
     ('confidentialTransferDiscriminator', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ApproveConfidentialTransferAccountInstructionData(
-          discriminator: map['discriminator']! as int,
-          confidentialTransferDiscriminator:
-              map['confidentialTransferDiscriminator']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription':
+            'approveConfidentialTransferAccount instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (ApproveConfidentialTransferAccountInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(27),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(3),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      ApproveConfidentialTransferAccountInstructionData(),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<ApproveConfidentialTransferAccountInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<ApproveConfidentialTransferAccountInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<

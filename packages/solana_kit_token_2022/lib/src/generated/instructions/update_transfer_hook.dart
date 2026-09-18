@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -19,10 +20,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class UpdateTransferHookInstructionData {
   const UpdateTransferHookInstructionData({
-    this.discriminator = 36,
-    this.transferHookDiscriminator = 1,
     required this.programId,
-  });
+  }) : discriminator = 36,
+       transferHookDiscriminator = 1;
 
   final int discriminator;
   final int transferHookDiscriminator;
@@ -47,8 +47,8 @@ getUpdateTransferHookInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (UpdateTransferHookInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'transferHookDiscriminator': value.transferHookDiscriminator,
+      'discriminator': 36,
+      'transferHookDiscriminator': 1,
       'programId': value.programId,
     },
   );
@@ -69,15 +69,58 @@ getUpdateTransferHookInstructionDataDecoder() {
     ),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        UpdateTransferHookInstructionData(
-          discriminator: map['discriminator']! as int,
-          transferHookDiscriminator: map['transferHookDiscriminator']! as int,
-          programId: map['programId'] as Address?,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'updateTransferHook instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (UpdateTransferHookInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(36),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(1),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      UpdateTransferHookInstructionData(
+        programId: map['programId'] as Address?,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<UpdateTransferHookInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<UpdateTransferHookInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<UpdateTransferHookInstructionData, UpdateTransferHookInstructionData>
@@ -89,11 +132,13 @@ getUpdateTransferHookInstructionDataCodec() {
 }
 
 /// Creates a [UpdateTransferHook] instruction.
+/// Set [authorityIsSigner] to false when [authority] does not sign (for example, a multisig authority).
 Instruction getUpdateTransferHookInstruction({
   required Address programAddress,
   required Address mint,
   required Address authority,
   required Address? programId,
+  bool authorityIsSigner = true,
 }) {
   final instructionData = UpdateTransferHookInstructionData(
     programId: programId,
@@ -103,7 +148,12 @@ Instruction getUpdateTransferHookInstruction({
     programAddress: programAddress,
     accounts: [
       AccountMeta(address: mint, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: authority,
+        role: authorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data: getUpdateTransferHookInstructionDataEncoder().encode(instructionData),
   );

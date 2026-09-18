@@ -15,8 +15,11 @@ void main() {
   group('size helpers', () {
     test('getMintSize matches encoded mint length', () {
       final extensions = <Extension>[
-        const MetadataPointer(authority: authority, metadataAddress: metadata),
-        InterestBearingConfig(
+        const ExtensionMetadataPointer(
+          authority: authority,
+          metadataAddress: metadata,
+        ),
+        ExtensionInterestBearingConfig(
           rateAuthority: authority,
           initializationTimestamp: BigInt.zero,
           preUpdateAverageRate: 0,
@@ -40,8 +43,8 @@ void main() {
 
     test('getTokenSize matches encoded token length', () {
       final extensions = <Extension>[
-        const MemoTransfer(requireIncomingTransferMemos: true),
-        const CpiGuard(lockCpi: true),
+        const ExtensionMemoTransfer(requireIncomingTransferMemos: true),
+        const ExtensionCpiGuard(lockCpi: true),
       ];
 
       final account = Token(
@@ -69,7 +72,7 @@ void main() {
       final instructions = getPreInitializeInstructionsForMintExtensions(
         mint: mint,
         extensions: <Extension>[
-          TransferFeeConfig(
+          ExtensionTransferFeeConfig(
             transferFeeConfigAuthority: authority,
             withdrawWithheldAuthority: delegate,
             withheldAmount: BigInt.zero,
@@ -84,11 +87,11 @@ void main() {
               transferFeeBasisPoints: 25,
             ),
           ),
-          const MetadataPointer(
+          const ExtensionMetadataPointer(
             authority: authority,
             metadataAddress: metadata,
           ),
-          const MintCloseAuthority(closeAuthority: delegate),
+          const ExtensionMintCloseAuthority(closeAuthority: delegate),
         ],
       );
 
@@ -127,13 +130,13 @@ void main() {
           mint: mint,
           programAddress: alternateProgram,
           extensions: <Extension>[
-            const ConfidentialTransferMint(
+            const ExtensionConfidentialTransferMint(
               authority: authority,
               autoApproveNewAccounts: true,
               auditorElgamalPubkey: metadata,
             ),
-            const DefaultAccountState(state: AccountState.frozen),
-            TransferFeeConfig(
+            const ExtensionDefaultAccountState(state: AccountState.frozen),
+            ExtensionTransferFeeConfig(
               transferFeeConfigAuthority: authority,
               withdrawWithheldAuthority: delegate,
               withheldAmount: BigInt.zero,
@@ -148,41 +151,47 @@ void main() {
                 transferFeeBasisPoints: 7,
               ),
             ),
-            const MetadataPointer(
+            const ExtensionMetadataPointer(
               authority: authority,
               metadataAddress: metadata,
             ),
-            InterestBearingConfig(
+            ExtensionInterestBearingConfig(
               rateAuthority: authority,
               initializationTimestamp: BigInt.zero,
               preUpdateAverageRate: 1,
               lastUpdateTimestamp: BigInt.one,
               currentRate: 123,
             ),
-            ScaledUiAmountConfig(
+            ExtensionScaledUiAmountConfig(
               authority: authority,
               multiplier: 1.5,
               newMultiplierEffectiveTimestamp: BigInt.from(2),
               newMultiplier: 2.5,
             ),
-            const PausableConfig(authority: authority, paused: false),
-            const PermissionedBurn(authority: delegate),
-            const GroupPointer(authority: authority, groupAddress: metadata),
-            const GroupMemberPointer(
+            const ExtensionPausableConfig(authority: authority, paused: false),
+            const ExtensionPermissionedBurn(authority: delegate),
+            const ExtensionGroupPointer(
+              authority: authority,
+              groupAddress: metadata,
+            ),
+            const ExtensionGroupMemberPointer(
               authority: authority,
               memberAddress: delegate,
             ),
-            const NonTransferable(),
-            const TransferHook(authority: authority, programId: delegate),
-            const PermanentDelegate(delegate: delegate),
-            ConfidentialTransferFee(
+            const ExtensionNonTransferable(),
+            const ExtensionTransferHook(
+              authority: authority,
+              programId: delegate,
+            ),
+            const ExtensionPermanentDelegate(delegate: delegate),
+            ExtensionConfidentialTransferFee(
               authority: authority,
               elgamalPubkey: metadata,
               harvestToMintEnabled: true,
               withheldAmount: Uint8List(0),
             ),
-            const MintCloseAuthority(closeAuthority: delegate),
-            const MemoTransfer(requireIncomingTransferMemos: true),
+            const ExtensionMintCloseAuthority(closeAuthority: delegate),
+            const ExtensionMemoTransfer(requireIncomingTransferMemos: true),
           ],
         );
 
@@ -273,13 +282,117 @@ void main() {
       },
     );
 
-    test('throws when PermissionedBurn authority is null', () {
+    test('throws when ExtensionPermissionedBurn authority is null', () {
       expect(
         () => getPreInitializeInstructionsForMintExtensions(
           mint: mint,
-          extensions: const <Extension>[PermissionedBurn(authority: null)],
+          extensions: const <Extension>[
+            ExtensionPermissionedBurn(authority: null),
+          ],
         ),
         throwsArgumentError,
+      );
+    });
+  });
+
+  group('TLV extension region', () {
+    // The program stops walking the TLV region at the first `Uninitialized`
+    // (type 0) header, or when fewer than two bytes remain, and ignores
+    // whatever follows. Accounts are allocated with spare room of any size —
+    // including the two-byte padding that keeps a mint from colliding with the
+    // multisig account length — so decoding must not consume that tail as
+    // extensions.
+    Mint mintWith(List<Extension>? extensions) => Mint(
+      mintAuthority: authority,
+      supply: BigInt.zero,
+      decimals: 6,
+      isInitialized: true,
+      freezeAuthority: authority,
+      extensions: extensions,
+    );
+
+    test('decodes an account with unused trailing space', () {
+      final encoded = getMintEncoder().encode(
+        mintWith(<Extension>[
+          const ExtensionMetadataPointer(
+            authority: authority,
+            metadataAddress: metadata,
+          ),
+        ]),
+      );
+
+      for (final padding in [1, 2, 5, 6, 8]) {
+        final padded = Uint8List(encoded.length + padding)..setAll(0, encoded);
+
+        final decoded = getMintDecoder().decode(padded);
+
+        expect(
+          decoded.extensions,
+          hasLength(1),
+          reason:
+              '$padding bytes of unused space must not decode as extensions',
+        );
+        expect(decoded.extensions!.single, isA<ExtensionMetadataPointer>());
+      }
+    });
+
+    test('never reports Uninitialized padding as an extension', () {
+      final encoded = getMintEncoder().encode(
+        mintWith(<Extension>[
+          const ExtensionCpiGuard(lockCpi: true),
+        ]),
+      );
+      final padded = Uint8List(encoded.length + 2)..setAll(0, encoded);
+
+      final decoded = getMintDecoder().decode(padded);
+
+      expect(decoded.extensions, hasLength(1));
+      expect(
+        decoded.extensions!.whereType<ExtensionUninitialized>(),
+        isEmpty,
+      );
+    });
+
+    test('round-trips a token account with unused trailing space', () {
+      final encoded = getTokenEncoder().encode(
+        Token(
+          mint: mint,
+          owner: authority,
+          amount: BigInt.zero,
+          delegate: null,
+          state: AccountState.initialized,
+          isNative: null,
+          delegatedAmount: BigInt.zero,
+          closeAuthority: null,
+          extensions: const <Extension>[
+            ExtensionMemoTransfer(requireIncomingTransferMemos: true),
+          ],
+        ),
+      );
+      final padded = Uint8List(encoded.length + 6)..setAll(0, encoded);
+
+      final decoded = getTokenDecoder().decode(padded);
+
+      expect(decoded.extensions, hasLength(1));
+      expect(decoded.extensions!.single, isA<ExtensionMemoTransfer>());
+    });
+
+    test('extensions codec round-trips the TLV region', () {
+      final extensions = <Extension>[
+        const ExtensionMetadataPointer(
+          authority: authority,
+          metadataAddress: metadata,
+        ),
+        const ExtensionCpiGuard(lockCpi: true),
+      ];
+
+      final encoded = getExtensionsCodec().encode(extensions);
+      final decoded = getExtensionsCodec().decode(encoded);
+
+      expect(decoded, equals(extensions));
+      expect(
+        decoded,
+        isNot(contains(isA<ExtensionUninitialized>())),
       );
     });
   });

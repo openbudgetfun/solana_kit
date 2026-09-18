@@ -2,4 +2,4 @@
 // ignore_for_file: type=lint
 
 export 'associated_token.dart';
-export 'token_2022.dart';
+export 'token2022.dart';

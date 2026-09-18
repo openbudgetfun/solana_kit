@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -19,12 +20,11 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class TransferCheckedWithFeeInstructionData {
   const TransferCheckedWithFeeInstructionData({
-    this.discriminator = 26,
-    this.transferFeeDiscriminator = 1,
     required this.amount,
     required this.decimals,
     required this.fee,
-  });
+  }) : discriminator = 26,
+       transferFeeDiscriminator = 1;
 
   final int discriminator;
   final int transferFeeDiscriminator;
@@ -46,8 +46,8 @@ getTransferCheckedWithFeeInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (TransferCheckedWithFeeInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'transferFeeDiscriminator': value.transferFeeDiscriminator,
+      'discriminator': 26,
+      'transferFeeDiscriminator': 1,
       'amount': value.amount,
       'decimals': value.decimals,
       'fee': value.fee,
@@ -65,17 +65,60 @@ getTransferCheckedWithFeeInstructionDataDecoder() {
     ('fee', getU64Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        TransferCheckedWithFeeInstructionData(
-          discriminator: map['discriminator']! as int,
-          transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
-          amount: map['amount']! as BigInt,
-          decimals: map['decimals']! as int,
-          fee: map['fee']! as BigInt,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'transferCheckedWithFee instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (TransferCheckedWithFeeInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(26),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(1),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      TransferCheckedWithFeeInstructionData(
+        amount: map['amount']! as BigInt,
+        decimals: map['decimals']! as int,
+        fee: map['fee']! as BigInt,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<TransferCheckedWithFeeInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<TransferCheckedWithFeeInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<
@@ -90,6 +133,7 @@ getTransferCheckedWithFeeInstructionDataCodec() {
 }
 
 /// Creates a [TransferCheckedWithFee] instruction.
+/// Set [authorityIsSigner] to false when [authority] does not sign (for example, a multisig authority).
 Instruction getTransferCheckedWithFeeInstruction({
   required Address programAddress,
   required Address source,
@@ -99,6 +143,7 @@ Instruction getTransferCheckedWithFeeInstruction({
   required BigInt amount,
   required int decimals,
   required BigInt fee,
+  bool authorityIsSigner = true,
 }) {
   final instructionData = TransferCheckedWithFeeInstructionData(
     amount: amount,
@@ -112,7 +157,12 @@ Instruction getTransferCheckedWithFeeInstruction({
       AccountMeta(address: source, role: AccountRole.writable),
       AccountMeta(address: mint, role: AccountRole.readonly),
       AccountMeta(address: destination, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: authority,
+        role: authorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data: getTransferCheckedWithFeeInstructionDataEncoder().encode(
       instructionData,

@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -15,9 +16,7 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class WithdrawExcessLamportsInstructionData {
-  const WithdrawExcessLamportsInstructionData({
-    this.discriminator = 38,
-  });
+  const WithdrawExcessLamportsInstructionData() : discriminator = 38;
 
   final int discriminator;
 }
@@ -31,7 +30,7 @@ getWithdrawExcessLamportsInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (WithdrawExcessLamportsInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': 38,
     },
   );
 }
@@ -42,13 +41,53 @@ getWithdrawExcessLamportsInstructionDataDecoder() {
     ('discriminator', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        WithdrawExcessLamportsInstructionData(
-          discriminator: map['discriminator']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'withdrawExcessLamports instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (WithdrawExcessLamportsInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(38),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      WithdrawExcessLamportsInstructionData(),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<WithdrawExcessLamportsInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<WithdrawExcessLamportsInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<
@@ -63,11 +102,14 @@ getWithdrawExcessLamportsInstructionDataCodec() {
 }
 
 /// Creates a [WithdrawExcessLamports] instruction.
+/// Set [authorityIsSigner] to false when [authority] does not sign (for example, a multisig authority).
 Instruction getWithdrawExcessLamportsInstruction({
   required Address programAddress,
   required Address source,
   required Address destination,
   required Address authority,
+
+  bool authorityIsSigner = true,
 }) {
   final instructionData = WithdrawExcessLamportsInstructionData();
 
@@ -76,7 +118,12 @@ Instruction getWithdrawExcessLamportsInstruction({
     accounts: [
       AccountMeta(address: source, role: AccountRole.writable),
       AccountMeta(address: destination, role: AccountRole.writable),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: authority,
+        role: authorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data: getWithdrawExcessLamportsInstructionDataEncoder().encode(
       instructionData,

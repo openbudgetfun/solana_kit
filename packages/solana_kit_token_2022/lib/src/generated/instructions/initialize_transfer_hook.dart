@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -19,11 +20,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class InitializeTransferHookInstructionData {
   const InitializeTransferHookInstructionData({
-    this.discriminator = 36,
-    this.transferHookDiscriminator = 0,
     required this.authority,
     required this.programId,
-  });
+  }) : discriminator = 36,
+       transferHookDiscriminator = 0;
 
   final int discriminator;
   final int transferHookDiscriminator;
@@ -57,8 +57,8 @@ getInitializeTransferHookInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (InitializeTransferHookInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'transferHookDiscriminator': value.transferHookDiscriminator,
+      'discriminator': 36,
+      'transferHookDiscriminator': 0,
       'authority': value.authority,
       'programId': value.programId,
     },
@@ -88,16 +88,59 @@ getInitializeTransferHookInstructionDataDecoder() {
     ),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializeTransferHookInstructionData(
-          discriminator: map['discriminator']! as int,
-          transferHookDiscriminator: map['transferHookDiscriminator']! as int,
-          authority: map['authority'] as Address?,
-          programId: map['programId'] as Address?,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'initializeTransferHook instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (InitializeTransferHookInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(36),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(0),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      InitializeTransferHookInstructionData(
+        authority: map['authority'] as Address?,
+        programId: map['programId'] as Address?,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<InitializeTransferHookInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<InitializeTransferHookInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<

@@ -12,11 +12,12 @@ sealed class TokenMetadataField {
   const TokenMetadataField();
 }
 
-final class Name extends TokenMetadataField {
-  const Name();
+final class TokenMetadataFieldName extends TokenMetadataField {
+  const TokenMetadataFieldName();
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is Name;
+  bool operator ==(Object other) =>
+      identical(this, other) || other is TokenMetadataFieldName;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -25,11 +26,12 @@ final class Name extends TokenMetadataField {
   String toString() => 'TokenMetadataField.Name()';
 }
 
-final class Symbol extends TokenMetadataField {
-  const Symbol();
+final class TokenMetadataFieldSymbol extends TokenMetadataField {
+  const TokenMetadataFieldSymbol();
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is Symbol;
+  bool operator ==(Object other) =>
+      identical(this, other) || other is TokenMetadataFieldSymbol;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -38,11 +40,12 @@ final class Symbol extends TokenMetadataField {
   String toString() => 'TokenMetadataField.Symbol()';
 }
 
-final class Uri extends TokenMetadataField {
-  const Uri();
+final class TokenMetadataFieldUri extends TokenMetadataField {
+  const TokenMetadataFieldUri();
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is Uri;
+  bool operator ==(Object other) =>
+      identical(this, other) || other is TokenMetadataFieldUri;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -51,14 +54,15 @@ final class Uri extends TokenMetadataField {
   String toString() => 'TokenMetadataField.Uri()';
 }
 
-final class Key extends TokenMetadataField {
-  const Key(this.value);
+final class TokenMetadataFieldKey extends TokenMetadataField {
+  const TokenMetadataFieldKey(this.value);
 
   final String value;
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Key && value == other.value;
+      identical(this, other) ||
+      other is TokenMetadataFieldKey && value == other.value;
 
   @override
   int get hashCode => value.hashCode;
@@ -82,10 +86,13 @@ Encoder<TokenMetadataField> getTokenMetadataFieldEncoder() {
       ),
     ], size: getU8Encoder()),
     (TokenMetadataField value) => switch (value) {
-      Name() => <String, Object?>{'__kind': 0},
-      Symbol() => <String, Object?>{'__kind': 1},
-      Uri() => <String, Object?>{'__kind': 2},
-      Key(value: final value) => <String, Object?>{'__kind': 3, 'value': value},
+      TokenMetadataFieldName() => <String, Object?>{'__kind': 0},
+      TokenMetadataFieldSymbol() => <String, Object?>{'__kind': 1},
+      TokenMetadataFieldUri() => <String, Object?>{'__kind': 2},
+      TokenMetadataFieldKey(value: final value) => <String, Object?>{
+        '__kind': 3,
+        'value': value,
+      },
     },
   );
 }
@@ -130,13 +137,13 @@ Decoder<TokenMetadataField> getTokenMetadataFieldDecoder() {
     (Map<String, Object?> map, Uint8List bytes, int offset) {
       switch (map['__kind']) {
         case 0:
-          return const Name();
+          return const TokenMetadataFieldName();
         case 1:
-          return const Symbol();
+          return const TokenMetadataFieldSymbol();
         case 2:
-          return const Uri();
+          return const TokenMetadataFieldUri();
         case 3:
-          return Key(map['value']! as String);
+          return TokenMetadataFieldKey(map['value']! as String);
       }
       throw StateError(
         'Unsupported TokenMetadataField discriminator: ${map['__kind']}',

@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 import '../types/decryptable_balance.dart';
@@ -21,12 +22,11 @@ import '../types/decryptable_balance.dart';
 @immutable
 class ConfigureConfidentialTransferAccountInstructionData {
   const ConfigureConfidentialTransferAccountInstructionData({
-    this.discriminator = 27,
-    this.confidentialTransferDiscriminator = 2,
     required this.decryptableZeroBalance,
     required this.maximumPendingBalanceCreditCounter,
     required this.proofInstructionOffset,
-  });
+  }) : discriminator = 27,
+       confidentialTransferDiscriminator = 2;
 
   final int discriminator;
   final int confidentialTransferDiscriminator;
@@ -49,9 +49,8 @@ getConfigureConfidentialTransferAccountInstructionDataEncoder() {
     structEncoder,
     (ConfigureConfidentialTransferAccountInstructionData value) =>
         <String, Object?>{
-          'discriminator': value.discriminator,
-          'confidentialTransferDiscriminator':
-              value.confidentialTransferDiscriminator,
+          'discriminator': 27,
+          'confidentialTransferDiscriminator': 2,
           'decryptableZeroBalance': value.decryptableZeroBalance,
           'maximumPendingBalanceCreditCounter':
               value.maximumPendingBalanceCreditCounter,
@@ -70,20 +69,63 @@ getConfigureConfidentialTransferAccountInstructionDataDecoder() {
     ('proofInstructionOffset', getI8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ConfigureConfidentialTransferAccountInstructionData(
-          discriminator: map['discriminator']! as int,
-          confidentialTransferDiscriminator:
-              map['confidentialTransferDiscriminator']! as int,
-          decryptableZeroBalance:
-              map['decryptableZeroBalance']! as DecryptableBalance,
-          maximumPendingBalanceCreditCounter:
-              map['maximumPendingBalanceCreditCounter']! as BigInt,
-          proofInstructionOffset: map['proofInstructionOffset']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription':
+            'configureConfidentialTransferAccount instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (ConfigureConfidentialTransferAccountInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(27),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(2),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      ConfigureConfidentialTransferAccountInstructionData(
+        decryptableZeroBalance:
+            map['decryptableZeroBalance']! as DecryptableBalance,
+        maximumPendingBalanceCreditCounter:
+            map['maximumPendingBalanceCreditCounter']! as BigInt,
+        proofInstructionOffset: map['proofInstructionOffset']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<ConfigureConfidentialTransferAccountInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<ConfigureConfidentialTransferAccountInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<
@@ -98,6 +140,7 @@ getConfigureConfidentialTransferAccountInstructionDataCodec() {
 }
 
 /// Creates a [ConfigureConfidentialTransferAccount] instruction.
+/// Set [authorityIsSigner] to false when [authority] does not sign (for example, a multisig authority).
 Instruction getConfigureConfidentialTransferAccountInstruction({
   required Address programAddress,
   required Address token,
@@ -107,6 +150,7 @@ Instruction getConfigureConfidentialTransferAccountInstruction({
   required DecryptableBalance decryptableZeroBalance,
   required BigInt maximumPendingBalanceCreditCounter,
   required int proofInstructionOffset,
+  bool authorityIsSigner = true,
 }) {
   final instructionData = ConfigureConfidentialTransferAccountInstructionData(
     decryptableZeroBalance: decryptableZeroBalance,
@@ -123,7 +167,12 @@ Instruction getConfigureConfidentialTransferAccountInstruction({
         address: instructionsSysvarOrContextState,
         role: AccountRole.readonly,
       ),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: authority,
+        role: authorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data: getConfigureConfidentialTransferAccountInstructionDataEncoder()
         .encode(instructionData),

@@ -9,9 +9,10 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
+import '../../extensions.dart';
 import '../types/account_state.dart';
-import '../types/extension.dart';
 
 @immutable
 class Token {
@@ -80,7 +81,7 @@ Encoder<Token> getTokenEncoder() {
     (
       'delegate',
       getNullableEncoder<Address>(
-        getAddressEncoder(),
+        transformEncoder(getAddressEncoder(), (Address value) => value),
         prefix: getU32Encoder(),
         noneValue: const ZeroesNoneValue(),
       ),
@@ -89,7 +90,7 @@ Encoder<Token> getTokenEncoder() {
     (
       'isNative',
       getNullableEncoder<BigInt>(
-        getU64Encoder(),
+        transformEncoder(getU64Encoder(), (BigInt value) => value),
         prefix: getU32Encoder(),
         noneValue: const ZeroesNoneValue(),
       ),
@@ -98,7 +99,7 @@ Encoder<Token> getTokenEncoder() {
     (
       'closeAuthority',
       getNullableEncoder<Address>(
-        getAddressEncoder(),
+        transformEncoder(getAddressEncoder(), (Address value) => value),
         prefix: getU32Encoder(),
         noneValue: const ZeroesNoneValue(),
       ),
@@ -106,10 +107,9 @@ Encoder<Token> getTokenEncoder() {
     (
       'extensions',
       getNullableEncoder<List<Extension>>(
-        getHiddenPrefixEncoder(
-          getArrayEncoder(getExtensionEncoder(), size: RemainderArraySize()),
-          [getConstantEncoder(getU8Encoder().encode(2))],
-        ),
+        getHiddenPrefixEncoder(getExtensionsEncoder(), [
+          getConstantEncoder(getU8Encoder().encode(2)),
+        ]),
         hasPrefix: false,
       ),
     ),
@@ -165,29 +165,73 @@ Decoder<Token> getTokenDecoder() {
     (
       'extensions',
       getNullableDecoder<List<Extension>>(
-        getHiddenPrefixDecoder(
-          getArrayDecoder(getExtensionDecoder(), size: RemainderArraySize()),
-          [getConstantDecoder(getU8Encoder().encode(2))],
-        ),
+        getHiddenPrefixDecoder(getExtensionsDecoder(), [
+          getConstantDecoder(getU8Encoder().encode(2)),
+        ]),
         hasPrefix: false,
       ),
     ),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => Token(
-      mint: map['mint']! as Address,
-      owner: map['owner']! as Address,
-      amount: map['amount']! as BigInt,
-      delegate: map['delegate'] as Address?,
-      state: map['state']! as AccountState,
-      isNative: map['isNative'] as BigInt?,
-      delegatedAmount: map['delegatedAmount']! as BigInt,
-      closeAuthority: map['closeAuthority'] as Address?,
-      extensions: map['extensions'] as List<Extension>?,
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'token account decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (Token, int) readTopLevel(Uint8List bytes, int offset) {
+    if (bytes.length - offset < 165) {
+      throw SolanaError(
+        SolanaErrorCode.codecsInvalidByteLength,
+        {
+          'codecDescription': 'token discriminator',
+          'expected': 165,
+          'bytesLength': bytes.length - offset,
+        },
+      );
+    }
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      Token(
+        mint: map['mint']! as Address,
+        owner: map['owner']! as Address,
+        amount: map['amount']! as BigInt,
+        delegate: map['delegate'] as Address?,
+        state: map['state']! as AccountState,
+        isNative: map['isNative'] as BigInt?,
+        delegatedAmount: map['delegatedAmount']! as BigInt,
+        closeAuthority: map['closeAuthority'] as Address?,
+        extensions: map['extensions'] as List<Extension>?,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() => FixedSizeDecoder<Token>(
+      fixedSize: structDecoder.fixedSize,
+      read: (bytes, offset) {
+        final bytesLength = bytes.length - offset;
+        if (bytesLength != structDecoder.fixedSize) {
+          throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+        }
+        return readTopLevel(bytes, offset);
+      },
     ),
-  );
+    VariableSizeDecoder<Map<String, Object?>>() => VariableSizeDecoder<Token>(
+      read: readTopLevel,
+      maxSize: structDecoder.maxSize,
+    ),
+  };
 }
 
 Codec<Token, Token> getTokenCodec() {

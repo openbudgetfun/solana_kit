@@ -1,7 +1,8 @@
 import 'package:solana_kit_address_constants/solana_kit_address_constants.dart'
-    show memoProgramAddress;
-import 'package:solana_kit_addresses/solana_kit_addresses.dart'
-    hide memoProgramAddress;
+    show
+        memoLegacyProgramAddress,
+        memoLegacyProgramAddressV3,
+        memoProgramAddress;
 import 'package:solana_kit_memo/solana_kit_memo.dart';
 import 'package:test/test.dart';
 
@@ -10,6 +11,10 @@ void main() {
     test('program addresses are accessible', () {
       expect(
         memoProgramAddress.value,
+        equals('Memo4c2pN8afCj432Lb7RMVKi9PbQnnW7ewFFaV3oAH'),
+      );
+      expect(
+        memoLegacyProgramAddressV3.value,
         equals('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
       );
       expect(

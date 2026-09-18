@@ -9,6 +9,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 @immutable
 class Multisig {
@@ -52,7 +53,13 @@ Encoder<Multisig> getMultisigEncoder() {
     ('m', getU8Encoder()),
     ('n', getU8Encoder()),
     ('isInitialized', getBooleanEncoder()),
-    ('signers', getArrayEncoder(getAddressEncoder(), size: FixedArraySize(11))),
+    (
+      'signers',
+      getArrayEncoder(
+        transformEncoder(getAddressEncoder(), (Address value) => value),
+        size: FixedArraySize(11),
+      ),
+    ),
   ]);
 
   return transformEncoder(
@@ -74,15 +81,61 @@ Decoder<Multisig> getMultisigDecoder() {
     ('signers', getArrayDecoder(getAddressDecoder(), size: FixedArraySize(11))),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => Multisig(
-      m: map['m']! as int,
-      n: map['n']! as int,
-      isInitialized: map['isInitialized']! as bool,
-      signers: map['signers']! as List<Address>,
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'multisig account decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (Multisig, int) readTopLevel(Uint8List bytes, int offset) {
+    if (bytes.length - offset < 355) {
+      throw SolanaError(
+        SolanaErrorCode.codecsInvalidByteLength,
+        {
+          'codecDescription': 'multisig discriminator',
+          'expected': 355,
+          'bytesLength': bytes.length - offset,
+        },
+      );
+    }
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      Multisig(
+        m: map['m']! as int,
+        n: map['n']! as int,
+        isInitialized: map['isInitialized']! as bool,
+        signers: map['signers']! as List<Address>,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() => FixedSizeDecoder<Multisig>(
+      fixedSize: structDecoder.fixedSize,
+      read: (bytes, offset) {
+        final bytesLength = bytes.length - offset;
+        if (bytesLength != structDecoder.fixedSize) {
+          throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+        }
+        return readTopLevel(bytes, offset);
+      },
     ),
-  );
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<Multisig>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<Multisig, Multisig> getMultisigCodec() {

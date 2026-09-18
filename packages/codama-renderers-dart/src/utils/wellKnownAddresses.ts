@@ -46,7 +46,8 @@ export const WELL_KNOWN_ADDRESSES: ReadonlyMap<string, string> = new Map([
   ['TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', 'tokenProgramAddress'],
   ['TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb', 'token2022ProgramAddress'],
   ['ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL', 'associatedTokenProgramAddress'],
-  ['MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr', 'memoProgramAddress'],
+  ['Memo4c2pN8afCj432Lb7RMVKi9PbQnnW7ewFFaV3oAH', 'memoProgramAddress'],
+  ['MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr', 'memoLegacyProgramAddressV3'],
   ['Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo', 'memoLegacyProgramAddress'],
 
   // Metaplex programs

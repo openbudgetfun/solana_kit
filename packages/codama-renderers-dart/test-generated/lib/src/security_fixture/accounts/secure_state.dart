@@ -82,7 +82,7 @@ Decoder<SecureState> getSecureStateDecoder() {
     getConstantDecoder(
       getU8Encoder().encode(7),
     ).read(bytes, offset + 0);
-    if (bytes.length - offset != 3) {
+    if (bytes.length - offset < 3) {
       throw SolanaError(
         SolanaErrorCode.codecsInvalidByteLength,
         {

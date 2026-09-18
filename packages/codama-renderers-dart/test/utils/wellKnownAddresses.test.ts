@@ -56,8 +56,11 @@ describe("WELL_KNOWN_ADDRESSES", () => {
       WELL_KNOWN_ADDRESSES.get("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"),
     ).toBe("associatedTokenProgramAddress");
     expect(
-      WELL_KNOWN_ADDRESSES.get("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+      WELL_KNOWN_ADDRESSES.get("Memo4c2pN8afCj432Lb7RMVKi9PbQnnW7ewFFaV3oAH"),
     ).toBe("memoProgramAddress");
+    expect(
+      WELL_KNOWN_ADDRESSES.get("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+    ).toBe("memoLegacyProgramAddressV3");
     expect(
       WELL_KNOWN_ADDRESSES.get("Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo"),
     ).toBe("memoLegacyProgramAddress");

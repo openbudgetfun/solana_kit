@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 import '../types/decryptable_balance.dart';
@@ -22,15 +23,14 @@ import '../types/encrypted_balance.dart';
 @immutable
 class ConfidentialTransferInstructionData {
   const ConfidentialTransferInstructionData({
-    this.discriminator = 27,
-    this.confidentialTransferDiscriminator = 7,
     required this.newSourceDecryptableAvailableBalance,
     required this.transferAmountAuditorCiphertextLo,
     required this.transferAmountAuditorCiphertextHi,
     required this.equalityProofInstructionOffset,
     required this.ciphertextValidityProofInstructionOffset,
     required this.rangeProofInstructionOffset,
-  });
+  }) : discriminator = 27,
+       confidentialTransferDiscriminator = 7;
 
   final int discriminator;
   final int confidentialTransferDiscriminator;
@@ -58,9 +58,8 @@ getConfidentialTransferInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (ConfidentialTransferInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'confidentialTransferDiscriminator':
-          value.confidentialTransferDiscriminator,
+      'discriminator': 27,
+      'confidentialTransferDiscriminator': 7,
       'newSourceDecryptableAvailableBalance':
           value.newSourceDecryptableAvailableBalance,
       'transferAmountAuditorCiphertextLo':
@@ -88,29 +87,68 @@ getConfidentialTransferInstructionDataDecoder() {
     ('rangeProofInstructionOffset', getI8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (
-      Map<String, Object?> map,
-      Uint8List bytes,
-      int offset,
-    ) => ConfidentialTransferInstructionData(
-      discriminator: map['discriminator']! as int,
-      confidentialTransferDiscriminator:
-          map['confidentialTransferDiscriminator']! as int,
-      newSourceDecryptableAvailableBalance:
-          map['newSourceDecryptableAvailableBalance']! as DecryptableBalance,
-      transferAmountAuditorCiphertextLo:
-          map['transferAmountAuditorCiphertextLo']! as EncryptedBalance,
-      transferAmountAuditorCiphertextHi:
-          map['transferAmountAuditorCiphertextHi']! as EncryptedBalance,
-      equalityProofInstructionOffset:
-          map['equalityProofInstructionOffset']! as int,
-      ciphertextValidityProofInstructionOffset:
-          map['ciphertextValidityProofInstructionOffset']! as int,
-      rangeProofInstructionOffset: map['rangeProofInstructionOffset']! as int,
-    ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'confidentialTransfer instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (ConfidentialTransferInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(27),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(7),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      ConfidentialTransferInstructionData(
+        newSourceDecryptableAvailableBalance:
+            map['newSourceDecryptableAvailableBalance']! as DecryptableBalance,
+        transferAmountAuditorCiphertextLo:
+            map['transferAmountAuditorCiphertextLo']! as EncryptedBalance,
+        transferAmountAuditorCiphertextHi:
+            map['transferAmountAuditorCiphertextHi']! as EncryptedBalance,
+        equalityProofInstructionOffset:
+            map['equalityProofInstructionOffset']! as int,
+        ciphertextValidityProofInstructionOffset:
+            map['ciphertextValidityProofInstructionOffset']! as int,
+        rangeProofInstructionOffset: map['rangeProofInstructionOffset']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<ConfidentialTransferInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<ConfidentialTransferInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<ConfidentialTransferInstructionData, ConfidentialTransferInstructionData>
@@ -122,6 +160,7 @@ getConfidentialTransferInstructionDataCodec() {
 }
 
 /// Creates a [ConfidentialTransfer] instruction.
+/// Set [authorityIsSigner] to false when [authority] does not sign (for example, a multisig authority).
 Instruction getConfidentialTransferInstruction({
   required Address programAddress,
   required Address sourceToken,
@@ -138,6 +177,7 @@ Instruction getConfidentialTransferInstruction({
   required int equalityProofInstructionOffset,
   required int ciphertextValidityProofInstructionOffset,
   required int rangeProofInstructionOffset,
+  bool authorityIsSigner = true,
 }) {
   final instructionData = ConfidentialTransferInstructionData(
     newSourceDecryptableAvailableBalance: newSourceDecryptableAvailableBalance,
@@ -166,7 +206,12 @@ Instruction getConfidentialTransferInstruction({
         ),
       if (rangeRecord != null)
         AccountMeta(address: rangeRecord, role: AccountRole.readonly),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: authority,
+        role: authorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data: getConfidentialTransferInstructionDataEncoder().encode(
       instructionData,

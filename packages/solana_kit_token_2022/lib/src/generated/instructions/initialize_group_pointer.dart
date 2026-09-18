@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -19,11 +20,10 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class InitializeGroupPointerInstructionData {
   const InitializeGroupPointerInstructionData({
-    this.discriminator = 40,
-    this.groupPointerDiscriminator = 0,
     required this.authority,
     required this.groupAddress,
-  });
+  }) : discriminator = 40,
+       groupPointerDiscriminator = 0;
 
   final int discriminator;
   final int groupPointerDiscriminator;
@@ -57,8 +57,8 @@ getInitializeGroupPointerInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (InitializeGroupPointerInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'groupPointerDiscriminator': value.groupPointerDiscriminator,
+      'discriminator': 40,
+      'groupPointerDiscriminator': 0,
       'authority': value.authority,
       'groupAddress': value.groupAddress,
     },
@@ -88,16 +88,59 @@ getInitializeGroupPointerInstructionDataDecoder() {
     ),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializeGroupPointerInstructionData(
-          discriminator: map['discriminator']! as int,
-          groupPointerDiscriminator: map['groupPointerDiscriminator']! as int,
-          authority: map['authority'] as Address?,
-          groupAddress: map['groupAddress'] as Address?,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'initializeGroupPointer instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (InitializeGroupPointerInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(40),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(0),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      InitializeGroupPointerInstructionData(
+        authority: map['authority'] as Address?,
+        groupAddress: map['groupAddress'] as Address?,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<InitializeGroupPointerInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<InitializeGroupPointerInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<

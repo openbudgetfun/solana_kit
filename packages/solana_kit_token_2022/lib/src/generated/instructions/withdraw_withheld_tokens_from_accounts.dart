@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -19,10 +20,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class WithdrawWithheldTokensFromAccountsInstructionData {
   const WithdrawWithheldTokensFromAccountsInstructionData({
-    this.discriminator = 26,
-    this.transferFeeDiscriminator = 3,
     required this.numTokenAccounts,
-  });
+  }) : discriminator = 26,
+       transferFeeDiscriminator = 3;
 
   final int discriminator;
   final int transferFeeDiscriminator;
@@ -41,8 +41,8 @@ getWithdrawWithheldTokensFromAccountsInstructionDataEncoder() {
     structEncoder,
     (WithdrawWithheldTokensFromAccountsInstructionData value) =>
         <String, Object?>{
-          'discriminator': value.discriminator,
-          'transferFeeDiscriminator': value.transferFeeDiscriminator,
+          'discriminator': 26,
+          'transferFeeDiscriminator': 3,
           'numTokenAccounts': value.numTokenAccounts,
         },
   );
@@ -56,15 +56,59 @@ getWithdrawWithheldTokensFromAccountsInstructionDataDecoder() {
     ('numTokenAccounts', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        WithdrawWithheldTokensFromAccountsInstructionData(
-          discriminator: map['discriminator']! as int,
-          transferFeeDiscriminator: map['transferFeeDiscriminator']! as int,
-          numTokenAccounts: map['numTokenAccounts']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription':
+            'withdrawWithheldTokensFromAccounts instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (WithdrawWithheldTokensFromAccountsInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(26),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(3),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      WithdrawWithheldTokensFromAccountsInstructionData(
+        numTokenAccounts: map['numTokenAccounts']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<WithdrawWithheldTokensFromAccountsInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<WithdrawWithheldTokensFromAccountsInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<
@@ -79,12 +123,14 @@ getWithdrawWithheldTokensFromAccountsInstructionDataCodec() {
 }
 
 /// Creates a [WithdrawWithheldTokensFromAccounts] instruction.
+/// Set [withdrawWithheldAuthorityIsSigner] to false when [withdrawWithheldAuthority] does not sign (for example, a multisig authority).
 Instruction getWithdrawWithheldTokensFromAccountsInstruction({
   required Address programAddress,
   required Address mint,
   required Address feeReceiver,
   required Address withdrawWithheldAuthority,
   required int numTokenAccounts,
+  bool withdrawWithheldAuthorityIsSigner = true,
 }) {
   final instructionData = WithdrawWithheldTokensFromAccountsInstructionData(
     numTokenAccounts: numTokenAccounts,
@@ -97,7 +143,9 @@ Instruction getWithdrawWithheldTokensFromAccountsInstruction({
       AccountMeta(address: feeReceiver, role: AccountRole.writable),
       AccountMeta(
         address: withdrawWithheldAuthority,
-        role: AccountRole.readonlySigner,
+        role: withdrawWithheldAuthorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
       ),
     ],
     data: getWithdrawWithheldTokensFromAccountsInstructionDataEncoder().encode(

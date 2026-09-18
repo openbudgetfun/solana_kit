@@ -73,7 +73,7 @@ void main() {
           units: 1,
         ),
         getAddMemoInstruction(
-          programAddress: memoProgramAddress,
+          programAddress: onChainMemoProgramAddress,
           memo: memo,
         ),
       ]),

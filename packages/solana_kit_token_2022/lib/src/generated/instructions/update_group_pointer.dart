@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -19,10 +20,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class UpdateGroupPointerInstructionData {
   const UpdateGroupPointerInstructionData({
-    this.discriminator = 40,
-    this.groupPointerDiscriminator = 1,
     required this.groupAddress,
-  });
+  }) : discriminator = 40,
+       groupPointerDiscriminator = 1;
 
   final int discriminator;
   final int groupPointerDiscriminator;
@@ -47,8 +47,8 @@ getUpdateGroupPointerInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (UpdateGroupPointerInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'groupPointerDiscriminator': value.groupPointerDiscriminator,
+      'discriminator': 40,
+      'groupPointerDiscriminator': 1,
       'groupAddress': value.groupAddress,
     },
   );
@@ -69,15 +69,58 @@ getUpdateGroupPointerInstructionDataDecoder() {
     ),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        UpdateGroupPointerInstructionData(
-          discriminator: map['discriminator']! as int,
-          groupPointerDiscriminator: map['groupPointerDiscriminator']! as int,
-          groupAddress: map['groupAddress'] as Address?,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'updateGroupPointer instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (UpdateGroupPointerInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(40),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(1),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      UpdateGroupPointerInstructionData(
+        groupAddress: map['groupAddress'] as Address?,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<UpdateGroupPointerInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<UpdateGroupPointerInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<UpdateGroupPointerInstructionData, UpdateGroupPointerInstructionData>
@@ -89,11 +132,13 @@ getUpdateGroupPointerInstructionDataCodec() {
 }
 
 /// Creates a [UpdateGroupPointer] instruction.
+/// Set [groupPointerAuthorityIsSigner] to false when [groupPointerAuthority] does not sign (for example, a multisig authority).
 Instruction getUpdateGroupPointerInstruction({
   required Address programAddress,
   required Address mint,
   required Address groupPointerAuthority,
   required Address? groupAddress,
+  bool groupPointerAuthorityIsSigner = true,
 }) {
   final instructionData = UpdateGroupPointerInstructionData(
     groupAddress: groupAddress,
@@ -105,7 +150,9 @@ Instruction getUpdateGroupPointerInstruction({
       AccountMeta(address: mint, role: AccountRole.writable),
       AccountMeta(
         address: groupPointerAuthority,
-        role: AccountRole.readonlySigner,
+        role: groupPointerAuthorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
       ),
     ],
     data: getUpdateGroupPointerInstructionDataEncoder().encode(instructionData),

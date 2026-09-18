@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 import '../types/account_state.dart';
@@ -21,10 +22,9 @@ import '../types/account_state.dart';
 @immutable
 class InitializeDefaultAccountStateInstructionData {
   const InitializeDefaultAccountStateInstructionData({
-    this.discriminator = 28,
-    this.defaultAccountStateDiscriminator = 0,
     required this.state,
-  });
+  }) : discriminator = 28,
+       defaultAccountStateDiscriminator = 0;
 
   final int discriminator;
   final int defaultAccountStateDiscriminator;
@@ -42,9 +42,8 @@ getInitializeDefaultAccountStateInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (InitializeDefaultAccountStateInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'defaultAccountStateDiscriminator':
-          value.defaultAccountStateDiscriminator,
+      'discriminator': 28,
+      'defaultAccountStateDiscriminator': 0,
       'state': value.state,
     },
   );
@@ -58,16 +57,58 @@ getInitializeDefaultAccountStateInstructionDataDecoder() {
     ('state', getAccountStateDecoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializeDefaultAccountStateInstructionData(
-          discriminator: map['discriminator']! as int,
-          defaultAccountStateDiscriminator:
-              map['defaultAccountStateDiscriminator']! as int,
-          state: map['state']! as AccountState,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'initializeDefaultAccountState instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (InitializeDefaultAccountStateInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(28),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(0),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      InitializeDefaultAccountStateInstructionData(
+        state: map['state']! as AccountState,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<InitializeDefaultAccountStateInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<InitializeDefaultAccountStateInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<

@@ -18,12 +18,12 @@ sealed class Extension {
   const Extension();
 }
 
-final class Uninitialized extends Extension {
-  const Uninitialized();
+final class ExtensionUninitialized extends Extension {
+  const ExtensionUninitialized();
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Uninitialized;
+      identical(this, other) || other is ExtensionUninitialized;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -32,8 +32,8 @@ final class Uninitialized extends Extension {
   String toString() => 'Extension.Uninitialized()';
 }
 
-final class TransferFeeConfig extends Extension {
-  const TransferFeeConfig({
+final class ExtensionTransferFeeConfig extends Extension {
+  const ExtensionTransferFeeConfig({
     required this.transferFeeConfigAuthority,
     required this.withdrawWithheldAuthority,
     required this.withheldAmount,
@@ -50,7 +50,7 @@ final class TransferFeeConfig extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TransferFeeConfig &&
+      other is ExtensionTransferFeeConfig &&
           transferFeeConfigAuthority == other.transferFeeConfigAuthority &&
           withdrawWithheldAuthority == other.withdrawWithheldAuthority &&
           withheldAmount == other.withheldAmount &&
@@ -71,8 +71,8 @@ final class TransferFeeConfig extends Extension {
       'Extension.TransferFeeConfig(transferFeeConfigAuthority: $transferFeeConfigAuthority, withdrawWithheldAuthority: $withdrawWithheldAuthority, withheldAmount: $withheldAmount, olderTransferFee: $olderTransferFee, newerTransferFee: $newerTransferFee)';
 }
 
-final class TransferFeeAmount extends Extension {
-  const TransferFeeAmount({
+final class ExtensionTransferFeeAmount extends Extension {
+  const ExtensionTransferFeeAmount({
     required this.withheldAmount,
   });
 
@@ -81,7 +81,8 @@ final class TransferFeeAmount extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TransferFeeAmount && withheldAmount == other.withheldAmount;
+      other is ExtensionTransferFeeAmount &&
+          withheldAmount == other.withheldAmount;
 
   @override
   int get hashCode => withheldAmount.hashCode;
@@ -91,8 +92,8 @@ final class TransferFeeAmount extends Extension {
       'Extension.TransferFeeAmount(withheldAmount: $withheldAmount)';
 }
 
-final class MintCloseAuthority extends Extension {
-  const MintCloseAuthority({
+final class ExtensionMintCloseAuthority extends Extension {
+  const ExtensionMintCloseAuthority({
     required this.closeAuthority,
   });
 
@@ -101,7 +102,8 @@ final class MintCloseAuthority extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is MintCloseAuthority && closeAuthority == other.closeAuthority;
+      other is ExtensionMintCloseAuthority &&
+          closeAuthority == other.closeAuthority;
 
   @override
   int get hashCode => closeAuthority.hashCode;
@@ -111,8 +113,8 @@ final class MintCloseAuthority extends Extension {
       'Extension.MintCloseAuthority(closeAuthority: $closeAuthority)';
 }
 
-final class ConfidentialTransferMint extends Extension {
-  const ConfidentialTransferMint({
+final class ExtensionConfidentialTransferMint extends Extension {
+  const ExtensionConfidentialTransferMint({
     required this.authority,
     required this.autoApproveNewAccounts,
     required this.auditorElgamalPubkey,
@@ -125,7 +127,7 @@ final class ConfidentialTransferMint extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ConfidentialTransferMint &&
+      other is ExtensionConfidentialTransferMint &&
           authority == other.authority &&
           autoApproveNewAccounts == other.autoApproveNewAccounts &&
           auditorElgamalPubkey == other.auditorElgamalPubkey;
@@ -139,8 +141,8 @@ final class ConfidentialTransferMint extends Extension {
       'Extension.ConfidentialTransferMint(authority: $authority, autoApproveNewAccounts: $autoApproveNewAccounts, auditorElgamalPubkey: $auditorElgamalPubkey)';
 }
 
-final class ConfidentialTransferAccount extends Extension {
-  const ConfidentialTransferAccount({
+final class ExtensionConfidentialTransferAccount extends Extension {
+  const ExtensionConfidentialTransferAccount({
     required this.approved,
     required this.elgamalPubkey,
     required this.pendingBalanceLow,
@@ -171,7 +173,7 @@ final class ConfidentialTransferAccount extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ConfidentialTransferAccount &&
+      other is ExtensionConfidentialTransferAccount &&
           approved == other.approved &&
           elgamalPubkey == other.elgamalPubkey &&
           pendingBalanceLow == other.pendingBalanceLow &&
@@ -209,8 +211,8 @@ final class ConfidentialTransferAccount extends Extension {
       'Extension.ConfidentialTransferAccount(approved: $approved, elgamalPubkey: $elgamalPubkey, pendingBalanceLow: $pendingBalanceLow, pendingBalanceHigh: $pendingBalanceHigh, availableBalance: $availableBalance, decryptableAvailableBalance: $decryptableAvailableBalance, allowConfidentialCredits: $allowConfidentialCredits, allowNonConfidentialCredits: $allowNonConfidentialCredits, pendingBalanceCreditCounter: $pendingBalanceCreditCounter, maximumPendingBalanceCreditCounter: $maximumPendingBalanceCreditCounter, expectedPendingBalanceCreditCounter: $expectedPendingBalanceCreditCounter, actualPendingBalanceCreditCounter: $actualPendingBalanceCreditCounter)';
 }
 
-final class DefaultAccountState extends Extension {
-  const DefaultAccountState({
+final class ExtensionDefaultAccountState extends Extension {
+  const ExtensionDefaultAccountState({
     required this.state,
   });
 
@@ -219,7 +221,7 @@ final class DefaultAccountState extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is DefaultAccountState && state == other.state;
+      other is ExtensionDefaultAccountState && state == other.state;
 
   @override
   int get hashCode => state.hashCode;
@@ -228,12 +230,12 @@ final class DefaultAccountState extends Extension {
   String toString() => 'Extension.DefaultAccountState(state: $state)';
 }
 
-final class ImmutableOwner extends Extension {
-  const ImmutableOwner();
+final class ExtensionImmutableOwner extends Extension {
+  const ExtensionImmutableOwner();
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is ImmutableOwner && true;
+      identical(this, other) || other is ExtensionImmutableOwner && true;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -242,8 +244,8 @@ final class ImmutableOwner extends Extension {
   String toString() => 'Extension.ImmutableOwner()';
 }
 
-final class MemoTransfer extends Extension {
-  const MemoTransfer({
+final class ExtensionMemoTransfer extends Extension {
+  const ExtensionMemoTransfer({
     required this.requireIncomingTransferMemos,
   });
 
@@ -252,7 +254,7 @@ final class MemoTransfer extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is MemoTransfer &&
+      other is ExtensionMemoTransfer &&
           requireIncomingTransferMemos == other.requireIncomingTransferMemos;
 
   @override
@@ -263,12 +265,12 @@ final class MemoTransfer extends Extension {
       'Extension.MemoTransfer(requireIncomingTransferMemos: $requireIncomingTransferMemos)';
 }
 
-final class NonTransferable extends Extension {
-  const NonTransferable();
+final class ExtensionNonTransferable extends Extension {
+  const ExtensionNonTransferable();
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is NonTransferable && true;
+      identical(this, other) || other is ExtensionNonTransferable && true;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -277,8 +279,8 @@ final class NonTransferable extends Extension {
   String toString() => 'Extension.NonTransferable()';
 }
 
-final class InterestBearingConfig extends Extension {
-  const InterestBearingConfig({
+final class ExtensionInterestBearingConfig extends Extension {
+  const ExtensionInterestBearingConfig({
     required this.rateAuthority,
     required this.initializationTimestamp,
     required this.preUpdateAverageRate,
@@ -295,7 +297,7 @@ final class InterestBearingConfig extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is InterestBearingConfig &&
+      other is ExtensionInterestBearingConfig &&
           rateAuthority == other.rateAuthority &&
           initializationTimestamp == other.initializationTimestamp &&
           preUpdateAverageRate == other.preUpdateAverageRate &&
@@ -316,8 +318,8 @@ final class InterestBearingConfig extends Extension {
       'Extension.InterestBearingConfig(rateAuthority: $rateAuthority, initializationTimestamp: $initializationTimestamp, preUpdateAverageRate: $preUpdateAverageRate, lastUpdateTimestamp: $lastUpdateTimestamp, currentRate: $currentRate)';
 }
 
-final class CpiGuard extends Extension {
-  const CpiGuard({
+final class ExtensionCpiGuard extends Extension {
+  const ExtensionCpiGuard({
     required this.lockCpi,
   });
 
@@ -325,7 +327,8 @@ final class CpiGuard extends Extension {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is CpiGuard && lockCpi == other.lockCpi;
+      identical(this, other) ||
+      other is ExtensionCpiGuard && lockCpi == other.lockCpi;
 
   @override
   int get hashCode => lockCpi.hashCode;
@@ -334,8 +337,8 @@ final class CpiGuard extends Extension {
   String toString() => 'Extension.CpiGuard(lockCpi: $lockCpi)';
 }
 
-final class PermanentDelegate extends Extension {
-  const PermanentDelegate({
+final class ExtensionPermanentDelegate extends Extension {
+  const ExtensionPermanentDelegate({
     required this.delegate,
   });
 
@@ -344,7 +347,7 @@ final class PermanentDelegate extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PermanentDelegate && delegate == other.delegate;
+      other is ExtensionPermanentDelegate && delegate == other.delegate;
 
   @override
   int get hashCode => delegate.hashCode;
@@ -353,12 +356,13 @@ final class PermanentDelegate extends Extension {
   String toString() => 'Extension.PermanentDelegate(delegate: $delegate)';
 }
 
-final class NonTransferableAccount extends Extension {
-  const NonTransferableAccount();
+final class ExtensionNonTransferableAccount extends Extension {
+  const ExtensionNonTransferableAccount();
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is NonTransferableAccount && true;
+      identical(this, other) ||
+      other is ExtensionNonTransferableAccount && true;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -367,8 +371,8 @@ final class NonTransferableAccount extends Extension {
   String toString() => 'Extension.NonTransferableAccount()';
 }
 
-final class TransferHook extends Extension {
-  const TransferHook({
+final class ExtensionTransferHook extends Extension {
+  const ExtensionTransferHook({
     required this.authority,
     required this.programId,
   });
@@ -379,7 +383,7 @@ final class TransferHook extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TransferHook &&
+      other is ExtensionTransferHook &&
           authority == other.authority &&
           programId == other.programId;
 
@@ -391,8 +395,8 @@ final class TransferHook extends Extension {
       'Extension.TransferHook(authority: $authority, programId: $programId)';
 }
 
-final class TransferHookAccount extends Extension {
-  const TransferHookAccount({
+final class ExtensionTransferHookAccount extends Extension {
+  const ExtensionTransferHookAccount({
     required this.transferring,
   });
 
@@ -401,7 +405,8 @@ final class TransferHookAccount extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TransferHookAccount && transferring == other.transferring;
+      other is ExtensionTransferHookAccount &&
+          transferring == other.transferring;
 
   @override
   int get hashCode => transferring.hashCode;
@@ -411,8 +416,8 @@ final class TransferHookAccount extends Extension {
       'Extension.TransferHookAccount(transferring: $transferring)';
 }
 
-final class ConfidentialTransferFee extends Extension {
-  const ConfidentialTransferFee({
+final class ExtensionConfidentialTransferFee extends Extension {
+  const ExtensionConfidentialTransferFee({
     required this.authority,
     required this.elgamalPubkey,
     required this.harvestToMintEnabled,
@@ -427,7 +432,7 @@ final class ConfidentialTransferFee extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ConfidentialTransferFee &&
+      other is ExtensionConfidentialTransferFee &&
           authority == other.authority &&
           elgamalPubkey == other.elgamalPubkey &&
           harvestToMintEnabled == other.harvestToMintEnabled &&
@@ -446,8 +451,8 @@ final class ConfidentialTransferFee extends Extension {
       'Extension.ConfidentialTransferFee(authority: $authority, elgamalPubkey: $elgamalPubkey, harvestToMintEnabled: $harvestToMintEnabled, withheldAmount: $withheldAmount)';
 }
 
-final class ConfidentialTransferFeeAmount extends Extension {
-  const ConfidentialTransferFeeAmount({
+final class ExtensionConfidentialTransferFeeAmount extends Extension {
+  const ExtensionConfidentialTransferFeeAmount({
     required this.withheldAmount,
   });
 
@@ -456,7 +461,7 @@ final class ConfidentialTransferFeeAmount extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ConfidentialTransferFeeAmount &&
+      other is ExtensionConfidentialTransferFeeAmount &&
           withheldAmount == other.withheldAmount;
 
   @override
@@ -467,8 +472,8 @@ final class ConfidentialTransferFeeAmount extends Extension {
       'Extension.ConfidentialTransferFeeAmount(withheldAmount: $withheldAmount)';
 }
 
-final class MetadataPointer extends Extension {
-  const MetadataPointer({
+final class ExtensionMetadataPointer extends Extension {
+  const ExtensionMetadataPointer({
     required this.authority,
     required this.metadataAddress,
   });
@@ -479,7 +484,7 @@ final class MetadataPointer extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is MetadataPointer &&
+      other is ExtensionMetadataPointer &&
           authority == other.authority &&
           metadataAddress == other.metadataAddress;
 
@@ -491,8 +496,8 @@ final class MetadataPointer extends Extension {
       'Extension.MetadataPointer(authority: $authority, metadataAddress: $metadataAddress)';
 }
 
-final class TokenMetadata extends Extension {
-  const TokenMetadata({
+final class ExtensionTokenMetadata extends Extension {
+  const ExtensionTokenMetadata({
     required this.updateAuthority,
     required this.mint,
     required this.name,
@@ -511,7 +516,7 @@ final class TokenMetadata extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TokenMetadata &&
+      other is ExtensionTokenMetadata &&
           updateAuthority == other.updateAuthority &&
           mint == other.mint &&
           name == other.name &&
@@ -528,8 +533,8 @@ final class TokenMetadata extends Extension {
       'Extension.TokenMetadata(updateAuthority: $updateAuthority, mint: $mint, name: $name, symbol: $symbol, uri: $uri, additionalMetadata: $additionalMetadata)';
 }
 
-final class GroupPointer extends Extension {
-  const GroupPointer({
+final class ExtensionGroupPointer extends Extension {
+  const ExtensionGroupPointer({
     required this.authority,
     required this.groupAddress,
   });
@@ -540,7 +545,7 @@ final class GroupPointer extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is GroupPointer &&
+      other is ExtensionGroupPointer &&
           authority == other.authority &&
           groupAddress == other.groupAddress;
 
@@ -552,8 +557,8 @@ final class GroupPointer extends Extension {
       'Extension.GroupPointer(authority: $authority, groupAddress: $groupAddress)';
 }
 
-final class TokenGroup extends Extension {
-  const TokenGroup({
+final class ExtensionTokenGroup extends Extension {
+  const ExtensionTokenGroup({
     required this.updateAuthority,
     required this.mint,
     required this.size,
@@ -568,7 +573,7 @@ final class TokenGroup extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TokenGroup &&
+      other is ExtensionTokenGroup &&
           updateAuthority == other.updateAuthority &&
           mint == other.mint &&
           size == other.size &&
@@ -582,8 +587,8 @@ final class TokenGroup extends Extension {
       'Extension.TokenGroup(updateAuthority: $updateAuthority, mint: $mint, size: $size, maxSize: $maxSize)';
 }
 
-final class GroupMemberPointer extends Extension {
-  const GroupMemberPointer({
+final class ExtensionGroupMemberPointer extends Extension {
+  const ExtensionGroupMemberPointer({
     required this.authority,
     required this.memberAddress,
   });
@@ -594,7 +599,7 @@ final class GroupMemberPointer extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is GroupMemberPointer &&
+      other is ExtensionGroupMemberPointer &&
           authority == other.authority &&
           memberAddress == other.memberAddress;
 
@@ -606,8 +611,8 @@ final class GroupMemberPointer extends Extension {
       'Extension.GroupMemberPointer(authority: $authority, memberAddress: $memberAddress)';
 }
 
-final class TokenGroupMember extends Extension {
-  const TokenGroupMember({
+final class ExtensionTokenGroupMember extends Extension {
+  const ExtensionTokenGroupMember({
     required this.mint,
     required this.group,
     required this.memberNumber,
@@ -620,7 +625,7 @@ final class TokenGroupMember extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TokenGroupMember &&
+      other is ExtensionTokenGroupMember &&
           mint == other.mint &&
           group == other.group &&
           memberNumber == other.memberNumber;
@@ -633,8 +638,8 @@ final class TokenGroupMember extends Extension {
       'Extension.TokenGroupMember(mint: $mint, group: $group, memberNumber: $memberNumber)';
 }
 
-final class ConfidentialMintBurn extends Extension {
-  const ConfidentialMintBurn({
+final class ExtensionConfidentialMintBurn extends Extension {
+  const ExtensionConfidentialMintBurn({
     required this.confidentialSupply,
     required this.decryptableSupply,
     required this.supplyElgamalPubkey,
@@ -649,7 +654,7 @@ final class ConfidentialMintBurn extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ConfidentialMintBurn &&
+      other is ExtensionConfidentialMintBurn &&
           confidentialSupply == other.confidentialSupply &&
           decryptableSupply == other.decryptableSupply &&
           supplyElgamalPubkey == other.supplyElgamalPubkey &&
@@ -668,8 +673,8 @@ final class ConfidentialMintBurn extends Extension {
       'Extension.ConfidentialMintBurn(confidentialSupply: $confidentialSupply, decryptableSupply: $decryptableSupply, supplyElgamalPubkey: $supplyElgamalPubkey, pendingBurn: $pendingBurn)';
 }
 
-final class ScaledUiAmountConfig extends Extension {
-  const ScaledUiAmountConfig({
+final class ExtensionScaledUiAmountConfig extends Extension {
+  const ExtensionScaledUiAmountConfig({
     required this.authority,
     required this.multiplier,
     required this.newMultiplierEffectiveTimestamp,
@@ -684,7 +689,7 @@ final class ScaledUiAmountConfig extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ScaledUiAmountConfig &&
+      other is ExtensionScaledUiAmountConfig &&
           authority == other.authority &&
           multiplier == other.multiplier &&
           newMultiplierEffectiveTimestamp ==
@@ -704,8 +709,8 @@ final class ScaledUiAmountConfig extends Extension {
       'Extension.ScaledUiAmountConfig(authority: $authority, multiplier: $multiplier, newMultiplierEffectiveTimestamp: $newMultiplierEffectiveTimestamp, newMultiplier: $newMultiplier)';
 }
 
-final class PausableConfig extends Extension {
-  const PausableConfig({
+final class ExtensionPausableConfig extends Extension {
+  const ExtensionPausableConfig({
     required this.authority,
     required this.paused,
   });
@@ -716,7 +721,7 @@ final class PausableConfig extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PausableConfig &&
+      other is ExtensionPausableConfig &&
           authority == other.authority &&
           paused == other.paused;
 
@@ -728,12 +733,12 @@ final class PausableConfig extends Extension {
       'Extension.PausableConfig(authority: $authority, paused: $paused)';
 }
 
-final class PausableAccount extends Extension {
-  const PausableAccount();
+final class ExtensionPausableAccount extends Extension {
+  const ExtensionPausableAccount();
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is PausableAccount && true;
+      identical(this, other) || other is ExtensionPausableAccount && true;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -742,8 +747,8 @@ final class PausableAccount extends Extension {
   String toString() => 'Extension.PausableAccount()';
 }
 
-final class PermissionedBurn extends Extension {
-  const PermissionedBurn({
+final class ExtensionPermissionedBurn extends Extension {
+  const ExtensionPermissionedBurn({
     required this.authority,
   });
 
@@ -752,7 +757,7 @@ final class PermissionedBurn extends Extension {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PermissionedBurn && authority == other.authority;
+      other is ExtensionPermissionedBurn && authority == other.authority;
 
   @override
   int get hashCode => authority.hashCode;
@@ -1025,8 +1030,8 @@ Encoder<Extension> getExtensionEncoder() {
       ),
     ], size: getU16Encoder()),
     (Extension value) => switch (value) {
-      Uninitialized() => <String, Object?>{'__kind': 0},
-      TransferFeeConfig(
+      ExtensionUninitialized() => <String, Object?>{'__kind': 0},
+      ExtensionTransferFeeConfig(
         transferFeeConfigAuthority: final transferFeeConfigAuthority,
         withdrawWithheldAuthority: final withdrawWithheldAuthority,
         withheldAmount: final withheldAmount,
@@ -1041,11 +1046,11 @@ Encoder<Extension> getExtensionEncoder() {
           'olderTransferFee': olderTransferFee,
           'newerTransferFee': newerTransferFee,
         },
-      TransferFeeAmount(withheldAmount: final withheldAmount) =>
+      ExtensionTransferFeeAmount(withheldAmount: final withheldAmount) =>
         <String, Object?>{'__kind': 2, 'withheldAmount': withheldAmount},
-      MintCloseAuthority(closeAuthority: final closeAuthority) =>
+      ExtensionMintCloseAuthority(closeAuthority: final closeAuthority) =>
         <String, Object?>{'__kind': 3, 'closeAuthority': closeAuthority},
-      ConfidentialTransferMint(
+      ExtensionConfidentialTransferMint(
         authority: final authority,
         autoApproveNewAccounts: final autoApproveNewAccounts,
         auditorElgamalPubkey: final auditorElgamalPubkey,
@@ -1056,7 +1061,7 @@ Encoder<Extension> getExtensionEncoder() {
           'autoApproveNewAccounts': autoApproveNewAccounts,
           'auditorElgamalPubkey': auditorElgamalPubkey,
         },
-      ConfidentialTransferAccount(
+      ExtensionConfidentialTransferAccount(
         approved: final approved,
         elgamalPubkey: final elgamalPubkey,
         pendingBalanceLow: final pendingBalanceLow,
@@ -1088,20 +1093,20 @@ Encoder<Extension> getExtensionEncoder() {
           'actualPendingBalanceCreditCounter':
               actualPendingBalanceCreditCounter,
         },
-      DefaultAccountState(state: final state) => <String, Object?>{
+      ExtensionDefaultAccountState(state: final state) => <String, Object?>{
         '__kind': 6,
         'state': state,
       },
-      ImmutableOwner() => <String, Object?>{'__kind': 7},
-      MemoTransfer(
+      ExtensionImmutableOwner() => <String, Object?>{'__kind': 7},
+      ExtensionMemoTransfer(
         requireIncomingTransferMemos: final requireIncomingTransferMemos,
       ) =>
         <String, Object?>{
           '__kind': 8,
           'requireIncomingTransferMemos': requireIncomingTransferMemos,
         },
-      NonTransferable() => <String, Object?>{'__kind': 9},
-      InterestBearingConfig(
+      ExtensionNonTransferable() => <String, Object?>{'__kind': 9},
+      ExtensionInterestBearingConfig(
         rateAuthority: final rateAuthority,
         initializationTimestamp: final initializationTimestamp,
         preUpdateAverageRate: final preUpdateAverageRate,
@@ -1116,24 +1121,27 @@ Encoder<Extension> getExtensionEncoder() {
           'lastUpdateTimestamp': lastUpdateTimestamp,
           'currentRate': currentRate,
         },
-      CpiGuard(lockCpi: final lockCpi) => <String, Object?>{
+      ExtensionCpiGuard(lockCpi: final lockCpi) => <String, Object?>{
         '__kind': 11,
         'lockCpi': lockCpi,
       },
-      PermanentDelegate(delegate: final delegate) => <String, Object?>{
+      ExtensionPermanentDelegate(delegate: final delegate) => <String, Object?>{
         '__kind': 12,
         'delegate': delegate,
       },
-      NonTransferableAccount() => <String, Object?>{'__kind': 13},
-      TransferHook(authority: final authority, programId: final programId) =>
+      ExtensionNonTransferableAccount() => <String, Object?>{'__kind': 13},
+      ExtensionTransferHook(
+        authority: final authority,
+        programId: final programId,
+      ) =>
         <String, Object?>{
           '__kind': 14,
           'authority': authority,
           'programId': programId,
         },
-      TransferHookAccount(transferring: final transferring) =>
+      ExtensionTransferHookAccount(transferring: final transferring) =>
         <String, Object?>{'__kind': 15, 'transferring': transferring},
-      ConfidentialTransferFee(
+      ExtensionConfidentialTransferFee(
         authority: final authority,
         elgamalPubkey: final elgamalPubkey,
         harvestToMintEnabled: final harvestToMintEnabled,
@@ -1146,9 +1154,11 @@ Encoder<Extension> getExtensionEncoder() {
           'harvestToMintEnabled': harvestToMintEnabled,
           'withheldAmount': withheldAmount,
         },
-      ConfidentialTransferFeeAmount(withheldAmount: final withheldAmount) =>
+      ExtensionConfidentialTransferFeeAmount(
+        withheldAmount: final withheldAmount,
+      ) =>
         <String, Object?>{'__kind': 17, 'withheldAmount': withheldAmount},
-      MetadataPointer(
+      ExtensionMetadataPointer(
         authority: final authority,
         metadataAddress: final metadataAddress,
       ) =>
@@ -1157,7 +1167,7 @@ Encoder<Extension> getExtensionEncoder() {
           'authority': authority,
           'metadataAddress': metadataAddress,
         },
-      TokenMetadata(
+      ExtensionTokenMetadata(
         updateAuthority: final updateAuthority,
         mint: final mint,
         name: final name,
@@ -1174,7 +1184,7 @@ Encoder<Extension> getExtensionEncoder() {
           'uri': uri,
           'additionalMetadata': additionalMetadata,
         },
-      GroupPointer(
+      ExtensionGroupPointer(
         authority: final authority,
         groupAddress: final groupAddress,
       ) =>
@@ -1183,7 +1193,7 @@ Encoder<Extension> getExtensionEncoder() {
           'authority': authority,
           'groupAddress': groupAddress,
         },
-      TokenGroup(
+      ExtensionTokenGroup(
         updateAuthority: final updateAuthority,
         mint: final mint,
         size: final size,
@@ -1196,7 +1206,7 @@ Encoder<Extension> getExtensionEncoder() {
           'size': size,
           'maxSize': maxSize,
         },
-      GroupMemberPointer(
+      ExtensionGroupMemberPointer(
         authority: final authority,
         memberAddress: final memberAddress,
       ) =>
@@ -1205,7 +1215,7 @@ Encoder<Extension> getExtensionEncoder() {
           'authority': authority,
           'memberAddress': memberAddress,
         },
-      TokenGroupMember(
+      ExtensionTokenGroupMember(
         mint: final mint,
         group: final group,
         memberNumber: final memberNumber,
@@ -1216,7 +1226,7 @@ Encoder<Extension> getExtensionEncoder() {
           'group': group,
           'memberNumber': memberNumber,
         },
-      ConfidentialMintBurn(
+      ExtensionConfidentialMintBurn(
         confidentialSupply: final confidentialSupply,
         decryptableSupply: final decryptableSupply,
         supplyElgamalPubkey: final supplyElgamalPubkey,
@@ -1229,7 +1239,7 @@ Encoder<Extension> getExtensionEncoder() {
           'supplyElgamalPubkey': supplyElgamalPubkey,
           'pendingBurn': pendingBurn,
         },
-      ScaledUiAmountConfig(
+      ExtensionScaledUiAmountConfig(
         authority: final authority,
         multiplier: final multiplier,
         newMultiplierEffectiveTimestamp: final newMultiplierEffectiveTimestamp,
@@ -1242,17 +1252,18 @@ Encoder<Extension> getExtensionEncoder() {
           'newMultiplierEffectiveTimestamp': newMultiplierEffectiveTimestamp,
           'newMultiplier': newMultiplier,
         },
-      PausableConfig(authority: final authority, paused: final paused) =>
+      ExtensionPausableConfig(
+        authority: final authority,
+        paused: final paused,
+      ) =>
         <String, Object?>{
           '__kind': 26,
           'authority': authority,
           'paused': paused,
         },
-      PausableAccount() => <String, Object?>{'__kind': 27},
-      PermissionedBurn(authority: final authority) => <String, Object?>{
-        '__kind': 28,
-        'authority': authority,
-      },
+      ExtensionPausableAccount() => <String, Object?>{'__kind': 27},
+      ExtensionPermissionedBurn(authority: final authority) =>
+        <String, Object?>{'__kind': 28, 'authority': authority},
     },
   );
 }
@@ -1644,9 +1655,9 @@ Decoder<Extension> getExtensionDecoder() {
     (Map<String, Object?> map, Uint8List bytes, int offset) {
       switch (map['__kind']) {
         case 0:
-          return const Uninitialized();
+          return const ExtensionUninitialized();
         case 1:
-          return TransferFeeConfig(
+          return ExtensionTransferFeeConfig(
             transferFeeConfigAuthority:
                 map['transferFeeConfigAuthority']! as Address,
             withdrawWithheldAuthority:
@@ -1656,21 +1667,21 @@ Decoder<Extension> getExtensionDecoder() {
             newerTransferFee: map['newerTransferFee']! as TransferFee,
           );
         case 2:
-          return TransferFeeAmount(
+          return ExtensionTransferFeeAmount(
             withheldAmount: map['withheldAmount']! as BigInt,
           );
         case 3:
-          return MintCloseAuthority(
+          return ExtensionMintCloseAuthority(
             closeAuthority: map['closeAuthority']! as Address,
           );
         case 4:
-          return ConfidentialTransferMint(
+          return ExtensionConfidentialTransferMint(
             authority: map['authority'] as Address?,
             autoApproveNewAccounts: map['autoApproveNewAccounts']! as bool,
             auditorElgamalPubkey: map['auditorElgamalPubkey'] as Address?,
           );
         case 5:
-          return ConfidentialTransferAccount(
+          return ExtensionConfidentialTransferAccount(
             approved: map['approved']! as bool,
             elgamalPubkey: map['elgamalPubkey']! as Address,
             pendingBalanceLow: map['pendingBalanceLow']! as EncryptedBalance,
@@ -1691,18 +1702,20 @@ Decoder<Extension> getExtensionDecoder() {
                 map['actualPendingBalanceCreditCounter']! as BigInt,
           );
         case 6:
-          return DefaultAccountState(state: map['state']! as AccountState);
+          return ExtensionDefaultAccountState(
+            state: map['state']! as AccountState,
+          );
         case 7:
-          return ImmutableOwner();
+          return ExtensionImmutableOwner();
         case 8:
-          return MemoTransfer(
+          return ExtensionMemoTransfer(
             requireIncomingTransferMemos:
                 map['requireIncomingTransferMemos']! as bool,
           );
         case 9:
-          return NonTransferable();
+          return ExtensionNonTransferable();
         case 10:
-          return InterestBearingConfig(
+          return ExtensionInterestBearingConfig(
             rateAuthority: map['rateAuthority']! as Address,
             initializationTimestamp: map['initializationTimestamp']! as BigInt,
             preUpdateAverageRate: map['preUpdateAverageRate']! as int,
@@ -1710,38 +1723,40 @@ Decoder<Extension> getExtensionDecoder() {
             currentRate: map['currentRate']! as int,
           );
         case 11:
-          return CpiGuard(lockCpi: map['lockCpi']! as bool);
+          return ExtensionCpiGuard(lockCpi: map['lockCpi']! as bool);
         case 12:
-          return PermanentDelegate(delegate: map['delegate']! as Address);
+          return ExtensionPermanentDelegate(
+            delegate: map['delegate']! as Address,
+          );
         case 13:
-          return NonTransferableAccount();
+          return ExtensionNonTransferableAccount();
         case 14:
-          return TransferHook(
+          return ExtensionTransferHook(
             authority: map['authority']! as Address,
             programId: map['programId']! as Address,
           );
         case 15:
-          return TransferHookAccount(
+          return ExtensionTransferHookAccount(
             transferring: map['transferring']! as bool,
           );
         case 16:
-          return ConfidentialTransferFee(
+          return ExtensionConfidentialTransferFee(
             authority: map['authority'] as Address?,
             elgamalPubkey: map['elgamalPubkey']! as Address,
             harvestToMintEnabled: map['harvestToMintEnabled']! as bool,
             withheldAmount: map['withheldAmount']! as EncryptedBalance,
           );
         case 17:
-          return ConfidentialTransferFeeAmount(
+          return ExtensionConfidentialTransferFeeAmount(
             withheldAmount: map['withheldAmount']! as EncryptedBalance,
           );
         case 18:
-          return MetadataPointer(
+          return ExtensionMetadataPointer(
             authority: map['authority'] as Address?,
             metadataAddress: map['metadataAddress'] as Address?,
           );
         case 19:
-          return TokenMetadata(
+          return ExtensionTokenMetadata(
             updateAuthority: map['updateAuthority'] as Address?,
             mint: map['mint']! as Address,
             name: map['name']! as String,
@@ -1751,37 +1766,37 @@ Decoder<Extension> getExtensionDecoder() {
                 map['additionalMetadata']! as Map<String, String>,
           );
         case 20:
-          return GroupPointer(
+          return ExtensionGroupPointer(
             authority: map['authority'] as Address?,
             groupAddress: map['groupAddress'] as Address?,
           );
         case 21:
-          return TokenGroup(
+          return ExtensionTokenGroup(
             updateAuthority: map['updateAuthority'] as Address?,
             mint: map['mint']! as Address,
             size: map['size']! as BigInt,
             maxSize: map['maxSize']! as BigInt,
           );
         case 22:
-          return GroupMemberPointer(
+          return ExtensionGroupMemberPointer(
             authority: map['authority'] as Address?,
             memberAddress: map['memberAddress'] as Address?,
           );
         case 23:
-          return TokenGroupMember(
+          return ExtensionTokenGroupMember(
             mint: map['mint']! as Address,
             group: map['group']! as Address,
             memberNumber: map['memberNumber']! as BigInt,
           );
         case 24:
-          return ConfidentialMintBurn(
+          return ExtensionConfidentialMintBurn(
             confidentialSupply: map['confidentialSupply']! as EncryptedBalance,
             decryptableSupply: map['decryptableSupply']! as DecryptableBalance,
             supplyElgamalPubkey: map['supplyElgamalPubkey']! as Address,
             pendingBurn: map['pendingBurn']! as EncryptedBalance,
           );
         case 25:
-          return ScaledUiAmountConfig(
+          return ExtensionScaledUiAmountConfig(
             authority: map['authority']! as Address,
             multiplier: map['multiplier']! as double,
             newMultiplierEffectiveTimestamp:
@@ -1789,14 +1804,16 @@ Decoder<Extension> getExtensionDecoder() {
             newMultiplier: map['newMultiplier']! as double,
           );
         case 26:
-          return PausableConfig(
+          return ExtensionPausableConfig(
             authority: map['authority'] as Address?,
             paused: map['paused']! as bool,
           );
         case 27:
-          return PausableAccount();
+          return ExtensionPausableAccount();
         case 28:
-          return PermissionedBurn(authority: map['authority'] as Address?);
+          return ExtensionPermissionedBurn(
+            authority: map['authority'] as Address?,
+          );
       }
       throw StateError('Unsupported Extension discriminator: ${map['__kind']}');
     },

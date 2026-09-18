@@ -82,11 +82,11 @@
       "url": "https://github.com/solana-program/token-2022",
       "ref": {
         "type": "tag",
-        "value": "js@v0.16.1"
+        "value": "js@v0.18.0"
       },
       "package": "solana_kit_token_2022",
-      "notes": "SPL Token-2022 JS client. Held at v0.16.1: js@v0.17.0 renames the program node to camelCase and changes how token and mint extensions decode, which requires a migration of this package's handwritten layer before the pin can move",
-      "checkedCommit": "341de223489b62fa482c552789a241d5e260b619"
+      "notes": "SPL Token-2022 JS client. js@v0.17.0 renamed the program node to its canonical camelCase name and swapped the generated extension array for a hand-written TLV codec that stops at the first Uninitialized header, so accounts with unused extension space (including two-byte multisig padding) decode instead of throwing",
+      "checkedCommit": "18a80055ed7aa2d0dff4df4f613e28efee11cc1a"
     },
     {
       "name": "subscriptions",
@@ -131,12 +131,12 @@
       "url": "https://github.com/solana-program/memo",
       "ref": {
         "type": "tag",
-        "value": "js@v0.13.1"
+        "value": "js@v0.14.1"
       },
       "package": "solana_kit_memo",
       "issue": 135,
-      "notes": "SPL Memo program JS client (patch: dev dependency bump only)",
-      "checkedCommit": "1845a92b17d5a9174ece2c08b5d1a77d07775a9e"
+      "notes": "SPL Memo program JS client. js@v0.14.0 points the generated client at the v4 memo program and adds the memo extraction helpers; the v1 and v3 addresses stay available as legacy constants",
+      "checkedCommit": "319fdde6ceefcbe79e2ba46898bb983b22701dbc"
     },
     {
       "name": "compute-budget",
@@ -234,11 +234,11 @@
       "url": "https://github.com/metaplex-foundation/mpl-token-metadata",
       "ref": {
         "type": "commit",
-        "value": "349e061053c6fc5b6b815e03e896e4db57012893"
+        "value": "353d01be4af3018e1daf49d0cd35ba9f731d9c9c"
       },
       "package": "solana_kit_mpl_token_metadata",
-      "notes": "Metaplex Token Metadata Shank IDL at idls/token_metadata.json for Codama Dart generation",
-      "checkedCommit": "349e061053c6fc5b6b815e03e896e4db57012893"
+      "notes": "Metaplex Token Metadata Shank IDL at idls/token_metadata.json for Codama Dart generation. The move from 349e0610 only fixes the JS client repository URL; the IDL is byte-identical",
+      "checkedCommit": "353d01be4af3018e1daf49d0cd35ba9f731d9c9c"
     },
     {
       "name": "mpl-core",

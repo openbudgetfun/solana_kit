@@ -26,6 +26,20 @@ const disableSbpfV0V1V2DeploymentFeatureGate = Address(
   'B8JJXCy5amZyWG9r7EnUYLwzXSXTxG7GZ1qZ1qggo83g',
 );
 
+/// The Memo program to invoke in on-chain integration tests.
+///
+/// `memoProgramAddress` identifies the v4 program, which is what the SDK
+/// exposes for building new memo instructions. SurfPool only ships the v1 and
+/// v3 memo programs as executable bytecode, however — v4 resolves to a
+/// 36-byte placeholder — so invoking `memoProgramAddress` against a local
+/// validator fails simulation. These tests exercise transaction, message, and
+/// compute-budget plumbing rather than the memo program itself, so they target
+/// the v3 program, which the validator can actually execute.
+///
+/// Both programs share the same instruction format: opaque bytes echoed by the
+/// program, so the wire behavior under test is unaffected.
+Address get onChainMemoProgramAddress => memoLegacyProgramAddressV3;
+
 /// A shared environment for on-chain integration tests against SurfPool.
 ///
 /// Use [IntegrationTestEnv.create] to start a fresh Surfpool instance for

@@ -56,7 +56,7 @@ void main() {
         env,
         [
           Instruction(
-            programAddress: memoProgramAddress,
+            programAddress: onChainMemoProgramAddress,
             accounts: const [],
             data: memoBytes,
           ),
@@ -370,11 +370,11 @@ void main() {
       final transactionPlan = await planner(
         getMessagePackerInstructionPlanFromInstructions([
           getAddMemoInstruction(
-            programAddress: memoProgramAddress,
+            programAddress: onChainMemoProgramAddress,
             memo: firstMemo,
           ),
           getAddMemoInstruction(
-            programAddress: memoProgramAddress,
+            programAddress: onChainMemoProgramAddress,
             memo: secondMemo,
           ),
         ]),
@@ -414,7 +414,10 @@ void main() {
           programAddress: computeBudgetProgramAddress,
           microLamports: price,
         ),
-        getAddMemoInstruction(programAddress: memoProgramAddress, memo: memo),
+        getAddMemoInstruction(
+          programAddress: onChainMemoProgramAddress,
+          memo: memo,
+        ),
       ]);
       expect(
         findSetComputeUnitPriceInstructionIndexAndMicroLamports(

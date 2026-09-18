@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -19,10 +20,9 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class UpdateMetadataPointerInstructionData {
   const UpdateMetadataPointerInstructionData({
-    this.discriminator = 39,
-    this.metadataPointerDiscriminator = 1,
     required this.metadataAddress,
-  });
+  }) : discriminator = 39,
+       metadataPointerDiscriminator = 1;
 
   final int discriminator;
   final int metadataPointerDiscriminator;
@@ -47,8 +47,8 @@ getUpdateMetadataPointerInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (UpdateMetadataPointerInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'metadataPointerDiscriminator': value.metadataPointerDiscriminator,
+      'discriminator': 39,
+      'metadataPointerDiscriminator': 1,
       'metadataAddress': value.metadataAddress,
     },
   );
@@ -69,16 +69,58 @@ getUpdateMetadataPointerInstructionDataDecoder() {
     ),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        UpdateMetadataPointerInstructionData(
-          discriminator: map['discriminator']! as int,
-          metadataPointerDiscriminator:
-              map['metadataPointerDiscriminator']! as int,
-          metadataAddress: map['metadataAddress'] as Address?,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'updateMetadataPointer instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (UpdateMetadataPointerInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(39),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(1),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      UpdateMetadataPointerInstructionData(
+        metadataAddress: map['metadataAddress'] as Address?,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<UpdateMetadataPointerInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<UpdateMetadataPointerInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<
@@ -93,11 +135,13 @@ getUpdateMetadataPointerInstructionDataCodec() {
 }
 
 /// Creates a [UpdateMetadataPointer] instruction.
+/// Set [metadataPointerAuthorityIsSigner] to false when [metadataPointerAuthority] does not sign (for example, a multisig authority).
 Instruction getUpdateMetadataPointerInstruction({
   required Address programAddress,
   required Address mint,
   required Address metadataPointerAuthority,
   required Address? metadataAddress,
+  bool metadataPointerAuthorityIsSigner = true,
 }) {
   final instructionData = UpdateMetadataPointerInstructionData(
     metadataAddress: metadataAddress,
@@ -109,7 +153,9 @@ Instruction getUpdateMetadataPointerInstruction({
       AccountMeta(address: mint, role: AccountRole.writable),
       AccountMeta(
         address: metadataPointerAuthority,
-        role: AccountRole.readonlySigner,
+        role: metadataPointerAuthorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
       ),
     ],
     data: getUpdateMetadataPointerInstructionDataEncoder().encode(

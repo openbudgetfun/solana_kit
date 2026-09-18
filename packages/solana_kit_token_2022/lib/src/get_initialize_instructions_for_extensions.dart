@@ -27,7 +27,7 @@ List<Instruction> getPreInitializeInstructionsForMintExtensions({
   return extensions
       .expand((extension) {
         return switch (extension) {
-          ConfidentialTransferMint(
+          ExtensionConfidentialTransferMint(
             :final authority,
             :final autoApproveNewAccounts,
             :final auditorElgamalPubkey,
@@ -41,14 +41,14 @@ List<Instruction> getPreInitializeInstructionsForMintExtensions({
                 auditorElgamalPubkey: auditorElgamalPubkey,
               ),
             ],
-          DefaultAccountState(:final state) => [
+          ExtensionDefaultAccountState(:final state) => [
             getInitializeDefaultAccountStateInstruction(
               programAddress: programAddress,
               mint: mint,
               state: state,
             ),
           ],
-          TransferFeeConfig(
+          ExtensionTransferFeeConfig(
             :final transferFeeConfigAuthority,
             :final withdrawWithheldAuthority,
             :final newerTransferFee,
@@ -63,38 +63,44 @@ List<Instruction> getPreInitializeInstructionsForMintExtensions({
                 maximumFee: newerTransferFee.maximumFee,
               ),
             ],
-          MetadataPointer(:final authority, :final metadataAddress) => [
-            getInitializeMetadataPointerInstruction(
-              programAddress: programAddress,
-              mint: mint,
-              authority: authority,
-              metadataAddress: metadataAddress,
-            ),
-          ],
-          InterestBearingConfig(:final rateAuthority, :final currentRate) => [
-            getInitializeInterestBearingMintInstruction(
-              programAddress: programAddress,
-              mint: mint,
-              rateAuthority: rateAuthority,
-              rate: currentRate,
-            ),
-          ],
-          ScaledUiAmountConfig(:final authority, :final multiplier) => [
-            getInitializeScaledUiAmountMintInstruction(
-              programAddress: programAddress,
-              mint: mint,
-              authority: authority,
-              multiplier: multiplier,
-            ),
-          ],
-          PausableConfig(:final authority) => [
+          ExtensionMetadataPointer(:final authority, :final metadataAddress) =>
+            [
+              getInitializeMetadataPointerInstruction(
+                programAddress: programAddress,
+                mint: mint,
+                authority: authority,
+                metadataAddress: metadataAddress,
+              ),
+            ],
+          ExtensionInterestBearingConfig(
+            :final rateAuthority,
+            :final currentRate,
+          ) =>
+            [
+              getInitializeInterestBearingMintInstruction(
+                programAddress: programAddress,
+                mint: mint,
+                rateAuthority: rateAuthority,
+                rate: currentRate,
+              ),
+            ],
+          ExtensionScaledUiAmountConfig(:final authority, :final multiplier) =>
+            [
+              getInitializeScaledUiAmountMintInstruction(
+                programAddress: programAddress,
+                mint: mint,
+                authority: authority,
+                multiplier: multiplier,
+              ),
+            ],
+          ExtensionPausableConfig(:final authority) => [
             getInitializePausableConfigInstruction(
               programAddress: programAddress,
               mint: mint,
               authority: authority,
             ),
           ],
-          PermissionedBurn(:final authority) => [
+          ExtensionPermissionedBurn(:final authority) => [
             getInitializePermissionedBurnInstruction(
               programAddress: programAddress,
               mint: mint,
@@ -107,7 +113,7 @@ List<Instruction> getPreInitializeInstructionsForMintExtensions({
                   )),
             ),
           ],
-          GroupPointer(:final authority, :final groupAddress) => [
+          ExtensionGroupPointer(:final authority, :final groupAddress) => [
             getInitializeGroupPointerInstruction(
               programAddress: programAddress,
               mint: mint,
@@ -115,21 +121,22 @@ List<Instruction> getPreInitializeInstructionsForMintExtensions({
               groupAddress: groupAddress,
             ),
           ],
-          GroupMemberPointer(:final authority, :final memberAddress) => [
-            getInitializeGroupMemberPointerInstruction(
-              programAddress: programAddress,
-              mint: mint,
-              authority: authority,
-              memberAddress: memberAddress,
-            ),
-          ],
-          NonTransferable() => [
+          ExtensionGroupMemberPointer(:final authority, :final memberAddress) =>
+            [
+              getInitializeGroupMemberPointerInstruction(
+                programAddress: programAddress,
+                mint: mint,
+                authority: authority,
+                memberAddress: memberAddress,
+              ),
+            ],
+          ExtensionNonTransferable() => [
             getInitializeNonTransferableMintInstruction(
               programAddress: programAddress,
               mint: mint,
             ),
           ],
-          TransferHook(:final authority, :final programId) => [
+          ExtensionTransferHook(:final authority, :final programId) => [
             getInitializeTransferHookInstruction(
               programAddress: programAddress,
               mint: mint,
@@ -137,22 +144,26 @@ List<Instruction> getPreInitializeInstructionsForMintExtensions({
               programId: programId,
             ),
           ],
-          PermanentDelegate(:final delegate) => [
+          ExtensionPermanentDelegate(:final delegate) => [
             getInitializePermanentDelegateInstruction(
               programAddress: programAddress,
               mint: mint,
               delegate: delegate,
             ),
           ],
-          ConfidentialTransferFee(:final authority, :final elgamalPubkey) => [
-            getInitializeConfidentialTransferFeeInstruction(
-              programAddress: programAddress,
-              mint: mint,
-              authority: authority,
-              withdrawWithheldAuthorityElGamalPubkey: elgamalPubkey,
-            ),
-          ],
-          MintCloseAuthority(:final closeAuthority) => [
+          ExtensionConfidentialTransferFee(
+            :final authority,
+            :final elgamalPubkey,
+          ) =>
+            [
+              getInitializeConfidentialTransferFeeInstruction(
+                programAddress: programAddress,
+                mint: mint,
+                authority: authority,
+                withdrawWithheldAuthorityElGamalPubkey: elgamalPubkey,
+              ),
+            ],
+          ExtensionMintCloseAuthority(:final closeAuthority) => [
             getInitializeMintCloseAuthorityInstruction(
               programAddress: programAddress,
               mint: mint,

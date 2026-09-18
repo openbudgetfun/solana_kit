@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -15,9 +16,7 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 @immutable
 class ThawAccountInstructionData {
-  const ThawAccountInstructionData({
-    this.discriminator = 11,
-  });
+  const ThawAccountInstructionData() : discriminator = 11;
 
   final int discriminator;
 }
@@ -30,7 +29,7 @@ Encoder<ThawAccountInstructionData> getThawAccountInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (ThawAccountInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': 11,
     },
   );
 }
@@ -40,13 +39,50 @@ Decoder<ThawAccountInstructionData> getThawAccountInstructionDataDecoder() {
     ('discriminator', getU8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        ThawAccountInstructionData(
-          discriminator: map['discriminator']! as int,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'thawAccount instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (ThawAccountInstructionData, int) readTopLevel(Uint8List bytes, int offset) {
+    getConstantDecoder(
+      getU8Encoder().encode(11),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      ThawAccountInstructionData(),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<ThawAccountInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<ThawAccountInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<ThawAccountInstructionData, ThawAccountInstructionData>
@@ -58,11 +94,14 @@ getThawAccountInstructionDataCodec() {
 }
 
 /// Creates a [ThawAccount] instruction.
+/// Set [ownerIsSigner] to false when [owner] does not sign (for example, a multisig authority).
 Instruction getThawAccountInstruction({
   required Address programAddress,
   required Address account,
   required Address mint,
   required Address owner,
+
+  bool ownerIsSigner = true,
 }) {
   final instructionData = ThawAccountInstructionData();
 
@@ -71,7 +110,10 @@ Instruction getThawAccountInstruction({
     accounts: [
       AccountMeta(address: account, role: AccountRole.writable),
       AccountMeta(address: mint, role: AccountRole.readonly),
-      AccountMeta(address: owner, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: owner,
+        role: ownerIsSigner ? AccountRole.readonlySigner : AccountRole.readonly,
+      ),
     ],
     data: getThawAccountInstructionDataEncoder().encode(instructionData),
   );

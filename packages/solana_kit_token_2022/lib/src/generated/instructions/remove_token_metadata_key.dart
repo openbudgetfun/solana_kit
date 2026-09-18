@@ -9,6 +9,7 @@ import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -17,12 +18,18 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class RemoveTokenMetadataKeyInstructionData {
   RemoveTokenMetadataKeyInstructionData({
-    Uint8List? discriminator,
     required this.idempotent,
     required this.key,
-  }) : discriminator =
-           discriminator ??
-           Uint8List.fromList([234, 18, 32, 56, 89, 141, 37, 181]);
+  }) : discriminator = Uint8List.fromList([
+         0xea,
+         0x12,
+         0x20,
+         0x38,
+         0x59,
+         0x8d,
+         0x25,
+         0xb5,
+       ]);
 
   final Uint8List discriminator;
   final bool idempotent;
@@ -32,7 +39,10 @@ class RemoveTokenMetadataKeyInstructionData {
 Encoder<RemoveTokenMetadataKeyInstructionData>
 getRemoveTokenMetadataKeyInstructionDataEncoder() {
   final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-    ('discriminator', fixEncoderSize(getBytesEncoder(), 8)),
+    (
+      'discriminator',
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false),
+    ),
     ('idempotent', getBooleanEncoder()),
     ('key', addEncoderSizePrefix(getUtf8Encoder(), getU32Encoder())),
   ]);
@@ -40,7 +50,16 @@ getRemoveTokenMetadataKeyInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (RemoveTokenMetadataKeyInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': Uint8List.fromList([
+        0xea,
+        0x12,
+        0x20,
+        0x38,
+        0x59,
+        0x8d,
+        0x25,
+        0xb5,
+      ]),
       'idempotent': value.idempotent,
       'key': value.key,
     },
@@ -55,15 +74,58 @@ getRemoveTokenMetadataKeyInstructionDataDecoder() {
     ('key', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        RemoveTokenMetadataKeyInstructionData(
-          discriminator: map['discriminator']! as Uint8List,
-          idempotent: map['idempotent']! as bool,
-          key: map['key']! as String,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'removeTokenMetadataKey instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (RemoveTokenMetadataKeyInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      fixEncoderSize(getBytesEncoder(), 8, allowTruncation: false).encode(
+        Uint8List.fromList([0xea, 0x12, 0x20, 0x38, 0x59, 0x8d, 0x25, 0xb5]),
+      ),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      RemoveTokenMetadataKeyInstructionData(
+        idempotent: map['idempotent']! as bool,
+        key: map['key']! as String,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<RemoveTokenMetadataKeyInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<RemoveTokenMetadataKeyInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<

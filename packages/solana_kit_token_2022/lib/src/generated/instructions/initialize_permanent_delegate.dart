@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 /// The discriminator field name: 'discriminator'.
@@ -16,9 +17,8 @@ import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 @immutable
 class InitializePermanentDelegateInstructionData {
   const InitializePermanentDelegateInstructionData({
-    this.discriminator = 35,
     required this.delegate,
-  });
+  }) : discriminator = 35;
 
   final int discriminator;
   final Address delegate;
@@ -34,7 +34,7 @@ getInitializePermanentDelegateInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (InitializePermanentDelegateInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
+      'discriminator': 35,
       'delegate': value.delegate,
     },
   );
@@ -47,14 +47,55 @@ getInitializePermanentDelegateInstructionDataDecoder() {
     ('delegate', getAddressDecoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializePermanentDelegateInstructionData(
-          discriminator: map['discriminator']! as int,
-          delegate: map['delegate']! as Address,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'initializePermanentDelegate instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (InitializePermanentDelegateInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(35),
+    ).read(bytes, offset + 0);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      InitializePermanentDelegateInstructionData(
+        delegate: map['delegate']! as Address,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<InitializePermanentDelegateInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<InitializePermanentDelegateInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<

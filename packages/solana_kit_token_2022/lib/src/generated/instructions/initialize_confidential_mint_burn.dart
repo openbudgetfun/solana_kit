@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 import '../types/decryptable_balance.dart';
@@ -21,11 +22,10 @@ import '../types/decryptable_balance.dart';
 @immutable
 class InitializeConfidentialMintBurnInstructionData {
   const InitializeConfidentialMintBurnInstructionData({
-    this.discriminator = 42,
-    this.confidentialMintBurnDiscriminator = 0,
     required this.supplyElgamalPubkey,
     required this.decryptableSupply,
-  });
+  }) : discriminator = 42,
+       confidentialMintBurnDiscriminator = 0;
 
   final int discriminator;
   final int confidentialMintBurnDiscriminator;
@@ -45,9 +45,8 @@ getInitializeConfidentialMintBurnInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (InitializeConfidentialMintBurnInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'confidentialMintBurnDiscriminator':
-          value.confidentialMintBurnDiscriminator,
+      'discriminator': 42,
+      'confidentialMintBurnDiscriminator': 0,
       'supplyElgamalPubkey': value.supplyElgamalPubkey,
       'decryptableSupply': value.decryptableSupply,
     },
@@ -63,17 +62,60 @@ getInitializeConfidentialMintBurnInstructionDataDecoder() {
     ('decryptableSupply', getDecryptableBalanceDecoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) =>
-        InitializeConfidentialMintBurnInstructionData(
-          discriminator: map['discriminator']! as int,
-          confidentialMintBurnDiscriminator:
-              map['confidentialMintBurnDiscriminator']! as int,
-          supplyElgamalPubkey: map['supplyElgamalPubkey']! as Address,
-          decryptableSupply: map['decryptableSupply']! as DecryptableBalance,
-        ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription':
+            'initializeConfidentialMintBurn instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (InitializeConfidentialMintBurnInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(42),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(0),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      InitializeConfidentialMintBurnInstructionData(
+        supplyElgamalPubkey: map['supplyElgamalPubkey']! as Address,
+        decryptableSupply: map['decryptableSupply']! as DecryptableBalance,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<InitializeConfidentialMintBurnInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<InitializeConfidentialMintBurnInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<

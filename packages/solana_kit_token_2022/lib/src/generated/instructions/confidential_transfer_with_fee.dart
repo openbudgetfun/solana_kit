@@ -8,6 +8,7 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
 import '../types/decryptable_balance.dart';
@@ -22,8 +23,6 @@ import '../types/encrypted_balance.dart';
 @immutable
 class ConfidentialTransferWithFeeInstructionData {
   const ConfidentialTransferWithFeeInstructionData({
-    this.discriminator = 27,
-    this.confidentialTransferDiscriminator = 13,
     required this.newSourceDecryptableAvailableBalance,
     required this.transferAmountAuditorCiphertextLo,
     required this.transferAmountAuditorCiphertextHi,
@@ -32,7 +31,8 @@ class ConfidentialTransferWithFeeInstructionData {
     required this.feeSigmaProofInstructionOffset,
     required this.feeCiphertextValidityProofInstructionOffset,
     required this.rangeProofInstructionOffset,
-  });
+  }) : discriminator = 27,
+       confidentialTransferDiscriminator = 13;
 
   final int discriminator;
   final int confidentialTransferDiscriminator;
@@ -64,9 +64,8 @@ getConfidentialTransferWithFeeInstructionDataEncoder() {
   return transformEncoder(
     structEncoder,
     (ConfidentialTransferWithFeeInstructionData value) => <String, Object?>{
-      'discriminator': value.discriminator,
-      'confidentialTransferDiscriminator':
-          value.confidentialTransferDiscriminator,
+      'discriminator': 27,
+      'confidentialTransferDiscriminator': 13,
       'newSourceDecryptableAvailableBalance':
           value.newSourceDecryptableAvailableBalance,
       'transferAmountAuditorCiphertextLo':
@@ -99,33 +98,73 @@ getConfidentialTransferWithFeeInstructionDataDecoder() {
     ('rangeProofInstructionOffset', getI8Decoder()),
   ]);
 
-  return transformDecoder(
-    structDecoder,
-    (
-      Map<String, Object?> map,
-      Uint8List bytes,
-      int offset,
-    ) => ConfidentialTransferWithFeeInstructionData(
-      discriminator: map['discriminator']! as int,
-      confidentialTransferDiscriminator:
-          map['confidentialTransferDiscriminator']! as int,
-      newSourceDecryptableAvailableBalance:
-          map['newSourceDecryptableAvailableBalance']! as DecryptableBalance,
-      transferAmountAuditorCiphertextLo:
-          map['transferAmountAuditorCiphertextLo']! as EncryptedBalance,
-      transferAmountAuditorCiphertextHi:
-          map['transferAmountAuditorCiphertextHi']! as EncryptedBalance,
-      equalityProofInstructionOffset:
-          map['equalityProofInstructionOffset']! as int,
-      transferAmountCiphertextValidityProofInstructionOffset:
-          map['transferAmountCiphertextValidityProofInstructionOffset']! as int,
-      feeSigmaProofInstructionOffset:
-          map['feeSigmaProofInstructionOffset']! as int,
-      feeCiphertextValidityProofInstructionOffset:
-          map['feeCiphertextValidityProofInstructionOffset']! as int,
-      rangeProofInstructionOffset: map['rangeProofInstructionOffset']! as int,
-    ),
-  );
+  Never throwInvalidByteLength(int expected, int bytesLength) {
+    throw SolanaError(
+      SolanaErrorCode.codecsInvalidByteLength,
+      {
+        'codecDescription': 'confidentialTransferWithFee instruction decoder',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
+  }
+
+  (ConfidentialTransferWithFeeInstructionData, int) readTopLevel(
+    Uint8List bytes,
+    int offset,
+  ) {
+    getConstantDecoder(
+      getU8Encoder().encode(27),
+    ).read(bytes, offset + 0);
+    getConstantDecoder(
+      getU8Encoder().encode(13),
+    ).read(bytes, offset + 1);
+    final (map, newOffset) = structDecoder.read(bytes, offset);
+    if (newOffset != bytes.length) {
+      throwInvalidByteLength(newOffset - offset, bytes.length - offset);
+    }
+
+    return (
+      ConfidentialTransferWithFeeInstructionData(
+        newSourceDecryptableAvailableBalance:
+            map['newSourceDecryptableAvailableBalance']! as DecryptableBalance,
+        transferAmountAuditorCiphertextLo:
+            map['transferAmountAuditorCiphertextLo']! as EncryptedBalance,
+        transferAmountAuditorCiphertextHi:
+            map['transferAmountAuditorCiphertextHi']! as EncryptedBalance,
+        equalityProofInstructionOffset:
+            map['equalityProofInstructionOffset']! as int,
+        transferAmountCiphertextValidityProofInstructionOffset:
+            map['transferAmountCiphertextValidityProofInstructionOffset']!
+                as int,
+        feeSigmaProofInstructionOffset:
+            map['feeSigmaProofInstructionOffset']! as int,
+        feeCiphertextValidityProofInstructionOffset:
+            map['feeCiphertextValidityProofInstructionOffset']! as int,
+        rangeProofInstructionOffset: map['rangeProofInstructionOffset']! as int,
+      ),
+      newOffset,
+    );
+  }
+
+  return switch (structDecoder) {
+    FixedSizeDecoder<Map<String, Object?>>() =>
+      FixedSizeDecoder<ConfidentialTransferWithFeeInstructionData>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (bytesLength != structDecoder.fixedSize) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
+          }
+          return readTopLevel(bytes, offset);
+        },
+      ),
+    VariableSizeDecoder<Map<String, Object?>>() =>
+      VariableSizeDecoder<ConfidentialTransferWithFeeInstructionData>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
+  };
 }
 
 Codec<
@@ -140,6 +179,7 @@ getConfidentialTransferWithFeeInstructionDataCodec() {
 }
 
 /// Creates a [ConfidentialTransferWithFee] instruction.
+/// Set [authorityIsSigner] to false when [authority] does not sign (for example, a multisig authority).
 Instruction getConfidentialTransferWithFeeInstruction({
   required Address programAddress,
   required Address sourceToken,
@@ -160,6 +200,7 @@ Instruction getConfidentialTransferWithFeeInstruction({
   required int feeSigmaProofInstructionOffset,
   required int feeCiphertextValidityProofInstructionOffset,
   required int rangeProofInstructionOffset,
+  bool authorityIsSigner = true,
 }) {
   final instructionData = ConfidentialTransferWithFeeInstructionData(
     newSourceDecryptableAvailableBalance: newSourceDecryptableAvailableBalance,
@@ -198,7 +239,12 @@ Instruction getConfidentialTransferWithFeeInstruction({
         ),
       if (rangeRecord != null)
         AccountMeta(address: rangeRecord, role: AccountRole.readonly),
-      AccountMeta(address: authority, role: AccountRole.readonlySigner),
+      AccountMeta(
+        address: authority,
+        role: authorityIsSigner
+            ? AccountRole.readonlySigner
+            : AccountRole.readonly,
+      ),
     ],
     data: getConfidentialTransferWithFeeInstructionDataEncoder().encode(
       instructionData,

@@ -43,7 +43,7 @@ void main() {
       version: TransactionVersion.v1,
       instructions: [
         Instruction(
-          programAddress: memoProgramAddress,
+          programAddress: onChainMemoProgramAddress,
           accounts: const [],
           data: Uint8List(memoLength)..fillRange(0, memoLength, 0x41),
         ),
@@ -97,7 +97,7 @@ void main() {
         version: TransactionVersion.legacy,
         instructions: [
           Instruction(
-            programAddress: memoProgramAddress,
+            programAddress: onChainMemoProgramAddress,
             accounts: const [],
             data: Uint8List(8),
           ),
