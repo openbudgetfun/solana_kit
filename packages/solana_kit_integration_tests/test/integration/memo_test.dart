@@ -7,7 +7,6 @@
 @Tags(['integration'])
 library;
 
-import 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
 import 'package:solana_kit_integration_tests/solana_kit_integration_tests.dart';
 import 'package:solana_kit_memo/solana_kit_memo.dart';
 import 'package:test/test.dart';
@@ -24,7 +23,10 @@ void main() {
   test('addMemo instruction lands on-chain and logs the memo', () async {
     const memo = 'hello surfpool';
     final signature = await env.sendInstructions([
-      getAddMemoInstruction(programAddress: memoProgramAddress, memo: memo),
+      getAddMemoInstruction(
+        programAddress: onChainMemoProgramAddress,
+        memo: memo,
+      ),
     ]);
 
     // The memo program echoes the memo in its program log; assert the
@@ -36,7 +38,7 @@ void main() {
   test('parsed addMemo instruction round-trips the memo text', () {
     const memo = 'solana-kit dart';
     final instruction = getAddMemoInstruction(
-      programAddress: memoProgramAddress,
+      programAddress: onChainMemoProgramAddress,
       memo: memo,
     );
     expect(parseAddMemoInstruction(instruction).memo, equals(memo));

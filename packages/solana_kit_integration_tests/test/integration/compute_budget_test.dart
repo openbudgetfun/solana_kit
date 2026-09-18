@@ -9,7 +9,6 @@
 @Tags(['integration'])
 library;
 
-import 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
 import 'package:solana_kit_compute_budget/solana_kit_compute_budget.dart';
 import 'package:solana_kit_integration_tests/solana_kit_integration_tests.dart';
 import 'package:solana_kit_memo/solana_kit_memo.dart';
@@ -38,7 +37,7 @@ void main() {
           microLamports: BigInt.from(1_000),
         ),
         getAddMemoInstruction(
-          programAddress: memoProgramAddress,
+          programAddress: onChainMemoProgramAddress,
           memo: memo,
         ),
       ]);

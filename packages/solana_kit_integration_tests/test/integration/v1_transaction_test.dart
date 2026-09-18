@@ -16,8 +16,6 @@ library;
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
-import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_integration_tests/solana_kit_integration_tests.dart';
@@ -48,7 +46,7 @@ void main() {
   /// limit but comfortably fits the v1 limit.
   Instruction oversizedMemoInstruction() {
     return Instruction(
-      programAddress: memoProgramAddress,
+      programAddress: onChainMemoProgramAddress,
       accounts: const [],
       // Printable ASCII so the memo program accepts it.
       data: Uint8List(_oversizedMemoLength)
@@ -217,7 +215,7 @@ void main() {
       // The payload is deliberately past the v1 ceiling. The node validates
       // size before simulation, so this fails at the RPC boundary.
       final oversized = Instruction(
-        programAddress: memoProgramAddress,
+        programAddress: onChainMemoProgramAddress,
         accounts: const [],
         data: Uint8List(4200)..fillRange(0, 4200, 0x41),
       );

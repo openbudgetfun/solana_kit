@@ -20,4 +20,4 @@ The generated layer is regenerated against `js@v0.14.1` with the current rendere
 
 `codama-renderers-dart` maps the v4 address to `memoProgramAddress` and the v3 address to `memoLegacyProgramAddressV3` in its well-known address registry, so regenerated clients re-export the canonical constants instead of hardcoding address strings.
 
-The `token-2022` pin stays at `js@v0.16.1`: `js@v0.17.0` (and the newer `js@v0.18.0`) still requires the handwritten-layer migration before the pin can move.
+Build new memo instructions against `memoProgramAddress` (v4). Where a memo must be executed by a program the runtime provides, check what is deployed: SurfPool, used by this repository's on-chain integration tests, ships the v1 and v3 programs as executable bytecode but resolves v4 to a placeholder, so those tests invoke `memoLegacyProgramAddressV3`. All three programs share the same instruction format, so only the program the transaction targets differs.
