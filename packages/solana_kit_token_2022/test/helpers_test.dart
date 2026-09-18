@@ -376,5 +376,24 @@ void main() {
       expect(decoded.extensions, hasLength(1));
       expect(decoded.extensions!.single, isA<ExtensionMemoTransfer>());
     });
+
+    test('extensions codec round-trips the TLV region', () {
+      final extensions = <Extension>[
+        const ExtensionMetadataPointer(
+          authority: authority,
+          metadataAddress: metadata,
+        ),
+        const ExtensionCpiGuard(lockCpi: true),
+      ];
+
+      final encoded = getExtensionsCodec().encode(extensions);
+      final decoded = getExtensionsCodec().decode(encoded);
+
+      expect(decoded, equals(extensions));
+      expect(
+        decoded,
+        isNot(contains(isA<ExtensionUninitialized>())),
+      );
+    });
   });
 }

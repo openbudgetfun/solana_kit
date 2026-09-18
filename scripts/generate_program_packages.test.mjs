@@ -9,19 +9,21 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const rendererDir = join(root, "packages/codama-renderers-dart");
 let importId = 0;
 
-async function runGenerator(t, { check = true, generated = "fresh", existing = "stale", fail = false } = {}) {
+async function runGenerator(t, { check = true, generated = "fresh", existing = "stale", fail = false, program = "system", idl = { kind: "rootNode", program: {} }, packageName } = {}) {
   const fixture = fs.mkdtempSync(join(tmpdir(), "program-generator-test-"));
   const fixtureRoot = join(fixture, "repo");
   const privateTmp = join(fixture, "tmp");
-  const generatedDir = join(fixtureRoot, "packages/solana_kit_system/lib/src/generated");
+  const packageDir = packageName ?? `solana_kit_${program.replace(/-/g, "_")}`;
+  const generatedDir = join(fixtureRoot, `packages/${packageDir}/lib/src/generated`);
   const previousArgv = process.argv;
   const previousExitCode = process.exitCode;
+  const renderedRoots = [];
 
   t.after(() => fs.rmSync(fixture, { recursive: true, force: true }));
-  fs.mkdirSync(join(fixtureRoot, ".repos/solana-program/system"), { recursive: true });
+  fs.mkdirSync(join(fixtureRoot, `.repos/solana-program/${program}`), { recursive: true });
   fs.mkdirSync(join(generatedDir, "nested"), { recursive: true });
   fs.mkdirSync(privateTmp);
-  fs.writeFileSync(join(fixtureRoot, ".repos/solana-program/system/idl.json"), JSON.stringify({ kind: "rootNode", program: {} }));
+  fs.writeFileSync(join(fixtureRoot, `.repos/solana-program/${program}/idl.json`), JSON.stringify(idl));
   fs.writeFileSync(join(generatedDir, "output.dart"), existing);
   fs.writeFileSync(join(generatedDir, "nested/output.dart"), existing);
 
@@ -43,9 +45,10 @@ async function runGenerator(t, { check = true, generated = "fresh", existing = "
   const osMock = mock.module("os", { namedExports: { tmpdir: () => privateTmp } });
   const rendererMock = mock.module(join(rendererDir, "dist/index.node.js"), {
     namedExports: {
-      renderVisitor(output) {
-        return () => {
+      renderVisitor(output, options) {
+        return (root) => {
           if (fail) throw new Error("renderer rejected IDL");
+          renderedRoots.push({ output, options, root });
           const target = mapPath(output);
           fs.rmSync(target, { recursive: true, force: true });
           fs.mkdirSync(join(target, "nested"), { recursive: true });
@@ -74,7 +77,7 @@ async function runGenerator(t, { check = true, generated = "fresh", existing = "
     process.exitCode = previousExitCode;
   });
 
-  process.argv = [process.execPath, "generate_program_packages.mjs", "--program=system", ...(check ? ["--check"] : [])];
+  process.argv = [process.execPath, "generate_program_packages.mjs", `--program=${program}`, ...(check ? ["--check"] : [])];
   process.exitCode = undefined;
   await import(`./generate_program_packages.mjs?case=${++importId}`);
 
@@ -82,6 +85,7 @@ async function runGenerator(t, { check = true, generated = "fresh", existing = "
     exitCode: process.exitCode ?? 0,
     output: fs.readFileSync(join(generatedDir, "output.dart"), "utf8"),
     temporaryEntries: fs.readdirSync(privateTmp),
+    renderedRoots,
   };
 }
 
@@ -115,4 +119,83 @@ test("write mode updates generated output", async (t) => {
   assert.equal(result.exitCode, 0);
   assert.equal(result.output, "fresh");
   assert.deepEqual(result.temporaryEntries, []);
+});
+
+// The Token-2022 account TLV region is `remainderOption(hiddenPrefix(array))`;
+// only the inner array is retargeted so the option and hidden-prefix framing
+// keep coming from the IDL.
+function token2022Idl(accountNames) {
+  return {
+    kind: "rootNode",
+    program: {
+      accounts: accountNames.map((name) => ({
+        name,
+        data: {
+          fields: [
+            {
+              name: "extensions",
+              type: {
+                kind: "remainderOptionTypeNode",
+                item: {
+                  kind: "hiddenPrefixTypeNode",
+                  type: {
+                    kind: "arrayTypeNode",
+                    item: { kind: "definedTypeLinkNode", name: "extension" },
+                    count: { kind: "remainderCountNode" },
+                  },
+                  prefix: [],
+                },
+              },
+            },
+          ],
+        },
+      })),
+    },
+  };
+}
+
+test("token-2022 retargets the TLV region at the hand-written link", async (t) => {
+  const idl = token2022Idl(["mint", "token"]);
+  // Matching fixture content keeps `--check` succeeding; the assertions below
+  // inspect what the generator handed to the renderer.
+  const result = await runGenerator(t, {
+    program: "token-2022",
+    idl,
+    existing: "fresh",
+  });
+
+  assert.equal(result.exitCode, 0);
+  const { options, root: renderedIdl } = result.renderedRoots[0];
+
+  // The retarget happens on the root the generator passes to the renderer.
+  assert.equal(renderedIdl.program.accounts.length, 2);
+  for (const account of renderedIdl.program.accounts) {
+    const field = account.data.fields[0];
+    // The wrappers survive: only the array inside the hidden prefix changes,
+    // so the option and hidden-prefix framing keep coming from the IDL.
+    assert.equal(field.type.kind, "remainderOptionTypeNode");
+    assert.equal(field.type.item.kind, "hiddenPrefixTypeNode");
+    assert.equal(field.type.item.type.kind, "definedTypeLinkNode");
+    assert.equal(field.type.item.type.name, "token2022Extensions");
+  }
+
+  assert.deepEqual(options.linkOverrides, {
+    token2022Extensions: {
+      path: "src/extensions.dart",
+      type: "List<Extension>",
+      encoder: "getExtensionsEncoder()",
+      decoder: "getExtensionsDecoder()",
+    },
+  });
+});
+
+test("token-2022 rejects an IDL that drifts from the expected TLV shape", async (t) => {
+  // A renamed inner link means the retarget silently stopped matching, so the
+  // generator must fail rather than emit accounts that decode extensions wrong.
+  const idl = token2022Idl(["mint", "token"]);
+  idl.program.accounts[0].data.fields[0].type.item.type.item.name = "renamed";
+
+  const result = await runGenerator(t, { program: "token-2022", idl });
+
+  assert.equal(result.exitCode, 1);
 });

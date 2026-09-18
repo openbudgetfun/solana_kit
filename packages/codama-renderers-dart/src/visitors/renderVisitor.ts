@@ -113,8 +113,16 @@ function linkOverrideImports(
   const resolved: Record<string, string> = {};
   if (Object.keys(overrides).length === 0) return resolved;
 
+  // Override paths are resolved against the package's `lib/` directory, so
+  // without one there is nothing to anchor them to. Failing loudly beats
+  // emitting an import that cannot resolve.
   const libRoot = findLibRoot(outputDir);
-  if (libRoot == null) return resolved;
+  if (libRoot == null) {
+    throw new Error(
+      `Cannot resolve linkOverrides because the render output directory ` +
+        `"${outputDir}" has no "lib" ancestor.`,
+    );
+  }
 
   const generatedAbsolute = posix.join(
     posix.resolve(outputDir),

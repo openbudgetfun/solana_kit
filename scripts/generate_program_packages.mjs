@@ -465,38 +465,6 @@ for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
 
   console.log(`Generating ${pkg} from ${repo}...`);
   const idlJson = JSON.parse(readFileSync(idlPath, "utf-8"));
-  let root;
-  if (idlJson.kind === "rootNode") {
-    root = repo === "stake"
-      ? prepareStakeRoot(idlJson)
-      : repo === "token-2022"
-        ? prepareToken2022Root(idlJson)
-        : idlJson;
-  } else {
-    // Anchor/shank-format IDL: pin the renderer-facing program name, then
-    // convert with @codama/nodes-from-anchor.
-    const { rootNodeFromAnchor } = await import(
-      join(RENDERER_DIR, "node_modules/@codama/nodes-from-anchor/dist/index.node.mjs")
-    );
-    if (programName != null) {
-      idlJson.name = programName;
-    }
-    if (repo === "mpl-core") {
-      const fixed = prepareMplCoreRoot(idlJson);
-      root = rootNodeFromAnchor(fixed);
-    } else if (repo === "mpl-token-metadata") {
-      const fixed = prepareMplTokenMetadataRoot(idlJson);
-      root = rootNodeFromAnchor(fixed);
-    } else if (repo === "squads-multisig") {
-      const fixed = prepareSquadsMultisigRoot(idlJson);
-      root = rootNodeFromAnchor(fixed);
-    } else if (repo === "solana-attestation-service") {
-      const fixed = prepareSolanaAttestationServiceRoot(idlJson);
-      root = rootNodeFromAnchor(fixed);
-    } else {
-      root = rootNodeFromAnchor(idlJson);
-    }
-  }
 
   const checkDirectory = CHECK_ONLY
     ? mkdtempSync(join(tmpdir(), "solana-kit-program-generation-"))
@@ -504,6 +472,42 @@ for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
   const renderDir = checkDirectory == null ? outDir : join(checkDirectory, repo);
 
   try {
+    // Preparing the root runs the repository's IDL assertions, so it belongs
+    // inside the guard: a drifted IDL must fail this program rather than abort
+    // the whole run before other programs are generated.
+    let root;
+    if (idlJson.kind === "rootNode") {
+      root = repo === "stake"
+        ? prepareStakeRoot(idlJson)
+        : repo === "token-2022"
+          ? prepareToken2022Root(idlJson)
+          : idlJson;
+    } else {
+      // Anchor/shank-format IDL: pin the renderer-facing program name, then
+      // convert with @codama/nodes-from-anchor.
+      const { rootNodeFromAnchor } = await import(
+        join(RENDERER_DIR, "node_modules/@codama/nodes-from-anchor/dist/index.node.mjs")
+      );
+      if (programName != null) {
+        idlJson.name = programName;
+      }
+      if (repo === "mpl-core") {
+        const fixed = prepareMplCoreRoot(idlJson);
+        root = rootNodeFromAnchor(fixed);
+      } else if (repo === "mpl-token-metadata") {
+        const fixed = prepareMplTokenMetadataRoot(idlJson);
+        root = rootNodeFromAnchor(fixed);
+      } else if (repo === "squads-multisig") {
+        const fixed = prepareSquadsMultisigRoot(idlJson);
+        root = rootNodeFromAnchor(fixed);
+      } else if (repo === "solana-attestation-service") {
+        const fixed = prepareSolanaAttestationServiceRoot(idlJson);
+        root = rootNodeFromAnchor(fixed);
+      } else {
+        root = rootNodeFromAnchor(idlJson);
+      }
+    }
+
     visit(root, renderVisitor(renderDir, {
       formatCode: true,
       deleteFolderBeforeRendering: true,
