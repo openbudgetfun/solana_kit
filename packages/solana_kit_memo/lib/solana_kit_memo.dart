@@ -58,9 +58,34 @@
 /// `transactionMessage` is a lightweight `TransactionMessageInput` — a map from instruction index to `InstructionInput(programAddress: ...)`. Build it from the same instructions you sent, so matching stays accurate even when the transaction mixes instructions from several programs.
 ///
 /// <!-- {/programErrorHandlingSection} -->
+///
+/// ## Read memos back from instructions
+///
+/// Memo instructions are plain UTF-8 data, so the memo text can be recovered
+/// from any instruction a Memo program emitted. `getMemosFromInstructions`
+/// scans a list of instructions, matches every Memo program address ever
+/// deployed, and returns the decoded text together with the raw bytes, the
+/// source program address, and the instruction index.
+///
+/// ```dart
+/// import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+/// import 'package:solana_kit_memo/solana_kit_memo.dart';
+///
+/// void printMemos(List<Instruction> instructions) {
+///   final memos = getMemosFromInstructions(instructions);
+///   for (final extracted in memos) {
+///     print('memo from ${extracted.programAddress}: ${extracted.memo}');
+///   }
+/// }
+/// ```
+///
+/// Use `supportedMemoProgramAddresses` when you only need to test whether an
+/// instruction targets a Memo program.
 
 library;
 
 // Hide memoProgramAddress; it's already provided by
 // solana_kit_address_constants to avoid duplication across the SDK.
+export 'src/constants.dart';
 export 'src/generated/memo.dart' hide memoProgramAddress;
+export 'src/memos.dart';

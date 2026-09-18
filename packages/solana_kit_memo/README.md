@@ -43,7 +43,7 @@ void main() {
 }
 ```
 
-Use `memoLegacyProgramAddress` when you need to target the legacy Memo program:
+Use `memoLegacyProgramAddress` (v1) or `memoLegacyProgramAddressV3` when you need to target a legacy Memo program:
 
 ```dart
 import 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
@@ -51,13 +51,29 @@ import 'package:solana_kit_memo/solana_kit_memo.dart';
 
 void main() {
   final legacyInstruction = getAddMemoInstruction(
-    programAddress: memoLegacyProgramAddress,
+    programAddress: memoLegacyProgramAddressV3,
     memo: 'legacy memo',
   );
 
   print(legacyInstruction.programAddress);
 }
 ```
+
+The Memo program has been deployed under several addresses over time. `supportedMemoProgramAddresses` lists every deployed address (v1, v3, and v4), which is what you want when detecting memos rather than building them:
+
+```dart
+import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+import 'package:solana_kit_memo/solana_kit_memo.dart';
+
+void printMemos(List<Instruction> instructions) {
+  final memos = getMemosFromInstructions(instructions);
+  for (final extracted in memos) {
+    print('${extracted.memo} from ${extracted.programAddress} (index ${extracted.index})');
+  }
+}
+```
+
+`getMemosFromInstructions` matches instructions against every supported Memo program address, decodes the memo text as UTF-8, and preserves the original instruction ordering.
 
 <!-- {=generatedProgramClientSection} -->
 
@@ -106,11 +122,15 @@ Future<void> handleTransactionFailure(Object error) async {
 ## Key APIs
 
 - `getAddMemoInstruction({required String memo})` — builds a Memo instruction from plain Dart text.
+- `getMemosFromInstructions(List<Instruction> instructions)` — extracts every memo from a list of instructions, matching all deployed Memo program addresses.
+- `ExtractedMemo` — one extracted memo: UTF-8 `memo` text, raw `bytes`, source `programAddress`, and instruction `index`.
+- `supportedMemoProgramAddresses` — every deployed Memo program address, ordered from oldest (v1) to newest (v4).
 - `AddMemoInstructionData` — generated instruction data model.
 - `getAddMemoInstructionDataCodec()` — UTF-8 codec for AddMemo data.
-- `memoProgramAddress` — current Memo program address.
-- `memoLegacyProgramAddress` — legacy Memo program address.
+- `memoProgramAddress` — current Memo program address (v4).
+- `memoLegacyProgramAddressV3` — legacy Memo program address (v3).
+- `memoLegacyProgramAddress` — legacy Memo program address (v1).
 
 ## Upstream reference
 
-Generated layer mirrors [solana-program/memo](https://github.com/solana-program/memo) at `js@v0.13.0`.
+Generated layer mirrors [solana-program/memo](https://github.com/solana-program/memo) at `js@v0.14.1`. `js@v0.14.0` pointed the generated client at the v4 memo program; the v1 and v3 addresses remain available as legacy constants, matching the upstream extraction helpers.

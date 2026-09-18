@@ -21,18 +21,30 @@ const associatedTokenProgramAddress = Address(
   'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
 );
 
-/// The address of the Memo program (v3, on-chain memo).
+/// The address of the Memo program (v4, on-chain memo).
 ///
-/// Matches the upstream `solana-program/memo` Codama IDL `publicKey`.
+/// Matches the upstream `solana-program/memo` Codama IDL `publicKey` as of
+/// `js@v0.14.0`, which pointed the clients at the v4 program.
 const memoProgramAddress = Address(
-  'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr',
+  'Memo4c2pN8afCj432Lb7RMVKi9PbQnnW7ewFFaV3oAH',
 );
 
 /// The address of the legacy Memo program (v1).
 ///
 /// The original Memo program (shank/spl-memo v1) was deployed at
 /// `Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo`; later versions moved to
-/// the v3 `memoProgramAddress` above.
+/// the v3 and then the v4 `memoProgramAddress` above. Use
+/// [memoProgramAddress] when building new memo instructions.
 const memoLegacyProgramAddress = Address(
   'Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo',
+);
+
+/// The address of the legacy Memo program (v3).
+///
+/// The v3 program was deployed at `MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr`
+/// and was the address this SDK exposed as [memoProgramAddress] before the v4
+/// program shipped. It is kept here for reading memos emitted by older
+/// transactions; use [memoProgramAddress] when building new memo instructions.
+const memoLegacyProgramAddressV3 = Address(
+  'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr',
 );

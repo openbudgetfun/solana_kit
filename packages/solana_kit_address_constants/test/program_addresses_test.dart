@@ -229,6 +229,13 @@ void main() {
     test('memoProgramAddress has the correct value', () {
       expect(
         memoProgramAddress.value,
+        'Memo4c2pN8afCj432Lb7RMVKi9PbQnnW7ewFFaV3oAH',
+      );
+    });
+
+    test('memoLegacyProgramAddressV3 has the correct value', () {
+      expect(
+        memoLegacyProgramAddressV3.value,
         'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr',
       );
     });
@@ -246,6 +253,7 @@ void main() {
         token2022ProgramAddress,
         associatedTokenProgramAddress,
         memoProgramAddress,
+        memoLegacyProgramAddressV3,
         memoLegacyProgramAddress,
       ];
 
