@@ -1,6 +1,7 @@
 ---
 "codama-renderers-dart": patch
 "solana_kit_address_constants": minor
+"solana_kit_integration_tests": patch
 "solana_kit_memo": minor
 ---
 
