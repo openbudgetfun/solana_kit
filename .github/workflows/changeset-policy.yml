@@ -19,7 +19,7 @@ jobs:
       pull-requests: read
     steps:
       - name: checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        uses: actions/checkout@v7.0.1 # v7
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -30,7 +30,7 @@ jobs:
 
       - name: collect changed files
         id: changed
-        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47
+        uses: tj-actions/changed-files@v47.0.6 # v47
 
       - name: reject group-targeted changesets
         env:
@@ -53,7 +53,7 @@ jobs:
         shell: devenv shell -- bash -e {0}
 
       - name: check changeset policy
-        uses: monochange/actions/changeset-policy@4c881e8caf28056185bc5ff854eab100f880a0e9 # v0.9.2
+        uses: monochange/actions/changeset-policy@v0.9.3 # v0
         with:
           setup-monochange: devenv shell monochange
           changed-paths: ${{ steps.changed.outputs.all_changed_files }}
