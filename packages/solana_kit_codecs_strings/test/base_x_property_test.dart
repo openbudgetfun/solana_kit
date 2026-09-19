@@ -65,6 +65,31 @@ void main() {
         );
       }
     });
+
+    test(
+      'values that need only part of the conversion buffer trim cleanly',
+      () {
+        // Characters are folded into a buffer sized for the worst case, so most
+        // inputs leave unused leading zero bytes. Those must be trimmed to the
+        // minimal big-endian representation rather than emitted as padding.
+        final encoder = getBase58Encoder();
+        final cases = <String, List<int>>{
+          '2': [1],
+          'j': [42],
+          'LUv': [255, 255],
+          // A high digit followed by zeroes exercises the low end of the range.
+          '1z': [0, 57],
+          '111z': [0, 0, 0, 57],
+        };
+        for (final entry in cases.entries) {
+          expect(
+            encoder.encode(entry.key),
+            orderedEquals(entry.value),
+            reason: entry.key,
+          );
+        }
+      },
+    );
   });
 
   group('base10 round trips', () {
@@ -125,6 +150,51 @@ void main() {
       expect(() => getBaseXEncoder('x'), throwsArgumentError);
       expect(() => getBaseXDecoder('x'), throwsArgumentError);
       expect(() => getBaseXEncoder(''), throwsArgumentError);
+    });
+
+    test('an alphabet with characters outside ASCII round trips', () {
+      // A wide alphabet takes the sparse lookup path rather than the dense
+      // code-unit table.
+      final alphabet = String.fromCharCodes(
+        List<int>.generate(120, (index) => 0x4E00 + index),
+      );
+      final codec = getBaseXCodec(alphabet);
+      for (var trial = 0; trial < 30; trial++) {
+        final length = random.nextInt(16);
+        final bytes = Uint8List.fromList(
+          List<int>.generate(length, (_) => random.nextInt(256)),
+        );
+        expect(codec.encode(codec.decode(bytes)), orderedEquals(bytes));
+      }
+    });
+
+    test('many distinct alphabets stay correct as the lookup cache cycles', () {
+      // The shared lookup cache evicts once it reaches its cap. Building more
+      // alphabets than that cap must not corrupt later conversions. Each
+      // rotation is a distinct alphabet, and characters stay unique because a
+      // repeated symbol would make the encoding ambiguous by construction.
+      final symbols = [
+        for (var code = 33; code <= 126; code++) String.fromCharCode(code),
+      ];
+      expect(symbols.length, greaterThan(80));
+      for (var variant = 0; variant < symbols.length; variant++) {
+        final alphabet = [
+          for (var i = 0; i < symbols.length; i++)
+            symbols[(i + variant) % symbols.length],
+        ].join();
+        final codec = getBaseXCodec(alphabet);
+        final bytes = Uint8List.fromList([
+          variant & 0xff,
+          (variant * 7) & 0xff,
+          0,
+          (variant * 13) & 0xff,
+        ]);
+        expect(
+          codec.encode(codec.decode(bytes)),
+          orderedEquals(bytes),
+          reason: 'alphabet variant $variant',
+        );
+      }
     });
   });
 

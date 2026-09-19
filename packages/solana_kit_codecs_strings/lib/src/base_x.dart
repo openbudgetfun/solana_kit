@@ -139,11 +139,11 @@ _ConvertedBytes _convertToBytes(String value, String alphabet) {
     length = j;
   }
 
-  // The buffer is little-endian. Unused headroom leaves leading zero bytes,
-  // which are not part of the minimal representation.
-  while (length > 0 && buffer[length - 1] == 0) {
-    length--;
-  }
+  // Little-endian buffer, big-endian output. The carry loop above always
+  // leaves the highest written byte non-zero: zero-valued leading characters
+  // were stripped before folding, so the first digit is never zero, and the
+  // loop only stops once the carry is exhausted. The result is therefore
+  // already the minimal big-endian representation.
   final bytes = Uint8List(length);
   for (var i = 0; i < length; i++) {
     bytes[i] = buffer[length - 1 - i];
