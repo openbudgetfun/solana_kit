@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Mutation rules for the Solana Kit Dart SDK.
+
+  `mutation-test` mutates by text replacement, not by parsing Dart, so the
+  built-in rules are too blunt for this codebase. Three problems show up on the
+  codec and parser files:
+
+    - The built-in `<` rule also matches the first character of `<<`, so a
+      bitshift becomes `< <=`. That is not a Dart program, and it wastes a test
+      run. The comparison rules below use lookarounds to match only real
+      comparisons.
+    - The built-in rules mutate generic type annotations such as
+      `FixedSizeDecoder<int>` and doc-comment prose. No test can kill those, and
+      they bury the real findings. The `exclude` block removes comments, and the
+      scopes in `scopes.json` keep the file list narrow.
+    - Built-in argument-reordering rules produce calls with swapped parameters,
+      which frequently fail to compile. A mutation that does not compile is
+      reported as a survivor, so it adds noise rather than signal. This file
+      defines only rules that stay syntactically valid, and is used with
+      `--rules-only` so the built-ins do not apply.
+
+  IMPORTANT: the parser only recognizes `literal` and `regex` directly under
+  `<rules>`. Wrapping them in any other element (a group, a section) silently
+  finds zero rules and the run reports zero mutations. Comment out a rule you
+  want to silence; do not nest it.
+
+  Rules are named `kit.*` so they are distinguishable from `builtin.*` in a
+  report.
+
+  Grouping, for reference when pruning a rule set:
+
+    boundary    comparison and equality operators, deciding whether malformed
+                input is rejected or accepted.
+    arithmetic  offset and length arithmetic; a wrong `+` or `-` in a slice
+                bound or a returned offset is the most common codec defect.
+    bitwise     masks and shifts used by shortU16 and base58 decoding.
+    constants   integer literals used as widths, bounds, and masks.
+    guard       negation and chaining of validation conditions.
+-->
+<mutations version="1.2">
+  <rules>
+    <!-- ================= boundary ================= -->
+
+    <!--
+      A genuine `<`: not preceded by another operator (which would make it
+      `<<`, `<=`, `!=`, `+=` ...) and not followed by `=` or `<`.
+    -->
+    <regex pattern="(?&lt;![&lt;&gt;=!+\-*/|&amp;])&lt;(?![&lt;=])" id="kit.lt">
+      <mutation text="&lt;="/>
+    </regex>
+
+    <literal text="&lt;=" id="kit.leq">
+      <mutation text="&lt;"/>
+    </literal>
+
+    <!-- A genuine `>`: not a `>>` shift and not `>=`. -->
+    <regex pattern="(?&lt;![&lt;&gt;=!+\-*/|&amp;])&gt;(?![&gt;=])" id="kit.gt">
+      <mutation text="&gt;="/>
+    </regex>
+
+    <literal text="&gt;=" id="kit.geq">
+      <mutation text="&gt;"/>
+    </literal>
+
+    <literal text="==" id="kit.eq">
+      <mutation text="!="/>
+    </literal>
+
+    <literal text="!=" id="kit.neq">
+      <mutation text="=="/>
+    </literal>
+
+    <!-- ================= arithmetic ================= -->
+
+    <!--
+      A binary `+`: not `++`, `+=`, and not a unary sign. The lookbehind also
+      rejects `e+`/`E+` so exponent literals are left alone.
+    -->
+    <regex pattern="(?&lt;![+\-=&lt;&gt;!eE])\+(?![+=])" id="kit.add">
+      <mutation text="-"/>
+    </regex>
+
+    <!-- A binary `-`: not `--`, `-=`, `->`, and not a negative numeric literal. -->
+    <regex pattern="(?&lt;![+\-=&lt;&gt;!eE])-(?![=\-&gt;0-9])" id="kit.sub">
+      <mutation text="+"/>
+    </regex>
+
+    <!-- ================= bitwise ================= -->
+
+    <regex pattern="&amp;(?!&amp;)" id="kit.bitand">
+      <mutation text="|"/>
+    </regex>
+
+    <regex pattern="(?&lt;!\|)\|(?!\|)" id="kit.bitor">
+      <mutation text="&amp;"/>
+    </regex>
+
+    <literal text="&lt;&lt;" id="kit.shl">
+      <mutation text="&gt;&gt;"/>
+    </literal>
+
+    <literal text="&gt;&gt;&gt;" id="kit.ushr">
+      <mutation text="&lt;&lt;"/>
+    </literal>
+
+    <!-- ================= constants ================= -->
+
+    <literal text="0x7f" id="kit.mask7f">
+      <mutation text="0x3f"/>
+      <mutation text="0xff"/>
+    </literal>
+
+    <literal text="0x80" id="kit.mask80">
+      <mutation text="0x40"/>
+      <mutation text="0xc0"/>
+    </literal>
+
+    <literal text="0xff" id="kit.maskff">
+      <mutation text="0x7f"/>
+    </literal>
+
+    <literal text="65535" id="kit.u16max">
+      <mutation text="32767"/>
+      <mutation text="65534"/>
+    </literal>
+
+    <literal text="4294967295" id="kit.u32max">
+      <mutation text="2147483647"/>
+    </literal>
+
+    <literal text="0xffffffff" id="kit.masku32">
+      <mutation text="0x7fffffff"/>
+    </literal>
+
+    <!-- The shortU16 continuation limit: shifts 0, 7, and 14 are legal. -->
+    <literal text="14" id="kit.shift14">
+      <mutation text="7"/>
+    </literal>
+
+    <!-- Ed25519 signature length and the fixed widths used across the codecs. -->
+    <literal text="64" id="kit.bytes64">
+      <mutation text="32"/>
+    </literal>
+
+    <literal text="32" id="kit.len32">
+      <mutation text="31"/>
+    </literal>
+
+    <!-- ================= guard ================= -->
+
+    <literal text="&amp;&amp;" id="kit.and">
+      <mutation text="||"/>
+    </literal>
+
+    <literal text="||" id="kit.or">
+      <mutation text="&amp;&amp;"/>
+    </literal>
+  </rules>
+
+  <!--
+    Exclusion zones.
+
+    Mutation testing measures tests, not prose: a mutant inside a comment is
+    unkillable by construction and only inflates the survivor count.
+
+    String literals are excluded for the same reason. Constants like `32` are
+    worth mutating where they are field widths (`size: 32`), but the same digits
+    appear inside codec names such as `'u32'`, and renaming a description
+    changes only an error message that no test should be asserting. Excluding
+    quoted text keeps the constant rules pointed at real arithmetic.
+  -->
+  <exclude>
+    <regex pattern="//[^\n]*" dotAll="false"/>
+    <regex pattern="/[*].*?[*]/" dotAll="true"/>
+    <regex pattern="'''[^']*?'''" dotAll="true"/>
+    <regex pattern="'[^'\n]*'" dotAll="false"/>
+  </exclude>
+
+  <!--
+    Quality gate.
+
+    Advisory. The devenv task prints the rating but does not fail the build.
+    Equivalent mutants survive legitimately, so a hard gate would produce a
+    red build nobody can make green. Raise `failure` per scope once its
+    survivor list has been triaged.
+  -->
+  <threshold failure="0">
+    <rating over="100" name="A"/>
+    <rating over="90" name="B"/>
+    <rating over="80" name="C"/>
+    <rating over="70" name="D"/>
+    <rating over="0" name="F"/>
+  </threshold>
+</mutations>
