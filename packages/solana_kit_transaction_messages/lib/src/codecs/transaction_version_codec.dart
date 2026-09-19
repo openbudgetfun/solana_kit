@@ -46,6 +46,15 @@ VariableSizeDecoder<TransactionVersion> getTransactionVersionDecoder() {
   return VariableSizeDecoder<TransactionVersion>(
     maxSize: 1,
     read: (bytes, offset) {
+      // `@solana/kit` reads `bytes[offset]` unguarded because JavaScript yields
+      // `undefined` past the end, which then takes the legacy branch and
+      // silently misreads a truncated buffer as an unversioned message. An
+      // exhausted buffer is a malformed message, so reject it instead.
+      assertByteArrayIsNotEmptyForCodec(
+        'transactionVersion',
+        bytes,
+        offset,
+      );
       final firstByte = bytes[offset];
       if ((firstByte & _versionFlagMask) == 0) {
         // No version flag set; it's a legacy (unversioned) transaction.

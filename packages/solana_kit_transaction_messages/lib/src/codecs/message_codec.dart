@@ -372,13 +372,24 @@ int _writeV1Message(
       accountIndices.add(index);
       pos = next;
     }
-    final dataEnd = pos + header.numInstructionDataBytes;
+    // Upstream expresses the payload as `fixDecoderSize(getBytesDecoder(),
+    // numInstructionDataBytes)`, which asserts the length before slicing. The
+    // declaration here is inlined for speed, so repeat that assertion to keep
+    // a truncated payload a SolanaError instead of a raw RangeError.
+    final dataStart = pos;
+    assertByteArrayHasEnoughBytesForCodec(
+      'fixCodecSize',
+      header.numInstructionDataBytes,
+      bytes,
+      dataStart,
+    );
+    final dataEnd = dataStart + header.numInstructionDataBytes;
     instructionPayloads.add(
       V1InstructionPayload(
         instructionAccountIndices: accountIndices,
         // `Uint8List.sublist` already returns an independent copy, so wrapping
         // it in `Uint8List.fromList` copied every instruction payload twice.
-        instructionData: bytes.sublist(pos, dataEnd),
+        instructionData: bytes.sublist(dataStart, dataEnd),
       ),
     );
     pos = dataEnd;

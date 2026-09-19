@@ -106,6 +106,32 @@ Future<void> handleTransactionFailure(Object error) async {
 
 <!-- {/programErrorHandlingSection} -->
 
+## Malformed input always arrives as `SolanaError`
+
+Decoding functions treat untrusted bytes as a protocol boundary. Given any byte array — including one truncated mid-field or claiming a length it cannot hold — a decoder either returns a value or throws `SolanaError` with a codec error code such as `codecsInvalidByteLength` or `codecsCannotDecodeEmptyByteArray`.
+
+This matters when the bytes come from outside your program: an RPC response, another wallet's payload, or account data. You do not need to catch implementation-level exceptions around a decode, and a malformed payload cannot escape a `try` block that catches `SolanaError`:
+
+```dart
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
+
+BigInt readAmount(Uint8List accountData) {
+  try {
+    return getU64Decoder().decode(accountData);
+  } on SolanaError catch (error) {
+    // Truncated or empty input lands here, named and structured.
+    print(error.context['codecDescription']); // 'u64'
+    print(error.context['expected']); // 8
+    rethrow;
+  }
+}
+```
+
+The same guarantee covers the compiled transaction message decoder and the transaction envelope decoder, which is where network data first becomes structured.
+
+Encoders are the exception. Writing a value into a buffer that is too small still throws `RangeError`, matching `@solana/kit`, because an undersized output buffer is a caller programming error rather than hostile input.
+
 ## Practical guidance
 
 ### Catch `SolanaError` at service boundaries

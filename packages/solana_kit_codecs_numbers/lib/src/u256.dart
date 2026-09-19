@@ -30,12 +30,11 @@ FixedSizeEncoder<BigInt> getU256Encoder([NumberCodecConfig? config]) {
 /// Decodes 32 bytes as a [BigInt] in the range [0, 2^256 - 1]. Defaults to
 /// little-endian byte order.
 FixedSizeDecoder<BigInt> getU256Decoder([NumberCodecConfig? config]) {
-  final endian = config?.endian ?? Endian.little;
-  return FixedSizeDecoder<BigInt>(
-    fixedSize: 32,
-    read: (bytes, offset) {
-      return (readBigIntUnsigned(bytes, offset, 32, endian), offset + 32);
-    },
+  return bigIntDecoderFactory(
+    name: 'u256',
+    size: 32,
+    unsigned: true,
+    config: config,
   );
 }
 

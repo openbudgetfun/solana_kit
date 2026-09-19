@@ -30,12 +30,11 @@ FixedSizeEncoder<BigInt> getU128Encoder([NumberCodecConfig? config]) {
 /// Decodes 16 bytes as a [BigInt] in the range [0, 2^128 - 1]. Defaults to
 /// little-endian byte order.
 FixedSizeDecoder<BigInt> getU128Decoder([NumberCodecConfig? config]) {
-  final endian = config?.endian ?? Endian.little;
-  return FixedSizeDecoder<BigInt>(
-    fixedSize: 16,
-    read: (bytes, offset) {
-      return (readBigIntUnsigned(bytes, offset, 16, endian), offset + 16);
-    },
+  return bigIntDecoderFactory(
+    name: 'u128',
+    size: 16,
+    unsigned: true,
+    config: config,
   );
 }
 
