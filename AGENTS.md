@@ -60,6 +60,7 @@ Before you finish work on any function:
 - [Architecture and package boundaries](docs/agents/architecture.md)
 - [Dart conventions and API style](docs/agents/dart-conventions.md)
 - [Error codes](docs/agents/error-codes.md)
+- [Mutation testing](docs/agents/mutation-testing.md)
 - [Documentation updates](docs/agents/documentation.md)
 - [Changesets and releases](docs/agents/changesets-and-releases.md)
 - [Git and PR workflow](docs/agents/git-and-prs.md)

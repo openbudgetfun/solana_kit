@@ -10,20 +10,24 @@ devenv shell -- bash -lc '<command>'
 
 ## Common workspace commands
 
-| Command           | Purpose                                                                                          |
-| ----------------- | ------------------------------------------------------------------------------------------------ |
-| `install:all`     | Install local tooling and resolve Dart dependencies.                                             |
-| `fix:all`         | Run sync, docs updates, formatting, and lint fixes.                                              |
-| `lint:all`        | Run sync checks, docs checks, formatting checks, Kotlin lint, and Dart analysis.                 |
-| `test:all`        | Run all workspace tests.                                                                         |
-| `test:coverage`   | Generate merged LCOV coverage.                                                                   |
-| `coverage:check`  | Run package-level coverage for risk-tier packages and enforce configured floors.                 |
-| `docs:check`      | Verify generated docs blocks, source comment consumers, and workspace metadata are up to date.   |
-| `docs:update`     | Refresh generated docs blocks and print mdt diagnostics.                                         |
-| `upstream:check`  | Check tracked upstream compatibility metadata and local drift.                                   |
-| `upstream:parity` | Generate runtime fixtures from the tracked `@solana/kit` release and compare selected behaviors. |
-| `audit:deps`      | Audit current Dart and pnpm lockfiles for known vulnerabilities with `osv-scanner`.              |
-| `update:deps`     | Update `devenv` and pub dependencies.                                                            |
+| Command            | Purpose                                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------------------ |
+| `install:all`      | Install local tooling and resolve Dart dependencies.                                             |
+| `fix:all`          | Run sync, docs updates, formatting, and lint fixes.                                              |
+| `lint:all`         | Run sync checks, docs checks, formatting checks, Kotlin lint, and Dart analysis.                 |
+| `test:all`         | Run all workspace tests.                                                                         |
+| `test:coverage`    | Generate merged LCOV coverage.                                                                   |
+| `coverage:check`   | Run package-level coverage for risk-tier packages and enforce configured floors.                 |
+| `mutation:list`    | List the configured mutation testing scopes and their sizes.                                     |
+| `mutation:check`   | Report how completely each mutation scope's test list covers its dependents.                     |
+| `mutation:changed` | Run mutation testing for scopes touched since `origin/main`.                                     |
+| `mutation:run`     | Run scoped mutation testing (`--scope`, `--changed`, `--full`, `--coverage`).                    |
+| `docs:check`       | Verify generated docs blocks, source comment consumers, and workspace metadata are up to date.   |
+| `docs:update`      | Refresh generated docs blocks and print mdt diagnostics.                                         |
+| `upstream:check`   | Check tracked upstream compatibility metadata and local drift.                                   |
+| `upstream:parity`  | Generate runtime fixtures from the tracked `@solana/kit` release and compare selected behaviors. |
+| `audit:deps`       | Audit current Dart and pnpm lockfiles for known vulnerabilities with `osv-scanner`.              |
+| `update:deps`      | Update `devenv` and pub dependencies.                                                            |
 
 ## Direct tools
 

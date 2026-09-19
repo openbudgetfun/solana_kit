@@ -1,0 +1,136 @@
+{
+  "scopes": {
+    "codecs_numbers": {
+      "note": "Fixed-width numeric decoding and shortU16 varint parsing. Length and boundary arithmetic here decides whether malformed wire data is rejected or crashes, and the offset returned by every encoder drives composition.",
+      "source": [
+        "packages/solana_kit_codecs_numbers/lib"
+      ],
+      "tests": [
+        "packages/solana_kit_codecs_numbers/test",
+        "packages/solana_kit_codecs_core/test",
+        "packages/solana_kit_codecs/test",
+        "packages/solana_kit_codecs_strings/test",
+        "packages/solana_kit_codecs_data_structures/test",
+        "packages/solana_kit_config/test",
+        "packages/solana_kit_transaction_messages/test",
+        "packages/solana_kit_transactions/test",
+        "packages/solana_kit_address/test",
+        "packages/solana_kit_addresses/test",
+        "packages/solana_kit_instructions/test",
+        "packages/solana_kit_instruction_plans/test",
+        "packages/solana_kit_keys/test",
+        "packages/solana_kit_system/test"
+      ]
+    },
+    "transaction_messages": {
+      "note": "Compiled transaction message codecs for legacy, v0, and v1 envelopes. This is where validator and RPC bytes first become structured data, so a wrong length or index calculation is a consensus-visible defect.",
+      "source": [
+        "packages/solana_kit_transaction_messages/lib"
+      ],
+      "tests": [
+        "packages/solana_kit_transaction_messages/test",
+        "packages/solana_kit_transactions/test",
+        "packages/solana_kit_transaction_introspection/test",
+        "packages/solana_kit_transaction_confirmation/test",
+        "packages/solana_kit_instruction_plans/test",
+        "packages/solana_kit_compute_budget/test",
+        "packages/solana_kit_signers/test",
+        "packages/solana_kit_wallet_adapter/test"
+      ]
+    },
+    "transactions": {
+      "note": "Transaction envelope encoding, signing, and size estimation. Signature counting and the legacy/v1 version dispatch decide which bytes a signer approves.",
+      "source": [
+        "packages/solana_kit_transactions/lib"
+      ],
+      "tests": [
+        "packages/solana_kit_transactions/test",
+        "packages/solana_kit_transaction_introspection/test",
+        "packages/solana_kit_transaction_confirmation/test",
+        "packages/solana_kit_signers/test",
+        "packages/solana_kit_wallet_adapter/test",
+        "packages/solana_kit_jupiter/test"
+      ]
+    },
+    "codecs_strings": {
+      "note": "Base16, base58, and base64 codecs, including the tolerant base64 decoder that must reject malformed input rather than silently dropping bytes.",
+      "source": [
+        "packages/solana_kit_codecs_strings/lib"
+      ],
+      "tests": [
+        "packages/solana_kit_codecs_strings/test",
+        "packages/solana_kit_address/test",
+        "packages/solana_kit_addresses/test",
+        "packages/solana_kit_keys/test",
+        "packages/solana_kit_transaction_messages/test",
+        "packages/solana_kit_transactions/test"
+      ]
+    },
+    "codecs_core": {
+      "note": "Codec composition primitives: size prefixes, sentinels, offsets, and the Keccak-256 used for Bubblegum leaf hashing.",
+      "source": [
+        "packages/solana_kit_codecs_core/lib"
+      ],
+      "tests": [
+        "packages/solana_kit_codecs_core/test",
+        "packages/solana_kit_codecs/test",
+        "packages/solana_kit_codecs_data_structures/test",
+        "packages/solana_kit_codecs_numbers/test",
+        "packages/solana_kit_codecs_strings/test",
+        "packages/solana_kit_mpl_bubblegum/test",
+        "packages/solana_kit_transaction_messages/test"
+      ]
+    },
+    "keys": {
+      "note": "Ed25519 signature parsing and the hand-written small-order public key and nonce rejection. A wrong comparison here accepts forged signatures.",
+      "source": [
+        "packages/solana_kit_keys/lib"
+      ],
+      "tests": [
+        "packages/solana_kit_keys/test",
+        "packages/solana_kit_signers/test",
+        "packages/solana_kit_transactions/test",
+        "packages/solana_kit_wallet_adapter/test"
+      ]
+    },
+    "pdas": {
+      "note": "Program-derived address derivation, including the curve check on the off-curve condition. A wrong comparison derives a wrong account address.",
+      "source": [
+        "packages/solana_kit_addresses/lib",
+        "packages/solana_kit_associated_token_account/lib"
+      ],
+      "tests": [
+        "packages/solana_kit_addresses/test",
+        "packages/solana_kit_associated_token_account/test",
+        "packages/solana_kit_address/test",
+        "packages/solana_kit_token/test",
+        "packages/solana_kit_token_2022/test"
+      ]
+    },
+    "hashing": {
+      "note": "Hand-written SHA-256 in the Anchor and SNS packages, plus the Merkle proof verification for compressed NFTs. A wrong hash silently derives a wrong discriminator or account address.",
+      "source": [
+        "packages/solana_kit_anchor/lib/src/sha256.dart",
+        "packages/solana_kit_sns/lib/src/sha256.dart",
+        "packages/solana_kit_mpl_bubblegum/lib/src/merkle"
+      ],
+      "tests": [
+        "packages/solana_kit_anchor/test",
+        "packages/solana_kit_sns/test",
+        "packages/solana_kit_mpl_bubblegum/test"
+      ]
+    },
+    "untrusted_parsers": {
+      "note": "Parsers for data this SDK does not control: Pyth Wormhole VAAs and price accounts, and the Mobile Wallet Adapter encrypted envelope.",
+      "source": [
+        "packages/solana_kit_pyth/lib",
+        "packages/solana_kit_mobile_wallet_adapter_protocol/lib"
+      ],
+      "tests": [
+        "packages/solana_kit_pyth/test",
+        "packages/solana_kit_mobile_wallet_adapter_protocol/test",
+        "packages/solana_kit_mobile_wallet_adapter/test"
+      ]
+    }
+  }
+}

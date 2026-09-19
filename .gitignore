@@ -39,6 +39,9 @@ node_modules/
 
 coverage_tmp/
 
+# Mutation testing reports (written under coverage/, which is already ignored)
+mutation-test-report/
+
 # Surfpool runtime state
 .surfpool/
 

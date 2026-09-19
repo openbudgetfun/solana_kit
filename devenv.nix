@@ -485,6 +485,38 @@ in
       description = "Run package-level coverage for risk-tier packages and enforce configured line-coverage floors.";
       binary = "bash";
     };
+    "mutation:list" = {
+      exec = ''
+        set -euo pipefail
+        dart "$DEVENV_ROOT/scripts/run_mutation_testing.dart" --list
+      '';
+      description = "List the configured mutation testing scopes and their sizes.";
+      binary = "bash";
+    };
+    "mutation:check" = {
+      exec = ''
+        set -euo pipefail
+        dart "$DEVENV_ROOT/scripts/run_mutation_testing.dart" --check
+      '';
+      description = "Report how completely each mutation scope's test list covers its dependents.";
+      binary = "bash";
+    };
+    "mutation:changed" = {
+      exec = ''
+        set -euo pipefail
+        dart "$DEVENV_ROOT/scripts/run_mutation_testing.dart" --changed "$@"
+      '';
+      description = "Run mutation testing for scopes touched since origin/main.";
+      binary = "bash";
+    };
+    "mutation:run" = {
+      exec = ''
+        set -euo pipefail
+        dart "$DEVENV_ROOT/scripts/run_mutation_testing.dart" "$@"
+      '';
+      description = "Run scoped mutation testing. Accepts --scope <name>, --changed, --full, and --coverage.";
+      binary = "bash";
+    };
     "clone:repos" = {
       exec = ''
         set -euo pipefail
