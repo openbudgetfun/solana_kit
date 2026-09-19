@@ -1,0 +1,174 @@
+name: upstream-version-sync
+
+# Keeps the tracked upstream `@solana/kit` version in step with npm.
+#
+# Every Monday (and on demand), compare the npm `latest` dist-tag with the
+# `@solana/kit` entry in `versions.json`. When upstream has published a new
+# stable release, open (or refresh) a draft pull request carrying the
+# mechanical pin updates: the version tables, the `anza-xyz/kit` reference
+# pin, and a changeset. CI runs `upstream:parity` on that pull request
+# against the new release, so a covered behavior change fails loudly until
+# the port catches up — the claim bump is never silent.
+#
+# Drift deliberately does not fail ordinary CI: unrelated pull requests must
+# not go red because upstream shipped. This workflow is the only place the
+# external comparison gates anything.
+
+on:
+  schedule:
+    # Mondays 09:00 UTC.
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+    inputs:
+      dist_tag:
+        description: "npm dist-tag to compare against"
+        default: latest
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upstream-version-sync
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    if: github.repository == 'openbudgetfun/solana_kit'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      status: ${{ steps.compare.outputs.status }}
+      tracked: ${{ steps.compare.outputs.tracked }}
+      latest: ${{ steps.compare.outputs.latest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: compare tracked version with npm
+        id: compare
+        env:
+          DIST_TAG: ${{ inputs.dist_tag || 'latest' }}
+        run: |
+          set -euo pipefail
+          # The script exits 1 on drift; that is a signal here, not a failure.
+          result="$(
+            dart run scripts/sync_upstream_kit_release.dart --check \
+              --dist-tag "$DIST_TAG" --format json || true
+          )"
+          echo "$result"
+          status="$(echo "$result" | jq -r '.status')"
+          if [ "$status" != "in-sync" ] && [ "$status" != "drift" ] && [ "$status" != "downgrade" ]; then
+            echo "::error::Unexpected sync status '$status'." >&2
+            exit 1
+          fi
+          {
+            echo "status=$status"
+            echo "tracked=$(echo "$result" | jq -r '.tracked')"
+            echo "latest=$(echo "$result" | jq -r '.latest')"
+          } >> "$GITHUB_OUTPUT"
+        shell: devenv shell -- bash -e {0}
+
+  open-sync-pr:
+    if:
+      needs.detect.outputs.status == 'drift' &&
+      github.repository == 'openbudgetfun/solana_kit'
+    needs: detect
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/devenv
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: apply mechanical pin updates
+        env:
+          DIST_TAG: ${{ inputs.dist_tag || 'latest' }}
+        run: |
+          dart run scripts/sync_upstream_kit_release.dart --write \
+            --dist-tag "$DIST_TAG"
+        shell: devenv shell -- bash -e {0}
+      - name: re-render docs consumers
+        run: |
+          docs:update
+          upstream:check
+        shell: devenv shell -- bash -e {0}
+      - name: commit pin updates
+        id: commit
+        env:
+          LATEST: ${{ needs.detect.outputs.latest }}
+          TRACKED: ${{ needs.detect.outputs.tracked }}
+        run: |
+          set -euo pipefail
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit; the pins already match."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "chore(upstream): track @solana/kit v$LATEST (was v$TRACKED)"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+      - name: push sync branch
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: chore/upstream-kit-sync
+        run: |
+          set -euo pipefail
+          git config http.https://github.com/.extraheader \
+            "AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64)"
+          # Refresh the remote-tracking ref so --force-with-lease can verify
+          # it; a missing branch is expected on the first run.
+          git fetch --depth=1 origin "$BRANCH" || true
+          git push --force-with-lease origin "HEAD:refs/heads/$BRANCH"
+      - name: open or refresh the draft pull request
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: chore/upstream-kit-sync
+          LATEST: ${{ needs.detect.outputs.latest }}
+          TRACKED: ${{ needs.detect.outputs.tracked }}
+        run: |
+          set -euo pipefail
+          title="chore(upstream): track @solana/kit v$LATEST (was v$TRACKED)"
+          body_file="$(mktemp)"
+          cat >"$body_file" <<EOF
+          <!-- upstream-version-sync -->
+          Upstream [\`@solana/kit\`](https://www.npmjs.com/package/@solana/kit) published **v$LATEST** (this workspace tracks v$TRACKED).
+
+          This pull request contains only the mechanical pin updates produced by \`scripts/sync_upstream_kit_release.dart --write\`:
+
+          - \`versions.json\` \`@solana/kit\` compatibility marker
+          - \`config/reference-repos.json\` kit tag pin and checked commit
+          - \`docs/agents/reference-repos.md\` pin line
+          - rendered upstream-support sections and the compatibility tables (\`docs:update\`)
+          - a changeset for the claim bump
+
+          Before marking this ready to merge:
+
+          - [ ] Audit the upstream changes since v$TRACKED against this port (see the \`docs/agents/upstream-audit-*.md\` convention) and record a note.
+          - [ ] Port any changed covered behavior; \`upstream:parity\` runs in CI on this pull request against v$LATEST and must pass.
+          - [ ] Regenerate parity fixtures (for example \`packages/solana_kit_transactions/test/fixtures/v1_wire_vectors.json\`) if the wire format changed.
+          - [ ] Amend the generated changeset if the release ports new APIs (the auto-generated entry is patch-level).
+
+          Do not merge while \`upstream:parity\` is failing; that means upstream changed a covered behavior this port has not caught up with.
+          EOF
+          if [ -n "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+            gh pr edit "$BRANCH" --title "$title" --body-file "$body_file"
+            echo "Updated the existing sync pull request."
+          else
+            gh pr create --draft --title "$title" --body-file "$body_file" \
+              --base main --head "$BRANCH"
+          fi

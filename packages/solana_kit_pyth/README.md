@@ -21,7 +21,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_pyth": ^
+  "solana_kit_pyth": ^0.9.3
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

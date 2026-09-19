@@ -58,6 +58,8 @@ Each program repo is pinned to a specific tag or commit in `config/reference-rep
 
 ## Updating a pinned version
 
+For the `kit` repository specifically, the scheduled `upstream-version-sync` workflow automates steps 1–2 and the version tables: when npm publishes a new stable `@solana/kit`, it opens a draft pull request with the pin updates and a changeset (driven by `scripts/sync_upstream_kit_release.dart`). Merge it only after the upstream audit and a passing `upstream:parity`.
+
 1. Find the new upstream tag or commit.
 2. Update `config/reference-repos.json`.
 3. Run `clone:repos` to fetch the new revision.

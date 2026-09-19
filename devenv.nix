@@ -322,6 +322,7 @@ in
         mdt info >/dev/null
         mdt doctor --format text
         dart run scripts/workspace_doc_drift.dart --check
+        dart run scripts/check_versions_inventory.dart
         dart run scripts/check_reference_repo_docs.dart
         dart run scripts/check_error_code_parity.dart
         dart run scripts/generate_upstream_docs.dart --check
@@ -337,6 +338,7 @@ in
         dart run "$DEVENV_ROOT/scripts/sync_dart_doc_comments.dart" --write
         dart run scripts/workspace_doc_drift.dart --write
         dart run scripts/generate_upstream_docs.dart --write
+        dart run scripts/generate_docs_search_index.dart
         mdt info
       '';
       description = "Update generated documentation blocks across Markdown and Dart doc comments, then print mdt diagnostics.";
