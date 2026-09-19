@@ -1,4 +1,5 @@
 ---
+"solana_kit_addresses": patch
 "solana_kit_codecs_strings": patch
 "solana_kit_rpc_spec_types": patch
 "solana_kit_fixed_points": patch
