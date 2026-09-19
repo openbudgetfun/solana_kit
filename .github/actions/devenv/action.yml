@@ -13,7 +13,7 @@ runs:
   using: composite
   steps:
     - name: cache pnpm node
-      uses: actions/cache@v6.1.0 # v6
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: ~/.local/share/pnpm
         key: ${{ runner.os }}-pnpm-node-${{ inputs.cache-version }}-${{ hashFiles('pnpm-workspace.yaml') }}
@@ -21,7 +21,7 @@ runs:
           ${{ runner.os }}-pnpm-node-${{ inputs.cache-version }}-
 
     - name: install nix
-      uses: cachix/install-nix-action@v31.11.1 # v31
+      uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
       with:
         github_access_token: ${{ inputs.github-token }}
 
