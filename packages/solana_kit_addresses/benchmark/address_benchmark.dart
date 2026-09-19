@@ -5,9 +5,13 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 
 void main() {
   const addressValue = '11111111111111111111111111111111';
+  // The all-ones System Program address is base58's leading-zero fast path: it
+  // never performs a base conversion, so benchmarks using only it cannot detect
+  // a regression in the conversion itself. Measure a typical address too.
+  const typicalAddress = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
 
   _runBenchmark(
-    name: 'address()',
+    name: 'address() (all-zero fast path)',
     iterations: 50000,
     body: () {
       address(addressValue);
@@ -15,10 +19,26 @@ void main() {
   );
 
   _runBenchmark(
-    name: 'isAddress()',
+    name: 'isAddress() (all-zero fast path)',
     iterations: 50000,
     body: () {
       isAddress(addressValue);
+    },
+  );
+
+  _runBenchmark(
+    name: 'address() (typical address)',
+    iterations: 50000,
+    body: () {
+      address(typicalAddress);
+    },
+  );
+
+  _runBenchmark(
+    name: 'isAddress() (typical address)',
+    iterations: 50000,
+    body: () {
+      isAddress(typicalAddress);
     },
   );
 }

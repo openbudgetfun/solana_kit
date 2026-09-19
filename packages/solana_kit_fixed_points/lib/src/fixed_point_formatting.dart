@@ -1,4 +1,5 @@
 import 'package:solana_kit_fixed_points/src/decimal_fixed_point.dart';
+import 'package:solana_kit_fixed_points/src/fixed_point_patterns.dart';
 
 /// Options for fixed-point string formatting helpers.
 final class FixedPointToStringOptions {
@@ -66,7 +67,7 @@ String formatScaledBigInt(
   final integerPart = padded.substring(0, padded.length - decimals);
   var fractionalPart = padded.substring(padded.length - decimals);
   if (!padTrailingZeros) {
-    fractionalPart = fractionalPart.replaceFirst(RegExp(r'0+$'), '');
+    fractionalPart = fractionalPart.replaceFirst(trailingZeroesRegExp, '');
   }
 
   final sign = isNegative ? '-' : '';

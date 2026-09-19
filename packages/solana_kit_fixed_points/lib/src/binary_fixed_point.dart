@@ -1,4 +1,5 @@
 import 'package:solana_kit_fixed_points/src/decimal_fixed_point.dart';
+import 'package:solana_kit_fixed_points/src/fixed_point_patterns.dart';
 
 /// A binary fixed-point value.
 ///
@@ -260,8 +261,8 @@ _ParsedDecimal _parseDecimalMagnitude(
   final negative = trimmed.startsWith('-');
   final unsignedInput = negative ? trimmed.substring(1) : trimmed;
   final parts = unsignedInput.split('.');
-  final digits = RegExp(r'^\d+$');
-  if (!RegExp(r'\d').hasMatch(unsignedInput) ||
+  final digits = decimalDigitsRegExp;
+  if (!anyDecimalDigitRegExp.hasMatch(unsignedInput) ||
       (negative && signedness == FixedPointSignedness.unsigned) ||
       parts.length > 2 ||
       !digits.hasMatch(parts[0].isEmpty ? '0' : parts[0]) ||

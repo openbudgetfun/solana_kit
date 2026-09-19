@@ -1,3 +1,4 @@
+import 'package:solana_kit_codecs_strings/src/base_x_lookup.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 /// Asserts that a given string contains only characters from the specified
@@ -11,9 +12,10 @@ void assertValidBaseString(
   String testValue, [
   String? givenValue,
 ]) {
+  final lookup = baseXLookupFor(alphabet);
   final effectiveValue = givenValue ?? testValue;
   for (var i = 0; i < testValue.length; i++) {
-    if (!alphabet.contains(testValue[i])) {
+    if (lookup.indexOf(testValue.codeUnitAt(i)) == -1) {
       throw SolanaError(SolanaErrorCode.codecsInvalidStringForBase, {
         'alphabet': alphabet,
         'base': alphabet.length,

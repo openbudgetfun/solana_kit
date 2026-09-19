@@ -91,7 +91,9 @@ Uint8List _decodeBase64Tolerant(String value) {
         );
 
   try {
-    return Uint8List.fromList(convert.base64.decode(padded));
+    // `base64.decode` already returns a `Uint8List`; copying it again here
+    // doubled the allocation for every decoded string.
+    return convert.base64.decode(padded);
   } on Object {
     throw SolanaError(SolanaErrorCode.codecsInvalidStringForBase, {
       'alphabet': _alphabet,

@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 
 import 'package:solana_kit_codecs_strings/src/assertions.dart';
+import 'package:solana_kit_codecs_strings/src/base_x_lookup.dart';
 
 /// Returns an encoder for base-X encoded strings.
 ///
@@ -10,52 +13,25 @@ import 'package:solana_kit_codecs_strings/src/assertions.dart';
 /// that value into bytes while preserving leading zeroes.
 ///
 /// For more details, see [getBaseXCodec].
+///
+/// Throws an [ArgumentError] when [alphabet] cannot represent a base-X
+/// encoding (fewer than two characters), so a misconfigured alphabet fails
+/// where it is declared rather than on the first encoded value.
 VariableSizeEncoder<String> getBaseXEncoder(String alphabet) {
+  baseXLookupFor(alphabet);
   return VariableSizeEncoder<String>(
-    getSizeFromValue: (value) {
-      final (leadingZeroes, tailChars) = _partitionLeadingZeroes(
-        value,
-        alphabet[0],
-      );
-      if (tailChars == null || tailChars.isEmpty) return value.length;
-
-      final base10Number = _getBigIntFromBaseX(tailChars, alphabet);
-      return leadingZeroes.length +
-          (base10Number.toRadixString(16).length / 2).ceil();
-    },
+    getSizeFromValue: (value) => _convertToBytes(value, alphabet).byteLength,
     write: (value, bytes, offset) {
       // Check if the value is valid.
       assertValidBaseString(alphabet, value);
       if (value.isEmpty) return offset;
 
-      // Handle leading zeroes.
-      final (leadingZeroes, tailChars) = _partitionLeadingZeroes(
-        value,
-        alphabet[0],
-      );
-      if (tailChars == null || tailChars.isEmpty) {
-        for (var i = 0; i < leadingZeroes.length; i++) {
-          bytes[offset + i] = 0;
-        }
-        return offset + leadingZeroes.length;
-      }
-
-      // From baseX to base10.
-      var base10Number = _getBigIntFromBaseX(tailChars, alphabet);
-
-      // From base10 to bytes.
-      final tailBytes = <int>[];
-      while (base10Number > BigInt.zero) {
-        tailBytes.insert(0, (base10Number % BigInt.from(256)).toInt());
-        base10Number = base10Number ~/ BigInt.from(256);
-      }
-
-      final bytesToAdd = [
-        ...List<int>.filled(leadingZeroes.length, 0),
-        ...tailBytes,
-      ];
-      bytes.setAll(offset, bytesToAdd);
-      return offset + bytesToAdd.length;
+      final converted = _convertToBytes(value, alphabet);
+      final zeroBytes = converted.leadingZeroes;
+      bytes
+        ..fillRange(offset, offset + zeroBytes, 0)
+        ..setAll(offset + zeroBytes, converted.bytes);
+      return offset + zeroBytes + converted.bytes.length;
     },
   );
 }
@@ -68,9 +44,15 @@ VariableSizeEncoder<String> getBaseXEncoder(String alphabet) {
 /// specified base-X alphabet.
 ///
 /// For more details, see [getBaseXCodec].
+///
+/// Throws an [ArgumentError] when [alphabet] cannot represent a base-X
+/// encoding (fewer than two characters), so a misconfigured alphabet fails
+/// where it is declared rather than on the first decoded value.
 VariableSizeDecoder<String> getBaseXDecoder(String alphabet) {
+  baseXLookupFor(alphabet);
   return VariableSizeDecoder<String>(
     read: (rawBytes, offset) {
+      final lookup = baseXLookupFor(alphabet);
       final bytes = offset == 0 || offset <= -rawBytes.length
           ? rawBytes
           : rawBytes.sublist(offset);
@@ -79,21 +61,12 @@ VariableSizeDecoder<String> getBaseXDecoder(String alphabet) {
       // Handle leading zeroes.
       var trailIndex = bytes.indexWhere((n) => n != 0);
       if (trailIndex == -1) trailIndex = bytes.length;
-      final leadingZeroes = alphabet[0] * trailIndex;
-      if (trailIndex == bytes.length) return (leadingZeroes, rawBytes.length);
+      if (trailIndex == bytes.length) {
+        return (lookup.zeroCharacter * bytes.length, rawBytes.length);
+      }
 
-      // From bytes to base10.
-      final base10Number = bytes.sublist(trailIndex).fold<BigInt>(BigInt.zero, (
-        sum,
-        byte,
-      ) {
-        return sum * BigInt.from(256) + BigInt.from(byte);
-      });
-
-      // From base10 to baseX.
-      final tailChars = _getBaseXFromBigInt(base10Number, alphabet);
-
-      return (leadingZeroes + tailChars, rawBytes.length);
+      final tailChars = _convertToBaseX(bytes, trailIndex, lookup);
+      return (lookup.zeroCharacter * trailIndex + tailChars, rawBytes.length);
     },
   );
 }
@@ -110,38 +83,103 @@ VariableSizeCodec<String, String> getBaseXCodec(String alphabet) {
       as VariableSizeCodec<String, String>;
 }
 
-/// Splits a string into leading zero characters and the remaining tail.
-(String leadingZeroes, String? tailChars) _partitionLeadingZeroes(
-  String value,
-  String zeroCharacter,
-) {
-  var i = 0;
-  while (i < value.length && value[i] == zeroCharacter) {
-    i++;
-  }
-  final leadingZeroes = value.substring(0, i);
-  final tailChars = i < value.length ? value.substring(i) : null;
-  return (leadingZeroes, tailChars);
+/// A base-X string converted to its byte representation.
+class _ConvertedBytes {
+  const _ConvertedBytes({required this.leadingZeroes, required this.bytes});
+
+  /// How many leading zero bytes the value encodes to.
+  final int leadingZeroes;
+
+  /// The significant bytes, big-endian, with no leading zero bytes.
+  final Uint8List bytes;
+
+  /// The total encoded length, which is what [VariableSizeEncoder.encode]
+  /// allocates for.
+  int get byteLength => leadingZeroes + bytes.length;
 }
 
-/// Converts a base-X string to a BigInt using the given alphabet.
-BigInt _getBigIntFromBaseX(String value, String alphabet) {
-  final base = BigInt.from(alphabet.length);
-  var sum = BigInt.zero;
-  for (var i = 0; i < value.length; i++) {
-    sum = sum * base + BigInt.from(alphabet.indexOf(value[i]));
+/// Converts a base-X string to bytes using word-sized arithmetic.
+///
+/// Each alphabet character is folded into a little-endian byte buffer one
+/// digit at a time, carrying within a single machine integer. The significant
+/// bytes are returned big-endian with leading zero bytes trimmed, which is the
+/// same minimal big-endian representation a big-integer conversion produces.
+///
+/// Characters outside the alphabet contribute a digit of `0` so this stays
+/// total for callers that skip validation; [assertValidBaseString] is the
+/// validating entry point.
+_ConvertedBytes _convertToBytes(String value, String alphabet) {
+  final lookup = baseXLookupFor(alphabet);
+  final base = lookup.base;
+  final zeroCharacter = alphabet.codeUnitAt(0);
+
+  var firstSignificant = 0;
+  while (firstSignificant < value.length &&
+      value.codeUnitAt(firstSignificant) == zeroCharacter) {
+    firstSignificant++;
   }
-  return sum;
+  final leadingZeroes = firstSignificant;
+  if (leadingZeroes == value.length) {
+    return _ConvertedBytes(leadingZeroes: leadingZeroes, bytes: _noBytes);
+  }
+
+  final significant = value.length - leadingZeroes;
+  final buffer = Uint8List(lookup.bytesForCharacters(significant) + 1);
+  var length = 0;
+
+  for (var i = leadingZeroes; i < value.length; i++) {
+    var carry = lookup.indexOf(value.codeUnitAt(i));
+    if (carry < 0) carry = 0;
+    var j = 0;
+    for (; carry != 0 || j < length; j++) {
+      carry += base * buffer[j];
+      buffer[j] = carry & 0xff;
+      carry >>= 8;
+    }
+    length = j;
+  }
+
+  // The buffer is little-endian. Unused headroom leaves leading zero bytes,
+  // which are not part of the minimal representation.
+  while (length > 0 && buffer[length - 1] == 0) {
+    length--;
+  }
+  final bytes = Uint8List(length);
+  for (var i = 0; i < length; i++) {
+    bytes[i] = buffer[length - 1 - i];
+  }
+  return _ConvertedBytes(leadingZeroes: leadingZeroes, bytes: bytes);
 }
 
-/// Converts a BigInt to a base-X string using the given alphabet.
-String _getBaseXFromBigInt(BigInt value, String alphabet) {
-  final base = BigInt.from(alphabet.length);
-  final tailChars = <String>[];
-  var remaining = value;
-  while (remaining > BigInt.zero) {
-    tailChars.insert(0, alphabet[(remaining % base).toInt()]);
-    remaining = remaining ~/ base;
+/// Converts bytes from [start] onwards into base-X characters.
+///
+/// Bytes are folded into a little-endian digit buffer one at a time, carrying
+/// within a single machine integer, then mapped through the alphabet in
+/// most-significant-first order.
+String _convertToBaseX(Uint8List bytes, int start, BaseXLookup lookup) {
+  final byteCount = bytes.length - start;
+  final base = lookup.base;
+  final buffer = Uint32List(lookup.digitsForBytes(byteCount) + 1);
+  var length = 0;
+
+  for (var i = start; i < bytes.length; i++) {
+    var carry = bytes[i];
+    var j = 0;
+    for (; carry != 0 || j < length; j++) {
+      carry += 256 * buffer[j];
+      buffer[j] = carry % base;
+      carry ~/= base;
+    }
+    length = j;
   }
-  return tailChars.join();
+
+  // Every slot below [length] holds a digit in `[0, base)`, so the alphabet
+  // index is always in range.
+  final chars = Uint16List(length);
+  for (var i = 0; i < length; i++) {
+    chars[i] = lookup.alphabet.codeUnitAt(buffer[length - 1 - i]);
+  }
+  return String.fromCharCodes(chars);
 }
+
+final _noBytes = Uint8List(0);

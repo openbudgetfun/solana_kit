@@ -1,3 +1,5 @@
+import 'package:solana_kit_fixed_points/src/fixed_point_patterns.dart';
+
 /// Whether a fixed-point value may be negative.
 enum FixedPointSignedness {
   /// Values must be zero or greater.
@@ -52,8 +54,8 @@ final class DecimalFixedPoint implements Comparable<DecimalFixedPoint> {
     final negative = trimmed.startsWith('-');
     final unsignedInput = negative ? trimmed.substring(1) : trimmed;
     final parts = unsignedInput.split('.');
-    final digits = RegExp(r'^\d+$');
-    if (!RegExp(r'\d').hasMatch(unsignedInput) ||
+    final digits = decimalDigitsRegExp;
+    if (!anyDecimalDigitRegExp.hasMatch(unsignedInput) ||
         (negative && signedness == FixedPointSignedness.unsigned) ||
         parts.length > 2 ||
         !digits.hasMatch(parts[0].isEmpty ? '0' : parts[0]) ||
@@ -71,7 +73,7 @@ final class DecimalFixedPoint implements Comparable<DecimalFixedPoint> {
     var incrementMagnitude = false;
     if (fractionPart.length > decimals) {
       final extra = fractionPart.substring(decimals);
-      final hasTruncatedValue = extra.contains(RegExp('[1-9]'));
+      final hasTruncatedValue = extra.contains(nonZeroDecimalDigitRegExp);
       incrementMagnitude = switch (rounding) {
         FixedPointRoundingMode.strict => throw FormatException(
           'Decimal fixed-point value cannot be represented without precision loss.',
@@ -126,7 +128,7 @@ final class DecimalFixedPoint implements Comparable<DecimalFixedPoint> {
     final scale = _pow10(decimals);
     final whole = magnitude ~/ scale;
     final fraction = (magnitude % scale).toString().padLeft(decimals, '0');
-    final trimmedFraction = fraction.replaceFirst(RegExp(r'0+$'), '');
+    final trimmedFraction = fraction.replaceFirst(trailingZeroesRegExp, '');
     return trimmedFraction.isEmpty
         ? '$sign$whole'
         : '$sign$whole.$trimmedFraction';

@@ -376,7 +376,9 @@ int _writeV1Message(
     instructionPayloads.add(
       V1InstructionPayload(
         instructionAccountIndices: accountIndices,
-        instructionData: Uint8List.fromList(bytes.sublist(pos, dataEnd)),
+        // `Uint8List.sublist` already returns an independent copy, so wrapping
+        // it in `Uint8List.fromList` copied every instruction payload twice.
+        instructionData: bytes.sublist(pos, dataEnd),
       ),
     );
     pos = dataEnd;
