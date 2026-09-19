@@ -6,7 +6,7 @@ include_private = false
 warn_on_group_mismatch = true
 package_type = "dart"
 versioned_files = [
-  { path = "versions.json", format = "json", fields = ["{{ name }}"] },
+  { path = "versions.json", format = "json", fields = ["{{ name }}"], missing_field_behavior = "add" },
 ]
 
 [defaults.changelog]
@@ -291,7 +291,7 @@ tag = true
 release = true
 versioned_files = [
   { path = "packages/codama-renderers-dart/package.json", type = "npm" },
-  { path = "versions.json", format = "json", fields = ["{{ name }}"] },
+  { path = "versions.json", format = "json", fields = ["{{ name }}"], missing_field_behavior = "add" },
 ]
 
 [group.main]

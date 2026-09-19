@@ -20,7 +20,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_mpl_core": ^
+  "solana_kit_mpl_core": ^0.9.3
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
