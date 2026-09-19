@@ -63,12 +63,56 @@ void _testViewBoundaries<T extends num>(
   T value,
 ) {
   group(name, () {
-    test('cannot decode bytes outside a truncated input view', () {
+    test('rejects a truncated input view with a SolanaError', () {
       final encoded = codec.encode(value);
       final backing = Uint8List.fromList([0xaa, ...encoded, 0xbb]);
       final truncated = Uint8List.sublistView(backing, 1, codec.fixedSize);
-      expect(() => codec.decode(truncated), throwsRangeError);
-      expect(() => codec.read(truncated, 0), throwsRangeError);
+      // Truncated wire data is a protocol-level rejection, not a programming
+      // error. Callers parsing network bytes must be able to catch it as a
+      // SolanaError rather than a raw RangeError escaping the SDK.
+      //
+      // A one-byte codec leaves an empty view once truncated, so the empty
+      // -array guard reports first; wider codecs report the short length.
+      expect(
+        () => codec.decode(truncated),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            anyOf(
+              SolanaErrorCode.codecsCannotDecodeEmptyByteArray,
+              SolanaErrorCode.codecsInvalidByteLength,
+            ),
+          ),
+        ),
+      );
+      expect(
+        () => codec.read(truncated, 0),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            anyOf(
+              SolanaErrorCode.codecsCannotDecodeEmptyByteArray,
+              SolanaErrorCode.codecsInvalidByteLength,
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('rejects an empty input view with a SolanaError', () {
+      final empty = Uint8List(0);
+      expect(
+        () => codec.decode(empty),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.codecsCannotDecodeEmptyByteArray,
+          ),
+        ),
+      );
     });
 
     test('cannot overwrite bytes outside a truncated output view', () {
@@ -76,6 +120,8 @@ void _testViewBoundaries<T extends num>(
         ..fillRange(0, codec.fixedSize + 2, 0xaa);
       final before = Uint8List.fromList(backing);
       final truncated = Uint8List.sublistView(backing, 1, codec.fixedSize);
+      // Encoders keep raising RangeError: upstream writes into a scratch
+      // buffer and then `bytes.set`s it, which throws in JavaScript too.
       expect(() => codec.write(value, truncated, 0), throwsRangeError);
       expect(backing, before);
     });
@@ -83,7 +129,7 @@ void _testViewBoundaries<T extends num>(
     test('honors an offset at the end of a bounded view', () {
       final backing = Uint8List(codec.fixedSize * 2 + 2);
       final view = Uint8List.sublistView(backing, 1, codec.fixedSize + 1);
-      expect(() => codec.decode(view, 1), throwsRangeError);
+      expect(() => codec.decode(view, 1), throwsA(isA<SolanaError>()));
       expect(() => codec.write(value, view, 1), throwsRangeError);
       expect(backing, everyElement(0));
     });

@@ -34,12 +34,11 @@ FixedSizeEncoder<BigInt> getI64Encoder([NumberCodecConfig? config]) {
 /// Decodes 8 bytes as a [BigInt] in the range [-(2^63), 2^63 - 1] using
 /// two's complement representation. Defaults to little-endian byte order.
 FixedSizeDecoder<BigInt> getI64Decoder([NumberCodecConfig? config]) {
-  final endian = config?.endian ?? Endian.little;
-  return FixedSizeDecoder<BigInt>(
-    fixedSize: 8,
-    read: (bytes, offset) {
-      return (readBigIntSigned(bytes, offset, 8, endian), offset + 8);
-    },
+  return bigIntDecoderFactory(
+    name: 'i64',
+    size: 8,
+    unsigned: false,
+    config: config,
   );
 }
 

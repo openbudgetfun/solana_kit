@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
-
 import 'package:solana_kit_codecs_numbers/src/assertions.dart';
 import 'package:solana_kit_codecs_numbers/src/common.dart';
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 
 /// Creates a [FixedSizeEncoder] for a numeric type using [ByteData] operations.
 ///
@@ -45,6 +45,11 @@ FixedSizeEncoder<T> numberEncoderFactory<T extends num>({
 /// The [size] is the number of bytes the decoder consumes.
 /// The [get] callback reads a numeric value from a [ByteData] view.
 /// The optional [config] controls endianness (defaults to little-endian).
+///
+/// Truncated input rejects with a [SolanaError]; it never lets the underlying
+/// [ByteData] access raise a raw [RangeError]. Callers parsing untrusted wire
+/// data can therefore handle every malformed message through one exception
+/// type.
 FixedSizeDecoder<int> numberDecoderFactory({
   required String name,
   required int size,
@@ -55,6 +60,7 @@ FixedSizeDecoder<int> numberDecoderFactory({
   return FixedSizeDecoder<int>(
     fixedSize: size,
     read: (bytes, offset) {
+      assertHasBytesForCodec(name, size, bytes, offset);
       final byteData = bytes.buffer.asByteData(
         bytes.offsetInBytes,
         bytes.lengthInBytes,
@@ -71,6 +77,9 @@ FixedSizeDecoder<int> numberDecoderFactory({
 /// The [size] is the number of bytes the decoder consumes.
 /// The [get] callback reads a double value from a [ByteData] view.
 /// The optional [config] controls endianness (defaults to little-endian).
+///
+/// Truncated input rejects with a [SolanaError]; it never lets the underlying
+/// [ByteData] access raise a raw [RangeError].
 FixedSizeDecoder<double> floatDecoderFactory({
   required String name,
   required int size,
@@ -81,6 +90,7 @@ FixedSizeDecoder<double> floatDecoderFactory({
   return FixedSizeDecoder<double>(
     fixedSize: size,
     read: (bytes, offset) {
+      assertHasBytesForCodec(name, size, bytes, offset);
       final byteData = bytes.buffer.asByteData(
         bytes.offsetInBytes,
         bytes.lengthInBytes,
@@ -88,6 +98,49 @@ FixedSizeDecoder<double> floatDecoderFactory({
       return (get(byteData, offset, endian), offset + size);
     },
   );
+}
+
+/// Creates a [FixedSizeDecoder] for a multi-word integer read through
+/// [readBigIntUnsigned] or [readBigIntSigned].
+///
+/// The [name] is used in error messages. [unsigned] selects the two's
+/// complement interpretation of the most significant bits.
+///
+/// Truncated input rejects with a [SolanaError]; it never lets the per-byte
+/// index arithmetic raise a raw [RangeError].
+FixedSizeDecoder<BigInt> bigIntDecoderFactory({
+  required String name,
+  required int size,
+  required bool unsigned,
+  NumberCodecConfig? config,
+}) {
+  final endian = config?.endian ?? Endian.little;
+  return FixedSizeDecoder<BigInt>(
+    fixedSize: size,
+    read: (bytes, offset) {
+      assertHasBytesForCodec(name, size, bytes, offset);
+      final value = unsigned
+          ? readBigIntUnsigned(bytes, offset, size, endian)
+          : readBigIntSigned(bytes, offset, size, endian);
+      return (value, offset + size);
+    },
+  );
+}
+
+/// Asserts that [size] bytes are readable from [bytes] at [offset].
+///
+/// Mirrors the guard `@solana/kit` applies in its own number decoder factory,
+/// so a truncated read raises `codecsCannotDecodeEmptyByteArray` or
+/// `codecsInvalidByteLength` instead of leaking an implementation-level
+/// [RangeError] out of the SDK.
+void assertHasBytesForCodec(
+  String name,
+  int size,
+  Uint8List bytes,
+  int offset,
+) {
+  assertByteArrayIsNotEmptyForCodec(name, bytes, offset);
+  assertByteArrayHasEnoughBytesForCodec(name, size, bytes, offset);
 }
 
 // ---------------------------------------------------------------------------

@@ -36,12 +36,11 @@ FixedSizeEncoder<BigInt> getI128Encoder([NumberCodecConfig? config]) {
 /// Decodes 16 bytes as a [BigInt] in the range [-(2^127), 2^127 - 1] using
 /// two's complement representation. Defaults to little-endian byte order.
 FixedSizeDecoder<BigInt> getI128Decoder([NumberCodecConfig? config]) {
-  final endian = config?.endian ?? Endian.little;
-  return FixedSizeDecoder<BigInt>(
-    fixedSize: 16,
-    read: (bytes, offset) {
-      return (readBigIntSigned(bytes, offset, 16, endian), offset + 16);
-    },
+  return bigIntDecoderFactory(
+    name: 'i128',
+    size: 16,
+    unsigned: false,
+    config: config,
   );
 }
 
