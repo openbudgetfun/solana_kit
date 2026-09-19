@@ -72,66 +72,97 @@ final _jsonNumberRegExp = RegExp(
 /// remain as doubles, not BigInts).
 final _floatIndicatorRegExp = RegExp(r'\.|[eE]-');
 
-/// Regex to match first character of a possible number.
-final _numberStartRegExp = RegExp(r'[-\d]');
+/// Regex to match a JSON integer's exponent separator.
+final _exponentSeparatorRegExp = RegExp('[eE]');
 
-final _numberEndRegExp = RegExp(r'[ \t\r\n,\]}]');
-
+/// Replaces every number in [json] with the index of its text in [numbers].
+///
+/// Scanning is done by code unit rather than by character: the previous
+/// implementation allocated a one-character string and ran up to two regular
+/// expressions for every character of the payload, then rebuilt the whole
+/// document a character at a time. Strings are copied in runs and numbers are
+/// recognised by their first code unit, so the per-character work no longer
+/// depends on the regular-expression engine.
 String _indexNumbers(String json, List<String> numbers) {
+  final length = json.length;
   final out = StringBuffer();
+  var chunkStart = 0;
   var inQuote = false;
+  var ii = 0;
 
-  for (var ii = 0; ii < json.length; ii++) {
-    var isEscaped = false;
-    if (json[ii] == r'\') {
-      out.write(json[ii]);
-      ii++;
-      isEscaped = !isEscaped;
-    }
+  while (ii < length) {
+    final codeUnit = json.codeUnitAt(ii);
 
-    if (ii >= json.length) break;
-
-    if (json[ii] == '"') {
-      out.write(json[ii]);
-      if (!isEscaped) {
-        inQuote = !inQuote;
+    if (codeUnit == _quote) {
+      // A quote toggles string context unless it is backslash-escaped.
+      var backslashes = 0;
+      for (var j = ii - 1; j >= 0 && json.codeUnitAt(j) == _backslash; j--) {
+        backslashes++;
       }
+      if (backslashes.isEven) inQuote = !inQuote;
+      ii++;
       continue;
     }
 
-    if (!inQuote) {
-      final consumedNumber = _consumeNumber(json, ii);
-      if (consumedNumber != null && consumedNumber.isNotEmpty) {
-        ii += consumedNumber.length - 1;
-        // Every number becomes an index into this private list. Original
-        // objects, strings, and integer-valued doubles cannot collide with it.
-        out.write(numbers.length);
-        numbers.add(consumedNumber);
+    if (inQuote) {
+      ii++;
+      continue;
+    }
+
+    if (codeUnit == _minus || (codeUnit >= _zero && codeUnit <= _nine)) {
+      final consumed = _consumeNumber(json, ii);
+      if (consumed != null) {
+        // Flush the literal run, then emit this number's index marker.
+        out
+          ..write(json.substring(chunkStart, ii))
+          ..write(numbers.length);
+        numbers.add(consumed);
+        ii += consumed.length;
+        chunkStart = ii;
         continue;
       }
     }
 
-    out.write(json[ii]);
+    ii++;
   }
 
+  out.write(json.substring(chunkStart));
   return out.toString();
 }
 
-String? _consumeNumber(String json, int ii) {
-  // Stop early if the first character isn't a digit or a minus sign.
-  if (!_numberStartRegExp.hasMatch(json[ii])) {
-    return null;
-  }
+const int _quote = 0x22;
+const int _backslash = 0x5c;
+const int _minus = 0x2d;
+const int _zero = 0x30;
+const int _nine = 0x39;
 
-  // Otherwise, check if the next characters form a valid JSON number.
-  final match = _jsonNumberRegExp.matchAsPrefix(json, ii);
+/// Consumes a complete JSON number at [start], or returns null when the text
+/// there is not a number.
+///
+/// The regular expression is anchored with [RegExp.matchAsPrefix] and checked
+/// only once per candidate; characters inside strings never reach it because
+/// the caller skips string contents.
+String? _consumeNumber(String json, int start) {
+  final match = _jsonNumberRegExp.matchAsPrefix(json, start);
   if (match == null) {
-    throw FormatException('Invalid JSON number', json, ii);
+    throw FormatException('Invalid JSON number', json, start);
   }
-  if (match.end < json.length && !_numberEndRegExp.hasMatch(json[match.end])) {
-    throw FormatException('Invalid JSON number', json, ii);
+  if (match.end < json.length &&
+      !_isNumberTerminator(json.codeUnitAt(match.end))) {
+    throw FormatException('Invalid JSON number', json, start);
   }
   return match.group(0);
+}
+
+/// Whether [codeUnit] may follow a JSON number.
+bool _isNumberTerminator(int codeUnit) {
+  return codeUnit == 0x20 || // space
+      codeUnit == 0x09 || // tab
+      codeUnit == 0x0d || // carriage return
+      codeUnit == 0x0a || // newline
+      codeUnit == 0x2c || // ,
+      codeUnit == 0x5d || // ]
+      codeUnit == 0x7d; // }
 }
 
 Object? _parseJsonWithBigIntsInIsolate(String json) {
@@ -142,13 +173,13 @@ Object _parseJsonNumber(String value) {
   if (_floatIndicatorRegExp.hasMatch(value)) {
     return double.parse(value);
   }
-  if (RegExp('[eE]').hasMatch(value)) {
-    final parts = value.split(RegExp('[eE]'));
-    final exponent = int.tryParse(parts[1]);
+  if (value.contains(_exponentSeparatorRegExp)) {
+    final separator = value.indexOf(_exponentSeparatorRegExp);
+    final exponent = int.tryParse(value.substring(separator + 1));
     if (exponent == null || exponent > 10000) {
       throw FormatException('JSON integer exponent exceeds 10,000', value);
     }
-    final units = BigInt.parse(parts[0]);
+    final units = BigInt.parse(value.substring(0, separator));
     return units * BigInt.from(10).pow(exponent);
   }
   return BigInt.parse(value);

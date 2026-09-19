@@ -82,7 +82,9 @@ VariableSizeEncoder<String> getUtf8Encoder([
       if (config.fatal) {
         _assertIsWellFormedUtf8String(value);
       }
-      final encoded = Uint8List.fromList(convert.utf8.encode(value));
+      // `utf8.encode` already returns a `Uint8List`; copying it again here
+      // doubled the allocation for every encoded string.
+      final encoded = convert.utf8.encode(value);
       bytes.setAll(offset, encoded);
       return offset + encoded.length;
     },
