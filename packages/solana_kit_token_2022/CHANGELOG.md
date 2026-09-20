@@ -197,3 +197,60 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #223](https://g
 ### Changed
 
 - **No package-specific changes were recorded; `solana_kit_token_2022` was updated to 0.8.3.**
+
+## solana_kit_token_2022 [0.9.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_token_2022/v0.9.0) (2026-09-21)
+
+### Breaking changes
+
+#### Raise the Dart and Flutter baseline
+
+The workspace now builds against Dart 3.13.3 and Flutter 3.47.4, and every package declares that floor instead of the previous Dart 3.12 range. Consumers on older SDKs can no longer resolve these packages, so this release is breaking even though no Dart API changed.
+
+The Flutter floor rises from 3.44 to 3.47 for `solana_kit_mobile_wallet_adapter`, `solana_kit_mobile_wallet_adapter_protocol`, and `solana_kit_wallet_adapter`, matching the floor `solana_kit_wallet_ui` already required. `solana_kit_lints` ships the raised floor to consumers, so it carries the same breaking bump. Every other package raises only the Dart SDK floor.
+
+Raising the language version also switches `dart format` to the tall style, so 83 files across library, test, script, and Codama-generated trees are reflowed. The renderer pipes generated output through `dart format`, so regenerating stays consistent.
+
+Align your own SDK constraint with the workspace:
+
+```yaml
+environment:
+  sdk: ^3.13.0
+  # Omit for pure Dart packages; required for the Flutter packages above.
+  flutter: ">=3.47.0"
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [5f5fe01](https://github.com/openbudgetfun/solana_kit/commit/5f5fe01f3e2220ccfee54cc26e82c3face26589d) · _Last updated in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
+
+#### Track Token-2022 js@v0.18.0
+
+`solana_kit_token_2022` follows `solana-program/token-2022` to `js@v0.18.0`, up from `js@v0.16.1`. The pin had been held back because the migration needed handwritten-layer work; that work is now done.
+
+The generated extension union renames its variants to the renderer's current convention, prefixing each with the union name: `TransferFeeConfig` becomes `ExtensionTransferFeeConfig`, `MetadataPointer` becomes `ExtensionMetadataPointer`, and so on for all twenty-nine variants. The prefix keeps variants readable at the call site and stops them from colliding with same-named generated types. Update pattern matches and constructors:
+
+```dart
+final instructions = getPreInitializeInstructionsForMintExtensions(
+  mint: mintAddress,
+  extensions: [
+    ExtensionTransferFeeConfig(
+      transferFeeConfigAuthority: authority,
+      withdrawWithheldAuthority: authority,
+      withheldAmount: BigInt.zero,
+      olderTransferFee: olderFee,
+      newerTransferFee: newerFee,
+    ),
+  ],
+);
+```
+
+Mint and token accounts now decode their TLV extension region the way the program reads it. The previous codec decoded the region as a `remainder` array, which had to consume every trailing byte as an entry, so an account allocated with unused space either threw or reported the padding as a spurious `Uninitialized` extension. The new codec walks entries until it meets an `Uninitialized` (type 0) header or fewer than two bytes remain, and ignores whatever follows, matching the program and `@solana/spl-token`:
+
+```dart
+final account = getMintDecoder().decode(bytesWithTwoBytesOfPadding);
+// extensions now holds only the real entries, never the padding.
+```
+
+`solana_kit_address_constants`-style address handling is unchanged; `getMintSize` and `getTokenSize` keep their existing signatures and results, and now share the same encoder the accounts use, so a size computed from a list of extensions always matches what the encoder writes.
+
+`codama-renderers-dart` gains `linkOverrides`, which lets an IDL link be backed by a hand-written Dart codec while the wrappers around it (`Option`, `HiddenPrefix`, …) still come from the IDL. That is what the Token-2022 extension region uses, and it is the extension point for any future type Codama cannot express. The renderer also stops requiring an account to match its size discriminator exactly: a size discriminator describes an account's fixed prefix, so accounts with variable trailing fields are legitimately longer. Instruction sizes are still matched exactly, since there the size identifies the whole payload.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [9dcb59a](https://github.com/openbudgetfun/solana_kit/commit/9dcb59a09c4b13fc471a286612da570a8141e3c7)

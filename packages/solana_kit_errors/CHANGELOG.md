@@ -4,6 +4,89 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.10.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.10.0) (2026-09-21)
+
+### Breaking changes
+
+#### Align error code numbers with upstream and report malformed UTF-8 as a code
+
+`SolanaErrorCode` numbers now match upstream `@solana/kit` exactly. Two port-only codes were occupying numbers upstream uses for its UTF-8 codes, which made any cross-SDK comparison of those numbers wrong.
+
+The UTF-8 codec also stops raising a bare `FormatException` and reports through the error codes upstream defines:
+
+- `codecsInvalidUtf8Bytes` (`8078026`) for a malformed byte sequence, carrying the `offset` where decoding failed.
+- `codecsInvalidUtf8String` (`8078027`) for a lone surrogate, carrying its `index`. This is thrown when encoding with `fatal: true` and, with `fatal: false`, both directions keep replacing the offending unit with `U+FFFD`.
+
+Two port-only codes moved or went away:
+
+- `codecsInvalidBoolean` moved from `8078027` to `8078999`. The number had to change because `8078027` is upstream's `CODECS__INVALID_UTF8_STRING`. This port validates that booleans are encoded as `0` or `1` and upstream does not, so the code has no upstream counterpart and now sits at the end of the codec block, where upstream cannot collide with it. If you match on `SolanaErrorCode.codecsInvalidBoolean.value`, update the number; matching on the enum member is unaffected.
+- `codecsStringContainsNullCharacters` was removed. Nothing in the workspace threw it, and upstream has no equivalent. Use `Utf8CodecConfig.removeNullCharacters` to control null handling instead.
+
+```dart
+try {
+  getUtf8Decoder().decode(bytes);
+} on SolanaError catch (error) {
+  if (error.code == SolanaErrorCode.codecsInvalidUtf8Bytes) {
+    print('bad bytes at ${error.context['offset']}');
+  }
+}
+```
+
+`solana_kit_memo`, `solana_kit_offchain_messages`, and `solana_kit_attestation_service` only had tests asserting the old `FormatException` for malformed UTF-8; those assertions now check the error code, and `solana_kit_memo` declares the `solana_kit_errors` dev dependency that needs.
+
+`upstream:error-codes`, which also runs as part of `docs:check`, compares this enum against `.repos/kit/packages/errors/src/codes.ts` and fails on a number mismatch or an occupied number, so this cannot drift again without CI saying so.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [a8f643f](https://github.com/openbudgetfun/solana_kit/commit/a8f643f1ae7e6594fbfa972d473f7042b1f6ace0)
+
+#### Raise the Dart and Flutter baseline
+
+The workspace now builds against Dart 3.13.3 and Flutter 3.47.4, and every package declares that floor instead of the previous Dart 3.12 range. Consumers on older SDKs can no longer resolve these packages, so this release is breaking even though no Dart API changed.
+
+The Flutter floor rises from 3.44 to 3.47 for `solana_kit_mobile_wallet_adapter`, `solana_kit_mobile_wallet_adapter_protocol`, and `solana_kit_wallet_adapter`, matching the floor `solana_kit_wallet_ui` already required. `solana_kit_lints` ships the raised floor to consumers, so it carries the same breaking bump. Every other package raises only the Dart SDK floor.
+
+Raising the language version also switches `dart format` to the tall style, so 83 files across library, test, script, and Codama-generated trees are reflowed. The renderer pipes generated output through `dart format`, so regenerating stays consistent.
+
+Align your own SDK constraint with the workspace:
+
+```yaml
+environment:
+  sdk: ^3.13.0
+  # Omit for pure Dart packages; required for the Flutter packages above.
+  flutter: ">=3.47.0"
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [5f5fe01](https://github.com/openbudgetfun/solana_kit/commit/5f5fe01f3e2220ccfee54cc26e82c3face26589d) · _Last updated in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
+
+### Fixes
+
+#### Track @solana/kit v8.3.0
+
+The workspace now tracks upstream `@solana/kit` v8.3.0 (previously v8.2.0), and `upstream:parity` passes against it. This entry maps every change in that upstream release to its Dart counterpart.
+
+Ported in this release:
+
+- `u256` and `i256` number codecs (`getU256Codec`, `getI256Codec` and their encoder/decoder pairs) serialize 32 bytes, honour the `endian` option, validate the full range on encode, and decode to `BigInt`, mirroring the existing 64-bit and 128-bit codecs.
+- Tap codec helpers observe values or bytes without modifying them: `tapEncoder`, `tapDecoder`, and `tapCodec` observe values, while `tapEncoderBytes`, `tapDecoderBytes`, and `tapCodecBytes` observe raw bytes and offsets. Each wrapper preserves the size characteristics of what it wraps, and any tap may throw, which makes them validation guards that need no identity `transformEncoder`.
+
+Already present before this release, and now covered by the v8.3.0 claim:
+
+- The `getAgGenesisCert` RPC method and its allowed numeric keypaths.
+- `isSolanaRequest` recognising `getAgGenesisCert` and `getTransactionsForAddress`, which is also what fixed upstream's `bigint` parsing for `getTransactionsForAddress` responses.
+
+No Dart change needed:
+
+- `HasAddress` and the `InstructionAccountInput` / `InstructionSignerInput` widening are TypeScript type-level changes. Dart has no structural typing, and this port's `ResolvedInstructionAccount` already wraps an `Object` value, so it accepts addresses, address-bearing objects, `ProgramDerivedAddress` values, and `AccountMeta` role overrides at runtime without a cast.
+- Marking `role` as `readonly` on the writable and signer account types is already true here: `AccountMeta.role` is a `final` field.
+- `createLazyKeyPairSignerFromBytes` exists upstream to defer an asynchronous WebCrypto key import. Signer creation in this port is synchronous, so there is nothing to defer and the type is not needed.
+
+Verification:
+
+- `upstream:parity` passes against `@solana/kit@8.3.0`
+- `upstream:check` reports the metadata is internally consistent for tracked version 8.3.0
+- The `@solana/kit` reference pin moved to tag `v8.3.0`
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [220066e](https://github.com/openbudgetfun/solana_kit/commit/220066ecb27aa738fd787ac8ada3918540435cc1)
+
 ## [0.9.3](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.3) (2026-09-12)
 
 ### Changed

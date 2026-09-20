@@ -142,3 +142,46 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #243](https://g
 ### Changed
 
 - **No package-specific changes were recorded; `solana_kit_integration_tests` was updated to 0.1.3.**
+
+## solana_kit_integration_tests [0.2.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_integration_tests/v0.2.0) (2026-09-21)
+
+### Fixes
+
+#### Track the memo v4 program and add memo extraction helpers
+
+The workspace now tracks `solana-program/memo` at `js@v0.14.1` (previously `js@v0.13.1`). The `mpl-token-metadata` reference pin also moves to `353d01be4af3`; its IDL is byte-identical, so that package is unaffected.
+
+`solana_kit_address_constants` moves `memoProgramAddress` to the v4 memo program (`Memo4c2pN8afCj432Lb7RMVKi9PbQnnW7ewFFaV3oAH`), matching the upstream IDL `publicKey` as of `js@v0.14.0`. The previous v3 address stays available as the new `memoLegacyProgramAddressV3` constant, and `memoLegacyProgramAddress` (v1) is unchanged. Code that builds new memo instructions picks up the v4 program automatically; code that must keep targeting v3 names the legacy constant explicitly.
+
+`solana_kit_memo` ports the upstream extraction helpers from `js@v0.14.1`:
+
+- `getMemosFromInstructions` scans a list of instructions, matches every deployed Memo program address, and returns the UTF-8 decoded memo text with the raw bytes, source program address, and instruction index.
+- `ExtractedMemo` carries one extracted memo.
+- `supportedMemoProgramAddresses` lists every deployed Memo program address ordered from oldest (v1) to newest (v4).
+
+The generated layer is regenerated against `js@v0.14.1` with the current renderer: the program page is byte-identical because the program address flows through the well-known constants, and the AddMemo data decoder now validates byte length strictly, throwing `SolanaError` with `codecsInvalidByteLength` on trailing bytes. `solana_kit_errors` moves from a dev dependency to a dependency because the generated decoder references it.
+
+`codama-renderers-dart` maps the v4 address to `memoProgramAddress` and the v3 address to `memoLegacyProgramAddressV3` in its well-known address registry, so regenerated clients re-export the canonical constants instead of hardcoding address strings.
+
+Build new memo instructions against `memoProgramAddress` (v4). Where a memo must be executed by a program the runtime provides, check what is deployed: SurfPool, used by this repository's on-chain integration tests, ships the v1 and v3 programs as executable bytecode but resolves v4 to a placeholder, so those tests invoke `memoLegacyProgramAddressV3`. All three programs share the same instruction format, so only the program the transaction targets differs.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [9dcb59a](https://github.com/openbudgetfun/solana_kit/commit/9dcb59a09c4b13fc471a286612da570a8141e3c7)
+
+#### Raise the Dart and Flutter baseline
+
+The workspace now builds against Dart 3.13.3 and Flutter 3.47.4, and every package declares that floor instead of the previous Dart 3.12 range. Consumers on older SDKs can no longer resolve these packages, so this release is breaking even though no Dart API changed.
+
+The Flutter floor rises from 3.44 to 3.47 for `solana_kit_mobile_wallet_adapter`, `solana_kit_mobile_wallet_adapter_protocol`, and `solana_kit_wallet_adapter`, matching the floor `solana_kit_wallet_ui` already required. `solana_kit_lints` ships the raised floor to consumers, so it carries the same breaking bump. Every other package raises only the Dart SDK floor.
+
+Raising the language version also switches `dart format` to the tall style, so 83 files across library, test, script, and Codama-generated trees are reflowed. The renderer pipes generated output through `dart format`, so regenerating stays consistent.
+
+Align your own SDK constraint with the workspace:
+
+```yaml
+environment:
+  sdk: ^3.13.0
+  # Omit for pure Dart packages; required for the Flutter packages above.
+  flutter: ">=3.47.0"
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [5f5fe01](https://github.com/openbudgetfun/solana_kit/commit/5f5fe01f3e2220ccfee54cc26e82c3face26589d) · _Last updated in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)

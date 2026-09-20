@@ -4,6 +4,99 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.10.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.10.0) (2026-09-21)
+
+### Breaking changes
+
+#### Raise the Dart and Flutter baseline
+
+The workspace now builds against Dart 3.13.3 and Flutter 3.47.4, and every package declares that floor instead of the previous Dart 3.12 range. Consumers on older SDKs can no longer resolve these packages, so this release is breaking even though no Dart API changed.
+
+The Flutter floor rises from 3.44 to 3.47 for `solana_kit_mobile_wallet_adapter`, `solana_kit_mobile_wallet_adapter_protocol`, and `solana_kit_wallet_adapter`, matching the floor `solana_kit_wallet_ui` already required. `solana_kit_lints` ships the raised floor to consumers, so it carries the same breaking bump. Every other package raises only the Dart SDK floor.
+
+Raising the language version also switches `dart format` to the tall style, so 83 files across library, test, script, and Codama-generated trees are reflowed. The renderer pipes generated output through `dart format`, so regenerating stays consistent.
+
+Align your own SDK constraint with the workspace:
+
+```yaml
+environment:
+  sdk: ^3.13.0
+  # Omit for pure Dart packages; required for the Flutter packages above.
+  flutter: ">=3.47.0"
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [5f5fe01](https://github.com/openbudgetfun/solana_kit/commit/5f5fe01f3e2220ccfee54cc26e82c3face26589d) · _Last updated in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
+
+### Features
+
+#### Add 256-bit number codecs and tap codec helpers
+
+Ports the two additive codec surfaces from upstream `@solana/kit` v8.3.0.
+
+`solana_kit_codecs_numbers` gains 256-bit integer codecs: `getU256Codec`, `getU256Encoder`, and `getU256Decoder` for unsigned values in `[0, 2^256 - 1]`, plus `getI256Codec`, `getI256Encoder`, and `getI256Decoder` for signed values in `[-(2^255), 2^255 - 1]`. Both serialize as 32 bytes, honour the `endian` option, and always decode to `BigInt`, matching the existing 64-bit and 128-bit codecs.
+
+`solana_kit_codecs_core` gains tap helpers that observe values or bytes without modifying them. Because any callback may throw, they double as validation guards that need no identity `transformEncoder`:
+
+```dart
+final guarded = tapDecoderBytes(getU8Decoder(), (bytes, offset) {
+  if (bytes[offset] > 1) throw StateError('Expected a 0 or a 1');
+});
+
+final spanned = tapEncoderBytes(getU8Encoder(), (bytes, pre, post) {
+  print('wrote ${post - pre} bytes at $pre');
+});
+```
+
+`tapEncoder`, `tapDecoder`, and `tapCodec` observe values; `tapEncoderBytes`, `tapDecoderBytes`, and `tapCodecBytes` observe bytes and offsets. Each wrapper preserves the size characteristics of the codec it wraps, so `FixedSizeEncoder` stays fixed-size and `VariableSizeEncoder` keeps its `maxSize`.
+
+Note that Dart's `Codec` is not an `Encoder` or a `Decoder`, so the value-level wrappers are typed against the encoder or decoder they observe; use `tapCodec` and `tapCodecBytes` to wrap a codec.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [220066e](https://github.com/openbudgetfun/solana_kit/commit/220066ecb27aa738fd787ac8ada3918540435cc1)
+
+#### Track @solana/kit v8.3.0
+
+The workspace now tracks upstream `@solana/kit` v8.3.0 (previously v8.2.0), and `upstream:parity` passes against it. This entry maps every change in that upstream release to its Dart counterpart.
+
+Ported in this release:
+
+- `u256` and `i256` number codecs (`getU256Codec`, `getI256Codec` and their encoder/decoder pairs) serialize 32 bytes, honour the `endian` option, validate the full range on encode, and decode to `BigInt`, mirroring the existing 64-bit and 128-bit codecs.
+- Tap codec helpers observe values or bytes without modifying them: `tapEncoder`, `tapDecoder`, and `tapCodec` observe values, while `tapEncoderBytes`, `tapDecoderBytes`, and `tapCodecBytes` observe raw bytes and offsets. Each wrapper preserves the size characteristics of what it wraps, and any tap may throw, which makes them validation guards that need no identity `transformEncoder`.
+
+Already present before this release, and now covered by the v8.3.0 claim:
+
+- The `getAgGenesisCert` RPC method and its allowed numeric keypaths.
+- `isSolanaRequest` recognising `getAgGenesisCert` and `getTransactionsForAddress`, which is also what fixed upstream's `bigint` parsing for `getTransactionsForAddress` responses.
+
+No Dart change needed:
+
+- `HasAddress` and the `InstructionAccountInput` / `InstructionSignerInput` widening are TypeScript type-level changes. Dart has no structural typing, and this port's `ResolvedInstructionAccount` already wraps an `Object` value, so it accepts addresses, address-bearing objects, `ProgramDerivedAddress` values, and `AccountMeta` role overrides at runtime without a cast.
+- Marking `role` as `readonly` on the writable and signer account types is already true here: `AccountMeta.role` is a `final` field.
+- `createLazyKeyPairSignerFromBytes` exists upstream to defer an asynchronous WebCrypto key import. Signer creation in this port is synchronous, so there is nothing to defer and the type is not needed.
+
+Verification:
+
+- `upstream:parity` passes against `@solana/kit@8.3.0`
+- `upstream:check` reports the metadata is internally consistent for tracked version 8.3.0
+- The `@solana/kit` reference pin moved to tag `v8.3.0`
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [220066e](https://github.com/openbudgetfun/solana_kit/commit/220066ecb27aa738fd787ac8ada3918540435cc1)
+
+### Fixes
+
+#### Reject truncated numeric reads with `SolanaError` instead of `RangeError`
+
+A decoder reading a fixed-width field out of malformed wire data could raise a raw `RangeError` or `IndexError` out of the SDK instead of the documented `SolanaError`, so a caller catching `SolanaError` saw an escaped exception rather than a rejection it could handle. A truncated account, transaction, or RPC payload reaching the decoders was enough to trigger it; no signature or cluster access was required.
+
+The guard that upstream `@solana/kit` applies in its number decoder factory was missing from three ports of it. `numberDecoderFactory` and `floatDecoderFactory` read through a `ByteData` view without first checking that the requested width was available, and the six `BigInt` decoders (`u64`, `i64`, `u128`, `i128`, `u256`, `i256`) indexed bytes directly with the same gap. All eight now call `assertByteArrayIsNotEmptyForCodec` and `assertByteArrayHasEnoughBytesForCodec` before reading, raising `codecsCannotDecodeEmptyByteArray` or `codecsInvalidByteLength` as upstream does. A new `bigIntDecoderFactory` carries the guard for the multi-word widths.
+
+Two further escape sites in `solana_kit_transaction_messages` are fixed. The version 1 instruction payload slice computed `pos + numInstructionDataBytes` and sliced without confirming the buffer held that many bytes; it now asserts the length the way upstream's `fixDecoderSize` wrapper does. The transaction version decoder read `bytes[offset]` unguarded — upstream tolerates this because JavaScript yields `undefined`, which then silently takes the legacy branch and misreports a truncated buffer as an unversioned message, so this port rejects the empty buffer rather than reproducing that fallback.
+
+Encoders are unchanged and still raise `RangeError` when a destination buffer is too small. Upstream writes into a scratch buffer and then `bytes.set`s it, which throws in JavaScript too, so that behavior is deliberate parity rather than a defect.
+
+Callers that caught `RangeError` around a decode should catch `SolanaError`. Callers that already caught `SolanaError` now see malformed input rejected where it previously surfaced as a crash.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [f21cd21](https://github.com/openbudgetfun/solana_kit/commit/f21cd21d26750d70f0c72e6acf8440346cf8175e)
+
 ## [0.9.3](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.3) (2026-09-12)
 
 ### Changed

@@ -20,7 +20,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_squads": ^0.9.3
+  "solana_kit_squads": ^0.10.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

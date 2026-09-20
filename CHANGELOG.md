@@ -2424,6 +2424,455 @@ Package groups scaffolded:
 - Fragment-based code generation with automatic import tracking
 - Comprehensive test suite with 261 tests
 
+## [0.10.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.10.0) (2026-09-21)
+
+Grouped release for `main`.
+
+### Breaking changes
+
+#### Raise the Dart and Flutter baseline
+
+_Packages:_ _solana_kit_, _solana_kit_accounts_, _solana_kit_address_, _solana_kit_anchor_, _solana_kit_address_constants_, _solana_kit_addresses_, _solana_kit_codecs_, _solana_kit_codecs_core_, _solana_kit_codecs_data_structures_, _solana_kit_codecs_numbers_, _solana_kit_codecs_strings_, _solana_kit_fixed_points_, _solana_kit_errors_, _solana_kit_fast_stable_stringify_, _solana_kit_jupiter_, _solana_kit_instruction_plans_, _solana_kit_instructions_, _solana_kit_keys_, _solana_kit_lints_, _solana_kit_mpl_core_, _solana_kit_mpl_token_metadata_, _solana_kit_options_, _solana_kit_pyth_, _solana_kit_program_client_core_, _solana_kit_programs_, _solana_kit_rpc_, _solana_kit_rpc_api_, _solana_kit_rpc_parsed_types_, _solana_kit_rpc_spec_, _solana_kit_rpc_spec_types_, _solana_kit_rpc_subscriptions_, _solana_kit_rpc_subscriptions_api_, _solana_kit_rpc_subscriptions_channel_websocket_, _solana_kit_rpc_transformers_, _solana_kit_rpc_transport_http_, _solana_kit_rpc_types_, _solana_kit_signers_, _solana_kit_sns_, _solana_kit_squads_, _solana_kit_subscribable_, _solana_kit_transaction_confirmation_, _solana_kit_transaction_introspection_, _solana_kit_transaction_messages_, _solana_kit_transactions_
+
+The workspace now builds against Dart 3.13.3 and Flutter 3.47.4, and every package declares that floor instead of the previous Dart 3.12 range. Consumers on older SDKs can no longer resolve these packages, so this release is breaking even though no Dart API changed.
+
+The Flutter floor rises from 3.44 to 3.47 for `solana_kit_mobile_wallet_adapter`, `solana_kit_mobile_wallet_adapter_protocol`, and `solana_kit_wallet_adapter`, matching the floor `solana_kit_wallet_ui` already required. `solana_kit_lints` ships the raised floor to consumers, so it carries the same breaking bump. Every other package raises only the Dart SDK floor.
+
+Raising the language version also switches `dart format` to the tall style, so 83 files across library, test, script, and Codama-generated trees are reflowed. The renderer pipes generated output through `dart format`, so regenerating stays consistent.
+
+Align your own SDK constraint with the workspace:
+
+```yaml
+environment:
+  sdk: ^3.13.0
+  # Omit for pure Dart packages; required for the Flutter packages above.
+  flutter: ">=3.47.0"
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [5f5fe01](https://github.com/openbudgetfun/solana_kit/commit/5f5fe01f3e2220ccfee54cc26e82c3face26589d) · _Last updated in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
+
+#### Align error code numbers with upstream and report malformed UTF-8 as a code
+
+_Packages:_ _solana_kit_errors_
+
+`SolanaErrorCode` numbers now match upstream `@solana/kit` exactly. Two port-only codes were occupying numbers upstream uses for its UTF-8 codes, which made any cross-SDK comparison of those numbers wrong.
+
+The UTF-8 codec also stops raising a bare `FormatException` and reports through the error codes upstream defines:
+
+- `codecsInvalidUtf8Bytes` (`8078026`) for a malformed byte sequence, carrying the `offset` where decoding failed.
+- `codecsInvalidUtf8String` (`8078027`) for a lone surrogate, carrying its `index`. This is thrown when encoding with `fatal: true` and, with `fatal: false`, both directions keep replacing the offending unit with `U+FFFD`.
+
+Two port-only codes moved or went away:
+
+- `codecsInvalidBoolean` moved from `8078027` to `8078999`. The number had to change because `8078027` is upstream's `CODECS__INVALID_UTF8_STRING`. This port validates that booleans are encoded as `0` or `1` and upstream does not, so the code has no upstream counterpart and now sits at the end of the codec block, where upstream cannot collide with it. If you match on `SolanaErrorCode.codecsInvalidBoolean.value`, update the number; matching on the enum member is unaffected.
+- `codecsStringContainsNullCharacters` was removed. Nothing in the workspace threw it, and upstream has no equivalent. Use `Utf8CodecConfig.removeNullCharacters` to control null handling instead.
+
+```dart
+try {
+  getUtf8Decoder().decode(bytes);
+} on SolanaError catch (error) {
+  if (error.code == SolanaErrorCode.codecsInvalidUtf8Bytes) {
+    print('bad bytes at ${error.context['offset']}');
+  }
+}
+```
+
+`solana_kit_memo`, `solana_kit_offchain_messages`, and `solana_kit_attestation_service` only had tests asserting the old `FormatException` for malformed UTF-8; those assertions now check the error code, and `solana_kit_memo` declares the `solana_kit_errors` dev dependency that needs.
+
+`upstream:error-codes`, which also runs as part of `docs:check`, compares this enum against `.repos/kit/packages/errors/src/codes.ts` and fails on a number mismatch or an occupied number, so this cannot drift again without CI saying so.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [a8f643f](https://github.com/openbudgetfun/solana_kit/commit/a8f643f1ae7e6594fbfa972d473f7042b1f6ace0)
+
+### Features
+
+#### Replace stubbed functions with real implementations
+
+_Packages:_ _solana_kit_, _solana_kit_addresses_, _solana_kit_rpc_, _solana_kit_transaction_messages_
+
+Several public functions promised behavior they did not deliver. Each is now implemented, with the missing API surface added alongside it.
+
+##### `estimateResourceLimitsFactory` now simulates
+
+The previous implementation returned its argument unchanged, so it performed no simulation: no compute unit measurement, no loaded accounts data size, no failure reporting. It also could not have worked where it lived, because it needs an RPC client and the transaction compiler, and `solana_kit_transaction_messages` depends on neither. Upstream defines this function in the umbrella `@solana/kit` package for the same reason, so it now lives in `package:solana_kit` with that dependency available.
+
+It takes an `EstimateResourceLimitsFactoryConfig` holding the RPC client and returns a function that:
+
+- Sets the compute unit limit to the maximum (`1400000`) and, for version 1 messages, the loaded accounts data size limit to the maximum (`67108864`) before simulating, so the simulation is not cut short by a resource ceiling.
+- Asks the node to replace the blockhash for blockhash-lifetime transactions, and uses the real nonce for durable nonce transactions.
+- Returns the `unitsConsumed` the node reported, capped at the `u32` ceiling, plus `loadedAccountsDataSize`.
+- Throws `transactionFailedToEstimateComputeLimit` when the node reports no compute units, `transactionFailedToEstimateLoadedAccountsDataSizeLimit` when a version 1 simulation omits the loaded accounts size, and `transactionFailedWhenSimulatingToEstimateResourceLimits` with the decoded transaction error as `cause` when the transaction itself fails. All three codes already existed and were never thrown.
+
+Three supporting pieces land with it:
+
+- `simulateTransaction` and its `simulateTransactionValue` result are now available on the RPC client. The method was reachable only by hand-assembling a request before this.
+- `maxLoadedAccountsDataSizeLimit` (`67108864`) is exported.
+- `estimateAndSetResourceLimitsFactory` no longer computes a loaded accounts data size for legacy and version 0 messages. It previously did, which spent an extra simulation and could attach a `SetLoadedAccountsDataSizeLimit` instruction the runtime ignores. The loaded accounts limit is now only ever set on version 1 messages, matching upstream.
+
+```dart
+final estimate = estimateResourceLimitsFactory(
+  EstimateResourceLimitsFactoryConfig(rpc: rpc),
+);
+final withLimits = await estimateAndSetResourceLimitsFactory(estimate)(message);
+```
+
+##### `solana_kit_functional` removed
+
+The package is gone. Its only utility, the `pipe` extension, has lived in `solana_kit_transaction_messages` since the previous breaking release and is re-exported by `solana_kit`, so the package duplicated what the SDK already provided and existed only as an empty placeholder pending retirement. Anyone still importing it should switch to `solana_kit_transaction_messages` (or the `solana_kit` umbrella), which is a one-line import change.
+
+##### `solana_kit_addresses` gains the PDA guards
+
+`isProgramDerivedAddress` and `assertIsProgramDerivedAddress` were absent, leaving `addressesMalformedPda` and `addressesPdaBumpSeedOutOfRange` defined but unreachable. Both are now implemented: they validate that a value is an `(Address, int)` record, that the bump seed is in `[0, 255]`, and that the address is well formed.
+
+##### `solana_kit_helius` builds real smart transactions
+
+`createSmartTransaction` returned a bare blockhash while documenting that it would estimate compute units and priority fees. It now performs the full sequence: validate, estimate compute units through `simulateTransaction`, sample the priority fee by account key, resolve the fee in both microLamports-per-unit and total lamports, and refresh the blockhash. It returns a `SmartTransaction` carrying the limits, fee, lifetime, instructions, fee payer, and account keys; signing stays with the caller because the client holds signer addresses rather than keys.
+
+Two related silent defaults were removed:
+
+- `getComputeUnits` returned `200000` when the node omitted `unitsConsumed`. It now throws, because inventing a number sizes the transaction for work the simulation never confirmed. It also reports a failed simulation instead of returning the units of one that did not succeed, and it serializes real `Instruction` objects, which previously failed at JSON encoding.
+- `broadcastTransaction`, `sendTransactionWithSender`, and `sendSmartTransaction` accepted a `senderUrl` parameter they never used. The parameter is gone; the REST client already targets the sender base URL.
+
+##### Version 1 durable nonce transactions are recognized
+
+`getTransactionLifetimeConstraintFromCompiledTransactionMessage` only inspected the legacy instruction list, which a version 1 compiled message leaves empty in favour of separate instruction headers and payloads. Every version 1 durable nonce transaction therefore decompiled as a blockhash transaction, so a caller could not tell that its lifetime depended on a nonce. The version 1 branch now reads the headers and payloads, throws `transactionInvalidNonceAccountIndex` for an out-of-range nonce account index, and returns the blockhash lifetime only when the first instruction is genuinely not an advance-nonce instruction.
+
+##### Priority fee lamports API
+
+`getTransactionMessagePriorityFeeLamports` and `setTransactionMessagePriorityFeeLamports` add the missing read/write surface for the total-lamport priority fee that only version 1 messages carry. The setter removes the fee on `null`, drops an emptied config, and is a no-op when the value already matches.
+
+##### Wallets can now express and check version 1 support
+
+`SolanaTransactionVersion` gains `version1` plus `wireValue` and `fromWireValue`, so the values a wallet advertises (`legacy`, `0`, `1`) round-trip instead of being collapsed. A `supportsVersion1` extension makes the check usable. Two related corrections:
+
+- The browser registry used to map any advertised entry other than `legacy` onto version 0, so a wallet advertising `1` was reported as version 0 and a caller could build a transaction the wallet cannot sign. Unrecognized entries are now dropped rather than mislabelled.
+- The MWA-backed mobile wallet advertises an explicit `legacy`-and-version-0 list instead of `SolanaTransactionVersion.values`, which would have silently started claiming version 1 support as the enum grew. This matches upstream's `wallet-standard-mobile`.
+
+##### Error codes that were defined but unreachable
+
+Three codes had no throw site. `signerWalletAccountCannotSignTransaction` is now thrown when a `WalletAccountSigner` is created for an account advertising neither transaction feature, matching upstream's `createSignerFromWalletAccount`. `heliusApiKeyRequired` is thrown by `HeliusConfig` for a blank key, which previously produced a request that could only fail with a 401. `heliusTransactionSimulationFailed` replaces a bare `StateError` when a compute-unit simulation reports a transaction failure.
+
+The remaining defined-but-unthrown codes were checked against upstream and are parity-faithful: upstream defines them without throwing them anywhere either (`addressesInvalidBase58EncodedAddress`, the four `wallet*` codes, `subscribableRetryNotSupported`, `transactionInvalidNonceTransactionFirstInstructionMustBeAdvanceNonce`), or they belong to abstractions this port intentionally does not have (the React hook path behind `signerWalletMultisignUnimplemented`, the fs-impl package behind `fsUnsupportedEnvironment`, the named-channel pubsub plan behind `invariantViolationDataPublisherChannelUnimplemented`).
+
+##### `solana_kit_dapp_publisher_cli` reports unreadable balances
+
+`parseLamportsValue` returned `0` for a balance response it could not parse. A malformed response therefore looked like an empty wallet. It now throws a `FormatException`, so a transport or schema change is reported as itself rather than as insufficient funds.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
+
+#### Track @solana/kit v8.3.0
+
+_Packages:_ _solana_kit_, _solana_kit_codecs_core_, _solana_kit_codecs_numbers_
+
+The workspace now tracks upstream `@solana/kit` v8.3.0 (previously v8.2.0), and `upstream:parity` passes against it. This entry maps every change in that upstream release to its Dart counterpart.
+
+Ported in this release:
+
+- `u256` and `i256` number codecs (`getU256Codec`, `getI256Codec` and their encoder/decoder pairs) serialize 32 bytes, honour the `endian` option, validate the full range on encode, and decode to `BigInt`, mirroring the existing 64-bit and 128-bit codecs.
+- Tap codec helpers observe values or bytes without modifying them: `tapEncoder`, `tapDecoder`, and `tapCodec` observe values, while `tapEncoderBytes`, `tapDecoderBytes`, and `tapCodecBytes` observe raw bytes and offsets. Each wrapper preserves the size characteristics of what it wraps, and any tap may throw, which makes them validation guards that need no identity `transformEncoder`.
+
+Already present before this release, and now covered by the v8.3.0 claim:
+
+- The `getAgGenesisCert` RPC method and its allowed numeric keypaths.
+- `isSolanaRequest` recognising `getAgGenesisCert` and `getTransactionsForAddress`, which is also what fixed upstream's `bigint` parsing for `getTransactionsForAddress` responses.
+
+No Dart change needed:
+
+- `HasAddress` and the `InstructionAccountInput` / `InstructionSignerInput` widening are TypeScript type-level changes. Dart has no structural typing, and this port's `ResolvedInstructionAccount` already wraps an `Object` value, so it accepts addresses, address-bearing objects, `ProgramDerivedAddress` values, and `AccountMeta` role overrides at runtime without a cast.
+- Marking `role` as `readonly` on the writable and signer account types is already true here: `AccountMeta.role` is a `final` field.
+- `createLazyKeyPairSignerFromBytes` exists upstream to defer an asynchronous WebCrypto key import. Signer creation in this port is synchronous, so there is nothing to defer and the type is not needed.
+
+Verification:
+
+- `upstream:parity` passes against `@solana/kit@8.3.0`
+- `upstream:check` reports the metadata is internally consistent for tracked version 8.3.0
+- The `@solana/kit` reference pin moved to tag `v8.3.0`
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [220066e](https://github.com/openbudgetfun/solana_kit/commit/220066ecb27aa738fd787ac8ada3918540435cc1)
+
+#### Track the memo v4 program and add memo extraction helpers
+
+_Packages:_ _solana_kit_address_constants_
+
+The workspace now tracks `solana-program/memo` at `js@v0.14.1` (previously `js@v0.13.1`). The `mpl-token-metadata` reference pin also moves to `353d01be4af3`; its IDL is byte-identical, so that package is unaffected.
+
+`solana_kit_address_constants` moves `memoProgramAddress` to the v4 memo program (`Memo4c2pN8afCj432Lb7RMVKi9PbQnnW7ewFFaV3oAH`), matching the upstream IDL `publicKey` as of `js@v0.14.0`. The previous v3 address stays available as the new `memoLegacyProgramAddressV3` constant, and `memoLegacyProgramAddress` (v1) is unchanged. Code that builds new memo instructions picks up the v4 program automatically; code that must keep targeting v3 names the legacy constant explicitly.
+
+`solana_kit_memo` ports the upstream extraction helpers from `js@v0.14.1`:
+
+- `getMemosFromInstructions` scans a list of instructions, matches every deployed Memo program address, and returns the UTF-8 decoded memo text with the raw bytes, source program address, and instruction index.
+- `ExtractedMemo` carries one extracted memo.
+- `supportedMemoProgramAddresses` lists every deployed Memo program address ordered from oldest (v1) to newest (v4).
+
+The generated layer is regenerated against `js@v0.14.1` with the current renderer: the program page is byte-identical because the program address flows through the well-known constants, and the AddMemo data decoder now validates byte length strictly, throwing `SolanaError` with `codecsInvalidByteLength` on trailing bytes. `solana_kit_errors` moves from a dev dependency to a dependency because the generated decoder references it.
+
+`codama-renderers-dart` maps the v4 address to `memoProgramAddress` and the v3 address to `memoLegacyProgramAddressV3` in its well-known address registry, so regenerated clients re-export the canonical constants instead of hardcoding address strings.
+
+Build new memo instructions against `memoProgramAddress` (v4). Where a memo must be executed by a program the runtime provides, check what is deployed: SurfPool, used by this repository's on-chain integration tests, ships the v1 and v3 programs as executable bytecode but resolves v4 to a placeholder, so those tests invoke `memoLegacyProgramAddressV3`. All three programs share the same instruction format, so only the program the transaction targets differs.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [9dcb59a](https://github.com/openbudgetfun/solana_kit/commit/9dcb59a09c4b13fc471a286612da570a8141e3c7)
+
+#### Add 256-bit number codecs and tap codec helpers
+
+_Packages:_ _solana_kit_codecs_core_, _solana_kit_codecs_numbers_
+
+Ports the two additive codec surfaces from upstream `@solana/kit` v8.3.0.
+
+`solana_kit_codecs_numbers` gains 256-bit integer codecs: `getU256Codec`, `getU256Encoder`, and `getU256Decoder` for unsigned values in `[0, 2^256 - 1]`, plus `getI256Codec`, `getI256Encoder`, and `getI256Decoder` for signed values in `[-(2^255), 2^255 - 1]`. Both serialize as 32 bytes, honour the `endian` option, and always decode to `BigInt`, matching the existing 64-bit and 128-bit codecs.
+
+`solana_kit_codecs_core` gains tap helpers that observe values or bytes without modifying them. Because any callback may throw, they double as validation guards that need no identity `transformEncoder`:
+
+```dart
+final guarded = tapDecoderBytes(getU8Decoder(), (bytes, offset) {
+  if (bytes[offset] > 1) throw StateError('Expected a 0 or a 1');
+});
+
+final spanned = tapEncoderBytes(getU8Encoder(), (bytes, pre, post) {
+  print('wrote ${post - pre} bytes at $pre');
+});
+```
+
+`tapEncoder`, `tapDecoder`, and `tapCodec` observe values; `tapEncoderBytes`, `tapDecoderBytes`, and `tapCodecBytes` observe bytes and offsets. Each wrapper preserves the size characteristics of the codec it wraps, so `FixedSizeEncoder` stays fixed-size and `VariableSizeEncoder` keeps its `maxSize`.
+
+Note that Dart's `Codec` is not an `Encoder` or a `Decoder`, so the value-level wrappers are typed against the encoder or decoder they observe; use `tapCodec` and `tapCodecBytes` to wrap a codec.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [220066e](https://github.com/openbudgetfun/solana_kit/commit/220066ecb27aa738fd787ac8ada3918540435cc1)
+
+#### Add the upstream size-prefix and UTF-8 codec options
+
+_Packages:_ _solana_kit_codecs_data_structures_, _solana_kit_codecs_strings_
+
+Ports the last two surfaces from upstream `@solana/kit` v8.3.0. Both are additive: no existing behavior changes.
+
+`requireSizePrefix` is a named parameter on `getArrayDecoder`, `getArrayCodec`, `getSetDecoder`, `getSetCodec`, `getMapDecoder`, and `getMapCodec`. Upstream defaults it to `false`, where an exhausted byte array decodes as an empty collection so a collection can be appended to an existing layout. This port defaults it to `true` and throws, because a silently empty collection hides truncated input. Pass `requireSizePrefix: false` to opt in:
+
+```dart
+final lenient = getArrayCodec(getU8Codec(), requireSizePrefix: false);
+lenient.decode(Uint8List(0)); // []
+getArrayCodec(getU8Codec()).decode(Uint8List(0)); // throws
+```
+
+`Utf8CodecConfig` is accepted by `getUtf8Encoder`, `getUtf8Decoder`, and `getUtf8Codec`, and carries upstream's three options:
+
+- `fatal` rejects malformed input instead of replacing it. Upstream defaults to `false`, decoding bad bytes as `U+FFFD`; this port defaults to `true` and raises a `FormatException` from decoding and, for lone surrogates, from encoding.
+- `ignoreBOM` preserves a leading byte order mark. Both default to `false`, which strips it, matching Dart's `Utf8Decoder`.
+- `removeNullCharacters` strips `U+0000` from decoded strings. Upstream defaults to `true`; this port defaults to `false` so the decoded value reflects the bytes exactly.
+
+The two divergent defaults exist so that malformed or null-padded account and instruction data cannot decode silently. To take upstream's behavior explicitly:
+
+```dart
+final codec = getUtf8Codec(
+  const Utf8CodecConfig(fatal: false, removeNullCharacters: true),
+);
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [cf4ab87](https://github.com/openbudgetfun/solana_kit/commit/cf4ab873e32bb2ce2f4fe69e73fbc8aa6162894b)
+
+#### Align error code numbers with upstream and report malformed UTF-8 as a code
+
+_Packages:_ _solana_kit_codecs_strings_
+
+`SolanaErrorCode` numbers now match upstream `@solana/kit` exactly. Two port-only codes were occupying numbers upstream uses for its UTF-8 codes, which made any cross-SDK comparison of those numbers wrong.
+
+The UTF-8 codec also stops raising a bare `FormatException` and reports through the error codes upstream defines:
+
+- `codecsInvalidUtf8Bytes` (`8078026`) for a malformed byte sequence, carrying the `offset` where decoding failed.
+- `codecsInvalidUtf8String` (`8078027`) for a lone surrogate, carrying its `index`. This is thrown when encoding with `fatal: true` and, with `fatal: false`, both directions keep replacing the offending unit with `U+FFFD`.
+
+Two port-only codes moved or went away:
+
+- `codecsInvalidBoolean` moved from `8078027` to `8078999`. The number had to change because `8078027` is upstream's `CODECS__INVALID_UTF8_STRING`. This port validates that booleans are encoded as `0` or `1` and upstream does not, so the code has no upstream counterpart and now sits at the end of the codec block, where upstream cannot collide with it. If you match on `SolanaErrorCode.codecsInvalidBoolean.value`, update the number; matching on the enum member is unaffected.
+- `codecsStringContainsNullCharacters` was removed. Nothing in the workspace threw it, and upstream has no equivalent. Use `Utf8CodecConfig.removeNullCharacters` to control null handling instead.
+
+```dart
+try {
+  getUtf8Decoder().decode(bytes);
+} on SolanaError catch (error) {
+  if (error.code == SolanaErrorCode.codecsInvalidUtf8Bytes) {
+    print('bad bytes at ${error.context['offset']}');
+  }
+}
+```
+
+`solana_kit_memo`, `solana_kit_offchain_messages`, and `solana_kit_attestation_service` only had tests asserting the old `FormatException` for malformed UTF-8; those assertions now check the error code, and `solana_kit_memo` declares the `solana_kit_errors` dev dependency that needs.
+
+`upstream:error-codes`, which also runs as part of `docs:check`, compares this enum against `.repos/kit/packages/errors/src/codes.ts` and fails on a number mismatch or an occupied number, so this cannot drift again without CI saying so.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [a8f643f](https://github.com/openbudgetfun/solana_kit/commit/a8f643f1ae7e6594fbfa972d473f7042b1f6ace0)
+
+### Fixes
+
+#### Add scoped mutation testing tooling
+
+_Packages:_ _solana_kit_
+
+Adds a mutation testing setup built on `mutation_test`, so the suite can be checked for tests that assert current behavior rather than the intended contract. Coverage cannot detect that failure mode: a test asserting the wrong contract still executes every line.
+
+Four devenv tasks wrap a new driver at `scripts/run_mutation_testing.dart`:
+
+- `mutation:list` shows the configured scopes and their sizes.
+- `mutation:check` reports how completely each scope's test list covers its transitive dependents.
+- `mutation:changed` runs only the scopes touched since `origin/main`.
+- `mutation:run` runs a scope directly, with `--scope`, `--full`, and `--coverage` options.
+
+Scopes live in `config/mutation/scopes.json` and pair source files with the test directories that can detect a change in them, covering the numeric codecs, transaction messages, transaction envelopes, string codecs, codec core, keys, PDAs, hashing, and the untrusted-input parsers.
+
+A default run executes only a scope's listed tests, which costs about two seconds per mutant. Because shared packages have many dependents (`solana_kit_codecs_numbers` has 58, `solana_kit_codecs_core` has 59), a survivor in code other packages exercise can be a false positive; `--full` expands the run to every dependent so no survivor is. `mutation:check` reports the size of that gap per scope.
+
+`config/mutation/rules.xml` replaces the builtin rule set, which is unsuitable for Dart: the builtin `<` rule also matches the first character of `<<` and the builtin argument rules reorder call arguments, so both produce mutations that fail to compile and are then reported as survivors. The rules here use lookarounds to match genuine comparisons, and exclude comments and string literals.
+
+This is advisory tooling only. It is not wired into CI: equivalent mutants survive legitimately and would make a required check permanently red. See `docs/agents/mutation-testing.md`.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [186ba3d](https://github.com/openbudgetfun/solana_kit/commit/186ba3d9b982b64f6d32156d41f59465fc5770b2)
+
+#### Restore complete version inventories in package READMEs
+
+_Packages:_ _solana_kit_anchor_, _solana_kit_jupiter_, _solana_kit_mpl_core_, _solana_kit_mpl_token_metadata_, _solana_kit_pyth_, _solana_kit_sns_, _solana_kit_squads_
+
+The `versions.json` data source that renders every package README's installation section had drifted: packages first released after the legacy knope era were never added, so their READMEs told consumers to depend on a bare `^` with no version. The retired `solana_kit_functional` entry and a stale `solana_kit_mobile_wallet_adapter_example` version were also lingering.
+
+The inventory now matches every package's `pubspec.yaml`, the `solana_kit_functional` key is gone, and the affected installation sections render the real published version again:
+
+```yaml
+dependencies:
+  "solana_kit_jupiter": ^0.9.3
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [4c8855b](https://github.com/openbudgetfun/solana_kit/commit/4c8855bd608bb9f05324b001b552c9329679e441)
+
+#### Verify both hand-written SHA-256 implementations against an independent hash
+
+_Packages:_ _solana_kit_anchor_, _solana_kit_sns_
+
+`solana_kit_anchor` and `solana_kit_sns` each carry their own pure-Dart SHA-256. Anchor uses it to derive program discriminators and SNS to derive name account addresses, so a defect in either changes which instruction or account a program resolves to — a wrong result rather than an exception. Both were covered only by a handful of fixed NIST vectors, which pin the round function but rarely land on the padding and block boundaries where a length bug hides.
+
+Each package now has a `sha256_differential_test.dart` comparing its implementation against `package:crypto` (the same dependency `solana_kit_addresses` already uses). Coverage includes every input length from 0 to 200, which crosses the 55/56-byte padding transitions and the 64-byte block boundary, lengths from 255 through 10000 for multi-block behavior, randomized inputs, and all-zero and all-`0xff` buffers. Anchor additionally checks `instructionDiscriminator` against the truncated namespaced digest, and SNS checks `getHashedName` against `sha256("SPL Name Service" + name)`.
+
+Both implementations agree with the reference on every case. No library behavior changes.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [f21cd21](https://github.com/openbudgetfun/solana_kit/commit/f21cd21d26750d70f0c72e6acf8440346cf8175e)
+
+#### Speed up base-X codecs, BigInt JSON parsing, and fixed-point parsing
+
+_Packages:_ _solana_kit_addresses_, _solana_kit_codecs_strings_, _solana_kit_fixed_points_, _solana_kit_rpc_spec_types_, _solana_kit_transaction_messages_
+
+Same results, less work per call. No public API, output byte, or error behavior changed; `upstream:parity` passes against `@solana/kit@8.3.0` and the full workspace suite is green.
+
+The base-X codecs converted through `BigInt`, scaled the alphabet with `String.indexOf` and a fresh one-character string per input character, and built output with repeated `insert(0, …)` calls that reallocate and shift the whole list each time. Encoding a typical base58 address cost roughly 600 µs, so compiling a 20-account transaction spent measurable milliseconds on address encoding alone. The conversion now folds digits into a byte buffer with word-sized carry arithmetic, indexes the alphabet through a cached code-unit lookup, and writes output in order:
+
+```dart
+// Before: BigInt division per character plus O(n²) list inserts.
+// After: one carry pass per character over a preallocated buffer.
+final converted = _convertToBytes(value, alphabet);
+bytes
+  ..fillRange(offset, offset + converted.leadingZeroes, 0)
+  ..setAll(offset + converted.leadingZeroes, converted.bytes);
+```
+
+Measured on an interleaved best-of-N benchmark, with the previous implementation running in the same process to cancel machine noise:
+
+| Operation                        | Before   | After   | Improvement |
+| -------------------------------- | -------- | ------- | ----------- |
+| base58 encode, typical address   | 22.97 µs | 2.88 µs | 8.0x        |
+| base58 decode, 32 bytes          | 16.79 µs | 3.24 µs | 5.2x        |
+| base58 encode, 64-byte signature | 52.89 µs | 8.44 µs | 6.3x        |
+
+`parseJsonWithBigInts` allocated a one-character string and ran up to two regular expressions per character of the payload, then rebuilt the document character by character. It now scans by code unit, copies literal runs as substrings, and hoists the exponent pattern:
+
+| Operation                 | Before   | After    | Improvement |
+| ------------------------- | -------- | -------- | ----------- |
+| parse a 28 KB RPC payload | 2.198 ms | 1.089 ms | 2.0x        |
+
+Also removed in the same pass: a redundant full copy in the UTF-8 encoder and the base64 decoder (both `utf8.encode` and `base64.decode` already return `Uint8List`), a double copy of every version-1 instruction payload, and two regular expressions that were compiled per parsed value in the fixed-point codecs.
+
+Behavior is pinned by tests rather than assumed. `base_x_property_test.dart` round-trips random byte strings across every length from 0 to 512 bytes, covers leading-zero-only input, alphabets wider than a byte, and non-power-of-two alphabets, and asserts arbitrary-precision digit strings beyond 64 bits. A degenerate one-character alphabet is now rejected with an `ArgumentError` when the codec is created; previously it produced silent zero output on encode and looped forever on decode.
+
+`bench:all` also gains coverage where the regression was invisible: the address benchmark previously measured only the all-ones System Program address, which is base58's leading-zero fast path and exercises no base conversion at all.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [b22257e](https://github.com/openbudgetfun/solana_kit/commit/b22257e1d1cb146eda742cd3da352b6a90a49f1d)
+
+#### Reject truncated numeric reads with `SolanaError` instead of `RangeError`
+
+_Packages:_ _solana_kit_codecs_numbers_, _solana_kit_transaction_messages_, _solana_kit_transactions_
+
+A decoder reading a fixed-width field out of malformed wire data could raise a raw `RangeError` or `IndexError` out of the SDK instead of the documented `SolanaError`, so a caller catching `SolanaError` saw an escaped exception rather than a rejection it could handle. A truncated account, transaction, or RPC payload reaching the decoders was enough to trigger it; no signature or cluster access was required.
+
+The guard that upstream `@solana/kit` applies in its number decoder factory was missing from three ports of it. `numberDecoderFactory` and `floatDecoderFactory` read through a `ByteData` view without first checking that the requested width was available, and the six `BigInt` decoders (`u64`, `i64`, `u128`, `i128`, `u256`, `i256`) indexed bytes directly with the same gap. All eight now call `assertByteArrayIsNotEmptyForCodec` and `assertByteArrayHasEnoughBytesForCodec` before reading, raising `codecsCannotDecodeEmptyByteArray` or `codecsInvalidByteLength` as upstream does. A new `bigIntDecoderFactory` carries the guard for the multi-word widths.
+
+Two further escape sites in `solana_kit_transaction_messages` are fixed. The version 1 instruction payload slice computed `pos + numInstructionDataBytes` and sliced without confirming the buffer held that many bytes; it now asserts the length the way upstream's `fixDecoderSize` wrapper does. The transaction version decoder read `bytes[offset]` unguarded — upstream tolerates this because JavaScript yields `undefined`, which then silently takes the legacy branch and misreports a truncated buffer as an unversioned message, so this port rejects the empty buffer rather than reproducing that fallback.
+
+Encoders are unchanged and still raise `RangeError` when a destination buffer is too small. Upstream writes into a scratch buffer and then `bytes.set`s it, which throws in JavaScript too, so that behavior is deliberate parity rather than a defect.
+
+Callers that caught `RangeError` around a decode should catch `SolanaError`. Callers that already caught `SolanaError` now see malformed input rejected where it previously surfaced as a crash.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [f21cd21](https://github.com/openbudgetfun/solana_kit/commit/f21cd21d26750d70f0c72e6acf8440346cf8175e)
+
+#### Track @solana/kit v8.3.0
+
+_Packages:_ _solana_kit_errors_
+
+The workspace now tracks upstream `@solana/kit` v8.3.0 (previously v8.2.0), and `upstream:parity` passes against it. This entry maps every change in that upstream release to its Dart counterpart.
+
+Ported in this release:
+
+- `u256` and `i256` number codecs (`getU256Codec`, `getI256Codec` and their encoder/decoder pairs) serialize 32 bytes, honour the `endian` option, validate the full range on encode, and decode to `BigInt`, mirroring the existing 64-bit and 128-bit codecs.
+- Tap codec helpers observe values or bytes without modifying them: `tapEncoder`, `tapDecoder`, and `tapCodec` observe values, while `tapEncoderBytes`, `tapDecoderBytes`, and `tapCodecBytes` observe raw bytes and offsets. Each wrapper preserves the size characteristics of what it wraps, and any tap may throw, which makes them validation guards that need no identity `transformEncoder`.
+
+Already present before this release, and now covered by the v8.3.0 claim:
+
+- The `getAgGenesisCert` RPC method and its allowed numeric keypaths.
+- `isSolanaRequest` recognising `getAgGenesisCert` and `getTransactionsForAddress`, which is also what fixed upstream's `bigint` parsing for `getTransactionsForAddress` responses.
+
+No Dart change needed:
+
+- `HasAddress` and the `InstructionAccountInput` / `InstructionSignerInput` widening are TypeScript type-level changes. Dart has no structural typing, and this port's `ResolvedInstructionAccount` already wraps an `Object` value, so it accepts addresses, address-bearing objects, `ProgramDerivedAddress` values, and `AccountMeta` role overrides at runtime without a cast.
+- Marking `role` as `readonly` on the writable and signer account types is already true here: `AccountMeta.role` is a `final` field.
+- `createLazyKeyPairSignerFromBytes` exists upstream to defer an asynchronous WebCrypto key import. Signer creation in this port is synchronous, so there is nothing to defer and the type is not needed.
+
+Verification:
+
+- `upstream:parity` passes against `@solana/kit@8.3.0`
+- `upstream:check` reports the metadata is internally consistent for tracked version 8.3.0
+- The `@solana/kit` reference pin moved to tag `v8.3.0`
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [220066e](https://github.com/openbudgetfun/solana_kit/commit/220066ecb27aa738fd787ac8ada3918540435cc1)
+
+#### Raise the Dart and Flutter baseline
+
+_Packages:_ _solana_kit_test_matchers_
+
+The workspace now builds against Dart 3.13.3 and Flutter 3.47.4, and every package declares that floor instead of the previous Dart 3.12 range. Consumers on older SDKs can no longer resolve these packages, so this release is breaking even though no Dart API changed.
+
+The Flutter floor rises from 3.44 to 3.47 for `solana_kit_mobile_wallet_adapter`, `solana_kit_mobile_wallet_adapter_protocol`, and `solana_kit_wallet_adapter`, matching the floor `solana_kit_wallet_ui` already required. `solana_kit_lints` ships the raised floor to consumers, so it carries the same breaking bump. Every other package raises only the Dart SDK floor.
+
+Raising the language version also switches `dart format` to the tall style, so 83 files across library, test, script, and Codama-generated trees are reflowed. The renderer pipes generated output through `dart format`, so regenerating stays consistent.
+
+Align your own SDK constraint with the workspace:
+
+```yaml
+environment:
+  sdk: ^3.13.0
+  # Omit for pure Dart packages; required for the Flutter packages above.
+  flutter: ">=3.47.0"
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [5f5fe01](https://github.com/openbudgetfun/solana_kit/commit/5f5fe01f3e2220ccfee54cc26e82c3face26589d) · _Last updated in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
+
+#### Add version 1 transaction coverage with oversized payloads
+
+_Packages:_ _solana_kit_transactions_
+
+Adds regression tests for the version 1 transaction wire format introduced by SIMD-0296 and SIMD-0385, which raise the transaction size ceiling from 1232 to 4096 bytes.
+
+`packages/solana_kit_transactions/test/v1_transaction_test.dart` pins the exact bytes against vectors generated by upstream `@solana/kit` 8.3.0, so a regression in the v1 envelope, config mask, or config value encoding fails loudly instead of silently producing transactions the cluster rejects. The vectors live in `test/fixtures/v1_wire_vectors.json`, alongside a README documenting how to regenerate them; the largest asserts a 3216-byte transaction byte-for-byte, which no legacy transaction can represent.
+
+On-chain coverage lands in `packages/solana_kit_integration_tests/test/integration/v1_transaction_test.dart`. It submits a v1 transaction with a 1600-byte memo — over the legacy ceiling — and asserts the node accepts it, recovers the full memo, reports the inline `transactionConfig` with the requested compute unit and loaded accounts limits, and moves lamports. The same suite asserts the node rejects a payload above 4096 bytes.
+
+A second on-chain suite, `resource_limit_estimation_test.dart`, submits a v1 transaction whose limits were produced by `estimateResourceLimitsFactory` and asserts the node executes it.
+
+`IntegrationTestEnv` gains `sendV1Instructions` and `buildV1WireTransaction` helpers, and `fetchTransaction` now requests `maxSupportedTransactionVersion: 1` so v1 responses can be read back rather than failing with RPC error `-32015`. No public library behavior changes.
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
+
 ## [0.9.3](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.3) (2026-09-12)
 
 Grouped release for `main`.

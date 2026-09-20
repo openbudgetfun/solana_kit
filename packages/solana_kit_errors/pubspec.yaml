@@ -1,11 +1,11 @@
 name: solana_kit_errors
 description: Error codes and SolanaError class for the Solana Kit Dart SDK.
-version: 0.9.3
+version: 0.10.0
 repository: https://github.com/openbudgetfun/solana_kit/tree/main/packages/solana_kit_errors
 homepage: https://openbudgetfun.github.io/solana_kit/
 environment:
   sdk: ^3.13.0
 resolution: workspace
 dev_dependencies:
-  solana_kit_lints: ^0.9.3
+  solana_kit_lints: ^0.10.0
   test: ^1.25.0

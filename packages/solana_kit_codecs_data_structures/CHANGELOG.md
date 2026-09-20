@@ -4,6 +4,59 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.10.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.10.0) (2026-09-21)
+
+### Breaking changes
+
+#### Raise the Dart and Flutter baseline
+
+The workspace now builds against Dart 3.13.3 and Flutter 3.47.4, and every package declares that floor instead of the previous Dart 3.12 range. Consumers on older SDKs can no longer resolve these packages, so this release is breaking even though no Dart API changed.
+
+The Flutter floor rises from 3.44 to 3.47 for `solana_kit_mobile_wallet_adapter`, `solana_kit_mobile_wallet_adapter_protocol`, and `solana_kit_wallet_adapter`, matching the floor `solana_kit_wallet_ui` already required. `solana_kit_lints` ships the raised floor to consumers, so it carries the same breaking bump. Every other package raises only the Dart SDK floor.
+
+Raising the language version also switches `dart format` to the tall style, so 83 files across library, test, script, and Codama-generated trees are reflowed. The renderer pipes generated output through `dart format`, so regenerating stays consistent.
+
+Align your own SDK constraint with the workspace:
+
+```yaml
+environment:
+  sdk: ^3.13.0
+  # Omit for pure Dart packages; required for the Flutter packages above.
+  flutter: ">=3.47.0"
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [5f5fe01](https://github.com/openbudgetfun/solana_kit/commit/5f5fe01f3e2220ccfee54cc26e82c3face26589d) · _Last updated in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
+
+### Features
+
+#### Add the upstream size-prefix and UTF-8 codec options
+
+Ports the last two surfaces from upstream `@solana/kit` v8.3.0. Both are additive: no existing behavior changes.
+
+`requireSizePrefix` is a named parameter on `getArrayDecoder`, `getArrayCodec`, `getSetDecoder`, `getSetCodec`, `getMapDecoder`, and `getMapCodec`. Upstream defaults it to `false`, where an exhausted byte array decodes as an empty collection so a collection can be appended to an existing layout. This port defaults it to `true` and throws, because a silently empty collection hides truncated input. Pass `requireSizePrefix: false` to opt in:
+
+```dart
+final lenient = getArrayCodec(getU8Codec(), requireSizePrefix: false);
+lenient.decode(Uint8List(0)); // []
+getArrayCodec(getU8Codec()).decode(Uint8List(0)); // throws
+```
+
+`Utf8CodecConfig` is accepted by `getUtf8Encoder`, `getUtf8Decoder`, and `getUtf8Codec`, and carries upstream's three options:
+
+- `fatal` rejects malformed input instead of replacing it. Upstream defaults to `false`, decoding bad bytes as `U+FFFD`; this port defaults to `true` and raises a `FormatException` from decoding and, for lone surrogates, from encoding.
+- `ignoreBOM` preserves a leading byte order mark. Both default to `false`, which strips it, matching Dart's `Utf8Decoder`.
+- `removeNullCharacters` strips `U+0000` from decoded strings. Upstream defaults to `true`; this port defaults to `false` so the decoded value reflects the bytes exactly.
+
+The two divergent defaults exist so that malformed or null-padded account and instruction data cannot decode silently. To take upstream's behavior explicitly:
+
+```dart
+final codec = getUtf8Codec(
+  const Utf8CodecConfig(fatal: false, removeNullCharacters: true),
+);
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [cf4ab87](https://github.com/openbudgetfun/solana_kit/commit/cf4ab873e32bb2ce2f4fe69e73fbc8aa6162894b)
+
 ## [0.9.3](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.9.3) (2026-09-12)
 
 ### Changed

@@ -62,3 +62,45 @@ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #236](https://g
 ### Changed
 
 - **No package-specific changes were recorded; `solana_kit_wallet_ui` was updated to 0.1.3 as part of group `wallet`.**
+
+## wallet [0.2.0](https://github.com/openbudgetfun/solana_kit/releases/tag/wallet/v0.2.0) (2026-09-21)
+
+### Breaking changes
+
+#### Raise the Dart and Flutter baseline
+
+The workspace now builds against Dart 3.13.3 and Flutter 3.47.4, and every package declares that floor instead of the previous Dart 3.12 range. Consumers on older SDKs can no longer resolve these packages, so this release is breaking even though no Dart API changed.
+
+The Flutter floor rises from 3.44 to 3.47 for `solana_kit_mobile_wallet_adapter`, `solana_kit_mobile_wallet_adapter_protocol`, and `solana_kit_wallet_adapter`, matching the floor `solana_kit_wallet_ui` already required. `solana_kit_lints` ships the raised floor to consumers, so it carries the same breaking bump. Every other package raises only the Dart SDK floor.
+
+Raising the language version also switches `dart format` to the tall style, so 83 files across library, test, script, and Codama-generated trees are reflowed. The renderer pipes generated output through `dart format`, so regenerating stays consistent.
+
+Align your own SDK constraint with the workspace:
+
+```yaml
+environment:
+  sdk: ^3.13.0
+  # Omit for pure Dart packages; required for the Flutter packages above.
+  flutter: ">=3.47.0"
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [5f5fe01](https://github.com/openbudgetfun/solana_kit/commit/5f5fe01f3e2220ccfee54cc26e82c3face26589d) · _Last updated in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
+
+### Features
+
+#### Add a hand-drawn Skribble wallet presentation
+
+The wallet components can now render with [skribble](https://pub.dev/packages/skribble), the hand-drawn Flutter design system. `SkribbleWalletButton` mirrors the Material and Cupertino connect buttons — connect, progress, connected-account, and disconnect states — using a `WiredFilledButton` and a hand-drawn disconnect sheet, and `showSkribbleWalletPicker` opens the picker as a `WiredBottomSheet` on compact viewports or a `WiredDialog` on wide ones, with rough-inked wallet tiles and a doodle-marked empty state over the same `WalletPickerContent` behavior as the other presentations.
+
+`skribbleWalletPalette` maps a `WiredThemeData` onto the framework-neutral `WalletUiPalette` for applications that embed `WalletPickerContent` in their own hand-drawn shell, and `resolveSkribbleWalletTheme` resolves the effective theme (explicit override, then nearest `WiredTheme`, then skribble's default ink). The example app — which is also the embedded docs demo — gained a presentation selector covering Adaptive, Material, Cupertino, and Skribble so the hand-drawn wallet can be compared live.
+
+Skribble is a direct dependency, so the package's Flutter floor rises from 3.44 to 3.47 and the workspace FVM pin moves to 3.47.4 accordingly.
+
+```dart
+SkribbleWalletButton(
+  controller: walletController,
+  theme: WiredThemeData.cuddly(),
+);
+```
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [e041e73](https://github.com/openbudgetfun/solana_kit/commit/e041e731bb0291af05c06c16d7042fdbf51166a1)
