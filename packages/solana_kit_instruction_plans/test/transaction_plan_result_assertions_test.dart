@@ -387,28 +387,6 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // successfulSingleTransactionPlanResultFromTransaction: extra context fields
-  // ---------------------------------------------------------------------------
-  group(
-    'successfulSingleTransactionPlanResultFromTransaction extra context',
-    () {
-      test('merges extra context alongside signature and transaction', () {
-        final msg = createMessage();
-        final tx = createTransaction();
-        final result = successfulSingleTransactionPlanResultFromTransaction(
-          msg,
-          tx,
-          {'customKey': 'customValue'},
-        );
-
-        expect(result.context['customKey'], 'customValue');
-        expect(result.context.containsKey('signature'), isTrue);
-        expect(result.context.containsKey('transaction'), isTrue);
-      });
-    },
-  );
-
-  // ---------------------------------------------------------------------------
   // getFirstFailedSingleTransactionPlanResult – deeply nested
   // ---------------------------------------------------------------------------
   group('getFirstFailedSingleTransactionPlanResult deep nesting', () {

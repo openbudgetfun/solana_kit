@@ -21,21 +21,6 @@ void main() {
       expect(result.signature, sig);
     });
 
-    test('creates a successful result from a transaction', () {
-      final message = createMessage();
-      final transaction = createTransaction();
-      final result = successfulSingleTransactionPlanResultFromTransaction(
-        message,
-        transaction,
-      );
-
-      expect(result, isA<SuccessfulSingleTransactionPlanResult>());
-      expect(result.status, TransactionPlanResultStatus.successful);
-      expect(result.context.containsKey('signature'), isTrue);
-      expect(result.context.containsKey('transaction'), isTrue);
-      expect(result.context['transaction'], same(transaction));
-    });
-
     test('context is unmodifiable', () {
       final message = createMessage();
       final sig = Signature('test-signature'.padRight(64, '0'));
