@@ -37,6 +37,10 @@ node_modules/
 # Reference repos
 .repos/
 
+# monochange scratch state (the prepared-release cache), regenerated on every
+# release preparation. `.monochange/releases/` holds the tracked release record.
+.monochange/local/
+
 coverage_tmp/
 
 # Mutation testing reports (written under coverage/, which is already ignored)
