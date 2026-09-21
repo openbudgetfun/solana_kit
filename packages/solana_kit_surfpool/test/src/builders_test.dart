@@ -101,13 +101,37 @@ void main() {
       );
     });
 
+    test('SetTokenAccount configures the confidential-transfer extension', () {
+      final builder = const SetTokenAccount(account, mint)
+          .withConfidentialTransfer(
+            const ConfidentialTransferAccountUpdate(
+              elgamalPubkey: 'elgamal-pubkey',
+              aesKey: 'aes-key',
+              amount: 5,
+            ),
+          )
+          .withTokenProgram(token2022ProgramAddress);
+
+      expect(builder.method, 'surfnet_setTokenAccount');
+      expect(builder.params, <Object?>[
+        account.value,
+        mint.value,
+        <String, Object?>{
+          'confidential': <String, Object?>{
+            'elgamalPubkey': 'elgamal-pubkey',
+            'aesKey': 'aes-key',
+            'amount': 5,
+          },
+        },
+        token2022ProgramAddress.value,
+      ]);
+    });
+
     test('ResetAccount omits options when unset', () {
       expect(const ResetAccount(account).params, <Object?>[account.value]);
       expect(
         const ResetAccount(account)
-            .withIncludeOwnedAccounts(
-              includeOwnedAccounts: true,
-            )
+            .withIncludeOwnedAccounts(includeOwnedAccounts: true)
             .params,
         <Object?>[
           account.value,
@@ -120,9 +144,7 @@ void main() {
       expect(const StreamAccount(account).params, <Object?>[account.value]);
       expect(
         const StreamAccount(account)
-            .withIncludeOwnedAccounts(
-              includeOwnedAccounts: false,
-            )
+            .withIncludeOwnedAccounts(includeOwnedAccounts: false)
             .params,
         <Object?>[
           account.value,

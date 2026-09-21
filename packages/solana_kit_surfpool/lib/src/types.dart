@@ -56,6 +56,7 @@ class SetTokenAccountUpdate {
     this.delegatedAmount,
     this.closeAuthority,
     this.clearCloseAuthority = false,
+    this.confidential,
   });
 
   /// Token amount to set.
@@ -85,6 +86,11 @@ class SetTokenAccountUpdate {
   /// operations, matching the upstream Rust SDK behavior.
   final bool clearCloseAuthority;
 
+  /// Configures the Token-2022 confidential-transfer extension on the account.
+  ///
+  /// Only Token-2022 accounts support this.
+  final ConfidentialTransferAccountUpdate? confidential;
+
   /// Encodes this update as JSON-RPC parameters.
   Map<String, Object?> toJson() {
     _assertNonNegative(amount, 'amount');
@@ -99,6 +105,7 @@ class SetTokenAccountUpdate {
       );
     }
 
+    final confidential = this.confidential;
     return <String, Object?>{
       if (amount != null) 'amount': amount,
       if (delegate != null) 'delegate': delegate!.value,
@@ -107,6 +114,214 @@ class SetTokenAccountUpdate {
       if (delegatedAmount != null) 'delegatedAmount': delegatedAmount,
       if (closeAuthority != null) 'closeAuthority': closeAuthority!.value,
       if (clearCloseAuthority) 'closeAuthority': 'null',
+      if (confidential != null) 'confidential': confidential.toJson(),
+    };
+  }
+}
+
+/// Configures the Token-2022 `ConfidentialTransferAccount` extension on a
+/// token account set through `surfnet_setTokenAccount`.
+///
+/// This is a test-only cheatcode: it fabricates a configured (and optionally
+/// funded) confidential account directly, bypassing the real on-chain
+/// configure / deposit / apply-pending-balance instruction flow.
+@immutable
+class ConfidentialTransferAccountUpdate {
+  /// Creates a confidential-transfer account update.
+  const ConfidentialTransferAccountUpdate({
+    required this.elgamalPubkey,
+    required this.aesKey,
+    this.amount,
+    this.approved,
+    this.allowConfidentialCredits,
+    this.allowNonConfidentialCredits,
+    this.maximumPendingBalanceCreditCounter,
+  });
+
+  /// The owner's ElGamal public key, base58 or base64 encoded (32 bytes).
+  ///
+  /// The confidential balance is encrypted to this key, and confidential
+  /// payment clients read it off the account to encrypt transfers.
+  final String elgamalPubkey;
+
+  /// The owner's AES secret key, base58 or base64 encoded (16 bytes).
+  ///
+  /// Produces the `decryptable_available_balance` the owner reads to learn its
+  /// balance. Even a zero-balance receive-only account needs a valid encrypted
+  /// zero here, so this is required for every confidential account.
+  final String aesKey;
+
+  /// Confidential available balance to set. Defaults to `0` upstream.
+  final int? amount;
+
+  /// Whether the account is approved for confidential transfers.
+  ///
+  /// Defaults to `true` upstream.
+  final bool? approved;
+
+  /// Whether the account accepts incoming confidential credits.
+  ///
+  /// Defaults to `true` upstream.
+  final bool? allowConfidentialCredits;
+
+  /// Whether the base account accepts incoming non-confidential credits.
+  ///
+  /// Defaults to `true` upstream.
+  final bool? allowNonConfidentialCredits;
+
+  /// Maximum pending-balance credit counter. Defaults to `65536` upstream.
+  final int? maximumPendingBalanceCreditCounter;
+
+  /// Encodes this update as JSON-RPC parameters.
+  Map<String, Object?> toJson() {
+    _assertNonNegative(amount, 'amount');
+    _assertNonNegative(
+      maximumPendingBalanceCreditCounter,
+      'maximumPendingBalanceCreditCounter',
+    );
+
+    return <String, Object?>{
+      'elgamalPubkey': elgamalPubkey,
+      'aesKey': aesKey,
+      if (amount != null) 'amount': amount,
+      if (approved != null) 'approved': approved,
+      if (allowConfidentialCredits != null)
+        'allowConfidentialCredits': allowConfidentialCredits,
+      if (allowNonConfidentialCredits != null)
+        'allowNonConfidentialCredits': allowNonConfidentialCredits,
+      if (maximumPendingBalanceCreditCounter != null)
+        'maximumPendingBalanceCreditCounter':
+            maximumPendingBalanceCreditCounter,
+    };
+  }
+}
+
+/// The owner's confidential-transfer secrets, passed to
+/// `surfnet_getConfidentialBalance` so it can decrypt a token account.
+///
+/// Each key unlocks a different half of the balance, so they are independently
+/// optional: a caller holding only one still gets the half it can read. At
+/// least one key must be supplied.
+@immutable
+class ConfidentialBalanceKeys {
+  /// Creates confidential balance decryption keys.
+  const ConfidentialBalanceKeys({this.aesKey, this.elgamalSecretKey});
+
+  /// The owner's AES key, base58 or base64 encoded (16 bytes).
+  ///
+  /// Decrypts the available balance.
+  final String? aesKey;
+
+  /// The owner's ElGamal *secret* key, base58 or base64 encoded (32 bytes).
+  ///
+  /// This is not the public key stored on the account. Decrypts the pending
+  /// balance.
+  final String? elgamalSecretKey;
+
+  /// Encodes these keys as JSON-RPC parameters.
+  Map<String, Object?> toJson() {
+    if (aesKey == null && elgamalSecretKey == null) {
+      throw ArgumentError('Provide at least one of aesKey or elgamalSecretKey');
+    }
+
+    return <String, Object?>{
+      if (aesKey != null) 'aesKey': aesKey,
+      if (elgamalSecretKey != null) 'elgamalSecretKey': elgamalSecretKey,
+    };
+  }
+}
+
+/// The decrypted confidential-transfer balances of a Token-2022 token account,
+/// returned by `surfnet_getConfidentialBalance`.
+@immutable
+class ConfidentialBalance {
+  /// Creates a confidential balance value.
+  const ConfidentialBalance({
+    required this.available,
+    required this.pending,
+    required this.pendingBalanceCreditCounter,
+  });
+
+  /// Creates a confidential balance value from JSON.
+  factory ConfidentialBalance.fromJson(Object? json) {
+    final map = _expectMap(json, 'ConfidentialBalance');
+    return ConfidentialBalance(
+      available: _optionalInt(map['available'], 'available'),
+      pending: _optionalInt(map['pending'], 'pending'),
+      pendingBalanceCreditCounter: _expectInt(
+        map['pendingBalanceCreditCounter'],
+        'pendingBalanceCreditCounter',
+      ),
+    );
+  }
+
+  /// Available (spendable) balance, or `null` when the request supplied no
+  /// [ConfidentialBalanceKeys.aesKey].
+  final int? available;
+
+  /// Pending (credited but not yet applied) balance, or `null` when the
+  /// request supplied no [ConfidentialBalanceKeys.elgamalSecretKey].
+  final int? pending;
+
+  /// How many confidential credits sit in the pending balance.
+  ///
+  /// A non-zero value means an `ApplyPendingBalance` is required before the
+  /// credits appear in [available].
+  final int pendingBalanceCreditCounter;
+
+  /// Encodes this value as JSON.
+  Map<String, Object?> toJson() {
+    return <String, Object?>{
+      'available': available,
+      'pending': pending,
+      'pendingBalanceCreditCounter': pendingBalanceCreditCounter,
+    };
+  }
+}
+
+/// The confidential-transfer keys derived for a token account, returned by
+/// `surfnet_deriveConfidentialKeys`.
+///
+/// All three values are base58-encoded and feed directly into the other
+/// confidential cheatcodes.
+@immutable
+class ConfidentialKeys {
+  /// Creates derived confidential-transfer keys.
+  const ConfidentialKeys({
+    required this.elgamalPubkey,
+    required this.elgamalSecretKey,
+    required this.aesKey,
+  });
+
+  /// Creates derived confidential-transfer keys from JSON.
+  factory ConfidentialKeys.fromJson(Object? json) {
+    final map = _expectMap(json, 'ConfidentialKeys');
+    return ConfidentialKeys(
+      elgamalPubkey: _expectString(map['elgamalPubkey'], 'elgamalPubkey'),
+      elgamalSecretKey: _expectString(
+        map['elgamalSecretKey'],
+        'elgamalSecretKey',
+      ),
+      aesKey: _expectString(map['aesKey'], 'aesKey'),
+    );
+  }
+
+  /// ElGamal public key, for [ConfidentialTransferAccountUpdate.elgamalPubkey].
+  final String elgamalPubkey;
+
+  /// ElGamal secret key, for [ConfidentialBalanceKeys.elgamalSecretKey].
+  final String elgamalSecretKey;
+
+  /// AES key, for [ConfidentialTransferAccountUpdate.aesKey] and
+  /// [ConfidentialBalanceKeys.aesKey].
+  final String aesKey;
+
+  /// Encodes this value as JSON.
+  Map<String, Object?> toJson() {
+    return <String, Object?>{
+      'elgamalPubkey': elgamalPubkey,
+      'elgamalSecretKey': elgamalSecretKey,
+      'aesKey': aesKey,
     };
   }
 }

@@ -61,10 +61,7 @@ void main() {
           clearDelegate: true,
           clearCloseAuthority: true,
         ).toJson(),
-        <String, Object?>{
-          'delegate': 'null',
-          'closeAuthority': 'null',
-        },
+        <String, Object?>{'delegate': 'null', 'closeAuthority': 'null'},
       );
     });
 
@@ -90,6 +87,197 @@ void main() {
           clearCloseAuthority: true,
         ).toJson(),
         throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('serializes the confidential-transfer extension', () {
+      expect(
+        const SetTokenAccountUpdate(
+          amount: 5,
+          confidential: ConfidentialTransferAccountUpdate(
+            elgamalPubkey: 'elgamal',
+            aesKey: 'aes',
+            amount: 100,
+            approved: true,
+          ),
+        ).toJson(),
+        <String, Object?>{
+          'amount': 5,
+          'confidential': <String, Object?>{
+            'elgamalPubkey': 'elgamal',
+            'aesKey': 'aes',
+            'amount': 100,
+            'approved': true,
+          },
+        },
+      );
+    });
+  });
+
+  group('ConfidentialTransferAccountUpdate', () {
+    test('serializes required keys and omits unset defaults', () {
+      expect(
+        const ConfidentialTransferAccountUpdate(
+          elgamalPubkey: 'elgamal-pubkey',
+          aesKey: 'aes-key',
+        ).toJson(),
+        <String, Object?>{
+          'elgamalPubkey': 'elgamal-pubkey',
+          'aesKey': 'aes-key',
+        },
+      );
+      expect(
+        const ConfidentialTransferAccountUpdate(
+          elgamalPubkey: 'elgamal-pubkey',
+          aesKey: 'aes-key',
+          amount: 7,
+          approved: false,
+          allowConfidentialCredits: false,
+          allowNonConfidentialCredits: true,
+          maximumPendingBalanceCreditCounter: 65536,
+        ).toJson(),
+        <String, Object?>{
+          'elgamalPubkey': 'elgamal-pubkey',
+          'aesKey': 'aes-key',
+          'amount': 7,
+          'approved': false,
+          'allowConfidentialCredits': false,
+          'allowNonConfidentialCredits': true,
+          'maximumPendingBalanceCreditCounter': 65536,
+        },
+      );
+    });
+
+    test('rejects negative numeric fields', () {
+      expect(
+        () => const ConfidentialTransferAccountUpdate(
+          elgamalPubkey: 'elgamal',
+          aesKey: 'aes',
+          amount: -1,
+        ).toJson(),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => const ConfidentialTransferAccountUpdate(
+          elgamalPubkey: 'elgamal',
+          aesKey: 'aes',
+          maximumPendingBalanceCreditCounter: -1,
+        ).toJson(),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+  });
+
+  group('ConfidentialBalanceKeys', () {
+    test('requires at least one key and omits unset keys', () {
+      expect(
+        const ConfidentialBalanceKeys(aesKey: 'aes').toJson(),
+        <String, Object?>{'aesKey': 'aes'},
+      );
+      expect(
+        const ConfidentialBalanceKeys(elgamalSecretKey: 'secret').toJson(),
+        <String, Object?>{'elgamalSecretKey': 'secret'},
+      );
+      expect(
+        const ConfidentialBalanceKeys(
+          aesKey: 'aes',
+          elgamalSecretKey: 'secret',
+        ).toJson(),
+        <String, Object?>{'aesKey': 'aes', 'elgamalSecretKey': 'secret'},
+      );
+      expect(
+        () => const ConfidentialBalanceKeys().toJson(),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+  });
+
+  group('ConfidentialBalance', () {
+    test('parses nullable balances and round trips', () {
+      final both = ConfidentialBalance.fromJson(const <String, Object?>{
+        'available': 10,
+        'pending': 5,
+        'pendingBalanceCreditCounter': 1,
+      });
+      final onlyAvailable = ConfidentialBalance.fromJson(
+        const <String, Object?>{
+          'available': 10,
+          'pending': null,
+          'pendingBalanceCreditCounter': 0,
+        },
+      );
+
+      expect(both.available, 10);
+      expect(both.pending, 5);
+      expect(both.pendingBalanceCreditCounter, 1);
+      expect(both.toJson(), <String, Object?>{
+        'available': 10,
+        'pending': 5,
+        'pendingBalanceCreditCounter': 1,
+      });
+      expect(onlyAvailable.pending, isNull);
+      expect(onlyAvailable.available, 10);
+      expect(onlyAvailable.toJson(), <String, Object?>{
+        'available': 10,
+        'pending': null,
+        'pendingBalanceCreditCounter': 0,
+      });
+    });
+
+    test('rejects malformed JSON', () {
+      expect(() => ConfidentialBalance.fromJson(null), throwsFormatException);
+      expect(
+        () => ConfidentialBalance.fromJson(const <String, Object?>{
+          'available': 'ten',
+          'pending': null,
+          'pendingBalanceCreditCounter': 0,
+        }),
+        throwsFormatException,
+      );
+      expect(
+        () => ConfidentialBalance.fromJson(const <String, Object?>{
+          'available': null,
+          'pending': null,
+        }),
+        throwsFormatException,
+      );
+    });
+  });
+
+  group('ConfidentialKeys', () {
+    test('parses and round trips', () {
+      final keys = ConfidentialKeys.fromJson(const <String, Object?>{
+        'elgamalPubkey': 'elgamal-pubkey',
+        'elgamalSecretKey': 'elgamal-secret',
+        'aesKey': 'aes-key',
+      });
+
+      expect(keys.elgamalPubkey, 'elgamal-pubkey');
+      expect(keys.elgamalSecretKey, 'elgamal-secret');
+      expect(keys.aesKey, 'aes-key');
+      expect(keys.toJson(), <String, Object?>{
+        'elgamalPubkey': 'elgamal-pubkey',
+        'elgamalSecretKey': 'elgamal-secret',
+        'aesKey': 'aes-key',
+      });
+    });
+
+    test('rejects malformed JSON', () {
+      expect(() => ConfidentialKeys.fromJson(null), throwsFormatException);
+      expect(
+        () => ConfidentialKeys.fromJson(const <String, Object?>{
+          'elgamalPubkey': 'elgamal-pubkey',
+          'elgamalSecretKey': 'elgamal-secret',
+        }),
+        throwsFormatException,
+      );
+      expect(
+        () => ConfidentialKeys.fromJson(const <String, Object?>{
+          'elgamalPubkey': 1,
+          'elgamalSecretKey': 'elgamal-secret',
+          'aesKey': 'aes-key',
+        }),
+        throwsFormatException,
       );
     });
   });

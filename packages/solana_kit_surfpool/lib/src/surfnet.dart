@@ -322,9 +322,10 @@ class Surfnet {
   ) async {
     _assertNonNegative(lamports, 'lamports');
     await execute(
-      SetAccount(
-        address,
-      ).withLamports(lamports).withData(data).withOwner(owner),
+      SetAccount(address)
+          .withLamports(lamports)
+          .withData(data)
+          .withOwner(owner),
     );
   }
 
@@ -392,6 +393,34 @@ class Surfnet {
       tokenProgram: tokenProgram,
       mint: mint,
     );
+  }
+
+  /// Decrypts the confidential-transfer balances of a Token-2022 token account.
+  ///
+  /// [keys] must supply at least one of an AES key (for [ConfidentialBalance.available])
+  /// or an ElGamal secret key (for [ConfidentialBalance.pending]).
+  Future<ConfidentialBalance> getConfidentialBalance(
+    Address tokenAccount,
+    ConfidentialBalanceKeys keys,
+  ) async {
+    final result = await _rpcClient.call(
+      'surfnet_getConfidentialBalance',
+      <Object?>[tokenAccount.value, keys.toJson()],
+    );
+    return ConfidentialBalance.fromJson(result);
+  }
+
+  /// Derives an owner's confidential-transfer keys from their [signature].
+  ///
+  /// [signature] is the owner's 64-byte signature over `solana-conf-bal/v1`
+  /// followed by a public seed (normally the token account address), base58 or
+  /// base64 encoded.
+  Future<ConfidentialKeys> deriveConfidentialKeys(String signature) async {
+    final result = await _rpcClient.call(
+      'surfnet_deriveConfidentialKeys',
+      <Object?>[signature],
+    );
+    return ConfidentialKeys.fromJson(result);
   }
 
   /// Resets an account to upstream state, when an upstream RPC is configured.
@@ -538,9 +567,7 @@ class Surfnet {
       try {
         await _rpcClient
             .call('getHealth')
-            .timeout(
-              deadline.difference(DateTime.now()),
-            );
+            .timeout(deadline.difference(DateTime.now()));
         return;
       } on Object catch (error) {
         lastError = error;
@@ -567,10 +594,7 @@ class Surfnet {
 
     return exitCodeFuture
         .then<int?>((exitCode) => exitCode)
-        .timeout(
-          const Duration(milliseconds: 1),
-          onTimeout: () => null,
-        );
+        .timeout(const Duration(milliseconds: 1), onTimeout: () => null);
   }
 
   String _recentProcessOutput() {
