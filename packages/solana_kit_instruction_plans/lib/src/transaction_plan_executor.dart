@@ -178,7 +178,7 @@ Future<TransactionPlanResult> _traverseLeavesConcurrently(
             {...context, 'signature': Signature(result)},
           );
         }
-        return successfulSingleTransactionPlanResultFromTransaction(
+        return _successfulResultFromTransaction(
           transactionPlan.message,
           result as Transaction,
           context,
@@ -269,7 +269,7 @@ Future<TransactionPlanResult> _traverseSingle(
         'signature': Signature(result),
       });
     }
-    return successfulSingleTransactionPlanResultFromTransaction(
+    return _successfulResultFromTransaction(
       transactionPlan.message,
       result as Transaction,
       context,
@@ -294,6 +294,25 @@ Future<TransactionPlanResult> _traverseSingle(
       contextWithSignature,
     );
   }
+}
+
+/// Builds a successful result from an executed [transaction], deriving the
+/// `signature` with [getSignatureFromTransaction] and recording the transaction
+/// itself alongside any fields the caller already put in [context].
+///
+/// [getSignatureFromTransaction] throws when the fee payer has not signed, so
+/// this remains a private detail of the executor rather than public API: a
+/// caller building a result of its own passes an explicit context instead.
+SuccessfulSingleTransactionPlanResult _successfulResultFromTransaction(
+  TransactionMessage plannedMessage,
+  Transaction transaction,
+  Map<String, Object?> context,
+) {
+  return successfulSingleTransactionPlanResult(plannedMessage, {
+    ...context,
+    'signature': getSignatureFromTransaction(transaction),
+    'transaction': transaction,
+  });
 }
 
 Object? _findErrorFromTransactionPlanResult(TransactionPlanResult result) {

@@ -1,7 +1,6 @@
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
-import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 
 /// The result of executing a transaction plan.
 ///
@@ -147,37 +146,6 @@ SequentialTransactionPlanResult nonDivisibleSequentialTransactionPlanResult(
 ParallelTransactionPlanResult parallelTransactionPlanResult(
   List<TransactionPlanResult> plans,
 ) => ParallelTransactionPlanResult(plans: plans);
-
-/// Creates a successful [SingleTransactionPlanResult] from a transaction
-/// message and a [Transaction].
-///
-/// Deprecated: call [successfulSingleTransactionPlanResult] instead, passing
-/// the context explicitly. This helper derives the `signature` for you by
-/// calling [getSignatureFromTransaction], which throws when the transaction's
-/// fee payer has not signed it — the explicit spelling makes that step
-/// visible and avoidable.
-@Deprecated(
-  'Call successfulSingleTransactionPlanResult instead, passing the context '
-  'explicitly. This helper derives the signature for you by calling '
-  "getSignatureFromTransaction, which throws when the transaction's fee "
-  'payer has not signed it.',
-)
-SuccessfulSingleTransactionPlanResult
-successfulSingleTransactionPlanResultFromTransaction(
-  TransactionMessage plannedMessage,
-  Transaction transaction, [
-  Map<String, Object?>? context,
-]) {
-  final sig = getSignatureFromTransaction(transaction);
-  return SuccessfulSingleTransactionPlanResult(
-    plannedMessage: plannedMessage,
-    context: Map<String, Object?>.unmodifiable({
-      ...?context,
-      'signature': sig,
-      'transaction': transaction,
-    }),
-  );
-}
 
 /// Creates a successful [SingleTransactionPlanResult] from a transaction
 /// message and a context containing at least a `signature`.

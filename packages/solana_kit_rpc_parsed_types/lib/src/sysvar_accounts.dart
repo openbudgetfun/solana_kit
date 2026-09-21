@@ -1,4 +1,3 @@
-// ignore_for_file: deprecated_consistency
 import 'package:solana_kit_rpc_parsed_types/src/rpc_parsed_type.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 
@@ -270,10 +269,10 @@ class JsonParsedRentSysvar extends RpcParsedType<String, JsonParsedRentInfo>
 /// The info payload for the rent sysvar.
 ///
 /// Agave 4.1.0 reshaped the rent sysvar from `{ burnPercent, exemptionThreshold,
-/// lamportsPerByteYear }` to `{ lamportsPerByte }`. This type is a union of both
-/// shapes: narrow on `lamportsPerByte != null` (Agave 4.1.0+) versus
-/// `lamportsPerByteYear != null` (deprecated, pre-4.1.0) before accessing the
-/// fields. The legacy fields are `@Deprecated`.
+/// lamportsPerByteYear }` to `{ lamportsPerByte }`, so this type is a union of
+/// both shapes: narrow on `lamportsPerByte != null` (Agave 4.1.0+) versus
+/// `lamportsPerByteYear != null` (validators running earlier versions) before
+/// reading the fields.
 ///
 /// Changed in @solana/kit v7.0.0 to match Agave 4.1.0.
 class JsonParsedRentInfo {
@@ -287,16 +286,14 @@ class JsonParsedRentInfo {
 
   /// The percentage of collected rent to burn.
   ///
-  /// Deprecated in Agave 4.1.0; present only on validators running earlier
-  /// versions. Use [lamportsPerByte] on Agave 4.1.0+.
-  @Deprecated('Use `lamportsPerByte` on Agave 4.1.0+ validators')
+  /// Only populated by validators running earlier than Agave 4.1.0. Use
+  /// [lamportsPerByte] on Agave 4.1.0+.
   final int? burnPercent;
 
   /// The exemption threshold multiplier.
   ///
-  /// Deprecated in Agave 4.1.0; present only on validators running earlier
-  /// versions.
-  @Deprecated('Use `lamportsPerByte` on Agave 4.1.0+ validators')
+  /// Only populated by validators running earlier than Agave 4.1.0. Use
+  /// [lamportsPerByte] on Agave 4.1.0+.
   final double? exemptionThreshold;
 
   /// The lamports charged per byte (Agave 4.1.0+).
@@ -304,9 +301,8 @@ class JsonParsedRentInfo {
 
   /// The lamports charged per byte-year.
   ///
-  /// Deprecated in Agave 4.1.0; present only on validators running earlier
-  /// versions. Use [lamportsPerByte] on Agave 4.1.0+.
-  @Deprecated('Use `lamportsPerByte` on Agave 4.1.0+ validators')
+  /// Only populated by validators running earlier than Agave 4.1.0. Use
+  /// [lamportsPerByte] on Agave 4.1.0+.
   final StringifiedBigInt? lamportsPerByteYear;
 
   @override

@@ -1,4 +1,3 @@
-// ignore_for_file: deprecated_consistency
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_rpc_parsed_types/src/rpc_parsed_type.dart';
 
@@ -21,6 +20,12 @@ class JsonParsedStakeConfig
 }
 
 /// The info payload for a parsed stake config account.
+///
+/// The stake config program is no longer recognized by the RPC's JSON parser as
+/// of Agave 4.1.0, where a `jsonParsed` request for that account falls back to
+/// annotated base64. These fields are therefore only populated by validators
+/// running earlier versions; they remain part of the type because such
+/// responses are still valid.
 class JsonParsedStakeConfigInfo {
   /// Creates a new [JsonParsedStakeConfigInfo].
   const JsonParsedStakeConfigInfo({
@@ -30,17 +35,12 @@ class JsonParsedStakeConfigInfo {
 
   /// The slash penalty percentage.
   ///
-  /// Deprecated: the stake config program is no longer recognized by the
-  /// RPC's JSON parser as of Agave 4.1.0 (such accounts now fall back to
-  /// annotated base64).
-  @Deprecated('The stake config program is deprecated as of Agave 4.1.0')
+  /// Only populated by validators running earlier than Agave 4.1.0.
   final int slashPenalty;
 
   /// The warmup/cooldown rate.
   ///
-  /// Deprecated: the stake config program is no longer recognized by the
-  /// RPC's JSON parser as of Agave 4.1.0.
-  @Deprecated('The stake config program is deprecated as of Agave 4.1.0')
+  /// Only populated by validators running earlier than Agave 4.1.0.
   final double warmupCooldownRate;
 
   @override
