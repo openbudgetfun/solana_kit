@@ -19,6 +19,46 @@ class _RawCheatcode implements CheatcodeBuilder {
   final List<Object?> params;
 }
 
+/// Default Surfpool HTTP RPC endpoint used by the CLI.
+///
+/// Mirrors `DEFAULT_SURFNET_ENDPOINT` from `@solana/surfpool/kit`.
+const String defaultSurfnetEndpoint = 'http://127.0.0.1:8899';
+
+/// Every `surfnet_*` cheatcode method name, with the `surfnet_` prefix.
+///
+/// Mirrors `SURFNET_CHEATCODE_METHODS` from `@solana/surfpool/kit`, which the
+/// upstream build pins against the set the runtime registers.
+const List<String> surfnetCheatcodeMethods = <String>[
+  'surfnet_cloneProgramAccount',
+  'surfnet_deriveConfidentialKeys',
+  'surfnet_disableCheatcode',
+  'surfnet_enableCheatcode',
+  'surfnet_exportSnapshot',
+  'surfnet_getActiveIdl',
+  'surfnet_getConfidentialBalance',
+  'surfnet_getLocalSignatures',
+  'surfnet_getProfileResultsByTag',
+  'surfnet_getStreamedAccounts',
+  'surfnet_getSurfnetInfo',
+  'surfnet_getTransactionProfile',
+  'surfnet_offlineAccount',
+  'surfnet_pauseClock',
+  'surfnet_profileTransaction',
+  'surfnet_registerIdl',
+  'surfnet_registerScenario',
+  'surfnet_resetAccount',
+  'surfnet_resetNetwork',
+  'surfnet_resumeClock',
+  'surfnet_setAccount',
+  'surfnet_setProgramAuthority',
+  'surfnet_setSupply',
+  'surfnet_setTokenAccount',
+  'surfnet_streamAccount',
+  'surfnet_streamAccounts',
+  'surfnet_timeTravel',
+  'surfnet_writeProgram',
+];
+
 /// Typed access to every `surfnet_*` cheatcode, mirroring the
 /// `client.cheatcodes` surface of `@solana/surfpool/kit`.
 ///
@@ -109,36 +149,29 @@ class SurfnetCheatcodes {
       _surfnet.setTokenAccount(owner, mint, update, tokenProgram: tokenProgram);
 
   /// Resets an account to upstream state, when an upstream RPC is configured.
-  Future<void> resetAccount(
-    Address address, {
-    bool? includeOwnedAccounts,
-  }) => _surfnet.resetAccount(
-    address,
-    options: ResetAccountOptions(
-      includeOwnedAccounts: includeOwnedAccounts,
-    ),
-  );
+  Future<void> resetAccount(Address address, {bool? includeOwnedAccounts}) =>
+      _surfnet.resetAccount(
+        address,
+        options: ResetAccountOptions(
+          includeOwnedAccounts: includeOwnedAccounts,
+        ),
+      );
 
   /// Streams an account from the upstream RPC, when an upstream RPC is
   /// configured.
-  Future<void> streamAccount(
-    Address address, {
-    bool? includeOwnedAccounts,
-  }) => _surfnet.streamAccount(
-    address,
-    options: StreamAccountOptions(
-      includeOwnedAccounts: includeOwnedAccounts,
-    ),
-  );
+  Future<void> streamAccount(Address address, {bool? includeOwnedAccounts}) =>
+      _surfnet.streamAccount(
+        address,
+        options: StreamAccountOptions(
+          includeOwnedAccounts: includeOwnedAccounts,
+        ),
+      );
 
   /// Marks an account as offline so reads fail until it is reset.
   Future<void> offlineAccount(
     Address address, {
     Map<String, Object?>? config,
-  }) => _call('surfnet_offlineAccount', [
-    address.value,
-    ?config,
-  ]);
+  }) => _call('surfnet_offlineAccount', [address.value, ?config]);
 
   /// Streams several accounts from the upstream RPC in one call.
   Future<void> streamAccounts(List<Map<String, Object?>> accounts) =>
@@ -146,6 +179,32 @@ class SurfnetCheatcodes {
 
   /// Returns the accounts currently being streamed.
   Future<Object?> getStreamedAccounts() => _call('surfnet_getStreamedAccounts');
+
+  /// Decrypts the confidential-transfer balances of a Token-2022 token account.
+  ///
+  /// [keys] must supply at least one of an AES key (for [ConfidentialBalance.available])
+  /// or an ElGamal secret key (for [ConfidentialBalance.pending]).
+  Future<ConfidentialBalance> getConfidentialBalance(
+    Address tokenAccount,
+    ConfidentialBalanceKeys keys,
+  ) async {
+    final result = await _call('surfnet_getConfidentialBalance', [
+      tokenAccount.value,
+      keys.toJson(),
+    ]);
+    return ConfidentialBalance.fromJson(result);
+  }
+
+  /// Derives an owner's confidential-transfer keys from their [signature].
+  ///
+  /// [signature] is the owner's 64-byte signature over `solana-conf-bal/v1`
+  /// followed by a public seed (normally the token account address), base58 or
+  /// base64 encoded. Signing with the token account address as the seed scopes
+  /// the derived keys to that account.
+  Future<ConfidentialKeys> deriveConfidentialKeys(String signature) async {
+    final result = await _call('surfnet_deriveConfidentialKeys', [signature]);
+    return ConfidentialKeys.fromJson(result);
+  }
 
   /// Clones a program account from [sourceProgramId] to [destinationProgramId].
   Future<void> cloneProgramAccount(
@@ -193,37 +252,21 @@ class SurfnetCheatcodes {
   Future<Object?> getTransactionProfile(
     String signatureOrUuid, {
     Map<String, Object?>? config,
-  }) => _call('surfnet_getTransactionProfile', [
-    signatureOrUuid,
-    ?config,
-  ]);
+  }) => _call('surfnet_getTransactionProfile', [signatureOrUuid, ?config]);
 
   /// Returns the profiles recorded under [tag].
   Future<Object?> getProfileResultsByTag(
     String tag, {
     Map<String, Object?>? config,
-  }) => _call('surfnet_getProfileResultsByTag', [
-    tag,
-    ?config,
-  ]);
+  }) => _call('surfnet_getProfileResultsByTag', [tag, ?config]);
 
   /// Registers an Anchor IDL for a program.
-  Future<void> registerIdl(
-    Map<String, Object?> idl, {
-    int? slot,
-  }) => _call('surfnet_registerIdl', [
-    idl,
-    ?slot,
-  ]);
+  Future<void> registerIdl(Map<String, Object?> idl, {int? slot}) =>
+      _call('surfnet_registerIdl', [idl, ?slot]);
 
   /// Returns the active IDL for [programId].
-  Future<Object?> getActiveIdl(
-    Address programId, {
-    int? slot,
-  }) => _call('surfnet_getActiveIdl', [
-    programId.value,
-    ?slot,
-  ]);
+  Future<Object?> getActiveIdl(Address programId, {int? slot}) =>
+      _call('surfnet_getActiveIdl', [programId.value, ?slot]);
 
   /// Sets the total supply of SOL.
   Future<void> setSupply(Map<String, Object?> update) =>
@@ -237,24 +280,15 @@ class SurfnetCheatcodes {
 
   /// Exports a snapshot of the current account state.
   Future<Object?> exportSnapshot({Map<String, Object?>? config}) =>
-      _call('surfnet_exportSnapshot', [
-        ?config,
-      ]);
+      _call('surfnet_exportSnapshot', [?config]);
 
   /// Registers a scenario for replay.
-  Future<void> registerScenario(
-    Map<String, Object?> scenario, {
-    int? slot,
-  }) => _call('surfnet_registerScenario', [
-    scenario,
-    ?slot,
-  ]);
+  Future<void> registerScenario(Map<String, Object?> scenario, {int? slot}) =>
+      _call('surfnet_registerScenario', [scenario, ?slot]);
 
   /// Returns the most recent local signatures.
   Future<Object?> getLocalSignatures({int? limit}) =>
-      _call('surfnet_getLocalSignatures', [
-        ?limit,
-      ]);
+      _call('surfnet_getLocalSignatures', [?limit]);
 
   /// Enables cheatcodes matching [filter] (`'all'` or a list of method names).
   Future<void> enableCheatcode(Object filter) =>
@@ -264,8 +298,5 @@ class SurfnetCheatcodes {
   Future<void> disableCheatcode(
     Object filter, {
     Map<String, Object?>? lockout,
-  }) => _call('surfnet_disableCheatcode', [
-    filter,
-    ?lockout,
-  ]);
+  }) => _call('surfnet_disableCheatcode', [filter, ?lockout]);
 }

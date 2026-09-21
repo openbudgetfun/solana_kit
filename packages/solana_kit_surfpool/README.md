@@ -153,6 +153,57 @@ Future<void> main() async {
 }
 ```
 
+`surfnetCheatcodeMethods` lists every registered `surfnet_*` method name and `defaultSurfnetEndpoint` is the CLI's default HTTP RPC endpoint, mirroring the constants `@solana/surfpool/kit` exports.
+
+## Confidential transfers
+
+Token-2022 confidential balances are exposed through test-only cheatcodes: they fabricate a configured confidential account directly rather than running the on-chain configure / deposit / apply-pending-balance instruction flow.
+
+`deriveConfidentialKeys` turns the owner's signature into the ElGamal and AES keys the other two cheatcodes need, so a test can drive the whole confidential suite without a client-side confidential-transfer crypto dependency. The signature is the owner's 64-byte signature over `solana-conf-bal/v1` followed by a public seed, normally the token account address; signing with that seed scopes the derived keys to that account.
+
+```dart
+import 'package:solana_kit_address_constants/solana_kit_address_constants.dart';
+import 'package:solana_kit_surfpool/solana_kit_surfpool.dart';
+
+Future<void> main() async {
+  final surfnet = await Surfnet.start();
+  try {
+    final owner = Surfnet.newKeypair();
+    final mint = Surfnet.newKeypair().address;
+
+    // The owner signs `solana-conf-bal/v1` plus the token account address.
+    final keys = await surfnet.deriveConfidentialKeys('base58Signature');
+
+    await surfnet.setTokenAccount(
+      owner.address,
+      mint,
+      SetTokenAccountUpdate(
+        confidential: ConfidentialTransferAccountUpdate(
+          elgamalPubkey: keys.elgamalPubkey,
+          aesKey: keys.aesKey,
+          amount: 1_000,
+        ),
+      ),
+      tokenProgram: token2022ProgramAddress,
+    );
+
+    final balance = await surfnet.getConfidentialBalance(
+      surfnet.getAta(owner.address, mint),
+      ConfidentialBalanceKeys(
+        aesKey: keys.aesKey,
+        elgamalSecretKey: keys.elgamalSecretKey,
+      ),
+    );
+    print('Available: ${balance.available}');
+    print('Pending credits: ${balance.pendingBalanceCreditCounter}');
+  } finally {
+    await surfnet.stop();
+  }
+}
+```
+
+`ConfidentialBalanceKeys` requires at least one key and throws an `ArgumentError` otherwise. The returned `available` is `null` when no AES key was supplied, and `pending` is `null` when no ElGamal secret key was supplied, so a caller holding only one half still reads the half it can decrypt.
+
 For advanced account fields, use the builder API:
 
 ```dart
@@ -211,4 +262,5 @@ The upstream Rust and JS SDKs expose an in-process event channel. This Dart pack
 | `fundSol`, `fundToken`, `setAccount`, `setTokenAccount`            | Mutate local account state through Surfpool cheatcodes.            |
 | `resetAccount`, `streamAccount`                                    | Re-fetch or stream accounts from an upstream RPC.                  |
 | `timeTravelToSlot`, `timeTravelToEpoch`, `timeTravelToTimestamp`   | Move the local Surfnet clock forward.                              |
+| `getConfidentialBalance`, `deriveConfidentialKeys`                 | Read Token-2022 confidential balances and derive their keys.       |
 | `deployProgram`, `deploy`                                          | Write program bytes and optionally register an Anchor IDL.         |

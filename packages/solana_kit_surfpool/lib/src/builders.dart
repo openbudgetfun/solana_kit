@@ -129,6 +129,7 @@ class SetTokenAccount implements CheatcodeBuilder {
     this.delegatedAmount,
     this.closeAuthority,
     this.clearCloseAuthority = false,
+    this.confidential,
     this.tokenProgram,
   });
 
@@ -158,6 +159,9 @@ class SetTokenAccount implements CheatcodeBuilder {
 
   /// Whether to clear the close authority.
   final bool clearCloseAuthority;
+
+  /// Token-2022 confidential-transfer extension to configure on the account.
+  final ConfidentialTransferAccountUpdate? confidential;
 
   /// Token program to use for the account mutation.
   final Address? tokenProgram;
@@ -202,6 +206,14 @@ class SetTokenAccount implements CheatcodeBuilder {
     return _copyWith(clearCloseAuthority: true, clearCloseAuthorityField: true);
   }
 
+  /// Returns a copy that configures the Token-2022 confidential-transfer
+  /// extension.
+  SetTokenAccount withConfidentialTransfer(
+    ConfidentialTransferAccountUpdate confidential,
+  ) {
+    return _copyWith(confidential: confidential);
+  }
+
   /// Returns a copy that uses [tokenProgram] for ATA derivation and mutation.
   SetTokenAccount withTokenProgram(Address tokenProgram) {
     return _copyWith(tokenProgram: tokenProgram);
@@ -217,6 +229,7 @@ class SetTokenAccount implements CheatcodeBuilder {
     Address? closeAuthority,
     bool? clearCloseAuthority,
     bool clearCloseAuthorityField = false,
+    ConfidentialTransferAccountUpdate? confidential,
     Address? tokenProgram,
   }) {
     return SetTokenAccount(
@@ -231,6 +244,7 @@ class SetTokenAccount implements CheatcodeBuilder {
           ? null
           : closeAuthority ?? this.closeAuthority,
       clearCloseAuthority: clearCloseAuthority ?? this.clearCloseAuthority,
+      confidential: confidential ?? this.confidential,
       tokenProgram: tokenProgram ?? this.tokenProgram,
     );
   }
@@ -248,6 +262,7 @@ class SetTokenAccount implements CheatcodeBuilder {
       delegatedAmount: delegatedAmount,
       closeAuthority: closeAuthority,
       clearCloseAuthority: clearCloseAuthority,
+      confidential: confidential,
     ).toJson();
 
     final tokenProgram = this.tokenProgram;

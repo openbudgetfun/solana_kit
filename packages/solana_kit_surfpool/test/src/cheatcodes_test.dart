@@ -58,12 +58,9 @@ void main() {
 
       expect(requests, hasLength(1));
       expect(requests.single['method'], 'surfnet_timeTravel');
-      expect(
-        requests.single['params'],
-        <Object?>[
-          <String, Object?>{'absoluteSlot': 100},
-        ],
-      );
+      expect(requests.single['params'], <Object?>[
+        <String, Object?>{'absoluteSlot': 100},
+      ]);
       expect(epochInfo.absoluteSlot, 100);
       expect(epochInfo.epoch, 0);
     });
@@ -79,21 +76,15 @@ void main() {
       });
 
       await cheatcodes.timeTravel(absoluteEpoch: 1);
-      expect(
-        requests.single['params'],
-        <Object?>[
-          <String, Object?>{'absoluteEpoch': 1},
-        ],
-      );
+      expect(requests.single['params'], <Object?>[
+        <String, Object?>{'absoluteEpoch': 1},
+      ]);
 
       requests.clear();
       await cheatcodes.timeTravel(absoluteTimestamp: 1234);
-      expect(
-        requests.single['params'],
-        <Object?>[
-          <String, Object?>{'absoluteTimestamp': 1234},
-        ],
-      );
+      expect(requests.single['params'], <Object?>[
+        <String, Object?>{'absoluteTimestamp': 1234},
+      ]);
     });
 
     test('pauseClock and resumeClock parse the epoch info', () async {
@@ -186,13 +177,10 @@ void main() {
         config: <String, Object?>{'reason': 'test'},
       );
       expect(requests.single['method'], 'surfnet_offlineAccount');
-      expect(
-        requests.single['params'],
-        <Object?>[
-          address.value,
-          <String, Object?>{'reason': 'test'},
-        ],
-      );
+      expect(requests.single['params'], <Object?>[
+        address.value,
+        <String, Object?>{'reason': 'test'},
+      ]);
 
       requests.clear();
       await cheatcodes.streamAccounts([
@@ -213,6 +201,55 @@ void main() {
       expect(result, isA<Map<String, Object?>>());
     });
 
+    test('getConfidentialBalance sends keys and parses the balance', () async {
+      final requests = <Map<String, Object?>>[];
+      final cheatcodes = cheatcodesWith(requests, <String, Object?>{
+        'context': <String, Object?>{'slot': 1},
+        'value': <String, Object?>{
+          'available': 10,
+          'pending': null,
+          'pendingBalanceCreditCounter': 2,
+        },
+      });
+
+      final balance = await cheatcodes.getConfidentialBalance(
+        address,
+        const ConfidentialBalanceKeys(aesKey: 'aes'),
+      );
+
+      expect(requests.single['method'], 'surfnet_getConfidentialBalance');
+      expect(requests.single['params'], <Object?>[
+        address.value,
+        <String, Object?>{'aesKey': 'aes'},
+      ]);
+      expect(balance.available, 10);
+      expect(balance.pending, isNull);
+      expect(balance.pendingBalanceCreditCounter, 2);
+    });
+
+    test(
+      'deriveConfidentialKeys sends the signature and parses keys',
+      () async {
+        final requests = <Map<String, Object?>>[];
+        final cheatcodes = cheatcodesWith(requests, <String, Object?>{
+          'context': <String, Object?>{'slot': 1},
+          'value': <String, Object?>{
+            'elgamalPubkey': 'elgamal-pubkey',
+            'elgamalSecretKey': 'elgamal-secret',
+            'aesKey': 'aes-key',
+          },
+        });
+
+        final keys = await cheatcodes.deriveConfidentialKeys('signature');
+
+        expect(requests.single['method'], 'surfnet_deriveConfidentialKeys');
+        expect(requests.single['params'], <Object?>['signature']);
+        expect(keys.elgamalPubkey, 'elgamal-pubkey');
+        expect(keys.elgamalSecretKey, 'elgamal-secret');
+        expect(keys.aesKey, 'aes-key');
+      },
+    );
+
     test(
       'cloneProgramAccount and setProgramAuthority send addresses',
       () async {
@@ -221,18 +258,18 @@ void main() {
 
         await cheatcodes.cloneProgramAccount(address, other);
         expect(requests.single['method'], 'surfnet_cloneProgramAccount');
-        expect(
-          requests.single['params'],
-          <Object?>[address.value, other.value],
-        );
+        expect(requests.single['params'], <Object?>[
+          address.value,
+          other.value,
+        ]);
 
         requests.clear();
         await cheatcodes.setProgramAuthority(address, newAuthority: other);
         expect(requests.single['method'], 'surfnet_setProgramAuthority');
-        expect(
-          requests.single['params'],
-          <Object?>[address.value, other.value],
-        );
+        expect(requests.single['params'], <Object?>[
+          address.value,
+          other.value,
+        ]);
       },
     );
 
@@ -248,10 +285,12 @@ void main() {
       );
 
       expect(requests.single['method'], 'surfnet_writeProgram');
-      expect(
-        requests.single['params'],
-        <Object?>[address.value, 'dead', 8, other.value],
-      );
+      expect(requests.single['params'], <Object?>[
+        address.value,
+        'dead',
+        8,
+        other.value,
+      ]);
     });
 
     test(
@@ -266,14 +305,11 @@ void main() {
           config: <String, Object?>{'depth': 1},
         );
         expect(requests.single['method'], 'surfnet_profileTransaction');
-        expect(
-          requests.single['params'],
-          <Object?>[
-            'base64data',
-            'tag',
-            <String, Object?>{'depth': 1},
-          ],
-        );
+        expect(requests.single['params'], <Object?>[
+          'base64data',
+          'tag',
+          <String, Object?>{'depth': 1},
+        ]);
 
         requests.clear();
         await cheatcodes.getTransactionProfile(
@@ -281,13 +317,10 @@ void main() {
           config: <String, Object?>{'depth': 1},
         );
         expect(requests.single['method'], 'surfnet_getTransactionProfile');
-        expect(
-          requests.single['params'],
-          <Object?>[
-            'sig',
-            <String, Object?>{'depth': 1},
-          ],
-        );
+        expect(requests.single['params'], <Object?>[
+          'sig',
+          <String, Object?>{'depth': 1},
+        ]);
       },
     );
 
@@ -315,10 +348,8 @@ void main() {
       addTearDown(surfnet.stop);
 
       expect(
-        await SurfnetCheatcodes(surfnet).profileTransaction(
-          'base64data',
-          config: {'depth': 'instruction'},
-        ),
+        await SurfnetCheatcodes(surfnet)
+            .profileTransaction('base64data', config: {'depth': 'instruction'}),
         'profile',
       );
     });
@@ -355,31 +386,24 @@ void main() {
         config: <String, Object?>{'depth': 1},
       );
       expect(requests.single['method'], 'surfnet_getProfileResultsByTag');
-      expect(
-        requests.single['params'],
-        <Object?>[
-          'my-tag',
-          <String, Object?>{'depth': 1},
-        ],
-      );
+      expect(requests.single['params'], <Object?>[
+        'my-tag',
+        <String, Object?>{'depth': 1},
+      ]);
     });
 
     test('registerIdl and getActiveIdl send the IDL and slot', () async {
       final requests = <Map<String, Object?>>[];
       final cheatcodes = cheatcodesWith(requests, null);
 
-      await cheatcodes.registerIdl(
-        <String, Object?>{'address': address.value},
-        slot: 5,
-      );
+      await cheatcodes.registerIdl(<String, Object?>{
+        'address': address.value,
+      }, slot: 5);
       expect(requests.single['method'], 'surfnet_registerIdl');
-      expect(
-        requests.single['params'],
-        <Object?>[
-          <String, Object?>{'address': address.value},
-          5,
-        ],
-      );
+      expect(requests.single['params'], <Object?>[
+        <String, Object?>{'address': address.value},
+        5,
+      ]);
 
       requests.clear();
       await cheatcodes.getActiveIdl(address, slot: 5);
@@ -408,26 +432,19 @@ void main() {
         config: <String, Object?>{'scope': 'all'},
       );
       expect(requests.single['method'], 'surfnet_exportSnapshot');
-      expect(
-        requests.single['params'],
-        <Object?>[
-          <String, Object?>{'scope': 'all'},
-        ],
-      );
+      expect(requests.single['params'], <Object?>[
+        <String, Object?>{'scope': 'all'},
+      ]);
 
       requests.clear();
-      await cheatcodes.registerScenario(
-        <String, Object?>{'name': 's'},
-        slot: 5,
-      );
+      await cheatcodes.registerScenario(<String, Object?>{
+        'name': 's',
+      }, slot: 5);
       expect(requests.single['method'], 'surfnet_registerScenario');
-      expect(
-        requests.single['params'],
-        <Object?>[
-          <String, Object?>{'name': 's'},
-          5,
-        ],
-      );
+      expect(requests.single['params'], <Object?>[
+        <String, Object?>{'name': 's'},
+        5,
+      ]);
 
       requests.clear();
       await cheatcodes.getLocalSignatures(limit: 3);
@@ -449,13 +466,10 @@ void main() {
         lockout: <String, Object?>{'until': 1},
       );
       expect(requests.single['method'], 'surfnet_disableCheatcode');
-      expect(
-        requests.single['params'],
-        <Object?>[
-          <String>['surfnet_setAccount'],
-          <String, Object?>{'until': 1},
-        ],
-      );
+      expect(requests.single['params'], <Object?>[
+        <String>['surfnet_setAccount'],
+        <String, Object?>{'until': 1},
+      ]);
     });
   });
 }

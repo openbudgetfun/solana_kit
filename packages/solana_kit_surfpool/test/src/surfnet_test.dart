@@ -213,6 +213,53 @@ void main() {
       ]);
     });
 
+    test('reads confidential balances and derives confidential keys', () async {
+      final requests = <Map<String, Object?>>[];
+      final surfnet = _mockSurfnet(
+        requests,
+        resultForMethod: (method) => switch (method) {
+          'surfnet_getConfidentialBalance' => <String, Object?>{
+            'available': 42,
+            'pending': 7,
+            'pendingBalanceCreditCounter': 1,
+          },
+          'surfnet_deriveConfidentialKeys' => <String, Object?>{
+            'elgamalPubkey': 'elgamal-pubkey',
+            'elgamalSecretKey': 'elgamal-secret',
+            'aesKey': 'aes-key',
+          },
+          _ => null,
+        },
+      );
+
+      final balance = await surfnet.getConfidentialBalance(
+        account,
+        const ConfidentialBalanceKeys(
+          aesKey: 'aes-key',
+          elgamalSecretKey: 'elgamal-secret',
+        ),
+      );
+      final keys = await surfnet.deriveConfidentialKeys('signature');
+
+      expect(requests[0]['method'], 'surfnet_getConfidentialBalance');
+      expect(requests[0]['params'], <Object?>[
+        account.value,
+        <String, Object?>{
+          'aesKey': 'aes-key',
+          'elgamalSecretKey': 'elgamal-secret',
+        },
+      ]);
+      expect(balance.available, 42);
+      expect(balance.pending, 7);
+      expect(balance.pendingBalanceCreditCounter, 1);
+
+      expect(requests[1]['method'], 'surfnet_deriveConfidentialKeys');
+      expect(requests[1]['params'], <Object?>['signature']);
+      expect(keys.elgamalPubkey, 'elgamal-pubkey');
+      expect(keys.elgamalSecretKey, 'elgamal-secret');
+      expect(keys.aesKey, 'aes-key');
+    });
+
     test('deploy writes inline bytes and skips optional IDL', () async {
       final requests = <Map<String, Object?>>[];
       final surfnet = _mockSurfnet(requests);
