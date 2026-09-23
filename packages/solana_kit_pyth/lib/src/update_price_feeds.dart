@@ -188,6 +188,7 @@ AccumulatorUpdateData parseAccumulatorUpdateData(Uint8List data) {
     );
   }
   var cursor = 6;
+
   if (cursor >= data.length) {
     throw const PythDecodeException(
       'Accumulator update data is missing its trailing payload size',
@@ -195,10 +196,12 @@ AccumulatorUpdateData parseAccumulatorUpdateData(Uint8List data) {
   }
   final trailingPayloadSize = data[cursor];
   cursor += 1 + trailingPayloadSize;
+
   if (cursor >= data.length) {
     throw const PythDecodeException('Accumulator update data is truncated');
   }
   cursor += 1; // proof type
+
   if (cursor + 2 > data.length) {
     throw const PythDecodeException(
       'Accumulator update data is missing its VAA size',
@@ -206,6 +209,7 @@ AccumulatorUpdateData parseAccumulatorUpdateData(Uint8List data) {
   }
   final vaaSize = (data[cursor] << 8) | data[cursor + 1];
   cursor += 2;
+
   if (cursor + vaaSize > data.length) {
     throw const PythDecodeException('Accumulator update data VAA is truncated');
   }
@@ -221,6 +225,7 @@ AccumulatorUpdateData parseAccumulatorUpdateData(Uint8List data) {
   cursor += 1;
 
   final updates = <MerklePriceUpdate>[];
+
   for (var i = 0; i < numUpdates; i++) {
     if (cursor + 3 > data.length) {
       throw PythDecodeException(
@@ -229,21 +234,25 @@ AccumulatorUpdateData parseAccumulatorUpdateData(Uint8List data) {
     }
     final messageSize = (data[cursor] << 8) | data[cursor + 1];
     cursor += 2;
+
     if (cursor + messageSize > data.length) {
       throw PythDecodeException('Accumulator update $i message is truncated');
     }
     final message = Uint8List.sublistView(data, cursor, cursor + messageSize);
     cursor += messageSize;
+
     if (cursor >= data.length) {
       throw PythDecodeException('Accumulator update $i proof count is missing');
     }
     final numProofs = data[cursor];
     cursor += 1;
     const keccak160HashSize = 20;
+
     if (cursor + keccak160HashSize * numProofs > data.length) {
       throw PythDecodeException('Accumulator update $i proofs are truncated');
     }
     final proof = <Uint8List>[];
+
     for (var j = 0; j < numProofs; j++) {
       proof.add(
         Uint8List.sublistView(
@@ -256,6 +265,7 @@ AccumulatorUpdateData parseAccumulatorUpdateData(Uint8List data) {
     }
     updates.add(MerklePriceUpdate(message: message, proof: proof));
   }
+
   if (cursor != data.length) {
     throw PythDecodeException(
       'Trailing ${data.length - cursor} byte(s) after accumulator updates',

@@ -27,6 +27,7 @@ int? getTransactionMessageComputeUnitLimit(
   final instruction = transactionMessage.instructions
       .where(_isSetComputeUnitLimitInstruction)
       .firstOrNull;
+
   if (instruction == null) return null;
   return _parseComputeUnitLimitInstruction(instruction);
 }
@@ -80,6 +81,7 @@ TransactionMessage setTransactionMessageComputeUnitLimit(
   final instruction = _getSetComputeUnitLimitInstruction(
     units: computeUnitLimit,
   );
+
   if (existingIndex == -1) {
     return transactionMessage.copyWith(
       instructions: [...transactionMessage.instructions, instruction],

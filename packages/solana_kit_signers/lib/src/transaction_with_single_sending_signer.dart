@@ -18,6 +18,7 @@ bool isTransactionMessageWithSingleSendingSigner(
   try {
     assertIsTransactionMessageWithSingleSendingSigner(transactionMessage);
     return true;
+
   } on Object {
     return false;
   }

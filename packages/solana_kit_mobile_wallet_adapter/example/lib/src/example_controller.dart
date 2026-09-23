@@ -52,6 +52,7 @@ class MwaExampleController extends ChangeNotifier {
 
   String get activeAccountLabel {
     final authorization = _authorization;
+
     if (authorization == null || authorization.accounts.isEmpty) {
       return 'Not authorized';
     }
@@ -120,6 +121,7 @@ class MwaExampleController extends ChangeNotifier {
 
   Future<void> loadCapabilities() {
     final authorization = _authorization;
+
     if (authorization == null) {
       throw StateError('Authorize first.');
     }
@@ -141,11 +143,13 @@ class MwaExampleController extends ChangeNotifier {
 
   Future<void> signMessage() {
     final authorization = _authorization;
+
     if (authorization == null || authorization.accounts.isEmpty) {
       throw StateError('Authorize first.');
     }
 
     final message = _messageDraft.trim();
+
     if (message.isEmpty) {
       throw StateError('Enter a message to sign.');
     }
@@ -171,11 +175,13 @@ class MwaExampleController extends ChangeNotifier {
 
   Future<void> signAndSendTransaction() {
     final authorization = _authorization;
+
     if (authorization == null || authorization.accounts.isEmpty) {
       throw StateError('Authorize first.');
     }
 
     final payload = _transactionDraft.trim();
+
     if (payload.isEmpty) {
       throw StateError('Paste a base64 transaction payload first.');
     }
@@ -197,6 +203,7 @@ class MwaExampleController extends ChangeNotifier {
 
   Future<void> deauthorize() {
     final authorization = _authorization;
+
     if (authorization == null) {
       throw StateError('No active authorization.');
     }
@@ -227,6 +234,7 @@ class MwaExampleController extends ChangeNotifier {
     try {
       await operation();
       _appendLog('$label succeeded.');
+
     } on Object catch (error) {
       _appendLog('$label failed: $error');
       rethrow;

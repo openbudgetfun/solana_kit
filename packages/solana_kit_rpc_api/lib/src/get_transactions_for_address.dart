@@ -26,8 +26,11 @@ class GetTransactionsForAddressComparison {
   /// Converts this comparison to a JSON-RPC map.
   Map<String, Object?> toJson() => {
     if (gt != null) 'gt': gt,
+
     if (gte != null) 'gte': gte,
+
     if (lt != null) 'lt': lt,
+
     if (lte != null) 'lte': lte,
   };
 }
@@ -75,9 +78,13 @@ class GetTransactionsForAddressFilters {
   /// Converts this filters object to a JSON-RPC map.
   Map<String, Object?> toJson() => {
     if (blockTime != null) 'blockTime': blockTime!.toJson(),
+
     if (signature != null) 'signature': signature!.toJson(),
+
     if (slot != null) 'slot': slot!.toJson(),
+
     if (status != null) 'status': status,
+
     if (tokenAccounts != null) 'tokenAccounts': tokenAccounts,
   };
 }
@@ -140,16 +147,25 @@ class GetTransactionsForAddressConfig {
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
+
     if (commitment != null) json['commitment'] = commitment!.name;
+
     if (filters != null) json['filters'] = filters!.toJson();
+
     if (limit != null) json['limit'] = limit;
+
     if (minContextSlot != null) json['minContextSlot'] = minContextSlot;
+
     if (paginationToken != null) json['paginationToken'] = paginationToken;
+
     if (sortOrder != null) json['sortOrder'] = sortOrder;
+
     if (encoding != null) json['encoding'] = encoding!.toJson();
+
     if (maxSupportedTransactionVersion != null) {
       json['maxSupportedTransactionVersion'] = maxSupportedTransactionVersion;
     }
+
     if (transactionDetails != null) {
       json['transactionDetails'] = transactionDetails;
     }

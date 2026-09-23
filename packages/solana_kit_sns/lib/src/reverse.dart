@@ -75,10 +75,12 @@ String decodeReverseValue(
   bool trimLeadingNullByte = false,
 }) {
   final value = decodeNameValue(data);
+
   if (value.isEmpty) {
     return value;
   }
   final firstCodeUnit = value.codeUnitAt(0);
+
   if (firstCodeUnit != 0) {
     return value;
   }

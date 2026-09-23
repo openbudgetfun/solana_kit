@@ -8,6 +8,7 @@ String getErrorMessage(
   Map<String, Object?> context = const {},
 ]) {
   final template = solanaErrorMessages[code];
+
   if (template == null || template.isEmpty) {
     return 'Solana error #${code.value}';
   }
@@ -17,23 +18,25 @@ String getErrorMessage(
 String _interpolate(String template, Map<String, Object?> context) {
   final buffer = StringBuffer();
   var i = 0;
+
   while (i < template.length) {
     final char = template[i];
     if (char == r'\' && i + 1 < template.length) {
       // Escape sequence: skip backslash, emit next char.
       i++;
-      buffer.write(template[i]);
-      i++;
     } else if (char == r'$') {
       // Variable reference: collect word characters after $.
       i++;
       final start = i;
+
       while (i < template.length && _isWordChar(template[i])) {
         i++;
       }
       final variableName = template.substring(start, i);
+
       if (variableName.isNotEmpty && context.containsKey(variableName)) {
         buffer.write(context[variableName]);
+
       } else if (variableName.isNotEmpty) {
         buffer
           ..write(r'$')

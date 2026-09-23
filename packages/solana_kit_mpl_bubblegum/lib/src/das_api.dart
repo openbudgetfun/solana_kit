@@ -302,13 +302,16 @@ Uint8List _base58ToBytes(String encoded) {
   const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
   final result = <int>[];
   var num = BigInt.zero;
+
   for (var i = 0; i < encoded.length; i++) {
     final charIndex = alphabet.indexOf(encoded[i]);
+
     if (charIndex < 0) {
       throw FormatException('Invalid base58 character: ${encoded[i]}');
     }
     num = num * BigInt.from(58) + BigInt.from(charIndex);
   }
+
   while (num > BigInt.zero) {
     result.add((num % BigInt.from(256)).toInt());
     num = num ~/ BigInt.from(256);

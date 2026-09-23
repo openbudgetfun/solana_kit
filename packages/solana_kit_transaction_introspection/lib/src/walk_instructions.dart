@@ -37,11 +37,14 @@ List<TracedInstruction> walkInstructions({
       );
 
   final innerByOuterIndex = <int, List<TracedInstruction>>{};
+
   if (meta != null) {
     for (final inner in getInnerInstructionsFromMeta(meta, accountMetas)) {
       final trace = inner.trace;
+
       if (trace is! InnerInstructionTrace) continue;
       final group = innerByOuterIndex[trace.outerIndex];
+
       if (group != null) {
         group.add(inner);
       } else {
@@ -51,6 +54,7 @@ List<TracedInstruction> walkInstructions({
   }
 
   final result = <TracedInstruction>[];
+
   for (var index = 0; index < outerInstructions.length; index++) {
     final instruction = outerInstructions[index];
     result.add(
@@ -62,6 +66,7 @@ List<TracedInstruction> walkInstructions({
       ),
     );
     final group = innerByOuterIndex.remove(index);
+
     if (group != null) {
       result.addAll(group);
     }

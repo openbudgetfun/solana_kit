@@ -50,6 +50,7 @@ Rpc _createMockRpc() {
 
 Map<String, dynamic>? _getAccountResponse(Address address) {
   final rawData = _getRawAccountData(address);
+
   if (rawData == null) return null;
   return {'value': rawData};
 }
@@ -64,6 +65,7 @@ Map<String, dynamic>? _getRawAccountData(Address address) {
       'space': 1,
     };
   }
+
   if (address == _mockAddressB) {
     return {
       'data': ['Ag==', 'base64'], // [2] in base64

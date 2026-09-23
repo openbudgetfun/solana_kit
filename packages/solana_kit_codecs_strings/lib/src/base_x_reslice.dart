@@ -74,14 +74,17 @@ List<int> _reslice(
   var accumulator = 0;
   var bitsInAccumulator = 0;
   final mask = (1 << outputBits) - 1;
+
   for (final value in input) {
     accumulator = (accumulator << inputBits) | value;
     bitsInAccumulator += inputBits;
+
     while (bitsInAccumulator >= outputBits) {
       bitsInAccumulator -= outputBits;
       output.add((accumulator >> bitsInAccumulator) & mask);
     }
   }
+
   if (useRemainder && bitsInAccumulator > 0) {
     output.add((accumulator << (outputBits - bitsInAccumulator)) & mask);
   }

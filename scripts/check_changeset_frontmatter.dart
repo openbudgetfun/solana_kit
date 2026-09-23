@@ -16,14 +16,17 @@ void main(List<String> args) {
   paths.sort();
 
   final errors = <String>[];
+
   for (final path in paths) {
     final file = File(path);
+
     if (!file.existsSync()) {
       errors.add('$path: file does not exist');
       continue;
     }
 
     final lines = file.readAsLinesSync();
+
     if (lines.isEmpty || lines.first.trim() != '---') {
       errors.add("$path: missing opening frontmatter delimiter '---'");
       continue;
@@ -33,6 +36,7 @@ void main(List<String> args) {
         .skip(1)
         .toList()
         .indexWhere((line) => line.trim() == '---');
+
     if (closingIndex == -1) {
       errors.add("$path: missing closing frontmatter delimiter '---'");
       continue;
@@ -60,6 +64,7 @@ void main(List<String> args) {
 
     final entry = entries.single;
     final separator = entry.indexOf(':');
+
     if (separator == -1) {
       errors.add(
         '$path: invalid frontmatter entry `$entry`; expected `default: patch|minor|major`',
@@ -69,6 +74,7 @@ void main(List<String> args) {
 
     final key = entry.substring(0, separator).trim();
     final value = entry.substring(separator + 1).trim();
+
     if (key != 'default' || !_allowedValues.contains(value)) {
       errors.add(
         '$path: expected `default: patch|minor|major`, found `$entry`',
@@ -78,6 +84,7 @@ void main(List<String> args) {
 
   if (errors.isNotEmpty) {
     stderr.writeln('Changeset frontmatter validation failed:');
+
     for (final error in errors) {
       stderr.writeln('- $error');
     }

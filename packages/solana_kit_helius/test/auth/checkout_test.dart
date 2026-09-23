@@ -17,6 +17,7 @@ Map<String, Object?> configs({bool agent = false}) => {
         'developer_v4': 'price_dev_yearly',
         'business_v4': 'price_biz_yearly',
       },
+
       if (agent) 'AgentPlan': 'price_agent_plan',
     },
   },

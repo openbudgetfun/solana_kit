@@ -8,6 +8,7 @@ Future<http.Response> sendHeliusRequest(
 ) async {
   try {
     return await send();
+
   } on http.ClientException {
     // Client exceptions may embed the complete URL in both message and URI.
     throw http.ClientException(

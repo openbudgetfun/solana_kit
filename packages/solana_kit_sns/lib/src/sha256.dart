@@ -58,6 +58,7 @@ Uint8List sha256(Uint8List data) {
   final paddedLength = ((data.length + 8) ~/ 64 + 1) * 64;
   final padded = Uint8List(paddedLength)..setRange(0, data.length, data);
   padded[data.length] = 0x80;
+
   for (var i = 0; i < 8; i++) {
     padded[paddedLength - 1 - i] = bitLength >>> (8 * i) & 0xFF;
   }
@@ -74,6 +75,7 @@ Uint8List sha256(Uint8List data) {
           (padded[i + 2] << 8) |
           padded[i + 3];
     }
+
     for (var t = 16; t < 64; t++) {
       final s0 = _rotr(w[t - 15], 7) ^ _rotr(w[t - 15], 18) ^ (w[t - 15] >>> 3);
       final s1 = _rotr(w[t - 2], 17) ^ _rotr(w[t - 2], 19) ^ (w[t - 2] >>> 10);
@@ -118,6 +120,7 @@ Uint8List sha256(Uint8List data) {
   }
 
   final digest = Uint8List(32);
+
   for (var i = 0; i < 8; i++) {
     digest[i * 4] = hash[i] >>> 24 & 0xFF;
     digest[i * 4 + 1] = hash[i] >>> 16 & 0xFF;

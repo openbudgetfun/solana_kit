@@ -151,6 +151,7 @@ int _getVariantDiscriminator(
   Object? discriminatorValue,
 ) {
   final index = variants.indexWhere((v) => v.$1 == discriminatorValue);
+
   if (index < 0) {
     throw SolanaError(SolanaErrorCode.codecsInvalidDiscriminatedUnionVariant, {
       'value': discriminatorValue,
@@ -173,9 +174,12 @@ void _assertValidVariantIndex(List<Object> variants, int index) {
 int? _getUnionFixedSize(List<Object> variants) {
   if (variants.isEmpty) return 0;
   final firstSize = getFixedSize(variants[0]);
+
   if (firstSize == null) return null;
+
   for (final variant in variants) {
     final s = getFixedSize(variant);
+
     if (s != firstSize) return null;
   }
   return firstSize;

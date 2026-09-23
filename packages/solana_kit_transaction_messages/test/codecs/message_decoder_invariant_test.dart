@@ -65,12 +65,15 @@ void main() {
     void Function(Uint8List bytes) read,
   ) {
     var handled = 0;
+
     for (final bytes in inputs) {
       try {
         read(bytes);
         handled++;
+
       } on SolanaError {
         handled++;
+
       } catch (error) {
         fail(
           '$label leaked ${error.runtimeType} instead of SolanaError.\n'

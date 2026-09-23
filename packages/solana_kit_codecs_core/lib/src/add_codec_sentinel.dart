@@ -19,6 +19,7 @@ Encoder<TFrom> addEncoderSentinel<TFrom>(
   int writeImpl(TFrom value, Uint8List bytes, int currentOffset) {
     // Use encode() to contain the encoder within its own bounds.
     final encoderBytes = encoder.encode(value);
+
     if (_findSentinelIndex(encoderBytes, sentinel) >= 0) {
       throw SolanaError(
         SolanaErrorCode.codecsEncodedBytesMustNotIncludeSentinel,
@@ -61,6 +62,7 @@ Decoder<TTo> addDecoderSentinel<TTo>(Decoder<TTo> decoder, Uint8List sentinel) {
         ? bytes
         : bytes.sublist(currentOffset);
     final sentinelIndex = _findSentinelIndex(candidateBytes, sentinel);
+
     if (sentinelIndex == -1) {
       throw SolanaError(SolanaErrorCode.codecsSentinelMissingInDecodedBytes, {
         'decodedBytes': candidateBytes,

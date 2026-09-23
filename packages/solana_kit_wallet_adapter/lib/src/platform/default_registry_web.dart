@@ -23,6 +23,7 @@ WalletRegistry createPlatformWalletRegistry({
   // surfaces alongside the browser-registered Wallet Standard wallets.
   if (isAndroidMobileBrowser()) {
     final backend = NativeMobileWalletBackend();
+
     if (backend.isSupported) {
       wallets.add(
         MobileWallet(backend: backend, identity: appIdentity, chain: chain),
@@ -60,6 +61,7 @@ class BrowserWalletRegistry extends WalletRegistryController {
 
     void handleEvent(web.Event event) {
       final detail = (event as web.CustomEvent).detail;
+
       if (detail == null || !detail.isA<JSFunction>()) return;
       (detail as JSFunction).callAsFunction(null, _api());
     }
@@ -75,6 +77,7 @@ class BrowserWalletRegistry extends WalletRegistryController {
         web.CustomEventInit(detail: _api()),
       ),
     );
+
     for (final wallet in additionalWallets) {
       register(wallet);
     }
@@ -84,12 +87,14 @@ class BrowserWalletRegistry extends WalletRegistryController {
     final api = JSObject();
     JSFunction registerWallet(JSObject raw) {
       final existing = _entries.where((entry) => entry.raw == raw).firstOrNull;
+
       if (existing != null) return (() {}).toJS;
       try {
         final wallet = _BrowserWallet(raw);
         _entries.add((raw: raw, wallet: wallet));
         register(wallet);
         return (() => _unregister(raw)).toJS;
+
       } on Object {
         return (() {}).toJS;
       }
@@ -101,6 +106,7 @@ class BrowserWalletRegistry extends WalletRegistryController {
 
   void _unregister(JSObject raw) {
     final index = _entries.indexWhere((entry) => entry.raw == raw);
+
     if (index < 0) return;
     final entry = _entries.removeAt(index);
     unregister(entry.wallet);
@@ -109,12 +115,14 @@ class BrowserWalletRegistry extends WalletRegistryController {
   @override
   Future<void> dispose() async {
     final listener = _listener;
+
     if (listener != null) {
       web.window.removeEventListener(
         'wallet-standard:register-wallet',
         listener,
       );
     }
+
     for (final entry in _entries) {
       entry.wallet.dispose();
     }
@@ -146,9 +154,11 @@ class _BrowserWallet implements Wallet {
   /// still registers and renders.
   WalletIcon _resolveIcon(JSObject raw, String name) {
     final value = _optionalString(raw, 'icon');
+
     if (value != null) {
       try {
         return WalletIcon(value);
+
       } on FormatException {
         // Fall through to the bundled fallback logos.
       }
@@ -173,6 +183,7 @@ class _BrowserWallet implements Wallet {
 
   JSObject accountObject(WalletAccount account) {
     final rawAccount = _accountObjects[account.address];
+
     if (rawAccount != null) return rawAccount;
     throw const WalletStandardException(
       WalletStandardErrorCode.invalidRequest,
@@ -185,8 +196,10 @@ class _BrowserWallet implements Wallet {
     _accounts = _accountsFromRaw(_array<JSObject>(raw, 'accounts'));
     final rawFeatures = _object(raw, 'features');
     final features = <String, WalletFeature>{};
+
     for (final identifier in _keys(rawFeatures)) {
       final feature = rawFeatures[identifier];
+
       if (feature != null && feature.isA<JSObject>()) {
         features[identifier] = _feature(identifier, feature as JSObject);
       }
@@ -202,9 +215,11 @@ class _BrowserWallet implements Wallet {
 
   void _handleChange(StandardWalletChange change) {
     if (change.chains != null) _chains = List.unmodifiable(change.chains!);
+
     if (change.features != null) {
       _features = Map.unmodifiable(change.features!);
     }
+
     if (change.accounts != null) {
       _accounts = List.unmodifiable(change.accounts!);
     }
@@ -306,11 +321,14 @@ class _BrowserEvents extends _BrowserFeature implements StandardEventsFeature {
   ) {
     void handle(JSObject value) {
       Map<String, WalletFeature>? features;
+
       if (value.has('features')) {
         final rawFeatures = _object(value, 'features');
         features = {};
+
         for (final identifier in _keys(rawFeatures)) {
           final feature = rawFeatures[identifier];
+
           if (feature != null && feature.isA<JSObject>()) {
             features[identifier] = wallet._feature(
               identifier,
@@ -554,6 +572,7 @@ JSObject _transactionInput(
     ..['transaction'] = input.transaction.toJS;
   _setString(value, 'chain', input.chain);
   final options = input.options;
+
   if (options != null) {
     final rawOptions = JSObject();
     _setString(
@@ -561,14 +580,18 @@ JSObject _transactionInput(
       'preflightCommitment',
       options.preflightCommitment?.name,
     );
+
     if (options.minContextSlot != null) {
       rawOptions['minContextSlot'] = options.minContextSlot!.toJS;
     }
+
     if (options is SolanaSignAndSendTransactionOptions) {
       _setString(rawOptions, 'commitment', options.commitment?.name);
+
       if (options.skipPreflight != null) {
         rawOptions['skipPreflight'] = options.skipPreflight!.toJS;
       }
+
       if (options.maxRetries != null) {
         rawOptions['maxRetries'] = options.maxRetries!.toJS;
       }

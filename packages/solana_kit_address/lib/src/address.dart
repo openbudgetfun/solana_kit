@@ -71,6 +71,7 @@ bool isAddress(String putativeAddress) {
   final encoder = _getBase58Encoder();
   try {
     return encoder.encode(putativeAddress).length == 32;
+
   } on Object {
     return false;
   }

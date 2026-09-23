@@ -17,6 +17,7 @@ class _IsValidAddressMatcher extends Matcher {
     try {
       assertIsAddress(item.toString());
       return true;
+
     } on Exception catch (_) {
       return false;
     }

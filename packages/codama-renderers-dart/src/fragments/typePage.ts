@@ -39,6 +39,7 @@ export function getTypePageFragment(
     const isScalar = variants.every(
       (v) => v.kind === "enumEmptyVariantTypeNode",
     );
+
     if (isScalar) {
       return getScalarEnumPageFragment(node, variants, scope);
     }
@@ -64,6 +65,7 @@ function getScalarEnumPageFragment(
   const name = node.name as string;
   const typeName = scope.nameApi.dataType(name);
   const enumNode = node.type;
+
   if (enumNode.kind !== "enumTypeNode") return emptyFragment();
 
   const variants = enumVariants.map((v) => {
@@ -87,7 +89,6 @@ function getScalarEnumPageFragment(
   const decodedVariant = isU64
     ? `(BigInt value, Uint8List bytes, int offset) {
       if (value.isNegative || value >= BigInt.from(${typeName}.values.length)) {
-        throw RangeError('Invalid ${typeName} discriminator: ' + value.toString());
       }
       return ${typeName}.values[value.toInt()];
     }`
@@ -96,36 +97,12 @@ function getScalarEnumPageFragment(
   return fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-${use("Uint8List", "dartTypedData")}
-${use("Encoder", "solanaCodecsCore")}
-${use("Decoder", "solanaCodecsCore")}
-${use("Codec", "solanaCodecsCore")}
-${use("combineCodec", "solanaCodecsCore")}
-${use("transformEncoder", "solanaCodecsCore")}
-${use("transformDecoder", "solanaCodecsCore")}
-${use(`get${sizeCodecName}Encoder`, "solanaCodecsNumbers")}
-${use(`get${sizeCodecName}Decoder`, "solanaCodecsNumbers")}
-
-enum ${fragmentFromString(typeName)} {
-${fragmentFromString(variantLines)}
 }
 
-Encoder<${fragmentFromString(typeName)}> ${fragmentFromString(encoderName)}() {
-  return transformEncoder(
-    get${fragmentFromString(sizeCodecName)}Encoder(),
-    (${fragmentFromString(typeName)} value) => ${fragmentFromString(encodedVariantIndex)},
-  );
 }
 
-Decoder<${fragmentFromString(typeName)}> ${fragmentFromString(decoderName)}() {
-  return transformDecoder(
-    get${fragmentFromString(sizeCodecName)}Decoder(),
-    ${fragmentFromString(decodedVariant)},
-  );
 }
 
-Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragmentFromString(codecName)}() {
-  return combineCodec(${fragmentFromString(encoderName)}(), ${fragmentFromString(decoderName)}());
 }`;
 }
 
@@ -140,6 +117,7 @@ function getDataEnumPageFragment(
   const name = node.name as string;
   const typeName = scope.nameApi.dataType(name);
   const enumNode = node.type;
+
   if (enumNode.kind !== "enumTypeNode") return emptyFragment();
 
   const variantClasses: string[] = [];
@@ -162,16 +140,6 @@ function getDataEnumPageFragment(
     if (variant.kind === "enumEmptyVariantTypeNode") {
       variantClasses.push(`final class ${variantClassName} extends ${typeName} {
   const ${variantClassName}();
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) || other is ${variantClassName};
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  String toString() => '${typeName}.${variantName}()';
 }`);
 
       encoderVariants.push(
@@ -182,6 +150,7 @@ function getDataEnumPageFragment(
       );
       encodeCases.push(`${variantClassName}() => <String, Object?>{'__kind': ${i}},`);
       decodeCases.push(`case ${i}: return const ${variantClassName}();`);
+
     } else if (variant.kind === "enumStructVariantTypeNode") {
       const resolvedStruct = resolveNestedTypeNode(variant.struct);
       const fields = resolvedStruct.fields ?? [];
@@ -191,6 +160,7 @@ function getDataEnumPageFragment(
         field: f,
         manifest: visit(f.type, scope.typeManifestVisitor),
       }));
+
       for (const { manifest } of fieldManifests) {
         allVariantManifests.push(manifest);
       }
@@ -222,6 +192,7 @@ function getDataEnumPageFragment(
               .join(" &&\n          ");
 
       const hashExpression = getValueHashExpression(fields, fieldManifests);
+
       if (fieldManifests.some(({ manifest }) => isListManifest(manifest))) {
         pageHasListEnums = true;
       }
@@ -232,20 +203,6 @@ function getDataEnumPageFragment(
 
       variantClasses.push(`final class ${variantClassName} extends ${typeName} {
 ${ctorSignature}
-
-${fieldDecls}
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ${variantClassName} &&
-          ${eqChecks};
-
-  @override
-  int get hashCode => ${hashExpression};
-
-  @override
-  String toString() => '${typeName}.${variantName}(${toStringFields})';
 }`);
 
       const encFields = fieldManifests
@@ -296,27 +253,16 @@ ${fieldDecls}
           : `, ${fields.map((f: StructFieldTypeNode)=>`'${f.name as string}': ${camelCase(f.name as string)}`).join(', ')}`;
       encodeCases.push(`${variantClassName}(${structPattern}) => <String, Object?>{'__kind': ${i}${structMapEntries}},`);
       decodeCases.push(`case ${i}: return ${variantClassName}(${fromMapFields.replace(/\n/g, ' ').replace(/,$/, '')});`);
+
     } else if (variant.kind === "enumTupleVariantTypeNode") {
       const resolvedTuple = resolveNestedTypeNode(variant.tuple);
       const items = resolvedTuple.items ?? [];
+
       if (items.length === 1) {
         const manifest = visit(items[0], scope.typeManifestVisitor);
         allVariantManifests.push(manifest);
         variantClasses.push(`final class ${variantClassName} extends ${typeName} {
   const ${variantClassName}(this.value);
-
-  final ${manifest.type.content} value;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ${variantClassName} && value == other.value;
-
-  @override
-  int get hashCode => value.hashCode;
-
-  @override
-  String toString() => '${typeName}.${variantName}(\$value)';
 }`);
         encoderVariants.push(
           `(${i}, transformEncoder<${manifest.type.content}, Map<String, Object?>>(${manifest.encoder.content}, (Map<String, Object?> map) => map['value']! as ${manifest.type.content}))`,
@@ -340,53 +286,14 @@ ${fieldDecls}
   const result = fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-${use("Uint8List", "dartTypedData")}
-${use("Encoder", "solanaCodecsCore")}
-${use("Decoder", "solanaCodecsCore")}
-${use("Codec", "solanaCodecsCore")}
-${use("combineCodec", "solanaCodecsCore")}
-${use("transformEncoder", "solanaCodecsCore")}
-${use("transformDecoder", "solanaCodecsCore")}
-${use("getStructEncoder", "solanaCodecsDataStructures")}
-${use("getStructDecoder", "solanaCodecsDataStructures")}
-${use("getDiscriminatedUnionEncoder", "solanaCodecsDataStructures")}
-${use("getDiscriminatedUnionDecoder", "solanaCodecsDataStructures")}
-${use(`get${sizeCodecName}Encoder`, "solanaCodecsNumbers")}
-${use(`get${sizeCodecName}Decoder`, "solanaCodecsNumbers")}
-
-sealed class ${fragmentFromString(typeName)} {
-  const ${fragmentFromString(typeName)}();
 }
 
-${fragmentFromString(variantClasses.join("\n\n"))}${pageHasListEnums ? LIST_VALUE_HELPERS : ""}
-
-Encoder<${fragmentFromString(typeName)}> ${fragmentFromString(encoderName)}() {
-  return transformEncoder<Map<String, Object?>, ${fragmentFromString(typeName)}>(
-    getDiscriminatedUnionEncoder([
-      ${fragmentFromString(encoderVariants.join(",\n      "))},
-    ], size: get${fragmentFromString(sizeCodecName)}Encoder()),
-    (${fragmentFromString(typeName)} value) => switch (value) {
-      ${fragmentFromString(encodeCases.join("\n      "))}
-    },
-  );
 }
 
-Decoder<${fragmentFromString(typeName)}> ${fragmentFromString(decoderName)}() {
-  return transformDecoder<Map<String, Object?>, ${fragmentFromString(typeName)}>(
-    getDiscriminatedUnionDecoder([
-      ${fragmentFromString(decoderVariants.join(",\n      "))},
-    ], size: get${fragmentFromString(sizeCodecName)}Decoder()),
-    (Map<String, Object?> map, Uint8List bytes, int offset) {
-      switch (map['__kind']) {
-        ${fragmentFromString(decodeCases.join("\n        "))}
       }
       throw StateError('Unsupported ${typeName} discriminator: \${map['__kind']}');
-    },
-  );
 }
 
-Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragmentFromString(codecName)}() {
-  return combineCodec(${fragmentFromString(encoderName)}(), ${fragmentFromString(decoderName)}());
 }`;
 
   // Merge variant field type manifest imports into the result
@@ -409,6 +316,7 @@ function getStructPageFragment(
   const name = node.name as string;
   const typeName = scope.nameApi.dataType(name);
   const structNode = node.type;
+
   if (structNode.kind !== "structTypeNode") return emptyFragment();
 
   const fields = structNode.fields ?? [];
@@ -445,6 +353,7 @@ function getStructPageFragment(
               : `${fieldName} == other.${fieldName}`;
           })
           .join(" &&\n          ");
+
   if (fieldManifests.some(({ manifest }) => isListManifest(manifest))) {
     pageHasListStructs = true;
   }
@@ -492,67 +401,14 @@ function getStructPageFragment(
   const result = fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-${use("Uint8List", "dartTypedData")}
-${use("immutable", "meta")}
-${use("Encoder", "solanaCodecsCore")}
-${use("Decoder", "solanaCodecsCore")}
-${use("Codec", "solanaCodecsCore")}
-${use("combineCodec", "solanaCodecsCore")}
-${use("transformEncoder", "solanaCodecsCore")}
-${use("transformDecoder", "solanaCodecsCore")}
-${use("getStructEncoder", "solanaCodecsDataStructures")}
-${use("getStructDecoder", "solanaCodecsDataStructures")}
-
 @immutable
 class ${fragmentFromString(typeName)} {
-${fragmentFromString(ctorSignature)}
-
-${fragmentFromString(fieldDecls)}
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ${fragmentFromString(typeName)} &&
-          runtimeType == other.runtimeType &&
-          ${fragmentFromString(eqChecks)};
-
-  @override
-  int get hashCode => ${fragmentFromString(
-    getValueHashExpression(fields, fieldManifests),
-  )};
-
-  @override
-  String toString() => '${fragmentFromString(typeName)}(${fragmentFromString(toStringFields)})';
 }
 ${pageHasListStructs ? LIST_VALUE_HELPERS : ""}
-Encoder<${fragmentFromString(typeName)}> ${fragmentFromString(encoderName)}() {
-  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-${fragmentFromString(encFields)}
-  ]);
-
-  return transformEncoder(
-    structEncoder,
-    (${fragmentFromString(typeName)} value) => <String, Object?>{
-${fragmentFromString(toMapFields)}
-    },
-  );
 }
 
-Decoder<${fragmentFromString(typeName)}> ${fragmentFromString(decoderName)}() {
-  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-${fragmentFromString(decFields)}
-  ]);
-
-  return transformDecoder(
-    structDecoder,
-    (Map<String, Object?> map, Uint8List bytes, int offset) => ${fragmentFromString(typeName)}(
-${fragmentFromString(fromMapFields)}
-    ),
-  );
 }
 
-Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragmentFromString(codecName)}() {
-  return combineCodec(${fragmentFromString(encoderName)}(), ${fragmentFromString(decoderName)}());
 }`;
 
   // Merge field type manifest imports (encoder, decoder, type) into the result
@@ -583,23 +439,10 @@ function getTypeAliasPageFragment(
   return fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-${use("Encoder", "solanaCodecsCore")}
-${use("Decoder", "solanaCodecsCore")}
-${use("Codec", "solanaCodecsCore")}
-${use("combineCodec", "solanaCodecsCore")}
-
-typedef ${fragmentFromString(typeName)} = ${manifest.type};
-
-Encoder<${fragmentFromString(typeName)}> ${fragmentFromString(encoderName)}() {
-  return ${manifest.encoder};
 }
 
-Decoder<${fragmentFromString(typeName)}> ${fragmentFromString(decoderName)}() {
-  return ${manifest.decoder};
 }
 
-Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragmentFromString(codecName)}() {
-  return combineCodec(${fragmentFromString(encoderName)}(), ${fragmentFromString(decoderName)}());
 }`;
 }
 
@@ -622,15 +465,6 @@ function isListManifest(manifest: { type: Fragment }): boolean {
 const LIST_VALUE_HELPERS = `
 bool _listEquals<T>(List<T>? a, List<T>? b) {
   if (identical(a, b)) return true;
-  if (a == null || b == null) return a == b;
-  if (a.length != b.length) return false;
-  for (var i = 0; i < a.length; i++) {
-    final left = a[i];
-    final right = b[i];
-    if (left is List<Object?> && right is List<Object?>) {
-      if (!_listEquals(left, right)) return false;
-    } else if (left != right) {
-      return false;
     }
   }
   return true;
@@ -638,14 +472,12 @@ bool _listEquals<T>(List<T>? a, List<T>? b) {
 
 Object? _deepHash(Object? value) {
   if (value is List<Object?>) {
-    return Object.hashAll(value.map(_deepHash));
   }
   return value;
 }
 
 int _listHashCode<T>(List<T>? a) {
   if (a == null) return 0;
-  return Object.hashAll(a.map(_deepHash));
 }
 `;
 
@@ -664,9 +496,11 @@ function getValueHashExpression(
   const hasListFields = fieldManifests.some(({ manifest }) =>
     isListManifest(manifest),
   );
+
   if (!hasListFields) {
     return getHashExpression(fieldNames);
   }
+
   if (fieldNames.length === 1) {
     return `_listHashCode(${fieldNames[0]})`;
   }
@@ -680,6 +514,7 @@ function getValueHashExpression(
 
 function getHashExpression(fields: string[]): string {
   if (fields.length === 0) return "runtimeType.hashCode";
+
   if (fields.length === 1) return `${fields[0]}.hashCode`;
   return `Object.hash(${fields.join(", ")})`;
 }
@@ -687,18 +522,31 @@ function getHashExpression(fields: string[]): string {
 function getNumberCodecName(format: string): string {
   switch (format) {
     case "u8": return "U8";
+
     case "u16": return "U16";
+
     case "u32": return "U32";
+
     case "u64": return "U64";
+
     case "u128": return "U128";
+
     case "i8": return "I8";
+
     case "i16": return "I16";
+
     case "i32": return "I32";
+
     case "i64": return "I64";
+
     case "i128": return "I128";
+
     case "f32": return "F32";
+
     case "f64": return "F64";
+
     case "shortU16": return "ShortU16";
+
     default: return "U8";
   }
 }

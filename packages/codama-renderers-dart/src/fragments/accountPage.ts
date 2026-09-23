@@ -161,7 +161,6 @@ export function getAccountPageFragment(
   const sizeFragment = node.size != null
     ? fragment`
 /// The size of the [${fragmentFromString(typeName)}] account data in bytes.
-const int ${fragmentFromString(scope.nameApi.accountSizeConstant(name))} = ${fragmentFromString(getNonNegativeInteger(node.size))};`
     : emptyFragment();
 
   // Discriminator
@@ -184,72 +183,23 @@ const int ${fragmentFromString(scope.nameApi.accountSizeConstant(name))} = ${fra
     fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-${use("Uint8List", "dartTypedData")}
-${use("immutable", "meta")}
-${use("Encoder", "solanaCodecsCore")}
-${use("Decoder", "solanaCodecsCore")}
-${use("Codec", "solanaCodecsCore")}
-${use("combineCodec", "solanaCodecsCore")}
-${use("transformEncoder", "solanaCodecsCore")}
-${use("transformDecoder", "solanaCodecsCore")}
-${use("getStructEncoder", "solanaCodecsDataStructures")}
-${use("getStructDecoder", "solanaCodecsDataStructures")}
-${use("Account", "solanaAccounts")}
-${use("EncodedAccount", "solanaAccounts")}
-${use("decodeAccount", "solanaAccounts")}
-
 @immutable
 class ${fragmentFromString(typeName)} {
-  ${fragmentFromString(ctorSignature)}
-
-${fragmentFromString(fieldDecls)}
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ${fragmentFromString(typeName)} &&
-          runtimeType == other.runtimeType &&
-          ${fragmentFromString(eqChecks)};
-
-  @override
-  int get hashCode => ${fragmentFromString(hashCodeExpr)};
-
-  @override
-  String toString() => '${fragmentFromString(typeName)}(${fragmentFromString(toStringFields)})';
 }`,
   ];
 
   if (sizeFragment.content) parts.push(sizeFragment);
+
   if (discFragment.content) parts.push(discFragment);
 
   parts.push(fragment`
 Encoder<${fragmentFromString(typeName)}> ${fragmentFromString(encoderName)}() {
-  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-${fragmentFromString(encFields)}
-  ]);
-
-  return transformEncoder(
-    structEncoder,
-    (${fragmentFromString(typeName)} value) => <String, Object?>{
-${fragmentFromString(toMapFields)}
-    },
-  );
 }
 
-Decoder<${fragmentFromString(typeName)}> ${fragmentFromString(decoderName)}() {
-  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-${fragmentFromString(decFields)}
-  ]);
-
-${topLevelDecoder}
 }
 
-Codec<${fragmentFromString(typeName)}, ${fragmentFromString(typeName)}> ${fragmentFromString(codecName)}() {
-  return combineCodec(${fragmentFromString(encoderName)}(), ${fragmentFromString(decoderName)}());
 }
 
-Account<${fragmentFromString(typeName)}> ${fragmentFromString(decodeFnName)}(EncodedAccount encodedAccount) {
-  return decodeAccount(encodedAccount, ${fragmentFromString(decoderName)}());
 }`);
 
   const result = mergeFragments(parts, (cs) => cs.join("\n\n"));
@@ -260,6 +210,7 @@ Account<${fragmentFromString(typeName)}> ${fragmentFromString(decodeFnName)}(Enc
     result.imports.mergeWith(manifest.decoder.imports);
     result.imports.mergeWith(manifest.type.imports);
   }
+
   for (const defaultValue of fieldDefaults.values()) {
     result.imports.mergeWith(defaultValue.imports);
   }

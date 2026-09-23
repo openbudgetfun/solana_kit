@@ -14,6 +14,7 @@ Uint8List content(List<int> bytes) => Uint8List.fromList(bytes);
 /// strings.
 Uint8List fieldNamesContent(List<String> names) {
   final bytes = <int>[];
+
   for (final name in names) {
     final encoded = utf8.encode(name);
     final length = encoded.length;

@@ -38,6 +38,7 @@ int _disc(Instruction ix) => ix.data![0];
 /// Extracts a u64 BigInt from bytes starting at [offset].
 BigInt _u64At(Uint8List bytes, int offset) {
   var result = BigInt.zero;
+
   for (var i = 7; i >= 0; i--) {
     result = (result << 8) | BigInt.from(bytes[offset + i]);
   }

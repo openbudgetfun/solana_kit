@@ -58,6 +58,7 @@ List<Object?> _requireList(Object? value) {
 List<Address> _addressList(Object? value) {
   final raw = _requireList(value);
   final addresses = <Address>[];
+
   for (final item in raw) {
     if (item is! String) _throwUnrecognized();
     addresses.add(Address(item));
@@ -68,6 +69,7 @@ List<Address> _addressList(Object? value) {
 List<int> _intList(Object? value) {
   final raw = _requireList(value);
   final integers = <int>[];
+
   for (final item in raw) {
     if (item is! int || item < 0 || item > 255) _throwUnrecognized();
     integers.add(item);
@@ -77,8 +79,10 @@ List<int> _intList(Object? value) {
 
 LoadedAddresses _getLoadedAddresses(Map<String, Object?>? meta) {
   final rawLoaded = meta?['loadedAddresses'];
+
   if (rawLoaded == null) return _emptyLoadedAddresses;
   final loaded = _asMap(rawLoaded);
+
   if (loaded == null) _throwUnrecognized();
   return LoadedAddresses(
     readonly: _addressList(loaded['readonly']),
@@ -100,6 +104,7 @@ DecodedRpcTransaction _decodeFromBase64(
   Map<String, Object?>? meta,
 ) {
   final b64 = _asString(tx[0]);
+
   if (b64 == null) {
     throw SolanaError(
       SolanaErrorCode
@@ -120,6 +125,7 @@ DecodedRpcTransaction _decodeFromBase58(
   Map<String, Object?>? meta,
 ) {
   final b58 = _asString(tx[0]);
+
   if (b58 == null) {
     throw SolanaError(
       SolanaErrorCode
@@ -202,6 +208,7 @@ DecodedRpcTransaction _decodeFromJson(
   final instructionsRaw = _requireList(message['instructions']);
   final instructions = _readJsonInstructions(instructionsRaw);
   final lifetimeToken = _asString(message['recentBlockhash']);
+
   if (lifetimeToken == null) {
     throw SolanaError(
       SolanaErrorCode
@@ -226,9 +233,11 @@ DecodedRpcTransaction _decodeFromJson(
     ),
     TransactionVersion.v0 => () {
       final lookups = <AddressTableLookup>[];
+
       for (final lookup in _requireList(message['addressTableLookups'])) {
         final l = _asMap(lookup);
         final accountKey = l == null ? null : _asString(l['accountKey']);
+
         if (accountKey == null) _throwUnrecognized();
         lookups.add(
           AddressTableLookup(
@@ -250,6 +259,7 @@ DecodedRpcTransaction _decodeFromJson(
     TransactionVersion.v1 => () {
       final instructionHeaders = <V1InstructionHeader>[];
       final instructionPayloads = <V1InstructionPayload>[];
+
       for (final instruction in instructions) {
         final accounts = instruction.accountIndices ?? const <int>[];
         final data = instruction.data ?? Uint8List(0);
@@ -324,12 +334,14 @@ DecodedRpcTransaction decodeTransactionFromRpcResponse(
   }
   final tx = rpcTx['transaction'];
   final metaRaw = rpcTx['meta'];
+
   if (metaRaw != null && metaRaw is! Map) _throwUnrecognized();
   final meta = metaRaw is Map<String, Object?> ? metaRaw : _asMap(metaRaw);
 
   // base64 / base58: `transaction` is a `[data, encoding]` array.
   if (tx is List) {
     if (tx.length >= 2 && tx[1] == 'base64') return _decodeFromBase64(tx, meta);
+
     if (tx.length >= 2 && tx[1] == 'base58') return _decodeFromBase58(tx, meta);
     throw SolanaError(
       SolanaErrorCode
@@ -340,6 +352,7 @@ DecodedRpcTransaction decodeTransactionFromRpcResponse(
   // json / jsonParsed: `transaction` is a `{message: ...}` map.
   final txMap = _asMap(tx);
   final messageMap = _asMap(txMap?['message']);
+
   if (messageMap == null) {
     throw SolanaError(
       SolanaErrorCode

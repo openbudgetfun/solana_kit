@@ -111,6 +111,7 @@ int Function(Uint8List, Uint8List) getSignatoriesComparator() {
     if (x.length != y.length) {
       return x.length < y.length ? -1 : 1;
     }
+
     for (var i = 0; i < x.length; i++) {
       if (x[i] == y[i]) continue;
       return x[i] < y[i] ? -1 : 1;
@@ -126,6 +127,7 @@ void _validateVersion(int version, int? expectedVersion) {
       {'unsupportedVersion': version},
     );
   }
+
   if (expectedVersion != null && version != expectedVersion) {
     throw SolanaError(SolanaErrorCode.offchainMessageUnexpectedVersion, {
       'actualVersion': version,

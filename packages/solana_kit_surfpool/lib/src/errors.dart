@@ -12,6 +12,7 @@ class SurfpoolException implements Exception {
   @override
   String toString() {
     final cause = this.cause;
+
     if (cause == null) return 'SurfpoolException: $message';
     return 'SurfpoolException: $message ($cause)';
   }

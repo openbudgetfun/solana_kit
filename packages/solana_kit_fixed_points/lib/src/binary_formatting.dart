@@ -42,6 +42,7 @@ double binaryFixedPointToNumber(BinaryFixedPoint value) {
 
 double _pow2Double(int exponent) {
   var result = 1.0;
+
   for (var i = 0; i < exponent; i++) {
     result *= 2;
   }

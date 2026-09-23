@@ -90,6 +90,7 @@ List<String> _findDocumentedLibraries(Directory repoRoot) {
     if (entity is! File || !entity.path.endsWith('.dart')) continue;
 
     final relativePath = entity.path.substring(repoRoot.path.length + 1);
+
     if (!RegExp(r'^packages/[^/]+/lib/[^/]+\.dart$').hasMatch(relativePath)) {
       continue;
     }
@@ -98,8 +99,6 @@ List<String> _findDocumentedLibraries(Directory repoRoot) {
     if (source.contains('/// <!-- {=')) {
       libraries.add(relativePath);
     }
-  }
-
   libraries.sort();
   return libraries;
 }

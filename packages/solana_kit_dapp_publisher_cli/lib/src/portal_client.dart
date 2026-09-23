@@ -61,13 +61,16 @@ final class SensitiveString {
     if (other is! SensitiveString) {
       return false;
     }
+
     if (identical(this, other)) {
       return true;
     }
+
     if (value.length != other.value.length) {
       return false;
     }
     var diff = 0;
+
     for (var i = 0; i < value.length; i++) {
       diff |= value.codeUnitAt(i) ^ other.value.codeUnitAt(i);
     }
@@ -123,6 +126,7 @@ Future<T> callPortalProcedure<T>(
   Object? payload;
   try {
     payload = text.isEmpty ? null : jsonDecode(text);
+
   } on FormatException {
     final preview = text.replaceAll('\n', ' ').trim();
     throw PublisherCliException(
@@ -141,13 +145,16 @@ Future<T> callPortalProcedure<T>(
 
   if (response.statusCode < 200 || response.statusCode >= 300) {
     final error = readDeep(record, 'error.message');
+
     if (error is String && error.isNotEmpty) {
       throw PublisherCliException('$procedure: $error');
     }
     final nested = readDeep(record, 'result.data');
+
     if (nested is Map<String, Object?> && nested['_tag'] == 'Left') {
       final left = asRecord(nested['left']);
       final message = optionalString(left['message']);
+
       if (message != null && message.isNotEmpty) {
         throw PublisherCliException('$procedure: $message');
       }
@@ -167,6 +174,7 @@ Future<T> callPortalProcedure<T>(
 T _unwrapPortalResult<T>(Object? result, String fallbackMessage) {
   if (result is Map<String, Object?> && result.containsKey('_tag')) {
     final tag = result['_tag'];
+
     if (tag == 'Left') {
       final left = asRecord(result['left']);
       throw PublisherCliException(
@@ -175,6 +183,7 @@ T _unwrapPortalResult<T>(Object? result, String fallbackMessage) {
     }
     return result['right'] as T;
   }
+
   if (result is Map<String, Object?>) {
     return result as T;
   }
@@ -195,9 +204,11 @@ Future<void> uploadBytes(
     headers: {'content-type': contentType},
     body: body,
   );
+
   if (owned) {
     httpClient.close();
   }
+
   if (response.statusCode < 200 || response.statusCode >= 300) {
     final preview = response.body.replaceAll('\n', ' ').trim();
     throw PublisherCliException(
@@ -239,6 +250,7 @@ Future<Map<String, Object?>> callCreateIngestionSessionWithRetry(
         'mutation',
         client: client,
       );
+
     } catch (error) {
       if (!isRetryableCreateIngestionSessionError(error) || attempt >= 2) {
         rethrow;

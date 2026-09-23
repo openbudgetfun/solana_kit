@@ -25,6 +25,7 @@ class BaseXLookup {
 
     if (codeUnits.every((unit) => unit < _denseLimit)) {
       final dense = List<int>.filled(_denseLimit, -1);
+
       for (var i = 0; i < codeUnits.length; i++) {
         // First occurrence wins, matching `alphabet.indexOf`.
         if (dense[codeUnits[i]] == -1) dense[codeUnits[i]] = i;
@@ -32,6 +33,7 @@ class BaseXLookup {
       _dense = dense;
     } else {
       final sparse = <int, int>{};
+
       for (var i = 0; i < codeUnits.length; i++) {
         sparse.putIfAbsent(codeUnits[i], () => i);
       }
@@ -97,8 +99,10 @@ class BaseXLookup {
 /// retaining everything.
 BaseXLookup baseXLookupFor(String alphabet) {
   final cached = _lookups[alphabet];
+
   if (cached != null) return cached;
   final lookup = BaseXLookup(alphabet);
+
   if (_lookups.length >= _lookupCacheLimit) {
     _lookups.clear();
   }

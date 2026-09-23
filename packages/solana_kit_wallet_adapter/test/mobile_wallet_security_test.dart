@@ -417,6 +417,7 @@ class _RecordingBackend implements MobileWalletBackend {
   @override
   Future<void> disconnect() async {
     final error = disconnectError;
+
     if (error != null) throw error;
     await disconnectCompletion?.future;
   }

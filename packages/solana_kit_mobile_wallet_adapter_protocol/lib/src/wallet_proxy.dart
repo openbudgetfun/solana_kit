@@ -131,6 +131,7 @@ class _MobileWalletProxy implements MobileWallet {
   /// Maps chain identifiers based on protocol version.
   Map<String, Object?> _mapAuthorizeParams(Map<String, Object?> params) {
     final chain = params['chain'] as String?;
+
     if (chain == null) return params;
 
     if (_version == ProtocolVersion.legacy) {
@@ -161,6 +162,7 @@ class _MobileWalletProxy implements MobileWallet {
     if (_version == ProtocolVersion.legacy) {
       // Convert legacy boolean flags to v1 features array.
       final features = <String>[mwaFeatureSignTransactions];
+
       if (result['supports_clone_authorization'] == true) {
         features.add(mwaFeatureCloneAuthorization);
       }

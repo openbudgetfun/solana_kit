@@ -54,6 +54,7 @@ Future<Address> findOracleAccount({
   Address? recipient,
 }) {
   final config = baseAddressConfig;
+
   if (config == null) {
     return Future.value(baseAddress);
   }

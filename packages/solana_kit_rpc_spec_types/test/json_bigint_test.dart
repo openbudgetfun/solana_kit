@@ -14,6 +14,7 @@ String _findTestDir() {
   final packageTestDir = Directory(
     '${dir.path}/packages/solana_kit_rpc_spec_types/test',
   );
+
   if (packageTestDir.existsSync()) {
     return packageTestDir.path;
   }

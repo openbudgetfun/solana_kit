@@ -52,10 +52,12 @@ PublicationBundle bundleWith({
       'bannerUrl': bannerUrl,
       'featureGraphicUrl': featureGraphicUrl,
       'editorsChoiceGraphicUrl': editorsChoiceGraphicUrl,
+
       if (includeAppWebsite) 'appWebsite': 'https://app.example.com',
       'contactEmail': 'contact@example.com',
       'supportEmail': 'support@example.com',
       'languages': ['en-US'],
+
       if (includeLegalUrls) ...{
         'licenseUrl': 'https://example.com/license',
         'copyrightUrl': 'https://example.com/copyright',
@@ -68,10 +70,12 @@ PublicationBundle bundleWith({
       'id': 'pub-1',
       'type': 'organization',
       'name': 'Example Inc',
+
       if (includePublisherWebsite) 'website': 'https://example.com',
       'email': 'contact@example.com',
       'supportEmail': 'support@example.com',
     },
+
     if (includeInstallFile)
       'installFile': {
         'uri': 'https://files.example.com/app.apk',
@@ -139,6 +143,7 @@ final class FakeMetadataClient implements ReleaseMetadataPortalClient {
   }) async {
     fetchCalls.add(url);
     final error = fetchError;
+
     if (error != null) {
       if (error is Exception) {
         throw error;

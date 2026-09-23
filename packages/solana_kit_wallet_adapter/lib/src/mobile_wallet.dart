@@ -97,6 +97,7 @@ class MobileWalletRegistry extends WalletRegistryController {
   Future<void> initialize() async {
     if (_initialized) return;
     _initialized = true;
+
     if (backend.isSupported) {
       register(
         MobileWallet(
@@ -106,6 +107,7 @@ class MobileWalletRegistry extends WalletRegistryController {
         ),
       );
     }
+
     for (final wallet in additionalWallets) {
       register(wallet);
     }
@@ -210,6 +212,7 @@ class MobileWallet implements Wallet {
         options?.maxRetries,
       );
     }).toSet();
+
     if (policies.length > 1) {
       throw const WalletStandardException(
         WalletStandardErrorCode.invalidRequest,
@@ -258,6 +261,7 @@ class MobileWallet implements Wallet {
   ) async {
     final generation = ++_authorizationGeneration;
     final results = <SolanaSignInOutput>[];
+
     for (final input in inputs) {
       final authorization = await backend.authorize(
         identity: identity,
@@ -267,6 +271,7 @@ class MobileWallet implements Wallet {
       _assertCurrentAuthorization(generation);
       _setAccounts(authorization.accounts);
       final output = authorization.signInOutput;
+
       if (output == null) {
         throw const WalletStandardException(
           WalletStandardErrorCode.invalidResponse,

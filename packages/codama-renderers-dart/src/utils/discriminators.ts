@@ -28,6 +28,7 @@ export function getDiscriminatorValidationFragment(
   scope: RenderScope,
 ): Fragment {
   const discriminators = node.discriminators ?? [];
+
   if (discriminators.length === 0) return emptyFragment();
 
   const fields = getDiscriminatorFields(node);
@@ -76,13 +77,8 @@ export function getDiscriminatorValidationFragment(
           node.kind === "accountNode" ? "<" : "!=";
         return fragment`if (bytes.length - offset ${fragmentFromString(comparison)} ${fragmentFromString(String(discriminator.size))}) {
   throw ${use("SolanaError", "solanaErrors")}(
-    ${use("SolanaErrorCode", "solanaErrors")}.codecsInvalidByteLength,
     {
       'codecDescription': '${fragmentFromString(node.name as string)} discriminator',
-      'expected': ${fragmentFromString(String(discriminator.size))},
-      'bytesLength': bytes.length - offset,
-    },
-  );
 }`;
       }
     }

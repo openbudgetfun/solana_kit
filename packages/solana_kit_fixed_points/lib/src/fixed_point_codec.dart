@@ -76,6 +76,7 @@ FixedPointEncoder<DecimalFixedPoint> getDecimalFixedPointEncoder(
   FixedPointEndian endian = FixedPointEndian.little,
 }) {
   _assertValidByteAlignedShape(totalBits);
+
   if (decimals < 0) throw RangeError.range(decimals, 0, null, 'decimals');
   final byteSize = totalBits ~/ 8;
   return FixedPointEncoder(
@@ -96,6 +97,7 @@ FixedPointDecoder<DecimalFixedPoint> getDecimalFixedPointDecoder(
   FixedPointEndian endian = FixedPointEndian.little,
 }) {
   _assertValidByteAlignedShape(totalBits);
+
   if (decimals < 0) throw RangeError.range(decimals, 0, null, 'decimals');
   final byteSize = totalBits ~/ 8;
   return FixedPointDecoder(
@@ -240,6 +242,7 @@ void _assertBinaryShape(
 
 void _assertValidByteAlignedShape(int totalBits) {
   if (totalBits <= 0) throw RangeError.range(totalBits, 1, null, 'totalBits');
+
   if (totalBits % 8 != 0) {
     throw ArgumentError.value(
       totalBits,
@@ -253,6 +256,7 @@ void _assertValidFractionalBits(int fractionalBits, int totalBits) {
   if (fractionalBits < 0) {
     throw RangeError.range(fractionalBits, 0, null, 'fractionalBits');
   }
+
   if (fractionalBits > totalBits) {
     throw RangeError.range(fractionalBits, 0, totalBits, 'fractionalBits');
   }
@@ -260,6 +264,7 @@ void _assertValidFractionalBits(int fractionalBits, int totalBits) {
 
 void _assertReadable(Uint8List buffer, int offset, int byteSize) {
   if (offset < 0) throw RangeError.range(offset, 0, null, 'offset');
+
   if (buffer.length - offset < byteSize) {
     throw RangeError(
       'Expected at least $byteSize readable bytes at offset $offset.',
@@ -305,6 +310,7 @@ BigInt _readRawBigInt(
   FixedPointEndian endian,
 ) {
   var encoded = BigInt.zero;
+
   for (var i = 0; i < byteSize; i++) {
     final index = endian == FixedPointEndian.little
         ? offset + i
@@ -314,6 +320,7 @@ BigInt _readRawBigInt(
 
   if (signedness == FixedPointSignedness.signed) {
     final signBit = BigInt.one << (byteSize * 8 - 1);
+
     if ((encoded & signBit) != BigInt.zero) {
       return encoded - (BigInt.one << (byteSize * 8));
     }

@@ -90,6 +90,7 @@ Uint8List computeDataHash(MetadataArgs metadata) {
 Uint8List computeCreatorHash(List<Creator> creators) {
   final addressEncoder = getAddressEncoder();
   final creatorBytes = <int>[];
+
   for (final creator in creators) {
     creatorBytes
       ..addAll(addressEncoder.encode(creator.address))

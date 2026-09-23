@@ -32,6 +32,7 @@ class CreateStakeTransactionRequest {
   Map<String, Object?> toJson() => {
     'from': from,
     'amount': amount,
+
     if (validatorVote != null) 'validatorVote': validatorVote,
   };
 }
@@ -95,6 +96,7 @@ class CreateWithdrawTransactionRequest {
   Map<String, Object?> toJson() => {
     'from': from,
     'stakeAccount': stakeAccount,
+
     if (amount != null) 'amount': amount,
   };
 }
@@ -147,8 +149,11 @@ class StakeAccountInfo {
     'address': address,
     'lamports': lamports,
     'state': state,
+
     if (voter != null) 'voter': voter,
+
     if (activationEpoch != null) 'activationEpoch': activationEpoch,
+
     if (deactivationEpoch != null) 'deactivationEpoch': deactivationEpoch,
   };
 }

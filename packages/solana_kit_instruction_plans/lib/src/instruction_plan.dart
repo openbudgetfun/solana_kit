@@ -306,6 +306,7 @@ InstructionPlan? findInstructionPlan(
   if (predicate(instructionPlan)) {
     return instructionPlan;
   }
+
   return switch (instructionPlan) {
     SingleInstructionPlan() || MessagePackerInstructionPlan() => null,
     SequentialInstructionPlan(:final plans) ||
@@ -319,6 +320,7 @@ InstructionPlan? _findInPlans(
 ) {
   for (final subPlan in plans) {
     final found = findInstructionPlan(subPlan, predicate);
+
     if (found != null) {
       return found;
     }
@@ -335,6 +337,7 @@ bool everyInstructionPlan(
   if (!predicate(instructionPlan)) {
     return false;
   }
+
   return switch (instructionPlan) {
     SingleInstructionPlan() || MessagePackerInstructionPlan() => true,
     SequentialInstructionPlan(:final plans) ||

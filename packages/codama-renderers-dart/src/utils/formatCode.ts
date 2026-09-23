@@ -13,6 +13,7 @@ export function formatDartCode(code: string): string {
       stdio: ["pipe", "pipe", "pipe"],
     });
     return result;
+
   } catch {
     // If dart format is not available, return as-is
     return code;

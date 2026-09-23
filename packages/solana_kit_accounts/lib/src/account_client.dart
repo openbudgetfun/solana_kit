@@ -67,11 +67,13 @@ class SolanaAccountClient {
         .send();
 
     final value = response.value;
+
     if (value == null) {
       return parseBase64RpcAccount(address, null);
     }
 
     final data = value['data'];
+
     if (data is Map<String, Object?> && data.containsKey('parsed')) {
       return parseJsonRpcAccount(address, value);
     }

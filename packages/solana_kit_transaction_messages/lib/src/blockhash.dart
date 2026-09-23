@@ -11,6 +11,7 @@ bool _isBlockhash(String value) {
   try {
     final bytes = getBase58Encoder().encode(value);
     return bytes.length == 32;
+
   } on Object {
     return false;
   }

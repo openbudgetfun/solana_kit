@@ -54,9 +54,11 @@ Encoder<Object?> getOptionEncoder<TFrom>(
 }) {
   // Determine none value size and encoder.
   final int noneValueFixedSize;
+
   if (noneValue is ZeroesOptionNoneValue) {
     assertIsFixedSize(item);
     noneValueFixedSize = (item as FixedSizeEncoder<TFrom>).fixedSize;
+
   } else if (noneValue is ConstantOptionNoneValue) {
     noneValueFixedSize = noneValue.bytes.length;
   } else {
@@ -99,6 +101,7 @@ Encoder<Object?> getOptionEncoder<TFrom>(
           bytes[pos + i] = 0;
         }
         pos += noneValueFixedSize;
+
       } else if (noneValue is ConstantOptionNoneValue) {
         bytes.setAll(pos, noneValue.bytes);
         pos += noneValue.bytes.length;
@@ -109,6 +112,7 @@ Encoder<Object?> getOptionEncoder<TFrom>(
 
     // Some case.
     final someValue = (option as Some<TFrom>).value;
+
     if (hasPrefix) {
       pos = actualPrefix.write(1, bytes, pos);
     }
@@ -167,6 +171,7 @@ Decoder<Option<TTo>> getOptionDecoder<TTo>(
 }) {
   // Determine prefix size.
   final int? prefixDecoderSize;
+
   if (!hasPrefix) {
     prefixDecoderSize = 0;
   } else {
@@ -175,9 +180,11 @@ Decoder<Option<TTo>> getOptionDecoder<TTo>(
 
   // Determine none value size.
   final int noneValueFixedSize;
+
   if (noneValue is ZeroesOptionNoneValue) {
     assertIsFixedSize(item);
     noneValueFixedSize = (item as FixedSizeDecoder<TTo>).fixedSize;
+
   } else if (noneValue is ConstantOptionNoneValue) {
     noneValueFixedSize = noneValue.bytes.length;
   } else {
@@ -208,12 +215,15 @@ Decoder<Option<TTo>> getOptionDecoder<TTo>(
 
     // Determine if the value is present.
     final bool isPresent;
+
     if (!hasPrefix && noneValue is OmitOptionNoneValue) {
       // No prefix, no none value: present if there are bytes left.
       isPresent = pos < bytes.length;
+
     } else if (!hasPrefix && noneValue is! OmitOptionNoneValue) {
       // No prefix, but has none value: compare bytes.
       final Uint8List zeroValue;
+
       if (noneValue is ZeroesOptionNoneValue) {
         zeroValue = Uint8List(noneValueFixedSize);
       } else {
@@ -223,6 +233,7 @@ Decoder<Option<TTo>> getOptionDecoder<TTo>(
     } else {
       // Has prefix: read it.
       final (prefixValue, newOffset) = actualPrefix.read(bytes, pos);
+
       if (prefixValue != 0 && prefixValue != 1) {
         throw SolanaError(SolanaErrorCode.codecsInvalidBoolean, {
           'value': prefixValue,
@@ -336,6 +347,7 @@ Codec<Object?, Option<TTo>> getOptionCodec<TFrom, TTo extends TFrom>(
 /// Accepts [Option<TFrom>], `TFrom?`, or `null`.
 Option<TFrom> _toOption<TFrom>(Object? value) {
   if (value is Option<TFrom>) return value;
+
   if (value == null) return none<TFrom>();
   // Treat as a raw value (TFrom).
   return some(value as TFrom);
@@ -345,7 +357,9 @@ Option<TFrom> _toOption<TFrom>(Object? value) {
 /// is variable-size.
 int? _getFixedSize(Object codec) {
   if (codec is FixedSizeEncoder) return codec.fixedSize;
+
   if (codec is FixedSizeDecoder) return codec.fixedSize;
+
   if (codec is FixedSizeCodec) return codec.fixedSize;
   return null;
 }
@@ -358,10 +372,13 @@ int? _computeMaxSize(
 ) {
   // Get prefix max.
   final int prefixMax;
+
   if (prefix == null) {
     prefixMax = 0;
+
   } else if (prefix is FixedSizeEncoder<num>) {
     prefixMax = prefix.fixedSize;
+
   } else if (prefix is VariableSizeEncoder<num>) {
     if (prefix.maxSize == null) return null;
     prefixMax = prefix.maxSize!;
@@ -371,13 +388,17 @@ int? _computeMaxSize(
 
   // Get item max.
   final int itemMax;
+
   if (itemCodec is FixedSizeEncoder) {
     itemMax = itemCodec.fixedSize;
+
   } else if (itemCodec is VariableSizeEncoder) {
     if (itemCodec.maxSize == null) return null;
     itemMax = itemCodec.maxSize!;
+
   } else if (itemCodec is FixedSizeDecoder) {
     itemMax = itemCodec.fixedSize;
+
   } else if (itemCodec is VariableSizeDecoder) {
     if (itemCodec.maxSize == null) return null;
     itemMax = itemCodec.maxSize!;

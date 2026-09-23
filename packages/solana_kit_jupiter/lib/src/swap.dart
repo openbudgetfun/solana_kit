@@ -33,6 +33,7 @@ class JupiterSwapClient {
       '/swap/v2/order',
       queryParameters: order.toQueryParameters(),
     );
+
     return switch (response) {
       final Map<String, Object?> json => JupiterOrderResponse.fromJson(json),
       _ => throw JupiterException(
@@ -58,6 +59,7 @@ class JupiterSwapClient {
     Address? userPublicKey,
   }) async {
     final requestId = order.requestId;
+
     if (requestId == null || requestId.trim().isEmpty) {
       throw ArgumentError('The order must include a nonempty requestId.');
     }
@@ -70,6 +72,7 @@ class JupiterSwapClient {
           'lastValidBlockHeight': order.lastValidBlockHeight.toString(),
       },
     );
+
     return switch (response) {
       final Map<String, Object?> json => JupiterExecutionResponse.fromJson(
         json,
@@ -88,6 +91,7 @@ class JupiterSwapClient {
       '/swap/v2/build',
       queryParameters: order.toQueryParameters(),
     );
+
     return switch (response) {
       final Map<String, Object?> json => JupiterBuildResponse.fromJson(json),
       _ => throw JupiterException(

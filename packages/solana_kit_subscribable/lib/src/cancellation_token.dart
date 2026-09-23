@@ -35,6 +35,7 @@ class CancellationTokenSource {
     if (token._isCancelled) return;
     token._isCancelled = true;
     token._reason = reason;
+
     if (!token._completer.isCompleted) {
       token._completer.complete();
     }

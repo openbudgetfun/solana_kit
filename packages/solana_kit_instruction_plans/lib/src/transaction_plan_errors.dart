@@ -191,6 +191,7 @@ Map<String, Object?> _getSingleFailureContext(
       causeMessage =
           '$indicator: '
           '${_errorMessage(unwrapped.unwrappedError)}${_formatLogSnippet(logs)}';
+
     case _:
       cause = abortReason;
       causeMessage = abortReason != null
@@ -215,6 +216,7 @@ Map<String, Object?> _getMultipleFailuresContext(
   final flattenedResults = flattenTransactionPlanResult(result);
 
   final failedTransactions = <Map<String, Object?>>[];
+
   for (final (index, singleResult) in flattenedResults.indexed) {
     if (singleResult is! FailedSingleTransactionPlanResult) continue;
     final unwrapped = _unwrapErrorWithPreflightData(singleResult.error);
@@ -277,6 +279,7 @@ _unwrapErrorWithPreflightData(Object error) {
     SolanaErrorCode.jsonRpcServerErrorSendTransactionPreflightFailure,
     SolanaErrorCode.transactionFailedWhenSimulatingToEstimateComputeLimit,
   ];
+
   if (error is SolanaError && simulationCodes.contains(error.code)) {
     final preflightData = <String, Object?>{
       ...error.context,
@@ -295,12 +298,15 @@ Object? _findErrorFromTransactionPlanResult(TransactionPlanResult result) {
   switch (result) {
     case final FailedSingleTransactionPlanResult failed:
       return failed.error;
+
     case SingleTransactionPlanResult():
       return null;
+
     case SequentialTransactionPlanResult(:final plans):
     case ParallelTransactionPlanResult(:final plans):
       for (final plan in plans) {
         final error = _findErrorFromTransactionPlanResult(plan);
+
         if (error != null) {
           return error;
         }
@@ -333,12 +339,14 @@ String? _getSignatureFromContext(Map<String, Object?> context) {
 
 String _getFailedIndicator(bool isPreflight, String? signature) {
   if (isPreflight) return ' (preflight)';
+
   if (signature != null) return ' ($signature)';
   return '';
 }
 
 String _errorMessage(Object error) {
   if (error is SolanaError) return getErrorMessage(error.code, error.context);
+
   if (error is StateError) return error.message;
   return error.toString();
 }

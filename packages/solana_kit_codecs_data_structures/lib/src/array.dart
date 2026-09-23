@@ -56,6 +56,7 @@ Encoder<List<T>> getArrayEncoder<T>(
 
   int writeImpl(List<T> array, Uint8List bytes, int currentOffset) {
     var offset = currentOffset;
+
     if (effectiveSize case final FixedArraySize fixedSize) {
       assertValidNumberOfItemsForCodec(
         description ?? 'array',
@@ -63,17 +64,21 @@ Encoder<List<T>> getArrayEncoder<T>(
         array.length,
       );
     }
+
     if (effectiveSize case final PrefixedArraySize prefixedSize) {
       final prefixObject = prefixedSize.prefix;
+
       if (prefixObject is Encoder<BigInt>) {
         // Sized prefixes wider than 32 bits (e.g. u64) are
         // generated as `BigInt` encoders, so the item count
         // must be widened to `BigInt` before writing.
         offset = prefixObject.write(BigInt.from(array.length), bytes, offset);
+
       } else if (prefixObject is Encoder<num>) {
         offset = prefixObject.write(array.length, bytes, offset);
       }
     }
+
     for (final value in array) {
       offset = item.write(value, bytes, offset);
     }
@@ -167,14 +172,17 @@ Decoder<List<T>> getArrayDecoder<T>(
     }
 
     final int resolvedSize;
+
     if (effectiveSize case final FixedArraySize fixedSize) {
       resolvedSize = fixedSize.size;
     } else {
       final prefixedSize = effectiveSize as PrefixedArraySize;
       final prefixObject = prefixedSize.prefix;
       int resolvedSizeLocal;
+
       if (prefixObject is Decoder<BigInt>) {
         final (prefixValue, newOffset) = prefixObject.read(bytes, offset);
+
         if (prefixValue < BigInt.zero || prefixValue > BigInt.from(maxItems)) {
           _throwInvalidArraySize(description, prefixValue);
         }
@@ -224,13 +232,16 @@ Codec<List<T>, List<T>> getArrayCodec<T>(
   // Determine matching encoder/decoder size configs.
   final ArrayLikeCodecSize? encoderSize;
   final ArrayLikeCodecSize? decoderSize;
+
   if (size case final PrefixedArraySize prefixedSize) {
     final prefix = prefixedSize.prefix;
+
     if (prefix is Codec<BigInt, BigInt>) {
       // `BigInt` is not a `num`, so wide integer codecs need a separate
       // branch before the standard numeric codec path.
       encoderSize = PrefixedArraySize(encoderFromCodec(prefix));
       decoderSize = PrefixedArraySize(decoderFromCodec(prefix));
+
     } else if (prefix is Codec<num, num>) {
       encoderSize = PrefixedArraySize(encoderFromCodec(prefix));
       decoderSize = PrefixedArraySize(decoderFromCodec(prefix));
@@ -270,6 +281,7 @@ Never _throwInvalidArraySize(String? description, Object actual) {
 int? _computeArrayLikeCodecSize(ArrayLikeCodecSize size, int? itemSize) {
   if (size case final FixedArraySize fixedSize) {
     if (fixedSize.size == 0) return 0;
+
     if (itemSize == null) return null;
     return itemSize * fixedSize.size;
   }

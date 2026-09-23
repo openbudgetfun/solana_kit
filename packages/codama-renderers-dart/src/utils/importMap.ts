@@ -78,6 +78,7 @@ export class DartImportMap {
       // Check internal map first (generated cross-references)
       if (module in internalMap) {
         const uri = internalMap[module];
+
         if (uri) {
           uris.add(uri);
         }
@@ -108,6 +109,7 @@ export class DartImportMap {
    */
   toString(internalMap: Record<string, string> = {}): string {
     const resolved = this.resolve(internalMap);
+
     if (resolved.length === 0) return "";
 
     const lines: string[] = [];

@@ -568,6 +568,7 @@ class SignAuthMessageRequest {
   Map<String, Object?> toJson() => {
     if (message != null) 'message': message,
     'secretKey': secretKey,
+
     if (timestamp != null) 'timestamp': timestamp,
   };
 }

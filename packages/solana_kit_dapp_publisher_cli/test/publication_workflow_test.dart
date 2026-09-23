@@ -249,8 +249,10 @@ class _FakeClient implements PublicationWorkflowClient {
   ) async {
     calls.add('prepareReleaseNftTransaction');
     prepareCalls++;
+
     if (failOnPrepare && prepareCalls == 1) {
       final error = customError ?? const _TestFailure('prepare failed');
+
       if (error is Exception) {
         throw error;
       }

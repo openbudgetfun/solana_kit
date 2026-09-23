@@ -76,9 +76,11 @@ class WalletRegistryController implements WalletRegistry {
   /// wallet a single time. This mirrors wallet-adapter's name-based dedup.
   void Function() register(Wallet wallet) {
     if (_disposed) throw StateError('Wallet registry is disposed');
+
     if (_wallets.any((existing) => existing.name == wallet.name)) {
       return () {};
     }
+
     if (_wallets.contains(wallet)) return () {};
     _wallets.add(wallet);
     _events.add(WalletRegistered(wallet));

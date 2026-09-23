@@ -32,6 +32,7 @@ class JsonReader {
   /// Throws if absent or null.
   double requireDouble(String key) {
     final value = _json[key];
+
     if (value == null) _missing(key);
     return (value as num).toDouble();
   }
@@ -110,6 +111,7 @@ class JsonReader {
   /// Useful for nested objects: `r.optDecoded('content', AssetContent.fromJson)`
   T? optDecoded<T>(String key, T Function(Map<String, Object?>) decoder) {
     final raw = _json[key];
+
     if (raw == null) return null;
     return decoder(raw as Map<String, Object?>);
   }
@@ -120,6 +122,7 @@ class JsonReader {
   /// Useful for optional enums: `r.optEnum('sortBy', AssetSortBy.fromJson)`
   T? optEnum<T>(String key, T Function(String) decoder) {
     final raw = _json[key];
+
     if (raw == null) return null;
     return decoder(raw as String);
   }
@@ -137,6 +140,7 @@ class JsonReader {
 
   T _require<T>(String key) {
     final value = _json[key];
+
     if (value == null) _missing(key);
     return value as T;
   }

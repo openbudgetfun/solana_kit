@@ -210,6 +210,7 @@ TransactionPlan? findTransactionPlan(
   if (predicate(transactionPlan)) {
     return transactionPlan;
   }
+
   return switch (transactionPlan) {
     SingleTransactionPlan() => null,
     SequentialTransactionPlan(:final plans) ||
@@ -225,6 +226,7 @@ TransactionPlan? _findInTransactionPlans(
 ) {
   for (final subPlan in plans) {
     final found = findTransactionPlan(subPlan, predicate);
+
     if (found != null) {
       return found;
     }
@@ -241,6 +243,7 @@ bool everyTransactionPlan(
   if (!predicate(transactionPlan)) {
     return false;
   }
+
   return switch (transactionPlan) {
     SingleTransactionPlan() => true,
     SequentialTransactionPlan(:final plans) ||

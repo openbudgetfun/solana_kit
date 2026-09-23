@@ -29,24 +29,32 @@ Future<double?> fetchTipFloor75th({
         ],
       }),
     );
+
     if (response.statusCode < 200 || response.statusCode >= 300) return null;
 
     final decoded = jsonDecode(response.body);
+
     if (decoded is List && decoded.isNotEmpty) {
       final first = decoded.first;
+
       if (first is Map<String, Object?>) {
         final value = first['landed_tips_75th_percentile'];
+
         if (value is num) return value.toDouble();
       }
     }
+
     if (decoded is Map<String, Object?>) {
       final result = decoded['result'];
+
       if (result is Map<String, Object?>) {
         final value = result['landed_tips_75th_percentile'];
+
         if (value is num) return value.toDouble();
       }
     }
     return null;
+
   } on Object catch (_) {
     return null;
   } finally {

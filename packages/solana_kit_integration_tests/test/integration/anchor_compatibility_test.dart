@@ -409,6 +409,7 @@ Future<Map<String, AnchorValue>> _readCounter(
 Future<Object> _captureFailure(Future<Object?> Function() action) async {
   try {
     await action();
+
   } on Object catch (error) {
     return error;
   }

@@ -67,6 +67,7 @@ Future<PayRenewalResult> payRenewal(
     client: client,
     baseUrl: baseUrl,
   );
+
   if (intent.status != 'pending') {
     throw StateError(
       'Payment intent $paymentIntentId is ${intent.status}; '
@@ -102,6 +103,7 @@ _provisionApiKey(
 }) async {
   final deadline = DateTime.now().add(timeout);
   String? projectId;
+
   while (DateTime.now().isBefore(deadline)) {
     final projects = await developerListProjects(
       jwt,
@@ -109,6 +111,7 @@ _provisionApiKey(
       client: client,
       baseUrl: baseUrl,
     );
+
     if (projects.isNotEmpty) {
       projectId = projects.first.id;
       break;
@@ -116,6 +119,7 @@ _provisionApiKey(
     final pollDelay = interval;
     await Future<void>.delayed(pollDelay);
   }
+
   if (projectId == null) {
     throw StateError(
       'Payment confirmed but no project was provisioned within timeout.',
@@ -172,6 +176,7 @@ Future<SignupAndPayResult> signupAndPay(
     httpClient: client,
     baseUrl: effectiveBaseUrl,
   );
+
   if (result is AlreadySubscribedResult) {
     return SignupAndPayAlreadySubscribedResult(
       jwt: result.jwt,
@@ -182,6 +187,7 @@ Future<SignupAndPayResult> signupAndPay(
       endpoints: result.endpoints,
     );
   }
+
   if (result is UpgradeRequiredResult) {
     return SignupAndPayUpgradeRequiredResult(
       jwt: result.jwt,
@@ -208,6 +214,7 @@ Future<SignupAndPayResult> signupAndPay(
     timeout: pollTimeout,
     interval: pollInterval,
   );
+
   if (outcome.kind == 'completed') {
     final provisioned = await _provisionApiKey(
       paymentRequired.jwt,
@@ -229,6 +236,7 @@ Future<SignupAndPayResult> signupAndPay(
       paymentIntentId: paymentIntentId,
     );
   }
+
   if (outcome.kind == 'expired') {
     return SignupAndPayExpiredResult(
       jwt: paymentRequired.jwt,
@@ -237,6 +245,7 @@ Future<SignupAndPayResult> signupAndPay(
       paymentIntentId: paymentIntentId,
     );
   }
+
   if (outcome.kind == 'failed') {
     return SignupAndPayFailedResult(
       jwt: paymentRequired.jwt,

@@ -108,6 +108,7 @@ String resolveReleaseMetadataUri(
   PublicationSession? session,
 ) {
   final uri = getReleaseMetadataUri(bundle, session);
+
   if (uri == null) {
     throw const PublisherCliException(
       'Publication bundle did not include a release metadata URI',
@@ -181,15 +182,18 @@ void validatePublicationBundle(PublicationBundle bundle) {
   ];
 
   final missing = <String>[];
+
   for (final (field, value) in requiredFields) {
     if (value is String) {
       if (value.trim().isEmpty) {
         missing.add(field);
       }
+
     } else if (value is List) {
       if (value.isEmpty) {
         missing.add(field);
       }
+
     } else if (value == null) {
       missing.add(field);
     }
@@ -233,25 +237,33 @@ PublicationSessionStage resolvePublicationSessionStage(
   if (session.stage != PublicationSessionStage.preparedForMint) {
     return session.stage;
   }
+
   if (session.status == PublicationSessionStatus.failed) {
     return PublicationSessionStage.failed;
   }
+
   if (session.status == PublicationSessionStatus.completed) {
     return PublicationSessionStage.submitted;
   }
+
   switch (session.checkpoint) {
     case PublicationCheckpoint.submitted:
     case PublicationCheckpoint.completed:
       return PublicationSessionStage.submitted;
+
     case PublicationCheckpoint.verified:
     case PublicationCheckpoint.attested:
       return PublicationSessionStage.verified;
+
     case PublicationCheckpoint.verificationSubmitted:
       return PublicationSessionStage.verificationSubmitted;
+
     case PublicationCheckpoint.mintSaved:
       return PublicationSessionStage.mintSaved;
+
     case PublicationCheckpoint.mintSubmitted:
       return PublicationSessionStage.mintSubmitted;
+
     case PublicationCheckpoint.bundleReady:
     case PublicationCheckpoint.created:
       return PublicationSessionStage.preparedForMint;

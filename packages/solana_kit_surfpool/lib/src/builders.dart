@@ -45,6 +45,7 @@ class SetAccount implements CheatcodeBuilder {
   /// Account data bytes.
   Uint8List? get data {
     final data = _data;
+
     if (data == null) return null;
     return Uint8List.fromList(data);
   }
@@ -300,6 +301,7 @@ class ResetAccount implements CheatcodeBuilder {
     final options = ResetAccountOptions(
       includeOwnedAccounts: includeOwnedAccounts,
     ).toJson();
+
     return <Object?>[address.value, if (options.isNotEmpty) options];
   }
 }
@@ -329,6 +331,7 @@ class StreamAccount implements CheatcodeBuilder {
     final options = StreamAccountOptions(
       includeOwnedAccounts: includeOwnedAccounts,
     ).toJson();
+
     return <Object?>[address.value, if (options.isNotEmpty) options];
   }
 }

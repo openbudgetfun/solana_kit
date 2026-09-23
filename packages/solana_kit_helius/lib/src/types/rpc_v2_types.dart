@@ -47,10 +47,15 @@ class GetProgramAccountsV2Request {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'programAddress': programAddress,
+
     if (filters != null) 'filters': filters,
+
     if (encoding != null) 'encoding': encoding,
+
     if (dataSlice != null) 'dataSlice': dataSlice,
+
     if (after != null) 'after': after,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -78,6 +83,7 @@ class GetProgramAccountsV2Response {
   /// Serializes this response to a JSON map.
   Map<String, Object?> toJson() => {
     'accounts': accounts.map((e) => e.toJson()).toList(),
+
     if (cursor != null) 'cursor': cursor,
   };
 }
@@ -152,10 +158,15 @@ class GetTokenAccountsByOwnerV2Request {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'ownerAddress': ownerAddress,
+
     if (mint != null) 'mint': mint,
+
     if (programId != null) 'programId': programId,
+
     if (encoding != null) 'encoding': encoding,
+
     if (after != null) 'after': after,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -188,6 +199,7 @@ class GetTokenAccountsByOwnerV2Response {
   /// Serializes this response to a JSON map.
   Map<String, Object?> toJson() => {
     'accounts': accounts.map((e) => e.toJson()).toList(),
+
     if (cursor != null) 'cursor': cursor,
   };
 }
@@ -257,9 +269,13 @@ class GetTransactionsForAddressRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'address': address,
+
     if (before != null) 'before': before,
+
     if (until != null) 'until': until,
+
     if (limit != null) 'limit': limit,
+
     if (commitment != null) 'commitment': commitment!.toJson(),
   };
 }
@@ -333,8 +349,11 @@ class TransactionForAddress {
   Map<String, Object?> toJson() => {
     'signature': signature,
     'slot': slot,
+
     if (blockTime != null) 'blockTime': blockTime,
+
     if (err != null) 'err': err,
+
     if (memo != null) 'memo': memo,
   };
 }
@@ -399,13 +418,21 @@ class GetTransfersByAddressConfig {
   /// Serializes this configuration to a JSON map.
   Map<String, Object?> toJson() => {
     if (withAddress != null) 'with': withAddress,
+
     if (direction != null) 'direction': direction,
+
     if (mint != null) 'mint': mint,
+
     if (solMode != null) 'solMode': solMode,
+
     if (filters != null) 'filters': filters,
+
     if (limit != null) 'limit': limit,
+
     if (paginationToken != null) 'paginationToken': paginationToken,
+
     if (commitment != null) 'commitment': commitment!.toJson(),
+
     if (sortOrder != null) 'sortOrder': sortOrder,
   };
 }
@@ -556,14 +583,19 @@ class AddressTransfer {
     'type': type,
     'fromUserAccount': fromUserAccount,
     'toUserAccount': toUserAccount,
+
     if (fromTokenAccount != null) 'fromTokenAccount': fromTokenAccount,
+
     if (toTokenAccount != null) 'toTokenAccount': toTokenAccount,
     'mint': mint,
     'amount': amount,
+
     if (feeAmount != null) 'feeAmount': feeAmount,
+
     if (feeAccount != null) 'feeAccount': feeAccount,
     'decimals': decimals,
     'uiAmount': uiAmount,
+
     if (feeUiAmount != null) 'feeUiAmount': feeUiAmount,
     'confirmationStatus': confirmationStatus,
     'transactionIdx': transactionIdx,

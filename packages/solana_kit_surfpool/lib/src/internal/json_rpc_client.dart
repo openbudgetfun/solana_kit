@@ -46,6 +46,7 @@ class SurfpoolJsonRpcClient {
     final Object? decoded;
     try {
       decoded = jsonDecode(response.body);
+
     } on FormatException catch (error) {
       throw SurfpoolRpcException(
         'Invalid JSON-RPC response',

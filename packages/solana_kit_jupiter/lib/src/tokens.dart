@@ -52,9 +52,11 @@ class JupiterTokenClient {
     }.contains(category)) {
       throw ArgumentError.value(category, 'category', 'Unknown token category');
     }
+
     if (!const {'5m', '1h', '6h', '24h'}.contains(interval)) {
       throw ArgumentError.value(interval, 'interval', 'Unknown token interval');
     }
+
     if (limit != null && (limit < 1 || limit > 100)) {
       throw ArgumentError.value(limit, 'limit', 'Must be between 1 and 100');
     }

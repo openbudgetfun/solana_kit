@@ -44,11 +44,13 @@ extension type const Sol(BigInt raw) implements Lamports, Object {
 /// to accept inputs with more fractional precision.
 Sol sol(String value, {RoundingMode rounding = RoundingMode.strict}) {
   final trimmed = value.trim();
+
   if (trimmed.isEmpty || trimmed.startsWith('-')) {
     throw FormatException('Expected an unsigned SOL decimal string.', value);
   }
 
   final parts = trimmed.split('.');
+
   if (parts.length > 2) {
     throw FormatException('Expected an unsigned SOL decimal string.', value);
   }
@@ -63,18 +65,23 @@ Sol sol(String value, {RoundingMode rounding = RoundingMode.strict}) {
 
   var paddedFraction = fractionPart;
   var increment = false;
+
   if (paddedFraction.length > 9) {
     final extra = paddedFraction.substring(9);
+
     switch (rounding) {
       case RoundingMode.strict:
         throw FormatException(
           'SOL value cannot be represented without precision loss.',
           value,
         );
+
       case RoundingMode.down:
         break;
+
       case RoundingMode.up:
         increment = extra.contains(RegExp('[1-9]'));
+
       case RoundingMode.halfUp:
         increment = int.parse(extra[0]) >= 5;
     }
@@ -84,6 +91,7 @@ Sol sol(String value, {RoundingMode rounding = RoundingMode.strict}) {
   paddedFraction = paddedFraction.padRight(9, '0');
   var raw =
       BigInt.parse(wholePart) * lamportsPerSol + BigInt.parse(paddedFraction);
+
   if (increment) raw += BigInt.one;
 
   return lamportsToSol(lamports(raw));

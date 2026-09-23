@@ -45,6 +45,7 @@ Future<void> main(List<String> args) async {
   }
 
   final scopes = _loadScopes(root);
+
   if (scopes.isEmpty) {
     stderr.writeln(
       'No scopes found in config/mutation/scopes.json. Nothing to mutate.',
@@ -54,17 +55,20 @@ Future<void> main(List<String> args) async {
   }
 
   final List<_Scope> selected;
+
   if (options.changed) {
     selected = _scopesForChangedFiles(root, scopes);
   } else {
     selected = _selectScopes(scopes, options.scope);
   }
+
   if (selected.isEmpty) {
     stdout.writeln('No mutation scope selected; nothing to do.');
     return;
   }
 
   final mutationTestReady = await _ensureMutationTest(root);
+
   if (!mutationTestReady) {
     exitCode = 1;
     return;
@@ -75,11 +79,13 @@ Future<void> main(List<String> args) async {
       : const <String, Set<String>>{};
 
   final failures = <String>[];
+
   for (final scope in selected) {
     final tests = options.full
         ? _testsForFullRun(root, scope, reverseDependencies)
         : scope.existingTests(root);
     final code = await _runScope(root, scope, options, tests);
+
     if (code != 0) {
       failures.add(scope.name);
     }
@@ -111,10 +117,13 @@ class _Scope {
   /// silently reducing coverage.
   List<String> existingSources(Directory root) {
     final files = <String>[];
+
     for (final entry in source) {
       final entity = FileSystemEntity.typeSync('${root.path}/$entry');
+
       if (entity == FileSystemEntityType.file) {
         files.add(entry);
+
       } else if (entity == FileSystemEntityType.directory) {
         files.addAll(
           _dartFilesUnder(
@@ -145,6 +154,7 @@ Future<int> _runScope(
   List<String> tests,
 ) async {
   final source = scope.existingSources(root);
+
   if (source.isEmpty) {
     stderr.writeln('Scope "${scope.name}" has no existing source files.');
     return 1;
@@ -161,6 +171,7 @@ Future<int> _runScope(
   final reportDirectory = Directory(
     '${root.path}/coverage/mutation/${scope.name}',
   );
+
   if (reportDirectory.existsSync()) {
     reportDirectory.deleteSync(recursive: true);
   }
@@ -189,6 +200,7 @@ Future<int> _runScope(
     ..write('dart run mutation_test ')
     ..write('--rules ${_quote('${root.path}/config/mutation/rules.xml')} ')
     ..write('--output ${_quote(reportDirectory.path)} ');
+
   if (options.coverage) {
     command.write('--coverage ${_quote('${root.path}/coverage/lcov.info')} ');
   }
@@ -289,6 +301,7 @@ int _checkScopeDrift(Directory root, String? only) {
         .toSet();
 
     final missing = <String>{};
+
     for (final package in sourcePackages) {
       for (final dependent in _transitiveDependents(
         package,
@@ -302,11 +315,13 @@ int _checkScopeDrift(Directory root, String? only) {
 
     // A scope with no runnable tests cannot produce a meaningful result.
     final runnable = scope.existingTests(root);
+
     if (runnable.isEmpty) {
       broken++;
       stdout.writeln('  broken ${scope.name}: no test directory exists');
       continue;
     }
+
     for (final entry in scope.source) {
       if (FileSystemEntity.typeSync('${root.path}/$entry') ==
           FileSystemEntityType.notFound) {
@@ -352,6 +367,7 @@ List<String> _testsForFullRun(
 ) {
   final directories = <String>{...scope.existingTests(root)};
   final sourcePackages = scope.source.map(_packageOf).whereType<String>();
+
   for (final package in sourcePackages) {
     for (final dependent in _transitiveDependents(
       package,
@@ -361,6 +377,7 @@ List<String> _testsForFullRun(
       // script's tag filter, so listing them would only add startup cost.
       if (dependent == 'solana_kit_integration_tests') continue;
       final testDirectory = 'packages/$dependent/test';
+
       if (Directory('${root.path}/$testDirectory').existsSync()) {
         directories.add(testDirectory);
       }
@@ -373,13 +390,17 @@ List<String> _testsForFullRun(
 /// Reads the internal dependency graph and inverts it.
 Map<String, Set<String>> _reverseDependencies(Directory root) {
   final reverse = <String, Set<String>>{};
+
   for (final packageDirectory in _packageDirectories(root)) {
     final pubspec = File('${packageDirectory.path}/pubspec.yaml');
+
     if (!pubspec.existsSync()) continue;
     final text = pubspec.readAsStringSync();
     final name = _pubspecName(text);
+
     if (name == null) continue;
     reverse.putIfAbsent(name, () => <String>{});
+
     for (final dependency in _pubspecDependencies(text)) {
       reverse.putIfAbsent(dependency, () => <String>{}).add(name);
     }
@@ -393,8 +414,10 @@ Set<String> _transitiveDependents(
 ) {
   final seen = <String>{};
   final stack = <String>[package];
+
   while (stack.isNotEmpty) {
     final current = stack.removeLast();
+
     for (final dependent in reverse[current] ?? const <String>{}) {
       if (seen.add(dependent)) {
         stack.add(dependent);
@@ -415,6 +438,7 @@ List<_Scope> _scopesForChangedFiles(
     '--name-only',
     'origin/main...HEAD',
   ], workingDirectory: root.path);
+
   if (result == null) {
     stderr.writeln(
       'Could not read `git diff origin/main...HEAD`. Pass --scope instead.',
@@ -427,15 +451,18 @@ List<_Scope> _scopesForChangedFiles(
       .map((line) => line.trim())
       .where((line) => line.isNotEmpty)
       .toList();
+
   if (changed.isEmpty) return const [];
 
   final selected = <String, _Scope>{};
+
   for (final scope in scopes.values) {
     final touched = scope.source.any(
       (entry) => changed.any(
         (file) => file == entry || file.startsWith('$entry/'),
       ),
     );
+
     if (touched) selected[scope.name] = scope;
   }
 
@@ -455,6 +482,7 @@ List<_Scope> _scopesForChangedFiles(
 List<_Scope> _selectScopes(Map<String, _Scope> scopes, String? name) {
   if (name == null) return scopes.values.toList();
   final scope = scopes[name];
+
   if (scope == null) {
     stderr.writeln(
       'Unknown scope "$name". Available scopes: ${scopes.keys.join(', ')}',
@@ -467,6 +495,7 @@ List<_Scope> _selectScopes(Map<String, _Scope> scopes, String? name) {
 void _printScopes(Directory root) {
   final scopes = _loadScopes(root);
   stdout.writeln('${scopes.length} mutation scope(s):\n');
+
   for (final scope in scopes.values) {
     final sources = scope.existingSources(root);
     final tests = scope.existingTests(root);
@@ -489,6 +518,7 @@ Future<bool> _ensureMutationTest(Directory root) async {
     ['run', 'mutation_test', '--version'],
     workingDirectory: root.path,
   );
+
   if (result.exitCode == 0) return true;
   stderr
     ..writeln('`mutation_test` is not available.')
@@ -508,6 +538,7 @@ Future<bool> _ensureMutationTest(Directory root) async {
 /// every mutant as surviving.
 Map<String, _Scope> _loadScopes(Directory root) {
   final file = File('${root.path}/config/mutation/scopes.json');
+
   if (!file.existsSync()) {
     throw StateError(
       'Missing config/mutation/scopes.json. Mutation testing needs a scope '
@@ -518,11 +549,13 @@ Map<String, _Scope> _loadScopes(Directory root) {
   final Object? decoded;
   try {
     decoded = jsonDecode(file.readAsStringSync());
+
   } on FormatException catch (error) {
     throw StateError('config/mutation/scopes.json is not valid JSON: $error');
   }
   final map = decoded is Map<String, Object?> ? decoded : null;
   final rawScopes = map?['scopes'];
+
   if (rawScopes is! Map<String, Object?>) {
     throw StateError(
       'config/mutation/scopes.json must contain a top-level `scopes` object.',
@@ -530,9 +563,11 @@ Map<String, _Scope> _loadScopes(Directory root) {
   }
 
   final scopes = <String, _Scope>{};
+
   for (final entry in rawScopes.entries) {
     final name = entry.key;
     final value = entry.value;
+
     if (value is! Map<String, Object?>) {
       throw StateError('Scope "$name" must be an object.');
     }
@@ -542,6 +577,7 @@ Map<String, _Scope> _loadScopes(Directory root) {
     final tests = (value['tests'] as List<Object?>? ?? const [])
         .cast<String>()
         .toList();
+
     if (source.isEmpty || tests.isEmpty) {
       throw StateError(
         'Scope "$name" must define at least one source and one test entry.',
@@ -572,6 +608,7 @@ List<File> _dartFilesUnder(Directory directory) {
 
 List<Directory> _packageDirectories(Directory root) {
   final packages = Directory('${root.path}/packages');
+
   if (!packages.existsSync()) return const [];
   return packages
       .listSync()
@@ -593,9 +630,11 @@ String? _pubspecName(String pubspec) {
 /// code, and including them would pull the whole workspace into every scope.
 Set<String> _pubspecDependencies(String pubspec) {
   final start = pubspec.indexOf(RegExp('^dependencies:', multiLine: true));
+
   if (start < 0) return const {};
   final rest = pubspec.substring(start + 'dependencies:'.length);
   final block = <String>[];
+
   for (final line in rest.split('\n')) {
     if (line.trim().isEmpty) continue;
     // A new top-level key ends the block.
@@ -630,6 +669,7 @@ String? _run(
     arguments,
     workingDirectory: workingDirectory,
   );
+
   if (result.exitCode != 0) return null;
   return result.stdout as String;
 }
@@ -642,27 +682,36 @@ class _Options {
     var changed = false;
     var coverage = false;
     var full = false;
+
     for (var index = 0; index < args.length; index++) {
       final arg = args[index];
+
       switch (arg) {
         case '--scope':
           if (index + 1 >= args.length) {
             throw ArgumentError('--scope requires a scope name.');
           }
           scope = args[++index];
+
         case '--list':
           list = true;
+
         case '--check':
           check = true;
+
         case '--changed':
           changed = true;
+
         case '--coverage':
           coverage = true;
+
         case '--full':
           full = true;
+
         case '--help' || '-h':
           _printUsage();
           exit(0);
+
         default:
           if (arg.startsWith('--scope=')) {
             scope = arg.substring('--scope='.length);

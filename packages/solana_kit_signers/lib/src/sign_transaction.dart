@@ -278,6 +278,7 @@ TransactionSendingSigner? _identifyTransactionSendingSigner(
   List<Object> signers,
 ) {
   final sendingSigners = signers.where(isTransactionSendingSigner).toList();
+
   if (sendingSigners.isEmpty) return null;
 
   // Prefer sending signers that do not offer other interfaces.
@@ -288,6 +289,7 @@ TransactionSendingSigner? _identifyTransactionSendingSigner(
             !isTransactionPartialSigner(signer),
       )
       .toList();
+
   if (sendingOnlySigners.isNotEmpty) {
     return sendingOnlySigners[0] as TransactionSendingSigner;
   }
@@ -301,6 +303,7 @@ List<TransactionModifyingSigner> _identifyTransactionModifyingSigners(
   List<Object> signers,
 ) {
   final modifyingSigners = signers.where(isTransactionModifyingSigner).toList();
+
   if (modifyingSigners.isEmpty) return [];
 
   // Prefer modifying signers that do not offer partial signing.
@@ -308,6 +311,7 @@ List<TransactionModifyingSigner> _identifyTransactionModifyingSigners(
       .where((signer) => !isTransactionPartialSigner(signer))
       .cast<TransactionModifyingSigner>()
       .toList();
+
   if (nonPartialSigners.isNotEmpty) return nonPartialSigners;
 
   // Otherwise, choose only one modifying signer (whichever).

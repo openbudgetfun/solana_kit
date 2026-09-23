@@ -53,6 +53,7 @@ getMockFixedCodec({
 
   int writeImpl(Object? value, Uint8List bytes, int offset) {
     writeCalls.add((value, bytes, offset));
+
     if (writeOverride != null) {
       return writeOverride(value, bytes, offset);
     }
@@ -97,6 +98,7 @@ getMockVariableCodec({
 
   int writeImpl(Object? value, Uint8List bytes, int offset) {
     writeCalls.add((value, bytes, offset));
+
     if (writeOverride != null) {
       return writeOverride(value, bytes, offset);
     }

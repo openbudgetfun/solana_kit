@@ -45,9 +45,11 @@ const List<int> _k = [
 Uint8List _compress(List<int> input) {
   final messageLengthBits = input.length * 8;
   final padded = List<int>.from(input)..add(0x80);
+
   while (padded.length % 64 != 56) {
     padded.add(0x00);
   }
+
   for (var i = 7; i >= 0; i--) {
     padded.add((messageLengthBits >> (i * 8)) & 0xff);
   }
@@ -63,6 +65,7 @@ Uint8List _compress(List<int> input) {
 
   for (var block = 0; block < padded.length; block += 64) {
     final w = List<int>.filled(64, 0);
+
     for (var i = 0; i < 16; i++) {
       final base = block + i * 4;
       w[i] =
@@ -71,6 +74,7 @@ Uint8List _compress(List<int> input) {
           (padded[base + 2] << 8) |
           padded[base + 3];
     }
+
     for (var i = 16; i < 64; i++) {
       final s0 = _rotr(w[i - 15], 7) ^ _rotr(w[i - 15], 18) ^ (w[i - 15] >> 3);
       final s1 = _rotr(w[i - 2], 17) ^ _rotr(w[i - 2], 19) ^ (w[i - 2] >> 10);
@@ -113,6 +117,7 @@ Uint8List _compress(List<int> input) {
   }
 
   final digest = Uint8List(32);
+
   for (final (index, word) in [h0, h1, h2, h3, h4, h5, h6, h7].indexed) {
     digest[index * 4] = (word >> 24) & 0xff;
     digest[index * 4 + 1] = (word >> 16) & 0xff;

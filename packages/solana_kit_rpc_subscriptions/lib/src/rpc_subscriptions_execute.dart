@@ -14,6 +14,7 @@ Future<NotificationStreams> executeRpcSubscription(
   List<Object?> params,
 ) {
   final signal = config.signal;
+
   if (signal.isCancelled) {
     return Future.error(signal.reason ?? const AbortError());
   }
@@ -38,6 +39,7 @@ Future<NotificationStreams> executeRpcSubscription(
 
   void dispose() {
     disposed = true;
+
     for (final listener in listeners) {
       unawaited(listener.cancel());
     }
@@ -50,8 +52,10 @@ Future<NotificationStreams> executeRpcSubscription(
     final failure =
         error ??
         SolanaError(SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed);
+
     if (!ready.isCompleted) {
       ready.completeError(failure);
+
     } else if (!signal.isCancelled) {
       errors.add(failure);
     }
@@ -79,12 +83,14 @@ Future<NotificationStreams> executeRpcSubscription(
         message['jsonrpc'] != '2.0') {
       return;
     }
+
     if (subscriptionId == null && message['id'] == request['id']) {
       if (message.containsKey('error')) {
         fail(getSolanaErrorFromJsonRpcError(message['error']));
         return;
       }
       final id = message['result'];
+
       if (!_isSubscriptionId(id)) {
         fail(
           SolanaError(
@@ -94,6 +100,7 @@ Future<NotificationStreams> executeRpcSubscription(
         return;
       }
       subscriptionId = id;
+
       if (signal.isCancelled) {
         unsubscribe();
       } else {
@@ -117,10 +124,12 @@ Future<NotificationStreams> executeRpcSubscription(
         notification['subscription'].toString() != subscriptionId.toString()) {
       return;
     }
+
     if (!notification.containsKey('result')) {
       fail(const FormatException('Subscription notification has no result.'));
       return;
     }
+
     if (!notifications.hasListener && ++bufferedNotificationCount > 1024) {
       fail(
         StateError('Subscription notification buffer exceeded 1024 events.'),

@@ -29,6 +29,7 @@ RpcTransport getRpcTransportWithRequestCoalescing(
     }
 
     final deduplicationKey = getDeduplicationKey(config.payload);
+
     if (deduplicationKey == null) {
       return transport(config);
     }
@@ -42,6 +43,7 @@ RpcTransport getRpcTransportWithRequestCoalescing(
 
     final existingRequest =
         coalescedRequestsByDeduplicationKey![deduplicationKey];
+
     if (existingRequest != null) {
       return existingRequest;
     }

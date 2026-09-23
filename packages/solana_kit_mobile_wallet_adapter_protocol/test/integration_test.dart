@@ -100,6 +100,7 @@ class SimulatedWallet {
 
     // Build JSON-RPC response.
     final Map<String, Object?> response;
+
     if (result.containsKey('error')) {
       response = {'id': id, 'jsonrpc': '2.0', 'error': result['error']};
     } else {
@@ -118,20 +119,28 @@ class SimulatedWallet {
     switch (method) {
       case 'authorize':
         return _handleAuthorize(params);
+
       case 'reauthorize':
         return _handleReauthorize(params);
+
       case 'deauthorize':
         return {};
+
       case 'get_capabilities':
         return _handleGetCapabilities();
+
       case 'sign_transactions':
         return _handleSignTransactions(params);
+
       case 'sign_messages':
         return _handleSignMessages(params);
+
       case 'sign_and_send_transactions':
         return _handleSignAndSendTransactions(params);
+
       case 'clone_authorization':
         return _handleCloneAuthorization(params);
+
       default:
         return {
           'error': {'code': -32601, 'message': 'Method not found: $method'},

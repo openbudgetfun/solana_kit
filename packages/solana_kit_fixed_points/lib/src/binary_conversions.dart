@@ -92,6 +92,7 @@ BigInt _divideWithRounding(
 ) {
   final quotient = numerator ~/ denominator;
   final remainder = numerator.remainder(denominator);
+
   if (remainder == BigInt.zero) return quotient;
 
   return switch (rounding) {
@@ -126,6 +127,7 @@ bool _roundsTowardPositiveInfinity(BigInt numerator, BigInt denominator) {
 
 BigInt _pow5(int exponent) {
   var result = BigInt.one;
+
   for (var i = 0; i < exponent; i++) {
     result *= BigInt.from(5);
   }

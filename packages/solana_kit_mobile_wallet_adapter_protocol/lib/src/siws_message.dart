@@ -66,29 +66,38 @@ String createSiwsMessage(SignInPayload payload) {
   if (payload.uri != null) {
     buffer.writeln('URI: ${payload.uri}');
   }
+
   if (payload.version != null) {
     buffer.writeln('Version: ${payload.version}');
   }
+
   if (payload.chainId != null) {
     buffer.writeln('Chain ID: ${payload.chainId}');
   }
+
   if (payload.nonce != null) {
     buffer.writeln('Nonce: ${payload.nonce}');
   }
+
   if (payload.issuedAt != null) {
     buffer.writeln('Issued At: ${payload.issuedAt}');
   }
+
   if (payload.expirationTime != null) {
     buffer.writeln('Expiration Time: ${payload.expirationTime}');
   }
+
   if (payload.notBefore != null) {
     buffer.writeln('Not Before: ${payload.notBefore}');
   }
+
   if (payload.requestId != null) {
     buffer.writeln('Request ID: ${payload.requestId}');
   }
+
   if (payload.resources != null && payload.resources!.isNotEmpty) {
     buffer.writeln('Resources:');
+
     for (final resource in payload.resources!) {
       buffer.writeln('- $resource');
     }

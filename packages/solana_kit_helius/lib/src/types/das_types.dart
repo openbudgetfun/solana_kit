@@ -28,6 +28,7 @@ class GetAssetRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'id': id,
+
     if (displayOptions != null) 'displayOptions': displayOptions,
   };
 }
@@ -55,6 +56,7 @@ class GetAssetBatchRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'ids': ids,
+
     if (displayOptions != null) 'displayOptions': displayOptions,
   };
 }
@@ -148,11 +150,17 @@ class GetAssetsByAuthorityRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'authorityAddress': authorityAddress,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
+
     if (sortBy != null) 'sortBy': sortBy!.toJson(),
+
     if (sortDirection != null) 'sortDirection': sortDirection!.toJson(),
+
     if (before != null) 'before': before,
+
     if (after != null) 'after': after,
   };
 }
@@ -214,12 +222,19 @@ class GetAssetsByCreatorRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'creatorAddress': creatorAddress,
+
     if (onlyVerified != null) 'onlyVerified': onlyVerified,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
+
     if (sortBy != null) 'sortBy': sortBy!.toJson(),
+
     if (sortDirection != null) 'sortDirection': sortDirection!.toJson(),
+
     if (before != null) 'before': before,
+
     if (after != null) 'after': after,
   };
 }
@@ -282,11 +297,17 @@ class GetAssetsByGroupRequest {
   Map<String, Object?> toJson() => {
     'groupKey': groupKey,
     'groupValue': groupValue,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
+
     if (sortBy != null) 'sortBy': sortBy!.toJson(),
+
     if (sortDirection != null) 'sortDirection': sortDirection!.toJson(),
+
     if (before != null) 'before': before,
+
     if (after != null) 'after': after,
   };
 }
@@ -343,11 +364,17 @@ class GetAssetsByOwnerRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'ownerAddress': ownerAddress,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
+
     if (sortBy != null) 'sortBy': sortBy!.toJson(),
+
     if (sortDirection != null) 'sortDirection': sortDirection!.toJson(),
+
     if (before != null) 'before': before,
+
     if (after != null) 'after': after,
   };
 }
@@ -379,7 +406,9 @@ class GetNftEditionsRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'mint': mint,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -426,9 +455,13 @@ class GetSignaturesForAssetRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'id': id,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
+
     if (before != null) 'before': before,
+
     if (after != null) 'after': after,
   };
 }
@@ -465,8 +498,11 @@ class GetTokenAccountsRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     if (owner != null) 'owner': owner,
+
     if (mint != null) 'mint': mint,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -557,18 +593,31 @@ class SearchAssetsRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     if (ownerAddress != null) 'ownerAddress': ownerAddress,
+
     if (creatorAddress != null) 'creatorAddress': creatorAddress,
+
     if (grouping != null) 'grouping': grouping,
+
     if (compressed != null) 'compressed': compressed,
+
     if (compressible != null) 'compressible': compressible,
+
     if (frozen != null) 'frozen': frozen,
+
     if (burnt != null) 'burnt': burnt,
+
     if (jsonUri != null) 'jsonUri': jsonUri,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
+
     if (sortBy != null) 'sortBy': sortBy!.toJson(),
+
     if (sortDirection != null) 'sortDirection': sortDirection!.toJson(),
+
     if (before != null) 'before': before,
+
     if (after != null) 'after': after,
   };
 }
@@ -663,19 +712,32 @@ class HeliusAsset {
   /// Serializes this asset to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     'id': id,
+
     if (interface_ != null) 'interface': interface_,
+
     if (content != null) 'content': content!.toJson(),
+
     if (authorities != null)
       'authorities': authorities!.map((a) => a.toJson()).toList(),
+
     if (compression != null) 'compression': compression!.toJson(),
+
     if (grouping != null) 'grouping': grouping!.map((g) => g.toJson()).toList(),
+
     if (royalty != null) 'royalty': royalty!.toJson(),
+
     if (creators != null) 'creators': creators!.map((c) => c.toJson()).toList(),
+
     if (ownership != null) 'ownership': ownership!.toJson(),
+
     if (supply != null) 'supply': supply!.toJson(),
+
     if (mutable != null) 'mutable': mutable,
+
     if (burnt != null) 'burnt': burnt,
+
     if (tokenInfo != null) 'token_info': tokenInfo!.toJson(),
+
     if (mintExtensions != null) 'mint_extensions': mintExtensions,
   };
 }
@@ -711,8 +773,11 @@ class AssetContent {
   /// Serializes this content to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (jsonUri != null) 'json_uri': jsonUri,
+
     if (files != null) 'files': files!.map((f) => f.toJson()).toList(),
+
     if (metadata != null) 'metadata': metadata!.toJson(),
+
     if (links != null) 'links': links,
   };
 }
@@ -744,7 +809,9 @@ class AssetFile {
   /// Serializes this file to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (uri != null) 'uri': uri,
+
     if (cdnUri != null) 'cdn_uri': cdnUri,
+
     if (mime != null) 'mime': mime,
   };
 }
@@ -785,8 +852,11 @@ class AssetMetadata {
   /// Serializes this metadata to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (name != null) 'name': name,
+
     if (symbol != null) 'symbol': symbol,
+
     if (description != null) 'description': description,
+
     if (attributes != null)
       'attributes': attributes!.map((a) => a.toJson()).toList(),
   };
@@ -815,6 +885,7 @@ class AssetAttribute {
   /// Serializes this attribute to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (traitType != null) 'trait_type': traitType,
+
     if (value != null) 'value': value,
   };
 }
@@ -842,6 +913,7 @@ class AssetAuthority {
   /// Serializes this authority to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     'address': address,
+
     if (scopes != null) 'scopes': scopes,
   };
 }
@@ -903,12 +975,19 @@ class AssetCompression {
   /// schema.
   Map<String, Object?> toJson() => {
     if (eligible != null) 'eligible': eligible,
+
     if (compressed != null) 'compressed': compressed,
+
     if (dataHash != null) 'data_hash': dataHash,
+
     if (creatorHash != null) 'creator_hash': creatorHash,
+
     if (assetHash != null) 'asset_hash': assetHash,
+
     if (tree != null) 'tree': tree,
+
     if (seq != null) 'seq': seq,
+
     if (leafId != null) 'leaf_id': leafId,
   };
 }
@@ -986,11 +1065,16 @@ class AssetRoyalty {
   /// Serializes this royalty to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (royaltyModel != null) 'royalty_model': royaltyModel,
+
     if (target != null) 'target': target,
+
     if (percent != null) 'percent': percent,
+
     if (basisPoints != null) 'basis_points': basisPoints,
+
     if (primarySaleHappened != null)
       'primary_sale_happened': primarySaleHappened,
+
     if (locked != null) 'locked': locked,
   };
 }
@@ -1072,9 +1156,13 @@ class AssetOwnership {
   /// Serializes this ownership to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (frozen != null) 'frozen': frozen,
+
     if (delegated != null) 'delegated': delegated,
+
     if (delegate != null) 'delegate': delegate,
+
     if (ownershipModel != null) 'ownership_model': ownershipModel,
+
     if (owner != null) 'owner': owner,
   };
 }
@@ -1110,7 +1198,9 @@ class AssetSupply {
   /// Serializes this supply to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (printMaxSupply != null) 'print_max_supply': printMaxSupply,
+
     if (printCurrentSupply != null) 'print_current_supply': printCurrentSupply,
+
     if (editionNonce != null) 'edition_nonce': editionNonce,
   };
 }
@@ -1166,12 +1256,18 @@ class AssetTokenInfo {
   /// Serializes this token info to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (supply != null) 'supply': supply,
+
     if (decimals != null) 'decimals': decimals,
+
     if (tokenProgram != null) 'token_program': tokenProgram,
+
     if (associatedTokenAddress != null)
       'associated_token_address': associatedTokenAddress,
+
     if (mintAuthority != null) 'mint_authority': mintAuthority,
+
     if (freezeAuthority != null) 'freeze_authority': freezeAuthority,
+
     if (priceInfo != null) 'price_info': priceInfo!.toJson(),
   };
 }
@@ -1203,7 +1299,9 @@ class AssetPriceInfo {
   /// Serializes this price info to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (pricePerToken != null) 'price_per_token': pricePerToken,
+
     if (totalPrice != null) 'total_price': totalPrice,
+
     if (currency != null) 'currency': currency,
   };
 }
@@ -1316,8 +1414,11 @@ class AssetSignature {
   /// Serializes this signature to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     'signature': signature,
+
     if (type_ != null) 'type': type_,
+
     if (slot != null) 'slot': slot,
+
     if (timestamp != null) 'timestamp': timestamp,
   };
 }
@@ -1359,6 +1460,7 @@ class AssetSignatureList {
   Map<String, Object?> toJson() => {
     'total': total,
     'limit': limit,
+
     if (page != null) 'page': page,
     'items': items.map((i) => i.toJson()).toList(),
   };
@@ -1401,6 +1503,7 @@ class AssetList {
   Map<String, Object?> toJson() => {
     'total': total,
     'limit': limit,
+
     if (page != null) 'page': page,
     'items': items.map((i) => i.toJson()).toList(),
   };
@@ -1446,6 +1549,7 @@ class TokenAccountList {
   Map<String, Object?> toJson() => {
     'total': total,
     'limit': limit,
+
     if (page != null) 'page': page,
     'token_accounts': tokenAccounts.map((t) => t.toJson()).toList(),
   };
@@ -1501,7 +1605,9 @@ class TokenAccount {
     'mint': mint,
     'owner': owner,
     'amount': amount,
+
     if (delegatedAmount != null) 'delegated_amount': delegatedAmount,
+
     if (frozen != null) 'frozen': frozen,
   };
 }

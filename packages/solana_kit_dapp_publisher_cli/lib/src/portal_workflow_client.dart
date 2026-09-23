@@ -38,12 +38,14 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
 
   void _trackBackendIdentifiers(Map<String, Object?> backendResult) {
     final releaseId = optionalString(backendResult['releaseId']);
+
     if (releaseId != null && releaseId.isNotEmpty) {
       _currentReleaseId = releaseId;
     }
     final publicationSessionId = optionalString(
       backendResult['publicationSessionId'],
     );
+
     if (publicationSessionId != null && publicationSessionId.isNotEmpty) {
       _currentPublicationSessionId = publicationSessionId;
     }
@@ -61,9 +63,11 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
     if (session.publicationSessionId != null &&
         session.publicationSessionId!.isNotEmpty) {
       _currentPublicationSessionId = session.publicationSessionId;
+
     } else if (session.publicationSession != null) {
       _currentPublicationSessionId = session.publicationSession!.id;
     }
+
     if (session.releaseId != null && session.releaseId!.isNotEmpty) {
       _currentReleaseId = session.releaseId;
     }
@@ -247,6 +251,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
   Future<String> _uploadReleaseMetadata(PublicationBundle bundle) async {
     final releaseId = bundle.releaseId;
     final cached = _metadataUriByReleaseId[releaseId];
+
     if (cached != null) {
       return cached;
     }

@@ -60,8 +60,11 @@ class CompressedAccount {
     'data': data,
     'owner': owner,
     'lamports': lamports,
+
     if (leafIndex != null) 'leafIndex': leafIndex,
+
     if (tree != null) 'tree': tree,
+
     if (seq != null) 'seq': seq,
   };
 }
@@ -110,6 +113,7 @@ class CompressedAccountProof {
     'root': root,
     'proof': proof,
     'leafIndex': leafIndex,
+
     if (tree != null) 'tree': tree,
   };
 }
@@ -173,9 +177,12 @@ class CompressedTokenAccount {
     'owner': owner,
     'mint': mint,
     'amount': amount,
+
     if (delegate != null) 'delegate': delegate,
     'frozen': frozen,
+
     if (leafIndex != null) 'leafIndex': leafIndex,
+
     if (tree != null) 'tree': tree,
   };
 }
@@ -290,6 +297,7 @@ class CompressedSignature {
   Map<String, Object?> toJson() => {
     'signature': signature,
     'slot': slot,
+
     if (blockTime != null) 'blockTime': blockTime,
   };
 }
@@ -343,7 +351,9 @@ class ValidityProof {
   /// Converts this [ValidityProof] to JSON.
   Map<String, Object?> toJson() => {
     'compressedProof': compressedProof,
+
     if (rootIndices != null) 'rootIndices': rootIndices,
+
     if (leafIndices != null) 'leafIndices': leafIndices,
   };
 }
@@ -422,6 +432,7 @@ class TransactionWithCompressionInfo {
   /// Converts this [TransactionWithCompressionInfo] to JSON.
   Map<String, Object?> toJson() => {
     if (transaction != null) 'transaction': transaction,
+
     if (compressionInfo != null) 'compressionInfo': compressionInfo,
   };
 }
@@ -501,7 +512,9 @@ class GetCompressedAccountsByOwnerRequest {
   /// Converts this [GetCompressedAccountsByOwnerRequest] to JSON.
   Map<String, Object?> toJson() => {
     'owner': owner,
+
     if (cursor != null) 'cursor': cursor,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -579,7 +592,9 @@ class GetCompressedMintTokenHoldersRequest {
   /// Converts this [GetCompressedMintTokenHoldersRequest] to JSON.
   Map<String, Object?> toJson() => {
     'mint': mint,
+
     if (cursor != null) 'cursor': cursor,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -644,8 +659,11 @@ class GetCompressedTokenAccountsByDelegateRequest {
   /// Converts this [GetCompressedTokenAccountsByDelegateRequest] to JSON.
   Map<String, Object?> toJson() => {
     'delegate': delegate,
+
     if (mint != null) 'mint': mint,
+
     if (cursor != null) 'cursor': cursor,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -688,8 +706,11 @@ class GetCompressedTokenAccountsByOwnerRequest {
   /// Converts this [GetCompressedTokenAccountsByOwnerRequest] to JSON.
   Map<String, Object?> toJson() => {
     'owner': owner,
+
     if (mint != null) 'mint': mint,
+
     if (cursor != null) 'cursor': cursor,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -732,8 +753,11 @@ class GetCompressedTokenBalancesByOwnerRequest {
   /// Converts this [GetCompressedTokenBalancesByOwnerRequest] to JSON.
   Map<String, Object?> toJson() => {
     'owner': owner,
+
     if (mint != null) 'mint': mint,
+
     if (cursor != null) 'cursor': cursor,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -771,7 +795,9 @@ class GetCompressionSignaturesForAccountRequest {
   /// Converts this [GetCompressionSignaturesForAccountRequest] to JSON.
   Map<String, Object?> toJson() => {
     'hash': hash,
+
     if (cursor != null) 'cursor': cursor,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -809,7 +835,9 @@ class GetCompressionSignaturesForAddressRequest {
   /// Converts this [GetCompressionSignaturesForAddressRequest] to JSON.
   Map<String, Object?> toJson() => {
     'address': address,
+
     if (cursor != null) 'cursor': cursor,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -847,7 +875,9 @@ class GetCompressionSignaturesForOwnerRequest {
   /// Converts this [GetCompressionSignaturesForOwnerRequest] to JSON.
   Map<String, Object?> toJson() => {
     'owner': owner,
+
     if (cursor != null) 'cursor': cursor,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -890,8 +920,11 @@ class GetCompressionSignaturesForTokenOwnerRequest {
   /// Converts this [GetCompressionSignaturesForTokenOwnerRequest] to JSON.
   Map<String, Object?> toJson() => {
     'owner': owner,
+
     if (mint != null) 'mint': mint,
+
     if (cursor != null) 'cursor': cursor,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -921,6 +954,7 @@ class GetLatestCompressionSignaturesRequest {
   /// Converts this [GetLatestCompressionSignaturesRequest] to JSON.
   Map<String, Object?> toJson() => {
     if (cursor != null) 'cursor': cursor,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -950,6 +984,7 @@ class GetLatestNonVotingSignaturesRequest {
   /// Converts this [GetLatestNonVotingSignaturesRequest] to JSON.
   Map<String, Object?> toJson() => {
     if (cursor != null) 'cursor': cursor,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -1065,6 +1100,7 @@ class GetValidityProofRequest {
   /// Converts this [GetValidityProofRequest] to JSON.
   Map<String, Object?> toJson() => {
     'hashes': hashes,
+
     if (newAddresses != null) 'newAddresses': newAddresses,
   };
 }
@@ -1100,7 +1136,9 @@ class GetZkSignaturesForAssetRequest {
   /// Converts this [GetZkSignaturesForAssetRequest] to JSON.
   Map<String, Object?> toJson() => {
     'id': id,
+
     if (cursor != null) 'cursor': cursor,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -1132,6 +1170,7 @@ class CompressedAccountList {
   /// Converts this [CompressedAccountList] to JSON.
   Map<String, Object?> toJson() => {
     'items': items.map((e) => e.toJson()).toList(),
+
     if (cursor != null) 'cursor': cursor,
   };
 }
@@ -1159,6 +1198,7 @@ class CompressedTokenAccountList {
   /// Converts this [CompressedTokenAccountList] to JSON.
   Map<String, Object?> toJson() => {
     'items': items.map((e) => e.toJson()).toList(),
+
     if (cursor != null) 'cursor': cursor,
   };
 }
@@ -1186,6 +1226,7 @@ class CompressedSignatureList {
   /// Converts this [CompressedSignatureList] to JSON.
   Map<String, Object?> toJson() => {
     'items': items.map((e) => e.toJson()).toList(),
+
     if (cursor != null) 'cursor': cursor,
   };
 }
@@ -1213,6 +1254,7 @@ class CompressedTokenBalanceList {
   /// Converts this [CompressedTokenBalanceList] to JSON.
   Map<String, Object?> toJson() => {
     'items': items.map((e) => e.toJson()).toList(),
+
     if (cursor != null) 'cursor': cursor,
   };
 }
@@ -1240,6 +1282,7 @@ class CompressedTokenBalanceV2List {
   /// Converts this [CompressedTokenBalanceV2List] to JSON.
   Map<String, Object?> toJson() => {
     'items': items.map((e) => e.toJson()).toList(),
+
     if (cursor != null) 'cursor': cursor,
   };
 }

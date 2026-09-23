@@ -18,7 +18,9 @@ class GetSupplyConfig {
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
+
     if (commitment != null) json['commitment'] = commitment!.name;
+
     if (excludeNonCirculatingAccountsList != null) {
       json['excludeNonCirculatingAccountsList'] =
           excludeNonCirculatingAccountsList;

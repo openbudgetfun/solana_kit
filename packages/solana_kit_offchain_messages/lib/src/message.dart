@@ -48,11 +48,15 @@ class OffchainMessageV0 implements OffchainMessage {
   @override
   bool operator ==(Object other) {
     if (other is! OffchainMessageV0) return false;
+
     if (other.applicationDomain.value != applicationDomain.value) return false;
+
     if (other.content != content) return false;
+
     if (other.requiredSignatories.length != requiredSignatories.length) {
       return false;
     }
+
     for (var i = 0; i < requiredSignatories.length; i++) {
       if (other.requiredSignatories[i] != requiredSignatories[i]) return false;
     }
@@ -92,10 +96,13 @@ class OffchainMessageV1 implements OffchainMessage {
   @override
   bool operator ==(Object other) {
     if (other is! OffchainMessageV1) return false;
+
     if (other.content != content) return false;
+
     if (other.requiredSignatories.length != requiredSignatories.length) {
       return false;
     }
+
     for (var i = 0; i < requiredSignatories.length; i++) {
       if (other.requiredSignatories[i] != requiredSignatories[i]) return false;
     }

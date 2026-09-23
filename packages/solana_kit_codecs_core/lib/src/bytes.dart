@@ -5,9 +5,11 @@ import 'dart:typed_data';
 /// Reuses the original byte array when only one non-empty array is present.
 Uint8List mergeBytes(List<Uint8List> byteArrays) {
   final nonEmpty = byteArrays.where((arr) => arr.isNotEmpty).toList();
+
   if (nonEmpty.isEmpty) {
     return byteArrays.isNotEmpty ? byteArrays[0] : Uint8List(0);
   }
+
   if (nonEmpty.length == 1) {
     return nonEmpty[0];
   }
@@ -54,6 +56,7 @@ bool containsBytes(Uint8List data, Uint8List bytes, int offset) {
 Uint8List _sliceBytesLikeJs(Uint8List data, int start, int end) {
   final normalizedStart = _normalizeSliceIndex(start, data.length);
   final normalizedEnd = _normalizeSliceIndex(end, data.length);
+
   if (normalizedEnd <= normalizedStart) return Uint8List(0);
   return data.sublist(normalizedStart, normalizedEnd);
 }
@@ -69,6 +72,7 @@ int _normalizeSliceIndex(int index, int length) {
 /// Returns `true` if [bytes1] and [bytes2] are element-wise equal.
 bool bytesEqual(Uint8List bytes1, Uint8List bytes2) {
   if (bytes1.length != bytes2.length) return false;
+
   for (var i = 0; i < bytes1.length; i++) {
     if (bytes1[i] != bytes2[i]) return false;
   }

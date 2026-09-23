@@ -16,6 +16,7 @@ import 'package:solana_kit_mpl_bubblegum/src/program_address.dart';
 /// This is a helper for encoding leaf indices as 8-byte LE values.
 Uint8List _writeUInt64LE(int value) {
   final buffer = Uint8List(8);
+
   for (var i = 0; i < 8; i++) {
     // ignore: avoid_js_rounding
     buffer[i] = (value >> (8 * i)) & 0xFF;

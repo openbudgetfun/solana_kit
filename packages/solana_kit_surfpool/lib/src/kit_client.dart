@@ -65,6 +65,7 @@ class SurfpoolClient {
           getMinimumBalanceForRentExemptionParams(space),
         )
         .send();
+
     if (response is BigInt) return response;
     // Defensive: the default response transformer upcasts numbers to BigInt.
     if (response is int) return BigInt.from(response); // coverage:ignore-line
@@ -114,6 +115,7 @@ Future<SurfpoolClient> createSurfpoolClient({
   );
   try {
     return _wireClient(surfnet);
+
   } catch (_) {
     // Defensive cleanup: only reachable if wiring the RPC clients fails,
     // which cannot happen with a successfully started Surfnet.

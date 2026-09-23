@@ -129,6 +129,7 @@ BigInt _divideChecked(
 
   final quotient = numerator ~/ denominator;
   final remainder = numerator.remainder(denominator);
+
   if (remainder == BigInt.zero) return quotient;
 
   return switch (rounding) {

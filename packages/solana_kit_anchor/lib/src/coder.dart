@@ -72,6 +72,7 @@ class AnchorCoder {
     final instruction = _instruction(name);
     final buffer = BytesBuilder()
       ..add(_discriminatorBytes(instruction.discriminator));
+
     for (final field in instruction.args) {
       final (encoder, _) = codecFor(field.type);
       _appendEncoded(
@@ -189,8 +190,10 @@ class AnchorCoder {
       }
 
       final payload = base64Decode(log.substring('Program data: '.length));
+
       for (final entry in idl.events.entries) {
         final discriminator = entry.value.discriminator;
+
         if (!startsWithDiscriminator(payload, discriminator)) {
           continue;
         }
@@ -213,6 +216,7 @@ class AnchorCoder {
 
   AnchorIdlInstruction _instruction(String name) {
     final instruction = idl.instructions[name];
+
     if (instruction == null) {
       throw ArgumentError.value(name, 'name', 'Unknown Anchor IDL instruction');
     }
@@ -221,6 +225,7 @@ class AnchorCoder {
 
   AnchorIdlAccount _account(String name) {
     final account = idl.accounts[name];
+
     if (account == null) {
       throw ArgumentError.value(name, 'name', 'Unknown Anchor IDL account');
     }
@@ -229,6 +234,7 @@ class AnchorCoder {
 
   AnchorIdlTypeDef _definitionFor(String name) {
     final definition = idl.types[name];
+
     if (definition == null) {
       throw ArgumentError.value(
         name,
@@ -277,6 +283,7 @@ class AnchorCoder {
   (Encoder<Object?>, Decoder<Object?>) codecFor(AnchorIdlType type) {
     final cacheKey = _typeCacheKey(type);
     final cached = _typeCache[cacheKey];
+
     if (cached != null) return cached;
 
     final (encoder, decoder) = switch (type) {
@@ -411,6 +418,7 @@ Uint8List _discriminatorBytes(List<int> discriminator) =>
 /// Validates [data] against [discriminator] and returns the bytes after it.
 Uint8List _stripDiscriminator(List<int> discriminator, List<int> data) {
   final bytes = Uint8List.fromList(data);
+
   for (var i = 0; i < discriminator.length; i++) {
     if (bytes.length <= i || bytes[i] != discriminator[i]) {
       throw AnchorDiscriminatorMismatch(
@@ -425,6 +433,7 @@ Uint8List _stripDiscriminator(List<int> discriminator, List<int> data) {
 /// Returns true when [data] starts with [discriminator].
 bool startsWithDiscriminator(List<int> data, List<int> discriminator) {
   if (data.length < discriminator.length) return false;
+
   for (var i = 0; i < discriminator.length; i++) {
     if (data[i] != discriminator[i]) return false;
   }

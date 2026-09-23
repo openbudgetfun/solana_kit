@@ -30,6 +30,7 @@ TransactionMessage setTransactionMessageConfig(
   if (config.computeUnitLimit != null) {
     assertIsValidComputeUnitLimit(config.computeUnitLimit!);
   }
+
   if (config.heapSize != null) {
     assertIsValidHeapSize(config.heapSize!);
   }
@@ -44,6 +45,7 @@ TransactionMessage setTransactionMessageConfig(
     priorityFeeLamports:
         config.priorityFeeLamports ?? current?.priorityFeeLamports,
   );
+
   if (merged.isEmpty) {
     return current == null
         ? transactionMessage
@@ -63,15 +65,19 @@ List<CompiledTransactionConfigValue> getTransactionConfigValues([
   final computeUnitLimit = config?.computeUnitLimit;
   final loadedAccountsDataSizeLimit = config?.loadedAccountsDataSizeLimit;
   final heapSize = config?.heapSize;
+
   if (priorityFeeLamports != null) {
     values.add(CompiledTransactionConfigValue.u64(priorityFeeLamports));
   }
+
   if (computeUnitLimit != null) {
     values.add(CompiledTransactionConfigValue.u32(computeUnitLimit));
   }
+
   if (loadedAccountsDataSizeLimit != null) {
     values.add(CompiledTransactionConfigValue.u32(loadedAccountsDataSizeLimit));
   }
+
   if (heapSize != null) {
     values.add(CompiledTransactionConfigValue.u32(heapSize));
   }
@@ -81,15 +87,19 @@ List<CompiledTransactionConfigValue> getTransactionConfigValues([
 /// Returns the v1 transaction config mask for [config].
 int getTransactionConfigMask([V1TransactionConfig? config]) {
   var mask = 0;
+
   if (config?.priorityFeeLamports != null) {
     mask |= transactionConfigPriorityFeeLamportsBitMask;
   }
+
   if (config?.computeUnitLimit != null) {
     mask |= transactionConfigComputeUnitLimitBitMask;
   }
+
   if (config?.loadedAccountsDataSizeLimit != null) {
     mask |= transactionConfigLoadedAccountsDataSizeLimitBitMask;
   }
+
   if (config?.heapSize != null) {
     mask |= transactionConfigHeapSizeBitMask;
   }
@@ -99,6 +109,7 @@ int getTransactionConfigMask([V1TransactionConfig? config]) {
 /// Returns true when [mask] indicates a priority fee value.
 bool transactionConfigMaskHasPriorityFee(int mask) {
   final priorityFeeBits = mask & transactionConfigPriorityFeeLamportsBitMask;
+
   if (priorityFeeBits == 1 || priorityFeeBits == 2) {
     throw SolanaError(
       SolanaErrorCode.transactionInvalidConfigMaskPriorityFeeBits,

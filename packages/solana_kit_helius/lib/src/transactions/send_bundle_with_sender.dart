@@ -65,6 +65,7 @@ Future<List<String>> sendBundleWithSender(
   if (transactions.isEmpty) {
     throw ArgumentError('Bundle must contain at least one transaction');
   }
+
   if (transactions.length > _maxBundleSize) {
     throw ArgumentError(
       'Bundle supports at most $_maxBundleSize transactions, got '
@@ -103,6 +104,7 @@ Future<List<String>> sendBundleWithSender(
   }
 
   final body = jsonDecode(response.body);
+
   if (body is Map<String, Object?> && body['error'] != null) {
     throw StateError('Sender bundle error: ${body['error']}');
   }
@@ -136,11 +138,14 @@ Future<void> _pollSignature(
       {'searchTransactionHistory': true},
     ]);
     final response = result as Map<String, Object?>?;
+
     if (response != null) {
       final value = response['value'] as List<Object?>?;
+
       if (value != null && value.isNotEmpty && value[0] != null) {
         final status = value[0]! as Map<String, Object?>;
         final error = status['err'];
+
         if (error != null) throw getSolanaErrorFromTransactionError(error);
 
         final confirmationStatus = status['confirmationStatus'] as String?;

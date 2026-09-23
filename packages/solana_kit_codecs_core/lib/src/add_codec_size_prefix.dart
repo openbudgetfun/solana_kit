@@ -34,11 +34,13 @@ Encoder<TFrom> addEncoderSizePrefix<TFrom>(
     FixedSizeEncoder<num>(:final fixedSize) => fixedSize,
     VariableSizeEncoder<num>(:final maxSize) => maxSize,
   };
+
   final encoderMaxSize = switch (encoder) {
     FixedSizeEncoder<TFrom>(:final fixedSize) => fixedSize,
     VariableSizeEncoder<TFrom>(:final maxSize) => maxSize,
   };
   final int? maxSize;
+
   if (prefixMaxSize != null && encoderMaxSize != null) {
     maxSize = prefixMaxSize + encoderMaxSize;
   } else {
@@ -87,6 +89,7 @@ Decoder<TTo> addDecoderSizePrefix<TTo>(
     final size = decodedSize.toInt();
     // Slice the byte array to the contained size if necessary.
     Uint8List sliced;
+
     if (contentStart > 0 || remaining > size) {
       sliced = bytes.sublist(contentStart, contentStart + size);
     } else {
@@ -107,11 +110,13 @@ Decoder<TTo> addDecoderSizePrefix<TTo>(
     FixedSizeDecoder<num>(:final fixedSize) => fixedSize,
     VariableSizeDecoder<num>(:final maxSize) => maxSize,
   };
+
   final decoderMaxSize = switch (decoder) {
     FixedSizeDecoder<TTo>(:final fixedSize) => fixedSize,
     VariableSizeDecoder<TTo>(:final maxSize) => maxSize,
   };
   final int? maxSize;
+
   if (prefixMaxSize != null && decoderMaxSize != null) {
     maxSize = prefixMaxSize + decoderMaxSize;
   } else {

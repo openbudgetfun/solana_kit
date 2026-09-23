@@ -240,7 +240,9 @@ class AccountInfoWithPubkey<TAccount extends AccountInfoBase> {
 
 bool _mapEquals(Map<String, Object?>? a, Map<String, Object?>? b) {
   if (identical(a, b)) return true;
+
   if (a == null || b == null || a.length != b.length) return false;
+
   for (final entry in a.entries) {
     if (!b.containsKey(entry.key) || b[entry.key] != entry.value) return false;
   }

@@ -24,6 +24,7 @@ const List<String> supportedPlans = [
 /// Validates and normalizes a plan name.
 String _validatePlan(String plan) {
   final normalized = plan.toLowerCase();
+
   if (!supportedPlans.contains(normalized)) {
     throw ArgumentError.value(
       plan,
@@ -36,6 +37,7 @@ String _validatePlan(String plan) {
 
 String _validatePeriod(String period) {
   final normalized = period.toLowerCase();
+
   if (normalized != 'monthly' && normalized != 'yearly') {
     throw ArgumentError.value(
       period,
@@ -113,9 +115,11 @@ bool _matchesExistingPlan(
   String period,
 ) {
   if (project.subscription.plan != planToUsagePlan[plan]) return false;
+
   if (plan == 'agent') return true;
   final start = DateTime.tryParse(project.subscription.billingPeriodStart);
   final end = DateTime.tryParse(project.subscription.billingPeriodEnd);
+
   if (start == null || end == null || !end.isAfter(start)) return false;
   final days = end.difference(start).inHours / 24;
   return period == 'yearly'
@@ -160,6 +164,7 @@ Future<SignupResult> authSignup(
     client: httpClient,
     baseUrl: effectiveBaseUrl,
   );
+
   if (projects.isNotEmpty) {
     // User has an existing project: check if already on requested plan
     final project = projects.first;
@@ -208,8 +213,11 @@ Future<SignupResult> authSignup(
       _isBlank(options.firstName) ||
       _isBlank(options.lastName)) {
     final missing = <String>[];
+
     if (_isBlank(options.email)) missing.add('email');
+
     if (_isBlank(options.firstName)) missing.add('firstName');
+
     if (_isBlank(options.lastName)) missing.add('lastName');
     throw StateError(
       'Signup requires contact info. Missing: ${missing.join(', ')}.',

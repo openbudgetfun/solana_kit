@@ -100,6 +100,7 @@ Future<TransactionPlanResult> _traverse(
         isCanceled,
         setCanceled,
       );
+
     case ParallelTransactionPlan():
       return _traverseParallel(
         transactionPlan,
@@ -107,6 +108,7 @@ Future<TransactionPlanResult> _traverse(
         isCanceled,
         setCanceled,
       );
+
     case SingleTransactionPlan():
       return _traverseSingle(transactionPlan, config, isCanceled, setCanceled);
   }
@@ -143,6 +145,7 @@ TransactionPlanExecutor createTransactionPlanExecutorWithConcurrentLeaves(
       plan,
       config,
     );
+
     if (!isSuccessfulTransactionPlanResult(transactionPlanResult)) {
       throw createFailedToExecuteTransactionPlanError(transactionPlanResult);
     }
@@ -166,12 +169,14 @@ Future<TransactionPlanResult> _traverseLeavesConcurrently(
           context,
           transactionPlan.message,
         );
+
         if (result is Map<String, Object?>) {
           return successfulSingleTransactionPlanResult(
             transactionPlan.message,
             {...context, ...result},
           );
         }
+
         if (result is String) {
           return successfulSingleTransactionPlanResult(
             transactionPlan.message,
@@ -183,6 +188,7 @@ Future<TransactionPlanResult> _traverseLeavesConcurrently(
           result as Transaction,
           context,
         );
+
       } on Object catch (error) {
         return failedSingleTransactionPlanResult(
           transactionPlan.message,
@@ -190,11 +196,13 @@ Future<TransactionPlanResult> _traverseLeavesConcurrently(
           context,
         );
       }
+
     case ParallelTransactionPlan(:final plans):
       final results = await Future.wait(
         plans.map((plan) => _traverseLeavesConcurrently(plan, config)),
       );
       return parallelTransactionPlanResult(results);
+
     case SequentialTransactionPlan(:final divisible, :final plans):
       final results = await Future.wait(
         plans.map((plan) => _traverseLeavesConcurrently(plan, config)),
@@ -242,6 +250,7 @@ Future<TransactionPlanResult> _traverseSingle(
   void Function() setCanceled,
 ) async {
   final context = <String, Object?>{};
+
   if (isCanceled()) {
     return canceledSingleTransactionPlanResult(
       transactionPlan.message,
@@ -254,6 +263,7 @@ Future<TransactionPlanResult> _traverseSingle(
       context,
       transactionPlan.message,
     );
+
     if (result is Map<String, Object?>) {
       // The callback returned the context of a successful result; use it
       // as-is, merged with the mutable context (the returned context takes
@@ -263,6 +273,7 @@ Future<TransactionPlanResult> _traverseSingle(
         ...result,
       });
     }
+
     if (result is String) {
       return successfulSingleTransactionPlanResult(transactionPlan.message, {
         ...context,
@@ -274,6 +285,7 @@ Future<TransactionPlanResult> _traverseSingle(
       result as Transaction,
       context,
     );
+
   } on Object catch (error) {
     setCanceled();
     // Signature enrichment must not erase the original failure or prior results
@@ -319,12 +331,15 @@ Object? _findErrorFromTransactionPlanResult(TransactionPlanResult result) {
   switch (result) {
     case FailedSingleTransactionPlanResult(:final error):
       return error;
+
     case SingleTransactionPlanResult():
       return null;
+
     case SequentialTransactionPlanResult(:final plans):
     case ParallelTransactionPlanResult(:final plans):
       for (final plan in plans) {
         final error = _findErrorFromTransactionPlanResult(plan);
+
         if (error != null) {
           return error;
         }
@@ -343,8 +358,10 @@ void _assertDivisibleSequentialPlansOnly(TransactionPlan transactionPlan) {
         );
       }
       plans.forEach(_assertDivisibleSequentialPlansOnly);
+
     case ParallelTransactionPlan(:final plans):
       plans.forEach(_assertDivisibleSequentialPlansOnly);
+
     case SingleTransactionPlan():
       return;
   }
@@ -362,12 +379,14 @@ Future<TransactionPlanResult> passthroughFailedTransactionPlanExecution(
 ) async {
   try {
     return await future;
+
   } on Object catch (error) {
     if (isSolanaError(
       error,
       SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan,
     )) {
       final solanaError = error as SolanaError;
+
       if (solanaError.context.containsKey('transactionPlanResult')) {
         return solanaError.context['transactionPlanResult']!
             as TransactionPlanResult;

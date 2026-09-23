@@ -57,6 +57,7 @@ class Webhook {
     'transactionTypes': transactionTypes,
     'accountAddresses': accountAddresses,
     'webhookType': webhookType.toJson(),
+
     if (authHeader != null) 'authHeader': authHeader,
   };
 }
@@ -110,7 +111,9 @@ class CreateWebhookRequest {
     'transactionTypes': transactionTypes,
     'accountAddresses': accountAddresses,
     'webhookType': webhookType.toJson(),
+
     if (authHeader != null) 'authHeader': authHeader,
+
     if (txnStatus != null) 'txnStatus': txnStatus,
   };
 }
@@ -166,11 +169,17 @@ class UpdateWebhookRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'webhookId': webhookId,
+
     if (webhookUrl != null) 'webhookUrl': webhookUrl,
+
     if (transactionTypes != null) 'transactionTypes': transactionTypes,
+
     if (accountAddresses != null) 'accountAddresses': accountAddresses,
+
     if (webhookType != null) 'webhookType': webhookType!.name,
+
     if (authHeader != null) 'authHeader': authHeader,
+
     if (txnStatus != null) 'txnStatus': txnStatus,
   };
 }

@@ -37,6 +37,7 @@ findSetComputeUnitLimitInstructionIndexAndUnits(
   final index = transactionMessage.instructions.indexWhere(
     _isSetComputeUnitLimitInstruction,
   );
+
   if (index < 0) return null;
 
   final data = transactionMessage.instructions[index].data!;
@@ -56,6 +57,7 @@ findSetComputeUnitPriceInstructionIndexAndMicroLamports(
   final index = transactionMessage.instructions.indexWhere(
     _isSetComputeUnitPriceInstruction,
   );
+
   if (index < 0) return null;
 
   final data = transactionMessage.instructions[index].data!;

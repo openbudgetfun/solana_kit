@@ -32,7 +32,9 @@ class GetPriorityFeeEstimateRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     if (accountKeys != null) 'accountKeys': accountKeys,
+
     if (transaction != null) 'transaction': transaction,
+
     if (options != null) 'options': options!.toJson(),
   };
 }
@@ -83,11 +85,16 @@ class PriorityFeeOptions {
   /// Serializes these options to a JSON map.
   Map<String, Object?> toJson() => {
     if (priorityLevel != null) 'priorityLevel': priorityLevel!.toJson(),
+
     if (includeAllPriorityFeeLevels != null)
       'includeAllPriorityFeeLevels': includeAllPriorityFeeLevels,
+
     if (transactionEncoding != null) 'transactionEncoding': transactionEncoding,
+
     if (lookbackSlots != null) 'lookbackSlots': lookbackSlots,
+
     if (includeVote != null) 'includeVote': includeVote,
+
     if (recommended != null) 'recommended': recommended,
   };
 }
@@ -121,6 +128,7 @@ class GetPriorityFeeEstimateResponse {
   /// Serializes this response to a JSON map.
   Map<String, Object?> toJson() => {
     if (priorityFeeEstimate != null) 'priorityFeeEstimate': priorityFeeEstimate,
+
     if (priorityFeeLevels != null)
       'priorityFeeLevels': priorityFeeLevels!.toJson(),
   };
@@ -172,10 +180,15 @@ class MicroLamportPriorityFeeLevels {
   /// Serializes these levels to a JSON map.
   Map<String, Object?> toJson() => {
     if (min != null) 'min': min,
+
     if (low != null) 'low': low,
+
     if (medium != null) 'medium': medium,
+
     if (high != null) 'high': high,
+
     if (veryHigh != null) 'veryHigh': veryHigh,
+
     if (unsafeMax != null) 'unsafeMax': unsafeMax,
   };
 }

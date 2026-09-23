@@ -306,6 +306,7 @@ class _Channel implements RpcSubscriptionsChannel {
     if (sendError case final Object error) return Future<void>.error(error);
     final request = message as Map<String, Object?>;
     sent.add(request);
+
     if (autoReply && (request['method']! as String).endsWith('Subscribe')) {
       scheduleMicrotask(
         () => reply(

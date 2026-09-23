@@ -152,6 +152,7 @@ async function runBuilder(t, options = {}) {
 
   try {
     await import(`./build_program_artifacts.mjs?case=${++importId}`);
+
   } catch (caught) {
     error = caught;
   }

@@ -5,6 +5,7 @@ Future<void> main(List<String> args) async {
 
   final testDirectories = _discoverPackageTestDirectories();
   final flutterPackages = _discoverFlutterPackages();
+
   if (testDirectories.isEmpty && flutterPackages.isEmpty) {
     stderr.writeln('No package test directories were found.');
     exitCode = 1;
@@ -24,6 +25,7 @@ Future<void> main(List<String> args) async {
 
   final stopwatch = Stopwatch()..start();
   var code = 0;
+
   if (testDirectories.isNotEmpty) {
     final result = await Process.start('dart', [
       'run',
@@ -36,6 +38,7 @@ Future<void> main(List<String> args) async {
     ], mode: ProcessStartMode.inheritStdio);
     code = await result.exitCode;
   }
+
   if (code == 0) {
     code = await _runFlutterCoverage(flutterPackages, testArgs);
   }
@@ -53,6 +56,7 @@ Future<int> _runFlutterCoverage(
   if (packages.isEmpty) return 0;
   final coverageDirectory = Directory('coverage')..createSync(recursive: true);
   final workspaceCoverage = File('${coverageDirectory.path}/lcov.info');
+
   for (final package in packages) {
     final name = package.uri.pathSegments.where((part) => part.isNotEmpty).last;
     final packageCoverage = File(
@@ -75,6 +79,7 @@ Future<int> _runFlutterCoverage(
       mode: ProcessStartMode.inheritStdio,
     );
     final code = await result.exitCode;
+
     if (code != 0) return code;
     _appendPackageCoverage(
       package: package,
@@ -94,13 +99,17 @@ void _appendPackageCoverage({
   final absolutePackagePath = package.absolute.path.replaceAll(r'\', '/');
   final records = packageCoverage.readAsStringSync().split('end_of_record');
   final output = StringBuffer();
+
   for (final record in records) {
     final trimmed = record.trim();
+
     if (trimmed.isEmpty) continue;
     final lines = trimmed.split('\n');
     final sourceIndex = lines.indexWhere((line) => line.startsWith('SF:'));
+
     if (sourceIndex < 0) continue;
     final source = lines[sourceIndex].substring(3).replaceAll(r'\', '/');
+
     final normalized = switch (source) {
       final value when value.startsWith('$absolutePackagePath/lib/') =>
         '$packagePath/${value.substring(absolutePackagePath.length + 1)}',
@@ -108,6 +117,7 @@ void _appendPackageCoverage({
       final value when value.startsWith('lib/') => '$packagePath/$value',
       _ => null,
     };
+
     if (normalized == null) continue;
     lines[sourceIndex] = 'SF:$normalized';
     output
@@ -119,8 +129,10 @@ void _appendPackageCoverage({
 
 List<String> _discoverPackageTestDirectories() {
   final testDirectories = <String>[];
+
   for (final packageDirectory in _packageDirectories()) {
     final testDirectory = Directory('${packageDirectory.path}/test');
+
     if (!testDirectory.existsSync() || !_hasDartTests(testDirectory)) {
       continue;
     }
@@ -147,6 +159,7 @@ List<Directory> _discoverFlutterPackages() => _packageDirectories().where((
 
 List<Directory> _packageDirectories() {
   final packagesDirectory = Directory('packages');
+
   if (!packagesDirectory.existsSync()) return const [];
   return packagesDirectory
       .listSync()
@@ -182,6 +195,7 @@ bool _hasConcurrencyOption(List<String> args) {
 
 int _defaultConcurrency() {
   final processors = Platform.numberOfProcessors;
+
   if (processors < 1) {
     return 1;
   }
@@ -223,6 +237,7 @@ Future<void> _ensurePackageConfig() async {
     'get',
   ], mode: ProcessStartMode.inheritStdio);
   final code = await result.exitCode;
+
   if (code != 0) {
     exitCode = code;
     throw const ProcessException('fvm', ['flutter', 'pub', 'get']);

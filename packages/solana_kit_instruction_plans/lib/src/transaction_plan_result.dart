@@ -334,6 +334,7 @@ TransactionPlanResult? findTransactionPlanResult(
   if (predicate(transactionPlanResult)) {
     return transactionPlanResult;
   }
+
   return switch (transactionPlanResult) {
     SingleTransactionPlanResult() => null,
     SequentialTransactionPlanResult(:final plans) ||
@@ -349,6 +350,7 @@ TransactionPlanResult? _findInResultPlans(
 ) {
   for (final subResult in plans) {
     final found = findTransactionPlanResult(subResult, predicate);
+
     if (found != null) {
       return found;
     }
@@ -388,6 +390,7 @@ bool everyTransactionPlanResult(
   if (!predicate(transactionPlanResult)) {
     return false;
   }
+
   return switch (transactionPlanResult) {
     SingleTransactionPlanResult() => true,
     SequentialTransactionPlanResult(:final plans) ||
@@ -467,8 +470,10 @@ TransactionPlanResultSummary summarizeTransactionPlanResult(
     switch (singleResult) {
       case SuccessfulSingleTransactionPlanResult():
         successfulTransactions.add(singleResult);
+
       case FailedSingleTransactionPlanResult():
         failedTransactions.add(singleResult);
+
       case CanceledSingleTransactionPlanResult():
         canceledTransactions.add(singleResult);
     }

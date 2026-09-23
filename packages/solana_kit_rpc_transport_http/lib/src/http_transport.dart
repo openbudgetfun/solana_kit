@@ -81,8 +81,10 @@ RpcTransport createHttpTransport(
       response = await http.Response.fromStream(
         await effectiveClient.send(request),
       );
+
     } on http.RequestAbortedException {
       throw http.RequestAbortedException();
+
     } on http.ClientException {
       // Client messages and URIs can both contain endpoint credentials.
       throw http.ClientException('HTTP transport request failed.');

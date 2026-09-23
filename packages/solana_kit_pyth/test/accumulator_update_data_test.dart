@@ -13,6 +13,7 @@ List<int> buildUpdate({
     ..addByte(message.length & 0xff)
     ..add(message)
     ..addByte(proof.length);
+
   for (final hash in proof) {
     buffer.add(hash);
   }
@@ -37,6 +38,7 @@ List<int> buildAccumulatorUpdateData({
     ..addByte(vaa.length & 0xff)
     ..add(vaa)
     ..addByte(updates.length);
+
   for (final update in updateBytes) {
     buffer.add(update);
   }
@@ -67,6 +69,7 @@ List<int> buildPriceFeedMessage({
 Uint8List _int64be(BigInt value) {
   final bytes = Uint8List(8);
   var v = value;
+
   for (var i = 7; i >= 0; i--) {
     bytes[i] = (v & BigInt.from(0xff)).toInt();
     v >>= 8;
@@ -77,6 +80,7 @@ Uint8List _int64be(BigInt value) {
 Uint8List _uint64be(BigInt value) {
   final bytes = Uint8List(8);
   var v = value;
+
   for (var i = 7; i >= 0; i--) {
     bytes[i] = (v & BigInt.from(0xff)).toInt();
     v >>= 8;

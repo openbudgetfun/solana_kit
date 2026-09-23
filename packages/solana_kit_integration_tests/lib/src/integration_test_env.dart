@@ -256,10 +256,13 @@ class IntegrationTestEnv {
   /// [signature], or an empty list when unavailable.
   Future<List<String>> transactionLogMessages(Signature signature) async {
     final transaction = await fetchTransaction(signature);
+
     if (transaction == null) return const [];
     final meta = transaction['meta'];
+
     if (meta is! Map<String, Object?>) return const [];
     final logs = meta['logMessages'];
+
     if (logs is! List) return const [];
     return logs.whereType<String>().toList();
   }
@@ -273,6 +276,7 @@ class IntegrationTestEnv {
 String resolveWorkspaceArtifactPath(String relativePath) {
   if (File(relativePath).existsSync()) return relativePath;
   final fromPackage = '../../$relativePath';
+
   if (File(fromPackage).existsSync()) return fromPackage;
   return relativePath;
 }

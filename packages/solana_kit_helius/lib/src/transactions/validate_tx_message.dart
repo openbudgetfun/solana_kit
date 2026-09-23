@@ -23,8 +23,10 @@ bool _isLookupAccount(Object? account) {
 /// [Instruction] or a structurally-similar map, or `null` when it has none.
 List<Object?>? _accountsOf(Object? instruction) {
   if (instruction is Instruction) return instruction.accounts;
+
   if (instruction is Map<String, Object?>) {
     final accounts = instruction['accounts'];
+
     if (accounts is List<Object?>) return accounts;
   }
   return null;
@@ -34,8 +36,10 @@ List<Object?>? _accountsOf(Object? instruction) {
 /// `null` when it cannot be read.
 String? _programAddressOf(Object? instruction) {
   if (instruction is Instruction) return instruction.programAddress.toString();
+
   if (instruction is Map<String, Object?>) {
     final programAddress = instruction['programAddress'];
+
     if (programAddress != null) return programAddress.toString();
   }
   return null;
@@ -54,6 +58,7 @@ void assertNoAddressLookupsOnV1(int version, List<Object?> instructions) {
 
   for (final ix in instructions) {
     final accounts = _accountsOf(ix);
+
     if (accounts == null || !accounts.any(_isLookupAccount)) continue;
 
     throw StateError(

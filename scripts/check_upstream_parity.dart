@@ -9,6 +9,7 @@ Future<void> main(List<String> args) async {
     'scripts/check_upstream_compatibility.dart',
     ...args,
   ]);
+
   if (code != 0) {
     exitCode = code;
     return;
@@ -17,6 +18,7 @@ Future<void> main(List<String> args) async {
   final trackedVersion = RegExp(
     'Latest supported `@solana/kit` version: `($_versionPattern)`',
   ).firstMatch(File('readme.md').readAsStringSync())?.group(1);
+
   if (trackedVersion == null) {
     stderr.writeln(
       'Failed to determine the tracked @solana/kit version from readme.md.',
@@ -34,6 +36,7 @@ Future<void> main(List<String> args) async {
   );
 
   var installedVersion = '';
+
   if (installedPackageJson.existsSync()) {
     final json = jsonDecode(
       installedPackageJson.readAsStringSync(),
@@ -45,6 +48,7 @@ Future<void> main(List<String> args) async {
     stdout.writeln(
       'Preparing upstream @solana/kit@$trackedVersion runtime fixture environment...',
     );
+
     if (cacheDirectory.existsSync()) {
       cacheDirectory.deleteSync(recursive: true);
     }
@@ -64,6 +68,7 @@ Future<void> main(List<String> args) async {
       '--no-fund',
       '--silent',
     ], workingDirectory: cacheDirectory.path);
+
     if (code != 0) {
       exitCode = code;
       return;
@@ -78,6 +83,7 @@ Future<void> main(List<String> args) async {
     },
   );
   stderr.write(node.stderr);
+
   if (node.exitCode != 0) {
     stdout.write(node.stdout);
     exitCode = node.exitCode;
@@ -91,6 +97,7 @@ Future<void> main(List<String> args) async {
     ['test', 'packages/solana_kit/test/upstream_parity_test.dart'],
     environment: {'UPSTREAM_PARITY_FIXTURES_JSON': fixturesJson.path},
   );
+
   if (code != 0) {
     exitCode = code;
     return;

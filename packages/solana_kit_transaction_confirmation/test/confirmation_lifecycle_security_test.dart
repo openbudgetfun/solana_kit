@@ -255,6 +255,7 @@ class _StrategyHarness {
           commitment: Commitment.confirmed,
           signature: 'sig',
         );
+
       case _StrategyKind.nonce:
         return createNonceInvalidationPromiseFactory(
           NonceInvalidationConfig(
@@ -284,6 +285,7 @@ class _StrategyHarness {
           expectedNonceValue: 'nonce',
           nonceAccountAddress: 'address',
         );
+
       case _StrategyKind.blockheight:
         return createBlockHeightExceedencePromiseFactory(
           BlockHeightExceedenceConfig(

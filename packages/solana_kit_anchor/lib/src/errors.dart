@@ -28,6 +28,7 @@ AnchorProgramError anchorProgramError(
   AnchorIdlProgram? idl,
 }) {
   final custom = idl?.errors[code];
+
   if (custom != null) {
     return AnchorProgramError._(
       code,

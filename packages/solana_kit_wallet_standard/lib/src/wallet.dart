@@ -14,6 +14,7 @@ class WalletIcon {
   /// Parses an icon containing base64 SVG, WebP, PNG, or GIF data.
   factory WalletIcon(String dataUri) {
     final match = _pattern.firstMatch(dataUri);
+
     if (match == null) {
       throw FormatException('Invalid Wallet Standard icon data URI', dataUri);
     }
@@ -57,6 +58,7 @@ class WalletAccount {
        chains = List.unmodifiable(chains),
        features = List.unmodifiable(features) {
     if (address.isEmpty) throw ArgumentError.value(address, 'address');
+
     if (publicKey.length != 32) {
       throw ArgumentError.value(publicKey.length, 'publicKey.length');
     }

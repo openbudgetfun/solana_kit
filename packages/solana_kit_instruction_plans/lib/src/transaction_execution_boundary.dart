@@ -164,6 +164,7 @@ TransactionExecutionBoundary createTransactionExecutionBoundary(
     final TransactionPlan transactionPlan;
     try {
       transactionPlan = await config.planTransactions(instructionPlan);
+
     } on Object catch (error) {
       return FailedTransactionExecution(
         stage: TransactionExecutionFailureStage.planning,
@@ -177,6 +178,7 @@ TransactionExecutionBoundary createTransactionExecutionBoundary(
         transactionPlan: transactionPlan,
         transactionPlanResult: transactionPlanResult,
       );
+
     } on Object catch (error) {
       TransactionPlanResult? transactionPlanResult;
       if (isSolanaError(
@@ -185,6 +187,7 @@ TransactionExecutionBoundary createTransactionExecutionBoundary(
       )) {
         final solanaError = error as SolanaError;
         final value = solanaError.context['transactionPlanResult'];
+
         if (value is TransactionPlanResult) {
           transactionPlanResult = value;
         }
@@ -243,6 +246,7 @@ _ExecutionFailure _extractExecutionFailure(
 
   if (error is SolanaError) {
     final abortReason = error.context['abortReason'];
+
     if (abortReason is _TransactionExecutionStageError) {
       return _ExecutionFailure(abortReason.stage, abortReason.error);
     }
@@ -258,12 +262,15 @@ Object? _findFirstSingleTransactionError(TransactionPlanResult result) {
   switch (result) {
     case FailedSingleTransactionPlanResult(:final error):
       return error;
+
     case SingleTransactionPlanResult():
       return null;
+
     case SequentialTransactionPlanResult(:final plans):
     case ParallelTransactionPlanResult(:final plans):
       for (final plan in plans) {
         final error = _findFirstSingleTransactionError(plan);
+
         if (error != null) {
           return error;
         }
@@ -279,6 +286,7 @@ Future<TransactionPlanResult?> _passthroughExecutionFailure(
     return await passthroughFailedTransactionPlanExecution(
       Future<TransactionPlanResult>.error(error),
     );
+
   } on Object {
     return null;
   }

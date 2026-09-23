@@ -39,6 +39,7 @@ getRpcSubscriptionsTransportWithSubscriptionCoalescing(
         fastStableStringify([request.methodName, request.params]) ?? '';
 
     var cachedEntry = cache[subscriptionConfigurationHash];
+
     if (cachedEntry == null) {
       final abortSource = CancellationTokenSource();
       final streamsFuture = transport(
@@ -90,6 +91,7 @@ getRpcSubscriptionsTransportWithSubscriptionCoalescing(
 
     void handleAbort() {
       entry.numSubscribers--;
+
       if (entry.numSubscribers == 0) {
         // Use a microtask to allow re-subscription in the same turn.
         scheduleMicrotask(() {

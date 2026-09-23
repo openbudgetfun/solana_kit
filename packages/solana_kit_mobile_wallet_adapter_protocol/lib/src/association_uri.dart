@@ -73,6 +73,7 @@ AssociationParams parseAssociationUri(Uri uri) {
   final publicKeyBytes = _fromBase64Url(association);
 
   final path = uri.path;
+
   if (path.endsWith('/v1/associate/local')) {
     final port = int.parse(uri.queryParameters['port']!);
     return LocalAssociationParams(
@@ -80,6 +81,7 @@ AssociationParams parseAssociationUri(Uri uri) {
       protocol: protocol,
       port: port,
     );
+
   } else if (path.endsWith('/v1/associate/remote')) {
     final reflectorHost = uri.queryParameters['reflector']!;
     final reflectorIdBytes = _fromBase64Url(uri.queryParameters['id']!);
@@ -102,6 +104,7 @@ AssociationParams parseAssociationUri(Uri uri) {
 Uri _getIntentUri(String methodPathname, String? intentUrlBase) {
   if (intentUrlBase != null) {
     final baseUrl = Uri.tryParse(intentUrlBase);
+
     if (baseUrl == null || baseUrl.scheme != 'https') {
       throw SolanaError(SolanaErrorCode.mwaForbiddenWalletBaseUrl, {
         'url': intentUrlBase,
@@ -125,6 +128,7 @@ Uint8List _fromBase64Url(String encoded) {
   // Restore padding.
   var padded = encoded;
   final remainder = padded.length % 4;
+
   if (remainder != 0) {
     padded = padded.padRight(padded.length + (4 - remainder), '=');
   }
@@ -134,6 +138,7 @@ Uint8List _fromBase64Url(String encoded) {
 /// Converts bytes to an integer (big-endian).
 int _bytesToInt(Uint8List bytes) {
   var result = 0;
+
   for (var i = 0; i < bytes.length; i++) {
     result = (result << 8) | bytes[i];
   }

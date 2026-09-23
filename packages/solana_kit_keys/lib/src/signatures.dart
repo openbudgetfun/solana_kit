@@ -47,6 +47,7 @@ bool isSignature(String putativeSignature) {
   try {
     assertIsSignature(putativeSignature);
     return true;
+
   } on Object {
     return false;
   }
@@ -124,6 +125,7 @@ bool verifySignature(
   try {
     final publicKey = ed.PublicKey(publicKeyBytes);
     return ed.verify(publicKey, data, Uint8List.fromList(signature.value));
+
   } on Object {
     return false;
   }
@@ -150,6 +152,7 @@ final BigInt _ed25519FieldPrime = (BigInt.one << 255) - BigInt.from(19);
 /// Rejects weak points, including non-canonical encodings and either sign bit.
 bool _isSmallOrderPoint(Uint8List bytes) {
   var y = BigInt.from(bytes[31] & 0x7f);
+
   for (var index = 30; index >= 0; index--) {
     y = (y << 8) | BigInt.from(bytes[index]);
   }

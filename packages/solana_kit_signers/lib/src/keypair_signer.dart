@@ -42,6 +42,7 @@ class KeyPairSigner implements MessagePartialSigner, TransactionPartialSigner {
     TransactionSignerConfig? config,
   ]) async {
     final results = <Map<Address, SignatureBytes>>[];
+
     for (final transaction in transactions) {
       final signedTransaction = await partiallySignTransaction([
         keyPair,

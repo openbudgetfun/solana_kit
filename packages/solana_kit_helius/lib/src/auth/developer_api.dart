@@ -77,6 +77,7 @@ final class DeveloperProjectDetails {
 
   factory DeveloperProjectDetails.fromJson(Map<String, Object?> json) {
     final rawApiKeys = json['apiKeys'];
+
     if (rawApiKeys is! List) {
       throw const FormatException('Expected apiKeys to be an array');
     }
@@ -126,6 +127,7 @@ Future<List<DeveloperProjectSummary>> developerListProjects(
     client: client,
     baseUrl: baseUrl,
   );
+
   if (result is! List) {
     throw const FormatException('Expected projects to be an array');
   }
@@ -181,9 +183,11 @@ Future<Object?> _developerApiRequest(
   String baseUrl = heliusDeveloperApiUrl,
 }) async {
   final baseUri = Uri.parse(baseUrl);
+
   if (!baseUri.isAbsolute || baseUri.host.isEmpty) {
     throw ArgumentError.value(baseUrl, 'baseUrl', 'must be an absolute URL');
   }
+
   if (baseUri.scheme != 'https' && baseUri.scheme != 'http') {
     throw ArgumentError.value(
       baseUrl,
@@ -205,7 +209,9 @@ Future<Object?> _developerApiRequest(
         : <String, String>{'User-Agent': userAgent};
     final headers = <String, String>{
       'accept': 'application/json',
+
       if (body != null) 'content-type': 'application/json',
+
       if (jwt != null) 'Authorization': 'Bearer $jwt',
       ...?userAgentHeader,
     };
@@ -216,6 +222,7 @@ Future<Object?> _developerApiRequest(
             body: body == null ? null : jsonEncode(body),
           )
         : await httpClient.get(uri, headers: headers);
+
     if (response.statusCode < 200 || response.statusCode >= 300) {
       final responseMessage = response.body.length <= 4096
           ? response.body
@@ -246,6 +253,7 @@ Map<String, Object?> _requireMap(Map<String, Object?> json, String key) {
 
 String _requireString(Map<String, Object?> json, String key) {
   final value = json[key];
+
   if (value is! String || value.isEmpty) {
     throw FormatException('Expected $key to be a non-empty string');
   }
@@ -254,6 +262,7 @@ String _requireString(Map<String, Object?> json, String key) {
 
 bool _requireBool(Map<String, Object?> json, String key) {
   final value = json[key];
+
   if (value is! bool) throw FormatException('Expected $key to be a boolean');
   return value;
 }

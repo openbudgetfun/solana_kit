@@ -15,6 +15,7 @@ class SlotRange {
   /// Converts this to a JSON map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{'firstSlot': firstSlot};
+
     if (lastSlot != null) json['lastSlot'] = lastSlot;
     return json;
   }
@@ -52,8 +53,11 @@ class GetBlockProductionConfig {
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
+
     if (commitment != null) json['commitment'] = commitment!.name;
+
     if (identity != null) json['identity'] = identity!.value;
+
     if (range != null) json['range'] = range!.toJson();
     return json;
   }

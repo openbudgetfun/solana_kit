@@ -78,6 +78,7 @@ class HermesPrice {
 
 ParsedHermesPriceMetadata? _parseMetadata(Object? json) {
   if (json == null) return null;
+
   if (json is! Map<String, Object?>) {
     throw ArgumentError.value(json, 'metadata', 'Expected a JSON object');
   }
@@ -346,6 +347,7 @@ Map<String, Object?> _object(Object? json, String field) {
 
 BigInt _parseBigint(Object? value, String field) {
   if (value is int) return BigInt.from(value);
+
   if (value is String) return BigInt.parse(value);
   throw ArgumentError.value(value, field, 'Expected a decimal string');
 }
@@ -360,7 +362,9 @@ int? _optionalInt(Object? value, String field) =>
 
 bool _listsEqual(List<String> a, List<String> b) {
   if (identical(a, b)) return true;
+
   if (a.length != b.length) return false;
+
   for (var i = 0; i < a.length; i++) {
     if (a[i] != b[i]) return false;
   }
@@ -369,7 +373,9 @@ bool _listsEqual(List<String> a, List<String> b) {
 
 bool _parsedEquals(List<HermesPriceFeed>? a, List<HermesPriceFeed>? b) {
   if (identical(a, b)) return true;
+
   if (a == null || b == null || a.length != b.length) return false;
+
   for (var i = 0; i < a.length; i++) {
     if (a[i] != b[i]) return false;
   }

@@ -47,6 +47,7 @@ Future<PublicationAttestation> createAttestationPayload(
   final signature = payloadBytes.length >= 64
       ? Uint8List.sublistView(payloadBytes, 0, 64)
       : payloadBytes;
+
   if (signature.length != 64) {
     throw PublisherCliException(
       'Invalid signature length: expected 64, got ${signature.length}',

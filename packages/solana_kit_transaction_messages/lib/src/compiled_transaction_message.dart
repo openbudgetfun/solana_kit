@@ -77,8 +77,11 @@ class CompiledInstruction {
 
 bool _listEquals<T>(List<T>? a, List<T>? b) {
   if (identical(a, b)) return true;
+
   if (a == null || b == null) return a == b;
+
   if (a.length != b.length) return false;
+
   for (var i = 0; i < a.length; i++) {
     if (a[i] != b[i]) return false;
   }
@@ -87,8 +90,11 @@ bool _listEquals<T>(List<T>? a, List<T>? b) {
 
 bool _uint8ListEquals(Uint8List? a, Uint8List? b) {
   if (identical(a, b)) return true;
+
   if (a == null || b == null) return a == b;
+
   if (a.length != b.length) return false;
+
   for (var i = 0; i < a.length; i++) {
     if (a[i] != b[i]) return false;
   }

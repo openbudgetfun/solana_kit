@@ -4,6 +4,7 @@ import 'dart:io';
 
 void main(List<String> args) {
   final mode = args.isEmpty ? '--check' : args.single;
+
   if (mode != '--check' && mode != '--write') {
     stderr.writeln(
       'Usage: dart run scripts/workspace_doc_drift.dart [--check|--write]',
@@ -13,6 +14,7 @@ void main(List<String> args) {
   }
 
   final publishingGuide = File('docs/publishing-guide.md');
+
   if (!publishingGuide.existsSync()) {
     stderr.writeln('Missing required file: ${publishingGuide.path}');
     exitCode = 2;
@@ -47,6 +49,7 @@ void main(List<String> args) {
   final sortedPackages = packages.toList()..sort();
   final sortedInternalPackages = internalPackages.toList()..sort();
   final graphLines = <String>[];
+
   for (final package in sortedPackages) {
     final deps =
         (packageDependencies[package] ?? const <String>{})
@@ -113,12 +116,14 @@ String _replaceBlock(
 ) {
   final start = input.indexOf(startMarker);
   final end = input.indexOf(endMarker);
+
   if (start == -1 && end == -1) {
     stdout.writeln(
       'Workspace documentation blocks are not configured in $path; skipping.',
     );
     return input;
   }
+
   if (start == -1 || end == -1 || end < start) {
     stderr.writeln('Incomplete workspace documentation markers in $path');
     exit(3);
@@ -131,6 +136,7 @@ String _replaceBlock(
 String _readPackageName(List<String> lines, String path) {
   for (final line in lines) {
     final match = RegExp(r'^name:\s*([^\s#]+)').firstMatch(line);
+
     if (match != null) return match.group(1)!;
   }
   stderr.writeln('Failed to parse package name from $path');
@@ -140,14 +146,18 @@ String _readPackageName(List<String> lines, String path) {
 Set<String> _readDependencies(List<String> lines) {
   final dependencies = <String>{};
   var inDependencies = false;
+
   for (final line in lines) {
     if (RegExp(r'^dependencies:\s*$').hasMatch(line)) {
       inDependencies = true;
       continue;
     }
+
     if (!inDependencies) continue;
+
     if (line.isNotEmpty && !line.startsWith(' ')) break;
     final match = RegExp(r'^\s{2}([A-Za-z0-9_]+):').firstMatch(line);
+
     if (match != null) dependencies.add(match.group(1)!);
   }
   return dependencies;

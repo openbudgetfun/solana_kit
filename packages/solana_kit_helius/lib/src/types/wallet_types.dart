@@ -98,9 +98,13 @@ class GetHistoryRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'address': address,
+
     if (before != null) 'before': before,
+
     if (until != null) 'until': until,
+
     if (limit != null) 'limit': limit,
+
     if (type != null) 'type': type,
   };
 }
@@ -141,8 +145,11 @@ class GetTransfersRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'address': address,
+
     if (before != null) 'before': before,
+
     if (until != null) 'until': until,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -223,8 +230,11 @@ class GetBalanceAtRequest {
   Map<String, Object?> toJson() => {
     'wallet': wallet,
     'mint': mint,
+
     if (time != null) 'time': time,
+
     if (datetime != null) 'datetime': datetime,
+
     if (slot != null) 'slot': slot,
   };
 }
@@ -260,6 +270,7 @@ class BalanceAtSource {
   /// Serializes this source to a JSON map.
   Map<String, Object?> toJson() => {
     'slot': slot,
+
     if (blockTime != null) 'blockTime': blockTime,
     'signature': signature,
   };
@@ -339,6 +350,7 @@ class GetBalanceAtResponse {
     'balanceRaw': balanceRaw,
     'decimals': decimals,
     'requested': requested.toJson(),
+
     if (asOf != null) 'asOf': asOf!.toJson(),
   };
 }
@@ -374,7 +386,9 @@ class GetBalanceAtRequested {
   /// Serializes this echo to a JSON map.
   Map<String, Object?> toJson() => {
     if (time != null) 'time': time,
+
     if (slot != null) 'slot': slot,
+
     if (datetime != null) 'datetime': datetime,
   };
 }
@@ -410,7 +424,9 @@ class Identity {
   /// Serializes this identity to a JSON map.
   Map<String, Object?> toJson() => {
     if (name != null) 'name': name,
+
     if (pfpUrl != null) 'pfpUrl': pfpUrl,
+
     if (domain != null) 'domain': domain,
     'socials': socials,
   };
@@ -481,6 +497,7 @@ class WalletTokenBalance {
     'mint': mint,
     'amount': amount,
     'decimals': decimals,
+
     if (tokenAccount != null) 'tokenAccount': tokenAccount,
   };
 }
@@ -556,10 +573,12 @@ class WalletTransfer {
   /// Serializes this transfer to a JSON map.
   Map<String, Object?> toJson() => {
     'signature': signature,
+
     if (timestamp != null) 'timestamp': timestamp,
     'from': from,
     'to': to,
     'amount': amount,
+
     if (mint != null) 'mint': mint,
   };
 }
@@ -627,6 +646,7 @@ class FundedByTransaction {
     'signature': signature,
     'source': source,
     'amount': amount,
+
     if (timestamp != null) 'timestamp': timestamp,
   };
 }

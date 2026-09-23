@@ -57,19 +57,25 @@ Future<void> main(List<String> args) async {
       case '--check':
       case '--write':
         mode = args[i].substring(2);
+
       case '--dist-tag':
         if (++i >= args.length) _usage('missing value after --dist-tag');
         distTag = args[i];
+
       case '--allow-downgrade':
         allowDowngrade = true;
+
       case '--format':
         if (++i >= args.length) _usage('missing value after --format');
+
         if (args[i] != 'json') _usage("unsupported --format '${args[i]}'");
         jsonOutput = true;
+
       default:
         _usage("unknown argument '${args[i]}'");
     }
   }
+
   if (RegExp('[^A-Za-z0-9_-]').hasMatch(distTag)) {
     _usage("invalid dist-tag '$distTag'");
   }
@@ -92,12 +98,14 @@ Future<void> main(List<String> args) async {
         distTag: distTag,
         status: 'in-sync',
       );
+
       if (!jsonOutput) {
         stdout.writeln(
           'Tracked $_trackedKey version ${tracker.version} matches the npm '
           "'$distTag' dist-tag.",
         );
       }
+
     case _VersionRelation.ahead:
       if (mode == 'write') {
         await _applyPinUpdates(tracker, latest);
@@ -124,6 +132,7 @@ Future<void> main(List<String> args) async {
         );
         exitCode = 1;
       }
+
     case _VersionRelation.behind:
       _report(
         jsonOutput,
@@ -132,6 +141,7 @@ Future<void> main(List<String> args) async {
         distTag: distTag,
         status: 'downgrade',
       );
+
       if (mode == 'write') {
         if (!allowDowngrade) {
           stderr.writeln(
@@ -186,6 +196,7 @@ void _report(
 Future<void> _applyPinUpdates(_TrackedVersion tracker, String latest) async {
   final tag = 'v$latest';
   final commit = _resolveTagCommit(tag);
+
   if (commit == null) {
     stderr.writeln(
       'Tag $tag does not exist on $_upstreamRemote yet, so the pin cannot be '
@@ -210,6 +221,7 @@ Future<void> _applyPinUpdates(_TrackedVersion tracker, String latest) async {
     previous: tracker.version,
     latest: latest,
   );
+
   if (changeset == null) {
     stdout.writeln('changeset: already present for $tag');
   } else {
@@ -226,6 +238,7 @@ String? _resolveTagCommit(String tag) {
     'refs/tags/$tag',
     'refs/tags/$tag^{}',
   ]);
+
   if (result.exitCode != 0) {
     stderr.writeln('git ls-remote failed: ${result.stderr}');
     return null;
@@ -243,8 +256,10 @@ String? _resolveTagCommit(String tag) {
 _VersionRelation _compare(String latest, String tracked) {
   final latestParts = _parseStable(latest);
   final trackedParts = _parseStable(tracked);
+
   for (var i = 0; i < 3; i++) {
     if (latestParts[i] > trackedParts[i]) return _VersionRelation.ahead;
+
     if (latestParts[i] < trackedParts[i]) return _VersionRelation.behind;
   }
   return _VersionRelation.inSync;
@@ -252,6 +267,7 @@ _VersionRelation _compare(String latest, String tracked) {
 
 List<int> _parseStable(String version) {
   final match = _stableVersionPattern.firstMatch(version);
+
   if (match == null) {
     stderr.writeln(
       "'$version' is not a stable semver version; compatibility claims only "
@@ -276,6 +292,7 @@ class _TrackedVersion {
   factory _TrackedVersion.load() {
     const path = 'versions.json';
     final file = File(path);
+
     if (!file.existsSync()) {
       stderr.writeln('Missing $path; run from the workspace root.');
       exit(2);
@@ -283,6 +300,7 @@ class _TrackedVersion {
     final versions =
         jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
     final tracked = versions[_trackedKey];
+
     if (tracked is! String) {
       stderr.writeln('$path has no String "$_trackedKey" entry.');
       exit(2);
@@ -334,20 +352,24 @@ class _ReferenceRepoDocs {
     final checkedPattern = RegExp('last checked `[0-9a-f]{7,40}`');
     var updated = false;
     var found = false;
+
     for (var i = 0; i < lines.length; i++) {
       if (!lines[i].contains('`.repos/kit`')) continue;
       found = true;
       var line = lines[i];
       line = line.replaceAll(tagPattern, 'pinned to tag `$tag`');
+
       if (checkedPattern.hasMatch(line)) {
         line = line.replaceAll(checkedPattern, 'last checked `$commitPrefix`');
       }
+
       if (line != lines[i]) {
         lines[i] = line;
         updated = true;
       }
       break;
     }
+
     if (!found) {
       stderr.writeln(
         '$path: could not find the `.repos/kit` pin line to update. Update it '
@@ -373,6 +395,7 @@ class _Changeset {
     final dashed = latest.replaceAll('.', '-');
     final path = '.changeset/upstream-kit-v$dashed.md';
     final file = File(path);
+
     if (file.existsSync()) return null;
     file.writeAsStringSync('''
 ---
@@ -404,6 +427,7 @@ class _NpmRegistry {
       final response = await request.close().timeout(
         const Duration(seconds: 30),
       );
+
       if (response.statusCode != 200) {
         stderr.writeln(
           '$_registryUrl answered HTTP ${response.statusCode}; cannot compare '
@@ -417,6 +441,7 @@ class _NpmRegistry {
           .timeout(const Duration(seconds: 30));
       final distTags = jsonDecode(body) as Map<String, dynamic>;
       final latest = distTags[distTag];
+
       if (latest is! String) {
         stderr.writeln(
           "npm has no '$distTag' dist-tag for $_trackedKey. Available: "
@@ -425,12 +450,15 @@ class _NpmRegistry {
         exit(2);
       }
       return _NpmRegistry._(latest);
+
     } on TimeoutException {
       stderr.writeln('Timed out contacting the npm registry.');
       exit(2);
+
     } on SocketException catch (error) {
       stderr.writeln('Cannot reach the npm registry: $error');
       exit(2);
+
     } on FormatException catch (error) {
       stderr.writeln('The npm registry returned malformed JSON: $error');
       exit(2);

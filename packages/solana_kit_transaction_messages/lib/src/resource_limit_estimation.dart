@@ -52,6 +52,7 @@ int? getTransactionMessageLoadedAccountsDataSizeLimit(
   final instruction = transactionMessage.instructions
       .where(_isSetLoadedAccountsDataSizeLimitInstruction)
       .firstOrNull;
+
   if (instruction == null) return null;
   return _parseLoadedAccountsDataSizeLimitInstruction(instruction);
 }
@@ -107,6 +108,7 @@ TransactionMessage setTransactionMessageLoadedAccountsDataSizeLimit(
   final instruction = _getSetLoadedAccountsDataSizeLimitInstruction(
     limit: limit,
   );
+
   if (existingIndex == -1) {
     return transactionMessage.copyWith(
       instructions: [...transactionMessage.instructions, instruction],
@@ -190,6 +192,7 @@ estimateAndSetResourceLimitsFactory(
 
     final isV1 = transactionMessage.version == TransactionVersion.v1;
     var loadedAccountsDataSizeLimitIsExplicit = true;
+
     if (isV1) {
       final existingLoadedLimit =
           getTransactionMessageLoadedAccountsDataSizeLimit(transactionMessage);
@@ -206,6 +209,7 @@ estimateAndSetResourceLimitsFactory(
     final estimate = await estimateResourceLimits(transactionMessage);
 
     var message = transactionMessage;
+
     if (!computeUnitLimitIsExplicit) {
       message = setTransactionMessageComputeUnitLimit(
         estimate.computeUnitLimit,

@@ -92,9 +92,11 @@ String sha256Hex(Uint8List bytes) {
 
   for (var block = 0; block < words.length; block += 16) {
     final w = Uint32List(64);
+
     for (var t = 0; t < 16; t++) {
       w[t] = words[block + t];
     }
+
     for (var t = 16; t < 64; t++) {
       final s0 =
           _rotateRight(w[t - 15], 7) ^
@@ -179,6 +181,7 @@ Uint8List _padMessage(Uint8List bytes) {
 Uint32List _parseMessage(Uint8List message) {
   final words = Uint32List(message.length ~/ 4);
   final view = ByteData.sublistView(message);
+
   for (var i = 0; i < words.length; i++) {
     words[i] = view.getUint32(i * 4);
   }
@@ -197,6 +200,7 @@ Uint8List _u32be(int value) {
 String base16Encode(Uint8List bytes) {
   const digits = '0123456789abcdef';
   final out = StringBuffer();
+
   for (final byte in bytes) {
     out
       ..write(digits[(byte >> 4) & 0xf])
@@ -221,6 +225,7 @@ extension SafeSubstring on String {
 Uint8List base64DecodeBytes(String value) {
   try {
     return base64.decode(value);
+
   } on FormatException {
     throw const PublisherCliException('Failed to decode a base64 payload.');
   }
@@ -230,12 +235,14 @@ Uint8List base64DecodeBytes(String value) {
 /// upstream CLI. Returns `null` when no segment can be inferred.
 String? inferFileNameFromUrl(String url) {
   final parsed = Uri.tryParse(url);
+
   if (parsed == null) {
     return null;
   }
   final segments = parsed.pathSegments
       .where((segment) => segment.isNotEmpty)
       .toList();
+
   if (segments.isEmpty) {
     return null;
   }
@@ -246,6 +253,7 @@ String? inferFileNameFromUrl(String url) {
 /// missing.
 String ensureApkFileName(String fileName) {
   final normalized = fileName.trim();
+
   if (normalized.toLowerCase().endsWith('.apk')) {
     return normalized;
   }
@@ -261,6 +269,7 @@ String inferMimeType(String? fileName) {
   final extension = fileName.contains('.')
       ? fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase()
       : '';
+
   return switch (extension) {
     'apk' => apkContentType,
     'png' => 'image/png',
@@ -284,9 +293,11 @@ String normalizeUrl(String value) => _stripTrailingSlash(Uri.parse(value));
 /// the scheme is missing.
 String ensureHttpsUrl(String value) {
   final trimmed = value.trim();
+
   if (trimmed.isEmpty) {
     return trimmed;
   }
+
   if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
     return _stripTrailingSlash(Uri.parse(trimmed));
   }

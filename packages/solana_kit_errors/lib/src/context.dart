@@ -21,9 +21,11 @@ Map<String, Object?> decodeEncodedContext(String encodedContext) {
 
 String _encodeValue(Object? value) {
   if (value == null) return Uri.encodeComponent('null');
+
   if (value is List) {
     return Uri.encodeComponent(value.map(_encodeValue).join(','));
   }
+
   if (value is Map) {
     final json = jsonEncode(value);
     return Uri.encodeComponent(json);
@@ -35,6 +37,7 @@ Object? _decodeValue(String value) {
   if (value == 'null') return null;
   // Try to parse as int.
   final asInt = int.tryParse(value);
+
   if (asInt != null) return asInt;
   // Try to parse as JSON object/array.
   if (value.startsWith('{') || value.startsWith('[')) {

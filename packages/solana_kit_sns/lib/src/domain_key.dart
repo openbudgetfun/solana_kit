@@ -162,6 +162,7 @@ Future<SnsDomainKey> findDomainKey(
   SnsRecordVersion? record,
 }) async {
   final labels = domain.split('.');
+
   if (domain.isEmpty || labels.any((label) => label.isEmpty)) {
     throw ArgumentError.value(
       domain,
@@ -169,6 +170,7 @@ Future<SnsDomainKey> findDomainKey(
       'Domain labels must not be empty',
     );
   }
+
   if (labels.length > 1 && (labels.last == 'sol' || labels.last == 'sns')) {
     throw ArgumentError.value(
       domain,

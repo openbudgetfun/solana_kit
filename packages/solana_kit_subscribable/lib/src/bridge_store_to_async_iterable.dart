@@ -70,10 +70,12 @@ Stream<T> bridgeStoreToAsyncIterable<T>(
         if (shouldYield != null && !shouldYield(state.data as T)) return;
         latest = (value: state.data as T);
         wake();
+
       } else if (state.status == ReactiveStreamState.error) {
         failure = state.error;
         wake();
       }
+
     } on Object catch (error, stackTrace) {
       // Predicates run inside store notifications. Their failures belong to
       // the stream consumer and must release this observer.

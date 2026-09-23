@@ -92,6 +92,7 @@ List<String> _findMarkdownFiles(Directory repoRoot, String? filter) {
       if (entity is Directory)
         'packages/${entity.path.split(Platform.pathSeparator).last}/README.md',
   ];
+
   for (final relativePath in candidates) {
     // codama-renderers-dart is an npm package; its README shows generated
     // Dart output patterns that are not standalone-compilable.
@@ -101,6 +102,7 @@ List<String> _findMarkdownFiles(Directory repoRoot, String? filter) {
     final file = File(
       '${repoRoot.path}${Platform.pathSeparator}$relativePath',
     );
+
     if (file.existsSync()) {
       if (wanted == null || wanted.any(relativePath.toLowerCase().contains)) {
         files.add(relativePath);

@@ -284,19 +284,6 @@ export function getInstructionPageFragment(
     fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-${use("Uint8List", "dartTypedData")}
-${use("immutable", "meta")}
-${use("Encoder", "solanaCodecsCore")}
-${use("Decoder", "solanaCodecsCore")}
-${use("Codec", "solanaCodecsCore")}
-${use("combineCodec", "solanaCodecsCore")}
-${use("transformEncoder", "solanaCodecsCore")}
-${use("transformDecoder", "solanaCodecsCore")}
-${use("getStructEncoder", "solanaCodecsDataStructures")}
-${use("getStructDecoder", "solanaCodecsDataStructures")}
-${use("Address", "solanaAddresses")}
-${use("Instruction", "solanaInstructions")}
-${use("AccountMeta", "solanaInstructions")}
 ${use("AccountRole", "solanaInstructions")}`,
   ];
 
@@ -306,64 +293,27 @@ ${use("AccountRole", "solanaInstructions")}`,
   parts.push(fragment`
 @immutable
 class ${fragmentFromString(dataClassName)} {
-  ${fragmentFromString(dataCtorSignature)}
-
-${fragmentFromString(dataFieldDecls)}
 }`);
 
   // Data encoder/decoder/codec
   parts.push(fragment`
 Encoder<${fragmentFromString(dataClassName)}> ${fragmentFromString(dataEncoderName)}() {
-  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
-${fragmentFromString(encFields)}
-  ]);
-
-  return transformEncoder(
-    structEncoder,
-    (${fragmentFromString(dataClassName)} value) => <String, Object?>{
-${fragmentFromString(toMapFields)}
-    },
-  );
 }
 
-Decoder<${fragmentFromString(dataClassName)}> ${fragmentFromString(dataDecoderName)}() {
-  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-${fragmentFromString(decFields)}
-  ]);
-
-${topLevelDecoder}
 }
 
-Codec<${fragmentFromString(dataClassName)}, ${fragmentFromString(dataClassName)}> ${fragmentFromString(dataCodecName)}() {
-  return combineCodec(${fragmentFromString(dataEncoderName)}(), ${fragmentFromString(dataDecoderName)}());
 }`);
 
   // Instruction builder
   parts.push(fragment`
 /// Creates a [${fragmentFromString(typeName)}] instruction.${fragmentFromString(signerParamDocs ? `\n${signerParamDocs}` : "")}
-Instruction ${fragmentFromString(instrFnName)}({
-  required Address ${fragmentFromString(instrProgramParam)},
-${fragmentFromString(accountParams)}
-${fragmentFromString(argParams)}${fragmentFromString(signerParamDeclarations ? `\n${signerParamDeclarations}` : "")}
 }) {
   final ${instructionDataLocal} = ${fragmentFromString(dataClassName)}(
-${fragmentFromString(dataConstruction)}
-  );
-
-  return Instruction(
-    programAddress: ${fragmentFromString(instrProgramParam)},
-    accounts: [
-${fragmentFromString(accountMetas)}
-    ],
-    data: ${fragmentFromString(dataEncoderName)}().encode(${instructionDataLocal}),
-  );
 }`);
 
   // Parse function
   parts.push(fragment`
 /// Parses a [${fragmentFromString(typeName)}] instruction from raw instruction data.
-${fragmentFromString(dataClassName)} ${fragmentFromString(parseFnName)}(Instruction instruction) {
-  return ${fragmentFromString(dataDecoderName)}().decode(instruction.data!);
 }`);
 
   const result = mergeFragments(parts, (cs) => cs.join("\n"));
@@ -374,6 +324,7 @@ ${fragmentFromString(dataClassName)} ${fragmentFromString(parseFnName)}(Instruct
     result.imports.mergeWith(manifest.decoder.imports);
     result.imports.mergeWith(manifest.type.imports);
   }
+
   for (const defaultValue of argDefaultValues.values()) {
     result.imports.mergeWith(defaultValue.imports);
   }
@@ -423,6 +374,7 @@ function isConstDefaultValue(defaultValue: InstructionArgumentNode["defaultValue
     case "stringValueNode":
     case "noneValueNode":
       return true;
+
     default:
       return false;
   }

@@ -35,6 +35,7 @@ TransactionWithLifetime compileTransaction(
 
   // Create signature map with null for all signers (preserving order).
   final signatures = <Address, SignatureBytes?>{};
+
   for (final signerAddress in transactionSigners) {
     signatures[signerAddress] = null;
   }
@@ -53,6 +54,7 @@ TransactionLifetimeConstraint _compileTransactionLifetimeConstraint(
   TransactionMessage transactionMessage,
 ) {
   final messageLifetimeConstraint = transactionMessage.lifetimeConstraint;
+
   if (messageLifetimeConstraint == null) {
     throw SolanaError(SolanaErrorCode.transactionExpectedBlockhashLifetime);
   }
@@ -69,6 +71,7 @@ TransactionLifetimeConstraint _compileTransactionLifetimeConstraint(
         blockhash: blockhash,
         lastValidBlockHeight: lastValidBlockHeight,
       );
+
     case DurableNonceLifetimeConstraint(:final nonce):
       if (!isTransactionMessageWithDurableNonceLifetime(transactionMessage)) {
         throw SolanaError(SolanaErrorCode.transactionExpectedNonceLifetime);

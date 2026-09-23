@@ -101,6 +101,7 @@ final class _FetchAccountsClient implements ClientWithFetchAccounts {
     FetchAccountConfig? config,
   }) async {
     if (addresses.isEmpty) return [];
+
     if (addresses.length == 1) {
       return [
         await fetchEncodedAccount(_rpc, addresses[0], config: config),

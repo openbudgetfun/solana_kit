@@ -101,6 +101,7 @@ class JupiterOrderRequest {
     }
 
     put('slippageBps', slippageBps);
+
     if (swapMode != null) {
       put(
         'swapMode',
@@ -140,13 +141,16 @@ class JupiterOrderResponse {
   factory JupiterOrderResponse.fromJson(Map<String, Object?> json) {
     BigInt? parseBigInt(Object? value) {
       if (value == null) return null;
+
       if (value is String) return BigInt.tryParse(value);
+
       if (value is int || value is num) return BigInt.parse('$value');
       return null;
     }
 
     int? parseInt(Object? value) {
       if (value is int) return value;
+
       if (value is String) return int.tryParse(value);
       return null;
     }

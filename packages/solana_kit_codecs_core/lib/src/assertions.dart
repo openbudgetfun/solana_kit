@@ -31,6 +31,7 @@ void assertByteArrayHasEnoughBytesForCodec(
   int offset = 0,
 ]) {
   final bytesLength = bytes.length - offset;
+
   if (bytesLength < expected) {
     throw SolanaError(SolanaErrorCode.codecsInvalidByteLength, {
       'bytesLength': bytesLength,

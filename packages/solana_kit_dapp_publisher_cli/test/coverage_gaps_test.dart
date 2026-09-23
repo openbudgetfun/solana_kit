@@ -173,6 +173,7 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
   ) async {
     calls.add('prepareReleaseNftTransaction');
     prepareCalls++;
+
     if (failOnPrepare && (!failOnPrepareOnce || prepareCalls == 1)) {
       throw const _TestFailure('prepare failed');
     }
@@ -884,6 +885,7 @@ Uint8List _webp(String format) {
     ..[9] = 0x45
     ..[10] = 0x42
     ..[11] = 0x50;
+
   for (var i = 0; i < 4; i++) {
     bytes[12 + i] = format.codeUnitAt(i);
   }

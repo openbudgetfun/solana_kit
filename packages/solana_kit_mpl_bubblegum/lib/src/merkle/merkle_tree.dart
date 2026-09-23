@@ -77,6 +77,7 @@ class MerkleTree {
     }
 
     var computedHash = leaf;
+
     for (var i = 0; i < proof.length; i++) {
       if ((leafIndex >> i) & 1 == 0) {
         computedHash = keccak256(concatBytes(computedHash, proof[i]));
@@ -90,11 +91,13 @@ class MerkleTree {
   _MerkleNode _buildTree(List<Uint8List> leaves, int depth) {
     final maxLeaves = 1 << depth;
     final paddedLeaves = List<Uint8List>.filled(maxLeaves, Uint8List(nodeSize));
+
     for (var i = 0; i < leaves.length && i < maxLeaves; i++) {
       paddedLeaves[i] = leaves[i];
     }
 
     var currentLevel = <_MerkleNode>[];
+
     for (var i = 0; i < paddedLeaves.length; i++) {
       final nodeHash = paddedLeaves[i];
       currentLevel.add(
@@ -107,6 +110,7 @@ class MerkleTree {
     // Build empty node cache
     final emptyNodes = <int, Uint8List>{};
     emptyNodes[0] = Uint8List(nodeSize);
+
     for (var i = 1; i <= depth; i++) {
       emptyNodes[i] = keccak256(
         concatBytes(emptyNodes[i - 1]!, emptyNodes[i - 1]!),
@@ -115,6 +119,7 @@ class MerkleTree {
 
     for (var level = 0; level < depth; level++) {
       final nextLevel = <_MerkleNode>[];
+
       for (var i = 0; i < currentLevel.length; i += 2) {
         final left = currentLevel[i];
         final right = i + 1 < currentLevel.length
@@ -133,6 +138,7 @@ class MerkleTree {
 
   static bool _bytesEqual(Uint8List a, Uint8List b) {
     if (a.length != b.length) return false;
+
     for (var i = 0; i < a.length; i++) {
       if (a[i] != b[i]) return false;
     }

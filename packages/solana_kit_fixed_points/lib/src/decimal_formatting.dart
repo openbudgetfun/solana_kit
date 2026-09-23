@@ -32,6 +32,7 @@ double decimalFixedPointToNumber(DecimalFixedPoint value) {
 
 double _pow10Double(int exponent) {
   var result = 1.0;
+
   for (var i = 0; i < exponent; i++) {
     result *= 10;
   }

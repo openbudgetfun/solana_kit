@@ -84,11 +84,13 @@ Future<String> payPaymentLink(
       'must be payment_required',
     );
   }
+
   if (paymentLink.memo != paymentLink.paymentIntentId) {
     throw ArgumentError(
       'paymentLink.memo must match paymentLink.paymentIntentId',
     );
   }
+
   if (paymentLink.amountCents <= 0) {
     throw ArgumentError.value(
       paymentLink.amountCents,

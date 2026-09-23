@@ -108,6 +108,7 @@ class MapRpcApi extends RpcApi {
   @override
   RpcPlan<Object?>? getPlan(String methodName, List<Object?> params) {
     final handler = _methods[methodName];
+
     if (handler == null) {
       return null;
     }
@@ -168,6 +169,7 @@ class Rpc {
     List<Object?> params = const [],
   ]) {
     final plan = api.getPlan(methodName, params);
+
     if (plan == null) {
       throw SolanaError(SolanaErrorCode.rpcApiPlanMissingForRpcMethod, {
         'method': methodName,

@@ -84,6 +84,7 @@ ResolvedPriorityFee resolvePriorityFee(ResolvePriorityFeeInput input) {
 
   if (input.lamportsCap != null && input.units > 0) {
     final cap = _toWholeLamports(input.lamportsCap!);
+
     if (cap != null) {
       final clampedRate =
           (cap * microLamportsPerLamport) ~/ BigInt.from(input.units);

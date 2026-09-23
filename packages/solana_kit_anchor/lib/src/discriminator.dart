@@ -31,6 +31,7 @@ Uint8List eventDiscriminator(String name) => anchorSighash('event', name);
 /// Returns true when [data] starts with [discriminator].
 bool hasDiscriminator(List<int> data, List<int> discriminator) {
   if (data.length < discriminator.length) return false;
+
   for (var i = 0; i < discriminator.length; i++) {
     if (data[i] != discriminator[i]) return false;
   }

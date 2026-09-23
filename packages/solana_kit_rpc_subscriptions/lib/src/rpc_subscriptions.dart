@@ -173,6 +173,7 @@ class RpcSubscriptions {
     List<Object?> params = const [],
   ]) {
     final plan = api.getPlan(notificationName, params);
+
     if (plan == null) {
       throw SolanaError(
         SolanaErrorCode.rpcSubscriptionsCannotCreateSubscriptionPlan,

@@ -24,6 +24,7 @@ class JupiterPriceClient {
   /// omitted from the response by the API.
   Future<Map<Address, JupiterPrice>> getPrices(Iterable<Address> mints) async {
     final ids = mints.toList(growable: false);
+
     if (ids.length > _maxPriceMints) {
       throw ArgumentError.value(
         ids.length,
@@ -37,6 +38,7 @@ class JupiterPriceClient {
         'ids': ids.map((mint) => mint.toString()).join(','),
       },
     );
+
     final json = switch (response) {
       final Map<String, Object?> json => json,
       _ => throw JupiterException(

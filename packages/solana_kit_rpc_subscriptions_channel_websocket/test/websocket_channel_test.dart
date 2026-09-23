@@ -675,6 +675,7 @@ Future<void> _waitFor(
   Duration timeout = const Duration(seconds: 2),
 }) async {
   final deadline = DateTime.now().add(timeout);
+
   while (!condition()) {
     if (DateTime.now().isAfter(deadline)) {
       throw TimeoutException('Condition not met within $timeout');

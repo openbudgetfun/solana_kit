@@ -42,11 +42,13 @@ class DigitalAssetLinksApiImpl(
 
             "verifyCallingPackage" -> {
                 val clientIdentityUri = call.argument<String>("clientIdentityUri")
+
                 if (clientIdentityUri == null) {
                     result.error("INVALID_ARGUMENT", "clientIdentityUri is required", null)
                     return
                 }
                 val callingPackage = activityProvider()?.callingPackage
+
                 if (callingPackage == null) {
                     result.success(false)
                     return
@@ -57,6 +59,7 @@ class DigitalAssetLinksApiImpl(
             "verifyPackage" -> {
                 val packageName = call.argument<String>("packageName")
                 val clientIdentityUri = call.argument<String>("clientIdentityUri")
+
                 if (packageName == null || clientIdentityUri == null) {
                     result.error(
                         "INVALID_ARGUMENT",
@@ -70,6 +73,7 @@ class DigitalAssetLinksApiImpl(
 
             "getCallingPackageUid" -> {
                 val callingPackage = activityProvider()?.callingPackage
+
                 if (callingPackage == null) {
                     result.error("NO_CALLING_PACKAGE", "No calling package available", null)
                     return
@@ -79,6 +83,7 @@ class DigitalAssetLinksApiImpl(
 
             "getUidForPackage" -> {
                 val packageName = call.argument<String>("packageName")
+
                 if (packageName == null) {
                     result.error("INVALID_ARGUMENT", "packageName is required", null)
                     return
@@ -102,6 +107,7 @@ class DigitalAssetLinksApiImpl(
         val verified =
             try {
                 verifier.verify(packageName, URI.create(clientIdentityUri))
+
             } catch (e: AndroidAppPackageVerifier.CouldNotVerifyPackageException) {
                 Log.w(
                     TAG,
@@ -109,6 +115,7 @@ class DigitalAssetLinksApiImpl(
                     e,
                 )
                 false
+
             } catch (e: IllegalArgumentException) {
                 Log.w(
                     TAG,
@@ -127,12 +134,14 @@ class DigitalAssetLinksApiImpl(
         val packageManager = context.packageManager
         try {
             val uid =
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     packageManager.getPackageUid(packageName, 0)
                 } else {
                     packageManager.getApplicationInfo(packageName, 0).uid
                 }
             result.success(uid)
+
         } catch (e: PackageManager.NameNotFoundException) {
             result.error("PACKAGE_NOT_FOUND", "Package not found: $packageName", null)
         }

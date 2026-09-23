@@ -47,10 +47,15 @@ class CreateSmartTransactionInput {
   /// Serializes this input to a JSON map.
   Map<String, Object?> toJson() => {
     'instructions': instructions,
+
     if (signers != null) 'signers': signers,
+
     if (feePayer != null) 'feePayer': feePayer,
+
     if (computeUnitLimit != null) 'computeUnitLimit': computeUnitLimit,
+
     if (computeUnitPrice != null) 'computeUnitPrice': computeUnitPrice,
+
     if (lookupTableAddresses != null)
       'lookupTableAddresses': lookupTableAddresses,
   };
@@ -82,6 +87,7 @@ class SmartTransactionResult {
   /// Serializes this result to a JSON map.
   Map<String, Object?> toJson() => {
     'signature': signature,
+
     if (confirmationStatus != null) 'confirmationStatus': confirmationStatus,
   };
 }
@@ -132,10 +138,15 @@ class SendSmartTransactionInput {
   /// Serializes this input to a JSON map.
   Map<String, Object?> toJson() => {
     'instructions': instructions,
+
     if (signers != null) 'signers': signers,
+
     if (feePayer != null) 'feePayer': feePayer,
+
     if (computeUnitPrice != null) 'computeUnitPrice': computeUnitPrice,
+
     if (skipPreflight != null) 'skipPreflight': skipPreflight,
+
     if (maxRetries != null) 'maxRetries': maxRetries,
   };
 }
@@ -198,8 +209,11 @@ class PollTransactionConfirmationRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'signature': signature,
+
     if (timeoutMs != null) 'timeoutMs': timeoutMs,
+
     if (intervalMs != null) 'intervalMs': intervalMs,
+
     if (commitment != null) 'commitment': commitment!.toJson(),
   };
 }

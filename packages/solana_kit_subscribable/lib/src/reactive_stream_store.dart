@@ -233,6 +233,7 @@ class ReactiveStreamStore<T> {
           _handleError(error, signal);
         },
       );
+
     } on Object catch (error) {
       if (_isDisposed || signal.isCancelled || _activeSource?.token != signal) {
         return;

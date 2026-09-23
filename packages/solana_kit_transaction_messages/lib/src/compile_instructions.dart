@@ -7,6 +7,7 @@ import 'package:solana_kit_transaction_messages/src/compiled_transaction_message
 
 Map<String, int> _getAccountIndex(List<OrderedAccount> orderedAccounts) {
   final out = <String, int>{};
+
   for (var i = 0; i < orderedAccounts.length; i++) {
     out[orderedAccounts[i].address.value] = i;
   }

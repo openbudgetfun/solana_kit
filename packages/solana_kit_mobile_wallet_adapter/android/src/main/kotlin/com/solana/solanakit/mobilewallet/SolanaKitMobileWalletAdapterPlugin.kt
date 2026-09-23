@@ -62,11 +62,13 @@ class SolanaKitMobileWalletAdapterPlugin :
         when (call.method) {
             "launchIntent" -> {
                 val uri = call.argument<String>("uri")
+
                 if (uri == null) {
                     result.error("INVALID_ARGUMENT", "URI is required", null)
                     return
                 }
                 val currentActivity = activity
+
                 if (currentActivity == null) {
                     result.error("NO_ACTIVITY", "No foreground activity available to launch wallet intent", null)
                     return
@@ -75,8 +77,10 @@ class SolanaKitMobileWalletAdapterPlugin :
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
                     currentActivity.startActivity(intent)
                     result.success(null)
+
                 } catch (e: ActivityNotFoundException) {
                     result.error("ERROR_WALLET_NOT_FOUND", "No installed wallet can handle this intent", null)
+
                 } catch (e: Exception) {
                     result.error("LAUNCH_FAILED", e.message, null)
                 }

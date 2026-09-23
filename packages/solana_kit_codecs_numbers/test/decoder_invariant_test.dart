@@ -79,6 +79,7 @@ void main() {
       64,
       255,
     ];
+
     for (final length in lengths) {
       for (var trial = 0; trial < 25; trial++) {
         final bytes = Uint8List.fromList(
@@ -90,12 +91,15 @@ void main() {
           0,
           length ~/ 2,
           length,
+
           if (length > 0) length - 1,
           length + 1,
         };
+
         for (final offset in offsets) {
           final Uint8List view;
           final int viewOffset;
+
           if (offset <= length) {
             view = Uint8List.sublistView(bytes, offset);
             viewOffset = 0;
@@ -107,6 +111,7 @@ void main() {
           try {
             read(view, viewOffset);
             decoded++;
+
           } on SolanaError {
             // The documented rejection path.
           } catch (error) {

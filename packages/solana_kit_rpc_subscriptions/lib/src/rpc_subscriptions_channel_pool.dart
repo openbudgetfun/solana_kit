@@ -61,6 +61,7 @@ RpcSubscriptionsChannelCreator getChannelPoolingChannelCreator(
 
     void destroyPoolEntry() {
       final index = pool.entries.indexOf(poolEntry);
+
       if (index != -1) {
         pool.entries.removeAt(index);
       }

@@ -296,6 +296,7 @@ class SnsRecordV2 {
         header.stalenessValidation.identifierLength +
         header.rightOfAssociationValidation.identifierLength;
     final endOffset = startOffset + header.contentLength;
+
     if (endOffset > data.length) {
       throw ArgumentError.value(
         this,
@@ -411,9 +412,11 @@ String decodeRecordContent({
   if (_utf8EncodedRecords.contains(record)) {
     return getUtf8Decoder().decode(content);
   }
+
   if (record == SnsRecord.sol) {
     return getAddressDecoder().decode(content).value;
   }
+
   if (_evmRecords.contains(record)) {
     if (content.length != 20) {
       throw ArgumentError.value(
@@ -442,9 +445,11 @@ Uint8List encodeRecordContent({
   if (_utf8EncodedRecords.contains(record)) {
     return getUtf8Encoder().encode(content);
   }
+
   if (record == SnsRecord.sol) {
     return getAddressEncoder().encode(address(content));
   }
+
   if (_evmRecords.contains(record)) {
     if (content.length != 42 || !content.startsWith('0x')) {
       throw ArgumentError.value(
@@ -454,6 +459,7 @@ Uint8List encodeRecordContent({
       );
     }
     final bytes = Uint8List(20);
+
     for (var i = 0; i < 20; i++) {
       bytes[i] = int.parse(content.substring(2 + i * 2, 4 + i * 2), radix: 16);
     }

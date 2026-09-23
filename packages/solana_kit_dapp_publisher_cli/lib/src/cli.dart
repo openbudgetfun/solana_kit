@@ -193,9 +193,11 @@ Future<int> runDappStoreCli(
 ) async {
   try {
     return await _run(arguments, dependencies);
+
   } on PublisherCliException catch (error) {
     _safePrintError(dependencies, error.message);
     return 1;
+
   } on Object catch (error) {
     _safePrintError(dependencies, 'An unexpected error occurred: $error');
     return 1;
@@ -212,6 +214,7 @@ Future<int> _run(List<String> arguments, DappStoreCliDependencies deps) async {
     deps.write('dapp-store $dappStoreCliVersion');
     return 0;
   }
+
   if (arguments.contains('--help') || arguments.contains('-h')) {
     _printHelp(deps);
     return 0;
@@ -278,6 +281,7 @@ Future<int> _runNewVersion(
     localDev: options.localDev,
     rpcUrl: options.rpcUrl,
   );
+
   if (balanceWarning != null) {
     deps.write('Warning: $balanceWarning');
   }
@@ -407,6 +411,7 @@ Future<int> _executeWorkflow({
       ..write('Publication session: ${result.publicationSessionId}')
       ..write('Release: ${result.releaseId}');
   }
+
   for (final line in extractPublicationSummaryLines(result)) {
     deps.write(line);
   }
@@ -416,6 +421,7 @@ Future<int> _executeWorkflow({
 /// Builds the publication source from the parsed options.
 PublicationSource buildPublicationSource(NewVersionCliOptions options) {
   final apkFile = options.apkFile;
+
   if (apkFile != null) {
     return ApkFileSource(
       filePath: apkFile,
@@ -423,6 +429,7 @@ PublicationSource buildPublicationSource(NewVersionCliOptions options) {
     );
   }
   final apkUrl = options.apkUrl;
+
   if (apkUrl == null) {
     throw const PublisherCliException(
       '`--apk-file` or `--apk-url` is required.',
@@ -451,6 +458,7 @@ void validateNewVersionArgs({
 }) {
   final apkSourceCount =
       (options.apkFile != null ? 1 : 0) + (options.apkUrl != null ? 1 : 0);
+
   if (apkSourceCount != 1) {
     throw const PublisherCliException(
       'Specify exactly one of `--apk-file` or `--apk-url`.',
@@ -468,6 +476,7 @@ void validateNewVersionArgs({
   if (options.apkFile != null) {
     final apkPath = options.apkFile!;
     final exists = fileExists?.call(apkPath) ?? File(apkPath).existsSync();
+
     if (!exists) {
       throw PublisherCliException('APK file not found: $apkPath');
     }
@@ -475,6 +484,7 @@ void validateNewVersionArgs({
 
   if (options.apkUrl != null) {
     final parsed = Uri.tryParse(options.apkUrl!);
+
     if (parsed == null || !parsed.hasScheme || parsed.scheme != 'https') {
       throw const PublisherCliException(
         '`--apk-url` must be a valid HTTPS URL.',
@@ -499,6 +509,7 @@ void validateResumeArgs({required ResumeCliOptions options}) {
   );
   final resumeTargetCount =
       (releaseId != null ? 1 : 0) + (sessionId != null ? 1 : 0);
+
   if (resumeTargetCount != 1) {
     throw const PublisherCliException(
       'Specify exactly one of `--release-id` or `--session-id`.',
@@ -587,6 +598,7 @@ ResolvedPortalTargets resolvePortalTargets({
 
 String _normalizeUrl(String value, String label) {
   final parsed = Uri.tryParse(value);
+
   if (parsed == null || !parsed.hasScheme || parsed.host.isEmpty) {
     throw PublisherCliException('Invalid $label: $value');
   }
@@ -608,6 +620,7 @@ String _deriveApiBaseUrl(String portalUrl) {
 
 bool _isLocalhostUrl(String url) {
   final parsed = Uri.tryParse(url);
+
   if (parsed == null) {
     return false;
   }
@@ -634,6 +647,7 @@ Future<SensitiveString> resolveApiKey({
   }
 
   final envValue = _trimToNull(env[envVarName]);
+
   if (envValue != null) {
     return SensitiveString(envValue);
   }
@@ -657,8 +671,10 @@ Future<SensitiveString> readSecretFromStdin({
   }
   final stream = stdinStream ?? stdin.cast<List<int>>();
   final chunks = await stream.toList();
+
   final bytes = <int>[for (final chunk in chunks) ...chunk];
   final value = utf8.decode(bytes).trim();
+
   if (value.isEmpty) {
     throw PublisherCliException(
       _withUpdatedCliDocs('No API key was provided on stdin.'),
@@ -676,22 +692,26 @@ Uint8List parseKeypairFile(
   try {
     final content = fileReader(path);
     final decoded = jsonDecode(utf8.decode(content));
+
     if (decoded is! List || decoded.isEmpty) {
       throw const FormatException('not a keypair array');
     }
     entries = <int>[];
+
     for (final entry in decoded) {
       if (entry is! num) {
         throw const FormatException('non-integer entry');
       }
       entries.add(entry.toInt() & 0xff);
     }
+
   } on Object {
     throw PublisherCliException(
       'Something went wrong when attempting to retrieve the keypair at '
       '$path. Failed to load the signer keypair.',
     );
   }
+
   if (entries.length != 64) {
     throw PublisherCliException(
       'Something went wrong when attempting to retrieve the keypair at '
@@ -721,6 +741,7 @@ List<String> extractPublicationSummaryLines(PublicationWorkflowResult result) {
     (result.collectionMintAddress, 'Collection mint address'),
     (result.hubspotTicketId, 'Ticket ID'),
   ];
+
   for (final (value, label) in entries) {
     if (value != null && value.isNotEmpty) {
       lines.add('$label: $value');
@@ -735,8 +756,10 @@ List<String> extractPublicationSummaryLines(PublicationWorkflowResult result) {
 /// rejects unknown or unexpected arguments.
 Map<String, String?> parseCliFlags(List<String> arguments) {
   final values = <String, String?>{};
+
   for (var i = 0; i < arguments.length; i++) {
     final argument = arguments[i];
+
     if (!argument.startsWith('--')) {
       throw PublisherCliException('Unexpected argument: $argument');
     }
@@ -745,6 +768,7 @@ Map<String, String?> parseCliFlags(List<String> arguments) {
     final name = equalsIndex >= 0
         ? withoutPrefix.substring(0, equalsIndex)
         : withoutPrefix;
+
     if (_valuedFlags.contains(name)) {
       if (equalsIndex >= 0) {
         values[name] = withoutPrefix.substring(equalsIndex + 1);
@@ -757,6 +781,7 @@ Map<String, String?> parseCliFlags(List<String> arguments) {
         values[name] = arguments[i + 1];
         i++;
       }
+
     } else if (_booleanFlags.contains(name)) {
       if (equalsIndex >= 0) {
         throw PublisherCliException(
@@ -790,6 +815,7 @@ void _printError(DappStoreCliDependencies deps, String message) {
 void _safePrintError(DappStoreCliDependencies deps, String message) {
   try {
     _printError(deps, message);
+
   } on Object {
     // The output stream is broken; there is nowhere left to report the error.
   }

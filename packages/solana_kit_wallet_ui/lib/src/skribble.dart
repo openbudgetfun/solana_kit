@@ -62,7 +62,9 @@ Future<Wallet?> showSkribbleWalletPicker({
   Future<void> select(BuildContext routeContext, Wallet wallet) async {
     try {
       await controller.connect(wallet);
+
       if (routeContext.mounted) Navigator.of(routeContext).pop(wallet);
+
     } on Object {
       // The controller exposes the error and the picker stays open for retry.
     }

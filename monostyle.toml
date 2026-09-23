@@ -1,0 +1,21 @@
+# monostyle's configuration for this repository.
+#
+# `fail-under` is a ratchet, not a destination: the floors sit just under the
+# score at onboarding, so the gate enforces non-regression from the first run
+# and is tightened as the findings it names are remediated.
+fail-under = { readability = 72.0, complexity = 82.0 }
+
+[rules]
+# The line limit matches the formatter the repository drives over its sources,
+# so the rule and the tool that wraps the code agree.
+max-line-width = 120
+
+[rules.ignore]
+# Sample applications demonstrate a technique end to end and are edited far
+# less often than the packages they accompany.
+patterns = [
+  "examples/**",
+  "docs/site/**",
+  "CHANGELOG.md",
+  "**/CHANGELOG.md",
+]

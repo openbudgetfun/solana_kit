@@ -20,7 +20,9 @@ class _EqualsBytesMatcher extends Matcher {
   @override
   bool matches(Object? item, Map<dynamic, dynamic> matchState) {
     if (item is! Uint8List) return false;
+
     if (item.length != _expected.length) return false;
+
     for (var i = 0; i < _expected.length; i++) {
       if (item[i] != _expected[i]) return false;
     }
@@ -41,11 +43,13 @@ class _EqualsBytesMatcher extends Matcher {
     if (item is! Uint8List) {
       return mismatchDescription.add('is not a Uint8List');
     }
+
     if (item.length != _expected.length) {
       return mismatchDescription.add(
         'has length ${item.length}, expected ${_expected.length}',
       );
     }
+
     for (var i = 0; i < _expected.length; i++) {
       if (item[i] != _expected[i]) {
         return mismatchDescription.add(
@@ -98,7 +102,9 @@ class _StartsWithBytesMatcher extends Matcher {
   @override
   bool matches(Object? item, Map<dynamic, dynamic> matchState) {
     if (item is! Uint8List) return false;
+
     if (item.length < _prefix.length) return false;
+
     for (var i = 0; i < _prefix.length; i++) {
       if (item[i] != _prefix[i]) return false;
     }
@@ -120,6 +126,7 @@ class _StartsWithBytesMatcher extends Matcher {
     if (item is! Uint8List) {
       return mismatchDescription.add('is not a Uint8List');
     }
+
     if (item.length < _prefix.length) {
       return mismatchDescription.add(
         'has length ${item.length}, which is shorter than prefix length '

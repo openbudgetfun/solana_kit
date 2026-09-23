@@ -33,10 +33,15 @@ class GetSignaturesForAddressConfig {
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
+
     if (before != null) json['before'] = before!.value;
+
     if (commitment != null) json['commitment'] = commitment!.name;
+
     if (limit != null) json['limit'] = limit;
+
     if (minContextSlot != null) json['minContextSlot'] = minContextSlot;
+
     if (until != null) json['until'] = until!.value;
     return json;
   }

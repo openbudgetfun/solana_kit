@@ -20,6 +20,7 @@ Uint8List concatBytes(Uint8List a, Uint8List b) {
 /// Concatenates multiple byte arrays into a single [Uint8List].
 Uint8List concatAll(List<Uint8List> arrays) {
   final builder = BytesBuilder(copy: false);
+
   for (final array in arrays) {
     builder.add(array);
   }
@@ -35,6 +36,7 @@ Uint8List bytes32FromHex(String hex) {
     throw ArgumentError('Hex string must be exactly 64 characters (32 bytes)');
   }
   final bytes = Uint8List(32);
+
   for (var i = 0; i < 32; i++) {
     bytes[i] = int.parse(hex.substring(i * 2, i * 2 + 2), radix: 16);
   }

@@ -148,6 +148,7 @@ class HermesClient {
   /// parameters precede the option parameters, mirroring the upstream client.
   Uri _uri(String path, List<(String, String)> parameters) {
     final buffer = StringBuffer('${config.normalizedBaseUrl}/v2/$path');
+
     if (parameters.isNotEmpty) {
       buffer
         ..write('?')
@@ -167,6 +168,7 @@ class HermesClient {
   Future<Object?> _getJson(Uri uri) async {
     var backoff = config.backoffMs;
     PythException? lastFailure;
+
     for (var attempt = 0; attempt <= config.httpRetries; attempt++) {
       if (attempt > 0) {
         await Future<void>.delayed(Duration(milliseconds: backoff));
@@ -178,6 +180,7 @@ class HermesClient {
             .timeout(
               config.timeout,
             );
+
         if (response.statusCode >= 200 && response.statusCode < 300) {
           if (response.body.isEmpty) return null;
           return jsonDecode(response.body) as Object?;
@@ -189,14 +192,17 @@ class HermesClient {
               ? response.body
               : (response.reasonPhrase ?? 'Unknown error'),
         );
+
         if (!_isRetryableStatus(response.statusCode)) {
           throw exception;
         }
         lastFailure = exception;
+
       } on TimeoutException {
         lastFailure = PythException(
           'Timed out fetching $uri after ${config.timeout.inMilliseconds}ms',
         );
+
       } on http.ClientException catch (error) {
         lastFailure = PythException(
           'Network error fetching $uri: ${error.message}',
@@ -214,6 +220,7 @@ class HermesClient {
   /// Headers sent with every request, including authentication.
   Map<String, String> get _headers => {
     'accept': 'application/json',
+
     if (config.accessToken != null)
       'authorization': 'Bearer ${config.accessToken}',
     ...config.headers,

@@ -36,6 +36,7 @@ void main(List<String> args) {
     }
 
     final current = output.readAsStringSync();
+
     if (current != json) {
       stderr.writeln(
         'Search index is stale. Run: dart run scripts/generate_docs_search_index.dart',
@@ -66,8 +67,10 @@ Map<String, Object> _entryForFile(File file) {
 
   return {
     'title': title,
+
     if (description.isNotEmpty) 'description': description,
     'route': _routeForPath(relativePath),
+
     if (headings.isNotEmpty) 'headings': headings,
     'content': text,
   };
@@ -75,24 +78,29 @@ Map<String, Object> _entryForFile(File file) {
 
 (Map<String, String>, String) _splitFrontMatter(String source) {
   final normalized = source.replaceAll('\r\n', '\n');
+
   if (!normalized.startsWith('---\n')) {
     return ({}, normalized);
   }
 
   final end = normalized.indexOf('\n---\n', 4);
+
   if (end == -1) {
     return ({}, normalized);
   }
 
   final frontMatter = <String, String>{};
+
   for (final line in normalized.substring(4, end).split('\n')) {
     final separator = line.indexOf(':');
+
     if (separator == -1) {
       continue;
     }
 
     final key = line.substring(0, separator).trim();
     final value = line.substring(separator + 1).trim();
+
     if (key.isNotEmpty && value.isNotEmpty) {
       frontMatter[key] = _unquote(value);
     }
@@ -107,6 +115,7 @@ Iterable<String> _headings(String markdown) sync* {
     multiLine: true,
   ).allMatches(markdown)) {
     final heading = _cleanInlineMarkdown(match.group(1) ?? '').trim();
+
     if (heading.isNotEmpty) {
       yield heading;
     }
@@ -131,6 +140,7 @@ String _plainText(String markdown) {
       .trim();
 
   const maxLength = 12000;
+
   if (withoutMarkup.length <= maxLength) {
     return withoutMarkup;
   }
@@ -150,6 +160,7 @@ String _routeForPath(String relativePath) {
     0,
     relativePath.length - '.md'.length,
   );
+
   if (withoutExtension == 'index') {
     return '/';
   }
@@ -177,6 +188,7 @@ String _unquote(String value) {
 
   final first = value[0];
   final last = value[value.length - 1];
+
   if ((first == '"' && last == '"') || (first == "'" && last == "'")) {
     return value.substring(1, value.length - 1);
   }

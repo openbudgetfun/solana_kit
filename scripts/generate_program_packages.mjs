@@ -56,6 +56,7 @@ function prepareMplCoreRoot(root) {
       node.forEach(visit);
       return;
     }
+
     if (node == null || typeof node !== "object") return;
     if (
       node.name === "relationships" &&
@@ -68,6 +69,7 @@ function prepareMplCoreRoot(root) {
     Object.values(node).forEach(visit);
   };
   visit(root);
+
   if (rewritten !== 1) {
     throw new Error(
       `prepareMplCoreRoot: expected 1 relationships field, rewrote ${rewritten}`,
@@ -87,6 +89,7 @@ function prepareMplTokenMetadataRoot(root) {
       node.forEach(visit);
       return;
     }
+
     if (node == null || typeof node !== "object") return;
     if (
       node.name === "updateAuthority" &&
@@ -121,6 +124,7 @@ function prepareSquadsMultisigRoot(root) {
       node.forEach((child) => visit(child, parentTypeName));
       return;
     }
+
     if (node == null || typeof node !== "object") return;
     if (
       node.name === "configAuthority" &&
@@ -137,6 +141,7 @@ function prepareSquadsMultisigRoot(root) {
     Object.values(node).forEach((child) => visit(child, childParentTypeName));
   };
   visit(root, undefined);
+
   if (renamed !== 1) {
     throw new Error(
       `prepareSquadsMultisigRoot: expected 1 configAuthority field, renamed ${renamed}`,
@@ -164,17 +169,20 @@ const SCHEMA_DATA_TYPE_VARIANTS = [
 
 function prepareSolanaAttestationServiceRoot(root) {
   const accounts = root.accounts ?? [];
+
   if (accounts.length !== 3) {
     throw new Error(
       `prepareSolanaAttestationServiceRoot: expected 3 accounts, found ${accounts.length}`,
     );
   }
+
   for (const account of accounts) {
     if (account.type?.kind !== "struct") {
       throw new Error(
         `prepareSolanaAttestationServiceRoot: account ${account.name} has no struct type`,
       );
     }
+
     if (account.type.fields.some((field) => field.name === "discriminator")) {
       throw new Error(
         `prepareSolanaAttestationServiceRoot: account ${account.name} already has a discriminator field`,
@@ -200,10 +208,12 @@ function prepareSolanaAttestationServiceRoot(root) {
   ];
 
   let retyped = 0;
+
   for (const instruction of root.instructions ?? []) {
     if (!["CreateSchema", "ChangeSchemaVersion"].includes(instruction.name)) {
       continue;
     }
+
     for (const argument of instruction.args ?? []) {
       if (argument.name === "layout") {
         if (argument.type !== "bytes") {
@@ -216,6 +226,7 @@ function prepareSolanaAttestationServiceRoot(root) {
       }
     }
   }
+
   if (retyped !== 2) {
     throw new Error(
       `prepareSolanaAttestationServiceRoot: expected 2 layout arguments, retyped ${retyped}`,
@@ -422,6 +433,7 @@ function prepareToken2022Root(root) {
       node.forEach(visit);
       return;
     }
+
     if (node == null || typeof node !== "object") return;
     if (
       node.kind === "hiddenPrefixTypeNode" &&
@@ -437,6 +449,7 @@ function prepareToken2022Root(root) {
     Object.values(node).forEach(visit);
   };
   visit(root);
+
   if (rewritten !== 2) {
     throw new Error(
       `prepareToken2022Root: expected 2 extension regions, rewrote ${rewritten}`,
@@ -458,6 +471,7 @@ for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
     console.error(`SKIP: IDL not found: ${idlPath}`);
     continue;
   }
+
   if (!existsSync(pkgDir)) {
     console.error(`SKIP: Package not found: ${pkgDir}`);
     continue;
@@ -476,6 +490,7 @@ for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
     // inside the guard: a drifted IDL must fail this program rather than abort
     // the whole run before other programs are generated.
     let root;
+
     if (idlJson.kind === "rootNode") {
       root = repo === "stake"
         ? prepareStakeRoot(idlJson)
@@ -488,18 +503,23 @@ for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
       const { rootNodeFromAnchor } = await import(
         join(RENDERER_DIR, "node_modules/@codama/nodes-from-anchor/dist/index.node.mjs")
       );
+
       if (programName != null) {
         idlJson.name = programName;
       }
+
       if (repo === "mpl-core") {
         const fixed = prepareMplCoreRoot(idlJson);
         root = rootNodeFromAnchor(fixed);
+
       } else if (repo === "mpl-token-metadata") {
         const fixed = prepareMplTokenMetadataRoot(idlJson);
         root = rootNodeFromAnchor(fixed);
+
       } else if (repo === "squads-multisig") {
         const fixed = prepareSquadsMultisigRoot(idlJson);
         root = rootNodeFromAnchor(fixed);
+
       } else if (repo === "solana-attestation-service") {
         const fixed = prepareSolanaAttestationServiceRoot(idlJson);
         root = rootNodeFromAnchor(fixed);
@@ -517,13 +537,16 @@ for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
     if (CHECK_ONLY && !directoriesEqual(renderDir, outDir)) {
       console.error(`  ✗ ${pkg} generated output differs from ${outDir}`);
       process.exitCode = 1;
+
     } else if (CHECK_ONLY) {
       console.log(`  ✓ ${pkg} generated output is current`);
     } else {
       console.log(`  ✓ ${pkg} generated to ${outDir}`);
     }
+
   } catch (error) {
     console.error(`  ✗ ${pkg} FAILED: ${error.message}`);
+
     if (error.stack) console.error(error.stack.split("\n").slice(0, 5).join("\n"));
     process.exitCode = 1;
   } finally {

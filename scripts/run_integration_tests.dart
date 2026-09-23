@@ -4,6 +4,7 @@ Future<void> main(List<String> args) async {
   await _ensurePackageConfig();
 
   final testDirectories = _discoverIntegrationTestDirectories();
+
   if (testDirectories.isEmpty) {
     stderr.writeln('No integration test directories were found.');
     exitCode = 1;
@@ -37,6 +38,7 @@ Future<void> main(List<String> args) async {
 
 List<String> _discoverIntegrationTestDirectories() {
   final packagesDirectory = Directory('packages');
+
   if (!packagesDirectory.existsSync()) {
     return const [];
   }
@@ -108,6 +110,7 @@ Future<void> _ensurePackageConfig() async {
     'get',
   ], mode: ProcessStartMode.inheritStdio);
   final code = await result.exitCode;
+
   if (code != 0) {
     exitCode = code;
     throw const ProcessException('fvm', ['flutter', 'pub', 'get']);

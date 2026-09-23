@@ -38,6 +38,7 @@ class _IsFullySignedTransactionMatcher extends Matcher {
     if (item is! Transaction) {
       return mismatchDescription.add('is not a Transaction');
     }
+
     if (item.signatures.isEmpty) {
       return mismatchDescription.add('has no signatures');
     }
@@ -49,6 +50,7 @@ class _IsFullySignedTransactionMatcher extends Matcher {
         )
         .map((e) => e.key.toString())
         .toList();
+
     if (zeroSigs.isNotEmpty) {
       return mismatchDescription.add(
         'has unsigned entries for: ${zeroSigs.join(', ')}',

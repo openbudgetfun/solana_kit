@@ -162,14 +162,17 @@ bool _startsWithByteOrderMark(Uint8List bytes) =>
 void _assertIsWellFormedUtf8String(String value) {
   for (var index = 0; index < value.length; index++) {
     final unit = value.codeUnitAt(index);
+
     if (unit >= 0xd800 && unit <= 0xdbff) {
       final next = index + 1 < value.length ? value.codeUnitAt(index + 1) : 0;
+
       if (next < 0xdc00 || next > 0xdfff) {
         throw SolanaError(SolanaErrorCode.codecsInvalidUtf8String, {
           'index': index,
         });
       }
       index++;
+
     } else if (unit >= 0xdc00 && unit <= 0xdfff) {
       throw SolanaError(SolanaErrorCode.codecsInvalidUtf8String, {
         'index': index,

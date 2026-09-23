@@ -41,6 +41,7 @@ List<String> decodeSchemaFieldNames(Uint8List bytes) {
   );
   final names = <String>[];
   var offset = 0;
+
   while (offset < bytes.length) {
     final (name, next) = stringDecoder.read(bytes, offset);
     names.add(name);
@@ -83,11 +84,13 @@ Codec<AttestationData, AttestationData> getAttestationDataCodec(
 ) {
   final fieldNames = decodeSchemaFieldNames(schema.fieldNames);
   final layout = decodeSchemaLayout(schema.layout);
+
   if (fieldNames.length != layout.length) {
     throw ArgumentError('Schema field names and layout do not match');
   }
 
   final fields = <(String, Encoder<Object?>, Decoder<Object?>)>[];
+
   for (var i = 0; i < fieldNames.length; i++) {
     final (fieldEncoder, fieldDecoder) = _getFieldCodec(layout[i]);
     fields.add((fieldNames[i], fieldEncoder, fieldDecoder));
@@ -122,6 +125,7 @@ void _requireSameKeys(
 ) {
   final declared = Set<String>.of(fieldNames);
   final provided = Set<String>.of(keys);
+
   for (final name in fieldNames) {
     if (!provided.contains(name)) {
       throw ArgumentError(
@@ -130,6 +134,7 @@ void _requireSameKeys(
       );
     }
   }
+
   for (final key in provided) {
     if (!declared.contains(key)) {
       throw ArgumentError(
@@ -346,6 +351,7 @@ String _codePointToChar(int codePoint) {
 String _decodeStringBytes(Uint8List bytes) {
   try {
     return utf8.decode(bytes);
+
   } on FormatException {
     final hex = bytes
         .map((byte) => byte.toRadixString(16).padLeft(2, '0'))

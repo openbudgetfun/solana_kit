@@ -86,6 +86,7 @@ void main() {
     );
     message = appendTransactionMessageInstruction(instruction, message);
     message = fillTransactionMessageProvisoryResourceLimits(message);
+
     if (config != null) {
       message = setTransactionMessageConfig(config, message);
     }

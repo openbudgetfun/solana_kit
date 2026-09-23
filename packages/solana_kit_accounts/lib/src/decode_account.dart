@@ -25,6 +25,7 @@ Account<TData> decodeAccount<TData>(
       programAddress: encodedAccount.programAddress,
       space: encodedAccount.space,
     );
+
   } on Object catch (error) {
     throw wrapSolanaError(
       SolanaErrorCode.accountsFailedToDecodeAccount,
@@ -90,11 +91,13 @@ void assertMaybeAccountDecoded<TData>(MaybeAccount<TData> account) {
 /// account data is still encoded.
 void assertAccountsDecoded<TData>(List<Account<TData>> accounts) {
   final encoded = <Account<TData>>[];
+
   for (final account in accounts) {
     if (account.data is Uint8List) {
       encoded.add(account);
     }
   }
+
   if (encoded.isNotEmpty) {
     final encodedAddresses = encoded.map((a) => a.address.value).toList();
     throw createSolanaError(
@@ -111,6 +114,7 @@ void assertAccountsDecoded<TData>(List<Account<TData>> accounts) {
 /// existing account data is still encoded.
 void assertMaybeAccountsDecoded<TData>(List<MaybeAccount<TData>> accounts) {
   final encoded = <MaybeAccount<TData>>[];
+
   for (final account in accounts) {
     if (account case ExistingAccount<TData>(account: final inner)) {
       if (inner.data is Uint8List) {
@@ -118,6 +122,7 @@ void assertMaybeAccountsDecoded<TData>(List<MaybeAccount<TData>> accounts) {
       }
     }
   }
+
   if (encoded.isNotEmpty) {
     final encodedAddresses = encoded.map((a) => a.address.value).toList();
     throw createSolanaError(

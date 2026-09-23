@@ -217,6 +217,7 @@ final class _DirectoryWithTempMode implements Directory {
   Future<Directory> createTemp([String? prefix]) async {
     final created = await directory.createTemp(prefix);
     final chmod = await Process.run('chmod', [mode, created.path]);
+
     if (chmod.exitCode != 0) {
       throw FileSystemException(
         'Failed to prepare test directory',

@@ -176,9 +176,11 @@ class _WalletExampleAppState extends State<WalletExampleApp> {
     try {
       final rpc = createSolanaRpc(url: _surfpoolUrl, allowInsecureHttp: true);
       await rpc.getSlot().send();
+
       if (mounted) {
         setState(() => _surfpoolStatus = 'Surfpool ready');
       }
+
     } on Object catch (error) {
       if (mounted) {
         setState(() => _surfpoolStatus = 'Surfpool unavailable · $error');
@@ -189,10 +191,12 @@ class _WalletExampleAppState extends State<WalletExampleApp> {
   Future<void> _signMessage() async {
     final wallet = _controller.state.selectedWallet;
     final account = _controller.state.selectedAccount;
+
     if (wallet == null || account == null) return;
     final feature = wallet.feature<SolanaSignMessageFeature>(
       SolanaFeatureId.signMessage,
     );
+
     if (feature == null) {
       setState(() => _signatureStatus = 'This wallet cannot sign messages.');
       return;
@@ -203,6 +207,7 @@ class _WalletExampleAppState extends State<WalletExampleApp> {
         message: Uint8List.fromList(utf8.encode('Hello from Solana Kit')),
       ),
     ]);
+
     if (mounted) {
       setState(
         () => _signatureStatus =

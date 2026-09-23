@@ -28,13 +28,17 @@ class GetVoteAccountsConfig {
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
+
     if (commitment != null) json['commitment'] = commitment!.name;
+
     if (delinquentSlotDistance != null) {
       json['delinquentSlotDistance'] = delinquentSlotDistance;
     }
+
     if (keepUnstakedDelinquents != null) {
       json['keepUnstakedDelinquents'] = keepUnstakedDelinquents;
     }
+
     if (votePubkey != null) json['votePubkey'] = votePubkey!.value;
     return json;
   }

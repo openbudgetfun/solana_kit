@@ -45,6 +45,7 @@ Future<Set<String>> _invokeEveryCheatcode() async {
   Future<void> attempt(Future<Object?> Function() call) async {
     try {
       await call();
+
     } on Object {
       // The stub transport answers `null` for every method, so methods that
       // parse a typed response throw. The method name already reached the

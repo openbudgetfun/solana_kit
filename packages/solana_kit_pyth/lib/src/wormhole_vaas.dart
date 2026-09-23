@@ -150,6 +150,7 @@ WormholeVaa parseWormholeVaa(Uint8List vaa) {
     throw PythDecodeException('VAA is too short (${vaa.length} bytes)');
   }
   final version = vaa[0];
+
   if (version != wormholeVaaVersion) {
     throw PythDecodeException(
       'Unsupported VAA version $version (expected $wormholeVaaVersion)',
@@ -160,6 +161,7 @@ WormholeVaa parseWormholeVaa(Uint8List vaa) {
 
   var cursor = 6;
   final signatures = <WormholeVaaSignature>[];
+
   for (var i = 0; i < signatureCount; i++) {
     if (cursor + vaaSignatureSize > vaa.length) {
       throw PythDecodeException(
@@ -188,6 +190,7 @@ WormholeVaa parseWormholeVaa(Uint8List vaa) {
   final emitterAddress = Uint8List.sublistView(vaa, cursor, cursor + 32);
   cursor += 32;
   var sequence = BigInt.zero;
+
   for (var i = 0; i < 8; i++) {
     sequence = (sequence << 8) | BigInt.from(vaa[cursor + i]);
   }
@@ -228,9 +231,11 @@ Uint8List trimVaaSignatures(
     throw ArgumentError.value(count, 'count', 'must be between 0 and 255');
   }
   final currentCount = getVaaSignatureCount(vaa);
+
   if (count >= currentCount) return vaa;
 
   final bodyStart = 6 + currentCount * vaaSignatureSize;
+
   if (bodyStart > vaa.length) {
     throw const PythDecodeException('VAA is truncated inside its signatures');
   }
@@ -305,6 +310,7 @@ PythWormholeMessage parsePythWormholeMessage(Uint8List payload) {
   if (payload.length < 2) {
     throw const PythDecodeException('Pyth wormhole message is too short');
   }
+
   if (payload[0] != 1) {
     throw PythDecodeException(
       'Unsupported Pyth wormhole message version ${payload[0]}',
@@ -391,12 +397,14 @@ class PythPriceFeedMessage {
 /// Mirrors `parsePriceFeedMessage` from `@pythnetwork/price-service-sdk`.
 PythPriceFeedMessage parsePythPriceFeedMessage(Uint8List message) {
   const size = 85;
+
   if (message.length < size) {
     throw PythDecodeException(
       'Price feed message is too short (${message.length} bytes)',
     );
   }
   final variant = message[0];
+
   if (variant != 0) {
     throw PythDecodeException('Not a price feed message (variant $variant)');
   }
@@ -447,9 +455,11 @@ BigInt _readBigInt(
   bool signed = false,
 }) {
   var value = BigInt.zero;
+
   for (var i = 0; i < length; i++) {
     value = (value << 8) | BigInt.from(bytes[offset + i]);
   }
+
   if (signed && (bytes[offset] & 0x80) != 0) {
     value -= BigInt.one << (length * 8);
   }

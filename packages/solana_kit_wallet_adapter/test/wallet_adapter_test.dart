@@ -634,6 +634,7 @@ class _TestWallet implements Wallet {
       SolanaFeatureId.signMessage: _TestSignMessage(this),
       SolanaFeatureId.signTransaction: _TestSignTransaction(this),
       SolanaFeatureId.signAndSendTransaction: _TestSendTransaction(this),
+
       if (includeSignIn) SolanaFeatureId.signIn: _TestSignIn(this),
     };
   }
@@ -689,6 +690,7 @@ class _TestConnect implements StandardConnectFeature {
     StandardConnectInput input = const StandardConnectInput(),
   ]) async {
     wallet.lastSilent = input.silent;
+
     if (wallet.connectError case final error?) throw error;
     return StandardConnectOutput(wallet.accounts);
   }

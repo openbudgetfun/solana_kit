@@ -88,6 +88,7 @@ Stream<TData> createStreamFromDataAndErrorStreams<TData>({
 
   if (isStopped) {
     unawaited(controller.close());
+
   } else if (cancellationToken != null) {
     unawaited(cancellationToken.future.then((_) => stop()));
   }

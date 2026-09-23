@@ -10,6 +10,7 @@ final ECDomainParameters p256 = ECDomainParameters('prime256v1');
 SecureRandom createSecureRandom() {
   final random = Random.secure();
   final seed = Uint8List(32);
+
   for (var i = 0; i < 32; i++) {
     seed[i] = random.nextInt(256);
   }
@@ -83,6 +84,7 @@ Uint8List ecdhSharedSecret(ECPrivateKey privateKey, ECPublicKey publicKey) {
 
   final publicPoint = _validatedP256PublicPoint(publicKey);
   final point = publicPoint * privateKey.d;
+
   if (point == null || point.isInfinity) {
     throw StateError('ECDH agreement produced point at infinity');
   }
@@ -207,6 +209,7 @@ Uint8List aesGcmDecrypt({
 Uint8List randomBytes(int length) {
   final random = Random.secure();
   final bytes = Uint8List(length);
+
   for (var i = 0; i < bytes.length; i++) {
     bytes[i] = random.nextInt(256);
   }
@@ -217,6 +220,7 @@ Uint8List randomBytes(int length) {
 Uint8List _bigIntToBytes(BigInt value, int length) {
   final result = Uint8List(length);
   var v = value;
+
   for (var i = length - 1; i >= 0; i--) {
     result[i] = (v & BigInt.from(0xFF)).toInt();
     v >>= 8;
@@ -227,6 +231,7 @@ Uint8List _bigIntToBytes(BigInt value, int length) {
 /// Converts unsigned big-endian bytes to a [BigInt].
 BigInt _bytesToBigInt(Uint8List bytes) {
   var result = BigInt.zero;
+
   for (var i = 0; i < bytes.length; i++) {
     result = (result << 8) | BigInt.from(bytes[i]);
   }

@@ -26,13 +26,16 @@ SessionProperties parseSessionProps(
 
   if (jsonProperties.containsKey('v')) {
     final v = jsonProperties['v'];
+
     switch (v) {
       case 1:
       case '1':
       case 'v1':
         protocolVersion = ProtocolVersion.v1;
+
       case 'legacy':
         protocolVersion = ProtocolVersion.legacy;
+
       default:
         throw SolanaError(SolanaErrorCode.mwaInvalidProtocolVersion, {
           'version': '$v',

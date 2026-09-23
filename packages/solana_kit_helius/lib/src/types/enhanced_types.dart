@@ -62,9 +62,13 @@ class GetTransactionsByAddressRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'address': address,
+
     if (before != null) 'before': before,
+
     if (until != null) 'until': until,
+
     if (commitment != null) 'commitment': commitment!.toJson(),
+
     if (type != null) 'type': type,
   };
 }
@@ -165,6 +169,7 @@ class EnhancedTransaction {
     'feePayer': feePayer,
     'signature': signature,
     'slot': slot,
+
     if (timestamp != null) 'timestamp': timestamp,
     'nativeTransfers': nativeTransfers.map((e) => e.toJson()).toList(),
     'tokenTransfers': tokenTransfers.map((e) => e.toJson()).toList(),
@@ -265,6 +270,7 @@ class TokenTransfer {
     'fromTokenAccount': fromTokenAccount,
     'toTokenAccount': toTokenAccount,
     'tokenAmount': tokenAmount,
+
     if (mint != null) 'mint': mint,
     'tokenStandard': tokenStandard,
   };
@@ -395,6 +401,7 @@ class InnerInstruction {
     'accounts': accounts,
     'data': data,
     'programId': programId,
+
     if (innerInstructions != null) 'innerInstructions': innerInstructions,
   };
 }

@@ -11,11 +11,13 @@ String resolvePaymentHost({
   Map<String, String>? environment,
 }) {
   final explicit = override;
+
   if (explicit != null && explicit.isNotEmpty) {
     return _validatePaymentHost(explicit);
   }
 
   final value = (environment ?? Platform.environment)['HELIUS_PAYMENT_HOST'];
+
   if (value != null && value.isNotEmpty) return _validatePaymentHost(value);
 
   return heliusPaymentHost;

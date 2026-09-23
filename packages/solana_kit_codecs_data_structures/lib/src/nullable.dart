@@ -48,6 +48,7 @@ Encoder<T?> getNullableEncoder<T>(
 }) {
   // Build the prefix encoder.
   final Encoder<bool> prefixEncoder;
+
   if (!hasPrefix) {
     prefixEncoder = transformEncoder<void, bool>(getUnitEncoder(), (_) {});
   } else {
@@ -57,11 +58,13 @@ Encoder<T?> getNullableEncoder<T>(
   // Build the none value encoder.
   final Encoder<void> noneEncoder;
   final int? noneEncoderFixedSize;
+
   if (noneValue is ZeroesNoneValue) {
     assertIsFixedSize(item);
     final itemSize = (item as FixedSizeEncoder<T>).fixedSize;
     noneEncoderFixedSize = itemSize;
     noneEncoder = fixEncoderSize(getUnitEncoder(), itemSize);
+
   } else if (noneValue is ConstantNoneValue) {
     noneEncoderFixedSize = noneValue.bytes.length;
     noneEncoder = getConstantEncoder(noneValue.bytes);
@@ -87,6 +90,7 @@ Encoder<T?> getNullableEncoder<T>(
 
   int writeImpl(T? value, Uint8List bytes, int currentOffset) {
     var offset = currentOffset;
+
     if (value == null) {
       offset = prefixEncoder.write(false, bytes, offset);
       offset = noneEncoder.write(null, bytes, offset);
@@ -124,6 +128,7 @@ Decoder<T?> getNullableDecoder<T>(
 }) {
   // Build the prefix decoder.
   final Decoder<bool> prefixDecoder;
+
   if (!hasPrefix) {
     prefixDecoder = transformDecoder<void, bool>(
       getUnitDecoder(),
@@ -136,11 +141,13 @@ Decoder<T?> getNullableDecoder<T>(
   // Build the none value decoder.
   final Decoder<void> noneDecoder;
   final int? noneFixedSize;
+
   if (noneValue is ZeroesNoneValue) {
     assertIsFixedSize(item);
     final size = (item as FixedSizeDecoder<T>).fixedSize;
     noneFixedSize = size;
     noneDecoder = fixDecoderSize(getUnitDecoder(), size);
+
   } else if (noneValue is ConstantNoneValue) {
     noneFixedSize = noneValue.bytes.length;
     noneDecoder = getConstantDecoder(noneValue.bytes);
@@ -165,10 +172,13 @@ Decoder<T?> getNullableDecoder<T>(
   (T?, int) readImpl(Uint8List bytes, int currentOffset) {
     var offset = currentOffset;
     final bool isPresent;
+
     if (!hasPrefix && noneValue is OmitNoneValue) {
       isPresent = offset < bytes.length;
+
     } else if (!hasPrefix && noneValue is! OmitNoneValue) {
       final Uint8List zeroValue;
+
       if (noneValue is ZeroesNoneValue) {
         zeroValue = Uint8List(noneFixedSize!);
       } else {

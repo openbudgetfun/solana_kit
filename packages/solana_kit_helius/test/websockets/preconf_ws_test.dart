@@ -469,6 +469,7 @@ Uint8List _encodedTransaction() {
 
 List<int> _u64le(int value) {
   final bytes = Uint8List(8);
+
   for (var i = 0; i < 8; i++) {
     bytes[i] = (value >> (8 * i)) & 0xff;
   }
@@ -505,6 +506,7 @@ class _FakeSink implements WebSocketSink {
   @override
   void add(Object? event) {
     final failure = sendFailure;
+
     if (failure != null) throw failure;
     sent.add(event);
   }
@@ -512,7 +514,9 @@ class _FakeSink implements WebSocketSink {
   @override
   Future<void> close([int? closeCode, String? closeReason]) async {
     final failure = closeFailure;
+
     if (failure != null) throw failure;
+
     if (!_done.isCompleted) _done.complete();
   }
 

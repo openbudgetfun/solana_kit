@@ -27,9 +27,11 @@ Comparator<Address> getAddressComparator() {
 /// `caseFirst: 'lower'` and `sensitivity: 'variant'` for base58 strings.
 int _compareBase58(String a, String b) {
   final minLen = a.length < b.length ? a.length : b.length;
+
   for (var i = 0; i < minLen; i++) {
     final charA = a.codeUnitAt(i);
     final charB = b.codeUnitAt(i);
+
     if (charA != charB) {
       final orderA = _charOrder(charA);
       final orderB = _charOrder(charB);
@@ -57,6 +59,7 @@ int _charOrder(int codeUnit) {
     // lowercase letter: maps to (letter_index * 2 + 10)
     return (codeUnit - 97) * 2 + 10;
   }
+
   if (codeUnit >= 65 && codeUnit <= 90) {
     // uppercase letter: maps to (letter_index * 2 + 11)
     return (codeUnit - 65) * 2 + 11;

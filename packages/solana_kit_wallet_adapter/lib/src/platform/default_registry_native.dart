@@ -77,6 +77,7 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
   @override
   Future<void> disconnect() async {
     final authToken = _authToken;
+
     if (authToken != null) {
       await _transact(
         (wallet) => wallet.deauthorize(authToken: authToken),
@@ -146,6 +147,7 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
     Future<T> Function(mwa.KitMobileWallet wallet) callback,
   ) async {
     final authToken = _authToken;
+
     if (authToken == null) {
       throw const WalletStandardException(
         WalletStandardErrorCode.disconnected,
@@ -184,6 +186,7 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
 
   String _rawAddress(WalletAccount account) {
     final value = _rawAddresses[account.address];
+
     if (value == null) {
       throw const WalletStandardException(
         WalletStandardErrorCode.invalidRequest,
@@ -204,6 +207,7 @@ Uint8List _messageSignature(String encoded, Uint8List message) {
   final Uint8List signed;
   try {
     signed = base64.decode(encoded);
+
   } on FormatException catch (error) {
     throw WalletStandardException(
       WalletStandardErrorCode.invalidResponse,
@@ -236,6 +240,7 @@ WalletIcon? _walletIcon(String? value) {
   if (value == null) return null;
   try {
     return WalletIcon(value);
+
   } on FormatException {
     return null;
   }

@@ -36,6 +36,7 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
   void dispose() {
     _messageController.dispose();
     _transactionController.dispose();
+
     if (_ownsController) {
       _controller.dispose();
     }
@@ -48,6 +49,7 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
   }) async {
     try {
       await action();
+
     } on Object {
       if (!mounted) {
         return;
@@ -323,6 +325,7 @@ class _SolanaKitMwaExampleAppState extends State<SolanaKitMwaExampleApp> {
 
   String _walletEndpointLabel() {
     final endpointAvailable = _controller.walletEndpointAvailable;
+
     if (endpointAvailable == null) {
       return 'Checking...';
     }
