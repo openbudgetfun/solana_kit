@@ -81,7 +81,6 @@ Instruction getCreateAssociatedTokenInstruction({
   required Address tokenProgram,
 }) {
   const instructionData = CreateAssociatedTokenInstructionData();
-
   return Instruction(
     programAddress: programAddress,
     accounts: [

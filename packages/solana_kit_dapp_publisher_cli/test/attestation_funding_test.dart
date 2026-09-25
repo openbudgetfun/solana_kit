@@ -84,7 +84,6 @@ void main() {
       final attestation = await createAttestationPayloadFromClient(
         () async {
           calls++;
-
           return (slot: 7, blockhash: 'Bh');
         },
         signer,
@@ -194,7 +193,6 @@ void main() {
         localDev: true,
         fetchBalance: (_, _) async {
           calls++;
-
           return 0;
         },
       );

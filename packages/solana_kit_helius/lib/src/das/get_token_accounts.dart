@@ -9,6 +9,5 @@ Future<TokenAccountList> dasGetTokenAccounts(
   GetTokenAccountsRequest request,
 ) async {
   final result = await rpcClient.call('getTokenAccounts', request.toJson());
-
   return TokenAccountList.fromJson(result! as Map<String, Object?>);
 }

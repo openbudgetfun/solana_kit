@@ -176,7 +176,6 @@ void main() {
               expectedError =
                   SolanaErrorCode.offchainMessageMessageMustBeNonEmpty;
           }
-
           final signature = signBytes(keyPair.privateKey, content);
           final envelope = OffchainMessageEnvelope(
             content: content,

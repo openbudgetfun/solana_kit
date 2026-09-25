@@ -10,7 +10,6 @@ void main() {
         expect(request.method, 'DELETE');
         expect(request.url.path, '/v0/webhooks/wh-1');
         expect(request.url.queryParameters['api-key'], 'test-key');
-
         return http.Response('', 200);
       });
 
@@ -28,7 +27,6 @@ void main() {
         expect(request.method, 'DELETE');
         expect(request.url.path, '/v0/webhooks/wh-abc-123');
         expect(request.url.queryParameters['api-key'], 'my-api-key');
-
         return http.Response('', 200);
       });
 

@@ -45,7 +45,6 @@ void main() {
         final params = body['params']! as Map<String, Object?>;
         expect(params['groupKey'], 'collection');
         expect(params['groupValue'], 'coll-123');
-
         return http.Response(
           jsonEncode(<String, Object?>{
             'jsonrpc': '2.0',
@@ -89,7 +88,6 @@ void main() {
         expect(params['groupValue'], 'coll-456');
         expect(params['page'], 1);
         expect(params['limit'], 5);
-
         return http.Response(
           jsonEncode(<String, Object?>{
             'jsonrpc': '2.0',

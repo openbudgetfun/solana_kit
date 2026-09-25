@@ -19,13 +19,11 @@ final BigInt _i256Max = (BigInt.one << 255) - BigInt.one;
 /// Defaults to little-endian byte order.
 FixedSizeEncoder<BigInt> getI256Encoder([NumberCodecConfig? config]) {
   final endian = config?.endian ?? Endian.little;
-
   return FixedSizeEncoder<BigInt>(
     fixedSize: 32,
     write: (value, bytes, offset) {
       assertBigIntIsBetweenForCodec('i256', _i256Min, _i256Max, value);
       writeBigIntSigned(bytes, offset, 32, value, endian);
-
       return offset + 32;
     },
   );

@@ -11,5 +11,4 @@ export type { Fragment } from "./utils/fragment.js";
 
 // Default export for Codama CLI integration
 import { renderVisitor } from "./visitors/renderVisitor.js";
-
 export default renderVisitor;

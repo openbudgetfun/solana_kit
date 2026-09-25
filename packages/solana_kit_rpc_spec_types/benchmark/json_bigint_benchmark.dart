@@ -73,12 +73,10 @@ String _fakeBase58Key(int seed) {
   const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
   final buffer = StringBuffer();
   var state = seed + 1;
-
   for (var i = 0; i < 43; i++) {
     state = (state * 1103515245 + 12345) & 0x7fffffff;
     buffer.write(alphabet[state % alphabet.length]);
   }
-
   return buffer.toString();
 }
 
@@ -88,17 +86,14 @@ void _runBenchmark({
   required void Function() body,
 }) {
   final warmupIterations = iterations ~/ 10;
-
   for (var i = 0; i < warmupIterations; i++) {
     body();
   }
 
   final stopwatch = Stopwatch()..start();
-
   for (var i = 0; i < iterations; i++) {
     body();
   }
-
   stopwatch.stop();
 
   final microsecondsPerIteration = stopwatch.elapsedMicroseconds / iterations;

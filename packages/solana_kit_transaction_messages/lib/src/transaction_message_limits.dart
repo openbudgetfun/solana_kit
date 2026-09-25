@@ -39,7 +39,6 @@ void assertTransactionMessageIsWithinLimits(
     }
 
     final signerCount = accounts.where(_isSignerAccount).length;
-
     if (signerCount > maxTransactionSignerAddresses) {
       throw SolanaError(SolanaErrorCode.transactionTooManySignerAddresses, {
         'actualCount': signerCount,
@@ -57,7 +56,6 @@ void assertTransactionMessageIsWithinLimits(
 
   for (var index = 0; index < instructions.length; index++) {
     final accountCount = instructions[index].accounts?.length ?? 0;
-
     if (accountCount > maxAccountsPerInstruction) {
       throw SolanaError(
         SolanaErrorCode.transactionTooManyAccountsInInstruction,

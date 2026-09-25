@@ -41,7 +41,6 @@ Future<AssetWithProof> _fetch({String? delegate, bool frozen = false}) {
               'leaf': _hash,
               'tree_id': _hash,
             };
-
       return http.Response(jsonEncode({'result': result}), 200);
     }),
   );

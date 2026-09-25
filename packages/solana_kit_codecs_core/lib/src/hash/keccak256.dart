@@ -78,7 +78,6 @@ final BigInt _mask64 = (BigInt.one << 64) - BigInt.one;
 /// Rotates a 64-bit integer left by [n] bits.
 BigInt _rotl64(BigInt x, int n) {
   final nMod = n % 64;
-
   if (nMod == 0) return x;
   return ((x << nMod) | (x >> (64 - nMod))) & _mask64;
 }
@@ -90,7 +89,6 @@ void _keccakF1600(List<BigInt> state) {
   for (final roundConstant in _roundConstants) {
     // θ (theta) step
     final c = List<BigInt>.filled(5, BigInt.zero);
-
     for (var x = 0; x < 5; x++) {
       c[x] =
           state[x] ^
@@ -99,10 +97,8 @@ void _keccakF1600(List<BigInt> state) {
           state[x + 15] ^
           state[x + 20];
     }
-
     for (var x = 0; x < 5; x++) {
       final d = c[(x + 4) % 5] ^ _rotl64(c[(x + 1) % 5], 1);
-
       for (var y = 0; y < 5; y++) {
         state[5 * y + x] ^= d;
       }
@@ -110,7 +106,6 @@ void _keccakF1600(List<BigInt> state) {
 
     // ρ (rho) and π (pi) steps combined
     final b = List<BigInt>.filled(25, BigInt.zero);
-
     for (var x = 0; x < 5; x++) {
       for (var y = 0; y < 5; y++) {
         b[5 * ((2 * x + 3 * y) % 5) + y] = _rotl64(
@@ -136,11 +131,9 @@ void _keccakF1600(List<BigInt> state) {
 /// Reads 8 bytes from [input] at [offset] as a little-endian 64-bit integer.
 BigInt _bytesToLane(Uint8List input, int offset) {
   var result = BigInt.zero;
-
   for (var i = 0; i < 8; i++) {
     result |= BigInt.from(input[offset + i] & 0xFF) << (8 * i);
   }
-
   return result & _mask64;
 }
 
@@ -175,25 +168,20 @@ Uint8List keccak256(Uint8List input) {
 
   // Absorb: process full rate blocks
   final fullBlockCount = input.length ~/ _rateBytes;
-
   for (var block = 0; block < fullBlockCount; block++) {
     final offset = block * _rateBytes;
-
     for (var i = 0; i < _rateLanes; i++) {
       state[i] ^= _bytesToLane(input, offset + i * 8);
     }
-
     _keccakF1600(state);
   }
 
   // Final padding block
   final temp = Uint8List(_rateBytes);
   final remaining = input.length - fullBlockCount * _rateBytes;
-
   for (var i = 0; i < remaining; i++) {
     temp[i] = input[fullBlockCount * _rateBytes + i];
   }
-
   // Keccak padding: 0x01 after message, 0x80 at the end
   temp[remaining] ^= 0x01;
   temp[_rateBytes - 1] ^= 0x80;
@@ -201,12 +189,10 @@ Uint8List keccak256(Uint8List input) {
   for (var i = 0; i < _rateLanes; i++) {
     state[i] ^= _bytesToLane(temp, i * 8);
   }
-
   _keccakF1600(state);
 
   // Squeeze: output 32 bytes (4 lanes × 8 bytes each)
   final output = Uint8List(32);
-
   for (var i = 0; i < 4; i++) {
     _laneToBytes(output, i * 8, state[i]);
   }

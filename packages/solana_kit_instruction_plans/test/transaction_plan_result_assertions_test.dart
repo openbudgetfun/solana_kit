@@ -10,7 +10,6 @@ void main() {
   SuccessfulSingleTransactionPlanResult makeSuccess() {
     final msg = createMessage();
     final sig = Signature('sig'.padRight(64, '0'));
-
     return successfulSingleTransactionPlanResult(msg, {'signature': sig});
   }
 
@@ -468,7 +467,6 @@ void main() {
 
       transformTransactionPlanResult(result, (r) {
         callCount++;
-
         return r;
       });
 

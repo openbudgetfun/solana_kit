@@ -25,11 +25,9 @@ OffchainMessageEnvelope compileOffchainMessageV0Envelope(
   final encoder = getOffchainMessageV0Encoder();
   final content = encoder.encode(offchainMessage);
   final signatures = <Address, SignatureBytes?>{};
-
   for (final signatory in offchainMessage.requiredSignatories) {
     signatures[signatory.address] = null;
   }
-
   return OffchainMessageEnvelope(
     content: content,
     signatures: Map<Address, SignatureBytes?>.unmodifiable(signatures),
@@ -43,11 +41,9 @@ OffchainMessageEnvelope compileOffchainMessageV1Envelope(
   final encoder = getOffchainMessageV1Encoder();
   final content = encoder.encode(offchainMessage);
   final signatures = <Address, SignatureBytes?>{};
-
   for (final signatory in offchainMessage.requiredSignatories) {
     signatures[signatory.address] = null;
   }
-
   return OffchainMessageEnvelope(
     content: content,
     signatures: Map<Address, SignatureBytes?>.unmodifiable(signatures),

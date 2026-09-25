@@ -5,6 +5,8 @@ import 'package:solana_kit_address/solana_kit_address.dart';
 // ---------------------------------------------------------------------------
 // Sourced from the solana-sdk-ids crate (https://docs.rs/crate/solana-sdk-ids)
 // and the official Solana documentation.
+
+/// The address of the System program.
 const systemProgramAddress = Address('11111111111111111111111111111111');
 
 /// The address of the Address Lookup Table program.

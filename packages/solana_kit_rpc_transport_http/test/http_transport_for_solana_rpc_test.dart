@@ -20,7 +20,6 @@ void main() {
         late http.Request capturedRequest;
         final mockClient = MockClient((request) async {
           capturedRequest = request;
-
           return http.Response(
             '{"ok":true}',
             200,
@@ -51,7 +50,6 @@ void main() {
           late http.Request capturedRequest;
           final mockClient = MockClient((request) async {
             capturedRequest = request;
-
             return http.Response(
               '{"ok":true}',
               200,

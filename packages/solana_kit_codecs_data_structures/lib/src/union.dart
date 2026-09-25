@@ -103,7 +103,6 @@ Encoder<Object?> getUnionEncoder(
   int writeImpl(Object? variant, Uint8List bytes, int offset) {
     final index = getIndexFromValue(variant);
     _assertValidVariantIndex(variants, index);
-
     return variants[index].write(variant, bytes, offset);
   }
 
@@ -117,7 +116,6 @@ Encoder<Object?> getUnionEncoder(
     getSizeFromValue: (variant) {
       final index = getIndexFromValue(variant);
       _assertValidVariantIndex(variants, index);
-
       return getEncodedSize(variant, variants[index]);
     },
     write: writeImpl,
@@ -138,7 +136,6 @@ Decoder<Object?> getUnionDecoder(
   (Object?, int) readImpl(Uint8List bytes, int offset) {
     final index = getIndexFromBytes(bytes, offset);
     _assertValidVariantIndex(variants, index);
-
     return variants[index].read(bytes, offset);
   }
 
@@ -147,7 +144,6 @@ Decoder<Object?> getUnionDecoder(
   }
 
   final maxSize = _getUnionMaxSize(variants);
-
   return VariableSizeDecoder<Object?>(read: readImpl, maxSize: maxSize);
 }
 
@@ -229,12 +225,10 @@ Decoder<Union2<T0, T1>> getUnion2Decoder<T0, T1>(
     return switch (index) {
       0 => () {
         final (value, nextOffset) = variant0.read(bytes, offset);
-
         return (Union2Variant0<T0, T1>(value), nextOffset);
       }(),
       1 => () {
         final (value, nextOffset) = variant1.read(bytes, offset);
-
         return (Union2Variant1<T0, T1>(value), nextOffset);
       }(),
       _ => throw StateError('Unreachable variant index: $index'),
@@ -249,7 +243,6 @@ Decoder<Union2<T0, T1>> getUnion2Decoder<T0, T1>(
   }
 
   final maxSize = _getUnionMaxSize(variants);
-
   return VariableSizeDecoder<Union2<T0, T1>>(read: readImpl, maxSize: maxSize);
 }
 
@@ -350,17 +343,14 @@ Decoder<Union3<T0, T1, T2>> getUnion3Decoder<T0, T1, T2>(
     return switch (index) {
       0 => () {
         final (value, nextOffset) = variant0.read(bytes, offset);
-
         return (Union3Variant0<T0, T1, T2>(value), nextOffset);
       }(),
       1 => () {
         final (value, nextOffset) = variant1.read(bytes, offset);
-
         return (Union3Variant1<T0, T1, T2>(value), nextOffset);
       }(),
       2 => () {
         final (value, nextOffset) = variant2.read(bytes, offset);
-
         return (Union3Variant2<T0, T1, T2>(value), nextOffset);
       }(),
       _ => throw StateError('Unreachable variant index: $index'),
@@ -375,7 +365,6 @@ Decoder<Union3<T0, T1, T2>> getUnion3Decoder<T0, T1, T2>(
   }
 
   final maxSize = _getUnionMaxSize(variants);
-
   return VariableSizeDecoder<Union3<T0, T1, T2>>(
     read: readImpl,
     maxSize: maxSize,
@@ -418,15 +407,11 @@ void _assertValidVariantIndex(List<Object> variants, int index) {
 int? _getUnionFixedSize(List<Object> variants) {
   if (variants.isEmpty) return 0;
   final firstSize = getFixedSize(variants[0]);
-
   if (firstSize == null) return null;
-
   for (final variant in variants) {
     final size = getFixedSize(variant);
-
     if (size != firstSize) return null;
   }
-
   return firstSize;
 }
 

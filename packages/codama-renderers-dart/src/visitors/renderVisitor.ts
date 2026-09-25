@@ -66,7 +66,6 @@ export function renderVisitor(
         if (!rel.startsWith(".")) {
           rel = `./${rel}`;
         }
-
         internalMap[key] = rel;
       }
 
@@ -112,14 +111,12 @@ function linkOverrideImports(
   overrides: Record<string, LinkOverride>,
 ): Record<string, string> {
   const resolved: Record<string, string> = {};
-
   if (Object.keys(overrides).length === 0) return resolved;
 
   // Override paths are resolved against the package's `lib/` directory, so
   // without one there is nothing to anchor them to. Failing loudly beats
   // emitting an import that cannot resolve.
   const libRoot = findLibRoot(outputDir);
-
   if (libRoot == null) {
     throw new Error(
       `Cannot resolve linkOverrides because the render output directory ` +
@@ -135,11 +132,9 @@ function linkOverrideImports(
   for (const override of Object.values(overrides)) {
     const overrideAbsolute = posix.join(libRoot, override.path);
     let rel = posix.relative(posix.dirname(generatedAbsolute), overrideAbsolute);
-
     if (!rel.startsWith(".")) {
       rel = `./${rel}`;
     }
-
     resolved[`linkOverride:${override.path}`] = rel;
   }
 
@@ -154,7 +149,6 @@ function linkOverrideImports(
 function findLibRoot(outputDir: string): string | null {
   const segments = posix.resolve(outputDir).split("/");
   const libIndex = segments.lastIndexOf("lib");
-
   if (libIndex < 0) return null;
   return segments.slice(0, libIndex + 1).join("/");
 }
@@ -223,9 +217,7 @@ function cleanFragmentContent(content: string): string {
     if (/^[a-zA-Z][a-zA-Z0-9]*$/.test(trimmed)) {
       return false;
     }
-
     return true;
   });
-
   return cleanLines.join("\n");
 }

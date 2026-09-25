@@ -14,7 +14,6 @@ AccountLookupMeta? _findAddressInLookupTables(
   for (final entry in addressesByLookupTableAddress.entries) {
     final lookupTableAddress = entry.key;
     final addresses = entry.value;
-
     for (var i = 0; i < addresses.length; i++) {
       if (address == addresses[i]) {
         return AccountLookupMeta(
@@ -26,7 +25,6 @@ AccountLookupMeta? _findAddressInLookupTables(
       }
     }
   }
-
   return null;
 }
 
@@ -42,13 +40,11 @@ TransactionMessage compressTransactionMessageUsingAddressLookupTables(
   AddressesByLookupTableAddress addressesByLookupTableAddress,
 ) {
   final programAddresses = <Address>{};
-
   for (final ix in transactionMessage.instructions) {
     programAddresses.add(ix.programAddress);
   }
 
   final eligibleLookupAddresses = <Address>{};
-
   for (final addresses in addressesByLookupTableAddress.values) {
     for (final address in addresses) {
       if (!programAddresses.contains(address)) {
@@ -84,7 +80,6 @@ TransactionMessage compressTransactionMessageUsingAddressLookupTables(
         account.role,
         addressesByLookupTableAddress,
       );
-
       if (lookupMetaAccount != null) {
         newAccounts.add(lookupMetaAccount);
         updatedAnyAccounts = true;
@@ -112,6 +107,5 @@ TransactionMessage compressTransactionMessageUsingAddressLookupTables(
       instructions: List<Instruction>.unmodifiable(newInstructions),
     );
   }
-
   return transactionMessage;
 }

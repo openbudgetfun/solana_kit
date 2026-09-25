@@ -131,6 +131,8 @@ class ParallelTransactionPlanResult extends TransactionPlanResult {
 // ---------------------------------------------------------------------------
 // Constructor helpers
 // ---------------------------------------------------------------------------
+
+/// Creates a divisible [SequentialTransactionPlanResult].
 SequentialTransactionPlanResult sequentialTransactionPlanResult(
   List<TransactionPlanResult> plans,
 ) => SequentialTransactionPlanResult(plans: plans);
@@ -180,6 +182,8 @@ CanceledSingleTransactionPlanResult canceledSingleTransactionPlanResult(
 // ---------------------------------------------------------------------------
 // Type checks and assertions
 // ---------------------------------------------------------------------------
+
+/// Returns `true` if [value] is a [TransactionPlanResult].
 bool isTransactionPlanResult(Object? value) => value is TransactionPlanResult;
 
 /// Returns `true` if [plan] is a [SingleTransactionPlanResult].
@@ -320,6 +324,9 @@ void assertIsSuccessfulTransactionPlanResult(TransactionPlanResult plan) {
 // ---------------------------------------------------------------------------
 // Tree helpers
 // ---------------------------------------------------------------------------
+
+/// Finds the first transaction plan result in the tree that matches the
+/// given [predicate].
 TransactionPlanResult? findTransactionPlanResult(
   TransactionPlanResult transactionPlanResult,
   bool Function(TransactionPlanResult) predicate,
@@ -327,8 +334,6 @@ TransactionPlanResult? findTransactionPlanResult(
   if (predicate(transactionPlanResult)) {
     return transactionPlanResult;
   }
-
-
   return switch (transactionPlanResult) {
     SingleTransactionPlanResult() => null,
     SequentialTransactionPlanResult(:final plans) ||
@@ -344,12 +349,10 @@ TransactionPlanResult? _findInResultPlans(
 ) {
   for (final subResult in plans) {
     final found = findTransactionPlanResult(subResult, predicate);
-
     if (found != null) {
       return found;
     }
   }
-
   return null;
 }
 
@@ -385,8 +388,6 @@ bool everyTransactionPlanResult(
   if (!predicate(transactionPlanResult)) {
     return false;
   }
-
-
   return switch (transactionPlanResult) {
     SingleTransactionPlanResult() => true,
     SequentialTransactionPlanResult(:final plans) ||
@@ -466,10 +467,8 @@ TransactionPlanResultSummary summarizeTransactionPlanResult(
     switch (singleResult) {
       case SuccessfulSingleTransactionPlanResult():
         successfulTransactions.add(singleResult);
-
       case FailedSingleTransactionPlanResult():
         failedTransactions.add(singleResult);
-
       case CanceledSingleTransactionPlanResult():
         canceledTransactions.add(singleResult);
     }

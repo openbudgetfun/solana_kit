@@ -40,7 +40,6 @@ void main() {
           client: MockClient((request) async {
             capturedUri = request.url;
             capturedHeaders = request.headers;
-
             return http.Response(
               '{"inAmount":"10000000","outAmount":"19950000","transaction":"dHJhbnNhY3Rpb24=",'
               '"requestId":"req-1","router":"metis","mode":"ultra",'
@@ -108,7 +107,6 @@ void main() {
       final config = JupiterConfig(
         client: MockClient((request) async {
           capturedUri = request.url;
-
           return http.Response('{}', 200);
         }),
       );
@@ -137,7 +135,6 @@ void main() {
         apiKey: 'test-key',
         client: MockClient((request) async {
           capturedBody = request.body;
-
           return http.Response('{"swapTransaction":"c2lnbmVk"}', 200);
         }),
       );
@@ -170,7 +167,6 @@ void main() {
         final config = JupiterConfig(
           client: MockClient((request) async {
             capturedBody = request.body;
-
             return http.Response('{"error":"Route expired"}', 200);
           }),
         );
@@ -201,7 +197,6 @@ void main() {
       final config = JupiterConfig(
         client: MockClient((request) async {
           capturedUri = request.url;
-
           return http.Response(
             jsonEncode({
               'computeBudgetInstructions': [

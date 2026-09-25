@@ -12,7 +12,6 @@ class MockMobileWallet implements MobileWallet {
   Future<Map<String, Object?>> authorize(Map<String, Object?> params) async {
     lastMethod = 'authorize';
     lastParams = params;
-
     return nextResult;
   }
 
@@ -20,7 +19,6 @@ class MockMobileWallet implements MobileWallet {
   Future<Map<String, Object?>> reauthorize(Map<String, Object?> params) async {
     lastMethod = 'reauthorize';
     lastParams = params;
-
     return nextResult;
   }
 
@@ -28,14 +26,12 @@ class MockMobileWallet implements MobileWallet {
   Future<Map<String, Object?>> deauthorize(Map<String, Object?> params) async {
     lastMethod = 'deauthorize';
     lastParams = params;
-
     return nextResult;
   }
 
   @override
   Future<Map<String, Object?>> getCapabilities() async {
     lastMethod = 'getCapabilities';
-
     return nextResult;
   }
 
@@ -45,7 +41,6 @@ class MockMobileWallet implements MobileWallet {
   ) async {
     lastMethod = 'signTransactions';
     lastParams = params;
-
     return nextResult;
   }
 
@@ -53,7 +48,6 @@ class MockMobileWallet implements MobileWallet {
   Future<Map<String, Object?>> signMessages(Map<String, Object?> params) async {
     lastMethod = 'signMessages';
     lastParams = params;
-
     return nextResult;
   }
 
@@ -63,7 +57,6 @@ class MockMobileWallet implements MobileWallet {
   ) async {
     lastMethod = 'signAndSendTransactions';
     lastParams = params;
-
     return nextResult;
   }
 
@@ -73,7 +66,6 @@ class MockMobileWallet implements MobileWallet {
   ) async {
     lastMethod = 'cloneAuthorization';
     lastParams = params;
-
     return nextResult;
   }
 }

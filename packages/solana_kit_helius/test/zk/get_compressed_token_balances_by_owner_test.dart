@@ -20,7 +20,6 @@ void main() {
         expect(body['method'], 'getCompressedTokenBalancesByOwner');
         expect(body['jsonrpc'], '2.0');
         expect(body['params'], {'owner': 'test-owner'});
-
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResult}),
           200,

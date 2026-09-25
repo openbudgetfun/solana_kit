@@ -396,7 +396,6 @@ void main() {
       for (final entry in compiled.signatures.entries) {
         signedSigs[entry.key] = sigA;
       }
-
       final signed = TransactionWithLifetime(
         lifetimeConstraint: compiled.lifetimeConstraint,
         messageBytes: compiled.messageBytes,

@@ -11,6 +11,7 @@ void main() {
   //   final rpc = createSolanaRpc('https://api.mainnet-beta.solana.com');
   //   final rent = await rpc.getMinimumBalanceForRentExemption(165).send();
   //   print('Rent exemption for 165 bytes: ${rent.value} lamports');
+
   final transformed = 2.pipe((value) => value + 3).pipe((value) => value * 10);
 
   print('Pipe result: $transformed');

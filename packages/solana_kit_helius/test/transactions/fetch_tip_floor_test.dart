@@ -12,7 +12,6 @@ void main() {
         expect(request.method, 'POST');
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['method'], 'getPriorityFeeEstimate');
-
         return http.Response(
           jsonEncode([
             {'landed_tips_75th_percentile': 0.0013},

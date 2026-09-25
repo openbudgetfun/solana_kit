@@ -5,7 +5,6 @@ import 'package:test/test.dart';
 
 Uint8List _b(String hex) {
   final matches = RegExp('.{1,2}').allMatches(hex.toLowerCase());
-
   return Uint8List.fromList(
     matches.map((m) => int.parse(m.group(0)!, radix: 16)).toList(),
   );
@@ -16,7 +15,6 @@ FixedSizeEncoder<num> _u8Encoder() => FixedSizeEncoder<num>(
   fixedSize: 1,
   write: (value, bytes, offset) {
     bytes[offset] = value.toInt();
-
     return offset + 1;
   },
 );
@@ -34,7 +32,6 @@ FixedSizeCodec<num, int> _u8Codec() => FixedSizeCodec<num, int>(
   fixedSize: 1,
   write: (value, bytes, offset) {
     bytes[offset] = value.toInt();
-
     return offset + 1;
   },
   read: (bytes, offset) {
@@ -51,7 +48,6 @@ VariableSizeEncoder<Uint8List> _bytesEncoder() =>
       write: (value, bytes, offset) {
         bytes[offset] = value.length;
         bytes.setRange(offset + 1, offset + 1 + value.length, value);
-
         return offset + 1 + value.length;
       },
     );
@@ -62,7 +58,6 @@ VariableSizeDecoder<Uint8List> _bytesDecoder() =>
       maxSize: 256,
       read: (bytes, offset) {
         final length = bytes[offset];
-
         return (
           Uint8List.sublistView(bytes, offset + 1, offset + 1 + length),
           offset + 1 + length,
@@ -78,12 +73,10 @@ VariableSizeCodec<Uint8List, Uint8List> _bytesCodec() =>
       write: (value, bytes, offset) {
         bytes[offset] = value.length;
         bytes.setRange(offset + 1, offset + 1 + value.length, value);
-
         return offset + 1 + value.length;
       },
       read: (bytes, offset) {
         final length = bytes[offset];
-
         return (
           Uint8List.sublistView(bytes, offset + 1, offset + 1 + length),
           offset + 1 + length,

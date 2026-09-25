@@ -14,7 +14,6 @@ Future<GetPriorityFeeEstimateResponse> priorityFeeGetEstimate(
     'getPriorityFeeEstimate',
     request.toJson(),
   );
-
   return GetPriorityFeeEstimateResponse.fromJson(
     result! as Map<String, Object?>,
   );

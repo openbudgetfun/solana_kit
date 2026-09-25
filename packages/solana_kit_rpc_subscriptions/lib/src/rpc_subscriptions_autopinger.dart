@@ -66,7 +66,6 @@ RpcSubscriptionsChannel getRpcSubscriptionsChannelWithAutoping({
     for (final subscription in channelSubscriptions) {
       unawaited(subscription.cancel());
     }
-
     channelSubscriptions.clear();
   }
 
@@ -123,7 +122,6 @@ class _AutopingChannel implements RpcSubscriptionsChannel {
     if (!pingerAbortSource.token.isCancelled) {
       restartPingTimer();
     }
-
     return channel.send(message);
   }
 }

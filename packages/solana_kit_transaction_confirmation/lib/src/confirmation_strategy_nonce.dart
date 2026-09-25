@@ -153,7 +153,6 @@ createNonceInvalidationPromiseFactory(NonceInvalidationConfig config) {
                   }),
                 );
               }
-
               // Otherwise, leave the completer pending (never resolves).
             })
             .catchError((Object error) {

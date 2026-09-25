@@ -20,7 +20,6 @@ export function getDiscriminatorConstantsFragment(
   scope: RenderScope,
 ): Fragment {
   const discriminators = node.discriminators ?? [];
-
   if (discriminators.length === 0) return emptyFragment();
 
   const name = node.name as string;
@@ -32,7 +31,6 @@ export function getDiscriminatorConstantsFragment(
     switch (disc.kind) {
       case "constantDiscriminatorNode": {
         const constDisc = disc as ConstantDiscriminatorNode;
-
         if (constDisc.constant.value.kind === "bytesValueNode") {
           const bytes = hexToBytes(constDisc.constant.value.data);
           const hexList = bytesToDartHexList(bytes);
@@ -41,10 +39,8 @@ export function getDiscriminatorConstantsFragment(
 final ${constName} = ${use("Uint8List", "dartTypedData")}.fromList(${fragmentFromString(hexList)});`,
           );
         }
-
         break;
       }
-
       case "fieldDiscriminatorNode": {
         const fieldDisc = disc as FieldDiscriminatorNode;
         fragments.push(
@@ -53,7 +49,6 @@ final ${constName} = ${use("Uint8List", "dartTypedData")}.fromList(${fragmentFro
         );
         break;
       }
-
       case "sizeDiscriminatorNode": {
         const sizeDisc = disc as SizeDiscriminatorNode;
         fragments.push(
@@ -72,10 +67,8 @@ final ${constName} = ${use("Uint8List", "dartTypedData")}.fromList(${fragmentFro
 function hexToBytes(hex: string): Uint8Array {
   const clean = hex.replace(/^0x/, "");
   const bytes = new Uint8Array(clean.length / 2);
-
   for (let i = 0; i < clean.length; i += 2) {
     bytes[i / 2] = parseInt(clean.slice(i, i + 2), 16);
   }
-
   return bytes;
 }

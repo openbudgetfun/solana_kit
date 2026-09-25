@@ -7,6 +7,5 @@ Future<CompressedAccount> zkGetCompressedAccount(
   GetCompressedAccountRequest request,
 ) async {
   final result = await rpcClient.call('getCompressedAccount', request.toJson());
-
   return CompressedAccount.fromJson(result! as Map<String, Object?>);
 }

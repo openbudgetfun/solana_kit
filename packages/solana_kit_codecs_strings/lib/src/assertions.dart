@@ -14,7 +14,6 @@ void assertValidBaseString(
 ]) {
   final lookup = baseXLookupFor(alphabet);
   final effectiveValue = givenValue ?? testValue;
-
   for (var i = 0; i < testValue.length; i++) {
     if (lookup.indexOf(testValue.codeUnitAt(i)) == -1) {
       throw SolanaError(SolanaErrorCode.codecsInvalidStringForBase, {

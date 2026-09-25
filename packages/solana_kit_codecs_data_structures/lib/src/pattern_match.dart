@@ -52,11 +52,9 @@ Encoder<TFrom> getPatternMatchEncoder<TFrom>(
 ) {
   int getIndexFromValue(Object? value) {
     final index = patterns.indexWhere((p) => p.$1(value as TFrom));
-
     if (index == -1) {
       throw SolanaError(SolanaErrorCode.codecsInvalidPatternMatchValue);
     }
-
     return index;
   }
 
@@ -65,7 +63,6 @@ Encoder<TFrom> getPatternMatchEncoder<TFrom>(
 
   int writeImpl(TFrom value, Uint8List bytes, int offset) {
     final index = getIndexFromValue(value);
-
     return variants[index].write(value, bytes, offset);
   }
 
@@ -74,11 +71,9 @@ Encoder<TFrom> getPatternMatchEncoder<TFrom>(
   }
 
   final maxSize = _getMaxSize(variants);
-
   return VariableSizeEncoder<TFrom>(
     getSizeFromValue: (value) {
       final index = getIndexFromValue(value);
-
       return getEncodedSize(value, variants[index]);
     },
     write: writeImpl,
@@ -114,13 +109,11 @@ Decoder<TTo> getPatternMatchDecoder<TTo>(
 ) {
   int getIndexFromBytes(Uint8List bytes, int offset) {
     final index = patterns.indexWhere((p) => p.$1(bytes));
-
     if (index == -1) {
       throw SolanaError(SolanaErrorCode.codecsInvalidPatternMatchBytes, {
         'bytes': bytes,
       });
     }
-
     return index;
   }
 
@@ -130,7 +123,6 @@ Decoder<TTo> getPatternMatchDecoder<TTo>(
   (TTo, int) readImpl(Uint8List bytes, int offset) {
     final index = getIndexFromBytes(bytes, offset);
     final (value, newOffset) = variants[index].read(bytes, offset);
-
     return (value as TTo, newOffset);
   }
 
@@ -139,7 +131,6 @@ Decoder<TTo> getPatternMatchDecoder<TTo>(
   }
 
   final maxSize = _getMaxSize(variants);
-
   return VariableSizeDecoder<TTo>(read: readImpl, maxSize: maxSize);
 }
 
@@ -186,27 +177,21 @@ Codec<TFrom, TTo> getPatternMatchCodec<TFrom, TTo>(
 /// `null`.
 int? _getFixedSize(List<Object> items) {
   int? result;
-
   for (final item in items) {
     final int itemSize;
-
     if (item case FixedSizeEncoder(:final fixedSize)) {
       itemSize = fixedSize;
-
     } else if (item case FixedSizeDecoder(:final fixedSize)) {
       itemSize = fixedSize;
     } else {
       return null;
     }
-
     if (result == null) {
       result = itemSize;
-
     } else if (result != itemSize) {
       return null;
     }
   }
-
   return result;
 }
 
@@ -214,27 +199,20 @@ int? _getFixedSize(List<Object> items) {
 /// size.
 int? _getMaxSize(List<Object> items) {
   var result = 0;
-
   for (final item in items) {
     if (item case FixedSizeEncoder(:final fixedSize)) {
       if (fixedSize > result) result = fixedSize;
-
     } else if (item case FixedSizeDecoder(:final fixedSize)) {
       if (fixedSize > result) result = fixedSize;
-
     } else if (item case VariableSizeEncoder(:final maxSize)) {
       if (maxSize == null) return null;
-
       if (maxSize > result) result = maxSize;
-
     } else if (item case VariableSizeDecoder(:final maxSize)) {
       if (maxSize == null) return null;
-
       if (maxSize > result) result = maxSize;
     } else {
       return null;
     }
   }
-
   return result;
 }

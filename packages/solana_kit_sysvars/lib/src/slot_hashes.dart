@@ -51,12 +51,10 @@ VariableSizeEncoder<SysvarSlotHashes> getSysvarSlotHashesEncoder() {
   return VariableSizeEncoder<SysvarSlotHashes>(
     getSizeFromValue: (value) {
       final maps = _entriesToMaps(value);
-
       return getEncodedSize(maps, arrayEncoder);
     },
     write: (value, bytes, offset) {
       final maps = _entriesToMaps(value);
-
       return arrayEncoder.write(maps, bytes, offset);
     },
   );
@@ -74,7 +72,6 @@ VariableSizeDecoder<SysvarSlotHashes> getSysvarSlotHashesDecoder() {
     read: (bytes, offset) {
       final (maps, newOffset) = arrayDecoder.read(bytes, offset);
       final entries = maps.map(_mapToEntry).toList();
-
       return (entries, newOffset);
     },
   );
@@ -104,7 +101,6 @@ Future<SysvarSlotHashes> fetchSysvarSlotHashes(
     (account as ExistingAccount<Uint8List>).account,
     getSysvarSlotHashesDecoder(),
   );
-
   return decoded.data;
 }
 

@@ -29,7 +29,6 @@ RpcRequestTransformer getIntegerOverflowRequestTransformer(
         (keyPath, value) => onIntegerOverflow(request, keyPath, value),
       ),
     ], const TraversalState(keyPath: []));
-
     return transformer(request);
   };
 }

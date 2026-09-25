@@ -23,14 +23,12 @@ const directories: string[] = [];
 function temporaryDirectory(): string {
   const directory = mkdtempSync(join(tmpdir(), "renderer-security-"));
   directories.push(directory);
-
   return directory;
 }
 
 function runDart(source: string) {
   const file = join(temporaryDirectory(), "proof.dart");
   writeFileSync(file, source);
-
   return spawnSync("dart", [file], { encoding: "utf8", timeout: 30_000 });
 }
 

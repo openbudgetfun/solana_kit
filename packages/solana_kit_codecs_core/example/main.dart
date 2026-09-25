@@ -10,12 +10,10 @@ void main() {
     write: (value, bytes, offset) {
       final charCodes = value.codeUnits;
       bytes.setAll(offset, charCodes);
-
       return offset + charCodes.length;
     },
     read: (bytes, offset) {
       final value = String.fromCharCodes(bytes.sublist(offset));
-
       return (value, bytes.length);
     },
   );

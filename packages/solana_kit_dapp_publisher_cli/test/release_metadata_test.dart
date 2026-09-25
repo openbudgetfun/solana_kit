@@ -52,18 +52,15 @@ PublicationBundle bundleWith({
       'bannerUrl': bannerUrl,
       'featureGraphicUrl': featureGraphicUrl,
       'editorsChoiceGraphicUrl': editorsChoiceGraphicUrl,
-
       if (includeAppWebsite) 'appWebsite': 'https://app.example.com',
       'contactEmail': 'contact@example.com',
       'supportEmail': 'support@example.com',
       'languages': ['en-US'],
-
       if (includeLegalUrls) ...{
         'licenseUrl': 'https://example.com/license',
         'copyrightUrl': 'https://example.com/copyright',
         'privacyPolicyUrl': 'https://example.com/privacy',
       },
-
       'walletAddress': 'Wa11et1111111111111111111111111111111111111',
       'nftMintAddress': 'App111111111111111111111111111111111111111',
     },
@@ -71,12 +68,10 @@ PublicationBundle bundleWith({
       'id': 'pub-1',
       'type': 'organization',
       'name': 'Example Inc',
-
       if (includePublisherWebsite) 'website': 'https://example.com',
       'email': 'contact@example.com',
       'supportEmail': 'support@example.com',
     },
-
     if (includeInstallFile)
       'installFile': {
         'uri': 'https://files.example.com/app.apk',
@@ -91,7 +86,6 @@ PublicationBundle bundleWith({
       'acceptedSignerRoles': ['publisher', 'payer'],
     },
   };
-
   return mapBackendBundleToPublicationBundle(
     backend,
     'https://meta.example.com/rel-1.json',
@@ -107,7 +101,6 @@ class FakeUploadClient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final request2 = request as http.Request;
     requests.add(request2);
-
     return http.StreamedResponse(
       const Stream<List<int>>.empty(),
       200,
@@ -132,7 +125,6 @@ final class FakeMetadataClient implements ReleaseMetadataPortalClient {
     if (uploadTarget != null) {
       return uploadTarget!;
     }
-
     return PortalUploadTarget(
       uploadUrl: 'https://upload.example.com',
       publicUrl: 'https://public.example.com/${input.fileExtension}',
@@ -147,15 +139,12 @@ final class FakeMetadataClient implements ReleaseMetadataPortalClient {
   }) async {
     fetchCalls.add(url);
     final error = fetchError;
-
     if (error != null) {
       if (error is Exception) {
         throw error;
       }
-
       throw PublisherCliException(error.toString());
     }
-
     return RemoteFilePayload(
       data: base64Encode(pngBytes(width: 512, height: 512)),
       fileName: fileName ?? 'icon.png',
@@ -173,7 +162,6 @@ Uint8List pngBytes({required int width, required int height}) {
     ..setUint32(12, 0x49484452)
     ..setUint32(16, width)
     ..setUint32(20, height);
-
   return data.buffer.asUint8List();
 }
 
@@ -240,7 +228,6 @@ void main() {
         expect(entry['height'], 512);
         expect(entry['sha256'], isNotEmpty);
       }
-
       expect(media.first['purpose'], 'icon');
       expect(media[1]['purpose'], 'screenshot');
       expect(media[2]['purpose'], 'banner');

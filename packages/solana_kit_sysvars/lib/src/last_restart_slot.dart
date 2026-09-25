@@ -68,7 +68,6 @@ FixedSizeDecoder<SysvarLastRestartSlot> getSysvarLastRestartSlotDecoder() {
     fixedSize: sysvarLastRestartSlotSize,
     read: (bytes, offset) {
       final (map, newOffset) = structDecoder.read(bytes, offset);
-
       return (
         SysvarLastRestartSlot(
           lastRestartSlot: map['lastRestartSlot']! as BigInt,
@@ -104,6 +103,5 @@ Future<SysvarLastRestartSlot> fetchSysvarLastRestartSlot(
     (account as ExistingAccount<Uint8List>).account,
     getSysvarLastRestartSlotDecoder(),
   );
-
   return decoded.data;
 }

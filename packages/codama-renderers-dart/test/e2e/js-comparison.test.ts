@@ -42,16 +42,11 @@ function categorizeKeys(keys: string[]): Record<string, string[]> {
     }
 
     if (key.startsWith("accounts/")) categories.accounts.push(key);
-
     else if (key.startsWith("instructions/"))
       categories.instructions.push(key);
-
     else if (key.startsWith("types/")) categories.types.push(key);
-
     else if (key.startsWith("errors/")) categories.errors.push(key);
-
     else if (key.startsWith("programs/")) categories.programs.push(key);
-
     else if (key.startsWith("pdas/")) categories.pdas.push(key);
   }
 
@@ -67,11 +62,9 @@ function extractDartTypeNames(content: string): string[] {
   const classRegex =
     /(?:sealed\s+)?class\s+([A-Z][A-Za-z0-9]*)|enum\s+([A-Z][A-Za-z0-9]*)|typedef\s+([A-Z][A-Za-z0-9]*)/g;
   let match;
-
   while ((match = classRegex.exec(content)) !== null) {
     names.push(match[1] || match[2] || match[3]);
   }
-
   return names;
 }
 
@@ -84,11 +77,9 @@ function extractTsTypeNames(content: string): string[] {
   const typeRegex =
     /(?:export\s+)?type\s+([A-Z][A-Za-z0-9]*)|(?:export\s+)?interface\s+([A-Z][A-Za-z0-9]*)/g;
   let match;
-
   while ((match = typeRegex.exec(content)) !== null) {
     names.push(match[1] || match[2]);
   }
-
   return names;
 }
 
@@ -104,7 +95,6 @@ function extractDartFunctionNames(content: string): string[] {
   while ((match = fnRegex.exec(content)) !== null) {
     names.push(match[1]);
   }
-
   return names;
 }
 
@@ -120,7 +110,6 @@ function extractTsFunctionNames(content: string): string[] {
   while ((match = fnRegex.exec(content)) !== null) {
     names.push(match[1]);
   }
-
   return names;
 }
 
@@ -135,7 +124,6 @@ function extractErrorCodes(content: string): number[] {
   while ((match = hexRegex.exec(content)) !== null) {
     codes.push(parseInt(match[1], 16));
   }
-
   return [...new Set(codes)].sort((a, b) => a - b);
 }
 

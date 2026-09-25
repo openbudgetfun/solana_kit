@@ -25,19 +25,16 @@ Signature getSignatureFromTransaction(Transaction transaction) {
 
   // First signature is the fee payer's.
   final signatureEntries = transaction.signatures.values;
-
   if (signatureEntries.isEmpty) {
     throw SolanaError(SolanaErrorCode.transactionFeePayerSignatureMissing);
   }
 
   final signatureBytes = signatureEntries.first;
-
   if (signatureBytes == null) {
     throw SolanaError(SolanaErrorCode.transactionFeePayerSignatureMissing);
   }
 
   final transactionSignature = _base58Decoder!.decode(signatureBytes.value);
-
   return Signature(transactionSignature);
 }
 
@@ -132,7 +129,6 @@ Future<Transaction> signTransaction(
 ) async {
   final out = await partiallySignTransaction(keyPairs, transaction);
   assertIsFullySignedTransaction(out);
-
   return out;
 }
 
@@ -149,7 +145,6 @@ bool isFullySignedTransaction(Transaction transaction) {
 /// signature, providing the list of missing signer addresses.
 void assertIsFullySignedTransaction(Transaction transaction) {
   final missingSigs = <Address>[];
-
   for (final entry in transaction.signatures.entries) {
     if (entry.value == null) {
       missingSigs.add(entry.key);
@@ -166,10 +161,8 @@ void assertIsFullySignedTransaction(Transaction transaction) {
 /// Compares two byte arrays for equality.
 bool _bytesEqual(Uint8List a, Uint8List b) {
   if (a.length != b.length) return false;
-
   for (var i = 0; i < a.length; i++) {
     if (a[i] != b[i]) return false;
   }
-
   return true;
 }

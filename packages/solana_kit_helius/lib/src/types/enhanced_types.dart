@@ -9,7 +9,6 @@ class GetTransactionsRequest {
   /// Creates a [GetTransactionsRequest] from a JSON map.
   factory GetTransactionsRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return GetTransactionsRequest(
       transactions: r.requireList<String>('transactions'),
     );
@@ -36,7 +35,6 @@ class GetTransactionsByAddressRequest {
   /// Creates a [GetTransactionsByAddressRequest] from a JSON map.
   factory GetTransactionsByAddressRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return GetTransactionsByAddressRequest(
       address: r.requireString('address'),
       before: r.optString('before'),
@@ -64,13 +62,9 @@ class GetTransactionsByAddressRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'address': address,
-
     if (before != null) 'before': before,
-
     if (until != null) 'until': until,
-
     if (commitment != null) 'commitment': commitment!.toJson(),
-
     if (type != null) 'type': type,
   };
 }
@@ -97,7 +91,6 @@ class EnhancedTransaction {
   /// Creates an [EnhancedTransaction] from a JSON map.
   factory EnhancedTransaction.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return EnhancedTransaction(
       description: r.optString('description'),
       type: r.requireString('type'),
@@ -172,7 +165,6 @@ class EnhancedTransaction {
     'feePayer': feePayer,
     'signature': signature,
     'slot': slot,
-
     if (timestamp != null) 'timestamp': timestamp,
     'nativeTransfers': nativeTransfers.map((e) => e.toJson()).toList(),
     'tokenTransfers': tokenTransfers.map((e) => e.toJson()).toList(),
@@ -194,7 +186,6 @@ class NativeTransfer {
   /// Creates a [NativeTransfer] from a JSON map.
   factory NativeTransfer.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return NativeTransfer(
       fromUserAccount: r.requireString('fromUserAccount'),
       toUserAccount: r.requireString('toUserAccount'),
@@ -235,7 +226,6 @@ class TokenTransfer {
   /// Creates a [TokenTransfer] from a JSON map.
   factory TokenTransfer.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return TokenTransfer(
       fromUserAccount: r.requireString('fromUserAccount'),
       toUserAccount: r.requireString('toUserAccount'),
@@ -275,7 +265,6 @@ class TokenTransfer {
     'fromTokenAccount': fromTokenAccount,
     'toTokenAccount': toTokenAccount,
     'tokenAmount': tokenAmount,
-
     if (mint != null) 'mint': mint,
     'tokenStandard': tokenStandard,
   };
@@ -293,7 +282,6 @@ class AccountData {
   /// Creates an [AccountData] from a JSON map.
   factory AccountData.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return AccountData(
       account: r.requireString('account'),
       nativeBalanceChange: r.requireMap('nativeBalanceChange'),
@@ -335,7 +323,6 @@ class TokenBalanceChange {
   /// Creates a [TokenBalanceChange] from a JSON map.
   factory TokenBalanceChange.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return TokenBalanceChange(
       mint: r.requireString('mint'),
       rawTokenAmount: r.requireInt('rawTokenAmount'),
@@ -383,7 +370,6 @@ class InnerInstruction {
   /// Creates an [InnerInstruction] from a JSON map.
   factory InnerInstruction.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return InnerInstruction(
       accounts: r.requireList<Object?>('accounts'),
       data: r.requireString('data'),
@@ -409,7 +395,6 @@ class InnerInstruction {
     'accounts': accounts,
     'data': data,
     'programId': programId,
-
     if (innerInstructions != null) 'innerInstructions': innerInstructions,
   };
 }

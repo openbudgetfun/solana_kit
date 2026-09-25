@@ -112,7 +112,6 @@ class WalletScenario {
     if (_closed || _started) {
       throw StateError('Wallet scenario has already been started or closed');
     }
-
     _started = true;
 
     // Set up the native -> Dart callback bridge.
@@ -126,7 +125,6 @@ class WalletScenario {
 
     if (_closed) {
       await _walletApi.closeScenario(sessionId: _sessionId!);
-
       return;
     }
 
@@ -141,19 +139,16 @@ class WalletScenario {
 
     if (_sessionId != null) {
       final pending = List<String>.from(_pendingRequestIds);
-
       for (final requestId in pending) {
         try {
           await _walletApi.cancelRequest(
             sessionId: _sessionId!,
             requestId: requestId,
           );
-
         } on Object {
           // Ignore cancellation errors during teardown.
         }
       }
-
       await _walletApi.closeScenario(sessionId: _sessionId!);
     }
 
@@ -173,48 +168,34 @@ class WalletScenario {
     switch (call.method) {
       case 'onScenarioReady':
         callbacks.onScenarioReady();
-
       case 'onScenarioServingClients':
         callbacks.onScenarioServingClients();
-
       case 'onScenarioServingComplete':
         callbacks.onScenarioServingComplete();
-
       case 'onScenarioComplete':
         callbacks.onScenarioComplete();
-
       case 'onScenarioError':
         final args = call.arguments as Map<Object?, Object?>?;
         callbacks.onScenarioError(args?['error']);
-
       case 'onScenarioTeardownComplete':
         callbacks.onScenarioTeardownComplete();
-
       case 'onSessionTerminated':
         callbacks.onScenarioTeardownComplete();
-
       case 'onAuthorizeRequest':
         await _handleAuthorizeRequest(call);
-
       case 'onReauthorizeRequest':
         await _handleReauthorizeRequest(call);
-
       case 'onSignTransactionsRequest':
         await _handleSignTransactionsRequest(call);
-
       case 'onSignMessagesRequest':
         await _handleSignMessagesRequest(call);
-
       case 'onSignAndSendTransactionsRequest':
         await _handleSignAndSendTransactionsRequest(call);
-
       case 'onDeauthorizedEvent':
         await _handleDeauthorizedEvent(call);
-
       default:
         throw MissingPluginException('No handler for method ${call.method}');
     }
-
     return null;
   }
 
@@ -240,7 +221,6 @@ class WalletScenario {
         requestId: requestId,
         resultJson: jsonEncode(result),
       );
-
     } on Object catch (error) {
       await _walletApi.resolveRequest(
         sessionId: _sessionId!,
@@ -276,7 +256,6 @@ class WalletScenario {
         requestId: requestId,
         resultJson: jsonEncode(result),
       );
-
     } on Object catch (error) {
       await _walletApi.resolveRequest(
         sessionId: _sessionId!,
@@ -309,7 +288,6 @@ class WalletScenario {
         requestId: requestId,
         resultJson: jsonEncode(result),
       );
-
     } on Object catch (error) {
       await _walletApi.resolveRequest(
         sessionId: _sessionId!,
@@ -342,7 +320,6 @@ class WalletScenario {
         requestId: requestId,
         resultJson: jsonEncode(result),
       );
-
     } on Object catch (error) {
       await _walletApi.resolveRequest(
         sessionId: _sessionId!,
@@ -375,7 +352,6 @@ class WalletScenario {
         requestId: requestId,
         resultJson: jsonEncode(result),
       );
-
     } on Object catch (error) {
       await _walletApi.resolveRequest(
         sessionId: _sessionId!,
@@ -411,7 +387,6 @@ class WalletScenario {
         requestId: requestId,
         resultJson: jsonEncode(result),
       );
-
     } on Object catch (error) {
       await _walletApi.resolveRequest(
         sessionId: _sessionId!,
@@ -425,20 +400,16 @@ class WalletScenario {
 
   Map<String, Object?> _decodeArgs(MethodCall call) {
     final args = call.arguments;
-
     if (args is Map<Object?, Object?>) {
       return args.cast<String, Object?>();
     }
-
     return <String, Object?>{};
   }
 
   Map<String, Object?> _decodeJsonMap(String? json) {
     if (json == null || json.isEmpty) return {};
     final decoded = jsonDecode(json);
-
     if (decoded is Map<String, Object?>) return decoded;
-
     if (decoded is Map) return decoded.cast<String, Object?>();
     return {};
   }
@@ -449,12 +420,10 @@ class WalletScenario {
         'error': {
           'code': error.code,
           'message': error.message,
-
           if (error.data != null) 'data': error.data,
         },
       };
     }
-
     return {
       'error': {'code': -32603, 'message': error.toString()},
     };

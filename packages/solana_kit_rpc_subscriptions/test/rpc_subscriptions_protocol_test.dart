@@ -190,7 +190,6 @@ void main() {
         case 'done':
           await channel.messages.close();
       }
-
       await check;
       expect(channel.messages.hasListener, isFalse);
     });
@@ -227,7 +226,6 @@ void main() {
     for (var index = 0; index < 1025; index++) {
       channel.notify(1, 'slotNotification', index);
     }
-
     final stream = await future;
     final failure = Completer<Object>();
     final listener = stream.listen((_) {}, onError: failure.complete);
@@ -274,7 +272,6 @@ void main() {
         } else {
           channel.errors.add(StateError('disconnected'));
         }
-
         expect(channel.messages.hasListener, isFalse);
         expect(channel.errors.hasListener, isFalse);
       },
@@ -309,7 +306,6 @@ class _Channel implements RpcSubscriptionsChannel {
     if (sendError case final Object error) return Future<void>.error(error);
     final request = message as Map<String, Object?>;
     sent.add(request);
-
     if (autoReply && (request['method']! as String).endsWith('Subscribe')) {
       scheduleMicrotask(
         () => reply(

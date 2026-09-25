@@ -40,7 +40,6 @@ Future<T> getAbortablePromise<T>(
 /// discarded (their errors are caught so they do not become unhandled).
 Future<T> safeRace<T>(List<Future<T>> futures) {
   final completer = Completer<T>();
-
   for (final future in futures) {
     future.then(
       (value) {
@@ -51,6 +50,5 @@ Future<T> safeRace<T>(List<Future<T>> futures) {
       },
     );
   }
-
   return completer.future;
 }

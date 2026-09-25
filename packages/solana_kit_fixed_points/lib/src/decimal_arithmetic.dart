@@ -34,7 +34,6 @@ DecimalFixedPoint multiplyDecimalFixedPoint(
       'Expected BigInt or DecimalFixedPoint.',
     ),
   };
-
   return _withDecimalRaw(a, raw);
 }
 
@@ -56,7 +55,6 @@ DecimalFixedPoint divideDecimalFixedPoint(
       'Expected BigInt or DecimalFixedPoint.',
     ),
   };
-
   return _withDecimalRaw(a, raw);
 }
 
@@ -69,7 +67,6 @@ DecimalFixedPoint negateDecimalFixedPoint(DecimalFixedPoint value) {
       'Expected a signed value.',
     );
   }
-
   return _withDecimalRaw(value, -value.raw);
 }
 
@@ -84,7 +81,6 @@ BigInt _multiplyByFixedPoint(
   FixedPointRoundingMode rounding,
 ) {
   _assertSameSignedness(a, b, 'multiplyDecimalFixedPoint');
-
   return _divideChecked(a.raw * b.raw, _pow10(b.decimals), rounding);
 }
 
@@ -95,7 +91,6 @@ BigInt _divideByFixedPoint(
 ) {
   _assertSameSignedness(a, b, 'divideDecimalFixedPoint');
   final scaledNumerator = a.raw * _pow10(b.decimals);
-
   return _divideChecked(scaledNumerator, b.raw, rounding);
 }
 
@@ -134,7 +129,6 @@ BigInt _divideChecked(
 
   final quotient = numerator ~/ denominator;
   final remainder = numerator.remainder(denominator);
-
   if (remainder == BigInt.zero) return quotient;
 
   return switch (rounding) {
@@ -169,10 +163,8 @@ bool _roundsTowardPositiveInfinity(BigInt numerator, BigInt denominator) {
 
 BigInt _pow10(int exponent) {
   var result = BigInt.one;
-
   for (var i = 0; i < exponent; i++) {
     result *= BigInt.from(10);
   }
-
   return result;
 }

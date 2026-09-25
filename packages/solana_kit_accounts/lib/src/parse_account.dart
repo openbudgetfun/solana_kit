@@ -86,7 +86,6 @@ MaybeEncodedAccount parseBase58RpcAccount(
 
   if (data is String) {
     base58String = data;
-
   } else if (data is List) {
     base58String = data[0] as String;
   } else {
@@ -206,7 +205,6 @@ MaybeAccount<JsonParsedAccountData<Map<String, Object?>>> parseJsonRpcAccount(
   final type = parsed['type'] as String?;
 
   ParsedAccountMeta? meta;
-
   if (program != null || type != null) {
     meta = ParsedAccountMeta(program: program ?? '', type: type);
   }
@@ -234,10 +232,8 @@ MaybeAccount<JsonParsedAccountData<Map<String, Object?>>> parseJsonRpcAccount(
 BaseAccount parseBaseAccount(Map<String, Object?> rpcAccount) {
   final rawLamports = rpcAccount['lamports'];
   final BigInt lamportsValue;
-
   if (rawLamports is BigInt) {
     lamportsValue = rawLamports;
-
   } else if (rawLamports is int) {
     lamportsValue = BigInt.from(rawLamports);
   } else {
@@ -246,10 +242,8 @@ BaseAccount parseBaseAccount(Map<String, Object?> rpcAccount) {
 
   final rawSpace = rpcAccount['space'];
   final BigInt spaceValue;
-
   if (rawSpace is BigInt) {
     spaceValue = rawSpace;
-
   } else if (rawSpace is int) {
     spaceValue = BigInt.from(rawSpace);
   } else {

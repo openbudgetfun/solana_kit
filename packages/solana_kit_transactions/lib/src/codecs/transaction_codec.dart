@@ -20,17 +20,14 @@ _EnvelopeShape _getEncodeShapeForMessageBytes(Uint8List messageBytes) {
   if (messageBytes.isEmpty) return _EnvelopeShape.signaturesFirst;
 
   final firstByte = messageBytes[0];
-
   if ((firstByte & _legacyVersionFlagMask) == 0) {
     return _EnvelopeShape.signaturesFirst;
   }
 
   final version = firstByte & _versionFlagMask;
-
   if (version == 0) {
     return _EnvelopeShape.signaturesFirst;
   }
-
   if (version == 1) {
     return _EnvelopeShape.messageFirst;
   }
@@ -76,7 +73,6 @@ int _getSignatureCountForVersionedOrThrow(Uint8List messageBytes) {
       'messageBytes': messageBytes,
     });
   }
-
   return messageBytes[1];
 }
 
@@ -88,7 +84,6 @@ VariableSizeEncoder<Transaction> _getTransactionEncoderWithMessageFirst() {
       final signatureCount = _getSignatureCountForVersionedOrThrow(
         transaction.messageBytes,
       );
-
       return transaction.messageBytes.length + signatureCount * 64;
     },
     write: (transaction, bytes, offset) {
@@ -101,7 +96,6 @@ VariableSizeEncoder<Transaction> _getTransactionEncoderWithMessageFirst() {
         transaction.messageBytes,
       );
       final signaturesEncoder = getSignaturesEncoderWithLength(signatureCount);
-
       return signaturesEncoder.write(transaction.signatures, bytes, nextOffset);
     },
   );
@@ -190,7 +184,6 @@ VariableSizeDecoder<Transaction> getTransactionDecoder() {
 VariableSizeCodec<Transaction, Transaction> getTransactionCodec() {
   final encoder = getTransactionEncoder();
   final decoder = getTransactionDecoder();
-
   return VariableSizeCodec<Transaction, Transaction>(
     getSizeFromValue: encoder.getSizeFromValue,
     write: encoder.write,
@@ -233,7 +226,6 @@ _SignerData _decodeSignerAddresses(Uint8List messageBytes) {
   pos = countEnd;
 
   final staticAddresses = <Address>[];
-
   for (var i = 0; i < accountCount; i++) {
     final (addr, addrEnd) = addrDec.read(messageBytes, pos);
     staticAddresses.add(addr);

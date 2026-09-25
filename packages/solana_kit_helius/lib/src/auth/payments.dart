@@ -55,7 +55,6 @@ Future<String> payWithMemo(
     ],
     data: utf8.encode(memo),
   );
-
   return buildAndSendTokenTransfer(
     TokenTransferParams(
       secretKey: secretKey,
@@ -85,13 +84,11 @@ Future<String> payPaymentLink(
       'must be payment_required',
     );
   }
-
   if (paymentLink.memo != paymentLink.paymentIntentId) {
     throw ArgumentError(
       'paymentLink.memo must match paymentLink.paymentIntentId',
     );
   }
-
   if (paymentLink.amountCents <= 0) {
     throw ArgumentError.value(
       paymentLink.amountCents,
@@ -99,9 +96,7 @@ Future<String> payPaymentLink(
       'must be positive',
     );
   }
-
   final rawAmount = BigInt.from(paymentLink.amountCents) * _centsToUsdcRaw;
-
   return payWithMemo(
     secretKey,
     paymentLink.destinationWallet,

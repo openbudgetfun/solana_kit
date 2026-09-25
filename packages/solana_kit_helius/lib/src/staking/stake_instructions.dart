@@ -14,6 +14,5 @@ Future<Map<String, Object?>> stakingGetStakeInstructions(
     '/v0/staking/instructions?api-key=$apiKey',
     body: request.toJson(),
   );
-
   return result! as Map<String, Object?>;
 }

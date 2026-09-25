@@ -95,7 +95,6 @@ Encoder<OffchainMessageV0> getOffchainMessageV0Encoder() {
         'requiredSignatories': offchainMessage.requiredSignatories,
         'messageLength': messageLength,
       };
-
       return [preamble, offchainMessage.content.text];
     },
   );

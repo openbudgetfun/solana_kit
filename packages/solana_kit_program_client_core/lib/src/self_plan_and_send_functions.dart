@@ -48,7 +48,6 @@ class SelfPlanAndSendFunctions<TInput, TPlan, TResult> {
     if (_planTransactions != null) {
       return _planTransactions(inputs);
     }
-
     return Future.wait(inputs.map(_planTransaction));
   }
 
@@ -62,7 +61,6 @@ class SelfPlanAndSendFunctions<TInput, TPlan, TResult> {
     if (_sendTransactions != null) {
       return _sendTransactions(inputs);
     }
-
     return Future.wait(inputs.map(_sendTransaction));
   }
 }

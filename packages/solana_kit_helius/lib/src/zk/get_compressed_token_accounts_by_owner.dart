@@ -10,6 +10,5 @@ Future<CompressedTokenAccountList> zkGetCompressedTokenAccountsByOwner(
     'getCompressedTokenAccountsByOwner',
     request.toJson(),
   );
-
   return CompressedTokenAccountList.fromJson(result! as Map<String, Object?>);
 }

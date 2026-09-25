@@ -19,7 +19,6 @@ void main() {
         fetchTipFloor: () async => 0.0000001,
         toLamports: (sol) {
           converted = sol;
-
           return BigInt.from(5000);
         },
       );
@@ -35,7 +34,6 @@ void main() {
         fetchTipFloor: () async => null,
         toLamports: (sol) {
           converted = sol;
-
           return BigInt.from(1000000);
         },
       );

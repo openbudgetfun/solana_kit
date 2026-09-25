@@ -35,9 +35,7 @@ class AppIdentity {
   /// Serializes this identity to a JSON-compatible map, omitting `null` fields.
   Map<String, Object?> toJson() => {
     if (uri != null) 'uri': uri.toString(),
-
     if (icon != null) 'icon': icon,
-
     if (name != null) 'name': name,
   };
 }
@@ -87,15 +85,10 @@ class MwaAccount {
   /// Serializes this account to a JSON-compatible map, omitting `null` fields.
   Map<String, Object?> toJson() => {
     'address': address,
-
     if (displayAddress != null) 'display_address': displayAddress,
-
     if (label != null) 'label': label,
-
     if (icon != null) 'icon': icon,
-
     if (chains != null) 'chains': chains,
-
     if (features != null) 'features': features,
   };
 }
@@ -138,7 +131,6 @@ class SignInResult {
     'address': address,
     'signed_message': signedMessage,
     'signature': signature,
-
     if (signatureType != null) 'signature_type': signatureType,
   };
 }
@@ -241,27 +233,16 @@ class SignInPayload {
   /// Serializes this payload to a JSON-compatible map, omitting `null` fields.
   Map<String, Object?> toJson() => {
     if (domain != null) 'domain': domain,
-
     if (address != null) 'address': address,
-
     if (statement != null) 'statement': statement,
-
     if (uri != null) 'uri': uri,
-
     if (version != null) 'version': version,
-
     if (chainId != null) 'chain_id': chainId,
-
     if (nonce != null) 'nonce': nonce,
-
     if (issuedAt != null) 'issued_at': issuedAt,
-
     if (expirationTime != null) 'expiration_time': expirationTime,
-
     if (notBefore != null) 'not_before': notBefore,
-
     if (requestId != null) 'request_id': requestId,
-
     if (resources != null) 'resources': resources,
   };
 }
@@ -330,13 +311,9 @@ class SignAndSendOptions {
   /// Serializes these options to a JSON-compatible map, omitting `null` fields.
   Map<String, Object?> toJson() => {
     if (minContextSlot != null) 'min_context_slot': minContextSlot,
-
     if (commitment != null) 'commitment': commitment,
-
     if (skipPreflight != null) 'skip_preflight': skipPreflight,
-
     if (maxRetries != null) 'max_retries': maxRetries,
-
     if (waitForCommitmentToSendNextTransaction != null)
       'wait_for_commitment_to_send_next_transaction':
           waitForCommitmentToSendNextTransaction,

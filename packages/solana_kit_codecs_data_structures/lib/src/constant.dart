@@ -12,7 +12,6 @@ FixedSizeEncoder<void> getConstantEncoder(Uint8List constant) {
     fixedSize: constant.length,
     write: (_, bytes, offset) {
       bytes.setAll(offset, constant);
-
       return offset + constant.length;
     },
   );
@@ -36,7 +35,6 @@ FixedSizeDecoder<void> getConstantDecoder(Uint8List constant) {
           'offset': offset,
         });
       }
-
       return (null, offset + constant.length);
     },
   );

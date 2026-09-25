@@ -96,7 +96,6 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
         abortSignal: abortController.token,
         commitment: commitment,
       );
-
       return (
         blockHeight: epochInfo.blockHeight,
         differenceBetweenSlotHeightAndBlockHeight:
@@ -180,7 +179,6 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
           if (exceedenceCompleter.isCompleted) return;
 
           final slot = notification.slot;
-
           if (slot - lastKnownDifference > lastValidBlockHeight) {
             // Before making a final decision, recheck the actual block height.
             unawaited(

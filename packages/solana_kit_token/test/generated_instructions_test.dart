@@ -16,6 +16,7 @@ import 'package:test/test.dart';
 // ---------------------------------------------------------------------------
 // Shared test addresses
 // ---------------------------------------------------------------------------
+
 const _prog = Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
 const _ataProg = Address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
 const _mint = Address('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
@@ -30,16 +31,16 @@ const _ata = Address('55555555555555555555555555555555555555555555');
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/// Extracts the first byte (discriminator) from the instruction data.
 int _disc(Instruction ix) => ix.data![0];
 
 /// Extracts a u64 BigInt from bytes starting at [offset].
 BigInt _u64At(Uint8List bytes, int offset) {
   var result = BigInt.zero;
-
   for (var i = 7; i >= 0; i--) {
     result = (result << 8) | BigInt.from(bytes[offset + i]);
   }
-
   return result;
 }
 

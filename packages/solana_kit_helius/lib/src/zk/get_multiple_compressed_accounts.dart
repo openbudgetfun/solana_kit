@@ -11,7 +11,6 @@ Future<List<CompressedAccount>> zkGetMultipleCompressedAccounts(
     request.toJson(),
   );
   final list = result! as List<Object?>;
-
   return list
       .cast<Map<String, Object?>>()
       .map(CompressedAccount.fromJson)

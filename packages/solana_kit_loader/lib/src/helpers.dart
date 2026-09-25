@@ -98,7 +98,6 @@ List<Object> _getWriteInstructions({
   }
 
   final instructions = <Object>[];
-
   for (var offset = 0; offset < programBytes.length; offset += chunkSize) {
     final end = (offset + chunkSize).clamp(0, programBytes.length);
     instructions.add(
@@ -111,6 +110,5 @@ List<Object> _getWriteInstructions({
       ),
     );
   }
-
   return instructions;
 }

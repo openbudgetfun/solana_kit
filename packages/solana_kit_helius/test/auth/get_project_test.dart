@@ -14,7 +14,6 @@ void main() {
           expect(request.method, 'GET');
           expect(request.url.path, '/v0/auth/projects/p1');
           expect(request.url.queryParameters['api-key'], isNotEmpty);
-
           return http.Response(
             jsonEncode(<String, Object?>{
               'id': 'p1',

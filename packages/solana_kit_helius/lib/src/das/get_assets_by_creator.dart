@@ -9,6 +9,5 @@ Future<AssetList> dasGetAssetsByCreator(
   GetAssetsByCreatorRequest request,
 ) async {
   final result = await rpcClient.call('getAssetsByCreator', request.toJson());
-
   return AssetList.fromJson(result! as Map<String, Object?>);
 }

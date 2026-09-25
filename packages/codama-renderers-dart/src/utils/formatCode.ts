@@ -12,9 +12,7 @@ export function formatDartCode(code: string): string {
       timeout: 30_000,
       stdio: ["pipe", "pipe", "pipe"],
     });
-
     return result;
-
   } catch {
     // If dart format is not available, return as-is
     return code;

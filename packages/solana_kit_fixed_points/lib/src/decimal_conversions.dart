@@ -32,7 +32,6 @@ DecimalFixedPoint rescaleDecimalFixedPoint(
   if (newDecimals < 0) {
     throw RangeError.range(newDecimals, 0, null, 'newDecimals');
   }
-
   if (value.totalBits == newTotalBits && value.decimals == newDecimals) {
     return value;
   }
@@ -57,7 +56,6 @@ BigInt _divideWithRounding(
 ) {
   final quotient = numerator ~/ denominator;
   final remainder = numerator.remainder(denominator);
-
   if (remainder == BigInt.zero) return quotient;
 
   return switch (rounding) {
@@ -92,10 +90,8 @@ bool _roundsTowardPositiveInfinity(BigInt numerator, BigInt denominator) {
 
 BigInt _pow10(int exponent) {
   var result = BigInt.one;
-
   for (var i = 0; i < exponent; i++) {
     result *= BigInt.from(10);
   }
-
   return result;
 }

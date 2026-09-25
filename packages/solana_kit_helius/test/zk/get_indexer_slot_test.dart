@@ -15,7 +15,6 @@ void main() {
         expect(body['method'], 'getIndexerSlot');
         expect(body['jsonrpc'], '2.0');
         expect(body.containsKey('params'), isFalse);
-
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResult}),
           200,

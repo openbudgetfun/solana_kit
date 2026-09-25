@@ -34,6 +34,5 @@ const snsHashPrefix = 'SPL Name Service';
 /// ```
 Uint8List getHashedName(String name) {
   final input = getUtf8Encoder().encode(snsHashPrefix + name);
-
   return sha256(input);
 }

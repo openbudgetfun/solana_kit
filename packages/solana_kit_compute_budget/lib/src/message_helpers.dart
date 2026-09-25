@@ -37,11 +37,9 @@ findSetComputeUnitLimitInstructionIndexAndUnits(
   final index = transactionMessage.instructions.indexWhere(
     _isSetComputeUnitLimitInstruction,
   );
-
   if (index < 0) return null;
 
   final data = transactionMessage.instructions[index].data!;
-
   return (
     index: index,
     units: ByteData.sublistView(data).getUint32(1, Endian.little),
@@ -58,11 +56,9 @@ findSetComputeUnitPriceInstructionIndexAndMicroLamports(
   final index = transactionMessage.instructions.indexWhere(
     _isSetComputeUnitPriceInstruction,
   );
-
   if (index < 0) return null;
 
   final data = transactionMessage.instructions[index].data!;
-
   return (
     index: index,
     microLamports: getSetComputeUnitPriceInstructionDataDecoder()
@@ -170,7 +166,6 @@ TransactionMessage updateOrAppendSetComputeUnitPriceInstruction(
 bool _isSetComputeUnitLimitInstruction(Instruction instruction) {
   if (instruction.programAddress != computeBudgetProgramAddress) return false;
   final data = instruction.data;
-
   return data != null &&
       data.length >= 5 &&
       identifyComputeBudgetInstruction(data) ==
@@ -180,7 +175,6 @@ bool _isSetComputeUnitLimitInstruction(Instruction instruction) {
 bool _isSetComputeUnitPriceInstruction(Instruction instruction) {
   if (instruction.programAddress != computeBudgetProgramAddress) return false;
   final data = instruction.data;
-
   return data != null &&
       data.length >= 9 &&
       identifyComputeBudgetInstruction(data) ==

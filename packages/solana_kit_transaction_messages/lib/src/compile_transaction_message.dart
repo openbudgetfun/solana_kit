@@ -41,7 +41,6 @@ CompiledTransactionMessage compileTransactionMessage(
 
   if (transactionMessage.version == TransactionVersion.v1) {
     final accountIndex = getAccountIndex(orderedAccounts);
-
     return CompiledTransactionMessage(
       version: TransactionVersion.v1,
       header: getCompiledMessageHeader(orderedAccounts),

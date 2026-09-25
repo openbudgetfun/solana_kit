@@ -14,7 +14,6 @@ void main() {
           expect(request.method, 'GET');
           expect(request.url.path, '/v0/addresses/wallet-addr/balances');
           expect(request.url.queryParameters['api-key'], isNotEmpty);
-
           return http.Response(
             jsonEncode(<String, Object?>{
               'nativeBalance': 1000000,

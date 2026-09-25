@@ -106,7 +106,6 @@ class TransactionWithLifetime extends Transaction {
 bool isTransactionWithBlockhashLifetime(Transaction transaction) {
   if (transaction is! TransactionWithLifetime) return false;
   final constraint = transaction.lifetimeConstraint;
-
   if (constraint is! TransactionBlockhashLifetime) return false;
   // Validate that the blockhash is a valid base58 string of 32 bytes.
   return _isBlockhash(constraint.blockhash);
@@ -128,7 +127,6 @@ void assertIsTransactionWithBlockhashLifetime(Transaction transaction) {
 bool isTransactionWithDurableNonceLifetime(Transaction transaction) {
   if (transaction is! TransactionWithLifetime) return false;
   final constraint = transaction.lifetimeConstraint;
-
   if (constraint is! TransactionDurableNonceLifetime) return false;
   // Validate the nonce account address is a valid address.
   return isAddress(constraint.nonceAccountAddress.value);
@@ -169,7 +167,6 @@ bool _compiledV1InstructionIsAdvanceNonceInstruction(
   List<Address> staticAddresses,
 ) {
   final programAccountIndex = header.programAccountIndex;
-
   if (programAccountIndex >= staticAddresses.length) return false;
   return staticAddresses[programAccountIndex] == systemProgramAddress &&
       _isAdvanceNonceAccountInstructionData(payload.instructionData) &&
@@ -195,9 +192,7 @@ bool _isBlockhash(String value) {
     // Reuse the address validation logic since a blockhash has the same
     // base58-32-byte format as an address.
     assertIsAddress(value);
-
     return true;
-
   } on Object {
     return false;
   }
@@ -228,7 +223,6 @@ getTransactionLifetimeConstraintFromCompiledTransactionMessage(
   if (compiledTransactionMessage.version == TransactionVersion.v1) {
     final headers = compiledTransactionMessage.instructionHeaders ?? const [];
     final payloads = compiledTransactionMessage.instructionPayloads ?? const [];
-
     if (headers.isEmpty || payloads.isEmpty) {
       return TransactionBlockhashLifetime(
         blockhash: lifetimeToken ?? '',
@@ -250,7 +244,6 @@ getTransactionLifetimeConstraintFromCompiledTransactionMessage(
     }
 
     final nonceAccountIndex = payload.instructionAccountIndices.first;
-
     if (nonceAccountIndex >= staticAccounts.length) {
       throw SolanaError(
         SolanaErrorCode.transactionInvalidNonceAccountIndex,
@@ -275,16 +268,13 @@ getTransactionLifetimeConstraintFromCompiledTransactionMessage(
         staticAccounts,
       )) {
     final nonceAccountIndex = instructions[0].accountIndices![0];
-
     if (nonceAccountIndex >= staticAccounts.length) {
       throw SolanaError(
         SolanaErrorCode.transactionNonceAccountCannotBeInLookupTable,
         {'nonce': lifetimeToken},
       );
     }
-
     final nonceAccountAddress = staticAccounts[nonceAccountIndex];
-
     return TransactionDurableNonceLifetime(
       nonce: lifetimeToken ?? '',
       nonceAccountAddress: nonceAccountAddress,

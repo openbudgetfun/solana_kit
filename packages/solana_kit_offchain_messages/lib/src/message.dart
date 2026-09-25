@@ -48,19 +48,14 @@ class OffchainMessageV0 implements OffchainMessage {
   @override
   bool operator ==(Object other) {
     if (other is! OffchainMessageV0) return false;
-
     if (other.applicationDomain.value != applicationDomain.value) return false;
-
     if (other.content != content) return false;
-
     if (other.requiredSignatories.length != requiredSignatories.length) {
       return false;
     }
-
     for (var i = 0; i < requiredSignatories.length; i++) {
       if (other.requiredSignatories[i] != requiredSignatories[i]) return false;
     }
-
     return true;
   }
 
@@ -97,17 +92,13 @@ class OffchainMessageV1 implements OffchainMessage {
   @override
   bool operator ==(Object other) {
     if (other is! OffchainMessageV1) return false;
-
     if (other.content != content) return false;
-
     if (other.requiredSignatories.length != requiredSignatories.length) {
       return false;
     }
-
     for (var i = 0; i < requiredSignatories.length; i++) {
       if (other.requiredSignatories[i] != requiredSignatories[i]) return false;
     }
-
     return true;
   }
 
@@ -149,7 +140,6 @@ void assertOffchainMessageV1Equal(
       },
     );
   }
-
   final actualAddresses = _getSortedSignatoryAddresses(receivedMessage);
   final expectedAddresses = _getSortedSignatoryAddresses(expectedMessage);
   if (actualAddresses.length != expectedAddresses.length ||
@@ -170,7 +160,6 @@ List<String> _getSortedSignatoryAddresses(OffchainMessageV1 message) {
           .map((signatory) => signatory.address.value)
           .toList()
         ..sort();
-
   return addresses;
 }
 
@@ -178,6 +167,5 @@ bool _sameAddresses(List<String> a, List<String> b) {
   for (var i = 0; i < a.length; i++) {
     if (a[i] != b[i]) return false;
   }
-
   return true;
 }

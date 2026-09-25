@@ -23,6 +23,5 @@ Future<BigInt> determineTipSol({
       await (fetchTipFloor ?? (() => fetchTipFloor75th(client: client)))();
   final minimum = swqosOnly ? swqosMinimumTipSol : dualRouteMinimumTipSol;
   final tipSol = floor == null || floor < minimum ? minimum : floor;
-
   return (toLamports ?? solToLamports)(tipSol);
 }

@@ -15,7 +15,6 @@ void main() {
           required CancellationToken abortSignal,
         }) {
           capturedSignal = abortSignal;
-
           return Completer<RpcSubscriptionsChannel>().future;
         }
 
@@ -58,7 +57,6 @@ void main() {
           RpcSubscriptionsTransportConfig(
             execute: (config) async {
               capturedConfig = config;
-
               return mockStreams();
             },
             request: const RpcSubscriptionsRequest(
@@ -98,7 +96,6 @@ void main() {
           RpcSubscriptionsTransportConfig(
             execute: (config) async {
               capturedConfig = config;
-
               return mockStreams();
             },
             request: const RpcSubscriptionsRequest(
@@ -122,7 +119,6 @@ void main() {
 NotificationStreams mockStreams() {
   final messages = StreamController<Object?>.broadcast(sync: true);
   final errors = StreamController<Object?>.broadcast(sync: true);
-
   return NotificationStreams(
     notifications: messages.stream,
     errors: errors.stream,

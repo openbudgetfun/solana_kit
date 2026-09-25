@@ -16,7 +16,6 @@ void main() {
               .map((c) => c > 255 ? 255 : c)
               .toList();
           bytes.setAll(offset, charCodes);
-
           return offset + 32;
         },
       );
@@ -41,7 +40,6 @@ void main() {
               .map((c) => c > 255 ? 255 : c)
               .toList();
           bytes.setAll(offset, charCodes);
-
           return offset + charCodes.length;
         },
       );
@@ -64,7 +62,6 @@ void main() {
             offset + 32 > bytes.length ? bytes.length : offset + 32,
           );
           final str = slice.map(String.fromCharCode).join();
-
           return (str, offset + 32);
         },
       );
@@ -92,7 +89,6 @@ void main() {
             offset + 32 > bytes.length ? bytes.length : offset + 32,
           );
           final str = slice.map(String.fromCharCode).join();
-
           return (str, offset + 32);
         },
         write: (value, bytes, offset) {
@@ -102,7 +98,6 @@ void main() {
               .map((c) => c > 255 ? 255 : c)
               .toList();
           bytes.setAll(offset, charCodes);
-
           return offset + 32;
         },
       );

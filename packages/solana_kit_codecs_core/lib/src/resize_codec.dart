@@ -13,14 +13,12 @@ Encoder<T> resizeEncoder<T>(Encoder<T> encoder, int Function(int size) resize) {
   return switch (encoder) {
     FixedSizeEncoder<T>() => () {
       final newFixedSize = resize(encoder.fixedSize);
-
       if (newFixedSize < 0) {
         throw SolanaError(SolanaErrorCode.codecsExpectedPositiveByteLength, {
           'bytesLength': newFixedSize,
           'codecDescription': 'resizeEncoder',
         });
       }
-
       return FixedSizeEncoder<T>(fixedSize: newFixedSize, write: encoder.write);
     }(),
     VariableSizeEncoder<T>() => VariableSizeEncoder<T>(
@@ -32,7 +30,6 @@ Encoder<T> resizeEncoder<T>(Encoder<T> encoder, int Function(int size) resize) {
             'codecDescription': 'resizeEncoder',
           });
         }
-
         return newSize;
       },
       write: encoder.write,
@@ -52,14 +49,12 @@ Decoder<T> resizeDecoder<T>(Decoder<T> decoder, int Function(int size) resize) {
   return switch (decoder) {
     FixedSizeDecoder<T>() => () {
       final newFixedSize = resize(decoder.fixedSize);
-
       if (newFixedSize < 0) {
         throw SolanaError(SolanaErrorCode.codecsExpectedPositiveByteLength, {
           'bytesLength': newFixedSize,
           'codecDescription': 'resizeDecoder',
         });
       }
-
       return FixedSizeDecoder<T>(fixedSize: newFixedSize, read: decoder.read);
     }(),
     VariableSizeDecoder<T>() => decoder,

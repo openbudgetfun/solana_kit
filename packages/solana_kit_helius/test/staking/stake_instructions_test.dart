@@ -15,7 +15,6 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['from'], 'owner-address');
         expect(body['amount'], 1000000);
-
         return http.Response(
           jsonEncode(<String, Object?>{
             'stakeInstruction': 'encoded-instruction',

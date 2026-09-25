@@ -48,7 +48,6 @@ TransactionMessage createMockTransactionMessageWithSigners(
     createMockInstructionWithSigners(signers),
     message,
   );
-
   return message;
 }
 
@@ -75,7 +74,6 @@ class MockTransactionPartialSigner implements TransactionPartialSigner {
     if (signTransactionsMock != null) {
       return signTransactionsMock!(transactions, config);
     }
-
     return transactions.map((_) => <Address, SignatureBytes>{}).toList();
   }
 
@@ -106,7 +104,6 @@ class MockTransactionModifyingSigner implements TransactionModifyingSigner {
     if (modifyAndSignTransactionsMock != null) {
       return modifyAndSignTransactionsMock!(transactions, config);
     }
-
     return transactions;
   }
 }
@@ -134,7 +131,6 @@ class MockTransactionSendingSigner implements TransactionSendingSigner {
     if (signAndSendTransactionsMock != null) {
       return signAndSendTransactionsMock!(transactions, config);
     }
-
     return transactions.map((_) => SignatureBytes(Uint8List(64))).toList();
   }
 }
@@ -205,7 +201,6 @@ class MockTransactionSendingPartialSigner
     if (signTransactionsMock != null) {
       return signTransactionsMock!(transactions, config);
     }
-
     return transactions.map((_) => <Address, SignatureBytes>{}).toList();
   }
 
@@ -217,7 +212,6 @@ class MockTransactionSendingPartialSigner
     if (signAndSendTransactionsMock != null) {
       return signAndSendTransactionsMock!(transactions, config);
     }
-
     return transactions.map((_) => SignatureBytes(Uint8List(64))).toList();
   }
 }
@@ -264,7 +258,6 @@ class MockTransactionCompositeSigner
     if (signTransactionsMock != null) {
       return signTransactionsMock!(transactions, config);
     }
-
     return transactions.map((_) => <Address, SignatureBytes>{}).toList();
   }
 
@@ -276,7 +269,6 @@ class MockTransactionCompositeSigner
     if (modifyAndSignTransactionsMock != null) {
       return modifyAndSignTransactionsMock!(transactions, config);
     }
-
     return transactions;
   }
 
@@ -288,7 +280,6 @@ class MockTransactionCompositeSigner
     if (signAndSendTransactionsMock != null) {
       return signAndSendTransactionsMock!(transactions, config);
     }
-
     return transactions.map((_) => SignatureBytes(Uint8List(64))).toList();
   }
 }

@@ -14,11 +14,9 @@ String _findTestDir() {
   final packageTestDir = Directory(
     '${dir.path}/packages/solana_kit_rpc_spec_types/test',
   );
-
   if (packageTestDir.existsSync()) {
     return packageTestDir.path;
   }
-
   // Otherwise we're likely in the package directory already.
   return '${dir.path}/test';
 }
@@ -150,13 +148,11 @@ void main() {
         final map = item as Map<String, Object?>;
         final friends = (map['friends']! as List).map((friend) {
           final friendMap = friend as Map<String, Object?>;
-
           return <String, Object?>{
             ...friendMap,
             'id': BigInt.from(friendMap['id']! as int),
           };
         }).toList();
-
         return <String, Object?>{
           ...map,
           'index': BigInt.from(map['index']! as int),

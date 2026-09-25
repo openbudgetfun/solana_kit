@@ -13,11 +13,8 @@ Future<List<WalletTransfer>> walletGetTransfers(
   GetTransfersRequest request,
 ) async {
   final queryParams = <String, String>{};
-
   if (request.before != null) queryParams['before'] = request.before!;
-
   if (request.until != null) queryParams['until'] = request.until!;
-
   if (request.limit != null) {
     queryParams['limit'] = request.limit.toString();
   }
@@ -28,7 +25,6 @@ Future<List<WalletTransfer>> walletGetTransfers(
     queryParameters: queryParams.isNotEmpty ? queryParams : null,
   );
   final list = result! as List<Object?>;
-
   return list
       .cast<Map<String, Object?>>()
       .map(WalletTransfer.fromJson)

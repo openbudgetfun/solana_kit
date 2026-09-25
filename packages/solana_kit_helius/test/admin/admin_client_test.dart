@@ -21,7 +21,6 @@ void main() {
           expect(request.headers['accept'], 'application/json');
           expect(request.headers['content-type'], 'application/json');
           expect(request.headers['x-api-key'], 'admin-key');
-
           return http.Response(jsonEncode(projectUsageJson()), 200);
         }),
       );

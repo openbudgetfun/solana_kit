@@ -20,7 +20,6 @@ VariableSizeEncoder<String> getBase64Encoder() {
     write: (value, bytes, offset) {
       final decoded = _decodeBase64Tolerant(value);
       bytes.setAll(offset, decoded);
-
       return offset + decoded.length;
     },
   );
@@ -36,7 +35,6 @@ VariableSizeDecoder<String> getBase64Decoder() {
     read: (bytes, offset) {
       final slice = bytes.sublist(offset);
       final value = convert.base64.encode(slice);
-
       return (value, bytes.length);
     },
   );
@@ -59,7 +57,6 @@ VariableSizeCodec<String, String> getBase64Codec() {
 Uint8List _decodeBase64Tolerant(String value) {
   // Validate the string contains only base64 characters (ignoring padding).
   final stripped = value.replaceAll('=', '');
-
   for (var i = 0; i < stripped.length; i++) {
     if (!_alphabet.contains(stripped[i])) {
       throw SolanaError(SolanaErrorCode.codecsInvalidStringForBase, {
@@ -97,7 +94,6 @@ Uint8List _decodeBase64Tolerant(String value) {
     // `base64.decode` already returns a `Uint8List`; copying it again here
     // doubled the allocation for every decoded string.
     return convert.base64.decode(padded);
-
   } on Object {
     throw SolanaError(SolanaErrorCode.codecsInvalidStringForBase, {
       'alphabet': _alphabet,

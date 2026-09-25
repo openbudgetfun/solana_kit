@@ -78,8 +78,6 @@ bool isSolanaRequest(Object? payload) {
   if (!isJsonRpcPayload(payload)) {
     return false;
   }
-
   final method = (payload! as Map<String, Object?>)['method']! as String;
-
   return _solanaRpcMethods.contains(method);
 }

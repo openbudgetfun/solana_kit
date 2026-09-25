@@ -83,7 +83,6 @@ void main() {
           expect(body['jsonrpc'], '2.0');
           final params = body['params']! as List<Object?>;
           expect(params[0], isA<List<Object?>>());
-
           return http.Response(
             jsonEncode(<String, Object?>{
               'jsonrpc': '2.0',
@@ -99,7 +98,6 @@ void main() {
           client: MockClient((request) async {
             final body = jsonDecode(request.body) as Map<String, Object?>;
             expect(body['method'], 'getSignatureStatuses');
-
             return http.Response(
               jsonEncode(<String, Object?>{
                 'jsonrpc': '2.0',
@@ -221,7 +219,6 @@ void main() {
         url: 'https://api.helius-rpc.com',
         client: MockClient((request) async {
           statusCalls++;
-
           return http.Response(
             jsonEncode(<String, Object?>{
               'jsonrpc': '2.0',

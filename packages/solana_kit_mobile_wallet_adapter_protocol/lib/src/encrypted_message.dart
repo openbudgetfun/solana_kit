@@ -45,7 +45,6 @@ Uint8List encryptMessage(
       nonce: iv,
       aad: sequenceNumberVector,
     );
-
   } on Object {
     throw SolanaError(SolanaErrorCode.mwaEncryptionFailed);
   }
@@ -68,7 +67,6 @@ Uint8List encryptMessage(
 DecryptedMessage decryptMessage(Uint8List message, Uint8List sharedSecret) {
   const minimumMessageLength =
       mwaSequenceNumberBytes + mwaIvBytes + (mwaGcmTagBits ~/ 8);
-
   if (message.length < minimumMessageLength) {
     throw SolanaError(SolanaErrorCode.mwaDecryptionFailed);
   }
@@ -96,7 +94,6 @@ DecryptedMessage decryptMessage(Uint8List message, Uint8List sharedSecret) {
       nonce: iv,
       aad: sequenceNumberVector,
     );
-
   } on Object {
     throw SolanaError(SolanaErrorCode.mwaDecryptionFailed);
   }

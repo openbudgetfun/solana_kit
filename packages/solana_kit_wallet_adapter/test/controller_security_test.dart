@@ -37,7 +37,6 @@ void main() {
             case 'dispose':
               controller.dispose();
           }
-
           wallet.connection!.complete(StandardConnectOutput(wallet.accounts));
           await rejected;
           expect(controller.state.selectedAccount, isNull);
@@ -65,7 +64,6 @@ void main() {
             StandardConnectOutput(oldWallet.accounts),
           );
         }
-
         await rejected;
         expect(controller.state.selectedWallet, same(newWallet));
         expect(
@@ -206,7 +204,6 @@ class _DelayedRegistry extends WalletRegistryController {
   @override
   Stream<WalletRegistryEvent> get events {
     subscriptionCount++;
-
     return super.events;
   }
 
@@ -268,7 +265,6 @@ class _DelayedWallet
   @override
   void Function() onChange(void Function(StandardWalletChange) listener) {
     listeners.add(listener);
-
     return () => listeners.remove(listener);
   }
 
@@ -281,7 +277,6 @@ class _DelayedWallet
   @override
   Future<List<SolanaSignInOutput>> signIn(List<SolanaSignInInput> inputs) {
     signInCalls++;
-
     return signInResponse?.future ?? Future.value([]);
   }
 }

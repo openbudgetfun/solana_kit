@@ -14,7 +14,6 @@ void main() {
           expect(request.method, 'GET');
           expect(request.url.path, '/v0/addresses/wallet-addr/transfers');
           expect(request.url.queryParameters['api-key'], isNotEmpty);
-
           return http.Response(
             jsonEncode(<Object?>[
               <String, Object?>{
@@ -72,7 +71,6 @@ void main() {
     test('adds limit query parameter when provided', () async {
       final client = MockClient((request) async {
         expect(request.url.queryParameters['limit'], '4');
-
         return http.Response(
           jsonEncode(<Object?>[]),
           200,

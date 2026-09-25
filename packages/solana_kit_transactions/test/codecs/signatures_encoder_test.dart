@@ -67,7 +67,6 @@ void main() {
       for (var i = 1; i < 65; i++) {
         expect(encoded[i], 1);
       }
-
       // Second signature: all 2s.
       for (var i = 65; i < 129; i++) {
         expect(encoded[i], 2);
@@ -89,7 +88,6 @@ void main() {
       for (var i = 1; i < 65; i++) {
         expect(encoded[i], 0xab);
       }
-
       // Second signature: all zeros (null).
       for (var i = 65; i < 129; i++) {
         expect(encoded[i], 0);

@@ -29,7 +29,6 @@ function normalizeNode(value: unknown): unknown {
     case "rootNode":
       setEmptyCollection(normalized, "additionalPrograms");
       break;
-
     case "programNode":
       setEmptyCollection(normalized, "accounts");
       setEmptyCollection(normalized, "constants");
@@ -39,32 +38,25 @@ function normalizeNode(value: unknown): unknown {
       setEmptyCollection(normalized, "instructions");
       setEmptyCollection(normalized, "pdas");
       break;
-
     case "instructionNode":
       setEmptyCollection(normalized, "accounts");
       setEmptyCollection(normalized, "arguments");
       break;
-
     case "pdaNode":
       setEmptyCollection(normalized, "seeds");
       break;
-
     case "structTypeNode":
       setEmptyCollection(normalized, "fields");
       break;
-
     case "enumTypeNode":
       setEmptyCollection(normalized, "variants");
       break;
-
     case "tupleTypeNode":
       setEmptyCollection(normalized, "items");
       break;
-
     case "hiddenPrefixTypeNode":
       setEmptyCollection(normalized, "prefix");
       break;
-
     case "hiddenSuffixTypeNode":
       setEmptyCollection(normalized, "suffix");
       break;

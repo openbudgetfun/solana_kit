@@ -144,6 +144,5 @@ Future<SysvarRent> fetchSysvarRent(
     (account as ExistingAccount<Uint8List>).account,
     getSysvarRentDecoder(),
   );
-
   return decoded.data;
 }

@@ -19,7 +19,6 @@ void main() {
         expect(body['params'], {
           'hashes': ['h1'],
         });
-
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResult}),
           200,

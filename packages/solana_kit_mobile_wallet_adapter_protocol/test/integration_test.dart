@@ -84,7 +84,6 @@ class SimulatedWallet {
         Uint8List(walletPublicKeyBytes.length + encryptedProps.length)
           ..setAll(0, walletPublicKeyBytes)
           ..setAll(walletPublicKeyBytes.length, encryptedProps);
-
     return result;
   }
 
@@ -101,7 +100,6 @@ class SimulatedWallet {
 
     // Build JSON-RPC response.
     final Map<String, Object?> response;
-
     if (result.containsKey('error')) {
       response = {'id': id, 'jsonrpc': '2.0', 'error': result['error']};
     } else {
@@ -110,7 +108,6 @@ class SimulatedWallet {
 
     final responseJson = json.encode(response);
     final seqNum = _nextSequenceNumber++;
-
     return encryptMessage(responseJson, seqNum, _sharedSecret);
   }
 
@@ -121,28 +118,20 @@ class SimulatedWallet {
     switch (method) {
       case 'authorize':
         return _handleAuthorize(params);
-
       case 'reauthorize':
         return _handleReauthorize(params);
-
       case 'deauthorize':
         return {};
-
       case 'get_capabilities':
         return _handleGetCapabilities();
-
       case 'sign_transactions':
         return _handleSignTransactions(params);
-
       case 'sign_messages':
         return _handleSignMessages(params);
-
       case 'sign_and_send_transactions':
         return _handleSignAndSendTransactions(params);
-
       case 'clone_authorization':
         return _handleCloneAuthorization(params);
-
       default:
         return {
           'error': {'code': -32601, 'message': 'Method not found: $method'},
@@ -183,7 +172,6 @@ class SimulatedWallet {
         'supported_transaction_versions': supportedTransactionVersions,
       };
     }
-
     return {
       'features': [
         mwaFeatureSignTransactions,
@@ -203,7 +191,6 @@ class SimulatedWallet {
 
   Map<String, Object?> _handleSignMessages(Map<String, Object?> params) {
     final payloads = (params['payloads']! as List<Object?>).cast<String>();
-
     return {'signed_payloads': payloads.map((p) => 'signed_$p').toList()};
   }
 
@@ -435,7 +422,6 @@ void main() {
         final capturedMethods = <String>[];
         final proxy = createMobileWalletProxy((method, params) {
           capturedMethods.add(method);
-
           return _sendViaWallet(wallet, method, params, sharedSecret);
         }, sessionProps);
 
@@ -449,7 +435,6 @@ void main() {
         final capturedParams = <Map<String, Object?>>[];
         final proxy = createMobileWalletProxy((method, params) {
           capturedParams.add(Map.of(params));
-
           return _sendViaWallet(wallet, method, params, sharedSecret);
         }, sessionProps);
 
@@ -736,7 +721,6 @@ void main() {
             sharedSecret,
           );
           final encryptedResponse = wallet.handleEncryptedRequest(encrypted);
-
           return Future.value(
             decryptJsonRpcResponse(encryptedResponse, sharedSecret),
           );
@@ -790,6 +774,5 @@ Future<Map<String, Object?>> _sendViaWallet(
   final seqNum = _nextSeqNum++;
   final encrypted = encryptJsonRpcRequest(seqNum, method, params, sharedSecret);
   final encryptedResponse = wallet.handleEncryptedRequest(encrypted);
-
   return decryptJsonRpcResponse(encryptedResponse, sharedSecret);
 }

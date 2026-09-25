@@ -23,7 +23,6 @@ void main() {
         late http.Request capturedRequest;
         final mockClient = MockClient((request) async {
           capturedRequest = request;
-
           return http.Response(
             jsonEncode({'ok': true}),
             200,
@@ -52,7 +51,6 @@ void main() {
       setUp(() {
         final mockClient = MockClient((request) async {
           capturedRequest = request;
-
           return http.Response(
             jsonEncode({'ok': true}),
             200,
@@ -116,7 +114,6 @@ void main() {
         late http.Request capturedRequest;
         final mockClient = MockClient((request) async {
           capturedRequest = request;
-
           return http.Response(
             jsonEncode({'ok': true}),
             200,
@@ -198,7 +195,6 @@ void main() {
           late http.Request capturedRequest;
           final mockClient = MockClient((request) async {
             capturedRequest = request;
-
             return http.Response(
               jsonEncode({'ok': true}),
               200,
@@ -283,7 +279,6 @@ void main() {
         late http.Request capturedRequest;
         final mockClient = MockClient((request) async {
           capturedRequest = request;
-
           return http.Response(
             jsonEncode({'ok': true}),
             200,
@@ -319,7 +314,6 @@ void main() {
             url: 'https://localhost',
             toJson: (payload) {
               receivedPayload = payload;
-
               return jsonEncode(payload);
             },
           ),
@@ -351,7 +345,6 @@ void main() {
             fromJson: (rawResponse, payload) {
               receivedRawResponse = rawResponse;
               receivedPayload = payload;
-
               return {'result': 456};
             },
           ),
@@ -402,7 +395,6 @@ void main() {
             url: 'https://localhost',
             fromJson: (rawResponse, payload) async {
               await Future<void>.delayed(Duration.zero);
-
               return {'async': true, 'payload': payload};
             },
           ),
@@ -425,7 +417,6 @@ void main() {
         late http.Request capturedRequest;
         final mockClient = MockClient((request) async {
           capturedRequest = request;
-
           return http.Response(
             jsonEncode({'ok': true}),
             200,

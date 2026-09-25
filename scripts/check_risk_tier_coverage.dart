@@ -11,7 +11,6 @@ Future<void> main() async {
   final failures = <String>[];
 
   stdout.writeln('Running risk-tier package coverage checks...');
-
   for (final packageConfig in packages) {
     final packageName = packageConfig['package']! as String;
     final risk = packageConfig['risk']! as String;
@@ -25,7 +24,6 @@ Future<void> main() async {
     stdout.writeln(
       '\n[$risk] $packageName (min ${minimum.toStringAsFixed(0)}%)',
     );
-
     if (coverageDirectory.existsSync()) {
       coverageDirectory.deleteSync(recursive: true);
     }
@@ -37,7 +35,6 @@ Future<void> main() async {
       mode: ProcessStartMode.inheritStdio,
     );
     final exitCode = await result.exitCode;
-
     if (exitCode != 0) {
       failures.add('$packageName: coverage command exited with $exitCode');
       continue;
@@ -63,13 +60,10 @@ Future<void> main() async {
 
   if (failures.isNotEmpty) {
     stdout.writeln('\nCoverage threshold failures:');
-
     for (final failure in failures) {
       stdout.writeln('  - $failure');
     }
-
     exitCode = 1;
-
     return;
   }
 
@@ -79,16 +73,13 @@ Future<void> main() async {
 (int, int) _parseLcov(File lcovFile) {
   var totalFound = 0;
   var totalHit = 0;
-
   for (final block in lcovFile.readAsStringSync().split('end_of_record')) {
     final found = RegExp(r'LF:(\d+)').firstMatch(block);
     final hit = RegExp(r'LH:(\d+)').firstMatch(block);
-
     if (found != null && hit != null) {
       totalFound += int.parse(found.group(1)!);
       totalHit += int.parse(hit.group(1)!);
     }
   }
-
   return (totalHit, totalFound);
 }

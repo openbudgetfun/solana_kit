@@ -25,7 +25,6 @@ class AssociationKeypair {
 /// - Serve as the HKDF salt during shared secret derivation
 AssociationKeypair generateAssociationKeypair() {
   final pair = generateP256KeyPair();
-
   return AssociationKeypair(
     publicKey: pair.publicKey,
     privateKey: pair.privateKey,
@@ -45,6 +44,5 @@ Uint8List exportPublicKeyBytes(ECPublicKey publicKey) {
 /// can identify the dApp's session.
 String getAssociationToken(ECPublicKey publicKey) {
   final publicKeyBytes = exportPublicKeyBytes(publicKey);
-
   return base64Url.encode(publicKeyBytes).replaceAll('=', '');
 }

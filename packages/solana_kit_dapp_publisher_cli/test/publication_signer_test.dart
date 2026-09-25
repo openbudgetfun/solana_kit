@@ -43,7 +43,6 @@ Uint8List buildMessageBytes({
   String? lifetime,
 }) {
   final encoder = getCompiledTransactionMessageEncoder();
-
   return encoder.encode(
     CompiledTransactionMessage(
       version: TransactionVersion.legacy,
@@ -99,7 +98,6 @@ Transaction buildTransaction({
     instructions: instructions,
   );
   final requiredSigners = accounts.take(numSigners);
-
   return Transaction(
     messageBytes: messageBytes,
     signatures: {

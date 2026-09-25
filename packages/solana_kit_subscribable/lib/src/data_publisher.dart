@@ -28,14 +28,12 @@ class ChannelStreamController {
   /// Adds [data] to [channelName] if the controller is still open.
   void add(String channelName, Object? data) {
     final controller = _controllerFor(channelName);
-
     if (!controller.isClosed) controller.add(data);
   }
 
   /// Adds [error] to [channelName] if the controller is still open.
   void addError(String channelName, Object error, [StackTrace? stackTrace]) {
     final controller = _controllerFor(channelName);
-
     if (!controller.isClosed) controller.addError(error, stackTrace);
   }
 

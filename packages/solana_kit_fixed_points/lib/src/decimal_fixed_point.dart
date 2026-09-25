@@ -71,11 +71,9 @@ final class DecimalFixedPoint implements Comparable<DecimalFixedPoint> {
     final wholePart = parts[0].isEmpty ? '0' : parts[0];
     var fractionPart = parts.length == 2 ? parts[1] : '';
     var incrementMagnitude = false;
-
     if (fractionPart.length > decimals) {
       final extra = fractionPart.substring(decimals);
       final hasTruncatedValue = extra.contains(nonZeroDecimalDigitRegExp);
-
       incrementMagnitude = switch (rounding) {
         FixedPointRoundingMode.strict => throw FormatException(
           'Decimal fixed-point value cannot be represented without precision loss.',
@@ -86,7 +84,6 @@ final class DecimalFixedPoint implements Comparable<DecimalFixedPoint> {
         FixedPointRoundingMode.ceil => !negative && hasTruncatedValue,
         FixedPointRoundingMode.round => int.parse(extra[0]) >= 5,
       };
-
       fractionPart = fractionPart.substring(0, decimals);
     }
 
@@ -95,12 +92,10 @@ final class DecimalFixedPoint implements Comparable<DecimalFixedPoint> {
         ? BigInt.zero
         : BigInt.parse(fractionPart.padRight(decimals, '0'));
     var magnitude = BigInt.parse(wholePart) * scale + fractionRaw;
-
     if (incrementMagnitude) magnitude += BigInt.one;
 
     final raw = negative ? -magnitude : magnitude;
     _assertRawFits(raw, signedness, totalBits);
-
     return DecimalFixedPoint(
       raw: raw,
       decimals: decimals,
@@ -128,14 +123,12 @@ final class DecimalFixedPoint implements Comparable<DecimalFixedPoint> {
   String toDecimalString() {
     final sign = raw.isNegative ? '-' : '';
     final magnitude = raw.abs();
-
     if (decimals == 0) return '$sign$magnitude';
 
     final scale = _pow10(decimals);
     final whole = magnitude ~/ scale;
     final fraction = (magnitude % scale).toString().padLeft(decimals, '0');
     final trimmedFraction = fraction.replaceFirst(trailingZeroesRegExp, '');
-
     return trimmedFraction.isEmpty
         ? '$sign$whole'
         : '$sign$whole.$trimmedFraction';
@@ -146,7 +139,6 @@ final class DecimalFixedPoint implements Comparable<DecimalFixedPoint> {
     _assertSameShape(other);
     final next = raw + other.raw;
     _assertRawFits(next, signedness, totalBits);
-
     return _copyWithRaw(next);
   }
 
@@ -155,14 +147,12 @@ final class DecimalFixedPoint implements Comparable<DecimalFixedPoint> {
     _assertSameShape(other);
     final next = raw - other.raw;
     _assertRawFits(next, signedness, totalBits);
-
     return _copyWithRaw(next);
   }
 
   @override
   int compareTo(DecimalFixedPoint other) {
     _assertSameShape(other);
-
     return raw.compareTo(other.raw);
   }
 
@@ -211,7 +201,6 @@ void assertIsDecimalFixedPoint(
   if (value is! DecimalFixedPoint) {
     throw ArgumentError.value(value, 'value', 'Expected a DecimalFixedPoint.');
   }
-
   if (signedness != null && value.signedness != signedness) {
     throw ArgumentError.value(
       value,
@@ -219,7 +208,6 @@ void assertIsDecimalFixedPoint(
       'Decimal fixed-point signedness mismatch.',
     );
   }
-
   if (totalBits != null && value.totalBits != totalBits) {
     throw ArgumentError.value(
       value,
@@ -227,7 +215,6 @@ void assertIsDecimalFixedPoint(
       'Decimal fixed-point total bit width mismatch.',
     );
   }
-
   if (decimals != null && value.decimals != decimals) {
     throw ArgumentError.value(
       value,
@@ -235,7 +222,6 @@ void assertIsDecimalFixedPoint(
       'Decimal fixed-point decimal scale mismatch.',
     );
   }
-
   _assertValidShape(value.decimals, value.totalBits);
   _assertRawFits(value.raw, value.signedness, value.totalBits);
 }
@@ -249,9 +235,7 @@ bool isDecimalFixedPoint(
 ]) {
   try {
     assertIsDecimalFixedPoint(value, signedness, totalBits, decimals);
-
     return true;
-
   } on Object {
     return false;
   }
@@ -265,7 +249,6 @@ decimalFixedPoint(
   int decimals,
 ) {
   _assertValidShape(decimals, totalBits);
-
   return (value, [rounding = FixedPointRoundingMode.strict]) =>
       DecimalFixedPoint.parse(
         value,
@@ -283,10 +266,8 @@ DecimalFixedPoint Function(BigInt raw) rawDecimalFixedPoint(
   int decimals,
 ) {
   _assertValidShape(decimals, totalBits);
-
   return (raw) {
     _assertRawFits(raw, signedness, totalBits);
-
     return DecimalFixedPoint(
       raw: raw,
       decimals: decimals,
@@ -308,7 +289,6 @@ ratioDecimalFixedPoint(
   int decimals,
 ) {
   _assertValidShape(decimals, totalBits);
-
   return (numerator, denominator, [rounding = FixedPointRoundingMode.strict]) {
     if (denominator == BigInt.zero) {
       throw ArgumentError.value(
@@ -321,7 +301,6 @@ ratioDecimalFixedPoint(
     final scaledNumerator = numerator * _pow10(decimals);
     final raw = _divideWithRounding(scaledNumerator, denominator, rounding);
     _assertRawFits(raw, signedness, totalBits);
-
     return DecimalFixedPoint(
       raw: raw,
       decimals: decimals,
@@ -338,7 +317,6 @@ BigInt _divideWithRounding(
 ) {
   final quotient = numerator ~/ denominator;
   final remainder = numerator.remainder(denominator);
-
   if (remainder == BigInt.zero) return quotient;
 
   return switch (rounding) {
@@ -373,7 +351,6 @@ bool _roundsTowardPositiveInfinity(BigInt numerator, BigInt denominator) {
 
 void _assertValidShape(int decimals, int totalBits) {
   if (decimals < 0) throw RangeError.range(decimals, 0, null, 'decimals');
-
   if (totalBits <= 0) throw RangeError.range(totalBits, 1, null, 'totalBits');
 }
 
@@ -386,12 +363,10 @@ void _assertRawFits(
     FixedPointSignedness.unsigned => BigInt.zero,
     FixedPointSignedness.signed => -_pow2(totalBits - 1),
   };
-
   final max = switch (signedness) {
     FixedPointSignedness.unsigned => _pow2(totalBits) - BigInt.one,
     FixedPointSignedness.signed => _pow2(totalBits - 1) - BigInt.one,
   };
-
   if (raw < min || raw > max) {
     throw RangeError(
       'Raw fixed-point value $raw is outside the $min..$max range.',
@@ -401,20 +376,16 @@ void _assertRawFits(
 
 BigInt _pow10(int exponent) {
   var result = BigInt.one;
-
   for (var i = 0; i < exponent; i++) {
     result *= BigInt.from(10);
   }
-
   return result;
 }
 
 BigInt _pow2(int exponent) {
   var result = BigInt.one;
-
   for (var i = 0; i < exponent; i++) {
     result *= BigInt.two;
   }
-
   return result;
 }

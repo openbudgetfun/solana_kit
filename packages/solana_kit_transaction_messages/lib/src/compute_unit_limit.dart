@@ -27,7 +27,6 @@ int? getTransactionMessageComputeUnitLimit(
   final instruction = transactionMessage.instructions
       .where(_isSetComputeUnitLimitInstruction)
       .firstOrNull;
-
   if (instruction == null) return null;
   return _parseComputeUnitLimitInstruction(instruction);
 }
@@ -81,7 +80,6 @@ TransactionMessage setTransactionMessageComputeUnitLimit(
   final instruction = _getSetComputeUnitLimitInstruction(
     units: computeUnitLimit,
   );
-
   if (existingIndex == -1) {
     return transactionMessage.copyWith(
       instructions: [...transactionMessage.instructions, instruction],
@@ -105,6 +103,7 @@ TransactionMessage setTransactionMessageComputeUnitLimit(
 // (#1948); use `fillTransactionMessageProvisoryResourceLimits` and
 // `estimateAndSetResourceLimitsFactory` instead.
 // ---------------------------------------------------------------------------
+
 TransactionMessage _setTransactionMessageComputeUnitLimitUsingConfig(
   int? computeUnitLimit,
   TransactionMessage transactionMessage,
@@ -129,7 +128,6 @@ TransactionMessage _setTransactionMessageComputeUnitLimitUsingConfig(
 Instruction _getSetComputeUnitLimitInstruction({required int units}) {
   final data = Uint8List(5)..first = _setComputeUnitLimitDiscriminator;
   ByteData.sublistView(data).setUint32(1, units, Endian.little);
-
   return Instruction(
     programAddress: computeBudgetProgramAddress,
     accounts: const [],
@@ -140,7 +138,6 @@ Instruction _getSetComputeUnitLimitInstruction({required int units}) {
 bool _isSetComputeUnitLimitInstruction(Instruction instruction) {
   if (instruction.programAddress != computeBudgetProgramAddress) return false;
   final data = instruction.data;
-
   return data != null &&
       data.length >= 5 &&
       data.first == _setComputeUnitLimitDiscriminator;

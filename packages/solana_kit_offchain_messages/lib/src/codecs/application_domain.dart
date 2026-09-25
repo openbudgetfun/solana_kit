@@ -11,7 +11,6 @@ getOffchainMessageApplicationDomainEncoder() {
     getAddressEncoder(),
     (putativeApplicationDomain) {
       offchainMessageApplicationDomain(putativeApplicationDomain.value);
-
       return putativeApplicationDomain;
     },
   ) as FixedSizeEncoder<OffchainMessageApplicationDomain>;

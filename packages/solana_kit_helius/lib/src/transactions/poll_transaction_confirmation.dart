@@ -27,18 +27,14 @@ Future<SmartTransactionResult> txPollTransactionConfirmation(
       {'searchTransactionHistory': true},
     ]);
     final response = result as Map<String, Object?>?;
-
     if (response != null) {
       final value = response['value'] as List<Object?>?;
-
       if (value != null && value.isNotEmpty && value[0] != null) {
         final status = value[0]! as Map<String, Object?>;
         final error = status['err'];
-
         if (error != null) throw getSolanaErrorFromTransactionError(error);
 
         final confirmationStatus = status['confirmationStatus'] as String?;
-
         if (confirmationStatus != null) {
           if (confirmationStatus == commitment ||
               confirmationStatus == 'finalized' ||
@@ -52,7 +48,6 @@ Future<SmartTransactionResult> txPollTransactionConfirmation(
         }
       }
     }
-
     await Future<void>.delayed(Duration(milliseconds: intervalMs));
   }
 

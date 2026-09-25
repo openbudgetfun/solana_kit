@@ -8,20 +8,16 @@ import 'package:solana_kit_rpc_transformers/src/tree_traversal.dart';
 NodeVisitor getBigIntUpcastVisitor(List<KeyPath> allowedNumericKeyPaths) {
   return (Object? value, TraversalState state) {
     final isInteger = (value is int) || (value is BigInt);
-
     if (!isInteger) return value;
-
     if (_keyPathIsAllowedToBeNumeric(state.keyPath, allowedNumericKeyPaths)) {
       if (value is BigInt) {
         return value.toInt();
       }
-
       return value;
     } else {
       if (value is int) {
         return BigInt.from(value);
       }
-
       return value;
     }
   };
@@ -43,7 +39,6 @@ bool _keyPathIsAllowedToBeNumeric(
         return false;
       }
     }
-
     return true;
   });
 }

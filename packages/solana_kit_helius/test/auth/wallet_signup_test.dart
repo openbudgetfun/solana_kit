@@ -18,7 +18,6 @@ void main() {
           expect(body['walletAddress'], 'wallet-addr');
           expect(body['signature'], 'sig-data');
           expect(body['message'], 'auth-message');
-
           return http.Response(
             jsonEncode(<String, Object?>{
               'apiKey': 'key-ws',

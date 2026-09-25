@@ -17,11 +17,8 @@ Future<GetBalanceAtResponse> walletGetBalanceAt(
   final query = <String, Object?>{
     'api-key': apiKey,
     'mint': request.mint,
-
     if (request.time != null) 'time': request.time,
-
     if (request.datetime != null) 'datetime': request.datetime,
-
     if (request.slot != null) 'slot': request.slot,
   };
   final queryString = query.entries
@@ -30,6 +27,5 @@ Future<GetBalanceAtResponse> walletGetBalanceAt(
   final result = await restClient.get(
     '/v0/addresses/${request.wallet}/balance-at?$queryString',
   );
-
   return GetBalanceAtResponse.fromJson(result! as Map<String, Object?>);
 }

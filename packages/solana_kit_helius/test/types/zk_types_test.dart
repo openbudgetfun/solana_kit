@@ -246,7 +246,6 @@ void main() {
             GetZkSignaturesForAssetRequest.fromJson(json).toJson(),
           _ => throw StateError('Unhandled ${entry.key}'),
         };
-
         expect(actual, json);
       });
     }

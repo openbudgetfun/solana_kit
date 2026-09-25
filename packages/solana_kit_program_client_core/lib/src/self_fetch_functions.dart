@@ -32,7 +32,6 @@ class SelfFetchFunctions<TData> {
   }) async {
     final maybeAccount = await fetchMaybe(address, config: config);
     assertAccountExists(maybeAccount);
-
     return (maybeAccount as ExistingAccount<TData>).account;
   }
 
@@ -49,7 +48,6 @@ class SelfFetchFunctions<TData> {
       address,
       config: config,
     );
-
     return decodeMaybeAccount(maybeEncodedAccount, _decoder);
   }
 
@@ -64,7 +62,6 @@ class SelfFetchFunctions<TData> {
   }) async {
     final maybeAccounts = await fetchAllMaybe(addresses, config: config);
     assertAccountsExist(maybeAccounts);
-
     return maybeAccounts
         .cast<ExistingAccount<TData>>()
         .map((e) => e.account)
@@ -84,7 +81,6 @@ class SelfFetchFunctions<TData> {
       addresses,
       config: config,
     );
-
     return maybeEncodedAccounts
         .map((maybeAccount) => decodeMaybeAccount(maybeAccount, _decoder))
         .toList();

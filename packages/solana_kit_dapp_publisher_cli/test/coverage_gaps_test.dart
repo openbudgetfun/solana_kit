@@ -105,7 +105,6 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
     CreateIngestionSessionInput input,
   ) async {
     calls.add('createIngestionSession');
-
     return translateBackendIngestionSession(<String, Object?>{
       'id': 'ing-1',
       'status': 'Ready',
@@ -119,7 +118,6 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
     required String sessionId,
   }) async {
     calls.add('getIngestionSession');
-
     return translateBackendIngestionSession(<String, Object?>{
       'id': 'ing-1',
       'status': 'Ready',
@@ -136,7 +134,6 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
     final backend = minimalBackend();
     (backend['release']! as Map<String, Object?>)['nftMintAddress'] =
         'app-mint';
-
     return mapBackendBundleToPublicationBundle(
       backend,
       'https://meta.example.com/rel-1.json',
@@ -150,7 +147,6 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
     String? releaseId,
   }) async {
     calls.add('getPublicationSession');
-
     return const PublicationSession(
       id: 'pub-1',
       ingestionSessionId: 'ing-1',
@@ -177,11 +173,9 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
   ) async {
     calls.add('prepareReleaseNftTransaction');
     prepareCalls++;
-
     if (failOnPrepare && (!failOnPrepareOnce || prepareCalls == 1)) {
       throw const _TestFailure('prepare failed');
     }
-
     return PreparedReleaseTransaction(
       transaction: base64Encode(getTransactionEncoder().encode(_simpleTx())),
       mintAddress: 'm',
@@ -195,7 +189,6 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
     String? publicationSessionId,
   }) async {
     calls.add('submitSignedTransaction');
-
     return const SubmitSignedTransactionResult(transactionSignature: 'sig');
   }
 
@@ -204,7 +197,6 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
     SaveReleaseNftDataInput input,
   ) async {
     calls.add('saveReleaseNftData');
-
     return const SaveReleaseNftDataResult(success: true);
   }
 
@@ -214,7 +206,6 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
     PrepareVerifyCollectionTransactionInput input,
   ) async {
     calls.add('prepareVerifyCollectionTransaction');
-
     return PreparedVerifyCollectionTransaction(
       transaction: base64Encode(getTransactionEncoder().encode(_simpleTx())),
       blockhash: publisherAddress,
@@ -227,7 +218,6 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
     required String releaseId,
   }) async {
     calls.add('markReleaseCollectionAsVerified');
-
     return MarkReleaseCollectionAsVerifiedResult(
       success: true,
       releaseId: releaseId,
@@ -237,14 +227,12 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
   @override
   Future<CleanupReleaseResult> cleanupRelease(CleanupReleaseInput input) async {
     calls.add('cleanupRelease');
-
     return const CleanupReleaseResult(action: 'deleted');
   }
 
   @override
   Future<SubmitToStoreResult> submitToStore(SubmitToStoreInput input) async {
     calls.add('submitToStore');
-
     return const SubmitToStoreResult(hubspotTicketId: 'HS-1');
   }
 }
@@ -263,7 +251,6 @@ Transaction _simpleTx() {
       lifetimeToken: publisherAddress,
     ),
   );
-
   return Transaction(
     messageBytes: messageBytes,
     signatures: {Address(publisherAddress): null},
@@ -312,7 +299,6 @@ class _FakeMetadataPortalClient implements ReleaseMetadataPortalClient {
     String? expectedMimeType,
   }) async {
     fetchCalls.add(url);
-
     return RemoteFilePayload(
       data: emptyData ? '' : base64Encode(pngBytes(width: 4, height: 4)),
       fileName: this.fileName,
@@ -328,7 +314,6 @@ class FakeUploadClient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final request2 = request as http.Request;
     requests.add(request2);
-
     return http.StreamedResponse(
       const Stream<List<int>>.empty(),
       200,
@@ -344,7 +329,6 @@ Uint8List pngBytes({required int width, required int height}) {
     ..setUint32(12, 0x49484452)
     ..setUint32(16, width)
     ..setUint32(20, height);
-
   return data.buffer.asUint8List();
 }
 
@@ -900,7 +884,6 @@ Uint8List _webp(String format) {
     ..[9] = 0x45
     ..[10] = 0x42
     ..[11] = 0x50;
-
   for (var i = 0; i < 4; i++) {
     bytes[12 + i] = format.codeUnitAt(i);
   }

@@ -18,7 +18,6 @@ List<Uint8List> _getSignaturesToEncode(
   Map<Address, SignatureBytes?> signaturesMap,
 ) {
   final signatures = signaturesMap.values.toList();
-
   if (signatures.isEmpty) {
     throw SolanaError(
       SolanaErrorCode.transactionCannotEncodeWithEmptySignatures,
@@ -29,7 +28,6 @@ List<Uint8List> _getSignaturesToEncode(
     if (signature == null) {
       return Uint8List(64);
     }
-
     return signature.value;
   }).toList();
 }

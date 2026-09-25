@@ -195,7 +195,6 @@ void main() {
       final plan = getReallocMessagePackerInstructionPlan(
         getInstruction: (size) {
           sizes.add(size);
-
           return createInstruction('Size: $size');
         },
         totalSize: 15000,
@@ -214,7 +213,6 @@ void main() {
       getReallocMessagePackerInstructionPlan(
         getInstruction: (size) {
           sizes.add(size);
-
           return createInstruction('Size: $size');
         },
         totalSize: 20480, // 2 * 10240
@@ -230,7 +228,6 @@ void main() {
       getReallocMessagePackerInstructionPlan(
         getInstruction: (size) {
           sizes.add(size);
-
           return createInstruction('Size: $size');
         },
         totalSize: 5000,
@@ -274,7 +271,6 @@ void main() {
         done: () => isDone,
         packMessageToCapacity: (message, {maxInstructions}) {
           isDone = true;
-
           return message.copyWith(
             instructions: [
               ...message.instructions,

@@ -15,6 +15,5 @@ Future<HeliusApiKey> authCreateApiKey(
     '/v0/auth/api-keys?api-key=$apiKey',
     body: request.toJson(),
   );
-
   return HeliusApiKey.fromJson(result! as Map<String, Object?>);
 }

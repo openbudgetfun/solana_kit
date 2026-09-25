@@ -55,6 +55,5 @@ abstract final class SolanaFeatureId {
 /// Whether [value] is a namespaced Wallet Standard identifier.
 bool isWalletStandardIdentifier(String value) {
   final separator = value.indexOf(':');
-
   return separator > 0 && separator < value.length - 1;
 }

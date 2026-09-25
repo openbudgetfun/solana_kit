@@ -13,6 +13,5 @@ Future<Webhook> webhooksGetWebhook(
   final result = await restClient.get(
     '/v0/webhooks/$webhookId?api-key=$apiKey',
   );
-
   return Webhook.fromJson(result! as Map<String, Object?>);
 }

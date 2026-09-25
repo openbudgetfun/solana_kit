@@ -40,9 +40,7 @@ VariableSizeEncoder<String> getBase16Encoder() {
             'value': value,
           });
         }
-
         bytes[offset] = n;
-
         return 1 + offset;
       }
 
@@ -61,12 +59,10 @@ VariableSizeEncoder<String> getBase16Encoder() {
             'value': value,
           });
         }
-
         hexBytes[i] = (n1 << 4) | n2;
       }
 
       bytes.setAll(offset, hexBytes);
-
       return hexBytes.length + offset;
     },
   );
@@ -84,7 +80,6 @@ VariableSizeDecoder<String> getBase16Decoder() {
       final value = slice
           .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
           .join();
-
       return (value, bytes.length);
     },
   );

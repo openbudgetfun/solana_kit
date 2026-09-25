@@ -28,7 +28,6 @@ Future<ComputeUnitsEstimate> txGetComputeUnits(
   // A transaction-level failure is reported in `err`; surface it rather than
   // reporting units from a simulation that did not succeed.
   final error = value['err'];
-
   if (error != null) {
     throw SolanaError(
       SolanaErrorCode.heliusTransactionSimulationFailed,
@@ -45,7 +44,6 @@ Future<ComputeUnitsEstimate> txGetComputeUnits(
     final BigInt units => units.toInt(),
     _ => null,
   };
-
   if (units == null) {
     throw StateError(
       'simulateTransaction did not report unitsConsumed, so the compute unit '
@@ -69,17 +67,12 @@ Map<String, Object?> serializeSmartTransactionInput(
       for (final instruction in input.instructions)
         serializeSmartTransactionInstruction(instruction),
     ],
-
     if (input.signers != null) 'signers': input.signers,
-
     if (input.feePayer != null) 'feePayer': input.feePayer,
-
     if (input.computeUnitLimit != null)
       'computeUnitLimit': input.computeUnitLimit,
-
     if (input.computeUnitPrice != null)
       'computeUnitPrice': input.computeUnitPrice,
-
     if (input.lookupTableAddresses != null)
       'lookupTableAddresses': input.lookupTableAddresses,
   };
@@ -98,7 +91,6 @@ Object? serializeSmartTransactionInstruction(Object? instruction) {
 
   return <String, Object?>{
     'programAddress': instruction.programAddress.value,
-
     if (accounts != null)
       'accounts': [
         for (final account in accounts)
@@ -109,7 +101,6 @@ Object? serializeSmartTransactionInstruction(Object? instruction) {
               'lookupTableAddress': account.lookupTableAddress,
           },
       ],
-
     if (data != null) 'data': getBase58Decoder().decode(data),
   };
 }

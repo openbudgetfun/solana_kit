@@ -24,7 +24,6 @@ Future<String> txSendTransactionWithSender(
       ],
     },
   );
-
   return _readSenderSignature(result);
 }
 
@@ -33,7 +32,6 @@ String _readSenderSignature(Object? result) {
 
   if (result case final Map<String, Object?> response) {
     final error = response['error'];
-
     if (error != null) throw Exception(error);
 
     if (response['result'] case final String signature) return signature;

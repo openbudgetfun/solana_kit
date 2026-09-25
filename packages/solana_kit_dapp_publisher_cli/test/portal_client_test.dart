@@ -18,7 +18,6 @@ class _RecordingHttpClient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     sentRequests.add(request);
     final response = handler(request);
-
     return http.StreamedResponse(
       Stream.value(response.bodyBytes),
       response.statusCode,
@@ -407,7 +406,6 @@ void main() {
         if (attempts < 3) {
           return http.Response('<html>Bad Gateway</html>', 502);
         }
-
         return http.Response(
           jsonEncode({
             'result': {
@@ -468,7 +466,6 @@ void main() {
       var attempts = 0;
       final client = _RecordingHttpClient((request) {
         attempts++;
-
         return http.Response('<html>gateway timeout</html>', 504);
       });
       final config = PortalClientConfig(

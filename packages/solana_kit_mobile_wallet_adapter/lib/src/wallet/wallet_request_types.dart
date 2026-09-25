@@ -218,18 +218,12 @@ class AuthorizedAccount {
   /// Converts this account to a JSON-compatible map.
   Map<String, Object?> toJson() => {
     'address': address,
-
     if (displayAddress != null) 'display_address': displayAddress,
-
     if (displayAddressFormat != null)
       'display_address_format': displayAddressFormat,
-
     if (label != null) 'label': label,
-
     if (icon != null) 'icon': icon,
-
     if (chains != null) 'chains': chains,
-
     if (features != null) 'features': features,
   };
 }
@@ -513,7 +507,6 @@ class SignAndSendTransactionsRequest extends WalletRequest {
     required Map<String, Object?> params,
   }) {
     final options = params['options'] as Map<String, Object?>?;
-
     return SignAndSendTransactionsRequest(
       requestId: requestId,
       sessionId: sessionId,

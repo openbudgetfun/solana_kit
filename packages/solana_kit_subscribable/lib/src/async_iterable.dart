@@ -65,13 +65,11 @@ Stream<TData> createStreamFromDataAndErrorStreams<TData>({
         // listener cancels, at which point `stop()` has already closed the
         // controller, so this replay branch is defensive dead code.
         controller.addError(firstError!);
-
         return;
       }
 
       if (shouldIgnoreEvents()) {
         unawaited(stop());
-
         return;
       }
 
@@ -90,7 +88,6 @@ Stream<TData> createStreamFromDataAndErrorStreams<TData>({
 
   if (isStopped) {
     unawaited(controller.close());
-
   } else if (cancellationToken != null) {
     unawaited(cancellationToken.future.then((_) => stop()));
   }

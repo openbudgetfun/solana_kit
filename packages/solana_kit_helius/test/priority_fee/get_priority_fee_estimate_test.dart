@@ -27,7 +27,6 @@ void main() {
         expect(body['method'], 'getPriorityFeeEstimate');
         final params = body['params']! as Map<String, Object?>;
         expect(params['accountKeys'], ['key1']);
-
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResponse}),
           200,
@@ -60,7 +59,6 @@ void main() {
         final options = params['options']! as Map<String, Object?>;
         expect(options['priorityLevel'], 'High');
         expect(options['includeAllPriorityFeeLevels'], true);
-
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResponse}),
           200,

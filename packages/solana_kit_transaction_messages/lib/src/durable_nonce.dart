@@ -54,9 +54,7 @@ bool isTransactionMessageWithDurableNonceLifetime(
   TransactionMessage transactionMessage,
 ) {
   final constraint = transactionMessage.lifetimeConstraint;
-
   if (constraint is! DurableNonceLifetimeConstraint) return false;
-
   if (transactionMessage.instructions.isEmpty) return false;
   return isAdvanceNonceAccountInstruction(transactionMessage.instructions[0]);
 }

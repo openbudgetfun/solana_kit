@@ -8,7 +8,6 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/src/constants.dart';
 /// as defined by RFC 6335.
 int getRandomAssociationPort() {
   final random = Random.secure();
-
   return mwaMinAssociationPort +
       random.nextInt(mwaMaxAssociationPort - mwaMinAssociationPort + 1);
 }
@@ -24,6 +23,5 @@ int assertAssociationPort(int port) {
       'port': port,
     });
   }
-
   return port;
 }

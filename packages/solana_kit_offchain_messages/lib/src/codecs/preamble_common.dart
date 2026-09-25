@@ -20,10 +20,8 @@ Decoder<Map<String, Object?>> createOffchainMessagePreambleDecoder(
     offset,
   ) {
     _validateVersion(value, expectedVersion);
-
     return value;
   });
-
   return getHiddenPrefixDecoder(
     getStructDecoder([('version', versionDecoder), ...fields]),
     [getOffchainMessageSigningDomainDecoder()],
@@ -38,10 +36,8 @@ Encoder<Map<String, Object?>> createOffchainMessagePreambleEncoder(
 ) {
   final versionEncoder = transformEncoder<num, int>(getU8Encoder(), (value) {
     _validateVersion(value, expectedVersion);
-
     return value;
   });
-
   return getHiddenPrefixEncoder(
     getStructEncoder([('version', versionEncoder), ...fields]),
     [getOffchainMessageSigningDomainEncoder()],
@@ -66,7 +62,6 @@ List<Address> decodeRequiredSignatoryAddresses(Uint8List bytes) {
         {'unsupportedVersion': value},
       );
     }
-
     return value;
   });
 
@@ -100,7 +95,6 @@ List<Address> decodeRequiredSignatoryAddresses(Uint8List bytes) {
           SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero,
         );
       }
-
       return addresses;
     },
   );
@@ -117,13 +111,10 @@ int Function(Uint8List, Uint8List) getSignatoriesComparator() {
     if (x.length != y.length) {
       return x.length < y.length ? -1 : 1;
     }
-
     for (var i = 0; i < x.length; i++) {
       if (x[i] == y[i]) continue;
-
       return x[i] < y[i] ? -1 : 1;
     }
-
     return 0;
   };
 }
@@ -135,7 +126,6 @@ void _validateVersion(int version, int? expectedVersion) {
       {'unsupportedVersion': version},
     );
   }
-
   if (expectedVersion != null && version != expectedVersion) {
     throw SolanaError(SolanaErrorCode.offchainMessageUnexpectedVersion, {
       'actualVersion': version,

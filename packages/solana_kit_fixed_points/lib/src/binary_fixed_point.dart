@@ -31,7 +31,6 @@ final class BinaryFixedPoint implements Comparable<BinaryFixedPoint> {
     final scaled = signedMagnitude * _pow2(fractionalBits);
     final raw = _divideWithRounding(scaled, _pow10(parsed.decimals), rounding);
     _assertRawFits(raw, signedness, totalBits);
-
     return BinaryFixedPoint(
       raw: raw,
       fractionalBits: fractionalBits,
@@ -59,23 +58,19 @@ final class BinaryFixedPoint implements Comparable<BinaryFixedPoint> {
   String toDecimalString() {
     final sign = raw.isNegative ? '-' : '';
     final magnitude = raw.abs();
-
     if (fractionalBits == 0) return '$sign$magnitude';
 
     final scale = _pow2(fractionalBits);
     final whole = magnitude ~/ scale;
     var remainder = magnitude % scale;
-
     if (remainder == BigInt.zero) return '$sign$whole';
 
     final digits = StringBuffer();
-
     while (remainder != BigInt.zero) {
       remainder *= BigInt.from(10);
       digits.write(remainder ~/ scale);
       remainder %= scale;
     }
-
     return '$sign$whole.$digits';
   }
 
@@ -84,7 +79,6 @@ final class BinaryFixedPoint implements Comparable<BinaryFixedPoint> {
     _assertSameShape(other);
     final next = raw + other.raw;
     _assertRawFits(next, signedness, totalBits);
-
     return _copyWithRaw(next);
   }
 
@@ -93,14 +87,12 @@ final class BinaryFixedPoint implements Comparable<BinaryFixedPoint> {
     _assertSameShape(other);
     final next = raw - other.raw;
     _assertRawFits(next, signedness, totalBits);
-
     return _copyWithRaw(next);
   }
 
   @override
   int compareTo(BinaryFixedPoint other) {
     _assertSameShape(other);
-
     return raw.compareTo(other.raw);
   }
 
@@ -149,7 +141,6 @@ void assertIsBinaryFixedPoint(
   if (value is! BinaryFixedPoint) {
     throw ArgumentError.value(value, 'value', 'Expected a BinaryFixedPoint.');
   }
-
   if (signedness != null && value.signedness != signedness) {
     throw ArgumentError.value(
       value,
@@ -157,7 +148,6 @@ void assertIsBinaryFixedPoint(
       'Binary fixed-point signedness mismatch.',
     );
   }
-
   if (totalBits != null && value.totalBits != totalBits) {
     throw ArgumentError.value(
       value,
@@ -165,7 +155,6 @@ void assertIsBinaryFixedPoint(
       'Binary fixed-point total bit width mismatch.',
     );
   }
-
   if (fractionalBits != null && value.fractionalBits != fractionalBits) {
     throw ArgumentError.value(
       value,
@@ -173,7 +162,6 @@ void assertIsBinaryFixedPoint(
       'Binary fixed-point fractional bit scale mismatch.',
     );
   }
-
   _assertValidShape(value.fractionalBits, value.totalBits);
   _assertRawFits(value.raw, value.signedness, value.totalBits);
 }
@@ -187,9 +175,7 @@ bool isBinaryFixedPoint(
 ]) {
   try {
     assertIsBinaryFixedPoint(value, signedness, totalBits, fractionalBits);
-
     return true;
-
   } on Object {
     return false;
   }
@@ -203,7 +189,6 @@ binaryFixedPoint(
   int fractionalBits,
 ) {
   _assertValidShape(fractionalBits, totalBits);
-
   return (value, [rounding = FixedPointRoundingMode.strict]) =>
       BinaryFixedPoint.parse(
         value,
@@ -221,10 +206,8 @@ BinaryFixedPoint Function(BigInt raw) rawBinaryFixedPoint(
   int fractionalBits,
 ) {
   _assertValidShape(fractionalBits, totalBits);
-
   return (raw) {
     _assertRawFits(raw, signedness, totalBits);
-
     return BinaryFixedPoint(
       raw: raw,
       fractionalBits: fractionalBits,
@@ -246,7 +229,6 @@ ratioBinaryFixedPoint(
   int fractionalBits,
 ) {
   _assertValidShape(fractionalBits, totalBits);
-
   return (numerator, denominator, [rounding = FixedPointRoundingMode.strict]) {
     if (denominator == BigInt.zero) {
       throw ArgumentError.value(
@@ -262,7 +244,6 @@ ratioBinaryFixedPoint(
       rounding,
     );
     _assertRawFits(raw, signedness, totalBits);
-
     return BinaryFixedPoint(
       raw: raw,
       fractionalBits: fractionalBits,
@@ -299,7 +280,6 @@ _ParsedDecimal _parseDecimalMagnitude(
   final magnitude =
       BigInt.parse(wholePart) * _pow10(fractionPart.length) +
       (fractionPart.isEmpty ? BigInt.zero : BigInt.parse(fractionPart));
-
   return _ParsedDecimal(
     negative: negative,
     magnitude: magnitude,
@@ -314,7 +294,6 @@ BigInt _divideWithRounding(
 ) {
   final quotient = numerator ~/ denominator;
   final remainder = numerator.remainder(denominator);
-
   if (remainder == BigInt.zero) return quotient;
 
   return switch (rounding) {
@@ -351,9 +330,7 @@ void _assertValidShape(int fractionalBits, int totalBits) {
   if (fractionalBits < 0) {
     throw RangeError.range(fractionalBits, 0, null, 'fractionalBits');
   }
-
   if (totalBits <= 0) throw RangeError.range(totalBits, 1, null, 'totalBits');
-
   if (fractionalBits > totalBits) {
     throw RangeError.range(fractionalBits, 0, totalBits, 'fractionalBits');
   }
@@ -368,12 +345,10 @@ void _assertRawFits(
     FixedPointSignedness.unsigned => BigInt.zero,
     FixedPointSignedness.signed => -_pow2(totalBits - 1),
   };
-
   final max = switch (signedness) {
     FixedPointSignedness.unsigned => _pow2(totalBits) - BigInt.one,
     FixedPointSignedness.signed => _pow2(totalBits - 1) - BigInt.one,
   };
-
   if (raw < min || raw > max) {
     throw RangeError(
       'Raw fixed-point value $raw is outside the $min..$max range.',
@@ -383,21 +358,17 @@ void _assertRawFits(
 
 BigInt _pow10(int exponent) {
   var result = BigInt.one;
-
   for (var i = 0; i < exponent; i++) {
     result *= BigInt.from(10);
   }
-
   return result;
 }
 
 BigInt _pow2(int exponent) {
   var result = BigInt.one;
-
   for (var i = 0; i < exponent; i++) {
     result *= BigInt.two;
   }
-
   return result;
 }
 

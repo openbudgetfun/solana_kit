@@ -5,6 +5,11 @@ import 'package:solana_kit_helius/src/internal/json_reader.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart' show KeyPair;
 
 // ── Signup types (v3.0.0) ──────────────────────────────────────────────────
+
+/// Request for unified signup (v3.0.0). Replaces the legacy agentic signup.
+///
+/// Either provide [secretKey] for SDK-authenticated signup, or provide
+/// [jwt]/[refId]/[walletAddress] for pre-authenticated signup.
 class SignupRequest {
   /// Creates a signup request with a secret key (SDK-authenticated).
   const SignupRequest.secretKey({
@@ -167,6 +172,12 @@ class PaymentRequiredResult extends SignupResult {
 }
 
 // ── PaymentLink type (shared between auth and checkout) ─────────────────────
+
+/// Hosted-checkout link returned to the caller.
+///
+/// The user clicks [paymentUrl] in a browser, OR an agent sends
+/// [amountCents] (× 10_000) USDC raw to [destinationWallet] with
+/// [memo] = [paymentIntentId].
 class PaymentLink {
   /// Creates a payment link.
   const PaymentLink({
@@ -184,7 +195,6 @@ class PaymentLink {
   /// Creates a [PaymentLink] from a JSON map.
   factory PaymentLink.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return PaymentLink(
       kind: r.requireString('kind'),
       paymentIntentId: r.requireString('paymentIntentId'),
@@ -240,6 +250,8 @@ class PaymentLink {
 }
 
 // ── Legacy wallet signup types ──────────────────────────────────────────────
+
+/// Request for wallet signup with signature verification.
 class WalletSignupRequest {
   /// Creates a wallet signup request.
   const WalletSignupRequest({
@@ -251,7 +263,6 @@ class WalletSignupRequest {
   /// Creates a [WalletSignupRequest] from a JSON map.
   factory WalletSignupRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return WalletSignupRequest(
       walletAddress: r.requireString('walletAddress'),
       signature: r.requireString('signature'),
@@ -284,7 +295,6 @@ class WalletSignupResponse {
   /// Creates a [WalletSignupResponse] from a JSON map.
   factory WalletSignupResponse.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return WalletSignupResponse(
       apiKey: r.requireString('apiKey'),
       projectId: r.requireString('projectId'),
@@ -302,6 +312,8 @@ class WalletSignupResponse {
 }
 
 // ── Project and API key types ───────────────────────────────────────────────
+
+/// Request to create a new project.
 class CreateProjectRequest {
   /// Creates a create-project request.
   const CreateProjectRequest({required this.name});
@@ -309,7 +321,6 @@ class CreateProjectRequest {
   /// Creates a [CreateProjectRequest] from a JSON map.
   factory CreateProjectRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return CreateProjectRequest(name: r.requireString('name'));
   }
 
@@ -333,7 +344,6 @@ class HeliusProject {
   /// Creates a [HeliusProject] from a JSON map.
   factory HeliusProject.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return HeliusProject(
       id: r.requireString('id'),
       name: r.requireString('name'),
@@ -371,7 +381,6 @@ class CreateApiKeyRequest {
   /// Creates a [CreateApiKeyRequest] from a JSON map.
   factory CreateApiKeyRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return CreateApiKeyRequest(
       projectId: r.requireString('projectId'),
       name: r.requireString('name'),
@@ -401,7 +410,6 @@ class HeliusApiKey {
   /// Creates a [HeliusApiKey] from a JSON map.
   factory HeliusApiKey.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return HeliusApiKey(
       id: r.requireString('id'),
       key: r.requireString('key'),
@@ -442,7 +450,6 @@ class CheckBalancesResponse {
   /// Creates a [CheckBalancesResponse] from a JSON map.
   factory CheckBalancesResponse.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return CheckBalancesResponse(
       credits: r.requireInt('credits'),
       creditsUsed: r.requireInt('creditsUsed'),
@@ -470,7 +477,6 @@ class KeypairResult {
   /// Creates a [KeypairResult] from a JSON map.
   factory KeypairResult.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return KeypairResult(
       publicKey: r.requireString('publicKey'),
       secretKey: r.requireString('secretKey'),
@@ -502,7 +508,6 @@ class SignAuthMessageRequest {
   /// Creates a [SignAuthMessageRequest] from a JSON map.
   factory SignAuthMessageRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return SignAuthMessageRequest(
       message: r.optString('message'),
       secretKey: r.requireString('secretKey'),
@@ -563,7 +568,6 @@ class SignAuthMessageRequest {
   Map<String, Object?> toJson() => {
     if (message != null) 'message': message,
     'secretKey': secretKey,
-
     if (timestamp != null) 'timestamp': timestamp,
   };
 }
@@ -576,7 +580,6 @@ class SignAuthMessageResponse {
   /// Creates a [SignAuthMessageResponse] from a JSON map.
   factory SignAuthMessageResponse.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return SignAuthMessageResponse(
       signature: r.requireString('signature'),
       message: r.optString('message'),
@@ -597,6 +600,8 @@ class SignAuthMessageResponse {
 }
 
 // ── Plan management result types (v3.0.0) ────────────────────────────────────
+
+/// Result of upgrading a project to a new plan.
 class UpgradePlanResult {
   /// Creates an upgrade-plan result.
   const UpgradePlanResult({required this.paymentLink});

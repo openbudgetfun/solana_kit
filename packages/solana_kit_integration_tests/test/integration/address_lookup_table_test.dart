@@ -122,7 +122,6 @@ void main() {
           break;
         }
       }
-
       expect(found, isTrue, reason: 'address $address should be in the table');
     }
   });
@@ -219,7 +218,6 @@ void main() {
         await Future<void>.delayed(const Duration(seconds: 1));
       }
     }
-
     expect(closeSucceeded, isTrue, reason: 'close should succeed within 30s');
 
     final closed = await env.rpc.getAccountInfoValue(lookupTableAddress).send();

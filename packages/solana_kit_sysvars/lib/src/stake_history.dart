@@ -113,7 +113,6 @@ VariableSizeEncoder<SysvarStakeHistory> getSysvarStakeHistoryEncoder() {
       for (final entry in value) {
         o = entryEncoder.write(_entryToMap(entry), bytes, o);
       }
-
       return o;
     },
   );
@@ -147,7 +146,6 @@ VariableSizeDecoder<SysvarStakeHistory> getSysvarStakeHistoryDecoder() {
         o = newOffset;
         entries.add(_mapToEntry(map));
       }
-
       return (entries, o);
     },
   );
@@ -177,7 +175,6 @@ Future<SysvarStakeHistory> fetchSysvarStakeHistory(
     (account as ExistingAccount<Uint8List>).account,
     getSysvarStakeHistoryDecoder(),
   );
-
   return decoded.data;
 }
 
@@ -194,7 +191,6 @@ Map<String, Object?> _entryToMap(StakeHistoryEntry entry) {
 
 StakeHistoryEntry _mapToEntry(Map<String, Object?> map) {
   final stakeHistoryMap = map['stakeHistory']! as Map<String, Object?>;
-
   return StakeHistoryEntry(
     epoch: map['epoch']! as BigInt,
     stakeHistory: StakeHistoryData(

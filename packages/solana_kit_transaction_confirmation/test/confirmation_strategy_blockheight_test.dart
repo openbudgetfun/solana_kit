@@ -26,7 +26,6 @@ void main() {
               getEpochInfo: ({required abortSignal, commitment}) {
                 final completer = Completer<EpochInfo>();
                 epochInfoCompleters.add(completer);
-
                 return completer.future;
               },
               onSlotNotification:
@@ -225,7 +224,6 @@ void main() {
               if (abortSignal.isCancelled) {
                 throw StateError('aborted: ${abortSignal.reason}');
               }
-
               return EpochInfo(
                 absoluteSlot: BigInt.from(200),
                 blockHeight: BigInt.from(101),
@@ -420,7 +418,6 @@ void main() {
         BlockHeightExceedenceConfig(
           getEpochInfo: ({required abortSignal, commitment}) async {
             capturedCommitment = commitment;
-
             return EpochInfo(
               absoluteSlot: BigInt.from(101),
               blockHeight: BigInt.from(101),
@@ -460,7 +457,6 @@ void main() {
             capturedCancellationToken = abortSignal;
             // Never complete - keep waiting.
             await Completer<EpochInfo>().future;
-
             return EpochInfo(
               absoluteSlot: BigInt.zero,
               blockHeight: BigInt.zero,

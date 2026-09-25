@@ -16,7 +16,6 @@ import 'dart:isolate';
 /// `@solana/rpc-spec-types` TypeScript package.
 Object? parseJsonWithBigInts(String json) {
   final numbers = <String>[];
-
   return jsonDecode(
     _indexNumbers(json, numbers),
     reviver: (key, value) =>
@@ -45,12 +44,10 @@ Future<Object?> parseJsonWithBigIntsAsync(
     return await Isolate.run<Object?>(
       () => _parseJsonWithBigIntsInIsolate(json),
     );
-
   } catch (error) {
     if (error is UnsupportedError || error is UnimplementedError) {
       return parseJsonWithBigInts(json);
     }
-
     rethrow;
   }
 }
@@ -63,7 +60,6 @@ Future<Object?> parseJsonWithBigIntsAsync(
 String stringifyJsonWithBigInts(Object? value, {Object? space}) {
   final out = StringBuffer();
   _writeJson(value, out, Set<Object>.identity());
-
   return out.toString();
 }
 
@@ -100,11 +96,9 @@ String _indexNumbers(String json, List<String> numbers) {
     if (codeUnit == _quote) {
       // A quote toggles string context unless it is backslash-escaped.
       var backslashes = 0;
-
       for (var j = ii - 1; j >= 0 && json.codeUnitAt(j) == _backslash; j--) {
         backslashes++;
       }
-
       if (backslashes.isEven) inQuote = !inQuote;
       ii++;
       continue;
@@ -117,7 +111,6 @@ String _indexNumbers(String json, List<String> numbers) {
 
     if (codeUnit == _minus || (codeUnit >= _zero && codeUnit <= _nine)) {
       final consumed = _consumeNumber(json, ii);
-
       if (consumed != null) {
         // Flush the literal run, then emit this number's index marker.
         out
@@ -134,7 +127,6 @@ String _indexNumbers(String json, List<String> numbers) {
   }
 
   out.write(json.substring(chunkStart));
-
   return out.toString();
 }
 
@@ -152,7 +144,6 @@ const int _nine = 0x39;
 /// the caller skips string contents.
 String? _consumeNumber(String json, int start) {
   final match = _jsonNumberRegExp.matchAsPrefix(json, start);
-
   if (match == null) {
     throw FormatException('Invalid JSON number', json, start);
   }
@@ -160,7 +151,6 @@ String? _consumeNumber(String json, int start) {
       !_isNumberTerminator(json.codeUnitAt(match.end))) {
     throw FormatException('Invalid JSON number', json, start);
   }
-
   return match.group(0);
 }
 
@@ -183,30 +173,23 @@ Object _parseJsonNumber(String value) {
   if (_floatIndicatorRegExp.hasMatch(value)) {
     return double.parse(value);
   }
-
   if (value.contains(_exponentSeparatorRegExp)) {
     final separator = value.indexOf(_exponentSeparatorRegExp);
     final exponent = int.tryParse(value.substring(separator + 1));
-
     if (exponent == null || exponent > 10000) {
       throw FormatException('JSON integer exponent exceeds 10,000', value);
     }
-
     final units = BigInt.parse(value.substring(0, separator));
-
     return units * BigInt.from(10).pow(exponent);
   }
-
   return BigInt.parse(value);
 }
 
 void _writeJson(Object? value, StringBuffer out, Set<Object> ancestors) {
   if (value is BigInt) {
     out.write(value);
-
     return;
   }
-
   if (value is! List<Object?> && value is! Map<Object?, Object?>) {
     out.write(
       jsonEncode(
@@ -216,36 +199,31 @@ void _writeJson(Object? value, StringBuffer out, Set<Object> ancestors) {
         ),
       ),
     );
-
     return;
   }
-
   if (!ancestors.add(value!)) {
     throw JsonCyclicError(value);
   }
-
   if (value is List<Object?>) {
     out.write('[');
-
     for (var index = 0; index < value.length; index++) {
       if (index > 0) out.write(',');
       _writeJson(value[index], out, ancestors);
     }
-
     out.write(']');
-
   } else if (value is Map<Object?, Object?>) {
     out.write('{');
     var first = true;
     for (final entry in value.entries) {
+      if (entry.key is! String) throw JsonUnsupportedObjectError(value);
       if (!first) out.write(',');
       first = false;
       out
+        ..write(jsonEncode(entry.key))
         ..write(':');
       _writeJson(entry.value, out, ancestors);
     }
     out.write('}');
   }
-
   ancestors.remove(value);
 }

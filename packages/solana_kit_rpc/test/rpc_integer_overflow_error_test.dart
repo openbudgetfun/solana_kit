@@ -66,7 +66,6 @@ void main() {
           expectedOrdinals[ii] = '${pos}th';
         }
       }
-
       // Override the special cases for 11th, 12th, 13th
       expectedOrdinals[10] = '11th';
       expectedOrdinals[11] = '12th';

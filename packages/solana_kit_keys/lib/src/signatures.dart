@@ -36,7 +36,6 @@ void assertIsSignature(String putativeSignature) {
       'actualLength': putativeSignature.length,
     });
   }
-
   // Slow path: decode and check byte length.
   final bytes = _base58Encoder.encode(putativeSignature);
   assertIsSignatureBytes(bytes);
@@ -47,9 +46,7 @@ void assertIsSignature(String putativeSignature) {
 bool isSignature(String putativeSignature) {
   try {
     assertIsSignature(putativeSignature);
-
     return true;
-
   } on Object {
     return false;
   }
@@ -81,7 +78,6 @@ bool isSignatureBytes(Uint8List putativeSignatureBytes) {
 /// and returns it as a [Signature].
 Signature signature(String value) {
   assertIsSignature(value);
-
   return Signature(value);
 }
 
@@ -91,7 +87,6 @@ Signature signature(String value) {
 /// [SignatureBytes].
 SignatureBytes signatureBytes(Uint8List value) {
   assertIsSignatureBytes(value);
-
   return SignatureBytes(value);
 }
 
@@ -105,7 +100,6 @@ SignatureBytes signBytes(Uint8List privateKeyBytes, Uint8List data) {
   assertIsPrivateKey(privateKeyBytes);
   final privateKey = ed.newKeyFromSeed(privateKeyBytes);
   final sig = ed.sign(privateKey, data);
-
   return SignatureBytes(Uint8List.fromList(sig));
 }
 
@@ -129,9 +123,7 @@ bool verifySignature(
 
   try {
     final publicKey = ed.PublicKey(publicKeyBytes);
-
     return ed.verify(publicKey, data, Uint8List.fromList(signature.value));
-
   } on Object {
     return false;
   }
@@ -158,7 +150,6 @@ final BigInt _ed25519FieldPrime = (BigInt.one << 255) - BigInt.from(19);
 /// Rejects weak points, including non-canonical encodings and either sign bit.
 bool _isSmallOrderPoint(Uint8List bytes) {
   var y = BigInt.from(bytes[31] & 0x7f);
-
   for (var index = 30; index >= 0; index--) {
     y = (y << 8) | BigInt.from(bytes[index]);
   }

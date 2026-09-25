@@ -39,18 +39,44 @@ export function getTopLevelDecoderFragment({
 
   const result = fragment`  Never throwInvalidByteLength(int expected, int bytesLength) {
     throw ${use("SolanaError", "solanaErrors")}(
+      ${use("SolanaErrorCode", "solanaErrors")}.codecsInvalidByteLength,
       {
         'codecDescription': '${fragmentFromString(description)}',
+        'expected': expected,
+        'bytesLength': bytesLength,
+      },
+    );
   }
 
+  (${fragmentFromString(typeName)}, int) readTopLevel(Uint8List bytes, int offset) {
+${fragmentFromString(validation)}    final (map, newOffset) = structDecoder.read(bytes, offset);
+${fragmentFromString(consumptionCheck)}
+    return (
+      ${fragmentFromString(typeName)}(
+${fragmentFromString(fromMapFields)}
+      ),
+      newOffset,
+    );
   }
 
   return switch (structDecoder) {
     ${use("FixedSizeDecoder", "solanaCodecsCore")}<Map<String, Object?>>() =>
+      ${use("FixedSizeDecoder", "solanaCodecsCore")}<${fragmentFromString(typeName)}>(
+        fixedSize: structDecoder.fixedSize,
+        read: (bytes, offset) {
+          final bytesLength = bytes.length - offset;
+          if (${fragmentFromString(fixedSizeCheck)}) {
+            throwInvalidByteLength(structDecoder.fixedSize, bytesLength);
           }
           return readTopLevel(bytes, offset);
+        },
+      ),
+    ${use("VariableSizeDecoder", "solanaCodecsCore")}<Map<String, Object?>>() =>
+      ${use("VariableSizeDecoder", "solanaCodecsCore")}<${fragmentFromString(typeName)}>(
+        read: readTopLevel,
+        maxSize: structDecoder.maxSize,
+      ),
   };`;
   result.imports.mergeWith(discriminatorValidation.imports);
-
   return result;
 }

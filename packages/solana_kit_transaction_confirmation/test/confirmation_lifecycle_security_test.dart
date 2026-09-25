@@ -138,7 +138,6 @@ void main() {
         BlockHeightExceedenceConfig(
           getEpochInfo: ({required abortSignal, commitment}) {
             requests++;
-
             return requests == 1
                 ? initial.future
                 : Future.value(
@@ -151,7 +150,6 @@ void main() {
           onSlotNotification:
               ({required abortSignal, required onNotification}) {
                 onNotification(SlotNotification(slot: BigInt.from(102)));
-
                 return Completer<void>().future;
               },
         ),
@@ -238,7 +236,6 @@ class _StrategyHarness {
             getSignatureStatuses: (signatures, {required abortSignal}) {
               requestCount++;
               if (lookupThrows) throw failure;
-
               return Future.value([null]);
             },
             onSignatureNotification:
@@ -250,7 +247,6 @@ class _StrategyHarness {
                 }) {
                   innerToken = abortSignal;
                   if (subscribeThrows) throw failure;
-
                   return subscription.future;
                 },
           ),
@@ -259,7 +255,6 @@ class _StrategyHarness {
           commitment: Commitment.confirmed,
           signature: 'sig',
         );
-
       case _StrategyKind.nonce:
         return createNonceInvalidationPromiseFactory(
           NonceInvalidationConfig(
@@ -267,7 +262,6 @@ class _StrategyHarness {
                 (address, {required abortSignal, required commitment}) {
                   requestCount++;
                   if (lookupThrows) throw failure;
-
                   return Future.value(
                     const NonceAccountInfo(nonceValue: 'nonce'),
                   );
@@ -281,7 +275,6 @@ class _StrategyHarness {
                 }) {
                   innerToken = abortSignal;
                   if (subscribeThrows) throw failure;
-
                   return subscription.future;
                 },
           ),
@@ -291,14 +284,12 @@ class _StrategyHarness {
           expectedNonceValue: 'nonce',
           nonceAccountAddress: 'address',
         );
-
       case _StrategyKind.blockheight:
         return createBlockHeightExceedencePromiseFactory(
           BlockHeightExceedenceConfig(
             getEpochInfo: ({required abortSignal, commitment}) {
               requestCount++;
               if (lookupThrows) throw failure;
-
               return Future.value(
                 EpochInfo(
                   absoluteSlot: BigInt.one,
@@ -310,7 +301,6 @@ class _StrategyHarness {
                 ({required abortSignal, required onNotification}) {
                   innerToken = abortSignal;
                   if (subscribeThrows) throw failure;
-
                   return subscription.future;
                 },
           ),

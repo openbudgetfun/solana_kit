@@ -11,7 +11,6 @@ void main() {
       transportCalls = [];
       transport = (config) async {
         transportCalls.add(config);
-
         return null;
       };
     });

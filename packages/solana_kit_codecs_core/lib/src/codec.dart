@@ -5,6 +5,12 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 // ---------------------------------------------------------------------------
 // Encoder
 // ---------------------------------------------------------------------------
+
+/// An object that can encode a value of type [T] into a [Uint8List].
+///
+/// An `Encoder` is either a [FixedSizeEncoder] (all encoded values share the
+/// same byte length) or a [VariableSizeEncoder] (encoded byte length depends
+/// on the value).
 sealed class Encoder<T> {
   /// Encode [value] into a new [Uint8List].
   Uint8List encode(T value);
@@ -31,7 +37,6 @@ final class FixedSizeEncoder<T> extends Encoder<T> {
   Uint8List encode(T value) {
     final bytes = Uint8List(fixedSize);
     _write(value, bytes, 0);
-
     return bytes;
   }
 
@@ -64,7 +69,6 @@ final class VariableSizeEncoder<T> extends Encoder<T> {
     final size = _getSizeFromValue(value);
     final bytes = Uint8List(size);
     _write(value, bytes, 0);
-
     return bytes;
   }
 
@@ -76,6 +80,11 @@ final class VariableSizeEncoder<T> extends Encoder<T> {
 // ---------------------------------------------------------------------------
 // Decoder
 // ---------------------------------------------------------------------------
+
+/// An object that can decode a [Uint8List] into a value of type [T].
+///
+/// A `Decoder` is either a [FixedSizeDecoder] (always reads a fixed number of
+/// bytes) or a [VariableSizeDecoder] (byte length varies).
 sealed class Decoder<T> {
   /// Decode a value from [bytes], optionally starting at [offset].
   T decode(Uint8List bytes, [int offset = 0]);
@@ -125,6 +134,13 @@ final class VariableSizeDecoder<T> extends Decoder<T> {
 // ---------------------------------------------------------------------------
 // Codec
 // ---------------------------------------------------------------------------
+
+/// An object that can both encode and decode values.
+///
+/// A `Codec` is either a [FixedSizeCodec] or a [VariableSizeCodec].
+///
+/// The type parameter `TFrom` is the type accepted for encoding (may be
+/// looser), while `TTo` is the type returned when decoding.
 sealed class Codec<TFrom, TTo> {
   /// Encode [value] into a new [Uint8List].
   Uint8List encode(TFrom value);
@@ -163,7 +179,6 @@ final class FixedSizeCodec<TFrom, TTo> extends Codec<TFrom, TTo> {
   Uint8List encode(TFrom value) {
     final bytes = Uint8List(fixedSize);
     _write(value, bytes, 0);
-
     return bytes;
   }
 
@@ -204,7 +219,6 @@ final class VariableSizeCodec<TFrom, TTo> extends Codec<TFrom, TTo> {
     final size = _getSizeFromValue(value);
     final bytes = Uint8List(size);
     _write(value, bytes, 0);
-
     return bytes;
   }
 
@@ -222,6 +236,11 @@ final class VariableSizeCodec<TFrom, TTo> extends Codec<TFrom, TTo> {
 // ---------------------------------------------------------------------------
 // Utility functions
 // ---------------------------------------------------------------------------
+
+/// Gets the encoded size of [value] using the provided [encoder].
+///
+/// If the encoder is fixed-size, returns its `fixedSize`.
+/// If the encoder is variable-size, delegates to `getSizeFromValue`.
 int getEncodedSize<T>(T value, Encoder<T> encoder) {
   return switch (encoder) {
     FixedSizeEncoder<T>(:final fixedSize) => fixedSize,
@@ -232,6 +251,8 @@ int getEncodedSize<T>(T value, Encoder<T> encoder) {
 // ---------------------------------------------------------------------------
 // Type checks
 // ---------------------------------------------------------------------------
+
+/// Returns `true` if the given encoder, decoder, or codec is fixed-size.
 bool isFixedSize(Object? object) {
   return object is FixedSizeEncoder ||
       object is FixedSizeDecoder ||

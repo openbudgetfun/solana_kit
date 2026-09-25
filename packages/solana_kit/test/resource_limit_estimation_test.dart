@@ -23,14 +23,12 @@ void main() {
     final rpc = createSolanaRpcFromTransport((config) async {
       final payload = config.payload! as Map<String, Object?>;
       requests.add(payload);
-
       return <String, Object?>{
         'jsonrpc': '2.0',
         'id': payload['id'],
         if (error != null) 'error': error else 'result': result,
       };
     });
-
     return (rpc: rpc, requests: requests);
   }
 
@@ -381,7 +379,6 @@ void main() {
       Future<void>? seenSignal;
       final rpc = createSolanaRpcFromTransport((config) async {
         seenSignal = config.signal;
-
         return <String, Object?>{
           'jsonrpc': '2.0',
           'id': (config.payload! as Map<String, Object?>)['id'],

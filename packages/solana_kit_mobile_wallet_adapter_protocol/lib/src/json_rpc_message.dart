@@ -21,7 +21,6 @@ Uint8List encryptJsonRpcRequest(
     'params': params,
   };
   final plaintext = json.encode(jsonRpcMessage);
-
   return encryptMessage(plaintext, id, sharedSecret);
 }
 

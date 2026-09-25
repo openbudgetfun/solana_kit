@@ -18,7 +18,6 @@ void main() {
         expect(body['method'], 'getTransactionWithCompressionInfo');
         expect(body['jsonrpc'], '2.0');
         expect(body['params'], {'signature': 'test-sig'});
-
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResult}),
           200,

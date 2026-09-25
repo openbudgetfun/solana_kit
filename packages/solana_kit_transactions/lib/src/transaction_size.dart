@@ -45,13 +45,11 @@ int getTransactionSizeLimit(Object versionOrTransaction) {
     const versionPrefixMask = 0x80;
     const versionFlagMask = 0x7f;
     final firstMessageByte = versionOrTransaction.messageBytes.first;
-
     if (firstMessageByte & versionPrefixMask == 0) {
       return legacyTransactionSizeLimit;
     }
 
     final version = firstMessageByte & versionFlagMask;
-
     return version == 1 ? transactionV1SizeLimit : legacyTransactionSizeLimit;
   }
 
@@ -65,7 +63,6 @@ int getTransactionSizeLimit(Object versionOrTransaction) {
 /// Gets the size of a given transaction in bytes.
 int getTransactionSize(Transaction transaction) {
   final encoder = getTransactionEncoder();
-
   return encoder.getSizeFromValue(transaction);
 }
 
@@ -87,7 +84,6 @@ void assertIsTransactionWithinSizeLimit(Transaction transaction) {
 
   final size = getTransactionSize(transaction);
   final sizeLimit = getTransactionSizeLimit(transaction);
-
   if (size > sizeLimit) {
     throw SolanaError(SolanaErrorCode.transactionExceedsSizeLimit, {
       'transactionSize': size,
@@ -126,7 +122,6 @@ void assertIsTransactionMessageWithinSizeLimit(
 ) {
   final size = getTransactionMessageSize(transactionMessage);
   final sizeLimit = getTransactionMessageSizeLimit(transactionMessage);
-
   if (size > sizeLimit) {
     throw SolanaError(SolanaErrorCode.transactionExceedsSizeLimit, {
       'transactionSize': size,

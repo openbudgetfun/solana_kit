@@ -7,7 +7,6 @@ import 'package:solana_kit_fixed_points/src/decimal_fixed_point.dart';
 /// are allowed to differ.
 int cmpDecimalFixedPoint(DecimalFixedPoint a, DecimalFixedPoint b) {
   _assertComparable(a, b);
-
   return a.raw.compareTo(b.raw).sign;
 }
 

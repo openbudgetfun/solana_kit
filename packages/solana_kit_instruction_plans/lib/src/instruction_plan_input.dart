@@ -16,16 +16,13 @@ InstructionPlan parseInstructionPlanInput(Object input) {
     if (input.length == 1) {
       return parseInstructionPlanInput(input[0] as Object);
     }
-
     return sequentialInstructionPlan(
       input.map((e) => parseInstructionPlanInput(e as Object)).toList(),
     );
   }
-
   if (input is InstructionPlan) {
     return input;
   }
-
   return singleInstructionPlan(input as Instruction);
 }
 
@@ -43,16 +40,13 @@ TransactionPlan parseTransactionPlanInput(Object input) {
     if (input.length == 1) {
       return parseTransactionPlanInput(input[0] as Object);
     }
-
     return sequentialTransactionPlan(
       input.map((e) => parseTransactionPlanInput(e as Object)).toList(),
     );
   }
-
   if (input is TransactionPlan) {
     return input;
   }
-
   return singleTransactionPlan(input as TransactionMessage);
 }
 
@@ -65,15 +59,12 @@ Object parseInstructionOrTransactionPlanInput(Object input) {
   if (input is List && input.isEmpty) {
     return parseTransactionPlanInput(input);
   }
-
   if (input is List && _isTransactionPlanInput(input[0] as Object)) {
     return parseTransactionPlanInput(input);
   }
-
   if (_isTransactionPlanInput(input)) {
     return parseTransactionPlanInput(input);
   }
-
   return parseInstructionPlanInput(input);
 }
 

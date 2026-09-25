@@ -70,12 +70,10 @@ Stream<T> bridgeStoreToAsyncIterable<T>(
         if (shouldYield != null && !shouldYield(state.data as T)) return;
         latest = (value: state.data as T);
         wake();
-
       } else if (state.status == ReactiveStreamState.error) {
         failure = state.error;
         wake();
       }
-
     } on Object catch (error, stackTrace) {
       // Predicates run inside store notifications. Their failures belong to
       // the stream consumer and must release this observer.
@@ -107,7 +105,6 @@ Stream<T> bridgeStoreToAsyncIterable<T>(
             error is Error || error is Exception ? error : StateError('$error'),
             failureStackTrace,
           );
-
           return;
         }
 
@@ -138,10 +135,8 @@ Stream<T> bridgeStoreToAsyncIterable<T>(
       // Explicit cancellation wakes the pump and waits for observer cleanup.
       cancelled = true;
       wake();
-
       return pumping;
     },
   );
-
   return controller.stream;
 }

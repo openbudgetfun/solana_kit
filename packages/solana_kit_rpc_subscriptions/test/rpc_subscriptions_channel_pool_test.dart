@@ -326,7 +326,6 @@ class _MockChannelCreator {
         : _MockChannel(
             onErrorListener: onErrorListener,
           );
-
     return Future.value(channel);
   }
 }

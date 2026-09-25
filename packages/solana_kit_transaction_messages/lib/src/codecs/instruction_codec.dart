@@ -25,7 +25,6 @@ VariableSizeEncoder<CompiledInstruction> getInstructionEncoder() {
     getSizeFromValue: (instruction) {
       final accountIndices = instruction.accountIndices ?? const <int>[];
       final data = instruction.data ?? Uint8List(0);
-
       return getEncodedSize(instruction.programAddressIndex, u8Enc) +
           getEncodedSize(accountIndices, arrayEnc) +
           getEncodedSize(data, bytesEnc);
@@ -39,7 +38,6 @@ VariableSizeEncoder<CompiledInstruction> getInstructionEncoder() {
         pos,
       );
       pos = bytesEnc.write(instruction.data ?? Uint8List(0), bytes, pos);
-
       return pos;
     },
   );
@@ -64,7 +62,6 @@ VariableSizeDecoder<CompiledInstruction> getInstructionDecoder() {
       final (programAddressIndex, o1) = u8Dec.read(bytes, offset);
       final (accountIndices, o2) = arrayDec.read(bytes, o1);
       final (data, o3) = bytesDec.read(bytes, o2);
-
       return (
         CompiledInstruction(
           programAddressIndex: programAddressIndex,

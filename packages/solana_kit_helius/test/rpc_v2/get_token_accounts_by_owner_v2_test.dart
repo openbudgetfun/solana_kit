@@ -42,7 +42,6 @@ void main() {
         final params = body['params']! as Map<String, Object?>;
         expect(params['ownerAddress'], 'owner1');
         expect(params['mint'], 'mintAddr');
-
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResponse}),
           200,

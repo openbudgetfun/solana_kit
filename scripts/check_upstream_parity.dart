@@ -9,23 +9,19 @@ Future<void> main(List<String> args) async {
     'scripts/check_upstream_compatibility.dart',
     ...args,
   ]);
-
   if (code != 0) {
     exitCode = code;
-
     return;
   }
 
   final trackedVersion = RegExp(
     'Latest supported `@solana/kit` version: `($_versionPattern)`',
   ).firstMatch(File('readme.md').readAsStringSync())?.group(1);
-
   if (trackedVersion == null) {
     stderr.writeln(
       'Failed to determine the tracked @solana/kit version from readme.md.',
     );
     exitCode = 1;
-
     return;
   }
 
@@ -38,7 +34,6 @@ Future<void> main(List<String> args) async {
   );
 
   var installedVersion = '';
-
   if (installedPackageJson.existsSync()) {
     final json = jsonDecode(
       installedPackageJson.readAsStringSync(),
@@ -50,11 +45,9 @@ Future<void> main(List<String> args) async {
     stdout.writeln(
       'Preparing upstream @solana/kit@$trackedVersion runtime fixture environment...',
     );
-
     if (cacheDirectory.existsSync()) {
       cacheDirectory.deleteSync(recursive: true);
     }
-
     cacheDirectory.createSync(recursive: true);
     File('${cacheDirectory.path}/package.json').writeAsStringSync(
       const JsonEncoder.withIndent('  ').convert({
@@ -71,10 +64,8 @@ Future<void> main(List<String> args) async {
       '--no-fund',
       '--silent',
     ], workingDirectory: cacheDirectory.path);
-
     if (code != 0) {
       exitCode = code;
-
       return;
     }
   }
@@ -87,14 +78,11 @@ Future<void> main(List<String> args) async {
     },
   );
   stderr.write(node.stderr);
-
   if (node.exitCode != 0) {
     stdout.write(node.stdout);
     exitCode = node.exitCode;
-
     return;
   }
-
   fixturesJson.writeAsStringSync(node.stdout.toString());
 
   stdout.writeln('Generated upstream parity fixtures at ${fixturesJson.path}');
@@ -103,10 +91,8 @@ Future<void> main(List<String> args) async {
     ['test', 'packages/solana_kit/test/upstream_parity_test.dart'],
     environment: {'UPSTREAM_PARITY_FIXTURES_JSON': fixturesJson.path},
   );
-
   if (code != 0) {
     exitCode = code;
-
     return;
   }
 
@@ -128,6 +114,5 @@ Future<int> _inherit(
     environment: environment,
     mode: ProcessStartMode.inheritStdio,
   );
-
   return process.exitCode;
 }

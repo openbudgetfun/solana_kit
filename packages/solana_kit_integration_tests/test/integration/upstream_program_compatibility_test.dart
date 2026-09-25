@@ -320,7 +320,6 @@ Future<EncodedAccount> _existingAccount(
 ) async {
   final account = await fetchEncodedAccount(env.rpc, address);
   expect(account, isA<ExistingAccount<Uint8List>>());
-
   return (account as ExistingAccount<Uint8List>).account;
 }
 

@@ -88,7 +88,6 @@ class JupiterBuildResponse {
             (value! as List<Object?>).cast<String>().toList(growable: false),
           ),
         );
-
     return JupiterBuildResponse(
       computeBudgetInstructions:
           (json['computeBudgetInstructions'] as List<Object?>?)

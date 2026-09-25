@@ -38,7 +38,6 @@ void main() {
           expect(body['jsonrpc'], '2.0');
           final params = body['params']! as Map<String, Object?>;
           expect(params['owner'], 'owner-1');
-
           return http.Response(
             jsonEncode(<String, Object?>{
               'jsonrpc': '2.0',
@@ -91,7 +90,6 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         final params = body['params']! as Map<String, Object?>;
         expect(params['mint'], 'mint-x');
-
         return http.Response(
           jsonEncode(<String, Object?>{
             'jsonrpc': '2.0',

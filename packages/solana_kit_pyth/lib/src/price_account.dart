@@ -459,39 +459,31 @@ class PythPriceAccount {
 /// price account.
 PythPriceAccount decodePythPriceAccount(Uint8List data, {int? currentSlot}) {
   const headerSize = 240;
-
   if (data.length < headerSize) {
     throw PythDecodeException(
       'Data is too short (${data.length} bytes) to be a Pyth price account',
     );
   }
-
   final magic = _readUint32(data, 0);
-
   if (magic != pythMagic) {
     throw PythDecodeException(
       'Unexpected Pyth magic 0x${magic.toRadixString(16)}',
     );
   }
-
   final version = _readUint32(data, 4);
-
   if (version != pythAccountVersion) {
     throw PythDecodeException(
       'Unsupported Pyth account version $version '
       '(expected $pythAccountVersion)',
     );
   }
-
   final accountTypeValue = _readUint32(data, 8);
   final accountType = PythAccountType.fromValue(accountTypeValue);
-
   if (accountType != PythAccountType.price) {
     throw PythDecodeException(
       'Unexpected Pyth account type $accountTypeValue (expected 3)',
     );
   }
-
   final size = _readUint32(data, 12);
   final priceType = PythPriceType.fromValue(_readUint32(data, 16));
   final exponent = ByteData.sublistView(
@@ -529,7 +521,6 @@ PythPriceAccount decodePythPriceAccount(Uint8List data, {int? currentSlot}) {
   final aggregate = PythPriceInfo.fromBytes(data, 208);
 
   var status = aggregate.status;
-
   if (currentSlot != null && status == PythPriceStatus.trading) {
     if (currentSlot - aggregate.publishSlot.toInt() > pythMaxSlotDifference) {
       status = PythPriceStatus.unknown;
@@ -538,7 +529,6 @@ PythPriceAccount decodePythPriceAccount(Uint8List data, {int? currentSlot}) {
 
   var offset = headerSize;
   final priceComponents = <PythPriceComponent>[];
-
   for (var i = 0; i < numComponentPrices; i++) {
     if (offset + 96 > data.length) {
       throw PythDecodeException(
@@ -546,7 +536,6 @@ PythPriceAccount decodePythPriceAccount(Uint8List data, {int? currentSlot}) {
         '(of $numComponentPrices components)',
       );
     }
-
     priceComponents.add(
       PythPriceComponent._(
         publisher: getAddressCodec().decode(
@@ -678,11 +667,9 @@ class PriceUpdateV2Account {
   /// The feed id as a hex string (without a `0x` prefix).
   String get feedIdHex {
     final buffer = StringBuffer();
-
     for (final byte in feedId) {
       buffer.write(byte.toRadixString(16).padLeft(2, '0'));
     }
-
     return buffer.toString();
   }
 }
@@ -702,13 +689,11 @@ PriceUpdateV2Account decodePriceUpdateV2Account(Uint8List data) {
   const authoritySize = 32;
   const messageSize = 84;
   const minimumSize = discriminatorSize + authoritySize + 2 + messageSize + 8;
-
   if (data.length < minimumSize) {
     throw PythDecodeException(
       'Data is too short (${data.length} bytes) to be a PriceUpdateV2 account',
     );
   }
-
   for (var i = 0; i < priceUpdateV2Discriminator.length; i++) {
     if (data[i] != priceUpdateV2Discriminator[i]) {
       throw const PythDecodeException(
@@ -716,7 +701,6 @@ PriceUpdateV2Account decodePriceUpdateV2Account(Uint8List data) {
       );
     }
   }
-
   var cursor = discriminatorSize;
   final writeAuthority = getAddressCodec().decode(
     Uint8List.sublistView(data, cursor, cursor + authoritySize),
@@ -725,17 +709,14 @@ PriceUpdateV2Account decodePriceUpdateV2Account(Uint8List data) {
 
   final verificationVariant = data[cursor];
   cursor += 1;
-
   if (verificationVariant > 1) {
     throw PythDecodeException(
       'Unknown verification level variant $verificationVariant',
     );
   }
-
   final verificationLevel = verificationVariant == 0
       ? PythVerificationLevel.partial(data[cursor])
       : PythVerificationLevel.full();
-
   if (verificationVariant == 0) {
     cursor += 1;
   }
@@ -779,14 +760,12 @@ PriceUpdateV2Account decodePriceUpdateV2Account(Uint8List data) {
 
 Address? _readAddressOrNull(Uint8List bytes) {
   var isZero = true;
-
   for (final byte in bytes) {
     if (byte != 0) {
       isZero = false;
       break;
     }
   }
-
   return isZero ? null : getAddressCodec().decode(bytes);
 }
 

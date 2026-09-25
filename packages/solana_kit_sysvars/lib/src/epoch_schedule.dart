@@ -172,6 +172,5 @@ Future<SysvarEpochSchedule> fetchSysvarEpochSchedule(
     (account as ExistingAccount<Uint8List>).account,
     getSysvarEpochScheduleDecoder(),
   );
-
   return decoded.data;
 }

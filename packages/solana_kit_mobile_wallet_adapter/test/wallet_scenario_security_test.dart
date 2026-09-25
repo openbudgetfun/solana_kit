@@ -75,7 +75,6 @@ class _DelayedCreationWalletHostApi extends _CapturingWalletHostApi {
       configJson: configJson,
     );
     await creationAllowed.future;
-
     return sessionId;
   }
 }

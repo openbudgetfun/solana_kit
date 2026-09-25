@@ -26,6 +26,5 @@ void assertIsStringifiedNumber(String putativeNumber) {
 /// it to the [StringifiedNumber] type. It's best used with untrusted input.
 StringifiedNumber stringifiedNumber(String putativeNumber) {
   assertIsStringifiedNumber(putativeNumber);
-
   return StringifiedNumber(putativeNumber);
 }

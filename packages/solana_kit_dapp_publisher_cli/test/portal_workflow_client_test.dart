@@ -25,7 +25,6 @@ class _ScriptedPortalServer extends http.BaseClient {
     // Handle file uploads.
     if (path.contains('/upload/')) {
       uploadBodies[path] = (request as http.Request).bodyBytes;
-
       return _emptyResponse();
     }
 
@@ -39,7 +38,6 @@ class _ScriptedPortalServer extends http.BaseClient {
         );
       }
     }
-
     return _emptyResponse();
   }
 
@@ -530,6 +528,5 @@ Uint8List _png({required int width, required int height}) {
     ..setUint32(12, 0x49484452)
     ..setUint32(16, width)
     ..setUint32(20, height);
-
   return data.buffer.asUint8List();
 }

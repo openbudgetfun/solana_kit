@@ -26,7 +26,6 @@ void main() {
         expect(body['method'], 'getCompressedTokenAccountsByDelegate');
         expect(body['jsonrpc'], '2.0');
         expect(body['params'], {'delegate': 'test-delegate'});
-
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResult}),
           200,

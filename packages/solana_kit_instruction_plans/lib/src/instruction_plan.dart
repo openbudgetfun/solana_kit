@@ -149,6 +149,7 @@ class MessagePacker {
 // ---------------------------------------------------------------------------
 // Constructor helpers
 // ---------------------------------------------------------------------------
+
 List<InstructionPlan> _parseSingleInstructionPlans(List<Object> plans) =>
     List<InstructionPlan>.unmodifiable(
       plans.map(
@@ -192,6 +193,8 @@ ParallelInstructionPlan parallelInstructionPlan(List<Object> plans) =>
 // ---------------------------------------------------------------------------
 // Type checks and assertions
 // ---------------------------------------------------------------------------
+
+/// Returns `true` if [value] is an [InstructionPlan].
 bool isInstructionPlan(Object? value) => value is InstructionPlan;
 
 /// Returns `true` if [plan] is a [SingleInstructionPlan].
@@ -290,6 +293,12 @@ void assertIsParallelInstructionPlan(InstructionPlan plan) {
 // ---------------------------------------------------------------------------
 // Tree helpers
 // ---------------------------------------------------------------------------
+
+/// Finds the first instruction plan in the tree that matches the given
+/// [predicate].
+///
+/// This function performs a depth-first search through the instruction plan
+/// tree, returning the first plan that satisfies the predicate.
 InstructionPlan? findInstructionPlan(
   InstructionPlan instructionPlan,
   bool Function(InstructionPlan) predicate,
@@ -297,8 +306,6 @@ InstructionPlan? findInstructionPlan(
   if (predicate(instructionPlan)) {
     return instructionPlan;
   }
-
-
   return switch (instructionPlan) {
     SingleInstructionPlan() || MessagePackerInstructionPlan() => null,
     SequentialInstructionPlan(:final plans) ||
@@ -312,12 +319,10 @@ InstructionPlan? _findInPlans(
 ) {
   for (final subPlan in plans) {
     final found = findInstructionPlan(subPlan, predicate);
-
     if (found != null) {
       return found;
     }
   }
-
   return null;
 }
 
@@ -330,8 +335,6 @@ bool everyInstructionPlan(
   if (!predicate(instructionPlan)) {
     return false;
   }
-
-
   return switch (instructionPlan) {
     SingleInstructionPlan() || MessagePackerInstructionPlan() => true,
     SequentialInstructionPlan(:final plans) ||
@@ -383,6 +386,8 @@ List<InstructionPlan> flattenInstructionPlan(InstructionPlan instructionPlan) =>
 // ---------------------------------------------------------------------------
 // Message packer factories
 // ---------------------------------------------------------------------------
+
+/// The realloc limit in bytes (10,240).
 const _reallocLimit = 10240;
 
 /// Creates a [MessagePackerInstructionPlan] that packs instructions
@@ -398,7 +403,6 @@ MessagePackerInstructionPlan getLinearMessagePackerInstructionPlan({
 }) => MessagePackerInstructionPlan(
   getMessagePacker: () {
     var offset = 0;
-
     return MessagePacker(
       done: () => offset >= totalLength,
       packMessageToCapacity: (message, {maxInstructions}) {
@@ -447,7 +451,6 @@ MessagePackerInstructionPlan getLinearMessagePackerInstructionPlan({
         final length = math.min(totalLength - offset, freeSpace);
         final instruction = getInstruction(offset, length);
         offset += length;
-
         return appendTransactionMessageInstruction(instruction, message);
       },
     );
@@ -468,7 +471,6 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
 ) => MessagePackerInstructionPlan(
   getMessagePacker: () {
     var instructionIndex = 0;
-
     return MessagePacker(
       done: () => instructionIndex >= instructions.length,
       packMessageToCapacity: (message, {maxInstructions}) {
@@ -500,10 +502,8 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
           // configured maximum number of instructions per transaction.
           if (currentMessage.instructions.length >= resolvedMax) {
             instructionIndex = index;
-
             return currentMessage;
           }
-
           final nextMessage = appendTransactionMessageInstruction(
             instructions[index],
             currentMessage,
@@ -522,17 +522,13 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
                 },
               );
             }
-
             instructionIndex = index;
-
             return currentMessage;
           }
-
           currentMessage = nextMessage;
         }
 
         instructionIndex = instructions.length;
-
         return currentMessage;
       },
     );

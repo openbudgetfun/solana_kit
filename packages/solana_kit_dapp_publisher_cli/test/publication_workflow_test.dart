@@ -95,7 +95,6 @@ Future<Transaction> buildReleaseMintTransaction() async {
   final messageBytes = getCompiledTransactionMessageEncoder().encode(
     message,
   );
-
   return Transaction(
     messageBytes: messageBytes,
     signatures: {
@@ -144,7 +143,6 @@ Future<Transaction> buildVerifyCollectionTransaction() async {
       lifetimeToken: blockhash,
     ),
   );
-
   return Transaction(
     messageBytes: messageBytes,
     signatures: {
@@ -192,7 +190,6 @@ class _FakeClient implements PublicationWorkflowClient {
     CreateUploadTargetInput input,
   ) async {
     calls.add('createUploadTarget');
-
     return const PortalUploadTarget(
       uploadUrl: 'https://upload.example.com',
       publicUrl: 'https://public.example.com/file',
@@ -204,7 +201,6 @@ class _FakeClient implements PublicationWorkflowClient {
     CreateIngestionSessionInput input,
   ) async {
     calls.add('createIngestionSession');
-
     return translateBackendIngestionSession({
       'id': 'ing-1',
       'status': 'Ready',
@@ -220,7 +216,6 @@ class _FakeClient implements PublicationWorkflowClient {
     required String sessionId,
   }) async {
     calls.add('getIngestionSession');
-
     return translateBackendIngestionSession({
       'id': 'ing-1',
       'status': 'Ready',
@@ -236,7 +231,6 @@ class _FakeClient implements PublicationWorkflowClient {
     required String releaseId,
   }) async {
     calls.add('getPublicationBundle');
-
     return bundled();
   }
 
@@ -246,7 +240,6 @@ class _FakeClient implements PublicationWorkflowClient {
     String? releaseId,
   }) async {
     calls.add('getPublicationSession');
-
     return publicationSession();
   }
 
@@ -256,17 +249,13 @@ class _FakeClient implements PublicationWorkflowClient {
   ) async {
     calls.add('prepareReleaseNftTransaction');
     prepareCalls++;
-
     if (failOnPrepare && prepareCalls == 1) {
       final error = customError ?? const _TestFailure('prepare failed');
-
       if (error is Exception) {
         throw error;
       }
-
       throw PublisherCliException(error.toString());
     }
-
     return PreparedReleaseTransaction.fromMap({
       'transaction': base64Encode(
         getTransactionEncoder().encode(await buildReleaseMintTransaction()),
@@ -282,7 +271,6 @@ class _FakeClient implements PublicationWorkflowClient {
     String? publicationSessionId,
   }) async {
     calls.add('submitSignedTransaction');
-
     return const SubmitSignedTransactionResult(
       transactionSignature: 'sig-1',
     );
@@ -293,7 +281,6 @@ class _FakeClient implements PublicationWorkflowClient {
     SaveReleaseNftDataInput input,
   ) async {
     calls.add('saveReleaseNftData');
-
     return const SaveReleaseNftDataResult(success: true);
   }
 
@@ -303,7 +290,6 @@ class _FakeClient implements PublicationWorkflowClient {
     PrepareVerifyCollectionTransactionInput input,
   ) async {
     calls.add('prepareVerifyCollectionTransaction');
-
     return PreparedVerifyCollectionTransaction.fromMap({
       'transaction': base64Encode(
         getTransactionEncoder().encode(
@@ -320,7 +306,6 @@ class _FakeClient implements PublicationWorkflowClient {
     required String releaseId,
   }) async {
     calls.add('markReleaseCollectionAsVerified');
-
     return MarkReleaseCollectionAsVerifiedResult(
       success: true,
       releaseId: releaseId,
@@ -330,7 +315,6 @@ class _FakeClient implements PublicationWorkflowClient {
   @override
   Future<CleanupReleaseResult> cleanupRelease(CleanupReleaseInput input) async {
     calls.add('cleanupRelease');
-
     return CleanupReleaseResult(
       action: preserveOnCleanup ? 'preservedSubmitted' : 'deleted',
     );
@@ -339,7 +323,6 @@ class _FakeClient implements PublicationWorkflowClient {
   @override
   Future<SubmitToStoreResult> submitToStore(SubmitToStoreInput input) async {
     calls.add('submitToStore');
-
     return const SubmitToStoreResult(hubspotTicketId: 'HS-1');
   }
 
@@ -398,7 +381,6 @@ class _FakeClient implements PublicationWorkflowClient {
         'feePayer': publisherAddress,
       },
     };
-
     return backend;
   }
 }
@@ -452,7 +434,6 @@ PublicationBundle mintlessBundle() {
       'feePayer': publisherAddress,
     },
   };
-
   return mapBackendBundleToPublicationBundle(
     backend,
     'https://meta.example.com/rel-1.json',
@@ -1109,7 +1090,6 @@ class _RecordingUploadClient implements http.Client {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     requests.add(request);
-
     return http.StreamedResponse(
       const Stream<List<int>>.empty(),
       200,
@@ -1127,7 +1107,6 @@ class _RecordingUploadClient implements http.Client {
       ..headers.addAll(headers ?? const {})
       ..bodyBytes = body! as List<int>;
     await send(request);
-
     return http.Response('', 200);
   }
 
@@ -1153,7 +1132,6 @@ class _ProcessingClient extends _FakeClient {
     required String sessionId,
   }) async {
     polls++;
-
     return translateBackendIngestionSession({
       'id': 'ing-1',
       'status': 'processing',
@@ -1174,7 +1152,6 @@ class _PollingClient extends _FakeClient {
     required String sessionId,
   }) async {
     polls++;
-
     return translateBackendIngestionSession({
       'id': 'ing-1',
       'status': polls < 3 ? 'processing' : 'Failed',
@@ -1189,7 +1166,6 @@ class _FailingIngestionClient extends _FakeClient {
     CreateIngestionSessionInput input,
   ) async {
     calls.add('createIngestionSession');
-
     return translateBackendIngestionSession({
       'id': 'ing-9',
       'status': 'Ready',
@@ -1211,7 +1187,6 @@ class _CleanupFailureClient extends _FakeClient {
     CreateUploadTargetInput input,
   ) async {
     calls.add('createUploadTarget');
-
     return const PortalUploadTarget(
       uploadUrl: 'https://upload.example.com',
       publicUrl: 'https://public.example.com/app.apk',
@@ -1223,7 +1198,6 @@ class _CleanupFailureClient extends _FakeClient {
     CreateIngestionSessionInput input,
   ) async {
     calls.add('createIngestionSession');
-
     return translateBackendIngestionSession({
       'id': 'ing-1',
       'status': 'Ready',

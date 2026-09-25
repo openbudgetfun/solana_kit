@@ -118,13 +118,10 @@ typedef EncodedAccount = Account<Uint8List>;
 bool _dataEquals<T>(T a, T b) {
   if (a is Uint8List && b is Uint8List) {
     if (a.length != b.length) return false;
-
     for (var i = 0; i < a.length; i++) {
       if (a[i] != b[i]) return false;
     }
-
     return true;
   }
-
   return a == b;
 }

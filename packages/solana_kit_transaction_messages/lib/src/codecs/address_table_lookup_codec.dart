@@ -30,7 +30,6 @@ VariableSizeEncoder<AddressTableLookup> getAddressTableLookupEncoder() {
       pos = addrEnc.write(lookup.lookupTableAddress, bytes, pos);
       pos = indexArrayEnc.write(lookup.writableIndexes, bytes, pos);
       pos = indexArrayEnc.write(lookup.readonlyIndexes, bytes, pos);
-
       return pos;
     },
   );
@@ -50,7 +49,6 @@ VariableSizeDecoder<AddressTableLookup> getAddressTableLookupDecoder() {
       final (lookupTableAddress, o1) = addrDec.read(bytes, offset);
       final (writableIndexes, o2) = indexArrayDec.read(bytes, o1);
       final (readonlyIndexes, o3) = indexArrayDec.read(bytes, o2);
-
       return (
         AddressTableLookup(
           lookupTableAddress: lookupTableAddress,

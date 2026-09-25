@@ -12,7 +12,6 @@ class CreateStakeTransactionRequest {
   /// Creates a [CreateStakeTransactionRequest] from a JSON map.
   factory CreateStakeTransactionRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return CreateStakeTransactionRequest(
       from: r.requireString('from'),
       amount: r.requireInt('amount'),
@@ -33,7 +32,6 @@ class CreateStakeTransactionRequest {
   Map<String, Object?> toJson() => {
     'from': from,
     'amount': amount,
-
     if (validatorVote != null) 'validatorVote': validatorVote,
   };
 }
@@ -49,7 +47,6 @@ class CreateUnstakeTransactionRequest {
   /// Creates a [CreateUnstakeTransactionRequest] from a JSON map.
   factory CreateUnstakeTransactionRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return CreateUnstakeTransactionRequest(
       from: r.requireString('from'),
       stakeAccount: r.requireString('stakeAccount'),
@@ -78,7 +75,6 @@ class CreateWithdrawTransactionRequest {
   /// Creates a [CreateWithdrawTransactionRequest] from a JSON map.
   factory CreateWithdrawTransactionRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return CreateWithdrawTransactionRequest(
       from: r.requireString('from'),
       stakeAccount: r.requireString('stakeAccount'),
@@ -99,7 +95,6 @@ class CreateWithdrawTransactionRequest {
   Map<String, Object?> toJson() => {
     'from': from,
     'stakeAccount': stakeAccount,
-
     if (amount != null) 'amount': amount,
   };
 }
@@ -119,7 +114,6 @@ class StakeAccountInfo {
   /// Creates a [StakeAccountInfo] from a JSON map.
   factory StakeAccountInfo.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return StakeAccountInfo(
       address: r.requireString('address'),
       lamports: r.requireInt('lamports'),
@@ -153,11 +147,8 @@ class StakeAccountInfo {
     'address': address,
     'lamports': lamports,
     'state': state,
-
     if (voter != null) 'voter': voter,
-
     if (activationEpoch != null) 'activationEpoch': activationEpoch,
-
     if (deactivationEpoch != null) 'deactivationEpoch': deactivationEpoch,
   };
 }
@@ -170,7 +161,6 @@ class GetHeliusStakeAccountsRequest {
   /// Creates a [GetHeliusStakeAccountsRequest] from a JSON map.
   factory GetHeliusStakeAccountsRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return GetHeliusStakeAccountsRequest(owner: r.requireString('owner'));
   }
 
@@ -189,7 +179,6 @@ class GetWithdrawableAmountRequest {
   /// Creates a [GetWithdrawableAmountRequest] from a JSON map.
   factory GetWithdrawableAmountRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return GetWithdrawableAmountRequest(
       stakeAccount: r.requireString('stakeAccount'),
     );
@@ -210,7 +199,6 @@ class WithdrawableAmount {
   /// Creates a [WithdrawableAmount] from a JSON map.
   factory WithdrawableAmount.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return WithdrawableAmount(amount: r.requireInt('amount'));
   }
 
@@ -229,7 +217,6 @@ class StakeTransactionResult {
   /// Creates a [StakeTransactionResult] from a JSON map.
   factory StakeTransactionResult.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return StakeTransactionResult(transaction: r.requireString('transaction'));
   }
 

@@ -101,14 +101,12 @@ class JupiterOrderRequest {
     }
 
     put('slippageBps', slippageBps);
-
     if (swapMode != null) {
       put(
         'swapMode',
         swapMode == JupiterSwapMode.exactOut ? 'ExactOut' : 'ExactIn',
       );
     }
-
     put('referralAccount', referralAccount);
     put('referralFee', referralFee);
     put('restrictIntermediateTokens', restrictIntermediateTokens);
@@ -117,7 +115,6 @@ class JupiterOrderRequest {
     put('payer', payer);
     put('taker', taker);
     params.addAll(extraQueryParameters);
-
     return params;
   }
 }
@@ -143,16 +140,13 @@ class JupiterOrderResponse {
   factory JupiterOrderResponse.fromJson(Map<String, Object?> json) {
     BigInt? parseBigInt(Object? value) {
       if (value == null) return null;
-
       if (value is String) return BigInt.tryParse(value);
-
       if (value is int || value is num) return BigInt.parse('$value');
       return null;
     }
 
     int? parseInt(Object? value) {
       if (value is int) return value;
-
       if (value is String) return int.tryParse(value);
       return null;
     }

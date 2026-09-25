@@ -141,7 +141,6 @@ int getConcurrentMerkleTreeAccountSize({
   }
 
   final effectiveCanopyDepth = canopyDepth ?? 0;
-
   if (effectiveCanopyDepth < 0 || effectiveCanopyDepth > maxDepth) {
     throw ArgumentError(
       'canopyDepth must be between 0 and maxDepth ($maxDepth), '

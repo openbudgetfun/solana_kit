@@ -58,7 +58,6 @@ String _readSenderSignature(Object? body) {
 
   if (body case final Map<String, Object?> response) {
     final error = response['error'];
-
     if (error != null) throw Exception(jsonEncode(error));
 
     if (response['result'] case final String signature) return signature;

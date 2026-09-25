@@ -129,7 +129,6 @@ int getGuardianSetIndex(Uint8List vaa) {
       'VAA is too short to contain a guardian set index',
     );
   }
-
   return (vaa[1] << 24) | (vaa[2] << 16) | (vaa[3] << 8) | vaa[4];
 }
 
@@ -140,7 +139,6 @@ int getVaaSignatureCount(Uint8List vaa) {
       'VAA is too short to contain a signature count',
     );
   }
-
   return vaa[5];
 }
 
@@ -151,28 +149,23 @@ WormholeVaa parseWormholeVaa(Uint8List vaa) {
   if (vaa.length < 6) {
     throw PythDecodeException('VAA is too short (${vaa.length} bytes)');
   }
-
   final version = vaa[0];
-
   if (version != wormholeVaaVersion) {
     throw PythDecodeException(
       'Unsupported VAA version $version (expected $wormholeVaaVersion)',
     );
   }
-
   final guardianSetIndex = getGuardianSetIndex(vaa);
   final signatureCount = getVaaSignatureCount(vaa);
 
   var cursor = 6;
   final signatures = <WormholeVaaSignature>[];
-
   for (var i = 0; i < signatureCount; i++) {
     if (cursor + vaaSignatureSize > vaa.length) {
       throw PythDecodeException(
         'VAA is truncated inside signature $i of $signatureCount',
       );
     }
-
     signatures.add(
       WormholeVaaSignature(
         guardianIndex: vaa[cursor],
@@ -186,7 +179,6 @@ WormholeVaa parseWormholeVaa(Uint8List vaa) {
   if (cursor + 51 > vaa.length) {
     throw const PythDecodeException('VAA body is truncated');
   }
-
   final timestamp = _readUint32(vaa, cursor);
   cursor += 4;
   final nonce = _readUint32(vaa, cursor);
@@ -196,11 +188,9 @@ WormholeVaa parseWormholeVaa(Uint8List vaa) {
   final emitterAddress = Uint8List.sublistView(vaa, cursor, cursor + 32);
   cursor += 32;
   var sequence = BigInt.zero;
-
   for (var i = 0; i < 8; i++) {
     sequence = (sequence << 8) | BigInt.from(vaa[cursor + i]);
   }
-
   cursor += 8;
   final consistencyLevel = vaa[cursor];
   cursor += 1;
@@ -237,23 +227,18 @@ Uint8List trimVaaSignatures(
   if (count < 0 || count > 255) {
     throw ArgumentError.value(count, 'count', 'must be between 0 and 255');
   }
-
   final currentCount = getVaaSignatureCount(vaa);
-
   if (count >= currentCount) return vaa;
 
   final bodyStart = 6 + currentCount * vaaSignatureSize;
-
   if (bodyStart > vaa.length) {
     throw const PythDecodeException('VAA is truncated inside its signatures');
   }
-
   final prefixLength = 6 + count * vaaSignatureSize;
   final trimmed = Uint8List(prefixLength + (vaa.length - bodyStart))
     ..setRange(0, prefixLength, vaa)
     ..setAll(prefixLength, Uint8List.sublistView(vaa, bodyStart));
   trimmed[5] = count;
-
   return trimmed;
 }
 
@@ -320,13 +305,11 @@ PythWormholeMessage parsePythWormholeMessage(Uint8List payload) {
   if (payload.length < 2) {
     throw const PythDecodeException('Pyth wormhole message is too short');
   }
-
   if (payload[0] != 1) {
     throw PythDecodeException(
       'Unsupported Pyth wormhole message version ${payload[0]}',
     );
   }
-
   final kind = PythWormholeMessageKind.fromId(payload[1]);
   final merkleRoot = kind == PythWormholeMessageKind.merkleRoot
       ? payload.length >= 22
@@ -335,7 +318,6 @@ PythWormholeMessage parsePythWormholeMessage(Uint8List payload) {
                 'Merkle root payload is truncated',
               )
       : null;
-
   return PythWormholeMessage(
     version: payload[0],
     kind: kind,
@@ -399,7 +381,6 @@ class PythPriceFeedMessage {
   /// The feed id as a hex string (without a `0x` prefix).
   String get feedIdHex {
     final (hex, _) = getBase16Decoder().read(feedId, 0);
-
     return hex;
   }
 }
@@ -410,19 +391,15 @@ class PythPriceFeedMessage {
 /// Mirrors `parsePriceFeedMessage` from `@pythnetwork/price-service-sdk`.
 PythPriceFeedMessage parsePythPriceFeedMessage(Uint8List message) {
   const size = 85;
-
   if (message.length < size) {
     throw PythDecodeException(
       'Price feed message is too short (${message.length} bytes)',
     );
   }
-
   final variant = message[0];
-
   if (variant != 0) {
     throw PythDecodeException('Not a price feed message (variant $variant)');
   }
-
   var cursor = 1;
   final feedId = Uint8List.sublistView(message, cursor, cursor + 32);
   cursor += 32;
@@ -460,7 +437,6 @@ int _readUint32(Uint8List bytes, int offset) =>
 
 int _readInt32(Uint8List bytes, int offset) {
   final value = _readUint32(bytes, offset);
-
   return value >= 0x80000000 ? value - 0x100000000 : value;
 }
 
@@ -471,14 +447,11 @@ BigInt _readBigInt(
   bool signed = false,
 }) {
   var value = BigInt.zero;
-
   for (var i = 0; i < length; i++) {
     value = (value << 8) | BigInt.from(bytes[offset + i]);
   }
-
   if (signed && (bytes[offset] & 0x80) != 0) {
     value -= BigInt.one << (length * 8);
   }
-
   return value;
 }

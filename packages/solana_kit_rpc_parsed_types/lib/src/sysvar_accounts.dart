@@ -21,6 +21,8 @@ sealed class JsonParsedSysvarAccount {
 // ---------------------------------------------------------------------------
 // Clock
 // ---------------------------------------------------------------------------
+
+/// A parsed sysvar 'clock' variant.
 class JsonParsedClockSysvar extends RpcParsedType<String, JsonParsedClockInfo>
     implements JsonParsedSysvarAccount {
   /// Creates a new [JsonParsedClockSysvar].
@@ -84,6 +86,8 @@ class JsonParsedClockInfo {
 // ---------------------------------------------------------------------------
 // Epoch Schedule
 // ---------------------------------------------------------------------------
+
+/// A parsed sysvar 'epochSchedule' variant.
 class JsonParsedEpochScheduleSysvar
     extends RpcParsedType<String, JsonParsedEpochScheduleInfo>
     implements JsonParsedSysvarAccount {
@@ -150,6 +154,10 @@ class JsonParsedEpochScheduleInfo {
 // ---------------------------------------------------------------------------
 // Fees (deprecated)
 // ---------------------------------------------------------------------------
+
+/// A parsed sysvar 'fees' variant.
+///
+/// This sysvar is deprecated.
 class JsonParsedFeesSysvar extends RpcParsedType<String, JsonParsedFeesInfo>
     implements JsonParsedSysvarAccount {
   /// Creates a new [JsonParsedFeesSysvar].
@@ -204,6 +212,10 @@ class JsonParsedFeeCalculator {
 // ---------------------------------------------------------------------------
 // Recent Blockhashes (deprecated)
 // ---------------------------------------------------------------------------
+
+/// A parsed sysvar 'recentBlockhashes' variant.
+///
+/// This sysvar is deprecated.
 class JsonParsedRecentBlockhashesSysvar
     extends RpcParsedType<String, List<JsonParsedRecentBlockhashEntry>>
     implements JsonParsedSysvarAccount {
@@ -246,6 +258,8 @@ class JsonParsedRecentBlockhashEntry {
 // ---------------------------------------------------------------------------
 // Rent
 // ---------------------------------------------------------------------------
+
+/// A parsed sysvar 'rent' variant.
 class JsonParsedRentSysvar extends RpcParsedType<String, JsonParsedRentInfo>
     implements JsonParsedSysvarAccount {
   /// Creates a new [JsonParsedRentSysvar].
@@ -321,6 +335,8 @@ class JsonParsedRentInfo {
 // ---------------------------------------------------------------------------
 // Slot Hashes
 // ---------------------------------------------------------------------------
+
+/// A parsed sysvar 'slotHashes' variant.
 class JsonParsedSlotHashesSysvar
     extends RpcParsedType<String, List<JsonParsedSlotHashEntry>>
     implements JsonParsedSysvarAccount {
@@ -358,6 +374,8 @@ class JsonParsedSlotHashEntry {
 // ---------------------------------------------------------------------------
 // Slot History
 // ---------------------------------------------------------------------------
+
+/// A parsed sysvar 'slotHistory' variant.
 class JsonParsedSlotHistorySysvar
     extends RpcParsedType<String, JsonParsedSlotHistoryInfo>
     implements JsonParsedSysvarAccount {
@@ -396,6 +414,8 @@ class JsonParsedSlotHistoryInfo {
 // ---------------------------------------------------------------------------
 // Stake History
 // ---------------------------------------------------------------------------
+
+/// A parsed sysvar 'stakeHistory' variant.
 class JsonParsedStakeHistorySysvar
     extends RpcParsedType<String, List<JsonParsedStakeHistoryEntry>>
     implements JsonParsedSysvarAccount {
@@ -474,6 +494,8 @@ class JsonParsedStakeHistoryData {
 // ---------------------------------------------------------------------------
 // Last Restart Slot
 // ---------------------------------------------------------------------------
+
+/// A parsed sysvar 'lastRestartSlot' variant.
 class JsonParsedLastRestartSlotSysvar
     extends RpcParsedType<String, JsonParsedLastRestartSlotInfo>
     implements JsonParsedSysvarAccount {
@@ -508,6 +530,8 @@ class JsonParsedLastRestartSlotInfo {
 // ---------------------------------------------------------------------------
 // Epoch Rewards
 // ---------------------------------------------------------------------------
+
+/// A parsed sysvar 'epochRewards' variant.
 class JsonParsedEpochRewardsSysvar
     extends RpcParsedType<String, JsonParsedEpochRewardsInfo>
     implements JsonParsedSysvarAccount {

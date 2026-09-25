@@ -15,7 +15,6 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['projectId'], 'p1');
         expect(body['name'], 'test');
-
         return http.Response(
           jsonEncode(<String, Object?>{
             'id': 'k1',

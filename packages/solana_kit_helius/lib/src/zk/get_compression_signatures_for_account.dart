@@ -10,6 +10,5 @@ Future<CompressedSignatureList> zkGetCompressionSignaturesForAccount(
     'getCompressionSignaturesForAccount',
     request.toJson(),
   );
-
   return CompressedSignatureList.fromJson(result! as Map<String, Object?>);
 }

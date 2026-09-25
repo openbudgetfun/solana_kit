@@ -89,7 +89,6 @@ export function getInstructionPageFragment(
   const dataFieldDecls = allArgManifests
     .map(({ arg, manifest }) => {
       const fieldName = camelCase(arg.name as string);
-
       return `  final ${manifest.type.content} ${fieldName};`;
     })
     .join("\n");
@@ -103,7 +102,6 @@ export function getInstructionPageFragment(
           ? `    this.${fieldName} = ${argDefaultValues.get(arg)!.content},`
           : `    ${manifest.type.content}? ${fieldName},`;
       }
-
       return `    required this.${fieldName},`;
     })
     .filter(Boolean)
@@ -118,7 +116,6 @@ export function getInstructionPageFragment(
       if (isDiscriminatorArg(arg, node) && !isConstDefaultValue(arg.defaultValue)) {
         return `      ${fieldName} = ${fieldName} ?? ${argDefaultValues.get(arg)!.content}`;
       }
-
       return null;
     })
     .filter((value): value is string => value !== null)
@@ -143,7 +140,6 @@ export function getInstructionPageFragment(
         isOmittedDefaultArgument(arg) || isDiscriminatorArg(arg, node)
           ? argDefaultValues.get(arg)!.content
           : `value.${camelCase(arg.name as string)}`;
-
       return `      '${arg.name as string}': ${value},`;
     })
     .join("\n");
@@ -154,7 +150,6 @@ export function getInstructionPageFragment(
       const typeStr = manifest.type.content;
       const isNullable = typeStr.endsWith("?");
       const accessor = isNullable ? `map['${arg.name as string}']` : `map['${arg.name as string}']!`;
-
       return `      ${camelCase(arg.name as string)}: ${accessor} as ${typeStr},`;
     })
     .join("\n");
@@ -212,7 +207,6 @@ export function getInstructionPageFragment(
     .map((acc) => {
       const fieldName = camelCase(acc.name as string);
       const isRequired = !(acc.isOptional ?? false);
-
       return isRequired
         ? `  required Address ${fieldName},`
         : `  Address? ${fieldName},`;
@@ -234,10 +228,8 @@ export function getInstructionPageFragment(
       if (hasDefault) {
         // Don't add `?` if the type is already nullable.
         const nullableType = typeStr.endsWith("?") ? typeStr : `${typeStr}?`;
-
         return `  ${nullableType} ${fieldName},`;
       }
-
       return `  required ${typeStr} ${fieldName},`;
     })
     .join("\n");
@@ -252,10 +244,8 @@ export function getInstructionPageFragment(
         if (optionalAccountStrategy === "omitted") {
           return `    if (${fieldName} != null) AccountMeta(address: ${fieldName}, role: ${role}),`;
         }
-
         return `    if (${fieldName} != null) AccountMeta(address: ${fieldName}, role: ${role}) else AccountMeta(address: ${instrProgramParam}, role: AccountRole.readonly),`;
       }
-
       return `    AccountMeta(address: ${fieldName}, role: ${role}),`;
     })
     .join("\n");
@@ -271,7 +261,6 @@ export function getInstructionPageFragment(
         return ""; // Use default
       }
       const skipDefault = arg.defaultValue?.kind === "accountBumpValueNode";
-
       return `      ${fieldName}: ${fieldName}${arg.defaultValue != null && !skipDefault ? ` ?? ${argDefaultValues.get(arg)!.content}` : ""},`;
     })
     .filter(Boolean)
@@ -295,6 +284,19 @@ export function getInstructionPageFragment(
     fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+${use("Uint8List", "dartTypedData")}
+${use("immutable", "meta")}
+${use("Encoder", "solanaCodecsCore")}
+${use("Decoder", "solanaCodecsCore")}
+${use("Codec", "solanaCodecsCore")}
+${use("combineCodec", "solanaCodecsCore")}
+${use("transformEncoder", "solanaCodecsCore")}
+${use("transformDecoder", "solanaCodecsCore")}
+${use("getStructEncoder", "solanaCodecsDataStructures")}
+${use("getStructDecoder", "solanaCodecsDataStructures")}
+${use("Address", "solanaAddresses")}
+${use("Instruction", "solanaInstructions")}
+${use("AccountMeta", "solanaInstructions")}
 ${use("AccountRole", "solanaInstructions")}`,
   ];
 
@@ -304,27 +306,64 @@ ${use("AccountRole", "solanaInstructions")}`,
   parts.push(fragment`
 @immutable
 class ${fragmentFromString(dataClassName)} {
+  ${fragmentFromString(dataCtorSignature)}
+
+${fragmentFromString(dataFieldDecls)}
 }`);
 
   // Data encoder/decoder/codec
   parts.push(fragment`
 Encoder<${fragmentFromString(dataClassName)}> ${fragmentFromString(dataEncoderName)}() {
+  final structEncoder = getStructEncoder(<(String, Encoder<Object?>)>[
+${fragmentFromString(encFields)}
+  ]);
+
+  return transformEncoder(
+    structEncoder,
+    (${fragmentFromString(dataClassName)} value) => <String, Object?>{
+${fragmentFromString(toMapFields)}
+    },
+  );
 }
 
+Decoder<${fragmentFromString(dataClassName)}> ${fragmentFromString(dataDecoderName)}() {
+  final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
+${fragmentFromString(decFields)}
+  ]);
+
+${topLevelDecoder}
 }
 
+Codec<${fragmentFromString(dataClassName)}, ${fragmentFromString(dataClassName)}> ${fragmentFromString(dataCodecName)}() {
+  return combineCodec(${fragmentFromString(dataEncoderName)}(), ${fragmentFromString(dataDecoderName)}());
 }`);
 
   // Instruction builder
   parts.push(fragment`
 /// Creates a [${fragmentFromString(typeName)}] instruction.${fragmentFromString(signerParamDocs ? `\n${signerParamDocs}` : "")}
+Instruction ${fragmentFromString(instrFnName)}({
+  required Address ${fragmentFromString(instrProgramParam)},
+${fragmentFromString(accountParams)}
+${fragmentFromString(argParams)}${fragmentFromString(signerParamDeclarations ? `\n${signerParamDeclarations}` : "")}
 }) {
   final ${instructionDataLocal} = ${fragmentFromString(dataClassName)}(
+${fragmentFromString(dataConstruction)}
+  );
+
+  return Instruction(
+    programAddress: ${fragmentFromString(instrProgramParam)},
+    accounts: [
+${fragmentFromString(accountMetas)}
+    ],
+    data: ${fragmentFromString(dataEncoderName)}().encode(${instructionDataLocal}),
+  );
 }`);
 
   // Parse function
   parts.push(fragment`
 /// Parses a [${fragmentFromString(typeName)}] instruction from raw instruction data.
+${fragmentFromString(dataClassName)} ${fragmentFromString(parseFnName)}(Instruction instruction) {
+  return ${fragmentFromString(dataDecoderName)}().decode(instruction.data!);
 }`);
 
   const result = mergeFragments(parts, (cs) => cs.join("\n"));
@@ -335,7 +374,6 @@ Encoder<${fragmentFromString(dataClassName)}> ${fragmentFromString(dataEncoderNa
     result.imports.mergeWith(manifest.decoder.imports);
     result.imports.mergeWith(manifest.type.imports);
   }
-
   for (const defaultValue of argDefaultValues.values()) {
     result.imports.mergeWith(defaultValue.imports);
   }
@@ -352,7 +390,6 @@ function reserveName(preferredName: string, usedNames: Set<string>): string {
   }
 
   usedNames.add(name);
-
   return name;
 }
 
@@ -372,7 +409,6 @@ function isDiscriminatorArg(
   node: InstructionNode,
 ): boolean {
   const discriminators = node.discriminators ?? [];
-
   return discriminators.some(
     (d) =>
       d.kind === "fieldDiscriminatorNode" && d.name === arg.name,
@@ -387,7 +423,6 @@ function isConstDefaultValue(defaultValue: InstructionArgumentNode["defaultValue
     case "stringValueNode":
     case "noneValueNode":
       return true;
-
     default:
       return false;
   }

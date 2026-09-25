@@ -10,7 +10,6 @@ Future<GetTransfersByAddressResponse> rpcV2GetTransfersByAddress(
     'getTransfersByAddress',
     request.toJson(),
   );
-
   return GetTransfersByAddressResponse.fromJson(
     result! as Map<String, Object?>,
   );

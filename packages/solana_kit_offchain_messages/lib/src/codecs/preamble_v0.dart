@@ -33,7 +33,6 @@ Decoder<Map<String, Object?>> getOffchainMessageV0PreambleDecoder() {
               SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero,
             );
           }
-
           return addresses
               .map((address) => OffchainMessageSignatory(address: address))
               .toList();
@@ -68,7 +67,6 @@ Encoder<Map<String, Object?>> getOffchainMessageV0PreambleEncoder() {
               SolanaErrorCode.offchainMessageNumRequiredSignersCannotBeZero,
             );
           }
-
           return signatories.map((s) => s.address).toList();
         },
       ) as Encoder<Object?>,

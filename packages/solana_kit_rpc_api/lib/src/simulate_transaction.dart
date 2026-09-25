@@ -20,9 +20,7 @@ class SimulateTransactionAccountsConfig {
     final json = <String, Object?>{
       'addresses': [for (final address in addresses) address.value],
     };
-
     if (encoding != null) json['encoding'] = encoding!.toJson();
-
     return json;
   }
 
@@ -84,25 +82,17 @@ class SimulateTransactionConfig {
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
-
     if (accounts != null) json['accounts'] = accounts!.toJson();
-
     if (commitment != null) json['commitment'] = commitment!.name;
-
     if (encoding != null) json['encoding'] = encoding!.toJson();
-
     if (innerInstructions != null) {
       json['innerInstructions'] = innerInstructions;
     }
-
     if (minContextSlot != null) json['minContextSlot'] = minContextSlot;
-
     if (replaceRecentBlockhash != null) {
       json['replaceRecentBlockhash'] = replaceRecentBlockhash;
     }
-
     if (sigVerify != null) json['sigVerify'] = sigVerify;
-
     return json;
   }
 
@@ -281,12 +271,9 @@ bool _nullableListEquals<T>(List<T>? a, List<T>? b) {
 
 bool _listEquals<T>(List<T> a, List<T> b) {
   if (identical(a, b)) return true;
-
   if (a.length != b.length) return false;
-
   for (var i = 0; i < a.length; i++) {
     if (a[i] != b[i]) return false;
   }
-
   return true;
 }

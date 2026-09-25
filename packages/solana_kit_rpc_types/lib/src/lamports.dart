@@ -43,7 +43,6 @@ void assertIsLamports(BigInt putativeLamports) {
 /// input.
 Lamports lamports(BigInt putativeLamports) {
   assertIsLamports(putativeLamports);
-
   return Lamports(putativeLamports);
 }
 
@@ -63,7 +62,6 @@ Encoder<Lamports> getLamportsEncoder(Encoder<Object?> innerEncoder) {
   if (innerEncoder is Encoder<BigInt>) {
     return _lamportsEncoderForBigInt(innerEncoder);
   }
-
   return _lamportsEncoderForNum(innerEncoder as Encoder<num>);
 }
 
@@ -105,7 +103,6 @@ Decoder<Lamports> getLamportsDecoder(Decoder<Object?> innerDecoder) {
   if (innerDecoder is Decoder<BigInt>) {
     return _lamportsDecoderForBigInt(innerDecoder);
   }
-
   return _lamportsDecoderForInt(innerDecoder as Decoder<int>);
 }
 
@@ -122,14 +119,12 @@ Decoder<Lamports> _lamportsDecoderForInt(Decoder<int> innerDecoder) {
       fixedSize: innerDecoder.fixedSize,
       read: (bytes, offset) {
         final (value, newOffset) = innerDecoder.read(bytes, offset);
-
         return (lamports(BigInt.from(value)), newOffset);
       },
     ),
     VariableSizeDecoder<int>() => VariableSizeDecoder<Lamports>(
       read: (bytes, offset) {
         final (value, newOffset) = innerDecoder.read(bytes, offset);
-
         return (lamports(BigInt.from(value)), newOffset);
       },
       maxSize: innerDecoder.maxSize,
@@ -153,10 +148,8 @@ Codec<Lamports, Lamports> getLamportsCodec(Object innerCodec) {
   if (innerCodec is Codec<BigInt, BigInt>) {
     return _lamportsCodecForBigInt(innerCodec);
   }
-
   // For num/int codecs (u8, u16, u32, etc.)
   final codec = innerCodec as Codec<num, int>;
-
   return _lamportsCodecForNum(codec);
 }
 
@@ -170,7 +163,6 @@ Codec<Lamports, Lamports> _lamportsCodecForBigInt(
           innerCodec.write(value.value, bytes, offset),
       read: (bytes, offset) {
         final (value, newOffset) = innerCodec.read(bytes, offset);
-
         return (lamports(value), newOffset);
       },
     ),
@@ -181,7 +173,6 @@ Codec<Lamports, Lamports> _lamportsCodecForBigInt(
             innerCodec.write(value.value, bytes, offset),
         read: (bytes, offset) {
           final (value, newOffset) = innerCodec.read(bytes, offset);
-
           return (lamports(value), newOffset);
         },
         maxSize: innerCodec.maxSize,
@@ -197,7 +188,6 @@ Codec<Lamports, Lamports> _lamportsCodecForNum(Codec<num, int> innerCodec) {
           innerCodec.write(value.value.toInt(), bytes, offset),
       read: (bytes, offset) {
         final (value, newOffset) = innerCodec.read(bytes, offset);
-
         return (lamports(BigInt.from(value)), newOffset);
       },
     ),
@@ -208,7 +198,6 @@ Codec<Lamports, Lamports> _lamportsCodecForNum(Codec<num, int> innerCodec) {
           innerCodec.write(value.value.toInt(), bytes, offset),
       read: (bytes, offset) {
         final (value, newOffset) = innerCodec.read(bytes, offset);
-
         return (lamports(BigInt.from(value)), newOffset);
       },
       maxSize: innerCodec.maxSize,

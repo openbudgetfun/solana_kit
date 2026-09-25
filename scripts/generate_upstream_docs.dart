@@ -15,13 +15,11 @@ import 'dart:io';
 /// owns their formatting instead of the markdown formatter.
 void main(List<String> args) {
   final mode = args.isEmpty ? '--check' : args.single;
-
   if (mode != '--check' && mode != '--write') {
     stderr.writeln(
       'Usage: dart run scripts/generate_upstream_docs.dart [--check|--write]',
     );
     exitCode = 2;
-
     return;
   }
 
@@ -46,17 +44,14 @@ void main(List<String> args) {
 
   for (final target in targets) {
     final file = File(target.path);
-
     if (!file.existsSync()) {
       stderr.writeln('Missing required file: ${target.path}');
       exitCode = 2;
-
       return;
     }
 
     final original = file.readAsStringSync();
     var updated = original;
-
     for (final entry in target.blocks.entries) {
       updated = _replaceBlock(
         updated,
@@ -69,7 +64,6 @@ void main(List<String> args) {
 
     if (updated == original) continue;
     updatedPaths.add(target.path);
-
     if (mode == '--write') {
       file.writeAsStringSync(updated);
     } else {
@@ -83,7 +77,6 @@ void main(List<String> args) {
           ? 'Upstream version tables are already up to date.'
           : 'Updated upstream version tables in ${updatedPaths.join(', ')}.',
     );
-
     return;
   }
 
@@ -93,7 +86,6 @@ void main(List<String> args) {
       'Run `dart run scripts/generate_upstream_docs.dart --write`.',
     );
     exitCode = 1;
-
     return;
   }
 
@@ -109,21 +101,17 @@ class _Target {
 
 Map<String, Object?> _readJsonObject(String path) {
   final file = File(path);
-
   if (!file.existsSync()) {
     stderr.writeln('Missing required file: $path');
     exitCode = 2;
-
     return const {};
   }
   if (jsonDecode(file.readAsStringSync())
       case final Map<String, Object?> json) {
     return json;
   }
-
   stderr.writeln('Expected a JSON object at $path');
   exitCode = 2;
-
   return const {};
 }
 
@@ -136,15 +124,12 @@ String _replaceBlock(
 ) {
   final start = input.indexOf(startMarker);
   final end = input.indexOf(endMarker);
-
   if (start == -1 && end == -1) {
     stdout.writeln(
       'Upstream version tables are not configured in $path; skipping.',
     );
-
     return input;
   }
-
   if (start == -1 || end == -1 || end < start) {
     stderr.writeln('Incomplete upstream version table markers in $path');
     exit(3);
@@ -156,7 +141,6 @@ String _replaceBlock(
 String _renderParityTable(Map<String, Object?> parityData) {
   final parityRows = (parityData['kitParity'] as List<Object?>? ?? const [])
       .cast<Map<String, Object?>>();
-
   if (parityRows.isEmpty) {
     stderr.writeln('config/upstream-versions.json declares no kitParity rows.');
     exit(2);
@@ -164,15 +148,12 @@ String _renderParityTable(Map<String, Object?> parityData) {
 
   final seen = <String>{};
   String? previous;
-
   for (final row in parityRows) {
     final version = '${row['solanaKit']}';
-
     if (!seen.add(version)) {
       stderr.writeln('Duplicate kitParity row for solana_kit $version.');
       exit(2);
     }
-
     if (previous != null && _compareVersions(version, previous) >= 0) {
       stderr.writeln(
         'kitParity rows must be ordered newest first: $version follows '
@@ -180,13 +161,11 @@ String _renderParityTable(Map<String, Object?> parityData) {
       );
       exit(2);
     }
-
     previous = version;
   }
 
   final rows = parityRows.map((row) {
     final jsKit = row['jsKit'];
-
     return <String>[
       '`${row['solanaKit']}`',
       if (jsKit == null) '—' else '`$jsKit`',
@@ -203,13 +182,10 @@ String _renderParityTable(Map<String, Object?> parityData) {
 int _compareVersions(String a, String b) {
   final left = a.split('.').map(int.parse).toList();
   final right = b.split('.').map(int.parse).toList();
-
   for (var index = 0; index < 3; index++) {
     final comparison = left[index].compareTo(right[index]);
-
     if (comparison != 0) return comparison;
   }
-
   return 0;
 }
 
@@ -220,7 +196,6 @@ String _renderRepoPinTables(Map<String, Object?> parityData) {
       .cast<Map<String, Object?>>();
   final rows = (parityData['repoPins'] as List<Object?>? ?? const [])
       .cast<Map<String, Object?>>();
-
   if (families.isEmpty || rows.isEmpty) {
     stderr.writeln(
       'config/upstream-versions.json declares no families or repoPins rows.',
@@ -231,7 +206,6 @@ String _renderRepoPinTables(Map<String, Object?> parityData) {
   final releases = rows.map((row) => '${row['solanaKit']}').toList();
   // A blank line separates the block marker from the first heading.
   final buffer = StringBuffer()..write('\n\n');
-
   for (final family in families) {
     final repos = (family['repos'] as List<Object?>? ?? const [])
         .cast<String>();
@@ -242,7 +216,6 @@ String _renderRepoPinTables(Map<String, Object?> parityData) {
         ),
       ),
     );
-
     if (missing.isNotEmpty) {
       stderr.writeln(
         'Family "${family['title']}" references repos with no pins: '
@@ -292,14 +265,11 @@ String _renderPinsTable(Map<String, Object?> referenceRepos) {
       .cast<Map<String, Object?>>();
 
   final rows = <List<String>>[];
-
   for (final repo in repos) {
     final ref = (repo['ref'] as Map<String, Object?>?) ?? const {};
     final checkedCommit = repo['checkedCommit'] as String?;
-
     final packages = switch (repo['packages']) {
       final List<Object?> list => list.cast<String>().toList()..sort(),
-
       _ => <String>[if (repo['package'] != null) '${repo['package']}'],
     };
 
@@ -342,7 +312,6 @@ String _table({
     for (final row in rows) {
       if (row[index].length > width) width = row[index].length;
     }
-
     return width;
   });
 
@@ -350,13 +319,10 @@ String _table({
     ..writeln()
     ..writeln('<!-- dprint-ignore -->')
     ..writeln(_row(header, widths))
-
     ..writeln(_row([for (final width in widths) '-' * width], widths));
-
   for (final row in rows) {
     buffer.writeln(_row(row, widths));
   }
-
   buffer.writeln();
 
   return buffer.toString();
@@ -367,6 +333,5 @@ String _row(List<String> cells, List<int> widths) {
     for (var index = 0; index < cells.length; index++)
       cells[index].padRight(widths[index]),
   ];
-
   return '| ${padded.join(' | ')} |';
 }

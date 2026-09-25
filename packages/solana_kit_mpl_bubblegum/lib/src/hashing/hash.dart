@@ -39,7 +39,6 @@ Uint8List bubblegumHash(List<Uint8List> input) {
   if (input.length == 1) {
     return keccak256(input.first);
   }
-
   return keccak256(
     input.fold<Uint8List>(
       Uint8List(0),

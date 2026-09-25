@@ -15,7 +15,6 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['from'], 'owner-address');
         expect(body['stakeAccount'], 'stake-account-1');
-
         return http.Response(
           jsonEncode(<String, Object?>{'transaction': 'base64tx-unstake'}),
           200,

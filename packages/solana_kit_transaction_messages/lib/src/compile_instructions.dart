@@ -7,11 +7,9 @@ import 'package:solana_kit_transaction_messages/src/compiled_transaction_message
 
 Map<String, int> _getAccountIndex(List<OrderedAccount> orderedAccounts) {
   final out = <String, int>{};
-
   for (var i = 0; i < orderedAccounts.length; i++) {
     out[orderedAccounts[i].address.value] = i;
   }
-
   return out;
 }
 
@@ -26,11 +24,9 @@ List<CompiledInstruction> getCompiledInstructions(
   List<OrderedAccount> orderedAccounts,
 ) {
   final accountIndex = _getAccountIndex(orderedAccounts);
-
   return instructions.map((instruction) {
     final accounts = instruction.accounts;
     final data = instruction.data;
-
     return CompiledInstruction(
       programAddressIndex: accountIndex[instruction.programAddress.value]!,
       accountIndices: accounts
@@ -48,7 +44,6 @@ V1InstructionHeader getInstructionHeader(
 ) {
   final accounts = instruction.accounts;
   final data = instruction.data;
-
   return V1InstructionHeader(
     programAccountIndex: accountIndex[instruction.programAddress.value]!,
     numInstructionAccounts: accounts?.length ?? 0,

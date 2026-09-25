@@ -19,15 +19,12 @@ String? resolveFundingPreflightRpcUrl({
   String? rpcUrl,
 }) {
   final explicitRpcUrl = rpcUrl?.trim();
-
   if (explicitRpcUrl != null && explicitRpcUrl.isNotEmpty) {
     return explicitRpcUrl;
   }
-
   if (localDev) {
     return null;
   }
-
   return defaultMainnetRpcUrl;
 }
 
@@ -48,7 +45,6 @@ Future<String?> ensurePublicationSignerBalance({
     localDev: localDev,
     rpcUrl: rpcUrl,
   );
-
   if (resolvedRpcUrl == null) {
     return null;
   }
@@ -57,7 +53,6 @@ Future<String?> ensurePublicationSignerBalance({
   try {
     address = Address(publicKey);
     assertIsAddress(publicKey);
-
   } on Object catch (error) {
     throw PublisherCliException(
       'Invalid signer public key for balance preflight: $publicKey. $error',
@@ -67,7 +62,6 @@ Future<String?> ensurePublicationSignerBalance({
   final fetcher = fetchBalance ?? defaultBalanceFetcher;
   try {
     final balanceLamports = await fetcher(address.toString(), resolvedRpcUrl);
-
     if (balanceLamports < minPublicationSignerBalanceLamports) {
       throw PublisherCliException(
         'Signer $publicKey has ${formatSolAmount(balanceLamports)} SOL, '
@@ -76,12 +70,9 @@ Future<String?> ensurePublicationSignerBalance({
         'available before it starts.',
       );
     }
-
     return null;
-
   } on PublisherCliException {
     rethrow;
-
   } on Object catch (error) {
     return 'Unable to confirm the signer balance via $resolvedRpcUrl. '
         'Continuing without a SOL preflight check: $error.';
@@ -103,7 +94,6 @@ Future<int> defaultBalanceFetcher(
         allowInsecureHttp: !rpcUrl.startsWith('https://'),
       );
   final response = await instance.getBalance(Address(address)).send();
-
   return parseLamportsValue(response);
 }
 
@@ -114,8 +104,6 @@ Future<int> defaultBalanceFetcher(
 /// the caller looking for a funding problem that does not exist.
 int parseLamportsValue(Map<String, Object?> response) {
   final value = response['value'];
-
-
   return switch (value) {
     final int lamports => lamports,
     final num lamports => lamports.toInt(),

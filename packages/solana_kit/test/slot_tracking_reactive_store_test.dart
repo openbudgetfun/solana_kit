@@ -334,11 +334,9 @@ class _InitialValueSource {
 
   ReactiveActionStore<List<Object?>, SolanaRpcResponse<String>> call() {
     storesCreated++;
-
     return createReactiveActionStore((signal, _) {
       final instance = _InitialValueInstance(signal);
       instances.add(instance);
-
       return instance.future;
     });
   }
@@ -367,12 +365,10 @@ class _StreamSource {
 
   ReactiveStreamStore<SolanaRpcResponse<int>> call() {
     storesCreated++;
-
     return createReactiveStreamStore(
       createDataPublisher: (signal) async {
         final instance = _StreamInstance(signal);
         instances.add(instance);
-
         return ReactiveStreamConnection(
           dataStream: instance.data.stream,
           errorStream: instance.errors.stream,

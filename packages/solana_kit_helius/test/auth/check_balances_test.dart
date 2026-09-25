@@ -12,7 +12,6 @@ void main() {
         expect(request.method, 'GET');
         expect(request.url.path, '/v0/auth/balances');
         expect(request.url.queryParameters['api-key'], isNotEmpty);
-
         return http.Response(
           jsonEncode(<String, Object?>{'credits': 1000, 'creditsUsed': 100}),
           200,

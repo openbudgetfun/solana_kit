@@ -19,7 +19,6 @@ void main() {
         if (defaultResponse != null) {
           completer.complete(defaultResponse());
         }
-
         return completer.future;
       };
     }
@@ -79,7 +78,6 @@ void main() {
           var callCount = 0;
           final mockTransport = createMockTransport(() {
             callCount++;
-
             return mockResponse;
           });
           coalescedTransport = getRpcTransportWithRequestCoalescing(
@@ -108,7 +106,6 @@ void main() {
         final mockError = Exception('bad');
         Future<Object?> errorTransport(RpcTransportConfig config) {
           transportCallCount++;
-
           return Future<Object?>.error(mockError);
         }
 
@@ -136,7 +133,6 @@ void main() {
         final abort = Completer<void>();
         final transport = getRpcTransportWithRequestCoalescing((config) async {
           signals.add(config.signal);
-
           return signals.length;
         }, (_) => 'samehash');
 
@@ -190,7 +186,6 @@ void main() {
           final responses = [mockResponseA, mockResponseB];
           Future<Object?> diffTransport(RpcTransportConfig config) {
             transportCallCount++;
-
             return Future<Object?>.value(responses[callCount++]);
           }
 
@@ -244,7 +239,6 @@ void main() {
           final responses = [mockResponseA, mockResponseB];
           Future<Object?> noHashTransport(RpcTransportConfig config) {
             transportCallCount++;
-
             return Future<Object?>.value(responses[callCount++]);
           }
 

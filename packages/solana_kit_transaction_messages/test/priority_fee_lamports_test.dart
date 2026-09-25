@@ -10,7 +10,6 @@ void main() {
   TransactionMessage v1Message({V1TransactionConfig? config}) {
     final message = createTransactionMessage(version: TransactionVersion.v1)
         .pipe((m) => setTransactionMessageFeePayer(feePayerAddress, m));
-
     if (config == null) return message;
     return setTransactionMessageConfig(config, message);
   }

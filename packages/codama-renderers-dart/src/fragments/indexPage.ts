@@ -18,7 +18,6 @@ export function getIndexPageFragment(
     .sort()
     .map((f) => {
       const path = relativePath ? `${relativePath}/${f}` : f;
-
       return `export '${path}';`;
     })
     .join("\n");

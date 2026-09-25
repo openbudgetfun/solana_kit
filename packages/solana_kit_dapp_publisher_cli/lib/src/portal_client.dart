@@ -61,21 +61,16 @@ final class SensitiveString {
     if (other is! SensitiveString) {
       return false;
     }
-
     if (identical(this, other)) {
       return true;
     }
-
     if (value.length != other.value.length) {
       return false;
     }
-
     var diff = 0;
-
     for (var i = 0; i < value.length; i++) {
       diff |= value.codeUnitAt(i) ^ other.value.codeUnitAt(i);
     }
-
     return diff == 0;
   }
 
@@ -128,7 +123,6 @@ Future<T> callPortalProcedure<T>(
   Object? payload;
   try {
     payload = text.isEmpty ? null : jsonDecode(text);
-
   } on FormatException {
     final preview = text.replaceAll('\n', ' ').trim();
     throw PublisherCliException(
@@ -147,22 +141,17 @@ Future<T> callPortalProcedure<T>(
 
   if (response.statusCode < 200 || response.statusCode >= 300) {
     final error = readDeep(record, 'error.message');
-
     if (error is String && error.isNotEmpty) {
       throw PublisherCliException('$procedure: $error');
     }
-
     final nested = readDeep(record, 'result.data');
-
     if (nested is Map<String, Object?> && nested['_tag'] == 'Left') {
       final left = asRecord(nested['left']);
       final message = optionalString(left['message']);
-
       if (message != null && message.isNotEmpty) {
         throw PublisherCliException('$procedure: $message');
       }
     }
-
     throw PublisherCliException(
       '$procedure: Portal request failed with status ${response.statusCode}',
     );
@@ -172,28 +161,23 @@ Future<T> callPortalProcedure<T>(
       readDeep(record, 'result.data') ??
       readDeep(record, 'result') ??
       <String, Object?>{};
-
   return _unwrapPortalResult<T>(result, procedure);
 }
 
 T _unwrapPortalResult<T>(Object? result, String fallbackMessage) {
   if (result is Map<String, Object?> && result.containsKey('_tag')) {
     final tag = result['_tag'];
-
     if (tag == 'Left') {
       final left = asRecord(result['left']);
       throw PublisherCliException(
         optionalString(left['message']) ?? fallbackMessage,
       );
     }
-
     return result['right'] as T;
   }
-
   if (result is Map<String, Object?>) {
     return result as T;
   }
-
   throw PublisherCliException(fallbackMessage);
 }
 
@@ -211,11 +195,9 @@ Future<void> uploadBytes(
     headers: {'content-type': contentType},
     body: body,
   );
-
   if (owned) {
     httpClient.close();
   }
-
   if (response.statusCode < 200 || response.statusCode >= 300) {
     final preview = response.body.replaceAll('\n', ' ').trim();
     throw PublisherCliException(
@@ -229,7 +211,6 @@ Future<void> uploadBytes(
 /// session creation.
 bool isRetryableCreateIngestionSessionError(Object error) {
   final message = error.toString().toLowerCase();
-
   return message.contains(
         'failed to parse portal response from publication.createingestionsession',
       ) ||
@@ -258,12 +239,10 @@ Future<Map<String, Object?>> callCreateIngestionSessionWithRetry(
         'mutation',
         client: client,
       );
-
     } catch (error) {
       if (!isRetryableCreateIngestionSessionError(error) || attempt >= 2) {
         rethrow;
       }
-
       await sleepFn(config.createIngestionSessionRetryDelay * (attempt + 1));
     }
   }
@@ -292,7 +271,6 @@ final class PortalAttestationClient {
       'query',
       client: client,
     );
-
     return (
       slot: numberOrDefault(result['slot'], 0),
       blockhash: asString(result['blockhash']),

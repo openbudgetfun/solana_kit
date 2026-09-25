@@ -10,13 +10,9 @@ import 'package:solana_kit_signers/src/transaction_sending_signer.dart';
 /// Gets the address from any signer type.
 Address getSignerAddress(Object signer) {
   if (signer is TransactionPartialSigner) return signer.address;
-
   if (signer is TransactionModifyingSigner) return signer.address;
-
   if (signer is TransactionSendingSigner) return signer.address;
-
   if (signer is MessagePartialSigner) return signer.address;
-
   if (signer is MessageModifyingSigner) return signer.address;
   throw ArgumentError('Value is not a signer: $signer');
 }
@@ -33,10 +29,8 @@ List<T> deduplicateSigners<T extends Object>(List<T> signers) {
   for (final signer in signers) {
     final addr = getSignerAddress(signer);
     final existing = deduplicated[addr];
-
     if (existing == null) {
       deduplicated[addr] = signer;
-
     } else if (!_signersAreEquivalent(existing, signer)) {
       throw SolanaError(
         SolanaErrorCode.signerAddressCannotHaveMultipleSigners,
@@ -50,7 +44,6 @@ List<T> deduplicateSigners<T extends Object>(List<T> signers) {
 
 bool _signersAreEquivalent(Object a, Object b) {
   if (identical(a, b) || a == b) return true;
-
   if (a is NoopSigner && b is NoopSigner) return a.address == b.address;
 
   return false;

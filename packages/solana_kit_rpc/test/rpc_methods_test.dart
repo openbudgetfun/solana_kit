@@ -532,11 +532,9 @@ Future<({T result, Map<String, Object?> payload})> _captureCall<
     payload = Map<String, Object?>.from(
       config.payload! as Map<String, Object?>,
     );
-
     return {'jsonrpc': '2.0', 'id': '1', 'result': rpcResult};
   });
 
   final result = await invoke(rpc);
-
   return (result: result, payload: payload);
 }

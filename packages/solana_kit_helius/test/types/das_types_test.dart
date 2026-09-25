@@ -444,6 +444,7 @@ void main() {
   // -------------------------------------------------------------------------
   // Error-case tests: missing required fields
   // -------------------------------------------------------------------------
+
   group('error cases — das request types', () {
     test(
       'GetAssetRequest throws when id is absent',

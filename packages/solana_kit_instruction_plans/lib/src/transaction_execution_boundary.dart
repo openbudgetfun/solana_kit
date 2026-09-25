@@ -149,7 +149,6 @@ TransactionExecutionBoundary createTransactionExecutionBoundary(
         try {
           final signature = await config.sendSignedTransaction(transaction);
           context['signature'] = signature;
-
           return transaction;
         } on Object catch (error) {
           throw _TransactionExecutionStageError(
@@ -165,7 +164,6 @@ TransactionExecutionBoundary createTransactionExecutionBoundary(
     final TransactionPlan transactionPlan;
     try {
       transactionPlan = await config.planTransactions(instructionPlan);
-
     } on Object catch (error) {
       return FailedTransactionExecution(
         stage: TransactionExecutionFailureStage.planning,
@@ -175,12 +173,10 @@ TransactionExecutionBoundary createTransactionExecutionBoundary(
 
     try {
       final transactionPlanResult = await executor(transactionPlan);
-
       return SuccessfulTransactionExecution(
         transactionPlan: transactionPlan,
         transactionPlanResult: transactionPlanResult,
       );
-
     } on Object catch (error) {
       TransactionPlanResult? transactionPlanResult;
       if (isSolanaError(
@@ -189,7 +185,6 @@ TransactionExecutionBoundary createTransactionExecutionBoundary(
       )) {
         final solanaError = error as SolanaError;
         final value = solanaError.context['transactionPlanResult'];
-
         if (value is TransactionPlanResult) {
           transactionPlanResult = value;
         }
@@ -198,7 +193,6 @@ TransactionExecutionBoundary createTransactionExecutionBoundary(
       transactionPlanResult ??= await _passthroughExecutionFailure(error);
 
       final failure = _extractExecutionFailure(error, transactionPlanResult);
-
       return FailedTransactionExecution(
         stage: failure.stage,
         error: failure.error,
@@ -249,7 +243,6 @@ _ExecutionFailure _extractExecutionFailure(
 
   if (error is SolanaError) {
     final abortReason = error.context['abortReason'];
-
     if (abortReason is _TransactionExecutionStageError) {
       return _ExecutionFailure(abortReason.stage, abortReason.error);
     }
@@ -265,20 +258,16 @@ Object? _findFirstSingleTransactionError(TransactionPlanResult result) {
   switch (result) {
     case FailedSingleTransactionPlanResult(:final error):
       return error;
-
     case SingleTransactionPlanResult():
       return null;
-
     case SequentialTransactionPlanResult(:final plans):
     case ParallelTransactionPlanResult(:final plans):
       for (final plan in plans) {
         final error = _findFirstSingleTransactionError(plan);
-
         if (error != null) {
           return error;
         }
       }
-
       return null;
   }
 }
@@ -290,7 +279,6 @@ Future<TransactionPlanResult?> _passthroughExecutionFailure(
     return await passthroughFailedTransactionPlanExecution(
       Future<TransactionPlanResult>.error(error),
     );
-
   } on Object {
     return null;
   }

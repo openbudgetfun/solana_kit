@@ -24,7 +24,6 @@ void main() {
           'skipPreflight': true,
           'maxRetries': 0,
         });
-
         return http.Response(jsonEncode('abc123'), 200);
       });
 
@@ -39,7 +38,6 @@ void main() {
           request.url.toString(),
           '${senderFastUrl(SenderRegion.euWest)}?swqos_only=true',
         );
-
         return http.Response(jsonEncode({'result': 'xyz789'}), 200);
       });
 

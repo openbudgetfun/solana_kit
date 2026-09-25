@@ -397,7 +397,6 @@ void main() {
           observedMemos.add('second');
         }
       }
-
       expect(observedMemos, ['first', 'second']);
     },
   );
@@ -477,7 +476,6 @@ Future<Signature> _signAndSendMessage(
 ) async {
   final compiled = compileTransaction(message);
   final signed = await signTransactionMessageWithSigners(message);
-
   return sendAndConfirmTransaction(
     rpc: env.rpc,
     transaction: TransactionWithLifetime(
@@ -493,11 +491,9 @@ Future<void> _waitForLaterSlot(
   Slot currentSlot,
 ) async {
   final deadline = DateTime.now().add(const Duration(seconds: 5));
-
   while (DateTime.now().isBefore(deadline)) {
     if (await env.rpc.getSlot().send() > currentSlot) return;
     await Future<void>.delayed(const Duration(milliseconds: 10));
   }
-
   throw StateError('Surfpool did not advance beyond slot $currentSlot');
 }

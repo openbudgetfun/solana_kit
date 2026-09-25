@@ -24,7 +24,6 @@ void main() {
           final options = params[1]! as Map<String, Object?>;
           expect(options['replaceRecentBlockhash'], true);
           expect(options['sigVerify'], false);
-
           return http.Response(
             jsonEncode(<String, Object?>{
               'jsonrpc': '2.0',
@@ -94,7 +93,6 @@ void main() {
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         sentParams = body['params']! as List<Object?>;
-
         return http.Response(
           jsonEncode(<String, Object?>{
             'jsonrpc': '2.0',
@@ -152,7 +150,6 @@ void main() {
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         sentParams = body['params']! as List<Object?>;
-
         return http.Response(
           jsonEncode(<String, Object?>{
             'jsonrpc': '2.0',
@@ -265,7 +262,6 @@ void main() {
       final client = MockClient((request) async {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         sentParams = body['params']! as List<Object?>;
-
         return http.Response(
           jsonEncode(<String, Object?>{
             'jsonrpc': '2.0',

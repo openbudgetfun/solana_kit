@@ -41,14 +41,12 @@ Decoder<TNewTo> transformDecoder<TOldTo, TNewTo>(
       fixedSize: decoder.fixedSize,
       read: (bytes, offset) {
         final (value, newOffset) = decoder.read(bytes, offset);
-
         return (map(value, bytes, offset), newOffset);
       },
     ),
     VariableSizeDecoder<TOldTo>() => VariableSizeDecoder<TNewTo>(
       read: (bytes, offset) {
         final (value, newOffset) = decoder.read(bytes, offset);
-
         return (map(value, bytes, offset), newOffset);
       },
       maxSize: decoder.maxSize,
@@ -76,7 +74,6 @@ Codec<TNewFrom, TNewTo> transformCodec<TOldFrom, TNewFrom, TOldTo, TNewTo>(
       decoderFromCodec(codec),
       map,
     );
-
     return _combineEncoderDecoder(transformedEncoder, transformedDecoder);
   }
 
@@ -87,7 +84,6 @@ Codec<TNewFrom, TNewTo> transformCodec<TOldFrom, TNewFrom, TOldTo, TNewTo>(
       write: transformedEncoder.write,
       read: (bytes, offset) {
         final (value, newOffset) = codec.read(bytes, offset);
-
         return (value as TNewTo, newOffset);
       },
     ),
@@ -98,7 +94,6 @@ Codec<TNewFrom, TNewTo> transformCodec<TOldFrom, TNewFrom, TOldTo, TNewTo>(
         write: transformedEncoder.write,
         read: (bytes, offset) {
           final (value, newOffset) = codec.read(bytes, offset);
-
           return (value as TNewTo, newOffset);
         },
         maxSize: codec.maxSize,

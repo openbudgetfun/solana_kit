@@ -19,13 +19,11 @@ final BigInt _i64Max = BigInt.parse('9223372036854775807');
 /// little-endian byte order.
 FixedSizeEncoder<BigInt> getI64Encoder([NumberCodecConfig? config]) {
   final endian = config?.endian ?? Endian.little;
-
   return FixedSizeEncoder<BigInt>(
     fixedSize: 8,
     write: (value, bytes, offset) {
       assertBigIntIsBetweenForCodec('i64', _i64Min, _i64Max, value);
       writeBigIntSigned(bytes, offset, 8, value, endian);
-
       return offset + 8;
     },
   );

@@ -45,7 +45,6 @@ Map<String, Object?> createSolanaErrorContext(
 }) {
   final normalized = <String, Object?>{
     for (final entry in context.entries)
-
       if (entry.value != null) entry.key: entry.value,
   };
 
@@ -62,7 +61,6 @@ Map<String, Object?> createSolanaErrorContext(
 
   if (cause is SolanaError) {
     normalized.putIfAbsent(SolanaErrorContextKeys.causeCode, () => cause.code);
-
     if (cause.context.isNotEmpty) {
       normalized.putIfAbsent(
         SolanaErrorContextKeys.causeContext,

@@ -30,7 +30,6 @@ class MwaClientHostApi {
     final result = await _channel.invokeMethod<bool>(
       'isWalletEndpointAvailable',
     );
-
     return result ?? false;
   }
 }

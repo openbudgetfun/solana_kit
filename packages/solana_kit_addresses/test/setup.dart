@@ -4,7 +4,6 @@ import 'dart:typed_data';
 Uint8List b(String hex) {
   if (hex.isEmpty) return Uint8List(0);
   final matches = RegExp('.{1,2}').allMatches(hex.toLowerCase());
-
   return Uint8List.fromList(
     matches.map((m) => int.parse(m.group(0)!, radix: 16)).toList(),
   );

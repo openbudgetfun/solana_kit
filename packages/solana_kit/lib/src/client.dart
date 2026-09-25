@@ -35,7 +35,6 @@ final class SolanaKitClient<T extends Object> {
 /// When [value] is omitted, the client starts with an empty, immutable map.
 SolanaKitClient<T> createClient<T extends Object>([T? value]) {
   final clientValue = value ?? const <String, Object?>{};
-
   return SolanaKitClient<T>._(clientValue as T);
 }
 

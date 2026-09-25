@@ -11,6 +11,5 @@ Future<GetProgramAccountsV2Response> rpcV2GetProgramAccountsV2(
   GetProgramAccountsV2Request request,
 ) async {
   final result = await rpcClient.call('getProgramAccountsV2', request.toJson());
-
   return GetProgramAccountsV2Response.fromJson(result! as Map<String, Object?>);
 }

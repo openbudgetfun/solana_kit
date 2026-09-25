@@ -20,14 +20,12 @@ Uint8List buildVaa({
     ..addByte(version)
     ..addUint32BE(guardianSetIndex)
     ..addByte(signatureCount);
-
   for (var i = 0; i < signatureCount; i++) {
     buffer
       ..addByte(i) // guardian index
       ..add(Uint8List.fromList(List.filled(64, 0x42 + i)))
       ..addByte(0); // recovery id
   }
-
   buffer
     ..addUint32BE(timestamp)
     ..addUint32BE(nonce)
@@ -37,7 +35,6 @@ Uint8List buildVaa({
     ..add(_uint64be(BigInt.from(sequence)))
     ..addByte(consistencyLevel)
     ..add(payload);
-
   return buffer.toBytes();
 }
 
@@ -53,12 +50,10 @@ extension _BytesBuilderX on BytesBuilder {
 Uint8List _uint64be(BigInt value) {
   final bytes = Uint8List(8);
   var v = value;
-
   for (var i = 7; i >= 0; i--) {
     bytes[i] = (v & BigInt.from(0xff)).toInt();
     v >>= 8;
   }
-
   return bytes;
 }
 

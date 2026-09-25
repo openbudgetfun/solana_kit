@@ -11,7 +11,6 @@ VariableSizeEncoder<Uint8List> getBytesEncoder() {
     getSizeFromValue: (value) => value.length,
     write: (value, bytes, offset) {
       bytes.setAll(offset, value);
-
       return offset + value.length;
     },
   );
@@ -26,7 +25,6 @@ VariableSizeDecoder<Uint8List> getBytesDecoder() {
   return VariableSizeDecoder<Uint8List>(
     read: (bytes, offset) {
       final slice = bytes.sublist(offset);
-
       return (slice, offset + slice.length);
     },
   );

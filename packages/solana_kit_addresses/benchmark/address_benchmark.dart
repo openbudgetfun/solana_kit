@@ -49,17 +49,14 @@ void _runBenchmark({
   required void Function() body,
 }) {
   final warmupIterations = iterations ~/ 10;
-
   for (var i = 0; i < warmupIterations; i++) {
     body();
   }
 
   final stopwatch = Stopwatch()..start();
-
   for (var i = 0; i < iterations; i++) {
     body();
   }
-
   stopwatch.stop();
 
   final microsecondsPerIteration = stopwatch.elapsedMicroseconds / iterations;

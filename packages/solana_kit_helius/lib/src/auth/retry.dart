@@ -6,17 +6,14 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 int? getHttpStatus(Object error) {
   if (error is SolanaError) {
     final status = error.context[SolanaErrorContextKeys.statusCode];
-
     if (status is int) return status;
   }
-
   return null;
 }
 
 /// Returns whether the given [error] should be retried.
 bool isRetryableError(Object error) {
   final status = getHttpStatus(error);
-
   if (status != null) return status >= 500;
   return true;
 }
@@ -34,12 +31,9 @@ Future<T> retryWithBackoff<T>(
   for (var attempt = 0; attempt < maxRetries; attempt++) {
     try {
       return await fn();
-
     } on Object catch (error) {
       lastError = error;
-
       if (!isRetryableError(error)) rethrow;
-
       if (attempt < maxRetries - 1) await wait(delay);
     }
   }

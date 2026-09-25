@@ -237,7 +237,6 @@ void main() {
         );
       });
     }
-
     test('throws a non-empty error when the content is empty', () {
       expect(
         () => assertIsOffchainMessageContentUtf8Of1232BytesMax(
@@ -311,7 +310,6 @@ void main() {
         );
       });
     }
-
     test('returns false when the content is empty', () {
       expect(
         isOffchainMessageContentUtf8Of1232BytesMax(
@@ -390,7 +388,6 @@ void main() {
         );
       });
     }
-
     test('throws a non-empty error when the content is empty', () {
       expect(
         () => assertIsOffchainMessageContentUtf8Of65535BytesMax(
@@ -463,7 +460,6 @@ void main() {
         );
       });
     }
-
     test('returns false when the content is empty', () {
       expect(
         isOffchainMessageContentUtf8Of65535BytesMax(

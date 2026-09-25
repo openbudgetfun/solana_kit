@@ -177,7 +177,6 @@ Matcher _solanaError(
       instructionIndex,
     );
   }
-
   if (actualCount != null) {
     matcher = matcher.having(
       (error) => error.context['actualCount'],
@@ -185,7 +184,6 @@ Matcher _solanaError(
       actualCount,
     );
   }
-
   if (maxAllowed != null) {
     matcher = matcher.having(
       (error) => error.context['maxAllowed'],

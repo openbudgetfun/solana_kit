@@ -23,7 +23,6 @@ describe("renderVisitor defined type imports", () => {
     for (const outputDir of outputDirectories) {
       rmSync(outputDir, { recursive: true, force: true });
     }
-
     outputDirectories.length = 0;
   });
 
@@ -86,7 +85,6 @@ describe("renderVisitor defined type imports", () => {
       `codama-dart-render-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     );
     outputDirectories.push(outputDir);
-
     return outputDir;
   }
 });
@@ -98,7 +96,6 @@ describe("renderVisitor link overrides", () => {
     for (const outputDir of outputDirectories) {
       rmSync(outputDir, { recursive: true, force: true });
     }
-
     outputDirectories.length = 0;
   });
 
@@ -109,7 +106,6 @@ describe("renderVisitor link overrides", () => {
       ...segments,
     );
     outputDirectories.push(join(outputDir, ".."));
-
     return outputDir;
   }
 

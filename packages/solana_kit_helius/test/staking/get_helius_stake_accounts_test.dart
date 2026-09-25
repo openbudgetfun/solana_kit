@@ -14,7 +14,6 @@ void main() {
           expect(request.method, 'GET');
           expect(request.url.path, '/v0/staking/accounts/owner-address');
           expect(request.url.queryParameters['api-key'], isNotEmpty);
-
           return http.Response(
             jsonEncode(<Object?>[
               <String, Object?>{

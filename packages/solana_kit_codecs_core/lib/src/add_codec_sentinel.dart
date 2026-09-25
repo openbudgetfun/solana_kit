@@ -19,7 +19,6 @@ Encoder<TFrom> addEncoderSentinel<TFrom>(
   int writeImpl(TFrom value, Uint8List bytes, int currentOffset) {
     // Use encode() to contain the encoder within its own bounds.
     final encoderBytes = encoder.encode(value);
-
     if (_findSentinelIndex(encoderBytes, sentinel) >= 0) {
       throw SolanaError(
         SolanaErrorCode.codecsEncodedBytesMustNotIncludeSentinel,
@@ -31,11 +30,9 @@ Encoder<TFrom> addEncoderSentinel<TFrom>(
         },
       );
     }
-
     bytes.setAll(currentOffset, encoderBytes);
     final afterContent = currentOffset + encoderBytes.length;
     bytes.setAll(afterContent, sentinel);
-
     return afterContent + sentinel.length;
   }
 
@@ -47,7 +44,6 @@ Encoder<TFrom> addEncoderSentinel<TFrom>(
   }
 
   final enc = encoder as VariableSizeEncoder<TFrom>;
-
   return VariableSizeEncoder<TFrom>(
     getSizeFromValue: (value) => enc.getSizeFromValue(value) + sentinel.length,
     write: writeImpl,
@@ -65,7 +61,6 @@ Decoder<TTo> addDecoderSentinel<TTo>(Decoder<TTo> decoder, Uint8List sentinel) {
         ? bytes
         : bytes.sublist(currentOffset);
     final sentinelIndex = _findSentinelIndex(candidateBytes, sentinel);
-
     if (sentinelIndex == -1) {
       throw SolanaError(SolanaErrorCode.codecsSentinelMissingInDecodedBytes, {
         'decodedBytes': candidateBytes,
@@ -74,7 +69,6 @@ Decoder<TTo> addDecoderSentinel<TTo>(Decoder<TTo> decoder, Uint8List sentinel) {
         'sentinel': sentinel,
       });
     }
-
     final preSentinelBytes = candidateBytes.sublist(0, sentinelIndex);
     // Use decode() to contain the decoder within its own bounds.
     return (
@@ -91,7 +85,6 @@ Decoder<TTo> addDecoderSentinel<TTo>(Decoder<TTo> decoder, Uint8List sentinel) {
   }
 
   final dec = decoder as VariableSizeDecoder<TTo>;
-
   return VariableSizeDecoder<TTo>(
     read: readImpl,
     maxSize: dec.maxSize != null ? dec.maxSize! + sentinel.length : null,
@@ -121,7 +114,6 @@ int _findSentinelIndex(Uint8List bytes, Uint8List sentinel) {
       if (containsBytes(bytes, sentinel, i)) return i;
     }
   }
-
   return -1;
 }
 

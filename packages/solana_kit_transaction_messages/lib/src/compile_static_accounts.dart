@@ -7,6 +7,5 @@ List<Address> getCompiledStaticAccounts(List<OrderedAccount> orderedAccounts) {
   final staticAccounts = firstLookupIndex == -1
       ? orderedAccounts
       : orderedAccounts.sublist(0, firstLookupIndex);
-
   return staticAccounts.map((a) => a.address).toList();
 }

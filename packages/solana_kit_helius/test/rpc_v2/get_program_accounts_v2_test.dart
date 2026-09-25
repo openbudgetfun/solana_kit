@@ -41,7 +41,6 @@ void main() {
         expect(body['method'], 'getProgramAccountsV2');
         final params = body['params']! as Map<String, Object?>;
         expect(params['programAddress'], 'program1');
-
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResponse}),
           200,

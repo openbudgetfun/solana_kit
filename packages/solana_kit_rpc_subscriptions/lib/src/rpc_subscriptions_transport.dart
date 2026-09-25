@@ -80,7 +80,6 @@ RpcSubscriptionsTransport createRpcSubscriptionsTransportFromChannelCreator(
 ) {
   return (RpcSubscriptionsTransportConfig config) async {
     final channel = await createChannel(abortSignal: config.signal);
-
     return config.execute(
       RpcSubscriptionsTransportExecuteConfig(
         channel: channel,

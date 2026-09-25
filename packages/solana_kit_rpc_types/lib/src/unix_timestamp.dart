@@ -35,6 +35,5 @@ void assertIsUnixTimestamp(BigInt putativeTimestamp) {
 /// input.
 UnixTimestamp unixTimestamp(BigInt putativeTimestamp) {
   assertIsUnixTimestamp(putativeTimestamp);
-
   return UnixTimestamp(putativeTimestamp);
 }

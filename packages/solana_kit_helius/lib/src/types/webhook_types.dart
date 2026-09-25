@@ -17,7 +17,6 @@ class Webhook {
   /// Creates a [Webhook] from a JSON map.
   factory Webhook.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return Webhook(
       webhookId: r.requireString('webhookId'),
       wallet: r.requireString('wallet'),
@@ -58,7 +57,6 @@ class Webhook {
     'transactionTypes': transactionTypes,
     'accountAddresses': accountAddresses,
     'webhookType': webhookType.toJson(),
-
     if (authHeader != null) 'authHeader': authHeader,
   };
 }
@@ -78,7 +76,6 @@ class CreateWebhookRequest {
   /// Creates a [CreateWebhookRequest] from a JSON map.
   factory CreateWebhookRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return CreateWebhookRequest(
       webhookUrl: r.requireString('webhookUrl'),
       transactionTypes: r.requireList<String>('transactionTypes'),
@@ -113,9 +110,7 @@ class CreateWebhookRequest {
     'transactionTypes': transactionTypes,
     'accountAddresses': accountAddresses,
     'webhookType': webhookType.toJson(),
-
     if (authHeader != null) 'authHeader': authHeader,
-
     if (txnStatus != null) 'txnStatus': txnStatus,
   };
 }
@@ -136,7 +131,6 @@ class UpdateWebhookRequest {
   /// Creates an [UpdateWebhookRequest] from a JSON map.
   factory UpdateWebhookRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return UpdateWebhookRequest(
       webhookId: r.requireString('webhookId'),
       webhookUrl: r.optString('webhookUrl'),
@@ -172,17 +166,11 @@ class UpdateWebhookRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'webhookId': webhookId,
-
     if (webhookUrl != null) 'webhookUrl': webhookUrl,
-
     if (transactionTypes != null) 'transactionTypes': transactionTypes,
-
     if (accountAddresses != null) 'accountAddresses': accountAddresses,
-
     if (webhookType != null) 'webhookType': webhookType!.name,
-
     if (authHeader != null) 'authHeader': authHeader,
-
     if (txnStatus != null) 'txnStatus': txnStatus,
   };
 }

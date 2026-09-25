@@ -16,8 +16,6 @@ Uint8List createSequenceNumberVector(int sequenceNumber) {
       'sequenceNumber': sequenceNumber,
     });
   }
-
   final bytes = ByteData(mwaSequenceNumberBytes)..setUint32(0, sequenceNumber);
-
   return bytes.buffer.asUint8List();
 }

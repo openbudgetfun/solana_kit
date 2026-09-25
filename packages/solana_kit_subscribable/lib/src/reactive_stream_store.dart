@@ -146,7 +146,6 @@ class ReactiveStreamStore<T> {
     if (_isDisposed) {
       throw StateError('ReactiveStreamStore has been disposed');
     }
-
     // Abort any currently active connection without resetting to idle.
     _abortActiveConnection();
 
@@ -158,7 +157,6 @@ class ReactiveStreamStore<T> {
             callerSignal!.reason ?? StateError('ReactiveStreamStore aborted'),
       );
       _notifySubscribers();
-
       return;
     }
 
@@ -189,14 +187,12 @@ class ReactiveStreamStore<T> {
             source.token,
           );
         }
-
         source.cancel(callerSignal.reason);
         if (_activeSource?.token == source.token) {
           _abortActiveConnection();
         }
       });
     }
-
     _openConnection(source.token);
   }
 
@@ -208,7 +204,6 @@ class ReactiveStreamStore<T> {
       if (_isDisposed || signal.isCancelled || _activeSource?.token != signal) {
         return;
       }
-
       _dataSubscription = connection.dataStream.listen(
         (data) {
           if (_isDisposed ||
@@ -232,19 +227,16 @@ class ReactiveStreamStore<T> {
           if (error == null) {
             return;
           }
-
           _handleError(error, signal);
         },
         onError: (Object error, StackTrace _) {
           _handleError(error, signal);
         },
       );
-
     } on Object catch (error) {
       if (_isDisposed || signal.isCancelled || _activeSource?.token != signal) {
         return;
       }
-
       _handleError(error, signal);
     }
   }
@@ -272,7 +264,6 @@ class ReactiveStreamStore<T> {
     if (_isDisposed) {
       return;
     }
-
     _abortActiveConnection();
     _state = ReactiveStreamStateSnapshot<T>(status: ReactiveStreamState.idle);
     _notifySubscribers();
@@ -306,16 +297,13 @@ class ReactiveStreamStore<T> {
     if (_isDisposed) {
       return () {};
     }
-
     _subscribers.add(callback);
 
     var isSubscribed = true;
-
     return () {
       if (!isSubscribed) {
         return;
       }
-
       isSubscribed = false;
       _subscribers.remove(callback);
     };
@@ -326,7 +314,6 @@ class ReactiveStreamStore<T> {
     if (_isDisposed) {
       return;
     }
-
     _isDisposed = true;
     _abortActiveConnection();
     _subscribers.clear();

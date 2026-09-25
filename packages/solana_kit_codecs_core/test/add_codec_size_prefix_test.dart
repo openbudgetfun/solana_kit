@@ -16,7 +16,6 @@ void main() {
           bytes[offset + 1] = (v >> 8) & 0xff;
           bytes[offset + 2] = (v >> 16) & 0xff;
           bytes[offset + 3] = (v >> 24) & 0xff;
-
           return offset + 4;
         },
         read: (bytes, offset) {
@@ -25,7 +24,6 @@ void main() {
               (bytes[offset + 1] << 8) |
               (bytes[offset + 2] << 16) |
               (bytes[offset + 3] << 24);
-
           return (v, offset + 4);
         },
       );
@@ -36,7 +34,6 @@ void main() {
         write: (value, bytes, offset) {
           final src = b(value);
           bytes.setAll(offset, src);
-
           return offset + src.length;
         },
         read: (bytes, offset) {
@@ -61,7 +58,6 @@ void main() {
           bytes[offset + 1] = (v >> 8) & 0xff;
           bytes[offset + 2] = (v >> 16) & 0xff;
           bytes[offset + 3] = (v >> 24) & 0xff;
-
           return offset + 4;
         },
         read: (bytes, offset) {
@@ -70,7 +66,6 @@ void main() {
               (bytes[offset + 1] << 8) |
               (bytes[offset + 2] << 16) |
               (bytes[offset + 3] << 24);
-
           return (v, offset + 4);
         },
       );
@@ -80,7 +75,6 @@ void main() {
         write: (value, bytes, offset) {
           final src = b(value);
           bytes.setAll(offset, src);
-
           return offset + src.length;
         },
         read: (bytes, offset) {
@@ -103,9 +97,7 @@ void main() {
           if (value.toInt() > 255) {
             throw StateError('overflow');
           }
-
           bytes[offset] = value.toInt();
-
           return offset + 1;
         },
         read: (bytes, offset) => (bytes[offset], offset + 1),
@@ -149,7 +141,6 @@ void main() {
         fixedSize: 1,
         write: (value, bytes, offset) {
           bytes[offset] = value.toInt();
-
           return offset + 1;
         },
         read: (bytes, offset) => (bytes[offset], offset + 1),
@@ -161,7 +152,6 @@ void main() {
         write: (value, bytes, offset) {
           final src = b(value);
           bytes.setAll(offset, src);
-
           return offset + src.length;
         },
         read: (bytes, offset) {

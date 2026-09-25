@@ -86,107 +86,82 @@ enum SolanaErrorDomain {
 /// Returns the [SolanaErrorDomain] for an error [code].
 SolanaErrorDomain getSolanaErrorDomain(SolanaErrorCode code) {
   final v = code.value;
-
   if (v >= -32768 && v <= -32000) {
     return SolanaErrorDomain.jsonRpc;
   }
-
   if (v >= 1 && v <= 10) {
     return SolanaErrorDomain.general;
   }
-
   if (v >= 2800000 && v <= 2800999) {
     return SolanaErrorDomain.addresses;
   }
-
   // Includes a historical constant typo in the upstream-port map.
   if ((v >= 3230000 && v <= 3230999) ||
       code == SolanaErrorCode.accountsOneOrMoreAccountsNotFound) {
     return SolanaErrorDomain.accounts;
   }
-
   if (v >= 3610000 && v <= 3610999) {
     return SolanaErrorDomain.subtleCrypto;
   }
-
   if (v >= 3611000 && v <= 3611050) {
     return SolanaErrorDomain.crypto;
   }
-
   if (v >= 3704000 && v <= 3704999) {
     return SolanaErrorDomain.keys;
   }
-
   if (v >= 4128000 && v <= 4128999) {
     return SolanaErrorDomain.instruction;
   }
-
   if (v >= 4615000 && v <= 4615999) {
     return SolanaErrorDomain.instructionError;
   }
-
   if (v >= 5508000 && v <= 5508999) {
     return SolanaErrorDomain.signer;
   }
-
   if (v >= 5607000 && v <= 5607999) {
     return SolanaErrorDomain.offchainMessage;
   }
-
   if (v >= 5663000 && v <= 5663999) {
     return SolanaErrorDomain.transaction;
   }
-
   // Added in @solana/kit v7.0.0: reserved [5664000-5664999] for the new
   // transaction-introspection domain.
   if (v >= 5664000 && v <= 5664999) {
     return SolanaErrorDomain.transactionIntrospection;
   }
-
   if (v >= 7050000 && v <= 7050999) {
     return SolanaErrorDomain.transactionError;
   }
-
   if (v >= 7618000 && v <= 7618999) {
     return SolanaErrorDomain.instructionPlans;
   }
-
   if (v >= 8078000 && v <= 8078999) {
     return SolanaErrorDomain.codecs;
   }
-
   if (v >= 8100000 && v <= 8100999) {
     return SolanaErrorDomain.rpc;
   }
-
   if (v >= 8190000 && v <= 8190999) {
     return SolanaErrorDomain.rpcSubscriptions;
   }
-
   if (v >= 8195000 && v <= 8195999) {
     return SolanaErrorDomain.subscribable;
   }
-
   if (v >= 8400000 && v <= 8400199) {
     return SolanaErrorDomain.mobileWalletAdapter;
   }
-
   if (v >= 8500000 && v <= 8500999) {
     return SolanaErrorDomain.programClients;
   }
-
   if (v >= 8600000 && v <= 8600099) {
     return SolanaErrorDomain.helius;
   }
-
   if (v >= 8900000 && v <= 8900999) {
     return SolanaErrorDomain.wallet;
   }
-
   if (v >= 9900000 && v <= 9900999) {
     return SolanaErrorDomain.invariantViolation;
   }
-
   return SolanaErrorDomain.unknown;
 }
 

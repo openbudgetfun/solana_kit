@@ -13,25 +13,20 @@ Future<void> main() async {
       '--quiet',
       'origin/main',
     ]);
-
     if (originMain.exitCode != 0) {
       stderr.writeln(
         'BASE_SHA/HEAD_SHA are required when origin/main is unavailable.',
       );
       exitCode = 2;
-
       return;
     }
 
     final mergeBase = await _run('git', ['merge-base', 'origin/main', 'HEAD']);
-
     if (mergeBase.exitCode != 0) {
       stderr.write(mergeBase.stderr);
       exitCode = mergeBase.exitCode;
-
       return;
     }
-
     baseSha = mergeBase.stdout.trim();
     headSha = 'HEAD';
   }
@@ -41,11 +36,9 @@ Future<void> main() async {
     '--name-only',
     '$baseSha...$headSha',
   ]);
-
   if (diff.exitCode != 0) {
     stderr.write(diff.stderr);
     exitCode = diff.exitCode;
-
     return;
   }
 
@@ -57,7 +50,6 @@ Future<void> main() async {
 
   if (changedFiles.isEmpty) {
     stdout.writeln('No changed files detected.');
-
     return;
   }
 
@@ -72,10 +64,8 @@ Future<void> main() async {
       'scripts/check_changeset_frontmatter.dart',
       ...changesetChanges,
     ], inherit: true);
-
     if (validation.exitCode != 0) {
       exitCode = validation.exitCode;
-
       return;
     }
   }
@@ -83,16 +73,13 @@ Future<void> main() async {
   final packageChanges = changedFiles
       .where((path) => path.startsWith('packages/'))
       .toList();
-
   if (packageChanges.isEmpty) {
     stdout.writeln('No package changes detected; changeset not required.');
-
     return;
   }
 
   if (changesetChanges.isNotEmpty) {
     stdout.writeln('Changeset requirement satisfied.');
-
     return;
   }
 
@@ -103,11 +90,9 @@ Future<void> main() async {
     'Run `monochange run document` to create a properly formatted changeset, then commit the file.',
   );
   stderr.writeln('Changed package files:');
-
   for (final path in packageChanges) {
     stderr.writeln(path);
   }
-
   exitCode = 1;
 }
 
@@ -122,12 +107,10 @@ Future<({int exitCode, String stdout, String stderr})> _run(
       arguments,
       mode: ProcessStartMode.inheritStdio,
     );
-
     return (exitCode: await process.exitCode, stdout: '', stderr: '');
   }
 
   final result = await Process.run(executable, arguments);
-
   return (
     exitCode: result.exitCode,
     stdout: result.stdout.toString(),

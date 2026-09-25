@@ -25,7 +25,6 @@ class _JsonSerializedChannel implements RpcSubscriptionsChannel {
     final decoded = channel.streams.notifications.map((data) {
       return jsonDecode(data! as String);
     });
-
     return NotificationStreams(
       notifications: decoded,
       errors: channel.streams.errors,

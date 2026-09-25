@@ -29,7 +29,6 @@ class _BigIntJsonSerializedChannel implements RpcSubscriptionsChannel {
     final decoded = channel.streams.notifications.map((data) {
       return parseJsonWithBigInts(data! as String);
     });
-
     return NotificationStreams(
       notifications: decoded,
       errors: channel.streams.errors,

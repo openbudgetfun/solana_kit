@@ -12,6 +12,5 @@ Future<Webhook> webhooksToggleWebhook(
     '/v0/webhooks/$webhookId?api-key=$apiKey',
     body: {'active': active},
   );
-
   return Webhook.fromJson(result! as Map<String, Object?>);
 }

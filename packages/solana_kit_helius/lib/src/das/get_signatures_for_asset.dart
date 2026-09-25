@@ -13,6 +13,5 @@ Future<AssetSignatureList> dasGetSignaturesForAsset(
     'getSignaturesForAsset',
     request.toJson(),
   );
-
   return AssetSignatureList.fromJson(result! as Map<String, Object?>);
 }

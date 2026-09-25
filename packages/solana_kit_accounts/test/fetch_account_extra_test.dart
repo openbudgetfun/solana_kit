@@ -14,6 +14,7 @@ const _owner = '11111111111111111111111111111111';
 // ---------------------------------------------------------------------------
 // Mock RPC helpers
 // ---------------------------------------------------------------------------
+
 Rpc _makeRpc(
   Map<String, Map<String, dynamic>?> accountInfo, {
   bool nullTopLevelResponse = false,
@@ -24,7 +25,6 @@ Rpc _makeRpc(
       execute: (config) async {
         if (nullTopLevelResponse) return null;
         final addr = params[0]! as String;
-
         return <String, dynamic>{'value': accountInfo[addr]};
       },
     ),
@@ -36,7 +36,6 @@ Rpc _makeRpc(
           if (nullValueInMultiple) return null;
           return accountInfo[a as String];
         }).toList();
-
         return <String, dynamic>{'value': values};
       },
     ),

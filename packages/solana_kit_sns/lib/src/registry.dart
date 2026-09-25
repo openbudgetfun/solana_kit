@@ -78,7 +78,6 @@ VariableSizeEncoder<NameRegistryState> getNameRegistryStateEncoder() {
         currentOffset + value.data.length,
         value.data,
       );
-
       return currentOffset + value.data.length;
     },
   );
@@ -106,7 +105,6 @@ VariableSizeDecoder<NameRegistryState> getNameRegistryStateDecoder() {
         registryClass: addressDecoder.decode(header['class']! as Uint8List),
         data: bytes.sublist(headerEnd),
       );
-
       return (state, bytes.length);
     },
   );
@@ -143,7 +141,6 @@ VariableSizeCodec<String, String> getNameValueCodec() {
       );
       final end = currentOffset + encoded.length;
       bytes.setRange(currentOffset, end, encoded);
-
       return end;
     },
     read: (bytes, offset) {
@@ -153,9 +150,7 @@ VariableSizeCodec<String, String> getNameValueCodec() {
       if (end > bytes.length) {
         throw ArgumentError('Name value length $length exceeds input bytes');
       }
-
       final (value, _) = utf8Codec.read(bytes.sublist(0, end), start);
-
       return (value, end);
     },
   );

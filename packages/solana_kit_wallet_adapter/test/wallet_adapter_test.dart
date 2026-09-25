@@ -585,7 +585,6 @@ class _Backend implements MobileWalletBackend {
     SolanaSignInInput? signIn,
   }) async {
     lastSilent = silent;
-
     return MobileWalletAuthorization(
       accounts: [account],
       signInOutput: signIn != null && includeSignIn
@@ -635,7 +634,6 @@ class _TestWallet implements Wallet {
       SolanaFeatureId.signMessage: _TestSignMessage(this),
       SolanaFeatureId.signTransaction: _TestSignTransaction(this),
       SolanaFeatureId.signAndSendTransaction: _TestSendTransaction(this),
-
       if (includeSignIn) SolanaFeatureId.signIn: _TestSignIn(this),
     };
   }
@@ -691,9 +689,7 @@ class _TestConnect implements StandardConnectFeature {
     StandardConnectInput input = const StandardConnectInput(),
   ]) async {
     wallet.lastSilent = input.silent;
-
     if (wallet.connectError case final error?) throw error;
-
     return StandardConnectOutput(wallet.accounts);
   }
 
@@ -718,7 +714,6 @@ class _TestEvents implements StandardEventsFeature {
     void Function(StandardWalletChange change) listener,
   ) {
     wallet.listener = listener;
-
     return () => wallet.listener = null;
   }
 
@@ -790,7 +785,6 @@ class _TestSignIn implements SolanaSignInFeature {
     List<SolanaSignInInput> inputs,
   ) async {
     if (wallet.signInError case final error?) throw error;
-
     return List.generate(
       wallet.signInOutputCount,
       (_) => SolanaSignInOutput(

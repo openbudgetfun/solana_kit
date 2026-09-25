@@ -28,7 +28,6 @@ void main() {
     test('computes the minimum balance with the header', () async {
       final rpc = _mockRpc((method, params) {
         expect(method, 'getMinimumBalanceForRentExemption');
-
         return BigInt.from(1000);
       });
       final client = createClientWithGetMinimumBalanceFromRpc(rpc);
@@ -38,7 +37,6 @@ void main() {
     test('computes the minimum balance without the header', () async {
       final rpc = _mockRpc((method, params) {
         expect(params, [BigInt.zero]);
-
         return BigInt.from(1280); // rate * 128
       });
       final client = createClientWithGetMinimumBalanceFromRpc(rpc);
@@ -59,7 +57,6 @@ void main() {
     test('fetches a single account', () async {
       final rpc = _mockRpc((method, params) {
         expect(method, 'getAccountInfo');
-
         return {
           'context': {'slot': BigInt.one},
           'value': null,
@@ -75,7 +72,6 @@ void main() {
     test('fetches multiple accounts in one call', () async {
       final rpc = _mockRpc((method, params) {
         expect(method, 'getMultipleAccounts');
-
         return {
           'context': {'slot': BigInt.one},
           'value': [null, null],
@@ -96,7 +92,6 @@ void main() {
         if (method == 'getMinimumBalanceForRentExemption') {
           return BigInt.from(1000);
         }
-
         return {
           'context': {'slot': BigInt.one},
           'value': null,

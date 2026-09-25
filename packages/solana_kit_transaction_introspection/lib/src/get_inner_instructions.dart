@@ -39,28 +39,22 @@ List<_RpcInnerInstructionsGroup> _parseInnerInstructions(
 ) {
   if (meta == null) return const [];
   final rawInner = meta['innerInstructions'];
-
   if (rawInner == null) return const [];
-
   if (rawInner is! List) _throwUnrecognized();
   final groups = <_RpcInnerInstructionsGroup>[];
   final outerIndices = <int>{};
-
   for (final rawGroup in rawInner) {
     if (rawGroup is! Map) _throwUnrecognized();
     final index = rawGroup['index'];
     final rawInstructions = rawGroup['instructions'];
-
     if (index is! int || index < 0 || rawInstructions is! List) {
       _throwUnrecognized();
     }
-
     // One group represents one outer execution. Duplicate groups would emit
     // the same trace positions more than once and could double-count CPIs.
     if (!outerIndices.add(index)) _throwUnrecognized();
 
     final instructions = <_RpcInnerInstruction>[];
-
     for (final rawIx in rawInstructions) {
       if (rawIx is! Map) _throwUnrecognized();
       final programIdIndex = rawIx['programIdIndex'];
@@ -75,12 +69,10 @@ List<_RpcInnerInstructionsGroup> _parseInnerInstructions(
         _throwUnrecognized();
       }
       final accounts = <int>[];
-
       for (final account in accountsRaw) {
         if (account is! int || account < 0) _throwUnrecognized();
         accounts.add(account);
       }
-
       instructions.add(
         _RpcInnerInstruction(
           accounts: accounts,
@@ -90,12 +82,10 @@ List<_RpcInnerInstructionsGroup> _parseInnerInstructions(
         ),
       );
     }
-
     groups.add(
       _RpcInnerInstructionsGroup(index: index, instructions: instructions),
     );
   }
-
   return groups;
 }
 
@@ -123,7 +113,6 @@ List<TracedInstruction> getInnerInstructionsFromMeta(
   final groups = _parseInnerInstructions(meta);
   final base58 = getBase58Encoder();
   final result = <TracedInstruction>[];
-
   for (final group in groups) {
     for (
       var innerIndex = 0;
@@ -131,7 +120,6 @@ List<TracedInstruction> getInnerInstructionsFromMeta(
       innerIndex++
     ) {
       final ix = group.instructions[innerIndex];
-
       if (ix.programIdIndex < 0 || ix.programIdIndex >= accountMetas.length) {
         throw SolanaError(
           SolanaErrorCode
@@ -139,10 +127,8 @@ List<TracedInstruction> getInnerInstructionsFromMeta(
           {'index': ix.programIdIndex},
         );
       }
-
       final programMeta = accountMetas[ix.programIdIndex];
       final accounts = <AccountMeta>[];
-
       for (final i in ix.accounts) {
         if (i < 0 || i >= accountMetas.length) {
           throw SolanaError(
@@ -151,10 +137,8 @@ List<TracedInstruction> getInnerInstructionsFromMeta(
             {'index': i},
           );
         }
-
         accounts.add(accountMetas[i]);
       }
-
       final data = base58.encode(ix.data);
       result.add(
         TracedInstruction(
@@ -170,6 +154,5 @@ List<TracedInstruction> getInnerInstructionsFromMeta(
       );
     }
   }
-
   return result;
 }

@@ -23,13 +23,11 @@ void main(List<String> args) {
       : '.repos/kit/packages/errors/src/codes.ts';
 
   final upstreamFile = File(upstreamPath);
-
   if (!upstreamFile.existsSync()) {
     stdout.writeln(
       'NOTICE: skipping error-code parity because $upstreamPath is '
       'unavailable. Run `clone:repos` to materialize it.',
     );
-
     return;
   }
 
@@ -41,12 +39,10 @@ void main(List<String> args) {
   if (upstream.isEmpty || ours.isEmpty) {
     stderr.writeln('Failed to parse one of the error-code sources.');
     exitCode = 2;
-
     return;
   }
 
   final upstreamByNumber = <int, String>{};
-
   for (final entry in upstream.entries) {
     upstreamByNumber.putIfAbsent(entry.value.$1, () => entry.value.$2);
   }
@@ -65,12 +61,10 @@ void main(List<String> args) {
           'this port is $number',
         );
       }
-
       continue;
     }
 
     final occupiedBy = upstreamByNumber[number];
-
     if (occupiedBy != null) {
       collisions.add(
         '${entry.value.$2} uses $number, which upstream uses for $occupiedBy',
@@ -84,20 +78,16 @@ void main(List<String> args) {
       'Error-code parity holds: ${ours.length} codes, '
       '${upstream.length} upstream, $missing upstream-only.',
     );
-
     return;
   }
 
   stderr.writeln('Error-code parity with upstream is broken:');
-
   for (final entry in mismatches) {
     stderr.writeln('  number differs — $entry');
   }
-
   for (final entry in collisions) {
     stderr.writeln('  number occupied — $entry');
   }
-
   stderr.writeln();
   stderr.writeln(
     'A code that exists upstream must use the upstream number. A code that '
@@ -113,12 +103,10 @@ Map<String, (int, String)> _parseUpstream(String source) {
   final pattern = RegExp(
     r'export const SOLANA_ERROR__([A-Z0-9_]*)__([A-Z0-9_]*)\s*=\s*(\d+);',
   );
-
   for (final match in pattern.allMatches(source)) {
     final name = '${match.group(1)}__${match.group(2)}';
     codes[_normalize(name)] = (int.parse(match.group(3)!), name);
   }
-
   return codes;
 }
 
@@ -126,12 +114,10 @@ Map<String, (int, String)> _parseUpstream(String source) {
 Map<String, (int, String)> _parsePort(String source) {
   final codes = <String, (int, String)>{};
   final pattern = RegExp(r'^\s{2}([a-zA-Z0-9_]+)\((\d+)\),', multiLine: true);
-
   for (final match in pattern.allMatches(source)) {
     final name = match.group(1)!;
     codes[_normalize(name)] = (int.parse(match.group(2)!), name);
   }
-
   return codes;
 }
 

@@ -27,7 +27,6 @@ void assertIsMessageSigner(Object? value) {
       TransactionSendingSigner(:final address) => address,
       _ => null,
     };
-
     throw SolanaError(SolanaErrorCode.signerExpectedMessageSigner, {
       'address': ?address,
     });

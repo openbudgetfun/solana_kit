@@ -20,7 +20,6 @@ void main() {
         expect(body['method'], 'getSignaturesForAsset');
         expect(body['jsonrpc'], '2.0');
         expect(body['params'], {'id': 'test-asset-id'});
-
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResult}),
           200,

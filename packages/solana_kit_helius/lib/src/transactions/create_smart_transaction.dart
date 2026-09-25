@@ -140,7 +140,6 @@ Future<SmartTransaction> txCreateSmartTransaction(
   );
 
   final recommendedFee = feeEstimate.priorityFeeEstimate;
-
   if (recommendedFee == null) {
     throw StateError(
       'Priority fee estimate not available. Error creating smart transaction.',
@@ -182,7 +181,6 @@ int bufferComputeUnits(
   double bufferPercent = 0.1,
 }) {
   final buffered = (rawUnits * (1 + bufferPercent)).ceil();
-
   return math.min(
     maxSmartTransactionComputeUnits,
     math.max(1, math.max(minimum, buffered)),
@@ -204,10 +202,8 @@ String? _programAddressOf(Object? instruction) {
   if (instruction is Map<String, Object?>) {
     return instruction['programAddress']?.toString();
   }
-
   try {
     return (instruction! as dynamic).programAddress?.toString();
-
   } on Object {
     return null;
   }
@@ -239,33 +235,26 @@ List<String> _collectAccountKeys(
 /// `accounts` getter, so it must be read by key.
 Iterable<String> _accountAddressesOf(Object? instruction) sync* {
   final Object? accounts;
-
   if (instruction is Map<String, Object?>) {
     accounts = instruction['accounts'];
   } else {
     try {
       accounts = (instruction! as dynamic).accounts;
-
     } on Object {
       return;
     }
   }
-
   if (accounts is! List) return;
 
   for (final account in accounts) {
     if (account is Map<String, Object?>) {
       final address = account['address'];
-
       if (address != null) yield address.toString();
       continue;
     }
-
     try {
       final address = (account! as dynamic).address;
-
       if (address != null) yield address.toString();
-
     } on Object {
       continue;
     }
@@ -275,14 +264,12 @@ Iterable<String> _accountAddressesOf(Object? instruction) sync* {
 /// Returns the first configured signer address.
 String _firstSigner(CreateSmartTransactionInput input) {
   final signers = input.signers;
-
   if (signers == null || signers.isEmpty) {
     throw StateError(
       'createSmartTransaction: expected at least one signer or an explicit '
       'feePayer.',
     );
   }
-
   return signers.first;
 }
 

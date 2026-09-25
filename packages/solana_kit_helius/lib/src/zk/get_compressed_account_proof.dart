@@ -10,6 +10,5 @@ Future<CompressedAccountProof> zkGetCompressedAccountProof(
     'getCompressedAccountProof',
     request.toJson(),
   );
-
   return CompressedAccountProof.fromJson(result! as Map<String, Object?>);
 }

@@ -26,7 +26,6 @@ void main() {
         expect(request.method, 'GET');
         expect(request.url.path, '/v0/addresses/myAddress/transactions');
         expect(request.url.queryParameters['api-key'], 'test-key');
-
         return http.Response(jsonEncode([mockTxn]), 200);
       });
 
@@ -69,7 +68,6 @@ void main() {
         expect(request.url.queryParameters['until'], 'untilSig');
         expect(request.url.queryParameters['commitment'], 'finalized');
         expect(request.url.queryParameters['type'], 'SWAP');
-
         return http.Response(jsonEncode([mockTxn]), 200);
       });
 

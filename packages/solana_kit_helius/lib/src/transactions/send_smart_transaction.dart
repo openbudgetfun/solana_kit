@@ -44,7 +44,6 @@ String _serializedTransaction(List<Object?> entries) {
   for (final entry in entries) {
     if (entry is String) return entry;
   }
-
   throw StateError(
     'sendSmartTransaction: expected a base64-encoded transaction to submit, '
     'but none of the ${entries.length} entries was a String.',

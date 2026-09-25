@@ -23,7 +23,6 @@ WalletRegistry createPlatformWalletRegistry({
   // surfaces alongside the browser-registered Wallet Standard wallets.
   if (isAndroidMobileBrowser()) {
     final backend = NativeMobileWalletBackend();
-
     if (backend.isSupported) {
       wallets.add(
         MobileWallet(backend: backend, identity: appIdentity, chain: chain),
@@ -39,7 +38,6 @@ WalletRegistry createPlatformWalletRegistry({
 /// association can launch an installed wallet app.
 bool isAndroidMobileBrowser() {
   final userAgent = web.window.navigator.userAgent.toLowerCase();
-
   return userAgent.contains('android');
 }
 
@@ -62,7 +60,6 @@ class BrowserWalletRegistry extends WalletRegistryController {
 
     void handleEvent(web.Event event) {
       final detail = (event as web.CustomEvent).detail;
-
       if (detail == null || !detail.isA<JSFunction>()) return;
       (detail as JSFunction).callAsFunction(null, _api());
     }
@@ -78,7 +75,6 @@ class BrowserWalletRegistry extends WalletRegistryController {
         web.CustomEventInit(detail: _api()),
       ),
     );
-
     for (final wallet in additionalWallets) {
       register(wallet);
     }
@@ -88,28 +84,23 @@ class BrowserWalletRegistry extends WalletRegistryController {
     final api = JSObject();
     JSFunction registerWallet(JSObject raw) {
       final existing = _entries.where((entry) => entry.raw == raw).firstOrNull;
-
       if (existing != null) return (() {}).toJS;
       try {
         final wallet = _BrowserWallet(raw);
         _entries.add((raw: raw, wallet: wallet));
         register(wallet);
-
         return (() => _unregister(raw)).toJS;
-
       } on Object {
         return (() {}).toJS;
       }
     }
 
     api['register'] = registerWallet.toJS;
-
     return api;
   }
 
   void _unregister(JSObject raw) {
     final index = _entries.indexWhere((entry) => entry.raw == raw);
-
     if (index < 0) return;
     final entry = _entries.removeAt(index);
     unregister(entry.wallet);
@@ -118,18 +109,15 @@ class BrowserWalletRegistry extends WalletRegistryController {
   @override
   Future<void> dispose() async {
     final listener = _listener;
-
     if (listener != null) {
       web.window.removeEventListener(
         'wallet-standard:register-wallet',
         listener,
       );
     }
-
     for (final entry in _entries) {
       entry.wallet.dispose();
     }
-
     _entries.clear();
     await super.dispose();
   }
@@ -158,16 +146,13 @@ class _BrowserWallet implements Wallet {
   /// still registers and renders.
   WalletIcon _resolveIcon(JSObject raw, String name) {
     final value = _optionalString(raw, 'icon');
-
     if (value != null) {
       try {
         return WalletIcon(value);
-
       } on FormatException {
         // Fall through to the bundled fallback logos.
       }
     }
-
     return walletLogoFallback(name) ?? genericWalletLogo();
   }
 
@@ -188,7 +173,6 @@ class _BrowserWallet implements Wallet {
 
   JSObject accountObject(WalletAccount account) {
     final rawAccount = _accountObjects[account.address];
-
     if (rawAccount != null) return rawAccount;
     throw const WalletStandardException(
       WalletStandardErrorCode.invalidRequest,
@@ -201,15 +185,12 @@ class _BrowserWallet implements Wallet {
     _accounts = _accountsFromRaw(_array<JSObject>(raw, 'accounts'));
     final rawFeatures = _object(raw, 'features');
     final features = <String, WalletFeature>{};
-
     for (final identifier in _keys(rawFeatures)) {
       final feature = rawFeatures[identifier];
-
       if (feature != null && feature.isA<JSObject>()) {
         features[identifier] = _feature(identifier, feature as JSObject);
       }
     }
-
     _features = Map.unmodifiable(features);
     _eventUnsubscribe?.call();
     _eventUnsubscribe =
@@ -221,11 +202,9 @@ class _BrowserWallet implements Wallet {
 
   void _handleChange(StandardWalletChange change) {
     if (change.chains != null) _chains = List.unmodifiable(change.chains!);
-
     if (change.features != null) {
       _features = Map.unmodifiable(change.features!);
     }
-
     if (change.accounts != null) {
       _accounts = List.unmodifiable(change.accounts!);
     }
@@ -269,12 +248,10 @@ class _BrowserWallet implements Wallet {
 
   List<WalletAccount> _accountsFromRaw(Iterable<JSObject> values) {
     _accountObjects.clear();
-
     return List.unmodifiable(
       values.map((value) {
         final account = _account(value);
         _accountObjects[account.address] = value;
-
         return account;
       }),
     );
@@ -305,7 +282,6 @@ class _BrowserConnect extends _BrowserFeature
     wallet._accounts = wallet._accountsFromRaw(
       _array<JSObject>(output, 'accounts'),
     );
-
     return StandardConnectOutput(wallet.accounts);
   }
 }
@@ -330,14 +306,11 @@ class _BrowserEvents extends _BrowserFeature implements StandardEventsFeature {
   ) {
     void handle(JSObject value) {
       Map<String, WalletFeature>? features;
-
       if (value.has('features')) {
         final rawFeatures = _object(value, 'features');
         features = {};
-
         for (final identifier in _keys(rawFeatures)) {
           final feature = rawFeatures[identifier];
-
           if (feature != null && feature.isA<JSObject>()) {
             features[identifier] = wallet._feature(
               identifier,
@@ -346,7 +319,6 @@ class _BrowserEvents extends _BrowserFeature implements StandardEventsFeature {
           }
         }
       }
-
       final accounts = value.has('accounts')
           ? wallet._accountsFromRaw(_array<JSObject>(value, 'accounts'))
           : null;
@@ -398,7 +370,6 @@ class _BrowserSignTransaction extends _BrowserFeature
       'signTransaction',
       inputs.map((input) => _transactionInput(wallet, input)).toList(),
     );
-
     return outputs
         .map(
           (output) =>
@@ -423,7 +394,6 @@ class _BrowserSignAndSendTransaction extends _BrowserFeature
       'signAndSendTransaction',
       inputs.map((input) => _transactionInput(wallet, input)).toList(),
     );
-
     return outputs
         .map(
           (output) =>
@@ -453,7 +423,6 @@ class _BrowserSignAndSendAll extends _BrowserFeature
     final outputs = await _promiseObjects(raw, 'signAndSendAllTransactions', [
       request,
     ]);
-
     return outputs.map((output) {
       if (_string(output, 'status') == 'fulfilled') {
         return SolanaSignAndSendAllSuccess(
@@ -462,7 +431,6 @@ class _BrowserSignAndSendAll extends _BrowserFeature
           ),
         );
       }
-
       return SolanaSignAndSendAllFailure(
         output['reason'].dartify() ?? 'Wallet rejected the transaction',
       );
@@ -485,7 +453,6 @@ class _BrowserSignMessage extends _BrowserFeature
         ..['message'] = input.message.toJS;
     }).toList();
     final outputs = await _promiseObjects(raw, 'signMessage', requests);
-
     return outputs
         .map(
           (output) => SolanaSignMessageOutput(
@@ -525,11 +492,9 @@ class _BrowserSignIn extends _BrowserFeature implements SolanaSignInFeature {
             .toList()
             .toJS;
       }
-
       return value;
     }).toList();
     final outputs = await _promiseObjects(raw, 'signIn', requests);
-
     return outputs
         .map(
           (output) => SolanaSignInOutput(
@@ -568,7 +533,6 @@ class _BrowserSignOffchainMessage extends _BrowserFeature
             .toJS;
     }).toList();
     final outputs = await _promiseObjects(raw, 'signOffchainMessage', requests);
-
     return outputs
         .map(
           (output) => SolanaSignOffchainMessageOutput(
@@ -590,7 +554,6 @@ JSObject _transactionInput(
     ..['transaction'] = input.transaction.toJS;
   _setString(value, 'chain', input.chain);
   final options = input.options;
-
   if (options != null) {
     final rawOptions = JSObject();
     _setString(
@@ -598,26 +561,20 @@ JSObject _transactionInput(
       'preflightCommitment',
       options.preflightCommitment?.name,
     );
-
     if (options.minContextSlot != null) {
       rawOptions['minContextSlot'] = options.minContextSlot!.toJS;
     }
-
     if (options is SolanaSignAndSendTransactionOptions) {
       _setString(rawOptions, 'commitment', options.commitment?.name);
-
       if (options.skipPreflight != null) {
         rawOptions['skipPreflight'] = options.skipPreflight!.toJS;
       }
-
       if (options.maxRetries != null) {
         rawOptions['maxRetries'] = options.maxRetries!.toJS;
       }
     }
-
     value['options'] = rawOptions;
   }
-
   return value;
 }
 
@@ -647,7 +604,6 @@ Future<List<JSObject>> _promiseObjects(
         arguments,
       )
       .toDart;
-
   return output.toDart;
 }
 
@@ -665,7 +621,6 @@ String _string(JSObject value, String property) =>
 
 String? _optionalString(JSObject value, String property) {
   final item = value[property];
-
   return item != null && item.isA<JSString>()
       ? (item as JSString).toDart
       : null;

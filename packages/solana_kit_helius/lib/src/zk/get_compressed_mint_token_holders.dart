@@ -10,6 +10,5 @@ Future<CompressedTokenAccountList> zkGetCompressedMintTokenHolders(
     'getCompressedMintTokenHolders',
     request.toJson(),
   );
-
   return CompressedTokenAccountList.fromJson(result! as Map<String, Object?>);
 }

@@ -23,11 +23,9 @@ Encoder<List<Object?>> getTupleEncoder(
       items.length,
       value.length,
     );
-
     for (var i = 0; i < items.length; i++) {
       offset = items[i].write(value[i], bytes, offset);
     }
-
     return offset;
   }
 
@@ -44,7 +42,6 @@ Encoder<List<Object?>> getTupleEncoder(
       for (var i = 0; i < items.length; i++) {
         total += getEncodedSize(value[i], items[i]);
       }
-
       return total;
     },
     write: writeImpl,
@@ -64,13 +61,11 @@ Decoder<List<Object?>> getTupleDecoder(List<Decoder<Object?>> items) {
   (List<Object?>, int) readImpl(Uint8List bytes, int currentOffset) {
     var offset = currentOffset;
     final values = <Object?>[];
-
     for (final item in items) {
       final (value, newOffset) = item.read(bytes, offset);
       values.add(value);
       offset = newOffset;
     }
-
     return (values, offset);
   }
 
@@ -134,7 +129,6 @@ Decoder<(T1, T2)> getTuple2Decoder<T1, T2>(
     ]),
     (values, _, _) {
       assert(values.length == 2, 'Expected a tuple of 2 elements');
-
       return (values[0] as T1, values[1] as T2);
     },
   );

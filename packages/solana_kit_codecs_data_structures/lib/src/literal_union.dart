@@ -11,7 +11,6 @@ Encoder<Object?> getLiteralUnionEncoder(
   Encoder<num>? size,
 }) {
   final discriminator = size ?? getU8Encoder();
-
   return transformEncoder<num, Object?>(discriminator, (variant) {
     final index = variants.indexOf(variant);
     if (index < 0) {
@@ -20,7 +19,6 @@ Encoder<Object?> getLiteralUnionEncoder(
         'variants': variants,
       });
     }
-
     return index;
   });
 }
@@ -34,7 +32,6 @@ Decoder<Object?> getLiteralUnionDecoder(
   Decoder<num>? size,
 }) {
   final discriminator = size ?? getU8Decoder();
-
   return transformDecoder<num, Object?>(discriminator, (index, bytes, offset) {
     final i = index.toInt();
     if (i < 0 || i >= variants.length) {
@@ -47,7 +44,6 @@ Decoder<Object?> getLiteralUnionDecoder(
         },
       );
     }
-
     return variants[i];
   });
 }

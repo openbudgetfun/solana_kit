@@ -1018,12 +1018,10 @@ void main() {
         getSizeFromValue: (value) => 8,
         write: (value, bytes, offset) {
           final u64 = getU64Encoder();
-
           return u64.write(value, bytes, offset);
         },
         read: (bytes, offset) {
           final u64 = getU64Decoder();
-
           return u64.read(bytes, offset);
         },
         maxSize: 8,

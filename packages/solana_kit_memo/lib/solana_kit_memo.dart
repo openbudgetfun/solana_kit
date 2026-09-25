@@ -81,6 +81,7 @@
 ///
 /// Use `supportedMemoProgramAddresses` when you only need to test whether an
 /// instruction targets a Memo program.
+
 library;
 
 // Hide memoProgramAddress; it's already provided by

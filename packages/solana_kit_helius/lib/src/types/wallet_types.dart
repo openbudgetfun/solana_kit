@@ -9,7 +9,6 @@ class GetIdentityRequest {
   /// Creates a [GetIdentityRequest] from a JSON map.
   factory GetIdentityRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return GetIdentityRequest(address: r.requireString('address'));
   }
 
@@ -28,7 +27,6 @@ class GetBatchIdentityRequest {
   /// Creates a [GetBatchIdentityRequest] from a JSON map.
   factory GetBatchIdentityRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return GetBatchIdentityRequest(
       addresses: r.requireList<String>('addresses'),
     );
@@ -49,7 +47,6 @@ class GetBalancesRequest {
   /// Creates a [GetBalancesRequest] from a JSON map.
   factory GetBalancesRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return GetBalancesRequest(address: r.requireString('address'));
   }
 
@@ -74,7 +71,6 @@ class GetHistoryRequest {
   /// Creates a [GetHistoryRequest] from a JSON map.
   factory GetHistoryRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return GetHistoryRequest(
       address: r.requireString('address'),
       before: r.optString('before'),
@@ -102,13 +98,9 @@ class GetHistoryRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'address': address,
-
     if (before != null) 'before': before,
-
     if (until != null) 'until': until,
-
     if (limit != null) 'limit': limit,
-
     if (type != null) 'type': type,
   };
 }
@@ -126,7 +118,6 @@ class GetTransfersRequest {
   /// Creates a [GetTransfersRequest] from a JSON map.
   factory GetTransfersRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return GetTransfersRequest(
       address: r.requireString('address'),
       before: r.optString('before'),
@@ -150,11 +141,8 @@ class GetTransfersRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'address': address,
-
     if (before != null) 'before': before,
-
     if (until != null) 'until': until,
-
     if (limit != null) 'limit': limit,
   };
 }
@@ -167,7 +155,6 @@ class GetFundedByRequest {
   /// Creates a [GetFundedByRequest] from a JSON map.
   factory GetFundedByRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return GetFundedByRequest(address: r.requireString('address'));
   }
 
@@ -201,7 +188,6 @@ class GetBalanceAtRequest {
   /// Creates a [GetBalanceAtRequest] from a JSON map.
   factory GetBalanceAtRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return GetBalanceAtRequest(
       wallet: r.requireString('wallet'),
       mint: r.requireString('mint'),
@@ -237,11 +223,8 @@ class GetBalanceAtRequest {
   Map<String, Object?> toJson() => {
     'wallet': wallet,
     'mint': mint,
-
     if (time != null) 'time': time,
-
     if (datetime != null) 'datetime': datetime,
-
     if (slot != null) 'slot': slot,
   };
 }
@@ -258,7 +241,6 @@ class BalanceAtSource {
   /// Creates a [BalanceAtSource] from a JSON map.
   factory BalanceAtSource.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return BalanceAtSource(
       slot: r.requireInt('slot'),
       blockTime: r.optInt('blockTime'),
@@ -278,7 +260,6 @@ class BalanceAtSource {
   /// Serializes this source to a JSON map.
   Map<String, Object?> toJson() => {
     'slot': slot,
-
     if (blockTime != null) 'blockTime': blockTime,
     'signature': signature,
   };
@@ -304,7 +285,6 @@ class GetBalanceAtResponse {
   /// Creates a [GetBalanceAtResponse] from a JSON map.
   factory GetBalanceAtResponse.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return GetBalanceAtResponse(
       wallet: r.requireString('wallet'),
       mint: r.requireString('mint'),
@@ -359,7 +339,6 @@ class GetBalanceAtResponse {
     'balanceRaw': balanceRaw,
     'decimals': decimals,
     'requested': requested.toJson(),
-
     if (asOf != null) 'asOf': asOf!.toJson(),
   };
 }
@@ -376,7 +355,6 @@ class GetBalanceAtRequested {
   /// Creates a [GetBalanceAtRequested] from a JSON map.
   factory GetBalanceAtRequested.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return GetBalanceAtRequested(
       time: r.optInt('time'),
       slot: r.optInt('slot'),
@@ -396,9 +374,7 @@ class GetBalanceAtRequested {
   /// Serializes this echo to a JSON map.
   Map<String, Object?> toJson() => {
     if (time != null) 'time': time,
-
     if (slot != null) 'slot': slot,
-
     if (datetime != null) 'datetime': datetime,
   };
 }
@@ -411,7 +387,6 @@ class Identity {
   /// Creates an [Identity] from a JSON map.
   factory Identity.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return Identity(
       name: r.optString('name'),
       pfpUrl: r.optString('pfpUrl'),
@@ -435,9 +410,7 @@ class Identity {
   /// Serializes this identity to a JSON map.
   Map<String, Object?> toJson() => {
     if (name != null) 'name': name,
-
     if (pfpUrl != null) 'pfpUrl': pfpUrl,
-
     if (domain != null) 'domain': domain,
     'socials': socials,
   };
@@ -451,7 +424,6 @@ class WalletBalances {
   /// Creates a [WalletBalances] from a JSON map.
   factory WalletBalances.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return WalletBalances(
       nativeBalance: r.requireInt('nativeBalance'),
       tokens: r.requireDecodedList('tokens', WalletTokenBalance.fromJson),
@@ -484,7 +456,6 @@ class WalletTokenBalance {
   /// Creates a [WalletTokenBalance] from a JSON map.
   factory WalletTokenBalance.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return WalletTokenBalance(
       mint: r.requireString('mint'),
       amount: r.requireInt('amount'),
@@ -510,7 +481,6 @@ class WalletTokenBalance {
     'mint': mint,
     'amount': amount,
     'decimals': decimals,
-
     if (tokenAccount != null) 'tokenAccount': tokenAccount,
   };
 }
@@ -523,7 +493,6 @@ class WalletHistory {
   /// Creates a [WalletHistory] from a JSON map.
   factory WalletHistory.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return WalletHistory(
       transactions: r.requireDecodedList(
         'transactions',
@@ -556,7 +525,6 @@ class WalletTransfer {
   /// Creates a [WalletTransfer] from a JSON map.
   factory WalletTransfer.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return WalletTransfer(
       signature: r.requireString('signature'),
       timestamp: r.optInt('timestamp'),
@@ -588,12 +556,10 @@ class WalletTransfer {
   /// Serializes this transfer to a JSON map.
   Map<String, Object?> toJson() => {
     'signature': signature,
-
     if (timestamp != null) 'timestamp': timestamp,
     'from': from,
     'to': to,
     'amount': amount,
-
     if (mint != null) 'mint': mint,
   };
 }
@@ -606,7 +572,6 @@ class FundedByResult {
   /// Creates a [FundedByResult] from a JSON map.
   factory FundedByResult.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return FundedByResult(
       transactions: r.requireDecodedList(
         'transactions',
@@ -637,7 +602,6 @@ class FundedByTransaction {
   /// Creates a [FundedByTransaction] from a JSON map.
   factory FundedByTransaction.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
-
     return FundedByTransaction(
       signature: r.requireString('signature'),
       source: r.requireString('source'),
@@ -663,7 +627,6 @@ class FundedByTransaction {
     'signature': signature,
     'source': source,
     'amount': amount,
-
     if (timestamp != null) 'timestamp': timestamp,
   };
 }

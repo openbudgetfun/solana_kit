@@ -28,7 +28,6 @@ export function getDiscriminatorValidationFragment(
   scope: RenderScope,
 ): Fragment {
   const discriminators = node.discriminators ?? [];
-
   if (discriminators.length === 0) return emptyFragment();
 
   const fields = getDiscriminatorFields(node);
@@ -49,7 +48,6 @@ export function getDiscriminatorValidationFragment(
             `Field discriminator "${discriminator.name}" on ${node.kind} "${node.name}" must reference a field with a default value.`,
           );
         }
-
         return getConstantValidationFragment(
           {
             kind: "constantValueNode",
@@ -76,11 +74,15 @@ export function getDiscriminatorValidationFragment(
         // example — are legitimately longer, so the check is a minimum.
         const comparison =
           node.kind === "accountNode" ? "<" : "!=";
-
         return fragment`if (bytes.length - offset ${fragmentFromString(comparison)} ${fragmentFromString(String(discriminator.size))}) {
   throw ${use("SolanaError", "solanaErrors")}(
+    ${use("SolanaErrorCode", "solanaErrors")}.codecsInvalidByteLength,
     {
       'codecDescription': '${fragmentFromString(node.name as string)} discriminator',
+      'expected': ${fragmentFromString(String(discriminator.size))},
+      'bytesLength': bytes.length - offset,
+    },
+  );
 }`;
       }
     }
@@ -105,7 +107,6 @@ function getConstantValidationFragment(
     constant.value,
     manifest.type.content,
   );
-
   return fragment`${use("getConstantDecoder", "solanaCodecsDataStructures")}(
   ${manifest.encoder}.encode(${value}),
 ).read(bytes, offset + ${fragmentFromString(String(discriminatorOffset))});`;
@@ -117,7 +118,6 @@ function getDiscriminatorFields(
   if (node.kind === "accountNode") {
     return resolveNestedTypeNode(node.data).fields ?? [];
   }
-
   return (node.arguments ?? []).map(
     (argument) =>
       ({

@@ -21,14 +21,11 @@ TransactionMessage appendTransactionMessageInstructionPlan(
           instruction,
           messageSoFar,
         );
-
       case MessagePackerInstructionPlan(:final getMessagePacker):
         final packer = getMessagePacker();
-
         while (!packer.done()) {
           messageSoFar = packer.packMessageToCapacity(messageSoFar);
         }
-
       default:
         // Should not happen as flattenInstructionPlan only returns
         // SingleInstructionPlan and MessagePackerInstructionPlan.

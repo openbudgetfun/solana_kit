@@ -53,46 +53,35 @@ Future<Address> deriveExtraAccountAddress(
   switch (account) {
     case ExtraAccountAddress(:final address):
       return address;
-
     case ExtraAccountPreconfiguredProgram():
       final (pda, _) = await findPreconfiguredProgramPda(
         programAddress: programAddress,
       );
-
       return pda;
-
     case ExtraAccountPreconfiguredCollection():
       final (pda, _) = await findPreconfiguredPda(
         key: _require(collection, 'collection'),
         programAddress: programAddress,
       );
-
       return pda;
-
     case ExtraAccountPreconfiguredOwner():
       final (pda, _) = await findPreconfiguredPda(
         key: _require(owner, 'owner'),
         programAddress: programAddress,
       );
-
       return pda;
-
     case ExtraAccountPreconfiguredRecipient():
       final (pda, _) = await findPreconfiguredPda(
         key: _require(recipient, 'recipient'),
         programAddress: programAddress,
       );
-
       return pda;
-
     case ExtraAccountPreconfiguredAsset():
       final (pda, _) = await findPreconfiguredPda(
         key: _require(asset, 'asset'),
         programAddress: programAddress,
       );
-
       return pda;
-
     case ExtraAccountCustomPda(:final customProgramId, :final seeds):
       final (pda, _) = await getProgramDerivedAddress(
         programAddress:
@@ -105,7 +94,6 @@ Future<Address> deriveExtraAccountAddress(
           recipient: recipient,
         ),
       );
-
       return pda;
   }
 }
@@ -144,6 +132,5 @@ Address _require(Address? value, String variant) {
       'deriveExtraAccountAddress requires `$variant` for this extra account',
     );
   }
-
   return value;
 }

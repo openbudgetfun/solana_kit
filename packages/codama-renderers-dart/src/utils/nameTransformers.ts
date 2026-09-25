@@ -3,6 +3,8 @@ import type { CamelCaseString } from "@codama/nodes";
 /**
  * Naming convention transformers for Dart code generation.
  */
+
+/** Convert a string to PascalCase */
 export function pascalCase(str: string): string {
   assertSafeName(str);
 
@@ -41,7 +43,6 @@ export function escapeDartIdentifier(name: string): string {
 export function camelCase(str: string): string {
   const pascal = pascalCase(str);
   const cased = pascal.charAt(0).toLowerCase() + pascal.slice(1);
-
   return escapeDartIdentifier(cased);
 }
 

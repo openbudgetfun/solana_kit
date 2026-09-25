@@ -21,13 +21,11 @@ final BigInt _i128Max = BigInt.parse('170141183460469231731687303715884105727');
 /// Defaults to little-endian byte order.
 FixedSizeEncoder<BigInt> getI128Encoder([NumberCodecConfig? config]) {
   final endian = config?.endian ?? Endian.little;
-
   return FixedSizeEncoder<BigInt>(
     fixedSize: 16,
     write: (value, bytes, offset) {
       assertBigIntIsBetweenForCodec('i128', _i128Min, _i128Max, value);
       writeBigIntSigned(bytes, offset, 16, value, endian);
-
       return offset + 16;
     },
   );

@@ -9,6 +9,5 @@ Future<HeliusAsset> dasGetAsset(
   GetAssetRequest request,
 ) async {
   final result = await rpcClient.call('getAsset', request.toJson());
-
   return HeliusAsset.fromJson(result! as Map<String, Object?>);
 }

@@ -385,7 +385,6 @@ BigInt _asBigInt(Object value) =>
 
 AnchorCoder _readCoder(String idlPath) {
   final file = File(resolveWorkspaceArtifactPath(idlPath));
-
   return AnchorCoder(AnchorIdlProgram.parse(file.readAsStringSync()));
 }
 
@@ -404,14 +403,12 @@ Future<Map<String, AnchorValue>> _readCounter(
   expect(response.value!['owner'], anchorCompatibilityProgram.value);
   final encoded = response.value!['data']! as List<Object?>;
   final bytes = base64Decode(encoded.first! as String);
-
   return coder.decodeAccount('Counter', bytes).data;
 }
 
 Future<Object> _captureFailure(Future<Object?> Function() action) async {
   try {
     await action();
-
   } on Object catch (error) {
     return error;
   }
@@ -425,6 +422,5 @@ Object? _customProgramErrorCode(Object error) {
     return null;
   }
   final code = cause.context['code'];
-
   return code is BigInt ? code.toInt() : code;
 }

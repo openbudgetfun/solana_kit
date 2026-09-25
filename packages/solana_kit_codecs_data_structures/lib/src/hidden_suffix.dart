@@ -15,7 +15,6 @@ Encoder<T> getHiddenSuffixEncoder<T>(
     ...suffixedEncoders.cast<Encoder<Object?>>(),
   ];
   final tupleEncoder = getTupleEncoder(allEncoders);
-
   return transformEncoder<List<Object?>, T>(tupleEncoder, (value) {
     return <Object?>[
       value,
@@ -39,7 +38,6 @@ Decoder<T> getHiddenSuffixDecoder<T>(
     ...suffixedDecoders.cast<Decoder<Object?>>(),
   ];
   final tupleDecoder = getTupleDecoder(allDecoders);
-
   return transformDecoder<List<Object?>, T>(
     tupleDecoder,
     (tuple, bytes, offset) => tuple[0] as T,

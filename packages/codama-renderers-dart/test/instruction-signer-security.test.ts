@@ -37,6 +37,8 @@ import 'instructions/action.dart';
 
 void main() {
   const program = Address('11111111111111111111111111111111');
+  const authority = Address('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
+  ${body}
 }
 `);
   const result = spawnSync("dart", [`--packages=${packageConfig}`, file], {

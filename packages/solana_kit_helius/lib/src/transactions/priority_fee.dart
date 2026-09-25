@@ -62,7 +62,6 @@ BigInt? _toWholeLamports(Object cap) => switch (cap) {
 BigInt _toLamports(int rate, int units) {
   final totalMicroLamports =
       BigInt.from(rate) * BigInt.from(math.max(0, units));
-
   return (totalMicroLamports + microLamportsPerLamport - BigInt.one) ~/
       microLamportsPerLamport;
 }
@@ -85,7 +84,6 @@ ResolvedPriorityFee resolvePriorityFee(ResolvePriorityFeeInput input) {
 
   if (input.lamportsCap != null && input.units > 0) {
     final cap = _toWholeLamports(input.lamportsCap!);
-
     if (cap != null) {
       final clampedRate =
           (cap * microLamportsPerLamport) ~/ BigInt.from(input.units);
@@ -95,7 +93,6 @@ ResolvedPriorityFee resolvePriorityFee(ResolvePriorityFeeInput input) {
 
   rate = rate.isFinite ? math.max(0, rate.floorToDouble()) : 0;
   final wholeRate = rate.toInt();
-
   return ResolvedPriorityFee(
     rate: wholeRate,
     lamports: _toLamports(wholeRate, input.units),

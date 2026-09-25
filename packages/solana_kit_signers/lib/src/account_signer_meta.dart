@@ -29,11 +29,9 @@ class AccountSignerMeta extends AccountMeta {
 /// de-duplicated.
 List<Object> getSignersFromInstruction(Instruction instruction) {
   final accounts = instruction.accounts;
-
   if (accounts == null) return [];
 
   final signers = <Object>[];
-
   for (final account in accounts) {
     if (account is AccountSignerMeta) {
       signers.add(account.signer);

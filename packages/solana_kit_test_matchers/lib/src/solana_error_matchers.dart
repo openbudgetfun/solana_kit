@@ -37,7 +37,6 @@ Matcher isSolanaErrorWithCodeAndContext(
   Map<String, Object?> expectedContext,
 ) {
   var matcher = isSolanaErrorWithCode(code);
-
   for (final entry in expectedContext.entries) {
     matcher = isA<SolanaError>()
         .having((e) => e.code, 'code', code)
@@ -47,7 +46,6 @@ Matcher isSolanaErrorWithCodeAndContext(
           entry.value,
         );
   }
-
   return matcher;
 }
 

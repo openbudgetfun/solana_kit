@@ -107,7 +107,6 @@ Future<OAuthTokenResponse> oauthTokenExchange(
     ).query;
     final headers = <String, String>{
       'Content-Type': 'application/x-www-form-urlencoded',
-
       if (request.userAgent != null) 'User-Agent': request.userAgent!,
     };
     final response = await httpClient.post(

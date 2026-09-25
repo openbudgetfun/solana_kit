@@ -671,12 +671,10 @@ VariableSizeCodec<String, String> _getVariableSizeCodec() {
       for (var i = 0; i < value.length; i++) {
         bytes[offset + i] = value.codeUnitAt(i);
       }
-
       return offset + value.length;
     },
     read: (bytes, offset) {
       final value = String.fromCharCodes(bytes, offset);
-
       return (value, bytes.length);
     },
   );

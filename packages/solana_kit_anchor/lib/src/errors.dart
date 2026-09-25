@@ -28,7 +28,6 @@ AnchorProgramError anchorProgramError(
   AnchorIdlProgram? idl,
 }) {
   final custom = idl?.errors[code];
-
   if (custom != null) {
     return AnchorProgramError._(
       code,
@@ -36,9 +35,7 @@ AnchorProgramError anchorProgramError(
       custom.msg ?? 'Custom program error: $code',
     );
   }
-
   final standard = standardAnchorErrorMessages[code];
-
   return AnchorProgramError._(
     code,
     standard?.name ?? 'Unknown',

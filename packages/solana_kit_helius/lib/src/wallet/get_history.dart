@@ -14,15 +14,11 @@ Future<List<EnhancedTransaction>> walletGetHistory(
   GetHistoryRequest request,
 ) async {
   final queryParams = <String, String>{};
-
   if (request.before != null) queryParams['before'] = request.before!;
-
   if (request.until != null) queryParams['until'] = request.until!;
-
   if (request.limit != null) {
     queryParams['limit'] = request.limit.toString();
   }
-
   if (request.type != null) queryParams['type'] = request.type!;
 
   final path = '/v0/addresses/${request.address}/transactions?api-key=$apiKey';
@@ -31,7 +27,6 @@ Future<List<EnhancedTransaction>> walletGetHistory(
     queryParameters: queryParams.isNotEmpty ? queryParams : null,
   );
   final list = result! as List<Object?>;
-
   return list
       .cast<Map<String, Object?>>()
       .map(EnhancedTransaction.fromJson)

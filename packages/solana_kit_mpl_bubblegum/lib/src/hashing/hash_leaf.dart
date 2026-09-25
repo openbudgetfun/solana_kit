@@ -136,7 +136,6 @@ Uint8List hashAssetData(Uint8List? assetData) {
   if (assetData == null || assetData.isEmpty) {
     return keccak256(Uint8List(0));
   }
-
   return keccak256(assetData);
 }
 
@@ -145,11 +144,9 @@ Uint8List hashAssetData(Uint8List? assetData) {
 /// This is a helper for encoding leaf indices as 8-byte LE values.
 Uint8List _writeUInt64LE(int value) {
   final buffer = Uint8List(8);
-
   for (var i = 0; i < 8; i++) {
     // ignore: avoid_js_rounding
     buffer[i] = (value >> (8 * i)) & 0xFF;
   }
-
   return buffer;
 }

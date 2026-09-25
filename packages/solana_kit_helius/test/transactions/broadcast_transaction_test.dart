@@ -21,7 +21,6 @@ void main() {
           'skipPreflight': true,
           'maxRetries': 0,
         });
-
         return http.Response(
           jsonEncode(<String, Object?>{
             'jsonrpc': '2.0',

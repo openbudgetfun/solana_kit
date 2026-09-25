@@ -97,7 +97,6 @@ OffchainMessageEnvelope signOffchainMessageEnvelope(
     offchainMessageEnvelope,
   );
   assertIsFullySignedOffchainMessageEnvelope(result);
-
   return result;
 }
 
@@ -111,12 +110,9 @@ bool isFullySignedOffchainMessageEnvelope(
 ) {
   try {
     assertIsFullySignedOffchainMessageEnvelope(offchainMessage);
-
     return true;
-
   } on SolanaError {
     return false;
-
   } on FormatException {
     return false;
   }
@@ -131,7 +127,6 @@ void assertIsFullySignedOffchainMessageEnvelope(
   OffchainMessageEnvelope offchainMessage,
 ) {
   final missingSigs = <Address>[];
-
   for (final address in _getRequiredSignatoryAddresses(offchainMessage)) {
     if (offchainMessage.signatures[address] == null) {
       missingSigs.add(address);
@@ -174,7 +169,6 @@ void verifyOffchainMessageEnvelope(
         signature,
         offchainMessageEnvelope.content,
       );
-
       if (!isValid) {
         signatoriesWithInvalidSignatures.add(addr);
       }

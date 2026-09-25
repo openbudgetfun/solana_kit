@@ -101,7 +101,6 @@ class ReactiveActionStore<TArgs extends List<Object?>, TResult> {
     _subscribers.add(callback);
 
     var isSubscribed = true;
-
     return () {
       if (!isSubscribed) return;
       isSubscribed = false;
@@ -174,7 +173,6 @@ class ReactiveActionStore<TArgs extends List<Object?>, TResult> {
       if (dispatch.isInternallyCancelled) {
         Error.throwWithStackTrace(dispatch.internalReason!, StackTrace.current);
       }
-
       if (dispatch.signal.isCancelled) {
         final error =
             dispatch.signal.reason ??
@@ -183,7 +181,6 @@ class ReactiveActionStore<TArgs extends List<Object?>, TResult> {
             );
         Error.throwWithStackTrace(error, StackTrace.current);
       }
-
       if (!_isCurrent(dispatch)) {
         throw const ReactiveActionCancellationException(
           'superseded before completion',
@@ -196,9 +193,7 @@ class ReactiveActionStore<TArgs extends List<Object?>, TResult> {
           result: result,
         ),
       );
-
       return result;
-
     } on Object catch (error, stackTrace) {
       if (dispatch.isInternallyCancelled || !_isCurrent(dispatch)) {
         final cancellation =
@@ -249,7 +244,6 @@ class ReactiveActionStore<TArgs extends List<Object?>, TResult> {
         );
       }
     });
-
     return completer.future;
   }
 
@@ -296,7 +290,6 @@ class ReactiveActionStore<TArgs extends List<Object?>, TResult> {
       return;
     }
     _snapshot = next;
-
     for (final subscriber in List<ReactiveActionSubscriber>.of(_subscribers)) {
       subscriber();
     }

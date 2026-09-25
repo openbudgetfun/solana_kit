@@ -12,18 +12,14 @@ String? firstString(Map<String, Object?> map, List<String> paths) {
   for (final path in paths) {
     var current = map;
     final segments = path.split('.');
-
     for (var i = 0; i < segments.length; i++) {
       final value = current[segments[i]];
-
       if (i == segments.length - 1) {
         if (value is String) {
           return value;
         }
-
         break;
       }
-
       if (value is Map<String, Object?>) {
         current = value;
       } else {
@@ -31,7 +27,6 @@ String? firstString(Map<String, Object?> map, List<String> paths) {
       }
     }
   }
-
   return null;
 }
 
@@ -41,13 +36,10 @@ String asString(Object? value) {
   if (value == null || value == false) {
     return '';
   }
-
   if (value is num && value == 0) {
     return '';
   }
-
   final stringValue = value.toString();
-
   return stringValue == 'null' ? '' : stringValue;
 }
 
@@ -67,7 +59,6 @@ num numberOrDefault(Object? value, num fallback) {
   if (value is num && value.isFinite) {
     return value;
   }
-
   return fallback;
 }
 
@@ -82,21 +73,17 @@ bool isRecord(Object? value) => value is Map<String, Object?>;
 Object? readDeep(Map<String, Object?> map, String path) {
   var current = map;
   final segments = path.split('.');
-
   for (var i = 0; i < segments.length; i++) {
     final value = current[segments[i]];
-
     if (i == segments.length - 1) {
       return value;
     }
-
     if (value is Map<String, Object?>) {
       current = value;
     } else {
       return null;
     }
   }
-
   return null;
 }
 
@@ -218,7 +205,6 @@ final class InstallFileDetails {
         optionalString(release['releaseFileName']) ?? inferFileNameFromUrl(url);
     final mimeType =
         optionalString(installFile['mimeType']) ?? inferMimeType(fileName);
-
     return InstallFileDetails(
       uri: url,
       mimeType: mimeType,
@@ -479,9 +465,7 @@ final class SubmitToStoreInput {
     'releaseId': releaseId,
     'whatsNew': whatsNew,
     'criticalUpdate': criticalUpdate,
-
     if (testingInstructions != null) 'testingInstructions': testingInstructions,
-
     if (isResubmission != null) 'isResubmission': isResubmission,
     'attestation': {
       'payload': attestationPayload,

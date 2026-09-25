@@ -48,7 +48,6 @@ void main() {
         url: 'https://mainnet.helius-rpc.com/?api-key=test-key',
         client: MockClient((request) async {
           requests.add(request);
-
           return http.Response(
             jsonEncode({
               'jsonrpc': '2.0',

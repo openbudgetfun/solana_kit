@@ -10,7 +10,6 @@ void main() {
       final store = createReactiveActionStore<List<Object?>, String>(
         (signal, args) async {
           signals.add(signal);
-
           return args.single! as String;
         },
       );
@@ -31,7 +30,6 @@ void main() {
           signals.add(signal);
           final result = Completer<String>();
           results.add(result);
-
           return result.future;
         },
       );
@@ -76,7 +74,6 @@ void main() {
             await firstFailure.future;
             throw StateError('late loser');
           }
-
           return 'new';
         },
       );
@@ -100,7 +97,6 @@ void main() {
         final store = createReactiveActionStore<List<Object?>, String>(
           (actionSignal, args) {
             signal = actionSignal;
-
             return result.future;
           },
         );
@@ -131,7 +127,6 @@ void main() {
         final store = createReactiveActionStore<List<Object?>, String>(
           (actionSignal, args) {
             signal = actionSignal;
-
             return result.future;
           },
         );
@@ -161,7 +156,6 @@ void main() {
       final store = createReactiveActionStore<List<Object?>, String>(
         (signal, args) {
           actionSignal = signal;
-
           return Completer<String>().future;
         },
       );
@@ -206,7 +200,6 @@ void main() {
         final store = createReactiveActionStore<List<Object?>, String>(
           (signal, args) async {
             invocations++;
-
             return 'unexpected';
           },
         );

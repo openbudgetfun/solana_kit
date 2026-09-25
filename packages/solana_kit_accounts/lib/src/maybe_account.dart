@@ -122,7 +122,6 @@ void assertAccountExists<TData>(MaybeAccount<TData> account) {
 /// accounts do not exist.
 void assertAccountsExist<TData>(List<MaybeAccount<TData>> accounts) {
   final missingAccounts = accounts.where((a) => !a.exists).toList();
-
   if (missingAccounts.isNotEmpty) {
     final missingAddresses = missingAccounts
         .map((a) => a.address.value)

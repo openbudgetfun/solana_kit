@@ -10,10 +10,8 @@ WalletRegistry createPlatformWalletRegistry({
   List<Wallet> additionalWallets = const [],
 }) {
   final registry = WalletRegistryController();
-
   for (final wallet in additionalWallets) {
     registry.register(wallet);
   }
-
   return registry;
 }

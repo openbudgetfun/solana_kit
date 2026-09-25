@@ -85,7 +85,6 @@ class _MobileWalletProxy implements MobileWallet {
     final mappedParams = _mapAuthorizeParams(Map<String, Object?>.of(params));
     final method = _resolveAuthorizeMethod(mappedParams);
     final result = await _sendRequest(method, mappedParams);
-
     return result;
   }
 
@@ -93,7 +92,6 @@ class _MobileWalletProxy implements MobileWallet {
   Future<Map<String, Object?>> reauthorize(Map<String, Object?> params) async {
     final mappedParams = Map<String, Object?>.of(params);
     final method = _resolveAuthorizeMethod(mappedParams);
-
     return _sendRequest(method, mappedParams);
   }
 
@@ -105,7 +103,6 @@ class _MobileWalletProxy implements MobileWallet {
   @override
   Future<Map<String, Object?>> getCapabilities() async {
     final result = await _sendRequest('get_capabilities', {});
-
     return _mapCapabilitiesResponse(result);
   }
 
@@ -134,7 +131,6 @@ class _MobileWalletProxy implements MobileWallet {
   /// Maps chain identifiers based on protocol version.
   Map<String, Object?> _mapAuthorizeParams(Map<String, Object?> params) {
     final chain = params['chain'] as String?;
-
     if (chain == null) return params;
 
     if (_version == ProtocolVersion.legacy) {
@@ -146,7 +142,6 @@ class _MobileWalletProxy implements MobileWallet {
       final v1Chain = _legacyToV1Chain[chain] ?? chain;
       params['chain'] = v1Chain;
     }
-
     return params;
   }
 
@@ -158,7 +153,6 @@ class _MobileWalletProxy implements MobileWallet {
     if (hasAuthToken && _version == ProtocolVersion.legacy) {
       return 'reauthorize';
     }
-
     return 'authorize';
   }
 
@@ -167,16 +161,13 @@ class _MobileWalletProxy implements MobileWallet {
     if (_version == ProtocolVersion.legacy) {
       // Convert legacy boolean flags to v1 features array.
       final features = <String>[mwaFeatureSignTransactions];
-
       if (result['supports_clone_authorization'] == true) {
         features.add(mwaFeatureCloneAuthorization);
       }
-
       return {...result, 'features': features};
     } else {
       // Convert v1 features to legacy boolean flags.
       final features = (result['features'] as List<Object?>?)?.cast<String>();
-
       return {
         ...result,
         'supports_sign_and_send_transactions': true,

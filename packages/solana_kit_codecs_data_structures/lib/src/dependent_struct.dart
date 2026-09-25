@@ -77,14 +77,12 @@ class DependentStructDecoderBuilder {
       // (via `Map.unmodifiable`) before being handed to each field factory so
       // that dependent factories cannot mutate earlier decoded values.
       final decoded = <String, Object?>{};
-
       for (final entry in _entries) {
         final decoder = entry.resolveDecoder(Map.unmodifiable(decoded));
         final (value, newOffset) = decoder.read(bytes, offset);
         offset = newOffset;
         decoded[entry.name] = value;
       }
-
       return (decoded, offset);
     }
 
@@ -94,7 +92,6 @@ class DependentStructDecoderBuilder {
         read: readImpl,
       );
     }
-
     return VariableSizeDecoder<Map<String, Object?>>(read: readImpl);
   }
 
@@ -116,7 +113,6 @@ class DependentStructDecoderBuilder {
     late final Decoder<Object?> Function(Map<String, Object?> fields)
     resolveDecoder;
     late final Decoder<Object?>? staticDecoder;
-
     if (isFactory) {
       final factory = decoderOrFactory as DependentStructDecoderFieldFactory;
       resolveDecoder = (fields) =>
@@ -130,7 +126,6 @@ class DependentStructDecoderBuilder {
       resolveDecoder = (_) => decoder;
       staticDecoder = decoder;
     }
-
     return DependentStructDecoderBuilder._([
       ..._entries,
       _InternalEntry(

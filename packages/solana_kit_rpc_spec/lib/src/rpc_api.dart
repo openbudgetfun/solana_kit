@@ -112,7 +112,6 @@ class JsonRpcApi {
         : rawRequest;
 
     final apiConfig = config;
-
     return RpcPlan<Object?>(
       execute: (executeConfig) async {
         final payload = createRpcMessage(request);
@@ -122,7 +121,6 @@ class JsonRpcApi {
         if (apiConfig?.responseTransformer == null) {
           return response;
         }
-
         return apiConfig!.responseTransformer!(response, request);
       },
     );

@@ -19,7 +19,6 @@ void main() {
         if (callCount == 1) {
           // First page: no cursor was sent
           expect(params.containsKey('after'), isFalse);
-
           return http.Response(
             jsonEncode({
               'jsonrpc': '2.0',
@@ -43,7 +42,6 @@ void main() {
         } else {
           // Second page: cursor from previous response
           expect(params['after'], 'token-next');
-
           return http.Response(
             jsonEncode({
               'jsonrpc': '2.0',
@@ -79,7 +77,6 @@ void main() {
 
       final client = MockClient((request) async {
         callCount++;
-
         return http.Response(
           jsonEncode({
             'jsonrpc': '2.0',

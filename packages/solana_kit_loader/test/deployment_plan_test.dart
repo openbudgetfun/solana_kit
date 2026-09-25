@@ -56,7 +56,6 @@ void main() {
           TransactionPlanExecutorConfig(
             executeTransactionMessage: (_, message) async {
               sent.add(message.instructions);
-
               return <String, Object?>{'signature': 'test signature'};
             },
           ),

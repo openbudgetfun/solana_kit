@@ -11,7 +11,6 @@ Future<Map<String, AssetProof>> dasGetAssetProofBatch(
 ) async {
   final result = await rpcClient.call('getAssetProofBatch', request.toJson());
   final map = result! as Map<String, Object?>;
-
   return map.map(
     (key, value) =>
         MapEntry(key, AssetProof.fromJson(value! as Map<String, Object?>)),

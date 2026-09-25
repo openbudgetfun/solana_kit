@@ -18,6 +18,8 @@ class JsonReader {
   // Required (non-nullable) accessors throw StateError when key is absent
   // or the value is null.
   // -------------------------------------------------------------------------
+
+  /// Returns the [String] value for [key]. Throws if absent or null.
   String requireString(String key) => _require<String>(key);
 
   /// Returns the [int] value for [key]. Throws if absent or null.
@@ -30,9 +32,7 @@ class JsonReader {
   /// Throws if absent or null.
   double requireDouble(String key) {
     final value = _json[key];
-
     if (value == null) _missing(key);
-
     return (value as num).toDouble();
   }
 
@@ -65,6 +65,8 @@ class JsonReader {
   // -------------------------------------------------------------------------
   // Optional (nullable) accessors return null when key is absent or null.
   // -------------------------------------------------------------------------
+
+  /// Returns the [String] value for [key], or null if absent / null.
   String? optString(String key) => _json[key] as String?;
 
   /// Returns the [int] value for [key], or null if absent / null.
@@ -108,7 +110,6 @@ class JsonReader {
   /// Useful for nested objects: `r.optDecoded('content', AssetContent.fromJson)`
   T? optDecoded<T>(String key, T Function(Map<String, Object?>) decoder) {
     final raw = _json[key];
-
     if (raw == null) return null;
     return decoder(raw as Map<String, Object?>);
   }
@@ -119,7 +120,6 @@ class JsonReader {
   /// Useful for optional enums: `r.optEnum('sortBy', AssetSortBy.fromJson)`
   T? optEnum<T>(String key, T Function(String) decoder) {
     final raw = _json[key];
-
     if (raw == null) return null;
     return decoder(raw as String);
   }
@@ -127,16 +127,17 @@ class JsonReader {
   // -------------------------------------------------------------------------
   // Raw access
   // -------------------------------------------------------------------------
+
+  /// Returns the raw value for [key] without any cast.
   Object? raw(String key) => _json[key];
 
   // -------------------------------------------------------------------------
   // Internal helpers
   // -------------------------------------------------------------------------
+
   T _require<T>(String key) {
     final value = _json[key];
-
     if (value == null) _missing(key);
-
     return value as T;
   }
 

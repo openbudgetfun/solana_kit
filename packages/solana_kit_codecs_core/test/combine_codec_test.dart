@@ -11,7 +11,6 @@ void main() {
         fixedSize: 1,
         write: (value, buffer, offset) {
           buffer[offset] = value;
-
           return offset + 1;
         },
       );
@@ -38,7 +37,6 @@ void main() {
           fixedSize: 1,
           write: (value, buffer, offset) {
             buffer[offset] = value.toInt();
-
             return offset + 1;
           },
         );
@@ -62,7 +60,6 @@ void main() {
         getSizeFromValue: (value) => value.length,
         write: (value, bytes, offset) {
           bytes.setAll(offset, value.codeUnits);
-
           return offset + value.length;
         },
         maxSize: 100,
@@ -71,7 +68,6 @@ void main() {
       final decoder = VariableSizeDecoder<String>(
         read: (bytes, offset) {
           final str = String.fromCharCodes(bytes.sublist(offset));
-
           return (str, bytes.length);
         },
         maxSize: 100,

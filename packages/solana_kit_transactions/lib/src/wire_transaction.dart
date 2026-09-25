@@ -7,6 +7,5 @@ import 'package:solana_kit_transactions/src/transaction.dart';
 /// base64-encoded wire transaction string.
 String getBase64EncodedWireTransaction(Transaction transaction) {
   final wireTransactionBytes = getTransactionEncoder().encode(transaction);
-
   return getBase64Decoder().decode(wireTransactionBytes);
 }

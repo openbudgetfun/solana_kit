@@ -176,7 +176,6 @@ Future<TransactionWithLifetime> _signedTransfer(IntegrationTestEnv env) async {
   );
   final compiled = compileTransaction(message);
   final signed = await signTransactionMessageWithSigners(message);
-
   return TransactionWithLifetime(
     messageBytes: signed.messageBytes,
     signatures: signed.signatures,

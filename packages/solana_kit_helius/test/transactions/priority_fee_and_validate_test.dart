@@ -263,10 +263,8 @@ void main() {
 
 List<int> _u64le(int value) {
   final bytes = Uint8List(8);
-
   for (var i = 0; i < 8; i++) {
     bytes[i] = (value >> (8 * i)) & 0xff;
   }
-
   return bytes;
 }

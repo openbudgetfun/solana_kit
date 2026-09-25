@@ -10,7 +10,6 @@ Future<TransactionWithCompressionInfo> zkGetTransactionWithCompressionInfo(
     'getTransactionWithCompressionInfo',
     request.toJson(),
   );
-
   return TransactionWithCompressionInfo.fromJson(
     result! as Map<String, Object?>,
   );

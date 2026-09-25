@@ -28,7 +28,6 @@ Future<BigInt> _tokenAmount(IntegrationTestEnv env, Address account) async {
   final parsed = response.value!['data']! as Map<String, Object?>;
   final info = parsed['parsed']! as Map<String, Object?>;
   final tokenAmount = info['info']! as Map<String, Object?>;
-
   return BigInt.parse(
     (tokenAmount['tokenAmount']! as Map<String, Object?>)['amount']! as String,
   );
@@ -44,7 +43,6 @@ Future<BigInt> _mintSupply(IntegrationTestEnv env, Address mint) async {
       .send();
   final parsed = response.value!['data']! as Map<String, Object?>;
   final info = parsed['parsed']! as Map<String, Object?>;
-
   return BigInt.parse(
     (info['info']! as Map<String, Object?>)['supply']! as String,
   );

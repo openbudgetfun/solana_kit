@@ -11,11 +11,9 @@ class GetSignatureStatusesConfig {
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
-
     if (searchTransactionHistory != null) {
       json['searchTransactionHistory'] = searchTransactionHistory;
     }
-
     return json;
   }
 }

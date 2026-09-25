@@ -14,7 +14,6 @@ Future<List<StakeAccountInfo>> stakingGetHeliusStakeAccounts(
     '/v0/staking/accounts/${request.owner}?api-key=$apiKey',
   );
   final list = result! as List<Object?>;
-
   return list
       .cast<Map<String, Object?>>()
       .map(StakeAccountInfo.fromJson)

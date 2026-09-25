@@ -37,7 +37,6 @@ const testSignatureValue = Signature(
 /// Builds 64-byte signature bytes with at least one non-zero entry.
 SignatureBytes nonZeroSignatureBytes([int fill = 42]) {
   final normalizedFill = fill == 0 ? 1 : fill;
-
   return SignatureBytes(
     Uint8List.fromList(List<int>.filled(64, normalizedFill)),
   );
@@ -114,7 +113,6 @@ Rpc createAccountsFixtureRpc(
     'getAccountInfo': (params) => RpcPlan<Object?>(
       execute: (_) async {
         final address = params[0]! as String;
-
         return <String, Object?>{
           'context': <String, Object?>{'slot': effectiveSlot},
           'value': accountMap[address],
@@ -124,7 +122,6 @@ Rpc createAccountsFixtureRpc(
     'getMultipleAccounts': (params) => RpcPlan<Object?>(
       execute: (_) async {
         final addresses = (params[0]! as List<Object?>).cast<String>();
-
         return <String, Object?>{
           'context': <String, Object?>{'slot': effectiveSlot},
           'value': addresses.map((address) => accountMap[address]).toList(),
@@ -172,7 +169,6 @@ class CapturingSubscriptionsTransport {
     RpcSubscriptionsTransportConfig config,
   ) async {
     configs.add(config);
-
     return streams;
   }
 

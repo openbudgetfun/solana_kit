@@ -52,7 +52,6 @@ int? getTransactionMessageLoadedAccountsDataSizeLimit(
   final instruction = transactionMessage.instructions
       .where(_isSetLoadedAccountsDataSizeLimitInstruction)
       .firstOrNull;
-
   if (instruction == null) return null;
   return _parseLoadedAccountsDataSizeLimitInstruction(instruction);
 }
@@ -108,7 +107,6 @@ TransactionMessage setTransactionMessageLoadedAccountsDataSizeLimit(
   final instruction = _getSetLoadedAccountsDataSizeLimitInstruction(
     limit: limit,
   );
-
   if (existingIndex == -1) {
     return transactionMessage.copyWith(
       instructions: [...transactionMessage.instructions, instruction],
@@ -192,7 +190,6 @@ estimateAndSetResourceLimitsFactory(
 
     final isV1 = transactionMessage.version == TransactionVersion.v1;
     var loadedAccountsDataSizeLimitIsExplicit = true;
-
     if (isV1) {
       final existingLoadedLimit =
           getTransactionMessageLoadedAccountsDataSizeLimit(transactionMessage);
@@ -209,7 +206,6 @@ estimateAndSetResourceLimitsFactory(
     final estimate = await estimateResourceLimits(transactionMessage);
 
     var message = transactionMessage;
-
     if (!computeUnitLimitIsExplicit) {
       message = setTransactionMessageComputeUnitLimit(
         estimate.computeUnitLimit,
@@ -236,7 +232,6 @@ Instruction _getSetLoadedAccountsDataSizeLimitInstruction({
   final data = Uint8List(5)
     ..first = _setLoadedAccountsDataSizeLimitDiscriminator;
   ByteData.sublistView(data).setUint32(1, limit, Endian.little);
-
   return Instruction(
     programAddress: computeBudgetProgramAddress,
     accounts: const [],
@@ -247,7 +242,6 @@ Instruction _getSetLoadedAccountsDataSizeLimitInstruction({
 bool _isSetLoadedAccountsDataSizeLimitInstruction(Instruction instruction) {
   if (instruction.programAddress != computeBudgetProgramAddress) return false;
   final data = instruction.data;
-
   return data != null &&
       data.length >= 5 &&
       data.first == _setLoadedAccountsDataSizeLimitDiscriminator;

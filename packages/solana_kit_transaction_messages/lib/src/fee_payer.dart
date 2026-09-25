@@ -19,6 +19,5 @@ TransactionMessage setTransactionMessageFeePayer(
   if (transactionMessage.feePayer == feePayer) {
     return transactionMessage;
   }
-
   return transactionMessage.copyWith(feePayer: feePayer);
 }

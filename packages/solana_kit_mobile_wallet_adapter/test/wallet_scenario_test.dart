@@ -26,7 +26,6 @@ class MockWalletHostApi extends MwaWalletHostApi {
       'walletName': walletName,
       'configJson': configJson,
     });
-
     return nextSessionId;
   }
 
@@ -79,7 +78,6 @@ class MockWalletHostApi extends MwaWalletHostApi {
     if (_handler == null) {
       throw StateError('No handler registered');
     }
-
     return _handler!(
       MethodCall(method, {'sessionId': nextSessionId, ...?arguments}),
     );

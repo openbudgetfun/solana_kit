@@ -9,6 +9,5 @@ Future<AssetList> dasGetAssetsByAuthority(
   GetAssetsByAuthorityRequest request,
 ) async {
   final result = await rpcClient.call('getAssetsByAuthority', request.toJson());
-
   return AssetList.fromJson(result! as Map<String, Object?>);
 }

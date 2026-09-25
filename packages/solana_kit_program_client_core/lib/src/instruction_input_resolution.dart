@@ -52,7 +52,6 @@ T getNonNullResolvedInstructionInput<T>(String inputName, T? value) {
       {'inputName': inputName},
     );
   }
-
   return value;
 }
 
@@ -100,7 +99,6 @@ ProgramDerivedAddress getResolvedInstructionAccountAsProgramDerivedAddress(
       {'expectedType': 'ProgramDerivedAddress', 'inputName': inputName},
     );
   }
-
   return value;
 }
 
@@ -120,7 +118,6 @@ Object getResolvedInstructionAccountAsTransactionSigner(
       {'expectedType': 'TransactionSigner', 'inputName': inputName},
     );
   }
-
   return value!;
 }
 

@@ -484,7 +484,6 @@ class _Events implements StandardEventsFeature {
     void Function(StandardWalletChange change) listener,
   ) {
     listener(StandardWalletChange(accounts: [_account()]));
-
     return () {};
   }
 

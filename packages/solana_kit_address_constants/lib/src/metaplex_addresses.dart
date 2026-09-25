@@ -5,6 +5,8 @@ import 'package:solana_kit_address/solana_kit_address.dart';
 // ---------------------------------------------------------------------------
 // Well-known addresses for Metaplex programs used across the Solana NFT
 // ecosystem.
+
+/// The address of the Metaplex Token Metadata program.
 const tokenMetadataProgramAddress = Address(
   'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
 );

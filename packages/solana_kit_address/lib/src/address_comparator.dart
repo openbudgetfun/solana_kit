@@ -27,19 +27,15 @@ Comparator<Address> getAddressComparator() {
 /// `caseFirst: 'lower'` and `sensitivity: 'variant'` for base58 strings.
 int _compareBase58(String a, String b) {
   final minLen = a.length < b.length ? a.length : b.length;
-
   for (var i = 0; i < minLen; i++) {
     final charA = a.codeUnitAt(i);
     final charB = b.codeUnitAt(i);
-
     if (charA != charB) {
       final orderA = _charOrder(charA);
       final orderB = _charOrder(charB);
-
       return orderA.compareTo(orderB);
     }
   }
-
   return a.length.compareTo(b.length);
 }
 
@@ -55,19 +51,16 @@ int _charOrder(int codeUnit) {
   if (codeUnit >= 48 && codeUnit <= 57) {
     return codeUnit - 48; // 0-9
   }
-
   // Letters: lowercase before uppercase for same letter
   // a-z: 97-122, A-Z: 65-90
   if (codeUnit >= 97 && codeUnit <= 122) {
     // lowercase letter: maps to (letter_index * 2 + 10)
     return (codeUnit - 97) * 2 + 10;
   }
-
   if (codeUnit >= 65 && codeUnit <= 90) {
     // uppercase letter: maps to (letter_index * 2 + 11)
     return (codeUnit - 65) * 2 + 11;
   }
-
   // Fallback for non-alphanumeric characters
   return codeUnit + 100;
 }

@@ -85,25 +85,21 @@ List<AccountMeta> getAccountMetasFromCompiledTransactionMessage(
 
   final metas = <AccountMeta>[];
   var i = 0;
-
   for (var n = 0; n < numWritableSignerAccounts; n++, i++) {
     metas.add(
       AccountMeta(address: staticAccounts[i], role: AccountRole.writableSigner),
     );
   }
-
   for (var n = 0; n < header.numReadonlySignerAccounts; n++, i++) {
     metas.add(
       AccountMeta(address: staticAccounts[i], role: AccountRole.readonlySigner),
     );
   }
-
   for (var n = 0; n < numWritableNonSignerAccounts; n++, i++) {
     metas.add(
       AccountMeta(address: staticAccounts[i], role: AccountRole.writable),
     );
   }
-
   for (var n = 0; n < header.numReadonlyNonSignerAccounts; n++, i++) {
     metas.add(
       AccountMeta(address: staticAccounts[i], role: AccountRole.readonly),
@@ -114,7 +110,6 @@ List<AccountMeta> getAccountMetasFromCompiledTransactionMessage(
     for (final address in loadedAddresses.writable) {
       metas.add(AccountMeta(address: address, role: AccountRole.writable));
     }
-
     for (final address in loadedAddresses.readonly) {
       metas.add(AccountMeta(address: address, role: AccountRole.readonly));
     }
@@ -147,7 +142,6 @@ List<ResolvedInstruction> getInstructionsFromCompiledTransactionMessage(
     compiledMessage,
     loadedAddresses: loadedAddresses,
   );
-
   return getInstructionsFromCompiledTransactionMessageWithMetas(
     compiledMessage,
     metas,
@@ -185,11 +179,9 @@ List<_NormalizedCompiledInstruction> _normalizeCompiledInstructions(
         )
         .toList();
   }
-
   if (version == TransactionVersion.v1) {
     final headers = compiledMessage.instructionHeaders ?? const [];
     final payloads = compiledMessage.instructionPayloads ?? const [];
-
     if (headers.length != payloads.length) {
       throw SolanaError(
         SolanaErrorCode.transactionInstructionHeadersPayloadsMismatch,
@@ -199,11 +191,9 @@ List<_NormalizedCompiledInstruction> _normalizeCompiledInstructions(
         },
       );
     }
-
     return List.generate(headers.length, (i) {
       final header = headers[i];
       final payload = payloads[i];
-
       return _NormalizedCompiledInstruction(
         accountIndices: payload.instructionAccountIndices,
         data: payload.instructionData,
@@ -211,7 +201,6 @@ List<_NormalizedCompiledInstruction> _normalizeCompiledInstructions(
       );
     });
   }
-
   // Unreachable for the current TransactionVersion enum (legacy/v0/v1), kept
   // for forward-compatibility.
   throw SolanaError(
@@ -231,10 +220,8 @@ ResolvedInstruction _resolveInstruction(
       {'index': ix.programAddressIndex},
     );
   }
-
   final programMeta = metas[ix.programAddressIndex];
   final accounts = <AccountMeta>[];
-
   for (final i in ix.accountIndices) {
     if (i < 0 || i >= metas.length) {
       throw SolanaError(
@@ -243,10 +230,8 @@ ResolvedInstruction _resolveInstruction(
         {'index': i},
       );
     }
-
     accounts.add(metas[i]);
   }
-
   return Instruction(
     programAddress: programMeta.address,
     accounts: accounts.isEmpty ? null : accounts,

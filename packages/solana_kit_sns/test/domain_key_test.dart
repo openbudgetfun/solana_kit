@@ -203,7 +203,6 @@ void main() {
       for (final domain in ['', '.bonfida', 'bonfida.', 'a..bonfida']) {
         expect(() => findDomainKey(domain), throwsArgumentError);
       }
-
       expect(() => findDomainKey('bonfida.sol'), throwsArgumentError);
       expect(() => findDomainKey('bonfida.sns'), throwsArgumentError);
     });

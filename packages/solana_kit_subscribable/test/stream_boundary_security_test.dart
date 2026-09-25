@@ -28,7 +28,6 @@ void main() {
         } else {
           errors.addError(failure);
         }
-
         await pumpEventQueue();
         final hasDataListener = data.hasListener;
         final hasErrorListener = errors.hasListener;
@@ -176,7 +175,6 @@ void main() {
       final store = createReactiveStreamStore<int>(
         createDataPublisher: (_) async {
           factoryCalls++;
-
           return const ReactiveStreamConnection<int>(
             dataStream: Stream<int>.empty(),
             errorStream: Stream<Object?>.empty(),

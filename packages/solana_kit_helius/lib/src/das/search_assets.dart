@@ -9,6 +9,5 @@ Future<AssetList> dasSearchAssets(
   SearchAssetsRequest request,
 ) async {
   final result = await rpcClient.call('searchAssets', request.toJson());
-
   return AssetList.fromJson(result! as Map<String, Object?>);
 }

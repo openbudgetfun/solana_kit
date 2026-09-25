@@ -16,7 +16,6 @@ void main() {
       final config = JupiterConfig(
         client: MockClient((request) async {
           capturedUri = request.url;
-
           return http.Response(
             jsonEncode({
               _wsol: {
@@ -95,7 +94,6 @@ void main() {
       final config = JupiterConfig(
         client: MockClient((request) async {
           capturedUri = request.url;
-
           return http.Response(
             jsonEncode([
               {
@@ -140,7 +138,6 @@ void main() {
       final config = JupiterConfig(
         client: MockClient((request) async {
           paths.add(request.url.path);
-
           return http.Response('[]', 200);
         }),
       );

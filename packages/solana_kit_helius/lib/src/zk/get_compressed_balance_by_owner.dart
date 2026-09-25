@@ -10,6 +10,5 @@ Future<CompressedBalance> zkGetCompressedBalanceByOwner(
     'getCompressedBalanceByOwner',
     request.toJson(),
   );
-
   return CompressedBalance.fromJson(result! as Map<String, Object?>);
 }
