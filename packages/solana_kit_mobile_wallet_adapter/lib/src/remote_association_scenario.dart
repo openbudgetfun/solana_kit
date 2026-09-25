@@ -40,6 +40,7 @@ Future<RemoteAssociationResult> startRemoteScenario(
   RemoteWalletAssociationConfig config,
 ) async {
   final session = _RemoteAssociationSession(config);
+
   return session.start();
 }
 
@@ -108,6 +109,7 @@ class _RemoteAssociationSession {
           unawaited(close());
         },
       );
+
     } on Object {
       await close();
       rethrow;
@@ -133,16 +135,21 @@ class _RemoteAssociationSession {
 
     try {
       final payload = _decodeInboundPayload(message);
+
       switch (_state) {
         case _RemoteState.connecting:
           _handleReflectorIdMessage(payload);
+
         case _RemoteState.reflectorIdReceived:
           _handleReflectionEstablishedMessage(payload);
+
         case _RemoteState.helloReqSent:
           _handleHelloResponse(payload);
+
         case _RemoteState.connected:
           _handleEncryptedMessage(payload);
       }
+
     } on Object catch (error) {
       _handleInboundError(error);
     }
@@ -208,6 +215,7 @@ class _RemoteAssociationSession {
     final decoded = _decryptJsonRpcMessage(payload, _sharedSecret!);
     final idValue = decoded['id'];
     final requestId = idValue is num ? idValue.toInt() : null;
+
     if (requestId == null) {
       throw SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
         'reason': 'Missing or invalid JSON-RPC id in wallet response',
@@ -215,18 +223,21 @@ class _RemoteAssociationSession {
     }
 
     final pending = _pendingResponses.remove(requestId);
+
     if (pending == null || pending.isCompleted) {
       return;
     }
 
     if (decoded.containsKey('error')) {
       final errorJson = decoded['error'];
+
       if (errorJson is! Map) {
         pending.completeError(
           SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
             'reason': 'Invalid JSON-RPC error payload',
           }),
         );
+
         return;
       }
 
@@ -241,16 +252,19 @@ class _RemoteAssociationSession {
           data: typedError['data'],
         ),
       );
+
       return;
     }
 
     final result = decoded['result'];
+
     if (result is! Map) {
       pending.completeError(
         SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
           'reason': 'Missing or invalid JSON-RPC result payload',
         }),
       );
+
       return;
     }
 
@@ -306,9 +320,11 @@ class _RemoteAssociationSession {
     if (message is Uint8List) {
       return message;
     }
+
     if (message is List<int>) {
       return Uint8List.fromList(message);
     }
+
     if (message is String) {
       return Uint8List.fromList(base64.decode(message.trim()));
     }
@@ -321,6 +337,7 @@ class _RemoteAssociationSession {
 
   Uint8List _extractReflectorId(Uint8List payload) {
     final (length, offset) = _decodeVarUintLength(payload);
+
     if (length <= 0 || offset + length > payload.length) {
       throw SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
         'reason': 'Malformed reflector ID payload',
@@ -349,6 +366,7 @@ class _RemoteAssociationSession {
       offset += 1;
 
       value |= (byte & 0x7f) << shift;
+
       if ((byte & 0x80) == 0) {
         break;
       }
@@ -365,11 +383,13 @@ class _RemoteAssociationSession {
   ) {
     final decrypted = decryptMessage(message, sharedSecret);
     final jsonRpcMessage = json.decode(decrypted.plaintext);
+
     if (jsonRpcMessage is! Map) {
       throw SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
         'reason': 'Wallet response is not a JSON object',
       });
     }
+
     return jsonRpcMessage.cast<String, Object?>();
   }
 
@@ -387,6 +407,7 @@ class _RemoteAssociationSession {
       mwaSequenceNumberBytes,
     ).getUint32(0);
     final expectedSequence = _lastKnownInboundSequenceNumber + 1;
+
     if (sequenceNumber != expectedSequence) {
       throw SolanaError(SolanaErrorCode.mwaInvalidSequenceNumber, {
         'expected': expectedSequence,
@@ -429,6 +450,7 @@ class _RemoteAssociationSession {
         completer.completeError(error);
       }
     }
+
     _pendingResponses.clear();
   }
 
@@ -440,6 +462,7 @@ class _RemoteAssociationSession {
     );
 
     var attempt = 0;
+
     while (DateTime.now().isBefore(deadline)) {
       try {
         final channel = WebSocketChannel.connect(
@@ -448,7 +471,9 @@ class _RemoteAssociationSession {
         );
 
         await channel.ready;
+
         return channel;
+
       } on Object {
         final delay = attempt < mwaRetryDelayScheduleMs.length
             ? mwaRetryDelayScheduleMs[attempt]

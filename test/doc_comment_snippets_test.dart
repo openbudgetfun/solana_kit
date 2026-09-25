@@ -30,6 +30,7 @@ void main() {
       if (docSnippetRoot.existsSync()) {
         docSnippetRoot.deleteSync(recursive: true);
       }
+
       docSnippetRoot.createSync(recursive: true);
       addTearDown(() {
         if (docSnippetRoot.existsSync()) {
@@ -90,6 +91,7 @@ List<String> _findDocumentedLibraries(Directory repoRoot) {
     if (entity is! File || !entity.path.endsWith('.dart')) continue;
 
     final relativePath = entity.path.substring(repoRoot.path.length + 1);
+
     if (!RegExp(r'^packages/[^/]+/lib/[^/]+\.dart$').hasMatch(relativePath)) {
       continue;
     }
@@ -98,9 +100,8 @@ List<String> _findDocumentedLibraries(Directory repoRoot) {
     if (source.contains('/// <!-- {=')) {
       libraries.add(relativePath);
     }
-  }
-
   libraries.sort();
+
   return libraries;
 }
 
@@ -116,6 +117,7 @@ String _extractTopLevelDocMarkdown(String source) {
       if (text.startsWith(' ')) {
         text = text.substring(1);
       }
+
       buffer.writeln(text);
       continue;
     }
@@ -130,6 +132,7 @@ String _extractTopLevelDocMarkdown(String source) {
 
 List<String> _extractDartCodeBlocks(String markdown) {
   final expression = RegExp(r'```dart\n([\s\S]*?)\n```');
+
   return [
     for (final match in expression.allMatches(markdown)) match.group(1)!.trim(),
   ];

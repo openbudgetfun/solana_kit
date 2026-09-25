@@ -33,6 +33,7 @@ void main() {
           expect(request.url.queryParameters['agent'], 'cli');
           expect(request.headers['Authorization'], 'Bearer jwt-token');
           expect(request.headers['User-Agent'], 'agent');
+
           return http.Response(jsonEncode(payload()), 200);
         });
 

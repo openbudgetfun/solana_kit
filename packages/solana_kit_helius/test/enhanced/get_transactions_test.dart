@@ -28,6 +28,7 @@ void main() {
         expect(request.url.queryParameters['api-key'], 'test-key');
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['transactions'], ['sig1', 'sig2']);
+
         return http.Response(jsonEncode([mockTxn]), 200);
       });
 

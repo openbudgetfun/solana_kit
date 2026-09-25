@@ -105,6 +105,7 @@ void main() {
               if (args.isEmpty) {
                 throw Exception('first fails');
               }
+
               return completer.future;
             },
           );

@@ -48,9 +48,11 @@ List<Object?> applyDefaultCommitment({
             nextParams[optionsObjectPositionInParams] = null;
           }
         }
+
         return nextParams;
       }
     } else if (overrideCommitment != null &&
+
         overrideCommitment != Commitment.finalized) {
       // Apply the default commitment.
       final nextParams = List<Object?>.of(params);
@@ -58,10 +60,12 @@ List<Object?> applyDefaultCommitment({
       while (nextParams.length <= optionsObjectPositionInParams) {
         nextParams.add(null);
       }
+
       nextParams[optionsObjectPositionInParams] = <String, Object?>{
         ...?configMap,
         commitmentPropertyName: overrideCommitment.name,
       };
+
       return nextParams;
     }
   }

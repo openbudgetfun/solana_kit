@@ -10,6 +10,7 @@ void main() {
     read: (bytes, offset) => (bytes[offset], offset + 1),
     write: (value, bytes, offset) {
       bytes[offset] = value;
+
       return offset + 1;
     },
   );
@@ -88,6 +89,7 @@ void main() {
             write: (value, bytes, offset) {
               bytes[offset] = value['discriminator']! as int;
               bytes[offset + 1] = (value['label']! as String).length;
+
               return offset + 2;
             },
           );
@@ -143,6 +145,7 @@ void main() {
         write: (value, bytes, offset) {
           bytes[offset] = value.$1;
           bytes[offset + 1] = value.$2.length;
+
           return offset + 2;
         },
       );
@@ -173,6 +176,7 @@ void main() {
           for (var i = 0; i < value.length; i++) {
             bytes[offset + i] = value.codeUnitAt(i);
           }
+
           return offset + value.length;
         },
         read: (bytes, offset) {
@@ -180,7 +184,9 @@ void main() {
           while (end < bytes.length && bytes[end] != 0) {
             end++;
           }
+
           final str = String.fromCharCodes(bytes.sublist(offset, end));
+
           return (str.length, end);
         },
       );
@@ -201,6 +207,7 @@ void main() {
         getSizeFromValue: (value) => value,
         write: (value, bytes, offset) {
           bytes[offset] = value;
+
           return offset + 1;
         },
         read: (bytes, offset) => (bytes[offset], offset + 1),
@@ -223,6 +230,7 @@ void main() {
         fixedSize: 1,
         write: (value, bytes, offset) {
           bytes[offset] = value;
+
           return offset + 1;
         },
       );
@@ -242,6 +250,7 @@ void main() {
         getSizeFromValue: (_) => 1,
         write: (value, bytes, offset) {
           bytes[offset] = value;
+
           return offset + 1;
         },
         maxSize: 10,

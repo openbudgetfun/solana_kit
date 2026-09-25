@@ -88,6 +88,7 @@ void main() {
                     SolanaErrorCode.transactionTooManyInstructions,
                   );
                 }
+
                 return appendTransactionMessageInstruction(
                   createInstructionWithData(overflow == 'bytes' ? 800 : 0),
                   message,

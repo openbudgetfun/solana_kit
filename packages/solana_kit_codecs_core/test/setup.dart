@@ -15,6 +15,7 @@ final VariableSizeCodec<String, String> base16Codec =
             .map((m) => int.parse(m.group(0)!, radix: 16))
             .toList();
         bytes.setAll(offset, hexBytes);
+
         return offset + hexBytes.length;
       },
       read: (bytes, offset) {
@@ -22,6 +23,7 @@ final VariableSizeCodec<String, String> base16Codec =
             .sublist(offset)
             .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
             .join();
+
         return (value, bytes.length);
       },
     );
@@ -53,14 +55,17 @@ getMockFixedCodec({
 
   int writeImpl(Object? value, Uint8List bytes, int offset) {
     writeCalls.add((value, bytes, offset));
+
     if (writeOverride != null) {
       return writeOverride(value, bytes, offset);
     }
+
     return offset + effectiveInnerSize;
   }
 
   (String, int) readImpl(Uint8List bytes, int offset) {
     readCalls.add((bytes, offset));
+
     return (defaultValue, offset + effectiveInnerSize);
   }
 
@@ -97,14 +102,17 @@ getMockVariableCodec({
 
   int writeImpl(Object? value, Uint8List bytes, int offset) {
     writeCalls.add((value, bytes, offset));
+
     if (writeOverride != null) {
       return writeOverride(value, bytes, offset);
     }
+
     return offset + effectiveInnerSize;
   }
 
   (String, int) readImpl(Uint8List bytes, int offset) {
     readCalls.add((bytes, offset));
+
     return (defaultValue, offset + effectiveInnerSize);
   }
 

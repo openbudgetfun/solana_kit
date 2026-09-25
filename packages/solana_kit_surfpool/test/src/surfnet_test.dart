@@ -612,6 +612,7 @@ void main() {
             client: MockClient((request) async {
               await Future<void>.delayed(const Duration(milliseconds: 500));
               final body = jsonDecode(request.body) as Map<String, Object?>;
+
               return http.Response(
                 jsonEncode({
                   'jsonrpc': '2.0',
@@ -673,6 +674,7 @@ Surfnet _mockSurfnet(
     client: MockClient((request) async {
       final body = jsonDecode(request.body) as Map<String, Object?>;
       requests.add(body);
+
       return http.Response(
         jsonEncode(<String, Object?>{
           'jsonrpc': '2.0',
@@ -690,6 +692,7 @@ Future<int> _availablePort({int? except}) async {
     final socket = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
     final port = socket.port;
     await socket.close();
+
     if (port != except) return port;
   }
 }
@@ -713,54 +716,31 @@ import 'dart:io';
 Future<void> main(List<String> args) async {
   await File(${jsonEncode(argsPath)}).writeAsString(jsonEncode(args));
 
-  for (var index = 0; index < $outputLines; index += 1) {
-    stdout.writeln('stdout line \$index');
   }
   stderr.writeln('stderr line');
   if ($exitImmediately) {
-    await stdout.flush();
-    await stderr.flush();
-    exit(9);
   }
 
   HttpServer? server;
-  if ($serveRpc) {
-    final port = int.parse(args[args.indexOf('--port') + 1]);
-    server = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
   }
 
   if ($ignoreSigint) {
-    ProcessSignal.sigint.watch().listen((_) => stderr.writeln('ignored sigint'));
-  } else {
-    ProcessSignal.sigint.watch().listen((_) async {
-      await server?.close(force: true);
-      exit(0);
-    });
   }
 
   if (!$serveRpc) {
-    await Completer<void>().future;
-    return;
   }
 
   await for (final request in server!) {
-    final body = await utf8.decoder.bind(request).join();
-    final payload = jsonDecode(body) as Map<String, Object?>;
-    request.response.headers.contentType = ContentType.json;
-    request.response.write(jsonEncode(<String, Object?>{
-      'jsonrpc': '2.0',
-      'id': payload['id'],
-      'result': 'ok',
-    }));
-    await request.response.close();
   }
 }
 ''';
 
   await script.writeAsString(content);
   final chmod = await Process.run('chmod', <String>['755', script.path]);
+
   if (chmod.exitCode != 0) {
     throw StateError('Failed to chmod fake Surfpool command: ${chmod.stderr}');
   }
+
   return script.path;
 }

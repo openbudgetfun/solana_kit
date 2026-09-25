@@ -31,6 +31,7 @@ void main() {
           VariableSizeDecoder<Uint8List>(
             read: (bytes, offset) {
               contentRead = true;
+
               return (bytes.sublist(offset), bytes.length);
             },
           ),
@@ -75,6 +76,7 @@ void main() {
         VariableSizeDecoder<int>(
           read: (bytes, offset) {
             expect(bytes.length, 1);
+
             return (bytes[offset], offset + 1);
           },
         ),

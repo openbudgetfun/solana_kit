@@ -30,7 +30,9 @@ VariableSizeEncoder<num> getShortU16Encoder() {
         remaining >>= 7;
         currentOffset++;
       }
+
       bytes[currentOffset] = remaining;
+
       return currentOffset + 1;
     },
   );
@@ -58,6 +60,7 @@ VariableSizeDecoder<int> getShortU16Decoder() {
             'bytesLength': bytes.length - offset,
           });
         }
+
         final byte = bytes[currentOffset];
         if (byte == 0 && shift > 0) {
           throw SolanaError(SolanaErrorCode.codecsInvalidByteLength, {
@@ -66,6 +69,7 @@ VariableSizeDecoder<int> getShortU16Decoder() {
             'bytesLength': currentOffset - offset + 1,
           });
         }
+
         result |= (byte & 0x7f) << shift;
         assertNumberIsBetweenForCodec('shortU16', 0, 65535, result);
         currentOffset++;
@@ -82,6 +86,7 @@ VariableSizeDecoder<int> getShortU16Decoder() {
           });
         }
       }
+
       return (result, currentOffset);
     },
   );

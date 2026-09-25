@@ -308,6 +308,7 @@ Future<Map<String, Object?>> buildReleaseMetadataDocument(
             'short_description': '5',
           },
         },
+
         'media': [for (final item in media) item.toMap()],
         'files': [
           {
@@ -339,6 +340,7 @@ Future<Map<String, Object?>> buildReleaseMetadataDocument(
       },
     },
   };
+
   return document;
 }
 
@@ -346,15 +348,19 @@ String? _normalizeOptionalUrl(String? value) {
   if (value == null) {
     return null;
   }
+
   final trimmed = value.trim();
+
   if (trimmed.isEmpty) {
     return null;
   }
+
   return ensureHttpsUrl(trimmed);
 }
 
 String _normalizeReleaseName(String value) {
   final trimmed = value.trim();
+
   return trimmed.length <= 32 ? trimmed : trimmed.substring(0, 32);
 }
 
@@ -370,6 +376,7 @@ String? _firstNonEmpty(
       return candidate;
     }
   }
+
   return null;
 }
 
@@ -382,12 +389,15 @@ List<String> _firstNonEmptyList(
   if (first.isNotEmpty) {
     return first;
   }
+
   if (second.isNotEmpty) {
     return second;
   }
+
   if (third.isNotEmpty) {
     return third;
   }
+
   return fallback;
 }
 
@@ -411,6 +421,7 @@ Future<ResolvedMediaItem> _resolveMediaItem(
       fileName: fallbackFileName,
       expectedMimeType: expectedMimeType,
     );
+
   } on Object catch (error) {
     throw PublisherCliException(
       'Failed to fetch $purpose media from $resolvedUri: '
@@ -490,10 +501,13 @@ String _errorText(Object error) =>
 /// Returns true when [url] points at a public portal R2 host.
 bool isR2PublicUrl(String url) {
   final parsed = Uri.tryParse(url);
+
   if (parsed == null) {
     return false;
   }
+
   final hostname = parsed.host.toLowerCase();
+
   return defaultR2PublicHosts.contains(hostname);
 }
 
@@ -502,7 +516,9 @@ String? normalizeMimeType(String? value) {
   if (value == null) {
     return null;
   }
+
   final normalized = value.split(';').first.trim().toLowerCase();
+
   return normalized.isEmpty ? null : normalized;
 }
 
@@ -512,9 +528,11 @@ String inferUploadFileExtension(String fileName, String mimeType) {
       ? fileName.substring(fileName.lastIndexOf('.') + 1).trim().toLowerCase()
       : '';
   final isPlainExtension = byName.isNotEmpty && _isAlphanumeric(byName);
+
   if (isPlainExtension) {
     return byName;
   }
+
   return inferExtensionFromMimeType(mimeType) ?? 'bin';
 }
 
@@ -524,10 +542,12 @@ bool _isAlphanumeric(String value) {
     final isDigit = code >= 0x30 && code <= 0x39;
     final isLower = code >= 0x61 && code <= 0x7a;
     final isUpper = code >= 0x41 && code <= 0x5a;
+
     if (!isDigit && !isLower && !isUpper) {
       return false;
     }
   }
+
   return true;
 }
 
@@ -547,23 +567,29 @@ String? inferExtensionFromMimeType(String mimeType) => switch (mimeType) {
 
 String? _subtypeExtension(String mimeType) {
   final parts = mimeType.split('/');
+
   if (parts.length < 2) {
     return null;
   }
+
   final subtype = parts[1].split('+').first.trim().toLowerCase();
   final cleaned = _stripNonAlphanumeric(subtype);
+
   return cleaned.isEmpty ? null : cleaned;
 }
 
 String _stripNonAlphanumeric(String value) {
   final buffer = StringBuffer();
+
   for (final code in value.codeUnits) {
     final isDigit = code >= 0x30 && code <= 0x39;
     final isLower = code >= 0x61 && code <= 0x7a;
+
     if (isDigit || isLower) {
       buffer.writeCharCode(code);
     }
   }
+
   return buffer.toString();
 }
 
@@ -575,11 +601,13 @@ String _stripNonAlphanumeric(String value) {
   String mimeType,
 ) {
   final dimensions = readImageDimensions(fileBytes);
+
   if (dimensions == null || dimensions.$1 <= 0 || dimensions.$2 <= 0) {
     throw PublisherCliException(
       'Unable to determine media dimensions for $fileName',
     );
   }
+
   return dimensions;
 }
 
@@ -587,18 +615,24 @@ String _stripNonAlphanumeric(String value) {
 (int, int)? readImageDimensions(Uint8List bytes) {
   if (bytes.length >= 24 && _isPng(bytes)) {
     final view = ByteData.sublistView(bytes);
+
     return (view.getUint32(16), view.getUint32(20));
   }
+
   if (bytes.length >= 4 && bytes[0] == 0xFF && bytes[1] == 0xD8) {
     return _readJpegDimensions(bytes);
   }
+
   if (bytes.length >= 10 && _isGif(bytes)) {
     final view = ByteData.sublistView(bytes);
+
     return (view.getUint16(6, Endian.little), view.getUint16(8, Endian.little));
   }
+
   if (bytes.length >= 30 && _isWebp(bytes)) {
     return _readWebpDimensions(bytes);
   }
+
   return null;
 }
 
@@ -630,49 +664,65 @@ bool _isWebp(Uint8List bytes) =>
 
 (int, int)? _readJpegDimensions(Uint8List bytes) {
   var offset = 2;
+
   while (offset + 9 < bytes.length) {
     if (bytes[offset] != 0xFF) {
       offset++;
       continue;
     }
+
     final marker = bytes[offset + 1];
+
     if (marker == 0xC0 || marker == 0xC1 || marker == 0xC2 || marker == 0xC3) {
       final view = ByteData.sublistView(bytes);
       final height = view.getUint16(offset + 5);
       final width = view.getUint16(offset + 7);
+
       return (width, height);
     }
+
     if (marker == 0xD8 || (marker >= 0xD0 && marker <= 0xD9)) {
       offset += 2;
       continue;
     }
+
     final length = (bytes[offset + 2] << 8) | bytes[offset + 3];
+
     if (length <= 0) {
       return null;
     }
+
     offset += 2 + length;
   }
+
   return null;
 }
 
 (int, int)? _readWebpDimensions(Uint8List bytes) {
   final format = String.fromCharCodes(bytes.sublist(12, 16));
   final view = ByteData.sublistView(bytes);
+
   switch (format) {
     case 'VP8X':
       final width = 1 + _readUint24(bytes, 24);
       final height = 1 + _readUint24(bytes, 27);
+
       return (width, height);
+
     case 'VP8L':
       final bits =
           bytes[21] | (bytes[22] << 8) | (bytes[23] << 16) | (bytes[24] << 24);
       final width = (bits & 0x3FFF) + 1;
       final height = ((bits >> 14) & 0x3FFF) + 1;
+
       return (width, height);
+
     case 'VP8 ':
       final width = view.getUint16(26, Endian.little) & 0x3FFF;
       final height = view.getUint16(28, Endian.little) & 0x3FFF;
+
       return (width, height);
+
     default:
       return null;
   }

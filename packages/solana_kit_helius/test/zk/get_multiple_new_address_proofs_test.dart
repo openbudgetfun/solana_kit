@@ -32,6 +32,7 @@ void main() {
         expect(body['params'], {
           'addresses': ['a1', 'a2'],
         });
+
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResult}),
           200,

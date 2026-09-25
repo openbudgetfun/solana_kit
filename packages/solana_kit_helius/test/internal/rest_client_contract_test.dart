@@ -60,6 +60,7 @@ void main() {
         baseUrl: 'https://api.helius.xyz/v0?api-key=test-key',
         client: MockClient((request) async {
           capturedRequest = request;
+
           return http.Response(
             jsonEncode({'ok': true}),
             200,
@@ -90,6 +91,7 @@ void main() {
           baseUrl: 'https://api.helius.xyz',
           client: MockClient((request) async {
             requests.add(request);
+
             return http.Response(
               jsonEncode({'ok': true}),
               200,
@@ -126,6 +128,7 @@ void main() {
         baseUrl: 'https://api.helius.xyz',
         client: MockClient((request) async {
           expect(request.method, 'DELETE');
+
           return http.Response('', 204);
         }),
       );

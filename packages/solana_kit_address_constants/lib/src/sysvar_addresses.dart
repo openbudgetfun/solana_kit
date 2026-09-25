@@ -9,8 +9,6 @@ import 'package:solana_kit_address/solana_kit_address.dart';
 // The sysvar fetch helpers and codecs live in `package:solana_kit_sysvars`.
 // These address constants are provided here so that any package can reference
 // a sysvar address without importing the full sysvar domain package.
-
-/// The owner address for all sysvar accounts.
 const sysvarOwnerAddress = Address(
   'Sysvar1111111111111111111111111111111111111',
 );

@@ -270,6 +270,7 @@ class _WalletFixture {
       ..['connect'] = ((JSObject input) {
         silent = (input['silent']! as JSBoolean).toDart;
         final output = JSObject()..['accounts'] = [account].toJS;
+
         return Future<JSObject>.value(output).toJS;
       }).toJS;
 
@@ -277,6 +278,7 @@ class _WalletFixture {
       ..['version'] = '1.0.0'.toJS
       ..['on'] = ((JSString event, JSFunction callback) {
         changeListener = callback;
+
         return (() => changeListener = null).toJS;
       }).toJS;
 
@@ -287,6 +289,7 @@ class _WalletFixture {
           ..['signedMessage'] = input['message']
           ..['signature'] = Uint8List(64).toJS
           ..['signatureType'] = 'ed25519'.toJS;
+
         return Future<JSArray<JSObject>>.value([output].toJS).toJS;
       }).toJS;
 
@@ -305,6 +308,7 @@ class _WalletFixture {
               ..['signedTransaction'] = input['inputs']
               ..['signature'] = Uint8List(64).toJS,
           );
+
         return Future<JSArray<JSObject>>.value(outputs).toJS;
       }).toJS;
 

@@ -118,6 +118,7 @@ void main() {
       );
       getSnsRecordHeaderEncoder().write(header, bytes, recordDataOffset);
       bytes.setAll(recordDataOffset + recordHeaderLength, payload);
+
       return bytes;
     }
 

@@ -23,6 +23,7 @@ void main() {
             headers: {'content-type': 'application/json'},
           );
         }
+
         // getSignatureStatuses
         return http.Response(
           jsonEncode(<String, Object?>{
@@ -120,6 +121,7 @@ void main() {
           final body = jsonDecode(request.body) as Map<String, Object?>;
           if (body['method'] == 'sendTransaction') {
             sentParams = body['params']! as List<Object?>;
+
             return http.Response(
               jsonEncode(<String, Object?>{
                 'jsonrpc': '2.0',
@@ -130,6 +132,7 @@ void main() {
               headers: {'content-type': 'application/json'},
             );
           }
+
           return http.Response(
             jsonEncode(<String, Object?>{
               'jsonrpc': '2.0',
@@ -175,6 +178,7 @@ void main() {
   final client = MockClient((request) async {
     final body = jsonDecode(request.body) as Map<String, Object?>;
     methods.add(body['method']! as String);
+
     return http.Response(
       handler(body['method']! as String) as String? ??
           jsonEncode(<String, Object?>{
@@ -186,6 +190,7 @@ void main() {
       headers: {'content-type': 'application/json'},
     );
   });
+
   return (
     helius: createHelius(HeliusConfig(apiKey: 'test-key'), client: client),
     methods: methods,

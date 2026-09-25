@@ -11,11 +11,13 @@ String resolvePaymentHost({
   Map<String, String>? environment,
 }) {
   final explicit = override;
+
   if (explicit != null && explicit.isNotEmpty) {
     return _validatePaymentHost(explicit);
   }
 
   final value = (environment ?? Platform.environment)['HELIUS_PAYMENT_HOST'];
+
   if (value != null && value.isNotEmpty) return _validatePaymentHost(value);
 
   return heliusPaymentHost;
@@ -25,6 +27,7 @@ String resolvePaymentHost({
 /// the host.
 String buildPaymentUrl(String paymentIntentId, {String? hostOverride}) {
   final encodedId = Uri.encodeComponent(paymentIntentId);
+
   return '${resolvePaymentHost(override: hostOverride)}/pay/$encodedId';
 }
 
@@ -47,5 +50,6 @@ String _validatePaymentHost(String value) {
       'must be an absolute HTTP(S) origin without credentials, query, or fragment',
     );
   }
+
   return normalized;
 }

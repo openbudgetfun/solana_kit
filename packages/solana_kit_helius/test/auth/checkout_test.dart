@@ -17,6 +17,7 @@ Map<String, Object?> configs({bool agent = false}) => {
         'developer_v4': 'price_dev_yearly',
         'business_v4': 'price_biz_yearly',
       },
+
       if (agent) 'AgentPlan': 'price_agent_plan',
     },
   },
@@ -41,6 +42,7 @@ void main() {
           request.headers['authorization'] ?? request.headers['Authorization'],
           'Bearer jwt',
         );
+
         return http.Response(
           jsonEncode(
             configs(agent: request.url.queryParameters['agent'] == 'cli'),
@@ -126,6 +128,7 @@ void main() {
           seen['userAgent'] =
               request.headers['user-agent'] ?? request.headers['User-Agent'];
           seen['qty'] = request.url.queryParameters['qty'];
+
           return http.Response(jsonEncode({'dueToday': 1}), 200);
         });
         final preview = await getCheckoutPreviewByPriceId(
@@ -171,6 +174,7 @@ void main() {
                 request.url.queryParameters['priceId'],
                 'price_dev_monthly',
               );
+
               return http.Response(
                 jsonEncode({
                   'planName': 'Developer',
@@ -192,6 +196,7 @@ void main() {
                 (jsonDecode(request.body) as Map<String, Object?>)['refId'],
                 'ref-1',
               );
+
               return http.Response(
                 jsonEncode({
                   'id': 'pi_test',
@@ -221,6 +226,7 @@ void main() {
                 200,
               );
           }
+
           return http.Response('nope', 404);
         });
 
@@ -374,6 +380,7 @@ void main() {
               200,
             );
         }
+
         return http.Response('nope', 404);
       });
 
@@ -428,10 +435,12 @@ void main() {
                 request.url.queryParameters['priceId'],
                 'price_agent_plan',
               );
+
               return http.Response(jsonEncode({'dueToday': 1000}), 200);
             case '/checkout/initialize':
               final body = jsonDecode(request.body) as Map<String, Object?>;
               expect(body['priceId'], 'price_agent_plan');
+
               return http.Response(
                 jsonEncode({
                   'id': 'pi_agent',
@@ -444,6 +453,7 @@ void main() {
                 200,
               );
           }
+
           return http.Response('nope', 404);
         });
 

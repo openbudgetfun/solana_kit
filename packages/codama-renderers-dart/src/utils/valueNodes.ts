@@ -37,35 +37,46 @@ export function getDartValueFragment(
           ? `BigInt.from(${value.number})`
           : String(value.number),
       );
+
     case "booleanValueNode":
       if (typeof value.boolean !== "boolean") {
         throw new Error("Invalid Dart boolean: expected a boolean");
       }
 
       return fragmentFromString(String(value.boolean));
+
     case "stringValueNode":
       return fragmentFromString(toDartStringLiteral(value.string));
+
     case "noneValueNode":
       return fragmentFromString("null");
+
     case "bytesValueNode": {
       if (value.encoding !== "base16") {
         throw new Error(
           `Unsupported deterministic bytes encoding: ${value.encoding}`,
         );
       }
+
       const clean = value.data.replace(/^0x/, "");
+
       if (clean.length % 2 !== 0 || !/^[0-9a-f]*$/i.test(clean)) {
         throw new Error(`Invalid hexadecimal bytes value: ${value.data}`);
       }
+
       const bytes = clean.match(/.{2}/g)?.map((byte) => `0x${byte}`) ?? [];
+
       return fragment`${use("Uint8List", "dartTypedData")}.fromList([${fragmentFromString(bytes.join(", "))}])`;
     }
+
     case "publicKeyValueNode": {
       const wellKnownName = WELL_KNOWN_ADDRESSES.get(value.publicKey);
+
       return wellKnownName
         ? fragment`${use(wellKnownName, "solanaAddresses")}`
         : fragment`${use("Address", "solanaAddresses")}(${fragmentFromString(toDartStringLiteral(value.publicKey))})`;
     }
+
     default:
       throw new Error(
         `Unsupported deterministic Dart value node: ${value.kind}`,
@@ -82,6 +93,7 @@ export function isConstDartValueNode(value: RenderableValueNode): boolean {
     case "noneValueNode":
     case "publicKeyValueNode":
       return true;
+
     default:
       return false;
   }
@@ -91,12 +103,6 @@ export function isConstDartValueNode(value: RenderableValueNode): boolean {
 export function toDartStringLiteral(value: string): string {
   return `'${value
     .replaceAll("\\", "\\\\")
-    .replaceAll("\n", "\\n")
-    .replaceAll("\r", "\\r")
-    .replaceAll("\t", "\\t")
-    .replaceAll("\b", "\\b")
-    .replaceAll("\f", "\\f")
-    .replaceAll("$", "\\$")
     .replaceAll("'", "\\'")}'`;
 }
 

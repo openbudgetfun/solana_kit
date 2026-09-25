@@ -7,6 +7,7 @@ String decimalFixedPointToString(
   FixedPointToStringOptions options = const FixedPointToStringOptions(),
 ]) {
   final scaled = applyDecimalsOption(value.raw, value.decimals, options);
+
   return formatScaledBigInt(
     scaled.raw,
     scaled.decimals,
@@ -32,8 +33,10 @@ double decimalFixedPointToNumber(DecimalFixedPoint value) {
 
 double _pow10Double(int exponent) {
   var result = 1.0;
+
   for (var i = 0; i < exponent; i++) {
     result *= 10;
   }
+
   return result;
 }

@@ -27,6 +27,7 @@ VariableSizeEncoder<String> _getBase58Encoder() {
 /// Throws a [SolanaError] if the string is not a valid address.
 Address address(String putativeAddress) {
   assertIsAddress(putativeAddress);
+
   return Address(putativeAddress);
 }
 
@@ -71,6 +72,7 @@ bool isAddress(String putativeAddress) {
   final encoder = _getBase58Encoder();
   try {
     return encoder.encode(putativeAddress).length == 32;
+
   } on Object {
     return false;
   }

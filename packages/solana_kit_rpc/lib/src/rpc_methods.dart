@@ -301,6 +301,7 @@ SolanaRpcResponse<Map<String, Object?>?> _parseNullableMapRpcResponse(
   return _parseSolanaRpcResponse(response, (value) {
     if (value == null) return null;
     final typedValue = value as Map;
+
     return typedValue.cast<String, Object?>();
   });
 }
@@ -310,10 +311,12 @@ SolanaRpcResponse<List<Map<String, Object?>?>> _parseNullableMapListRpcResponse(
 ) {
   return _parseSolanaRpcResponse(response, (value) {
     final typedValue = (value as List<Object?>?) ?? const <Object?>[];
+
     return typedValue
         .map((item) {
           if (item == null) return null;
           final typedItem = item as Map;
+
           return typedItem.cast<String, Object?>();
         })
         .toList(growable: false);
@@ -331,6 +334,7 @@ SolanaRpcResponse<LatestBlockhashValue> _parseLatestBlockhashRpcResponse(
 ) {
   return _parseSolanaRpcResponse(response, (value) {
     final typedValue = (value! as Map).cast<String, Object?>();
+
     return LatestBlockhashValue(
       blockhash: blockhash(typedValue['blockhash']! as String),
       lastValidBlockHeight: typedValue['lastValidBlockHeight']! as BigInt,
@@ -346,10 +350,12 @@ SolanaRpcResponse<TValue> _parseSolanaRpcResponse<TValue>(
     Map() => response.cast<String, Object?>(),
     _ => <String, Object?>{},
   };
+
   final typedContext = switch (typedResponse['context']) {
     Map() => (typedResponse['context']! as Map).cast<String, Object?>(),
     _ => <String, Object?>{},
   };
+
   return SolanaRpcResponse<TValue>(
     context: RpcResponseContext(
       slot: (typedContext['slot'] as Slot?) ?? BigInt.zero,

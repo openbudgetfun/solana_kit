@@ -51,6 +51,7 @@ class SurfnetConfig {
     if (slotTimeMs <= 0) {
       throw ArgumentError.value(slotTimeMs, 'slotTimeMs', 'must be positive');
     }
+
     if (airdropSol < 0) {
       throw ArgumentError.value(
         airdropSol,
@@ -58,8 +59,10 @@ class SurfnetConfig {
         'must be non-negative',
       );
     }
+
     _validatePort(rpcPort, 'rpcPort');
     _validatePort(wsPort, 'wsPort');
+
     if (rpcPort != null && rpcPort == wsPort) {
       throw ArgumentError.value(wsPort, 'wsPort', 'must differ from rpcPort');
     }
@@ -99,6 +102,7 @@ class SurfnetConfig {
   /// Optional 64-byte payer secret key in Solana CLI keypair format.
   Uint8List? get payerSecretKey {
     final payerSecretKey = _payerSecretKey;
+
     if (payerSecretKey == null) return null;
     return Uint8List.fromList(payerSecretKey);
   }
@@ -137,6 +141,7 @@ class SurfnetConfig {
 
 void _validatePort(int? port, String name) {
   if (port == null) return;
+
   if (port <= 0 || port > 65535) {
     throw ArgumentError.value(port, name, 'must be between 1 and 65535');
   }

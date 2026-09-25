@@ -302,6 +302,7 @@ void main() {
 Instruction _heapFrameInstruction(int bytes) {
   final data = Uint8List(5)..first = 1;
   ByteData.sublistView(data).setUint32(1, bytes, Endian.little);
+
   return Instruction(
     programAddress: computeBudgetProgramAddress,
     accounts: const [],

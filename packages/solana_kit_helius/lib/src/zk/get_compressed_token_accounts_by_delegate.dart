@@ -10,5 +10,6 @@ Future<CompressedTokenAccountList> zkGetCompressedTokenAccountsByDelegate(
     'getCompressedTokenAccountsByDelegate',
     request.toJson(),
   );
+
   return CompressedTokenAccountList.fromJson(result! as Map<String, Object?>);
 }

@@ -5,8 +5,6 @@ void main() {
   // -------------------------------------------------------------------------
   // Helpers
   // -------------------------------------------------------------------------
-
-  /// Wrap a flat map of key-value pairs in a [JsonReader] for convenience.
   JsonReader reader(Map<String, Object?> json) => JsonReader(json);
 
   // Matcher that asserts a [FormatException] whose message contains [key].

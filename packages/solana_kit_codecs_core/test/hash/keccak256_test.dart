@@ -6,16 +6,17 @@ import 'package:test/test.dart';
 /// Helper to convert a hex string to [Uint8List].
 Uint8List _hex(String hex) {
   final bytes = Uint8List(hex.length ~/ 2);
+
   for (var i = 0; i < bytes.length; i++) {
     bytes[i] = int.parse(hex.substring(i * 2, i * 2 + 2), radix: 16);
   }
+
   return bytes;
 }
 
 void main() {
   group('keccak256', () {
     // Test vectors cross-validated against Python hashlib's keccak-256.
-
     test('empty input returns known hash', () {
       final result = keccak256(Uint8List(0));
       expect(
@@ -95,6 +96,7 @@ void main() {
       for (var i = 0; i < 200; i++) {
         input[i] = i % 256;
       }
+
       final result = keccak256(input);
       expect(result.length, 32);
       // Verify it's not all zeros and not all the same byte.
@@ -108,6 +110,7 @@ void main() {
       for (var i = 0; i < 136; i++) {
         input[i] = i % 256;
       }
+
       final result = keccak256(input);
       expect(result.length, 32);
     });
@@ -118,6 +121,7 @@ void main() {
       for (var i = 0; i < 135; i++) {
         input[i] = i % 256;
       }
+
       final result = keccak256(input);
       expect(result.length, 32);
     });

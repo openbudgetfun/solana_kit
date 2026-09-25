@@ -21,6 +21,7 @@ void main() {
                 required signature,
               }) {
                 capturedSignal = abortSignal;
+
                 return Future.value();
               },
         ),
@@ -97,6 +98,7 @@ void main() {
           ),
           ({required abortSignal}) {
             capturedStrategySignal = abortSignal;
+
             return [];
           },
         );
@@ -127,6 +129,7 @@ void main() {
         ),
         ({required abortSignal}) {
           capturedStrategySignal = abortSignal;
+
           return [Completer<void>().future];
         },
       );

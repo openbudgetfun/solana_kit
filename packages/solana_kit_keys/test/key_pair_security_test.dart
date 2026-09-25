@@ -62,6 +62,7 @@ void main() {
             final file = realIO.createFile(path);
             if (path == destination.path) return file;
             expect(file.parent.statSync().mode & 0x1ff, 0x1c0);
+
             return _FileAfterCreate(file, () async {
               // Model the staged file disappearing before chmod completes.
               await file.delete();
@@ -96,6 +97,7 @@ void main() {
             final file = realIO.createFile(path);
             inspectedStagingDirectory = true;
             expect(file.parent.statSync().mode & 0x1ff, 0x1c0);
+
             return file;
           },
         );
@@ -170,6 +172,7 @@ class _FileAfterCreate implements File {
   Future<File> create({bool recursive = false, bool exclusive = false}) async {
     await file.create(recursive: recursive, exclusive: exclusive);
     await afterCreate();
+
     return this;
   }
 
@@ -217,12 +220,14 @@ final class _DirectoryWithTempMode implements Directory {
   Future<Directory> createTemp([String? prefix]) async {
     final created = await directory.createTemp(prefix);
     final chmod = await Process.run('chmod', [mode, created.path]);
+
     if (chmod.exitCode != 0) {
       throw FileSystemException(
         'Failed to prepare test directory',
         created.path,
       );
     }
+
     return created;
   }
 

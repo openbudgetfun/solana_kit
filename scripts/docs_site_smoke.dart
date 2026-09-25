@@ -32,8 +32,10 @@ Future<void> main(List<String> args) async {
     'pub',
     'get',
   ], workingDirectory: siteDirectory.path);
+
   if (code != 0) {
     exitCode = code;
+
     return;
   }
 
@@ -43,8 +45,10 @@ Future<void> main(List<String> args) async {
     'build_runner',
     'clean',
   ], workingDirectory: siteDirectory.path);
+
   if (code != 0) {
     exitCode = code;
+
     return;
   }
 
@@ -53,8 +57,10 @@ Future<void> main(List<String> args) async {
     'scripts/build_wallet_demo.dart',
     '--base-path=$basePath',
   ], workingDirectory: repoRoot.path);
+
   if (code != 0) {
     exitCode = code;
+
     return;
   }
 
@@ -64,9 +70,11 @@ Future<void> main(List<String> args) async {
   // /solana_kit/ on GitHub Pages).
   try {
     _assertDemoBaseHref(repoRoot, basePath, demoBaseHref);
+
   } on SmokeFailure catch (error) {
     stderr.writeln(error.message);
     exitCode = 1;
+
     return;
   }
 
@@ -82,8 +90,10 @@ Future<void> main(List<String> args) async {
     workingDirectory: siteDirectory.path,
     environment: {'PORT': Platform.environment['DOCS_BUILD_PORT'] ?? '9080'},
   );
+
   if (code != 0) {
     exitCode = code;
+
     return;
   }
 
@@ -107,6 +117,7 @@ Future<void> main(List<String> args) async {
       await _verifyWalletDemo(port, repoRoot, basePath, demoBaseHref);
 
       stdout.writeln('Docs smoke test passed.');
+
     } on SmokeFailure catch (error) {
       stderr.writeln(error.message);
       exitCode = 1;
@@ -121,56 +132,70 @@ Future<void> main(List<String> args) async {
 
 void _assertDemoBaseHref(Directory repoRoot, String basePath, String expected) {
   final file = File('${repoRoot.path}/docs/site/web/wallet-demo/index.html');
+
   if (!file.existsSync()) {
     _fail('wallet demo build output is missing (${file.path}).');
   }
+
   final match = RegExp(
     r'<base\s+href="([^"]*)"',
   ).firstMatch(file.readAsStringSync());
   final actual = match?.group(1);
+
   if (actual != expected) {
     _fail(
       'wallet demo base href is "$actual" but the demo is served at '
       '"$expected" (basePath "$basePath"). Assets would 404 when deployed.',
     );
   }
+
   stdout.writeln('Wallet demo base href matches "$expected".');
 }
 
 /// Maps every Markdown file under [contentDirectoryPath] to its served route.
 List<String> _contentRoutes(String contentDirectoryPath) {
   final directory = Directory(contentDirectoryPath);
+
   if (!directory.existsSync()) return const [];
   final routes = <String>[];
+
   for (final entity in directory.listSync(recursive: true)) {
     if (entity is! File || !entity.path.endsWith('.md')) continue;
     final relative = entity.path
         .substring(directory.path.length + 1)
         .replaceAll(r'\\', '/');
+
     if (relative == 'index.md') {
       routes.add('/');
     } else {
       routes.add('/${relative.substring(0, relative.length - '.md'.length)}/');
     }
   }
+
   routes.sort();
+
   return routes;
 }
 
 Future<void> _verifyContentPages(int port, Directory repoRoot) async {
   final routes = _contentRoutes('${repoRoot.path}/docs/site/content');
+
   if (routes.isEmpty) {
     _fail('no content pages were found under docs/site/content.');
   }
+
   for (final route in routes) {
     final html = await _fetchText(port, route);
+
     if (!html.contains('</html>')) {
       _fail('page $route did not render a complete HTML document.');
     }
+
     if (!html.contains('Solana Kit')) {
       _fail('page $route is missing the shared site chrome.');
     }
   }
+
   stdout.writeln('Verified ${routes.length} content pages render.');
 }
 
@@ -184,26 +209,32 @@ Future<void> _verifyWalletDemo(
 ) async {
   final demoPagePath = _demoPath(basePath);
   final demoHtml = await _fetchText(port, demoPagePath);
+
   if (!demoHtml.contains('flutter_bootstrap.js')) {
     _fail('wallet demo page did not load.');
   }
 
   final assets = <String>{};
   final assetPattern = RegExp('(?:src|href)="([^"]+)"');
+
   for (final match in assetPattern.allMatches(demoHtml)) {
     final raw = match.group(1)!;
+
     if (raw.startsWith('data:') || raw.startsWith('http')) continue;
     assets.add(raw.startsWith('/') ? raw : '$demoBaseHref$raw');
   }
+
   // main.dart.js is loaded dynamically by flutter_bootstrap.js, so it never
   // appears in index.html; fetch it explicitly.
   assets.add('${demoBaseHref}main.dart.js');
 
   for (final url in assets) {
     final response = await _get(port, url);
+
     if (response.statusCode != HttpStatus.ok) {
       _fail('wallet demo asset $url returned ${response.statusCode}.');
     }
+
     if (response.bytes.isEmpty) {
       _fail('wallet demo asset $url is empty.');
     }
@@ -235,18 +266,22 @@ Future<void> _serveStatic(
       final file = File(
         '${root.path}${path.endsWith('/') ? '${path}index.html' : path}',
       );
+
       if (!file.existsSync()) {
         request.response.statusCode = HttpStatus.notFound;
         await request.response.close();
         continue;
       }
+
       request.response.headers.contentType = _contentType(file.path);
       await request.response.addStream(file.openRead());
       await request.response.close();
+
     } on Object catch (error) {
       stderr.writeln('Static server request failed: $error');
       try {
         await request.response.close();
+
       } on Object {
         // The client may already have closed the connection.
       }
@@ -259,33 +294,42 @@ Future<void> _serveStatic(
 String _stripBasePath(String path, String basePath) {
   if (basePath == '/') return path;
   final normalized = basePath.endsWith('/') ? basePath : '$basePath/';
+
   if (path == normalized || path == '${normalized}index.html') {
     return '/index.html';
   }
+
   if (path.startsWith(normalized)) {
     return path.substring(normalized.length - 1);
   }
+
   return path;
 }
 
 String _demoPath(String basePath) {
   final normalized = basePath.endsWith('/') ? basePath : '$basePath/';
+
   return '${normalized}wallet-demo/index.html';
 }
 
 ContentType _contentType(String path) {
   if (path.endsWith('.html')) return ContentType.html;
+
   if (path.endsWith('.js')) return ContentType('application', 'javascript');
+
   if (path.endsWith('.css')) return ContentType('text', 'css');
   return ContentType.binary;
 }
 
 Future<void> _waitForServer(int port) async {
   Object? lastError;
+
   for (var attempt = 0; attempt < 20; attempt += 1) {
     try {
       await _fetchText(port, '/');
+
       return;
+
     } catch (error) {
       lastError = error;
       await Future<void>.delayed(const Duration(milliseconds: 500));
@@ -306,6 +350,7 @@ Future<({int statusCode, List<int> bytes})> _get(int port, String path) async {
       <int>[],
       (accumulator, chunk) => accumulator..addAll(chunk),
     );
+
     return (statusCode: response.statusCode, bytes: bytes);
   } finally {
     client.close();
@@ -314,9 +359,11 @@ Future<({int statusCode, List<int> bytes})> _get(int port, String path) async {
 
 Future<String> _fetchText(int port, String path) async {
   final response = await _get(port, path);
+
   if (response.statusCode != HttpStatus.ok) {
     throw SmokeFailure('GET $path returned ${response.statusCode}');
   }
+
   return utf8.decode(response.bytes, allowMalformed: true);
 }
 
@@ -333,5 +380,6 @@ Future<int> _inherit(
     environment: environment,
     mode: ProcessStartMode.inheritStdio,
   );
+
   return process.exitCode;
 }

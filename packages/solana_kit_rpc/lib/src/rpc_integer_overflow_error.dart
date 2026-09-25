@@ -15,24 +15,30 @@ SolanaError createSolanaJsonRpcIntegerOverflowError(
   BigInt value,
 ) {
   var argumentLabel = '';
+
   if (keyPath.isNotEmpty && keyPath[0] is int) {
     final argPosition = (keyPath[0] as int) + 1;
     final lastDigit = argPosition % 10;
     final lastTwoDigits = argPosition % 100;
+
     if (lastDigit == 1 && lastTwoDigits != 11) {
       argumentLabel = '${argPosition}st';
+
     } else if (lastDigit == 2 && lastTwoDigits != 12) {
       argumentLabel = '${argPosition}nd';
+
     } else if (lastDigit == 3 && lastTwoDigits != 13) {
       argumentLabel = '${argPosition}rd';
     } else {
       argumentLabel = '${argPosition}th';
     }
+
   } else if (keyPath.isNotEmpty) {
     argumentLabel = '`${keyPath[0]}`';
   }
 
   String? path;
+
   if (keyPath.length > 1) {
     path = keyPath
         .skip(1)

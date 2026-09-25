@@ -82,10 +82,12 @@ VariableSizeEncoder<String> getUtf8Encoder([
       if (config.fatal) {
         _assertIsWellFormedUtf8String(value);
       }
+
       // `utf8.encode` already returns a `Uint8List`; copying it again here
       // doubled the allocation for every encoded string.
       final encoded = convert.utf8.encode(value);
       bytes.setAll(offset, encoded);
+
       return offset + encoded.length;
     },
   );
@@ -128,6 +130,7 @@ VariableSizeDecoder<String> getUtf8Decoder([
       if (config.removeNullCharacters) {
         result = removeNullCharacters(result);
       }
+
       return (result, bytes.length);
     },
   );
@@ -162,14 +165,18 @@ bool _startsWithByteOrderMark(Uint8List bytes) =>
 void _assertIsWellFormedUtf8String(String value) {
   for (var index = 0; index < value.length; index++) {
     final unit = value.codeUnitAt(index);
+
     if (unit >= 0xd800 && unit <= 0xdbff) {
       final next = index + 1 < value.length ? value.codeUnitAt(index + 1) : 0;
+
       if (next < 0xdc00 || next > 0xdfff) {
         throw SolanaError(SolanaErrorCode.codecsInvalidUtf8String, {
           'index': index,
         });
       }
+
       index++;
+
     } else if (unit >= 0xdc00 && unit <= 0xdfff) {
       throw SolanaError(SolanaErrorCode.codecsInvalidUtf8String, {
         'index': index,

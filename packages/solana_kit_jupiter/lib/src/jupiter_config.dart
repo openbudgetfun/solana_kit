@@ -65,5 +65,6 @@ String _validateBaseUrl(String baseUrl, bool allowInsecureHttp) {
       'fragment. Set allowInsecureHttp only for trusted development endpoints.',
     );
   }
+
   return baseUrl;
 }

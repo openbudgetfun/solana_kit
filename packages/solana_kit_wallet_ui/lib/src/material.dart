@@ -16,7 +16,9 @@ Future<Wallet?> showMaterialWalletPicker({
   Future<void> select(BuildContext routeContext, Wallet wallet) async {
     try {
       await controller.connect(wallet);
+
       if (routeContext.mounted) Navigator.of(routeContext).pop(wallet);
+
     } on Object {
       // The controller exposes the error and the picker stays open for retry.
     }
@@ -39,6 +41,7 @@ Future<Wallet?> showMaterialWalletPicker({
       ),
     );
   }
+
   return showDialog<Wallet>(
     context: context,
     builder: (routeContext) => Dialog(
@@ -97,6 +100,7 @@ class MaterialWalletButton extends StatelessWidget {
             state.connectionStatus == WalletConnectionStatus.connecting ||
             state.connectionStatus == WalletConnectionStatus.disconnecting;
         final onPressed = busy ? null : () => _pressed(context, state);
+
         return KeyedSubtree(
           key: WalletUiKeys.connectButton,
           child:
@@ -129,6 +133,7 @@ class MaterialWalletButton extends StatelessWidget {
 
   String _label(BuildContext context, WalletAdapterState state) {
     final account = state.selectedAccount;
+
     return account == null
         ? WalletUiTheme.of(context).connectLabel
         : account.label ?? compactWalletAddress(account.address);
@@ -146,8 +151,10 @@ class MaterialWalletButton extends StatelessWidget {
         headerBuilder: headerBuilder,
         tileBuilder: tileBuilder,
       );
+
       return;
     }
+
     await showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
@@ -172,6 +179,7 @@ class MaterialWalletButton extends StatelessWidget {
 
 WalletUiPalette _materialPalette(BuildContext context) {
   final colors = Theme.of(context).colorScheme;
+
   return WalletUiPalette(
     accent: colors.primary,
     foreground: colors.onSurface,

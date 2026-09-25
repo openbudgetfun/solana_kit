@@ -126,6 +126,7 @@ class _WalletExampleAppState extends State<WalletExampleApp> {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final wide = constraints.maxWidth >= 820;
+
                 return Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1120),
@@ -176,9 +177,11 @@ class _WalletExampleAppState extends State<WalletExampleApp> {
     try {
       final rpc = createSolanaRpc(url: _surfpoolUrl, allowInsecureHttp: true);
       await rpc.getSlot().send();
+
       if (mounted) {
         setState(() => _surfpoolStatus = 'Surfpool ready');
       }
+
     } on Object catch (error) {
       if (mounted) {
         setState(() => _surfpoolStatus = 'Surfpool unavailable · $error');
@@ -189,20 +192,25 @@ class _WalletExampleAppState extends State<WalletExampleApp> {
   Future<void> _signMessage() async {
     final wallet = _controller.state.selectedWallet;
     final account = _controller.state.selectedAccount;
+
     if (wallet == null || account == null) return;
     final feature = wallet.feature<SolanaSignMessageFeature>(
       SolanaFeatureId.signMessage,
     );
+
     if (feature == null) {
       setState(() => _signatureStatus = 'This wallet cannot sign messages.');
+
       return;
     }
+
     final output = await feature.signMessage([
       SolanaSignMessageInput(
         account: account,
         message: Uint8List.fromList(utf8.encode('Hello from Solana Kit')),
       ),
     ]);
+
     if (mounted) {
       setState(
         () => _signatureStatus =
@@ -289,6 +297,7 @@ class _ActionsState extends State<_Actions> {
   @override
   Widget build(BuildContext context) {
     final controller = widget.controller;
+
     return DecoratedBox(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -338,6 +347,7 @@ class _ActionsState extends State<_Actions> {
                 theme: WiredThemeData.cuddly(brightness: Brightness.dark),
               ),
             },
+
             const SizedBox(height: 14),
             FilledButton.tonal(
               key: AppKeys.checkSurfpool,
@@ -378,6 +388,7 @@ WalletRegistry _demoRegistry() {
       additionalWallets: [DemoWallet()],
     );
   }
+
   return DemoWalletRegistry();
 }
 
@@ -431,6 +442,7 @@ class _DemoConnect implements StandardConnectFeature {
     StandardConnectInput input = const StandardConnectInput(),
   ]) async {
     wallet._accounts = [wallet.account];
+
     return StandardConnectOutput(wallet.accounts);
   }
 

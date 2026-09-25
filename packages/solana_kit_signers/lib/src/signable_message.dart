@@ -39,8 +39,10 @@ SignableMessage createSignableMessage(
   Map<Address, SignatureBytes>? signatures,
 ]) {
   final Uint8List contentBytes;
+
   if (content is String) {
     contentBytes = Uint8List.fromList(utf8.encode(content));
+
   } else if (content is Uint8List) {
     contentBytes = content;
   } else {

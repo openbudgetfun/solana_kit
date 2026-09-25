@@ -41,6 +41,7 @@ SolanaError getSolanaErrorFromRpcError(
 
   if (rpcEnumError is String) {
     rpcErrorName = rpcEnumError;
+
   } else if (rpcEnumError is Map<String, Object?>) {
     rpcErrorName = rpcEnumError.keys.first;
     rpcErrorContext = rpcEnumError[rpcErrorName];
@@ -56,5 +57,6 @@ SolanaError getSolanaErrorFromRpcError(
     rpcErrorName,
     rpcErrorContext,
   );
+
   return SolanaError(errorCode, errorContext);
 }

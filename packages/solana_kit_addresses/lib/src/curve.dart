@@ -6,8 +6,6 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 // ---------------------------------------------------------------------------
 // Ed25519 curve constants
 // ---------------------------------------------------------------------------
-
-/// The prime field: p = 2^255 - 19
 final BigInt _p = BigInt.two.pow(255) - BigInt.from(19);
 
 /// The Ed25519 curve parameter d.
@@ -23,15 +21,10 @@ final BigInt _rm1 = BigInt.parse(
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
-
-/// Returns `true` if the given 32 [bytes] represent a compressed point that
-/// lies on the Ed25519 curve.
-///
-/// Returns `false` if [bytes] is not exactly 32 bytes long or if the point
-/// is not on the curve.
 bool compressedPointBytesAreOnCurve(Uint8List bytes) {
   if (bytes.length != 32) return false;
   final y = _decompressPointBytes(bytes);
+
   return _pointIsOnCurve(y, bytes[31]);
 }
 
@@ -39,6 +32,7 @@ bool compressedPointBytesAreOnCurve(Uint8List bytes) {
 /// curve.
 bool isOnCurveAddress(Address addr) {
   final addressBytes = getAddressCodec().encode(addr);
+
   return compressedPointBytesAreOnCurve(addressBytes);
 }
 
@@ -73,32 +67,34 @@ void assertIsOffCurveAddress(Address addr) {
 // ---------------------------------------------------------------------------
 // Internal Ed25519 implementation (ported from noble-ed25519)
 // ---------------------------------------------------------------------------
-
-/// Decompresses the 32-byte compressed point representation to get the y
-/// coordinate as a [BigInt].
 BigInt _decompressPointBytes(Uint8List bytes) {
   // Read the 32 bytes in little-endian order, clearing the sign bit on the
   // last byte.
   final hexString = StringBuffer();
+
   for (var i = 31; i >= 0; i--) {
     final byte = i == 31 ? bytes[i] & 0x7f : bytes[i];
     hexString.write(byte.toRadixString(16).padLeft(2, '0'));
   }
+
   return BigInt.parse('0x$hexString');
 }
 
 /// Modular reduction: returns `a mod p` with positive result.
 BigInt _mod(BigInt a) {
   final r = a % _p;
+
   return r >= BigInt.zero ? r : _p + r;
 }
 
 /// Computes `x^(2^power) mod p`.
 BigInt _pow2(BigInt x, int power) {
   var r = x;
+
   for (var i = 0; i < power; i++) {
     r = r * r % _p;
   }
+
   return r;
 }
 
@@ -115,6 +111,7 @@ BigInt _pow2523(BigInt x) {
   final b160 = _pow2(b80, 80) * b80 % _p;
   final b240 = _pow2(b160, 80) * b80 % _p;
   final b250 = _pow2(b240, 10) * b10 % _p;
+
   return _pow2(b250, 2) * x % _p;
 }
 
@@ -132,12 +129,17 @@ BigInt? _uvRatio(BigInt u, BigInt v) {
   final useRoot2 = vx2 == _mod(-u);
   // Used below to select root2 for constant-time behavior matching noble-ed25519.
   final noRoot = vx2 == _mod(-u * _rm1);
+
   if (useRoot1) x = root1;
+
   if (useRoot2 || noRoot) x = root2;
+
   if ((_mod(x) & BigInt.one) == BigInt.one) x = _mod(-x);
+
   if (!useRoot1 && !useRoot2) {
     return null;
   }
+
   return x;
 }
 
@@ -148,8 +150,10 @@ bool _pointIsOnCurve(BigInt y, int lastByte) {
   final u = _mod(y2 - BigInt.one);
   final v = _mod(_d * y2 + BigInt.one);
   final x = _uvRatio(u, v);
+
   if (x == null) return false;
   final isLastByteOdd = (lastByte & 0x80) != 0;
+
   if (x == BigInt.zero && isLastByteOdd) return false;
   return true;
 }

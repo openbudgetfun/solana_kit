@@ -97,6 +97,7 @@ class MobileWalletRegistry extends WalletRegistryController {
   Future<void> initialize() async {
     if (_initialized) return;
     _initialized = true;
+
     if (backend.isSupported) {
       register(
         MobileWallet(
@@ -106,6 +107,7 @@ class MobileWalletRegistry extends WalletRegistryController {
         ),
       );
     }
+
     for (final wallet in additionalWallets) {
       register(wallet);
     }
@@ -173,6 +175,7 @@ class MobileWallet implements Wallet {
     );
     _assertCurrentAuthorization(generation);
     _setAccounts(authorization.accounts);
+
     return StandardConnectOutput(_accounts);
   }
 
@@ -192,6 +195,7 @@ class MobileWallet implements Wallet {
       inputs.first.account,
     );
     _assertOutputLength(inputs.length, signed.length);
+
     return signed.map(SolanaSignTransactionOutput.new).toList();
   }
 
@@ -202,6 +206,7 @@ class MobileWallet implements Wallet {
     _assertTransactionChains(inputs);
     final policies = inputs.map((input) {
       final options = input.options;
+
       return (
         options?.preflightCommitment,
         options?.minContextSlot,
@@ -210,18 +215,21 @@ class MobileWallet implements Wallet {
         options?.maxRetries,
       );
     }).toSet();
+
     if (policies.length > 1) {
       throw const WalletStandardException(
         WalletStandardErrorCode.invalidRequest,
         'Mobile wallet batches must use the same submission options',
       );
     }
+
     final signatures = await backend.signAndSendTransactions(
       inputs.map((input) => input.transaction).toList(),
       inputs.first.account,
       inputs.first.options,
     );
     _assertOutputLength(inputs.length, signatures.length);
+
     return signatures.map(SolanaSignAndSendTransactionOutput.new).toList();
   }
 
@@ -234,6 +242,7 @@ class MobileWallet implements Wallet {
       inputs.first.account,
     );
     _assertOutputLength(inputs.length, signatures.length);
+
     return [
       for (var index = 0; index < inputs.length; index++)
         SolanaSignMessageOutput(
@@ -258,6 +267,7 @@ class MobileWallet implements Wallet {
   ) async {
     final generation = ++_authorizationGeneration;
     final results = <SolanaSignInOutput>[];
+
     for (final input in inputs) {
       final authorization = await backend.authorize(
         identity: identity,
@@ -267,14 +277,17 @@ class MobileWallet implements Wallet {
       _assertCurrentAuthorization(generation);
       _setAccounts(authorization.accounts);
       final output = authorization.signInOutput;
+
       if (output == null) {
         throw const WalletStandardException(
           WalletStandardErrorCode.invalidResponse,
           'Mobile wallet did not return a sign-in proof',
         );
       }
+
       results.add(output);
     }
+
     return results;
   }
 
@@ -342,6 +355,7 @@ class _MobileEventsFeature implements StandardEventsFeature {
   @override
   void Function() onChange(void Function(StandardWalletChange) listener) {
     _listeners.add(listener);
+
     return () => _listeners.remove(listener);
   }
 

@@ -99,6 +99,7 @@ class SetTokenAccountUpdate {
     if (delegate != null && clearDelegate) {
       throw ArgumentError('delegate and clearDelegate are mutually exclusive');
     }
+
     if (closeAuthority != null && clearCloseAuthority) {
       throw ArgumentError(
         'closeAuthority and clearCloseAuthority are mutually exclusive',
@@ -106,14 +107,22 @@ class SetTokenAccountUpdate {
     }
 
     final confidential = this.confidential;
+
     return <String, Object?>{
       if (amount != null) 'amount': amount,
+
       if (delegate != null) 'delegate': delegate!.value,
+
       if (clearDelegate) 'delegate': 'null',
+
       if (state != null) 'state': state,
+
       if (delegatedAmount != null) 'delegatedAmount': delegatedAmount,
+
       if (closeAuthority != null) 'closeAuthority': closeAuthority!.value,
+
       if (clearCloseAuthority) 'closeAuthority': 'null',
+
       if (confidential != null) 'confidential': confidential.toJson(),
     };
   }
@@ -183,12 +192,17 @@ class ConfidentialTransferAccountUpdate {
     return <String, Object?>{
       'elgamalPubkey': elgamalPubkey,
       'aesKey': aesKey,
+
       if (amount != null) 'amount': amount,
+
       if (approved != null) 'approved': approved,
+
       if (allowConfidentialCredits != null)
         'allowConfidentialCredits': allowConfidentialCredits,
+
       if (allowNonConfidentialCredits != null)
         'allowNonConfidentialCredits': allowNonConfidentialCredits,
+
       if (maximumPendingBalanceCreditCounter != null)
         'maximumPendingBalanceCreditCounter':
             maximumPendingBalanceCreditCounter,
@@ -226,6 +240,7 @@ class ConfidentialBalanceKeys {
 
     return <String, Object?>{
       if (aesKey != null) 'aesKey': aesKey,
+
       if (elgamalSecretKey != null) 'elgamalSecretKey': elgamalSecretKey,
     };
   }
@@ -245,6 +260,7 @@ class ConfidentialBalance {
   /// Creates a confidential balance value from JSON.
   factory ConfidentialBalance.fromJson(Object? json) {
     final map = _expectMap(json, 'ConfidentialBalance');
+
     return ConfidentialBalance(
       available: _optionalInt(map['available'], 'available'),
       pending: _optionalInt(map['pending'], 'pending'),
@@ -296,6 +312,7 @@ class ConfidentialKeys {
   /// Creates derived confidential-transfer keys from JSON.
   factory ConfidentialKeys.fromJson(Object? json) {
     final map = _expectMap(json, 'ConfidentialKeys');
+
     return ConfidentialKeys(
       elgamalPubkey: _expectString(map['elgamalPubkey'], 'elgamalPubkey'),
       elgamalSecretKey: _expectString(
@@ -386,6 +403,7 @@ class DeployOptions {
   /// Raw compiled program bytes.
   Uint8List? get soBytes {
     final soBytes = _soBytes;
+
     if (soBytes == null) return null;
     return Uint8List.fromList(soBytes);
   }
@@ -412,6 +430,7 @@ class EpochInfoValue {
   /// Creates epoch information from JSON.
   factory EpochInfoValue.fromJson(Object? json) {
     final map = _expectMap(json, 'EpochInfoValue');
+
     return EpochInfoValue(
       absoluteSlot: _expectInt(map['absoluteSlot'], 'absoluteSlot'),
       slotIndex: _expectInt(map['slotIndex'], 'slotIndex'),
@@ -451,6 +470,7 @@ class EpochInfoValue {
       'slotsInEpoch': slotsInEpoch,
       'epoch': epoch,
       'blockHeight': blockHeight,
+
       if (transactionCount != null) 'transactionCount': transactionCount,
     };
   }
@@ -471,6 +491,7 @@ class ClockValue {
   /// Creates a clock value from JSON.
   factory ClockValue.fromJson(Object? json) {
     final map = _expectMap(json, 'ClockValue');
+
     return ClockValue(
       slot: _optionalInt(map['slot'], 'slot'),
       epochStartTimestamp: _optionalInt(
@@ -505,11 +526,15 @@ class ClockValue {
   Map<String, Object?> toJson() {
     return <String, Object?>{
       if (slot != null) 'slot': slot,
+
       if (epochStartTimestamp != null)
         'epochStartTimestamp': epochStartTimestamp,
+
       if (epoch != null) 'epoch': epoch,
+
       if (leaderScheduleEpoch != null)
         'leaderScheduleEpoch': leaderScheduleEpoch,
+
       if (unixTimestamp != null) 'unixTimestamp': unixTimestamp,
     };
   }
@@ -547,6 +572,7 @@ class SimnetEventValue {
   /// Creates a runtime event value from JSON.
   factory SimnetEventValue.fromJson(Object? json) {
     final map = _expectMap(json, 'SimnetEventValue');
+
     return SimnetEventValue(
       kind: _expectString(map['kind'], 'kind'),
       message: _optionalString(map['message'], 'message'),
@@ -614,6 +640,7 @@ class SimnetEventValue {
   /// Logs attached to transaction or profile events.
   UnmodifiableListView<String>? get logs {
     final logs = _logs;
+
     if (logs == null) return null;
     return UnmodifiableListView(logs);
   }
@@ -644,6 +671,7 @@ class SimnetEventValue {
   /// Runbook errors.
   UnmodifiableListView<String>? get runbookErrors {
     final runbookErrors = _runbookErrors;
+
     if (runbookErrors == null) return null;
     return UnmodifiableListView(runbookErrors);
   }
@@ -654,26 +682,44 @@ class SimnetEventValue {
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'kind': kind,
+
       if (message != null) 'message': message,
+
       if (timestamp != null) 'timestamp': timestamp,
+
       if (initialTransactionCount != null)
         'initialTransactionCount': initialTransactionCount,
+
       if (clock != null) 'clock': clock!.toJson(),
+
       if (epochInfo != null) 'epochInfo': epochInfo!.toJson(),
+
       if (clockCommand != null) 'clockCommand': clockCommand,
+
       if (slotIntervalMs != null) 'slotIntervalMs': slotIntervalMs,
+
       if (accountPubkey != null) 'accountPubkey': accountPubkey,
+
       if (transactionSignature != null)
         'transactionSignature': transactionSignature,
+
       if (_logs != null) 'logs': _logs,
+
       if (computeUnitsConsumed != null)
         'computeUnitsConsumed': computeUnitsConsumed,
+
       if (fee != null) 'fee': fee,
+
       if (errorMessage != null) 'errorMessage': errorMessage,
+
       if (tag != null) 'tag': tag,
+
       if (profileKey != null) 'profileKey': profileKey,
+
       if (profileSlot != null) 'profileSlot': profileSlot,
+
       if (runbookId != null) 'runbookId': runbookId,
+
       if (_runbookErrors != null) 'runbookErrors': _runbookErrors,
     };
   }
@@ -681,6 +727,7 @@ class SimnetEventValue {
 
 void _assertNonNegative(int? value, String name) {
   if (value == null) return;
+
   if (value < 0) {
     throw ArgumentError.value(value, name, 'must be non-negative');
   }
@@ -688,9 +735,11 @@ void _assertNonNegative(int? value, String name) {
 
 Map<String, Object?> _expectMap(Object? value, String name) {
   if (value is Map<String, Object?>) return value;
+
   if (value is Map) {
     return value.cast<String, Object?>();
   }
+
   throw FormatException('$name must be a JSON object', value);
 }
 
@@ -701,6 +750,7 @@ String _expectString(Object? value, String name) {
 
 String? _optionalString(Object? value, String name) {
   if (value == null) return null;
+
   if (value is String) return value;
   throw FormatException('$name must be a string', value);
 }
@@ -712,14 +762,17 @@ int _expectInt(Object? value, String name) {
 
 int? _optionalInt(Object? value, String name) {
   if (value == null) return null;
+
   if (value is int) return value;
   throw FormatException('$name must be an integer', value);
 }
 
 List<String>? _optionalStringList(Object? value, String name) {
   if (value == null) return null;
+
   if (value is List) {
     return [for (final item in value) _expectString(item, name)];
   }
+
   throw FormatException('$name must be a list of strings', value);
 }

@@ -14,6 +14,7 @@ void main() {
     setUp(() {
       final mockClient = MockClient((request) async {
         capturedRequest = request;
+
         return http.Response(
           jsonEncode({'ok': true}),
           200,
@@ -36,6 +37,7 @@ void main() {
     test('user cannot override the solana-client header', () async {
       final mockClient = MockClient((request) async {
         capturedRequest = request;
+
         return http.Response(
           jsonEncode({'ok': true}),
           200,
@@ -58,6 +60,7 @@ void main() {
         'names', () async {
       final mockClient = MockClient((request) async {
         capturedRequest = request;
+
         return http.Response(
           jsonEncode({'ok': true}),
           200,
@@ -85,6 +88,7 @@ void main() {
         var callCount = 0;
         final mockClient = MockClient((request) async {
           callCount++;
+
           return http.Response(
             jsonEncode({'jsonrpc': '2.0', 'result': 42, 'id': '1'}),
             200,

@@ -58,6 +58,7 @@ RpcResponseTransformer<Object?> getThrowSolanaErrorResponseTransformer() {
 
       throw getSolanaErrorFromJsonRpcError(json['error']);
     }
+
     return json;
   };
 }

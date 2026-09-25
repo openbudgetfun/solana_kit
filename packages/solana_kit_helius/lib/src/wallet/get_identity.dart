@@ -13,5 +13,6 @@ Future<Identity> walletGetIdentity(
   final result = await restClient.get(
     '/v0/addresses/${request.address}/identity?api-key=$apiKey',
   );
+
   return Identity.fromJson(result! as Map<String, Object?>);
 }

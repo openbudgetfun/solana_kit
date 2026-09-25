@@ -16,6 +16,7 @@ MockClient _recordingClient(
   return MockClient((request) async {
     final body = jsonDecode(request.body) as Map<String, Object?>;
     requests.add(body);
+
     return http.Response(
       jsonEncode(<String, Object?>{
         'jsonrpc': '2.0',
@@ -41,6 +42,7 @@ void main() {
         rpcUrl: Uri.parse('http://localhost:8899'),
         client: _recordingClient(requests, result),
       );
+
       return SurfnetCheatcodes(surfnet);
     }
 
@@ -332,6 +334,7 @@ void main() {
           final params = body['params']! as List<Object?>;
           final validParams =
               params.length == 3 && params[1] == null && params[2] is Map;
+
           return http.Response(
             jsonEncode({
               'jsonrpc': '2.0',

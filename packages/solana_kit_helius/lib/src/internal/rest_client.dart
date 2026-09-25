@@ -32,6 +32,7 @@ class RestClient {
       uri,
       () => _client.get(uri, headers: {'accept': 'application/json'}),
     );
+
     return _handleResponse(response);
   }
 
@@ -46,6 +47,7 @@ class RestClient {
         body: body != null ? jsonEncode(body) : null,
       ),
     );
+
     return _handleResponse(response);
   }
 
@@ -60,6 +62,7 @@ class RestClient {
         body: body != null ? jsonEncode(body) : null,
       ),
     );
+
     return _handleResponse(response);
   }
 
@@ -74,6 +77,7 @@ class RestClient {
         body: body != null ? jsonEncode(body) : null,
       ),
     );
+
     return _handleResponse(response);
   }
 
@@ -84,6 +88,7 @@ class RestClient {
       uri,
       () => _client.delete(uri, headers: {'accept': 'application/json'}),
     );
+
     return _handleResponse(response);
   }
 

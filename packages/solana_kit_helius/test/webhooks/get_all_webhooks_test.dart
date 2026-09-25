@@ -31,6 +31,7 @@ void main() {
         expect(request.method, 'GET');
         expect(request.url.path, '/v0/webhooks');
         expect(request.url.queryParameters['api-key'], 'test-key');
+
         return http.Response(jsonEncode(mockWebhooks), 200);
       });
 
@@ -55,6 +56,7 @@ void main() {
         expect(request.method, 'GET');
         expect(request.url.path, '/v0/webhooks');
         expect(request.url.queryParameters['api-key'], 'test-key');
+
         return http.Response(jsonEncode(<Object?>[]), 200);
       });
 

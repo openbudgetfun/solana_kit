@@ -7,6 +7,7 @@ import 'package:solana_kit_fixed_points/src/binary_fixed_point.dart';
 /// are allowed to differ.
 int cmpBinaryFixedPoint(BinaryFixedPoint a, BinaryFixedPoint b) {
   _assertComparable(a, b);
+
   return a.raw.compareTo(b.raw).sign;
 }
 

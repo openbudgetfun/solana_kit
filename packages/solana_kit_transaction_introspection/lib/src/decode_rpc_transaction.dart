@@ -52,34 +52,42 @@ Never _throwUnrecognized() {
 
 List<Object?> _requireList(Object? value) {
   if (value is! List) _throwUnrecognized();
+
   return List<Object?>.from(value);
 }
 
 List<Address> _addressList(Object? value) {
   final raw = _requireList(value);
   final addresses = <Address>[];
+
   for (final item in raw) {
     if (item is! String) _throwUnrecognized();
     addresses.add(Address(item));
   }
+
   return addresses;
 }
 
 List<int> _intList(Object? value) {
   final raw = _requireList(value);
   final integers = <int>[];
+
   for (final item in raw) {
     if (item is! int || item < 0 || item > 255) _throwUnrecognized();
     integers.add(item);
   }
+
   return integers;
 }
 
 LoadedAddresses _getLoadedAddresses(Map<String, Object?>? meta) {
   final rawLoaded = meta?['loadedAddresses'];
+
   if (rawLoaded == null) return _emptyLoadedAddresses;
   final loaded = _asMap(rawLoaded);
+
   if (loaded == null) _throwUnrecognized();
+
   return LoadedAddresses(
     readonly: _addressList(loaded['readonly']),
     writable: _addressList(loaded['writable']),
@@ -92,6 +100,7 @@ _decodeFromWire(Uint8List wireBytes) {
   final compiledMessage = getCompiledTransactionMessageDecoder().decode(
     transaction.messageBytes,
   );
+
   return (compiledMessage: compiledMessage, transaction: transaction);
 }
 
@@ -100,14 +109,17 @@ DecodedRpcTransaction _decodeFromBase64(
   Map<String, Object?>? meta,
 ) {
   final b64 = _asString(tx[0]);
+
   if (b64 == null) {
     throw SolanaError(
       SolanaErrorCode
           .transactionIntrospectionUnrecognizedGetTransactionResponse,
     );
   }
+
   final wire = getBase64Encoder().encode(b64);
   final (:compiledMessage, :transaction) = _decodeFromWire(wire);
+
   return DecodedRpcTransaction(
     compiledMessage: compiledMessage,
     loadedAddresses: _getLoadedAddresses(meta),
@@ -120,14 +132,17 @@ DecodedRpcTransaction _decodeFromBase58(
   Map<String, Object?>? meta,
 ) {
   final b58 = _asString(tx[0]);
+
   if (b58 == null) {
     throw SolanaError(
       SolanaErrorCode
           .transactionIntrospectionUnrecognizedGetTransactionResponse,
     );
   }
+
   final wire = getBase58Encoder().encode(b58);
   final (:compiledMessage, :transaction) = _decodeFromWire(wire);
+
   return DecodedRpcTransaction(
     compiledMessage: compiledMessage,
     loadedAddresses: _getLoadedAddresses(meta),
@@ -150,6 +165,7 @@ MessageHeader _readJsonHeader(Map<String, Object?> header) {
       numReadonlySignerAccounts > numSignerAccounts) {
     _throwUnrecognized();
   }
+
   return MessageHeader(
     numSignerAccounts: numSignerAccounts,
     numReadonlySignerAccounts: numReadonlySignerAccounts,
@@ -161,6 +177,7 @@ List<CompiledInstruction> _readJsonInstructions(
   List<Object?> rawInstructions,
 ) {
   final base58 = getBase58Encoder();
+
   return rawInstructions.map((raw) {
     final ix = _asMap(raw);
     if (ix == null) {
@@ -169,6 +186,7 @@ List<CompiledInstruction> _readJsonInstructions(
             .transactionIntrospectionUnrecognizedGetTransactionResponse,
       );
     }
+
     final programAddressIndex = _asInt(ix['programIdIndex']);
     if (programAddressIndex == null ||
         programAddressIndex < 0 ||
@@ -179,6 +197,7 @@ List<CompiledInstruction> _readJsonInstructions(
     final dataString = _asString(ix['data']);
     if (dataString == null) _throwUnrecognized();
     final data = base58.encode(dataString);
+
     return CompiledInstruction(
       programAddressIndex: programAddressIndex,
       accountIndices: accounts.isEmpty ? null : accounts,
@@ -202,6 +221,7 @@ DecodedRpcTransaction _decodeFromJson(
   final instructionsRaw = _requireList(message['instructions']);
   final instructions = _readJsonInstructions(instructionsRaw);
   final lifetimeToken = _asString(message['recentBlockhash']);
+
   if (lifetimeToken == null) {
     throw SolanaError(
       SolanaErrorCode
@@ -226,9 +246,11 @@ DecodedRpcTransaction _decodeFromJson(
     ),
     TransactionVersion.v0 => () {
       final lookups = <AddressTableLookup>[];
+
       for (final lookup in _requireList(message['addressTableLookups'])) {
         final l = _asMap(lookup);
         final accountKey = l == null ? null : _asString(l['accountKey']);
+
         if (accountKey == null) _throwUnrecognized();
         lookups.add(
           AddressTableLookup(
@@ -238,6 +260,7 @@ DecodedRpcTransaction _decodeFromJson(
           ),
         );
       }
+
       return CompiledTransactionMessage(
         version: TransactionVersion.v0,
         header: header,
@@ -250,6 +273,7 @@ DecodedRpcTransaction _decodeFromJson(
     TransactionVersion.v1 => () {
       final instructionHeaders = <V1InstructionHeader>[];
       final instructionPayloads = <V1InstructionPayload>[];
+
       for (final instruction in instructions) {
         final accounts = instruction.accountIndices ?? const <int>[];
         final data = instruction.data ?? Uint8List(0);
@@ -267,6 +291,7 @@ DecodedRpcTransaction _decodeFromJson(
           ),
         );
       }
+
       return CompiledTransactionMessage(
         version: TransactionVersion.v1,
         header: header,
@@ -322,14 +347,17 @@ DecodedRpcTransaction decodeTransactionFromRpcResponse(
           .transactionIntrospectionUnrecognizedGetTransactionResponse,
     );
   }
+
   final tx = rpcTx['transaction'];
   final metaRaw = rpcTx['meta'];
+
   if (metaRaw != null && metaRaw is! Map) _throwUnrecognized();
   final meta = metaRaw is Map<String, Object?> ? metaRaw : _asMap(metaRaw);
 
   // base64 / base58: `transaction` is a `[data, encoding]` array.
   if (tx is List) {
     if (tx.length >= 2 && tx[1] == 'base64') return _decodeFromBase64(tx, meta);
+
     if (tx.length >= 2 && tx[1] == 'base58') return _decodeFromBase58(tx, meta);
     throw SolanaError(
       SolanaErrorCode
@@ -340,12 +368,14 @@ DecodedRpcTransaction decodeTransactionFromRpcResponse(
   // json / jsonParsed: `transaction` is a `{message: ...}` map.
   final txMap = _asMap(tx);
   final messageMap = _asMap(txMap?['message']);
+
   if (messageMap == null) {
     throw SolanaError(
       SolanaErrorCode
           .transactionIntrospectionUnrecognizedGetTransactionResponse,
     );
   }
+
   // jsonParsed responses have no `header`; the server has already resolved
   // roles onto each `accountKey` and pre-parsed the instructions, so they
   // cannot be round-tripped through the kit codecs.
@@ -354,6 +384,8 @@ DecodedRpcTransaction decodeTransactionFromRpcResponse(
       SolanaErrorCode.transactionIntrospectionCannotDecodeJsonParsedTransaction,
     );
   }
+
   final version = rpcTx.containsKey('version') ? rpcTx['version'] : null;
+
   return _decodeFromJson(messageMap, meta, version);
 }

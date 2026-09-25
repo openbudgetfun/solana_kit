@@ -393,6 +393,7 @@ void main() {
           );
       final estimateAndSet = estimateAndSetResourceLimitsFactory((_) async {
         called = true;
+
         return const ResourceLimitsEstimate(
           computeUnitLimit: 500000,
           loadedAccountsDataSizeLimit: 8192,
@@ -565,6 +566,7 @@ void main() {
         );
         final estimateAndSet = estimateAndSetResourceLimitsFactory((_) async {
           called = true;
+
           return const ResourceLimitsEstimate(computeUnitLimit: 500000);
         });
 

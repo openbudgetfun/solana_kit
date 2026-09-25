@@ -22,6 +22,7 @@ class BooleanCodecConfig {
 /// The `config` option allows customizing the number encoder used for storage.
 Encoder<bool> getBooleanEncoder({Encoder<num>? size}) {
   final numberEncoder = size ?? getU8Encoder();
+
   return transformEncoder<num, bool>(numberEncoder, (value) {
     return value ? 1 : 0;
   });
@@ -34,6 +35,7 @@ Encoder<bool> getBooleanEncoder({Encoder<num>? size}) {
 /// [SolanaErrorCode.codecsInvalidBoolean].
 Decoder<bool> getBooleanDecoder({Decoder<num>? size}) {
   final numberDecoder = size ?? getU8Decoder();
+
   return transformDecoder<num, bool>(numberDecoder, (value, _, _) {
     if (value == 0) return false;
     if (value == 1) return true;
@@ -49,6 +51,7 @@ Decoder<bool> getBooleanDecoder({Decoder<num>? size}) {
 /// By default, booleans are stored as a `u8` (1 for `true`, 0 for `false`).
 Codec<bool, bool> getBooleanCodec({Codec<num, num>? size}) {
   final codec = size ?? getU8Codec();
+
   return combineCodec(
     getBooleanEncoder(size: encoderFromCodec(codec)),
     getBooleanDecoder(size: decoderFromCodec(codec)),

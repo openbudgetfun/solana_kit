@@ -15,6 +15,7 @@ Encoder<T> tapEncoder<T>(Encoder<T> encoder, void Function(T value) tap) {
       fixedSize: fixedSize,
       write: (value, bytes, offset) {
         tap(value);
+
         return encoder.write(value, bytes, offset);
       },
     ),
@@ -22,6 +23,7 @@ Encoder<T> tapEncoder<T>(Encoder<T> encoder, void Function(T value) tap) {
       getSizeFromValue: encoder.getSizeFromValue,
       write: (value, bytes, offset) {
         tap(value);
+
         return encoder.write(value, bytes, offset);
       },
       maxSize: encoder.maxSize,
@@ -42,6 +44,7 @@ Decoder<T> tapDecoder<T>(Decoder<T> decoder, void Function(T value) tap) {
       read: (bytes, offset) {
         final (value, newOffset) = decoder.read(bytes, offset);
         tap(value);
+
         return (value, newOffset);
       },
     ),
@@ -49,6 +52,7 @@ Decoder<T> tapDecoder<T>(Decoder<T> decoder, void Function(T value) tap) {
       read: (bytes, offset) {
         final (value, newOffset) = decoder.read(bytes, offset);
         tap(value);
+
         return (value, newOffset);
       },
       maxSize: decoder.maxSize,
@@ -71,6 +75,7 @@ Codec<TFrom, TTo> tapCodec<TFrom, TTo>(
   (TTo, int) readWithDecodeTap(Uint8List bytes, int offset) {
     final (value, newOffset) = codec.read(bytes, offset);
     decodeTap?.call(value);
+
     return (value, newOffset);
   }
 
@@ -80,6 +85,7 @@ Codec<TFrom, TTo> tapCodec<TFrom, TTo>(
       read: readWithDecodeTap,
       write: (value, bytes, offset) {
         encodeTap(value);
+
         return codec.write(value, bytes, offset);
       },
     ),
@@ -88,6 +94,7 @@ Codec<TFrom, TTo> tapCodec<TFrom, TTo>(
       read: readWithDecodeTap,
       write: (value, bytes, offset) {
         encodeTap(value);
+
         return codec.write(value, bytes, offset);
       },
       maxSize: codec.maxSize,
@@ -112,6 +119,7 @@ Encoder<T> tapEncoderBytes<T>(
       write: (value, bytes, offset) {
         final postOffset = encoder.write(value, bytes, offset);
         tap(bytes, offset, postOffset);
+
         return postOffset;
       },
     ),
@@ -120,6 +128,7 @@ Encoder<T> tapEncoderBytes<T>(
       write: (value, bytes, offset) {
         final postOffset = encoder.write(value, bytes, offset);
         tap(bytes, offset, postOffset);
+
         return postOffset;
       },
       maxSize: encoder.maxSize,
@@ -143,12 +152,14 @@ Decoder<T> tapDecoderBytes<T>(
       fixedSize: fixedSize,
       read: (bytes, offset) {
         tap(bytes, offset);
+
         return decoder.read(bytes, offset);
       },
     ),
     VariableSizeDecoder<T>() => VariableSizeDecoder<T>(
       read: (bytes, offset) {
         tap(bytes, offset);
+
         return decoder.read(bytes, offset);
       },
       maxSize: decoder.maxSize,
@@ -170,6 +181,7 @@ Codec<TFrom, TTo> tapCodecBytes<TFrom, TTo>(
 ]) {
   (TTo, int) readWithDecodeTap(Uint8List bytes, int offset) {
     decodeTap?.call(bytes, offset);
+
     return codec.read(bytes, offset);
   }
 
@@ -180,6 +192,7 @@ Codec<TFrom, TTo> tapCodecBytes<TFrom, TTo>(
       write: (value, bytes, offset) {
         final postOffset = codec.write(value, bytes, offset);
         encodeTap(bytes, offset, postOffset);
+
         return postOffset;
       },
     ),
@@ -189,6 +202,7 @@ Codec<TFrom, TTo> tapCodecBytes<TFrom, TTo>(
       write: (value, bytes, offset) {
         final postOffset = codec.write(value, bytes, offset);
         encodeTap(bytes, offset, postOffset);
+
         return postOffset;
       },
       maxSize: codec.maxSize,

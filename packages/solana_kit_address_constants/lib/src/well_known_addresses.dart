@@ -6,11 +6,6 @@ import 'package:solana_kit_address/solana_kit_address.dart';
 // These are the canonical mainnet addresses for widely-used tokens.
 // They are provided as convenience constants for common operations like
 // creating ATAs, checking mint addresses, or displaying token info.
-
-/// The mint address of Wrapped SOL (native SOL in the Token program).
-///
-/// Sending lamports to the associated token account for this mint wraps SOL
-/// into an SPL token balance.
 const wrappedSolMintAddress = Address(
   'So11111111111111111111111111111111111111112',
 );

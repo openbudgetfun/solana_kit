@@ -23,12 +23,14 @@ Codec<TFrom, TTo> combineCodec<TFrom, TTo>(
   if (encoderIsFixed && decoderIsFixed) {
     final enc = encoder as FixedSizeEncoder<TFrom>;
     final dec = decoder as FixedSizeDecoder<TTo>;
+
     if (enc.fixedSize != dec.fixedSize) {
       throw SolanaError(SolanaErrorCode.codecsEncoderDecoderFixedSizeMismatch, {
         'decoderFixedSize': dec.fixedSize,
         'encoderFixedSize': enc.fixedSize,
       });
     }
+
     return FixedSizeCodec<TFrom, TTo>(
       fixedSize: enc.fixedSize,
       write: encoder.write,
@@ -39,6 +41,7 @@ Codec<TFrom, TTo> combineCodec<TFrom, TTo>(
   // Both are variable-size.
   final enc = encoder as VariableSizeEncoder<TFrom>;
   final dec = decoder as VariableSizeDecoder<TTo>;
+
   if (enc.maxSize != dec.maxSize) {
     throw SolanaError(SolanaErrorCode.codecsEncoderDecoderMaxSizeMismatch, {
       'decoderMaxSize': dec.maxSize,

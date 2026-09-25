@@ -7,6 +7,7 @@ import 'package:test/test.dart';
 /// Encode hex string to [Uint8List].
 Uint8List b(String hex) {
   final matches = RegExp('.{1,2}').allMatches(hex.toLowerCase());
+
   return Uint8List.fromList(
     matches.map((m) => int.parse(m.group(0)!, radix: 16)).toList(),
   );

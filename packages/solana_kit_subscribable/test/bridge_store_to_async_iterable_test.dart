@@ -92,6 +92,7 @@ void main() {
         store,
         shouldYield: (_) {
           predicateCalls++;
+
           return true;
         },
       ).listen(values.add);

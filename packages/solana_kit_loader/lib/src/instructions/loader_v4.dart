@@ -27,6 +27,7 @@ AccountMeta _account(
     (false, true) => AccountRole.readonlySigner,
     (false, false) => AccountRole.readonly,
   };
+
   return AccountMeta(address: address, role: role);
 }
 
@@ -49,6 +50,7 @@ Encoder<LoaderV4WriteInstructionData> getLoaderV4WriteInstructionDataEncoder() {
     ('offset', getU32Encoder()),
     ('bytes', addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())),
   ]);
+
   return transformEncoder(
     structEncoder,
     (value) => <String, Object?>{
@@ -65,6 +67,7 @@ Decoder<LoaderV4WriteInstructionData> getLoaderV4WriteInstructionDataDecoder() {
     ('offset', getU32Decoder()),
     ('bytes', addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())),
   ]);
+
   return transformDecoder(
     structDecoder,
     (map, _, _) => LoaderV4WriteInstructionData(
@@ -91,6 +94,7 @@ Encoder<TruncateInstructionData> getTruncateInstructionDataEncoder() {
     ('discriminator', getU8Encoder()),
     ('newSize', getU32Encoder()),
   ]);
+
   return transformEncoder(
     structEncoder,
     (value) => <String, Object?>{
@@ -105,6 +109,7 @@ Decoder<TruncateInstructionData> getTruncateInstructionDataDecoder() {
     ('discriminator', getU8Decoder()),
     ('newSize', getU32Decoder()),
   ]);
+
   return transformDecoder(
     structDecoder,
     (map, _, _) => TruncateInstructionData(

@@ -41,7 +41,9 @@ FixedSizeEncoder<TFrom> fixEncoderSize<TFrom>(
       } else {
         fixedByteArray = variableByteArray;
       }
+
       bytes.setAll(offset, fixedByteArray);
+
       return offset + fixedBytes;
     },
   );
@@ -71,12 +73,15 @@ FixedSizeDecoder<TTo> fixDecoderSize<TTo>(
       } else {
         sliced = bytes;
       }
+
       // If the nested decoder is fixed-size, pad and truncate accordingly.
       if (decoder case FixedSizeDecoder<TTo>(:final fixedSize)) {
         sliced = fixBytes(sliced, fixedSize);
       }
+
       // Decode the value using the nested decoder.
       final (value, _) = decoder.read(sliced, 0);
+
       return (value, offset + fixedBytes);
     },
   );

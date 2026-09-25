@@ -91,11 +91,13 @@ Future<DevPortalConfigsResponse> fetchDevPortalConfigs(
       'accept': 'application/json',
     };
     final agent = userAgent;
+
     if (agent != null) headers['User-Agent'] = agent;
     final response = await httpClient.get(
       Uri.parse('$baseUrl$path'),
       headers: headers,
     );
+
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw createSolanaError(
         SolanaErrorCode.heliusRestError,
@@ -106,6 +108,7 @@ Future<DevPortalConfigsResponse> fetchDevPortalConfigs(
         },
       );
     }
+
     return DevPortalConfigsResponse.fromJson(
       jsonDecode(response.body) as Map<String, Object?>,
     );
@@ -129,6 +132,7 @@ Future<PriceIds> fetchStripePriceIds(
     client: client,
     baseUrl: baseUrl,
   );
+
   return configs.stripe.priceIds;
 }
 
@@ -145,5 +149,6 @@ Future<Map<String, String>> fetchPrepaidCreditsPriceIds(
     client: client,
     baseUrl: baseUrl,
   );
+
   return configs.stripe.prepaidCreditsPlans ?? const <String, String>{};
 }

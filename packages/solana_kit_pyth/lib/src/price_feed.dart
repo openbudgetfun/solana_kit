@@ -78,9 +78,11 @@ class HermesPrice {
 
 ParsedHermesPriceMetadata? _parseMetadata(Object? json) {
   if (json == null) return null;
+
   if (json is! Map<String, Object?>) {
     throw ArgumentError.value(json, 'metadata', 'Expected a JSON object');
   }
+
   return ParsedHermesPriceMetadata(
     slot: _optionalInt(json['slot'], 'slot'),
     prevPublishTime: _optionalInt(
@@ -196,6 +198,7 @@ class HermesPriceUpdate {
   factory HermesPriceUpdate.fromJson(Map<String, Object?> json) {
     final binary = _object(json['binary'], 'binary');
     final parsed = json['parsed'];
+
     return HermesPriceUpdate(
       binaryData: [
         for (final data in (binary['data'] as List<Object?>?) ?? const [])
@@ -268,6 +271,7 @@ class HermesPriceFeedMetadata {
   /// Decodes one entry of the `/v2/price_feeds` response.
   factory HermesPriceFeedMetadata.fromJson(Map<String, Object?> json) {
     final attributes = json['attributes'];
+
     return HermesPriceFeedMetadata(
       id: json['id'] as String? ?? (throw ArgumentError('id is required')),
       attributes: attributes is Map<String, Object?>
@@ -346,6 +350,7 @@ Map<String, Object?> _object(Object? json, String field) {
 
 BigInt _parseBigint(Object? value, String field) {
   if (value is int) return BigInt.from(value);
+
   if (value is String) return BigInt.parse(value);
   throw ArgumentError.value(value, field, 'Expected a decimal string');
 }
@@ -360,18 +365,24 @@ int? _optionalInt(Object? value, String field) =>
 
 bool _listsEqual(List<String> a, List<String> b) {
   if (identical(a, b)) return true;
+
   if (a.length != b.length) return false;
+
   for (var i = 0; i < a.length; i++) {
     if (a[i] != b[i]) return false;
   }
+
   return true;
 }
 
 bool _parsedEquals(List<HermesPriceFeed>? a, List<HermesPriceFeed>? b) {
   if (identical(a, b)) return true;
+
   if (a == null || b == null || a.length != b.length) return false;
+
   for (var i = 0; i < a.length; i++) {
     if (a[i] != b[i]) return false;
   }
+
   return true;
 }

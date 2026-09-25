@@ -8,6 +8,7 @@ final _encodeToZero = FixedSizeEncoder<int>(
   fixedSize: 1,
   write: (_, bytes, offset) {
     bytes[offset] = 0;
+
     return offset + 1;
   },
 );
@@ -16,6 +17,7 @@ final _encodeToOne = FixedSizeEncoder<int>(
   fixedSize: 1,
   write: (_, bytes, offset) {
     bytes[offset] = 1;
+
     return offset + 1;
   },
 );

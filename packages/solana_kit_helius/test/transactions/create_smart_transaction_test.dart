@@ -40,12 +40,14 @@ String _simulation(int units) => _rpcResult({
     final method = body['method']! as String;
     methods.add(method);
     final response = handler(method);
+
     return http.Response(
       response as String? ?? _rpcError(-32601, 'Method not found: $method'),
       200,
       headers: {'content-type': 'application/json'},
     );
   });
+
   return (
     helius: createHelius(HeliusConfig(apiKey: 'test-key'), client: client),
     methods: methods,
@@ -171,6 +173,7 @@ void main() {
             'simulateTransaction' => _simulation(10000),
             'getPriorityFeeEstimate' => () {
               feeRequest = body['params']! as Map<String, Object?>;
+
               return _rpcResult({'priorityFeeEstimate': 1000});
             }(),
             _ => _rpcResult({
@@ -178,6 +181,7 @@ void main() {
               'value': {'blockhash': 'bh', 'lastValidBlockHeight': 1},
             }),
           };
+
           return http.Response(
             reply,
             200,
@@ -211,6 +215,7 @@ void main() {
           'simulateTransaction' => _simulation(10000),
           'getPriorityFeeEstimate' => () {
             feeRequest = body['params']! as Map<String, Object?>;
+
             return _rpcResult({'priorityFeeEstimate': 1000});
           }(),
           _ => _rpcResult({
@@ -218,6 +223,7 @@ void main() {
             'value': {'blockhash': 'bh', 'lastValidBlockHeight': 1},
           }),
         };
+
         return http.Response(
           reply,
           200,
@@ -260,6 +266,7 @@ void main() {
           'simulateTransaction' => _simulation(10000),
           'getPriorityFeeEstimate' => () {
             feeRequest = body['params']! as Map<String, Object?>;
+
             return _rpcResult({'priorityFeeEstimate': 1000});
           }(),
           _ => _rpcResult({
@@ -267,6 +274,7 @@ void main() {
             'value': {'blockhash': 'bh', 'lastValidBlockHeight': 1},
           }),
         };
+
         return http.Response(
           reply,
           200,

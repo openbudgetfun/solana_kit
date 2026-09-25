@@ -100,6 +100,7 @@ async function runBuilder(t, options = {}) {
         if (command === "cargo" && args[0] === "update") {
           executions.push(args.join(" "));
           fs.writeFileSync(workspaceLockfile, "updated lockfile\n");
+
           return;
         }
 
@@ -107,6 +108,7 @@ async function runBuilder(t, options = {}) {
           const output = mapPath(args[args.indexOf("-o") + 1]);
           downloads.push(output);
           fs.writeFileSync(output, "downloaded crate archive");
+
           return;
         }
 
@@ -115,6 +117,7 @@ async function runBuilder(t, options = {}) {
           fs.mkdirSync(join(destination, "src"), { recursive: true });
           fs.writeFileSync(join(destination, "Cargo.toml"), '[package]\nname = "ahash"\nversion = "0.7.6"\n');
           fs.writeFileSync(join(destination, "src/lib.rs"), options.invalidSource ? "unexpected source" : `${sourceMarker}pub fn safe() {}\n`);
+
           return;
         }
 
@@ -152,6 +155,7 @@ async function runBuilder(t, options = {}) {
 
   try {
     await import(`./build_program_artifacts.mjs?case=${++importId}`);
+
   } catch (caught) {
     error = caught;
   }

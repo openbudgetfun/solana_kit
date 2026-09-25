@@ -19,6 +19,7 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['method'], 'getLatestCompressionSignatures');
         expect(body['jsonrpc'], '2.0');
+
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResult}),
           200,

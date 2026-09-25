@@ -108,11 +108,17 @@ class CheckoutInitializeRequest {
   Map<String, Object?> toJson() => {
     'priceId': priceId,
     'refId': refId,
+
     if (email != null) 'email': email,
+
     if (firstName != null) 'firstName': firstName,
+
     if (lastName != null) 'lastName': lastName,
+
     if (walletAddress != null) 'walletAddress': walletAddress,
+
     if (couponCode != null) 'couponCode': couponCode,
+
     if (qty != null) 'qty': qty,
   };
 }
@@ -234,12 +240,15 @@ Future<T> _authRequest<T>(
       'Authorization': 'Bearer $jwt',
       'accept': 'application/json',
     };
+
     if (body != null) headers['content-type'] = 'application/json';
+
     if (userAgent != null) headers['User-Agent'] = userAgent;
     final uri = Uri.parse('$baseUrl$path');
     final response = method == 'POST'
         ? await httpClient.post(uri, headers: headers, body: jsonEncode(body))
         : await httpClient.get(uri, headers: headers);
+
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw createSolanaError(
         SolanaErrorCode.heliusRestError,
@@ -250,6 +259,7 @@ Future<T> _authRequest<T>(
         },
       );
     }
+
     return fromJson(jsonDecode(response.body) as Map<String, Object?>);
   } finally {
     if (closeClient) httpClient.close(); // coverage:ignore-line
@@ -266,11 +276,13 @@ Future<String> resolvePriceId(
 }) async {
   final planKey = plan.toLowerCase();
   final usagePlan = planToUsagePlan[planKey];
+
   if (usagePlan == null) {
     throw ArgumentError(
       'Unknown plan: $plan. Available: ${planToUsagePlan.keys.join(', ')}',
     );
   }
+
   if (planKey == 'agent') {
     final priceIds = await fetchStripePriceIds(
       jwt,
@@ -280,12 +292,15 @@ Future<String> resolvePriceId(
       baseUrl: baseUrl,
     );
     final priceId = priceIds.agentPlan;
+
     if (priceId == null || priceId.isEmpty)
       throw StateError(
         'No priceId found for plan "agent" at stripe.priceIds.AgentPlan / PRICE_ID_AGENT_PLAN.',
       );
+
     return priceId;
   }
+
   final priceIds = await fetchStripePriceIds(
     jwt,
     userAgent: userAgent,
@@ -294,12 +309,14 @@ Future<String> resolvePriceId(
   );
   final periodMap = period == 'yearly' ? priceIds.yearly : priceIds.monthly;
   final priceId = periodMap[usagePlan];
+
   if (priceId == null || priceId.isEmpty) {
     final available = periodMap.keys.toList();
     throw StateError(
       'No priceId found for plan "$plan" ($period). ${available.isEmpty ? 'The pricing configuration is empty; the backend may not be fully deployed yet.' : 'Expected key "$usagePlan" but available keys are: [${available.join(', ')}]'}',
     );
   }
+
   return priceId;
 }
 
@@ -333,9 +350,12 @@ Future<CheckoutPreviewResponse> getCheckoutPreviewByPriceId(
   final params = {
     'priceId': priceId,
     'refId': refId,
+
     if (couponCode != null) 'couponCode': couponCode,
+
     if (qty != null) 'qty': '$qty',
   };
+
   return _authRequest(
     '/checkout/preview?${Uri(queryParameters: params).query}',
     CheckoutPreviewResponse.fromJson,
@@ -365,6 +385,7 @@ Future<CheckoutPreviewResponse> getCheckoutPreview(
     client: client,
     baseUrl: baseUrl,
   );
+
   return getCheckoutPreviewByPriceId(
     jwt,
     priceId,
@@ -421,6 +442,7 @@ Future<PollOutcome> pollUntilTerminal(
 }) async {
   final deadline = DateTime.now().add(timeout);
   final wait = sleep ?? Future<void>.delayed;
+
   while (DateTime.now().isBefore(deadline)) {
     late final CheckoutStatusResponse status;
     try {
@@ -433,16 +455,22 @@ Future<PollOutcome> pollUntilTerminal(
                 client: client,
                 baseUrl: baseUrl,
               ));
+
     } on Object catch (error) {
       if (getHttpStatus(error) == 410) return const PollOutcome('expired');
       rethrow;
     }
+
     if (status.readyToRedirect) return PollOutcome('completed', status: status);
+
     if (status.phase == 'expired')
+
       return PollOutcome('expired', status: status);
+
     if (status.phase == 'failed') return PollOutcome('failed', status: status);
     await wait(interval);
   }
+
   return const PollOutcome('timeout');
 }
 
@@ -466,8 +494,11 @@ Future<CheckoutStatusResponse> pollCheckoutCompletion(
     baseUrl: baseUrl,
     sleep: sleep,
   );
+
   if (outcome.status != null) return outcome.status!;
+
   if (outcome.kind == 'expired')
+
     return const CheckoutStatusResponse(
       status: 'expired',
       phase: 'expired',
@@ -475,6 +506,7 @@ Future<CheckoutStatusResponse> pollCheckoutCompletion(
       readyToRedirect: false,
       message: 'Payment intent expired',
     );
+
   return const CheckoutStatusResponse(
     status: 'pending',
     phase: 'confirming',
@@ -486,9 +518,11 @@ Future<CheckoutStatusResponse> pollCheckoutCompletion(
 
 String _planNameFor(String? plan, String period, String? fallback) {
   if (plan == null) return fallback ?? 'Helius';
+
   if (plan == 'agent') return 'Agent Plan';
   final cap =
       '${plan[0].toUpperCase()}${plan.substring(1)}'; // coverage:ignore-line
+
   return '$cap (${period == 'yearly' ? 'Yearly' : 'Monthly'})'; // coverage:ignore-line
 }
 
@@ -534,12 +568,15 @@ Future<PaymentLink> createPayment(
             client: client,
             baseUrl: baseUrl,
           );
+
     if (preview.dueToday == 0)
       throw StateError(
         'Zero-amount signups are not supported in this version. Remove the coupon or use a different plan.',
       );
+
   } on StateError {
     rethrow;
+
   } on Object {
     // Preview can be unavailable for fresh one-time checkout customers; initialize surfaces final errors.
   }
@@ -559,6 +596,7 @@ Future<PaymentLink> createPayment(
     client: client,
     baseUrl: baseUrl,
   );
+
   return PaymentLink(
     kind: 'payment_required',
     paymentIntentId: intent.id,

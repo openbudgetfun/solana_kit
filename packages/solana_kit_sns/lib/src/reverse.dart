@@ -37,6 +37,7 @@ Future<Address> findReverseAddress({
   Address? parentAddress,
 }) {
   final hashed = getHashedName(domainAddress.value);
+
   return findNameAccountKey(
     hashed,
     classAddress: reverseLookupClassAddressObject,
@@ -57,6 +58,7 @@ Future<Address> findReverseAddress({
 /// ```
 Future<Address> findReverseAddressForDomain(String domain) async {
   final key = await findDomainKey(domain);
+
   return findReverseAddress(
     domainAddress: key.address,
     parentAddress: key.parentAddress,
@@ -75,13 +77,17 @@ String decodeReverseValue(
   bool trimLeadingNullByte = false,
 }) {
   final value = decodeNameValue(data);
+
   if (value.isEmpty) {
     return value;
   }
+
   final firstCodeUnit = value.codeUnitAt(0);
+
   if (firstCodeUnit != 0) {
     return value;
   }
+
   return trimLeadingNullByte ? value.substring(1) : value;
 }
 

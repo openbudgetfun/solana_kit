@@ -14,5 +14,6 @@ Future<FundedByResult> walletGetFundedBy(
   final result = await restClient.get(
     '/v0/addresses/${request.address}/funded-by?api-key=$apiKey',
   );
+
   return FundedByResult.fromJson(result! as Map<String, Object?>);
 }

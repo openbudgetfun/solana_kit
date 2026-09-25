@@ -646,6 +646,7 @@ void main() {
         if (r is SuccessfulSingleTransactionPlanResult) {
           return canceledSingleTransactionPlanResult(r.plannedMessage);
         }
+
         return r;
       });
 
@@ -663,6 +664,7 @@ void main() {
       final kinds = <String>[];
       transformTransactionPlanResult(result, (r) {
         kinds.add(r.kind);
+
         return r;
       });
 

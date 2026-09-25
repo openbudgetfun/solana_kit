@@ -30,6 +30,7 @@ Encoder<Map<Address, SignatureBytes?>> getSignaturesEncoder() {
         if (sig == null) {
           return Uint8List(64);
         }
+
         return sig.value;
       }).toList();
     },

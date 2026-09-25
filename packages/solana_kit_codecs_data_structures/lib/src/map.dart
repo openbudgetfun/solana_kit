@@ -17,6 +17,7 @@ Encoder<Map<K, V>> getMapEncoder<K, V>(
     value as Encoder<Object?>,
   ]);
   final arrayEncoder = getArrayEncoder<List<Object?>>(tupleEncoder, size: size);
+
   return transformEncoder<List<List<Object?>>, Map<K, V>>(
     arrayEncoder,
     (map) => map.entries.map((e) => <Object?>[e.key, e.value]).toList(),
@@ -43,6 +44,7 @@ Decoder<Map<K, V>> getMapDecoder<K, V>(
     size: size,
     requireSizePrefix: requireSizePrefix,
   );
+
   return transformDecoder<List<List<Object?>>, Map<K, V>>(arrayDecoder, (
     entries,
     bytes,
@@ -52,6 +54,7 @@ Decoder<Map<K, V>> getMapDecoder<K, V>(
     for (final entry in entries) {
       map[entry[0] as K] = entry[1] as V;
     }
+
     return map;
   });
 }
@@ -70,12 +73,15 @@ Codec<Map<K, V>, Map<K, V>> getMapCodec<K, V>(
   // Split size config for encoder/decoder.
   final ArrayLikeCodecSize? encoderSize;
   final ArrayLikeCodecSize? decoderSize;
+
   if (size is PrefixedArraySize) {
     final prefix = size.prefix;
+
     if (prefix is Codec<BigInt, BigInt>) {
       // Wide integer prefixes use `BigInt`, which is not a `num` in Dart.
       encoderSize = PrefixedArraySize(encoderFromCodec(prefix));
       decoderSize = PrefixedArraySize(decoderFromCodec(prefix));
+
     } else if (prefix is Codec<num, num>) {
       encoderSize = PrefixedArraySize(encoderFromCodec(prefix));
       decoderSize = PrefixedArraySize(decoderFromCodec(prefix));

@@ -83,6 +83,7 @@ Instruction getCreateAssociatedTokenIdempotentInstruction({
   required Address tokenProgram,
 }) {
   const instructionData = CreateAssociatedTokenIdempotentInstructionData();
+
   return Instruction(
     programAddress: programAddress,
     accounts: [

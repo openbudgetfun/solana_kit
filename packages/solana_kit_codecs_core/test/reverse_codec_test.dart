@@ -61,6 +61,7 @@ void main() {
         write: (value, bytes, offset) {
           bytes[offset] = value;
           bytes[offset + 1] = 0;
+
           return offset + 2;
         },
       );
@@ -77,6 +78,7 @@ void main() {
         fixedSize: 2,
         write: (value, bytes, offset) {
           capturedBytes = bytes;
+
           return offset + 2;
         },
       );
@@ -126,6 +128,7 @@ void main() {
         fixedSize: 2,
         read: (bytes, offset) {
           capturedBytes = bytes;
+
           return ('', offset + 2);
         },
       );

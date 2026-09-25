@@ -62,7 +62,9 @@ Future<Wallet?> showSkribbleWalletPicker({
   Future<void> select(BuildContext routeContext, Wallet wallet) async {
     try {
       await controller.connect(wallet);
+
       if (routeContext.mounted) Navigator.of(routeContext).pop(wallet);
+
     } on Object {
       // The controller exposes the error and the picker stays open for retry.
     }
@@ -91,6 +93,7 @@ Future<Wallet?> showSkribbleWalletPicker({
       builder: (routeContext) => WiredBottomSheet(child: content(routeContext)),
     );
   }
+
   return showDialog<Wallet>(
     context: context,
     builder: (routeContext) => WiredTheme(
@@ -169,6 +172,7 @@ class SkribbleWalletButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final wired = resolveSkribbleWalletTheme(context, theme);
+
     return ListenableBuilder(
       listenable: controller,
       builder: (context, child) {
@@ -177,6 +181,7 @@ class SkribbleWalletButton extends StatelessWidget {
             state.connectionStatus == WalletConnectionStatus.connecting ||
             state.connectionStatus == WalletConnectionStatus.disconnecting;
         final onPressed = busy ? null : () => _pressed(context, state);
+
         return KeyedSubtree(
           key: WalletUiKeys.connectButton,
           child:
@@ -214,6 +219,7 @@ class SkribbleWalletButton extends StatelessWidget {
 
   String _label(BuildContext context, WalletAdapterState state) {
     final account = state.selectedAccount;
+
     return account == null
         ? WalletUiTheme.of(context).connectLabel
         : account.label ?? compactWalletAddress(account.address);
@@ -232,8 +238,10 @@ class SkribbleWalletButton extends StatelessWidget {
         headerBuilder: headerBuilder,
         tileBuilder: tileBuilder,
       );
+
       return;
     }
+
     await showWiredBottomSheet<void>(
       context: context,
       builder: (routeContext) => SafeArea(
@@ -262,6 +270,7 @@ Widget _skribbleHeader(
   VoidCallback? onClose,
 ) {
   final wired = WiredTheme.of(context);
+
   return Row(
     children: [
       Expanded(
@@ -306,6 +315,7 @@ Widget _skribbleTile(
 ) {
   final wired = WiredTheme.of(context);
   final tokens = WalletUiTheme.of(context);
+
   return Semantics(
     button: true,
     label: 'Connect ${wallet.name}',
@@ -353,6 +363,7 @@ Widget _skribbleTile(
 Widget _skribbleEmpty(BuildContext context) {
   final wired = WiredTheme.of(context);
   final tokens = WalletUiTheme.of(context);
+
   return Semantics(
     key: WalletUiKeys.emptyState,
     liveRegion: true,

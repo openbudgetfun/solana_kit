@@ -20,6 +20,7 @@ Decoder<T> createDecoderThatConsumesEntireByteArray<T>(Decoder<T> decoder) {
             },
           );
         }
+
         return (value, newOffset);
       },
     ),
@@ -35,6 +36,7 @@ Decoder<T> createDecoderThatConsumesEntireByteArray<T>(Decoder<T> decoder) {
             },
           );
         }
+
         return (value, newOffset);
       },
       maxSize: decoder.maxSize,

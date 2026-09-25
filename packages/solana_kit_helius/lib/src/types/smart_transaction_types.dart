@@ -16,6 +16,7 @@ class CreateSmartTransactionInput {
   /// Creates a [CreateSmartTransactionInput] from a JSON map.
   factory CreateSmartTransactionInput.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return CreateSmartTransactionInput(
       instructions: r.requireList<Object?>('instructions'),
       signers: r.optList<String>('signers'),
@@ -47,10 +48,15 @@ class CreateSmartTransactionInput {
   /// Serializes this input to a JSON map.
   Map<String, Object?> toJson() => {
     'instructions': instructions,
+
     if (signers != null) 'signers': signers,
+
     if (feePayer != null) 'feePayer': feePayer,
+
     if (computeUnitLimit != null) 'computeUnitLimit': computeUnitLimit,
+
     if (computeUnitPrice != null) 'computeUnitPrice': computeUnitPrice,
+
     if (lookupTableAddresses != null)
       'lookupTableAddresses': lookupTableAddresses,
   };
@@ -67,6 +73,7 @@ class SmartTransactionResult {
   /// Creates a [SmartTransactionResult] from a JSON map.
   factory SmartTransactionResult.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return SmartTransactionResult(
       signature: r.requireString('signature'),
       confirmationStatus: r.optString('confirmationStatus'),
@@ -82,6 +89,7 @@ class SmartTransactionResult {
   /// Serializes this result to a JSON map.
   Map<String, Object?> toJson() => {
     'signature': signature,
+
     if (confirmationStatus != null) 'confirmationStatus': confirmationStatus,
   };
 }
@@ -101,6 +109,7 @@ class SendSmartTransactionInput {
   /// Creates a [SendSmartTransactionInput] from a JSON map.
   factory SendSmartTransactionInput.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return SendSmartTransactionInput(
       instructions: r.requireList<Object?>('instructions'),
       signers: r.optList<String>('signers'),
@@ -132,10 +141,15 @@ class SendSmartTransactionInput {
   /// Serializes this input to a JSON map.
   Map<String, Object?> toJson() => {
     'instructions': instructions,
+
     if (signers != null) 'signers': signers,
+
     if (feePayer != null) 'feePayer': feePayer,
+
     if (computeUnitPrice != null) 'computeUnitPrice': computeUnitPrice,
+
     if (skipPreflight != null) 'skipPreflight': skipPreflight,
+
     if (maxRetries != null) 'maxRetries': maxRetries,
   };
 }
@@ -148,6 +162,7 @@ class BroadcastTransactionRequest {
   /// Creates a [BroadcastTransactionRequest] from a JSON map.
   factory BroadcastTransactionRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return BroadcastTransactionRequest(
       transaction: r.requireString('transaction'),
     );
@@ -175,6 +190,7 @@ class PollTransactionConfirmationRequest {
     Map<String, Object?> json,
   ) {
     final r = JsonReader(json);
+
     return PollTransactionConfirmationRequest(
       signature: r.requireString('signature'),
       timeoutMs: r.optInt('timeoutMs'),
@@ -198,8 +214,11 @@ class PollTransactionConfirmationRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'signature': signature,
+
     if (timeoutMs != null) 'timeoutMs': timeoutMs,
+
     if (intervalMs != null) 'intervalMs': intervalMs,
+
     if (commitment != null) 'commitment': commitment!.toJson(),
   };
 }
@@ -212,6 +231,7 @@ class ComputeUnitsEstimate {
   /// Creates a [ComputeUnitsEstimate] from a JSON map.
   factory ComputeUnitsEstimate.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return ComputeUnitsEstimate(units: r.requireInt('units'));
   }
 

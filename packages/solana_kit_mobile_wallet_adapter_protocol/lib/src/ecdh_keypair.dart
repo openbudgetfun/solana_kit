@@ -22,6 +22,7 @@ class EcdhKeypair {
 /// a shared secret with the wallet via Elliptic-curve Diffie-Hellman.
 EcdhKeypair generateEcdhKeypair() {
   final pair = generateP256KeyPair();
+
   return EcdhKeypair(publicKey: pair.publicKey, privateKey: pair.privateKey);
 }
 

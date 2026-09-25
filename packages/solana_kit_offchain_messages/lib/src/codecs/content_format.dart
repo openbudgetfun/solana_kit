@@ -24,6 +24,7 @@ getOffchainMessageContentFormatDecoder() {
           'Invalid offchain message content format: $value',
         );
       }
+
       return OffchainMessageContentFormat.fromValue(value);
     },
   ) as FixedSizeDecoder<OffchainMessageContentFormat>;

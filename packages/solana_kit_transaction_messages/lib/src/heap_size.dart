@@ -24,6 +24,7 @@ int? getTransactionMessageHeapSize(TransactionMessage transactionMessage) {
   final instruction = transactionMessage.instructions
       .where(_isRequestHeapFrameInstruction)
       .firstOrNull;
+
   if (instruction == null) return null;
   return _getHeapSizeFromInstructionData(instruction.data!);
 }
@@ -58,6 +59,7 @@ TransactionMessage setTransactionMessageHeapSize(
       transactionMessage,
     );
   }
+
   return _setTransactionMessageHeapSizeUsingInstruction(
     heapSize,
     transactionMessage,
@@ -112,11 +114,13 @@ TransactionMessage _setTransactionMessageHeapSizeUsingInstruction(
 
   // Add or replace the heap size instruction with the new size.
   final instruction = _getRequestHeapFrameInstruction(bytes: heapSize);
+
   if (existingIndex == -1) {
     return transactionMessage.copyWith(
       instructions: [...transactionMessage.instructions, instruction],
     );
   }
+
   return transactionMessage.copyWith(
     instructions: _replaceInstructionAt(
       transactionMessage.instructions,
@@ -129,6 +133,7 @@ TransactionMessage _setTransactionMessageHeapSizeUsingInstruction(
 Instruction _getRequestHeapFrameInstruction({required int bytes}) {
   final data = Uint8List(5)..first = _requestHeapFrameDiscriminator;
   ByteData.sublistView(data).setUint32(1, bytes, Endian.little);
+
   return Instruction(
     programAddress: computeBudgetProgramAddress,
     accounts: const [],
@@ -139,6 +144,7 @@ Instruction _getRequestHeapFrameInstruction({required int bytes}) {
 bool _isRequestHeapFrameInstruction(Instruction instruction) {
   if (instruction.programAddress != computeBudgetProgramAddress) return false;
   final data = instruction.data;
+
   return data != null &&
       data.length >= 5 &&
       data.first == _requestHeapFrameDiscriminator;

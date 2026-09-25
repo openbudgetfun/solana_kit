@@ -15,5 +15,6 @@ Future<HeliusProject> authCreateProject(
     '/v0/auth/projects?api-key=$apiKey',
     body: request.toJson(),
   );
+
   return HeliusProject.fromJson(result! as Map<String, Object?>);
 }

@@ -72,6 +72,7 @@ SolanaError getSolanaErrorFromInstructionError(
   Object instructionError,
 ) {
   final numberIndex = index.toInt();
+
   return getSolanaErrorFromRpcError(
     RpcEnumErrorConfig(
       errorCodeBaseOffset:
@@ -92,6 +93,7 @@ SolanaError getSolanaErrorFromInstructionError(
             'index': numberIndex,
           };
         }
+
         return {'index': numberIndex};
       },
     ),

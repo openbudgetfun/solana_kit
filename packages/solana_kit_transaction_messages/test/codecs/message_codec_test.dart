@@ -11,7 +11,6 @@ void main() {
   // 2VDW9dFE1ZXz4zWAbaBDQFynNVdRpQ73HyfSHMzBSL6Z decodes to [22{32}]
   // 3EKkiwNLWqoUbzFkPrmKbtUB4EweE6f4STzevYUmezeL decodes to [33{32}]
   // 3yS1JFVT284y8z1LC9MRoWxZjzFrdoD5axKsZiyMsfC7 decodes to [44{32}]
-
   group('Compiled transaction message encoder', () {
     test('round-trips a v1 transaction message', () {
       final codec = getCompiledTransactionMessageCodec();
@@ -273,8 +272,6 @@ void main() {
         equals(
           Uint8List.fromList([
             // NO VERSION HEADER
-
-            // MESSAGE HEADER
             3, 2, 1,
 
             // STATIC ADDRESSES

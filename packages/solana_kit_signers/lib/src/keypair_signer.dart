@@ -32,6 +32,7 @@ class KeyPairSigner implements MessagePartialSigner, TransactionPartialSigner {
   ]) async {
     return messages.map((message) {
       final sig = signBytes(keyPair.privateKey, message.content);
+
       return Map<Address, SignatureBytes>.unmodifiable({address: sig});
     }).toList();
   }
@@ -42,6 +43,7 @@ class KeyPairSigner implements MessagePartialSigner, TransactionPartialSigner {
     TransactionSignerConfig? config,
   ]) async {
     final results = <Map<Address, SignatureBytes>>[];
+
     for (final transaction in transactions) {
       final signedTransaction = await partiallySignTransaction([
         keyPair,
@@ -53,6 +55,7 @@ class KeyPairSigner implements MessagePartialSigner, TransactionPartialSigner {
         ),
       );
     }
+
     return results;
   }
 }
@@ -65,6 +68,7 @@ class KeyPairSigner implements MessagePartialSigner, TransactionPartialSigner {
 /// ```
 KeyPairSigner createSignerFromKeyPair(KeyPair keyPair) {
   final addr = getAddressFromPublicKey(keyPair.publicKey);
+
   return KeyPairSigner(address: addr, keyPair: keyPair);
 }
 
@@ -92,6 +96,7 @@ Future<List<KeyPairSigner>> grindKeyPairSigners({
     amount: amount,
     concurrency: concurrency,
   );
+
   return keyPairs.map(createSignerFromKeyPair).toList();
 }
 
@@ -104,6 +109,7 @@ Future<KeyPairSigner> grindKeyPairSigner({
     matches: matches,
     concurrency: concurrency,
   );
+
   return signers.single;
 }
 
@@ -144,6 +150,7 @@ void assertIsKeyPairSigner(Object? value) {
       TransactionPartialSigner(:final address) => address,
       _ => null,
     };
+
     throw SolanaError(SolanaErrorCode.signerExpectedKeyPairSigner, {
       'address': ?address,
     });

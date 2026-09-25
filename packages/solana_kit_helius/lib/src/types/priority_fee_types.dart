@@ -13,6 +13,7 @@ class GetPriorityFeeEstimateRequest {
   /// Creates a [GetPriorityFeeEstimateRequest] from a JSON map.
   factory GetPriorityFeeEstimateRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetPriorityFeeEstimateRequest(
       accountKeys: r.optList<String>('accountKeys'),
       transaction: r.optString('transaction'),
@@ -32,7 +33,9 @@ class GetPriorityFeeEstimateRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     if (accountKeys != null) 'accountKeys': accountKeys,
+
     if (transaction != null) 'transaction': transaction,
+
     if (options != null) 'options': options!.toJson(),
   };
 }
@@ -52,6 +55,7 @@ class PriorityFeeOptions {
   /// Creates a [PriorityFeeOptions] from a JSON map.
   factory PriorityFeeOptions.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return PriorityFeeOptions(
       priorityLevel: r.optEnum('priorityLevel', PriorityLevel.fromJson),
       includeAllPriorityFeeLevels: r.optBool('includeAllPriorityFeeLevels'),
@@ -83,11 +87,16 @@ class PriorityFeeOptions {
   /// Serializes these options to a JSON map.
   Map<String, Object?> toJson() => {
     if (priorityLevel != null) 'priorityLevel': priorityLevel!.toJson(),
+
     if (includeAllPriorityFeeLevels != null)
       'includeAllPriorityFeeLevels': includeAllPriorityFeeLevels,
+
     if (transactionEncoding != null) 'transactionEncoding': transactionEncoding,
+
     if (lookbackSlots != null) 'lookbackSlots': lookbackSlots,
+
     if (includeVote != null) 'includeVote': includeVote,
+
     if (recommended != null) 'recommended': recommended,
   };
 }
@@ -103,6 +112,7 @@ class GetPriorityFeeEstimateResponse {
   /// Creates a [GetPriorityFeeEstimateResponse] from a JSON map.
   factory GetPriorityFeeEstimateResponse.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetPriorityFeeEstimateResponse(
       priorityFeeEstimate: r.optDouble('priorityFeeEstimate'),
       priorityFeeLevels: r.optDecoded(
@@ -121,6 +131,7 @@ class GetPriorityFeeEstimateResponse {
   /// Serializes this response to a JSON map.
   Map<String, Object?> toJson() => {
     if (priorityFeeEstimate != null) 'priorityFeeEstimate': priorityFeeEstimate,
+
     if (priorityFeeLevels != null)
       'priorityFeeLevels': priorityFeeLevels!.toJson(),
   };
@@ -141,6 +152,7 @@ class MicroLamportPriorityFeeLevels {
   /// Creates a [MicroLamportPriorityFeeLevels] from a JSON map.
   factory MicroLamportPriorityFeeLevels.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return MicroLamportPriorityFeeLevels(
       min: r.optDouble('min'),
       low: r.optDouble('low'),
@@ -172,10 +184,15 @@ class MicroLamportPriorityFeeLevels {
   /// Serializes these levels to a JSON map.
   Map<String, Object?> toJson() => {
     if (min != null) 'min': min,
+
     if (low != null) 'low': low,
+
     if (medium != null) 'medium': medium,
+
     if (high != null) 'high': high,
+
     if (veryHigh != null) 'veryHigh': veryHigh,
+
     if (unsafeMax != null) 'unsafeMax': unsafeMax,
   };
 }

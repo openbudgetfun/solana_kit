@@ -113,6 +113,7 @@ class LocalAssociationScenario {
 
       // Step 8: Create wallet proxy.
       return createMobileWalletProxy(_sendRequest, _sessionProps);
+
     } on Object {
       await close();
       rethrow;
@@ -180,6 +181,7 @@ class LocalAssociationScenario {
           'reason': 'Unexpected non-binary WebSocket payload type',
         }),
       );
+
       return;
     }
 
@@ -193,6 +195,7 @@ class LocalAssociationScenario {
       } else {
         _handleEncryptedMessage(payload);
       }
+
     } on Object catch (error) {
       _handleInboundError(error);
     }
@@ -200,6 +203,7 @@ class LocalAssociationScenario {
 
   void _handleHandshakeMessage(Uint8List payload) {
     final helloCompleter = _helloResponseCompleter;
+
     if (helloCompleter == null || helloCompleter.isCompleted) {
       return;
     }
@@ -207,6 +211,7 @@ class LocalAssociationScenario {
     // APP_PING (empty payload) can arrive before HELLO_RSP; resend HELLO_REQ.
     if (payload.isEmpty) {
       _sendHelloReq();
+
       return;
     }
 
@@ -219,6 +224,7 @@ class LocalAssociationScenario {
     final decoded = _decryptJsonRpcMessage(payload, _sharedSecret!);
     final idValue = decoded['id'];
     final requestId = idValue is num ? idValue.toInt() : null;
+
     if (requestId == null) {
       throw SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
         'reason': 'Missing or invalid JSON-RPC id in wallet response',
@@ -226,20 +232,24 @@ class LocalAssociationScenario {
     }
 
     final pending = _pendingResponses.remove(requestId);
+
     if (pending == null || pending.isCompleted) {
       return;
     }
 
     if (decoded.containsKey('error')) {
       final errorJson = decoded['error'];
+
       if (errorJson is! Map) {
         pending.completeError(
           SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
             'reason': 'Invalid JSON-RPC error payload',
           }),
         );
+
         return;
       }
+
       final typedError = errorJson.cast<Object?, Object?>();
       pending.completeError(
         MwaProtocolError(
@@ -251,16 +261,19 @@ class LocalAssociationScenario {
           data: typedError['data'],
         ),
       );
+
       return;
     }
 
     final result = decoded['result'];
+
     if (result is! Map) {
       pending.completeError(
         SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
           'reason': 'Missing or invalid JSON-RPC result payload',
         }),
       );
+
       return;
     }
 
@@ -273,11 +286,13 @@ class LocalAssociationScenario {
   ) {
     final decrypted = decryptMessage(message, sharedSecret);
     final jsonRpcMessage = json.decode(decrypted.plaintext);
+
     if (jsonRpcMessage is! Map) {
       throw SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
         'reason': 'Wallet response is not a JSON object',
       });
     }
+
     return jsonRpcMessage.cast<String, Object?>();
   }
 
@@ -295,12 +310,14 @@ class LocalAssociationScenario {
       mwaSequenceNumberBytes,
     ).getUint32(0);
     final expectedSequence = _lastKnownInboundSequenceNumber + 1;
+
     if (sequenceNumber != expectedSequence) {
       throw SolanaError(SolanaErrorCode.mwaInvalidSequenceNumber, {
         'expected': expectedSequence,
         'actual': sequenceNumber,
       });
     }
+
     _lastKnownInboundSequenceNumber = sequenceNumber;
   }
 
@@ -324,9 +341,11 @@ class LocalAssociationScenario {
 
   void _failPendingOperations(Object error) {
     final helloCompleter = _helloResponseCompleter;
+
     if (helloCompleter != null && !helloCompleter.isCompleted) {
       helloCompleter.completeError(error);
     }
+
     _helloResponseCompleter = null;
 
     for (final completer in _pendingResponses.values) {
@@ -334,6 +353,7 @@ class LocalAssociationScenario {
         completer.completeError(error);
       }
     }
+
     _pendingResponses.clear();
   }
 
@@ -344,6 +364,7 @@ class LocalAssociationScenario {
     final deadline = DateTime.now().add(_connectionDeadline);
 
     var attempt = 0;
+
     while (DateTime.now().isBefore(deadline)) {
       try {
         final channel = WebSocketChannel.connect(
@@ -353,7 +374,9 @@ class LocalAssociationScenario {
 
         // Wait for the connection to be established.
         await channel.ready;
+
         return channel;
+
       } on Object {
         // Get retry delay from schedule, or use last value.
         final delay = attempt < mwaRetryDelayScheduleMs.length

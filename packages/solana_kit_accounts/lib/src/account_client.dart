@@ -25,6 +25,7 @@ class SolanaAccountClient {
           _getAccountInfoConfig(config, AccountEncoding.base64),
         )
         .send();
+
     return parseBase64RpcAccount(address, response.value);
   }
 
@@ -49,6 +50,7 @@ class SolanaAccountClient {
       final accountData = index < response.value.length
           ? response.value[index]
           : null;
+
       return parseBase64RpcAccount(requestedAddresses[index], accountData);
     });
   }
@@ -67,11 +69,13 @@ class SolanaAccountClient {
         .send();
 
     final value = response.value;
+
     if (value == null) {
       return parseBase64RpcAccount(address, null);
     }
 
     final data = value['data'];
+
     if (data is Map<String, Object?> && data.containsKey('parsed')) {
       return parseJsonRpcAccount(address, value);
     }

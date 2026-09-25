@@ -237,6 +237,7 @@ FixedSizeDecoder<SnsRecordHeader> getSnsRecordHeaderDecoder() {
         ),
         contentLength: struct['contentLength']! as int,
       );
+
       return (header, end);
     },
   );
@@ -264,10 +265,12 @@ class SnsRecordV2 {
     if (data.length < recordDataOffset + recordHeaderLength) {
       throw ArgumentError('Record account data is too short');
     }
+
     final (header, end) = getSnsRecordHeaderDecoder().read(
       data,
       recordDataOffset,
     );
+
     return SnsRecordV2(header: header, data: data.sublist(end));
   }
 
@@ -296,6 +299,7 @@ class SnsRecordV2 {
         header.stalenessValidation.identifierLength +
         header.rightOfAssociationValidation.identifierLength;
     final endOffset = startOffset + header.contentLength;
+
     if (endOffset > data.length) {
       throw ArgumentError.value(
         this,
@@ -303,6 +307,7 @@ class SnsRecordV2 {
         'Record content length exceeds account data',
       );
     }
+
     return data.sublist(startOffset, endOffset);
   }
 }
@@ -328,6 +333,7 @@ Future<Address> findRecordV1Address({
     '${record.label}.$domain',
     record: SnsRecordVersion.v1,
   );
+
   return key.address;
 }
 
@@ -354,6 +360,7 @@ Future<Address> findRecordV2Address({
   final hash = getHashedName(
     String.fromCharCode(SnsRecordVersion.v2.prefixByte) + record.label,
   );
+
   return findNameAccountKey(
     hash,
     classAddress: centralStateSnsRecordsAddressObject,
@@ -411,9 +418,11 @@ String decodeRecordContent({
   if (_utf8EncodedRecords.contains(record)) {
     return getUtf8Decoder().decode(content);
   }
+
   if (record == SnsRecord.sol) {
     return getAddressDecoder().decode(content).value;
   }
+
   if (_evmRecords.contains(record)) {
     if (content.length != 20) {
       throw ArgumentError.value(
@@ -422,9 +431,12 @@ String decodeRecordContent({
         'EVM record content must be exactly 20 bytes',
       );
     }
+
     final hex = content.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+
     return '0x$hex';
   }
+
   throw ArgumentError.value(record, 'record', 'Unsupported record type');
 }
 
@@ -442,9 +454,11 @@ Uint8List encodeRecordContent({
   if (_utf8EncodedRecords.contains(record)) {
     return getUtf8Encoder().encode(content);
   }
+
   if (record == SnsRecord.sol) {
     return getAddressEncoder().encode(address(content));
   }
+
   if (_evmRecords.contains(record)) {
     if (content.length != 42 || !content.startsWith('0x')) {
       throw ArgumentError.value(
@@ -453,11 +467,15 @@ Uint8List encodeRecordContent({
         'EVM record content must be a 0x-prefixed 20-byte address',
       );
     }
+
     final bytes = Uint8List(20);
+
     for (var i = 0; i < 20; i++) {
       bytes[i] = int.parse(content.substring(2 + i * 2, 4 + i * 2), radix: 16);
     }
+
     return bytes;
   }
+
   throw ArgumentError.value(record, 'record', 'Unsupported record type');
 }

@@ -3,6 +3,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const nodeModulesDir = process.env.UPSTREAM_KIT_NODE_MODULES;
+
 if (!nodeModulesDir) {
   throw new Error('UPSTREAM_KIT_NODE_MODULES must point to the installed upstream node_modules directory.');
 }
@@ -28,6 +29,7 @@ function serializeValidationCase(coerce, validate, input) {
   if (!isValid) {
     try {
       coerce(input);
+
     } catch (error) {
       errorCode = error?.context?.__code ?? null;
     }
@@ -156,6 +158,7 @@ const fixture = {
             programAddress: kit.address(addressWithSeedProgramAddress),
             seed: 'a'.repeat(33),
           });
+
           return null;
         } catch (error) {
           return error?.context?.__code ?? null;
@@ -180,6 +183,7 @@ const fixture = {
             programAddress: kit.address(pdaProgramAddress),
             seeds: ['a'.repeat(33)],
           });
+
           return null;
         } catch (error) {
           return error?.context?.__code ?? null;

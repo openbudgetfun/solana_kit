@@ -417,6 +417,7 @@ class _RecordingBackend implements MobileWalletBackend {
   @override
   Future<void> disconnect() async {
     final error = disconnectError;
+
     if (error != null) throw error;
     await disconnectCompletion?.future;
   }
@@ -427,6 +428,7 @@ class _RecordingBackend implements MobileWalletBackend {
     WalletAccount account,
   ) async {
     calls.add((account: account, payloads: transactions, options: null));
+
     return transactions;
   }
 
@@ -436,6 +438,7 @@ class _RecordingBackend implements MobileWalletBackend {
     WalletAccount account,
   ) async {
     calls.add((account: account, payloads: messages, options: null));
+
     return messages.map((_) => Uint8List(64)).toList();
   }
 
@@ -446,6 +449,7 @@ class _RecordingBackend implements MobileWalletBackend {
     SolanaSignAndSendTransactionOptions? options,
   ) async {
     calls.add((account: account, payloads: transactions, options: options));
+
     return transactions.map((_) => Uint8List(64)).toList();
   }
 }

@@ -135,6 +135,7 @@ createRecentSignatureConfirmationPromiseFactory(
                   StateError('Transaction failed: ${signatureStatus!.err}'),
                 );
               } else if (signatureStatus?.confirmationStatus != null &&
+
                   commitmentComparator(
                         signatureStatus!.confirmationStatus!,
                         commitment,

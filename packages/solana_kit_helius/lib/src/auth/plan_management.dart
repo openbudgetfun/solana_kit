@@ -46,6 +46,7 @@ Future<UpgradePlanResult> upgradePlan(
     client: client,
     baseUrl: baseUrl,
   );
+
   return UpgradePlanResult(paymentLink: paymentLink);
 }
 
@@ -67,12 +68,14 @@ Future<PayRenewalResult> payRenewal(
     client: client,
     baseUrl: baseUrl,
   );
+
   if (intent.status != 'pending') {
     throw StateError(
       'Payment intent $paymentIntentId is ${intent.status}; '
       'only pending intents can be paid.',
     );
   }
+
   return PayRenewalResult(
     paymentLink: PaymentLink(
       kind: 'payment_required',
@@ -102,6 +105,7 @@ _provisionApiKey(
 }) async {
   final deadline = DateTime.now().add(timeout);
   String? projectId;
+
   while (DateTime.now().isBefore(deadline)) {
     final projects = await developerListProjects(
       jwt,
@@ -109,18 +113,22 @@ _provisionApiKey(
       client: client,
       baseUrl: baseUrl,
     );
+
     if (projects.isNotEmpty) {
       projectId = projects.first.id;
       break;
     }
+
     final pollDelay = interval;
     await Future<void>.delayed(pollDelay);
   }
+
   if (projectId == null) {
     throw StateError(
       'Payment confirmed but no project was provisioned within timeout.',
     );
   }
+
   final details = await developerGetProject(
     jwt,
     projectId,
@@ -137,6 +145,7 @@ _provisionApiKey(
     client: client,
     baseUrl: baseUrl,
   )).keyId;
+
   return (
     projectId: projectId,
     apiKey: provisionedApiKey,
@@ -172,6 +181,7 @@ Future<SignupAndPayResult> signupAndPay(
     httpClient: client,
     baseUrl: effectiveBaseUrl,
   );
+
   if (result is AlreadySubscribedResult) {
     return SignupAndPayAlreadySubscribedResult(
       jwt: result.jwt,
@@ -182,6 +192,7 @@ Future<SignupAndPayResult> signupAndPay(
       endpoints: result.endpoints,
     );
   }
+
   if (result is UpgradeRequiredResult) {
     return SignupAndPayUpgradeRequiredResult(
       jwt: result.jwt,
@@ -191,6 +202,7 @@ Future<SignupAndPayResult> signupAndPay(
       requestedPlan: result.requestedPlan,
     );
   }
+
   final paymentRequired = result as PaymentRequiredResult;
   final txSignature = await payPaymentLink(
     secretKey,
@@ -208,6 +220,7 @@ Future<SignupAndPayResult> signupAndPay(
     timeout: pollTimeout,
     interval: pollInterval,
   );
+
   if (outcome.kind == 'completed') {
     final provisioned = await _provisionApiKey(
       paymentRequired.jwt,
@@ -218,6 +231,7 @@ Future<SignupAndPayResult> signupAndPay(
       timeout: provisionTimeout,
       interval: provisionInterval,
     );
+
     return SignupAndPayCompletedResult(
       jwt: paymentRequired.jwt,
       refId: paymentRequired.refId,
@@ -229,6 +243,7 @@ Future<SignupAndPayResult> signupAndPay(
       paymentIntentId: paymentIntentId,
     );
   }
+
   if (outcome.kind == 'expired') {
     return SignupAndPayExpiredResult(
       jwt: paymentRequired.jwt,
@@ -237,6 +252,7 @@ Future<SignupAndPayResult> signupAndPay(
       paymentIntentId: paymentIntentId,
     );
   }
+
   if (outcome.kind == 'failed') {
     return SignupAndPayFailedResult(
       jwt: paymentRequired.jwt,
@@ -246,6 +262,7 @@ Future<SignupAndPayResult> signupAndPay(
       reason: outcome.status?.message ?? 'Payment failed',
     );
   }
+
   return SignupAndPayPendingResult(
     jwt: paymentRequired.jwt,
     refId: paymentRequired.refId,

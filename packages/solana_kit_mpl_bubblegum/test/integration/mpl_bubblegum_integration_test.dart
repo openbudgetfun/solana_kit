@@ -16,7 +16,6 @@ import 'package:test/test.dart';
 
 /// Default RPC URL for a local SurfPool validator.
 // Integration tests use SurfPool at localhost:8899.
-
 void main() {
   group('mpl-bubblegum integration', () {
     group('instruction builders', () {

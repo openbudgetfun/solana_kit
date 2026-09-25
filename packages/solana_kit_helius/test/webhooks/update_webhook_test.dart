@@ -25,6 +25,7 @@ void main() {
         expect(body['webhookId'], 'wh-1');
         expect(body['webhookUrl'], 'https://example.com/hook-updated');
         expect(body['transactionTypes'], ['TRANSFER', 'SWAP']);
+
         return http.Response(jsonEncode(mockWebhook), 200);
       });
 
@@ -67,6 +68,7 @@ void main() {
         expect(body.containsKey('webhookUrl'), isFalse);
         expect(body.containsKey('transactionTypes'), isFalse);
         expect(body.containsKey('accountAddresses'), isFalse);
+
         return http.Response(jsonEncode(mockWebhook), 200);
       });
 

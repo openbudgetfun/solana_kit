@@ -115,6 +115,7 @@ void main() {
                     params: [...params, 'augmented', 'params'],
                   ),
                 );
+
                 return RpcPlan<Object?>(
                   execute: (config) => config.transport(
                     RpcTransportConfig(payload: payload, signal: config.signal),
@@ -168,6 +169,7 @@ void main() {
             final response = await config.transport(
               RpcTransportConfig(payload: null, signal: config.signal),
             );
+
             return response! as int;
           },
         ),
@@ -186,6 +188,7 @@ void main() {
       () async {
         Future<Object?> transport(RpcTransportConfig config) async {
           transportCalls.add(config);
+
           return 42;
         }
 
@@ -195,6 +198,7 @@ void main() {
               final response = await config.transport(
                 RpcTransportConfig(payload: null, signal: config.signal),
               );
+
               return response! as int;
             },
           ),
@@ -218,6 +222,7 @@ void main() {
         started.complete();
         await config.signal!;
         aborted.complete();
+
         return 42;
       }
 
@@ -227,6 +232,7 @@ void main() {
             final response = await config.transport(
               RpcTransportConfig(payload: null, signal: config.signal),
             );
+
             return response! as int;
           },
         ),
@@ -250,6 +256,7 @@ void main() {
             final response = await config.transport(
               RpcTransportConfig(payload: null, signal: config.signal),
             );
+
             return response! as int;
           },
         ),
@@ -278,6 +285,7 @@ void main() {
       late RpcTransportConfig capturedConfig;
       Future<Object?> transport(RpcTransportConfig config) async {
         capturedConfig = config;
+
         return null;
       }
 

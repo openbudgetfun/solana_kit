@@ -18,6 +18,7 @@ File _fixture(String relative) {
   final base = inPackage
       ? current
       : '$current/packages/solana_kit_transactions';
+
   return File('$base/$relative'.replaceAll('//', '/'));
 }
 
@@ -86,9 +87,11 @@ void main() {
     );
     message = appendTransactionMessageInstruction(instruction, message);
     message = fillTransactionMessageProvisoryResourceLimits(message);
+
     if (config != null) {
       message = setTransactionMessageConfig(config, message);
     }
+
     return message;
   }
 
@@ -103,6 +106,7 @@ void main() {
       ),
       message,
     );
+
     return message;
   }
 
@@ -113,12 +117,14 @@ void main() {
       [payerKeyPair],
       compileTransaction(message),
     );
+
     return getBase64EncodedWireTransaction(signed);
   }
 
   /// Decodes [wire] back into a decompiled transaction message.
   TransactionMessage roundTrip(String wire) {
     final decoded = getTransactionDecoder().read(base64Decode(wire), 0).$1;
+
     return decompileTransactionMessage(
       getCompiledTransactionMessageDecoder()
           .read(

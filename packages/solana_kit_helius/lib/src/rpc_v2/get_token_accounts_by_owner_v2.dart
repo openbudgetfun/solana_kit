@@ -14,6 +14,7 @@ Future<GetTokenAccountsByOwnerV2Response> rpcV2GetTokenAccountsByOwnerV2(
     'getTokenAccountsByOwnerV2',
     request.toJson(),
   );
+
   return GetTokenAccountsByOwnerV2Response.fromJson(
     result! as Map<String, Object?>,
   );

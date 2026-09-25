@@ -23,6 +23,7 @@ class JupiterTokenClient {
         if (limit != null) 'limit': '$limit',
       },
     );
+
     return _parseTokenList(response);
   }
 
@@ -34,6 +35,7 @@ class JupiterTokenClient {
         'query': tag,
       },
     );
+
     return _parseTokenList(response);
   }
 
@@ -52,24 +54,29 @@ class JupiterTokenClient {
     }.contains(category)) {
       throw ArgumentError.value(category, 'category', 'Unknown token category');
     }
+
     if (!const {'5m', '1h', '6h', '24h'}.contains(interval)) {
       throw ArgumentError.value(interval, 'interval', 'Unknown token interval');
     }
+
     if (limit != null && (limit < 1 || limit > 100)) {
       throw ArgumentError.value(limit, 'limit', 'Must be between 1 and 100');
     }
+
     final response = await _restClient.get(
       '/tokens/v2/$category/$interval',
       queryParameters: {
         if (limit != null) 'limit': '$limit',
       },
     );
+
     return _parseTokenList(response);
   }
 
   /// Lists recently active tokens.
   Future<List<JupiterTokenItem>> recent() async {
     final response = await _restClient.get('/tokens/v2/recent');
+
     return _parseTokenList(response);
   }
 
@@ -82,6 +89,7 @@ class JupiterTokenClient {
         body: response,
       ),
     };
+
     return items
         .map((item) {
           return switch (item) {

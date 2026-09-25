@@ -143,6 +143,7 @@ FixedSizeDecoder<SysvarEpochRewards> getSysvarEpochRewardsDecoder() {
     fixedSize: sysvarEpochRewardsSize,
     read: (bytes, offset) {
       final (map, newOffset) = structDecoder.read(bytes, offset);
+
       return (
         SysvarEpochRewards(
           distributionStartingBlockHeight:
@@ -184,5 +185,6 @@ Future<SysvarEpochRewards> fetchSysvarEpochRewards(
     (account as ExistingAccount<Uint8List>).account,
     getSysvarEpochRewardsDecoder(),
   );
+
   return decoded.data;
 }

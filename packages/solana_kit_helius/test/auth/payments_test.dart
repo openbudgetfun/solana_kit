@@ -49,6 +49,7 @@ http.Client _rpcAndSenderClient() {
         headers: {'content-type': 'application/json'},
       );
     }
+
     return http.Response('{"error":"unknown"}', 500);
   });
 }
@@ -112,6 +113,7 @@ http.Client _restClient() {
         headers: {'content-type': 'application/json'},
       );
     }
+
     return http.Response(
       jsonEncode({
         'kind': 'payment_required',

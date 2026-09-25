@@ -53,6 +53,7 @@ final class CreateIngestionSessionInput {
         'sourceReleaseId': sourceReleaseId,
       },
     },
+
     'whatsNew': whatsNew,
     'idempotencyKey': idempotencyKey,
     'dappId': ?dappId,

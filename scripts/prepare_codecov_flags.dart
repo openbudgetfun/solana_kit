@@ -12,9 +12,11 @@ void main(List<String> arguments) {
   final recordsByFlag = {for (final flag in packages.keys) flag: <String>[]};
 
   final lcovFile = File(options.lcovPath);
+
   if (lcovFile.existsSync()) {
     for (final record in _lcovRecords(lcovFile.readAsStringSync())) {
       final sourcePath = _recordSourcePath(record);
+
       if (sourcePath == null) continue;
 
       for (final entry in packages.entries) {
@@ -29,6 +31,7 @@ void main(List<String> arguments) {
   }
 
   final npmLcovFile = File('packages/codama-renderers-dart/coverage/lcov.info');
+
   if (npmLcovFile.existsSync()) {
     recordsByFlag['codama_renderers_dart']!.addAll(
       _lcovRecords(npmLcovFile.readAsStringSync()),
@@ -36,6 +39,7 @@ void main(List<String> arguments) {
   }
 
   final writtenFlags = <String>[];
+
   for (final entry in recordsByFlag.entries) {
     if (entry.value.isEmpty) continue;
 
@@ -46,6 +50,7 @@ void main(List<String> arguments) {
   }
 
   final flagsJson = jsonEncode(writtenFlags);
+
   if (options.githubOutputPath != null) {
     File(
       options.githubOutputPath!,
@@ -57,6 +62,7 @@ void main(List<String> arguments) {
 
 Map<String, String> _discoverPackages() {
   final packagesDirectory = Directory('packages');
+
   if (!packagesDirectory.existsSync()) return {};
 
   final packages = <String, String>{};
@@ -71,6 +77,7 @@ Map<String, String> _discoverPackages() {
 
   for (final pubspec in pubspecs) {
     final name = _packageName(pubspec);
+
     if (name != null) {
       packages[name] = pubspec.parent.path.replaceAll(
         String.fromCharCode(92),
@@ -85,6 +92,7 @@ Map<String, String> _discoverPackages() {
 String? _packageName(File pubspec) {
   for (final line in pubspec.readAsLinesSync()) {
     final match = RegExp(r'^name:\s*([^\s#]+)').firstMatch(line);
+
     if (match != null) {
       return match.group(1);
     }
@@ -99,6 +107,7 @@ List<String> _lcovRecords(String contents) {
 
   for (final line in const LineSplitter().convert(contents)) {
     current.add(line);
+
     if (line == 'end_of_record') {
       records.add('${current.join('\n')}\n');
       current.clear();
@@ -119,12 +128,15 @@ String? _recordSourcePath(String record) {
         .trim()
         .replaceAll(String.fromCharCode(92), '/');
     const marker = '/packages/';
+
     if (path.contains(marker)) {
       path = 'packages/${path.split(marker).last}';
     }
+
     if (path.startsWith('./')) {
       path = path.substring(2);
     }
+
     return path;
   }
 
@@ -145,16 +157,20 @@ final class _Options {
 
     for (var index = 0; index < arguments.length; index += 1) {
       final argument = arguments[index];
+
       switch (argument) {
         case '--lcov':
           lcovPath = _requiredValue(arguments, index);
           index += 1;
+
         case '--out-dir':
           outputDirectory = _requiredValue(arguments, index);
           index += 1;
+
         case '--github-output':
           githubOutputPath = _requiredValue(arguments, index);
           index += 1;
+
         default:
           throw ArgumentError('Unknown argument: $argument');
       }

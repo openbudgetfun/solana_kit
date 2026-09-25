@@ -34,6 +34,7 @@ void main() {
           expect(body['jsonrpc'], '2.0');
           final params = body['params']! as Map<String, Object?>;
           expect(params['ids'], ['id1', 'id2']);
+
           return http.Response(
             jsonEncode(<String, Object?>{
               'jsonrpc': '2.0',

@@ -51,13 +51,16 @@ class JupiterRestClient {
     Map<String, String>? queryParameters,
   }) async {
     var uri = _baseUri.resolve(path);
+
     if (queryParameters != null && queryParameters.isNotEmpty) {
       uri = uri.replace(queryParameters: queryParameters);
     }
+
     final request = Request('GET', uri)
       ..headers.addAll(_headers())
       ..followRedirects = false;
     final response = await Response.fromStream(await _client.send(request));
+
     return _handleResponse(response);
   }
 
@@ -68,23 +71,28 @@ class JupiterRestClient {
       ..headers.addAll(_headers())
       ..headers['content-type'] = 'application/json; charset=utf-8'
       ..followRedirects = false;
+
     if (body != null) request.body = jsonEncode(body);
     final response = await Response.fromStream(await _client.send(request));
+
     return _handleResponse(response);
   }
 
   Map<String, String> _headers() {
     final headers = <String, String>{'accept': 'application/json'};
     final apiKey = _apiKey;
+
     if (apiKey != null && apiKey.isNotEmpty) {
       headers['x-api-key'] = apiKey;
     }
+
     return headers;
   }
 
   Object? _handleResponse(Response response) {
     final status = response.statusCode;
     final body = decodeJsonObject(response.body);
+
     if (status < 200 || status >= 300) {
       throw JupiterException(
         statusCode: status,
@@ -92,6 +100,7 @@ class JupiterRestClient {
         body: body,
       );
     }
+
     return body;
   }
 }
@@ -102,6 +111,7 @@ Object? decodeJsonObject(String body) {
   if (body.isEmpty) return null;
   try {
     return jsonDecode(body);
+
   } on FormatException {
     return body;
   }
@@ -111,12 +121,16 @@ String _errorMessage(int status, String body) {
   if (body.isEmpty) return 'HTTP $status';
   try {
     final decoded = jsonDecode(body);
+
     if (decoded is Map) {
       final error = decoded['error'] ?? decoded['detail'] ?? decoded['message'];
+
       if (error != null) return '$status: $error';
     }
+
   } on FormatException {
     // fall through to the status-only message
   }
+
   return 'HTTP $status';
 }

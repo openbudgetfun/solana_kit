@@ -69,6 +69,7 @@ void main() {
           TransactionPlanExecutorConfig(
             executeTransactionMessage: (context, message) async {
               submitted++;
+
               return {'signature': 'test-signature'};
             },
           ),

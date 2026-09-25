@@ -12,6 +12,7 @@ void main() {
         write: (value, bytes, offset) {
           final src = b(value);
           bytes.setAll(offset, src);
+
           return offset + src.length;
         },
         read: (bytes, offset) {
@@ -33,6 +34,7 @@ void main() {
         write: (value, bytes, offset) {
           final src = b(value);
           bytes.setAll(offset, src);
+
           return offset + src.length;
         },
         read: (bytes, offset) {
@@ -54,6 +56,7 @@ void main() {
         write: (value, bytes, offset) {
           final src = b(value);
           bytes.setAll(offset, src);
+
           return offset + src.length;
         },
         read: (bytes, offset) {
@@ -82,6 +85,7 @@ void main() {
         write: (value, bytes, offset) {
           final src = b(value);
           bytes.setAll(offset, src);
+
           return offset + src.length;
         },
         read: (bytes, offset) {
@@ -141,6 +145,7 @@ void main() {
         write: (value, bytes, offset) {
           final src = b(value);
           bytes.setAll(offset, src);
+
           return offset + src.length;
         },
         read: (bytes, offset) {

@@ -162,10 +162,13 @@ Future<_MutableTransactionPlan?> _traverse(
   switch (instructionPlan) {
     case SequentialInstructionPlan():
       return _traverseSequential(instructionPlan, context);
+
     case ParallelInstructionPlan():
       return _traverseParallel(instructionPlan, context);
+
     case SingleInstructionPlan():
       return _traverseSingle(instructionPlan, context);
+
     case MessagePackerInstructionPlan():
       return _traverseMessagePacker(instructionPlan, context);
   }
@@ -194,6 +197,7 @@ Future<_MutableTransactionPlan?> _traverseSequential(
         maxInstructions: context.maxInstructionsPerTransaction,
       ),
     );
+
     if (selectedCandidate != null) {
       return null;
     }
@@ -204,6 +208,7 @@ Future<_MutableTransactionPlan?> _traverseSequential(
   }
 
   final transactionPlans = <_MutableTransactionPlan>[];
+
   for (final plan in instructionPlan.plans) {
     final transactionPlan = await _traverse(
       plan,
@@ -215,11 +220,13 @@ Future<_MutableTransactionPlan?> _traverseSequential(
         parentCandidates: candidate != null ? [candidate] : [],
       ),
     );
+
     if (transactionPlan != null) {
       candidate = _getSequentialCandidate(transactionPlan);
       final isFlattened =
           transactionPlan is _MutableSequential &&
           (transactionPlan.divisible || !instructionPlan.divisible);
+
       if (isFlattened) {
         transactionPlans.addAll(transactionPlan.plans);
       } else {
@@ -231,9 +238,11 @@ Future<_MutableTransactionPlan?> _traverseSequential(
   if (transactionPlans.length == 1) {
     return transactionPlans[0];
   }
+
   if (transactionPlans.isEmpty) {
     return null;
   }
+
   return _MutableSequential(
     plans: transactionPlans,
     divisible: instructionPlan.divisible,
@@ -268,8 +277,10 @@ Future<_MutableTransactionPlan?> _traverseParallel(
         parentCandidates: candidates,
       ),
     );
+
     if (transactionPlan != null) {
       candidates.addAll(_getParallelCandidates(transactionPlan));
+
       if (transactionPlan is _MutableParallel) {
         transactionPlans.addAll(transactionPlan.plans);
       } else {
@@ -281,9 +292,11 @@ Future<_MutableTransactionPlan?> _traverseParallel(
   if (transactionPlans.length == 1) {
     return transactionPlans[0];
   }
+
   if (transactionPlans.isEmpty) {
     return null;
   }
+
   return _MutableParallel(plans: transactionPlans);
 }
 
@@ -301,10 +314,13 @@ Future<_MutableTransactionPlan?> _traverseSingle(
     context.parentCandidates,
     predicate,
   );
+
   if (candidate != null) {
     return null;
   }
+
   final message = await _createNewMessage(context, predicate);
+
   return _MutableSingle(
     candidate: _MutableSingleTransactionPlan(message: message),
   );
@@ -335,6 +351,7 @@ Future<_MutableTransactionPlan?> _traverseMessagePacker(
       packToCapacity,
       isStateful: true,
     );
+
     if (candidate == null) {
       final message = await _createNewMessage(
         context,
@@ -349,12 +366,15 @@ Future<_MutableTransactionPlan?> _traverseMessagePacker(
   if (transactionPlans.length == 1) {
     return transactionPlans[0];
   }
+
   if (transactionPlans.isEmpty) {
     return null;
   }
+
   if (context.parent is ParallelInstructionPlan) {
     return _MutableParallel(plans: transactionPlans);
   }
+
   return _MutableSequential(
     plans: transactionPlans,
     divisible:
@@ -369,11 +389,13 @@ _MutableSingleTransactionPlan? _getSequentialCandidate(
   if (latestPlan is _MutableSingle) {
     return latestPlan.candidate;
   }
+
   if (latestPlan is _MutableSequential && latestPlan.plans.isNotEmpty) {
     return _getSequentialCandidate(
       latestPlan.plans[latestPlan.plans.length - 1],
     );
   }
+
   return null;
 }
 
@@ -383,12 +405,15 @@ List<_MutableSingleTransactionPlan> _getParallelCandidates(
   if (latestPlan is _MutableSingle) {
     return [latestPlan.candidate];
   }
+
   if (latestPlan is _MutableSequential) {
     return latestPlan.plans.expand(_getParallelCandidates).toList();
   }
+
   if (latestPlan is _MutableParallel) {
     return latestPlan.plans.expand(_getParallelCandidates).toList();
   }
+
   return [];
 }
 
@@ -412,6 +437,7 @@ Future<_MutableSingleTransactionPlan?> _selectAndMutateCandidate(
         resolveMaxInstructions(context.maxInstructionsPerTransaction),
       );
       final messageSize = getTransactionMessageSize(message);
+
       if (messageSize > getTransactionMessageSizeLimit(message)) {
         final baseSize = getTransactionMessageSize(candidate.message);
         throw SolanaError(
@@ -423,16 +449,21 @@ Future<_MutableSingleTransactionPlan?> _selectAndMutateCandidate(
           },
         );
       }
+
       candidate.message = message;
+
       return candidate;
+
     } on Object catch (error) {
       if (canRetry && _isCandidateOverflowError(error)) {
         // Try the next candidate.
         continue;
       }
+
       rethrow;
     }
   }
+
   return null;
 }
 
@@ -451,6 +482,7 @@ Future<TransactionMessage> _createNewMessage(
     resolveMaxInstructions(context.maxInstructionsPerTransaction),
   );
   final updatedMessageSize = getTransactionMessageSize(updatedMessage);
+
   if (updatedMessageSize > getTransactionMessageSizeLimit(updatedMessage)) {
     final newMessageSize = getTransactionMessageSize(newMessage);
     throw SolanaError(
@@ -462,6 +494,7 @@ Future<TransactionMessage> _createNewMessage(
       },
     );
   }
+
   return updatedMessage;
 }
 
@@ -483,11 +516,14 @@ TransactionPlan _freezeTransactionPlan(_MutableTransactionPlan plan) {
   switch (plan) {
     case _MutableSingle(:final candidate):
       return singleTransactionPlan(candidate.message);
+
     case _MutableSequential(:final plans, :final divisible):
       final frozenPlans = plans.map(_freezeTransactionPlan).toList();
+
       return divisible
           ? sequentialTransactionPlan(frozenPlans)
           : nonDivisibleSequentialTransactionPlan(frozenPlans);
+
     case _MutableParallel(:final plans):
       return parallelTransactionPlan(
         plans.map(_freezeTransactionPlan).toList(),
@@ -504,6 +540,7 @@ TransactionMessage _fitEntirePlanInsideMessage(
     case SequentialInstructionPlan(:final plans):
     case ParallelInstructionPlan(:final plans):
       var newMessage = message;
+
       for (final plan in plans) {
         newMessage = _fitEntirePlanInsideMessage(
           plan,
@@ -511,12 +548,15 @@ TransactionMessage _fitEntirePlanInsideMessage(
           maxInstructions: maxInstructions,
         );
       }
+
       return newMessage;
+
     case SingleInstructionPlan(:final instruction):
       final newMessage = appendTransactionMessageInstructions([
         instruction,
       ], message);
       final newMessageSize = getTransactionMessageSize(newMessage);
+
       if (newMessageSize > getTransactionMessageSizeLimit(newMessage)) {
         final baseMessageSize = getTransactionMessageSize(message);
         throw SolanaError(
@@ -528,16 +568,20 @@ TransactionMessage _fitEntirePlanInsideMessage(
           },
         );
       }
+
       return newMessage;
+
     case MessagePackerInstructionPlan(:final getMessagePacker):
       final packer = getMessagePacker();
       var newMessage = message;
+
       while (!packer.done()) {
         newMessage = packer.packMessageToCapacity(
           newMessage,
           maxInstructions: maxInstructions,
         );
       }
+
       return newMessage;
   }
 }

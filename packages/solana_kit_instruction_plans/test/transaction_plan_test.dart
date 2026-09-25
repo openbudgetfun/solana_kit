@@ -428,6 +428,7 @@ void main() {
         if (p is SingleTransactionPlan) {
           return singleTransactionPlan(newMessage);
         }
+
         return p;
       });
 
@@ -450,6 +451,7 @@ void main() {
             divisible: p.divisible,
           );
         }
+
         return p;
       });
 
@@ -462,6 +464,7 @@ void main() {
         if (p is ParallelTransactionPlan) {
           return sequentialTransactionPlan(p.plans);
         }
+
         return p;
       });
 
@@ -473,6 +476,7 @@ void main() {
       var transformCount = 0;
       final transformedPlan = transformTransactionPlan(plan, (p) {
         transformCount++;
+
         return p;
       });
 

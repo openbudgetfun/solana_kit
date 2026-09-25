@@ -16,7 +16,9 @@ class _IsValidAddressMatcher extends Matcher {
     if (item is! Address) return false;
     try {
       assertIsAddress(item.toString());
+
       return true;
+
     } on Exception catch (_) {
       return false;
     }
@@ -36,6 +38,7 @@ class _IsValidAddressMatcher extends Matcher {
     if (item is! Address) {
       return mismatchDescription.add('is not an Address');
     }
+
     return mismatchDescription.add('is not a valid base58-encoded address');
   }
 }

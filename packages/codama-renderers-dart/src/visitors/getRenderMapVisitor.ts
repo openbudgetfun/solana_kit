@@ -185,6 +185,7 @@ export function getRenderMapVisitor(
           const frag = getAccountPageFragment(node, scope);
           let map = createRenderMap<Fragment>();
           map = addToRenderMap(map, `accounts/${fileName}`, frag);
+
           return map;
         },
 
@@ -193,6 +194,7 @@ export function getRenderMapVisitor(
           const frag = getTypePageFragment(node, scope);
           let map = createRenderMap<Fragment>();
           map = addToRenderMap(map, `types/${fileName}`, frag);
+
           return map;
         },
 
@@ -201,6 +203,7 @@ export function getRenderMapVisitor(
           const frag = getInstructionPageFragment(node, scope);
           let map = createRenderMap<Fragment>();
           map = addToRenderMap(map, `instructions/${fileName}`, frag);
+
           return map;
         },
 
@@ -209,6 +212,7 @@ export function getRenderMapVisitor(
           const frag = getPdaPageFragment(node, scope);
           let map = createRenderMap<Fragment>();
           map = addToRenderMap(map, `pdas/${fileName}`, frag);
+
           return map;
         },
       }),
@@ -258,16 +262,20 @@ function getSharedCategoryIndexMaps(
     const match = renderPath.match(
       /^(accounts|instructions|types|pdas|errors|programs)\/([^/]+\.dart)$/,
     );
+
     if (!match) continue;
 
     const [, category, fileName] = match;
+
     if (!categories.has(category)) {
       categories.set(category, new Set());
     }
+
     categories.get(category)!.add(fileName);
   }
 
   const maps: RenderMap<Fragment>[] = [];
+
   for (const [category, files] of categories.entries()) {
     const sortedFiles = [...files].sort();
     let map = createRenderMap<Fragment>();

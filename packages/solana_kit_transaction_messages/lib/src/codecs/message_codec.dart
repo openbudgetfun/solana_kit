@@ -136,7 +136,6 @@ getCompiledTransactionMessageCodec() {
 // ---------------------------------------------------------------------------
 // Private helpers
 // ---------------------------------------------------------------------------
-
 int _getLegacyEncoderSize(CompiledTransactionMessage message) {
   final versionEnc = getTransactionVersionEncoder();
   final headerEnc = getMessageHeaderEncoder();
@@ -201,6 +200,7 @@ int _writeLegacyMessage(
   pos = accountArrayEnc.write(message.staticAccounts, bytes, pos);
   pos = lifetimeEnc.write(message.lifetimeToken, bytes, pos);
   pos = instructionArrayEnc.write(message.instructions, bytes, pos);
+
   return pos;
 }
 
@@ -232,15 +232,19 @@ int _getV1EncoderSize(CompiledTransactionMessage message) {
   final instructionPayloads =
       message.instructionPayloads ?? const <V1InstructionPayload>[];
   var size = 1 + 3 + 4 + 32 + 1 + 1 + message.staticAccounts.length * 32;
+
   for (final value in configValues) {
     size += value.kind == 'u64' ? 8 : 4;
   }
+
   size += instructionHeaders.length * 4;
+
   for (final payload in instructionPayloads) {
     size +=
         payload.instructionAccountIndices.length +
         payload.instructionData.length;
   }
+
   return size;
 }
 
@@ -279,30 +283,37 @@ int _writeV1Message(
     bytes,
     pos,
   );
+
   for (final address in message.staticAccounts) {
     pos = addrEnc.write(address, bytes, pos);
   }
+
   for (final value in configValues) {
     switch (value.kind) {
       case 'u32':
         pos = u32Enc.write(value.value as int, bytes, pos);
+
       case 'u64':
         pos = u64Enc.write(value.value as BigInt, bytes, pos);
+
       default:
         throw SolanaError(SolanaErrorCode.transactionInvalidConfigValueKind, {
           'kind': value.kind,
         });
     }
   }
+
   for (final header in instructionHeaders) {
     pos = u8Enc.write(header.programAccountIndex, bytes, pos);
     pos = u8Enc.write(header.numInstructionAccounts, bytes, pos);
     pos = u16Enc.write(header.numInstructionDataBytes, bytes, pos);
   }
+
   for (final payload in instructionPayloads) {
     for (final index in payload.instructionAccountIndices) {
       pos = u8Enc.write(index, bytes, pos);
     }
+
     bytes.setRange(
       pos,
       pos + payload.instructionData.length,
@@ -310,6 +321,7 @@ int _writeV1Message(
     );
     pos += payload.instructionData.length;
   }
+
   return pos;
 }
 
@@ -336,6 +348,7 @@ int _writeV1Message(
   pos = o6;
 
   final staticAccounts = <Address>[];
+
   for (var i = 0; i < numStaticAccounts; i++) {
     final (address, next) = addrDec.read(bytes, pos);
     staticAccounts.add(address);
@@ -350,6 +363,7 @@ int _writeV1Message(
   pos = afterConfig;
 
   final instructionHeaders = <V1InstructionHeader>[];
+
   for (var i = 0; i < numInstructions; i++) {
     final (programAccountIndex, h1) = u8Dec.read(bytes, pos);
     final (numInstructionAccounts, h2) = u8Dec.read(bytes, h1);
@@ -365,13 +379,16 @@ int _writeV1Message(
   }
 
   final instructionPayloads = <V1InstructionPayload>[];
+
   for (final header in instructionHeaders) {
     final accountIndices = <int>[];
+
     for (var i = 0; i < header.numInstructionAccounts; i++) {
       final (index, next) = u8Dec.read(bytes, pos);
       accountIndices.add(index);
       pos = next;
     }
+
     // Upstream expresses the payload as `fixDecoderSize(getBytesDecoder(),
     // numInstructionDataBytes)`, which asserts the length before slicing. The
     // declaration here is inlined for speed, so repeat that assertion to keep
@@ -422,26 +439,31 @@ int _writeV1Message(
   final u64Dec = getU64Decoder();
   final values = <CompiledTransactionConfigValue>[];
   var pos = offset;
+
   if (transactionConfigMaskHasPriorityFee(mask)) {
     final (value, next) = u64Dec.read(bytes, pos);
     values.add(CompiledTransactionConfigValue.u64(value));
     pos = next;
   }
+
   if (transactionConfigMaskHasComputeUnitLimit(mask)) {
     final (value, next) = u32Dec.read(bytes, pos);
     values.add(CompiledTransactionConfigValue.u32(value));
     pos = next;
   }
+
   if (transactionConfigMaskHasLoadedAccountsDataSizeLimit(mask)) {
     final (value, next) = u32Dec.read(bytes, pos);
     values.add(CompiledTransactionConfigValue.u32(value));
     pos = next;
   }
+
   if (transactionConfigMaskHasHeapSize(mask)) {
     final (value, next) = u32Dec.read(bytes, pos);
     values.add(CompiledTransactionConfigValue.u32(value));
     pos = next;
   }
+
   return (values, pos);
 }
 
@@ -452,12 +474,15 @@ int _writeV1Message(
 Encoder<String?> _getLifetimeTokenEncoder(String? token) {
   if (token == null) {
     final constantEnc = getConstantEncoder(Uint8List(32));
+
     return FixedSizeEncoder<String?>(
       fixedSize: 32,
       write: (_, bytes, offset) => constantEnc.write(null, bytes, offset),
     );
   }
+
   final base58Enc = fixEncoderSize(getBase58Encoder(), 32);
+
   return FixedSizeEncoder<String?>(
     fixedSize: 32,
     write: (value, bytes, offset) => base58Enc.write(value!, bytes, offset),

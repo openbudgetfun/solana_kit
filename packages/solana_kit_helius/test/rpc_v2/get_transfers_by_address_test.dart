@@ -15,6 +15,7 @@ void main() {
           'addr1',
           {'direction': 'out', 'limit': 2, 'commitment': 'confirmed'},
         ]);
+
         return http.Response(
           jsonEncode({
             'jsonrpc': '2.0',

@@ -20,9 +20,11 @@ import 'dart:convert';
 /// `Function`).
 String? fastStableStringify(Object? value) {
   final result = _stringify(value, false);
+
   if (result != null) {
     return result;
   }
+
   return null;
 }
 
@@ -47,6 +49,7 @@ String? _stringify(Object? val, bool isArrayProp) {
     if (val.isNaN || val.isInfinite) {
       return 'null';
     }
+
     return '$val';
   }
 
@@ -57,33 +60,41 @@ String? _stringify(Object? val, bool isArrayProp) {
   if (val is List) {
     final buffer = StringBuffer('[');
     final max = val.length - 1;
+
     for (var i = 0; i < max; i++) {
       buffer
         ..write(_stringify(val[i], true) ?? 'null')
         ..write(',');
     }
+
     if (max > -1) {
       buffer.write(_stringify(val[max], true) ?? 'null');
     }
+
     buffer.write(']');
+
     return buffer.toString();
   }
 
   if (val is Map<String, Object?>) {
     final keys = val.keys.toList()..sort();
     final buffer = StringBuffer();
+
     for (final key in keys) {
       final propVal = _stringify(val[key], false);
+
       if (propVal != null) {
         if (buffer.isNotEmpty) {
           buffer.write(',');
         }
+
         buffer
           ..write(jsonEncode(key))
           ..write(':')
           ..write(propVal);
       }
     }
+
     return '{$buffer}';
   }
 

@@ -26,6 +26,7 @@ void main() {
         expect(body['transactionTypes'], ['TRANSFER']);
         expect(body['accountAddresses'], ['addr1']);
         expect(body['webhookType'], 'enhanced');
+
         return http.Response(jsonEncode(mockWebhook), 200);
       });
 
@@ -67,6 +68,7 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['authHeader'], 'Bearer secret');
         expect(body['txnStatus'], 'success');
+
         return http.Response(jsonEncode(mockWebhook), 200);
       });
 

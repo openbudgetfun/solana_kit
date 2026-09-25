@@ -49,6 +49,7 @@ void main() {
             'third',
             (Map<String, Object?> fields) {
               seenByFactory.add({...fields});
+
               return getU8Decoder();
             },
           )

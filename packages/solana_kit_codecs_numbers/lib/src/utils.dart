@@ -23,17 +23,20 @@ FixedSizeEncoder<T> numberEncoderFactory<T extends num>({
   (num, num)? range,
 }) {
   final endian = config?.endian ?? Endian.little;
+
   return FixedSizeEncoder<T>(
     fixedSize: size,
     write: (value, bytes, offset) {
       if (range != null) {
         assertNumberIsBetweenForCodec(name, range.$1, range.$2, value);
       }
+
       final byteData = bytes.buffer.asByteData(
         bytes.offsetInBytes,
         bytes.lengthInBytes,
       );
       set(byteData, offset, value, endian);
+
       return offset + size;
     },
   );
@@ -57,6 +60,7 @@ FixedSizeDecoder<int> numberDecoderFactory({
   NumberCodecConfig? config,
 }) {
   final endian = config?.endian ?? Endian.little;
+
   return FixedSizeDecoder<int>(
     fixedSize: size,
     read: (bytes, offset) {
@@ -65,6 +69,7 @@ FixedSizeDecoder<int> numberDecoderFactory({
         bytes.offsetInBytes,
         bytes.lengthInBytes,
       );
+
       return (get(byteData, offset, endian), offset + size);
     },
   );
@@ -87,6 +92,7 @@ FixedSizeDecoder<double> floatDecoderFactory({
   NumberCodecConfig? config,
 }) {
   final endian = config?.endian ?? Endian.little;
+
   return FixedSizeDecoder<double>(
     fixedSize: size,
     read: (bytes, offset) {
@@ -95,6 +101,7 @@ FixedSizeDecoder<double> floatDecoderFactory({
         bytes.offsetInBytes,
         bytes.lengthInBytes,
       );
+
       return (get(byteData, offset, endian), offset + size);
     },
   );
@@ -115,6 +122,7 @@ FixedSizeDecoder<BigInt> bigIntDecoderFactory({
   NumberCodecConfig? config,
 }) {
   final endian = config?.endian ?? Endian.little;
+
   return FixedSizeDecoder<BigInt>(
     fixedSize: size,
     read: (bytes, offset) {
@@ -122,6 +130,7 @@ FixedSizeDecoder<BigInt> bigIntDecoderFactory({
       final value = unsigned
           ? readBigIntUnsigned(bytes, offset, size, endian)
           : readBigIntSigned(bytes, offset, size, endian);
+
       return (value, offset + size);
     },
   );
@@ -146,7 +155,6 @@ void assertHasBytesForCodec(
 // ---------------------------------------------------------------------------
 // BigInt helpers for 64-bit and 128-bit codecs
 // ---------------------------------------------------------------------------
-
 final BigInt _bigIntMask8 = BigInt.from(0xff);
 
 /// Writes an unsigned [BigInt] value to [bytes] starting at [offset],
@@ -159,6 +167,7 @@ void writeBigIntUnsigned(
   Endian endian,
 ) {
   var remaining = value;
+
   if (endian == Endian.little) {
     for (var i = 0; i < size; i++) {
       bytes[offset + i] = (remaining & _bigIntMask8).toInt();
@@ -181,6 +190,7 @@ BigInt readBigIntUnsigned(
   Endian endian,
 ) {
   var result = BigInt.zero;
+
   if (endian == Endian.little) {
     for (var i = size - 1; i >= 0; i--) {
       result = (result << 8) | BigInt.from(bytes[offset + i]);
@@ -190,6 +200,7 @@ BigInt readBigIntUnsigned(
       result = (result << 8) | BigInt.from(bytes[offset + i]);
     }
   }
+
   return result;
 }
 
@@ -200,9 +211,11 @@ BigInt readBigIntUnsigned(
 BigInt readBigIntSigned(Uint8List bytes, int offset, int size, Endian endian) {
   final unsigned = readBigIntUnsigned(bytes, offset, size, endian);
   final maxPositive = BigInt.one << (size * 8 - 1);
+
   if (unsigned >= maxPositive) {
     return unsigned - (BigInt.one << (size * 8));
   }
+
   return unsigned;
 }
 

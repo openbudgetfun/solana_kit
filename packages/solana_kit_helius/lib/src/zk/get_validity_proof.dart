@@ -7,5 +7,6 @@ Future<ValidityProof> zkGetValidityProof(
   GetValidityProofRequest request,
 ) async {
   final result = await rpcClient.call('getValidityProof', request.toJson());
+
   return ValidityProof.fromJson(result! as Map<String, Object?>);
 }

@@ -44,6 +44,7 @@ void main() {
         expect(body['jsonrpc'], '2.0');
         final params = body['params']! as Map<String, Object?>;
         expect(params['creatorAddress'], 'creator-addr');
+
         return http.Response(
           jsonEncode(<String, Object?>{
             'jsonrpc': '2.0',
@@ -82,6 +83,7 @@ void main() {
         final params = body['params']! as Map<String, Object?>;
         expect(params['creatorAddress'], 'creator-addr');
         expect(params['onlyVerified'], true);
+
         return http.Response(
           jsonEncode(<String, Object?>{
             'jsonrpc': '2.0',

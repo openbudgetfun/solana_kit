@@ -10,8 +10,6 @@ import '../instructions/instructions.dart';
 
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
-
-/// The address of the SecurityFixture program.
 const securityFixtureProgramAddress = systemProgramAddress;
 
 /// Known accounts for the SecurityFixture program.

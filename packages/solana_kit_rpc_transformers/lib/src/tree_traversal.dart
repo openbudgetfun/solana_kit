@@ -39,20 +39,25 @@ Object? Function(Object? node, TraversalState state) _getTreeWalker(
         for (var ii = 0; ii < node.length; ii++)
           traverse(node[ii], TraversalState(keyPath: [...state.keyPath, ii])),
       ];
+
     } else if (node is Map<String, Object?>) {
       final out = <String, Object?>{};
+
       for (final entry in node.entries) {
         final nextState = TraversalState(
           keyPath: [...state.keyPath, entry.key],
         );
         out[entry.key] = traverse(entry.value, nextState);
       }
+
       return out;
     } else {
       var result = node;
+
       for (final visitor in visitors) {
         result = visitor(result, state);
       }
+
       return result;
     }
   }
@@ -71,6 +76,7 @@ RpcRequestTransformer getTreeWalkerRequestTransformer(
 ) {
   return (RpcRequest<Object?> request) {
     final traverse = _getTreeWalker(visitors);
+
     return RpcRequest(
       methodName: request.methodName,
       params: traverse(request.params, initialState),

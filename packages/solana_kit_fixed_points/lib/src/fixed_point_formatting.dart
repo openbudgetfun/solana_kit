@@ -27,12 +27,15 @@ final class FixedPointToStringOptions {
   FixedPointToStringOptions options = const FixedPointToStringOptions(),
 ]) {
   final targetDecimals = options.decimals;
+
   if (targetDecimals == null || targetDecimals == currentDecimals) {
     return (decimals: currentDecimals, raw: raw);
   }
+
   if (targetDecimals < 0) {
     throw RangeError.range(targetDecimals, 0, null, 'decimals');
   }
+
   if (targetDecimals > currentDecimals) {
     return (
       decimals: targetDecimals,
@@ -59,6 +62,7 @@ String formatScaledBigInt(
   if (decimals < 0) {
     throw RangeError.range(decimals, 0, null, 'decimals');
   }
+
   if (decimals == 0) return raw.toString();
 
   final isNegative = raw.isNegative;
@@ -66,11 +70,13 @@ String formatScaledBigInt(
   final padded = absDigits.padLeft(decimals + 1, '0');
   final integerPart = padded.substring(0, padded.length - decimals);
   var fractionalPart = padded.substring(padded.length - decimals);
+
   if (!padTrailingZeros) {
     fractionalPart = fractionalPart.replaceFirst(trailingZeroesRegExp, '');
   }
 
   final sign = isNegative ? '-' : '';
+
   if (fractionalPart.isEmpty) return '$sign$integerPart';
   return '$sign$integerPart.$fractionalPart';
 }
@@ -82,6 +88,7 @@ BigInt _divideWithRounding(
 ) {
   final quotient = numerator ~/ denominator;
   final remainder = numerator.remainder(denominator);
+
   if (remainder == BigInt.zero) return quotient;
 
   return switch (rounding) {
@@ -116,8 +123,10 @@ bool _roundsTowardPositiveInfinity(BigInt numerator, BigInt denominator) {
 
 BigInt _pow10(int exponent) {
   var result = BigInt.one;
+
   for (var i = 0; i < exponent; i++) {
     result *= BigInt.from(10);
   }
+
   return result;
 }

@@ -13,5 +13,6 @@ Future<WithdrawableAmount> stakingGetWithdrawableAmount(
   final result = await restClient.get(
     '/v0/staking/withdrawable/${request.stakeAccount}?api-key=$apiKey',
   );
+
   return WithdrawableAmount.fromJson(result! as Map<String, Object?>);
 }

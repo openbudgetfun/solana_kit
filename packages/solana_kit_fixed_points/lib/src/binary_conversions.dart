@@ -27,6 +27,7 @@ final class BinaryFixedPointBase10 {
 /// Converts [value] to an exact base-10 `(raw, decimals)` representation.
 BinaryFixedPointBase10 binaryFixedPointToBase10(BinaryFixedPoint value) {
   final decimals = value.fractionalBits;
+
   return BinaryFixedPointBase10(
     raw: decimals == 0 ? value.raw : value.raw * _pow5(decimals),
     decimals: decimals,
@@ -92,6 +93,7 @@ BigInt _divideWithRounding(
 ) {
   final quotient = numerator ~/ denominator;
   final remainder = numerator.remainder(denominator);
+
   if (remainder == BigInt.zero) return quotient;
 
   return switch (rounding) {
@@ -126,8 +128,10 @@ bool _roundsTowardPositiveInfinity(BigInt numerator, BigInt denominator) {
 
 BigInt _pow5(int exponent) {
   var result = BigInt.one;
+
   for (var i = 0; i < exponent; i++) {
     result *= BigInt.from(5);
   }
+
   return result;
 }

@@ -4,6 +4,7 @@ import 'package:test/test.dart';
 SubscribeToFn createSubscribeTo(Set<void Function()> listeners) {
   return (listener) {
     listeners.add(listener);
+
     return () => listeners.remove(listener);
   };
 }
@@ -28,12 +29,14 @@ final class SignerClient
   @override
   void Function() subscribeToIdentity(void Function() listener) {
     _identityListeners.add(listener);
+
     return () => _identityListeners.remove(listener);
   }
 
   @override
   void Function() subscribeToPayer(void Function() listener) {
     _payerListeners.add(listener);
+
     return () => _payerListeners.remove(listener);
   }
 
@@ -92,6 +95,7 @@ void main() {
     for (final listener in List<void Function()>.of(listeners)) {
       listener();
     }
+
     unsubscribe();
 
     expect(notifications, 1);
@@ -175,6 +179,7 @@ final class _FakeTransactionClient
   }) async {
     receivedInputs.add(input);
     lastAbortSignal = abortSignal;
+
     return _successfulResult({
       'signature': Signature('3' * 87),
     });
@@ -187,6 +192,7 @@ final class _FakeTransactionClient
   }) async {
     receivedInputs.add(input);
     lastAbortSignal = abortSignal;
+
     return sequentialTransactionPlanResult([
       await sendTransaction(input, abortSignal: abortSignal),
     ]);
@@ -199,6 +205,7 @@ final class _FakeTransactionClient
   }) async {
     receivedInputs.add(input);
     lastAbortSignal = abortSignal;
+
     return _successfulResult({
       'transaction': Object(),
     });
@@ -211,6 +218,7 @@ final class _FakeTransactionClient
   }) async {
     receivedInputs.add(input);
     lastAbortSignal = abortSignal;
+
     return sequentialTransactionPlanResult([
       await signTransaction(input, abortSignal: abortSignal),
     ]);

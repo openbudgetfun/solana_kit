@@ -22,9 +22,11 @@ Encoder<Map<String, Object?>> getStructEncoder(
     int currentOffset,
   ) {
     var offset = currentOffset;
+
     for (final (key, codec) in fields) {
       offset = codec.write(struct[key], bytes, offset);
     }
+
     return offset;
   }
 
@@ -41,6 +43,7 @@ Encoder<Map<String, Object?>> getStructEncoder(
       for (final (key, codec) in fields) {
         total += getEncodedSize(struct[key], codec);
       }
+
       return total;
     },
     write: writeImpl,
@@ -64,11 +67,13 @@ Decoder<Map<String, Object?>> getStructDecoder(
   (Map<String, Object?>, int) readImpl(Uint8List bytes, int currentOffset) {
     var offset = currentOffset;
     final struct = <String, Object?>{};
+
     for (final (key, codec) in fields) {
       final (value, newOffset) = codec.read(bytes, offset);
       offset = newOffset;
       struct[key] = value;
     }
+
     return (struct, offset);
   }
 

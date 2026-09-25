@@ -83,6 +83,7 @@ Future<Address> getPythConfigAddress({
     programAddress: programAddress,
     seeds: configPdaSeeds,
   );
+
   return pda;
 }
 
@@ -100,6 +101,7 @@ Future<Address> getPythTreasuryAddress(
       Uint8List.fromList([treasuryId]),
     ],
   );
+
   return pda;
 }
 
@@ -118,8 +120,10 @@ Future<Address> getGuardianSetAddress(
       'must be between 0 and 4294967295',
     );
   }
+
   final indexBytes = Uint8List(4)
     ..buffer.asByteData().setUint32(0, guardianSetIndex);
+
   return getProgramDerivedAddress(
     programAddress: wormholeProgramAddress,
     seeds: [guardianSetPdaSeed, indexBytes],
@@ -187,28 +191,37 @@ AccumulatorUpdateData parseAccumulatorUpdateData(Uint8List data) {
       'Invalid accumulator update data: unexpected magic or version',
     );
   }
+
   var cursor = 6;
+
   if (cursor >= data.length) {
     throw const PythDecodeException(
       'Accumulator update data is missing its trailing payload size',
     );
   }
+
   final trailingPayloadSize = data[cursor];
   cursor += 1 + trailingPayloadSize;
+
   if (cursor >= data.length) {
     throw const PythDecodeException('Accumulator update data is truncated');
   }
+
   cursor += 1; // proof type
+
   if (cursor + 2 > data.length) {
     throw const PythDecodeException(
       'Accumulator update data is missing its VAA size',
     );
   }
+
   final vaaSize = (data[cursor] << 8) | data[cursor + 1];
   cursor += 2;
+
   if (cursor + vaaSize > data.length) {
     throw const PythDecodeException('Accumulator update data VAA is truncated');
   }
+
   final vaa = Uint8List.sublistView(data, cursor, cursor + vaaSize);
   cursor += vaaSize;
 
@@ -217,33 +230,43 @@ AccumulatorUpdateData parseAccumulatorUpdateData(Uint8List data) {
       'Accumulator update data is missing updates',
     );
   }
+
   final numUpdates = data[cursor];
   cursor += 1;
 
   final updates = <MerklePriceUpdate>[];
+
   for (var i = 0; i < numUpdates; i++) {
     if (cursor + 3 > data.length) {
       throw PythDecodeException(
         'Accumulator update $i is truncated in its header',
       );
     }
+
     final messageSize = (data[cursor] << 8) | data[cursor + 1];
     cursor += 2;
+
     if (cursor + messageSize > data.length) {
       throw PythDecodeException('Accumulator update $i message is truncated');
     }
+
     final message = Uint8List.sublistView(data, cursor, cursor + messageSize);
     cursor += messageSize;
+
     if (cursor >= data.length) {
       throw PythDecodeException('Accumulator update $i proof count is missing');
     }
+
     final numProofs = data[cursor];
     cursor += 1;
     const keccak160HashSize = 20;
+
     if (cursor + keccak160HashSize * numProofs > data.length) {
       throw PythDecodeException('Accumulator update $i proofs are truncated');
     }
+
     final proof = <Uint8List>[];
+
     for (var j = 0; j < numProofs; j++) {
       proof.add(
         Uint8List.sublistView(
@@ -254,13 +277,16 @@ AccumulatorUpdateData parseAccumulatorUpdateData(Uint8List data) {
       );
       cursor += keccak160HashSize;
     }
+
     updates.add(MerklePriceUpdate(message: message, proof: proof));
   }
+
   if (cursor != data.length) {
     throw PythDecodeException(
       'Trailing ${data.length - cursor} byte(s) after accumulator updates',
     );
   }
+
   return AccumulatorUpdateData(vaa: vaa, updates: updates);
 }
 
@@ -342,6 +368,7 @@ Encoder<Map<String, Object?>> _paramsFieldsEncoder() {
           'proof': update.proof,
         },
       );
+
   return getStructEncoder(<(String, Encoder<Object?>)>[
     ('vaa', getArrayEncoder(getU8Encoder())),
     ('merklePriceUpdate', updateEncoder),
@@ -365,6 +392,7 @@ Encoder<Map<String, Object?>> _postUpdateFieldsEncoder() {
           'proof': update.proof,
         },
       );
+
   return getStructEncoder(<(String, Encoder<Object?>)>[
     ('merklePriceUpdate', updateEncoder),
     ('treasuryId', getU8Encoder()),
@@ -412,6 +440,7 @@ Future<Instruction> getPostUpdateAtomicInstruction({
   final effectiveTreasury =
       treasury ??
       await getPythTreasuryAddress(treasuryId, programAddress: programAddress);
+
   return Instruction(
     programAddress: programAddress,
     accounts: [
@@ -467,6 +496,7 @@ Future<Instruction> getPostUpdateInstruction({
   final effectiveTreasury =
       treasury ??
       await getPythTreasuryAddress(treasuryId, programAddress: programAddress);
+
   return Instruction(
     programAddress: programAddress,
     accounts: [

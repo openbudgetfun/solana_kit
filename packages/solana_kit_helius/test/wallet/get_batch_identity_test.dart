@@ -16,6 +16,7 @@ void main() {
         final addresses = (body['addresses']! as List<Object?>).cast<String>();
         expect(addresses, contains('addr1'));
         expect(addresses, contains('addr2'));
+
         return http.Response(
           jsonEncode(<String, Object?>{
             'addr1': <String, Object?>{

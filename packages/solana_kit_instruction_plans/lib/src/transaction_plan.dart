@@ -62,7 +62,6 @@ class ParallelTransactionPlan extends TransactionPlan {
 // ---------------------------------------------------------------------------
 // Constructor helpers
 // ---------------------------------------------------------------------------
-
 List<TransactionPlan> _parseSingleTransactionPlans(List<Object> plans) =>
     List<TransactionPlan>.unmodifiable(
       plans.map(
@@ -106,8 +105,6 @@ ParallelTransactionPlan parallelTransactionPlan(List<Object> plans) =>
 // ---------------------------------------------------------------------------
 // Type checks and assertions
 // ---------------------------------------------------------------------------
-
-/// Returns `true` if [value] is a [TransactionPlan].
 bool isTransactionPlan(Object? value) => value is TransactionPlan;
 
 /// Returns `true` if [plan] is a [SingleTransactionPlan].
@@ -188,9 +185,6 @@ void assertIsParallelTransactionPlan(TransactionPlan plan) {
 // ---------------------------------------------------------------------------
 // Tree helpers
 // ---------------------------------------------------------------------------
-
-/// Retrieves all individual [SingleTransactionPlan] instances from a
-/// transaction plan tree.
 List<SingleTransactionPlan> flattenTransactionPlan(
   TransactionPlan transactionPlan,
 ) => switch (transactionPlan) {
@@ -210,6 +204,8 @@ TransactionPlan? findTransactionPlan(
   if (predicate(transactionPlan)) {
     return transactionPlan;
   }
+
+
   return switch (transactionPlan) {
     SingleTransactionPlan() => null,
     SequentialTransactionPlan(:final plans) ||
@@ -225,10 +221,12 @@ TransactionPlan? _findInTransactionPlans(
 ) {
   for (final subPlan in plans) {
     final found = findTransactionPlan(subPlan, predicate);
+
     if (found != null) {
       return found;
     }
   }
+
   return null;
 }
 
@@ -241,6 +239,8 @@ bool everyTransactionPlan(
   if (!predicate(transactionPlan)) {
     return false;
   }
+
+
   return switch (transactionPlan) {
     SingleTransactionPlan() => true,
     SequentialTransactionPlan(:final plans) ||

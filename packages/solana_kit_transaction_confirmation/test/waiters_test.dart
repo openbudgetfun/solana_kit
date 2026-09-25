@@ -166,6 +166,7 @@ void main() {
                   capturedNonceValue = expectedNonceValue;
                   capturedNonceAddress = nonceAccountAddress;
                   capturedCommitment = commitment;
+
                   return Completer<Never>().future;
                 },
             getRecentSignatureConfirmationPromise:
@@ -217,6 +218,7 @@ void main() {
                 }) {
                   capturedSignature = signature;
                   capturedCommitment = commitment;
+
                   return Completer<void>().future;
                 },
             nonceAccountAddress: 'nonce_address',
@@ -251,6 +253,7 @@ void main() {
                   required nonceAccountAddress,
                 }) {
                   capturedNonceCancellationToken = abortSignal;
+
                   return Completer<Never>().future;
                 },
             getRecentSignatureConfirmationPromise:
@@ -260,6 +263,7 @@ void main() {
                   required signature,
                 }) {
                   capturedSignatureCancellationToken = abortSignal;
+
                   return Completer<void>().future;
                 },
             nonceAccountAddress: 'nonce_address',
@@ -428,6 +432,7 @@ void main() {
                 }) {
                   capturedCommitment = commitment;
                   capturedLastValidBlockHeight = lastValidBlockHeight;
+
                   return Completer<Never>().future;
                 },
             getRecentSignatureConfirmationPromise:
@@ -476,6 +481,7 @@ void main() {
                 }) {
                   capturedSignature = signature;
                   capturedCommitment = commitment;
+
                   return Completer<void>().future;
                 },
             lastValidBlockHeight: BigInt.from(123),
@@ -508,6 +514,7 @@ void main() {
                   commitment,
                 }) {
                   capturedBlockHeightCancellationToken = abortSignal;
+
                   return Completer<Never>().future;
                 },
             getRecentSignatureConfirmationPromise:
@@ -517,6 +524,7 @@ void main() {
                   required signature,
                 }) {
                   capturedSignatureCancellationToken = abortSignal;
+
                   return Completer<void>().future;
                 },
             lastValidBlockHeight: BigInt.from(123),
@@ -657,6 +665,7 @@ void main() {
           commitment: Commitment.finalized,
           getTimeoutPromise: ({required abortSignal, required commitment}) {
             capturedCommitment = commitment;
+
             return Completer<Never>().future;
           },
           getRecentSignatureConfirmationPromise:

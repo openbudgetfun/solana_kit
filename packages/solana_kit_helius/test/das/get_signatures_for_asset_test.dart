@@ -36,6 +36,7 @@ void main() {
           expect(body['jsonrpc'], '2.0');
           final params = body['params']! as Map<String, Object?>;
           expect(params['id'], 'asset-abc');
+
           return http.Response(
             jsonEncode(<String, Object?>{
               'jsonrpc': '2.0',
@@ -81,6 +82,7 @@ void main() {
         expect(params['id'], 'asset-abc');
         expect(params['page'], 2);
         expect(params['limit'], 5);
+
         return http.Response(
           jsonEncode(<String, Object?>{
             'jsonrpc': '2.0',

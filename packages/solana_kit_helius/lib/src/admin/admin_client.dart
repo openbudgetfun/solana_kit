@@ -38,6 +38,7 @@ class AdminClient {
         'x-api-key': _apiKey,
       },
     );
+
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw createSolanaError(
         SolanaErrorCode.heliusRestError,
@@ -50,6 +51,7 @@ class AdminClient {
         },
       );
     }
+
     return ProjectUsage.fromJson(
       jsonDecode(response.body) as Map<String, Object?>,
     );

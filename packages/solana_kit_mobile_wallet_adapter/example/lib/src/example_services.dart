@@ -71,6 +71,7 @@ class DefaultMwaSessionService implements MwaSessionService {
     return transact((wallet) async {
       final refreshedAuth = await wallet.reauthorize(authToken: authToken);
       final capabilities = await wallet.getCapabilities();
+
       return (refreshedAuth, capabilities);
     });
   }
@@ -90,6 +91,7 @@ class DefaultMwaSessionService implements MwaSessionService {
         addresses: <String>[refreshedAuth.accounts.first.address],
         payloads: <String>[base64Encode(utf8.encode(message))],
       );
+
       return (refreshedAuth, signedPayloads);
     });
   }
@@ -104,6 +106,7 @@ class DefaultMwaSessionService implements MwaSessionService {
       final signatures = await wallet.signAndSendTransactions(
         payloads: payloads,
       );
+
       return (refreshedAuth, signatures);
     });
   }

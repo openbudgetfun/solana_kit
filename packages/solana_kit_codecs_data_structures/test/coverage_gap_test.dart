@@ -13,6 +13,7 @@ Encoder<num> _fixedNumEncoder(int byte) => FixedSizeEncoder<num>(
   fixedSize: 1,
   write: (_, bytes, offset) {
     bytes[offset] = byte;
+
     return offset + 1;
   },
 );
@@ -43,6 +44,7 @@ void main() {
         getSizeFromValue: (_) => 5,
         write: (v, bytes, offset) {
           bytes[offset] = v.toInt();
+
           return offset + 1;
         },
         maxSize: 10,
@@ -64,6 +66,7 @@ void main() {
           getSizeFromValue: (_) => 5,
           write: (v, bytes, offset) {
             bytes[offset] = v.toInt();
+
             return offset + 1;
           },
           maxSize: 10,

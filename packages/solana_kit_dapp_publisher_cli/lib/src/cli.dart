@@ -193,11 +193,15 @@ Future<int> runDappStoreCli(
 ) async {
   try {
     return await _run(arguments, dependencies);
+
   } on PublisherCliException catch (error) {
     _safePrintError(dependencies, error.message);
+
     return 1;
+
   } on Object catch (error) {
     _safePrintError(dependencies, 'An unexpected error occurred: $error');
+
     return 1;
   }
 }
@@ -205,15 +209,19 @@ Future<int> runDappStoreCli(
 Future<int> _run(List<String> arguments, DappStoreCliDependencies deps) async {
   if (arguments.isEmpty) {
     _printHelp(deps);
+
     return 0;
   }
 
   if (arguments.contains('--version')) {
     deps.write('dapp-store $dappStoreCliVersion');
+
     return 0;
   }
+
   if (arguments.contains('--help') || arguments.contains('-h')) {
     _printHelp(deps);
+
     return 0;
   }
 
@@ -225,6 +233,7 @@ Future<int> _run(List<String> arguments, DappStoreCliDependencies deps) async {
   if (isResume) {
     return _runResume(flags, deps);
   }
+
   return _runNewVersion(flags, deps);
 }
 
@@ -278,6 +287,7 @@ Future<int> _runNewVersion(
     localDev: options.localDev,
     rpcUrl: options.rpcUrl,
   );
+
   if (balanceWarning != null) {
     deps.write('Warning: $balanceWarning');
   }
@@ -285,6 +295,7 @@ Future<int> _runNewVersion(
   final attestationClient = createPortalAttestationClient(
     PortalClientConfig(apiBaseUrl: targets.apiBaseUrl, apiKey: apiKey),
   );
+
   return _executeWorkflow(
     deps: deps,
     targets: targets,
@@ -349,6 +360,7 @@ Future<int> _runResume(
   final attestationClient = createPortalAttestationClient(
     PortalClientConfig(apiBaseUrl: targets.apiBaseUrl, apiKey: apiKey),
   );
+
   return _executeWorkflow(
     deps: deps,
     targets: targets,
@@ -407,27 +419,33 @@ Future<int> _executeWorkflow({
       ..write('Publication session: ${result.publicationSessionId}')
       ..write('Release: ${result.releaseId}');
   }
+
   for (final line in extractPublicationSummaryLines(result)) {
     deps.write(line);
   }
+
   return 0;
 }
 
 /// Builds the publication source from the parsed options.
 PublicationSource buildPublicationSource(NewVersionCliOptions options) {
   final apkFile = options.apkFile;
+
   if (apkFile != null) {
     return ApkFileSource(
       filePath: apkFile,
       fileName: fileNameOf(apkFile),
     );
   }
+
   final apkUrl = options.apkUrl;
+
   if (apkUrl == null) {
     throw const PublisherCliException(
       '`--apk-file` or `--apk-url` is required.',
     );
   }
+
   return ApkUrlSource(
     url: apkUrl,
     fileName: inferFileNameFromUrl(apkUrl),
@@ -438,6 +456,7 @@ PublicationSource buildPublicationSource(NewVersionCliOptions options) {
 String fileNameOf(String filePath) {
   final normalized = filePath.replaceAll(r'\', '/');
   final segments = normalized.split('/');
+
   return segments.isEmpty ? filePath : segments.last;
 }
 
@@ -451,6 +470,7 @@ void validateNewVersionArgs({
 }) {
   final apkSourceCount =
       (options.apkFile != null ? 1 : 0) + (options.apkUrl != null ? 1 : 0);
+
   if (apkSourceCount != 1) {
     throw const PublisherCliException(
       'Specify exactly one of `--apk-file` or `--apk-url`.',
@@ -468,6 +488,7 @@ void validateNewVersionArgs({
   if (options.apkFile != null) {
     final apkPath = options.apkFile!;
     final exists = fileExists?.call(apkPath) ?? File(apkPath).existsSync();
+
     if (!exists) {
       throw PublisherCliException('APK file not found: $apkPath');
     }
@@ -475,6 +496,7 @@ void validateNewVersionArgs({
 
   if (options.apkUrl != null) {
     final parsed = Uri.tryParse(options.apkUrl!);
+
     if (parsed == null || !parsed.hasScheme || parsed.scheme != 'https') {
       throw const PublisherCliException(
         '`--apk-url` must be a valid HTTPS URL.',
@@ -499,6 +521,7 @@ void validateResumeArgs({required ResumeCliOptions options}) {
   );
   final resumeTargetCount =
       (releaseId != null ? 1 : 0) + (sessionId != null ? 1 : 0);
+
   if (resumeTargetCount != 1) {
     throw const PublisherCliException(
       'Specify exactly one of `--release-id` or `--session-id`.',
@@ -527,6 +550,7 @@ String? resolveResumeTarget(
       'Conflicting values were provided for $primaryLabel and $aliasLabel.',
     );
   }
+
   return trimmedPrimary ?? trimmedAlias;
 }
 
@@ -587,9 +611,11 @@ ResolvedPortalTargets resolvePortalTargets({
 
 String _normalizeUrl(String value, String label) {
   final parsed = Uri.tryParse(value);
+
   if (parsed == null || !parsed.hasScheme || parsed.host.isEmpty) {
     throw PublisherCliException('Invalid $label: $value');
   }
+
   return parsed.toString().replaceFirst(RegExp(r'/+$'), '');
 }
 
@@ -597,6 +623,7 @@ String _deriveApiBaseUrl(String portalUrl) {
   final parsed = Uri.parse(portalUrl);
   final basePath = parsed.path.replaceFirst(RegExp(r'/+$'), '');
   final newPath = basePath.isEmpty ? '/api' : '$basePath/api';
+
   return parsed
       .replace(path: newPath)
       .toString()
@@ -608,10 +635,13 @@ String _deriveApiBaseUrl(String portalUrl) {
 
 bool _isLocalhostUrl(String url) {
   final parsed = Uri.tryParse(url);
+
   if (parsed == null) {
     return false;
   }
+
   final host = parsed.host;
+
   return host == 'localhost' || host == '127.0.0.1' || host == '::1';
 }
 
@@ -634,6 +664,7 @@ Future<SensitiveString> resolveApiKey({
   }
 
   final envValue = _trimToNull(env[envVarName]);
+
   if (envValue != null) {
     return SensitiveString(envValue);
   }
@@ -655,15 +686,19 @@ Future<SensitiveString> readSecretFromStdin({
       _withUpdatedCliDocs('No API key was piped into stdin.'),
     );
   }
+
   final stream = stdinStream ?? stdin.cast<List<int>>();
   final chunks = await stream.toList();
+
   final bytes = <int>[for (final chunk in chunks) ...chunk];
   final value = utf8.decode(bytes).trim();
+
   if (value.isEmpty) {
     throw PublisherCliException(
       _withUpdatedCliDocs('No API key was provided on stdin.'),
     );
   }
+
   return SensitiveString(value);
 }
 
@@ -676,28 +711,35 @@ Uint8List parseKeypairFile(
   try {
     final content = fileReader(path);
     final decoded = jsonDecode(utf8.decode(content));
+
     if (decoded is! List || decoded.isEmpty) {
       throw const FormatException('not a keypair array');
     }
+
     entries = <int>[];
+
     for (final entry in decoded) {
       if (entry is! num) {
         throw const FormatException('non-integer entry');
       }
+
       entries.add(entry.toInt() & 0xff);
     }
+
   } on Object {
     throw PublisherCliException(
       'Something went wrong when attempting to retrieve the keypair at '
       '$path. Failed to load the signer keypair.',
     );
   }
+
   if (entries.length != 64) {
     throw PublisherCliException(
       'Something went wrong when attempting to retrieve the keypair at '
       '$path. Failed to load the signer keypair.',
     );
   }
+
   return Uint8List.fromList(entries);
 }
 
@@ -709,7 +751,9 @@ PublicationSigner loadSignerKeypair(
   if (keypairPath == null || keypairPath.trim().isEmpty) {
     throw const PublisherCliException('`--keypair` is required.');
   }
+
   final bytes = parseKeypairFile(keypairPath, fileReader: fileReader);
+
   return createPublicationSignerFromKeypairBytes(bytes);
 }
 
@@ -721,11 +765,13 @@ List<String> extractPublicationSummaryLines(PublicationWorkflowResult result) {
     (result.collectionMintAddress, 'Collection mint address'),
     (result.hubspotTicketId, 'Ticket ID'),
   ];
+
   for (final (value, label) in entries) {
     if (value != null && value.isNotEmpty) {
       lines.add('$label: $value');
     }
   }
+
   return lines;
 }
 
@@ -735,16 +781,20 @@ List<String> extractPublicationSummaryLines(PublicationWorkflowResult result) {
 /// rejects unknown or unexpected arguments.
 Map<String, String?> parseCliFlags(List<String> arguments) {
   final values = <String, String?>{};
+
   for (var i = 0; i < arguments.length; i++) {
     final argument = arguments[i];
+
     if (!argument.startsWith('--')) {
       throw PublisherCliException('Unexpected argument: $argument');
     }
+
     final withoutPrefix = argument.substring(2);
     final equalsIndex = withoutPrefix.indexOf('=');
     final name = equalsIndex >= 0
         ? withoutPrefix.substring(0, equalsIndex)
         : withoutPrefix;
+
     if (_valuedFlags.contains(name)) {
       if (equalsIndex >= 0) {
         values[name] = withoutPrefix.substring(equalsIndex + 1);
@@ -754,25 +804,30 @@ Map<String, String?> parseCliFlags(List<String> arguments) {
             'Missing value for --$name. Provide it as --$name <value>.',
           );
         }
+
         values[name] = arguments[i + 1];
         i++;
       }
+
     } else if (_booleanFlags.contains(name)) {
       if (equalsIndex >= 0) {
         throw PublisherCliException(
           'The --$name flag does not accept a value.',
         );
       }
+
       values[name] = '';
     } else {
       throw PublisherCliException('Unknown argument: $argument');
     }
   }
+
   return values;
 }
 
 String? _trimToNull(String? value) {
   final trimmed = value?.trim();
+
   return trimmed == null || trimmed.isEmpty ? null : trimmed;
 }
 
@@ -790,6 +845,7 @@ void _printError(DappStoreCliDependencies deps, String message) {
 void _safePrintError(DappStoreCliDependencies deps, String message) {
   try {
     _printError(deps, message);
+
   } on Object {
     // The output stream is broken; there is nowhere left to report the error.
   }

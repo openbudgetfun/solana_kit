@@ -33,6 +33,8 @@ class JupiterSwapClient {
       '/swap/v2/order',
       queryParameters: order.toQueryParameters(),
     );
+
+
     return switch (response) {
       final Map<String, Object?> json => JupiterOrderResponse.fromJson(json),
       _ => throw JupiterException(
@@ -58,9 +60,11 @@ class JupiterSwapClient {
     Address? userPublicKey,
   }) async {
     final requestId = order.requestId;
+
     if (requestId == null || requestId.trim().isEmpty) {
       throw ArgumentError('The order must include a nonempty requestId.');
     }
+
     final response = await _restClient.post(
       '/swap/v2/execute',
       body: {
@@ -70,6 +74,8 @@ class JupiterSwapClient {
           'lastValidBlockHeight': order.lastValidBlockHeight.toString(),
       },
     );
+
+
     return switch (response) {
       final Map<String, Object?> json => JupiterExecutionResponse.fromJson(
         json,
@@ -88,6 +94,8 @@ class JupiterSwapClient {
       '/swap/v2/build',
       queryParameters: order.toQueryParameters(),
     );
+
+
     return switch (response) {
       final Map<String, Object?> json => JupiterBuildResponse.fromJson(json),
       _ => throw JupiterException(
@@ -107,5 +115,6 @@ class JupiterSwapClient {
 /// re-encoded with `getBase64EncodedWireTransaction` once signs are attached.
 Transaction decodeBase64SwapTransaction(String encodedTransaction) {
   final bytes = getBase64Encoder().encode(encodedTransaction);
+
   return getTransactionDecoder().decode(bytes);
 }

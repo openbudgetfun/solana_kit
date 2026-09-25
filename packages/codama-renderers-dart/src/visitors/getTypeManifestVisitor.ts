@@ -147,11 +147,9 @@ export function getTypeManifestVisitor(input: {
         type: fragmentFromString("bool"),
         encoder: fragment`${use(
           "getBooleanEncoder",
-          "solanaCodecsDataStructures",
         )}()`,
         decoder: fragment`${use(
           "getBooleanDecoder",
-          "solanaCodecsDataStructures",
         )}()`,
         value: emptyTypeManifest().value,
         isEnum: false,
@@ -167,6 +165,7 @@ export function getTypeManifestVisitor(input: {
         base16: "Base16",
       };
       const codecName = codecMap[encoding] ?? "Utf8";
+
       return {
         type: fragmentFromString("String"),
         encoder: fragment`${use(
@@ -187,11 +186,9 @@ export function getTypeManifestVisitor(input: {
         type: fragment`${use("Address", "solanaAddresses")}`,
         encoder: fragment`${use(
           "getAddressEncoder",
-          "solanaAddresses",
         )}()`,
         decoder: fragment`${use(
           "getAddressDecoder",
-          "solanaAddresses",
         )}()`,
         value: emptyTypeManifest().value,
         isEnum: false,
@@ -203,11 +200,9 @@ export function getTypeManifestVisitor(input: {
         type: fragment`${use("Uint8List", "dartTypedData")}`,
         encoder: fragment`${use(
           "getBytesEncoder",
-          "solanaCodecsDataStructures",
         )}()`,
         decoder: fragment`${use(
           "getBytesDecoder",
-          "solanaCodecsDataStructures",
         )}()`,
         value: emptyTypeManifest().value,
         isEnum: false,
@@ -221,18 +216,15 @@ export function getTypeManifestVisitor(input: {
       const itemType = fragmentFromString(itemManifest.type.content);
       const itemEncoder = fragment`${use(
         "transformEncoder",
-        "solanaCodecsCore",
       )}(${itemManifest.encoder}, (${itemType} value) => value)`;
 
       return {
         type: fragment`List<${itemManifest.type}>`,
         encoder: fragment`${use(
           "getArrayEncoder",
-          "solanaCodecsDataStructures",
         )}(${itemEncoder}${encoderSizeExpr})`,
         decoder: fragment`${use(
           "getArrayDecoder",
-          "solanaCodecsDataStructures",
         )}(${itemManifest.decoder}${decoderSizeExpr})`,
         value: emptyTypeManifest().value,
         isEnum: false,
@@ -249,11 +241,9 @@ export function getTypeManifestVisitor(input: {
         type: fragment`Map<${keyManifest.type}, ${valueManifest.type}>`,
         encoder: fragment`${use(
           "getMapEncoder",
-          "solanaCodecsDataStructures",
         )}(${keyManifest.encoder}, ${valueManifest.encoder}${encoderSizeExpr})`,
         decoder: fragment`${use(
           "getMapDecoder",
-          "solanaCodecsDataStructures",
         )}(${keyManifest.decoder}, ${valueManifest.decoder}${decoderSizeExpr})`,
         value: emptyTypeManifest().value,
         isEnum: false,
@@ -269,11 +259,9 @@ export function getTypeManifestVisitor(input: {
         type: fragment`Set<${itemManifest.type}>`,
         encoder: fragment`${use(
           "getSetEncoder",
-          "solanaCodecsDataStructures",
         )}(${itemManifest.encoder}${encoderSizeExpr})`,
         decoder: fragment`${use(
           "getSetDecoder",
-          "solanaCodecsDataStructures",
         )}(${itemManifest.decoder}${decoderSizeExpr})`,
         value: emptyTypeManifest().value,
         isEnum: false,
@@ -310,9 +298,9 @@ export function getTypeManifestVisitor(input: {
         tupleEncoderArgs = encoderListStr;
         tupleDecoderArgs = decoderListStr;
       }
+
       const encoderFrag = fragment`${use(
         tupleEncoderFn,
-        "solanaCodecsDataStructures",
       )}(${tupleEncoderArgs})`;
       for (const e of encoderList) {
         encoderFrag.imports.mergeWith(e.imports);
@@ -320,7 +308,6 @@ export function getTypeManifestVisitor(input: {
 
       const decoderFrag = fragment`${use(
         tupleDecoderFn,
-        "solanaCodecsDataStructures",
       )}(${tupleDecoderArgs})`;
       for (const d of decoderList) {
         decoderFrag.imports.mergeWith(d.imports);
@@ -349,7 +336,6 @@ export function getTypeManifestVisitor(input: {
         .join(", ");
       const encoderFrag = fragment`${use(
         "getStructEncoder",
-        "solanaCodecsDataStructures",
       )}([${fragmentFromString(encoderFields)}])`;
       for (const f of fields) {
         encoderFrag.imports.mergeWith(f.encoder.imports);
@@ -360,7 +346,6 @@ export function getTypeManifestVisitor(input: {
         .join(", ");
       const decoderFrag = fragment`${use(
         "getStructDecoder",
-        "solanaCodecsDataStructures",
       )}([${fragmentFromString(decoderFields)}])`;
       for (const f of fields) {
         decoderFrag.imports.mergeWith(f.decoder.imports);
@@ -445,14 +430,9 @@ export function getTypeManifestVisitor(input: {
         type: fragment`${itemManifest.type}?`,
         encoder: fragment`${use(
           "getNullableEncoder",
-          "solanaCodecsDataStructures",
-        )}<${fragmentFromString(itemTypeStr)}>(${use(
-          "transformEncoder",
-          "solanaCodecsCore",
         )}(${itemManifest.encoder}, (${fragmentFromString(itemTypeStr)} value) => value)${prefixExpr}${fragmentFromString(noneValueExpr)})`,
         decoder: fragment`${use(
           "getNullableDecoder",
-          "solanaCodecsDataStructures",
         )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.decoder}${prefixDecoderExpr}${fragmentFromString(noneValueExpr)})`,
         value: emptyTypeManifest().value,
         isEnum: false,
@@ -470,11 +450,9 @@ export function getTypeManifestVisitor(input: {
         type: fragment`${itemManifest.type}?`,
         encoder: fragment`${use(
           "getNullableEncoder",
-          "solanaCodecsDataStructures",
         )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.encoder}, hasPrefix: false)`,
         decoder: fragment`${use(
           "getNullableDecoder",
-          "solanaCodecsDataStructures",
         )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.decoder}, hasPrefix: false)`,
         value: emptyTypeManifest().value,
         isEnum: false,
@@ -492,11 +470,9 @@ export function getTypeManifestVisitor(input: {
         type: fragment`${itemManifest.type}?`,
         encoder: fragment`${use(
           "getNullableEncoder",
-          "solanaCodecsDataStructures",
         )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.encoder}, hasPrefix: false, noneValue: const ZeroesNoneValue())`,
         decoder: fragment`${use(
           "getNullableDecoder",
-          "solanaCodecsDataStructures",
         )}<${fragmentFromString(itemTypeStr)}>(${itemManifest.decoder}, hasPrefix: false, noneValue: const ZeroesNoneValue())`,
         value: emptyTypeManifest().value,
         isEnum: false,
@@ -510,11 +486,9 @@ export function getTypeManifestVisitor(input: {
         type: innerManifest.type,
         encoder: fragment`${use(
           "fixEncoderSize",
-          "solanaCodecsCore",
         )}(${innerManifest.encoder}, ${fragmentFromString(getNonNegativeInteger(node.size))}, allowTruncation: false)`,
         decoder: fragment`${use(
           "fixDecoderSize",
-          "solanaCodecsCore",
         )}(${innerManifest.decoder}, ${fragmentFromString(getNonNegativeInteger(node.size))})`,
         value: innerManifest.value,
         isEnum: innerManifest.isEnum,
@@ -549,11 +523,9 @@ export function getTypeManifestVisitor(input: {
         type: innerManifest.type,
         encoder: fragment`${use(
           "addEncoderSizePrefix",
-          "solanaCodecsCore",
         )}(${innerManifest.encoder}, ${prefixManifest.encoder})`,
         decoder: fragment`${use(
           "addDecoderSizePrefix",
-          "solanaCodecsCore",
         )}(${innerManifest.decoder}, ${prefixManifest.decoder})`,
         value: innerManifest.value,
         isEnum: innerManifest.isEnum,
@@ -572,7 +544,6 @@ export function getTypeManifestVisitor(input: {
 
       const encoderFrag = fragment`${use(
         "getHiddenPrefixEncoder",
-        "solanaCodecsDataStructures",
       )}(${innerManifest.encoder}, [${fragmentFromString(prefixEncoders)}])`;
       for (const p of prefixes) {
         encoderFrag.imports.mergeWith(p.encoder.imports);
@@ -580,7 +551,6 @@ export function getTypeManifestVisitor(input: {
 
       const decoderFrag = fragment`${use(
         "getHiddenPrefixDecoder",
-        "solanaCodecsDataStructures",
       )}(${innerManifest.decoder}, [${fragmentFromString(prefixDecoders)}])`;
       for (const p of prefixes) {
         decoderFrag.imports.mergeWith(p.decoder.imports);
@@ -607,7 +577,6 @@ export function getTypeManifestVisitor(input: {
 
       const encoderFrag = fragment`${use(
         "getHiddenSuffixEncoder",
-        "solanaCodecsDataStructures",
       )}(${innerManifest.encoder}, [${fragmentFromString(suffixEncoders)}])`;
       for (const s of suffixes) {
         encoderFrag.imports.mergeWith(s.encoder.imports);
@@ -615,7 +584,6 @@ export function getTypeManifestVisitor(input: {
 
       const decoderFrag = fragment`${use(
         "getHiddenSuffixDecoder",
-        "solanaCodecsDataStructures",
       )}(${innerManifest.decoder}, [${fragmentFromString(suffixDecoders)}])`;
       for (const s of suffixes) {
         decoderFrag.imports.mergeWith(s.decoder.imports);
@@ -638,11 +606,9 @@ export function getTypeManifestVisitor(input: {
         type: innerManifest.type,
         encoder: fragment`${use(
           "addEncoderSentinel",
-          "solanaCodecsCore",
         )}(${innerManifest.encoder}, ${sentinelManifest.encoder})`,
         decoder: fragment`${use(
           "addDecoderSentinel",
-          "solanaCodecsCore",
         )}(${innerManifest.decoder}, ${sentinelManifest.decoder})`,
         value: innerManifest.value,
         isEnum: innerManifest.isEnum,
@@ -685,6 +651,7 @@ export function getTypeManifestVisitor(input: {
       const override = linkOverrides[name];
       if (override != null) {
         const moduleKey = `linkOverride:${override.path}`;
+
         return {
           type: use(override.type, moduleKey),
           encoder: use(override.encoder, moduleKey),
@@ -722,7 +689,6 @@ export function getTypeManifestVisitor(input: {
 }
 
 // --- Helper functions ---
-
 function getNumberDartType(
   format: string,
 ): string {
@@ -735,14 +701,17 @@ function getNumberDartType(
     case "i32":
     case "shortU16":
       return "int";
+
     case "u64":
     case "u128":
     case "i64":
     case "i128":
       return "BigInt";
+
     case "f32":
     case "f64":
       return "double";
+
     default:
       return "int";
   }
@@ -752,30 +721,43 @@ function getNumberCodecName(format: string): string {
   switch (format) {
     case "u8":
       return "U8";
+
     case "u16":
       return "U16";
+
     case "u32":
       return "U32";
+
     case "u64":
       return "U64";
+
     case "u128":
       return "U128";
+
     case "i8":
       return "I8";
+
     case "i16":
       return "I16";
+
     case "i32":
       return "I32";
+
     case "i64":
       return "I64";
+
     case "i128":
       return "I128";
+
     case "f32":
       return "F32";
+
     case "f64":
       return "F64";
+
     case "shortU16":
       return "ShortU16";
+
     default:
       return "U8";
   }
@@ -803,8 +785,10 @@ function getArraySizeExpression(
   switch (count.kind) {
     case "fixedCountNode":
       return `, size: FixedArraySize(${getNonNegativeInteger(count.value)})`;
+
     case "remainderCountNode":
       return ", size: RemainderArraySize()";
+
     case "prefixedCountNode": {
       if (
         count.prefix.kind === "numberTypeNode" &&
@@ -814,8 +798,10 @@ function getArraySizeExpression(
         return ""; // Default
       }
       const prefix = visit(count.prefix, self);
+
       return fragment`, size: PrefixedArraySize(${codecType === "Encoder" ? prefix.encoder : prefix.decoder})`;
     }
+
     default:
       return "";
   }
@@ -831,8 +817,10 @@ function getMapSizeExpression(
   switch (count.kind) {
     case "fixedCountNode":
       return `, size: FixedArraySize(${getNonNegativeInteger(count.value)})`;
+
     case "remainderCountNode":
       return ", size: RemainderArraySize()";
+
     case "prefixedCountNode": {
       if (
         count.prefix.kind === "numberTypeNode" &&
@@ -842,8 +830,10 @@ function getMapSizeExpression(
         return "";
       }
       const prefix = visit(count.prefix, self);
+
       return fragment`, size: PrefixedArraySize(${codecType === "Encoder" ? prefix.encoder : prefix.decoder})`;
     }
+
     default:
       return "";
   }
@@ -859,8 +849,10 @@ function getSetSizeExpression(
   switch (count.kind) {
     case "fixedCountNode":
       return `, size: FixedArraySize(${getNonNegativeInteger(count.value)})`;
+
     case "remainderCountNode":
       return ", size: RemainderArraySize()";
+
     case "prefixedCountNode": {
       if (
         count.prefix.kind === "numberTypeNode" &&
@@ -870,8 +862,10 @@ function getSetSizeExpression(
         return "";
       }
       const prefix = visit(count.prefix, self);
+
       return fragment`, size: PrefixedArraySize(${codecType === "Encoder" ? prefix.encoder : prefix.decoder})`;
     }
+
     default:
       return "";
   }
@@ -888,10 +882,12 @@ function getHiddenAffixManifest(
 ): HiddenAffixManifest {
   if (node?.kind !== "constantValueNode") {
     const manifest = visit(node, self);
+
     return { encoder: manifest.encoder, decoder: manifest.decoder };
   }
 
   const constantBytes = getConstantBytesExpression(node, self);
+
   return {
     encoder: fragment`${use("getConstantEncoder", "solanaCodecsDataStructures")}(${constantBytes})`,
     decoder: fragment`${use("getConstantDecoder", "solanaCodecsDataStructures")}(${constantBytes})`,
@@ -950,12 +946,15 @@ function getOffsetManifest(
     case "absolute":
       expression = node.offset < 0 ? `scope.wrapBytes(${node.offset})` : String(node.offset);
       break;
+
     case "relative":
       expression = `scope.${key} + ${node.offset}`;
       break;
+
     case "preOffset":
       expression = `scope.preOffset + ${node.offset}`;
       break;
+
     default:
       throw new Error(`Unsupported offset strategy: ${node.strategy}`);
   }

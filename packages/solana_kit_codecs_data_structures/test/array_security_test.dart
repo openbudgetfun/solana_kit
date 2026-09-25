@@ -24,6 +24,7 @@ void main() {
         read: (bytes, offset) {
           // Stop an unfixed decoder safely instead of exhausting memory.
           if (++reads > 10) throw StateError('unbounded zero-progress loop');
+
           return unit.read(bytes, offset);
         },
       );
@@ -49,6 +50,7 @@ void main() {
           read: (bytes, offset) {
             // Four hostile bytes request over four billion list entries.
             if (++reads > 10) throw StateError('unbounded count expansion');
+
             return unit.read(bytes, offset);
           },
         );

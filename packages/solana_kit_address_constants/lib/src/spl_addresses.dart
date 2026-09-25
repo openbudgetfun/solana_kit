@@ -5,8 +5,6 @@ import 'package:solana_kit_address/solana_kit_address.dart';
 // ---------------------------------------------------------------------------
 // Well-known addresses for SPL programs that are not part of the Agave
 // runtime but are widely used across the Solana ecosystem.
-
-/// The address of the SPL Token program.
 const tokenProgramAddress = Address(
   'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
 );

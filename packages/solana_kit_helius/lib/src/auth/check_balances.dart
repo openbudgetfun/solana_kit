@@ -10,5 +10,6 @@ Future<CheckBalancesResponse> authCheckBalances(
   String apiKey,
 ) async {
   final result = await restClient.get('/v0/auth/balances?api-key=$apiKey');
+
   return CheckBalancesResponse.fromJson(result! as Map<String, Object?>);
 }

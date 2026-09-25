@@ -15,6 +15,7 @@ void main() {
         () {},
         skip: 'Run upstream:parity to generate fixtures before executing this harness.',
       );
+
       return;
     }
 
@@ -294,11 +295,13 @@ void main() {
 
 Map<String, dynamic>? _loadFixtures() {
   final fixturePath = Platform.environment['UPSTREAM_PARITY_FIXTURES_JSON'];
+
   if (fixturePath == null || fixturePath.isEmpty) {
     return null;
   }
 
   final fixtureFile = File(fixturePath);
+
   if (!fixtureFile.existsSync()) {
     return null;
   }
@@ -322,6 +325,7 @@ TransactionMessage _buildTransactionMessage(Map<String, dynamic> input) {
           );
 
   final instruction = input['instruction'] as Map<String, dynamic>?;
+
   if (instruction == null) {
     return message;
   }

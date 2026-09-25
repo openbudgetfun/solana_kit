@@ -4,8 +4,6 @@ import 'package:solana_kit_helius/src/types/enums.dart';
 // ---------------------------------------------------------------------------
 // Request types
 // ---------------------------------------------------------------------------
-
-/// Request parameters for the `getAsset` DAS method.
 class GetAssetRequest {
   /// Creates a `getAsset` request.
   const GetAssetRequest({required this.id, this.displayOptions});
@@ -13,6 +11,7 @@ class GetAssetRequest {
   /// Builds a [GetAssetRequest] from the JSON returned by the Helius API.
   factory GetAssetRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetAssetRequest(
       id: r.requireString('id'),
       displayOptions: r.optBool('displayOptions'),
@@ -28,6 +27,7 @@ class GetAssetRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'id': id,
+
     if (displayOptions != null) 'displayOptions': displayOptions,
   };
 }
@@ -40,6 +40,7 @@ class GetAssetBatchRequest {
   /// Builds a [GetAssetBatchRequest] from the JSON returned by the Helius API.
   factory GetAssetBatchRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetAssetBatchRequest(
       ids: r.requireList<String>('ids'),
       displayOptions: r.optBool('displayOptions'),
@@ -55,6 +56,7 @@ class GetAssetBatchRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'ids': ids,
+
     if (displayOptions != null) 'displayOptions': displayOptions,
   };
 }
@@ -67,6 +69,7 @@ class GetAssetProofRequest {
   /// Builds a [GetAssetProofRequest] from the JSON returned by the Helius API.
   factory GetAssetProofRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetAssetProofRequest(id: r.requireString('id'));
   }
 
@@ -86,6 +89,7 @@ class GetAssetProofBatchRequest {
   /// API.
   factory GetAssetProofBatchRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetAssetProofBatchRequest(ids: r.requireList<String>('ids'));
   }
 
@@ -113,6 +117,7 @@ class GetAssetsByAuthorityRequest {
   /// Helius API.
   factory GetAssetsByAuthorityRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetAssetsByAuthorityRequest(
       authorityAddress: r.requireString('authorityAddress'),
       page: r.optInt('page'),
@@ -148,11 +153,17 @@ class GetAssetsByAuthorityRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'authorityAddress': authorityAddress,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
+
     if (sortBy != null) 'sortBy': sortBy!.toJson(),
+
     if (sortDirection != null) 'sortDirection': sortDirection!.toJson(),
+
     if (before != null) 'before': before,
+
     if (after != null) 'after': after,
   };
 }
@@ -175,6 +186,7 @@ class GetAssetsByCreatorRequest {
   /// API.
   factory GetAssetsByCreatorRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetAssetsByCreatorRequest(
       creatorAddress: r.requireString('creatorAddress'),
       onlyVerified: r.optBool('onlyVerified'),
@@ -214,12 +226,19 @@ class GetAssetsByCreatorRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'creatorAddress': creatorAddress,
+
     if (onlyVerified != null) 'onlyVerified': onlyVerified,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
+
     if (sortBy != null) 'sortBy': sortBy!.toJson(),
+
     if (sortDirection != null) 'sortDirection': sortDirection!.toJson(),
+
     if (before != null) 'before': before,
+
     if (after != null) 'after': after,
   };
 }
@@ -242,6 +261,7 @@ class GetAssetsByGroupRequest {
   /// API.
   factory GetAssetsByGroupRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetAssetsByGroupRequest(
       groupKey: r.requireString('groupKey'),
       groupValue: r.requireString('groupValue'),
@@ -282,11 +302,17 @@ class GetAssetsByGroupRequest {
   Map<String, Object?> toJson() => {
     'groupKey': groupKey,
     'groupValue': groupValue,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
+
     if (sortBy != null) 'sortBy': sortBy!.toJson(),
+
     if (sortDirection != null) 'sortDirection': sortDirection!.toJson(),
+
     if (before != null) 'before': before,
+
     if (after != null) 'after': after,
   };
 }
@@ -308,6 +334,7 @@ class GetAssetsByOwnerRequest {
   /// API.
   factory GetAssetsByOwnerRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetAssetsByOwnerRequest(
       ownerAddress: r.requireString('ownerAddress'),
       page: r.optInt('page'),
@@ -343,11 +370,17 @@ class GetAssetsByOwnerRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'ownerAddress': ownerAddress,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
+
     if (sortBy != null) 'sortBy': sortBy!.toJson(),
+
     if (sortDirection != null) 'sortDirection': sortDirection!.toJson(),
+
     if (before != null) 'before': before,
+
     if (after != null) 'after': after,
   };
 }
@@ -360,6 +393,7 @@ class GetNftEditionsRequest {
   /// Builds a [GetNftEditionsRequest] from the JSON returned by the Helius API.
   factory GetNftEditionsRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetNftEditionsRequest(
       mint: r.requireString('mint'),
       page: r.optInt('page'),
@@ -379,7 +413,9 @@ class GetNftEditionsRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'mint': mint,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -399,6 +435,7 @@ class GetSignaturesForAssetRequest {
   /// Helius API.
   factory GetSignaturesForAssetRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetSignaturesForAssetRequest(
       id: r.requireString('id'),
       page: r.optInt('page'),
@@ -426,9 +463,13 @@ class GetSignaturesForAssetRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     'id': id,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
+
     if (before != null) 'before': before,
+
     if (after != null) 'after': after,
   };
 }
@@ -442,6 +483,7 @@ class GetTokenAccountsRequest {
   /// API.
   factory GetTokenAccountsRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetTokenAccountsRequest(
       owner: r.optString('owner'),
       mint: r.optString('mint'),
@@ -465,8 +507,11 @@ class GetTokenAccountsRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     if (owner != null) 'owner': owner,
+
     if (mint != null) 'mint': mint,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -494,6 +539,7 @@ class SearchAssetsRequest {
   /// Builds a [SearchAssetsRequest] from the JSON returned by the Helius API.
   factory SearchAssetsRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return SearchAssetsRequest(
       ownerAddress: r.optString('ownerAddress'),
       creatorAddress: r.optString('creatorAddress'),
@@ -557,18 +603,31 @@ class SearchAssetsRequest {
   /// Serializes this request to a JSON map suitable for the Helius RPC call.
   Map<String, Object?> toJson() => {
     if (ownerAddress != null) 'ownerAddress': ownerAddress,
+
     if (creatorAddress != null) 'creatorAddress': creatorAddress,
+
     if (grouping != null) 'grouping': grouping,
+
     if (compressed != null) 'compressed': compressed,
+
     if (compressible != null) 'compressible': compressible,
+
     if (frozen != null) 'frozen': frozen,
+
     if (burnt != null) 'burnt': burnt,
+
     if (jsonUri != null) 'jsonUri': jsonUri,
+
     if (page != null) 'page': page,
+
     if (limit != null) 'limit': limit,
+
     if (sortBy != null) 'sortBy': sortBy!.toJson(),
+
     if (sortDirection != null) 'sortDirection': sortDirection!.toJson(),
+
     if (before != null) 'before': before,
+
     if (after != null) 'after': after,
   };
 }
@@ -576,8 +635,6 @@ class SearchAssetsRequest {
 // ---------------------------------------------------------------------------
 // Response / model types
 // ---------------------------------------------------------------------------
-
-/// A digital asset returned by the Helius DAS API.
 class HeliusAsset {
   /// Creates a [HeliusAsset].
   const HeliusAsset({
@@ -600,6 +657,7 @@ class HeliusAsset {
   /// Builds a [HeliusAsset] from the JSON returned by the Helius API.
   factory HeliusAsset.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return HeliusAsset(
       id: r.requireString('id'),
       interface_: r.optString('interface'),
@@ -663,19 +721,32 @@ class HeliusAsset {
   /// Serializes this asset to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     'id': id,
+
     if (interface_ != null) 'interface': interface_,
+
     if (content != null) 'content': content!.toJson(),
+
     if (authorities != null)
       'authorities': authorities!.map((a) => a.toJson()).toList(),
+
     if (compression != null) 'compression': compression!.toJson(),
+
     if (grouping != null) 'grouping': grouping!.map((g) => g.toJson()).toList(),
+
     if (royalty != null) 'royalty': royalty!.toJson(),
+
     if (creators != null) 'creators': creators!.map((c) => c.toJson()).toList(),
+
     if (ownership != null) 'ownership': ownership!.toJson(),
+
     if (supply != null) 'supply': supply!.toJson(),
+
     if (mutable != null) 'mutable': mutable,
+
     if (burnt != null) 'burnt': burnt,
+
     if (tokenInfo != null) 'token_info': tokenInfo!.toJson(),
+
     if (mintExtensions != null) 'mint_extensions': mintExtensions,
   };
 }
@@ -688,6 +759,7 @@ class AssetContent {
   /// Builds an [AssetContent] from the JSON returned by the Helius API.
   factory AssetContent.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetContent(
       jsonUri: r.optString('json_uri'),
       files: r.optDecodedList('files', AssetFile.fromJson),
@@ -711,8 +783,11 @@ class AssetContent {
   /// Serializes this content to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (jsonUri != null) 'json_uri': jsonUri,
+
     if (files != null) 'files': files!.map((f) => f.toJson()).toList(),
+
     if (metadata != null) 'metadata': metadata!.toJson(),
+
     if (links != null) 'links': links,
   };
 }
@@ -725,6 +800,7 @@ class AssetFile {
   /// Builds an [AssetFile] from the JSON returned by the Helius API.
   factory AssetFile.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetFile(
       uri: r.optString('uri'),
       cdnUri: r.optString('cdn_uri'),
@@ -744,7 +820,9 @@ class AssetFile {
   /// Serializes this file to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (uri != null) 'uri': uri,
+
     if (cdnUri != null) 'cdn_uri': cdnUri,
+
     if (mime != null) 'mime': mime,
   };
 }
@@ -762,6 +840,7 @@ class AssetMetadata {
   /// Builds an [AssetMetadata] from the JSON returned by the Helius API.
   factory AssetMetadata.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetMetadata(
       name: r.optString('name'),
       symbol: r.optString('symbol'),
@@ -785,8 +864,11 @@ class AssetMetadata {
   /// Serializes this metadata to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (name != null) 'name': name,
+
     if (symbol != null) 'symbol': symbol,
+
     if (description != null) 'description': description,
+
     if (attributes != null)
       'attributes': attributes!.map((a) => a.toJson()).toList(),
   };
@@ -800,6 +882,7 @@ class AssetAttribute {
   /// Builds an [AssetAttribute] from the JSON returned by the Helius API.
   factory AssetAttribute.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetAttribute(
       traitType: r.optString('trait_type'),
       value: r.raw('value'),
@@ -815,6 +898,7 @@ class AssetAttribute {
   /// Serializes this attribute to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (traitType != null) 'trait_type': traitType,
+
     if (value != null) 'value': value,
   };
 }
@@ -827,6 +911,7 @@ class AssetAuthority {
   /// Builds an [AssetAuthority] from the JSON returned by the Helius API.
   factory AssetAuthority.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetAuthority(
       address: r.requireString('address'),
       scopes: r.optList<String>('scopes'),
@@ -842,6 +927,7 @@ class AssetAuthority {
   /// Serializes this authority to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     'address': address,
+
     if (scopes != null) 'scopes': scopes,
   };
 }
@@ -863,6 +949,7 @@ class AssetCompression {
   /// Builds an [AssetCompression] from the JSON returned by the Helius API.
   factory AssetCompression.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetCompression(
       eligible: r.optBool('eligible'),
       compressed: r.optBool('compressed'),
@@ -903,12 +990,19 @@ class AssetCompression {
   /// schema.
   Map<String, Object?> toJson() => {
     if (eligible != null) 'eligible': eligible,
+
     if (compressed != null) 'compressed': compressed,
+
     if (dataHash != null) 'data_hash': dataHash,
+
     if (creatorHash != null) 'creator_hash': creatorHash,
+
     if (assetHash != null) 'asset_hash': assetHash,
+
     if (tree != null) 'tree': tree,
+
     if (seq != null) 'seq': seq,
+
     if (leafId != null) 'leaf_id': leafId,
   };
 }
@@ -921,6 +1015,7 @@ class AssetGrouping {
   /// Builds an [AssetGrouping] from the JSON returned by the Helius API.
   factory AssetGrouping.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetGrouping(
       groupKey: r.requireString('group_key'),
       groupValue: r.requireString('group_value'),
@@ -955,6 +1050,7 @@ class AssetRoyalty {
   /// Builds an [AssetRoyalty] from the JSON returned by the Helius API.
   factory AssetRoyalty.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetRoyalty(
       royaltyModel: r.optString('royalty_model'),
       target: r.optString('target'),
@@ -986,11 +1082,16 @@ class AssetRoyalty {
   /// Serializes this royalty to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (royaltyModel != null) 'royalty_model': royaltyModel,
+
     if (target != null) 'target': target,
+
     if (percent != null) 'percent': percent,
+
     if (basisPoints != null) 'basis_points': basisPoints,
+
     if (primarySaleHappened != null)
       'primary_sale_happened': primarySaleHappened,
+
     if (locked != null) 'locked': locked,
   };
 }
@@ -1007,6 +1108,7 @@ class AssetCreator {
   /// Builds an [AssetCreator] from the JSON returned by the Helius API.
   factory AssetCreator.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetCreator(
       address: r.requireString('address'),
       share: r.requireInt('share'),
@@ -1045,6 +1147,7 @@ class AssetOwnership {
   /// Builds an [AssetOwnership] from the JSON returned by the Helius API.
   factory AssetOwnership.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetOwnership(
       frozen: r.optBool('frozen'),
       delegated: r.optBool('delegated'),
@@ -1072,9 +1175,13 @@ class AssetOwnership {
   /// Serializes this ownership to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (frozen != null) 'frozen': frozen,
+
     if (delegated != null) 'delegated': delegated,
+
     if (delegate != null) 'delegate': delegate,
+
     if (ownershipModel != null) 'ownership_model': ownershipModel,
+
     if (owner != null) 'owner': owner,
   };
 }
@@ -1091,6 +1198,7 @@ class AssetSupply {
   /// Builds an [AssetSupply] from the JSON returned by the Helius API.
   factory AssetSupply.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetSupply(
       printMaxSupply: r.optInt('print_max_supply'),
       printCurrentSupply: r.optInt('print_current_supply'),
@@ -1110,7 +1218,9 @@ class AssetSupply {
   /// Serializes this supply to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (printMaxSupply != null) 'print_max_supply': printMaxSupply,
+
     if (printCurrentSupply != null) 'print_current_supply': printCurrentSupply,
+
     if (editionNonce != null) 'edition_nonce': editionNonce,
   };
 }
@@ -1131,6 +1241,7 @@ class AssetTokenInfo {
   /// Builds an [AssetTokenInfo] from the JSON returned by the Helius API.
   factory AssetTokenInfo.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetTokenInfo(
       supply: r.optInt('supply'),
       decimals: r.optInt('decimals'),
@@ -1166,12 +1277,18 @@ class AssetTokenInfo {
   /// Serializes this token info to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (supply != null) 'supply': supply,
+
     if (decimals != null) 'decimals': decimals,
+
     if (tokenProgram != null) 'token_program': tokenProgram,
+
     if (associatedTokenAddress != null)
       'associated_token_address': associatedTokenAddress,
+
     if (mintAuthority != null) 'mint_authority': mintAuthority,
+
     if (freezeAuthority != null) 'freeze_authority': freezeAuthority,
+
     if (priceInfo != null) 'price_info': priceInfo!.toJson(),
   };
 }
@@ -1184,6 +1301,7 @@ class AssetPriceInfo {
   /// Builds an [AssetPriceInfo] from the JSON returned by the Helius API.
   factory AssetPriceInfo.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetPriceInfo(
       pricePerToken: r.optDouble('price_per_token'),
       totalPrice: r.optDouble('total_price'),
@@ -1203,7 +1321,9 @@ class AssetPriceInfo {
   /// Serializes this price info to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     if (pricePerToken != null) 'price_per_token': pricePerToken,
+
     if (totalPrice != null) 'total_price': totalPrice,
+
     if (currency != null) 'currency': currency,
   };
 }
@@ -1222,6 +1342,7 @@ class AssetProof {
   /// Builds an [AssetProof] from the JSON returned by the Helius API.
   factory AssetProof.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetProof(
       root: r.requireString('root'),
       proof: r.requireList<String>('proof'),
@@ -1264,6 +1385,7 @@ class NftEdition {
   /// Builds an [NftEdition] from the JSON returned by the Helius API.
   factory NftEdition.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return NftEdition(
       mint: r.requireString('mint'),
       edition: r.requireInt('edition'),
@@ -1293,6 +1415,7 @@ class AssetSignature {
   /// Builds an [AssetSignature] from the JSON returned by the Helius API.
   factory AssetSignature.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetSignature(
       signature: r.requireString('signature'),
       type_: r.optString('type'),
@@ -1316,8 +1439,11 @@ class AssetSignature {
   /// Serializes this signature to a JSON map matching the Helius DAS schema.
   Map<String, Object?> toJson() => {
     'signature': signature,
+
     if (type_ != null) 'type': type_,
+
     if (slot != null) 'slot': slot,
+
     if (timestamp != null) 'timestamp': timestamp,
   };
 }
@@ -1335,6 +1461,7 @@ class AssetSignatureList {
   /// Builds an [AssetSignatureList] from the JSON returned by the Helius API.
   factory AssetSignatureList.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetSignatureList(
       total: r.requireInt('total'),
       limit: r.requireInt('limit'),
@@ -1359,6 +1486,7 @@ class AssetSignatureList {
   Map<String, Object?> toJson() => {
     'total': total,
     'limit': limit,
+
     if (page != null) 'page': page,
     'items': items.map((i) => i.toJson()).toList(),
   };
@@ -1377,6 +1505,7 @@ class AssetList {
   /// Builds an [AssetList] from the JSON returned by the Helius API.
   factory AssetList.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AssetList(
       total: r.requireInt('total'),
       limit: r.requireInt('limit'),
@@ -1401,6 +1530,7 @@ class AssetList {
   Map<String, Object?> toJson() => {
     'total': total,
     'limit': limit,
+
     if (page != null) 'page': page,
     'items': items.map((i) => i.toJson()).toList(),
   };
@@ -1419,6 +1549,7 @@ class TokenAccountList {
   /// Builds a [TokenAccountList] from the JSON returned by the Helius API.
   factory TokenAccountList.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return TokenAccountList(
       total: r.requireInt('total'),
       limit: r.requireInt('limit'),
@@ -1446,6 +1577,7 @@ class TokenAccountList {
   Map<String, Object?> toJson() => {
     'total': total,
     'limit': limit,
+
     if (page != null) 'page': page,
     'token_accounts': tokenAccounts.map((t) => t.toJson()).toList(),
   };
@@ -1466,6 +1598,7 @@ class TokenAccount {
   /// Builds a [TokenAccount] from the JSON returned by the Helius API.
   factory TokenAccount.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return TokenAccount(
       address: r.requireString('address'),
       mint: r.requireString('mint'),
@@ -1501,7 +1634,9 @@ class TokenAccount {
     'mint': mint,
     'owner': owner,
     'amount': amount,
+
     if (delegatedAmount != null) 'delegated_amount': delegatedAmount,
+
     if (frozen != null) 'frozen': frozen,
   };
 }

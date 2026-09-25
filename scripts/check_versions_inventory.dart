@@ -28,6 +28,7 @@ void main() {
 
   for (final package in _manifests()) {
     final entry = versions[package.name];
+
     if (entry == null) {
       if (package.publishable) {
         errors.add(
@@ -35,8 +36,10 @@ void main() {
           'so its README installation section renders without a version.',
         );
       }
+
       continue;
     }
+
     if (entry != package.version) {
       errors.add(
         '${package.source}: `${package.name}` is `${package.version}` in its '
@@ -47,10 +50,12 @@ void main() {
 
   final knownPackages = _manifests().map((package) => package.name).toSet();
   const allowedNonPackageKeys = {_upstreamMarkerKey, 'solana_kit_docs_site'};
+
   for (final key in versions.keys) {
     if (knownPackages.contains(key) || allowedNonPackageKeys.contains(key)) {
       continue;
     }
+
     errors.add(
       'versions.json: `$key` does not match any package in the workspace; '
       'remove the stale entry.',
@@ -59,10 +64,13 @@ void main() {
 
   if (errors.isNotEmpty) {
     stderr.writeln('versions.json drifted from the workspace manifests:');
+
     for (final error in errors) {
       stderr.writeln('  - $error');
     }
+
     exitCode = 1;
+
     return;
   }
 
@@ -75,15 +83,19 @@ void main() {
 Map<String, String> _readVersions() {
   const path = 'versions.json';
   final file = File(path);
+
   if (!file.existsSync()) {
     stderr.writeln('Missing $path; run from the workspace root.');
     exit(2);
   }
+
   final decoded = jsonDecode(file.readAsStringSync());
+
   if (decoded is! Map<String, dynamic>) {
     stderr.writeln('$path is not a JSON object.');
     exit(2);
   }
+
   return decoded.map((key, value) => MapEntry(key, value.toString()));
 }
 
@@ -98,13 +110,17 @@ Iterable<_Manifest> _manifests() sync* {
         (child) => child.uri.pathSegments.contains('example'),
       ),
   ];
+
   for (final directory in directories) {
     final pubspec = File('${directory.path}/pubspec.yaml');
+
     if (pubspec.existsSync()) {
       yield _readPubspec(pubspec);
       continue;
     }
+
     final packageJson = File('${directory.path}/package.json');
+
     if (packageJson.existsSync()) {
       yield _readPackageJson(packageJson);
     }
@@ -115,10 +131,12 @@ _Manifest _readPubspec(File file) {
   final lines = file.readAsLinesSync();
   final name = _matchLine(lines, RegExp(r'^name:\s*(.+)$'));
   final version = _matchLine(lines, RegExp(r'^version:\s*(.+)$'));
+
   if (name == null || version == null) {
     stderr.writeln('${file.path}: missing a name or version line.');
     exit(2);
   }
+
   return _Manifest(
     name: name,
     version: version,
@@ -131,16 +149,20 @@ _Manifest _readPubspec(File file) {
 
 _Manifest _readPackageJson(File file) {
   final decoded = jsonDecode(file.readAsStringSync());
+
   if (decoded is! Map<String, dynamic>) {
     stderr.writeln('${file.path}: not a JSON object.');
     exit(2);
   }
+
   final name = decoded['name'];
   final version = decoded['version'];
+
   if (name is! String || version is! String) {
     stderr.writeln('${file.path}: missing a name or version field.');
     exit(2);
   }
+
   return _Manifest(
     name: name,
     version: version,
@@ -152,16 +174,21 @@ _Manifest _readPackageJson(File file) {
 String? _matchLine(List<String> lines, RegExp pattern) {
   for (final line in lines) {
     final match = pattern.firstMatch(line);
+
     if (match == null) continue;
     var value = match.group(1)!.split('#').first.trim();
+
     if (value.length >= 2) {
       final quote = value[0];
+
       if ((quote == '"' || quote == "'") && value.endsWith(quote)) {
         value = value.substring(1, value.length - 1).trim();
       }
     }
+
     return value;
   }
+
   return null;
 }
 

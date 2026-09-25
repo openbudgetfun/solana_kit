@@ -37,6 +37,7 @@ FixedSizeEncoder<List<bool>> getBitArrayEncoder(
       }
 
       bytes.setAll(offset, bytesToAdd);
+
       return offset + size;
     },
   );

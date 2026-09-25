@@ -55,6 +55,7 @@ void main() {
       numInstructions: 1,
       numStaticAccounts: 1,
     );
+
     return getCompiledTransactionMessageEncoder().encode(message);
   }
 
@@ -65,12 +66,15 @@ void main() {
     void Function(Uint8List bytes) read,
   ) {
     var handled = 0;
+
     for (final bytes in inputs) {
       try {
         read(bytes);
         handled++;
+
       } on SolanaError {
         handled++;
+
       } catch (error) {
         fail(
           '$label leaked ${error.runtimeType} instead of SolanaError.\n'
@@ -79,6 +83,7 @@ void main() {
         );
       }
     }
+
     expect(
       handled,
       greaterThan(0),
@@ -137,6 +142,7 @@ void main() {
           );
         }
       }
+
       assertNoForeignExceptions('v1-prefixed buffer', inputs, (bytes) {
         getCompiledTransactionMessageDecoder().decode(bytes);
       });
@@ -174,6 +180,7 @@ void main() {
             Uint8List.fromList(corrupted.sublist(0, corrupted.length - 8)),
           );
       }
+
       assertNoForeignExceptions('inflated payload length', inputs, (bytes) {
         getCompiledTransactionMessageDecoder().decode(bytes);
       });
@@ -190,6 +197,7 @@ void main() {
           inputs.add(corrupted);
         }
       }
+
       assertNoForeignExceptions('single-byte corruption', inputs, (bytes) {
         getCompiledTransactionMessageDecoder().decode(bytes);
       });
@@ -199,5 +207,6 @@ void main() {
 
 String _hex(Uint8List bytes) {
   final text = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+
   return text.length > 240 ? '${text.substring(0, 240)}...' : text;
 }

@@ -12,5 +12,6 @@ Uint8List getPublicKeyFromPrivateKey(Uint8List privateKeyBytes) {
   assertIsPrivateKey(privateKeyBytes);
   final privateKey = ed.newKeyFromSeed(privateKeyBytes);
   final publicKey = ed.public(privateKey);
+
   return Uint8List.fromList(publicKey.bytes);
 }

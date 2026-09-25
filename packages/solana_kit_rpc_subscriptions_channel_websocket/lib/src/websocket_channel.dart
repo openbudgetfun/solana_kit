@@ -58,6 +58,7 @@ Future<T> getAbortableFuture<T>(
 void _completeAbort<T>(Completer<T> completer, CancellationToken token) {
   if (completer.isCompleted) return;
   final reason = token.reason ?? const AbortError();
+
   if (reason is Error) {
     completer.completeError(reason, reason.stackTrace);
   } else {
@@ -171,11 +172,13 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
   // Check if already cancelled.
   if (config.signal?.isCancelled ?? false) {
     final reason = config.signal!.reason;
+
     if (reason is Exception || reason is Error) {
       // The reason is known to be an Exception or Error at this point.
       // ignore: only_throw_errors
       throw reason!;
     }
+
     throw SolanaError(SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed);
   }
 
@@ -196,21 +199,26 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
     webSocketChannel = connectingChannel;
     // Wait for the connection to be established.
     await getAbortableFuture(webSocketChannel.ready, config.signal);
+
   } on Object {
     connectingChannel?.sink.close(normalClosureCode).ignore();
     unawaited(messagesController.close());
     unawaited(errorsController.close());
+
     if (config.signal?.isCancelled ?? false) {
       final reason = config.signal!.reason;
+
       if (reason is Exception || reason is Error) {
         // The reason is known to be an Exception or Error at this point.
         // ignore: only_throw_errors
         throw reason!;
       }
+
       throw SolanaError(
         SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed,
       );
     }
+
     throw SolanaError(SolanaErrorCode.rpcSubscriptionsChannelFailedToConnect);
   }
 
@@ -229,6 +237,7 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
       if (!isClosed) {
         webSocketChannel.sink.close(normalClosureCode).ignore();
       }
+
       closeStreams();
       // Clean up subscriptions.
       for (final sub in subscriptions) {
@@ -294,6 +303,7 @@ Uri validateWebSocketUrl(
     allowInsecureWs: allowInsecureWs,
     allowPrivateHosts: allowPrivateHosts,
   );
+
   return url;
 }
 
@@ -410,6 +420,7 @@ bool _isPrivateIpv4(String host) {
       : host;
 
   final parts = ip.split('.');
+
   if (parts.length != 4) return false;
 
   final first = int.tryParse(parts[0]);
@@ -433,6 +444,7 @@ bool _isPrivateIpv4(String host) {
 
   // Unspecified, loopback, and carrier-grade NAT.
   if (first == 0 || first == 127) return true;
+
   if (first == 100 && second >= 64 && second <= 127) return true;
 
   // 10.0.0.0/8
@@ -449,9 +461,13 @@ bool _isPrivateIpv4(String host) {
 
   // IETF protocol assignments and TEST-NET ranges are not globally routable.
   if (first == 192 && second == 0 && third == 0) return true;
+
   if (first == 192 && second == 0 && third == 2) return true;
+
   if (first == 198 && (second == 18 || second == 19)) return true;
+
   if (first == 198 && second == 51 && third == 100) return true;
+
   if (first == 203 && second == 0 && third == 113) return true;
 
   // Multicast, reserved, and limited broadcast ranges.
@@ -466,11 +482,13 @@ bool _looksLikeNonCanonicalIpv4(String host) {
   // makes literal-only SSRF filters easy to bypass.
   if (RegExp(r'^\d+(?:\.\d+){0,3}$').hasMatch(host)) {
     final parts = host.split('.');
+
     if (parts.length != 4) return true;
     return parts.any(
       (part) => part.length > 1 && part.startsWith('0'),
     );
   }
+
   return RegExp(
     r'^(?:0x[0-9a-f]+|\d+)(?:\.(?:0x[0-9a-f]+|\d+)){0,3}$',
     caseSensitive: false,
@@ -536,6 +554,7 @@ class _WebSocketRpcChannel implements RpcSubscriptionsChannel {
         SolanaErrorCode.rpcSubscriptionsChannelConnectionClosed,
       );
     }
+
     _webSocketChannel.sink.add(message);
   }
 }

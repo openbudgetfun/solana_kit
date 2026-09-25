@@ -52,6 +52,7 @@ void main() {
         const HermesConfig(),
         client: MockClient((request) async {
           requests.add(request);
+
           return http.Response(jsonEncode(priceUpdateFixture), 200);
         }),
       );
@@ -78,6 +79,7 @@ void main() {
         const HermesConfig(),
         client: MockClient((request) async {
           requests.add(request);
+
           return http.Response(jsonEncode(priceUpdateFixture), 200);
         }),
       );
@@ -99,6 +101,7 @@ void main() {
         const HermesConfig(),
         client: MockClient((request) async {
           requests.add(request);
+
           return http.Response(jsonEncode(priceUpdateFixture), 200);
         }),
       );
@@ -114,6 +117,7 @@ void main() {
         const HermesConfig(),
         client: MockClient((request) async {
           requests.add(request);
+
           return http.Response(jsonEncode(priceFeedsFixture), 200);
         }),
       );
@@ -135,6 +139,7 @@ void main() {
         const HermesConfig(),
         client: MockClient((request) async {
           requests.add(request);
+
           return http.Response('[]', 200);
         }),
       );
@@ -151,6 +156,7 @@ void main() {
         const HermesConfig(baseUrl: 'https://prices.example.com/'),
         client: MockClient((request) async {
           requests.add(request);
+
           return http.Response(jsonEncode(priceUpdateFixture), 200);
         }),
       );
@@ -165,6 +171,7 @@ void main() {
         const HermesConfig(accessToken: 'top-secret'),
         client: MockClient((request) async {
           requests.add(request);
+
           return http.Response(jsonEncode(priceUpdateFixture), 200);
         }),
       );
@@ -178,6 +185,7 @@ void main() {
         const HermesConfig(headers: {'x-custom': 'yes'}),
         client: MockClient((request) async {
           requests.add(request);
+
           return http.Response(jsonEncode(priceUpdateFixture), 200);
         }),
       );
@@ -193,6 +201,7 @@ void main() {
         const HermesConfig(),
         client: MockClient((request) async {
           calls++;
+
           return http.Response('Not found', 404);
         }),
       );
@@ -230,6 +239,7 @@ void main() {
         const HermesConfig(httpRetries: 2, backoffMs: 1),
         client: MockClient((request) async {
           calls++;
+
           return http.Response('boom', 503);
         }),
       );
@@ -381,6 +391,7 @@ void main() {
         const HermesConfig(),
         client: MockClient((request) async {
           requests.add(request);
+
           return http.Response(jsonEncode(priceUpdateFixture), 200);
         }),
       );

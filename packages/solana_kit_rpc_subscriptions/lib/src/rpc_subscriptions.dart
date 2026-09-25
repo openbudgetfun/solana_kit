@@ -52,6 +52,7 @@ class PendingRpcSubscriptionsRequest<TNotification> {
           ),
           signal,
         );
+
         return ReactiveStreamConnection<TNotification>(
           dataStream: streams.notifications.cast<TNotification>(),
           errorStream: streams.errors,
@@ -173,12 +174,14 @@ class RpcSubscriptions {
     List<Object?> params = const [],
   ]) {
     final plan = api.getPlan(notificationName, params);
+
     if (plan == null) {
       throw SolanaError(
         SolanaErrorCode.rpcSubscriptionsCannotCreateSubscriptionPlan,
         {'notificationName': notificationName},
       );
     }
+
     return PendingRpcSubscriptionsRequest<Object?>(
       transport: transport,
       plan: plan,

@@ -14,6 +14,7 @@ Future<PublicationAttestation> createAttestationPayloadFromClient(
   String Function()? requestIdGenerator,
 }) async {
   final blockData = await getBlockData();
+
   return createAttestationPayload(
     blockData,
     signer,
@@ -47,6 +48,7 @@ Future<PublicationAttestation> createAttestationPayload(
   final signature = payloadBytes.length >= 64
       ? Uint8List.sublistView(payloadBytes, 0, 64)
       : payloadBytes;
+
   if (signature.length != 64) {
     throw PublisherCliException(
       'Invalid signature length: expected 64, got ${signature.length}',
@@ -54,6 +56,7 @@ Future<PublicationAttestation> createAttestationPayload(
   }
 
   final payload = base64Encode(payloadBytes);
+
   return PublicationAttestation(
     payload: payload,
     attestationPayload: payload,
@@ -83,6 +86,7 @@ String createRequestUniqueId() {
   const length = 32;
   const charset = '0123456789';
   final random = Random.secure();
+
   return List.generate(
     length,
     (_) => charset[random.nextInt(charset.length)],

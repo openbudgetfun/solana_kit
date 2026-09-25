@@ -32,6 +32,7 @@ extension type const Sol(BigInt raw) implements Lamports, Object {
     final whole = raw ~/ lamportsPerSol;
     final fraction = (raw % lamportsPerSol).toString().padLeft(9, '0');
     final trimmedFraction = fraction.replaceFirst(RegExp(r'0+$'), '');
+
     return trimmedFraction.isEmpty
         ? whole.toString()
         : '$whole.$trimmedFraction';
@@ -44,11 +45,13 @@ extension type const Sol(BigInt raw) implements Lamports, Object {
 /// to accept inputs with more fractional precision.
 Sol sol(String value, {RoundingMode rounding = RoundingMode.strict}) {
   final trimmed = value.trim();
+
   if (trimmed.isEmpty || trimmed.startsWith('-')) {
     throw FormatException('Expected an unsigned SOL decimal string.', value);
   }
 
   final parts = trimmed.split('.');
+
   if (parts.length > 2) {
     throw FormatException('Expected an unsigned SOL decimal string.', value);
   }
@@ -63,27 +66,34 @@ Sol sol(String value, {RoundingMode rounding = RoundingMode.strict}) {
 
   var paddedFraction = fractionPart;
   var increment = false;
+
   if (paddedFraction.length > 9) {
     final extra = paddedFraction.substring(9);
+
     switch (rounding) {
       case RoundingMode.strict:
         throw FormatException(
           'SOL value cannot be represented without precision loss.',
           value,
         );
+
       case RoundingMode.down:
         break;
+
       case RoundingMode.up:
         increment = extra.contains(RegExp('[1-9]'));
+
       case RoundingMode.halfUp:
         increment = int.parse(extra[0]) >= 5;
     }
+
     paddedFraction = paddedFraction.substring(0, 9);
   }
 
   paddedFraction = paddedFraction.padRight(9, '0');
   var raw =
       BigInt.parse(wholePart) * lamportsPerSol + BigInt.parse(paddedFraction);
+
   if (increment) raw += BigInt.one;
 
   return lamportsToSol(lamports(raw));
@@ -99,6 +109,7 @@ Sol lamportsToSol(Lamports value) => Sol(value.value);
 /// 64-bit Lamports count in little-endian order.
 FixedSizeEncoder<Object> getSolEncoder() {
   final inner = getU64Encoder();
+
   return FixedSizeEncoder<Object>(
     fixedSize: inner.fixedSize,
     write: (value, bytes, offset) {
@@ -109,6 +120,7 @@ FixedSizeEncoder<Object> getSolEncoder() {
               'value',
               'Expected Sol or Lamports',
             );
+
       return inner.write(raw, bytes, offset);
     },
   );
@@ -117,10 +129,12 @@ FixedSizeEncoder<Object> getSolEncoder() {
 /// Returns a decoder that reads an unsigned 64-bit Lamports count as [Sol].
 FixedSizeDecoder<Sol> getSolDecoder() {
   final inner = getU64Decoder();
+
   return FixedSizeDecoder<Sol>(
     fixedSize: inner.fixedSize,
     read: (bytes, offset) {
       final (value, newOffset) = inner.read(bytes, offset);
+
       return (lamportsToSol(lamports(value)), newOffset);
     },
   );

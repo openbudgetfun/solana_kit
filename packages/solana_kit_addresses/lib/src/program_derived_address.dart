@@ -42,11 +42,14 @@ Future<Address> _createProgramDerivedAddress({
   }
 
   final seedBytesList = <int>[];
+
   for (var i = 0; i < seeds.length; i++) {
     final seed = seeds[i];
     final Uint8List seedBytes;
+
     if (seed is Uint8List) {
       seedBytes = seed;
+
     } else if (seed is String) {
       seedBytes = Uint8List.fromList(utf8.encode(seed));
     } else {
@@ -103,6 +106,7 @@ Future<ProgramDerivedAddress> getProgramDerivedAddress({
   required List<Object> seeds,
 }) async {
   var bumpSeed = 255;
+
   while (bumpSeed >= 0) {
     try {
       final addr = await _createProgramDerivedAddress(
@@ -112,7 +116,9 @@ Future<ProgramDerivedAddress> getProgramDerivedAddress({
           Uint8List.fromList([bumpSeed]),
         ],
       );
+
       return (addr, bumpSeed);
+
     } on SolanaError catch (e) {
       if (isSolanaError(e, SolanaErrorCode.addressesInvalidSeedsPointOnCurve)) {
         bumpSeed--;
@@ -121,6 +127,7 @@ Future<ProgramDerivedAddress> getProgramDerivedAddress({
       }
     }
   }
+
   throw SolanaError(SolanaErrorCode.addressesFailedToFindViablePdaBumpSeed);
 }
 
@@ -144,8 +151,10 @@ Future<Address> createAddressWithSeed({
   final codec = getAddressCodec();
 
   final Uint8List seedBytes;
+
   if (seed is String) {
     seedBytes = Uint8List.fromList(utf8.encode(seed));
+
   } else if (seed is Uint8List) {
     seedBytes = seed;
   } else {
@@ -167,6 +176,7 @@ Future<Address> createAddressWithSeed({
     final tail = programAddressBytes.sublist(
       programAddressBytes.length - _pdaMarkerBytes.length,
     );
+
     if (bytesEqual(tail, _pdaMarkerBytes)) {
       throw SolanaError(SolanaErrorCode.addressesPdaEndsWithPdaMarker);
     }
@@ -194,6 +204,7 @@ Future<Address> createAddressWithSeed({
 bool isProgramDerivedAddress(Object? value) {
   if (value is! (Address, int)) return false;
   final (address, bump) = value;
+
   return bump >= 0 && bump <= 255 && isAddress(address.value);
 }
 
@@ -212,6 +223,7 @@ void assertIsProgramDerivedAddress(Object? value) {
   }
 
   final (address, bump) = value;
+
   if (bump < 0 || bump > 255) {
     throw SolanaError(
       SolanaErrorCode.addressesPdaBumpSeedOutOfRange,

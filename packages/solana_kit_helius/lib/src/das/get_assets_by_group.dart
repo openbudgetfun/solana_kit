@@ -10,5 +10,6 @@ Future<AssetList> dasGetAssetsByGroup(
   GetAssetsByGroupRequest request,
 ) async {
   final result = await rpcClient.call('getAssetsByGroup', request.toJson());
+
   return AssetList.fromJson(result! as Map<String, Object?>);
 }

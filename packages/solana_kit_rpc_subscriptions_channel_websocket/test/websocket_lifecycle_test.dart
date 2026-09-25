@@ -60,6 +60,7 @@ void main() {
         } else {
           await (await remote.future).close(normalClosureCode);
         }
+
         await Future.wait([
           notificationDone.future,
           errorsDone.future,

@@ -71,9 +71,11 @@ class SysvarSlotHistory {
 
 bool _listEquals(List<BigInt> a, List<BigInt> b) {
   if (a.length != b.length) return false;
+
   for (var i = 0; i < a.length; i++) {
     if (a[i] != b[i]) return false;
   }
+
   return true;
 }
 
@@ -99,6 +101,7 @@ FixedSizeEncoder<List<BigInt>> _getMemoizedU64ArrayEncoder() {
   );
   _memoizedU64ArrayEncoder =
       encoderFromCodec(codec) as FixedSizeEncoder<List<BigInt>>;
+
   return _memoizedU64ArrayEncoder!;
 }
 
@@ -110,6 +113,7 @@ FixedSizeDecoder<List<BigInt>> _getMemoizedU64ArrayDecoder() {
   );
   _memoizedU64ArrayDecoder =
       decoderFromCodec(codec) as FixedSizeDecoder<List<BigInt>>;
+
   return _memoizedU64ArrayDecoder!;
 }
 
@@ -133,6 +137,7 @@ FixedSizeEncoder<SysvarSlotHistory> getSysvarSlotHistoryEncoder() {
       o += 8;
       // Next 8 bytes are the next slot.
       _getMemoizedU64Encoder().write(value.nextSlot, bytes, o);
+
       return o + 8;
     },
   );
@@ -151,6 +156,7 @@ FixedSizeDecoder<SysvarSlotHistory> getSysvarSlotHistoryDecoder() {
           'expected': sysvarSlotHistorySize,
         });
       }
+
       // First byte is the bitvector discriminator.
       final discriminator = bytes[o];
       o += 1;
@@ -160,6 +166,7 @@ FixedSizeDecoder<SysvarSlotHistory> getSysvarSlotHistoryDecoder() {
           'expected': bitvecDiscriminator,
         });
       }
+
       // Next 8 bytes are the bitvector length.
       final (bitVecLength, offsetAfterLen) = _getMemoizedU64Decoder().read(
         bytes,
@@ -173,6 +180,7 @@ FixedSizeDecoder<SysvarSlotHistory> getSysvarSlotHistoryDecoder() {
           'expected': bitvecLength,
         });
       }
+
       // Next `bitvecLength * 8` bytes are the bitvector.
       final (bits, offsetAfterBits) = _getMemoizedU64ArrayDecoder().read(
         bytes,
@@ -192,11 +200,13 @@ FixedSizeDecoder<SysvarSlotHistory> getSysvarSlotHistoryDecoder() {
           'expected': bitvecNumBits,
         });
       }
+
       // Next 8 bytes are the next slot.
       final (nextSlot, offsetAfterNextSlot) = _getMemoizedU64Decoder().read(
         bytes,
         o,
       );
+
       return (
         SysvarSlotHistory(bits: bits, nextSlot: nextSlot),
         offsetAfterNextSlot,
@@ -229,5 +239,6 @@ Future<SysvarSlotHistory> fetchSysvarSlotHistory(
     (account as ExistingAccount<Uint8List>).account,
     getSysvarSlotHistoryDecoder(),
   );
+
   return decoded.data;
 }

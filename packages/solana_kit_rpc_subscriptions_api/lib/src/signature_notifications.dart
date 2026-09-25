@@ -25,10 +25,13 @@ class SignatureNotificationsConfig {
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
+
     if (commitment != null) json['commitment'] = commitment!.name;
+
     if (enableReceivedNotification != null) {
       json['enableReceivedNotification'] = enableReceivedNotification;
     }
+
     return json;
   }
 }

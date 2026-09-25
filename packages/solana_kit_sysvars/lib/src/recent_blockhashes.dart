@@ -92,10 +92,12 @@ getSysvarRecentBlockhashesEncoder() {
   return VariableSizeEncoder<SysvarRecentBlockhashes>(
     getSizeFromValue: (value) {
       final maps = _entriesToMaps(value);
+
       return getEncodedSize(maps, arrayEncoder);
     },
     write: (value, bytes, offset) {
       final maps = _entriesToMaps(value);
+
       return arrayEncoder.write(maps, bytes, offset);
     },
   );
@@ -120,6 +122,7 @@ getSysvarRecentBlockhashesDecoder() {
     read: (bytes, offset) {
       final (maps, newOffset) = arrayDecoder.read(bytes, offset);
       final entries = maps.map(_mapToEntry).toList();
+
       return (entries, newOffset);
     },
   );
@@ -156,6 +159,7 @@ Future<SysvarRecentBlockhashes> fetchSysvarRecentBlockhashes(
     (account as ExistingAccount<Uint8List>).account,
     getSysvarRecentBlockhashesDecoder(),
   );
+
   return decoded.data;
 }
 
@@ -172,6 +176,7 @@ List<Map<String, Object?>> _entriesToMaps(SysvarRecentBlockhashes entries) {
 
 RecentBlockhashEntry _mapToEntry(Map<String, Object?> map) {
   final feeCalcMap = map['feeCalculator']! as Map<String, Object?>;
+
   return RecentBlockhashEntry(
     blockhash: map['blockhash']! as Blockhash,
     feeCalculator: FeeCalculator(

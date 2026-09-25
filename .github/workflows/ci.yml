@@ -89,6 +89,11 @@ jobs:
         run: lint:all
         shell: devenv shell -- bash -e {0}
 
+      - name: monostyle inline annotations
+        if: always()
+        run: monostyle check . --format github
+        shell: devenv shell -- bash -e {0}
+
       - name: Validate monochange configuration
         run: monochange step validate
         shell: devenv shell -- bash -e {0}

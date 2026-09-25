@@ -26,6 +26,7 @@ void main() {
                 'getMultipleAccounts': (params) => RpcPlan<Object?>(
                   execute: (config) {
                     requested.complete((params[0]! as List).cast<String>());
+
                     return response.future;
                   },
                 ),

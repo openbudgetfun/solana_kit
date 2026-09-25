@@ -35,12 +35,14 @@ class HeliusDasClient implements DasApiClient {
   @override
   Future<DasAsset> getAsset(String assetId) async {
     final response = await _sendRequest('getAsset', [assetId]);
+
     return _parseAsset(response);
   }
 
   @override
   Future<DasAssetProof> getAssetProof(String assetId) async {
     final response = await _sendRequest('getAssetProof', [assetId]);
+
     return _parseAssetProof(response);
   }
 
@@ -132,6 +134,7 @@ class HeliusDasClient implements DasApiClient {
           : null,
       creators: creatorsList.map((c) {
         final creator = c as Map<String, dynamic>;
+
         return DasAssetCreator(
           address: (creator['address'] as String?) ?? '',
           share: (creator['share'] as int?) ?? 0,
@@ -140,6 +143,7 @@ class HeliusDasClient implements DasApiClient {
       }).toList(),
       grouping: groupingList.map((g) {
         final group = g as Map<String, dynamic>;
+
         return DasAssetGrouping(
           groupKey: (group['group_key'] as String?) ?? '',
           groupValue: (group['group_value'] as String?) ?? '',

@@ -165,6 +165,7 @@ void main() {
       ]);
       final result = everyInstructionPlan(plan, (p) {
         callCount++;
+
         return false;
       });
       expect(result, isFalse);
@@ -197,6 +198,7 @@ void main() {
         if (p is SingleInstructionPlan) {
           return singleInstructionPlan(newInstruction);
         }
+
         return p;
       });
 
@@ -219,6 +221,7 @@ void main() {
             divisible: p.divisible,
           );
         }
+
         return p;
       });
 
@@ -236,6 +239,7 @@ void main() {
         if (p is ParallelInstructionPlan) {
           return ParallelInstructionPlan(plans: p.plans.reversed.toList());
         }
+
         return p;
       });
 
@@ -251,6 +255,7 @@ void main() {
         if (p is MessagePackerInstructionPlan) {
           wasTransformed = true;
         }
+
         return p;
       });
 
@@ -270,6 +275,7 @@ void main() {
       final seenKinds = <String>[];
       transformInstructionPlan(plan, (p) {
         seenKinds.add(p.kind);
+
         return p;
       });
 
@@ -288,6 +294,7 @@ void main() {
         if (p is SingleInstructionPlan) {
           return sequentialInstructionPlan([p.instruction, p.instruction]);
         }
+
         return p;
       });
 
@@ -307,6 +314,7 @@ void main() {
         if (p is ParallelInstructionPlan) {
           return sequentialInstructionPlan(p.plans);
         }
+
         return p;
       });
 

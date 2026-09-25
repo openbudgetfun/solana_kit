@@ -22,6 +22,7 @@ void main() {
         expect(body['method'], 'getTransactionsForAddress');
         final params = body['params']! as Map<String, Object?>;
         expect(params['address'], 'addr1');
+
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResponse}),
           200,
@@ -57,6 +58,7 @@ void main() {
         expect(params['until'], 'untilSig');
         expect(params['limit'], 10);
         expect(params['commitment'], 'confirmed');
+
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResponse}),
           200,

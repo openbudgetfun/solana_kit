@@ -41,27 +41,21 @@ export function getProgramPageFragment(
       ? fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-/// The address of the ${fragmentFromString(pascalCase(name))} program.
-export 'package:solana_kit_addresses/solana_kit_addresses.dart' show ${fragmentFromString(wellKnownName)};`
       : fragment`${use(wellKnownName, "solanaAddresses")}
 
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-/// The address of the ${fragmentFromString(pascalCase(name))} program.
-const ${fragmentFromString(addressConstName)} = ${fragmentFromString(wellKnownName)};`
     : fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
-${use("Address", "solanaAddresses")}
-
-/// The address of the ${fragmentFromString(pascalCase(name))} program.
 const ${fragmentFromString(addressConstName)} = Address(${fragmentFromString(toDartStringLiteral(node.publicKey))});`;
 
   const parts: Fragment[] = [addressDeclaration];
 
   // Account identifier enum
   const accounts = node.accounts ?? [];
+
   if (accounts.length > 0) {
     const accountVariants = accounts
       .map((acc) => `  ${camelCase(acc.name as string)},`)
@@ -69,13 +63,12 @@ const ${fragmentFromString(addressConstName)} = Address(${fragmentFromString(toD
 
     parts.push(fragment`
 /// Known accounts for the ${fragmentFromString(pascalCase(name))} program.
-enum ${fragmentFromString(pascalCase(name))}Account {
-${fragmentFromString(accountVariants)}
 }`);
   }
 
   // Instruction identification and parsing helpers.
   const instructions = getAllInstructionsWithSubs(node);
+
   if (instructions.length > 0) {
     const programName = pascalCase(name);
     const instructionEnum = `${programName}Instruction`;
@@ -85,8 +78,6 @@ ${fragmentFromString(accountVariants)}
 
     parts.push(fragment`
 /// Known instructions for the ${fragmentFromString(programName)} program.
-enum ${fragmentFromString(instructionEnum)} {
-${fragmentFromString(instrVariants)}
 }`);
 
     const identifiableInstructions = instructions
@@ -111,12 +102,9 @@ ${fragmentFromString(instrVariants)}
         const variant = camelCase(instruction.name as string);
         const parsedClass = `Parsed${instructionName}`;
         const dataClass = `${instructionName}InstructionData`;
+
         return fragment`/// A parsed ${fragmentFromString(instructionName)} instruction.
 final class ${fragmentFromString(parsedClass)} extends ${fragmentFromString(parsedBase)} {
-  const ${fragmentFromString(parsedClass)}({required this.data})
-      : super(${fragmentFromString(instructionEnum)}.${fragmentFromString(variant)});
-
-  final ${use(dataClass, "../instructions/instructions.dart")} data;
 }`;
       });
       const parseBranches = instructions.map((instruction) => {
@@ -126,6 +114,7 @@ final class ${fragmentFromString(parsedClass)} extends ${fragmentFromString(pars
         const parseFunction = scope.nameApi.instructionParseFunction(
           instruction.name as string,
         );
+
         return fragment`    ${fragmentFromString(instructionEnum)}.${fragmentFromString(variant)} => ${fragmentFromString(parsedClass)}(
       data: ${use(parseFunction, "../instructions/instructions.dart")}(instruction),
     ),`;
@@ -133,38 +122,16 @@ final class ${fragmentFromString(parsedClass)} extends ${fragmentFromString(pars
 
       parts.push(fragment`
 /// Identifies the type of a ${fragmentFromString(programName)} instruction.
-${fragmentFromString(instructionEnum)} identify${fragmentFromString(programName)}Instruction(
-  ${use("Uint8List", "dartTypedData")} data,
 ) {
 ${mergeFragments(identifyBranches, (cs) => cs.join("\n"))}
-
-  throw ${use("SolanaError", "solanaErrors")}(
-    ${use("SolanaErrorCode", "solanaErrors")}.programClientsFailedToIdentifyInstruction,
     {
       'instructionData': data,
-      'programName': '${fragmentFromString(name)}',
-    },
-  );
 }
 
-/// A parsed instruction from the ${fragmentFromString(programName)} program.
-sealed class ${fragmentFromString(parsedBase)} {
-  const ${fragmentFromString(parsedBase)}(this.instructionType);
-
-  final ${fragmentFromString(instructionEnum)} instructionType;
 }
 
-${mergeFragments(parsedClasses, (cs) => cs.join("\n\n"))}
-
-/// Parses a ${fragmentFromString(programName)} instruction.
-${fragmentFromString(parsedBase)} parse${fragmentFromString(programName)}Instruction(
-  ${use("Instruction", "solanaInstructions")} instruction,
 ) {
   return switch (identify${fragmentFromString(programName)}Instruction(
-    instruction.data ?? Uint8List(0),
-  )) {
-${mergeFragments(parseBranches, (cs) => cs.join("\n"))}
-  };
 }`);
     }
   }
@@ -177,6 +144,7 @@ function getInstructionDiscriminatorCondition(
   scope: RenderScope,
 ): Fragment | null {
   const discriminators = instruction.discriminators ?? [];
+
   if (discriminators.length === 0) return null;
 
   const conditions = discriminators.map((discriminator): Fragment | null => {
@@ -230,15 +198,20 @@ function getValueFragment(
           ? `BigInt.from(${value.number})`
           : String(value.number),
       );
+
     case "booleanValueNode":
       return fragmentFromString(String(value.boolean));
+
     case "stringValueNode":
       return fragmentFromString(toDartStringLiteral(value.string));
+
     case "bytesValueNode": {
       const clean = value.data.replace(/^0x/, "");
       const bytes = clean.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) ?? [];
+
       return fragment`${use("Uint8List", "dartTypedData")}.fromList([${fragmentFromString(bytes.join(", "))}])`;
     }
+
     default:
       return null;
   }

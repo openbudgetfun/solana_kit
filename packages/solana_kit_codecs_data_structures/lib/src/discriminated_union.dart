@@ -25,6 +25,7 @@ Encoder<Map<String, Object?>> getDiscriminatedUnionEncoder(
 
   final variantEncoders = variants.indexed.map((entry) {
     final (index, (_, variant)) = entry;
+
     return transformEncoder<List<Object?>, Map<String, Object?>>(
       getTupleEncoder([prefix as Encoder<Object?>, variant]),
       (value) => <Object?>[index, value],
@@ -33,6 +34,7 @@ Encoder<Map<String, Object?>> getDiscriminatedUnionEncoder(
 
   int getIndex(Map<String, Object?> value) {
     final discriminatorValue = value[discriminator];
+
     return _getVariantDiscriminator(variants, discriminatorValue);
   }
 
@@ -42,6 +44,7 @@ Encoder<Map<String, Object?>> getDiscriminatedUnionEncoder(
   int writeImpl(Map<String, Object?> value, Uint8List bytes, int offset) {
     final index = getIndex(value);
     _assertValidVariantIndex(variantEncoders, index);
+
     return variantEncoders[index].write(value, bytes, offset);
   }
 
@@ -58,6 +61,7 @@ Encoder<Map<String, Object?>> getDiscriminatedUnionEncoder(
     getSizeFromValue: (value) {
       final index = getIndex(value);
       _assertValidVariantIndex(variantEncoders, index);
+
       return getEncodedSize(value, variantEncoders[index]);
     },
     write: writeImpl,
@@ -84,6 +88,7 @@ Decoder<Map<String, Object?>> getDiscriminatedUnionDecoder(
 
   final variantDecoders = variants.map((entry) {
     final (discriminatorValue, variant) = entry;
+
     return transformDecoder<List<Object?>, Map<String, Object?>>(
       getTupleDecoder([prefix as Decoder<Object?>, variant]),
       (tuple, bytes, offset) {
@@ -92,6 +97,7 @@ Decoder<Map<String, Object?>> getDiscriminatedUnionDecoder(
         if (value is Map<String, Object?>) {
           result.addAll(value);
         }
+
         return result;
       },
     );
@@ -104,6 +110,7 @@ Decoder<Map<String, Object?>> getDiscriminatedUnionDecoder(
     final (value, _) = prefix.read(bytes, offset);
     final index = value.toInt();
     _assertValidVariantIndex(variantDecoders, index);
+
     return variantDecoders[index].read(bytes, offset);
   }
 
@@ -115,6 +122,7 @@ Decoder<Map<String, Object?>> getDiscriminatedUnionDecoder(
   }
 
   final maxSize = _getUnionMaxSize(variantDecoders);
+
   return VariableSizeDecoder<Map<String, Object?>>(
     read: readImpl,
     maxSize: maxSize,
@@ -151,12 +159,14 @@ int _getVariantDiscriminator(
   Object? discriminatorValue,
 ) {
   final index = variants.indexWhere((v) => v.$1 == discriminatorValue);
+
   if (index < 0) {
     throw SolanaError(SolanaErrorCode.codecsInvalidDiscriminatedUnionVariant, {
       'value': discriminatorValue,
       'variants': variants.map((v) => v.$1).toList(),
     });
   }
+
   return index;
 }
 
@@ -173,11 +183,15 @@ void _assertValidVariantIndex(List<Object> variants, int index) {
 int? _getUnionFixedSize(List<Object> variants) {
   if (variants.isEmpty) return 0;
   final firstSize = getFixedSize(variants[0]);
+
   if (firstSize == null) return null;
+
   for (final variant in variants) {
     final s = getFixedSize(variant);
+
     if (s != firstSize) return null;
   }
+
   return firstSize;
 }
 

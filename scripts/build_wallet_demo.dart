@@ -19,8 +19,10 @@ Future<void> main(List<String> args) async {
 
   stdout.writeln('[wallet-demo] building example app (DEMO_WALLET mode)…');
   final pubGet = await _run(['pub', 'get'], _exampleDirectory);
+
   if (pubGet != 0) {
     exitCode = pubGet;
+
     return;
   }
 
@@ -35,16 +37,20 @@ Future<void> main(List<String> args) async {
     // runtime, which the constant-icon tree sharker rejects outright.
     '--no-tree-shake-icons',
   ], _exampleDirectory);
+
   if (buildWeb != 0) {
     exitCode = buildWeb;
+
     return;
   }
 
   final source = Directory('$_exampleDirectory/build/web');
   final target = Directory(_outputTarget);
+
   if (target.existsSync()) {
     target.deleteSync(recursive: true);
   }
+
   _copyDirectory(source, target);
   stdout.writeln(
     '[wallet-demo] copied example build → $_outputTarget '
@@ -55,9 +61,13 @@ Future<void> main(List<String> args) async {
 /// Composes the Flutter web base href for the embedded demo directory.
 String composeDemoBaseHref(String basePath) {
   var base = basePath.trim();
+
   if (base.isEmpty) base = '/';
+
   if (!base.startsWith('/')) base = '/$base';
+
   if (!base.endsWith('/')) base = '$base/';
+
   return '${base}wallet-demo/';
 }
 
@@ -68,6 +78,7 @@ Future<int> _run(List<String> arguments, String workingDirectory) async {
     workingDirectory: workingDirectory,
     mode: ProcessStartMode.inheritStdio,
   );
+
   return process.exitCode;
 }
 
@@ -76,14 +87,17 @@ Future<int> _run(List<String> arguments, String workingDirectory) async {
 /// value as a single shell-expanded word.
 String? optionValue(List<String> arguments, String flag) {
   final index = arguments.indexOf(flag);
+
   if (index >= 0 && index + 1 < arguments.length) {
     return arguments[index + 1];
   }
+
   for (final argument in arguments) {
     if (argument.startsWith('$flag=')) {
       return argument.substring(flag.length + 1);
     }
   }
+
   return null;
 }
 
@@ -91,8 +105,10 @@ void _copyDirectory(Directory source, Directory target) {
   for (final entity in source.listSync(recursive: true)) {
     final relative = entity.path.substring(source.path.length);
     final destination = '${target.path}$relative';
+
     if (entity is Directory) {
       Directory(destination).createSync(recursive: true);
+
     } else if (entity is File) {
       File(destination)
         ..createSync(recursive: true)

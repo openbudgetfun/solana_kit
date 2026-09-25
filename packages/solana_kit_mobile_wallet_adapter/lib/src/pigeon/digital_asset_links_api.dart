@@ -25,6 +25,7 @@ class MwaDigitalAssetLinksHostApi {
     final result = await _channel.invokeMethod<bool>('verifyCallingPackage', {
       'clientIdentityUri': clientIdentityUri,
     });
+
     return result ?? false;
   }
 
@@ -37,6 +38,7 @@ class MwaDigitalAssetLinksHostApi {
       'packageName': packageName,
       'clientIdentityUri': clientIdentityUri,
     });
+
     return result ?? false;
   }
 

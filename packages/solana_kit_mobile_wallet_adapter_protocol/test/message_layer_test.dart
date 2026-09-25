@@ -269,6 +269,7 @@ void main() {
       final wallet = createMobileWalletProxy((method, params) async {
         capturedMethod = method;
         capturedParams = params;
+
         return {'accounts': <Object?>[], 'auth_token': 'token'};
       }, const SessionProperties(protocolVersion: ProtocolVersion.v1));
 
@@ -286,6 +287,7 @@ void main() {
 
       final wallet = createMobileWalletProxy((method, params) async {
         capturedParams = params;
+
         return {'accounts': <Object?>[], 'auth_token': 'token'};
       }, const SessionProperties(protocolVersion: ProtocolVersion.legacy));
 
@@ -302,6 +304,7 @@ void main() {
 
       final wallet = createMobileWalletProxy((method, params) async {
         capturedMethod = method;
+
         return {'accounts': <Object?>[], 'auth_token': 'token'};
       }, const SessionProperties(protocolVersion: ProtocolVersion.legacy));
 
@@ -318,6 +321,7 @@ void main() {
 
       final wallet = createMobileWalletProxy((method, params) async {
         capturedMethod = method;
+
         return {'accounts': <Object?>[], 'auth_token': 'token'};
       }, const SessionProperties(protocolVersion: ProtocolVersion.v1));
 
@@ -361,6 +365,7 @@ void main() {
 
       final wallet = createMobileWalletProxy((method, params) async {
         capturedMethod = method;
+
         return {};
       }, const SessionProperties(protocolVersion: ProtocolVersion.v1));
 

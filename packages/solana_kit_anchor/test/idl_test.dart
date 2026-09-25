@@ -9,6 +9,7 @@ File _fixture(String relative) {
   final current = Directory.current.path;
   final inPackage = current.endsWith('solana_kit_anchor');
   final base = inPackage ? current : '$current/packages/solana_kit_anchor';
+
   return File('$base/$relative'.replaceAll('//', '/'));
 }
 

@@ -21,6 +21,7 @@ void main() {
         expect(request.url.path, '/v0/webhooks/wh-1');
         expect(request.url.queryParameters['api-key'], 'test-key');
         expect(jsonDecode(request.body), {'active': false});
+
         return http.Response(jsonEncode(mockWebhook), 200);
       });
       final helius = createHelius(

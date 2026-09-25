@@ -80,6 +80,7 @@ Uint8List computeDataHash(MetadataArgs metadata) {
   final metadataHash = keccak256(encodeMetadataArgs(metadata));
   final sfbp = ByteData(2)
     ..setUint16(0, metadata.sellerFeeBasisPoints, Endian.little);
+
   return keccak256(
     Uint8List.fromList([...metadataHash, ...sfbp.buffer.asUint8List()]),
   );
@@ -90,12 +91,14 @@ Uint8List computeDataHash(MetadataArgs metadata) {
 Uint8List computeCreatorHash(List<Creator> creators) {
   final addressEncoder = getAddressEncoder();
   final creatorBytes = <int>[];
+
   for (final creator in creators) {
     creatorBytes
       ..addAll(addressEncoder.encode(creator.address))
       ..add(creator.verified ? 1 : 0)
       ..add(creator.share);
   }
+
   return keccak256(Uint8List.fromList(creatorBytes));
 }
 

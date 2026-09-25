@@ -61,6 +61,7 @@ Future<Transaction> signTransactionMessageWithSigners(
     config,
   );
   assertIsFullySignedTransaction(signedTransaction);
+
   return signedTransaction;
 }
 
@@ -153,6 +154,7 @@ Future<Transaction> signTransactionWithSigners(
     config,
   );
   assertIsFullySignedTransaction(signedTransaction);
+
   return signedTransaction;
 }
 
@@ -278,6 +280,7 @@ TransactionSendingSigner? _identifyTransactionSendingSigner(
   List<Object> signers,
 ) {
   final sendingSigners = signers.where(isTransactionSendingSigner).toList();
+
   if (sendingSigners.isEmpty) return null;
 
   // Prefer sending signers that do not offer other interfaces.
@@ -288,6 +291,7 @@ TransactionSendingSigner? _identifyTransactionSendingSigner(
             !isTransactionPartialSigner(signer),
       )
       .toList();
+
   if (sendingOnlySigners.isNotEmpty) {
     return sendingOnlySigners[0] as TransactionSendingSigner;
   }
@@ -301,6 +305,7 @@ List<TransactionModifyingSigner> _identifyTransactionModifyingSigners(
   List<Object> signers,
 ) {
   final modifyingSigners = signers.where(isTransactionModifyingSigner).toList();
+
   if (modifyingSigners.isEmpty) return [];
 
   // Prefer modifying signers that do not offer partial signing.
@@ -308,6 +313,7 @@ List<TransactionModifyingSigner> _identifyTransactionModifyingSigners(
       .where((signer) => !isTransactionPartialSigner(signer))
       .cast<TransactionModifyingSigner>()
       .toList();
+
   if (nonPartialSigners.isNotEmpty) return nonPartialSigners;
 
   // Otherwise, choose only one modifying signer (whichever).
@@ -329,6 +335,7 @@ Future<Transaction> _signModifyingAndPartialTransactionSigners(
     if (config != null && config.aborted) {
       throw StateError('The operation was aborted');
     }
+
     final results = await modifyingSigner.modifyAndSignTransactions([
       currentTransaction,
     ], config);
@@ -345,6 +352,7 @@ Future<Transaction> _signModifyingAndPartialTransactionSigners(
       final signatures = await partialSigner.signTransactions([
         currentTransaction,
       ], config);
+
       return signatures[0];
     }),
   );

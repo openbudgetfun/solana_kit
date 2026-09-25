@@ -191,6 +191,7 @@ class _NativeWallet implements mwa.KitMobileWallet {
   }) async {
     lastAddresses = addresses;
     lastPayloads = payloads;
+
     return outputs ??
         [
           for (final payload in payloads)

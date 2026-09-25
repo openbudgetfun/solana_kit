@@ -24,15 +24,18 @@ function collectFiles(dir: string, prefix = ""): string[] {
   const fs = require("node:fs");
   const path = require("node:path");
   const files: string[] = [];
+
   for (const entry of fs.readdirSync(dir)) {
     const full = path.join(dir, entry);
     const relative = prefix ? `${prefix}/${entry}` : entry;
+
     if (fs.statSync(full).isDirectory()) {
       files.push(...collectFiles(full, relative));
     } else {
       files.push(relative);
     }
   }
+
   return files.sort();
 }
 

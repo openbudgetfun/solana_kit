@@ -99,6 +99,7 @@ void main() {
           createTransactionMessage: () async => createMessage(),
           onTransactionMessageUpdated: (msg) async {
             updateCount++;
+
             return msg;
           },
         ),
@@ -148,6 +149,7 @@ void main() {
                 // adding large data.
                 return msg;
               }
+
               return msg;
             },
           ),

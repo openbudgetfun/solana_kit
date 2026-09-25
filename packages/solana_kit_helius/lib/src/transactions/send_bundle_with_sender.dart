@@ -65,6 +65,7 @@ Future<List<String>> sendBundleWithSender(
   if (transactions.isEmpty) {
     throw ArgumentError('Bundle must contain at least one transaction');
   }
+
   if (transactions.length > _maxBundleSize) {
     throw ArgumentError(
       'Bundle supports at most $_maxBundleSize transactions, got '
@@ -103,13 +104,13 @@ Future<List<String>> sendBundleWithSender(
   }
 
   final body = jsonDecode(response.body);
+
   if (body is Map<String, Object?> && body['error'] != null) {
     throw StateError('Sender bundle error: ${body['error']}');
   }
+
   // The result (bundle id, etc.) is intentionally ignored — landing is
   // tracked by transaction signature, not bundle id.
-
-  // Track landing via each transaction's signature.
   for (final signature in signatures) {
     await _pollSignature(
       rpcClient,
@@ -136,11 +137,14 @@ Future<void> _pollSignature(
       {'searchTransactionHistory': true},
     ]);
     final response = result as Map<String, Object?>?;
+
     if (response != null) {
       final value = response['value'] as List<Object?>?;
+
       if (value != null && value.isNotEmpty && value[0] != null) {
         final status = value[0]! as Map<String, Object?>;
         final error = status['err'];
+
         if (error != null) throw getSolanaErrorFromTransactionError(error);
 
         final confirmationStatus = status['confirmationStatus'] as String?;
@@ -150,6 +154,7 @@ Future<void> _pollSignature(
         }
       }
     }
+
     await Future<void>.delayed(Duration(milliseconds: intervalMs));
   }
 

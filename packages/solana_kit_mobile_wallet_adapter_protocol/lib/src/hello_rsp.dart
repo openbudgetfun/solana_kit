@@ -74,6 +74,7 @@ HelloRspResult parseHelloRsp(
 
   // Extract optional encrypted session properties.
   final Uint8List? encryptedSessionProps;
+
   if (payload.length > mwaPublicKeyLengthBytes) {
     encryptedSessionProps = payload.sublist(mwaPublicKeyLengthBytes);
   } else {

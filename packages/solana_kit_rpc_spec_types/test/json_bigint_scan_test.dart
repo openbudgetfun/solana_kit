@@ -15,6 +15,7 @@ void main() {
   Map<Object?, Object?> parseObject(String input) {
     final parsed = parseJsonWithBigInts(input);
     expect(parsed, isA<Map<Object?, Object?>>());
+
     return parsed! as Map<Object?, Object?>;
   }
 

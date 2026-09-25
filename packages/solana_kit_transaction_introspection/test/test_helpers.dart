@@ -44,6 +44,7 @@ Uint8List encodeWire(CompiledTransactionMessage message) {
         message.staticAccounts.first: SignatureBytes(Uint8List(64)),
     },
   );
+
   return getTransactionEncoder().encode(tx);
 }
 

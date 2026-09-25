@@ -125,15 +125,18 @@ PublicationSource _translateIngestionSource(
   final fileName =
       optionalString(backendSession['releaseFileName']) ??
       inferFileNameFromUrl(sourceUrl);
+
   if (sourceKind == 'existingRelease') {
     return ExistingReleaseSource(
       sourceReleaseId:
           existingReleaseId ?? asString(backendSession['releaseId']),
     );
   }
+
   if (sourceKind == 'externalUrl') {
     return ApkUrlSource(url: sourceUrl, fileName: fileName);
   }
+
   return PortalUploadSource(
     releaseFileUrl: sourceUrl,
     releaseFileName: fileName ?? '',
@@ -309,6 +312,7 @@ SignerAuthority _translateSignerAuthority(
         signerAuthority['collectionAuthority'] ??
         dapp['walletAddress'],
   );
+
   return SignerAuthority(
     dappWalletAddress: fallbackSigner,
     collectionAuthority: asString(
@@ -370,15 +374,20 @@ PublicationCheckpoint normalizePublicationCheckpoint({
   switch (stage) {
     case 'Submitted':
       return PublicationCheckpoint.submitted;
+
     case 'Attested':
       return PublicationCheckpoint.verified;
+
     case 'Verified':
     case 'VerificationSubmitted':
       return PublicationCheckpoint.verified;
+
     case 'MintSaved':
       return PublicationCheckpoint.mintSaved;
+
     case 'MintSubmitted':
       return PublicationCheckpoint.mintSubmitted;
+
     case 'PreparedForMint':
       return PublicationCheckpoint.bundleReady;
   }
@@ -386,12 +395,15 @@ PublicationCheckpoint normalizePublicationCheckpoint({
   if (_firstNonEmpty(hubspotTicketId) != null) {
     return PublicationCheckpoint.submitted;
   }
+
   if (_firstNonEmpty(attestationRequestUniqueId) != null) {
     return PublicationCheckpoint.verified;
   }
+
   if (_firstNonEmpty(verificationTransactionSignature) != null) {
     return PublicationCheckpoint.verified;
   }
+
   if (_firstNonEmpty(mintTransactionSignature) != null) {
     return PublicationCheckpoint.mintSubmitted;
   }
@@ -399,6 +411,7 @@ PublicationCheckpoint normalizePublicationCheckpoint({
       _firstNonEmpty(metadataUri) != null) {
     return PublicationCheckpoint.bundleReady;
   }
+
   return PublicationCheckpoint.created;
 }
 
@@ -410,9 +423,11 @@ PublicationSessionStatus normalizePublicationStatus({
   if (stage == 'Failed') {
     return PublicationSessionStatus.failed;
   }
+
   if (stage == 'Submitted' || _firstNonEmpty(hubspotTicketId) != null) {
     return PublicationSessionStatus.completed;
   }
+
   return PublicationSessionStatus.running;
 }
 

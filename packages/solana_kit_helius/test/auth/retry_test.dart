@@ -40,6 +40,7 @@ void main() {
       final result = await retryWithBackoff(() async {
         calls++;
         if (calls < 3) throw Exception('temporary');
+
         return 'ok';
       }, sleep: (_) async {});
 

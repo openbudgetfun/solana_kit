@@ -15,6 +15,7 @@ Encoder<T> getHiddenPrefixEncoder<T>(
     encoder as Encoder<Object?>,
   ];
   final tupleEncoder = getTupleEncoder(allEncoders);
+
   return transformEncoder<List<Object?>, T>(tupleEncoder, (value) {
     return <Object?>[
       ...List<Object?>.filled(prefixedEncoders.length, null),
@@ -38,6 +39,7 @@ Decoder<T> getHiddenPrefixDecoder<T>(
     decoder as Decoder<Object?>,
   ];
   final tupleDecoder = getTupleDecoder(allDecoders);
+
   return transformDecoder<List<Object?>, T>(
     tupleDecoder,
     (tuple, bytes, offset) => tuple[tuple.length - 1] as T,

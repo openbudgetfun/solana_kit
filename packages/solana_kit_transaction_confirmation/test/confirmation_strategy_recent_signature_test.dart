@@ -163,7 +163,6 @@ void main() {
 
     test('resolves when a signature notification indicates success', () async {
       // Don't resolve the one-shot query.
-
       final future = getSignatureConfirmationPromise(
         abortSignal: CancellationTokenSource().token,
         commitment: Commitment.finalized,
@@ -211,6 +210,7 @@ void main() {
         RecentSignatureConfirmationConfig(
           getSignatureStatuses: (signatures, {required abortSignal}) {
             capturedCancellationToken = abortSignal;
+
             return Completer<List<SignatureStatus?>>().future;
           },
           onSignatureNotification:

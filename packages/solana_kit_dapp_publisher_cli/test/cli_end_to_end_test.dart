@@ -148,6 +148,7 @@ Future<Transaction> buildReleaseMintTransaction() async {
       lifetimeToken: blockhash,
     ),
   );
+
   return Transaction(
     messageBytes: messageBytes,
     signatures: {
@@ -189,6 +190,7 @@ Future<Transaction> buildVerifyCollectionTransaction() async {
       lifetimeToken: blockhash,
     ),
   );
+
   return Transaction(
     messageBytes: messageBytes,
     signatures: {
@@ -211,6 +213,7 @@ class MockPortalServer {
     await for (final request in server) {
       try {
         await _respond(request);
+
       } on Object {
         request.response.statusCode = 500;
         await request.response.close();
@@ -220,9 +223,11 @@ class MockPortalServer {
 
   Future<void> _respond(HttpRequest request) async {
     final path = request.uri.path;
+
     if (path.contains('/rpc')) {
       final body =
           jsonDecode(utf8.decode(await _body(request))) as Map<String, Object?>;
+
       if (body['method'] == 'getBalance') {
         await _json(request, {
           'jsonrpc': '2.0',
@@ -232,9 +237,12 @@ class MockPortalServer {
           },
           'id': body['id'],
         });
+
         return;
       }
+
       await _json(request, {'jsonrpc': '2.0', 'error': 'unknown', 'id': 1});
+
       return;
     }
 
@@ -256,7 +264,9 @@ class MockPortalServer {
               'publicUrl': '$host/files/$fileHash.$fileExtension',
             }),
           );
+
           return;
+
         case 'publication.createIngestionSession':
           await _json(
             request,
@@ -267,7 +277,9 @@ class MockPortalServer {
               'publicationSession': {'id': 'pub-1'},
             }),
           );
+
           return;
+
         case 'publication.getIngestionSession':
           await _json(
             request,
@@ -278,10 +290,14 @@ class MockPortalServer {
               'publicationSession': {'id': 'pub-1'},
             }),
           );
+
           return;
+
         case 'publication.getPublicationBundle':
           await _json(request, _trpcOk(backendBundle()));
+
           return;
+
         case 'publication.getPublicationSession':
           await _json(
             request,
@@ -294,7 +310,9 @@ class MockPortalServer {
               'metadataUri': 'https://public.example.com/meta.json',
             }),
           );
+
           return;
+
         case 'publication.prepareReleaseNftTransaction':
           await _json(
             request,
@@ -308,7 +326,9 @@ class MockPortalServer {
               'blockhash': blockhash,
             }),
           );
+
           return;
+
         case 'publication.submitSignedTransaction':
           final body = jsonDecode(
             utf8.decode(await _body(request)),
@@ -318,10 +338,14 @@ class MockPortalServer {
             request,
             _trpcOk({'transactionSignature': 'sig-1'}),
           );
+
           return;
+
         case 'publication.saveReleaseNftData':
           await _json(request, _trpcOk({'success': true}));
+
           return;
+
         case 'publication.prepareVerifyCollectionTransaction':
           await _json(
             request,
@@ -334,19 +358,25 @@ class MockPortalServer {
               'blockhash': blockhash,
             }),
           );
+
           return;
+
         case 'publication.markReleaseCollectionAsVerified':
           await _json(
             request,
             _trpcOk({'success': true, 'releaseId': 'rel-1'}),
           );
+
           return;
+
         case 'publication.cleanupRelease':
           await _json(
             request,
             _trpcOk({'action': 'deleted', 'releaseId': 'rel-1'}),
           );
+
           return;
+
         case 'publication.submitToStore':
           final body = jsonDecode(
             utf8.decode(await _body(request)),
@@ -356,13 +386,17 @@ class MockPortalServer {
             request,
             _trpcOk({'hubspotTicketId': 'HS-E2E'}),
           );
+
           return;
+
         case 'attestation.getBlockData':
           await _json(
             request,
             _trpcOk({'slot': 42, 'blockhash': blockhash}),
           );
+
           return;
+
         case 'fetchRemoteFile':
           await _json(
             request,
@@ -372,10 +406,13 @@ class MockPortalServer {
               'mimeType': 'image/png',
             }),
           );
+
           return;
+
         default:
           request.response.statusCode = 404;
           await request.response.close();
+
           return;
       }
     }
@@ -385,6 +422,7 @@ class MockPortalServer {
       _uploadedFiles[path] = bytes;
       request.response.statusCode = 200;
       await request.response.close();
+
       return;
     }
 
@@ -395,9 +433,11 @@ class MockPortalServer {
 
 Future<Uint8List> _body(HttpRequest request) async {
   final builder = BytesBuilder();
+
   await for (final chunk in request) {
     builder.add(chunk);
   }
+
   return builder.toBytes();
 }
 
@@ -415,6 +455,7 @@ Uint8List pngBytes({required int width, required int height}) {
     ..setUint32(12, 0x49484452)
     ..setUint32(16, width)
     ..setUint32(20, height);
+
   return data.buffer.asUint8List();
 }
 

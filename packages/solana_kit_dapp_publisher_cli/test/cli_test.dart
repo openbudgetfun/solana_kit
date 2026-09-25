@@ -27,9 +27,11 @@ class _CapturingDependencies extends DappStoreCliDependencies {
   @override
   Uint8List fileReader(String path) {
     final content = files[path];
+
     if (content == null) {
       throw const _PathNotFound();
     }
+
     return content;
   }
 }
@@ -804,6 +806,7 @@ Uint8List validKeypairFileBytes() {
     ...keyPair.privateKey,
     ...keyPair.publicKey,
   ]);
+
   return Uint8List.fromList(
     utf8.encode(jsonEncode(List<num>.from(bytes))),
   );
@@ -856,6 +859,7 @@ PublicationBundle _dummyBundle() {
       'acceptedSignerRoles': ['publisher', 'payer'],
     },
   };
+
   return mapBackendBundleToPublicationBundle(
     backend,
     'https://meta.example.com/r.json',

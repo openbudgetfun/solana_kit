@@ -20,10 +20,13 @@ class _EqualsBytesMatcher extends Matcher {
   @override
   bool matches(Object? item, Map<dynamic, dynamic> matchState) {
     if (item is! Uint8List) return false;
+
     if (item.length != _expected.length) return false;
+
     for (var i = 0; i < _expected.length; i++) {
       if (item[i] != _expected[i]) return false;
     }
+
     return true;
   }
 
@@ -41,11 +44,13 @@ class _EqualsBytesMatcher extends Matcher {
     if (item is! Uint8List) {
       return mismatchDescription.add('is not a Uint8List');
     }
+
     if (item.length != _expected.length) {
       return mismatchDescription.add(
         'has length ${item.length}, expected ${_expected.length}',
       );
     }
+
     for (var i = 0; i < _expected.length; i++) {
       if (item[i] != _expected[i]) {
         return mismatchDescription.add(
@@ -55,6 +60,7 @@ class _EqualsBytesMatcher extends Matcher {
         );
       }
     }
+
     return mismatchDescription;
   }
 
@@ -62,6 +68,7 @@ class _EqualsBytesMatcher extends Matcher {
     if (bytes.length <= 8) {
       return '[${bytes.map((b) => '0x${b.toRadixString(16).padLeft(2, '0')}').join(', ')}]';
     }
+
     final first = bytes
         .take(4)
         .map((b) => '0x${b.toRadixString(16).padLeft(2, '0')}')
@@ -70,6 +77,7 @@ class _EqualsBytesMatcher extends Matcher {
         .skip(bytes.length - 4)
         .map((b) => '0x${b.toRadixString(16).padLeft(2, '0')}')
         .join(', ');
+
     return '[$first, ...(${bytes.length} bytes), $last]';
   }
 }
@@ -98,10 +106,13 @@ class _StartsWithBytesMatcher extends Matcher {
   @override
   bool matches(Object? item, Map<dynamic, dynamic> matchState) {
     if (item is! Uint8List) return false;
+
     if (item.length < _prefix.length) return false;
+
     for (var i = 0; i < _prefix.length; i++) {
       if (item[i] != _prefix[i]) return false;
     }
+
     return true;
   }
 
@@ -120,12 +131,14 @@ class _StartsWithBytesMatcher extends Matcher {
     if (item is! Uint8List) {
       return mismatchDescription.add('is not a Uint8List');
     }
+
     if (item.length < _prefix.length) {
       return mismatchDescription.add(
         'has length ${item.length}, which is shorter than prefix length '
         '${_prefix.length}',
       );
     }
+
     return mismatchDescription;
   }
 }

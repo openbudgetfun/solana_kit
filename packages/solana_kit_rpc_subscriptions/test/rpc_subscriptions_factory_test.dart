@@ -465,6 +465,7 @@ Future<NotificationStreams> _planStreamsExecute(
 ) async {
   final messages = StreamController<Object?>.broadcast(sync: true);
   final errors = StreamController<Object?>.broadcast(sync: true);
+
   return NotificationStreams(
     notifications: messages.stream,
     errors: errors.stream,
@@ -474,6 +475,7 @@ Future<NotificationStreams> _planStreamsExecute(
 NotificationStreams _emptyStreams() {
   final messages = StreamController<Object?>.broadcast(sync: true);
   final errors = StreamController<Object?>.broadcast(sync: true);
+
   return NotificationStreams(
     notifications: messages.stream,
     errors: errors.stream,

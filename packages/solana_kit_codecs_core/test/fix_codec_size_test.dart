@@ -19,6 +19,7 @@ void main() {
         write: (_, bytes, offset) {
           final src = b('08050c0c0f170f120c04');
           bytes.setAll(offset, src);
+
           return offset + 10;
         },
         read: (bytes, offset) {
@@ -51,6 +52,7 @@ void main() {
         write: (_, bytes, offset) {
           final src = b('08050c0c0f170f120c04');
           bytes.setAll(offset, src);
+
           return offset + 10;
         },
         read: (bytes, offset) {
@@ -83,6 +85,7 @@ void main() {
         write: (_, bytes, offset) {
           final src = b('08050c0c0f');
           bytes.setAll(offset, src);
+
           return offset + 5;
         },
         read: (bytes, offset) {
@@ -139,10 +142,12 @@ void main() {
           if (bytes.sublist(offset).length < 4) {
             throw StateError('Not enough bytes to decode a u32.');
           }
+
           return (bytes[offset], offset + 4);
         },
         write: (value, bytes, offset) {
           bytes[offset] = value;
+
           return offset + 4;
         },
       );
@@ -186,6 +191,7 @@ void main() {
         getSizeFromValue: (_) => 10,
         write: (_, bytes, offset) {
           bytes.setAll(offset, b('08050c0c0f170f120c04'));
+
           return offset + 10;
         },
       );
@@ -205,6 +211,7 @@ void main() {
         getSizeFromValue: (_) => 5,
         write: (_, bytes, offset) {
           bytes.setAll(offset, b('08050c0c0f'));
+
           return offset + 5;
         },
       );

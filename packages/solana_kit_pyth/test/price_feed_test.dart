@@ -573,6 +573,7 @@ void main() {
         },
         'parsed': ?parsed,
       };
+
       return HermesPriceUpdate.fromJson(json);
     }
 

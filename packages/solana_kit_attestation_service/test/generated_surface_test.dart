@@ -185,6 +185,7 @@ void main() {
       for (final type in SchemaDataType.values) {
         _roundTrip(getSchemaDataTypeCodec(), type);
       }
+
       expect(SchemaDataType.u8.toString(), 'SchemaDataType.u8');
     });
   });

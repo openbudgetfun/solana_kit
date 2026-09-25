@@ -26,6 +26,7 @@ void main() {
     NotificationStreams streamsForExecute() {
       final mock = _MockNotificationStreams();
       mockInnerTransport.mockStreams.add(mock);
+
       return mock.streams;
     }
 

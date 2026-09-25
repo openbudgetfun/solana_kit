@@ -29,6 +29,7 @@ FixedSizeDecoder<T> mapFixedSizeStructDecoder<T>({
     fixedSize: fixedSize,
     read: (bytes, offset) {
       final (fields, newOffset) = structDecoder.read(bytes, offset);
+
       return (fromFields(fields), newOffset);
     },
   );
@@ -64,5 +65,6 @@ int hashStructuredFields(Iterable<Object?> fields) => Object.hashAll(fields);
 /// `typeName(key: value, ...)` string.
 String formatStructuredFields(String typeName, StructuredFields fields) {
   final entries = fields.entries.map((entry) => '${entry.key}: ${entry.value}');
+
   return '$typeName(${entries.join(', ')})';
 }

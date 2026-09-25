@@ -15,6 +15,7 @@ void main() {
         final body = jsonDecode(request.body) as Map<String, Object?>;
         expect(body['from'], 'owner-address');
         expect(body['amount'], 1000000);
+
         return http.Response(
           jsonEncode(<String, Object?>{'transaction': 'base64tx'}),
           200,
@@ -43,6 +44,7 @@ void main() {
         expect(body['from'], 'owner-address');
         expect(body['amount'], 500000);
         expect(body['validatorVote'], 'validator1');
+
         return http.Response(
           jsonEncode(<String, Object?>{'transaction': 'base64tx-vote'}),
           200,

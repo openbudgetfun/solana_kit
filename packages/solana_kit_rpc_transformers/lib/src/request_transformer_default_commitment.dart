@@ -23,6 +23,7 @@ RpcRequestTransformer getDefaultCommitmentRequestTransformer({
     // not found.
     final optionsObjectPositionInParams =
         optionsObjectPositionByMethod[request.methodName];
+
     if (optionsObjectPositionInParams == null) {
       return request;
     }

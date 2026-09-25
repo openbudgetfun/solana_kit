@@ -179,22 +179,25 @@ function buildWideEnumsIdl() {
   );
 }
 
-
 /**
  * Recursively collect all file paths under a directory.
  */
 function collectFiles(dir: string, prefix = ""): string[] {
   const files: string[] = [];
+
   if (!existsSync(dir)) return files;
+
   for (const entry of readdirSync(dir)) {
     const full = join(dir, entry);
     const relative = prefix ? `${prefix}/${entry}` : entry;
+
     if (statSync(full).isDirectory()) {
       files.push(...collectFiles(full, relative));
     } else {
       files.push(relative);
     }
   }
+
   return files.sort();
 }
 

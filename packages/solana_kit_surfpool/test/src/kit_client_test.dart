@@ -53,6 +53,7 @@ void main() {
         client: MockClient((request) async {
           final body = jsonDecode(request.body) as Map<String, Object?>;
           requests.add(body);
+
           return http.Response(
             jsonEncode(<String, Object?>{
               'jsonrpc': '2.0',

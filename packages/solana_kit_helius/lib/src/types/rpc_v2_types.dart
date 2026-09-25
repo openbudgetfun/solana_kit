@@ -16,6 +16,7 @@ class GetProgramAccountsV2Request {
   /// Builds a request from a JSON map.
   factory GetProgramAccountsV2Request.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetProgramAccountsV2Request(
       programAddress: r.requireString('programAddress'),
       filters: r.optList<Map<String, Object?>>('filters'),
@@ -47,10 +48,15 @@ class GetProgramAccountsV2Request {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'programAddress': programAddress,
+
     if (filters != null) 'filters': filters,
+
     if (encoding != null) 'encoding': encoding,
+
     if (dataSlice != null) 'dataSlice': dataSlice,
+
     if (after != null) 'after': after,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -63,6 +69,7 @@ class GetProgramAccountsV2Response {
   /// Builds a response from a JSON map.
   factory GetProgramAccountsV2Response.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetProgramAccountsV2Response(
       accounts: r.requireDecodedList('accounts', ProgramAccountV2.fromJson),
       cursor: r.optString('cursor'),
@@ -78,6 +85,7 @@ class GetProgramAccountsV2Response {
   /// Serializes this response to a JSON map.
   Map<String, Object?> toJson() => {
     'accounts': accounts.map((e) => e.toJson()).toList(),
+
     if (cursor != null) 'cursor': cursor,
   };
 }
@@ -90,6 +98,7 @@ class ProgramAccountV2 {
   /// Builds a program account entry from a JSON map.
   factory ProgramAccountV2.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return ProgramAccountV2(
       pubkey: r.requireString('pubkey'),
       account: r.requireMap('account'),
@@ -121,6 +130,7 @@ class GetTokenAccountsByOwnerV2Request {
   /// Builds a request from a JSON map.
   factory GetTokenAccountsByOwnerV2Request.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetTokenAccountsByOwnerV2Request(
       ownerAddress: r.requireString('ownerAddress'),
       mint: r.optString('mint'),
@@ -152,10 +162,15 @@ class GetTokenAccountsByOwnerV2Request {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'ownerAddress': ownerAddress,
+
     if (mint != null) 'mint': mint,
+
     if (programId != null) 'programId': programId,
+
     if (encoding != null) 'encoding': encoding,
+
     if (after != null) 'after': after,
+
     if (limit != null) 'limit': limit,
   };
 }
@@ -173,6 +188,7 @@ class GetTokenAccountsByOwnerV2Response {
     Map<String, Object?> json,
   ) {
     final r = JsonReader(json);
+
     return GetTokenAccountsByOwnerV2Response(
       accounts: r.requireDecodedList('accounts', TokenAccountV2.fromJson),
       cursor: r.optString('cursor'),
@@ -188,6 +204,7 @@ class GetTokenAccountsByOwnerV2Response {
   /// Serializes this response to a JSON map.
   Map<String, Object?> toJson() => {
     'accounts': accounts.map((e) => e.toJson()).toList(),
+
     if (cursor != null) 'cursor': cursor,
   };
 }
@@ -200,6 +217,7 @@ class TokenAccountV2 {
   /// Builds a token account entry from a JSON map.
   factory TokenAccountV2.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return TokenAccountV2(
       pubkey: r.requireString('pubkey'),
       account: r.requireMap('account'),
@@ -230,6 +248,7 @@ class GetTransactionsForAddressRequest {
   /// Builds a request from a JSON map.
   factory GetTransactionsForAddressRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetTransactionsForAddressRequest(
       address: r.requireString('address'),
       before: r.optString('before'),
@@ -257,9 +276,13 @@ class GetTransactionsForAddressRequest {
   /// Serializes this request to a JSON map.
   Map<String, Object?> toJson() => {
     'address': address,
+
     if (before != null) 'before': before,
+
     if (until != null) 'until': until,
+
     if (limit != null) 'limit': limit,
+
     if (commitment != null) 'commitment': commitment!.toJson(),
   };
 }
@@ -274,6 +297,7 @@ class GetTransactionsForAddressResponse {
     Map<String, Object?> json,
   ) {
     final r = JsonReader(json);
+
     return GetTransactionsForAddressResponse(
       transactions: r.requireDecodedList(
         'transactions',
@@ -305,6 +329,7 @@ class TransactionForAddress {
   /// Builds a transaction summary from a JSON map.
   factory TransactionForAddress.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return TransactionForAddress(
       signature: r.requireString('signature'),
       slot: r.requireInt('slot'),
@@ -333,8 +358,11 @@ class TransactionForAddress {
   Map<String, Object?> toJson() => {
     'signature': signature,
     'slot': slot,
+
     if (blockTime != null) 'blockTime': blockTime,
+
     if (err != null) 'err': err,
+
     if (memo != null) 'memo': memo,
   };
 }
@@ -399,13 +427,21 @@ class GetTransfersByAddressConfig {
   /// Serializes this configuration to a JSON map.
   Map<String, Object?> toJson() => {
     if (withAddress != null) 'with': withAddress,
+
     if (direction != null) 'direction': direction,
+
     if (mint != null) 'mint': mint,
+
     if (solMode != null) 'solMode': solMode,
+
     if (filters != null) 'filters': filters,
+
     if (limit != null) 'limit': limit,
+
     if (paginationToken != null) 'paginationToken': paginationToken,
+
     if (commitment != null) 'commitment': commitment!.toJson(),
+
     if (sortOrder != null) 'sortOrder': sortOrder,
   };
 }
@@ -421,6 +457,7 @@ class GetTransfersByAddressResponse {
   /// Builds a response from a JSON map.
   factory GetTransfersByAddressResponse.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetTransfersByAddressResponse(
       data: r.requireDecodedList('data', AddressTransfer.fromJson),
       paginationToken: r.optString('paginationToken'),
@@ -468,6 +505,7 @@ class AddressTransfer {
   /// Builds a transfer record from a JSON map.
   factory AddressTransfer.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AddressTransfer(
       signature: r.requireString('signature'),
       slot: r.requireInt('slot'),
@@ -556,14 +594,19 @@ class AddressTransfer {
     'type': type,
     'fromUserAccount': fromUserAccount,
     'toUserAccount': toUserAccount,
+
     if (fromTokenAccount != null) 'fromTokenAccount': fromTokenAccount,
+
     if (toTokenAccount != null) 'toTokenAccount': toTokenAccount,
     'mint': mint,
     'amount': amount,
+
     if (feeAmount != null) 'feeAmount': feeAmount,
+
     if (feeAccount != null) 'feeAccount': feeAccount,
     'decimals': decimals,
     'uiAmount': uiAmount,
+
     if (feeUiAmount != null) 'feeUiAmount': feeUiAmount,
     'confirmationStatus': confirmationStatus,
     'transactionIdx': transactionIdx,

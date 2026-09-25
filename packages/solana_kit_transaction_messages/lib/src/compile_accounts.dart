@@ -102,6 +102,7 @@ Map<String, _AddressMapEntry> _buildAddressMap(
           return entry;
         }
       }
+
       return _AddressMapEntry(
         type: AddressMapEntryType.static_,
         role: AccountRole.readonly,
@@ -155,6 +156,7 @@ Map<String, _AddressMapEntry> _buildAddressMap(
               if (entry.role != nextRole) {
                 entry.role = nextRole;
               }
+
               return entry;
             case AddressMapEntryType.static_:
               final nextRole = mergeRoles(entry.role, account.role);
@@ -168,6 +170,7 @@ Map<String, _AddressMapEntry> _buildAddressMap(
                 if (entry.role != nextRole) {
                   entry.role = nextRole;
                 }
+
                 return entry;
               } else if (lookupMeta != null && !isSignerRole(entry.role)) {
                 return _AddressMapEntry(
@@ -180,6 +183,7 @@ Map<String, _AddressMapEntry> _buildAddressMap(
                 if (entry.role != nextRole) {
                   entry.role = nextRole;
                 }
+
                 return entry;
               }
           }
@@ -200,6 +204,7 @@ Map<String, _AddressMapEntry> _buildAddressMap(
       });
     }
   }
+
   return addressMap;
 }
 
@@ -225,6 +230,7 @@ List<OrderedAccount> getOrderedAccountsFromInstructions(
     instructions,
     useLookupTables: useLookupTables,
   );
+
   return _getOrderedAccountsFromAddressMap(addressMap);
 }
 
@@ -252,6 +258,7 @@ List<OrderedAccount> _getOrderedAccountsFromAddressMap(
       if (leftIsSigner != rightIsSigner) {
         return leftIsSigner ? -1 : 1;
       }
+
       final leftIsWritable = isWritableRole(leftEntry.role);
       final rightIsWritable = isWritableRole(rightEntry.role);
       if (leftIsWritable != rightIsWritable) {
@@ -268,6 +275,7 @@ List<OrderedAccount> _getOrderedAccountsFromAddressMap(
           rightEntry.lookupTableAddress!,
         );
       }
+
       return addressComparator!(Address(a.key), Address(b.key));
     });
 

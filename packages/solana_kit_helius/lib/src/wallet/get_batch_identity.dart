@@ -16,6 +16,7 @@ Future<Map<String, Identity>> walletGetBatchIdentity(
     body: {'addresses': request.addresses},
   );
   final map = result! as Map<String, Object?>;
+
   return map.map(
     (key, value) =>
         MapEntry(key, Identity.fromJson(value! as Map<String, Object?>)),

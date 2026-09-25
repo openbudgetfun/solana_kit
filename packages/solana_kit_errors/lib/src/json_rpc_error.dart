@@ -17,6 +17,7 @@ SolanaError getSolanaErrorFromJsonRpcError(Object? putativeErrorResponse) {
     final data = response['data'];
 
     final code = SolanaErrorCode.fromValue(codeInt);
+
     if (code == null) {
       return SolanaError(SolanaErrorCode.malformedJsonRpcError, {
         'error': putativeErrorResponse,
@@ -44,6 +45,7 @@ SolanaError getSolanaErrorFromJsonRpcError(Object? putativeErrorResponse) {
     }
 
     Map<String, Object?>? errorContext;
+
     switch (code) {
       case SolanaErrorCode.jsonRpcInternalError:
       case SolanaErrorCode.jsonRpcInvalidParams:
@@ -61,6 +63,7 @@ SolanaError getSolanaErrorFromJsonRpcError(Object? putativeErrorResponse) {
           .jsonRpcServerErrorTransactionPrecompileVerificationFailure:
       case SolanaErrorCode.jsonRpcServerErrorUnsupportedTransactionVersion:
         errorContext = {'__serverMessage': message};
+
       case _:
         if (data is Map<String, Object?>) {
           errorContext = data;
@@ -76,6 +79,7 @@ SolanaError getSolanaErrorFromJsonRpcError(Object? putativeErrorResponse) {
           putativeErrorResponse['message'] is String
       ? putativeErrorResponse['message']! as String
       : 'Malformed JSON-RPC error with no message attribute';
+
   return SolanaError(SolanaErrorCode.malformedJsonRpcError, {
     'error': putativeErrorResponse,
     'message': message,
@@ -108,5 +112,6 @@ bool _isRpcErrorResponse(Object? value) {
   if (value is! Map<String, Object?>) return false;
   final code = value['code'];
   final message = value['message'];
+
   return (code is num || code is BigInt) && message is String;
 }

@@ -42,11 +42,13 @@ void main() {
       final modifying = MockTransactionModifyingSigner(_addressA)
         ..modifyAndSignTransactionsMock = (transactions, config) async {
           order.add('modify');
+
           return transactions;
         };
       final partial = MockTransactionPartialSigner(_addressB)
         ..signTransactionsMock = (transactions, config) async {
           order.add('partial');
+
           return transactions
               .map(
                 (_) => <Address, SignatureBytes>{

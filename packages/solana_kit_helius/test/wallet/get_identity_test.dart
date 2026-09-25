@@ -14,6 +14,7 @@ void main() {
           expect(request.method, 'GET');
           expect(request.url.path, '/v0/addresses/wallet-addr/identity');
           expect(request.url.queryParameters['api-key'], isNotEmpty);
+
           return http.Response(
             jsonEncode(<String, Object?>{
               'name': 'Alice',

@@ -20,6 +20,7 @@ void main() {
         expect(body['method'], 'getCompressionSignaturesForAddress');
         expect(body['jsonrpc'], '2.0');
         expect(body['params'], {'address': 'test-address'});
+
         return http.Response(
           jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': mockResult}),
           200,

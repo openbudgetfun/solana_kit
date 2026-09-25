@@ -20,21 +20,26 @@ class BaseXLookup {
         'a base-X alphabet must contain at least two characters',
       );
     }
+
     base = codeUnits.length;
     zeroCharacter = String.fromCharCode(codeUnits.first);
 
     if (codeUnits.every((unit) => unit < _denseLimit)) {
       final dense = List<int>.filled(_denseLimit, -1);
+
       for (var i = 0; i < codeUnits.length; i++) {
         // First occurrence wins, matching `alphabet.indexOf`.
         if (dense[codeUnits[i]] == -1) dense[codeUnits[i]] = i;
       }
+
       _dense = dense;
     } else {
       final sparse = <int, int>{};
+
       for (var i = 0; i < codeUnits.length; i++) {
         sparse.putIfAbsent(codeUnits[i], () => i);
       }
+
       _sparse = sparse;
     }
   }
@@ -84,6 +89,7 @@ class BaseXLookup {
     if (_dense case final dense?) {
       return codeUnit < _denseLimit ? dense[codeUnit] : -1;
     }
+
     return _sparse![codeUnit] ?? -1;
   }
 }
@@ -97,12 +103,16 @@ class BaseXLookup {
 /// retaining everything.
 BaseXLookup baseXLookupFor(String alphabet) {
   final cached = _lookups[alphabet];
+
   if (cached != null) return cached;
   final lookup = BaseXLookup(alphabet);
+
   if (_lookups.length >= _lookupCacheLimit) {
     _lookups.clear();
   }
+
   _lookups[alphabet] = lookup;
+
   return lookup;
 }
 

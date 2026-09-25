@@ -64,10 +64,12 @@ void main() {
             )
             .then<String>((_) {
               completer.complete('resolved');
+
               return 'resolved';
             })
             .catchError((Object error) {
               completer.complete('rejected');
+
               return 'rejected';
             }),
       );
@@ -131,7 +133,6 @@ void main() {
     test('continues to pend when the nonce value returned by the '
         'account subscription is the same as expected', () async {
       // Don't resolve the one-shot query.
-
       final completer = Completer<String>();
       unawaited(
         getNonceInvalidationPromise(
@@ -142,10 +143,12 @@ void main() {
             )
             .then<String>((_) {
               completer.complete('resolved');
+
               return 'resolved';
             })
             .catchError((Object error) {
               completer.complete('rejected');
+
               return 'rejected';
             }),
       );
@@ -207,6 +210,7 @@ void main() {
                 required commitment,
               }) {
                 capturedCancellationToken = abortSignal;
+
                 return Completer<NonceAccountInfo?>().future;
               },
           onAccountNotification:
@@ -256,6 +260,7 @@ void main() {
                 required commitment,
               }) async {
                 capturedCommitment = commitment;
+
                 return null;
               },
           onAccountNotification:

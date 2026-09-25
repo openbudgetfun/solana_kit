@@ -32,6 +32,8 @@ Future<Wallet?> showAdaptiveWalletPicker({
   WalletTileBuilder? tileBuilder,
 }) {
   final resolved = style ?? defaultWalletUiStyle(defaultTargetPlatform);
+
+
   return switch (resolved) {
     WalletUiStyle.material => showMaterialWalletPicker(
       context: context,
@@ -84,6 +86,8 @@ class AdaptiveWalletButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final resolved = style ?? defaultWalletUiStyle(defaultTargetPlatform);
+
+
     return switch (resolved) {
       WalletUiStyle.material => MaterialWalletButton(
         controller: controller,

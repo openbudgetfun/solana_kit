@@ -144,6 +144,7 @@ http.Client _checkoutClient({
         headers: {'content-type': 'application/json'},
       );
     }
+
     return http.Response('{"error":"not found"}', 404);
   });
 }
@@ -161,6 +162,7 @@ JsonRpcClient _rpcClient() {
           headers: {'content-type': 'application/json'},
         );
       }
+
       final body = jsonDecode(request.body) as Map<String, Object?>;
       final method = body['method'];
       if (method == 'getLatestBlockhash') {
@@ -186,6 +188,7 @@ JsonRpcClient _rpcClient() {
           headers: {'content-type': 'application/json'},
         );
       }
+
       return http.Response('{"error":"unknown"}', 500);
     }),
   );
@@ -475,6 +478,7 @@ void main() {
       final rest = _restClient();
       List<Map<String, Object?>> projects() {
         projectCalls++;
+
         return projectCalls <= 2 ? [] : [_project('p-1')];
       }
 

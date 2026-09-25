@@ -48,10 +48,12 @@ Encoder<OffchainMessageV1> getOffchainMessageV1Encoder() {
       if (offchainMessage.content.isEmpty) {
         throw SolanaError(SolanaErrorCode.offchainMessageMessageMustBeNonEmpty);
       }
+
       final preamble = <String, Object?>{
         'version': offchainMessage.version,
         'requiredSignatories': offchainMessage.requiredSignatories,
       };
+
       return [preamble, offchainMessage.content];
     },
   );

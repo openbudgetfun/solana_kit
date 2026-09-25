@@ -40,6 +40,7 @@ export class DartImportMap {
    */
   add(module: string): this {
     this._imports.add(module);
+
     return this;
   }
 
@@ -50,6 +51,7 @@ export class DartImportMap {
     for (const imp of other._imports) {
       this._imports.add(imp);
     }
+
     return this;
   }
 
@@ -78,14 +80,17 @@ export class DartImportMap {
       // Check internal map first (generated cross-references)
       if (module in internalMap) {
         const uri = internalMap[module];
+
         if (uri) {
           uris.add(uri);
         }
       }
+
       // Then external package map
       else if (module in DART_EXTERNAL_PACKAGE_MAP) {
         uris.add(DART_EXTERNAL_PACKAGE_MAP[module]);
       }
+
       // Finally, accept explicit Dart URIs and relative Dart paths.
       else if (isRawDartImportUri(module)) {
         uris.add(module);
@@ -108,6 +113,7 @@ export class DartImportMap {
    */
   toString(internalMap: Record<string, string> = {}): string {
     const resolved = this.resolve(internalMap);
+
     if (resolved.length === 0) return "";
 
     const lines: string[] = [];
@@ -124,6 +130,7 @@ export class DartImportMap {
       if (lastPrefix && lastPrefix !== prefix) {
         lines.push("");
       }
+
       lastPrefix = prefix;
 
       lines.push(`import '${uri}';`);

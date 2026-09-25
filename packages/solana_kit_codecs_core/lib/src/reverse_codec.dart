@@ -9,6 +9,7 @@ import 'package:solana_kit_codecs_core/src/combine_codec.dart';
 /// fixed-size range.
 FixedSizeEncoder<TFrom> reverseEncoder<TFrom>(FixedSizeEncoder<TFrom> encoder) {
   assertIsFixedSize(encoder);
+
   return FixedSizeEncoder<TFrom>(
     fixedSize: encoder.fixedSize,
     write: (value, bytes, offset) {
@@ -19,6 +20,7 @@ FixedSizeEncoder<TFrom> reverseEncoder<TFrom>(FixedSizeEncoder<TFrom> encoder) {
         offset, // sourceOffset
         offset + encoder.fixedSize, // sourceLength
       );
+
       return newOffset;
     },
   );
@@ -30,6 +32,7 @@ FixedSizeEncoder<TFrom> reverseEncoder<TFrom>(FixedSizeEncoder<TFrom> encoder) {
 /// decoding.
 FixedSizeDecoder<TTo> reverseDecoder<TTo>(FixedSizeDecoder<TTo> decoder) {
   assertIsFixedSize(decoder);
+
   return FixedSizeDecoder<TTo>(
     fixedSize: decoder.fixedSize,
     read: (bytes, offset) {
@@ -40,6 +43,7 @@ FixedSizeDecoder<TTo> reverseDecoder<TTo>(FixedSizeDecoder<TTo> decoder) {
         offset, // sourceOffset
         offset + decoder.fixedSize, // sourceLength
       );
+
       return decoder.read(reversedBytes, offset);
     },
   );
@@ -75,12 +79,14 @@ void _copySourceToTargetInReverse(
 ]) {
   var left = sourceStart;
   var right = sourceEnd;
+
   while (left < --right) {
     final leftValue = source[left];
     target[left + targetOffset] = source[right];
     target[right + targetOffset] = leftValue;
     left++;
   }
+
   if (left == right) {
     target[left + targetOffset] = source[left];
   }

@@ -107,6 +107,7 @@ PreconfNotification decodePreconfFrame(Uint8List bytes) {
   }
 
   final version = bytes[0];
+
   if (version != preconfWireVersion) {
     throw StateError(
       'unsupported preconf wire version $version (this client understands '
@@ -211,15 +212,20 @@ class PreconfWsClient {
   void _terminate(StateError error, {bool notify = true}) {
     if (_failure != null) return;
     _failure = error;
+
     if (!_ready.isCompleted) _ready.complete();
+
     for (final completer in _pending.values) {
       completer.completeError(error);
     }
+
     _pending.clear();
+
     for (final controller in _controllers.values) {
       if (notify) controller.addError(error);
       unawaited(controller.close());
     }
+
     _controllers.clear();
     close();
   }
@@ -227,6 +233,7 @@ class PreconfWsClient {
   void _onMessage(Object? message) {
     try {
       _handleMessage(message);
+
     } on Object {
       _terminate(StateError('Invalid preconf WebSocket message'));
     }
@@ -236,19 +243,25 @@ class PreconfWsClient {
     if (message is List<int>) {
       // Binary frames carry pre-confirmation notifications.
       final notification = decodePreconfFrame(Uint8List.fromList(message));
+
       for (final controller in _controllers.values) {
         controller.add(notification);
       }
+
       return;
     }
+
     if (message is String) {
       // Text frames are JSON-RPC 2.0 subscribe/unsubscribe responses.
       final response = jsonDecode(message) as Map<String, Object?>;
       final id = response['id'];
+
       if (id is int) {
         final completer = _pending.remove(id);
+
         if (completer != null) {
           final error = response['error'];
+
           if (error != null) {
             completer.completeError(StateError('preconf RPC error: $error'));
           } else {
@@ -282,12 +295,14 @@ class PreconfWsClient {
   Future<bool> preconfUnsubscribe(int subscriptionId) async {
     final result = await _call('preconfUnsubscribe', [subscriptionId]);
     unawaited(_controllers.remove(subscriptionId)?.close());
+
     return result == true;
   }
 
   Future<Object?> _call(String method, List<Object?> params) async {
     await _ready.future;
     final failure = _failure;
+
     if (failure != null) throw failure;
 
     final id = _nextId++;
@@ -302,12 +317,14 @@ class PreconfWsClient {
           'params': params,
         }),
       );
+
     } on Object {
       _pending.remove(id);
       final error = StateError('preconf WebSocket send failed');
       _terminate(error);
       throw error;
     }
+
     return completer.future;
   }
 
@@ -326,6 +343,7 @@ class PreconfWsClient {
     try {
       await _streamSubscription?.cancel();
       await _channel.sink.close();
+
     } on Object {
       // Pending calls already have a credential-free terminal error.
     }

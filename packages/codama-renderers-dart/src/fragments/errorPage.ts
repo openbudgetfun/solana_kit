@@ -20,6 +20,7 @@ export function getErrorPageFragment(
   scope: RenderScope,
 ): Fragment {
   const errors = programNode.errors ?? [];
+
   if (errors.length === 0) return emptyFragment();
 
   const programName = programNode.name as string;
@@ -37,6 +38,7 @@ export function getErrorPageFragment(
         ? err.docs.map(toDartDocComment).join("\n") + "\n"
         : "";
       const message = err.message ? `${toDartDocComment(`Message: "${err.message}"`)}\n` : "";
+
       return `${docs}${message}const int ${constName} = ${hexCode}; // ${err.code}`;
     })
     .join("\n\n");
@@ -49,6 +51,7 @@ export function getErrorPageFragment(
         err.name as string,
       );
       const message = err.message ?? err.name as string;
+
       return `    ${constName}: ${toDartStringLiteral(message)},`;
     })
     .join("\n");
@@ -59,23 +62,12 @@ export function getErrorPageFragment(
   return fragment`// Auto-generated. Do not edit.
 // ignore_for_file: type=lint, constant_identifier_names
 
-/// Error codes for the ${fragmentFromString(pascalCase(programName))} program.
-
-${fragmentFromString(errorConstants)}
-
 /// Map of error codes to human-readable messages.
 const Map<int, String> _${fragmentFromString(camelCase(programName))}ErrorMessages = {
-${fragmentFromString(messageEntries)}
 };
 
-/// Get the error message for a ${fragmentFromString(pascalCase(programName))} program error code.
-String? ${fragmentFromString(errorMessageFnName)}(int code) {
-  return _${fragmentFromString(camelCase(programName))}ErrorMessages[code];
 }
 
-/// Check if an error code belongs to the ${fragmentFromString(pascalCase(programName))} program.
-bool ${fragmentFromString(isErrorFnName)}(int code) {
-  return _${fragmentFromString(camelCase(programName))}ErrorMessages.containsKey(code);
 }`;
 }
 

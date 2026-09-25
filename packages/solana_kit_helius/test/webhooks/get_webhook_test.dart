@@ -21,6 +21,7 @@ void main() {
         expect(request.method, 'GET');
         expect(request.url.path, '/v0/webhooks/wh-1');
         expect(request.url.queryParameters['api-key'], 'test-key');
+
         return http.Response(jsonEncode(mockWebhook), 200);
       });
 

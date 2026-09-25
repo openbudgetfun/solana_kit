@@ -33,6 +33,7 @@ List<AddressTableLookup> getCompiledAddressTableLookups(
 
   return keys.map((key) {
     final entry = index[key]!;
+
     return AddressTableLookup(
       lookupTableAddress: Address(key),
       writableIndexes: entry.writableIndexes,

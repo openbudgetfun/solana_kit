@@ -65,6 +65,7 @@ Address getAssociatedTokenAddressSync({
     ),
     programAddress: programAddress,
   );
+
   return address;
 }
 
@@ -89,6 +90,7 @@ Future<(Address, int)> findAssociatedTokenPda({
     getAddressEncoder().encode(seeds.tokenProgram),
     getAddressEncoder().encode(seeds.mint),
   ];
+
   return _findProgramDerivedAddressSync(
     programAddress: programAddress,
     seeds: seedValues,
@@ -100,6 +102,7 @@ Future<(Address, int)> findAssociatedTokenPda({
   required List<Object> seeds,
 }) {
   var bumpSeed = 255;
+
   while (bumpSeed >= 0) {
     try {
       final addr = _createProgramDerivedAddressSync(
@@ -109,7 +112,9 @@ Future<(Address, int)> findAssociatedTokenPda({
           Uint8List.fromList([bumpSeed]),
         ],
       );
+
       return (addr, bumpSeed);
+
     } on SolanaError catch (error) {
       if (isSolanaError(
         error,
@@ -137,11 +142,14 @@ Address _createProgramDerivedAddressSync({
   }
 
   final seedBytesList = <int>[];
+
   for (var i = 0; i < seeds.length; i++) {
     final seed = seeds[i];
     final Uint8List seedBytes;
+
     if (seed is Uint8List) {
       seedBytes = seed;
+
     } else if (seed is String) {
       seedBytes = Uint8List.fromList(utf8.encode(seed));
     } else {

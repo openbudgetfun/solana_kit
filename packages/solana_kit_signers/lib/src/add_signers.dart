@@ -36,6 +36,7 @@ Instruction addSignersToInstruction(
     if (account is AccountSignerMeta || signer == null) {
       return account;
     }
+
     return AccountSignerMeta(
       address: account.address,
       role: upgradeRoleToSigner(account.role),

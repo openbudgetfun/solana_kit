@@ -200,6 +200,7 @@ class WalletAvatar extends StatelessWidget {
             semanticLabel: semanticLabel,
             errorBuilder: (context, error, stackTrace) => buildFallback(),
           );
+
     return SizedBox.square(
       dimension: size,
       child: ClipRRect(
@@ -271,6 +272,7 @@ class WalletPickerContent extends StatelessWidget {
                 listenable: controller,
                 builder: (context, child) {
                   final state = controller.state;
+
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -337,6 +339,7 @@ class WalletPickerContent extends StatelessWidget {
   ) {
     final tokens = WalletUiTheme.of(context);
     final columns = constraints.maxWidth >= tokens.compactBreakpoint ? 2 : 1;
+
     return GridView.builder(
       shrinkWrap: true,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -348,6 +351,7 @@ class WalletPickerContent extends StatelessWidget {
       itemCount: wallets.length,
       itemBuilder: (context, index) {
         final wallet = wallets[index];
+
         return KeyedSubtree(
           key: WalletUiKeys.walletTile(index),
           child: (tileBuilder ?? _tile)(
@@ -398,6 +402,7 @@ class WalletPickerContent extends StatelessWidget {
 
   Widget _empty(BuildContext context) {
     final tokens = WalletUiTheme.of(context);
+
     return Semantics(
       key: WalletUiKeys.emptyState,
       liveRegion: true,
@@ -448,6 +453,7 @@ class WalletPickerContent extends StatelessWidget {
     VoidCallback onTap,
   ) {
     final tokens = WalletUiTheme.of(context);
+
     return Semantics(
       button: true,
       label: 'Connect ${wallet.name}',

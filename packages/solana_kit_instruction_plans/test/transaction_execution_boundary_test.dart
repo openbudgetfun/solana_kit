@@ -99,6 +99,7 @@ void main() {
           signers: <Object>[feePayer],
           sendSignedTransaction: (transaction) async {
             sentTransactions.add(transaction);
+
             return getSignatureFromTransaction(transaction);
           },
         ),

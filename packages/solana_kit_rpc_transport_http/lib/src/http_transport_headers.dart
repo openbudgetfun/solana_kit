@@ -44,6 +44,7 @@ const _forbiddenHeaders = <String, bool>{
 void assertIsAllowedHttpRequestHeaders(Map<String, String> headers) {
   final badHeaders = headers.keys.where((headerName) {
     final lowercased = headerName.toLowerCase();
+
     return (_disallowedHeaders[lowercased] ?? false) ||
         (_forbiddenHeaders[lowercased] ?? false) ||
         lowercased.startsWith('proxy-') ||

@@ -60,6 +60,7 @@ Encoder<ProgramStateAccount> getProgramStateAccountEncoder() =>
           bytes,
           cursor,
         );
+
         return getLoaderV4StatusEncoder().write(value.status, bytes, cursor);
       },
     );
@@ -75,6 +76,7 @@ Decoder<ProgramStateAccount> getProgramStateAccountDecoder() =>
         cursor = authority.$2;
         final status = getLoaderV4StatusDecoder().read(bytes, cursor);
         cursor = status.$2;
+
         return (
           ProgramStateAccount(
             slot: slot.$1,

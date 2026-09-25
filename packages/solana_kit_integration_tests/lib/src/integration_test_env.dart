@@ -94,6 +94,7 @@ class IntegrationTestEnv {
     );
     final payer = generateKeyPairSigner();
     await surfnet.fundSol(payer.address, payerLamports);
+
     return IntegrationTestEnv._(
       rpc: rpc,
       surfnet: surfnet,
@@ -109,6 +110,7 @@ class IntegrationTestEnv {
   /// Returns a blockhash-based lifetime constraint using the latest blockhash.
   Future<BlockhashLifetimeConstraint> recentBlockhashLifetime() async {
     final result = await rpc.getLatestBlockhashValue().send();
+
     return BlockhashLifetimeConstraint(
       blockhash: result.value.blockhash.value,
       lastValidBlockHeight: result.value.lastValidBlockHeight,
@@ -142,6 +144,7 @@ class IntegrationTestEnv {
       signatures: signed.signatures,
       lifetimeConstraint: compiled.lifetimeConstraint,
     );
+
     return sendAndConfirmTransaction(rpc: rpc, transaction: signedWithLifetime);
   }
 
@@ -185,6 +188,7 @@ class IntegrationTestEnv {
       signatures: signed.signatures,
       lifetimeConstraint: compiled.lifetimeConstraint,
     );
+
     return sendAndConfirmTransaction(rpc: rpc, transaction: signedWithLifetime);
   }
 
@@ -215,6 +219,7 @@ class IntegrationTestEnv {
     );
     final signed = await signTransactionMessageWithSigners(message);
     final wire = getBase64EncodedWireTransaction(signed);
+
     return (wire: wire, byteLength: base64Decode(wire).length);
   }
 
@@ -256,10 +261,13 @@ class IntegrationTestEnv {
   /// [signature], or an empty list when unavailable.
   Future<List<String>> transactionLogMessages(Signature signature) async {
     final transaction = await fetchTransaction(signature);
+
     if (transaction == null) return const [];
     final meta = transaction['meta'];
+
     if (meta is! Map<String, Object?>) return const [];
     final logs = meta['logMessages'];
+
     if (logs is! List) return const [];
     return logs.whereType<String>().toList();
   }
@@ -273,6 +281,7 @@ class IntegrationTestEnv {
 String resolveWorkspaceArtifactPath(String relativePath) {
   if (File(relativePath).existsSync()) return relativePath;
   final fromPackage = '../../$relativePath';
+
   if (File(fromPackage).existsSync()) return fromPackage;
   return relativePath;
 }

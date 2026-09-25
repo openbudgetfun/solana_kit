@@ -65,6 +65,7 @@ class KeyPair {
     if (_isDisposed) {
       throw StateError('KeyPair has been disposed');
     }
+
     return Uint8List.fromList(_privateKey);
   }
 
@@ -76,6 +77,7 @@ class KeyPair {
     if (_isDisposed) {
       throw StateError('KeyPair has been disposed');
     }
+
     return Uint8List.fromList(_publicKey);
   }
 
@@ -104,6 +106,7 @@ KeyPair generateKeyPair() {
   final keyPair = ed.generateKey();
   final seed = keyPair.privateKey.bytes.sublist(0, 32);
   final publicKeyBytes = keyPair.publicKey.bytes;
+
   return KeyPair(
     privateKey: Uint8List.fromList(seed),
     publicKey: Uint8List.fromList(publicKeyBytes),
@@ -128,16 +131,19 @@ Future<List<KeyPair>> grindKeyPairs({
   int concurrency = 32,
 }) async {
   final matcher = _createGrindMatcher(matches);
+
   if (amount <= 0) return <KeyPair>[];
 
   final found = <KeyPair>[];
   final batchSize = concurrency <= 0 ? 1 : concurrency;
+
   while (found.length < amount) {
     for (var i = 0; i < batchSize && found.length < amount; i++) {
       final keyPair = generateKeyPair();
       var retained = false;
       try {
         final addr = getAddressFromPublicKey(keyPair.publicKey).value;
+
         if (matcher(addr)) {
           found.add(keyPair);
           retained = true;
@@ -148,6 +154,7 @@ Future<List<KeyPair>> grindKeyPairs({
         if (!retained) keyPair.dispose();
       }
     }
+
     await Future<void>.delayed(Duration.zero);
   }
 
@@ -163,13 +170,16 @@ Future<KeyPair> grindKeyPair({
     matches: matches,
     concurrency: concurrency,
   );
+
   return keyPairs.single;
 }
 
 GrindKeyPairPredicate _createGrindMatcher(Object matches) {
   if (matches is GrindKeyPairPredicate) return matches;
+
   if (matches is RegExp) {
     _assertGrindRegexIsValid(matches);
+
     return matches.hasMatch;
   }
 
@@ -183,6 +193,7 @@ void _assertGrindRegexIsValid(RegExp regex) {
 
   for (final rune in stripped.runes) {
     final character = String.fromCharCode(rune);
+
     if (!_isBase58Character(character, caseSensitive: regex.isCaseSensitive)) {
       throw SolanaError(SolanaErrorCode.keysInvalidBase58InGrindRegex, {
         'character': character,
@@ -225,6 +236,7 @@ KeyPair createKeyPairFromBytes(Uint8List bytes) {
   final testData = Uint8List.fromList([0, 1, 2, 3]);
   final sig = signBytes(privateKeyBytes, testData);
   final isValid = verifySignature(derivedPublicKey, sig, testData);
+
   if (!isValid) {
     throw SolanaError(SolanaErrorCode.keysPublicKeyMustMatchPrivateKey);
   }
@@ -250,6 +262,7 @@ KeyPair createKeyPairFromBytes(Uint8List bytes) {
 KeyPair createKeyPairFromPrivateKeyBytes(Uint8List bytes) {
   assertIsPrivateKey(bytes);
   final publicKeyBytes = getPublicKeyFromPrivateKey(bytes);
+
   return KeyPair(privateKey: bytes, publicKey: publicKeyBytes);
 }
 
@@ -276,6 +289,7 @@ Future<void> writeKeyPair(
   try {
     final file = File(path);
     final parent = file.parent;
+
     if (parent.path.isNotEmpty) {
       await parent.create(recursive: true);
     }
@@ -290,6 +304,7 @@ Future<void> writeKeyPair(
           '700',
           stagingDirectory.path,
         ]);
+
         if (chmod.exitCode != 0) {
           throw FileSystemException(
             'Failed to restrict key pair staging directory permissions',
@@ -303,6 +318,7 @@ Future<void> writeKeyPair(
 
       if (!Platform.isWindows) {
         final chmod = await Process.run('chmod', ['600', stagedFile.path]);
+
         if (chmod.exitCode != 0) {
           throw FileSystemException(
             'Failed to restrict key pair file permissions',
@@ -320,12 +336,14 @@ Future<void> writeKeyPair(
 
       if (unsafelyOverwriteExistingKeyPair) {
         final type = FileSystemEntity.typeSync(path, followLinks: false);
+
         if (type == FileSystemEntityType.link) {
           throw FileSystemException(
             'Refusing to overwrite a symbolic link',
             path,
           );
         }
+
         await file.create();
       } else {
         // Reserve the destination atomically, preserving no-overwrite
@@ -355,8 +373,10 @@ Future<void> writeKeyPair(
 bool constantTimeEqual(Uint8List a, Uint8List b) {
   if (a.length != b.length) return false;
   var result = 0;
+
   for (var i = 0; i < a.length; i++) {
     result |= a[i] ^ b[i];
   }
+
   return result == 0;
 }

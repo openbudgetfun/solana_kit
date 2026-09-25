@@ -78,6 +78,7 @@ Uint8List buildPriceAccount({
     setU32(base + 80, 1); // latest status
     setU64(base + 88, 999); // latest publish slot
   }
+
   return bytes;
 }
 
@@ -235,6 +236,7 @@ void main() {
       if (partial) {
         bytes[cursor++] = 5; // num signatures
       }
+
       bytes.setAll(cursor, List.filled(32, feedIdPattern)); // feed id
       cursor += 32;
       view.setInt64(cursor, 3000123456789, Endian.little); // price
@@ -252,6 +254,7 @@ void main() {
       view.setUint64(cursor, 48650000, Endian.little); // ema conf
       cursor += 8;
       view.setUint64(cursor, 4242, Endian.little); // posted slot
+
       return bytes;
     }
 

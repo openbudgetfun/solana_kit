@@ -90,6 +90,7 @@ void main() {
         final params = body['params']! as List<Object?>;
         final signatures = params[0]! as List<Object?>;
         expect(signatures, contains('sig-poll'));
+
         return http.Response(
           jsonEncode(<String, Object?>{
             'jsonrpc': '2.0',

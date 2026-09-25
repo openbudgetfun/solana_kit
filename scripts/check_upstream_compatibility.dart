@@ -16,11 +16,13 @@ Future<void> main(List<String> args) async {
     File('readme.md'),
     RegExp('Latest supported `@solana/kit` version: `($_versionPattern)`'),
   );
+
   if (trackedVersion == null) {
     stderr.writeln(
       'Failed to determine the tracked @solana/kit version from readme.md.',
     );
     exitCode = 1;
+
     return;
   }
 
@@ -32,6 +34,7 @@ Future<void> main(List<String> args) async {
   ];
 
   var failed = false;
+
   for (final path in versionFiles) {
     final file = File(path);
     final latestSupported = _extractFirstSemver(
@@ -76,8 +79,10 @@ Future<void> main(List<String> args) async {
       'https://github.com/anza-xyz/kit',
       upstreamDirectory.path,
     ]);
+
     if (code != 0) {
       exitCode = code;
+
       return;
     }
   }
@@ -87,6 +92,7 @@ Future<void> main(List<String> args) async {
       upstreamPackageJson.readAsStringSync(),
     ) as Map<String, Object?>;
     final upstreamVersion = json['version'] as String?;
+
     if (upstreamVersion != null && upstreamVersion != trackedVersion) {
       stderr.writeln(
         'NOTICE: upstream @solana/kit is currently $upstreamVersion while this workspace tracks $trackedVersion.',
@@ -106,6 +112,7 @@ Future<void> main(List<String> args) async {
 
   if (failed) {
     exitCode = 1;
+
     return;
   }
 
@@ -116,6 +123,7 @@ Future<void> main(List<String> args) async {
 
 String? _extractFirstSemver(File file, RegExp pattern) {
   final match = pattern.firstMatch(file.readAsStringSync());
+
   return match?.group(1);
 }
 
@@ -125,5 +133,6 @@ Future<int> _inherit(String executable, List<String> arguments) async {
     arguments,
     mode: ProcessStartMode.inheritStdio,
   );
+
   return process.exitCode;
 }

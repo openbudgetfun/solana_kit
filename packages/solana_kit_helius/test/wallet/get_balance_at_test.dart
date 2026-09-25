@@ -16,6 +16,7 @@ void main() {
         expect(request.url.queryParameters['mint'], 'mint-xyz');
         expect(request.url.queryParameters['time'], '1736548800');
         expect(request.url.queryParameters.containsKey('slot'), isFalse);
+
         return http.Response(
           jsonEncode(<String, Object?>{
             'wallet': 'abc123',
@@ -74,6 +75,7 @@ void main() {
         expect(request.url.queryParameters['datetime'], '2025-01-10 19:20:00');
         expect(request.url.queryParameters.containsKey('time'), isFalse);
         expect(request.url.queryParameters.containsKey('slot'), isFalse);
+
         return http.Response(
           jsonEncode(<String, Object?>{
             'wallet': 'abc123',
@@ -158,6 +160,7 @@ void main() {
         expect(request.url.queryParameters['api-key'], 'test-key');
         expect(request.url.queryParameters['mint'], 'mint-xyz');
         expect(request.url.queryParameters['slot'], '300000001');
+
         return http.Response(
           jsonEncode(<String, Object?>{
             'wallet': 'abc123',

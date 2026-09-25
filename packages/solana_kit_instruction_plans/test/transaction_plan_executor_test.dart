@@ -126,6 +126,7 @@ void main() {
             if (callCount == 1) {
               throw Exception('first transaction failed');
             }
+
             return Signature('sig'.padRight(64, '0')).toString();
           },
         ),
@@ -204,6 +205,7 @@ void main() {
           executeTransactionMessage: (context, msg) async {
             capturedContext = context;
             context['myKey'] = 'myValue';
+
             return Signature('sig'.padRight(64, '0')).toString();
           },
         ),
@@ -256,6 +258,7 @@ void main() {
               if (callCount == 1) {
                 throw Exception('first transaction failed');
               }
+
               return Signature('sig'.padRight(64, '0')).toString();
             },
           ),
@@ -365,6 +368,7 @@ void main() {
             executeTransactionMessage: (context, msg) async {
               if (identical(msg, messageA)) throw errorA;
               if (identical(msg, messageC)) throw errorC;
+
               return {
                 'signature': Signature('sig-b'.padRight(64, '0')),
               };

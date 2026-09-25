@@ -79,8 +79,10 @@ final class _GetMinimumBalanceClient implements ClientWithGetMinimumBalance {
           )
           .send();
       final lamportsPerByte = headerBalance ~/ BigInt.from(baseAccountSize);
+
       return lamportsPerByte * BigInt.from(space);
     }
+
     return _rpc
         .request<BigInt>(
           'getMinimumBalanceForRentExemption',
@@ -101,11 +103,13 @@ final class _FetchAccountsClient implements ClientWithFetchAccounts {
     FetchAccountConfig? config,
   }) async {
     if (addresses.isEmpty) return [];
+
     if (addresses.length == 1) {
       return [
         await fetchEncodedAccount(_rpc, addresses[0], config: config),
       ];
     }
+
     return fetchEncodedAccounts(_rpc, addresses, config: config);
   }
 }

@@ -28,6 +28,7 @@ void main() {
           'requestId': 'request-1',
           'lastValidBlockHeight': '1000',
         });
+
         return http.Response(
           '{"status":"Success","code":0,"signature":"signature"}',
           200,
@@ -60,6 +61,7 @@ void main() {
         final config = JupiterConfig(
           client: MockClient((request) async {
             requests++;
+
             return http.Response('{}', 200);
           }),
         );
@@ -87,6 +89,7 @@ void main() {
       client: MockClient((request) async {
         expect(request.url.path, '/tokens/v2/tag');
         expect(request.url.queryParameters, {'query': 'verified'});
+
         return http.Response('[]', 200);
       }),
     );
@@ -99,6 +102,7 @@ void main() {
       client: MockClient((request) async {
         expect(request.url.path, '/tokens/v2/toptrending/24h');
         expect(request.url.queryParameters, {'limit': '10'});
+
         return http.Response('[]', 200);
       }),
     );
@@ -154,6 +158,7 @@ void main() {
       client: MockClient((request) async {
         paths.add(request.url.path);
         expect(request.url.queryParameters, isEmpty);
+
         return http.Response('[]', 200);
       }),
     );
@@ -162,6 +167,7 @@ void main() {
     for (final interval in ['5m', '1h', '6h', '24h']) {
       await client.tokens.category('toptraded', interval: interval);
     }
+
     expect(paths, [
       for (final interval in ['5m', '1h', '6h', '24h'])
         '/tokens/v2/toptraded/$interval',
@@ -175,6 +181,7 @@ void main() {
       final config = JupiterConfig(
         client: MockClient((request) async {
           requests++;
+
           return http.Response('[]', 200);
         }),
       );
@@ -194,6 +201,7 @@ void main() {
           throwsArgumentError,
         );
       }
+
       expect(requests, 0);
     },
   );

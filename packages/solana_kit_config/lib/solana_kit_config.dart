@@ -47,7 +47,6 @@
 ///
 /// <!-- {/programErrorHandlingSection} -->
 ///
-
 library;
 
 export 'src/generated/config.dart';

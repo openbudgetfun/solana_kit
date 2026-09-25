@@ -11,5 +11,6 @@ Future<List<HeliusProject>> authListProjects(
 ) async {
   final result = await restClient.get('/v0/auth/projects?api-key=$apiKey');
   final list = result! as List<Object?>;
+
   return list.cast<Map<String, Object?>>().map(HeliusProject.fromJson).toList();
 }

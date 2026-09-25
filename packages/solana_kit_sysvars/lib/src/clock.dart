@@ -174,5 +174,6 @@ Future<SysvarClock> fetchSysvarClock(
     (account as ExistingAccount<Uint8List>).account,
     getSysvarClockDecoder(),
   );
+
   return decoded.data;
 }

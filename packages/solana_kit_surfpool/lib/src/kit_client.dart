@@ -65,6 +65,7 @@ class SurfpoolClient {
           getMinimumBalanceForRentExemptionParams(space),
         )
         .send();
+
     if (response is BigInt) return response;
     // Defensive: the default response transformer upcasts numbers to BigInt.
     if (response is int) return BigInt.from(response); // coverage:ignore-line
@@ -114,6 +115,7 @@ Future<SurfpoolClient> createSurfpoolClient({
   );
   try {
     return _wireClient(surfnet);
+
   } catch (_) {
     // Defensive cleanup: only reachable if wiring the RPC clients fails,
     // which cannot happen with a successfully started Surfnet.
@@ -138,6 +140,7 @@ SurfpoolClient connectSurfpoolClient({
     wsUrl: wsUrl,
     payer: _keypairInfoFromSigner(payer),
   );
+
   return _wireClient(surfnet, payer: payer);
 }
 
@@ -153,6 +156,7 @@ SurfpoolClient _wireClient(Surfnet surfnet, {KeyPairSigner? payer}) {
   );
   final effectivePayer =
       payer ?? createKeyPairSignerFromBytes(surfnet.payerSecretKey);
+
   return SurfpoolClient._(
     surfnet: surfnet,
     rpc: rpc,
@@ -169,5 +173,6 @@ KeypairInfo _keypairInfoFromSigner(KeyPairSigner signer) {
     ...keyPair.privateKey,
     ...keyPair.publicKey,
   ]);
+
   return KeypairInfo(publicKey: signer.address, secretKey: secretKey);
 }

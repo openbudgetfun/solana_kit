@@ -16,7 +16,9 @@ Future<Wallet?> showCupertinoWalletPicker({
   Future<void> select(BuildContext routeContext, Wallet wallet) async {
     try {
       await controller.connect(wallet);
+
       if (routeContext.mounted) Navigator.of(routeContext).pop(wallet);
+
     } on Object {
       // The controller exposes the error and the picker stays open for retry.
     }
@@ -42,6 +44,7 @@ Future<Wallet?> showCupertinoWalletPicker({
       ),
     );
   }
+
   return showCupertinoDialog<Wallet>(
     context: context,
     builder: (routeContext) => Center(
@@ -104,6 +107,7 @@ class CupertinoWalletButton extends StatelessWidget {
             state.connectionStatus == WalletConnectionStatus.connecting ||
             state.connectionStatus == WalletConnectionStatus.disconnecting;
         final onPressed = busy ? null : () => _pressed(context, state);
+
         return KeyedSubtree(
           key: WalletUiKeys.connectButton,
           child:
@@ -121,6 +125,7 @@ class CupertinoWalletButton extends StatelessWidget {
 
   String _label(BuildContext context, WalletAdapterState state) {
     final account = state.selectedAccount;
+
     return account == null
         ? WalletUiTheme.of(context).connectLabel
         : account.label ?? compactWalletAddress(account.address);
@@ -138,8 +143,10 @@ class CupertinoWalletButton extends StatelessWidget {
         headerBuilder: headerBuilder,
         tileBuilder: tileBuilder,
       );
+
       return;
     }
+
     await showCupertinoModalPopup<void>(
       context: context,
       builder: (routeContext) => CupertinoActionSheet(
@@ -166,6 +173,7 @@ class CupertinoWalletButton extends StatelessWidget {
 WalletUiPalette _cupertinoPalette(BuildContext context) {
   final brightness = CupertinoTheme.brightnessOf(context);
   final dark = brightness == Brightness.dark;
+
   return WalletUiPalette(
     accent: CupertinoTheme.of(context).primaryColor,
     foreground: CupertinoColors.label.resolveFrom(context),

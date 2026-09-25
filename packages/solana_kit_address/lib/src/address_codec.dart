@@ -17,8 +17,10 @@ FixedSizeEncoder<Address> getAddressEncoder() {
     addr,
   ) {
     assertIsAddress(addr.value);
+
     return addr.value;
   }) as FixedSizeEncoder<Address>;
+
   return _memoizedAddressEncoder!;
 }
 
@@ -31,6 +33,7 @@ FixedSizeDecoder<Address> getAddressDecoder() {
     base58Decoder,
     (value, bytes, offset) => Address(value),
   ) as FixedSizeDecoder<Address>;
+
   return _memoizedAddressDecoder!;
 }
 

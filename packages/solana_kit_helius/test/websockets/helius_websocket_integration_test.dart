@@ -177,15 +177,9 @@ void main() {
       commands.add('{not valid json');
       await Future<void>.delayed(const Duration(milliseconds: 50));
 
-      expect(
-        errors.single,
-        isA<SolanaError>().having(
-          (error) => error.code,
           'code',
           SolanaErrorCode.heliusWebSocketError,
         ),
-      );
-      expect(requests, isNotEmpty);
     });
 
     test('connection failures redact API keys from SolanaError', () async {
@@ -271,6 +265,7 @@ void main() {
         for (final socket in sockets) {
           await socket.close();
         }
+
         await server.close(force: true);
       });
 

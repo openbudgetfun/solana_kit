@@ -109,6 +109,7 @@ Future<Address> findNameAccountKey(
         addressEncoder.encode(parentAddress),
     ],
   );
+
   return address;
 }
 
@@ -127,12 +128,14 @@ Future<DerivedNameAddress> deriveNameAddress(
     classAddress: classAddress,
     parentAddress: parentAddress,
   );
+
   return (address, hash);
 }
 
 /// The one-character prefix string for a record (or subdomain) derivation.
 String _recordPrefix(SnsRecordVersion? record) {
   final byte = record?.prefixByte ?? 0;
+
   return String.fromCharCode(byte);
 }
 
@@ -162,6 +165,7 @@ Future<SnsDomainKey> findDomainKey(
   SnsRecordVersion? record,
 }) async {
   final labels = domain.split('.');
+
   if (domain.isEmpty || labels.any((label) => label.isEmpty)) {
     throw ArgumentError.value(
       domain,
@@ -169,6 +173,7 @@ Future<SnsDomainKey> findDomainKey(
       'Domain labels must not be empty',
     );
   }
+
   if (labels.length > 1 && (labels.last == 'sol' || labels.last == 'sns')) {
     throw ArgumentError.value(
       domain,
@@ -184,6 +189,7 @@ Future<SnsDomainKey> findDomainKey(
         labels[0],
         parentAddress: snsRootDomainAddressObject,
       );
+
       return SnsDomainKey(address: address, hash: hash, isSub: false);
 
     case 2:
@@ -199,6 +205,7 @@ Future<SnsDomainKey> findDomainKey(
             ? centralStateSnsRecordsAddressObject
             : null,
       );
+
       return SnsDomainKey(
         address: address,
         hash: hash,
@@ -225,6 +232,7 @@ Future<SnsDomainKey> findDomainKey(
             ? centralStateSnsRecordsAddressObject
             : null,
       );
+
       return SnsDomainKey(
         address: address,
         hash: hash,

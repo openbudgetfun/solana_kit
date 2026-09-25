@@ -15,6 +15,7 @@ class ProjectUsage {
   /// Creates a [ProjectUsage] from a JSON map.
   factory ProjectUsage.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return ProjectUsage(
       creditsRemaining: r.requireInt('creditsRemaining'),
       creditsUsed: r.requireInt('creditsUsed'),
@@ -68,6 +69,7 @@ class AdminSubscriptionDetails {
   /// Creates an [AdminSubscriptionDetails] from a JSON map.
   factory AdminSubscriptionDetails.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AdminSubscriptionDetails(
       billingCycle: AdminBillingCycle.fromJson(r.requireMap('billingCycle')),
       creditsLimit: r.requireInt('creditsLimit'),
@@ -100,6 +102,7 @@ class AdminBillingCycle {
   /// Creates an [AdminBillingCycle] from a JSON map.
   factory AdminBillingCycle.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AdminBillingCycle(
       start: r.requireString('start'),
       end: r.requireString('end'),
@@ -135,6 +138,7 @@ class AdminUsageBreakdown {
   /// Creates an [AdminUsageBreakdown] from a JSON map.
   factory AdminUsageBreakdown.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return AdminUsageBreakdown(
       api: r.requireInt('api'),
       archival: r.requireInt('archival'),

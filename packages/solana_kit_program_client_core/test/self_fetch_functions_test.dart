@@ -18,6 +18,7 @@ Decoder<Map<String, int>> _getMockDecoder() {
   return VariableSizeDecoder<Map<String, int>>(
     read: (bytes, offset) {
       final value = bytes[offset];
+
       return ({'value': value}, offset + 1);
     },
   );
@@ -30,12 +31,14 @@ Rpc _createMockRpc() {
       'getAccountInfo': (params) => RpcPlan<Object?>(
         execute: (_) async {
           final addressStr = params[0]! as String;
+
           return _getAccountResponse(Address(addressStr));
         },
       ),
       'getMultipleAccounts': (params) => RpcPlan<Object?>(
         execute: (_) async {
           final addresses = (params[0]! as List).cast<String>();
+
           return {
             'value': addresses
                 .map((a) => _getRawAccountData(Address(a)))
@@ -50,6 +53,7 @@ Rpc _createMockRpc() {
 
 Map<String, dynamic>? _getAccountResponse(Address address) {
   final rawData = _getRawAccountData(address);
+
   if (rawData == null) return null;
   return {'value': rawData};
 }
@@ -64,6 +68,7 @@ Map<String, dynamic>? _getRawAccountData(Address address) {
       'space': 1,
     };
   }
+
   if (address == _mockAddressB) {
     return {
       'data': ['Ag==', 'base64'], // [2] in base64
@@ -73,6 +78,7 @@ Map<String, dynamic>? _getRawAccountData(Address address) {
       'space': 1,
     };
   }
+
   // Missing account.
   return null;
 }

@@ -12,6 +12,7 @@ void main() {
           onTransactionMessageUpdated: onUpdate != null
               ? (msg) async {
                   await onUpdate('updated');
+
                   return msg;
                 }
               : null,
@@ -204,6 +205,7 @@ void main() {
                   SolanaErrorCode.transactionTooManyInstructions,
                 );
               }
+
               return msg;
             },
           ),
@@ -227,6 +229,7 @@ void main() {
           createTransactionMessage: () async => createMessage(),
           onTransactionMessageUpdated: (msg) async {
             calls.add('update');
+
             return msg;
           },
         ),
@@ -247,6 +250,7 @@ void main() {
         TransactionPlannerConfig(
           createTransactionMessage: () async {
             createCount++;
+
             return createMessage();
           },
         ),

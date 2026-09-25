@@ -15,11 +15,13 @@ final BigInt _u256Max = (BigInt.one << 256) - BigInt.one;
 /// [0, 2^256 - 1]. Defaults to little-endian byte order.
 FixedSizeEncoder<BigInt> getU256Encoder([NumberCodecConfig? config]) {
   final endian = config?.endian ?? Endian.little;
+
   return FixedSizeEncoder<BigInt>(
     fixedSize: 32,
     write: (value, bytes, offset) {
       assertBigIntIsBetweenForCodec('u256', BigInt.zero, _u256Max, value);
       writeBigIntUnsigned(bytes, offset, 32, value, endian);
+
       return offset + 32;
     },
   );

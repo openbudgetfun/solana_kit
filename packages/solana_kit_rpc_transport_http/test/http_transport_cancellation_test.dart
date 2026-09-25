@@ -23,6 +23,7 @@ void main() {
           received.complete();
           // Deliberately keep the response open to simulate a stalled RPC node.
         });
+
         addTearDown(() async {
           client.close();
           await server.close(force: true);

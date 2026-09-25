@@ -14,12 +14,14 @@ String _mismatch(Matcher matcher, Object? item) {
   matcher.matches(item, matchState);
   final desc = StringDescription();
   matcher.describeMismatch(item, desc, matchState, false);
+
   return desc.toString();
 }
 
 String _describe(Matcher matcher) {
   final desc = StringDescription();
   matcher.describe(desc);
+
   return desc.toString();
 }
 

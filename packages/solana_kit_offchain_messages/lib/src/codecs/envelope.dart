@@ -28,6 +28,7 @@ Encoder<OffchainMessageEnvelope> getOffchainMessageEnvelopeEncoder() {
           SolanaErrorCode.offchainMessageNumEnvelopeSignaturesCannotBeZero,
         );
       }
+
       final signatoryAddresses = _decodeAndValidateRequiredSignatoryAddresses(
         envelope.content,
       );

@@ -68,6 +68,7 @@ void main() {
           child: Builder(
             builder: (context) {
               resolved = WalletUiTheme.of(context);
+
               return theme.wrap(context, const SizedBox());
             },
           ),
@@ -604,6 +605,7 @@ void main() {
           child: Builder(
             builder: (context) {
               resolved = resolveSkribbleWalletTheme(context, null);
+
               return const SizedBox();
             },
           ),
@@ -617,6 +619,7 @@ void main() {
           child: Builder(
             builder: (context) {
               resolved = resolveSkribbleWalletTheme(context, explicit);
+
               return const SizedBox();
             },
           ),
@@ -628,6 +631,7 @@ void main() {
         Builder(
           builder: (context) {
             resolved = resolveSkribbleWalletTheme(context, null);
+
             return const SizedBox();
           },
         ),
@@ -639,11 +643,14 @@ void main() {
 
 Future<WalletController> _controller({List<Wallet> wallets = const []}) async {
   final registry = WalletRegistryController();
+
   for (final wallet in wallets) {
     registry.register(wallet);
   }
+
   final controller = WalletController(registry, chain: SolanaChainId.localnet);
   await controller.initialize();
+
   return controller;
 }
 
@@ -818,7 +825,9 @@ class _Connect implements StandardConnectFeature {
   ]) async {
     if (wallet.reject) throw StateError('rejected');
     final gate = wallet._gate;
+
     if (gate != null) await gate.future;
+
     return StandardConnectOutput([wallet.account]);
   }
 

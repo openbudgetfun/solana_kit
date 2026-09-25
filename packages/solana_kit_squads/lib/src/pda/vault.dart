@@ -31,6 +31,7 @@ Future<ProgramDerivedAddress> findVaultPda({
   if (index < 0 || index > 255) {
     throw ArgumentError.value(index, 'index', 'must be between 0 and 255');
   }
+
   return getProgramDerivedAddress(
     programAddress: squadsMultisigProgramAddressObject,
     seeds: [

@@ -41,11 +41,13 @@ List<String> decodeSchemaFieldNames(Uint8List bytes) {
   );
   final names = <String>[];
   var offset = 0;
+
   while (offset < bytes.length) {
     final (name, next) = stringDecoder.read(bytes, offset);
     names.add(name);
     offset = next;
   }
+
   return names;
 }
 
@@ -83,11 +85,13 @@ Codec<AttestationData, AttestationData> getAttestationDataCodec(
 ) {
   final fieldNames = decodeSchemaFieldNames(schema.fieldNames);
   final layout = decodeSchemaLayout(schema.layout);
+
   if (fieldNames.length != layout.length) {
     throw ArgumentError('Schema field names and layout do not match');
   }
 
   final fields = <(String, Encoder<Object?>, Decoder<Object?>)>[];
+
   for (var i = 0; i < fieldNames.length; i++) {
     final (fieldEncoder, fieldDecoder) = _getFieldCodec(layout[i]);
     fields.add((fieldNames[i], fieldEncoder, fieldDecoder));
@@ -95,6 +99,7 @@ Codec<AttestationData, AttestationData> getAttestationDataCodec(
 
   AttestationData alignWithSchema(Map<String, Object?> data) {
     _requireSameKeys(data.keys, fieldNames);
+
     return AttestationData.from(data);
   }
 
@@ -122,6 +127,7 @@ void _requireSameKeys(
 ) {
   final declared = Set<String>.of(fieldNames);
   final provided = Set<String>.of(keys);
+
   for (final name in fieldNames) {
     if (!provided.contains(name)) {
       throw ArgumentError(
@@ -130,6 +136,7 @@ void _requireSameKeys(
       );
     }
   }
+
   for (final key in provided) {
     if (!declared.contains(key)) {
       throw ArgumentError(
@@ -264,6 +271,7 @@ AttestationData deserializeAttestationData(Schema schema, Uint8List bytes) {
 /// field map.
 Encoder<Object?> _widenEncoder<T extends Object>(Encoder<T> encoder) {
   T passthrough(Object? value) => value! as T;
+
   return transformEncoder<T, Object?>(encoder, passthrough);
 }
 
@@ -271,6 +279,7 @@ Encoder<Object?> _widenEncoder<T extends Object>(Encoder<T> encoder) {
 /// field map.
 Decoder<Object?> _widenDecoder<T extends Object>(Decoder<T> decoder) {
   Object? passthrough(T value, Uint8List bytes, int offset) => value;
+
   return transformDecoder<T, Object?>(decoder, passthrough);
 }
 
@@ -325,6 +334,7 @@ int _charToCodePoint(String value) {
       'Char fields must hold exactly one Unicode character',
     );
   }
+
   return runes.single;
 }
 
@@ -334,6 +344,7 @@ String _codePointToChar(int codePoint) {
       'Char field holds $codePoint, which is not a Unicode character',
     );
   }
+
   return String.fromCharCode(codePoint);
 }
 
@@ -346,10 +357,12 @@ String _codePointToChar(int codePoint) {
 String _decodeStringBytes(Uint8List bytes) {
   try {
     return utf8.decode(bytes);
+
   } on FormatException {
     final hex = bytes
         .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
         .join();
+
     return '0x$hex';
   }
 }

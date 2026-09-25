@@ -13,6 +13,7 @@ Future<GetTransactionsForAddressResponse> rpcV2GetTransactionsForAddress(
     'getTransactionsForAddress',
     request.toJson(),
   );
+
   return GetTransactionsForAddressResponse.fromJson(
     result! as Map<String, Object?>,
   );

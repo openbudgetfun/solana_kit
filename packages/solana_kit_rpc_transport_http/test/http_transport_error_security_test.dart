@@ -49,6 +49,7 @@ void main() {
     test('redacts errors from a response body stream', () async {
       final client = MockClient.streaming((request, body) async {
         await body.drain<void>();
+
         return http.StreamedResponse(
           Stream<List<int>>.error(
             http.ClientException(

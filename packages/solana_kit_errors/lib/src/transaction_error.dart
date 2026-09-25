@@ -57,11 +57,13 @@ SolanaError getSolanaErrorFromTransactionError(Object transactionError) {
       transactionError.containsKey('InstructionError')) {
     final args = transactionError['InstructionError']! as List<Object?>;
     final index = args[0]!;
+
     return getSolanaErrorFromInstructionError(
       index is BigInt ? index.toInt() : (index as num),
       args[1]!,
     );
   }
+
   return getSolanaErrorFromRpcError(
     RpcEnumErrorConfig(
       errorCodeBaseOffset:
@@ -74,6 +76,7 @@ SolanaError getSolanaErrorFromTransactionError(Object transactionError) {
             'transactionErrorContext': ?rpcErrorContext,
           };
         } else if (errorCode ==
+
             SolanaErrorCode.transactionErrorDuplicateInstruction) {
           return {
             'index': rpcErrorContext is num
@@ -87,12 +90,14 @@ SolanaError getSolanaErrorFromTransactionError(Object transactionError) {
                     .transactionErrorProgramExecutionTemporarilyRestricted) {
           final ctx = rpcErrorContext as Map<String, Object?>?;
           final accountIndex = ctx?['account_index'];
+
           return {
             'accountIndex': accountIndex is BigInt
                 ? accountIndex.toInt()
                 : (accountIndex as num?)?.toInt(),
           };
         }
+
         return null;
       },
     ),
