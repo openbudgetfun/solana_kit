@@ -30,7 +30,6 @@ void main() {
         final snippets = _extractDartCodeBlocks(file.readAsStringSync());
         snippetCount += snippets.length;
       }
-
       expect(snippetCount, greaterThan(0));
     });
 
@@ -38,7 +37,6 @@ void main() {
       if (snippetRoot.existsSync()) {
         snippetRoot.deleteSync(recursive: true);
       }
-
       snippetRoot.createSync(recursive: true);
       addTearDown(() {
         if (snippetRoot.existsSync()) {
@@ -94,33 +92,27 @@ List<String> _findMarkdownFiles(Directory repoRoot, String? filter) {
       if (entity is Directory)
         'packages/${entity.path.split(Platform.pathSeparator).last}/README.md',
   ];
-
   for (final relativePath in candidates) {
     // codama-renderers-dart is an npm package; its README shows generated
     // Dart output patterns that are not standalone-compilable.
     if (relativePath.startsWith('packages/codama-renderers-dart/')) {
       continue;
     }
-
     final file = File(
       '${repoRoot.path}${Platform.pathSeparator}$relativePath',
     );
-
     if (file.existsSync()) {
       if (wanted == null || wanted.any(relativePath.toLowerCase().contains)) {
         files.add(relativePath);
       }
     }
   }
-
   files.sort();
-
   return files;
 }
 
 List<String> _extractDartCodeBlocks(String markdown) {
   final expression = RegExp(r'```dart\n([\s\S]*?)\n```');
-
   return [
     for (final match in expression.allMatches(markdown)) match.group(1)!.trim(),
   ];
