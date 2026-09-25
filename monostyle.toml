@@ -1,8 +1,9 @@
 # monostyle's configuration for this repository.
 #
-# `fail-under` is a ratchet, not a destination: the floors sit just under the
-# score at onboarding, so the gate enforces non-regression from the first run
-# and is tightened as the findings it names are remediated.
+# The findings are reported inline on every pull request diff via the
+# `--format github` output. A `fail-under` floor should be added at 90 once
+# the findings it names are remediated — a ratchet that starts where the
+# codebase already is, not where it needs to be.
 [rules]
 max-line-width = 120
 
