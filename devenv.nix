@@ -26,7 +26,6 @@ in
       shfmt
       taplo
       zizmor
-      extra.monostyle
       extra.mdt
       extra.monochange
       extra.pnpm
@@ -203,19 +202,10 @@ in
         lint:format
         lint:kotlin
         lint:analyze
-        lint:style
         lint:workflows
         monochange check
       '';
       description = "Run all lint checks.";
-      binary = "bash";
-    };
-    "lint:style" = {
-      exec = ''
-        set -euo pipefail
-        monostyle check .
-      '';
-      description = "Score the codebase with monostyle; the floor lives in monostyle.toml.";
       binary = "bash";
     };
     "lint:push" = {
@@ -241,6 +231,8 @@ in
       exec = ''
         set -euo pipefail
         workspace_root="''${DEVENV_ROOT:-${currentDir}}"
+        ${pkgs.dprint}/bin/dprint check --config "$workspace_root/dprint.json"
+        ${pkgs.fvm}/bin/fvm dart format -o none --set-exit-if-changed "$workspace_root"
       '';
       description = "Check all formatting is correct.";
     };
@@ -410,6 +402,7 @@ in
             | sort
         )
 
+        if [ ''${#lockfiles[@]} -eq 0 ]; then
           echo "No lockfiles were found to audit."
           exit 1
         fi
@@ -419,6 +412,8 @@ in
           args+=("-L" "$lockfile")
         done
 
+        echo "Auditing ''${#lockfiles[@]} lockfile(s) with osv-scanner..."
+        osv-scanner scan source "''${args[@]}" --allow-no-lockfiles
       '';
       description = "Audit current Dart and pnpm lockfiles for known vulnerabilities with osv-scanner.";
       binary = "bash";
@@ -439,6 +434,7 @@ in
         while IFS= read -r benchmark; do
           pkg_dir="$(dirname "$(dirname "$benchmark")")"
           rel_benchmark="''${benchmark#"$pkg_dir"/}"
+
           echo "Running benchmark: $benchmark"
           (
             cd "$pkg_dir"
@@ -526,10 +522,52 @@ in
         set -euo pipefail
         config_file="$DEVENV_ROOT/config/reference-repos.json"
         jq_bin="${pkgs.jq}/bin/jq"
+
         mkdir -p "$DEVENV_ROOT/.repos"
 
         sync_reference_repo() {
           local name="$1" path="$2" url="$3" ref_type="$4" ref_value="$5"
+          local dest="$DEVENV_ROOT/$path"
+
+          mkdir -p "$(dirname "$dest")"
+
+          case "$ref_type" in
+            branch)
+              if [ -d "$dest/.git" ]; then
+                echo "Updating $path on branch $ref_value..."
+                git -C "$dest" fetch origin --quiet
+                git -C "$dest" checkout --quiet "$ref_value"
+                git -C "$dest" pull --ff-only origin "$ref_value"
+              else
+                echo "Cloning $name on branch $ref_value..."
+                git clone --branch "$ref_value" "$url" "$dest"
+              fi
+              ;;
+            tag)
+              if [ -d "$dest/.git" ]; then
+                echo "Checking $path at tag $ref_value..."
+                git -C "$dest" fetch origin --tags --quiet
+                git -C "$dest" checkout --quiet "$ref_value"
+              else
+                echo "Cloning $name at tag $ref_value..."
+                git clone --branch "$ref_value" --depth 1 "$url" "$dest"
+              fi
+              ;;
+            commit)
+              if [ -d "$dest/.git" ]; then
+                echo "Checking $path at commit $ref_value..."
+                git -C "$dest" fetch origin --quiet
+              else
+                echo "Cloning $name at commit $ref_value..."
+                git clone "$url" "$dest"
+              fi
+              git -C "$dest" checkout --quiet "$ref_value"
+              ;;
+            *)
+              echo "Unknown ref type '$ref_type' for $name" >&2
+              return 1
+              ;;
+          esac
         }
 
         while IFS= read -r repo_json; do

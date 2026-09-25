@@ -89,14 +89,15 @@ jobs:
         run: lint:all
         shell: devenv shell -- bash -e {0}
 
-      - name: monostyle inline annotations
-        if: always()
-        run: monostyle check . --format github
-        shell: devenv shell -- bash -e {0}
-
       - name: Validate monochange configuration
         run: monochange step validate
         shell: devenv shell -- bash -e {0}
+
+      - name: monostyle inline annotations
+        if: always()
+        run: |
+          cargo install monostyle --version 0.3.4 --locked || true
+          monostyle check . --format github
 
   # Lint the tree a release would actually publish, not the tree as it sits on
   # the branch.
