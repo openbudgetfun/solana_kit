@@ -12,7 +12,6 @@ class SurfpoolException implements Exception {
   @override
   String toString() {
     final cause = this.cause;
-
     if (cause == null) return 'SurfpoolException: $message';
     return 'SurfpoolException: $message ($cause)';
   }
@@ -47,7 +46,6 @@ class SurfpoolRpcException extends SurfpoolException {
       if (rpcCode != null) 'rpcCode: $rpcCode',
       if (cause != null) 'cause: $cause',
     ];
-
     return parts.join(', ');
   }
 }

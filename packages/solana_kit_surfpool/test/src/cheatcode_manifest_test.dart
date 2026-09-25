@@ -25,7 +25,6 @@ Future<Set<String>> _invokeEveryCheatcode() async {
   final client = MockClient((request) async {
     final body = jsonDecode(request.body) as Map<String, Object?>;
     methods.add(body['method']! as String);
-
     return http.Response(
       jsonEncode(<String, Object?>{
         'jsonrpc': '2.0',
@@ -46,7 +45,6 @@ Future<Set<String>> _invokeEveryCheatcode() async {
   Future<void> attempt(Future<Object?> Function() call) async {
     try {
       await call();
-
     } on Object {
       // The stub transport answers `null` for every method, so methods that
       // parse a typed response throw. The method name already reached the

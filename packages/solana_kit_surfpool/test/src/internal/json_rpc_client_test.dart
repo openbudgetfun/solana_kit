@@ -14,7 +14,6 @@ void main() {
         url: Uri.parse('http://127.0.0.1:8899'),
         client: MockClient((request) async {
           requests.add(request);
-
           return http.Response(
             jsonEncode(<String, Object?>{
               'jsonrpc': '2.0',

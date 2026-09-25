@@ -81,7 +81,6 @@ class SurfnetCheatcodes {
         result.containsKey('value')) {
       return result['value'];
     }
-
     return result;
   }
 
@@ -101,7 +100,6 @@ class SurfnetCheatcodes {
       if (absoluteTimestamp != null)
         <String, Object?>{'absoluteTimestamp': absoluteTimestamp},
     ];
-
     return _call('surfnet_timeTravel', params).then(EpochInfoValue.fromJson);
   }
 
@@ -194,7 +192,6 @@ class SurfnetCheatcodes {
       tokenAccount.value,
       keys.toJson(),
     ]);
-
     return ConfidentialBalance.fromJson(result);
   }
 
@@ -206,7 +203,6 @@ class SurfnetCheatcodes {
   /// the derived keys to that account.
   Future<ConfidentialKeys> deriveConfidentialKeys(String signature) async {
     final result = await _call('surfnet_deriveConfidentialKeys', [signature]);
-
     return ConfidentialKeys.fromJson(result);
   }
 
