@@ -1,0 +1,18 @@
+# monostyle's configuration for this repository.
+#
+# The findings are reported inline on every pull request diff via the
+# `--format github` output. A `fail-under` floor should be added at 90 once
+# the findings it names are remediated — a ratchet that starts where the
+# codebase already is, not where it needs to be.
+[rules]
+max-line-width = 120
+
+[rules.ignore]
+# Sample applications demonstrate a technique end to end and are edited far
+# less often than the packages they accompany.
+patterns = [
+  "examples/**",
+  "docs/site/**",
+  "CHANGELOG.md",
+  "**/CHANGELOG.md",
+]
