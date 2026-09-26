@@ -99,3 +99,14 @@ Instruction builders such as `getCreateV1Instruction`, `getCreateCollectionV1Ins
 ## Reference
 
 Generated with `codama-renderers-dart` from the metaplex-foundation / mpl-core shank IDL, mirroring the upstream TypeScript client. PDA seeds follow the on-chain Rust (`processor/execute.rs`, external plugin adapter prefixes) and were cross-verified against `@solana/web3.js` derivations.
+
+## Upstream reference
+
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit` version | [`mpl-core`](https://github.com/metaplex-foundation/mpl-core) | Released     |
+| -------------------- | ------------------------------------------------------------- | ------------ |
+| _next release_       | `release/core@0.15.2`                                         | _unreleased_ |
+| `0.9.0` – `0.9.3`    | `2181404f90c7`                                                | —            |
+
+<!-- upstream-support:end -->

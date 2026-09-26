@@ -33,3 +33,19 @@ final instruction = getWriteInstruction(
 ## Uploading programs
 
 Prepare the buffer and program accounts before running the planning helpers. Their sequential plans allow buffer writes to span transactions. The final deploy or upgrade executes after all writes succeed, so normal program binaries work with the standard transaction planner and executor. If a write fails, the existing program remains unchanged and the prepared buffer can be reused or closed.
+
+## Upstream reference
+
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit_loader` version | [`loader-v3`](https://github.com/solana-program/loader-v3)<br />[`loader-v4`](https://github.com/solana-program/loader-v4) | Released                |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| _next release_              | `js@v0.7.0`<br />`76f8ce27d3bc`                                                                                            | _unreleased_            |
+| `0.5.0`                     | `js@v0.6.1`<br />`5bb854dbd2b6`                                                                                            | 2026-09-21              |
+| `0.4.2` – `0.4.3`           | `js@v0.6.1`<br />`4f62fb2e25c8`                                                                                            | 2026-09-06 – 2026-09-12 |
+| `0.4.0` – `0.4.1`           | `js@v0.6.0`<br />`4f62fb2e25c8`                                                                                            | 2026-08-30              |
+| `0.3.0` – `0.3.1`           | `js@v0.5.0`<br />`1d6335be`                                                                                                | 2026-08-18 – 2026-08-19 |
+| `0.1.1`                     | `js@v0.4.0`<br />`5df834d`                                                                                                 | 2026-08-12              |
+| `0.1.0`                     | `js@v0.3.0`<br />`5df834d`                                                                                                 | 2026-06-01              |
+
+<!-- upstream-support:end -->

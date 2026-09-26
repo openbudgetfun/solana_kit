@@ -146,4 +146,17 @@ The `AddressLookupTableAccountData` decoder can decode on-chain account data for
 
 ## Upstream reference
 
-Generated layer mirrors [solana-program/address-lookup-table](https://github.com/solana-program/address-lookup-table) at `js@v0.14.0`.
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit_address_lookup_table` version | [`address-lookup-table`](https://github.com/solana-program/address-lookup-table) | Released                |
+| ----------------------------------------- | -------------------------------------------------------------------------------- | ----------------------- |
+| _next release_                            | `js@v0.15.0`                                                                     | _unreleased_            |
+| `0.4.2` – `0.5.0`                         | `js@v0.14.1`                                                                     | 2026-09-06 – 2026-09-21 |
+| `0.4.0` – `0.4.1`                         | `js@v0.14.0`                                                                     | 2026-08-30              |
+| `0.3.0` – `0.3.1`                         | `js@v0.13.0`                                                                     | 2026-08-18 – 2026-08-19 |
+| `0.1.1`                                   | `js@v0.12.1`                                                                     | 2026-08-12              |
+| `0.1.0`                                   | `js@v0.11.0`                                                                     | 2026-06-01              |
+
+<!-- upstream-support:end -->
+
+Generated layer mirrors [solana-program/address-lookup-table](https://github.com/solana-program/address-lookup-table) at `js@v0.15.0`.

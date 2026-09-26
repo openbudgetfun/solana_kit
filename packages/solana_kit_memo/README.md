@@ -133,4 +133,19 @@ Future<void> handleTransactionFailure(Object error) async {
 
 ## Upstream reference
 
-Generated layer mirrors [solana-program/memo](https://github.com/solana-program/memo) at `js@v0.14.1`. `js@v0.14.0` pointed the generated client at the v4 memo program; the v1 and v3 addresses remain available as legacy constants, matching the upstream extraction helpers.
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit_memo` version | [`memo`](https://github.com/solana-program/memo) | Released                |
+| ------------------------- | ------------------------------------------------ | ----------------------- |
+| _next release_            | `js@v0.15.0`                                     | _unreleased_            |
+| `0.5.0`                   | `js@v0.14.1`                                     | 2026-09-21              |
+| `0.4.2` – `0.4.3`         | `js@v0.13.1`                                     | 2026-09-06 – 2026-09-12 |
+| `0.4.0` – `0.4.1`         | `js@v0.13.0`                                     | 2026-08-30              |
+| `0.3.0` – `0.3.1`         | `js@v0.12.0`                                     | 2026-08-18 – 2026-08-19 |
+| `0.1.2`                   | `js@v0.11.2`                                     | 2026-08-12              |
+| `0.1.1`                   | `js@v0.11.1`                                     | 2026-06-03              |
+| `0.1.0`                   | `js@v0.11.0`                                     | 2026-06-01              |
+
+<!-- upstream-support:end -->
+
+Generated layer mirrors [solana-program/memo](https://github.com/solana-program/memo) at `js@v0.15.0`. `js@v0.14.0` pointed the generated client at the v4 memo program; the v1 and v3 addresses remain available as legacy constants, matching the upstream extraction helpers.

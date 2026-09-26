@@ -97,4 +97,17 @@ Nine typed error codes covering invalid nonce state, missing accounts, insuffici
 
 ## Upstream reference
 
-Generated layer mirrors [solana-program/system](https://github.com/solana-program/system) at `js@v0.14.0` (commit `83818c3`).
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit_system` version | [`system`](https://github.com/solana-program/system) | Released                |
+| --------------------------- | ---------------------------------------------------- | ----------------------- |
+| _next release_              | `js@v0.15.0`                                         | _unreleased_            |
+| `0.7.2` – `0.8.0`           | `js@v0.14.1`                                         | 2026-09-06 – 2026-09-21 |
+| `0.7.0` – `0.7.1`           | `js@v0.14.0`                                         | 2026-08-30              |
+| `0.6.0` – `0.6.1`           | `js@v0.13.0`                                         | 2026-08-18 – 2026-08-19 |
+| `0.4.1` – `0.4.2`           | `js@v0.12.2`                                         | 2026-06-03 – 2026-08-12 |
+| `0.3.2` – `0.4.0`           | `js@v0.12.0`                                         | 2026-05-30 – 2026-06-01 |
+
+<!-- upstream-support:end -->
+
+Generated layer mirrors [solana-program/system](https://github.com/solana-program/system) at `js@v0.15.0` (commit `15f1848`).
