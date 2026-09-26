@@ -148,7 +148,8 @@ InstructionPlan getMintV2InstructionPlan(
       config.coreCollection ??
       input.merkleTree; // Default to tree if not provided
 
-  // Encode the MetadataArgsV2 manually since the generated encoder has a bug
+  // Encode the MetadataArgsV2 with the generated encoder, which emits the
+  // on-chain V2 layout (no editionNonce / uses / tokenProgramVersion fields).
   final metadataBytes = encodeMetadataArgsV2(
     name: input.name,
     symbol: input.symbol,
@@ -156,11 +157,8 @@ InstructionPlan getMintV2InstructionPlan(
     sellerFeeBasisPoints: input.sellerFeeBasisPoints,
     primarySaleHappened: false,
     isMutable: true,
-    editionNonce: null,
     tokenStandard: TokenStandard.nonFungible.value,
     collection: input.collection,
-    uses: null,
-    tokenProgramVersion: TokenProgramVersion.original.value,
     creators: input.creators,
   );
 

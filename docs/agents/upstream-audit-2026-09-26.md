@@ -6,18 +6,18 @@ Reference-pin refresh for the program, SDK, and wallet reference repositories tr
 
 Ten of the twenty-two configured pins had moved:
 
-| Repository                            | Was               | Now                                               | Dart package                      |
-| ------------------------------------- | ----------------- | ------------------------------------------------- | --------------------------------- |
-| `solana-program/system`               | `js@v0.14.1`      | `js@v0.15.0`                                      | `solana_kit_system`               |
-| `solana-program/token`                | `js@v0.16.1`      | `js@v0.17.0`                                      | `solana_kit_token`                |
-| `solana-program/token-2022`           | `js@v0.18.0`      | `js@v0.19.0`                                      | `solana_kit_token_2022`           |
-| `solana-program/address-lookup-table` | `js@v0.14.1`      | `js@v0.15.0`                                      | `solana_kit_address_lookup_table` |
-| `solana-program/memo`                 | `js@v0.14.1`      | `js@v0.15.0`                                      | `solana_kit_memo`                 |
-| `solana-program/compute-budget`       | `js@v0.18.1`      | `js@v0.19.0`                                      | `solana_kit_compute_budget`       |
-| `solana-program/stake`                | `js@v0.9.1`       | `js@v0.10.0`                                      | `solana_kit_stake`                |
-| `solana-program/loader-v3`            | `js@v0.6.1`       | `js@v0.7.0`                                       | `solana_kit_loader`               |
-| `solana-program/loader-v4`            | commit `5bb854db` | commit `76f8ce27d3bcb7492e5adb83c6eae8b5a6d2ee39` | `solana_kit_loader`               |
-| `metaplex-foundation/mpl-bubblegum`   | commit `07180c73` | commit `ad7d32b477625190704eb204741667b5df15221d` | `solana_kit_mpl_bubblegum`        |
+| Repository                            | Was               | Now                                        | Dart package                      |
+| ------------------------------------- | ----------------- | ------------------------------------------ | --------------------------------- |
+| `solana-program/system`               | `js@v0.14.1`      | `js@v0.15.0`                               | `solana_kit_system`               |
+| `solana-program/token`                | `js@v0.16.1`      | `js@v0.17.0`                               | `solana_kit_token`                |
+| `solana-program/token-2022`           | `js@v0.18.0`      | `js@v0.19.0`                               | `solana_kit_token_2022`           |
+| `solana-program/address-lookup-table` | `js@v0.14.1`      | `js@v0.15.0`                               | `solana_kit_address_lookup_table` |
+| `solana-program/memo`                 | `js@v0.14.1`      | `js@v0.15.0`                               | `solana_kit_memo`                 |
+| `solana-program/compute-budget`       | `js@v0.18.1`      | `js@v0.19.0`                               | `solana_kit_compute_budget`       |
+| `solana-program/stake`                | `js@v0.9.1`       | `js@v0.10.0`                               | `solana_kit_stake`                |
+| `solana-program/loader-v3`            | `js@v0.6.1`       | `js@v0.7.0`                                | `solana_kit_loader`               |
+| `solana-program/loader-v4`            | commit `5bb854db` | commit `76f8ce27`                          | `solana_kit_loader`               |
+| `metaplex-foundation/mpl-bubblegum`   | commit `07180c73` | tag `release/bubblegum@2.0.0` (`79e1a195`) | `solana_kit_mpl_bubblegum`        |
 
 Every other pin was already current: `kit` (`v8.3.0`), `espresso-cash-public`, `helius-sdk`, `mobile-wallet-adapter`, `subscriptions`, `associated-token-account`, `config`, `account-compression`, `mpl-token-metadata`, `mpl-core`, `squads-v4`, and `solana-attestation-service`.
 
@@ -31,32 +31,39 @@ The Dart packages are generated from each repository's **`idl.json`**, not from 
 
 This was verified empirically rather than argued: the generator was run against the **old** pins and against the **new** pins, and the two outputs are byte-identical across all thirteen generated packages (`diff -rq` clean). The pin moves are output-neutral for the Dart workspace.
 
-## mpl-bubblegum: JS SDK changes, not ported yet
+## mpl-bubblegum: the DAS inherited-royalty work, ported
 
-`mpl-bubblegum` is the one repository where the intervening commits carry real client-side behavior, not just regeneration. Five commits separate the old and new pins:
+`mpl-bubblegum` is the one repository where the intervening commits carry real client-side behavior, not just regeneration. It is also the one pin that moved from a commit to a **tag**: `release/bubblegum@2.0.0` at commit `79e1a195`, which is the newest immutable upstream ref carrying the DAS work.
 
-- `Align getAssetWithProof with DAS inherited SFBP _raw fields (#173)`
-- `Fix release PR creation in JS publish workflow (#178)`
-- `chore: release JS client v6.0.0 (#179)`
-- `chore: Release mpl-bubblegum version 4.0.0 (#180)`
-- `Fix Rust client release flow: create release PR instead of pushing to main (#181)`
+Upstream's JS client v6.0.0 reworks how `getAssetWithProof` handles DAS inherited seller-fee-by-proxy royalties. The port now covers that surface:
 
-Upstream's JS client v6.0.0 reworks how `getAssetWithProof` handles DAS inherited seller-fee-by-proxy royalties. The new surface is:
+| Upstream symbol                                                                                                                  | Dart counterpart                                                                                                                                                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `leafMetadata.ts` — `resolveLeafRoyaltyFields`, `toLeafMetadata`, `toLeafMetadataV2`, `asCurrentMetadata`, `asCurrentMetadataV2` | `resolveLeafRoyaltyFields`, `toLeafMetadata`, `toLeafMetadataV2`, `asCurrentMetadata`, `asCurrentMetadataV2`, and `isV1MetadataArgs` in `leaf_metadata.dart`                                                |
+| `getAssetWithProof` `AssetWithProof` shape                                                                                       | `AssetWithProof` now carries required `metadata` and `currentMetadata` plus `sellerFeeBasisPointsRaw`, `creatorsRaw`, and `inherited`, and `getAssetWithProof` derives them including the sentinel fallback |
+| `SELLER_FEE_BASIS_POINTS_INHERIT` (`0xffff`) and `isInheritedSfbpRoyalty`                                                        | `sellerFeeBasisPointsInherit` and the `DasAssetRoyalty.inherited` flag, which `HeliusDasClient` sets from `sfbp_inherited` / `inherited` or from the sentinel value                                         |
+| `hashMetadata`, `hashMetadataV2`, `hashMetadataData`, `hashMetadataDataV2`, `hashMetadataCreators`                               | The same names in `metadata_hash.dart`                                                                                                                                                                      |
 
-| Upstream symbol                                                                                                                  | What it does                                                                                                                                  | Port status |
-| -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `leafMetadata.ts` — `resolveLeafRoyaltyFields`, `toLeafMetadata`, `toLeafMetadataV2`, `asCurrentMetadata`, `asCurrentMetadataV2` | Merges the DAS `_raw` royalty companions (`basis_points_raw`, `creators_raw`) into leaf-canonical metadata for write instructions and hashing | Not ported  |
-| `getAssetWithProof` `AssetWithProof` shape                                                                                       | `currentMetadata` is now required, and the new `sellerFeeBasisPointsRaw`, `creatorsRaw`, and `inherited` fields are carried on the result     | Not ported  |
-| `SELLER_FEE_BASIS_POINTS_INHERIT` (`0xffff`) and `isInheritedSfbpRoyalty`                                                        | The inherit sentinel and its detector, imported from `@metaplex-foundation/digital-asset-standard-api`                                        | Not ported  |
+The DAS royalty data is no longer discarded on the way in: `DasAsset` gained `royalty`, `creatorsRaw`, `collection`, `mutable`, and `editionNonce`, `DasAssetRoyalty` models the raw companions, `DasAssetContent` gained `jsonUri`, `DasAssetGrouping` gained `verified`, and the compression block carries `collectionHash`, `assetDataHash`, and `flags`.
 
-The generated IDL-derived layer is unaffected: `idls/bubblegum.json` is byte-identical at both pins and the program crate version stays `0.12.0`, so the generated instruction builders, account codecs, and error definitions do not change. What is missing is the handwritten DAS helper layer, which is where the current port is thinner than upstream:
+The generated IDL-derived layer remains unaffected: `idls/bubblegum.json` is byte-identical at both pins and the program crate stays `0.12.0`.
 
-- The port's `AssetWithProof` (`packages/solana_kit_mpl_bubblegum/lib/src/das_api.dart`) carries `rpcAsset`, `rpcAssetProof`, `leafOwner`, `leafDelegate`, `merkleTree`, `root`, `dataHash`, `creatorHash`, `nonce`, `index`, and `proof`. It has no `currentMetadata`, `sellerFeeBasisPointsRaw`, `creatorsRaw`, or `inherited`, and its `DasAsset` model has no `royalty` field at all, so the DAS response's royalty data is currently discarded on the way in.
-- The port hashes a caller-supplied `metadataHash` in `hashLeafV1`/`hashLeafV2` rather than computing it from metadata. There is no `hashMetadataData`/`hashMetadataV2` equivalent, and no `getMetadataArgsCodec` in the generated layer, so there is nothing today that could consume `resolveLeafRoyaltyFields`.
+### Why the tag, not a commit
 
-Porting this properly means adding the DAS royalty model to `DasAsset`, implementing the leaf-metadata resolution helpers, and computing metadata hashes in Dart — a multi-part change to a handwritten package, not a pin refresh. **It is deliberately not ported in this sync.** The pin still advances because it changes no generated output and moves the workspace onto the newest IDL the renderer verifies against; the gap is recorded here so the compatibility claim stays auditable.
+`release/bubblegum@2.0.0` versions the Rust client (`clients/rust/Cargo.toml` is `mpl-bubblegum` `3.0.0`) and, decisively, it is the exact revision of the DAS commit `#173` (`git` reports the tag and `79e1a195` as _identical_). The four commits between it and `main` only touch the release workflows (`deploy-rust-client.yml`, `publish-js-client.yml`) and crate manifests, so no client-visible behavior separates the tag from the branch head.
 
-One separate correctness bug was noticed while reading the generated update path, outside the scope of this refresh: `packages/solana_kit_mpl_bubblegum/lib/src/generated/instructions/update_metadata_v2.dart` encodes and decodes `currentMetadata` and `updateArgs` as `getU8Encoder()` / `getU8Decoder()` while the TypeScript fields are typed `MetadataArgsV2` and `UpdateArgs` (the upstream IDL declares both as `defined` types). The generated layer does not yet render struct-typed instruction-account arguments, so these two fields serialized as one byte instead of their Borsh bodies. This predates the pin move and is unaffected by it (`idl.json` is identical at both pins); it is called out here because it will produce malformed `updateMetadataV2` instructions. Porting the leaf-metadata work above is the natural place to fix it.
+Upstream tags its JS client releases separately (`js@v*`), and the highest such tag is `js@v5.0.2`; JS client v6.0.0 was released without a tag. `release/bubblegum@2.0.0` is therefore the closest thing upstream publishes to a versioned pin for this work, and it is immutable where a branch head is not.
+
+## Fixed alongside: two encoders that did not match the program
+
+Auditing the generated update path surfaced two byte-layout bugs that predate this sync. Both made their instructions invalid on chain, so they are fixed here rather than only recorded:
+
+- `encodeMetadataArgsV2` wrote the **V1** field layout — 63 bytes including `editionNonce`, `uses`, and `tokenProgramVersion`. The on-chain `MetadataArgsV2` (`state/metaplex_adapter.rs`), the Anchor IDL, and upstream's own `getMetadataArgsV2Serializer` all agree on nine fields and a 60-byte encoding with `creators` **before** `collection`. The handwritten `mintV2` builder called this encoder, so `mintV2` instruction data was malformed.
+- `UpdateArgs` declared `collection`, `uses`, and `tokenStandard` and omitted `creators`. The on-chain struct is `name`, `symbol`, `uri`, `creators`, `sellerFeeBasisPoints`, `primarySaleHappened`, `isMutable`, each an `Option`, so `updateMetadataV2` instruction data was malformed.
+
+Both are now verified byte-for-byte against `@metaplex-foundation/mpl-bubblegum` 6.0.0's own serializers, and the test suite asserts those vectors. The `mintV2` workaround comment ("the generated encoder has a bug") is gone because the bug is fixed.
+
+The generated instruction-data codecs in `lib/src/generated/instructions/` still collapse `defined`-type arguments (`metadataArgs`, `currentMetadata`, `updateArgs`) to `getU8Encoder()`. That is a separate renderer limitation: `mpl-bubblegum` is not one of the packages `scripts/generate_program_packages.mjs` manages, so its generated layer is hand-committed and the fix belongs with the renderer, not here. Those codecs are not on the path the handwritten builders use.
 
 ## Reference pins
 

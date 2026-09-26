@@ -220,13 +220,13 @@
       "path": ".repos/metaplex-foundation/mpl-bubblegum",
       "url": "https://github.com/metaplex-foundation/mpl-bubblegum",
       "ref": {
-        "type": "commit",
-        "value": "ad7d32b477625190704eb204741667b5df15221d"
+        "type": "tag",
+        "value": "release/bubblegum@2.0.0"
       },
       "package": "solana_kit_mpl_bubblegum",
       "issue": 131,
-      "notes": "Metaplex Bubblegum Anchor IDL at idls/bubblegum.json; convert with @codama/nodes-from-anchor before rendering. JS client release commits are untagged, so the default-branch commit is the pin. The move to ad7d32b4 carries JS client v6.0.0 (DAS inherited-SFBP alignment in getAssetWithProof and the new leafMetadata helpers) plus a Rust client release; idls/bubblegum.json is byte-identical and the program crate stays 0.12.0, so the Dart output is unchanged. The JS-only leaf-metadata surface is not ported yet, see docs/agents/upstream-audit-2026-09-26.md",
-      "checkedCommit": "ad7d32b477625190704eb204741667b5df15221d"
+      "notes": "Metaplex Bubblegum Anchor IDL at idls/bubblegum.json; convert with @codama/nodes-from-anchor before rendering. Pinned to the Core/Rust client release tag release/bubblegum@2.0.0 rather than a default-branch commit: the tag is the newest immutable ref that carries the DAS inherited-SFBP work (JS client v6.0.0 leaf metadata, commit 79e1a195), and the four commits between it and main only touch CI release workflows and crate manifests. The JS client's own v6.0.0 release is untagged, so this tag is the closest versioned pin upstream publishes.",
+      "checkedCommit": "79e1a1954bddb7fe5dcd52a5570a66a9f7d465e4"
     },
     {
       "name": "mpl-token-metadata",

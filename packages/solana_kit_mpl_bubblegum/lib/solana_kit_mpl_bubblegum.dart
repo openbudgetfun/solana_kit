@@ -61,9 +61,13 @@ export 'src/flags/leaf_schema_flags.dart';
 // Hand-written hashing utilities.
 export 'src/hashing/hash.dart';
 export 'src/hashing/hash_leaf.dart';
+export 'src/hashing/metadata_hash.dart';
 
 // Helius DAS API client.
 export 'src/helius_das_client.dart';
+
+// Leaf metadata resolution for hashing and write instructions.
+export 'src/leaf/leaf_metadata.dart';
 
 // Leaf schema.
 export 'src/leaf/leaf_schema.dart';
