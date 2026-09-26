@@ -307,3 +307,15 @@ Use [`example/main.dart`](./example/main.dart) as a runnable starting point for 
 On web the Mobile Wallet Adapter associates through the localhost WebSocket transport, which requires a secure context (HTTPS or localhost). The pairing sheet can appear before the wallet app is foreground — the session establishes as soon as the wallet app resumes. `transact` accepts a `connectionTimeout` (default: 30s on native, 3 minutes on web) and a `launchIntent` override.
 
 To revoke a pairing, use the wallet app's linked-dApps settings or the example app's Deauthorize action.
+
+## Upstream reference
+
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit_mobile_wallet_adapter` version | [`mobile-wallet-adapter`](https://github.com/solana-mobile/mobile-wallet-adapter) | Released                |
+| ------------------------------------------ | --------------------------------------------------------------------------------- | ----------------------- |
+| `0.6.0`                                    | `@solana-mobile/mobile-wallet-adapter-protocol-kit@0.4.0`                         | 2026-09-21              |
+| `0.4.3` – `0.5.3`                          | `8642fa3e1edb`                                                                    | 2026-08-18 – 2026-09-12 |
+| `0.3.2` – `0.4.2`                          | `main`                                                                            | 2026-05-30 – 2026-08-12 |
+
+<!-- upstream-support:end -->

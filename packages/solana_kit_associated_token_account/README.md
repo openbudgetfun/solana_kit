@@ -26,3 +26,13 @@ Future<void> main() async {
   print(ata.value);
 }
 ```
+
+## Upstream reference
+
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit_associated_token_account` version | [`associated-token-account`](https://github.com/solana-program/associated-token-account) | Released                |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------- |
+| `0.4.0` – `0.8.0`                             | `program@v8.0.0`                                                                         | 2026-05-30 – 2026-09-21 |
+
+<!-- upstream-support:end -->

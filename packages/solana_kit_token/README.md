@@ -115,4 +115,17 @@ The full `solana_kit_associated_token_account` API surface is re-exported so cal
 
 ## Upstream reference
 
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit_token` version | [`token`](https://github.com/solana-program/token) | Released                |
+| -------------------------- | -------------------------------------------------- | ----------------------- |
+| _next release_             | `js@v0.17.0`                                       | _unreleased_            |
+| `0.8.2` – `0.9.0`          | `js@v0.16.1`                                       | 2026-09-06 – 2026-09-21 |
+| `0.8.0` – `0.8.1`          | `js@v0.16.0`                                       | 2026-08-30              |
+| `0.7.0` – `0.7.1`          | `js@v0.15.0`                                       | 2026-08-18 – 2026-08-19 |
+| `0.5.2`                    | `js@v0.14.0`                                       | 2026-08-12              |
+| `0.4.0` – `0.5.1`          | `js@v0.13.0`                                       | 2026-05-30 – 2026-06-03 |
+
+<!-- upstream-support:end -->
+
 Generated layer mirrors [solana-program/token](https://github.com/solana-program/token) at `js@v0.17.0`.

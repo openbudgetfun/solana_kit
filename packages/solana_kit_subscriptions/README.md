@@ -8,6 +8,15 @@ The package is generated from the upstream `solana-foundation/subscriptions` Cod
 
 ## Upstream Compatibility
 
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit_subscriptions` version | [`subscriptions`](https://github.com/solana-foundation/subscriptions) | Released                |
+| ---------------------------------- | --------------------------------------------------------------------- | ----------------------- |
+| `0.1.1` – `0.3.0`                  | `ts-client-v0.5.0`                                                    | 2026-08-18 – 2026-09-21 |
+| `0.1.0`                            | `ts-client-v0.4.0-rc.2`                                               | 2026-08-12              |
+
+<!-- upstream-support:end -->
+
 - Upstream repository: [`solana-foundation/subscriptions`](https://github.com/solana-foundation/subscriptions)
 - Supported upstream baseline: `ts-client-v0.4.0-rc.2`
 - Program address: `De1egAFMkMWZSN5rYXRj9CAdheBamobVNubTsi9avR44`

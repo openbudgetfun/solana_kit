@@ -82,3 +82,14 @@ This package is a low-level dependency of `solana_kit_mpl_bubblegum`, which prov
 ## License
 
 MIT
+
+## Upstream reference
+
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit_spl_account_compression` version | [`account-compression`](https://github.com/solana-program/account-compression) | Released                |
+| -------------------------------------------- | ------------------------------------------------------------------------------ | ----------------------- |
+| `0.3.1` – `0.5.0`                            | `ac-mainnet-tag`                                                               | 2026-08-12 – 2026-09-21 |
+| `0.2.0` – `0.3.0`                            | `main`                                                                         | 2026-05-30 – 2026-06-01 |
+
+<!-- upstream-support:end -->
