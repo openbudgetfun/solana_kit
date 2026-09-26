@@ -87,6 +87,58 @@ void main() {
       expect(viaSugar.sellerFeeBasisPoints, sellerFeeBasisPointsInherit);
     });
 
+    test('asCurrentMetadata resolves V1 metadata from sibling raw fields', () {
+      const metadata = MetadataArgs(
+        name: 'My NFT',
+        uri: 'https://example.com/my-nft.json',
+        sellerFeeBasisPoints: 500,
+        creators: [
+          Creator(address: Address(_payee), verified: true, share: 100),
+        ],
+      );
+      const raw = RoyaltyRawFields(
+        sellerFeeBasisPointsRaw: sellerFeeBasisPointsInherit,
+        creatorsRaw: [],
+      );
+
+      final leaf = asCurrentMetadata(metadata, raw);
+
+      expect(leaf.sellerFeeBasisPoints, sellerFeeBasisPointsInherit);
+      expect(leaf.creators, isEmpty);
+      // The V1 fields the V2 shape drops are preserved here.
+      expect(leaf.tokenProgramVersion, metadata.tokenProgramVersion);
+      expect(leaf.uses, metadata.uses);
+      expect(leaf.editionNonce, metadata.editionNonce);
+    });
+
+    test('asCurrentMetadata accepts a value with no raw siblings', () {
+      const metadata = MetadataArgs(
+        name: 'X',
+        uri: 'https://example.com/x.json',
+        sellerFeeBasisPoints: 550,
+        creators: [],
+      );
+
+      expect(asCurrentMetadata(metadata).sellerFeeBasisPoints, 550);
+    });
+
+    test('toLeafMetadataV2 preserves the V2-only optional fields', () {
+      const metadata = MetadataArgsV2(
+        name: 'V2 NFT',
+        uri: 'https://example.com/v2.json',
+        sellerFeeBasisPoints: 500,
+        editionNonce: 3,
+        collection: Address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'),
+        creators: [],
+      );
+
+      final leaf = toLeafMetadataV2(metadata);
+
+      expect(leaf.editionNonce, 3);
+      expect(leaf.collection?.toString(), metadata.collection.toString());
+      expect(leaf.name, 'V2 NFT');
+    });
+
     test('rejects a value that is neither metadata shape', () {
       expect(
         () => toLeafMetadataV2('not metadata'),
