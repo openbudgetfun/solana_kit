@@ -139,6 +139,20 @@ The full `solana_kit_associated_token_account` API surface is re-exported so cal
 
 ## Upstream reference
 
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit_token_2022` version | [`token-2022`](https://github.com/solana-program/token-2022) | Released                |
+| ------------------------------- | ------------------------------------------------------------ | ----------------------- |
+| _next release_                  | `js@v0.19.0`                                                 | _unreleased_            |
+| `0.9.0`                         | `js@v0.18.0`                                                 | 2026-09-21              |
+| `0.8.2` – `0.8.3`               | `js@v0.16.1`                                                 | 2026-09-06 – 2026-09-12 |
+| `0.8.0` – `0.8.1`               | `js@v0.16.0`                                                 | 2026-08-30              |
+| `0.7.0` – `0.7.1`               | `js@v0.14.1`                                                 | 2026-08-18 – 2026-08-19 |
+| `0.5.2`                         | `js@v0.12.0`                                                 | 2026-08-12              |
+| `0.4.0` – `0.5.1`               | `js@v0.9.0`                                                  | 2026-05-30 – 2026-06-03 |
+
+<!-- upstream-support:end -->
+
 Generated layer mirrors [solana-program/token-2022](https://github.com/solana-program/token-2022) at `js@v0.19.0`.
 
 Accounts decode their TLV extension region the way the program reads it: entries are walked until an `Uninitialized` header or the end of the data. Accounts allocated with unused space — including the two-byte padding that keeps a mint from colliding with the multisig account length — decode correctly, and padding is never reported as an extension.

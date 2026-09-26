@@ -101,3 +101,14 @@ Instruction builders cover multisig creation, config transactions, vault transac
 ## Reference
 
 Generated with `codama-renderers-dart` from the Squads-Protocol / v4 Anchor IDL (`sdk/multisig/idl/squads_multisig_program.json`). PDA derivations and seed constants mirror the upstream TypeScript SDK and the Rust `squads-client` reference exactly, including little-endian `u64` transaction indices and single-byte vault indices.
+
+## Upstream reference
+
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit` version | [`squads-v4`](https://github.com/Squads-Protocol/v4) | Released     |
+| -------------------- | ---------------------------------------------------- | ------------ |
+| _next release_       | `af94153ff77a`                                       | _unreleased_ |
+| `0.9.0` – `0.9.3`    | `af94153ff77a`                                       | —            |
+
+<!-- upstream-support:end -->

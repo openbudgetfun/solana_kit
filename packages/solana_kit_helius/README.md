@@ -20,6 +20,16 @@ A Dart client for the [Helius API](https://github.com/helius-labs/helius-sdk), c
 
 ## Upstream compatibility
 
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit_helius` version | [`helius-sdk`](https://github.com/helius-labs/helius-sdk) | Released                |
+| --------------------------- | --------------------------------------------------------- | ----------------------- |
+| `0.7.0`                     | `v3.2.0`                                                  | 2026-09-21              |
+| `0.6.0` – `0.6.3`           | `ad8f796d81be`                                            | 2026-08-30 – 2026-09-12 |
+| `0.4.0` – `0.5.1`           | `4c0c55b86eab`                                            | 2026-06-01 – 2026-08-19 |
+
+<!-- upstream-support:end -->
+
 This package was audited against `helius-labs/helius-sdk` v3.0.0 at commit [`4c0c55b86eab0e3abde7896c0aa23c4b6515e9b0`](https://github.com/helius-labs/helius-sdk/commit/4c0c55b86eab0e3abde7896c0aa23c4b6515e9b0) (`chore(release): Update CHANGELOG (#330)`, 2026-05-30). Helius has not published a Git tag for that release, so this commit is the comparison baseline.
 
 The package covers the broad v3 surface: DAS, priority fees, RPC v2 including `getTransfersByAddress`, enhanced transactions, webhook CRUD/toggle, ZK compression, staking, wallet operations, Sender, the v3 JWT-based signup/checkout/payment flow, Admin project usage, and WebSocket subscriptions. The mainnet REST default follows v3's `https://api-mainnet.helius-rpc.com/v0` host, while devnet enhanced REST continues to use `https://api-devnet.helius.xyz/v0`.

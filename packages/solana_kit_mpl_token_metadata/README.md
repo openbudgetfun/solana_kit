@@ -99,3 +99,14 @@ Instruction builders such as `getCreateMetadataAccountV3Instruction`, `getUpdate
 ## Reference
 
 Generated with `codama-renderers-dart` from the metaplex-foundation / mpl-token-metadata shank IDL (program `metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s`), mirroring the upstream TypeScript client, including the `newUpdateAuthority` argument naming used by the official SDK.
+
+## Upstream reference
+
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit` version | [`mpl-token-metadata`](https://github.com/metaplex-foundation/mpl-token-metadata) | Released     |
+| -------------------- | --------------------------------------------------------------------------------- | ------------ |
+| _next release_       | `353d01be4af3`                                                                    | _unreleased_ |
+| `0.9.0` – `0.9.3`    | `349e061053c6`                                                                    | —            |
+
+<!-- upstream-support:end -->
