@@ -132,6 +132,96 @@ void main() {
         'c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470',
       );
     });
+
+    test('hashes V1 metadata through the V1 encoder', () {
+      const metadata = MetadataArgs(
+        name: 'My NFT',
+        uri: 'https://example.com/my-nft.json',
+        sellerFeeBasisPoints: 500,
+        creators: [
+          Creator(address: Address(_payee), verified: true, share: 100),
+        ],
+      );
+
+      // V1 hashing uses the V1 encoder, which is three bytes longer than V2
+      // because of editionNonce, uses, and tokenProgramVersion.
+      expect(hashMetadataData(metadata), isNot(hashMetadataDataV2(metadata)));
+      expect(hashMetadata(metadata), isNot(hashMetadataV2(metadata)));
+      expect(hashMetadataCreators(metadata.creators), isNotEmpty);
+    });
+
+    test('V1 hashing resolves the raw royalty companions', () {
+      const metadata = MetadataArgs(
+        name: 'My NFT',
+        uri: 'https://example.com/my-nft.json',
+        sellerFeeBasisPoints: 500,
+        creators: [],
+      );
+      final plain = hashMetadataData(metadata);
+      final inherited = hashMetadataData(
+        metadata,
+        const RoyaltyRawFields(
+          sellerFeeBasisPointsRaw: sellerFeeBasisPointsInherit,
+        ),
+      );
+
+      expect(_hex(plain), isNot(_hex(inherited)));
+    });
+
+    test('V1 hashing accepts the siblings carried on the value', () {
+      const metadata = MetadataArgs(
+        name: 'My NFT',
+        uri: 'https://example.com/my-nft.json',
+        sellerFeeBasisPoints: 500,
+        creators: [],
+      );
+      const siblings = RoyaltyRawFields(
+        sellerFeeBasisPointsRaw: sellerFeeBasisPointsInherit,
+      );
+
+      // Passing the companions explicitly and via toLeafMetadata agree.
+      expect(
+        _hex(hashMetadataV2(toLeafMetadataV2(metadata, siblings))),
+        _hex(hashMetadataV2(metadata, siblings)),
+      );
+    });
+
+    test('encodeBorshString prefixes the UTF-8 byte length', () {
+      final encoded = encodeBorshString('abc');
+
+      expect(encoded, hasLength(7));
+      expect(encoded.sublist(0, 4), [3, 0, 0, 0]);
+      expect(encoded.sublist(4), [0x61, 0x62, 0x63]);
+    });
+
+    test('encodeBorshString counts UTF-8 bytes, not code units', () {
+      // 'é' is two UTF-8 bytes, so the length prefix must be 2.
+      final encoded = encodeBorshString('é');
+
+      expect(encoded.sublist(0, 4), [2, 0, 0, 0]);
+      expect(encoded, hasLength(6));
+    });
+
+    test('encodeMetadataArgsV2FromMetadata matches the generated encoder', () {
+      final fromValue = encodeMetadataArgsV2FromMetadata(_v2Metadata);
+      final fromArgs = encodeMetadataArgsV2(
+        name: _v2Metadata.name,
+        symbol: _v2Metadata.symbol,
+        uri: _v2Metadata.uri,
+        sellerFeeBasisPoints: _v2Metadata.sellerFeeBasisPoints,
+        primarySaleHappened: _v2Metadata.primarySaleHappened,
+        isMutable: _v2Metadata.isMutable,
+        tokenStandard: _v2Metadata.tokenStandard.value,
+        collection: _v2Metadata.collection,
+        creators: _v2Metadata.creators,
+      );
+
+      expect(_hex(fromValue), _hex(fromArgs));
+    });
+
+    test('encodeBorshString handles an empty string', () {
+      expect(encodeBorshString(''), [0, 0, 0, 0]);
+    });
   });
 
   group('UpdateArgs encoding', () {
