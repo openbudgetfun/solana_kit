@@ -57,12 +57,12 @@
       "url": "https://github.com/solana-program/system",
       "ref": {
         "type": "tag",
-        "value": "js@v0.14.1"
+        "value": "js@v0.15.0"
       },
       "package": "solana_kit_system",
       "issue": 131,
-      "notes": "Solana system JS client (patch: devEngines packaging only)",
-      "checkedCommit": "0ebb80013b7706ee09441289c4221605c394be4a"
+      "notes": "Solana system JS client. js@v0.15.0 only bumps the Codama JS renderer and regenerates the TypeScript client; idl.json is byte-identical, so the Dart output is unchanged",
+      "checkedCommit": "15f18487535a4f248afc1bf700a1a8a14f305452"
     },
     {
       "name": "token",
@@ -70,11 +70,11 @@
       "url": "https://github.com/solana-program/token",
       "ref": {
         "type": "tag",
-        "value": "js@v0.16.1"
+        "value": "js@v0.17.0"
       },
       "package": "solana_kit_token",
-      "notes": "SPL Token JS client (patch: devEngines packaging only)",
-      "checkedCommit": "0087ca54bd5a5b07e1df7e1b52303529047a1186"
+      "notes": "SPL Token JS client. js@v0.17.0 only bumps the Codama JS renderer and regenerates the TypeScript client; idl.json is byte-identical, so the Dart output is unchanged",
+      "checkedCommit": "8185db13640f0df038266c7cf4306c212d81380a"
     },
     {
       "name": "token-2022",
@@ -82,11 +82,11 @@
       "url": "https://github.com/solana-program/token-2022",
       "ref": {
         "type": "tag",
-        "value": "js@v0.18.0"
+        "value": "js@v0.19.0"
       },
       "package": "solana_kit_token_2022",
-      "notes": "SPL Token-2022 JS client. js@v0.17.0 renamed the program node to its canonical camelCase name and swapped the generated extension array for a hand-written TLV codec that stops at the first Uninitialized header, so accounts with unused extension space (including two-byte multisig padding) decode instead of throwing",
-      "checkedCommit": "18a80055ed7aa2d0dff4df4f613e28efee11cc1a"
+      "notes": "SPL Token-2022 JS client. js@v0.17.0 renamed the program node to its canonical camelCase name and swapped the generated extension array for a hand-written TLV codec that stops at the first Uninitialized header, so accounts with unused extension space (including two-byte multisig padding) decode instead of throwing. js@v0.19.0 only bumps the Codama JS renderer and regenerates the TypeScript client; idl.json is byte-identical, so the Dart output is unchanged",
+      "checkedCommit": "bf0dd490ab8ac02c1b234589ff006833cbe03106"
     },
     {
       "name": "subscriptions",
@@ -118,12 +118,12 @@
       "url": "https://github.com/solana-program/address-lookup-table",
       "ref": {
         "type": "tag",
-        "value": "js@v0.14.1"
+        "value": "js@v0.15.0"
       },
       "package": "solana_kit_address_lookup_table",
       "issue": 134,
-      "notes": "Solana address-lookup-table JS client (patch: dev dependency bump only)",
-      "checkedCommit": "e180ec24af8ea018ad71ec633cf640ede77c5fba"
+      "notes": "Solana address-lookup-table JS client. js@v0.15.0 bumps the Codama JS renderer and regenerates the TypeScript client alongside Rust dependency bumps; idl.json is byte-identical, so the Dart output is unchanged",
+      "checkedCommit": "d8e353376135d9699a243e798274dae7ea21da4f"
     },
     {
       "name": "memo",
@@ -131,12 +131,12 @@
       "url": "https://github.com/solana-program/memo",
       "ref": {
         "type": "tag",
-        "value": "js@v0.14.1"
+        "value": "js@v0.15.0"
       },
       "package": "solana_kit_memo",
       "issue": 135,
-      "notes": "SPL Memo program JS client. js@v0.14.0 points the generated client at the v4 memo program and adds the memo extraction helpers; the v1 and v3 addresses stay available as legacy constants",
-      "checkedCommit": "319fdde6ceefcbe79e2ba46898bb983b22701dbc"
+      "notes": "SPL Memo program JS client. js@v0.14.0 points the generated client at the v4 memo program and adds the memo extraction helpers; the v1 and v3 addresses stay available as legacy constants. js@v0.15.0 only bumps the Codama JS renderer and regenerates the TypeScript client; idl.json is byte-identical, so the Dart output is unchanged",
+      "checkedCommit": "f3f090d344da11fe082f65ed0e36149a979e2507"
     },
     {
       "name": "compute-budget",
@@ -144,12 +144,12 @@
       "url": "https://github.com/solana-program/compute-budget",
       "ref": {
         "type": "tag",
-        "value": "js@v0.18.1"
+        "value": "js@v0.19.0"
       },
       "package": "solana_kit_compute_budget",
       "issue": 133,
-      "notes": "Solana compute-budget JS client for Codama Dart generation (patch: devEngines packaging only)",
-      "checkedCommit": "0de2c3630f69c77fae80437563788f797e5b5b21"
+      "notes": "Solana compute-budget JS client for Codama Dart generation. js@v0.19.0 only bumps the Codama JS renderer and regenerates the TypeScript client; idl.json is byte-identical, so the Dart output is unchanged",
+      "checkedCommit": "b68894cf2ca3664db1f9530061c63033a461ac33"
     },
     {
       "name": "stake",
@@ -157,12 +157,12 @@
       "url": "https://github.com/solana-program/stake",
       "ref": {
         "type": "tag",
-        "value": "js@v0.9.1"
+        "value": "js@v0.10.0"
       },
       "package": "solana_kit_stake",
       "issue": 136,
-      "notes": "Solana stake JS client (patch: dev dependency bump only)",
-      "checkedCommit": "5b20fb2a51fd3253f3ac138fffe2e4dd1e863f0d"
+      "notes": "Solana stake JS client. js@v0.10.0 moves the Codama IDL format to 1.9.2 and the program version to 5.0.0, but the IDL is byte-identical apart from those version fields and the renderer emits no program version, so the Dart output is unchanged",
+      "checkedCommit": "6ff57404c5b723c96bad6c7438d812825968ecaf"
     },
     {
       "name": "config",
@@ -182,12 +182,12 @@
       "url": "https://github.com/solana-program/loader-v3",
       "ref": {
         "type": "tag",
-        "value": "js@v0.6.1"
+        "value": "js@v0.7.0"
       },
       "package": "solana_kit_loader",
       "issue": 138,
-      "notes": "Solana loader-v3 JS client (patch: devEngines packaging only)",
-      "checkedCommit": "d87c071b5c7cfe6e3ae0cc7345bd5550e06f97f4"
+      "notes": "Solana loader-v3 JS client. js@v0.7.0 only bumps the Codama JS renderer and regenerates the TypeScript client; idl.json is byte-identical, so the Dart output is unchanged",
+      "checkedCommit": "b74b8fbfba09dd1915134da3b4a90c69af058154"
     },
     {
       "name": "loader-v4",
@@ -195,12 +195,12 @@
       "url": "https://github.com/solana-program/loader-v4",
       "ref": {
         "type": "commit",
-        "value": "5bb854dbd2b680ea377c29fe8bc1847a694f7f45"
+        "value": "76f8ce27d3bcb7492e5adb83c6eae8b5a6d2ee39"
       },
       "package": "solana_kit_loader",
       "issue": 138,
-      "notes": "Pinned to a commit because upstream still publishes no versioned release for this program",
-      "checkedCommit": "5bb854dbd2b680ea377c29fe8bc1847a694f7f45"
+      "notes": "Pinned to a commit because upstream still publishes no versioned release for this program. The move to 76f8ce27 only bumps the Codama JS renderer and regenerates the TypeScript client; idl.json is byte-identical, so the Dart output is unchanged",
+      "checkedCommit": "76f8ce27d3bcb7492e5adb83c6eae8b5a6d2ee39"
     },
     {
       "name": "account-compression",
@@ -221,12 +221,12 @@
       "url": "https://github.com/metaplex-foundation/mpl-bubblegum",
       "ref": {
         "type": "commit",
-        "value": "07180c737ebd00151a2e18ccef9929d19d26823e"
+        "value": "ad7d32b477625190704eb204741667b5df15221d"
       },
       "package": "solana_kit_mpl_bubblegum",
       "issue": 131,
-      "notes": "Metaplex Bubblegum Anchor IDL at idls/bubblegum.json; convert with @codama/nodes-from-anchor before rendering. JS client release commits are untagged, so the default-branch commit is the pin",
-      "checkedCommit": "07180c737ebd00151a2e18ccef9929d19d26823e"
+      "notes": "Metaplex Bubblegum Anchor IDL at idls/bubblegum.json; convert with @codama/nodes-from-anchor before rendering. JS client release commits are untagged, so the default-branch commit is the pin. The move to ad7d32b4 carries JS client v6.0.0 (DAS inherited-SFBP alignment in getAssetWithProof and the new leafMetadata helpers) plus a Rust client release; idls/bubblegum.json is byte-identical and the program crate stays 0.12.0, so the Dart output is unchanged. The JS-only leaf-metadata surface is not ported yet, see docs/agents/upstream-audit-2026-09-26.md",
+      "checkedCommit": "ad7d32b477625190704eb204741667b5df15221d"
     },
     {
       "name": "mpl-token-metadata",
