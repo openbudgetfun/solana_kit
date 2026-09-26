@@ -132,6 +132,12 @@ Uint8List encodeMetadataArgs(MetadataArgs args) {
 }
 
 /// Borsh-encodes a MetadataArgsV2.
+///
+/// The V2 struct has no `editionNonce`, `uses`, or `tokenProgramVersion`
+/// fields: the on-chain `MetadataArgsV2` is `name`, `symbol`, `uri`,
+/// `sellerFeeBasisPoints`, `primarySaleHappened`, `isMutable`, `tokenStandard`,
+/// `creators`, `collection` (see `state/metaplex_adapter.rs` in the Bubblegum
+/// program and the `MetadataArgsV2` entry in `idls/bubblegum.json`).
 Uint8List encodeMetadataArgsV2({
   required String name,
   required String symbol,
@@ -139,11 +145,8 @@ Uint8List encodeMetadataArgsV2({
   required int sellerFeeBasisPoints,
   required bool primarySaleHappened,
   required bool isMutable,
-  required int? editionNonce,
   required int tokenStandard,
   required Address? collection,
-  required Uses? uses,
-  required int tokenProgramVersion,
   required List<Creator> creators,
 }) {
   final buffer = BytesBuilder();
@@ -162,38 +165,9 @@ Uint8List encodeMetadataArgsV2({
   // isMutable (bool)
   buffer.addByte(isMutable ? 1 : 0);
 
-  // editionNonce (Option<u8>)
-  if (editionNonce != null) {
-    buffer.addByte(1); // Some
-    buffer.addByte(editionNonce);
-  } else {
-    buffer.addByte(0); // None
-  }
-
   // tokenStandard (Option<u8>)
   buffer.addByte(1); // Some
   buffer.addByte(tokenStandard);
-
-  // collection (Option<Address>)
-  if (collection != null) {
-    buffer.addByte(1); // Some
-    buffer.add(getAddressEncoder().encode(collection));
-  } else {
-    buffer.addByte(0); // None
-  }
-
-  // uses (Option<Uses>)
-  if (uses != null) {
-    buffer.addByte(1); // Some
-    buffer.addByte(uses.useMethod.value);
-    _writeU64LE(buffer, uses.remaining);
-    _writeU64LE(buffer, uses.total);
-  } else {
-    buffer.addByte(0); // None
-  }
-
-  // tokenProgramVersion (u8)
-  buffer.addByte(tokenProgramVersion);
 
   // creators (Vec<Creator>)
   _writeU32LE(buffer, creators.length);
@@ -201,6 +175,14 @@ Uint8List encodeMetadataArgsV2({
     buffer.add(getAddressEncoder().encode(creator.address));
     buffer.addByte(creator.verified ? 1 : 0);
     buffer.addByte(creator.share);
+  }
+
+  // collection (Option<Address>)
+  if (collection != null) {
+    buffer.addByte(1); // Some
+    buffer.add(getAddressEncoder().encode(collection));
+  } else {
+    buffer.addByte(0); // None
   }
 
   return buffer.toBytes();
