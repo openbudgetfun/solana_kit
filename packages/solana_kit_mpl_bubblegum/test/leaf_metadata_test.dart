@@ -139,6 +139,19 @@ void main() {
       expect(leaf.name, 'V2 NFT');
     });
 
+    test('isV1MetadataArgs distinguishes the two metadata shapes', () {
+      const v1 = MetadataArgs(
+        name: 'X',
+        uri: 'https://example.com/x.json',
+        sellerFeeBasisPoints: 0,
+        creators: [],
+      );
+
+      expect(isV1MetadataArgs(v1), isTrue);
+      expect(isV1MetadataArgs(_v2Metadata), isFalse);
+      expect(isV1MetadataArgs('not metadata'), isFalse);
+    });
+
     test('rejects a value that is neither metadata shape', () {
       expect(
         () => toLeafMetadataV2('not metadata'),
