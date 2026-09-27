@@ -313,6 +313,18 @@ void main() {
           nonce: BigInt.zero,
           index: 0,
           proof: [Uint8List(32)],
+          metadata: const MetadataArgs(
+            name: 'test',
+            uri: 'https://example.com/test.json',
+            sellerFeeBasisPoints: 0,
+            creators: [],
+          ),
+          currentMetadata: const MetadataArgsV2(
+            name: 'test',
+            uri: 'https://example.com/test.json',
+            sellerFeeBasisPoints: 0,
+            creators: [],
+          ),
         );
 
         expect(assetWithProof.rpcAsset.id, equals('test-id'));

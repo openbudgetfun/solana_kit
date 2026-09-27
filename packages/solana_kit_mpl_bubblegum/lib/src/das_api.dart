@@ -6,6 +6,13 @@ library;
 
 import 'dart:typed_data';
 
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_mpl_bubblegum/src/flags/leaf_schema_flags.dart';
+import 'package:solana_kit_mpl_bubblegum/src/generated/types/enums.dart';
+import 'package:solana_kit_mpl_bubblegum/src/generated/types/metadata_args.dart';
+import 'package:solana_kit_mpl_bubblegum/src/generated/types/types.dart';
+import 'package:solana_kit_mpl_bubblegum/src/leaf/leaf_metadata.dart';
+
 /// The result of a DAS `getAssetProof` call.
 class DasAssetProof {
   /// Creates a [DasAssetProof].
@@ -44,6 +51,11 @@ class DasAsset {
     required this.content,
     required this.creators,
     required this.grouping,
+    this.royalty,
+    this.creatorsRaw,
+    this.collection,
+    this.mutable = true,
+    this.editionNonce,
   });
 
   /// The asset ID (compressed NFT address).
@@ -63,6 +75,24 @@ class DasAsset {
 
   /// Grouping (collection info).
   final List<DasAssetGrouping> grouping;
+
+  /// Royalty information, including the leaf-only raw companions.
+  final DasAssetRoyalty? royalty;
+
+  /// Leaf creators from DAS `creators_raw`.
+  ///
+  /// DAS omits this unless the asset's royalties are inherited.
+  final List<DasAssetCreator>? creatorsRaw;
+
+  /// The collection this asset belongs to, derived from the `collection`
+  /// grouping entry, with its verification flag.
+  final Collection? collection;
+
+  /// Whether the asset's metadata is mutable.
+  final bool mutable;
+
+  /// The asset's edition nonce, when DAS reports one.
+  final int? editionNonce;
 }
 
 /// Ownership information for a DAS asset.
@@ -101,6 +131,9 @@ class DasAssetCompression {
     required this.tree,
     required this.seq,
     required this.leafId,
+    this.collectionHash,
+    this.assetDataHash,
+    this.flags,
   });
 
   /// Whether the asset is compressed.
@@ -123,16 +156,30 @@ class DasAssetCompression {
 
   /// The leaf ID.
   final int leafId;
+
+  /// The collection hash from DAS `compression.collection_hash`, when present.
+  final String? collectionHash;
+
+  /// The asset data hash from DAS `compression.asset_data_hash`, when present.
+  final String? assetDataHash;
+
+  /// The leaf schema V2 flags from DAS `compression.flags`, when present.
+  final int? flags;
 }
 
 /// Content information for a DAS asset.
 /// DAS API asset content data.
 class DasAssetContent {
   /// Creates a [DasAssetContent].
-  const DasAssetContent({this.metadata});
+  const DasAssetContent({this.metadata, this.jsonUri});
 
   /// Metadata information.
   final DasAssetMetadata? metadata;
+
+  /// The off-chain metadata URI from DAS `content.json_uri`.
+  ///
+  /// This is the value Bubblegum hashes into the leaf as the metadata URI.
+  final String? jsonUri;
 }
 
 /// Metadata for a DAS asset.
@@ -183,13 +230,20 @@ class DasAssetCreator {
 /// DAS API asset grouping data.
 class DasAssetGrouping {
   /// Creates a [DasAssetGrouping].
-  const DasAssetGrouping({required this.groupKey, required this.groupValue});
+  const DasAssetGrouping({
+    required this.groupKey,
+    required this.groupValue,
+    this.verified = false,
+  });
 
   /// The grouping key (e.g., "collection").
   final String groupKey;
 
   /// The grouping value (e.g., the collection address).
   final String groupValue;
+
+  /// Whether DAS reports the grouping as verified.
+  final bool verified;
 }
 
 /// Abstract interface for DAS API operations needed by mpl-bubblegum.
@@ -203,6 +257,39 @@ abstract class DasApiClient {
 
   /// Gets the Merkle proof for a compressed NFT.
   Future<DasAssetProof> getAssetProof(String assetId);
+}
+
+/// Royalty information for a DAS asset.
+///
+/// DAS reports the display view of an asset's royalties here. When an asset
+/// inherits its seller fee from a Core collection, [basisPointsRaw] carries the
+/// leaf value and [inherited] marks the inherit sentinel; otherwise the leaf
+/// value is [basisPoints].
+class DasAssetRoyalty {
+  /// Creates a [DasAssetRoyalty].
+  const DasAssetRoyalty({
+    this.basisPoints,
+    this.basisPointsRaw,
+    this.primarySaleHappened,
+    this.inherited = false,
+  });
+
+  /// The display royalty basis points from DAS `royalty.basis_points`.
+  final int? basisPoints;
+
+  /// The leaf royalty basis points from DAS `royalty.basis_points_raw`.
+  ///
+  /// DAS omits this unless the asset's royalties are inherited.
+  final int? basisPointsRaw;
+
+  /// Whether the asset's primary sale has happened.
+  final bool? primarySaleHappened;
+
+  /// Whether DAS reports the asset's seller fee as inherited.
+  ///
+  /// Set from `royalty.sfbp_inherited` or `royalty.inherited`, or when
+  /// [basisPoints] equals the inherit sentinel.
+  final bool inherited;
 }
 
 /// Complete data for a compressed NFT including its Merkle proof.
@@ -225,6 +312,14 @@ class AssetWithProof {
     required this.nonce,
     required this.index,
     required this.proof,
+    required this.metadata,
+    required this.currentMetadata,
+    this.collectionHash,
+    this.assetDataHash,
+    this.flags,
+    this.sellerFeeBasisPointsRaw,
+    this.creatorsRaw,
+    this.inherited = false,
   });
 
   /// The raw DAS API asset response.
@@ -259,6 +354,43 @@ class AssetWithProof {
 
   /// The Merkle proof nodes.
   final List<Uint8List> proof;
+
+  /// Display-aligned metadata mirroring DAS `royalty.basis_points` and
+  /// `creators`. When the seller fee is inherited this holds the
+  /// collection-resolved rate and payees.
+  final MetadataArgs metadata;
+
+  /// Canonical leaf metadata for V2 hash and write instructions.
+  ///
+  /// Uses the DAS raw royalty companions when the seller fee is inherited, so
+  /// a hash computed from this value matches the leaf the tree stores.
+  final MetadataArgsV2 currentMetadata;
+
+  /// The collection hash from DAS `compression.collection_hash`, when present.
+  final Uint8List? collectionHash;
+
+  /// The asset data hash from DAS `compression.asset_data_hash`, when present.
+  final Uint8List? assetDataHash;
+
+  /// The validated leaf schema V2 flags from DAS `compression.flags`.
+  ///
+  /// `null` when DAS reports no flags or a value outside the known bit range.
+  final int? flags;
+
+  /// Leaf seller fee basis points from DAS `royalty.basis_points_raw`.
+  ///
+  /// Set only when DAS provides the raw value or the seller fee is inherited.
+  /// `null` for ordinary assets.
+  final int? sellerFeeBasisPointsRaw;
+
+  /// Leaf creators from DAS `creators_raw`.
+  ///
+  /// Set only when DAS provides them or the seller fee is inherited. `null`
+  /// for ordinary assets.
+  final List<Creator>? creatorsRaw;
+
+  /// Whether DAS reports the asset's seller fee as inherited.
+  final bool inherited;
 }
 
 /// Gets an asset and its Merkle proof from the DAS API.
@@ -282,6 +414,38 @@ Future<AssetWithProof> getAssetWithProof({
   // Parse the proof nodes
   final proofNodes = proof.proof.map(_base58ToBytes).toList();
 
+  final royalty = asset.royalty;
+  final inherited =
+      royalty?.inherited ?? royalty?.basisPoints == sellerFeeBasisPointsInherit;
+
+  // Leaf `_raw` values are only present when DAS exposes them or when the
+  // seller fee is inherited, in which case DAS omits them from its response.
+  int? sellerFeeBasisPointsRaw;
+  List<Creator>? creatorsRaw;
+  if (royalty?.basisPointsRaw != null) {
+    sellerFeeBasisPointsRaw = royalty!.basisPointsRaw;
+  } else if (inherited) {
+    sellerFeeBasisPointsRaw = sellerFeeBasisPointsInherit;
+  }
+  if (asset.creatorsRaw != null) {
+    creatorsRaw = asset.creatorsRaw!.map(_toCreator).toList();
+  } else if (inherited) {
+    creatorsRaw = const [];
+  }
+
+  final collection = asset.collection;
+  final metadata = MetadataArgs(
+    name: asset.content?.metadata?.name ?? '',
+    symbol: asset.content?.metadata?.symbol ?? '',
+    uri: asset.content?.jsonUri ?? '',
+    sellerFeeBasisPoints: royalty?.basisPoints ?? 0,
+    primarySaleHappened: royalty?.primarySaleHappened ?? false,
+    isMutable: asset.mutable,
+    editionNonce: asset.editionNonce,
+    collection: collection,
+    creators: asset.creators.map(_toCreator).toList(),
+  );
+
   return AssetWithProof(
     rpcAsset: asset,
     rpcAssetProof: proof,
@@ -294,8 +458,35 @@ Future<AssetWithProof> getAssetWithProof({
     nonce: BigInt.from(asset.compression.leafId),
     index: proof.nodeIndex - (1 << proof.proof.length),
     proof: proofNodes,
+    metadata: metadata,
+    currentMetadata: toLeafMetadataV2(
+      metadata,
+      RoyaltyRawFields(
+        sellerFeeBasisPointsRaw: sellerFeeBasisPointsRaw,
+        creatorsRaw: creatorsRaw,
+      ),
+    ),
+    collectionHash: asset.compression.collectionHash == null
+        ? null
+        : _base58ToBytes(asset.compression.collectionHash!),
+    assetDataHash: asset.compression.assetDataHash == null
+        ? null
+        : _base58ToBytes(asset.compression.assetDataHash!),
+    flags: isValidLeafSchemaV2Flags(asset.compression.flags ?? -1)
+        ? asset.compression.flags
+        : null,
+    sellerFeeBasisPointsRaw: sellerFeeBasisPointsRaw,
+    creatorsRaw: creatorsRaw,
+    inherited: inherited,
   );
 }
+
+/// Converts a DAS creator record into the on-chain [Creator] shape.
+Creator _toCreator(DasAssetCreator creator) => Creator(
+  address: Address(creator.address),
+  verified: creator.verified,
+  share: creator.share,
+);
 
 Uint8List _base58ToBytes(String encoded) {
   // Base58 decoding - simplified implementation

@@ -1,6 +1,9 @@
 // Auto-generated. Do not edit.
 // ignore_for_file: type=lint
 
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:meta/meta.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/types/types.dart';
@@ -41,29 +44,97 @@ class MetadataArgsV2 {
 }
 
 /// Update arguments for metadata updates.
+///
+/// Field order and set match the on-chain `UpdateArgs` struct: `name`,
+/// `symbol`, `uri`, `creators`, `sellerFeeBasisPoints`,
+/// `primarySaleHappened`, `isMutable`. Every field is optional; `null` means
+/// "leave unchanged".
 @immutable
 class UpdateArgs {
   const UpdateArgs({
     this.name,
     this.symbol,
     this.uri,
+    this.creators,
     this.sellerFeeBasisPoints,
     this.primarySaleHappened,
     this.isMutable,
-    this.collection,
-    this.uses,
-    this.tokenStandard,
   });
 
   final String? name;
   final String? symbol;
   final String? uri;
+  final List<Creator>? creators;
   final int? sellerFeeBasisPoints;
   final bool? primarySaleHappened;
   final bool? isMutable;
-  final Address? collection;
-  final Uses? uses;
-  final TokenStandard? tokenStandard;
+}
+
+/// Borsh-encodes an [UpdateArgs] value.
+///
+/// Each field is `Option<T>`, prefixed by a `1`/`0` presence byte.
+Uint8List encodeUpdateArgs(UpdateArgs args) {
+  final buffer = BytesBuilder();
+
+  _writeOptionalBorshString(buffer, args.name);
+  _writeOptionalBorshString(buffer, args.symbol);
+  _writeOptionalBorshString(buffer, args.uri);
+
+  final creators = args.creators;
+  if (creators == null) {
+    buffer.addByte(0);
+  } else {
+    buffer.addByte(1);
+    _writeU32Le(buffer, creators.length);
+    for (final creator in creators) {
+      buffer.add(getAddressEncoder().encode(creator.address));
+      buffer.addByte(creator.verified ? 1 : 0);
+      buffer.addByte(creator.share);
+    }
+  }
+
+  _writeOptionalU16(buffer, args.sellerFeeBasisPoints);
+  _writeOptionalBool(buffer, args.primarySaleHappened);
+  _writeOptionalBool(buffer, args.isMutable);
+
+  return buffer.toBytes();
+}
+
+void _writeOptionalBorshString(BytesBuilder buffer, String? value) {
+  if (value == null) {
+    buffer.addByte(0);
+    return;
+  }
+  buffer.addByte(1);
+  final bytes = utf8.encode(value);
+  _writeU32Le(buffer, bytes.length);
+  buffer.add(bytes);
+}
+
+void _writeOptionalU16(BytesBuilder buffer, int? value) {
+  if (value == null) {
+    buffer.addByte(0);
+    return;
+  }
+  buffer.addByte(1);
+  buffer.addByte(value & 0xFF);
+  buffer.addByte((value >> 8) & 0xFF);
+}
+
+void _writeOptionalBool(BytesBuilder buffer, bool? value) {
+  if (value == null) {
+    buffer.addByte(0);
+    return;
+  }
+  buffer.addByte(1);
+  buffer.addByte(value ? 1 : 0);
+}
+
+void _writeU32Le(BytesBuilder buffer, int value) {
+  buffer.addByte(value & 0xFF);
+  buffer.addByte((value >> 8) & 0xFF);
+  buffer.addByte((value >> 16) & 0xFF);
+  buffer.addByte((value >> 24) & 0xFF);
 }
 
 /// Version enum (V1 or V2).

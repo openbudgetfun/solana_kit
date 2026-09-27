@@ -312,110 +312,117 @@ void main() {
   });
 
   group('MetadataArgsV2 encoder', () {
-    test('encodeMetadataArgsV2 produces valid bytes', () {
+    // The on-chain MetadataArgsV2 struct has no editionNonce, uses, or
+    // tokenProgramVersion fields. These vectors are the exact bytes the
+    // upstream @metaplex-foundation/mpl-bubblegum 6.0.0
+    // getMetadataArgsV2Serializer produces for the same input, so they pin
+    // the byte layout the program actually deserializes.
+    const expectedV2Bytes =
+        '060000004d79204e4654000000001f00000068747470733a2f2f6578616d706c652e'
+        '636f6d2f6d792d6e66742e6a736f6ef401000101000000000000';
+
+    String hex(List<int> bytes) =>
+        bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+
+    test('encodeMetadataArgsV2 matches the on-chain V2 layout', () {
       final bytes = encodeMetadataArgsV2(
-        name: 'Test NFT',
-        symbol: 'TNFT',
-        uri: 'https://example.com/metadata.json',
+        name: 'My NFT',
+        symbol: '',
+        uri: 'https://example.com/my-nft.json',
         sellerFeeBasisPoints: 500,
         primarySaleHappened: false,
         isMutable: true,
-        editionNonce: null,
         tokenStandard: 0, // NonFungible
         collection: null,
-        uses: null,
-        tokenProgramVersion: 0, // Original
         creators: [],
       );
 
-      // Should produce non-empty bytes
-      expect(bytes.isNotEmpty, isTrue);
-      // Should start with the name length (8 bytes for 'Test NFT')
-      expect(bytes[0], 8); // 'Test NFT'.length = 8
+      expect(hex(bytes), expectedV2Bytes);
+      expect(bytes.length, 60);
     });
 
-    test('encodeMetadataArgsV2 with collection', () {
-      final bytes = encodeMetadataArgsV2(
-        name: 'Test NFT',
-        symbol: 'TNFT',
-        uri: 'https://example.com/metadata.json',
+    test('encodeMetadataArgsV2 omits the V1-only trailing fields', () {
+      final v2 = encodeMetadataArgsV2(
+        name: 'My NFT',
+        symbol: '',
+        uri: 'https://example.com/my-nft.json',
         sellerFeeBasisPoints: 500,
         primarySaleHappened: false,
         isMutable: true,
-        editionNonce: null,
-        tokenStandard: 0,
-        collection: const Address(
-          'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
-        ),
-        uses: null,
-        tokenProgramVersion: 0,
-        creators: [],
-      );
-
-      expect(bytes.isNotEmpty, isTrue);
-    });
-
-    test('encodeMetadataArgsV2 with creators', () {
-      final bytes = encodeMetadataArgsV2(
-        name: 'Test NFT',
-        symbol: 'TNFT',
-        uri: 'https://example.com/metadata.json',
-        sellerFeeBasisPoints: 500,
-        primarySaleHappened: false,
-        isMutable: true,
-        editionNonce: null,
         tokenStandard: 0,
         collection: null,
-        uses: null,
-        tokenProgramVersion: 0,
+        creators: [],
+      );
+      final v1 = encodeMetadataArgs(
+        const MetadataArgs(
+          name: 'My NFT',
+          uri: 'https://example.com/my-nft.json',
+          sellerFeeBasisPoints: 500,
+          creators: [],
+        ),
+      );
+
+      // V2 drops editionNonce (1), uses (1), and tokenProgramVersion (1).
+      expect(v2.length, 60);
+      expect(v1.length, 63);
+    });
+
+    test('encodeMetadataArgsV2 appends creators before the collection', () {
+      final withCreator = encodeMetadataArgsV2(
+        name: 'My NFT',
+        symbol: '',
+        uri: 'https://example.com/my-nft.json',
+        sellerFeeBasisPoints: 500,
+        primarySaleHappened: false,
+        isMutable: true,
+        tokenStandard: 0,
+        collection: null,
         creators: [
           const Creator(
             address: Address('11111111111111111111111111111111'),
-            verified: false,
+            verified: true,
             share: 100,
           ),
         ],
       );
 
-      expect(bytes.isNotEmpty, isTrue);
+      // Full vector from the upstream 6.0.0 V2 serializer. creators precede
+      // collection in the V2 layout, unlike V1.
+      expect(
+        hex(withCreator),
+        '060000004d79204e4654000000001f00000068747470733a2f2f6578616d706c652e'
+        '636f6d2f6d792d6e66742e6a736f6ef4010001010001000000000000000000000000'
+        '0000000000000000000000000000000000000000000000016400',
+      );
+      expect(withCreator.length, 94);
     });
 
-    test('encodeMetadataArgsV2 includes editionNonce when set', () {
-      final withNonce = encodeMetadataArgsV2(
-        name: 'Test',
+    test('encodeMetadataArgsV2 writes the collection as a bare key', () {
+      final withCollection = encodeMetadataArgsV2(
+        name: 'My NFT',
         symbol: '',
-        uri: 'https://example.com',
-        sellerFeeBasisPoints: 0,
+        uri: 'https://example.com/my-nft.json',
+        sellerFeeBasisPoints: 500,
         primarySaleHappened: false,
         isMutable: true,
-        editionNonce: 42,
         tokenStandard: 0,
-        collection: null,
-        uses: null,
-        tokenProgramVersion: 0,
+        collection: const Address(
+          'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+        ),
         creators: [],
       );
 
-      final withoutNonce = encodeMetadataArgsV2(
-        name: 'Test',
-        symbol: '',
-        uri: 'https://example.com',
-        sellerFeeBasisPoints: 0,
-        primarySaleHappened: false,
-        isMutable: true,
-        editionNonce: null,
-        tokenStandard: 0,
-        collection: null,
-        uses: null,
-        tokenProgramVersion: 0,
-        creators: [],
+      // Full vector from the upstream 6.0.0 V2 serializer. The collection is a
+      // bare 32-byte key with no verified flag, unlike V1.
+      expect(
+        hex(withCollection),
+        '060000004d79204e4654000000001f00000068747470733a2f2f6578616d706c652e'
+        '636f6d2f6d792d6e66742e6a736f6ef40100010100000000000106ddf6e1d765a193'
+        'd9cbe146ceeb79ac1cb485ed5f5b37913a8cf5857eff00a9',
       );
-
-      // With nonce should include the Some flag byte
-      expect(withNonce.length, greaterThan(withoutNonce.length));
+      expect(withCollection.length, 92);
     });
   });
-
   group('Composite helpers', () {
     group('getBurnInstructionPlan', () {
       test('returns an InstructionPlan', () {

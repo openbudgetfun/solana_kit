@@ -7,7 +7,10 @@ library;
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_mpl_bubblegum/src/das_api.dart';
+import 'package:solana_kit_mpl_bubblegum/src/generated/types/types.dart';
+import 'package:solana_kit_mpl_bubblegum/src/leaf/leaf_metadata.dart';
 
 /// A DAS API client that uses the Helius API.
 ///
@@ -97,9 +100,45 @@ class HeliusDasClient implements DasApiClient {
         (data['compression'] as Map<String, dynamic>?) ?? <String, dynamic>{};
     final content = data['content'] as Map<String, dynamic>?;
     final creatorsList = (data['creators'] as List<dynamic>?) ?? [];
+    final creatorsRawList = data['creators_raw'] as List<dynamic>?;
     final groupingList = (data['grouping'] as List<dynamic>?) ?? [];
+    final royalty = data['royalty'] as Map<String, dynamic>?;
+    final supply = data['supply'] as Map<String, dynamic>?;
 
     final contentMetadata = content?['metadata'] as Map<String, dynamic>?;
+
+    final grouping = groupingList.map((g) {
+      final group = g as Map<String, dynamic>;
+      return DasAssetGrouping(
+        groupKey: (group['group_key'] as String?) ?? '',
+        groupValue: (group['group_value'] as String?) ?? '',
+        verified: (group['verified'] as bool?) ?? false,
+      );
+    }).toList();
+
+    // The `collection` grouping entry is the asset's collection; DAS reports
+    // its verification under the same object.
+    DasAssetGrouping? collectionGroup;
+    for (final group in grouping) {
+      if (group.groupKey == 'collection' && group.groupValue.isNotEmpty) {
+        collectionGroup = group;
+        break;
+      }
+    }
+
+    DasAssetRoyalty? parsedRoyalty;
+    if (royalty != null) {
+      final basisPoints = royalty['basis_points'] as int?;
+      parsedRoyalty = DasAssetRoyalty(
+        basisPoints: basisPoints,
+        basisPointsRaw: royalty['basis_points_raw'] as int?,
+        primarySaleHappened: royalty['primary_sale_happened'] as bool?,
+        inherited:
+            (royalty['sfbp_inherited'] as bool?) ??
+            (royalty['inherited'] as bool?) ??
+            basisPoints == sellerFeeBasisPointsInherit,
+      );
+    }
 
     return DasAsset(
       id: (data['id'] as String?) ?? '',
@@ -117,9 +156,13 @@ class HeliusDasClient implements DasApiClient {
         tree: (compression['tree'] as String?) ?? '',
         seq: (compression['seq'] as int?) ?? 0,
         leafId: (compression['leaf_id'] as int?) ?? 0,
+        collectionHash: compression['collection_hash'] as String?,
+        assetDataHash: compression['asset_data_hash'] as String?,
+        flags: compression['flags'] as int?,
       ),
       content: content != null
           ? DasAssetContent(
+              jsonUri: content['json_uri'] as String?,
               metadata: contentMetadata != null
                   ? DasAssetMetadata(
                       name: contentMetadata['name'] as String?,
@@ -130,21 +173,27 @@ class HeliusDasClient implements DasApiClient {
                   : null,
             )
           : null,
-      creators: creatorsList.map((c) {
-        final creator = c as Map<String, dynamic>;
-        return DasAssetCreator(
-          address: (creator['address'] as String?) ?? '',
-          share: (creator['share'] as int?) ?? 0,
-          verified: (creator['verified'] as bool?) ?? false,
-        );
-      }).toList(),
-      grouping: groupingList.map((g) {
-        final group = g as Map<String, dynamic>;
-        return DasAssetGrouping(
-          groupKey: (group['group_key'] as String?) ?? '',
-          groupValue: (group['group_value'] as String?) ?? '',
-        );
-      }).toList(),
+      creators: creatorsList.map(_parseCreator).toList(),
+      creatorsRaw: creatorsRawList?.map(_parseCreator).toList(),
+      grouping: grouping,
+      royalty: parsedRoyalty,
+      collection: collectionGroup == null
+          ? null
+          : Collection(
+              key: Address(collectionGroup.groupValue),
+              verified: collectionGroup.verified,
+            ),
+      mutable: (data['mutable'] as bool?) ?? true,
+      editionNonce: supply?['edition_nonce'] as int?,
+    );
+  }
+
+  static DasAssetCreator _parseCreator(dynamic c) {
+    final creator = c as Map<String, dynamic>;
+    return DasAssetCreator(
+      address: (creator['address'] as String?) ?? '',
+      share: (creator['share'] as int?) ?? 0,
+      verified: (creator['verified'] as bool?) ?? false,
     );
   }
 

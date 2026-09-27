@@ -133,4 +133,4 @@ Future<void> handleTransactionFailure(Object error) async {
 
 ## Upstream reference
 
-Generated layer mirrors [solana-program/memo](https://github.com/solana-program/memo) at `js@v0.14.1`. `js@v0.14.0` pointed the generated client at the v4 memo program; the v1 and v3 addresses remain available as legacy constants, matching the upstream extraction helpers.
+Generated layer mirrors [solana-program/memo](https://github.com/solana-program/memo) at `js@v0.15.0`. `js@v0.14.0` pointed the generated client at the v4 memo program; the v1 and v3 addresses remain available as legacy constants, matching the upstream extraction helpers.
