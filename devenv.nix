@@ -325,6 +325,7 @@ in
         dart run scripts/check_versions_inventory.dart
         dart run scripts/check_reference_repo_docs.dart
         dart run scripts/check_error_code_parity.dart
+        dart run scripts/sync_package_upstream_support.dart --check
         dart run scripts/generate_upstream_docs.dart --check
       '';
       description = "Check documentation consistency with mdt, synchronized Dart doc comments, workspace metadata, reference-repo pins, upstream error-code parity, and upstream version tables.";
@@ -337,6 +338,7 @@ in
         mdt update --verbose
         dart run "$DEVENV_ROOT/scripts/sync_dart_doc_comments.dart" --write
         dart run scripts/workspace_doc_drift.dart --write
+        dart run scripts/sync_package_upstream_support.dart --write
         dart run scripts/generate_upstream_docs.dart --write
         dart run scripts/generate_docs_search_index.dart
         mdt info

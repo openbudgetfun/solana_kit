@@ -3,13 +3,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-/// Renders the upstream version tables that appear in the root readme and the
-/// upstream-compatibility docs page.
+/// Renders the upstream version tables that appear in the root readme, the
+/// upstream-compatibility docs page, and each package README.
 ///
 /// The tables are generated from `config/upstream-versions.json` (the
-/// historical `solana_kit` ↔ `@solana/kit` parity map) and
+/// historical `solana_kit` ↔ `@solana/kit` parity map),
 /// `config/reference-repos.json` (the upstream client and IDL pins the current
-/// release was verified against).
+/// release was verified against), and `config/package-upstream-support.json`
+/// (the per-package upstream support history, refreshed by
+/// `scripts/sync_package_upstream_support.dart`).
 ///
 /// Markdown tables are wrapped in a `dprint-ignore` comment so the generator
 /// owns their formatting instead of the markdown formatter.
@@ -26,9 +28,8 @@ void main(List<String> args) {
   final parityData = _readJsonObject('config/upstream-versions.json');
   final parityTable = _renderParityTable(parityData);
   final repoPinTables = _renderRepoPinTables(parityData);
-  final pinsTable = _renderPinsTable(
-    _readJsonObject('config/reference-repos.json'),
-  );
+  final referenceRepos = _readJsonObject('config/reference-repos.json');
+  final pinsTable = _renderPinsTable(referenceRepos);
 
   final targets = <_Target>[
     _Target('readme.md', {'upstream-parity': parityTable}),
@@ -37,6 +38,7 @@ void main(List<String> args) {
       'upstream-repo-pins': repoPinTables,
       'upstream-pins': pinsTable,
     }),
+    ..._packageTargets(referenceRepos),
   ];
 
   var drifted = false;
@@ -258,6 +260,179 @@ String _renderRepoPinTables(Map<String, Object?> parityData) {
   }
 
   return buffer.toString();
+}
+
+/// Builds one generation target per package README that carries an
+/// `upstream-support` block.
+///
+/// Only packages that port something outside `@solana/kit` get a table: the
+/// block is skipped when a README has no markers (via [_replaceBlock]) and when
+/// the package has no recorded upstream history.
+List<_Target> _packageTargets(Map<String, Object?> referenceRepos) {
+  final support = _readJsonObject('config/package-upstream-support.json');
+  final packages = support['packages'] as Map<String, Object?>? ?? const {};
+  if (packages.isEmpty) {
+    stderr.writeln(
+      'config/package-upstream-support.json declares no packages.',
+    );
+    exit(2);
+  }
+
+  // The upstream repository URL for each name, so the table can link out.
+  final repoUrls = <String, String>{
+    for (final repo
+        in (referenceRepos['repos'] as List<Object?>? ?? const [])
+            .cast<Map<String, Object?>>())
+      if (repo['name'] != null && repo['url'] != null)
+        '${repo['name']}': '${repo['url']}',
+  };
+
+  final targets = <_Target>[];
+  for (final entry in packages.entries) {
+    final package = entry.key;
+    final data = entry.value as Map<String, Object?>? ?? const {};
+    final runs = (data['runs'] as List<Object?>? ?? const [])
+        .cast<Map<String, Object?>>();
+    if (runs.isEmpty) continue;
+    final versionAxis = '${data['versionAxis'] ?? 'package'}';
+
+    final path = 'packages/$package/README.md';
+    if (!File(path).existsSync()) {
+      stderr.writeln('Missing package README for $package: $path');
+      exit(2);
+    }
+
+    final repos = (data['repos'] as List<Object?>? ?? const []).cast<String>();
+    targets.add(
+      _Target(path, {
+        'upstream-support': _renderPackageSupportTable(
+          package: package,
+          repos: repos,
+          repoUrls: repoUrls,
+          runs: runs,
+          versionAxis: versionAxis,
+          currentPins: _currentPins(referenceRepos, repos),
+        ),
+      }),
+    );
+  }
+  targets.sort((a, b) => a.path.compareTo(b.path));
+  return targets;
+}
+
+/// Renders the "supported upstream versions" table for one package.
+///
+/// One row per distinct upstream state, newest first, with the range of this
+/// package's releases that map to it. A package that shipped several patches
+/// against a single upstream revision shows one row covering that range rather
+/// than one row per patch.
+String _renderPackageSupportTable({
+  required String package,
+  required List<String> repos,
+  required Map<String, String> repoUrls,
+  required List<Map<String, Object?>> runs,
+  required String versionAxis,
+  required Map<String, String> currentPins,
+}) {
+  final rows = <List<String>>[];
+
+  // When the working tree has moved past the newest release, lead the table
+  // with the pin the next release will publish. It deliberately carries no
+  // version number: the release tooling assigns that later. When the pin
+  // already matches the newest release, that row covers it and no extra row is
+  // added.
+  final currentPinRuns = _pinsEqual(runs.first['pins'], currentPins);
+  if (currentPins.isNotEmpty && !currentPinRuns) {
+    rows.add([
+      '_next release_',
+      if (repos.length == 1)
+        _upstreamRefCell(currentPins[repos.single] ?? '—')
+      else
+        repos
+            .map((repo) => _upstreamRefCell(currentPins[repo] ?? '—'))
+            .join('<br />'),
+      '_unreleased_',
+    ]);
+  }
+  for (final run in runs) {
+    final from = '${run['from']}';
+    final to = '${run['to']}';
+    final released = '${run['released']}';
+    final releasedTo = '${run['releasedTo'] ?? released}';
+    final pins = run['pins'] as Map<String, Object?>? ?? const {};
+
+    rows.add([
+      if (from == to) '`$from`' else '`$from` – `$to`',
+      if (repos.length == 1)
+        _upstreamRefCell('${pins[repos.single] ?? '—'}')
+      else
+        repos
+            .map((repo) => _upstreamRefCell('${pins[repo] ?? '—'}'))
+            .join('<br />'),
+      if (released.isEmpty)
+        '—'
+      else if (released == releasedTo)
+        released
+      else
+        '$released – $releasedTo',
+    ]);
+  }
+
+  // Lockstep group members release with the umbrella package, so their rows
+  // are keyed by that version rather than one of their own.
+  final header = [
+    if (versionAxis == 'package')
+      '`$package` version'
+    else
+      '`solana_kit` version',
+    if (repos.length == 1)
+      _upstreamHeader(repos.single, repoUrls[repos.single])
+    else
+      repos.map((repo) => _upstreamHeader(repo, repoUrls[repo])).join('<br />'),
+    'Released',
+  ];
+
+  return _table(header: header, rows: rows);
+}
+
+/// The pins the working tree is currently generated against, read from
+/// `config/reference-repos.json`.
+Map<String, String> _currentPins(
+  Map<String, Object?> referenceRepos,
+  List<String> repos,
+) {
+  final result = <String, String>{};
+  for (final repo
+      in (referenceRepos['repos'] as List<Object?>? ?? const [])
+          .cast<Map<String, Object?>>()) {
+    final name = repo['name'] as String?;
+    if (name == null || !repos.contains(name)) continue;
+    final ref = repo['ref'] as Map<String, Object?>? ?? const {};
+    result[name] = '${ref['value']}';
+  }
+  return result;
+}
+
+/// Whether a recorded run's pins match the working tree's current pins.
+bool _pinsEqual(Object? recorded, Map<String, String> current) {
+  if (recorded is! Map<String, Object?>) return false;
+  if (recorded.length != current.length) return false;
+  for (final entry in current.entries) {
+    if (recorded[entry.key] != entry.value) return false;
+  }
+  return true;
+}
+
+String _upstreamHeader(String repo, String? url) {
+  final label = repo.contains('/') ? repo.split('/').last : repo;
+  return url == null ? '`$label`' : '[`$label`]($url)';
+}
+
+String _upstreamRefCell(String value) {
+  // Commit pins are abbreviated so the column stays readable.
+  final isCommit = RegExp(r'^[0-9a-f]{12,40}$').hasMatch(value);
+  final label = isCommit ? value.substring(0, 12) : value;
+  return '`$label`';
 }
 
 String _renderPinsTable(Map<String, Object?> referenceRepos) {

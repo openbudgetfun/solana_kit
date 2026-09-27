@@ -81,3 +81,19 @@ Future<void> handleTransactionFailure(Object error) async {
 - `StakeAccount` and `StakeStateV2` codecs for account decoding.
 - `getCreateStakeAccountInstructionPlan` and `getDelegateStakeInstructionPlan` ergonomic helpers.
 - Program address constant: `solanaStakeInterfaceProgramAddress`.
+
+## Upstream reference
+
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit_stake` version | [`stake`](https://github.com/solana-program/stake) | Released                |
+| -------------------------- | -------------------------------------------------- | ----------------------- |
+| _next release_             | `js@v0.10.0`                                       | _unreleased_            |
+| `0.5.2` – `0.6.0`          | `js@v0.9.1`                                        | 2026-09-06 – 2026-09-21 |
+| `0.5.0` – `0.5.1`          | `js@v0.9.0`                                        | 2026-08-30              |
+| `0.4.0` – `0.4.1`          | `js@v0.8.0`                                        | 2026-08-18 – 2026-08-19 |
+| `0.2.1`                    | `js@v0.7.2`                                        | 2026-08-12              |
+| `0.2.0`                    | `js@v0.6.1`                                        | 2026-06-03              |
+| `0.1.0`                    | `js@v0.6.0`                                        | 2026-06-01              |
+
+<!-- upstream-support:end -->

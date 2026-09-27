@@ -226,3 +226,15 @@ Use [`example/main.dart`](./example/main.dart) as a runnable starting point for 
 - Keep examples focused on one workflow and reference package README sections for deeper API details.
 
 <!-- {/packageExampleSection} -->
+
+## Upstream reference
+
+<!-- upstream-support:start -->
+<!-- dprint-ignore -->
+| `solana_kit_mobile_wallet_adapter_protocol` version | [`mobile-wallet-adapter`](https://github.com/solana-mobile/mobile-wallet-adapter) | Released                |
+| --------------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------- |
+| `0.6.0`                                             | `@solana-mobile/mobile-wallet-adapter-protocol-kit@0.4.0`                         | 2026-09-21              |
+| `0.4.3` – `0.5.3`                                   | `8642fa3e1edb`                                                                    | 2026-08-18 – 2026-09-12 |
+| `0.3.2` – `0.4.2`                                   | `main`                                                                            | 2026-05-30 – 2026-08-12 |
+
+<!-- upstream-support:end -->
