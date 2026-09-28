@@ -16,6 +16,7 @@ import 'package:solana_kit_surfpool/src/config.dart';
 import 'package:solana_kit_surfpool/src/errors.dart';
 import 'package:solana_kit_surfpool/src/internal/hex.dart';
 import 'package:solana_kit_surfpool/src/internal/json_rpc_client.dart';
+import 'package:solana_kit_surfpool/src/internal/redact.dart';
 import 'package:solana_kit_surfpool/src/types.dart';
 
 const int _programChunkSize = 15 * 1024 * 1024;
@@ -536,13 +537,16 @@ class Surfnet {
   }
 
   void _recordProcessLine(String kind, String line) {
+    // The CLI can echo caller-supplied arguments such as a fork's upstream
+    // `--rpc-url`, whose query string commonly carries an API key.
+    final message = redactUrlCredentials(line);
     final event = SimnetEventValue(
       kind: kind,
-      message: line,
+      message: message,
       timestamp: DateTime.now().toUtc().toIso8601String(),
     );
     _events.add(event);
-    _processOutput.add('[$kind] $line');
+    _processOutput.add('[$kind] $message');
     if (_events.length > _maxBufferedEvents) {
       _events.removeAt(0);
     }
@@ -577,9 +581,11 @@ class Surfnet {
     }
 
     throw SurfnetProcessException(
-      'Timed out waiting for Surfpool RPC at $rpcUrl',
+      'Timed out waiting for Surfpool RPC at ${redactUrlCredentials(rpcUrl)}',
       cause: <String, Object?>{
-        'lastError': lastError?.toString(),
+        'lastError': lastError == null
+            ? null
+            : redactUrlCredentials(lastError.toString()),
         'processOutput': _recentProcessOutput(),
       },
     );

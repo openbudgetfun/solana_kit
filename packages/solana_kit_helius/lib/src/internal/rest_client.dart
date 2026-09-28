@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_helius/src/internal/http_request.dart';
+import 'package:solana_kit_helius/src/internal/redact_url.dart';
 
 /// Internal REST caller for Helius REST API endpoints.
 ///
@@ -117,7 +118,7 @@ class RestClient {
           SolanaErrorContextKeys.operation: 'heliusRest',
           SolanaErrorContextKeys.statusCode: response.statusCode,
           'message': response.body.isNotEmpty
-              ? response.body
+              ? redactUrlCredentials(response.body)
               : (response.reasonPhrase ?? 'Unknown error'),
         },
       );

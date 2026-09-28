@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:solana_kit_errors/solana_kit_errors.dart';
+import 'package:solana_kit_helius/src/internal/redact_url.dart';
 import 'package:solana_kit_helius/src/types/admin_types.dart';
 
 /// Client for Helius Admin API methods.
@@ -45,7 +46,7 @@ class AdminClient {
           SolanaErrorContextKeys.operation: 'heliusAdmin',
           SolanaErrorContextKeys.statusCode: response.statusCode,
           'message': response.body.isNotEmpty
-              ? response.body
+              ? redactUrlCredentials(response.body)
               : (response.reasonPhrase ?? 'Unknown error'),
         },
       );

@@ -31,6 +31,14 @@ enum SenderRegion {
 }
 
 /// Helius sender endpoint URLs keyed by region.
+///
+/// Only the default region serves HTTPS. The regional endpoints are plain
+/// `http://` (upstream Helius infrastructure), so transactions sent through
+/// them — fully signed and therefore valid on submission — travel in
+/// cleartext: an on-path observer can read the transaction's contents and
+/// drop or delay it, though they cannot alter it without invalidating the
+/// signature. Prefer [SenderRegion.defaultRegion] whenever the payload is
+/// sensitive.
 const senderEndpoints = <SenderRegion, String>{
   SenderRegion.defaultRegion: 'https://sender.helius-rpc.com',
   SenderRegion.usSlc: 'http://slc-sender.helius-rpc.com',

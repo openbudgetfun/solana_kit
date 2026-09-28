@@ -67,6 +67,30 @@ void main() {
       );
     });
 
+    test('redacts credentials echoed back in an error body', () async {
+      final client = AdminClient(
+        baseUrl: 'https://api.helius.xyz',
+        apiKey: 'admin-key',
+        client: MockClient(
+          (_) async => http.Response(
+            'unauthorized for https://mainnet.helius-rpc.com/?api-key=leaky-key',
+            403,
+          ),
+        ),
+      );
+
+      await expectLater(
+        client.getProjectUsage('project-1'),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.context['message'],
+            'message',
+            isNot(contains('leaky-key')),
+          ),
+        ),
+      );
+    });
+
     test('uses reason phrase when error body is empty', () async {
       final client = AdminClient(
         baseUrl: 'https://api.helius.xyz',
