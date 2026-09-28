@@ -1,7 +1,13 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:solana_kit_addresses/solana_kit_addresses.dart' as addresses;
+import 'package:solana_kit_keys/solana_kit_keys.dart';
+import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
+
+/// A signature algorithm name whose signatures this package can verify.
+const _supportedSignatureType = 'ed25519';
 
 /// Metadata supplied to wallet authorization prompts.
 class WalletAppIdentity {
@@ -192,7 +198,10 @@ class MobileWallet implements Wallet {
       inputs.first.account,
     );
     _assertOutputLength(inputs.length, signed.length);
-    return signed.map(SolanaSignTransactionOutput.new).toList();
+    return [
+      for (var index = 0; index < inputs.length; index++)
+        _assertVerifiedSignedTransaction(inputs[index], signed[index]),
+    ];
   }
 
   Future<List<SolanaSignAndSendTransactionOutput>> _signAndSendTransactions(
@@ -222,7 +231,12 @@ class MobileWallet implements Wallet {
       inputs.first.options,
     );
     _assertOutputLength(inputs.length, signatures.length);
-    return signatures.map(SolanaSignAndSendTransactionOutput.new).toList();
+    return [
+      for (var index = 0; index < inputs.length; index++)
+        SolanaSignAndSendTransactionOutput(
+          _assertVerifiedTransactionSignature(inputs[index], signatures[index]),
+        ),
+    ];
   }
 
   Future<List<SolanaSignMessageOutput>> _signMessages(
@@ -238,8 +252,12 @@ class MobileWallet implements Wallet {
       for (var index = 0; index < inputs.length; index++)
         SolanaSignMessageOutput(
           signedMessage: inputs[index].message,
-          signature: signatures[index],
-          signatureType: 'ed25519',
+          signature: _assertVerifiedSignature(
+            account: inputs[index].account,
+            signature: signatures[index],
+            signedBytes: inputs[index].message,
+          ),
+          signatureType: _supportedSignatureType,
         ),
     ];
   }
@@ -273,9 +291,146 @@ class MobileWallet implements Wallet {
           'Mobile wallet did not return a sign-in proof',
         );
       }
+      // The backend may present the proof against any of the accounts it
+      // authorized alongside it, but the proof must verify against the
+      // account it is attached to.
+      if (!authorization.accounts.contains(output.account)) {
+        throw const WalletStandardException(
+          WalletStandardErrorCode.invalidResponse,
+          'Mobile wallet attached the sign-in proof to an unauthorized '
+          'account',
+        );
+      }
+      _assertVerifiedSignature(
+        account: output.account,
+        signature: output.signature,
+        signedBytes: output.signedMessage,
+      );
+      if (output.signatureType != null &&
+          output.signatureType != _supportedSignatureType) {
+        throw const WalletStandardException(
+          WalletStandardErrorCode.invalidResponse,
+          'Mobile wallet returned an unsupported signature type',
+        );
+      }
       results.add(output);
     }
     return results;
+  }
+
+  /// Verifies a wallet-returned [signature] over [signedBytes] against
+  /// [account]'s public key before it can be treated as authentic.
+  ///
+  /// A compromised wallet can return any bytes it likes; without this check a
+  /// well-formed but forged signature flows into `SignableMessage` and
+  /// `Transaction` objects as if the account had actually signed.
+  Uint8List _assertVerifiedSignature({
+    required WalletAccount account,
+    required Uint8List signature,
+    required Uint8List signedBytes,
+  }) {
+    final isValid =
+        signature.length == 64 &&
+        verifySignature(
+          account.publicKey,
+          SignatureBytes(Uint8List.fromList(signature)),
+          signedBytes,
+        );
+    if (!isValid) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Wallet signature does not verify against the authorized account',
+      );
+    }
+    return signature;
+  }
+
+  /// Verifies the account's signature inside a wallet-returned signed
+  /// transaction and returns the signed transaction output.
+  ///
+  /// A wallet that returns a different transaction than the one it was
+  /// given — or one whose signature does not verify — is rejected. The
+  /// signed message bytes must match the submission byte-for-byte, so a
+  /// wallet cannot slip a modified transaction past a caller that reviewed
+  /// it.
+  SolanaSignTransactionOutput _assertVerifiedSignedTransaction(
+    SolanaSignTransactionInput input,
+    Uint8List signedTransaction,
+  ) {
+    final signed = getTransactionDecoder().decode(signedTransaction);
+    final submitted = getTransactionDecoder().decode(input.transaction);
+    if (!_bytesEqual(signed.messageBytes, submitted.messageBytes)) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Wallet signed a different transaction',
+      );
+    }
+    final signature = signed.signatures[_address(input.account)];
+    if (signature == null) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Wallet signed transaction does not include the authorized account',
+      );
+    }
+    _assertVerifiedSignature(
+      account: input.account,
+      signature: signature.value,
+      signedBytes: signed.messageBytes,
+    );
+    return SolanaSignTransactionOutput(signedTransaction);
+  }
+
+  /// Verifies that a wallet-reported submission signature is a genuine
+  /// signature of the submitted transaction's message bytes.
+  ///
+  /// The MWA `sign_and_send_transactions` result is the submitted
+  /// transaction's own signature — a required signer's Ed25519 signature
+  /// over its message bytes. The submission is verified against the
+  /// authorized account first and every declared signer public key second,
+  /// so a wallet that reports a signature for a different transaction — or
+  /// an arbitrary byte string — is rejected before the caller records it.
+  Uint8List _assertVerifiedTransactionSignature(
+    SolanaSignAndSendTransactionInput input,
+    Uint8List reportedSignature,
+  ) {
+    if (reportedSignature.length != 64) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Wallet reported a malformed transaction signature',
+      );
+    }
+    final transaction = getTransactionDecoder().decode(input.transaction);
+    final isValid =
+        verifySignature(
+          input.account.publicKey,
+          SignatureBytes(Uint8List.fromList(reportedSignature)),
+          transaction.messageBytes,
+        ) ||
+        transaction.signatures.keys.any(
+          (signerAddress) => verifySignature(
+            addresses.getPublicKeyFromAddress(signerAddress),
+            SignatureBytes(Uint8List.fromList(reportedSignature)),
+            transaction.messageBytes,
+          ),
+        );
+    if (!isValid) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Wallet reported a signature for a different transaction',
+      );
+    }
+    return reportedSignature;
+  }
+
+  addresses.Address _address(WalletAccount account) =>
+      addresses.address(account.address);
+
+  static bool _bytesEqual(Uint8List a, Uint8List b) {
+    if (a.length != b.length) return false;
+    for (var index = 0; index < a.length; index++) {
+      if (a[index] != b[index]) return false;
+    }
+    return true;
   }
 
   void _setAccounts(List<WalletAccount> accounts) {

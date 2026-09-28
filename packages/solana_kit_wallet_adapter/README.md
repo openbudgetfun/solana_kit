@@ -43,7 +43,7 @@ Pending authorization is invalidated when you disconnect, switch wallets, remove
 
 Mobile wallet signing batches must use one authorized account. Transaction chains must match the chain used to authorize the mobile wallet, and every sign-and-send input in a batch must use equivalent submission options. Submit requests with different accounts or policies separately; mismatched batches are rejected before any backend signing or submission. Disconnect immediately revokes local accounts even if backend cleanup fails. Pending or superseded connect/sign-in operations cannot restore authority.
 
-Native message signing validates the returned message envelope and exposes the extracted 64-byte signature; malformed envelopes and changed message bytes are rejected.
+Native message signing validates the returned message envelope and exposes the extracted 64-byte signature; malformed envelopes and changed message bytes are rejected. Every signature the mobile wallet returns — over messages, signed transactions, submitted transactions, and Sign In With Solana proofs — is verified against the authorized account's public key before it reaches the caller, and a sign-in proof is rejected unless its address belongs to the accounts the same authorization returned.
 
 ## Key APIs
 

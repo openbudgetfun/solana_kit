@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
+import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_mobile_wallet_adapter/solana_kit_mobile_wallet_adapter.dart'
     as mwa;
 import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart'
@@ -61,16 +62,70 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
       accounts: accounts,
       signInOutput: signInResult == null
           ? null
-          : SolanaSignInOutput(
-              account: accounts.firstWhere(
-                (account) =>
-                    _rawAddresses[account.address] == signInResult.address,
-                orElse: () => accounts.first,
-              ),
-              signedMessage: base64.decode(signInResult.signedMessage),
-              signature: base64.decode(signInResult.signature),
-              signatureType: signInResult.signatureType,
-            ),
+          : _verifiedSignInOutput(signInResult, accounts),
+    );
+  }
+
+  /// Matches a wallet sign-in result to the account it proves and verifies
+  /// its signature against that account's public key.
+  ///
+  /// The MWA spec requires the returned address to be one of the authorized
+  /// accounts. Attributing the proof to a fallback account would let a
+  /// malicious wallet authenticate an account that never signed in.
+  SolanaSignInOutput _verifiedSignInOutput(
+    protocol.SignInResult signInResult,
+    List<WalletAccount> accounts,
+  ) {
+    final rawAddress = _rawAddresses.entries
+        .where((entry) => entry.value == signInResult.address)
+        .map((entry) => entry.key)
+        .firstOrNull;
+    final account = rawAddress == null
+        ? null
+        : accounts
+              .where((account) => account.address == rawAddress)
+              .firstOrNull;
+    if (account == null) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Mobile wallet sign-in address does not match an authorized account',
+      );
+    }
+
+    final Uint8List signedMessage;
+    final Uint8List signature;
+    try {
+      signedMessage = base64.decode(signInResult.signedMessage);
+      signature = base64.decode(signInResult.signature);
+    } on FormatException {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Mobile wallet returned an invalid sign-in proof encoding',
+      );
+    }
+    final signatureType = signInResult.signatureType;
+    if (signatureType != null && signatureType != 'ed25519') {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Mobile wallet returned an unsupported signature type',
+      );
+    }
+    if (signature.length != 64 ||
+        !verifySignature(
+          account.publicKey,
+          SignatureBytes(signature),
+          signedMessage,
+        )) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Mobile wallet sign-in signature does not verify',
+      );
+    }
+    return SolanaSignInOutput(
+      account: account,
+      signedMessage: signedMessage,
+      signature: signature,
+      signatureType: signInResult.signatureType,
     );
   }
 
