@@ -2,27 +2,27 @@ import 'package:solana_kit_helius/src/internal/redact_url.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('redactUrl', () {
-    test('removes credentials even without query parameters', () {
+  group('redactUrlCredentials', () {
+    test('redacts api-key query parameters anywhere in the text', () {
       expect(
-        redactUrl('https://user:password@example.com/rpc'),
-        'https://example.com/rpc',
+        redactUrlCredentials(
+          'denied for https://mainnet.helius-rpc.com/?api-key=leaky-key',
+        ),
+        isNot(contains('leaky-key')),
       );
     });
 
-    test('redacts sensitive query parameters and keeps safe parameters', () {
-      expect(
-        redactUrl('https://example.com/rpc?api-key=secret&cluster=mainnet'),
-        'https://example.com/rpc?api-key=%5BREDACTED%5D&cluster=mainnet',
+    test('redacts user-info credentials anywhere in the text', () {
+      final redacted = redactUrlCredentials(
+        'gateway error contacting https://user:hunter2@rpc.example.com/v0',
       );
+      expect(redacted, isNot(contains('hunter2')));
+      expect(redacted, contains('[REDACTED]@rpc.example.com'));
     });
 
-    test('returns URLs without query parameters unchanged', () {
-      expect(redactUrl('https://example.com/rpc'), 'https://example.com/rpc');
-    });
-
-    test('returns unparsable strings unchanged', () {
-      expect(redactUrl('http://[::1'), 'http://[::1');
+    test('leaves text without credentials untouched', () {
+      const clean = 'denied';
+      expect(redactUrlCredentials(clean), clean);
     });
   });
 }
