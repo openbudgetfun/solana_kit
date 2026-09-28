@@ -856,8 +856,13 @@ class WalletApiImpl(
     private fun decodeOpaqueToken(value: String): ByteArray =
         try {
             Base64.decode(value, Base64.NO_WRAP)
-        } catch (_: IllegalArgumentException) {
-            value.toByteArray(StandardCharsets.UTF_8)
+        } catch (e: IllegalArgumentException) {
+            // Silently reinterpreting malformed base64 as raw UTF-8 bytes
+            // turns a corrupt payload into a plausible-looking address or
+            // auth token. Fail the request instead.
+            // Deliberately omits the payload from the message so a
+            // malformed-but-sensitive value cannot leak into logs.
+            throw IllegalArgumentException("Malformed base64 payload", e)
         }
 
     private fun JSONObject.optStringOrNull(key: String): String? {

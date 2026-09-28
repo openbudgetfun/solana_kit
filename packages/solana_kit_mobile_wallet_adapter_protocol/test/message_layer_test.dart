@@ -249,6 +249,23 @@ void main() {
       expect(local.associationPublicKey, hasLength(65));
     });
 
+    test('parseAssociationUri rejects an out-of-range local port', () {
+      final uri = Uri.parse(
+        'solana-wallet:/v1/associate/local'
+        '?association=AA&port=8080&v=v1',
+      );
+      expect(
+        () => parseAssociationUri(uri),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.mwaAssociationPortOutOfRange,
+          ),
+        ),
+      );
+    });
+
     test('parseAssociationUri round-trips local URI', () {
       final keyPair = generateAssociationKeypair();
       final originalPubKeyBytes = exportPublicKeyBytes(keyPair.publicKey);

@@ -43,8 +43,8 @@ class LocalAssociationScenario {
   WebSocketChannel? _channel;
   StreamSubscription<Object?>? _subscription;
 
-  late AssociationKeypair _associationKeyPair;
-  late EcdhKeypair _ecdhKeyPair;
+  AssociationKeypair? _associationKeyPair;
+  EcdhKeypair? _ecdhKeyPair;
   Uint8List? _sharedSecret;
   late SessionProperties _sessionProps;
 
@@ -68,7 +68,7 @@ class LocalAssociationScenario {
     // Step 2: Pick random port and build Intent URI.
     final port = getRandomAssociationPort();
     final intentUri = buildLocalAssociationUri(
-      _associationKeyPair.publicKey,
+      _associationKeyPair!.publicKey,
       port,
       baseUri: _baseUri,
     );
@@ -95,7 +95,11 @@ class LocalAssociationScenario {
       );
 
       // Step 6: Parse HELLO_RSP and derive shared secret.
-      final result = parseHelloRsp(helloRsp, _associationKeyPair, _ecdhKeyPair);
+      final result = parseHelloRsp(
+        helloRsp,
+        _associationKeyPair!,
+        _ecdhKeyPair!,
+      );
       _sharedSecret = result.sharedSecret;
 
       // Step 7: Parse session properties if present.
@@ -132,6 +136,15 @@ class LocalAssociationScenario {
 
     await _channel?.sink.close();
     _channel = null;
+
+    // Zero the session key and drop the handshake keypairs so they do not
+    // outlive the session. The P-256 scalars live inside PointyCastle
+    // BigInts, which cannot be zeroed deterministically in Dart; only the
+    // references are released.
+    _sharedSecret?.fillRange(0, _sharedSecret!.length, 0);
+    _sharedSecret = null;
+    _ecdhKeyPair = null;
+    _associationKeyPair = null;
   }
 
   /// Sends an encrypted JSON-RPC request and returns the decrypted response.
@@ -167,7 +180,7 @@ class LocalAssociationScenario {
 
   void _sendHelloReq() {
     _ecdhKeyPair = generateEcdhKeypair();
-    final helloReq = createHelloReq(_ecdhKeyPair, _associationKeyPair);
+    final helloReq = createHelloReq(_ecdhKeyPair!, _associationKeyPair!);
     _channel?.sink.add(helloReq);
   }
 

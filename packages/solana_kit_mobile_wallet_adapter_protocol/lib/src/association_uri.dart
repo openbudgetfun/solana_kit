@@ -8,6 +8,7 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/src/association_keypair.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/src/association_port.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/src/constants.dart';
+import 'package:solana_kit_mobile_wallet_adapter_protocol/src/reflector_id.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/src/types.dart';
 
 /// Builds a local association URI for launching the wallet app.
@@ -74,7 +75,11 @@ AssociationParams parseAssociationUri(Uri uri) {
 
   final path = uri.path;
   if (path.endsWith('/v1/associate/local')) {
-    final port = int.parse(uri.queryParameters['port']!);
+    // A crafted association URI must not redirect the session to an
+    // arbitrary port; the same range the builder enforces applies here.
+    final port = assertAssociationPort(
+      int.parse(uri.queryParameters['port']!),
+    );
     return LocalAssociationParams(
       associationPublicKey: publicKeyBytes,
       protocol: protocol,
@@ -91,7 +96,7 @@ AssociationParams parseAssociationUri(Uri uri) {
       associationPublicKey: publicKeyBytes,
       protocol: protocol,
       reflectorHost: reflectorHost,
-      reflectorId: reflectorId,
+      reflectorId: assertReflectorId(reflectorId),
     );
   }
 
