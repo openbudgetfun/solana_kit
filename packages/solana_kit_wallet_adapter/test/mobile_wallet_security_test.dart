@@ -454,6 +454,31 @@ void main() {
     );
 
     test(
+      'rejects a sign-in proof with an unsupported signature type',
+      () async {
+        final message = Uint8List.fromList([1, 2, 3]);
+        final signature = signBytes(backend.keyPair.privateKey, message);
+        final authorization = Completer<MobileWalletAuthorization>();
+        backend.authorization = authorization;
+        final signingIn = wallet
+            .feature<SolanaSignInFeature>(SolanaFeatureId.signIn)!
+            .signIn(const [SolanaSignInInput()]);
+        authorization.complete(
+          MobileWalletAuthorization(
+            accounts: backend.accounts,
+            signInOutput: SolanaSignInOutput(
+              account: backend.accounts.first,
+              signedMessage: message,
+              signature: signature.value,
+              signatureType: 'ecdsa',
+            ),
+          ),
+        );
+        await expectLater(signingIn, _invalidResponse);
+      },
+    );
+
+    test(
       'disconnect immediately removes authority while backend cleanup waits',
       () async {
         final completion = Completer<void>();

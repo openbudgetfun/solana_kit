@@ -180,6 +180,29 @@ void main() {
       );
     });
 
+    test(
+      'rejects a sign-in proof with an unsupported signature type',
+      () async {
+        final message = Uint8List.fromList(utf8.encode('sign-in message'));
+        wallet.signInResult = protocol.SignInResult(
+          address: base64.encode(wallet.keyPair.publicKey),
+          signedMessage: base64.encode(message),
+          signature: base64.encode(
+            signBytes(wallet.keyPair.privateKey, message).value,
+          ),
+          signatureType: 'ecdsa',
+        );
+        await expectLater(
+          backend.authorize(
+            identity: const WalletAppIdentity(name: 'Sign-in test'),
+            chain: SolanaChainId.mainnet,
+            signIn: const SolanaSignInInput(),
+          ),
+          _invalidResponse,
+        );
+      },
+    );
+
     test('rejects a sign-in proof with a malformed base64 signature', () async {
       wallet.signInResult = protocol.SignInResult(
         address: base64.encode(wallet.keyPair.publicKey),
