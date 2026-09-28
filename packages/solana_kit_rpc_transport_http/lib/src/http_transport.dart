@@ -126,9 +126,11 @@ Uri _validateAndNormalizeHttpEndpoint(
     // In release/profile mode, http:// is never allowed regardless of
     // the allowInsecureHttp flag. This prevents accidental use of insecure
     // HTTP connections in production, mirroring the WebSocket transport's
-    // release-mode lockdown.
+    // release-mode lockdown. The branch is a compile-time constant under
+    // `dart test`, where it can never execute.
     const isProduction = bool.fromEnvironment('dart.vm.product');
 
+    // coverage:ignore-start
     if (isProduction) {
       throw ArgumentError.value(
         url,
@@ -137,6 +139,7 @@ Uri _validateAndNormalizeHttpEndpoint(
             'Use an https:// URL instead.',
       );
     }
+    // coverage:ignore-end
 
     return parsedUrl;
   }
