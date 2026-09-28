@@ -212,6 +212,16 @@ Instruction _convertInstruction(
     // Build a list of AccountMeta and AccountLookupMeta objects.
     // AccountLookupMeta extends AccountMeta, so both fit in List<AccountMeta>.
     final mixed = accountIndices.map((idx) {
+      // A crafted compiled message can declare an account index outside the
+      // account list; reject it with the typed range error instead of
+      // crashing the wallet-review path with a raw RangeError.
+      if (idx < 0 || idx >= transactionMetas.length) {
+        throw SolanaError(
+          SolanaErrorCode
+              .transactionFailedToDecompileInstructionAccountIndexOutOfRange,
+          {'accountIndex': idx, 'numberOfAccounts': transactionMetas.length},
+        );
+      }
       final meta = transactionMetas[idx];
       return switch (meta) {
         _StaticAccount() => AccountMeta(address: meta.address, role: meta.role),

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:solana_kit_transaction_confirmation/src/signature_status.dart';
@@ -92,7 +93,7 @@ createRecentSignatureConfirmationPromiseFactory(
                 if (signatureDidCommitCompleter.isCompleted) return;
                 if (err != null) {
                   signatureDidCommitCompleter.completeError(
-                    StateError('Transaction failed: $err'),
+                    getSolanaErrorFromTransactionError(err),
                   );
                 } else {
                   signatureDidCommitCompleter.complete();
@@ -130,9 +131,10 @@ createRecentSignatureConfirmationPromiseFactory(
             .then((results) {
               if (signatureStatusLookupCompleter.isCompleted) return;
               final signatureStatus = results.isNotEmpty ? results[0] : null;
-              if (signatureStatus?.err != null) {
+              final transactionError = signatureStatus?.err;
+              if (transactionError != null) {
                 signatureStatusLookupCompleter.completeError(
-                  StateError('Transaction failed: ${signatureStatus!.err}'),
+                  getSolanaErrorFromTransactionError(transactionError),
                 );
               } else if (signatureStatus?.confirmationStatus != null &&
                   commitmentComparator(

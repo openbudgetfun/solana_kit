@@ -71,6 +71,14 @@ Future<Transaction> signTransactionMessageWithSigners(
 /// It returns the signature of the sent transaction (i.e. its identifier)
 /// as bytes.
 ///
+/// The returned signature only records submission. When the sending signer
+/// is a wallet's `signAndSendTransactions` backend, this function performs
+/// no on-chain confirmation: a transaction that fails after submission —
+/// or one the backend never actually submitted — still produces a returned
+/// signature. Callers that need execution guaranteed should follow up with
+/// a confirmation strategy such as `waitForTransactionConfirmation`, or use
+/// `sendAndConfirmTransaction` from `solana_kit_transaction_confirmation`.
+///
 /// See also: [signAndSendTransactionWithSigners],
 /// [assertIsTransactionMessageWithSingleSendingSigner],
 /// [partiallySignTransactionMessageWithSigners],

@@ -217,10 +217,10 @@ void main() {
           ),
         ),
         throwsA(
-          isA<StateError>().having(
-            (error) => error.message,
-            'message',
-            contains('Transaction failed'),
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.instructionErrorCustom,
           ),
         ),
       );
@@ -390,6 +390,35 @@ void main() {
           'preflightCommitment': 'processed',
         },
       ]);
+    });
+
+    test('throws when the RPC reports a different signature', () async {
+      // A signature string that is format-valid (decodes to 64 bytes) but
+      // differs from the locally computed fee-payer signature (the base58
+      // encoding of 64 zero bytes with the first byte set to one).
+      const wrongSignature =
+          '2AFv15MNPuA84RmU66xw2uMzGipcVxNpzAffoacGVvjFue3CBmf633fAWuiP9cwL9C3z3CJiGgRSFjJfeEcA6QX';
+      final transport = _ScriptedRpcTransport(
+        fallbackResults: {'sendTransaction': wrongSignature},
+      );
+      final rpc = createSolanaRpcFromTransport(transport.call);
+
+      await expectLater(
+        () => sendAndConfirmTransaction(
+          rpc: rpc,
+          transaction: _blockhashTransaction(),
+          config: const SendAndConfirmTransactionConfig(
+            pollInterval: Duration.zero,
+          ),
+        ),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.transactionReportedSignatureMismatch,
+          ),
+        ),
+      );
     });
 
     test('sends with abort signal when provided', () async {

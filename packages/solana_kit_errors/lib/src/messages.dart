@@ -477,8 +477,11 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode.transactionFailedToDecompileInstructionAccountIndexOutOfRange: r'Could not find an account address at index $index while decompiling an instruction',
   SolanaErrorCode.transactionComputeUnitLimitOutOfRange: r'Transaction compute unit limit must be an integer in the range [0, $maxComputeUnitLimit]. `$computeUnitLimit` given',
   SolanaErrorCode.transactionInvalidHeapSize: r'Transaction heap size must be an integer multiple of $multipleOf bytes in the range [$minHeapSize, $maxHeapSize]. `$heapSize` given',
+  SolanaErrorCode.transactionInvalidNonceFormat: r'Expected base58 encoded nonce to decode to a byte array of length 32. Actual length: $actualLength.',
+  SolanaErrorCode.transactionReportedSignatureMismatch: r'The signature returned for the submitted transaction does not match the transaction signature computed locally. Expected $expectedSignature, got $reportedSignature.',
   SolanaErrorCode.transactionIntrospectionCannotDecodeJsonParsedTransaction: "`getTransaction` responses fetched with `encoding: 'jsonParsed'` cannot be decoded. Re-fetch the transaction with `encoding: 'base64'`, `'base58'`, or `'json'`",
   SolanaErrorCode.transactionIntrospectionUnrecognizedGetTransactionResponse: "Could not recognize the shape of this `getTransaction` response. Expected a response fetched with `encoding: 'base64'`, `'base58'`, or `'json'`",
+  SolanaErrorCode.transactionIntrospectionHeaderAccountsMismatch: r'The transaction message header counts do not fit within the static account list. numSignerAccounts: $numSignerAccounts, numReadonlyNonSignerAccounts: $numReadonlyNonSignerAccounts, numStaticAccounts: $numStaticAccounts.',
   SolanaErrorCode.transactionFeePayerMissing:
       'Transaction is missing a fee payer.',
   SolanaErrorCode.transactionFeePayerSignatureMissing: "Could not determine this transaction's signature. Make sure that the transaction has been signed by its fee payer.",

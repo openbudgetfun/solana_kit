@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 import 'package:test/test.dart';
@@ -152,10 +153,10 @@ void main() {
           signature: 'abc',
         ),
         throwsA(
-          isA<StateError>().having(
-            (e) => e.message,
-            'message',
-            contains('Transaction failed'),
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionErrorUnknown,
           ),
         ),
       );
@@ -195,10 +196,10 @@ void main() {
       await expectLater(
         future,
         throwsA(
-          isA<StateError>().having(
-            (e) => e.message,
-            'message',
-            contains('Transaction failed'),
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionErrorUnknown,
           ),
         ),
       );
