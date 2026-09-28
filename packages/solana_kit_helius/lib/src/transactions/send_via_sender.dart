@@ -8,6 +8,10 @@ import 'package:solana_kit_helius/src/transactions/sender.dart';
 /// `skipPreflight` is a caller-controlled passthrough (Sender no longer
 /// requires it to be `true`); it defaults to `true` for backward
 /// compatibility. `maxRetries` is fixed at 0.
+///
+/// Note that every region except [SenderRegion.defaultRegion] is served
+/// over plain `http://` (see [senderEndpoints]); transactions submitted
+/// through those regions are readable by anyone on the network path.
 Future<String> sendViaSender(
   String transaction, {
   SenderRegion region = SenderRegion.defaultRegion,
