@@ -247,7 +247,14 @@ void main() {
     test('rejects a nonce that is not a 32-byte base58 value', () {
       // A too-short nonce would otherwise be silently zero-extended by the
       // fixed-size lifetime-token encoder; a too-long one truncated.
-      for (final nonce in ['123', '', '0'.padRight(60, '0')]) {
+      for (final nonce in [
+        '123',
+        '',
+        '0'.padRight(60, '0'),
+        // Valid base58 within the 32-44 character range that decodes to
+        // fewer than 32 bytes.
+        '2'.padRight(40, '2'),
+      ]) {
         expect(
           () => setTransactionMessageLifetimeUsingDurableNonce(
             DurableNonceConfig(
