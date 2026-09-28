@@ -72,11 +72,9 @@ Security work should include, where relevant:
 - follow-up checks for related packages and transports
 - rerunning `audit:deps` or the dependency-audit workflow after dependency changes
 
-## Planned Improvements
+## Implemented Safeguards
 
-The active roadmap includes:
-
-- adding dependency audit checks to CI
-- documenting strict-vs-compatibility behavior for risky decoding paths
-- strengthening transport hardening and shared WebSocket behavior
-- improving security guidance around Flutter and Android-only MWA support
+- Dependency auditing runs in CI: OSV-Scanner checks every pull request and weekly against the Dart and pnpm lockfiles (`.github/workflows/dependency-audit.yml`).
+- Signatures returned by Mobile Wallet Adapter wallets are cryptographically verified against the authorized account's public key before callers receive them, including Sign In With Solana proofs.
+- Signature-confirmation strategies ignore received-notifications, so a node's receipt of a transaction can never be mistaken for its execution.
+- Insecure `http://` and `ws://` endpoints are rejected in release builds regardless of the opt-in flags.
