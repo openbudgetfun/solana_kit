@@ -52,7 +52,7 @@ class _RemoteAssociationSession {
     : _associationKeyPair = generateAssociationKeypair();
 
   final RemoteWalletAssociationConfig _config;
-  final AssociationKeypair _associationKeyPair;
+  AssociationKeypair? _associationKeyPair;
 
   WebSocketChannel? _channel;
   StreamSubscription<Object?>? _subscription;
@@ -60,7 +60,7 @@ class _RemoteAssociationSession {
   _RemoteProtocolEncoding _encoding = _RemoteProtocolEncoding.binary;
   _RemoteState _state = _RemoteState.connecting;
 
-  late EcdhKeypair _ecdhKeyPair;
+  EcdhKeypair? _ecdhKeyPair;
   Uint8List? _sharedSecret;
   SessionProperties _sessionProps = const SessionProperties(
     protocolVersion: ProtocolVersion.legacy,
@@ -95,7 +95,7 @@ class _RemoteAssociationSession {
       );
 
       final associationUri = buildRemoteAssociationUri(
-        _associationKeyPair.publicKey,
+        _associationKeyPair!.publicKey,
         _config.reflectorHost,
         reflectorIdBytes,
         baseUri: _config.baseUri,
@@ -126,6 +126,15 @@ class _RemoteAssociationSession {
 
     await _channel?.sink.close();
     _channel = null;
+
+    // Zero the session key and drop the handshake keypairs so they do not
+    // outlive the session. The P-256 scalars live inside PointyCastle
+    // BigInts, which cannot be zeroed deterministically in Dart; only the
+    // references are released.
+    _sharedSecret?.fillRange(0, _sharedSecret!.length, 0);
+    _sharedSecret = null;
+    _ecdhKeyPair = null;
+    _associationKeyPair = null;
   }
 
   void _handleInboundMessage(Object? message) {
@@ -183,7 +192,7 @@ class _RemoteAssociationSession {
       });
     }
 
-    final result = parseHelloRsp(payload, _associationKeyPair, _ecdhKeyPair);
+    final result = parseHelloRsp(payload, _associationKeyPair!, _ecdhKeyPair!);
     _sharedSecret = result.sharedSecret;
 
     if (result.encryptedSessionProps != null) {
@@ -290,7 +299,7 @@ class _RemoteAssociationSession {
 
   void _sendHelloReq() {
     _ecdhKeyPair = generateEcdhKeypair();
-    final helloReq = createHelloReq(_ecdhKeyPair, _associationKeyPair);
+    final helloReq = createHelloReq(_ecdhKeyPair!, _associationKeyPair!);
     _sendEncoded(helloReq);
   }
 
