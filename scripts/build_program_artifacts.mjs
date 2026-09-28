@@ -15,6 +15,7 @@
 //
 // Requires: `cargo build-sbf` on PATH (provided by the devenv `agave` package).
 import { execFileSync } from "child_process";
+import { createHash } from "crypto";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join, resolve } from "path";
@@ -64,6 +65,22 @@ function checkoutPin(repo) {
   run("git", ["-C", path, "checkout", "--quiet", ref]);
 }
 
+// Known sha256 digests of every ahash .crate this script may download. The
+// crates are fetched from static.crates.io and compiled into program
+// artifacts, so a compromised CDN must not be able to substitute a different
+// archive. When adding a version, pin its digest here.
+function sha256FileSync(path) {
+  return createHash("sha256").update(readFileSync(path)).digest("hex");
+}
+
+const ahashCrateSha256 = {
+  "0.7.6": "fcb51a0695d8f838b1ee009b3fbf66bda078cd64590202a864a8f3e8c4315c47",
+  "0.7.8": "891477e0c6a8957309ee5c45a6368af3ae14bb510732d2684ffa19af310920f9",
+  "0.8.3": "2c99f64d1e06488f620f932677e24bc6e2897582980441ae90a671415bd7ec2f",
+  "0.8.11": "e89da841a80418a9b391ebaea17f5c112ffaaa96f621d2c285b5174da76b9011",
+  "0.8.12": "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75",
+};
+
 // The platform-tools rustc (1.89+) removed the `stdsimd` feature gate, but
 // agave's `cargo build-sbf` still injects `--cfg feature="stdsimd"` for AES-NI
 // hashing. Older Solana programs pull in ahash releases whose
@@ -85,6 +102,20 @@ function applyAhashPatch(repo, artifact, patchDir) {
     const sourceDir = join(patchDir, `ahash-${ahashVersion}`);
     mkdirSync(sourceDir, { recursive: true, mode: 0o700 });
     run("curl", ["-fsSL", "-A", "solana-kit-build-script", `https://static.crates.io/crates/ahash/ahash-${ahashVersion}.crate`, "-o", crate]);
+
+    const expectedSha256 = artifact.ahashSha256?.[ahashVersion] ?? ahashCrateSha256[ahashVersion];
+    if (expectedSha256 === undefined) {
+      throw new Error(
+        `No pinned sha256 for ahash ${ahashVersion}; add it to ahashCrateSha256 in scripts/build_program_artifacts.mjs`,
+      );
+    }
+    const actualSha256 = sha256FileSync(crate);
+    if (actualSha256 !== expectedSha256) {
+      throw new Error(
+        `ahash ${ahashVersion} crate digest mismatch: expected ${expectedSha256}, got ${actualSha256}`,
+      );
+    }
+
     run("tar", ["-xzf", crate, "-C", sourceDir, "--strip-components=1"]);
     const lib = join(sourceDir, "src/lib.rs");
     const source = readFileSync(lib, "utf8");

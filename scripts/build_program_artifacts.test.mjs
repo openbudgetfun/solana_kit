@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import * as fs from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
@@ -50,6 +51,19 @@ async function runBuilder(t, options = {}) {
       crateName: "test", needsAhashPatch: options.needsAhashPatch ?? true,
       ahashVersion: options.ahashVersion,
       ahashVersions: options.ahashVersions,
+      // The curl mock downloads a fixed fixture archive; pin its digest so
+      // the builder's integrity check passes without network access.
+      ...(options.unpinned
+        ? {}
+        : {
+            ahashSha256: Object.fromEntries(
+              (options.ahashVersions ?? [options.ahashVersion ?? "0.7.6"]).map((version) => [
+                version,
+                options.digestOverride ??
+                  createHash("sha256").update("downloaded crate archive").digest("hex"),
+              ]),
+            ),
+          }),
       blake3Pure: options.blake3Pure,
       cargoUpdates: options.cargoUpdates,
       verifyProgramId: false,
@@ -194,6 +208,21 @@ test("the configured ahash release is downloaded and patched", async (t) => {
   assert.ifError(result.error);
   assert.match(result.downloads[0], /ahash-0\.8\.3\.crate$/);
 });
+
+test("a downloaded ahash crate with a mismatched digest is rejected", async (t) => {
+  const result = await runBuilder(t, { digestOverride: "deadbeef" });
+
+  assert.match(String(result.error), /digest mismatch/);
+  assert.equal(result.builds.length, 0, "cargo must not run on an unverified crate");
+});
+
+test("an ahash version without a pinned digest is rejected", async (t) => {
+  const result = await runBuilder(t, { ahashVersion: "0.9.9", unpinned: true });
+
+  assert.match(String(result.error), /No pinned sha256/);
+  assert.equal(result.builds.length, 0);
+});
+
 
 test("multiple ahash releases are patched in one isolated build", async (t) => {
   const result = await runBuilder(t, { ahashVersions: ["0.7.6", "0.8.3"] });
