@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
+import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_signers/solana_kit_signers.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
@@ -240,14 +242,13 @@ void main() {
         SolanaTransactionVersion.legacy,
         SolanaTransactionVersion.version0,
       ]);
+      final firstWire = _unsignedWireTransaction(account.address);
+      final signedEnvelope = (await signTransactions.signTransaction([
+        SolanaSignTransactionInput(account: account, transaction: firstWire),
+      ])).single.signedTransaction;
       expect(
-        (await signTransactions.signTransaction([
-          SolanaSignTransactionInput(
-            account: account,
-            transaction: Uint8List.fromList([1]),
-          ),
-        ])).single.signedTransaction,
-        [1],
+        getTransactionDecoder().decode(signedEnvelope).messageBytes,
+        getTransactionDecoder().decode(firstWire).messageBytes,
       );
       final send = wallet.feature<SolanaSignAndSendTransactionFeature>(
         SolanaFeatureId.signAndSendTransaction,
@@ -261,7 +262,7 @@ void main() {
         (await send.signAndSendTransaction([
           SolanaSignAndSendTransactionInput(
             account: account,
-            transaction: Uint8List.fromList([2]),
+            transaction: _unsignedWireTransaction(account.address),
             chain: SolanaChainId.localnet,
           ),
         ])).single.signature,
@@ -526,6 +527,19 @@ void main() {
   });
 }
 
+/// An unsigned wire transaction whose only signer is [feePayerAddress].
+Uint8List _unsignedWireTransaction(String feePayerAddress) {
+  final message = TransactionMessage(
+    version: TransactionVersion.v0,
+    feePayer: address(feePayerAddress),
+    lifetimeConstraint: BlockhashLifetimeConstraint(
+      blockhash: '11111111111111111111111111111111',
+      lastValidBlockHeight: BigInt.zero,
+    ),
+  );
+  return getTransactionEncoder().encode(compileTransaction(message));
+}
+
 /// The default account fixture advertises every Solana feature, because most
 /// tests connect to a wallet and then create a signer from its account.
 WalletAccount _account({String address = '11111111111111111111111111111111'}) =>
@@ -568,13 +582,35 @@ class _NamedWallet implements Wallet {
 }
 
 class _Backend implements MobileWalletBackend {
-  _Backend({this.supported = true});
+  _Backend({this.supported = true}) : keyPair = generateKeyPair();
+
   final bool supported;
+  final KeyPair keyPair;
+  bool disposed = false;
   bool disconnected = false;
   bool includeSignIn = true;
   bool lastSilent = false;
   bool wrongCount = false;
-  final WalletAccount account = _account();
+  WalletAccount? _account;
+
+  WalletAccount get account => _account ??= WalletAccount(
+    address: getAddressFromPublicKey(keyPair.publicKey).value,
+    publicKey: keyPair.publicKey,
+    chains: const [SolanaChainId.localnet],
+    features: const [
+      SolanaFeatureId.signMessage,
+      SolanaFeatureId.signTransaction,
+      SolanaFeatureId.signAndSendTransaction,
+    ],
+  );
+
+  void dispose() {
+    if (!disposed) {
+      keyPair.dispose();
+      disposed = true;
+    }
+  }
+
   @override
   bool get isSupported => supported;
   @override
@@ -585,36 +621,67 @@ class _Backend implements MobileWalletBackend {
     SolanaSignInInput? signIn,
   }) async {
     lastSilent = silent;
-    return MobileWalletAuthorization(
-      accounts: [account],
-      signInOutput: signIn != null && includeSignIn
-          ? SolanaSignInOutput(
-              account: account,
-              signedMessage: Uint8List(1),
-              signature: Uint8List(64),
-            )
-          : null,
-    );
+    if (signIn != null && includeSignIn) {
+      final message = Uint8List.fromList([3]);
+      return MobileWalletAuthorization(
+        accounts: [account],
+        signInOutput: SolanaSignInOutput(
+          account: account,
+          signedMessage: message,
+          signature: signBytes(keyPair.privateKey, message).value,
+        ),
+      );
+    }
+    return MobileWalletAuthorization(accounts: [account]);
   }
 
   @override
   Future<void> disconnect() async => disconnected = true;
+
+  Uint8List _signEnvelope(Uint8List wireTransaction) {
+    final decoded = getTransactionDecoder().decode(wireTransaction);
+    return getTransactionEncoder().encode(
+      Transaction(
+        messageBytes: decoded.messageBytes,
+        signatures: {
+          address(account.address): signBytes(
+            keyPair.privateKey,
+            decoded.messageBytes,
+          ),
+        },
+      ),
+    );
+  }
+
   @override
   Future<List<Uint8List>> signAndSendTransactions(
     List<Uint8List> transactions,
     WalletAccount account,
     SolanaSignAndSendTransactionOptions? options,
-  ) async => wrongCount ? [] : transactions.map((_) => Uint8List(64)).toList();
+  ) async => wrongCount
+      ? []
+      : [
+          for (final transaction in transactions)
+            signBytes(
+              keyPair.privateKey,
+              getTransactionDecoder().decode(transaction).messageBytes,
+            ).value,
+        ];
   @override
   Future<List<Uint8List>> signMessages(
     List<Uint8List> messages,
     WalletAccount account,
-  ) async => wrongCount ? [] : messages.map((_) => Uint8List(64)).toList();
+  ) async => wrongCount
+      ? []
+      : [
+          for (final message in messages)
+            signBytes(keyPair.privateKey, message).value,
+        ];
   @override
   Future<List<Uint8List>> signTransactions(
     List<Uint8List> transactions,
     WalletAccount account,
-  ) async => wrongCount ? [] : transactions.map(Uint8List.fromList).toList();
+  ) async => wrongCount ? [] : transactions.map(_signEnvelope).toList();
 }
 
 class _TestWallet implements Wallet {
