@@ -6,11 +6,11 @@
       "url": "https://github.com/anza-xyz/kit",
       "ref": {
         "type": "tag",
-        "value": "v8.3.0"
+        "value": "v8.4.0"
       },
-      "notes": "upstream TypeScript source from anza-xyz/kit (v8.3.0)",
+      "notes": "upstream TypeScript source from anza-xyz/kit (v8.4.0)",
       "package": "solana_kit",
-      "checkedCommit": "7dfaf8827c217105d47aa1940893d301ad9f63c0"
+      "checkedCommit": "0a296c6ba8cd7e055f79364b64dbf01907172ea2"
     },
     {
       "name": "espresso-cash-public",
