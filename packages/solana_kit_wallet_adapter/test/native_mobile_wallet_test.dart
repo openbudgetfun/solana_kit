@@ -120,6 +120,82 @@ void main() {
       );
     });
 
+    test('accepts a sign-in proof signed by the authorized account', () async {
+      final authorization = await backend.authorize(
+        identity: const WalletAppIdentity(name: 'Sign-in test'),
+        chain: SolanaChainId.mainnet,
+        signIn: const SolanaSignInInput(),
+      );
+      final output = authorization.signInOutput;
+      expect(output, isNotNull);
+      expect(output!.account.address, account.address);
+      expect(
+        verifySignature(
+          wallet.keyPair.publicKey,
+          SignatureBytes(output.signature),
+          output.signedMessage,
+        ),
+        isTrue,
+      );
+    });
+
+    test('rejects a sign-in proof for an unauthorized address', () async {
+      final stranger = generateKeyPair();
+      addTearDown(stranger.dispose);
+      final message = Uint8List.fromList(utf8.encode('sign-in message'));
+      wallet.signInResult = protocol.SignInResult(
+        address: base64.encode(stranger.publicKey),
+        signedMessage: base64.encode(message),
+        signature: base64.encode(
+          signBytes(stranger.privateKey, message).value,
+        ),
+      );
+      await expectLater(
+        backend.authorize(
+          identity: const WalletAppIdentity(name: 'Sign-in test'),
+          chain: SolanaChainId.mainnet,
+          signIn: const SolanaSignInInput(),
+        ),
+        _invalidResponse,
+      );
+    });
+
+    test('rejects a sign-in proof with a forged signature', () async {
+      final message = Uint8List.fromList(utf8.encode('sign-in message'));
+      final stranger = generateKeyPair();
+      addTearDown(stranger.dispose);
+      final forged = signBytes(stranger.privateKey, message).value;
+      wallet.signInResult = protocol.SignInResult(
+        address: base64.encode(wallet.keyPair.publicKey),
+        signedMessage: base64.encode(message),
+        signature: base64.encode(forged),
+      );
+      await expectLater(
+        backend.authorize(
+          identity: const WalletAppIdentity(name: 'Sign-in test'),
+          chain: SolanaChainId.mainnet,
+          signIn: const SolanaSignInInput(),
+        ),
+        _invalidResponse,
+      );
+    });
+
+    test('rejects a sign-in proof with a malformed base64 signature', () async {
+      wallet.signInResult = protocol.SignInResult(
+        address: base64.encode(wallet.keyPair.publicKey),
+        signedMessage: base64.encode(utf8.encode('sign-in message')),
+        signature: 'not base64!',
+      );
+      await expectLater(
+        backend.authorize(
+          identity: const WalletAppIdentity(name: 'Sign-in test'),
+          chain: SolanaChainId.mainnet,
+          signIn: const SolanaSignInInput(),
+        ),
+        _invalidResponse,
+      );
+    });
+
     test(
       'deauthorizes the latest token through the supplied session transport',
       () async {
@@ -169,6 +245,8 @@ class _NativeWallet implements mwa.KitMobileWallet {
         authToken: token,
       );
 
+  protocol.SignInResult? signInResult;
+
   @override
   Future<protocol.AuthorizationResult> authorize({
     protocol.AppIdentity? identity,
@@ -176,7 +254,33 @@ class _NativeWallet implements mwa.KitMobileWallet {
     List<String>? features,
     List<String>? addresses,
     protocol.SignInPayload? signInPayload,
-  }) async => _authorization('initial-token');
+  }) async {
+    if (signInPayload != null) {
+      final result =
+          signInResult ??
+          () {
+            final message = utf8.encode('sign-in message');
+            return protocol.SignInResult(
+              address: base64.encode(keyPair.publicKey),
+              signedMessage: base64.encode(message),
+              signature: base64.encode(
+                signBytes(
+                  keyPair.privateKey,
+                  Uint8List.fromList(message),
+                ).value,
+              ),
+            );
+          }();
+      return protocol.AuthorizationResult(
+        accounts: [
+          protocol.MwaAccount(address: base64.encode(keyPair.publicKey)),
+        ],
+        authToken: 'initial-token',
+        signInResult: result,
+      );
+    }
+    return _authorization('initial-token');
+  }
 
   @override
   Future<protocol.AuthorizationResult> reauthorize({

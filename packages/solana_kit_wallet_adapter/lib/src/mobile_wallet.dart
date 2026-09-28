@@ -301,11 +301,6 @@ class MobileWallet implements Wallet {
           'account',
         );
       }
-      _assertVerifiedSignature(
-        account: output.account,
-        signature: output.signature,
-        signedBytes: output.signedMessage,
-      );
       if (output.signatureType != null &&
           output.signatureType != _supportedSignatureType) {
         throw const WalletStandardException(
@@ -313,6 +308,11 @@ class MobileWallet implements Wallet {
           'Mobile wallet returned an unsupported signature type',
         );
       }
+      _assertVerifiedSignature(
+        account: output.account,
+        signature: output.signature,
+        signedBytes: output.signedMessage,
+      );
       results.add(output);
     }
     return results;
