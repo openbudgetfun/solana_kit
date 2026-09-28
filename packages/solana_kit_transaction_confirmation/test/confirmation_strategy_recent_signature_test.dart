@@ -7,7 +7,8 @@ import 'package:test/test.dart';
 void main() {
   group('createRecentSignatureConfirmationPromiseFactory', () {
     late Completer<List<SignatureStatus?>> getSignatureStatusesCompleter;
-    late void Function({required Object? err})? signatureNotificationCallback;
+    late void Function({required Object? err, required bool received})?
+    signatureNotificationCallback;
     late Future<void> Function({
       required CancellationToken abortSignal,
       required Commitment commitment,
@@ -30,7 +31,10 @@ void main() {
                     signature, {
                     required commitment,
                     required abortSignal,
-                    required void Function({required Object? err})
+                    required void Function({
+                      required Object? err,
+                      required bool received,
+                    })
                     onNotification,
                   }) async {
                     signatureNotificationCallback = onNotification;
@@ -175,8 +179,62 @@ void main() {
       await Future<void>.delayed(Duration.zero);
 
       // Now trigger the subscription notification.
-      signatureNotificationCallback!(err: null);
+      signatureNotificationCallback!(err: null, received: false);
 
+      await future;
+    });
+
+    test('a received-notification cannot resolve the confirmation', () async {
+      final future = getSignatureConfirmationPromise(
+        abortSignal: CancellationTokenSource().token,
+        commitment: Commitment.finalized,
+        signature: 'abc',
+      );
+
+      await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
+
+      // The node received the signature but has not executed it; this must
+      // not be mistaken for confirmation.
+      signatureNotificationCallback!(err: null, received: true);
+      expect(
+        await future
+            .then<Object?>((_) => 'confirmed')
+            .timeout(
+              const Duration(milliseconds: 50),
+              onTimeout: () => 'pending',
+            ),
+        'pending',
+      );
+
+      // The processed-status notification is what confirms.
+      signatureNotificationCallback!(err: null, received: false);
+      await future;
+    });
+
+    test('a received-notification cannot fail the confirmation', () async {
+      final future = getSignatureConfirmationPromise(
+        abortSignal: CancellationTokenSource().token,
+        commitment: Commitment.finalized,
+        signature: 'abc',
+      );
+
+      await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
+
+      signatureNotificationCallback!(err: 'o no', received: true);
+      expect(
+        await future
+            .then<Object?>((_) => 'confirmed')
+            .timeout(
+              const Duration(milliseconds: 50),
+              onTimeout: () => 'pending',
+            ),
+        'pending',
+      );
+
+      // The transaction is still confirmed by a status notification.
+      signatureNotificationCallback!(err: null, received: false);
       await future;
     });
 
@@ -190,7 +248,7 @@ void main() {
       await Future<void>.delayed(Duration.zero);
       await Future<void>.delayed(Duration.zero);
 
-      signatureNotificationCallback!(err: 'o no');
+      signatureNotificationCallback!(err: 'o no', received: false);
 
       await expectLater(
         future,
@@ -218,7 +276,11 @@ void main() {
                 signature, {
                 required commitment,
                 required abortSignal,
-                required void Function({required Object? err}) onNotification,
+                required void Function({
+                  required Object? err,
+                  required bool received,
+                })
+                onNotification,
               }) async {
                 await Completer<void>().future;
               },
@@ -257,7 +319,11 @@ void main() {
                 signature, {
                 required commitment,
                 required abortSignal,
-                required void Function({required Object? err}) onNotification,
+                required void Function({
+                  required Object? err,
+                  required bool received,
+                })
+                onNotification,
               }) async {
                 await Completer<void>().future;
               },
