@@ -1,4 +1,5 @@
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 
@@ -92,6 +93,7 @@ TransactionMessage setTransactionMessageLifetimeUsingDurableNonce(
   DurableNonceConfig config,
   TransactionMessage transactionMessage,
 ) {
+  _assertValidNonceFormat(config.nonce);
   List<Instruction> newInstructions;
 
   final firstInstruction = transactionMessage.instructions.isNotEmpty
@@ -142,4 +144,36 @@ TransactionMessage setTransactionMessageLifetimeUsingDurableNonce(
     instructions: List<Instruction>.unmodifiable(newInstructions),
     lifetimeConstraint: DurableNonceLifetimeConstraint(nonce: config.nonce),
   );
+}
+
+/// The nonce account stores the nonce as a 32-byte blockhash, so the value
+/// must be a base58 string that decodes to exactly 32 bytes — the same format
+/// a blockhash has.
+///
+/// Without this check, a nonce that decodes to more than 32 bytes is silently
+/// truncated and one that decodes to fewer is silently zero-extended by the
+/// fixed-size lifetime-token encoder, producing a wire lifetime token that
+/// differs from the caller-supplied string.
+void _assertValidNonceFormat(String nonce) {
+  if (nonce.length < 32 || nonce.length > 44) {
+    throw SolanaError(
+      SolanaErrorCode.transactionInvalidNonceFormat,
+      {'actualLength': nonce.length},
+    );
+  }
+  final int actualLength;
+  try {
+    actualLength = getBase58Encoder().encode(nonce).length;
+  } on Object {
+    throw SolanaError(
+      SolanaErrorCode.transactionInvalidNonceFormat,
+      {'actualLength': nonce.length},
+    );
+  }
+  if (actualLength != 32) {
+    throw SolanaError(
+      SolanaErrorCode.transactionInvalidNonceFormat,
+      {'actualLength': actualLength},
+    );
+  }
 }

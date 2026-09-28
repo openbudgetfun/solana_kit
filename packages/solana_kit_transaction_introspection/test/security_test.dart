@@ -87,6 +87,46 @@ void main() {
       }
     });
 
+    test('rejects a header claiming more signers than static accounts', () {
+      final malformed = CompiledTransactionMessage(
+        version: TransactionVersion.v0,
+        header: header(3, 1, 0),
+        staticAccounts: const [Address(feePayer), Address(systemProgram)],
+        instructions: const [],
+        lifetimeToken: blockhash,
+      );
+      expect(
+        () => getAccountMetasFromCompiledTransactionMessage(malformed),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.transactionIntrospectionHeaderAccountsMismatch,
+          ),
+        ),
+      );
+    });
+
+    test('rejects a header claiming more readonly non-signers than fit', () {
+      final malformed = CompiledTransactionMessage(
+        version: TransactionVersion.v0,
+        header: header(1, 0, 3),
+        staticAccounts: const [Address(feePayer), Address(systemProgram)],
+        instructions: const [],
+        lifetimeToken: blockhash,
+      );
+      expect(
+        () => getAccountMetasFromCompiledTransactionMessage(malformed),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.transactionIntrospectionHeaderAccountsMismatch,
+          ),
+        ),
+      );
+    });
+
     test('requires loaded addresses before resolving lookup accounts', () {
       expect(
         () => getAccountMetasFromCompiledTransactionMessage(message),

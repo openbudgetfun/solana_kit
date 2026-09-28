@@ -76,6 +76,21 @@ List<AccountMeta> getAccountMetasFromCompiledTransactionMessage(
 
   final header = compiledMessage.header;
   final staticAccounts = compiledMessage.staticAccounts;
+  // A message whose header counts do not fit inside the static account list
+  // cannot be mapped onto account metas; indexing would crash with a raw
+  // RangeError instead of a typed error.
+  if (header.numSignerAccounts > staticAccounts.length ||
+      header.numReadonlyNonSignerAccounts >
+          staticAccounts.length - header.numSignerAccounts) {
+    throw SolanaError(
+      SolanaErrorCode.transactionIntrospectionHeaderAccountsMismatch,
+      {
+        'numSignerAccounts': header.numSignerAccounts,
+        'numReadonlyNonSignerAccounts': header.numReadonlyNonSignerAccounts,
+        'numStaticAccounts': staticAccounts.length,
+      },
+    );
+  }
   final numWritableSignerAccounts =
       header.numSignerAccounts - header.numReadonlySignerAccounts;
   final numWritableNonSignerAccounts =

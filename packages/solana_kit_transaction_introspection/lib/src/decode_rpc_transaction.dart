@@ -22,6 +22,7 @@ class DecodedRpcTransaction {
     required this.compiledMessage,
     required this.loadedAddresses,
     this.transaction,
+    this.err,
   });
 
   /// The decoded compiled transaction message.
@@ -33,6 +34,19 @@ class DecodedRpcTransaction {
   /// The wire-format transaction, for `'base64'` and `'base58'` responses.
   /// `null` for `'json'` responses.
   final Transaction? transaction;
+
+  /// The `meta.err` value of the response, verbatim, if the transaction
+  /// failed.
+  ///
+  /// A failed transaction still reports the instructions it *attempted*, so
+  /// consumers of the instruction-walking getters must check this field
+  /// before treating an instruction trace as evidence that the program
+  /// actually executed. `null` when the transaction succeeded or the
+  /// response carried no `meta`.
+  final Object? err;
+
+  /// Whether the transaction failed on-chain (`meta.err` was present).
+  bool get failed => err != null;
 }
 
 const _emptyLoadedAddresses = LoadedAddresses();
@@ -60,7 +74,9 @@ List<Address> _addressList(Object? value) {
   final addresses = <Address>[];
   for (final item in raw) {
     if (item is! String) _throwUnrecognized();
-    addresses.add(Address(item));
+    // The RPC is not trusted to send well-formed account keys; an invalid
+    // string must be a typed error rather than an unchecked [Address].
+    addresses.add(address(item));
   }
   return addresses;
 }
@@ -74,6 +90,8 @@ List<int> _intList(Object? value) {
   }
   return integers;
 }
+
+Object? _getErr(Map<String, Object?>? meta) => meta?['err'];
 
 LoadedAddresses _getLoadedAddresses(Map<String, Object?>? meta) {
   final rawLoaded = meta?['loadedAddresses'];
@@ -112,6 +130,7 @@ DecodedRpcTransaction _decodeFromBase64(
     compiledMessage: compiledMessage,
     loadedAddresses: _getLoadedAddresses(meta),
     transaction: transaction,
+    err: _getErr(meta),
   );
 }
 
@@ -132,6 +151,7 @@ DecodedRpcTransaction _decodeFromBase58(
     compiledMessage: compiledMessage,
     loadedAddresses: _getLoadedAddresses(meta),
     transaction: transaction,
+    err: _getErr(meta),
   );
 }
 
@@ -286,6 +306,7 @@ DecodedRpcTransaction _decodeFromJson(
   return DecodedRpcTransaction(
     compiledMessage: compiledMessage,
     loadedAddresses: _getLoadedAddresses(meta),
+    err: _getErr(meta),
   );
 }
 

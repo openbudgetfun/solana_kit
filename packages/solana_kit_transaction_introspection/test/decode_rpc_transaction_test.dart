@@ -66,6 +66,76 @@ void main() {
       },
     );
 
+    test('surfaces meta.err so failed transactions are detectable', () {
+      final message = legacyMessage(
+        staticAccounts: const [Address(systemProgram)],
+      );
+      final wire = encodeWire(message);
+      final err = {
+        'InstructionError': [0, 'Custom'],
+      };
+      final rpcTx = <String, Object?>{
+        'transaction': [base64String(wire), 'base64'],
+        'meta': {'err': err},
+      };
+      final decoded = decodeTransactionFromRpcResponse(rpcTx);
+      expect(decoded.err, err);
+      expect(decoded.failed, isTrue);
+    });
+
+    test('reports success when meta.err is absent or null', () {
+      final message = legacyMessage(
+        staticAccounts: const [Address(systemProgram)],
+      );
+      final wire = encodeWire(message);
+      for (final meta in [
+        null,
+        <String, Object?>{},
+        <String, Object?>{'err': null},
+      ]) {
+        final rpcTx = <String, Object?>{
+          'transaction': [base64String(wire), 'base64'],
+          'meta': meta,
+        };
+        final decoded = decodeTransactionFromRpcResponse(rpcTx);
+        expect(decoded.err, isNull, reason: 'meta: $meta');
+        expect(decoded.failed, isFalse, reason: 'meta: $meta');
+      }
+    });
+
+    test('rejects an invalid account key instead of accepting it', () {
+      final rpcTx = <String, Object?>{
+        'transaction': [
+          base64String(
+            encodeWire(
+              legacyMessage(
+                staticAccounts: const [Address(systemProgram)],
+              ),
+            ),
+          ),
+          'base64',
+        ],
+        'meta': {
+          'loadedAddresses': {
+            'readonly': const <String>[
+              '0OIl!xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+            ],
+            'writable': const <String>[],
+          },
+        },
+      };
+      expect(
+        () => decodeTransactionFromRpcResponse(rpcTx),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.codecsInvalidStringForBase,
+          ),
+        ),
+      );
+    });
+
     test('throws for an unrecognized array encoding', () {
       final rpcTx = <String, Object?>{
         'transaction': ['deadbeef', 'hex'],

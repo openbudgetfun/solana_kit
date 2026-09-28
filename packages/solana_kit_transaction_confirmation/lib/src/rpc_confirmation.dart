@@ -176,6 +176,21 @@ Future<Signature> sendAndConfirmTransaction({
 
   final transactionSignature = signature(signatureValue);
 
+  // The RPC reports the signature of the transaction it received; Ed25519 is
+  // deterministic, so the reported signature must equal the one computed
+  // locally from the fully signed transaction. A mismatch means the RPC is
+  // reporting a different transaction than the one that was sent.
+  final expectedSignature = getSignatureFromTransaction(transaction);
+  if (expectedSignature.value != transactionSignature.value) {
+    throw SolanaError(
+      SolanaErrorCode.transactionReportedSignatureMismatch,
+      {
+        'expectedSignature': expectedSignature.value,
+        'reportedSignature': transactionSignature.value,
+      },
+    );
+  }
+
   await waitForTransactionConfirmation(
     rpc: rpc,
     signature: transactionSignature,
@@ -223,8 +238,9 @@ Future<void> _pollForSignatureConfirmation({
     final statuses = _parseSignatureStatusesResponse(response);
     final status = statuses.isNotEmpty ? statuses[0] : null;
 
-    if (status?.err != null) {
-      throw StateError('Transaction failed: ${status!.err}');
+    final transactionError = status?.err;
+    if (transactionError != null) {
+      throw getSolanaErrorFromTransactionError(transactionError);
     }
 
     if (status?.confirmationStatus != null &&

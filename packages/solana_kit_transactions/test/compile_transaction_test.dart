@@ -72,7 +72,7 @@ void main() {
           );
       final nonceMessage = setTransactionMessageLifetimeUsingDurableNonce(
         const DurableNonceConfig(
-          nonce: '33333333333333333333333333333333',
+          nonce: '1thX6LZfHDZZKUs92febYZhYRcXddmzfzF2NvTkPNE',
           nonceAccountAddress: Address(
             '44444444444444444444444444444444444444444444',
           ),
@@ -88,7 +88,7 @@ void main() {
       final lifetime = transaction.lifetimeConstraint;
       expect(lifetime, isA<TransactionDurableNonceLifetime>());
       final nonceLifetime = lifetime as TransactionDurableNonceLifetime;
-      expect(nonceLifetime.nonce, '33333333333333333333333333333333');
+      expect(nonceLifetime.nonce, '1thX6LZfHDZZKUs92febYZhYRcXddmzfzF2NvTkPNE');
       expect(
         nonceLifetime.nonceAccountAddress,
         const Address('44444444444444444444444444444444444444444444'),

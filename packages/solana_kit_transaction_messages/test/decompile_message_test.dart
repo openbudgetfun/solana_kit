@@ -11,6 +11,38 @@ void main() {
   const feePayer = Address('7EqQdEULxWcraVx3mXKFjc84LhCkMGZCkRuDpvcMwJeK');
 
   group('decompileTransactionMessage', () {
+    test('rejects an instruction account index outside the account list', () {
+      const crafted = CompiledTransactionMessage(
+        version: TransactionVersion.v0,
+        header: MessageHeader(
+          numSignerAccounts: 1,
+          numReadonlySignerAccounts: 0,
+          numReadonlyNonSignerAccounts: 0,
+        ),
+        staticAccounts: [feePayer],
+        lifetimeToken: 'J4yED2jcMAHyQUg61DBmm4njmEydUr2WqrV9cdEcDDgL',
+        instructions: [
+          CompiledInstruction(
+            programAddressIndex: 0,
+            // No static account exists at index 5.
+            accountIndices: [5],
+          ),
+        ],
+      );
+
+      expect(
+        () => decompileTransactionMessage(crafted),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode
+                .transactionFailedToDecompileInstructionAccountIndexOutOfRange,
+          ),
+        ),
+      );
+    });
+
     group('for a transaction with a blockhash lifetime', () {
       const blockhash = 'J4yED2jcMAHyQUg61DBmm4njmEydUr2WqrV9cdEcDDgL';
 

@@ -29,12 +29,12 @@ Instruction _createMockAdvanceNonceAccountInstruction({
 
 void main() {
   const nonceConstraintA = (
-    nonce: '123',
+    nonce: '4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi',
     nonceAccountAddress: Address('123'),
     nonceAuthorityAddress: Address('123'),
   );
   const nonceConstraintB = (
-    nonce: '456',
+    nonce: 'cGfHiC6Kgg3FpFZvgwGcswsCRtp4aBP2fzuXRQPizuN',
     nonceAccountAddress: Address('456'),
     nonceAuthorityAddress: Address('456'),
   );
@@ -241,6 +241,58 @@ void main() {
             ),
           ),
         ],
+      );
+    });
+
+    test('rejects a nonce that is not a 32-byte base58 value', () {
+      // A too-short nonce would otherwise be silently zero-extended by the
+      // fixed-size lifetime-token encoder; a too-long one truncated.
+      for (final nonce in [
+        '123',
+        '',
+        '0'.padRight(60, '0'),
+        // Valid base58 within the 32-44 character range that decodes to
+        // fewer than 32 bytes.
+        '2'.padRight(40, '2'),
+      ]) {
+        expect(
+          () => setTransactionMessageLifetimeUsingDurableNonce(
+            DurableNonceConfig(
+              nonce: nonce,
+              nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
+              nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
+            ),
+            baseTx,
+          ),
+          throwsA(
+            isA<SolanaError>().having(
+              (error) => error.code,
+              'code',
+              SolanaErrorCode.transactionInvalidNonceFormat,
+            ),
+          ),
+          reason: 'nonce: `$nonce`',
+        );
+      }
+    });
+
+    test('rejects a nonce containing non-base58 characters', () {
+      expect(
+        () => setTransactionMessageLifetimeUsingDurableNonce(
+          DurableNonceConfig(
+            nonce: '0OIl' * 11, // 0, O, I, l are not in the base58 alphabet
+            nonceAccountAddress: nonceConstraintA.nonceAccountAddress,
+            nonceAuthorityAddress: nonceConstraintA.nonceAuthorityAddress,
+          ),
+          baseTx,
+        ),
+        throwsA(
+          isA<SolanaError>().having(
+            (error) => error.code,
+            'code',
+            SolanaErrorCode.transactionInvalidNonceFormat,
+          ),
+        ),
       );
     });
 

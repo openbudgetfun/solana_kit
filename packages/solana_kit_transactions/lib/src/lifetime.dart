@@ -147,6 +147,10 @@ bool _compiledInstructionIsAdvanceNonceInstruction(
   CompiledInstruction instruction,
   List<Address> staticAddresses,
 ) {
+  if (instruction.programAddressIndex < 0 ||
+      instruction.programAddressIndex >= staticAddresses.length) {
+    return false;
+  }
   return staticAddresses[instruction.programAddressIndex] ==
           systemProgramAddress &&
       instruction.data != null &&
@@ -204,6 +208,13 @@ bool _isBlockhash(String value) {
 /// If the first instruction is an AdvanceNonceAccount instruction, returns
 /// a [TransactionDurableNonceLifetime]. Otherwise, returns a
 /// [TransactionBlockhashLifetime] with lastValidBlockHeight set to max u64.
+///
+/// The wire format does not carry `lastValidBlockHeight`, so the sentinel
+/// means "unknown expiry" (matching upstream `@solana/kit`). Confirmation
+/// strategies treat it as never-expiring: waiting on a reconstructed
+/// lifetime polls until the transaction lands or the caller aborts, and
+/// cannot fail fast on expiry. When the original expiry matters, discard
+/// the reconstructed constraint and set a fresh blockhash lifetime.
 ///
 /// Version 1 messages store their instructions as separate headers and
 /// payloads rather than as [CompiledInstruction] values, so they are inspected

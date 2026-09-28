@@ -692,6 +692,21 @@ enum SolanaErrorCode {
   /// (#1972).
   transactionInvalidHeapSize(5663040),
 
+  /// A durable nonce value is not a base58 string that decodes to exactly 32
+  /// bytes. The nonce account stores the nonce as a 32-byte blockhash, so a
+  /// shorter or longer value would be silently mangled by the fixed-size
+  /// lifetime-token encoder rather than rejected.
+  ///
+  /// Port-only code (upstream's `TRANSACTION__` block ends at 5663040).
+  transactionInvalidNonceFormat(5663041),
+
+  /// The signature returned by the RPC for a submitted transaction does not
+  /// match the locally computed signature of that transaction, so the RPC
+  /// may be reporting a different transaction than the one sent.
+  ///
+  /// Port-only code (upstream's `TRANSACTION__` block ends at 5663040).
+  transactionReportedSignatureMismatch(5663042),
+
   // ---------------------------------------------------------------------------
   // Transaction Introspection (5664000 - 5664999)
   // ---------------------------------------------------------------------------
@@ -707,6 +722,14 @@ enum SolanaErrorCode {
   //
   // Added in @solana/kit v7.0.0 for the new transaction-introspection package.
   transactionIntrospectionUnrecognizedGetTransactionResponse(5664001),
+
+  /// A compiled transaction message's header counts (signers and readonly
+  /// non-signers) do not fit within its static account list, so account
+  /// metas cannot be resolved.
+  ///
+  /// Port-only code (upstream's `TRANSACTION_INTROSPECTION` block ends at
+  /// 5664001).
+  transactionIntrospectionHeaderAccountsMismatch(5664002),
 
   // ---------------------------------------------------------------------------
   // Transaction Errors (7050000 - 7050999)
