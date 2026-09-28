@@ -4,15 +4,17 @@ name: publish
 #
 # Trusted publishing (OIDC) pins the run identity, and pub.dev rejects any
 # token whose run ref is not `refs/tags/<tag-pattern>` — for push and
-# workflow_dispatch events alike (the "Enable publishing from
-# workflow_dispatch events" option on pub.dev only relaxes the event name).
-# Push the v* tag to publish, or dispatch the workflow ON the tag ref:
+# workflow_dispatch events alike. Each run therefore resolves the single
+# MonoChange release target identified by its tag and publishes only that
+# target's packages. The primary `v*` tag starts on push; dispatch this
+# workflow on each scoped tag to publish independently versioned targets:
 #
-#   gh workflow run publish.yml --ref v0.1.0
+#   gh workflow run publish.yml --ref solana_kit_system/v0.8.0 \
+#     -f tag=solana_kit_system/v0.8.0
 #
-# Dispatching on the tag requires "Enable publishing from `workflow_dispatch`
-# events" on each dart package's pub.dev admin page. A dispatch from a branch
-# ref publishes npm only; dart is skipped because pub.dev would reject it.
+# Every pub.dev package must enable publishing from `workflow_dispatch` and
+# use the exact tag pattern of its MonoChange release target. A dispatch from a
+# branch ref never receives a publishable pub.dev OIDC identity.
 on:
   push:
     tags:
@@ -21,9 +23,10 @@ on:
     inputs:
       tag:
         description:
-          "Release tag to publish (for example v0.1.0). Prefer leaving this
-          empty and dispatching on the tag ref (`gh workflow run publish.yml
-          --ref <tag>`) so pub.dev trusted publishing accepts the run."
+          "Release tag to publish (for example v0.1.0 or
+          solana_kit_system/v0.8.0). Dispatch on the same tag ref with
+          `gh workflow run publish.yml --ref <tag>` so pub.dev trusted
+          publishing accepts the run."
         required: false
         type: string
 
@@ -82,6 +85,62 @@ jobs:
           fi
         shell: bash
 
+      - name: resolve release target
+        id: release_target
+        env:
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          mapfile -t changed_release_files < <(
+            git diff-tree --no-commit-id --name-only -r HEAD -- .monochange/releases
+          )
+          release_records=()
+          for changed_file in "${changed_release_files[@]}"; do
+            case "$changed_file" in
+              .monochange/releases/*/release.json) release_records+=("$changed_file") ;;
+            esac
+          done
+          if [ "${#release_records[@]}" -ne 1 ]; then
+            echo "::error::Expected one release record written by the tagged commit, found ${#release_records[@]}." >&2
+            exit 1
+          fi
+          target_record="${release_records[0]}"
+          target="$(
+            git show "HEAD:$target_record" | jq -ce --arg tag "$RELEASE_TAG" '
+              [.release_targets?[] | select(.tag_name == $tag)] |
+              if length == 1 then .[0] else error("expected one release target") end
+            '
+          )"
+
+          target_kind="$(jq -r '.kind' <<<"$target")"
+          target_id="$(jq -r '.id' <<<"$target")"
+          case "$target_kind" in
+            group|package) ;;
+            *)
+              echo "::error::Release tag $RELEASE_TAG resolved to unsupported target kind $target_kind." >&2
+              exit 1
+              ;;
+          esac
+          if [ -z "$target_id" ] || [ "$target_id" = "null" ]; then
+            echo "::error::Release tag $RELEASE_TAG has no target identifier." >&2
+            exit 1
+          fi
+
+          jq -r '.members[]' <<<"$target" > "$RUNNER_TEMP/publish-target-packages"
+          if [ ! -s "$RUNNER_TEMP/publish-target-packages" ]; then
+            echo "::error::Release tag $RELEASE_TAG has no target packages." >&2
+            exit 1
+          fi
+
+          {
+            echo "kind=$target_kind"
+            echo "id=$target_id"
+            echo "record=$target_record"
+          } >> "$GITHUB_OUTPUT"
+          echo "Publishing $target_kind $target_id from $target_record:"
+          cat "$RUNNER_TEMP/publish-target-packages"
+
       - name: setup Dart publishing authentication
         uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
 
@@ -117,8 +176,14 @@ jobs:
         env:
           NPM_CONFIG_PROVENANCE: "true"
         run: |
+          mapfile -t target_packages < "$RUNNER_TEMP/publish-target-packages"
+          target_args=()
+          for package_name in "${target_packages[@]}"; do
+            target_args+=(--package "$package_name")
+          done
           monochange step publish-readiness \
             --from HEAD \
+            "${target_args[@]}" \
             --output "$RUNNER_TEMP/publish-readiness.json" \
             --format json
         shell: devenv shell -- bash -e {0}
@@ -152,14 +217,24 @@ jobs:
             ecosystems=(--ecosystem npm)
             echo "::warning::skipping dart/pub.dev publishing: this run ref is ${GITHUB_REF}, not a tag, and pub.dev trusted publishing only accepts tag refs. Dispatch on the release tag instead: gh workflow run publish.yml --ref <tag>"
           fi
+          mapfile -t target_packages < "$RUNNER_TEMP/publish-target-packages"
+          target_args=()
+          for package_name in "${target_packages[@]}"; do
+            target_args+=(--package "$package_name")
+          done
           monochange step publish-packages \
             --log-level info \
+            "${target_args[@]}" \
             "${ecosystems[@]}" \
             --output "$RUNNER_TEMP/publish-result.json" \
             --format json
         shell: devenv shell -- bash -e {0}
 
       - name: publish GitHub releases
+        # MonoChange creates the release objects from the complete release
+        # record. Run it once from the primary group tag rather than for each
+        # independently dispatched pub.dev target.
+        if: steps.release_target.outputs.kind == 'group' && steps.release_target.outputs.id == 'main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

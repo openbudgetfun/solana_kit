@@ -210,13 +210,13 @@ monochange step publish-packages --dry-run --all --format json
 
 ### Publishing with monochange
 
-Package publishing is handled by `.github/workflows/publish.yml` after the release PR merges. The `release-pr` workflow detects the merged MonoChange release commit, creates the direct `v*` tag, and dispatches the `publish` workflow with that tag.
+Package publishing is handled by `.github/workflows/publish.yml`. Each run resolves the exact MonoChange release target named by its tag, then publishes only that target's packages. The primary `v*` tag starts from a push; independently versioned package and group tags are published by dispatching the workflow on their tag ref.
 
 Important requirements before running publish workflows:
 
 - The release commit must include a valid MonoChange release record.
-- The direct `v*` tag must point at a commit reachable from `origin/main`.
-- pub.dev Trusted Publishing must be configured for `.github/workflows/publish.yml` and the `publisher` GitHub environment.
+- Every release tag must point at a commit reachable from `origin/main`.
+- pub.dev Trusted Publishing must be configured for `.github/workflows/publish.yml` and the `publisher` GitHub environment. Enable both push and `workflow_dispatch` events. The tag pattern must match the release target: `v{{version}}` for the primary SDK group, `wallet/v{{version}}` for the wallet group, and `<package>/v{{version}}` for independently versioned packages.
 - Each package `CHANGELOG.md` must contain the current package version heading.
 
 For local verification from a release commit or checked-out release tag, run:
@@ -299,7 +299,15 @@ The expected publishing order follows the layer table above:
 
 ### Running the Publish Workflow
 
-The normal path is the automated workflow dispatch from `.github/workflows/release-pr.yml`. If maintainers need to rerun publishing for an existing direct release tag, use the GitHub Actions `publish` workflow and provide the `v*` tag input.
+The primary SDK group publishes from its direct `v*` tag. To publish or rerun an independently versioned package or group, dispatch the GitHub Actions `publish` workflow on its exact release tag, for example:
+
+```bash
+gh workflow run publish.yml \
+  --ref solana_kit_system/v0.8.0 \
+  -f tag=solana_kit_system/v0.8.0
+```
+
+This tagged dispatch is required for pub.dev trusted publishing: a dispatch from a branch cannot obtain a trusted pub.dev token.
 
 For a local dry run from the release commit or checked-out release tag:
 
