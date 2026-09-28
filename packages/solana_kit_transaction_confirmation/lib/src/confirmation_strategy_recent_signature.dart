@@ -28,12 +28,16 @@ class RecentSignatureConfirmationConfig {
   /// each time a notification arrives. Returns a future that completes when
   /// the subscription ends.
   ///
-  /// The callback receives an `err` field (null if no error).
+  /// The callback reports whether the notification is a processed-status
+  /// notification or a mere receipt: receipts (`received == true`) only say
+  /// that the RPC node saw the signature, carry no `err`, and say nothing
+  /// about execution, so the strategy ignores them.
   final Future<void> Function(
     String signature, {
     required CancellationToken abortSignal,
     required Commitment commitment,
-    required void Function({required Object? err}) onNotification,
+    required void Function({required Object? err, required bool received})
+    onNotification,
   })
   onSignatureNotification;
 }
@@ -87,9 +91,13 @@ createRecentSignatureConfirmationPromiseFactory(
               signature,
               abortSignal: abortController.token,
               commitment: commitment,
-              onNotification: ({required err}) {
+              onNotification: ({required err, required received}) {
                 if (abortController.token.isCancelled) return;
                 if (signatureDidCommitCompleter.isCompleted) return;
+                // A received-notification only says the node saw the
+                // signature; only a processed-status notification can confirm
+                // or fail the transaction, so receipts never resolve this.
+                if (received) return;
                 if (err != null) {
                   signatureDidCommitCompleter.completeError(
                     StateError('Transaction failed: $err'),
