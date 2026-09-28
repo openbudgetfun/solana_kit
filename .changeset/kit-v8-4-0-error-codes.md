@@ -1,4 +1,5 @@
 ---
+"solana_kit": docs
 "solana_kit_errors": minor
 ---
 
@@ -9,7 +10,7 @@ The reference pin moves from `anza-xyz/kit` `v8.3.0` to `v8.4.0`, and the `@sola
 Three new error codes are ported from upstream `@solana/errors`:
 
 - `codecsSentinelMissingAtEndOfBytes(8078028)` — thrown when a collection codec using a sentinel size strategy reaches the end of the byte array without encountering the sentinel.
-- `codecsSentinelMustNotEmpty(8078029)` — thrown when constructing a codec with an empty sentinel.
+- `codecsSentinelMustNotBeEmpty(8078029)` — thrown when constructing a codec with an empty sentinel.
 - `instructionPlansMessageRejectedByPacker(7618012)` — thrown by a custom message packer to reject a transaction message for a reason other than the standard capacity limits.
 
 These codes reserve their upstream numbers in the Dart `SolanaErrorCode` enum so that error codes remain interoperable across implementations. The features that throw them (the sentinel size strategy for collection codecs and the custom message packer helpers) are ported separately.

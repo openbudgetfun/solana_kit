@@ -52,7 +52,8 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode.codecsInvalidUtf8String:
       r'Invalid UTF-8 string. Found a lone surrogate at index $index.',
   SolanaErrorCode.codecsSentinelMissingAtEndOfBytes: r'Codec [$codecDescription] expected sentinel [$hexSentinel] to terminate the collection, but reached the end of the byte array without it.',
-  SolanaErrorCode.codecsSentinelMustNotEmpty: 'The sentinel must not be empty.',
+  SolanaErrorCode.codecsSentinelMustNotBeEmpty:
+      'The sentinel must not be empty.',
   SolanaErrorCode.codecsInvalidBoolean:
       r'Invalid boolean value. Expected 0 or 1, got $value.',
   SolanaErrorCode.fixedPointsArithmeticOverflow: r'Fixed-point operation `$operation` of kind `$kind` overflowed. Expected a raw bigint in [$min, $max], got $result.',

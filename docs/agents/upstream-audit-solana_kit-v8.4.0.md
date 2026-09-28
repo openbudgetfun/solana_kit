@@ -9,7 +9,7 @@ Status: the workspace tracks `v8.4.0`; `upstream:parity` passes against `@solana
 | Upstream change                                                                            | Dart counterpart                                                                 |
 | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
 | `SOLANA_ERROR__CODECS__SENTINEL_MISSING_AT_END_OF_BYTES` (8078028) (`@solana/errors`)      | `SolanaErrorCode.codecsSentinelMissingAtEndOfBytes` in `solana_kit_errors`       |
-| `SOLANA_ERROR__CODECS__SENTINEL_MUST_NOT_BE_EMPTY` (8078029) (`@solana/errors`)            | `SolanaErrorCode.codecsSentinelMustNotEmpty` in `solana_kit_errors`              |
+| `SOLANA_ERROR__CODECS__SENTINEL_MUST_NOT_BE_EMPTY` (8078029) (`@solana/errors`)            | `SolanaErrorCode.codecsSentinelMustNotBeEmpty` in `solana_kit_errors`            |
 | `SOLANA_ERROR__INSTRUCTION_PLANS__MESSAGE_REJECTED_BY_PACKER` (7618012) (`@solana/errors`) | `SolanaErrorCode.instructionPlansMessageRejectedByPacker` in `solana_kit_errors` |
 
 ## Not ported yet

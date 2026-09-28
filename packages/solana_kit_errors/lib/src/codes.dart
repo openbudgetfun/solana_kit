@@ -992,7 +992,7 @@ enum SolanaErrorCode {
   codecsSentinelMissingAtEndOfBytes(8078028),
 
   /// The sentinel provided to a codec is an empty byte sequence.
-  codecsSentinelMustNotEmpty(8078029),
+  codecsSentinelMustNotBeEmpty(8078029),
 
   /// The boolean value is not encoded as zero or one.
   ///
