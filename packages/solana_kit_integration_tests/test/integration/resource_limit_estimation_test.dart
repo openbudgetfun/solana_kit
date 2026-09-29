@@ -27,6 +27,35 @@ import 'package:test/test.dart';
 /// ceiling but comfortably fits the v1 4096-byte ceiling.
 const _oversizedMemoLength = 1600;
 
+/// Agave's `TRANSACTION_ACCOUNT_BASE_SIZE`: the number of bytes the runtime
+/// charges every loaded account on top of its data.
+const _transactionAccountBaseSize = 165;
+
+/// Returns [message] with its loaded accounts data size limit padded by the
+/// per-account base sizes that SurfPool omits from its simulation report.
+///
+/// SurfPool (1.6.0) computes `simulateTransaction`'s `loadedAccountsDataSize`
+/// as a bare sum of account data bytes, while its runtime charges the
+/// Agave-style accounting — `_transactionAccountBaseSize + data.length` per
+/// loaded account. Submitting the verbatim estimate therefore always fails
+/// execution with `MaxLoadedAccountsDataSizeExceeded` on this validator, even
+/// though the estimator mirrors upstream `@solana/kit` exactly: real Agave
+/// nodes report the runtime-consistent size, where the verbatim estimate
+/// executes as-is. Padding keeps the submitted limit derived from the
+/// estimate while covering the missing base-size term, and can only overshoot
+/// the runtime's charge — never undershoot it.
+TransactionMessage _padLoadedAccountsDataSizeLimitForExecution(
+  TransactionMessage message,
+) {
+  final estimated = getTransactionMessageLoadedAccountsDataSizeLimit(message);
+  if (estimated == null) return message;
+  final accountCount = compileTransactionMessage(message).staticAccounts.length;
+  return setTransactionMessageLoadedAccountsDataSizeLimit(
+    estimated + _transactionAccountBaseSize * accountCount,
+    message,
+  );
+}
+
 void main() {
   late IntegrationTestEnv env;
 
@@ -147,7 +176,10 @@ void main() {
         greaterThan(0),
       );
 
-      final signed = await signTransactionMessageWithSigners(estimated);
+      // The estimated compute unit limit is submitted verbatim — only the
+      // loaded accounts data size limit needs SurfPool's base-size padding.
+      final executable = _padLoadedAccountsDataSizeLimitForExecution(estimated);
+      final signed = await signTransactionMessageWithSigners(executable);
       final signature = await env.rpc
           .sendTransaction(
             getBase64EncodedWireTransaction(signed),
@@ -258,7 +290,11 @@ void main() {
       );
 
       final estimated = await estimateAndSet(message);
-      final signed = await signTransactionMessageWithSigners(estimated);
+
+      // The estimated compute unit limit is submitted verbatim — only the
+      // loaded accounts data size limit needs SurfPool's base-size padding.
+      final executable = _padLoadedAccountsDataSizeLimitForExecution(estimated);
+      final signed = await signTransactionMessageWithSigners(executable);
       await env.rpc
           .sendTransaction(
             getBase64EncodedWireTransaction(signed),
