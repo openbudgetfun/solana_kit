@@ -7,102 +7,12 @@ import 'test_helpers.dart';
 
 void main() {
   group('max-instructions', () {
-    group('resolveMaxInstructions', () {
-      test('falls back to the default when null', () {
-        expect(
-          resolveMaxInstructions(null),
-          defaultMaxInstructionsPerTransaction,
-        );
-        expect(defaultMaxInstructionsPerTransaction, 16);
-      });
-
-      test('returns the provided value when given', () {
-        expect(resolveMaxInstructions(5), 5);
-      });
-    });
-
-    group('assertValidMaxInstructionsPerTransaction', () {
-      test('accepts null', () {
-        expect(
-          () => assertValidMaxInstructionsPerTransaction(null),
-          returnsNormally,
-        );
-      });
-
-      test('accepts positive integers up to the transaction limit', () {
-        expect(
-          () => assertValidMaxInstructionsPerTransaction(1),
-          returnsNormally,
-        );
-        expect(
-          () => assertValidMaxInstructionsPerTransaction(
-            transactionInstructionLimit,
-          ),
-          returnsNormally,
-        );
-      });
-
-      test('rejects zero', () {
-        expect(
-          () => assertValidMaxInstructionsPerTransaction(0),
-          throwsA(
-            isA<SolanaError>().having(
-              (e) => e.code,
-              'code',
-              SolanaErrorCode
-                  .instructionPlansInvalidMaxInstructionsPerTransaction,
-            ),
-          ),
-        );
-      });
-
-      test('rejects negative values', () {
-        expect(
-          () => assertValidMaxInstructionsPerTransaction(-1),
-          throwsA(isA<SolanaError>()),
-        );
-      });
-
-      test('rejects values greater than the transaction limit', () {
-        expect(
-          () => assertValidMaxInstructionsPerTransaction(
-            transactionInstructionLimit + 1,
-          ),
-          throwsA(
-            isA<SolanaError>().having(
-              (e) => e.code,
-              'code',
-              SolanaErrorCode
-                  .instructionPlansInvalidMaxInstructionsPerTransaction,
-            ),
-          ),
-        );
-      });
-    });
-
-    group('assertMaxInstructionsPerTransaction', () {
-      test('passes when within the limit', () {
-        expect(
-          () => assertMaxInstructionsPerTransaction(3, 5),
-          returnsNormally,
-        );
-      });
-
-      test('throws when exceeding the limit', () {
-        expect(
-          () => assertMaxInstructionsPerTransaction(6, 5),
-          throwsA(
-            isA<SolanaError>().having(
-              (e) => e.code,
-              'code',
-              SolanaErrorCode
-                  .instructionPlansMaxInstructionsPerTransactionExceeded,
-            ),
-          ),
-        );
-      });
-    });
-
+    // The pure helpers (resolveMaxInstructionsPerTransaction,
+    // assertMaxInstructionsPerTransaction,
+    // assertMessageCanAccommodateSize and
+    // isMessagePackerErrorThatRequiresNewCandidate) are covered in
+    // message_packer_errors_test.dart; this file exercises the instruction
+    // limit end-to-end through the packers and the planner.
     group('MessagePacker.packMessageToCapacity maxInstructions', () {
       test(
         'splits instructions across messages when exceeding maxInstructions',

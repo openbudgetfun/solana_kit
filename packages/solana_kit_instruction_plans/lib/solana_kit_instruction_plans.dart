@@ -30,6 +30,7 @@ export 'src/append_instruction_plan.dart';
 export 'src/instruction_plan.dart';
 export 'src/instruction_plan_input.dart';
 export 'src/max_instructions.dart';
+export 'src/message_packer_errors.dart';
 export 'src/transaction_execution_boundary.dart';
 export 'src/transaction_plan.dart';
 export 'src/transaction_plan_errors.dart';

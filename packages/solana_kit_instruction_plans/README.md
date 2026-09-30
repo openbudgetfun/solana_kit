@@ -78,6 +78,8 @@ The built-in instruction-list packer preserves every instruction exactly once, l
 
 Reserve fixed instructions, such as compute-budget instructions, in `createTransactionMessage`. If `onTransactionMessageUpdated` makes a packed message exceed its limits, planning fails rather than discarding already consumed instructions and returning an incomplete plan.
 
+Custom packers can rely on `resolveMaxInstructionsPerTransaction`, `assertMaxInstructionsPerTransaction`, and `assertMessageCanAccommodateSize` to enforce the instruction-count and size limits the built-in packers use, and may throw `instructionPlansMessageRejectedByPacker` to refuse a message for any other reason. The planner treats that rejection like the capacity errors and opens a new transaction message; use `isMessagePackerErrorThatRequiresNewCandidate` to identify every error that calls for a new candidate.
+
 ```dart
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 
@@ -102,6 +104,7 @@ Execution errors preserve the complete result tree, including signatures for ear
 - `InstructionPlan` sealed type: `SingleInstructionPlan`, `SequentialInstructionPlan`, `ParallelInstructionPlan`.
 - `singleInstructionPlan`, `sequentialInstructionPlan`, `parallelInstructionPlan`.
 - `getMessagePacker`, `MessagePacker`.
+- `resolveMaxInstructionsPerTransaction`, `assertMaxInstructionsPerTransaction`, `assertMessageCanAccommodateSize`, `isMessagePackerErrorThatRequiresNewCandidate`.
 - `TransactionPlan`, `TransactionPlanner`, `TransactionPlanExecutor`, `TransactionExecutionBoundary`.
 
 <!-- {=packageExampleSection|replace:"__PACKAGE__":"solana_kit_instruction_plans"|replace:"__EXAMPLE_PATH__":"example/main.dart"|replace:"__IMPORT_PATH__":"package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart"} -->

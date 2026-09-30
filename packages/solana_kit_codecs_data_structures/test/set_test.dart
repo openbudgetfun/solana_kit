@@ -52,5 +52,27 @@ void main() {
       final original = {10, 20, 30};
       expect(codec.decode(codec.encode(original)), equals(original));
     });
+
+    test('encodes sentinel-terminated sets with required by default', () {
+      // Required (default): the sentinel is written on encode and demanded
+      // on decode.
+      final codec = getSetCodec(getU8Codec(), size: SentinelArraySize(b('00')));
+      expect(hex(codec.encode({42, 1, 2})), equals('2a010200'));
+      expect(codec.decode(b('2a010200')), equals({42, 1, 2}));
+    });
+
+    test('encodes sentinel-terminated sets with the omitted strategy', () {
+      // Omitted: the sentinel is never written; the set ends at the end of
+      // the byte array.
+      final codec = getSetCodec(
+        getU8Codec(),
+        size: SentinelArraySize(
+          b('00'),
+          strategy: SentinelCountStrategy.omitted,
+        ),
+      );
+      expect(hex(codec.encode({42, 1, 2})), equals('2a0102'));
+      expect(codec.decode(b('2a0102')), equals({42, 1, 2}));
+    });
   });
 }

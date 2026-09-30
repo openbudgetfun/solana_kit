@@ -61,5 +61,36 @@ void main() {
       final decoded = codec.decode(codec.encode(original));
       expect(decoded, equals(original));
     });
+
+    test('encodes sentinel-terminated maps with required by default', () {
+      // Required (default): the sentinel is written on encode and demanded
+      // on decode.
+      final codec = getMapCodec(
+        getU8Codec(),
+        getU8Codec(),
+        size: SentinelArraySize(b('00')),
+      );
+      expect(hex(codec.encode({1: 2})), equals('010200'));
+      final decoded = codec.decode(b('010200'));
+      expect(decoded[1], equals(2));
+      expect(decoded, hasLength(1));
+    });
+
+    test('encodes sentinel-terminated maps with the omitted strategy', () {
+      // Omitted: the sentinel is never written; the map ends at the end of
+      // the byte array.
+      final codec = getMapCodec(
+        getU8Codec(),
+        getU8Codec(),
+        size: SentinelArraySize(
+          b('00'),
+          strategy: SentinelCountStrategy.omitted,
+        ),
+      );
+      expect(hex(codec.encode({1: 2})), equals('0102'));
+      final decoded = codec.decode(b('0102'));
+      expect(decoded[1], equals(2));
+      expect(decoded, hasLength(1));
+    });
   });
 }
