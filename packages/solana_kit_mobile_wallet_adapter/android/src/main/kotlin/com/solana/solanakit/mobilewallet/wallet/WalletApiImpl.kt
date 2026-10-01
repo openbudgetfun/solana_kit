@@ -8,7 +8,6 @@ import android.os.Looper
 import android.util.Base64
 import com.solana.mobilewalletadapter.common.ProtocolContract
 import com.solana.mobilewalletadapter.common.signin.SignInWithSolana
-
 import com.solana.mobilewalletadapter.walletlib.association.AssociationUri
 import com.solana.mobilewalletadapter.walletlib.association.LocalAssociationUri
 import com.solana.mobilewalletadapter.walletlib.authorization.AuthIssuerConfig
@@ -17,7 +16,6 @@ import com.solana.mobilewalletadapter.walletlib.scenario.AuthorizeRequest
 import com.solana.mobilewalletadapter.walletlib.scenario.AuthorizedAccount
 import com.solana.mobilewalletadapter.walletlib.scenario.DeauthorizedEvent
 import com.solana.mobilewalletadapter.walletlib.scenario.LocalScenario
-
 import com.solana.mobilewalletadapter.walletlib.scenario.ReauthorizeRequest
 import com.solana.mobilewalletadapter.walletlib.scenario.Scenario
 import com.solana.mobilewalletadapter.walletlib.scenario.ScenarioRequest
@@ -26,7 +24,6 @@ import com.solana.mobilewalletadapter.walletlib.scenario.SignInResult
 import com.solana.mobilewalletadapter.walletlib.scenario.SignMessagesRequest
 import com.solana.mobilewalletadapter.walletlib.scenario.SignPayloadsRequest
 import com.solana.mobilewalletadapter.walletlib.scenario.SignTransactionsRequest
-
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -121,62 +118,52 @@ class WalletApiImpl(
     ) {
         val walletName = call.argument<String>("walletName")
         val configJson = call.argument<String>("configJson")
-
         if (walletName == null || configJson == null) {
             result.error(
                 ERROR_INVALID_ARGUMENT,
                 "walletName and configJson are required",
                 null,
             )
-
             return
         }
 
         val currentActivity = activityProvider()
         val intent = currentActivity?.intent
         val data = intent?.data
-
         if (data == null) {
             result.error(
                 ERROR_INTENT_DATA_NOT_FOUND,
                 "Unable to get launch association URI from current activity intent",
                 null,
             )
-
             return
         }
 
         val associationUriString = data.toString()
-
         if (sessionByAssociationUri.containsKey(associationUriString)) {
             result.error(
                 ERROR_SESSION_ALREADY_CREATED,
                 "Session already created for uri: $associationUriString",
                 null,
             )
-
             return
         }
 
         val associationUri = AssociationUri.parse(data)
-
         if (associationUri == null) {
             result.error(
                 ERROR_UNSUPPORTED_ASSOCIATION_URI,
                 "Unsupported association URI: $associationUriString",
                 null,
             )
-
             return
         }
-
         if (associationUri !is LocalAssociationUri) {
             result.error(
                 ERROR_UNSUPPORTED_ASSOCIATION_TYPE,
                 "Only local association URIs are currently supported",
                 null,
             )
-
             return
         }
 
@@ -201,18 +188,13 @@ class WalletApiImpl(
         result: MethodChannel.Result,
     ) {
         val sessionId = call.argument<String>("sessionId")
-
         if (sessionId == null) {
             result.error(ERROR_INVALID_ARGUMENT, "sessionId is required", null)
-
             return
         }
-
         val state = scenarios[sessionId]
-
         if (state == null) {
             result.error(ERROR_INVALID_SESSION, "Invalid session ID: $sessionId", null)
-
             return
         }
 
@@ -231,24 +213,18 @@ class WalletApiImpl(
         result: MethodChannel.Result,
     ) {
         val sessionId = call.argument<String>("sessionId")
-
         if (sessionId == null) {
             result.error(ERROR_INVALID_ARGUMENT, "sessionId is required", null)
-
             return
         }
-
         val state = scenarios.remove(sessionId)
-
         if (state == null) {
             result.success(null)
-
             return
         }
 
         sessionByAssociationUri.remove(state.associationUri.toString())
         pendingRequests.entries.removeIf { (_, pending) ->
-
             if (pending.sessionId == sessionId) {
                 pending.request.cancel()
                 true
@@ -267,18 +243,13 @@ class WalletApiImpl(
     ) {
         val sessionId = call.argument<String>("sessionId")
         val requestId = call.argument<String>("requestId")
-
         if (sessionId == null || requestId == null) {
             result.error(ERROR_INVALID_ARGUMENT, "sessionId and requestId are required", null)
-
             return
         }
-
         val pending = pendingRequests.remove(requestId)
-
         if (pending == null || pending.sessionId != sessionId) {
             result.success(null)
-
             return
         }
 
@@ -293,43 +264,33 @@ class WalletApiImpl(
         val sessionId = call.argument<String>("sessionId")
         val requestId = call.argument<String>("requestId")
         val resultJson = call.argument<String>("resultJson")
-
         if (sessionId == null || requestId == null || resultJson == null) {
             result.error(
                 ERROR_INVALID_ARGUMENT,
                 "sessionId, requestId, and resultJson are required",
                 null,
             )
-
             return
         }
-
         if (!scenarios.containsKey(sessionId)) {
             result.error(ERROR_INVALID_SESSION, "Invalid session ID: $sessionId", null)
-
             return
         }
-
         val pending = pendingRequests.remove(requestId)
-
         if (pending == null || pending.sessionId != sessionId) {
             result.error(ERROR_INVALID_REQUEST, "Invalid request ID: $requestId", null)
-
             return
         }
 
         try {
             val response = JSONObject(resultJson)
-
             if (response.has("error")) {
                 resolveFailure(pending, response.optJSONObject("error"))
             } else {
                 resolveSuccess(pending, response)
             }
-
             result.success(null)
         } catch (e: Exception) {
-
             pending.request.completeWithInternalError(e)
             sendLifecycleEvent(
                 "onScenarioError",
@@ -387,7 +348,6 @@ class WalletApiImpl(
 
                     ProtocolContract.ERROR_INVALID_PAYLOADS -> {
                         val valid = parseValidFlags(data)
-
                         if (valid != null) {
                             request.completeWithInvalidPayloads(valid)
                         } else {
@@ -418,7 +378,6 @@ class WalletApiImpl(
 
                     ProtocolContract.ERROR_INVALID_PAYLOADS -> {
                         val valid = parseValidFlags(data)
-
                         if (valid != null) {
                             request.completeWithInvalidSignatures(valid)
                         } else {
@@ -428,7 +387,6 @@ class WalletApiImpl(
 
                     ProtocolContract.ERROR_NOT_SUBMITTED -> {
                         val signatures = parseOpaqueByteArrayList(data, "signatures")
-
                         if (signatures != null) {
                             request.completeWithNotSubmitted(signatures)
                         } else {
@@ -456,11 +414,9 @@ class WalletApiImpl(
                 val accountsJson =
                     response.optJSONArray("accounts")
                         ?: throw IllegalArgumentException("Authorize response missing accounts")
-
                 if (accountsJson.length() == 0) {
                     throw IllegalArgumentException("Authorize response has no accounts")
                 }
-
                 val accounts = parseAuthorizedAccounts(accountsJson)
                 val walletUriBase = response.optStringOrNull("wallet_uri_base")?.let(Uri::parse)
                 val scope = response.optStringOrNull("auth_token")?.let(::decodeOpaqueToken)
@@ -527,7 +483,6 @@ class WalletApiImpl(
                 sessionByAssociationUri.remove(state.associationUri.toString())
             }
             pendingRequests.entries.removeIf { (_, pending) ->
-
                 if (pending.sessionId == sessionId) {
                     pending.request.cancel()
                     true
@@ -630,11 +585,9 @@ class WalletApiImpl(
             request.waitForCommitmentToSendNextTransaction?.let {
                 options.put("wait_for_commitment_to_send_next_transaction", it)
             }
-
             if (options.length() > 0) {
                 params.put("options", options)
             }
-
             forwardRequestToDart(
                 methodName = "onSignAndSendTransactionsRequest",
                 sessionId = sessionId,
@@ -686,11 +639,9 @@ class WalletApiImpl(
         error: String? = null,
     ) {
         val args = mutableMapOf<String, Any?>("sessionId" to sessionId)
-
         if (error != null) {
             args["error"] = error
         }
-
         invokeMethodOnMain(methodName, args)
     }
 
@@ -735,13 +686,11 @@ class WalletApiImpl(
                 "supported_transaction_versions",
             )
         val supportedTransactionVersions = mutableListOf<Any>()
-
         if (versionsArray == null || versionsArray.length() == 0) {
             supportedTransactionVersions.add(MobileWalletAdapterConfig.LEGACY_TRANSACTION_VERSION)
         } else {
             for (i in 0 until versionsArray.length()) {
                 val version = versionsArray.get(i)
-
                 when (version) {
                     is Number -> {
                         supportedTransactionVersions.add(version.toInt())
@@ -753,7 +702,6 @@ class WalletApiImpl(
                     }
                 }
             }
-
             if (supportedTransactionVersions.isEmpty()) {
                 supportedTransactionVersions.add(MobileWalletAdapterConfig.LEGACY_TRANSACTION_VERSION)
             }
@@ -761,13 +709,11 @@ class WalletApiImpl(
 
         val featuresArray = config.optJSONArrayAny("optionalFeatures", "features")
         val optionalFeatures = mutableListOf<String>()
-
         if (featuresArray != null) {
             for (i in 0 until featuresArray.length()) {
                 optionalFeatures.add(featuresArray.getString(i))
             }
         }
-
         if (optionalFeatures.isEmpty()) {
             optionalFeatures.add(ProtocolContract.FEATURE_ID_SIGN_TRANSACTIONS)
         }
@@ -789,7 +735,6 @@ class WalletApiImpl(
         request.identityName?.let { identity.put("name", it) }
         request.identityUri?.toString()?.let { identity.put("uri", it) }
         request.iconRelativeUri?.toString()?.let { identity.put("icon", it) }
-
         if (identity.length() > 0) {
             params.put("identity", identity)
         }
@@ -842,7 +787,6 @@ class WalletApiImpl(
                 authorizationScope = authorizationScope,
             )
         params.put("payloads", encodeByteArrayList(payloads))
-
         return params
     }
 
@@ -904,7 +848,6 @@ class WalletApiImpl(
         payloads.forEach { payload ->
             result.put(encodeOpaqueBytes(payload))
         }
-
         return result
     }
 
@@ -926,9 +869,7 @@ class WalletApiImpl(
         if (!has(key) || isNull(key)) {
             return null
         }
-
         val value = optString(key, "")
-
         return if (value.isEmpty()) null else value
     }
 
