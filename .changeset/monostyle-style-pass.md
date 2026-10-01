@@ -1,5 +1,5 @@
 ---
-"codama_renderers_dart": fix
+"codama-renderers-dart": fix
 "solana_kit": fix
 "solana_kit_accounts": fix
 "solana_kit_address": fix
