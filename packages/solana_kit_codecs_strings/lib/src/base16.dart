@@ -40,6 +40,7 @@ VariableSizeEncoder<String> getBase16Encoder() {
             'value': value,
           });
         }
+
         bytes[offset] = n;
         return 1 + offset;
       }
@@ -59,6 +60,7 @@ VariableSizeEncoder<String> getBase16Encoder() {
             'value': value,
           });
         }
+
         hexBytes[i] = (n1 << 4) | n2;
       }
 

@@ -8,6 +8,7 @@ import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart'
     show
         GetAccountInfoConfig,
         GetEpochInfoConfig,
+
         GetSignatureStatusesConfig,
         SendTransactionConfig;
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
@@ -16,6 +17,7 @@ import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:solana_kit_transaction_confirmation/src/confirmation_strategy_blockheight.dart';
 import 'package:solana_kit_transaction_confirmation/src/confirmation_strategy_nonce.dart';
 import 'package:solana_kit_transaction_confirmation/src/signature_status.dart';
+
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 
 /// Default interval used by polling-based confirmation helpers.
@@ -181,6 +183,7 @@ Future<Signature> sendAndConfirmTransaction({
   // locally from the fully signed transaction. A mismatch means the RPC is
   // reporting a different transaction than the one that was sent.
   final expectedSignature = getSignatureFromTransaction(transaction);
+
   if (expectedSignature.value != transactionSignature.value) {
     throw SolanaError(
       SolanaErrorCode.transactionReportedSignatureMismatch,
@@ -239,6 +242,7 @@ Future<void> _pollForSignatureConfirmation({
     final status = statuses.isNotEmpty ? statuses[0] : null;
 
     final transactionError = status?.err;
+
     if (transactionError != null) {
       throw getSolanaErrorFromTransactionError(transactionError);
     }
@@ -280,6 +284,7 @@ Future<void> _pollForBlockHeightExceedence({
     _throwIfAborted(abortSignal);
 
     final epochInfo = _parseEpochInfoResponse(response);
+
     if (epochInfo.blockHeight > lastValidBlockHeight) {
       throw SolanaError(SolanaErrorCode.blockHeightExceeded, {
         'currentBlockHeight': epochInfo.blockHeight,
@@ -402,6 +407,7 @@ List<SignatureStatus?> _parseSignatureStatusesResponse(
   Map<String, Object?> response,
 ) {
   final values = _asList(response['value'], 'getSignatureStatuses.value');
+
   return values.map(_parseSignatureStatus).toList();
 }
 
@@ -427,6 +433,7 @@ NonceAccountInfo _parseNonceAccountInfoResponse(
   Map<String, Object?> response,
 ) {
   final accountValue = response['value'];
+
   if (accountValue == null) {
     throw SolanaError(SolanaErrorCode.nonceAccountNotFound, {
       'nonceAccountAddress': nonceAccountAddress.value,
@@ -452,9 +459,11 @@ List<Object?> _asList(Object? value, String context) {
   if (value is List<Object?>) {
     return value;
   }
+
   if (value is List) {
     return List<Object?>.from(value);
   }
+
   throw StateError('Expected $context to be a list, got $value.');
 }
 
@@ -462,11 +471,13 @@ Map<String, Object?> _asMap(Object? value, String context) {
   if (value is Map<String, Object?>) {
     return value;
   }
+
   if (value is Map) {
     return Map<String, Object?>.fromEntries(
       value.entries.map((entry) => MapEntry(entry.key.toString(), entry.value)),
     );
   }
+
   throw StateError('Expected $context to be a map, got $value.');
 }
 
@@ -474,17 +485,21 @@ BigInt _asBigInt(Object? value, String context) {
   if (value is BigInt) {
     return value;
   }
+
   if (value is int) {
     return BigInt.from(value);
   }
+
   if (value is String) {
     return BigInt.parse(value);
   }
+
   throw StateError('Expected $context to be numeric, got $value.');
 }
 
 Commitment? _parseCommitment(Object? value) {
   if (value == null) return null;
+
   if (value is! String) {
     throw StateError('Expected commitment to be a string, got $value.');
   }

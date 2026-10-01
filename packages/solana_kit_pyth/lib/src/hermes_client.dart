@@ -148,6 +148,7 @@ class HermesClient {
   /// parameters precede the option parameters, mirroring the upstream client.
   Uri _uri(String path, List<(String, String)> parameters) {
     final buffer = StringBuffer('${config.normalizedBaseUrl}/v2/$path');
+
     if (parameters.isNotEmpty) {
       buffer
         ..write('?')
@@ -161,27 +162,32 @@ class HermesClient {
           '&',
         );
     }
+
     return Uri.parse(buffer.toString());
   }
 
   Future<Object?> _getJson(Uri uri) async {
     var backoff = config.backoffMs;
     PythException? lastFailure;
+
     for (var attempt = 0; attempt <= config.httpRetries; attempt++) {
       if (attempt > 0) {
         await Future<void>.delayed(Duration(milliseconds: backoff));
         backoff *= 2;
       }
+
       try {
         final response = await _client
             .get(uri, headers: _headers)
             .timeout(
               config.timeout,
             );
+
         if (response.statusCode >= 200 && response.statusCode < 300) {
           if (response.body.isEmpty) return null;
           return jsonDecode(response.body) as Object?;
         }
+
         final exception = PythHttpException(
           statusCode: response.statusCode,
           message: 'Hermes request failed',
@@ -189,9 +195,11 @@ class HermesClient {
               ? response.body
               : (response.reasonPhrase ?? 'Unknown error'),
         );
+
         if (!_isRetryableStatus(response.statusCode)) {
           throw exception;
         }
+
         lastFailure = exception;
       } on TimeoutException {
         lastFailure = PythException(
@@ -203,6 +211,7 @@ class HermesClient {
         );
       }
     }
+
     // Every attempt either returned, threw, or recorded a failure, so the
     // only way to get here without a recorded failure is httpRetries < 0.
     throw lastFailure!;
@@ -229,6 +238,7 @@ class HermesClient {
             throw PythException('Expected a JSON object, got: $item'),
       ];
     }
+
     throw PythException('Expected a JSON array, got: $json');
   }
 

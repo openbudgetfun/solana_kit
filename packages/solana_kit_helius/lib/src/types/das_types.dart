@@ -4,7 +4,6 @@ import 'package:solana_kit_helius/src/types/enums.dart';
 // ---------------------------------------------------------------------------
 // Request types
 // ---------------------------------------------------------------------------
-
 /// Request parameters for the `getAsset` DAS method.
 class GetAssetRequest {
   /// Creates a `getAsset` request.
@@ -67,6 +66,7 @@ class GetAssetProofRequest {
   /// Builds a [GetAssetProofRequest] from the JSON returned by the Helius API.
   factory GetAssetProofRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetAssetProofRequest(id: r.requireString('id'));
   }
 
@@ -86,6 +86,7 @@ class GetAssetProofBatchRequest {
   /// API.
   factory GetAssetProofBatchRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetAssetProofBatchRequest(ids: r.requireList<String>('ids'));
   }
 
@@ -576,7 +577,6 @@ class SearchAssetsRequest {
 // ---------------------------------------------------------------------------
 // Response / model types
 // ---------------------------------------------------------------------------
-
 /// A digital asset returned by the Helius DAS API.
 class HeliusAsset {
   /// Creates a [HeliusAsset].

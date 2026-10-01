@@ -32,6 +32,7 @@ in
       extra.surfpool
       extra.agave
     ]
+
     ++ lib.optionals stdenv.isDarwin [
       coreutils
     ];

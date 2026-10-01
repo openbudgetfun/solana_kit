@@ -12,6 +12,7 @@ import 'package:solana_kit_fixed_points/src/decimal_fixed_point.dart';
 
   if (signedness == FixedPointSignedness.signed) {
     final half = BigInt.one << (totalBits - 1);
+
     return (min: -half, max: half - BigInt.one);
   }
 

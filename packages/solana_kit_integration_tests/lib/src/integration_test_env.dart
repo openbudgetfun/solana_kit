@@ -9,6 +9,7 @@ import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart';
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart'
     hide TransactionVersion;
+
 import 'package:solana_kit_signers/solana_kit_signers.dart';
 import 'package:solana_kit_surfpool/solana_kit_surfpool.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
@@ -256,10 +257,13 @@ class IntegrationTestEnv {
   /// [signature], or an empty list when unavailable.
   Future<List<String>> transactionLogMessages(Signature signature) async {
     final transaction = await fetchTransaction(signature);
+
     if (transaction == null) return const [];
     final meta = transaction['meta'];
+
     if (meta is! Map<String, Object?>) return const [];
     final logs = meta['logMessages'];
+
     if (logs is! List) return const [];
     return logs.whereType<String>().toList();
   }
@@ -273,6 +277,7 @@ class IntegrationTestEnv {
 String resolveWorkspaceArtifactPath(String relativePath) {
   if (File(relativePath).existsSync()) return relativePath;
   final fromPackage = '../../$relativePath';
+
   if (File(fromPackage).existsSync()) return fromPackage;
   return relativePath;
 }

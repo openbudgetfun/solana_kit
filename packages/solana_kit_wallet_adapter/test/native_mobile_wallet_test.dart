@@ -9,6 +9,7 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wall
     as protocol;
 import 'package:solana_kit_wallet_adapter/src/mobile_wallet.dart';
 import 'package:solana_kit_wallet_adapter/src/platform/default_registry_native.dart';
+
 import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
 
 void main() {
@@ -302,6 +303,7 @@ class _NativeWallet implements mwa.KitMobileWallet {
         signInResult: result,
       );
     }
+
     return _authorization('initial-token');
   }
 
@@ -318,6 +320,7 @@ class _NativeWallet implements mwa.KitMobileWallet {
   }) async {
     lastAddresses = addresses;
     lastPayloads = payloads;
+
     return outputs ??
         [
           for (final payload in payloads)

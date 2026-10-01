@@ -13,6 +13,7 @@ export 'src/codecs/message_v0.dart';
 export 'src/codecs/message_v1.dart';
 export 'src/codecs/preamble_common.dart'
     show decodeRequiredSignatoryAddresses, getSignatoriesComparator;
+
 export 'src/codecs/signing_domain.dart';
 export 'src/compile_envelope.dart';
 export 'src/content.dart';

@@ -31,12 +31,14 @@ void assertIsOffchainMessageApplicationDomain(
         error.context,
       );
     }
+
     if (isSolanaError(error, SolanaErrorCode.addressesInvalidByteLength)) {
       throw SolanaError(
         SolanaErrorCode.offchainMessageInvalidApplicationDomainByteLength,
         error.context,
       );
     }
+
     rethrow;
   }
 }
@@ -47,5 +49,6 @@ OffchainMessageApplicationDomain offchainMessageApplicationDomain(
   String putativeApplicationDomain,
 ) {
   assertIsOffchainMessageApplicationDomain(putativeApplicationDomain);
+
   return Address(putativeApplicationDomain);
 }

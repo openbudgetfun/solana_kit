@@ -25,12 +25,14 @@ void main() {
     void Function(Uint8List bytes) read,
   ) {
     var handled = 0;
+
     for (final bytes in inputs) {
       try {
         read(bytes);
         handled++;
       } on SolanaError {
         handled++;
+
       } catch (error) {
         fail(
           '$label leaked ${error.runtimeType} instead of SolanaError.\n'
@@ -39,6 +41,7 @@ void main() {
         );
       }
     }
+
     expect(handled, greaterThan(0), reason: '$label never ran any input');
   }
 
@@ -105,6 +108,7 @@ void main() {
           ]),
         );
       }
+
       assertNoForeignExceptions('truncated v1 envelope', inputs, (bytes) {
         getTransactionDecoder().decode(bytes);
       });
@@ -126,6 +130,7 @@ void main() {
           }
         }
       }
+
       assertNoForeignExceptions('corrupted v1 envelope', inputs, (bytes) {
         getTransactionDecoder().decode(bytes);
       });
@@ -135,5 +140,6 @@ void main() {
 
 String _hex(Uint8List bytes) {
   final text = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+
   return text.length > 240 ? '${text.substring(0, 240)}...' : text;
 }

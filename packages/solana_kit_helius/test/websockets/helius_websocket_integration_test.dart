@@ -271,6 +271,7 @@ void main() {
         for (final socket in sockets) {
           await socket.close();
         }
+
         await server.close(force: true);
       });
 

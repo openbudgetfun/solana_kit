@@ -6,6 +6,7 @@ import 'package:solana_kit_token_2022/src/generated/instructions/initialize_defa
 import 'package:solana_kit_token_2022/src/generated/instructions/initialize_group_member_pointer.dart';
 import 'package:solana_kit_token_2022/src/generated/instructions/initialize_group_pointer.dart';
 import 'package:solana_kit_token_2022/src/generated/instructions/initialize_interest_bearing_mint.dart';
+
 import 'package:solana_kit_token_2022/src/generated/instructions/initialize_metadata_pointer.dart';
 import 'package:solana_kit_token_2022/src/generated/instructions/initialize_mint_close_authority.dart';
 import 'package:solana_kit_token_2022/src/generated/instructions/initialize_non_transferable_mint.dart';
@@ -14,6 +15,7 @@ import 'package:solana_kit_token_2022/src/generated/instructions/initialize_perm
 import 'package:solana_kit_token_2022/src/generated/instructions/initialize_permissioned_burn.dart';
 import 'package:solana_kit_token_2022/src/generated/instructions/initialize_scaled_ui_amount_mint.dart';
 import 'package:solana_kit_token_2022/src/generated/instructions/initialize_transfer_fee_config.dart';
+
 import 'package:solana_kit_token_2022/src/generated/instructions/initialize_transfer_hook.dart';
 import 'package:solana_kit_token_2022/src/generated/types/extension.dart';
 

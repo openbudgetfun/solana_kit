@@ -88,6 +88,7 @@ String? _firstNonEmpty(
       return candidate;
     }
   }
+
   return null;
 }
 
@@ -108,11 +109,13 @@ String resolveReleaseMetadataUri(
   PublicationSession? session,
 ) {
   final uri = getReleaseMetadataUri(bundle, session);
+
   if (uri == null) {
     throw const PublisherCliException(
       'Publication bundle did not include a release metadata URI',
     );
   }
+
   return uri;
 }
 
@@ -181,6 +184,7 @@ void validatePublicationBundle(PublicationBundle bundle) {
   ];
 
   final missing = <String>[];
+
   for (final (field, value) in requiredFields) {
     if (value is String) {
       if (value.trim().isEmpty) {
@@ -190,6 +194,7 @@ void validatePublicationBundle(PublicationBundle bundle) {
       if (value.isEmpty) {
         missing.add(field);
       }
+
     } else if (value == null) {
       missing.add(field);
     }
@@ -233,12 +238,15 @@ PublicationSessionStage resolvePublicationSessionStage(
   if (session.stage != PublicationSessionStage.preparedForMint) {
     return session.stage;
   }
+
   if (session.status == PublicationSessionStatus.failed) {
     return PublicationSessionStage.failed;
   }
+
   if (session.status == PublicationSessionStatus.completed) {
     return PublicationSessionStage.submitted;
   }
+
   switch (session.checkpoint) {
     case PublicationCheckpoint.submitted:
     case PublicationCheckpoint.completed:

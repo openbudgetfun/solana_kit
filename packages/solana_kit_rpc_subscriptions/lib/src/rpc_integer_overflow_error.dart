@@ -32,11 +32,13 @@ SolanaError createSolanaJsonRpcIntegerOverflowError(
     } else {
       argumentLabel = '${argPosition}th';
     }
+
   } else {
     argumentLabel = '`${keyPath[0]}`';
   }
 
   final String? path;
+
   if (keyPath.length > 1) {
     path = keyPath
         .skip(1)

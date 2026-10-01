@@ -21,12 +21,14 @@ import 'dart:io';
 /// Usage: dart run scripts/sync_package_upstream_support.dart [--check|--write]
 void main(List<String> args) {
   final mode = args.isEmpty ? '--check' : args.single;
+
   if (mode != '--check' && mode != '--write') {
     stderr.writeln(
       'Usage: dart run scripts/sync_package_upstream_support.dart '
       '[--check|--write]',
     );
     exitCode = 2;
+
     return;
   }
 
@@ -34,11 +36,13 @@ void main(List<String> args) {
   const outputPath = 'config/package-upstream-support.json';
 
   final tags = _gitLines(['tag', '-l']);
+
   if (tags.isEmpty) {
     stdout.writeln(
       'No git tags available; leaving $outputPath unchanged. '
       'Run in a full clone to refresh the support history.',
     );
+
     return;
   }
 
@@ -49,6 +53,7 @@ void main(List<String> args) {
   final groupReleases = _groupReleases('config/upstream-versions.json');
 
   final packages = <String, Object?>{};
+
   for (final entry in packageRepos.entries) {
     final package = entry.key;
     // The `solana_kit` ↔ `@solana/kit` parity table serves this package
@@ -61,6 +66,7 @@ void main(List<String> args) {
       versions: releasesByPackage[package] ?? const [],
     );
     var versionAxis = 'package';
+
     if (runs.isEmpty) {
       // Lockstep group members have no `"<package>/v…"` tags of their own;
       // their history lives in `upstream-versions.json` repoPins, keyed by the
@@ -68,6 +74,7 @@ void main(List<String> args) {
       runs = _groupSupportRuns(repos: entry.value, group: groupReleases);
       versionAxis = 'solana_kit';
     }
+
     if (runs.isEmpty) continue;
     packages[package] = {
       'repos': entry.value,
@@ -88,14 +95,17 @@ void main(List<String> args) {
 
   final output = File(outputPath);
   final previous = output.existsSync() ? output.readAsStringSync() : null;
+
   if (previous == encoded) {
     stdout.writeln('$outputPath is up to date.');
+
     return;
   }
 
   if (mode == '--write') {
     output.writeAsStringSync(encoded);
     stdout.writeln('Updated $outputPath.');
+
     return;
   }
 
@@ -113,16 +123,22 @@ Map<String, List<String>> _packageRepos(Map<String, Object?> config) {
       in (config['repos'] as List<Object?>? ?? const [])
           .cast<Map<String, Object?>>()) {
     final name = repo['name'] as String?;
+
     if (name == null) continue;
+
     final packages = switch (repo['packages']) {
       final List<Object?> list => list.cast<String>(),
+
       _ => <String>[if (repo['package'] != null) '${repo['package']}'],
     };
+
     for (final package in packages) {
       (result[package] ??= <String>[]).add(name);
     }
   }
+
   for (final repos in result.values) {
+
     repos.sort();
   }
   return Map.fromEntries(
@@ -134,14 +150,18 @@ Map<String, List<String>> _packageRepos(Map<String, Object?> config) {
 Map<String, List<String>> _releaseTags(List<String> tags) {
   final pattern = RegExp(r'^([A-Za-z0-9_]+)/v(\d+\.\d+\.\d+)$');
   final result = <String, List<String>>{};
+
   for (final tag in tags) {
     final match = pattern.firstMatch(tag);
+
     if (match == null) continue;
     (result[match.group(1)!] ??= <String>[]).add(match.group(2)!);
   }
+
   for (final versions in result.values) {
     versions.sort(_compareVersions);
   }
+
   return result;
 }
 
@@ -149,8 +169,10 @@ Map<String, List<String>> _releaseTags(List<String> tags) {
 /// as `(solanaKit version, released-ish label, pins)`.
 List<({String version, Map<String, String> pins})> _groupReleases(String path) {
   final file = File(path);
+
   if (!file.existsSync()) return const [];
   final decoded = jsonDecode(file.readAsStringSync());
+
   if (decoded is! Map<String, Object?>) return const [];
   final rows = (decoded['repoPins'] as List<Object?>? ?? const [])
       .cast<Map<String, Object?>>();
@@ -179,14 +201,18 @@ List<Map<String, Object?>> _groupSupportRuns({
   for (final release in group.reversed) {
     final pins = <String, String>{
       for (final repo in repos)
+
         if (release.pins[repo] != null) repo: release.pins[repo]!,
     };
+
     if (pins.isEmpty) continue;
     final last = runs.isEmpty ? null : runs.last;
+
     if (last != null && _samePins(last['pins'], pins)) {
       last['to'] = release.version;
       continue;
     }
+
     runs.add({
       'from': release.version,
       'to': release.version,
@@ -195,6 +221,7 @@ List<Map<String, Object?>> _groupSupportRuns({
       'pins': pins,
     });
   }
+
   return runs.reversed.toList();
 }
 
@@ -205,9 +232,11 @@ List<Map<String, Object?>> _supportRuns({
   required List<String> versions,
 }) {
   final runs = <Map<String, Object?>>[];
+
   for (final version in versions) {
     final tag = '$package/v$version';
     final raw = _git(['show', '$tag:config/reference-repos.json']);
+
     if (raw == null) continue;
     final Object? decoded;
     try {
@@ -215,6 +244,7 @@ List<Map<String, Object?>> _supportRuns({
     } on FormatException {
       continue;
     }
+
     if (decoded is! Map<String, Object?>) continue;
 
     final pins = <String, String>{};
@@ -222,10 +252,12 @@ List<Map<String, Object?>> _supportRuns({
         in (decoded['repos'] as List<Object?>? ?? const [])
             .cast<Map<String, Object?>>()) {
       final name = repo['name'] as String?;
+
       if (name == null || !repos.contains(name)) continue;
       final ref = repo['ref'] as Map<String, Object?>? ?? const {};
       pins[name] = '${ref['value']}';
     }
+
     if (pins.isEmpty) continue;
 
     final released = _gitLines([
@@ -238,6 +270,7 @@ List<Map<String, Object?>> _supportRuns({
     final date = released.isEmpty ? '' : released.first;
 
     final last = runs.isEmpty ? null : runs.last;
+
     if (last != null && _samePins(last['pins'], pins)) {
       last['to'] = version;
       last['releasedTo'] = date;
@@ -251,37 +284,46 @@ List<Map<String, Object?>> _supportRuns({
       });
     }
   }
+
   // Newest first reads better in a table.
   return runs.reversed.toList();
 }
 
 bool _samePins(Object? left, Map<String, String> right) {
   if (left is! Map<String, Object?>) return false;
+
   if (left.length != right.length) return false;
+
   for (final entry in right.entries) {
     if (left[entry.key] != entry.value) return false;
   }
+
   return true;
 }
 
 int _compareVersions(String a, String b) {
   final left = a.split('.').map(int.parse).toList();
   final right = b.split('.').map(int.parse).toList();
+
   for (var index = 0; index < 3; index++) {
     final comparison = left[index].compareTo(right[index]);
+
     if (comparison != 0) return comparison;
   }
+
   return 0;
 }
 
 String? _git(List<String> arguments) {
   final result = Process.runSync('git', arguments);
+
   if (result.exitCode != 0) return null;
   return '${result.stdout}';
 }
 
 List<String> _gitLines(List<String> arguments) {
   final output = _git(arguments);
+
   if (output == null) return const [];
   return output
       .split('\n')

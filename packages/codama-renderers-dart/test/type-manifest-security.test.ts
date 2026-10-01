@@ -6,6 +6,7 @@ import {
   arrayTypeNode,
   booleanTypeNode,
   booleanValueNode,
+
   bytesTypeNode,
   constantValueNode,
   fixedCountNode,
@@ -14,6 +15,7 @@ import {
   mapTypeNode,
   numberTypeNode,
   numberValueNode,
+
   optionTypeNode,
   postOffsetTypeNode,
   preOffsetTypeNode,
@@ -22,6 +24,7 @@ import {
   sizePrefixTypeNode,
   structFieldTypeNode,
   structTypeNode,
+
   type TypeNode,
 } from "@codama/nodes";
 import { LinkableDictionary, NodeStack, visit } from "@codama/visitors-core";
@@ -207,7 +210,6 @@ describe("hidden affix constant validation", () => {
     )]))).toThrow(/Unsupported hidden affix constant type kind/);
   });
 });
-
 
 describe("generated prefix codecs compile and preserve wire bytes", () => {
   const prefix = numberTypeNode("u16", "be");

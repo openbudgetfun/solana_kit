@@ -78,6 +78,7 @@ String decodeReverseValue(
   if (value.isEmpty) {
     return value;
   }
+
   final firstCodeUnit = value.codeUnitAt(0);
   if (firstCodeUnit != 0) {
     return value;

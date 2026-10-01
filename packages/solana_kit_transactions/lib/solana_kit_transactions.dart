@@ -59,4 +59,5 @@ export 'src/sendable_transaction.dart';
 export 'src/signatures.dart';
 export 'src/transaction.dart';
 export 'src/transaction_size.dart';
+
 export 'src/wire_transaction.dart';

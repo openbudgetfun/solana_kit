@@ -38,6 +38,7 @@ export 'src/keypair_signer.dart';
 export 'src/message_modifying_signer.dart';
 export 'src/message_partial_signer.dart';
 export 'src/message_signer.dart';
+
 export 'src/noop_signer.dart';
 export 'src/sign_transaction.dart';
 export 'src/signable_message.dart';
@@ -46,4 +47,5 @@ export 'src/transaction_partial_signer.dart';
 export 'src/transaction_sending_signer.dart';
 export 'src/transaction_signer.dart';
 export 'src/transaction_with_single_sending_signer.dart';
+
 export 'src/types.dart';

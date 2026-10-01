@@ -8,6 +8,7 @@ import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart'
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart' show Rpc;
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
 import 'package:solana_kit_signers/solana_kit_signers.dart';
+
 import 'package:solana_kit_surfpool/src/cheatcodes.dart';
 import 'package:solana_kit_surfpool/src/config.dart';
 import 'package:solana_kit_surfpool/src/surfnet.dart';
@@ -65,6 +66,7 @@ class SurfpoolClient {
           getMinimumBalanceForRentExemptionParams(space),
         )
         .send();
+
     if (response is BigInt) return response;
     // Defensive: the default response transformer upcasts numbers to BigInt.
     if (response is int) return BigInt.from(response); // coverage:ignore-line
@@ -138,6 +140,7 @@ SurfpoolClient connectSurfpoolClient({
     wsUrl: wsUrl,
     payer: _keypairInfoFromSigner(payer),
   );
+
   return _wireClient(surfnet, payer: payer);
 }
 
@@ -169,5 +172,6 @@ KeypairInfo _keypairInfoFromSigner(KeyPairSigner signer) {
     ...keyPair.privateKey,
     ...keyPair.publicKey,
   ]);
+
   return KeypairInfo(publicKey: signer.address, secretKey: secretKey);
 }

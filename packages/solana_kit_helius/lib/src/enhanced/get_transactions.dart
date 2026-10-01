@@ -16,6 +16,7 @@ Future<List<EnhancedTransaction>> enhancedGetTransactions(
     body: request.toJson(),
   );
   final list = result! as List<Object?>;
+
   return list
       .cast<Map<String, Object?>>()
       .map(EnhancedTransaction.fromJson)

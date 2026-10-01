@@ -108,7 +108,6 @@
 ///
 /// Discriminator helpers and error resolution round out the runtime: `instructionDiscriminator`, `accountDiscriminator`, `eventDiscriminator`, and `anchorProgramError` resolve against the standard Anchor table plus program-defined IDL errors.
 ///
-
 /// <!-- {=docsAnchorRuntimeSection -->
 ///
 /// ### Parse an Anchor IDL and code accounts dynamically

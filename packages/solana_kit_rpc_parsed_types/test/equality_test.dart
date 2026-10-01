@@ -6,6 +6,7 @@ import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart'
         Blockhash,
         StringifiedBigInt,
         StringifiedNumber,
+
         TokenAmount,
         UnixTimestamp;
 import 'package:test/test.dart';
@@ -13,7 +14,6 @@ import 'package:test/test.dart';
 // ---------------------------------------------------------------------------
 // Minimal concrete helper with proper equality, used throughout the tests.
 // ---------------------------------------------------------------------------
-
 @immutable
 class _IntInfo {
   const _IntInfo(this.value);

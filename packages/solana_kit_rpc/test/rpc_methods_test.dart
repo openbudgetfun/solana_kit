@@ -536,5 +536,6 @@ Future<({T result, Map<String, Object?> payload})> _captureCall<
   });
 
   final result = await invoke(rpc);
+
   return (result: result, payload: payload);
 }

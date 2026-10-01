@@ -55,7 +55,9 @@ bool isTransactionMessageWithDurableNonceLifetime(
   TransactionMessage transactionMessage,
 ) {
   final constraint = transactionMessage.lifetimeConstraint;
+
   if (constraint is! DurableNonceLifetimeConstraint) return false;
+
   if (transactionMessage.instructions.isEmpty) return false;
   return isAdvanceNonceAccountInstruction(transactionMessage.instructions[0]);
 }
@@ -120,6 +122,7 @@ TransactionMessage setTransactionMessageLifetimeUsingDurableNonce(
         ];
       }
     } else {
+
       // We have a different advance nonce instruction; replace it.
       newInstructions = [
         createAdvanceNonceAccountInstruction(
@@ -161,6 +164,7 @@ void _assertValidNonceFormat(String nonce) {
       {'actualLength': nonce.length},
     );
   }
+
   final int actualLength;
   try {
     actualLength = getBase58Encoder().encode(nonce).length;
@@ -170,7 +174,9 @@ void _assertValidNonceFormat(String nonce) {
       {'actualLength': nonce.length},
     );
   }
+
   if (actualLength != 32) {
+
     throw SolanaError(
       SolanaErrorCode.transactionInvalidNonceFormat,
       {'actualLength': actualLength},

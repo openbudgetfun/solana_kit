@@ -43,6 +43,7 @@ bool isAdvanceNonceAccountInstruction(Instruction instruction) {
       instruction.accounts![0].role == AccountRole.writable &&
       instruction.accounts![1].address == sysvarRecentBlockhashesAddress &&
       instruction.accounts![1].role == AccountRole.readonly &&
+
       isSignerRole(instruction.accounts![2].role);
 }
 

@@ -10,5 +10,6 @@ Future<List<NftEdition>> dasGetNftEditions(
 ) async {
   final result = await rpcClient.call('getNftEditions', request.toJson());
   final list = result! as List<Object?>;
+
   return list.cast<Map<String, Object?>>().map(NftEdition.fromJson).toList();
 }

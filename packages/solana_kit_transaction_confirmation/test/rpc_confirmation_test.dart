@@ -8,6 +8,7 @@ import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
+
 import 'package:test/test.dart';
 
 void main() {
@@ -592,12 +593,15 @@ class _ScriptedRpcTransport {
 
   Object? _nextResult(String method) {
     final queue = _queuedResults[method];
+
     if (queue != null && queue.isNotEmpty) {
       return queue.removeAt(0);
     }
+
     if (_fallbackResults.containsKey(method)) {
       return _fallbackResults[method];
     }
+
     throw StateError('Unexpected RPC method: $method');
   }
 }

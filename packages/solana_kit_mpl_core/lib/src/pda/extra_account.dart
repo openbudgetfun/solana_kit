@@ -132,5 +132,6 @@ Address _require(Address? value, String variant) {
       'deriveExtraAccountAddress requires `$variant` for this extra account',
     );
   }
+
   return value;
 }

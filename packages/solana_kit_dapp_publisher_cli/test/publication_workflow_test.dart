@@ -10,6 +10,7 @@ import 'package:solana_kit_dapp_publisher_cli/src/files.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/portal_translators.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/portal_types.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/publication_models.dart';
+
 import 'package:solana_kit_dapp_publisher_cli/src/publication_signer.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/publication_workflow.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/workflow_client.dart';
@@ -231,6 +232,7 @@ class _FakeClient implements PublicationWorkflowClient {
     required String releaseId,
   }) async {
     calls.add('getPublicationBundle');
+
     return bundled();
   }
 
@@ -240,6 +242,7 @@ class _FakeClient implements PublicationWorkflowClient {
     String? releaseId,
   }) async {
     calls.add('getPublicationSession');
+
     return publicationSession();
   }
 
@@ -249,11 +252,14 @@ class _FakeClient implements PublicationWorkflowClient {
   ) async {
     calls.add('prepareReleaseNftTransaction');
     prepareCalls++;
+
     if (failOnPrepare && prepareCalls == 1) {
       final error = customError ?? const _TestFailure('prepare failed');
+
       if (error is Exception) {
         throw error;
       }
+
       throw PublisherCliException(error.toString());
     }
     return PreparedReleaseTransaction.fromMap({
@@ -281,6 +287,7 @@ class _FakeClient implements PublicationWorkflowClient {
     SaveReleaseNftDataInput input,
   ) async {
     calls.add('saveReleaseNftData');
+
     return const SaveReleaseNftDataResult(success: true);
   }
 
@@ -323,6 +330,7 @@ class _FakeClient implements PublicationWorkflowClient {
   @override
   Future<SubmitToStoreResult> submitToStore(SubmitToStoreInput input) async {
     calls.add('submitToStore');
+
     return const SubmitToStoreResult(hubspotTicketId: 'HS-1');
   }
 
@@ -381,6 +389,7 @@ class _FakeClient implements PublicationWorkflowClient {
         'feePayer': publisherAddress,
       },
     };
+
     return backend;
   }
 }

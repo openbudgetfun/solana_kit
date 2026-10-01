@@ -33,11 +33,13 @@ class WalletDemoFrame extends CustomComponentBase {
   ) {
     final height = double.tryParse(attributes['height'] ?? '') ?? 720;
     final src = _frameUrl(attributes['src'] ?? 'wallet-demo/');
+
     return _WalletDemoSurface(src: src, height: height);
   }
 
   String _frameUrl(String path) {
     final basePath = normalizeBasePath(_rawDocsBasePath);
+
     return path.startsWith('/')
         ? '$basePath${path.substring(1)}'
         : '$basePath$path';

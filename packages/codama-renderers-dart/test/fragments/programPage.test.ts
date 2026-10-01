@@ -6,6 +6,7 @@ import {
   bytesValueNode,
   constantDiscriminatorNode,
   constantValueNode,
+
   fieldDiscriminatorNode,
   instructionArgumentNode,
   instructionNode,
@@ -14,6 +15,7 @@ import {
   numberTypeNode,
   numberValueNode,
   programNode,
+
   sizeDiscriminatorNode,
   stringTypeNode,
   stringValueNode,
@@ -32,6 +34,7 @@ function createScope(): RenderScope {
   const nameApi = createDartNameApi();
   const linkables = new LinkableDictionary();
   const stack = new NodeStack();
+
   return {
     nameApi,
     typeManifestVisitor: getTypeManifestVisitor({

@@ -10,6 +10,7 @@ RpcResponseTransformer<Object?> getResultResponseTransformer() {
     if (json is Map<String, Object?>) {
       return json['result'];
     }
+
     return json;
   };
 }

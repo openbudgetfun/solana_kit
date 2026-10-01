@@ -74,6 +74,7 @@ AssociationParams parseAssociationUri(Uri uri) {
   final publicKeyBytes = _fromBase64Url(association);
 
   final path = uri.path;
+
   if (path.endsWith('/v1/associate/local')) {
     // A crafted association URI must not redirect the session to an
     // arbitrary port; the same range the builder enforces applies here.
@@ -90,6 +91,7 @@ AssociationParams parseAssociationUri(Uri uri) {
     final reflectorIdBytes = _fromBase64Url(uri.queryParameters['id']!);
     // Parse reflector ID from bytes (it's encoded as base64url).
     final reflectorId = reflectorIdBytes.isNotEmpty
+
         ? _bytesToInt(reflectorIdBytes)
         : 0;
     return RemoteAssociationParams(
@@ -107,16 +109,20 @@ AssociationParams parseAssociationUri(Uri uri) {
 Uri _getIntentUri(String methodPathname, String? intentUrlBase) {
   if (intentUrlBase != null) {
     final baseUrl = Uri.tryParse(intentUrlBase);
+
     if (baseUrl == null || baseUrl.scheme != 'https') {
       throw SolanaError(SolanaErrorCode.mwaForbiddenWalletBaseUrl, {
         'url': intentUrlBase,
       });
     }
+
     final prefix = baseUrl.path.endsWith('/')
         ? baseUrl.path
         : '${baseUrl.path}/';
+
     return baseUrl.replace(path: '$prefix$methodPathname', fragment: '');
   }
+
   return Uri.parse('$mwaIntentScheme:/$methodPathname');
 }
 
@@ -130,17 +136,21 @@ Uint8List _fromBase64Url(String encoded) {
   // Restore padding.
   var padded = encoded;
   final remainder = padded.length % 4;
+
   if (remainder != 0) {
     padded = padded.padRight(padded.length + (4 - remainder), '=');
   }
+
   return Uint8List.fromList(base64Url.decode(padded));
 }
 
 /// Converts bytes to an integer (big-endian).
 int _bytesToInt(Uint8List bytes) {
   var result = 0;
+
   for (var i = 0; i < bytes.length; i++) {
     result = (result << 8) | bytes[i];
   }
+
   return result;
 }

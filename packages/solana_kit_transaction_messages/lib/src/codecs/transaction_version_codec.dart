@@ -18,6 +18,7 @@ VariableSizeEncoder<TransactionVersion> getTransactionVersionEncoder() {
       if (value == TransactionVersion.legacy) {
         return offset;
       }
+
       final version = value.versionNumber!;
       if (version < 0 || version > 127) {
         throw SolanaError(SolanaErrorCode.transactionVersionNumberOutOfRange, {
@@ -30,6 +31,7 @@ VariableSizeEncoder<TransactionVersion> getTransactionVersionEncoder() {
           {'unsupportedVersion': version},
         );
       }
+
       bytes[offset] = version | _versionFlagMask;
       return offset + 1;
     },

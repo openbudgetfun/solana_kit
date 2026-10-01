@@ -10,5 +10,6 @@ Future<CompressedSignatureList> zkGetLatestNonVotingSignatures(
     'getLatestNonVotingSignatures',
     request.toJson(),
   );
+
   return CompressedSignatureList.fromJson(result! as Map<String, Object?>);
 }

@@ -18,7 +18,6 @@ void main() {
   // ────────────────────────────────────────────────────────────────────────────
   // Part A: Typed Union2 with explicit variant wrappers
   // ────────────────────────────────────────────────────────────────────────────
-
   // Build a union of two fixed-size variants: u32 (variant 0) or u8 (variant 1).
   // The `getIndexFromBytes` callback reads the first byte to pick the variant.
   final union2Codec = getUnion2Codec(
@@ -37,6 +36,7 @@ void main() {
 
   // Decode variant 0.
   final decoded0 = union2Codec.decode(encodedV0);
+
   switch (decoded0) {
     case Union2Variant0(:final value):
       print('Decoded variant 0 value: $value (type: ${value.runtimeType})');
@@ -47,7 +47,6 @@ void main() {
   // ────────────────────────────────────────────────────────────────────────────
   // Part B: Map-based discriminated union (mirrors Anchor account discriminators)
   // ────────────────────────────────────────────────────────────────────────────
-
   // Build the per-variant struct codecs first.
   // getStructCodec takes no type parameters.
   final vaultVariantCodec = getStructCodec([('balance', getU64Codec())]);

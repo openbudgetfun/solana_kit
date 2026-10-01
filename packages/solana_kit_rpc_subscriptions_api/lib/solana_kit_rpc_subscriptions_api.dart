@@ -14,5 +14,6 @@ export 'src/root_notifications.dart';
 export 'src/signature_notifications.dart';
 export 'src/slot_notifications.dart';
 export 'src/slots_updates_notifications.dart';
+
 export 'src/solana_rpc_subscriptions_api.dart';
 export 'src/vote_notifications.dart';

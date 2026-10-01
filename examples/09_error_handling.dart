@@ -40,6 +40,7 @@ void main() {
       print('  → RPC error');
     } else if (e.isInDomain(SolanaErrorDomain.transaction)) {
       print('  → transaction error');
+
     } else {
       print('  → other Solana error (code=${e.code})');
     }
@@ -51,6 +52,7 @@ void main() {
     SolanaError(SolanaErrorCode.keysInvalidKeyPairByteLength),
     SolanaError(SolanaErrorCode.blockHeightExceeded),
   ];
+
   for (final e in samples) {
     print('code ${e.code}:');
     route(e);

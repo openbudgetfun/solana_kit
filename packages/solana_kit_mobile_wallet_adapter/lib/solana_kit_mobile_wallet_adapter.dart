@@ -6,6 +6,7 @@ export 'src/pigeon/wallet_api.dart';
 export 'src/platform_check.dart';
 export 'src/remote_association_scenario.dart';
 export 'src/transact.dart';
+
 export 'src/wallet/wallet_config.dart';
 export 'src/wallet/wallet_request_types.dart';
 export 'src/wallet/wallet_scenario.dart';

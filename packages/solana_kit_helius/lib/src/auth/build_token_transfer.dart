@@ -9,6 +9,7 @@ import 'package:solana_kit_helius/src/transactions/send_via_sender.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_token/solana_kit_token.dart';
+
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 
@@ -59,6 +60,7 @@ Future<String> buildAndSendTokenTransfer(
       'must be a positive unsigned 64-bit integer',
     );
   }
+
   final keyPair = createKeyPairFromBytes(params.secretKey);
   try {
     final signerAddress = Address(
@@ -92,16 +94,19 @@ Future<String> buildAndSendTokenTransfer(
 
     // Fetch a recent blockhash for the transaction lifetime.
     final effectiveRpc = rpcClient;
+
     if (effectiveRpc == null) {
       throw StateError(
         'An RPC client is required to fetch a recent blockhash.',
       );
     }
+
     final blockhashResult = await effectiveRpc.call('getLatestBlockhash');
     final blockhashValue =
         (blockhashResult! as Map<String, Object?>)['value']!
             as Map<String, Object?>;
     final blockhash = blockhashValue['blockhash']! as String;
+
     final lastValidBlockHeight =
         switch (blockhashValue['lastValidBlockHeight']) {
           final BigInt value => value,

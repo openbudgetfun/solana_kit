@@ -143,6 +143,7 @@ InstructionPlan getMintToCollectionV1InstructionPlan(
       const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi');
   final tokenMetadataProgram =
       config.tokenMetadataProgram ??
+
       const Address('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
   final systemProgram =
       config.systemProgram ?? const Address('11111111111111111111111111111112');

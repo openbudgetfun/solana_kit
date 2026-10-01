@@ -619,6 +619,7 @@ final _headerClone = Header(
   payer: a3,
   initId: BigInt.from(9),
 );
+
 final _headerAlt = Header(
   discriminator: 2,
   version: 1,
@@ -679,6 +680,7 @@ final _subscribeData = SubscribeData(
   expectedCreatedAt: BigInt.from(1000),
   expectedSubscriptionAuthorityInitId: BigInt.from(7),
 );
+
 final _subscribeDataClone = SubscribeData(
   planId: BigInt.one,
   planBump: 254,
@@ -726,6 +728,7 @@ final _updatePlanData = UpdatePlanData(
   expectedPullers: const [a5, a6, a7, a8],
   expectedMetadataUri: 'https://example.com/expected',
 );
+
 final _updatePlanDataClone = UpdatePlanData(
   status: 0,
   endTs: BigInt.from(3000),
@@ -809,6 +812,7 @@ final _recurringDelegationClone = RecurringDelegation(
   amountPerPeriod: BigInt.from(10),
   amountPulledInPeriod: BigInt.from(5),
 );
+
 final _recurringDelegationAlt = RecurringDelegation(
   header: _header,
   subscriptionAuthority: a3,

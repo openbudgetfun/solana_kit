@@ -9,7 +9,6 @@ import 'package:solana_kit_rpc_types/src/typed_numbers.dart';
 // ---------------------------------------------------------------------------
 // Transaction Version
 // ---------------------------------------------------------------------------
-
 /// The version of a transaction.
 ///
 /// Either [TransactionVersionLegacy] or [TransactionVersionV0].
@@ -52,7 +51,6 @@ class TransactionVersionV0 extends TransactionVersion {
 // ---------------------------------------------------------------------------
 // Address Table Lookup
 // ---------------------------------------------------------------------------
-
 /// An address lookup table reference within a versioned transaction.
 class AddressTableLookup {
   /// Creates an address table lookup reference.
@@ -97,7 +95,6 @@ class AddressTableLookup {
 // ---------------------------------------------------------------------------
 // Reward
 // ---------------------------------------------------------------------------
-
 /// Represents a reward credited or debited to an account.
 sealed class Reward {
   const Reward();
@@ -214,7 +211,6 @@ class RewardVotingOrStaking extends Reward {
 // ---------------------------------------------------------------------------
 // Transaction Meta
 // ---------------------------------------------------------------------------
-
 /// Base transaction metadata shared by all transaction detail levels.
 class TransactionForAccountsMetaBase {
   /// Creates the shared transaction metadata.
@@ -285,7 +281,6 @@ class TransactionForAccountsMetaBase {
 // ---------------------------------------------------------------------------
 // Return Data
 // ---------------------------------------------------------------------------
-
 /// Return data from a transaction.
 class ReturnData {
   /// Creates the return data from a transaction.
@@ -315,7 +310,6 @@ class ReturnData {
 // ---------------------------------------------------------------------------
 // Parsed Account
 // ---------------------------------------------------------------------------
-
 /// A parsed account key in a transaction.
 class TransactionParsedAccount {
   /// Creates a parsed account entry in a transaction.
@@ -361,15 +355,19 @@ class TransactionParsedAccount {
 
 bool _listEquals<T>(List<T> a, List<T> b) {
   if (identical(a, b)) return true;
+
   if (a.length != b.length) return false;
+
   for (var i = 0; i < a.length; i++) {
     if (a[i] != b[i]) return false;
   }
+
   return true;
 }
 
 bool _nullableListEquals<T>(List<T>? a, List<T>? b) {
   if (identical(a, b)) return true;
+
   if (a == null || b == null) return false;
   return _listEquals(a, b);
 }

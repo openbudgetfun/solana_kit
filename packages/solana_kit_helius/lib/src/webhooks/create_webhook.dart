@@ -14,5 +14,6 @@ Future<Webhook> webhooksCreateWebhook(
     '/v0/webhooks?api-key=$apiKey',
     body: request.toJson(),
   );
+
   return Webhook.fromJson(result! as Map<String, Object?>);
 }

@@ -13,4 +13,5 @@ export 'src/rpc_parsed_type.dart';
 export 'src/stake_accounts.dart';
 export 'src/sysvar_accounts.dart';
 export 'src/token_accounts.dart';
+
 export 'src/vote_accounts.dart';

@@ -9,6 +9,7 @@ import 'package:solana_kit_helius/src/auth/constants.dart';
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/types/auth_types.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
+
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 
 /// Sends 1 USDC (6 decimals) to the Helius treasury, returning the
@@ -96,6 +97,7 @@ Future<String> payPaymentLink(
       'must be positive',
     );
   }
+
   final rawAmount = BigInt.from(paymentLink.amountCents) * _centsToUsdcRaw;
   return payWithMemo(
     secretKey,

@@ -9,6 +9,7 @@ class GetIdentityRequest {
   /// Creates a [GetIdentityRequest] from a JSON map.
   factory GetIdentityRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetIdentityRequest(address: r.requireString('address'));
   }
 
@@ -47,6 +48,7 @@ class GetBalancesRequest {
   /// Creates a [GetBalancesRequest] from a JSON map.
   factory GetBalancesRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetBalancesRequest(address: r.requireString('address'));
   }
 
@@ -155,6 +157,7 @@ class GetFundedByRequest {
   /// Creates a [GetFundedByRequest] from a JSON map.
   factory GetFundedByRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetFundedByRequest(address: r.requireString('address'));
   }
 

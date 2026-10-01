@@ -6,6 +6,7 @@ import {
   type BytesTypeNode,
   type CamelCaseString,
   type ConstantValueNode,
+
   type DateTimeTypeNode,
   type DefinedTypeLinkNode,
   type DefinedTypeNode,
@@ -14,6 +15,7 @@ import {
   type EnumTupleVariantTypeNode,
   type EnumTypeNode,
   type FixedSizeTypeNode,
+
   type HiddenPrefixTypeNode,
   type HiddenSuffixTypeNode,
   type InstructionNode,
@@ -22,6 +24,7 @@ import {
   type OptionTypeNode,
   type PostOffsetTypeNode,
   type PreOffsetTypeNode,
+
   type PublicKeyTypeNode,
   type RemainderOptionTypeNode,
   type SentinelTypeNode,
@@ -310,6 +313,7 @@ export function getTypeManifestVisitor(input: {
         tupleEncoderArgs = encoderListStr;
         tupleDecoderArgs = decoderListStr;
       }
+
       const encoderFrag = fragment`${use(
         tupleEncoderFn,
         "solanaCodecsDataStructures",
@@ -722,7 +726,6 @@ export function getTypeManifestVisitor(input: {
 }
 
 // --- Helper functions ---
-
 function getNumberDartType(
   format: string,
 ): string {
@@ -888,10 +891,12 @@ function getHiddenAffixManifest(
 ): HiddenAffixManifest {
   if (node?.kind !== "constantValueNode") {
     const manifest = visit(node, self);
+
     return { encoder: manifest.encoder, decoder: manifest.decoder };
   }
 
   const constantBytes = getConstantBytesExpression(node, self);
+
   return {
     encoder: fragment`${use("getConstantEncoder", "solanaCodecsDataStructures")}(${constantBytes})`,
     decoder: fragment`${use("getConstantDecoder", "solanaCodecsDataStructures")}(${constantBytes})`,

@@ -32,4 +32,5 @@ export 'src/demultiplex.dart';
 export 'src/notification_streams.dart';
 export 'src/reactive_action_store.dart';
 export 'src/reactive_store.dart';
+
 export 'src/reactive_stream_store.dart';

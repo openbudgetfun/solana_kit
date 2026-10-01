@@ -9,6 +9,7 @@ import 'package:solana_kit_helius/src/auth/developer_api.dart';
 import 'package:solana_kit_helius/src/auth/oauth_token_exchange.dart';
 import 'package:solana_kit_helius/src/auth/plan_catalog.dart';
 import 'package:solana_kit_helius/src/auth/sign_auth_message.dart';
+
 import 'package:solana_kit_helius/src/auth/signup_helpers.dart';
 import 'package:solana_kit_helius/src/internal/rest_client.dart';
 import 'package:solana_kit_helius/src/types/auth_types.dart';
@@ -24,6 +25,7 @@ const List<String> supportedPlans = [
 /// Validates and normalizes a plan name.
 String _validatePlan(String plan) {
   final normalized = plan.toLowerCase();
+
   if (!supportedPlans.contains(normalized)) {
     throw ArgumentError.value(
       plan,
@@ -31,11 +33,13 @@ String _validatePlan(String plan) {
       'Unknown plan: $plan. Available: ${supportedPlans.join(', ')}',
     );
   }
+
   return normalized;
 }
 
 String _validatePeriod(String period) {
   final normalized = period.toLowerCase();
+
   if (normalized != 'monthly' && normalized != 'yearly') {
     throw ArgumentError.value(
       period,
@@ -43,6 +47,7 @@ String _validatePeriod(String period) {
       'must be either monthly or yearly',
     );
   }
+
   return normalized;
 }
 
@@ -66,7 +71,9 @@ Future<Map<String, String>> _authenticate(
     if (options.jwt!.isEmpty || options.refId!.isEmpty) {
       throw ArgumentError('jwt and refId must not be empty');
     }
+
     final walletAddress = Address(options.walletAddress!);
+
     return {
       'jwt': options.jwt!,
       'refId': options.refId!,
@@ -84,6 +91,7 @@ Future<Map<String, String>> _authenticate(
         'must decode to 64 bytes',
       );
     }
+
     final publicKey = Uint8List.sublistView(secretKeyBytes, 32, 64);
     final walletAddress = getBase58Decoder().decode(publicKey);
     final signResponse = await signAuthMessage(
@@ -97,12 +105,14 @@ Future<Map<String, String>> _authenticate(
       client: client,
       baseUrl: baseUrl,
     );
+
     return {
       'jwt': authResponse.token,
       'refId': authResponse.refId,
       'walletAddress': walletAddress,
     };
   } finally {
+
     secretKeyBytes.fillRange(0, secretKeyBytes.length, 0);
   }
 }
@@ -113,12 +123,16 @@ bool _matchesExistingPlan(
   String period,
 ) {
   if (project.subscription.plan != planToUsagePlan[plan]) return false;
+
   if (plan == 'agent') return true;
   final start = DateTime.tryParse(project.subscription.billingPeriodStart);
   final end = DateTime.tryParse(project.subscription.billingPeriodEnd);
+
   if (start == null || end == null || !end.isAfter(start)) return false;
   final days = end.difference(start).inHours / 24;
+
   return period == 'yearly'
+
       ? days >= 350 && days <= 380
       : days >= 25 && days <= 35;
 }
@@ -208,8 +222,11 @@ Future<SignupResult> authSignup(
       _isBlank(options.firstName) ||
       _isBlank(options.lastName)) {
     final missing = <String>[];
+
     if (_isBlank(options.email)) missing.add('email');
+
     if (_isBlank(options.firstName)) missing.add('firstName');
+
     if (_isBlank(options.lastName)) missing.add('lastName');
     throw StateError(
       'Signup requires contact info. Missing: ${missing.join(', ')}.',

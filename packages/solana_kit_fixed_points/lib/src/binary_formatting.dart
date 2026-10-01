@@ -25,6 +25,7 @@ String formatBinaryFixedPoint(
   BinaryFixedPoint value,
 ) {
   final base10 = binaryFixedPointToBase10(value);
+
   return formatter('${base10.raw}E-${base10.decimals}');
 }
 
@@ -37,13 +38,16 @@ double binaryFixedPointToNumber(BinaryFixedPoint value) {
   final fractionalPart =
       (value.raw - integerPart * scale).toDouble() /
       _pow2Double(value.fractionalBits);
+
   return integerPart.toDouble() + fractionalPart;
 }
 
 double _pow2Double(int exponent) {
   var result = 1.0;
+
   for (var i = 0; i < exponent; i++) {
     result *= 2;
   }
+
   return result;
 }

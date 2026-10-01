@@ -6,6 +6,7 @@ import {
   enumTupleVariantTypeNode,
   enumTypeNode,
   numberTypeNode,
+
   publicKeyTypeNode,
   stringTypeNode,
   structFieldTypeNode,
@@ -24,6 +25,7 @@ function createScope(): RenderScope {
   const nameApi = createDartNameApi();
   const linkables = new LinkableDictionary();
   const stack = new NodeStack();
+
   return {
     nameApi,
     typeManifestVisitor: getTypeManifestVisitor({

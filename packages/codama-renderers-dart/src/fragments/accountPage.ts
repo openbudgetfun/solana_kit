@@ -19,6 +19,7 @@ import {
   getNonNegativeInteger,
   isConstDartValueNode,
 } from "../utils/valueNodes.js";
+
 import { getDiscriminatorConstantsFragment } from "./discriminatorConstants.js";
 
 /**
@@ -220,6 +221,7 @@ ${fragmentFromString(fieldDecls)}
   ];
 
   if (sizeFragment.content) parts.push(sizeFragment);
+
   if (discFragment.content) parts.push(discFragment);
 
   parts.push(fragment`
@@ -260,6 +262,7 @@ Account<${fragmentFromString(typeName)}> ${fragmentFromString(decodeFnName)}(Enc
     result.imports.mergeWith(manifest.decoder.imports);
     result.imports.mergeWith(manifest.type.imports);
   }
+
   for (const defaultValue of fieldDefaults.values()) {
     result.imports.mergeWith(defaultValue.imports);
   }

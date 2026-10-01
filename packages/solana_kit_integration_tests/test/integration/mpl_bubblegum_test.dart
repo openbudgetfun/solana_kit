@@ -27,6 +27,7 @@ import 'package:solana_kit_mpl_bubblegum/solana_kit_mpl_bubblegum.dart'
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart'
     show GetAccountInfoConfig, getMinimumBalanceForRentExemptionParams;
+
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart'
     hide TransactionVersion;
 import 'package:solana_kit_signers/solana_kit_signers.dart';
@@ -90,12 +91,14 @@ Uint8List computeDataHash(MetadataArgs metadata) {
 Uint8List computeCreatorHash(List<Creator> creators) {
   final addressEncoder = getAddressEncoder();
   final creatorBytes = <int>[];
+
   for (final creator in creators) {
     creatorBytes
       ..addAll(addressEncoder.encode(creator.address))
       ..add(creator.verified ? 1 : 0)
       ..add(creator.share);
   }
+
   return keccak256(Uint8List.fromList(creatorBytes));
 }
 

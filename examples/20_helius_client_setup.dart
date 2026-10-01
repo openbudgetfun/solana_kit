@@ -42,7 +42,6 @@ void main() {
   //   helius.wallet         → wallet-level helpers
   //   helius.auth           → API key authentication
   //   helius.websocket      → enhanced WebSocket subscriptions
-
   print('\nHeliusClient sub-clients available:');
   print('  das          : ${helius.das.runtimeType}');
   print('  priorityFee  : ${helius.priorityFee.runtimeType}');

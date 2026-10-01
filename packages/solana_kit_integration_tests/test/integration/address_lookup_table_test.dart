@@ -15,6 +15,7 @@ import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_signers/solana_kit_signers.dart';
+
 import 'package:test/test.dart';
 
 void main() {
@@ -122,6 +123,7 @@ void main() {
           break;
         }
       }
+
       expect(found, isTrue, reason: 'address $address should be in the table');
     }
   });
@@ -218,6 +220,7 @@ void main() {
         await Future<void>.delayed(const Duration(seconds: 1));
       }
     }
+
     expect(closeSucceeded, isTrue, reason: 'close should succeed within 30s');
 
     final closed = await env.rpc.getAccountInfoValue(lookupTableAddress).send();

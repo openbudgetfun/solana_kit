@@ -39,9 +39,11 @@ export function getTypePageFragment(
     const isScalar = variants.every(
       (v) => v.kind === "enumEmptyVariantTypeNode",
     );
+
     if (isScalar) {
       return getScalarEnumPageFragment(node, variants, scope);
     }
+
     return getDataEnumPageFragment(node, variants, scope);
   }
 
@@ -64,6 +66,7 @@ function getScalarEnumPageFragment(
   const name = node.name as string;
   const typeName = scope.nameApi.dataType(name);
   const enumNode = node.type;
+
   if (enumNode.kind !== "enumTypeNode") return emptyFragment();
 
   const variants = enumVariants.map((v) => {
@@ -140,6 +143,7 @@ function getDataEnumPageFragment(
   const name = node.name as string;
   const typeName = scope.nameApi.dataType(name);
   const enumNode = node.type;
+
   if (enumNode.kind !== "enumTypeNode") return emptyFragment();
 
   const variantClasses: string[] = [];
@@ -191,6 +195,7 @@ function getDataEnumPageFragment(
         field: f,
         manifest: visit(f.type, scope.typeManifestVisitor),
       }));
+
       for (const { manifest } of fieldManifests) {
         allVariantManifests.push(manifest);
       }
@@ -222,6 +227,7 @@ function getDataEnumPageFragment(
               .join(" &&\n          ");
 
       const hashExpression = getValueHashExpression(fields, fieldManifests);
+
       if (fieldManifests.some(({ manifest }) => isListManifest(manifest))) {
         pageHasListEnums = true;
       }
@@ -292,6 +298,7 @@ ${fieldDecls}
               .join(', ');
       const structMapEntries =
         fields.length === 0
+
           ? ''
           : `, ${fields.map((f: StructFieldTypeNode)=>`'${f.name as string}': ${camelCase(f.name as string)}`).join(', ')}`;
       encodeCases.push(`${variantClassName}(${structPattern}) => <String, Object?>{'__kind': ${i}${structMapEntries}},`);
@@ -299,6 +306,7 @@ ${fieldDecls}
     } else if (variant.kind === "enumTupleVariantTypeNode") {
       const resolvedTuple = resolveNestedTypeNode(variant.tuple);
       const items = resolvedTuple.items ?? [];
+
       if (items.length === 1) {
         const manifest = visit(items[0], scope.typeManifestVisitor);
         allVariantManifests.push(manifest);
@@ -409,6 +417,7 @@ function getStructPageFragment(
   const name = node.name as string;
   const typeName = scope.nameApi.dataType(name);
   const structNode = node.type;
+
   if (structNode.kind !== "structTypeNode") return emptyFragment();
 
   const fields = structNode.fields ?? [];
@@ -445,6 +454,7 @@ function getStructPageFragment(
               : `${fieldName} == other.${fieldName}`;
           })
           .join(" &&\n          ");
+
   if (fieldManifests.some(({ manifest }) => isListManifest(manifest))) {
     pageHasListStructs = true;
   }
@@ -664,22 +674,27 @@ function getValueHashExpression(
   const hasListFields = fieldManifests.some(({ manifest }) =>
     isListManifest(manifest),
   );
+
   if (!hasListFields) {
     return getHashExpression(fieldNames);
   }
+
   if (fieldNames.length === 1) {
     return `_listHashCode(${fieldNames[0]})`;
   }
+
   const hashArgs = fields.map((f: StructFieldTypeNode, index) =>
     isListManifest(fieldManifests[index].manifest)
       ? `_listHashCode(${camelCase(f.name as string)})`
       : camelCase(f.name as string),
   );
+
   return `Object.hash(${hashArgs.join(", ")})`;
 }
 
 function getHashExpression(fields: string[]): string {
   if (fields.length === 0) return "runtimeType.hashCode";
+
   if (fields.length === 1) return `${fields[0]}.hashCode`;
   return `Object.hash(${fields.join(", ")})`;
 }

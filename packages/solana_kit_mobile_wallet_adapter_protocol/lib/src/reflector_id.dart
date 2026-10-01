@@ -11,5 +11,6 @@ int assertReflectorId(int id) {
   if (id < 0 || id > mwaMaxReflectorId) {
     throw SolanaError(SolanaErrorCode.mwaReflectorIdOutOfRange, {'id': id});
   }
+
   return id;
 }

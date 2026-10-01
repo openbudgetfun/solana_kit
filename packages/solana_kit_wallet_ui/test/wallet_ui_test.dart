@@ -639,11 +639,14 @@ void main() {
 
 Future<WalletController> _controller({List<Wallet> wallets = const []}) async {
   final registry = WalletRegistryController();
+
   for (final wallet in wallets) {
     registry.register(wallet);
   }
+
   final controller = WalletController(registry, chain: SolanaChainId.localnet);
   await controller.initialize();
+
   return controller;
 }
 
@@ -818,7 +821,9 @@ class _Connect implements StandardConnectFeature {
   ]) async {
     if (wallet.reject) throw StateError('rejected');
     final gate = wallet._gate;
+
     if (gate != null) await gate.future;
+
     return StandardConnectOutput([wallet.account]);
   }
 

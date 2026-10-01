@@ -79,6 +79,7 @@ final class _GetMinimumBalanceClient implements ClientWithGetMinimumBalance {
           )
           .send();
       final lamportsPerByte = headerBalance ~/ BigInt.from(baseAccountSize);
+
       return lamportsPerByte * BigInt.from(space);
     }
     return _rpc

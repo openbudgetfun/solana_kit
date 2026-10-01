@@ -449,7 +449,6 @@ void main() {
   // -------------------------------------------------------------------------
   // Error-case tests: missing required fields
   // -------------------------------------------------------------------------
-
   group('error cases — smart_transaction_types', () {
     test(
       'CreateSmartTransactionInput throws when instructions is absent',

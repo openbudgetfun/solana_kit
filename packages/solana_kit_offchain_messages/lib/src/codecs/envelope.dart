@@ -8,6 +8,7 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_offchain_messages/src/codecs/message.dart';
 import 'package:solana_kit_offchain_messages/src/codecs/signatures.dart';
+
 import 'package:solana_kit_offchain_messages/src/envelope.dart';
 
 /// Returns a variable-size encoder for [OffchainMessageEnvelope].
@@ -28,6 +29,7 @@ Encoder<OffchainMessageEnvelope> getOffchainMessageEnvelopeEncoder() {
           SolanaErrorCode.offchainMessageNumEnvelopeSignaturesCannotBeZero,
         );
       }
+
       final signatoryAddresses = _decodeAndValidateRequiredSignatoryAddresses(
         envelope.content,
       );

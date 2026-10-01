@@ -170,7 +170,6 @@ class MessagePacker {
 // ---------------------------------------------------------------------------
 // Constructor helpers
 // ---------------------------------------------------------------------------
-
 List<InstructionPlan> _parseSingleInstructionPlans(List<Object> plans) =>
     List<InstructionPlan>.unmodifiable(
       plans.map(
@@ -214,7 +213,6 @@ ParallelInstructionPlan parallelInstructionPlan(List<Object> plans) =>
 // ---------------------------------------------------------------------------
 // Type checks and assertions
 // ---------------------------------------------------------------------------
-
 /// Returns `true` if [value] is an [InstructionPlan].
 bool isInstructionPlan(Object? value) => value is InstructionPlan;
 
@@ -314,7 +312,6 @@ void assertIsParallelInstructionPlan(InstructionPlan plan) {
 // ---------------------------------------------------------------------------
 // Tree helpers
 // ---------------------------------------------------------------------------
-
 /// Finds the first instruction plan in the tree that matches the given
 /// [predicate].
 ///
@@ -327,6 +324,7 @@ InstructionPlan? findInstructionPlan(
   if (predicate(instructionPlan)) {
     return instructionPlan;
   }
+
   return switch (instructionPlan) {
     SingleInstructionPlan() || MessagePackerInstructionPlan() => null,
     SequentialInstructionPlan(:final plans) ||
@@ -340,10 +338,12 @@ InstructionPlan? _findInPlans(
 ) {
   for (final subPlan in plans) {
     final found = findInstructionPlan(subPlan, predicate);
+
     if (found != null) {
       return found;
     }
   }
+
   return null;
 }
 
@@ -356,6 +356,7 @@ bool everyInstructionPlan(
   if (!predicate(instructionPlan)) {
     return false;
   }
+
   return switch (instructionPlan) {
     SingleInstructionPlan() || MessagePackerInstructionPlan() => true,
     SequentialInstructionPlan(:final plans) ||
@@ -407,7 +408,6 @@ List<InstructionPlan> flattenInstructionPlan(InstructionPlan instructionPlan) =>
 // ---------------------------------------------------------------------------
 // Message packer factories
 // ---------------------------------------------------------------------------
-
 /// The realloc limit in bytes (10,240).
 const _reallocLimit = 10240;
 
@@ -527,6 +527,7 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
             instructionIndex = index;
             return currentMessage;
           }
+
           final nextMessage = appendTransactionMessageInstruction(
             instructions[index],
             currentMessage,
@@ -546,6 +547,7 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
             instructionIndex = index;
             return currentMessage;
           }
+
           currentMessage = nextMessage;
         }
 
@@ -567,6 +569,7 @@ MessagePackerInstructionPlan getReallocMessagePackerInstructionPlan({
   required int totalSize,
 }) {
   final instructions = <Instruction>[];
+
   for (var remaining = totalSize; remaining > 0; remaining -= _reallocLimit) {
     instructions.add(getInstruction(math.min(_reallocLimit, remaining)));
   }

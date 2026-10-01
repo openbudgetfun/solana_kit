@@ -5,6 +5,7 @@ int _nextMessageId = 0;
 String _getNextMessageId() {
   final id = _nextMessageId;
   _nextMessageId++;
+
   return id.toString();
 }
 

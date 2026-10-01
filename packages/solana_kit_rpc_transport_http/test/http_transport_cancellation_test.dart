@@ -20,6 +20,7 @@ void main() {
             request.response.write('{');
             await request.response.flush();
           }
+
           received.complete();
           // Deliberately keep the response open to simulate a stalled RPC node.
         });

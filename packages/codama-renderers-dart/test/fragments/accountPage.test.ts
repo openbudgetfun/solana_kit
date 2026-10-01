@@ -6,6 +6,7 @@ import {
   constantValueNode,
   fieldDiscriminatorNode,
   numberTypeNode,
+
   numberValueNode,
   optionTypeNode,
   publicKeyTypeNode,
@@ -14,6 +15,7 @@ import {
   structTypeNode,
 } from "@codama/nodes";
 import { LinkableDictionary, NodeStack } from "@codama/visitors-core";
+
 import { describe, expect, it } from "vitest";
 
 import { getAccountPageFragment } from "../../src/fragments/accountPage.js";
@@ -25,6 +27,7 @@ function createScope(): RenderScope {
   const nameApi = createDartNameApi();
   const linkables = new LinkableDictionary();
   const stack = new NodeStack();
+
   return {
     nameApi,
     typeManifestVisitor: getTypeManifestVisitor({

@@ -6,6 +6,7 @@ import {
   accountNode,
   constantPdaSeedNodeFromString,
   errorNode,
+
   pdaNode,
   programNode,
   rootNode,
@@ -14,6 +15,7 @@ import {
 } from "@codama/nodes";
 import { visit } from "@codama/visitors-core";
 import { afterEach, describe, expect, it } from "vitest";
+
 import { formatDartDirectory } from "../src/utils/formatCode.js";
 import { getRenderMapVisitor } from "../src/visitors/getRenderMapVisitor.js";
 import { renderVisitor } from "../src/visitors/renderVisitor.js";
@@ -23,12 +25,14 @@ const directories: string[] = [];
 function temporaryDirectory(): string {
   const directory = mkdtempSync(join(tmpdir(), "renderer-security-"));
   directories.push(directory);
+
   return directory;
 }
 
 function runDart(source: string) {
   const file = join(temporaryDirectory(), "proof.dart");
   writeFileSync(file, source);
+
   return spawnSync("dart", [file], { encoding: "utf8", timeout: 30_000 });
 }
 

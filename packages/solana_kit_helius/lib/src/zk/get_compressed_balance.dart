@@ -7,5 +7,6 @@ Future<CompressedBalance> zkGetCompressedBalance(
   GetCompressedBalanceRequest request,
 ) async {
   final result = await rpcClient.call('getCompressedBalance', request.toJson());
+
   return CompressedBalance.fromJson(result! as Map<String, Object?>);
 }

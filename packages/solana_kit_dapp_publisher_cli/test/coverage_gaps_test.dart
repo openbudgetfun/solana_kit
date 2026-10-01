@@ -9,6 +9,7 @@ import 'package:solana_kit_dapp_publisher_cli/src/errors.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/funding_preflight.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/portal_translators.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/portal_types.dart';
+
 import 'package:solana_kit_dapp_publisher_cli/src/publication_models.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/publication_signer.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/publication_workflow.dart';
@@ -17,6 +18,7 @@ import 'package:solana_kit_dapp_publisher_cli/src/workflow_client.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/workflow_state.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
+
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 import 'package:test/test.dart';
 
@@ -173,6 +175,7 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
   ) async {
     calls.add('prepareReleaseNftTransaction');
     prepareCalls++;
+
     if (failOnPrepare && (!failOnPrepareOnce || prepareCalls == 1)) {
       throw const _TestFailure('prepare failed');
     }
@@ -189,6 +192,7 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
     String? publicationSessionId,
   }) async {
     calls.add('submitSignedTransaction');
+
     return const SubmitSignedTransactionResult(transactionSignature: 'sig');
   }
 
@@ -197,6 +201,7 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
     SaveReleaseNftDataInput input,
   ) async {
     calls.add('saveReleaseNftData');
+
     return const SaveReleaseNftDataResult(success: true);
   }
 
@@ -227,12 +232,14 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
   @override
   Future<CleanupReleaseResult> cleanupRelease(CleanupReleaseInput input) async {
     calls.add('cleanupRelease');
+
     return const CleanupReleaseResult(action: 'deleted');
   }
 
   @override
   Future<SubmitToStoreResult> submitToStore(SubmitToStoreInput input) async {
     calls.add('submitToStore');
+
     return const SubmitToStoreResult(hubspotTicketId: 'HS-1');
   }
 }
@@ -329,6 +336,7 @@ Uint8List pngBytes({required int width, required int height}) {
     ..setUint32(12, 0x49484452)
     ..setUint32(16, width)
     ..setUint32(20, height);
+
   return data.buffer.asUint8List();
 }
 
@@ -884,6 +892,7 @@ Uint8List _webp(String format) {
     ..[9] = 0x45
     ..[10] = 0x42
     ..[11] = 0x50;
+
   for (var i = 0; i < 4; i++) {
     bytes[12 + i] = format.codeUnitAt(i);
   }

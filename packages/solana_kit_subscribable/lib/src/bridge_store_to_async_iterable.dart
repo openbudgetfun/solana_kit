@@ -75,6 +75,7 @@ Stream<T> bridgeStoreToAsyncIterable<T>(
         wake();
       }
     } on Object catch (error, stackTrace) {
+
       // Predicates run inside store notifications. Their failures belong to
       // the stream consumer and must release this observer.
       failure = error;
@@ -105,6 +106,7 @@ Stream<T> bridgeStoreToAsyncIterable<T>(
             error is Error || error is Exception ? error : StateError('$error'),
             failureStackTrace,
           );
+
           return;
         }
 

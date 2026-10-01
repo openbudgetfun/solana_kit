@@ -27,5 +27,6 @@ Future<GetBalanceAtResponse> walletGetBalanceAt(
   final result = await restClient.get(
     '/v0/addresses/${request.wallet}/balance-at?$queryString',
   );
+
   return GetBalanceAtResponse.fromJson(result! as Map<String, Object?>);
 }

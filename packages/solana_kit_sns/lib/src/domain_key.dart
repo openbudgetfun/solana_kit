@@ -133,6 +133,7 @@ Future<DerivedNameAddress> deriveNameAddress(
 /// The one-character prefix string for a record (or subdomain) derivation.
 String _recordPrefix(SnsRecordVersion? record) {
   final byte = record?.prefixByte ?? 0;
+
   return String.fromCharCode(byte);
 }
 

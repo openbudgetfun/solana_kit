@@ -94,16 +94,21 @@ void assertIsOffchainMessageContentRestrictedAsciiOf1232BytesMax(
           OffchainMessageContentFormat.restrictedAscii1232BytesMax.value,
     });
   }
+
   if (content.text.isEmpty) {
     throw SolanaError(SolanaErrorCode.offchainMessageMessageMustBeNonEmpty);
   }
+
   if (!_isTextRestrictedAscii(content.text)) {
     throw SolanaError(
       SolanaErrorCode.offchainMessageRestrictedAsciiBodyCharacterOutOfRange,
     );
   }
+
   final length = _getUtf8ByteLength(content.text);
+
   if (length > maxBodyBytesHardwareWalletSignable) {
+
     throw SolanaError(SolanaErrorCode.offchainMessageMaximumLengthExceeded, {
       'actualBytes': length,
       'maxBytes': maxBodyBytesHardwareWalletSignable,
@@ -122,6 +127,7 @@ bool isOffchainMessageContentRestrictedAsciiOf1232BytesMax(
     return false;
   }
   final length = _getUtf8ByteLength(content.text);
+
   return length <= maxBodyBytesHardwareWalletSignable;
 }
 
@@ -137,6 +143,7 @@ void assertIsOffchainMessageContentUtf8Of1232BytesMax(
   if (content.text.isEmpty) {
     throw SolanaError(SolanaErrorCode.offchainMessageMessageMustBeNonEmpty);
   }
+
   if (content.format != OffchainMessageContentFormat.utf81232BytesMax) {
     throw SolanaError(SolanaErrorCode.offchainMessageMessageFormatMismatch, {
       'actualMessageFormat': content.format.value,
@@ -144,7 +151,9 @@ void assertIsOffchainMessageContentUtf8Of1232BytesMax(
           OffchainMessageContentFormat.utf81232BytesMax.value,
     });
   }
+
   final length = _getUtf8ByteLength(content.text);
+
   if (length > maxBodyBytesHardwareWalletSignable) {
     throw SolanaError(SolanaErrorCode.offchainMessageMaximumLengthExceeded, {
       'actualBytes': length,
@@ -162,6 +171,7 @@ bool isOffchainMessageContentUtf8Of1232BytesMax(
     return false;
   }
   final length = _getUtf8ByteLength(content.text);
+
   return length <= maxBodyBytesHardwareWalletSignable;
 }
 
@@ -181,10 +191,13 @@ void assertIsOffchainMessageContentUtf8Of65535BytesMax(
           OffchainMessageContentFormat.utf865535BytesMax.value,
     });
   }
+
   if (content.text.isEmpty) {
     throw SolanaError(SolanaErrorCode.offchainMessageMessageMustBeNonEmpty);
   }
+
   final length = _getUtf8ByteLength(content.text);
+
   if (length > maxBodyBytes) {
     throw SolanaError(SolanaErrorCode.offchainMessageMaximumLengthExceeded, {
       'actualBytes': length,
@@ -202,5 +215,6 @@ bool isOffchainMessageContentUtf8Of65535BytesMax(
     return false;
   }
   final length = _getUtf8ByteLength(content.text);
+
   return length <= maxBodyBytes;
 }

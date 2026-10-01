@@ -64,6 +64,7 @@ export function getPdaPageFragment(
 
   // Build the PDA seeds list.
   const seedValues: string[] = [];
+
   for (const seed of seeds) {
     if (seed.kind === "constantPdaSeedNode") {
       if (seed.value.kind === "bytesValueNode") {
@@ -72,7 +73,9 @@ export function getPdaPageFragment(
         seedValues.push(`    ${toDartStringLiteral(seed.value.string)},`);
       } else if (seed.value.kind === "publicKeyValueNode") {
         const wellKnownSeedName = WELL_KNOWN_ADDRESSES.get(seed.value.publicKey);
+
         if (wellKnownSeedName) {
+
           use(wellKnownSeedName, "solanaAddresses");
           seedValues.push(
             `    getAddressEncoder().encode(${wellKnownSeedName}),`,
@@ -86,6 +89,7 @@ export function getPdaPageFragment(
         const manifest = visit(seed.type, scope.typeManifestVisitor);
         seedManifests.push(manifest);
         const value = getDartValueFragment(seed.value, manifest.type.content);
+
         seedValues.push(`    ${manifest.encoder.content}.encode(${value.content}),`);
       }
     } else if (seed.kind === "variablePdaSeedNode") {
@@ -101,9 +105,11 @@ export function getPdaPageFragment(
   const wellKnownProgramName = node.programId
     ? WELL_KNOWN_ADDRESSES.get(node.programId)
     : undefined;
+
   if (wellKnownProgramName) {
     use(wellKnownProgramName, "solanaAddresses");
   }
+
   const programIdParam = node.programId
     ? wellKnownProgramName
       ? `Address programAddress = ${wellKnownProgramName}`

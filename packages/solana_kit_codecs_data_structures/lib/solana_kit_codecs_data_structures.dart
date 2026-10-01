@@ -70,6 +70,7 @@ export 'src/bytes.dart';
 export 'src/constant.dart';
 export 'src/dependent_struct.dart';
 export 'src/discriminated_union.dart';
+
 export 'src/hidden_prefix.dart';
 export 'src/hidden_suffix.dart';
 export 'src/literal_union.dart';
@@ -78,6 +79,7 @@ export 'src/nullable.dart';
 export 'src/pattern_match.dart';
 export 'src/predicate.dart';
 export 'src/set.dart';
+
 export 'src/struct.dart';
 export 'src/tuple.dart';
 export 'src/union.dart';

@@ -6,6 +6,7 @@ import 'package:solana_kit_helius/src/auth/generate_keypair.dart';
 import 'package:solana_kit_helius/src/auth/get_project.dart';
 import 'package:solana_kit_helius/src/auth/list_projects.dart';
 import 'package:solana_kit_helius/src/auth/sign_auth_message.dart'
+
     as sign_auth_message;
 import 'package:solana_kit_helius/src/auth/signup.dart';
 import 'package:solana_kit_helius/src/auth/wallet_signup.dart';

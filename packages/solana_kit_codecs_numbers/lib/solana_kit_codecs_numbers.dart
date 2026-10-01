@@ -35,6 +35,7 @@ export 'src/i128.dart';
 export 'src/i16.dart';
 export 'src/i256.dart';
 export 'src/i32.dart';
+
 export 'src/i64.dart';
 export 'src/i8.dart';
 export 'src/short_u16.dart';
@@ -43,5 +44,6 @@ export 'src/u16.dart';
 export 'src/u256.dart';
 export 'src/u32.dart';
 export 'src/u64.dart';
+
 export 'src/u8.dart';
 export 'src/utils.dart';

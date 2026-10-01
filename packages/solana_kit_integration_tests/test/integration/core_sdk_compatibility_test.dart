@@ -20,6 +20,7 @@ import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_integration_tests/solana_kit_integration_tests.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
+
 import 'package:solana_kit_memo/solana_kit_memo.dart';
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart';
@@ -28,6 +29,7 @@ import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart'
 import 'package:solana_kit_signers/solana_kit_signers.dart';
 import 'package:solana_kit_system/solana_kit_system.dart';
 import 'package:solana_kit_token/solana_kit_token.dart';
+
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 import 'package:solana_kit_transaction_introspection/solana_kit_transaction_introspection.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
@@ -397,6 +399,7 @@ void main() {
           observedMemos.add('second');
         }
       }
+
       expect(observedMemos, ['first', 'second']);
     },
   );
@@ -491,9 +494,11 @@ Future<void> _waitForLaterSlot(
   Slot currentSlot,
 ) async {
   final deadline = DateTime.now().add(const Duration(seconds: 5));
+
   while (DateTime.now().isBefore(deadline)) {
     if (await env.rpc.getSlot().send() > currentSlot) return;
     await Future<void>.delayed(const Duration(milliseconds: 10));
   }
+
   throw StateError('Surfpool did not advance beyond slot $currentSlot');
 }

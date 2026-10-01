@@ -45,6 +45,7 @@ class SetAccount implements CheatcodeBuilder {
   /// Account data bytes.
   Uint8List? get data {
     final data = _data;
+
     if (data == null) return null;
     return Uint8List.fromList(data);
   }
@@ -54,6 +55,7 @@ class SetAccount implements CheatcodeBuilder {
   /// Returns a copy that sets the account lamports.
   SetAccount withLamports(int lamports) {
     _assertNonNegative(lamports, 'lamports');
+
     return _copyWith(lamports: lamports);
   }
 
@@ -70,6 +72,7 @@ class SetAccount implements CheatcodeBuilder {
   /// Returns a copy that sets the account rent epoch.
   SetAccount withRentEpoch(int rentEpoch) {
     _assertNonNegative(rentEpoch, 'rentEpoch');
+
     return _copyWith(rentEpoch: rentEpoch);
   }
 
@@ -169,6 +172,7 @@ class SetTokenAccount implements CheatcodeBuilder {
   /// Returns a copy that sets the token amount.
   SetTokenAccount withAmount(int amount) {
     _assertNonNegative(amount, 'amount');
+
     return _copyWith(amount: amount);
   }
 
@@ -190,6 +194,7 @@ class SetTokenAccount implements CheatcodeBuilder {
   /// Returns a copy that sets the delegated amount.
   SetTokenAccount withDelegatedAmount(int delegatedAmount) {
     _assertNonNegative(delegatedAmount, 'delegatedAmount');
+
     return _copyWith(delegatedAmount: delegatedAmount);
   }
 
@@ -300,6 +305,7 @@ class ResetAccount implements CheatcodeBuilder {
     final options = ResetAccountOptions(
       includeOwnedAccounts: includeOwnedAccounts,
     ).toJson();
+
     return <Object?>[address.value, if (options.isNotEmpty) options];
   }
 }
@@ -329,6 +335,7 @@ class StreamAccount implements CheatcodeBuilder {
     final options = StreamAccountOptions(
       includeOwnedAccounts: includeOwnedAccounts,
     ).toJson();
+
     return <Object?>[address.value, if (options.isNotEmpty) options];
   }
 }
