@@ -27,9 +27,11 @@ class _CapturingDependencies extends DappStoreCliDependencies {
   @override
   Uint8List fileReader(String path) {
     final content = files[path];
+
     if (content == null) {
       throw const _PathNotFound();
     }
+
     return content;
   }
 }

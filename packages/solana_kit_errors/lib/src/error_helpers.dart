@@ -61,6 +61,7 @@ Map<String, Object?> createSolanaErrorContext(
 
   if (cause is SolanaError) {
     normalized.putIfAbsent(SolanaErrorContextKeys.causeCode, () => cause.code);
+
     if (cause.context.isNotEmpty) {
       normalized.putIfAbsent(
         SolanaErrorContextKeys.causeContext,

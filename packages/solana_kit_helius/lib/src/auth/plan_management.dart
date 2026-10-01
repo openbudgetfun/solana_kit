@@ -109,10 +109,12 @@ _provisionApiKey(
       client: client,
       baseUrl: baseUrl,
     );
+
     if (projects.isNotEmpty) {
       projectId = projects.first.id;
       break;
     }
+
     final pollDelay = interval;
     await Future<void>.delayed(pollDelay);
   }
@@ -121,6 +123,7 @@ _provisionApiKey(
       'Payment confirmed but no project was provisioned within timeout.',
     );
   }
+
   final details = await developerGetProject(
     jwt,
     projectId,
@@ -191,6 +194,7 @@ Future<SignupAndPayResult> signupAndPay(
       requestedPlan: result.requestedPlan,
     );
   }
+
   final paymentRequired = result as PaymentRequiredResult;
   final txSignature = await payPaymentLink(
     secretKey,

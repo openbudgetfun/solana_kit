@@ -34,7 +34,9 @@ bool isSolanaError(Object? e, [SolanaErrorCode? code]) {
     if (code != null) {
       return e.code == code;
     }
+
     return true;
   }
+
   return false;
 }

@@ -77,6 +77,7 @@ final class DeveloperProjectDetails {
 
   factory DeveloperProjectDetails.fromJson(Map<String, Object?> json) {
     final rawApiKeys = json['apiKeys'];
+
     if (rawApiKeys is! List) {
       throw const FormatException('Expected apiKeys to be an array');
     }
@@ -110,6 +111,7 @@ Future<DeveloperSignupResponse> developerWalletSignup({
     client: client,
     baseUrl: baseUrl,
   );
+
   return DeveloperSignupResponse.fromJson(_asMap(result));
 }
 
@@ -191,6 +193,7 @@ Future<Object?> _developerApiRequest(
       'must use the https or http scheme',
     );
   }
+
   final uri = baseUri.replace(
     pathSegments: [
       ...baseUri.pathSegments.where((segment) => segment.isNotEmpty),
@@ -216,10 +219,12 @@ Future<Object?> _developerApiRequest(
             body: body == null ? null : jsonEncode(body),
           )
         : await httpClient.get(uri, headers: headers);
+
     if (response.statusCode < 200 || response.statusCode >= 300) {
       final responseMessage = response.body.length <= 4096
           ? response.body
           : '${response.body.substring(0, 4096)}…';
+
       throw createSolanaError(
         SolanaErrorCode.heliusRestError,
         context: {
@@ -229,6 +234,7 @@ Future<Object?> _developerApiRequest(
         },
       );
     }
+
     return jsonDecode(response.body);
   } finally {
     if (closeClient) httpClient.close();
@@ -237,6 +243,7 @@ Future<Object?> _developerApiRequest(
 
 Map<String, Object?> _asMap(Object? value) {
   if (value is! Map) throw const FormatException('Expected a JSON object');
+
   return Map<String, Object?>.from(value);
 }
 
@@ -246,14 +253,18 @@ Map<String, Object?> _requireMap(Map<String, Object?> json, String key) {
 
 String _requireString(Map<String, Object?> json, String key) {
   final value = json[key];
+
   if (value is! String || value.isEmpty) {
     throw FormatException('Expected $key to be a non-empty string');
   }
+
   return value;
 }
 
 bool _requireBool(Map<String, Object?> json, String key) {
   final value = json[key];
+
   if (value is! bool) throw FormatException('Expected $key to be a boolean');
+
   return value;
 }

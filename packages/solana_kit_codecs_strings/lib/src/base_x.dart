@@ -119,6 +119,7 @@ _ConvertedBytes _convertToBytes(String value, String alphabet) {
     firstSignificant++;
   }
   final leadingZeroes = firstSignificant;
+
   if (leadingZeroes == value.length) {
     return _ConvertedBytes(leadingZeroes: leadingZeroes, bytes: _noBytes);
   }
@@ -129,13 +130,16 @@ _ConvertedBytes _convertToBytes(String value, String alphabet) {
 
   for (var i = leadingZeroes; i < value.length; i++) {
     var carry = lookup.indexOf(value.codeUnitAt(i));
+
     if (carry < 0) carry = 0;
     var j = 0;
+
     for (; carry != 0 || j < length; j++) {
       carry += base * buffer[j];
       buffer[j] = carry & 0xff;
       carry >>= 8;
     }
+
     length = j;
   }
 
@@ -145,9 +149,11 @@ _ConvertedBytes _convertToBytes(String value, String alphabet) {
   // loop only stops once the carry is exhausted. The result is therefore
   // already the minimal big-endian representation.
   final bytes = Uint8List(length);
+
   for (var i = 0; i < length; i++) {
     bytes[i] = buffer[length - 1 - i];
   }
+
   return _ConvertedBytes(leadingZeroes: leadingZeroes, bytes: bytes);
 }
 
@@ -165,20 +171,24 @@ String _convertToBaseX(Uint8List bytes, int start, BaseXLookup lookup) {
   for (var i = start; i < bytes.length; i++) {
     var carry = bytes[i];
     var j = 0;
+
     for (; carry != 0 || j < length; j++) {
       carry += 256 * buffer[j];
       buffer[j] = carry % base;
       carry ~/= base;
     }
+
     length = j;
   }
 
   // Every slot below [length] holds a digit in `[0, base)`, so the alphabet
   // index is always in range.
   final chars = Uint16List(length);
+
   for (var i = 0; i < length; i++) {
     chars[i] = lookup.alphabet.codeUnitAt(buffer[length - 1 - i]);
   }
+
   return String.fromCharCodes(chars);
 }
 

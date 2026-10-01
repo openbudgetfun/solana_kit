@@ -93,6 +93,11 @@ jobs:
         run: monochange step validate
         shell: devenv shell -- bash -e {0}
 
+      - uses: ifiokjr/monostyle@6992bad14db3a663523b731a5f29192bcd91cd23 # v0.3.24
+        if: always()
+        with:
+          version: 0.3.23
+
   # Lint the tree a release would actually publish, not the tree as it sits on
   # the branch.
   #

@@ -9,5 +9,6 @@ Future<AssetProof> dasGetAssetProof(
   GetAssetProofRequest request,
 ) async {
   final result = await rpcClient.call('getAssetProof', request.toJson());
+
   return AssetProof.fromJson(result! as Map<String, Object?>);
 }

@@ -12,8 +12,10 @@ MessageHeader getCompiledMessageHeader(List<OrderedAccount> orderedAccounts) {
   for (final account in orderedAccounts) {
     if (account.isLookupTable) break;
     final accountIsWritable = isWritableRole(account.role);
+
     if (isSignerRole(account.role)) {
       numSignerAccounts++;
+
       if (!accountIsWritable) {
         numReadonlySignerAccounts++;
       }

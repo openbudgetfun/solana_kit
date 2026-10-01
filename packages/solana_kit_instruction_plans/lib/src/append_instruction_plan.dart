@@ -23,6 +23,7 @@ TransactionMessage appendTransactionMessageInstructionPlan(
         );
       case MessagePackerInstructionPlan(:final getMessagePacker):
         final packer = getMessagePacker();
+
         while (!packer.done()) {
           messageSoFar = packer.packMessageToCapacity(messageSoFar);
         }

@@ -28,6 +28,7 @@ Future<ComputeUnitsEstimate> txGetComputeUnits(
   // A transaction-level failure is reported in `err`; surface it rather than
   // reporting units from a simulation that did not succeed.
   final error = value['err'];
+
   if (error != null) {
     throw SolanaError(
       SolanaErrorCode.heliusTransactionSimulationFailed,
@@ -44,6 +45,7 @@ Future<ComputeUnitsEstimate> txGetComputeUnits(
     final BigInt units => units.toInt(),
     _ => null,
   };
+
   if (units == null) {
     throw StateError(
       'simulateTransaction did not report unitsConsumed, so the compute unit '

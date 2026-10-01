@@ -30,6 +30,7 @@ class MwaWalletHostApi {
       'walletName': walletName,
       'configJson': configJson,
     });
+
     return result!;
   }
 

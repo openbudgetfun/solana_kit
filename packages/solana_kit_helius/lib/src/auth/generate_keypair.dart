@@ -23,6 +23,7 @@ KeypairResult authGenerateKeypair() {
     );
   } finally {
     privateKey.fillRange(0, privateKey.length, 0);
+
     publicKey.fillRange(0, publicKey.length, 0);
     secretKey.fillRange(0, secretKey.length, 0);
     keyPair.dispose();

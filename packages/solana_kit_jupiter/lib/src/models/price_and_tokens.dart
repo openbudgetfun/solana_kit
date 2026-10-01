@@ -12,6 +12,7 @@ class JupiterPrice {
   factory JupiterPrice.fromJson(Map<String, Object?> json) {
     int? parseInt(Object? value) {
       if (value is int) return value;
+
       if (value is String) return int.tryParse(value);
       return null;
     }
@@ -63,6 +64,7 @@ class JupiterTokenItem {
     double? parseDouble(Object? value) => (value as num?)?.toDouble();
     int? parseInt(Object? value) {
       if (value is int) return value;
+
       if (value is String) return int.tryParse(value);
       return null;
     }
@@ -70,11 +72,15 @@ class JupiterTokenItem {
     // Prices may arrive as integer strings for small decimals like 0.
     double? priceFromDynamic(Object? value) {
       if (value == null) return null;
+
       if (value is num) return value.toDouble();
+
       if (value is String) {
         final parsed = double.tryParse(value);
+
         if (parsed != null) return parsed;
       }
+
       return null;
     }
 

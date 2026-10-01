@@ -1,6 +1,7 @@
 /// Normalizes a deployment base path so it starts and ends with a slash.
 String normalizeBasePath(String value) {
   var basePath = value.trim();
+
   if (basePath.isEmpty || basePath == '/') {
     return '/';
   }
@@ -25,5 +26,6 @@ String docsRoute(String basePath, String route) {
   }
 
   final normalizedRoute = route.startsWith('/') ? route.substring(1) : route;
+
   return '$normalizedBasePath$normalizedRoute';
 }

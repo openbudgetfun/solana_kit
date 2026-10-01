@@ -38,12 +38,14 @@ class HeliusDasClient implements DasApiClient {
   @override
   Future<DasAsset> getAsset(String assetId) async {
     final response = await _sendRequest('getAsset', [assetId]);
+
     return _parseAsset(response);
   }
 
   @override
   Future<DasAssetProof> getAssetProof(String assetId) async {
     final response = await _sendRequest('getAssetProof', [assetId]);
+
     return _parseAssetProof(response);
   }
 
@@ -102,6 +104,7 @@ class HeliusDasClient implements DasApiClient {
     final creatorsList = (data['creators'] as List<dynamic>?) ?? [];
     final creatorsRawList = data['creators_raw'] as List<dynamic>?;
     final groupingList = (data['grouping'] as List<dynamic>?) ?? [];
+
     final royalty = data['royalty'] as Map<String, dynamic>?;
     final supply = data['supply'] as Map<String, dynamic>?;
 
@@ -119,6 +122,7 @@ class HeliusDasClient implements DasApiClient {
     // The `collection` grouping entry is the asset's collection; DAS reports
     // its verification under the same object.
     DasAssetGrouping? collectionGroup;
+
     for (final group in grouping) {
       if (group.groupKey == 'collection' && group.groupValue.isNotEmpty) {
         collectionGroup = group;
@@ -127,6 +131,7 @@ class HeliusDasClient implements DasApiClient {
     }
 
     DasAssetRoyalty? parsedRoyalty;
+
     if (royalty != null) {
       final basisPoints = royalty['basis_points'] as int?;
       parsedRoyalty = DasAssetRoyalty(

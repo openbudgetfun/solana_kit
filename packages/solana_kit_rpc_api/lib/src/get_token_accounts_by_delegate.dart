@@ -27,15 +27,20 @@ class GetTokenAccountsByDelegateConfig {
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
+
     if (commitment != null) json['commitment'] = commitment!.name;
+
     if (encoding != null) json['encoding'] = encoding!.toJson();
+
     if (dataSlice != null) {
       json['dataSlice'] = {
         'offset': dataSlice!.offset,
         'length': dataSlice!.length,
       };
     }
+
     if (minContextSlot != null) json['minContextSlot'] = minContextSlot;
+
     return json;
   }
 }

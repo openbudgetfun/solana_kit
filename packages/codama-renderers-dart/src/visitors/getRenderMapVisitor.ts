@@ -258,16 +258,20 @@ function getSharedCategoryIndexMaps(
     const match = renderPath.match(
       /^(accounts|instructions|types|pdas|errors|programs)\/([^/]+\.dart)$/,
     );
+
     if (!match) continue;
 
     const [, category, fileName] = match;
+
     if (!categories.has(category)) {
       categories.set(category, new Set());
     }
+
     categories.get(category)!.add(fileName);
   }
 
   const maps: RenderMap<Fragment>[] = [];
+
   for (const [category, files] of categories.entries()) {
     const sortedFiles = [...files].sort();
     let map = createRenderMap<Fragment>();

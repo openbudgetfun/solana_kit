@@ -48,6 +48,7 @@ TransactionMessage _padLoadedAccountsDataSizeLimitForExecution(
   TransactionMessage message,
 ) {
   final estimated = getTransactionMessageLoadedAccountsDataSizeLimit(message);
+
   if (estimated == null) return message;
   final accountCount = compileTransactionMessage(message).staticAccounts.length;
   return setTransactionMessageLoadedAccountsDataSizeLimit(

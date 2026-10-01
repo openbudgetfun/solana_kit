@@ -14,6 +14,7 @@ Uint8List content(List<int> bytes) => Uint8List.fromList(bytes);
 
 Schema makeSchema(List<SchemaDataType> layout, List<String> fieldNames) {
   final fieldNamesBytes = <int>[];
+
   for (final name in fieldNames) {
     final length = name.length;
     fieldNamesBytes.addAll([length, 0, 0, 0, ...name.codeUnits]);

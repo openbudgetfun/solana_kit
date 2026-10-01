@@ -4,7 +4,6 @@ import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 
 // ignore_for_file: one_member_abstracts
-
 /// Represents a client that provides a default identity signer.
 ///
 /// The identity is the signer whose assets the application is acting upon. In

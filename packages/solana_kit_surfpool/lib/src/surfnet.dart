@@ -54,6 +54,7 @@ class Surfnet {
        _exitCodeFuture = process?.exitCode,
        _rpcClient = SurfpoolJsonRpcClient(url: rpcUri, client: client) {
     final exitCodeFuture = _exitCodeFuture;
+
     if (exitCodeFuture != null) {
       unawaited(exitCodeFuture.then((exitCode) => _exitCode = exitCode));
     }
@@ -138,6 +139,7 @@ class Surfnet {
         portConflict = error;
       }
     }
+
     throw portConflict!;
   }
 
@@ -170,8 +172,8 @@ class Surfnet {
         'must differ from rpcPort and wsPort',
       );
     }
-    // coverage:ignore-end
 
+    // coverage:ignore-end
     final payerInfo = _payerFromSecretKey(config.payerSecretKey);
     final args = _buildStartArgs(
       config,
@@ -222,6 +224,7 @@ class Surfnet {
 
     try {
       await surfnet._waitForReady(startupTimeout);
+
       return surfnet;
     } on Object {
       await surfnet.stop();
@@ -294,12 +297,14 @@ class Surfnet {
     try {
       final process = _process;
       final exitCodeFuture = _exitCodeFuture;
+
       if (process != null && exitCodeFuture != null) {
         process.kill(ProcessSignal.sigint);
         try {
           await exitCodeFuture.timeout(timeout);
         } on TimeoutException {
           process.kill();
+
           await exitCodeFuture.timeout(
             const Duration(seconds: 1),
             // Processes that ignore termination can outlive this wrapper;
@@ -314,6 +319,7 @@ class Surfnet {
       await _stderrSubscription?.cancel();
 
       final workingDirectory = _processWorkingDirectory;
+
       if (workingDirectory != null) {
         try {
           await workingDirectory.delete(recursive: true);
@@ -327,6 +333,7 @@ class Surfnet {
       // payer. Clear it deterministically once the process can no longer use
       // it, including when shutdown or cleanup raises an error.
       _payerSecretKey.fillRange(0, _payerSecretKey.length, 0);
+
       if (_closeClientOnStop) {
         _client.close();
       }
@@ -342,6 +349,7 @@ class Surfnet {
   List<SimnetEventValue> drainEvents() {
     final drained = List<SimnetEventValue>.unmodifiable(_events);
     _events.clear();
+
     return drained;
   }
 
@@ -457,6 +465,7 @@ class Surfnet {
       'surfnet_getConfidentialBalance',
       <Object?>[tokenAccount.value, keys.toJson()],
     );
+
     return ConfidentialBalance.fromJson(result);
   }
 
@@ -470,6 +479,7 @@ class Surfnet {
       'surfnet_deriveConfidentialKeys',
       <Object?>[signature],
     );
+
     return ConfidentialKeys.fromJson(result);
   }
 
@@ -505,6 +515,7 @@ class Surfnet {
     final result = await _rpcClient.call('surfnet_timeTravel', <Object?>[
       <String, Object?>{'absoluteSlot': slot},
     ]);
+
     return EpochInfoValue.fromJson(result);
   }
 
@@ -514,6 +525,7 @@ class Surfnet {
     final result = await _rpcClient.call('surfnet_timeTravel', <Object?>[
       <String, Object?>{'absoluteEpoch': epoch},
     ]);
+
     return EpochInfoValue.fromJson(result);
   }
 
@@ -523,6 +535,7 @@ class Surfnet {
     final result = await _rpcClient.call('surfnet_timeTravel', <Object?>[
       <String, Object?>{'absoluteTimestamp': timestampMs},
     ]);
+
     return EpochInfoValue.fromJson(result);
   }
 
@@ -554,6 +567,7 @@ class Surfnet {
   Future<Address> deploy(DeployOptions options) async {
     final bytes = await _readProgramBytes(options);
     var offset = 0;
+
     while (offset < bytes.length) {
       final nextOffset = offset + _programChunkSize;
       final end = nextOffset > bytes.length ? bytes.length : nextOffset;
@@ -567,6 +581,7 @@ class Surfnet {
     }
 
     final idlPath = options.idlPath;
+
     if (idlPath != null) {
       await _registerIdl(idlPath, options.programId);
     }
@@ -596,9 +611,11 @@ class Surfnet {
     );
     _events.add(event);
     _processOutput.add('[$kind] $message');
+
     if (_events.length > _maxBufferedEvents) {
       _events.removeAt(0);
     }
+
     if (_processOutput.length > _maxBufferedEvents) {
       _processOutput.removeAt(0);
     }
@@ -610,6 +627,7 @@ class Surfnet {
 
     while (DateTime.now().isBefore(deadline)) {
       final exitCode = await _exitCodeOrNull();
+
       if (exitCode != null) {
         throw SurfnetProcessException(
           '`surfpool start` exited before becoming ready with code $exitCode',
@@ -621,6 +639,7 @@ class Surfnet {
         await _rpcClient
             .call('getHealth')
             .timeout(deadline.difference(DateTime.now()));
+
         return;
       } on Object catch (error) {
         lastError = error;
@@ -642,9 +661,11 @@ class Surfnet {
 
   Future<int?> _exitCodeOrNull() async {
     final exitCode = _exitCode;
+
     if (exitCode != null) return exitCode;
 
     final exitCodeFuture = _exitCodeFuture;
+
     if (exitCodeFuture == null) return null;
 
     return exitCodeFuture
@@ -733,6 +754,7 @@ Future<int> _findAvailablePort(Set<int> excludedPorts) async {
     final socket = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
     final port = socket.port;
     await socket.close();
+
     if (!excludedPorts.contains(port)) return port;
   }
 }
@@ -743,6 +765,7 @@ Future<int> _findAvailablePort(Set<int> excludedPorts) async {
 /// Studio server logs `Address already in use` when its port is taken.
 bool _isPortConflict(SurfnetProcessException error) {
   final cause = error.cause;
+
   return cause is String && cause.contains('already in use');
 }
 
@@ -781,6 +804,7 @@ Uri _defaultWsUrlFor(Uri rpcUrl) {
     'https' => 'wss',
     _ => 'ws',
   };
+
   return rpcUrl.replace(scheme: scheme);
 }
 
@@ -796,6 +820,7 @@ Future<_ProgramArtifacts> _discoverProgramArtifacts(
       'deploy',
       '$programName-keypair.json',
     );
+
     if (File(soPath).existsSync() && File(keypairPath).existsSync()) {
       final idlPath = _joinPath(targetDir, 'idl', '$programName.json');
       return _ProgramArtifacts(
@@ -824,14 +849,17 @@ List<String> _targetDirectories(String workingDirectory) {
     seen.add(cargoTargetDir);
     dirs.add(cargoTargetDir);
   }
-  // coverage:ignore-end
 
+  // coverage:ignore-end
   var directory = Directory(workingDirectory).absolute;
+
   while (true) {
     final targetDir = _joinPath(directory.path, 'target');
+
     if (seen.add(targetDir)) dirs.add(targetDir);
 
     final parent = directory.parent;
+
     if (parent.path == directory.path) break;
     directory = parent;
   }
@@ -858,13 +886,16 @@ Future<Address> _readProgramIdFromKeypair(String keypairPath) async {
   }
 
   final bytes = Uint8List(decoded.length);
+
   for (var index = 0; index < decoded.length; index++) {
     final value = decoded[index];
+
     if (value is! int || value < 0 || value > 255) {
       throw SurfpoolException(
         'Keypair byte at index $index in $keypairPath must be 0..255',
       );
     }
+
     bytes[index] = value;
   }
 
@@ -873,9 +904,11 @@ Future<Address> _readProgramIdFromKeypair(String keypairPath) async {
 
 Future<Uint8List> _readProgramBytes(DeployOptions options) async {
   final soBytes = options.soBytes;
+
   if (soBytes != null) return soBytes;
 
   final soPath = options.soPath;
+
   if (soPath == null) {
     throw const SurfpoolException('DeployOptions must include program bytes');
   }
@@ -885,6 +918,7 @@ Future<Uint8List> _readProgramBytes(DeployOptions options) async {
 
 String _joinPath(String first, String second, [String? third]) {
   final withSecond = _appendPath(first, second);
+
   if (third == null) return withSecond;
   return _appendPath(withSecond, third);
 }

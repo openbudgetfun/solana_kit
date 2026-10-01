@@ -78,5 +78,6 @@ ${fragmentFromString(fromMapFields)}
       ),
   };`;
   result.imports.mergeWith(discriminatorValidation.imports);
+
   return result;
 }

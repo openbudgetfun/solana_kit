@@ -29,6 +29,7 @@ void main() {
         if (error != null) 'error': error else 'result': result,
       };
     });
+
     return (rpc: rpc, requests: requests);
   }
 

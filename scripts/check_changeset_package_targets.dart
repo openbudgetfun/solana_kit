@@ -18,18 +18,22 @@ void main(List<String> args) {
   paths.sort();
 
   final errors = <String>[];
+
   for (final path in paths) {
     if (!path.startsWith('.changeset/') || !path.endsWith('.md')) continue;
     final file = File(path);
+
     if (!file.existsSync()) continue;
 
     final lines = file.readAsLinesSync();
+
     if (lines.isEmpty || lines.first.trim() != '---') continue;
 
     final closingIndex = lines
         .skip(1)
         .toList()
         .indexWhere((line) => line.trim() == '---');
+
     if (closingIndex == -1) continue;
 
     final entries = lines
@@ -39,7 +43,9 @@ void main(List<String> args) {
 
     for (final entry in entries) {
       final match = _entryPattern.firstMatch(entry);
+
       if (match == null) continue;
+
       if (match.namedGroup('target') == 'main') {
         errors.add(
           '$path: targets the `main` release group. Target the granular package ids instead.',
@@ -50,10 +56,13 @@ void main(List<String> args) {
 
   if (errors.isNotEmpty) {
     stderr.writeln('Changeset package target validation failed:');
+
     for (final error in errors) {
       stderr.writeln('- $error');
     }
+
     exitCode = 1;
+
     return;
   }
 

@@ -18,6 +18,7 @@ NodeVisitor getIntegerOverflowNodeVisitor(
         onIntegerOverflow(state.keyPath, value);
       }
     }
+
     return value;
   };
 }

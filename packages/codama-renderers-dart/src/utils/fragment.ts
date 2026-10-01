@@ -24,8 +24,10 @@ export function fragment(
 
   for (let i = 0; i < strings.length; i++) {
     parts.push(strings[i]);
+
     if (i < values.length) {
       const value = values[i];
+
       if (value != null && typeof value === "object" && "imports" in value) {
         parts.push(value.content);
         imports.mergeWith(value.imports);
@@ -79,5 +81,6 @@ export function mergeFragments(
 export function use(typeName: string, module: string): Fragment {
   const imports = new DartImportMap();
   imports.add(module);
+
   return { content: typeName, imports };
 }

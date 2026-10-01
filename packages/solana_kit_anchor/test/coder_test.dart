@@ -288,8 +288,10 @@ void main() {
 List<int> bytesFromHex(String hex) {
   final result = <int>[];
   final clean = hex.replaceAll(RegExp('[^0-9a-fA-F]'), '');
+
   for (var i = 0; i + 1 < clean.length; i += 2) {
     result.add(int.parse(clean.substring(i, i + 2), radix: 16));
   }
+
   return result;
 }

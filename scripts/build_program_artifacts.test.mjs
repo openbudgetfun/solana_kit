@@ -22,6 +22,7 @@ async function runBuilder(t, options = {}) {
   const workspaceLockfile = join(fixtureRoot, ".repos/program/Cargo.lock");
   const victim = join(fixture, "victim.txt");
   const maliciousCrate = join(sharedTmp, "solana-kit-ahash-patch");
+
   const executions = [];
   const downloads = [];
   const builds = [];
@@ -222,7 +223,6 @@ test("an ahash version without a pinned digest is rejected", async (t) => {
   assert.match(String(result.error), /No pinned sha256/);
   assert.equal(result.builds.length, 0);
 });
-
 
 test("multiple ahash releases are patched in one isolated build", async (t) => {
   const result = await runBuilder(t, { ahashVersions: ["0.7.6", "0.8.3"] });

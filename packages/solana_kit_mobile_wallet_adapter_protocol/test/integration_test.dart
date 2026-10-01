@@ -84,6 +84,7 @@ class SimulatedWallet {
         Uint8List(walletPublicKeyBytes.length + encryptedProps.length)
           ..setAll(0, walletPublicKeyBytes)
           ..setAll(walletPublicKeyBytes.length, encryptedProps);
+
     return result;
   }
 
@@ -100,6 +101,7 @@ class SimulatedWallet {
 
     // Build JSON-RPC response.
     final Map<String, Object?> response;
+
     if (result.containsKey('error')) {
       response = {'id': id, 'jsonrpc': '2.0', 'error': result['error']};
     } else {
@@ -108,6 +110,7 @@ class SimulatedWallet {
 
     final responseJson = json.encode(response);
     final seqNum = _nextSequenceNumber++;
+
     return encryptMessage(responseJson, seqNum, _sharedSecret);
   }
 
@@ -172,6 +175,7 @@ class SimulatedWallet {
         'supported_transaction_versions': supportedTransactionVersions,
       };
     }
+
     return {
       'features': [
         mwaFeatureSignTransactions,
@@ -191,6 +195,7 @@ class SimulatedWallet {
 
   Map<String, Object?> _handleSignMessages(Map<String, Object?> params) {
     final payloads = (params['payloads']! as List<Object?>).cast<String>();
+
     return {'signed_payloads': payloads.map((p) => 'signed_$p').toList()};
   }
 
@@ -774,5 +779,6 @@ Future<Map<String, Object?>> _sendViaWallet(
   final seqNum = _nextSeqNum++;
   final encrypted = encryptJsonRpcRequest(seqNum, method, params, sharedSecret);
   final encryptedResponse = wallet.handleEncryptedRequest(encrypted);
+
   return decryptJsonRpcResponse(encryptedResponse, sharedSecret);
 }

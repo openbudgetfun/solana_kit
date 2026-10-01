@@ -97,6 +97,7 @@ void main() {
           if (value.toInt() > 255) {
             throw StateError('overflow');
           }
+
           bytes[offset] = value.toInt();
           return offset + 1;
         },

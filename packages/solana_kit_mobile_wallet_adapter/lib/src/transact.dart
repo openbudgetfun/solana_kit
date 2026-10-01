@@ -41,6 +41,7 @@ Future<T> transact<T>(
   try {
     final wallet = await scenario.start();
     final kitWallet = wrapWithKitApi(wallet);
+
     return await callback(kitWallet);
   } finally {
     await scenario.close();

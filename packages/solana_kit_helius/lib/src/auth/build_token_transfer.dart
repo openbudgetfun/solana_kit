@@ -59,6 +59,7 @@ Future<String> buildAndSendTokenTransfer(
       'must be a positive unsigned 64-bit integer',
     );
   }
+
   final keyPair = createKeyPairFromBytes(params.secretKey);
   try {
     final signerAddress = Address(
@@ -92,11 +93,13 @@ Future<String> buildAndSendTokenTransfer(
 
     // Fetch a recent blockhash for the transaction lifetime.
     final effectiveRpc = rpcClient;
+
     if (effectiveRpc == null) {
       throw StateError(
         'An RPC client is required to fetch a recent blockhash.',
       );
     }
+
     final blockhashResult = await effectiveRpc.call('getLatestBlockhash');
     final blockhashValue =
         (blockhashResult! as Map<String, Object?>)['value']!

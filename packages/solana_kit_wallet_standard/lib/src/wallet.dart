@@ -14,10 +14,13 @@ class WalletIcon {
   /// Parses an icon containing base64 SVG, WebP, PNG, or GIF data.
   factory WalletIcon(String dataUri) {
     final match = _pattern.firstMatch(dataUri);
+
     if (match == null) {
       throw FormatException('Invalid Wallet Standard icon data URI', dataUri);
     }
+
     final bytes = base64.decode(match.group(2)!);
+
     return WalletIcon._(dataUri, match.group(1)!, Uint8List.fromList(bytes));
   }
 
@@ -57,9 +60,11 @@ class WalletAccount {
        chains = List.unmodifiable(chains),
        features = List.unmodifiable(features) {
     if (address.isEmpty) throw ArgumentError.value(address, 'address');
+
     if (publicKey.length != 32) {
       throw ArgumentError.value(publicKey.length, 'publicKey.length');
     }
+
     _validateIdentifiers(chains, 'chains');
     _validateIdentifiers(features, 'features');
   }
@@ -109,6 +114,7 @@ extension WalletFeatureLookup on Wallet {
   /// Returns the feature named [identifier] when it has type [T].
   T? feature<T extends WalletFeature>(String identifier) {
     final value = features[identifier];
+
     return value is T ? value : null;
   }
 

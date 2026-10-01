@@ -374,6 +374,7 @@ ${fragmentFromString(dataClassName)} ${fragmentFromString(parseFnName)}(Instruct
     result.imports.mergeWith(manifest.decoder.imports);
     result.imports.mergeWith(manifest.type.imports);
   }
+
   for (const defaultValue of argDefaultValues.values()) {
     result.imports.mergeWith(defaultValue.imports);
   }
@@ -390,6 +391,7 @@ function reserveName(preferredName: string, usedNames: Set<string>): string {
   }
 
   usedNames.add(name);
+
   return name;
 }
 

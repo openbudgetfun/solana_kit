@@ -29,6 +29,7 @@ FixedSizeEncoder<T> numberEncoderFactory<T extends num>({
       if (range != null) {
         assertNumberIsBetweenForCodec(name, range.$1, range.$2, value);
       }
+
       final byteData = bytes.buffer.asByteData(
         bytes.offsetInBytes,
         bytes.lengthInBytes,
@@ -146,7 +147,6 @@ void assertHasBytesForCodec(
 // ---------------------------------------------------------------------------
 // BigInt helpers for 64-bit and 128-bit codecs
 // ---------------------------------------------------------------------------
-
 final BigInt _bigIntMask8 = BigInt.from(0xff);
 
 /// Writes an unsigned [BigInt] value to [bytes] starting at [offset],
@@ -159,6 +159,7 @@ void writeBigIntUnsigned(
   Endian endian,
 ) {
   var remaining = value;
+
   if (endian == Endian.little) {
     for (var i = 0; i < size; i++) {
       bytes[offset + i] = (remaining & _bigIntMask8).toInt();
@@ -167,6 +168,7 @@ void writeBigIntUnsigned(
   } else {
     for (var i = size - 1; i >= 0; i--) {
       bytes[offset + i] = (remaining & _bigIntMask8).toInt();
+
       remaining >>= 8;
     }
   }
@@ -181,6 +183,7 @@ BigInt readBigIntUnsigned(
   Endian endian,
 ) {
   var result = BigInt.zero;
+
   if (endian == Endian.little) {
     for (var i = size - 1; i >= 0; i--) {
       result = (result << 8) | BigInt.from(bytes[offset + i]);
@@ -190,6 +193,7 @@ BigInt readBigIntUnsigned(
       result = (result << 8) | BigInt.from(bytes[offset + i]);
     }
   }
+
   return result;
 }
 
@@ -200,9 +204,11 @@ BigInt readBigIntUnsigned(
 BigInt readBigIntSigned(Uint8List bytes, int offset, int size, Endian endian) {
   final unsigned = readBigIntUnsigned(bytes, offset, size, endian);
   final maxPositive = BigInt.one << (size * 8 - 1);
+
   if (unsigned >= maxPositive) {
     return unsigned - (BigInt.one << (size * 8));
   }
+
   return unsigned;
 }
 

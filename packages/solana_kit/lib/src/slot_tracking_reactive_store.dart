@@ -136,6 +136,7 @@ createReactiveStoreWithInitialValueAndSlotTracking<
         streamStore.withSignal(innerSource.token)();
         actionStore.withSignal(innerSource.token).dispatch(const []);
       }
+
       // Register cleanup after the inner stores have attached their cancellation
       // listeners so they observe the original reason before disposal.
       unawaited(innerSource.token.future.then((_) => cleanUp()));

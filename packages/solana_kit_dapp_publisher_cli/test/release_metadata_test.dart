@@ -139,10 +139,12 @@ final class FakeMetadataClient implements ReleaseMetadataPortalClient {
   }) async {
     fetchCalls.add(url);
     final error = fetchError;
+
     if (error != null) {
       if (error is Exception) {
         throw error;
       }
+
       throw PublisherCliException(error.toString());
     }
     return RemoteFilePayload(
@@ -162,6 +164,7 @@ Uint8List pngBytes({required int width, required int height}) {
     ..setUint32(12, 0x49484452)
     ..setUint32(16, width)
     ..setUint32(20, height);
+
   return data.buffer.asUint8List();
 }
 
@@ -228,6 +231,7 @@ void main() {
         expect(entry['height'], 512);
         expect(entry['sha256'], isNotEmpty);
       }
+
       expect(media.first['purpose'], 'icon');
       expect(media[1]['purpose'], 'screenshot');
       expect(media[2]['purpose'], 'banner');

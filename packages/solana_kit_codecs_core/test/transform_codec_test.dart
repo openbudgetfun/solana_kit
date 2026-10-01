@@ -180,6 +180,7 @@ void main() {
           while (end < bytes.length && bytes[end] != 0) {
             end++;
           }
+
           final str = String.fromCharCodes(bytes.sublist(offset, end));
           return (str.length, end);
         },

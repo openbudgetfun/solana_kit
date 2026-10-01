@@ -23,6 +23,7 @@ describe("renderVisitor defined type imports", () => {
     for (const outputDir of outputDirectories) {
       rmSync(outputDir, { recursive: true, force: true });
     }
+
     outputDirectories.length = 0;
   });
 
@@ -96,6 +97,7 @@ describe("renderVisitor link overrides", () => {
     for (const outputDir of outputDirectories) {
       rmSync(outputDir, { recursive: true, force: true });
     }
+
     outputDirectories.length = 0;
   });
 

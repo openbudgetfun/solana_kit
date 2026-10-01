@@ -42,7 +42,6 @@
 ///
 /// Instruction builders cover multisig creation, config transactions, vault transactions, batches, proposals, and spending limits.
 ///
-
 /// <!-- {=docsSquadsSection -->
 ///
 /// ### Derive the multisig and vault PDAs
@@ -70,7 +69,6 @@
 library;
 
 // ignore_for_file: comment_references
-
 ///
 // Generated (Codama-style).
 // Program addresses are exported directly from src/program_address.dart.

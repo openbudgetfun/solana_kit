@@ -131,7 +131,6 @@ void main() {
     test('continues to pend when the nonce value returned by the '
         'account subscription is the same as expected', () async {
       // Don't resolve the one-shot query.
-
       final completer = Completer<String>();
       unawaited(
         getNonceInvalidationPromise(

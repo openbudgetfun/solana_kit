@@ -21,6 +21,7 @@ const attestationCredential = 'G6QmvUp3a1Kv9rX2LqHDH8AWcKD8yaufcoXEB1h6SzN8';
 const attestationSchema = 'GSwz99vWPKnePyeYTM5iionEfArVmfrufV4AaV4SecTH';
 const attestationNonce = 'Bdf3cgpzgboZq95T4AVYNxuYGDVE4pwLNQBhQ2ob8CoG';
 const attestationGolden = 'CnhgnrLiawRWitfjrrUfWdR2jpwKbKGDccbk3ne171iu';
+
 const schemaMintSchema = 'GCVt9SmgLF8bgEVwZAhQ9A2skwj5TvEnyn8Z7eUm583E';
 const schemaMintGolden = '9JLQQK3zeEjiq2AJ1XPN765bYnLrBWJSFfyjDwdSMmyN';
 const attestationMintAttestation =

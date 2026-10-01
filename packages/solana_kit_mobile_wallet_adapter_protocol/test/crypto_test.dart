@@ -522,6 +522,7 @@ void main() {
 
 String _addPadding(String base64Url) {
   final remainder = base64Url.length % 4;
+
   if (remainder == 0) return base64Url;
   return base64Url.padRight(base64Url.length + (4 - remainder), '=');
 }

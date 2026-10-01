@@ -56,6 +56,7 @@ Future<void> main() async {
   ]);
 
   print('\nMultiple accounts:');
+
   for (final acct in accounts) {
     switch (acct) {
       case ExistingAccount(:final account):

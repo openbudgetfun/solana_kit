@@ -21,6 +21,7 @@ Future<void> main() async {
     print('Set a real Helius API key to run this example.');
     print('Get one free at https://helius.dev');
     _printStructureDoc();
+
     return;
   }
 
@@ -36,6 +37,7 @@ Future<void> main() async {
   );
 
   print('Total assets: ${assetList.total}');
+
   for (final asset in assetList.items) {
     print(
       '  id: ${asset.id}, '
