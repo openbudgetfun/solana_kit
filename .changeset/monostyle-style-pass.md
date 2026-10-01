@@ -68,7 +68,6 @@
 "solana_kit_wallet_ui": fix
 ---
 
-
 # Monostyle style pass
 
 Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched.
