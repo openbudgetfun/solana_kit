@@ -42,6 +42,7 @@ class SurfnetConfig {
     this.host = '127.0.0.1',
     this.rpcPort,
     this.wsPort,
+    this.studioPort,
   }) : _airdropAddresses = List<Address>.unmodifiable(airdropAddresses),
        _payerSecretKey = payerSecretKey == null
            ? null
@@ -60,8 +61,23 @@ class SurfnetConfig {
     }
     _validatePort(rpcPort, 'rpcPort');
     _validatePort(wsPort, 'wsPort');
+    _validatePort(studioPort, 'studioPort');
     if (rpcPort != null && rpcPort == wsPort) {
       throw ArgumentError.value(wsPort, 'wsPort', 'must differ from rpcPort');
+    }
+    if (studioPort != null && studioPort == rpcPort) {
+      throw ArgumentError.value(
+        studioPort,
+        'studioPort',
+        'must differ from rpcPort',
+      );
+    }
+    if (studioPort != null && studioPort == wsPort) {
+      throw ArgumentError.value(
+        studioPort,
+        'studioPort',
+        'must differ from wsPort',
+      );
     }
   }
 
@@ -133,6 +149,14 @@ class SurfnetConfig {
 
   /// Optional fixed WebSocket RPC port.
   final int? wsPort;
+
+  /// Optional fixed Surfpool Studio port.
+  ///
+  /// Surfpool always binds its Studio/scenario server — even under
+  /// `--no-studio` — and defaults every instance to the same fixed port, so
+  /// concurrent Surfnets collide on it. Each instance therefore passes a
+  /// distinct auto-allocated port unless one is pinned here.
+  final int? studioPort;
 }
 
 void _validatePort(int? port, String name) {

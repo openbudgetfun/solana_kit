@@ -30,6 +30,7 @@ void main() {
       expect(config.host, '127.0.0.1');
       expect(config.rpcPort, isNull);
       expect(config.wsPort, isNull);
+      expect(config.studioPort, isNull);
     });
 
     test('defensively copies lists and payer secret key', () {
@@ -83,6 +84,22 @@ void main() {
       );
       expect(
         () => SurfnetConfig(rpcPort: 8899, wsPort: 8899),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => SurfnetConfig(studioPort: 0),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => SurfnetConfig(studioPort: 65_536),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => SurfnetConfig(rpcPort: 8899, studioPort: 8899),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => SurfnetConfig(wsPort: 8900, studioPort: 8900),
         throwsA(isA<ArgumentError>()),
       );
     });

@@ -24,6 +24,7 @@ const _defaultStartupTimeout = Duration(seconds: 30);
 const _defaultShutdownTimeout = Duration(seconds: 5);
 const _readinessPollInterval = Duration(milliseconds: 100);
 const _maxBufferedEvents = 500;
+const _maxStartAttempts = 3;
 
 /// A local Surfpool Surfnet controlled from Dart.
 ///
@@ -108,19 +109,66 @@ class Surfnet {
   /// process runs in a dedicated temporary working directory per instance, so
   /// multiple Surfnets can run concurrently without racing on the `.surfpool`
   /// runtime state the CLI creates next to its working directory.
+  ///
+  /// Port probing releases each port before the CLI binds it, so under
+  /// parallel startup another process can claim the same port in between and
+  /// make `surfpool start` exit with a bind failure. Starts with at least one
+  /// auto-allocated port are retried with freshly probed ports; a config that
+  /// pins every port fails deterministically and never retries.
   static Future<Surfnet> startWithConfig(
     SurfnetConfig config, {
     String command = 'surfpool',
     Duration startupTimeout = _defaultStartupTimeout,
     http.Client? client,
   }) async {
-    final rpcPort = config.rpcPort ?? await _findAvailablePort();
-    final wsPort = config.wsPort ?? await _findDistinctAvailablePort(rpcPort);
+    final attempts = config.rpcPort == null || config.wsPort == null
+        ? _maxStartAttempts
+        : 1;
+    SurfnetProcessException? portConflict;
+    for (var attempt = 1; attempt <= attempts; attempt++) {
+      try {
+        return await _startAttempt(
+          config,
+          command: command,
+          startupTimeout: startupTimeout,
+          client: client,
+        );
+      } on SurfnetProcessException catch (error) {
+        if (!_isPortConflict(error)) rethrow;
+        portConflict = error;
+      }
+    }
+    throw portConflict!;
+  }
+
+  static Future<Surfnet> _startAttempt(
+    SurfnetConfig config, {
+    required String command,
+    required Duration startupTimeout,
+    http.Client? client,
+  }) async {
+    // Ports the config pins explicitly must never be offered to another role,
+    // so they stay reserved while the remaining ports are probed.
+    final reservedPorts = <int>{
+      if (config.rpcPort != null) config.rpcPort!,
+      if (config.wsPort != null) config.wsPort!,
+      if (config.studioPort != null) config.studioPort!,
+    };
+    final rpcPort = config.rpcPort ?? await _findAvailablePort(reservedPorts);
+    reservedPorts.add(rpcPort);
+    final wsPort = config.wsPort ?? await _findAvailablePort(reservedPorts);
+    reservedPorts.add(wsPort);
+    final studioPort =
+        config.studioPort ?? await _findAvailablePort(reservedPorts);
     // SurfnetConfig validates this for user-provided ports; keep the runtime
     // guard for future internal port selection changes.
     // coverage:ignore-start
-    if (rpcPort == wsPort) {
-      throw ArgumentError.value(wsPort, 'wsPort', 'must differ from rpcPort');
+    if (rpcPort == wsPort || rpcPort == studioPort || wsPort == studioPort) {
+      throw ArgumentError.value(
+        studioPort,
+        'studioPort',
+        'must differ from rpcPort and wsPort',
+      );
     }
     // coverage:ignore-end
 
@@ -129,6 +177,7 @@ class Surfnet {
       config,
       rpcPort: rpcPort,
       wsPort: wsPort,
+      studioPort: studioPort,
       payer: payerInfo.publicKey,
     );
 
@@ -631,6 +680,7 @@ List<String> _buildStartArgs(
   SurfnetConfig config, {
   required int rpcPort,
   required int wsPort,
+  required int studioPort,
   required Address payer,
 }) {
   return <String>[
@@ -639,6 +689,11 @@ List<String> _buildStartArgs(
     '$rpcPort',
     '--ws-port',
     '$wsPort',
+    // Surfpool always binds its Studio/scenario server — even under
+    // `--no-studio` — and defaults every instance to the same fixed port, so
+    // concurrent Surfnets collide on it. Give each instance its own.
+    '--studio-port',
+    '$studioPort',
     '--host',
     config.host,
     '--no-tui',
@@ -673,18 +728,22 @@ List<String> _buildStartArgs(
   ];
 }
 
-Future<int> _findAvailablePort() async {
-  final socket = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
-  final port = socket.port;
-  await socket.close();
-  return port;
+Future<int> _findAvailablePort(Set<int> excludedPorts) async {
+  while (true) {
+    final socket = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+    final port = socket.port;
+    await socket.close();
+    if (!excludedPorts.contains(port)) return port;
+  }
 }
 
-Future<int> _findDistinctAvailablePort(int otherPort) async {
-  while (true) {
-    final port = await _findAvailablePort();
-    if (port != otherPort) return port;
-  }
+/// Whether [error] reports the CLI exiting because one of its ports was
+/// claimed between probing and binding. The CLI prints e.g.
+/// `Error: WebSocket port 41234 is already in use.` before exiting, and its
+/// Studio server logs `Address already in use` when its port is taken.
+bool _isPortConflict(SurfnetProcessException error) {
+  final cause = error.cause;
+  return cause is String && cause.contains('already in use');
 }
 
 KeypairInfo _payerFromSecretKey(Uint8List? payerSecretKey) {

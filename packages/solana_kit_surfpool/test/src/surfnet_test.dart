@@ -466,6 +466,7 @@ void main() {
         final payer = Surfnet.newKeypair();
         final rpcPort = await _availablePort();
         final wsPort = await _availablePort(except: rpcPort);
+        final studioPort = await _availablePort(except: wsPort);
         final config = SurfnetConfig(
           remoteRpcUrl: Uri.parse('https://api.mainnet-beta.solana.com'),
           blockProductionMode: BlockProductionMode.clock,
@@ -479,6 +480,7 @@ void main() {
           skipBlockhashCheck: true,
           rpcPort: rpcPort,
           wsPort: wsPort,
+          studioPort: studioPort,
         );
 
         try {
@@ -509,6 +511,8 @@ void main() {
               '$rpcPort',
               '--ws-port',
               '$wsPort',
+              '--studio-port',
+              '$studioPort',
               '--host',
               '127.0.0.1',
               '--no-tui',
@@ -590,6 +594,107 @@ void main() {
       } finally {
         await exitTempDir.delete(recursive: true);
         await timeoutTempDir.delete(recursive: true);
+      }
+    });
+
+    test(
+      'auto-allocates pairwise-distinct rpc, ws, and studio ports',
+      () async {
+        final tempDir = await Directory.systemTemp.createTemp(
+          'surfpool_cli_ports_',
+        );
+        final argsPath = '${tempDir.path}/args.json';
+        final command = await _writeFakeSurfpoolCommand(
+          tempDir,
+          argsPath: argsPath,
+        );
+
+        try {
+          final surfnet = await Surfnet.startWithConfig(
+            SurfnetConfig(),
+            command: command,
+            startupTimeout: const Duration(seconds: 5),
+          );
+          await surfnet.stop();
+
+          final args = (jsonDecode(await File(argsPath).readAsString()) as List)
+              .cast<String>();
+          int? portAfter(String flag) {
+            final index = args.indexOf(flag);
+            expect(index, greaterThanOrEqualTo(0));
+            return int.parse(args[index + 1]);
+          }
+
+          final rpcPort = portAfter('--port');
+          final wsPort = portAfter('--ws-port');
+          final studioPort = portAfter('--studio-port');
+          expect(rpcPort, isNot(wsPort));
+          expect(rpcPort, isNot(studioPort));
+          expect(wsPort, isNot(studioPort));
+        } finally {
+          await tempDir.delete(recursive: true);
+        }
+      },
+    );
+
+    test('start retries when the CLI loses a port race', () async {
+      final tempDir = await Directory.systemTemp.createTemp(
+        'surfpool_cli_retry_',
+      );
+      final argsPath = '${tempDir.path}/args.json';
+      final command = await _writeFakeSurfpoolCommand(
+        tempDir,
+        argsPath: argsPath,
+        portConflictExits: 1,
+      );
+      final rpcPort = await _availablePort();
+
+      try {
+        final surfnet = await Surfnet.startWithConfig(
+          SurfnetConfig(rpcPort: rpcPort),
+          command: command,
+          startupTimeout: const Duration(seconds: 5),
+        );
+        await surfnet.stop();
+
+        final invocations = int.parse(
+          await File('$argsPath.invocations').readAsString(),
+        );
+        expect(invocations, 2);
+      } finally {
+        await tempDir.delete(recursive: true);
+      }
+    });
+
+    test('start never retries a fully pinned port conflict', () async {
+      final tempDir = await Directory.systemTemp.createTemp(
+        'surfpool_cli_pinned_',
+      );
+      final argsPath = '${tempDir.path}/args.json';
+      final command = await _writeFakeSurfpoolCommand(
+        tempDir,
+        argsPath: argsPath,
+        portConflictExits: 99,
+      );
+      final rpcPort = await _availablePort();
+      final wsPort = await _availablePort(except: rpcPort);
+
+      try {
+        await expectLater(
+          Surfnet.startWithConfig(
+            SurfnetConfig(rpcPort: rpcPort, wsPort: wsPort),
+            command: command,
+            startupTimeout: const Duration(seconds: 5),
+          ),
+          throwsA(isA<SurfnetProcessException>()),
+        );
+
+        final invocations = int.parse(
+          await File('$argsPath.invocations').readAsString(),
+        );
+        expect(invocations, 1);
+      } finally {
+        await tempDir.delete(recursive: true);
       }
     });
 
@@ -701,6 +806,7 @@ Future<String> _writeFakeSurfpoolCommand(
   bool exitImmediately = false,
   bool ignoreSigint = false,
   int outputLines = 1,
+  int portConflictExits = 0,
 }) async {
   final script = File('${directory.path}/fake_surfpool.dart');
   final content =
@@ -717,6 +823,22 @@ Future<void> main(List<String> args) async {
     stdout.writeln('stdout line \$index');
   }
   stderr.writeln('stderr line');
+  if ($portConflictExits > 0) {
+    final counterPath = ${jsonEncode('$argsPath.invocations')};
+    var invocations = 0;
+    final counterFile = File(counterPath);
+    if (counterFile.existsSync()) {
+      invocations = int.parse(counterFile.readAsStringSync());
+    }
+    counterFile.writeAsStringSync('\${invocations + 1}');
+    if (invocations < $portConflictExits) {
+      stderr.writeln(
+        'Error: WebSocket port 40179 is already in use. '
+        'Try --port or --ws-port to use a different port.',
+      );
+      exit(1);
+    }
+  }
   if ($exitImmediately) {
     await stdout.flush();
     await stderr.flush();
