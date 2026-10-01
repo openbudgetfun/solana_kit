@@ -6,7 +6,6 @@ export 'src/crypto.dart';
 export 'src/ecdh_keypair.dart';
 export 'src/encrypted_message.dart';
 export 'src/hello_req.dart';
-
 export 'src/hello_rsp.dart';
 export 'src/json_rpc_message.dart';
 export 'src/jws.dart';
@@ -15,6 +14,5 @@ export 'src/reflector_id.dart';
 export 'src/sequence_number.dart';
 export 'src/session_properties.dart';
 export 'src/siws_message.dart';
-
 export 'src/types.dart';
 export 'src/wallet_proxy.dart';

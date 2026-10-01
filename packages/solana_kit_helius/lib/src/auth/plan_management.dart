@@ -8,7 +8,6 @@ import 'package:solana_kit_helius/src/auth/oauth_token_exchange.dart';
 import 'package:solana_kit_helius/src/auth/payment_url.dart';
 import 'package:solana_kit_helius/src/auth/payments.dart';
 import 'package:solana_kit_helius/src/auth/signup.dart';
-
 import 'package:solana_kit_helius/src/auth/signup_helpers.dart';
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/internal/rest_client.dart';

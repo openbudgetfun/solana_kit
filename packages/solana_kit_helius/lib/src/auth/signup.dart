@@ -9,7 +9,6 @@ import 'package:solana_kit_helius/src/auth/developer_api.dart';
 import 'package:solana_kit_helius/src/auth/oauth_token_exchange.dart';
 import 'package:solana_kit_helius/src/auth/plan_catalog.dart';
 import 'package:solana_kit_helius/src/auth/sign_auth_message.dart';
-
 import 'package:solana_kit_helius/src/auth/signup_helpers.dart';
 import 'package:solana_kit_helius/src/internal/rest_client.dart';
 import 'package:solana_kit_helius/src/types/auth_types.dart';

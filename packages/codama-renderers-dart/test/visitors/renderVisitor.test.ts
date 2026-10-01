@@ -10,7 +10,6 @@ import {
   rootNode,
   structFieldTypeNode,
   structTypeNode,
-
 } from "@codama/nodes";
 import { visit } from "@codama/visitors-core";
 import { afterEach, describe, expect, it } from "vitest";

@@ -6,7 +6,6 @@ import {
   arrayTypeNode,
   booleanTypeNode,
   booleanValueNode,
-
   bytesTypeNode,
   constantValueNode,
   fixedCountNode,
@@ -15,7 +14,6 @@ import {
   mapTypeNode,
   numberTypeNode,
   numberValueNode,
-
   optionTypeNode,
   postOffsetTypeNode,
   preOffsetTypeNode,
@@ -24,8 +22,8 @@ import {
   sizePrefixTypeNode,
   structFieldTypeNode,
   structTypeNode,
-
   type TypeNode,
+
 } from "@codama/nodes";
 import { LinkableDictionary, NodeStack, visit } from "@codama/visitors-core";
 import { describe, expect, it } from "vitest";

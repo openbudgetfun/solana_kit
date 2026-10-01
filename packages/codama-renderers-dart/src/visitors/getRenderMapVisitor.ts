@@ -6,7 +6,6 @@ import {
   type ProgramNode,
   type RootNode,
 } from "@codama/nodes";
-
 import {
   type RenderMap,
   addToRenderMap,
@@ -15,7 +14,6 @@ import {
 } from "@codama/renderers-core";
 import {
   type Visitor,
-
   LinkableDictionary,
   NodeStack,
   extendVisitor,
@@ -24,7 +22,6 @@ import {
   recordNodeStackVisitor,
   staticVisitor,
   visit,
-
 } from "@codama/visitors-core";
 
 import type { Fragment } from "../utils/fragment.js";

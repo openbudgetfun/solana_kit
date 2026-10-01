@@ -20,7 +20,6 @@ export 'package:solana_kit_dapp_publisher_cli/src/portal_client.dart';
 export 'package:solana_kit_dapp_publisher_cli/src/portal_translators.dart';
 export 'package:solana_kit_dapp_publisher_cli/src/portal_types.dart';
 export 'package:solana_kit_dapp_publisher_cli/src/portal_workflow_client.dart';
-
 export 'package:solana_kit_dapp_publisher_cli/src/publication_models.dart';
 export 'package:solana_kit_dapp_publisher_cli/src/publication_signer.dart';
 export 'package:solana_kit_dapp_publisher_cli/src/publication_workflow.dart';

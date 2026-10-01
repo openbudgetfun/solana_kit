@@ -13,6 +13,5 @@ export 'src/response_transformer.dart';
 export 'src/response_transformer_allowed_numeric_values.dart';
 export 'src/response_transformer_bigint_upcast.dart';
 export 'src/response_transformer_result.dart';
-
 export 'src/response_transformer_throw_solana_error.dart';
 export 'src/tree_traversal.dart';

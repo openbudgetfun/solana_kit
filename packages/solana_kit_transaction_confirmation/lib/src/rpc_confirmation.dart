@@ -16,7 +16,6 @@ import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:solana_kit_transaction_confirmation/src/confirmation_strategy_blockheight.dart';
 import 'package:solana_kit_transaction_confirmation/src/confirmation_strategy_nonce.dart';
 import 'package:solana_kit_transaction_confirmation/src/signature_status.dart';
-
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 
 /// Default interval used by polling-based confirmation helpers.

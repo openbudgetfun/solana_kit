@@ -6,7 +6,6 @@ import {
   definedTypeLinkNode,
   enumEmptyVariantTypeNode,
   enumStructVariantTypeNode,
-
   enumTupleVariantTypeNode,
   enumTypeNode,
   fixedCountNode,
@@ -15,16 +14,15 @@ import {
   hiddenSuffixTypeNode,
   mapTypeNode,
   numberTypeNode,
-
   numberValueNode,
   optionTypeNode,
   prefixedCountNode,
   publicKeyTypeNode,
   remainderCountNode,
+
   setTypeNode,
   sizePrefixTypeNode,
   stringTypeNode,
-
   structFieldTypeNode,
   structTypeNode,
   tupleTypeNode,

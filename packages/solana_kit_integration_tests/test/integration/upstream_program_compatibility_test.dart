@@ -17,7 +17,6 @@ import 'package:solana_kit_mpl_token_metadata/solana_kit_mpl_token_metadata.dart
     as metadata;
 import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:solana_kit_signers/solana_kit_signers.dart';
-
 import 'package:solana_kit_squads/solana_kit_squads.dart' as squads;
 import 'package:solana_kit_system/solana_kit_system.dart';
 import 'package:solana_kit_token/solana_kit_token.dart';

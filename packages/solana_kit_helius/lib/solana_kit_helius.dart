@@ -13,7 +13,6 @@ export 'src/auth/constants.dart';
 export 'src/auth/dev_portal_configs.dart';
 export 'src/auth/keypair_helpers.dart';
 export 'src/auth/oauth_token_exchange.dart';
-
 export 'src/auth/payment_url.dart';
 export 'src/auth/payments.dart';
 export 'src/auth/plan_catalog.dart';
@@ -22,7 +21,6 @@ export 'src/auth/retry.dart';
 export 'src/auth/signup.dart';
 export 'src/auth/signup_helpers.dart';
 export 'src/das/das_client.dart';
-
 export 'src/enhanced/enhanced_client.dart';
 export 'src/helius_client.dart';
 export 'src/helius_config.dart';
@@ -31,7 +29,6 @@ export 'src/rpc_v2/rpc_v2_client.dart';
 export 'src/sensitive_string.dart';
 export 'src/staking/staking_client.dart';
 export 'src/transactions/create_smart_transaction.dart';
-
 export 'src/transactions/create_tx_message.dart';
 export 'src/transactions/determine_tip.dart';
 export 'src/transactions/fetch_tip_floor.dart';

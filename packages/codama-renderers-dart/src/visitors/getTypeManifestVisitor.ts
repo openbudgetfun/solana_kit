@@ -6,7 +6,6 @@ import {
   type BytesTypeNode,
   type CamelCaseString,
   type ConstantValueNode,
-
   type DateTimeTypeNode,
   type DefinedTypeLinkNode,
   type DefinedTypeNode,
@@ -15,16 +14,15 @@ import {
   type EnumTupleVariantTypeNode,
   type EnumTypeNode,
   type FixedSizeTypeNode,
-
   type HiddenPrefixTypeNode,
   type HiddenSuffixTypeNode,
   type InstructionNode,
   type MapTypeNode,
   type NumberTypeNode,
+
   type OptionTypeNode,
   type PostOffsetTypeNode,
   type PreOffsetTypeNode,
-
   type PublicKeyTypeNode,
   type RemainderOptionTypeNode,
   type SentinelTypeNode,

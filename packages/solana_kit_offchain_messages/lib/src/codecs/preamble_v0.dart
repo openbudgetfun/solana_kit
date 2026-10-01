@@ -6,7 +6,6 @@ import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_offchain_messages/src/codecs/application_domain.dart';
 import 'package:solana_kit_offchain_messages/src/codecs/content_format.dart';
 import 'package:solana_kit_offchain_messages/src/codecs/preamble_common.dart';
-
 import 'package:solana_kit_offchain_messages/src/signatory.dart';
 
 /// Returns a variable-size decoder for the v0 offchain message preamble.

@@ -50,7 +50,6 @@ String _interpolate(String template, Map<String, Object?> context) {
       }
     } else {
       buffer.write(char);
-
       i++;
     }
   }

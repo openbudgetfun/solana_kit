@@ -6,7 +6,6 @@ import 'package:solana_kit_helius/src/transactions/get_compute_units.dart';
 import 'package:solana_kit_helius/src/transactions/poll_transaction_confirmation.dart';
 import 'package:solana_kit_helius/src/transactions/send_smart_transaction.dart';
 import 'package:solana_kit_helius/src/transactions/send_transaction_with_sender.dart';
-
 import 'package:solana_kit_helius/src/types/smart_transaction_types.dart';
 
 /// Client for Helius smart transaction operations.

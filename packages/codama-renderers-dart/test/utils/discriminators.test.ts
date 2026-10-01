@@ -6,7 +6,6 @@ import {
   instructionArgumentNode,
   instructionNode,
   numberTypeNode,
-
   numberValueNode,
   sizeDiscriminatorNode,
   structTypeNode,

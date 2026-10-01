@@ -6,7 +6,6 @@ import { visit } from "@codama/visitors-core";
 import {
   accountNode,
   arrayTypeNode,
-
   constantDiscriminatorNode,
   constantValueNode,
   definedTypeNode,
@@ -15,7 +14,6 @@ import {
   fieldDiscriminatorNode,
   fixedSizeTypeNode,
   instructionAccountNode,
-
   instructionArgumentNode,
   instructionNode,
   numberTypeNode,
@@ -24,9 +22,9 @@ import {
   remainderCountNode,
   rootNode,
   sizeDiscriminatorNode,
-
   stringTypeNode,
   structFieldTypeNode,
+
   structTypeNode,
 } from "@codama/nodes";
 import { rootNodeFromAnchor } from "@codama/nodes-from-anchor";

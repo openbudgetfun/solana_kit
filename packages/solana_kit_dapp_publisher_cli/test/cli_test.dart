@@ -9,7 +9,6 @@ import 'package:solana_kit_dapp_publisher_cli/src/portal_types.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/publication_models.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/workflow_client.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
-
 import 'package:test/test.dart';
 
 class _CapturingDependencies extends DappStoreCliDependencies {

@@ -531,7 +531,6 @@ for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
         root = rootNodeFromAnchor(fixed);
       } else if (repo === "squads-multisig") {
         const fixed = prepareSquadsMultisigRoot(idlJson);
-
         root = rootNodeFromAnchor(fixed);
       } else if (repo === "solana-attestation-service") {
         const fixed = prepareSolanaAttestationServiceRoot(idlJson);

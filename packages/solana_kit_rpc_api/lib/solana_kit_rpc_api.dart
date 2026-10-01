@@ -14,7 +14,6 @@ export 'src/get_block.dart';
 export 'src/get_block_commitment.dart';
 export 'src/get_block_height.dart';
 export 'src/get_block_production.dart';
-
 export 'src/get_block_time.dart';
 export 'src/get_blocks.dart';
 export 'src/get_blocks_with_limit.dart';
@@ -23,7 +22,6 @@ export 'src/get_epoch_info.dart';
 export 'src/get_epoch_schedule.dart';
 export 'src/get_fee_for_message.dart';
 export 'src/get_first_available_block.dart';
-
 export 'src/get_genesis_hash.dart';
 export 'src/get_health.dart';
 export 'src/get_highest_snapshot_slot.dart';
@@ -32,7 +30,6 @@ export 'src/get_inflation_governor.dart';
 export 'src/get_inflation_rate.dart';
 export 'src/get_inflation_reward.dart';
 export 'src/get_largest_accounts.dart';
-
 export 'src/get_latest_blockhash.dart';
 export 'src/get_leader_schedule.dart';
 export 'src/get_max_retransmit_slot.dart';

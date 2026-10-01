@@ -6,7 +6,6 @@ import 'package:solana_kit_helius/src/wallet/get_balances.dart';
 import 'package:solana_kit_helius/src/wallet/get_batch_identity.dart';
 import 'package:solana_kit_helius/src/wallet/get_funded_by.dart';
 import 'package:solana_kit_helius/src/wallet/get_history.dart';
-
 import 'package:solana_kit_helius/src/wallet/get_identity.dart';
 import 'package:solana_kit_helius/src/wallet/get_transfers.dart';
 

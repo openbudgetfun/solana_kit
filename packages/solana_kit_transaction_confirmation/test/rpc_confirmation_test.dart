@@ -8,7 +8,6 @@ import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 import 'package:solana_kit_transaction_confirmation/solana_kit_transaction_confirmation.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
-
 import 'package:test/test.dart';
 
 void main() {

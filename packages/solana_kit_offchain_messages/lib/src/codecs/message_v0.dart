@@ -8,7 +8,6 @@ import 'package:solana_kit_offchain_messages/src/application_domain.dart';
 import 'package:solana_kit_offchain_messages/src/codecs/preamble_v0.dart';
 import 'package:solana_kit_offchain_messages/src/content.dart';
 import 'package:solana_kit_offchain_messages/src/message.dart';
-
 import 'package:solana_kit_offchain_messages/src/signatory.dart';
 
 /// Returns a variable-size decoder for [OffchainMessageV0].

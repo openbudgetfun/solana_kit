@@ -19,7 +19,6 @@ import {
   getNonNegativeInteger,
   isConstDartValueNode,
 } from "../utils/valueNodes.js";
-
 import { getDiscriminatorConstantsFragment } from "./discriminatorConstants.js";
 
 /**

@@ -349,7 +349,6 @@ Decoder<List<T>> getArrayDecoder<T>(
           _throwInvalidArraySize(description, prefixValue);
         }
         resolvedSizeLocal = prefixValue.toInt();
-
         offset = newOffset;
       }
 

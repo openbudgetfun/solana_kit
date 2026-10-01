@@ -11,7 +11,6 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart'
     show Address, getAddressFromPublicKey;
 import 'package:solana_kit_associated_token_account/solana_kit_associated_token_account.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
-
 import 'package:solana_kit_surfpool/src/builders.dart';
 import 'package:solana_kit_surfpool/src/config.dart';
 import 'package:solana_kit_surfpool/src/errors.dart';

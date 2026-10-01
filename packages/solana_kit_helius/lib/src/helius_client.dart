@@ -6,7 +6,6 @@ import 'package:solana_kit_helius/src/enhanced/enhanced_client.dart';
 import 'package:solana_kit_helius/src/helius_config.dart';
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
 import 'package:solana_kit_helius/src/internal/rest_client.dart';
-
 import 'package:solana_kit_helius/src/priority_fee/priority_fee_client.dart';
 import 'package:solana_kit_helius/src/rpc_v2/rpc_v2_client.dart';
 import 'package:solana_kit_helius/src/staking/staking_client.dart';

@@ -761,7 +761,6 @@ PriceUpdateV2Account decodePriceUpdateV2Account(Uint8List data) {
   cursor += 8;
   final emaConf = _readBigUint64(data, cursor);
   cursor += 8;
-
   final postedSlot = _readBigUint64(data, cursor);
 
   return PriceUpdateV2Account._(

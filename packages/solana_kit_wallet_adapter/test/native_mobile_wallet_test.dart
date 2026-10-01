@@ -9,7 +9,6 @@ import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wall
     as protocol;
 import 'package:solana_kit_wallet_adapter/src/mobile_wallet.dart';
 import 'package:solana_kit_wallet_adapter/src/platform/default_registry_native.dart';
-
 import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
 
 void main() {

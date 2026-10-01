@@ -39,7 +39,6 @@ export 'src/codec.dart';
 export 'src/codec_utils.dart';
 export 'src/combine_codec.dart';
 export 'src/decoder_entire_byte_array.dart';
-
 export 'src/fix_codec_size.dart';
 export 'src/hash/keccak256.dart';
 export 'src/offset_codec.dart';

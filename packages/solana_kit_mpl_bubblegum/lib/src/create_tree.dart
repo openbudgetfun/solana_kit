@@ -9,7 +9,6 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart'
         tokenProgramAddress;
 import 'package:solana_kit_instruction_plans/solana_kit_instruction_plans.dart';
 import 'package:solana_kit_mpl_bubblegum/src/constants/program_addresses.dart';
-
 import 'package:solana_kit_mpl_bubblegum/src/generated/instructions/create_tree.dart';
 import 'package:solana_kit_mpl_bubblegum/src/generated/programs/mpl_bubblegum.dart';
 

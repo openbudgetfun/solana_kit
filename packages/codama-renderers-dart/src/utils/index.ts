@@ -6,7 +6,6 @@ export * from "./fragment.js";
 export * from "./importMap.js";
 export * from "./nameTransformers.js";
 export * from "./normalizeRootNode.js";
-
 export * from "./options.js";
 export * from "./typeManifest.js";
 export * from "./valueNodes.js";

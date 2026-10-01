@@ -89,7 +89,6 @@ export function getPdaPageFragment(
         const manifest = visit(seed.type, scope.typeManifestVisitor);
         seedManifests.push(manifest);
         const value = getDartValueFragment(seed.value, manifest.type.content);
-
         seedValues.push(`    ${manifest.encoder.content}.encode(${value.content}),`);
       }
     } else if (seed.kind === "variablePdaSeedNode") {

@@ -17,7 +17,6 @@ import 'package:solana_kit_signers/solana_kit_signers.dart';
 import 'package:solana_kit_subscriptions/solana_kit_subscriptions.dart';
 import 'package:solana_kit_system/solana_kit_system.dart';
 import 'package:solana_kit_token/solana_kit_token.dart';
-
 import 'package:test/test.dart';
 
 void main() {

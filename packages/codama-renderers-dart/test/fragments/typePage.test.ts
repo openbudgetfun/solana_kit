@@ -6,7 +6,6 @@ import {
   enumTupleVariantTypeNode,
   enumTypeNode,
   numberTypeNode,
-
   publicKeyTypeNode,
   stringTypeNode,
   structFieldTypeNode,

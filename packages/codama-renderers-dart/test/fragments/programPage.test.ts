@@ -6,7 +6,6 @@ import {
   bytesValueNode,
   constantDiscriminatorNode,
   constantValueNode,
-
   fieldDiscriminatorNode,
   instructionArgumentNode,
   instructionNode,
@@ -15,12 +14,12 @@ import {
   numberTypeNode,
   numberValueNode,
   programNode,
-
   sizeDiscriminatorNode,
   stringTypeNode,
   stringValueNode,
   structFieldTypeNode,
   structTypeNode,
+
 } from "@codama/nodes";
 import { LinkableDictionary, NodeStack } from "@codama/visitors-core";
 import { describe, expect, it } from "vitest";

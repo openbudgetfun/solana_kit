@@ -51,7 +51,6 @@ export 'src/error_helpers.dart';
 export 'src/instruction_error.dart';
 export 'src/json_rpc_error.dart';
 export 'src/message_formatter.dart';
-
 export 'src/messages.dart';
 export 'src/rpc_enum_errors.dart';
 export 'src/simulation_errors.dart';

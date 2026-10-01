@@ -8,7 +8,6 @@ import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart'
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart' show Rpc;
 import 'package:solana_kit_rpc_subscriptions/solana_kit_rpc_subscriptions.dart';
 import 'package:solana_kit_signers/solana_kit_signers.dart';
-
 import 'package:solana_kit_surfpool/src/cheatcodes.dart';
 import 'package:solana_kit_surfpool/src/config.dart';
 import 'package:solana_kit_surfpool/src/surfnet.dart';

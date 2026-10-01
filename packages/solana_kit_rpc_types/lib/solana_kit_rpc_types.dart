@@ -12,7 +12,6 @@ export 'src/commitment.dart';
 export 'src/encoded_bytes.dart';
 export 'src/encoding.dart';
 export 'src/get_transactions_for_address_types.dart';
-
 export 'src/lamports.dart';
 export 'src/latest_blockhash_value.dart';
 export 'src/rpc_response.dart';
@@ -21,7 +20,6 @@ export 'src/stringified_bigint.dart';
 export 'src/stringified_number.dart';
 export 'src/token_amount.dart';
 export 'src/token_balance.dart';
-
 export 'src/transaction_error.dart';
 export 'src/transaction_types.dart';
 export 'src/typed_numbers.dart';

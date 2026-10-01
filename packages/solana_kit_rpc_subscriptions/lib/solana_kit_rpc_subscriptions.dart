@@ -26,7 +26,6 @@ export 'src/rpc_subscriptions_channel.dart';
 export 'src/rpc_subscriptions_channel_pool.dart';
 export 'src/rpc_subscriptions_channel_pool_internal.dart';
 export 'src/rpc_subscriptions_clusters.dart';
-
 export 'src/rpc_subscriptions_coalescer.dart';
 export 'src/rpc_subscriptions_json.dart';
 export 'src/rpc_subscriptions_json_bigint.dart';

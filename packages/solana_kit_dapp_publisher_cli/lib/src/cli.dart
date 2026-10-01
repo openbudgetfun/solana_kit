@@ -10,7 +10,6 @@ import 'package:solana_kit_dapp_publisher_cli/src/portal_types.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/portal_workflow_client.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/publication_signer.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/publication_workflow.dart';
-
 import 'package:solana_kit_dapp_publisher_cli/src/workflow_client.dart';
 
 /// The CLI version reported by `--version`.

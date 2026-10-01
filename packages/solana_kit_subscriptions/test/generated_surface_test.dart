@@ -680,7 +680,6 @@ final _subscribeData = SubscribeData(
   expectedCreatedAt: BigInt.from(1000),
   expectedSubscriptionAuthorityInitId: BigInt.from(7),
 );
-
 final _subscribeDataClone = SubscribeData(
   planId: BigInt.one,
   planBump: 254,
@@ -728,7 +727,6 @@ final _updatePlanData = UpdatePlanData(
   expectedPullers: const [a5, a6, a7, a8],
   expectedMetadataUri: 'https://example.com/expected',
 );
-
 final _updatePlanDataClone = UpdatePlanData(
   status: 0,
   endTs: BigInt.from(3000),

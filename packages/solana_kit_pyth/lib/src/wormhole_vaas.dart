@@ -431,7 +431,6 @@ PythPriceFeedMessage parsePythPriceFeedMessage(Uint8List message) {
   final exponent = _readInt32(message, cursor);
   cursor += 4;
   final publishTime = _readBigInt(message, cursor, 8, signed: true);
-
   cursor += 8;
   final prevPublishTime = _readBigInt(message, cursor, 8, signed: true);
   cursor += 8;

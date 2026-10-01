@@ -6,7 +6,6 @@ import {
   constantValueNode,
   fieldDiscriminatorNode,
   instructionAccountNode,
-
   instructionArgumentNode,
   instructionNode,
   numberTypeNode,
@@ -15,7 +14,6 @@ import {
   publicKeyTypeNode,
   publicKeyValueNode,
   sizeDiscriminatorNode,
-
 } from "@codama/nodes";
 import { LinkableDictionary, NodeStack } from "@codama/visitors-core";
 import { describe, expect, it } from "vitest";
