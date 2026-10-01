@@ -896,6 +896,10 @@ enum SolanaErrorCode {
   // transaction format limit of 64 instructions per transaction.
   instructionPlansInvalidMaxInstructionsPerTransaction(7618011),
 
+  /// A message packer rejected the transaction message for a reason other
+  /// than the standard capacity limits.
+  instructionPlansMessageRejectedByPacker(7618012),
+
   // ---------------------------------------------------------------------------
   // Codecs (8078000 - 8078999)
   // ---------------------------------------------------------------------------
@@ -983,6 +987,12 @@ enum SolanaErrorCode {
 
   /// A string contains a lone surrogate.
   codecsInvalidUtf8String(8078027),
+
+  /// The sentinel was expected at the end of the byte array but was not found.
+  codecsSentinelMissingAtEndOfBytes(8078028),
+
+  /// The sentinel provided to a codec is an empty byte sequence.
+  codecsSentinelMustNotBeEmpty(8078029),
 
   /// The boolean value is not encoded as zero or one.
   ///

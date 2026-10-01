@@ -7,8 +7,8 @@ description: How this workspace tracks @solana/kit compatibility.
 
 ## Upstream Compatibility
 
-- Latest supported `@solana/kit` version: `8.3.0`
-- This Dart port tracks upstream APIs and behavior through `v8.3.0`.
+- Latest supported `@solana/kit` version: `8.4.0`
+- This Dart port tracks upstream APIs and behavior through `v8.4.0`.
 
 <!-- {/docsUpstreamCompatibilitySection} -->
 
@@ -44,7 +44,7 @@ The upstream clients and IDLs the current release was generated and verified aga
 <!-- dprint-ignore -->
 | Upstream repository                                                                           | Pin                                                       | Dart package(s)                                                                 |
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| [kit](https://github.com/anza-xyz/kit)                                                        | `v8.3.0`                                                  | `solana_kit`                                                                    |
+| [kit](https://github.com/anza-xyz/kit)                                                        | `v8.4.0`                                                  | `solana_kit`                                                                    |
 | [espresso-cash-public](https://github.com/brij-digital/espresso-cash-public)                  | `master` (77150680d6bf)                                   | —                                                                               |
 | [helius-sdk](https://github.com/helius-labs/helius-sdk)                                       | `v3.2.0`                                                  | `solana_kit_helius`                                                             |
 | [mobile-wallet-adapter](https://github.com/solana-mobile/mobile-wallet-adapter)               | `@solana-mobile/mobile-wallet-adapter-protocol-kit@0.4.0` | `solana_kit_mobile_wallet_adapter`, `solana_kit_mobile_wallet_adapter_protocol` |

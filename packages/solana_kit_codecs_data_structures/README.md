@@ -126,6 +126,26 @@ void main() {
 }
 ```
 
+Arrays, sets, and maps can also be terminated by a constant sentinel instead of a size prefix. The sentinel is compared at item boundaries only, so its bytes may occur inside an item without terminating the collection. No valid item may begin with the sentinel's bytes — see `SentinelArraySize` for the full constraints.
+
+```dart
+import 'dart:typed_data';
+
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
+
+void main() {
+  // Sentinel-terminated array: the 0x00 byte ends the collection.
+  final codec = getArrayCodec(
+    getU8Codec(),
+    size: SentinelArraySize(Uint8List.fromList([0])),
+  );
+  final encoded = codec.encode([42, 1, 2]); // 2a 01 02 00
+  final decoded = codec.decode(encoded); // [42, 1, 2]
+  print(decoded);
+}
+```
+
 ## Union codecs
 
 `getDiscriminatedUnionCodec` handles Rust-style enums with a discriminant byte. `getLiteralUnionCodec` handles simple enums with no data.

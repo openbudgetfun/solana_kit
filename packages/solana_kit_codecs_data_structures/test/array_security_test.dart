@@ -40,6 +40,34 @@ void main() {
     });
 
     test(
+      'rejects zero progress in sentinel-terminated arrays before looping',
+      () {
+        var reads = 0;
+        final unit = getUnitDecoder();
+        final guardedUnit = FixedSizeDecoder<void>(
+          fixedSize: 0,
+          read: (bytes, offset) {
+            if (++reads > 10) throw StateError('unbounded zero-progress loop');
+            return unit.read(bytes, offset);
+          },
+        );
+        final decoder = getArrayDecoder(
+          guardedUnit,
+          size: SentinelArraySize(Uint8List.fromList([0])),
+        );
+
+        // The byte is present (so the sentinel fits) but does not match the
+        // sentinel, and the item decoder consumes nothing; the loop must
+        // stop instead of spinning forever.
+        expect(
+          () => decoder.decode(Uint8List.fromList([1])),
+          throwsA(isA<SolanaError>()),
+        );
+        expect(reads, lessThanOrEqualTo(1));
+      },
+    );
+
+    test(
       'rejects an attacker-sized unit count before allocating its items',
       () {
         var reads = 0;

@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
-import 'package:solana_kit_instruction_plans/src/max_instructions.dart';
+import 'package:solana_kit_instruction_plans/src/message_packer_errors.dart';
 import 'package:solana_kit_instructions/solana_kit_instructions.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
@@ -105,6 +105,18 @@ class MessagePackerInstructionPlan extends InstructionPlan {
 ///
 /// The [done] method checks whether there are more instructions to pack into
 /// transaction messages.
+///
+/// Custom message packers can rely on
+/// [resolveMaxInstructionsPerTransaction],
+/// [assertMaxInstructionsPerTransaction] and
+/// [assertMessageCanAccommodateSize] to enforce the instruction-count and
+/// size limits, and may throw a [SolanaError] with code
+/// [SolanaErrorCode.instructionPlansMessageRejectedByPacker] to refuse a
+/// message for any other reason. Consumers can use
+/// [isMessagePackerErrorThatRequiresNewCandidate] to identify every error
+/// that calls for a new transaction message.
+///
+/// Added in @solana/kit v8.4.0.
 class MessagePacker {
   /// Creates a [MessagePacker] with the given [done] and
   /// [packMessageToCapacity] functions.
@@ -138,7 +150,16 @@ class MessagePacker {
   /// if packing would exceed `maxInstructions` (defaulting to
   /// `defaultMaxInstructionsPerTransaction`).
   ///
+  /// Throws a [SolanaError] with code
+  /// [SolanaErrorCode.instructionPlansMessageRejectedByPacker] if the
+  /// message packer refuses the provided transaction message for a reason
+  /// other than its size or instruction count — e.g. a constraint specific
+  /// to the instructions being packed. The error's `reason` explains why.
+  ///
   /// Added the `maxInstructions` option in @solana/kit v7.0.0.
+  ///
+  /// Added the `messageRejectedByPacker` rejection path in
+  /// @solana/kit v8.4.0.
   final TransactionMessage Function(
     TransactionMessage message, {
     int? maxInstructions,
@@ -416,8 +437,9 @@ MessagePackerInstructionPlan getLinearMessagePackerInstructionPlan({
         // count limit so packed messages never exceed it. The base
         // instruction is always added, so the limit is checked against
         // `instructions.length + 1`.
-        assertValidMaxInstructionsPerTransaction(maxInstructions);
-        final resolvedMax = resolveMaxInstructions(maxInstructions);
+        final resolvedMax = resolveMaxInstructionsPerTransaction(
+          maxInstructions,
+        );
         assertMaxInstructionsPerTransaction(
           message.instructions.length + 1,
           resolvedMax,
@@ -483,8 +505,9 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
         // Added in @solana/kit v7.0.0: enforce the configurable instruction
         // count limit. The next instruction is always added, so the limit is
         // checked against `instructions.length + 1` before appending.
-        assertValidMaxInstructionsPerTransaction(maxInstructions);
-        final resolvedMax = resolveMaxInstructions(maxInstructions);
+        final resolvedMax = resolveMaxInstructionsPerTransaction(
+          maxInstructions,
+        );
         assertMaxInstructionsPerTransaction(
           message.instructions.length + 1,
           resolvedMax,
@@ -508,20 +531,18 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
             instructions[index],
             currentMessage,
           );
-          final messageSize = getTransactionMessageSize(nextMessage);
+          final nextSize = getTransactionMessageSize(nextMessage);
+          final sizeLimit = getTransactionMessageSizeLimit(nextMessage);
 
-          if (messageSize > getTransactionMessageSizeLimit(nextMessage)) {
-            if (index == instructionIndex) {
-              throw SolanaError(
-                SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
-                {
-                  'numBytesRequired': messageSize - originalMessageSize,
-                  'numFreeBytes':
-                      getTransactionMessageSizeLimit(message) -
-                      originalMessageSize,
-                },
-              );
-            }
+          if (index == instructionIndex) {
+            // The count was already asserted above, so the first instruction
+            // can only fail to fit because of the transaction size limit.
+            assertMessageCanAccommodateSize(
+              currentSize: originalMessageSize,
+              nextSize: nextSize,
+              sizeLimit: sizeLimit,
+            );
+          } else if (nextSize > sizeLimit) {
             instructionIndex = index;
             return currentMessage;
           }
@@ -538,22 +559,17 @@ MessagePackerInstructionPlan getMessagePackerInstructionPlanFromInstructions(
 /// Creates a [MessagePackerInstructionPlan] that packs a list of realloc
 /// instructions.
 ///
-/// It splits instruction by chunks of `REALLOC_LIMIT` (10,240) bytes until
-/// the given [totalSize] is reached.
+/// It splits the total size into chunks of at most `REALLOC_LIMIT` (10,240)
+/// bytes and creates one instruction per chunk until the given [totalSize]
+/// is reached.
 MessagePackerInstructionPlan getReallocMessagePackerInstructionPlan({
   required Instruction Function(int size) getInstruction,
   required int totalSize,
 }) {
-  final numberOfInstructions = (totalSize + _reallocLimit - 1) ~/ _reallocLimit;
-  final lastInstructionSize = totalSize % _reallocLimit;
-  final instructions = List<Instruction>.generate(
-    numberOfInstructions,
-    (i) => getInstruction(
-      i == numberOfInstructions - 1 && lastInstructionSize != 0
-          ? lastInstructionSize
-          : _reallocLimit,
-    ),
-  );
+  final instructions = <Instruction>[];
+  for (var remaining = totalSize; remaining > 0; remaining -= _reallocLimit) {
+    instructions.add(getInstruction(math.min(_reallocLimit, remaining)));
+  }
 
   return getMessagePackerInstructionPlanFromInstructions(instructions);
 }

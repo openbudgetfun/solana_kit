@@ -1,6 +1,6 @@
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_instruction_plans/src/instruction_plan.dart';
-import 'package:solana_kit_instruction_plans/src/max_instructions.dart';
+import 'package:solana_kit_instruction_plans/src/message_packer_errors.dart';
 import 'package:solana_kit_instruction_plans/src/transaction_plan.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
@@ -86,11 +86,14 @@ TransactionPlanner createTransactionPlanner(TransactionPlannerConfig config) {
     InstructionPlan instructionPlan, {
     int? maxInstructionsPerTransaction,
   }) async {
-    // Validate the resolved limit for every invocation so per-call overrides
-    // are checked without mutating or bypassing the planner configuration.
-    assertValidMaxInstructionsPerTransaction(
-      maxInstructionsPerTransaction ?? config.maxInstructionsPerTransaction,
-    );
+    // Reject up front any configured maximum the transaction format could
+    // never satisfy, rather than discovering it mid-plan when a message fails
+    // to compile. Resolving once here also lets the traversal carry a
+    // non-nullable limit.
+    final resolvedMaxInstructionsPerTransaction =
+        resolveMaxInstructionsPerTransaction(
+          maxInstructionsPerTransaction ?? config.maxInstructionsPerTransaction,
+        );
 
     final plan = await _traverse(
       instructionPlan,
@@ -98,9 +101,7 @@ TransactionPlanner createTransactionPlanner(TransactionPlannerConfig config) {
         createTransactionMessage: config.createTransactionMessage,
         onTransactionMessageUpdated:
             config.onTransactionMessageUpdated ?? (msg) async => msg,
-        maxInstructionsPerTransaction:
-            maxInstructionsPerTransaction ??
-            config.maxInstructionsPerTransaction,
+        maxInstructionsPerTransaction: resolvedMaxInstructionsPerTransaction,
         parent: null,
         parentCandidates: [],
       ),
@@ -131,8 +132,9 @@ class _TraverseContext {
   final CreateTransactionMessage createTransactionMessage;
   final OnTransactionMessageUpdated onTransactionMessageUpdated;
   // Added in @solana/kit v7.0.0: the resolved per-transaction instruction
-  // limit threaded through the plan traversal.
-  final int? maxInstructionsPerTransaction;
+  // limit threaded through the plan traversal. Resolved once by the planner
+  // in @solana/kit v8.4.0 so it is never null during traversal.
+  final int maxInstructionsPerTransaction;
   final InstructionPlan? parent;
   final List<_MutableSingleTransactionPlan> parentCandidates;
 }
@@ -409,7 +411,7 @@ Future<_MutableSingleTransactionPlan?> _selectAndMutateCandidate(
       // covers instructions injected by `onTransactionMessageUpdated`.
       assertMaxInstructionsPerTransaction(
         message.instructions.length,
-        resolveMaxInstructions(context.maxInstructionsPerTransaction),
+        context.maxInstructionsPerTransaction,
       );
       final messageSize = getTransactionMessageSize(message);
       if (messageSize > getTransactionMessageSizeLimit(message)) {
@@ -448,7 +450,7 @@ Future<TransactionMessage> _createNewMessage(
   // covers instructions injected by `onTransactionMessageUpdated`.
   assertMaxInstructionsPerTransaction(
     updatedMessage.instructions.length,
-    resolveMaxInstructions(context.maxInstructionsPerTransaction),
+    context.maxInstructionsPerTransaction,
   );
   final updatedMessageSize = getTransactionMessageSize(updatedMessage);
   if (updatedMessageSize > getTransactionMessageSizeLimit(updatedMessage)) {
@@ -465,19 +467,10 @@ Future<TransactionMessage> _createNewMessage(
   return updatedMessage;
 }
 
-const Set<SolanaErrorCode> _candidateOverflowErrorCodes = {
-  SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan,
-  // Added in @solana/kit v7.0.0: exceeding the configured instruction limit
-  // means this candidate can't hold the next instruction; try the next one.
-  SolanaErrorCode.instructionPlansMaxInstructionsPerTransactionExceeded,
-  SolanaErrorCode.transactionTooManyAccountAddresses,
-  SolanaErrorCode.transactionTooManyAccountsInInstruction,
-  SolanaErrorCode.transactionTooManyInstructions,
-  SolanaErrorCode.transactionTooManySignerAddresses,
-};
-
 bool _isCandidateOverflowError(Object error) =>
-    error is SolanaError && _candidateOverflowErrorCodes.contains(error.code);
+    // Added in @solana/kit v8.4.0: a message packer refusing the candidate
+    // (instructionPlansMessageRejectedByPacker) also calls for a new one.
+    isMessagePackerErrorThatRequiresNewCandidate(error);
 
 TransactionPlan _freezeTransactionPlan(_MutableTransactionPlan plan) {
   switch (plan) {

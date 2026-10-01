@@ -51,6 +51,9 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       r'Invalid UTF-8 byte sequence at offset $offset.',
   SolanaErrorCode.codecsInvalidUtf8String:
       r'Invalid UTF-8 string. Found a lone surrogate at index $index.',
+  SolanaErrorCode.codecsSentinelMissingAtEndOfBytes: r'Codec [$codecDescription] expected sentinel [$hexSentinel] to terminate the collection, but reached the end of the byte array without it.',
+  SolanaErrorCode.codecsSentinelMustNotBeEmpty:
+      'The sentinel must not be empty.',
   SolanaErrorCode.codecsInvalidBoolean:
       r'Invalid boolean value. Expected 0 or 1, got $value.',
   SolanaErrorCode.fixedPointsArithmeticOverflow: r'Fixed-point operation `$operation` of kind `$kind` overflowed. Expected a raw bigint in [$min, $max], got $result.',
@@ -211,6 +214,8 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode.instructionPlansExpectedSuccessfulTransactionPlanResult: 'Expected a successful transaction plan result. I.e. there is at least one failed or cancelled transaction in the plan.',
   SolanaErrorCode.instructionPlansInvalidMaxInstructionsPerTransaction: r'The configured maximum of $maxInstructions instructions per transaction is invalid. It must be a positive integer no greater than the transaction format limit of $transactionInstructionLimit instructions per transaction. Provide a `maxInstructionsPerTransaction` (on the transaction planner) or `maxInstructions` (on the message packer) value between 1 and $transactionInstructionLimit.',
   SolanaErrorCode.instructionPlansMaxInstructionsPerTransactionExceeded: r'Planning this transaction message would require $numInstructions instructions, which exceeds the configured maximum of $maxInstructions instructions per transaction. This limit is configurable, and intended to leave headroom for inner instructions which are included in the maximum instruction limit for transactions. Increase `maxInstructionsPerTransaction` on the transaction planner (or `maxInstructions` on the message packer) to allow more instructions per transaction.',
+  SolanaErrorCode.instructionPlansMessageRejectedByPacker:
+      r'The message packer rejected the provided transaction message: $reason.',
   SolanaErrorCode.instructionPlansFailedSingleTransactionPlanResultNotFound: 'No failed transaction plan result was found in the provided transaction plan result.',
   SolanaErrorCode.instructionPlansFailedToExecuteTransactionPlan: 'The provided transaction plan failed to execute. See the transactionPlanResult attribute for more details.',
   SolanaErrorCode.instructionPlansMessageCannotAccommodatePlan: r'The provided message has insufficient capacity to accommodate the next instruction(s) in this plan. Expected at least $numBytesRequired free byte(s), got $numFreeBytes byte(s).',
