@@ -96,7 +96,6 @@ Future<NotificationStreams> executeRpcSubscription(
       final id = message['result'];
 
       if (!_isSubscriptionId(id)) {
-
         fail(
           SolanaError(
             SolanaErrorCode.rpcSubscriptionsExpectedServerSubscriptionId,

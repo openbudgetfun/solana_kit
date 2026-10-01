@@ -72,7 +72,6 @@ Uint8List _compress(List<int> input) {
           (padded[base] << 24) |
           (padded[base + 1] << 16) |
           (padded[base + 2] << 8) |
-
           padded[base + 3];
     }
 

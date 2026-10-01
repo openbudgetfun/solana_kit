@@ -202,7 +202,6 @@ AccumulatorUpdateData parseAccumulatorUpdateData(Uint8List data) {
   cursor += 1 + trailingPayloadSize;
 
   if (cursor >= data.length) {
-
     throw const PythDecodeException('Accumulator update data is truncated');
   }
 

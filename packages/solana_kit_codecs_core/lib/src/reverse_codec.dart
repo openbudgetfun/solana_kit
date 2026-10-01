@@ -84,7 +84,6 @@ void _copySourceToTargetInReverse(
   }
 
   if (left == right) {
-
     target[left + targetOffset] = source[left];
   }
 }

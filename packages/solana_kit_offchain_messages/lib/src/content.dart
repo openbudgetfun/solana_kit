@@ -108,7 +108,6 @@ void assertIsOffchainMessageContentRestrictedAsciiOf1232BytesMax(
   final length = _getUtf8ByteLength(content.text);
 
   if (length > maxBodyBytesHardwareWalletSignable) {
-
     throw SolanaError(SolanaErrorCode.offchainMessageMaximumLengthExceeded, {
       'actualBytes': length,
       'maxBytes': maxBodyBytesHardwareWalletSignable,

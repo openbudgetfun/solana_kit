@@ -329,7 +329,6 @@ PythWormholeMessage parsePythWormholeMessage(Uint8List payload) {
   final merkleRoot = kind == PythWormholeMessageKind.merkleRoot
       ? payload.length >= 22
             ? Uint8List.sublistView(payload, 2, 22)
-
             : throw const PythDecodeException(
                 'Merkle root payload is truncated',
               )

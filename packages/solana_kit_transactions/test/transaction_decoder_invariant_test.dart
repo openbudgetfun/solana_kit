@@ -32,7 +32,6 @@ void main() {
         handled++;
       } on SolanaError {
         handled++;
-
       } catch (error) {
         fail(
           '$label leaked ${error.runtimeType} instead of SolanaError.\n'

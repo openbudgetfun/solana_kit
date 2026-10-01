@@ -112,7 +112,6 @@ Future<Map<String, String>> _authenticate(
       'walletAddress': walletAddress,
     };
   } finally {
-
     secretKeyBytes.fillRange(0, secretKeyBytes.length, 0);
   }
 }
@@ -132,7 +131,6 @@ bool _matchesExistingPlan(
   final days = end.difference(start).inHours / 24;
 
   return period == 'yearly'
-
       ? days >= 350 && days <= 380
       : days >= 25 && days <= 35;
 }

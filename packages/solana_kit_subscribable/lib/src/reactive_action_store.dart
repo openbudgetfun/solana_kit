@@ -185,7 +185,6 @@ class ReactiveActionStore<TArgs extends List<Object?>, TResult> {
       }
 
       if (!_isCurrent(dispatch)) {
-
         throw const ReactiveActionCancellationException(
           'superseded before completion',
         );

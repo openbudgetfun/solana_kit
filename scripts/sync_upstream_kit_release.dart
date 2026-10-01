@@ -465,7 +465,6 @@ class _NpmRegistry {
       stderr.writeln('Cannot reach the npm registry: $error');
       exit(2);
     } on FormatException catch (error) {
-
       stderr.writeln('The npm registry returned malformed JSON: $error');
       exit(2);
     } finally {

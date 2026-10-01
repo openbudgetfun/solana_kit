@@ -51,7 +51,6 @@ List<Object?> applyDefaultCommitment({
 
         return nextParams;
       }
-
     } else if (overrideCommitment != null &&
         overrideCommitment != Commitment.finalized) {
       // Apply the default commitment.

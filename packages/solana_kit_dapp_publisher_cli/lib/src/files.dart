@@ -102,7 +102,6 @@ String sha256Hex(Uint8List bytes) {
       final s0 =
           _rotateRight(w[t - 15], 7) ^
           _rotateRight(w[t - 15], 18) ^
-
           (w[t - 15] >>> 3);
       final s1 =
           _rotateRight(w[t - 2], 17) ^

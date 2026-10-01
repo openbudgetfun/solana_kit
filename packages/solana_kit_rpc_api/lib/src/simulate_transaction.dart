@@ -98,7 +98,6 @@ class SimulateTransactionConfig {
     if (minContextSlot != null) json['minContextSlot'] = minContextSlot;
 
     if (replaceRecentBlockhash != null) {
-
       json['replaceRecentBlockhash'] = replaceRecentBlockhash;
     }
 

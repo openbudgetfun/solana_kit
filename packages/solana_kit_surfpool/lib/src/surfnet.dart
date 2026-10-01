@@ -336,7 +336,6 @@ class Surfnet {
       _payerSecretKey.fillRange(0, _payerSecretKey.length, 0);
 
       if (_closeClientOnStop) {
-
         _client.close();
       }
     }

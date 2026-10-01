@@ -57,7 +57,6 @@ Codec<Set<T>, Set<T>> getSetCodec<T>(
       encoderSize = PrefixedArraySize(encoderFromCodec(prefix));
       decoderSize = PrefixedArraySize(decoderFromCodec(prefix));
     } else {
-
       encoderSize = size;
       decoderSize = size;
     }

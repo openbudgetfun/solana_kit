@@ -37,7 +37,6 @@ class BaseXLookup {
       final sparse = <int, int>{};
 
       for (var i = 0; i < codeUnits.length; i++) {
-
         sparse.putIfAbsent(codeUnits[i], () => i);
       }
 

@@ -19,7 +19,6 @@ NodeVisitor getBigIntUpcastVisitor(List<KeyPath> allowedNumericKeyPaths) {
       return value;
     } else {
       if (value is int) {
-
         return BigInt.from(value);
       }
 

@@ -201,7 +201,6 @@ List<_NormalizedCompiledInstruction> _normalizeCompiledInstructions(
     final payloads = compiledMessage.instructionPayloads ?? const [];
 
     if (headers.length != payloads.length) {
-
       throw SolanaError(
         SolanaErrorCode.transactionInstructionHeadersPayloadsMismatch,
         {

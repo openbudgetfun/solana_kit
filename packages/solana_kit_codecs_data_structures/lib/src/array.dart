@@ -172,7 +172,6 @@ Encoder<List<T>> getArrayEncoder<T>(
         // must be widened to `BigInt` before writing.
         offset = prefixObject.write(BigInt.from(array.length), bytes, offset);
       } else if (prefixObject is Encoder<num>) {
-
         offset = prefixObject.write(array.length, bytes, offset);
       }
     }
@@ -305,7 +304,6 @@ Decoder<List<T>> getArrayDecoder<T>(
         }
 
         if (containsBytes(bytes, sentinel, offset)) {
-
           // The sentinel is present; consume it and stop.
           return (array, offset + sentinel.length);
         }
@@ -333,7 +331,6 @@ Decoder<List<T>> getArrayDecoder<T>(
       int resolvedSizeLocal;
 
       if (prefixObject is Decoder<BigInt>) {
-
         final (prefixValue, newOffset) = prefixObject.read(bytes, offset);
 
         if (prefixValue < BigInt.zero || prefixValue > BigInt.from(maxItems)) {
@@ -401,7 +398,6 @@ Codec<List<T>, List<T>> getArrayCodec<T>(
       encoderSize = PrefixedArraySize(encoderFromCodec(prefix));
       decoderSize = PrefixedArraySize(decoderFromCodec(prefix));
     } else {
-
       encoderSize = size;
       decoderSize = size;
     }

@@ -175,7 +175,6 @@ void _assertIsWellFormedUtf8String(String value) {
 
       index++;
     } else if (unit >= 0xdc00 && unit <= 0xdfff) {
-
       throw SolanaError(SolanaErrorCode.codecsInvalidUtf8String, {
         'index': index,
       });

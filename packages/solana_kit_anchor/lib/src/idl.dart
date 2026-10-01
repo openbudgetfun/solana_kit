@@ -27,7 +27,6 @@ sealed class AnchorIdlType {
 
       if (defined is Map) {
         if (defined['generics'] != null) {
-
           throw ArgumentError.value(
             defined['generics'],
             'type.defined.generics',

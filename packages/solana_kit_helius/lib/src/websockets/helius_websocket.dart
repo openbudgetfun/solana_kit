@@ -246,6 +246,7 @@ class HeliusWebSocket {
       }),
     );
   }
+
   // coverage:ignore-end
   void _onDone() {
     final subscription = _subscription;
@@ -257,7 +258,6 @@ class HeliusWebSocket {
     _nextId = 1;
 
     if (subscription != null) {
-
       unawaited(subscription.cancel());
     }
 

@@ -73,7 +73,6 @@ List<_RpcInnerInstructionsGroup> _parseInnerInstructions(
           data is! String ||
           accountsRaw is! List ||
           (stackHeight != null && stackHeight is! int)) {
-
         _throwUnrecognized();
       }
       final accounts = <int>[];

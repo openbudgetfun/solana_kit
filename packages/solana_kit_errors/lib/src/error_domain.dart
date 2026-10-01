@@ -102,7 +102,6 @@ SolanaErrorDomain getSolanaErrorDomain(SolanaErrorCode code) {
   // Includes a historical constant typo in the upstream-port map.
   if ((v >= 3230000 && v <= 3230999) ||
       code == SolanaErrorCode.accountsOneOrMoreAccountsNotFound) {
-
     return SolanaErrorDomain.accounts;
   }
 

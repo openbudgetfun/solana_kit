@@ -66,7 +66,6 @@ Encoder<T?> getNullableEncoder<T>(
     noneEncoderFixedSize = noneValue.bytes.length;
     noneEncoder = getConstantEncoder(noneValue.bytes);
   } else {
-
     noneEncoderFixedSize = 0;
     noneEncoder = getUnitEncoder();
   }
@@ -148,7 +147,6 @@ Decoder<T?> getNullableDecoder<T>(
     noneFixedSize = noneValue.bytes.length;
     noneDecoder = getConstantDecoder(noneValue.bytes);
   } else {
-
     noneFixedSize = 0;
     noneDecoder = getUnitDecoder();
   }
@@ -177,7 +175,6 @@ Decoder<T?> getNullableDecoder<T>(
 
       if (noneValue is ZeroesNoneValue) {
         zeroValue = Uint8List(noneFixedSize!);
-
       } else {
         zeroValue = (noneValue as ConstantNoneValue).bytes;
       }

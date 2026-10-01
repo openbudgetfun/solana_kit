@@ -99,7 +99,6 @@ Future<DevPortalConfigsResponse> fetchDevPortalConfigs(
     );
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
-
       throw createSolanaError(
         SolanaErrorCode.heliusRestError,
         context: {

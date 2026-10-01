@@ -188,7 +188,6 @@ TransactionExecutionBoundary createTransactionExecutionBoundary(
         final value = solanaError.context['transactionPlanResult'];
 
         if (value is TransactionPlanResult) {
-
           transactionPlanResult = value;
         }
       }

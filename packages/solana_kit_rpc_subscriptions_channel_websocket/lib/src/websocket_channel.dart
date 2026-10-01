@@ -205,7 +205,6 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
     unawaited(errorsController.close());
 
     if (config.signal?.isCancelled ?? false) {
-
       final reason = config.signal!.reason;
 
       if (reason is Exception || reason is Error) {

@@ -449,7 +449,6 @@ Future<PollOutcome> pollUntilTerminal(
     if (status.readyToRedirect) return PollOutcome('completed', status: status);
 
     if (status.phase == 'expired')
-
       return PollOutcome('expired', status: status);
 
     if (status.phase == 'failed') return PollOutcome('failed', status: status);
@@ -555,7 +554,6 @@ Future<PaymentLink> createPayment(
       );
   } on StateError {
     rethrow;
-
   } on Object {
     // Preview can be unavailable for fresh one-time checkout customers; initialize surfaces final errors.
   }

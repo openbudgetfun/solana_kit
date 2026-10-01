@@ -120,7 +120,6 @@ Future<(Address, int)> findAssociatedTokenPda({
       )) {
         bumpSeed--;
       } else {
-
         rethrow;
       }
     }

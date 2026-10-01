@@ -124,7 +124,6 @@ Future<void> main(List<String> args) async {
       await serverDone;
     }
   } finally {
-
     await server.close(force: true);
   }
 }
@@ -166,7 +165,6 @@ List<String> _contentRoutes(String contentDirectoryPath) {
 
     if (relative == 'index.md') {
       routes.add('/');
-
     } else {
       routes.add('/${relative.substring(0, relative.length - '.md'.length)}/');
     }

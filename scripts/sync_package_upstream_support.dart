@@ -138,7 +138,6 @@ Map<String, List<String>> _packageRepos(Map<String, Object?> config) {
   }
 
   for (final repos in result.values) {
-
     repos.sort();
   }
   return Map.fromEntries(
@@ -201,7 +200,6 @@ List<Map<String, Object?>> _groupSupportRuns({
   for (final release in group.reversed) {
     final pins = <String, String>{
       for (final repo in repos)
-
         if (release.pins[repo] != null) repo: release.pins[repo]!,
     };
 

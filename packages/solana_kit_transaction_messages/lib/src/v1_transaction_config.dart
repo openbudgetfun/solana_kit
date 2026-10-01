@@ -54,7 +54,6 @@ TransactionMessage setTransactionMessageConfig(
 
   return current == merged
       ? transactionMessage
-
       : transactionMessage.copyWith(config: merged);
 }
 
@@ -73,7 +72,6 @@ List<CompiledTransactionConfigValue> getTransactionConfigValues([
   }
 
   if (computeUnitLimit != null) {
-
     values.add(CompiledTransactionConfigValue.u32(computeUnitLimit));
   }
 
@@ -105,7 +103,6 @@ int getTransactionConfigMask([V1TransactionConfig? config]) {
   }
 
   if (config?.heapSize != null) {
-
     mask |= transactionConfigHeapSizeBitMask;
   }
 

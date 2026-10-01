@@ -48,7 +48,6 @@ export 'src/generated/token.dart'
         CreateAssociatedTokenInstructionData,
         RecoverNestedAssociatedTokenInstructionData,
         associatedTokenErrorInvalidOwner,
-
         getAssociatedTokenErrorMessage,
         getCreateAssociatedTokenIdempotentInstruction,
         getCreateAssociatedTokenIdempotentInstructionDataCodec,
@@ -57,7 +56,6 @@ export 'src/generated/token.dart'
         getCreateAssociatedTokenInstruction,
         getCreateAssociatedTokenInstructionDataCodec,
         getCreateAssociatedTokenInstructionDataDecoder,
-
         getCreateAssociatedTokenInstructionDataEncoder,
         getRecoverNestedAssociatedTokenInstruction,
         getRecoverNestedAssociatedTokenInstructionDataCodec,
@@ -66,7 +64,6 @@ export 'src/generated/token.dart'
         isAssociatedTokenError,
         parseCreateAssociatedTokenIdempotentInstruction,
         parseCreateAssociatedTokenInstruction,
-
         parseRecoverNestedAssociatedTokenInstruction;
 export 'src/mint_to_ata.dart';
 export 'src/transfer_to_ata.dart';

@@ -193,7 +193,6 @@ int? _getFixedSize(List<Object> items) {
     } else if (item case FixedSizeDecoder(:final fixedSize)) {
       itemSize = fixedSize;
     } else {
-
       return null;
     }
 

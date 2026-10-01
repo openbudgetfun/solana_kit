@@ -147,7 +147,6 @@ InstructionPlan getMintV2InstructionPlan(
       const Address('CpiSigner111111111111111111111111111111111111');
   final coreCollection =
       config.coreCollection ??
-
       input.merkleTree; // Default to tree if not provided
 
   // Encode the MetadataArgsV2 with the generated encoder, which emits the

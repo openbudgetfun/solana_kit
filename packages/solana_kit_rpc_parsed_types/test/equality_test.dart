@@ -6,7 +6,6 @@ import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart'
         Blockhash,
         StringifiedBigInt,
         StringifiedNumber,
-
         TokenAmount,
         UnixTimestamp;
 import 'package:test/test.dart';

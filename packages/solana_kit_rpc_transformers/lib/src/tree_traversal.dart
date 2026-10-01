@@ -50,7 +50,6 @@ Object? Function(Object? node, TraversalState state) _getTreeWalker(
       }
 
       return out;
-
     } else {
       var result = node;
 

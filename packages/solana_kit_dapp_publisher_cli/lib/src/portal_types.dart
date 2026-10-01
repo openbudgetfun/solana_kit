@@ -92,7 +92,6 @@ Object? readDeep(Map<String, Object?> map, String path) {
 
     if (value is Map<String, Object?>) {
       current = value;
-
     } else {
       return null;
     }

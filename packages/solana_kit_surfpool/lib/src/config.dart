@@ -66,7 +66,6 @@ class SurfnetConfig {
     _validatePort(studioPort, 'studioPort');
 
     if (rpcPort != null && rpcPort == wsPort) {
-
       throw ArgumentError.value(wsPort, 'wsPort', 'must differ from rpcPort');
     }
 

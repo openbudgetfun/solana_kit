@@ -147,7 +147,6 @@ Future<List<KeyPair>> grindKeyPairs({
           found.add(keyPair);
           retained = true;
         }
-
       } finally {
         // A grind can reject millions of candidates. Dispose rejected keys
         // immediately instead of waiting for a best-effort GC finalizer.

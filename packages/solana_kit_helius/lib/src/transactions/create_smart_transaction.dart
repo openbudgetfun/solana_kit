@@ -263,7 +263,6 @@ Iterable<String> _accountAddressesOf(Object? instruction) sync* {
 
       if (address != null) yield address.toString();
     } on Object {
-
       continue;
     }
   }

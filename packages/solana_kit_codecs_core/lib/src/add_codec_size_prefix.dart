@@ -93,7 +93,6 @@ Decoder<TTo> addDecoderSizePrefix<TTo>(
     Uint8List sliced;
 
     if (contentStart > 0 || remaining > size) {
-
       sliced = bytes.sublist(contentStart, contentStart + size);
     } else {
       sliced = bytes;

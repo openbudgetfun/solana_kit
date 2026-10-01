@@ -711,7 +711,6 @@ PriceUpdateV2Account decodePriceUpdateV2Account(Uint8List data) {
 
   for (var i = 0; i < priceUpdateV2Discriminator.length; i++) {
     if (data[i] != priceUpdateV2Discriminator[i]) {
-
       throw const PythDecodeException(
         'Unexpected PriceUpdateV2 account discriminator',
       );
@@ -738,7 +737,6 @@ PriceUpdateV2Account decodePriceUpdateV2Account(Uint8List data) {
       : PythVerificationLevel.full();
 
   if (verificationVariant == 0) {
-
     cursor += 1;
   }
 

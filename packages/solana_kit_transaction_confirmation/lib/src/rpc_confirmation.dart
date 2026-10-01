@@ -8,7 +8,6 @@ import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart'
     show
         GetAccountInfoConfig,
         GetEpochInfoConfig,
-
         GetSignatureStatusesConfig,
         SendTransactionConfig;
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';

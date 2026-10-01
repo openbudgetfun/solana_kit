@@ -234,7 +234,6 @@ int _getV1EncoderSize(CompiledTransactionMessage message) {
   var size = 1 + 3 + 4 + 32 + 1 + 1 + message.staticAccounts.length * 32;
 
   for (final value in configValues) {
-
     size += value.kind == 'u64' ? 8 : 4;
   }
 
@@ -287,7 +286,6 @@ int _writeV1Message(
   );
 
   for (final address in message.staticAccounts) {
-
     pos = addrEnc.write(address, bytes, pos);
   }
 

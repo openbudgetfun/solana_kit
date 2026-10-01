@@ -162,7 +162,6 @@ List<_ConsumerBlock> _consumerBlocks(File file) {
     }
 
     if (endIndex >= lines.length) {
-
       throw _ParseError('Missing consumer end tag for `$name` in ${file.path}');
     }
 

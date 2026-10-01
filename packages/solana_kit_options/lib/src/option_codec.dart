@@ -102,7 +102,6 @@ Encoder<Object?> getOptionEncoder<TFrom>(
 
         pos += noneValueFixedSize;
       } else if (noneValue is ConstantOptionNoneValue) {
-
         bytes.setAll(pos, noneValue.bytes);
         pos += noneValue.bytes.length;
       }
@@ -226,7 +225,6 @@ Decoder<Option<TTo>> getOptionDecoder<TTo>(
       if (noneValue is ZeroesOptionNoneValue) {
         zeroValue = Uint8List(noneValueFixedSize);
       } else {
-
         zeroValue = (noneValue as ConstantOptionNoneValue).bytes;
       }
 
@@ -383,7 +381,6 @@ int? _computeMaxSize(
   } else if (prefix is VariableSizeEncoder<num>) {
     if (prefix.maxSize == null) return null;
     prefixMax = prefix.maxSize!;
-
   } else {
     return null;
   }
@@ -398,7 +395,6 @@ int? _computeMaxSize(
     itemMax = itemCodec.maxSize!;
   } else if (itemCodec is FixedSizeDecoder) {
     itemMax = itemCodec.fixedSize;
-
   } else if (itemCodec is VariableSizeDecoder) {
     if (itemCodec.maxSize == null) return null;
     itemMax = itemCodec.maxSize!;

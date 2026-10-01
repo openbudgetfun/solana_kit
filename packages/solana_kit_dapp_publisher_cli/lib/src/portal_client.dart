@@ -73,7 +73,6 @@ final class SensitiveString {
     var diff = 0;
 
     for (var i = 0; i < value.length; i++) {
-
       diff |= value.codeUnitAt(i) ^ other.value.codeUnitAt(i);
     }
 
@@ -121,7 +120,6 @@ Future<T> callPortalProcedure<T>(
     }
   } finally {
     if (owned) {
-
       httpClient.close();
     }
   }
@@ -160,7 +158,6 @@ Future<T> callPortalProcedure<T>(
       final message = optionalString(left['message']);
 
       if (message != null && message.isNotEmpty) {
-
         throw PublisherCliException('$procedure: $message');
       }
     }

@@ -74,7 +74,6 @@ void main() {
       } on SolanaError {
         handled++;
       } catch (error) {
-
         fail(
           '$label leaked ${error.runtimeType} instead of SolanaError.\n'
           '  input:  ${_hex(bytes)}\n'

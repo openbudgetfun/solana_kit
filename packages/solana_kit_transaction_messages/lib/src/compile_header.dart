@@ -20,7 +20,6 @@ MessageHeader getCompiledMessageHeader(List<OrderedAccount> orderedAccounts) {
         numReadonlySignerAccounts++;
       }
     } else if (!accountIsWritable) {
-
       numReadonlyNonSignerAccounts++;
     }
   }

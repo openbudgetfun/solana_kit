@@ -32,7 +32,6 @@ SolanaError createSolanaJsonRpcIntegerOverflowError(
     } else {
       argumentLabel = '${argPosition}th';
     }
-
   } else {
     argumentLabel = '`${keyPath[0]}`';
   }

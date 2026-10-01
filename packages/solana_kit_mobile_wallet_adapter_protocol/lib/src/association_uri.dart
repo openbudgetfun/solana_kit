@@ -91,7 +91,6 @@ AssociationParams parseAssociationUri(Uri uri) {
     final reflectorIdBytes = _fromBase64Url(uri.queryParameters['id']!);
     // Parse reflector ID from bytes (it's encoded as base64url).
     final reflectorId = reflectorIdBytes.isNotEmpty
-
         ? _bytesToInt(reflectorIdBytes)
         : 0;
     return RemoteAssociationParams(

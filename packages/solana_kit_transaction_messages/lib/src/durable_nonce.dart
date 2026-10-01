@@ -122,7 +122,6 @@ TransactionMessage setTransactionMessageLifetimeUsingDurableNonce(
         ];
       }
     } else {
-
       // We have a different advance nonce instruction; replace it.
       newInstructions = [
         createAdvanceNonceAccountInstruction(
@@ -176,7 +175,6 @@ void _assertValidNonceFormat(String nonce) {
   }
 
   if (actualLength != 32) {
-
     throw SolanaError(
       SolanaErrorCode.transactionInvalidNonceFormat,
       {'actualLength': actualLength},

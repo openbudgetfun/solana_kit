@@ -116,7 +116,6 @@ void _rewritePubspec(
     final name = _readPackageName(packagePubspec);
 
     if (name != null && name.startsWith('solana_kit_')) {
-
       overrides.add((name, entity.path));
     }
   }

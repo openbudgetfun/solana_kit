@@ -784,7 +784,6 @@ Map<String, String?> parseCliFlags(List<String> arguments) {
     final withoutPrefix = argument.substring(2);
     final equalsIndex = withoutPrefix.indexOf('=');
     final name = equalsIndex >= 0
-
         ? withoutPrefix.substring(0, equalsIndex)
         : withoutPrefix;
 

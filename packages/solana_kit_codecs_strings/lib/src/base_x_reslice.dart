@@ -80,7 +80,6 @@ List<int> _reslice(
     bitsInAccumulator += inputBits;
 
     while (bitsInAccumulator >= outputBits) {
-
       bitsInAccumulator -= outputBits;
       output.add((accumulator >> bitsInAccumulator) & mask);
     }

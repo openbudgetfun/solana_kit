@@ -194,7 +194,6 @@ void validatePublicationBundle(PublicationBundle bundle) {
       if (value.isEmpty) {
         missing.add(field);
       }
-
     } else if (value == null) {
       missing.add(field);
     }

@@ -178,7 +178,6 @@ String _renderParityTable(Map<String, Object?> parityData) {
     }
 
     if (previous != null && _compareVersions(version, previous) >= 0) {
-
       stderr.writeln(
         'kitParity rows must be ordered newest first: $version follows '
         '$previous.',
@@ -313,7 +312,6 @@ List<_Target> _packageTargets(Map<String, Object?> referenceRepos) {
     for (final repo
         in (referenceRepos['repos'] as List<Object?>? ?? const [])
             .cast<Map<String, Object?>>())
-
       if (repo['name'] != null && repo['url'] != null)
         '${repo['name']}': '${repo['url']}',
   };

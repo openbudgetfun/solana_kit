@@ -134,7 +134,6 @@ PublicationSource _translateIngestionSource(
   }
 
   if (sourceKind == 'externalUrl') {
-
     return ApkUrlSource(url: sourceUrl, fileName: fileName);
   }
   return PortalUploadSource(
@@ -170,7 +169,6 @@ PublicationBundle mapBackendBundleToPublicationBundle(
       optionalString(dapp['subtitle']) ??
       asString(dapp['description']).substringSafe(0, 50);
   final localizedShortDescription =
-
       optionalString(release['shortDescription']) ??
       asString(dapp['description']).substringSafe(0, 50);
   final longDescription =
@@ -179,7 +177,6 @@ PublicationBundle mapBackendBundleToPublicationBundle(
   final newInVersion = optionalString(release['newInVersion']) ?? '';
   final dappName = optionalString(dapp['dappName']) ?? releaseName;
   final publisherType = optionalString(publisher['type']) == 'individual'
-
       ? 'individual'
       : 'organization';
 

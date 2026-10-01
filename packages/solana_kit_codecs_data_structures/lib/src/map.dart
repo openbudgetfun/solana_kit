@@ -81,7 +81,6 @@ Codec<Map<K, V>, Map<K, V>> getMapCodec<K, V>(
       encoderSize = PrefixedArraySize(encoderFromCodec(prefix));
       decoderSize = PrefixedArraySize(decoderFromCodec(prefix));
     } else {
-
       encoderSize = size;
       decoderSize = size;
     }

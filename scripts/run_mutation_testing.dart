@@ -135,7 +135,6 @@ class _Scope {
           ).map((file) => _relative(root, file.path)),
         );
       } else {
-
         stderr.writeln(
           '  warning: scope "$name" lists a missing source path: $entry',
         );
@@ -584,7 +583,6 @@ Map<String, _Scope> _loadScopes(Directory root) {
   final rawScopes = map?['scopes'];
 
   if (rawScopes is! Map<String, Object?>) {
-
     throw StateError(
       'config/mutation/scopes.json must contain a top-level `scopes` object.',
     );

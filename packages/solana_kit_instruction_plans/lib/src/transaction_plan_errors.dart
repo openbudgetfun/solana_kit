@@ -250,7 +250,6 @@ Map<String, Object?> _getMultipleFailuresContext(
         : '';
     causeMessages =
         '.$failureLines$logSnippet${logSnippet.isEmpty ? '\n' : ''}';
-
   } else {
     cause = abortReason;
     causeMessages = abortReason != null

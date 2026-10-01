@@ -97,7 +97,6 @@ void _keccakF1600(List<BigInt> state) {
           state[x + 5] ^
           state[x + 10] ^
           state[x + 15] ^
-
           state[x + 20];
     }
 

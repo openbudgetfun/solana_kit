@@ -28,7 +28,6 @@ String _interpolate(String template, Map<String, Object?> context) {
       i++;
       buffer.write(template[i]);
       i++;
-
     } else if (char == r'$') {
       // Variable reference: collect word characters after $.
       i++;

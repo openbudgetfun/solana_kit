@@ -228,7 +228,6 @@ Future<_MutableTransactionPlan?> _traverseSequential(
 
       if (isFlattened) {
         transactionPlans.addAll(transactionPlan.plans);
-
       } else {
         transactionPlans.add(transactionPlan);
       }

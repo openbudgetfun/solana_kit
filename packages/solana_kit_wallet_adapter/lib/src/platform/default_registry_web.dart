@@ -97,7 +97,6 @@ class BrowserWalletRegistry extends WalletRegistryController {
 
         return (() => _unregister(raw)).toJS;
       } on Object {
-
         return (() {}).toJS;
       }
     }
@@ -594,7 +593,6 @@ JSObject _transactionInput(
     );
 
     if (options.minContextSlot != null) {
-
       rawOptions['minContextSlot'] = options.minContextSlot!.toJS;
     }
 

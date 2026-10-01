@@ -24,7 +24,6 @@ SolanaError createSolanaJsonRpcIntegerOverflowError(
     if (lastDigit == 1 && lastTwoDigits != 11) {
       argumentLabel = '${argPosition}st';
     } else if (lastDigit == 2 && lastTwoDigits != 12) {
-
       argumentLabel = '${argPosition}nd';
     } else if (lastDigit == 3 && lastTwoDigits != 13) {
       argumentLabel = '${argPosition}rd';

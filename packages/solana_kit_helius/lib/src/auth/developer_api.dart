@@ -213,7 +213,6 @@ Future<Object?> _developerApiRequest(
       ...?userAgentHeader,
     };
     final response = method == 'POST'
-
         ? await httpClient.post(
             uri,
             headers: headers,

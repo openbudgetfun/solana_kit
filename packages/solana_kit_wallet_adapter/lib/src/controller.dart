@@ -238,7 +238,6 @@ class WalletController extends ChangeNotifier {
       rethrow;
     } finally {
       if (_isCurrentConnection(revision)) {
-
         _emit(_state.copyWith(operationStatus: WalletOperationStatus.idle));
       }
     }

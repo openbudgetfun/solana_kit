@@ -399,7 +399,6 @@ String? getTokenMetadataCreateCollectionAddress(
     }
 
     try {
-
       final decoded = getCreateInstructionDataDecoder().decode(data);
       final args = decoded.createArgs;
 
