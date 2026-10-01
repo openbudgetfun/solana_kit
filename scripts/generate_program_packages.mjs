@@ -511,7 +511,6 @@ for (const { repo, pkg, idlPath: idlPathOverride, programName } of PROGRAMS) {
         : repo === "token-2022"
           ? prepareToken2022Root(idlJson)
           : idlJson;
-
     } else {
       // Anchor/shank-format IDL: pin the renderer-facing program name, then
       // convert with @codama/nodes-from-anchor.

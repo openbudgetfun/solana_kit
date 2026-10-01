@@ -105,7 +105,6 @@ Future<String> buildAndSendTokenTransfer(
         (blockhashResult! as Map<String, Object?>)['value']!
             as Map<String, Object?>;
     final blockhash = blockhashValue['blockhash']! as String;
-
     final lastValidBlockHeight =
         switch (blockhashValue['lastValidBlockHeight']) {
           final BigInt value => value,

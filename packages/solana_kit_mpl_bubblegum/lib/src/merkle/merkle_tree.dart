@@ -129,7 +129,6 @@ class MerkleTree {
         final parentHash = keccak256(
           Uint8List.fromList([...left.hash, ...right.hash]),
         );
-
         nextLevel.add(_MerkleNode(parentHash, left: left, right: right));
       }
 

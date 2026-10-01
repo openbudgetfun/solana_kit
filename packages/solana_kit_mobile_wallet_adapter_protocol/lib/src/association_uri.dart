@@ -93,6 +93,7 @@ AssociationParams parseAssociationUri(Uri uri) {
     final reflectorId = reflectorIdBytes.isNotEmpty
         ? _bytesToInt(reflectorIdBytes)
         : 0;
+
     return RemoteAssociationParams(
       associationPublicKey: publicKeyBytes,
       protocol: protocol,

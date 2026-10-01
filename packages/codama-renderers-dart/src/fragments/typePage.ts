@@ -298,11 +298,11 @@ ${fieldDecls}
               .join(', ');
       const structMapEntries =
         fields.length === 0
-
           ? ''
           : `, ${fields.map((f: StructFieldTypeNode)=>`'${f.name as string}': ${camelCase(f.name as string)}`).join(', ')}`;
       encodeCases.push(`${variantClassName}(${structPattern}) => <String, Object?>{'__kind': ${i}${structMapEntries}},`);
       decodeCases.push(`case ${i}: return ${variantClassName}(${fromMapFields.replace(/\n/g, ' ').replace(/,$/, '')});`);
+
     } else if (variant.kind === "enumTupleVariantTypeNode") {
       const resolvedTuple = resolveNestedTypeNode(variant.tuple);
       const items = resolvedTuple.items ?? [];

@@ -224,6 +224,7 @@ Future<Object?> _developerApiRequest(
       final responseMessage = response.body.length <= 4096
           ? response.body
           : '${response.body.substring(0, 4096)}…';
+
       throw createSolanaError(
         SolanaErrorCode.heliusRestError,
         context: {

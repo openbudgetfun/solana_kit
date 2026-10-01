@@ -93,7 +93,7 @@ jobs:
         run: monochange step validate
         shell: devenv shell -- bash -e {0}
 
-      - uses: ifiokjr/monostyle@862af88bca4b9f1046b58e462499bfcf17e4369f # v0.3.23
+      - uses: ifiokjr/monostyle@6992bad14db3a663523b731a5f29192bcd91cd23 # v0.3.24
         if: always()
         with:
           version: 0.3.23
