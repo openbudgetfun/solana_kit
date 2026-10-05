@@ -13,5 +13,6 @@ Future<HeliusProject> authGetProject(
   final result = await restClient.get(
     '/v0/auth/projects/$projectId?api-key=$apiKey',
   );
+
   return HeliusProject.fromJson(result! as Map<String, Object?>);
 }

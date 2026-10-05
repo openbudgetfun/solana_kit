@@ -51,6 +51,7 @@ void main() {
     SolanaError(SolanaErrorCode.keysInvalidKeyPairByteLength),
     SolanaError(SolanaErrorCode.blockHeightExceeded),
   ];
+
   for (final e in samples) {
     print('code ${e.code}:');
     route(e);

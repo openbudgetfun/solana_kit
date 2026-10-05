@@ -14,5 +14,6 @@ Future<StakeTransactionResult> stakingCreateWithdrawTransaction(
     '/v0/staking/withdraw?api-key=$apiKey',
     body: request.toJson(),
   );
+
   return StakeTransactionResult.fromJson(result! as Map<String, Object?>);
 }

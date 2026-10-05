@@ -130,6 +130,7 @@ MetadataArgsV2 toLeafMetadataV2(Object metadata, [RoyaltyRawFields? raw]) {
       collection: leaf.collection?.key,
     );
   }
+
   if (metadata is MetadataArgsV2) {
     final resolved = resolveLeafRoyaltyFields(
       sellerFeeBasisPoints: metadata.sellerFeeBasisPoints,
@@ -151,6 +152,7 @@ MetadataArgsV2 toLeafMetadataV2(Object metadata, [RoyaltyRawFields? raw]) {
       creators: resolved.creators,
     );
   }
+
   throw ArgumentError.value(
     metadata,
     'metadata',

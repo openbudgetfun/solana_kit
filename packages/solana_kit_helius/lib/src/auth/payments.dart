@@ -96,6 +96,7 @@ Future<String> payPaymentLink(
       'must be positive',
     );
   }
+
   final rawAmount = BigInt.from(paymentLink.amountCents) * _centsToUsdcRaw;
   return payWithMemo(
     secretKey,

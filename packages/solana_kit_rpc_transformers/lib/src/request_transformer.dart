@@ -33,6 +33,7 @@ RpcRequestTransformer getDefaultRequestTransformerForSolanaRpc([
   RequestTransformerConfig? config,
 ]) {
   final handleIntegerOverflow = config?.onIntegerOverflow;
+
   return (RpcRequest<Object?> request) {
     var result = request;
 

@@ -37,6 +37,7 @@ Future<void> main() async {
       .send();
 
   final account = typedInfo.value;
+
   if (account != null) {
     print('\nSystem program exists.');
     print('  owner     : ${account['owner']}');
@@ -61,6 +62,7 @@ Future<void> main() async {
   ]).send();
 
   print('\ngetMultipleAccounts returned ${multi.value.length} results:');
+
   for (var i = 0; i < multi.value.length; i++) {
     final a = multi.value[i];
     print('  [$i] ${a == null ? 'null' : 'owner=${a['owner']}'}');

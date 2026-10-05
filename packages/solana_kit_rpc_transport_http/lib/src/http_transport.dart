@@ -139,8 +139,8 @@ Uri _validateAndNormalizeHttpEndpoint(
             'Use an https:// URL instead.',
       );
     }
-    // coverage:ignore-end
 
+    // coverage:ignore-end
     return parsedUrl;
   }
 

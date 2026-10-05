@@ -169,6 +169,7 @@ class CapturingSubscriptionsTransport {
     RpcSubscriptionsTransportConfig config,
   ) async {
     configs.add(config);
+
     return streams;
   }
 

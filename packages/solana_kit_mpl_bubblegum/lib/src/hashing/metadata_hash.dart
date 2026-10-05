@@ -74,12 +74,14 @@ Uint8List hashMetadataDataV2(Object metadata, [RoyaltyRawFields? raw]) {
 /// the concatenation is hashed. Mirrors the upstream `hashMetadataCreators`.
 Uint8List hashMetadataCreators(List<Creator> creators) {
   final buffer = BytesBuilder();
+
   for (final creator in creators) {
     buffer
       ..add(getAddressEncoder().encode(creator.address))
       ..addByte(creator.verified ? 1 : 0)
       ..addByte(creator.share);
   }
+
   return bubblegumHash([buffer.toBytes()]);
 }
 
@@ -116,6 +118,7 @@ Uint8List encodeBorshString(String value) {
   final buffer = BytesBuilder()
     ..add(_u32Le(bytes.length))
     ..add(bytes);
+
   return buffer.toBytes();
 }
 

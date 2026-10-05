@@ -162,6 +162,7 @@ void main() {
     for (final interval in ['5m', '1h', '6h', '24h']) {
       await client.tokens.category('toptraded', interval: interval);
     }
+
     expect(paths, [
       for (final interval in ['5m', '1h', '6h', '24h'])
         '/tokens/v2/toptraded/$interval',
@@ -194,6 +195,7 @@ void main() {
           throwsArgumentError,
         );
       }
+
       expect(requests, 0);
     },
   );

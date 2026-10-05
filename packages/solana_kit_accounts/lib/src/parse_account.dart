@@ -205,6 +205,7 @@ MaybeAccount<JsonParsedAccountData<Map<String, Object?>>> parseJsonRpcAccount(
   final type = parsed['type'] as String?;
 
   ParsedAccountMeta? meta;
+
   if (program != null || type != null) {
     meta = ParsedAccountMeta(program: program ?? '', type: type);
   }
@@ -232,6 +233,7 @@ MaybeAccount<JsonParsedAccountData<Map<String, Object?>>> parseJsonRpcAccount(
 BaseAccount parseBaseAccount(Map<String, Object?> rpcAccount) {
   final rawLamports = rpcAccount['lamports'];
   final BigInt lamportsValue;
+
   if (rawLamports is BigInt) {
     lamportsValue = rawLamports;
   } else if (rawLamports is int) {
@@ -242,6 +244,7 @@ BaseAccount parseBaseAccount(Map<String, Object?> rpcAccount) {
 
   final rawSpace = rpcAccount['space'];
   final BigInt spaceValue;
+
   if (rawSpace is BigInt) {
     spaceValue = rawSpace;
   } else if (rawSpace is int) {

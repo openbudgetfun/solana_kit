@@ -26,6 +26,7 @@ class MockWalletHostApi extends MwaWalletHostApi {
       'walletName': walletName,
       'configJson': configJson,
     });
+
     return nextSessionId;
   }
 

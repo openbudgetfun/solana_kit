@@ -16,6 +16,7 @@ Encoder<TFrom> getPredicateEncoder<TFrom>(
 
   int writeImpl(TFrom value, Uint8List bytes, int offset) {
     final encoder = predicate(value) ? ifTrue : ifFalse;
+
     return encoder.write(value, bytes, offset);
   }
 
@@ -50,6 +51,7 @@ Decoder<TTo> getPredicateDecoder<TTo>(
 
   (TTo, int) readImpl(Uint8List bytes, int offset) {
     final decoder = predicate(bytes) ? ifTrue : ifFalse;
+
     return decoder.read(bytes, offset);
   }
 
@@ -60,6 +62,7 @@ Decoder<TTo> getPredicateDecoder<TTo>(
   }
 
   final maxSize = maxCodecSizes([getMaxSize(ifTrue), getMaxSize(ifFalse)]);
+
   return VariableSizeDecoder<TTo>(read: readImpl, maxSize: maxSize);
 }
 

@@ -10,6 +10,7 @@ bool _isBlockhash(String value) {
   if (value.length < 32 || value.length > 44) return false;
   try {
     final bytes = getBase58Encoder().encode(value);
+
     return bytes.length == 32;
   } on Object {
     return false;
@@ -22,6 +23,7 @@ bool isTransactionMessageWithBlockhashLifetime(
   TransactionMessage transactionMessage,
 ) {
   final constraint = transactionMessage.lifetimeConstraint;
+
   return constraint is BlockhashLifetimeConstraint &&
       _isBlockhash(constraint.blockhash);
 }

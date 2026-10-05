@@ -67,6 +67,7 @@ Uint8List encryptMessage(
 DecryptedMessage decryptMessage(Uint8List message, Uint8List sharedSecret) {
   const minimumMessageLength =
       mwaSequenceNumberBytes + mwaIvBytes + (mwaGcmTagBits ~/ 8);
+
   if (message.length < minimumMessageLength) {
     throw SolanaError(SolanaErrorCode.mwaDecryptionFailed);
   }

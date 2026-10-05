@@ -150,8 +150,10 @@ List<_DecompiledAccount> _getAddressLookupMetas(
   for (final lookup in compiledAddressTableLookups) {
     final addresses = addressesByLookupTableAddress[lookup.lookupTableAddress]!;
     final allIndexes = [...lookup.readonlyIndexes, ...lookup.writableIndexes];
+
     if (allIndexes.isNotEmpty) {
       final highestIndex = allIndexes.reduce(math.max);
+
       if (highestIndex >= addresses.length) {
         throw SolanaError(
           SolanaErrorCode
@@ -208,6 +210,7 @@ Instruction _convertInstruction(
 
   final accountIndices = instruction.accountIndices;
   List<AccountMeta>? accounts;
+
   if (accountIndices != null && accountIndices.isNotEmpty) {
     // Build a list of AccountMeta and AccountLookupMeta objects.
     // AccountLookupMeta extends AccountMeta, so both fit in List<AccountMeta>.
@@ -222,6 +225,7 @@ Instruction _convertInstruction(
           {'accountIndex': idx, 'numberOfAccounts': transactionMetas.length},
         );
       }
+
       final meta = transactionMetas[idx];
       return switch (meta) {
         _StaticAccount() => AccountMeta(address: meta.address, role: meta.role),
@@ -253,6 +257,7 @@ List<CompiledInstruction> _getCompiledInstructions(
   final headers = message.instructionHeaders ?? const <V1InstructionHeader>[];
   final payloads =
       message.instructionPayloads ?? const <V1InstructionPayload>[];
+
   if (headers.length != payloads.length) {
     throw SolanaError(
       SolanaErrorCode.transactionInstructionHeadersPayloadsMismatch,
@@ -291,7 +296,9 @@ V1TransactionConfig? _getV1Config(CompiledTransactionMessage message) {
     if (index >= values.length) {
       throw const FormatException('Missing V1 transaction config value.');
     }
+
     final value = values[index++];
+
     if (value.kind != expectedKind || value.value is! T) {
       throw SolanaError(SolanaErrorCode.transactionInvalidConfigValueKind, {
         'configName': configName,
@@ -299,6 +306,7 @@ V1TransactionConfig? _getV1Config(CompiledTransactionMessage message) {
         'actualKind': value.kind,
       });
     }
+
     return value.value as T;
   }
 
@@ -317,9 +325,11 @@ V1TransactionConfig? _getV1Config(CompiledTransactionMessage message) {
         ? readValue<int>('heapSize', 'u32')
         : null,
   );
+
   if (index != values.length) {
     throw const FormatException('Unexpected V1 transaction config value.');
   }
+
   return config.isEmpty ? null : config;
 }
 

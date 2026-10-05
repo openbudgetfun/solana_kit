@@ -105,6 +105,7 @@ Stream<T> bridgeStoreToAsyncIterable<T>(
             error is Error || error is Exception ? error : StateError('$error'),
             failureStackTrace,
           );
+
           return;
         }
 

@@ -5,7 +5,6 @@ import 'package:solana_kit_helius/src/internal/json_reader.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart' show KeyPair;
 
 // ── Signup types (v3.0.0) ──────────────────────────────────────────────────
-
 /// Request for unified signup (v3.0.0). Replaces the legacy agentic signup.
 ///
 /// Either provide [secretKey] for SDK-authenticated signup, or provide
@@ -172,7 +171,6 @@ class PaymentRequiredResult extends SignupResult {
 }
 
 // ── PaymentLink type (shared between auth and checkout) ─────────────────────
-
 /// Hosted-checkout link returned to the caller.
 ///
 /// The user clicks [paymentUrl] in a browser, OR an agent sends
@@ -250,7 +248,6 @@ class PaymentLink {
 }
 
 // ── Legacy wallet signup types ──────────────────────────────────────────────
-
 /// Request for wallet signup with signature verification.
 class WalletSignupRequest {
   /// Creates a wallet signup request.
@@ -312,7 +309,6 @@ class WalletSignupResponse {
 }
 
 // ── Project and API key types ───────────────────────────────────────────────
-
 /// Request to create a new project.
 class CreateProjectRequest {
   /// Creates a create-project request.
@@ -321,6 +317,7 @@ class CreateProjectRequest {
   /// Creates a [CreateProjectRequest] from a JSON map.
   factory CreateProjectRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return CreateProjectRequest(name: r.requireString('name'));
   }
 
@@ -600,7 +597,6 @@ class SignAuthMessageResponse {
 }
 
 // ── Plan management result types (v3.0.0) ────────────────────────────────────
-
 /// Result of upgrading a project to a new plan.
 class UpgradePlanResult {
   /// Creates an upgrade-plan result.

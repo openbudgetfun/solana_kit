@@ -11,6 +11,7 @@ Future<List<NewAddressProof>> zkGetMultipleNewAddressProofs(
     request.toJson(),
   );
   final list = result! as List<Object?>;
+
   return list
       .cast<Map<String, Object?>>()
       .map(NewAddressProof.fromJson)

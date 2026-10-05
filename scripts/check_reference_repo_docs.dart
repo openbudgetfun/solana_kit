@@ -13,6 +13,7 @@ void main(List<String> args) {
       'Usage: dart run scripts/check_reference_repo_docs.dart [--check]',
     );
     exitCode = 2;
+
     return;
   }
 
@@ -21,9 +22,11 @@ void main(List<String> args) {
 
   final configFile = File(configPath);
   final docsFile = File(docsPath);
+
   if (!configFile.existsSync() || !docsFile.existsSync()) {
     stderr.writeln('Expected both $configPath and $docsPath to exist.');
     exitCode = 1;
+
     return;
   }
 
@@ -46,6 +49,7 @@ void main(List<String> args) {
     }
 
     final expectedToken = _expectedToken(repo, documentedLine);
+
     if (expectedToken != null && !documentedLine.contains(expectedToken)) {
       errors.add(
         '$path: documented pin does not mention the configured '
@@ -56,10 +60,13 @@ void main(List<String> args) {
 
   if (errors.isNotEmpty) {
     stderr.writeln('$docsPath drifted from $configPath:');
+
     for (final error in errors) {
       stderr.writeln('  - $error');
     }
+
     exitCode = 1;
+
     return;
   }
 
@@ -77,6 +84,7 @@ void main(List<String> args) {
 /// `last checked` revision; a branch name alone cannot pin a moving ref.
 String? _expectedToken(Map<String, dynamic> repo, String documentedLine) {
   final ref = repo['ref'] as Map<String, dynamic>;
+
   switch (ref['type'] as String) {
     case 'tag':
       return ref['value'] as String;
@@ -86,6 +94,7 @@ String? _expectedToken(Map<String, dynamic> repo, String documentedLine) {
       if (!documentedLine.contains('last checked')) {
         return null;
       }
+
       final checkedCommit = repo['checkedCommit'] as String?;
       return checkedCommit?.substring(0, 8);
     default:

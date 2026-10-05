@@ -80,15 +80,21 @@ class BlockNotificationsConfig {
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
+
     if (commitment != null) json['commitment'] = commitment!.name;
+
     if (encoding != null) json['encoding'] = encoding!.toJson();
+
     if (maxSupportedTransactionVersion != null) {
       json['maxSupportedTransactionVersion'] = maxSupportedTransactionVersion;
     }
+
     if (showRewards != null) json['showRewards'] = showRewards;
+
     if (transactionDetails != null) {
       json['transactionDetails'] = transactionDetails;
     }
+
     return json;
   }
 }

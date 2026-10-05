@@ -32,6 +32,7 @@ extension type const Sol(BigInt raw) implements Lamports, Object {
     final whole = raw ~/ lamportsPerSol;
     final fraction = (raw % lamportsPerSol).toString().padLeft(9, '0');
     final trimmedFraction = fraction.replaceFirst(RegExp(r'0+$'), '');
+
     return trimmedFraction.isEmpty
         ? whole.toString()
         : '$whole.$trimmedFraction';
@@ -44,11 +45,13 @@ extension type const Sol(BigInt raw) implements Lamports, Object {
 /// to accept inputs with more fractional precision.
 Sol sol(String value, {RoundingMode rounding = RoundingMode.strict}) {
   final trimmed = value.trim();
+
   if (trimmed.isEmpty || trimmed.startsWith('-')) {
     throw FormatException('Expected an unsigned SOL decimal string.', value);
   }
 
   final parts = trimmed.split('.');
+
   if (parts.length > 2) {
     throw FormatException('Expected an unsigned SOL decimal string.', value);
   }
@@ -63,8 +66,10 @@ Sol sol(String value, {RoundingMode rounding = RoundingMode.strict}) {
 
   var paddedFraction = fractionPart;
   var increment = false;
+
   if (paddedFraction.length > 9) {
     final extra = paddedFraction.substring(9);
+
     switch (rounding) {
       case RoundingMode.strict:
         throw FormatException(
@@ -78,12 +83,14 @@ Sol sol(String value, {RoundingMode rounding = RoundingMode.strict}) {
       case RoundingMode.halfUp:
         increment = int.parse(extra[0]) >= 5;
     }
+
     paddedFraction = paddedFraction.substring(0, 9);
   }
 
   paddedFraction = paddedFraction.padRight(9, '0');
   var raw =
       BigInt.parse(wholePart) * lamportsPerSol + BigInt.parse(paddedFraction);
+
   if (increment) raw += BigInt.one;
 
   return lamportsToSol(lamports(raw));

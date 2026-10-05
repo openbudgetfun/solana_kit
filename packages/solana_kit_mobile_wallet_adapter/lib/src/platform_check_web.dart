@@ -23,6 +23,7 @@ bool isMwaSupported() {
   if (!const bool.fromEnvironment('dart.library.js_interop')) {
     return false;
   }
+
   return web.window.isSecureContext;
 }
 

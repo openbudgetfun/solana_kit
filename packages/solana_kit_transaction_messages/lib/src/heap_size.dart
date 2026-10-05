@@ -24,6 +24,7 @@ int? getTransactionMessageHeapSize(TransactionMessage transactionMessage) {
   final instruction = transactionMessage.instructions
       .where(_isRequestHeapFrameInstruction)
       .firstOrNull;
+
   if (instruction == null) return null;
   return _getHeapSizeFromInstructionData(instruction.data!);
 }
@@ -112,6 +113,7 @@ TransactionMessage _setTransactionMessageHeapSizeUsingInstruction(
 
   // Add or replace the heap size instruction with the new size.
   final instruction = _getRequestHeapFrameInstruction(bytes: heapSize);
+
   if (existingIndex == -1) {
     return transactionMessage.copyWith(
       instructions: [...transactionMessage.instructions, instruction],
@@ -139,6 +141,7 @@ Instruction _getRequestHeapFrameInstruction({required int bytes}) {
 bool _isRequestHeapFrameInstruction(Instruction instruction) {
   if (instruction.programAddress != computeBudgetProgramAddress) return false;
   final data = instruction.data;
+
   return data != null &&
       data.length >= 5 &&
       data.first == _requestHeapFrameDiscriminator;

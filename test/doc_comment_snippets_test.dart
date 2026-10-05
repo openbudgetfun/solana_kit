@@ -30,6 +30,7 @@ void main() {
       if (docSnippetRoot.existsSync()) {
         docSnippetRoot.deleteSync(recursive: true);
       }
+
       docSnippetRoot.createSync(recursive: true);
       addTearDown(() {
         if (docSnippetRoot.existsSync()) {
@@ -90,17 +91,20 @@ List<String> _findDocumentedLibraries(Directory repoRoot) {
     if (entity is! File || !entity.path.endsWith('.dart')) continue;
 
     final relativePath = entity.path.substring(repoRoot.path.length + 1);
+
     if (!RegExp(r'^packages/[^/]+/lib/[^/]+\.dart$').hasMatch(relativePath)) {
       continue;
     }
 
     final source = entity.readAsStringSync();
+
     if (source.contains('/// <!-- {=')) {
       libraries.add(relativePath);
     }
   }
 
   libraries.sort();
+
   return libraries;
 }
 
@@ -113,9 +117,11 @@ String _extractTopLevelDocMarkdown(String source) {
     if (line.startsWith('///')) {
       sawDocComment = true;
       var text = line.substring(3);
+
       if (text.startsWith(' ')) {
         text = text.substring(1);
       }
+
       buffer.writeln(text);
       continue;
     }

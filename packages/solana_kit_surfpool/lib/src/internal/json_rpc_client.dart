@@ -85,6 +85,7 @@ class SurfpoolJsonRpcClient {
         ),
         _ => ('Unknown RPC error', null),
       };
+
       throw SurfpoolRpcException(
         message,
         method: method,

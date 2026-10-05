@@ -173,6 +173,7 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
   ) async {
     calls.add('prepareReleaseNftTransaction');
     prepareCalls++;
+
     if (failOnPrepare && (!failOnPrepareOnce || prepareCalls == 1)) {
       throw const _TestFailure('prepare failed');
     }
@@ -189,6 +190,7 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
     String? publicationSessionId,
   }) async {
     calls.add('submitSignedTransaction');
+
     return const SubmitSignedTransactionResult(transactionSignature: 'sig');
   }
 
@@ -197,6 +199,7 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
     SaveReleaseNftDataInput input,
   ) async {
     calls.add('saveReleaseNftData');
+
     return const SaveReleaseNftDataResult(success: true);
   }
 
@@ -227,12 +230,14 @@ class _TestWorkflowClient implements PublicationWorkflowClient {
   @override
   Future<CleanupReleaseResult> cleanupRelease(CleanupReleaseInput input) async {
     calls.add('cleanupRelease');
+
     return const CleanupReleaseResult(action: 'deleted');
   }
 
   @override
   Future<SubmitToStoreResult> submitToStore(SubmitToStoreInput input) async {
     calls.add('submitToStore');
+
     return const SubmitToStoreResult(hubspotTicketId: 'HS-1');
   }
 }
@@ -329,6 +334,7 @@ Uint8List pngBytes({required int width, required int height}) {
     ..setUint32(12, 0x49484452)
     ..setUint32(16, width)
     ..setUint32(20, height);
+
   return data.buffer.asUint8List();
 }
 
@@ -884,6 +890,7 @@ Uint8List _webp(String format) {
     ..[9] = 0x45
     ..[10] = 0x42
     ..[11] = 0x50;
+
   for (var i = 0; i < 4; i++) {
     bytes[12 + i] = format.codeUnitAt(i);
   }

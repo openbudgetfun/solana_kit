@@ -23,9 +23,11 @@ Encoder<List<Object?>> getTupleEncoder(
       items.length,
       value.length,
     );
+
     for (var i = 0; i < items.length; i++) {
       offset = items[i].write(value[i], bytes, offset);
     }
+
     return offset;
   }
 
@@ -61,11 +63,13 @@ Decoder<List<Object?>> getTupleDecoder(List<Decoder<Object?>> items) {
   (List<Object?>, int) readImpl(Uint8List bytes, int currentOffset) {
     var offset = currentOffset;
     final values = <Object?>[];
+
     for (final item in items) {
       final (value, newOffset) = item.read(bytes, offset);
       values.add(value);
       offset = newOffset;
     }
+
     return (values, offset);
   }
 

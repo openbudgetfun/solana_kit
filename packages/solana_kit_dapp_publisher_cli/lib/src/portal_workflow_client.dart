@@ -38,15 +38,19 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
 
   void _trackBackendIdentifiers(Map<String, Object?> backendResult) {
     final releaseId = optionalString(backendResult['releaseId']);
+
     if (releaseId != null && releaseId.isNotEmpty) {
       _currentReleaseId = releaseId;
     }
+
     final publicationSessionId = optionalString(
       backendResult['publicationSessionId'],
     );
+
     if (publicationSessionId != null && publicationSessionId.isNotEmpty) {
       _currentPublicationSessionId = publicationSessionId;
     }
+
     _rememberLinkedPublicationSession(
       _currentReleaseId,
       _currentPublicationSessionId,
@@ -64,6 +68,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
     } else if (session.publicationSession != null) {
       _currentPublicationSessionId = session.publicationSession!.id;
     }
+
     if (session.releaseId != null && session.releaseId!.isNotEmpty) {
       _currentReleaseId = session.releaseId;
     }
@@ -103,6 +108,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
       input.toMap(),
       'mutation',
     );
+
     return PortalUploadTarget.fromMap(result);
   }
 
@@ -116,6 +122,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
       client: _client,
     );
     _trackBackendIdentifiers(backendResult);
+
     return _translateIngestionBackendResult(backendResult);
   }
 
@@ -129,6 +136,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
       'query',
     );
     _trackBackendIdentifiers(backendResult);
+
     return _translateIngestionBackendResult(backendResult);
   }
 
@@ -141,6 +149,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
       publicationSession: asRecord(backendResult['publicationSession']),
     );
     _trackTranslatedIngestionSession(translated);
+
     return translated;
   }
 
@@ -247,6 +256,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
   Future<String> _uploadReleaseMetadata(PublicationBundle bundle) async {
     final releaseId = bundle.releaseId;
     final cached = _metadataUriByReleaseId[releaseId];
+
     if (cached != null) {
       return cached;
     }
@@ -255,6 +265,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
     if (bundleReleaseMetadataUri != null &&
         bundleReleaseMetadataUri.isNotEmpty) {
       _metadataUriByReleaseId[releaseId] = bundleReleaseMetadataUri;
+
       return bundleReleaseMetadataUri;
     }
 
@@ -289,6 +300,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
     );
 
     _metadataUriByReleaseId[releaseId] = uploadTarget.publicUrl;
+
     return uploadTarget.publicUrl;
   }
 
@@ -314,6 +326,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
     _currentPublicationSessionId = translated.id;
     _currentReleaseId = translated.releaseId;
     _rememberLinkedPublicationSession(translated.releaseId, translated.id);
+
     return translated;
   }
 
@@ -326,6 +339,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
       input.toMap(),
       'mutation',
     );
+
     return PreparedReleaseTransaction.fromMap(result);
   }
 
@@ -343,6 +357,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
       },
       'mutation',
     );
+
     return SubmitSignedTransactionResult.fromMap(result);
   }
 
@@ -355,6 +370,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
       input.toMap(),
       'mutation',
     );
+
     return SaveReleaseNftDataResult.fromMap(result);
   }
 
@@ -368,6 +384,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
       input.toMap(),
       'mutation',
     );
+
     return PreparedVerifyCollectionTransaction.fromMap(result);
   }
 
@@ -381,6 +398,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
       {'releaseId': releaseId},
       'mutation',
     );
+
     return MarkReleaseCollectionAsVerifiedResult.fromMap(result);
   }
 
@@ -391,6 +409,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
       input.toMap(),
       'mutation',
     );
+
     return CleanupReleaseResult.fromMap(result);
   }
 
@@ -401,6 +420,7 @@ final class PortalWorkflowClient implements PublicationWorkflowClient {
       input.toMap(),
       'mutation',
     );
+
     return SubmitToStoreResult.fromMap(result);
   }
 }
@@ -417,6 +437,7 @@ String? _firstNonEmpty(
       return candidate;
     }
   }
+
   return null;
 }
 

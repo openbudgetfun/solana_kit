@@ -30,6 +30,7 @@ void main() {
   final addresses = [tokenProgram, walletAddr, systemProgram];
   addresses.sort(cmp);
   print('\nSorted addresses:');
+
   for (final addr in addresses) {
     print('  ${addr.value}');
   }
@@ -57,6 +58,7 @@ void main() {
   ]..sort(cmp);
 
   print('\nAccounts in runtime order:');
+
   for (final a in accounts) {
     print('  ${a.value}');
   }

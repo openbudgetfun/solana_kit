@@ -15,5 +15,6 @@ Future<WalletSignupResponse> authWalletSignup(
     '/v0/auth/wallet-signup?api-key=$apiKey',
     body: request.toJson(),
   );
+
   return WalletSignupResponse.fromJson(result! as Map<String, Object?>);
 }

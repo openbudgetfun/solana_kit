@@ -111,6 +111,7 @@ void main() {
           throwsA(_error(SolanaErrorCode.codecsOffsetOutOfRange)),
         );
       }
+
       expect(decoder.read(Uint8List(1), 1), (none<int>(), 1));
     });
   });

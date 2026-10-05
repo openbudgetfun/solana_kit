@@ -71,6 +71,7 @@ Codec<TFrom, TTo> tapCodec<TFrom, TTo>(
   (TTo, int) readWithDecodeTap(Uint8List bytes, int offset) {
     final (value, newOffset) = codec.read(bytes, offset);
     decodeTap?.call(value);
+
     return (value, newOffset);
   }
 
@@ -170,6 +171,7 @@ Codec<TFrom, TTo> tapCodecBytes<TFrom, TTo>(
 ]) {
   (TTo, int) readWithDecodeTap(Uint8List bytes, int offset) {
     decodeTap?.call(bytes, offset);
+
     return codec.read(bytes, offset);
   }
 

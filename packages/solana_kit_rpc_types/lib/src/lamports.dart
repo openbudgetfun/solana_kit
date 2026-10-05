@@ -43,6 +43,7 @@ void assertIsLamports(BigInt putativeLamports) {
 /// input.
 Lamports lamports(BigInt putativeLamports) {
   assertIsLamports(putativeLamports);
+
   return Lamports(putativeLamports);
 }
 
@@ -62,6 +63,7 @@ Encoder<Lamports> getLamportsEncoder(Encoder<Object?> innerEncoder) {
   if (innerEncoder is Encoder<BigInt>) {
     return _lamportsEncoderForBigInt(innerEncoder);
   }
+
   return _lamportsEncoderForNum(innerEncoder as Encoder<num>);
 }
 
@@ -103,6 +105,7 @@ Decoder<Lamports> getLamportsDecoder(Decoder<Object?> innerDecoder) {
   if (innerDecoder is Decoder<BigInt>) {
     return _lamportsDecoderForBigInt(innerDecoder);
   }
+
   return _lamportsDecoderForInt(innerDecoder as Decoder<int>);
 }
 
@@ -148,8 +151,10 @@ Codec<Lamports, Lamports> getLamportsCodec(Object innerCodec) {
   if (innerCodec is Codec<BigInt, BigInt>) {
     return _lamportsCodecForBigInt(innerCodec);
   }
+
   // For num/int codecs (u8, u16, u32, etc.)
   final codec = innerCodec as Codec<num, int>;
+
   return _lamportsCodecForNum(codec);
 }
 

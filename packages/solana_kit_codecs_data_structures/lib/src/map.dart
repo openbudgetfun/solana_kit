@@ -72,6 +72,7 @@ Codec<Map<K, V>, Map<K, V>> getMapCodec<K, V>(
   final ArrayLikeCodecSize? decoderSize;
   if (size is PrefixedArraySize) {
     final prefix = size.prefix;
+
     if (prefix is Codec<BigInt, BigInt>) {
       // Wide integer prefixes use `BigInt`, which is not a `num` in Dart.
       encoderSize = PrefixedArraySize(encoderFromCodec(prefix));

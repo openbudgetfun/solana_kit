@@ -61,6 +61,7 @@ Decoder<Extensions> getExtensionsDecoder() {
         extensions.add(extension);
         offset = nextOffset;
       }
+
       // Consume the remaining (unused) bytes so the enclosing codecs see the
       // whole region as read.
       return (extensions, bytes.length);

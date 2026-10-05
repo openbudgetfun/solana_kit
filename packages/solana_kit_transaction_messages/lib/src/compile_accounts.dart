@@ -252,6 +252,7 @@ List<OrderedAccount> _getOrderedAccountsFromAddressMap(
       if (leftIsSigner != rightIsSigner) {
         return leftIsSigner ? -1 : 1;
       }
+
       final leftIsWritable = isWritableRole(leftEntry.role);
       final rightIsWritable = isWritableRole(rightEntry.role);
       if (leftIsWritable != rightIsWritable) {

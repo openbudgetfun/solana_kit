@@ -23,6 +23,7 @@ import {
   structFieldTypeNode,
   structTypeNode,
   type TypeNode,
+
 } from "@codama/nodes";
 import { LinkableDictionary, NodeStack, visit } from "@codama/visitors-core";
 import { describe, expect, it } from "vitest";
@@ -207,7 +208,6 @@ describe("hidden affix constant validation", () => {
     )]))).toThrow(/Unsupported hidden affix constant type kind/);
   });
 });
-
 
 describe("generated prefix codecs compile and preserve wire bytes", () => {
   const prefix = numberTypeNode("u16", "be");

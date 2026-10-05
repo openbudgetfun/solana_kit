@@ -14,5 +14,6 @@ Future<StakeTransactionResult> stakingCreateStakeTransaction(
     '/v0/staking/stake?api-key=$apiKey',
     body: request.toJson(),
   );
+
   return StakeTransactionResult.fromJson(result! as Map<String, Object?>);
 }
