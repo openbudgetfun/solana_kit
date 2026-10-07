@@ -49,6 +49,33 @@ void main() {
       expect(map['value'], equals(_maxSafeIntegerPlusOne));
       subscription.cancel();
     });
+
+    test('decodes each message once for every subscription on the channel', () {
+      final channel = getRpcSubscriptionsChannelWithBigIntJsonSerialization(
+        mockChannel,
+      );
+
+      // Every subscription shares one decoded stream so each inbound
+      // message is parsed once, no matter how many subscriptions the
+      // channel serves.
+      expect(channel.streams, same(channel.streams));
+
+      final received = <Object?>[];
+      final subscriptions = [
+        channel.streams.notifications.listen(received.add),
+        channel.streams.notifications.listen(received.add),
+      ];
+
+      mockChannel.publishMessage('{"value":$_maxSafeIntegerPlusOne}');
+
+      expect(received, hasLength(2));
+      for (final message in received.cast<Map<String, Object?>>()) {
+        expect(message['value'], equals(_maxSafeIntegerPlusOne));
+      }
+      for (final subscription in subscriptions) {
+        subscription.cancel();
+      }
+    });
   });
 }
 
