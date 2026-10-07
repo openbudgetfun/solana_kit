@@ -445,6 +445,58 @@ void main() {
       expect(signatures.single.value, hasLength(64));
     });
 
+    test('rejects forged wallet signatures', () async {
+      final wallet = _TestWallet(forgedSignatures: true);
+      final signer = WalletAccountSigner(
+        wallet: wallet,
+        account: wallet.accounts.first,
+        chain: SolanaChainId.localnet,
+      );
+      final transaction = compileTransaction(
+        const TransactionMessage(version: TransactionVersion.v0).copyWith(
+          feePayer: signer.address,
+          lifetimeConstraint: BlockhashLifetimeConstraint(
+            blockhash: '11111111111111111111111111111111',
+            lastValidBlockHeight: BigInt.zero,
+          ),
+        ),
+      );
+      // A message signature that does not verify against the account's
+      // public key must not be attached as if the account had signed.
+      await expectLater(
+        signer.modifyAndSignMessages([createSignableMessage('hello')]),
+        throwsA(
+          isA<WalletStandardException>().having(
+            (error) => error.message,
+            'message',
+            'Wallet signature does not verify against the authorized account',
+          ),
+        ),
+      );
+      // A transaction returned without the account's signature is rejected.
+      await expectLater(
+        signer.modifyAndSignTransactions([transaction]),
+        throwsA(
+          isA<WalletStandardException>().having(
+            (error) => error.message,
+            'message',
+            'Wallet signed transaction does not include the authorized account',
+          ),
+        ),
+      );
+      // A reported send signature for a different transaction is rejected.
+      await expectLater(
+        signer.signAndSendTransactions([transaction]),
+        throwsA(
+          isA<WalletStandardException>().having(
+            (error) => error.message,
+            'message',
+            'Wallet reported a signature for a different transaction',
+          ),
+        ),
+      );
+    });
+
     test('rejects an account that advertises no transaction feature', () {
       // Upstream refuses to build the signer at all: a signer that can never
       // sign only surfaces the problem at the first call.
@@ -540,19 +592,26 @@ Uint8List _unsignedWireTransaction(String feePayerAddress) {
   return getTransactionEncoder().encode(compileTransaction(message));
 }
 
+/// A deterministic signing keypair backing the default account fixture, so
+/// wallet-adapter signatures can be verified against the account's public
+/// key.
+final KeyPair _signingKeyPair = generateKeyPair();
+final String _signingAddress = getAddressFromPublicKey(
+  _signingKeyPair.publicKey,
+).value;
+
 /// The default account fixture advertises every Solana feature, because most
 /// tests connect to a wallet and then create a signer from its account.
-WalletAccount _account({String address = '11111111111111111111111111111111'}) =>
-    WalletAccount(
-      address: address,
-      publicKey: Uint8List(32),
-      chains: const [SolanaChainId.localnet],
-      features: const [
-        SolanaFeatureId.signMessage,
-        SolanaFeatureId.signTransaction,
-        SolanaFeatureId.signAndSendTransaction,
-      ],
-    );
+WalletAccount _account({String? address}) => WalletAccount(
+  address: address ?? _signingAddress,
+  publicKey: address == null ? _signingKeyPair.publicKey : Uint8List(32),
+  chains: const [SolanaChainId.localnet],
+  features: const [
+    SolanaFeatureId.signMessage,
+    SolanaFeatureId.signTransaction,
+    SolanaFeatureId.signAndSendTransaction,
+  ],
+);
 
 /// Minimal wallet used to verify registry composition.
 class _NamedWallet implements Wallet {
@@ -688,6 +747,7 @@ class _TestWallet implements Wallet {
   _TestWallet({
     this.connectAccounts,
     this.connectError,
+    this.forgedSignatures = false,
     this.includeSignIn = true,
     this.wrongOutputCount = false,
   }) {
@@ -706,6 +766,11 @@ class _TestWallet implements Wallet {
   }
   final List<WalletAccount>? connectAccounts;
   final Error? connectError;
+
+  /// When set, the signing features return well-formed but forged outputs —
+  /// zero signatures and unsigned transactions — which the signer must
+  /// reject.
+  final bool forgedSignatures;
   final bool includeSignIn;
   final bool wrongOutputCount;
   late List<WalletAccount> _accounts;
@@ -800,7 +865,12 @@ class _TestSignMessage implements SolanaSignMessageFeature {
             .map(
               (input) => SolanaSignMessageOutput(
                 signedMessage: input.message,
-                signature: Uint8List(64),
+                signature: wallet.forgedSignatures
+                    ? Uint8List(64)
+                    : signBytes(
+                        _signingKeyPair.privateKey,
+                        input.message,
+                      ).value,
               ),
             )
             .toList();
@@ -816,9 +886,28 @@ class _TestSignTransaction implements SolanaSignTransactionFeature {
     List<SolanaSignTransactionInput> inputs,
   ) async => wallet.wrongOutputCount
       ? []
-      : inputs
-            .map((input) => SolanaSignTransactionOutput(input.transaction))
-            .toList();
+      : inputs.map((input) {
+          if (wallet.forgedSignatures) {
+            // An unsigned transaction: no account signature at all.
+            return SolanaSignTransactionOutput(input.transaction);
+          }
+          final decoded = getTransactionDecoder().decode(
+            input.transaction,
+          );
+          return SolanaSignTransactionOutput(
+            getTransactionEncoder().encode(
+              Transaction(
+                messageBytes: decoded.messageBytes,
+                signatures: {
+                  address(wallet.accounts.first.address): signBytes(
+                    _signingKeyPair.privateKey,
+                    decoded.messageBytes,
+                  ),
+                },
+              ),
+            ),
+          );
+        }).toList();
   @override
   List<SolanaTransactionVersion> get supportedTransactionVersions =>
       SolanaTransactionVersion.values;
@@ -835,7 +924,18 @@ class _TestSendTransaction implements SolanaSignAndSendTransactionFeature {
   ) async => wallet.wrongOutputCount
       ? []
       : inputs
-            .map((_) => SolanaSignAndSendTransactionOutput(Uint8List(64)))
+            .map(
+              (input) => SolanaSignAndSendTransactionOutput(
+                wallet.forgedSignatures
+                    ? Uint8List(64)
+                    : signBytes(
+                        _signingKeyPair.privateKey,
+                        getTransactionDecoder()
+                            .decode(input.transaction)
+                            .messageBytes,
+                      ).value,
+              ),
+            )
             .toList();
   @override
   List<SolanaTransactionVersion> get supportedTransactionVersions =>
