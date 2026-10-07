@@ -56,5 +56,6 @@ SolanaError getSolanaErrorFromRpcError(
     rpcErrorName,
     rpcErrorContext,
   );
+
   return SolanaError(errorCode, errorContext);
 }

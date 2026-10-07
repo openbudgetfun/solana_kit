@@ -103,6 +103,7 @@ Encoder<Object?> getUnionEncoder(
   int writeImpl(Object? variant, Uint8List bytes, int offset) {
     final index = getIndexFromValue(variant);
     _assertValidVariantIndex(variants, index);
+
     return variants[index].write(variant, bytes, offset);
   }
 
@@ -136,6 +137,7 @@ Decoder<Object?> getUnionDecoder(
   (Object?, int) readImpl(Uint8List bytes, int offset) {
     final index = getIndexFromBytes(bytes, offset);
     _assertValidVariantIndex(variants, index);
+
     return variants[index].read(bytes, offset);
   }
 
@@ -144,6 +146,7 @@ Decoder<Object?> getUnionDecoder(
   }
 
   final maxSize = _getUnionMaxSize(variants);
+
   return VariableSizeDecoder<Object?>(read: readImpl, maxSize: maxSize);
 }
 
@@ -243,6 +246,7 @@ Decoder<Union2<T0, T1>> getUnion2Decoder<T0, T1>(
   }
 
   final maxSize = _getUnionMaxSize(variants);
+
   return VariableSizeDecoder<Union2<T0, T1>>(read: readImpl, maxSize: maxSize);
 }
 
@@ -407,11 +411,15 @@ void _assertValidVariantIndex(List<Object> variants, int index) {
 int? _getUnionFixedSize(List<Object> variants) {
   if (variants.isEmpty) return 0;
   final firstSize = getFixedSize(variants[0]);
+
   if (firstSize == null) return null;
+
   for (final variant in variants) {
     final size = getFixedSize(variant);
+
     if (size != firstSize) return null;
   }
+
   return firstSize;
 }
 

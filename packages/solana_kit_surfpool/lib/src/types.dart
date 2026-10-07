@@ -99,6 +99,7 @@ class SetTokenAccountUpdate {
     if (delegate != null && clearDelegate) {
       throw ArgumentError('delegate and clearDelegate are mutually exclusive');
     }
+
     if (closeAuthority != null && clearCloseAuthority) {
       throw ArgumentError(
         'closeAuthority and clearCloseAuthority are mutually exclusive',
@@ -106,6 +107,7 @@ class SetTokenAccountUpdate {
     }
 
     final confidential = this.confidential;
+
     return <String, Object?>{
       if (amount != null) 'amount': amount,
       if (delegate != null) 'delegate': delegate!.value,
@@ -386,6 +388,7 @@ class DeployOptions {
   /// Raw compiled program bytes.
   Uint8List? get soBytes {
     final soBytes = _soBytes;
+
     if (soBytes == null) return null;
     return Uint8List.fromList(soBytes);
   }
@@ -614,6 +617,7 @@ class SimnetEventValue {
   /// Logs attached to transaction or profile events.
   UnmodifiableListView<String>? get logs {
     final logs = _logs;
+
     if (logs == null) return null;
     return UnmodifiableListView(logs);
   }
@@ -644,6 +648,7 @@ class SimnetEventValue {
   /// Runbook errors.
   UnmodifiableListView<String>? get runbookErrors {
     final runbookErrors = _runbookErrors;
+
     if (runbookErrors == null) return null;
     return UnmodifiableListView(runbookErrors);
   }
@@ -681,6 +686,7 @@ class SimnetEventValue {
 
 void _assertNonNegative(int? value, String name) {
   if (value == null) return;
+
   if (value < 0) {
     throw ArgumentError.value(value, name, 'must be non-negative');
   }
@@ -688,9 +694,11 @@ void _assertNonNegative(int? value, String name) {
 
 Map<String, Object?> _expectMap(Object? value, String name) {
   if (value is Map<String, Object?>) return value;
+
   if (value is Map) {
     return value.cast<String, Object?>();
   }
+
   throw FormatException('$name must be a JSON object', value);
 }
 
@@ -701,6 +709,7 @@ String _expectString(Object? value, String name) {
 
 String? _optionalString(Object? value, String name) {
   if (value == null) return null;
+
   if (value is String) return value;
   throw FormatException('$name must be a string', value);
 }
@@ -712,14 +721,17 @@ int _expectInt(Object? value, String name) {
 
 int? _optionalInt(Object? value, String name) {
   if (value == null) return null;
+
   if (value is int) return value;
   throw FormatException('$name must be an integer', value);
 }
 
 List<String>? _optionalStringList(Object? value, String name) {
   if (value == null) return null;
+
   if (value is List) {
     return [for (final item in value) _expectString(item, name)];
   }
+
   throw FormatException('$name must be a list of strings', value);
 }

@@ -589,6 +589,7 @@ Uint8List _unsignedWireTransaction(String feePayerAddress) {
       lastValidBlockHeight: BigInt.zero,
     ),
   );
+
   return getTransactionEncoder().encode(compileTransaction(message));
 }
 
@@ -680,6 +681,7 @@ class _Backend implements MobileWalletBackend {
     SolanaSignInInput? signIn,
   }) async {
     lastSilent = silent;
+
     if (signIn != null && includeSignIn) {
       final message = Uint8List.fromList([3]);
       return MobileWalletAuthorization(
@@ -691,6 +693,7 @@ class _Backend implements MobileWalletBackend {
         ),
       );
     }
+
     return MobileWalletAuthorization(accounts: [account]);
   }
 
@@ -821,7 +824,9 @@ class _TestConnect implements StandardConnectFeature {
     StandardConnectInput input = const StandardConnectInput(),
   ]) async {
     wallet.lastSilent = input.silent;
+
     if (wallet.connectError case final error?) throw error;
+
     return StandardConnectOutput(wallet.accounts);
   }
 
@@ -846,6 +851,7 @@ class _TestEvents implements StandardEventsFeature {
     void Function(StandardWalletChange change) listener,
   ) {
     wallet.listener = listener;
+
     return () => wallet.listener = null;
   }
 

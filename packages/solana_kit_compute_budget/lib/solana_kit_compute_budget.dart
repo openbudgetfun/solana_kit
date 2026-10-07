@@ -65,7 +65,6 @@
 /// `transactionMessage` is a lightweight `TransactionMessageInput` — a map from instruction index to `InstructionInput(programAddress: ...)`. Build it from the same instructions you sent, so matching stays accurate even when the transaction mixes instructions from several programs.
 ///
 /// <!-- {/programErrorHandlingSection} -->
-
 library;
 
 export 'src/generated/compute_budget.dart';

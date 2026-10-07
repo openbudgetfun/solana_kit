@@ -140,19 +140,29 @@ class GetTransactionsForAddressConfig {
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
+
     if (commitment != null) json['commitment'] = commitment!.name;
+
     if (filters != null) json['filters'] = filters!.toJson();
+
     if (limit != null) json['limit'] = limit;
+
     if (minContextSlot != null) json['minContextSlot'] = minContextSlot;
+
     if (paginationToken != null) json['paginationToken'] = paginationToken;
+
     if (sortOrder != null) json['sortOrder'] = sortOrder;
+
     if (encoding != null) json['encoding'] = encoding!.toJson();
+
     if (maxSupportedTransactionVersion != null) {
       json['maxSupportedTransactionVersion'] = maxSupportedTransactionVersion;
     }
+
     if (transactionDetails != null) {
       json['transactionDetails'] = transactionDetails;
     }
+
     return json;
   }
 }

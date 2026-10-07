@@ -212,6 +212,7 @@ class ComputeUnitsEstimate {
   /// Creates a [ComputeUnitsEstimate] from a JSON map.
   factory ComputeUnitsEstimate.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return ComputeUnitsEstimate(units: r.requireInt('units'));
   }
 

@@ -62,9 +62,11 @@ function extractDartTypeNames(content: string): string[] {
   const classRegex =
     /(?:sealed\s+)?class\s+([A-Z][A-Za-z0-9]*)|enum\s+([A-Z][A-Za-z0-9]*)|typedef\s+([A-Z][A-Za-z0-9]*)/g;
   let match;
+
   while ((match = classRegex.exec(content)) !== null) {
     names.push(match[1] || match[2] || match[3]);
   }
+
   return names;
 }
 
@@ -77,9 +79,11 @@ function extractTsTypeNames(content: string): string[] {
   const typeRegex =
     /(?:export\s+)?type\s+([A-Z][A-Za-z0-9]*)|(?:export\s+)?interface\s+([A-Z][A-Za-z0-9]*)/g;
   let match;
+
   while ((match = typeRegex.exec(content)) !== null) {
     names.push(match[1] || match[2]);
   }
+
   return names;
 }
 

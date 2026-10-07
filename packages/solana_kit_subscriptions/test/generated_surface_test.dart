@@ -619,6 +619,7 @@ final _headerClone = Header(
   payer: a3,
   initId: BigInt.from(9),
 );
+
 final _headerAlt = Header(
   discriminator: 2,
   version: 1,
@@ -809,6 +810,7 @@ final _recurringDelegationClone = RecurringDelegation(
   amountPerPeriod: BigInt.from(10),
   amountPulledInPeriod: BigInt.from(5),
 );
+
 final _recurringDelegationAlt = RecurringDelegation(
   header: _header,
   subscriptionAuthority: a3,

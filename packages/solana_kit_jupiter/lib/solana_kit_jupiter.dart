@@ -94,7 +94,6 @@
 ///
 /// For self-landing swaps, use `jupiter.swap.buildSwap(...)` to fetch the raw instruction set instead of the assembled transaction.
 ///
-
 /// <!-- {=docsJupiterSwapSection -->
 ///
 /// ### Swap through Jupiter's managed order flow
@@ -139,7 +138,6 @@
 library;
 
 // ignore_for_file: comment_references
-
 ///
 ///
 export 'src/internal/rest_client.dart' show JupiterException;

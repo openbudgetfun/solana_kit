@@ -53,10 +53,13 @@ export function getDartValueFragment(
           `Unsupported deterministic bytes encoding: ${value.encoding}`,
         );
       }
+
       const clean = value.data.replace(/^0x/, "");
+
       if (clean.length % 2 !== 0 || !/^[0-9a-f]*$/i.test(clean)) {
         throw new Error(`Invalid hexadecimal bytes value: ${value.data}`);
       }
+
       const bytes = clean.match(/.{2}/g)?.map((byte) => `0x${byte}`) ?? [];
       return fragment`${use("Uint8List", "dartTypedData")}.fromList([${fragmentFromString(bytes.join(", "))}])`;
     }

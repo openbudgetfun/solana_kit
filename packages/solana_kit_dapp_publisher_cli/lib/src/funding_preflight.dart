@@ -19,12 +19,15 @@ String? resolveFundingPreflightRpcUrl({
   String? rpcUrl,
 }) {
   final explicitRpcUrl = rpcUrl?.trim();
+
   if (explicitRpcUrl != null && explicitRpcUrl.isNotEmpty) {
     return explicitRpcUrl;
   }
+
   if (localDev) {
     return null;
   }
+
   return defaultMainnetRpcUrl;
 }
 
@@ -45,6 +48,7 @@ Future<String?> ensurePublicationSignerBalance({
     localDev: localDev,
     rpcUrl: rpcUrl,
   );
+
   if (resolvedRpcUrl == null) {
     return null;
   }
@@ -62,6 +66,7 @@ Future<String?> ensurePublicationSignerBalance({
   final fetcher = fetchBalance ?? defaultBalanceFetcher;
   try {
     final balanceLamports = await fetcher(address.toString(), resolvedRpcUrl);
+
     if (balanceLamports < minPublicationSignerBalanceLamports) {
       throw PublisherCliException(
         'Signer $publicKey has ${formatSolAmount(balanceLamports)} SOL, '
@@ -70,6 +75,7 @@ Future<String?> ensurePublicationSignerBalance({
         'available before it starts.',
       );
     }
+
     return null;
   } on PublisherCliException {
     rethrow;
@@ -104,6 +110,7 @@ Future<int> defaultBalanceFetcher(
 /// the caller looking for a funding problem that does not exist.
 int parseLamportsValue(Map<String, Object?> response) {
   final value = response['value'];
+
   return switch (value) {
     final int lamports => lamports,
     final num lamports => lamports.toInt(),

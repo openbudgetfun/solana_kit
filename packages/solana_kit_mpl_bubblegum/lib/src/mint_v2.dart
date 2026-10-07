@@ -138,6 +138,7 @@ InstructionPlan getMintV2InstructionPlan(
       const Address('cmtDvXzGgh4bcrDY2gZqFaGQqat4RNQPhKJ4jAc7uLi');
   final systemProgram =
       config.systemProgram ?? const Address('11111111111111111111111111111112');
+
   final mplCoreProgram =
       config.mplCoreProgram ??
       const Address('CoREENxT6tW1HoJmSkLZP4xizQrmYMahYpv2UKJF2mLQ');
@@ -190,6 +191,7 @@ InstructionPlan getMintV2InstructionPlan(
     offset += 4;
     // Write asset data bytes
     data.setRange(offset, offset + assetData.length, assetData);
+
     offset += assetData.length;
     // Write asset data schema
     data[offset] = assetDataSchema?.value ?? 0;

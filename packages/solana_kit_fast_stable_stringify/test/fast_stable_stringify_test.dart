@@ -7,28 +7,38 @@ import 'package:test/test.dart';
 /// This sorts object keys and stringifies values using standard JSON rules.
 String? jsonStableStringify(Object? value) {
   if (value == null) return 'null';
+
   if (value is bool) return jsonEncode(value);
+
   if (value is num) {
     if (value.isNaN || value.isInfinite) return 'null';
     return jsonEncode(value);
   }
+
   if (value is String) return jsonEncode(value);
+
   if (value is List) {
     final items = value.map((e) => jsonStableStringify(e) ?? 'null').join(',');
+
     return '[$items]';
   }
+
   if (value is Map<String, Object?>) {
     final keys = value.keys.toList()..sort();
     final pairs = <String>[];
+
     for (final key in keys) {
       final v = value[key];
       final stringified = jsonStableStringify(v);
+
       if (stringified != null) {
         pairs.add('${jsonEncode(key)}:$stringified');
       }
     }
+
     return '{${pairs.join(',')}}';
   }
+
   return null;
 }
 

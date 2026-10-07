@@ -13,15 +13,19 @@ Future<List<EnhancedTransaction>> enhancedGetTransactionsByAddress(
   GetTransactionsByAddressRequest request,
 ) async {
   final queryParams = <String, String>{};
+
   if (request.before != null) {
     queryParams['before'] = request.before!;
   }
+
   if (request.until != null) {
     queryParams['until'] = request.until!;
   }
+
   if (request.commitment != null) {
     queryParams['commitment'] = request.commitment!.toJson();
   }
+
   if (request.type != null) {
     queryParams['type'] = request.type!;
   }
@@ -31,6 +35,7 @@ Future<List<EnhancedTransaction>> enhancedGetTransactionsByAddress(
     queryParameters: queryParams.isNotEmpty ? queryParams : null,
   );
   final list = result! as List<Object?>;
+
   return list
       .cast<Map<String, Object?>>()
       .map(EnhancedTransaction.fromJson)

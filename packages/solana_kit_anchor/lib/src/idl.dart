@@ -17,11 +17,14 @@ sealed class AnchorIdlType {
     if (node is String) {
       return _parseScalar(node);
     }
+
     if (node is Map) {
       if (node.containsKey('bytes')) {
         return const AnchorIdlBytes();
       }
+
       final defined = node['defined'];
+
       if (defined is Map) {
         if (defined['generics'] != null) {
           throw ArgumentError.value(
@@ -30,14 +33,18 @@ sealed class AnchorIdlType {
             'Generic type instantiation is not supported by the runtime coder',
           );
         }
+
         if (defined['name'] is String) {
           final name = defined['name'] as String;
+
           return AnchorIdlDefined(typeNameOf(name));
         }
       }
+
       if (node['vec'] != null) {
         return AnchorIdlVec(parse(node['vec']));
       }
+
       if (node['option'] != null) {
         final prefixNode = node['prefix'];
         return AnchorIdlOption(
@@ -45,11 +52,14 @@ sealed class AnchorIdlType {
           prefixNode == null ? 1 : _parsePrefix(prefixNode),
         );
       }
+
       final array = node['array'];
+
       if (array is List && array.length == 2) {
         return AnchorIdlArray(parse(array[0]), _parseArrayLength(array[1]));
       }
     }
+
     throw ArgumentError.value(
       node,
       'type',
@@ -90,8 +100,10 @@ sealed class AnchorIdlType {
           '8-byte option prefixes are not supported by the runtime coder',
         );
       }
+
       return prefix;
     }
+
     throw ArgumentError.value(
       prefix,
       'type.option.prefix',
@@ -101,11 +113,15 @@ sealed class AnchorIdlType {
 
   static int _parseArrayLength(Object? length) {
     if (length is int) return length;
+
     if (length is num) return length.toInt();
+
     if (length is String) {
       final parsed = int.tryParse(length);
+
       if (parsed != null) return parsed;
     }
+
     throw ArgumentError.value(
       length,
       'type.array.length',
@@ -118,6 +134,7 @@ sealed class AnchorIdlType {
 /// `idl::some_module::NamedStruct` becomes `NamedStruct`.
 String typeNameOf(String name) {
   final parts = name.split('::');
+
   return parts.isEmpty ? name : parts.last;
 }
 
@@ -249,6 +266,7 @@ class AnchorIdlField {
     if (node is Map && node.containsKey('type')) {
       final mapping = Map<String, Object?>.from(node);
       final rawType = mapping['type'];
+
       if (rawType == null) {
         throw ArgumentError.value(
           node,
@@ -261,6 +279,7 @@ class AnchorIdlField {
         rawType,
       );
     }
+
     return AnchorIdlField._('field$tupleIndex', node);
   }
 
@@ -293,6 +312,7 @@ class AnchorIdlEnumVariant {
         'Anchor IDL enum variants must be objects',
       );
     }
+
     final fields = switch (node['fields']) {
       final List<Object?> list =>
         list.indexed
@@ -426,6 +446,7 @@ class AnchorIdlProgram {
         'Expected an IDL JSON string or decoded map',
       ),
     };
+
     final metadata = json['metadata'];
     final programName = metadata is Map ? metadata['name'] : null;
     return AnchorIdlProgram(
@@ -444,6 +465,7 @@ class AnchorIdlProgram {
               'Expected an instruction object',
             ),
           };
+
           final name = map['name'];
           if (name is! String) {
             throw ArgumentError.value(
@@ -542,6 +564,7 @@ MapEntry<String, AnchorIdlTypeDef> _parseType(Object? node) {
   final map = Map<String, Object?>.from(node! as Map);
   final name = typeNameOf((map['name'] as String?) ?? '');
   final type = map['type'];
+
   final definition = switch (type) {
     {'kind': 'struct'} => AnchorIdlStruct(
       fields: _parseFields(type['fields']),
@@ -564,6 +587,7 @@ MapEntry<String, AnchorIdlTypeDef> _parseType(Object? node) {
       'Unsupported Anchor IDL defined type',
     ),
   };
+
   return MapEntry(name, definition);
 }
 

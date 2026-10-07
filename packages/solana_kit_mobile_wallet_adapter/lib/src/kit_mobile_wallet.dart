@@ -79,6 +79,7 @@ class _KitMobileWalletImpl implements KitMobileWallet {
     };
 
     final result = await _wallet.authorize(params);
+
     return AuthorizationResult.fromJson(result);
   }
 
@@ -93,6 +94,7 @@ class _KitMobileWalletImpl implements KitMobileWallet {
     };
 
     final result = await _wallet.reauthorize(params);
+
     return AuthorizationResult.fromJson(result);
   }
 
@@ -104,6 +106,7 @@ class _KitMobileWalletImpl implements KitMobileWallet {
   @override
   Future<WalletCapabilities> getCapabilities() async {
     final result = await _wallet.getCapabilities();
+
     return WalletCapabilities.fromJson(result);
   }
 
@@ -112,6 +115,7 @@ class _KitMobileWalletImpl implements KitMobileWallet {
     required List<String> payloads,
   }) async {
     final result = await _wallet.signTransactions({'payloads': payloads});
+
     return (result['signed_payloads']! as List<Object?>).cast<String>();
   }
 
@@ -124,6 +128,7 @@ class _KitMobileWalletImpl implements KitMobileWallet {
       'addresses': addresses,
       'payloads': payloads,
     });
+
     return (result['signed_payloads']! as List<Object?>).cast<String>();
   }
 
@@ -138,12 +143,14 @@ class _KitMobileWalletImpl implements KitMobileWallet {
     };
 
     final result = await _wallet.signAndSendTransactions(params);
+
     return (result['signatures']! as List<Object?>).cast<String>();
   }
 
   @override
   Future<AuthorizationResult> cloneAuthorization() async {
     final result = await _wallet.cloneAuthorization({});
+
     return AuthorizationResult.fromJson(result);
   }
 }

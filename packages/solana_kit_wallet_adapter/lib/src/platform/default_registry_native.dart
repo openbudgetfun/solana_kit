@@ -85,6 +85,7 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
         : accounts
               .where((account) => account.address == rawAddress)
               .firstOrNull;
+
     if (account == null) {
       throw const WalletStandardException(
         WalletStandardErrorCode.invalidResponse,
@@ -104,6 +105,7 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
       );
     }
     final signatureType = signInResult.signatureType;
+
     if (signatureType != null && signatureType != 'ed25519') {
       throw const WalletStandardException(
         WalletStandardErrorCode.invalidResponse,
@@ -132,12 +134,14 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
   @override
   Future<void> disconnect() async {
     final authToken = _authToken;
+
     if (authToken != null) {
       await _transact(
         (wallet) => wallet.deauthorize(authToken: authToken),
         config: protocol.WalletAssociationConfig(baseUri: _walletUriBase),
       );
     }
+
     _authToken = null;
     _rawAddresses.clear();
   }
@@ -201,6 +205,7 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
     Future<T> Function(mwa.KitMobileWallet wallet) callback,
   ) async {
     final authToken = _authToken;
+
     if (authToken == null) {
       throw const WalletStandardException(
         WalletStandardErrorCode.disconnected,
@@ -239,12 +244,14 @@ class NativeMobileWalletBackend implements MobileWalletBackend {
 
   String _rawAddress(WalletAccount account) {
     final value = _rawAddresses[account.address];
+
     if (value == null) {
       throw const WalletStandardException(
         WalletStandardErrorCode.invalidRequest,
         'Mobile wallet account is not authorized',
       );
     }
+
     return value;
   }
 }

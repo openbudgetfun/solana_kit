@@ -57,6 +57,7 @@ VariableSizeCodec<String, String> getBase64Codec() {
 Uint8List _decodeBase64Tolerant(String value) {
   // Validate the string contains only base64 characters (ignoring padding).
   final stripped = value.replaceAll('=', '');
+
   for (var i = 0; i < stripped.length; i++) {
     if (!_alphabet.contains(stripped[i])) {
       throw SolanaError(SolanaErrorCode.codecsInvalidStringForBase, {

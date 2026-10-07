@@ -75,12 +75,14 @@ void _copySourceToTargetInReverse(
 ]) {
   var left = sourceStart;
   var right = sourceEnd;
+
   while (left < --right) {
     final leftValue = source[left];
     target[left + targetOffset] = source[right];
     target[right + targetOffset] = leftValue;
     left++;
   }
+
   if (left == right) {
     target[left + targetOffset] = source[left];
   }

@@ -795,6 +795,7 @@ Future<int> _availablePort({int? except}) async {
     final socket = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
     final port = socket.port;
     await socket.close();
+
     if (port != except) return port;
   }
 }

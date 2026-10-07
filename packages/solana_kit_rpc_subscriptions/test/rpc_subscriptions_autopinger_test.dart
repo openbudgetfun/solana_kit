@@ -291,9 +291,11 @@ class _MockChannel implements RpcSubscriptionsChannel {
   Future<void> send(Object message) {
     sendCallCount++;
     lastSentMessage = message;
+
     if (sendError != null) {
       return Future<void>.error(sendError!);
     }
+
     return Future<void>.value();
   }
 }

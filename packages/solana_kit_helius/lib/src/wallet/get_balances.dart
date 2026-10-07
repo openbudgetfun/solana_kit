@@ -13,5 +13,6 @@ Future<WalletBalances> walletGetBalances(
   final result = await restClient.get(
     '/v0/addresses/${request.address}/balances?api-key=$apiKey',
   );
+
   return WalletBalances.fromJson(result! as Map<String, Object?>);
 }

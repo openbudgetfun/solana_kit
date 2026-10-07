@@ -9,6 +9,7 @@ Future<void> main(List<String> args) async {
 
   final packagesDirectory = Directory('packages');
   final packageDirectories = <Directory>[];
+
   if (packagesDirectory.existsSync()) {
     packageDirectories
       ..addAll(
@@ -21,6 +22,7 @@ Future<void> main(List<String> args) async {
 
   for (final packageDirectory in packageDirectories) {
     final testDirectory = Directory('${packageDirectory.path}/test');
+
     if (!testDirectory.existsSync() || !_hasDartTests(testDirectory)) {
       continue;
     }
@@ -31,15 +33,18 @@ Future<void> main(List<String> args) async {
     final isFlutter = pubspec.contains(
       RegExp(r'^  flutter:\s*$', multiLine: true),
     );
+
     if (isFlutter) {
       if (!pubspec.contains(RegExp(r'^  plugin:\s*$', multiLine: true))) {
         flutterPackages.add(packageDirectory);
       }
+
       continue;
     }
 
     testDirectories.add(testDirectory.path);
   }
+
   final generatedTestDirectory = Directory(
     'packages/codama-renderers-dart/test-generated/test',
   );
@@ -50,6 +55,7 @@ Future<void> main(List<String> args) async {
   }
 
   final rootTestDirectory = Directory('test');
+
   if (rootTestDirectory.existsSync() && _hasDartTests(rootTestDirectory)) {
     testDirectories.add(rootTestDirectory.path);
   }
@@ -58,9 +64,11 @@ Future<void> main(List<String> args) async {
   // packages so their widget tests execute alongside the package tests.
   for (final packageDirectory in packageDirectories) {
     final exampleDirectory = Directory('${packageDirectory.path}/example');
+
     if (!File('${exampleDirectory.path}/pubspec.yaml').existsSync()) {
       continue;
     }
+
     final exampleTestDirectory = Directory('${exampleDirectory.path}/test');
     if (!exampleTestDirectory.existsSync() ||
         !_hasDartTests(exampleTestDirectory)) {
@@ -76,6 +84,7 @@ Future<void> main(List<String> args) async {
   if (testDirectories.isEmpty && flutterPackages.isEmpty) {
     stderr.writeln('No test directories were found.');
     exitCode = 1;
+
     return;
   }
 
@@ -91,6 +100,7 @@ Future<void> main(List<String> args) async {
   final testArgs = _withDefaultTestArgs(args);
   final stopwatch = Stopwatch()..start();
   var code = 0;
+
   if (testDirectories.isNotEmpty) {
     final result = await Process.start(
       'fvm',
@@ -107,6 +117,7 @@ Future<void> main(List<String> args) async {
     );
     code = await result.exitCode;
   }
+
   for (final package in flutterPackages) {
     if (code != 0) break;
     stdout.writeln('Running Flutter tests for ${package.path}.');
@@ -125,6 +136,7 @@ Future<void> main(List<String> args) async {
     );
     code = await result.exitCode;
   }
+
   stopwatch.stop();
   stdout.writeln(
     'Workspace tests finished in ${_formatDuration(stopwatch.elapsed)}.',
@@ -158,9 +170,11 @@ bool _hasConcurrencyOption(List<String> args) {
 
 int _defaultConcurrency() {
   final processors = Platform.numberOfProcessors;
+
   if (processors < 1) {
     return 1;
   }
+
   return processors > 12 ? 12 : processors;
 }
 
@@ -185,6 +199,7 @@ Future<void> _ensurePackageConfig() async {
     'get',
   ], mode: ProcessStartMode.inheritStdio);
   final code = await result.exitCode;
+
   if (code != 0) {
     exitCode = code;
     throw const ProcessException('fvm', ['flutter', 'pub', 'get']);
@@ -194,5 +209,6 @@ Future<void> _ensurePackageConfig() async {
 String _formatDuration(Duration duration) {
   final minutes = duration.inMinutes;
   final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+
   return '$minutes:${seconds}s';
 }

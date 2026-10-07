@@ -67,7 +67,6 @@
 ///
 /// Feed the derived keys to `getNameRegistryStateCodec` or the record codecs when you need parsed owner, class, and content data.
 ///
-
 /// <!-- {=docsSnsSection -->
 ///
 /// ### Resolve a .sol domain key
@@ -89,7 +88,6 @@
 library;
 
 // ignore_for_file: comment_references
-
 ///
 // Program and protocol addresses.
 ///

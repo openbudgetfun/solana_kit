@@ -20,6 +20,7 @@ export function getErrorPageFragment(
   scope: RenderScope,
 ): Fragment {
   const errors = programNode.errors ?? [];
+
   if (errors.length === 0) return emptyFragment();
 
   const programName = programNode.name as string;

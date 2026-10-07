@@ -72,7 +72,6 @@
 ///
 /// The receiver program also supports `post_update`, which consumes an encoded-VAA account that was already verified by the Wormhole program. On-chain price accounts decode with `decodePythPriceAccount` (classic layout) and `decodePriceUpdateV2Account` (push oracle `PriceUpdateV2`).
 ///
-
 /// <!-- {=docsPythSection -->
 ///
 /// ### Fetch a price from Hermes
@@ -144,7 +143,6 @@
 library;
 
 // ignore_for_file: comment_references
-
 export 'src/encoding.dart';
 export 'src/exceptions.dart';
 export 'src/hermes_client.dart';

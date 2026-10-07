@@ -33,6 +33,7 @@ Encoder<Map<String, Object?>> getDiscriminatedUnionEncoder(
 
   int getIndex(Map<String, Object?> value) {
     final discriminatorValue = value[discriminator];
+
     return _getVariantDiscriminator(variants, discriminatorValue);
   }
 
@@ -42,6 +43,7 @@ Encoder<Map<String, Object?>> getDiscriminatedUnionEncoder(
   int writeImpl(Map<String, Object?> value, Uint8List bytes, int offset) {
     final index = getIndex(value);
     _assertValidVariantIndex(variantEncoders, index);
+
     return variantEncoders[index].write(value, bytes, offset);
   }
 
@@ -104,6 +106,7 @@ Decoder<Map<String, Object?>> getDiscriminatedUnionDecoder(
     final (value, _) = prefix.read(bytes, offset);
     final index = value.toInt();
     _assertValidVariantIndex(variantDecoders, index);
+
     return variantDecoders[index].read(bytes, offset);
   }
 
@@ -151,12 +154,14 @@ int _getVariantDiscriminator(
   Object? discriminatorValue,
 ) {
   final index = variants.indexWhere((v) => v.$1 == discriminatorValue);
+
   if (index < 0) {
     throw SolanaError(SolanaErrorCode.codecsInvalidDiscriminatedUnionVariant, {
       'value': discriminatorValue,
       'variants': variants.map((v) => v.$1).toList(),
     });
   }
+
   return index;
 }
 
@@ -173,11 +178,15 @@ void _assertValidVariantIndex(List<Object> variants, int index) {
 int? _getUnionFixedSize(List<Object> variants) {
   if (variants.isEmpty) return 0;
   final firstSize = getFixedSize(variants[0]);
+
   if (firstSize == null) return null;
+
   for (final variant in variants) {
     final s = getFixedSize(variant);
+
     if (s != firstSize) return null;
   }
+
   return firstSize;
 }
 

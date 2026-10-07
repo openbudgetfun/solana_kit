@@ -346,6 +346,7 @@ SolanaRpcResponse<TValue> _parseSolanaRpcResponse<TValue>(
     Map() => response.cast<String, Object?>(),
     _ => <String, Object?>{},
   };
+
   final typedContext = switch (typedResponse['context']) {
     Map() => (typedResponse['context']! as Map).cast<String, Object?>(),
     _ => <String, Object?>{},

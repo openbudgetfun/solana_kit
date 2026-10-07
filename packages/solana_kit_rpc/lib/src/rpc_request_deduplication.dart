@@ -11,6 +11,8 @@ String? getSolanaRpcPayloadDeduplicationKey(Object? payload) {
   if (!isJsonRpcPayload(payload)) {
     return null;
   }
+
   final map = payload! as Map<String, Object?>;
+
   return fastStableStringify([map['method'], map['params']]);
 }

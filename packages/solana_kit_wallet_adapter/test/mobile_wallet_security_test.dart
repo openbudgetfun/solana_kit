@@ -613,6 +613,7 @@ Uint8List _unsignedTransaction(Address address, String blockhash) {
       ),
     ),
   );
+
   return getTransactionEncoder().encode(transaction);
 }
 
@@ -625,6 +626,7 @@ String blockhashFor(int byte) {
     '1thX6LZfHDZZKUs92febYZhYRcXddmzfzF2NvTkPNE',
     '3ARMH9zfVCnU2TKiphU4xcEyWdA45fc1sjKEtYMdf3gr',
   ];
+
   return blockhashes[byte % blockhashes.length];
 }
 
@@ -751,6 +753,7 @@ class _RecordingBackend implements MobileWalletBackend {
   @override
   Future<void> disconnect() async {
     final error = disconnectError;
+
     if (error != null) throw error;
     await disconnectCompletion?.future;
   }
@@ -762,9 +765,11 @@ class _RecordingBackend implements MobileWalletBackend {
   ) async {
     calls.add((account: account, payloads: transactions, options: null));
     final substituted = substitutedTransaction;
+
     if (substituted != null) {
       return List.filled(transactions.length, substituted);
     }
+
     return transactions.map(signTransactionBytes).toList();
   }
 
@@ -774,6 +779,7 @@ class _RecordingBackend implements MobileWalletBackend {
     WalletAccount account,
   ) async {
     calls.add((account: account, payloads: messages, options: null));
+
     if (forgeMessageSignatures) {
       return messages.map((_) => Uint8List(64)).toList();
     }
@@ -791,6 +797,7 @@ class _RecordingBackend implements MobileWalletBackend {
   ) async {
     calls.add((account: account, payloads: transactions, options: options));
     final reported = reportedSignatures;
+
     if (reported != null) return reported;
     return [
       for (final transaction in transactions)

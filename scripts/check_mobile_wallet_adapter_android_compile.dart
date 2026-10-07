@@ -2,9 +2,11 @@ import 'dart:io';
 
 Future<void> main() async {
   final rootResult = await Process.run('git', ['rev-parse', '--show-toplevel']);
+
   if (rootResult.exitCode != 0) {
     stderr.write(rootResult.stderr);
     exitCode = rootResult.exitCode;
+
     return;
   }
 
@@ -12,9 +14,11 @@ Future<void> main() async {
   final pluginDirectory = Directory(
     '${rootDirectory.path}/packages/solana_kit_mobile_wallet_adapter',
   );
+
   if (!pluginDirectory.existsSync()) {
     stderr.writeln('Expected plugin path not found: ${pluginDirectory.path}');
     exitCode = 1;
+
     return;
   }
 
@@ -36,8 +40,10 @@ Future<void> main() async {
       'com.example',
       tempApp.path,
     ]);
+
     if (code != 0) {
       exitCode = code;
+
       return;
     }
 
@@ -52,8 +58,10 @@ Future<void> main() async {
       'pub',
       'get',
     ], workingDirectory: tempApp.path);
+
     if (code != 0) {
       exitCode = code;
+
       return;
     }
 
@@ -78,8 +86,10 @@ void main() {
       '--target-platform',
       'android-arm64',
     ], workingDirectory: tempApp.path);
+
     if (code != 0) {
       exitCode = code;
+
       return;
     }
 
@@ -98,21 +108,27 @@ void _rewritePubspec(
 ) {
   final overrides = <(String, String)>[];
   final packagesDirectory = Directory('${rootDirectory.path}/packages');
+
   for (final entity in packagesDirectory.listSync().whereType<Directory>()) {
     final packagePubspec = File('${entity.path}/pubspec.yaml');
+
     if (!packagePubspec.existsSync()) continue;
     final name = _readPackageName(packagePubspec);
+
     if (name != null && name.startsWith('solana_kit_')) {
       overrides.add((name, entity.path));
     }
   }
+
   overrides.sort((a, b) => a.$1.compareTo(b.$1));
 
   final lines = pubspec.readAsLinesSync();
   final output = <String>[];
   var insertedDependency = false;
+
   for (final line in lines) {
     output.add(line);
+
     if (line.trim() == 'dependencies:' && !insertedDependency) {
       output
         ..add('  solana_kit_mobile_wallet_adapter:')
@@ -130,6 +146,7 @@ void _rewritePubspec(
   output
     ..add('')
     ..add('dependency_overrides:');
+
   for (final (name, path) in overrides) {
     output
       ..add('  $name:')
@@ -142,8 +159,10 @@ void _rewritePubspec(
 String? _readPackageName(File pubspec) {
   for (final line in pubspec.readAsLinesSync()) {
     final match = RegExp(r'^name:\s*([^\s#]+)').firstMatch(line);
+
     if (match != null) return match.group(1);
   }
+
   return null;
 }
 

@@ -302,6 +302,7 @@ class _NativeWallet implements mwa.KitMobileWallet {
         signInResult: result,
       );
     }
+
     return _authorization('initial-token');
   }
 
@@ -318,6 +319,7 @@ class _NativeWallet implements mwa.KitMobileWallet {
   }) async {
     lastAddresses = addresses;
     lastPayloads = payloads;
+
     return outputs ??
         [
           for (final payload in payloads)

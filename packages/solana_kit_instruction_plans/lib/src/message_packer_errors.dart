@@ -39,6 +39,7 @@ int resolveMaxInstructionsPerTransaction(int? maxInstructions) {
       },
     );
   }
+
   return maxInstructions ?? defaultMaxInstructionsPerTransaction;
 }
 

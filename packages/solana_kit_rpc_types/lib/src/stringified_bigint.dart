@@ -26,5 +26,6 @@ void assertIsStringifiedBigInt(String putativeBigInt) {
 /// it to the [StringifiedBigInt] type. It's best used with untrusted input.
 StringifiedBigInt stringifiedBigInt(String putativeBigInt) {
   assertIsStringifiedBigInt(putativeBigInt);
+
   return StringifiedBigInt(putativeBigInt);
 }

@@ -154,6 +154,7 @@ Encoder<List<T>> getArrayEncoder<T>(
 
   int writeImpl(List<T> array, Uint8List bytes, int currentOffset) {
     var offset = currentOffset;
+
     if (effectiveSize case final FixedArraySize fixedSize) {
       assertValidNumberOfItemsForCodec(
         description ?? 'array',
@@ -161,8 +162,10 @@ Encoder<List<T>> getArrayEncoder<T>(
         array.length,
       );
     }
+
     if (effectiveSize case final PrefixedArraySize prefixedSize) {
       final prefixObject = prefixedSize.prefix;
+
       if (prefixObject is Encoder<BigInt>) {
         // Sized prefixes wider than 32 bits (e.g. u64) are
         // generated as `BigInt` encoders, so the item count
@@ -172,6 +175,7 @@ Encoder<List<T>> getArrayEncoder<T>(
         offset = prefixObject.write(array.length, bytes, offset);
       }
     }
+
     for (final value in array) {
       offset = item.write(value, bytes, offset);
     }
@@ -180,6 +184,7 @@ Encoder<List<T>> getArrayEncoder<T>(
       bytes.setAll(offset, sentinelSize.sentinel);
       offset += sentinelSize.sentinel.length;
     }
+
     return offset;
   }
 
@@ -202,6 +207,7 @@ Encoder<List<T>> getArrayEncoder<T>(
             ? getEncodedSize(BigInt.from(array.length), prefixObject)
             : getEncodedSize(array.length, prefixObject as Encoder<num>);
       }
+
       var suffixSize = 0;
       if (effectiveSize case final SentinelArraySize sentinelSize
           when sentinelSize.strategy != SentinelCountStrategy.omitted) {
@@ -256,6 +262,7 @@ Decoder<List<T>> getArrayDecoder<T>(
       if (requireSizePrefix) {
         _throwInvalidArraySize(description, 'missing size prefix');
       }
+
       return (array, offset);
     }
 
@@ -272,11 +279,13 @@ Decoder<List<T>> getArrayDecoder<T>(
         offset = newOffset;
         array.add(value);
       }
+
       return (array, offset);
     }
 
     if (effectiveSize case final SentinelArraySize sentinelSize) {
       final sentinel = sentinelSize.sentinel;
+
       while (true) {
         if (offset + sentinel.length > bytes.length) {
           // Not enough bytes remain to hold the sentinel.
@@ -290,12 +299,15 @@ Decoder<List<T>> getArrayDecoder<T>(
               },
             );
           }
+
           return (array, offset);
         }
+
         if (containsBytes(bytes, sentinel, offset)) {
           // The sentinel is present; consume it and stop.
           return (array, offset + sentinel.length);
         }
+
         final (value, newOffset) = item.read(bytes, offset);
 
         // Security: like the remainder branch, every item must consume at
@@ -310,17 +322,21 @@ Decoder<List<T>> getArrayDecoder<T>(
     }
 
     final int resolvedSize;
+
     if (effectiveSize case final FixedArraySize fixedSize) {
       resolvedSize = fixedSize.size;
     } else {
       final prefixedSize = effectiveSize as PrefixedArraySize;
       final prefixObject = prefixedSize.prefix;
       int resolvedSizeLocal;
+
       if (prefixObject is Decoder<BigInt>) {
         final (prefixValue, newOffset) = prefixObject.read(bytes, offset);
+
         if (prefixValue < BigInt.zero || prefixValue > BigInt.from(maxItems)) {
           _throwInvalidArraySize(description, prefixValue);
         }
+
         resolvedSizeLocal = prefixValue.toInt();
         offset = newOffset;
       } else {
@@ -335,6 +351,7 @@ Decoder<List<T>> getArrayDecoder<T>(
         resolvedSizeLocal = prefixValue.toInt();
         offset = newOffset;
       }
+
       resolvedSize = resolvedSizeLocal;
     }
 
@@ -343,6 +360,7 @@ Decoder<List<T>> getArrayDecoder<T>(
       offset = newOffset;
       array.add(value);
     }
+
     return (array, offset);
   }
 
@@ -369,6 +387,7 @@ Codec<List<T>, List<T>> getArrayCodec<T>(
   final ArrayLikeCodecSize? decoderSize;
   if (size case final PrefixedArraySize prefixedSize) {
     final prefix = prefixedSize.prefix;
+
     if (prefix is Codec<BigInt, BigInt>) {
       // `BigInt` is not a `num`, so wide integer codecs need a separate
       // branch before the standard numeric codec path.
@@ -425,8 +444,10 @@ String _hexBytes(Uint8List bytes) =>
 int? _computeArrayLikeCodecSize(ArrayLikeCodecSize size, int? itemSize) {
   if (size case final FixedArraySize fixedSize) {
     if (fixedSize.size == 0) return 0;
+
     if (itemSize == null) return null;
     return itemSize * fixedSize.size;
   }
+
   return null;
 }

@@ -35,6 +35,7 @@ AnchorProgramError anchorProgramError(
       custom.msg ?? 'Custom program error: $code',
     );
   }
+
   final standard = standardAnchorErrorMessages[code];
   return AnchorProgramError._(
     code,

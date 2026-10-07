@@ -21,5 +21,6 @@ KeypairResult loadKeypair(Uint8List bytes) {
 /// Returns the base58-encoded public address for the given [keypair].
 Future<String> getAddress(KeypairResult keypair) async {
   final publicKey = base64Decode(keypair.publicKey);
+
   return getBase58Decoder().decode(Uint8List.fromList(publicKey));
 }

@@ -91,11 +91,13 @@ Future<DevPortalConfigsResponse> fetchDevPortalConfigs(
       'accept': 'application/json',
     };
     final agent = userAgent;
+
     if (agent != null) headers['User-Agent'] = agent;
     final response = await httpClient.get(
       Uri.parse('$baseUrl$path'),
       headers: headers,
     );
+
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw createSolanaError(
         SolanaErrorCode.heliusRestError,

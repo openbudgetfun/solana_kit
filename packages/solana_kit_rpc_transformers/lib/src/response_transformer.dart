@@ -59,6 +59,7 @@ String toAllowedNumericMethodName(String methodName) {
       !methodName.endsWith('Notifications')) {
     return '${methodName}s';
   }
+
   return methodName;
 }
 

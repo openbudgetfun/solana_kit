@@ -300,6 +300,7 @@ void main() {
       for (final ws in serverSockets) {
         await ws.close();
       }
+
       await server.close(force: true);
     });
 
@@ -679,6 +680,7 @@ Future<void> _waitFor(
     if (DateTime.now().isAfter(deadline)) {
       throw TimeoutException('Condition not met within $timeout');
     }
+
     await Future<void>.delayed(const Duration(milliseconds: 10));
   }
 }

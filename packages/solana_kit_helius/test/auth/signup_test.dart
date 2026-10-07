@@ -161,6 +161,7 @@ JsonRpcClient _rpcClient() {
           headers: {'content-type': 'application/json'},
         );
       }
+
       final body = jsonDecode(request.body) as Map<String, Object?>;
       final method = body['method'];
       if (method == 'getLatestBlockhash') {

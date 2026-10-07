@@ -33,6 +33,7 @@ BinaryFixedPoint multiplyBinaryFixedPoint(
       'Expected BigInt or BinaryFixedPoint.',
     ),
   };
+
   return _withBinaryRaw(a, raw);
 }
 
@@ -55,6 +56,7 @@ BinaryFixedPoint divideBinaryFixedPoint(
       'Expected BigInt or BinaryFixedPoint.',
     ),
   };
+
   return _withBinaryRaw(a, raw);
 }
 
@@ -67,6 +69,7 @@ BinaryFixedPoint negateBinaryFixedPoint(BinaryFixedPoint value) {
       'Expected a signed value.',
     );
   }
+
   return _withBinaryRaw(value, -value.raw);
 }
 
@@ -81,6 +84,7 @@ BigInt _multiplyByFixedPoint(
   FixedPointRoundingMode rounding,
 ) {
   _assertSameSignedness(a, b, 'multiplyBinaryFixedPoint');
+
   return _divideChecked(a.raw * b.raw, _pow2(b.fractionalBits), rounding);
 }
 
@@ -91,6 +95,7 @@ BigInt _divideByFixedPoint(
 ) {
   _assertSameSignedness(a, b, 'divideBinaryFixedPoint');
   final scaledNumerator = a.raw * _pow2(b.fractionalBits);
+
   return _divideChecked(scaledNumerator, b.raw, rounding);
 }
 
@@ -129,6 +134,7 @@ BigInt _divideChecked(
 
   final quotient = numerator ~/ denominator;
   final remainder = numerator.remainder(denominator);
+
   if (remainder == BigInt.zero) return quotient;
 
   return switch (rounding) {

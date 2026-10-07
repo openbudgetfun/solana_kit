@@ -185,6 +185,7 @@ TransactionExecutionBoundary createTransactionExecutionBoundary(
       )) {
         final solanaError = error as SolanaError;
         final value = solanaError.context['transactionPlanResult'];
+
         if (value is TransactionPlanResult) {
           transactionPlanResult = value;
         }
@@ -243,6 +244,7 @@ _ExecutionFailure _extractExecutionFailure(
 
   if (error is SolanaError) {
     final abortReason = error.context['abortReason'];
+
     if (abortReason is _TransactionExecutionStageError) {
       return _ExecutionFailure(abortReason.stage, abortReason.error);
     }
@@ -264,6 +266,7 @@ Object? _findFirstSingleTransactionError(TransactionPlanResult result) {
     case ParallelTransactionPlanResult(:final plans):
       for (final plan in plans) {
         final error = _findFirstSingleTransactionError(plan);
+
         if (error != null) {
           return error;
         }

@@ -77,6 +77,7 @@ class HeliusWebSocket {
     } on Object {
       _channel = null;
       _subscription = null;
+
       _isConnected = false;
       throw SolanaError(SolanaErrorCode.heliusWebSocketError, {
         'message': 'Failed to connect to ${redactUrl(uri.toString())}.',
@@ -171,12 +172,14 @@ class HeliusWebSocket {
     if (data is! String) return;
 
     final json = _tryParseMessage(data);
+
     if (json == null) return;
 
     // Subscription confirmation response.
     if (json.containsKey('id') && json.containsKey('result')) {
       final id = json['id'];
       final result = json['result'];
+
       if (id is int && result is int) {
         if (_cancellationsPendingAck.remove(id)) {
           // The local subscription was cancelled before this ack arrived;
@@ -186,12 +189,14 @@ class HeliusWebSocket {
           _subscriptionIds[id] = result;
         }
       }
+
       return;
     }
 
     // Subscription error response.
     if (json.containsKey('id') && json.containsKey('error')) {
       final id = json['id'];
+
       if (id is int) {
         // The subscribe failed, so there is no server-side subscription to
         // release for any deferred cancellation of this request.
@@ -202,24 +207,29 @@ class HeliusWebSocket {
           }),
         );
       }
+
       return;
     }
 
     // Notification message.
     if (json.containsKey('method') && json.containsKey('params')) {
       final params = json['params'];
+
       if (params is! Map) return;
 
       final subscription = params['subscription'] as int?;
+
       if (subscription == null) return;
 
       final result = params['result'];
+
       if (result is! Map) return;
 
       // The server coalesces identical subscriptions and reuses one
       // server-side subscription id for them, so every local subscription
       // mapped to that id must receive the notification.
       final typedResult = result.cast<String, Object?>();
+
       for (final entry in _subscriptionIds.entries) {
         if (entry.value == subscription) {
           _controllers[entry.key]?.add(typedResult);
@@ -231,14 +241,17 @@ class HeliusWebSocket {
   Map<String, Object?>? _tryParseMessage(String data) {
     try {
       final decoded = jsonDecode(data);
+
       if (decoded is! Map) {
         _broadcastError(
           SolanaError(SolanaErrorCode.heliusWebSocketError, {
             'message': 'Received non-object WebSocket payload from Helius.',
           }),
         );
+
         return null;
       }
+
       return decoded.cast<String, Object?>();
     } on FormatException catch (error) {
       _broadcastError(
@@ -246,6 +259,7 @@ class HeliusWebSocket {
           'message': 'Failed to decode Helius WebSocket payload: $error',
         }),
       );
+
       return null;
     }
   }
@@ -258,8 +272,8 @@ class HeliusWebSocket {
       }),
     );
   }
-  // coverage:ignore-end
 
+  // coverage:ignore-end
   void _onDone() {
     final subscription = _subscription;
     _channel = null;
@@ -269,9 +283,11 @@ class HeliusWebSocket {
     _subscriptionMethods.clear();
     _cancellationsPendingAck.clear();
     _nextId = 1;
+
     if (subscription != null) {
       unawaited(subscription.cancel());
     }
+
     unawaited(_closeControllers());
   }
 
@@ -284,6 +300,7 @@ class HeliusWebSocket {
   Future<void> _closeControllers() async {
     final controllers = _controllers.values.toList(growable: false);
     _controllers.clear();
+
     for (final controller in controllers) {
       await controller.close();
     }
@@ -293,6 +310,7 @@ class HeliusWebSocket {
 String _unsubscribeMethodFor(String? subscribeMethod) {
   if (subscribeMethod == null) return 'unsubscribe';
   const suffix = 'Subscribe';
+
   if (!subscribeMethod.endsWith(suffix)) return 'unsubscribe';
   return '${subscribeMethod.substring(0, subscribeMethod.length - suffix.length)}Unsubscribe';
 }

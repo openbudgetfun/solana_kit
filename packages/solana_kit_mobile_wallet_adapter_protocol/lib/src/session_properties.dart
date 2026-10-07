@@ -26,6 +26,7 @@ SessionProperties parseSessionProps(
 
   if (jsonProperties.containsKey('v')) {
     final v = jsonProperties['v'];
+
     switch (v) {
       case 1:
       case '1':
