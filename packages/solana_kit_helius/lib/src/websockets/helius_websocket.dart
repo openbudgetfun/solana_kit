@@ -42,6 +42,10 @@ class HeliusWebSocket {
   final _controllers = <int, StreamController<Map<String, Object?>>>{};
   final _subscriptionIds = <int, int>{};
   final _subscriptionMethods = <int, String>{};
+  // Subscribe request ids whose local subscription was cancelled before the
+  // server acknowledged it; the unsubscribe is deferred until the ack names
+  // the server-side subscription id.
+  final _cancellationsPendingAck = <int>{};
   int _nextId = 1;
   bool _isConnected = false;
 
@@ -128,28 +132,39 @@ class HeliusWebSocket {
 
     _subscriptionIds.clear();
     _subscriptionMethods.clear();
+    _cancellationsPendingAck.clear();
     _nextId = 1;
   }
 
   void _unsubscribe(int requestId) {
-    final subId = _subscriptionIds.remove(requestId);
     final controller = _controllers.remove(requestId);
-    final subscribeMethod = _subscriptionMethods.remove(requestId);
-
     if (controller != null && !controller.isClosed) {
       unawaited(controller.close());
     }
 
-    if (subId != null && _channel != null && _isConnected) {
-      _channel!.sink.add(
-        jsonEncode({
-          'jsonrpc': '2.0',
-          'id': _nextId++,
-          'method': _unsubscribeMethodFor(subscribeMethod),
-          'params': [subId],
-        }),
-      );
+    final subId = _subscriptionIds.remove(requestId);
+    if (subId != null) {
+      _sendUnsubscribe(subId, _subscriptionMethods.remove(requestId));
+      return;
     }
+    // The server has not acknowledged the subscribe request yet. Remember the
+    // cancellation so the subscription is released as soon as the ack arrives;
+    // otherwise the server-side subscription would leak until the socket
+    // closes.
+    _cancellationsPendingAck.add(requestId);
+  }
+
+  void _sendUnsubscribe(int subscriptionId, String? subscribeMethod) {
+    final channel = _channel;
+    if (channel == null || !_isConnected) return;
+    channel.sink.add(
+      jsonEncode({
+        'jsonrpc': '2.0',
+        'id': _nextId++,
+        'method': _unsubscribeMethodFor(subscribeMethod),
+        'params': [subscriptionId],
+      }),
+    );
   }
 
   void _onMessage(Object? data) {
@@ -163,7 +178,13 @@ class HeliusWebSocket {
       final id = json['id'];
       final result = json['result'];
       if (id is int && result is int) {
-        _subscriptionIds[id] = result;
+        if (_cancellationsPendingAck.remove(id)) {
+          // The local subscription was cancelled before this ack arrived;
+          // release the server-side subscription immediately.
+          _sendUnsubscribe(result, _subscriptionMethods.remove(id));
+        } else {
+          _subscriptionIds[id] = result;
+        }
       }
       return;
     }
@@ -172,6 +193,9 @@ class HeliusWebSocket {
     if (json.containsKey('id') && json.containsKey('error')) {
       final id = json['id'];
       if (id is int) {
+        // The subscribe failed, so there is no server-side subscription to
+        // release for any deferred cancellation of this request.
+        _cancellationsPendingAck.remove(id);
         _controllers[id]?.addError(
           SolanaError(SolanaErrorCode.heliusWebSocketError, {
             'message': 'Helius subscription error: ${json['error']}',
@@ -192,11 +216,13 @@ class HeliusWebSocket {
       final result = params['result'];
       if (result is! Map) return;
 
+      // The server coalesces identical subscriptions and reuses one
+      // server-side subscription id for them, so every local subscription
+      // mapped to that id must receive the notification.
       final typedResult = result.cast<String, Object?>();
       for (final entry in _subscriptionIds.entries) {
         if (entry.value == subscription) {
           _controllers[entry.key]?.add(typedResult);
-          break;
         }
       }
     }
@@ -241,6 +267,7 @@ class HeliusWebSocket {
     _isConnected = false;
     _subscriptionIds.clear();
     _subscriptionMethods.clear();
+    _cancellationsPendingAck.clear();
     _nextId = 1;
     if (subscription != null) {
       unawaited(subscription.cancel());
