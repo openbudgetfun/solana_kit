@@ -32,13 +32,19 @@ class SendTransactionConfig {
   /// Converts this config to a JSON-RPC params map.
   Map<String, Object?> toJson() {
     final json = <String, Object?>{};
+
     if (encoding != null) json['encoding'] = encoding!.toJson();
+
     if (maxRetries != null) json['maxRetries'] = maxRetries;
+
     if (minContextSlot != null) json['minContextSlot'] = minContextSlot;
+
     if (preflightCommitment != null) {
       json['preflightCommitment'] = preflightCommitment!.name;
     }
+
     if (skipPreflight != null) json['skipPreflight'] = skipPreflight;
+
     return json;
   }
 

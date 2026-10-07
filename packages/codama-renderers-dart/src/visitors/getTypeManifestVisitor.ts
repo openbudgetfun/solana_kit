@@ -19,6 +19,7 @@ import {
   type InstructionNode,
   type MapTypeNode,
   type NumberTypeNode,
+
   type OptionTypeNode,
   type PostOffsetTypeNode,
   type PreOffsetTypeNode,
@@ -310,6 +311,7 @@ export function getTypeManifestVisitor(input: {
         tupleEncoderArgs = encoderListStr;
         tupleDecoderArgs = decoderListStr;
       }
+
       const encoderFrag = fragment`${use(
         tupleEncoderFn,
         "solanaCodecsDataStructures",
@@ -722,7 +724,6 @@ export function getTypeManifestVisitor(input: {
 }
 
 // --- Helper functions ---
-
 function getNumberDartType(
   format: string,
 ): string {
@@ -888,10 +889,12 @@ function getHiddenAffixManifest(
 ): HiddenAffixManifest {
   if (node?.kind !== "constantValueNode") {
     const manifest = visit(node, self);
+
     return { encoder: manifest.encoder, decoder: manifest.decoder };
   }
 
   const constantBytes = getConstantBytesExpression(node, self);
+
   return {
     encoder: fragment`${use("getConstantEncoder", "solanaCodecsDataStructures")}(${constantBytes})`,
     decoder: fragment`${use("getConstantDecoder", "solanaCodecsDataStructures")}(${constantBytes})`,

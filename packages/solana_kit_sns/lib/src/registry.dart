@@ -150,6 +150,7 @@ VariableSizeCodec<String, String> getNameValueCodec() {
       if (end > bytes.length) {
         throw ArgumentError('Name value length $length exceeds input bytes');
       }
+
       final (value, _) = utf8Codec.read(bytes.sublist(0, end), start);
       return (value, end);
     },

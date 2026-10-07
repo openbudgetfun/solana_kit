@@ -10,9 +10,11 @@ final ECDomainParameters p256 = ECDomainParameters('prime256v1');
 SecureRandom createSecureRandom() {
   final random = Random.secure();
   final seed = Uint8List(32);
+
   for (var i = 0; i < 32; i++) {
     seed[i] = random.nextInt(256);
   }
+
   try {
     return FortunaRandom()..seed(KeyParameter(seed));
   } finally {
@@ -30,6 +32,7 @@ AsymmetricKeyPair<ECPublicKey, ECPrivateKey> generateP256KeyPair() {
       ),
     );
   final pair = generator.generateKeyPair();
+
   return AsymmetricKeyPair(pair.publicKey, pair.privateKey);
 }
 
@@ -53,6 +56,7 @@ Uint8List ecdsaSign(Uint8List data, ECPrivateKey privateKey) {
   final result = Uint8List(64)
     ..setAll(0, r)
     ..setAll(32, s);
+
   return result;
 }
 
@@ -69,6 +73,7 @@ bool ecdsaVerify(
 
   final verifier = ECDSASigner(SHA256Digest())
     ..init(false, PublicKeyParameter<ECPublicKey>(publicKey));
+
   return verifier.verifySignature(data, ECSignature(r, s));
 }
 
@@ -83,9 +88,11 @@ Uint8List ecdhSharedSecret(ECPrivateKey privateKey, ECPublicKey publicKey) {
 
   final publicPoint = _validatedP256PublicPoint(publicKey);
   final point = publicPoint * privateKey.d;
+
   if (point == null || point.isInfinity) {
     throw StateError('ECDH agreement produced point at infinity');
   }
+
   return _bigIntToBytes(point.x!.toBigInteger()!, 32);
 }
 
@@ -110,6 +117,7 @@ ECPublicKey ecPublicKeyFromBytes(Uint8List bytes) {
 
   final publicKey = ECPublicKey(p256.curve.decodePoint(bytes), p256);
   _validatedP256PublicPoint(publicKey);
+
   return publicKey;
 }
 
@@ -153,6 +161,7 @@ Uint8List hkdfSha256({
     ..init(HkdfParameters(ikm, outputLength, salt, info));
   final output = Uint8List(outputLength);
   hkdf.deriveKey(null, 0, output, 0);
+
   return output;
 }
 
@@ -170,6 +179,7 @@ Uint8List aesGcmEncrypt({
   final output = Uint8List(plaintext.length + 16); // +16 for GCM tag
   var offset = cipher.processBytes(plaintext, 0, plaintext.length, output, 0);
   offset += cipher.doFinal(output, offset);
+
   return output.sublist(0, offset);
 }
 
@@ -200,6 +210,7 @@ Uint8List aesGcmDecrypt({
     Uint8List.sublistView(output, 0, offset),
   );
   output.fillRange(0, output.length, 0);
+
   return plaintext;
 }
 
@@ -207,9 +218,11 @@ Uint8List aesGcmDecrypt({
 Uint8List randomBytes(int length) {
   final random = Random.secure();
   final bytes = Uint8List(length);
+
   for (var i = 0; i < bytes.length; i++) {
     bytes[i] = random.nextInt(256);
   }
+
   return bytes;
 }
 
@@ -217,18 +230,22 @@ Uint8List randomBytes(int length) {
 Uint8List _bigIntToBytes(BigInt value, int length) {
   final result = Uint8List(length);
   var v = value;
+
   for (var i = length - 1; i >= 0; i--) {
     result[i] = (v & BigInt.from(0xFF)).toInt();
     v >>= 8;
   }
+
   return result;
 }
 
 /// Converts unsigned big-endian bytes to a [BigInt].
 BigInt _bytesToBigInt(Uint8List bytes) {
   var result = BigInt.zero;
+
   for (var i = 0; i < bytes.length; i++) {
     result = (result << 8) | BigInt.from(bytes[i]);
   }
+
   return result;
 }

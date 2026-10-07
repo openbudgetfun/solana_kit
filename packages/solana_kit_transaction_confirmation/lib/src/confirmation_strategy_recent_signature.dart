@@ -152,6 +152,7 @@ createRecentSignatureConfirmationPromiseFactory(
                       0) {
                 signatureStatusLookupCompleter.complete();
               }
+
               // Otherwise, leave the completer pending (never resolves).
             })
             .catchError((Object error) {

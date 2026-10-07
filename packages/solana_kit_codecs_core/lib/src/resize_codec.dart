@@ -13,6 +13,7 @@ Encoder<T> resizeEncoder<T>(Encoder<T> encoder, int Function(int size) resize) {
   return switch (encoder) {
     FixedSizeEncoder<T>() => () {
       final newFixedSize = resize(encoder.fixedSize);
+
       if (newFixedSize < 0) {
         throw SolanaError(SolanaErrorCode.codecsExpectedPositiveByteLength, {
           'bytesLength': newFixedSize,
@@ -49,6 +50,7 @@ Decoder<T> resizeDecoder<T>(Decoder<T> decoder, int Function(int size) resize) {
   return switch (decoder) {
     FixedSizeDecoder<T>() => () {
       final newFixedSize = resize(decoder.fixedSize);
+
       if (newFixedSize < 0) {
         throw SolanaError(SolanaErrorCode.codecsExpectedPositiveByteLength, {
           'bytesLength': newFixedSize,

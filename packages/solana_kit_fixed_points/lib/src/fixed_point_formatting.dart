@@ -27,12 +27,15 @@ final class FixedPointToStringOptions {
   FixedPointToStringOptions options = const FixedPointToStringOptions(),
 ]) {
   final targetDecimals = options.decimals;
+
   if (targetDecimals == null || targetDecimals == currentDecimals) {
     return (decimals: currentDecimals, raw: raw);
   }
+
   if (targetDecimals < 0) {
     throw RangeError.range(targetDecimals, 0, null, 'decimals');
   }
+
   if (targetDecimals > currentDecimals) {
     return (
       decimals: targetDecimals,
@@ -82,6 +85,7 @@ BigInt _divideWithRounding(
 ) {
   final quotient = numerator ~/ denominator;
   final remainder = numerator.remainder(denominator);
+
   if (remainder == BigInt.zero) return quotient;
 
   return switch (rounding) {
@@ -116,8 +120,10 @@ bool _roundsTowardPositiveInfinity(BigInt numerator, BigInt denominator) {
 
 BigInt _pow10(int exponent) {
   var result = BigInt.one;
+
   for (var i = 0; i < exponent; i++) {
     result *= BigInt.from(10);
   }
+
   return result;
 }

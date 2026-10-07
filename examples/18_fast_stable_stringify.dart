@@ -18,7 +18,6 @@ void main() {
   final json = fastStableStringify(unsorted);
   print('Sorted keys: $json');
   // Expected: {"a":1,"m":2,"z":3}
-
   // ── 2. Nested objects ─────────────────────────────────────────────────────
   final nested = {
     'transaction': {

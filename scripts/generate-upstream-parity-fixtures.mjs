@@ -3,6 +3,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const nodeModulesDir = process.env.UPSTREAM_KIT_NODE_MODULES;
+
 if (!nodeModulesDir) {
   throw new Error('UPSTREAM_KIT_NODE_MODULES must point to the installed upstream node_modules directory.');
 }

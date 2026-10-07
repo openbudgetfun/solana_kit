@@ -37,6 +37,7 @@ SolanaError createSolanaJsonRpcIntegerOverflowError(
   }
 
   final String? path;
+
   if (keyPath.length > 1) {
     path = keyPath
         .skip(1)

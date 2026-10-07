@@ -41,7 +41,6 @@
 ///
 /// Instruction builders such as `getCreateMetadataAccountV3Instruction`, `getUpdateMetadataAccountV2Instruction`, and `getVerifyCollectionInstruction` take explicit program and account addresses, keeping fee payment, signing, and account ordering visible in your transaction messages.
 ///
-
 /// <!-- {=docsMplTokenMetadataSection -->
 ///
 /// ### Derive the metadata PDA
@@ -67,7 +66,6 @@
 library;
 
 // ignore_for_file: comment_references
-
 ///
 // Generated (Codama-style).
 // Program addresses are exported directly from src/program_address.dart.

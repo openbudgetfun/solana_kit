@@ -74,6 +74,7 @@ Codec<TNewFrom, TNewTo> transformCodec<TOldFrom, TNewFrom, TOldTo, TNewTo>(
       decoderFromCodec(codec),
       map,
     );
+
     return _combineEncoderDecoder(transformedEncoder, transformedDecoder);
   }
 

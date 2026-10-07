@@ -179,6 +179,7 @@ createBlockHeightExceedencePromiseFactory(BlockHeightExceedenceConfig config) {
           if (exceedenceCompleter.isCompleted) return;
 
           final slot = notification.slot;
+
           if (slot - lastKnownDifference > lastValidBlockHeight) {
             // Before making a final decision, recheck the actual block height.
             unawaited(

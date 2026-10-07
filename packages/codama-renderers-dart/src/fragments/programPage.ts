@@ -62,6 +62,7 @@ const ${fragmentFromString(addressConstName)} = Address(${fragmentFromString(toD
 
   // Account identifier enum
   const accounts = node.accounts ?? [];
+
   if (accounts.length > 0) {
     const accountVariants = accounts
       .map((acc) => `  ${camelCase(acc.name as string)},`)
@@ -76,6 +77,7 @@ ${fragmentFromString(accountVariants)}
 
   // Instruction identification and parsing helpers.
   const instructions = getAllInstructionsWithSubs(node);
+
   if (instructions.length > 0) {
     const programName = pascalCase(name);
     const instructionEnum = `${programName}Instruction`;
@@ -177,6 +179,7 @@ function getInstructionDiscriminatorCondition(
   scope: RenderScope,
 ): Fragment | null {
   const discriminators = instruction.discriminators ?? [];
+
   if (discriminators.length === 0) return null;
 
   const conditions = discriminators.map((discriminator): Fragment | null => {

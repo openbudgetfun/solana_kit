@@ -19,6 +19,7 @@ class FakeRpcTransport {
     calls.add(config);
 
     final payload = config.payload;
+
     if (payload is! Map<String, Object?>) {
       return {'jsonrpc': '2.0', 'id': 1, 'result': null};
     }

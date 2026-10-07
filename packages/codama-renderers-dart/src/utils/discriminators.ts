@@ -28,6 +28,7 @@ export function getDiscriminatorValidationFragment(
   scope: RenderScope,
 ): Fragment {
   const discriminators = node.discriminators ?? [];
+
   if (discriminators.length === 0) return emptyFragment();
 
   const fields = getDiscriminatorFields(node);
@@ -107,6 +108,7 @@ function getConstantValidationFragment(
     constant.value,
     manifest.type.content,
   );
+
   return fragment`${use("getConstantDecoder", "solanaCodecsDataStructures")}(
   ${manifest.encoder}.encode(${value}),
 ).read(bytes, offset + ${fragmentFromString(String(discriminatorOffset))});`;

@@ -188,6 +188,7 @@ class CompressedBalance {
   /// Creates a [CompressedBalance] from JSON.
   factory CompressedBalance.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return CompressedBalance(amount: r.requireInt('amount'));
   }
 
@@ -302,6 +303,7 @@ class IndexerHealth {
   /// Creates an [IndexerHealth] from JSON.
   factory IndexerHealth.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return IndexerHealth(status: r.requireString('status'));
   }
 
@@ -429,7 +431,6 @@ class TransactionWithCompressionInfo {
 // ---------------------------------------------------------------------------
 // Request types for ZK compression methods
 // ---------------------------------------------------------------------------
-
 /// Request to get a compressed account by hash.
 class GetCompressedAccountRequest {
   /// Creates a [GetCompressedAccountRequest].
@@ -438,6 +439,7 @@ class GetCompressedAccountRequest {
   /// Creates a [GetCompressedAccountRequest] from JSON.
   factory GetCompressedAccountRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetCompressedAccountRequest(hash: r.requireString('hash'));
   }
 
@@ -458,6 +460,7 @@ class GetCompressedAccountProofRequest {
     Map<String, Object?> json,
   ) {
     final r = JsonReader(json);
+
     return GetCompressedAccountProofRequest(hash: r.requireString('hash'));
   }
 
@@ -514,6 +517,7 @@ class GetCompressedBalanceRequest {
   /// Creates a [GetCompressedBalanceRequest] from JSON.
   factory GetCompressedBalanceRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetCompressedBalanceRequest(hash: r.requireString('hash'));
   }
 
@@ -1108,7 +1112,6 @@ class GetZkSignaturesForAssetRequest {
 // ---------------------------------------------------------------------------
 // Paginated list wrappers
 // ---------------------------------------------------------------------------
-
 /// A paginated list of compressed accounts.
 class CompressedAccountList {
   /// Creates a [CompressedAccountList].

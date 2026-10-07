@@ -277,6 +277,7 @@ _unwrapErrorWithPreflightData(Object error) {
     SolanaErrorCode.jsonRpcServerErrorSendTransactionPreflightFailure,
     SolanaErrorCode.transactionFailedWhenSimulatingToEstimateComputeLimit,
   ];
+
   if (error is SolanaError && simulationCodes.contains(error.code)) {
     final preflightData = <String, Object?>{
       ...error.context,
@@ -288,6 +289,7 @@ _unwrapErrorWithPreflightData(Object error) {
       unwrappedError: error.context['cause'] ?? error,
     );
   }
+
   return (logs: null, preflightData: null, unwrappedError: error);
 }
 
@@ -301,6 +303,7 @@ Object? _findErrorFromTransactionPlanResult(TransactionPlanResult result) {
     case ParallelTransactionPlanResult(:final plans):
       for (final plan in plans) {
         final error = _findErrorFromTransactionPlanResult(plan);
+
         if (error != null) {
           return error;
         }
@@ -318,6 +321,7 @@ String _formatLogSnippet(List<String>? logs) {
   final header = logs.length > maxLines
       ? '\n\nLogs (last $maxLines of ${logs.length}):'
       : '\n\nLogs:';
+
   return '$header\n${lastLines.map((line) => '  > $line\n').join()}';
 }
 
@@ -328,17 +332,20 @@ String _formatLogSnippet(List<String>? logs) {
 /// runtime rather than trusting the type.
 String? _getSignatureFromContext(Map<String, Object?> context) {
   final signature = context['signature'];
+
   return signature is String ? signature : null;
 }
 
 String _getFailedIndicator(bool isPreflight, String? signature) {
   if (isPreflight) return ' (preflight)';
+
   if (signature != null) return ' ($signature)';
   return '';
 }
 
 String _errorMessage(Object error) {
   if (error is SolanaError) return getErrorMessage(error.code, error.context);
+
   if (error is StateError) return error.message;
   return error.toString();
 }

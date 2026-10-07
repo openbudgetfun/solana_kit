@@ -43,7 +43,6 @@
 /// `transactionMessage` is a lightweight `TransactionMessageInput` — a map from instruction index to `InstructionInput(programAddress: ...)`. Build it from the same instructions you sent, so matching stays accurate even when the transaction mixes instructions from several programs.
 ///
 /// <!-- {/programErrorHandlingSection} -->
-
 library;
 
 export 'package:solana_kit_addresses/solana_kit_addresses.dart'

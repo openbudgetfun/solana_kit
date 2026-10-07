@@ -111,6 +111,7 @@ EstimateResourceLimitsWithConfig estimateResourceLimitsFactory(
       maxComputeUnitLimit,
       transactionMessage,
     );
+
     if (isDataSizeRequired) {
       prepared = setTransactionMessageLoadedAccountsDataSizeLimit(
         maxLoadedAccountsDataSizeLimit,
@@ -162,6 +163,7 @@ EstimateResourceLimitsWithConfig estimateResourceLimitsFactory(
       final int units => BigInt.from(units),
       _ => null,
     };
+
     if (unitsConsumed == null) {
       throw SolanaError(
         SolanaErrorCode.transactionFailedToEstimateComputeLimit,
@@ -173,6 +175,7 @@ EstimateResourceLimitsWithConfig estimateResourceLimitsFactory(
       final BigInt size => size.toInt(),
       _ => null,
     };
+
     if (isDataSizeRequired && loadedAccountsDataSize == null) {
       throw SolanaError(
         SolanaErrorCode.transactionFailedToEstimateLoadedAccountsDataSizeLimit,
@@ -182,6 +185,7 @@ EstimateResourceLimitsWithConfig estimateResourceLimitsFactory(
     // A transaction-level failure is reported in `err` rather than thrown, so
     // the limits above are already validated before this check runs.
     final transactionError = result['err'];
+
     if (transactionError != null) {
       throw SolanaError(
         SolanaErrorCode.transactionFailedWhenSimulatingToEstimateResourceLimits,

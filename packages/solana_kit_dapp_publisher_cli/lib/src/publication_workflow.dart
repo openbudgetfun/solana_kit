@@ -115,6 +115,7 @@ final class PublicationWorkflow {
 
       createdReleaseId = ingestionSession.releaseId;
       createdIngestionSessionId = ingestionSession.id.trim();
+
       if (createdIngestionSessionId.isEmpty) {
         throw const PublisherCliException(
           'Portal createIngestionSession did not return an ingestion session id',
@@ -134,11 +135,13 @@ final class PublicationWorkflow {
       );
 
       final releaseId = readySession.releaseId;
+
       if (releaseId == null || releaseId.isEmpty) {
         throw const PublisherCliException(
           'Publication ingestion completed without a release identifier',
         );
       }
+
       createdReleaseId = releaseId;
 
       final readyPublicationSession = readySession.publicationSession == null
@@ -190,6 +193,7 @@ final class PublicationWorkflow {
             sessionId: createdIngestionSessionId,
           );
           final fallbackReleaseId = failedIngestionSession.releaseId;
+
           if (fallbackReleaseId != null && fallbackReleaseId.isNotEmpty) {
             createdReleaseId = fallbackReleaseId;
           }
@@ -273,14 +277,17 @@ final class PublicationWorkflow {
 String newIdempotencyKey() {
   final random = Random.secure();
   final bytes = Uint8List(16);
+
   for (var i = 0; i < bytes.length; i++) {
     bytes[i] = random.nextInt(256);
   }
+
   bytes[6] = (bytes[6] & 0x0f) | 0x40;
   bytes[8] = (bytes[8] & 0x3f) | 0x80;
   final hex = bytes
       .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
       .join();
+
   return '${hex.substring(0, 8)}-${hex.substring(8, 12)}-'
       '${hex.substring(12, 16)}-${hex.substring(16, 20)}-'
       '${hex.substring(20)}';
@@ -304,11 +311,13 @@ resolvePublicationSessionLookup({
       releaseId: null,
     );
   }
+
   if (releaseId == null || releaseId.isEmpty) {
     throw const PublisherCliException(
       'releaseId is required when publicationSessionId is absent',
     );
   }
+
   return (publicationSessionId: null, releaseId: releaseId);
 }
 
@@ -405,6 +414,7 @@ Future<PublicationIngestionSession> waitForIngestionSessionReady(
     final session = await client.getIngestionSession(
       sessionId: ingestionSessionId,
     );
+
     if (session.isFailed) {
       throw PublisherCliException(
         session.error ??
@@ -414,6 +424,7 @@ Future<PublicationIngestionSession> waitForIngestionSessionReady(
     }
 
     final statusMessage = buildIngestionStatusMessage(session);
+
     if (statusMessage != null) {
       options.logger?.call(
         statusMessage,
@@ -428,6 +439,7 @@ Future<PublicationIngestionSession> waitForIngestionSessionReady(
         step: 'ingestion.wait',
         status: 'complete',
       );
+
       return session;
     }
 
@@ -444,13 +456,17 @@ Future<PublicationIngestionSession> waitForIngestionSessionReady(
 /// Builds the ingestion status message for the logger, when one applies.
 String? buildIngestionStatusMessage(PublicationIngestionSession session) {
   final detail = session.processingDetail?.trim();
+
   if (detail != null && detail.isNotEmpty) {
     return detail;
   }
+
   final stage = session.processingStage?.trim();
+
   if (stage != null && stage.isNotEmpty) {
     return stage;
   }
+
   return switch (session.status) {
     'created' => 'Portal ingestion request created',
     'queued' => 'Portal ingestion queued',
@@ -605,6 +621,7 @@ Future<PublicationWorkflowResult> runPublicationWorkflowCore(
   final requiredSignerAddress = resolvePublicationSignerAddress(
     normalizedBundle,
   );
+
   if (signer.address != requiredSignerAddress) {
     throw PublisherCliException(
       'Publication signer mismatch. '
@@ -653,6 +670,7 @@ Future<PublicationWorkflowResult> runPublicationWorkflowCore(
   await _attestAndSubmitIfNeeded(context, state);
 
   final releaseMintAddress = state.releaseMintAddress;
+
   if (releaseMintAddress == null || releaseMintAddress.isEmpty) {
     throw const PublisherCliException(
       'Publication session did not resolve a release mint address',
@@ -806,6 +824,7 @@ Future<void> _saveReleaseMintIfNeeded(
       'Publication bundle did not include a release mint address',
     );
   }
+
   if (state.releaseTransactionSignature == null) {
     throw const PublisherCliException(
       'Release transaction signature is missing',

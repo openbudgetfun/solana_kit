@@ -6,9 +6,11 @@ import 'dart:typed_data';
 Uint8List b(String hex) {
   if (hex.isEmpty) return Uint8List(0);
   final bytes = <int>[];
+
   for (var i = 0; i < hex.length; i += 2) {
     bytes.add(int.parse(hex.substring(i, i + 2), radix: 16));
   }
+
   return Uint8List.fromList(bytes);
 }
 

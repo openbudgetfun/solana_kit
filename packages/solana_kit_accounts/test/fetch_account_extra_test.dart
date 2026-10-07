@@ -14,7 +14,6 @@ const _owner = '11111111111111111111111111111111';
 // ---------------------------------------------------------------------------
 // Mock RPC helpers
 // ---------------------------------------------------------------------------
-
 Rpc _makeRpc(
   Map<String, Map<String, dynamic>?> accountInfo, {
   bool nullTopLevelResponse = false,

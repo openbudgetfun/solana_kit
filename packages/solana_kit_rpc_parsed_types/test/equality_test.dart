@@ -13,7 +13,6 @@ import 'package:test/test.dart';
 // ---------------------------------------------------------------------------
 // Minimal concrete helper with proper equality, used throughout the tests.
 // ---------------------------------------------------------------------------
-
 @immutable
 class _IntInfo {
   const _IntInfo(this.value);

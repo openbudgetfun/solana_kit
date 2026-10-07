@@ -34,6 +34,7 @@ RpcSubscriptionsChannelCreator getChannelPoolingChannelCreator(
       // Don't set the free channel index until the pool fills up; we want
       // to keep creating channels before we start rotating among them.
       pool.freeChannelIndex = -1;
+
       return;
     }
 
@@ -61,9 +62,11 @@ RpcSubscriptionsChannelCreator getChannelPoolingChannelCreator(
 
     void destroyPoolEntry() {
       final index = pool.entries.indexOf(poolEntry);
+
       if (index != -1) {
         pool.entries.removeAt(index);
       }
+
       poolEntry.dispose();
       recomputeFreeChannelIndex();
     }
@@ -118,6 +121,7 @@ RpcSubscriptionsChannelCreator getChannelPoolingChannelCreator(
     }).ignore();
 
     recomputeFreeChannelIndex();
+
     return poolEntry.channel;
   };
 }

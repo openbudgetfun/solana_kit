@@ -103,6 +103,7 @@ class MobileWalletRegistry extends WalletRegistryController {
   Future<void> initialize() async {
     if (_initialized) return;
     _initialized = true;
+
     if (backend.isSupported) {
       register(
         MobileWallet(
@@ -112,6 +113,7 @@ class MobileWalletRegistry extends WalletRegistryController {
         ),
       );
     }
+
     for (final wallet in additionalWallets) {
       register(wallet);
     }
@@ -179,6 +181,7 @@ class MobileWallet implements Wallet {
     );
     _assertCurrentAuthorization(generation);
     _setAccounts(authorization.accounts);
+
     return StandardConnectOutput(_accounts);
   }
 
@@ -219,12 +222,14 @@ class MobileWallet implements Wallet {
         options?.maxRetries,
       );
     }).toSet();
+
     if (policies.length > 1) {
       throw const WalletStandardException(
         WalletStandardErrorCode.invalidRequest,
         'Mobile wallet batches must use the same submission options',
       );
     }
+
     final signatures = await backend.signAndSendTransactions(
       inputs.map((input) => input.transaction).toList(),
       inputs.first.account,
@@ -276,6 +281,7 @@ class MobileWallet implements Wallet {
   ) async {
     final generation = ++_authorizationGeneration;
     final results = <SolanaSignInOutput>[];
+
     for (final input in inputs) {
       final authorization = await backend.authorize(
         identity: identity,
@@ -285,12 +291,14 @@ class MobileWallet implements Wallet {
       _assertCurrentAuthorization(generation);
       _setAccounts(authorization.accounts);
       final output = authorization.signInOutput;
+
       if (output == null) {
         throw const WalletStandardException(
           WalletStandardErrorCode.invalidResponse,
           'Mobile wallet did not return a sign-in proof',
         );
       }
+
       // The backend may present the proof against any of the accounts it
       // authorized alongside it, but the proof must verify against the
       // account it is attached to.
@@ -301,6 +309,7 @@ class MobileWallet implements Wallet {
           'account',
         );
       }
+
       if (output.signatureType != null &&
           output.signatureType != _supportedSignatureType) {
         throw const WalletStandardException(
@@ -315,6 +324,7 @@ class MobileWallet implements Wallet {
       );
       results.add(output);
     }
+
     return results;
   }
 
@@ -336,12 +346,14 @@ class MobileWallet implements Wallet {
           SignatureBytes(Uint8List.fromList(signature)),
           signedBytes,
         );
+
     if (!isValid) {
       throw const WalletStandardException(
         WalletStandardErrorCode.invalidResponse,
         'Wallet signature does not verify against the authorized account',
       );
     }
+
     return signature;
   }
 
@@ -359,24 +371,29 @@ class MobileWallet implements Wallet {
   ) {
     final signed = getTransactionDecoder().decode(signedTransaction);
     final submitted = getTransactionDecoder().decode(input.transaction);
+
     if (!_bytesEqual(signed.messageBytes, submitted.messageBytes)) {
       throw const WalletStandardException(
         WalletStandardErrorCode.invalidResponse,
         'Wallet signed a different transaction',
       );
     }
+
     final signature = signed.signatures[_address(input.account)];
+
     if (signature == null) {
       throw const WalletStandardException(
         WalletStandardErrorCode.invalidResponse,
         'Wallet signed transaction does not include the authorized account',
       );
     }
+
     _assertVerifiedSignature(
       account: input.account,
       signature: signature.value,
       signedBytes: signed.messageBytes,
     );
+
     return SolanaSignTransactionOutput(signedTransaction);
   }
 
@@ -399,6 +416,7 @@ class MobileWallet implements Wallet {
         'Wallet reported a malformed transaction signature',
       );
     }
+
     final transaction = getTransactionDecoder().decode(input.transaction);
     final isValid =
         verifySignature(
@@ -413,12 +431,14 @@ class MobileWallet implements Wallet {
             transaction.messageBytes,
           ),
         );
+
     if (!isValid) {
       throw const WalletStandardException(
         WalletStandardErrorCode.invalidResponse,
         'Wallet reported a signature for a different transaction',
       );
     }
+
     return reportedSignature;
   }
 
@@ -427,9 +447,11 @@ class MobileWallet implements Wallet {
 
   static bool _bytesEqual(Uint8List a, Uint8List b) {
     if (a.length != b.length) return false;
+
     for (var index = 0; index < a.length; index++) {
       if (a[index] != b[index]) return false;
     }
+
     return true;
   }
 
@@ -497,6 +519,7 @@ class _MobileEventsFeature implements StandardEventsFeature {
   @override
   void Function() onChange(void Function(StandardWalletChange) listener) {
     _listeners.add(listener);
+
     return () => _listeners.remove(listener);
   }
 

@@ -597,6 +597,7 @@ void main() {
           checkpoint,
         );
       }
+
       expect(
         PublicationCheckpoint.fromWire('unknown'),
         PublicationCheckpoint.created,

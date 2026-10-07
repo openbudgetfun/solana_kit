@@ -220,9 +220,11 @@ class MockPortalServer {
 
   Future<void> _respond(HttpRequest request) async {
     final path = request.uri.path;
+
     if (path.contains('/rpc')) {
       final body =
           jsonDecode(utf8.decode(await _body(request))) as Map<String, Object?>;
+
       if (body['method'] == 'getBalance') {
         await _json(request, {
           'jsonrpc': '2.0',
@@ -232,9 +234,12 @@ class MockPortalServer {
           },
           'id': body['id'],
         });
+
         return;
       }
+
       await _json(request, {'jsonrpc': '2.0', 'error': 'unknown', 'id': 1});
+
       return;
     }
 
@@ -385,6 +390,7 @@ class MockPortalServer {
       _uploadedFiles[path] = bytes;
       request.response.statusCode = 200;
       await request.response.close();
+
       return;
     }
 
@@ -395,9 +401,11 @@ class MockPortalServer {
 
 Future<Uint8List> _body(HttpRequest request) async {
   final builder = BytesBuilder();
+
   await for (final chunk in request) {
     builder.add(chunk);
   }
+
   return builder.toBytes();
 }
 
@@ -415,6 +423,7 @@ Uint8List pngBytes({required int width, required int height}) {
     ..setUint32(12, 0x49484452)
     ..setUint32(16, width)
     ..setUint32(20, height);
+
   return data.buffer.asUint8List();
 }
 

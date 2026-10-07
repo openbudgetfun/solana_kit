@@ -10,5 +10,6 @@ Future<List<HeliusAsset>> dasGetAssetBatch(
 ) async {
   final result = await rpcClient.call('getAssetBatch', request.toJson());
   final list = result! as List<Object?>;
+
   return list.cast<Map<String, Object?>>().map(HeliusAsset.fromJson).toList();
 }

@@ -15,6 +15,7 @@ public class MainActivityTest {
                 (PatrolJUnitRunner) InstrumentationRegistry.getInstrumentation();
         instrumentation.setUp(MainActivity.class);
         instrumentation.waitForPatrolAppService();
+
         return instrumentation.listDartTests();
     }
 

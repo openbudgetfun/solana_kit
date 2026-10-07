@@ -39,7 +39,6 @@
 ///
 /// Instruction builders such as `getCreateV1Instruction`, `getCreateCollectionV1Instruction`, and `getTransferV1Instruction` give you explicit account ordering while pattern helpers like `deriveExtraAccountAddress` cover the external plugin adapter surface.
 ///
-
 /// <!-- {=docsMplCoreSection -->
 ///
 /// ### Derive the asset signer PDA
@@ -65,7 +64,6 @@
 library;
 
 // ignore_for_file: comment_references
-
 ///
 // Generated (Codama-style).
 // Program addresses are exported directly from src/program_address.dart.

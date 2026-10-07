@@ -72,6 +72,7 @@ void main() {
         Some<int>(:final value) => 'Some($value)',
         None<int>() => 'None',
       };
+
       expect(result, equals('Some(42)'));
 
       Option<int> makeNone() => none<int>();
@@ -80,6 +81,7 @@ void main() {
         Some<int>(:final value) => 'Some($value)',
         None<int>() => 'None',
       };
+
       expect(noneResult, equals('None'));
     });
   });

@@ -112,6 +112,7 @@ class WalletScenario {
     if (_closed || _started) {
       throw StateError('Wallet scenario has already been started or closed');
     }
+
     _started = true;
 
     // Set up the native -> Dart callback bridge.
@@ -125,6 +126,7 @@ class WalletScenario {
 
     if (_closed) {
       await _walletApi.closeScenario(sessionId: _sessionId!);
+
       return;
     }
 
@@ -139,6 +141,7 @@ class WalletScenario {
 
     if (_sessionId != null) {
       final pending = List<String>.from(_pendingRequestIds);
+
       for (final requestId in pending) {
         try {
           await _walletApi.cancelRequest(
@@ -149,6 +152,7 @@ class WalletScenario {
           // Ignore cancellation errors during teardown.
         }
       }
+
       await _walletApi.closeScenario(sessionId: _sessionId!);
     }
 
@@ -196,6 +200,7 @@ class WalletScenario {
       default:
         throw MissingPluginException('No handler for method ${call.method}');
     }
+
     return null;
   }
 
@@ -400,16 +405,20 @@ class WalletScenario {
 
   Map<String, Object?> _decodeArgs(MethodCall call) {
     final args = call.arguments;
+
     if (args is Map<Object?, Object?>) {
       return args.cast<String, Object?>();
     }
+
     return <String, Object?>{};
   }
 
   Map<String, Object?> _decodeJsonMap(String? json) {
     if (json == null || json.isEmpty) return {};
     final decoded = jsonDecode(json);
+
     if (decoded is Map<String, Object?>) return decoded;
+
     if (decoded is Map) return decoded.cast<String, Object?>();
     return {};
   }
@@ -424,6 +433,7 @@ class WalletScenario {
         },
       };
     }
+
     return {
       'error': {'code': -32603, 'message': error.toString()},
     };

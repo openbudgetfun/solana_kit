@@ -20,6 +20,7 @@ void main() {
       ..setAll(32, ownerBytes)
       ..setAll(64, classBytes)
       ..setAll(nameRegistryHeaderLength, payload);
+
     return bytes;
   }
 

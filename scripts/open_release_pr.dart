@@ -22,10 +22,12 @@ Future<void> main(List<String> args) async {
   }
 
   final output = '$stdoutText\n$stderrText';
+
   if (output.contains(_noReleasablePackages)) {
     stderr.writeln(
       'No releasable monochange entries were found; skipping release PR update.',
     );
+
     return;
   }
 
@@ -35,6 +37,7 @@ Future<void> main(List<String> args) async {
       'skipping release PR update. Enable the repository Actions setting or '
       'run monochange run release-pr manually.',
     );
+
     return;
   }
 

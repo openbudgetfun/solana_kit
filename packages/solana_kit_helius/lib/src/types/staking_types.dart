@@ -161,6 +161,7 @@ class GetHeliusStakeAccountsRequest {
   /// Creates a [GetHeliusStakeAccountsRequest] from a JSON map.
   factory GetHeliusStakeAccountsRequest.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return GetHeliusStakeAccountsRequest(owner: r.requireString('owner'));
   }
 
@@ -199,6 +200,7 @@ class WithdrawableAmount {
   /// Creates a [WithdrawableAmount] from a JSON map.
   factory WithdrawableAmount.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return WithdrawableAmount(amount: r.requireInt('amount'));
   }
 
@@ -217,6 +219,7 @@ class StakeTransactionResult {
   /// Creates a [StakeTransactionResult] from a JSON map.
   factory StakeTransactionResult.fromJson(Map<String, Object?> json) {
     final r = JsonReader(json);
+
     return StakeTransactionResult(transaction: r.requireString('transaction'));
   }
 

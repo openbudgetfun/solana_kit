@@ -140,6 +140,7 @@ Future<SmartTransaction> txCreateSmartTransaction(
   );
 
   final recommendedFee = feeEstimate.priorityFeeEstimate;
+
   if (recommendedFee == null) {
     throw StateError(
       'Priority fee estimate not available. Error creating smart transaction.',
@@ -202,6 +203,7 @@ String? _programAddressOf(Object? instruction) {
   if (instruction is Map<String, Object?>) {
     return instruction['programAddress']?.toString();
   }
+
   try {
     return (instruction! as dynamic).programAddress?.toString();
   } on Object {
@@ -235,6 +237,7 @@ List<String> _collectAccountKeys(
 /// `accounts` getter, so it must be read by key.
 Iterable<String> _accountAddressesOf(Object? instruction) sync* {
   final Object? accounts;
+
   if (instruction is Map<String, Object?>) {
     accounts = instruction['accounts'];
   } else {
@@ -244,16 +247,20 @@ Iterable<String> _accountAddressesOf(Object? instruction) sync* {
       return;
     }
   }
+
   if (accounts is! List) return;
 
   for (final account in accounts) {
     if (account is Map<String, Object?>) {
       final address = account['address'];
+
       if (address != null) yield address.toString();
       continue;
     }
+
     try {
       final address = (account! as dynamic).address;
+
       if (address != null) yield address.toString();
     } on Object {
       continue;
@@ -264,12 +271,14 @@ Iterable<String> _accountAddressesOf(Object? instruction) sync* {
 /// Returns the first configured signer address.
 String _firstSigner(CreateSmartTransactionInput input) {
   final signers = input.signers;
+
   if (signers == null || signers.isEmpty) {
     throw StateError(
       'createSmartTransaction: expected at least one signer or an explicit '
       'feePayer.',
     );
   }
+
   return signers.first;
 }
 

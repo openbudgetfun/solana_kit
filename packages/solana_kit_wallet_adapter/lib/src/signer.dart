@@ -29,6 +29,7 @@ class WalletAccountSigner
     final hasSignAndSendTransaction = account.features.contains(
       SolanaFeatureId.signAndSendTransaction,
     );
+
     if (!hasSignTransaction && !hasSignAndSendTransaction) {
       throw SolanaError(
         SolanaErrorCode.signerWalletAccountCannotSignTransaction,
@@ -60,6 +61,7 @@ class WalletAccountSigner
     final feature = wallet.feature<SolanaSignMessageFeature>(
       SolanaFeatureId.signMessage,
     );
+
     if (feature == null) throw _unsupported(SolanaFeatureId.signMessage);
     final outputs = await feature.signMessage(
       messages
@@ -92,6 +94,7 @@ class WalletAccountSigner
     final feature = wallet.feature<SolanaSignTransactionFeature>(
       SolanaFeatureId.signTransaction,
     );
+
     if (feature == null) throw _unsupported(SolanaFeatureId.signTransaction);
     final encoder = getTransactionEncoder();
     final outputs = await feature.signTransaction(
@@ -110,6 +113,7 @@ class WalletAccountSigner
     );
     _assertOutputLength(transactions.length, outputs.length);
     final decoder = getTransactionDecoder();
+
     return outputs
         .map((output) => decoder.decode(output.signedTransaction))
         .toList();
@@ -123,9 +127,11 @@ class WalletAccountSigner
     final feature = wallet.feature<SolanaSignAndSendTransactionFeature>(
       SolanaFeatureId.signAndSendTransaction,
     );
+
     if (feature == null) {
       throw _unsupported(SolanaFeatureId.signAndSendTransaction);
     }
+
     final encoder = getTransactionEncoder();
     final outputs = await feature.signAndSendTransaction(
       transactions
@@ -142,6 +148,7 @@ class WalletAccountSigner
           .toList(),
     );
     _assertOutputLength(transactions.length, outputs.length);
+
     return outputs.map((output) => SignatureBytes(output.signature)).toList();
   }
 

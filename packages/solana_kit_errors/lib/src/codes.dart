@@ -8,7 +8,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // General (1 - 10)
   // ---------------------------------------------------------------------------
-
   /// The current block height has been exceeded.
   blockHeightExceeded(1),
 
@@ -60,7 +59,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // JSON-RPC (-32768 to -32000)
   // ---------------------------------------------------------------------------
-
   /// JSON-RPC parse error: invalid JSON was received.
   jsonRpcParseError(-32700),
 
@@ -142,7 +140,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Addresses (2800000 - 2800999)
   // ---------------------------------------------------------------------------
-
   /// An address has an invalid byte length.
   addressesInvalidByteLength(2800000),
 
@@ -182,7 +179,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Accounts (3230000 - 3230999)
   // ---------------------------------------------------------------------------
-
   /// The account could not be found.
   accountsAccountNotFound(3230000),
 
@@ -201,7 +197,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Subtle Crypto (3610000 - 3610999)
   // ---------------------------------------------------------------------------
-
   /// SubtleCrypto is disallowed in an insecure context.
   subtleCryptoDisallowedInInsecureContext(3610000),
 
@@ -229,14 +224,12 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Crypto (3611000 - 3611050)
   // ---------------------------------------------------------------------------
-
   /// The `randomValues` function is unimplemented in this environment.
   cryptoRandomValuesFunctionUnimplemented(3611000),
 
   // ---------------------------------------------------------------------------
   // Keys (3704000 - 3704999)
   // ---------------------------------------------------------------------------
-
   /// The key pair has an invalid byte length.
   keysInvalidKeyPairByteLength(3704000),
 
@@ -261,14 +254,12 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Filesystem (3712000 - 3712999)
   // ---------------------------------------------------------------------------
-
   /// Filesystem access is unsupported in this environment.
   fsUnsupportedEnvironment(3712000),
 
   // ---------------------------------------------------------------------------
   // Instruction (4128000 - 4128999)
   // ---------------------------------------------------------------------------
-
   /// The instruction was expected to have accounts.
   instructionExpectedToHaveAccounts(4128000),
 
@@ -281,7 +272,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Instruction Errors (4615000 - 4615999)
   // ---------------------------------------------------------------------------
-
   /// An unknown instruction error occurred.
   instructionErrorUnknown(4615000),
 
@@ -450,7 +440,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Signer (5508000 - 5508999)
   // ---------------------------------------------------------------------------
-
   /// An address cannot have multiple signers.
   signerAddressCannotHaveMultipleSigners(5508000),
 
@@ -493,7 +482,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Offchain Message (5607000 - 5607999)
   // ---------------------------------------------------------------------------
-
   /// The offchain message exceeds the maximum length.
   offchainMessageMaximumLengthExceeded(5607000),
 
@@ -557,7 +545,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Transaction (5663000 - 5663999)
   // ---------------------------------------------------------------------------
-
   /// Invoked programs cannot pay fees.
   transactionInvokedProgramsCannotPayFees(5663000),
 
@@ -710,7 +697,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Transaction Introspection (5664000 - 5664999)
   // ---------------------------------------------------------------------------
-
   /// A `getTransaction` response fetched with `encoding: 'jsonParsed'` cannot
   /// be decoded. Re-fetch with `encoding: 'base64'`, `'base58'`, or `'json'`.
   //
@@ -734,7 +720,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Transaction Errors (7050000 - 7050999)
   // ---------------------------------------------------------------------------
-
   /// An unknown transaction error occurred.
   transactionErrorUnknown(7050000),
 
@@ -849,7 +834,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Instruction Plans (7618000 - 7618999)
   // ---------------------------------------------------------------------------
-
   /// The message cannot accommodate the instruction plan.
   instructionPlansMessageCannotAccommodatePlan(7618000),
 
@@ -903,7 +887,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Codecs (8078000 - 8078999)
   // ---------------------------------------------------------------------------
-
   /// Cannot decode an empty byte array.
   codecsCannotDecodeEmptyByteArray(8078000),
 
@@ -1004,7 +987,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Fixed Points (8090000 - 8090999)
   // ---------------------------------------------------------------------------
-
   /// The total number of bits is invalid.
   fixedPointsInvalidTotalBits(8090000),
 
@@ -1047,7 +1029,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // RPC (8100000 - 8100999)
   // ---------------------------------------------------------------------------
-
   /// An integer overflow occurred in an RPC response.
   rpcIntegerOverflow(8100000),
 
@@ -1063,7 +1044,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // RPC Subscriptions (8190000 - 8190999)
   // ---------------------------------------------------------------------------
-
   /// Cannot create a subscription plan for the RPC subscription.
   rpcSubscriptionsCannotCreateSubscriptionPlan(8190000),
 
@@ -1082,7 +1062,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Subscribable (8195000 - 8195999)
   // ---------------------------------------------------------------------------
-
   /// Retry is not supported by this subscribable.
   subscribableRetryNotSupported(8195000),
 
@@ -1092,7 +1071,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Program Clients (8500000 - 8500999)
   // ---------------------------------------------------------------------------
-
   /// There are insufficient account metas for the program client.
   programClientsInsufficientAccountMetas(8500000),
 
@@ -1117,7 +1095,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Mobile Wallet Adapter - Session (8400000 - 8400049)
   // ---------------------------------------------------------------------------
-
   /// The MWA association port is out of range.
   mwaAssociationPortOutOfRange(8400000),
 
@@ -1163,7 +1140,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Mobile Wallet Adapter - Protocol JSON-RPC (8400100 - 8400199)
   // ---------------------------------------------------------------------------
-
   /// The MWA protocol authorization failed.
   mwaProtocolAuthorizationFailed(8400100),
 
@@ -1185,7 +1161,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Helius (8600000 - 8600099)
   // ---------------------------------------------------------------------------
-
   /// A Helius RPC error occurred.
   heliusRpcError(8600000),
 
@@ -1207,7 +1182,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Wallet (8900000 - 8900999)
   // ---------------------------------------------------------------------------
-
   /// The wallet is not connected.
   walletNotConnected(8900000),
 
@@ -1223,7 +1197,6 @@ enum SolanaErrorCode {
   // ---------------------------------------------------------------------------
   // Invariant Violations (9900000 - 9900999)
   // ---------------------------------------------------------------------------
-
   /// The subscription iterator state is missing.
   invariantViolationSubscriptionIteratorStateMissing(9900000),
 
@@ -1261,6 +1234,7 @@ enum SolanaErrorCode {
     for (final code in SolanaErrorCode.values) {
       if (code.value == value) return code;
     }
+
     return null;
   }
 }

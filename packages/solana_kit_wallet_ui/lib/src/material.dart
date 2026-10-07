@@ -16,6 +16,7 @@ Future<Wallet?> showMaterialWalletPicker({
   Future<void> select(BuildContext routeContext, Wallet wallet) async {
     try {
       await controller.connect(wallet);
+
       if (routeContext.mounted) Navigator.of(routeContext).pop(wallet);
     } on Object {
       // The controller exposes the error and the picker stays open for retry.
@@ -129,6 +130,7 @@ class MaterialWalletButton extends StatelessWidget {
 
   String _label(BuildContext context, WalletAdapterState state) {
     final account = state.selectedAccount;
+
     return account == null
         ? WalletUiTheme.of(context).connectLabel
         : account.label ?? compactWalletAddress(account.address);
@@ -146,8 +148,10 @@ class MaterialWalletButton extends StatelessWidget {
         headerBuilder: headerBuilder,
         tileBuilder: tileBuilder,
       );
+
       return;
     }
+
     await showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,

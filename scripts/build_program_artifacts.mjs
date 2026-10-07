@@ -48,20 +48,25 @@ function run(command, args, options = {}) {
 
 function repoFor(name) {
   const repo = referenceRepos.find((entry) => entry.name === name);
+
   if (!repo) throw new Error(`No reference repo named "${name}" in config/reference-repos.json`);
+
   return repo;
 }
 
 function checkoutPin(repo) {
   const path = join(ROOT, repo.path);
+
   if (!existsSync(join(path, ".git"))) {
     console.log(`Cloning ${repo.url} -> ${path}`);
     mkdirSync(dirname(path), { recursive: true });
     run("git", ["clone", "--quiet", repo.url, path]);
   }
+
   const ref = repo.ref.value;
   console.log(`Checking out ${repo.name} @ ${ref}`);
   run("git", ["-C", path, "fetch", "--quiet", "origin", ref], { stdio: "pipe" });
+
   run("git", ["-C", path, "checkout", "--quiet", ref]);
 }
 
@@ -90,6 +95,7 @@ const ahashCrateSha256 = {
 function applyAhashPatch(repo, artifact, patchDir) {
   const workspaceToml = join(ROOT, repo.path, artifact.workspaceToml ?? "Cargo.toml");
   const toml = readFileSync(workspaceToml, "utf8");
+
   if (toml.includes("[patch.crates-io]")) return; // already patched
 
   const ahashVersions = artifact.ahashVersions ?? [artifact.ahashVersion ?? "0.7.6"];
@@ -104,12 +110,15 @@ function applyAhashPatch(repo, artifact, patchDir) {
     run("curl", ["-fsSL", "-A", "solana-kit-build-script", `https://static.crates.io/crates/ahash/ahash-${ahashVersion}.crate`, "-o", crate]);
 
     const expectedSha256 = artifact.ahashSha256?.[ahashVersion] ?? ahashCrateSha256[ahashVersion];
+
     if (expectedSha256 === undefined) {
       throw new Error(
         `No pinned sha256 for ahash ${ahashVersion}; add it to ahashCrateSha256 in scripts/build_program_artifacts.mjs`,
       );
     }
+
     const actualSha256 = sha256FileSync(crate);
+
     if (actualSha256 !== expectedSha256) {
       throw new Error(
         `ahash ${ahashVersion} crate digest mismatch: expected ${expectedSha256}, got ${actualSha256}`,
@@ -156,6 +165,7 @@ function buildArtifact(artifact) {
     if (artifact.cargoUpdates?.length) {
       const originalLockfile = readFileSync(lockfile);
       restoreLockfile = () => writeFileSync(lockfile, originalLockfile);
+
       for (const update of artifact.cargoUpdates) {
         run("cargo", ["update", "-p", update.package, "--precise", update.version], {
           cwd: programDir,
@@ -177,6 +187,7 @@ function buildArtifact(artifact) {
       try {
         restoreWorkspace?.();
       } finally {
+
         if (patchDir) rmSync(patchDir, { recursive: true, force: true });
       }
     }
@@ -184,6 +195,7 @@ function buildArtifact(artifact) {
 
   // cargo build-sbf writes to <rust-workspace-root>/target/deploy/<crate>.so
   const built = join(workspaceRoot, "target/deploy", `${artifact.crateName}.so`);
+
   if (!existsSync(built)) throw new Error(`Expected built artifact at ${built}`);
 
   const target = join(ARTIFACTS_DIR, `${artifact.name}-v${artifact.version}.so`);
@@ -200,18 +212,22 @@ function buildArtifact(artifact) {
 function verifyProgramId(path, programId) {
   const ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
   let n = 0n;
+
   for (const char of programId) n = n * 58n + BigInt(ALPHABET.indexOf(char));
   const bytes = Buffer.from(n.toString(16).padStart(64, "0"), "hex");
   const data = readFileSync(path);
+
   if (!data.includes(bytes)) {
     throw new Error(`Program ID ${programId} not found in ${path}`);
   }
+
   console.log(`Verified program ID ${programId} in ${path}`);
 }
 
 const selected = artifacts.filter(
   (artifact) => !PROGRAM_FILTER || artifact.name === PROGRAM_FILTER,
 );
+
 if (selected.length === 0) {
   throw new Error(`No artifact named "${PROGRAM_FILTER}" in config/programs/artifacts.json`);
 }
@@ -219,4 +235,5 @@ if (selected.length === 0) {
 for (const artifact of selected) {
   buildArtifact(artifact);
 }
+
 console.log(`\nBuilt ${selected.length} artifact(s) into ${ARTIFACTS_DIR}`);

@@ -28,6 +28,7 @@ void main() {
         } else {
           errors.addError(failure);
         }
+
         await pumpEventQueue();
         final hasDataListener = data.hasListener;
         final hasErrorListener = errors.hasListener;

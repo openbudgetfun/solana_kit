@@ -66,6 +66,7 @@ WalletIcon? walletLogoFallback(String walletName) {
           ? _fallbackLogoUris[key.substring(0, key.length - ' wallet'.length)]
           : null);
   final resolved = uri ?? _fallbackLogoUris['$key wallet'];
+
   if (resolved == null) return null;
   return WalletIcon(resolved);
 }
