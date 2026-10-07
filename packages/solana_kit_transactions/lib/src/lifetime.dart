@@ -174,7 +174,11 @@ bool _compiledV1InstructionIsAdvanceNonceInstruction(
   if (programAccountIndex >= staticAddresses.length) return false;
   return staticAddresses[programAccountIndex] == systemProgramAddress &&
       _isAdvanceNonceAccountInstructionData(payload.instructionData) &&
-      header.numInstructionAccounts == 3;
+      header.numInstructionAccounts == 3 &&
+      // A header/payload disagreement means malformed data; classify it as
+      // not an advance-nonce instruction instead of crashing on `.first`
+      // below.
+      payload.instructionAccountIndices.length == 3;
 }
 
 /// Checks if instruction data represents the AdvanceNonceAccount instruction.
