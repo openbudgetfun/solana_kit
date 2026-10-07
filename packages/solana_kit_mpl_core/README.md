@@ -106,7 +106,7 @@ Generated with `codama-renderers-dart` from the metaplex-foundation / mpl-core s
 <!-- dprint-ignore -->
 | `solana_kit` version | [`mpl-core`](https://github.com/metaplex-foundation/mpl-core) | Released     |
 | -------------------- | ------------------------------------------------------------- | ------------ |
-| _next release_       | `release/core@0.15.2`                                         | _unreleased_ |
+| _next release_       | `release/core@0.15.3`                                         | _unreleased_ |
 | `0.9.0` – `0.9.3`    | `2181404f90c7`                                                | —            |
 
 <!-- upstream-support:end -->
