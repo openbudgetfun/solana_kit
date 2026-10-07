@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:solana_kit_addresses/solana_kit_addresses.dart' as addresses;
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
@@ -80,7 +82,10 @@ class WalletAccountSigner
           content: outputs[index].signedMessage,
           signatures: {
             ...messages[index].signatures,
-            address: SignatureBytes(outputs[index].signature),
+            address: _assertVerifiedSignature(
+              outputs[index].signature,
+              outputs[index].signedMessage,
+            ),
           },
         ),
     ];
@@ -113,10 +118,13 @@ class WalletAccountSigner
     );
     _assertOutputLength(transactions.length, outputs.length);
     final decoder = getTransactionDecoder();
-
-    return outputs
-        .map((output) => decoder.decode(output.signedTransaction))
-        .toList();
+    return [
+      for (var index = 0; index < outputs.length; index++)
+        _assertVerifiedSignedTransaction(
+          transactions[index],
+          decoder.decode(outputs[index].signedTransaction),
+        ),
+    ];
   }
 
   @override
@@ -148,8 +156,97 @@ class WalletAccountSigner
           .toList(),
     );
     _assertOutputLength(transactions.length, outputs.length);
+    return [
+      for (var index = 0; index < outputs.length; index++)
+        _assertVerifiedTransactionSignature(
+          transactions[index],
+          outputs[index].signature,
+        ),
+    ];
+  }
 
-    return outputs.map((output) => SignatureBytes(output.signature)).toList();
+  /// Verifies a wallet-returned [signature] over [signedBytes] against the
+  /// account's public key before it can be treated as authentic.
+  ///
+  /// A compromised wallet can return any bytes it likes; without this check a
+  /// well-formed but forged signature flows into [SignableMessage] and
+  /// [Transaction] objects as if the account had actually signed.
+  SignatureBytes _assertVerifiedSignature(
+    Uint8List signature,
+    Uint8List signedBytes,
+  ) {
+    final signatureBytes = SignatureBytes(Uint8List.fromList(signature));
+    if (signature.length != 64 ||
+        !verifySignature(account.publicKey, signatureBytes, signedBytes)) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Wallet signature does not verify against the authorized account',
+      );
+    }
+    return signatureBytes;
+  }
+
+  /// Verifies the account's signature inside a wallet-returned signed
+  /// transaction.
+  ///
+  /// A [TransactionModifyingSigner] is allowed to modify the transaction it
+  /// signs, but the returned signature must be a genuine signature by the
+  /// authorized account over the returned message bytes.
+  Transaction _assertVerifiedSignedTransaction(
+    Transaction submitted,
+    Transaction signed,
+  ) {
+    final signature = signed.signatures[address];
+    if (signature == null) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Wallet signed transaction does not include the authorized account',
+      );
+    }
+    _assertVerifiedSignature(signature.value, signed.messageBytes);
+    return signed;
+  }
+
+  /// Verifies that a wallet-reported submission signature is a genuine
+  /// signature of the submitted transaction's message bytes.
+  ///
+  /// The wallet sends the transaction itself; the signature it reports is
+  /// what callers use to track confirmation, so it must correspond to the
+  /// transaction that was submitted — verified against the authorized
+  /// account first and every declared signer public key second.
+  SignatureBytes _assertVerifiedTransactionSignature(
+    Transaction submitted,
+    Uint8List reportedSignature,
+  ) {
+    if (reportedSignature.length != 64) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Wallet reported a malformed transaction signature',
+      );
+    }
+    final signatureBytes = SignatureBytes(
+      Uint8List.fromList(reportedSignature),
+    );
+    final isValid =
+        verifySignature(
+          account.publicKey,
+          signatureBytes,
+          submitted.messageBytes,
+        ) ||
+        submitted.signatures.keys.any(
+          (signerAddress) => verifySignature(
+            addresses.getPublicKeyFromAddress(signerAddress),
+            signatureBytes,
+            submitted.messageBytes,
+          ),
+        );
+    if (!isValid) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Wallet reported a signature for a different transaction',
+      );
+    }
+    return signatureBytes;
   }
 
   WalletStandardException _unsupported(String feature) {

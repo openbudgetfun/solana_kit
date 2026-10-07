@@ -450,6 +450,43 @@ void main() {
 
       expect(result, isA<TransactionBlockhashLifetime>());
     });
+
+    test('returns a blockhash lifetime for a version 1 message whose header '
+        'and payload disagree about the account count', () async {
+      final compiledMessage = CompiledTransactionMessage(
+        version: TransactionVersion.v1,
+        header: const MessageHeader(
+          numSignerAccounts: 1,
+          numReadonlySignerAccounts: 0,
+          numReadonlyNonSignerAccounts: 0,
+        ),
+        staticAccounts: const [Address('11111111111111111111111111111111')],
+        instructionHeaders: const [
+          V1InstructionHeader(
+            programAccountIndex: 0,
+            numInstructionAccounts: 3,
+            numInstructionDataBytes: 4,
+          ),
+        ],
+        instructionPayloads: [
+          // The header claims three accounts but the payload carries none;
+          // this is malformed data and must not crash with a StateError.
+          V1InstructionPayload(
+            instructionAccountIndices: const [],
+            instructionData: Uint8List.fromList([4, 0, 0, 0]),
+          ),
+        ],
+        instructions: const [],
+        lifetimeToken: 'abc',
+      );
+
+      final result =
+          await getTransactionLifetimeConstraintFromCompiledTransactionMessage(
+            compiledMessage,
+          );
+
+      expect(result, isA<TransactionBlockhashLifetime>());
+    });
   });
 
   group('assertIsTransactionWithBlockhashLifetime', () {

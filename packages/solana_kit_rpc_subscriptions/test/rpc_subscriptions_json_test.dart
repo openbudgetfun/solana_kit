@@ -43,6 +43,39 @@ void main() {
         await subscription.cancel();
       },
     );
+
+    test(
+      'decodes each message once for every subscription on the channel',
+      () async {
+        final channelWithJsonSerialization =
+            getRpcSubscriptionsChannelWithJsonSerialization(mockChannel);
+
+        // Every subscription shares one decoded stream so each inbound
+        // message is parsed once, no matter how many subscriptions the
+        // channel serves.
+        expect(
+          channelWithJsonSerialization.streams,
+          same(channelWithJsonSerialization.streams),
+        );
+
+        final received = <Object?>[];
+        final subscriptions = [
+          channelWithJsonSerialization.streams.notifications.listen(
+            received.add,
+          ),
+          channelWithJsonSerialization.streams.notifications.listen(
+            received.add,
+          ),
+        ];
+
+        mockChannel.publishMessage(jsonEncode('hello'));
+
+        expect(received, equals(['hello', 'hello']));
+        for (final subscription in subscriptions) {
+          await subscription.cancel();
+        }
+      },
+    );
   });
 }
 

@@ -24,16 +24,18 @@ class _BigIntJsonSerializedChannel implements RpcSubscriptionsChannel {
 
   final RpcSubscriptionsChannel channel;
 
+  // Memoized so that every subscription sharing this channel listens to one
+  // mapped stream instead of each creating its own; otherwise each inbound
+  // message would be JSON-parsed once per active subscription.
+  late final NotificationStreams _streams = NotificationStreams(
+    notifications: channel.streams.notifications.map(
+      (data) => parseJsonWithBigInts(data! as String),
+    ),
+    errors: channel.streams.errors,
+  );
+
   @override
-  NotificationStreams get streams {
-    final decoded = channel.streams.notifications.map((data) {
-      return parseJsonWithBigInts(data! as String);
-    });
-    return NotificationStreams(
-      notifications: decoded,
-      errors: channel.streams.errors,
-    );
-  }
+  NotificationStreams get streams => _streams;
 
   @override
   Future<void> send(Object message) {

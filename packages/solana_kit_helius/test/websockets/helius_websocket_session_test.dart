@@ -123,5 +123,87 @@ void main() {
       expect(unsubscribeJson['method'], 'accountUnsubscribe');
       expect(unsubscribeJson['params'], [51]);
     });
+
+    test(
+      'delivers notifications to every subscription sharing a server id',
+      () async {
+        final (server, commands, _) = await _startServer();
+        addTearDown(() async {
+          await commands.close();
+          await server.close(force: true);
+        });
+
+        final ws = HeliusWebSocket(
+          url: 'ws://${server.address.address}:${server.port}',
+          allowInsecureWs: true,
+          allowPrivateHosts: true,
+        );
+        await ws.connect();
+        addTearDown(ws.close);
+
+        // Two local subscriptions with identical method and params; the
+        // server coalesces them onto one server-side subscription id.
+        final firstStream = ws.subscribe('accountSubscribe', ['acct-1']);
+        final secondStream = ws.subscribe('accountSubscribe', ['acct-1']);
+
+        final firstEvent = firstStream.first;
+        final secondEvent = secondStream.first;
+
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        commands
+          ..add(heliusSubscriptionAckFixture(id: 1, subscription: 61))
+          ..add(heliusSubscriptionAckFixture(id: 2, subscription: 61))
+          ..add(
+            heliusNotificationFixture(
+              method: 'accountNotification',
+              subscription: 61,
+              result: {'kind': 'coalesced'},
+            ),
+          );
+
+        expect(await firstEvent, {'kind': 'coalesced'});
+        expect(await secondEvent, {'kind': 'coalesced'});
+      },
+    );
+
+    test(
+      'cancelling before the ack releases the subscription once acked',
+      () async {
+        final (server, commands, requests) = await _startServer();
+        addTearDown(() async {
+          await commands.close();
+          await server.close(force: true);
+        });
+
+        final ws = HeliusWebSocket(
+          url: 'ws://${server.address.address}:${server.port}',
+          allowInsecureWs: true,
+          allowPrivateHosts: true,
+        );
+        await ws.connect();
+        addTearDown(ws.close);
+
+        final subscription = ws
+            .subscribe('accountSubscribe', ['acct-1'])
+            .listen((_) {});
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        // Cancel before the server has acknowledged the subscription.
+        await subscription.cancel();
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        expect(
+          requests.whereType<String>(),
+          everyElement(contains('Subscribe')),
+        );
+
+        commands.add(heliusSubscriptionAckFixture(id: 1, subscription: 71));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        final unsubscribeJson =
+            jsonDecode(requests.last! as String) as Map<String, Object?>;
+        expect(unsubscribeJson['method'], 'accountUnsubscribe');
+        expect(unsubscribeJson['params'], [71]);
+      },
+    );
   });
 }
