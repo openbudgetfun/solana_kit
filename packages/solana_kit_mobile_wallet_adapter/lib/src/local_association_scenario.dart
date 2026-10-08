@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:meta/meta.dart';
+
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_mobile_wallet_adapter/src/intent_launcher.dart';
 import 'package:solana_kit_mobile_wallet_adapter/src/platform_check.dart';
@@ -229,7 +231,30 @@ class LocalAssociationScenario {
     helloCompleter.complete(payload);
   }
 
+  /// Establishes a connected session state with [sharedSecret] and feeds
+  /// [message] through the inbound pipeline, returning whether the session
+  /// survived the frame.
+  ///
+  /// Test-only: the association handshake cannot be driven in a unit test
+  /// (local sessions bind a random port and remote sessions require TLS), so
+  /// tests establish the encrypted state directly through this hook.
+  @visibleForTesting
+  bool deliverConnectedFrameForTesting({
+    required Uint8List sharedSecret,
+    required Uint8List message,
+  }) {
+    _sharedSecret = sharedSecret;
+    _handleInboundMessage(message);
+    return !_closed;
+  }
+
   void _handleEncryptedMessage(Uint8List payload) {
+    // Empty frames can arrive in the connected state (e.g. wallet
+    // keep-alives); skip them without advancing the sequence number instead
+    // of treating them as malformed encrypted messages.
+    if (payload.isEmpty) {
+      return;
+    }
     _assertAndAdvanceInboundSequence(payload);
 
     final decoded = _decryptJsonRpcMessage(payload, _sharedSecret!);

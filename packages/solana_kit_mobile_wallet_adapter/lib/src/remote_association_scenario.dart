@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:meta/meta.dart';
+
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_mobile_wallet_adapter/src/kit_mobile_wallet.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart';
@@ -28,6 +30,16 @@ class RemoteAssociationResult {
   final void Function() close;
 }
 
+/// Creates an unstarted remote association session for frame-handling
+/// tests.
+///
+/// Test-only: [startRemoteScenario] immediately connects to the configured
+/// reflector host, which cannot run in a unit test.
+@visibleForTesting
+RemoteAssociationSession createRemoteAssociationSessionForTesting(
+  RemoteWalletAssociationConfig config,
+) => RemoteAssociationSession(config);
+
 /// Starts a remote association session via a WebSocket reflector.
 ///
 /// The reflector server relays messages between the dApp and wallet when
@@ -39,7 +51,7 @@ class RemoteAssociationResult {
 Future<RemoteAssociationResult> startRemoteScenario(
   RemoteWalletAssociationConfig config,
 ) async {
-  final session = _RemoteAssociationSession(config);
+  final session = RemoteAssociationSession(config);
 
   return session.start();
 }
@@ -48,8 +60,15 @@ enum _RemoteProtocolEncoding { binary, base64 }
 
 enum _RemoteState { connecting, reflectorIdReceived, helloReqSent, connected }
 
-class _RemoteAssociationSession {
-  _RemoteAssociationSession(this._config)
+/// The dApp-side state machine for a remote (reflector-relayed) association
+/// session.
+///
+/// Most callers want [startRemoteScenario], which starts a session and
+/// returns its association URI. The class is public so connected-state frame
+/// handling can be exercised in tests without a TLS reflector.
+class RemoteAssociationSession {
+  /// Creates a session bound to [_config].
+  RemoteAssociationSession(this._config)
     : _associationKeyPair = generateAssociationKeypair();
 
   final RemoteWalletAssociationConfig _config;
@@ -77,6 +96,9 @@ class _RemoteAssociationSession {
   int _lastKnownInboundSequenceNumber = 0;
   bool _closed = false;
 
+  /// Connects to the reflector, negotiates the handshake, and returns the
+  /// association result whose [RemoteAssociationResult.wallet] future
+  /// completes once a wallet joins.
   Future<RemoteAssociationResult> start() async {
     try {
       _channel = await _connectWithRetry();
@@ -115,6 +137,8 @@ class _RemoteAssociationSession {
     }
   }
 
+  /// Closes the session, fails every pending request with
+  /// [SolanaErrorCode.mwaSessionClosed], and zeroes the session key.
   Future<void> close() async {
     if (_closed) return;
     _closed = true;
@@ -213,7 +237,31 @@ class _RemoteAssociationSession {
     }
   }
 
+  /// Establishes a connected session state with [sharedSecret] and feeds
+  /// [message] through the inbound pipeline, returning whether the session
+  /// survived the frame.
+  ///
+  /// Test-only: the association handshake cannot be driven in a unit test
+  /// (local sessions bind a random port and remote sessions require TLS), so
+  /// tests establish the encrypted state directly through this hook.
+  @visibleForTesting
+  bool deliverConnectedFrameForTesting({
+    required Uint8List sharedSecret,
+    required Uint8List message,
+  }) {
+    _state = _RemoteState.connected;
+    _sharedSecret = sharedSecret;
+    _handleInboundMessage(message);
+    return !_closed;
+  }
+
   void _handleEncryptedMessage(Uint8List payload) {
+    // Empty frames can arrive in the connected state (e.g. wallet
+    // keep-alives); skip them without advancing the sequence number instead
+    // of treating them as malformed encrypted messages.
+    if (payload.isEmpty) {
+      return;
+    }
     _assertAndAdvanceInboundSequence(payload);
 
     final decoded = _decryptJsonRpcMessage(payload, _sharedSecret!);
