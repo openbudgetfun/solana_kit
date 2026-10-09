@@ -41,7 +41,7 @@
       "url": "https://github.com/solana-mobile/mobile-wallet-adapter",
       "ref": {
         "type": "tag",
-        "value": "@solana-mobile/mobile-wallet-adapter-protocol-kit@0.4.0"
+        "value": "@solana-mobile/mobile-wallet-adapter-protocol-kit@3.0.0"
       },
       "notes": "Solana Mobile Wallet Adapter reference. The same commit carries @solana-mobile/wallet-standard-mobile@0.6.0, so one tag pins both the protocol kit and the wallet standard",
       "package": "solana_kit_mobile_wallet_adapter",
@@ -49,7 +49,7 @@
         "solana_kit_mobile_wallet_adapter",
         "solana_kit_mobile_wallet_adapter_protocol"
       ],
-      "checkedCommit": "22d8da508cce3dadbeb6e2542a85f000a2629519"
+      "checkedCommit": "12b1784ca7b0ab0f54c8333c2b4694b2f3fb4f13"
     },
     {
       "name": "system",
