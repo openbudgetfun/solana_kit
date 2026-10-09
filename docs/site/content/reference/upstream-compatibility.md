@@ -63,7 +63,7 @@ The upstream clients and IDLs the current release was generated and verified aga
 | [account-compression](https://github.com/solana-program/account-compression)                  | `ac-mainnet-tag` (b229799e395c)                           | `solana_kit_spl_account_compression`                                            |
 | [mpl-bubblegum](https://github.com/metaplex-foundation/mpl-bubblegum)                         | `release/bubblegum@2.0.0`                                 | `solana_kit_mpl_bubblegum`                                                      |
 | [mpl-token-metadata](https://github.com/metaplex-foundation/mpl-token-metadata)               | `353d01be4af3`                                            | `solana_kit_mpl_token_metadata`                                                 |
-| [mpl-core](https://github.com/metaplex-foundation/mpl-core)                                   | `release/core@0.15.2`                                     | `solana_kit_mpl_core`                                                           |
+| [mpl-core](https://github.com/metaplex-foundation/mpl-core)                                   | `release/core@0.15.3`                                     | `solana_kit_mpl_core`                                                           |
 | [squads-v4](https://github.com/Squads-Protocol/v4)                                            | `af94153ff77a`                                            | `solana_kit_squads`                                                             |
 | [solana-attestation-service](https://github.com/solana-foundation/solana-attestation-service) | `5b64cf09843d`                                            | `solana_kit_attestation_service`                                                |
 
