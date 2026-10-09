@@ -86,9 +86,15 @@ class RemoteAssociationSession {
     protocolVersion: ProtocolVersion.legacy,
   );
 
-  final Completer<Uint8List> _reflectorIdCompleter = Completer<Uint8List>();
+  // `ignore()` marks these futures' errors as handled at creation so a
+  // teardown that fires them before a listener attaches (e.g. the
+  // reflector connection failing) cannot surface as an unhandled zone
+  // error on top of the exception `start()` already throws; awaiting the
+  // futures afterwards still delivers results and errors normally.
+  final Completer<Uint8List> _reflectorIdCompleter = Completer<Uint8List>()
+    ..future.ignore();
   final Completer<KitMobileWallet> _walletCompleter =
-      Completer<KitMobileWallet>();
+      Completer<KitMobileWallet>()..future.ignore();
   final Map<int, Completer<Map<String, Object?>>> _pendingResponses =
       <int, Completer<Map<String, Object?>>>{};
 

@@ -83,6 +83,18 @@ void main() {
       },
     );
 
+    test('startRemoteScenario rejects a malformed reflector host', () async {
+      // `Uri.parse` fails synchronously before any connection-retry timer
+      // is armed, so the scenario rejects immediately instead of retrying
+      // for the full connection deadline.
+      await expectLater(
+        startRemoteScenario(
+          const RemoteWalletAssociationConfig(reflectorHost: '['),
+        ),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
     test('an out-of-order sequence number still fails the session', () {
       final local = LocalAssociationScenario();
       expect(
