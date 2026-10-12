@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
+
+### Changed
+
+#### No package-specific changes were recorded; `solana_kit_codecs` was updated to 0.11.0 as part of group `main`.
+
 ## [0.10.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.10.0) (2026-09-21)
 
 ### Breaking changes

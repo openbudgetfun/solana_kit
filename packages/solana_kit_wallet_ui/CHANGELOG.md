@@ -104,3 +104,9 @@ SkribbleWalletButton(
 ```
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [e041e73](https://github.com/openbudgetfun/solana_kit/commit/e041e731bb0291af05c06c16d7042fdbf51166a1)
+
+## wallet [0.3.0](https://github.com/openbudgetfun/solana_kit/releases/tag/wallet/v0.3.0) (2026-10-12)
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)

@@ -129,3 +129,9 @@ The remaining defined-but-unthrown codes were checked against upstream and are p
 `parseLamportsValue` returned `0` for a balance response it could not parse. A malformed response therefore looked like an empty wallet. It now throws a `FormatException`, so a transport or schema change is reported as itself rather than as insufficient funds.
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
+
+## solana_kit_dapp_publisher_cli [0.3.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_dapp_publisher_cli/v0.3.0) (2026-10-12)
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)

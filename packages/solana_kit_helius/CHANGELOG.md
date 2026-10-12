@@ -354,3 +354,56 @@ _Owner:_ Ifiok Jr. · _Introduced in:_ [19932db](https://github.com/openbudgetfu
 ### Fixes
 
 - **Await the sender service call before disposing the signing keypair.** `buildTokenTransfer` now awaits `sendViaSender` inside the `try` block instead of returning the Future directly, so the ephemeral keypair is disposed after the send completes rather than at return time. Signing already finishes before the call, so this is a lifecycle hygiene change with no observable behavior difference; it satisfies the Dart 3.13 `unawaited_return_in_try_block` diagnostic that the Flutter 3.47 toolchain enables. _Owner:_ Ifiok Jr. · _Introduced in:_ [e041e73](https://github.com/openbudgetfun/solana_kit/commit/e041e731bb0291af05c06c16d7042fdbf51166a1)
+
+## solana_kit_helius [0.8.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_helius/v0.8.0) (2026-10-12)
+
+### Fixes
+
+#### Fix Helius WebSocket notification routing and leaked subscriptions
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #298](https://github.com/openbudgetfun/solana_kit/pull/298)
+
+`HeliusWebSocket` now delivers every notification to **all** local subscriptions the server mapped it to. Solana RPC servers coalesce identical subscriptions and reuse one server-side subscription id for them, and the dispatcher previously stopped after the first match — so two subscriptions with the same method and params on one client meant the second stream never emitted anything, silently. Both streams now receive every notification for their shared server subscription.
+
+Cancelling a subscription before the server acknowledged it also no longer leaks the server-side subscription: the cancellation is remembered, and the unsubscribe request is sent the moment the late acknowledgement names the server-side subscription id (previously no unsubscribe was ever sent, and the orphaned subscription kept streaming dropped notifications until the socket closed). A subscribe request that fails with an error response releases the pending cancellation instead of holding it.
+
+```dart
+final accountA = ws.subscribe('accountSubscribe', [address]);
+final accountB = ws.subscribe('accountSubscribe', [address]);
+// The server coalesces these onto one subscription id; both streams
+// now receive each account notification.
+```
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
+
+#### Redact credentials echoed in Helius error bodies
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #288](https://github.com/openbudgetfun/solana_kit/pull/288)
+
+When a Helius endpoint returned an error, the response body was embedded verbatim into the thrown `SolanaError` context. Some proxies and gateways echo the request URL — `https://mainnet.helius-rpc.com/?api-key=...` for the RPC endpoints this package builds by default — back inside that body, which leaked the API key into whatever logged the error.
+
+Error bodies from `RestClient` and `AdminClient` now pass through the same credential redaction used for URLs: `api-key`-style query parameters and userinfo are replaced with `[REDACTED]`. The regional sender endpoints are also documented as cleartext `http://` infrastructure so callers understand the exposure before choosing a non-default region.
+
+### Documentation
+
+#### Publish a per-package upstream support table in each package README
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #285](https://github.com/openbudgetfun/solana_kit/pull/285) · _Related issues:_ [#223](https://github.com/openbudgetfun/solana_kit/issues/223), [#284](https://github.com/openbudgetfun/solana_kit/issues/284)
+
+Every package that ports something outside `@solana/kit` now documents which upstream revision each of its releases was generated and verified against, so a reader can pick the Dart version that matches the upstream program version they target.
+
+```markdown
+| `solana_kit_system` version | `system`     | Released                |
+| --------------------------- | ------------ | ----------------------- |
+| _next release_              | `js@v0.15.0` | _unreleased_            |
+| `0.7.2` – `0.8.0`           | `js@v0.14.1` | 2026-09-06 – 2026-09-21 |
+| `0.7.0` – `0.7.1`           | `js@v0.14.0` | 2026-08-30              |
+```
+
+**One row per upstream revision, not per release.** Consecutive releases that were generated against the same upstream ref collapse into a single `0.7.2` – `0.8.0` range, so a package that shipped several patches against one upstream tag reports one row instead of burying the mapping in repetition. Packages whose releases moved with the umbrella `solana_kit` version (the lockstep group members) are keyed by that version and label the column accordingly.
+
+The leading `_next release_` row shows the pin the working tree is currently generated against, so the mapping for unreleased work is visible before the release tooling assigns a version.
+
+Tables are generated, not hand-written. `scripts/sync_package_upstream_support.dart` reads `config/reference-repos.json` at every `"<package>/v<version>"` release tag, collapses the ranges, and writes `config/package-upstream-support.json`; `scripts/generate_upstream_docs.dart` renders that into each README between `upstream-support` markers. Both run through `docs:update`, so the tables refresh alongside the other generated docs. The history is committed rather than derived at check time because CI checks out shallowly and would see no tags.
+
+No package code changes; this is documentation only.

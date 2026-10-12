@@ -4,6 +4,55 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
+
+### Breaking changes
+
+#### Remove the deprecated transaction-result helper
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #281](https://github.com/openbudgetfun/solana_kit/pull/281) · _Related issues:_ [#280](https://github.com/openbudgetfun/solana_kit/issues/280)
+
+`successfulSingleTransactionPlanResultFromTransaction` is gone. It derived a result's `signature` by calling `getSignatureFromTransaction`, which throws when the transaction's fee payer has not signed; passing the context explicitly makes that step visible and lets the caller decide how to handle an unsigned transaction before it becomes an exception.
+
+The executor no longer needs it: it keeps the same derivation as a private helper, so `TransactionPlanExecutor` results are unchanged.
+
+```dart
+// Before
+final result = successfulSingleTransactionPlanResultFromTransaction(
+  message,
+  transaction,
+);
+
+// After
+final result = successfulSingleTransactionPlanResult(message, {
+  'signature': getSignatureFromTransaction(transaction),
+  'transaction': transaction,
+});
+```
+
+Callers that only need the signature can pass just that key.
+
+### Features
+
+#### Message packer helpers for custom packers
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #293](https://github.com/openbudgetfun/solana_kit/pull/293) · _Related issues:_ [#2061](https://github.com/openbudgetfun/solana_kit/issues/2061), [#2067](https://github.com/openbudgetfun/solana_kit/issues/2067), [#2071](https://github.com/openbudgetfun/solana_kit/issues/2071), [#2073](https://github.com/openbudgetfun/solana_kit/issues/2073)
+
+Ports the custom message packer helpers from `@solana/instruction-plans` v8.4.0 (#2073):
+
+- `resolveMaxInstructionsPerTransaction` validates and resolves the configured instruction limit in one call (defaulting to 16, rejecting non-positive values and anything above the 64-instruction transaction format limit).
+- `assertMessageCanAccommodateSize` asserts a message can grow to a next size within a byte limit, throwing `instructionPlansMessageCannotAccommodatePlan` with the required and free byte counts.
+- `isMessagePackerErrorThatRequiresNewCandidate` identifies every error that tells the planner to open a new transaction message.
+- Custom packers can refuse a message for any reason by throwing `instructionPlansMessageRejectedByPacker` with a `reason`; the transaction planner now treats that rejection like the existing capacity errors and opens a new candidate message instead of failing the plan.
+
+The internal `maxInstructions` handling of the built-in linear and instruction-list packers and the transaction planner now routes through these helpers, and the planner resolves the limit once per invocation.
+
+**Breaking:** the Dart-only helpers `resolveMaxInstructions` and `assertValidMaxInstructionsPerTransaction` are removed in favor of `resolveMaxInstructionsPerTransaction`, which validates and resolves in one call — matching upstream, which never exported the two-function form. The realloc packer was also rewritten to chunk `totalSize` in a loop, matching upstream v8.4.0 (#2071); its output is unchanged (no 0-byte instruction for exact multiples of the 10,240-byte limit, which this port already guaranteed).
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
+
 ## [0.10.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.10.0) (2026-09-21)
 
 ### Breaking changes

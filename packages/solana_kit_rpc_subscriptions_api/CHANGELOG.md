@@ -4,6 +4,43 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
+
+### Features
+
+#### Ignore received-notifications in signature confirmation
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #287](https://github.com/openbudgetfun/solana_kit/pull/287)
+
+The recent-signature confirmation strategy can no longer be tricked into treating a received-notification as confirmation. Subscribing with `enableReceivedNotification: true` (`SignatureNotificationsConfig`) makes the RPC report the moment a node receives the signature, before the transaction executes; the strategy previously treated any notification without an `err` as success, so that wiring would resolve confirmation on receipt — the transaction could still fail on-chain while the caller believed it had landed.
+
+The `onSignatureNotification` callback in `RecentSignatureConfirmationConfig` now reports the notification kind through a required `received` flag, and the strategy ignores receipts unconditionally: only a processed-status notification resolves or fails the confirmation.
+
+```dart
+onSignatureNotification: (
+  signature, {
+  required abortSignal,
+  required commitment,
+  required onNotification,
+}) {
+  // `received` distinguishes a receipt from a processed status; the
+  // strategy ignores receipts either way.
+  return signatureNotifications(
+    signature,
+    SignatureNotificationsConfig(
+      commitment: commitment,
+      enableReceivedNotification: true,
+    ),
+  ).subscribe(/* report received accordingly */);
+},
+```
+
+Callers that never enable received-notifications only need to pass `received: false`.
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
+
 ## [0.10.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.10.0) (2026-09-21)
 
 ### Breaking changes

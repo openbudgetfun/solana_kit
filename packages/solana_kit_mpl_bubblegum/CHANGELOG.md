@@ -307,3 +307,82 @@ environment:
 ```
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [5f5fe01](https://github.com/openbudgetfun/solana_kit/commit/5f5fe01f3e2220ccfee54cc26e82c3face26589d) · _Last updated in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
+
+## solana_kit_mpl_bubblegum [0.7.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_mpl_bubblegum/v0.7.0) (2026-10-12)
+
+### Features
+
+#### Port the mpl-bubblegum DAS inherited-royalty leaf metadata
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #284](https://github.com/openbudgetfun/solana_kit/pull/284)
+
+The reference pin moves from commit `07180c73` to the tag `release/bubblegum@2.0.0` (commit `79e1a195`), which carries upstream JS client v6.0.0 and the DAS `_raw` leaf-royalty work. Unlike the other program pins in this sync, this one carries real client behavior, so the corresponding port is included here.
+
+##### Why the inherited-royalty handling matters
+
+Bubblegum hashes the _leaf_ value of the seller fee basis points into the Merkle leaf. When a compressed NFT inherits its royalties from a Core collection, DAS reports two different numbers: the display rate under `royalty.basis_points` and the leaf rate under `royalty.basis_points_raw` (frequently the `0xffff` inherit sentinel). Hashing or writing with the display value produces a proof the tree rejects. These helpers resolve the leaf-canonical metadata before hashing or building a write instruction, and never mutate the display value.
+
+##### New API
+
+`solana_kit_mpl_bubblegum` now exports the leaf-metadata resolution helpers and the metadata hashes they feed:
+
+```dart
+import 'package:solana_kit_mpl_bubblegum/solana_kit_mpl_bubblegum.dart';
+
+// Resolve leaf-canonical metadata from an AssetWithProof value.
+final leafMetadata = asCurrentMetadataV2(
+  asset.metadata,
+  RoyaltyRawFields(
+    sellerFeeBasisPointsRaw: asset.sellerFeeBasisPointsRaw,
+    creatorsRaw: asset.creatorsRaw,
+  ),
+);
+
+// Hash it the way the tree does.
+final dataHash = hashMetadataDataV2(leafMetadata);
+final leafHash = hashMetadataV2(leafMetadata);
+```
+
+- `toLeafMetadata`, `toLeafMetadataV2`, `resolveLeafRoyaltyFields`, `asCurrentMetadata`, `asCurrentMetadataV2`, `isV1MetadataArgs`, `RoyaltyRawFields`, and `sellerFeeBasisPointsInherit`.
+- `hashMetadata`, `hashMetadataV2`, `hashMetadataData`, `hashMetadataDataV2`, and `hashMetadataCreators`.
+- `DasAsset.royalty`, `DasAsset.creatorsRaw`, `DasAsset.collection`, `DasAsset.mutable`, and `DasAsset.editionNonce`; `DasAssetRoyalty`; `DasAssetContent.jsonUri`; `DasAssetGrouping.verified`; and the `collectionHash`, `assetDataHash`, and `flags` compression fields. `HeliusDasClient` parses all of them, so the DAS royalty data is no longer discarded on the way in.
+- `AssetWithProof` gains required `metadata` and `currentMetadata` fields plus optional `collectionHash`, `assetDataHash`, `flags`, `sellerFeeBasisPointsRaw`, `creatorsRaw`, and `inherited`. `getAssetWithProof` derives them, including the inherit-sentinel fallback that supplies `0xffff` and an empty creator list when DAS omits the raw values.
+
+`AssetWithProof`'s two new required fields make this a `minor` rather than a `patch` for callers that construct the type directly.
+
+##### Fixed alongside
+
+Two encoders emitted byte layouts that did not match the on-chain program, so any instruction built from them would have been rejected:
+
+- `encodeMetadataArgsV2` wrote the **V1** field layout — 63 bytes including `editionNonce`, `uses`, and `tokenProgramVersion`. The on-chain `MetadataArgsV2` struct has nine fields and no such members; the correct encoding is 60 bytes. This affected `mintV2`, whose handwritten builder called the broken encoder.
+- `UpdateArgs` declared `collection`, `uses`, and `tokenStandard` and omitted `creators`, while the on-chain struct is `name`, `symbol`, `uri`, `creators`, `sellerFeeBasisPoints`, `primarySaleHappened`, `isMutable`. This made `updateMetadataV2` instruction data malformed.
+
+Both now match, verified byte-for-byte against `@metaplex-foundation/mpl-bubblegum` 6.0.0's own serializers, and the previously-swallowed `mintV2` workaround is gone.
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
+
+### Documentation
+
+#### Publish a per-package upstream support table in each package README
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #285](https://github.com/openbudgetfun/solana_kit/pull/285) · _Related issues:_ [#223](https://github.com/openbudgetfun/solana_kit/issues/223), [#284](https://github.com/openbudgetfun/solana_kit/issues/284)
+
+Every package that ports something outside `@solana/kit` now documents which upstream revision each of its releases was generated and verified against, so a reader can pick the Dart version that matches the upstream program version they target.
+
+```markdown
+| `solana_kit_system` version | `system`     | Released                |
+| --------------------------- | ------------ | ----------------------- |
+| _next release_              | `js@v0.15.0` | _unreleased_            |
+| `0.7.2` – `0.8.0`           | `js@v0.14.1` | 2026-09-06 – 2026-09-21 |
+| `0.7.0` – `0.7.1`           | `js@v0.14.0` | 2026-08-30              |
+```
+
+**One row per upstream revision, not per release.** Consecutive releases that were generated against the same upstream ref collapse into a single `0.7.2` – `0.8.0` range, so a package that shipped several patches against one upstream tag reports one row instead of burying the mapping in repetition. Packages whose releases moved with the umbrella `solana_kit` version (the lockstep group members) are keyed by that version and label the column accordingly.
+
+The leading `_next release_` row shows the pin the working tree is currently generated against, so the mapping for unreleased work is visible before the release tooling assigns a version.
+
+Tables are generated, not hand-written. `scripts/sync_package_upstream_support.dart` reads `config/reference-repos.json` at every `"<package>/v<version>"` release tag, collapses the ranges, and writes `config/package-upstream-support.json`; `scripts/generate_upstream_docs.dart` renders that into each README between `upstream-support` markers. Both run through `docs:update`, so the tables refresh alongside the other generated docs. The history is committed rather than derived at check time because CI checks out shallowly and would see no tags.
+
+No package code changes; this is documentation only.

@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
+
+### Features
+
+#### Track `@solana/errors` v8.4.0: three new error codes
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #293](https://github.com/openbudgetfun/solana_kit/pull/293) · _Related issues:_ [#2061](https://github.com/openbudgetfun/solana_kit/issues/2061), [#2067](https://github.com/openbudgetfun/solana_kit/issues/2067), [#2071](https://github.com/openbudgetfun/solana_kit/issues/2071), [#2073](https://github.com/openbudgetfun/solana_kit/issues/2073)
+
+Ports the three error codes added upstream in `@solana/kit` v8.4.0:
+
+- `codecsSentinelMissingAtEndOfBytes(8078028)` — thrown when a collection codec using a sentinel size strategy reaches the end of the byte array without encountering the sentinel.
+- `codecsSentinelMustNotBeEmpty(8078029)` — thrown when constructing a collection codec with an empty sentinel.
+- `instructionPlansMessageRejectedByPacker(7618012)` — thrown by a custom message packer to reject a transaction message for a reason other than the standard capacity limits.
+
+Each code keeps its upstream `SolanaErrorCode` number so error codes remain interoperable across implementations. The features that throw them ship in this release too: the sentinel size strategy in `solana_kit_codecs_data_structures` and the custom message packer helpers in `solana_kit_instruction_plans`.
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
+
+#### Harden transaction lifetime, confirmation, and introspection boundaries
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #290](https://github.com/openbudgetfun/solana_kit/pull/290)
+
+Durable nonce values are now format-checked when a nonce lifetime is set: a nonce that is not a base58 string decoding to exactly 32 bytes throws `transactionInvalidNonceFormat` instead of being silently truncated or zero-extended by the fixed-size lifetime-token encoder.
+
+On-chain transaction failures now surface as typed `SolanaError`s (via the existing transaction-error mapper, matching upstream) instead of bare `StateError`s, in both the confirmation strategies and `sendAndConfirmTransaction` — callers that already catch `SolanaError` no longer miss transaction failures. `sendAndConfirmTransaction` also verifies that the signature the RPC returns for a submitted transaction equals the locally computed fee-payer signature, throwing `transactionReportedSignatureMismatch` when an RPC reports a different transaction than the one sent.
+
+`DecodedRpcTransaction` gained an `err` field (and a `failed` getter) carrying the response's `meta.err` verbatim, so introspection consumers can tell a failed transaction's attempted instructions from a successful one's. Decoding now also rejects malformed account keys and headers with typed errors — `getAccountMetasFromCompiledTransactionMessage` throws `transactionIntrospectionHeaderAccountsMismatch` when header counts exceed the static account list, RPC account keys run through address validation, and `decompileTransactionMessage` bounds-checks instruction account indices — instead of crashing with raw `RangeError`s. Reconstructed wire lifetimes document their unknown-expiry semantics, and `signAndSendTransactionMessageWithSigners` documents that its returned signature records submission, not execution.
+
 ## [0.10.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.10.0) (2026-09-21)
 
 ### Breaking changes

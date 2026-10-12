@@ -20,7 +20,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_mpl_token_metadata": ^0.10.0
+  "solana_kit_mpl_token_metadata": ^0.11.0
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

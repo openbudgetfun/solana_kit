@@ -2424,6 +2424,201 @@ Package groups scaffolded:
 - Fragment-based code generation with automatic import tracking
 - Comprehensive test suite with 261 tests
 
+## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
+
+Grouped release for `main`.
+
+### Breaking changes
+
+#### Remove the deprecated transaction-result helper
+
+_Packages:_ 🔴 _solana_kit_instruction_plans_
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #281](https://github.com/openbudgetfun/solana_kit/pull/281) · _Related issues:_ [#280](https://github.com/openbudgetfun/solana_kit/issues/280)
+
+`successfulSingleTransactionPlanResultFromTransaction` is gone. It derived a result's `signature` by calling `getSignatureFromTransaction`, which throws when the transaction's fee payer has not signed; passing the context explicitly makes that step visible and lets the caller decide how to handle an unsigned transaction before it becomes an exception.
+
+The executor no longer needs it: it keeps the same derivation as a private helper, so `TransactionPlanExecutor` results are unchanged.
+
+```dart
+// Before
+final result = successfulSingleTransactionPlanResultFromTransaction(
+  message,
+  transaction,
+);
+
+// After
+final result = successfulSingleTransactionPlanResult(message, {
+  'signature': getSignatureFromTransaction(transaction),
+  'transaction': transaction,
+});
+```
+
+Callers that only need the signature can pass just that key.
+
+#### Drop the deprecation markers on legacy parsed account fields
+
+_Packages:_ 🔴 _solana_kit_rpc_parsed_types_
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #281](https://github.com/openbudgetfun/solana_kit/pull/281) · _Related issues:_ [#280](https://github.com/openbudgetfun/solana_kit/issues/280)
+
+`JsonParsedStakeConfigInfo.slashPenalty`, `warmupCooldownRate`, and `JsonParsedRentInfo`'s `burnPercent`, `exemptionThreshold`, and `lamportsPerByteYear` are no longer marked `@Deprecated`. Their fields, types, and behavior are unchanged, so this is a source-compatible change unless you suppress deprecation warnings — the markers were also suppressing nothing useful, because these fields describe what pre-Agave-4.1.0 validators actually return.
+
+Agave 4.1.0 reshaped both responses, and the fields are still the documented way to read a validator that predates it. The `@Deprecated` annotation could not express that "only on older validators" condition, so the doc comments now carry it instead. This matches how the workspace already models the same legacy rent fields in `solana_kit_sysvars` and how `solana_kit_rpc_transformers` still lists `slashPenalty`, `warmupCooldownRate`, `burnPercent`, and `exemptionThreshold` as numeric keypaths in parsed accounts.
+
+```dart
+// Narrow on which shape the validator returned before reading either side.
+final info = rentSysvar.info;
+final lamportsPerByte = info.lamportsPerByte; // Agave 4.1.0+
+final legacy = info.burnPercent; // validators running earlier versions
+```
+
+Removing the fields outright would have deleted real wire support: a `jsonParsed` request to an older validator returns exactly these fields, and `JsonParsedStakeConfigInfo` has no others, so the type would have become an empty placeholder.
+
+### Features
+
+#### Sentinel size strategy for array, set, and map codecs
+
+_Packages:_ 🟠 _solana_kit_codecs_data_structures_
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #293](https://github.com/openbudgetfun/solana_kit/pull/293) · _Related issues:_ [#2061](https://github.com/openbudgetfun/solana_kit/issues/2061), [#2067](https://github.com/openbudgetfun/solana_kit/issues/2067), [#2071](https://github.com/openbudgetfun/solana_kit/issues/2071), [#2073](https://github.com/openbudgetfun/solana_kit/issues/2073)
+
+Ports the sentinel size strategy from `@solana/codecs-data-structures` v8.4.0 (#2061). `getArrayCodec`, `getSetCodec`, and `getMapCodec` accept a new `SentinelArraySize` that ends the collection when the bytes at the next item position match a constant sentinel:
+
+```dart
+final codec = getArrayCodec(
+  getU8Codec(),
+  size: SentinelArraySize(Uint8List.fromList([0])),
+);
+codec.encode([42, 1, 2]); // 2a 01 02 00
+```
+
+- The sentinel is compared at item boundaries only, so its bytes may occur inside an item without terminating the collection. No valid item may begin with the sentinel's bytes.
+- `SentinelCountStrategy.required` (default) writes the sentinel after the last item and demands it when decoding; `optional` writes it but tolerates its absence; `omitted` never writes it and consumes it only if present.
+- Constructing a codec with an empty sentinel throws `codecsSentinelMustNotBeEmpty`; a required sentinel missing at the end of the byte array throws `codecsSentinelMissingAtEndOfBytes`. Both codes use their upstream numbers.
+
+This mirrors Codama's `sentinelCountNode`, so sentinel-counted IDL types can now be generated.
+
+#### Track `@solana/errors` v8.4.0: three new error codes
+
+_Packages:_ 🟠 _solana_kit_errors_
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #293](https://github.com/openbudgetfun/solana_kit/pull/293) · _Related issues:_ [#2061](https://github.com/openbudgetfun/solana_kit/issues/2061), [#2067](https://github.com/openbudgetfun/solana_kit/issues/2067), [#2071](https://github.com/openbudgetfun/solana_kit/issues/2071), [#2073](https://github.com/openbudgetfun/solana_kit/issues/2073)
+
+Ports the three error codes added upstream in `@solana/kit` v8.4.0:
+
+- `codecsSentinelMissingAtEndOfBytes(8078028)` — thrown when a collection codec using a sentinel size strategy reaches the end of the byte array without encountering the sentinel.
+- `codecsSentinelMustNotBeEmpty(8078029)` — thrown when constructing a collection codec with an empty sentinel.
+- `instructionPlansMessageRejectedByPacker(7618012)` — thrown by a custom message packer to reject a transaction message for a reason other than the standard capacity limits.
+
+Each code keeps its upstream `SolanaErrorCode` number so error codes remain interoperable across implementations. The features that throw them ship in this release too: the sentinel size strategy in `solana_kit_codecs_data_structures` and the custom message packer helpers in `solana_kit_instruction_plans`.
+
+#### Harden transaction lifetime, confirmation, and introspection boundaries
+
+_Packages:_ 🟢 _solana_kit_errors_, 🟢 _solana_kit_signers_, 🟢 _solana_kit_transaction_confirmation_, 🟢 _solana_kit_transaction_messages_, 🟢 _solana_kit_transactions_, 🟠 _solana_kit_transaction_introspection_
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #290](https://github.com/openbudgetfun/solana_kit/pull/290)
+
+Durable nonce values are now format-checked when a nonce lifetime is set: a nonce that is not a base58 string decoding to exactly 32 bytes throws `transactionInvalidNonceFormat` instead of being silently truncated or zero-extended by the fixed-size lifetime-token encoder.
+
+On-chain transaction failures now surface as typed `SolanaError`s (via the existing transaction-error mapper, matching upstream) instead of bare `StateError`s, in both the confirmation strategies and `sendAndConfirmTransaction` — callers that already catch `SolanaError` no longer miss transaction failures. `sendAndConfirmTransaction` also verifies that the signature the RPC returns for a submitted transaction equals the locally computed fee-payer signature, throwing `transactionReportedSignatureMismatch` when an RPC reports a different transaction than the one sent.
+
+`DecodedRpcTransaction` gained an `err` field (and a `failed` getter) carrying the response's `meta.err` verbatim, so introspection consumers can tell a failed transaction's attempted instructions from a successful one's. Decoding now also rejects malformed account keys and headers with typed errors — `getAccountMetasFromCompiledTransactionMessage` throws `transactionIntrospectionHeaderAccountsMismatch` when header counts exceed the static account list, RPC account keys run through address validation, and `decompileTransactionMessage` bounds-checks instruction account indices — instead of crashing with raw `RangeError`s. Reconstructed wire lifetimes document their unknown-expiry semantics, and `signAndSendTransactionMessageWithSigners` documents that its returned signature records submission, not execution.
+
+#### Message packer helpers for custom packers
+
+_Packages:_ 🟠 _solana_kit_instruction_plans_
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #293](https://github.com/openbudgetfun/solana_kit/pull/293) · _Related issues:_ [#2061](https://github.com/openbudgetfun/solana_kit/issues/2061), [#2067](https://github.com/openbudgetfun/solana_kit/issues/2067), [#2071](https://github.com/openbudgetfun/solana_kit/issues/2071), [#2073](https://github.com/openbudgetfun/solana_kit/issues/2073)
+
+Ports the custom message packer helpers from `@solana/instruction-plans` v8.4.0 (#2073):
+
+- `resolveMaxInstructionsPerTransaction` validates and resolves the configured instruction limit in one call (defaulting to 16, rejecting non-positive values and anything above the 64-instruction transaction format limit).
+- `assertMessageCanAccommodateSize` asserts a message can grow to a next size within a byte limit, throwing `instructionPlansMessageCannotAccommodatePlan` with the required and free byte counts.
+- `isMessagePackerErrorThatRequiresNewCandidate` identifies every error that tells the planner to open a new transaction message.
+- Custom packers can refuse a message for any reason by throwing `instructionPlansMessageRejectedByPacker` with a `reason`; the transaction planner now treats that rejection like the existing capacity errors and opens a new candidate message instead of failing the plan.
+
+The internal `maxInstructions` handling of the built-in linear and instruction-list packers and the transaction planner now routes through these helpers, and the planner resolves the limit once per invocation.
+
+**Breaking:** the Dart-only helpers `resolveMaxInstructions` and `assertValidMaxInstructionsPerTransaction` are removed in favor of `resolveMaxInstructionsPerTransaction`, which validates and resolves in one call — matching upstream, which never exported the two-function form. The realloc packer was also rewritten to chunk `totalSize` in a loop, matching upstream v8.4.0 (#2071); its output is unchanged (no 0-byte instruction for exact multiples of the 10,240-byte limit, which this port already guaranteed).
+
+#### Ignore received-notifications in signature confirmation
+
+_Packages:_ 🟠 _solana_kit_rpc_subscriptions_api_, 🟠 _solana_kit_transaction_confirmation_
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #287](https://github.com/openbudgetfun/solana_kit/pull/287)
+
+The recent-signature confirmation strategy can no longer be tricked into treating a received-notification as confirmation. Subscribing with `enableReceivedNotification: true` (`SignatureNotificationsConfig`) makes the RPC report the moment a node receives the signature, before the transaction executes; the strategy previously treated any notification without an `err` as success, so that wiring would resolve confirmation on receipt — the transaction could still fail on-chain while the caller believed it had landed.
+
+The `onSignatureNotification` callback in `RecentSignatureConfirmationConfig` now reports the notification kind through a required `received` flag, and the strategy ignores receipts unconditionally: only a processed-status notification resolves or fails the confirmation.
+
+```dart
+onSignatureNotification: (
+  signature, {
+  required abortSignal,
+  required commitment,
+  required onNotification,
+}) {
+  // `received` distinguishes a receipt from a processed status; the
+  // strategy ignores receipts either way.
+  return signatureNotifications(
+    signature,
+    SignatureNotificationsConfig(
+      commitment: commitment,
+      enableReceivedNotification: true,
+    ),
+  ).subscribe(/* report received accordingly */);
+},
+```
+
+Callers that never enable received-notifications only need to pass `received: false`.
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Packages:_ 🟢 _solana_kit_, 🟢 _solana_kit_accounts_, 🟢 _solana_kit_address_, 🟢 _solana_kit_anchor_, 🟢 _solana_kit_address_constants_, 🟢 _solana_kit_addresses_, 🟢 _solana_kit_codecs_core_, 🟢 _solana_kit_codecs_data_structures_, 🟢 _solana_kit_codecs_numbers_, 🟢 _solana_kit_codecs_strings_, 🟢 _solana_kit_fixed_points_, 🟢 _solana_kit_errors_, 🟢 _solana_kit_fast_stable_stringify_, 🟢 _solana_kit_jupiter_, 🟢 _solana_kit_instruction_plans_, 🟢 _solana_kit_instructions_, 🟢 _solana_kit_keys_, 🟢 _solana_kit_mpl_core_, 🟢 _solana_kit_mpl_token_metadata_, 🟢 _solana_kit_options_, 🟢 _solana_kit_pyth_, 🟢 _solana_kit_program_client_core_, 🟢 _solana_kit_rpc_, 🟢 _solana_kit_rpc_api_, 🟢 _solana_kit_rpc_parsed_types_, 🟢 _solana_kit_rpc_spec_, 🟢 _solana_kit_rpc_spec_types_, 🟢 _solana_kit_rpc_subscriptions_, 🟢 _solana_kit_rpc_subscriptions_api_, 🟢 _solana_kit_rpc_subscriptions_channel_websocket_, 🟢 _solana_kit_rpc_transformers_, 🟢 _solana_kit_rpc_transport_http_, 🟢 _solana_kit_rpc_types_, 🟢 _solana_kit_signers_, 🟢 _solana_kit_sns_, 🟢 _solana_kit_squads_, 🟢 _solana_kit_subscribable_, 🟢 _solana_kit_test_matchers_, 🟢 _solana_kit_transaction_confirmation_, 🟢 _solana_kit_transaction_introspection_, 🟢 _solana_kit_transaction_messages_, 🟢 _solana_kit_transactions_ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
+- **Track `metaplex-foundation/mpl-core` `release/core@0.15.3`.** The reference pin advances from `release/core@0.15.2` to `release/core@0.15.3`. The release fixes VerifiedCreators plugin validation on-chain (it no longer blocks asset lifecycle events it must not gate) and bumps CI Node versions. The Shank IDL the Dart package is generated from is byte-identical between the two tags, so no generated code, API, or wire format changes. _Packages:_ 🟢 _solana_kit_mpl_core_ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #299](https://github.com/openbudgetfun/solana_kit/pull/299) · _Related issues:_ [#302](https://github.com/openbudgetfun/solana_kit/issues/302), [#303](https://github.com/openbudgetfun/solana_kit/issues/303), [#304](https://github.com/openbudgetfun/solana_kit/issues/304)
+- **Parse each WebSocket notification once per channel.** The JSON and BigInt-JSON channel wrappers no longer build a fresh mapped stream on every `streams` access. Each subscription on a shared channel previously created its own parse pipeline, so a pooled channel serving N subscriptions JSON-parsed every inbound message N times — at the default pool capacity of 100 subscriptions per channel that was a 100× CPU multiplier on the hottest subscription path. All subscriptions on a channel now share one decoded stream, and each message is parsed exactly once. Delivery semantics are unchanged: the underlying streams are broadcast, so every subscription still receives every notification. _Packages:_ 🟢 _solana_kit_rpc_subscriptions_ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #298](https://github.com/openbudgetfun/solana_kit/pull/298)
+
+#### Lock insecure HTTP endpoints out of release builds
+
+_Packages:_ 🟢 _solana_kit_rpc_transport_http_
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #289](https://github.com/openbudgetfun/solana_kit/pull/289)
+
+`allowInsecureHttp: true` unconditionally permitted `http://` endpoints in every build mode. A Flutter app that flipped the flag for local development and shipped that configuration got plaintext RPC in production — with API keys in headers traveling in cleartext.
+
+The HTTP transport now mirrors the WebSocket transport's release-mode lockdown: in release and profile builds (`dart.vm.product`), `http://` endpoints are rejected with an `ArgumentError` regardless of `allowInsecureHttp`, while debug builds keep the escape hatch for local development.
+
+- **Tolerate version 1 messages with inconsistent instruction payloads.** `getTransactionLifetimeConstraintFromCompiledTransactionMessage` no longer crashes with a bare `StateError: No element` when a version 1 message's instruction header claims three accounts but the payload carries a different number of account indices. Such header/payload disagreement is now treated as malformed data that is not an AdvanceNonceAccount instruction, matching how the legacy message path already classified it — the message falls back to a blockhash lifetime instead of throwing from an unguarded `.first`. _Packages:_ 🟢 _solana_kit_transactions_ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #298](https://github.com/openbudgetfun/solana_kit/pull/298)
+
+### Documentation
+
+- **Track `@solana/kit` v8.4.0.** The reference pin moves from `anza-xyz/kit` v8.3.0 to v8.4.0, and the `@solana/kit` compatibility claim in `versions.json` and the root readme advances accordingly. See the audit in `docs/agents/upstream-audit-solana_kit-v8.4.0.md` for the full change map. _Packages:_ ⚪ _solana_kit_ _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #293](https://github.com/openbudgetfun/solana_kit/pull/293) · _Related issues:_ [#2061](https://github.com/openbudgetfun/solana_kit/issues/2061), [#2067](https://github.com/openbudgetfun/solana_kit/issues/2067), [#2071](https://github.com/openbudgetfun/solana_kit/issues/2071), [#2073](https://github.com/openbudgetfun/solana_kit/issues/2073)
+
+#### Publish a per-package upstream support table in each package README
+
+_Packages:_ ⚪ _solana_kit_mpl_core_, ⚪ _solana_kit_mpl_token_metadata_, ⚪ _solana_kit_squads_
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #285](https://github.com/openbudgetfun/solana_kit/pull/285) · _Related issues:_ [#223](https://github.com/openbudgetfun/solana_kit/issues/223), [#284](https://github.com/openbudgetfun/solana_kit/issues/284)
+
+Every package that ports something outside `@solana/kit` now documents which upstream revision each of its releases was generated and verified against, so a reader can pick the Dart version that matches the upstream program version they target.
+
+```markdown
+| `solana_kit_system` version | `system`     | Released                |
+| --------------------------- | ------------ | ----------------------- |
+| _next release_              | `js@v0.15.0` | _unreleased_            |
+| `0.7.2` – `0.8.0`           | `js@v0.14.1` | 2026-09-06 – 2026-09-21 |
+| `0.7.0` – `0.7.1`           | `js@v0.14.0` | 2026-08-30              |
+```
+
+**One row per upstream revision, not per release.** Consecutive releases that were generated against the same upstream ref collapse into a single `0.7.2` – `0.8.0` range, so a package that shipped several patches against one upstream tag reports one row instead of burying the mapping in repetition. Packages whose releases moved with the umbrella `solana_kit` version (the lockstep group members) are keyed by that version and label the column accordingly.
+
+The leading `_next release_` row shows the pin the working tree is currently generated against, so the mapping for unreleased work is visible before the release tooling assigns a version.
+
+Tables are generated, not hand-written. `scripts/sync_package_upstream_support.dart` reads `config/reference-repos.json` at every `"<package>/v<version>"` release tag, collapses the ranges, and writes `config/package-upstream-support.json`; `scripts/generate_upstream_docs.dart` renders that into each README between `upstream-support` markers. Both run through `docs:update`, so the tables refresh alongside the other generated docs. The history is committed rather than derived at check time because CI checks out shallowly and would see no tags.
+
+No package code changes; this is documentation only.
+
 ## [0.10.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.10.0) (2026-09-21)
 
 Grouped release for `main`.
