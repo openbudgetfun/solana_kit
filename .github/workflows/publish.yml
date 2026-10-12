@@ -211,8 +211,11 @@ jobs:
           # and workflow_dispatch events alike. Skip dart on non-tag runs
           # instead of failing late with an opaque registry authorization
           # error; dispatch on the release tag to publish dart.
+          # monochange 0.16 rejects repeated `--ecosystem` flags, and every
+          # release target's members share one ecosystem, so tag runs publish
+          # all ecosystems in the resolved target without a filter.
           if [ "${GITHUB_REF_TYPE:-}" = "tag" ]; then
-            ecosystems=(--ecosystem npm --ecosystem dart)
+            ecosystems=()
           else
             ecosystems=(--ecosystem npm)
             echo "::warning::skipping dart/pub.dev publishing: this run ref is ${GITHUB_REF}, not a tag, and pub.dev trusted publishing only accepts tag refs. Dispatch on the release tag instead: gh workflow run publish.yml --ref <tag>"
