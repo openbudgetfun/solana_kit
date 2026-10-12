@@ -239,6 +239,8 @@ release = false
 
 [package.solana_kit_mpl_bubblegum]
 path = "packages/solana_kit_mpl_bubblegum"
+tag = true
+release = false
 
 [package.solana_kit_mpl_core]
 path = "packages/solana_kit_mpl_core"
