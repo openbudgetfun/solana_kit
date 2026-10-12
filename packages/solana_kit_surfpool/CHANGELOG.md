@@ -170,6 +170,64 @@ environment:
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [5f5fe01](https://github.com/openbudgetfun/solana_kit/commit/5f5fe01f3e2220ccfee54cc26e82c3face26589d) · _Last updated in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
 
+## solana_kit_surfpool [0.5.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_surfpool/v0.5.0) (2026-10-12)
+
+### Features
+
+#### Track Surfpool 1.6.0 confidential-transfer cheatcodes
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #279](https://github.com/openbudgetfun/solana_kit/pull/279)
+
+Surfpool 1.6.0 registers two new `surfnet_*` cheatcode methods, and this package now exposes both. Every method the package implemented before keeps its exact name, parameter order, and wire field names, so this release is additive.
+
+`getConfidentialBalance` returns the decrypted confidential-transfer balances of a Token-2022 token account. `deriveConfidentialKeys` turns an owner signature into the ElGamal and AES keys the other confidential cheatcodes need, so a test can drive the confidential suite without a client-side confidential-transfer crypto dependency.
+
+```dart
+final keys = await surfnet.deriveConfidentialKeys('base58Signature');
+
+await surfnet.setTokenAccount(
+  owner,
+  mint,
+  SetTokenAccountUpdate(
+    confidential: ConfidentialTransferAccountUpdate(
+      elgamalPubkey: keys.elgamalPubkey,
+      aesKey: keys.aesKey,
+      amount: 1_000,
+    ),
+  ),
+  tokenProgram: token2022ProgramAddress,
+);
+
+final balance = await surfnet.getConfidentialBalance(
+  surfnet.getAta(owner, mint),
+  ConfidentialBalanceKeys(aesKey: keys.aesKey),
+);
+```
+
+`SetTokenAccountUpdate` gains a `confidential` field for the Token-2022 `ConfidentialTransferAccount` extension, and the `SetTokenAccount` builder gains `withConfidentialTransfer`. `ConfidentialBalanceKeys` requires at least one of `aesKey` or `elgamalSecretKey` and throws an `ArgumentError` otherwise; the response's `available` and `pending` are `null` when the matching key was not supplied.
+
+Two upstream constants are now available in Dart: `defaultSurfnetEndpoint` (`http://127.0.0.1:8899`) and `surfnetCheatcodeMethods`, the 28-method manifest that upstream pins against the set its runtime registers.
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
+
+#### Redact credentials from Surfnet process output and exceptions
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #288](https://github.com/openbudgetfun/solana_kit/pull/288)
+
+Forking a Surfnet from a paid RPC provider means passing an upstream URL such as `https://mainnet.helius-rpc.com/?api-key=...` through `SurfnetConfig.remoteRpcUrl`. When `surfpool start` timed out or logged its configuration, the credential-bearing URL was embedded verbatim in `SurfnetProcessException` messages, error contexts, and the drained event stream — and those routinely end up in application logs.
+
+Captured process output and readiness-timeout exceptions now run through a credential redaction pass: query parameters such as `api-key`, `token`, or `password`, and `user:password@` userinfo, are replaced with `[REDACTED]` everywhere the URL appears. URLs without credentials are unchanged.
+
+#### Give every Surfnet a dedicated Studio port and retry port-race startups
+
+_Owner:_ Bot · _Introduced in:_ [69277c4](https://github.com/openbudgetfun/solana_kit/commit/69277c4dc8f42fac4acf97d4e8ec8b5f6f066630)
+
+Surfpool always binds its Studio/scenario server — even under `--no-studio` — and defaults every instance to the same fixed port, so concurrent Surfnets (one per parallel integration test file) collided on it. `SurfnetConfig` gains an optional `studioPort`, and each started instance now passes a distinct `--studio-port`, auto-allocated away from the RPC and WebSocket ports when omitted.
+
+Port probing also released each port before the CLI bound it, so under parallel startup another process could claim the probed port in between and make `surfpool start` exit with `... port N is already in use` — the failure mode Surfpool 1.6.0 now reports instead of panicking. Starts with at least one auto-allocated port are retried with freshly probed ports (up to three attempts) when the CLI exits on a bind failure; a config that pins every port still fails immediately, since that conflict is deterministic.
+
 ## 0.0.0
 
 - Initial unpublished package version.

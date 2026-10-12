@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
+
+### Breaking changes
+
+#### Drop the deprecation markers on legacy parsed account fields
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #281](https://github.com/openbudgetfun/solana_kit/pull/281) · _Related issues:_ [#280](https://github.com/openbudgetfun/solana_kit/issues/280)
+
+`JsonParsedStakeConfigInfo.slashPenalty`, `warmupCooldownRate`, and `JsonParsedRentInfo`'s `burnPercent`, `exemptionThreshold`, and `lamportsPerByteYear` are no longer marked `@Deprecated`. Their fields, types, and behavior are unchanged, so this is a source-compatible change unless you suppress deprecation warnings — the markers were also suppressing nothing useful, because these fields describe what pre-Agave-4.1.0 validators actually return.
+
+Agave 4.1.0 reshaped both responses, and the fields are still the documented way to read a validator that predates it. The `@Deprecated` annotation could not express that "only on older validators" condition, so the doc comments now carry it instead. This matches how the workspace already models the same legacy rent fields in `solana_kit_sysvars` and how `solana_kit_rpc_transformers` still lists `slashPenalty`, `warmupCooldownRate`, `burnPercent`, and `exemptionThreshold` as numeric keypaths in parsed accounts.
+
+```dart
+// Narrow on which shape the validator returned before reading either side.
+final info = rentSysvar.info;
+final lamportsPerByte = info.lamportsPerByte; // Agave 4.1.0+
+final legacy = info.burnPercent; // validators running earlier versions
+```
+
+Removing the fields outright would have deleted real wire support: a `jsonParsed` request to an older validator returns exactly these fields, and `JsonParsedStakeConfigInfo` has no others, so the type would have become an empty placeholder.
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
+
 ## [0.10.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.10.0) (2026-09-21)
 
 ### Breaking changes

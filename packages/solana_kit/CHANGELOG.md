@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
+
+### Documentation
+
+- **Track `@solana/kit` v8.4.0.** The reference pin moves from `anza-xyz/kit` v8.3.0 to v8.4.0, and the `@solana/kit` compatibility claim in `versions.json` and the root readme advances accordingly. See the audit in `docs/agents/upstream-audit-solana_kit-v8.4.0.md` for the full change map. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #293](https://github.com/openbudgetfun/solana_kit/pull/293) · _Related issues:_ [#2061](https://github.com/openbudgetfun/solana_kit/issues/2061), [#2067](https://github.com/openbudgetfun/solana_kit/issues/2067), [#2071](https://github.com/openbudgetfun/solana_kit/issues/2071), [#2073](https://github.com/openbudgetfun/solana_kit/issues/2073)
+
 ## [0.10.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.10.0) (2026-09-21)
 
 ### Breaking changes

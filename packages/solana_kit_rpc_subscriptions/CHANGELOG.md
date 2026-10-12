@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
+
+### Fixes
+
+- **Parse each WebSocket notification once per channel.** The JSON and BigInt-JSON channel wrappers no longer build a fresh mapped stream on every `streams` access. Each subscription on a shared channel previously created its own parse pipeline, so a pooled channel serving N subscriptions JSON-parsed every inbound message N times — at the default pool capacity of 100 subscriptions per channel that was a 100× CPU multiplier on the hottest subscription path. All subscriptions on a channel now share one decoded stream, and each message is parsed exactly once. Delivery semantics are unchanged: the underlying streams are broadcast, so every subscription still receives every notification. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #298](https://github.com/openbudgetfun/solana_kit/pull/298)
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
+
 ## [0.10.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.10.0) (2026-09-21)
 
 ### Breaking changes

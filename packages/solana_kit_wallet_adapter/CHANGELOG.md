@@ -108,3 +108,51 @@ _Owner:_ Ifiok Jr. · _Introduced in:_ [5f5fe01](https://github.com/openbudgetfu
 ### Fixes
 
 - **Refresh analyzer excludes for the Flutter 3.47 toolchain.** The Flutter 3.47 tooling rewrites package `analysis_options.yaml` files during resolution to exclude generated `build/**` output from analysis. This applies the same exclusion to the wallet adapter and mobile wallet adapter packages (and the mobile example), keeping their analysis options stable under the updated FVM pin. No public API or behavior changes. _Owner:_ Ifiok Jr. · _Introduced in:_ [e041e73](https://github.com/openbudgetfun/solana_kit/commit/e041e731bb0291af05c06c16d7042fdbf51166a1)
+
+## wallet [0.3.0](https://github.com/openbudgetfun/solana_kit/releases/tag/wallet/v0.3.0) (2026-10-12)
+
+### Features
+
+#### Verify wallet-returned signatures before accepting them
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #286](https://github.com/openbudgetfun/solana_kit/pull/286)
+
+`MobileWallet` now cryptographically verifies every signature a wallet returns before handing it to the caller. Message signatures, signed transactions, and sign-and-send submission signatures are all checked against the authorized account's Ed25519 public key, and a signed transaction must carry the exact message bytes that were submitted — a wallet that returns a different transaction, a signature for a different transaction, or a well-formed forgery is rejected with `WalletStandardErrorCode.invalidResponse`.
+
+A Sign In With Solana proof must now verify against the account it is attached to, and the MWA spec's rule that the returned sign-in address must belong to one of the authorized accounts is enforced: a proof attributed to an account that never signed in is rejected instead of silently falling back to the first authorized account, and non-`ed25519` signature types are rejected rather than passed through.
+
+```dart
+// A wallet that returns this can no longer impersonate the account:
+final outputs = await mobileWallet
+    .feature<SolanaSignMessageFeature>(SolanaFeatureId.signMessage)!
+    .signMessage([SolanaSignMessageInput(account: account, message: data)]);
+// Throws WalletStandardException(invalidResponse) unless `signature`
+// verifies against `account.publicKey` over `data`.
+```
+
+The checks mirror the validate-before-trust pattern this workspace already applies in the dApp publisher CLI, which verifies portal-supplied transaction signatures before signing. Backends that return genuine signatures are unaffected.
+
+#### Verify Wallet Standard signatures before accepting them
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #298](https://github.com/openbudgetfun/solana_kit/pull/298)
+
+`WalletAccountSigner` now cryptographically verifies every signature a Wallet Standard wallet returns before handing it to the caller, closing the same gap the mobile-wallet path already guards against:
+
+- Message signatures must verify against the authorized account's Ed25519 public key over the returned signed bytes.
+- A signed transaction must include the account's signature, and that signature must verify over the returned transaction's message bytes.
+- A sign-and-send submission signature must be a genuine signature of the **submitted** transaction's message bytes — verified against the authorized account first and every declared signer public key second — so a reported signature for a different transaction is rejected before the caller records it for confirmation tracking.
+
+Anything else fails with `WalletStandardErrorCode.invalidResponse`. A compromised wallet can no longer attach well-formed forgeries as if the account had signed, which matters when wallet signatures are composed with local signers in the same transaction.
+
+```dart
+final signer = WalletAccountSigner(wallet: wallet, account: account, chain: chain);
+// Throws WalletStandardException(invalidResponse) unless the wallet's
+// signature verifies against `account.publicKey`.
+final signed = await signer.modifyAndSignTransactions([transaction]);
+```
+
+Transaction modification itself remains permitted, as the `TransactionModifyingSigner` contract documents — but any modification must come with a genuine signature by the authorized account over the modified bytes.
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)

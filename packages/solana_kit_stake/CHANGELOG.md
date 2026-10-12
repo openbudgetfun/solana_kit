@@ -199,6 +199,44 @@ environment:
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [5f5fe01](https://github.com/openbudgetfun/solana_kit/commit/5f5fe01f3e2220ccfee54cc26e82c3face26589d) · _Last updated in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
 
+## solana_kit_stake [0.7.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_stake/v0.7.0) (2026-10-12)
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
+
+#### Track `solana-program/stake` `js@v0.10.0`
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #284](https://github.com/openbudgetfun/solana_kit/pull/284)
+
+The reference pin moves from `js@v0.9.1` to `js@v0.10.0`. This is the one program release in this sync whose `idl.json` blob changed, and the change is confined to its version headers: the Codama format version moves `1.8.0` → `1.9.2` and the program version `4.4.0` → `5.0.0`. The rest of the IDL is identical, and the Dart renderer emits no program version, so **the generated Dart is unchanged**.
+
+Upstream also rebased the interface crate onto `solana-instruction` 4.0 and split `InstructionError` into its own `solana-instruction-error` crate, and regenerated the TypeScript client with the wider `InstructionSignerInput` family. Neither affects this port, which consumes the IDL and keeps its own error mapping. Verified by regenerating against the old and new pins: byte-identical output.
+
+### Documentation
+
+#### Publish a per-package upstream support table in each package README
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #285](https://github.com/openbudgetfun/solana_kit/pull/285) · _Related issues:_ [#223](https://github.com/openbudgetfun/solana_kit/issues/223), [#284](https://github.com/openbudgetfun/solana_kit/issues/284)
+
+Every package that ports something outside `@solana/kit` now documents which upstream revision each of its releases was generated and verified against, so a reader can pick the Dart version that matches the upstream program version they target.
+
+```markdown
+| `solana_kit_system` version | `system`     | Released                |
+| --------------------------- | ------------ | ----------------------- |
+| _next release_              | `js@v0.15.0` | _unreleased_            |
+| `0.7.2` – `0.8.0`           | `js@v0.14.1` | 2026-09-06 – 2026-09-21 |
+| `0.7.0` – `0.7.1`           | `js@v0.14.0` | 2026-08-30              |
+```
+
+**One row per upstream revision, not per release.** Consecutive releases that were generated against the same upstream ref collapse into a single `0.7.2` – `0.8.0` range, so a package that shipped several patches against one upstream tag reports one row instead of burying the mapping in repetition. Packages whose releases moved with the umbrella `solana_kit` version (the lockstep group members) are keyed by that version and label the column accordingly.
+
+The leading `_next release_` row shows the pin the working tree is currently generated against, so the mapping for unreleased work is visible before the release tooling assigns a version.
+
+Tables are generated, not hand-written. `scripts/sync_package_upstream_support.dart` reads `config/reference-repos.json` at every `"<package>/v<version>"` release tag, collapses the ranges, and writes `config/package-upstream-support.json`; `scripts/generate_upstream_docs.dart` renders that into each README between `upstream-support` markers. Both run through `docs:update`, so the tables refresh alongside the other generated docs. The history is committed rather than derived at check time because CI checks out shallowly and would see no tags.
+
+No package code changes; this is documentation only.
+
 ## 0.0.0
 
 Placeholder publication.

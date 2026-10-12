@@ -185,3 +185,17 @@ environment:
 ```
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [5f5fe01](https://github.com/openbudgetfun/solana_kit/commit/5f5fe01f3e2220ccfee54cc26e82c3face26589d) · _Last updated in:_ [19932db](https://github.com/openbudgetfun/solana_kit/commit/19932dba1979f1190b7501947b87eb8a4d4cc8d5)
+
+## solana_kit_integration_tests [0.3.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_integration_tests/v0.3.0) (2026-10-12)
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
+
+#### Pad estimated loaded-accounts limits for SurfPool 1.6.0 execution
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #295](https://github.com/openbudgetfun/solana_kit/pull/295)
+
+SurfPool 1.6.0 updated its embedded LiteSVM to enforce full v1 transaction semantics, so its runtime now charges Agave-style loaded-accounts accounting — a 165-byte base size plus data length for every loaded account. Its `simulateTransaction` response, however, still computes `loadedAccountsDataSize` as a bare sum of account data bytes. A version 1 transaction that submits the estimator's `loadedAccountsDataSizeLimit` verbatim is therefore always rejected with `MaxLoadedAccountsDataSizeExceeded`, even though the estimator mirrors upstream `@solana/kit` (which reports the value verbatim and executes as-is against real Agave nodes, where the simulation report is runtime-consistent).
+
+The on-chain estimator tests now pad the estimated loaded accounts data size limit by the per-account base sizes before submitting, while the estimated compute unit limit is still submitted verbatim — preserving the end-to-end proof that estimated compute budgets execute. The estimator itself is unchanged.

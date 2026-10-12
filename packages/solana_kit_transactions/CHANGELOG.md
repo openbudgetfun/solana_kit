@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
+
+### Fixes
+
+- **Tolerate version 1 messages with inconsistent instruction payloads.** `getTransactionLifetimeConstraintFromCompiledTransactionMessage` no longer crashes with a bare `StateError: No element` when a version 1 message's instruction header claims three accounts but the payload carries a different number of account indices. Such header/payload disagreement is now treated as malformed data that is not an AdvanceNonceAccount instruction, matching how the legacy message path already classified it — the message falls back to a blockhash lifetime instead of throwing from an unguarded `.first`. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #298](https://github.com/openbudgetfun/solana_kit/pull/298)
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
+
+#### Harden transaction lifetime, confirmation, and introspection boundaries
+
+_Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #290](https://github.com/openbudgetfun/solana_kit/pull/290)
+
+Durable nonce values are now format-checked when a nonce lifetime is set: a nonce that is not a base58 string decoding to exactly 32 bytes throws `transactionInvalidNonceFormat` instead of being silently truncated or zero-extended by the fixed-size lifetime-token encoder.
+
+On-chain transaction failures now surface as typed `SolanaError`s (via the existing transaction-error mapper, matching upstream) instead of bare `StateError`s, in both the confirmation strategies and `sendAndConfirmTransaction` — callers that already catch `SolanaError` no longer miss transaction failures. `sendAndConfirmTransaction` also verifies that the signature the RPC returns for a submitted transaction equals the locally computed fee-payer signature, throwing `transactionReportedSignatureMismatch` when an RPC reports a different transaction than the one sent.
+
+`DecodedRpcTransaction` gained an `err` field (and a `failed` getter) carrying the response's `meta.err` verbatim, so introspection consumers can tell a failed transaction's attempted instructions from a successful one's. Decoding now also rejects malformed account keys and headers with typed errors — `getAccountMetasFromCompiledTransactionMessage` throws `transactionIntrospectionHeaderAccountsMismatch` when header counts exceed the static account list, RPC account keys run through address validation, and `decompileTransactionMessage` bounds-checks instruction account indices — instead of crashing with raw `RangeError`s. Reconstructed wire lifetimes document their unknown-expiry semantics, and `signAndSendTransactionMessageWithSigners` documents that its returned signature records submission, not execution.
+
 ## [0.10.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.10.0) (2026-09-21)
 
 ### Breaking changes

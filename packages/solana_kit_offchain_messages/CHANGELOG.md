@@ -212,3 +212,9 @@ try {
 `upstream:error-codes`, which also runs as part of `docs:check`, compares this enum against `.repos/kit/packages/errors/src/codes.ts` and fails on a number mismatch or an occupied number, so this cannot drift again without CI saying so.
 
 _Owner:_ Ifiok Jr. · _Introduced in:_ [a8f643f](https://github.com/openbudgetfun/solana_kit/commit/a8f643f1ae7e6594fbfa972d473f7042b1f6ace0)
+
+## solana_kit_offchain_messages [0.7.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_offchain_messages/v0.7.0) (2026-10-12)
+
+### Fixes
+
+- **Monostyle style pass.** Blank-line breathing room around control flow and returns, group splits, and collapsed blank runs, applied by `monostyle fix` and kept where dprint puts them. No behavior change: the renderers' emitted code and every package's API are untouched. _Owner:_ [@ifiokjr](https://github.com/ifiokjr) · _Review:_ [PR #283](https://github.com/openbudgetfun/solana_kit/pull/283)
