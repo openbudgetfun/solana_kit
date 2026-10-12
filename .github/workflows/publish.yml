@@ -102,6 +102,24 @@ jobs:
             esac
           done
           if [ "${#release_records[@]}" -ne 1 ]; then
+            # Release tags retargeted onto a follow-up commit (for example a
+            # workflow fix) no longer write the record themselves. Fall back
+            # to the nearest ancestor commit that wrote it; the record file
+            # is still present in the tagged tree.
+            record_commit="$(
+              git log --format=%H --no-merges --diff-filter=AM -1 HEAD -- .monochange/releases
+            )"
+            if [ -n "$record_commit" ]; then
+              while IFS= read -r changed_file; do
+                case "$changed_file" in
+                  .monochange/releases/*/release.json) release_records+=("$changed_file") ;;
+                esac
+              done < <(
+                git diff-tree --no-commit-id --name-only -r "$record_commit" -- .monochange/releases
+              )
+            fi
+          fi
+          if [ "${#release_records[@]}" -ne 1 ]; then
             echo "::error::Expected one release record written by the tagged commit, found ${#release_records[@]}." >&2
             exit 1
           fi
