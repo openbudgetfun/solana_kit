@@ -1,12 +1,89 @@
 import 'dart:io';
 
+/// A workspace member's name, directory and declared dependencies.
+class WorkspacePackage {
+  /// Creates a workspace package description.
+  const WorkspacePackage({
+    required this.name,
+    required this.directory,
+    required this.dependencies,
+  });
+
+  /// The package name declared in its `pubspec.yaml`.
+  final String name;
+
+  /// Absolute path to the directory holding the package.
+  final String directory;
+
+  /// Names declared under the package's `dependencies:` section.
+  ///
+  /// Dev dependencies are deliberately excluded. Pub never resolves a
+  /// dependency's dev dependencies, so they are absent from an application's
+  /// build graph and pinning them would only drag unrelated packages in.
+  final List<String> dependencies;
+}
+
+/// Returns every workspace package the dependency graph rooted at [root] reaches.
+///
+/// Only packages something in [root]'s graph actually requires need a local
+/// override. Listing unrelated members is not harmless: a `dependency_overrides`
+/// path entry makes pub treat that package as though the root declared it, so an
+/// unrelated member with an unsatisfiable constraint fails the whole resolution.
+List<WorkspacePackage> dependencyClosure(
+  List<WorkspacePackage> packages,
+  String root,
+) {
+  final byName = {for (final package in packages) package.name: package};
+  final reached = <String, WorkspacePackage>{};
+  final pending = <String>[root];
+  while (pending.isNotEmpty) {
+    final package = byName[pending.removeLast()];
+    if (package == null) continue;
+    for (final dependency in package.dependencies) {
+      final resolved = byName[dependency];
+      if (resolved == null || reached.containsKey(dependency)) continue;
+      reached[dependency] = resolved;
+      pending.add(dependency);
+    }
+  }
+  return reached.values.toList()..sort((a, b) => a.name.compareTo(b.name));
+}
+
+/// Reads the workspace members declared in [rootDirectory]'s `pubspec.yaml`.
+///
+/// The workspace list is the source of truth rather than a directory scan:
+/// `packages/` also holds directories that are not workspace members.
+List<WorkspacePackage> readWorkspacePackages(Directory rootDirectory) {
+  final rootPubspec = File('${rootDirectory.path}/pubspec.yaml');
+  final packages = <WorkspacePackage>[];
+  for (final member in _readWorkspaceMembers(rootPubspec)) {
+    final directory = Directory('${rootDirectory.path}/$member');
+    final pubspec = File('${directory.path}/pubspec.yaml');
+    if (!pubspec.existsSync()) {
+      throw StateError(
+        'Workspace member "$member" has no pubspec.yaml at ${pubspec.path}',
+      );
+    }
+    final name = _readPackageName(pubspec);
+    if (name == null) {
+      throw StateError('Could not read package name from ${pubspec.path}');
+    }
+    packages.add(
+      WorkspacePackage(
+        name: name,
+        directory: directory.path,
+        dependencies: _readDependencies(pubspec),
+      ),
+    );
+  }
+  return packages;
+}
+
 Future<void> main() async {
   final rootResult = await Process.run('git', ['rev-parse', '--show-toplevel']);
-
   if (rootResult.exitCode != 0) {
     stderr.write(rootResult.stderr);
     exitCode = rootResult.exitCode;
-
     return;
   }
 
@@ -14,11 +91,9 @@ Future<void> main() async {
   final pluginDirectory = Directory(
     '${rootDirectory.path}/packages/solana_kit_mobile_wallet_adapter',
   );
-
   if (!pluginDirectory.existsSync()) {
     stderr.writeln('Expected plugin path not found: ${pluginDirectory.path}');
     exitCode = 1;
-
     return;
   }
 
@@ -40,10 +115,8 @@ Future<void> main() async {
       'com.example',
       tempApp.path,
     ]);
-
     if (code != 0) {
       exitCode = code;
-
       return;
     }
 
@@ -58,10 +131,8 @@ Future<void> main() async {
       'pub',
       'get',
     ], workingDirectory: tempApp.path);
-
     if (code != 0) {
       exitCode = code;
-
       return;
     }
 
@@ -86,10 +157,8 @@ void main() {
       '--target-platform',
       'android-arm64',
     ], workingDirectory: tempApp.path);
-
     if (code != 0) {
       exitCode = code;
-
       return;
     }
 
@@ -101,34 +170,32 @@ void main() {
   }
 }
 
+/// Rewrites the generated app's pubspec to depend on the plugin by path.
+///
+/// Every workspace package the plugin's own dependency graph reaches is pinned
+/// to its local path so the check compiles against working-tree sources instead
+/// of whatever is published. Pinning reachable members only keeps the temp app's
+/// resolution graph as small as the plugin's real one.
 void _rewritePubspec(
   Directory rootDirectory,
   Directory pluginDirectory,
   File pubspec,
 ) {
-  final overrides = <(String, String)>[];
-  final packagesDirectory = Directory('${rootDirectory.path}/packages');
-
-  for (final entity in packagesDirectory.listSync().whereType<Directory>()) {
-    final packagePubspec = File('${entity.path}/pubspec.yaml');
-
-    if (!packagePubspec.existsSync()) continue;
-    final name = _readPackageName(packagePubspec);
-
-    if (name != null && name.startsWith('solana_kit_')) {
-      overrides.add((name, entity.path));
-    }
+  final pluginPubspec = File('${pluginDirectory.path}/pubspec.yaml');
+  final pluginName = _readPackageName(pluginPubspec);
+  if (pluginName == null) {
+    throw StateError('Could not read package name from ${pluginPubspec.path}');
   }
-
-  overrides.sort((a, b) => a.$1.compareTo(b.$1));
+  final overrides = dependencyClosure(
+    readWorkspacePackages(rootDirectory),
+    pluginName,
+  );
 
   final lines = pubspec.readAsLinesSync();
   final output = <String>[];
   var insertedDependency = false;
-
   for (final line in lines) {
     output.add(line);
-
     if (line.trim() == 'dependencies:' && !insertedDependency) {
       output
         ..add('  solana_kit_mobile_wallet_adapter:')
@@ -146,23 +213,61 @@ void _rewritePubspec(
   output
     ..add('')
     ..add('dependency_overrides:');
-
-  for (final (name, path) in overrides) {
+  for (final package in overrides) {
     output
-      ..add('  $name:')
-      ..add('    path: $path');
+      ..add('  ${package.name}:')
+      ..add('    path: ${package.directory}');
   }
 
   pubspec.writeAsStringSync('${output.join('\n')}\n');
 }
 
+/// Reads the `workspace:` entries from the root pubspec.
+List<String> _readWorkspaceMembers(File pubspec) {
+  final members = <String>[];
+  var inWorkspace = false;
+  for (final line in pubspec.readAsLinesSync()) {
+    if (line.startsWith('workspace:')) {
+      inWorkspace = true;
+      continue;
+    }
+    if (!inWorkspace) continue;
+    final match = RegExp(r'^  - (.+)$').firstMatch(line);
+    if (match == null) {
+      // A non-list top-level key ends the workspace section.
+      if (line.isNotEmpty && !line.startsWith(' ')) break;
+      continue;
+    }
+    members.add(match.group(1)!.trim());
+  }
+  return members;
+}
+
+/// Reads the names declared under a pubspec's `dependencies:` section.
+List<String> _readDependencies(File pubspec) {
+  final dependencies = <String>[];
+  var inDependencies = false;
+  for (final line in pubspec.readAsLinesSync()) {
+    if (line.startsWith('dependencies:')) {
+      inDependencies = true;
+      continue;
+    }
+    if (line.isNotEmpty && !line.startsWith(' ')) {
+      inDependencies = false;
+      continue;
+    }
+    if (!inDependencies) continue;
+    final match = RegExp('^  ([A-Za-z0-9_]+):').firstMatch(line);
+    if (match != null) dependencies.add(match.group(1)!);
+  }
+  return dependencies;
+}
+
 String? _readPackageName(File pubspec) {
   for (final line in pubspec.readAsLinesSync()) {
     final match = RegExp(r'^name:\s*([^\s#]+)').firstMatch(line);
-
     if (match != null) return match.group(1);
   }
-
   return null;
 }
 
