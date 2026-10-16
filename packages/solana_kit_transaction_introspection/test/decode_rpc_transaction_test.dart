@@ -130,7 +130,9 @@ void main() {
           isA<SolanaError>().having(
             (error) => error.code,
             'code',
-            SolanaErrorCode.codecsInvalidStringForBase,
+            // The invalid loaded address fails address validation with the
+            // address-scoped code, not the codec's internal base error.
+            SolanaErrorCode.addressesInvalidBase58EncodedAddress,
           ),
         ),
       );

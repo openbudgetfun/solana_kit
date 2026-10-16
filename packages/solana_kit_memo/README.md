@@ -137,7 +137,7 @@ Future<void> handleTransactionFailure(Object error) async {
 <!-- dprint-ignore -->
 | `solana_kit_memo` version | [`memo`](https://github.com/solana-program/memo) | Released                |
 | ------------------------- | ------------------------------------------------ | ----------------------- |
-| _next release_            | `js@v0.15.0`                                     | _unreleased_            |
+| `0.6.0`                   | `js@v0.15.0`                                     | 2026-10-12              |
 | `0.5.0`                   | `js@v0.14.1`                                     | 2026-09-21              |
 | `0.4.2` – `0.4.3`         | `js@v0.13.1`                                     | 2026-09-06 – 2026-09-12 |
 | `0.4.0` – `0.4.1`         | `js@v0.13.0`                                     | 2026-08-30              |

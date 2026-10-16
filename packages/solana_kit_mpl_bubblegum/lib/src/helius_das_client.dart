@@ -146,21 +146,21 @@ class HeliusDasClient implements DasApiClient {
     }
 
     return DasAsset(
-      id: (data['id'] as String?) ?? '',
+      id: _requireString(data, 'id'),
       ownership: DasAssetOwnership(
-        owner: (ownership['owner'] as String?) ?? '',
+        owner: _requireString(ownership, 'owner'),
         delegate: ownership['delegate'] as String?,
-        frozen: (ownership['frozen'] as bool?) ?? false,
+        frozen: _requireBool(ownership, 'frozen'),
         nonTransferable: (ownership['non_transferable'] as bool?) ?? false,
       ),
       compression: DasAssetCompression(
-        compressed: (compression['compressed'] as bool?) ?? false,
-        dataHash: (compression['data_hash'] as String?) ?? '',
-        creatorHash: (compression['creator_hash'] as String?) ?? '',
-        assetHash: (compression['asset_hash'] as String?) ?? '',
-        tree: (compression['tree'] as String?) ?? '',
-        seq: (compression['seq'] as int?) ?? 0,
-        leafId: (compression['leaf_id'] as int?) ?? 0,
+        compressed: _requireBool(compression, 'compressed'),
+        dataHash: _requireString(compression, 'data_hash'),
+        creatorHash: _requireString(compression, 'creator_hash'),
+        assetHash: _requireString(compression, 'asset_hash'),
+        tree: _requireString(compression, 'tree'),
+        seq: _requireInt(compression, 'seq'),
+        leafId: _requireInt(compression, 'leaf_id'),
         collectionHash: compression['collection_hash'] as String?,
         assetDataHash: compression['asset_data_hash'] as String?,
         flags: compression['flags'] as int?,
@@ -196,24 +196,57 @@ class HeliusDasClient implements DasApiClient {
   static DasAssetCreator _parseCreator(dynamic c) {
     final creator = c as Map<String, dynamic>;
     return DasAssetCreator(
-      address: (creator['address'] as String?) ?? '',
-      share: (creator['share'] as int?) ?? 0,
-      verified: (creator['verified'] as bool?) ?? false,
+      address: _requireString(creator, 'address'),
+      share: _requireInt(creator, 'share'),
+      verified: _requireBool(creator, 'verified'),
     );
   }
 
   /// Parses a DAS asset proof response into a [DasAssetProof].
   static DasAssetProof _parseAssetProof(Map<String, dynamic> data) {
-    final proof = data['proof'] as List<dynamic>? ?? [];
+    final proof = data['proof'] as List<dynamic>?;
+    if (proof == null) {
+      throw const FormatException(
+        'DAS getAssetProof response is missing the proof path',
+      );
+    }
 
     return DasAssetProof(
-      root: data['root'] as String? ?? '',
+      root: _requireString(data, 'root'),
       proof: proof.map((p) => p.toString()).toList(),
-      nodeIndex: data['node_index'] as int? ?? 0,
-      leaf: data['leaf'] as String? ?? '',
-      treeId: data['tree_id'] as String? ?? '',
+      nodeIndex: _requireInt(data, 'node_index'),
+      leaf: _requireString(data, 'leaf'),
+      treeId: _requireString(data, 'tree_id'),
     );
   }
+}
+
+String _requireString(Map<String, dynamic> json, String key) {
+  final value = json[key];
+  if (value is! String || value.isEmpty) {
+    throw FormatException(
+      'Expected DAS response field "$key" to be a non-empty string',
+    );
+  }
+  return value;
+}
+
+int _requireInt(Map<String, dynamic> json, String key) {
+  final value = json[key];
+  if (value is! int) {
+    throw FormatException(
+      'Expected DAS response field "$key" to be an integer',
+    );
+  }
+  return value;
+}
+
+bool _requireBool(Map<String, dynamic> json, String key) {
+  final value = json[key];
+  if (value is! bool) {
+    throw FormatException('Expected DAS response field "$key" to be a boolean');
+  }
+  return value;
 }
 
 /// Exception thrown by the Helius DAS API client.

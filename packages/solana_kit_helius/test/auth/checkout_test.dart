@@ -33,6 +33,19 @@ Map<String, Object?> status({
   'message': ready ? 'Payment successful!' : phase,
 };
 
+Map<String, Object?> checkoutPreview({int dueToday = 4900}) => {
+  'planName': 'Developer',
+  'period': 'monthly',
+  'baseAmount': dueToday,
+  'subtotal': dueToday,
+  'appliedCredits': 0,
+  'proratedCredits': 0,
+  'discounts': 0,
+  'dueToday': dueToday,
+  'destinationWallet': 'Treasury111',
+  'note': '',
+};
+
 void main() {
   group('checkout helpers', () {
     test('resolvePriceId resolves plans and agent plan', () async {
@@ -126,7 +139,7 @@ void main() {
           seen['userAgent'] =
               request.headers['user-agent'] ?? request.headers['User-Agent'];
           seen['qty'] = request.url.queryParameters['qty'];
-          return http.Response(jsonEncode({'dueToday': 1}), 200);
+          return http.Response(jsonEncode(checkoutPreview(dueToday: 1)), 200);
         });
         final preview = await getCheckoutPreviewByPriceId(
           'jwt',
@@ -355,12 +368,62 @@ void main() {
     );
   });
 
+  group('strict response parsing', () {
+    // These responses carry payment amounts and destination wallets that flow
+    // into user-facing payment links. A malformed response must throw rather
+    // than silently degrade to a zero amount or an empty wallet.
+    test('initialize responses reject missing required fields', () {
+      expect(
+        () => CheckoutInitializeResponse.fromJson({
+          'id': 'pi_test',
+          'status': 'pending',
+          'destinationWallet': 'Treasury111',
+        }),
+        throwsFormatException,
+      );
+      expect(
+        () => CheckoutInitializeResponse.fromJson({
+          'id': 'pi_test',
+          'status': 'pending',
+          'destinationWallet': 'Treasury111',
+          'amount': null,
+          'solanaPayUrl': 'solana:...',
+          'expiresAt': '2026-01-01T00:00:00Z',
+        }),
+        throwsFormatException,
+      );
+    });
+
+    test('preview responses reject missing amounts', () {
+      expect(
+        () => CheckoutPreviewResponse.fromJson({
+          ...checkoutPreview(),
+          'dueToday': null,
+        }),
+        throwsFormatException,
+      );
+    });
+
+    test('status responses reject missing booleans', () {
+      expect(
+        () => CheckoutStatusResponse.fromJson({
+          ...status(),
+          'readyToRedirect': null,
+        }),
+        throwsFormatException,
+      );
+    });
+  });
+
   group('createPayment', () {
     test('creates a payment link and rejects zero amount preview', () async {
       final client = MockClient((request) async {
         switch (request.url.path.replaceFirst('/v0', '')) {
           case '/checkout/preview':
-            return http.Response(jsonEncode({'dueToday': 4900}), 200);
+            return http.Response(
+              jsonEncode(checkoutPreview()),
+              200,
+            );
           case '/checkout/initialize':
             return http.Response(
               jsonEncode({
@@ -390,7 +453,8 @@ void main() {
       expect(link.memo, 'pi_test');
 
       final zero = MockClient(
-        (_) async => http.Response(jsonEncode({'dueToday': 0}), 200),
+        (_) async =>
+            http.Response(jsonEncode(checkoutPreview(dueToday: 0)), 200),
       );
       await expectLater(
         createPayment(
@@ -428,7 +492,10 @@ void main() {
                 request.url.queryParameters['priceId'],
                 'price_agent_plan',
               );
-              return http.Response(jsonEncode({'dueToday': 1000}), 200);
+              return http.Response(
+                jsonEncode(checkoutPreview(dueToday: 1000)),
+                200,
+              );
             case '/checkout/initialize':
               final body = jsonDecode(request.body) as Map<String, Object?>;
               expect(body['priceId'], 'price_agent_plan');

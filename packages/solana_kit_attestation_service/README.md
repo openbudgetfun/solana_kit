@@ -180,7 +180,7 @@ Discriminant 8 is unused. The program's entrypoint assigns `EmitEvent` the first
 <!-- dprint-ignore -->
 | `solana_kit_attestation_service` version | [`solana-attestation-service`](https://github.com/solana-foundation/solana-attestation-service) | Released                |
 | ---------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------- |
-| `0.1.0` – `0.2.0`                        | `5b64cf09843d`                                                                                  | 2026-09-12 – 2026-09-21 |
+| `0.1.0` – `0.3.0`                        | `5b64cf09843d`                                                                                  | 2026-09-12 – 2026-10-12 |
 
 <!-- upstream-support:end -->
 

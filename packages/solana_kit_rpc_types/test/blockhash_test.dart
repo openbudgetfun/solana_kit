@@ -9,14 +9,15 @@ void main() {
   group('assertIsBlockhash()', () {
     test('throws when supplied a non-base58 string', () {
       // This string is 41 chars (within 32-44 range) but contains
-      // invalid base58 chars (hyphens), so it throws a codec error.
+      // invalid base58 chars (hyphens), so it fails address validation
+      // with the address-scoped error code.
       expect(
         () => assertIsBlockhash('not-a-base-58-encoded-string-but-nice-try'),
         throwsA(
           isA<SolanaError>().having(
             (e) => e.code,
             'code',
-            SolanaErrorCode.codecsInvalidStringForBase,
+            SolanaErrorCode.addressesInvalidBase58EncodedAddress,
           ),
         ),
       );

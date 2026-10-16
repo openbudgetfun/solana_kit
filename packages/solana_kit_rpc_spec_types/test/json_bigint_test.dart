@@ -237,6 +237,65 @@ void main() {
       );
     });
 
+    group('pretty-prints with the space argument', () {
+      final input = <String, Object?>{
+        'slot': BigInt.parse('12345678901234567890'),
+        'nested': <String, Object?>{
+          'flag': true,
+          'list': <Object?>[1, 2],
+        },
+        'empty': <String, Object?>{},
+      };
+
+      test('indents by the requested number of spaces', () {
+        expect(
+          stringifyJsonWithBigInts(input, space: 2),
+          '{\n'
+          '  "slot": 12345678901234567890,\n'
+          '  "nested": {\n'
+          '    "flag": true,\n'
+          '    "list": [\n'
+          '      1,\n'
+          '      2\n'
+          '    ]\n'
+          '  },\n'
+          '  "empty": {}\n'
+          '}',
+        );
+      });
+
+      test('repeats a string indent per level', () {
+        expect(
+          stringifyJsonWithBigInts({
+            'a': [1],
+          }, space: '\t'),
+          '{\n\t"a": [\n\t\t1\n\t]\n}',
+        );
+      });
+
+      test('clamps large spaces like JSON.stringify', () {
+        expect(
+          stringifyJsonWithBigInts({'a': 1}, space: 20),
+          '{\n          "a": 1\n}',
+        );
+        expect(
+          stringifyJsonWithBigInts({'a': 1}, space: 'abcdefghijklm'),
+          '{\nabcdefghij"a": 1\n}',
+        );
+      });
+
+      test('treats zero, empty, and absent spaces as compact', () {
+        const compact = '{"a":1,"b":[1,2]}';
+        final value = <String, Object?>{
+          'a': 1,
+          'b': [1, 2],
+        };
+        expect(stringifyJsonWithBigInts(value), compact);
+        expect(stringifyJsonWithBigInts(value, space: 0), compact);
+        expect(stringifyJsonWithBigInts(value, space: ''), compact);
+      });
+    });
+
     group('stringifies numbers as numerical value', () {
       final numberTestCases = <(double, String)>[
         (0.5, '0.5'),

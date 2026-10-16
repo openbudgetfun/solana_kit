@@ -145,6 +145,31 @@ void main() {
         );
       });
 
+      test(
+        'throws the address error code for non-base58 characters',
+        () {
+          // 36 characters, so it passes the length check, but '0' and 'O' are
+          // outside the base58 alphabet.
+          const putative = '0OO111111111111111111111111111111111111';
+          expect(
+            () => assertIsAddress(putative),
+            throwsA(
+              isA<SolanaError>()
+                  .having(
+                    (e) => e.code,
+                    'code',
+                    SolanaErrorCode.addressesInvalidBase58EncodedAddress,
+                  )
+                  .having(
+                    (e) => e.context['putativeAddress'],
+                    'putativeAddress',
+                    putative,
+                  ),
+            ),
+          );
+        },
+      );
+
       test('accepts addresses of all valid string lengths (32 to 44)', () {
         // The all-ones address (32 bytes of 0x00) is '1' * 32 characters
         expect(

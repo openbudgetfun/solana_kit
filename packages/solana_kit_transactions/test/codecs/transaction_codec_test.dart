@@ -10,6 +10,23 @@ import 'package:test/test.dart';
 
 void main() {
   group('getTransactionEncoder', () {
+    test('refuses to encode empty message bytes', () {
+      final transaction = Transaction(
+        messageBytes: Uint8List(0),
+        signatures: const {Address('11111111111111111111111111111111'): null},
+      );
+      expect(
+        () => getTransactionEncoder().encode(transaction),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionCannotEncodeWithEmptyMessageBytes,
+          ),
+        ),
+      );
+    });
+
     test('encodes a transaction with null signatures to bytes', () {
       final transaction = Transaction(
         messageBytes: Uint8List.fromList([1, 2, 3]),
@@ -217,6 +234,39 @@ void main() {
   });
 
   group('getTransactionDecoder security', () {
+    test('throws when the transaction bytes are empty', () {
+      expect(
+        () => getTransactionDecoder().read(Uint8List(0), 0),
+        throwsA(
+          isA<SolanaError>().having(
+            (e) => e.code,
+            'code',
+            SolanaErrorCode.transactionCannotDecodeEmptyTransactionBytes,
+          ),
+        ),
+      );
+    });
+
+    test(
+      'throws when the signature count exceeds the byte length',
+      () {
+        // A shortU16 signature count of 5 followed by far fewer than
+        // 5 * 64 signature bytes.
+        final bytes = Uint8List.fromList([5, 1, 2, 3]);
+        expect(
+          () => getTransactionDecoder().read(bytes, 0),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              SolanaErrorCode
+                  .transactionSignatureCountTooHighForTransactionBytes,
+            ),
+          ),
+        );
+      },
+    );
+
     test('throws when signer count exceeds static addresses', () {
       // Craft a malformed transaction where the message header claims
       // 5 required signatures but only 2 static addresses exist.

@@ -39,6 +39,10 @@ Address address(String putativeAddress) {
 /// Throws [SolanaError] with [SolanaErrorCode.addressesStringLengthOutOfRange]
 /// if the string length is outside [32, 44].
 ///
+/// Throws [SolanaError] with
+/// [SolanaErrorCode.addressesInvalidBase58EncodedAddress] if the string
+/// contains characters that are not part of the base58 alphabet.
+///
 /// Throws [SolanaError] with [SolanaErrorCode.addressesInvalidByteLength]
 /// if the decoded byte array is not exactly 32 bytes.
 void assertIsAddress(String putativeAddress) {
@@ -49,7 +53,19 @@ void assertIsAddress(String putativeAddress) {
   }
 
   final encoder = _getBase58Encoder();
-  final bytes = encoder.encode(putativeAddress);
+  final List<int> bytes;
+  try {
+    bytes = encoder.encode(putativeAddress);
+  } on Object catch (cause) {
+    // A string in range can still contain non-base58 characters; the codec's
+    // own error names the offending input, but callers match on the address
+    // error codes, so rewrap it with the address-scoped code.
+    throw createSolanaError(
+      SolanaErrorCode.addressesInvalidBase58EncodedAddress,
+      context: {'putativeAddress': putativeAddress},
+      cause: cause,
+    );
+  }
   final numBytes = bytes.length;
 
   if (numBytes != 32) {

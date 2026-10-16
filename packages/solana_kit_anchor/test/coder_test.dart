@@ -180,6 +180,35 @@ void main() {
     );
   });
 
+  test('encode failures name the offending field', () {
+    // `amount` is a u64; a non-BigInt value fails inside the codec, and the
+    // error must point at the argument rather than the codec internals.
+    expect(
+      () => coder.encodeInstructionData('initialize', {
+        ...initialArgs(authorityAddress),
+        'amount': 'not-a-number',
+      }),
+      throwsA(
+        isA<ArgumentError>().having(
+          (error) => error.name,
+          'name',
+          'amount',
+        ),
+      ),
+    );
+  });
+
+  test('account encode failures name the account', () {
+    expect(
+      () => coder.encodeAccount('Counter', <String, Object?>{
+        'authority': authorityAddress,
+        'count': 'not-a-number',
+        'state': {'__kind': 'Unit'},
+      }),
+      throwsArgumentError,
+    );
+  });
+
   test('accounts round-trip through the dynamic coder', () {
     final values = <String, Object?>{
       'authority': authorityAddress,

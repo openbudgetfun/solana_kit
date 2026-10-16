@@ -151,6 +151,79 @@ void main() {
       expect(() => readWorkspacePackages(root), throwsA(isA<StateError>()));
     });
   });
+
+  group('stripNdkVersion', () {
+    late Directory root;
+
+    setUp(() {
+      root = Directory.systemTemp.createTempSync('mwa_app_');
+    });
+
+    tearDown(() {
+      if (root.existsSync()) root.deleteSync(recursive: true);
+    });
+
+    File writeGradleFile(String name, String contents) {
+      final app = Directory('${root.path}/android/app')
+        ..createSync(recursive: true);
+      return File('${app.path}/$name')..writeAsStringSync(contents);
+    }
+
+    // Regression: AGP resolves the template's `ndkVersion` and downloads an
+    // NDK mid-build; a corrupt download fails the whole CI check. The plugin
+    // has no native code, so the declaration must be removed before building.
+    test('removes the ndkVersion assignment from the kotlin dsl script', () {
+      writeGradleFile('build.gradle.kts', '''
+android {
+    namespace = "com.example.app"
+    compileSdk = 35
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+    }
+}
+''');
+
+      stripNdkVersion(root);
+
+      final rewritten = File(
+        '${root.path}/android/app/build.gradle.kts',
+      ).readAsStringSync();
+      expect(rewritten, isNot(contains('ndkVersion')));
+      expect(rewritten, contains('compileSdk = 35'));
+    });
+
+    test('handles a groovy script with a pinned ndk version string', () {
+      writeGradleFile('build.gradle', '''
+android {
+    ndkVersion = "28.2.13676358"
+}
+''');
+
+      stripNdkVersion(root);
+
+      expect(
+        File('${root.path}/android/app/build.gradle').readAsStringSync(),
+        isNot(contains('28.2.13676358')),
+      );
+    });
+
+    test('leaves scripts without ndkVersion untouched', () {
+      writeGradleFile('build.gradle.kts', 'android {\n}\n');
+      final file = File('${root.path}/android/app/build.gradle.kts');
+
+      stripNdkVersion(root);
+
+      expect(file.readAsStringSync(), 'android {\n}\n');
+    });
+
+    test('throws when the app has no gradle build script', () {
+      Directory('${root.path}/android/app').createSync(recursive: true);
+
+      expect(() => stripNdkVersion(root), throwsA(isA<StateError>()));
+    });
+  });
 }
 
 WorkspacePackage _package(

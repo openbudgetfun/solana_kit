@@ -271,13 +271,29 @@ class AnchorCoder {
     );
   }
 
+  /// Encodes [value] into [buffer], attributing encode failures to [context].
+  ///
+  /// [context] names the field or account being encoded so a value that does
+  /// not fit the IDL type reports which argument was at fault instead of
+  /// surfacing a bare codec error.
   void _appendEncoded(
     BytesBuilder buffer,
     Encoder<Object?> encoder,
     AnchorValue value,
     String context,
   ) {
-    buffer.add(encoder.encode(value));
+    try {
+      buffer.add(encoder.encode(value));
+    } on Object catch (error) {
+      Error.throwWithStackTrace(
+        ArgumentError.value(
+          value,
+          context,
+          'Failed to encode "$context": $error',
+        ),
+        StackTrace.current,
+      );
+    }
   }
 
   (Encoder<Object?>, Decoder<Object?>) _codecForDefinition(

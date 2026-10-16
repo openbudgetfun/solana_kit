@@ -17,7 +17,11 @@ const _versionFlagMask = 0x7f;
 enum _EnvelopeShape { signaturesFirst, messageFirst }
 
 _EnvelopeShape _getEncodeShapeForMessageBytes(Uint8List messageBytes) {
-  if (messageBytes.isEmpty) return _EnvelopeShape.signaturesFirst;
+  if (messageBytes.isEmpty) {
+    throw SolanaError(
+      SolanaErrorCode.transactionCannotEncodeWithEmptyMessageBytes,
+    );
+  }
 
   final firstByte = messageBytes[0];
 
@@ -116,6 +120,12 @@ VariableSizeDecoder<Transaction> getTransactionDecoder() {
 
   return VariableSizeDecoder<Transaction>(
     read: (bytes, offset) {
+      if (offset >= bytes.length) {
+        throw SolanaError(
+          SolanaErrorCode.transactionCannotDecodeEmptyTransactionBytes,
+        );
+      }
+
       Uint8List? messageBytes;
       _SignerData? decoded;
       final int sigCount;
@@ -132,6 +142,15 @@ VariableSizeDecoder<Transaction> getTransactionDecoder() {
         final (count, countEnd) = shortU16Dec.read(bytes, offset);
         sigCount = count;
         pos = countEnd;
+        if (pos + sigCount * 64 > bytes.length) {
+          throw SolanaError(
+            SolanaErrorCode.transactionSignatureCountTooHighForTransactionBytes,
+            {
+              'numExpectedSignatures': sigCount,
+              'transactionBytesLength': bytes.length - offset,
+            },
+          );
+        }
       }
 
       final signatures = <Uint8List>[];

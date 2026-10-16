@@ -129,7 +129,7 @@ MIT
 <!-- dprint-ignore -->
 | `solana_kit_mpl_bubblegum` version | [`mpl-bubblegum`](https://github.com/metaplex-foundation/mpl-bubblegum) | Released                |
 | ---------------------------------- | ----------------------------------------------------------------------- | ----------------------- |
-| _next release_                     | `release/bubblegum@2.0.0`                                               | _unreleased_            |
+| `0.7.0`                            | `release/bubblegum@2.0.0`                                               | 2026-10-12              |
 | `0.4.0` – `0.4.1`                  | `68e4bc204099`                                                          | 2026-08-18 – 2026-08-19 |
 | `0.2.0` – `0.3.1`                  | `main`                                                                  | 2026-05-30 – 2026-08-12 |
 

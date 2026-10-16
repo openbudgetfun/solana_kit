@@ -1,3 +1,7 @@
+// The catch-and-rethrow below deliberately catches Error subclasses so
+// programming errors are not swallowed by the conservative null fallback;
+// that is exactly what avoid_catching_errors exists to flag.
+// ignore_for_file: avoid_catching_errors
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -55,7 +59,14 @@ Future<double?> fetchTipFloor75th({
     }
 
     return null;
-  } on Object catch (_) {
+  } on ArgumentError {
+    // A bad endpoint is a programming error; the conservative null fallback
+    // exists for transient network and response-shape failures, not for
+    // hiding mistakes in the caller's arguments.
+    rethrow;
+  } on TypeError {
+    rethrow;
+  } on Object {
     return null;
   } finally {
     if (closeClient) httpClient.close(); // coverage:ignore-line
