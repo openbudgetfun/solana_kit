@@ -545,7 +545,7 @@ List<int> _discriminator(Map<String, Object?> node) =>
 AnchorIdlInstruction _parseInstruction(Object? node) {
   final map = Map<String, Object?>.from(node! as Map);
   return AnchorIdlInstruction(
-    name: (map['name'] as String?) ?? '',
+    name: _requireName(map, 'instruction'),
     discriminator: _discriminator(map),
     args: _parseFields(map['args']),
   );
@@ -553,16 +553,40 @@ AnchorIdlInstruction _parseInstruction(Object? node) {
 
 AnchorIdlCustomError _parseError(Object? node) {
   final map = Map<String, Object?>.from(node! as Map);
+  final code = map['code'];
+  if (code is! num) {
+    throw ArgumentError.value(
+      code,
+      'error.code',
+      'Anchor IDL error entry is missing its numeric code',
+    );
+  }
   return AnchorIdlCustomError(
-    code: ((map['code'] as num?) ?? 0).toInt(),
-    name: (map['name'] as String?) ?? '',
+    code: code.toInt(),
+    name: _requireName(map, 'error'),
     msg: map['msg'] as String?,
   );
 }
 
+/// Reads the `name` entry of an IDL node, throwing when it is absent.
+///
+/// Names key the instruction, error, and type maps, so an empty name would
+/// silently collide every unnamed node under `''`.
+String _requireName(Map<String, Object?> map, String nodeKind) {
+  final name = map['name'];
+  if (name is! String || name.isEmpty) {
+    throw ArgumentError.value(
+      name,
+      '$nodeKind.name',
+      'Anchor IDL $nodeKind entry is missing its name',
+    );
+  }
+  return name;
+}
+
 MapEntry<String, AnchorIdlTypeDef> _parseType(Object? node) {
   final map = Map<String, Object?>.from(node! as Map);
-  final name = typeNameOf((map['name'] as String?) ?? '');
+  final name = typeNameOf(_requireName(map, 'defined type'));
   final type = map['type'];
 
   final definition = switch (type) {
