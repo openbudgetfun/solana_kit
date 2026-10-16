@@ -40,6 +40,7 @@ Prepare the buffer and program accounts before running the planning helpers. The
 <!-- dprint-ignore -->
 | `solana_kit_loader` version | [`loader-v3`](https://github.com/solana-program/loader-v3)<br />[`loader-v4`](https://github.com/solana-program/loader-v4) | Released                |
 | --------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| _next release_              | `js@v0.8.0`<br />`76f8ce27d3bc`                                                                                            | _unreleased_            |
 | `0.6.0`                     | `js@v0.7.0`<br />`76f8ce27d3bc`                                                                                            | 2026-10-12              |
 | `0.5.0`                     | `js@v0.6.1`<br />`5bb854dbd2b6`                                                                                            | 2026-09-21              |
 | `0.4.2` – `0.4.3`           | `js@v0.6.1`<br />`4f62fb2e25c8`                                                                                            | 2026-09-06 – 2026-09-12 |

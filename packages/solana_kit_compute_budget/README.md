@@ -128,6 +128,7 @@ void main() {
 <!-- dprint-ignore -->
 | `solana_kit_compute_budget` version | [`compute-budget`](https://github.com/solana-program/compute-budget) | Released                |
 | ----------------------------------- | -------------------------------------------------------------------- | ----------------------- |
+| _next release_                      | `js@v0.20.0`                                                         | _unreleased_            |
 | `0.10.0`                            | `js@v0.19.0`                                                         | 2026-10-12              |
 | `0.8.2` – `0.9.0`                   | `js@v0.18.1`                                                         | 2026-09-06 – 2026-09-21 |
 | `0.8.0` – `0.8.1`                   | `js@v0.18.0`                                                         | 2026-08-30              |
