@@ -303,5 +303,17 @@ void main() {
         throwsFormatException,
       );
     });
+
+    test('rejects an empty proof root', () async {
+      final malformed = {...proofJson, 'root': ''};
+      await expectLater(
+        withMockClient(
+          assetJson,
+          malformed,
+          (client) => client.getAssetProof(_hash),
+        ),
+        throwsFormatException,
+      );
+    });
   });
 }

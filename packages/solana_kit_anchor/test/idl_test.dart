@@ -123,4 +123,35 @@ void main() {
       throwsArgumentError,
     );
   });
+
+  test('rejects entries with missing names and error codes', () {
+    expect(
+      () => AnchorIdlProgram.parse({
+        'instructions': [
+          <String, Object?>{
+            'discriminator': [1, 2, 3, 4, 5, 6, 7, 8],
+          },
+        ],
+      }),
+      throwsArgumentError,
+    );
+    expect(
+      () => AnchorIdlProgram.parse({
+        'errors': [
+          <String, Object?>{'name': 'NameOnly'},
+        ],
+      }),
+      throwsArgumentError,
+    );
+    expect(
+      () => AnchorIdlProgram.parse({
+        'types': [
+          <String, Object?>{
+            'type': {'kind': 'struct'},
+          },
+        ],
+      }),
+      throwsArgumentError,
+    );
+  });
 }
