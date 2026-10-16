@@ -56,13 +56,33 @@ Future<Object?> parseJsonWithBigIntsAsync(
 /// Converts a value to a JSON string, rendering [BigInt] values as large
 /// unsafe integers (without quotes).
 ///
+/// Pass [space] to pretty-print the output, exactly like `JSON.stringify`'s
+/// space argument: an [int] indents by that many spaces (clamped to 10, zero
+/// or negative for compact output) and a [String] is repeated at each nesting
+/// level (first 10 characters). Compact output is the default.
+///
 /// This is a Dart port of the `stringifyJsonWithBigInts` function from the
 /// `@solana/rpc-spec-types` TypeScript package.
 String stringifyJsonWithBigInts(Object? value, {Object? space}) {
+  final gap = _gapFor(space);
   final out = StringBuffer();
-  _writeJson(value, out, Set<Object>.identity());
+  _writeJson(value, out, Set<Object>.identity(), gap: gap, depth: 0);
 
   return out.toString();
+}
+
+/// The per-level indent string for JSON.stringify's space argument, or null
+/// for compact output.
+String? _gapFor(Object? space) {
+  if (space is int) {
+    if (space <= 0) return null;
+    return ' ' * (space > 10 ? 10 : space);
+  }
+  if (space is String) {
+    if (space.isEmpty) return null;
+    return space.length > 10 ? space.substring(0, 10) : space;
+  }
+  return null;
 }
 
 /// Regex for a valid JSON number.
@@ -198,7 +218,13 @@ Object _parseJsonNumber(String value) {
   return BigInt.parse(value);
 }
 
-void _writeJson(Object? value, StringBuffer out, Set<Object> ancestors) {
+void _writeJson(
+  Object? value,
+  StringBuffer out,
+  Set<Object> ancestors, {
+  String? gap,
+  int depth = 0,
+}) {
   if (value is BigInt) {
     out.write(value);
 
@@ -222,31 +248,56 @@ void _writeJson(Object? value, StringBuffer out, Set<Object> ancestors) {
     throw JsonCyclicError(value);
   }
 
+  final pretty = gap != null;
+
+  String indentAt(int level) => pretty ? gap! * level : '';
+
   if (value is List<Object?>) {
-    out.write('[');
+    if (value.isEmpty) {
+      out.write('[]');
+      ancestors.remove(value);
+      return;
+    }
+    out.write(pretty ? '[\n' : '[');
 
     for (var index = 0; index < value.length; index++) {
-      if (index > 0) out.write(',');
-      _writeJson(value[index], out, ancestors);
+      if (index > 0) out.write(pretty ? ',\n' : ',');
+      out.write(indentAt(depth + 1));
+      _writeJson(
+        value[index],
+        out,
+        ancestors,
+        gap: gap,
+        depth: depth + 1,
+      );
     }
 
-    out.write(']');
+    out.write(pretty ? '\n' : '');
+    out.write('${indentAt(depth)}]');
   } else if (value is Map<Object?, Object?>) {
-    out.write('{');
+    if (value.isEmpty) {
+      out.write('{}');
+      ancestors.remove(value);
+      return;
+    }
+    out.write(pretty ? '{\n' : '{');
+
     var first = true;
 
     for (final entry in value.entries) {
       if (entry.key is! String) throw JsonUnsupportedObjectError(value);
 
-      if (!first) out.write(',');
+      if (!first) out.write(pretty ? ',\n' : ',');
       first = false;
       out
+        ..write(indentAt(depth + 1))
         ..write(jsonEncode(entry.key))
-        ..write(':');
-      _writeJson(entry.value, out, ancestors);
+        ..write(pretty ? ': ' : ':');
+      _writeJson(entry.value, out, ancestors, gap: gap, depth: depth + 1);
     }
 
-    out.write('}');
+    out.write(pretty ? '\n' : '');
+    out.write('${indentAt(depth)}}');
   }
 
   ancestors.remove(value);
