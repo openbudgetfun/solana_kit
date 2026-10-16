@@ -101,6 +101,7 @@ Nine typed error codes covering invalid nonce state, missing accounts, insuffici
 <!-- dprint-ignore -->
 | `solana_kit_system` version | [`system`](https://github.com/solana-program/system) | Released                |
 | --------------------------- | ---------------------------------------------------- | ----------------------- |
+| _next release_              | `js@v0.16.0`                                         | _unreleased_            |
 | `0.9.0`                     | `js@v0.15.0`                                         | 2026-10-12              |
 | `0.7.2` – `0.8.0`           | `js@v0.14.1`                                         | 2026-09-06 – 2026-09-21 |
 | `0.7.0` – `0.7.1`           | `js@v0.14.0`                                         | 2026-08-30              |

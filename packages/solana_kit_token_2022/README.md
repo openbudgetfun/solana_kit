@@ -143,6 +143,7 @@ The full `solana_kit_associated_token_account` API surface is re-exported so cal
 <!-- dprint-ignore -->
 | `solana_kit_token_2022` version | [`token-2022`](https://github.com/solana-program/token-2022) | Released                |
 | ------------------------------- | ------------------------------------------------------------ | ----------------------- |
+| _next release_                  | `js@v0.20.0`                                                 | _unreleased_            |
 | `0.10.0`                        | `js@v0.19.0`                                                 | 2026-10-12              |
 | `0.9.0`                         | `js@v0.18.0`                                                 | 2026-09-21              |
 | `0.8.2` – `0.8.3`               | `js@v0.16.1`                                                 | 2026-09-06 – 2026-09-12 |
