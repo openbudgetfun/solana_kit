@@ -315,5 +315,35 @@ void main() {
         throwsFormatException,
       );
     });
+
+    test('rejects a response with no proof path at all', () async {
+      final malformed = Map.of(proofJson)..remove('proof');
+      await expectLater(
+        withMockClient(
+          assetJson,
+          malformed,
+          (client) => client.getAssetProof(_hash),
+        ),
+        throwsFormatException,
+      );
+    });
+
+    test('rejects an asset with a missing compression flag', () async {
+      final malformed = {
+        ...assetJson,
+        'compression': {
+          ...(assetJson['compression']! as Map<String, Object?>),
+          'compressed': null,
+        },
+      };
+      await expectLater(
+        withMockClient(
+          malformed,
+          proofJson,
+          (client) => client.getAsset(_hash),
+        ),
+        throwsFormatException,
+      );
+    });
   });
 }
