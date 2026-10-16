@@ -126,6 +126,7 @@ Future<void> main() async {
       pluginDirectory,
       File('${tempApp.path}/pubspec.yaml'),
     );
+    stripNdkVersion(tempApp);
 
     code = await _inherit('flutter', [
       'pub',
@@ -220,6 +221,45 @@ void _rewritePubspec(
   }
 
   pubspec.writeAsStringSync('${output.join('\n')}\n');
+}
+
+/// Removes the Flutter template's `ndkVersion` declaration from the generated
+/// app's Gradle build script.
+///
+/// Nothing in the plugin or the generated app compiles native code, but the
+/// Flutter app template still declares `ndkVersion = flutter.ndkVersion`. AGP
+/// then resolves that NDK during configuration and its SDK auto-installer
+/// downloads a multi-hundred-megabyte NDK mid-build; when that download
+/// returns a corrupt archive the whole check fails with
+/// `Error on ZipFile unknown archive` (seen on CI against
+/// android-ndk-r28c). Dropping the declaration keeps AGP from resolving an
+/// NDK at all, so the check neither downloads one nor flakes on it.
+void stripNdkVersion(Directory tempApp) {
+  final candidates = [
+    File('${tempApp.path}/android/app/build.gradle.kts'),
+    File('${tempApp.path}/android/app/build.gradle'),
+  ];
+  final present = candidates
+      .where((candidate) => candidate.existsSync())
+      .toList();
+  if (present.isEmpty) {
+    throw StateError(
+      'Generated app has no Gradle build script at any of '
+      '${candidates.map((file) => file.path)}. '
+      'The Flutter template changed; update this check.',
+    );
+  }
+  final ndkAssignment = RegExp(
+    r'^\s*ndkVersion\s*=.*$',
+    multiLine: true,
+  );
+  for (final candidate in present) {
+    final original = candidate.readAsStringSync();
+    final rewritten = original.replaceAllMapped(ndkAssignment, (match) => '');
+    if (rewritten != original) {
+      candidate.writeAsStringSync(rewritten);
+    }
+  }
 }
 
 /// Reads the `workspace:` entries from the root pubspec.
