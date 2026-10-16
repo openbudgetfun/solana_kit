@@ -36,6 +36,7 @@ Future<AssetWithProof> _fetch({
                 'creator_hash': _hash,
                 'asset_hash': _hash,
                 'tree': _hash,
+                'seq': 6,
                 'leaf_id': 5,
                 ...?extraCompression,
               },
@@ -213,6 +214,94 @@ void main() {
       );
 
       expect(asset.rpcAsset.collection, isNull);
+    });
+  });
+
+  group('malformed DAS responses fail loudly', () {
+    // These fields feed the leaf hash, nonce, and index of on-chain
+    // instructions. A silently defaulted value would produce a plausible but
+    // invalid transfer, so a missing field must throw instead.
+    Future<T> _withMockClient<T>(
+      Map<String, Object?> assetJson,
+      Map<String, Object?> proofJson,
+      Future<T> Function(HeliusDasClient client) body,
+    ) => http.runWithClient(
+      () => body(
+        const HeliusDasClient(rpcUrl: 'https://example.com'),
+      ),
+      () => MockClient((request) async {
+        final body = jsonDecode(request.body) as Map<String, Object?>;
+        final result = body['method'] == 'getAsset' ? assetJson : proofJson;
+        return http.Response(jsonEncode({'result': result}), 200);
+      }),
+    );
+
+    final assetJson = <String, Object?>{
+      'id': _hash,
+      'ownership': {
+        'owner': _owner,
+        'delegate': null,
+        'frozen': false,
+      },
+      'compression': <String, Object?>{
+        'compressed': true,
+        'data_hash': _hash,
+        'creator_hash': _hash,
+        'asset_hash': _hash,
+        'tree': _hash,
+        'seq': 6,
+        'leaf_id': 5,
+      },
+    };
+
+    final proofJson = <String, Object?>{
+      'root': _hash,
+      'proof': [_hash, _hash, _hash],
+      'node_index': 13,
+      'leaf': _hash,
+      'tree_id': _hash,
+    };
+
+    test('rejects a missing compression leaf ID', () async {
+      final malformed = {
+        ...assetJson,
+        'compression': {
+          ...assetJson['compression']! as Map<String, Object?>,
+          'leaf_id': null,
+        },
+      };
+      await expectLater(
+        _withMockClient(
+          malformed,
+          proofJson,
+          (client) => client.getAsset(_hash),
+        ),
+        throwsFormatException,
+      );
+    });
+
+    test('rejects a missing proof tree ID', () async {
+      final malformed = {...proofJson, 'tree_id': null};
+      await expectLater(
+        _withMockClient(
+          assetJson,
+          malformed,
+          (client) => client.getAssetProof(_hash),
+        ),
+        throwsFormatException,
+      );
+    });
+
+    test('rejects a missing proof node index', () async {
+      final malformed = {...proofJson, 'node_index': null};
+      await expectLater(
+        _withMockClient(
+          assetJson,
+          malformed,
+          (client) => client.getAssetProof(_hash),
+        ),
+        throwsFormatException,
+      );
     });
   });
 }
