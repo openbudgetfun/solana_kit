@@ -88,7 +88,7 @@ Future<void> handleTransactionFailure(Object error) async {
 <!-- dprint-ignore -->
 | `solana_kit_stake` version | [`stake`](https://github.com/solana-program/stake) | Released                |
 | -------------------------- | -------------------------------------------------- | ----------------------- |
-| _next release_             | `js@v0.10.0`                                       | _unreleased_            |
+| `0.7.0`                    | `js@v0.10.0`                                       | 2026-10-12              |
 | `0.5.2` – `0.6.0`          | `js@v0.9.1`                                        | 2026-09-06 – 2026-09-21 |
 | `0.5.0` – `0.5.1`          | `js@v0.9.0`                                        | 2026-08-30              |
 | `0.4.0` – `0.4.1`          | `js@v0.8.0`                                        | 2026-08-18 – 2026-08-19 |

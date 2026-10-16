@@ -150,7 +150,7 @@ The `AddressLookupTableAccountData` decoder can decode on-chain account data for
 <!-- dprint-ignore -->
 | `solana_kit_address_lookup_table` version | [`address-lookup-table`](https://github.com/solana-program/address-lookup-table) | Released                |
 | ----------------------------------------- | -------------------------------------------------------------------------------- | ----------------------- |
-| _next release_                            | `js@v0.15.0`                                                                     | _unreleased_            |
+| `0.6.0`                                   | `js@v0.15.0`                                                                     | 2026-10-12              |
 | `0.4.2` – `0.5.0`                         | `js@v0.14.1`                                                                     | 2026-09-06 – 2026-09-21 |
 | `0.4.0` – `0.4.1`                         | `js@v0.14.0`                                                                     | 2026-08-30              |
 | `0.3.0` – `0.3.1`                         | `js@v0.13.0`                                                                     | 2026-08-18 – 2026-08-19 |

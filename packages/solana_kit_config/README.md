@@ -93,6 +93,6 @@ MIT
 <!-- dprint-ignore -->
 | `solana_kit_config` version | [`config`](https://github.com/solana-program/config) | Released                |
 | --------------------------- | ---------------------------------------------------- | ----------------------- |
-| `0.1.0` – `0.3.0`           | `solana-config-program-client@v1.1.0`                | 2026-06-01 – 2026-09-21 |
+| `0.1.0` – `0.4.0`           | `solana-config-program-client@v1.1.0`                | 2026-06-01 – 2026-10-12 |
 
 <!-- upstream-support:end -->
