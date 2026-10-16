@@ -9,6 +9,7 @@ import 'package:solana_kit_helius/src/auth/oauth_token_exchange.dart';
 import 'package:solana_kit_helius/src/auth/payment_url.dart';
 import 'package:solana_kit_helius/src/auth/plan_catalog.dart';
 import 'package:solana_kit_helius/src/auth/retry.dart';
+import 'package:solana_kit_helius/src/internal/json_reader.dart';
 import 'package:solana_kit_helius/src/types/auth_types.dart';
 
 const checkoutPollInterval = Duration(seconds: 1);
@@ -54,22 +55,24 @@ class CheckoutPreviewResponse {
     this.coupon,
   });
 
-  factory CheckoutPreviewResponse.fromJson(Map<String, Object?> json) =>
-      CheckoutPreviewResponse(
-        planName: json['planName'] as String? ?? '',
-        period: json['period'] as String? ?? '',
-        baseAmount: json['baseAmount'] as int? ?? 0,
-        subtotal: json['subtotal'] as int? ?? 0,
-        appliedCredits: json['appliedCredits'] as int? ?? 0,
-        proratedCredits: json['proratedCredits'] as int? ?? 0,
-        discounts: json['discounts'] as int? ?? 0,
-        dueToday: json['dueToday'] as int? ?? 0,
-        destinationWallet: json['destinationWallet'] as String? ?? '',
-        note: json['note'] as String? ?? '',
-        coupon: json['coupon'] is Map<String, Object?>
-            ? CheckoutCoupon.fromJson(json['coupon']! as Map<String, Object?>)
-            : null,
-      );
+  factory CheckoutPreviewResponse.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    return CheckoutPreviewResponse(
+      planName: r.requireString('planName'),
+      period: r.requireString('period'),
+      baseAmount: r.requireInt('baseAmount'),
+      subtotal: r.requireInt('subtotal'),
+      appliedCredits: r.requireInt('appliedCredits'),
+      proratedCredits: r.requireInt('proratedCredits'),
+      discounts: r.requireInt('discounts'),
+      dueToday: r.requireInt('dueToday'),
+      destinationWallet: r.requireString('destinationWallet'),
+      note: r.requireString('note'),
+      coupon: json['coupon'] is Map<String, Object?>
+          ? CheckoutCoupon.fromJson(json['coupon']! as Map<String, Object?>)
+          : null,
+    );
+  }
 
   final String planName;
   final String period;
@@ -130,18 +133,20 @@ class CheckoutInitializeResponse {
     this.refId,
   });
 
-  factory CheckoutInitializeResponse.fromJson(Map<String, Object?> json) =>
-      CheckoutInitializeResponse(
-        id: json['id'] as String? ?? '',
-        status: json['status'] as String? ?? '',
-        destinationWallet: json['destinationWallet'] as String? ?? '',
-        amount: json['amount'] as int? ?? 0,
-        solanaPayUrl: json['solanaPayUrl'] as String? ?? '',
-        expiresAt: json['expiresAt'] as String? ?? '',
-        createdAt: json['createdAt'] as String?,
-        priceId: json['priceId'] as String?,
-        refId: json['refId'] as String?,
-      );
+  factory CheckoutInitializeResponse.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    return CheckoutInitializeResponse(
+      id: r.requireString('id'),
+      status: r.requireString('status'),
+      destinationWallet: r.requireString('destinationWallet'),
+      amount: r.requireInt('amount'),
+      solanaPayUrl: r.requireString('solanaPayUrl'),
+      expiresAt: r.requireString('expiresAt'),
+      createdAt: r.optString('createdAt'),
+      priceId: r.optString('priceId'),
+      refId: r.optString('refId'),
+    );
+  }
 
   final String id;
   final String status;
@@ -163,14 +168,16 @@ class CheckoutStatusResponse {
     required this.message,
   });
 
-  factory CheckoutStatusResponse.fromJson(Map<String, Object?> json) =>
-      CheckoutStatusResponse(
-        status: json['status'] as String? ?? '',
-        phase: json['phase'] as String? ?? '',
-        subscriptionActive: json['subscriptionActive'] as bool? ?? false,
-        readyToRedirect: json['readyToRedirect'] as bool? ?? false,
-        message: json['message'] as String? ?? '',
-      );
+  factory CheckoutStatusResponse.fromJson(Map<String, Object?> json) {
+    final r = JsonReader(json);
+    return CheckoutStatusResponse(
+      status: r.requireString('status'),
+      phase: r.requireString('phase'),
+      subscriptionActive: r.requireBool('subscriptionActive'),
+      readyToRedirect: r.requireBool('readyToRedirect'),
+      message: r.requireString('message'),
+    );
+  }
 
   final String status;
   final String phase;

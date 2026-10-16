@@ -55,7 +55,14 @@ Future<double?> fetchTipFloor75th({
     }
 
     return null;
-  } on Object catch (_) {
+  } on ArgumentError {
+    // A bad endpoint is a programming error; the conservative null fallback
+    // exists for transient network and response-shape failures, not for
+    // hiding mistakes in the caller's arguments.
+    rethrow;
+  } on TypeError {
+    rethrow;
+  } on Object {
     return null;
   } finally {
     if (closeClient) httpClient.close(); // coverage:ignore-line

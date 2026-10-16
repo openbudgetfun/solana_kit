@@ -136,9 +136,11 @@ http.Client _checkoutClient({
     if (path.endsWith('/checkout/pi-1/status')) {
       return http.Response(
         jsonEncode({
+          'status': readyToRedirect ? 'completed' : phase,
           'phase': phase,
+          'subscriptionActive': readyToRedirect,
           'readyToRedirect': readyToRedirect,
-          'message': ?message,
+          'message': message ?? phase,
         }),
         200,
         headers: {'content-type': 'application/json'},
