@@ -163,7 +163,7 @@ void main() {
       if (root.existsSync()) root.deleteSync(recursive: true);
     });
 
-    File _writeGradleFile(String name, String contents) {
+    File writeGradleFile(String name, String contents) {
       final app = Directory('${root.path}/android/app')
         ..createSync(recursive: true);
       return File('${app.path}/$name')..writeAsStringSync(contents);
@@ -173,7 +173,7 @@ void main() {
     // NDK mid-build; a corrupt download fails the whole CI check. The plugin
     // has no native code, so the declaration must be removed before building.
     test('removes the ndkVersion assignment from the kotlin dsl script', () {
-      _writeGradleFile('build.gradle.kts', '''
+      writeGradleFile('build.gradle.kts', '''
 android {
     namespace = "com.example.app"
     compileSdk = 35
@@ -195,7 +195,7 @@ android {
     });
 
     test('handles a groovy script with a pinned ndk version string', () {
-      _writeGradleFile('build.gradle', '''
+      writeGradleFile('build.gradle', '''
 android {
     ndkVersion = "28.2.13676358"
 }
@@ -210,7 +210,7 @@ android {
     });
 
     test('leaves scripts without ndkVersion untouched', () {
-      _writeGradleFile('build.gradle.kts', 'android {\n}\n');
+      writeGradleFile('build.gradle.kts', 'android {\n}\n');
       final file = File('${root.path}/android/app/build.gradle.kts');
 
       stripNdkVersion(root);

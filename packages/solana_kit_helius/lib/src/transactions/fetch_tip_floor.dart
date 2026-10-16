@@ -1,3 +1,7 @@
+// The catch-and-rethrow below deliberately catches Error subclasses so
+// programming errors are not swallowed by the conservative null fallback;
+// that is exactly what avoid_catching_errors exists to flag.
+// ignore_for_file: avoid_catching_errors
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;

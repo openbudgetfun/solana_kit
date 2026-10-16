@@ -204,7 +204,7 @@ class HeliusDasClient implements DasApiClient {
 
   /// Parses a DAS asset proof response into a [DasAssetProof].
   static DasAssetProof _parseAssetProof(Map<String, dynamic> data) {
-    final proof = (data['proof'] as List<dynamic>?);
+    final proof = data['proof'] as List<dynamic>?;
     if (proof == null) {
       throw const FormatException(
         'DAS getAssetProof response is missing the proof path',

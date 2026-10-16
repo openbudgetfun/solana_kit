@@ -421,7 +421,7 @@ void main() {
         switch (request.url.path.replaceFirst('/v0', '')) {
           case '/checkout/preview':
             return http.Response(
-              jsonEncode(checkoutPreview(dueToday: 4900)),
+              jsonEncode(checkoutPreview()),
               200,
             );
           case '/checkout/initialize':

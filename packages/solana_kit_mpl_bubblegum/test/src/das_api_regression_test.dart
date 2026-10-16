@@ -221,7 +221,7 @@ void main() {
     // These fields feed the leaf hash, nonce, and index of on-chain
     // instructions. A silently defaulted value would produce a plausible but
     // invalid transfer, so a missing field must throw instead.
-    Future<T> _withMockClient<T>(
+    Future<T> withMockClient<T>(
       Map<String, Object?> assetJson,
       Map<String, Object?> proofJson,
       Future<T> Function(HeliusDasClient client) body,
@@ -271,7 +271,7 @@ void main() {
         },
       };
       await expectLater(
-        _withMockClient(
+        withMockClient(
           malformed,
           proofJson,
           (client) => client.getAsset(_hash),
@@ -283,7 +283,7 @@ void main() {
     test('rejects a missing proof tree ID', () async {
       final malformed = {...proofJson, 'tree_id': null};
       await expectLater(
-        _withMockClient(
+        withMockClient(
           assetJson,
           malformed,
           (client) => client.getAssetProof(_hash),
@@ -295,7 +295,7 @@ void main() {
     test('rejects a missing proof node index', () async {
       final malformed = {...proofJson, 'node_index': null};
       await expectLater(
-        _withMockClient(
+        withMockClient(
           assetJson,
           malformed,
           (client) => client.getAssetProof(_hash),

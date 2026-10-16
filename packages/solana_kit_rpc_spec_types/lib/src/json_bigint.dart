@@ -66,7 +66,7 @@ Future<Object?> parseJsonWithBigIntsAsync(
 String stringifyJsonWithBigInts(Object? value, {Object? space}) {
   final gap = _gapFor(space);
   final out = StringBuffer();
-  _writeJson(value, out, Set<Object>.identity(), gap: gap, depth: 0);
+  _writeJson(value, out, Set<Object>.identity(), gap: gap);
 
   return out.toString();
 }
@@ -249,8 +249,9 @@ void _writeJson(
   }
 
   final pretty = gap != null;
+  final indent = pretty ? gap : null;
 
-  String indentAt(int level) => pretty ? gap! * level : '';
+  String indentAt(int level) => pretty ? indent! * level : '';
 
   if (value is List<Object?>) {
     if (value.isEmpty) {
@@ -272,8 +273,9 @@ void _writeJson(
       );
     }
 
-    out.write(pretty ? '\n' : '');
-    out.write('${indentAt(depth)}]');
+    out
+      ..write(pretty ? '\n' : '')
+      ..write('${indentAt(depth)}]');
   } else if (value is Map<Object?, Object?>) {
     if (value.isEmpty) {
       out.write('{}');
@@ -296,8 +298,9 @@ void _writeJson(
       _writeJson(entry.value, out, ancestors, gap: gap, depth: depth + 1);
     }
 
-    out.write(pretty ? '\n' : '');
-    out.write('${indentAt(depth)}}');
+    out
+      ..write(pretty ? '\n' : '')
+      ..write('${indentAt(depth)}}');
   }
 
   ancestors.remove(value);
