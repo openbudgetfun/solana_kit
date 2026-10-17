@@ -24,6 +24,7 @@ A Dart client for the [Helius API](https://github.com/helius-labs/helius-sdk), c
 <!-- dprint-ignore -->
 | `solana_kit_helius` version | [`helius-sdk`](https://github.com/helius-labs/helius-sdk) | Released                |
 | --------------------------- | --------------------------------------------------------- | ----------------------- |
+| _next release_              | `v3.3.0`                                                  | _unreleased_            |
 | `0.7.0` – `0.8.0`           | `v3.2.0`                                                  | 2026-09-21 – 2026-10-12 |
 | `0.6.0` – `0.6.3`           | `ad8f796d81be`                                            | 2026-08-30 – 2026-09-12 |
 | `0.4.0` – `0.5.1`           | `4c0c55b86eab`                                            | 2026-06-01 – 2026-08-19 |
