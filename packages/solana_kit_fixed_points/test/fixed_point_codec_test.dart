@@ -155,9 +155,10 @@ void main() {
         () => getBinaryFixedPointEncoder(FixedPointSignedness.unsigned, 8, -1),
         throwsRangeError,
       );
+      // `fractionalBits` may exceed `totalBits` (upstream v8.5.0).
       expect(
         () => getBinaryFixedPointDecoder(FixedPointSignedness.unsigned, 8, 9),
-        throwsRangeError,
+        returnsNormally,
       );
       expect(
         () => getBinaryFixedPointEncoder(FixedPointSignedness.unsigned, 7, 0),

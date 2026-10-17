@@ -16,54 +16,56 @@ void main() {
       },
     );
 
-    test('rejects zero progress before repeatedly decoding the same bytes', () {
-      var reads = 0;
-      final unit = getUnitDecoder();
-      final guardedUnit = FixedSizeDecoder<void>(
-        fixedSize: 0,
-        read: (bytes, offset) {
-          // Stop an unfixed decoder safely instead of exhausting memory.
-          if (++reads > 10) throw StateError('unbounded zero-progress loop');
-          return unit.read(bytes, offset);
-        },
-      );
-      final decoder = getArrayDecoder(
-        guardedUnit,
-        size: const RemainderArraySize(),
-      );
-
-      expect(
-        () => decoder.decode(Uint8List.fromList([1])),
-        throwsA(isA<SolanaError>()),
-      );
-      expect(reads, lessThanOrEqualTo(1));
-    });
+    test(
+      'rejects zero-byte remainder items at construction (upstream v8.5.0)',
+      () {
+        // A zero-byte item can never advance a remainder decoder, so the
+        // combination is now rejected when the decoder is built instead of
+        // during the decode loop.
+        expect(
+          () => getArrayDecoder(
+            FixedSizeDecoder<void>(
+              fixedSize: 0,
+              read: (bytes, offset) {
+                throw StateError('must never be reached');
+              },
+            ),
+            size: const RemainderArraySize(),
+          ),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              SolanaErrorCode
+                  .codecsUnexpectedZeroFixedSizeItemForArrayLikeSizeStrategy,
+            ),
+          ),
+        );
+      },
+    );
 
     test(
-      'rejects zero progress in sentinel-terminated arrays before looping',
+      'rejects zero-byte sentinel items at construction (upstream v8.5.0)',
       () {
-        var reads = 0;
-        final unit = getUnitDecoder();
-        final guardedUnit = FixedSizeDecoder<void>(
-          fixedSize: 0,
-          read: (bytes, offset) {
-            if (++reads > 10) throw StateError('unbounded zero-progress loop');
-            return unit.read(bytes, offset);
-          },
-        );
-        final decoder = getArrayDecoder(
-          guardedUnit,
-          size: SentinelArraySize(Uint8List.fromList([0])),
-        );
-
-        // The byte is present (so the sentinel fits) but does not match the
-        // sentinel, and the item decoder consumes nothing; the loop must
-        // stop instead of spinning forever.
         expect(
-          () => decoder.decode(Uint8List.fromList([1])),
-          throwsA(isA<SolanaError>()),
+          () => getArrayDecoder(
+            FixedSizeDecoder<void>(
+              fixedSize: 0,
+              read: (bytes, offset) {
+                throw StateError('must never be reached');
+              },
+            ),
+            size: SentinelArraySize(Uint8List.fromList([0])),
+          ),
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.code,
+              'code',
+              SolanaErrorCode
+                  .codecsUnexpectedZeroFixedSizeItemForArrayLikeSizeStrategy,
+            ),
+          ),
         );
-        expect(reads, lessThanOrEqualTo(1));
       },
     );
 

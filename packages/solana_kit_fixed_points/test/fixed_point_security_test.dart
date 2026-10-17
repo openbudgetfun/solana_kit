@@ -42,7 +42,8 @@ void main() {
       for (final value in [
         BinaryFixedPoint(raw: BigInt.zero, fractionalBits: -1),
         BinaryFixedPoint(raw: BigInt.zero, fractionalBits: 0, totalBits: 0),
-        BinaryFixedPoint(raw: BigInt.zero, fractionalBits: 9, totalBits: 8),
+        // `fractionalBits` may exceed `totalBits` (upstream v8.5.0), so
+        // (9, 8) is a valid shape and no longer listed here.
       ]) {
         expect(isBinaryFixedPoint(value), isFalse);
         expect(() => assertIsBinaryFixedPoint(value), throwsRangeError);

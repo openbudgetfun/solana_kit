@@ -147,6 +147,11 @@ Encoder<List<T>> getArrayEncoder<T>(
   final effectiveSize = size ?? PrefixedArraySize(getU32Encoder());
   _assertValidArrayLikeSize(effectiveSize);
   final itemFixedSize = getFixedSize(item);
+  _assertItemCodecSupportsSizeStrategy(
+    description ?? 'array',
+    effectiveSize,
+    itemFixedSize,
+  );
   final computedFixed = _computeArrayLikeCodecSize(
     effectiveSize,
     itemFixedSize,
@@ -243,6 +248,11 @@ Decoder<List<T>> getArrayDecoder<T>(
   final effectiveSize = size ?? PrefixedArraySize(getU32Decoder());
   _assertValidArrayLikeSize(effectiveSize);
   final itemFixedSize = getFixedSize(item);
+  _assertItemCodecSupportsSizeStrategy(
+    description ?? 'array',
+    effectiveSize,
+    itemFixedSize,
+  );
   final computedFixed = _computeArrayLikeCodecSize(
     effectiveSize,
     itemFixedSize,
@@ -427,6 +437,28 @@ Never _throwInvalidArraySize(String? description, Object actual) {
     'expected': 'an integer between 0 and the configured maximum',
     'actual': actual,
   });
+}
+
+/// Throws if a zero-byte item codec is used with a size strategy that relies
+/// on items consuming bytes to make progress, such as the sentinel and
+/// remainder strategies.
+///
+/// Added in @solana/kit v8.5.0.
+void _assertItemCodecSupportsSizeStrategy(
+  String codecDescription,
+  ArrayLikeCodecSize size,
+  int? itemFixedSize,
+) {
+  if (itemFixedSize != 0) return;
+  if (size is RemainderArraySize || size is SentinelArraySize) {
+    throw SolanaError(
+      SolanaErrorCode.codecsUnexpectedZeroFixedSizeItemForArrayLikeSizeStrategy,
+      {
+        'codecDescription': codecDescription,
+        'sizeStrategy': size is RemainderArraySize ? 'remainder' : 'sentinel',
+      },
+    );
+  }
 }
 
 /// Throws if an array-like size strategy is misconfigured — e.g. a sentinel

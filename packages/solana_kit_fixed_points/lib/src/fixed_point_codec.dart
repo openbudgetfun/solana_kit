@@ -256,9 +256,8 @@ void _assertValidFractionalBits(int fractionalBits, int totalBits) {
     throw RangeError.range(fractionalBits, 0, null, 'fractionalBits');
   }
 
-  if (fractionalBits > totalBits) {
-    throw RangeError.range(fractionalBits, 0, totalBits, 'fractionalBits');
-  }
+  // `fractionalBits` may exceed `totalBits` (upstream v8.5.0); the raw value
+  // simply has to fit within `totalBits` bits.
 }
 
 void _assertReadable(Uint8List buffer, int offset, int byteSize) {

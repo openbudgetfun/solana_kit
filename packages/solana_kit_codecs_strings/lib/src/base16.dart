@@ -10,8 +10,9 @@ const String _alphabet = '0123456789abcdef';
 /// This encoder serializes strings using a base-16 encoding scheme.
 /// The output consists of bytes representing the hexadecimal values of the
 /// input string.
-/// Inputs must contain complete byte pairs, except that a single hexadecimal
-/// character is accepted as a one-byte value. Other odd lengths are rejected.
+/// Inputs must contain complete hex-digit pairs; a trailing lone digit is
+/// accepted and encoded as the low nibble of a final byte (so `'abc'`
+/// encodes as `[0xab, 0x0c]`).
 ///
 /// For more details, see [getBase16Codec].
 VariableSizeEncoder<String> getBase16Encoder() {
@@ -19,17 +20,12 @@ VariableSizeEncoder<String> getBase16Encoder() {
     getSizeFromValue: (value) => (value.length / 2).ceil(),
     write: (value, bytes, offset) {
       final len = value.length;
-      final al = len ~/ 2;
+      // Upstream v8.5.0 pads a trailing lone hex digit into the low nibble
+      // (`'abc'` encodes as `[0xab, 0x0c]`) instead of dropping it, so odd
+      // lengths other than the single-character case are now accepted.
+      final al = (len / 2).ceil();
 
       if (len == 0) return offset;
-
-      if (len > 1 && len.isOdd) {
-        throw SolanaError(SolanaErrorCode.codecsInvalidStringForBase, {
-          'alphabet': _alphabet,
-          'base': 16,
-          'value': value,
-        });
-      }
 
       if (len == 1) {
         final n = _charCodeToBase16(value.codeUnitAt(0));
@@ -49,11 +45,11 @@ VariableSizeEncoder<String> getBase16Encoder() {
       var j = 0;
       for (var i = 0; i < al; i++) {
         final c1 = value.codeUnitAt(j++);
-        final c2 = value.codeUnitAt(j++);
+        final c2 = j < len ? value.codeUnitAt(j++) : -1;
 
         final n1 = _charCodeToBase16(c1);
         final n2 = _charCodeToBase16(c2);
-        if (n1 == -1 || n2 == -1) {
+        if (n1 == -1 || (n2 == -1 && c2 != -1)) {
           throw SolanaError(SolanaErrorCode.codecsInvalidStringForBase, {
             'alphabet': _alphabet,
             'base': 16,
@@ -61,7 +57,7 @@ VariableSizeEncoder<String> getBase16Encoder() {
           });
         }
 
-        hexBytes[i] = (n1 << 4) | n2;
+        hexBytes[i] = c2 == -1 ? n1 : (n1 << 4) | n2;
       }
 
       bytes.setAll(offset, hexBytes);

@@ -44,6 +44,25 @@ void main() {
       );
     });
 
+    test(
+      'encodes odd-length strings by padding the final digit (upstream v8.5.0)',
+      () {
+        final base16 = getBase16Codec();
+
+        // 'abc' encodes as [0xab, 0x0c]: the trailing lone digit becomes the
+        // low nibble of the final byte instead of being dropped.
+        expect(base16.encode('abc'), equals(Uint8List.fromList([0xab, 0x0c])));
+        expect(base16.getSizeFromValue('abc'), equals(2));
+        expect(
+          base16.encode('abcde'),
+          equals(Uint8List.fromList([0xab, 0xcd, 0x0e])),
+        );
+
+        // The single-character case is unchanged.
+        expect(base16.encode('f'), equals(Uint8List.fromList([0x0f])));
+      },
+    );
+
     test('throws on a single invalid hex character', () {
       final base16 = getBase16Codec();
       expect(

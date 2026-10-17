@@ -81,14 +81,37 @@ void main() {
         throwsRangeError,
       );
       expect(
-        () => BinaryFixedPoint.parse('1', fractionalBits: 2, totalBits: 1),
-        throwsRangeError,
-      );
-      expect(
         () => BinaryFixedPoint.parse('256', fractionalBits: 0, totalBits: 8),
         throwsRangeError,
       );
     });
+
+    test('allows fractionalBits to exceed totalBits (upstream v8.5.0)', () {
+      // An unsigned 8-bit value with 12 fractional bits represents values in
+      // [0, 1/16); 255 / 2 ** 12 = 0.062255859375.
+      final fixed = BinaryFixedPoint.parse(
+        '0.062255859375',
+        fractionalBits: 12,
+        totalBits: 8,
+      );
+      expect(fixed.raw, equals(BigInt.from(255)));
+    });
+
+    test(
+      'rejects values that do not fit when fractionalBits exceed totalBits',
+      () {
+        // 1/16 needs a raw value of 256, one more than an unsigned 8-bit
+        // value can hold.
+        expect(
+          () => BinaryFixedPoint.parse(
+            '0.0625',
+            fractionalBits: 12,
+            totalBits: 8,
+          ),
+          throwsA(isA<RangeError>()),
+        );
+      },
+    );
 
     test('supports explicit rounding modes', () {
       expect(
@@ -308,9 +331,15 @@ void main() {
         () => rawBinaryFixedPoint(FixedPointSignedness.unsigned, 8, -1),
         throwsRangeError,
       );
+      // `fractionalBits` may exceed `totalBits` (upstream v8.5.0); every
+      // factory accepts such shapes and range-checks the raw value instead.
       expect(
         () => rawBinaryFixedPoint(FixedPointSignedness.unsigned, 8, 9),
-        throwsRangeError,
+        returnsNormally,
+      );
+      expect(
+        () => rawBinaryFixedPoint(FixedPointSignedness.signed, 16, 32),
+        returnsNormally,
       );
       expect(
         () => rawBinaryFixedPoint(FixedPointSignedness.unsigned, 8, 0)(

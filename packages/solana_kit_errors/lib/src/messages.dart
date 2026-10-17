@@ -54,6 +54,7 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode.codecsSentinelMissingAtEndOfBytes: r'Codec [$codecDescription] expected sentinel [$hexSentinel] to terminate the collection, but reached the end of the byte array without it.',
   SolanaErrorCode.codecsSentinelMustNotBeEmpty:
       'The sentinel must not be empty.',
+  SolanaErrorCode.codecsUnexpectedZeroFixedSizeItemForArrayLikeSizeStrategy: r'Codec [$codecDescription] cannot use the [$sizeStrategy] size strategy: the item codec has a fixed size of zero and consumes no bytes.',
   SolanaErrorCode.codecsInvalidBoolean:
       r'Invalid boolean value. Expected 0 or 1, got $value.',
   SolanaErrorCode.fixedPointsArithmeticOverflow: r'Fixed-point operation `$operation` of kind `$kind` overflowed. Expected a raw bigint in [$min, $max], got $result.',
@@ -290,6 +291,7 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode.keysInvalidBase58InGrindRegex: r'The grind regex `/$source/` contains the character `$character`, which is not in the base58 alphabet and can never match a Solana address.',
   SolanaErrorCode.keysWriteKeyPairUnsupportedEnvironment:
       'Writing a key pair to disk is not supported in this environment.',
+  SolanaErrorCode.keysVerificationRequiresExtractablePublicKey: 'Signatures can only be verified using an extractable public key. The bytes of the public key must be readable. If you imported the public key yourself, set `extractable` to `true`.',
   SolanaErrorCode.lamportsOutOfRange:
       'Lamports value must be in the range [0, 2e64-1]',
   SolanaErrorCode.malformedBigintString: r'$value cannot be parsed as a BigInt',
@@ -525,6 +527,9 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
       'Connected wallet does not support signing',
   SolanaErrorCode.walletAccountNotAvailable:
       r'Wallet account $address is not available in wallet $walletName.',
+  SolanaErrorCode.walletInvalidMessageSignature: r'The signature returned by wallet $walletName for the message failed verification against the account with address $address.',
+  SolanaErrorCode.walletInvalidSignInOutput: r'The sign-in output returned by wallet $walletName failed verification against the account with address $address.',
+  SolanaErrorCode.walletInvalidNumberOfOutputs: r'Wallet $walletName returned $actual outputs for the `$featureName` feature, but exactly $expected were expected.',
 
   // Mobile Wallet Adapter - Session errors
   SolanaErrorCode.mwaAssociationPortOutOfRange:

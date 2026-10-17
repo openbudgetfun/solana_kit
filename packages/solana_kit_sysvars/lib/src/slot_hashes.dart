@@ -46,7 +46,13 @@ VariableSizeEncoder<SysvarSlotHashes> getSysvarSlotHashesEncoder() {
     ('slot', getU64Encoder()),
     ('hash', getBlockhashEncoder()),
   ]);
-  final arrayEncoder = getArrayEncoder<Map<String, Object?>>(entryEncoder);
+  // The on-chain sysvar layout prefixes the entry array with a `u64` length,
+  // not a `u32` one; decoding with a `u32` prefix shifted every entry by
+  // four bytes.
+  final arrayEncoder = getArrayEncoder<Map<String, Object?>>(
+    entryEncoder,
+    size: PrefixedArraySize(getU64Encoder()),
+  );
 
   return VariableSizeEncoder<SysvarSlotHashes>(
     getSizeFromValue: (value) {
@@ -66,7 +72,10 @@ VariableSizeDecoder<SysvarSlotHashes> getSysvarSlotHashesDecoder() {
     ('slot', getU64Decoder()),
     ('hash', getBlockhashDecoder()),
   ]);
-  final arrayDecoder = getArrayDecoder<Map<String, Object?>>(entryDecoder);
+  final arrayDecoder = getArrayDecoder<Map<String, Object?>>(
+    entryDecoder,
+    size: PrefixedArraySize(getU64Decoder()),
+  );
 
   return VariableSizeDecoder<SysvarSlotHashes>(
     read: (bytes, offset) {
