@@ -29,11 +29,11 @@
       "url": "https://github.com/helius-labs/helius-sdk",
       "ref": {
         "type": "tag",
-        "value": "v3.2.0"
+        "value": "v3.3.0"
       },
       "package": "solana_kit_helius",
       "notes": "Helius SDK reference; release tag has no GitHub Release object, so the tag itself is the pin",
-      "checkedCommit": "b76a792979dc4581c8fd1e98121137a6530673d6"
+      "checkedCommit": "1a37d6f0d9ebd6220d7e9047af3e31d0b0bc105e"
     },
     {
       "name": "mobile-wallet-adapter",
