@@ -78,6 +78,67 @@ void main() {
       expect(codec.decode(b('010203')), equals([1, 2, 3]));
     });
 
+    test('rejects zero-byte item codecs with remainder or sentinel strategies (upstream v8.5.0)', () {
+      // Explicit sizes keep working with zero-byte items.
+      expect(
+        hex(
+          getArrayCodec(
+            getStructCodec(const []),
+            size: const FixedArraySize(2),
+          ).encode([{}, {}]),
+        ),
+        equals(''),
+      );
+
+      // Remainder strategy is rejected at construction time, on both sides.
+      for (final factory in [
+        () => getArrayEncoder(
+          getStructEncoder(const []),
+          size: const RemainderArraySize(),
+        ),
+        () => getArrayDecoder(
+          getStructDecoder(const []),
+          size: const RemainderArraySize(),
+        ),
+      ]) {
+        expect(
+          factory,
+          throwsA(
+            isA<SolanaError>()
+                .having(
+                  (e) => e.code,
+                  'code',
+                  SolanaErrorCode
+                      .codecsUnexpectedZeroFixedSizeItemForArrayLikeSizeStrategy,
+                )
+                .having(
+                  (e) => e.context,
+                  'context',
+                  {'codecDescription': 'array', 'sizeStrategy': 'remainder'},
+                ),
+          ),
+        );
+      }
+
+      // Sentinel strategy likewise.
+      final sentinel = SentinelArraySize(b('00'));
+      for (final factory in [
+        () => getArrayEncoder(getStructEncoder(const []), size: sentinel),
+        () => getArrayDecoder(getStructDecoder(const []), size: sentinel),
+      ]) {
+        expect(
+          factory,
+          throwsA(
+            isA<SolanaError>().having(
+              (e) => e.context,
+              'context',
+              {'codecDescription': 'array', 'sizeStrategy': 'sentinel'},
+            ),
+          ),
+        );
+      }
+    });
+
     test('encodes sentinel-terminated arrays with required by default', () {
       final sentinel = SentinelArraySize(b('00'));
 

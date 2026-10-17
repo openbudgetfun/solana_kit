@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:solana_kit_accounts/solana_kit_accounts.dart';
 import 'package:solana_kit_codecs_core/solana_kit_codecs_core.dart';
 import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 
@@ -87,7 +88,13 @@ getSysvarRecentBlockhashesEncoder() {
       getStructEncoder([('lamportsPerSignature', getDefaultLamportsEncoder())]),
     ),
   ]);
-  final arrayEncoder = getArrayEncoder<Map<String, Object?>>(entryEncoder);
+  // The on-chain sysvar layout prefixes the entry array with a `u64` length,
+  // not a `u32` one; decoding with a `u32` prefix shifted every entry by
+  // four bytes.
+  final arrayEncoder = getArrayEncoder<Map<String, Object?>>(
+    entryEncoder,
+    size: PrefixedArraySize(getU64Encoder()),
+  );
 
   return VariableSizeEncoder<SysvarRecentBlockhashes>(
     getSizeFromValue: (value) {
@@ -114,7 +121,10 @@ getSysvarRecentBlockhashesDecoder() {
       getStructDecoder([('lamportsPerSignature', getDefaultLamportsDecoder())]),
     ),
   ]);
-  final arrayDecoder = getArrayDecoder<Map<String, Object?>>(entryDecoder);
+  final arrayDecoder = getArrayDecoder<Map<String, Object?>>(
+    entryDecoder,
+    size: PrefixedArraySize(getU64Decoder()),
+  );
 
   return VariableSizeDecoder<SysvarRecentBlockhashes>(
     read: (bytes, offset) {

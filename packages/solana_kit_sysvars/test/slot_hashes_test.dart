@@ -10,8 +10,8 @@ void main() {
     test('decode', () {
       // From TS test: slot-hashes-test.ts
       final slotHashesState = Uint8List.fromList([
-        // array length (u32)
-        2, 0, 0, 0,
+        // array length (u64)
+        2, 0, 0, 0, 0, 0, 0, 0,
         // entry 1: slot
         134, 74, 2, 0, 0, 0, 0, 0,
         // entry 1: hash (32 bytes of 0x01)

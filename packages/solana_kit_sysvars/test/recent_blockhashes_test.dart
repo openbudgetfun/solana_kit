@@ -10,8 +10,8 @@ void main() {
     test('decode', () {
       // From TS test: recent-blockhashes-test.ts
       final recentBlockhashesState = Uint8List.fromList([
-        // array length (u32)
-        2, 0, 0, 0,
+        // array length (u64)
+        2, 0, 0, 0, 0, 0, 0, 0,
         // entry 1: blockhash (32 bytes of 0x01)
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,

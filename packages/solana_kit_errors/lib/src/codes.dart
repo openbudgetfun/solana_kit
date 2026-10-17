@@ -251,6 +251,13 @@ enum SolanaErrorCode {
   /// Writing a key pair is unsupported in this environment.
   keysWriteKeyPairUnsupportedEnvironment(3704006),
 
+  /// Signature verification requires an extractable public key.
+  ///
+  /// Reserved with its upstream number: this Dart port verifies signatures
+  /// with its own Ed25519 implementation whose public keys are always
+  /// readable, so no code path throws it today.
+  keysVerificationRequiresExtractablePublicKey(3704007),
+
   // ---------------------------------------------------------------------------
   // Filesystem (3712000 - 3712999)
   // ---------------------------------------------------------------------------
@@ -977,6 +984,10 @@ enum SolanaErrorCode {
   /// The sentinel provided to a codec is an empty byte sequence.
   codecsSentinelMustNotBeEmpty(8078029),
 
+  /// A zero-byte fixed-size item codec was used with the sentinel or
+  /// remainder size strategy.
+  codecsUnexpectedZeroFixedSizeItemForArrayLikeSizeStrategy(8078030),
+
   /// The boolean value is not encoded as zero or one.
   ///
   /// This port validates booleans and upstream `@solana/kit` does not, so the
@@ -1193,6 +1204,24 @@ enum SolanaErrorCode {
 
   /// The wallet account is not available.
   walletAccountNotAvailable(8900003),
+
+  /// A wallet returned a message signature that failed verification.
+  ///
+  /// Reserved with its upstream number: the Dart port does not implement the
+  /// wallet-account message signer surface yet.
+  walletInvalidMessageSignature(8900004),
+
+  /// A wallet returned a sign-in output that failed verification.
+  ///
+  /// Reserved with its upstream number: the Dart port does not implement the
+  /// wallet-account sign-in surface yet.
+  walletInvalidSignInOutput(8900005),
+
+  /// A wallet returned a different number of outputs than requested.
+  ///
+  /// Reserved with its upstream number: the Dart port does not implement the
+  /// wallet-account message signer surface yet.
+  walletInvalidNumberOfOutputs(8900006),
 
   // ---------------------------------------------------------------------------
   // Invariant Violations (9900000 - 9900999)

@@ -6,38 +6,41 @@ import 'package:test/test.dart';
 
 void main() {
   group('base16 input validation', () {
-    for (final value in ['abg', 'ab!', 'abcdz', 'ab1', 'abcde']) {
-      test(
-        'rejects incomplete hex input $value instead of dropping its tail',
-        () {
-          expect(
-            () => getBase16Encoder().encode(value),
-            throwsA(
-              isA<SolanaError>().having(
-                (error) => error.code,
-                'code',
-                SolanaErrorCode.codecsInvalidStringForBase,
-              ),
+    // Upstream v8.5.0 pads a trailing lone hex digit into the low nibble, so
+    // odd-length inputs with a valid final digit ('ab1', 'abcde') are now
+    // accepted; only genuinely invalid characters are rejected.
+    for (final value in ['abg', 'ab!', 'abcdz']) {
+      test('rejects invalid hex characters in $value', () {
+        expect(
+          () => getBase16Encoder().encode(value),
+          throwsA(
+            isA<SolanaError>().having(
+              (error) => error.code,
+              'code',
+              SolanaErrorCode.codecsInvalidStringForBase,
             ),
-          );
-        },
-      );
+          ),
+        );
+      });
     }
 
-    test('rejects odd input before overwriting a following field', () {
+    test('encodes odd-length inputs with a padded final digit', () {
+      expect(getBase16Encoder().encode('ab1'), [0xab, 0x01]);
+      expect(getBase16Encoder().encode('abcde'), [0xab, 0xcd, 0x0e]);
+    });
+
+    test('odd input does not overwrite a following field', () {
       final bytes = Uint8List.fromList([99, 99, 99, 42]);
-      expect(
-        () => getBase16Encoder().write('ab1', bytes, 1),
-        throwsA(isA<SolanaError>()),
-      );
-      expect(bytes, [99, 99, 99, 42]);
+      final written = getBase16Encoder().write('ab1', bytes, 1);
+      expect(written, 3);
+      expect(bytes, [99, 0xab, 0x01, 42]);
     });
 
     test(
       'valid hex writes consume their advertised size at nonzero offsets',
       () {
         final codec = getBase16Codec();
-        for (final value in ['', 'a', 'Ab', 'aBcD']) {
+        for (final value in ['', 'a', 'Ab', 'aBcD', 'ab1', 'abcde']) {
           final size = codec.getSizeFromValue(value);
           final bytes = Uint8List(size + 2)..fillRange(0, size + 2, 99);
           expect(codec.write(value, bytes, 1), 1 + size);

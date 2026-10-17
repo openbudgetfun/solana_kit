@@ -348,9 +348,10 @@ void _assertValidShape(int fractionalBits, int totalBits) {
 
   if (totalBits <= 0) throw RangeError.range(totalBits, 1, null, 'totalBits');
 
-  if (fractionalBits > totalBits) {
-    throw RangeError.range(fractionalBits, 0, totalBits, 'fractionalBits');
-  }
+  // `fractionalBits` may exceed `totalBits` (upstream v8.5.0): the raw value
+  // stays within `totalBits` bits while the represented quantum shrinks to
+  // `2^-fractionalBits`, e.g. an unsigned 8-bit shape with 12 fractional
+  // bits represents values in [0, 1/16).
 }
 
 void _assertRawFits(
