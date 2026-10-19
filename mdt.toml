@@ -13,5 +13,8 @@ patterns = [
   "**/build/**",
   "**/coverage/**",
   "**/.git/**",
+  # Dart doc comments are synced by scripts/sync_dart_doc_comments.dart, which
+  # adds the `///` prefix; mdt 0.9.6 started scanning `.dart` files itself.
+  "**/*.dart",
 ]
 markdown_codeblocks = true
