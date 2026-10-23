@@ -21,7 +21,7 @@ jobs:
         with:
           persist-credentials: false
       - name: run zizmor
-        uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        uses: zizmorcore/zizmor-action@53290badfa369cb0bf7ad16342cb62c2fa47ac7b # v0.8.0
         with:
           inputs: ".github/workflows/ .github/actions/"
           advanced-security: true
@@ -93,7 +93,7 @@ jobs:
         run: monochange step validate
         shell: devenv shell -- bash -e {0}
 
-      - uses: ifiokjr/monostyle@c320d9c0bd2d85e8c939e8ac74c2b4e40ea2da5f # v0.3.26
+      - uses: ifiokjr/monostyle@ab5d8d2f6af6ea12d5655a11ab61b92c2365ddfe # v0.3.27
         if: always()
         with:
           version: 0.3.25
@@ -186,7 +186,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: "17"
