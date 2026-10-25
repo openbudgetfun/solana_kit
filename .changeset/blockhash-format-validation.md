@@ -1,6 +1,6 @@
 ---
 "solana_kit_transaction_messages": patch
-"solana_kit_errors": patch
+"solana_kit_errors": minor
 ---
 
 # Validate blockhash format before it reaches the wire
