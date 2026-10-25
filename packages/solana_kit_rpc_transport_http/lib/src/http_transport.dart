@@ -123,7 +123,7 @@ Uri _validateAndNormalizeHttpEndpoint(
   }
 
   if (scheme == 'http' && allowInsecureHttp) {
-    // In release/profile mode, http:// is never allowed regardless of
+    // In release (product) mode, http:// is never allowed regardless of
     // the allowInsecureHttp flag. This prevents accidental use of insecure
     // HTTP connections in production, mirroring the WebSocket transport's
     // release-mode lockdown. The branch is a compile-time constant under

@@ -42,9 +42,46 @@ void assertIsTransactionMessageWithBlockhashLifetime(
   }
 }
 
+/// The blockhash is stored on the wire as a fixed 32-byte token, so the value
+/// must be a base58 string that decodes to exactly 32 bytes.
+///
+/// Without this check, a blockhash that decodes to more than 32 bytes is
+/// silently truncated and one that decodes to fewer is silently zero-extended
+/// by the fixed-size lifetime-token encoder, producing a wire lifetime token
+/// that differs from the caller-supplied string — for example after a
+/// compromised RPC returns a malformed `getLatestBlockhash` value.
+void _assertValidBlockhashFormat(String blockhash) {
+  if (blockhash.length < 32 || blockhash.length > 44) {
+    throw SolanaError(SolanaErrorCode.transactionInvalidBlockhashFormat, {
+      'actualLength': blockhash.length,
+    });
+  }
+
+  final int actualLength;
+  try {
+    actualLength = getBase58Encoder().encode(blockhash).length;
+  } on Object {
+    throw SolanaError(SolanaErrorCode.transactionInvalidBlockhashFormat, {
+      'actualLength': blockhash.length,
+    });
+  }
+
+  if (actualLength != 32) {
+    throw SolanaError(SolanaErrorCode.transactionInvalidBlockhashFormat, {
+      'actualLength': actualLength,
+    });
+  }
+}
+
 /// Given a blockhash and the last block height at which that blockhash is
 /// considered usable, this method will return a new transaction message with
 /// the lifetime constraint set to the given blockhash constraint.
+///
+/// Throws a [SolanaError] with code
+/// [SolanaErrorCode.transactionInvalidBlockhashFormat] if the blockhash is
+/// not a base58 string that decodes to exactly 32 bytes, so a malformed
+/// value — for example one served by a compromised RPC — fails loudly
+/// instead of being silently truncated or zero-extended on the wire.
 ///
 /// Returns the same instance if the lifetime constraint is already set to
 /// the same blockhash constraint.
@@ -63,6 +100,8 @@ TransactionMessage setTransactionMessageLifetimeUsingBlockhash(
   BlockhashLifetimeConstraint blockhashLifetimeConstraint,
   TransactionMessage transactionMessage,
 ) {
+  _assertValidBlockhashFormat(blockhashLifetimeConstraint.blockhash);
+
   final existing = transactionMessage.lifetimeConstraint;
   if (existing is BlockhashLifetimeConstraint &&
       existing.blockhash == blockhashLifetimeConstraint.blockhash &&

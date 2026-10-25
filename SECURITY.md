@@ -37,7 +37,7 @@ The workspace already enforces secure defaults in several places:
 
 Known constraints and active hardening areas:
 
-- Dart does not provide deterministic secure memory wiping for ordinary heap objects, so private key material may remain in memory until garbage collection.
+- Dart does not provide deterministic secure memory wiping for ordinary heap objects, so private key material may remain in memory until garbage collection. Key generation, signing, and public-key derivation zero their expanded-key intermediates in `finally` blocks; the residual risk covers objects Dart's runtime copies opaquely.
 - Some compatibility behaviors intentionally mirror upstream `@solana/kit`, even when stricter Dart-specific behavior may be preferable.
 - Mobile Wallet Adapter support is Android-only at the ecosystem level today; iOS support in this repo is a safe stub/no-op for mixed-platform Flutter apps.
 
@@ -74,7 +74,11 @@ Security work should include, where relevant:
 
 ## Implemented Safeguards
 
-- Dependency auditing runs in CI: OSV-Scanner checks every pull request and weekly against the Dart and pnpm lockfiles (`.github/workflows/dependency-audit.yml`).
-- Signatures returned by Mobile Wallet Adapter wallets are cryptographically verified against the authorized account's public key before callers receive them, including Sign In With Solana proofs.
+- Dependency auditing runs in CI: OSV-Scanner checks every pull request and weekly against the Dart and pnpm lockfiles (`.github/workflows/dependency-audit.yml`), and `zizmor` lints the workflow files.
+- Signatures returned by Mobile Wallet Adapter wallets are cryptographically verified against the authorized account's public key before callers receive them, including Sign In With Solana proofs. SIWS proofs are additionally bound to the request that triggered them: every field the application supplied (domain, nonce, statement, timestamps, resources, …) must appear verbatim in the signed message, which names the account it is attached to, mirroring `verifySignIn` from `@solana/wallet-standard-util`.
 - Signature-confirmation strategies ignore received-notifications, so a node's receipt of a transaction can never be mistaken for its execution.
-- Insecure `http://` and `ws://` endpoints are rejected in release builds regardless of the opt-in flags.
+- Insecure `http://` and `ws://` endpoints are rejected in release (product) builds regardless of the opt-in flags, across the core HTTP and WebSocket transports, the Jupiter client, and Helius Sender regional endpoints (only `SenderRegion.defaultRegion` serves HTTPS and is allowed in release builds).
+- Blockhash and durable-nonce lifetime tokens must be base58 strings that decode to exactly 32 bytes; a malformed value from a compromised RPC fails loudly instead of being silently truncated or zero-extended on the wire.
+- The BigInt-aware JSON parser bounds the number of digits a single integer literal can materialize, on both the plain and exponent paths.
+- Helius REST path segments built from API-returned identifiers are URL-encoded, so a compromised endpoint cannot reshape a subsequent request's path.
+- Surfnet passes a fork's upstream RPC URL to the Surfpool CLI through the `SURFPOOL_DATASOURCE_RPC_URL` environment variable rather than a process argument, keeping API keys out of `ps`/`/proc` listings.

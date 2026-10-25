@@ -11,7 +11,7 @@ Future<Webhook> webhooksGetWebhook(
   String webhookId,
 ) async {
   final result = await restClient.get(
-    '/v0/webhooks/$webhookId?api-key=$apiKey',
+    '/v0/webhooks/${Uri.encodeComponent(webhookId)}?api-key=$apiKey',
   );
 
   return Webhook.fromJson(result! as Map<String, Object?>);

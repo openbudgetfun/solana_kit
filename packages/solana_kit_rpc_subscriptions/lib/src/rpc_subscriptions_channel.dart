@@ -15,7 +15,6 @@ class DefaultRpcSubscriptionsChannelConfig {
     this.intervalMs = 5000,
     this.maxSubscriptionsPerChannel = 100,
     this.minChannels = 1,
-    this.sendBufferHighWatermark = 131072,
   });
 
   /// The WebSocket server URL. Must use the `ws` or `wss` protocols.
@@ -54,12 +53,6 @@ class DefaultRpcSubscriptionsChannelConfig {
   ///
   /// Defaults to 1.
   final int minChannels;
-
-  /// The number of bytes of data to admit into the WebSocket buffer before
-  /// buffering data on the client.
-  ///
-  /// Defaults to 131072 (128KB).
-  final int sendBufferHighWatermark;
 }
 
 /// Creates a default Solana RPC subscriptions channel creator.
@@ -117,7 +110,6 @@ RpcSubscriptionsChannelCreator _createDefaultRpcSubscriptionsChannelCreatorImpl(
         url: Uri.parse(config.url),
         allowInsecureWs: config.allowInsecureWs,
         allowPrivateHosts: config.allowPrivateHosts,
-        sendBufferHighWatermark: config.sendBufferHighWatermark,
         signal: abortSignal,
       ),
     );

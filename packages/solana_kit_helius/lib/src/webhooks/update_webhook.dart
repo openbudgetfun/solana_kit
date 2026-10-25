@@ -12,7 +12,7 @@ Future<Webhook> webhooksUpdateWebhook(
   UpdateWebhookRequest request,
 ) async {
   final result = await restClient.put(
-    '/v0/webhooks/${request.webhookId}?api-key=$apiKey',
+    '/v0/webhooks/${Uri.encodeComponent(request.webhookId)}?api-key=$apiKey',
     body: request.toJson(),
   );
 

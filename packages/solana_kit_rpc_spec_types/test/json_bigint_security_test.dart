@@ -70,6 +70,30 @@ void main() {
       expect(result.toString(), '-3${'0' * 10000}');
     });
 
+    test('bounds a plain integer literal to the same size the exponent cap '
+        'permits', () {
+      // A hostile RPC payload with a multi-megabyte integer literal must not
+      // force a same-sized BigInt allocation; 10,001 digits is the largest
+      // integer the exponent path already accepts.
+      expect(
+        () => parseJsonWithBigInts('{"result":${'9' * 10002}}'),
+        throwsFormatException,
+      );
+      expect(
+        () => parseJsonWithBigInts('-${'9' * 10002}'),
+        throwsFormatException,
+      );
+      expect(parseJsonWithBigInts('9' * 10001), isA<BigInt>());
+    });
+
+    test('bounds a long mantissa combined with an exponent', () {
+      expect(
+        () => parseJsonWithBigInts('${'9' * 10001}e+1'),
+        throwsFormatException,
+      );
+      expect(parseJsonWithBigInts('${'9' * 9999}e+2'), isA<BigInt>());
+    });
+
     test('preserves escaped keys and marker-like string content', () {
       const input = r'{"\u0024n":"not a number","nested":[{"$n":"7"}]}';
 

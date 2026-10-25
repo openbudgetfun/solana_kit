@@ -458,9 +458,11 @@ void main() {
       () async {
         final tempDir = await Directory.systemTemp.createTemp('surfpool_cli_');
         final argsPath = '${tempDir.path}/args.json';
+        final envPath = '${tempDir.path}/env.json';
         final command = await _writeFakeSurfpoolCommand(
           tempDir,
           argsPath: argsPath,
+          envPath: envPath,
           outputLines: 505,
         );
         final payer = Surfnet.newKeypair();
@@ -495,6 +497,7 @@ void main() {
 
           final args = (jsonDecode(await File(argsPath).readAsString()) as List)
               .cast<String>();
+          final datasourceUrl = await File(envPath).readAsString();
           expect(surfnet.rpcUri, Uri.parse('http://127.0.0.1:$rpcPort'));
           expect(surfnet.wsUri, Uri.parse('ws://127.0.0.1:$wsPort'));
           expect(surfnet.payer, payer.publicKey);
@@ -503,6 +506,15 @@ void main() {
           expect(events.length, lessThanOrEqualTo(500));
           expect(events.map((event) => event.kind), contains('stdoutLog'));
           expect(events.map((event) => event.kind), contains('stderrLog'));
+          // The fork's upstream URL — which commonly carries an API key in
+          // its query string — must ride in the process environment rather
+          // than argv, where `ps`/`/proc` would expose it to other local
+          // users.
+          expect(args, isNot(contains('--rpc-url')));
+          expect(
+            datasourceUrl,
+            'https://api.mainnet-beta.solana.com',
+          );
           expect(
             args,
             containsAllInOrder(<String>[
@@ -523,8 +535,6 @@ void main() {
               '2',
               '--airdrop-amount',
               '3',
-              '--rpc-url',
-              'https://api.mainnet-beta.solana.com',
               '--airdrop',
               payer.publicKey.value,
               '--airdrop',
@@ -803,6 +813,7 @@ Future<int> _availablePort({int? except}) async {
 Future<String> _writeFakeSurfpoolCommand(
   Directory directory, {
   required String argsPath,
+  String? envPath,
   bool serveRpc = true,
   bool exitImmediately = false,
   bool ignoreSigint = false,
@@ -810,6 +821,11 @@ Future<String> _writeFakeSurfpoolCommand(
   int portConflictExits = 0,
 }) async {
   final script = File('${directory.path}/fake_surfpool.dart');
+  final envDump = envPath == null
+      ? ''
+      // ignore: missing_whitespace_between_adjacent_strings
+      : 'await File(${jsonEncode(envPath)}).writeAsString('
+            "Platform.environment['SURFPOOL_DATASOURCE_RPC_URL'] ?? '');";
   final content =
       // ignore: leading_newlines_in_multiline_strings
       '''#!/usr/bin/env dart
@@ -819,6 +835,7 @@ import 'dart:io';
 
 Future<void> main(List<String> args) async {
   await File(${jsonEncode(argsPath)}).writeAsString(jsonEncode(args));
+  $envDump
 
   for (var index = 0; index < $outputLines; index += 1) {
     stdout.writeln('stdout line \$index');

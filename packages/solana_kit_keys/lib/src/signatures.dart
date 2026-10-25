@@ -103,9 +103,19 @@ SignatureBytes signatureBytes(Uint8List value) {
 SignatureBytes signBytes(Uint8List privateKeyBytes, Uint8List data) {
   assertIsPrivateKey(privateKeyBytes);
   final privateKey = ed.newKeyFromSeed(privateKeyBytes);
-  final sig = ed.sign(privateKey, data);
+  try {
+    final sig = ed.sign(privateKey, data);
 
-  return SignatureBytes(Uint8List.fromList(sig));
+    return SignatureBytes(Uint8List.fromList(sig));
+  } finally {
+    // `privateKey` holds the 64-byte expanded key derived from the seed.
+    // Zero it so each signature leaves no heap copy of the key material
+    // beyond the caller's own [privateKeyBytes].
+    final expanded = privateKey.bytes;
+    for (var i = 0; i < expanded.length; i++) {
+      expanded[i] = 0;
+    }
+  }
 }
 
 /// Verifies that [signature] was produced by signing [data] with the private

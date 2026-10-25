@@ -25,7 +25,8 @@ Future<List<EnhancedTransaction>> walletGetHistory(
 
   if (request.type != null) queryParams['type'] = request.type!;
 
-  final path = '/v0/addresses/${request.address}/transactions?api-key=$apiKey';
+  final path =
+      '/v0/addresses/${Uri.encodeComponent(request.address)}/transactions?api-key=$apiKey';
   final result = await restClient.get(
     path,
     queryParameters: queryParams.isNotEmpty ? queryParams : null,

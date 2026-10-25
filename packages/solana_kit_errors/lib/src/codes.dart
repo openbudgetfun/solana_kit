@@ -701,6 +701,14 @@ enum SolanaErrorCode {
   /// Port-only code (upstream's `TRANSACTION__` block ends at 5663040).
   transactionReportedSignatureMismatch(5663042),
 
+  /// A blockhash lifetime constraint value is not a base58 string that
+  /// decodes to exactly 32 bytes. The wire format stores the blockhash as a
+  /// fixed 32-byte token, so a shorter or longer value would be silently
+  /// truncated or zero-extended rather than rejected.
+  ///
+  /// Port-only code (upstream's `TRANSACTION__` block ends at 5663040).
+  transactionInvalidBlockhashFormat(5663043),
+
   // ---------------------------------------------------------------------------
   // Transaction Introspection (5664000 - 5664999)
   // ---------------------------------------------------------------------------

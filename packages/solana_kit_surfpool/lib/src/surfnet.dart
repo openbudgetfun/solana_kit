@@ -196,6 +196,12 @@ class Surfnet {
         command,
         args,
         workingDirectory: processWorkingDirectory.path,
+        // Fork datasource URLs ride in the environment rather than argv so
+        // they never appear in `ps`/`/proc` listings (see _buildStartArgs).
+        environment: {
+          if (config.remoteRpcUrl != null)
+            'SURFPOOL_DATASOURCE_RPC_URL': config.remoteRpcUrl.toString(),
+        },
       );
     } on Object catch (error) {
       try {
@@ -601,8 +607,8 @@ class Surfnet {
   }
 
   void _recordProcessLine(String kind, String line) {
-    // The CLI can echo caller-supplied arguments such as a fork's upstream
-    // `--rpc-url`, whose query string commonly carries an API key.
+    // The CLI can echo the fork's upstream datasource URL — for example in
+    // its startup banner — whose query string commonly carries an API key.
     final message = redactUrlCredentials(line);
     final event = SimnetEventValue(
       kind: kind,
@@ -725,11 +731,12 @@ List<String> _buildStartArgs(
     '${config.slotTimeMs}',
     '--airdrop-amount',
     '${config.airdropSol}',
-    if (config.remoteRpcUrl != null) ...<String>[
-      '--rpc-url',
-      config.remoteRpcUrl.toString(),
-    ] else if (config.offline)
-      '--offline',
+    // A fork's upstream RPC URL is passed through the process environment,
+    // not `--rpc-url`: its query string commonly carries an API key, and
+    // process arguments are world-readable through `ps`/`/proc` on the
+    // machine running Surfnet. The CLI accepts the same value via
+    // SURFPOOL_DATASOURCE_RPC_URL.
+    if (config.remoteRpcUrl == null && config.offline) '--offline',
     '--airdrop',
     payer.value,
     for (final address in config.airdropAddresses) ...<String>[

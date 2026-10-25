@@ -66,7 +66,6 @@ void main() {
       expect(config.intervalMs, 5000);
       expect(config.maxSubscriptionsPerChannel, 100);
       expect(config.minChannels, 1);
-      expect(config.sendBufferHighWatermark, 131072);
     });
 
     test('stores insecure override flag', () {
