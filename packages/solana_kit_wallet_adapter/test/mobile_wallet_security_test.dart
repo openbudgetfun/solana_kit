@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -477,6 +478,205 @@ void main() {
         await expectLater(signingIn, _invalidResponse);
       },
     );
+
+    Future<List<SolanaSignInOutput>> signInWithProof(
+      SolanaSignInInput input,
+      Uint8List message,
+    ) {
+      final authorization = Completer<MobileWalletAuthorization>();
+      backend.authorization = authorization;
+      final signingIn = wallet
+          .feature<SolanaSignInFeature>(SolanaFeatureId.signIn)!
+          .signIn([input]);
+      authorization.complete(
+        MobileWalletAuthorization(
+          accounts: backend.accounts,
+          signInOutput: SolanaSignInOutput(
+            account: backend.accounts.first,
+            signedMessage: message,
+            signature: signBytes(backend.keyPair.privateKey, message).value,
+          ),
+        ),
+      );
+
+      return signingIn;
+    }
+
+    const challenge = SolanaSignInInput(
+      domain: 'example.com',
+      statement: 'Sign in to view your account.',
+      uri: 'https://example.com/login',
+      version: '1',
+      chainId: 'solana:mainnet',
+      nonce: 'freshnonce',
+      issuedAt: '2026-10-25T12:00:00Z',
+      expirationTime: '2026-10-25T13:00:00Z',
+      notBefore: '2026-10-25T12:00:00Z',
+      requestId: 'request-1',
+      resources: ['https://example.com/read', 'https://example.com/data'],
+    );
+
+    String canonicalProof() =>
+        'example.com wants you to sign in with your Solana account:\n'
+        '${backend.accounts.first.address}\n\n'
+        'Sign in to view your account.\n\n'
+        'URI: https://example.com/login\n'
+        'Version: 1\n'
+        'Chain ID: solana:mainnet\n'
+        'Nonce: freshnonce\n'
+        'Issued At: 2026-10-25T12:00:00Z\n'
+        'Expiration Time: 2026-10-25T13:00:00Z\n'
+        'Not Before: 2026-10-25T12:00:00Z\n'
+        'Request ID: request-1\n'
+        'Resources:\n'
+        '- https://example.com/read\n'
+        '- https://example.com/data';
+
+    test('SIWS accepts a canonical proof for every challenge field', () async {
+      final message = utf8.encode(canonicalProof());
+      final outputs = await signInWithProof(challenge, message);
+
+      expect(outputs.single.signedMessage, message);
+      expect(outputs.single.account, backend.accounts.first);
+    });
+
+    const challengeFields = {
+      'domain': 'example.com',
+      'statement': 'Sign in to view your account.',
+      'URI': 'URI: https://example.com/login',
+      'version': 'Version: 1',
+      'chain ID': 'Chain ID: solana:mainnet',
+      'nonce': 'Nonce: freshnonce',
+      'issued-at time': 'Issued At: 2026-10-25T12:00:00Z',
+      'expiration time': 'Expiration Time: 2026-10-25T13:00:00Z',
+      'not-before time': 'Not Before: 2026-10-25T12:00:00Z',
+      'request ID': 'Request ID: request-1',
+      'resources': '- https://example.com/read',
+    };
+
+    for (final entry in challengeFields.entries) {
+      for (final replacement in ['', '${entry.value}-different']) {
+        test('SIWS rejects a substituted or missing ${entry.key}: '
+            '$replacement', () async {
+          final message = utf8.encode(
+            canonicalProof().replaceFirst(entry.value, replacement),
+          );
+
+          await expectLater(
+            signInWithProof(challenge, message),
+            _invalidResponse,
+          );
+        });
+      }
+    }
+
+    test('SIWS rejects reordered resources', () async {
+      final message = utf8.encode(
+        canonicalProof().replaceFirst(
+          '- https://example.com/read\n- https://example.com/data',
+          '- https://example.com/data\n- https://example.com/read',
+        ),
+      );
+
+      await expectLater(signInWithProof(challenge, message), _invalidResponse);
+    });
+
+    for (final (name, input, field) in [
+      (
+        'nonce',
+        const SolanaSignInInput(nonce: 'freshnonce '),
+        'Nonce: freshnonce',
+      ),
+      (
+        'resource',
+        const SolanaSignInInput(resources: ['https://example.com/read ']),
+        'Resources:\n- https://example.com/read',
+      ),
+    ]) {
+      test(
+        'SIWS preserves trailing whitespace in the requested $name',
+        () async {
+          final text =
+              'example.com wants you to sign in with your Solana account:\n'
+              '${backend.accounts.first.address}\n\n$field';
+
+          await expectLater(
+            signInWithProof(input, utf8.encode(text)),
+            _invalidResponse,
+          );
+          final outputs = await signInWithProof(input, utf8.encode('$text '));
+
+          expect(outputs.single.signedMessage, utf8.encode('$text '));
+        },
+      );
+    }
+
+    test('SIWS rejects a proof for a different requested address', () async {
+      final input = SolanaSignInInput(address: backend.accounts.last.address);
+      final message = utf8.encode(
+        'example.com wants you to sign in with your Solana account:\n'
+        '${backend.accounts.first.address}',
+      );
+
+      await expectLater(signInWithProof(input, message), _invalidResponse);
+    });
+
+    test('SIWS rejects a proof naming a different signing account', () async {
+      final message = utf8.encode(
+        'example.com wants you to sign in with your Solana account:\n'
+        '${backend.accounts.last.address}',
+      );
+
+      await expectLater(
+        signInWithProof(const SolanaSignInInput(), message),
+        _invalidResponse,
+      );
+    });
+
+    test(
+      'SIWS accepts a wallet-selected domain and account when omitted',
+      () async {
+        final message = utf8.encode(
+          'example.com wants you to sign in with your Solana account:\n'
+          '${backend.accounts.first.address}',
+        );
+        final outputs = await signInWithProof(
+          const SolanaSignInInput(),
+          message,
+        );
+
+        expect(outputs.single.signedMessage, message);
+      },
+    );
+
+    test('SIWS accepts a matching requested address', () async {
+      final input = SolanaSignInInput(address: backend.accounts.first.address);
+      final message = utf8.encode(
+        'example.com wants you to sign in with your Solana account:\n'
+        '${input.address}',
+      );
+      final outputs = await signInWithProof(input, message);
+
+      expect(outputs.single.account.address, input.address);
+    });
+
+    for (final (name, message) in [
+      ('non-SIWS text', utf8.encode('not a sign-in message')),
+      ('invalid UTF-8', Uint8List.fromList([0xff])),
+      (
+        'missing address',
+        utf8.encode(
+          'example.com wants you to sign in with your Solana account:',
+        ),
+      ),
+    ]) {
+      test('SIWS rejects malformed signed bytes: $name', () async {
+        await expectLater(
+          signInWithProof(const SolanaSignInInput(), message),
+          _invalidResponse,
+        );
+      });
+    }
 
     test(
       'disconnect immediately removes authority while backend cleanup waits',

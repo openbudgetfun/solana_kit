@@ -8,7 +8,7 @@ The package has zero Flutter dependency and runs in server-side Dart, CLI tools,
 
 Public-key import validates that uncompressed keys encode finite points on P-256. ECDH also checks the key domains and curve equation before multiplying by the private scalar. Malformed points, noncanonical coordinates, and mismatched curves throw `ArgumentError`.
 
-`createSiwsMessage` rejects carriage returns and line feeds in scalar fields and resource entries with `FormatException`, preventing fields from injecting additional signed lines. Valid single-line messages remain unchanged.
+`createSiwsMessage` rejects carriage returns and line feeds in scalar fields and resource entries with `FormatException`, preventing fields from injecting additional signed lines. Field values, including trailing spaces, are preserved verbatim so different challenges produce different signed bytes.
 
 ## What it covers
 

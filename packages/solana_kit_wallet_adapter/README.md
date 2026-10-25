@@ -45,6 +45,8 @@ Mobile wallet signing batches must use one authorized account. Transaction chain
 
 Native message signing validates the returned message envelope and exposes the extracted 64-byte signature; malformed envelopes and changed message bytes are rejected. Every signature the mobile wallet returns — over messages, signed transactions, submitted transactions, and Sign In With Solana proofs — is verified against the authorized account's public key before it reaches the caller, and a sign-in proof is rejected unless its address belongs to the accounts the same authorization returned.
 
+Native sign-in also requires the signed bytes to match the canonical SIWS message for the request, including the requested address, nonce, domain, URI, statement, version, chain ID, timestamps, request ID, and ordered resources. The wallet may select the domain and account when those inputs are omitted. A replayed proof for a different challenge or a malformed message fails with `WalletStandardErrorCode.invalidResponse`. Applications remain responsible for choosing a fresh nonce and enforcing their authentication expiry policy.
+
 ## Key APIs
 
 - `WalletController` and immutable `WalletAdapterState`

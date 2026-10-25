@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
+import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart'
+    as protocol;
 import 'package:solana_kit_signers/solana_kit_signers.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
@@ -683,7 +686,24 @@ class _Backend implements MobileWalletBackend {
     lastSilent = silent;
 
     if (signIn != null && includeSignIn) {
-      final message = Uint8List.fromList([3]);
+      final message = utf8.encode(
+        protocol.createSiwsMessage(
+          protocol.SignInPayload(
+            domain: signIn.domain,
+            address: account.address,
+            statement: signIn.statement,
+            uri: signIn.uri,
+            version: signIn.version,
+            chainId: signIn.chainId,
+            nonce: signIn.nonce,
+            issuedAt: signIn.issuedAt,
+            expirationTime: signIn.expirationTime,
+            notBefore: signIn.notBefore,
+            requestId: signIn.requestId,
+            resources: signIn.resources,
+          ),
+        ),
+      );
       return MobileWalletAuthorization(
         accounts: [account],
         signInOutput: SolanaSignInOutput(

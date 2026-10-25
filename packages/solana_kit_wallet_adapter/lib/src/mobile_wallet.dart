@@ -3,6 +3,8 @@ import 'dart:typed_data';
 
 import 'package:solana_kit_addresses/solana_kit_addresses.dart' as addresses;
 import 'package:solana_kit_keys/solana_kit_keys.dart';
+import 'package:solana_kit_mobile_wallet_adapter_protocol/solana_kit_mobile_wallet_adapter_protocol.dart'
+    as protocol;
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
 
@@ -322,10 +324,72 @@ class MobileWallet implements Wallet {
         signature: output.signature,
         signedBytes: output.signedMessage,
       );
+      _assertSignInProofBoundToInput(input, output);
       results.add(output);
     }
 
     return results;
+  }
+
+  /// Requires the signed bytes to be the canonical message for this request.
+  ///
+  /// A valid signature alone permits replaying an unrelated proof. Only the
+  /// domain and account may be selected by the wallet when omitted by the app;
+  /// every other field comes from the original challenge.
+  void _assertSignInProofBoundToInput(
+    SolanaSignInInput input,
+    SolanaSignInOutput output,
+  ) {
+    const headerSuffix = ' wants you to sign in with your Solana account:';
+    final Uint8List expectedMessage;
+
+    if (input.address != null && input.address != output.account.address) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Mobile wallet sign-in account does not match the requested address',
+      );
+    }
+
+    try {
+      final header = utf8.decode(output.signedMessage).split('\n').first;
+
+      if (!header.endsWith(headerSuffix)) {
+        throw const FormatException('Missing SIWS header');
+      }
+
+      expectedMessage = utf8.encode(
+        protocol.createSiwsMessage(
+          protocol.SignInPayload(
+            domain:
+                input.domain ??
+                header.substring(0, header.length - headerSuffix.length),
+            address: output.account.address,
+            statement: input.statement,
+            uri: input.uri,
+            version: input.version,
+            chainId: input.chainId,
+            nonce: input.nonce,
+            issuedAt: input.issuedAt,
+            expirationTime: input.expirationTime,
+            notBefore: input.notBefore,
+            requestId: input.requestId,
+            resources: input.resources,
+          ),
+        ),
+      );
+    } on FormatException {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Mobile wallet returned a malformed sign-in proof',
+      );
+    }
+
+    if (!_bytesEqual(expectedMessage, output.signedMessage)) {
+      throw const WalletStandardException(
+        WalletStandardErrorCode.invalidResponse,
+        'Mobile wallet sign-in proof does not match the request',
+      );
+    }
   }
 
   /// Verifies a wallet-returned [signature] over [signedBytes] against
