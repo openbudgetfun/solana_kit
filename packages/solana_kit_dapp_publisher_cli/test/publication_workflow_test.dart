@@ -14,10 +14,11 @@ import 'package:solana_kit_dapp_publisher_cli/src/publication_signer.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/publication_workflow.dart';
 import 'package:solana_kit_dapp_publisher_cli/src/workflow_client.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
-import 'package:solana_kit_mpl_token_metadata/solana_kit_mpl_token_metadata.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 import 'package:test/test.dart';
+
+import 'fixtures/publication_transactions.dart';
 
 final KeyPair publisherKeypair = generateKeyPair();
 final KeyPair mintKeypair = generateKeyPair();
@@ -44,56 +45,32 @@ Address get tokenMetadataProgram =>
     const Address('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
 
 /// Builds a valid legacy release-mint transaction.
-Future<Transaction> buildReleaseMintTransaction() async {
-  final metadataPda = (await findMetadataPda(mint: Address(mintAddress))).$1;
-  final accounts = <Address>[
-    Address(publisherAddress),
-    Address(mintAddress),
-    tokenMetadataProgram,
-    metadataPda,
-    const Address('11111111111111111111111111111111'),
-  ];
-  final instructionData = getCreateInstructionDataEncoder().encode(
-    CreateInstructionData(
-      createArgs: CreateArgsV1(
-        assetData: AssetData(
-          name: 'Release',
-          symbol: '',
-          uri: 'https://meta.example.com/rel-1.json',
-          sellerFeeBasisPoints: 0,
-          creators: null,
-          primarySaleHappened: false,
-          isMutable: true,
-          tokenStandard: TokenStandard.nonFungible,
-          collection: Collection(key: Address(appMintAddress), verified: false),
-          uses: null,
-          collectionDetails: null,
-          ruleSet: null,
-        ),
-        decimals: null,
-        printSupply: null,
+Future<Transaction> buildReleaseMintTransaction({
+  required String name,
+  required String uri,
+}) async {
+  final compiled = compileTransactionMessage(
+    TransactionMessage(
+      version: TransactionVersion.legacy,
+      feePayer: Address(publisherAddress),
+      instructions: await releaseInstructions(
+        publisher: Address(publisherAddress),
+        payer: Address(publisherAddress),
+        mint: Address(mintAddress),
+        collection: Address(appMintAddress),
+        name: name,
+        uri: uri,
       ),
     ),
-  );
-  final message = CompiledTransactionMessage(
-    version: TransactionVersion.legacy,
-    header: const MessageHeader(
-      numSignerAccounts: 2,
-      numReadonlySignerAccounts: 1,
-      numReadonlyNonSignerAccounts: 3,
-    ),
-    staticAccounts: accounts,
-    instructions: [
-      CompiledInstruction(
-        programAddressIndex: 2,
-        accountIndices: const [0, 1, 3, 4],
-        data: instructionData,
-      ),
-    ],
-    lifetimeToken: blockhash,
   );
   final messageBytes = getCompiledTransactionMessageEncoder().encode(
-    message,
+    CompiledTransactionMessage(
+      version: compiled.version,
+      header: compiled.header,
+      staticAccounts: compiled.staticAccounts,
+      instructions: compiled.instructions,
+      lifetimeToken: blockhash,
+    ),
   );
   return Transaction(
     messageBytes: messageBytes,
@@ -108,38 +85,23 @@ Future<Transaction> buildReleaseMintTransaction() async {
 
 /// Builds a valid legacy collection-verification transaction.
 Future<Transaction> buildVerifyCollectionTransaction() async {
-  final nftMetadataPda = (await findMetadataPda(mint: Address(mintAddress))).$1;
-  final collectionMetadataPda = (await findMetadataPda(
-    mint: Address(appMintAddress),
-  )).$1;
-  final collectionEdition = (await findMasterEditionPda(
-    mint: Address(appMintAddress),
-  )).$1;
-  final accounts = <Address>[
-    Address(publisherAddress),
-    Address(collectionAuthorityAddress),
-    tokenMetadataProgram,
-    nftMetadataPda,
-    Address(appMintAddress),
-    collectionMetadataPda,
-    collectionEdition,
-  ];
+  final compiled = compileTransactionMessage(
+    TransactionMessage(
+      version: TransactionVersion.legacy,
+      feePayer: Address(publisherAddress),
+      instructions: await verifyInstructions(
+        authority: Address(collectionAuthorityAddress),
+        mint: Address(mintAddress),
+        collection: Address(appMintAddress),
+      ),
+    ),
+  );
   final messageBytes = getCompiledTransactionMessageEncoder().encode(
     CompiledTransactionMessage(
-      version: TransactionVersion.legacy,
-      header: const MessageHeader(
-        numSignerAccounts: 2,
-        numReadonlySignerAccounts: 0,
-        numReadonlyNonSignerAccounts: 5,
-      ),
-      staticAccounts: accounts,
-      instructions: [
-        CompiledInstruction(
-          programAddressIndex: 2,
-          accountIndices: const [0, 1, 3, 4],
-          data: Uint8List.fromList([25, 1, 2, 3]),
-        ),
-      ],
+      version: compiled.version,
+      header: compiled.header,
+      staticAccounts: compiled.staticAccounts,
+      instructions: compiled.instructions,
       lifetimeToken: blockhash,
     ),
   );
@@ -263,7 +225,12 @@ class _FakeClient implements PublicationWorkflowClient {
     }
     return PreparedReleaseTransaction.fromMap({
       'transaction': base64Encode(
-        getTransactionEncoder().encode(await buildReleaseMintTransaction()),
+        getTransactionEncoder().encode(
+          await buildReleaseMintTransaction(
+            name: input.releaseName,
+            uri: input.releaseMetadataUri,
+          ),
+        ),
       ),
       'mintAddress': mintAddress,
       'blockhash': blockhash,

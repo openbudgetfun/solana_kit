@@ -783,6 +783,8 @@ Future<void> _submitReleaseMintIfNeeded(
         expectedSignerAddress: context.publisherAddress,
         expectedMintAddress: preparedReleaseTransaction.mintAddress,
         expectedAppMintAddress: context.bundle.signerAuthority.appMintAddress,
+        expectedName: resolveReleaseDisplayName(context.bundle),
+        expectedMetadataUri: context.releaseMetadataUri,
       ),
     );
 

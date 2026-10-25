@@ -100,7 +100,7 @@ solana_kit_codecs_numbers -> solana_kit_codecs_core, solana_kit_errors
 solana_kit_codecs_strings -> solana_kit_codecs_core, solana_kit_codecs_numbers, solana_kit_errors
 solana_kit_compute_budget -> solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_errors, solana_kit_instructions, solana_kit_transaction_messages
 solana_kit_config -> solana_kit_accounts, solana_kit_addresses, solana_kit_codecs_core, solana_kit_codecs_data_structures, solana_kit_codecs_numbers, solana_kit_instructions
-solana_kit_dapp_publisher_cli -> solana_kit_address_constants, solana_kit_addresses, solana_kit_keys, solana_kit_mpl_token_metadata, solana_kit_rpc, solana_kit_rpc_spec, solana_kit_signers, solana_kit_transaction_messages, solana_kit_transactions
+solana_kit_dapp_publisher_cli -> solana_kit_address_constants, solana_kit_addresses, solana_kit_instructions, solana_kit_keys, solana_kit_mpl_token_metadata, solana_kit_rpc, solana_kit_rpc_spec, solana_kit_signers, solana_kit_transaction_messages, solana_kit_transactions
 solana_kit_errors -> (none)
 solana_kit_fast_stable_stringify -> (none)
 solana_kit_fixed_points -> (none)
