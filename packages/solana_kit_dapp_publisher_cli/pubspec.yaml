@@ -13,6 +13,7 @@ dependencies:
   http: ^1.4.0
   solana_kit_address_constants: ^0.11.0
   solana_kit_addresses: ^0.11.0
+  solana_kit_instructions: ^0.11.0
   solana_kit_keys: ^0.11.0
   solana_kit_mpl_token_metadata: ^0.11.0
   solana_kit_rpc: ^0.11.0

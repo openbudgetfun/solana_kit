@@ -299,7 +299,10 @@ More CI surfaces — continuous publishing on merge to `main` with an idempotenc
 
 ## Security
 
-- **Local transaction validation**: every portal-prepared transaction is verified before signing — blockhash, fee payer, exact signer set, program ID allowlist (compute budget + token metadata only), Create-instruction collection match, pre-signed mint signature, and verify-collection PDA derivations. A tampered transaction from the portal is never signed.
+- **Local transaction validation**: signing requires explicit transaction intent. Release transactions must contain exactly CreateV1 then MintV1 for one non-fungible token owned by the publisher, with the requested name, metadata URI and collection. Collection verification must contain exactly Verify(CollectionV1) for the expected release and collection PDAs. Every instruction's data, ordered account addresses and runtime privileges must match a locally built template. Blockhash, fee payer, signer sets and existing signatures are also checked. Only legacy and v0 messages without lookup tables are accepted. An optional Compute Budget limit (1–1,400,000 units) followed by an optional price is allowed before the publication instructions; the maximum priority fee is 100,000 lamports (0.0001 SOL), conservatively using 1,400,000 units when no limit is supplied. Extra instructions, delegated authorities and other metadata operations are rejected.
+
+`ReleaseMintValidation` requires `expectedName` and `expectedMetadataUri` from the local preparation request, alongside the expected addresses and blockhash. Omitting validation from `signPreparedTransaction` throws before invoking the signer. Portal implementations using a different instruction contract must be reviewed and supported explicitly before their transactions can be signed.
+
 - **HTTPS enforcement**: portal and APK endpoints must use HTTPS. `--local-dev` allows only localhost endpoints.
 - **Keypair handling**: the keypair is loaded from disk and used to sign in memory; only signature bytes leave the machine.
 - **API key handling**: the key lives in a `SensitiveString` wrapper with constant-time comparison and a redacting `toString()`. It is read from an environment variable or stdin, never from argv, and never appears in logs or error messages.
