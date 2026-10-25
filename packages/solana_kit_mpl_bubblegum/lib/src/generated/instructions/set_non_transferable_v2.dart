@@ -93,7 +93,12 @@ getSetNonTransferableV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     (
       'discriminator',
-      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+      transformDecoder(
+        getConstantDecoder(
+          Uint8List.fromList(SetNonTransferableV2InstructionDiscriminator),
+        ),
+        (_, bytes, offset) => SetNonTransferableV2InstructionDiscriminator,
+      ),
     ),
     ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
     (
@@ -116,7 +121,7 @@ getSetNonTransferableV2InstructionDataDecoder() {
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         SetNonTransferableV2InstructionData(
           discriminator: map['discriminator']! as List<int>,

@@ -59,13 +59,18 @@ getSetDecompressibleStateInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     (
       'discriminator',
-      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+      transformDecoder(
+        getConstantDecoder(
+          Uint8List.fromList(SetDecompressibleStateInstructionDiscriminator),
+        ),
+        (_, bytes, offset) => SetDecompressibleStateInstructionDiscriminator,
+      ),
     ),
     ('decompressableState', getU8Decoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         SetDecompressibleStateInstructionData(
           discriminator: map['discriminator']! as List<int>,

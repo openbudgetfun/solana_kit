@@ -39,11 +39,17 @@ getGetMinimumDelegationInstructionDataEncoder() {
 Decoder<GetMinimumDelegationInstructionData>
 getGetMinimumDelegationInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(13)),
+        (_, bytes, offset) => 13,
+      ),
+    ),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         GetMinimumDelegationInstructionData(
           discriminator: map['discriminator']! as int,

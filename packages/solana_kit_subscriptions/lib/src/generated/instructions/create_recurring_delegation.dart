@@ -45,12 +45,18 @@ getCreateRecurringDelegationInstructionDataEncoder() {
 Decoder<CreateRecurringDelegationInstructionData>
 getCreateRecurringDelegationInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(2)),
+        (_, bytes, offset) => 2,
+      ),
+    ),
     ('recurringDelegation', getCreateRecurringDelegationDataDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         CreateRecurringDelegationInstructionData(
           discriminator: map['discriminator']! as int,

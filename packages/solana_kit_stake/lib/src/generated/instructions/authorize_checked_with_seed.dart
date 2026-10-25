@@ -54,14 +54,20 @@ getAuthorizeCheckedWithSeedInstructionDataEncoder() {
 Decoder<AuthorizeCheckedWithSeedInstructionData>
 getAuthorizeCheckedWithSeedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(11)),
+        (_, bytes, offset) => 11,
+      ),
+    ),
     ('stakeAuthorize', getStakeAuthorizeDecoder()),
     ('authoritySeed', addDecoderSizePrefix(getUtf8Decoder(), getU32Decoder())),
     ('authorityOwner', getAddressDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         AuthorizeCheckedWithSeedInstructionData(
           discriminator: map['discriminator']! as int,

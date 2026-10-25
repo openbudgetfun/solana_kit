@@ -58,7 +58,13 @@ getAssignWithSeedInstructionDataEncoder() {
 Decoder<AssignWithSeedInstructionData>
 getAssignWithSeedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(10)),
+        (_, bytes, offset) => 10,
+      ),
+    ),
     ('base', getAddressDecoder()),
     (
       'seed',
@@ -71,7 +77,7 @@ getAssignWithSeedInstructionDataDecoder() {
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         AssignWithSeedInstructionData(
           discriminator: map['discriminator']! as int,

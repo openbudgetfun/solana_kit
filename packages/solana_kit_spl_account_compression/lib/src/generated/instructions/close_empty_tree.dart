@@ -37,11 +37,17 @@ getCloseEmptyTreeInstructionDataEncoder() {
 Decoder<CloseEmptyTreeInstructionData>
 getCloseEmptyTreeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(6)),
+        (_, bytes, offset) => 6,
+      ),
+    ),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         CloseEmptyTreeInstructionData(
           discriminator: map['discriminator']! as int,

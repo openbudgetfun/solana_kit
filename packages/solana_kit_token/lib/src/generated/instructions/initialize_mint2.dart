@@ -51,14 +51,20 @@ getInitializeMint2InstructionDataEncoder() {
 Decoder<InitializeMint2InstructionData>
 getInitializeMint2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(20)),
+        (_, bytes, offset) => 20,
+      ),
+    ),
     ('decimals', getU8Decoder()),
     ('mintAuthority', getAddressDecoder()),
     ('freezeAuthority', getNullableDecoder<Address>(getAddressDecoder())),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         InitializeMint2InstructionData(
           discriminator: map['discriminator']! as int,

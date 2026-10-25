@@ -43,12 +43,18 @@ getWithdrawNonceAccountInstructionDataEncoder() {
 Decoder<WithdrawNonceAccountInstructionData>
 getWithdrawNonceAccountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(5)),
+        (_, bytes, offset) => 5,
+      ),
+    ),
     ('withdrawAmount', getU64Decoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         WithdrawNonceAccountInstructionData(
           discriminator: map['discriminator']! as int,

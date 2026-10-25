@@ -39,11 +39,17 @@ getSetAuthorityCheckedInstructionDataEncoder() {
 Decoder<SetAuthorityCheckedInstructionData>
 getSetAuthorityCheckedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(7)),
+        (_, bytes, offset) => 7,
+      ),
+    ),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         SetAuthorityCheckedInstructionData(
           discriminator: map['discriminator']! as int,

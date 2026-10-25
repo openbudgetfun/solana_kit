@@ -102,7 +102,12 @@ getDelegateAndFreezeV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     (
       'discriminator',
-      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+      transformDecoder(
+        getConstantDecoder(
+          Uint8List.fromList(DelegateAndFreezeV2InstructionDiscriminator),
+        ),
+        (_, bytes, offset) => DelegateAndFreezeV2InstructionDiscriminator,
+      ),
     ),
     ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
     (
@@ -131,7 +136,7 @@ getDelegateAndFreezeV2InstructionDataDecoder() {
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         DelegateAndFreezeV2InstructionData(
           discriminator: map['discriminator']! as List<int>,

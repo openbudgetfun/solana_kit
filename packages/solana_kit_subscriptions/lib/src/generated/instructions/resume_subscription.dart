@@ -45,12 +45,18 @@ getResumeSubscriptionInstructionDataEncoder() {
 Decoder<ResumeSubscriptionInstructionData>
 getResumeSubscriptionInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(13)),
+        (_, bytes, offset) => 13,
+      ),
+    ),
     ('resumeData', getResumeDataDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         ResumeSubscriptionInstructionData(
           discriminator: map['discriminator']! as int,

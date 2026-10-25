@@ -43,12 +43,18 @@ Encoder<TransferFixedInstructionData> getTransferFixedInstructionDataEncoder() {
 
 Decoder<TransferFixedInstructionData> getTransferFixedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(4)),
+        (_, bytes, offset) => 4,
+      ),
+    ),
     ('transferData', getTransferDataDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         TransferFixedInstructionData(
           discriminator: map['discriminator']! as int,

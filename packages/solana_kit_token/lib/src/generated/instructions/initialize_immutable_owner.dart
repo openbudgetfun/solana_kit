@@ -39,11 +39,17 @@ getInitializeImmutableOwnerInstructionDataEncoder() {
 Decoder<InitializeImmutableOwnerInstructionData>
 getInitializeImmutableOwnerInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(22)),
+        (_, bytes, offset) => 22,
+      ),
+    ),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         InitializeImmutableOwnerInstructionData(
           discriminator: map['discriminator']! as int,

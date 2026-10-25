@@ -37,11 +37,17 @@ Encoder<CloseInstructionData> getCloseInstructionDataEncoder() {
 
 Decoder<CloseInstructionData> getCloseInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(5)),
+        (_, bytes, offset) => 5,
+      ),
+    ),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         CloseInstructionData(
           discriminator: map['discriminator']! as int,

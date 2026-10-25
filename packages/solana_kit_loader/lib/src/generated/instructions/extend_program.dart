@@ -41,12 +41,18 @@ Encoder<ExtendProgramInstructionData> getExtendProgramInstructionDataEncoder() {
 
 Decoder<ExtendProgramInstructionData> getExtendProgramInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(6)),
+        (_, bytes, offset) => 6,
+      ),
+    ),
     ('additionalBytes', getU32Decoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         ExtendProgramInstructionData(
           discriminator: map['discriminator']! as int,

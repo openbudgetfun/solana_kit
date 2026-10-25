@@ -41,12 +41,18 @@ Encoder<AssignInstructionData> getAssignInstructionDataEncoder() {
 
 Decoder<AssignInstructionData> getAssignInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(1)),
+        (_, bytes, offset) => 1,
+      ),
+    ),
     ('programAddress', getAddressDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         AssignInstructionData(
           discriminator: map['discriminator']! as int,

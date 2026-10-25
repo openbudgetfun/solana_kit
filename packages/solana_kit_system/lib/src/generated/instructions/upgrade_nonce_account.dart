@@ -39,11 +39,17 @@ getUpgradeNonceAccountInstructionDataEncoder() {
 Decoder<UpgradeNonceAccountInstructionData>
 getUpgradeNonceAccountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(12)),
+        (_, bytes, offset) => 12,
+      ),
+    ),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         UpgradeNonceAccountInstructionData(
           discriminator: map['discriminator']! as int,

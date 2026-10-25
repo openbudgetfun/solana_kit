@@ -58,7 +58,13 @@ getTransferSolWithSeedInstructionDataEncoder() {
 Decoder<TransferSolWithSeedInstructionData>
 getTransferSolWithSeedInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(11)),
+        (_, bytes, offset) => 11,
+      ),
+    ),
     ('amount', getU64Decoder()),
     (
       'fromSeed',
@@ -71,7 +77,7 @@ getTransferSolWithSeedInstructionDataDecoder() {
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         TransferSolWithSeedInstructionData(
           discriminator: map['discriminator']! as int,

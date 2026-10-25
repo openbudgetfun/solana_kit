@@ -78,7 +78,12 @@ Decoder<TransferInstructionData> getTransferInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     (
       'discriminator',
-      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+      transformDecoder(
+        getConstantDecoder(
+          Uint8List.fromList(TransferInstructionDiscriminator),
+        ),
+        (_, bytes, offset) => TransferInstructionDiscriminator,
+      ),
     ),
     ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
     (
@@ -94,7 +99,7 @@ Decoder<TransferInstructionData> getTransferInstructionDataDecoder() {
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         TransferInstructionData(
           discriminator: map['discriminator']! as List<int>,

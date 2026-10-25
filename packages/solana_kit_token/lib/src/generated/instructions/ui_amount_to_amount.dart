@@ -44,12 +44,18 @@ getUiAmountToAmountInstructionDataEncoder() {
 Decoder<UiAmountToAmountInstructionData>
 getUiAmountToAmountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(24)),
+        (_, bytes, offset) => 24,
+      ),
+    ),
     ('uiAmount', getUtf8Decoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         UiAmountToAmountInstructionData(
           discriminator: map['discriminator']! as int,

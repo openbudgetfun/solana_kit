@@ -84,7 +84,12 @@ getSetCollectionV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     (
       'discriminator',
-      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+      transformDecoder(
+        getConstantDecoder(
+          Uint8List.fromList(SetCollectionV2InstructionDiscriminator),
+        ),
+        (_, bytes, offset) => SetCollectionV2InstructionDiscriminator,
+      ),
     ),
     ('root', getArrayDecoder(getU8Decoder(), size: const FixedArraySize(32))),
     (
@@ -100,7 +105,7 @@ getSetCollectionV2InstructionDataDecoder() {
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         SetCollectionV2InstructionData(
           discriminator: map['discriminator']! as List<int>,

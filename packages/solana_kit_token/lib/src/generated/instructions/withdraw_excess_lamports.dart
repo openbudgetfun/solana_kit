@@ -39,11 +39,17 @@ getWithdrawExcessLamportsInstructionDataEncoder() {
 Decoder<WithdrawExcessLamportsInstructionData>
 getWithdrawExcessLamportsInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(38)),
+        (_, bytes, offset) => 38,
+      ),
+    ),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         WithdrawExcessLamportsInstructionData(
           discriminator: map['discriminator']! as int,

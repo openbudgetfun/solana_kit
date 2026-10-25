@@ -43,12 +43,18 @@ getInitializeAccount3InstructionDataEncoder() {
 Decoder<InitializeAccount3InstructionData>
 getInitializeAccount3InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(18)),
+        (_, bytes, offset) => 18,
+      ),
+    ),
     ('owner', getAddressDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         InitializeAccount3InstructionData(
           discriminator: map['discriminator']! as int,

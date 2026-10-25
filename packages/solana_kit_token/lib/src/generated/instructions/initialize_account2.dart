@@ -43,12 +43,18 @@ getInitializeAccount2InstructionDataEncoder() {
 Decoder<InitializeAccount2InstructionData>
 getInitializeAccount2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(16)),
+        (_, bytes, offset) => 16,
+      ),
+    ),
     ('owner', getAddressDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         InitializeAccount2InstructionData(
           discriminator: map['discriminator']! as int,

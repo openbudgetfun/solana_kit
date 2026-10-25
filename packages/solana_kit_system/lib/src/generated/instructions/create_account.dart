@@ -49,14 +49,20 @@ Encoder<CreateAccountInstructionData> getCreateAccountInstructionDataEncoder() {
 
 Decoder<CreateAccountInstructionData> getCreateAccountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(0)),
+        (_, bytes, offset) => 0,
+      ),
+    ),
     ('lamports', getU64Decoder()),
     ('space', getU64Decoder()),
     ('programAddress', getAddressDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         CreateAccountInstructionData(
           discriminator: map['discriminator']! as int,
