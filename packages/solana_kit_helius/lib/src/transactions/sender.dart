@@ -35,10 +35,9 @@ enum SenderRegion {
 /// Only the default region serves HTTPS. The regional endpoints are plain
 /// `http://` (upstream Helius infrastructure), so transactions sent through
 /// them — fully signed and therefore valid on submission — travel in
-/// cleartext: an on-path observer can read the transaction's contents and
-/// drop or delay it, though they cannot alter it without invalidating the
-/// signature. Prefer [SenderRegion.defaultRegion] whenever the payload is
-/// sensitive.
+/// cleartext. The URL helpers reject these endpoints by default and always
+/// reject them in release builds, even with `allowInsecureHttpForTesting`.
+/// Use [SenderRegion.defaultRegion] for HTTPS with automatic region routing.
 const senderEndpoints = <SenderRegion, String>{
   SenderRegion.defaultRegion: 'https://sender.helius-rpc.com',
   SenderRegion.usSlc: 'http://slc-sender.helius-rpc.com',
@@ -74,7 +73,55 @@ const int minTipLamportsMax = 1000000;
 const minTipLamportsSwqos = 5000;
 
 /// Builds the `/fast` endpoint URL for a sender [region].
-String senderFastUrl(SenderRegion region) => '${senderEndpoints[region]!}/fast';
+///
+/// {@template helius-sender-transport}
+/// Throws [ArgumentError] for HTTP endpoints unless
+/// [allowInsecureHttpForTesting] is explicitly enabled in a non-release build.
+/// This override exposes signed transactions to network observers and is only
+/// for controlled tests. Release builds always require HTTPS.
+/// {@endtemplate}
+String senderFastUrl(
+  SenderRegion region, {
+  bool allowInsecureHttpForTesting = false,
+}) => _senderUrl(
+  region,
+  'fast',
+  allowInsecureHttpForTesting: allowInsecureHttpForTesting,
+);
 
 /// Builds the `/ping` endpoint URL for a sender [region].
-String senderPingUrl(SenderRegion region) => '${senderEndpoints[region]!}/ping';
+///
+/// {@macro helius-sender-transport}
+String senderPingUrl(
+  SenderRegion region, {
+  bool allowInsecureHttpForTesting = false,
+}) => _senderUrl(
+  region,
+  'ping',
+  allowInsecureHttpForTesting: allowInsecureHttpForTesting,
+);
+
+/// Validates transport before a caller can send signed transactions.
+String _senderUrl(
+  SenderRegion region,
+  String path, {
+  required bool allowInsecureHttpForTesting,
+}) {
+  final endpoint = senderEndpoints[region]!;
+  const isProduction = bool.fromEnvironment('dart.vm.product');
+
+  // Security: the provider's regional hosts only serve HTTP. Never expose a
+  // signed transaction by selecting a region, including in release builds.
+  if (Uri.parse(endpoint).scheme != 'https' &&
+      (isProduction || !allowInsecureHttpForTesting)) {
+    throw ArgumentError.value(
+      region,
+      'region',
+      'Regional Helius Sender endpoints use insecure HTTP. '
+          'Use SenderRegion.defaultRegion for HTTPS. '
+          'allowInsecureHttpForTesting is only supported in non-release builds.',
+    );
+  }
+
+  return '$endpoint/$path';
+}

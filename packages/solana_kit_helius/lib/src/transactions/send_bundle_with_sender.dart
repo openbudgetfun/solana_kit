@@ -15,12 +15,19 @@ class SendBundleOptions {
   /// Creates send-bundle options.
   const SendBundleOptions({
     this.region,
+    this.allowInsecureHttpForTesting = false,
     this.pollTimeoutMs,
     this.pollIntervalMs,
   });
 
   /// Sender region to route through. Defaults to `SenderRegion.defaultRegion`.
   final SenderRegion? region;
+
+  /// Allows HTTP regional endpoints only for controlled non-release tests.
+  ///
+  /// Signed transactions are exposed to network observers. Release builds
+  /// reject HTTP endpoints regardless of this flag.
+  final bool allowInsecureHttpForTesting;
 
   /// Overall polling timeout in milliseconds. Defaults to 60 seconds.
   final int? pollTimeoutMs;
@@ -52,6 +59,9 @@ const _maxBundleSize = 5;
 /// Returns the signatures of every transaction in the bundle, in submission
 /// order. A failed on-chain transaction throws its transaction or instruction
 /// [SolanaError], including when its signature is confirmed or finalized.
+/// Regional HTTP endpoints throw [ArgumentError] unless
+/// [SendBundleOptions.allowInsecureHttpForTesting] is enabled in a non-release
+/// build. Use [SenderRegion.defaultRegion] for HTTPS.
 Future<List<String>> sendBundleWithSender(
   http.Client httpClient,
   JsonRpcClient rpcClient,
@@ -82,7 +92,12 @@ Future<List<String>> sendBundleWithSender(
 
   // Bundles always go through Sender Max — no `?swqos_only=true`.
   final response = await httpClient.post(
-    Uri.parse(senderFastUrl(region)),
+    Uri.parse(
+      senderFastUrl(
+        region,
+        allowInsecureHttpForTesting: options.allowInsecureHttpForTesting,
+      ),
+    ),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(<String, Object?>{
       'jsonrpc': '2.0',

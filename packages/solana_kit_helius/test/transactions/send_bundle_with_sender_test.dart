@@ -7,13 +7,52 @@ import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_helius/solana_kit_helius.dart';
 import 'package:solana_kit_helius/src/internal/json_rpc_client.dart';
-import 'package:solana_kit_helius/src/transactions/send_bundle_with_sender.dart';
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_transactions/solana_kit_transactions.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('sendBundleWithSender', () {
+    for (final region in SenderRegion.values) {
+      if (region == SenderRegion.defaultRegion) continue;
+
+      test('rejects $region before submitting or polling a bundle', () async {
+        var requests = 0;
+        final client = MockClient((request) async {
+          requests++;
+          return http.Response(
+            jsonEncode({
+              'result': {
+                'value': [
+                  {'confirmationStatus': 'confirmed'},
+                ],
+              },
+            }),
+            200,
+          );
+        });
+        final rpcClient = JsonRpcClient(
+          url: 'https://api.helius-rpc.com',
+          client: client,
+        );
+
+        await expectLater(
+          sendBundleWithSender(
+            client,
+            rpcClient,
+            [_signedTx(1)],
+            options: SendBundleOptions(
+              region: region,
+              pollTimeoutMs: 50,
+              pollIntervalMs: 1,
+            ),
+          ),
+          throwsArgumentError,
+        );
+        expect(requests, 0);
+      });
+    }
+
     for (final status in ['processed', 'confirmed', 'finalized']) {
       test(
         'rejects a failed bundle transaction at $status commitment',
@@ -71,13 +110,15 @@ void main() {
       );
     }
 
-    test(
-      'posts a sendBundle request and returns signatures in order',
-      () async {
+    for (final region in [
+      SenderRegion.defaultRegion,
+      SenderRegion.euWest,
+    ]) {
+      test('posts a sendBundle request through $region', () async {
         final requests = <http.Request>[];
         final httpClient = MockClient((request) async {
           requests.add(request);
-          expect(request.url.toString(), 'https://sender.helius-rpc.com/fast');
+          expect(request.url.toString(), '${senderEndpoints[region]}/fast');
           final body = jsonDecode(request.body) as Map<String, Object?>;
           expect(body['method'], 'sendBundle');
           expect(body['jsonrpc'], '2.0');
@@ -120,12 +161,16 @@ void main() {
           httpClient,
           rpcClient,
           [_signedTx(1), _signedTx(2)],
+          options: SendBundleOptions(
+            region: region,
+            allowInsecureHttpForTesting: region != SenderRegion.defaultRegion,
+          ),
         );
 
         expect(requests, hasLength(1));
         expect(sigs, [_expectedSig(1), _expectedSig(2)]);
-      },
-    );
+      });
+    }
 
     test('rejects empty bundles and bundles larger than 5', () async {
       final httpClient = MockClient(

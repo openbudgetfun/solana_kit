@@ -172,6 +172,12 @@ void main() {
 
 `HeliusWebSocket` enforces `wss://` URLs and rejects localhost plus non-public IP literals by default. Use `allowInsecureWs: true` and `allowPrivateHosts: true` only for local development and controlled tests. The private-host check does not resolve DNS names, so do not accept arbitrary WebSocket URLs from untrusted input.
 
+## Sender transport security
+
+`sendViaSender`, `sendBundleWithSender`, `senderFastUrl`, and `senderPingUrl` require HTTPS by default. Use `SenderRegion.defaultRegion` for Helius's global HTTPS endpoint, which automatically routes to the nearest location.
+
+Helius's regional Sender hosts use plain HTTP. Selecting one throws `ArgumentError` before any request is sent. Only controlled tests in non-release builds can opt in with `allowInsecureHttpForTesting: true` (on `SendBundleOptions` for bundles). This exposes signed transactions to network observers; release builds reject regional HTTP even with the override enabled. The exported `senderEndpoints` map lists the provider's raw URLs and does not validate transport.
+
 ## Testing strategy
 
 The Helius package keeps DTO smoke coverage, but long-term confidence should come from higher-level contracts:
