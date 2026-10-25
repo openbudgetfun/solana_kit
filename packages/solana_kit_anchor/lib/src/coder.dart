@@ -448,21 +448,19 @@ Uint8List _discriminatorBytes(List<int> discriminator) =>
 Uint8List _stripDiscriminator(List<int> discriminator, List<int> data) {
   final bytes = Uint8List.fromList(data);
 
-  for (var i = 0; i < discriminator.length; i++) {
-    if (bytes.length <= i || bytes[i] != discriminator[i]) {
-      throw AnchorDiscriminatorMismatch(
-        expected: List.of(discriminator),
-        found: List.of(bytes.take(discriminator.length)),
-      );
-    }
+  if (!startsWithDiscriminator(bytes, discriminator)) {
+    throw AnchorDiscriminatorMismatch(
+      expected: List.of(discriminator),
+      found: List.of(bytes.take(discriminator.length)),
+    );
   }
 
   return Uint8List.sublistView(bytes, discriminator.length);
 }
 
-/// Returns true when [data] starts with [discriminator].
+/// Returns true when [data] starts with a nonempty [discriminator].
 bool startsWithDiscriminator(List<int> data, List<int> discriminator) {
-  if (data.length < discriminator.length) return false;
+  if (discriminator.isEmpty || data.length < discriminator.length) return false;
 
   for (var i = 0; i < discriminator.length; i++) {
     if (data[i] != discriminator[i]) return false;
