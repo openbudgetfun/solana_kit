@@ -33,7 +33,10 @@ void verifyMobileWalletSignIn(
     throw const FormatException('Wallet sign-in signature does not verify');
   }
 
-  final fields = _signInFields(utf8.decode(message));
+  final fields = _signInFields(
+    utf8.decode(message),
+    request['statement'] as String?,
+  );
 
   if (fields['address'] != getAddressFromPublicKey(publicKey).value) {
     throw const FormatException('SIWS message names a different account');
@@ -69,7 +72,7 @@ const _fieldNames = {
 };
 
 /// Reads only the unambiguous SIWS grammar; duplicated and unknown fields fail.
-Map<String, Object?> _signInFields(String message) {
+Map<String, Object?> _signInFields(String message, String? requestedStatement) {
   final lines = message.split('\n');
 
   if (message.contains('\r') ||
@@ -92,9 +95,18 @@ Map<String, Object?> _signInFields(String message) {
       throw const FormatException('SIWS message is missing a blank separator');
     }
 
+    final hasStatementSeparator =
+        position + 1 < lines.length && lines[position + 1].isEmpty;
+    final isRequestedTrailingStatement =
+        position == lines.length - 1 && lines[position] == requestedStatement;
+
+    // A statement may itself begin with a field label. Its following blank
+    // separator, or the requested statement at EOF, disambiguates that case.
     if (position < lines.length &&
-        lines[position] != 'Resources:' &&
-        !_fieldNames.keys.any(lines[position].startsWith)) {
+        (hasStatementSeparator ||
+            isRequestedTrailingStatement ||
+            (lines[position] != 'Resources:' &&
+                !_fieldNames.keys.any(lines[position].startsWith)))) {
       fields['statement'] = lines[position++];
 
       if (position < lines.length && lines[position++] != '') {

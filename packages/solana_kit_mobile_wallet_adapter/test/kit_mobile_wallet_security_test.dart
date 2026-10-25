@@ -328,6 +328,25 @@ void main() {
     },
   );
 
+  for (final statement in ['Nonce: sign in', 'Resources:', 'URI: sign in']) {
+    test(
+      'accepts a SIWS statement that begins with a field label: $statement',
+      () async {
+        final request = _payloadFromJson(
+          _signInPayload(key).toJson()..['statement'] = statement,
+        );
+        raw.nextResult = _signInAuthorization(
+          key,
+          text: createSiwsMessage(request),
+        );
+        expect(
+          (await wallet.authorize(signInPayload: request)).signInResult,
+          isNotNull,
+        );
+      },
+    );
+  }
+
   for (final mismatch in [
     'domain',
     'address',
