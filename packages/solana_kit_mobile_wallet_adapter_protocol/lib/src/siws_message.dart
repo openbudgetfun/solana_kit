@@ -103,6 +103,6 @@ String createSiwsMessage(SignInPayload payload) {
     }
   }
 
-  // Trim trailing newline.
-  return buffer.toString().trimRight();
+  // Remove generated newlines without changing the final challenge value.
+  return buffer.toString().replaceFirst(RegExp(r'\n+$'), '');
 }

@@ -18,6 +18,14 @@ void main() {
     };
 
     for (final entry in scalarPayloads.entries) {
+      if (entry.key != 'domain') {
+        test('preserves trailing whitespace in ${entry.key}', () {
+          final message = createSiwsMessage(entry.value('value \t'));
+
+          expect(message, endsWith('value \t'));
+        });
+      }
+
       for (final (name, newline) in [
         ('LF', '\n'),
         ('CR', '\r'),
@@ -83,6 +91,14 @@ void main() {
             'Different resource scopes must not produce identical bytes '
             'for the wallet to sign.',
       );
+    });
+
+    test('preserves trailing whitespace in the last resource', () {
+      final message = createSiwsMessage(
+        const SignInPayload(resources: ['https://example.com/read \t']),
+      );
+
+      expect(message, endsWith('- https://example.com/read \t'));
     });
 
     test('preserves valid fields and resource delimiters', () {
