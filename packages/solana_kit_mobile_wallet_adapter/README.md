@@ -38,7 +38,7 @@ Use `isMwaSupported()` / `assertMwaSupported()` before invoking MWA APIs.
 - `transact()` for simple one-call session lifecycle
 - `LocalAssociationScenario` for explicit same-device control
 - `startRemoteScenario()` for reflector-based cross-device sessions
-- `KitMobileWallet` typed wrapper over the protocol wallet interface
+- `KitMobileWallet` wrapper that verifies signing results from the protocol wallet
 
 ### wallet-side APIs
 
@@ -245,6 +245,9 @@ This is useful when wallet policy requires Android app-origin verification befor
 
 ## Native parity and behavior notes
 
+- `KitMobileWallet` requires authorization or reauthorization through the same wrapper before signing. It verifies output counts, transaction message equality, existing cosignatures, and Ed25519 signatures from authorized signers. Message outputs must contain the original message followed by one signature per requested address, in address order. Incorrect counts or forged signing results throw `FormatException`.
+- Sign-in requests require a proof from an authorized account whose signed SIWS message matches every supplied request field. Include a fresh nonce and validate its lifetime and single use in your authentication service. Wallets may fill omitted fields. Unrequested or missing sign-in proofs are rejected.
+- Sign-and-send results must verify as the submitted transaction's fee payer signature. This verifies the transaction ID; confirm submission and commitment independently through your RPC connection.
 - Android wallet-side implementation is backed by Solana Mobile `walletlib` request/scenario APIs.
 - Request lifecycle is explicit:
   - native request -> Dart callback -> `completeWith*` -> native resolve/cancel

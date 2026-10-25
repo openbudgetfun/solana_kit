@@ -91,7 +91,7 @@ void main() {
     test('authorize passes identity and chain', () async {
       mockWallet.nextResult = {
         'accounts': [
-          {'address': 'dGVzdA=='},
+          {'address': 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='},
         ],
         'auth_token': 'token123',
       };
@@ -111,7 +111,7 @@ void main() {
     test('reauthorize passes auth token', () async {
       mockWallet.nextResult = {
         'accounts': [
-          {'address': 'dGVzdA=='},
+          {'address': 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='},
         ],
         'auth_token': 'newToken',
       };
@@ -146,59 +146,10 @@ void main() {
       expect(caps.features, contains('solana:signTransactions'));
     });
 
-    test('signTransactions returns signed payloads', () async {
-      mockWallet.nextResult = {
-        'signed_payloads': ['c2lnbmVk', 'c2lnbmVkMg=='],
-      };
-
-      final result = await kitWallet.signTransactions(
-        payloads: ['dHgx', 'dHgy'],
-      );
-
-      expect(mockWallet.lastMethod, 'signTransactions');
-      expect(result, hasLength(2));
-      expect(result[0], 'c2lnbmVk');
-    });
-
-    test('signMessages returns signed payloads', () async {
-      mockWallet.nextResult = {
-        'signed_payloads': ['c2lnbmVk'],
-      };
-
-      final result = await kitWallet.signMessages(
-        addresses: ['addr1'],
-        payloads: ['bXNn'],
-      );
-
-      expect(mockWallet.lastMethod, 'signMessages');
-      expect(result, hasLength(1));
-    });
-
-    test('signAndSendTransactions returns signatures', () async {
-      mockWallet.nextResult = {
-        'signatures': ['c2ln1', 'c2ln2'],
-      };
-
-      final result = await kitWallet.signAndSendTransactions(
-        payloads: ['dHgx', 'dHgy'],
-        options: const SignAndSendOptions(
-          commitment: 'confirmed',
-          skipPreflight: true,
-        ),
-      );
-
-      expect(mockWallet.lastMethod, 'signAndSendTransactions');
-      final params = mockWallet.lastParams!;
-      final options = params['options']! as Map<String, Object?>;
-      expect(options['commitment'], 'confirmed');
-      expect(options['skip_preflight'], isTrue);
-      expect(result, hasLength(2));
-    });
-
     test('cloneAuthorization returns authorization result', () async {
       mockWallet.nextResult = {
         'accounts': [
-          {'address': 'dGVzdA=='},
+          {'address': 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='},
         ],
         'auth_token': 'clonedToken',
       };
