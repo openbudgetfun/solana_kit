@@ -372,15 +372,14 @@ class AnchorIdlInstruction {
   /// The instruction name.
   final String name;
 
-  /// The 8-byte discriminator from the IDL, when present.
+  /// The nonempty discriminator bytes from the IDL.
   final List<int> discriminator;
 
   /// The instruction arguments, in declaration order.
   final List<AnchorIdlField> args;
 }
 
-/// A named entry with an 8-byte discriminator (accounts and events).
-/// A named entry with an 8-byte discriminator.
+/// A named entry with discriminator bytes (accounts and events).
 class AnchorIdlAccount {
   /// Creates a named, discriminated entry.
   const AnchorIdlAccount({required this.name, required this.discriminator});
@@ -388,7 +387,9 @@ class AnchorIdlAccount {
   /// The account name.
   final String name;
 
-  /// The 8-byte discriminator, `sha256("account:<name>")[0..8]`.
+  /// The nonempty discriminator bytes from the IDL.
+  ///
+  /// Anchor defaults to 8 bytes but also supports custom lengths.
   final List<int> discriminator;
 }
 
@@ -435,6 +436,9 @@ class AnchorIdlProgram {
   });
 
   /// Parses a raw IDL JSON string or a pre-decoded map.
+  ///
+  /// Instruction, account, and event discriminators must be nonempty lists
+  /// of integers in `0..255`; malformed values throw [ArgumentError].
   factory AnchorIdlProgram.parse(Object? raw) {
     final json = switch (raw) {
       final String text => jsonDecode(text) as Map<String, Object?>,
@@ -536,11 +540,24 @@ class AnchorIdlProgram {
   final Map<String, AnchorIdlTypeDef> types;
 }
 
-List<int> _discriminator(Map<String, Object?> node) =>
-    (node['discriminator'] as List<Object?>? ?? const [])
-        .cast<num>()
-        .map((byte) => byte.toInt())
-        .toList(growable: false);
+/// Validates type identity before building a runtime IDL entry.
+List<int> _discriminator(Map<String, Object?> node) {
+  final discriminator = node['discriminator'];
+
+  // Empty discriminators match every payload. Anchor permits custom lengths,
+  // so enforce nonempty byte lists rather than a fixed eight-byte width.
+  if (discriminator is! List<Object?> ||
+      discriminator.isEmpty ||
+      discriminator.any((byte) => byte is! int || byte < 0 || byte > 255)) {
+    throw ArgumentError.value(
+      discriminator,
+      'discriminator',
+      'Expected a nonempty list of integer bytes in 0..255',
+    );
+  }
+
+  return List<int>.unmodifiable(discriminator.cast<int>());
+}
 
 AnchorIdlInstruction _parseInstruction(Object? node) {
   final map = Map<String, Object?>.from(node! as Map);

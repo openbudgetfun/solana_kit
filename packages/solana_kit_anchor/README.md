@@ -14,6 +14,8 @@ Anchor program runtime for the Solana Kit Dart SDK: discriminators, Anchor IDL p
 
 The package does **not** port the Anchor on-chain framework, the CLI, or client code generation. Programs that rely on generics in their IDLs are better served by Codama-generated clients; the dynamic coder rejects generic type instantiations instead of silently mis-encoding them.
 
+`AnchorIdlProgram.parse` requires every instruction, account, and event discriminator to be a nonempty list of integer bytes (`0..255`). Missing, empty, or malformed values throw `ArgumentError`. Custom discriminator lengths are supported alongside Anchor's default eight-byte discriminators.
+
 <!-- {=packageInstallSection:"solana_kit_anchor"} -->
 
 ## Installation

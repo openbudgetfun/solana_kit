@@ -278,6 +278,7 @@ void main() {
         'instructions': [
           {
             'name': 'x',
+            'discriminator': [1],
             'args': [
               <String, Object?>{
                 'name': 'weird',
@@ -297,6 +298,7 @@ void main() {
       'instructions': <Object?>[
         <String, Object?>{
           'name': 'x',
+          'discriminator': [1],
           'args': <Object?>[13],
         },
       ],
