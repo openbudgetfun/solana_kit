@@ -7,6 +7,55 @@ import 'package:test/test.dart';
 
 void main() {
   group('sendViaSender', () {
+    for (final region in SenderRegion.values) {
+      if (region == SenderRegion.defaultRegion) continue;
+
+      test('allows $region only with a controlled-test opt-in', () async {
+        final client = MockClient((request) async {
+          expect(request.url.scheme, 'http');
+          expect(request.url.host, Uri.parse(senderEndpoints[region]!).host);
+          expect(request.url.path, '/fast');
+          expect(request.url.queryParameters, {'swqos_only': 'true'});
+          final body = jsonDecode(request.body) as Map<String, Object?>;
+          final params = body['params']! as List<Object?>;
+          expect(params.first, 'dGVzdA==');
+
+          return http.Response(jsonEncode('signature'), 200);
+        });
+
+        final signature = await sendViaSender(
+          'dGVzdA==',
+          region: region,
+          swqosOnly: true,
+          allowInsecureHttpForTesting: true,
+          client: client,
+        );
+
+        expect(signature, 'signature');
+      });
+
+      for (final swqosOnly in [false, true]) {
+        test('rejects $region before sending (SWQOS: $swqosOnly)', () async {
+          var requests = 0;
+          final client = MockClient((request) async {
+            requests++;
+            return http.Response(jsonEncode('signature'), 200);
+          });
+
+          await expectLater(
+            sendViaSender(
+              'dGVzdA==',
+              region: region,
+              swqosOnly: swqosOnly,
+              client: client,
+            ),
+            throwsArgumentError,
+          );
+          expect(requests, 0);
+        });
+      }
+    }
+
     test('handles a bare-string JSON response', () async {
       final client = MockClient((request) async {
         expect(request.method, 'POST');
@@ -36,14 +85,13 @@ void main() {
       final client = MockClient((request) async {
         expect(
           request.url.toString(),
-          '${senderFastUrl(SenderRegion.euWest)}?swqos_only=true',
+          'https://sender.helius-rpc.com/fast?swqos_only=true',
         );
         return http.Response(jsonEncode({'result': 'xyz789'}), 200);
       });
 
       final signature = await sendViaSender(
         'dGVzdA==',
-        region: SenderRegion.euWest,
         swqosOnly: true,
         client: client,
       );
@@ -105,9 +153,32 @@ void main() {
   });
 
   group('sender constants', () {
+    for (final region in SenderRegion.values) {
+      if (region == SenderRegion.defaultRegion) continue;
+
+      test('rejects $region in URL helpers by default', () {
+        expect(() => senderFastUrl(region), throwsArgumentError);
+        expect(() => senderPingUrl(region), throwsArgumentError);
+        expect(
+          senderFastUrl(region, allowInsecureHttpForTesting: true),
+          '${senderEndpoints[region]}/fast',
+        );
+        expect(
+          senderPingUrl(region, allowInsecureHttpForTesting: true),
+          '${senderEndpoints[region]}/ping',
+        );
+      });
+    }
+
     test('builds fast and ping URLs', () {
-      expect(senderFastUrl(SenderRegion.usEast), endsWith('/fast'));
-      expect(senderPingUrl(SenderRegion.usEast), endsWith('/ping'));
+      expect(
+        senderFastUrl(SenderRegion.defaultRegion),
+        'https://sender.helius-rpc.com/fast',
+      );
+      expect(
+        senderPingUrl(SenderRegion.defaultRegion),
+        'https://sender.helius-rpc.com/ping',
+      );
       expect(senderTipAccounts, hasLength(10));
       expect(minTipLamportsMax, 1000000);
       expect(minTipLamportsSwqos, 5000);

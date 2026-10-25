@@ -9,19 +9,20 @@ import 'package:solana_kit_helius/src/transactions/sender.dart';
 /// requires it to be `true`); it defaults to `true` for backward
 /// compatibility. `maxRetries` is fixed at 0.
 ///
-/// Note that every region except [SenderRegion.defaultRegion] is served
-/// over plain `http://` (see [senderEndpoints]); transactions submitted
-/// through those regions are readable by anyone on the network path.
+/// {@macro helius-sender-transport}
 Future<String> sendViaSender(
   String transaction, {
   SenderRegion region = SenderRegion.defaultRegion,
   bool swqosOnly = false,
   bool skipPreflight = true,
+  bool allowInsecureHttpForTesting = false,
   http.Client? client,
 }) async {
-  final endpoint = swqosOnly
-      ? '${senderFastUrl(region)}?swqos_only=true'
-      : senderFastUrl(region);
+  final fastUrl = senderFastUrl(
+    region,
+    allowInsecureHttpForTesting: allowInsecureHttpForTesting,
+  );
+  final endpoint = swqosOnly ? '$fastUrl?swqos_only=true' : fastUrl;
   final effectiveClient = client ?? http.Client(); // coverage:ignore-line
   final shouldClose = client == null; // coverage:ignore-line
 
