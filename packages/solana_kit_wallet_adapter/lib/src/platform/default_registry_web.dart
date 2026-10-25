@@ -4,6 +4,7 @@ import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 import 'dart:typed_data';
 
+import 'package:solana_kit_wallet_adapter/src/browser_wallet_verification.dart';
 import 'package:solana_kit_wallet_adapter/src/mobile_wallet.dart';
 import 'package:solana_kit_wallet_adapter/src/platform/default_registry_native.dart'
     show NativeMobileWalletBackend;
@@ -394,13 +395,15 @@ class _BrowserSignTransaction extends _BrowserFeature
       'signTransaction',
       inputs.map((input) => _transactionInput(wallet, input)).toList(),
     );
+    assertWalletOutputCount(inputs.length, outputs.length);
 
-    return outputs
-        .map(
-          (output) =>
-              SolanaSignTransactionOutput(_bytes(output, 'signedTransaction')),
-        )
-        .toList();
+    return outputs.indexed.map((entry) {
+      final (index, output) = entry;
+      final bytes = _bytes(output, 'signedTransaction');
+      assertWalletSignedTransaction(inputs[index], bytes);
+
+      return SolanaSignTransactionOutput(bytes);
+    }).toList();
   }
 }
 
@@ -419,13 +422,15 @@ class _BrowserSignAndSendTransaction extends _BrowserFeature
       'signAndSendTransaction',
       inputs.map((input) => _transactionInput(wallet, input)).toList(),
     );
+    assertWalletOutputCount(inputs.length, outputs.length);
 
-    return outputs
-        .map(
-          (output) =>
-              SolanaSignAndSendTransactionOutput(_bytes(output, 'signature')),
-        )
-        .toList();
+    return outputs.indexed.map((entry) {
+      final (index, output) = entry;
+      final signature = _bytes(output, 'signature');
+      assertWalletSubmissionSignature(inputs[index], signature);
+
+      return SolanaSignAndSendTransactionOutput(signature);
+    }).toList();
   }
 }
 
@@ -449,14 +454,25 @@ class _BrowserSignAndSendAll extends _BrowserFeature
     final outputs = await _promiseObjects(raw, 'signAndSendAllTransactions', [
       request,
     ]);
-    return outputs.map((output) {
-      if (_string(output, 'status') == 'fulfilled') {
+    assertWalletOutputCount(inputs.length, outputs.length);
+
+    return outputs.indexed.map((entry) {
+      final (index, output) = entry;
+      final status = _string(output, 'status');
+
+      if (status == 'fulfilled') {
+        final signature = _bytes(_object(output, 'value'), 'signature');
+        assertWalletSubmissionSignature(inputs[index], signature);
+
         return SolanaSignAndSendAllSuccess(
-          SolanaSignAndSendTransactionOutput(
-            _bytes(_object(output, 'value'), 'signature'),
-          ),
+          SolanaSignAndSendTransactionOutput(signature),
         );
       }
+
+      if (status != 'rejected') {
+        throw invalidWalletResponse('Wallet returned an invalid batch status');
+      }
+
       return SolanaSignAndSendAllFailure(
         output['reason'].dartify() ?? 'Wallet rejected the transaction',
       );
@@ -476,19 +492,22 @@ class _BrowserSignMessage extends _BrowserFeature
     final requests = inputs.map((input) {
       return JSObject()
         ..['account'] = wallet.accountObject(input.account)
-        ..['message'] = input.message.toJS;
+        ..['message'] = Uint8List.fromList(input.message).toJS;
     }).toList();
     final outputs = await _promiseObjects(raw, 'signMessage', requests);
+    assertWalletOutputCount(inputs.length, outputs.length);
 
-    return outputs
-        .map(
-          (output) => SolanaSignMessageOutput(
-            signedMessage: _bytes(output, 'signedMessage'),
-            signature: _bytes(output, 'signature'),
-            signatureType: _optionalString(output, 'signatureType'),
-          ),
-        )
-        .toList();
+    return outputs.indexed.map((entry) {
+      final (index, value) = entry;
+      final output = SolanaSignMessageOutput(
+        signedMessage: _bytes(value, 'signedMessage'),
+        signature: _bytes(value, 'signature'),
+        signatureType: _optionalSignatureType(value),
+      );
+      assertWalletSignedMessage(inputs[index], output);
+
+      return output;
+    }).toList();
   }
 }
 
@@ -522,17 +541,26 @@ class _BrowserSignIn extends _BrowserFeature implements SolanaSignInFeature {
       return value;
     }).toList();
     final outputs = await _promiseObjects(raw, 'signIn', requests);
+    assertWalletOutputCount(inputs.length, outputs.length);
+    // Sign-in may authorize accounts without a preceding connect call.
+    final rawAccounts = _array<JSObject>(wallet.raw, 'accounts');
+    final accounts = rawAccounts.map(wallet._account).toList();
 
-    return outputs
-        .map(
-          (output) => SolanaSignInOutput(
-            account: wallet._account(_object(output, 'account')),
-            signedMessage: _bytes(output, 'signedMessage'),
-            signature: _bytes(output, 'signature'),
-            signatureType: _optionalString(output, 'signatureType'),
-          ),
-        )
-        .toList();
+    final results = outputs.indexed.map((entry) {
+      final (index, value) = entry;
+      final output = SolanaSignInOutput(
+        account: wallet._account(_object(value, 'account')),
+        signedMessage: _bytes(value, 'signedMessage'),
+        signature: _bytes(value, 'signature'),
+        signatureType: _optionalSignatureType(value),
+      );
+      assertWalletSignIn(inputs[index], output, accounts);
+
+      return output;
+    }).toList();
+    wallet._accounts = wallet._accountsFromRaw(rawAccounts);
+
+    return results;
   }
 }
 
@@ -556,21 +584,24 @@ class _BrowserSignOffchainMessage extends _BrowserFeature
         ..['account'] = wallet.accountObject(input.account)
         ..['message'] = input.message.toJS
         ..['requiredSigners'] = input.requiredSigners
-            .map((item) => item.toJS)
+            .map((item) => Uint8List.fromList(item).toJS)
             .toList()
             .toJS;
     }).toList();
     final outputs = await _promiseObjects(raw, 'signOffchainMessage', requests);
+    assertWalletOutputCount(inputs.length, outputs.length);
 
-    return outputs
-        .map(
-          (output) => SolanaSignOffchainMessageOutput(
-            signedOffchainMessage: _bytes(output, 'signedOffchainMessage'),
-            signature: _bytes(output, 'signature'),
-            signatureType: _optionalString(output, 'signatureType'),
-          ),
-        )
-        .toList();
+    return outputs.indexed.map((entry) {
+      final (index, value) = entry;
+      final output = SolanaSignOffchainMessageOutput(
+        signedOffchainMessage: _bytes(value, 'signedOffchainMessage'),
+        signature: _bytes(value, 'signature'),
+        signatureType: _optionalSignatureType(value),
+      );
+      assertWalletOffchainMessage(inputs[index], output);
+
+      return output;
+    }).toList();
   }
 }
 
@@ -580,7 +611,7 @@ JSObject _transactionInput(
 ) {
   final value = JSObject()
     ..['account'] = wallet.accountObject(input.account)
-    ..['transaction'] = input.transaction.toJS;
+    ..['transaction'] = Uint8List.fromList(input.transaction).toJS;
   _setString(value, 'chain', input.chain);
   final options = input.options;
 
@@ -641,7 +672,8 @@ Future<List<JSObject>> _promiseObjects(
       )
       .toDart;
 
-  return output.toDart;
+  // Keep output cardinality stable even if a provider getter mutates its array.
+  return List<JSObject>.of(output.toDart);
 }
 
 List<String> _keys(JSObject value) =>
@@ -662,6 +694,18 @@ String? _optionalString(JSObject value, String property) {
   return item != null && item.isA<JSString>()
       ? (item as JSString).toDart
       : null;
+}
+
+String? _optionalSignatureType(JSObject value) {
+  final type = value['signatureType'];
+
+  if (type == null) return null;
+
+  if (!type.isA<JSString>()) {
+    throw invalidWalletResponse('Wallet returned an invalid signature type');
+  }
+
+  return (type as JSString).toDart;
 }
 
 List<String> _strings(JSObject value, String property) =>

@@ -6,6 +6,8 @@ import 'dart:js_interop_unsafe';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:solana_kit_addresses/solana_kit_addresses.dart';
+import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:solana_kit_wallet_adapter/solana_kit_wallet_adapter.dart';
 import 'package:solana_kit_wallet_standard/solana_kit_wallet_standard.dart';
 import 'package:web/web.dart' as web;
@@ -258,9 +260,13 @@ class _DemoWallet implements Wallet {
 class _WalletFixture {
   _WalletFixture({List<String> supportedTransactionVersions = const []}) {
     this.supportedTransactionVersions = supportedTransactionVersions;
+    final keyPair = createKeyPairFromPrivateKeyBytes(
+      Uint8List.fromList(List.filled(32, 9)),
+    );
+    address = getAddressFromPublicKey(keyPair.publicKey).value;
     account
       ..['address'] = address.toJS
-      ..['publicKey'] = Uint8List(32).toJS
+      ..['publicKey'] = keyPair.publicKey.toJS
       ..['chains'] = [SolanaChainId.localnet.toJS].toJS
       ..['features'] = [SolanaFeatureId.signMessage.toJS].toJS
       ..['label'] = 'Browser account'.toJS;
@@ -283,9 +289,10 @@ class _WalletFixture {
     final signMessage = JSObject()
       ..['version'] = '1.1.0'.toJS
       ..['signMessage'] = ((JSObject input) {
+        final message = (input['message']! as JSUint8Array).toDart;
         final output = JSObject()
           ..['signedMessage'] = input['message']
-          ..['signature'] = Uint8List(64).toJS
+          ..['signature'] = signBytes(keyPair.privateKey, message).value.toJS
           ..['signatureType'] = 'ed25519'.toJS;
         return Future<JSArray<JSObject>>.value([output].toJS).toJS;
       }).toJS;
@@ -324,7 +331,7 @@ class _WalletFixture {
 
   final JSObject account = JSObject();
   List<String> supportedTransactionVersions = const [];
-  final String address = '11111111111111111111111111111111';
+  late final String address;
   JSFunction? changeListener;
   bool silent = false;
   JSFunction? _unregister;
