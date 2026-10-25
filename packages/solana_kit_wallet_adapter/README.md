@@ -47,6 +47,8 @@ Native message signing validates the returned message envelope and exposes the e
 
 Native sign-in also requires the signed bytes to match the canonical SIWS message for the request, including the requested address, nonce, domain, URI, statement, version, chain ID, timestamps, request ID, and ordered resources. The wallet may select the domain and account when those inputs are omitted. A replayed proof for a different challenge or a malformed message fails with `WalletStandardErrorCode.invalidResponse`. Applications remain responsible for choosing a fresh nonce and enforcing their authentication expiry policy.
 
+Browser signing verifies one result per input and rejects changed transaction or message bytes, invalid Ed25519 signatures, and unsupported signature algorithms. Sign-in proofs must use an authorized account and match every supplied SIWS field, including the nonce and resources. Offchain proofs must preserve the version-one message content and required signers. Submission signatures must identify the requested transaction; use RPC confirmation to establish whether it landed on chain.
+
 ## Key APIs
 
 - `WalletController` and immutable `WalletAdapterState`
