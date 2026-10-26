@@ -43,12 +43,18 @@ getUnwrapLamportsInstructionDataEncoder() {
 Decoder<UnwrapLamportsInstructionData>
 getUnwrapLamportsInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(45)),
+        (_, bytes, offset) => 45,
+      ),
+    ),
     ('amount', getNullableDecoder<BigInt>(getU64Decoder())),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         UnwrapLamportsInstructionData(
           discriminator: map['discriminator']! as int,

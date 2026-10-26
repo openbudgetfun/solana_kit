@@ -43,12 +43,18 @@ Encoder<UpdatePlanInstructionData> getUpdatePlanInstructionDataEncoder() {
 
 Decoder<UpdatePlanInstructionData> getUpdatePlanInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(8)),
+        (_, bytes, offset) => 8,
+      ),
+    ),
     ('updatePlanData', getUpdatePlanDataDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         UpdatePlanInstructionData(
           discriminator: map['discriminator']! as int,

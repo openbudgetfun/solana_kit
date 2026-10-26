@@ -43,12 +43,18 @@ getInitializeMultisig2InstructionDataEncoder() {
 Decoder<InitializeMultisig2InstructionData>
 getInitializeMultisig2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(19)),
+        (_, bytes, offset) => 19,
+      ),
+    ),
     ('m', getU8Decoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         InitializeMultisig2InstructionData(
           discriminator: map['discriminator']! as int,

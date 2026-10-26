@@ -39,11 +39,17 @@ getInitSubscriptionAuthorityInstructionDataEncoder() {
 Decoder<InitSubscriptionAuthorityInstructionData>
 getInitSubscriptionAuthorityInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(0)),
+        (_, bytes, offset) => 0,
+      ),
+    ),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         InitSubscriptionAuthorityInstructionData(
           discriminator: map['discriminator']! as int,

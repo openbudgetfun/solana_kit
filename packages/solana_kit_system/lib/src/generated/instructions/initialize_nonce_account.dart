@@ -43,12 +43,18 @@ getInitializeNonceAccountInstructionDataEncoder() {
 Decoder<InitializeNonceAccountInstructionData>
 getInitializeNonceAccountInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(6)),
+        (_, bytes, offset) => 6,
+      ),
+    ),
     ('nonceAuthority', getAddressDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         InitializeNonceAccountInstructionData(
           discriminator: map['discriminator']! as int,

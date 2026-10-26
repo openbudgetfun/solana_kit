@@ -48,13 +48,19 @@ Encoder<InitializeInstructionData> getInitializeInstructionDataEncoder() {
 
 Decoder<InitializeInstructionData> getInitializeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(0)),
+        (_, bytes, offset) => 0,
+      ),
+    ),
     ('arg0', getAuthorizedDecoder()),
     ('arg1', getLockupDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         InitializeInstructionData(
           discriminator: map['discriminator']! as int,

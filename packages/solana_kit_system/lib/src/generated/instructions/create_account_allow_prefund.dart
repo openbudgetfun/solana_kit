@@ -51,14 +51,20 @@ getCreateAccountAllowPrefundInstructionDataEncoder() {
 Decoder<CreateAccountAllowPrefundInstructionData>
 getCreateAccountAllowPrefundInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(13)),
+        (_, bytes, offset) => 13,
+      ),
+    ),
     ('lamports', getU64Decoder()),
     ('space', getU64Decoder()),
     ('programAddress', getAddressDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         CreateAccountAllowPrefundInstructionData(
           discriminator: map['discriminator']! as int,

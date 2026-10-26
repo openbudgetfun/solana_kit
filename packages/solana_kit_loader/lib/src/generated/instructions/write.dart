@@ -51,7 +51,13 @@ Encoder<WriteInstructionData> getWriteInstructionDataEncoder() {
 
 Decoder<WriteInstructionData> getWriteInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(1)),
+        (_, bytes, offset) => 1,
+      ),
+    ),
     ('offset', getU32Decoder()),
     (
       'bytes',
@@ -63,7 +69,7 @@ Decoder<WriteInstructionData> getWriteInstructionDataDecoder() {
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         WriteInstructionData(
           discriminator: map['discriminator']! as int,

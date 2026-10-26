@@ -65,7 +65,10 @@ Decoder<MintV2InstructionData> getMintV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     (
       'discriminator',
-      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+      transformDecoder(
+        getConstantDecoder(Uint8List.fromList(MintV2InstructionDiscriminator)),
+        (_, bytes, offset) => MintV2InstructionDiscriminator,
+      ),
     ),
     ('metadataArgs', getU8Decoder()),
     ('assetData', getNullableDecoder(getBytesDecoder())),
@@ -73,7 +76,7 @@ Decoder<MintV2InstructionData> getMintV2InstructionDataDecoder() {
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         MintV2InstructionData(
           discriminator: map['discriminator']! as List<int>,

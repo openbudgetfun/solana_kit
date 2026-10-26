@@ -41,12 +41,18 @@ Encoder<SplitInstructionData> getSplitInstructionDataEncoder() {
 
 Decoder<SplitInstructionData> getSplitInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(3)),
+        (_, bytes, offset) => 3,
+      ),
+    ),
     ('args', getU64Decoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         SplitInstructionData(
           discriminator: map['discriminator']! as int,

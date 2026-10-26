@@ -45,12 +45,18 @@ getCancelSubscriptionNowInstructionDataEncoder() {
 Decoder<CancelSubscriptionNowInstructionData>
 getCancelSubscriptionNowInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(17)),
+        (_, bytes, offset) => 17,
+      ),
+    ),
     ('cancelSubscriptionNowData', getCancelSubscriptionNowDataDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         CancelSubscriptionNowInstructionData(
           discriminator: map['discriminator']! as int,

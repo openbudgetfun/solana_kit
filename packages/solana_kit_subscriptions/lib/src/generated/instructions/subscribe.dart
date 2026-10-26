@@ -43,12 +43,18 @@ Encoder<SubscribeInstructionData> getSubscribeInstructionDataEncoder() {
 
 Decoder<SubscribeInstructionData> getSubscribeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(11)),
+        (_, bytes, offset) => 11,
+      ),
+    ),
     ('subscribeData', getSubscribeDataDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         SubscribeInstructionData(
           discriminator: map['discriminator']! as int,

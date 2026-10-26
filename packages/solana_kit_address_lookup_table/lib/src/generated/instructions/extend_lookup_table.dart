@@ -49,7 +49,13 @@ getExtendLookupTableInstructionDataEncoder() {
 Decoder<ExtendLookupTableInstructionData>
 getExtendLookupTableInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(2)),
+        (_, bytes, offset) => 2,
+      ),
+    ),
     (
       'addresses',
       getArrayDecoder(
@@ -60,7 +66,7 @@ getExtendLookupTableInstructionDataDecoder() {
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         ExtendLookupTableInstructionData(
           discriminator: map['discriminator']! as int,

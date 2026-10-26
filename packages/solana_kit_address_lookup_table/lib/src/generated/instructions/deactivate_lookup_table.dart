@@ -39,11 +39,17 @@ getDeactivateLookupTableInstructionDataEncoder() {
 Decoder<DeactivateLookupTableInstructionData>
 getDeactivateLookupTableInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(3)),
+        (_, bytes, offset) => 3,
+      ),
+    ),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         DeactivateLookupTableInstructionData(
           discriminator: map['discriminator']! as int,

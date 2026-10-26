@@ -53,7 +53,13 @@ Encoder<BatchInstructionData> getBatchInstructionDataEncoder() {
 
 Decoder<BatchInstructionData> getBatchInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(255)),
+        (_, bytes, offset) => 255,
+      ),
+    ),
     (
       'data',
       getArrayDecoder(
@@ -70,7 +76,7 @@ Decoder<BatchInstructionData> getBatchInstructionDataDecoder() {
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         BatchInstructionData(
           discriminator: map['discriminator']! as int,

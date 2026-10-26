@@ -43,12 +43,18 @@ getDeployWithMaxDataLenInstructionDataEncoder() {
 Decoder<DeployWithMaxDataLenInstructionData>
 getDeployWithMaxDataLenInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(2)),
+        (_, bytes, offset) => 2,
+      ),
+    ),
     ('maxDataLen', getU64Decoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         DeployWithMaxDataLenInstructionData(
           discriminator: map['discriminator']! as int,

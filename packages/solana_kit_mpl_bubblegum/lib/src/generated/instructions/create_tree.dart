@@ -64,7 +64,12 @@ Decoder<CreateTreeInstructionData> getCreateTreeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     (
       'discriminator',
-      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+      transformDecoder(
+        getConstantDecoder(
+          Uint8List.fromList(CreateTreeInstructionDiscriminator),
+        ),
+        (_, bytes, offset) => CreateTreeInstructionDiscriminator,
+      ),
     ),
     ('maxDepth', getU32Decoder()),
     ('maxBufferSize', getU32Decoder()),
@@ -72,7 +77,7 @@ Decoder<CreateTreeInstructionData> getCreateTreeInstructionDataDecoder() {
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         CreateTreeInstructionData(
           discriminator: map['discriminator']! as List<int>,

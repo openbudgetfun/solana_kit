@@ -45,12 +45,18 @@ getTransferSubscriptionInstructionDataEncoder() {
 Decoder<TransferSubscriptionInstructionData>
 getTransferSubscriptionInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(10)),
+        (_, bytes, offset) => 10,
+      ),
+    ),
     ('transferData', getTransferDataDecoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         TransferSubscriptionInstructionData(
           discriminator: map['discriminator']! as int,

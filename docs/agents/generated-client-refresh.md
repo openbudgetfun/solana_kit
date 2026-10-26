@@ -28,6 +28,12 @@ node scripts/generate_program_packages.mjs --check
 
 CI does not run `--check`, which is why the drift went unnoticed. Wiring it into CI has to come _after_ the refresh, otherwise it fails immediately.
 
+## Instruction decoder security backport
+
+The legacy instruction data decoders now validate their discriminator bytes and require complete input consumption, including when called by a named `parse*Instruction` helper. These checks use `getConstantDecoder` and `createDecoderThatConsumesEntireByteArray` to preserve the committed data classes and decoder size metadata. The current renderer already emits equivalent discriminator and full-consumption checks through `getTopLevelDecoderFragment`; a full client refresh must retain those checks. General-purpose codecs continue to support reading a prefix from a larger buffer.
+
+Instruction data validation does not establish program identity. Call `assertIsInstructionForProgram` with the intended program address before using a named parser for transaction classification or signing policy.
+
 ## What kind of drift this is
 
 Not a single fix. The renderer has accumulated several behavior changes since the committed clients were produced, and they alter the generated public API:

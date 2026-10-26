@@ -53,7 +53,13 @@ Encoder<ReplaceLeafInstructionData> getReplaceLeafInstructionDataEncoder() {
 
 Decoder<ReplaceLeafInstructionData> getReplaceLeafInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU8Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU8Encoder().encode(1)),
+        (_, bytes, offset) => 1,
+      ),
+    ),
     ('root', getArrayDecoder(getU8Decoder(), size: FixedArraySize(32))),
     ('previousLeaf', getArrayDecoder(getU8Decoder(), size: FixedArraySize(32))),
     ('newLeaf', getArrayDecoder(getU8Decoder(), size: FixedArraySize(32))),
@@ -61,7 +67,7 @@ Decoder<ReplaceLeafInstructionData> getReplaceLeafInstructionDataDecoder() {
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         ReplaceLeafInstructionData(
           discriminator: map['discriminator']! as int,

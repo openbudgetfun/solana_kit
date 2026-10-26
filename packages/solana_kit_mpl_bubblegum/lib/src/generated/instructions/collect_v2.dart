@@ -52,12 +52,17 @@ Decoder<CollectV2InstructionData> getCollectV2InstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
     (
       'discriminator',
-      getArrayDecoder(getU8Decoder(), size: const FixedArraySize(8)),
+      transformDecoder(
+        getConstantDecoder(
+          Uint8List.fromList(CollectV2InstructionDiscriminator),
+        ),
+        (_, bytes, offset) => CollectV2InstructionDiscriminator,
+      ),
     ),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         CollectV2InstructionData(
           discriminator: map['discriminator']! as List<int>,

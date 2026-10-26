@@ -41,12 +41,18 @@ Encoder<MoveLamportsInstructionData> getMoveLamportsInstructionDataEncoder() {
 
 Decoder<MoveLamportsInstructionData> getMoveLamportsInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(17)),
+        (_, bytes, offset) => 17,
+      ),
+    ),
     ('args', getU64Decoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         MoveLamportsInstructionData(
           discriminator: map['discriminator']! as int,

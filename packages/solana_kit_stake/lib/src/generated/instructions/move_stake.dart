@@ -41,12 +41,18 @@ Encoder<MoveStakeInstructionData> getMoveStakeInstructionDataEncoder() {
 
 Decoder<MoveStakeInstructionData> getMoveStakeInstructionDataDecoder() {
   final structDecoder = getStructDecoder(<(String, Decoder<Object?>)>[
-    ('discriminator', getU32Decoder()),
+    (
+      'discriminator',
+      transformDecoder(
+        getConstantDecoder(getU32Encoder().encode(16)),
+        (_, bytes, offset) => 16,
+      ),
+    ),
     ('args', getU64Decoder()),
   ]);
 
   return transformDecoder(
-    structDecoder,
+    createDecoderThatConsumesEntireByteArray(structDecoder),
     (Map<String, Object?> map, Uint8List bytes, int offset) =>
         MoveStakeInstructionData(
           discriminator: map['discriminator']! as int,
