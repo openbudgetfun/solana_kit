@@ -6,6 +6,22 @@ import 'package:test/test.dart';
 void main() {
   final secret = Uint8List.fromList(List.filled(32, 7));
 
+  test('local association limits bound encrypted wallet responses', () {
+    final frame = encryptMessage('{"id":1,"result":{"ok":true}}', 1, secret);
+    final config = WalletAssociationConfig(
+      inboundLimits: InboundPayloadLimits(maxBytes: frame.length - 1),
+    );
+
+    expect(
+      () => decryptJsonRpcResponse(
+        frame,
+        secret,
+        inboundLimits: config.inboundLimits,
+      ),
+      throwsA(isA<InboundPayloadLimitException>()),
+    );
+  });
+
   test('rejects oversized encrypted bytes before cryptographic processing', () {
     expect(
       () => decryptMessage(

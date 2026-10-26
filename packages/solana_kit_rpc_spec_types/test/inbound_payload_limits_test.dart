@@ -5,6 +5,24 @@ import 'package:test/test.dart';
 
 void main() {
   group('InboundPayloadLimits', () {
+    test(
+      'budget diagnostics identify the limit without including payloads',
+      () {
+        const payload = 'sensitive wallet response';
+
+        expect(
+          () => const InboundPayloadLimits(maxBytes: 8).checkText(payload),
+          throwsA(
+            isA<InboundPayloadLimitException>().having(
+              (error) => error.toString(),
+              'diagnostic',
+              allOf(contains('bytes'), contains('8'), isNot(contains(payload))),
+            ),
+          ),
+        );
+      },
+    );
+
     for (final text in ['ascii', 'é', '😀', '\ud800', '\udc00', 'é😀ascii']) {
       test('counts UTF-8 bytes for ${jsonEncode(text)}', () {
         final bytes = utf8.encode(text).length;

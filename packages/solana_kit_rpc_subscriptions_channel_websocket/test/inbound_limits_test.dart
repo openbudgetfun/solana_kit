@@ -42,6 +42,20 @@ void main() {
     ),
   );
 
+  test(
+    'rejects a non-positive pending message count before connecting',
+    () async {
+      await expectLater(connect(maxPendingMessages: 0), throwsArgumentError);
+    },
+  );
+
+  test(
+    'rejects a non-positive pending byte budget before connecting',
+    () async {
+      await expectLater(connect(maxPendingBytes: 0), throwsArgumentError);
+    },
+  );
+
   for (final frame in <Object>['é' * 5, List<int>.filled(9, 0), '[[[0]]]']) {
     test(
       'closes on oversized or too deeply nested ${frame.runtimeType}',

@@ -298,11 +298,10 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
 
         if (data is String) {
           bytes = config.inboundLimits.checkText(data);
-        } else if (data is List<int>) {
-          bytes = data.length;
-          config.inboundLimits.checkByteLength(bytes);
         } else {
-          throw StateError('Unexpected WebSocket payload type.');
+          // The connector emits only String text or List<int> binary data.
+          bytes = (data as List<int>).length;
+          config.inboundLimits.checkByteLength(bytes);
         }
 
         messagesController.add(_InboundMessage(data, bytes));
@@ -311,7 +310,7 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
       }
     },
     onError: (Object error) {
-      if (isClosed || (config.signal?.isCancelled ?? false)) return;
+      if (config.signal?.isCancelled ?? false) return;
       if (!errorsController.isClosed) errorsController.addError(error);
     },
     onDone: () {
