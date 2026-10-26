@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
+import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
 import 'package:solana_kit_subscribable/solana_kit_subscribable.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -73,6 +75,9 @@ class WebSocketChannelConfig {
     required this.url,
     this.allowInsecureWs = false,
     this.allowPrivateHosts = false,
+    this.inboundLimits = const InboundPayloadLimits(),
+    this.maxPendingMessages = 128,
+    this.maxPendingBytes = 16 * 1024 * 1024,
     this.signal,
   });
 
@@ -99,6 +104,20 @@ class WebSocketChannelConfig {
   ///
   /// Set to `true` for local development and testing against local validators.
   final bool allowPrivateHosts;
+
+  /// Bounds message bytes and text JSON complexity before forwarding.
+  ///
+  /// The platform WebSocket implementation assembles each message first.
+  /// Exceeding this budget closes the connection with application code 4009.
+  final InboundPayloadLimits inboundLimits;
+
+  /// Maximum messages queued for each paused notification listener.
+  final int maxPendingMessages;
+
+  /// Maximum total bytes queued for each paused notification listener.
+  ///
+  /// Exceeding either queue budget closes the connection with code 4009.
+  final int maxPendingBytes;
 
   /// An optional cancellation token used to abort the connection.
   ///
@@ -157,6 +176,12 @@ abstract interface class RpcSubscriptionsChannel {
 Future<RpcSubscriptionsChannel> createWebSocketChannel(
   WebSocketChannelConfig config,
 ) async {
+  config.inboundLimits.validate();
+
+  if (config.maxPendingMessages <= 0 || config.maxPendingBytes <= 0) {
+    throw ArgumentError('Pending message budgets must be positive.');
+  }
+
   // Check if already cancelled.
   if (config.signal?.isCancelled ?? false) {
     final reason = config.signal!.reason;
@@ -176,7 +201,9 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
     allowPrivateHosts: config.allowPrivateHosts,
   );
 
-  final messagesController = StreamController<Object?>.broadcast(sync: true);
+  final messagesController = StreamController<_InboundMessage>.broadcast(
+    sync: true,
+  );
   final errorsController = StreamController<Object?>.broadcast(sync: true);
 
   WebSocketChannel? connectingChannel;
@@ -213,10 +240,38 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
   final subscriptions = <StreamSubscription<void>>[];
 
   void closeStreams() {
+    if (isClosed) return;
     isClosed = true;
-    unawaited(messagesController.close());
-    unawaited(errorsController.close());
+
+    // A paused listener can overflow while the synchronous source is firing.
+    // Defer closure until that event finishes to avoid reentrant stream events.
+    scheduleMicrotask(() {
+      unawaited(messagesController.close());
+      unawaited(errorsController.close());
+    });
   }
+
+  void failBudget(InboundPayloadLimitException error) {
+    if (isClosed) return;
+
+    closeStreams();
+    errorsController.add(error);
+    // Browser-compatible WebSocket APIs only permit 1000 or 3000-4999.
+    webSocketChannel.sink
+        .close(4009, 'Inbound resource limit exceeded')
+        .ignore();
+
+    for (final subscription in subscriptions) {
+      unawaited(subscription.cancel());
+    }
+  }
+
+  final notifications = _boundPendingMessages(
+    messagesController.stream,
+    maxMessages: config.maxPendingMessages,
+    maxBytes: config.maxPendingBytes,
+    onOverflow: failBudget,
+  );
 
   // Handle cancellation token.
   if (config.signal != null) {
@@ -236,14 +291,32 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
   // Listen for messages from the WebSocket.
   final messageSub = webSocketChannel.stream.listen(
     (data) {
-      if (config.signal?.isCancelled ?? false) return;
-      if (!messagesController.isClosed) messagesController.add(data);
+      if (isClosed || (config.signal?.isCancelled ?? false)) return;
+
+      try {
+        final int bytes;
+
+        if (data is String) {
+          bytes = config.inboundLimits.checkText(data);
+        } else if (data is List<int>) {
+          bytes = data.length;
+          config.inboundLimits.checkByteLength(bytes);
+        } else {
+          throw StateError('Unexpected WebSocket payload type.');
+        }
+
+        messagesController.add(_InboundMessage(data, bytes));
+      } on InboundPayloadLimitException catch (error) {
+        failBudget(error);
+      }
     },
     onError: (Object error) {
-      if (config.signal?.isCancelled ?? false) return;
+      if (isClosed || (config.signal?.isCancelled ?? false)) return;
       if (!errorsController.isClosed) errorsController.addError(error);
     },
     onDone: () {
+      if (isClosed) return;
+
       // Connection closed unexpectedly.
       final closeCode = webSocketChannel.closeCode;
       if (!(config.signal?.isCancelled ?? false) &&
@@ -267,7 +340,7 @@ Future<RpcSubscriptionsChannel> createWebSocketChannel(
   subscriptions.add(messageSub);
 
   return _WebSocketRpcChannel(
-    messagesController: messagesController,
+    notifications: notifications,
     errorsController: errorsController,
     webSocketChannel: webSocketChannel,
     isClosed: () => isClosed || (config.signal?.isCancelled ?? false),
@@ -515,20 +588,20 @@ bool _isPrivateIpv6(String host) {
 
 class _WebSocketRpcChannel implements RpcSubscriptionsChannel {
   _WebSocketRpcChannel({
-    required this._messagesController,
+    required this._notifications,
     required this._errorsController,
     required this._webSocketChannel,
     required this._isClosed,
   });
 
-  final StreamController<Object?> _messagesController;
+  final Stream<Object?> _notifications;
   final StreamController<Object?> _errorsController;
   final WebSocketChannel _webSocketChannel;
   final bool Function() _isClosed;
 
   @override
   NotificationStreams get streams => NotificationStreams(
-    notifications: _messagesController.stream,
+    notifications: _notifications,
     errors: _errorsController.stream,
   );
 
@@ -543,3 +616,75 @@ class _WebSocketRpcChannel implements RpcSubscriptionsChannel {
     _webSocketChannel.sink.add(message);
   }
 }
+
+class _InboundMessage {
+  const _InboundMessage(this.value, this.bytes);
+
+  final Object? value;
+  final int bytes;
+}
+
+/// Keeps the source subscription running so Dart cannot buffer an unbounded
+/// broadcast queue behind a paused listener. Each listener owns a finite queue.
+Stream<Object?> _boundPendingMessages(
+  Stream<_InboundMessage> source, {
+  required int maxMessages,
+  required int maxBytes,
+  required void Function(InboundPayloadLimitException) onOverflow,
+}) => Stream<Object?>.multi((controller) {
+  final pending = Queue<_InboundMessage>();
+  var pendingBytes = 0;
+  var sourceDone = false;
+  var closed = false;
+
+  void drain() {
+    while (!closed && !controller.isPaused && pending.isNotEmpty) {
+      final message = pending.removeFirst();
+      pendingBytes -= message.bytes;
+      controller.addSync(message.value);
+    }
+
+    if (!closed && sourceDone && pending.isEmpty) {
+      closed = true;
+      controller.closeSync();
+    }
+  }
+
+  final subscription = source.listen(
+    (message) {
+      if (closed) return;
+
+      if (!controller.isPaused && pending.isEmpty) {
+        controller.addSync(message.value);
+        return;
+      }
+
+      if (pending.length >= maxMessages ||
+          pendingBytes + message.bytes > maxBytes) {
+        closed = true;
+        pending.clear();
+        controller.closeSync();
+        onOverflow(
+          pendingBytes + message.bytes > maxBytes
+              ? InboundPayloadLimitException('queued bytes', maxBytes)
+              : InboundPayloadLimitException('queued messages', maxMessages),
+        );
+        return;
+      }
+
+      pending.add(message);
+      pendingBytes += message.bytes;
+    },
+    onDone: () {
+      sourceDone = true;
+      drain();
+    },
+  );
+  controller
+    ..onResume = drain
+    ..onCancel = () {
+      closed = true;
+      pending.clear();
+      return subscription.cancel();
+    };
+}, isBroadcast: true);

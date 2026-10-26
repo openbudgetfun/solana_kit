@@ -3,6 +3,7 @@ import 'package:solana_kit_rpc/src/rpc_default_config.dart';
 import 'package:solana_kit_rpc/src/rpc_transport.dart';
 import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart';
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
+import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
 
 /// Creates an [Rpc] instance that exposes the Solana JSON RPC API given a
 /// cluster URL and some optional transport config.
@@ -19,6 +20,7 @@ import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
 Rpc createSolanaRpc({
   required String url,
   bool allowInsecureHttp = false,
+  InboundPayloadLimits inboundLimits = const InboundPayloadLimits(),
   Map<String, String>? headers,
   http.Client? client,
 }) {
@@ -26,6 +28,7 @@ Rpc createSolanaRpc({
     createDefaultRpcTransport(
       url: url,
       allowInsecureHttp: allowInsecureHttp,
+      inboundLimits: inboundLimits,
       headers: headers,
       client: client,
     ),

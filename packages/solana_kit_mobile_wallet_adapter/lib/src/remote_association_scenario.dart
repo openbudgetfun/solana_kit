@@ -69,7 +69,9 @@ enum _RemoteState { connecting, reflectorIdReceived, helloReqSent, connected }
 class RemoteAssociationSession {
   /// Creates a session bound to [_config].
   RemoteAssociationSession(this._config)
-    : _associationKeyPair = generateAssociationKeypair();
+    : _associationKeyPair = generateAssociationKeypair() {
+    _config.inboundLimits.validate();
+  }
 
   final RemoteWalletAssociationConfig _config;
   AssociationKeypair? _associationKeyPair;
@@ -151,13 +153,16 @@ class RemoteAssociationSession {
 
     final error = SolanaError(SolanaErrorCode.mwaSessionClosed);
     _failPendingOperations(error);
+    _clearSessionKeys();
 
     await _subscription?.cancel();
     _subscription = null;
 
     await _channel?.sink.close();
     _channel = null;
+  }
 
+  void _clearSessionKeys() {
     // Zero the session key and drop the handshake keypairs so they do not
     // outlive the session. The P-256 scalars live inside PointyCastle
     // BigInts, which cannot be zeroed deterministically in Dart; only the
@@ -173,6 +178,7 @@ class RemoteAssociationSession {
 
     try {
       final payload = _decodeInboundPayload(message);
+      _config.inboundLimits.checkByteLength(payload.length);
 
       switch (_state) {
         case _RemoteState.connecting:
@@ -232,6 +238,7 @@ class RemoteAssociationSession {
       _sessionProps = parseSessionProps(
         result.encryptedSessionProps!,
         _sharedSecret!,
+        inboundLimits: _config.inboundLimits,
       );
     }
 
@@ -253,7 +260,7 @@ class RemoteAssociationSession {
   @visibleForTesting
   bool deliverConnectedFrameForTesting({
     required Uint8List sharedSecret,
-    required Uint8List message,
+    required Object? message,
   }) {
     _state = _RemoteState.connected;
     _sharedSecret = sharedSecret;
@@ -376,15 +383,24 @@ class RemoteAssociationSession {
 
   Uint8List _decodeInboundPayload(Object? message) {
     if (message is Uint8List) {
+      _config.inboundLimits.checkByteLength(message.length);
       return message;
     }
 
     if (message is List<int>) {
+      _config.inboundLimits.checkByteLength(message.length);
       return Uint8List.fromList(message);
     }
 
     if (message is String) {
-      return Uint8List.fromList(base64.decode(message.trim()));
+      // Bound the encoded form before trim/base64 can allocate another copy.
+      final maxEncodedLength = ((_config.inboundLimits.maxBytes + 2) ~/ 3) * 4;
+
+      if (message.length > maxEncodedLength) {
+        throw InboundPayloadLimitException('base64 bytes', maxEncodedLength);
+      }
+
+      return base64.decode(message.trim());
     }
 
     throw SolanaError(SolanaErrorCode.mwaHandshakeFailed, {
@@ -439,7 +455,11 @@ class RemoteAssociationSession {
     Uint8List message,
     Uint8List sharedSecret,
   ) {
-    final decrypted = decryptMessage(message, sharedSecret);
+    final decrypted = decryptMessage(
+      message,
+      sharedSecret,
+      inboundLimits: _config.inboundLimits,
+    );
     final jsonRpcMessage = json.decode(decrypted.plaintext);
 
     if (jsonRpcMessage is! Map) {
@@ -481,6 +501,7 @@ class RemoteAssociationSession {
     _closed = true;
 
     _failPendingOperations(error);
+    _clearSessionKeys();
 
     unawaited(_subscription?.cancel());
     _subscription = null;

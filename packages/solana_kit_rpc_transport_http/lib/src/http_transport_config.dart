@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
+
 /// Configuration for creating an HTTP transport.
 ///
 /// Pass an instance of this class to `createHttpTransport` to create a
@@ -11,6 +13,7 @@ class HttpTransportConfig {
   const HttpTransportConfig({
     required this.url,
     this.allowInsecureHttp = false,
+    this.inboundLimits = const InboundPayloadLimits(),
     this.fromJson,
     this.headers,
     this.toJson,
@@ -28,6 +31,12 @@ class HttpTransportConfig {
   ///
   /// Defaults to `false`, which enforces `https://` URLs.
   final bool allowInsecureHttp;
+
+  /// Bounds response bytes while streaming and JSON complexity before decoding.
+  ///
+  /// Applies to custom [fromJson] callbacks as well. Oversized responses are
+  /// cancelled and throw [InboundPayloadLimitException].
+  final InboundPayloadLimits inboundLimits;
 
   /// An optional function that takes the response as a JSON string and
   /// converts it to a JSON value.

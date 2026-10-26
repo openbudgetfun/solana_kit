@@ -29,6 +29,9 @@
 /// <!-- {/docsIsolateJsonDecodeHttpSection} -->
 library;
 
+export 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart'
+    show InboundPayloadLimitException, InboundPayloadLimits;
+
 export 'src/http_transport.dart';
 export 'src/http_transport_config.dart';
 export 'src/http_transport_for_solana_rpc.dart';

@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:solana_kit_errors/solana_kit_errors.dart';
-
 import 'package:solana_kit_mobile_wallet_adapter_protocol/src/constants.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/src/crypto.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/src/sequence_number.dart';
+import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
 
 /// Result of decrypting an MWA encrypted message.
 class DecryptedMessage {
@@ -64,7 +64,14 @@ Uint8List encryptMessage(
 /// Wire format: `[4B seq big-endian][12B random IV][ciphertext + 16B GCM tag]`
 ///
 /// Returns the decrypted plaintext and the extracted sequence number.
-DecryptedMessage decryptMessage(Uint8List message, Uint8List sharedSecret) {
+DecryptedMessage decryptMessage(
+  Uint8List message,
+  Uint8List sharedSecret, {
+  InboundPayloadLimits inboundLimits = const InboundPayloadLimits(),
+}) {
+  inboundLimits
+    ..validate()
+    ..checkByteLength(message.length);
   const minimumMessageLength =
       mwaSequenceNumberBytes + mwaIvBytes + (mwaGcmTagBits ~/ 8);
 
@@ -99,8 +106,13 @@ DecryptedMessage decryptMessage(Uint8List message, Uint8List sharedSecret) {
     throw SolanaError(SolanaErrorCode.mwaDecryptionFailed);
   }
 
+  // AES-GCM plaintext cannot exceed the bounded ciphertext size. Preflight
+  // JSON complexity before callers allocate its object graph.
+  final plaintext = utf8.decode(plaintextBytes);
+  inboundLimits.checkText(plaintext);
+
   return DecryptedMessage(
-    plaintext: utf8.decode(plaintextBytes),
+    plaintext: plaintext,
     sequenceNumber: sequenceNumber,
   );
 }

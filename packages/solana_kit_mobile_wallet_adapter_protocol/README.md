@@ -185,6 +185,10 @@ Future<void> main() async {
 }
 ```
 
+## Inbound resource limits
+
+`decryptMessage`, `decryptJsonRpcResponse`, and `parseSessionProps` accept `inboundLimits: InboundPayloadLimits(...)`. Defaults allow 16 MiB of encrypted bytes (including sequence prefix, IV, and authentication tag), 64 JSON container levels, and one million JSON tokens. Limits must be positive. Oversized ciphertext is rejected before cryptographic processing; decrypted text is checked before JSON decoding. Budget violations throw `InboundPayloadLimitException`.
+
 ## Protocol details
 
 ### Wire format

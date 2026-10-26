@@ -1,3 +1,6 @@
+export 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart'
+    show InboundPayloadLimitException, InboundPayloadLimits;
+
 export 'src/association_keypair.dart';
 export 'src/association_port.dart';
 export 'src/association_uri.dart';
