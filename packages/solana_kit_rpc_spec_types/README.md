@@ -173,6 +173,10 @@ For direct parsing, use `parseJsonWithBigIntsAsync(...)` with `runInIsolate: tru
 
 <!-- {/isolateJsonDecodeSection} -->
 
+### Inbound resource limits
+
+`InboundPayloadLimits` provides the shared HTTP, WebSocket, and wallet resource policy: 16 MiB, 64 nested JSON containers, and one million JSON tokens by default. `validate()` rejects non-positive budgets. `checkByteLength()` rejects oversized byte streams, and `checkText()` measures UTF-8 bytes and checks JSON nesting/token counts without building an object graph. The latter is a resource preflight; the JSON decoder still validates syntax. Violations throw `InboundPayloadLimitException` without retaining payload contents.
+
 ## Key APIs
 
 - `RpcRequest<TParams>`: method name + params.

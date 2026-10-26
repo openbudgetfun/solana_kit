@@ -233,6 +233,25 @@ For direct parsing, use `parseJsonWithBigIntsAsync(...)` with `runInIsolate: tru
 
 <!-- {/isolateJsonDecodeSection} -->
 
+### Inbound resource limits
+
+`HttpTransportConfig.inboundLimits` and `createHttpTransportForSolanaRpc(inboundLimits: ...)` accept `InboundPayloadLimits`. Defaults allow 16 MiB per response, 64 nested JSON objects/arrays, and one million JSON tokens (containers, object keys, and scalar values). Limits must be positive. Increase them explicitly for larger RPC results.
+
+The transport checks Content-Length and counts actual streamed bytes, cancels the response at the first oversized chunk, and throws `InboundPayloadLimitException`. JSON complexity is checked before either the built-in or custom `fromJson` decoder runs. HTTP clients that buffer responses internally may allocate the body before the SDK receives its stream.
+
+```dart
+import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
+
+void main() {
+  final transport = createHttpTransportForSolanaRpc(
+    url: 'https://api.mainnet-beta.solana.com',
+    inboundLimits: const InboundPayloadLimits(maxBytes: 32 * 1024 * 1024),
+  );
+
+  print(transport);
+}
+```
+
 ## Key APIs
 
 - `createHttpTransport(HttpTransportConfig, {http.Client?})`: creates a generic `RpcTransport` that sends JSON-RPC requests over HTTP POST.

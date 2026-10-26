@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
+
 /// MWA protocol version.
 enum ProtocolVersion {
   /// Version 1 of the MWA protocol (chain-based, with features).
@@ -323,10 +325,16 @@ class SignAndSendOptions {
 /// Configuration for a local wallet association session.
 class WalletAssociationConfig {
   /// Creates a local association config with an optional [baseUri].
-  const WalletAssociationConfig({this.baseUri});
+  const WalletAssociationConfig({
+    this.baseUri,
+    this.inboundLimits = const InboundPayloadLimits(),
+  });
 
   /// An optional base URI for the wallet Intent.
   final String? baseUri;
+
+  /// Bounds inbound wallet frames and decrypted JSON before decoding.
+  final InboundPayloadLimits inboundLimits;
 }
 
 /// Configuration for a remote wallet association session.
@@ -336,10 +344,14 @@ class RemoteWalletAssociationConfig {
   const RemoteWalletAssociationConfig({
     required this.reflectorHost,
     this.baseUri,
+    this.inboundLimits = const InboundPayloadLimits(),
   });
 
   /// The reflector server host authority.
   final String reflectorHost;
+
+  /// Bounds inbound wallet frames and decrypted JSON before decoding.
+  final InboundPayloadLimits inboundLimits;
 
   /// An optional base URI for the wallet Intent.
   final String? baseUri;

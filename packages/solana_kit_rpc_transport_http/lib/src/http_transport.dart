@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_rpc_spec/solana_kit_rpc_spec.dart';
+import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
 
 import 'package:solana_kit_rpc_transport_http/src/http_transport_config.dart';
 import 'package:solana_kit_rpc_transport_http/src/http_transport_headers.dart';
@@ -37,9 +40,11 @@ RpcTransport createHttpTransport(
     :allowInsecureHttp,
     :fromJson,
     :headers,
+    :inboundLimits,
     :toJson,
     :url,
   ) = config;
+  inboundLimits.validate();
   final endpointUrl = _validateAndNormalizeHttpEndpoint(
     url,
     allowInsecureHttp: allowInsecureHttp,
@@ -67,20 +72,27 @@ RpcTransport createHttpTransport(
       'content-type': 'application/json; charset=utf-8',
     };
 
+    final budgetAbort = Completer<void>();
     final request =
         http.AbortableRequest(
             'POST',
             endpointUrl,
-            abortTrigger: transportConfig.signal,
+            abortTrigger: transportConfig.signal == null
+                ? budgetAbort.future
+                : Future.any([transportConfig.signal!, budgetAbort.future]),
           )
           ..followRedirects = false
           ..headers.addAll(mergedHeaders)
           ..bodyBytes = bodyBytes;
     final http.Response response;
     try {
-      response = await http.Response.fromStream(
+      response = await _readBoundedResponse(
         await effectiveClient.send(request),
+        inboundLimits,
       );
+    } on InboundPayloadLimitException {
+      budgetAbort.complete();
+      rethrow;
     } on http.RequestAbortedException {
       throw http.RequestAbortedException();
     } on http.ClientException {
@@ -95,12 +107,44 @@ RpcTransport createHttpTransport(
       });
     }
 
+    final responseBody = response.body;
+    inboundLimits.checkText(responseBody);
+
     if (fromJson != null) {
-      return fromJson(response.body, payload);
+      return fromJson(responseBody, payload);
     }
 
-    return jsonDecode(response.body);
+    return jsonDecode(responseBody);
   };
+}
+
+/// Cancels at the first chunk beyond the budget, including chunked or
+/// misleadingly short Content-Length responses, without retaining that chunk.
+Future<http.Response> _readBoundedResponse(
+  http.StreamedResponse response,
+  InboundPayloadLimits limits,
+) async {
+  if ((response.contentLength ?? 0) > limits.maxBytes) {
+    await response.stream.listen(null).cancel();
+    throw InboundPayloadLimitException('bytes', limits.maxBytes);
+  }
+
+  final bytes = BytesBuilder(copy: false);
+
+  await for (final chunk in response.stream) {
+    limits.checkByteLength(bytes.length + chunk.length);
+    bytes.add(chunk);
+  }
+
+  return http.Response.bytes(
+    bytes.takeBytes(),
+    response.statusCode,
+    headers: response.headers,
+    isRedirect: response.isRedirect,
+    persistentConnection: response.persistentConnection,
+    reasonPhrase: response.reasonPhrase,
+    request: response.request,
+  );
 }
 
 Uri _validateAndNormalizeHttpEndpoint(

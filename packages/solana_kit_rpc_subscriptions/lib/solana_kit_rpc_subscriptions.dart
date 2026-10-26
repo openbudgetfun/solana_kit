@@ -15,6 +15,9 @@
 /// - JSON serialization: standard and BigInt-safe variants
 library;
 
+export 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart'
+    show InboundPayloadLimitException, InboundPayloadLimits;
+
 export 'package:solana_kit_subscribable/solana_kit_subscribable.dart'
     show CancellationToken, CancellationTokenSource;
 

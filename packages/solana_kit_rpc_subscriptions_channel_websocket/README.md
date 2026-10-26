@@ -97,6 +97,12 @@ Future<void> main() async {
 
 Cancellation rejects a pending handshake promptly and closes any socket that completes afterward. Once cancelled, sends fail immediately, and both public streams close when the connection ends. The portable WebSocket API may finish an in-flight network handshake before it can close the underlying socket.
 
+### Inbound resource limits
+
+`WebSocketChannelConfig.inboundLimits` defaults to 16 MiB per message, 64 JSON container levels, and one million JSON tokens for text messages. Binary messages are byte-limited. Each paused notification listener may queue at most `maxPendingMessages` (128) and `maxPendingBytes` (16 MiB). All budgets must be positive and can be increased explicitly.
+
+Exceeding a budget emits `InboundPayloadLimitException` on the error stream and closes the connection with application code 4009. The overflowing listener's queue is discarded. Other paused listeners retain at most their existing budgets. Normal paused queues drain in order when resumed. The platform WebSocket API assembles a message before handing it to the SDK, so these checks bound SDK retention and parsing after that initial allocation.
+
 ## Key APIs
 
 - `createWebSocketChannel(WebSocketChannelConfig(...))`.

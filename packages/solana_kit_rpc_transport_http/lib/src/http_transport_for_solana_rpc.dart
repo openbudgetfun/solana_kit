@@ -36,6 +36,7 @@ import 'package:solana_kit_rpc_transport_http/src/is_solana_request.dart';
 RpcTransport createHttpTransportForSolanaRpc({
   required String url,
   bool allowInsecureHttp = false,
+  InboundPayloadLimits inboundLimits = const InboundPayloadLimits(),
   Map<String, String>? headers,
   bool decodeSolanaJsonInIsolate = false,
   int solanaJsonIsolateThreshold = 262144,
@@ -45,6 +46,7 @@ RpcTransport createHttpTransportForSolanaRpc({
     HttpTransportConfig(
       url: url,
       allowInsecureHttp: allowInsecureHttp,
+      inboundLimits: inboundLimits,
       headers: headers,
       fromJson: (rawResponse, payload) => isSolanaRequest(payload)
           ? parseJsonWithBigIntsAsync(

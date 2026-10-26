@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:solana_kit_mobile_wallet_adapter_protocol/src/encrypted_message.dart';
 import 'package:solana_kit_mobile_wallet_adapter_protocol/src/protocol_error.dart';
+import 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart';
 
 /// Encrypts a JSON-RPC request for transmission over an MWA session.
 ///
@@ -31,9 +32,14 @@ Uint8List encryptJsonRpcRequest(
 /// Returns the `result` field of the response.
 Map<String, Object?> decryptJsonRpcResponse(
   Uint8List message,
-  Uint8List sharedSecret,
-) {
-  final decrypted = decryptMessage(message, sharedSecret);
+  Uint8List sharedSecret, {
+  InboundPayloadLimits inboundLimits = const InboundPayloadLimits(),
+}) {
+  final decrypted = decryptMessage(
+    message,
+    sharedSecret,
+    inboundLimits: inboundLimits,
+  );
   final jsonRpcMessage =
       json.decode(decrypted.plaintext) as Map<String, Object?>;
 

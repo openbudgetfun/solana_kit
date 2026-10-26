@@ -158,6 +158,10 @@ void main() {
 }
 ```
 
+### Inbound resource limits
+
+`createSolanaRpc` and `createDefaultRpcTransport` accept `inboundLimits: InboundPayloadLimits(...)`. Defaults reject responses larger than 16 MiB, deeper than 64 JSON container levels, or containing more than one million JSON tokens before decoding. Increase budgets explicitly for larger results. See the [HTTP transport resource limits](../solana_kit_rpc_transport_http/README.md#inbound-resource-limits) for streaming behavior and errors.
+
 ## Key APIs
 
 - `createSolanaRpc({url, ...})`: the standard client factory.

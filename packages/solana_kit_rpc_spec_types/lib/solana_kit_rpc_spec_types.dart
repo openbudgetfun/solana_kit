@@ -5,6 +5,7 @@
 /// JSON-RPC payloads.
 library;
 
+export 'src/inbound_payload_limits.dart';
 export 'src/json_bigint.dart';
 export 'src/rpc_message.dart';
 export 'src/rpc_request.dart';
