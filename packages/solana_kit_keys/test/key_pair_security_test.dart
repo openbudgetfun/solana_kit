@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:solana_kit_keys/solana_kit_keys.dart';
@@ -20,6 +21,43 @@ void main() {
       keyPair.dispose();
       await directory.delete(recursive: true);
     });
+
+    for (final substituteChmod in [false, true]) {
+      test(
+        'exports with ${substituteChmod ? 'hostile' : 'empty'} PATH',
+        () async {
+          if (Platform.isWindows) return;
+          final destination = File('${directory.path}/keypair.json');
+          final marker = File('${directory.path}/chmod-executed');
+          final bin = await Directory('${directory.path}/bin').create();
+          final fakeChmod = File('${bin.path}/chmod');
+          await fakeChmod.writeAsString(
+            '#!/bin/sh\n'
+            'printf executed > "\$CHMOD_MARKER"\n'
+            'exit 1\n',
+          );
+          final chmod = await Process.run('/bin/chmod', [
+            '700',
+            fakeChmod.path,
+          ]);
+          expect(chmod.exitCode, 0, reason: '${chmod.stderr}');
+
+          final result = await Process.run(
+            Platform.resolvedExecutable,
+            ['test/fixtures/write_key_pair.dart', destination.path],
+            environment: {
+              'PATH': substituteChmod ? bin.path : '',
+              'CHMOD_MARKER': marker.path,
+            },
+          );
+
+          expect(marker.existsSync(), isFalse);
+          expect(result.exitCode, 0, reason: '${result.stderr}');
+          expect(jsonDecode(await destination.readAsString()), mockKeyBytes);
+          expect(destination.statSync().mode & 0x1ff, 0x180);
+        },
+      );
+    }
 
     for (final overwrite in [false, true]) {
       test('does not write through a replaced destination, overwrite '
