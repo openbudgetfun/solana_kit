@@ -16,6 +16,8 @@ The package does **not** port the Anchor on-chain framework, the CLI, or client 
 
 `AnchorIdlProgram.parse` requires every instruction, account, and event discriminator to be a nonempty list of integer bytes (`0..255`). Missing, empty, or malformed values throw `ArgumentError`. Custom discriminator lengths are supported alongside Anchor's default eight-byte discriminators.
 
+`AnchorCoder` throws `ArgumentError` when building a codec for a defined type that references itself, directly or through other types. This includes cycles through struct fields, enum variants, options, vectors, and arrays. Repeated references to acyclic types are supported.
+
 <!-- {=packageInstallSection:"solana_kit_anchor"} -->
 
 ## Installation
