@@ -168,6 +168,24 @@ void main() {
         );
       });
 
+      test(
+        'rejects an in-range length that decodes to the wrong byte count',
+        () {
+          // 33 '1' characters pass the length window but decode to 33 zero
+          // bytes, which the fixed-size encoder would silently truncate.
+          expect(
+            () => setTransactionMessageLifetimeUsingBlockhash(
+              BlockhashLifetimeConstraint(
+                blockhash: '1' * 33,
+                lastValidBlockHeight: BigInt.from(123),
+              ),
+              baseTx,
+            ),
+            throwsInvalidBlockhashFormat(),
+          );
+        },
+      );
+
       test('rejects a blockhash containing non-base58 characters', () {
         expect(
           () => setTransactionMessageLifetimeUsingBlockhash(
