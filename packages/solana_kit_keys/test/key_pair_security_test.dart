@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:solana_kit_keys/solana_kit_keys.dart';
 import 'package:test/test.dart';
@@ -42,9 +43,18 @@ void main() {
           ]);
           expect(chmod.exitCode, 0, reason: '${chmod.stderr}');
 
+          final libraryUri = await Isolate.resolvePackageUri(
+            Uri.parse('package:solana_kit_keys/solana_kit_keys.dart'),
+          );
+
+          if (libraryUri == null) fail('Could not resolve solana_kit_keys');
+
+          final fixturePath = libraryUri
+              .resolve('../test/fixtures/write_key_pair.dart')
+              .toFilePath();
           final result = await Process.run(
             Platform.resolvedExecutable,
-            ['test/fixtures/write_key_pair.dart', destination.path],
+            [fixturePath, destination.path],
             environment: {
               'PATH': substituteChmod ? bin.path : '',
               'CHMOD_MARKER': marker.path,
