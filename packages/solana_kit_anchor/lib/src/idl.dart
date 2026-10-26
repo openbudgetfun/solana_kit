@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:solana_kit_codecs_data_structures/solana_kit_codecs_data_structures.dart';
+
 /// A parsed Anchor IDL type node describing how values are byte-encoded.
 sealed class AnchorIdlType {
   const AnchorIdlType();
@@ -13,6 +15,8 @@ sealed class AnchorIdlType {
   /// Throws [ArgumentError] on unknown shapes — including generic
   /// instantiations, which this runtime does not monomorphize — so callers
   /// never silently build a wrong codec.
+  /// Fixed-array lengths must be integers between zero and
+  /// [defaultMaxArrayItems], inclusive.
   static AnchorIdlType parse(Object? node) {
     if (node is String) {
       return _parseScalar(node);
@@ -112,21 +116,31 @@ sealed class AnchorIdlType {
   }
 
   static int _parseArrayLength(Object? length) {
-    if (length is int) return length;
+    final parsed = switch (length) {
+      int() => length,
+      num() when length.isFinite && length == length.truncateToDouble() =>
+        length.toInt(),
+      String() => int.tryParse(length),
+      _ => null,
+    };
 
-    if (length is num) return length.toInt();
-
-    if (length is String) {
-      final parsed = int.tryParse(length);
-
-      if (parsed != null) return parsed;
+    if (parsed == null) {
+      throw ArgumentError.value(
+        length,
+        'type.array.length',
+        'Array lengths must be integers',
+      );
     }
 
-    throw ArgumentError.value(
-      length,
-      'type.array.length',
-      'Array lengths must be integers',
-    );
+    if (parsed < 0 || parsed > defaultMaxArrayItems) {
+      throw ArgumentError.value(
+        length,
+        'type.array.length',
+        'Array lengths must be between 0 and $defaultMaxArrayItems',
+      );
+    }
+
+    return parsed;
   }
 }
 

@@ -100,6 +100,8 @@ Discriminator helpers and error resolution round out the runtime: `instructionDi
 
 ## Key APIs
 
+Fixed-array lengths are validated when their IDL type is parsed, including when a field's type is first accessed during codec construction. Lengths must be integers from zero to one million, inclusive, matching the default array decoder limit. Negative, fractional, non-finite, and excessive lengths throw `ArgumentError`.
+
 - `anchorSighash(namespace, name)`, `instructionDiscriminator`, `accountDiscriminator`, `eventDiscriminator`
 - `AnchorIdlProgram.parse`, `AnchorIdlType.parse`
 - `AnchorCoder`: `encodeInstructionData`, `decodeInstructionData`, `encodeAccount`, `decodeAccount`, `decodeEventLogs`
