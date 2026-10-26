@@ -21,12 +21,12 @@ final Finalizer<(Uint8List, Uint8List)> _keyPairFinalizer = Finalizer((keys) {
   _zeroBytes(keys.$2);
 });
 
-/// Zeros out all bytes in a [Uint8List].
+/// Zeros out all bytes in a byte list.
 ///
 /// Note: The Dart VM may theoretically optimize this away if it determines
 /// the buffer is no longer read. In practice, this provides reasonable
 /// protection against casual memory inspection.
-void _zeroBytes(Uint8List bytes) {
+void _zeroBytes(List<int> bytes) {
   for (var i = 0; i < bytes.length; i++) {
     bytes[i] = 0;
   }
@@ -104,12 +104,20 @@ class KeyPair {
 /// corresponding 32-byte public key.
 KeyPair generateKeyPair() {
   final keyPair = ed.generateKey();
-  final seed = keyPair.privateKey.bytes.sublist(0, 32);
-  final publicKeyBytes = keyPair.publicKey.bytes;
-  return KeyPair(
-    privateKey: Uint8List.fromList(seed),
-    publicKey: Uint8List.fromList(publicKeyBytes),
-  );
+  // `ed.PrivateKey.bytes` is the 64-byte expanded key: seed followed by the
+  // public key. Zero it (and the seed copy) so the only surviving copy lives
+  // inside the returned KeyPair, whose lifetime the caller controls through
+  // dispose().
+  final seed = Uint8List.fromList(keyPair.privateKey.bytes.sublist(0, 32));
+  try {
+    return KeyPair(
+      privateKey: seed,
+      publicKey: Uint8List.fromList(keyPair.publicKey.bytes),
+    );
+  } finally {
+    _zeroBytes(seed);
+    _zeroBytes(keyPair.privateKey.bytes);
+  }
 }
 
 /// A predicate used to test whether a generated address satisfies a key grind.

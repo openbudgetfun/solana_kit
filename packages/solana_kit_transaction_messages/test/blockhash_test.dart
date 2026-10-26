@@ -128,5 +128,76 @@ void main() {
         expect(identical(txWithBlockhashA, txWithSameBlockhash), isTrue);
       });
     });
+
+    group('blockhash format validation', () {
+      Matcher throwsInvalidBlockhashFormat() => throwsA(
+        isA<SolanaError>().having(
+          (e) => e.code,
+          'code',
+          SolanaErrorCode.transactionInvalidBlockhashFormat,
+        ),
+      );
+
+      test('rejects a blockhash that is too short to decode to 32 bytes', () {
+        // 31 '1' characters decode to 31 zero bytes and would be silently
+        // zero-extended on the wire without this check.
+        expect(
+          () => setTransactionMessageLifetimeUsingBlockhash(
+            BlockhashLifetimeConstraint(
+              blockhash: '1' * 31,
+              lastValidBlockHeight: BigInt.from(123),
+            ),
+            baseTx,
+          ),
+          throwsInvalidBlockhashFormat(),
+        );
+      });
+
+      test('rejects a blockhash that is too long to decode to 32 bytes', () {
+        // 45 '1' characters decode to 45 zero bytes and would be silently
+        // truncated on the wire without this check.
+        expect(
+          () => setTransactionMessageLifetimeUsingBlockhash(
+            BlockhashLifetimeConstraint(
+              blockhash: '1' * 45,
+              lastValidBlockHeight: BigInt.from(123),
+            ),
+            baseTx,
+          ),
+          throwsInvalidBlockhashFormat(),
+        );
+      });
+
+      test(
+        'rejects an in-range length that decodes to the wrong byte count',
+        () {
+          // 33 '1' characters pass the length window but decode to 33 zero
+          // bytes, which the fixed-size encoder would silently truncate.
+          expect(
+            () => setTransactionMessageLifetimeUsingBlockhash(
+              BlockhashLifetimeConstraint(
+                blockhash: '1' * 33,
+                lastValidBlockHeight: BigInt.from(123),
+              ),
+              baseTx,
+            ),
+            throwsInvalidBlockhashFormat(),
+          );
+        },
+      );
+
+      test('rejects a blockhash containing non-base58 characters', () {
+        expect(
+          () => setTransactionMessageLifetimeUsingBlockhash(
+            BlockhashLifetimeConstraint(
+              blockhash: '0' * 32,
+              lastValidBlockHeight: BigInt.from(123),
+            ),
+            baseTx,
+          ),
+          throwsInvalidBlockhashFormat(),
+        );
+      });
+    });
   });
 }

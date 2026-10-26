@@ -22,7 +22,8 @@ Future<List<WalletTransfer>> walletGetTransfers(
     queryParams['limit'] = request.limit.toString();
   }
 
-  final path = '/v0/addresses/${request.address}/transfers?api-key=$apiKey';
+  final path =
+      '/v0/addresses/${Uri.encodeComponent(request.address)}/transfers?api-key=$apiKey';
   final result = await restClient.get(
     path,
     queryParameters: queryParams.isNotEmpty ? queryParams : null,

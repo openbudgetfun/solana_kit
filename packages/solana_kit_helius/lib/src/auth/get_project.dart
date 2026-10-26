@@ -11,7 +11,7 @@ Future<HeliusProject> authGetProject(
   String projectId,
 ) async {
   final result = await restClient.get(
-    '/v0/auth/projects/$projectId?api-key=$apiKey',
+    '/v0/auth/projects/${Uri.encodeComponent(projectId)}?api-key=$apiKey',
   );
 
   return HeliusProject.fromJson(result! as Map<String, Object?>);

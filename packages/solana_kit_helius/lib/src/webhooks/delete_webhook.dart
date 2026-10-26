@@ -9,5 +9,7 @@ Future<void> webhooksDeleteWebhook(
   String apiKey,
   String webhookId,
 ) async {
-  await restClient.delete('/v0/webhooks/$webhookId?api-key=$apiKey');
+  await restClient.delete(
+    '/v0/webhooks/${Uri.encodeComponent(webhookId)}?api-key=$apiKey',
+  );
 }

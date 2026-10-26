@@ -11,7 +11,14 @@ import 'package:solana_kit_keys/src/private_key.dart';
 Uint8List getPublicKeyFromPrivateKey(Uint8List privateKeyBytes) {
   assertIsPrivateKey(privateKeyBytes);
   final privateKey = ed.newKeyFromSeed(privateKeyBytes);
-  final publicKey = ed.public(privateKey);
-
-  return Uint8List.fromList(publicKey.bytes);
+  try {
+    return Uint8List.fromList(ed.public(privateKey).bytes);
+  } finally {
+    // Zero the 64-byte expanded key so deriving a public key leaves no heap
+    // copy of the seed-derived secret beyond the caller's own bytes.
+    final expanded = privateKey.bytes;
+    for (var i = 0; i < expanded.length; i++) {
+      expanded[i] = 0;
+    }
+  }
 }

@@ -197,6 +197,18 @@ Object? _parseJsonWithBigIntsInIsolate(String json) {
   return parseJsonWithBigInts(json);
 }
 
+/// The largest integer, by decimal digit count, that this parser will
+/// materialize from a single literal.
+///
+/// Upstream `@solana/kit` caps materialization at 1,000 digits; this port
+/// instead caps the exponent at 10,000 (`-3e+10000` parses to a 10,001-digit
+/// integer). This ceiling equals the largest integer that exponent cap
+/// already permits, so capping plain literals at the same size closes the
+/// unbounded-allocation gap — a multi-megabyte integer literal from a
+/// hostile RPC no longer forces a same-sized `BigInt` — without changing
+/// any value the exponent path accepts.
+const int _maxMaterializedDigits = 10001;
+
 Object _parseJsonNumber(String value) {
   if (_floatIndicatorRegExp.hasMatch(value)) {
     return double.parse(value);
@@ -210,9 +222,24 @@ Object _parseJsonNumber(String value) {
       throw FormatException('JSON integer exponent exceeds 10,000', value);
     }
 
-    final units = BigInt.parse(value.substring(0, separator));
+    final mantissa = value.substring(0, separator);
+    final mantissaDigits = mantissa.startsWith('-')
+        ? mantissa.length - 1
+        : mantissa.length;
+    // The materialized integer has the mantissa's digits plus `exponent`
+    // more.
+    if (mantissaDigits + exponent > _maxMaterializedDigits) {
+      throw FormatException('JSON integer exceeds 10,001 digits', value);
+    }
+
+    final units = BigInt.parse(mantissa);
 
     return units * BigInt.from(10).pow(exponent);
+  }
+
+  final digits = value.startsWith('-') ? value.length - 1 : value.length;
+  if (digits > _maxMaterializedDigits) {
+    throw FormatException('JSON integer exceeds 10,001 digits', value);
   }
 
   return BigInt.parse(value);

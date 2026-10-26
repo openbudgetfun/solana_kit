@@ -128,13 +128,6 @@ void main() {
       expect(config.allowInsecureWs, isFalse);
     });
 
-    test('has default sendBufferHighWatermark of 128KB', () {
-      final config = WebSocketChannelConfig(
-        url: Uri.parse('wss://example.com'),
-      );
-      expect(config.sendBufferHighWatermark, 128 * 1024);
-    });
-
     test('signal defaults to null', () {
       final config = WebSocketChannelConfig(
         url: Uri.parse('wss://example.com'),
@@ -149,12 +142,10 @@ void main() {
         url: url,
         allowInsecureWs: true,
         allowPrivateHosts: true,
-        sendBufferHighWatermark: 42069,
         signal: token,
       );
       expect(config.url, url);
       expect(config.allowInsecureWs, isTrue);
-      expect(config.sendBufferHighWatermark, 42069);
       expect(config.signal, same(token));
     });
   });

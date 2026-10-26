@@ -25,7 +25,7 @@ Future<GetBalanceAtResponse> walletGetBalanceAt(
       .map((e) => '${e.key}=${Uri.encodeQueryComponent('${e.value}')}')
       .join('&');
   final result = await restClient.get(
-    '/v0/addresses/${request.wallet}/balance-at?$queryString',
+    '/v0/addresses/${Uri.encodeComponent(request.wallet)}/balance-at?$queryString',
   );
 
   return GetBalanceAtResponse.fromJson(result! as Map<String, Object?>);

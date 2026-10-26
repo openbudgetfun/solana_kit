@@ -41,6 +41,8 @@ class JupiterConfig {
   /// Allows plaintext HTTP for explicitly trusted local development endpoints.
   ///
   /// Defaults to `false`, requiring HTTPS to protect API keys and swap data.
+  /// In release (product) builds this flag is ignored and `https://` is always
+  /// required, mirroring the core HTTP and WebSocket transports.
   final bool allowInsecureHttp;
 
   /// The HTTP client used for all API calls.
@@ -66,5 +68,23 @@ String _validateBaseUrl(String baseUrl, bool allowInsecureHttp) {
     );
   }
 
+  // In release mode, http:// is never allowed regardless of the
+  // allowInsecureHttp flag, mirroring the HTTP and WebSocket transports'
+  // release-mode lockdown so API keys and swap traffic cannot leave a
+  // production build in cleartext. The branch is a compile-time constant
+  // under `dart test`/`flutter test`, where it can never execute.
+  const isProduction = bool.fromEnvironment('dart.vm.product');
+
+  // coverage:ignore-start
+  if (isProduction && uri.scheme == 'http') {
+    throw ArgumentError.value(
+      baseUrl,
+      'baseUrl',
+      'Insecure HTTP endpoints are not allowed in release mode. '
+          'Use an https:// URL instead.',
+    );
+  }
+
+  // coverage:ignore-end
   return baseUrl;
 }

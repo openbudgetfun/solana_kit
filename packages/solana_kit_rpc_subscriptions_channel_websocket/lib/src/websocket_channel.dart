@@ -73,7 +73,6 @@ class WebSocketChannelConfig {
     required this.url,
     this.allowInsecureWs = false,
     this.allowPrivateHosts = false,
-    this.sendBufferHighWatermark = 128 * 1024,
     this.signal,
   });
 
@@ -87,7 +86,7 @@ class WebSocketChannelConfig {
   ///
   /// Defaults to `false`, which enforces `wss://` URLs.
   /// When set to `true`, insecure `ws://` URLs are only allowed in
-  /// debug mode. In release/profile mode, this flag is ignored and
+  /// debug mode. In release (product) builds this flag is ignored and
   /// `wss://` is always required.
   final bool allowInsecureWs;
 
@@ -100,17 +99,6 @@ class WebSocketChannelConfig {
   ///
   /// Set to `true` for local development and testing against local validators.
   final bool allowPrivateHosts;
-
-  /// The number of bytes to admit into the send buffer before queueing
-  /// messages on the client.
-  ///
-  /// When you call [RpcSubscriptionsChannel.send] the runtime might add the
-  /// message to a buffer rather than send it right away. In the event that the
-  /// buffered amount exceeds the value configured here, messages will be added
-  /// to a queue in your application code instead of being sent to the
-  /// WebSocket, until such time that the buffered amount falls back below the
-  /// high watermark.
-  final int sendBufferHighWatermark;
 
   /// An optional cancellation token used to abort the connection.
   ///
@@ -330,7 +318,7 @@ void _validateWebSocketUrl(
   }
 
   if (scheme == 'ws' && allowInsecureWs) {
-    // In release/profile mode, ws:// is never allowed regardless of
+    // In release (product) mode, ws:// is never allowed regardless of
     // the allowInsecureWs flag. This prevents accidental use of
     // insecure WebSocket connections in production.
     const isProduction = bool.fromEnvironment('dart.vm.product');
