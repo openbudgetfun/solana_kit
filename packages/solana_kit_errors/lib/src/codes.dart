@@ -1231,6 +1231,12 @@ enum SolanaErrorCode {
   /// wallet-account message signer surface yet.
   walletInvalidNumberOfOutputs(8900006),
 
+  /// The wallet does not support the requested feature version.
+  ///
+  /// Reserved with its upstream number: the Dart port does not implement the
+  /// wallet-account feature-negotiation surface yet.
+  walletFeatureVersionUnsupported(8900007),
+
   // ---------------------------------------------------------------------------
   // Invariant Violations (9900000 - 9900999)
   // ---------------------------------------------------------------------------

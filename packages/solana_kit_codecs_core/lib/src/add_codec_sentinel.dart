@@ -20,7 +20,19 @@ Encoder<TFrom> addEncoderSentinel<TFrom>(
     // Use encode() to contain the encoder within its own bounds.
     final encoderBytes = encoder.encode(value);
 
-    if (_findSentinelIndex(encoderBytes, sentinel) >= 0) {
+    // The decoder stops at the first sentinel it finds, so the sentinel must
+    // not appear in the encoded bytes before the one we append — including
+    // across the boundary (e.g. `6c` encoded followed by the sentinel `6c6c`
+    // reads back as one sentinel at the seam) (upstream v8.6.0).
+    final encoderBytesWithSentinel =
+        Uint8List(
+            encoderBytes.length + sentinel.length,
+          )
+          ..setAll(0, encoderBytes)
+          ..setAll(encoderBytes.length, sentinel);
+
+    if (_findSentinelIndex(encoderBytesWithSentinel, sentinel) <
+        encoderBytes.length) {
       throw SolanaError(
         SolanaErrorCode.codecsEncodedBytesMustNotIncludeSentinel,
         {

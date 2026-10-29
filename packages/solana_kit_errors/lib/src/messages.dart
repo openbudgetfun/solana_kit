@@ -531,6 +531,7 @@ const Map<SolanaErrorCode, String> solanaErrorMessages = {
   SolanaErrorCode.walletInvalidMessageSignature: r'The signature returned by wallet $walletName for the message failed verification against the account with address $address.',
   SolanaErrorCode.walletInvalidSignInOutput: r'The sign-in output returned by wallet $walletName failed verification against the account with address $address.',
   SolanaErrorCode.walletInvalidNumberOfOutputs: r'Wallet $walletName returned $actual outputs for the `$featureName` feature, but exactly $expected were expected.',
+  SolanaErrorCode.walletFeatureVersionUnsupported: r'Wallet "$walletName" supports version $actualVersion of `$featureName`, but version $requiredVersion or newer is required',
 
   // Mobile Wallet Adapter - Session errors
   SolanaErrorCode.mwaAssociationPortOutOfRange:

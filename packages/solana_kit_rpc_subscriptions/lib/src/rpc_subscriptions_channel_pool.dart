@@ -63,10 +63,15 @@ RpcSubscriptionsChannelCreator getChannelPoolingChannelCreator(
     void destroyPoolEntry() {
       final index = pool.entries.indexOf(poolEntry);
 
-      if (index != -1) {
-        pool.entries.removeAt(index);
+      // The entry may already be destroyed: an errored or failed-to-construct
+      // channel destroys itself when its last subscriber aborts (upstream
+      // v8.6.0 #2121). Returning early stops an abort of THAT subscriber from
+      // destroying an unrelated, healthy channel.
+      if (index == -1) {
+        return;
       }
 
+      pool.entries.removeAt(index);
       poolEntry.dispose();
       recomputeFreeChannelIndex();
     }
