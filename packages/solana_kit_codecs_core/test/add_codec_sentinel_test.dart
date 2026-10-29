@@ -156,5 +156,33 @@ void main() {
       // Decode with 2-byte sentinel.
       expect(codec.decode(b('0102ffff')), equals('0102'));
     });
+
+    test('rejects encoded bytes where the value ends with the sentinel prefix (upstream v8.6.0)', () {
+      // The value bytes end with `6c` and the sentinel is `6c6c`: appended,
+      // the sentinel straddles the boundary and would be found at the seam.
+      final innerCodec = VariableSizeCodec<String, String>(
+        getSizeFromValue: (value) => (value.length / 2).ceil(),
+        write: (value, bytes, offset) {
+          final src = b(value);
+          bytes.setAll(offset, src);
+          return offset + src.length;
+        },
+        read: (bytes, offset) => (
+          bytes
+              .sublist(offset)
+              .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+              .join(),
+          bytes.length,
+        ),
+      );
+      final codec = addCodecSentinel(innerCodec, b('6c6c'));
+
+      // '5b6c' encodes to [0x5b, 0x6c]; appending the sentinel yields
+      // [0x5b, 0x6c, 0x6c, 0x6c] where the sentinel would be found at the
+      // seam (index 1), so encoding must fail.
+      expect(() => codec.encode('5b6c'), throwsA(isA<SolanaError>()));
+      // A value that does not end with the sentinel prefix still round-trips.
+      expect(codec.encode('5a'), equals(b('5a6c6c')));
+    });
   });
 }

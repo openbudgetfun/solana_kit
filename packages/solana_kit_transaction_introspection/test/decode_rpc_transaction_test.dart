@@ -257,6 +257,109 @@ void main() {
       expect(decoded.compiledMessage.configMask, 0);
     });
 
+    test(
+      'decodes transactionConfig from a v1 json response (upstream v8.6.0)',
+      () {
+        final rpcTx = <String, Object?>{
+          'version': 1,
+          'transaction': {
+            'message': {
+              'header': {
+                'numRequiredSignatures': 1,
+                'numReadonlySignedAccounts': 0,
+                'numReadonlyUnsignedAccounts': 0,
+              },
+              'accountKeys': const <String>[feePayer],
+              'instructions': const <Object?>[],
+              'recentBlockhash': blockhash,
+              'transactionConfig': {
+                'computeUnitLimit': 300000,
+                'heapSize': 65536,
+                'loadedAccountsDataSizeLimit': 65536,
+                'priorityFee': 5000,
+              },
+            },
+          },
+        };
+
+        final decoded = decodeTransactionFromRpcResponse(rpcTx);
+
+        // Mask bits: priorityFee (3) | computeUnitLimit (4) |
+        // loadedAccountsDataSizeLimit (8) | heapSize (16) = 31.
+        expect(decoded.compiledMessage.configMask, 31);
+        // Wire order: priorityFee (u64), computeUnitLimit (u32),
+        // loadedAccountsDataSizeLimit (u32), heapSize (u32).
+        expect(
+          decoded.compiledMessage.configValues!.map((v) => v.kind).toList(),
+          ['u64', 'u32', 'u32', 'u32'],
+        );
+        expect(
+          decoded.compiledMessage.configValues![0].value,
+          BigInt.from(5000),
+        );
+        expect(decoded.compiledMessage.configValues![1].value, 300000);
+        expect(decoded.compiledMessage.configValues![2].value, 65536);
+        expect(decoded.compiledMessage.configValues![3].value, 65536);
+      },
+    );
+
+    test('decodes a partial transactionConfig from a v1 json response', () {
+      final rpcTx = <String, Object?>{
+        'version': 1,
+        'transaction': {
+          'message': {
+            'header': {
+              'numRequiredSignatures': 1,
+              'numReadonlySignedAccounts': 0,
+              'numReadonlyUnsignedAccounts': 0,
+            },
+            'accountKeys': const <String>[feePayer],
+            'instructions': const <Object?>[],
+            'recentBlockhash': blockhash,
+            'transactionConfig': {'computeUnitLimit': 150000.0},
+          },
+        },
+      };
+
+      final decoded = decodeTransactionFromRpcResponse(rpcTx);
+
+      // Only the compute unit limit bit is set. The json decoder hands the
+      // limit back as a num (150000.0), which the reader narrows to int.
+      expect(decoded.compiledMessage.configMask, 4);
+      expect(decoded.compiledMessage.configValues, hasLength(1));
+      expect(decoded.compiledMessage.configValues!.first.value, 150000);
+    });
+
+    test('accepts priorityFee as a decimal string in a v1 json response', () {
+      final rpcTx = <String, Object?>{
+        'version': 1,
+        'transaction': {
+          'message': {
+            'header': {
+              'numRequiredSignatures': 1,
+              'numReadonlySignedAccounts': 0,
+              'numReadonlyUnsignedAccounts': 0,
+            },
+            'accountKeys': const <String>[feePayer],
+            'instructions': const <Object?>[],
+            'recentBlockhash': blockhash,
+            'transactionConfig': {'priorityFee': '5000'},
+          },
+        },
+      };
+
+      final decoded = decodeTransactionFromRpcResponse(rpcTx);
+
+      // Only the priority fee bits are set (mask 3); the decimal string is
+      // parsed into the u64 BigInt value.
+      expect(decoded.compiledMessage.configMask, 3);
+      expect(decoded.compiledMessage.configValues, hasLength(1));
+      expect(
+        decoded.compiledMessage.configValues!.first.value,
+        BigInt.from(5000),
+      );
+    });
+
     test('rejects a jsonParsed response', () {
       final rpcTx = <String, Object?>{
         'transaction': {
