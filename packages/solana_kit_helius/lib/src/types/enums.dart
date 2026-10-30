@@ -42,7 +42,7 @@ enum HeliusAssetInterface {
   v1Print('V1_PRINT'),
 
   /// Legacy NFT standard.
-  legacyNft('Legacy_NFT'),
+  legacyNft('LEGACY_NFT'),
 
   /// Metaplex Token Metadata v2 NFT.
   v2Nft('V2_NFT'),
@@ -66,7 +66,13 @@ enum HeliusAssetInterface {
   mplCoreAsset('MplCoreAsset'),
 
   /// Metaplex Core collection standard.
-  mplCoreCollection('MplCoreCollection');
+  mplCoreCollection('MplCoreCollection'),
+
+  /// Metaplex Core group standard.
+  mplCoreGroup('MplCoreGroup'),
+
+  /// Metaplex Bubblegum v2 standard.
+  mplBubblegumV2('MplBubblegumV2');
 
   const HeliusAssetInterface(this.value);
 
@@ -83,7 +89,9 @@ enum HeliusAssetInterface {
     'V1_NFT' => v1Nft,
     'Custom' => custom,
     'V1_PRINT' => v1Print,
-    'Legacy_NFT' => legacyNft,
+    'LEGACY_NFT' => legacyNft,
+    'MplCoreGroup' => mplCoreGroup,
+    'MplBubblegumV2' => mplBubblegumV2,
     'V2_NFT' => v2Nft,
     'FungibleAsset' => fungibleAsset,
     'Identity' => identity,

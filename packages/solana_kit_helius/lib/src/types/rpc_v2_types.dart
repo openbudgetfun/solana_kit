@@ -169,13 +169,26 @@ class GetTokenAccountsByOwnerV2Response {
   });
 
   /// Builds a response from a JSON map.
+  ///
+  /// The endpoint returns two page shapes: with `withContext` the accounts
+  /// and cursor sit at the top level of the result; without it the page
+  /// array is nested under `value` and the cursor travels as `paginationKey`
+  /// next to it. Both are accepted (upstream v3.4.0 #380).
   factory GetTokenAccountsByOwnerV2Response.fromJson(
     Map<String, Object?> json,
   ) {
-    final r = JsonReader(json);
+    final wrapped = json['value'] is List<Object?>;
+    final accountsJson =
+        ((wrapped ? json['value'] : json['accounts']) ?? <Object?>[])
+            as List<Object?>;
+    final cursor =
+        (wrapped ? json['paginationKey'] : json['cursor']) as String?;
     return GetTokenAccountsByOwnerV2Response(
-      accounts: r.requireDecodedList('accounts', TokenAccountV2.fromJson),
-      cursor: r.optString('cursor'),
+      accounts: [
+        for (final account in accountsJson)
+          TokenAccountV2.fromJson(account! as Map<String, Object?>),
+      ],
+      cursor: cursor,
     );
   }
 
