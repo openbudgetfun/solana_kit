@@ -72,6 +72,48 @@ void main() {
       expect(accounts[2].pubkey, 'tokenAcct3');
     });
 
+    test(
+      'parses the value-wrapped page shape (upstream v3.4.0 #380)',
+      () async {
+        var callCount = 0;
+
+        final client = MockClient((request) async {
+          callCount++;
+          // Without `withContext`, the endpoint nests the page's accounts
+          // under `value` and sends the cursor as `paginationKey` next to it.
+          return http.Response(
+            jsonEncode({
+              'jsonrpc': '2.0',
+              'id': callCount,
+              'result': {
+                'value': [
+                  {
+                    'pubkey': 'tokenAcct${callCount}v',
+                    'account': {'lamports': 2039280},
+                  },
+                ],
+                'paginationKey': callCount == 1 ? 'wrapped-cursor' : null,
+              },
+            }),
+            200,
+          );
+        });
+
+        final helius = createHelius(
+          HeliusConfig(apiKey: 'test'),
+          client: client,
+        );
+        final accounts = await helius.rpcV2.getAllTokenAccountsByOwner(
+          const GetTokenAccountsByOwnerV2Request(ownerAddress: 'owner1'),
+        );
+
+        expect(callCount, 2);
+        expect(accounts, hasLength(2));
+        expect(accounts[0].pubkey, 'tokenAcct1v');
+        expect(accounts[1].pubkey, 'tokenAcct2v');
+      },
+    );
+
     test('returns single page when no cursor', () async {
       var callCount = 0;
 
