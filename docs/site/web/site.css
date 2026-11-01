@@ -1551,6 +1551,16 @@ pre.code code {
   display: block;
   margin: 1.75rem 0;
   padding: 4px;
+  overflow: hidden;
+}
+
+/* WiredBox draws its rough border into a 240x120 canvas and stretches it to
+   the element. On a tall table the 3-unit canvas inset scales to tens of
+   pixels, which draws the top stroke through the header row. Map the ink's
+   3..117 vertical range onto the frame's edges instead. */
+.table-frame > .skribble-ink {
+  transform: translateY(-2.55%) scaleY(1.051);
+  transform-origin: top center;
 }
 
 .table-scroll {
