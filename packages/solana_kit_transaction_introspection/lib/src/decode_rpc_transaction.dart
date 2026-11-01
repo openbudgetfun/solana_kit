@@ -220,6 +220,43 @@ List<CompiledInstruction> _readJsonInstructions(
   }).toList();
 }
 
+/// Maps the `transactionConfig` object of a `'json'`-encoded v1 RPC response
+/// onto a [V1TransactionConfig]. Absent fields stay absent; upstream renamed
+/// `priorityFee` to `priorityFeeLamports` in the compiled config.
+V1TransactionConfig _readV1TransactionConfig(
+  Map<String, Object?>? transactionConfig,
+) {
+  if (transactionConfig == null) return const V1TransactionConfig();
+
+  int? readInt(String key) {
+    final value = transactionConfig[key];
+    if (value == null) return null;
+    return switch (value) {
+      final int v => v,
+      final num v => v.toInt(),
+      _ => null,
+    };
+  }
+
+  BigInt? readPriorityFee() {
+    final value = transactionConfig['priorityFee'];
+    if (value == null) return null;
+    return switch (value) {
+      final BigInt v => v,
+      final int v => BigInt.from(v),
+      final String v => BigInt.parse(v),
+      _ => null,
+    };
+  }
+
+  return V1TransactionConfig(
+    computeUnitLimit: readInt('computeUnitLimit'),
+    heapSize: readInt('heapSize'),
+    loadedAccountsDataSizeLimit: readInt('loadedAccountsDataSizeLimit'),
+    priorityFeeLamports: readPriorityFee(),
+  );
+}
+
 DecodedRpcTransaction _decodeFromJson(
   Map<String, Object?> message,
   Map<String, Object?>? meta,
@@ -304,14 +341,17 @@ DecodedRpcTransaction _decodeFromJson(
           ),
         );
       }
+      final transactionConfig = _readV1TransactionConfig(
+        _asMap(message['transactionConfig']),
+      );
       return CompiledTransactionMessage(
         version: TransactionVersion.v1,
         header: header,
         staticAccounts: staticAccounts,
         instructions: const [],
         lifetimeToken: lifetimeToken,
-        configMask: 0,
-        configValues: const [],
+        configMask: getTransactionConfigMask(transactionConfig),
+        configValues: getTransactionConfigValues(transactionConfig),
         instructionHeaders: instructionHeaders,
         instructionPayloads: instructionPayloads,
         numInstructions: instructionHeaders.length,
