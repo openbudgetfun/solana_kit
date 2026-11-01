@@ -12,8 +12,11 @@ class HeliusConfig {
   ///
   /// An [apiKey] is required for all Helius operations.
   /// The [cluster] defaults to [HeliusCluster.mainnet].
-  HeliusConfig({required String apiKey, this.cluster = HeliusCluster.mainnet})
-    : _apiKey = SensitiveString(apiKey) {
+  HeliusConfig({
+    required String apiKey,
+    this.cluster = HeliusCluster.mainnet,
+    this.mevProtect = false,
+  }) : _apiKey = SensitiveString(apiKey) {
     // Every Helius endpoint embeds the key in its URL, so an empty key is not
     // a degenerate case but a request that cannot succeed. Catching it here
     // reports the missing key instead of a 401 from the far end.
@@ -33,9 +36,18 @@ class HeliusConfig {
   /// The Solana cluster to connect to.
   final HeliusCluster cluster;
 
+  /// Whether to route transactions away from validators statistically linked
+  /// to sandwich attacks.
+  ///
+  /// When enabled, `mev-protect=true` is appended to the RPC and Sender URLs,
+  /// covering every transaction this client submits. Sender helpers can
+  /// override the setting per call.
+  final bool mevProtect;
+
   /// The Helius RPC URL for JSON-RPC requests (DAS, ZK, priority fees, etc.).
   String get rpcUrl =>
-      'https://${cluster.value}.helius-rpc.com/?api-key=$apiKey';
+      'https://${cluster.value}.helius-rpc.com/?api-key=$apiKey'
+      '${mevProtect ? '&mev-protect=true' : ''}';
 
   /// The Helius REST API base URL for REST endpoints (webhooks, enhanced, etc.).
   String get restBaseUrl => switch (cluster) {
@@ -60,9 +72,17 @@ class HeliusConfig {
 
   /// The Helius sender API base URL.
   String get senderBaseUrl => switch (cluster) {
-    HeliusCluster.mainnet => 'https://mainnet.helius-rpc.com/?api-key=$apiKey',
-    HeliusCluster.devnet => 'https://devnet.helius-rpc.com/?api-key=$apiKey',
+    HeliusCluster.mainnet =>
+      'https://mainnet.helius-rpc.com/?api-key=$apiKey'
+          '${mevProtect ? '&mev-protect=true' : ''}',
+    HeliusCluster.devnet =>
+      'https://devnet.helius-rpc.com/?api-key=$apiKey'
+          '${mevProtect ? '&mev-protect=true' : ''}',
   };
+
+  /// The base URL for the mainnet-only Parsed Events REST API.
+  String get parsedEventsBaseUrl =>
+      'https://mainnet.helius-rpc.com/v1/parsed-events';
 
   @override
   String toString() =>

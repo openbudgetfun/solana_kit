@@ -36,6 +36,7 @@ Future<T> transact<T>(
     launchIntent: launchIntent,
     baseUri: config?.baseUri,
     connectionDeadline: connectionTimeout,
+    inboundLimits: config?.inboundLimits ?? const InboundPayloadLimits(),
   );
 
   try {

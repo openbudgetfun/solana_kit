@@ -99,6 +99,36 @@ void main() {
       expect(signature, 'xyz789');
     });
 
+    test('adds mev-protect to the sender URL', () async {
+      final client = MockClient((request) async {
+        expect(
+          request.url.toString(),
+          'https://sender.helius-rpc.com/fast?mev-protect=true',
+        );
+        return http.Response(jsonEncode('sig-mev'), 200);
+      });
+
+      final signature = await sendViaSender(
+        'dGVzdA==',
+        mevProtect: true,
+        client: client,
+      );
+
+      expect(signature, 'sig-mev');
+    });
+
+    test('combines swqos_only and mev-protect', () {
+      expect(
+        senderFastUrl(
+          SenderRegion.defaultRegion,
+          swqosOnly: true,
+          mevProtect: true,
+        ),
+        'https://sender.helius-rpc.com/fast'
+        '?swqos_only=true&mev-protect=true',
+      );
+    });
+
     test('throws on JSON-RPC errors and malformed responses', () async {
       final errorClient = MockClient(
         (_) async => http.Response(

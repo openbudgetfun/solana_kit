@@ -287,9 +287,35 @@ List<CompiledInstruction> _getCompiledInstructions(
 V1TransactionConfig? _getV1Config(CompiledTransactionMessage message) {
   if (message.version != TransactionVersion.v1) return null;
 
-  final mask = message.configMask ?? 0;
-  final values =
-      message.configValues ?? const <CompiledTransactionConfigValue>[];
+  final config = decompileTransactionConfig(
+    message.configMask ?? 0,
+    message.configValues ?? const <CompiledTransactionConfigValue>[],
+  );
+
+  return config.isEmpty ? null : config;
+}
+
+/// Decodes the compiled `configMask` and `configValues` of a version 1
+/// compiled transaction message into a [V1TransactionConfig].
+///
+/// Returns a [V1TransactionConfig] whose fields are absent when the
+/// corresponding mask bit is unset — never null.
+///
+/// Use this to read a v1 transaction's compute budget without decompiling
+/// the whole message via [decompileTransactionMessage].
+///
+/// Throws a [FormatException] when a config value is missing or unexpected,
+/// and a [SolanaError] with code
+/// [SolanaErrorCode.transactionInvalidConfigValueKind] when a value's kind
+/// does not match the field it is decoded into.
+///
+/// Added in @solana/kit v8.6.0 (#2134).
+V1TransactionConfig decompileTransactionConfig(
+  int configMask,
+  List<CompiledTransactionConfigValue> configValues,
+) {
+  final mask = configMask;
+  final values = configValues;
   var index = 0;
 
   T readValue<T extends Object>(String configName, String expectedKind) {
@@ -330,7 +356,7 @@ V1TransactionConfig? _getV1Config(CompiledTransactionMessage message) {
     throw const FormatException('Unexpected V1 transaction config value.');
   }
 
-  return config.isEmpty ? null : config;
+  return config;
 }
 
 /// Decompiles a [CompiledTransactionMessage] back into a

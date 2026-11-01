@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_rpc_transport_http": ^0.11.0
+  "solana_kit_rpc_transport_http": ^0.11.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -232,6 +232,25 @@ void main() {
 For direct parsing, use `parseJsonWithBigIntsAsync(...)` with `runInIsolate: true`. Reserve isolate parsing for larger payloads where the extra hop is worth the reduced UI or server-request blocking.
 
 <!-- {/isolateJsonDecodeSection} -->
+
+### Inbound resource limits
+
+`HttpTransportConfig.inboundLimits` and `createHttpTransportForSolanaRpc(inboundLimits: ...)` accept `InboundPayloadLimits`. Defaults allow 16 MiB per response, 64 nested JSON objects/arrays, and one million JSON tokens (containers, object keys, and scalar values). Limits must be positive. Increase them explicitly for larger RPC results.
+
+The transport checks Content-Length and counts actual streamed bytes, cancels the response at the first oversized chunk, and throws `InboundPayloadLimitException`. JSON complexity is checked before either the built-in or custom `fromJson` decoder runs. HTTP clients that buffer responses internally may allocate the body before the SDK receives its stream.
+
+```dart
+import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart';
+
+void main() {
+  final transport = createHttpTransportForSolanaRpc(
+    url: 'https://api.mainnet-beta.solana.com',
+    inboundLimits: const InboundPayloadLimits(maxBytes: 32 * 1024 * 1024),
+  );
+
+  print(transport);
+}
+```
 
 ## Key APIs
 

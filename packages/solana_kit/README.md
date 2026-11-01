@@ -12,8 +12,8 @@ Program-specific packages are intentionally **not** re-exported here. Import pac
 
 ## Upstream Compatibility
 
-- Latest supported `@solana/kit` version: `8.5.0`
-- This Dart port tracks upstream APIs and behavior through `v8.5.0`.
+- Latest supported `@solana/kit` version: `8.6.0`
+- This Dart port tracks upstream APIs and behavior through `v8.6.0`.
 
 <!-- {/upstreamSupportSection} -->
 
@@ -25,7 +25,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit": ^0.11.0
+  "solana_kit": ^0.11.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

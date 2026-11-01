@@ -36,7 +36,13 @@ class LocalAssociationScenario {
     Future<void> Function(Uri intentUri)? launchIntent,
     this._baseUri,
     this._connectionDeadline = mwaConnectionDeadline,
-  }) : _launchIntent = launchIntent ?? launchWalletIntent;
+    this.inboundLimits = const InboundPayloadLimits(),
+  }) : _launchIntent = launchIntent ?? launchWalletIntent {
+    inboundLimits.validate();
+  }
+
+  /// Bounds handshake and encrypted frames before copying or decrypting.
+  final InboundPayloadLimits inboundLimits;
 
   final Future<void> Function(Uri intentUri) _launchIntent;
   final String? _baseUri;
@@ -110,6 +116,7 @@ class LocalAssociationScenario {
         _sessionProps = parseSessionProps(
           result.encryptedSessionProps!,
           _sharedSecret!,
+          inboundLimits: inboundLimits,
         );
       } else {
         _sessionProps = const SessionProperties(
@@ -132,13 +139,16 @@ class LocalAssociationScenario {
 
     final error = SolanaError(SolanaErrorCode.mwaSessionClosed);
     _failPendingOperations(error);
+    _clearSessionKeys();
 
     await _subscription?.cancel();
     _subscription = null;
 
     await _channel?.sink.close();
     _channel = null;
+  }
 
+  void _clearSessionKeys() {
     // Zero the session key and drop the handshake keypairs so they do not
     // outlive the session. The P-256 scalars live inside PointyCastle
     // BigInts, which cannot be zeroed deterministically in Dart; only the
@@ -199,11 +209,12 @@ class LocalAssociationScenario {
       return;
     }
 
-    final payload = message is Uint8List
-        ? message
-        : Uint8List.fromList(message);
-
     try {
+      inboundLimits.checkByteLength(message.length);
+      final payload = message is Uint8List
+          ? message
+          : Uint8List.fromList(message);
+
       if (_sharedSecret == null) {
         _handleHandshakeMessage(payload);
       } else {
@@ -320,7 +331,11 @@ class LocalAssociationScenario {
     Uint8List message,
     Uint8List sharedSecret,
   ) {
-    final decrypted = decryptMessage(message, sharedSecret);
+    final decrypted = decryptMessage(
+      message,
+      sharedSecret,
+      inboundLimits: inboundLimits,
+    );
     final jsonRpcMessage = json.decode(decrypted.plaintext);
 
     if (jsonRpcMessage is! Map) {
@@ -362,6 +377,7 @@ class LocalAssociationScenario {
     _closed = true;
 
     _failPendingOperations(error);
+    _clearSessionKeys();
 
     unawaited(_subscription?.cancel());
     _subscription = null;

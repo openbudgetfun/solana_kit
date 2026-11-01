@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_mpl_bubblegum": ^0.7.0
+  "solana_kit_mpl_bubblegum": ^0.7.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -129,7 +129,7 @@ MIT
 <!-- dprint-ignore -->
 | `solana_kit_mpl_bubblegum` version | [`mpl-bubblegum`](https://github.com/metaplex-foundation/mpl-bubblegum) | Released                |
 | ---------------------------------- | ----------------------------------------------------------------------- | ----------------------- |
-| `0.7.0`                            | `release/bubblegum@2.0.0`                                               | 2026-10-12              |
+| `0.7.0` – `0.7.1`                  | `release/bubblegum@2.0.0`                                               | 2026-10-12 – 2026-11-01 |
 | `0.4.0` – `0.4.1`                  | `68e4bc204099`                                                          | 2026-08-18 – 2026-08-19 |
 | `0.2.0` – `0.3.1`                  | `main`                                                                  | 2026-05-30 – 2026-08-12 |
 

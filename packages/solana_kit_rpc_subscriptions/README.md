@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_rpc_subscriptions": ^0.11.0
+  "solana_kit_rpc_subscriptions": ^0.11.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -96,6 +96,10 @@ Future<void> main() async {
   }
 }
 ```
+
+### Inbound resource limits
+
+`DefaultRpcSubscriptionsChannelConfig` accepts `inboundLimits`, `maxPendingMessages`, and `maxPendingBytes`. Defaults allow 16 MiB per inbound message, 64 JSON container levels, one million JSON tokens, and at most 128 messages or 16 MiB queued for each paused channel listener. Budget violations emit `InboundPayloadLimitException` and close the channel with application code 4009. See the [WebSocket channel documentation](../solana_kit_rpc_subscriptions_channel_websocket/README.md#inbound-resource-limits) for queue behavior and platform allocation limits.
 
 ## Key APIs
 

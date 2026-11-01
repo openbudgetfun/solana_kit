@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_token": ^0.10.0
+  "solana_kit_token": ^0.10.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -119,7 +119,7 @@ The full `solana_kit_associated_token_account` API surface is re-exported so cal
 <!-- dprint-ignore -->
 | `solana_kit_token` version | [`token`](https://github.com/solana-program/token) | Released                |
 | -------------------------- | -------------------------------------------------- | ----------------------- |
-| _next release_             | `js@v0.18.0`                                       | _unreleased_            |
+| `0.10.1`                   | `js@v0.18.0`                                       | 2026-11-01              |
 | `0.10.0`                   | `js@v0.17.0`                                       | 2026-10-12              |
 | `0.8.2` – `0.9.0`          | `js@v0.16.1`                                       | 2026-09-06 – 2026-09-21 |
 | `0.8.0` – `0.8.1`          | `js@v0.16.0`                                       | 2026-08-30              |

@@ -10,6 +10,18 @@ dependencies:
   jaspr: ^0.23.1
   jaspr_content: ^0.5.0
   jaspr_router: ^0.9.0
+  # skribble's Jaspr components are not on pub.dev yet; pin the source.
+  skribble_jaspr:
+    git:
+      url: https://github.com/openbudgetfun/skribble.git
+      path: packages/skribble_jaspr
+      ref: 75ec42da69c24703a87d8c5aba3097ecf550e070
+  # Pinned to the same commit by the workspace dependency_overrides.
+  skribble_rough:
+    git:
+      url: https://github.com/openbudgetfun/skribble.git
+      path: packages/skribble_rough
+      ref: 75ec42da69c24703a87d8c5aba3097ecf550e070
 
 dev_dependencies:
   build_runner: ^2.10.0
@@ -18,6 +30,7 @@ dev_dependencies:
   jaspr_cli: ^0.23.0+3
   jaspr_lints: ^0.7.0
   lints: ^6.1.0
+  test: ^1.25.0
 
 jaspr:
   mode: static

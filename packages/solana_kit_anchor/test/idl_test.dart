@@ -114,6 +114,67 @@ void main() {
     expect(typeNameOf('Plain'), 'Plain');
   });
 
+  group('fixed-array lengths', () {
+    for (final length in <Object?>[
+      -1,
+      '-1',
+      -0.5,
+      1.5,
+      1000001,
+      '1000001',
+      4294967295,
+      double.infinity,
+      double.negativeInfinity,
+      double.nan,
+      null,
+      true,
+    ]) {
+      test('rejects invalid length $length when building a program codec', () {
+        expect(
+          () {
+            final idl = AnchorIdlProgram.parse({
+              'types': [
+                {
+                  'name': 'Values',
+                  'type': {
+                    'kind': 'struct',
+                    'fields': [
+                      {
+                        'name': 'values',
+                        'type': {
+                          'array': ['u8', length],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            });
+
+            AnchorCoder(idl).codecFor(const AnchorIdlDefined('Values'));
+          },
+          throwsA(
+            isA<ArgumentError>().having(
+              (error) => error.name,
+              'name',
+              'type.array.length',
+            ),
+          ),
+        );
+      });
+    }
+
+    for (final length in <Object>[0, 4, 4.0, '4', 1000000]) {
+      test('accepts valid length $length (${length.runtimeType})', () {
+        final array = AnchorIdlType.parse({
+          'array': ['u8', length],
+        }) as AnchorIdlArray;
+
+        expect(array.length, length is String ? int.parse(length) : length);
+      });
+    }
+  });
+
   test('rejects non-object documents', () {
     expect(() => AnchorIdlProgram.parse(42), throwsArgumentError);
     expect(

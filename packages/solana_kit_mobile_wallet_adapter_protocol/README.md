@@ -31,7 +31,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_mobile_wallet_adapter_protocol": ^0.7.0
+  "solana_kit_mobile_wallet_adapter_protocol": ^0.7.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -185,6 +185,10 @@ Future<void> main() async {
 }
 ```
 
+## Inbound resource limits
+
+`decryptMessage`, `decryptJsonRpcResponse`, and `parseSessionProps` accept `inboundLimits: InboundPayloadLimits(...)`. Defaults allow 16 MiB of encrypted bytes (including sequence prefix, IV, and authentication tag), 64 JSON container levels, and one million JSON tokens. Limits must be positive. Oversized ciphertext is rejected before cryptographic processing; decrypted text is checked before JSON decoding. Budget violations throw `InboundPayloadLimitException`.
+
 ## Protocol details
 
 ### Wire format
@@ -233,7 +237,7 @@ Use [`example/main.dart`](./example/main.dart) as a runnable starting point for 
 <!-- dprint-ignore -->
 | `solana_kit_mobile_wallet_adapter_protocol` version | [`mobile-wallet-adapter`](https://github.com/solana-mobile/mobile-wallet-adapter) | Released                |
 | --------------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------- |
-| _next release_                                      | `@solana-mobile/mobile-wallet-adapter-protocol-kit@3.0.1`                         | _unreleased_            |
+| `0.7.1`                                             | `@solana-mobile/mobile-wallet-adapter-protocol-kit@3.0.1`                         | 2026-11-01              |
 | `0.7.0`                                             | `@solana-mobile/mobile-wallet-adapter-protocol-kit@3.0.0`                         | 2026-10-12              |
 | `0.6.0`                                             | `@solana-mobile/mobile-wallet-adapter-protocol-kit@0.4.0`                         | 2026-09-21              |
 | `0.4.3` – `0.5.3`                                   | `8642fa3e1edb`                                                                    | 2026-08-18 – 2026-09-12 |

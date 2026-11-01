@@ -64,6 +64,7 @@ class AnchorCoder {
   final AnchorIdlProgram idl;
 
   final Map<String, (Encoder<Object?>, Decoder<Object?>)> _typeCache = {};
+  final Set<String> _buildingTypes = {};
 
   /// Encodes instruction arguments for the instruction named [name].
   ///
@@ -113,8 +114,7 @@ class AnchorCoder {
   ) {
     final account = _account(name);
     final stripped = _stripDiscriminator(account.discriminator, data);
-    final definition = _definitionFor(name);
-    final (_, decoder) = _codecForDefinition(definition);
+    final (_, decoder) = _codecForDefinition(name);
     final (decoded, _) = decoder.read(stripped, 0);
     return (
       discriminator: account.discriminator,
@@ -128,7 +128,7 @@ class AnchorCoder {
     final account = _account(name);
     final buffer = BytesBuilder()
       ..add(_discriminatorBytes(account.discriminator));
-    final (encoder, _) = _codecForDefinition(_definitionFor(name));
+    final (encoder, _) = _codecForDefinition(name);
     _appendEncoded(
       buffer,
       encoder,
@@ -203,8 +203,7 @@ class AnchorCoder {
         }
 
         final stripped = _stripDiscriminator(discriminator, payload);
-        final definition = _definitionFor(entry.key);
-        final (_, decoder) = _codecForDefinition(definition);
+        final (_, decoder) = _codecForDefinition(entry.key);
 
         final (decoded, _) = decoder.read(stripped, 0);
         events.add(
@@ -296,17 +295,34 @@ class AnchorCoder {
     }
   }
 
-  (Encoder<Object?>, Decoder<Object?>) _codecForDefinition(
-    AnchorIdlTypeDef definition,
-  ) => switch (definition) {
-    final AnchorIdlStruct struct => _structCodec(struct.fields),
-    final AnchorIdlEnum enumDef => _enumCodec(enumDef),
-  };
+  /// Builds a named codec, rejecting cycles before they exhaust the stack.
+  (Encoder<Object?>, Decoder<Object?>) _codecForDefinition(String name) {
+    // Security: Cycles must fail before recursive codec construction fills
+    // the stack; the cache is populated only after dependencies are built.
+    if (!_buildingTypes.add(name)) {
+      throw ArgumentError.value(
+        name,
+        'name',
+        'Cyclic Anchor IDL type reference',
+      );
+    }
+
+    try {
+      return switch (_definitionFor(name)) {
+        final AnchorIdlStruct struct => _structCodec(struct.fields),
+        final AnchorIdlEnum enumDef => _enumCodec(enumDef),
+      };
+    } finally {
+      _buildingTypes.remove(name);
+    }
+  }
 
   /// Builds the runtime codec pair for an [AnchorIdlType].
   ///
   /// Exposed for advanced use cases that compose Anchor codecs outside the
   /// fixed account/instruction/event flows.
+  /// Throws [ArgumentError] when a defined type depends on itself, directly
+  /// or through other types.
   (Encoder<Object?>, Decoder<Object?>) codecFor(AnchorIdlType type) {
     final cacheKey = _typeCacheKey(type);
     final cached = _typeCache[cacheKey];
@@ -332,9 +348,7 @@ class AnchorCoder {
           getU32Decoder(),
         ),
       ),
-      final AnchorIdlDefined defined => _codecForDefinition(
-        _definitionFor(defined.name),
-      ),
+      final AnchorIdlDefined defined => _codecForDefinition(defined.name),
       final AnchorIdlVec vec => (
         getArrayEncoder<Object?>(codecFor(vec.element).$1),
         getArrayDecoder<Object?>(codecFor(vec.element).$2),

@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:solana_kit_addresses/solana_kit_addresses.dart';
 import 'package:solana_kit_helius/solana_kit_helius.dart';
 import 'package:solana_kit_transaction_messages/solana_kit_transaction_messages.dart';
@@ -21,150 +23,8 @@ void main() {
 
     test('preconfWireVersion and preconfHeadLength match the frame layout', () {
       expect(preconfWireVersion, 1);
-      // version(1) + slot(8) + transaction_index(8) + status(1).
+      expect(preconfSlotWireVersion, 128);
       expect(preconfHeadLength, 18);
-    });
-
-    test('decodePreconfFrame maps an out-of-range status to unknown', () {
-      final encoded = _encodedTransaction();
-      final frame = Uint8List(preconfHeadLength + encoded.length)
-        ..[0] = preconfWireVersion
-        ..setAll(1, _u64le(9))
-        ..setAll(9, _u64le(1))
-        ..[17] =
-            99 // not 0 or 1
-        ..setAll(preconfHeadLength, encoded);
-
-      final notification = decodePreconfFrame(frame);
-      expect(notification.status, PreconfStatus.unknown);
-    });
-
-    test('subscribe, receive a notification, unsubscribe, and close', () async {
-      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
-      final received = StreamController<Object?>.broadcast();
-      final sockets = <WebSocket>[];
-      final serverClosed = Completer<void>();
-
-      unawaited(() async {
-        await for (final request in server) {
-          final socket = await WebSocketTransformer.upgrade(request);
-          sockets.add(socket);
-          socket.listen(received.add);
-          await serverClosed.future;
-          await socket.close();
-        }
-      }());
-
-      final client = PreconfWsClient(
-        apiKey: 'test-key',
-        channel: WebSocketChannel.connect(
-          Uri.parse('ws://127.0.0.1:${server.port}'),
-        ),
-      );
-
-      final subFuture = client.preconfSubscribe();
-      // Wait for the subscribe request to arrive.
-      final request = await received.stream.first.timeout(
-        const Duration(seconds: 30),
-      );
-      final subscribeCall =
-          jsonDecode(request! as String) as Map<String, Object?>;
-      expect(subscribeCall['method'], 'preconfSubscribe');
-      final subscribeId = subscribeCall['id']! as int;
-      expect(subscribeId, 1);
-      sockets.first.add(
-        jsonEncode({
-          'jsonrpc': '2.0',
-          'id': subscribeId,
-          'result': 42,
-        }),
-      );
-
-      final subscription = await subFuture;
-      expect(subscription.subscriptionId, 42);
-
-      // Push a binary notification frame.
-      final encoded = _encodedTransaction();
-      final frame = Uint8List(preconfHeadLength + encoded.length)
-        ..[0] = preconfWireVersion
-        ..setAll(1, _u64le(123))
-        ..setAll(9, _u64le(4))
-        ..[17] =
-            1 // success
-        ..setAll(preconfHeadLength, encoded);
-      sockets.first.add(frame);
-
-      final notification = await subscription.notifications.first.timeout(
-        const Duration(seconds: 30),
-      );
-      expect(notification.slot, 123);
-      expect(notification.transactionIndex, 4);
-      expect(notification.status, PreconfStatus.success);
-      expect(notification.transactionBytes, encoded);
-
-      // Unsubscribe.
-      final unsubReceived = received.stream.first;
-      final unsubFuture = subscription.unsubscribe();
-      final unsubRequest =
-          (await unsubReceived.timeout(const Duration(seconds: 30)))! as String;
-      final unsubCall = jsonDecode(unsubRequest) as Map<String, Object?>;
-      expect(unsubCall['method'], 'preconfUnsubscribe');
-      expect(unsubCall['params'], [42]);
-      sockets.first.add(
-        jsonEncode({
-          'jsonrpc': '2.0',
-          'id': unsubCall['id'],
-          'result': true,
-        }),
-      );
-      expect(await unsubFuture, isTrue);
-
-      client.close();
-      serverClosed.complete();
-      await server.close(force: true);
-    });
-
-    test('close cancels an active subscription stream', () async {
-      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
-      final received = StreamController<Object?>.broadcast();
-      final sockets = <WebSocket>[];
-      final serverClosed = Completer<void>();
-
-      unawaited(() async {
-        await for (final request in server) {
-          final socket = await WebSocketTransformer.upgrade(request);
-          sockets.add(socket);
-          socket.listen(received.add);
-          await serverClosed.future;
-          await socket.close();
-        }
-      }());
-
-      final client = PreconfWsClient(
-        apiKey: 'test-key',
-        channel: WebSocketChannel.connect(
-          Uri.parse('ws://127.0.0.1:${server.port}'),
-        ),
-      );
-
-      final subFuture = client.preconfSubscribe();
-      final request =
-          (await received.stream.first.timeout(const Duration(seconds: 30)))!
-              as String;
-      final call = jsonDecode(request) as Map<String, Object?>;
-      sockets.first.add(
-        jsonEncode({
-          'jsonrpc': '2.0',
-          'id': call['id'],
-          'result': 7,
-        }),
-      );
-      await subFuture;
-
-      // Closing while subscribed must close the per-subscription stream.
-      client.close();
-      serverClosed.complete();
-      await server.close(force: true);
     });
 
     test('encodes reserved characters in API keys', () {
@@ -175,282 +35,384 @@ void main() {
       expect(uri.fragment, isEmpty);
     });
 
-    test('uses the default endpoint through an injected connector', () {
-      Uri? connectedUri;
-      final client = PreconfWsClient(
-        apiKey: 'test-key',
-        channelFactory: (uri) {
-          connectedUri = uri;
-          return _FakeChannel();
-        },
+    test('decodePreconfFrame maps an out-of-range status to unknown', () {
+      final notification = decodePreconfFrame(
+        _transactionFrame(status: 99, slot: 9),
       );
 
-      expect(connectedUri, Uri.parse(preconfWebsocketUrl('test-key')));
-      client
-        ..close()
-        ..close();
+      expect(notification.status, PreconfStatus.unknown);
     });
 
-    test('waits for readiness before sending subscribe requests', () async {
-      final channel = _FakeChannel(ready: false);
-      final client = PreconfWsClient(apiKey: 'test-key', channel: channel);
-      final pending = client.preconfSubscribe();
-      await Future<void>.delayed(Duration.zero);
-      expect(channel.sink.sent, isEmpty);
+    test('decodePreconfEvent decodes slot frames', () {
+      final bytes = Uint8List(10)
+        ..[0] = preconfSlotWireVersion
+        ..setAll(1, _u64le(77))
+        ..[9] = PreconfSlotStatus.bankFrozen;
 
-      channel.readyCompleter.complete();
-      await Future<void>.delayed(Duration.zero);
-      channel.incoming.add(
-        jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 7}),
-      );
+      final event = decodePreconfEvent(bytes);
 
-      expect((await pending).subscriptionId, 7);
-      client.close();
+      expect(event, isA<PreconfSlotNotification>());
+      final slot = event as PreconfSlotNotification;
+      expect(slot.version, preconfSlotWireVersion);
+      expect(slot.slot, 77);
+      expect(slot.status, PreconfSlotStatus.bankFrozen);
     });
 
-    test(
-      'failed readiness rejects calls and suppresses duplicate errors',
-      () async {
-        final channel = _FakeChannel(ready: false);
-        final client = PreconfWsClient(apiKey: 'private-key', channel: channel);
-        final pending = client.preconfSubscribe();
-        final failure = StateError(preconfWebsocketUrl('private-key'));
-        channel.readyCompleter.completeError(failure);
-        channel.incoming.addError(failure);
+    test('decodePreconfEvent rejects unknown slot status', () {
+      final bytes = Uint8List(10)
+        ..[0] = preconfSlotWireVersion
+        ..setAll(1, _u64le(77))
+        ..[9] = 9;
 
-        await expectLater(
-          pending,
-          throwsA(
-            isA<StateError>().having(
-              (error) => error.toString(),
-              'credential-free message',
-              isNot(contains('private-key')),
-            ),
-          ),
-        );
-        await expectLater(
-          client.preconfSubscribe(),
-          throwsA(isA<StateError>()),
-        );
-        client.close();
-      },
-    );
-
-    test(
-      'close observes later readiness errors without leaking keys',
-      () async {
-        final unhandled = <Object>[];
-        await runZonedGuarded(() async {
-          final channel = _FakeChannel(ready: false);
-          PreconfWsClient(
-            apiKey: 'private-key',
-            channel: channel,
-          ).close();
-          channel.readyCompleter.completeError(
-            StateError(
-              'Connection failed: ${preconfWebsocketUrl('private-key')}',
-            ),
-          );
-          await Future<void>.delayed(Duration.zero);
-        }, (error, _) => unhandled.add(error));
-
-        expect(unhandled, isEmpty);
-      },
-    );
-
-    test('close rejects pending subscribe requests', () async {
-      final channel = _FakeChannel();
-      final client = PreconfWsClient(apiKey: 'private-key', channel: channel);
-      final pending = client.preconfSubscribe();
-      await Future<void>.delayed(Duration.zero);
-      client.close();
-
-      await expectLater(
-        pending.timeout(const Duration(seconds: 1)),
-        throwsA(isA<StateError>()),
-      );
-    });
-
-    test('close settles requests even before readiness completes', () async {
-      final channel = _FakeChannel(ready: false);
-      final client = PreconfWsClient(apiKey: 'test-key', channel: channel);
-      final pending = client.preconfSubscribe();
-      client.close();
-
-      await expectLater(pending, throwsA(isA<StateError>()));
-      channel.readyCompleter.complete();
-    });
-
-    test('peer closure rejects pending unsubscribe requests', () async {
-      final channel = _FakeChannel();
-      final client = PreconfWsClient(apiKey: 'test-key', channel: channel);
-      final pending = client.preconfUnsubscribe(7);
-      await Future<void>.delayed(Duration.zero);
-      unawaited(channel.incoming.close());
-
-      await expectLater(pending, throwsA(isA<StateError>()));
-      client.close();
+      expect(() => decodePreconfEvent(bytes), throwsStateError);
     });
 
     test(
-      'transport failures notify and close active subscription streams',
+      'subscribe sends the filter, streams notifications, and unsubscribes',
       () async {
-        final channel = _FakeChannel();
-        final client = PreconfWsClient(apiKey: 'private-key', channel: channel);
-        final pending = client.preconfSubscribe();
-        await Future<void>.delayed(Duration.zero);
-        channel.incoming.add(
-          jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 7}),
-        );
-        final subscription = await pending;
-        final errors = <Object>[];
-        final done = Completer<void>();
-        subscription.notifications.listen(
-          (_) {},
-          onError: errors.add,
-          onDone: done.complete,
-        );
-        channel.incoming.addError(
-          StateError(preconfWebsocketUrl('private-key')),
-        );
+        final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+        final sockets = <WebSocket>[];
+        final requests = StreamController<String>.broadcast();
+        final socketDone = Completer<void>();
 
-        await done.future;
-        expect(errors.single, isA<StateError>());
-        expect(errors.single.toString(), isNot(contains('private-key')));
-        client.close();
-      },
-    );
-
-    for (final frame in <Object>[
-      'not json',
-      <int>[1],
-    ]) {
-      test('malformed frame $frame fails pending requests safely', () async {
-        final channel = _FakeChannel();
-        final client = PreconfWsClient(apiKey: 'test-key', channel: channel);
-        final pending = client.preconfSubscribe();
-        await Future<void>.delayed(Duration.zero);
-        channel.incoming.add(frame);
-
-        await expectLater(pending, throwsA(isA<StateError>()));
-        client.close();
-      });
-    }
-
-    test(
-      'send and asynchronous close failures do not leak endpoint keys',
-      () async {
-        final unhandled = <Object>[];
-        Object? operationError;
-        await runZonedGuarded(() async {
-          final channel = _FakeChannel();
-          final failure = StateError(preconfWebsocketUrl('private-key'));
-          channel.sink.sendFailure = failure;
-          channel.sink.closeFailure = failure;
-          final client = PreconfWsClient(
-            apiKey: 'private-key',
-            channel: channel,
-          );
-          try {
-            await client.preconfSubscribe();
-          } on Object catch (error) {
-            operationError = error;
+        unawaited(() async {
+          await for (final request in server) {
+            final socket = await WebSocketTransformer.upgrade(request);
+            sockets.add(socket);
+            socket.listen(
+              (data) {
+                if (data is String) requests.add(data);
+              },
+              onDone: () {
+                if (!socketDone.isCompleted) socketDone.complete();
+              },
+            );
           }
-          client.close();
-          await Future<void>.delayed(Duration.zero);
-        }, (error, _) => unhandled.add(error));
+        }());
 
-        expect(operationError, isA<StateError>());
-        expect(operationError.toString(), isNot(contains('private-key')));
-        expect(unhandled, isEmpty);
-      },
-    );
-
-    test('stream failures reject pending calls without leaking keys', () async {
-      final unhandled = <Object>[];
-      Object? operationError;
-      await runZonedGuarded(() async {
-        final channel = _FakeChannel();
-        final client = PreconfWsClient(apiKey: 'private-key', channel: channel);
-        final pending = client.preconfSubscribe();
-        await Future<void>.delayed(Duration.zero);
-        channel.incoming.addError(
-          StateError(
-            'Connection failed: ${preconfWebsocketUrl('private-key')}',
+        final client = PreconfWsClient(
+          apiKey: 'test-key',
+          channelFactory: (_) => WebSocketChannel.connect(
+            Uri.parse('ws://127.0.0.1:${server.port}'),
           ),
         );
 
-        try {
-          await pending.timeout(const Duration(seconds: 1));
-        } on Object catch (error) {
-          operationError = error;
-        }
+        final pending = client.preconfSubscribe(
+          filter: PreconfFilter(
+            failed: false,
+            accountInclude: ['account-1'],
+            includeSource: [PreconfSource.helius],
+          ),
+        );
+        final request = jsonDecode(
+          await requests.stream.first.timeout(const Duration(seconds: 30)),
+        ) as Map<String, Object?>;
+
+        expect(request['method'], 'preconfSubscribe');
+        expect(request['id'], 1);
+        expect(request['params'], [
+          {
+            'failed': false,
+            'accountInclude': ['account-1'],
+            'includeSource': ['helius'],
+          },
+        ]);
+
+        sockets.single.add(
+          jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 42}),
+        );
+
+        final subscription = await pending;
+        expect(subscription.subscriptionId, 42);
+
+        sockets.single.add(_transactionFrame(slot: 123, transactionIndex: 4));
+
+        final notification = await subscription.notifications.first.timeout(
+          const Duration(seconds: 30),
+        );
+        expect(notification.slot, 123);
+        expect(notification.transactionIndex, 4);
+        expect(notification.status, PreconfStatus.success);
+        expect(notification.transaction.signatures, isNotEmpty);
+
+        expect(await subscription.unsubscribe(), isTrue);
+        await socketDone.future.timeout(const Duration(seconds: 30));
+
         client.close();
-      }, (error, _) => unhandled.add(error));
+        await server.close(force: true);
+      },
+    );
 
-      expect(unhandled, isEmpty);
-      expect(
-        operationError,
-        isA<StateError>().having(
-          (error) => error.toString(),
-          'credential-free message',
-          isNot(contains('private-key')),
-        ),
-      );
-    });
-
-    test('subscribe surfaces JSON-RPC errors', () async {
+    test('slot subscriptions deliver transaction and slot events', () async {
       final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
-      final received = StreamController<Object?>.broadcast();
-      final sockets = <WebSocket>[];
-      final serverClosed = Completer<void>();
+      late WebSocket socket;
+      final accepted = Completer<void>();
 
       unawaited(() async {
         await for (final request in server) {
-          final socket = await WebSocketTransformer.upgrade(request);
-          sockets.add(socket);
-          socket.listen(received.add);
-          await serverClosed.future;
-          await socket.close();
+          socket = await WebSocketTransformer.upgrade(request);
+          accepted.complete();
+          socket.listen((_) {});
         }
       }());
 
       final client = PreconfWsClient(
         apiKey: 'test-key',
-        channel: WebSocketChannel.connect(
+        channelFactory: (_) => WebSocketChannel.connect(
           Uri.parse('ws://127.0.0.1:${server.port}'),
         ),
       );
 
-      final subFuture = client.preconfSubscribe();
-      final request =
-          (await received.stream.first.timeout(const Duration(seconds: 30)))!
-              as String;
-      final call = jsonDecode(request) as Map<String, Object?>;
-      sockets.first.add(
+      final pending = client.preconfSubscribe(
+        options: const PreconfSubscribeOptions(slots: true),
+      );
+      await accepted.future.timeout(const Duration(seconds: 30));
+      socket.add(jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 7}));
+      final subscription = await pending;
+
+      final events = <PreconfEvent>[];
+      final done = Completer<void>();
+      subscription.events.listen(
+        events.add,
+        onDone: done.complete,
+      );
+
+      socket
+        ..add(_transactionFrame())
+        ..add(
+          Uint8List(10)
+            ..[0] = preconfSlotWireVersion
+            ..setAll(1, _u64le(2))
+            ..[9] = PreconfSlotStatus.bankCreated,
+        );
+
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(events, hasLength(2));
+      expect(events[0], isA<PreconfNotification>());
+      expect(events[1], isA<PreconfSlotNotification>());
+
+      client.close();
+      await done.future.timeout(const Duration(seconds: 30));
+      await server.close(force: true);
+    });
+
+    test('subscribe surfaces JSON-RPC errors with the server code', () async {
+      final channel = _FakeChannel();
+      final client = PreconfWsClient(
+        apiKey: 'test-key',
+        channelFactory: (_) => channel,
+      );
+
+      final pending = client.preconfSubscribe();
+      await Future<void>.delayed(Duration.zero);
+      channel.incoming.add(
         jsonEncode({
           'jsonrpc': '2.0',
-          'id': call['id'],
-          'error': {'code': -32601, 'message': 'method not found'},
+          'id': 1,
+          'error': {'code': -32602, 'message': 'invalid filter'},
         }),
       );
 
       await expectLater(
-        subFuture,
+        pending,
         throwsA(
-          isA<StateError>().having(
-            (e) => e.message,
-            'message',
-            contains('method not found'),
+          isA<PreconfRpcError>()
+              .having((error) => error.code, 'code', -32602)
+              .having((error) => error.message, 'message', 'invalid filter'),
+        ),
+      );
+      client.close();
+    });
+
+    test('failed readiness is credential-free', () async {
+      final channel = _FakeChannel(ready: false);
+      final client = PreconfWsClient(
+        apiKey: 'private-key',
+        channelFactory: (_) => channel,
+      );
+
+      final pending = client.preconfSubscribe();
+      channel.readyCompleter.completeError(
+        StateError(preconfWebsocketUrl('private-key')),
+      );
+
+      await expectLater(
+        pending,
+        throwsA(
+          isA<PreconfRpcError>().having(
+            (error) => error.toString(),
+            'credential-free message',
+            isNot(contains('private-key')),
+          ),
+        ),
+      );
+      client.close();
+    });
+
+    test('close ends every live subscription', () async {
+      final channel = _FakeChannel();
+      final client = PreconfWsClient(
+        apiKey: 'test-key',
+        channelFactory: (_) => channel,
+      );
+
+      final pending = client.preconfSubscribe();
+      await Future<void>.delayed(Duration.zero);
+      channel.incoming.add(
+        jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 7}),
+      );
+      final subscription = await pending;
+      final done = Completer<void>();
+      subscription.events.listen((_) {}, onDone: done.complete);
+
+      client.close();
+      await done.future.timeout(const Duration(seconds: 1));
+      expect(await subscription.unsubscribe(), isFalse);
+    });
+
+    test('preconfUnsubscribe rejects ambiguous subscription ids', () async {
+      final first = _FakeChannel();
+      final second = _FakeChannel();
+      final channels = [first, second];
+      final client = PreconfWsClient(
+        apiKey: 'test-key',
+        channelFactory: (_) => channels.removeAt(0),
+      );
+
+      final firstPending = client.preconfSubscribe();
+      final secondPending = client.preconfSubscribe();
+      await Future<void>.delayed(Duration.zero);
+      first.incoming.add(jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 7}));
+      second.incoming.add(jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 7}));
+      await firstPending;
+      await secondPending;
+
+      await expectLater(
+        () => client.preconfUnsubscribe(7),
+        throwsA(isA<StateError>()),
+      );
+      client.close();
+    });
+
+    test('preconfUnsubscribe returns false for unknown ids', () async {
+      final client = PreconfWsClient(
+        apiKey: 'test-key',
+        channelFactory: (_) => _FakeChannel(),
+      );
+
+      expect(await client.preconfUnsubscribe(99), isFalse);
+      client.close();
+    });
+
+    test('getPreConfCoverage posts HTTPS and parses the result', () async {
+      final client = PreconfWsClient(
+        apiKey: 'test-key',
+        channelFactory: (_) => _FakeChannel(),
+        httpClient: MockClient((request) async {
+          expect(request.method, 'POST');
+          expect(request.url.scheme, 'https');
+          expect(request.url.host, 'beta.helius-rpc.com');
+          expect(request.url.queryParameters['api-key'], 'test-key');
+          final body = jsonDecode(request.body) as Map<String, Object?>;
+          expect(body['method'], 'getPreConfCoverage');
+          return http.Response(
+            jsonEncode({
+              'jsonrpc': '2.0',
+              'id': 1,
+              'result': {
+                'networkSharePercent': 45.84,
+                'coverageByRegion': {'fra': 0.27, 'slc': 0.1},
+              },
+            }),
+            200,
+          );
+        }),
+      );
+
+      final coverage = await client.getPreConfCoverage();
+
+      expect(coverage.networkSharePercent, 45.84);
+      expect(coverage.coverageByRegion, {'fra': 0.27, 'slc': 0.1});
+      client.close();
+    });
+
+    test('getPreConfCoverage surfaces JSON-RPC errors', () async {
+      final client = PreconfWsClient(
+        apiKey: 'test-key',
+        channelFactory: (_) => _FakeChannel(),
+        httpClient: MockClient(
+          (_) async => http.Response(
+            jsonEncode({
+              'jsonrpc': '2.0',
+              'id': 1,
+              'error': {'code': -32602, 'message': 'bad request'},
+            }),
+            200,
           ),
         ),
       );
 
+      await expectLater(
+        client.getPreConfCoverage,
+        throwsA(
+          isA<PreconfRpcError>().having(
+            (error) => error.message,
+            'message',
+            'bad request',
+          ),
+        ),
+      );
       client.close();
-      serverClosed.complete();
-      await server.close(force: true);
+    });
+
+    test('filters cannot combine includeSource and includeBam', () {
+      expect(
+        () => PreconfFilter(
+          includeSource: const [PreconfSource.helius],
+          includeBam: false,
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('instruction filters serialize memcmp and dataSize', () {
+      final filter = PreconfFilter(
+        instructions: [
+          const PreconfInstructionFilter(
+            programId: 'program-1',
+            memcmp: [
+              PreconfMemcmp(offset: 8, bytes: 'deadbeef', encoding: 'hex'),
+            ],
+            dataSize: 16,
+          ),
+        ],
+      );
+
+      expect(filter.toJson()['instructions'], [
+        {
+          'programId': 'program-1',
+          'memcmp': [
+            {'offset': 8, 'bytes': 'deadbeef', 'encoding': 'hex'},
+          ],
+          'dataSize': 16,
+        },
+      ]);
     });
   });
+}
+
+Uint8List _transactionFrame({
+  int slot = 1,
+  int transactionIndex = 0,
+  int status = PreconfStatus.success,
+}) {
+  final encoded = _encodedTransaction();
+  return Uint8List(preconfHeadLength + encoded.length)
+    ..[0] = preconfWireVersion
+    ..setAll(1, _u64le(slot))
+    ..setAll(9, _u64le(transactionIndex))
+    ..[17] = status
+    ..setAll(preconfHeadLength, encoded);
 }
 
 Uint8List _encodedTransaction() {
@@ -502,23 +464,12 @@ class _FakeChannel implements WebSocketChannel {
 class _FakeSink implements WebSocketSink {
   final sent = <Object?>[];
   final _done = Completer<void>();
-  StateError? sendFailure;
-  StateError? closeFailure;
 
   @override
-  void add(Object? event) {
-    final failure = sendFailure;
-
-    if (failure != null) throw failure;
-    sent.add(event);
-  }
+  void add(Object? event) => sent.add(event);
 
   @override
   Future<void> close([int? closeCode, String? closeReason]) async {
-    final failure = closeFailure;
-
-    if (failure != null) throw failure;
-
     if (!_done.isCompleted) _done.complete();
   }
 

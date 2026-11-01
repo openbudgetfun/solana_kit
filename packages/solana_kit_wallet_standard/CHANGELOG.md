@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## wallet [0.3.1](https://github.com/openbudgetfun/solana_kit/releases/tag/wallet/v0.3.1) (2026-11-01)
+
+### Changed
+
+- **No package-specific changes were recorded; `solana_kit_wallet_standard` was updated to 0.3.1 as part of group `wallet`.**
+
 ## wallet [0.1.0](https://github.com/openbudgetfun/solana_kit/releases/tag/wallet/v0.1.0) (2026-08-30)
 
 ### 💥 Breaking Change

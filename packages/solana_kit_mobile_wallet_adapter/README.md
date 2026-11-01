@@ -243,6 +243,12 @@ Future<void> main() async {
 
 This is useful when wallet policy requires Android app-origin verification before honoring sensitive requests.
 
+## Inbound resource limits
+
+Local and remote association configs accept `inboundLimits: InboundPayloadLimits(...)`. Defaults allow 16 MiB per binary frame (including encryption overhead), 64 JSON container levels, and one million JSON tokens. `LocalAssociationScenario` also accepts the same option directly. All limits must be positive.
+
+Sessions reject oversized handshake and encrypted frames before copying or decrypting. Remote base64 messages are length-checked before decoding and byte-checked afterwards. Decrypted responses and session properties are checked for JSON complexity before parsing. Rejection closes the session, fails pending operations, and clears session keys. Platform WebSocket implementations assemble messages before these SDK checks run.
+
 ## Native parity and behavior notes
 
 - `KitMobileWallet` requires authorization or reauthorization through the same wrapper before signing. It verifies output counts, transaction message equality, existing cosignatures, and Ed25519 signatures from authorized signers. Message outputs must contain the original message followed by one signature per requested address, in address order. Incorrect counts or forged signing results throw `FormatException`.
@@ -317,7 +323,7 @@ To revoke a pairing, use the wallet app's linked-dApps settings or the example a
 <!-- dprint-ignore -->
 | `solana_kit_mobile_wallet_adapter` version | [`mobile-wallet-adapter`](https://github.com/solana-mobile/mobile-wallet-adapter) | Released                |
 | ------------------------------------------ | --------------------------------------------------------------------------------- | ----------------------- |
-| _next release_                             | `@solana-mobile/mobile-wallet-adapter-protocol-kit@3.0.1`                         | _unreleased_            |
+| `0.7.1`                                    | `@solana-mobile/mobile-wallet-adapter-protocol-kit@3.0.1`                         | 2026-11-01              |
 | `0.7.0`                                    | `@solana-mobile/mobile-wallet-adapter-protocol-kit@3.0.0`                         | 2026-10-12              |
 | `0.6.0`                                    | `@solana-mobile/mobile-wallet-adapter-protocol-kit@0.4.0`                         | 2026-09-21              |
 | `0.4.3` – `0.5.3`                          | `8642fa3e1edb`                                                                    | 2026-08-18 – 2026-09-12 |

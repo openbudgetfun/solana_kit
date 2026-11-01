@@ -33,8 +33,8 @@ It is designed for apps, CLIs, servers, Flutter projects, tests, and tooling tha
 
 ## Upstream Compatibility
 
-- Latest supported `@solana/kit` version: `8.5.0`
-- This Dart port tracks upstream APIs and behavior through `v8.5.0`.
+- Latest supported `@solana/kit` version: `8.6.0`
+- This Dart port tracks upstream APIs and behavior through `v8.6.0`.
 
 <!-- {/docsUpstreamCompatibilitySection} -->
 
@@ -80,7 +80,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit": ^0.11.0
+  "solana_kit": ^0.11.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:

@@ -11,9 +11,10 @@ Future<String> txSendTransactionWithSender(
   RestClient restClient,
   BroadcastTransactionRequest request, {
   bool skipPreflight = true,
+  bool mevProtect = false,
 }) async {
   final result = await restClient.post(
-    '',
+    mevProtect ? '?mev-protect=true' : '',
     body: {
       'jsonrpc': '2.0',
       'id': 1,

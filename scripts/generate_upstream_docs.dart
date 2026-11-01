@@ -35,7 +35,7 @@ void main(List<String> args) {
 
   final targets = <_Target>[
     _Target('readme.md', {'upstream-parity': parityTable}),
-    _Target('docs/site/content/reference/upstream-compatibility.md', {
+    _Target('docs/site/content/docs/reference/upstream-compatibility.md', {
       'upstream-parity': parityTable,
       'upstream-repo-pins': repoPinTables,
       'upstream-pins': pinsTable,

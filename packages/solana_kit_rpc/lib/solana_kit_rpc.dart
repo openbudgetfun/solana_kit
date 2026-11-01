@@ -71,6 +71,9 @@
 /// <!-- {/preferredDartPathCalloutSection} -->
 library;
 
+export 'package:solana_kit_rpc_spec_types/solana_kit_rpc_spec_types.dart'
+    show InboundPayloadLimitException, InboundPayloadLimits;
+
 export 'src/rpc.dart';
 export 'src/rpc_default_config.dart';
 export 'src/rpc_integer_overflow_error.dart';

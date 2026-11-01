@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Fixes
+
+#### Guard transaction encoding and decoding against empty and truncated bytes
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [eedf4a4](https://github.com/openbudgetfun/solana_kit/commit/eedf4a41807028ea4e43b01badd3b330013c7016)
+
+Three upstream error codes were defined but never thrown, and the paths they describe failed with less useful errors:
+
+- Encoding a transaction with empty message bytes produced a signatures-first wire envelope of a zero-length message; it now throws `transactionCannotEncodeWithEmptyMessageBytes`.
+- Decoding an empty byte array failed inside the shortU16 codec; it now throws `transactionCannotDecodeEmptyTransactionBytes`.
+- A signature count larger than the remaining bytes can hold failed inside the signature reader with a range error; it now throws `transactionSignatureCountTooHighForTransactionBytes` with the expected count and byte length in the context.
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Fixes

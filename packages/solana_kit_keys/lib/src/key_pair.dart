@@ -281,11 +281,18 @@ KeyPair createKeyPairFromPrivateKeyBytes(Uint8List bytes) {
 /// overwritten unless [unsafelyOverwriteExistingKeyPair] is `true`. Key bytes
 /// are written in a private staging directory and published with a rename, so
 /// replacing the destination with a symbolic link cannot redirect the write.
+/// On POSIX systems, this requires `/bin/chmod` (`/system/bin/chmod` on Android)
+/// and does not search `PATH` for the permission utility.
 Future<void> writeKeyPair(
   KeyPair keyPair,
   String path, {
   bool unsafelyOverwriteExistingKeyPair = false,
 }) async {
+  // Use a system path so an inherited PATH cannot substitute an executable
+  // while this process holds private key material.
+  final chmodExecutable = Platform.isAndroid
+      ? '/system/bin/chmod'
+      : '/bin/chmod';
   final privateKey = keyPair.privateKey;
   final publicKey = keyPair.publicKey;
   assertIsPrivateKey(privateKey);
@@ -307,7 +314,7 @@ Future<void> writeKeyPair(
     final stagingDirectory = await parent.createTemp('.solana-keypair-');
     try {
       if (!Platform.isWindows) {
-        final chmod = await Process.run('chmod', [
+        final chmod = await Process.run(chmodExecutable, [
           '700',
           stagingDirectory.path,
         ]);
@@ -324,7 +331,10 @@ Future<void> writeKeyPair(
       await stagedFile.create(exclusive: true);
 
       if (!Platform.isWindows) {
-        final chmod = await Process.run('chmod', ['600', stagedFile.path]);
+        final chmod = await Process.run(chmodExecutable, [
+          '600',
+          stagedFile.path,
+        ]);
 
         if (chmod.exitCode != 0) {
           throw FileSystemException(

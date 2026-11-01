@@ -14,7 +14,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_rpc": ^0.11.0
+  "solana_kit_rpc": ^0.11.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -157,6 +157,10 @@ void main() {
   print('Deduplication key: $dedupeKey');
 }
 ```
+
+### Inbound resource limits
+
+`createSolanaRpc` and `createDefaultRpcTransport` accept `inboundLimits: InboundPayloadLimits(...)`. Defaults reject responses larger than 16 MiB, deeper than 64 JSON container levels, or containing more than one million JSON tokens before decoding. Increase budgets explicitly for larger results. See the [HTTP transport resource limits](../solana_kit_rpc_transport_http/README.md#inbound-resource-limits) for streaming behavior and errors.
 
 ## Key APIs
 

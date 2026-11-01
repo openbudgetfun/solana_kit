@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Documentation
+
+- **Track `@solana/kit` v8.5.0.** The reference pin moves from `anza-xyz/kit` v8.4.0 to v8.5.0, and the `@solana/kit` compatibility claim in `versions.json` and the root readme advances accordingly. See the audit in `docs/agents/upstream-audit-solana_kit-v8.5.0.md` for the full change map. _Owner:_ Ifiok Jr. · _Introduced in:_ [253a913](https://github.com/openbudgetfun/solana_kit/commit/253a9130ef81c0dd25e822fdcecebad7508a01cf)
+- **Track `@solana/kit` v8.6.0.** The reference pin moves from `anza-xyz/kit` v8.5.0 to v8.6.0, and the `@solana/kit` compatibility claim in `versions.json` and the root readme advances accordingly. See the audit in `docs/agents/upstream-audit-solana_kit-v8.6.0.md` for the full change map. _Owner:_ Ifiok Jr. · _Introduced in:_ [e3d08a9](https://github.com/openbudgetfun/solana_kit/commit/e3d08a9ef215e7d2fe6b53943b851925bbbfb2ac)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Fixes

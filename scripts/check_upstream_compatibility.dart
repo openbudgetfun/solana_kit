@@ -29,8 +29,8 @@ Future<void> main(List<String> args) async {
   final versionFiles = [
     'readme.md',
     'packages/solana_kit/README.md',
-    'docs/site/content/index.md',
-    'docs/site/content/reference/upstream-compatibility.md',
+    'docs/site/content/docs/index.md',
+    'docs/site/content/docs/reference/upstream-compatibility.md',
   ];
 
   var failed = false;

@@ -16,6 +16,7 @@ class SendBundleOptions {
   const SendBundleOptions({
     this.region,
     this.allowInsecureHttpForTesting = false,
+    this.mevProtect,
     this.pollTimeoutMs,
     this.pollIntervalMs,
   });
@@ -28,6 +29,13 @@ class SendBundleOptions {
   /// Signed transactions are exposed to network observers. Release builds
   /// reject HTTP endpoints regardless of this flag.
   final bool allowInsecureHttpForTesting;
+
+  /// Routes transactions away from validators statistically linked to
+  /// sandwich attacks.
+  ///
+  /// Defaults to the client's `mevProtect` setting; set it here to override it
+  /// for this bundle.
+  final bool? mevProtect;
 
   /// Overall polling timeout in milliseconds. Defaults to 60 seconds.
   final int? pollTimeoutMs;
@@ -67,8 +75,10 @@ Future<List<String>> sendBundleWithSender(
   JsonRpcClient rpcClient,
   List<SignedBundleTransaction> transactions, {
   SendBundleOptions options = const SendBundleOptions(),
+  bool mevProtect = false,
 }) async {
   final region = options.region ?? SenderRegion.defaultRegion;
+  final effectiveMevProtect = options.mevProtect ?? mevProtect;
   final pollTimeoutMs = options.pollTimeoutMs ?? _defaultTimeoutMs;
   final pollIntervalMs = options.pollIntervalMs ?? _defaultPollMs;
 
@@ -96,6 +106,7 @@ Future<List<String>> sendBundleWithSender(
       senderFastUrl(
         region,
         allowInsecureHttpForTesting: options.allowInsecureHttpForTesting,
+        mevProtect: effectiveMevProtect,
       ),
     ),
     headers: {'Content-Type': 'application/json'},

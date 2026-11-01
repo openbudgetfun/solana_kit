@@ -16,6 +16,8 @@ The package does **not** port the Anchor on-chain framework, the CLI, or client 
 
 `AnchorIdlProgram.parse` requires every instruction, account, and event discriminator to be a nonempty list of integer bytes (`0..255`). Missing, empty, or malformed values throw `ArgumentError`. Custom discriminator lengths are supported alongside Anchor's default eight-byte discriminators.
 
+`AnchorCoder` throws `ArgumentError` when building a codec for a defined type that references itself, directly or through other types. This includes cycles through struct fields, enum variants, options, vectors, and arrays. Repeated references to acyclic types are supported.
+
 <!-- {=packageInstallSection:"solana_kit_anchor"} -->
 
 ## Installation
@@ -24,7 +26,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_anchor": ^0.11.0
+  "solana_kit_anchor": ^0.11.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -97,6 +99,8 @@ Discriminator helpers and error resolution round out the runtime: `instructionDi
 <!-- {/docsAnchorRuntimeSection} -->
 
 ## Key APIs
+
+Fixed-array lengths are validated when their IDL type is parsed, including when a field's type is first accessed during codec construction. Lengths must be integers from zero to one million, inclusive, matching the default array decoder limit. Negative, fractional, non-finite, and excessive lengths throw `ArgumentError`.
 
 - `anchorSighash(namespace, name)`, `instructionDiscriminator`, `accountDiscriminator`, `eventDiscriminator`
 - `AnchorIdlProgram.parse`, `AnchorIdlType.parse`

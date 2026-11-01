@@ -12,6 +12,9 @@ class DefaultRpcSubscriptionsChannelConfig {
     required this.url,
     this.allowInsecureWs = false,
     this.allowPrivateHosts = false,
+    this.inboundLimits = const InboundPayloadLimits(),
+    this.maxPendingMessages = 128,
+    this.maxPendingBytes = 16 * 1024 * 1024,
     this.intervalMs = 5000,
     this.maxSubscriptionsPerChannel = 100,
     this.minChannels = 1,
@@ -29,6 +32,15 @@ class DefaultRpcSubscriptionsChannelConfig {
   ///
   /// Defaults to `false`. Enable only for controlled local development.
   final bool allowPrivateHosts;
+
+  /// Bounds inbound message bytes and JSON complexity.
+  final InboundPayloadLimits inboundLimits;
+
+  /// Maximum queued messages per paused channel notification listener.
+  final int maxPendingMessages;
+
+  /// Maximum queued bytes per paused channel notification listener.
+  final int maxPendingBytes;
 
   /// The number of milliseconds to wait since the last message sent or
   /// received over the channel before sending a ping message to keep the
@@ -110,6 +122,9 @@ RpcSubscriptionsChannelCreator _createDefaultRpcSubscriptionsChannelCreatorImpl(
         url: Uri.parse(config.url),
         allowInsecureWs: config.allowInsecureWs,
         allowPrivateHosts: config.allowPrivateHosts,
+        inboundLimits: config.inboundLimits,
+        maxPendingMessages: config.maxPendingMessages,
+        maxPendingBytes: config.maxPendingBytes,
         signal: abortSignal,
       ),
     );

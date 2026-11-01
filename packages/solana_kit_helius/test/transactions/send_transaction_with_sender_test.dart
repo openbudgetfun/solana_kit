@@ -47,6 +47,28 @@ void main() {
       },
     );
 
+    test('adds mev-protect as a query parameter', () async {
+      final client = MockClient((request) async {
+        expect(request.url.queryParameters['mev-protect'], 'true');
+        return http.Response(
+          jsonEncode({'jsonrpc': '2.0', 'id': 1, 'result': 'sig-mev'}),
+          200,
+        );
+      });
+
+      final helius = createHelius(
+        HeliusConfig(apiKey: 'test-key'),
+        client: client,
+      );
+
+      final signature = await helius.transactions.sendTransactionWithSender(
+        const BroadcastTransactionRequest(transaction: 'base64-tx-data'),
+        mevProtect: true,
+      );
+
+      expect(signature, 'sig-mev');
+    });
+
     test('handles a bare-string JSON response', () async {
       final client = MockClient((request) async {
         return http.Response(jsonEncode('sig-bare'), 200);

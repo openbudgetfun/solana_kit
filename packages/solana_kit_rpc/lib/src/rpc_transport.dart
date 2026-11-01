@@ -19,6 +19,7 @@ import 'package:solana_kit_rpc_transport_http/solana_kit_rpc_transport_http.dart
 RpcTransport createDefaultRpcTransport({
   required String url,
   bool allowInsecureHttp = false,
+  InboundPayloadLimits inboundLimits = const InboundPayloadLimits(),
   Map<String, String>? headers,
   http.Client? client,
 }) {
@@ -32,6 +33,7 @@ RpcTransport createDefaultRpcTransport({
   final baseTransport = createHttpTransportForSolanaRpc(
     url: url,
     allowInsecureHttp: allowInsecureHttp,
+    inboundLimits: inboundLimits,
     headers: mergedHeaders,
     client: client,
   );

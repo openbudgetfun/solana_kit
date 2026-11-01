@@ -19,10 +19,14 @@ class TransactionsClient {
   const TransactionsClient({
     required this._rpcClient,
     required this._restClient,
+    this.mevProtect = false,
   });
 
   final JsonRpcClient _rpcClient;
   final RestClient _restClient;
+
+  /// The client-level MEV Protect default for Sender helpers.
+  final bool mevProtect;
 
   /// Simulates the transaction to estimate compute units consumed.
   Future<ComputeUnitsEstimate> getComputeUnits(
@@ -35,9 +39,18 @@ class TransactionsClient {
     PollTransactionConfirmationRequest request,
   ) => txPollTransactionConfirmation(_rpcClient, request);
 
-  /// Broadcasts a base64-encoded transaction to the sender URL.
-  Future<String> broadcastTransaction(BroadcastTransactionRequest request) =>
-      txBroadcastTransaction(_restClient, request);
+  /// Broadcasts a base64-encoded transaction to the sender URL and tracks its
+  /// landing, re-checking status once the block height passes the computed
+  /// expiry.
+  Future<String> broadcastTransaction(
+    BroadcastTransactionRequest request, {
+    BroadcastTransactionOptions options = const BroadcastTransactionOptions(),
+  }) => txBroadcastTransaction(
+    _rpcClient,
+    _restClient,
+    request,
+    options: options,
+  );
 
   /// Builds a smart transaction by estimating its compute units and priority
   /// fee, then refreshing the blockhash it should be built against.
@@ -52,6 +65,13 @@ class TransactionsClient {
 
   /// Sends a transaction via the Helius sender (SWQOS).
   Future<String> sendTransactionWithSender(
-    BroadcastTransactionRequest request,
-  ) => txSendTransactionWithSender(_restClient, request);
+    BroadcastTransactionRequest request, {
+    bool? mevProtect,
+    bool skipPreflight = true,
+  }) => txSendTransactionWithSender(
+    _restClient,
+    request,
+    skipPreflight: skipPreflight,
+    mevProtect: mevProtect ?? this.mevProtect,
+  );
 }

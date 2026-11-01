@@ -8,6 +8,80 @@ import 'package:test/test.dart';
 
 void main() {
   group('array decoder security boundaries', () {
+    for (final count in [-1, 1000001, 4294967295]) {
+      test('rejects fixed count $count before reading zero-byte items', () {
+        var reads = 0;
+        final item = FixedSizeDecoder<void>(
+          fixedSize: 0,
+          read: (bytes, offset) {
+            reads++;
+            throw StateError('must never read an item');
+          },
+        );
+
+        expect(
+          () => getArrayDecoder(item, size: FixedArraySize(count)),
+          throwsA(
+            isA<SolanaError>()
+                .having(
+                  (error) => error.code,
+                  'code',
+                  SolanaErrorCode.codecsInvalidNumberOfItems,
+                )
+                .having((error) => error.context['actual'], 'actual', count),
+          ),
+        );
+        expect(reads, 0);
+      });
+    }
+
+    test(
+      'applies a custom item limit to fixed arrays with variable-size items',
+      () {
+        expect(
+          () => getArrayCodec(
+            getArrayCodec(getU8Codec()),
+            size: const FixedArraySize(2),
+            maxItems: 1,
+          ),
+          throwsA(isA<SolanaError>()),
+        );
+      },
+    );
+
+    test('allows zero-byte items at the configured fixed-array limit', () {
+      final decoder = getArrayDecoder(
+        getUnitDecoder(),
+        size: const FixedArraySize(2),
+        maxItems: 2,
+      );
+
+      final (values, offset) = decoder.read(Uint8List(0), 0);
+
+      expect(values, [null, null]);
+      expect(offset, 0);
+    });
+
+    test('allows empty fixed arrays with a zero item limit', () {
+      final decoder = getArrayDecoder(
+        getUnitDecoder(),
+        size: const FixedArraySize(0),
+        maxItems: 0,
+      );
+
+      expect(decoder.decode(Uint8List(0)), isEmpty);
+    });
+
+    test('allows callers to raise the fixed-array limit', () {
+      final decoder = getArrayDecoder(
+        getUnitDecoder(),
+        size: const FixedArraySize(1000001),
+        maxItems: 1000001,
+      );
+
+      expect(decoder.decode(Uint8List(0)), hasLength(1000001));
+    });
+
     test(
       'rejects a missing size prefix instead of inventing an empty list',
       () {

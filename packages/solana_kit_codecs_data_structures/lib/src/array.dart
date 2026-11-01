@@ -6,6 +6,11 @@ import 'package:solana_kit_codecs_data_structures/src/utils.dart';
 import 'package:solana_kit_codecs_numbers/solana_kit_codecs_numbers.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 
+/// The default item limit for fixed and prefixed array decoders.
+///
+/// Runtime schema parsers can use the same limit before building codecs.
+const defaultMaxArrayItems = 1000000;
+
 /// Determines how the size of an array-like codec is specified.
 sealed class ArrayLikeCodecSize {
   /// Creates an [ArrayLikeCodecSize].
@@ -234,11 +239,14 @@ Encoder<List<T>> getArrayEncoder<T>(
 /// This decoder deserializes arrays by decoding each element using the
 /// provided [item] decoder. By default, a `u32` size prefix is expected to
 /// indicate the number of items in the array.
+///
+/// Fixed and prefixed counts must be between zero and [maxItems], inclusive.
+/// Invalid fixed counts throw at construction, before computing byte sizes.
 Decoder<List<T>> getArrayDecoder<T>(
   Decoder<T> item, {
   ArrayLikeCodecSize? size,
   String? description,
-  int maxItems = 1000000,
+  int maxItems = defaultMaxArrayItems,
   bool requireSizePrefix = true,
 }) {
   if (maxItems < 0) {
@@ -247,6 +255,14 @@ Decoder<List<T>> getArrayDecoder<T>(
 
   final effectiveSize = size ?? PrefixedArraySize(getU32Decoder());
   _assertValidArrayLikeSize(effectiveSize);
+
+  // Security: fixed counts may originate in untrusted runtime schemas.
+  // Check before size arithmetic, including for items that consume no bytes.
+  if (effectiveSize case final FixedArraySize fixedSize
+      when fixedSize.size < 0 || fixedSize.size > maxItems) {
+    _throwInvalidArraySize(description, fixedSize.size);
+  }
+
   final itemFixedSize = getFixedSize(item);
   _assertItemCodecSupportsSizeStrategy(
     description ?? 'array',
@@ -385,11 +401,14 @@ Decoder<List<T>> getArrayDecoder<T>(
 ///
 /// This codec serializes arrays by encoding each element using the provided
 /// [item] codec. By default, a `u32` size prefix is included.
+///
+/// [maxItems] limits fixed and prefixed counts when decoding. Invalid fixed
+/// counts throw when the codec is constructed.
 Codec<List<T>, List<T>> getArrayCodec<T>(
   Codec<T, T> item, {
   ArrayLikeCodecSize? size,
   String? description,
-  int maxItems = 1000000,
+  int maxItems = defaultMaxArrayItems,
   bool requireSizePrefix = true,
 }) {
   // Determine matching encoder/decoder size configs.

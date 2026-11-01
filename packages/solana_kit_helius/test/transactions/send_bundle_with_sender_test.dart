@@ -335,6 +335,39 @@ void main() {
         throwsA(isA<SolanaError>()),
       );
     });
+    test('passes mev-protect through to the bundle endpoint', () async {
+      final httpClient = MockClient((request) async {
+        expect(request.url.queryParameters['mev-protect'], 'true');
+        return http.Response(jsonEncode({'result': 'bundle'}), 200);
+      });
+      final rpcClient = JsonRpcClient(
+        url: 'https://api.helius-rpc.com',
+        client: MockClient(
+          (_) async => http.Response(
+            jsonEncode({
+              'result': {
+                'value': [
+                  {'confirmationStatus': 'confirmed'},
+                ],
+              },
+            }),
+            200,
+          ),
+        ),
+      );
+
+      final signatures = await sendBundleWithSender(
+        httpClient,
+        rpcClient,
+        [_signedTx(1)],
+        options: const SendBundleOptions(
+          mevProtect: true,
+          pollIntervalMs: 1,
+        ),
+      );
+
+      expect(signatures, [_expectedSig(1)]);
+    });
   });
 }
 

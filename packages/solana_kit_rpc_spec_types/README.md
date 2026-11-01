@@ -12,7 +12,7 @@ Install the package directly:
 
 ```yaml
 dependencies:
-  "solana_kit_rpc_spec_types": ^0.11.0
+  "solana_kit_rpc_spec_types": ^0.11.1
 ```
 
 If your app uses several Solana Kit packages together, you can also depend on the umbrella package instead:
@@ -172,6 +172,10 @@ void main() {
 For direct parsing, use `parseJsonWithBigIntsAsync(...)` with `runInIsolate: true`. Reserve isolate parsing for larger payloads where the extra hop is worth the reduced UI or server-request blocking.
 
 <!-- {/isolateJsonDecodeSection} -->
+
+### Inbound resource limits
+
+`InboundPayloadLimits` provides the shared HTTP, WebSocket, and wallet resource policy: 16 MiB, 64 nested JSON containers, and one million JSON tokens by default. `validate()` rejects non-positive budgets. `checkByteLength()` rejects oversized byte streams, and `checkText()` measures UTF-8 bytes and checks JSON nesting/token counts without building an object graph. The latter is a resource preflight; the JSON decoder still validates syntax. Violations throw `InboundPayloadLimitException` without retaining payload contents.
 
 ## Key APIs
 

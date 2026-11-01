@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Fixes
+
+- **Reject sentinels found across the encoded-bytes/sentinel boundary.** Ports the encoder hardening from `@solana/codecs-core` v8.6.0: `addCodecSentinel` now checks for the sentinel within the concatenation of the encoded bytes and the appended sentinel, so a value ending with the sentinel's own prefix (e.g. encoded bytes ending `6c` with sentinel `6c6c`) is rejected — the decoder would otherwise stop at that straddling occurrence instead of the real sentinel. _Owner:_ Ifiok Jr. · _Introduced in:_ [e3d08a9](https://github.com/openbudgetfun/solana_kit/commit/e3d08a9ef215e7d2fe6b53943b851925bbbfb2ac)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Fixes

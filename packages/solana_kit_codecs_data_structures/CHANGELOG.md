@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Features
+
+#### Bound fixed-array lengths from runtime schemas
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [43167d1](https://github.com/openbudgetfun/solana_kit/commit/43167d1ed14951e6647f6f70d15a99a5890912d3)
+
+Anchor IDL type parsing rejects negative, fractional, non-finite, and excessive fixed-array lengths. The upper bound is one million items, shared with array decoders through the new `defaultMaxArrayItems` constant.
+
+Fixed-array decoders now enforce `maxItems` during construction, before byte-size calculations or element reads. This prevents hostile schema lengths from expanding zero-byte elements into unbounded lists. Callers can still choose a different decoder limit with `maxItems`; valid empty arrays and zero-byte elements remain supported.
+
+### Fixes
+
+- **Reject zero-byte item codecs with sentinel and remainder strategies.** Ports the fix from `@solana/codecs-data-structures` v8.5.0 (#2089): constructing an `array`, `set`, or `map` codec whose item codec has a fixed size of zero with the sentinel or remainder size strategy now throws `codecsUnexpectedZeroFixedSizeItemForArrayLikeSizeStrategy` at construction time, on both the encoder and the decoder. A zero-byte item can never advance past a sentinel boundary or toward the end of the byte array, so decoding such a combination previously pushed elements until memory ran out. Zero-byte item codecs remain allowed when the collection size is explicit. The runtime zero-progress loop guards added in earlier port work remain as defense in depth. _Owner:_ Ifiok Jr. · _Introduced in:_ [253a913](https://github.com/openbudgetfun/solana_kit/commit/253a9130ef81c0dd25e822fdcecebad7508a01cf)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Features
