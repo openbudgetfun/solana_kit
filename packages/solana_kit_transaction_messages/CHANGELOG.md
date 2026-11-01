@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Features
+
+- **Export `decompileTransactionConfig`.** Ports #2134 from `@solana/transaction-messages` v8.6.0: `decompileTransactionConfig(configMask, configValues)` decodes the compiled config of a version 1 transaction message into a `V1TransactionConfig` without decompiling the whole message. The decompiler now delegates to it, preserving existing empty-config-to-null semantics. Config values that are missing, unexpected, or of the wrong kind still throw as before. _Owner:_ Ifiok Jr. · _Introduced in:_ [e3d08a9](https://github.com/openbudgetfun/solana_kit/commit/e3d08a9ef215e7d2fe6b53943b851925bbbfb2ac)
+
+### Fixes
+
+- **Validate blockhash format before it reaches the wire.** The wire format stores a blockhash lifetime token as a fixed 32-byte value, but nothing validated the constraint's string: a blockhash whose base58 decoding was not exactly 32 bytes — for example one served by a compromised RPC — was silently truncated or zero-extended by the fixed-size encoder, producing a signed transaction whose lifetime token differs from the string shown to the caller. `setTransactionMessageLifetimeUsingBlockhash` now rejects such values with the new `SolanaErrorCode.transactionInvalidBlockhashFormat` (port-only code `5663043`), the blockhash counterpart of the existing `transactionInvalidNonceFormat` check. _Owner:_ Ifiok Jr. · _Introduced in:_ [ad4d903](https://github.com/openbudgetfun/solana_kit/commit/ad4d903443f06270c48a9ad135ad416147b020ae)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Fixes

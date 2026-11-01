@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## solana_kit_sysvars [0.7.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_sysvars/v0.7.1) (2026-11-01)
+
+### Fixes
+
+- **Fix the `SlotHashes` and `RecentBlockhashes` sysvar length prefix.** Ports the wire-format fix from `@solana/sysvars` v8.5.0 (#2116): the entry arrays of `SysvarSlotHashes` and `SysvarRecentBlockhashes` are prefixed with a `u64` length on chain, not a `u32` one. The codecs now use `u64`, so decoded slots, hashes, and fee values are no longer shifted by four bytes. _Owner:_ Ifiok Jr. · _Introduced in:_ [253a913](https://github.com/openbudgetfun/solana_kit/commit/253a9130ef81c0dd25e822fdcecebad7508a01cf)
+
 ## solana_kit_sysvars [0.3.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_sysvars/v0.3.2) (2026-05-30)
 
 ### 🚀 Feature

@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Features
+
+- **Decode the v1 transaction config from `json` RPC responses.** Ports #2132 from `@solana/transaction-introspection` v8.6.0: `decodeTransactionFromRpcResponse` now reads `message.transactionConfig` from a version 1 `'json'`-encoded response and fills the compiled message's `configMask` and `configValues`, matching what the `base64` and `base58` decoders already produced. Previously the synthesized v1 message always reported an empty config. _Owner:_ Ifiok Jr. · _Introduced in:_ [e3d08a9](https://github.com/openbudgetfun/solana_kit/commit/e3d08a9ef215e7d2fe6b53943b851925bbbfb2ac)
+
+### Fixes
+
+- **Refresh generated upstream version tables and align validation tests.** Regenerate the upstream version tables embedded in the generated program-client READMEs after the 2026-10-12 release (docs-only, produced by `docs:update`), and update two validation tests to the address-scoped error code now thrown for non-base58 strings: `assertIsBlockhash` and the RPC transaction decoder's loaded-address checks expect `addressesInvalidBase58EncodedAddress` instead of the codec-internal error that used to leak through. _Owner:_ Ifiok Jr. · _Introduced in:_ [eedf4a4](https://github.com/openbudgetfun/solana_kit/commit/eedf4a41807028ea4e43b01badd3b330013c7016)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Features

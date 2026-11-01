@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## solana_kit_offchain_messages [0.7.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_offchain_messages/v0.7.1) (2026-11-01)
+
+### Changed
+
+- **No package-specific changes were recorded; `solana_kit_offchain_messages` was updated to 0.7.1.**
+
 ## solana_kit_offchain_messages [0.3.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_offchain_messages/v0.3.2) (2026-05-30)
 
 ### 🚀 Feature

@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Fixes
+
+- **Validate Anchor IDL discriminators.** Reject missing, empty, non-integer, and out-of-range instruction, account, and event discriminators during IDL parsing. Preserve valid custom lengths and make parsed discriminator bytes immutable. Prevent empty discriminators from matching instruction, account, or event payloads, including when IDL entries are constructed manually. _Owner:_ Ifiok Jr. · _Introduced in:_ [0f54cb7](https://github.com/openbudgetfun/solana_kit/commit/0f54cb7e7e71e965fb43764cb7a9dafefd7400da)
+
+#### Bound fixed-array lengths from runtime schemas
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [43167d1](https://github.com/openbudgetfun/solana_kit/commit/43167d1ed14951e6647f6f70d15a99a5890912d3)
+
+Anchor IDL type parsing rejects negative, fractional, non-finite, and excessive fixed-array lengths. The upper bound is one million items, shared with array decoders through the new `defaultMaxArrayItems` constant.
+
+Fixed-array decoders now enforce `maxItems` during construction, before byte-size calculations or element reads. This prevents hostile schema lengths from expanding zero-byte elements into unbounded lists. Callers can still choose a different decoder limit with `maxItems`; valid empty arrays and zero-byte elements remain supported.
+
+#### Require Anchor IDL names and error codes, and attribute encode failures
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [eedf4a4](https://github.com/openbudgetfun/solana_kit/commit/eedf4a41807028ea4e43b01badd3b330013c7016)
+
+`parseAnchorIdl` silently turned an IDL instruction, error, or defined type with a missing name into the empty string — every such node then collided under the `''` key in the instruction, error, and type maps — and an error entry without a numeric `code` became code zero, silently mis-keying program error decoding. Both now throw `ArgumentError` naming the offending entry.
+
+`AnchorCoder`'s encode helpers no longer drop the field context they are given: a value that fails to encode inside an instruction argument or account field now surfaces as an `ArgumentError` naming that field instead of a bare codec error.
+
+- **Reject cyclic Anchor IDL type dependencies.** Reject cyclic Anchor IDL type dependencies with an `ArgumentError` during codec construction instead of exhausting the call stack. Apply the check to direct codec requests, instructions, accounts, and events while preserving repeated acyclic references. _Owner:_ Ifiok Jr. · _Introduced in:_ [640aee8](https://github.com/openbudgetfun/solana_kit/commit/640aee875464cf9fb1b30e981fd35d923b447e7a)
+- **Repair corrupted README documentation sections.** Five package READMEs carried a mangled documentation region: a duplicated Installation section with an unfilled `^` version placeholder, a stray `:::` container marker, and an orphaned `packageDocumentationSection` closing tag with no opening tag. The sections now match the mdt consumer-block structure the rest of the workspace uses, so `mdt check` passes with validators that flag unmatched tags (mdt 0.9.6+) and the published READMEs no longer show two conflicting Installation sections. _Owner:_ Ifiok Jr. · _Introduced in:_ [eedf4a4](https://github.com/openbudgetfun/solana_kit/commit/eedf4a41807028ea4e43b01badd3b330013c7016)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Fixes
