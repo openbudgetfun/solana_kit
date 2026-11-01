@@ -19,24 +19,32 @@ Future<void> main() async {
   // ── 1. Create a subscription client ──────────────────────────────────────
   // createSolanaRpcSubscriptions builds a WebSocket-backed subscriptions
   // client with default configuration (autopinging, channel pooling, etc.).
+  // #docregion landing
   final rpcSubscriptions = createSolanaRpcSubscriptions(
     'wss://api.devnet.solana.com',
   );
+  // #enddocregion landing
 
   // ── 2. Create a cancellation token source ─────────────────────────────────
   // The cancellation token is passed to `subscribe()` and triggers clean
   // teardown.
+  // #docregion landing
   final controller = CancellationTokenSource();
+  // #enddocregion landing
 
   print('Subscribing to slotNotifications on devnet …');
 
   // ── 3. Build a pending slot notification request ──────────────────────────
+  // #docregion landing
   final pending = rpcSubscriptions.slotNotifications();
+  // #enddocregion landing
 
   // ── 4. Subscribe and stream notifications ────────────────────────────────
+  // #docregion landing
   final stream = await pending.subscribe(
     RpcSubscribeOptions(abortSignal: controller.token),
   );
+  // #enddocregion landing
 
   // ── 5. Listen for 3 notifications then unsubscribe ───────────────────────
   var count = 0;

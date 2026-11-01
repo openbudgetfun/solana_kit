@@ -1,26 +1,31 @@
 [
   {
-    "title": "Solana Kit for Dart",
-    "description": "Comprehensive, example-driven documentation for the Solana Kit Dart workspace.",
+    "title": "The Solana SDK for Dart & Flutter",
+    "description": "A typed, modular Dart and Flutter port of @solana/kit — addresses, codecs, RPC, subscriptions, transactions, signers, and program clients.",
     "route": "/",
+    "content": "The landing page is rendered by LandingLayout in lib/layouts/landinglayout.dart. This file supplies its title and description, and an entry for the docs search."
+  },
+  {
+    "title": "Solana Kit docs",
+    "description": "Everything you need to build Solana apps and services in Dart and Flutter, from your first RPC call to production program clients.",
+    "route": "/docs",
     "headings": [
       "Upstream Compatibility",
-      "What makes Solana Kit different?",
+      "How these docs are organized",
       "Start here",
-      "Common workflows",
+      "Find it by task",
       "Read chain state",
       "Build and submit transactions",
       "Work with binary layouts and account schemas",
       "Build production integrations",
-      "Package map",
-      "Contributor resources"
+      "Contributing"
     ],
-    "content": "A Dart-first Solana SDK workspace modeled after @solana/kit, with strongly typed APIs for addresses, instructions, transactions, RPC, subscriptions, account decoding, and Mobile Wallet Adapter integrations. Upstream Compatibility Latest supported @solana/kit version: 8.6.0 This Dart port tracks upstream APIs and behavior through v8.6.0. Preferred Dart path Start with typed RPC clients, typed account helpers, and explicit transaction/signer models. The workspace teaches those Dart-first surfaces before lower-level compatibility seams. Use raw JSON-RPC requests, manual map peeling, or compatibility-only paths when you need to match upstream behavior exactly or reach a surface that has not been wrapped yet. Parity status Executable parity checks already cover selected @solana/kit behaviors for validation, derivation, transaction compilation, serialization, and targeted error semantics. Additional parity areas are tracked explicitly in the roadmap; absence from the harness should be read as out of scope today, not silently compatible. What makes Solana Kit different? Typed end to end: addresses, RPC requests, subscriptions, transactions, and account models are all expressed with explicit Dart types. Modular by default: import the umbrella package for convenience, or pull in only the packages you need. Composable primitives: build transaction messages, codecs, program clients, and confirmation strategies from smaller reusable pieces. Dart-native ergonomics: modern Dart 3 features like records, patterns, extension types, and sealed classes are used throughout the workspace. Upstream-aware: the repo tracks @solana/kit compatibility and documents sync status explicitly. Start here If you're new to the workspace, follow this path: 1. Installation 2. Quick Start 3. Generate a Signer 4. Fetch an Account 5. First Transaction 6. Transactions 7. RPC and Subscriptions Common workflows Read chain state Fetch an Account Accounts RPC and Subscriptions Build and submit transactions Create Instructions Build a Transaction First Transaction Transactions Signers Work with binary layouts and account schemas Codecs Build a Program Client Build production integrations Build an RPC Service Build a Realtime Observer Mobile Wallet Adapter Helius package Use the package catalog when you want to know which package to import. Use the core concept pages when you want to understand how the pieces fit together. Package map Package Index Complete Package Catalog Upstream Compatibility Contributor resources Contributing Release Process Benchmarking"
+    "content": "A Dart-first Solana SDK workspace modeled after @solana/kit, with strongly typed APIs for addresses, instructions, transactions, RPC, subscriptions, account decoding, and Mobile Wallet Adapter integrations. Upstream Compatibility Latest supported @solana/kit version: 8.6.0 This Dart port tracks upstream APIs and behavior through v8.6.0. Preferred Dart path Start with typed RPC clients, typed account helpers, and explicit transaction/signer models. The workspace teaches those Dart-first surfaces before lower-level compatibility seams. Use raw JSON-RPC requests, manual map peeling, or compatibility-only paths when you need to match upstream behavior exactly or reach a surface that has not been wrapped yet. Parity status Executable parity checks already cover selected @solana/kit behaviors for validation, derivation, transaction compilation, serialization, and targeted error semantics. Additional parity areas are tracked explicitly in the roadmap; absence from the harness should be read as out of scope today, not silently compatible. How these docs are organized | Section | What you will find | | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | | Get started | Install the SDK, create a signer, read an account, and send a first transaction. Read these in order. | | Core concepts | How addresses, codecs, accounts, signers, transactions, and RPC fit together, and why the APIs look the way they do. | | Guides | End-to-end walkthroughs for production integrations: RPC services, token transfers, program clients, and realtime observers. | | Flutter & mobile | Mobile Wallet Adapter, the wallet UI kit, and publishing to the Solana Mobile dApp Store. | | Programs | Task-focused guides for program clients such as Subscriptions and the Solana Attestation Service. | | Reference | Every package, what it is for, and which @solana/kit release it tracks. | Start here New to the workspace? Follow this path from an empty project to a confirmed transaction: 1. Installation 2. Quick Start 3. Generate a Signer 4. Fetch an Account 5. Create Instructions 6. Build a Transaction 7. First Transaction Find it by task Read chain state Fetch an Account Accounts RPC and Subscriptions Build and submit transactions Transactions Signers Build a Token Transfer Flow Work with binary layouts and account schemas Codecs Build a Program Client Build production integrations Build an RPC Service Build a Realtime Observer Errors and Diagnostics Helius package Use the package catalog when you want to know which package to import. Use the core concept pages when you want to understand how the pieces fit together. Contributing Working on the SDK itself? Start with Contributing, then see the Release Process and Benchmarking."
   },
   {
     "title": "Contributing",
     "description": "Local development, docs workflow, and contribution standards.",
-    "route": "/contributing",
+    "route": "/docs/contributing",
     "headings": [
       "Local Setup",
       "Clone the repository",
@@ -54,9 +59,40 @@
     "content": "Local Setup Day-to-Day Commands Documentation Site Commands Security and Platform Expectations Security note Keep allowInsecureHttp and allowInsecureWs disabled outside local development and controlled tests, and prefer small structured error context over ad hoc debug dumps. Avoid logging private keys, auth tokens, wallet session payloads, or full structured error contexts that may contain sensitive material. Keep allowInsecureHttp and allowInsecureWs disabled outside local development and controlled tests. Use audit:deps to scan the current workspace pubspec.lock and pnpm-lock.yaml files present on disk for known vulnerabilities. Do not log private keys, auth tokens, wallet session payloads, or full error contexts that may contain sensitive material. Treat Mobile Wallet Adapter as Android-only for real wallet handoff today. iOS remains a safe stub/no-op because the current Solana MWA ecosystem does not provide an equivalent iOS integration target. Gate MWA flows explicitly with isMwaSupported() / assertMwaSupported() and provide fallback UX on unsupported platforms. Coverage Expectations Run coverage:check before merging changes that touch transport, account parsing, typed RPC models, Helius integrations, or shared test utilities. Current risk-tier coverage floors are enforced at 90% line coverage for: - solanakitaccounts - solanakithelius - solanakitrpcsubscriptions - solanakitrpctypes - solanakittestmatchers Treat these floors as minimums, not targets: new tests should keep changed high-risk packages comfortably above 90%. Pull Request Expectations Keep changes scoped and include tests where behavior changes. Update documentation when APIs or workflows change. Prefer typed APIs over stringly-typed calls in new code."
   },
   {
+    "title": "Benchmarking",
+    "description": "Measure performance, enforce baselines, and prevent regressions.",
+    "route": "/docs/contributing/benchmarking",
+    "headings": [
+      "Why Benchmarking Is Critical",
+      "Current Workspace Command",
+      "Step 1: Pick Stable Benchmarks",
+      "Step 2: Freeze Input Fixtures",
+      "Step 3: Define Regression Policy",
+      "Step 4: Track Baseline and Prior Versions",
+      "Step 5: Report Meaningful Metrics",
+      "Step 6: Automate in CI"
+    ],
+    "content": "Why Benchmarking Is Critical In Solana workloads, tight loops around encoding, message compilation, and parsing directly affect user latency and infrastructure cost. Current Workspace Command Run all local benchmark scripts with: The initial suite covers address validation, transaction wire encoding, and BigInt-aware JSON parsing. Step 1: Pick Stable Benchmarks Target deterministic, high-frequency paths: address validation and encode/decode transaction message compilation key derivation/signing hot paths RPC payload parsing and transformation Reason: stable microbenchmarks produce actionable trend lines. Step 2: Freeze Input Fixtures commit representative fixture inputs. avoid network-dependent benchmark inputs. Reason: fixture drift makes regression data unreliable. Step 3: Define Regression Policy set thresholds by operation class. require justification for regressions beyond threshold. Reason: performance budgets should be explicit engineering policy. Step 4: Track Baseline and Prior Versions compare current branch vs baseline. compare current branch vs previous release tags. Reason: catches both accidental slowdowns and long-term drift. Step 5: Report Meaningful Metrics median and p95 runtime throughput where relevant absolute delta and percent delta Reason: single-number summaries hide variance and tail behavior. Step 6: Automate in CI run benchmark checks on PRs. upload machine-readable result artifacts. Reason: manual-only benchmarking does not scale."
+  },
+  {
+    "title": "Release Process",
+    "description": "End-to-end release guidance for preparing and publishing package releases.",
+    "route": "/docs/contributing/release-process",
+    "headings": [
+      "Release Goals",
+      "Step-by-Step Release Flow",
+      "Step 1: Validate Workspace Health",
+      "Step 2: Prepare Release Changes",
+      "Step 3: Publish Package Artifacts",
+      "Step 4: Validate Published Artifacts",
+      "Operational Guidance"
+    ],
+    "content": "Release Goals The release flow is automated with MonoChange and GitHub Actions. It separates version preparation from package publication so version bumps, changelogs, and package metadata can be reviewed in a release PR before anything is published to pub.dev or NPM. Step-by-Step Release Flow Step 1: Validate Workspace Health Run the standard workspace checks before preparing a release: Reason: release quality gates should fail fast before versions or changelogs change. Step 2: Prepare Release Changes Every push to main runs the release-pr workflow. That workflow prepares the pending changesets with MonoChange, updates package versions, refreshes changelogs and lockfiles, and opens or updates the chore(release): prepare release PR. Review the generated package versions and release notes before merging the release PR. Reason: package consumers should see accurate version numbers and user-facing release notes. Step 3: Publish Package Artifacts After the release PR merges to main, the release-pr workflow detects the merged MonoChange release commit, creates release tags, and dispatches the publish workflow with the direct v tag. The publish workflow checks out that tag, verifies publish readiness, publishes changed packages with monochange step publish-packages, and then publishes GitHub release objects. Reason: CI-owned publishing keeps the reviewed release commit, direct release tag, package artifacts, and GitHub releases tied to the same MonoChange release record. Step 4: Validate Published Artifacts Verify package metadata on pub.dev. Confirm each published package resolves from a clean consumer project. Smoke test critical quick-start paths. Reason: publishing success alone does not guarantee downstream usability. Operational Guidance Keep release cadence predictable. Batch breaking changes with migration notes. Document user-visible changes and minimum SDK changes clearly. Verify the umbrella package resolves after publishing dependent packages. Keep pub.dev Trusted Publishing configuration aligned with .github/workflows/publish.yml."
+  },
+  {
     "title": "Accounts",
     "description": "Understand encoded accounts, maybe-account wrappers, jsonParsed reads, and decode flows.",
-    "route": "/core/accounts",
+    "route": "/docs/core/accounts",
     "headings": [
       "Core account models",
       "Account",
@@ -75,7 +111,7 @@
   {
     "title": "Architecture",
     "description": "Understand the workspace structure and package boundaries.",
-    "route": "/core/architecture",
+    "route": "/docs/core/architecture",
     "headings": [
       "Primary Layers"
     ],
@@ -84,7 +120,7 @@
   {
     "title": "Codecs",
     "description": "Build deterministic binary layouts with Solana Kit codecs for numbers, strings, structs, tuples, unions, and options.",
-    "route": "/core/codecs",
+    "route": "/docs/core/codecs",
     "headings": [
       "Core concepts",
       "Encoder",
@@ -105,7 +141,7 @@
   {
     "title": "Errors and Diagnostics",
     "description": "Handle structured Solana errors, preserve context, and build recoverable failure flows.",
-    "route": "/core/errors-and-diagnostics",
+    "route": "/docs/core/errors-and-diagnostics",
     "headings": [
       "Domain helpers",
       "Typed Error Domains",
@@ -125,7 +161,7 @@
   {
     "title": "RPC and Subscriptions",
     "description": "Typed RPC methods, transport choices, websocket subscriptions, and production guidance.",
-    "route": "/core/rpc-and-subscriptions",
+    "route": "/docs/core/rpc-and-subscriptions",
     "headings": [
       "Typed RPC requests",
       "Typed RPC methods",
@@ -141,7 +177,7 @@
   {
     "title": "Signers",
     "description": "Model fee payers, partial signers, modifying signers, and sending signers explicitly.",
-    "route": "/core/signers",
+    "route": "/docs/core/signers",
     "headings": [
       "Why the signer model matters",
       "Common signer interfaces",
@@ -155,7 +191,7 @@
   {
     "title": "Transactions",
     "description": "Compose messages, attach signers, compile transactions, and confirm results with explicit typed steps.",
-    "route": "/core/transactions",
+    "route": "/docs/core/transactions",
     "headings": [
       "Recommended mental model",
       "Message construction",
@@ -170,7 +206,7 @@
   {
     "title": "Build a Transaction",
     "description": "Assemble a transaction message with a fee payer, a lifetime, and one or more instructions.",
-    "route": "/getting-started/build-a-transaction",
+    "route": "/docs/getting-started/build-a-transaction",
     "headings": [
       "Build a transaction message",
       "Why the lifetime constraint matters",
@@ -184,7 +220,7 @@
   {
     "title": "Create Instructions",
     "description": "Model Solana instructions explicitly with program addresses, account roles, and binary payloads.",
-    "route": "/getting-started/create-instructions",
+    "route": "/docs/getting-started/create-instructions",
     "headings": [
       "Minimal instruction",
       "Instruction with account metadata",
@@ -198,7 +234,7 @@
   {
     "title": "Fetch an Account",
     "description": "Read encoded or jsonParsed account data and handle missing accounts safely.",
-    "route": "/getting-started/fetch-an-account",
+    "route": "/docs/getting-started/fetch-an-account",
     "headings": [
       "Fetch an account",
       "Fetch multiple accounts",
@@ -213,7 +249,7 @@
   {
     "title": "First Transaction",
     "description": "Build, sign, send, and confirm a Solana transaction with explicit typed steps.",
-    "route": "/getting-started/first-transaction",
+    "route": "/docs/getting-started/first-transaction",
     "headings": [
       "1. Create the dependencies",
       "2. Build an instruction",
@@ -229,7 +265,7 @@
   {
     "title": "Generate a Signer",
     "description": "Create local key-pair signers and understand the signer roles used across the SDK.",
-    "route": "/getting-started/generate-a-signer",
+    "route": "/docs/getting-started/generate-a-signer",
     "headings": [
       "Start with a key-pair signer",
       "Sign a message",
@@ -242,7 +278,7 @@
   {
     "title": "Installation",
     "description": "Install Solana Kit in an application or set up the full workspace for contribution.",
-    "route": "/getting-started/installation",
+    "route": "/docs/getting-started/installation",
     "headings": [
       "Install in an app",
       "When to install a smaller package instead",
@@ -275,7 +311,7 @@
   {
     "title": "Quick Start",
     "description": "Connect to RPC, create a signer, and read your first typed Solana data.",
-    "route": "/getting-started/quick-start",
+    "route": "/docs/getting-started/quick-start",
     "headings": [
       "Create an RPC client",
       "Generate a signer",
@@ -285,33 +321,9 @@
     "content": "This page gives you a fast tour of the three building blocks most apps start with: 1. a typed RPC client 2. a signer 3. an account read Create an RPC client Start with a typed RPC client. It gives you method-specific helpers instead of building raw JSON-RPC requests by hand, while still letting you swap transports or request middleware later. A call like rpc.getSlot() builds a typed request first and only hits the network when you call .send(). That separation makes it easier to compose, cache, batch, or decorate RPC interactions. Use solanakitrpcsubscriptions alongside solanakitrpc when you also need websocket notifications for accounts, signatures, logs, or slots. Generate a signer Most app flows need a signer for fee payment, message signing, or transaction submission. generateKeyPairSigner() creates a new Ed25519 key-pair-backed KeyPairSigner. Use key-pair signers for local development, tests, automation, and server-side flows. For wallet-driven applications, you can also model fee-payer, partial, and sending signers explicitly with solanakitsigners. Fetch an account Use fetchEncodedAccount when you want the raw account bytes plus its Solana metadata. Decode it later with the codec or parser that matches your program. Use fetchJsonParsedAccount when the RPC can return a structured jsonParsed representation for a well-known program. Use encoded reads when you need byte-perfect custom decoding or when the RPC does not expose a parsed view for your program. What to read next Create Instructions Build a Transaction First Transaction RPC and Subscriptions Accounts"
   },
   {
-    "title": "Attestation Service overview",
-    "route": "/guides/attestation-service-overview",
-    "headings": [
-      "Attestation Service overview"
-    ],
-    "content": "Attestation Service overview The Solana Attestation Service is an open, permissionless protocol for verifiable on-chain credentials. In Dart, use solanakitattestationservice for generated instruction builders, account codecs, PDAs, and a schema-driven attestation data codec. An issuer registers a Credential with its authorized signers, declares a Schema that names and types its fields, and issues Attestations whose payloads are encoded exactly as the schema declares. Verifiers fetch an attestation, decode its payload with the schema, and check the signer and expiry. | Model | Use | | ----------- | ----------------------------------------------------------------------------- | | Credential | Register an issuer and rotate its authorized signers. | | Schema | Declare a versioned, pausable field layout under a credential. | | Attestation | Store a schema-conformant payload (optionally tokenized as a Token-2022 NFT). | The canonical flow is create-credential, create-schema, create-attestation, then verify: Verification closes the loop: fetch the Attestation and Schema accounts, decode the payload against the schema's declared layout, and check that the attestation's signer is one of the credential's authorized signers and that the expiry has not passed. Upstream documentation:"
-  },
-  {
-    "title": "Benchmarking",
-    "description": "Measure performance, enforce baselines, and prevent regressions.",
-    "route": "/guides/benchmarking",
-    "headings": [
-      "Why Benchmarking Is Critical",
-      "Current Workspace Command",
-      "Step 1: Pick Stable Benchmarks",
-      "Step 2: Freeze Input Fixtures",
-      "Step 3: Define Regression Policy",
-      "Step 4: Track Baseline and Prior Versions",
-      "Step 5: Report Meaningful Metrics",
-      "Step 6: Automate in CI"
-    ],
-    "content": "Why Benchmarking Is Critical In Solana workloads, tight loops around encoding, message compilation, and parsing directly affect user latency and infrastructure cost. Current Workspace Command Run all local benchmark scripts with: The initial suite covers address validation, transaction wire encoding, and BigInt-aware JSON parsing. Step 1: Pick Stable Benchmarks Target deterministic, high-frequency paths: address validation and encode/decode transaction message compilation key derivation/signing hot paths RPC payload parsing and transformation Reason: stable microbenchmarks produce actionable trend lines. Step 2: Freeze Input Fixtures commit representative fixture inputs. avoid network-dependent benchmark inputs. Reason: fixture drift makes regression data unreliable. Step 3: Define Regression Policy set thresholds by operation class. require justification for regressions beyond threshold. Reason: performance budgets should be explicit engineering policy. Step 4: Track Baseline and Prior Versions compare current branch vs baseline. compare current branch vs previous release tags. Reason: catches both accidental slowdowns and long-term drift. Step 5: Report Meaningful Metrics median and p95 runtime throughput where relevant absolute delta and percent delta Reason: single-number summaries hide variance and tail behavior. Step 6: Automate in CI run benchmark checks on PRs. upload machine-readable result artifacts. Reason: manual-only benchmarking does not scale."
-  },
-  {
     "title": "Build a Program Client",
     "description": "Combine codecs, instructions, and account decoding into a reusable typed client for a Solana program.",
-    "route": "/guides/build-program-client",
+    "route": "/docs/guides/build-program-client",
     "headings": [
       "Step 1: define the instruction layout",
       "Step 2: create an instruction builder",
@@ -325,7 +337,7 @@
   {
     "title": "Build a Realtime Observer",
     "description": "Turn Solana websocket notifications into a reusable observer layer for your app or service.",
-    "route": "/guides/build-realtime-observer",
+    "route": "/docs/guides/build-realtime-observer",
     "headings": [
       "Step 1: create a subscription client",
       "Step 2: register a typed subscription request",
@@ -339,7 +351,7 @@
   {
     "title": "Build an RPC Service",
     "description": "Create a reusable application service that owns Solana RPC access, policy, and error mapping.",
-    "route": "/guides/build-rpc-service",
+    "route": "/docs/guides/build-rpc-service",
     "headings": [
       "Why this pattern works",
       "Step 1: wrap the RPC client",
@@ -354,7 +366,7 @@
   {
     "title": "Build a Token Transfer Flow",
     "description": "Assemble a production-friendly transfer pipeline from inputs to confirmation.",
-    "route": "/guides/build-token-transfer-flow",
+    "route": "/docs/guides/build-token-transfer-flow",
     "headings": [
       "Step 1: gather the inputs",
       "Step 2: fetch the latest blockhash",
@@ -370,7 +382,7 @@
   {
     "title": "Mobile Wallet Adapter",
     "description": "Step-by-step guide for integrating Solana Mobile Wallet Adapter flows.",
-    "route": "/guides/mobile-wallet-adapter",
+    "route": "/docs/guides/mobile-wallet-adapter",
     "headings": [
       "Why MWA Exists in This Workspace",
       "Platform Support",
@@ -389,7 +401,7 @@
   {
     "title": "Publish a dApp to the Solana Mobile dApp Store",
     "description": "Publish, resume, and automate dApp version releases to the Solana Mobile dApp Store with the solana_kit_dapp_publisher_cli.",
-    "route": "/guides/publish-dapp-store",
+    "route": "/docs/guides/publish-dapp-store",
     "headings": [
       "Installation",
       "Prerequisites",
@@ -418,72 +430,9 @@
     "content": "Publishing a dApp to the Solana Mobile dApp Store involves minting a release NFT, verifying its collection membership, and submitting it for store review. The solanakitdapppublishercli package wraps that entire workflow behind a single CLI command backed by the Solana Mobile Publisher Portal. Installation Install the CLI globally from pub.dev: This exposes the dapp-store executable on your PATH. Verify: Prerequisites Before you can publish, you need four things: 1. A Publisher Portal account with your dApp registered and its App NFT minted. Go to publish.solanamobile.com, create an account, and register your dApp with its Android package name (e.g. com.example.myapp). 2. A portal API key. Generate one from the Publisher Portal settings. The CLI reads it from an environment variable or stdin — never from argv — so it won't leak into process listings or shell history. 3. A signer keypair in the Solana CLI JSON format (a 64-element JSON array of bytes). This keypair must be the publisher wallet registered in the portal. It signs the release mint and collection verification transactions locally. 4. A release-ready APK signed with your release key. Either a local file path or an HTTPS URL where the portal can download it. Quick start Publish from a local APK Publish from an externally hosted APK If you host the APK on your own CDN or GitHub Releases: The portal downloads the APK from the URL and handles ingestion, so you don't need to upload the file yourself. Resume a partially completed publication If the CLI is interrupted (network failure, CI timeout, manual abort), you can resume from where it left off using the release ID or session ID printed by the failed run: Or with a session ID: CLI reference Root command (publish a new version) | Flag | Description | Required | | ------------------------- | --------------------------------------------------------------------------- | --------------------- | | --apk-file | Path to the APK file to publish | Yes (or --apk-url) | | --apk-url | HTTPS URL for an externally hosted APK | Yes (or --apk-file) | | --whats-new | Release notes for this version | Yes | | --keypair | Path to the Solana signer keypair (JSON) | Yes | | --portal-url | Portal base URL (default: production) | No | | --api-key-env | Env var containing the API key (default: DAPPSTOREAPIKEY) | No | | --api-key-stdin | Read the API key from stdin | No | | --rpc-url | RPC endpoint for the balance preflight (defaults to the Solana mainnet API) | No | | --local-dev | Allow localhost portal endpoints for local development | No | | --skip-self-update | Skip the self-update gate (local development only) | No | | --idempotency-key | Idempotency key for safe retries | No | | --verbose | Print detailed publication identifiers | No | The portal base URL can also be set through the DAPPSTOREPORTALURL environment variable instead of --portal-url. Resume command | Flag | Description | | ----------------------- | -------------------------------------------- | | --release-id | Resume by release identifier | | --session-id | Resume by publication session identifier | | --resume-release | Alias for --release-id | | --resume-session | Alias for --session-id | | --keypair | Path to the Solana signer keypair (required) | | --portal-url | Portal base URL | | --api-key-env | Env var containing the API key | | --api-key-stdin | Read the API key from stdin | | --local-dev | Allow localhost portal endpoints | | --verbose | Print detailed identifiers | Global flags | Flag | Description | | --------------- | --------------------- | | --version | Print the CLI version | | --help / -h | Print help text | How the publication works The CLI drives a multi-step workflow through the Publisher Portal: 1. APK ingestion — the APK is uploaded to portal storage (or the portal downloads it from the external URL), then processed to extract the Android package name, version code, certificate fingerprint, permissions, and locales. 2. Release metadata — the portal builds a release NFT metadata document from the APK metadata and your portal configuration. The CLI uploads any media that isn't already on portal storage. 3. Release NFT minting — the portal prepares a Metaplex Token Metadata create transaction. The CLI validates it locally (blockhash, fee payer, signer set, program IDs, collection reference, pre-signed mint) and then signs it with your keypair before submitting it back to the portal for on-chain submission. 4. Collection verification — the portal prepares a verify-collection transaction. The CLI validates it and signs it. 5. Attestation — the CLI builds a signed attestation payload that binds the current blockhash and a unique request ID to prove the request originated from the publisher. 6. Store submission — the release is submitted to the dApp Store for review. You'll receive a HubSpot ticket ID for tracking. Using the Dart API programmatically If you want to embed the publishing workflow in your own Dart code instead of shelling out to the CLI: The same pattern works for resuming: call workflow.resumePublication(PublicationResumeInput(signer: ..., attestationClient: ..., releaseId: ...)) instead of startPublication. Automating publishing with GitHub Actions Basic setup Add your portal API key and publisher keypair as repository secrets: | Secret | Description | | ------------------------------ | ----------------------------------------------------------------------- | | DAPPSTOREAPIKEY | Your portal API key from the Publisher Portal settings. | | DAPPSTOREPUBLISHERKEYPAIR | The full contents of your Solana CLI keypair JSON file, base64-encoded. | Security note: Never commit your keypair to the repository. Use GitHub encrypted secrets, and scope the keypair to the main branch (or a dedicated publishing branch) so only trusted workflows can access it. Workflow: publish on version tag push This workflow publishes a new dApp version whenever you push a version tag (e.g. v1.2.0). It builds the APK, then invokes the CLI: Workflow: publish with an externally hosted APK If your APK is already hosted (e.g. on GitHub Releases), skip the build step: Workflow: build and publish on merge to main For continuous deployment where every merge to main publishes a new version: Workflow: retry a failed publication If a publication fails mid-way (e.g. the CI runner times out during ingestion), you can resume it: Workflow: macOS runner with codesigned APK If you build with Xcode and need to codesign, use a macOS runner: Setting up your own project for automated publishing Here's a minimal checklist for a Flutter project that wants to publish to the Solana dApp Store on every release: 1. Register your dApp at publish.solanamobile.com. Note the Android package name — it must match the applicationId in your build.gradle. 2. Generate an API key in the Publisher Portal settings. 3. Create a publisher keypair (if you don't already have one): 4. Link the keypair to your Portal account by setting the dApp wallet address to the publisher's public key. 5. Add the secrets to your GitHub repository (Settings → Secrets → Actions): - DAPPSTOREAPIKEY — the portal API key - DAPPSTOREPUBLISHERKEYPAIR — base64-encoded keypair (base64 -w0 < publisher.json) 6. Add the workflow (.github/workflows/publish-dapp-store.yml) from one of the examples above. 7. Publish by pushing a version tag: Security considerations Transaction validation: The CLI validates every portal-prepared transaction locally before signing. It checks the blockhash, fee payer, required signer set, program IDs (only compute budget and token metadata are allowed), collection metadata reference, and PDA derivations. If the portal sends a modified or malicious transaction, signing fails. HTTPS enforcement: Portal endpoints must use HTTPS. Local development (--local-dev) is restricted to localhost only. Keypair handling: The keypair is loaded from disk, used to sign in memory, and never transmitted. Only the signature bytes are sent to the portal. API key handling: The API key is stored in a SensitiveString wrapper that redacts its value in toString() and uses constant-time comparison. It never appears in error messages or logs. Troubleshooting | Problem | Solution | | ------------------------------------------------ | ---------------------------------------------------------------------- | | Portal API key is required | Set DAPPSTOREAPIKEY or pass --api-key-stdin. | | Specify exactly one of --apk-file or --apk-url | You must provide exactly one APK source. | | APK file not found | Check that the path exists and the CI runner can read it. | | Portal endpoints must use HTTPS | Use https:// URLs, or pass --local-dev for localhost testing. | | Publication signer mismatch | The keypair doesn't match the publisher wallet in the portal. | | Insufficient balance | Fund the signer keypair with at least 0.016 SOL for transaction fees. | | Timed out waiting for ingestion session | Large APKs can take tens of minutes to process. Try resume later. |"
   },
   {
-    "title": "Release Process",
-    "description": "End-to-end release guidance for preparing and publishing package releases.",
-    "route": "/guides/release-process",
-    "headings": [
-      "Release Goals",
-      "Step-by-Step Release Flow",
-      "Step 1: Validate Workspace Health",
-      "Step 2: Prepare Release Changes",
-      "Step 3: Publish Package Artifacts",
-      "Step 4: Validate Published Artifacts",
-      "Operational Guidance"
-    ],
-    "content": "Release Goals The release flow is automated with MonoChange and GitHub Actions. It separates version preparation from package publication so version bumps, changelogs, and package metadata can be reviewed in a release PR before anything is published to pub.dev or NPM. Step-by-Step Release Flow Step 1: Validate Workspace Health Run the standard workspace checks before preparing a release: Reason: release quality gates should fail fast before versions or changelogs change. Step 2: Prepare Release Changes Every push to main runs the release-pr workflow. That workflow prepares the pending changesets with MonoChange, updates package versions, refreshes changelogs and lockfiles, and opens or updates the chore(release): prepare release PR. Review the generated package versions and release notes before merging the release PR. Reason: package consumers should see accurate version numbers and user-facing release notes. Step 3: Publish Package Artifacts After the release PR merges to main, the release-pr workflow detects the merged MonoChange release commit, creates release tags, and dispatches the publish workflow with the direct v tag. The publish workflow checks out that tag, verifies publish readiness, publishes changed packages with monochange step publish-packages, and then publishes GitHub release objects. Reason: CI-owned publishing keeps the reviewed release commit, direct release tag, package artifacts, and GitHub releases tied to the same MonoChange release record. Step 4: Validate Published Artifacts Verify package metadata on pub.dev. Confirm each published package resolves from a clean consumer project. Smoke test critical quick-start paths. Reason: publishing success alone does not guarantee downstream usability. Operational Guidance Keep release cadence predictable. Batch breaking changes with migration notes. Document user-visible changes and minimum SDK changes clearly. Verify the umbrella package resolves after publishing dependent packages. Keep pub.dev Trusted Publishing configuration aligned with .github/workflows/publish.yml."
-  },
-  {
-    "title": "Create a Subscription Authority",
-    "route": "/guides/subscriptions-authority",
-    "headings": [
-      "Create a Subscription Authority"
-    ],
-    "content": "Create a Subscription Authority Create a Subscription Authority once per (user, token mint) pair. The user's associated token account must exist first. Build the instruction with getInitSubscriptionAuthorityInstruction, add it to a transaction, and sign with the owner. Fetch and decode SubscriptionAuthority before creating it when your app may have initialized the authority already."
-  },
-  {
-    "title": "Close a Subscription Authority",
-    "route": "/guides/subscriptions-close-authority",
-    "headings": [
-      "Close a Subscription Authority"
-    ],
-    "content": "Close a Subscription Authority Close the Subscription Authority after all fixed, recurring, and subscription delegations that depend on it have been closed or revoked. Closing returns the authority account rent and removes the program authority for that (user, token mint) pair. The user signs the transaction. If your app stores derived addresses, recompute the PDA before closing so the instruction targets the canonical authority for the user and mint."
-  },
-  {
-    "title": "Fixed delegation",
-    "route": "/guides/subscriptions-fixed-delegation",
-    "headings": [
-      "Fixed delegation"
-    ],
-    "content": "Fixed delegation A fixed delegation lets a delegatee pull up to a fixed token amount. Each successful transfer reduces the remaining allowance. Use expiryTs: BigInt.zero for no expiry. The delegator signs setup and revoke transactions. The delegatee signs transfer transactions built with getTransferFixedInstruction."
-  },
-  {
-    "title": "Subscriptions overview",
-    "route": "/guides/subscriptions-overview",
-    "headings": [
-      "Subscriptions overview"
-    ],
-    "content": "Subscriptions overview The Subscriptions Delegation Program lets users authorize future SPL Token or Token-2022 transfers with explicit limits. In Dart, use solanakitsubscriptions for generated PDAs, account decoders, and instruction builders. Each (user, token mint) pair gets a program-controlled Subscription Authority. The user's token account approves that authority once. The program then checks every requested pull against an active authorization record. | Model | Use | | -------------------- | ------------------------------------------------------------------------------------ | | Fixed delegation | Let a delegatee spend up to one total allowance, optionally with an expiry. | | Recurring delegation | Let a delegatee spend up to a limit that resets each period. | | Subscription plan | Let a merchant publish terms that subscribers accept and approved collectors charge. | Amounts are token base units. For a 6-decimal token, 1000000 means 1 token."
-  },
-  {
-    "title": "Subscription plans",
-    "route": "/guides/subscriptions-plan",
-    "headings": [
-      "Subscription plans"
-    ],
-    "content": "Subscription plans Subscription plans let a merchant publish reusable terms. A subscriber accepts a plan with getSubscribeInstruction, which creates a subscription delegation account tied to the accepted terms. After the plan exists, derive the subscription delegation PDA and call getSubscribeInstruction. Use getTransferSubscriptionInstruction for billing, getCancelSubscriptionInstruction for subscriber cancellation, and getResumeSubscriptionInstruction to resume a paused subscription."
-  },
-  {
-    "title": "Recurring delegation",
-    "route": "/guides/subscriptions-recurring-delegation",
-    "headings": [
-      "Recurring delegation"
-    ],
-    "content": "Recurring delegation A recurring delegation lets a delegatee pull up to a token limit that resets every period. The program rejects transfers that exceed the current period's remaining allowance. Use getTransferRecurringInstruction for collection. It updates the recurring delegation account so the remaining allowance and billing window stay consistent on-chain."
-  },
-  {
     "title": "Wallet UI",
     "description": "A wallet connect surface that feels at home in any Flutter app — Material, Cupertino, adaptive, or hand-drawn Skribble — with a live demo.",
-    "route": "/guides/wallet-ui",
+    "route": "/docs/guides/wallet-ui",
     "headings": [
       "What Wallet UI Does",
       "Live Demo",
@@ -496,9 +445,65 @@
     "content": "What Wallet UI Does solanakitwalletui is the connect surface of the Solana Kit wallet stack. Discovery, authorization, and message signing live in solanakitwalletadapter and solanakitwalletstandard; the UI package turns that state into Flutter widgets: one adaptive connect button that picks Material or Cupertino per platform, a hand-drawn Skribble presentation that renders the same flow with the skribble design system, a framework-neutral picker (WalletPickerContent) you can embed in any surface you already own, an SVG/data-URI avatar (WalletAvatar) for any Wallet Standard icon format, a small token vocabulary (WalletUiTheme, WalletUiPalette) instead of a foreign design system. Nothing here assumes it owns the screen. Every widget takes builders you can replace to bend the flow to your app. Live Demo The frame below runs the real package — the example app built for web. It detects the Wallet Standard wallets you have installed in the browser the same way the wallet adapter examples do, and always keeps a deterministic demo wallet available so the picker is never empty. Connecting to a detected wallet uses your real wallet; every demo-wallet interaction stays local: no keys, no network, no setup. What to try: 1. Pick a presentation at the top of the action panel — Adaptive, Material, Cupertino, or Skribble. Skribble swaps the whole connect flow to hand-drawn ink: a rough-filled connect button, sketchy wallet tiles, and a doodle-marked empty state, so the frame below shows exactly how a wallet app looks with Skribble built in. 2. Press the connect button. The picker lists every Wallet Standard wallet detected in your browser — Phantom, Backpack, Solflare, and any other standard-compatible extension — plus the built-in demo wallet. 3. After connecting, use Sign message to exercise the solanasignMessage feature end to end. 4. Check Surfpool pings a local surfpool node — in the hosted demo it reports unavailable unless you run one on localhost:8899. [!TIP] The demo source lives in packages/solanakitwalletui/example. Run it locally with fvm flutter run -d chrome --dart-define=DEMOWALLET=true. Quickstart That is the whole connect experience: the controller watches the registry, the button renders connect / progress / connected states, and the picker appears on tap. One Button, Three Platforms AdaptiveWalletButton resolves per platform at runtime. Pin a style explicitly whenever you need it: WalletUiStyle.material and WalletUiStyle.cupertino are pure Flutter surfaces — they do not pull platform channels — so both render identically in tests and on web. A Hand-Drawn Wallet with Skribble Skribble is a design system of sketchy, hand-drawn widgets that keeps familiar Material-style APIs. Wallet UI ships a first-class presentation on top of it, so the entire connect flow — button, picker, tiles, disconnect sheet — can be drawn in ink: Compact viewports get a hand-drawn bottom sheet, large viewports a hand-drawn dialog, and the wallet tiles are roughened per index so no two wobble alike. The discovery, error, and empty states — including the doodle-marked empty state — reuse WalletPickerContent, so behavior matches the Material and Cupertino pickers exactly. When you embed WalletPickerContent in your own hand-drawn shell, skribbleWalletPalette maps a WiredThemeData onto the neutral WalletUiPalette for you. Skribble is a direct dependency of solanakitwalletui, so adopting the package now requires Flutter 3.47 or newer — the skribble floor. Make It Yours Two extension points go deeper than colors: WalletUiThemeData carries the shared copy and geometry; WalletUiPalette colors the picker tiles when you render WalletPickerContent inside your own dialogs. For total control, every widget accepts builder overrides — builder, tileBuilder, headerBuilder, emptyBuilder — so the flow can be restyled without forking the wiring: Test Like a Product WalletUiKeys exposes stable keys for every interactive element, and the example app ships Patrol end-to-end tests that drive connect → sign → disconnect against the deterministic demo wallet. The hosted demo above is the same app those tests exercise."
   },
   {
+    "title": "Attestation Service overview",
+    "route": "/docs/programs/attestation-service-overview",
+    "headings": [
+      "Attestation Service overview"
+    ],
+    "content": "Attestation Service overview The Solana Attestation Service is an open, permissionless protocol for verifiable on-chain credentials. In Dart, use solanakitattestationservice for generated instruction builders, account codecs, PDAs, and a schema-driven attestation data codec. An issuer registers a Credential with its authorized signers, declares a Schema that names and types its fields, and issues Attestations whose payloads are encoded exactly as the schema declares. Verifiers fetch an attestation, decode its payload with the schema, and check the signer and expiry. | Model | Use | | ----------- | ----------------------------------------------------------------------------- | | Credential | Register an issuer and rotate its authorized signers. | | Schema | Declare a versioned, pausable field layout under a credential. | | Attestation | Store a schema-conformant payload (optionally tokenized as a Token-2022 NFT). | The canonical flow is create-credential, create-schema, create-attestation, then verify: Verification closes the loop: fetch the Attestation and Schema accounts, decode the payload against the schema's declared layout, and check that the attestation's signer is one of the credential's authorized signers and that the expiry has not passed. Upstream documentation:"
+  },
+  {
+    "title": "Create a Subscription Authority",
+    "route": "/docs/programs/subscriptions-authority",
+    "headings": [
+      "Create a Subscription Authority"
+    ],
+    "content": "Create a Subscription Authority Create a Subscription Authority once per (user, token mint) pair. The user's associated token account must exist first. Build the instruction with getInitSubscriptionAuthorityInstruction, add it to a transaction, and sign with the owner. Fetch and decode SubscriptionAuthority before creating it when your app may have initialized the authority already."
+  },
+  {
+    "title": "Close a Subscription Authority",
+    "route": "/docs/programs/subscriptions-close-authority",
+    "headings": [
+      "Close a Subscription Authority"
+    ],
+    "content": "Close a Subscription Authority Close the Subscription Authority after all fixed, recurring, and subscription delegations that depend on it have been closed or revoked. Closing returns the authority account rent and removes the program authority for that (user, token mint) pair. The user signs the transaction. If your app stores derived addresses, recompute the PDA before closing so the instruction targets the canonical authority for the user and mint."
+  },
+  {
+    "title": "Fixed delegation",
+    "route": "/docs/programs/subscriptions-fixed-delegation",
+    "headings": [
+      "Fixed delegation"
+    ],
+    "content": "Fixed delegation A fixed delegation lets a delegatee pull up to a fixed token amount. Each successful transfer reduces the remaining allowance. Use expiryTs: BigInt.zero for no expiry. The delegator signs setup and revoke transactions. The delegatee signs transfer transactions built with getTransferFixedInstruction."
+  },
+  {
+    "title": "Subscriptions overview",
+    "route": "/docs/programs/subscriptions-overview",
+    "headings": [
+      "Subscriptions overview"
+    ],
+    "content": "Subscriptions overview The Subscriptions Delegation Program lets users authorize future SPL Token or Token-2022 transfers with explicit limits. In Dart, use solanakitsubscriptions for generated PDAs, account decoders, and instruction builders. Each (user, token mint) pair gets a program-controlled Subscription Authority. The user's token account approves that authority once. The program then checks every requested pull against an active authorization record. | Model | Use | | -------------------- | ------------------------------------------------------------------------------------ | | Fixed delegation | Let a delegatee spend up to one total allowance, optionally with an expiry. | | Recurring delegation | Let a delegatee spend up to a limit that resets each period. | | Subscription plan | Let a merchant publish terms that subscribers accept and approved collectors charge. | Amounts are token base units. For a 6-decimal token, 1000000 means 1 token."
+  },
+  {
+    "title": "Subscription plans",
+    "route": "/docs/programs/subscriptions-plan",
+    "headings": [
+      "Subscription plans"
+    ],
+    "content": "Subscription plans Subscription plans let a merchant publish reusable terms. A subscriber accepts a plan with getSubscribeInstruction, which creates a subscription delegation account tied to the accepted terms. After the plan exists, derive the subscription delegation PDA and call getSubscribeInstruction. Use getTransferSubscriptionInstruction for billing, getCancelSubscriptionInstruction for subscriber cancellation, and getResumeSubscriptionInstruction to resume a paused subscription."
+  },
+  {
+    "title": "Recurring delegation",
+    "route": "/docs/programs/subscriptions-recurring-delegation",
+    "headings": [
+      "Recurring delegation"
+    ],
+    "content": "Recurring delegation A recurring delegation lets a delegatee pull up to a token limit that resets every period. The program rejects transfers that exceed the current period's remaining allowance. Use getTransferRecurringInstruction for collection. It updates the recurring delegation account so the remaining allowance and billing window stay consistent on-chain."
+  },
+  {
     "title": "Complete Package Catalog",
     "description": "Every Solana Kit package, why it exists, what it does, and when to use it.",
-    "route": "/reference/package-catalog",
+    "route": "/docs/reference/package-catalog",
     "headings": [
       "Umbrella Packages",
       "solanakit",
@@ -582,7 +587,7 @@
   {
     "title": "Package Index",
     "description": "Category-level map of the Solana Kit workspace packages with guidance on where to start.",
-    "route": "/reference/package-index",
+    "route": "/docs/reference/package-index",
     "headings": [
       "Start with the umbrella package unless you have a reason not to",
       "Umbrella",
@@ -602,7 +607,7 @@
   {
     "title": "Upstream Compatibility",
     "description": "How this workspace tracks @solana/kit compatibility.",
-    "route": "/reference/upstream-compatibility",
+    "route": "/docs/reference/upstream-compatibility",
     "headings": [
       "Upstream Compatibility",
       "Version parity",

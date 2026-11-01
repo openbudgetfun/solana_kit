@@ -2,6 +2,8 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
 /// Header search control and modal for the static documentation site.
+///
+/// Styles live in `web/site.css`.
 class SiteSearch extends StatelessComponent {
   /// Creates a docs search UI whose results are resolved relative to [basePath].
   const SiteSearch({required this.basePath, super.key});
@@ -12,11 +14,6 @@ class SiteSearch extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     return Component.fragment([
-      const Document.head(
-        children: [
-          Component.element(tag: 'style', children: [Component.text(_styles)]),
-        ],
-      ),
       Component.element(
         tag: 'button',
         id: 'site-search-button',
@@ -28,6 +25,7 @@ class SiteSearch extends StatelessComponent {
           'data-search-base-path': basePath,
         },
         children: const [
+          span(classes: 'site-search-icon', [Component.text('⌕')]),
           span(classes: 'site-search-button-label', [Component.text('Search')]),
           Component.element(tag: 'kbd', children: [Component.text('⌘K')]),
         ],
@@ -78,162 +76,6 @@ class SiteSearch extends StatelessComponent {
     ]);
   }
 }
-
-const _styles = '''
-.site-search-button {
-  align-items: center;
-  background: color-mix(in srgb, var(--background), var(--text) 4%);
-  border: 1px solid color-mix(in srgb, var(--text), transparent 86%);
-  border-radius: 0.65rem;
-  color: color-mix(in srgb, var(--text), transparent 18%);
-  cursor: pointer;
-  display: inline-flex;
-  font: inherit;
-  gap: 0.65rem;
-  height: 2.25rem;
-  padding: 0 0.45rem 0 0.8rem;
-}
-
-.site-search-button:hover,
-.site-search-button:focus-visible {
-  background: color-mix(in srgb, var(--primary), transparent 90%);
-  border-color: color-mix(in srgb, var(--primary), transparent 55%);
-  color: var(--text);
-  outline: none;
-}
-
-.site-search-button kbd {
-  background: color-mix(in srgb, var(--text), transparent 92%);
-  border: 1px solid color-mix(in srgb, var(--text), transparent 84%);
-  border-radius: 0.45rem;
-  color: color-mix(in srgb, var(--text), transparent 24%);
-  font-size: 0.72rem;
-  line-height: 1;
-  padding: 0.28rem 0.38rem;
-}
-
-.site-search-dialog[hidden] {
-  display: none;
-}
-
-.site-search-dialog {
-  inset: 0;
-  position: fixed;
-  z-index: 1000;
-}
-
-.site-search-backdrop {
-  background: color-mix(in srgb, #020617, transparent 35%);
-  inset: 0;
-  position: absolute;
-}
-
-.site-search-panel {
-  background: var(--background);
-  border: 1px solid color-mix(in srgb, var(--text), transparent 86%);
-  border-radius: 1rem;
-  box-shadow: 0 1.5rem 4rem color-mix(in srgb, #020617, transparent 55%);
-  left: 50%;
-  max-height: min(42rem, calc(100vh - 2rem));
-  max-width: min(44rem, calc(100vw - 1.5rem));
-  overflow: hidden;
-  position: absolute;
-  top: 6rem;
-  transform: translateX(-50%);
-  width: 100%;
-}
-
-.site-search-input-row {
-  align-items: center;
-  border-bottom: 1px solid color-mix(in srgb, var(--text), transparent 90%);
-  display: flex;
-  gap: 0.75rem;
-  padding: 0.85rem 1rem;
-}
-
-.site-search-icon {
-  color: color-mix(in srgb, var(--text), transparent 48%);
-  font-size: 1.35rem;
-}
-
-.site-search-input {
-  background: transparent;
-  border: 0;
-  color: var(--text);
-  flex: 1;
-  font: inherit;
-  font-size: 1rem;
-  outline: none;
-}
-
-.site-search-close {
-  background: color-mix(in srgb, var(--text), transparent 94%);
-  border: 1px solid color-mix(in srgb, var(--text), transparent 86%);
-  border-radius: 0.5rem;
-  color: color-mix(in srgb, var(--text), transparent 28%);
-  cursor: pointer;
-  font-size: 0.75rem;
-  padding: 0.3rem 0.5rem;
-}
-
-.site-search-results {
-  display: flex;
-  flex-direction: column;
-  max-height: min(32rem, calc(100vh - 10rem));
-  overflow-y: auto;
-  padding: 0.45rem;
-}
-
-.site-search-result {
-  border-radius: 0.75rem;
-  color: inherit;
-  display: block;
-  padding: 0.75rem 0.85rem;
-  text-decoration: none;
-}
-
-.site-search-result:hover,
-.site-search-result:focus-visible,
-.site-search-result[aria-selected="true"] {
-  background: color-mix(in srgb, var(--primary), transparent 90%);
-  outline: none;
-}
-
-.site-search-result-title {
-  color: var(--text);
-  font-weight: 650;
-}
-
-.site-search-result-route {
-  color: color-mix(in srgb, var(--primary), var(--text) 20%);
-  font-size: 0.8rem;
-  margin-top: 0.15rem;
-}
-
-.site-search-result-description {
-  color: color-mix(in srgb, var(--text), transparent 30%);
-  font-size: 0.9rem;
-  line-height: 1.45;
-  margin-top: 0.35rem;
-}
-
-.site-search-empty {
-  color: color-mix(in srgb, var(--text), transparent 38%);
-  font-size: 0.92rem;
-  padding: 1.25rem;
-  text-align: center;
-}
-
-@media (max-width: 640px) {
-  .site-search-button-label {
-    display: none;
-  }
-
-  .site-search-panel {
-    top: 4.75rem;
-  }
-}
-''';
 
 const _script = r'''
 (() => {

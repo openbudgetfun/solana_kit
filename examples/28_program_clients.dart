@@ -23,10 +23,12 @@ void main() {
 }
 
 void buildMemoInstruction() {
+  // #docregion landing
   final instruction = getAddMemoInstruction(
     programAddress: memoProgramAddress,
     memo: 'hello from solana_kit',
   );
+  // #enddocregion landing
 
   print('memo program: ${instruction.programAddress}');
   print('memo bytes: ${utf8.decode(instruction.data ?? Uint8List(0))}');
@@ -86,11 +88,13 @@ void buildLoaderInstructions() {
 }
 
 void buildStakeInstructions() {
+  // #docregion landing
   final delegate = getDelegateStakeInstructionPlan(
     stake: account,
     vote: secondAccount,
     stakeAuthority: authority,
   );
+  // #enddocregion landing
   final create = getCreateStakeAccountInstructionPlan(
     payer: payer,
     stake: account,

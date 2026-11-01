@@ -16,10 +16,14 @@ import 'package:solana_kit_rpc_api/solana_kit_rpc_api.dart';
 import 'package:solana_kit_rpc_types/solana_kit_rpc_types.dart';
 
 Future<void> main() async {
+  // #docregion landing
   final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
+  // #enddocregion landing
 
   // ── 1. System program account (always exists) ─────────────────────────────
+  // #docregion landing
   const systemProgram = Address('11111111111111111111111111111111');
+  // #enddocregion landing
 
   final rawInfo = await rpc.getAccountInfo(systemProgram).send();
   print(
@@ -29,6 +33,7 @@ Future<void> main() async {
   // ── 2. Typed wrapper: SolanaRpcResponse<Map?> ─────────────────────────────
   // getAccountInfoValue parses the result into a typed response wrapper
   // that includes context (slot) and value (account or null).
+  // #docregion landing
   final typedInfo = await rpc
       .getAccountInfoValue(
         systemProgram,
@@ -44,6 +49,7 @@ Future<void> main() async {
     print('  lamports  : ${account['lamports']}');
     print('  executable: ${account['executable']}');
   }
+  // #enddocregion landing
 
   // ── 3. Account that likely does not exist on devnet ───────────────────────
   // A freshly generated public key almost certainly has no account.

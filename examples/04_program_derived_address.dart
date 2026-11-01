@@ -28,10 +28,12 @@ Future<void> main() async {
   // ── 2. Derive a PDA with string seeds ─────────────────────────────────────
   // getProgramDerivedAddress searches for a bump seed, starting at 255,
   // until the derived address is NOT on the Ed25519 curve.
+  // #docregion landing
   final (vaultPda, vaultBump) = await getProgramDerivedAddress(
     programAddress: systemProgram,
     seeds: ['vault', 'user-42'],
   );
+  // #enddocregion landing
 
   print('\nVault PDA  : ${vaultPda.value}');
   print('Vault bump : $vaultBump');
@@ -50,7 +52,9 @@ Future<void> main() async {
 
   // ── 4. Validate that PDA is off-curve ─────────────────────────────────────
   // isOnCurve returns false for a correctly derived PDA.
+  // #docregion landing
   final onCurve = isOnCurveAddress(vaultPda);
+  // #enddocregion landing
   print('\nVault PDA on Ed25519 curve (should be false): $onCurve');
 
   // ── 5. Typical Associated Token Account PDA formula ───────────────────────

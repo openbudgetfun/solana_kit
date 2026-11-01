@@ -102,3 +102,7 @@ Get a free API key at <https://helius.dev> and replace the placeholder.
 | Helius                       | `solana_kit_helius`                                                                                                                          |
 | Functional (deprecated shim) | `solana_kit_functional`                                                                                                                      |
 | Stringify                    | `solana_kit_fast_stable_stringify`                                                                                                           |
+
+## Snippets on the website
+
+Some examples contain `// #docregion landing` and `// #enddocregion landing` comments. The [docs site](../docs/site/README.md) landing page quotes the code between them, so the website always shows code that compiles. Keep the markers when you edit those files; the site build fails if a region disappears.
