@@ -15,20 +15,22 @@ Future<String> sendViaSender(
   SenderRegion region = SenderRegion.defaultRegion,
   bool swqosOnly = false,
   bool skipPreflight = true,
+  bool mevProtect = false,
   bool allowInsecureHttpForTesting = false,
   http.Client? client,
 }) async {
   final fastUrl = senderFastUrl(
     region,
     allowInsecureHttpForTesting: allowInsecureHttpForTesting,
+    swqosOnly: swqosOnly,
+    mevProtect: mevProtect,
   );
-  final endpoint = swqosOnly ? '$fastUrl?swqos_only=true' : fastUrl;
   final effectiveClient = client ?? http.Client(); // coverage:ignore-line
   final shouldClose = client == null; // coverage:ignore-line
 
   try {
     final response = await effectiveClient.post(
-      Uri.parse(endpoint),
+      Uri.parse(fastUrl),
       headers: const {'content-type': 'application/json'},
       body: jsonEncode({
         'jsonrpc': '2.0',

@@ -2,21 +2,24 @@
 
 [![pub package](https://img.shields.io/pub/v/solana_kit_helius.svg)](https://pub.dev/packages/solana_kit_helius) [![docs](https://img.shields.io/badge/docs-pub.dev-0175C2.svg)](https://pub.dev/documentation/solana_kit_helius/latest/) [![website](https://img.shields.io/badge/website-solana__kit__docs-0A7EA4.svg)](https://openbudgetfun.github.io/solana_kit/reference/package-catalog#solana_kit_helius) [![CI](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/openbudgetfun/solana_kit/actions/workflows/ci.yml) [![coverage](https://codecov.io/gh/openbudgetfun/solana_kit/branch/main/graph/badge.svg?flag=solana_kit_helius)](https://codecov.io/gh/openbudgetfun/solana_kit?flag=solana_kit_helius)
 
-A Dart client for the [Helius API](https://github.com/helius-labs/helius-sdk), covering the DAS API, enhanced transactions, webhooks, smart transactions, ZK compression, staking, the wallet API, WebSocket subscriptions, and auth.
+A Dart client for the [Helius API](https://github.com/helius-labs/helius-sdk), covering the DAS API, parsed events, enhanced transactions, webhooks, smart transactions, ZK compression, staking, the wallet API, WebSocket subscriptions, parsed streams, preconfirmations, and auth.
 
 ## What you get
 
 - **DAS API**: query assets, proofs, and metadata
+- **Parsed Events**: decode signatures and address history, and scan history by program instruction or token mint
+- **Parsed Streams**: real-time decoded transactions with server-side filters and automatic reconnect/resubscribe
 - **Enhanced transactions**: parsed transaction history with human-readable types
 - **Webhooks**: create, manage, and delete webhook subscriptions
-- **Transaction utilities**: priority fee policies, signed transaction broadcasting, and confirmation polling
+- **Transaction utilities**: priority fee policies, signed transaction broadcasting with expiry tracking, MEV Protect, and confirmation polling
 - **ZK compression**: compressed account and token operations via Light Protocol
 - **Staking**: create stake, unstake, and withdraw transactions via Helius validators
 - **Wallet API**: identity resolution, balances, history, and transfers
-- **WebSockets**: real-time subscription support
+- **WebSockets**: real-time subscription support, including preconfirmation filters, slot events, and coverage
 - **Auth**: project and API key management
 - **Priority fees**: estimate priority fees for transactions
-- **RPC V2**: enhanced RPC methods with pagination
+- **RPC V2**: enhanced RPC methods with pagination and the full `getTransactionsForAddress` filter surface
+- **`kitRpc`**: a standard `solana_kit_rpc` client over the Helius transport
 
 ## Upstream compatibility
 
@@ -24,7 +27,7 @@ A Dart client for the [Helius API](https://github.com/helius-labs/helius-sdk), c
 <!-- dprint-ignore -->
 | `solana_kit_helius` version | [`helius-sdk`](https://github.com/helius-labs/helius-sdk) | Released                |
 | --------------------------- | --------------------------------------------------------- | ----------------------- |
-| _next release_              | `v3.3.0`                                                  | _unreleased_            |
+| _next release_              | `v3.4.0`                                                  | _unreleased_            |
 | `0.7.0` – `0.8.0`           | `v3.2.0`                                                  | 2026-09-21 – 2026-10-12 |
 | `0.6.0` – `0.6.3`           | `ad8f796d81be`                                            | 2026-08-30 – 2026-09-12 |
 | `0.4.0` – `0.5.1`           | `4c0c55b86eab`                                            | 2026-06-01 – 2026-08-19 |
@@ -37,11 +40,13 @@ The package covers the broad v3 surface: DAS, priority fees, RPC v2 including `g
 
 The legacy smart-transaction facade does not yet implement the v3 transaction-building contract: `createSmartTransaction` only fetches a blockhash, `sendSmartTransaction` does not compile or sign instructions, and `getComputeUnits` does not serialize a transaction for simulation. These three helpers cannot complete their advertised transaction flows. Prefer Solana Kit's transaction-message, signer, and Sender APIs until that surface is replaced. Remaining v3 gaps also include smart-transaction tip helpers and enhanced WebSocket account/transaction subscriptions.
 
-`pollTransactionConfirmation` and `sendBundleWithSender` check on-chain execution errors before accepting confirmation. A failed transaction throws its corresponding `SolanaError`, even when its signature is confirmed or finalized. A higher commitment satisfies a lower requested commitment; confirmation alone never establishes that the intended transfer executed successfully.
+`pollTransactionConfirmation`, `sendBundleWithSender`, and `broadcastTransaction` check on-chain execution errors before accepting confirmation. A failed transaction throws its corresponding `SolanaError`, even when its signature is confirmed or finalized. A higher commitment satisfies a lower requested commitment; confirmation alone never establishes that the intended transfer executed successfully.
 
 The JSON-RPC and REST transports sanitize connection exceptions so API keys and URL user credentials are omitted from their messages. WebSocket connection errors also omit URL user credentials.
 
-Preconfirmation subscriptions wait for WebSocket readiness. Connection failure or closure rejects pending requests and closes notification streams without exposing endpoint credentials. `PreconfWsClient` accepts `channelFactory` for custom connectors; `close()` is safe to repeat, including before connection readiness.
+Preconfirmation subscriptions accept server-side filters and optional slot (bank created/frozen) events, use one connection per subscription, and expose `getPreConfCoverage` over HTTPS. Connection failure or closure rejects pending requests and closes notification streams without exposing endpoint credentials. `PreconfWsClient` accepts `channelFactory` for custom connectors; `close()` is safe to repeat.
+
+Parsed Streams subscriptions buffer notifications, fail loudly when a consumer falls more than 10,000 notifications behind, reconnect with exponential backoff, and resubscribe active filters. Delivery is at most once; use `onReconnect` and `ParsedStreamsReconnectInfo.lastSlot` to backfill the gap from RPC when it matters.
 
 <!-- {=packageInstallSection:"solana_kit_helius"} -->
 
@@ -108,6 +113,57 @@ Future<void> main() async {
   print(asset);
   print(fees);
   print(txns);
+}
+```
+
+### Parsed events and streams
+
+```dart
+import 'package:solana_kit_helius/solana_kit_helius.dart';
+
+Future<void> main() async {
+  final helius = createHelius(HeliusConfig(apiKey: 'your-api-key'));
+
+  // Decode signatures, history, or scan history by program/mint.
+  final parsed = await helius.parsedEvents.parseTransactions(
+    const ParseTransactionsRequest(transactions: ['transaction-signature']),
+  );
+
+  final page = await helius.parsedEvents.getTransactionHistory(
+    const GetParsedTransactionHistoryRequest(address: 'wallet-address'),
+  );
+
+  // Real-time decoded transactions with a server-side filter.
+  final subscription = await helius.parsedStreams.parsedTransactionSubscribe(
+    const ParsedTransactionFilter(
+      programs: ['JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4'],
+      instructionNames: ['route'],
+    ),
+  );
+  await for (final notification in subscription.notifications) {
+    print(notification.value);
+  }
+
+  print(parsed);
+  print(page.paginationToken);
+}
+```
+
+### Standard RPC and MEV Protect
+
+`helius.kitRpc` is a standard `solana_kit_rpc` client, so it can be passed to kit helpers. Set `mevProtect: true` to route every transaction away from validators statistically linked to sandwich attacks.
+
+```dart
+import 'package:solana_kit_helius/solana_kit_helius.dart';
+import 'package:solana_kit_rpc/solana_kit_rpc.dart';
+
+Future<void> main() async {
+  final helius = createHelius(
+    HeliusConfig(apiKey: 'your-api-key', mevProtect: true),
+  );
+
+  final slot = await helius.kitRpc.getSlot().send();
+  print(slot);
 }
 ```
 

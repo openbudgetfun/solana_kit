@@ -74,6 +74,10 @@ const minTipLamportsSwqos = 5000;
 
 /// Builds the `/fast` endpoint URL for a sender [region].
 ///
+/// Set [swqosOnly] to route through the SWQOS-only path, and [mevProtect] to
+/// route transactions away from validators statistically linked to sandwich
+/// attacks.
+///
 /// {@template helius-sender-transport}
 /// Throws [ArgumentError] for HTTP endpoints unless
 /// [allowInsecureHttpForTesting] is explicitly enabled in a non-release build.
@@ -83,10 +87,16 @@ const minTipLamportsSwqos = 5000;
 String senderFastUrl(
   SenderRegion region, {
   bool allowInsecureHttpForTesting = false,
+  bool swqosOnly = false,
+  bool mevProtect = false,
 }) => _senderUrl(
   region,
   'fast',
   allowInsecureHttpForTesting: allowInsecureHttpForTesting,
+  queryParameters: {
+    if (swqosOnly) 'swqos_only': 'true',
+    if (mevProtect) 'mev-protect': 'true',
+  },
 );
 
 /// Builds the `/ping` endpoint URL for a sender [region].
@@ -106,6 +116,7 @@ String _senderUrl(
   SenderRegion region,
   String path, {
   required bool allowInsecureHttpForTesting,
+  Map<String, String> queryParameters = const {},
 }) {
   final endpoint = senderEndpoints[region]!;
   const isProduction = bool.fromEnvironment('dart.vm.product');
@@ -123,5 +134,11 @@ String _senderUrl(
     );
   }
 
-  return '$endpoint/$path';
+  return Uri.parse(
+        '$endpoint/$path',
+      )
+      .replace(
+        queryParameters: queryParameters.isEmpty ? null : queryParameters,
+      )
+      .toString();
 }

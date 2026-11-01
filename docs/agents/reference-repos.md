@@ -29,7 +29,7 @@ When you need to update an upstream pin, change the JSON config first instead of
 - `.repos/kit` — upstream TypeScript source from `anza-xyz/kit`, pinned to tag `v8.6.0` (last checked `37301ae0f2e8`)
 - `.repos/espresso-cash-public` — Dart Solana reference from `brij-digital/espresso-cash-public` on `master` (last checked `77150680d6bf`)
 - `.repos/mobile-wallet-adapter` — Solana Mobile Wallet Adapter reference from `solana-mobile/mobile-wallet-adapter`, pinned to tag `@solana-mobile/mobile-wallet-adapter-protocol-kit@3.0.1` (last checked `100e023048b7`)
-- `.repos/helius-labs/helius-sdk` — Helius SDK reference from `helius-labs/helius-sdk`, pinned to the v3.3.0 release tag (last checked `1a37d6f0d9eb`)
+- `.repos/helius-labs/helius-sdk` — Helius SDK reference from `helius-labs/helius-sdk`, pinned to the v3.4.0 release tag (last checked `87cb392f0e69`)
 
 ## solana-program/* references
 

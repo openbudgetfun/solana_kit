@@ -160,6 +160,40 @@ class BroadcastTransactionRequest {
   Map<String, Object?> toJson() => {'transaction': transaction};
 }
 
+/// Options for tracking a broadcast transaction to confirmation.
+class BroadcastTransactionOptions {
+  /// Creates broadcast options.
+  const BroadcastTransactionOptions({
+    this.lastValidBlockHeightOffset = 150,
+    this.pollTimeoutMs = 60000,
+    this.pollIntervalMs = 2000,
+    this.skipPreflight = true,
+    this.commitment = CommitmentLevel.confirmed,
+    this.maxRetries = 0,
+  });
+
+  /// How far past the current chain height the transaction may land.
+  ///
+  /// The effective expiry is the earlier of the blockhash's
+  /// `lastValidBlockHeight` and `chainHeight + lastValidBlockHeightOffset`.
+  final int lastValidBlockHeightOffset;
+
+  /// Overall polling timeout in milliseconds.
+  final int pollTimeoutMs;
+
+  /// Polling cadence in milliseconds.
+  final int pollIntervalMs;
+
+  /// Whether to skip preflight simulation when submitting.
+  final bool skipPreflight;
+
+  /// Commitment level used for submission and blockhash reads.
+  final CommitmentLevel commitment;
+
+  /// Maximum number of retries the sender should perform.
+  final int maxRetries;
+}
+
 /// Request to poll for transaction confirmation.
 class PollTransactionConfirmationRequest {
   /// Creates a poll-confirmation request.

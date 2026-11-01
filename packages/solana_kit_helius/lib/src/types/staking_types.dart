@@ -1,5 +1,17 @@
 import 'package:solana_kit_helius/src/internal/json_reader.dart';
 
+/// The largest unsigned 64-bit integer, used for an active stake account's
+/// deactivation epoch.
+///
+/// Dart's `int` is signed, so the value is exposed as a [BigInt].
+final BigInt stakingU64Max = BigInt.parse('18446744073709551615');
+
+/// Lamports in one SOL, as a [BigInt].
+final BigInt lamportsPerSolBigInt = BigInt.from(1000000000);
+
+/// Size of a stake account, in bytes.
+const int stakeStateLen = 200;
+
 /// Request to create a stake transaction.
 class CreateStakeTransactionRequest {
   /// Creates a stake transaction request.

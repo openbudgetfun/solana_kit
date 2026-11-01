@@ -1,5 +1,10 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:solana_kit_errors/solana_kit_errors.dart';
 import 'package:solana_kit_helius/solana_kit_helius.dart';
+import 'package:solana_kit_rpc/solana_kit_rpc.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -55,6 +60,38 @@ void main() {
       expect(helius.wallet, isNotNull);
       expect(helius.websocket, isNotNull);
       expect(helius.auth, isNotNull);
+      expect(helius.kitRpc, isNotNull);
+    });
+
+    test('kitRpc sends standard Solana RPC requests', () async {
+      final client = MockClient((request) async {
+        final body = jsonDecode(request.body) as Map<String, Object?>;
+        expect(body['method'], 'getSlot');
+        return http.Response(
+          jsonEncode({'jsonrpc': '2.0', 'id': body['id'], 'result': 123}),
+          200,
+        );
+      });
+      final helius = createHelius(
+        HeliusConfig(apiKey: 'test-key'),
+        client: client,
+      );
+
+      expect(await helius.kitRpc.getSlot().send(), BigInt.from(123));
+    });
+
+    test('mevProtect appends the flag to RPC and sender URLs', () {
+      final config = HeliusConfig(apiKey: 'abc', mevProtect: true);
+
+      expect(
+        config.rpcUrl,
+        'https://mainnet-beta.helius-rpc.com/?api-key=abc&mev-protect=true',
+      );
+      expect(
+        config.senderBaseUrl,
+        'https://mainnet.helius-rpc.com/?api-key=abc&mev-protect=true',
+      );
+      expect(config.mevProtect, isTrue);
     });
 
     test('HeliusConfig computes correct URLs for mainnet', () {
