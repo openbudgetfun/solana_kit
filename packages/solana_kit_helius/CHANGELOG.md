@@ -4,6 +4,42 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## solana_kit_helius [0.8.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_helius/v0.8.1) (2026-11-01)
+
+### Features
+
+- **Require secure transport for Sender submissions.** Reject plaintext regional Sender endpoints before submitting transactions or bundles. The HTTPS default retains automatic region routing. Regional HTTP requires an explicit `allowInsecureHttpForTesting` opt-in in non-release builds and is always rejected in release builds, including by the Sender URL helpers. _Owner:_ Ifiok Jr. · _Introduced in:_ [981dc3d](https://github.com/openbudgetfun/solana_kit/commit/981dc3dd5113eccfd72ca66f00f703b072ec1e3c)
+
+#### Track `helius-labs/helius-sdk` `v3.4.0`
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [4c9341c](https://github.com/openbudgetfun/solana_kit/commit/4c9341cd206b2a34f32e28398b771ae371505167)
+
+The reference pin advances from `v3.3.0` to `v3.4.0`, and the previously deferred v3 surfaces are ported:
+
+- **Parsed Events REST API** — `helius.parsedEvents` exposes `parseTransactions`, `getTransactionHistory`, and the new `scan` endpoint, with typed requests/responses, manual pagination, program/instruction/mint match filters, and a mainnet-only guard.
+- **Parsed Streams WebSocket client** — `helius.parsedStreams` subscribes to decoded transactions with program/instruction/account-role filters and `full`/`matched`/`raw` details, reconnects and resubscribes automatically, reports the last delivered slot, and exposes `describeProgram`.
+- **Preconfirmation filters, slot events, and coverage** — `preconfSubscribe` accepts server-side filters and `{slots: true}`, slot bank lifecycle frames decode as `PreconfSlotNotification`, and `getPreConfCoverage` reads the HTTPS coverage endpoint. Each subscription now uses its own connection, matching the upstream design.
+- **`kitRpc` and MEV Protect** — `HeliusClient.kitRpc` exposes a standard `solana_kit_rpc` client over the Helius transport, and `HeliusConfig.mevProtect` (plus per-call Sender overrides) appends `mev-protect=true`.
+- **Broadcast expiry re-check** — `broadcastTransaction` now polls to landing with an expiry derived from the latest blockhash and chain height, performing one final status read after the expiry height before throwing.
+- **`getTransactionsForAddress` filters** — the request models the full v3 filter surface, including `filters.tokenTransfer`, and responses parse the live `{data, paginationToken}` shape.
+- **DAS fixes** — `getAllTokenAccountsByOwner` accepts both page shapes, and the DAS `HeliusAssetInterface` enum uses the corrected `LEGACY_NFT` wire value with `MplCoreGroup` and `MplBubblegumV2`.
+- **Staking constants** — `stakingU64Max` and `lamportsPerSolBigInt` expose the upstream `BigInt` constants.
+
+The changeset is minor because the new clients and request fields are additive, while `GetTransactionsForAddressRequest` moves from the inaccurate `before`/`until` fields to the upstream `paginationToken` and `filters` shape.
+
+### Fixes
+
+#### Reject malformed Helius checkout responses instead of silently defaulting them
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [eedf4a4](https://github.com/openbudgetfun/solana_kit/commit/eedf4a41807028ea4e43b01badd3b330013c7016)
+
+The hosted-checkout response models (`CheckoutInitializeResponse`, `CheckoutPreviewResponse`, `CheckoutStatusResponse`) parsed with `?? ''` / `?? 0` / `?? false` fallbacks on every field, so a malformed renewal response could tell a user to pay zero cents to an empty wallet through a payment link that looked real. All three models now parse with the package's `JsonReader` require-accessors and throw `FormatException` naming the missing key, matching the strict parsing the developer-portal API clients already use. `pollCheckoutCompletion`'s documented synthetic pending/expired statuses are unchanged; only genuinely malformed HTTP responses now fail.
+
+`fetchTipFloor75th` still returns null for transient endpoint failures but no longer swallows `ArgumentError` and `TypeError`: a bad endpoint argument now surfaces as a programming error instead of the conservative null tip.
+
+- **URL-encode dynamic path segments in REST endpoints.** Dynamic path segments in the REST endpoints (`projectId`, `webhookId`, `address`, `wallet`, `stakeAccount`) are now URL-encoded, so a value returned by a compromised API cannot reshape a subsequent request's path on the Helius host. Fixed paths and the API-key query parameter are unchanged. _Owner:_ Ifiok Jr. · _Introduced in:_ [ad4d903](https://github.com/openbudgetfun/solana_kit/commit/ad4d903443f06270c48a9ad135ad416147b020ae)
+- **Track `helius-labs/helius-sdk` `v3.3.0`.** The reference pin advances from `v3.2.0` to `v3.3.0`. The upstream release adds two new API surfaces (the parsed-events REST API and the parsed-streams WebSocket client), expands the preconfirmation WebSocket API, and fixes three bugs whose Dart counterparts are already equivalent: the Dart REST client surfaces raw non-JSON error bodies verbatim, the controller-based WebSocket client ends awaiting iterators on connection loss instead of hanging, and `HeliusConfig` builds fixed per-cluster URLs so the doubled-query-separator bug cannot occur. No code the Dart port implements changed. The new API surfaces are tracked for follow-up ports; see `docs/agents/upstream-audit-solana_kit_helius-v3.3.0.md`. _Owner:_ Ifiok Jr. · _Introduced in:_ [599479a](https://github.com/openbudgetfun/solana_kit/commit/599479adb2d9c10c737642399967cf1568b3b6f1)
+
 ## solana_kit_helius [0.3.2](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_helius/v0.3.2) (2026-05-30)
 
 ### 🚀 Feature

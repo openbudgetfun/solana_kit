@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## solana_kit_subscriptions [0.4.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_subscriptions/v0.4.1) (2026-11-01)
+
+### Fixes
+
+- **Reject incorrect instruction discriminators and trailing bytes.** Reject incorrect instruction discriminators and trailing bytes in the remaining legacy generated instruction data decoders and named parsers. Preserve their existing data classes, encoder APIs, and decoder size metadata. Add regression coverage for instruction classification, truncated input, and nonzero decoder offsets. _Owner:_ Ifiok Jr. · _Introduced in:_ [ed8882e](https://github.com/openbudgetfun/solana_kit/commit/ed8882e603d58d4d8def43d8578d4f87a4086fad)
+- **Refresh generated upstream version tables and align validation tests.** Regenerate the upstream version tables embedded in the generated program-client READMEs after the 2026-10-12 release (docs-only, produced by `docs:update`), and update two validation tests to the address-scoped error code now thrown for non-base58 strings: `assertIsBlockhash` and the RPC transaction decoder's loaded-address checks expect `addressesInvalidBase58EncodedAddress` instead of the codec-internal error that used to leak through. _Owner:_ Ifiok Jr. · _Introduced in:_ [eedf4a4](https://github.com/openbudgetfun/solana_kit/commit/eedf4a41807028ea4e43b01badd3b330013c7016)
+
 ## solana_kit_subscriptions [0.1.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_subscriptions/v0.1.0) (2026-08-12)
 
 ### 💥 Breaking Change

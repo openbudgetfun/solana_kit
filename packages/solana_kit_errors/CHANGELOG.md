@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Features
+
+- **Validate blockhash format before it reaches the wire.** The wire format stores a blockhash lifetime token as a fixed 32-byte value, but nothing validated the constraint's string: a blockhash whose base58 decoding was not exactly 32 bytes — for example one served by a compromised RPC — was silently truncated or zero-extended by the fixed-size encoder, producing a signed transaction whose lifetime token differs from the string shown to the caller. `setTransactionMessageLifetimeUsingBlockhash` now rejects such values with the new `SolanaErrorCode.transactionInvalidBlockhashFormat` (port-only code `5663043`), the blockhash counterpart of the existing `transactionInvalidNonceFormat` check. _Owner:_ Ifiok Jr. · _Introduced in:_ [ad4d903](https://github.com/openbudgetfun/solana_kit/commit/ad4d903443f06270c48a9ad135ad416147b020ae)
+
+#### Track `@solana/errors` v8.5.0: five new error codes
+
+_Owner:_ Ifiok Jr. · _Introduced in:_ [253a913](https://github.com/openbudgetfun/solana_kit/commit/253a9130ef81c0dd25e822fdcecebad7508a01cf)
+
+Ports the error codes added upstream in `@solana/kit` v8.5.0:
+
+- `keysVerificationRequiresExtractablePublicKey(3704007)` — WebCrypto-specific upstream; reserved here with its upstream number (the Dart verifier's public keys are always readable), with no throw site today.
+- `codecsUnexpectedZeroFixedSizeItemForArrayLikeSizeStrategy(8078030)` — thrown by the array/set/map codecs when a zero-byte fixed-size item codec is combined with the sentinel or remainder size strategy.
+- `walletInvalidMessageSignature(8900004)`, `walletInvalidSignInOutput(8900005)`, `walletInvalidNumberOfOutputs(8900006)` — wallet-account signer surface codes; reserved with their upstream numbers (that surface is not implemented in the Dart port yet).
+
+Each code keeps its upstream `SolanaErrorCode` number so error codes remain interoperable across implementations.
+
+- **Track `@solana/errors` v8.6.0: one new error code.** Adds `walletFeatureVersionUnsupported` (8900007) with its upstream number and message: the wallet supports an older version of a requested feature than required. Reserved with no throw site today — the wallet-account feature-negotiation surface is not implemented in the Dart port yet. _Owner:_ Ifiok Jr. · _Introduced in:_ [e3d08a9](https://github.com/openbudgetfun/solana_kit/commit/e3d08a9ef215e7d2fe6b53943b851925bbbfb2ac)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Features

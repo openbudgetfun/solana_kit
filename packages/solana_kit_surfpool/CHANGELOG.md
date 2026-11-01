@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## solana_kit_surfpool [0.5.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_surfpool/v0.5.1) (2026-11-01)
+
+### Fixes
+
+- **Pass the fork datasource URL through the environment.** `Surfnet` passed a fork's upstream RPC URL — whose query string commonly carries an API key — as a `--rpc-url` process argument, where it was world-readable through `ps` and `/proc` on the machine running Surfnet. The URL now rides in the `SURFPOOL_DATASOURCE_RPC_URL` environment variable, which the CLI supports natively; output redaction is unchanged. _Owner:_ Ifiok Jr. · _Introduced in:_ [ad4d903](https://github.com/openbudgetfun/solana_kit/commit/ad4d903443f06270c48a9ad135ad416147b020ae)
+
 ## solana_kit_surfpool [0.1.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_surfpool/v0.1.0) (2026-08-12)
 
 ### 💥 Breaking Change

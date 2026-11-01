@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Fixes
+
+- **Accept odd-length strings in the base16 encoder.** Ports the fix from `@solana/codecs-strings` v8.5.0 (#2117): `getBase16Encoder` no longer drops the last digit of odd-length strings. A trailing lone hex digit is encoded as the low nibble of a final byte — `'abc'` now encodes to `[0xab, 0x0c]` instead of throwing, matching the size `getSizeFromValue` reports. The single-character case is unchanged. _Owner:_ Ifiok Jr. · _Introduced in:_ [253a913](https://github.com/openbudgetfun/solana_kit/commit/253a9130ef81c0dd25e822fdcecebad7508a01cf)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Fixes

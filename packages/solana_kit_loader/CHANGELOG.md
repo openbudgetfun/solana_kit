@@ -1,5 +1,13 @@
 # Changelog
 
+## solana_kit_loader [0.6.1](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_loader/v0.6.1) (2026-11-01)
+
+### Fixes
+
+- **Reject incorrect instruction discriminators and trailing bytes.** Reject incorrect instruction discriminators and trailing bytes in the remaining legacy generated instruction data decoders and named parsers. Preserve their existing data classes, encoder APIs, and decoder size metadata. Add regression coverage for instruction classification, truncated input, and nonzero decoder offsets. _Owner:_ Ifiok Jr. · _Introduced in:_ [ed8882e](https://github.com/openbudgetfun/solana_kit/commit/ed8882e603d58d4d8def43d8578d4f87a4086fad)
+- **Track `solana-program/loader-v3` `js@v0.8.0`.** The reference pin advances to `js@v0.8.0`. The upstream release regenerates the TypeScript client without changing the program's `idl.json`, so no generated Dart code changes. See `docs/agents/upstream-audit-program-pins-2026-10-16.md`. _Owner:_ Ifiok Jr. · _Introduced in:_ [595a274](https://github.com/openbudgetfun/solana_kit/commit/595a274879dad120d612ea73e2f2f0edc119a15b)
+- **Refresh generated upstream version tables and align validation tests.** Regenerate the upstream version tables embedded in the generated program-client READMEs after the 2026-10-12 release (docs-only, produced by `docs:update`), and update two validation tests to the address-scoped error code now thrown for non-base58 strings: `assertIsBlockhash` and the RPC transaction decoder's loaded-address checks expect `addressesInvalidBase58EncodedAddress` instead of the codec-internal error that used to leak through. _Owner:_ Ifiok Jr. · _Introduced in:_ [eedf4a4](https://github.com/openbudgetfun/solana_kit/commit/eedf4a41807028ea4e43b01badd3b330013c7016)
+
 ## solana_kit_loader [0.1.0](https://github.com/openbudgetfun/solana_kit/releases/tag/solana_kit_loader/v0.1.0) (2026-06-01)
 
 ### 💥 Breaking Change

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 This changelog is managed by [monochange](https://github.com/monochange/monochange).
 
+## [0.11.1](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.1) (2026-11-01)
+
+### Fixes
+
+- **Bound BigInt materialization from plain integer literals.** `parseJsonWithBigInts` capped positive-exponent expansion at 10,000 but accepted a plain integer literal of any length, so a hostile RPC response containing a multi-megabyte integer forced a same-sized `BigInt` allocation for a cost far cheaper for the sender than for this process. Integer literals are now rejected when they would materialize more than 10,001 digits — the same ceiling the exponent cap already permits — on both the plain and the mantissa-plus-exponent paths. No value the exponent path accepted before changes. _Owner:_ Ifiok Jr. · _Introduced in:_ [ad4d903](https://github.com/openbudgetfun/solana_kit/commit/ad4d903443f06270c48a9ad135ad416147b020ae)
+- **Bound untrusted inbound transport payloads.** Add configurable inbound limits of 16 MiB, 64 JSON container levels, and one million JSON tokens. HTTP responses stop streaming on overflow, including when Content-Length is absent or understated, and custom decoders receive only bounded JSON. WebSocket channels close with application code 4009 on message or paused-listener queue overflow; queues default to 128 messages and 16 MiB per listener. Local and remote wallet sessions bound binary and base64 frames before copying or decrypting, validate decrypted JSON before parsing, and release session keys when a rejected frame closes the session. _Owner:_ Ifiok Jr. · _Introduced in:_ [f240282](https://github.com/openbudgetfun/solana_kit/commit/f240282055735bd5694832f94d7d8f6a905d5960)
+- **Implement the space argument of stringifyJsonWithBigInts.** `stringifyJsonWithBigInts` accepted a `space` parameter named after `JSON.stringify`'s but silently ignored it, so callers asking for pretty-printed output always got compact JSON with no error. The parameter now works exactly like its upstream counterpart: an int indents by that many spaces (clamped to ten, zero or negative stays compact) and a string is repeated at each nesting level (first ten characters), with `": "` separators and the same newline placement as `JSON.stringify`. Compact output — the default used by the RPC transports — is byte-for-byte unchanged. _Owner:_ Ifiok Jr. · _Introduced in:_ [eedf4a4](https://github.com/openbudgetfun/solana_kit/commit/eedf4a41807028ea4e43b01badd3b330013c7016)
+
 ## [0.11.0](https://github.com/openbudgetfun/solana_kit/releases/tag/v0.11.0) (2026-10-12)
 
 ### Fixes
