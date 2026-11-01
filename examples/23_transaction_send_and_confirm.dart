@@ -27,7 +27,9 @@ Future<void> main() async {
   final rpc = createSolanaRpc(url: 'https://api.devnet.solana.com');
 
   // ── 1. Create a payer key pair and request an airdrop ─────────────────────
+  // #docregion landing
   final payer = generateKeyPairSigner();
+  // #enddocregion landing
   print('Payer: ${payer.address.value}');
 
   print('Requesting 0.1 SOL airdrop …');
@@ -41,11 +43,14 @@ Future<void> main() async {
   print('Balance after airdrop: ${balance.value} lamports');
 
   // ── 2. Fetch a recent blockhash ───────────────────────────────────────────
+  // #docregion landing
   final blockhashResult = await rpc.getLatestBlockhashValue().send();
   final blockhash = blockhashResult.value;
+  // #enddocregion landing
 
   // ── 3. Build the transaction message ──────────────────────────────────────
   // We send a Memo instruction as the simplest possible transaction.
+  // #docregion landing
   const memoProgram = Address('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr');
   final memoData = Uint8List.fromList('Hello devnet!'.codeUnits);
 
@@ -69,14 +74,19 @@ Future<void> main() async {
           data: memoData,
         ),
       );
+  // #enddocregion landing
 
   // ── 4. Compile and sign ───────────────────────────────────────────────────
+  // #docregion landing
   final transaction = compileTransaction(message);
   final signed = await signTransactionWithSigners([payer], transaction);
+  // #enddocregion landing
 
   // ── 5. Send and confirm ───────────────────────────────────────────────────
   print('\nSending transaction …');
+  // #docregion landing
   final sig = await sendAndConfirmTransaction(rpc: rpc, transaction: signed);
+  // #enddocregion landing
   print('Confirmed! Signature: $sig');
   print('Explorer: https://explorer.solana.com/tx/$sig?cluster=devnet');
 }

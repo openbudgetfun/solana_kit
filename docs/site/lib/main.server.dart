@@ -2,20 +2,18 @@
 library;
 
 import 'package:jaspr/server.dart';
-import 'package:jaspr_content/components/callout.dart';
-import 'package:jaspr_content/components/github_button.dart';
-import 'package:jaspr_content/components/image.dart';
-import 'package:jaspr_content/components/theme_toggle.dart';
 import 'package:jaspr_content/jaspr_content.dart';
 import 'package:jaspr_content/theme.dart';
-import 'package:solana_kit_docs_site/components/site_docs_layout.dart';
-import 'package:solana_kit_docs_site/components/site_header.dart';
 import 'package:solana_kit_docs_site/components/site_paths.dart';
-import 'package:solana_kit_docs_site/components/site_search.dart';
-import 'package:solana_kit_docs_site/components/site_sidebar.dart';
+import 'package:solana_kit_docs_site/components/sketch_code.dart';
+import 'package:solana_kit_docs_site/components/sketch_content.dart';
 import 'package:solana_kit_docs_site/components/wallet_demo_frame.dart';
+import 'package:solana_kit_docs_site/layouts/docs_layout.dart';
+import 'package:solana_kit_docs_site/layouts/landing_layout.dart';
+import 'package:solana_kit_docs_site/layouts/redirect_page.dart';
 // This file is generated automatically by Jaspr, do not remove or edit.
 import 'package:solana_kit_docs_site/main.server.options.dart';
+import 'package:solana_kit_docs_site/site/workspace_data.dart';
 
 const _rawDocsBasePath = String.fromEnvironment(
   'DOCS_BASE_PATH',
@@ -24,38 +22,37 @@ const _rawDocsBasePath = String.fromEnvironment(
 
 void main() {
   final docsBasePath = normalizeBasePath(_rawDocsBasePath);
+  final workspace = WorkspaceData.load();
 
   Jaspr.initializeApp(options: defaultServerOptions);
 
   runApp(
-    ContentApp(
-      templateEngine: const MustacheTemplateEngine(),
-      parsers: const [MarkdownParser()],
-      extensions: [HeadingAnchorsExtension(), const TableOfContentsExtension()],
-      components: [Callout(), const Image(zoom: true), WalletDemoFrame()],
-      layouts: [
-        SiteDocsLayout(
-          basePath: docsBasePath,
-          header: SiteHeader(
-            basePath: docsRoute(docsBasePath, '/'),
-            title: 'Solana Kit Docs',
-            logo: docsRoute(docsBasePath, '/images/logo.svg'),
-            items: [
-              SiteSearch(basePath: docsBasePath),
-              const ThemeToggle(),
-              const GitHubButton(repo: 'openbudgetfun/solana_kit'),
-            ],
-          ),
-          sidebar: SiteSidebar(basePath: docsBasePath),
-        ),
+    ContentApp.custom(
+      loaders: [
+        FilesystemLoader('content'),
+        MemoryLoader(pages: legacyRedirectPages(docsBasePath)),
       ],
-      theme: ContentTheme(
-        primary: ThemeColor(ThemeColors.cyan.$600, dark: ThemeColors.cyan.$300),
-        background: ThemeColor(
-          ThemeColors.slate.$50,
-          dark: ThemeColors.slate.$950,
-        ),
-        colors: [ContentColors.quoteBorders.apply(ThemeColors.cyan.$500)],
+      configResolver: PageConfig.all(
+        dataLoaders: [FilesystemDataLoader('content/_data')],
+        templateEngine: const MustacheTemplateEngine(),
+        parsers: const [MarkdownParser()],
+        extensions: [
+          HeadingAnchorsExtension(),
+          const TableOfContentsExtension(),
+        ],
+        components: [
+          const SketchCodeBlocks(),
+          ...sketchContentComponents,
+          WalletDemoFrame(),
+        ],
+        layouts: [
+          // The first layout is the default for pages without `layout:`.
+          SiteDocsLayout(basePath: docsBasePath),
+          LandingLayout(basePath: docsBasePath, workspace: workspace),
+        ],
+        // The site ships its own stylesheet (web/site.css), so the default
+        // content theme's reset and typography are left out.
+        theme: const ContentTheme.none(),
       ),
     ),
   );

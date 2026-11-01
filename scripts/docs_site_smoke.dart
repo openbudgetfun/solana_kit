@@ -108,7 +108,12 @@ Future<void> main(List<String> args) async {
 
     try {
       // Every documented page must render with the shared site chrome.
-      await _verifyContentPages(port, repoRoot);
+      await _verifyContentPages(port, repoRoot, basePath);
+
+      // The landing page quotes real example code, and the pre-/docs/ URLs
+      // that published package READMEs link to must keep redirecting.
+      await _verifyLandingPage(port, basePath);
+      await _verifyLegacyRedirects(port, basePath);
 
       // The embedded wallet demo must serve its page and all referenced assets
       // under the deployment base path, and must be compiled in demo mode so
@@ -165,6 +170,11 @@ List<String> _contentRoutes(String contentDirectoryPath) {
 
     if (relative == 'index.md') {
       routes.add('/');
+    } else if (relative.endsWith('/index.md')) {
+      // A section index such as docs/index.md is served at its folder.
+      routes.add(
+        '/${relative.substring(0, relative.length - 'index.md'.length)}',
+      );
     } else {
       routes.add('/${relative.substring(0, relative.length - '.md'.length)}/');
     }
@@ -175,7 +185,11 @@ List<String> _contentRoutes(String contentDirectoryPath) {
   return routes;
 }
 
-Future<void> _verifyContentPages(int port, Directory repoRoot) async {
+Future<void> _verifyContentPages(
+  int port,
+  Directory repoRoot,
+  String basePath,
+) async {
   final routes = _contentRoutes('${repoRoot.path}/docs/site/content');
 
   if (routes.isEmpty) {
@@ -183,7 +197,7 @@ Future<void> _verifyContentPages(int port, Directory repoRoot) async {
   }
 
   for (final route in routes) {
-    final html = await _fetchText(port, route);
+    final html = await _fetchText(port, _served(basePath, route));
 
     if (!html.contains('</html>')) {
       _fail('page $route did not render a complete HTML document.');
@@ -195,6 +209,55 @@ Future<void> _verifyContentPages(int port, Directory repoRoot) async {
   }
 
   stdout.writeln('Verified ${routes.length} content pages render.');
+}
+
+Future<void> _verifyLandingPage(int port, String basePath) async {
+  final html = await _fetchText(port, _served(basePath, '/'));
+
+  for (final expected in [
+    'id="examples"',
+    'createSolanaRpc',
+    'getStructCodec',
+    'data-copy-text="dart pub add solana_kit"',
+    'href="${_served(basePath, '/docs/getting-started/installation')}"',
+  ]) {
+    if (!html.contains(expected)) {
+      _fail('landing page is missing `$expected`.');
+    }
+  }
+
+  if (html.contains('#docregion')) {
+    _fail('landing page leaked a #docregion marker from examples/.');
+  }
+
+  stdout.writeln('Landing page verified.');
+}
+
+Future<void> _verifyLegacyRedirects(int port, String basePath) async {
+  const redirects = {
+    '/reference/package-catalog/': '/docs/reference/package-catalog',
+    '/getting-started/installation/': '/docs/getting-started/installation',
+    '/guides/subscriptions-overview/': '/docs/programs/subscriptions-overview',
+    '/contributing/': '/docs/contributing',
+  };
+
+  for (final MapEntry(key: legacy, value: target) in redirects.entries) {
+    final html = await _fetchText(port, _served(basePath, legacy));
+    final expected = 'url=${_served(basePath, target)}"';
+
+    if (!html.contains(expected)) {
+      _fail('legacy route $legacy does not redirect to $target.');
+    }
+  }
+
+  stdout.writeln('Verified ${redirects.length} legacy redirects.');
+}
+
+/// The URL a route is served at under [basePath].
+String _served(String basePath, String route) {
+  final normalized = basePath.endsWith('/') ? basePath : '$basePath/';
+
+  return route == '/' ? normalized : '$normalized${route.substring(1)}';
 }
 
 /// Resolves asset URLs the way a browser would: relative to the page's base

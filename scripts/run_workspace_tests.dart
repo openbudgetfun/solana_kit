@@ -54,6 +54,14 @@ Future<void> main(List<String> args) async {
     testDirectories.add(generatedTestDirectory.path);
   }
 
+  // The documentation site's navigation, snippet, and highlighter tests.
+  final docsSiteTestDirectory = Directory('docs/site/test');
+
+  if (docsSiteTestDirectory.existsSync() &&
+      _hasDartTests(docsSiteTestDirectory)) {
+    testDirectories.add(docsSiteTestDirectory.path);
+  }
+
   final rootTestDirectory = Directory('test');
 
   if (rootTestDirectory.existsSync() && _hasDartTests(rootTestDirectory)) {

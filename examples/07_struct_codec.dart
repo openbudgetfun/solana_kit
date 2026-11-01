@@ -16,21 +16,25 @@ import 'package:solana_kit_codecs_strings/solana_kit_codecs_strings.dart';
 void main() {
   // Each field is a (name, codec) pair.
   // fixEncoderSize / fixDecoderSize lock a variable-size base58 codec to 32 b.
+  // #docregion landing
   final mintCodec = combineCodec(
     fixEncoderSize(getBase58Encoder(), 32),
     fixDecoderSize(getBase58Decoder(), 32),
   );
+  // #enddocregion landing
 
   // Build a struct codec that round-trips Map<String, Object?> values.
   // Field order determines byte layout.
   // getStructCodec takes no type parameters – it always works with
   // Map<String, Object?>.
+  // #docregion landing
   final tokenAccountCodec = getStructCodec([
     ('mint', mintCodec), // 32 bytes
     ('owner', mintCodec), // 32 bytes
     ('amount', getU64Codec()), // 8 bytes (BigInt)
     ('isInitialized', getBooleanCodec()), // 1 byte
   ]);
+  // #enddocregion landing
 
   // ── 1. Encode ─────────────────────────────────────────────────────────────
   final account = <String, Object?>{
@@ -40,12 +44,16 @@ void main() {
     'isInitialized': true,
   };
 
+  // #docregion landing
   final encoded = tokenAccountCodec.encode(account);
+  // #enddocregion landing
   // 32 (mint) + 32 (owner) + 8 (u64) + 1 (bool) = 73 bytes
   print('Encoded length: ${encoded.length} bytes (expected 73)');
 
   // ── 2. Decode ─────────────────────────────────────────────────────────────
+  // #docregion landing
   final decoded = tokenAccountCodec.decode(encoded);
+  // #enddocregion landing
   print('Decoded mint  : ${decoded['mint']}');
   print('Decoded owner : ${decoded['owner']}');
   print('Decoded amount: ${decoded['amount']}');
