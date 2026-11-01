@@ -33,6 +33,6 @@ Future<void> main() async {
 <!-- dprint-ignore -->
 | `solana_kit_associated_token_account` version | [`associated-token-account`](https://github.com/solana-program/associated-token-account) | Released                |
 | --------------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------- |
-| `0.4.0` – `0.9.0`                             | `program@v8.0.0`                                                                         | 2026-05-30 – 2026-10-12 |
+| `0.4.0` – `0.9.1`                             | `program@v8.0.0`                                                                         | 2026-05-30 – 2026-11-01 |
 
 <!-- upstream-support:end -->
